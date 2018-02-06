@@ -6,6 +6,7 @@
 *.iml
 .classpath
 .pydevproject
+nb-configuration.xml
 
 # Maven
 target

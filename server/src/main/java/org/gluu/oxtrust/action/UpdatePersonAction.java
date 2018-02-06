@@ -8,11 +8,13 @@ package org.gluu.oxtrust.action;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
+import java.util.TimeZone;
 
 import javax.enterprise.context.ConversationScoped;
 import javax.faces.application.FacesMessage;
@@ -37,6 +39,7 @@ import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.fido.GluuCustomFidoDevice;
+import org.gluu.oxtrust.model.fido.GluuDeviceDataBean;
 import org.gluu.oxtrust.service.external.ExternalUpdateUserService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.ServiceUtil;
@@ -108,6 +111,9 @@ public class UpdatePersonAction implements Serializable {
 	private MemberService memberService;
 	
 	@Inject
+	private LdapEntryManager ldapEntryManager;
+	
+	@Inject
 	private FidoDeviceService fidoDeviceService;
 
 	private GluuStatus gluuStatus;
@@ -116,13 +122,13 @@ public class UpdatePersonAction implements Serializable {
 	
 	private String confirmPassword;
 	
-	private List <DeviceData> deviceDataMap;
+	private List <GluuDeviceDataBean> deviceDataMap;
 
-	public List<DeviceData> getDeviceDataMap() {
+	public List<GluuDeviceDataBean> getDeviceDataMap() {
 		return deviceDataMap;
 	}
 
-	public void setDeviceDataMap(List<DeviceData> deviceDataMap) {
+	public void setDeviceDataMap(List<GluuDeviceDataBean> deviceDataMap) {
 		this.deviceDataMap = deviceDataMap;
 	}
 
@@ -195,6 +201,7 @@ public class UpdatePersonAction implements Serializable {
 		}
 
 		initAttributes(false);
+		try {
 		this.gluuStatus = this.person.getStatus();
 		List <String> oxexternal = this.person.getOxExternalUid();
 		externalAuthCustomAttributes = new ArrayList<String>();
@@ -205,15 +212,41 @@ public class UpdatePersonAction implements Serializable {
 			}			
 		}
 		
-		try {
+	
 			List<GluuCustomFidoDevice>  gluuCustomFidoDevices = fidoDeviceService.searchFidoDevices( this.person.getInum(),null);
-			deviceDataMap = new ArrayList<DeviceData>();
+			deviceDataMap = new ArrayList<GluuDeviceDataBean>();
 			if(gluuCustomFidoDevices != null){
-				for( GluuCustomFidoDevice gluuCustomFidoDevice : gluuCustomFidoDevices){
-					String devicedata = gluuCustomFidoDevice.getDeviceData();
-	                DeviceData deviceData = getDeviceata(devicedata);
-	                deviceDataMap.add(deviceData); 
+				for( GluuCustomFidoDevice gluuCustomFidoDevice : gluuCustomFidoDevices){					
+	                GluuDeviceDataBean gluuDeviceDataBean= new GluuDeviceDataBean();
+	                gluuDeviceDataBean.setCreationDate(ldapEntryManager.decodeGeneralizedTime(gluuCustomFidoDevice.getCreationDate()).toGMTString());
+	                gluuDeviceDataBean.setId(gluuCustomFidoDevice.getId());
+	                String devicedata = gluuCustomFidoDevice.getDeviceData();
+	                String modality = "";
+	                String nickName = "";
+	                if(devicedata != null){
+	                	DeviceData deviceData = getDeviceata(devicedata);
+	                	nickName = deviceData.getName();
+		                modality = "Super-Gluu Device";
+	                }else{
+	                	nickName = "U2F";
+	                	modality = "U2F device";
+	                }
+	                gluuDeviceDataBean.setNickName(nickName);
+	                gluuDeviceDataBean.setModality(modality);
+	                deviceDataMap.add(gluuDeviceDataBean); 
 				}
+			}
+			
+			if(oxexternal != null && oxexternal.size()>0){
+				for(String oxexternalStr : oxexternal){
+					String [] args = oxexternalStr.split(":");
+					GluuDeviceDataBean gluuDeviceDataBean= new GluuDeviceDataBean();
+					gluuDeviceDataBean.setNickName(args[0]);
+					gluuDeviceDataBean.setModality(args[0]);
+					gluuDeviceDataBean.setId(oxexternalStr);
+					deviceDataMap.add(gluuDeviceDataBean);
+					
+				}			
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -245,6 +278,12 @@ public class UpdatePersonAction implements Serializable {
 	public String save() throws Exception {
 		if (!organizationService.isAllowPersonModification()) {
 			return OxTrustConstants.RESULT_FAILURE;
+		}
+		
+		if(!update){
+			if(!validatePerson(this.person)){
+				return OxTrustConstants.RESULT_FAILURE;
+			}			
 		}
 
 		updateCustomObjectClasses();
@@ -474,33 +513,26 @@ public class UpdatePersonAction implements Serializable {
 		}
 	}
 	
-	public void removeExternalAuthCustomAttribute(String removeAttribute){
-		Iterator<String> itrList = externalAuthCustomAttributes.iterator();		
-		while(itrList.hasNext()){			
-			if( itrList.next().contains(removeAttribute) ){
-				itrList.remove();
-			}				
-		}
-		List <String> list = new ArrayList<String>(this.person.getOxExternalUid());
-		Iterator<String> itrList1 = list.iterator();		
-		while(itrList1.hasNext()){			
-			if( itrList1.next().contains(removeAttribute) ){
-				itrList1.remove();
-			}				
-		}
-		this.person.setOxExternalUid(list);
-	}
-	
-	public void removeDevice(DeviceData deleteDeviceData){		
+	public void removeDevice(GluuDeviceDataBean deleteDeviceData){		
 		try {
 			List<GluuCustomFidoDevice>  gluuCustomFidoDevices = fidoDeviceService.searchFidoDevices( this.person.getInum(),null);
 			
-			for( GluuCustomFidoDevice gluuCustomFidoDevice : gluuCustomFidoDevices){
-				String devicedata = gluuCustomFidoDevice.getDeviceData();
-                DeviceData deviceData = getDeviceata(devicedata);
-                if(deviceData.getUuid().equals(deleteDeviceData.getUuid())){
+			for( GluuCustomFidoDevice gluuCustomFidoDevice : gluuCustomFidoDevices){				
+                if(gluuCustomFidoDevice.getId().equals(deleteDeviceData.getId())){
                 	fidoDeviceService.removeGluuCustomFidoDevice(gluuCustomFidoDevice);
-                	this.deviceDataMap.remove(deviceData);
+                	this.deviceDataMap.remove(deleteDeviceData);
+                	return;
+                } 
+			}
+			
+
+			List <String> list = new ArrayList<String>(this.person.getOxExternalUid());
+			for( String external : list){				
+                if(deleteDeviceData.getId().trim().equals(external.trim())){
+                	list.remove(external);
+                	this.person.setOxExternalUid(list);
+                	this.deviceDataMap.remove(deleteDeviceData);
+                	return;
                 } 
 			}
 		} catch (Exception e) {
@@ -528,5 +560,23 @@ public class UpdatePersonAction implements Serializable {
 		}
 		return obj;
 	}
-
+	
+	private boolean validatePerson(GluuCustomPerson person) throws Exception {
+	
+		GluuCustomPerson  gluuCustomPerson  = personService.getPersonByUid(person.getUid());
+		if (gluuCustomPerson != null){
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Add User failed. Uid already exist: %s",
+					gluuCustomPerson.getUid());
+			return false;
+		}
+		
+		gluuCustomPerson  = personService.getPersonByEmail(person.getMail());
+		if (gluuCustomPerson != null){
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Add User failed. Mail id already exist: %s",
+					gluuCustomPerson.getMail());
+			return false;
+		}	
+		
+		return true;
+	}
 }

@@ -151,7 +151,9 @@ public class PersonService implements Serializable, IPersonService {
         Filter mailFilter = Filter.createSubstringFilter(OxTrustConstants.mail, null, targetArray, null);
         Filter nameFilter = Filter.createSubstringFilter(OxTrustConstants.displayName, null, targetArray, null);
         Filter inameFilter = Filter.createSubstringFilter(OxTrustConstants.iname, null, targetArray, null);
-        Filter searchFilter = Filter.createORFilter(uidFilter, mailFilter, nameFilter, inameFilter);
+        Filter ppidFilter = Filter.createSubstringFilter(OxTrustConstants.ppid, null, targetArray, null);
+        Filter inumFilter = Filter.createSubstringFilter(OxTrustConstants.inum, null, targetArray, null);
+        Filter searchFilter = Filter.createORFilter(uidFilter, mailFilter, nameFilter, inameFilter, ppidFilter, inumFilter);
 
         List<GluuCustomPerson> result = ldapEntryManager.findEntries(getDnForPerson(null), GluuCustomPerson.class, searchFilter);
 
@@ -228,6 +230,24 @@ public class PersonService implements Serializable, IPersonService {
 
         List<GluuCustomPerson> result = ldapEntryManager
                 .findEntries(getDnForPerson(null), GluuCustomPerson.class, filter, returnAttributes);
+
+        return result;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.gluu.oxtrust.ldap.service.IPersonService#findPersonsByMailds(java.util.List, java.lang.String[])
+     */
+    @Override
+    public List<GluuCustomPerson> findPersonsByMailids(List<String> mailids, String[] returnAttributes) throws Exception {
+        List<Filter> mailidFilters = new ArrayList<Filter>();
+        for (String mailid : mailids) {
+        	mailidFilters.add(Filter.createEqualityFilter(OxTrustConstants.mail, mailid));
+        }
+
+        Filter filter = Filter.createORFilter(mailidFilters);
+
+        List<GluuCustomPerson> result = ldapEntryManager
+                .findEntries(getDnForPerson(null), GluuCustomPerson.class, returnAttributes, filter);
 
         return result;
     }
@@ -415,15 +435,33 @@ public class PersonService implements Serializable, IPersonService {
     }
 
     /* (non-Javadoc)
-     * @see org.gluu.oxtrust.ldap.service.IPersonService#getPersonString(java.util.List)
+     * @see org.gluu.oxtrust.ldap.service.IPersonService#getPersonUid(java.util.List)
      */
     @Override
-    public String getPersonString(List<GluuCustomPerson> persons) throws Exception {
+    public String getPersonUids(List<GluuCustomPerson> persons) throws Exception {
         StringBuilder sb = new StringBuilder();
 
         for (Iterator<GluuCustomPerson> iterator = persons.iterator(); iterator.hasNext();) {
             GluuCustomPerson call = iterator.next();
-            sb.append('\'').append(call.getDisplayName()).append('\'');
+            sb.append('\'').append(call.getUid()).append('\'');
+            if (iterator.hasNext()) {
+                sb.append(", ");
+            }
+        }
+        return sb.toString();
+    }
+    
+    
+    /* (non-Javadoc)
+     * @see org.gluu.oxtrust.ldap.service.IPersonService#getPersonMailid(java.util.List)
+     */
+    @Override
+    public String getPersonMailids(List<GluuCustomPerson> persons) throws Exception {
+        StringBuilder sb = new StringBuilder();
+
+        for (Iterator<GluuCustomPerson> iterator = persons.iterator(); iterator.hasNext();) {
+            GluuCustomPerson call = iterator.next();
+            sb.append('\'').append(call.getMail()).append('\'');
             if (iterator.hasNext()) {
                 sb.append(", ");
             }

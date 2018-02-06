@@ -102,9 +102,10 @@ public class UmaPermissionService implements Serializable {
 	}
 
 	public Pair<Boolean, Response> validateRptToken(Token patToken, String authorization, String resourceId, String scopeId) {
+	    /* //caller of this method never pass null patToken
 		if (patToken == null) {
 	        return authenticationFailure;
-		}
+		} */
 
 		if (StringHelper.isNotEmpty(authorization) && authorization.startsWith("Bearer ")) {
 			String rptToken = authorization.substring(7);
@@ -113,20 +114,22 @@ public class UmaPermissionService implements Serializable {
 	        RptIntrospectionResponse rptStatusResponse = getStatusResponse(patToken, rptToken);
 			if ((rptStatusResponse == null) || !rptStatusResponse.getActive()) {
 				log.error("Status response for RPT token: '{}' is invalid", rptToken);
-				return authenticationFailure;
+				//return authenticationFailure;
 			}
-			
-			boolean rptHasPermissions = isRptHasPermissions(rptStatusResponse);
-			if (rptHasPermissions) {
-				for (UmaPermission umaPermission : rptStatusResponse.getPermissions()) {
-					if ((umaPermission.getScopes() != null) && umaPermission.getScopes().contains(scopeId) &&
-							(isGat || StringHelper.equals(resourceId, umaPermission.getResourceId()))) {
-						return authenticationSuccess;
-					}
-				}
-	
-				log.error("Status response for RPT token: '{}' not contains right permissions", rptToken);
-			}
+			else{
+                boolean rptHasPermissions = isRptHasPermissions(rptStatusResponse);
+
+                if (rptHasPermissions) {
+                    for (UmaPermission umaPermission : rptStatusResponse.getPermissions()) {
+                        if ((umaPermission.getScopes() != null) && umaPermission.getScopes().contains(scopeId) &&
+                                (isGat || StringHelper.equals(resourceId, umaPermission.getResourceId()))) {
+                            return authenticationSuccess;
+                        }
+                    }
+
+                    log.error("Status response for RPT token: '{}' not contains right permissions", rptToken);
+                }
+            }
 		}
 
 		Response registerPermissionsResponse = prepareRegisterPermissionsResponse(patToken, resourceId, Arrays.asList(scopeId));

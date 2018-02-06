@@ -191,6 +191,7 @@ public class UpdateScopeAction implements Serializable {
 		// return Configuration.RESULT_FAILURE;
 		// }
 
+		this.scope.setDisplayName(this.scope.getDisplayName().trim());
 		updateDynamicScripts();
 		updateClaims();
 		if (update) {

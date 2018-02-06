@@ -178,6 +178,7 @@ public class UpdateScopeDescriptionAction implements Serializable {
 
 	public String save() {
 		updateAuthorizationPolicies();
+		this.scopeDescription.setDisplayName(this.scopeDescription.getDisplayName().trim());
 
 		if (this.update) {
 			// Update scope description

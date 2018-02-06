@@ -1,5 +1,11 @@
+/*
+ * oxTrust is available under the MIT License (2008). See http://opensource.org/licenses/MIT for full text.
+ *
+ * Copyright (c) 2017, Gluu
+ */
 package org.gluu.oxtrust.service;
 
+import java.io.Serializable;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.security.Identity;
@@ -17,7 +23,9 @@ import javax.inject.Named;
  */
 @ApplicationScoped
 @Named
-public class PermissionService {
+public class PermissionService implements Serializable {
+    
+    private static final long serialVersionUID = 8880839485161960537L;
 
     @Inject
     private Logger log;
@@ -91,7 +99,7 @@ public class PermissionService {
                 }
             }
         }
-
+        
         if (identity.hasRole(GluuUserRole.USER.getValue())) {
             for (String[] managerAction : managerActions) {
                 String targetString = (String) target;

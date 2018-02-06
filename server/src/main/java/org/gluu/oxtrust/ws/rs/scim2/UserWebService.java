@@ -1,81 +1,57 @@
 /*
  * oxTrust is available under the MIT License (2008). See http://opensource.org/licenses/MIT for full text.
  *
- * Copyright (c) 2014, Gluu
+ * Copyright (c) 2015, Gluu
  */
 package org.gluu.oxtrust.ws.rs.scim2;
-
-import static org.gluu.oxtrust.util.OxTrustConstants.INTERNAL_SERVER_ERROR_MESSAGE;
-
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
-import org.codehaus.jackson.Version;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.SerializationConfig;
-import org.codehaus.jackson.map.module.SimpleModule;
-import org.gluu.oxtrust.exception.PersonRequiredFieldsException;
-import org.gluu.oxtrust.ldap.service.IPersonService;
-import org.gluu.oxtrust.ldap.service.JsonConfigurationService;
-import org.gluu.oxtrust.model.GluuCustomPerson;
-import org.gluu.oxtrust.model.scim2.Constants;
-import org.gluu.oxtrust.model.scim2.ErrorScimType;
-import org.gluu.oxtrust.model.scim2.ListResponse;
-import org.gluu.oxtrust.model.scim2.ScimPatchUser;
-import org.gluu.oxtrust.model.scim2.SearchRequest;
-import org.gluu.oxtrust.model.scim2.User;
-import org.gluu.oxtrust.service.antlr.scimFilter.util.ListResponseUserSerializer;
-import org.gluu.oxtrust.service.scim2.Scim2UserService;
-import org.gluu.oxtrust.util.CopyUtils2;
-import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.oxtrust.ws.rs.scim2.validators.UserValidator;
-import org.gluu.persist.exception.mapping.EntryPersistenceException;
-import org.gluu.persist.exception.operation.DuplicateEntryException;
-import org.gluu.persist.model.ListViewResponse;
-import org.gluu.persist.model.SortOrder;
-import org.slf4j.Logger;
-import org.xdi.config.oxtrust.AppConfiguration;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.Authorization;
+import org.gluu.oxtrust.ldap.service.IPersonService;
+import org.gluu.oxtrust.model.GluuCustomPerson;
+import org.gluu.oxtrust.model.exception.SCIMException;
+import org.gluu.oxtrust.model.scim2.*;
+import org.gluu.oxtrust.model.scim2.patch.PatchOperation;
+import org.gluu.oxtrust.model.scim2.patch.PatchRequest;
+import org.gluu.oxtrust.model.scim2.util.ScimResourceUtil;
+import org.gluu.oxtrust.service.scim2.Scim2PatchService;
+import org.gluu.oxtrust.service.scim2.interceptor.ScimAuthorization;
+import org.gluu.oxtrust.service.scim2.interceptor.RefAdjusted;
+import org.gluu.oxtrust.model.scim2.user.UserResource;
+import org.gluu.oxtrust.service.scim2.Scim2UserService;
+import org.joda.time.format.ISODateTimeFormat;
+import org.xdi.ldap.model.SortOrder;
+import org.xdi.ldap.model.VirtualListViewResponse;
+import org.xdi.util.Pair;
+
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.management.InvalidAttributeValueException;
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
+import java.net.URI;
+import java.util.List;
+
+import static org.gluu.oxtrust.model.scim2.Constants.*;
 
 /**
- * scim2UserEndpoint Implementation
+ * Implementation of /Users endpoint. Methods here are intercepted and/or decorated.
+ * Class org.gluu.oxtrust.service.scim2.interceptor.UserWebServiceDecorator is used to apply pre-validations on data.
+ * Filter org.gluu.oxtrust.service.scim2.interceptor.AuthorizationProcessingFilter secures invocations
  *
  * @author Rahat Ali Date: 05.08.2015
+ * Updated by jgomer on 2017-09-12.
  */
-@Named("scim2UserEndpoint")
+@Named
 @Path("/scim/v2/Users")
-@Api(value = "/v2/Users", description = "SCIM 2.0 User Endpoint (https://tools.ietf.org/html/rfc7644#section-3.2)", authorizations = {@Authorization(value = "Authorization", type = "uma")})
-public class UserWebService extends BaseScimWebService {
-
-    @Inject
-    private Logger log;
-
-    @Inject
-    private JsonConfigurationService jsonConfigurationService;
-
-    @Inject
-    private AppConfiguration appConfiguration;
+@Api(value = "/v2/Users", description = "SCIM 2.0 User Endpoint (https://tools.ietf.org/html/rfc7644#section-3.2)",
+        authorizations = {@Authorization(value = "Authorization", type = "uma")})
+public class UserWebService extends BaseScimWebService implements IUserWebService {
 
     @Inject
     private IPersonService personService;
@@ -84,422 +60,280 @@ public class UserWebService extends BaseScimWebService {
     private Scim2UserService scim2UserService;
 
     @Inject
-    private CopyUtils2 copyUtils2;
+    private Scim2PatchService scim2PatchService;
 
-    @GET
-    @Produces({Constants.MEDIA_TYPE_SCIM_JSON + "; charset=utf-8", MediaType.APPLICATION_JSON + "; charset=utf-8"})
-    @HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
-    @ApiOperation(value = "Search users", notes = "Returns a list of users (https://tools.ietf.org/html/rfc7644#section-3.4.2.2)", response = ListResponse.class)
-    public Response searchUsers(
-            @HeaderParam("Authorization") String authorization,
-            @QueryParam(OxTrustConstants.QUERY_PARAMETER_FILTER) final String filterString,
-            @QueryParam(OxTrustConstants.QUERY_PARAMETER_START_INDEX) final int startIndex,
-            @QueryParam(OxTrustConstants.QUERY_PARAMETER_COUNT)  Integer count,
-            @QueryParam(OxTrustConstants.QUERY_PARAMETER_SORT_BY) final String sortBy,
-            @QueryParam(OxTrustConstants.QUERY_PARAMETER_SORT_ORDER) final String sortOrder,
-            @QueryParam(OxTrustConstants.QUERY_PARAMETER_ATTRIBUTES) final String attributesArray) throws Exception {
+    /**
+     *
+     */
+    @POST
+    @Consumes({MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
+    @Produces({MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT, MediaType.APPLICATION_JSON + UTF8_CHARSET_FRAGMENT})
+    @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
+    @ScimAuthorization
+    @RefAdjusted
+    @ApiOperation(value = "Create user", notes = "https://tools.ietf.org/html/rfc7644#section-3.3", response = UserResource.class)
+    public Response createUser(
+            @ApiParam(value = "User", required = true) UserResource user,
+            @QueryParam(QUERY_PARAM_ATTRIBUTES) String attrsList,
+            @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList){
 
-        Response authorizationResponse;
-        if (jsonConfigurationService.getOxTrustappConfiguration().isScimTestMode()) {
-            log.info(" ##### SCIM Test Mode is ACTIVE");
-            authorizationResponse = processTestModeAuthorization(authorization);
-        } else {
-            authorizationResponse = processAuthorization(authorization);
-        }
-
-        if (authorizationResponse != null) {
-            return authorizationResponse;
-        }
-
+        Response response;
         try {
-            count = (count == null) ? getMaxCount() : count;
+            log.debug("Executing web service method. createUser");
+            GluuCustomPerson person = scim2UserService.createUser(user, endpointUrl);
 
-            if (count > getMaxCount()) {
-                String detail = "Too many results (=" + count + ") would be returned; max is " + getMaxCount() + " only.";
-                return getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.TOO_MANY, detail);
-            } else {
-                log.info(" Searching users from LDAP ");
+            // For custom script: create user
+            if (externalScimService.isEnabled())
+                externalScimService.executeScimCreateUserMethods(person);
 
-                ListViewResponse<GluuCustomPerson> vlvResponse = search(personService.getDnForPerson(null), GluuCustomPerson.class, filterString, startIndex, count, sortBy, sortOrder, attributesArray);
-
-                List<GluuCustomPerson> gluuCustomPersons = vlvResponse.getResult();
-                // List<GluuCustomPerson> personList = personService.findAllPersons(null);
-
-                ListResponse usersListResponse = new ListResponse();
-
-                List<String> schema = new ArrayList<String>();
-                schema.add(Constants.LIST_RESPONSE_SCHEMA_ID);
-
-                log.info(" setting schema");
-                usersListResponse.setSchemas(schema);
-
-                // Set total
-                usersListResponse.setTotalResults(vlvResponse.getTotalResults());
-
-                if (count > 0 && gluuCustomPersons != null && !gluuCustomPersons.isEmpty()) {
-
-                    // log.info(" LDAP person list is not empty ");
-
-                    for (GluuCustomPerson gluuPerson : gluuCustomPersons) {
-
-                        User user = copyUtils2.copy(gluuPerson, null);
-
-                        log.info(" user to be added id : " + user.getUserName());
-
-                        usersListResponse.getResources().add(user);
-
-                        log.info(" user added? : " + usersListResponse.getResources().contains(user));
-                    }
-
-                    // Set the rest of results info
-                    usersListResponse.setItemsPerPage(vlvResponse.getItemsPerPage());
-                    usersListResponse.setStartIndex(vlvResponse.getStartIndex());
-                }
-
-                // Serialize to JSON
-                String json = serializeToJson(usersListResponse, attributesArray);
-
-                URI location = new URI(appConfiguration.getBaseEndpoint() + "/scim/v2/Users");
-
-                return Response.ok(json).location(location).build();
-            }
-
-        } catch (Exception ex) {
-
-            log.error("Error in searchUsers", ex);
-            ex.printStackTrace();
-            return getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.INVALID_FILTER, INTERNAL_SERVER_ERROR_MESSAGE);
+            String json=resourceSerializer.serialize(user, attrsList, excludedAttrsList);
+            response=Response.created(new URI(user.getMeta().getLocation())).entity(json).build();
         }
+        catch (Exception e){
+            log.error("Failure at createUser method", e);
+            response=getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, "Unexpected error: " + e.getMessage());
+        }
+        return response;
+
     }
 
     @Path("{id}")
     @GET
-    @Produces({Constants.MEDIA_TYPE_SCIM_JSON + "; charset=utf-8", MediaType.APPLICATION_JSON + "; charset=utf-8"})
-    @HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
-    @ApiOperation(value = "Find user by id", notes = "Returns a user by id as path param (https://tools.ietf.org/html/rfc7644#section-3.4.1)", response = User.class)
+    @Produces({MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT, MediaType.APPLICATION_JSON + UTF8_CHARSET_FRAGMENT})
+    @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
+    @ScimAuthorization
+    @RefAdjusted
+    @ApiOperation(value = "Find user by id", notes = "Returns a user by id as path param (https://tools.ietf.org/html/rfc7644#section-3.4.1)",
+            response = UserResource.class)
     public Response getUserById(
-            @HeaderParam("Authorization") String authorization,
             @PathParam("id") String id,
-            @QueryParam(OxTrustConstants.QUERY_PARAMETER_ATTRIBUTES) final String attributesArray) throws Exception {
+            @QueryParam(QUERY_PARAM_ATTRIBUTES) String attrsList,
+            @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList) {
 
-        Response authorizationResponse;
-        if (jsonConfigurationService.getOxTrustappConfiguration().isScimTestMode()) {
-            log.info(" ##### SCIM Test Mode is ACTIVE");
-            authorizationResponse = processTestModeAuthorization(authorization);
-        } else {
-            authorizationResponse = processAuthorization(authorization);
-        }
-        if (authorizationResponse != null) {
-            return authorizationResponse;
-        }
-
+        Response response;
         try {
-            String filterString = "id eq \"" + id + "\"";
-            ListViewResponse<GluuCustomPerson> vlvResponse = search(personService.getDnForPerson(null), GluuCustomPerson.class, filterString, 1, 1, "id", SortOrder.ASCENDING.getValue(), attributesArray);
+            log.debug("Executing web service method. getUserById");
+            UserResource user=new UserResource();
+            GluuCustomPerson person=personService.getPersonByInum(id);  //person is not null (check associated decorator method)
+            scim2UserService.transferAttributesToUserResource(person, user, endpointUrl);
 
-            List<GluuCustomPerson> personList = vlvResponse.getResult();
-            // GluuCustomPerson gluuPerson = personService.getPersonByInum(id);
-
-            if (personList == null || personList.isEmpty() || vlvResponse.getTotalResults() == 0) {
-                // sets HTTP status code 404 Not Found
-                return getErrorResponse(Response.Status.NOT_FOUND, ErrorScimType.INVALID_VALUE, "Resource " + id + " not found");
-            } else {
-                log.info(" Resource " + id + " found ");
-            }
-
-            GluuCustomPerson gluuPerson = personList.get(0);
-
-            User user = copyUtils2.copy(gluuPerson, null);
-
-            // Serialize to JSON
-            String json = serializeToJson(user, attributesArray);
-
-            URI location = new URI(user.getMeta().getLocation());
-
-            return Response.ok(json).location(location).build();
-
-        } catch (EntryPersistenceException ex) {
-
-            log.error("Error in getUserById", ex);
-            ex.printStackTrace();
-            return getErrorResponse(Response.Status.NOT_FOUND, ErrorScimType.INVALID_VALUE, "Resource " + id + " not found");
-
-        } catch (Exception ex) {
-
-            log.error("Error in getUserById", ex);
-            ex.printStackTrace();
-            return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR_MESSAGE);
+            String json=resourceSerializer.serialize(user, attrsList, excludedAttrsList);
+            response=Response.ok(new URI(user.getMeta().getLocation())).entity(json).build();
         }
+        catch (Exception e){
+            log.error("Failure at getUserById method", e);
+            response=getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, "Unexpected error: " + e.getMessage());
+        }
+        return response;
+
     }
 
-    @POST
-    @Consumes({Constants.MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
-    @Produces({Constants.MEDIA_TYPE_SCIM_JSON + "; charset=utf-8", MediaType.APPLICATION_JSON + "; charset=utf-8"})
-    @HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
-    @ApiOperation(value = "Create user", notes = "Create user (https://tools.ietf.org/html/rfc7644#section-3.3)", response = User.class)
-    public Response createUser(
-            @HeaderParam("Authorization") String authorization,
-            @ApiParam(value = "User", required = true) User user,
-            @QueryParam(OxTrustConstants.QUERY_PARAMETER_ATTRIBUTES) final String attributesArray) throws Exception {
-
-        Response authorizationResponse;
-        if (jsonConfigurationService.getOxTrustappConfiguration().isScimTestMode()) {
-            log.info(" ##### SCIM Test Mode is ACTIVE");
-            authorizationResponse = processTestModeAuthorization(authorization);
-        } else {
-            authorizationResponse = processAuthorization(authorization);
-        }
-        if (authorizationResponse != null) {
-            return authorizationResponse;
-        }
-
-        try {
-            if (UserValidator.validate(user)) {
-                User createdUser = scim2UserService.createUser(user);
-                // Serialize to JSON
-                String json = serializeToJson(createdUser, attributesArray);
-                URI location = new URI(createdUser.getMeta().getLocation());
-                // Return HTTP response with status code 201 Created
-                return Response.created(location).entity(json).build();
-            }
-            else{
-                return getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.INVALID_VALUE,"User object did not pass validation of one or more attributes");
-            }
-        }
-        catch (DuplicateEntryException ex) {
-            log.error("DuplicateEntryException", ex);
-            ex.printStackTrace();
-            return getErrorResponse(Response.Status.CONFLICT, ErrorScimType.UNIQUENESS, ex.getMessage());
-        }
-        catch (PersonRequiredFieldsException ex) {
-            log.error("PersonRequiredFieldsException: ", ex);
-            return getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.INVALID_VALUE, ex.getMessage());
-        }
-        catch (Exception ex) {
-            log.error("Failed to create user " + ex.getMessage(), ex);
-            return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR_MESSAGE);
-        }
-    }
-
+    /**
+     * This implementation differs from spec in the following aspects:
+     * - Passing a null value for an attribute, does not modify the attribute in the destination, however passing an
+     * empty array for a multivalued attribute does clear the attribute. Thus, to clear single-valued attribute, PATCH
+     * operation should be used
+     */
     @Path("{id}")
     @PUT
-    @Consumes({Constants.MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
-    @Produces({Constants.MEDIA_TYPE_SCIM_JSON + "; charset=utf-8", MediaType.APPLICATION_JSON + "; charset=utf-8"})
-    @HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
-    @ApiOperation(value = "Update user", notes = "Update user (https://tools.ietf.org/html/rfc7644#section-3.5.1)", response = User.class)
+    @Consumes({MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
+    @Produces({MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT, MediaType.APPLICATION_JSON + UTF8_CHARSET_FRAGMENT})
+    @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
+    @ScimAuthorization
+    @RefAdjusted
+    @ApiOperation(value = "Update user", notes = "Update user (https://tools.ietf.org/html/rfc7644#section-3.5.1)", response = UserResource.class)
     public Response updateUser(
-            @HeaderParam("Authorization") String authorization,
+            @ApiParam(value = "User", required = true) UserResource user,
             @PathParam("id") String id,
-            @ApiParam(value = "User", required = true) User user,
-            @QueryParam(OxTrustConstants.QUERY_PARAMETER_ATTRIBUTES) final String attributesArray) throws Exception {
+            @QueryParam(QUERY_PARAM_ATTRIBUTES) String attrsList,
+            @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList) {
 
-        Response authorizationResponse;
-        if (jsonConfigurationService.getOxTrustappConfiguration().isScimTestMode()) {
-            log.info(" ##### SCIM Test Mode is ACTIVE");
-            authorizationResponse = processTestModeAuthorization(authorization);
-        } else {
-            authorizationResponse = processAuthorization(authorization);
-        }
-        if (authorizationResponse != null) {
-            return authorizationResponse;
-        }
-
+        Response response;
         try {
-            if (UserValidator.validate(user)) {
-                User updatedUser = scim2UserService.updateUser(id, user);
-                // Serialize to JSON
-                String json = serializeToJson(updatedUser, attributesArray);
-                URI location = new URI(updatedUser.getMeta().getLocation());
-                return Response.ok(json).location(location).build();
-            }
-            else{
-                return getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.INVALID_VALUE,"User object did not pass validation of one or more attributes");
-            }
-        }
-        catch (EntryPersistenceException ex) {
-            log.error("Failed to update user", ex);
-            ex.printStackTrace();
-            return getErrorResponse(Response.Status.NOT_FOUND, ErrorScimType.INVALID_VALUE, "Resource " + id + " not found");
+            log.debug("Executing web service method. updateUser");
+            Pair<GluuCustomPerson, UserResource> pair=scim2UserService.updateUser(id, user, endpointUrl);
 
-        }
-        catch (DuplicateEntryException ex) {
-            log.error("DuplicateEntryException", ex);
-            ex.printStackTrace();
-            return getErrorResponse(Response.Status.CONFLICT, ErrorScimType.UNIQUENESS, ex.getMessage());
+            // For custom script: update user
+            if (externalScimService.isEnabled()) {
+                externalScimService.executeScimUpdateUserMethods(pair.getFirst());
+            }
 
+            UserResource updatedResource=pair.getSecond();
+            String json=resourceSerializer.serialize(updatedResource, attrsList, excludedAttrsList);
+            response=Response.ok(new URI(updatedResource.getMeta().getLocation())).entity(json).build();
         }
-        catch (Exception ex) {
-            log.error("Failed to update user", ex);
-            ex.printStackTrace();
-            return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR_MESSAGE);
+        catch (InvalidAttributeValueException e){
+            log.error(e.getMessage());
+            response=getErrorResponse(Response.Status.CONFLICT, ErrorScimType.MUTABILITY, e.getMessage());
         }
+        catch (Exception e){
+            log.error("Failure at updateUser method", e);
+            response=getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, "Unexpected error: " + e.getMessage());
+        }
+        return response;
+
     }
 
     @Path("{id}")
     @DELETE
-    @Produces({Constants.MEDIA_TYPE_SCIM_JSON + "; charset=utf-8", MediaType.APPLICATION_JSON + "; charset=utf-8"})
-    @HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
+    @Produces({MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT, MediaType.APPLICATION_JSON + UTF8_CHARSET_FRAGMENT})
+    @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
+    @ScimAuthorization
     @ApiOperation(value = "Delete User", notes = "Delete User (https://tools.ietf.org/html/rfc7644#section-3.6)")
-    public Response deleteUser(
-            @HeaderParam("Authorization") String authorization,
-            @PathParam("id") String id) throws Exception {
+    public Response deleteUser(@PathParam("id") String id){
 
-        Response authorizationResponse;
-        if (jsonConfigurationService.getOxTrustappConfiguration().isScimTestMode()) {
-            log.info(" ##### SCIM Test Mode is ACTIVE");
-            authorizationResponse = processTestModeAuthorization(authorization);
-        } else {
-            authorizationResponse = processAuthorization(authorization);
-        }
-        if (authorizationResponse != null) {
-            return authorizationResponse;
-        }
-
+        Response response;
         try {
+            log.debug("Executing web service method. deleteUser");
+            GluuCustomPerson person=personService.getPersonByInum(id);  //person cannot be null (check associated decorator method)
 
-            scim2UserService.deleteUser(id);
+            // For custom script: delete user. Execute before actual deletion
+            if (externalScimService.isEnabled()) {
+                externalScimService.executeScimDeleteUserMethods(person);
+            }
 
-            return Response.noContent().build();
-
-        } catch (EntryPersistenceException ex) {
-
-            log.error("Failed to delete user", ex);
-            ex.printStackTrace();
-            return getErrorResponse(Response.Status.NOT_FOUND, "Resource " + id + " not found");
-
-        } catch (Exception ex) {
-
-            log.error("Failed to delete user", ex);
-            ex.printStackTrace();
-            return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR_MESSAGE);
+            scim2UserService.deleteUser(person);
+            response=Response.noContent().build();
         }
+        catch (Exception e){
+            log.error("Failure at deleteUser method", e);
+            response=getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, "Unexpected error: " + e.getMessage());
+        }
+        return response;
+
     }
 
-    @Path("/.search")
-    @POST
-    @Produces({Constants.MEDIA_TYPE_SCIM_JSON + "; charset=utf-8", MediaType.APPLICATION_JSON + "; charset=utf-8"})
-    @HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
-    @ApiOperation(value = "Search users POST /.search", notes = "Returns a list of users (https://tools.ietf.org/html/rfc7644#section-3.4.3)", response = ListResponse.class)
-    public Response searchUsersPost(
-            @HeaderParam("Authorization") String authorization,
-            @ApiParam(value = "SearchRequest", required = true) SearchRequest searchRequest) throws Exception {
-
-        try {
-
-            log.info("IN UserWebService.searchUsersPost()...");
-
-            // Authorization check is done in searchUsers()
-            Response response = searchUsers(
-                    authorization,
-                    searchRequest.getFilter(),
-                    searchRequest.getStartIndex(),
-                    searchRequest.getCount(),
-                    searchRequest.getSortBy(),
-                    searchRequest.getSortOrder(),
-                    searchRequest.getAttributesArray()
-            );
-
-            URI location = new URI(appConfiguration.getBaseEndpoint() + "/scim/v2/Users/.search");
-
-            log.info("LEAVING UserWebService.searchUsersPost()...");
-
-            return Response.fromResponse(response).location(location).build();
-
-        } catch (EntryPersistenceException ex) {
-
-            log.error("Error in searchUsersPost", ex);
-            ex.printStackTrace();
-            return getErrorResponse(Response.Status.NOT_FOUND, ErrorScimType.INVALID_VALUE, "Resource not found");
-
-        } catch (Exception ex) {
-
-            log.error("Error in searchUsersPost", ex);
-            ex.printStackTrace();
-            return getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.INVALID_FILTER, INTERNAL_SERVER_ERROR_MESSAGE);
-        }
-    }
-
-    @Path("/Me")
     @GET
-    @Produces({Constants.MEDIA_TYPE_SCIM_JSON + "; charset=utf-8", MediaType.APPLICATION_JSON + "; charset=utf-8"})
-    @HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
-    @ApiOperation(value = "GET \"/Me\"", notes = "\"/Me\" Authenticated Subject Alias (https://tools.ietf.org/html/rfc7644#section-3.11)")
-    public Response meGet() {
-        return getErrorResponse(501, "Not Implemented");
+    @Produces({MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT, MediaType.APPLICATION_JSON + UTF8_CHARSET_FRAGMENT})
+    @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
+    @ScimAuthorization
+    @RefAdjusted
+    @ApiOperation(value = "Search users", notes = "Returns a list of users (https://tools.ietf.org/html/rfc7644#section-3.4.2.2)", response = ListResponse.class)
+    public Response searchUsers(
+            @QueryParam(QUERY_PARAM_FILTER) String filter,
+            @QueryParam(QUERY_PARAM_START_INDEX) Integer startIndex,
+            @QueryParam(QUERY_PARAM_COUNT) Integer count,
+            @QueryParam(QUERY_PARAM_SORT_BY) String sortBy,
+            @QueryParam(QUERY_PARAM_SORT_ORDER) String sortOrder,
+            @QueryParam(QUERY_PARAM_ATTRIBUTES) String attrsList,
+            @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList){
+
+        Response response;
+        try {
+            log.debug("Executing web service method. searchUsers");
+
+            VirtualListViewResponse vlv = new VirtualListViewResponse();
+            List<BaseScimResource> resources = scim2UserService.searchUsers(filter, sortBy, SortOrder.getByValue(sortOrder),
+                    startIndex, count, vlv, endpointUrl, getMaxCount());
+
+            String json = getListResponseSerialized(vlv.getTotalResults(), startIndex, resources, attrsList, excludedAttrsList, count==0);
+            response=Response.ok(json).location(new URI(endpointUrl)).build();
+        }
+        catch (SCIMException e){
+            log.error(e.getMessage(), e);
+            response=getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.INVALID_FILTER, e.getMessage());
+        }
+        catch (Exception e){
+            log.error("Failure at searchUsers method", e);
+            response=getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, "Unexpected error: " + e.getMessage());
+        }
+        return response;
+
     }
 
-    @Path("/Me")
+    @Path(SEARCH_SUFFIX)
     @POST
-    @Produces({Constants.MEDIA_TYPE_SCIM_JSON + "; charset=utf-8", MediaType.APPLICATION_JSON + "; charset=utf-8"})
-    @HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
-    @ApiOperation(value = "POST \"/Me\"", notes = "\"/Me\" Authenticated Subject Alias (https://tools.ietf.org/html/rfc7644#section-3.11)")
-    public Response mePost() {
-        return getErrorResponse(501, "Not Implemented");
-    }
+    @Consumes({MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
+    @Produces({MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT, MediaType.APPLICATION_JSON + UTF8_CHARSET_FRAGMENT})
+    @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
+    @ScimAuthorization
+    @RefAdjusted
+    @ApiOperation(value = "Search users POST /.search", notes = "Returns a list of users (https://tools.ietf.org/html/rfc7644#section-3.4.3)", response = ListResponse.class)
+    public Response searchUsersPost(@ApiParam(value = "SearchRequest", required = true) SearchRequest searchRequest){
 
-    private String serializeToJson(Object object, String attributesArray) throws Exception {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.disable(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS);
-        SimpleModule customScimFilterModule = new SimpleModule("CustomScim2UserFilterModule", new Version(1, 0, 0, ""));
-        ListResponseUserSerializer serializer = new ListResponseUserSerializer();
-        serializer.setAttributesArray(attributesArray);
-        customScimFilterModule.addSerializer(User.class, serializer);
-        mapper.registerModule(customScimFilterModule);
+        log.debug("Executing web service method. searchUsersPost");
 
-        return mapper.writeValueAsString(object);
-    }
-
-    //  PATCH WEBSERVICES
-    @Path("/patch/{id}")
-    @PUT
-    @Consumes({Constants.MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
-    @Produces({Constants.MEDIA_TYPE_SCIM_JSON + "; charset=utf-8", MediaType.APPLICATION_JSON + "; charset=utf-8"})
-    @HeaderParam("Accept") @DefaultValue(Constants.MEDIA_TYPE_SCIM_JSON)
-    @ApiOperation(value = "patch user", notes = "Update user (https://tools.ietf.org/html/rfc7644#section-3.5.1)", response = User.class)
-    public Response patchUser(
-            @HeaderParam("Authorization") String authorization,
-            @PathParam("id") String id,
-            @ApiParam(value = "User", required = true) ScimPatchUser user,
-            @QueryParam(OxTrustConstants.QUERY_PARAMETER_ATTRIBUTES) final String attributesArray) throws Exception {
-
-        Response authorizationResponse;
-        if (jsonConfigurationService.getOxTrustappConfiguration().isScimTestMode()) {
-            log.info(" ##### SCIM Test Mode is ACTIVE");
-            authorizationResponse = processTestModeAuthorization(authorization);
-        } else {
-            authorizationResponse = processAuthorization(authorization);
-        }
-        if (authorizationResponse != null) {
-            return authorizationResponse;
-        }
+        //Calling searchUsers here does not provoke that method's interceptor/decorator being called (only this one's)
+        URI uri=null;
+        Response response = searchUsers(searchRequest.getFilter(),searchRequest.getStartIndex(), searchRequest.getCount(),
+                searchRequest.getSortBy(), searchRequest.getSortOrder(), searchRequest.getAttributesStr(), searchRequest.getExcludedAttributesStr());
 
         try {
-            if (UserValidator.validate(user)) {
-                User updatedUser = scim2UserService.patchUser(id, user);
-                // Serialize to JSON
-                String json = serializeToJson(updatedUser, attributesArray);
-                URI location = new URI(updatedUser.getMeta().getLocation());
-                return Response.ok(json).location(location).build();
+            uri = new URI(endpointUrl + "/" + SEARCH_SUFFIX);
+        }
+        catch (Exception e){
+            log.error(e.getMessage(), e);
+        }
+        return Response.fromResponse(response).location(uri).build();
+
+    }
+
+    @Path("{id}")
+    @PATCH
+    @Consumes({MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
+    @Produces({MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT, MediaType.APPLICATION_JSON + UTF8_CHARSET_FRAGMENT})
+    @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
+    @ScimAuthorization
+    @RefAdjusted
+    @ApiOperation(value = "PATCH operation", notes = "https://tools.ietf.org/html/rfc7644#section-3.5.2", response = UserResource.class)
+    public Response patchUser(
+            PatchRequest request,
+            @PathParam("id") String id,
+            @QueryParam(QUERY_PARAM_ATTRIBUTES) String attrsList,
+            @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList){
+
+        Response response;
+        try{
+            log.debug("Executing web service method. patchUser");
+            UserResource user=new UserResource();
+            GluuCustomPerson person=personService.getPersonByInum(id);  //person is not null (check associated decorator method)
+
+            //Fill user instance with all info from person
+            scim2UserService.transferAttributesToUserResource(person, user, endpointUrl);
+
+            //Apply patches one by one in sequence
+            for (PatchOperation po : request.getOperations())
+                user=(UserResource) scim2PatchService.applyPatchOperation(user, po);
+
+            //Throws exception if final representation does not pass overall validation
+            log.debug("patchUser. Revising final resource representation still passes validations");
+            executeDefaultValidation(user);
+            ScimResourceUtil.adjustPrimarySubAttributes(user);
+
+            //Update timestamp
+            String now=ISODateTimeFormat.dateTime().withZoneUTC().print(System.currentTimeMillis());
+            user.getMeta().setLastModified(now);
+
+            //Replaces the information found in person with the contents of user
+            scim2UserService.replacePersonInfo(person, user);
+
+            // For custom script: update user
+            if (externalScimService.isEnabled()) {
+                externalScimService.executeScimUpdateUserMethods(person);
             }
-            else{
-                return getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.INVALID_VALUE,"User object did not pass validation of one or more attributes");
-            }
+
+            String json=resourceSerializer.serialize(user, attrsList, excludedAttrsList);
+            response=Response.ok(new URI(user.getMeta().getLocation())).entity(json).build();
         }
-        catch (EntryPersistenceException ex) {
-            log.error("Failed to update user", ex);
-            ex.printStackTrace();
-            return getErrorResponse(Response.Status.NOT_FOUND, ErrorScimType.INVALID_VALUE, "Resource " + id + " not found");
+        catch (InvalidAttributeValueException e){
+            log.error(e.getMessage(), e);
+            response=getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.MUTABILITY, e.getMessage());
         }
-        catch (DuplicateEntryException ex) {
-            log.error("DuplicateEntryException", ex);
-            ex.printStackTrace();
-            return getErrorResponse(Response.Status.CONFLICT, ErrorScimType.UNIQUENESS, ex.getMessage());
+        catch (SCIMException e){
+            response=getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.INVALID_SYNTAX, e.getMessage());
         }
-        catch (Exception ex) {
-            log.error("Failed to update user", ex);
-            ex.printStackTrace();
-            return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR_MESSAGE);
+        catch (Exception e){
+            log.error("Failure at patchUser method", e);
+            response=getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, "Unexpected error: " + e.getMessage());
         }
+        return response;
+
+    }
+
+    @PostConstruct
+    public void setup(){
+        //Do not use getClass() here... a typical weld issue...
+        endpointUrl=appConfiguration.getBaseEndpoint() + UserWebService.class.getAnnotation(Path.class).value();
     }
 
 }

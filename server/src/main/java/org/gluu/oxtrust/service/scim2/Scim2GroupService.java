@@ -5,15 +5,11 @@
  */
 package org.gluu.oxtrust.service.scim2;
 
-import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.inject.Named;
-
+import com.unboundid.ldap.sdk.Filter;
 import org.gluu.oxtrust.ldap.service.IGroupService;
+import org.gluu.oxtrust.ldap.service.IPersonService;
+import org.gluu.oxtrust.ldap.service.OrganizationService;
+import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.scim2.Group;
 import org.gluu.oxtrust.service.external.ExternalScimService;
@@ -23,15 +19,31 @@ import org.gluu.persist.exception.mapping.EntryPersistenceException;
 import org.gluu.persist.exception.operation.DuplicateEntryException;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
+import org.gluu.oxtrust.model.scim2.BaseScimResource;
+import org.gluu.oxtrust.model.scim2.Meta;
+import org.gluu.oxtrust.model.scim2.group.GroupResource;
+import org.gluu.oxtrust.model.scim2.group.Member;
+import org.gluu.oxtrust.model.scim2.util.ScimResourceUtil;
+import org.gluu.oxtrust.service.antlr.scimFilter.ScimFilterParserService;
+import org.gluu.oxtrust.service.antlr.scimFilter.util.FilterUtil;
+import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.joda.time.format.ISODateTimeFormat;
 import org.slf4j.Logger;
+import org.xdi.ldap.model.GluuStatus;
+import org.xdi.ldap.model.SortOrder;
+import org.xdi.ldap.model.VirtualListViewResponse;
+import org.xdi.util.Pair;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.io.Serializable;
+import java.util.*;
 
 /**
- * Centralizes calls by the GroupWebService and BulkWebService service classes
- *
  * @author Val Pecaoco
+ * Re-engineered by jgomer on 2017-10-18.
  */
-@Stateless
 @Named
 public class Scim2GroupService implements Serializable {
 
@@ -39,155 +51,256 @@ public class Scim2GroupService implements Serializable {
     private Logger log;
 
     @Inject
+    private IPersonService personService;
+
+    @Inject
     private IGroupService groupService;
 
     @Inject
-    private ExternalScimService externalScimService;
+    private OrganizationService organizationService;
 
     @Inject
-    private CopyUtils2 copyUtils2;
-    
-    @Inject
-    private ServiceUtil serviceUtil;
+    private ExtensionService extService;
 
-    public Group createGroup(Group group) throws Exception {
-        log.debug(" copying gluuGroup ");
-        GluuGroup gluuGroup = copyUtils2.copy(group, null, false);
-        if (gluuGroup == null) {
-            throw new Exception("Scim2GroupService.createGroup(): Failed to create group; GluuGroup is null");
+    @Inject
+    private ScimFilterParserService scimFilterParserService;
+
+    @Inject
+    private LdapEntryManager ldapEntryManager;
+
+    private void transferAttributesToGroup(GroupResource res, GluuGroup group, String usersUrl) {
+
+        //externalId (so oxTrustExternalId) not part of LDAP schema
+        group.setAttribute("oxTrustMetaCreated", res.getMeta().getCreated());
+        group.setAttribute("oxTrustMetaLastModified", res.getMeta().getLastModified());
+        //When creating group, location will be set again when having an inum
+        group.setAttribute("oxTrustMetaLocation", res.getMeta().getLocation());
+
+        group.setDisplayName(res.getDisplayName());
+        group.setStatus(GluuStatus.ACTIVE);
+        group.setOrganization(organizationService.getDnForOrganization());
+
+        //Add the members, and complement the $refs and users' display names in res
+        Set<Member> members=res.getMembers();
+        if (members!=null && members.size()>0){
+            List<String> listMembers = new ArrayList<String>();
+
+            for (Member member : members){
+                String inum=member.getValue();  //it's not null as it is required in GroupResource
+                GluuCustomPerson person=personService.getPersonByInum(inum);
+
+                if (person==null)
+                    log.info("Member identified by {} does not exist. Ignored", inum);
+                else{
+                    member.setDisplay(person.getDisplayName());
+                    member.setRef(usersUrl + "/" + inum);
+                    member.setType(ScimResourceUtil.getType(res.getClass()));
+
+                    listMembers.add(person.getDn());
+                }
+            }
+            group.setMembers(listMembers);
         }
+    }
 
-        log.debug(" generating inum ");
+    private void assignComputedAttributesToGroup(GluuGroup gluuGroup) throws Exception{
+
         String inum = groupService.generateInumForNewGroup();
-
-        log.debug(" getting DN ");
         String dn = groupService.getDnForGroup(inum);
 
-        log.debug(" getting iname ");
-        String iname = groupService.generateInameForNewGroup(group.getDisplayName().replaceAll(" ", ""));
-
-        log.debug(" setting dn ");
-        gluuGroup.setDn(dn);
-
-        log.debug(" setting inum ");
         gluuGroup.setInum(inum);
+        gluuGroup.setDn(dn);
+        gluuGroup.setIname(groupService.generateInameForNewGroup(gluuGroup.getDisplayName().replaceAll(" ", "")));
 
-        log.debug(" setting iname ");
-        gluuGroup.setIname(iname);
+    }
 
-        log.info("group.getMembers().size() : " + group.getMembers().size());
-        if (group.getMembers().size() > 0) {
-        	serviceUtil.personMembersAdder(gluuGroup, dn);
+    public void transferAttributesToGroupResource(GluuGroup gluuGroup, GroupResource res, String groupsUrl, String usersUrl) {
+
+        res.setId(gluuGroup.getInum());
+
+        Meta meta=new Meta();
+        meta.setResourceType(ScimResourceUtil.getType(res.getClass()));
+        meta.setCreated(gluuGroup.getAttribute("oxTrustMetaCreated"));
+        meta.setLastModified(gluuGroup.getAttribute("oxTrustMetaLastModified"));
+        meta.setLocation(gluuGroup.getAttribute("oxTrustMetaLocation"));
+        if (meta.getLocation()==null)
+            meta.setLocation(groupsUrl + "/" + gluuGroup.getInum());
+
+        res.setMeta(meta);
+        res.setDisplayName(gluuGroup.getDisplayName());
+
+        //Transfer members from GluuGroup to GroupResource
+        List<String> memberDNs =gluuGroup.getMembers();
+        if (memberDNs !=null){
+            Set<Member> members=new HashSet<Member>();
+
+            for (String dn : memberDNs){
+                GluuCustomPerson person=null;
+                try{
+                    person=personService.getPersonByDn(dn);
+                }
+                catch (Exception e){
+                    log.warn("Wrong member entry {} found in group {}", dn, gluuGroup.getDisplayName());
+                }
+                if (person!=null){
+                    Member aMember=new Member();
+                    aMember.setValue(person.getInum());
+                    aMember.setRef(usersUrl + "/" + person.getInum());
+                    aMember.setType(ScimResourceUtil.getType(res.getClass()));
+                    aMember.setDisplay(person.getDisplayName());
+
+                    members.add(aMember);
+                }
+            }
+            res.setMembers(members);
         }
+    }
 
-        // As per spec, the SP must be the one to assign the meta attributes
-        log.info(" Setting meta: create group ");
-        DateTimeFormatter dateTimeFormatter = ISODateTimeFormat.dateTime().withZoneUTC();  // Date should be in UTC format
-        Date dateCreated = DateTime.now().toDate();
-        String relativeLocation = "/scim/v2/Groups/" + inum;
-        gluuGroup.setAttribute("oxTrustMetaCreated", dateTimeFormatter.print(dateCreated.getTime()));
-        gluuGroup.setAttribute("oxTrustMetaLastModified", dateTimeFormatter.print(dateCreated.getTime()));
-        gluuGroup.setAttribute("oxTrustMetaLocation", relativeLocation);
+    /**
+     * Inserts a new group in LDAP based on the SCIM Resource passed
+     * There is no need to check attributes mutability in this case as there are no original attributes (the resource does
+     * not exist yet)
+     * @param group A GroupResource object with all info as received by the web service
+     * @return The new created group
+     * @throws Exception
+     */
+    public GluuGroup createGroup(GroupResource group, String groupsUrl, String usersUrl) throws Exception {
 
-        // For custom script: create group
-        if (externalScimService.isEnabled()) {
-            externalScimService.executeScimCreateGroupMethods(gluuGroup);
-        }
+        String groupName=group.getDisplayName();
+        log.info("Preparing to create group {}", groupName);
 
-        log.debug("adding new GluuGroup");
+        GluuGroup gluuGroup=new GluuGroup();
+        transferAttributesToGroup(group, gluuGroup, usersUrl);
+        assignComputedAttributesToGroup(gluuGroup);
+
+        String location= groupsUrl + "/" + gluuGroup.getInum();
+        gluuGroup.setAttribute("oxTrustMetaLocation", location);
+
+        log.info("Persisting group {}", groupName);
         groupService.addGroup(gluuGroup);
 
-        Group createdGroup = copyUtils2.copy(gluuGroup, null);
+        group.getMeta().setLocation(location);
+        //We are ignoring the id value received (group.getId())
+        group.setId(gluuGroup.getInum());
+        syncMemberAttributeInPerson(gluuGroup.getDn(), null, gluuGroup.getMembers());
 
-        return createdGroup;
+        return gluuGroup;
+
     }
 
-    public Group updateGroup(String id, Group group) throws Exception {
-        GluuGroup gluuGroup = groupService.getGroupByInum(id);
-        if (gluuGroup == null) {
+    public Pair<GluuGroup, GroupResource> updateGroup(String id, GroupResource group, String groupsUrl, String usersUrl) throws Exception {
 
-            throw new EntryPersistenceException("Scim2GroupService.updateGroup(): " + "Resource " + id + " not found");
+        GluuGroup gluuGroup = groupService.getGroupByInum(id);    //This is never null (see decorator involved)
+        GroupResource tmpGroup=new GroupResource();
+        transferAttributesToGroupResource(gluuGroup, tmpGroup, groupsUrl, usersUrl);
 
-        } else {
+        long now=System.currentTimeMillis();
+        tmpGroup.getMeta().setLastModified(ISODateTimeFormat.dateTime().withZoneUTC().print(now));
 
-            // Validate if attempting to update displayName of a different id
-            if (gluuGroup.getDisplayName() != null) {
+        tmpGroup=(GroupResource) ScimResourceUtil.transferToResourceReplace(group, tmpGroup, extService.getResourceExtensions(group.getClass()));
+        replaceGroupInfo(gluuGroup, tmpGroup, usersUrl);
 
-                GluuGroup groupToFind = new GluuGroup();
-                groupToFind.setDisplayName(group.getDisplayName());
+        return new Pair<GluuGroup, GroupResource>(gluuGroup, tmpGroup);
 
-                List<GluuGroup> foundGroups = groupService.findGroups(groupToFind, 2);
-                if (foundGroups != null && foundGroups.size() > 0) {
-                    for (GluuGroup foundGroup : foundGroups) {
-                        if (foundGroup != null && !foundGroup.getInum().equalsIgnoreCase(gluuGroup.getInum())) {
-                            throw new DuplicateEntryException("Cannot update displayName of a different id: " + group.getDisplayName());
-                        }
-                    }
+    }
+
+    public void replaceGroupInfo(GluuGroup gluuGroup, GroupResource group, String usersUrl) throws Exception{
+
+        List<String> olderMembers=new ArrayList<String>();
+        if (gluuGroup.getMembers()!=null)
+            olderMembers.addAll(gluuGroup.getMembers());
+
+        transferAttributesToGroup(group, gluuGroup, usersUrl);
+        log.debug("replaceGroupInfo. Updating group info in LDAP");
+        groupService.updateGroup(gluuGroup);
+        syncMemberAttributeInPerson(gluuGroup.getDn(), olderMembers, gluuGroup.getMembers());
+
+    }
+
+    public List<BaseScimResource> searchGroups(String filter, String sortBy, SortOrder sortOrder, int startIndex, int count,
+                                               VirtualListViewResponse vlvResponse, String groupsUrl, String usersUrl, int maxCount) throws Exception{
+
+        Filter ldapFilter=scimFilterParserService.createLdapFilter(filter, "inum=*", GroupResource.class);
+        //Transform scim attribute to LDAP attribute
+        sortBy = FilterUtil.getLdapAttributeOfResourceAttribute(sortBy, GroupResource.class).getFirst();
+
+        log.info("Executing search for groups using: ldapfilter '{}', sortBy '{}', sortOrder '{}', startIndex '{}', count '{}'",
+                ldapFilter.toString(), sortBy, sortOrder.getValue(), startIndex, count);
+
+        List<GluuGroup> list=ldapEntryManager.findEntriesSearchSearchResult(groupService.getDnForGroup(null),
+                GluuGroup.class, ldapFilter, startIndex, count, maxCount, sortBy, sortOrder, vlvResponse, null);
+        List<BaseScimResource> resources=new ArrayList<BaseScimResource>();
+
+        for (GluuGroup group: list){
+            GroupResource scimGroup=new GroupResource();
+            transferAttributesToGroupResource(group, scimGroup, groupsUrl, usersUrl);
+            //TODO: Delete this IF in the future - added for backwards compatibility with SCIM-Client <= 3.1.2.
+            if (scimGroup.getMembers()==null)
+                scimGroup.setMembers(new HashSet<Member>());
+
+            resources.add(scimGroup);
+        }
+        log.info ("Found {} matching entries - returning {}", vlvResponse.getTotalResults(), list.size());
+        return resources;
+
+    }
+
+    private void syncMemberAttributeInPerson(String groupDn, List<String> beforeMemberDns, List<String> afterMemberDns){
+
+        log.debug("syncMemberAttributeInPerson. Updating memberOf attribute in user LDAP entries");
+        log.trace("Before member dns {}; After member dns {}", beforeMemberDns, afterMemberDns);
+
+        //Build 2 sets of DNs
+        Set<String> before=new HashSet<String>();
+        if (beforeMemberDns!=null)
+            before.addAll(beforeMemberDns);
+
+        Set<String> after=new HashSet<String>();
+        if (afterMemberDns!=null)
+            after.addAll(afterMemberDns);
+
+        //Do removals
+        for (String dn : before){
+            if (!after.contains(dn)){
+                try{
+                    GluuCustomPerson gluuPerson = personService.getPersonByDn(dn);
+
+                    List<String> memberOf=new ArrayList<String>();
+                    memberOf.addAll(gluuPerson.getMemberOf());
+                    memberOf.remove(groupDn);
+
+                    gluuPerson.setMemberOf(memberOf);
+                    personService.updatePerson(gluuPerson);
+                }
+                catch (Exception e){
+                    log.error("An error occurred while removing user {} from group {}", dn, groupDn);
+                    log.error(e.getMessage(), e);
                 }
             }
         }
 
-        GluuGroup updatedGluuGroup = copyUtils2.copy(group, gluuGroup, true);
+        //Do insertions
+        for (String dn : after){
+            if (!before.contains(dn)){
+                try{
+                    GluuCustomPerson gluuPerson = personService.getPersonByDn(dn);
 
-        if (group.getMembers().size() > 0) {
-        	serviceUtil.personMembersAdder(updatedGluuGroup, groupService.getDnForGroup(id));
-        }
+                    List<String> memberOf=new ArrayList<String>();
+                    memberOf.add(groupDn);
 
-        log.info(" Setting meta: update group ");
-        DateTimeFormatter dateTimeFormatter = ISODateTimeFormat.dateTime().withZoneUTC();  // Date should be in UTC format
-        Date dateLastModified = DateTime.now().toDate();
-        updatedGluuGroup.setAttribute("oxTrustMetaLastModified", dateTimeFormatter.print(dateLastModified.getTime()));
-        if (updatedGluuGroup.getAttribute("oxTrustMetaLocation") == null || (updatedGluuGroup.getAttribute("oxTrustMetaLocation") != null && updatedGluuGroup.getAttribute("oxTrustMetaLocation").isEmpty())) {
-            String relativeLocation = "/scim/v2/Groups/" + id;
-            updatedGluuGroup.setAttribute("oxTrustMetaLocation", relativeLocation);
-        }
+                    if (gluuPerson.getMemberOf()!=null)
+                        memberOf.addAll(gluuPerson.getMemberOf());
 
-        // For custom script: update group
-        if (externalScimService.isEnabled()) {
-            externalScimService.executeScimUpdateGroupMethods(updatedGluuGroup);
-        }
-
-        groupService.updateGroup(updatedGluuGroup);
-
-        log.debug(" group updated ");
-
-        Group updatedGroup = copyUtils2.copy(updatedGluuGroup, null);
-
-        return updatedGroup;
-    }
-
-    public void deleteGroup(String id) throws Exception {
-        log.info(" Checking if the group exists ");
-        log.info(" id : " + id);
-
-        GluuGroup gluuGroup = groupService.getGroupByInum(id);
-        if (gluuGroup == null) {
-
-            log.info(" the group is null ");
-            throw new EntryPersistenceException("Scim2GroupService.deleteGroup(): " + "Resource " + id + " not found");
-
-        } else {
-
-            // For custom script: delete group
-            if (externalScimService.isEnabled()) {
-                externalScimService.executeScimDeleteGroupMethods(gluuGroup);
-            }
-
-            log.info(" getting started to delete members from groups ");
-            if (gluuGroup.getMembers() != null) {
-
-                if (gluuGroup.getMembers().size() > 0) {
-
-                    log.info(" getting dn for group ");
-                    String dn = groupService.getDnForGroup(id);
-                    log.info(" DN : " + dn);
-
-                    serviceUtil.deleteGroupFromPerson(gluuGroup, dn);
+                    gluuPerson.setMemberOf(memberOf);
+                    personService.updatePerson(gluuPerson);
+                }
+                catch (Exception e){
+                    log.error("An error occurred while adding user {} to group {}", dn, groupDn);
+                    log.error(e.getMessage(), e);
                 }
             }
-
-            log.info(" removing the group ");
-            groupService.removeGroup(gluuGroup);
         }
+
     }
+
 }

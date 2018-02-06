@@ -171,8 +171,6 @@ public interface IPersonService {
 
 	public abstract List<GluuCustomAttribute> getMandatoryAtributes();
 
-	public abstract String getPersonString(List<GluuCustomPerson> persons) throws Exception;
-
 	public abstract List<GluuCustomPerson> createEntities(Map<String, List<AttributeData>> entriesAttributes) throws Exception;
 
 	/**
@@ -214,5 +212,11 @@ public interface IPersonService {
 	 * @return List <Person>
 	 */
 	public List<GluuCustomPerson> getPersonsByAttribute(String attribute, String value) throws Exception;
+
+	List<GluuCustomPerson> findPersonsByMailids(List<String> mailids, String[] returnAttributes) throws Exception;
+
+	String getPersonUids(List<GluuCustomPerson> persons) throws Exception;
+
+	String getPersonMailids(List<GluuCustomPerson> persons) throws Exception;
 	
 }

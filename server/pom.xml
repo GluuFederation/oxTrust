@@ -208,6 +208,10 @@
 			<groupId>org.xdi</groupId>
 			<artifactId>oxtrust-configuration</artifactId>
 		</dependency>
+                <dependency>
+                    <groupId>org.xdi</groupId>
+                    <artifactId>oxtrust-model</artifactId>
+                </dependency>
 		<dependency>
 			<groupId>org.xdi</groupId>
 			<artifactId>openid-auth-client</artifactId>
@@ -436,6 +440,8 @@
 			<groupId>org.jboss.resteasy</groupId>
 			<artifactId>jaxrs-api</artifactId>
 		</dependency>
+                
+                <!-- Jackson -->
 		<dependency>
 			<groupId>org.codehaus.jackson</groupId>
 			<artifactId>jackson-core-asl</artifactId>
@@ -444,7 +450,7 @@
 			<groupId>org.codehaus.jackson</groupId>
 			<artifactId>jackson-mapper-asl</artifactId>
 		</dependency>
-
+                
 		<!-- Asimba -->
 		<dependency>
 			<groupId>org.asimba</groupId>
