@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.xdi.ldap.model.GluuBoolean;
+import org.gluu.persist.model.base.GluuBoolean;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuAttributeDataType;
 

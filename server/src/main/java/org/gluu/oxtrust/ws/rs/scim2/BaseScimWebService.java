@@ -5,12 +5,30 @@
  */
 package org.gluu.oxtrust.ws.rs.scim2;
 
+import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
+import static org.gluu.oxtrust.model.scim2.Constants.PATCH_REQUEST_SCHEMA_ID;
+import static org.gluu.oxtrust.model.scim2.Constants.SEARCH_REQUEST_SCHEMA_ID;
+
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.util.Date;
+import java.util.List;
+
+import javax.inject.Inject;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.Response;
+
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.Version;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.module.SimpleModule;
 import org.gluu.oxtrust.model.exception.SCIMException;
-import org.gluu.oxtrust.model.scim2.*;
+import org.gluu.oxtrust.model.scim2.BaseScimResource;
+import org.gluu.oxtrust.model.scim2.ErrorResponse;
+import org.gluu.oxtrust.model.scim2.ErrorScimType;
+import org.gluu.oxtrust.model.scim2.ListResponse;
+import org.gluu.oxtrust.model.scim2.Meta;
+import org.gluu.oxtrust.model.scim2.SearchRequest;
 import org.gluu.oxtrust.model.scim2.extensions.Extension;
 import org.gluu.oxtrust.model.scim2.patch.PatchOperation;
 import org.gluu.oxtrust.model.scim2.patch.PatchOperationType;
@@ -22,20 +40,10 @@ import org.gluu.oxtrust.service.external.ExternalScimService;
 import org.gluu.oxtrust.service.scim2.ExtensionService;
 import org.gluu.oxtrust.service.scim2.serialization.ListResponseJsonSerializer;
 import org.gluu.oxtrust.service.scim2.serialization.ScimResourceSerializer;
+import org.gluu.persist.model.SortOrder;
 import org.joda.time.format.ISODateTimeFormat;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.ldap.model.SortOrder;
-
-import javax.inject.Inject;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.Response;
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.util.*;
-
-import static javax.ws.rs.core.Response.Status.*;
-import static org.gluu.oxtrust.model.scim2.Constants.*;
 
 /**
  * Base methods for SCIM web services

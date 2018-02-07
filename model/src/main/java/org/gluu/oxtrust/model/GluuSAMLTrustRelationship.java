@@ -6,7 +6,6 @@
 
 package org.gluu.oxtrust.model;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,11 +23,13 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 
+import org.gluu.persist.model.base.GluuStatus;
+import org.gluu.persist.model.base.InumEntry;
 import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
 import org.gluu.site.ldap.persistence.annotation.LdapEntry;
 import org.gluu.site.ldap.persistence.annotation.LdapObjectClass;
-import org.xdi.ldap.model.GluuStatus;
-import org.xdi.ldap.model.InumEntry;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 @LdapEntry
 @LdapObjectClass(values = { "top", "gluuSAMLconfig" })
@@ -167,7 +168,7 @@ public class GluuSAMLTrustRelationship extends InumEntry implements Serializable
 	public void setGluuEntityId(Set<String> gluuEntityId) {
 		this.gluuEntityId = new ArrayList<String>(gluuEntityId);
 	}
-	/**
+	/*
 	 * This method is for ldap persistance only. For purposes of crud - please use setGluuEntityId(Set<String> gluuEntityId)
 	 */
 	@Deprecated
@@ -176,7 +177,7 @@ public class GluuSAMLTrustRelationship extends InumEntry implements Serializable
 	}
 
 
-	/**
+	/*
 	 * This method returns entityId for site TRs only.
 	 */
 	public String getEntityId() {

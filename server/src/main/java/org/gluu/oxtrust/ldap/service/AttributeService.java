@@ -36,7 +36,7 @@ import org.xdi.service.SchemaService;
 import org.xdi.util.INumGenerator;
 import org.xdi.util.StringHelper;
 
-import com.unboundid.ldap.sdk.Filter;
+import org.gluu.search.filter.Filter;
 import com.unboundid.ldap.sdk.LDAPException;
 
 /**
@@ -599,7 +599,7 @@ public class AttributeService extends org.xdi.service.AttributeService {
 	}
 
 	public void sortCustomAttributes(List<GluuCustomAttribute> customAttributes, String sortByProperties) {
-		ldapEntryManager.sortListByProperties(GluuCustomAttribute.class, customAttributes, sortByProperties);
+		ldapEntryManager.sortListByProperties(GluuCustomAttribute.class, customAttributes, false, sortByProperties);
 	}
 
 	/**
@@ -685,7 +685,7 @@ public class AttributeService extends org.xdi.service.AttributeService {
 		Filter inameFilter = Filter.createSubstringFilter(OxTrustConstants.iname, null, targetArray, null);
 		Filter searchFilter = Filter.createORFilter(displayNameFilter, descriptionFilter, inameFilter , nameFilter);
 
-		List<GluuAttribute> result = ldapEntryManager.findEntries(getDnForAttribute(null), GluuAttribute.class, searchFilter, 0, sizeLimit);
+		List<GluuAttribute> result = ldapEntryManager.findEntries(getDnForAttribute(null), GluuAttribute.class, searchFilter, sizeLimit);
 		String customOrigin = getCustomOrigin();
 		for (GluuAttribute attribute : result) {
 			attribute.setCustom(customOrigin.equals(attribute.getOrigin()));
@@ -709,7 +709,7 @@ public class AttributeService extends org.xdi.service.AttributeService {
 		Filter originFilter = Filter.createORFilter(originFilters.toArray(new Filter[0]));
 		Filter filter = Filter.createANDFilter(searchFilter, originFilter);
 
-		List<GluuAttribute> result = ldapEntryManager.findEntries(getDnForAttribute(null), GluuAttribute.class, filter, 0, sizeLimit);
+		List<GluuAttribute> result = ldapEntryManager.findEntries(getDnForAttribute(null), GluuAttribute.class, filter, sizeLimit);
 
 		return result;
 	}

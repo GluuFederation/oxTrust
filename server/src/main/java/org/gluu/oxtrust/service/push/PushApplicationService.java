@@ -19,12 +19,12 @@ import javax.inject.Named;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.model.push.PushApplication;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.site.ldap.persistence.LdapEntryManager;
+import org.gluu.persist.ldap.impl.LdapEntryManager;
+import org.gluu.persist.model.base.SimpleBranch;
 import org.slf4j.Logger;
-import org.xdi.ldap.model.SimpleBranch;
 import org.xdi.util.StringHelper;
 
-import com.unboundid.ldap.sdk.Filter;
+import org.gluu.search.filter.Filter;
 
 /**
  * Provides operations with oxPush applications
@@ -128,7 +128,7 @@ public class PushApplicationService implements Serializable {
 	 * @return List of oxPush applications
 	 */
 	public List<PushApplication> getAllPushApplications(String... ldapReturnAttributes) {
-		return ldapEntryManager.findEntries(getDnForPushApplication(null), PushApplication.class, ldapReturnAttributes, null);
+		return ldapEntryManager.findEntries(getDnForPushApplication(null), PushApplication.class, null, ldapReturnAttributes);
 	}
 
 	/**
@@ -145,7 +145,7 @@ public class PushApplicationService implements Serializable {
 		Filter displayNameFilter = Filter.createSubstringFilter(OxTrustConstants.displayName, null, targetArray, null);
 		Filter searchFilter = Filter.createORFilter(oxIdFilter, oxNameFilter, displayNameFilter);
 
-		List<PushApplication> result = ldapEntryManager.findEntries(getDnForPushApplication(null), PushApplication.class, searchFilter, 0, sizeLimit);
+		List<PushApplication> result = ldapEntryManager.findEntries(getDnForPushApplication(null), PushApplication.class, searchFilter, sizeLimit);
 
 		return result;
 	}

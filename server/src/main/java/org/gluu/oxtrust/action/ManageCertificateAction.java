@@ -53,8 +53,9 @@ import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.cert.TrustStoreCertificate;
 import org.gluu.oxtrust.model.cert.TrustStoreConfiguration;
+import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.site.ldap.persistence.exception.LdapMappingException;
+import org.gluu.persist.exception.mapping.BaseMappingException;
 import org.richfaces.event.FileUploadEvent;
 import org.richfaces.model.UploadedFile;
 import org.slf4j.Logger;
@@ -99,7 +100,7 @@ public class ManageCertificateAction implements Serializable {
 	private ApplianceService applianceService;
 
 	@Inject
-	protected GluuCustomPerson currentPerson;
+	private Identity identity;
 
 	private TrustStoreConfiguration trustStoreConfiguration;
 	private List<TrustStoreCertificate> trustStoreCertificates;
@@ -445,7 +446,7 @@ public class ManageCertificateAction implements Serializable {
 			}
 
 			applianceService.updateAppliance(tmpAppliance);
-		} catch (LdapMappingException ex) {
+		} catch (BaseMappingException ex) {
 			log.error("Failed to update appliance configuration", ex);
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update appliance");
 			return false;
@@ -552,7 +553,7 @@ public class ManageCertificateAction implements Serializable {
 			this.trustStoreCertificateUploadMarker.setCertificate(certificate);
 
 			this.trustStoreCertificateUploadMarker.setAddedAt(new Date());
-			this.trustStoreCertificateUploadMarker.setAddedBy(currentPerson.getDn());
+			this.trustStoreCertificateUploadMarker.setAddedBy(identity.getUser().getDn());
 
 		} catch (IOException ex) {
 			log.error("Failed to upload key", ex);
@@ -586,7 +587,7 @@ public class ManageCertificateAction implements Serializable {
 	public void addPublicCertificate() {
 		TrustStoreCertificate trustStoreCertificate = new TrustStoreCertificate();
 		trustStoreCertificate.setAddedAt(new Date());
-		trustStoreCertificate.setAddedBy(currentPerson.getDn());
+		trustStoreCertificate.setAddedBy(identity.getUser().getDn());
 
 		this.trustStoreCertificates.add(trustStoreCertificate);
 	}

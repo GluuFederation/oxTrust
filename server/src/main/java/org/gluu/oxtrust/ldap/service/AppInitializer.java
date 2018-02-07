@@ -6,8 +6,6 @@
 
 package org.gluu.oxtrust.ldap.service;
 
-import com.unboundid.ldap.sdk.ResultCode;
-import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.List;
@@ -18,7 +16,6 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.BeforeDestroyed;
 import javax.enterprise.context.Initialized;
-import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Produces;
@@ -27,7 +24,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.ServletContext;
 
-import com.unboundid.ldap.sdk.ResultCode;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.gluu.oxtrust.config.ConfigurationFactory;
@@ -37,16 +33,14 @@ import org.gluu.oxtrust.service.cdi.event.CentralLdap;
 import org.gluu.oxtrust.service.custom.LdapCentralConfigurationReload;
 import org.gluu.oxtrust.service.logger.LoggerService;
 import org.gluu.oxtrust.service.status.ldap.LdapStatusTimer;
-import org.gluu.oxtrust.util.BuildVersion;
-import org.gluu.site.ldap.OperationsFacade;
-import org.gluu.site.ldap.persistence.LdapEntryManager;
+import org.gluu.oxtrust.util.BuildVersionService;
+import org.gluu.persist.ldap.impl.LdapEntryManager;
+import org.gluu.persist.ldap.impl.LdapEntryManagerFactory;
 import org.slf4j.Logger;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.exception.ConfigurationException;
 import org.xdi.exception.OxIntializationException;
 import org.xdi.model.custom.script.CustomScriptType;
-import org.xdi.model.ldap.GluuLdapConfiguration;
 import org.xdi.oxauth.client.OpenIdConfigurationClient;
 import org.xdi.oxauth.client.OpenIdConfigurationResponse;
 import org.xdi.oxauth.client.OpenIdConnectDiscoveryClient;
@@ -62,9 +56,7 @@ import org.xdi.service.cdi.event.LdapConfigurationReload;
 import org.xdi.service.cdi.util.CdiUtil;
 import org.xdi.service.custom.lib.CustomLibrariesLoader;
 import org.xdi.service.custom.script.CustomScriptManager;
-import org.xdi.service.ldap.LdapConnectionService;
 import org.xdi.service.timer.QuartzSchedulerManager;
-import org.xdi.service.timer.event.TimerEvent;
 import org.xdi.util.StringHelper;
 import org.xdi.util.properties.FileConfiguration;
 import org.xdi.util.security.StringEncrypter;
@@ -79,6 +71,7 @@ import org.xdi.util.security.StringEncrypter.EncryptionException;
 @Named
 public class AppInitializer {
 
+    public static final String LDAP_ENTRY_MANAGER_FACTORY_NAME = "ldapEntryManagerFactory";
     public static final String LDAP_ENTRY_MANAGER_NAME = "ldapEntryManager";
     public static final String LDAP_CENTRAL_ENTRY_MANAGER_NAME = "centralLdapEntryManager";
 
@@ -87,12 +80,6 @@ public class AppInitializer {
 
     @Inject
     private BeanManager beanManager;
-
-    @Inject
-    private Event<String> event;
-
-    @Inject
-    private Event<TimerEvent> timerEvent;
 
     @Inject @Named(LDAP_ENTRY_MANAGER_NAME)
     private Instance<LdapEntryManager> ldapEntryManagerInstance;
@@ -164,18 +151,15 @@ public class AppInitializer {
     private LdifArchiver ldifArchiver;
 
     @Inject
-    private BuildVersion buildVersion;
+    private BuildVersionService buildVersionService;
 
     @Inject
     private LoggerService loggerService;
 
-    private FileConfiguration ldapConfig;
-    private FileConfiguration ldapCentralConfig;
-    private LdapConnectionService connectionProvider;
-    private LdapConnectionService centralConnectionProvider;
-
     private AtomicBoolean isActive;
     private long lastFinishedTime;
+
+    private LdapEntryManagerFactory ldapEntryManagerFactory;
 
     @PostConstruct
     public void createApplicationComponents() {
@@ -192,19 +176,15 @@ public class AppInitializer {
      * Initialize components and schedule DS connection time checker
      */
     public void applicationInitialized(@Observes @Initialized(ApplicationScoped.class) Object init) {
-        log.debug("Creating application components");
+        log.debug("Initializing application services");
         showBuildInfo();
 
         customLibrariesLoader.init();
 
-        // Initialize local LDAP connection provider
-        createConnectionProvider();
+        createEntryManagerFactory();
 
         configurationFactory.create();
         LdapEntryManager localLdapEntryManager = ldapEntryManagerInstance.get();
-
-        // Initialize central LDAP connection provider
-        createCentralConnectionProvider();
 
         initializeLdifArchiver(localLdapEntryManager);
 
@@ -259,77 +239,51 @@ public class AppInitializer {
         }
     }
 
-    public void destroy(@Observes @BeforeDestroyed(ApplicationScoped.class) ServletContext init) {
-        log.info("Closing LDAP connection at server shutdown...");
-        LdapEntryManager ldapEntryManager = ldapEntryManagerInstance.get();
-        closeLdapEntryManager(ldapEntryManager);
-
-
-        LdapEntryManager ldapCentralEntryManager = ldapCentralEntryManagerInstance.get();
-        if (ldapCentralEntryManager != null) {
-            closeLdapEntryManager(ldapCentralEntryManager);
-        }
-    }
-
     private void showBuildInfo() {
         log.info("Build date {}. Code revision {} on {}. Build {}", getGluuBuildDate(),
                 getGluuRevisionVersion(), getGluuRevisionDate(), getGluuBuildNumber());
     }
 
-    private void createConnectionProvider() {
-        this.ldapConfig = configurationFactory.getLdapConfiguration();
+  @Produces @ApplicationScoped @Named(LDAP_ENTRY_MANAGER_NAME)
+    public LdapEntryManager createLdapEntryManager() {
+    	FileConfiguration ldapConfig = configurationFactory.getLdapConfiguration();
+        Properties connectionProperties = (Properties) ldapConfig.getProperties();
 
-        Properties connectionProperties = (Properties) this.ldapConfig.getProperties();
-        this.connectionProvider = createConnectionProvider(connectionProperties);
-        if (!ResultCode.SUCCESS.equals(this.connectionProvider.getCreationResultCode())) {
-            throw new ConfigurationException("Failed to create LDAP connection pool!");
-        }
-        log.debug("Created connectionProvider: {}", connectionProvider);
-    }
-
-    private void createCentralConnectionProvider() {
-        if ((configurationFactory.getLdapCentralConfiguration() != null) && configurationFactory.getAppConfiguration().isUpdateApplianceStatus()) {
-            this.ldapCentralConfig = configurationFactory.getLdapCentralConfiguration();
-
-            Properties connectionProperties = (Properties) this.ldapConfig.getProperties();
-            this.centralConnectionProvider = createConnectionProvider(connectionProperties);
-            log.debug("Created centralConnectionProvider: {}", centralConnectionProvider);
-        }
-    }
-
-    private LdapConnectionService createConnectionProvider(Properties connectionProperties) {
         EncryptionService securityService = encryptionServiceInstance.get();
-        LdapConnectionService connectionProvider = new LdapConnectionService(securityService.decryptProperties(connectionProperties));
+        Properties decryptedConnectionProperties = securityService.decryptProperties(connectionProperties);
 
-        return connectionProvider;
-    }
-
-    @Produces @ApplicationScoped @Named(LDAP_ENTRY_MANAGER_NAME)
-    public LdapEntryManager getLdapEntryManager() {
-        LdapEntryManager ldapEntryManager = new LdapEntryManager(new OperationsFacade(this.connectionProvider));
-        log.info("Created {}: {}", new Object[] { LDAP_ENTRY_MANAGER_NAME, ldapEntryManager.getLdapOperationService() });
+        LdapEntryManager ldapEntryManager = this.ldapEntryManagerFactory.createEntryManager(decryptedConnectionProperties); 
+        log.info("Created {}: {}", new Object[] { LDAP_ENTRY_MANAGER_NAME, ldapEntryManager.getOperationService() });
 
         return ldapEntryManager;
     }
 
     @Produces @ApplicationScoped @Named(LDAP_CENTRAL_ENTRY_MANAGER_NAME) @CentralLdap
     public LdapEntryManager createCentralLdapEntryManager() {
-        if (this.centralConnectionProvider == null) {
+        if (!((configurationFactory.getLdapCentralConfiguration() != null) && configurationFactory.getAppConfiguration().isUpdateApplianceStatus())) {
             return new LdapEntryManager();
         }
 
-        LdapEntryManager centralLdapEntryManager = new LdapEntryManager(new OperationsFacade(this.centralConnectionProvider));
-        log.info("Created {}: {}", new Object[] { LDAP_CENTRAL_ENTRY_MANAGER_NAME, centralLdapEntryManager.getLdapOperationService() });
+    	FileConfiguration ldapCentralConfig = configurationFactory.getLdapCentralConfiguration();
+        Properties centralConnectionProperties = (Properties) ldapCentralConfig.getProperties();
+
+        EncryptionService securityService = encryptionServiceInstance.get();
+        Properties decryptedCentralConnectionProperties = securityService.decryptProperties(centralConnectionProperties);
+
+        LdapEntryManager centralLdapEntryManager = this.ldapEntryManagerFactory.createEntryManager(decryptedCentralConnectionProperties); 
+        log.info("Created {}: {}", new Object[] { LDAP_CENTRAL_ENTRY_MANAGER_NAME, centralLdapEntryManager.getOperationService() });
 
         return centralLdapEntryManager;
     }
 
+	@Produces @ApplicationScoped @Named(LDAP_ENTRY_MANAGER_FACTORY_NAME)
+	public LdapEntryManagerFactory getLdapEntryManagerFactory() {
+		return this.ldapEntryManagerFactory;
+	}
+
     public void recreateLdapEntryManager(@Observes @LdapConfigurationReload String event) {
         // Get existing application scoped instance
         LdapEntryManager oldLdapEntryManager = CdiUtil.getContextBean(beanManager, LdapEntryManager.class, LDAP_ENTRY_MANAGER_NAME);
-
-        // Recreate components
-        createConnectionProvider();
 
         // Close existing connections
         closeLdapEntryManager(oldLdapEntryManager);
@@ -344,9 +298,6 @@ public class AppInitializer {
         // Get existing application scoped instance
         LdapEntryManager oldCentralLdapEntryManager = CdiUtil.getContextBean(beanManager, LdapEntryManager.class, LDAP_CENTRAL_ENTRY_MANAGER_NAME);
 
-        // Recreate components
-        createCentralConnectionProvider();
-
         // Close existing connections
         closeLdapEntryManager(oldCentralLdapEntryManager);
 
@@ -356,27 +307,20 @@ public class AppInitializer {
         log.info("Recreated instance {}: {}", LDAP_CENTRAL_ENTRY_MANAGER_NAME, ldapCentralEntryManager);
     }
 
+    private void createEntryManagerFactory() {
+		this.ldapEntryManagerFactory = new LdapEntryManagerFactory();
+	}
+
     private void closeLdapEntryManager(LdapEntryManager oldLdapEntryManager) {
         // Close existing connections
-        if ((oldLdapEntryManager != null) && (oldLdapEntryManager.getLdapOperationService() != null)) {
-            log.debug("Attempting to destroy {}: {}", LDAP_ENTRY_MANAGER_NAME, oldLdapEntryManager);
-            oldLdapEntryManager.destroy();
-            log.debug("Destroyed {}: {}", LDAP_ENTRY_MANAGER_NAME, oldLdapEntryManager);
-        }
+        log.debug("Attempting to destroy {}: {}", LDAP_ENTRY_MANAGER_NAME, oldLdapEntryManager);
+        oldLdapEntryManager.destroy();
+        log.debug("Destroyed {}: {}", LDAP_ENTRY_MANAGER_NAME, oldLdapEntryManager);
     }
 
     private void initializeLdifArchiver(LdapEntryManager ldapEntryManager) {
         ldifArchiver.init();
         ldapEntryManager.addDeleteSubscriber(ldifArchiver);
-    }
-
-    private GluuLdapConfiguration mapLdapConfig(String config) throws IOException {
-        try {
-            return (GluuLdapConfiguration) jsonService.jsonToObject(config, GluuLdapConfiguration.class);
-        } catch (IOException ex) {
-            log.error("Failed to parse JSON", ex);
-            throw ex;
-        }
     }
 
     @Produces @ApplicationScoped @Named("openIdConfiguration")
@@ -473,20 +417,32 @@ public class AppInitializer {
         }
     }
 
+    public void destroy(@Observes @BeforeDestroyed(ApplicationScoped.class) ServletContext init) {
+        log.info("Closing LDAP connection at server shutdown...");
+        LdapEntryManager ldapEntryManager = ldapEntryManagerInstance.get();
+        closeLdapEntryManager(ldapEntryManager);
+
+
+        LdapEntryManager ldapCentralEntryManager = ldapCentralEntryManagerInstance.get();
+        if (ldapCentralEntryManager != null) {
+            closeLdapEntryManager(ldapCentralEntryManager);
+        }
+    }
+
     public String getGluuRevisionVersion() {
-        return buildVersion.getRevisionVersion();
+        return buildVersionService.getRevisionVersion();
     }
 
     public String getGluuRevisionDate() {
-        return buildVersion.getRevisionDate();
+        return buildVersionService.getRevisionDate();
     }
 
     public String getGluuBuildDate() {
-        return buildVersion.getBuildDate();
+        return buildVersionService.getBuildDate();
     }
 
     public String getGluuBuildNumber() {
-        return buildVersion.getBuildNumber();
+        return buildVersionService.getBuildNumber();
     }
 
 }

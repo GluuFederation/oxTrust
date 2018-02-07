@@ -13,7 +13,7 @@ import javax.inject.Named;
 import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.service.cdi.event.CentralLdap;
-import org.gluu.site.ldap.persistence.LdapEntryManager;
+import org.gluu.persist.ldap.impl.LdapEntryManager;
 
 /**
  * Provides operations with central LDAP server

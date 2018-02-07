@@ -6,7 +6,7 @@
 
 package org.gluu.oxtrust.ldap.cache.service;
 
-import static org.gluu.oxtrust.ldap.service.AppInitializer.LDAP_ENTRY_MANAGER_NAME;
+import static org.gluu.oxtrust.ldap.service.AppInitializer.LDAP_ENTRY_MANAGER_FACTORY_NAME;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -26,7 +26,6 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.xdi.service.cdi.async.Asynchronous;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
@@ -51,29 +50,29 @@ import org.gluu.oxtrust.service.cdi.event.CacheRefreshEvent;
 import org.gluu.oxtrust.service.external.ExternalCacheRefreshService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.PropertyUtil;
-import org.gluu.site.ldap.LDAPConnectionProvider;
-import org.gluu.site.ldap.OperationsFacade;
-import org.gluu.site.ldap.persistence.LdapEntryManager;
-import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
-import org.gluu.site.ldap.persistence.exception.LdapMappingException;
+import org.gluu.persist.exception.mapping.BaseMappingException;
+import org.gluu.persist.exception.mapping.EntryPersistenceException;
+import org.gluu.persist.ldap.impl.LdapEntryManager;
+import org.gluu.persist.ldap.impl.LdapEntryManagerFactory;
+import org.gluu.persist.model.SearchScope;
+import org.gluu.persist.model.base.GluuBoolean;
+import org.gluu.persist.model.base.GluuDummyEntry;
+import org.gluu.persist.model.base.GluuStatus;
+import org.gluu.search.filter.Filter;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.config.oxtrust.CacheRefreshAttributeMapping;
 import org.xdi.config.oxtrust.CacheRefreshConfiguration;
-import org.xdi.ldap.model.GluuBoolean;
-import org.xdi.ldap.model.GluuDummyEntry;
-import org.xdi.ldap.model.GluuStatus;
 import org.xdi.model.ldap.GluuLdapConfiguration;
 import org.xdi.service.ObjectSerializationService;
 import org.xdi.service.SchemaService;
+import org.xdi.service.cdi.async.Asynchronous;
 import org.xdi.service.cdi.event.Scheduled;
 import org.xdi.service.timer.event.TimerEvent;
 import org.xdi.service.timer.schedule.TimerSchedule;
 import org.xdi.util.ArrayHelper;
 import org.xdi.util.Pair;
 import org.xdi.util.StringHelper;
-
-import com.unboundid.ldap.sdk.Filter;
 
 /**
  * Check periodically if source servers contains updates and trigger target
@@ -110,6 +109,10 @@ public class CacheRefreshTimer {
 
 	@Inject
 	private LdapEntryManager ldapEntryManager;
+
+	@Inject @Named(LDAP_ENTRY_MANAGER_FACTORY_NAME)
+	private LdapEntryManagerFactory ldapEntryManagerFactory;
+
 	@Inject
 	private ApplianceService applianceService;
 
@@ -532,10 +535,10 @@ public class CacheRefreshTimer {
 		for (String changedInum : changedInums) {
 			String baseDn = "action=synchronizecache," + personService.getDnForPerson(changedInum);
 			try {
-				targetLdapEntryManager.findEntries(baseDn, GluuDummyEntry.class, filter, null, cacheRefreshConfiguration.getLdapSearchSizeLimit());
+				targetLdapEntryManager.findEntries(baseDn, GluuDummyEntry.class, filter, SearchScope.SUB, null, 0, cacheRefreshConfiguration.getLdapSearchSizeLimit());
 				result.add(changedInum);
 				log.debug("Updated entry with inum {}", changedInum);
-			} catch (LdapMappingException ex) {
+			} catch (BaseMappingException ex) {
 				log.error("Failed to update entry with inum '{}' using baseDN {}", changedInum, baseDn, ex);
 			}
 		}
@@ -719,7 +722,7 @@ public class CacheRefreshTimer {
 				try {
 					inumDbLdapEntryManager.merge(removedInumMap);
 					result2.add(removedInumMap.getInum());
-				} catch (LdapMappingException ex) {
+				} catch (BaseMappingException ex) {
 					log.error("Failed to update entry with inum '{}' and DN: {}", currentInumMap.getInum(), currentInumMap.getDn(), ex);
 					continue;
 				}
@@ -727,9 +730,9 @@ public class CacheRefreshTimer {
 
 			// Remove person from target server
 			try {
-				targetLdapEntryManager.removeWithSubtree(removedPerson.getDn());
+				targetLdapEntryManager.removeRecursively(removedPerson.getDn());
 				result1.add(inum);
-			} catch (LdapMappingException ex) {
+			} catch (BaseMappingException ex) {
 				log.error("Failed to remove person entry with inum '{}' and DN: {}", inum, removedPerson.getDn(), ex);
 				continue;
 			}
@@ -790,7 +793,7 @@ public class CacheRefreshTimer {
 		Filter filterStatus = Filter.createNOTFilter(Filter.createEqualityFilter(OxTrustConstants.gluuStatus, GluuStatus.INACTIVE.getValue()));
 		Filter filter = Filter.createANDFilter(filterObjectClass, filterStatus);
 
-		return inumDbldapEntryManager.findEntries(inumbaseDn, GluuInumMap.class, filter, null, cacheRefreshConfiguration.getLdapSearchSizeLimit());
+		return inumDbldapEntryManager.findEntries(inumbaseDn, GluuInumMap.class, filter, SearchScope.SUB, null, 0, cacheRefreshConfiguration.getLdapSearchSizeLimit());
 	}
 
 	private List<GluuSimplePerson> loadSourceServerEntriesWithoutLimits(CacheRefreshConfiguration cacheRefreshConfiguration, LdapServerConnection[] sourceServerConnections) {
@@ -817,7 +820,7 @@ public class CacheRefreshTimer {
 
 			for (String baseDn : baseDns) {
 				List<GluuSimplePerson> currentSourcePersons = sourceLdapEntryManager.findEntries(baseDn, GluuSimplePerson.class,
-						filter, returnAttributes, cacheRefreshConfiguration.getLdapSearchSizeLimit());
+						filter, SearchScope.SUB, returnAttributes, 0, cacheRefreshConfiguration.getLdapSearchSizeLimit());
 
 				// Add to result and ignore root entry if needed
 				for (GluuSimplePerson currentSourcePerson : currentSourcePersons) {
@@ -863,7 +866,7 @@ public class CacheRefreshTimer {
 
 				for (String baseDn : baseDns) {
 					List<GluuSimplePerson> currentSourcePersons = sourceLdapEntryManager.findEntries(baseDn, GluuSimplePerson.class,
-							filter, returnAttributes, cacheRefreshConfiguration.getLdapSearchSizeLimit());
+							filter, SearchScope.SUB, returnAttributes, 0, cacheRefreshConfiguration.getLdapSearchSizeLimit());
 
 					// Add to result and ignore root entry if needed
 					for (GluuSimplePerson currentSourcePerson : currentSourcePersons) {
@@ -887,8 +890,8 @@ public class CacheRefreshTimer {
 	private List<GluuSimplePerson> loadTargetServerEntries(CacheRefreshConfiguration cacheRefreshConfiguration, LdapEntryManager targetLdapEntryManager) {
 		Filter filter = Filter.createEqualityFilter(OxTrustConstants.objectClass, OxTrustConstants.objectClassPerson);
 
-		return targetLdapEntryManager.findEntries(personService.getDnForPerson(null), GluuSimplePerson.class, filter,
-				TARGET_PERSON_RETURN_ATTRIBUTES, cacheRefreshConfiguration.getLdapSearchSizeLimit());
+		return targetLdapEntryManager.findEntries(personService.getDnForPerson(null), GluuSimplePerson.class, filter, SearchScope.SUB,
+				TARGET_PERSON_RETURN_ATTRIBUTES, 0, cacheRefreshConfiguration.getLdapSearchSizeLimit());
 	}
 
 	private GluuInumMap addGluuInumMap(String inumbBaseDn, LdapEntryManager inumDbLdapEntryManager, String[] primaryKeyAttrName,
@@ -1061,21 +1064,23 @@ public class CacheRefreshTimer {
 		}
 
 		Properties ldapProperties = toLdapProperties(ldapConfiguration);
+		Properties ldapDecryptedProperties = encryptionService.decryptProperties(ldapProperties);
 
-		LDAPConnectionProvider ldapConnectionProvider = new LDAPConnectionProvider(encryptionService.decryptProperties(ldapProperties));
+		LdapEntryManager customLdapEntryManager = ldapEntryManagerFactory.createEntryManager(ldapDecryptedProperties);
 
-		if (!ldapConnectionProvider.isConnected()) {
+		if (!customLdapEntryManager.getOperationService().getConnectionProvider().isConnected()) {
 			log.error("Failed to connect to LDAP server using configuration {}", ldapConfig);
 			return null;
 		}
 		
-		return new LdapServerConnection(ldapConfig, ldapConnectionProvider, getBaseDNs(ldapConfiguration));
+
+		return new LdapServerConnection(ldapConfig, customLdapEntryManager, getBaseDNs(ldapConfiguration));
 	}
 
 	private void closeLdapServerConnection(LdapServerConnection... ldapServerConnections) {
 		for (LdapServerConnection ldapServerConnection : ldapServerConnections) {
-			if ((ldapServerConnection != null) && (ldapServerConnection.getConnectionProvider() != null)) {
-				ldapServerConnection.getConnectionProvider().closeConnectionPool();
+			if ((ldapServerConnection != null) && (ldapServerConnection.getLdapEntryManager() != null)) {
+				ldapServerConnection.getLdapEntryManager().destroy();
 			}
 		}
 	}
@@ -1124,30 +1129,17 @@ public class CacheRefreshTimer {
 
 	private class LdapServerConnection {
 		private String sourceServerName;
-		private LDAPConnectionProvider connectionProvider;
 		private LdapEntryManager ldapEntryManager;
 		private String[] baseDns;
-
-		protected LdapServerConnection(String sourceServerName, LDAPConnectionProvider ldapConnectionProvider, String[] baseDns) {
+		
+		protected LdapServerConnection(String sourceServerName, LdapEntryManager ldapEntryManager, String[] baseDns) {
 			this.sourceServerName = sourceServerName;
-			this.connectionProvider = ldapConnectionProvider;
-			this.ldapEntryManager = new LdapEntryManager(new OperationsFacade(connectionProvider));
+			this.ldapEntryManager = ldapEntryManager;
 			this.baseDns = baseDns;
 		}
-		
-		protected LdapServerConnection(String sourceServerName, LdapEntryManager ldapEntryManager , String[] baseDns) {
-			   this.sourceServerName = sourceServerName;
-			   this.connectionProvider = null;
-			   this.ldapEntryManager = ldapEntryManager;
-			   this.baseDns = baseDns;
-			  }
 
 		public final String getSourceServerName() {
 			return sourceServerName;
-		}
-
-		public final LDAPConnectionProvider getConnectionProvider() {
-			return connectionProvider;
 		}
 
 		public final LdapEntryManager getLdapEntryManager() {
@@ -1157,7 +1149,6 @@ public class CacheRefreshTimer {
 		public final String[] getBaseDns() {
 			return baseDns;
 		}
-
 	}
 
 	private CacheRefreshUpdateMethod getUpdateMethod(CacheRefreshConfiguration cacheRefreshConfiguration) {
@@ -1211,7 +1202,7 @@ public class CacheRefreshTimer {
 		ldapProperties.put("bindPassword", ldapConfiguration.getBindPassword());
 		
 		// Copy binary attributes list from main LDAP connection
-		ldapProperties.put("binaryAttributes", PropertyUtil.stringsToCommaSeparatedList(ldapEntryManager.getLdapOperationService().getConnectionProvider().getBinaryAttributes()));
+		ldapProperties.put("binaryAttributes", PropertyUtil.stringsToCommaSeparatedList(ldapEntryManager.getOperationService().getConnectionProvider().getBinaryAttributes()));
 
 		return ldapProperties;
 	}

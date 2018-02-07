@@ -14,8 +14,8 @@ import javax.inject.Named;
 
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.model.GluuAppliance;
+import org.gluu.persist.model.base.GluuBoolean;
 import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.ldap.model.GluuBoolean;
 
 /**
  * Provides service to protect Passport Passport Rest service endpoints

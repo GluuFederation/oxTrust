@@ -6,34 +6,33 @@
 
 package org.gluu.oxtrust.util;
 
-import java.io.IOException;
 import java.io.Serializable;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 /**
  * Constants with current build info
  * 
  * @author Yuriy Movchan Date: 12.17.2010
  */
-@Named("buildVersion")
-public class BuildVersion implements Serializable {
+
+@ApplicationScoped
+public class BuildVersionService implements Serializable {
 
 	private static final long serialVersionUID = 3790281266924133197L;
 
 	@Inject
 	private Logger log;
+
 	private String revisionVersion;
 	private String revisionDate;
 	private String buildDate;
@@ -73,7 +72,6 @@ public class BuildVersion implements Serializable {
 	
 	@PostConstruct
 	public void initalize() {
-
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder dBuilder = factory.newDocumentBuilder();
@@ -83,20 +81,15 @@ public class BuildVersion implements Serializable {
 			NodeList nList = doc.getElementsByTagName("bean");
 
 			if (doc.hasChildNodes()) {
-				printNote(nList);
+				readBuildDetails(nList);
 			}
-		} catch (ParserConfigurationException e) {			
-			e.printStackTrace();
-		} catch (SAXException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch (Exception ex) {
+			log.error("Failed to obtain build version", ex);
 		}
 
 	}
 
-	private  void printNote(NodeList nodeList) {
-
+	private void readBuildDetails(NodeList nodeList) {
 		for (int count = 0; count < nodeList.getLength(); count++) {
 			Node tempNode = nodeList.item(count);
 
@@ -132,7 +125,7 @@ public class BuildVersion implements Serializable {
 
 				if (tempNode.hasChildNodes()) {
 					// loop again if has child nodes
-					printNote(tempNode.getChildNodes());
+					readBuildDetails(tempNode.getChildNodes());
 
 				}
 			}

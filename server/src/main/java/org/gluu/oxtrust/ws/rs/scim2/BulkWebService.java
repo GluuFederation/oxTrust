@@ -5,38 +5,61 @@
  */
 package org.gluu.oxtrust.ws.rs.scim2;
 
+import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
+import static javax.ws.rs.core.Response.Status.CREATED;
+import static javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR;
+import static javax.ws.rs.core.Response.Status.REQUEST_ENTITY_TOO_LARGE;
+import static javax.ws.rs.core.Response.Status.Family.CLIENT_ERROR;
+import static javax.ws.rs.core.Response.Status.Family.SERVER_ERROR;
+import static javax.ws.rs.core.Response.Status.Family.SUCCESSFUL;
+import static javax.ws.rs.core.Response.Status.Family.familyOf;
+import static org.gluu.oxtrust.model.scim2.Constants.MAX_BULK_OPERATIONS;
+import static org.gluu.oxtrust.model.scim2.Constants.MAX_BULK_PAYLOAD_SIZE;
+import static org.gluu.oxtrust.model.scim2.Constants.MEDIA_TYPE_SCIM_JSON;
+import static org.gluu.oxtrust.model.scim2.Constants.UTF8_CHARSET_FRAGMENT;
+import static org.gluu.oxtrust.ws.rs.scim2.BulkWebService.Verb.DELETE;
+import static org.gluu.oxtrust.ws.rs.scim2.BulkWebService.Verb.PATCH;
+import static org.gluu.oxtrust.ws.rs.scim2.BulkWebService.Verb.POST;
+import static org.gluu.oxtrust.ws.rs.scim2.BulkWebService.Verb.PUT;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import com.wordnik.swagger.annotations.*;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.gluu.oxtrust.model.scim2.ErrorScimType;
-import org.gluu.oxtrust.model.scim2.patch.PatchRequest;
 import org.gluu.oxtrust.model.scim2.bulk.BulkOperation;
 import org.gluu.oxtrust.model.scim2.bulk.BulkRequest;
 import org.gluu.oxtrust.model.scim2.bulk.BulkResponse;
 import org.gluu.oxtrust.model.scim2.fido.FidoDeviceResource;
 import org.gluu.oxtrust.model.scim2.group.GroupResource;
+import org.gluu.oxtrust.model.scim2.patch.PatchRequest;
 import org.gluu.oxtrust.model.scim2.user.UserResource;
 import org.gluu.oxtrust.service.scim2.interceptor.ScimAuthorization;
 import org.xdi.util.Pair;
 
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import static javax.ws.rs.core.Response.Status.Family.*;
-import static javax.ws.rs.core.Response.Status.*;
-
-import static org.gluu.oxtrust.model.scim2.Constants.*;
-import static org.gluu.oxtrust.ws.rs.scim2.BulkWebService.Verb.*;
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
+import com.wordnik.swagger.annotations.Authorization;
 
 /**
  * SCIM Bulk Endpoint Implementation

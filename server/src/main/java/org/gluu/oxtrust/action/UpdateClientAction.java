@@ -16,7 +16,7 @@ import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.model.OxAuthScope;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.site.ldap.persistence.exception.LdapMappingException;
+import org.gluu.persist.exception.mapping.BaseMappingException;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.DisplayNameEntry;
@@ -141,7 +141,7 @@ public class UpdateClientAction implements Serializable {
 			this.defaultAcrValues = getNonEmptyStringList(client.getDefaultAcrValues());
 			this.requestUris = getNonEmptyStringList(client.getRequestUris());
 			this.claimRedirectURIList = getNonEmptyStringList(client.getClaimRedirectURI());
-		} catch (LdapMappingException ex) {
+		} catch (BaseMappingException ex) {
 			log.error("Failed to prepare lists", ex);
 
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new client");
@@ -163,7 +163,7 @@ public class UpdateClientAction implements Serializable {
 		try {
 			log.debug("inum : " + inum);
 			this.client = clientService.getClientByInum(inum);
-		} catch (LdapMappingException ex) {
+		} catch (BaseMappingException ex) {
 			log.error("Failed to find client {}", inum, ex);
 		}
 
@@ -187,7 +187,7 @@ public class UpdateClientAction implements Serializable {
 			this.defaultAcrValues = getNonEmptyStringList(client.getDefaultAcrValues());
 			this.requestUris = getNonEmptyStringList(client.getRequestUris());
 			this.claimRedirectURIList = getNonEmptyStringList(client.getClaimRedirectURI());
-		} catch (LdapMappingException ex) {
+		} catch (BaseMappingException ex) {
 			log.error("Failed to prepare lists", ex);
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to load client");
 
@@ -246,7 +246,7 @@ public class UpdateClientAction implements Serializable {
 			// Update client
 			try {
 				clientService.updateClient(this.client);
-			} catch (LdapMappingException ex) {
+			} catch (BaseMappingException ex) {
 
 				log.error("Failed to update client {}", this.inum, ex);
 
@@ -264,7 +264,7 @@ public class UpdateClientAction implements Serializable {
 			this.client.setInum(this.inum);
 			try {
 				clientService.addClient(this.client);
-			} catch (LdapMappingException ex) {
+			} catch (BaseMappingException ex) {
 				log.error("Failed to add new client {}", this.inum, ex);
 
 				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new client");
@@ -301,7 +301,7 @@ public class UpdateClientAction implements Serializable {
 				conversationService.endConversation();
 
 				return OxTrustConstants.RESULT_SUCCESS;
-			} catch (LdapMappingException ex) {
+			} catch (BaseMappingException ex) {
 				log.error("Failed to remove client {}", this.inum, ex);
 			}
 		}

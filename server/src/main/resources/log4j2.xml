@@ -117,6 +117,10 @@
 			<AppenderRef ref="OX_PERSISTENCE_FILE" />
 		</logger>
 
+		<Logger name="org.gluu.persist" level="${log4j.default.log.level}" additivity="false">
+			<AppenderRef ref="OX_PERSISTENCE_FILE" />
+		</Logger>
+
 		<logger name="com.unboundid.ldap.sdk.LDAPConnection" level="${log4j.default.log.level}" additivity="false">
 			<AppenderRef ref="OX_PERSISTENCE_FILE" />
 		</logger>

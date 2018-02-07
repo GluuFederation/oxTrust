@@ -125,7 +125,7 @@ public class ClientWebService {
     public String list(@Context HttpServletResponse response) {
         try {
         	
-            List<OxAuthClient> clientList = clientService.getAllClientsList();
+            List<OxAuthClient> clientList = clientService.getAllClients();
             ObjectMapper mapper = new ObjectMapper();
             String clientListJson = mapper.writeValueAsString(clientList);
             response.setStatus(HttpServletResponse.SC_OK);

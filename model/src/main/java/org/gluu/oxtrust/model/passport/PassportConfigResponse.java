@@ -4,7 +4,7 @@ import java.util.Map;
 
 /**
  * @author Shekhar L.
- * @Date 07/17/2016
+ * @version 07/17/2016
  */
 
 public class PassportConfigResponse {

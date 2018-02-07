@@ -9,7 +9,7 @@ import java.util.List;
 
 import org.gluu.oxtrust.model.fido.GluuCustomFidoDevice;
 
-import com.unboundid.ldap.sdk.Filter;
+import org.gluu.search.filter.Filter;
 
 /**
  * @author Val Pecaoco

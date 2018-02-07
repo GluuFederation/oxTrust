@@ -8,11 +8,11 @@ package org.gluu.oxtrust.model.push;
 
 import java.io.Serializable;
 
+import org.gluu.persist.model.base.Entry;
 import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
 import org.gluu.site.ldap.persistence.annotation.LdapEntry;
 import org.gluu.site.ldap.persistence.annotation.LdapJsonObject;
 import org.gluu.site.ldap.persistence.annotation.LdapObjectClass;
-import org.xdi.ldap.model.Entry;
 
 /**
  * Push device

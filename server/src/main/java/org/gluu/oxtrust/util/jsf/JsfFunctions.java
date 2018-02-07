@@ -15,7 +15,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.gluu.oxtrust.model.User;
 import org.gluu.oxtrust.service.PermissionService;
-import org.xdi.ldap.model.Entry;
+import org.gluu.persist.model.base.Entry;
 import org.xdi.model.DisplayNameEntry;
 import org.xdi.service.LookupService;
 import org.xdi.service.cdi.util.CdiUtil;

@@ -10,12 +10,12 @@ import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.site.ldap.persistence.exception.LdapMappingException;
+import org.gluu.persist.exception.mapping.BaseMappingException;
+import org.gluu.persist.model.base.GluuBoolean;
+import org.gluu.persist.model.base.GluuStatus;
 import org.xdi.config.oxauth.WebKeysSettings;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.config.oxtrust.LdapOxAuthConfiguration;
-import org.xdi.ldap.model.GluuBoolean;
-import org.xdi.ldap.model.GluuStatus;
 import org.xdi.model.ProgrammingLanguage;
 import org.xdi.service.CacheService;
 import org.xdi.util.ArrayHelper;
@@ -246,7 +246,7 @@ public class OrganizationService extends org.xdi.service.OrganizationService {
 			configurationDn = configurationDn.replace("ou=oxtrust", "ou=oxauth");
 			ldapOxAuthConfiguration = ldapEntryManager.find(LdapOxAuthConfiguration.class, configurationDn);
 			return ldapOxAuthConfiguration;
-		} catch (LdapMappingException ex) {
+		} catch (BaseMappingException ex) {
 			log.error("Failed to load configuration from LDAP");
 		}
 
