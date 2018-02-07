@@ -78,9 +78,6 @@ public class UserProfileAction implements Serializable {
 
 	@Inject
 	private WhitePagesAction whitePagesAction;
-
-	@Inject
-	private GluuCustomPerson currentPerson;
 	
 	@Inject
 	private ImapDataService imapDataService;
@@ -125,8 +122,8 @@ public class UserProfileAction implements Serializable {
 
 		try {
 			this.person = identity.getUser();
-		} catch (LdapMappingException ex) {
-			log.error("Failed to find person {}", currentPerson.getInum(), ex);
+		} catch (BaseMappingException ex) {
+			log.error("Failed to find person {}", identity.getUser().getInum(), ex);
 		}
 
 		if (this.person == null) {

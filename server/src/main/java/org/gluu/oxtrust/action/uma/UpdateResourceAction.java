@@ -13,6 +13,7 @@ import org.gluu.oxtrust.ldap.service.uma.ResourceSetService;
 import org.gluu.oxtrust.ldap.service.uma.ScopeDescriptionService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.OxAuthClient;
+import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.slf4j.Logger;
@@ -60,7 +61,7 @@ public class UpdateResourceAction implements Serializable {
 	private ConversationService conversationService;
 
 	@Inject
-	protected GluuCustomPerson currentPerson;
+	private Identity identity;
 
 	@Inject
 	private ResourceSetService umaResourcesService;
@@ -226,7 +227,7 @@ public class UpdateResourceAction implements Serializable {
 			String resourceSetDn = umaResourcesService.getDnForResource(id);
 			this.resource.setDn(resourceSetDn);
 			this.resource.setRev(String.valueOf(0));
-			this.resource.setCreator(currentPerson.getDn());
+			this.resource.setCreator(identity.getUser().getDn());
 
 			// Save resource set
 			try {

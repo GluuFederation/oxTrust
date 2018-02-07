@@ -33,6 +33,7 @@ import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuOrganization;
+import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.service.render.RenderService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
@@ -69,7 +70,7 @@ public class UpdateOrganizationAction implements Serializable {
 	private ConversationService conversationService;
 
 	@Inject
-	private GluuCustomPerson currentPerson;
+	private Identity identity;
 
 	@Inject
 	private ImageService imageService;
@@ -388,7 +389,7 @@ public class UpdateOrganizationAction implements Serializable {
 	private void setCustLogoImageImpl(UploadedFile uploadedFile) {
 		removeLogoImage();
 
-		GluuImage newLogoImage = imageService.constructImage(currentPerson, uploadedFile);
+		GluuImage newLogoImage = imageService.constructImage(identity.getUser(), uploadedFile);
 		newLogoImage.setStoreTemporary(true);
 		newLogoImage.setLogo(true);
 		try {
@@ -479,7 +480,7 @@ public class UpdateOrganizationAction implements Serializable {
 	public void setFaviconImageImpl(UploadedFile uploadedFile) {
 		removeFaviconImage();
 
-		GluuImage newFaviconImage = imageService.constructImage(currentPerson, uploadedFile);
+		GluuImage newFaviconImage = imageService.constructImage(identity.getUser(), uploadedFile);
 		newFaviconImage.setStoreTemporary(true);
 		newFaviconImage.setLogo(false);
 		try {
