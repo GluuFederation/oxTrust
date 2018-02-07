@@ -3,7 +3,7 @@
  *
  * Copyright (c) 2018, Gluu
  */
-package org.gluu.oxtrust.api.test.client;
+package org.gluu.oxtrust.api.client;
 
 
 import java.util.logging.Logger;
