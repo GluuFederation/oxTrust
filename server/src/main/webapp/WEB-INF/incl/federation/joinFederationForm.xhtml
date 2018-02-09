@@ -70,20 +70,20 @@
                 <rich:tab header="#{msg['federation.trustAgreement']}">
                     <h:panelGrid columns="1" width="100%">
                         <ox:decorate id="displayName" rendered="#{not _isFederation}" label="#{msg['federation.organizationName']}">
-                            <h:inputText value="#{_federationProposal.displayName}" size="40" maxlength="60" required="#{empty param['sv']}" />
+                            <h:inputText value="#{_federationProposal.displayName}" size="40" maxlength="60" required="true" />
                         </ox:decorate>
 
                         <ox:decorate id="displayNameFedeation" rendered="#{_isFederation}" label="#{msg['federation.federationName']}">
-                            <h:inputText value="#{_federationProposal.displayName}" size="40" maxlength="60" required="#{empty param['sv']}" />
+                            <h:inputText value="#{_federationProposal.displayName}" size="40" maxlength="60" required="true" />
                         </ox:decorate>
 
                         <ox:decorate id="description" label="#{msg['federation.description']}">
-                            <h:inputTextarea value="#{_federationProposal.description}" rows="3" size="40" maxlength="4000" required="#{empty param['sv']}" id="descriptionId" />
+                            <h:inputTextarea value="#{_federationProposal.description}" rows="3" size="40" maxlength="4000" required="true" id="descriptionId" />
                         </ox:decorate>
 
                         <h:panelGroup rendered="#{not _isFederation}">
                             <ox:decorate id="spMetaDataSourceType" label="#{msg['federation.metadataType']}">
-                                <h:selectOneMenu value="#{_federationProposal.spMetaDataSourceType}" required="#{empty param['sv']}" id="spMetaDataSourceTypeId">
+                                <h:selectOneMenu value="#{_federationProposal.spMetaDataSourceType}" required="true" id="spMetaDataSourceTypeId">
                                     <f:selectItem noSelectionOption="true"  itemLabel="#{msg['federation.metadataType']}"/>
                                     <f:selectItems value="#{federationService.metadataSourceTypes}" var="_type" itemLabel="#{_type.displayName}" />
                                     <f:converter converterId="org.gluu.jsf2.converter.EnumConverter" />
@@ -102,23 +102,21 @@
                                     #{_federationProposal.spMetaDataSourceType.value eq 'file' ? 'Sp Metadata File' : 'Public certificate'}
                                 </ui:define>
                                 <s:fileUpload id="
-                                         fileWrapperId" required="#{(_federationProposal.spMetaDataSourceType.value eq 'file')
-                                                and (empty param['sv'])}"
+                                         fileWrapperId" required="#{_federationProposal.spMetaDataSourceType.value eq 'file'}"
                                     fileName="#{joinFederationAction.fileWrapper.fileName}" data="#{joinFederationAction.fileWrapper.stream}" fileSize="#{joinFederationAction.fileWrapper.fileSize}"
                                     contentType="#{joinFederationAction.fileWrapper.contentType}" maxlength="100" rendered="#{empty _federationProposal.spMetaDataFN}" />
                                 <a4j:commandLink value="#{_federationProposal.spMetaDataFN}" rendered="#{not empty _federationProposal.spMetaDataFN}"
                                     oncomplete="#{rich:component('spMetadataPanel')}.show();" execute="@this" />
                                 <a4j:commandLink action="#{_federationProposal.setSpMetaDataFN('')}" limitRender="true" render="fileWrapperGroupId"
-                                    rendered="#{not empty _federationProposal.spMetaDataFN}">
+                                    rendered="#{not empty _federationProposal.spMetaDataFN}" execute="@this">
                                     <h:graphicImage value="/img/remove.gif" />
-                                    <f:param name="sv" value="1" />
                                 </a4j:commandLink>
                             </ox:decorate>
                         </h:panelGroup>
 
                         <h:panelGroup id="spMetaDataUrlGroupId">
                             <ox:decorate id="spMetaDataUrlId" rendered="#{_federationProposal.spMetaDataSourceType.value eq 'uri'}" label="#{msg['federation.spMetadataURL']}">
-                                <h:inputText value="#{_federationProposal.spMetaDataURL}" size="40" required="#{empty param['sv']}" id="spMetaDataURLId" />
+                                <h:inputText value="#{_federationProposal.spMetaDataURL}" size="40" required="true" id="spMetaDataURLId" />
                             </ox:decorate>
                         </h:panelGroup>
                     </h:panelGrid>

@@ -34,9 +34,8 @@
             <rich:list var="_retainedRole" value="#{_metadataFilterSelected.retainedRoles}" id="roleList">
                 <h:outputText value="#{_retainedRole}" />
                 <h:outputText value="&#160;">
-                    <a4j:commandLink action="#{_metadataFilterSelected.retainedRoles.remove(_retainedRole)}" limitRender="true" render="EntityRoleWhiteListFilterMenu">
+                    <a4j:commandLink action="#{_metadataFilterSelected.retainedRoles.remove(_retainedRole)}" limitRender="true" render="EntityRoleWhiteListFilterMenu" execute="@this">
                         <h:graphicImage value="/img/remove.gif" />
-                        <f:param name="sv" value="1" />
                     </a4j:commandLink>
                 </h:outputText>
             </rich:list>

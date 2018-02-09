@@ -110,9 +110,7 @@
                                                                     onbeforedomupdate="changeAttributeVisibility('#{_aid}', true);"
                                                                     render="selectedCustomAttributesId"
                                                                     rendered="#{_custAttr.userCanEdit and (not _mandatory) and permissionService.hasPermission(applianceService.appliance, 'profile_management')}"
-                                                                    styleClass="glyphicon glyphicon-remove">
-                                                                <!-- 	<h:graphicImage value="/img/remove.gif" />  -->
-                                                                <f:param name="sv" value="1"/>
+                                                                    styleClass="glyphicon glyphicon-remove" execute="@this" >
                                                             </a4j:commandLink>
 
                                                         </ox:decorate>
@@ -169,9 +167,8 @@
                                                                             limitRender="true"
                                                                             onbeforedomupdate="changeAttributeVisibility('#{_aid}', true);"
                                                                             render="selectedCustomAttributesId"
-                                                                            rendered="#{_custAttr.userCanEdit}">
+                                                                            rendered="#{_custAttr.userCanEdit}" execute="@this">
                                                                         <h:graphicImage value="/img/remove.gif"/>
-                                                                        <f:param name="sv" value="1"/>
                                                                     </a4j:commandLink>
                                                                 </h:panelGroup>
                                                             </h:panelGroup>
@@ -191,9 +188,7 @@
                                                                     onbeforedomupdate="changeAttributeVisibility('#{_aid}', true);"
                                                                     render="selectedCustomAttributesId"
                                                                     rendered="#{_custAttr.userCanEdit and (not _mandatory) and permissionService.hasPermission(applianceService.appliance, 'profile_management')}"
-                                                                    styleClass="glyphicon glyphicon-remove">
-                                                                <!-- <h:graphicImage value="/img/remove.gif" />  -->
-                                                                <f:param name="sv" value="1"/>
+                                                                    styleClass="glyphicon glyphicon-remove" execute="@this">
                                                             </a4j:commandLink>
 
                                                             <ox:decorate label="#{msg['profile.imapHost']}"
@@ -328,8 +323,7 @@
                                                                     oncomplete="changeAttributeVisibility('${component.clientId}', false);"
                                                                     render="selectedCustomAttributesId"
                                                                     style="#{customAttributeAction.containsCustomAttribute(attr) ? 'display: none;' : ''}"
-                                                                    value="#{attr.displayName}">
-                                                                <f:param name="sv" value="1"/>
+                                                                    value="#{attr.displayName}" execute="@this">
                                                             </a4j:commandLink>
                                                         </li>
                                                     </a4j:repeat>
