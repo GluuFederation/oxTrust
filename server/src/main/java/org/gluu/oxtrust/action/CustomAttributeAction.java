@@ -222,7 +222,7 @@ public class CustomAttributeAction implements Serializable {
 		if (StringHelper.isEmpty(inum)) {
 			return;
 		}
-
+		
 		GluuAttribute tmpAttribute = this.attributeInums.get(inum);
 		if (tmpAttribute == null) {
 			return;
@@ -237,7 +237,6 @@ public class CustomAttributeAction implements Serializable {
 		for (GluuCustomAttribute customAttribute : this.customAttributes) {
 			if (tmpAttribute.equals(customAttribute.getMetadata())) {
 				values = customAttribute.getValues();
-				
 				newValues = removeElementFromArray(values , removeValue);
 				break;
 			}
@@ -250,15 +249,18 @@ public class CustomAttributeAction implements Serializable {
 
 		this.customAttributes.add(index,tmpGluuPersonAttribute);
 	}
-	
+
 	private String[] removeElementFromArray(String [] n , String removeElement){
+		  if(removeElement.isEmpty()){
+			  removeElement = null ;
+			  }
 		  List<String> list =  new ArrayList<String>();
 	      Collections.addAll(list, n); 
 	      list.remove(removeElement);
 	      n = list.toArray(new String[list.size()]);
 	      return n;
 	}
-
+	
 	public void addCustomAttribute(String inum) {
 		addCustomAttribute(inum, false);
 	}
