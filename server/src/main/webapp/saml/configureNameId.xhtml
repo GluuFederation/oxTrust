@@ -32,7 +32,7 @@
               
         <div class="row" style="padding:5px;margin-bottom: 5px;margin-left:0px">
         	<div class="col-sm-2">
-        	<h:outputLabel value="Create NameID" />
+        	<h:outputLabel value="Activate NameID" />
         	</div>
         	<div class="col-sm-10">
         	<h:selectBooleanCheckbox value="#{attributeResolverAction.enable}"  styleClass="form-control"/>
@@ -40,7 +40,7 @@
         </div>
         <div class="row" style="padding:5px;margin-bottom: 5px;margin-left:0px">
         	<div class="col-sm-2">
-        	<h:outputLabel value="Attribute Base" />
+        	<h:outputLabel value="Source Attribute" />
         	</div>
         	<div class="col-sm-10">
         	<h:selectOneMenu value="#{attributeResolverAction.attributeBase}" styleClass="form-control">
@@ -59,7 +59,7 @@
         </div>
         <div class="row" style="padding:5px;margin-bottom: 5px;margin-left:0px">
         	<div class="col-sm-2">
-        	<h:outputLabel value="Attribute Type" />
+        	<h:outputLabel value="Nameid Type" />
         	</div>
         	<div class="col-sm-10">
         	<h:selectOneMenu value="#{attributeResolverAction.nameIdType}"  styleClass="form-control">
@@ -74,7 +74,7 @@
         </div>
         </div>
                     <div id="updateButtons">
-                        <h:commandButton styleClass="btn btn-primary" value="Resolve Attribute" action="#{attributeResolverAction.saveCustomAttributetoResolve}" />
+                        <h:commandButton styleClass="btn btn-primary" value="Commit Changes" action="#{attributeResolverAction.saveCustomAttributetoResolve}" />
                         <h:commandButton styleClass="btn btn-success" value="#{msg['attribute.cancel']}" action="#{attributeResolverAction.cancel}" immediate="true" style="margin-left:5px"/>
                     </div>
           </h:form>
