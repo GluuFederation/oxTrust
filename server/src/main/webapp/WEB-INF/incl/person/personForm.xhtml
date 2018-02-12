@@ -158,6 +158,8 @@
 		});
 		
     </h:outputScript>
+    	<ui:include
+		src="/WEB-INF/incl/person/u2fPage.xhtml" />
     <section class="content-header">
         <h1 style="color: #333;">
             #{msg['person.users']}
@@ -358,7 +360,23 @@
 						    			styleClass="order-table"
 						    			headerClass="order-table-header"
 						    			rowClasses="order-table-odd-row,order-table-even-row" rendered="#{updatePersonAction.deviceDataMap.size() gt 0}">
-						
+										
+										<h:column>
+						    				<!-- column header -->
+						    				<f:facet name="header">Id</f:facet>
+						    				<!-- row record -->
+						    				
+						    				<!-- <h:outputText  value="#{_value.id}"  rendered="#{not _value.id.contains(':')}" /> -->
+											<h:panelGroup id="U2fPanelid">
+												<a4j:commandLink id="u2fConfig"   action="#{updatePersonAction.fetchFidoRecord(_value.id)}"
+													value="#{_value.id}"
+													rendered="#{not _value.id.contains(':')}"
+													render=":U2fPanel"
+													oncomplete="#{rich:component('U2fPanel')}.show();"
+													execute="@this" />
+											</h:panelGroup>
+										</h:column>
+						    			
 						    			<h:column>
 						    				<!-- column header -->
 						    				<f:facet name="header">Nickname</f:facet>
