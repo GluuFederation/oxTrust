@@ -56,18 +56,14 @@
 					         <ui:param name="_customScriptId" value="#{_action.getId(_customScript)}" />
 		                     <div id="collapseOne#{_customScript.name}" class="collapse" role="tabpanel" aria-labelledby="headingOne" data-parent="#accordion">
 							  <h:panelGroup layout="block" class="card-body">
-							  <a4j:commandLink  value="Delete Script" immediate="true"   onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();" execute="@region" styleClass="btn btn-danger" >
-		                                <f:param name="sv" value="1" />
-		                                
-		                      </a4j:commandLink>
+							  <a4j:commandLink  value="Delete Script" immediate="true"   onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();" execute="@region" styleClass="btn btn-danger" />
 		                      <h:panelGroup layout="block" class="form-script">
 		                      			<div  class="form-group">
-		                      			<h:outputLabel for="#{msg['customScript.name']}" value="#{msg['customScript.name']}" >
-											<span class="hello" data-toggle="tooltip" data-original-title="#{msg['customScript.name']}"><i class="fa fa-info-circle" aria-hidden="true"></i></span>
-										</h:outputLabel>
-										 <h:inputText value="#{_customScript.name}" size="90" required="#{empty param['sv']}" validatorMessage="Script Name cannot contain space(s)" styleClass="form-control">
-												<f:validateRegex pattern="^[a-zA-Z0-9_]+$"/>						    
-										</h:inputText>
+			                      			<ox:decorate label="#{msg['customScript.name']}" forId="#{msg['customScript.name']}" tooltip="#{msg['customScript.name']}" oneColumn="true">
+												 <h:inputText value="#{_customScript.name}" size="90" required="true" validatorMessage="Script Name cannot contain space(s)" styleClass="form-control">
+														<f:validateRegex pattern="^[a-zA-Z0-9_]+$"/>						    
+												</h:inputText>
+											</ox:decorate>
 		                                </div>
 
 		                                <div class="form-group">
@@ -177,9 +173,7 @@
 		                    </rich:dataGrid>
 		    
 		                    <h:panelGroup layout="block" styleClass="addConfig">
-		                        <a4j:commandLink styleClass="btn btn-primary" style="font-size:13px !important;" value="#{msg['customScript.addCustomScriptConfiguration']}" action="#{_action.addCustomScript(_scriptType)}" render="customScriptTypeId" execute="@region">
-		                        	<f:param name="sv" value="1" />
-		                        </a4j:commandLink>
+		                        <a4j:commandLink styleClass="btn btn-primary" style="font-size:13px !important;" value="#{msg['customScript.addCustomScriptConfiguration']}" action="#{_action.addCustomScript(_scriptType)}" render="customScriptTypeId" execute="@this" />
 		                    </h:panelGroup>
 
 		                </a4j:region>

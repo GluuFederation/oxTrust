@@ -118,7 +118,7 @@
                                                         <f:facet
                                                                 name="header">#{msg['trustmanager.relationshipType']}</f:facet>
                                                         <h:outputText
-                                                                value="#{tsps.isFederation() ? 'federation' : (tsps.containerFederation ne null ? 'site federated with '.concat(tsps.containerFederation.displayName) : 'site')}"/>
+                                                                value="#{tsps.isFederation() ? 'federation' : (trustService.getTrustContainerFederation(tsps) ne null ? 'site federated with '.concat(trustService.getTrustContainerFederation(tsps).displayName) : 'site')}"/>
                                                     </rich:column>
                                                     <rich:column sortBy="#{tsps.validationStatus.value}">
                                                         <f:facet

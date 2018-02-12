@@ -8,7 +8,8 @@
                 xmlns:rich="http://richfaces.org/rich"
                 xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
                 xmlns:gluufn="http://www.gluu.org/jsf/functions"
-                xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:p="http://xmlns.jcp.org/jsf/passthrough"                
+    			xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
                 xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox">
 
     <h:outputStylesheet>
@@ -190,8 +191,7 @@
 		                                                 <a4j:commandLink p:aid="#{_aid}" value="#{attr.displayName}" action="#{_customAttributeAction.addCustomAttribute(attr.inum)}"
 		                                                                  render="selectedCustomAttributesId"
 		                                                                  oncomplete="changeAttributeVisibility('${component.clientId}', false);"
-		                                                                  style="#{_customAttributeAction.containsCustomAttribute(attr) ? 'display: none;' : ''}">
-		                                                     <f:param name="sv" value="1"/>
+		                                                                  style="#{_customAttributeAction.containsCustomAttribute(attr) ? 'display: none;' : ''}" execute="@this">
 		                                                     <f:event listener="#{_customAttributeAction.renderAttribute}" type="preRenderComponent" />
 		                                                 </a4j:commandLink>
 	                                                </div>
@@ -212,9 +212,8 @@
                                                     rowKeyVar="_custAttrIdx">
                                             <h:panelGroup rendered="#{_custAttr.metadata != null}">
                                                 <ui:param name="_mandatory" value="#{_custAttr.mandatory}"/>
-                                                <ui:param name="_mustEnter" value="#{_mandatory and _new}"/>
-                                                <a4j:repeat value="#{_custAttr.values}" var="_value"
-                                                            rowKeyVar="_valueIdx">
+                                                <ui:param name="_mustEnter" value="#{_mandatory}"/>
+                                                <a4j:repeat value="#{_custAttr.values}" var="_value" rowKeyVar="_valueIdx">
                                                     <f:event type="postValidate" listener="#{_customAttributeAction.validateAttributeValues}" />
                                                     <ui:param name="_aid"
                                                               value="#{_customAttributeAction.attributeIds[_custAttr.metadata]}"/>
@@ -227,7 +226,7 @@
                                                                     value="#{_custAttr.values[_valueIdx]}"
                                                                     defaultLabel="#{msg['person.clickToEnter']} #{_custAttr.metadata.displayName} #{_valueIdx == 0 ? '' : _valueIdx}"
                                                                     id="custId_text_#{_custAttrIdx}"
-                                                                    required="#{_mustEnter and empty param['sv']}"
+                                                                    required="#{_mustEnter}"
                                                                     requiredMessage="#{msg['person.pleaseEnter']} #{_custAttr.metadata.displayName} #{_valueIdx == 0 ? '' : _valueIdx}. "
                                                                     rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.dataType.value ne 'boolean') and (_custAttr.metadata.displayName ne 'Password') and (_custAttr.metadata.dataType.value ne 'certificate')}" >
 																<rich:validator event="blur"/>
@@ -235,7 +234,7 @@
                                                             </rich:inplaceInput>
                                                             <h:selectOneMenu styleClass="form-control"
                                                                              value="#{updatePersonAction.gluuStatus}"
-                                                                             required="true"
+                                                                             required="#{_mustEnter}"
                                                                              id="statusId"
                                                                              rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.dataType.value eq 'boolean') and (_custAttr.metadata.displayName eq 'User Status') }">
                                                                 <f:selectItems
@@ -246,7 +245,7 @@
                                                             </h:selectOneMenu>
                                                             <h:selectOneMenu styleClass="form-control"
                                                                              value="#{_custAttr.booleanValues[_valueIdx]}"
-                                                                             required="true"
+                                                                             required="#{_mustEnter}"
                                                                              id="custId_boolean#{_custAttrIdx}"
                                                                              rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.dataType.value eq 'boolean') and (_custAttr.metadata.displayName ne 'User Status') }">
                                                                 <f:selectItems
@@ -259,7 +258,7 @@
                                                             <h:inputTextarea cols="40" rows="3"
                                                             		styleClass="form-control"
                                                                     value="#{_custAttr.values[_valueIdx]}"
-                                                                    required="#{_mustEnter and empty param['sv']}"
+                                                                    required="#{_mustEnter}"
                                                                     requiredMessage="#{msg['person.pleaseEnter']} #{_custAttr.metadata.displayName} #{_valueIdx == 0 ? '' : _valueIdx}. "
                                                                     rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.dataType.value eq 'certificate')}" >
 																<rich:validator event="blur"/>
@@ -275,35 +274,28 @@
                                                                     render="selectedCustomAttributesId"
                                                                     styleClass="glyphicon glyphicon-remove"
                                                                     onbegin="changeAttributeVisibility('#{_aid}', true);"
-                                                                    rendered="#{_custAttr.adminCanEdit and not _mandatory and not _custAttr.metadata.oxMultivaluedAttribute.value}">
-                                                                <!--   <h:graphicImage value="/img/remove.gif" />-->
-                                                                <f:param name="sv" value="1"/>
+                                                                    rendered="#{_custAttr.adminCanEdit and not _mandatory and not _custAttr.metadata.oxMultivaluedAttribute.value}" execute="@this">
                                                             </a4j:commandLink>
                                                             <a4j:commandLink
                                                                     action="#{_customAttributeAction.removeCustomAttribute(_custAttr.metadata.inum)}"
                                                                     render="selectedCustomAttributesId"
                                                                     styleClass="glyphicon glyphicon-remove"
                                                                     onbegin="changeAttributeVisibility('#{_aid}', true);"
-                                                                    rendered="#{_custAttr.adminCanEdit and _custAttr.metadata.oxMultivaluedAttribute.value and _valueIdx == 0}">
-                                                                <!--   <h:graphicImage value="/img/remove.gif" />-->
-                                                                <f:param name="sv" value="1"/>
+                                                                    rendered="#{_custAttr.adminCanEdit and not _mandatory and _custAttr.metadata.oxMultivaluedAttribute.value and fn:length(_custAttr.values) eq 1 }" execute="@this">
+                                                            </a4j:commandLink>
+                                                            <a4j:commandLink
+                                                                    action="#{_customAttributeAction.removeMultiValuesInAttributes(_custAttr.metadata.inum,_mandatory,_custAttr.values[_valueIdx])}"
+                                                                    render="selectedCustomAttributesId"
+                                                                    styleClass="glyphicon glyphicon-remove"
+                                                                    rendered="#{_custAttr.adminCanEdit and not _mandatory and _custAttr.metadata.oxMultivaluedAttribute.value and fn:length(_custAttr.values) gt 1 }" execute="@this">
                                                             </a4j:commandLink>
                                                             <a4j:commandLink
                                                             		action="#{_customAttributeAction.addMultiValuesInAttributes(_custAttr.metadata.inum,_mandatory)}"
                                                                     render="selectedCustomAttributesId"
                                                                     styleClass="glyphicon glyphicon-plus"
-                                                                    rendered="#{_custAttr.adminCanEdit and _custAttr.metadata.oxMultivaluedAttribute.value and _valueIdx == 0}">
-                                                                <!--   <h:graphicImage value="/img/remove.gif" />-->
-                                                                <f:param name="sv" value="1"/>
+                                                                    rendered="#{_custAttr.adminCanEdit and _custAttr.metadata.oxMultivaluedAttribute.value and _valueIdx == 0}" execute="@this">
                                                             </a4j:commandLink>
-                                                            <a4j:commandLink
-                                                            		action="#{_customAttributeAction.removeMultiValuesInAttributes(_custAttr.metadata.inum,_mandatory,_custAttr.values[_valueIdx])}"
-                                                                    render="selectedCustomAttributesId"
-                                                                    styleClass="glyphicon glyphicon-minus"
-                                                                    rendered="#{_custAttr.adminCanEdit and _custAttr.metadata.oxMultivaluedAttribute.value }">
-                                                                <!--   <h:graphicImage value="/img/remove.gif" />-->
-                                                                <f:param name="sv" value="1"/>
-                                                            </a4j:commandLink>
+                                                            
                                                             <!-- </div> -->
                                                     </ox:decorate>
 
@@ -320,9 +312,8 @@
                                                                 action="#{_customAttributeAction.removeCustomAttribute(_custAttr.metadata.inum)}"
                                                                 render="selectedCustomAttributesId"
                                                                 onbegin="changeAttributeVisibility('#{_aid}', true);"
-                                                                rendered="#{_custAttr.adminCanEdit and not _mandatory}">
+                                                                rendered="#{_custAttr.adminCanEdit and not _mandatory}" execute="@this">
                                                             <h:graphicImage value="/img/remove.gif"/>
-                                                            <f:param name="sv" value="1"/>
                                                         </a4j:commandLink>
                                                  	</ox:decorate>
                                                         
@@ -333,7 +324,7 @@
                                                             <rich:inplaceInput
                                                                     id="custpasswordId"
                                                                     validator="#{updatePersonAction.validateConfirmPassword}"
-                                                                    required="#{_mustEnter and empty param['sv']}"
+                                                                    required="#{_mustEnter}"
                                                                     requiredMessage="#{msg['person.pleaseEnter']} #{_custAttr.metadata.displayName}. "
                                                                     rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'Password')}" 
                                                                     onfocus="changeTextType(this);">
@@ -348,7 +339,7 @@
                                                                     defaultLabel="#{msg['person.confirmPassword']}"
                                                                     maxlength="50" id="custconfirmpasswordId"
                                                                     validator="#{updatePersonAction.validateConfirmPassword}"
-                                                                    required="#{_mustEnter and empty param['sv']}"
+                                                                    required="#{_mustEnter}"
                                                                     requiredMessage="Please enter Confirm Password" 
                                                                     rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'Password')}"
                                                                     onfocus="changeTextType(this);">

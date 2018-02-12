@@ -14,25 +14,23 @@
             <a4j:repeat value="#{_properties}" var="_property">
                 <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
                     <h:panelGroup>
-                        <h:inputText id="fInput" value="#{_property.value1}" size="23" required="#{_required and empty param['sv']}"/>
+                        <h:inputText id="fInput" value="#{_property.value1}" size="23" required="#{_required}"/>
                         <h:message for="fInput" errorClass="invalid"/>
                         &#160;&#160;
-                        <h:inputText id="sInput" value="#{_property.value2}" size="23" required="#{_required and empty param['sv']}"/>
+                        <h:inputText id="sInput" value="#{_property.value2}" size="23" required="#{_required}"/>
                         <h:message for="sInput" errorClass="invalid"/>
                         &#160;&#160;
                         <h:graphicImage value="/img/error.gif" rendered="#{invalid}" styleClass="errors"/>
-                        <a4j:commandLink action="#{_propertiesAction.removeItemFromSimpleDoubleProperties(_properties, _property)}" limitRender="true" render="#{_id}DoubleList" eventsQueue="#{_queue}">
+                        <a4j:commandLink action="#{_propertiesAction.removeItemFromSimpleDoubleProperties(_properties, _property)}" limitRender="true" render="#{_id}DoubleList" execute="@this">
                                <h:graphicImage value="/img/remove.gif"/>
-                              <f:param name="sv" value="1"/>
                         </a4j:commandLink>
                     </h:panelGroup>
                 </h:panelGrid>
             </a4j:repeat>
 
             <a4j:commandLink action="#{_propertiesAction.addItemToSimpleDoubleProperties(_properties)}" limitRender="true" render="#{_id}DoubleList" eventsQueue="#{_queue}"
-                rendered="#{empty _maxItems or _maxItems gt _properties.size()}">
+                rendered="#{empty _maxItems or _maxItems gt _properties.size()}" execute="@this">
                       <h:outputText value="Add #{_labelAdd eq null ? _label : _labelAdd}"/>
-                      <f:param name="sv" value="1"/>
             </a4j:commandLink>
         </h:panelGroup>
     </ox:decorate>

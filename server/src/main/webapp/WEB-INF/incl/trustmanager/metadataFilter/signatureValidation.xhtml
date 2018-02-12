@@ -36,9 +36,8 @@
             <h:panelGrid>
                 <h:outputText value="#{_metadataFilterSelected.filterCertFileName}" rendered="#{not empty _metadataFilterSelected.filterCertFileName}" />
                 <a4j:commandLink action="#{_metadataFilterSelected.setFilterCertFileName('')}" limitRender="true" render="SignatureValidationFilterMenu"
-                    rendered="#{not empty _metadataFilterSelected.filterCertFileName}">
+                    rendered="#{not empty _metadataFilterSelected.filterCertFileName}" execute="@this">
                     <h:graphicImage value="/img/remove.gif" />
-                    <f:param name="sv" value="1" />
                 </a4j:commandLink>
             </h:panelGrid>
         </rich:panel>

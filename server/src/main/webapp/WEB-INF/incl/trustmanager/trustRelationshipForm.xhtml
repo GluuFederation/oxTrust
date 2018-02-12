@@ -150,7 +150,6 @@
 															#{_trustRelationshipAction.getSAML2URI(attr)}
 														</span>
 													</rich:tooltip>
-													<f:param name="sv" value="1" />
 		                                            <f:event listener="#{_customAttributeAction.renderAttribute}" type="preRenderComponent" />
 												</a4j:commandLink>
 												</li> 
@@ -176,7 +175,7 @@
 							id="displayName" label="#{msg['trustmanager.displayName']}">
 							<h:inputText styleClass="form-control"
 								value="#{_trustRelationship.displayName}" size="40"
-								maxlength="60" required="#{empty param['sv']}"
+								maxlength="60" required="true"
 								id="displayNameId" />
 						</ox:decorate>
 
@@ -184,14 +183,14 @@
 							id="description" label="#{msg['trustmanager.description']}">
 							<h:inputTextarea value="#{_trustRelationship.description}"
 								rows="3" size="40" maxlength="4000"
-								required="#{empty param['sv']}" id="descriptionId" />
+								required="true" id="descriptionId" />
 						</ox:decorate>
 						
 						<ox:decorate
 								id="entityType" label="#{msg['trustmanager.entityType']}">
 								<h:selectOneMenu styleClass="form-control"
 									value="#{_trustRelationship.entityType}"
-									required="#{empty param['sv']}" id="entityTypeId" converter="omnifaces.GenericEnumConverter">
+									required="true" id="entityTypeId" converter="omnifaces.GenericEnumConverter">
 									<f:selectItem noSelectionOption="true"  itemLabel="Entity type"/>
 									<f:selectItems value="#{_trustRelationshipAction.entityTypeList}"
 										var="_type"
@@ -207,7 +206,7 @@
 						<ox:decorate id="spMetaDataSourceType" label="#{msg['trustmanager.metadataLocation']}">
 								<h:selectOneMenu styleClass="form-control"
 									value="#{_trustRelationship.spMetaDataSourceType}" onchange="changeEvent(this)"
-									required="#{empty param['sv']}" id="spMetaDataSourceTypeId" converter="omnifaces.GenericEnumConverter">
+									required="true" id="spMetaDataSourceTypeId" converter="omnifaces.GenericEnumConverter">
 									<f:selectItem noSelectionOption="true"  itemLabel="Metadata type"/>
 									<f:selectItems value="#{_trustRelationshipAction.metadataSourceTypesList}"
 										var="_type"
@@ -257,7 +256,7 @@
 
 								<h:panelGroup id="FederationWizardEntitySelection">
 									<h:panelGroup
-										rendered="#{(_trustRelationship.containerFederation ne null) and (_trustRelationship.spMetaDataSourceType.value eq 'federation')}">
+										rendered="#{(trustService.getTrustContainerFederation(_trustRelationship) ne null) and (_trustRelationship.spMetaDataSourceType.value eq 'federation')}">
 										<ox:decorate
 											id="spMetaDataSourceTypeFederationEntitySelection" label="#{msg['trustmanager.entityID']}">
 
@@ -284,7 +283,7 @@
 										 label="
 											#{msg['trustmanager.spMetadataFile']}">
 										<h:inputFile id="fileWrapperId"
-											required="#{(_trustRelationship.spMetaDataSourceType.value eq 'file') and (empty param['sv'])}"
+											required="#{_trustRelationship.spMetaDataSourceType.value eq 'file'}"
 											value="#{_trustRelationshipAction.fileWrapper}"
 											rendered="#{empty _trustRelationship.spMetaDataFN}" />
 										
@@ -323,7 +322,7 @@
 								rendered="#{_trustRelationship.spMetaDataSourceType.value eq 'uri'}" label="#{msg['trustmanager.spMetadataURL']}">
 								<h:inputText styleClass="form-control"
 									value="#{_trustRelationship.spMetaDataURL}" size="40"
-									required="#{empty param['sv']}" id="spMetaDataURLId" />
+									required="true" id="spMetaDataURLId" />
 							</ox:decorate>
 						</h:panelGroup>
 						
@@ -402,8 +401,6 @@
 														render="newTrustId"
 														onbeforedomupdate="changeAttributeVisibility('#{_aid}', true);"
 														execute="@this">
-														<!-- <h:graphicImage value="/img/remove.gif" /> -->
-														<f:param name="sv" value="1" />
 													</a4j:commandLink>
 												</div>
 											</div>
@@ -437,7 +434,6 @@
 													onbeforedomupdate="changeAttributeVisibility('#{_aid}');"
 													execute="@this">
 													<h:graphicImage value="/img/remove.gif" />
-													<f:param name="sv" value="1" />
 												</a4j:commandLink>
 
 												<br />
@@ -451,7 +447,7 @@
 						</h:panelGroup>
 						<a4j:commandLink style="margin-left: 165px;"
 							id="additionalTRParams" value="#{msg['trustmanager.configureMetadataFilter']}"
-							rendered="#{(not _new) and (_trustRelationship.containerFederation eq null)}"
+							rendered="#{(not _new) and (trustService.getTrustContainerFederation(_trustRelationship) eq null)}"
 							onclick="#{rich:component('additionalTRParamsPanel')}.show();"
 							execute="@this" />
 

@@ -35,7 +35,7 @@
                     </rich:column>
                     <rich:column sortBy="#{tsps.isFederation()}">
                         <f:facet name="header">#{msg['federation.relationshipType']}</f:facet>
-                        <h:outputText value="#{tsps.isFederation() ? 'federation' : (tsps.containerFederation ne null ? 'site federated with '.concat(tsps.containerFederation.displayName) : 'site')}" />
+                        <h:outputText value="#{tsps.isFederation() ? 'federation' : (trustService.getTrustContainerFederation(tsps) ne null ? 'site federated with '.concat(trustService.getTrustContainerFederation(tsps).displayName) : 'site')}" />
                     </rich:column>
                     <rich:column sortBy="#{tsps.status.value}">
                         <f:facet name="header">#{msg['federation.status']}</f:facet>
