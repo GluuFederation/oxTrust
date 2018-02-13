@@ -8,7 +8,6 @@ package org.gluu.oxtrust.api.secure;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -23,11 +22,10 @@ import javax.ws.rs.ext.Provider;
 
 import org.apache.commons.lang.StringUtils;
 import org.gluu.oxtrust.exception.UmaProtectionException;
-import org.gluu.oxtrust.ldap.service.JsonConfigurationService;
+import org.gluu.oxtrust.model.ErrorResponse;
 import org.gluu.oxtrust.service.OpenIdService;
 import org.gluu.oxtrust.service.uma.ApiUmaProtectionService;
 import org.gluu.oxtrust.service.uma.UmaPermissionService;
-import org.gluu.oxtrust.ws.rs.scim2.BaseScimWebService;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.oxauth.client.ClientInfoClient;
@@ -97,12 +95,11 @@ public class AuthorizationFilter implements ContainerRequestFilter {
 			} else {
 				log.info(
 						"Please activate UMA or test mode to protect your API endpoints. Read the Gluu API docs to learn more");
-				authorizationResponse = BaseScimWebService.getErrorResponse(Status.UNAUTHORIZED,
-						"API API not protected");
+				authorizationResponse = getErrorResponse(Status.UNAUTHORIZED, "API API not protected");
 			}
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
-			authorizationResponse = BaseScimWebService.getErrorResponse(Status.INTERNAL_SERVER_ERROR, e.getMessage());
+			authorizationResponse = getErrorResponse(Status.INTERNAL_SERVER_ERROR, e.getMessage());
 		}
 
 		if (authorizationResponse != null) {
@@ -124,14 +121,13 @@ public class AuthorizationFilter implements ContainerRequestFilter {
 			ClientInfoResponse clientInfoResponse = clientInfoClient.execClientInfo(token);
 
 			if (clientInfoResponse.getErrorType() != null) {
-				response = BaseScimWebService.getErrorResponse(Status.UNAUTHORIZED, "Invalid token " + token);
+				response = getErrorResponse(Status.UNAUTHORIZED, "Invalid token " + token);
 				log.debug("Error validating access token: {}", clientInfoResponse.getErrorDescription());
 			}
 		} else {
 			log.info("Request is missing authorization header");
 			// see section 3.12 RFC 7644
-			response = BaseScimWebService.getErrorResponse(Status.INTERNAL_SERVER_ERROR,
-					"No authorization header found");
+			response = getErrorResponse(Status.INTERNAL_SERVER_ERROR, "No authorization header found");
 		}
 		return response;
 
@@ -140,7 +136,7 @@ public class AuthorizationFilter implements ContainerRequestFilter {
 	private Response processUmaAuthorization(ContainerRequestContext requestContext, String authorization) throws Exception {
 		List<String> scopes = getRequestedScopes();
 		if (scopes == null) {
-			return BaseScimWebService.getErrorResponse(Status.UNAUTHORIZED, "Invalid API method security restrictions");
+			return getErrorResponse(Status.UNAUTHORIZED, "Invalid API method security restrictions");
 		}
 
 		log.debug("Requested access to '{}' with scopes '{}'", requestContext.getUriInfo().getPath(), scopes);
@@ -149,7 +145,7 @@ public class AuthorizationFilter implements ContainerRequestFilter {
 		try {
 			patToken = apiUmaProtectionService.getPatToken();
 		} catch (UmaProtectionException ex) {
-			return BaseScimWebService.getErrorResponse(Status.INTERNAL_SERVER_ERROR, "Failed to obtain PAT token");
+			return getErrorResponse(Status.INTERNAL_SERVER_ERROR, "Failed to obtain PAT token");
 		}
 
 		Pair<Boolean, Response> rptTokenValidationResult = umaPermissionService.validateRptToken(patToken,
@@ -159,7 +155,7 @@ public class AuthorizationFilter implements ContainerRequestFilter {
 				return rptTokenValidationResult.getSecond();
 			}
 		} else {
-			return BaseScimWebService.getErrorResponse(Status.UNAUTHORIZED, "Invalid RPT token");
+			return getErrorResponse(Status.UNAUTHORIZED, "Invalid RPT token");
 		}
 
 		return null;
@@ -202,5 +198,17 @@ public class AuthorizationFilter implements ContainerRequestFilter {
 		
 		return result;
 	}
+
+    public static Response getErrorResponse(Response.Status status, String detail) {
+        return getErrorResponse(status.getStatusCode(), detail);
+    }
+
+    public static Response getErrorResponse(int statusCode, String detail) {
+        ErrorResponse errorResponse = new ErrorResponse();
+        errorResponse.setStatus(String.valueOf(statusCode));
+        errorResponse.setDetail(detail);
+
+        return Response.status(statusCode).entity(errorResponse).build();
+    }
 
 }
