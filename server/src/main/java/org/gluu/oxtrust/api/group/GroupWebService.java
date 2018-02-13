@@ -50,15 +50,11 @@ public class GroupWebService {
     @GET
     @Path("/read/{inum}")
     @Produces(MediaType.APPLICATION_JSON)
-    public String read(@PathParam("inum") String inum, @Context HttpServletResponse response) {
+    public GluuGroup read(@PathParam("inum") String inum, @Context HttpServletResponse response) {
         try {
-            String result = null;
             GluuGroup gluuGroup = groupService.getGroupByInum(inum);
-            //TODO
-            ObjectMapper mapper = new ObjectMapper();
-            String jsonInString = mapper.writeValueAsString(gluuGroup);
-            response.setStatus(HttpServletResponse.SC_OK);
-            return jsonInString;
+
+            return gluuGroup;
         } catch (Exception e) {
             logger.error("read() Exception", e);
             try { response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "INTERNAL SERVER ERROR"); } catch (Exception ex) {}
