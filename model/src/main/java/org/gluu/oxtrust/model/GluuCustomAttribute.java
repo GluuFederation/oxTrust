@@ -7,10 +7,8 @@
 package org.gluu.oxtrust.model;
 
 import java.io.Serializable;
-import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -18,8 +16,6 @@ import java.util.Set;
 import org.gluu.persist.model.base.GluuBoolean;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuAttributeDataType;
-
-import com.unboundid.util.StaticUtils;
 
 /**
  * Attribute
@@ -125,33 +121,6 @@ public class GluuCustomAttribute implements Serializable, Comparable<GluuCustomA
 			this.booleanValues = new GluuBoolean[1];
 		}
 		this.booleanValues[0] = value;
-	}
-
-	public Date getDate() {
-		if (this.values == null) {
-			return null;
-		}
-
-		if (this.values.length > 0 && values[0] != null) {
-			try {
-                return StaticUtils.decodeGeneralizedTime(values[0]);
-			} catch (ParseException e) {
-				e.printStackTrace();
-			}
-		}
-
-		return null;
-	}
-
-	public void setDate(Date date) {
-		if (this.values == null) {
-			this.values = new String[0];
-		}
-
-		if (this.values.length != 1) {
-			this.values = new String[1];
-		}
-		this.values[0] = StaticUtils.encodeGeneralizedTime(date);
 	}
 
 	public String[] getValues() {

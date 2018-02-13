@@ -6,8 +6,6 @@
 
 package org.gluu.oxtrust.ldap.service;
 
-import static org.gluu.oxtrust.ldap.service.AppInitializer.LDAP_ENTRY_MANAGER_NAME;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
