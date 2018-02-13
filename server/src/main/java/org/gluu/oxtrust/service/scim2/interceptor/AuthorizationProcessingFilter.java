@@ -5,27 +5,27 @@
  */
 package org.gluu.oxtrust.service.scim2.interceptor;
 
-import org.apache.commons.lang.StringUtils;
-import org.gluu.oxtrust.exception.UmaProtectionException;
-import org.gluu.oxtrust.ldap.service.JsonConfigurationService;
-import org.gluu.oxtrust.service.OpenIdService;
-import org.gluu.oxtrust.service.uma.ScimUmaProtectionService;
-import org.gluu.oxtrust.service.uma.UmaPermissionService;
-import org.gluu.oxtrust.ws.rs.scim2.BaseScimWebService;
-import org.slf4j.Logger;
-import org.xdi.oxauth.client.ClientInfoClient;
-import org.xdi.oxauth.client.ClientInfoResponse;
-import org.xdi.oxauth.model.uma.wrapper.Token;
-import org.xdi.util.Pair;
+import java.io.IOException;
 
 import javax.inject.Inject;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.Provider;
-import java.io.IOException;
 
-import static javax.ws.rs.core.Response.Status;
+import org.apache.commons.lang.StringUtils;
+import org.gluu.oxtrust.exception.UmaProtectionException;
+import org.gluu.oxtrust.service.OpenIdService;
+import org.gluu.oxtrust.service.uma.ScimUmaProtectionService;
+import org.gluu.oxtrust.service.uma.UmaPermissionService;
+import org.gluu.oxtrust.ws.rs.scim2.BaseScimWebService;
+import org.slf4j.Logger;
+import org.xdi.config.oxtrust.AppConfiguration;
+import org.xdi.oxauth.client.ClientInfoClient;
+import org.xdi.oxauth.client.ClientInfoResponse;
+import org.xdi.oxauth.model.uma.wrapper.Token;
+import org.xdi.util.Pair;
 
 /**
  * This class checks whether authorization header is present and is valid before scim service methods are actually called.
@@ -40,8 +40,8 @@ public class AuthorizationProcessingFilter implements ContainerRequestFilter {
     @Inject
     private Logger log;
 
-    @Inject
-    private JsonConfigurationService jsonConfigurationService;
+	@Inject
+	private AppConfiguration appConfiguration;
 
     @Inject
     private OpenIdService openIdService;
@@ -75,7 +75,7 @@ public class AuthorizationProcessingFilter implements ContainerRequestFilter {
         log.info("Authorization header {} found", StringUtils.isEmpty(authorization) ? "not" : "");
 
         try {
-            if (jsonConfigurationService.getOxTrustappConfiguration().isScimTestMode()) {
+            if (appConfiguration.isScimTestMode()) {
                 log.info("SCIM Test Mode is ACTIVE");
                 authorizationResponse = processTestModeAuthorization(authorization);
             }

@@ -70,6 +70,14 @@ public abstract class BaseUmaProtectionService implements Serializable {
 
 		return false;
 	}
+	
+	public String getIssuer() {
+		if (umaMetadata == null) {
+			return "";
+		}
+
+		return umaMetadata.getIssuer();
+	}
 
 	private void retrievePatToken() throws UmaProtectionException {
 		this.umaPat = null;
