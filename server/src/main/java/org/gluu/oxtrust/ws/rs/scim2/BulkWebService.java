@@ -25,7 +25,7 @@ import org.gluu.oxtrust.model.scim2.bulk.BulkResponse;
 import org.gluu.oxtrust.model.scim2.fido.FidoDeviceResource;
 import org.gluu.oxtrust.model.scim2.group.GroupResource;
 import org.gluu.oxtrust.model.scim2.user.UserResource;
-import org.gluu.oxtrust.service.scim2.interceptor.ScimAuthorization;
+import org.gluu.oxtrust.service.filter.ProtectedApi;
 import org.xdi.util.Pair;
 
 import java.util.*;
@@ -78,7 +78,7 @@ public class BulkWebService extends BaseScimWebService {
     @Consumes({MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
     @Produces({MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT, MediaType.APPLICATION_JSON + UTF8_CHARSET_FRAGMENT})
     @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
-    @ScimAuthorization
+    @ProtectedApi
     @ApiOperation(value = "Bulk Operations", notes = "Bulk Operations (https://tools.ietf.org/html/rfc7644#section-3.7)", response = BulkResponse.class)
     public Response processBulkOperations(@ApiParam(value = "BulkRequest", required = true) BulkRequest request){
 

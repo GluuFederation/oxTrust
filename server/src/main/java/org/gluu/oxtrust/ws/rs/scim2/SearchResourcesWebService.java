@@ -11,13 +11,13 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.Version;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.module.SimpleModule;
+import org.gluu.oxtrust.service.filter.ProtectedApi;
 import org.gluu.oxtrust.model.scim2.ListResponse;
 import org.gluu.oxtrust.model.scim2.SearchRequest;
 import org.gluu.oxtrust.model.scim2.fido.FidoDeviceResource;
 import org.gluu.oxtrust.model.scim2.group.GroupResource;
 import org.gluu.oxtrust.model.scim2.user.UserResource;
 import org.gluu.oxtrust.model.scim2.util.ScimResourceUtil;
-import org.gluu.oxtrust.service.scim2.interceptor.ScimAuthorization;
 import org.gluu.oxtrust.service.scim2.interceptor.RefAdjusted;
 import org.gluu.oxtrust.service.scim2.serialization.ListResponseJsonSerializer;
 import org.xdi.util.Pair;
@@ -66,7 +66,7 @@ public class SearchResourcesWebService extends BaseScimWebService {
     @Consumes({MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
     @Produces({MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT, MediaType.APPLICATION_JSON + UTF8_CHARSET_FRAGMENT})
     @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
-    @ScimAuthorization
+    @ProtectedApi
     @RefAdjusted
     @ApiOperation(value = "General search POST /.search", notes = "Returns a list of resources (https://tools.ietf.org/html/rfc7644#section-3.4.3)", response = ListResponse.class)
     public Response search(@ApiParam(value = "SearchRequest", required = true) SearchRequest searchRequest) {
