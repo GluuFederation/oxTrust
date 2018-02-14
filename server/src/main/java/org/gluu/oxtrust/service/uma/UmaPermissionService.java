@@ -172,11 +172,11 @@ public class UmaPermissionService implements Serializable {
 		return rptStatusResponse;
 	}
 
-	public String registerResourcePermission(Token patToken, String resourceId, List<String> scopes) {
+	public String registerResourcePermission(Token patToken, String resourceId, List<String> scopeIds) {
 
         UmaPermission permission = new UmaPermission();
         permission.setResourceId(resourceId);
-        permission.setScopes(scopes);
+        permission.setScopes(scopeIds);
 
         PermissionTicket ticket = permissionService.registerPermission(
                 "Bearer " + patToken.getAccessToken(), UmaPermissionList.instance(permission));
@@ -188,8 +188,8 @@ public class UmaPermissionService implements Serializable {
         return ticket.getTicket();
     }
 
-	private Response prepareRegisterPermissionsResponse(Token patToken, String resourceId, List<String> scopes) {
-		String ticket = registerResourcePermission(patToken, resourceId, scopes);
+	private Response prepareRegisterPermissionsResponse(Token patToken, String resourceId, List<String> scopeIds) {
+		String ticket = registerResourcePermission(patToken, resourceId, scopeIds);
 		if (StringHelper.isEmpty(ticket)) {
 			return null;
 		}

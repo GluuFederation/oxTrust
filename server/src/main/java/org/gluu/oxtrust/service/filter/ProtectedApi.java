@@ -14,8 +14,15 @@ import java.lang.annotation.RetentionPolicy;
 
 /**
  * Created by jgomer on 2017-11-25.
+ * @author Yuriy Movchan Date: 02/13/2017
  */
 @NameBinding
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.METHOD})
-public @interface ProtectedApi {}
+public @interface ProtectedApi {
+	/**
+     * @return UMA scopes which application should have to access this endpoint.
+     */
+	String[] scopes() default {};
+
+}

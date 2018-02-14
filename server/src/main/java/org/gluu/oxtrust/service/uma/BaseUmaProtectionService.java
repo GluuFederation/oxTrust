@@ -2,7 +2,9 @@ package org.gluu.oxtrust.service.uma;
 
 import org.gluu.oxtrust.exception.UmaProtectionException;
 import org.gluu.oxtrust.ldap.service.EncryptionService;
+import org.gluu.oxtrust.service.filter.ProtectedApi;
 import org.slf4j.Logger;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.oxauth.client.uma.wrapper.UmaClient;
 import org.xdi.oxauth.model.uma.UmaMetadata;
 import org.xdi.oxauth.model.uma.wrapper.Token;
@@ -11,11 +13,16 @@ import org.xdi.util.StringHelper;
 import org.xdi.util.security.StringEncrypter.EncryptionException;
 
 import javax.inject.Inject;
+import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.io.Serializable;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
@@ -38,6 +45,9 @@ public abstract class BaseUmaProtectionService implements Serializable {
 
     @Inject
     protected UmaPermissionService umaPermissionService;
+
+	@Inject
+	private AppConfiguration appConfiguration;
 
 	private Token umaPat;
 	private long umaPatAccessTokenExpiration = 0l; // When the "accessToken" will expire;
@@ -138,9 +148,10 @@ public abstract class BaseUmaProtectionService implements Serializable {
         return Response.status(status).entity(detail).build();
     }
 
-    Response processUmaAuthorization(String authorization) throws Exception {
+    Response processUmaAuthorization(String authorization, ResourceInfo resourceInfo) throws Exception {
+		List<String> scopes = getRequestedScopes(resourceInfo);
 
-        Token patToken;
+        Token patToken = null;
         try {
             patToken = getPatToken();
         }
@@ -148,7 +159,13 @@ public abstract class BaseUmaProtectionService implements Serializable {
             return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, "Failed to obtain PAT token");
         }
 
-        Pair<Boolean, Response> rptTokenValidationResult = umaPermissionService.validateRptToken(patToken, authorization, getUmaResourceId(), getUmaScope());
+        Pair<Boolean, Response> rptTokenValidationResult;
+        if (scopes.isEmpty()) {
+        	rptTokenValidationResult = umaPermissionService.validateRptToken(patToken, authorization, getUmaResourceId(), scopes);
+        } else {
+        	rptTokenValidationResult = umaPermissionService.validateRptToken(patToken, authorization, getUmaResourceId(), getUmaScope());
+        }
+
         if (rptTokenValidationResult.getFirst()) {
             if (rptTokenValidationResult.getSecond() != null) {
                 return rptTokenValidationResult.getSecond();
@@ -161,6 +178,44 @@ public abstract class BaseUmaProtectionService implements Serializable {
 
     }
 
+	public List<String> getRequestedScopes(ResourceInfo resourceInfo) {
+		Class<?> resourceClass = resourceInfo.getResourceClass();
+		ProtectedApi typeAnnotation = resourceClass.getAnnotation(ProtectedApi.class);
+		if (typeAnnotation == null) {
+			return Collections.emptyList();
+		}
+
+		List<String> scopes = new ArrayList<String>();
+		scopes.addAll(getResourceScopes(typeAnnotation.scopes()));
+
+		Method resourceMethod = resourceInfo.getResourceMethod();
+		ProtectedApi methodAnnotation = resourceMethod.getAnnotation(ProtectedApi.class);
+		if (methodAnnotation != null) {
+			scopes.addAll(getResourceScopes(methodAnnotation.scopes()));
+		}
+
+		return scopes;
+	}
+	
+	private List<String> getResourceScopes(String[] scopes) {
+		List<String> result = new ArrayList<String>();
+		if ((scopes == null) || (scopes.length == 0)) {
+			return result;
+		}
+		
+		String baseEndpoint = appConfiguration.getBaseEndpoint();
+		if (baseEndpoint.endsWith("/")) {
+			baseEndpoint = baseEndpoint.substring(0, baseEndpoint.length() - 1);
+		}
+
+		for (String scope : scopes) {
+			String umaIssuerScope = baseEndpoint + scope;
+			result.add(umaIssuerScope);
+		}
+		
+		return result;
+	}
+
 	protected abstract String getClientId();
 	protected abstract String getClientKeyStorePassword();
 	protected abstract String getClientKeyStoreFile();
@@ -172,6 +227,6 @@ public abstract class BaseUmaProtectionService implements Serializable {
 
 	public abstract boolean isEnabled();
 
-	public abstract Response processAuthorization(HttpHeaders headers, UriInfo uriInfo);
+	public abstract Response processAuthorization(HttpHeaders headers, ResourceInfo resourceInfo);
 
 }

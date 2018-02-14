@@ -22,9 +22,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-import org.gluu.oxtrust.api.secure.UmaSecure;
 import org.gluu.oxtrust.ldap.service.IGroupService;
 import org.gluu.oxtrust.model.GluuGroup;
+import org.gluu.oxtrust.service.filter.ProtectedApi;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.slf4j.Logger;
 
@@ -35,10 +35,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * 
  * @author Shekhar L.
  */
-@Path("/api/group")
+@Path("/api/v1/group")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN })
 @DeclareRoles("administrator")
-@UmaSecure(scopes = { "/api/group/access" })
+@ProtectedApi(scopes = { "/api/group/access" })
 public class GroupWebService {
     
     @Inject
@@ -52,7 +52,7 @@ public class GroupWebService {
     @GET
     @Path("/read/{inum}")
     @Produces(MediaType.APPLICATION_JSON)
-    @UmaSecure(scopes = { "/api/group/read" })
+    @ProtectedApi(scopes = { "/api/group/read" })
     public GluuGroup read(@PathParam("inum") String inum, @Context HttpServletResponse response) {
         try {
             GluuGroup gluuGroup = groupService.getGroupByInum(inum);

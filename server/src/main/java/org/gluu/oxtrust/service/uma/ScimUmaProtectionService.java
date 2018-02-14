@@ -11,6 +11,7 @@ import java.io.Serializable;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
@@ -96,13 +97,13 @@ public class ScimUmaProtectionService extends BaseUmaProtectionService implement
      * @return A null value if the authorization was successful, otherwise a Response object is returned signaling an
      * authorization error
      */
-	public Response processAuthorization(HttpHeaders headers, UriInfo uriInfo){
+	public Response processAuthorization(HttpHeaders headers, ResourceInfo resourceInfo){
 
         //Comment this method body if you want to skip the authorization check and proceed straight to use your SCIM service.
         //This is useful under certain circumstances while doing development
         //log.warn("Bypassing protection TEMPORARILY");
 
-        Response authorizationResponse;
+        Response authorizationResponse = null;
         String authorization = headers.getHeaderString("Authorization");
         log.info("==== SCIM Service call intercepted ====");
         log.info("Authorization header {} found", StringUtils.isEmpty(authorization) ? "not" : "");
@@ -116,7 +117,7 @@ public class ScimUmaProtectionService extends BaseUmaProtectionService implement
             else
             if (isEnabled()){
                 log.info("SCIM is protected by UMA");
-                authorizationResponse = processUmaAuthorization(authorization);
+                authorizationResponse = processUmaAuthorization(authorization, resourceInfo);
             }
             else{
                 log.info("Please activate UMA or test mode to protect your SCIM endpoints. Read the Gluu SCIM docs to learn more");

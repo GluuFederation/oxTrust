@@ -5,25 +5,30 @@
  */
 package org.gluu.oxtrust.service.filter;
 
-import org.gluu.oxtrust.service.uma.*;
-import org.jboss.weld.inject.WeldInstance;
-import org.slf4j.Logger;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
+import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+
+import org.gluu.oxtrust.service.uma.BaseUmaProtectionService;
+import org.gluu.oxtrust.service.uma.BindingUrls;
+import org.gluu.oxtrust.service.uma.ScimUmaProtectionService;
+import org.jboss.weld.inject.WeldInstance;
+import org.slf4j.Logger;
 
 /**
  * A RestEasy filter to centralize protection of APIs with UMA based on path pattern.
  * Created by jgomer on 2017-11-25.
+ * @author Yuriy Movchan Date: 02/14/2017
  */
 //To protect methods with this filter just add the @ProtectedApi annotation to them and ensure there is a proper subclass
 //of {@link BaseUmaProtectionService} that can handle specific protection logic for your particular case
@@ -40,10 +45,13 @@ public class AuthorizationProcessingFilter implements ContainerRequestFilter {
     @Context
     private HttpHeaders httpHeaders;
 
+    @Context
+	private ResourceInfo resourceInfo;
+
     @Inject
     private WeldInstance<BaseUmaProtectionService> protectionServiceInstance;
 
-    private Map<String, BaseUmaProtectionService> protectionMapping;
+    private Map<String, Class<BaseUmaProtectionService>> protectionMapping;
 
     /**
      * This method performs the protection check of service invocations: it provokes returning an early error response if
@@ -62,7 +70,7 @@ public class AuthorizationProcessingFilter implements ContainerRequestFilter {
 
         for (String prefix : protectionMapping.keySet()){
             if (path.startsWith(prefix)){
-                protectionService=protectionMapping.get(prefix);
+                protectionService=protectionServiceInstance.select(protectionMapping.get(prefix)).get();
                 break;
             }
         }
@@ -73,7 +81,7 @@ public class AuthorizationProcessingFilter implements ContainerRequestFilter {
         else{
             log.info("Path is protected, proceeding with authorization processing...");
 
-            Response authorizationResponse=protectionService.processAuthorization(httpHeaders, requestContext.getUriInfo());
+            Response authorizationResponse=protectionService.processAuthorization(httpHeaders, resourceInfo);
             if (authorizationResponse == null)
                 log.info("Authorization passed");   //If authorization passed, proceed with actual processing of request
             else
@@ -86,20 +94,18 @@ public class AuthorizationProcessingFilter implements ContainerRequestFilter {
      * Builds a map around url patterns and service beans that are aimed to perform actual protection
      */
     @PostConstruct
-    private void init(){
-
-        protectionMapping=new HashMap<String, BaseUmaProtectionService>();
+    private void init() {
+        protectionMapping=new HashMap<String, Class<BaseUmaProtectionService>>();
         for (WeldInstance.Handler<BaseUmaProtectionService> handler : protectionServiceInstance.handlers()){
 
-            BindingUrls annotation=handler.getBean().getBeanClass().getAnnotation(BindingUrls.class);
+        	Class<BaseUmaProtectionService> beanClass = (Class<BaseUmaProtectionService>) handler.getBean().getBeanClass();
+            BindingUrls annotation=beanClass.getAnnotation(BindingUrls.class);
             if (annotation!=null){
-                BaseUmaProtectionService serviceBean=handler.get();
-
                 //annotation.value() is never null, at most, it's empty array
                 for (String pattern : annotation.value()){
                     if (pattern.length()>0) {
                         //pattern, can never be null
-                        protectionMapping.put(pattern, serviceBean);
+                        protectionMapping.put(pattern, beanClass);
                         //If two beans pretend to protect the same url, only the last in the list will take effect
                     }
                 }

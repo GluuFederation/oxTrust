@@ -10,6 +10,7 @@ import java.io.Serializable;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
@@ -75,11 +76,11 @@ public class PassportUmaProtectionService extends BaseUmaProtectionService imple
 		return GluuBoolean.ENABLED.equals(passportEnbaled) || GluuBoolean.TRUE.equals(passportEnbaled);
 	}
 
-    public Response processAuthorization(HttpHeaders headers, UriInfo uriInfo){
+    public Response processAuthorization(HttpHeaders headers, ResourceInfo resourceInfo){
 
         if (isEnabled()) {
             try {
-                return processUmaAuthorization(headers.getHeaderString("Authorization"));
+                return processUmaAuthorization(headers.getHeaderString("Authorization"), resourceInfo);
             }
             catch (Exception e){
                 log.error(e.getMessage(), e);
