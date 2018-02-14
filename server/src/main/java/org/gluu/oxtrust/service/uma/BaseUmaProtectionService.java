@@ -6,10 +6,14 @@ import org.slf4j.Logger;
 import org.xdi.oxauth.client.uma.wrapper.UmaClient;
 import org.xdi.oxauth.model.uma.UmaMetadata;
 import org.xdi.oxauth.model.uma.wrapper.Token;
+import org.xdi.util.Pair;
 import org.xdi.util.StringHelper;
 import org.xdi.util.security.StringEncrypter.EncryptionException;
 
 import javax.inject.Inject;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.concurrent.locks.ReentrantLock;
@@ -31,6 +35,9 @@ public abstract class BaseUmaProtectionService implements Serializable {
 
 	@Inject
 	private UmaMetadata umaMetadata;
+
+    @Inject
+    protected UmaPermissionService umaPermissionService;
 
 	private Token umaPat;
 	private long umaPatAccessTokenExpiration = 0l; // When the "accessToken" will expire;
@@ -69,14 +76,6 @@ public abstract class BaseUmaProtectionService implements Serializable {
 		}
 
 		return false;
-	}
-	
-	public String getIssuer() {
-		if (umaMetadata == null) {
-			return "";
-		}
-
-		return umaMetadata.getIssuer();
 	}
 
 	private void retrievePatToken() throws UmaProtectionException {
@@ -135,6 +134,33 @@ public abstract class BaseUmaProtectionService implements Serializable {
                 (validatePatTokenExpiration <= now));
     }
 
+    protected Response getErrorResponse(Response.Status status, String detail) {
+        return Response.status(status).entity(detail).build();
+    }
+
+    Response processUmaAuthorization(String authorization) throws Exception {
+
+        Token patToken;
+        try {
+            patToken = getPatToken();
+        }
+        catch (UmaProtectionException ex) {
+            return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, "Failed to obtain PAT token");
+        }
+
+        Pair<Boolean, Response> rptTokenValidationResult = umaPermissionService.validateRptToken(patToken, authorization, getUmaResourceId(), getUmaScope());
+        if (rptTokenValidationResult.getFirst()) {
+            if (rptTokenValidationResult.getSecond() != null) {
+                return rptTokenValidationResult.getSecond();
+            }
+        }
+        else {
+            return getErrorResponse(Response.Status.UNAUTHORIZED, "Invalid GAT/RPT token");
+        }
+        return null;
+
+    }
+
 	protected abstract String getClientId();
 	protected abstract String getClientKeyStorePassword();
 	protected abstract String getClientKeyStoreFile();
@@ -145,5 +171,7 @@ public abstract class BaseUmaProtectionService implements Serializable {
 	public abstract String getUmaScope();
 
 	public abstract boolean isEnabled();
+
+	public abstract Response processAuthorization(HttpHeaders headers, UriInfo uriInfo);
 
 }
