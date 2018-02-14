@@ -3,21 +3,19 @@
  *
  * Copyright (c) 2017, Gluu
  */
-package org.gluu.oxtrust.service.scim2.interceptor;
+package org.gluu.oxtrust.service.filter;
 
 import javax.ws.rs.NameBinding;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
-
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.TYPE;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.RetentionPolicy;
 
 /**
  * Created by jgomer on 2017-11-25.
  */
 @NameBinding
-@Retention(RUNTIME)
-@Target({TYPE, METHOD})
-public @interface ScimAuthorization {}
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.TYPE, ElementType.METHOD})
+public @interface ProtectedApi {}
