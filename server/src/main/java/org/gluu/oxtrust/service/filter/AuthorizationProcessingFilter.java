@@ -13,6 +13,7 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
+import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
@@ -34,6 +35,9 @@ public class AuthorizationProcessingFilter implements ContainerRequestFilter {
     @Inject
     private Logger log;
 
+	@Context
+	private ResourceInfo resourceInfo;
+    
     @Inject
     private ScimUmaProtectionService scimUmaProtectionService;
 
@@ -43,7 +47,7 @@ public class AuthorizationProcessingFilter implements ContainerRequestFilter {
     @Inject
     private WeldInstance<BaseUmaProtectionService> protectionServiceInstance;
 
-    private Map<String, BaseUmaProtectionService> protectionMapping;
+    private Map<String, Class<BaseUmaProtectionService>> protectionMapping;
 
     /**
      * This method performs the protection check of service invocations: it provokes returning an early error response if
@@ -62,7 +66,7 @@ public class AuthorizationProcessingFilter implements ContainerRequestFilter {
 
         for (String prefix : protectionMapping.keySet()){
             if (path.startsWith(prefix)){
-                protectionService=protectionMapping.get(prefix);
+                protectionService=protectionServiceInstance.select(protectionMapping.get(prefix)).get();
                 break;
             }
         }
@@ -88,18 +92,17 @@ public class AuthorizationProcessingFilter implements ContainerRequestFilter {
     @PostConstruct
     private void init(){
 
-        protectionMapping=new HashMap<String, BaseUmaProtectionService>();
+        protectionMapping=new HashMap<String, Class<BaseUmaProtectionService>>();
         for (WeldInstance.Handler<BaseUmaProtectionService> handler : protectionServiceInstance.handlers()){
 
-            BindingUrls annotation=handler.getBean().getBeanClass().getAnnotation(BindingUrls.class);
+        	Class<BaseUmaProtectionService> beanClass = (Class<BaseUmaProtectionService>) handler.getBean().getBeanClass();
+        	BindingUrls annotation=beanClass.getAnnotation(BindingUrls.class);
             if (annotation!=null){
-                BaseUmaProtectionService serviceBean=handler.get();
-
                 //annotation.value() is never null, at most, it's empty array
                 for (String pattern : annotation.value()){
                     if (pattern.length()>0) {
                         //pattern, can never be null
-                        protectionMapping.put(pattern, serviceBean);
+                        protectionMapping.put(pattern, beanClass);
                         //If two beans pretend to protect the same url, only the last in the list will take effect
                     }
                 }
