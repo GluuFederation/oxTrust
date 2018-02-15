@@ -106,6 +106,12 @@
                                                                 <h:outputText class="col-xs-12"
                                                                               value="#{clt.oxAuthAppType}"/>
                                                             </h:column>
+                                                            <h:column>
+                                                                <f:facet name="header">
+                                                                    delete
+                                                                </f:facet>
+                                                                <h:selectBooleanCheckbox value="#{searchClientAction.checkMap[clt]}"/>
+                                                            </h:column>
                                                             <f:facet name="footer">
                                                                 <rich:dataScroller align="left" fastControls="hide"
                                                                                    for="clientsListId" maxPages="10"
@@ -114,6 +120,11 @@
                                                                                    stepControls="auto"/>
                                                             </f:facet>
                                                         </h:dataTable>
+                                                        
+                                                        <h:commandButton action="#{searchClientAction.deleteClients}" 
+                                                                 style="float:left;margin-left :3px;"
+                                                                 styleClass="btn btn-primary"
+                                                                 value="Delete"/>
                                                     </h:form>
                                                 </div>
                                             </div>
