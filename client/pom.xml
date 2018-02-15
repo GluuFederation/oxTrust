@@ -20,12 +20,64 @@
         <buildDate>${maven.build.timestamp}</buildDate>
     </properties>
     
+    <build>
+        <finalName>oxtrust-client</finalName>
+
+        <testResources>
+            <testResource>
+                <directory>conf</directory>
+                <filtering>false</filtering>
+            </testResource>
+        </testResources>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>findbugs-maven-plugin</artifactId>
+                <version>3.0.4</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.10.4</version>
+                <configuration>
+                    <failOnError>false</failOnError>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
     
     <dependencies>
+        <!-- Gluu -->
+        <dependency>
+            <groupId>org.xdi</groupId>
+            <artifactId>oxauth-client</artifactId>
+            <version>${oxauth.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.xdi</groupId>
+            <artifactId>oxauth-model</artifactId>
+            <version>${oxauth.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.xdi</groupId>
+            <artifactId>oxcore-util</artifactId>
+            <version>${oxcore.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.xdi</groupId>
             <artifactId>oxtrust-model</artifactId>
         </dependency>
+        <!-- Other -->
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-client</artifactId>
