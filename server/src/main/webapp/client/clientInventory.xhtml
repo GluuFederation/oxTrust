@@ -12,6 +12,8 @@
     </f:metadata>
 
     <ui:define name="body">
+    
+   
         <section class="content-header">
             <h1 style="color: #333;">
                 #{msg['client.openIDConnect']}
@@ -110,7 +112,9 @@
                                                                 <f:facet name="header">
                                                                     delete
                                                                 </f:facet>
-                                                                <h:selectBooleanCheckbox value="#{searchClientAction.checkMap[clt]}"/>
+                                                                <h:selectBooleanCheckbox id="selectid"  onchange="displayButton();" value="#{searchClientAction.checkMap[clt]}" >
+                                                           		
+                                                           		</h:selectBooleanCheckbox>
                                                             </h:column>
                                                             <f:facet name="footer">
                                                                 <rich:dataScroller align="left" fastControls="hide"
@@ -121,7 +125,7 @@
                                                             </f:facet>
                                                         </h:dataTable>
                                                         
-                                                        <h:commandButton action="#{searchClientAction.deleteClients}" 
+                                                        <h:commandButton action="#{searchClientAction.deleteClients}"  id="deleteid" disabled="true"
                                                                  style="float:left;margin-left :3px;"
                                                                  styleClass="btn btn-primary"
                                                                  value="Delete"/>
@@ -140,5 +144,19 @@
                 </div>
             </div>
         </section>
+        <h:outputScript> 
+	    	function displayButton(){  	
+		    	var elemtn = document.querySelectorAll('*[name$="selectid"]');
+		    	console.log("elemtn  : " + elemtn.length); 
+		    	i=0;
+		    	while(i &lt; elemtn.length){
+		    		console.log("elemtn [] :" + i +"  val : " + elemtn[i].parentElement.className);
+		    		if(elemtn[i].parentElement.classList.contains("hover") || elemtn[i].parentElement.classList.contains("checked")){
+		    			document.getElementById("clientsFormId:deleteid").disabled = false;
+		    		}
+		    		i++;
+		    	}		
+	    	} 
+   	</h:outputScript>
     </ui:define>
 </ui:composition>
