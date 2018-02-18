@@ -71,6 +71,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiResponse;
+import com.wordnik.swagger.annotations.ApiResponses;
 import com.wordnik.swagger.annotations.Authorization;
 
 /**
@@ -122,7 +124,10 @@ public class TrustRelationshipWebService {
     @GET
     @Path("/read/{inum}")
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "read TrustRelationship", notes = "Returns a SAMLTrustRelationship", response = GluuSAMLTrustRelationship.class)
+    @ApiOperation(value = "read TrustRelationship", notes = "Returns a GluuSAMLTrustRelationship by inum", response = GluuSAMLTrustRelationship.class)
+    @ApiResponses(value = {
+		@ApiResponse(code = 200, message = "OK", response = GluuSAMLTrustRelationship.class),
+		@ApiResponse(code = 500, message = "Server error") })
     public String read(@PathParam("inum") String inum, @Context HttpServletResponse response) {
         logger.trace("Read Trust Relationship");
         try {
@@ -140,6 +145,10 @@ public class TrustRelationshipWebService {
     @Path("/create")
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces(MediaType.TEXT_PLAIN)
+    @ApiOperation(value = "create TrustRelationship", notes = "Create new GluuSAMLTrustRelationship. Returns inum.", response = String.class)
+    @ApiResponses(value = {
+		@ApiResponse(code = 200, message = "OK", response = String.class),
+		@ApiResponse(code = 500, message = "Server error") })
     public String create(GluuSAMLTrustRelationship trustRelationship, @Context HttpServletResponse response) {
         logger.trace("Create Trust Relationship");
         try {
@@ -158,41 +167,47 @@ public class TrustRelationshipWebService {
     @Path("/update/{inum}")
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces(MediaType.TEXT_PLAIN)
-    public String update(@PathParam("inum") String inum, GluuSAMLTrustRelationship trustRelationship, @Context HttpServletResponse response) {
+    @ApiOperation(value = "update TrustRelationship", notes = "Update GluuSAMLTrustRelationship.")
+    @ApiResponses(value = {
+		@ApiResponse(code = 200, message = "OK"),
+		@ApiResponse(code = 500, message = "Server error") })
+    public void update(@PathParam("inum") String inum, GluuSAMLTrustRelationship trustRelationship, @Context HttpServletResponse response) {
         logger.trace("Update Trust Relationship");
         try {
             String dn = trustService.getDnForTrustRelationShip(inum);
             trustRelationship.setDn(dn);
             trustService.updateTrustRelationship(trustRelationship);
-            
-            return OxTrustConstants.RESULT_SUCCESS;
         } catch (Exception e) {
             logger.error("update() Exception", e);
             try { response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "INTERNAL SERVER ERROR"); } catch (Exception ex) {}
-            return OxTrustConstants.RESULT_FAILURE;
         }
     }
     
     @DELETE
     @Path("/delete/{inum}")
     @Produces(MediaType.TEXT_PLAIN)
-    public String delete(@PathParam("inum") String inum, @Context HttpServletResponse response) {
+    @ApiOperation(value = "delete TrustRelationship", notes = "Delete GluuSAMLTrustRelationship.")
+    @ApiResponses(value = {
+		@ApiResponse(code = 200, message = "OK"),
+		@ApiResponse(code = 500, message = "Server error") })
+    public void delete(@PathParam("inum") String inum, @Context HttpServletResponse response) {
         logger.trace("Delete Trust Relationship");
         try {
             GluuSAMLTrustRelationship trustRelationship = trustService.getRelationshipByInum(inum);
             trustService.removeTrustRelationship(trustRelationship);
-            
-            return OxTrustConstants.RESULT_SUCCESS;
         } catch (Exception e) {
             logger.error("delete() Exception", e);
             try { response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "INTERNAL SERVER ERROR"); } catch (Exception ex) {}
-            return OxTrustConstants.RESULT_FAILURE;
         }
     }
     
     @GET
     @Path("/list")
     @Produces(MediaType.APPLICATION_JSON)
+    @ApiOperation(value = "list TrustRelationships", notes = "List all GluuSAMLTrustRelationship.", response = GluuSAMLTrustRelationship.class)
+    @ApiResponses(value = {
+		@ApiResponse(code = 200, message = "OK", response = GluuSAMLTrustRelationship.class),
+		@ApiResponse(code = 500, message = "Server error") })
     public String list(@Context HttpServletResponse response) {
         try {
             List<GluuSAMLTrustRelationship> trustRelationships = trustService.getAllTrustRelationships();
@@ -201,13 +216,16 @@ public class TrustRelationshipWebService {
         } catch (Exception e) {
             logger.error("list() Exception", e);
             try { response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "INTERNAL SERVER ERROR"); } catch (Exception ex) {}
-            return OxTrustConstants.RESULT_FAILURE;
+            return null;
         } 
    }
     
     @GET
     @Path("/list_all_federations")
     @Produces(MediaType.APPLICATION_JSON)
+    @ApiResponses(value = {
+		@ApiResponse(code = 200, message = "OK", response = GluuSAMLTrustRelationship.class),
+		@ApiResponse(code = 500, message = "Server error") })
     public String listAllFederations(@Context HttpServletResponse response) {
         try {
             List<GluuSAMLTrustRelationship> trustRelationships = trustService.getAllFederations();
@@ -223,6 +241,9 @@ public class TrustRelationshipWebService {
     @GET
     @Path("/list_all_active_trust_relationships")
     @Produces(MediaType.APPLICATION_JSON)
+    @ApiResponses(value = {
+		@ApiResponse(code = 200, message = "OK", response = GluuSAMLTrustRelationship.class),
+		@ApiResponse(code = 500, message = "Server error") })
     public String listAllActiveTrustRelationships(@Context HttpServletResponse response) {
         try {
             List<GluuSAMLTrustRelationship> trustRelationships = trustService.getAllActiveTrustRelationships();
@@ -238,6 +259,9 @@ public class TrustRelationshipWebService {
     @GET
     @Path("/list_all_other_federations")
     @Produces(MediaType.APPLICATION_JSON)
+    @ApiResponses(value = {
+		@ApiResponse(code = 200, message = "OK", response = GluuSAMLTrustRelationship.class),
+		@ApiResponse(code = 500, message = "Server error") })
     public String listAllOtherFederations(@PathParam("inum") String inum, @Context HttpServletResponse response) {
         try {
             List<GluuSAMLTrustRelationship> trustRelationships = trustService.getAllOtherFederations(inum);
@@ -253,6 +277,9 @@ public class TrustRelationshipWebService {
     @GET
     @Path("/search_trust_relationships")
     @Produces(MediaType.APPLICATION_JSON)
+    @ApiResponses(value = {
+		@ApiResponse(code = 200, message = "OK", response = GluuSAMLTrustRelationship.class),
+		@ApiResponse(code = 500, message = "Server error") })
     public String searchTrustRelationships(@PathParam("pattern") String pattern, @PathParam("size_limit") int sizeLimit, @Context HttpServletResponse response) {
         try {
             List<GluuSAMLTrustRelationship> trustRelationships = trustService.searchSAMLTrustRelationships(pattern, sizeLimit);
@@ -268,6 +295,9 @@ public class TrustRelationshipWebService {
     @GET
     @Path("/get_all_saml_trust_relationships")
     @Produces(MediaType.APPLICATION_JSON)
+    @ApiResponses(value = {
+		@ApiResponse(code = 200, message = "OK", response = GluuSAMLTrustRelationship.class),
+		@ApiResponse(code = 500, message = "Server error") })
     public String listAllSAMLTrustRelationships(@PathParam("size_limit") int sizeLimit, @Context HttpServletResponse response) {
         try {
             List<GluuSAMLTrustRelationship> trustRelationships = trustService.getAllSAMLTrustRelationships(sizeLimit);
@@ -283,6 +313,9 @@ public class TrustRelationshipWebService {
     @GET
     @Path("/list_deconstructed_trust_relationships")
     @Produces(MediaType.APPLICATION_JSON)
+    @ApiResponses(value = {
+		@ApiResponse(code = 200, message = "OK", response = GluuSAMLTrustRelationship.class),
+		@ApiResponse(code = 500, message = "Server error") })
     public String listDeconstructedTrustRelationships(@PathParam("inum") String inum, @Context HttpServletResponse response) {
         try {
             GluuSAMLTrustRelationship trustRelationship = trustService.getRelationshipByInum(inum);
@@ -300,6 +333,9 @@ public class TrustRelationshipWebService {
     @Path("/add_metadata")
     @Consumes({MediaType.APPLICATION_XML, MediaType.TEXT_PLAIN})
     @Produces(MediaType.TEXT_PLAIN)
+    @ApiResponses(value = {
+		@ApiResponse(code = 200, message = "OK"),
+		@ApiResponse(code = 500, message = "Server error") })
     public void addMetadata(@PathParam("inum") String trustRelationshipInum, String metadata, @Context HttpServletResponse response) {
         try {
             //TODO
@@ -313,6 +349,9 @@ public class TrustRelationshipWebService {
     @Path("/add_attribute")
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces(MediaType.TEXT_PLAIN)
+    @ApiResponses(value = {
+		@ApiResponse(code = 200, message = "OK"),
+		@ApiResponse(code = 500, message = "Server error") })
     public void addAttribute(@PathParam("inum") String trustRelationshipInum, String attribute, @Context HttpServletResponse response) {
         try {
             GluuSAMLTrustRelationship trustRelationship = trustService.getRelationshipByInum(trustRelationshipInum);
@@ -326,6 +365,9 @@ public class TrustRelationshipWebService {
     @GET
     @Path("/generate_inum_for_new_trust_relationship")
     @Produces(MediaType.TEXT_PLAIN)
+    @ApiResponses(value = {
+		@ApiResponse(code = 200, message = "OK"),
+		@ApiResponse(code = 500, message = "Server error") })
     public String generateInumForNewTrustRelationship(@Context HttpServletResponse response) {
         try {
             return trustService.generateInumForNewTrustRelationship();
@@ -356,6 +398,10 @@ public class TrustRelationshipWebService {
     @Path("/set_contacts")
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces(MediaType.TEXT_PLAIN)
+    @ApiOperation(value = "set contacts for TrustRelationship", notes = "Find TrustRelationship by inum and set contacts. Contacts parameter is List<TrustContact>")
+    @ApiResponses(value = {
+		@ApiResponse(code = 200, message = "OK"),
+		@ApiResponse(code = 500, message = "Server error") })
     public void setContacts(@PathParam("inum") String trustRelationshipInum, String contacts, @Context HttpServletResponse response) {
         try {
             GluuSAMLTrustRelationship trustRelationship = trustService.getRelationshipByInum(trustRelationshipInum);
@@ -372,7 +418,11 @@ public class TrustRelationshipWebService {
     @POST
     @Path("/set_certificate")
     @Consumes({MediaType.TEXT_PLAIN})
-    @Produces(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.TEXT_PLAIN)    
+    @ApiOperation(value = "set certificate for TrustRelationship", notes = "Find TrustRelationship by inum and set certificate.")
+    @ApiResponses(value = {
+		@ApiResponse(code = 200, message = "OK"),
+		@ApiResponse(code = 500, message = "Server error") })
     public void setCertificate(@PathParam("inum") String trustRelationshipInum, String certificate, @Context HttpServletResponse response) {
         try {
             GluuSAMLTrustRelationship trustRelationship = trustService.getRelationshipByInum(trustRelationshipInum);
