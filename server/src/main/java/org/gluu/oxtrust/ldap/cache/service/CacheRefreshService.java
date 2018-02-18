@@ -26,12 +26,10 @@ import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.ldap.impl.LdapEntryManager;
+import org.gluu.search.filter.Filter;
 import org.slf4j.Logger;
 import org.xdi.util.ArrayHelper;
 import org.xdi.util.StringHelper;
-
-import org.gluu.search.filter.Filter;
-import com.unboundid.ldap.sdk.LDAPException;
 
 /**
  * Provides cache refresh related operations

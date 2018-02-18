@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -101,7 +102,11 @@ public class UmaPermissionService implements Serializable {
 		}
 	}
 
-	public Pair<Boolean, Response> validateRptToken(Token patToken, String authorization, String resourceId, String scopeId) {
+	public Pair<Boolean, Response> validateRptToken(Token patToken, String authorization, String umaResourceId, String scopeId) {
+		return validateRptToken(patToken, authorization, umaResourceId, Arrays.asList(scopeId));
+	}
+
+	public Pair<Boolean, Response> validateRptToken(Token patToken, String authorization, String resourceId, List<String> scopeIds) {
 	    /* //caller of this method never pass null patToken
 		if (patToken == null) {
 	        return authenticationFailure;
@@ -109,22 +114,25 @@ public class UmaPermissionService implements Serializable {
 
 		if (StringHelper.isNotEmpty(authorization) && authorization.startsWith("Bearer ")) {
 			String rptToken = authorization.substring(7);
-			boolean isGat = rptToken.startsWith("gat_");
 	
 	        RptIntrospectionResponse rptStatusResponse = getStatusResponse(patToken, rptToken);
 			if ((rptStatusResponse == null) || !rptStatusResponse.getActive()) {
 				log.error("Status response for RPT token: '{}' is invalid", rptToken);
 				//return authenticationFailure;
-			}
-			else{
+			} else{
                 boolean rptHasPermissions = isRptHasPermissions(rptStatusResponse);
 
                 if (rptHasPermissions) {
+                	// Collect all scopes
+                	List<String> returnScopeIds = new LinkedList<String>();
                     for (UmaPermission umaPermission : rptStatusResponse.getPermissions()) {
-                        if ((umaPermission.getScopes() != null) && umaPermission.getScopes().contains(scopeId) &&
-                                (isGat || StringHelper.equals(resourceId, umaPermission.getResourceId()))) {
-                            return authenticationSuccess;
+                        if (umaPermission.getScopes() != null) {
+                        	returnScopeIds.addAll(umaPermission.getScopes());
                         }
+                    }
+                    
+                    if (returnScopeIds.containsAll(scopeIds)) {
+                        return authenticationSuccess;
                     }
 
                     log.error("Status response for RPT token: '{}' not contains right permissions", rptToken);
@@ -132,7 +140,7 @@ public class UmaPermissionService implements Serializable {
             }
 		}
 
-		Response registerPermissionsResponse = prepareRegisterPermissionsResponse(patToken, resourceId, Arrays.asList(scopeId));
+		Response registerPermissionsResponse = prepareRegisterPermissionsResponse(patToken, resourceId, scopeIds);
         if (registerPermissionsResponse == null) {
         	return authenticationFailure;
         }
@@ -164,11 +172,11 @@ public class UmaPermissionService implements Serializable {
 		return rptStatusResponse;
 	}
 
-	public String registerResourcePermission(Token patToken, String resourceId, List<String> scopes) {
+	public String registerResourcePermission(Token patToken, String resourceId, List<String> scopeIds) {
 
         UmaPermission permission = new UmaPermission();
         permission.setResourceId(resourceId);
-        permission.setScopes(scopes);
+        permission.setScopes(scopeIds);
 
         PermissionTicket ticket = permissionService.registerPermission(
                 "Bearer " + patToken.getAccessToken(), UmaPermissionList.instance(permission));
@@ -180,8 +188,8 @@ public class UmaPermissionService implements Serializable {
         return ticket.getTicket();
     }
 
-	private Response prepareRegisterPermissionsResponse(Token patToken, String resourceId, List<String> scopes) {
-		String ticket = registerResourcePermission(patToken, resourceId, scopes);
+	private Response prepareRegisterPermissionsResponse(Token patToken, String resourceId, List<String> scopeIds) {
+		String ticket = registerResourcePermission(patToken, resourceId, scopeIds);
 		if (StringHelper.isEmpty(ticket)) {
 			return null;
 		}

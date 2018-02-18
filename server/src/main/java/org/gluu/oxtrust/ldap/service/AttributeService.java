@@ -25,6 +25,7 @@ import org.gluu.oxtrust.service.cdi.event.EventType;
 import org.gluu.oxtrust.service.cdi.event.EventTypeQualifier;
 import org.gluu.oxtrust.service.cdi.event.Events;
 import org.gluu.oxtrust.util.OxTrustConstants;
+import org.gluu.search.filter.Filter;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuAttributeDataType;
@@ -36,7 +37,6 @@ import org.xdi.service.SchemaService;
 import org.xdi.util.INumGenerator;
 import org.xdi.util.StringHelper;
 
-import org.gluu.search.filter.Filter;
 import com.unboundid.ldap.sdk.LDAPException;
 
 /**
