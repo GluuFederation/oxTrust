@@ -5,6 +5,7 @@
  */
 package org.gluu.oxtrust.api.saml;
 
+import com.wordnik.swagger.annotations.ApiModel;
 import java.io.Serializable;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -20,6 +21,7 @@ import org.gluu.oxtrust.model.GluuValidationStatus;
  */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
+@ApiModel(value = "Shorted version GluuSAMLTrustRelationship class")
 public class SAMLTrustRelationshipShort implements Serializable {
     private String inum;
     
