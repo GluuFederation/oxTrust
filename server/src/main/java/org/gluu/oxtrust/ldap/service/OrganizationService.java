@@ -11,14 +11,17 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.exception.mapping.BaseMappingException;
+import org.gluu.persist.ldap.impl.LdapEntryManager;
 import org.gluu.persist.model.base.GluuBoolean;
 import org.gluu.persist.model.base.GluuStatus;
+import org.slf4j.Logger;
 import org.xdi.config.oxauth.WebKeysSettings;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.config.oxtrust.LdapOxAuthConfiguration;
 import org.xdi.model.ProgrammingLanguage;
 import org.xdi.service.CacheService;
 import org.xdi.util.ArrayHelper;
+import org.xdi.util.OxConstants;
 import org.xdi.util.StringHelper;
 
 import javax.ejb.Stateless;
@@ -42,6 +45,12 @@ import java.util.Properties;
 public class OrganizationService extends org.xdi.service.OrganizationService {
 
 	private static final long serialVersionUID = -1959146007518514678L;
+
+	@Inject
+    private Logger log;
+
+    @Inject
+    private LdapEntryManager ldapEntryManager;
 
 	@Inject
 	private CacheService cacheService;
@@ -86,11 +95,11 @@ public class OrganizationService extends org.xdi.service.OrganizationService {
 	 * @return Organization
 	 */
 	public GluuOrganization getOrganizationByInum(String inum) {
-		String key = OxTrustConstants.CACHE_ORGANIZATION_KEY + "_" + inum;
-		GluuOrganization organization = (GluuOrganization) cacheService.get(OxTrustConstants.CACHE_APPLICATION_NAME, key);
+		String key = OxConstants.CACHE_ORGANIZATION_KEY + "_" + inum;
+		GluuOrganization organization = (GluuOrganization) cacheService.get(OxConstants.CACHE_APPLICATION_NAME, key);
 		if (organization == null) {
 			organization = ldapEntryManager.find(GluuOrganization.class, getDnForOrganization(inum));
-			cacheService.put(OxTrustConstants.CACHE_APPLICATION_NAME, key, organization);
+			cacheService.put(OxConstants.CACHE_APPLICATION_NAME, key, organization);
 		}
 
 		return organization;
@@ -112,7 +121,7 @@ public class OrganizationService extends org.xdi.service.OrganizationService {
 
 		String key = OxTrustConstants.CACHE_ORGANIZATION_CUSTOM_MESSAGE_KEY + "_" + organization.getInum();
 		@SuppressWarnings("unchecked")
-		Map<String, String> organizationCustomMessage = (Map<String, String>) cacheService.get(OxTrustConstants.CACHE_APPLICATION_NAME, key);
+		Map<String, String> organizationCustomMessage = (Map<String, String>) cacheService.get(OxConstants.CACHE_APPLICATION_NAME, key);
 		if (organizationCustomMessage == null) {
 			organizationCustomMessage = new HashMap<String, String>();
 
@@ -130,7 +139,7 @@ public class OrganizationService extends org.xdi.service.OrganizationService {
 					}
 				}
 			}
-			cacheService.put(OxTrustConstants.CACHE_APPLICATION_NAME, key, organizationCustomMessage);
+			cacheService.put(OxConstants.CACHE_APPLICATION_NAME, key, organizationCustomMessage);
 		}
 
 		return organizationCustomMessage.get(customMessageId);

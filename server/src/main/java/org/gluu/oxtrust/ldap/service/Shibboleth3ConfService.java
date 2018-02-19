@@ -63,6 +63,7 @@ import org.xdi.model.SchemaEntry;
 import org.xdi.service.SchemaService;
 import org.xdi.service.XmlService;
 import org.xdi.util.INumGenerator;
+import org.xdi.util.OxConstants;
 import org.xdi.util.StringHelper;
 import org.xdi.util.Util;
 import org.xdi.util.exception.InvalidConfigurationException;
@@ -253,7 +254,7 @@ public class Shibboleth3ConfService implements Serializable {
 		List<GluuAttribute> attributes = attributeService.getAllPersonAttributes(GluuUserRole.ADMIN);
 		HashMap<String, GluuAttribute> attributesByDNs = attributeService.getAttributeMapByDNs(attributes);
 
-		GluuAttribute uid = attributeService.getAttributeByName(OxTrustConstants.uid);
+		GluuAttribute uid = attributeService.getAttributeByName(OxConstants.UID);
 
 		// Load attributes definition
 		for (GluuSAMLTrustRelationship trustRelationship : trustRelationships) {

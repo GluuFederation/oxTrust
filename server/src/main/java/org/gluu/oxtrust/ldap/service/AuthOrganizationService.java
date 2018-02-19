@@ -22,6 +22,7 @@ import org.gluu.persist.ldap.impl.LdapEntryManager;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.service.CacheService;
 import org.xdi.util.ArrayHelper;
+import org.xdi.util.OxConstants;
 import org.xdi.util.StringHelper;
 import static org.gluu.oxtrust.ldap.service.AppInitializer.LDAP_ENTRY_MANAGER_NAME;
 
@@ -73,11 +74,11 @@ public class AuthOrganizationService implements Serializable {
 	 * @return Organization
 	 */
 	public GluuOrganization getOrganizationByInum(String inum) throws Exception {
-		String key = OxTrustConstants.CACHE_ORGANIZATION_KEY + "_" + inum;
-		GluuOrganization organization = (GluuOrganization) cacheService.get(OxTrustConstants.CACHE_APPLICATION_NAME, key);
+		String key = OxConstants.CACHE_ORGANIZATION_KEY + "_" + inum;
+		GluuOrganization organization = (GluuOrganization) cacheService.get(OxConstants.CACHE_APPLICATION_NAME, key);
 		if (organization == null) {
 			organization = ldapAuthEntryManager.find(GluuOrganization.class, getDnForOrganization(inum));
-			cacheService.put(OxTrustConstants.CACHE_APPLICATION_NAME, key, organization);
+			cacheService.put(OxConstants.CACHE_APPLICATION_NAME, key, organization);
 
 		}
 
@@ -96,7 +97,7 @@ public class AuthOrganizationService implements Serializable {
 
 		String key = OxTrustConstants.CACHE_ORGANIZATION_CUSTOM_MESSAGE_KEY + "_" + organization.getInum();
 		@SuppressWarnings("unchecked")
-		Map<String, String> organizationCustomMessage = (Map<String, String>) cacheService.get(OxTrustConstants.CACHE_APPLICATION_NAME, key);
+		Map<String, String> organizationCustomMessage = (Map<String, String>) cacheService.get(OxConstants.CACHE_APPLICATION_NAME, key);
 		if (organizationCustomMessage == null) {
 			organizationCustomMessage = new HashMap<String, String>();
 
@@ -114,7 +115,7 @@ public class AuthOrganizationService implements Serializable {
 					}
 				}
 			}
-			cacheService.put(OxTrustConstants.CACHE_APPLICATION_NAME, key, organizationCustomMessage);
+			cacheService.put(OxConstants.CACHE_APPLICATION_NAME, key, organizationCustomMessage);
 		}
 
 		return organizationCustomMessage.get(customMessageId);

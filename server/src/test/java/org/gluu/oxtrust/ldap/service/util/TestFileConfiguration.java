@@ -22,7 +22,7 @@ public class TestFileConfiguration extends FileConfiguration {
 	}
 
 	public boolean isKeyExist(String key) {
-		Iterator<String> keyIterator = this.propertiesConfiguration.getKeys();
+		Iterator<String> keyIterator = getPropertiesConfiguration().getKeys();
 		while (keyIterator.hasNext()) {
 			if (keyIterator.next().equals(key)) {
 				return true;
@@ -34,7 +34,7 @@ public class TestFileConfiguration extends FileConfiguration {
 
 	public List<String> getKeysStartWith(String keyPrefix) {
 		List<String> result = new ArrayList<String>();
-		Iterator<String> keyIterator = this.propertiesConfiguration.getKeys();
+		Iterator<String> keyIterator = getPropertiesConfiguration().getKeys();
 		while (keyIterator.hasNext()) {
 			String key = keyIterator.next();
 			if (key.startsWith(keyPrefix)) {
@@ -50,8 +50,8 @@ public class TestFileConfiguration extends FileConfiguration {
 	}
 
 	public Map<String, String> getStringMap(String key, String keyValue) {
-		String keys[] = this.propertiesConfiguration.getStringArray(key);
-		String values[] = this.propertiesConfiguration.getStringArray(keyValue);
+		String keys[] = getPropertiesConfiguration().getStringArray(key);
+		String values[] = getPropertiesConfiguration().getStringArray(keyValue);
 
 		HashMap<String, String> result = new HashMap<String, String>(keys.length);
 		for (int i = 0; i < keys.length; i++) {
@@ -69,7 +69,7 @@ public class TestFileConfiguration extends FileConfiguration {
 	public Map<String, ?> getCollection(String baseKey) {
 		Map result = new HashMap();
 
-		Iterator<String> keyIterator = this.propertiesConfiguration.getKeys();
+		Iterator<String> keyIterator = getPropertiesConfiguration().getKeys();
 		while (keyIterator.hasNext()) {
 			String currKey = keyIterator.next();
 			if (!currKey.startsWith(baseKey)) {
@@ -77,7 +77,7 @@ public class TestFileConfiguration extends FileConfiguration {
 			}
 
 			String resultKey = currKey.substring(currKey.indexOf(baseKey) + baseKey.length() + 1);
-			result.put(resultKey, this.propertiesConfiguration.getString(currKey));
+			result.put(resultKey, getPropertiesConfiguration().getString(currKey));
 		}
 
 		return result;
