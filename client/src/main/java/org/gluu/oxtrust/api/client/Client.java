@@ -14,7 +14,7 @@ import org.gluu.oxtrust.api.client.saml.TrustRelationshipClient;
  */
 public class Client {
     
-    private String baseURI;
+    private final String baseURI;
     
     private TrustRelationshipClient trustRelationshipClient;
     

@@ -21,7 +21,7 @@ import org.gluu.oxtrust.model.GluuValidationStatus;
  */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-@ApiModel(value = "Shorted version GluuSAMLTrustRelationship class")
+@ApiModel(value = "Shorted version of GluuSAMLTrustRelationship class")
 public class SAMLTrustRelationshipShort implements Serializable {
     private String inum;
     

@@ -6,19 +6,12 @@
 package org.gluu.oxtrust.api.test;
 
 /**
- * Typical client lifecycle test requests (registration, document uploading, etc.).
+ * A message about test fail.
  * 
  * @author Dmitry Ognyannikov
  */
-public class ClientScenary {
-    public ClientScenary() {
-        
-    }
-    
-    /**
-     * Run tests.
-     */
-    public void run() {
-        
+public class APITestException extends Exception {
+    public APITestException(String message) {
+        super(message);
     }
 }

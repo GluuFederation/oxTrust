@@ -32,6 +32,13 @@ public class AbstractClient<T> {
         webTarget = client.target(baseURI).path(path);
     }
 
+    /**
+     * Read entity by ID.
+     * 
+     * @param id ID of the entity (inum bu default)
+     * @return entity instance
+     * @throws ClientErrorException 
+     */
     public T read(String id) throws ClientErrorException {
         WebTarget resource = webTarget.path(java.text.MessageFormat.format("read/{0}", new Object[]{id}));
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_JSON)
@@ -39,7 +46,14 @@ public class AbstractClient<T> {
                 .get(entityClass);
     }
 
-    public void create(T requestEntity) throws ClientErrorException {
+    /**
+     * Create (save) entity.
+     * 
+     * @param requestEntity
+     * @return ID of created entity (inum bu default)
+     * @throws ClientErrorException 
+     */
+    public String create(T requestEntity) throws ClientErrorException {
 //        Entity<T> entity = Entity.entity(requestEntity, MediaType.APPLICATION_JSON);
 //        System.out.println("entity: " + entity);
 //        Response response = client.target("http://localhost:8080/ws/user/create")
@@ -47,9 +61,11 @@ public class AbstractClient<T> {
 //             .post(entity);
         
         Response response = webTarget.path("create").request().post(Entity.entity(requestEntity, MediaType.APPLICATION_JSON));
-        
+        String id = response.readEntity(String.class);
         System.out.println("response: " + response.getStatusInfo().getReasonPhrase());
         response.close();
+        
+        return id;
     }
 
     public boolean update(T requestEntity, String id) throws ClientErrorException {

@@ -74,16 +74,17 @@ import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 import com.wordnik.swagger.annotations.Authorization;
+import java.util.ArrayList;
 
 /**
  * WS endpoint for TrustRelationship actions.
  * 
  * @author Dmitry Ognyannikov
  */
-@Path("/apis/saml/tr")
+@Path("/api/saml/tr")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN })
-@Api(value = "/apis/saml/tr", description = "SAML UI API Endpoint", authorizations = {@Authorization(value = "Authorization", type = "uma")})
-@UmaSecure(scope = "'apis_saml', '/auth/oxtrust.allow-saml-config-all', '/auth/oxtrust.allow-saml-modify-all'")
+@Api(value = "/api/saml/tr", description = "SAML UI API Endpoint", authorizations = {@Authorization(value = "Authorization", type = "uma")})
+@UmaSecure(scope = "'api_saml', '/auth/oxtrust.allow-saml-config-all', '/auth/oxtrust.allow-saml-modify-all'")
 public class TrustRelationshipWebService {
     
     @Inject
@@ -204,13 +205,13 @@ public class TrustRelationshipWebService {
     @GET
     @Path("/list")
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "list TrustRelationships", notes = "List all GluuSAMLTrustRelationship.", response = GluuSAMLTrustRelationship.class)
+    @ApiOperation(value = "list TrustRelationships", notes = "List all GluuSAMLTrustRelationship.", response = SAMLTrustRelationshipShort.class)
     @ApiResponses(value = {
 		@ApiResponse(code = 200, message = "OK", response = GluuSAMLTrustRelationship.class),
 		@ApiResponse(code = 500, message = "Server error") })
     public String list(@Context HttpServletResponse response) {
         try {
-            List<GluuSAMLTrustRelationship> trustRelationships = trustService.getAllTrustRelationships();
+            List<SAMLTrustRelationshipShort> trustRelationships = convertTRtoTRShort(trustService.getAllTrustRelationships());
             //convert to JSON
             return objectMapper.writeValueAsString(trustRelationships);
         } catch (Exception e) {
@@ -218,17 +219,17 @@ public class TrustRelationshipWebService {
             try { response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "INTERNAL SERVER ERROR"); } catch (Exception ex) {}
             return null;
         } 
-   }
+    }
     
     @GET
     @Path("/list_all_federations")
     @Produces(MediaType.APPLICATION_JSON)
     @ApiResponses(value = {
-		@ApiResponse(code = 200, message = "OK", response = GluuSAMLTrustRelationship.class),
+		@ApiResponse(code = 200, message = "OK", response = SAMLTrustRelationshipShort.class),
 		@ApiResponse(code = 500, message = "Server error") })
     public String listAllFederations(@Context HttpServletResponse response) {
         try {
-            List<GluuSAMLTrustRelationship> trustRelationships = trustService.getAllFederations();
+            List<SAMLTrustRelationshipShort> trustRelationships = convertTRtoTRShort(trustService.getAllFederations());
             //convert to JSON
             return objectMapper.writeValueAsString(trustRelationships);
         } catch (Exception e) {
@@ -242,11 +243,11 @@ public class TrustRelationshipWebService {
     @Path("/list_all_active_trust_relationships")
     @Produces(MediaType.APPLICATION_JSON)
     @ApiResponses(value = {
-		@ApiResponse(code = 200, message = "OK", response = GluuSAMLTrustRelationship.class),
+		@ApiResponse(code = 200, message = "OK", response = SAMLTrustRelationshipShort.class),
 		@ApiResponse(code = 500, message = "Server error") })
     public String listAllActiveTrustRelationships(@Context HttpServletResponse response) {
         try {
-            List<GluuSAMLTrustRelationship> trustRelationships = trustService.getAllActiveTrustRelationships();
+            List<SAMLTrustRelationshipShort> trustRelationships = convertTRtoTRShort(trustService.getAllActiveTrustRelationships());
             //convert to JSON
             return objectMapper.writeValueAsString(trustRelationships);
         } catch (Exception e) {
@@ -260,11 +261,11 @@ public class TrustRelationshipWebService {
     @Path("/list_all_other_federations")
     @Produces(MediaType.APPLICATION_JSON)
     @ApiResponses(value = {
-		@ApiResponse(code = 200, message = "OK", response = GluuSAMLTrustRelationship.class),
+		@ApiResponse(code = 200, message = "OK", response = SAMLTrustRelationshipShort.class),
 		@ApiResponse(code = 500, message = "Server error") })
     public String listAllOtherFederations(@PathParam("inum") String inum, @Context HttpServletResponse response) {
         try {
-            List<GluuSAMLTrustRelationship> trustRelationships = trustService.getAllOtherFederations(inum);
+            List<SAMLTrustRelationshipShort> trustRelationships = convertTRtoTRShort(trustService.getAllOtherFederations(inum));
             //convert to JSON
             return objectMapper.writeValueAsString(trustRelationships);
         } catch (Exception e) {
@@ -278,11 +279,11 @@ public class TrustRelationshipWebService {
     @Path("/search_trust_relationships")
     @Produces(MediaType.APPLICATION_JSON)
     @ApiResponses(value = {
-		@ApiResponse(code = 200, message = "OK", response = GluuSAMLTrustRelationship.class),
+		@ApiResponse(code = 200, message = "OK", response = SAMLTrustRelationshipShort.class),
 		@ApiResponse(code = 500, message = "Server error") })
     public String searchTrustRelationships(@PathParam("pattern") String pattern, @PathParam("size_limit") int sizeLimit, @Context HttpServletResponse response) {
         try {
-            List<GluuSAMLTrustRelationship> trustRelationships = trustService.searchSAMLTrustRelationships(pattern, sizeLimit);
+            List<SAMLTrustRelationshipShort> trustRelationships = convertTRtoTRShort(trustService.searchSAMLTrustRelationships(pattern, sizeLimit));
             //convert to JSON
             return objectMapper.writeValueAsString(trustRelationships);
         } catch (Exception e) {
@@ -296,11 +297,11 @@ public class TrustRelationshipWebService {
     @Path("/get_all_saml_trust_relationships")
     @Produces(MediaType.APPLICATION_JSON)
     @ApiResponses(value = {
-		@ApiResponse(code = 200, message = "OK", response = GluuSAMLTrustRelationship.class),
+		@ApiResponse(code = 200, message = "OK", response = SAMLTrustRelationshipShort.class),
 		@ApiResponse(code = 500, message = "Server error") })
     public String listAllSAMLTrustRelationships(@PathParam("size_limit") int sizeLimit, @Context HttpServletResponse response) {
         try {
-            List<GluuSAMLTrustRelationship> trustRelationships = trustService.getAllSAMLTrustRelationships(sizeLimit);
+            List<SAMLTrustRelationshipShort> trustRelationships = convertTRtoTRShort(trustService.getAllSAMLTrustRelationships(sizeLimit));
             //convert to JSON
             return objectMapper.writeValueAsString(trustRelationships);
         } catch (Exception e) {
@@ -314,12 +315,12 @@ public class TrustRelationshipWebService {
     @Path("/list_deconstructed_trust_relationships")
     @Produces(MediaType.APPLICATION_JSON)
     @ApiResponses(value = {
-		@ApiResponse(code = 200, message = "OK", response = GluuSAMLTrustRelationship.class),
+		@ApiResponse(code = 200, message = "OK", response = SAMLTrustRelationshipShort.class),
 		@ApiResponse(code = 500, message = "Server error") })
     public String listDeconstructedTrustRelationships(@PathParam("inum") String inum, @Context HttpServletResponse response) {
         try {
             GluuSAMLTrustRelationship trustRelationship = trustService.getRelationshipByInum(inum);
-            List<GluuSAMLTrustRelationship> trustRelationships = trustService.getDeconstructedTrustRelationships(trustRelationship);
+            List<SAMLTrustRelationshipShort> trustRelationships = convertTRtoTRShort(trustService.getDeconstructedTrustRelationships(trustRelationship));
             //convert to JSON
             return objectMapper.writeValueAsString(trustRelationships);
         } catch (Exception e) {
@@ -849,5 +850,15 @@ public class TrustRelationshipWebService {
         String updatedMetadata = metadata.replaceFirst(certRegEx, certificate);
         FileUtils.writeStringToFile(metadataFile, updatedMetadata);
         trustRelationship.setStatus(GluuStatus.ACTIVE);
+    }
+    
+    private static List<SAMLTrustRelationshipShort> convertTRtoTRShort (List<GluuSAMLTrustRelationship> trustRelationships) {
+        ArrayList<SAMLTrustRelationshipShort> trustRelationshipsShort = new ArrayList<SAMLTrustRelationshipShort>();
+        trustRelationshipsShort.ensureCapacity(trustRelationships.size());
+        
+        for (GluuSAMLTrustRelationship tr : trustRelationships) {
+            trustRelationshipsShort.add(new SAMLTrustRelationshipShort(tr));
+        }
+        return trustRelationshipsShort;
     }
 }
