@@ -31,7 +31,7 @@ public class SamlTestScenary {
         this.client = client;
     }
     
-    private Random random = new Random();
+    private final Random random = new Random();
     
     /**
      * Run tests.
@@ -52,7 +52,13 @@ public class SamlTestScenary {
         List<SAMLTrustRelationshipShort> trustRelationships = samlClient.list();
         if (!checkListForTrustRelationship(trustRelationships, inum))
             throw new APITestException("TrustRelationship really not saved");
-        //TODO
+        // test delete()
+        samlClient.delete(inum);
+        trustRelationships = samlClient.list();
+        if (checkListForTrustRelationship(trustRelationships, inum))
+            throw new APITestException("TrustRelationship really not deleted");
+        
+        //TODO: all API calls
     }
     
     private GluuSAMLTrustRelationship generateRandomeSingleTrustRelationship() {
