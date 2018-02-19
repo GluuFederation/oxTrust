@@ -5,6 +5,8 @@
  */
 package org.gluu.oxtrust.api.test;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.gluu.oxtrust.api.client.Client;
 import org.gluu.oxtrust.api.test.saml.SamlTestScenary;
 
@@ -15,7 +17,9 @@ import org.gluu.oxtrust.api.test.saml.SamlTestScenary;
  */
 public class ClientTestScenary {
     
-    private Client client;
+    private static final Logger logger = LogManager.getLogger(ClientTestScenary.class);
+    
+    private final Client client;
     
     public ClientTestScenary(Client client) {
         this.client = client;
@@ -24,7 +28,7 @@ public class ClientTestScenary {
     /**
      * Run tests.
      */
-    public void run() {
+    public void run() throws APITestException {
         SamlTestScenary saml = new SamlTestScenary(client);
         saml.run();
     }

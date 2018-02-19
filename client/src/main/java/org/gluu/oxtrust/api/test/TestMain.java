@@ -42,7 +42,7 @@ public class TestMain {
     /**
      * Run tests.
      */
-    public void run() {
+    public void run() throws APITestException {
         Client client = new Client(baseURI, login, password);
         
         ClientTestScenary clientScenary = new ClientTestScenary(client);

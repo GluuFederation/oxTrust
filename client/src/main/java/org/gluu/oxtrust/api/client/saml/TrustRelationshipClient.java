@@ -11,20 +11,21 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.gluu.oxtrust.api.client.AbstractClient;
 import org.gluu.oxtrust.api.saml.SAMLTrustRelationshipShort;
+import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 
 /**
  * REST webservice CRUD for TrustRelationships.
  * 
  * @author Dmitry Ognyannikov
  */
-public class TrustRelationshipClient extends AbstractClient<String> {
+public class TrustRelationshipClient extends AbstractClient<GluuSAMLTrustRelationship> {
 
-    private final Logger logger = LogManager.getLogger(getClass());
+    private static final Logger logger = LogManager.getLogger(TrustRelationshipClient.class);
     
     private static final String PATH = "/api/saml/tr"; 
     
     public TrustRelationshipClient(String baseURI) {
-        super(String.class, baseURI, PATH);
+        super(GluuSAMLTrustRelationship.class, baseURI, PATH);
     }
     
     public List<SAMLTrustRelationshipShort> list() {

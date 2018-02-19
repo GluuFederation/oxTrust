@@ -219,7 +219,7 @@ public class TrustRelationshipWebService {
             try { response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "INTERNAL SERVER ERROR"); } catch (Exception ex) {}
             return null;
         } 
-   }
+    }
     
     @GET
     @Path("/list_all_federations")
