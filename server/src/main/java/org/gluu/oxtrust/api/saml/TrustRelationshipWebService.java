@@ -81,10 +81,10 @@ import java.util.ArrayList;
  * 
  * @author Dmitry Ognyannikov
  */
-@Path("/apis/saml/tr")
+@Path("/api/saml/tr")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN })
-@Api(value = "/apis/saml/tr", description = "SAML UI API Endpoint", authorizations = {@Authorization(value = "Authorization", type = "uma")})
-@UmaSecure(scope = "'apis_saml', '/auth/oxtrust.allow-saml-config-all', '/auth/oxtrust.allow-saml-modify-all'")
+@Api(value = "/api/saml/tr", description = "SAML UI API Endpoint", authorizations = {@Authorization(value = "Authorization", type = "uma")})
+@UmaSecure(scope = "'api_saml', '/auth/oxtrust.allow-saml-config-all', '/auth/oxtrust.allow-saml-modify-all'")
 public class TrustRelationshipWebService {
     
     @Inject
