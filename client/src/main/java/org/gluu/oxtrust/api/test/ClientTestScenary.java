@@ -5,20 +5,27 @@
  */
 package org.gluu.oxtrust.api.test;
 
+import org.gluu.oxtrust.api.client.Client;
+import org.gluu.oxtrust.api.test.saml.SamlTestScenary;
+
 /**
  * Typical client lifecycle test requests (registration, document uploading, etc.).
  * 
  * @author Dmitry Ognyannikov
  */
-public class ClientScenary {
-    public ClientScenary() {
-        
+public class ClientTestScenary {
+    
+    private Client client;
+    
+    public ClientTestScenary(Client client) {
+        this.client = client;
     }
     
     /**
      * Run tests.
      */
     public void run() {
-        
+        SamlTestScenary saml = new SamlTestScenary(client);
+        saml.run();
     }
 }

@@ -8,6 +8,7 @@ package org.gluu.oxtrust.api.test;
 import java.util.Properties;
 import java.io.FileInputStream;
 import java.io.IOException;
+import org.gluu.oxtrust.api.client.Client;
 
 /**
  * Test oxTrust API.
@@ -42,8 +43,10 @@ public class TestMain {
      * Run tests.
      */
     public void run() {
-        ClientScenary client = new ClientScenary();
-        client.run();
+        Client client = new Client(baseURI, login, password);
+        
+        ClientTestScenary clientScenary = new ClientTestScenary(client);
+        clientScenary.run();
     }
     
     public static void main(String args[]) {
