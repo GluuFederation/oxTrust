@@ -37,6 +37,7 @@ import java.net.URI;
 import java.util.List;
 
 import static org.gluu.oxtrust.model.scim2.Constants.*;
+import static org.gluu.oxtrust.model.scim2.patch.PatchOperationType.REMOVE;
 
 /**
  * Implementation of /Users endpoint. Methods here are intercepted and/or decorated.
@@ -273,8 +274,17 @@ public class UserWebService extends BaseScimWebService implements IUserWebServic
             scim2UserService.transferAttributesToUserResource(person, user, endpointUrl);
 
             //Apply patches one by one in sequence
-            for (PatchOperation po : request.getOperations())
-                user=(UserResource) scim2PatchService.applyPatchOperation(user, po);
+            for (PatchOperation po : request.getOperations()) {
+                //Handle special case: https://github.com/GluuFederation/oxTrust/issues/800
+                if (po.getType().equals(REMOVE) && po.getPath().equals("pairwiseIdentifiers")){
+                    //If this block weren't here, the implementation will throw error because read-only attribute cannot be altered
+                    person.setOxPPID(null);
+                    user.setPairwiseIdentitifers(null);
+                    scim2UserService.removePPIDsBranch(person.getDn());
+                }
+                else
+                    user = (UserResource) scim2PatchService.applyPatchOperation(user, po);
+            }
 
             //Throws exception if final representation does not pass overall validation
             log.debug("patchUser. Revising final resource representation still passes validations");

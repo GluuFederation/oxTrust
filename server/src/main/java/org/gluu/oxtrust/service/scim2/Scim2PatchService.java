@@ -49,10 +49,7 @@ public class Scim2PatchService {
     @Inject
     private ExtensionService extService;
 
-    @Inject
-    private Scim2UserService scim2UserService;
-
-    public BaseScimResource applyPatchOperation(BaseScimResource resource, PatchOperation operation) throws Exception{
+    public BaseScimResource applyPatchOperation(BaseScimResource resource, PatchOperation operation) throws Exception {
 
         BaseScimResource result=null;
         Map<String, Object> genericMap=null;
@@ -138,8 +135,6 @@ public class Scim2PatchService {
                 result=ScimResourceUtil.transferToResourceAdd(alter, resource, extensions);
                 break;
             case REMOVE:
-                //Special case see: https://github.com/GluuFederation/oxTrust/issues/800
-                //if (operation.getPath().equals())
                 result=ScimResourceUtil.deleteFromResource(alter, operation.getPath(), extensions);
                 break;
         }

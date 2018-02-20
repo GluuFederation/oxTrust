@@ -508,4 +508,14 @@ public class Scim2UserService implements Serializable {
 
     }
 
+    //See: https://github.com/GluuFederation/oxTrust/issues/800
+    public void removePPIDsBranch(String dn) {
+        try {
+            ldapEntryManager.removeWithSubtree(String.format("ou=pairwiseIdentifiers,%s", dn));
+        }
+        catch (Exception e){
+            log.error(e.getMessage(), e);
+        }
+    }
+
 }
