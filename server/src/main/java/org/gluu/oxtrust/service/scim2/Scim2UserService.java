@@ -40,7 +40,6 @@ import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.ldap.model.GluuBoolean;
 import org.xdi.ldap.model.SortOrder;
 import org.xdi.ldap.model.VirtualListViewResponse;
-import org.xdi.util.Pair;
 
 import static org.xdi.ldap.model.GluuBoolean.*;
 
@@ -193,9 +192,10 @@ public class Scim2UserService implements Serializable {
         person.setAttribute("oxTrustRole", getComplexMultivaluedAsArray(res.getRoles()));
         person.setAttribute("oxTrustx509Certificate", getComplexMultivaluedAsArray(res.getX509Certificates()));
 
-        //Pairwise identifiers are not supplied here...
+        //Pairwise identifiers must not be supplied here... (they are mutability = readOnly)
 
         transferExtendedAttributesToPerson(res, person);
+
     }
 
     /**
@@ -307,6 +307,7 @@ public class Scim2UserService implements Serializable {
                     String reference = groupWS.getEndpointUrl() + "/" + gluuGroup.getInum();
                     group.setRef(reference);
                     group.setDisplay(gluuGroup.getDisplayName());
+                    group.setType(Group.Type.DIRECT);   //Only support direct membership: see section 4.1.2 of RFC 7644
 
                     groupList.add(group);
                 }
@@ -326,6 +327,7 @@ public class Scim2UserService implements Serializable {
         res.setPairwiseIdentitifers(person.getOxPPID());
 
         transferExtendedAttributesToResource(person, res);
+
     }
 
     private void transferExtendedAttributesToResource(GluuCustomPerson person, BaseScimResource resource){
@@ -390,10 +392,9 @@ public class Scim2UserService implements Serializable {
     /**
      * Inserts a new user in LDAP based on the SCIM Resource passed
      * @param user A UserResource object with all info as received by the web service
-     * @return The new created user
      * @throws Exception
      */
-    public GluuCustomPerson createUser(UserResource user, String url) throws Exception {
+    public void createUser(UserResource user, String url) throws Exception {
 
         String userName=user.getUserName();
         log.info("Preparing to create user {}", userName);
@@ -409,16 +410,24 @@ public class Scim2UserService implements Serializable {
 
         log.info("Persisting user {}", userName);
         personService.addCustomObjectClass(gluuPerson);
-        personService.addPerson(gluuPerson);
 
-        user.getMeta().setLocation(location);
-        //We are ignoring the id value received (user.getId())
-        user.setId(gluuPerson.getInum());
+        if (externalScimService.isEnabled()){
+            externalScimService.executeScimCreateUserMethods(gluuPerson);
+            personService.addPerson(gluuPerson);
+            //Copy back to user the info from gluuPerson
+            transferAttributesToUserResource(gluuPerson, user, url);
+            externalScimService.executeScimPostCreateUserMethods(gluuPerson);
+        }
+        else {
+            personService.addPerson(gluuPerson);
+            user.getMeta().setLocation(location);
+            //We are ignoring the id value received (user.getId())
+            user.setId(gluuPerson.getInum());
+        }
 
-        return gluuPerson;
     }
 
-    public Pair<GluuCustomPerson, UserResource> updateUser(String id, UserResource user, String url) throws InvalidAttributeValueException {
+    public UserResource updateUser(String id, UserResource user, String url) throws InvalidAttributeValueException {
 
         GluuCustomPerson gluuPerson = personService.getPersonByInum(id);    //This is never null (see decorator involved)
         UserResource tmpUser=new UserResource();
@@ -429,20 +438,30 @@ public class Scim2UserService implements Serializable {
         tmpUser.getMeta().setLastModified(ISODateTimeFormat.dateTime().withZoneUTC().print(now));
 
         tmpUser=(UserResource) ScimResourceUtil.transferToResourceReplace(user, tmpUser, extService.getResourceExtensions(user.getClass()));
-        replacePersonInfo(gluuPerson, tmpUser);
+        replacePersonInfo(gluuPerson, tmpUser, url);
 
-        return new Pair<GluuCustomPerson, UserResource>(gluuPerson, tmpUser);
+        return tmpUser;
 
     }
 
-    public void replacePersonInfo(GluuCustomPerson gluuPerson, UserResource user){
+    public void replacePersonInfo(GluuCustomPerson gluuPerson, UserResource user, String url){
 
         transferAttributesToPerson(user, gluuPerson);
         writeCommonName(gluuPerson);
 
         log.debug("replacePersonInfo. Updating person info in LDAP");
         personService.addCustomObjectClass(gluuPerson);
-        personService.updatePerson(gluuPerson);
+
+        if (externalScimService.isEnabled()){
+            externalScimService.executeScimUpdateUserMethods(gluuPerson);
+            personService.updatePerson(gluuPerson);
+            //Copy back to user the info from gluuPerson
+            transferAttributesToUserResource(gluuPerson, user, url);
+            externalScimService.executeScimPostUpdateUserMethods(gluuPerson);
+        }
+        else {
+            personService.updatePerson(gluuPerson);
+        }
 
     }
 
@@ -454,7 +473,14 @@ public class Scim2UserService implements Serializable {
             serviceUtil.deleteUserFromGroup(gluuPerson, dn);
         }
         log.info("Removing user entry {}", dn);
+
+        if (externalScimService.isEnabled())
+            externalScimService.executeScimDeleteUserMethods(gluuPerson);
+
         personService.removePerson(gluuPerson);
+
+        if (externalScimService.isEnabled())
+            externalScimService.executeScimPostDeleteUserMethods(gluuPerson);
 
     }
 

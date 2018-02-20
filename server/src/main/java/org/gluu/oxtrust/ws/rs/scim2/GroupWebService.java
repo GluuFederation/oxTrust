@@ -31,7 +31,6 @@ import org.gluu.oxtrust.service.scim2.interceptor.RefAdjusted;
 import org.joda.time.format.ISODateTimeFormat;
 import org.xdi.ldap.model.SortOrder;
 import org.xdi.ldap.model.VirtualListViewResponse;
-import org.xdi.util.Pair;
 
 import java.net.URI;
 import java.util.List;
@@ -79,13 +78,7 @@ public class GroupWebService extends BaseScimWebService implements IGroupWebServ
         Response response;
         try {
             log.debug("Executing web service method. createGroup");
-            GluuGroup gluuGroup=scim2GroupService.createGroup(group, endpointUrl, userWebService.getEndpointUrl());
-
-            // For custom script: create group
-            if (externalScimService.isEnabled()) {
-                externalScimService.executeScimCreateGroupMethods(gluuGroup);
-            }
-
+            scim2GroupService.createGroup(group, endpointUrl, userWebService.getEndpointUrl());
             String json=resourceSerializer.serialize(group, attrsList, excludedAttrsList);
             response=Response.created(new URI(group.getMeta().getLocation())).entity(json).build();
         }
@@ -151,14 +144,7 @@ public class GroupWebService extends BaseScimWebService implements IGroupWebServ
         Response response;
         try {
             log.debug("Executing web service method. updateGroup");
-            Pair<GluuGroup, GroupResource> pair=scim2GroupService.updateGroup(id, group, endpointUrl, userWebService.getEndpointUrl());
-
-            // For custom script: update group
-            if (externalScimService.isEnabled()) {
-                externalScimService.executeScimUpdateGroupMethods(pair.getFirst());
-            }
-
-            GroupResource updatedResource=pair.getSecond();
+            GroupResource updatedResource=scim2GroupService.updateGroup(id, group, endpointUrl, userWebService.getEndpointUrl());
             String json=resourceSerializer.serialize(updatedResource, attrsList, excludedAttrsList);
             response=Response.ok(new URI(updatedResource.getMeta().getLocation())).entity(json).build();
         }
@@ -185,16 +171,8 @@ public class GroupWebService extends BaseScimWebService implements IGroupWebServ
         Response response;
         try {
             log.debug("Executing web service method. deleteGroup");
-            GluuGroup group=groupService.getGroupByInum(id);  //group cannot be null (check associated decorator method)
-
-            // For custom script: delete group. Execute before actual deletion
-            if (externalScimService.isEnabled()) {
-                externalScimService.executeScimDeleteGroupMethods(group);
-            }
-
-            log.info("Removing group and updating user's entries");
-            groupService.removeGroup(group);
-
+            GluuGroup gr=groupService.getGroupByInum(id);  //group cannot be null (check associated decorator method)
+            scim2GroupService.deleteGroup(gr);
             response=Response.noContent().build();
         }
         catch (Exception e){
@@ -308,12 +286,7 @@ public class GroupWebService extends BaseScimWebService implements IGroupWebServ
             group.getMeta().setLastModified(now);
 
             //Replaces the information found in gluuGroup with the contents of group
-            scim2GroupService.replaceGroupInfo(gluuGroup, group, usersUrl);
-
-            // For custom script: update group
-            if (externalScimService.isEnabled()) {
-                externalScimService.executeScimUpdateGroupMethods(gluuGroup);
-            }
+            scim2GroupService.replaceGroupInfo(gluuGroup, group, endpointUrl, usersUrl);
 
             String json=resourceSerializer.serialize(group, attrsList, excludedAttrsList);
             response=Response.ok(new URI(group.getMeta().getLocation())).entity(json).build();

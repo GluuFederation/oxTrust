@@ -24,7 +24,6 @@ import org.gluu.oxtrust.service.scim2.Scim2UserService;
 import org.joda.time.format.ISODateTimeFormat;
 import org.xdi.ldap.model.SortOrder;
 import org.xdi.ldap.model.VirtualListViewResponse;
-import org.xdi.util.Pair;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -80,12 +79,7 @@ public class UserWebService extends BaseScimWebService implements IUserWebServic
         Response response;
         try {
             log.debug("Executing web service method. createUser");
-            GluuCustomPerson person = scim2UserService.createUser(user, endpointUrl);
-
-            // For custom script: create user
-            if (externalScimService.isEnabled())
-                externalScimService.executeScimCreateUserMethods(person);
-
+            scim2UserService.createUser(user, endpointUrl);
             String json=resourceSerializer.serialize(user, attrsList, excludedAttrsList);
             response=Response.created(new URI(user.getMeta().getLocation())).entity(json).build();
         }
@@ -151,14 +145,7 @@ public class UserWebService extends BaseScimWebService implements IUserWebServic
         Response response;
         try {
             log.debug("Executing web service method. updateUser");
-            Pair<GluuCustomPerson, UserResource> pair=scim2UserService.updateUser(id, user, endpointUrl);
-
-            // For custom script: update user
-            if (externalScimService.isEnabled()) {
-                externalScimService.executeScimUpdateUserMethods(pair.getFirst());
-            }
-
-            UserResource updatedResource=pair.getSecond();
+            UserResource updatedResource=scim2UserService.updateUser(id, user, endpointUrl);
             String json=resourceSerializer.serialize(updatedResource, attrsList, excludedAttrsList);
             response=Response.ok(new URI(updatedResource.getMeta().getLocation())).entity(json).build();
         }
@@ -186,12 +173,6 @@ public class UserWebService extends BaseScimWebService implements IUserWebServic
         try {
             log.debug("Executing web service method. deleteUser");
             GluuCustomPerson person=personService.getPersonByInum(id);  //person cannot be null (check associated decorator method)
-
-            // For custom script: delete user. Execute before actual deletion
-            if (externalScimService.isEnabled()) {
-                externalScimService.executeScimDeleteUserMethods(person);
-            }
-
             scim2UserService.deleteUser(person);
             response=Response.noContent().build();
         }
@@ -305,12 +286,7 @@ public class UserWebService extends BaseScimWebService implements IUserWebServic
             user.getMeta().setLastModified(now);
 
             //Replaces the information found in person with the contents of user
-            scim2UserService.replacePersonInfo(person, user);
-
-            // For custom script: update user
-            if (externalScimService.isEnabled()) {
-                externalScimService.executeScimUpdateUserMethods(person);
-            }
+            scim2UserService.replacePersonInfo(person, user, endpointUrl);
 
             String json=resourceSerializer.serialize(user, attrsList, excludedAttrsList);
             response=Response.ok(new URI(user.getMeta().getLocation())).entity(json).build();
