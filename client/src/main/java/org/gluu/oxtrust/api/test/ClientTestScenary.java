@@ -27,6 +27,8 @@ public class ClientTestScenary {
     
     /**
      * Run tests.
+     * 
+     * @throws APITestException
      */
     public void run() throws APITestException {
         SamlTestScenary saml = new SamlTestScenary(client);

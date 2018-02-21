@@ -21,6 +21,8 @@ import javax.ws.rs.core.Response;
  * @author Dmitry Ognyannikov
  */
 public class AbstractClient<T> {
+    public static final int HTTP_OK = 200;
+    
     protected WebTarget webTarget;
     protected Client client;
     protected Class<T> entityClass;
@@ -77,7 +79,7 @@ public class AbstractClient<T> {
         
         int code = response.getStatusInfo().getStatusCode();
         response.close();
-        return code == 200;
+        return code == HTTP_OK;
     }
 
     public boolean delete(String id) throws ClientErrorException {
@@ -89,7 +91,7 @@ public class AbstractClient<T> {
         
         int code = response.getStatusInfo().getStatusCode();
         response.close();
-        return code == 200;
+        return code == HTTP_OK;
     }
 
     public void close() {

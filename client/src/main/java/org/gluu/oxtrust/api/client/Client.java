@@ -22,6 +22,8 @@ public class Client {
         this.baseURI = baseURI;
         
         //TODO: login
+        
+        trustRelationshipClient = new TrustRelationshipClient(baseURI);
     }
 
     /**

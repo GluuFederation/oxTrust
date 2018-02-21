@@ -35,6 +35,8 @@ public class SamlTestScenary {
     
     /**
      * Run tests.
+     * 
+     * @throws APITestException
      */
     public void run() throws APITestException {
         TrustRelationshipClient samlClient = client.getTrustRelationshipClient();
