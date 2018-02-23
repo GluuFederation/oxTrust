@@ -6,7 +6,9 @@
 package org.gluu.oxtrust.api.client;
 
 
-import java.util.logging.Logger;
+import java.text.MessageFormat;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import org.glassfish.jersey.filter.LoggingFilter;
@@ -26,6 +28,9 @@ import org.glassfish.jersey.message.GZipEncoder;
  * @author Dmitry Ognyannikov
  */
 public class AbstractClient<T> {
+
+    private static final Logger logger = LogManager.getLogger(AbstractClient.class);
+    
     public static final int HTTP_OK = 200;
     
     protected WebTarget webTarget;
@@ -37,7 +42,7 @@ public class AbstractClient<T> {
         client = ClientBuilder.newBuilder().sslContext(sslContext).hostnameVerifier(verifier)
         .register(new EncodingFeature("gzip", GZipEncoder.class))
         .build();
-        client.register(new LoggingFilter(Logger.global, true));
+        client.register(new LoggingFilter(java.util.logging.Logger.global, true));
         webTarget = client.target(baseURI).path(path);
     }
 
@@ -49,9 +54,9 @@ public class AbstractClient<T> {
      * @throws ClientErrorException 
      */
     public T read(String id) throws ClientErrorException {
-        WebTarget resource = webTarget.path(java.text.MessageFormat.format("read/{0}", new Object[]{id}));
-        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_JSON)
-                .accept(javax.ws.rs.core.MediaType.APPLICATION_JSON)
+        WebTarget resource = webTarget.path(MessageFormat.format("read/{0}", new Object[]{id}));
+        return resource.request(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
                 .get(entityClass);
     }
 
@@ -78,11 +83,9 @@ public class AbstractClient<T> {
     }
 
     public boolean update(T requestEntity, String id) throws ClientErrorException {
-        WebTarget resource = webTarget.path(java.text.MessageFormat.format("update/{0}", new Object[]{id}));
+        WebTarget resource = webTarget.path(MessageFormat.format("update/{0}", new Object[]{id}));
         
         Response response = resource.request().put(Entity.entity(requestEntity, MediaType.APPLICATION_JSON));
-        
-        //Response response = webTarget.path("update").request().put(Entity.entity(requestEntity, MediaType.APPLICATION_JSON));
         
         int code = response.getStatusInfo().getStatusCode();
         response.close();
@@ -90,8 +93,8 @@ public class AbstractClient<T> {
     }
 
     public boolean delete(String id) throws ClientErrorException {
-        WebTarget resource = webTarget.path(java.text.MessageFormat.format("delete/{0}", new Object[]{id}));
-        Response response = resource.request(javax.ws.rs.core.MediaType.TEXT_PLAIN).delete();
+        WebTarget resource = webTarget.path(MessageFormat.format("delete/{0}", new Object[]{id}));
+        Response response = resource.request(MediaType.TEXT_PLAIN).delete();
         
         //System.out.println("response phrase: " + response.getStatusInfo().getReasonPhrase());
         //System.out.println("response statusCode: " + response.getStatusInfo().getStatusCode());

@@ -1075,6 +1075,7 @@ public class Shibboleth3ConfService implements Serializable {
 			ArrayList<SubversionFile> obsoleteMetadata = new ArrayList<SubversionFile>();
 
 			for (File metadata : metadataDir.listFiles(new FileFilter() {
+                                @Override
 				public boolean accept(File pathname) {
 					return pathname.isFile();
 				}
@@ -1123,6 +1124,7 @@ public class Shibboleth3ConfService implements Serializable {
 			ArrayList<SubversionFile> obsoleteMetadata = new ArrayList<SubversionFile>();
 
 			for (File credential : credentialsDir.listFiles(new FileFilter() {
+                                @Override
 				public boolean accept(File pathname) {
 					return pathname.isFile();
 				}
@@ -1152,7 +1154,7 @@ public class Shibboleth3ConfService implements Serializable {
 				try {
 					profileConfigurationService.parseProfileConfigurations(trust);
 				} catch (Exception e) {
-					e.printStackTrace();
+                                        log.error("parseProfileConfigurations exception", e);
 					return false;
 				}
 
@@ -1174,7 +1176,7 @@ public class Shibboleth3ConfService implements Serializable {
 				try {
 					filterService.parseFilters(trust);
 				} catch (Exception e) {
-					e.printStackTrace();
+					log.error("parseFilters exception", e);
 					return false;
 				}
 				if (trust.getMetadataFilters().get("signatureValidation") != null) {

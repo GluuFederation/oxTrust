@@ -32,6 +32,8 @@ public class TestMain {
     
     /**
      * Init tests.
+     * 
+     * @throws IOException
      */
     public void init() throws IOException {
         final String confFile = "conf/configuration.properties";
@@ -48,7 +50,7 @@ public class TestMain {
      * 
      * @throws APITestException
      */
-    public void run() throws APITestException {
+    public void run() throws Exception {
         Client client = new Client(baseURI, login, password);
         
         ClientTestScenary clientScenary = new ClientTestScenary(client);

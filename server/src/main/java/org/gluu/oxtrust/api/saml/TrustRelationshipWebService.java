@@ -294,7 +294,7 @@ public class TrustRelationshipWebService {
     }
     
     @GET
-    @Path("/get_all_saml_trust_relationships")
+    @Path("/list_all_saml_trust_relationships")
     @Produces(MediaType.APPLICATION_JSON)
     @ApiResponses(value = {
 		@ApiResponse(code = 200, message = "OK", response = SAMLTrustRelationshipShort.class),

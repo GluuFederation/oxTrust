@@ -24,7 +24,7 @@ public class Client {
     
     private final String baseURI;
     
-    private TrustRelationshipClient trustRelationshipClient;
+    private final TrustRelationshipClient trustRelationshipClient;
     
     private final SSLContext sslContext;
     

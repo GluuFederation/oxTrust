@@ -9,6 +9,7 @@ import java.util.List;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.gluu.oxtrust.api.client.AbstractClient;
@@ -32,8 +33,50 @@ public class TrustRelationshipClient extends AbstractClient<GluuSAMLTrustRelatio
     
     public List<SAMLTrustRelationshipShort> list() {
         WebTarget resource = webTarget.path("list");
-        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_JSON)
-                .accept(javax.ws.rs.core.MediaType.APPLICATION_JSON)
+        return resource.request(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .get(List.class);
+    }
+    
+    public List<SAMLTrustRelationshipShort> listAllFederations() {
+        WebTarget resource = webTarget.path("list_all_federations");
+        return resource.request(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .get(List.class);
+    }
+    
+    public List<SAMLTrustRelationshipShort> listAllActiveTrustRelationships() {
+        WebTarget resource = webTarget.path("list_all_active_trust_relationships");
+        return resource.request(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .get(List.class);
+    }
+    
+    public List<SAMLTrustRelationshipShort> listAllOtherFederations() {
+        WebTarget resource = webTarget.path("list_all_other_federations");
+        return resource.request(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .get(List.class);
+    }
+    
+    public List<SAMLTrustRelationshipShort> listAllSAMLTrustRelationships() {
+        WebTarget resource = webTarget.path("list_all_saml_trust_relationships");
+        return resource.request(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .get(List.class);
+    }
+    
+    public List<SAMLTrustRelationshipShort> listDeconstructedTrustRelationships() {
+        WebTarget resource = webTarget.path("list_deconstructed_trust_relationships");
+        return resource.request(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .get(List.class);
+    }
+    
+    public List<SAMLTrustRelationshipShort> searchTrustRelationships(String pattern, int sizeLimit) {
+        WebTarget resource = webTarget.path(java.text.MessageFormat.format("search_trust_relationships/{0}", new Object[]{pattern}));
+        return resource.request(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
                 .get(List.class);
     }
     
