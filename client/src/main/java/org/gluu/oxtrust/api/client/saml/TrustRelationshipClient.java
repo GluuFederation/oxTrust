@@ -6,6 +6,8 @@
 package org.gluu.oxtrust.api.client.saml;
 
 import java.util.List;
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLContext;
 import javax.ws.rs.client.WebTarget;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -22,10 +24,10 @@ public class TrustRelationshipClient extends AbstractClient<GluuSAMLTrustRelatio
 
     private static final Logger logger = LogManager.getLogger(TrustRelationshipClient.class);
     
-    private static final String PATH = "/api/saml/tr"; 
+    private static final String PATH = "/restv1/api/saml/tr/"; 
     
-    public TrustRelationshipClient(String baseURI) {
-        super(GluuSAMLTrustRelationship.class, baseURI, PATH);
+    public TrustRelationshipClient(String baseURI, SSLContext sslContext, HostnameVerifier verifier) {
+        super(GluuSAMLTrustRelationship.class, baseURI, PATH, sslContext, verifier);
     }
     
     public List<SAMLTrustRelationshipShort> list() {

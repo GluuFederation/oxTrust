@@ -7,13 +7,18 @@ package org.gluu.oxtrust.api.client;
 
 
 import java.util.logging.Logger;
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLContext;
 import org.glassfish.jersey.filter.LoggingFilter;
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import org.glassfish.jersey.client.filter.EncodingFeature;
+import org.glassfish.jersey.message.GZipEncoder;
 
 /**
  * REST webservice CRUD template.
@@ -27,9 +32,11 @@ public class AbstractClient<T> {
     protected Client client;
     protected Class<T> entityClass;
     
-    public AbstractClient(Class<T> entityClass, String baseURI, String path) {
+    public AbstractClient(Class<T> entityClass, String baseURI, String path, SSLContext sslContext, HostnameVerifier verifier) {
         this.entityClass = entityClass;
-        client = javax.ws.rs.client.ClientBuilder.newClient();
+        client = ClientBuilder.newBuilder().sslContext(sslContext).hostnameVerifier(verifier)
+        .register(new EncodingFeature("gzip", GZipEncoder.class))
+        .build();
         client.register(new LoggingFilter(Logger.global, true));
         webTarget = client.target(baseURI).path(path);
     }
