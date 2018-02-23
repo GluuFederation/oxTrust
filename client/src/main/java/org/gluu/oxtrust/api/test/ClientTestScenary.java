@@ -30,6 +30,7 @@ public class ClientTestScenary {
      * Run tests.
      * 
      * @throws APITestException
+     * @throws OxTrustAPIException
      */
     public void run() throws APITestException, OxTrustAPIException {
         SamlTestScenary saml = new SamlTestScenary(client);

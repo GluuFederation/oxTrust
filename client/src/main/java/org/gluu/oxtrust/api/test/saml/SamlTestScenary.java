@@ -38,6 +38,7 @@ public class SamlTestScenary {
      * Run tests.
      * 
      * @throws APITestException
+     * @throws OxTrustAPIException
      */
     public void run() throws APITestException, OxTrustAPIException {
         TrustRelationshipClient samlClient = client.getTrustRelationshipClient();
