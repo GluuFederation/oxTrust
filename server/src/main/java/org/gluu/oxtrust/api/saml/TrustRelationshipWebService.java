@@ -75,6 +75,7 @@ import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 import com.wordnik.swagger.annotations.Authorization;
 import java.util.ArrayList;
+import javax.validation.constraints.NotNull;
 
 /**
  * WS endpoint for TrustRelationship actions.
@@ -129,7 +130,7 @@ public class TrustRelationshipWebService {
     @ApiResponses(value = {
 		@ApiResponse(code = 200, message = "OK", response = GluuSAMLTrustRelationship.class),
 		@ApiResponse(code = 500, message = "Server error") })
-    public String read(@PathParam("inum") String inum, @Context HttpServletResponse response) {
+    public String read(@PathParam("inum") @NotNull String inum, @Context HttpServletResponse response) {
         logger.trace("Read Trust Relationship");
         try {
             GluuSAMLTrustRelationship trustRelationship = trustService.getRelationshipByInum(inum);
@@ -172,7 +173,7 @@ public class TrustRelationshipWebService {
     @ApiResponses(value = {
 		@ApiResponse(code = 200, message = "OK"),
 		@ApiResponse(code = 500, message = "Server error") })
-    public void update(@PathParam("inum") String inum, GluuSAMLTrustRelationship trustRelationship, @Context HttpServletResponse response) {
+    public void update(@PathParam("inum") @NotNull String inum, GluuSAMLTrustRelationship trustRelationship, @Context HttpServletResponse response) {
         logger.trace("Update Trust Relationship");
         try {
             String dn = trustService.getDnForTrustRelationShip(inum);
@@ -191,7 +192,7 @@ public class TrustRelationshipWebService {
     @ApiResponses(value = {
 		@ApiResponse(code = 200, message = "OK"),
 		@ApiResponse(code = 500, message = "Server error") })
-    public void delete(@PathParam("inum") String inum, @Context HttpServletResponse response) {
+    public void delete(@PathParam("inum") @NotNull String inum, @Context HttpServletResponse response) {
         logger.trace("Delete Trust Relationship");
         try {
             GluuSAMLTrustRelationship trustRelationship = trustService.getRelationshipByInum(inum);
@@ -281,7 +282,7 @@ public class TrustRelationshipWebService {
     @ApiResponses(value = {
 		@ApiResponse(code = 200, message = "OK", response = SAMLTrustRelationshipShort.class),
 		@ApiResponse(code = 500, message = "Server error") })
-    public String searchTrustRelationships(@PathParam("pattern") String pattern, @PathParam("size_limit") int sizeLimit, @Context HttpServletResponse response) {
+    public String searchTrustRelationships(@PathParam("pattern") @NotNull String pattern, @PathParam("size_limit") int sizeLimit, @Context HttpServletResponse response) {
         try {
             List<SAMLTrustRelationshipShort> trustRelationships = convertTRtoTRShort(trustService.searchSAMLTrustRelationships(pattern, sizeLimit));
             //convert to JSON

@@ -6,12 +6,17 @@
 
 package org.gluu.oxtrust.model;
 
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.gluu.persist.model.base.GluuBoolean;
 import org.xdi.model.GluuAttribute;
@@ -22,6 +27,8 @@ import org.xdi.model.GluuAttributeDataType;
  * 
  * @author Yuriy Movchan Date: 10.07.2010
  */
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 public class GluuCustomAttribute implements Serializable, Comparable<GluuCustomAttribute> {
 
 	private static final long serialVersionUID = 1468440094325406153L;
@@ -133,10 +140,6 @@ public class GluuCustomAttribute implements Serializable, Comparable<GluuCustomA
 		return values;
 	}
 
-	public void setValues(String[] values) {
-		this.values = values;
-	}
-
 	public GluuBoolean[] getBooleanValues() {
 		this.usedBooleanValues = true; // Remove after adding separate type for status
 
@@ -147,6 +150,11 @@ public class GluuCustomAttribute implements Serializable, Comparable<GluuCustomA
 		this.usedBooleanValues = true; // Remove after adding separate type for status
 
 		this.booleanValues = booleanValues;
+	}
+        
+        @JsonSetter(nulls = Nulls.AS_EMPTY)
+	public void setValues(String[] values) {
+		this.values = values;
 	}
 
 	public void setValues(Collection<String> values) {
