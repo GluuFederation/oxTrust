@@ -37,12 +37,10 @@ public class AbstractClient<T> {
     protected Client client;
     protected Class<T> entityClass;
     
-    public AbstractClient(Class<T> entityClass, String baseURI, String path, SSLContext sslContext, HostnameVerifier verifier) {
+    public AbstractClient(Class<T> entityClass, Client client, String baseURI, String path) {
         this.entityClass = entityClass;
-        client = ClientBuilder.newBuilder().sslContext(sslContext).hostnameVerifier(verifier)
-        .register(new EncodingFeature("gzip", GZipEncoder.class))
-        .build();
-        client.register(new LoggingFilter(java.util.logging.Logger.global, true));
+        this.client = client;
+        
         webTarget = client.target(baseURI).path(path);
     }
 
@@ -65,18 +63,15 @@ public class AbstractClient<T> {
      * 
      * @param requestEntity
      * @return ID of created entity (inum bu default)
-     * @throws ClientErrorException 
+     * @throws ClientErrorException
+     * @throws OxTrustAPIException
      */
-    public String create(T requestEntity) throws ClientErrorException {
-//        Entity<T> entity = Entity.entity(requestEntity, MediaType.APPLICATION_JSON);
-//        System.out.println("entity: " + entity);
-//        Response response = client.target("http://localhost:8080/ws/user/create")
-//             .request()
-//             .post(entity);
-        
+    public String create(T requestEntity) throws ClientErrorException, OxTrustAPIException {
         Response response = webTarget.path("create").request().post(Entity.entity(requestEntity, MediaType.APPLICATION_JSON));
+        if (response.getStatus() != HTTP_OK) {
+            throw new OxTrustAPIException("Response error. HTTP code: " + response.getStatus() + ", reason phrase: " + response.getStatusInfo().getReasonPhrase(), response.getStatus());
+        }
         String id = response.readEntity(String.class);
-        System.out.println("response: " + response.getStatusInfo().getReasonPhrase());
         response.close();
         
         return id;
@@ -87,7 +82,7 @@ public class AbstractClient<T> {
         
         Response response = resource.request().put(Entity.entity(requestEntity, MediaType.APPLICATION_JSON));
         
-        int code = response.getStatusInfo().getStatusCode();
+        int code = response.getStatus();
         response.close();
         return code == HTTP_OK;
     }
@@ -96,10 +91,7 @@ public class AbstractClient<T> {
         WebTarget resource = webTarget.path(MessageFormat.format("delete/{0}", new Object[]{id}));
         Response response = resource.request(MediaType.TEXT_PLAIN).delete();
         
-        //System.out.println("response phrase: " + response.getStatusInfo().getReasonPhrase());
-        //System.out.println("response statusCode: " + response.getStatusInfo().getStatusCode());
-        
-        int code = response.getStatusInfo().getStatusCode();
+        int code = response.getStatus();
         response.close();
         return code == HTTP_OK;
     }

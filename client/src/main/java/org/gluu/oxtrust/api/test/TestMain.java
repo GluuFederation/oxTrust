@@ -10,7 +10,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.gluu.oxtrust.api.client.Client;
+import org.gluu.oxtrust.api.client.OxTrustClient;
+import org.gluu.oxtrust.api.client.OxTrustAPIException;
 
 /**
  * Test oxTrust API.
@@ -51,7 +52,7 @@ public class TestMain {
      * @throws APITestException
      */
     public void run() throws Exception {
-        Client client = new Client(baseURI, login, password);
+        OxTrustClient client = new OxTrustClient(baseURI, login, password);
         
         ClientTestScenary clientScenary = new ClientTestScenary(client);
         clientScenary.run();
@@ -64,6 +65,10 @@ public class TestMain {
             test.run();
         } catch (APITestException e) {
             logger.error("Some test failured with exception", e);
+            // report failure
+            System.exit(1);
+        } catch (OxTrustAPIException e) {
+            logger.error("Some oxTrust API call failured with exception", e);
             // report failure
             System.exit(1);
         } catch (Throwable t) {

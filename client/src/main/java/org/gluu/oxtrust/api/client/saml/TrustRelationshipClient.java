@@ -8,6 +8,7 @@ package org.gluu.oxtrust.api.client.saml;
 import java.util.List;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
+import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import org.apache.logging.log4j.LogManager;
@@ -25,10 +26,10 @@ public class TrustRelationshipClient extends AbstractClient<GluuSAMLTrustRelatio
 
     private static final Logger logger = LogManager.getLogger(TrustRelationshipClient.class);
     
-    private static final String PATH = "/restv1/api/saml/tr/"; 
+    private static final String PATH = "/restv1/api/saml/tr/";
     
-    public TrustRelationshipClient(String baseURI, SSLContext sslContext, HostnameVerifier verifier) {
-        super(GluuSAMLTrustRelationship.class, baseURI, PATH, sslContext, verifier);
+    public TrustRelationshipClient(Client client, String baseURI) {
+        super(GluuSAMLTrustRelationship.class, client, baseURI, PATH);
     }
     
     public List<SAMLTrustRelationshipShort> list() {
@@ -74,7 +75,7 @@ public class TrustRelationshipClient extends AbstractClient<GluuSAMLTrustRelatio
     }
     
     public List<SAMLTrustRelationshipShort> searchTrustRelationships(String pattern, int sizeLimit) {
-        WebTarget resource = webTarget.path(java.text.MessageFormat.format("search_trust_relationships/{0}", new Object[]{pattern}));
+        WebTarget resource = webTarget.path("search_trust_relationships").queryParam("pattern", pattern).queryParam("size_limit", sizeLimit);
         return resource.request(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .get(List.class);

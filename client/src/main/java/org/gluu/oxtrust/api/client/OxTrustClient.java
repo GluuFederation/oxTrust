@@ -13,6 +13,11 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import org.glassfish.jersey.client.filter.EncodingFeature;
+import org.glassfish.jersey.filter.LoggingFilter;
+import org.glassfish.jersey.message.GZipEncoder;
 import org.gluu.oxtrust.api.client.saml.TrustRelationshipClient;
 
 /**
@@ -20,7 +25,7 @@ import org.gluu.oxtrust.api.client.saml.TrustRelationshipClient;
  * 
  * @author Dmitry Ognyannikov
  */
-public class Client {
+public class OxTrustClient {
     
     private final String baseURI;
     
@@ -30,13 +35,20 @@ public class Client {
     
     private final HostnameVerifier verifier;
     
-    public Client(String baseURI, String user, String password) throws NoSuchAlgorithmException, KeyManagementException {
+    private final Client client;
+    
+    public OxTrustClient(String baseURI, String user, String password) throws NoSuchAlgorithmException, KeyManagementException {
         this.baseURI = baseURI;
         sslContext = initSSLContext();
         verifier = initHostnameVerifier();
+        client = ClientBuilder.newBuilder().sslContext(sslContext).hostnameVerifier(verifier)
+        .register(new EncodingFeature("gzip", GZipEncoder.class))
+        .build();
+        client.register(new LoggingFilter(java.util.logging.Logger.global, true));
+        
         //TODO: login
         
-        trustRelationshipClient = new TrustRelationshipClient(baseURI, sslContext, verifier);
+        trustRelationshipClient = new TrustRelationshipClient(client, baseURI);
         
     }
         
