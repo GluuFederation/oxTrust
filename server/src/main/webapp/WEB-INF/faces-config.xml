@@ -14,7 +14,7 @@
             <supported-locale>tr</supported-locale>
         </locale-config>
         <resource-bundle>
-            <base-name>org.gluu.oxtrust.i18n.Text</base-name>
+            <base-name>org.gluu.oxtrust.i18n.CustomResourceBundle</base-name>
             <var>msg</var>
         </resource-bundle>
     </application>
