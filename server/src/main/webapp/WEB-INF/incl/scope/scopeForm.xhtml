@@ -9,6 +9,15 @@
     xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
     xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
     xmlns:gluufn="http://www.gluu.org/jsf/functions">
+    <style type="text/css">
+        .odd {
+            background-color: #ddd;
+        }
+
+        .even {
+            background-color: #eee;
+        }
+   </style>
 
     <h:form id="scopeForm">
      <div class="row">
@@ -53,15 +62,17 @@
 		            <ox:decorate id="claims" label="#{msg['scope.claims']}">
 		                <h:panelGroup id="selectedClaimsId">
 		                    <h:panelGroup>
-		                        <a4j:repeat value="#{_scopeAction.claims}" rowKeyVar="_claimIdx" var="_claim">
+		                        <a4j:repeat value="#{_scopeAction.claims}" rowKeyVar="_claimIdx" var="_claim" iterationStatusVar="loop">
+                                                <div class="row-fluid">
+                                                <div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
 		                            <h:outputText value="#{empty _claim.displayName ? _claim.displayName : _claim.displayName}" />
 		                            <h:outputText value="&#160;" />
-		                            <div class="row-fluid">
+		                            
 		                                 <div class="span6 pull-right" >
 		                            
 		                            <a4j:commandLink styleClass="glyphicon glyphicon-remove" style="margin-top:-20px;" action="#{_scopeAction.removeClaim(_claim.inum)}" execute="@this" render="selectedClaimsId" eventsQueue="scopeQueue">
 		                               <!--   <h:graphicImage value="/img/remove.gif" />-->
-		                            </a4j:commandLink></div></div>
+		                            </a4j:commandLink></div></div></div>
 		                            <br />
 		                        </a4j:repeat>
 		                      
