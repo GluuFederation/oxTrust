@@ -56,7 +56,7 @@ public class ExtensionField {
         Object value=null;
         switch (field.getType()){
             case STRING:
-            case PHOTO:
+            case BINARY:
                 if (val instanceof String)
                     value = val;
                 break;
@@ -95,7 +95,7 @@ public class ExtensionField {
         Object value=null;  //In practice value will never end up being null
         switch (field.getType()){
             case STRING:
-            case PHOTO:
+            case BINARY:
                 value = val;
                 break;
             case DATE:
@@ -137,7 +137,7 @@ public class ExtensionField {
         switch (field.getType()) {
             case NUMERIC:
             case STRING:
-            case PHOTO:
+            case BINARY:
                 value=val.toString();
                 break;
             case DATE:
@@ -163,7 +163,7 @@ public class ExtensionField {
 
         Type attrType=null;
         switch (type) {
-            case PHOTO:
+            case BINARY:
                 attrType = Type.REFERENCE;
                 break;
             case STRING:
