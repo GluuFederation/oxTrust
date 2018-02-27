@@ -201,8 +201,9 @@ public class GroupWebService extends BaseScimWebService implements IGroupWebServ
         Response response;
         try {
             log.debug("Executing web service method. searchGroups");
-
             VirtualListViewResponse vlv = new VirtualListViewResponse();
+
+            sortBy=translateSortByAttribute(GroupResource.class, sortBy);
             List<BaseScimResource> resources = scim2GroupService.searchGroups(filter, sortBy, SortOrder.getByValue(sortOrder),
                     startIndex, count, vlv, endpointUrl, userWebService.getEndpointUrl(), getMaxCount());
 

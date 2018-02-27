@@ -11,13 +11,13 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.module.SimpleModule;
 import org.gluu.oxtrust.model.exception.SCIMException;
 import org.gluu.oxtrust.model.scim2.*;
-import org.gluu.oxtrust.model.scim2.extensions.Extension;
 import org.gluu.oxtrust.model.scim2.patch.PatchOperation;
 import org.gluu.oxtrust.model.scim2.patch.PatchOperationType;
 import org.gluu.oxtrust.model.scim2.patch.PatchRequest;
 import org.gluu.oxtrust.model.scim2.util.IntrospectUtil;
 import org.gluu.oxtrust.model.scim2.util.ResourceValidator;
 import org.gluu.oxtrust.model.scim2.util.ScimResourceUtil;
+import org.gluu.oxtrust.service.antlr.scimFilter.util.FilterUtil;
 import org.gluu.oxtrust.service.scim2.ExtensionService;
 import org.gluu.oxtrust.service.scim2.serialization.ListResponseJsonSerializer;
 import org.gluu.oxtrust.service.scim2.serialization.ScimResourceSerializer;
@@ -95,22 +95,6 @@ public class BaseScimWebService {
         return (values==null || values.size()==0) ? null : values.get(0);
     }
 
-    protected boolean isAttributeRecognized(Class<? extends BaseScimResource> cls, String attribute){
-
-        boolean valid;
-
-        Extension ext=extService.extensionOfAttribute(cls, attribute);
-        valid=ext!=null;
-
-        if (!valid) {
-            attribute = ScimResourceUtil.stripDefaultSchema(cls, attribute);
-            Field f= IntrospectUtil.findFieldFromPath(cls, attribute);
-            valid= f!=null;
-        }
-        return valid;
-
-    }
-
     protected void assignMetaInformation(BaseScimResource resource){
 
         //Generate some meta information (this replaces the info client passed in the request)
@@ -145,8 +129,38 @@ public class BaseScimWebService {
 
     }
 
+    //Transform scim attribute to LDAP attribute
+    String translateSortByAttribute(Class<? extends BaseScimResource> cls, String sortBy) {
+
+        String type=ScimResourceUtil.getType(cls);
+        if (StringUtils.isEmpty(sortBy) || type==null)
+            sortBy=null;
+        else {
+            if (extService.extensionOfAttribute(cls, sortBy)==null) {   //It's not a custom attribute...
+
+                sortBy=ScimResourceUtil.stripDefaultSchema(cls, sortBy);
+                Field f=IntrospectUtil.findFieldFromPath(cls, sortBy);
+
+                if (f==null){   //Not recognized!
+                    log.warn("SortBy parameter value '{}' was not recognized as a SCIM attribute for resource {} - sortBy will be ignored.", sortBy, type);
+                    sortBy=null;
+                    //return getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.INVALID_PATH, "sortBy parameter value not recognized");
+                }
+                else {
+                    sortBy = FilterUtil.getLdapAttributeOfResourceAttribute(sortBy, cls).getFirst();
+                    if (sortBy==null)
+                        log.warn("There is no LDAP attribute mapping to sortBy attribute provided - sortBy will be ignored.");
+                }
+            }
+            else
+                sortBy = sortBy.substring(sortBy.lastIndexOf(":")+1);
+        }
+        return sortBy;
+
+    }
+
     protected Response prepareSearchRequest(List<String> schemas, String filter, String sortBy, String sortOrder, Integer startIndex,
-                                         Integer count, String attrsList, String excludedAttrsList, SearchRequest request, String sortByDefault){
+                                         Integer count, String attrsList, String excludedAttrsList, SearchRequest request){
 
         Response response=null;
 
@@ -166,7 +180,7 @@ public class BaseScimWebService {
                 request.setAttributes(attrsList);
                 request.setExcludedAttributes(excludedAttrsList);
                 request.setFilter(filter);
-                request.setSortBy(StringUtils.isEmpty(sortBy) ? sortByDefault : sortBy);
+                request.setSortBy(sortBy);
                 request.setSortOrder(sortOrder);
                 request.setStartIndex(startIndex);
                 request.setCount(count);

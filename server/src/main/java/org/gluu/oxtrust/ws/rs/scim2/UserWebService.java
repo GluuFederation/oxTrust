@@ -203,8 +203,9 @@ public class UserWebService extends BaseScimWebService implements IUserWebServic
         Response response;
         try {
             log.debug("Executing web service method. searchUsers");
-
             VirtualListViewResponse vlv = new VirtualListViewResponse();
+
+            sortBy=translateSortByAttribute(UserResource.class, sortBy);
             List<BaseScimResource> resources = scim2UserService.searchUsers(filter, sortBy, SortOrder.getByValue(sortOrder),
                     startIndex, count, vlv, endpointUrl, getMaxCount());
 
