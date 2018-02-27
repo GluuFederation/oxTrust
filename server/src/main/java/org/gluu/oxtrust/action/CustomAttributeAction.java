@@ -544,7 +544,7 @@ public class CustomAttributeAction implements Serializable {
 
 	public void deletePhotos() {
 		for (GluuCustomAttribute customAttribute : this.customAttributes) {
-			if (GluuAttributeDataType.PHOTO.equals(customAttribute.getMetadata().getDataType())) {
+			if (GluuAttributeDataType.BINARY.equals(customAttribute.getMetadata().getDataType())) {
 				removePhoto(customAttribute.getMetadata().getInum());
 			}
 		}
