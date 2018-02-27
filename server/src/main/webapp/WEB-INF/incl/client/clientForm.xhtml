@@ -320,7 +320,6 @@
                                                 <div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
                                                     <h:outputText value="#{empty _uri ? _uri : _uri}"/>
                                                     <h:outputText value="&#160;"/>
-                                                    <div class="row-fluid">
                                                         <div class="span6 pull-right">
                                                             <a4j:commandLink styleClass="glyphicon glyphicon-remove"
                                                                              style="margin-top:-20px;"
@@ -329,7 +328,7 @@
                                                                              render="selectedLoginURIsId"
                                                                              eventsQueue="clientQueue">
                                                                 <!--  <h:graphicImage value="/img/remove.gif" /> -->
-                                                            </a4j:commandLink></div>
+                                                            </a4j:commandLink>
                                                     </div>
                                                     <br/>
                                                 </div>
@@ -344,10 +343,12 @@
                                         <h:panelGroup columns="1" width="100%" border="0" cellpadding="0"
                                                       cellspacing="0">
                                             <a4j:repeat value="#{_clientAction.logoutUris}" rowKeyVar="_urisIdx"
-                                                        var="_uri">
+                                                        var="_uri" iterationStatusVar="loop">
+                                                <div class="row-fluid">
+                                                <div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
                                                 <h:outputText value="#{empty _uri ? _uri : _uri}"/>
                                                 <h:outputText value="&#160;"/>
-                                                <div class="row-fluid">
+                                                <!-- <div class="row-fluid"> -->
                                                     <div class="span6 pull-right">
                                                         <a4j:commandLink styleClass="glyphicon glyphicon-remove"
                                                                          style="margin-top:-20px;"
@@ -355,7 +356,7 @@
                                                                          execute="@this" render="selectedLogoutURIsId"
                                                                          eventsQueue="clientQueue">
                                                             <!-- <h:graphicImage value="/img/remove.gif" /> -->
-                                                        </a4j:commandLink></div>
+                                                        </a4j:commandLink></div></div>
                                                 </div>
                                                 <br/>
                                             </a4j:repeat>
@@ -371,10 +372,12 @@
                                         <h:panelGroup columns="1" width="100%" border="0" cellpadding="0"
                                                       cellspacing="0">
                                             <a4j:repeat value="#{_clientAction.claimRedirectURIList}" rowKeyVar="_urisIdx"
-                                                        var="_uri">
+                                                        var="_uri" iterationStatusVar="loop">
+                                                <div class="row-fluid">
+                                                <div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
                                                 <h:outputText value="#{empty _uri ? _uri : _uri}"/>
                                                 <h:outputText value="&#160;"/>
-                                                <div class="row-fluid">
+                                                
                                                     <div class="span6 pull-right">
                                                         <a4j:commandLink styleClass="glyphicon glyphicon-remove"
                                                                          style="margin-top:-20px;"
@@ -382,7 +385,7 @@
                                                                          execute="@this" render="selectedClaimRedirectURIIsId"
                                                                          eventsQueue="clientQueue">
                                                             <!-- <h:graphicImage value="/img/remove.gif" /> -->
-                                                        </a4j:commandLink></div>
+                                                        </a4j:commandLink></div></div>
                                                 </div>
                                                 <br/>
                                             </a4j:repeat>
@@ -397,12 +400,12 @@
                                     <h:panelGroup id="selectedScopesId">
                                         <h:panelGroup>
                                             <a4j:repeat value="#{_clientAction.scopes}" rowKeyVar="_scopeIdx"
-                                                        var="_scope">
+                                                        var="_scope" iterationStatusVar="loop">
+                                                <div class="row-fluid">
+                                                <div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
                                                 <h:outputText
                                                         value="#{empty _scope.displayName ? _scope.displayName : _scope.displayName}"/>
                                                 <h:outputText value="&#160;"/>
-
-                                                <div class="row-fluid">
                                                     <div class="span6 pull-right">
                                                         <a4j:commandLink styleClass="glyphicon glyphicon-remove"
                                                                          style="margin-top:-20px;"
@@ -411,7 +414,7 @@
                                                                          eventsQueue="clientQueue">
                                                             <!--   <h:graphicImage value="/img/remove.gif" />-->
 
-                                                        </a4j:commandLink></div>
+                                                        </a4j:commandLink></div></div>
                                                 </div>
                                                 <br/>
                                             </a4j:repeat>
@@ -424,10 +427,11 @@
                                     <h:panelGroup id="selectedResponseTypesId">
                                         <h:panelGroup>
                                             <a4j:repeat value="#{_clientAction.responseTypes}"
-                                                        rowKeyVar="_responseTypeIdx" var="_responseType">
+                                                        rowKeyVar="_responseTypeIdx" var="_responseType" iterationStatusVar="loop">
+                                                <div class="row-fluid">
+                                                <div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
                                                 <h:outputText value="#{_responseType.value}"/>
                                                 <h:outputText value="&#160;"/>
-                                                <div class="row-fluid">
                                                     <div class="span6 pull-right">
                                                         <a4j:commandLink styleClass="glyphicon glyphicon-remove"
                                                                          style="margin-top:-20px;"
@@ -437,7 +441,7 @@
                                                                          eventsQueue="clientQueue">
                                                         </a4j:commandLink>
                                                     </div>
-                                                </div>
+                                                </div></div>
                                                 <br/>
                                             </a4j:repeat>
                                             <richext:spacer height="16"/>
@@ -449,10 +453,11 @@
                                     <h:panelGroup id="selectedGrantTypesId">
                                         <h:panelGroup>
                                             <a4j:repeat value="#{_clientAction.grantTypes}" rowKeyVar="_grantTypeIdx"
-                                                        var="_grantType">
+                                                        var="_grantType" iterationStatusVar="loop">
+                                                <div class="row-fluid">
+                                                <div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
                                                 <h:outputText value="#{_grantType.value}"/>
                                                 <h:outputText value="&#160;"/>
-                                                <div class="row-fluid">
                                                     <div class="span6 pull-right">
                                                         <a4j:commandLink styleClass="glyphicon glyphicon-remove"
                                                                          style="margin-top:-20px;"
@@ -460,6 +465,7 @@
                                                                          execute="@this" render="selectedGrantTypesId"
                                                                          eventsQueue="clientQueue">
                                                         </a4j:commandLink>
+                                                    </div>
                                                     </div>
                                                 </div>
                                                 <br/>
@@ -474,10 +480,11 @@
                                         <h:panelGroup columns="1" width="100%" border="0" cellpadding="0"
                                                       cellspacing="0">
                                             <a4j:repeat value="#{_clientAction.contacts}" rowKeyVar="_contactsIdx"
-                                                        var="_contact">
+                                                        var="_contact" iterationStatusVar="loop">
+                                                <div class="row-fluid">
+                                                <div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
                                                 <h:outputText value="#{empty _contact ? _contact : _contact}"/>
                                                 <h:outputText value="&#160;"/>
-                                                <div class="row-fluid">
                                                     <div class="span6 pull-right">
                                                         <a4j:commandLink styleClass="glyphicon glyphicon-remove"
                                                                          style="margin-top:-20px;"
@@ -486,7 +493,7 @@
                                                                          render="selectedContactsId"
                                                                          eventsQueue="clientQueue">
                                                         </a4j:commandLink></div>
-                                                </div>
+                                                </div></div>
                                                 <br/>
                                             </a4j:repeat>
                                             <richext:spacer height="16"/>
@@ -500,10 +507,11 @@
                                         <h:panelGroup columns="1" width="100%" border="0" cellpadding="0"
                                                       cellspacing="0">
                                             <a4j:repeat value="#{_clientAction.defaultAcrValues}"
-                                                        rowKeyVar="_defaultAcrValuesIdx" var="_defaultAcrValue">
+                                                        rowKeyVar="_defaultAcrValuesIdx" var="_defaultAcrValue" iterationStatusVar="loop">
+                                                <div class="row-fluid">
+                                                <div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
                                                 <h:outputText value="#{_defaultAcrValue}"/>
                                                 <h:outputText value="&#160;"/>
-                                                <div class="row-fluid">
                                                     <div class="span6 pull-right">
                                                         <a4j:commandLink styleClass="glyphicon glyphicon-remove"
                                                                          style="margin-top:-20px;"
@@ -512,7 +520,7 @@
                                                                          render="selectedDefaultAcrValuesId"
                                                                          eventsQueue="clientQueue">
                                                         </a4j:commandLink></div>
-                                                </div>
+                                                </div></div>
                                                 <br/>
                                             </a4j:repeat>
                                             <richext:spacer height="16"/>
@@ -532,10 +540,11 @@
                                         <h:panelGroup columns="1" width="100%" border="0" cellpadding="0"
                                                       cellspacing="0">
                                             <a4j:repeat value="#{_clientAction.requestUris}" rowKeyVar="_requestUrisIdx"
-                                                        var="_requestUri">
+                                                        var="_requestUri" iterationStatusVar="loop">
+                                                <div class="row-fluid">
+                                                <div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
                                                 <h:outputText value="#{_requestUri}"/>
                                                 <h:outputText value="&#160;"/>
-                                                <div class="row-fluid">
                                                     <div class="span6 pull-right">
                                                         <a4j:commandLink styleClass="glyphicon glyphicon-remove"
                                                                          style="margin-top:-20px;"
@@ -544,7 +553,7 @@
                                                                          render="selectedRequestUrisId"
                                                                          eventsQueue="clientQueue">
                                                         </a4j:commandLink></div>
-                                                </div>
+                                                </div></div>
                                                 <br/>
                                             </a4j:repeat>
                                             <richext:spacer height="16"/>
@@ -562,10 +571,11 @@
                                         <h:panelGroup columns="1" width="100%" border="0" cellpadding="0"
                                                       cellspacing="0">
                                             <a4j:repeat value="#{_clientAction.clientlogoutUris}" rowKeyVar="_urisIdx"
-                                                        var="_uri">
+                                                        var="_uri" iterationStatusVar="loop">
+                                                <div class="row-fluid">
+                                                <div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
                                                 <h:outputText value="#{empty _uri ? _uri : _uri}"/>
                                                 <h:outputText value="&#160;"/>
-                                                <div class="row-fluid">
                                                     <div class="span6 pull-right">
                                                         <a4j:commandLink styleClass="glyphicon glyphicon-remove"
                                                                          style="margin-top:-20px;"
@@ -574,7 +584,7 @@
                                                                          eventsQueue="clientQueue">
                                                             <!-- <h:graphicImage value="/img/remove.gif" /> -->
                                                         </a4j:commandLink></div>
-                                                </div>
+                                                </div></div>
                                                 <br/>
                                             </a4j:repeat>
                                             <richext:spacer height="16"/>
