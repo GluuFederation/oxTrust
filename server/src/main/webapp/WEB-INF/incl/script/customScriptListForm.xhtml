@@ -49,7 +49,7 @@
 					       <h:panelGroup layout="block" styleClass="#{(_customScript.enabled) ?  'card-header active' : 'card-header'}" id="headingOne" >
 							  <h5 class="mb-0">
 								<a class="accordion-toggle in" data-toggle="collapse" href="#collapseOne#{_customScript.name}" aria-expanded="true" aria-controls="collapseOne">
-								  #{(_customScript.name == null) ? "New script " : _customScript.name }  
+								  #{(_customScript.name == null) ? msg['customScript.newscript'] : _customScript.name }  
 								</a>
 							  </h5>
 							</h:panelGroup>
