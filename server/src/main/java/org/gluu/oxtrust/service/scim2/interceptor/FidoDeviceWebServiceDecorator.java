@@ -103,14 +103,10 @@ public abstract class FidoDeviceWebServiceDecorator extends BaseScimWebService i
 
         SearchRequest searchReq=new SearchRequest();
         Response response=prepareSearchRequest(searchReq.getSchemas(), filter, sortBy, sortOrder, startIndex, count,
-                                attrsList, excludedAttrsList, searchReq, "id");
+                                attrsList, excludedAttrsList, searchReq);
 
         if (response==null) {
-            //searchReq.getSortBy() is not null since we are providing userName as default
-            if (!isAttributeRecognized(FidoDeviceResource.class, searchReq.getSortBy()))
-                response = getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.INVALID_PATH, "sortBy parameter value not recognized");
-            else
-                response = service.searchDevices(searchReq.getFilter(), searchReq.getStartIndex(), searchReq.getCount(),
+            response = service.searchDevices(searchReq.getFilter(), searchReq.getStartIndex(), searchReq.getCount(),
                         searchReq.getSortBy(), searchReq.getSortOrder(), searchReq.getAttributesStr(), searchReq.getExcludedAttributesStr());
         }
         return response;
@@ -122,14 +118,10 @@ public abstract class FidoDeviceWebServiceDecorator extends BaseScimWebService i
         SearchRequest searchReq = new SearchRequest();
         Response response = prepareSearchRequest(searchRequest.getSchemas(), searchRequest.getFilter(), searchRequest.getSortBy(),
                                 searchRequest.getSortOrder(), searchRequest.getStartIndex(), searchRequest.getCount(),
-                                searchRequest.getAttributesStr(), searchRequest.getExcludedAttributesStr(), searchReq, "id");
+                                searchRequest.getAttributesStr(), searchRequest.getExcludedAttributesStr(), searchReq);
 
         if (response==null) {
-            //searchReq.getSortBy() is not null since we are providing userName as default
-            if (!isAttributeRecognized(FidoDeviceResource.class, searchReq.getSortBy()))
-                response = getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.INVALID_PATH, "sortBy parameter value not recognized");
-            else
-                response = service.searchDevicesPost(searchReq);
+            response = service.searchDevicesPost(searchReq);
         }
         return response;
     }

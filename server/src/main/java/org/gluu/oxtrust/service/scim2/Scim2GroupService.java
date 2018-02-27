@@ -15,9 +15,9 @@ import org.gluu.oxtrust.model.scim2.BaseScimResource;
 import org.gluu.oxtrust.model.scim2.Meta;
 import org.gluu.oxtrust.model.scim2.group.GroupResource;
 import org.gluu.oxtrust.model.scim2.group.Member;
+import org.gluu.oxtrust.model.scim2.user.UserResource;
 import org.gluu.oxtrust.model.scim2.util.ScimResourceUtil;
 import org.gluu.oxtrust.service.antlr.scimFilter.ScimFilterParserService;
-import org.gluu.oxtrust.service.antlr.scimFilter.util.FilterUtil;
 import org.gluu.oxtrust.service.external.ExternalScimService;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.joda.time.format.ISODateTimeFormat;
@@ -90,7 +90,7 @@ public class Scim2GroupService implements Serializable {
                 else{
                     member.setDisplay(person.getDisplayName());
                     member.setRef(usersUrl + "/" + inum);
-                    member.setType(ScimResourceUtil.getType(res.getClass()));
+                    member.setType(ScimResourceUtil.getType(UserResource.class));
 
                     listMembers.add(person.getDn());
                 }
@@ -142,7 +142,7 @@ public class Scim2GroupService implements Serializable {
                     Member aMember=new Member();
                     aMember.setValue(person.getInum());
                     aMember.setRef(usersUrl + "/" + person.getInum());
-                    aMember.setType(ScimResourceUtil.getType(res.getClass()));
+                    aMember.setType(ScimResourceUtil.getType(UserResource.class));
                     aMember.setDisplay(person.getDisplayName());
 
                     members.add(aMember);
@@ -253,9 +253,6 @@ public class Scim2GroupService implements Serializable {
                                                VirtualListViewResponse vlvResponse, String groupsUrl, String usersUrl, int maxCount) throws Exception{
 
         Filter ldapFilter=scimFilterParserService.createLdapFilter(filter, "inum=*", GroupResource.class);
-        //Transform scim attribute to LDAP attribute
-        sortBy = FilterUtil.getLdapAttributeOfResourceAttribute(sortBy, GroupResource.class).getFirst();
-
         log.info("Executing search for groups using: ldapfilter '{}', sortBy '{}', sortOrder '{}', startIndex '{}', count '{}'",
                 ldapFilter.toString(), sortBy, sortOrder.getValue(), startIndex, count);
 

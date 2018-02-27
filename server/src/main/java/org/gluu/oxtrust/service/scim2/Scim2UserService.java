@@ -488,9 +488,6 @@ public class Scim2UserService implements Serializable {
                                               VirtualListViewResponse vlvResponse, String url, int maxCount) throws Exception{
 
         Filter ldapFilter=scimFilterParserService.createLdapFilter(filter, "inum=*", UserResource.class);
-        //Transform scim attribute to LDAP attribute
-        sortBy = FilterUtil.getLdapAttributeOfResourceAttribute(sortBy, UserResource.class).getFirst();
-
         log.info("Executing search for users using: ldapfilter '{}', sortBy '{}', sortOrder '{}', startIndex '{}', count '{}'",
                 ldapFilter.toString(), sortBy, sortOrder.getValue(), startIndex, count);
 
