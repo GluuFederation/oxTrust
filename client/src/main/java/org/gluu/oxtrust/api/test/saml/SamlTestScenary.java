@@ -9,7 +9,8 @@ import java.util.List;
 import java.util.Random;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.gluu.oxtrust.api.client.Client;
+import org.gluu.oxtrust.api.client.OxTrustAPIException;
+import org.gluu.oxtrust.api.client.OxTrustClient;
 import org.gluu.oxtrust.api.client.saml.TrustRelationshipClient;
 import org.gluu.oxtrust.api.saml.SAMLTrustRelationshipShort;
 import org.gluu.oxtrust.api.test.APITestException;
@@ -25,9 +26,9 @@ public class SamlTestScenary {
     
     private static final Logger logger = LogManager.getLogger(SamlTestScenary.class);
     
-    private final Client client;
+    private final OxTrustClient client;
     
-    public SamlTestScenary(Client client) {
+    public SamlTestScenary(OxTrustClient client) {
         this.client = client;
     }
     
@@ -35,8 +36,11 @@ public class SamlTestScenary {
     
     /**
      * Run tests.
+     * 
+     * @throws APITestException
+     * @throws OxTrustAPIException
      */
-    public void run() throws APITestException {
+    public void run() throws APITestException, OxTrustAPIException {
         TrustRelationshipClient samlClient = client.getTrustRelationshipClient();
         
         GluuSAMLTrustRelationship trGenerated = generateRandomeSingleTrustRelationship();

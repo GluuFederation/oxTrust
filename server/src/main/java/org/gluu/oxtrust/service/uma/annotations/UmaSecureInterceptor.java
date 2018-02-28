@@ -41,7 +41,7 @@ public class UmaSecureInterceptor {
     
     @Inject
     private ExpressionEvaluator expressionEvaluator;
-        
+    
     @AroundInvoke
     public Object invoke(InvocationContext ctx) throws Exception {
         HttpServletResponse response = null;
