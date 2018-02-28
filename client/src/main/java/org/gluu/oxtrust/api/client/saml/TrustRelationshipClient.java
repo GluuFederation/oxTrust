@@ -56,8 +56,8 @@ public class TrustRelationshipClient extends AbstractClient<GluuSAMLTrustRelatio
                 .get(List.class);
     }
     
-    public List<SAMLTrustRelationshipShort> listAllOtherFederations(String inum) {
-        WebTarget resource = webTarget.path("list_all_other_federations/{inum}").resolveTemplate("inum", inum);
+    public List<SAMLTrustRelationshipShort> listAllOtherFederations(String trustRelationshipInum) {
+        WebTarget resource = webTarget.path("list_all_other_federations/{inum}").resolveTemplate("inum", trustRelationshipInum);
         return resource.request(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .get(List.class);
@@ -84,11 +84,18 @@ public class TrustRelationshipClient extends AbstractClient<GluuSAMLTrustRelatio
                 .get(List.class);
     }
     
-    public List<TrustContact> getContacts(String inum) {
-        WebTarget resource = webTarget.path("/get_contacts/{inum}").resolveTemplate("inum", inum);
+    public List<TrustContact> getContacts(String trustRelationshipInum) {
+        WebTarget resource = webTarget.path("/get_contacts/{inum}").resolveTemplate("inum", trustRelationshipInum);
         return resource.request(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .get(List.class);
+    }
+    
+    public void setContacts(String trustRelationshipInum, List<TrustContact> contacts) throws OxTrustAPIException {
+        Response response = webTarget.path("set_contacts/{inum}").resolveTemplate("inum", trustRelationshipInum).request().post(Entity.entity(contacts, MediaType.APPLICATION_JSON));
+        if (response.getStatus() != HTTP_OK) {
+            throw new OxTrustAPIException("Response error. HTTP code: " + response.getStatus() + ", reason phrase: " + response.getStatusInfo().getReasonPhrase(), response.getStatus());
+        }
     }
     
     public void addMetadata(String trustRelationshipInum, String metadata) throws OxTrustAPIException {

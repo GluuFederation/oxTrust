@@ -397,7 +397,7 @@ public class TrustRelationshipWebService {
     }
     
     @POST
-    @Path("/set_contacts")
+    @Path("/set_contacts/{inum}")
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces(MediaType.TEXT_PLAIN)
     @ApiOperation(value = "set contacts for TrustRelationship", notes = "Find TrustRelationship by inum and set contacts. Contacts parameter is List<TrustContact>")
