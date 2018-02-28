@@ -6,14 +6,16 @@
 package org.gluu.oxtrust.api.client.saml;
 
 import java.util.List;
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.SSLContext;
 import javax.ws.rs.client.Client;
+import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.gluu.oxtrust.api.client.AbstractClient;
+import static org.gluu.oxtrust.api.client.AbstractClient.HTTP_OK;
+import org.gluu.oxtrust.api.client.OxTrustAPIException;
 import org.gluu.oxtrust.api.saml.SAMLTrustRelationshipShort;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.xdi.model.TrustContact;
@@ -87,6 +89,13 @@ public class TrustRelationshipClient extends AbstractClient<GluuSAMLTrustRelatio
         return resource.request(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .get(List.class);
+    }
+    
+    public void addMetadata(String trustRelationshipInum, String metadata) throws OxTrustAPIException {
+        Response response = webTarget.path("add_metadata/{inum}").resolveTemplate("inum", trustRelationshipInum).request().post(Entity.entity(metadata, MediaType.APPLICATION_XML));
+        if (response.getStatus() != HTTP_OK) {
+            throw new OxTrustAPIException("Response error. HTTP code: " + response.getStatus() + ", reason phrase: " + response.getStatusInfo().getReasonPhrase(), response.getStatus());
+        }
     }
     
 }
