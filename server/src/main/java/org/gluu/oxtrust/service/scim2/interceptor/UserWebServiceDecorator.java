@@ -166,14 +166,10 @@ public class UserWebServiceDecorator extends BaseScimWebService implements IUser
 
         SearchRequest searchReq=new SearchRequest();
         Response response=prepareSearchRequest(searchReq.getSchemas(), filter, sortBy, sortOrder, startIndex, count,
-                                attrsList, excludedAttrsList, searchReq, "userName");
+                                attrsList, excludedAttrsList, searchReq);
 
         if (response==null) {
-            //searchReq.getSortBy() is not null since we are providing userName as default
-            if (!isAttributeRecognized(UserResource.class, searchReq.getSortBy()))
-                response = getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.INVALID_PATH, "sortBy parameter value not recognized");
-            else
-                response = service.searchUsers(searchReq.getFilter(), searchReq.getStartIndex(), searchReq.getCount(),
+            response = service.searchUsers(searchReq.getFilter(), searchReq.getStartIndex(), searchReq.getCount(),
                         searchReq.getSortBy(), searchReq.getSortOrder(), searchReq.getAttributesStr(), searchReq.getExcludedAttributesStr());
         }
         return response;
@@ -185,14 +181,10 @@ public class UserWebServiceDecorator extends BaseScimWebService implements IUser
         SearchRequest searchReq=new SearchRequest();
         Response response=prepareSearchRequest(searchRequest.getSchemas(), searchRequest.getFilter(), searchRequest.getSortBy(),
                             searchRequest.getSortOrder(), searchRequest.getStartIndex(), searchRequest.getCount(),
-                            searchRequest.getAttributesStr(), searchRequest.getExcludedAttributesStr(), searchReq, "userName");
+                            searchRequest.getAttributesStr(), searchRequest.getExcludedAttributesStr(), searchReq);
 
         if (response==null) {
-            //searchReq.getSortBy() is not null since we are providing userName as default
-            if (!isAttributeRecognized(UserResource.class, searchReq.getSortBy()))
-                response = getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.INVALID_PATH, "sortBy parameter value not recognized");
-            else
-                response = service.searchUsersPost(searchReq);
+            response = service.searchUsersPost(searchReq);
         }
         return response;
 

@@ -74,15 +74,9 @@ public class SearchResourcesWebService extends BaseScimWebService {
         SearchRequest searchReq = new SearchRequest();
         Response response = prepareSearchRequest(searchRequest.getSchemas(), searchRequest.getFilter(), searchRequest.getSortBy(),
                 searchRequest.getSortOrder(), searchRequest.getStartIndex(), searchRequest.getCount(),
-                searchRequest.getAttributesStr(), searchRequest.getExcludedAttributesStr(), searchReq, null);
+                searchRequest.getAttributesStr(), searchRequest.getExcludedAttributesStr(), searchReq);
 
         if (response == null) {
-            /*
-            if (!isAttributeRecognized(BaseScimResource.class, searchReq.getSortBy()))
-                response = getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.INVALID_PATH,
-                        "sortBy parameter value not recognized for Basic Resource, use other endpoints (/Users, /Groups, etc.) to provide specific sort attributes");
-            else{
-            */
             try {
                 List<JsonNode> resources = new ArrayList<JsonNode>();
                 Pair<Integer, Integer> totals = computeResults(searchReq, resources);
@@ -106,7 +100,6 @@ public class SearchResourcesWebService extends BaseScimWebService {
                 log.error("Failure at search method", e);
                 response=getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, "Unexpected error: " + e.getMessage());
             }
-            //}
         }
         return response;
 

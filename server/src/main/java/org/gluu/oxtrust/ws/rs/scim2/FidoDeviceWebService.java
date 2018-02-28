@@ -236,7 +236,7 @@ public class FidoDeviceWebService extends BaseScimWebService implements IFidoDev
         Response response;
         try {
             log.debug("Executing web service method. searchDevices");
-
+            sortBy=translateSortByAttribute(FidoDeviceResource.class, sortBy);
             ListViewResponse<BaseScimResource> resources = searchDevices(filter, sortBy, SortOrder.getByValue(sortOrder), startIndex, count, endpointUrl);
 
             String json = getListResponseSerialized(resources.getTotalResults(), startIndex, resources.getResult(), attrsList, excludedAttrsList, count==0);
@@ -353,14 +353,11 @@ public class FidoDeviceWebService extends BaseScimWebService implements IFidoDev
                                                     int count, String url) throws Exception {
 
         Filter ldapFilter=scimFilterParserService.createLdapFilter(filter, "oxId=*", FidoDeviceResource.class);
-        //Transform scim attribute to LDAP attribute
-        sortBy = FilterUtil.getLdapAttributeOfResourceAttribute(sortBy, FidoDeviceResource.class).getFirst();
-
         log.info("Executing search for fido devices using: ldapfilter '{}', sortBy '{}', sortOrder '{}', startIndex '{}', count '{}'",
                 ldapFilter.toString(), sortBy, sortOrder.getValue(), startIndex, count);
+
         ListViewResponse<GluuCustomFidoDevice> list=ldapEntryManager.findListViewResponse(fidoDeviceService.getDnForFidoDevice(null, null),
                 GluuCustomFidoDevice.class, ldapFilter, startIndex, count, getMaxCount(), sortBy, sortOrder, null);
-
         List<BaseScimResource> resources=new ArrayList<BaseScimResource>();
 
         for (GluuCustomFidoDevice device : list.getResult()){
