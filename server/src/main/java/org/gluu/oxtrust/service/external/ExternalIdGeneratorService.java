@@ -40,6 +40,7 @@ public class ExternalIdGeneratorService extends ExternalScriptService {
 			return externalType.generateId(appId, idType, idPrefix, configurationAttributes);
 		} catch (Exception ex) {
 			log.error(ex.getMessage(), ex);
+            saveScriptError(customScriptConfiguration.getCustomScript(), ex);
 		}
 
 		return null;
