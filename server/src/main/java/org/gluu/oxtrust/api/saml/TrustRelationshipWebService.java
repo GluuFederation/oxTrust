@@ -332,7 +332,7 @@ public class TrustRelationshipWebService {
     }
     
     @POST
-    @Path("/add_metadata")
+    @Path("/add_metadata/{inum}")
     @Consumes({MediaType.APPLICATION_XML, MediaType.TEXT_PLAIN})
     @Produces(MediaType.TEXT_PLAIN)
     @ApiResponses(value = {
