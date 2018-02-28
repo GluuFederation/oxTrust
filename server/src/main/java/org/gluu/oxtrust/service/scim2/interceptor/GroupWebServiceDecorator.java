@@ -173,14 +173,10 @@ public class GroupWebServiceDecorator extends BaseScimWebService implements IGro
 
         SearchRequest searchReq=new SearchRequest();
         Response response=prepareSearchRequest(searchReq.getSchemas(), filter, sortBy, sortOrder, startIndex, count,
-                            attrsList, excludedAttrsList, searchReq, "displayName");
+                            attrsList, excludedAttrsList, searchReq);
 
         if (response==null) {
-            //searchReq.getSortBy() is not null since we are providing userName as default
-            if (!isAttributeRecognized(GroupResource.class, searchReq.getSortBy()))
-                response = getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.INVALID_PATH, "sortBy parameter value not recognized");
-            else
-                response = service.searchGroups(searchReq.getFilter(), searchReq.getStartIndex(), searchReq.getCount(),
+            response = service.searchGroups(searchReq.getFilter(), searchReq.getStartIndex(), searchReq.getCount(),
                         searchReq.getSortBy(), searchReq.getSortOrder(), searchReq.getAttributesStr(), searchReq.getExcludedAttributesStr());
         }
         return response;
@@ -192,14 +188,10 @@ public class GroupWebServiceDecorator extends BaseScimWebService implements IGro
         SearchRequest searchReq=new SearchRequest();
         Response response=prepareSearchRequest(searchRequest.getSchemas(), searchRequest.getFilter(), searchRequest.getSortBy(),
                 searchRequest.getSortOrder(), searchRequest.getStartIndex(), searchRequest.getCount(),
-                searchRequest.getAttributesStr(), searchRequest.getExcludedAttributesStr(), searchReq, "displayName");
+                searchRequest.getAttributesStr(), searchRequest.getExcludedAttributesStr(), searchReq);
 
         if (response==null) {
-            //searchReq.getSortBy() is not null since we are providing userName as default
-            if (!isAttributeRecognized(GroupResource.class, searchReq.getSortBy()))
-                response = getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.INVALID_PATH, "sortBy parameter value not recognized");
-            else
-                response = service.searchGroupsPost(searchReq);
+            response = service.searchGroupsPost(searchReq);
         }
         return response;
 

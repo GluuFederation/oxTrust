@@ -148,11 +148,13 @@ public class UserResource extends BaseScimResource {
     @StoreReference(ref = "oxTrustx509Certificate")
     private List<X509Certificate> x509Certificates;
 
+    //This attribute is not present in SCIM spec... but see https://github.com/GluuFederation/SCIM-Client/issues/19
     @Attribute(description = "Pairwise IDs",
             mutability = AttributeDefinition.Mutability.READ_ONLY,
             returned = AttributeDefinition.Returned.REQUEST,
             multiValueClass = String.class)
-    //This attribute is not present in SCIM spec... but see https://github.com/GluuFederation/SCIM-Client/issues/19
+    //TODO: this attribute name is mistyped, fixing it will introduce incompatibilities for users of <=3.1.2
+    //...Refactoring pending for version 3.3
     @StoreReference(ref = "oxPPID")
     private List<String> pairwiseIdentitifers;
 

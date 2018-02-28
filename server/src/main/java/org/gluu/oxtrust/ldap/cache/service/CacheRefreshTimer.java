@@ -71,6 +71,7 @@ import org.xdi.service.cdi.event.Scheduled;
 import org.xdi.service.timer.event.TimerEvent;
 import org.xdi.service.timer.schedule.TimerSchedule;
 import org.xdi.util.ArrayHelper;
+import org.xdi.util.OxConstants;
 import org.xdi.util.Pair;
 import org.xdi.util.StringHelper;
 
@@ -789,7 +790,7 @@ public class CacheRefreshTimer {
 		LdapEntryManager inumDbldapEntryManager = inumDbServerConnection.getLdapEntryManager();
 		String inumbaseDn = inumDbServerConnection.getBaseDns()[0];
 
-		Filter filterObjectClass = Filter.createEqualityFilter(OxTrustConstants.objectClass, OxTrustConstants.objectClassInumMap);
+		Filter filterObjectClass = Filter.createEqualityFilter(OxConstants.OBJECT_CLASS, OxTrustConstants.objectClassInumMap);
 		Filter filterStatus = Filter.createNOTFilter(Filter.createEqualityFilter(OxTrustConstants.gluuStatus, GluuStatus.INACTIVE.getValue()));
 		Filter filter = Filter.createANDFilter(filterObjectClass, filterStatus);
 
@@ -888,7 +889,7 @@ public class CacheRefreshTimer {
 	}
 
 	private List<GluuSimplePerson> loadTargetServerEntries(CacheRefreshConfiguration cacheRefreshConfiguration, LdapEntryManager targetLdapEntryManager) {
-		Filter filter = Filter.createEqualityFilter(OxTrustConstants.objectClass, OxTrustConstants.objectClassPerson);
+		Filter filter = Filter.createEqualityFilter(OxConstants.OBJECT_CLASS, OxTrustConstants.objectClassPerson);
 
 		return targetLdapEntryManager.findEntries(personService.getDnForPerson(null), GluuSimplePerson.class, filter, SearchScope.SUB,
 				TARGET_PERSON_RETURN_ATTRIBUTES, 0, cacheRefreshConfiguration.getLdapSearchSizeLimit());

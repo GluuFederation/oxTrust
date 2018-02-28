@@ -33,6 +33,7 @@ import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.util.ArrayHelper;
 import org.xdi.util.INumGenerator;
+import org.xdi.util.OxConstants;
 import org.xdi.util.StringHelper;
 
 import org.gluu.search.filter.Filter;
@@ -130,7 +131,7 @@ public class PersonService implements Serializable, IPersonService {
     @Override
     public List<GluuCustomPerson> searchPersons(String pattern, int sizeLimit) {
         String[] targetArray = new String[] { pattern };
-        Filter uidFilter = Filter.createSubstringFilter(OxTrustConstants.uid, null, targetArray, null);
+        Filter uidFilter = Filter.createSubstringFilter(OxConstants.UID, null, targetArray, null);
         Filter mailFilter = Filter.createSubstringFilter(OxTrustConstants.mail, null, targetArray, null);
         Filter nameFilter = Filter.createSubstringFilter(OxTrustConstants.displayName, null, targetArray, null);
         Filter inameFilter = Filter.createSubstringFilter(OxTrustConstants.iname, null, targetArray, null);
@@ -147,7 +148,7 @@ public class PersonService implements Serializable, IPersonService {
     @Override
     public List<GluuCustomPerson> searchPersons(String pattern) {
         String[] targetArray = new String[] { pattern };
-        Filter uidFilter = Filter.createSubstringFilter(OxTrustConstants.uid, null, targetArray, null);
+        Filter uidFilter = Filter.createSubstringFilter(OxConstants.UID, null, targetArray, null);
         Filter mailFilter = Filter.createSubstringFilter(OxTrustConstants.mail, null, targetArray, null);
         Filter nameFilter = Filter.createSubstringFilter(OxTrustConstants.displayName, null, targetArray, null);
         Filter inameFilter = Filter.createSubstringFilter(OxTrustConstants.iname, null, targetArray, null);
@@ -175,7 +176,7 @@ public class PersonService implements Serializable, IPersonService {
     @Override
     public List<GluuCustomPerson> searchPersons(String pattern, int sizeLimit, List<GluuCustomPerson> excludedPersons) throws Exception {
         String[] targetArray = new String[] { pattern };
-        Filter uidFilter = Filter.createSubstringFilter(OxTrustConstants.uid, null, targetArray, null);
+        Filter uidFilter = Filter.createSubstringFilter(OxConstants.UID, null, targetArray, null);
         Filter mailFilter = Filter.createSubstringFilter(OxTrustConstants.mail, null, targetArray, null);
         Filter nameFilter = Filter.createSubstringFilter(OxTrustConstants.displayName, null, targetArray, null);
         Filter inameFilter = Filter.createSubstringFilter(OxTrustConstants.iname, null, targetArray, null);
@@ -187,7 +188,7 @@ public class PersonService implements Serializable, IPersonService {
         if (excludedPersons != null && excludedPersons.size() > 0) {
             List<Filter> excludeFilters = new ArrayList<Filter>();
             for (GluuCustomPerson excludedPerson : excludedPersons) {
-                Filter eqFilter = Filter.createEqualityFilter(OxTrustConstants.uid, excludedPerson.getUid());
+                Filter eqFilter = Filter.createEqualityFilter(OxConstants.UID, excludedPerson.getUid());
                 excludeFilters.add(eqFilter);
             }
             Filter orExcludeFilter = null;
@@ -223,7 +224,7 @@ public class PersonService implements Serializable, IPersonService {
     public List<GluuCustomPerson> findPersonsByUids(List<String> uids, String[] returnAttributes) throws Exception {
         List<Filter> uidFilters = new ArrayList<Filter>();
         for (String uid : uids) {
-            uidFilters.add(Filter.createEqualityFilter(OxTrustConstants.uid, uid));
+            uidFilters.add(Filter.createEqualityFilter(OxConstants.UID, uid));
         }
 
         Filter filter = Filter.createORFilter(uidFilters);

@@ -90,6 +90,16 @@ public class UpdateResourceAction implements Serializable {
 	private String newResource;
 
 	private boolean update;
+	private String scopeSelection="Scopes";
+	
+
+	public String getScopeSelection() {
+		return scopeSelection;
+	}
+
+	public void setScopeSelection(String scopeSelection) {
+		this.scopeSelection = scopeSelection;
+	}
 
 	public String modify() {
 		if (this.resource != null) {
@@ -541,6 +551,5 @@ public class UpdateResourceAction implements Serializable {
 	public void setOxId(String oxId) {
 		this.oxId = oxId;
 	}
-
 
 }

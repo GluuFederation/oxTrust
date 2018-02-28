@@ -49,7 +49,7 @@ public class Scim2PatchService {
     @Inject
     private ExtensionService extService;
 
-    public BaseScimResource applyPatchOperation(BaseScimResource resource, PatchOperation operation) throws Exception{
+    public BaseScimResource applyPatchOperation(BaseScimResource resource, PatchOperation operation) throws Exception {
 
         BaseScimResource result=null;
         Map<String, Object> genericMap=null;

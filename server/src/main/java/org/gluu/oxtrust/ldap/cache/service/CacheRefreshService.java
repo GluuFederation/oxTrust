@@ -29,6 +29,7 @@ import org.gluu.persist.ldap.impl.LdapEntryManager;
 import org.gluu.search.filter.Filter;
 import org.slf4j.Logger;
 import org.xdi.util.ArrayHelper;
+import org.xdi.util.OxConstants;
 import org.xdi.util.StringHelper;
 
 /**
@@ -84,7 +85,7 @@ public class CacheRefreshService implements Serializable {
 		}
 
 		for (String keyObjectClass : keyObjectClasses) {
-			filters.add(Filter.createEqualityFilter(OxTrustConstants.objectClass, keyObjectClass));
+			filters.add(Filter.createEqualityFilter(OxConstants.OBJECT_CLASS, keyObjectClass));
 		}
 
 		if (customFilter != null) {
@@ -95,7 +96,7 @@ public class CacheRefreshService implements Serializable {
 	}
 
 	public Filter createObjectClassPresenceFilter() {
-		return Filter.createPresenceFilter(OxTrustConstants.objectClass);
+		return Filter.createPresenceFilter(OxConstants.OBJECT_CLASS);
 	}
 
 	public void addInumMap(LdapEntryManager ldapEntryManager, GluuInumMap inumMap) {

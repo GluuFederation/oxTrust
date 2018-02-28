@@ -14,9 +14,9 @@ import static org.gluu.oxtrust.model.scim2.Constants.QUERY_PARAM_SORT_BY;
 import static org.gluu.oxtrust.model.scim2.Constants.QUERY_PARAM_SORT_ORDER;
 import static org.gluu.oxtrust.model.scim2.Constants.QUERY_PARAM_START_INDEX;
 import static org.gluu.oxtrust.model.scim2.Constants.UTF8_CHARSET_FRAGMENT;
+import static org.gluu.oxtrust.model.scim2.patch.PatchOperationType.REMOVE;
 
 import java.net.URI;
-import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -54,7 +54,6 @@ import org.gluu.oxtrust.service.filter.ProtectedApi;
 import org.gluu.persist.model.ListViewResponse;
 import org.gluu.persist.model.SortOrder;
 import org.joda.time.format.ISODateTimeFormat;
-import org.xdi.util.Pair;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -102,12 +101,7 @@ public class UserWebService extends BaseScimWebService implements IUserWebServic
         Response response;
         try {
             log.debug("Executing web service method. createUser");
-            GluuCustomPerson person = scim2UserService.createUser(user, endpointUrl);
-
-            // For custom script: create user
-            if (externalScimService.isEnabled())
-                externalScimService.executeScimCreateUserMethods(person);
-
+            scim2UserService.createUser(user, endpointUrl);
             String json=resourceSerializer.serialize(user, attrsList, excludedAttrsList);
             response=Response.created(new URI(user.getMeta().getLocation())).entity(json).build();
         }
@@ -173,14 +167,7 @@ public class UserWebService extends BaseScimWebService implements IUserWebServic
         Response response;
         try {
             log.debug("Executing web service method. updateUser");
-            Pair<GluuCustomPerson, UserResource> pair=scim2UserService.updateUser(id, user, endpointUrl);
-
-            // For custom script: update user
-            if (externalScimService.isEnabled()) {
-                externalScimService.executeScimUpdateUserMethods(pair.getFirst());
-            }
-
-            UserResource updatedResource=pair.getSecond();
+            UserResource updatedResource=scim2UserService.updateUser(id, user, endpointUrl);
             String json=resourceSerializer.serialize(updatedResource, attrsList, excludedAttrsList);
             response=Response.ok(new URI(updatedResource.getMeta().getLocation())).entity(json).build();
         }
@@ -208,12 +195,6 @@ public class UserWebService extends BaseScimWebService implements IUserWebServic
         try {
             log.debug("Executing web service method. deleteUser");
             GluuCustomPerson person=personService.getPersonByInum(id);  //person cannot be null (check associated decorator method)
-
-            // For custom script: delete user. Execute before actual deletion
-            if (externalScimService.isEnabled()) {
-                externalScimService.executeScimDeleteUserMethods(person);
-            }
-
             scim2UserService.deleteUser(person);
             response=Response.noContent().build();
         }
@@ -243,7 +224,7 @@ public class UserWebService extends BaseScimWebService implements IUserWebServic
         Response response;
         try {
             log.debug("Executing web service method. searchUsers");
-
+            sortBy=translateSortByAttribute(UserResource.class, sortBy);
             ListViewResponse<BaseScimResource> resources = scim2UserService.searchUsers(filter, sortBy, SortOrder.getByValue(sortOrder),
                     startIndex, count, endpointUrl, getMaxCount());
 
@@ -313,8 +294,17 @@ public class UserWebService extends BaseScimWebService implements IUserWebServic
             scim2UserService.transferAttributesToUserResource(person, user, endpointUrl);
 
             //Apply patches one by one in sequence
-            for (PatchOperation po : request.getOperations())
-                user=(UserResource) scim2PatchService.applyPatchOperation(user, po);
+            for (PatchOperation po : request.getOperations()) {
+                //Handle special case: https://github.com/GluuFederation/oxTrust/issues/800
+                if (po.getType().equals(REMOVE) && po.getPath().equals("pairwiseIdentifiers")){
+                    //If this block weren't here, the implementation will throw error because read-only attribute cannot be altered
+                    person.setOxPPID(null);
+                    user.setPairwiseIdentitifers(null);
+                    scim2UserService.removePPIDsBranch(person.getDn());
+                }
+                else
+                    user = (UserResource) scim2PatchService.applyPatchOperation(user, po);
+            }
 
             //Throws exception if final representation does not pass overall validation
             log.debug("patchUser. Revising final resource representation still passes validations");
@@ -326,12 +316,7 @@ public class UserWebService extends BaseScimWebService implements IUserWebServic
             user.getMeta().setLastModified(now);
 
             //Replaces the information found in person with the contents of user
-            scim2UserService.replacePersonInfo(person, user);
-
-            // For custom script: update user
-            if (externalScimService.isEnabled()) {
-                externalScimService.executeScimUpdateUserMethods(person);
-            }
+            scim2UserService.replacePersonInfo(person, user, endpointUrl);
 
             String json=resourceSerializer.serialize(user, attrsList, excludedAttrsList);
             response=Response.ok(new URI(user.getMeta().getLocation())).entity(json).build();
