@@ -105,4 +105,11 @@ public class TrustRelationshipClient extends AbstractClient<GluuSAMLTrustRelatio
         }
     }
     
+    public void setCertificate(String trustRelationshipInum, String certificate) throws OxTrustAPIException {
+        Response response = webTarget.path("set_certificate/{inum}").resolveTemplate("inum", trustRelationshipInum).request().post(Entity.entity(certificate, MediaType.TEXT_PLAIN));
+        if (response.getStatus() != HTTP_OK) {
+            throw new OxTrustAPIException("Response error. HTTP code: " + response.getStatus() + ", reason phrase: " + response.getStatusInfo().getReasonPhrase(), response.getStatus());
+        }
+    } 
+    
 }

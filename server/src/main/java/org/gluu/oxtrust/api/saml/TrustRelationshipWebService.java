@@ -418,7 +418,7 @@ public class TrustRelationshipWebService {
     }
     
     @POST
-    @Path("/set_certificate")
+    @Path("/set_certificate/{inum}")
     @Consumes({MediaType.TEXT_PLAIN})
     @Produces(MediaType.TEXT_PLAIN)    
     @ApiOperation(value = "set certificate for TrustRelationship", notes = "Find TrustRelationship by inum and set certificate.")
