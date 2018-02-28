@@ -259,7 +259,7 @@ public class TrustRelationshipWebService {
     }
     
     @GET
-    @Path("/list_all_other_federations")
+    @Path("/list_all_other_federations/{inum}")
     @Produces(MediaType.APPLICATION_JSON)
     @ApiResponses(value = {
 		@ApiResponse(code = 200, message = "OK", response = SAMLTrustRelationshipShort.class),
@@ -313,7 +313,7 @@ public class TrustRelationshipWebService {
     }
     
     @GET
-    @Path("/list_deconstructed_trust_relationships")
+    @Path("/list_deconstructed_trust_relationships/{inum}")
     @Produces(MediaType.APPLICATION_JSON)
     @ApiResponses(value = {
 		@ApiResponse(code = 200, message = "OK", response = SAMLTrustRelationshipShort.class),
@@ -381,7 +381,7 @@ public class TrustRelationshipWebService {
     }
     
     @GET
-    @Path("/get_contacts")
+    @Path("/get_contacts/{inum}")
     @Produces(MediaType.TEXT_PLAIN)
     public String getContacts(@PathParam("inum") String trustRelationshipInum, @Context HttpServletResponse response) {
         try {

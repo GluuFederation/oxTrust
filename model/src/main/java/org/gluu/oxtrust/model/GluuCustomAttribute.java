@@ -152,11 +152,11 @@ public class GluuCustomAttribute implements Serializable, Comparable<GluuCustomA
 		this.booleanValues = booleanValues;
 	}
         
-        @JsonSetter(nulls = Nulls.AS_EMPTY)
 	public void setValues(String[] values) {
 		this.values = values;
 	}
 
+        @JsonSetter(nulls = Nulls.AS_EMPTY)
 	public void setValues(Collection<String> values) {
 		this.values = values.toArray(new String[0]);
 	}
