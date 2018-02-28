@@ -6,6 +6,7 @@
 
 package org.gluu.oxtrust.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,6 +31,9 @@ import org.gluu.site.ldap.persistence.annotation.LdapEntry;
 import org.gluu.site.ldap.persistence.annotation.LdapObjectClass;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
+import javax.xml.bind.annotation.XmlTransient;
 
 @LdapEntry
 @LdapObjectClass(values = { "top", "gluuSAMLconfig" })
@@ -164,14 +168,18 @@ public class GluuSAMLTrustRelationship extends InumEntry implements Serializable
 	public List<String> getGluuEntityId() {
 		return gluuEntityId;
 	}
-
+        
+        @JsonIgnore
+        @XmlTransient
 	public void setGluuEntityId(Set<String> gluuEntityId) {
 		this.gluuEntityId = new ArrayList<String>(gluuEntityId);
 	}
+        
 	/*
-	 * This method is for ldap persistance only. For purposes of crud - please use setGluuEntityId(Set<String> gluuEntityId)
+	 * This method is for ldap persistance only. For purposes of crud - plea00se use setGluuEntityId(Set<String> gluuEntityId)
 	 */
 	@Deprecated
+        @JsonSetter(nulls = Nulls.AS_EMPTY)
 	public void setGluuEntityId(List<String> gluuEntityId) {
 		this.gluuEntityId = gluuEntityId;
 	}
