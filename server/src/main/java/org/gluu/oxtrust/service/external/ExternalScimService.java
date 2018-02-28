@@ -39,6 +39,7 @@ public class ExternalScimService extends ExternalScriptService {
         }
         catch (Exception e){
             log.error(e.getMessage(), e);
+            saveScriptError(customScriptConfiguration.getCustomScript(), e);
         }
         return version;
 
@@ -57,6 +58,7 @@ public class ExternalScimService extends ExternalScriptService {
 
         } catch (Exception e) {
             log.error(e.getMessage(), e);
+            saveScriptError(customScriptConfiguration.getCustomScript(), e);
         }
         return false;
 
@@ -78,6 +80,7 @@ public class ExternalScimService extends ExternalScriptService {
 
         } catch (Exception e) {
             log.error(e.getMessage(), e);
+            saveScriptError(customScriptConfiguration.getCustomScript(), e);
         }
         return false;
 
@@ -96,6 +99,7 @@ public class ExternalScimService extends ExternalScriptService {
 
         } catch (Exception e) {
             log.error(e.getMessage(), e);
+            saveScriptError(customScriptConfiguration.getCustomScript(), e);
         }
         return false;
 
@@ -117,6 +121,7 @@ public class ExternalScimService extends ExternalScriptService {
 
         } catch (Exception e) {
             log.error(e.getMessage(), e);
+            saveScriptError(customScriptConfiguration.getCustomScript(), e);
         }
         return false;
 
@@ -135,6 +140,7 @@ public class ExternalScimService extends ExternalScriptService {
 
         } catch (Exception e) {
             log.error(e.getMessage(), e);
+            saveScriptError(customScriptConfiguration.getCustomScript(), e);
         }
         return false;
 
@@ -156,6 +162,7 @@ public class ExternalScimService extends ExternalScriptService {
 
         } catch (Exception e) {
             log.error(e.getMessage(), e);
+            saveScriptError(customScriptConfiguration.getCustomScript(), e);
         }
         return false;
 
@@ -174,6 +181,7 @@ public class ExternalScimService extends ExternalScriptService {
 
         } catch (Exception e) {
             log.error(e.getMessage(), e);
+            saveScriptError(customScriptConfiguration.getCustomScript(), e);
         }
         return false;
 
@@ -195,6 +203,7 @@ public class ExternalScimService extends ExternalScriptService {
 
         } catch (Exception e) {
             log.error(e.getMessage(), e);
+            saveScriptError(customScriptConfiguration.getCustomScript(), e);
         }
         return false;
 
@@ -213,6 +222,7 @@ public class ExternalScimService extends ExternalScriptService {
 
         } catch (Exception e) {
             log.error(e.getMessage(), e);
+            saveScriptError(customScriptConfiguration.getCustomScript(), e);
         }
         return false;
 
@@ -234,6 +244,7 @@ public class ExternalScimService extends ExternalScriptService {
 
         } catch (Exception e) {
             log.error(e.getMessage(), e);
+            saveScriptError(customScriptConfiguration.getCustomScript(), e);
         }
         return false;
 
@@ -252,6 +263,7 @@ public class ExternalScimService extends ExternalScriptService {
 
         } catch (Exception e) {
             log.error(e.getMessage(), e);
+            saveScriptError(customScriptConfiguration.getCustomScript(), e);
         }
         return false;
 
@@ -273,6 +285,7 @@ public class ExternalScimService extends ExternalScriptService {
 
         } catch (Exception e) {
             log.error(e.getMessage(), e);
+            saveScriptError(customScriptConfiguration.getCustomScript(), e);
         }
         return false;
 

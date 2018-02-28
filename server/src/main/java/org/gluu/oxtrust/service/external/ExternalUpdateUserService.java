@@ -41,6 +41,7 @@ public class ExternalUpdateUserService extends ExternalScriptService {
 			return externalType.addUser(user, persisted, configurationAttributes);
 		} catch (Exception ex) {
 			log.error(ex.getMessage(), ex);
+            saveScriptError(customScriptConfiguration.getCustomScript(), ex);
 		}
 		
 		return false;
@@ -71,6 +72,7 @@ public class ExternalUpdateUserService extends ExternalScriptService {
 			return externalType.postAddUser(user, configurationAttributes);
 		} catch (Exception ex) {
 			log.error(ex.getMessage(), ex);
+            saveScriptError(customScriptConfiguration.getCustomScript(), ex);
 		}
 		
 		return false;
@@ -96,6 +98,7 @@ public class ExternalUpdateUserService extends ExternalScriptService {
 			return externalType.updateUser(user, persisted, configurationAttributes);
 		} catch (Exception ex) {
 			log.error(ex.getMessage(), ex);
+            saveScriptError(customScriptConfiguration.getCustomScript(), ex);
 		}
 		
 		return false;
@@ -126,6 +129,7 @@ public class ExternalUpdateUserService extends ExternalScriptService {
 			return externalType.postUpdateUser(user, configurationAttributes);
 		} catch (Exception ex) {
 			log.error(ex.getMessage(), ex);
+            saveScriptError(customScriptConfiguration.getCustomScript(), ex);
 		}
 		
 		return false;
@@ -151,6 +155,7 @@ public class ExternalUpdateUserService extends ExternalScriptService {
 			return externalType.newUser(user, configurationAttributes);
 		} catch (Exception ex) {
 			log.error(ex.getMessage(), ex);
+            saveScriptError(customScriptConfiguration.getCustomScript(), ex);
 		}
 		
 		return false;
@@ -176,6 +181,7 @@ public class ExternalUpdateUserService extends ExternalScriptService {
 			return externalType.deleteUser(user, persisted, configurationAttributes);
 		} catch (Exception ex) {
 			log.error(ex.getMessage(), ex);
+            saveScriptError(customScriptConfiguration.getCustomScript(), ex);
 		}
 		
 		return false;
@@ -206,6 +212,7 @@ public class ExternalUpdateUserService extends ExternalScriptService {
 			return externalType.postDeleteUser(user, configurationAttributes);
 		} catch (Exception ex) {
 			log.error(ex.getMessage(), ex);
+            saveScriptError(customScriptConfiguration.getCustomScript(), ex);
 		}
 		
 		return false;
@@ -230,6 +237,7 @@ public class ExternalUpdateUserService extends ExternalScriptService {
 			return externalAuthenticator.getApiVersion();
 		} catch (Exception ex) {
 			log.error(ex.getMessage(), ex);
+            saveScriptError(customScriptConfiguration.getCustomScript(), ex);
 		}
 
 		return -1;

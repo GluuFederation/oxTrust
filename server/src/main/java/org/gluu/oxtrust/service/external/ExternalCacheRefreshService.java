@@ -41,6 +41,7 @@ public class ExternalCacheRefreshService extends ExternalScriptService {
 			return externalType.updateUser(user, configurationAttributes);
 		} catch (Exception ex) {
 			log.error(ex.getMessage(), ex);
+            saveScriptError(customScriptConfiguration.getCustomScript(), ex);
 		}
 
 		return false;
