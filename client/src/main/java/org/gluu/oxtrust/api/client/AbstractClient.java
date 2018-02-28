@@ -52,7 +52,7 @@ public class AbstractClient<T> {
      * @throws ClientErrorException 
      */
     public T read(String id) throws ClientErrorException {
-        WebTarget resource = webTarget.path(MessageFormat.format("read/{0}", new Object[]{id}));
+        WebTarget resource = webTarget.path("read/{id}").resolveTemplate("id", id);
         return resource.request(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .get(entityClass);
@@ -78,7 +78,7 @@ public class AbstractClient<T> {
     }
 
     public boolean update(T requestEntity, String id) throws ClientErrorException {
-        WebTarget resource = webTarget.path(MessageFormat.format("update/{0}", new Object[]{id}));
+        WebTarget resource = webTarget.path("update/{id}").resolveTemplate("id", id);
         
         Response response = resource.request().put(Entity.entity(requestEntity, MediaType.APPLICATION_JSON));
         
@@ -88,7 +88,7 @@ public class AbstractClient<T> {
     }
 
     public boolean delete(String id) throws ClientErrorException {
-        WebTarget resource = webTarget.path(MessageFormat.format("delete/{0}", new Object[]{id}));
+        WebTarget resource = webTarget.path("delete/{id}").resolveTemplate("id", id);
         Response response = resource.request(MediaType.TEXT_PLAIN).delete();
         
         int code = response.getStatus();

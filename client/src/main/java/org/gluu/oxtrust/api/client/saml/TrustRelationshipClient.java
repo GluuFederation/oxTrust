@@ -16,6 +16,7 @@ import org.apache.logging.log4j.Logger;
 import org.gluu.oxtrust.api.client.AbstractClient;
 import org.gluu.oxtrust.api.saml.SAMLTrustRelationshipShort;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
+import org.xdi.model.TrustContact;
 
 /**
  * REST webservice CRUD for TrustRelationships.
@@ -53,22 +54,22 @@ public class TrustRelationshipClient extends AbstractClient<GluuSAMLTrustRelatio
                 .get(List.class);
     }
     
-    public List<SAMLTrustRelationshipShort> listAllOtherFederations() {
-        WebTarget resource = webTarget.path("list_all_other_federations");
+    public List<SAMLTrustRelationshipShort> listAllOtherFederations(String inum) {
+        WebTarget resource = webTarget.path("list_all_other_federations/{inum}").resolveTemplate("inum", inum);
         return resource.request(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .get(List.class);
     }
     
-    public List<SAMLTrustRelationshipShort> listAllSAMLTrustRelationships() {
-        WebTarget resource = webTarget.path("list_all_saml_trust_relationships");
+    public List<SAMLTrustRelationshipShort> listAllSAMLTrustRelationships(int sizeLimit) {
+        WebTarget resource = webTarget.path("list_all_saml_trust_relationships").queryParam("size_limit", sizeLimit);;
         return resource.request(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .get(List.class);
     }
     
     public List<SAMLTrustRelationshipShort> listDeconstructedTrustRelationships() {
-        WebTarget resource = webTarget.path("list_deconstructed_trust_relationships");
+        WebTarget resource = webTarget.path("list_deconstructed_trust_relationships/{inum}");
         return resource.request(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .get(List.class);
@@ -76,6 +77,13 @@ public class TrustRelationshipClient extends AbstractClient<GluuSAMLTrustRelatio
     
     public List<SAMLTrustRelationshipShort> searchTrustRelationships(String pattern, int sizeLimit) {
         WebTarget resource = webTarget.path("search_trust_relationships").queryParam("pattern", pattern).queryParam("size_limit", sizeLimit);
+        return resource.request(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .get(List.class);
+    }
+    
+    public List<TrustContact> getContacts(String inum) {
+        WebTarget resource = webTarget.path("/get_contacts/{inum}").resolveTemplate("inum", inum);
         return resource.request(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .get(List.class);
