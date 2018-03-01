@@ -99,7 +99,7 @@ public class FaviconImageServlet extends HttpServlet {
 			} else {
 				// If customized logo doesn't exist then send default
 				// organization logo
-				String defaultFaviconFileName = "/WEB-INF/static/images/favicon_ic.ico";
+				String defaultFaviconFileName = "/WEB-INF/static/images/favicon_icosahedron.ico";
 				is = getServletContext().getResourceAsStream(defaultFaviconFileName);
 				if (is == null) {
 					log.error("Default organization favicon image doesn't exist");
