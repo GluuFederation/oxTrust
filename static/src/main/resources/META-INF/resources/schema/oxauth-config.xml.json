@@ -640,6 +640,16 @@
             "exclusiveMaximum": false,
             "exclusiveMinimum": false
         },
+        "umaResourceLifetime": {
+            "id": "umaResourceLifetime",
+            "description": "UMA Resource lifetime",
+            "type": "integer",
+            "multipleOf": 1,
+            "maximum": 2147483647,
+            "minimum": 1,
+            "exclusiveMaximum": false,
+            "exclusiveMinimum": false
+        },
         "umaAddScopesAutomatically": {
             "id": "umaAddScopesAutomatically",
             "description": "Add UMA scopes automatically if it is not registered yet",
