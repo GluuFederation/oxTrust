@@ -98,8 +98,15 @@ public class TrustRelationshipClient extends AbstractClient<GluuSAMLTrustRelatio
         }
     }
     
-    public void addMetadata(String trustRelationshipInum, String metadata) throws OxTrustAPIException {
-        Response response = webTarget.path("add_metadata/{inum}").resolveTemplate("inum", trustRelationshipInum).request().post(Entity.entity(metadata, MediaType.APPLICATION_XML));
+    public void setMetadata(String trustRelationshipInum, String metadata) throws OxTrustAPIException {
+        Response response = webTarget.path("set_metadata/{inum}").resolveTemplate("inum", trustRelationshipInum).request().post(Entity.entity(metadata, MediaType.APPLICATION_XML));
+        if (response.getStatus() != HTTP_OK) {
+            throw new OxTrustAPIException("Response error. HTTP code: " + response.getStatus() + ", reason phrase: " + response.getStatusInfo().getReasonPhrase(), response.getStatus());
+        }
+    }
+    
+    public void setMetadataURL(String trustRelationshipInum, String url) throws OxTrustAPIException {
+        Response response = webTarget.path("set_metadata_url/{inum}").resolveTemplate("inum", trustRelationshipInum).request().post(Entity.entity(url, MediaType.TEXT_PLAIN));
         if (response.getStatus() != HTTP_OK) {
             throw new OxTrustAPIException("Response error. HTTP code: " + response.getStatus() + ", reason phrase: " + response.getStatusInfo().getReasonPhrase(), response.getStatus());
         }
