@@ -6,7 +6,6 @@
 
 package org.gluu.oxtrust.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -169,7 +168,8 @@ public class GluuSAMLTrustRelationship extends InumEntry implements Serializable
 		return gluuEntityId;
 	}
         
-        @JsonIgnore
+        @com.fasterxml.jackson.annotation.JsonIgnore
+        @org.codehaus.jackson.annotate.JsonIgnore
         @XmlTransient
 	public void setGluuEntityId(Set<String> gluuEntityId) {
 		this.gluuEntityId = new ArrayList<String>(gluuEntityId);

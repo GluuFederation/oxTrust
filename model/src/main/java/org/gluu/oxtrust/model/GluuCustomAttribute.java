@@ -6,7 +6,6 @@
 
 package org.gluu.oxtrust.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 import java.io.Serializable;
@@ -154,7 +153,8 @@ public class GluuCustomAttribute implements Serializable, Comparable<GluuCustomA
 		this.booleanValues = booleanValues;
 	}
         
-        @JsonIgnore
+        @com.fasterxml.jackson.annotation.JsonIgnore
+        @org.codehaus.jackson.annotate.JsonIgnore
         @XmlTransient
 	public void setValues(String[] values) {
 		this.values = values;
@@ -166,7 +166,8 @@ public class GluuCustomAttribute implements Serializable, Comparable<GluuCustomA
 	}
 
 	// To avoid extra code in CR interceptor script
-        @JsonIgnore
+        @com.fasterxml.jackson.annotation.JsonIgnore
+        @org.codehaus.jackson.annotate.JsonIgnore
         @XmlTransient
 	public void setValues(Set<String> values) {
 		this.values = values.toArray(new String[0]);

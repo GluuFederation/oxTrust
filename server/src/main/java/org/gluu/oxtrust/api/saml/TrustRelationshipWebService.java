@@ -75,6 +75,7 @@ import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 import com.wordnik.swagger.annotations.Authorization;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import javax.validation.constraints.NotNull;
 
@@ -348,11 +349,10 @@ public class TrustRelationshipWebService {
                 // Generate new file name
 		metadataFileName = shibboleth3ConfService.getSpNewMetadataFileName(trustRelationshipInum);
             }
-            //TODO
-            
-            //shibboleth3ConfService.saveSpMetadataFile(metadata, metadataFileName);
+            shibboleth3ConfService.saveSpMetadataFile(metadataFileName, metadata.getBytes("UTF8"));
             
             trustRelationship.setSpMetaDataFN(metadataFileName);
+            trustRelationship.setSpMetaDataSourceType(GluuMetadataSourceType.FILE);
              trustService.updateTrustRelationship(trustRelationship);
         } catch (Exception e) {
             logger.error("addMetadata() Exception", e);
@@ -380,7 +380,8 @@ public class TrustRelationshipWebService {
             shibboleth3ConfService.saveSpMetadataFile(url, metadataFileName);
             
             trustRelationship.setSpMetaDataFN(metadataFileName);
-             trustService.updateTrustRelationship(trustRelationship);
+            trustRelationship.setSpMetaDataSourceType(GluuMetadataSourceType.FILE);
+            trustService.updateTrustRelationship(trustRelationship);
         } catch (Exception e) {
             logger.error("addMetadata() Exception", e);
             try { response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "INTERNAL SERVER ERROR"); } catch (Exception ex) {}
