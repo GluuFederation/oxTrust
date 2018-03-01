@@ -13,8 +13,9 @@ import org.gluu.oxtrust.ldap.service.uma.ResourceSetService;
 import org.gluu.oxtrust.ldap.service.uma.ScopeDescriptionService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.OxAuthClient;
+import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.site.ldap.persistence.exception.LdapMappingException;
+import org.gluu.persist.exception.mapping.BaseMappingException;
 import org.slf4j.Logger;
 import org.xdi.model.DisplayNameEntry;
 import org.xdi.model.SelectableEntity;
@@ -60,7 +61,7 @@ public class UpdateResourceAction implements Serializable {
 	private ConversationService conversationService;
 
 	@Inject
-	protected GluuCustomPerson currentPerson;
+	private Identity identity;
 
 	@Inject
 	private ResourceSetService umaResourcesService;
@@ -89,6 +90,16 @@ public class UpdateResourceAction implements Serializable {
 	private String newResource;
 
 	private boolean update;
+	private String scopeSelection="Scopes";
+	
+
+	public String getScopeSelection() {
+		return scopeSelection;
+	}
+
+	public void setScopeSelection(String scopeSelection) {
+		this.scopeSelection = scopeSelection;
+	}
 
 	public String modify() {
 		if (this.resource != null) {
@@ -134,7 +145,7 @@ public class UpdateResourceAction implements Serializable {
 		try {
 			String resourceDn = umaResourcesService.getDnForResource(this.oxId);
 			this.resource = umaResourcesService.getResourceByDn(resourceDn);
-		} catch (LdapMappingException ex) {
+		} catch (BaseMappingException ex) {
 			log.error("Failed to find resource set '{}'", this.oxId, ex);
 			return OxTrustConstants.RESULT_FAILURE;
 		}
@@ -178,7 +189,7 @@ public class UpdateResourceAction implements Serializable {
 			// Update resource set
 			try {
 				umaResourcesService.updateResource(this.resource);
-			} catch (LdapMappingException ex) {
+			} catch (BaseMappingException ex) {
 				log.error("Failed to update resource set '{}'", this.resource.getInum(), ex);
 				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update UMA resource '#{updateResourceAction.resource.name}'");
 				return OxTrustConstants.RESULT_FAILURE;
@@ -194,12 +205,12 @@ public class UpdateResourceAction implements Serializable {
 			String resourceSetDn = umaResourcesService.getDnForResource(id);
 			this.resource.setDn(resourceSetDn);
 			this.resource.setRev(String.valueOf(0));
-			this.resource.setCreator(currentPerson.getDn());
+			this.resource.setCreator(identity.getUser().getDn());
 
 			// Save resource set
 			try {
 				umaResourcesService.addResource(this.resource);
-			} catch (LdapMappingException ex) {
+			} catch (BaseMappingException ex) {
 				log.error("Failed to add new resource set '{}'", this.resource.getInum(), ex);
 				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new UMA resource");
 
@@ -227,7 +238,7 @@ public class UpdateResourceAction implements Serializable {
 				conversationService.endConversation();
 
 				return OxTrustConstants.RESULT_SUCCESS;
-			} catch (LdapMappingException ex) {
+			} catch (BaseMappingException ex) {
 				log.error("Failed to remove resource set {}", this.resource.getInum(), ex);
 			}
 		}
@@ -540,6 +551,5 @@ public class UpdateResourceAction implements Serializable {
 	public void setOxId(String oxId) {
 		this.oxId = oxId;
 	}
-
 
 }

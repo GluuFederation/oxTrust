@@ -126,7 +126,7 @@ public class ImageService {
 	 */
 	public GluuImage getImage(GluuCustomAttribute customAttribute) {
 		if ((customAttribute == null) || StringHelper.isEmpty(customAttribute.getValue())
-				|| !GluuAttributeDataType.PHOTO.equals(customAttribute.getMetadata().getDataType())) {
+				|| !GluuAttributeDataType.BINARY.equals(customAttribute.getMetadata().getDataType())) {
 			return null;
 		}
 

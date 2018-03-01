@@ -20,10 +20,10 @@ import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.model.sql.InumSqlEntry;
-import org.gluu.site.ldap.persistence.LdapEntryManager;
+import org.gluu.persist.ldap.impl.LdapEntryManager;
+import org.gluu.persist.model.base.InumEntry;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.ldap.model.InumEntry;
 import org.xdi.model.GluuAttribute;
 import org.xdi.util.INumGenerator;
 

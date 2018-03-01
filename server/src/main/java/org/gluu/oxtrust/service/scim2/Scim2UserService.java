@@ -6,306 +6,526 @@
 package org.gluu.oxtrust.service.scim2;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.management.InvalidAttributeValueException;
 
+import org.apache.commons.lang.StringUtils;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.gluu.oxtrust.ldap.service.IGroupService;
 import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.MemberService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
-import org.gluu.oxtrust.model.scim2.Operation;
-import org.gluu.oxtrust.model.scim2.ScimPatchUser;
-import org.gluu.oxtrust.model.scim2.User;
+import org.gluu.oxtrust.model.GluuGroup;
+import org.gluu.oxtrust.model.scim2.BaseScimResource;
+import org.gluu.oxtrust.model.scim2.Meta;
+import org.gluu.oxtrust.model.scim2.extensions.Extension;
+import org.gluu.oxtrust.model.scim2.extensions.ExtensionField;
+import org.gluu.oxtrust.model.scim2.user.Address;
+import org.gluu.oxtrust.model.scim2.user.Email;
+import org.gluu.oxtrust.model.scim2.user.Entitlement;
+import org.gluu.oxtrust.model.scim2.user.Group;
+import org.gluu.oxtrust.model.scim2.user.InstantMessagingAddress;
+import org.gluu.oxtrust.model.scim2.user.Name;
+import org.gluu.oxtrust.model.scim2.user.PhoneNumber;
+import org.gluu.oxtrust.model.scim2.user.Photo;
+import org.gluu.oxtrust.model.scim2.user.Role;
+import org.gluu.oxtrust.model.scim2.user.UserResource;
+import org.gluu.oxtrust.model.scim2.user.X509Certificate;
+import org.gluu.oxtrust.model.scim2.util.IntrospectUtil;
+import org.gluu.oxtrust.model.scim2.util.ScimResourceUtil;
+import org.gluu.oxtrust.service.antlr.scimFilter.ScimFilterParserService;
 import org.gluu.oxtrust.service.external.ExternalScimService;
-import org.gluu.oxtrust.util.CopyUtils2;
-import org.gluu.oxtrust.util.PatchUtil;
 import org.gluu.oxtrust.util.ServiceUtil;
-import org.gluu.site.ldap.exception.DuplicateEntryException;
-import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormatter;
+import org.gluu.oxtrust.ws.rs.scim2.GroupWebService;
+import org.gluu.persist.ldap.impl.LdapEntryManager;
+import org.gluu.persist.model.ListViewResponse;
+import org.gluu.persist.model.SortOrder;
+import org.gluu.persist.model.base.GluuBoolean;
+import org.gluu.persist.model.base.GluuStatus;
+import org.gluu.search.filter.Filter;
 import org.joda.time.format.ISODateTimeFormat;
 import org.slf4j.Logger;
+import org.xdi.config.oxtrust.AppConfiguration;
 
 /**
- * Centralizes calls by the UserWebService and BulkWebService service classes
+ * This class holds the most important business logic of the SCIM service for the resource type "User". It's devoted to
+ * taking objects of class UserResource, feeding instances of GluuCustomPerson, and do persistence to LDAP. The converse
+ * is also done: querying LDAP, and transforming GluuCustomPerson into UserResource
  *
  * @author Val Pecaoco
+ * Re-engineered by jgomer on 2017-09-15.
  */
-@Stateless
 @Named
 public class Scim2UserService implements Serializable {
 
     @Inject
     private Logger log;
 
-	@Inject
-	private MemberService memberService;
+    @Inject
+    private AppConfiguration appConfiguration;
+
+    @Inject
+    private MemberService memberService;
 
     @Inject
     private IPersonService personService;
 
     @Inject
+    private IGroupService groupService;
+
+    @Inject
+    private GroupWebService groupWS;
+
+    @Inject
     private ExternalScimService externalScimService;
 
     @Inject
-    private CopyUtils2 copyUtils2;
-    
-    @Inject
     private ServiceUtil serviceUtil;
-    
+
     @Inject
-    private PatchUtil patchUtil;
+    private ExtensionService extService;
 
-    public User createUser(User user) throws Exception {
-        log.debug(" copying gluuperson ");
-        GluuCustomPerson gluuPerson = copyUtils2.copy(user, null, false);
-        if (gluuPerson == null) {
-            throw new Exception("Scim2UserService.createUser(): Failed to create user; GluuCustomPerson is null");
+    @Inject
+    private ScimFilterParserService scimFilterParserService;
+
+    @Inject
+    private LdapEntryManager ldapEntryManager;
+
+    private String[] getComplexMultivaluedAsArray(List items){
+
+        String array[]=null;
+
+        try {
+            if (items!=null && items.size()>0) {
+                ObjectMapper mapper = ServiceUtil.getObjectMapper();
+                List<String> itemList = new ArrayList<String>();
+
+                for (Object item : items)
+                    itemList.add(mapper.writeValueAsString(item));
+
+                array = itemList.toArray(new String[]{});
+            }
         }
-
-        log.debug(" generating inum ");
-        String inum = personService.generateInumForNewPerson(); // inumService.generateInums(Configuration.INUM_TYPE_PEOPLE_SLUG);
-        // //personService.generateInumForNewPerson();
-        log.debug(" getting DN ");
-        String dn = personService.getDnForPerson(inum);
-
-        log.debug(" getting iname ");
-        String iname = personService.generateInameForNewPerson(user.getUserName());
-
-        log.debug(" setting dn ");
-        gluuPerson.setDn(dn);
-
-        log.debug(" setting inum ");
-        gluuPerson.setInum(inum);
-
-        log.debug(" setting iname ");
-        gluuPerson.setIname(iname);
-
-        log.debug(" setting commonName ");
-        gluuPerson.setCommonName(gluuPerson.getGivenName() + " " + gluuPerson.getSurname());
-
-        log.info("gluuPerson.getMemberOf().size() : " + gluuPerson.getMemberOf().size());
-        if (user.getGroups() != null && user.getGroups().size() > 0) {
-            log.info(" jumping to groupMembersAdder ");
-            log.info("gluuPerson.getDn() : " + gluuPerson.getDn());
-            serviceUtil.groupMembersAdder(gluuPerson, gluuPerson.getDn());
+        catch (Exception e){
+            log.error(e.getMessage(), e);
         }
+        return array;
 
-        // As per spec, the SP must be the one to assign the meta attributes
-        log.info(" Setting meta: create user ");
-        DateTimeFormatter dateTimeFormatter = ISODateTimeFormat.dateTime().withZoneUTC();  // Date should be in UTC format
-        Date dateCreated = DateTime.now().toDate();
-        String relativeLocation = "/scim/v2/Users/" + inum;
-        gluuPerson.setAttribute("oxTrustMetaCreated", dateTimeFormatter.print(dateCreated.getTime()));
-        gluuPerson.setAttribute("oxTrustMetaLastModified", dateTimeFormatter.print(dateCreated.getTime()));
-        gluuPerson.setAttribute("oxTrustMetaLocation", relativeLocation);
-
-        // Sync email, forward ("oxTrustEmail" -> "mail")
-        gluuPerson = serviceUtil.syncEmailForward(gluuPerson, true);
-
-        // For custom script: create user
-        if (externalScimService.isEnabled()) {
-            externalScimService.executeScimCreateUserMethods(gluuPerson);
-        }
-
-        log.debug("adding new GluuPerson");
-        personService.addPerson(gluuPerson);
-
-        User createdUser = copyUtils2.copy(gluuPerson, null);
-
-        return createdUser;
     }
 
-    public User updateUser(String id, User user) throws Exception {
-        GluuCustomPerson gluuPerson = personService.getPersonByInum(id);
-        if (gluuPerson == null) {
+    private <T> List<T> getAttributeListValue(GluuCustomPerson source, Class<T> clazz, String attrName) {
 
-            throw new EntryPersistenceException("Scim2UserService.updateUser(): " + "Resource " + id + " not found");
+        List<T> items = null;
+        try {
+            ObjectMapper mapper = ServiceUtil.getObjectMapper();
+            //This is already disabled in ServiceUtil
+            //mapper.disable(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES);
 
-        } else {
+            String[] attributeArray = source.getAttributeArray(attrName);
+            if (attributeArray != null) {
+                items = new ArrayList<T>();
+                for (String attribute : attributeArray) {
+                    T item = mapper.readValue(attribute, clazz);
+                    items.add(item);
+                }
+            }
+        }
+        catch (Exception e){
+            log.error(e.getMessage(), e);
+        }
+        return items;
 
-            // Validate if attempting to update userName of a different id
-            if (user.getUserName() != null) {
+    }
 
-                GluuCustomPerson personToFind = new GluuCustomPerson();
-                personToFind.setUid(user.getUserName());
+    private void transferAttributesToPerson(UserResource res, GluuCustomPerson person) {
 
-                List<GluuCustomPerson> foundPersons = personService.findPersons(personToFind, 2);
-                if (foundPersons != null && foundPersons.size() > 0) {
-                    for (GluuCustomPerson foundPerson : foundPersons) {
-                        if (foundPerson != null && !foundPerson.getInum().equalsIgnoreCase(gluuPerson.getInum())) {
-                            throw new DuplicateEntryException("Cannot update userName of a different id: " + user.getUserName());
+        log.debug("transferAttributesToPerson");
+
+        //Set values trying to follow the order found in BaseScimResource class
+        person.setAttribute("oxTrustExternalId", res.getExternalId());
+        person.setAttribute("oxTrustMetaCreated", res.getMeta().getCreated());
+        person.setAttribute("oxTrustMetaLastModified", res.getMeta().getLastModified());
+        //When creating user, location will be set again when having an inum
+        person.setAttribute("oxTrustMetaLocation", res.getMeta().getLocation());
+
+        //Set values trying to follow the order found in UserResource class
+        person.setUid(res.getUserName());
+
+        if (res.getName()!=null){
+            person.setGivenName(res.getName().getGivenName());
+            person.setSurname(res.getName().getFamilyName());
+            person.setAttribute("middleName", res.getName().getMiddleName());
+            person.setAttribute("oxTrusthonorificPrefix", res.getName().getHonorificPrefix());
+            person.setAttribute("oxTrusthonorificSuffix", res.getName().getHonorificSuffix());
+            person.setAttribute("oxTrustNameFormatted", res.getName().computeFormattedName());
+        }
+        person.setDisplayName(res.getDisplayName());
+
+        person.setAttribute("nickname", res.getNickName());
+        person.setAttribute("oxTrustProfileURL", res.getProfileUrl());
+        person.setAttribute("oxTrustTitle", res.getTitle());
+        person.setAttribute("oxTrustUserType", res.getUserType());
+
+        person.setPreferredLanguage(res.getPreferredLanguage());
+        person.setAttribute("locale", res.getLocale());
+        person.setTimezone(res.getTimezone());
+
+        //Why are both gluuStatus and oxTrustActive used for active? it's for active being used in filter queries?
+        Boolean active=res.getActive()!=null && res.getActive();
+        person.setAttribute("oxTrustActive", active.toString());
+        person.setAttribute("gluuStatus", active ? GluuStatus.ACTIVE.getValue() : GluuStatus.INACTIVE.getValue());
+        person.setUserPassword(res.getPassword());
+
+        person.setAttribute("oxTrustEmail", getComplexMultivaluedAsArray(res.getEmails()));
+        try {
+            person = serviceUtil.syncEmailForward(person, true);
+        }
+        catch (Exception e){
+            log.error("Problem syncing emails forward", e);
+        }
+
+        person.setAttribute("oxTrustPhoneValue", getComplexMultivaluedAsArray(res.getPhoneNumbers()));
+        person.setAttribute("oxTrustImsValue", getComplexMultivaluedAsArray(res.getIms()));
+        person.setAttribute("oxTrustPhotos", getComplexMultivaluedAsArray(res.getPhotos()));
+        person.setAttribute("oxTrustAddresses", getComplexMultivaluedAsArray(res.getAddresses()));
+
+        //group membership changes MUST be applied via the "Group" Resource (Section 4.1.2 & 8.7.1 RFC 7643) only
+
+        person.setAttribute("oxTrustEntitlements", getComplexMultivaluedAsArray(res.getEntitlements()));
+        person.setAttribute("oxTrustRole", getComplexMultivaluedAsArray(res.getRoles()));
+        person.setAttribute("oxTrustx509Certificate", getComplexMultivaluedAsArray(res.getX509Certificates()));
+
+        //Pairwise identifiers must not be supplied here... (they are mutability = readOnly)
+
+        transferExtendedAttributesToPerson(res, person);
+
+    }
+
+    /**
+     * Takes all extended attributes found in the SCIM resource and copies them to a GluuCustomPerson
+     * This method is called after validations take place (see associated decorator for User Service), so all inputs are
+     * OK and can go straight to LDAP with no runtime surprises
+     * @param resource A SCIM resource used as origin of data
+     * @param person a GluuCustomPerson used as destination
+     */
+    private void transferExtendedAttributesToPerson(BaseScimResource resource, GluuCustomPerson person){
+
+        try {
+            //Gets all the extended attributes for this resource
+            Map<String, Object> extendedAttrs= resource.getCustomAttributes();
+            
+            //Iterates over all extensions this type of resource might have
+            for (Extension extension : extService.getResourceExtensions(resource.getClass())){
+                Object val=extendedAttrs.get(extension.getUrn());
+
+                if (val!=null) {
+                    //Obtains the attribute/value(s) pairs in the current extension
+                    Map<String, Object> attrsMap = IntrospectUtil.strObjMap(val);
+
+                    for (String attribute : attrsMap.keySet()) {
+                        Object value = attrsMap.get(attribute);
+
+                        //Ignore if the attribute is unassigned in this resource: destination will not be changed in this regard
+                        if (value != null) {
+                            //Get properly formatted string representations for the value(s) associated to the attribute
+                            List<String> values=extService.getStringAttributeValues(extension.getFields().get(attribute), value);
+                            log.debug("transferExtendedAttributesToPerson. Setting attribute '{}' with values {}", attribute, values.toString());
+                            person.setAttribute(attribute, values.toArray(new String[]{}));
                         }
                     }
                 }
             }
         }
-
-        GluuCustomPerson updatedGluuPerson = copyUtils2.copy(user, gluuPerson, true);
-
-        if (user.getGroups() != null && user.getGroups().size() > 0) {
-            serviceUtil.groupMembersAdder(updatedGluuPerson, personService.getDnForPerson(id));
+        catch (Exception e){
+            log.error(e.getMessage(), e);
         }
 
-        log.info(" Setting meta: update user ");
-        DateTimeFormatter dateTimeFormatter = ISODateTimeFormat.dateTime().withZoneUTC();  // Date should be in UTC format
-        Date dateLastModified = DateTime.now().toDate();
-        updatedGluuPerson.setAttribute("oxTrustMetaLastModified", dateTimeFormatter.print(dateLastModified.getTime()));
-        if (updatedGluuPerson.getAttribute("oxTrustMetaLocation") == null || (updatedGluuPerson.getAttribute("oxTrustMetaLocation") != null && updatedGluuPerson.getAttribute("oxTrustMetaLocation").isEmpty())) {
-            String relativeLocation = "/scim/v2/Users/" + id;
-            updatedGluuPerson.setAttribute("oxTrustMetaLocation", relativeLocation);
-        }
-
-        // Sync email, forward ("oxTrustEmail" -> "mail")
-        updatedGluuPerson = serviceUtil.syncEmailForward(updatedGluuPerson, true);
-
-        // For custom script: update user
-        if (externalScimService.isEnabled()) {
-            externalScimService.executeScimUpdateUserMethods(updatedGluuPerson);
-        }
-
-        personService.updatePerson(updatedGluuPerson);
-
-        log.debug(" person updated ");
-
-        User updatedUser = copyUtils2.copy(updatedGluuPerson, null);
-
-        return updatedUser;
     }
 
-    public void deleteUser(String id) throws Exception {
-        GluuCustomPerson gluuPerson = personService.getPersonByInum(id);
-        if (gluuPerson == null) {
+    public void transferAttributesToUserResource(GluuCustomPerson person, UserResource res, String url) {
 
-            throw new EntryPersistenceException("Scim2UserService.deleteUser(): " + "Resource " + id + " not found");
+        log.debug("transferAttributesToUserResource");
 
-        } else {
+        res.setId(person.getInum());
+        res.setExternalId(person.getAttribute("oxTrustExternalId"));
 
-            // For custom script: delete user
-            if (externalScimService.isEnabled()) {
-                externalScimService.executeScimDeleteUserMethods(gluuPerson);
-            }
+        Meta meta=new Meta();
+        meta.setResourceType(ScimResourceUtil.getType(res.getClass()));
+        meta.setCreated(person.getAttribute("oxTrustMetaCreated"));
+        meta.setLastModified(person.getAttribute("oxTrustMetaLastModified"));
+        meta.setLocation(person.getAttribute("oxTrustMetaLocation"));
+        if (meta.getLocation()==null)
+            meta.setLocation(url + "/" + person.getInum());
 
-            log.info("person.getMemberOf().size() : " + gluuPerson.getMemberOf().size());
-            if (gluuPerson.getMemberOf() != null) {
+        res.setMeta(meta);
 
-                if (gluuPerson.getMemberOf().size() > 0) {
+        //Set values in order of appearance in UserResource class
+        res.setUserName(person.getUid());
 
-                    String dn = personService.getDnForPerson(id);
-                    log.info("DN : " + dn);
+        Name name=new Name();
+        name.setGivenName(person.getGivenName());
+        name.setFamilyName(person.getSurname());
+        name.setMiddleName(person.getAttribute("middleName"));
+        name.setHonorificPrefix(person.getAttribute("oxTrusthonorificPrefix"));
+        name.setHonorificSuffix(person.getAttribute("oxTrusthonorificSuffix"));
 
-                    serviceUtil.deleteUserFromGroup(gluuPerson, dn);
+        String formatted=person.getAttribute("oxTrustNameFormatted");
+        if (formatted==null)    //recomputes the formatted name if absent in LDAP
+            name.computeFormattedName();
+        else
+            name.setFormatted(formatted);
+
+        res.setName(name);
+        res.setDisplayName(person.getDisplayName());
+
+        res.setNickName(person.getAttribute("nickname"));
+        res.setProfileUrl(person.getAttribute("oxTrustProfileURL"));
+        res.setTitle(person.getAttribute("oxTrustTitle"));
+        res.setUserType(person.getAttribute("oxTrustUserType"));
+
+        res.setPreferredLanguage(person.getPreferredLanguage());
+        res.setLocale(person.getAttribute("locale"));
+        res.setTimezone(person.getTimezone());
+
+        res.setActive(Boolean.valueOf(person.getAttribute("oxTrustActive"))
+                || GluuBoolean.getByValue(person.getAttribute("gluuStatus")).isBooleanValue());
+        res.setPassword(person.getUserPassword());
+
+        res.setEmails(getAttributeListValue(person, Email.class, "oxTrustEmail"));
+        res.setPhoneNumbers(getAttributeListValue(person, PhoneNumber.class, "oxTrustPhoneValue"));
+        res.setIms(getAttributeListValue(person, InstantMessagingAddress.class, "oxTrustImsValue"));
+        res.setPhotos(getAttributeListValue(person, Photo.class, "oxTrustPhotos"));
+        res.setAddresses(getAttributeListValue(person, Address.class, "oxTrustAddresses"));
+
+        List<String> listOfGroups = person.getMemberOf();
+        if (listOfGroups!= null && listOfGroups.size()>0) {
+            List<Group> groupList = new ArrayList<Group>();
+
+            for (String groupDN : listOfGroups) {
+                try {
+                    GluuGroup gluuGroup = groupService.getGroupByDn(groupDN);
+
+                    Group group = new Group();
+                    group.setValue(gluuGroup.getInum());
+                    String reference = groupWS.getEndpointUrl() + "/" + gluuGroup.getInum();
+                    group.setRef(reference);
+                    group.setDisplay(gluuGroup.getDisplayName());
+                    group.setType(Group.Type.DIRECT);   //Only support direct membership: see section 4.1.2 of RFC 7644
+
+                    groupList.add(group);
+                }
+                catch (Exception e){
+                    log.warn("transferAttributesToUserResource. Group with dn {} could not be added to User Resource. {}", groupDN, person.getUid());
+                    log.error(e.getMessage(), e);
                 }
             }
+            if (groupList.size()>0)
+                res.setGroups(groupList);
+        }
 
-            memberService.removePerson(gluuPerson);
+        res.setEntitlements(getAttributeListValue(person, Entitlement.class, "oxTrustEntitlements"));
+        res.setRoles(getAttributeListValue(person, Role.class, "oxTrustRole"));
+        res.setX509Certificates(getAttributeListValue(person, X509Certificate.class, "oxTrustx509Certificate"));
+
+        res.setPairwiseIdentitifers(person.getOxPPID());
+
+        transferExtendedAttributesToResource(person, res);
+    }
+
+    private void transferExtendedAttributesToResource(GluuCustomPerson person, BaseScimResource resource){
+
+        log.debug("transferExtendedAttributesToResource of type {}", ScimResourceUtil.getType(resource.getClass()));
+
+        //Gets the list of extensions associated to the resource passed. In practice, this will be at most a singleton list
+        List<Extension> extensions=extService.getResourceExtensions(resource.getClass());
+
+        //Iterate over every extension to copy extended attributes from person to resource
+        for (Extension extension : extensions){
+            Map<String, ExtensionField> fields=extension.getFields();
+            //Create empty map to store the values of the extended attributes found for current extension in object person
+            Map<String, Object> map=new HashMap<String, Object>();
+
+            log.debug("transferExtendedAttributesToResource. Revising attributes of extension '{}'", extension.getUrn());
+
+            //Iterate over every attribute part of this extension
+            for (String attr : fields.keySet()){
+                //Gets the values associated to this attribute that were found in LDAP
+                String values[]=person.getAttributes(attr);
+
+                if (values!=null){
+                    log.debug("transferExtendedAttributesToResource. Copying to resource the value(s) for attribute '{}'", attr);
+
+                    ExtensionField field=fields.get(attr);
+                    if (field.isMultiValued())
+                        map.put(attr, extService.convertValues(field, values));
+                    else
+                        map.put(attr, extService.convertValues(field, values).get(0));
+                }
+            }
+            //Stores all extended attributes (with their values) in the resource object
+            if (map.size()>0) {
+                resource.addCustomAttributes(extension.getUrn(), map);
+            }
+        }
+        for (String urn : resource.getCustomAttributes().keySet())
+            resource.getSchemas().add(urn);
+
+    }
+
+    private void writeCommonName(GluuCustomPerson person){
+
+        if (StringUtils.isNotEmpty(person.getGivenName()) && StringUtils.isNotEmpty(person.getSurname()))
+            person.setCommonName(person.getGivenName() + " " + person.getSurname());
+
+    }
+
+    private void assignComputedAttributesToPerson(GluuCustomPerson person){
+
+        String inum = personService.generateInumForNewPerson();
+        String dn = personService.getDnForPerson(inum);
+
+        person.setInum(inum);
+        person.setDn(dn);
+        person.setIname(personService.generateInameForNewPerson(person.getUid()));
+        writeCommonName(person);
+
+    }
+
+    /**
+     * Inserts a new user in LDAP based on the SCIM Resource passed
+     * @param user A UserResource object with all info as received by the web service
+     * @throws Exception
+     */
+    public void createUser(UserResource user, String url) throws Exception {
+
+        String userName=user.getUserName();
+        log.info("Preparing to create user {}", userName);
+
+        //There is no need to check attributes mutability in this case as there are no original attributes
+        //(the resource does not exist yet)
+        GluuCustomPerson gluuPerson=new GluuCustomPerson();
+        transferAttributesToPerson(user, gluuPerson);
+        assignComputedAttributesToPerson(gluuPerson);
+
+        String location=url + "/" + gluuPerson.getInum();
+        gluuPerson.setAttribute("oxTrustMetaLocation", location);
+
+        log.info("Persisting user {}", userName);
+        personService.addCustomObjectClass(gluuPerson);
+
+        if (externalScimService.isEnabled()){
+            externalScimService.executeScimCreateUserMethods(gluuPerson);
+            personService.addPerson(gluuPerson);
+            //Copy back to user the info from gluuPerson
+            transferAttributesToUserResource(gluuPerson, user, url);
+            externalScimService.executeScimPostCreateUserMethods(gluuPerson);
+        }
+        else {
+            personService.addPerson(gluuPerson);
+            user.getMeta().setLocation(location);
+            //We are ignoring the id value received (user.getId())
+            user.setId(gluuPerson.getInum());
+        }
+
+    }
+
+    public UserResource updateUser(String id, UserResource user, String url) throws InvalidAttributeValueException {
+
+        GluuCustomPerson gluuPerson = personService.getPersonByInum(id);    //This is never null (see decorator involved)
+        UserResource tmpUser=new UserResource();
+
+        transferAttributesToUserResource(gluuPerson, tmpUser, url);
+
+        long now=System.currentTimeMillis();
+        tmpUser.getMeta().setLastModified(ISODateTimeFormat.dateTime().withZoneUTC().print(now));
+
+        tmpUser=(UserResource) ScimResourceUtil.transferToResourceReplace(user, tmpUser, extService.getResourceExtensions(user.getClass()));
+        replacePersonInfo(gluuPerson, tmpUser, url);
+
+        return tmpUser;
+
+    }
+
+    public void replacePersonInfo(GluuCustomPerson gluuPerson, UserResource user, String url){
+
+        transferAttributesToPerson(user, gluuPerson);
+        writeCommonName(gluuPerson);
+
+        log.debug("replacePersonInfo. Updating person info in LDAP");
+        personService.addCustomObjectClass(gluuPerson);
+
+        if (externalScimService.isEnabled()){
+            externalScimService.executeScimUpdateUserMethods(gluuPerson);
+            personService.updatePerson(gluuPerson);
+            //Copy back to user the info from gluuPerson
+            transferAttributesToUserResource(gluuPerson, user, url);
+            externalScimService.executeScimPostUpdateUserMethods(gluuPerson);
+        }
+        else {
+            personService.updatePerson(gluuPerson);
+        }
+
+    }
+
+    public void deleteUser(GluuCustomPerson gluuPerson) throws Exception {
+
+        String dn = gluuPerson.getDn();
+        if (gluuPerson.getMemberOf()!= null && gluuPerson.getMemberOf().size()>0) {
+            log.info("Removing user {} from groups", gluuPerson.getUid());
+            serviceUtil.deleteUserFromGroup(gluuPerson, dn);
+        }
+        log.info("Removing user entry {}", dn);
+
+        if (externalScimService.isEnabled())
+            externalScimService.executeScimDeleteUserMethods(gluuPerson);
+
+        personService.removePerson(gluuPerson);
+
+        if (externalScimService.isEnabled())
+            externalScimService.executeScimPostDeleteUserMethods(gluuPerson);
+
+    }
+
+    public ListViewResponse<BaseScimResource> searchUsers(String filter, String sortBy, SortOrder sortOrder, int startIndex, int count,
+                                              String url, int maxCount) throws Exception{
+
+        Filter ldapFilter=scimFilterParserService.createLdapFilter(filter, "inum=*", UserResource.class);
+        log.info("Executing search for users using: ldapfilter '{}', sortBy '{}', sortOrder '{}', startIndex '{}', count '{}'",
+                ldapFilter.toString(), sortBy, sortOrder.getValue(), startIndex, count);
+
+        ListViewResponse<GluuCustomPerson> list=ldapEntryManager.findListViewResponse(personService.getDnForPerson(null),
+                GluuCustomPerson.class, ldapFilter, startIndex, count, maxCount, sortBy, sortOrder, null);
+        List<BaseScimResource> resources=new ArrayList<BaseScimResource>();
+
+        for (GluuCustomPerson person : list.getResult()){
+            UserResource scimUsr=new UserResource();
+            transferAttributesToUserResource(person, scimUsr, url);
+            resources.add(scimUsr);
+        }
+        log.info ("Found {} matching entries - returning {}", list.getTotalResults(), list.getResult().size());
+
+        ListViewResponse<BaseScimResource> result = new ListViewResponse<BaseScimResource>();
+        result.setResult(resources);
+        result.setTotalResults(list.getTotalResults());
+
+        return result;
+
+    }
+
+    //See: https://github.com/GluuFederation/oxTrust/issues/800
+    public void removePPIDsBranch(String dn) {
+        try {
+            ldapEntryManager.removeRecursively(String.format("ou=pairwiseIdentifiers,%s", dn));
+        }
+        catch (Exception e){
+            log.error(e.getMessage(), e);
         }
     }
-    
 
-    public User patchUser(String id, ScimPatchUser patchUser) throws Exception {
-    	
-    	for(Operation operation : patchUser.getOperatons()){
-    		String val = operation.getOperationName();
-    		
-    		if(val.equalsIgnoreCase("replace")){
-    			replaceUserPatch(operation,id);
-    		}
-    		
-    		if(val.equalsIgnoreCase("remove")){
-    			removeUserPatch(operation,id);
-    		}
-    		
-    		if(val.equalsIgnoreCase("add")){
-    			addUserPatch(operation,id);
-    		}       
-    		
-    	}
-
-    	GluuCustomPerson gluuPerson = personService.getPersonByInum(id);
-    	User updatedUser = copyUtils2.copy(gluuPerson, null);   	
-    	
-		return updatedUser;  	
-    }
-    
-   private void removeUserPatch(Operation operation,String id) throws Exception{	   
-	   User user = operation.getValue();	
-		
-		GluuCustomPerson updatedGluuPerson = patchUtil.removePatch(user, validUsernameByInum(user, id));
-		log.info(" Setting meta: removeUserPatch update user ");
-		setMeta(updatedGluuPerson);    	
-    }
-   
-	private void replaceUserPatch(Operation operation, String id) throws Exception {
-		User user = operation.getValue();		
-		
-		GluuCustomPerson updatedGluuPerson = patchUtil.replacePatch(user, validUsernameByInum(user, id));
-		log.info(" Setting meta: replaceUserPatch update user ");
-		setMeta(updatedGluuPerson);
-	}
-   
-	private void addUserPatch(Operation operation, String id) throws Exception {
-		User user = operation.getValue();		
-		
-		GluuCustomPerson updatedGluuPerson = patchUtil.addPatch(user, validUsernameByInum(user, id));
-		log.info(" Setting meta: addUserPatch update user ");
-		setMeta(updatedGluuPerson);
-	}
-	
-	private GluuCustomPerson validUsernameByInum(User user,String id) throws DuplicateEntryException{
-		GluuCustomPerson gluuPerson = personService.getPersonByInum(id);
-		if (gluuPerson == null) {
-
-			throw new EntryPersistenceException("Scim2UserService.updateUser(): " + "Resource " + id + " not found");
-
-		} else {
-
-			// Validate if attempting to update userName of a different id
-			if (user.getUserName() != null) {
-
-				GluuCustomPerson personToFind = new GluuCustomPerson();
-				personToFind.setUid(user.getUserName());
-
-				List<GluuCustomPerson> foundPersons = personService	.findPersons(personToFind, 2);
-				if (foundPersons != null && foundPersons.size() > 0) {
-					for (GluuCustomPerson foundPerson : foundPersons) {
-						if (foundPerson != null && !foundPerson.getInum().equalsIgnoreCase(gluuPerson.getInum())) {
-							throw new DuplicateEntryException("Cannot update userName of a different id: "+ user.getUserName());
-						}
-					}
-				}
-			}
-		}
-		return gluuPerson;
-		
-	}
-	
-	private void setMeta(GluuCustomPerson updatedGluuPerson) throws Exception{
-		
-		DateTimeFormatter dateTimeFormatter = ISODateTimeFormat.dateTime().withZoneUTC(); // Date should be in UTC format
-		Date dateLastModified = DateTime.now().toDate();
-		updatedGluuPerson.setAttribute("oxTrustMetaLastModified",dateTimeFormatter.print(dateLastModified.getTime()));
-		if (updatedGluuPerson.getAttribute("oxTrustMetaLocation") == null 
-				|| (updatedGluuPerson.getAttribute("oxTrustMetaLocation") != null 
-				&& updatedGluuPerson.getAttribute("oxTrustMetaLocation").isEmpty())) {
-
-			String relativeLocation = "/scim/v2/Users/" + updatedGluuPerson.getInum();
-			updatedGluuPerson.setAttribute("oxTrustMetaLocation",relativeLocation);
-		}
-		updatedGluuPerson = serviceUtil.syncEmailForward(updatedGluuPerson, true);
-
-		// For custom script: update user
-		if (externalScimService.isEnabled()) {
-			externalScimService.executeScimUpdateUserMethods(updatedGluuPerson);
-		}
-		personService.updatePerson(updatedGluuPerson);
-
-		log.debug(" person updated ");
-		
-	}
-    
 }

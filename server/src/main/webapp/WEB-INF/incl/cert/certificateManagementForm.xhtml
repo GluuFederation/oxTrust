@@ -82,14 +82,12 @@
     
                             <a4j:commandLink action="#{_action.removePublicCertificate(_cert)}" render="managePublicCertificateId" execute="@region">
                                 <h:graphicImage value="/img/remove.gif" />
-                                <f:param name="sv" value="1" />
                             </a4j:commandLink>
                         </h:panelGrid>
                     </rich:dataGrid>
     
                     <h:panelGroup layout="block" styleClass="addConfig">
                         <a4j:commandLink value="#{msg['cert.addPublicCertificates']}" action="#{_action.addPublicCertificate()}" render="managePublicCertificateId" execute="@region" />
-                        <f:param name="sv" value="1" />
                     </h:panelGroup>
                 </a4j:region>
             </h:panelGrid>

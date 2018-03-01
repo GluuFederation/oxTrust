@@ -7,7 +7,7 @@
 package org.gluu.oxtrust.ldap.service;
 
 import org.gluu.oxtrust.model.GluuAppliance;
-import org.gluu.site.ldap.persistence.LdapEntryManager;
+import org.gluu.persist.ldap.impl.LdapEntryManager;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.AuthenticationScriptUsageType;

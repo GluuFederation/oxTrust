@@ -25,13 +25,12 @@ import org.gluu.oxtrust.ldap.service.InumService;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.site.ldap.persistence.LdapEntryManager;
+import org.gluu.persist.ldap.impl.LdapEntryManager;
+import org.gluu.search.filter.Filter;
 import org.slf4j.Logger;
 import org.xdi.util.ArrayHelper;
+import org.xdi.util.OxConstants;
 import org.xdi.util.StringHelper;
-
-import com.unboundid.ldap.sdk.Filter;
-import com.unboundid.ldap.sdk.LDAPException;
 
 /**
  * Provides cache refresh related operations
@@ -55,13 +54,7 @@ public class CacheRefreshService implements Serializable {
 			return null;
 		}
 
-		try {
-			return Filter.create(customLdapFilter);
-		} catch (LDAPException e) {
-			log.error("Failed to create filter: {}", customLdapFilter);
-
-			return null;
-		}
+		return Filter.create(customLdapFilter);
 	}
 
 	public Filter createFilter(String[] keyAttributes, String[] keyObjectClasses, String keyAttributeStart, Filter customFilter) {
@@ -73,31 +66,26 @@ public class CacheRefreshService implements Serializable {
 		for (int i = 0; i < keyAttributes.length; i++) {
 			String filterString = keyAttributes[i];
 
-			try {
-				if (filterString.contains("=")) {
-					filters.add(Filter.create(filterString));
-					// } else {
-					// filters.add(Filter.createPresenceFilter(filterString));
+			if (filterString.contains("=")) {
+				filters.add(Filter.create(filterString));
+				// } else {
+				// filters.add(Filter.createPresenceFilter(filterString));
+			}
+
+			// Limit result list
+			if ((i == 0) && (keyAttributeStart != null)) {
+				int index = filterString.indexOf('=');
+				if (index != -1) {
+					filterString = filterString.substring(0, index);
 				}
 
-				// Limit result list
-				if ((i == 0) && (keyAttributeStart != null)) {
-					int index = filterString.indexOf('=');
-					if (index != -1) {
-						filterString = filterString.substring(0, index);
-					}
-
-					filterString = String.format("%s=%s*", filterString, keyAttributeStart);
-					filters.add(Filter.create(filterString));
-				}
-			} catch (LDAPException ex) {
-				log.error("Failed to create filter: {}", keyAttributes[i]);
-				return null;
+				filterString = String.format("%s=%s*", filterString, keyAttributeStart);
+				filters.add(Filter.create(filterString));
 			}
 		}
 
 		for (String keyObjectClass : keyObjectClasses) {
-			filters.add(Filter.createEqualityFilter(OxTrustConstants.objectClass, keyObjectClass));
+			filters.add(Filter.createEqualityFilter(OxConstants.OBJECT_CLASS, keyObjectClass));
 		}
 
 		if (customFilter != null) {
@@ -108,7 +96,7 @@ public class CacheRefreshService implements Serializable {
 	}
 
 	public Filter createObjectClassPresenceFilter() {
-		return Filter.createPresenceFilter(OxTrustConstants.objectClass);
+		return Filter.createPresenceFilter(OxConstants.OBJECT_CLASS);
 	}
 
 	public void addInumMap(LdapEntryManager ldapEntryManager, GluuInumMap inumMap) {

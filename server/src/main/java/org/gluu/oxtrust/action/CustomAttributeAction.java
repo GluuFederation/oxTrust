@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.IdentityHashMap;
@@ -217,11 +218,11 @@ public class CustomAttributeAction implements Serializable {
 
 		this.customAttributes.add(index,tmpGluuPersonAttribute);
 	}
-	public void removeMultiValuesInAttributes(String inum, boolean mandatory) {
+	public void removeMultiValuesInAttributes(String inum, boolean mandatory, String removeValue) {
 		if (StringHelper.isEmpty(inum)) {
 			return;
 		}
-
+		
 		GluuAttribute tmpAttribute = this.attributeInums.get(inum);
 		if (tmpAttribute == null) {
 			return;
@@ -231,19 +232,17 @@ public class CustomAttributeAction implements Serializable {
 		this.availableAttributeIds.remove(id);
 		
 		String[] values = null;
+		String[] newValues = null;
 		int index = 0;
 		for (GluuCustomAttribute customAttribute : this.customAttributes) {
 			if (tmpAttribute.equals(customAttribute.getMetadata())) {
 				values = customAttribute.getValues();
-				if(values.length == 1)
-					return; 
+				newValues = removeElementFromArray(values , removeValue);
 				break;
 			}
 			index ++;
 		}
 		
-		String[] newValues = new String[values.length-1];
-		System.arraycopy(values, 0 , newValues , 0 , values.length-1);
 		removeCustomAttribute(inum);
 		GluuCustomAttribute tmpGluuPersonAttribute = new GluuCustomAttribute(tmpAttribute.getName(),newValues , true, mandatory);
 		tmpGluuPersonAttribute.setMetadata(tmpAttribute);
@@ -251,6 +250,17 @@ public class CustomAttributeAction implements Serializable {
 		this.customAttributes.add(index,tmpGluuPersonAttribute);
 	}
 
+	private String[] removeElementFromArray(String [] n , String removeElement){
+		  if(removeElement.isEmpty()){
+			  removeElement = null ;
+			  }
+		  List<String> list =  new ArrayList<String>();
+	      Collections.addAll(list, n); 
+	      list.remove(removeElement);
+	      n = list.toArray(new String[list.size()]);
+	      return n;
+	}
+	
 	public void addCustomAttribute(String inum) {
 		addCustomAttribute(inum, false);
 	}
@@ -534,7 +544,7 @@ public class CustomAttributeAction implements Serializable {
 
 	public void deletePhotos() {
 		for (GluuCustomAttribute customAttribute : this.customAttributes) {
-			if (GluuAttributeDataType.PHOTO.equals(customAttribute.getMetadata().getDataType())) {
+			if (GluuAttributeDataType.BINARY.equals(customAttribute.getMetadata().getDataType())) {
 				removePhoto(customAttribute.getMetadata().getInum());
 			}
 		}

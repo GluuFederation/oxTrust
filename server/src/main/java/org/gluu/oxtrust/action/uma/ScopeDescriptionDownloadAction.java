@@ -10,7 +10,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.gluu.oxtrust.ldap.service.ImageService;
 import org.gluu.oxtrust.ldap.service.ViewHandlerService;
 import org.gluu.oxtrust.ldap.service.uma.ScopeDescriptionService;
-import org.gluu.site.ldap.persistence.exception.LdapMappingException;
+import org.gluu.persist.exception.mapping.BaseMappingException;
 import org.slf4j.Logger;
 import org.xdi.model.GluuImage;
 import org.xdi.oxauth.model.uma.persistence.UmaScopeDescription;
@@ -135,7 +135,7 @@ public class ScopeDescriptionDownloadAction implements Serializable {
 			}
 
 			scopeDescription = scopeDescriptions.get(0);
-		} catch (LdapMappingException ex) {
+		} catch (BaseMappingException ex) {
 			log.error("Failed to find scope description '{}'", this.scopeId, ex);
 			return null;
 		}

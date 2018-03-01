@@ -19,7 +19,7 @@ import javax.validation.constraints.Size;
 
 import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
-import org.gluu.site.ldap.persistence.exception.AuthenticationException;
+import org.gluu.persist.exception.operation.AuthenticationException;
 import org.slf4j.Logger;
 import org.xdi.service.security.Secure;
 import org.xdi.util.StringHelper;

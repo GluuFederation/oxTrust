@@ -20,10 +20,10 @@ import javax.inject.Named;
 import org.gluu.oxtrust.model.GluuMetadataSourceType;
 import org.gluu.oxtrust.model.GluuSAMLFederationProposal;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.site.ldap.persistence.LdapEntryManager;
+import org.gluu.persist.ldap.impl.LdapEntryManager;
+import org.gluu.persist.model.base.GluuStatus;
+import org.gluu.persist.model.base.InumEntry;
 import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.ldap.model.GluuStatus;
-import org.xdi.ldap.model.InumEntry;
 import org.xdi.util.INumGenerator;
 import org.xdi.util.StringHelper;
 

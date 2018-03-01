@@ -11,10 +11,9 @@ import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.lang.StringUtils;
-import org.gluu.site.ldap.LDAPConnectionProvider;
-import org.gluu.site.ldap.OperationsFacade;
-import org.gluu.site.ldap.persistence.LdapEntryManager;
-import org.gluu.site.ldap.persistence.exception.LdapMappingException;
+import org.gluu.persist.exception.mapping.BaseMappingException;
+import org.gluu.persist.ldap.impl.LdapEntryManager;
+import org.gluu.persist.ldap.impl.LdapEntryManagerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xdi.util.StringHelper;
@@ -184,7 +183,7 @@ public abstract class Configuration<C extends AppConfiguration, L extends LdapAp
 
 			final L ldapConf = this.ldapEntryManager.find(getAppConfigurationType(), dn, returnAttributes);
 			return ldapConf;
-		} catch (LdapMappingException ex) {
+		} catch (BaseMappingException ex) {
 			logger.error(ex.getMessage());
 		}
 
@@ -194,9 +193,9 @@ public abstract class Configuration<C extends AppConfiguration, L extends LdapAp
 	private LdapEntryManager createLdapEntryManager() {
 		Properties connectionProperties = (Properties) this.ldapConfiguration.getProperties();
 		Properties decryptedConnectionProperties = PropertiesDecrypter.decryptProperties(connectionProperties, this.cryptoConfigurationSalt);
-
-		LDAPConnectionProvider connectionProvider = new LDAPConnectionProvider(decryptedConnectionProperties);
-		LdapEntryManager ldapEntryManager = new LdapEntryManager(new OperationsFacade(connectionProvider, null));
+		
+		LdapEntryManagerFactory ldapEntryManagerFactory = new LdapEntryManagerFactory();
+		LdapEntryManager ldapEntryManager = ldapEntryManagerFactory.createEntryManager(decryptedConnectionProperties);
 
 		logger.debug("Created LdapEntryManager: {}", ldapEntryManager);
 

@@ -110,14 +110,6 @@ public interface IGroupService {
 	public abstract GluuGroupVisibility[] getVisibilityTypes() throws Exception;
 
 	/**
-	 * returns a list of all groups
-	 * 
-	 * @return list of groups
-	 */
-
-	public abstract List<GluuGroup> getAllGroupsList() throws Exception;
-
-	/**
 	 * returns GluuGroup by Dn
 	 * 
 	 * @return GluuGroup

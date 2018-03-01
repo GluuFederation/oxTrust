@@ -31,6 +31,7 @@ import org.xdi.model.metric.MetricType;
 import org.xdi.model.metric.counter.CounterMetricEntry;
 import org.xdi.model.metric.ldap.MetricEntry;
 import org.xdi.service.CacheService;
+import org.xdi.util.OxConstants;
 
 /**
  * Store and retrieve metric
@@ -90,8 +91,8 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 	}
 
 	public AuthenticationChartDto genereateAuthenticationChartDto(int countDays) {
-		String key = OxTrustConstants.CACHE_METRICS_KEY + "#home";
-		AuthenticationChartDto authenticationChartDto = (AuthenticationChartDto) cacheService.get(OxTrustConstants.CACHE_METRICS_NAME, key);
+		String key = OxConstants.CACHE_METRICS_KEY + "#home";
+		AuthenticationChartDto authenticationChartDto = (AuthenticationChartDto) cacheService.get(OxConstants.CACHE_METRICS_NAME, key);
 		if (authenticationChartDto != null) {
 			return authenticationChartDto;
 		}
@@ -115,7 +116,7 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 		values = failureStats.values().toArray(values);
 		authenticationChartDto.setFailure(values);
 
-		cacheService.put(OxTrustConstants.CACHE_METRICS_NAME, key, authenticationChartDto);
+		cacheService.put(OxConstants.CACHE_METRICS_NAME, key, authenticationChartDto);
 
 		return authenticationChartDto;
 	}

@@ -444,6 +444,11 @@
 									$('#menuSAML').addClass('active');
 									$('#subMenuLinkSAML2').addClass('active');
 								}
+								if(window.location.href.indexOf("saml/nameid") != -1){
+									$('#subMenuSAML').css('display', 'block');
+									$('#menuSAML').addClass('active');
+									$('#subMenuLinkSAML3').addClass('active');
+								}
 
 								//Menu Highlights - SAML Asimba
 								if(window.location.href.indexOf("asimba/idps") != -1 || window.location.href.indexOf("asimba/editIDP") != -1){
@@ -469,12 +474,12 @@
                                                                 
 
 								//Menu Highlights - OpenID Connect
-								if (window.location.href.indexOf("scope/inventory") != -1 || window.location.href.indexOf("scope/manage/add") != -1 || window.location.href.indexOf("scope/manage/update") != -1) {
+								if (window.location.href.indexOf("scope/scopeInventory") != -1 || window.location.href.indexOf("scope/manage/add") != -1 || window.location.href.indexOf("scope/manage/update") != -1) {
 									$('#subMenuOpenID').css('display', 'block');
 									$('#menuOpenID').addClass('active');
 									$('#subMenuLinkOpenID1').addClass('active');
 								}
-								if (window.location.href.indexOf("client/inventory") != -1) {
+								if (window.location.href.indexOf("client/clientInventory") != -1) {
 									$('#subMenuOpenID').css('display', 'block');
 									$('#menuOpenID').addClass('active');
 									$('#subMenuLinkOpenID2').addClass('active');
@@ -516,14 +521,14 @@
 
 								//Menu Highlights - UMA
 								
-								if (window.location.href.indexOf("uma/scopehome?scopes") != -1 || window.location.href.indexOf("uma/scope/add") != -1) {
+								if (window.location.href.indexOf("uma/scope") != -1 || window.location.href.indexOf("uma/scope/add") != -1) {
 									$('#subMenuUMA').css('display', 'block');
 									$('#subMenuLinkUMA1').addClass('active');
 								//	$('#subMenuLinkUMA1').addClass('active');
 								}
 								
 								
-								if (window.location.href.indexOf("uma/resourcehome?resources") != -1 || window.location.href.indexOf("uma/resource/add") != -1) {
+								if (window.location.href.indexOf("uma/resource") != -1 || window.location.href.indexOf("uma/resource/add") != -1) {
 									$('#subMenuUMA').css('display', 'block');
 									$('#subMenuLinkUMA2').addClass('active');
 									//$('#subMenuLinkUMA1').addClass('active');
@@ -536,13 +541,13 @@
 								
 								//Menu Highlights - Users
 								
-								if (window.location.href.indexOf("group/inventory") != -1 || window.location.href.indexOf("group/manage/add")!= -1 || window.location.href.indexOf("group/manage/update")!= -1) {
+								if (window.location.href.indexOf("group/groupInventory") != -1 || window.location.href.indexOf("group/manage/add")!= -1 || window.location.href.indexOf("group/manage/update")!= -1) {
 									$('#subMenuUsers').css('display', 'block');
 									$('#menuUsers').addClass('active');
 									$('#subMenuLinkUsers1').addClass('active');
 								}
 								
-								if (window.location.href.indexOf("person/inventory") != -1) {
+								if (window.location.href.indexOf("person/personInventory") != -1) {
 									$('#subMenuUsers').css('display', 'block');
 									$('#menuUsers').addClass('active');
 									$('#subMenuLinkUsers2').addClass('active');

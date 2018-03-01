@@ -22,14 +22,13 @@ import org.gluu.oxtrust.model.OxAuthCustomClient;
 import org.gluu.oxtrust.model.OxAuthSubjectType;
 import org.gluu.oxtrust.model.SignatureAlgorithm;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.site.ldap.persistence.LdapEntryManager;
+import org.gluu.persist.ldap.impl.LdapEntryManager;
+import org.gluu.persist.model.base.GluuBoolean;
+import org.gluu.search.filter.Filter;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.ldap.model.GluuBoolean;
 import org.xdi.util.INumGenerator;
 import org.xdi.util.StringHelper;
-
-import com.unboundid.ldap.sdk.Filter;
 
 /**
  * Provides operations with clients
@@ -68,7 +67,6 @@ public class ClientService implements Serializable {
      */
     public void addClient(OxAuthClient client) {
         ldapEntryManager.persist(client);
-
     }
 
     /**
@@ -77,7 +75,7 @@ public class ClientService implements Serializable {
      * @param client
      */
     public void removeClient(OxAuthClient client) {
-        ldapEntryManager.removeWithSubtree(client.getDn());
+        ldapEntryManager.removeRecursively(client.getDn());
     }
 
     /**
@@ -195,29 +193,18 @@ public class ClientService implements Serializable {
         Filter inumFilter = Filter.createSubstringFilter(OxTrustConstants.inum, null, targetArray, null);
         Filter searchFilter = Filter.createORFilter(displayNameFilter, descriptionFilter, inameFilter, inumFilter);
 
-        List<OxAuthClient> result = ldapEntryManager.findEntries(getDnForClient(null), OxAuthClient.class, searchFilter, 0, sizeLimit);
+        List<OxAuthClient> result = ldapEntryManager.findEntries(getDnForClient(null), OxAuthClient.class, searchFilter, sizeLimit);
 
         return result;
     }
-    
+
     public List<OxAuthClient> getAllClients(int sizeLimit) {		
-		return ldapEntryManager.findEntries(getDnForClient(null), OxAuthClient.class, null, 0, sizeLimit);
+		return ldapEntryManager.findEntries(getDnForClient(null), OxAuthClient.class, null, sizeLimit);
     }
 
-    /**
-     * returns a list of all clients
-     *
-     * @return list of clients
-     */
-
-    public List<OxAuthClient> getAllClientsList() {
-
-        List<OxAuthClient> result = ldapEntryManager.findEntries(getDnForClient(null), OxAuthClient.class,
-                Filter.createPresenceFilter("inum"), 0, 10);
-
-        return result;
-
-    }
+    public List<OxAuthClient> getAllClients() {
+		return ldapEntryManager.findEntries(getDnForClient(null), OxAuthClient.class, null);
+	}
 
     /**
      * returns oxAuthClient by Dn

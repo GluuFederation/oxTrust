@@ -5,10 +5,12 @@
  */
 package org.gluu.oxtrust.ldap.service;
 
+import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -45,6 +47,7 @@ import org.gluu.oxtrust.model.ProfileConfiguration;
 import org.gluu.oxtrust.model.SubversionFile;
 import org.gluu.oxtrust.util.EasyCASSLProtocolSocketFactory;
 import org.gluu.oxtrust.util.OxTrustConstants;
+import org.gluu.persist.model.base.GluuStatus;
 import org.gluu.saml.metadata.SAMLMetadataParser;
 import org.opensaml.xml.schema.SchemaBuilder;
 import org.opensaml.xml.schema.SchemaBuilder.SchemaLanguage;
@@ -54,13 +57,13 @@ import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.config.oxtrust.AttributeResolverConfiguration;
 import org.xdi.config.oxtrust.LdapOxTrustConfiguration;
 import org.xdi.config.oxtrust.ShibbolethCASProtocolConfiguration;
-import org.xdi.ldap.model.GluuStatus;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuUserRole;
 import org.xdi.model.SchemaEntry;
 import org.xdi.service.SchemaService;
 import org.xdi.service.XmlService;
 import org.xdi.util.INumGenerator;
+import org.xdi.util.OxConstants;
 import org.xdi.util.StringHelper;
 import org.xdi.util.Util;
 import org.xdi.util.exception.InvalidConfigurationException;
@@ -251,7 +254,7 @@ public class Shibboleth3ConfService implements Serializable {
 		List<GluuAttribute> attributes = attributeService.getAllPersonAttributes(GluuUserRole.ADMIN);
 		HashMap<String, GluuAttribute> attributesByDNs = attributeService.getAttributeMapByDNs(attributes);
 
-		GluuAttribute uid = attributeService.getAttributeByName(OxTrustConstants.uid);
+		GluuAttribute uid = attributeService.getAttributeByName(OxConstants.UID);
 
 		// Load attributes definition
 		for (GluuSAMLTrustRelationship trustRelationship : trustRelationships) {
@@ -392,7 +395,7 @@ public class Shibboleth3ConfService implements Serializable {
 
 			} else {
 
-				String federationInum = trustRelationship.getContainerFederation().getInum();
+				String federationInum = trustService.getTrustContainerFederation(trustRelationship).getInum();
 
 				if (deconstructedMap.get(federationInum) == null) {
 					deconstructedMap.put(federationInum, new ArrayList<String>());
@@ -931,7 +934,7 @@ public class Shibboleth3ConfService implements Serializable {
 		subversionFiles.add(new SubversionFile(SHIB3_SP, spConfFolder + SHIB3_SP_SHIBBOLETH2_FILE));
 
 		for (GluuSAMLTrustRelationship trustRelationship : trustRelationships) {
-			if (trustRelationship.getContainerFederation() == null) {
+			if (trustService.getTrustContainerFederation(trustRelationship)  == null) {
 				subversionFiles.add(new SubversionFile(SHIB3_IDP + File.separator + SHIB3_IDP_METADATA_FOLDER, idpMetadataFolder
 						+ trustRelationship.getSpMetaDataFN()));
 			}
@@ -1073,6 +1076,7 @@ public class Shibboleth3ConfService implements Serializable {
 			ArrayList<SubversionFile> obsoleteMetadata = new ArrayList<SubversionFile>();
 
 			for (File metadata : metadataDir.listFiles(new FileFilter() {
+                                @Override
 				public boolean accept(File pathname) {
 					return pathname.isFile();
 				}
@@ -1121,6 +1125,7 @@ public class Shibboleth3ConfService implements Serializable {
 			ArrayList<SubversionFile> obsoleteMetadata = new ArrayList<SubversionFile>();
 
 			for (File credential : credentialsDir.listFiles(new FileFilter() {
+                                @Override
 				public boolean accept(File pathname) {
 					return pathname.isFile();
 				}
@@ -1150,7 +1155,7 @@ public class Shibboleth3ConfService implements Serializable {
 				try {
 					profileConfigurationService.parseProfileConfigurations(trust);
 				} catch (Exception e) {
-					e.printStackTrace();
+                                        log.error("parseProfileConfigurations exception", e);
 					return false;
 				}
 
@@ -1172,7 +1177,7 @@ public class Shibboleth3ConfService implements Serializable {
 				try {
 					filterService.parseFilters(trust);
 				} catch (Exception e) {
-					e.printStackTrace();
+					log.error("parseFilters exception", e);
 					return false;
 				}
 				if (trust.getMetadataFilters().get("signatureValidation") != null) {
@@ -1496,5 +1501,87 @@ public class Shibboleth3ConfService implements Serializable {
 	public boolean isFederation(GluuSAMLTrustRelationship trustRelationship) {
 	    //TODO: optimize this method. should not take so long
 		return isFederationMetadata(trustRelationship.getSpMetaDataFN());
+	}
+        
+        /**
+	 * @param trustRelationship
+	 * @param certificate
+	 */
+	public void saveCert(GluuSAMLTrustRelationship trustRelationship,
+			String certificate) {
+		String sslDirFN = appConfiguration.getShibboleth3IdpRootDir()
+				+ File.separator + TrustService.GENERATED_SSL_ARTIFACTS_DIR
+				+ File.separator;
+		File sslDir = new File(sslDirFN);
+		if (!sslDir.exists()) {
+			log.debug("creating directory: " + sslDirFN);
+			boolean result = sslDir.mkdir();
+			if (result) {
+				log.debug("DIR created");
+
+			}
+		}
+		BufferedWriter writer = null;
+		try {
+			writer = new BufferedWriter(
+			            new FileWriter(
+			                       sslDirFN	
+			                       + getSpNewMetadataFileName(trustRelationship).replaceFirst("\\.xml$",".crt")));
+			writer.write(Shibboleth3ConfService.PUBLIC_CERTIFICATE_START_LINE + "\n" 
+						+ certificate
+						+ Shibboleth3ConfService.PUBLIC_CERTIFICATE_END_LINE);
+		} catch (IOException e) {
+		} finally {
+			try {
+				if (writer != null) {
+					writer.close();
+				}
+			} catch (IOException e) {
+			}
+		}
+
+	}
+
+	/**
+	 * @param trustRelationship
+	 * @param key
+	 */
+	public void saveKey(GluuSAMLTrustRelationship trustRelationship,
+			String key) {
+		
+		
+		String sslDirFN = appConfiguration.getShibboleth3IdpRootDir()
+				+ File.separator + TrustService.GENERATED_SSL_ARTIFACTS_DIR
+				+ File.separator;
+		File sslDir = new File(sslDirFN);
+		if (!sslDir.exists()) {
+			log.debug("creating directory: " + sslDirFN);
+			boolean result = sslDir.mkdir();
+			if (result) {
+				log.debug("DIR created");
+
+			}
+		}
+		if(key != null){
+		BufferedWriter writer = null;
+		try {
+			writer = new BufferedWriter(new FileWriter(sslDirFN + getSpNewMetadataFileName(trustRelationship).replaceFirst("\\.xml$",".key")));
+			writer.write(key);
+		} catch (IOException e) {
+		} finally {
+			try {
+				if (writer != null) {
+					writer.close();
+				}
+			} catch (IOException e) {
+			}
+		}
+		}else{
+			File keyFile = new File(sslDirFN + getSpNewMetadataFileName(trustRelationship).replaceFirst("\\.xml$",".key"));
+			if(keyFile.exists()){
+				keyFile.delete();
+			}
+		}
+
 	}
 }

@@ -11,7 +11,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.enterprise.context.ConversationScoped;
@@ -37,13 +36,15 @@ import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.fido.GluuCustomFidoDevice;
+import org.gluu.oxtrust.model.fido.GluuDeviceDataBean;
 import org.gluu.oxtrust.service.external.ExternalUpdateUserService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.ServiceUtil;
-import org.gluu.site.ldap.persistence.exception.LdapMappingException;
+import org.gluu.persist.exception.mapping.BaseMappingException;
+import org.gluu.persist.ldap.impl.LdapEntryManager;
+import org.gluu.persist.model.base.GluuStatus;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.ldap.model.GluuStatus;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuUserRole;
 import org.xdi.oxauth.model.fido.u2f.protocol.DeviceData;
@@ -108,6 +109,9 @@ public class UpdatePersonAction implements Serializable {
 	private MemberService memberService;
 	
 	@Inject
+	private LdapEntryManager ldapEntryManager;
+	
+	@Inject
 	private FidoDeviceService fidoDeviceService;
 
 	private GluuStatus gluuStatus;
@@ -116,18 +120,38 @@ public class UpdatePersonAction implements Serializable {
 	
 	private String confirmPassword;
 	
-	private List <DeviceData> deviceDataMap;
+	private List <GluuDeviceDataBean> deviceDataMap;
+	
+	private GluuCustomFidoDevice fidoDevice;
 
-	public List<DeviceData> getDeviceDataMap() {
+	public GluuCustomFidoDevice getFidoDevice() {
+		return fidoDevice;
+	}
+
+	public void setFidoDevice(GluuCustomFidoDevice fidoDevice) {
+		this.fidoDevice = fidoDevice;
+	}
+
+	public List<GluuDeviceDataBean> getDeviceDataMap() {
 		return deviceDataMap;
 	}
 
-	public void setDeviceDataMap(List<DeviceData> deviceDataMap) {
+	public void setDeviceDataMap(List<GluuDeviceDataBean> deviceDataMap) {
 		this.deviceDataMap = deviceDataMap;
 	}
 
 	private List<String> externalAuthCustomAttributes;
 
+	private DeviceData deviceDetail;
+
+
+	public DeviceData getDeviceDetail() {
+		return deviceDetail;
+	}
+
+	public void setDeviceDetail(DeviceData deviceDetail) {
+		this.deviceDetail = deviceDetail;
+	}
 
 	public List<String> getExternalAuthCustomAttributes() {
 		return externalAuthCustomAttributes;
@@ -185,7 +209,7 @@ public class UpdatePersonAction implements Serializable {
 		this.update = true;
 		try {
 			this.person = personService.getPersonByInum(inum);
-		} catch (LdapMappingException ex) {
+		} catch (BaseMappingException ex) {
 			log.error("Failed to find person {}", inum, ex);
 
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to find person");
@@ -195,6 +219,7 @@ public class UpdatePersonAction implements Serializable {
 		}
 
 		initAttributes(false);
+		try {
 		this.gluuStatus = this.person.getStatus();
 		List <String> oxexternal = this.person.getOxExternalUid();
 		externalAuthCustomAttributes = new ArrayList<String>();
@@ -205,22 +230,48 @@ public class UpdatePersonAction implements Serializable {
 			}			
 		}
 		
-		try {
+	
 			List<GluuCustomFidoDevice>  gluuCustomFidoDevices = fidoDeviceService.searchFidoDevices( this.person.getInum(),null);
-			deviceDataMap = new ArrayList<DeviceData>();
+			deviceDataMap = new ArrayList<GluuDeviceDataBean>();
 			if(gluuCustomFidoDevices != null){
-				for( GluuCustomFidoDevice gluuCustomFidoDevice : gluuCustomFidoDevices){
-					String devicedata = gluuCustomFidoDevice.getDeviceData();
-	                DeviceData deviceData = getDeviceata(devicedata);
-	                deviceDataMap.add(deviceData); 
+				for( GluuCustomFidoDevice gluuCustomFidoDevice : gluuCustomFidoDevices){					
+	                GluuDeviceDataBean gluuDeviceDataBean= new GluuDeviceDataBean();
+	                gluuDeviceDataBean.setCreationDate(ldapEntryManager.decodeGeneralizedTime(gluuCustomFidoDevice.getCreationDate()).toGMTString());
+	                gluuDeviceDataBean.setId(gluuCustomFidoDevice.getId());
+	                String devicedata = gluuCustomFidoDevice.getDeviceData();
+	                String modality = "";
+	                String nickName = "";
+	                if(devicedata != null){
+	                	DeviceData deviceData = getDeviceata(devicedata);
+	                	//nickName = deviceData.getName();
+	                	nickName = gluuCustomFidoDevice.getNickname();
+		                modality = "Super-Gluu Device";
+	                }else{
+	                	//nickName = "U2F";
+	                	nickName = gluuCustomFidoDevice.getNickname();
+	                	modality = "U2F device";
+	                }
+	                gluuDeviceDataBean.setNickName(nickName);
+	                gluuDeviceDataBean.setModality(modality);
+	                deviceDataMap.add(gluuDeviceDataBean); 
 				}
+			}
+			
+			if(oxexternal != null && oxexternal.size()>0){
+				for(String oxexternalStr : oxexternal){
+					String [] args = oxexternalStr.split(":");
+					GluuDeviceDataBean gluuDeviceDataBean= new GluuDeviceDataBean();
+					gluuDeviceDataBean.setNickName(args[0]);
+					gluuDeviceDataBean.setModality(args[0]);
+					gluuDeviceDataBean.setId(oxexternalStr);
+					deviceDataMap.add(gluuDeviceDataBean);
+					
+				}			
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
 
 		userPasswordAction.setPerson(this.person);
 
@@ -265,7 +316,6 @@ public class UpdatePersonAction implements Serializable {
 			if (customAttribute.getName().equalsIgnoreCase("gluuStatus")) {
 				customAttribute.setValue(gluuStatus.getValue());
 			}
-
 		}
 
 		this.person.setCustomAttributes(customAttributeAction.getCustomAttributes());
@@ -284,7 +334,7 @@ public class UpdatePersonAction implements Serializable {
 				if (runScript) {
 					externalUpdateUserService.executeExternalPostUpdateUserMethods(this.person);
 				}
-			} catch (LdapMappingException ex) {
+			} catch (BaseMappingException ex) {
 				log.error("Failed to update person {}", inum, ex);
 				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update person '#{updatePersonAction.person.displayName}'");
 
@@ -381,7 +431,7 @@ public class UpdatePersonAction implements Serializable {
 				conversationService.endConversation();
 
 				return OxTrustConstants.RESULT_SUCCESS;
-			} catch (LdapMappingException ex) {
+			} catch (BaseMappingException ex) {
 				log.error("Failed to remove person {}", this.person.getInum(), ex);
 			}
 		}
@@ -483,33 +533,26 @@ public class UpdatePersonAction implements Serializable {
 		}
 	}
 	
-	public void removeExternalAuthCustomAttribute(String removeAttribute){
-		Iterator<String> itrList = externalAuthCustomAttributes.iterator();		
-		while(itrList.hasNext()){			
-			if( itrList.next().contains(removeAttribute) ){
-				itrList.remove();
-			}				
-		}
-		List <String> list = new ArrayList<String>(this.person.getOxExternalUid());
-		Iterator<String> itrList1 = list.iterator();		
-		while(itrList1.hasNext()){			
-			if( itrList1.next().contains(removeAttribute) ){
-				itrList1.remove();
-			}				
-		}
-		this.person.setOxExternalUid(list);
-	}
-	
-	public void removeDevice(DeviceData deleteDeviceData){		
+	public void removeDevice(GluuDeviceDataBean deleteDeviceData){		
 		try {
 			List<GluuCustomFidoDevice>  gluuCustomFidoDevices = fidoDeviceService.searchFidoDevices( this.person.getInum(),null);
 			
-			for( GluuCustomFidoDevice gluuCustomFidoDevice : gluuCustomFidoDevices){
-				String devicedata = gluuCustomFidoDevice.getDeviceData();
-                DeviceData deviceData = getDeviceata(devicedata);
-                if(deviceData.getUuid().equals(deleteDeviceData.getUuid())){
+			for( GluuCustomFidoDevice gluuCustomFidoDevice : gluuCustomFidoDevices){				
+                if(gluuCustomFidoDevice.getId().equals(deleteDeviceData.getId())){
                 	fidoDeviceService.removeGluuCustomFidoDevice(gluuCustomFidoDevice);
-                	this.deviceDataMap.remove(deviceData);
+                	this.deviceDataMap.remove(deleteDeviceData);
+                	return;
+                } 
+			}
+			
+
+			List <String> list = new ArrayList<String>(this.person.getOxExternalUid());
+			for( String external : list){				
+                if(deleteDeviceData.getId().trim().equals(external.trim())){
+                	list.remove(external);
+                	this.person.setOxExternalUid(list);
+                	this.deviceDataMap.remove(deleteDeviceData);
+                	return;
                 } 
 			}
 		} catch (Exception e) {
@@ -538,6 +581,16 @@ public class UpdatePersonAction implements Serializable {
 		return obj;
 	}
 	
+	public void fetchFidoRecord(String id){
+		this.fidoDevice = fidoDeviceService.getGluuCustomFidoDeviceById(this.person.getInum(), id);
+		if(this.fidoDevice.getDeviceData() != null){
+			this.deviceDetail = getDeviceata(this.fidoDevice.getDeviceData());
+		}else{
+			this.deviceDetail = null;
+		}
+		 
+	}
+	
 	private boolean validatePerson(GluuCustomPerson person) throws Exception {
 	
 		GluuCustomPerson  gluuCustomPerson  = personService.getPersonByUid(person.getUid());
@@ -556,5 +609,4 @@ public class UpdatePersonAction implements Serializable {
 		
 		return true;
 	}
-
 }

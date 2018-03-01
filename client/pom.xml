@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>oxtrust-client</artifactId>
+    <name>oxTrust Client library</name>
+    <packaging>jar</packaging>  
+    <url>http://www.gluu.org</url>
+
+    <parent>
+        <groupId>org.xdi</groupId>
+        <artifactId>oxtrust</artifactId>
+        <version>3.2.0-SNAPSHOT</version>
+    </parent>
+    
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>
+        <buildDate>${maven.build.timestamp}</buildDate>
+    </properties>
+    
+    
+    <dependencies>        
+        <!-- Gluu -->
+        <dependency>
+            <groupId>org.xdi</groupId>
+            <artifactId>oxauth-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.xdi</groupId>
+            <artifactId>oxauth-model</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.xdi</groupId>
+            <artifactId>oxcore-util</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.xdi</groupId>
+            <artifactId>oxtrust-model</artifactId>
+        </dependency>
+        <!-- Other -->
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-client</artifactId>
+            <version>9.2.7.v20150116</version>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup.okhttp</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>2.2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup.okio</groupId>
+            <artifactId>okio</artifactId>
+            <version>1.2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.module</groupId>
+            <artifactId>jackson-module-jaxb-annotations</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.ws.rs</groupId>
+            <artifactId>javax.ws.rs-api</artifactId>
+            <version>2.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.core</groupId>
+            <artifactId>jersey-client</artifactId>
+            <version>2.16</version>
+        </dependency>
+        <!--<dependency>
+            <groupId>org.glassfish.jersey.connectors</groupId>
+            <artifactId>jersey-grizzly-connector</artifactId>
+            <version>2.16</version>
+        </dependency>-->
+        <dependency>
+            <groupId>org.glassfish.jersey.media</groupId>
+            <artifactId>jersey-media-jaxb</artifactId>
+            <version>2.16</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.media</groupId>
+            <artifactId>jersey-media-json-jackson</artifactId>
+            <version>2.16</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.json</groupId>
+            <artifactId>javax.json-api</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish</groupId>
+            <artifactId>javax.json</artifactId>
+            <version>1.0.2</version>
+        </dependency>
+    </dependencies>
+</project>

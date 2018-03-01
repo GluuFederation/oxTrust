@@ -6,8 +6,6 @@
 
 package org.gluu.oxtrust.ldap.service;
 
-import static org.gluu.oxtrust.ldap.service.AppInitializer.LDAP_ENTRY_MANAGER_NAME;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -18,9 +16,9 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.gluu.site.ldap.persistence.LdapEntryManager;
-import org.gluu.site.ldap.persistence.LdifDataUtility;
-import org.gluu.site.ldap.persistence.exception.LdapMappingException;
+import org.gluu.persist.exception.mapping.BaseMappingException;
+import org.gluu.persist.ldap.impl.LdapEntryManager;
+import org.gluu.persist.ldap.impl.LdifDataUtility;
 import org.slf4j.Logger;
 
 import com.unboundid.ldap.sdk.LDAPConnection;
@@ -53,7 +51,7 @@ public class LdifService implements Serializable {
 	public ResultCode importLdifFileInLdap(InputStream is) throws LDAPException {
 		ResultCode result = ResultCode.UNAVAILABLE;
 
-		LDAPConnection connection = ldapEntryManager.getLdapOperationService().getConnection();
+		LDAPConnection connection = ldapEntryManager.getOperationService().getConnection();
 		try {
 			LdifDataUtility ldifDataUtility = LdifDataUtility.instance();
 			LDIFReader importLdifReader = new LDIFReader(is);
@@ -63,7 +61,7 @@ public class LdifService implements Serializable {
 		} catch (Exception ex) {
 			log.error("Failed to import ldif file: ", ex);
 		} finally {
-			ldapEntryManager.getLdapOperationService().releaseConnection(connection);
+			ldapEntryManager.getOperationService().releaseConnection(connection);
 		}
 
 		return result;
@@ -89,14 +87,14 @@ public class LdifService implements Serializable {
 	public void exportLDIFFile(List<String> checkedItems, OutputStream output)
 			throws LDAPException {
 		List<SearchResultEntry> result = null;
-		LDAPConnection connection = ldapEntryManager.getLdapOperationService().getConnection();
+		LDAPConnection connection = ldapEntryManager.getOperationService().getConnection();
 		try {
 			LdifDataUtility ldifDataUtility = LdifDataUtility.instance();
 			result = ldifDataUtility.getAttributeResultEntryLDIF(connection,checkedItems, attributeService.getDnForAttribute(null));
 		} catch (Exception ex) {
 			log.error("Failed to export ldif file: ", ex);
 		} finally {
-			ldapEntryManager.getLdapOperationService().releaseConnection(connection);
+			ldapEntryManager.getOperationService().releaseConnection(connection);
 		}
 
 		if (result != null && result.size() > 0) {
@@ -110,7 +108,7 @@ public class LdifService implements Serializable {
 
 				ldifWriter.close();
 			} catch (IOException e) {
-				throw new LdapMappingException("Error writing to file, try again", e);
+				throw new BaseMappingException("Error writing to file, try again", e);
 			}
 		}
 	}

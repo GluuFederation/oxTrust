@@ -208,6 +208,10 @@
 			<groupId>org.xdi</groupId>
 			<artifactId>oxtrust-configuration</artifactId>
 		</dependency>
+                <dependency>
+                    <groupId>org.xdi</groupId>
+                    <artifactId>oxtrust-model</artifactId>
+                </dependency>
 		<dependency>
 			<groupId>org.xdi</groupId>
 			<artifactId>openid-auth-client</artifactId>
@@ -239,6 +243,10 @@
 		<dependency>
 			<groupId>org.xdi</groupId>
 			<artifactId>oxcore-ldap-annotations</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.xdi</groupId>
+			<artifactId>oxcore-persist-model</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.xdi</groupId>
@@ -432,10 +440,8 @@
 			<groupId>org.jboss.resteasy</groupId>
 			<artifactId>resteasy-jackson-provider</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>org.jboss.resteasy</groupId>
-			<artifactId>jaxrs-api</artifactId>
-		</dependency>
+                
+                <!-- Jackson -->
 		<dependency>
 			<groupId>org.codehaus.jackson</groupId>
 			<artifactId>jackson-core-asl</artifactId>
@@ -444,7 +450,7 @@
 			<groupId>org.codehaus.jackson</groupId>
 			<artifactId>jackson-mapper-asl</artifactId>
 		</dependency>
-
+                
 		<!-- Asimba -->
 		<dependency>
 			<groupId>org.asimba</groupId>
@@ -837,38 +843,6 @@
 					<artifactId>swagger-servlet_2.9.1</artifactId>
 				</dependency>
 			</dependencies>
-		</profile>
-
-		<profile>
-			<id>native2ascii</id>
-			<activation>
-				<os>
-					<family>unix</family>
-				</os>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<artifactId>exec-maven-plugin</artifactId>
-						<groupId>org.codehaus.mojo</groupId>
-						<executions>
-							<execution><!-- Run our version calculation script -->
-								<id>native2ascii</id>
-								<phase>compile</phase>
-								<goals>
-									<goal>exec</goal>
-								</goals>
-								<configuration>
-									<executable>${basedir}/src/main/resources/scripts/native2ascii.sh</executable>
-									<arguments>
-										<argument>${basedir}/src/main/resources/messages*.properties</argument>
-									</arguments>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
 		</profile>
 	</profiles>
 

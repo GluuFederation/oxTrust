@@ -50,7 +50,7 @@
 
                                 <ui:param name="_resourceSet" value="#{updateResourceAction.resource}"/>
 
-                                <h:form>
+                                <h:form id="resourceid">
                                     <h:panelGrid border="0" cellpadding="0" cellspacing="0" columns="1" width="100%">
                                         <ox:decorate id="resourceSet" label="#{msg['uma.resource']}"
                                                      rendered="#{updateResourceAction.update}">
@@ -74,8 +74,21 @@
                                                                    value="#{_resourceSet.iconUri}"/>
                                             </div>
                                         </ox:decorate>
+                                                                                
+                                        <ox:decorate id="selecctionid" label="Scope Selection">
+										<h:selectOneMenu styleClass="form-control" immediate="true"
+										value="#{updateResourceAction.scopeSelection}" 
+										id="selectionid" >
+											<f:selectItem itemValue="Scopes" />
+											<f:selectItem itemValue="ScopeExpression" />
+											<a4j:ajax event="change" 
+												render="selectiongroup" 
+												limitRender="true" execute="@this" />
+										</h:selectOneMenu>
+										</ox:decorate>
 
-                                        <ox:decorate id="scopes" label="#{msg['uma.scopes']}">
+										<h:panelGroup id="selectiongroup">
+                                        <ox:decorate id="scopesid"  label="#{msg['uma.scope']}" rendered="#{updateResourceAction.scopeSelection eq 'Scopes'}">
                                             <h:panelGroup id="selectedScopesId">
                                                 <h:panelGrid border="0" cellpadding="0" cellspacing="0" columns="1"
                                                              width="100%">
@@ -102,6 +115,7 @@
                                                 </h:panelGrid>
                                             </h:panelGroup>
                                         </ox:decorate>
+                                        
 
                                         <!--                     <ox:decorate id="clients" label="Clients">
                                                                 <h:panelGroup id="selectedClientsId">
@@ -126,6 +140,13 @@
 
                                                                 </h:panelGroup>
                                                             </ox:decorate> -->
+
+                                        <ox:decorate id="expression" label="#{msg['uma.scopeExpression']}" rendered="#{updateResourceAction.scopeSelection eq 'ScopeExpression'}">
+                                            <div class="col-sm-9">
+												<h:outputText value="#{gluufn:trimToLength(_resourceSet.scopeExpression, 160)}" />
+											</div>
+                                        </ox:decorate>
+                                        </h:panelGroup>
 
                                         <h:panelGroup>
                                             <a4j:commandButton

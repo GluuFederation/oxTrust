@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.gluu.oxtrust.ldap.service.DownloadService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
+import org.gluu.oxtrust.security.Identity;
 import org.slf4j.Logger;
 import org.xdi.service.security.Secure;
 
@@ -32,7 +33,7 @@ public class ContactDownloadAction implements Serializable {
 	private Logger log;
 
 	@Inject
-	protected GluuCustomPerson currentPerson;
+	private Identity identity;;
 
 	@Inject
 	private DownloadService downloadService;
@@ -46,10 +47,10 @@ public class ContactDownloadAction implements Serializable {
 	public String download() {
 		HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
 		response.setContentType("text/plain");
-		response.addHeader("Content-disposition", "attachment; filename=\"" + currentPerson.getDisplayName() + "_contacts.csv\"");
+		response.addHeader("Content-disposition", "attachment; filename=\"" + identity.getUser().getDisplayName() + "_contacts.csv\"");
 		try {
 			ServletOutputStream os = response.getOutputStream();
-			os.write(downloadService.contactsAsCSV(currentPerson));
+			os.write(downloadService.contactsAsCSV(identity.getUser()));
 			os.flush();
 			os.close();
 			facesContext.responseComplete();
