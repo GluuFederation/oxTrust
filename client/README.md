@@ -25,4 +25,4 @@ Integration test application usage:
 
 Embedding to automatic tests:
 
-org.gluu.oxtrust.api.test.TestMain.main() returns 0 if all tests passed and 1 if an error has been occured.
+    org.gluu.oxtrust.api.test.TestMain.main() returns 0 if all tests passed and 1 if an error has been occured.
