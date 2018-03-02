@@ -23,6 +23,8 @@ import org.xdi.model.TrustContact;
 /**
  * REST webservice CRUD for TrustRelationships.
  * 
+ * TrustRelationship identified by LDAP inum.
+ * 
  * @author Dmitry Ognyannikov
  */
 public class TrustRelationshipClient extends AbstractClient<GluuSAMLTrustRelationship> {
