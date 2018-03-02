@@ -46,7 +46,7 @@
 		            <div class="card">
 		                <a4j:region>
 		                    <rich:dataGrid id="customScriptTypeId" columns="1" value="#{_customScripts}" var="_customScript" style="width: 100%;">	
-					       <h:panelGroup layout="block" styleClass="#{(_customScript.enabled) ?  'card-header active' : 'card-header'}" id="headingOne" >
+					       <h:panelGroup layout="block" styleClass="#{(_customScript.enabled) ?  'card-header active' : 'card-header'}" style="#{(_customScript.enabled and _action.hasCustomScriptError(_customScript)) ?  'background: red' : ''}" id="headingOne" >
 							  <h5 class="mb-0">
 								<a class="accordion-toggle in" data-toggle="collapse" href="#collapseOne#{_customScript.name}" aria-expanded="true" aria-controls="collapseOne">
 								  #{(_customScript.name == null) ? msg['customScript.newscript'] : _customScript.name }  
