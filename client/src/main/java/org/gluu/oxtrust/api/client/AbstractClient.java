@@ -6,21 +6,14 @@
 package org.gluu.oxtrust.api.client;
 
 
-import java.text.MessageFormat;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.SSLContext;
-import org.glassfish.jersey.filter.LoggingFilter;
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import org.glassfish.jersey.client.filter.EncodingFeature;
-import org.glassfish.jersey.message.GZipEncoder;
 
 /**
  * REST webservice CRUD template.
@@ -66,7 +59,7 @@ public class AbstractClient<T> {
      * @throws ClientErrorException
      * @throws OxTrustAPIException
      */
-    public String create(T requestEntity) throws ClientErrorException, OxTrustAPIException {
+    public String create(T requestEntity) throws OxTrustAPIException {
         Response response = webTarget.path("create").request().post(Entity.entity(requestEntity, MediaType.APPLICATION_JSON));
         if (response.getStatus() != HTTP_OK) {
             throw new OxTrustAPIException("Response error. HTTP code: " + response.getStatus() + ", reason phrase: " + response.getStatusInfo().getReasonPhrase(), response.getStatus());
@@ -77,7 +70,7 @@ public class AbstractClient<T> {
         return id;
     }
 
-    public boolean update(T requestEntity, String id) throws ClientErrorException {
+    public boolean update(T requestEntity, String id) {
         WebTarget resource = webTarget.path("update/{id}").resolveTemplate("id", id);
         
         Response response = resource.request().put(Entity.entity(requestEntity, MediaType.APPLICATION_JSON));
@@ -87,18 +80,13 @@ public class AbstractClient<T> {
         return code == HTTP_OK;
     }
 
-    public boolean delete(String id) throws ClientErrorException {
+    public boolean delete(String id) {
         WebTarget resource = webTarget.path("delete/{id}").resolveTemplate("id", id);
         Response response = resource.request(MediaType.TEXT_PLAIN).delete();
         
         int code = response.getStatus();
         response.close();
         return code == HTTP_OK;
-    }
-
-    public void close() {
-        client.close();
-    }
-    
+    }    
 }
 

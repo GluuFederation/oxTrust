@@ -31,6 +31,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -74,6 +75,7 @@ import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 import com.wordnik.swagger.annotations.Authorization;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import javax.validation.constraints.NotNull;
 
@@ -277,30 +279,12 @@ public class TrustRelationshipWebService {
     }
     
     @GET
-    @Path("/search_trust_relationships")
-    @Produces(MediaType.APPLICATION_JSON)
-    @ApiResponses(value = {
-		@ApiResponse(code = 200, message = "OK", response = SAMLTrustRelationshipShort.class),
-		@ApiResponse(code = 500, message = "Server error") })
-    public String searchTrustRelationships(@PathParam("pattern") @NotNull String pattern, @PathParam("size_limit") int sizeLimit, @Context HttpServletResponse response) {
-        try {
-            List<SAMLTrustRelationshipShort> trustRelationships = convertTRtoTRShort(trustService.searchSAMLTrustRelationships(pattern, sizeLimit));
-            //convert to JSON
-            return objectMapper.writeValueAsString(trustRelationships);
-        } catch (Exception e) {
-            logger.error("searchTrustRelationships() Exception", e);
-            try { response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "INTERNAL SERVER ERROR"); } catch (Exception ex) {}
-            return OxTrustConstants.RESULT_FAILURE;
-        }
-    }
-    
-    @GET
     @Path("/list_all_saml_trust_relationships")
     @Produces(MediaType.APPLICATION_JSON)
     @ApiResponses(value = {
 		@ApiResponse(code = 200, message = "OK", response = SAMLTrustRelationshipShort.class),
 		@ApiResponse(code = 500, message = "Server error") })
-    public String listAllSAMLTrustRelationships(@PathParam("size_limit") int sizeLimit, @Context HttpServletResponse response) {
+    public String listAllSAMLTrustRelationships(@QueryParam("size_limit") int sizeLimit, @Context HttpServletResponse response) {
         try {
             List<SAMLTrustRelationshipShort> trustRelationships = convertTRtoTRShort(trustService.getAllSAMLTrustRelationships(sizeLimit));
             //convert to JSON
@@ -331,16 +315,45 @@ public class TrustRelationshipWebService {
         }
     }
     
+    @GET
+    @Path("/search_trust_relationships")
+    @Produces(MediaType.APPLICATION_JSON)
+    @ApiResponses(value = {
+		@ApiResponse(code = 200, message = "OK", response = SAMLTrustRelationshipShort.class),
+		@ApiResponse(code = 500, message = "Server error") })
+    public String searchTrustRelationships(@QueryParam("pattern") @NotNull String pattern, @QueryParam("size_limit") int sizeLimit, @Context HttpServletResponse response) {
+        try {
+            List<SAMLTrustRelationshipShort> trustRelationships = convertTRtoTRShort(trustService.searchSAMLTrustRelationships(pattern, sizeLimit));
+            //convert to JSON
+            return objectMapper.writeValueAsString(trustRelationships);
+        } catch (Exception e) {
+            logger.error("searchTrustRelationships() Exception", e);
+            try { response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "INTERNAL SERVER ERROR"); } catch (Exception ex) {}
+            return OxTrustConstants.RESULT_FAILURE;
+        }
+    }
+    
     @POST
-    @Path("/add_metadata")
+    @Path("/set_metadata/{inum}")
     @Consumes({MediaType.APPLICATION_XML, MediaType.TEXT_PLAIN})
     @Produces(MediaType.TEXT_PLAIN)
     @ApiResponses(value = {
 		@ApiResponse(code = 200, message = "OK"),
 		@ApiResponse(code = 500, message = "Server error") })
-    public void addMetadata(@PathParam("inum") String trustRelationshipInum, String metadata, @Context HttpServletResponse response) {
+    public void setMetadata(@PathParam("inum") String trustRelationshipInum, String metadata, @Context HttpServletResponse response) {
         try {
-            //TODO
+            GluuSAMLTrustRelationship trustRelationship = trustService.getRelationshipByInum(trustRelationshipInum);
+            
+            String metadataFileName = trustRelationship.getSpMetaDataFN();
+            if (StringHelper.isEmpty(metadataFileName)) {
+                // Generate new file name
+		metadataFileName = shibboleth3ConfService.getSpNewMetadataFileName(trustRelationshipInum);
+            }
+            shibboleth3ConfService.saveSpMetadataFile(metadataFileName, metadata.getBytes("UTF8"));
+            
+            trustRelationship.setSpMetaDataFN(metadataFileName);
+            trustRelationship.setSpMetaDataSourceType(GluuMetadataSourceType.FILE);
+             trustService.updateTrustRelationship(trustRelationship);
         } catch (Exception e) {
             logger.error("addMetadata() Exception", e);
             try { response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "INTERNAL SERVER ERROR"); } catch (Exception ex) {}
@@ -348,7 +361,35 @@ public class TrustRelationshipWebService {
     }
     
     @POST
-    @Path("/add_attribute")
+    @Path("/set_metadata_url/{inum}")
+    @Consumes({MediaType.TEXT_PLAIN})
+    @Produces(MediaType.TEXT_PLAIN)
+    @ApiResponses(value = {
+		@ApiResponse(code = 200, message = "OK"),
+		@ApiResponse(code = 500, message = "Server error") })
+    public void setMetadataURL(@PathParam("inum") String trustRelationshipInum, String url, @Context HttpServletResponse response) {
+        try {
+            GluuSAMLTrustRelationship trustRelationship = trustService.getRelationshipByInum(trustRelationshipInum);
+            
+            String metadataFileName = trustRelationship.getSpMetaDataFN();
+            if (StringHelper.isEmpty(metadataFileName)) {
+                // Generate new file name
+		metadataFileName = shibboleth3ConfService.getSpNewMetadataFileName(trustRelationshipInum);
+            }
+            
+            shibboleth3ConfService.saveSpMetadataFile(url, metadataFileName);
+            
+            trustRelationship.setSpMetaDataFN(metadataFileName);
+            trustRelationship.setSpMetaDataSourceType(GluuMetadataSourceType.FILE);
+            trustService.updateTrustRelationship(trustRelationship);
+        } catch (Exception e) {
+            logger.error("addMetadata() Exception", e);
+            try { response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "INTERNAL SERVER ERROR"); } catch (Exception ex) {}
+        }
+    }
+    
+    @POST
+    @Path("/add_attribute/{inum}")
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces(MediaType.TEXT_PLAIN)
     @ApiResponses(value = {
@@ -358,6 +399,7 @@ public class TrustRelationshipWebService {
         try {
             GluuSAMLTrustRelationship trustRelationship = trustService.getRelationshipByInum(trustRelationshipInum);
             //TODO
+            
         } catch (Exception e) {
             logger.error("addAttribute() Exception", e);
             try { response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "INTERNAL SERVER ERROR"); } catch (Exception ex) {}
@@ -397,7 +439,7 @@ public class TrustRelationshipWebService {
     }
     
     @POST
-    @Path("/set_contacts")
+    @Path("/set_contacts/{inum}")
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces(MediaType.TEXT_PLAIN)
     @ApiOperation(value = "set contacts for TrustRelationship", notes = "Find TrustRelationship by inum and set contacts. Contacts parameter is List<TrustContact>")
@@ -418,7 +460,7 @@ public class TrustRelationshipWebService {
     }
     
     @POST
-    @Path("/set_certificate")
+    @Path("/set_certificate/{inum}")
     @Consumes({MediaType.TEXT_PLAIN})
     @Produces(MediaType.TEXT_PLAIN)    
     @ApiOperation(value = "set certificate for TrustRelationship", notes = "Find TrustRelationship by inum and set certificate.")
@@ -634,7 +676,6 @@ public class TrustRelationshipWebService {
                             updatedLogoutRedirectUris.add(logoutRedirectUri);
                         }
                     }
-
                 }
                 if(updatedLogoutRedirectUris.isEmpty()){
                     client.setPostLogoutRedirectUris(null);

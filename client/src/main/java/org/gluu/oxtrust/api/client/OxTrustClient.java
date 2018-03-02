@@ -91,4 +91,8 @@ public class OxTrustClient {
     public TrustRelationshipClient getTrustRelationshipClient() {
         return trustRelationshipClient;
     }
+
+    public void close() {
+        client.close();
+    }
 }
