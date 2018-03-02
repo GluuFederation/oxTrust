@@ -1,7 +1,7 @@
-# oxtrust-api-test
-oxTrust API Client library.
+oxTrust API Client library
+======
 
-oxTrust API integration test application usage example.
+With oxTrust API integration test application (usage example).
 
 
 Library usage:
@@ -20,5 +20,5 @@ Library usage:
     
 Integration test application usage:
 
-1. Edit client/conf/configuration.properties with your oxTrust server parameters.
-2. Run java -cp target/oxtrust-client-3.2.0-SNAPSHOT.jar org.gluu.oxtrust.api.test.TestMain
+# Edit client/conf/configuration.properties with your oxTrust server parameters.
+# Run java -cp target/oxtrust-client-3.2.0-SNAPSHOT.jar org.gluu.oxtrust.api.test.TestMain
