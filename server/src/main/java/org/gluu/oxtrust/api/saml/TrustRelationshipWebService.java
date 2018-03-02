@@ -676,7 +676,6 @@ public class TrustRelationshipWebService {
                             updatedLogoutRedirectUris.add(logoutRedirectUri);
                         }
                     }
-
                 }
                 if(updatedLogoutRedirectUris.isEmpty()){
                     client.setPostLogoutRedirectUris(null);
