@@ -285,6 +285,25 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 		}
 	}
 
+	public boolean hasCustomScriptError(CustomScript customScript) {
+	    String error = getCustomScriptError(customScript);
+        
+        return error != null;
+    }
+
+	public String getCustomScriptError(CustomScript customScript) {
+	    if (customScript == null) {
+	        return null;
+	    }
+
+	    CustomScript currentScript = customScriptService.getCustomScriptByDn(customScript.getDn(), "oxScriptError");
+	    if ((currentScript != null) && (currentScript.getScriptError() != null)) {
+	        return currentScript.getScriptError().getStackTrace();
+	    }
+	    
+        return null;
+	}
+
 	public boolean isInitialized() {
 		return initialized;
 	}
