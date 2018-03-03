@@ -574,7 +574,7 @@
             "description": "Maximum value \"count\" query param can take (also used as default value when not specified)",
             "default": 1000,
             "minimum": 1,
-            "maximum": 200
+            "maximum": 2147483647
           }
         }
       }
