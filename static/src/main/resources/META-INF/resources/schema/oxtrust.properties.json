@@ -571,8 +571,8 @@
           "maxCount":{
             "title": "MAX COUNT",
             "type": "integer",
-            "description": "Max. number of results returned in queries when \"count\" query param is not specified",
-            "default": 200,
+            "description": "Maximum number of results returned for a SCIM search query",
+            "default": 1000,
             "minimum": 1,
             "maximum": 200
           }
