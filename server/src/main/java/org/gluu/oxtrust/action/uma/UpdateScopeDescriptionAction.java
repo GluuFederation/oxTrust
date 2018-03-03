@@ -8,9 +8,12 @@ package org.gluu.oxtrust.action.uma;
 
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
+import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.ImageService;
+import org.gluu.oxtrust.ldap.service.uma.ResourceSetService;
 import org.gluu.oxtrust.ldap.service.uma.ScopeDescriptionService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
+import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.service.custom.CustomScriptService;
 import org.gluu.oxtrust.util.OxTrustConstants;
@@ -24,6 +27,7 @@ import org.xdi.model.SelectableEntity;
 import org.xdi.model.custom.script.CustomScriptType;
 import org.xdi.model.custom.script.model.CustomScript;
 import org.xdi.oxauth.model.uma.UmaMetadata;
+import org.xdi.oxauth.model.uma.persistence.UmaResource;
 import org.xdi.oxauth.model.uma.persistence.UmaScopeDescription;
 import org.xdi.service.JsonService;
 import org.xdi.service.LookupService;
@@ -87,6 +91,12 @@ public class UpdateScopeDescriptionAction implements Serializable {
 
     @Inject
    	private UmaMetadata umaMetadataConfiguration;
+    
+    @Inject
+   	private ResourceSetService resourceSetService;
+    
+    @Inject
+   	private ClientService clientService;
 
 	private String scopeInum;
 
@@ -98,6 +108,16 @@ public class UpdateScopeDescriptionAction implements Serializable {
 	private List<SelectableEntity<CustomScript>> availableAuthorizationPolicies;
 
 	private boolean update;
+	
+	private List<OxAuthClient> clientList;
+	
+	public List<OxAuthClient> getClientList() {
+		return clientList;
+	}
+
+	public void setClientList(List<OxAuthClient> clientList) {
+		this.clientList = clientList;
+	}
 
 	public String modify() {
 		if (this.scopeDescription != null) {
@@ -150,6 +170,20 @@ public class UpdateScopeDescriptionAction implements Serializable {
 			String scopeDn = scopeDescriptionService.getDnForScopeDescription(this.scopeInum);
 			this.scopeDescription = scopeDescriptionService.getScopeDescriptionByDn(scopeDn);
 			this.authorizationPolicies = getInitialAuthorizationPolicies();
+			
+			List<UmaResource> umaResourceList = resourceSetService.findResourcesByScope(scopeDn);
+			if (umaResourceList != null) {
+				for (UmaResource umaResource : umaResourceList) {
+					List<String> list = umaResource.getClients();
+					if (list != null) {
+						clientList = new ArrayList<OxAuthClient>();
+						for (String clientDn : list) {
+							OxAuthClient oxAuthClient = clientService.getClientByDn(clientDn);
+							clientList.add(oxAuthClient);
+						}
+					}
+				}
+			}
 		} catch (BaseMappingException ex) {
 			log.error("Failed to find scope description '{}'", this.scopeInum, ex);
 			return OxTrustConstants.RESULT_FAILURE;
