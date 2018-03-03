@@ -11,9 +11,10 @@ import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.service.ImageService;
 import org.gluu.oxtrust.ldap.service.uma.ScopeDescriptionService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
+import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.service.custom.CustomScriptService;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.site.ldap.persistence.exception.LdapMappingException;
+import org.gluu.persist.exception.mapping.BaseMappingException;
 import org.richfaces.event.FileUploadEvent;
 import org.richfaces.model.UploadedFile;
 import org.slf4j.Logger;
@@ -67,7 +68,7 @@ public class UpdateScopeDescriptionAction implements Serializable {
 	private ConversationService conversationService;
 
 	@Inject
-	protected GluuCustomPerson currentPerson;
+	private Identity identity;
 
 	@Inject
 	protected ScopeDescriptionService scopeDescriptionService;
@@ -107,7 +108,7 @@ public class UpdateScopeDescriptionAction implements Serializable {
 
 		try {
 			scopeDescriptionService.prepareScopeDescriptionBranch();
-		} catch (LdapMappingException ex) {
+		} catch (BaseMappingException ex) {
 			log.error("Failed to initialize form", ex);
 
 			if (update) {
@@ -149,7 +150,7 @@ public class UpdateScopeDescriptionAction implements Serializable {
 			String scopeDn = scopeDescriptionService.getDnForScopeDescription(this.scopeInum);
 			this.scopeDescription = scopeDescriptionService.getScopeDescriptionByDn(scopeDn);
 			this.authorizationPolicies = getInitialAuthorizationPolicies();
-		} catch (LdapMappingException ex) {
+		} catch (BaseMappingException ex) {
 			log.error("Failed to find scope description '{}'", this.scopeInum, ex);
 			return OxTrustConstants.RESULT_FAILURE;
 		}
@@ -184,7 +185,7 @@ public class UpdateScopeDescriptionAction implements Serializable {
 			// Update scope description
 			try {
 				scopeDescriptionService.updateScopeDescription(this.scopeDescription);
-			} catch (LdapMappingException ex) {
+			} catch (BaseMappingException ex) {
 				log.error("Failed to update scope description '{}'", this.scopeDescription.getId(), ex);
 				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update UMA resource '#{updateScopeDescriptionAction.scopeDescription.displayName}'");
 				return OxTrustConstants.RESULT_FAILURE;
@@ -205,13 +206,13 @@ public class UpdateScopeDescriptionAction implements Serializable {
 
 			this.scopeDescription.setInum(inum);
 			this.scopeDescription.setDn(scopeDescriptionDn);
-			this.scopeDescription.setOwner(currentPerson.getDn());
+			this.scopeDescription.setOwner(identity.getUser().getDn());
             this.scopeDescription.setId(scopeDescription.getId());
 
 			// Save scope description
 			try {
 				scopeDescriptionService.addScopeDescription(this.scopeDescription);
-			} catch (LdapMappingException ex) {
+			} catch (BaseMappingException ex) {
 				log.error("Failed to add new UMA resource '{}'", this.scopeDescription.getId(), ex);
 				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new UMA resource");
 
@@ -239,7 +240,7 @@ public class UpdateScopeDescriptionAction implements Serializable {
 				conversationService.endConversation();
 
 				return OxTrustConstants.RESULT_SUCCESS;
-			} catch (LdapMappingException ex) {
+			} catch (BaseMappingException ex) {
 				log.error("Failed to remove scope description {}", this.scopeDescription.getId(), ex);
 			}
 		}
@@ -275,7 +276,7 @@ public class UpdateScopeDescriptionAction implements Serializable {
 	private void setIconImageImpl(UploadedFile uploadedFile) {
 		removeIconImage();
 
-		GluuImage newIcon = imageService.constructImageWithThumbnail(currentPerson, uploadedFile, 16, 16);
+		GluuImage newIcon = imageService.constructImageWithThumbnail(identity.getUser(), uploadedFile, 16, 16);
 		this.curIconImage = newIcon;
 		try {
 			this.scopeDescription.setFaviconImageAsXml(jsonService.objectToJson(this.curIconImage));
@@ -407,7 +408,7 @@ public class UpdateScopeDescriptionAction implements Serializable {
 			
 			this.availableAuthorizationPolicies = tmpAvailableAuthorizationPolicies;
 			selectAddedAuthorizationPolicies();
-		} catch (LdapMappingException ex) {
+		} catch (BaseMappingException ex) {
 			log.error("Failed to find available authorization policies", ex);
 		}
 
