@@ -6,9 +6,17 @@
 
 package org.gluu.oxtrust.action.uma;
 
-import org.codehaus.jettison.json.JSONObject;
+import java.io.Serializable;
+import java.util.List;
+
+import javax.enterprise.context.RequestScoped;
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.servlet.http.HttpServletResponse;
+
 import org.gluu.oxtrust.ldap.service.ImageService;
-import org.gluu.oxtrust.ldap.service.ViewHandlerService;
 import org.gluu.oxtrust.ldap.service.uma.ScopeDescriptionService;
 import org.gluu.persist.exception.mapping.BaseMappingException;
 import org.slf4j.Logger;
@@ -18,17 +26,6 @@ import org.xdi.service.security.Secure;
 import org.xdi.util.io.FileDownloader;
 import org.xdi.util.io.FileDownloader.ContentDisposition;
 import org.xdi.util.io.ResponseHelper;
-
-import javax.enterprise.context.RequestScoped;
-import javax.faces.context.ExternalContext;
-import javax.faces.context.FacesContext;
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.servlet.http.HttpServletResponse;
-import java.io.Serializable;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
 
 /**
  * Action class for download scope descriptions
@@ -51,45 +48,8 @@ public class ScopeDescriptionDownloadAction implements Serializable {
 	@Inject
 	protected ImageService imageService;
 
-	@Inject
-	private ViewHandlerService viewHandlerService;
-
 	private String scopeId;
 	private boolean download;
-
-	public void downloadFile() {
-		byte resultFile[] = null;
-
-		UmaScopeDescription scopeDescription = getScopeDescription();
-
-		if (scopeDescription != null) {
-			JSONObject jsonObject = new JSONObject();
-			try {
-				HashMap<String, List<String>> pageParams = new HashMap<String, List<String>>();
-				pageParams.put("scope", Arrays.asList(scopeDescription.getId()));
-				String umaScope = viewHandlerService.getBookmarkableURL("/uma/scope/scopeDescriptionFile.xhtml", pageParams);
-
-				jsonObject.put("name", scopeDescription.getId());
-				jsonObject.put("icon_uri", umaScope);
-
-				resultFile = jsonObject.toString().getBytes("UTF-8");
-			} catch (Exception ex) {
-				log.error("Failed to generate json response", ex);
-			}
-		}
-
-		FacesContext facesContext = FacesContext.getCurrentInstance();
-		ExternalContext externalContext = facesContext.getExternalContext();
-
-		if (resultFile == null) {
-			HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
-			FileDownloader.sendError(response, "Failed to generate json file");
-		} else {
-			ContentDisposition contentDisposition = download ? ContentDisposition.ATTACHEMENT : ContentDisposition.NONE;
-			ResponseHelper.downloadFile(scopeDescription.getId() + ".json", "application/json;charset=UTF-8", resultFile,
-					contentDisposition, facesContext);
-		}
-	}
 
 	public void downloadIcon() {
 		byte resultFile[] = null;
