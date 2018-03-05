@@ -2,7 +2,7 @@ oxTrust
 ======
 oxTrust is a Weld based web application for Gluu Server administration.
   
-oxTrust enables administrators to manage what information about people is being exposed to which partner websites. oxTrust is also the local management interface that handles other server instance specific configurations, and provides a mechanism for IT administrators to support people at the organization who are having trouble accessing a website or network resource.
+oxTrust enables administrators to manage what information about people is being exposed to partner websites. oxTrust is also the local management interface that handles other server instance specific configurations, and provides a mechanism for IT administrators to support people at the organization who are having trouble accessing a website or network resource.
 
 **oxTrust is tightly coupled with [oxAuth](https://github.com/GluuFederation/oxAuth).** 
 
