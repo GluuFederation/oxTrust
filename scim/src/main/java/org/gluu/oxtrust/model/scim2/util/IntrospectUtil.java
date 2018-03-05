@@ -240,6 +240,7 @@ public class IntrospectUtil {
     private static List<String> defaultAttrsNames;
     private static List<String> alwaysAttrsNames;
     private static List<String> neverAttrsNames;
+    private static List<String> requestAttrsNames;
     private static List<String> validableAttrsNames;
     private static List<String> canonicalizedAttrsNames;
 
@@ -248,6 +249,12 @@ public class IntrospectUtil {
      * value(s) for every possible attribute (or sub-atribute) of a SCIM resource when its returnability is "default"
      */
     public static Map<Class<? extends BaseScimResource>, Map<String, List<Method>>> defaultCoreAttrs;
+
+    /**
+     * An <b>unmodifiable</b> map that provides access to the sequence of getter methods that allow to get the actual
+     * value(s) for every possible attribute (or sub-atribute) of a SCIM resource when its returnability is "request"
+     */
+    public static Map<Class<? extends BaseScimResource>, Map<String, List<Method>>> requestCoreAttrs;
 
     /**
      * An <b>unmodifiable</b> map that provides access to the sequence of getter methods that allow to get the actual
@@ -310,6 +317,7 @@ public class IntrospectUtil {
         canonicalizedAttrsNames=new ArrayList<String>();
         alwaysAttrsNames=new ArrayList<String>();
         neverAttrsNames=new ArrayList<String>();
+        requestAttrsNames=new ArrayList<String>();
     }
 
     private static void resetMaps(){
@@ -317,6 +325,7 @@ public class IntrospectUtil {
         defaultCoreAttrs=newEmptyMap();
         alwaysCoreAttrs=newEmptyMap();
         neverCoreAttrs=newEmptyMap();
+        requestCoreAttrs=newEmptyMap();
         validableCoreAttrs=newEmptyMap();
         canonicalCoreAttrs=newEmptyMap();
 
@@ -329,6 +338,7 @@ public class IntrospectUtil {
         defaultCoreAttrs=Collections.unmodifiableMap(defaultCoreAttrs);
         alwaysCoreAttrs=Collections.unmodifiableMap(alwaysCoreAttrs);
         neverCoreAttrs=Collections.unmodifiableMap(neverCoreAttrs);
+        requestCoreAttrs=Collections.unmodifiableMap(requestCoreAttrs);
         validableCoreAttrs=Collections.unmodifiableMap(validableCoreAttrs);
         canonicalCoreAttrs=Collections.unmodifiableMap(canonicalCoreAttrs);
 
@@ -359,6 +369,9 @@ public class IntrospectUtil {
                         break;
                     case NEVER:
                         neverAttrsNames.add(name);
+                        break;
+                    case REQUEST:
+                        requestAttrsNames.add(name);
                         break;
                 }
 
@@ -430,6 +443,7 @@ public class IntrospectUtil {
                 defaultCoreAttrs.put(aClass, computeGettersMap(defaultAttrsNames, aClass));
                 alwaysCoreAttrs.put(aClass, computeGettersMap(alwaysAttrsNames, aClass));
                 neverCoreAttrs.put(aClass, computeGettersMap(neverAttrsNames, aClass));
+                requestCoreAttrs.put(aClass, computeGettersMap(requestAttrsNames, aClass));
                 validableCoreAttrs.put(aClass, computeGettersMap(validableAttrsNames, aClass));
                 canonicalCoreAttrs.put(aClass, computeGettersMap(canonicalizedAttrsNames, aClass));
 
@@ -437,6 +451,7 @@ public class IntrospectUtil {
                 allAttrs.get(aClass).addAll(alwaysAttrsNames);
                 allAttrs.get(aClass).addAll(defaultAttrsNames);
                 allAttrs.get(aClass).addAll(neverAttrsNames);
+                allAttrs.get(aClass).addAll(requestAttrsNames);
             }
 
             for (Class<? extends BaseScimResource> cls : resourceClasses) {
