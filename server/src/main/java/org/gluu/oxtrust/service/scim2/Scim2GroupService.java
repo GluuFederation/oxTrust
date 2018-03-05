@@ -5,13 +5,13 @@
  */
 package org.gluu.oxtrust.service.scim2;
 
-import com.unboundid.ldap.sdk.Filter;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.ws.rs.WebApplicationException;
@@ -37,11 +37,7 @@ import org.xdi.ldap.model.GluuStatus;
 import org.xdi.ldap.model.SortOrder;
 import org.xdi.ldap.model.VirtualListViewResponse;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.inject.Named;
-import java.io.Serializable;
-import java.util.*;
+import com.unboundid.ldap.sdk.Filter;
 
 /**
  * @author Val Pecaoco
