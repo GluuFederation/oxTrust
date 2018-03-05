@@ -5,7 +5,18 @@
  */
 package org.gluu.oxtrust.service.scim2;
 
-import com.unboundid.ldap.sdk.Filter;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response.Status;
+
 import org.gluu.oxtrust.ldap.service.IGroupService;
 import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
@@ -26,11 +37,7 @@ import org.xdi.ldap.model.GluuStatus;
 import org.xdi.ldap.model.SortOrder;
 import org.xdi.ldap.model.VirtualListViewResponse;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.inject.Named;
-import java.io.Serializable;
-import java.util.*;
+import com.unboundid.ldap.sdk.Filter;
 
 /**
  * @author Val Pecaoco
@@ -174,8 +181,10 @@ public class Scim2GroupService implements Serializable {
         log.info("Persisting group {}", groupName);
 
         if (externalScimService.isEnabled()){
-
-            externalScimService.executeScimCreateGroupMethods(gluuGroup);
+            boolean result = externalScimService.executeScimCreateGroupMethods(gluuGroup);
+            if (!result) {
+                throw new WebApplicationException("Failed to execute SCIM script successfully", Status.PRECONDITION_FAILED);
+            }
             groupService.addGroup(gluuGroup);
             syncMemberAttributeInPerson(gluuGroup.getDn(), null, gluuGroup.getMembers());
 
@@ -210,11 +219,14 @@ public class Scim2GroupService implements Serializable {
     }
 
     public void deleteGroup(GluuGroup gluuGroup) throws Exception {
-
         log.info("Removing group and updating user's entries");
 
-        if (externalScimService.isEnabled())
-            externalScimService.executeScimDeleteGroupMethods(gluuGroup);
+        if (externalScimService.isEnabled()) {
+            boolean result = externalScimService.executeScimDeleteGroupMethods(gluuGroup);
+            if (!result) {
+                throw new WebApplicationException("Failed to execute SCIM script successfully", Status.PRECONDITION_FAILED);
+            }
+        }
 
         groupService.removeGroup(gluuGroup);
 
@@ -233,8 +245,11 @@ public class Scim2GroupService implements Serializable {
         log.debug("replaceGroupInfo. Updating group info in LDAP");
 
         if (externalScimService.isEnabled()) {
+            boolean result = externalScimService.executeScimUpdateGroupMethods(gluuGroup);
+            if (!result) {
+                throw new WebApplicationException("Failed to execute SCIM script successfully", Status.PRECONDITION_FAILED);
+            }
 
-            externalScimService.executeScimUpdateGroupMethods(gluuGroup);
             groupService.updateGroup(gluuGroup);
             syncMemberAttributeInPerson(gluuGroup.getDn(), olderMembers, gluuGroup.getMembers());
 
