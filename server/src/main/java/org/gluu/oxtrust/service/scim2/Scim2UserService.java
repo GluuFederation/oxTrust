@@ -14,6 +14,8 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.management.InvalidAttributeValueException;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -420,7 +422,11 @@ public class Scim2UserService implements Serializable {
         personService.addCustomObjectClass(gluuPerson);
 
         if (externalScimService.isEnabled()){
-            externalScimService.executeScimCreateUserMethods(gluuPerson);
+            boolean result = externalScimService.executeScimCreateUserMethods(gluuPerson);
+            if (!result) {
+                throw new WebApplicationException("Failed to execute SCIM script successfully", Status.PRECONDITION_FAILED);
+            }
+
             personService.addPerson(gluuPerson);
             //Copy back to user the info from gluuPerson
             transferAttributesToUserResource(gluuPerson, user, url);
@@ -453,7 +459,6 @@ public class Scim2UserService implements Serializable {
     }
 
     public void replacePersonInfo(GluuCustomPerson gluuPerson, UserResource user, String url){
-
         transferAttributesToPerson(user, gluuPerson);
         writeCommonName(gluuPerson);
 
@@ -461,7 +466,11 @@ public class Scim2UserService implements Serializable {
         personService.addCustomObjectClass(gluuPerson);
 
         if (externalScimService.isEnabled()){
-            externalScimService.executeScimUpdateUserMethods(gluuPerson);
+            boolean result = externalScimService.executeScimUpdateUserMethods(gluuPerson);
+            if (!result) {
+                throw new WebApplicationException("Failed to execute SCIM script successfully", Status.PRECONDITION_FAILED);
+            }
+
             personService.updatePerson(gluuPerson);
             //Copy back to user the info from gluuPerson
             transferAttributesToUserResource(gluuPerson, user, url);
@@ -482,8 +491,12 @@ public class Scim2UserService implements Serializable {
         }
         log.info("Removing user entry {}", dn);
 
-        if (externalScimService.isEnabled())
-            externalScimService.executeScimDeleteUserMethods(gluuPerson);
+        if (externalScimService.isEnabled()) {
+            boolean result = externalScimService.executeScimDeleteUserMethods(gluuPerson);
+            if (!result) {
+                throw new WebApplicationException("Failed to execute SCIM script successfully", Status.PRECONDITION_FAILED);
+            }
+        }
 
         personService.removePerson(gluuPerson);
 
