@@ -26,8 +26,8 @@
       <to-view-id>/sectoridentifier/updateSectorIdentifier.xhtml</to-view-id>
       <redirect>
 		<view-param>
-			<name>inum</name>
-			<value>#{updateSectorIdentifierAction.inum}</value>
+			<name>id</name>
+			<value>#{updateSectorIdentifierAction.id}</value>
 		</view-param>
       </redirect>
     </navigation-case>

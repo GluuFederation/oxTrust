@@ -4,7 +4,7 @@
                 xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox" xmlns:rich="http://richfaces.org/rich"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
     <f:metadata>
-        <f:viewParam name="inum" value="#{updateSectorIdentifierAction.inum}" />
+        <f:viewParam name="id" value="#{updateSectorIdentifierAction.id}" />
         <f:viewAction action="#{conversationService.initConversation}" />
         <f:viewAction action="#{updateSectorIdentifierAction.update}"
                       if="#{updateSectorIdentifierAction.sectorIdentifier == null }"
@@ -49,7 +49,7 @@
 
             <ox:acceptRemovalDialog deleteMethod="#{updateSectorIdentifierAction.delete}" id="deleteConfirmation"
                                     queue="sectorIdentifierQueue" subject="sectorIdentifier"
-                                    value="#{updateSectorIdentifierAction.sectorIdentifier.inum}"/>
+                                    value="#{updateSectorIdentifierAction.sectorIdentifier.id}"/>
         </div>
     </ui:define>
 
