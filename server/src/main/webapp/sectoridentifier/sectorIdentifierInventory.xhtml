@@ -51,7 +51,7 @@
                                     <h:form>
                                         <ox:decorate hideLabel="true" id="searchPattern">
                                             <h:inputText
-                                                    alt="search parameters for sector identifier like inum, redirect_uri"
+                                                    alt="search parameters for sector identifier like id, redirect_uri"
                                                     id="searchPatternId" maxlength="30" size="30"
                                                     style="float: left;width: 50%;"
                                                     styleClass="searchParameters form-control"
@@ -76,12 +76,12 @@
                                                         rows="20" sortMode="single" styleClass="data sortable"
                                                         value="#{searchSectorIdentifierAction.sectorIdentifierList}"
                                                         var="si">
-                                            <rich:column sortBy="#{si.inum}">
-                                                <f:facet name="header">inum</f:facet>
+                                            <rich:column sortBy="#{si.id}">
+                                                <f:facet name="header">id</f:facet>
                                                 <h:link includeViewParams="false"
                                                         outcome="/sectoridentifier/updateSectorIdentifier"
-                                                        value="#{si.inum}">
-                                                    <f:param name="inum" value="#{si.inum}"/>
+                                                        value="#{si.id}">
+                                                    <f:param name="id" value="#{si.id}"/>
                                                 </h:link>
                                             </rich:column>
                                             <f:facet name="footer">

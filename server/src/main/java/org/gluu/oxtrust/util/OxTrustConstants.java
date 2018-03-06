@@ -37,6 +37,7 @@ public final class OxTrustConstants extends OxConstants {
     public static final String origin = "gluuAttributeOrigin";
     public static final String mail = "mail";
     public static final String ppid = "oxPPID";
+    public static final String oxId = "oxId";
 
     public static final String status = "status";
     public static final String gluuStatus = "gluuStatus";
