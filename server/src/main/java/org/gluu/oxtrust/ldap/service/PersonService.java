@@ -29,6 +29,7 @@ import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.exception.operation.DuplicateEntryException;
 import org.gluu.persist.ldap.impl.LdapEntryManager;
 import org.gluu.persist.model.AttributeData;
+import org.joda.time.format.ISODateTimeFormat;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.util.ArrayHelper;
@@ -112,8 +113,15 @@ public class PersonService implements Serializable, IPersonService {
      */
     @Override
     public void updatePerson(GluuCustomPerson person) {
-        person.setUpdatedAt(new Date());
+
+        Date updateDate = new Date();
+        person.setUpdatedAt(updateDate);
+        //Update oxTrustMetaLastModified if it has been previously set
+        if (person.getAttribute("oxTrustMetaLastModified") != null) {
+            person.setAttribute("oxTrustMetaLastModified", ISODateTimeFormat.dateTime().withZoneUTC().print(updateDate.getTime()));
+        }
         ldapEntryManager.merge(person);
+
     }
 
     /* (non-Javadoc)
