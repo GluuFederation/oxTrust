@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Date;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -259,8 +260,19 @@ public class Scim2UserService implements Serializable {
 
         Meta meta=new Meta();
         meta.setResourceType(ScimResourceUtil.getType(res.getClass()));
+
         meta.setCreated(person.getAttribute("oxTrustMetaCreated"));
+        if (meta.getCreated() == null) {
+            Date tmpDate = person.getCreationDate();
+            meta.setCreated(tmpDate == null ? null : ISODateTimeFormat.dateTime().withZoneUTC().print(tmpDate.getTime()));
+        }
+
         meta.setLastModified(person.getAttribute("oxTrustMetaLastModified"));
+        if (meta.getLastModified() == null) {
+            Date tmpDate = person.getUpdatedAt();
+            meta.setLastModified(tmpDate == null ? null : ISODateTimeFormat.dateTime().withZoneUTC().print(tmpDate.getTime()));
+        }
+
         meta.setLocation(person.getAttribute("oxTrustMetaLocation"));
         if (meta.getLocation()==null)
             meta.setLocation(url + "/" + person.getInum());

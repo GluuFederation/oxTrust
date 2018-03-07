@@ -62,23 +62,29 @@ public class ListResponseJsonSerializer extends JsonSerializer<ListResponse> {
 
             jGen.writeNumberField("totalResults", listResponse.getTotalResults());
 
-            if (!skipResults && listResponse.getItemsPerPage()>0) {
-                jGen.writeNumberField("startIndex", listResponse.getStartIndex());
-                jGen.writeNumberField("itemsPerPage", listResponse.getItemsPerPage());
+            if (!skipResults) {
+                if (listResponse.getItemsPerPage()>0) {
+                    //these two bits are "REQUIRED when partial results are returned due to pagination." (section 3.4.2 RFC 7644)
+                    jGen.writeNumberField("startIndex", listResponse.getStartIndex());
+                    jGen.writeNumberField("itemsPerPage", listResponse.getItemsPerPage());
+                }
 
-                jGen.writeArrayFieldStart("Resources");
+                //Section 3.4.2 RFC 7644: Resources [...] REQUIRED if "totalResults" is non-zero
+                if (listResponse.getTotalResults()>0) {
+                    jGen.writeArrayFieldStart("Resources");
 
-                if (listResponse.getResources().size()>0)
-                    for (BaseScimResource resource : listResponse.getResources()) {
-                        JsonNode jsonResource = mapper.readTree(resourceSerializer.serialize(resource, attributes, excludeAttributes));
-                        jGen.writeTree(jsonResource);
-                    }
-                else
-                if (jsonResources != null)
-                    for (JsonNode node : jsonResources)
-                        jGen.writeTree(node);
+                    if (listResponse.getResources().size()>0)
+                        for (BaseScimResource resource : listResponse.getResources()) {
+                            JsonNode jsonResource = mapper.readTree(resourceSerializer.serialize(resource, attributes, excludeAttributes));
+                            jGen.writeTree(jsonResource);
+                        }
+                    else
+                    if (jsonResources != null)
+                        for (JsonNode node : jsonResources)
+                            jGen.writeTree(node);
 
-                jGen.writeEndArray();
+                    jGen.writeEndArray();
+                }
             }
 
             jGen.writeEndObject();
