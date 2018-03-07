@@ -30,7 +30,6 @@ import org.gluu.oxtrust.model.scim2.extensions.ExtensionField;
 import org.gluu.oxtrust.model.scim2.user.*;
 import org.gluu.oxtrust.model.scim2.util.IntrospectUtil;
 import org.gluu.oxtrust.service.antlr.scimFilter.ScimFilterParserService;
-import org.gluu.oxtrust.service.antlr.scimFilter.util.FilterUtil;
 import org.gluu.oxtrust.service.external.ExternalScimService;
 import org.gluu.oxtrust.util.ServiceUtil;
 import org.gluu.oxtrust.model.scim2.util.ScimResourceUtil;
@@ -250,8 +249,19 @@ public class Scim2UserService implements Serializable {
 
         Meta meta=new Meta();
         meta.setResourceType(ScimResourceUtil.getType(res.getClass()));
+
         meta.setCreated(person.getAttribute("oxTrustMetaCreated"));
+        if (meta.getCreated() == null) {
+            Date tmpDate = person.getCreationDate();
+            meta.setCreated(tmpDate == null ? null : ISODateTimeFormat.dateTime().withZoneUTC().print(tmpDate.getTime()));
+        }
+
         meta.setLastModified(person.getAttribute("oxTrustMetaLastModified"));
+        if (meta.getLastModified() == null) {
+            Date tmpDate = person.getUpdatedAt();
+            meta.setLastModified(tmpDate == null ? null : ISODateTimeFormat.dateTime().withZoneUTC().print(tmpDate.getTime()));
+        }
+
         meta.setLocation(person.getAttribute("oxTrustMetaLocation"));
         if (meta.getLocation()==null)
             meta.setLocation(url + "/" + person.getInum());
