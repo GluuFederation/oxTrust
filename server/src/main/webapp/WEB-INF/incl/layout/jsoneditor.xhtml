@@ -7,8 +7,10 @@
 	<h:inputHidden prependId="false" id="#{id}_hidden" value="#{json}" />
 	<div id="#{id}"></div>
 
+	<h:panelGroup  rendered="#{saveBtnLabelHide ne 'hide'}">
 	<button id="save_#{id}" type="button" class="btn btn-primary"
 		style="margin-bottom: 5px !important; margin-top: 10px !important;">#{saveBtnLabel}</button>
+	</h:panelGroup>
 
 	<h:outputScript>        
 		  var container = document.getElementById("#{id}");
