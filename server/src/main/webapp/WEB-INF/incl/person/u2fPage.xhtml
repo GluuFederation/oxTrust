@@ -65,6 +65,12 @@
 		}
 
     </h:outputStylesheet>
+    <script src="#{oxTrustConfigurationService.jsLocation}/jsoneditor.min.js" type="text/javascript"/>
+        <script>
+            // Set the default CSS theme and icon library globally
+            JSONEditor.defaults.theme = 'bootstrap3';
+            JSONEditor.defaults.iconlib = 'bootstrap3';
+        </script>
 
 	<rich:popupPanel id="U2fPanel" onmaskclick="#{rich:component('U2fPanel')}.hide()" keepVisualState="true"  zindex="1000" minHeight="1000" top="60" >
         <f:facet name="header">
@@ -89,10 +95,18 @@
                     <h:inputText value="#{updatePersonAction.fidoDevice.deviceKeyHandle}" disabled="true" id="devicekey" autocomplete="off" styleClass="form-control" style="margin-top: 10px;">
                         
                     </h:inputText>
-                    <h:outputText value="Device Registration Conf :" style="margin-top: 10px;display: block;" />
-                    <h:inputText value="#{updatePersonAction.fidoDevice.deviceRegistrationConf}" disabled="true" id="deviceregist" autocomplete="off" styleClass="form-control" style="margin-top: 10px;">
-                        
-                    </h:inputText>
+                    
+                    <ui:decorate id="DeviceRegiConfig" prependId="false"
+                                                     template="/WEB-INF/incl/layout/jsoneditor.xhtml">
+                                            <ui:param name="id" value="DeviceRegiConf"/>
+                                            <ui:param name="parentId" value="DeviceRegiConfig"/>
+                                            <ui:param name="json" value="#{updatePersonAction.fidoDevice.deviceRegistrationConf}"/>
+                                            <ui:param name="jsonSchema"
+                                                      value="#{request.contextPath}/schema/u2f.properties.json"/>
+                                            <ui:param name="saveBtnId" value="saveOxTrustConfigBtn"/>
+                                            <ui:param name="saveBtnLabel"
+                                                      value="configuration"/>
+                    </ui:decorate>
                     
                     <h:panelGroup id="U2fDeviceConfigMenu"  rendered="#{updatePersonAction.deviceDetail != null}">
                     
