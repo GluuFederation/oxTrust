@@ -6,7 +6,7 @@
 package org.gluu.oxtrust.api.client;
 
 /**
- * A message about test fail.
+ * General REST exception for oxTrust API.
  * 
  * @author Dmitry Ognyannikov
  */

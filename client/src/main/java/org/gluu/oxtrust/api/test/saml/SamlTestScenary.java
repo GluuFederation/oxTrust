@@ -44,18 +44,23 @@ public class SamlTestScenary {
         TrustRelationshipClient samlClient = client.getTrustRelationshipClient();
         
         GluuSAMLTrustRelationship trGenerated = generateRandomeSingleTrustRelationship();
+        
         // test create()
         String inum = samlClient.create(trGenerated);
+        
         // test read()
         GluuSAMLTrustRelationship trReaded = samlClient.read(inum);
-        //TODO: compare
+        //TODO: compare etities
         trReaded.setDescription("description changed");
-        // test read()
+        
+        // test update()
         samlClient.update(trReaded, inum);
+        
         // test list()
         List<SAMLTrustRelationshipShort> trustRelationships = samlClient.list();
         if (!checkListForTrustRelationship(trustRelationships, inum))
             throw new APITestException("TrustRelationship really not saved");
+        
         // test delete()
         samlClient.delete(inum);
         trustRelationships = samlClient.list();
