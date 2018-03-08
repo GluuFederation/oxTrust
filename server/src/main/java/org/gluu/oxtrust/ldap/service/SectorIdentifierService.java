@@ -2,22 +2,19 @@ package org.gluu.oxtrust.ldap.service;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.UUID;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.model.OxAuthSectorIdentifier;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.ldap.impl.LdapEntryManager;
-import org.slf4j.Logger;
-import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.util.INumGenerator;
-import org.xdi.util.StringHelper;
-
 import org.gluu.search.filter.Filter;
+import org.slf4j.Logger;
+import org.xdi.util.StringHelper;
 
 /**
  * Provides operations with Sector Identifiers
@@ -43,23 +40,20 @@ public class SectorIdentifierService implements Serializable {
     @Inject
     private ClientService clientService;
 
-    @Inject
-    private AppConfiguration appConfiguration;
-
     /**
      * Build DN string for sector identifier
      *
-     * @param inum Sector Identifier Inum
-     * @return DN string for specified sector identifier or DN for sector identifiers branch if inum is null
+     * @param oxId Sector Identifier oxId
+     * @return DN string for specified sector identifier or DN for sector identifiers branch if oxId is null
      * @throws Exception
      */
-    public String getDnForSectorIdentifier(String inum) {
+    public String getDnForSectorIdentifier(String oxId) {
         String orgDn = organizationService.getDnForOrganization();
-        if (StringHelper.isEmpty(inum)) {
+        if (StringHelper.isEmpty(oxId)) {
             return String.format("ou=sector_identifiers,%s", orgDn);
         }
 
-        return String.format("inum=%s,ou=sector_identifiers,%s", inum, orgDn);
+        return String.format("oxId=%s,ou=sector_identifiers,%s", oxId, orgDn);
     }
 
     /**
@@ -69,9 +63,9 @@ public class SectorIdentifierService implements Serializable {
      * @param sizeLimit Maximum count of results
      * @return List of sector identifiers
      */
-    public List<OxAuthSectorIdentifier> searchSectorIdentifiers(String pattern, int sizeLimit) throws Exception {
+    public List<OxAuthSectorIdentifier> searchSectorIdentifiers(String pattern, int sizeLimit) {
         String[] targetArray = new String[]{pattern};
-        Filter searchFilter = Filter.createSubstringFilter(OxTrustConstants.inum, null, targetArray, null);
+        Filter searchFilter = Filter.createSubstringFilter(OxTrustConstants.oxId, null, targetArray, null);
 
         List<OxAuthSectorIdentifier> result = ldapEntryManager.findEntries(getDnForSectorIdentifier(null), OxAuthSectorIdentifier.class, searchFilter, sizeLimit);
 
@@ -83,48 +77,46 @@ public class SectorIdentifierService implements Serializable {
 	}
 
     /**
-     * Get sector identifier by inum
+     * Get sector identifier by oxId
      *
-     * @param inum Sector identifier inum
+     * @param oxId Sector identifier oxId
      * @return Sector identifier
      */
-    public OxAuthSectorIdentifier getSectorIdentifierByInum(String inum) {
+    public OxAuthSectorIdentifier getSectorIdentifierById(String oxId) {
         OxAuthSectorIdentifier result = null;
         try {
-            result = ldapEntryManager.find(OxAuthSectorIdentifier.class, getDnForSectorIdentifier(inum));
+            result = ldapEntryManager.find(OxAuthSectorIdentifier.class, getDnForSectorIdentifier(oxId));
         } catch (Exception e) {
-            log.error("Failed to find sector identifier by Inum " + inum, e);
+            log.error("Failed to find sector identifier by oxId " + oxId, e);
         }
         return result;
     }
 
     /**
-     * Generate new inum for sector identifier
+     * Generate new oxId for sector identifier
      *
-     * @return New inum for sector identifier
+     * @return New oxId for sector identifier
      * @throws Exception
      */
-    public String generateInumForNewSectorIdentifier() throws Exception {
+    public String generateIdForNewSectorIdentifier() {
         OxAuthSectorIdentifier sectorIdentifier = new OxAuthSectorIdentifier();
-        String newInum = null;
+        String newId = null;
         do {
-            newInum = generateInumForNewSectorIdentifierImpl();
-            String newDn = getDnForSectorIdentifier(newInum);
+            newId = generateIdForNewSectorIdentifierImpl();
+            String newDn = getDnForSectorIdentifier(newId);
             sectorIdentifier.setDn(newDn);
         } while (ldapEntryManager.contains(sectorIdentifier));
 
-        return newInum;
+        return newId;
     }
 
     /**
-     * Generate new inum for sector identifier
+     * Generate new oxId for sector identifier
      *
-     * @return New inum for sector identifier
+     * @return New oxId for sector identifier
      */
-    private String generateInumForNewSectorIdentifierImpl() throws Exception {
-        String orgInum = organizationService.getInumForOrganization();
-        return orgInum + OxTrustConstants.inumDelimiter + OxTrustConstants.INUM_SECTOR_IDENTIFIER_OBJECTTYPE + OxTrustConstants.inumDelimiter
-                + INumGenerator.generate(2);
+    private String generateIdForNewSectorIdentifierImpl(){
+        return UUID.randomUUID().toString();
     }
 
     /**
@@ -132,7 +124,7 @@ public class SectorIdentifierService implements Serializable {
      *
      * @param sectorIdentifier Sector identifier
      */
-    public void addSectorIdentifier(OxAuthSectorIdentifier sectorIdentifier) throws Exception {
+    public void addSectorIdentifier(OxAuthSectorIdentifier sectorIdentifier) {
         ldapEntryManager.persist(sectorIdentifier);
     }
 
@@ -141,7 +133,7 @@ public class SectorIdentifierService implements Serializable {
      *
      * @param sectorIdentifier Sector identifier
      */
-    public void updateSectorIdentifier(OxAuthSectorIdentifier sectorIdentifier) throws Exception {
+    public void updateSectorIdentifier(OxAuthSectorIdentifier sectorIdentifier) {
         ldapEntryManager.merge(sectorIdentifier);
     }
 
@@ -163,5 +155,9 @@ public class SectorIdentifierService implements Serializable {
         }
 
         ldapEntryManager.remove(sectorIdentifier);
+    }
+    
+    public static void main(String[] args) {
+        System.out.println(UUID.randomUUID().toString());
     }
 }

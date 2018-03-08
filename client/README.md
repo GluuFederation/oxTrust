@@ -20,5 +20,9 @@ Library usage:
     
 Integration test application usage:
 
-# Edit client/conf/configuration.properties with your oxTrust server parameters.
-# Run java -cp target/oxtrust-client-3.2.0-SNAPSHOT.jar org.gluu.oxtrust.api.test.TestMain
+1. Edit client/conf/configuration.properties with your oxTrust server parameters.
+2. Run java -cp target/oxtrust-client-3.2.0-SNAPSHOT.jar org.gluu.oxtrust.api.test.TestMain
+
+Embedding to automatic tests:
+
+    org.gluu.oxtrust.api.test.TestMain.main() returns 0 if all tests passed and 1 if an error has been occured.

@@ -3,7 +3,7 @@
                 xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
     <f:metadata>
-        <f:viewParam name="inum" value="#{updateSectorIdentifierAction.inum}" />
+        <f:viewParam name="id" value="#{updateSectorIdentifierAction.id}" />
         <f:viewAction action="#{conversationService.initConversation}" />
         <f:viewAction action="#{updateSectorIdentifierAction.add}"
                       if="#{updateSectorIdentifierAction.sectorIdentifier == null }"

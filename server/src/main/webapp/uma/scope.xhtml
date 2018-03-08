@@ -77,20 +77,7 @@
 
                                                 <rich:column>
                                                     <f:facet name="header">#{msg['uma.action']}</f:facet>
-                                                    <ui:fragment rendered="#{_row.id != null}">
-                                                        <h:link includeViewParams="false"
-                                                                outcome="/uma/scope/scopeDescriptionFile"
-                                                                value="#{msg['uma.download']}">
-                                                            <f:param name="scope" value="#{_row.id}"/>
-                                                            <f:param name="dl" value="#{true}"/>
-                                                        </h:link>
-                                                        <h:outputText value="/"/>
-                                                        <h:link includeViewParams="false"
-                                                                outcome="/uma/scope/scopeDescriptionFile"
-                                                                value="#{msg['uma.link']}">
-                                                            <f:param name="scope" value="#{_row.id}"/>
-                                                        </h:link>
-                                                    </ui:fragment>
+                                                    <h:outputText value="#{_row.id}"></h:outputText>                                                    
                                                 </rich:column>
 
                                                 <f:facet name="footer">

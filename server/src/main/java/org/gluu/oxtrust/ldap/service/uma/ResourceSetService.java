@@ -197,5 +197,15 @@ public class ResourceSetService implements Serializable {
 
 		return String.format("oxId=%s,ou=resources,ou=uma,%s", oxId, orgDn);
 	}
+	
+	/**
+	 * Get resources by scope
+	 * 
+	 * @param id Id
+	 * @return List of Resources which specified scope
+	 */
+	public List<UmaResource> findResourcesByScope(String scopeId) {
+		return ldapEntryManager.findEntries(getDnForResource(null), UmaResource.class, Filter.createEqualityFilter("oxAuthUmaScope", scopeId));
+	}
 
 }

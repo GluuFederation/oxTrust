@@ -41,6 +41,7 @@ public class ExternalUserRegistrationService extends ExternalScriptService {
 			return externalType.initRegistration(user, requestParameters, configurationAttributes);
 		} catch (Exception ex) {
 			log.error(ex.getMessage(), ex);
+            saveScriptError(customScriptConfiguration.getCustomScript(), ex);
 		}
 
 		return false;
@@ -54,6 +55,7 @@ public class ExternalUserRegistrationService extends ExternalScriptService {
 			return externalType.preRegistration(user, requestParameters, configurationAttributes);
 		} catch (Exception ex) {
 			log.error(ex.getMessage(), ex);
+            saveScriptError(customScriptConfiguration.getCustomScript(), ex);
 		}
 
 		return false;
@@ -67,6 +69,7 @@ public class ExternalUserRegistrationService extends ExternalScriptService {
 			return externalType.postRegistration(user, requestParameters, configurationAttributes);
 		} catch (Exception ex) {
 			log.error(ex.getMessage(), ex);
+            saveScriptError(customScriptConfiguration.getCustomScript(), ex);
 		}
 
 		return false;
@@ -128,6 +131,7 @@ public class ExternalUserRegistrationService extends ExternalScriptService {
 			return externalType.confirmRegistration(user, requestParameters, configurationAttributes);
 		} catch (Exception ex) {
 			log.error(ex.getMessage(), ex);
+            saveScriptError(customScriptConfiguration.getCustomScript(), ex);
 		}
 
 		return false;

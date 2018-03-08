@@ -48,7 +48,7 @@ public class UpdateSectorIdentifierAction implements Serializable {
     @Inject
     private Logger log;
 
-    private String inum;
+    private String id;
     private boolean update;
 
     private OxAuthSectorIdentifier sectorIdentifier;
@@ -129,10 +129,10 @@ public class UpdateSectorIdentifierAction implements Serializable {
         this.update = true;
         log.info("this.update : " + this.update);
         try {
-            log.info("inum : " + inum);
-            this.sectorIdentifier = sectorIdentifierService.getSectorIdentifierByInum(inum);
+            log.info("id : " + id);
+            this.sectorIdentifier = sectorIdentifierService.getSectorIdentifierById(id);
         } catch (BaseMappingException ex) {
-            log.error("Failed to find sector identifier {}", inum, ex);
+            log.error("Failed to find sector identifier {}", id, ex);
         }
 
         if (this.sectorIdentifier == null) {
@@ -156,7 +156,7 @@ public class UpdateSectorIdentifierAction implements Serializable {
 
 	public String cancel() {
 		if (update) {
-			facesMessages.add(FacesMessage.SEVERITY_INFO, "Sector identifier '#{updateSectorIdentifierAction.sectorIdentifier.inum}' not updated");
+			facesMessages.add(FacesMessage.SEVERITY_INFO, "Sector identifier '#{updateSectorIdentifierAction.sectorIdentifier.id}' not updated");
 		} else {
 			facesMessages.add(FacesMessage.SEVERITY_INFO, "New sector identifier not added");
 		}
@@ -186,34 +186,34 @@ public class UpdateSectorIdentifierAction implements Serializable {
                 updateClients(oldClientDisplayNameEntries, this.clientDisplayNameEntries);
             } catch (BaseMappingException ex) {
                 log.info("error updating sector identifier ", ex);
-                log.error("Failed to update sector identifier {}", this.inum, ex);
+                log.error("Failed to update sector identifier {}", this.id, ex);
 
-                facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update sector identifier '#{updateSectorIdentifierAction.sectorIdentifier.inum}'");
+                facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update sector identifier '#{updateSectorIdentifierAction.sectorIdentifier.id}'");
                 return OxTrustConstants.RESULT_FAILURE;
             } catch (Exception ex) {
-				log.error("Failed to update sector identifier {}", this.inum, ex);
+				log.error("Failed to update sector identifier {}", this.id, ex);
             }
 
-            facesMessages.add(FacesMessage.SEVERITY_INFO, "Sector identifier '#{updateSectorIdentifierAction.sectorIdentifier.inum}' updated successfully");
+            facesMessages.add(FacesMessage.SEVERITY_INFO, "Sector identifier '#{updateSectorIdentifierAction.sectorIdentifier.id}' updated successfully");
         } else {
-            this.inum = sectorIdentifierService.generateInumForNewSectorIdentifier();
-            String dn = sectorIdentifierService.getDnForSectorIdentifier(this.inum);
+            this.id = sectorIdentifierService.generateIdForNewSectorIdentifier();
+            String dn = sectorIdentifierService.getDnForSectorIdentifier(this.id);
 
             // Save sectorIdentifier
             this.sectorIdentifier.setDn(dn);
-            this.sectorIdentifier.setInum(this.inum);
+            this.sectorIdentifier.setId(this.id);
             try {
                 sectorIdentifierService.addSectorIdentifier(this.sectorIdentifier);
                 updateClients(oldClientDisplayNameEntries, this.clientDisplayNameEntries);
             } catch (BaseMappingException ex) {
                 log.info("error saving sector identifier ");
-                log.error("Failed to add new sector identifier {}", this.sectorIdentifier.getInum(), ex);
+                log.error("Failed to add new sector identifier {}", this.sectorIdentifier.getId(), ex);
 
                 facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new sector identifier");
                 return OxTrustConstants.RESULT_FAILURE;
             }
 
-			facesMessages.add(FacesMessage.SEVERITY_INFO, "New sector identifier '#{updateSectorIdentifierAction.sectorIdentifier.inum}' added successfully");
+			facesMessages.add(FacesMessage.SEVERITY_INFO, "New sector identifier '#{updateSectorIdentifierAction.sectorIdentifier.id}' added successfully");
 			conversationService.endConversation();
 
             this.update = true;
@@ -230,16 +230,16 @@ public class UpdateSectorIdentifierAction implements Serializable {
             try {
                 sectorIdentifierService.removeSectorIdentifier(this.sectorIdentifier);
 
-                facesMessages.add(FacesMessage.SEVERITY_INFO, "Sector identifier '#{updateSectorIdentifierAction.sectorIdentifier.inum}' removed successfully");
+                facesMessages.add(FacesMessage.SEVERITY_INFO, "Sector identifier '#{updateSectorIdentifierAction.sectorIdentifier.id}' removed successfully");
 				conversationService.endConversation();
 
 				return OxTrustConstants.RESULT_SUCCESS;
             } catch (BaseMappingException ex) {
-                log.error("Failed to remove sector identifier {}", this.sectorIdentifier.getInum(), ex);
+                log.error("Failed to remove sector identifier {}", this.sectorIdentifier.getId(), ex);
             }
         }
 
-        facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to remove sector identifier '#{updateSectorIdentifierAction.sectorIdentifier.inum}'");
+        facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to remove sector identifier '#{updateSectorIdentifierAction.sectorIdentifier.id}'");
 
         return OxTrustConstants.RESULT_FAILURE;
     }
@@ -474,15 +474,15 @@ public class UpdateSectorIdentifierAction implements Serializable {
     }
 
     public String getSectorIdentifierUrl() {
-        return appConfiguration.getOxAuthSectorIdentifierUrl() + "/" + inum;
+        return appConfiguration.getOxAuthSectorIdentifierUrl() + "/" + id;
     }
 
-    public String getInum() {
-        return inum;
+    public String getId() {
+        return id;
     }
 
-    public void setInum(String inum) {
-        this.inum = inum;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public OxAuthSectorIdentifier getSectorIdentifier() {

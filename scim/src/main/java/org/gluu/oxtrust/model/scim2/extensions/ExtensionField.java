@@ -154,9 +154,8 @@ public class ExtensionField {
     /**
      * <p>Maps the org.xdi.model.GluuAttributeDataType associated to this ExtensionField (see {@link #getType() getType}) to
      * a member of the enum {@link org.gluu.oxtrust.model.scim2.AttributeDefinition.Type AttributeDefinition.Type}.</p>
-     * <p>The mapping is straightforward. Special cases are org.xdi.model.GluuAttributeDataType.PHOTO being mapped to
-     * {@link org.gluu.oxtrust.model.scim2.AttributeDefinition.Type#REFERENCE Type.REFERENCE}, and org.xdi.model.GluuAttributeDataType.NUMERIC
-     * to {@link org.gluu.oxtrust.model.scim2.AttributeDefinition.Type#DECIMAL Type.DECIMAL}.</p>
+     * <p>The mapping is straightforward. Special case is org.xdi.model.GluuAttributeDataType.NUMERIC mapped to
+     * {@link org.gluu.oxtrust.model.scim2.AttributeDefinition.Type#DECIMAL Type.DECIMAL}.</p>
      * @return An enum value of AttributeDefinition.Type
      */
     public Type getAttributeDefinitionType(){
@@ -164,7 +163,7 @@ public class ExtensionField {
         Type attrType=null;
         switch (type) {
             case BINARY:
-                attrType = Type.REFERENCE;
+                attrType = Type.BINARY;
                 break;
             case STRING:
                 attrType = Type.STRING;

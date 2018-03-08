@@ -143,6 +143,18 @@
                                                                    value="#{msg['uma.addAuthorizationPolicy']}"/>
                                             </h:panelGroup>
                                         </ox:decorate>
+                                        
+                                        <ox:decorate id="clients" label="clients" rendered="#{updateScopeDescriptionAction.clientList != null}">
+                                         	<a4j:repeat rowKeyVar="_clientIdx"
+                                                                value="#{updateScopeDescriptionAction.clientList}"
+                                                                var="_cilent">
+                                                  <h:link includeViewParams="false"
+                                                                        outcome="/client/updateClient"
+                                                                        value="#{_cilent.displayName}">
+                                                                    <f:param name="inum" value="#{_cilent.inum}"/>
+                                                  </h:link>
+                                            </a4j:repeat>
+                                         </ox:decorate>
                                     </h:panelGrid>
 
 
