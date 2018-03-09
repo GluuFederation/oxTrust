@@ -292,7 +292,7 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
     }
 
 	public String getCustomScriptError(CustomScript customScript) {
-	    if (customScript == null) {
+	    if ((customScript == null) || (customScript.getDn() == null)) {
 	        return null;
 	    }
 
