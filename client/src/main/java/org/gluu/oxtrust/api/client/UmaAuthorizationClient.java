@@ -10,6 +10,9 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jboss.resteasy.client.jaxrs.ResteasyClient;
+import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
+import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 import org.xdi.oxauth.client.TokenRequest;
 import org.xdi.oxauth.client.uma.UmaClientFactory;
 import org.xdi.oxauth.client.uma.UmaTokenService;
@@ -38,6 +41,8 @@ public class UmaAuthorizationClient {
     private String umaAatClientJksPath;
     private String umaAatClientJksPassword;
     
+    private ResteasyClient client;
+    
     /**
      * Constructs a UmaAuthorizationClient object with the specified parameters and service contract.
      * @param domain The root URL of the SCIM service. Usually in the form {@code https://your.gluu-server.com/identity/restv1}
@@ -47,7 +52,13 @@ public class UmaAuthorizationClient {
      * @param umaAatClientKeyId Key Id in the keystore. Pass an empty string to use the first key in keystore
      */
     public UmaAuthorizationClient(String domain, String umaAatClientId, String umaAatClientJksPath, String umaAatClientJksPassword, String umaAatClientKeyId) {
-        //TODO: domain
+                /*
+         Configures a proxy to interact with the service using the new JAX-RS 2.0 Client API, see section
+         "Resteasy Proxy Framework" of RESTEasy JAX-RS user guide
+         */
+        client = new ResteasyClientBuilder().build();
+        ResteasyWebTarget target = client.target(domain);
+        
         
         this.umaAatClientId = umaAatClientId;
         this.umaAatClientJksPath = umaAatClientJksPath;
