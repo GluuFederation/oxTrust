@@ -23,7 +23,6 @@ import org.gluu.oxtrust.ldap.service.JsonConfigurationService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.model.RegistrationConfiguration;
-import org.gluu.oxtrust.model.RegistrationInterceptorScript;
 import org.gluu.oxtrust.model.SimpleCustomPropertiesListModel;
 import org.gluu.oxtrust.model.Tuple;
 import org.gluu.oxtrust.util.OxTrustConstants;
@@ -31,6 +30,7 @@ import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.SimpleCustomProperty;
+import org.xdi.util.StringHelper;
 import org.xdi.util.Util;
 
 /**
@@ -40,7 +40,6 @@ import org.xdi.util.Util;
  */
 @ConversationScoped
 @Named("registrationManagementAction")
-//TODO: Remove configureInterceptors, registrationInterceptors, removeCustomAuthenticationConfiguration, addRegistrationInterceptor
 //TODO: Clean up LDAP OC
 public class RegistrationManagementAction implements SimpleCustomPropertiesListModel, Serializable {
 
@@ -60,12 +59,8 @@ public class RegistrationManagementAction implements SimpleCustomPropertiesListM
 
 	@Inject
 	private ConversationService conversationService;
-	
-	private boolean configureInterceptors;
 
 	private boolean captchaDisabled;
-	
-	private List<RegistrationInterceptorScript> registrationInterceptors;
 	
 	private boolean configureRegistrationForm;
 	
@@ -96,21 +91,22 @@ public class RegistrationManagementAction implements SimpleCustomPropertiesListM
 	}
 
 	public String search() {
-		if (Util.equals(this.oldSearchPattern, this.searchPattern)) {
+		if (StringHelper.isNotEmpty(this.oldSearchPattern) && Util.equals(this.oldSearchPattern, this.searchPattern)) {
 			return OxTrustConstants.RESULT_SUCCESS;
-		}
-		
-		if (this.searchPattern == null || this.searchPattern.length() < 2) {
-			return OxTrustConstants.RESULT_VALIDATION_ERROR;
 		}
 
 		try {
-			this.attributes = attributeService.searchAttributes(this.searchPattern, OxTrustConstants.searchPersonsSizeLimit);
-			for(GluuAttribute selectedAttribute : selectedAttributes){
-				if(! attributes.contains(selectedAttribute)){
-					attributes.add(selectedAttribute);
-				}
-			}
+		    if (StringHelper.isEmpty(this.searchPattern)) {
+	            this.attributes = attributeService.getAllAttributes();
+		    } else {
+		        this.attributes = attributeService.searchAttributes(this.searchPattern, OxTrustConstants.searchPersonsSizeLimit);
+		    }
+
+            for (GluuAttribute selectedAttribute : selectedAttributes) {
+                if (!attributes.contains(selectedAttribute)) {
+                    attributes.add(selectedAttribute);
+                }
+            }
 			this.oldSearchPattern = this.searchPattern;
 		} catch (Exception ex) {
 			log.error("Failed to find attributes", ex);
@@ -131,16 +127,7 @@ public class RegistrationManagementAction implements SimpleCustomPropertiesListM
 
 		GluuOrganization org = organizationService.getOrganization();
 		RegistrationConfiguration config = org.getOxRegistrationConfiguration();
-		List<RegistrationInterceptorScript> newScripts = new ArrayList<RegistrationInterceptorScript>();
-		String configLinksExpirationFrequency = null;
-		String configAccountsExpirationServiceFrequency = null;
-		String configAccountsExpirationPeriod = null;
 		if(config != null){
-			List<RegistrationInterceptorScript> scripts = config.getRegistrationInterceptorScripts();
-			if(scripts != null && !scripts.isEmpty()){
-				newScripts.addAll(scripts);
-			}
-			configureInterceptors = config.isRegistrationInterceptorsConfigured();
 			captchaDisabled = config.isCaptchaDisabled();
 			
 			List<String> attributeList = config.getAdditionalAttributes();
@@ -155,7 +142,8 @@ public class RegistrationManagementAction implements SimpleCustomPropertiesListM
 
 		}
 		
-		registrationInterceptors = newScripts;
+		search();
+
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 	
@@ -204,12 +192,6 @@ public class RegistrationManagementAction implements SimpleCustomPropertiesListM
 		if (config == null) {
 			config = new RegistrationConfiguration();
 		}
-		config.setRegistrationInterceptorsConfigured(configureInterceptors);
-		if (configureInterceptors) {
-			config.setRegistrationInterceptorScripts(registrationInterceptors);
-		} else {
-			config.setRegistrationInterceptorScripts(null);
-		}
 
 		config.setCaptchaDisabled(captchaDisabled);
 
@@ -229,27 +211,6 @@ public class RegistrationManagementAction implements SimpleCustomPropertiesListM
 
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
-	
-	/**
-	 * @param linksExpirationServicePeriod2
-	 * @return
-	 */
-	private String getPeriod(Tuple<String, String> period) {
-		Integer result = Integer.parseInt(period.getValue0());
-		switch(Integer.parseInt(period.getValue1())){
-			case 0: 
-					break;
-			case 1: result = result* 60 ;
-					break;
-			case 2: result = result* 24*60;
-					break;
-			case 3: result = result* 7*24*60;
-					break;
-			default:break;
-		}
-			
-		return result.toString();
-	}
 
 	@Override
 	public void removeItemFromSimpleCustomProperties(
@@ -268,22 +229,6 @@ public class RegistrationManagementAction implements SimpleCustomPropertiesListM
 		if (simpleCustomProperties != null) {
 			simpleCustomProperties.add(new SimpleCustomProperty("", ""));
 		}
-	}
-
-
-	public String addRegistrationInterceptor(){
-		RegistrationInterceptorScript registrationScript = new RegistrationInterceptorScript();
-		
-		registrationInterceptors.add(registrationScript);
-		
-		return OxTrustConstants.RESULT_SUCCESS;
-	}
-	
-	public String removeCustomAuthenticationConfiguration(RegistrationInterceptorScript script){
-		if(registrationInterceptors.contains(script)){
-			registrationInterceptors.remove(script);
-		}
-		return OxTrustConstants.RESULT_SUCCESS;
 	}
 	
 	public String cancel() {
