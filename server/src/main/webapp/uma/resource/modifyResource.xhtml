@@ -147,6 +147,24 @@
 											</div>
                                         </ox:decorate>
                                         </h:panelGroup>
+                                        
+                                        <ox:decorate id="clients" label="#{msg['uma.clients']}" rendered="#{updateResourceAction.clientList != null}">
+                                         	<a4j:repeat rowKeyVar="_clientIdx"
+                                                                value="#{updateResourceAction.clientList}"
+                                                                var="_cilent">
+                                                  <h:link includeViewParams="false"
+                                                                        outcome="/client/updateClient"
+                                                                        value="#{_cilent.displayName}">
+                                                      <f:param name="inum" value="#{_cilent.inum}"/>
+                                                  </h:link>
+                                            </a4j:repeat>
+                                         </ox:decorate>
+                                         
+                                         <ox:decorate id="creatDate" label="#{msg['uma.creationTime']}" >
+                                            <div class="col-sm-9">
+												<h:outputText value="#{gluufn:convertLdapTimeToDisplay(_resourceSet.authCreation)}" />
+											</div>
+                                        </ox:decorate>
 
                                         <h:panelGroup>
                                             <a4j:commandButton
