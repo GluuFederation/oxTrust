@@ -120,7 +120,6 @@ public class RegistrationManagementAction implements SimpleCustomPropertiesListM
 		customScriptTypes.add(OxTrustConstants.INIT_REGISTRATION_SCRIPT);
 		customScriptTypes.add(OxTrustConstants.PRE_REGISTRATION_SCRIPT);
 		customScriptTypes.add(OxTrustConstants.POST_REGISTRATION_SCRIPT);
-		
 
 		this.oxTrustappConfiguration = jsonConfigurationService.getOxTrustappConfiguration();
 
@@ -138,7 +137,6 @@ public class RegistrationManagementAction implements SimpleCustomPropertiesListM
 					attributes.add(attribute);
 				}
 			}
-
 		}
 		
 		search();
