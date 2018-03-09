@@ -12,8 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.inject.Inject;
-
 import org.apache.commons.lang.StringEscapeUtils;
 import org.gluu.oxtrust.model.User;
 import org.gluu.oxtrust.service.PermissionService;
@@ -32,9 +30,6 @@ import org.xdi.util.StringHelper;
  * @author Yuriy Movchan Date: 11.09.2010
  */
 public class JsfFunctions {
-	
-	@Inject
-	private LdapEntryManager ldapEntryManager;
 
 	public static DisplayNameEntry getDisplayNameEntry(String dn) {
 		if (dn == null) {
