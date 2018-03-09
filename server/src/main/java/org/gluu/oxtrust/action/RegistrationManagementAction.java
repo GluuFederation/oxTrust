@@ -40,7 +40,6 @@ import org.xdi.util.Util;
  */
 @ConversationScoped
 @Named("registrationManagementAction")
-//TODO: Clean up LDAP OC
 public class RegistrationManagementAction implements SimpleCustomPropertiesListModel, Serializable {
 
 	private static final long serialVersionUID = -3832167044333943686L;
