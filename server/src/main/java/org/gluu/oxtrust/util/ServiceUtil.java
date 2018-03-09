@@ -365,9 +365,8 @@ public class ServiceUtil implements Serializable {
     }
 
     /**
-     * One-way sync from "mail" to "oxTrustEmail". This will persist the email in "oxTrustEmail"
-     * in SCIM 2.0 format since the SCIM 1.1 format is a subset of SCIM 2.0.
-     *
+     * One-way sync from "mail" to "oxTrustEmail". This method takes current values of "oxTrustEmail" attribute, deletes
+     * those that do not match any of those in "mail", and adds new ones that are missing.
      * @param gluuCustomPerson
      * @param isScim2
      * @return
@@ -375,6 +374,12 @@ public class ServiceUtil implements Serializable {
      */
     public static GluuCustomPerson syncEmailReverse(GluuCustomPerson gluuCustomPerson, boolean isScim2) throws Exception {
 
+        /*
+        Implementation of this method could not be simplified to creating a new empty list for oxTrustEmail and then do
+        the respective additions based on current mail values since information such as display, primary, etc. would be lost.
+        Instead, it uses set operations to know which existing entries must be removed or retained, and then apply additions
+        of new data.
+         */
         logger.info(" IN Utils.syncEmailReverse()...");
 
         GluuCustomAttribute mail = gluuCustomPerson.getGluuCustomAttribute("mail");
@@ -421,6 +426,7 @@ public class ServiceUtil implements Serializable {
             for (String mailStr : mailSetCopy){
                 Email email = new Email();
                 email.setValue(mailStr);
+                email.setPrimary(false);
                 newValues.add(mapper.writeValueAsString(email));
             }
 
