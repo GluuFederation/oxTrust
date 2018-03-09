@@ -12,8 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.inject.Inject;
-
 import org.apache.commons.lang.StringEscapeUtils;
 import org.gluu.oxtrust.model.User;
 import org.gluu.oxtrust.service.PermissionService;
