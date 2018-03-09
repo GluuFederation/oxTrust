@@ -136,9 +136,11 @@
                                                             
                                                         
 								<ul class="treeview-menu" id="subMenuSAML">
-                                                                    <li id="menuSAMLShibboleth"><a href="#"> <i
+                                                                    <li id="menuSAMLShibboleth">
+                                                                    <h:panelGroup rendered="#{permissionService.hasPermission('trust', 'access') and productInstallationCheckerAction.showAsimbaSubmenu}">
+                                                                    <a href="#"> <i
                                                                             class="fa fa-pencil-square-o"></i> <span>#{msg['leftmenu.outbound']}</span> <i
-                                                                            class="fa fa-angle-left pull-right"></i></a>
+                                                                            class="fa fa-angle-left pull-right"></i></a></h:panelGroup>
 									<!--Shibboleth-->
                                                                         <li id="subMenuLinkSAML1"><h:commandLink
 											value="#{msg['leftmenu.trustRelationships']}"
@@ -168,9 +170,11 @@
                                                             
                                                         
 								<ul class="treeview-menu" id="subMenuSAMLAsimba">
-                                                                    <li id="menuSAMLAsimba"><a href="#"> <i
+                                                                    <li id="menuSAMLAsimba">
+                                                                    <h:panelGroup rendered="#{permissionService.hasPermission('trust', 'access') and productInstallationCheckerAction.showAsimbaSubmenu}">
+                                                                    <a href="#"> <i
                                                                             class="fa fa-pencil-square-o"></i> <span>#{msg['leftmenu.inbound']}</span> <i
-                                                                            class="fa fa-angle-left pull-right"></i></a>
+                                                                            class="fa fa-angle-left pull-right"></i></a></h:panelGroup>
                                                                         <!--Asimba-->
                                                                         <li id="subMenuLinkAsimba1"><h:commandLink
 											value="#{msg['leftmenu.idps']}"
