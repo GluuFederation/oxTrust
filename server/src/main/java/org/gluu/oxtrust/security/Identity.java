@@ -18,6 +18,8 @@ public class Identity extends org.xdi.model.security.Identity {
 	private OauthData oauthData;
 	private GluuCustomPerson user;
 	private Map<String, Object> sessionMap;
+
+	private String savedRequestUri;
 	
 	@PostConstruct
 	public void create() {
@@ -45,5 +47,13 @@ public class Identity extends org.xdi.model.security.Identity {
 	public Map<String, Object> getSessionMap() {
 		return sessionMap;
 	}
+
+    public String getSavedRequestUri() {
+        return savedRequestUri;
+    }
+
+    public void setSavedRequestUri(String savedRequestUri) {
+        this.savedRequestUri = savedRequestUri;
+    }
 
 }
