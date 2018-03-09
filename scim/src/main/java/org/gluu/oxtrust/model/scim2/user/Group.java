@@ -81,4 +81,58 @@ public class Group {
         setType(type.name().toLowerCase());
     }
 
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((value == null) ? 0 : value.hashCode());
+        result = prime * result + ((ref == null) ? 0 : ref.hashCode());
+        result = prime * result + ((type == null) ? 0 : type.hashCode());
+        result = prime * result + ((display == null) ? 0 : display.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        Group other = (Group) obj;
+        if (value == null) {
+            if (other.value != null) {
+                return false;
+            }
+        } else if (!value.equals(other.value)) {
+            return false;
+        }
+        if (ref == null) {
+            if (other.ref != null) {
+                return false;
+            }
+        } else if (!ref.equals(other.ref)) {
+            return false;
+        }
+        if (type == null) {
+            if (other.type != null) {
+                return false;
+            }
+        } else if (!type.equals(other.type)) {
+            return false;
+        }
+        if (display == null) {
+            if (other.display != null) {
+                return false;
+            }
+        } else if (!display.equals(other.display)) {
+            return false;
+        }
+        return true;
+    }
+
 }
