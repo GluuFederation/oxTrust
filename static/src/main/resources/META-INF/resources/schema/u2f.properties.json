@@ -1,0 +1,23 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "id": "/",
+    "title": "u2f.properties",
+    "type": "object",
+    "additionalProperties": true,
+    "properties": {
+        "publicKey": {
+            "id": "publicKey",
+            "type": "string",
+            "minLength": 1
+        },
+        "attestationCert": {
+            "id": "attestationCert",
+            "type": "string",
+            "minLength": 1
+        }
+    },
+    "required": [
+        "publicKey",
+        "attestationCert"
+    ]
+}

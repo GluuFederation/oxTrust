@@ -25,9 +25,4 @@
         </exception-handler-factory>
     </factory>
 
-    <!--
-        <lifecycle>
-            <phase-listener>org.gluu.oxtrust.util.jsf.MultiPageMessagesSupport</phase-listener>
-        </lifecycle>
-     -->
 </faces-config>
