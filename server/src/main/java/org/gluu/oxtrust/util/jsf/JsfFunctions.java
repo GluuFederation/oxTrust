@@ -16,6 +16,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.gluu.oxtrust.model.User;
 import org.gluu.oxtrust.service.PermissionService;
 import org.xdi.ldap.model.Entry;
+import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.xdi.model.DisplayNameEntry;
 import org.xdi.service.LookupService;
 import org.xdi.service.cdi.util.CdiUtil;
@@ -153,6 +154,15 @@ public class JsfFunctions {
 		}
 
 		return str.substring(0, maxLength) + "...";
+	}
+	
+	public static String convertLdapTimeToDisplay(String timeStamp) {
+		if ((timeStamp == null) || (timeStamp.length() == 0)) {
+			return timeStamp;
+		}
+		
+		return CdiUtil.bean(LdapEntryManager.class).decodeGeneralizedTime(timeStamp).toGMTString();
+		
 	}
 
 }
