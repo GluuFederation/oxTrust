@@ -56,6 +56,7 @@ import org.w3c.dom.Document;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.config.oxtrust.AttributeResolverConfiguration;
 import org.xdi.config.oxtrust.LdapOxTrustConfiguration;
+import org.xdi.config.oxtrust.NameIdConfig;
 import org.xdi.config.oxtrust.ShibbolethCASProtocolConfiguration;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuUserRole;
@@ -493,7 +494,7 @@ public class Shibboleth3ConfService implements Serializable {
 		return attrParams;
 	}
         
-        private HashMap<String, Object> initCASParamMap() {
+    private HashMap<String, Object> initCASParamMap() {
 		HashMap<String, Object> casParams = new HashMap<String, Object>();
                 try {
                     ShibbolethCASProtocolConfiguration configuration = casService.loadCASConfiguration();
@@ -514,16 +515,27 @@ public class Shibboleth3ConfService implements Serializable {
     public HashMap<String, Object> initAttributeResolverParamMap() {
     	HashMap<String, Object> attributeResolverParams = new HashMap<String, Object>();
 
+    	List<NameIdConfig> nameIdConfigs = new ArrayList<NameIdConfig>();
+        Map<String, GluuAttribute> nameIdAttributes = new HashMap<String, GluuAttribute>();
+
     	final LdapOxTrustConfiguration conf = configurationFactory.loadConfigurationFromLdap();
 		AttributeResolverConfiguration attributeResolverConfiguration = conf.getAttributeResolverConfig();
-		if ((attributeResolverConfiguration != null) && (StringHelper.isNotEmpty(attributeResolverConfiguration.getAttributeBase()))) {
-			GluuAttribute attribute = attributeService.getAttributeByName(attributeResolverConfiguration.getAttributeBase());
-			
-	    	attributeResolverParams.put("name_id_conf", attributeResolverConfiguration);
-	    	attributeResolverParams.put("name_id_attr_base", attribute);
+		if ((attributeResolverConfiguration != null) && (attributeResolverConfiguration.getNameIdConfigs() != null)) {
+		    for (NameIdConfig nameIdConfig : attributeResolverConfiguration.getNameIdConfigs()) {
+	            if (StringHelper.isNotEmpty(nameIdConfig.getSourceAttribute()) && nameIdConfig.isEnabled()) {
+	                String attributeName = nameIdConfig.getSourceAttribute();
+	                GluuAttribute attribute = attributeService.getAttributeByName(attributeName);
+	                
+                    nameIdConfigs.add(nameIdConfig);
+                    nameIdAttributes.put(attributeName, attribute);
+	            }
+		    }
 		}
 
-		return attributeResolverParams;
+        attributeResolverParams.put("configs", nameIdConfigs);
+        attributeResolverParams.put("attributes", nameIdAttributes);
+
+        return attributeResolverParams;
     }
 
 	private VelocityContext prepareVelocityContext(HashMap<String, Object> trustParams, HashMap<String, Object> attrParams, HashMap<String, Object> casParams, HashMap<String, Object> attrResolverParams, String idpMetadataFolder) {
