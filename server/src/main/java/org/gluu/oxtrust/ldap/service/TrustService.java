@@ -209,18 +209,6 @@ public class TrustService implements Serializable {
 		return result;
 	}
 
-	public List<String> getAllOtherFederationsDNs(String inum) {
-		List<GluuSAMLTrustRelationship> trList = getAllFederations();
-                trList.remove(getRelationshipByInum(inum));
-                
-                List<String> result = new ArrayList<String>();
-                for (GluuSAMLTrustRelationship tr : trList) {
-                    result.add(tr.getDn());
-                }
-		
-		return result;
-	}
-
 	/**
 	 * Check if LDAP server contains trust relationship with specified
 	 * attributes
