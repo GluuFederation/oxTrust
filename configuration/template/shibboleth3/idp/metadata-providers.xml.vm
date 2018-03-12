@@ -66,4 +66,23 @@
         #end
 #end
 
+#foreach( $trustRelationship in $trustParams.deconstructed )
+    #set ($profileConfigMap = $trustRelationship.profileConfigurations)
+    
+    #if($trustRelationship.spMetaDataSourceType.value == "generate")
+        <MetadataProvider id="SiteSP$trustParams.trustIds.get($trustRelationship.inum)"
+          xsi:type="FilesystemMetadataProvider"
+          metadataFile="$medataFolder$trustRelationship.spMetaDataFN">
+        #if( $trustRelationship.gluuSAMLMetaDataFilter and $trustRelationship.getGluuSAMLMetaDataFilter().size() > 0 )
+            <MetadataFilter xsi:type="ChainingFilter" xmlns="urn:mace:shibboleth:2.0:metadata">
+                    #foreach( $filter in $trustRelationship.getGluuSAMLMetaDataFilter() )
+                $filter
+                    #end
+            </MetadataFilter>
+        #end
+        </MetadataProvider>
+    #end
+        
+#end
+
 </MetadataProvider>
