@@ -52,7 +52,7 @@ public class UmaAuthorizationClient {
      * @param umaAatClientKeyId Key Id in the keystore. Pass an empty string to use the first key in keystore
      */
     public UmaAuthorizationClient(String domain, String umaAatClientId, String umaAatClientJksPath, String umaAatClientJksPassword, String umaAatClientKeyId) {
-                /*
+        /*
          Configures a proxy to interact with the service using the new JAX-RS 2.0 Client API, see section
          "Resteasy Proxy Framework" of RESTEasy JAX-RS user guide
          */

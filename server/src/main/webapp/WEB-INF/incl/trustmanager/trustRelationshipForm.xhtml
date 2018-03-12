@@ -233,13 +233,14 @@
 											id="spMetaDataSourceTypeFederation"
 											 label="#{msg['trustmanager.federationName']}">
 											<h:selectOneMenu styleClass="form-control"
-												value="#{_trustRelationship.containerFederation}"
+												value="#{_trustRelationship.gluuContainerFederation}"
 												id="spMetaDataSourceTypeFederationId"
-												converter="federationConverter" required="true">
+												 required="true">
 												<f:selectItem noSelectionOption="true"  itemLabel="Select Federation"/>
 												<f:selectItems
 													value="#{trustService.getAllOtherFederations(_trustRelationship.inum)}"
 													var="_type"
+                                                                                                        itemValue="#{_type.getDn()}"
 													itemLabel="#{_type.displayName}" />
 												<a4j:ajax event="change"
 													render="FederationWizardEntitySelection, EntityIds"
