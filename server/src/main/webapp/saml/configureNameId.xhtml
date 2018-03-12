@@ -1,84 +1,105 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://xmlns.jcp.org/jsf/core"
-                xmlns:h="http://xmlns.jcp.org/jsf/html"
-                xmlns:ui="http://xmlns.jcp.org/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
-                
-      <f:metadata>
-        <f:viewAction action="#{conversationService.initConversation}" />
-        <f:viewAction action="#{attributeResolverAction.init}" onPostback="false"/>
-    </f:metadata>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+    xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
+	template="/WEB-INF/incl/layout/newtemplate.xhtml">
 
-    <ui:define name="head">
-    </ui:define>
+	<f:metadata>
+		<f:viewAction action="#{conversationService.initConversation}" />
+		<f:viewAction action="#{configureNameIdAction.init}" onPostback="false" />
+	</f:metadata>
 
-    <ui:define name="body">
-    
-    	    <section class="content-header">
-		<h1 style="color: #333;">
-            #{msg['leftmenu.saml']}<small><i class="fa fa-caret-right" style="color: #333 !important;"></i> #{msg['leftmenu.nameId']}</small>
-		</h1>
-		<ol class="breadcrumb">
-<li><a href="#{request.contextPath}/home"><i class="fa fa-home"></i></a></li>
-			<li class="organization/configuration">Resolve Attribute</li>
-		</ol>
+	<ui:define name="head">
+	</ui:define>
+
+	<ui:define name="body">
+		<section class="content-header">
+			<h1 style="color: #333;">
+				#{msg['leftmenu.saml']}<small><i class="fa fa-caret-right"
+					style="color: #333 !important;"></i> #{msg['leftmenu.nameId']}</small>
+			</h1>
+			<ol class="breadcrumb">
+				<li><a href="#{request.contextPath}/home"><i class="fa fa-home"></i></a></li>
+				<li class="organization/configuration">Configure NameId</li>
+			</ol>
 		</section>
-        <section class="content">
-        <h:form>
-     <div class="row">
-            <div class="col-xs-12">
-              <div class="box box-primary">
-              <div class="box-header">
-              <div style="display: inline-block;width: 75% !important;">
-              
-        <div class="row" style="padding:5px;margin-bottom: 5px;margin-left:0px">
-        	<div class="col-sm-2">
-        	<h:outputLabel value="Activate NameID" />
-        	</div>
-        	<div class="col-sm-10">
-        	<h:selectBooleanCheckbox value="#{attributeResolverAction.enable}"  styleClass="form-control"/>
-        	</div>
-        </div>
-        <div class="row" style="padding:5px;margin-bottom: 5px;margin-left:0px">
-        	<div class="col-sm-2">
-        	<h:outputLabel value="Source Attribute" />
-        	</div>
-        	<div class="col-sm-10">
-        	<h:selectOneMenu value="#{attributeResolverAction.attributeBase}" styleClass="form-control">
-        	<f:selectItems var="_attribute" value="#{attributeResolverAction.attributes}" itemLabel="#{_attribute.displayName}" itemValue="#{_attribute.name}"/>
-        	</h:selectOneMenu>
-        	</div>
-        </div>
-        
-        <div class="row" style="padding:5px;margin-bottom: 5px;margin-left:0px">
-        	<div class="col-sm-2">
-        	<h:outputLabel value="Attribute Name" />
-        	</div>
-        	<div class="col-sm-10">
-        	<h:inputText value="#{attributeResolverAction.attributeName}"  styleClass="form-control"/>
-        	</div>
-        </div>
-        <div class="row" style="padding:5px;margin-bottom: 5px;margin-left:0px">
-        	<div class="col-sm-2">
-        	<h:outputLabel value="Nameid Type" />
-        	</div>
-        	<div class="col-sm-10">
-        	<h:selectOneMenu value="#{attributeResolverAction.nameIdType}"  styleClass="form-control">
-        		<f:selectItem itemLabel="emailAddress" itemValue="emailAddress"/>
-        		<f:selectItem itemLabel="unspecified" itemValue="unspecified"/>
-        	</h:selectOneMenu>
-        	</div>
-        </div>
-        </div>
-        </div>
-        </div>
-        </div>
-        </div>
-                    <div id="updateButtons">
-                        <h:commandButton styleClass="btn btn-primary" value="Commit Changes" action="#{attributeResolverAction.saveCustomAttributetoResolve}" />
-                        <h:commandButton styleClass="btn btn-success" value="#{msg['attribute.cancel']}" action="#{attributeResolverAction.cancel}" immediate="true" style="margin-left:5px"/>
-                    </div>
-          </h:form>
-        </section>
-    </ui:define>
+
+		<section class="content">
+			<div id="formArea">
+				<h:form>
+					<div class="row">
+						<div class="col-xs-12">
+							<div class="box box-primary">
+								<div class="box-header">
+		             			   <a4j:region>
+									<rich:dataGrid id="nameIdConfigsId" value="#{configureNameIdAction.nameIdConfigs}" var="_nameIdConfig" columns="1" style="width: 100%;" border="0" columnClasses="noBorder">
+										<div style="display: inline-block; width: 75% !important;">
+											<h:panelGroup layout="block" class="card-body">
+												<a4j:commandLink  value="Delete NameId" onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();" execute="@region" styleClass="btn btn-danger" />
+
+												<h:panelGroup layout="block" class="form-script">
+							                      	<div  class="form-group">
+														<ox:decorate id="enabled" label="#{msg['nameId.enabled']}">
+															<h:selectBooleanCheckbox value="#{_nameIdConfig.enabled}" />
+														</ox:decorate>
+					
+														<ox:decorate id="sourceAttribute" label="#{msg['nameId.sourceAttribute']}">
+															<h:selectOneMenu
+																value="#{_nameIdConfig.sourceAttribute}"
+																styleClass="form-control">
+																<f:selectItems var="_attribute"
+																	value="#{configureNameIdAction.attributes}"
+																	itemLabel="#{_attribute.displayName}"
+																	itemValue="#{_attribute.name}" />
+															</h:selectOneMenu>
+														</ox:decorate>
+						
+														<ox:decorate id="name" label="#{msg['nameId.name']}">
+															<h:inputText value="#{_nameIdConfig.name}" styleClass="form-control" />
+														</ox:decorate>
+					
+														<ox:decorate id="nameIdType" label="#{msg['nameId.nameIdType']}">
+															<h:selectOneMenu value="#{_nameIdConfig.nameIdType}"
+																styleClass="form-control">
+																<f:selectItem itemLabel="emailAddress"
+																	itemValue="emailAddress" />
+																<f:selectItem itemLabel="unspecified"
+																	itemValue="unspecified" />
+															</h:selectOneMenu>
+														</ox:decorate>
+													</div>
+												</h:panelGroup>
+											</h:panelGroup>
+										</div>
+
+							            <ox:acceptRemovalDialog id="deleteConfirmation" subject="nameId" value="#{_nameIdConfig.name}" deleteMethod="#{configureNameIdAction.removeNameIdConfig(_nameIdConfig)}" render="nameIdConfigsId" />
+									</rich:dataGrid>
+									</a4j:region>
+				
+				
+								    <h:panelGroup layout="block" styleClass="addConfig">
+										<a4j:commandLink styleClass="btn btn-primary" style="font-size:13px !important;" value="#{msg['nameId.addNameIdConfiguration']}" action="#{configureNameIdAction.addNameIdConfig()}" render="nameIdConfigsId" execute="@region"/>
+				                    </h:panelGroup>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div id="updateButtons">
+						<h:commandButton styleClass="btn btn-primary"
+							value="#{msg['nameId.update']}"
+							action="#{configureNameIdAction.save}" />
+						<h:commandButton styleClass="btn btn-success"
+							value="#{msg['nameId.cancel']}"
+							action="#{configureNameIdAction.cancel}" immediate="true"
+							style="margin-left:5px" />
+					</div>
+				</h:form>
+			</div>
+		</section>
+	</ui:define>
 
 </ui:composition>
