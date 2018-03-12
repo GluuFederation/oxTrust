@@ -6,10 +6,10 @@
     xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="urn:mace:shibboleth:2.0:metadata http://shibboleth.net/schema/idp/shibboleth-metadata.xsd
-                        urn:mace:shibboleth:2.0:resource http://shibboleth.net/schema/idp/shibboleth-resource.xsd
+                        urn:mace:shibboleth:2.0:resource http://shibboleth.net/schema/idp/shibboleth-resource.xsd 
                         urn:mace:shibboleth:2.0:security http://shibboleth.net/schema/idp/shibboleth-security.xsd
                         urn:oasis:names:tc:SAML:2.0:metadata http://docs.oasis-open.org/security/saml/v2.0/saml-schema-metadata-2.0.xsd">
-
+                        
     <!-- ========================================================================================== -->
     <!--                             Metadata Configuration                                         -->
     <!--                                                                                            -->
@@ -18,37 +18,52 @@
     <!--                                                                                            -->
     <!--  The Shibboleth Documentation at                                                           -->
     <!--  https://wiki.shibboleth.net/confluence/display/IDP30/MetadataConfiguration                -->
-    <!--  provides more details.                                                                    -->
+    <!--  provides more details.                                                                    --> 
     <!--                                                                                            -->
     <!--  NOTE.  This file SHOULD NOT contain the metadata for this IdP.                            -->
     <!--                                                                                            -->
     <!-- ========================================================================================== -->
 
-
-
 #foreach( $trustRelationship in $trustParams.trusts )
-<test/>
-#if($trustRelationship.spMetaDataSourceType.value == 'file')
-        <MetadataProvider id="SiteSP$trustParams.trustIds.get($trustRelationship.inum)" xsi:type="FilesystemMetadataProvider"
-            metadataFile="$medataFolder$trustRelationship.spMetaDataFN" >
-#end
-#if($trustRelationship.spMetaDataSourceType.value == 'uri')
-        <MetadataProvider id="SiteSP$trustParams.trustIds.get($trustRelationship.inum)" xsi:type="FileBackedHTTPMetadataProvider"
 
-        metadataURL="$trustRelationship.spMetaDataURL"
-        backingFile="$medataFolder$trustRelationship.spMetaDataFN"
-        maxRefreshDelay="$trustRelationship.maxRefreshDelay" >
+        #set ($profileConfigMap = $trustRelationship.profileConfigurations)
+        #if(!$profileConfigMap.isEmpty())
+
+            #* #set($providerId = $StringHelper.removePunctuation($trustRelationship.inum)) *#
+            #* #set($providerUrl = $trustParams.trustEntityIds.get($trustRelationship.inum).get(0)) *#
+            #* #set($providerId = $providerUrl.replaceAll(":[0-9]*$", "").replaceAll("^.*?//", "")) *#
+
+            #if($trustRelationship.spMetaDataSourceType.value == "file" || $trustRelationship.spMetaDataSourceType.value == "generate")
+
+    <MetadataProvider id="SiteSP$trustParams.trustIds.get($trustRelationship.inum)"
+                      xsi:type="FilesystemMetadataProvider"
+                      metadataFile="$medataFolder$trustRelationship.spMetaDataFN">
+
+            #elseif($trustRelationship.spMetaDataSourceType.value == "uri")
+
+    <MetadataProvider id="SiteSP$trustParams.trustIds.get($trustRelationship.inum)"
+                      xsi:type="FileBackedHTTPMetadataProvider"
+                      maxRefreshDelay="$trustRelationship.maxRefreshDelay"
+                      metadataURL="$trustRelationship.spMetaDataURL"
+                      backingFile="$medataFolder$trustRelationship.spMetaDataFN">
+
+            #end
+
+            #if( $trustRelationship.gluuSAMLMetaDataFilter and $trustRelationship.getGluuSAMLMetaDataFilter().size() > 0 )
+
+        <MetadataFilter xsi:type="ChainingFilter" xmlns="urn:mace:shibboleth:2.0:metadata">
+                #foreach( $filter in $trustRelationship.getGluuSAMLMetaDataFilter() )
+            $filter
+                #end
+        </MetadataFilter>
+
+            #end
+
+            #if($trustRelationship.spMetaDataSourceType.value == 'file' || $trustRelationship.spMetaDataSourceType.value == "generate" || $trustRelationship.spMetaDataSourceType.value == 'uri')
+    </MetadataProvider>
+            #end
+
+        #end
 #end
 
-#if( $trustRelationship.gluuSAMLMetaDataFilter and $trustRelationship.getGluuSAMLMetaDataFilter().size() > 0 )
-            <MetadataFilter xsi:type="ChainingFilter" xmlns="urn:mace:shibboleth:2.0:metadata">
-#foreach( $filter in $trustRelationship.getGluuSAMLMetaDataFilter() )
-$filter
-#end
-            </MetadataFilter>
-#end
-#if($trustRelationship.spMetaDataSourceType.value == 'file' || $trustRelationship.spMetaDataSourceType.value == 'uri')
-        </MetadataProvider>
-#end
-#end
 </MetadataProvider>
