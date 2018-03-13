@@ -307,7 +307,7 @@
 							<h:panelGroup id="certUpdateWrapperGroupId"
 								rendered="#{((not empty _trustRelationship.spMetaDataFN) and (_trustRelationship.spMetaDataSourceType.value eq 'file')) or (_trustRelationship.spMetaDataSourceType.value eq 'generate')}">
 								<ox:decorate
-									id="certUpdate" label="
+									id="certUpdate" rendered="#{empty _trustRelationship.spMetaDataFN}"  label="
                                         #{_trustRelationship.spMetaDataSourceType.value eq 'file' ? 'Update public certificate' : 'Public certificate'}">
                                     
 									<h:inputFile id="certWrapperId"
