@@ -108,6 +108,44 @@
     </h:outputStylesheet>
 
     <h:outputScript>
+    
+    	var password;
+    	var confirmpassword;
+    	
+    	function setPasswordValueChange(element){
+    		console.log(element);
+    		console.log(element.children[0].innerHTML);
+    		password=element.children[0].innerHTML;
+    		
+    	}
+    	
+    	function setConfirmPasswordValueChange(element){
+    		console.log(element);
+    		console.log(element.children[0].innerHTML);
+    		confirmpassword=element.children[0].innerHTML;
+    	}
+    
+    
+    	function changeVisibility(hideid,showid,type,value){
+	    	//alert("hideid" + hideid + "showid" + showid);
+	    	var hideobj = document.querySelector('[id*="'+hideid+'"]');//$('[id^="'+hideid+'"]'); 
+	    	//document.getElementById(hideid);
+	    	var showobj = document.querySelector('[id*="'+showid+'"]');
+	    	console.log(hideobj);
+	    	//alert("hideid" + hideobj);
+	    	hideobj.style.display = 'none';
+	    	showobj.style.display = '';
+	    	if(type == 'show'){
+	    		showSpanvalue(showobj,value);
+	    	}
+    	
+    	}
+    	
+    	function showSpanvalue(element,value) {
+    		console.log("showSpanvalue"+element.childNodes[0].childNodes[1].childNodes[1].childNodes[1].childNodes[0].childNodes[0].innerHTML);
+    		element.childNodes[0].childNodes[1].childNodes[1].childNodes[1].childNodes[0].childNodes[0].innerHTML = value;
+		}
+    	
         function changeAttributeVisibility(attrId, show) {
         	var attr = document.getElementById(attrId);
 
@@ -320,6 +358,7 @@
                                                  	</ox:decorate>
                                                         
                                                         
+                                                 	<h:panelGroup layout="block" id="hidePassword" rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'Password')}"> 
                                                  	<ox:decorate label="#{msg['person.password']}" rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'Password')}">
 														<div class="col-xs-10">                                                                                           
                                                             
@@ -327,14 +366,39 @@
                                                                     id="custpasswordId"
                                                                     validator="#{updatePersonAction.validateConfirmPassword}"
                                                                     required="#{_mustEnter}"
-                                                                    requiredMessage="#{msg['person.pleaseEnter']} #{_custAttr.metadata.displayName}. "
+                                                                    requiredMessage="#{msg['person.pleaseEnter']} hidePassword #{_custAttr.metadata.displayName}. "
                                                                     rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'Password')}" 
-                                                                    onfocus="changeTextType(this);">
+                                                                    onfocus="changeTextType(this);"
+                                                                    onchange="setPasswordValueChange(this)">
                                                                 <rich:validator event="blur" oncomplete="updateSpan(this, #{rich:component('custpasswordId')}.getValue())"/>
-                                                            </rich:inplaceInput>                                                             
+                                                            </rich:inplaceInput> 
+                                                            <h:graphicImage value="/img/eye.png"   id="view" onclick="return changeVisibility('hidePassword', 'showPassword','show',password);" />                                                             
+                                                                                                                    
                                                         </div>
-                                                     </ox:decorate>               
+                                                     </ox:decorate>
+                                                     </h:panelGroup>
+                                                     
+                                                     <h:panelGroup layout="block" style="display: none;" id="showPassword" rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'Password')}"> 
+                                                 		<ox:decorate label="#{msg['person.password']}" rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'Password')}">
+														<div class="col-xs-10">                                                                                           
+                                                            
+                                                            <rich:inplaceInput
+                                                                    id="custpasswordId"
+                                                                    validator="#{updatePersonAction.validateConfirmPassword}"
+                                                                    required="#{_mustEnter}"
+                                                                    requiredMessage="#{msg['person.pleaseEnter']} showPassword #{_custAttr.metadata.displayName}. "
+                                                                    rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'Password')}" 
+                                                                    onfocus="changeTextType(this);"
+                                                                    onchange="setPasswordValueChange(this)">
+                                                                <rich:validator event="blur" oncomplete="updateSpan(this, #{rich:component('custpasswordId')}.getValue())"/>
+                                                            </rich:inplaceInput>
+                                                            <h:graphicImage value="/img/eye-hidden.png"  id="hide" onclick="return changeVisibility('showPassword' , 'hidePassword', 'hide' ,'' );" />
+                                                                                                                          
+                                                        </div>
+                                                     </ox:decorate> 
+                                                     </h:panelGroup>              
                                                         
+                                                     <h:panelGroup layout="block"  id="hideConfirmPassword" rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'Password')}"> 
                                                      <ox:decorate label="#{msg['person.confirmPassword']}" rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'Password')}">
 														<div class="col-xs-10">                                                                                           
                                                             <rich:inplaceInput       
@@ -342,13 +406,38 @@
                                                                     maxlength="50" id="custconfirmpasswordId"
                                                                     validator="#{updatePersonAction.validateConfirmPassword}"
                                                                     required="#{_mustEnter}"
-                                                                    requiredMessage="Please enter Confirm Password" 
+                                                                    requiredMessage="Please enter hideConfirmPassword Confirm Password" 
                                                                     rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'Password')}"
-                                                                    onfocus="changeTextType(this);">
+                                                                    onfocus="changeTextType(this);"
+                                                                    onchange="setConfirmPasswordValueChange(this)">
                                                                 <rich:validator event="blur" oncomplete="updateSpan(this, #{rich:component('custconfirmpasswordId')}.getValue())"/>
-                                                            </rich:inplaceInput>                                                             
+                                                            </rich:inplaceInput> 
+                                                            <h:graphicImage value="/img/eye.png"   id="view" onclick="return changeVisibility('hideConfirmPassword', 'showConfirmPassword','show',confirmpassword);" />                                                             
+                                                                                                                        
                                                         </div>
-                                                     </ox:decorate>                                                        
+                                                     </ox:decorate>
+                                                     </h:panelGroup>
+                                                     
+                                                     <h:panelGroup layout="block" style="display: none;" id="showConfirmPassword" rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'Password')}"> 
+                                                     
+                                                     <ox:decorate label="#{msg['person.confirmPassword']}" rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'Password')}">
+														<div class="col-xs-10">                                                                                           
+                                                            <rich:inplaceInput       
+                                                                    defaultLabel="#{msg['person.confirmPassword']}"
+                                                                    maxlength="50" id="custconfirmpasswordId"
+                                                                    validator="#{updatePersonAction.validateConfirmPassword}"
+                                                                    required="#{_mustEnter}"
+                                                                    requiredMessage="Please enter showConfirmPassword Confirm Password" 
+                                                                    rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'Password')}"
+                                                                    onfocus="changeTextType(this);"
+                                                                    onchange="setConfirmPasswordValueChange(this)">
+                                                                <rich:validator event="blur" oncomplete="updateSpan(this, #{rich:component('custconfirmpasswordId')}.getValue())"/>
+                                                            </rich:inplaceInput>  
+                                                            <h:graphicImage value="/img/eye-hidden.png" id="hide" onclick="return changeVisibility('showConfirmPassword' , 'hideConfirmPassword','hide' , '');"/>
+                                                                                                                       
+                                                        </div>
+                                                     </ox:decorate> 
+                                                     </h:panelGroup>                                                       
                                                   
                                                 </a4j:repeat>
                                             	
