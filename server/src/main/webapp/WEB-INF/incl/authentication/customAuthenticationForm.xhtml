@@ -54,12 +54,12 @@
 									changePasswordDialogId="bindPasswordDialogId:changePasswordModalPanel" />		
 									
 									
-								 <a4j:commandButton value="#{msg['manageAuthentication.activate']}" action="#{_ldapConfig.setEnabled(true)}" rendered="#{not _ldapConfig.enabled}"
-							                    render="ldapManagementGroupId" limitRender="true" styleClass="btn btn-success"/>
+								<a4j:commandButton value="#{msg['manageAuthentication.activate']}" action="#{_ldapConfig.setEnabled(true)}" rendered="#{not _ldapConfig.enabled}"
+							                    render="ldapManagementGroupId" limitRender="true" styleClass="btn btn-success"  style= "margin-left:20px;"/>
 				                <a4j:commandButton value="#{msg['manageAuthentication.deactivate']}" action="#{_ldapConfig.setEnabled(false)}" rendered="#{_ldapConfig.enabled}"
-			                    render="ldapManagementGroupId" limitRender="true" immediate="true" styleClass="btn btn-success"/>
+			                    render="ldapManagementGroupId" limitRender="true" immediate="true" styleClass="btn btn-success"  style= "margin-left:20px;"/>
 			                    	
-								<a4j:commandLink style= "margin-left:-12px;" styleClass="btn btn-success"
+								<a4j:commandLink style= "margin-left:5px;" styleClass="btn btn-success"
 									value="#{msg['manageAuthentication.testLDAPConnection']}"
 									rendered="#{_ldapConfig.enabled}"
 									action="#{_action.testLdapConnection(_ldapConfig)}"/>
