@@ -120,16 +120,63 @@
         
        function changeTextType(element) {
     		var $element = $(element);
-    		$element[0].childNodes[2].childNodes[0].setAttribute('type','password');
+			if (isViewPassword()) {
+	    		$element[0].childNodes[2].childNodes[0].setAttribute('type','text');
+			} else {
+	    		$element[0].childNodes[2].childNodes[0].setAttribute('type','password');
+			}
 		}
 
-		function updateSpan(element, value) {
+    	function isViewPassword() {
+	    	isVisible = $("img[id$=hidePassword]").is(':visible');
+
+    		return isVisible;
+    	}
+
+    	function viewValue(obj){
+			passwordElement = $("input[id$='custpasswordIdInput']");
+			passwordValue = passwordElement.val();
+
+			passwordElementSpan = $("span[id$='custpasswordIdLabel']");
+			
+			restoreSpanValue(passwordElementSpan.parent()[0], passwordValue);
+
+			$(obj).css({"display":"none"});
+			$(obj).siblings("img[id$='hidePassword']").css({"display":"block"});
+		}
+				
+		function hideValue(obj){
+			passwordElement = $("input[id$='custpasswordIdInput']");
+			passwordValue = passwordElement.val();
+
+			passwordElementSpan = $("span[id$='custpasswordIdLabel']");
+			
+			hideSpanValue(passwordElementSpan.parent()[0], passwordValue);
+
+			$(obj).css({"display":"none"});
+			$(obj).siblings("img[id$='viewPassword']").css({"display":"block"});
+		}
+
+		function hidePasswordValue(element, value) {
+			if (isViewPassword()) {
+				return;
+			}
+			
+			hideSpanValue(element, value);
+		}
+
+		function hideSpanValue(element, value) {
     		var newValue = '';
     		for (i = 0;  i &lt; value.length ; i++)
     			newValue += '&bull;';
     		
     		var $element = $(element);
     		$element[0].childNodes[0].innerHTML = newValue;
+		}
+
+		function restoreSpanValue(element, value) {
+    		var $element = $(element);
+    		$element[0].childNodes[0].innerHTML = value;
 		}
 		
 		function addIndex(){ 
@@ -324,14 +371,16 @@
 														<div class="col-xs-10">                                                                                           
                                                             
                                                             <rich:inplaceInput
-                                                                    id="custpasswordId"
+                                                                    id="custpasswordId" styleClass="togglefield"
                                                                     validator="#{updatePersonAction.validateConfirmPassword}"
                                                                     required="#{_mustEnter}"
                                                                     requiredMessage="#{msg['person.pleaseEnter']} #{_custAttr.metadata.displayName}. "
                                                                     rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'Password')}" 
                                                                     onfocus="changeTextType(this);">
-                                                                <rich:validator event="blur" oncomplete="updateSpan(this, #{rich:component('custpasswordId')}.getValue())"/>
+                                                                <rich:validator event="blur" oncomplete="hidePasswordValue(this, #{rich:component('custpasswordId')}.getValue())"/>
                                                             </rich:inplaceInput>                                                             
+							                                <h:graphicImage value="/img/eye.png" id="viewPassword" onclick="return viewValue(this);"/>
+							                                <h:graphicImage value="/img/eye-hidden.png" id="hidePassword" style="display: none;" onclick="return hideValue(this);"/>
                                                         </div>
                                                      </ox:decorate>               
                                                         
@@ -345,7 +394,7 @@
                                                                     requiredMessage="Please enter Confirm Password" 
                                                                     rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'Password')}"
                                                                     onfocus="changeTextType(this);">
-                                                                <rich:validator event="blur" oncomplete="updateSpan(this, #{rich:component('custconfirmpasswordId')}.getValue())"/>
+                                                                <rich:validator event="blur" oncomplete="hidePasswordValue(this, #{rich:component('custconfirmpasswordId')}.getValue())"/>
                                                             </rich:inplaceInput>                                                             
                                                         </div>
                                                      </ox:decorate>                                                        
