@@ -57,6 +57,11 @@
                                                        inputWidth="695" required="true" id="displayNameId"/>
                                 </ox:decorate>
 
+                                <ox:decorate id="description" label="#{msg['clientForm.clientDescription']}">
+					                <h:inputTextarea value="#{_client.description}" rows="3" cols="80"
+					                	maxlength="250" id="descriptionId" />
+                                </ox:decorate>
+
                                 <ox:decorate id="clientSecret" rendered="#{_new}"
                                              label="#{msg['clientForm.clientSecret']}">
                                     <rich:inplaceInput value="#{_client.oxAuthClientSecret}"
@@ -629,6 +634,12 @@
                                                        defaultLabel="#{msg['clientForm.oxRefreshTokenLifetimeLabel']}"
                                                        maxlength="60" inputWidth="695" required="false"
                                                        id="oxRefreshTokenLifetimeId"/>
+                                </ox:decorate>
+
+                                <ox:decorate id="oxdId" label="#{msg['clientForm.oxdId']}">
+                                    <rich:inplaceInput value="#{_client.oxdId}"
+                                                       defaultLabel="click to enter a oxd Id for the Client application"
+                                                       maxlength="60" inputWidth="64" required="false" id="oxdIdId"/>
                                 </ox:decorate>
 
                                 <ox:decorate label="#{msg['clientForm.disabled']}">
