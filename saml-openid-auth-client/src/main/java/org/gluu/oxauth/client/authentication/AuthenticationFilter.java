@@ -43,240 +43,243 @@ import org.xdi.util.StringHelper;
 import org.xdi.util.security.StringEncrypter;
 import org.xdi.util.security.StringEncrypter.EncryptionException;
 
-
 /**
- * Filter implementation to intercept all requests and attempt to authorize
- * the client by redirecting them to OAuth (unless the client has get authorization code).
+ * Filter implementation to intercept all requests and attempt to authorize the
+ * client by redirecting them to OAuth (unless the client has get authorization
+ * code).
  * <p>
- * This filter allows you to specify the following parameters (at either the context-level or the filter-level):
+ * This filter allows you to specify the following parameters (at either the
+ * context-level or the filter-level):
  * <ul>
- * <li><code>oAuthServerAuthorizeUrl</code> - the url to authorize OAuth client, i.e. https://localhost/oxauth/authorize</li>
+ * <li><code>oAuthServerAuthorizeUrl</code> - the url to authorize OAuth client,
+ * i.e. https://localhost/oxauth/authorize</li>
  * </ul>
  *
- * <p>Please see AbstractOAuthFilter for additional properties</p>
+ * <p>
+ * Please see AbstractOAuthFilter for additional properties
+ * </p>
  *
  * @author Yuriy Movchan
  */
 public class AuthenticationFilter extends AbstractOAuthFilter {
 
-        public static final String SESSION_CONVERSATION_KEY = "saml_idp_conversation_key";
-        
-	/**
-	 * The URL to the OAuth Server authorization services
-	 */
+    public static final String SESSION_CONVERSATION_KEY = "saml_idp_conversation_key";
 
-	private final Pattern authModePattern = Pattern.compile(".+/acr_values/([\\d\\w]+)$");
+    /**
+     * The URL to the OAuth Server authorization services
+     */
 
-        @Override
-	public final void init(final FilterConfig filterConfig) throws ServletException {
-	}
+    private final Pattern authModePattern = Pattern.compile(".+/acr_values/([\\d\\w]+)$");
 
-        @Override
-	public final void destroy() {
-	}
+    @Override
+    public final void init(final FilterConfig filterConfig) throws ServletException {
+    }
 
-        @Override
-	public final void doFilter(final ServletRequest servletRequest, final ServletResponse servletResponse, final FilterChain filterChain) throws IOException, ServletException {
+    @Override
+    public final void destroy() {
+    }
 
-		if (!preFilter(servletRequest, servletResponse, filterChain)) {
-			log.debug("Execute validation filter");
-			filterChain.doFilter(servletRequest, servletResponse);
-			return;
-		}
+    @Override
+    public final void doFilter(final ServletRequest servletRequest, final ServletResponse servletResponse, final FilterChain filterChain)
+            throws IOException, ServletException {
 
-		log.debug("No code and no OAuth data found");
+        if (!preFilter(servletRequest, servletResponse, filterChain)) {
+            log.debug("Execute validation filter");
+            filterChain.doFilter(servletRequest, servletResponse);
+            return;
+        }
 
-		final HttpServletRequest request = (HttpServletRequest) servletRequest;
-		final HttpServletResponse response = (HttpServletResponse) servletResponse;
+        log.debug("No code and no OAuth data found");
 
-		String urlToRedirectTo;
-		try {
-			urlToRedirectTo = getOAuthRedirectUrl(request, response);
-		} catch (Exception ex) {
-			log.error("Failed to preapre request to OAuth server", ex);
-			return;
-		}
+        final HttpServletRequest request = (HttpServletRequest) servletRequest;
+        final HttpServletResponse response = (HttpServletResponse) servletResponse;
 
-		log.debug("Redirecting to \"" + urlToRedirectTo + "\"");
+        String urlToRedirectTo;
+        try {
+            urlToRedirectTo = getOAuthRedirectUrl(request, response);
+        } catch (Exception ex) {
+            log.error("Failed to preapre request to OAuth server", ex);
+            return;
+        }
 
-		response.sendRedirect(urlToRedirectTo);
-	}
+        log.debug("Redirecting to \"" + urlToRedirectTo + "\"");
 
-	/**
-	 * Determine filter execution conditions
-	 */
-	protected final boolean preFilter(final ServletRequest servletRequest, final ServletResponse servletResponse, final FilterChain filterChain) throws IOException, ServletException {
+        response.sendRedirect(urlToRedirectTo);
+    }
 
-		final HttpServletRequest request = (HttpServletRequest) servletRequest;
+    /**
+     * Determine filter execution conditions
+     */
+    protected final boolean preFilter(final ServletRequest servletRequest, final ServletResponse servletResponse, final FilterChain filterChain)
+            throws IOException, ServletException {
 
-		final HttpSession session = request.getSession(false);
+        final HttpServletRequest request = (HttpServletRequest) servletRequest;
 
-		final OAuthData oAuthData = session != null ? (OAuthData) session.getAttribute(Configuration.SESSION_OAUTH_DATA) : null;
-		if (oAuthData != null) {
-			return false;
-		}
+        final HttpSession session = request.getSession(false);
 
-		final String code = getParameter(request, Configuration.OAUTH_CODE);
-		log.trace("code value: " + code);
-		if (StringHelper.isNotEmpty(code)) {
-			return false;
-		}
+        final OAuthData oAuthData = session != null ? (OAuthData) session.getAttribute(Configuration.SESSION_OAUTH_DATA) : null;
+        if (oAuthData != null) {
+            return false;
+        }
 
-		final String idToken = getParameter(request, Configuration.OAUTH_ID_TOKEN);
-		log.trace("id_token value: " + idToken);
-		if (StringHelper.isNotEmpty(idToken)) {
-			return false;
-		}
+        final String code = getParameter(request, Configuration.OAUTH_CODE);
+        log.trace("code value: " + code);
+        if (StringHelper.isNotEmpty(code)) {
+            return false;
+        }
 
-		return true;
-	}
+        return true;
+    }
 
-	public String getOAuthRedirectUrl(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-		String authorizeUrl = getPropertyFromInitParams(null, Configuration.OAUTH_PROPERTY_AUTHORIZE_URL, null);
-		String clientScopes = getPropertyFromInitParams(null, Configuration.OAUTH_PROPERTY_CLIENT_SCOPE, null);
+    public String getOAuthRedirectUrl(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        String authorizeUrl = getPropertyFromInitParams(null, Configuration.OAUTH_PROPERTY_AUTHORIZE_URL, null);
+        String clientScopes = getPropertyFromInitParams(null, Configuration.OAUTH_PROPERTY_CLIENT_SCOPE, null);
 
-		String clientId = getPropertyFromInitParams(null, Configuration.OAUTH_PROPERTY_CLIENT_ID, null);
-		String clientSecret = getPropertyFromInitParams(null, Configuration.OAUTH_PROPERTY_CLIENT_PASSWORD, null);
-		if (clientSecret != null) {
-		    try {
-		    	clientSecret = StringEncrypter.defaultInstance().decrypt(clientSecret, Configuration.instance().getCryptoPropertyValue());
-		    } catch (EncryptionException ex) {
-		    log.error("Failed to decrypt property: " + Configuration.OAUTH_PROPERTY_CLIENT_PASSWORD, ex);
-		    }
-		}
+        String clientId = getPropertyFromInitParams(null, Configuration.OAUTH_PROPERTY_CLIENT_ID, null);
+        String clientSecret = getPropertyFromInitParams(null, Configuration.OAUTH_PROPERTY_CLIENT_PASSWORD, null);
+        if (clientSecret != null) {
+            try {
+                clientSecret = StringEncrypter.defaultInstance().decrypt(clientSecret, Configuration.instance().getCryptoPropertyValue());
+            } catch (EncryptionException ex) {
+                log.error("Failed to decrypt property: " + Configuration.OAUTH_PROPERTY_CLIENT_PASSWORD, ex);
+            }
+        }
 
-		String redirectUri = constructRedirectUrl(request);
+        String redirectUri = constructRedirectUrl(request);
 
-		List<String> scopes = Arrays.asList(clientScopes.split(StringUtils.SPACE));
-		List<ResponseType> responseTypes = Arrays.asList(ResponseType.ID_TOKEN, ResponseType.CODE);
+        List<String> scopes = Arrays.asList(clientScopes.split(StringUtils.SPACE));
+        List<ResponseType> responseTypes = Arrays.asList(ResponseType.CODE);
 
-		String nonce = UUID.randomUUID().toString();
-		String rfp = UUID.randomUUID().toString();
-		String jti = UUID.randomUUID().toString();
-		
-                // Lookup for relying party ID
-                final String key = request.getParameter(ExternalAuthentication.CONVERSATION_KEY);
-                request.getSession().setAttribute(SESSION_CONVERSATION_KEY, key);
-                ProfileRequestContext prc = ExternalAuthentication.getProfileRequestContext(key, request);
-                
-                String relyingPartyId = "";
-                final RelyingPartyContext relyingPartyCtx = prc.getSubcontext(RelyingPartyContext.class);
-                if (relyingPartyCtx != null) {
-                    relyingPartyId = relyingPartyCtx.getRelyingPartyId();
-                    log.info("relyingPartyId found: " + relyingPartyId);
+        String nonce = UUID.randomUUID().toString();
+        String rfp = UUID.randomUUID().toString();
+        String jti = UUID.randomUUID().toString();
+
+        // Lookup for relying party ID
+        final String key = request.getParameter(ExternalAuthentication.CONVERSATION_KEY);
+        request.getSession().setAttribute(SESSION_CONVERSATION_KEY, key);
+        ProfileRequestContext prc = ExternalAuthentication.getProfileRequestContext(key, request);
+
+        String relyingPartyId = "";
+        final RelyingPartyContext relyingPartyCtx = prc.getSubcontext(RelyingPartyContext.class);
+        if (relyingPartyCtx != null) {
+            relyingPartyId = relyingPartyCtx.getRelyingPartyId();
+            log.info("relyingPartyId found: " + relyingPartyId);
+        } else
+            log.warn("No RelyingPartyContext was available");
+
+        // JWT
+        OxAuthCryptoProvider cryptoProvider = new OxAuthCryptoProvider();
+        JwtState jwtState = new JwtState(SignatureAlgorithm.HS256, clientSecret, cryptoProvider);
+        jwtState.setRfp(rfp);
+        jwtState.setJti(jti);
+        if (relyingPartyId != null && !"".equals(relyingPartyId)) {
+            String additionalClaims = String.format("{relyingPartyId: '%s'}", relyingPartyId);
+            jwtState.setAdditionalClaims(new JSONObject(additionalClaims));
+        } else
+            log.warn("No relyingPartyId was available");
+        String encodedState = jwtState.getEncodedJwt();
+
+        AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes, redirectUri, nonce);
+        authorizationRequest.setState(encodedState);
+
+        Cookie currentShibstateCookie = getCurrentShibstateCookie(request);
+        if (currentShibstateCookie != null) {
+            String requestUri = decodeCookieValue(currentShibstateCookie.getValue());
+            log.debug("requestUri = \"" + requestUri + "\"");
+
+            String authenticationMode = determineAuthenticationMode(requestUri);
+
+            if (StringHelper.isNotEmpty(authenticationMode)) {
+                log.debug("acr_values = \"" + authenticationMode + "\"");
+                authorizationRequest.setAcrValues(Arrays.asList(authenticationMode));
+                updateShibstateCookie(response, currentShibstateCookie, requestUri, "/" + Configuration.OXAUTH_ACR_VALUES + "/" + authenticationMode);
+            }
+        }
+
+        // Store for validation in session
+        final HttpSession session = request.getSession(false);
+        session.setAttribute(Configuration.SESSION_AUTH_STATE, encodedState);
+        session.setAttribute(Configuration.SESSION_AUTH_NONCE, nonce);
+
+        return authorizeUrl + "?" + authorizationRequest.getQueryString();
+    }
+
+    private Cookie getCurrentShibstateCookie(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (ArrayHelper.isEmpty(cookies)) {
+            return null;
+        }
+
+        Cookie resultCookie = null;
+        for (Cookie cookie : cookies) {
+            String cookieName = cookie.getName();
+            if (cookieName.startsWith("_shibstate_")) {
+                if (resultCookie == null) {
+                    resultCookie = cookie;
+                } else {
+                    if (cookieName.compareTo(resultCookie.getName()) > 0) {
+                        resultCookie = cookie;
+                    }
                 }
-                else
-                    log.warn("No RelyingPartyContext was available");
+            }
+        }
 
-                // JWT
-		OxAuthCryptoProvider cryptoProvider = new OxAuthCryptoProvider();
-		JwtState jwtState = new JwtState(SignatureAlgorithm.HS256, clientSecret, cryptoProvider);
-		jwtState.setRfp(rfp);
-		jwtState.setJti(jti);
-                if (relyingPartyId != null && !"".equals(relyingPartyId)) {
-                    String additionalClaims = String.format("{relyingPartyId: '%s'}", relyingPartyId);
-                    jwtState.setAdditionalClaims(new JSONObject(additionalClaims));
-                } else 
-                    log.warn("No relyingPartyId was available");
-		String encodedState = jwtState.getEncodedJwt();
+        if (resultCookie == null) {
+            return null;
+        }
+        return resultCookie;
+    }
 
-		AuthorizationRequest authorizationRequest = new AuthorizationRequest(responseTypes, clientId, scopes, redirectUri, nonce);
-		authorizationRequest.setState(encodedState);
+    private void updateShibstateCookie(HttpServletResponse response, Cookie shibstateCookie, String requestUri, String acrPathParam) {
+        // Check if parameter exists
+        if (!requestUri.contains(acrPathParam)) {
+            return;
+        }
 
-		Cookie currentShibstateCookie = getCurrentShibstateCookie(request);
-		if (currentShibstateCookie != null) {
-			String requestUri = decodeCookieValue(currentShibstateCookie.getValue());
-			log.debug("requestUri = \"" + requestUri + "\"");
+        String newRequestUri = requestUri.replace(acrPathParam, "");
 
-			String authenticationMode = determineAuthenticationMode(requestUri);
+        // Set new cookie
+        Cookie updateShibstateCookie = cloneCokie(shibstateCookie, encodeCookieValue(newRequestUri), shibstateCookie.getMaxAge());
+        response.addCookie(updateShibstateCookie);
+    }
 
-			if (StringHelper.isNotEmpty(authenticationMode)) {
-				log.debug("acr_values = \"" + authenticationMode + "\"");
-				authorizationRequest.setAcrValues(Arrays.asList(authenticationMode));
-				updateShibstateCookie(response, currentShibstateCookie, requestUri,
-						"/" + Configuration.OXAUTH_ACR_VALUES + "/" + authenticationMode);
-			}
-		}
+    private Cookie cloneCokie(Cookie sourceCookie, String newValue, int maxAge) {
+        Cookie resultCookie = new Cookie(sourceCookie.getName(), newValue);
 
-		return authorizeUrl + "?" + authorizationRequest.getQueryString();
-	}
+        resultCookie.setPath("/");
+        resultCookie.setMaxAge(maxAge);
+        resultCookie.setVersion(1);
+        resultCookie.setSecure(true);
 
-	private Cookie getCurrentShibstateCookie(HttpServletRequest request) {
-		Cookie[] cookies = request.getCookies();
-		if (ArrayHelper.isEmpty(cookies)) {
-			return null;
-		}
+        return resultCookie;
+    }
 
-		Cookie resultCookie = null;
-		for (Cookie cookie : cookies) {
-			String cookieName = cookie.getName();
-			if (cookieName.startsWith("_shibstate_")) {
-				if (resultCookie == null) {
-					resultCookie = cookie;
-				} else {
-					if (cookieName.compareTo(resultCookie.getName()) > 0) {
-						resultCookie = cookie;
-					}
-				}
-			}
-		}
+    private String decodeCookieValue(String cookieValue) {
+        if (StringHelper.isEmpty(cookieValue)) {
+            return null;
+        }
 
-		if (resultCookie == null) {
-			return null;
-		}
-		return resultCookie;
-	}
+        return URLDecoder.decode(cookieValue);
+    }
 
-	private void updateShibstateCookie(HttpServletResponse response, Cookie shibstateCookie, String requestUri, String acrPathParam) {
-		// Check if parameter exists
-		if (!requestUri.contains(acrPathParam)) {
-			return;
-		}
+    private String encodeCookieValue(String cookieValue) {
+        if (StringHelper.isEmpty(cookieValue)) {
+            return null;
+        }
 
-		String newRequestUri = requestUri.replace(acrPathParam, "");
+        return URLEncoder.encode(cookieValue);
+    }
 
-		// Set new cookie
-		Cookie updateShibstateCookie = cloneCokie(shibstateCookie, encodeCookieValue(newRequestUri), shibstateCookie.getMaxAge());
-		response.addCookie(updateShibstateCookie);
-	}
-	
-	private Cookie cloneCokie(Cookie sourceCookie, String newValue, int maxAge) {
-		Cookie resultCookie = new Cookie(sourceCookie.getName(), newValue);
+    private String determineAuthenticationMode(String requestUri) {
+        return determineAuthenticationParameter(requestUri, authModePattern);
+    }
 
-		resultCookie.setPath("/");
-		resultCookie.setMaxAge(maxAge);
-		resultCookie.setVersion(1);
-		resultCookie.setSecure(true);
-		
-		return resultCookie;
-	}
+    private String determineAuthenticationParameter(String requestUri, Pattern pattern) {
+        Matcher matcher = pattern.matcher(requestUri);
+        if (matcher.find()) {
+            return matcher.group(1);
+        }
 
-	private String decodeCookieValue(String cookieValue) {
-		if (StringHelper.isEmpty(cookieValue)) {
-			return null;
-		}
-
-		return URLDecoder.decode(cookieValue);
-	}
-
-	private String encodeCookieValue(String cookieValue) {
-		if (StringHelper.isEmpty(cookieValue)) {
-			return null;
-		}
-
-		return URLEncoder.encode(cookieValue);
-	}
-
-	private String determineAuthenticationMode(String requestUri) {
-		return determineAuthenticationParameter(requestUri, authModePattern);
-	}
-
-	private String determineAuthenticationParameter(String requestUri, Pattern pattern) {
-		Matcher matcher = pattern.matcher(requestUri);
-		if (matcher.find()) {
-			return matcher.group(1);
-		}
-
-		return null;
-	}
+        return null;
+    }
 }

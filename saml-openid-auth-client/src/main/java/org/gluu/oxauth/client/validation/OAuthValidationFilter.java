@@ -6,26 +6,36 @@
 
 package org.gluu.oxauth.client.validation;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.List;
+
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.gluu.oxauth.client.authentication.AuthenticationFilter;
 import org.gluu.oxauth.client.session.AbstractOAuthFilter;
 import org.gluu.oxauth.client.session.OAuthData;
 import org.gluu.oxauth.client.util.Configuration;
-import org.xdi.oxauth.client.*;
+import org.xdi.oxauth.client.TokenClient;
+import org.xdi.oxauth.client.TokenResponse;
+import org.xdi.oxauth.client.UserInfoClient;
+import org.xdi.oxauth.client.UserInfoResponse;
+import org.xdi.oxauth.model.exception.InvalidJwtException;
+import org.xdi.oxauth.model.jwt.Jwt;
 import org.xdi.oxauth.model.jwt.JwtClaimName;
 import org.xdi.util.StringHelper;
 import org.xdi.util.security.StringEncrypter;
 import org.xdi.util.security.StringEncrypter.EncryptionException;
 
-import javax.servlet.*;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.List;
 import net.shibboleth.idp.authn.ExternalAuthentication;
-import org.gluu.oxauth.client.authentication.AuthenticationFilter;
 
 /**
  * Validates grants recieved from OAuth server.
@@ -74,11 +84,10 @@ public class OAuthValidationFilter extends AbstractOAuthFilter {
         
         // authorized way
         final String code = getParameter(request, Configuration.OAUTH_CODE);
-        final String idToken = getParameter(request, Configuration.OAUTH_ID_TOKEN);
 
-        log.debug("Attempting to validate code: " + code + " and id_token: " + idToken);
+        log.debug("Attempting to validate code: " + code);
         try {
-                OAuthData oAuthData = getOAuthData(request, code, idToken);
+                OAuthData oAuthData = getOAuthData(session, request, code);
                 session.setAttribute(Configuration.SESSION_OAUTH_DATA, oAuthData);
                 
                 customRequest.setRemoteUser(oAuthData.getUserUid());
@@ -104,15 +113,21 @@ public class OAuthValidationFilter extends AbstractOAuthFilter {
         }
 
         final String code = getParameter(request, Configuration.OAUTH_CODE);
-        final String idToken = getParameter(request, Configuration.OAUTH_ID_TOKEN);
-        if (StringHelper.isNotEmpty(code) && (StringHelper.isNotEmpty(idToken))) {
+        if (StringHelper.isNotEmpty(code)) {
             return true;
         }
 
         return false;
     }
 
-    private OAuthData getOAuthData(HttpServletRequest request, String authorizationCode, String idToken) throws Exception {
+    private OAuthData getOAuthData(HttpSession session, HttpServletRequest request, String authorizationCode) throws Exception {
+        // Check state
+        String authorizationState = request.getParameter(Configuration.OAUTH_STATE);
+        final String stateSession = session != null ? (String) session.getAttribute(Configuration.SESSION_AUTH_STATE) : null;
+        if (!StringHelper.equals(stateSession, authorizationState)) {
+            log.error("Login failed, oxTrust wasn't allow to access user data");
+            return null;
+        }
 
         String oAuthAuthorizeUrl = getPropertyFromInitParams(null, Configuration.OAUTH_PROPERTY_AUTHORIZE_URL, null);
         String oAuthHost = getOAuthHost(oAuthAuthorizeUrl);
@@ -139,16 +154,44 @@ public class OAuthValidationFilter extends AbstractOAuthFilter {
 
         String redirectURL = constructRedirectUrl(request);
         TokenResponse tokenResponse = tokenClient1.execAuthorizationCode(authorizationCode, redirectURL, oAuthClientId, oAuthClientPassword);
+        if (tokenResponse == null) {
+            log.error("Get empty token response. User can't log into application");
+            return null;
+        }
 
         log.trace("tokenResponse : " + tokenResponse);
         log.trace("tokenResponse.getErrorType() : " + tokenResponse.getErrorType());
 
         String accessToken = tokenResponse.getAccessToken();
+        String idToken = tokenResponse.getIdToken();
         log.trace("accessToken : " + accessToken);
+        log.trace("idToken : " + idToken);
+
+        // Parse JWT
+        Jwt jwt;
+        try {
+            jwt = Jwt.parse(idToken);
+        } catch (InvalidJwtException ex) {
+            log.error("Failed to parse id_token");
+            return null;
+        }
+
+        // Check nonce
+        String nonceResponse = (String) jwt.getClaims().getClaim(JwtClaimName.NONCE);
+        final String nonceSession = session != null ? (String) session.getAttribute(Configuration.SESSION_AUTH_NONCE) : null;
+        if (!StringHelper.equals(nonceSession, nonceResponse)) {
+            log.error("User info response :  nonce is not matching.");
+            return null;
+        }
 
         log.info("Session validation successful. User is logged in");
         UserInfoClient userInfoClient = new UserInfoClient(oAuthUserInfoUrl);
+
         UserInfoResponse userInfoResponse = userInfoClient.execUserInfo(accessToken);
+        if (userInfoResponse == null) {
+            log.error("Get empty user info response. User can't log into application");
+            return null;
+        }
 
         OAuthData oAuthData = new OAuthData();
         oAuthData.setHost(oAuthHost);
