@@ -52,6 +52,11 @@ public class OxAuthClient extends Entry implements Serializable {
     private String displayName;
 
     @NotNull
+    @Size(min = 0, max = 250, message = "Length of the Description should not exceed 250")
+    @LdapAttribute
+    private String description;
+
+    @NotNull
     @LdapAttribute(name = "oxAuthAppType")
     private OxAuthApplicationType oxAuthAppType;
 
@@ -185,6 +190,9 @@ public class OxAuthClient extends Entry implements Serializable {
     @LdapAttribute(name = "oxDisabled")
     private boolean disabled;
 
+    @LdapAttribute(name = "oxdId")
+    private String oxdId;
+
     private String oxAuthClientSecret;
 
     public boolean isSelected() {
@@ -225,6 +233,14 @@ public class OxAuthClient extends Entry implements Serializable {
 
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
+    }
+
+    public final String getDescription() {
+        return description;
+    }
+
+    public final void setDescription(String description) {
+        this.description = description;
     }
 
     public OxAuthApplicationType getOxAuthAppType() {
@@ -581,6 +597,14 @@ public class OxAuthClient extends Entry implements Serializable {
 
     public void setClientSecretExpiresAt(Date clientSecretExpiresAt) {
         this.clientSecretExpiresAt = clientSecretExpiresAt;
+    }
+
+    public final String getOxdId() {
+        return oxdId;
+    }
+
+    public final void setOxdId(String oxdId) {
+        this.oxdId = oxdId;
     }
 
 }
