@@ -190,8 +190,8 @@ public class Shibboleth3ConfService implements Serializable {
 		initAttributes(trustRelationships);
 		HashMap<String, Object> trustParams = initTrustParamMap(trustRelationships);
 		HashMap<String, Object> attrParams = initAttributeParamMap(trustRelationships);
-        HashMap<String, Object> casParams = initCASParamMap();
-        HashMap<String, Object> attrResolverParams = initAttributeResolverParamMap();
+		HashMap<String, Object> casParams = initCASParamMap();
+		HashMap<String, Object> attrResolverParams = initAttributeResolverParamMap();
 
 		boolean result = (trustParams != null) && (attrParams != null) && (casParams != null) && (attrResolverParams != null);
 		if (!result) {
@@ -401,7 +401,7 @@ public class Shibboleth3ConfService implements Serializable {
 				}
 
 			} else {
-
+                                // add Part Of Federation
 				String federationInum = trustService.getTrustContainerFederation(trustRelationship).getInum();
 
 				if (deconstructedMap.get(federationInum) == null) {
@@ -783,6 +783,7 @@ public class Shibboleth3ConfService implements Serializable {
 			byte[] spMetadataFileContentBytes = spMetadataFileContent.getBytes("UTF-8");
 			is = new ByteArrayInputStream(spMetadataFileContentBytes);
 		} catch (UnsupportedEncodingException ex) {
+                        log.error("saveSpMetadataFile exception", e);
 			ex.printStackTrace();
 			return null;
 		}
