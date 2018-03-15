@@ -783,7 +783,7 @@ public class Shibboleth3ConfService implements Serializable {
 			byte[] spMetadataFileContentBytes = spMetadataFileContent.getBytes("UTF-8");
 			is = new ByteArrayInputStream(spMetadataFileContentBytes);
 		} catch (UnsupportedEncodingException ex) {
-                        log.error("saveSpMetadataFile exception", e);
+                        log.error("saveSpMetadataFile exception", ex);
 			ex.printStackTrace();
 			return null;
 		}
