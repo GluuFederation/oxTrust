@@ -164,7 +164,7 @@
 					var currentTabIndex = $(e.currentTarget).attr("tabindex");
 					if(undefined !== currentTabIndex){
 						currentTabIndex = (currentTabIndex == 0)  ? currentTabIndex+1 : currentTabIndex;
-						//var currentTabIndex = parseInt(currentTabIndex);
+						currentTabIndex = parseInt(currentTabIndex);
 						$("span[tabindex='"+currentTabIndex+"']").focus();
 					}
 				}
