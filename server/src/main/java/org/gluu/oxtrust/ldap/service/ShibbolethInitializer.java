@@ -61,15 +61,15 @@ public class ShibbolethInitializer {
 			// log.info("########## gluuSP.getDn() = " + gluuSP.getDn());
 
 			boolean servicesNeedRestarting = false;
-			if (gluuSPInum == null || ! trustService.containsTrustRelationship(gluuSP)) {
-
-				log.info("No trust relationships exist in LDAP. Adding gluuSP");
+//			if (gluuSPInum == null || ! trustService.containsTrustRelationship(gluuSP)) {
+//
+//				log.info("No trust relationships exist in LDAP. Adding gluuSP");
 //				GluuAppliance appliance = applianceService.getAppliance();
 //				appliance.setGluuSPTR(null);
 //				applianceService.updateAppliance(appliance);
-				shibboleth3ConfService.addGluuSP();
-				servicesNeedRestarting = true;
-			}
+//				shibboleth3ConfService.addGluuSP();
+//				servicesNeedRestarting = true;
+//			}
 
 			gluuSP = trustService.getRelationshipByInum(applianceService.getAppliance().getGluuSPTR());
 

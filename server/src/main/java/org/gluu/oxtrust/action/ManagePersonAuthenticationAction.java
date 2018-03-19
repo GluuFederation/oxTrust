@@ -511,6 +511,7 @@ public class ManagePersonAuthenticationAction
 		ldapConfigList.add(ldapConfiguration);
 	}
 	
+	@Override
 	public void removeLdapConfig(List<GluuLdapConfiguration> ldapConfigList, GluuLdapConfiguration removeLdapConfig) {
 		for (Iterator<GluuLdapConfiguration> iterator = ldapConfigList.iterator(); iterator.hasNext();) {
 			GluuLdapConfiguration ldapConfig = iterator.next();

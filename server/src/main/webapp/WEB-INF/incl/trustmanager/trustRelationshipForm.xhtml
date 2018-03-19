@@ -257,7 +257,7 @@
 
 								<h:panelGroup id="FederationWizardEntitySelection">
 									<h:panelGroup
-										rendered="#{(_trustRelationship.containerFederation ne null) and (_trustRelationship.spMetaDataSourceType.value eq 'federation')}">
+										rendered="#{(trustService.getTrustContainerFederation(_trustRelationship) ne null) and (_trustRelationship.spMetaDataSourceType.value eq 'federation')}">
 										<ox:decorate
 											id="spMetaDataSourceTypeFederationEntitySelection" label="#{msg['trustmanager.entityID']}">
 
@@ -307,7 +307,7 @@
 							<h:panelGroup id="certUpdateWrapperGroupId"
 								rendered="#{((not empty _trustRelationship.spMetaDataFN) and (_trustRelationship.spMetaDataSourceType.value eq 'file')) or (_trustRelationship.spMetaDataSourceType.value eq 'generate')}">
 								<ox:decorate
-									id="certUpdate" label="
+									id="certUpdate" rendered="#{empty _trustRelationship.spMetaDataFN}"  label="
                                         #{_trustRelationship.spMetaDataSourceType.value eq 'file' ? 'Update public certificate' : 'Public certificate'}">
                                     
 									<h:inputFile id="certWrapperId"
@@ -451,7 +451,7 @@
 						</h:panelGroup>
 						<a4j:commandLink style="margin-left: 165px;"
 							id="additionalTRParams" value="#{msg['trustmanager.configureMetadataFilter']}"
-							rendered="#{(not _new) and (_trustRelationship.containerFederation eq null)}"
+							rendered="#{(not _new) and (trustService.getTrustContainerFederation(_trustRelationship) eq null)}"
 							onclick="#{rich:component('additionalTRParamsPanel')}.show();"
 							execute="@this" />
 

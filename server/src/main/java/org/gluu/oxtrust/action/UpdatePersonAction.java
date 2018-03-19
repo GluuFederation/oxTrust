@@ -124,6 +124,16 @@ public class UpdatePersonAction implements Serializable {
 	private String confirmPassword;
 	
 	private List <GluuDeviceDataBean> deviceDataMap;
+	
+	private GluuCustomFidoDevice fidoDevice;
+
+	public GluuCustomFidoDevice getFidoDevice() {
+		return fidoDevice;
+	}
+
+	public void setFidoDevice(GluuCustomFidoDevice fidoDevice) {
+		this.fidoDevice = fidoDevice;
+	}
 
 	public List<GluuDeviceDataBean> getDeviceDataMap() {
 		return deviceDataMap;
@@ -135,6 +145,16 @@ public class UpdatePersonAction implements Serializable {
 
 	private List<String> externalAuthCustomAttributes;
 
+	private DeviceData deviceDetail;
+
+
+	public DeviceData getDeviceDetail() {
+		return deviceDetail;
+	}
+
+	public void setDeviceDetail(DeviceData deviceDetail) {
+		this.deviceDetail = deviceDetail;
+	}
 
 	public List<String> getExternalAuthCustomAttributes() {
 		return externalAuthCustomAttributes;
@@ -226,10 +246,12 @@ public class UpdatePersonAction implements Serializable {
 	                String nickName = "";
 	                if(devicedata != null){
 	                	DeviceData deviceData = getDeviceata(devicedata);
-	                	nickName = deviceData.getName();
+	                	//nickName = deviceData.getName();
+	                	nickName = gluuCustomFidoDevice.getNickname();
 		                modality = "Super-Gluu Device";
 	                }else{
-	                	nickName = "U2F";
+	                	//nickName = "U2F";
+	                	nickName = gluuCustomFidoDevice.getNickname();
 	                	modality = "U2F device";
 	                }
 	                gluuDeviceDataBean.setNickName(nickName);
@@ -563,6 +585,16 @@ public class UpdatePersonAction implements Serializable {
 			log.error("Failed to convert device string to object IOException", e);
 		}
 		return obj;
+	}
+	
+	public void fetchFidoRecord(String id){
+		this.fidoDevice = fidoDeviceService.getGluuCustomFidoDeviceById(this.person.getInum(), id);
+		if(this.fidoDevice.getDeviceData() != null){
+			this.deviceDetail = getDeviceata(this.fidoDevice.getDeviceData());
+		}else{
+			this.deviceDetail = null;
+		}
+		 
 	}
 	
 	private boolean validatePerson(GluuCustomPerson person) throws Exception {

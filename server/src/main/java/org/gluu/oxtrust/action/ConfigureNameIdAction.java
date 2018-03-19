@@ -2,6 +2,8 @@
 package org.gluu.oxtrust.action;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.enterprise.context.ConversationScoped;
@@ -22,13 +24,14 @@ import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.config.oxtrust.AttributeResolverConfiguration;
 import org.xdi.config.oxtrust.LdapOxTrustConfiguration;
+import org.xdi.config.oxtrust.NameIdConfig;
 import org.xdi.model.GluuAttribute;
 import org.xdi.service.security.Secure;
 
 @ConversationScoped
-@Named("attributeResolverAction")
+@Named("configureNameIdAction")
 @Secure("#{permissionService.hasPermission('trust', 'access')}")
-public class AttributeResolverAction implements Serializable {
+public class ConfigureNameIdAction implements Serializable {
 
 	private static final long serialVersionUID = -9125609238796284572L;
 	
@@ -59,45 +62,11 @@ public class AttributeResolverAction implements Serializable {
 	@Inject
 	private ConfigurationFactory configurationFactory;
 	
+    private ArrayList<NameIdConfig> nameIdConfigs;
 	private List<GluuAttribute> attributes;
-	
-	private String attributeBase;
-	private String attributeName;
-	private String nameIdType;
-	private boolean enable;
 
 	private boolean initialized;
-	
-	public boolean isEnable() {
-		return enable;
-	}
-	public void setEnable(boolean enable) {
-		this.enable = enable;
-	}
-	
-	public String getAttributeBase() {
-		return attributeBase;
-	}
 
-	public void setAttributeBase(String attributeBase) {
-		this.attributeBase = attributeBase;
-	}
-
-	public String getAttributeName() {
-		return attributeName;
-	}
-
-	public void setAttributeName(String attributeName) {
-		this.attributeName = attributeName;
-	}
-	
-	public String getNameIdType() {
-		return nameIdType;
-	}
-
-	public void setNameIdType(String nameIdType) {
-		this.nameIdType = nameIdType;
-	}
 
 	public List<GluuAttribute> getAttributes() {
 		return attributes;
@@ -111,17 +80,18 @@ public class AttributeResolverAction implements Serializable {
 		this.attributes = attributeService.getAllAttributes();
 
 		final LdapOxTrustConfiguration conf = configurationFactory.loadConfigurationFromLdap("oxTrustConfAttributeResolver");
+		if (conf == null) {
+		    log.error("Failed to load oxTrust configuration");
+            return OxTrustConstants.RESULT_FAILURE;
+		}
+		
+		this.nameIdConfigs = new ArrayList<NameIdConfig>();
+
 		AttributeResolverConfiguration attributeResolverConfiguration = conf.getAttributeResolverConfig();
-		if (attributeResolverConfiguration != null) {
-			this.attributeName = attributeResolverConfiguration.getAttributeName();
-			this.nameIdType = attributeResolverConfiguration.getNameIdType();
-			this.enable = attributeResolverConfiguration.isEnabled();
-			
-			String attributeBase = attributeResolverConfiguration.getAttributeBase();
-			GluuAttribute foundAttribute = attributeService.getAttributeByName(attributeBase, this.attributes);
-			if (foundAttribute != null) {
-				this.attributeBase = foundAttribute.getName();
-			}
+		if ((attributeResolverConfiguration != null) && (attributeResolverConfiguration.getNameIdConfigs() != null)) {
+		    for (NameIdConfig nameIdConfig : attributeResolverConfiguration.getNameIdConfigs()) {
+		        this.nameIdConfigs.add(nameIdConfig);
+		    }
 		}
 
 		this.initialized = true;
@@ -129,8 +99,8 @@ public class AttributeResolverAction implements Serializable {
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	public String saveCustomAttributetoResolveImpl(){
-		String outcome = saveCustomAttributetoResolve();
+	public String save() {
+		String outcome = saveImpl();
 		
 		if (OxTrustConstants.RESULT_SUCCESS.equals(outcome)) {
 			facesMessages.add(FacesMessage.SEVERITY_INFO, "NameId configuration updated successfully");
@@ -141,12 +111,9 @@ public class AttributeResolverAction implements Serializable {
 		return outcome;
 	}
 
-	public String saveCustomAttributetoResolve(){
+	private String saveImpl() {
 		AttributeResolverConfiguration attributeResolverConfiguration = new AttributeResolverConfiguration();
-		attributeResolverConfiguration.setAttributeBase(attributeBase);
-		attributeResolverConfiguration.setAttributeName(attributeName);
-		attributeResolverConfiguration.setNameIdType(nameIdType);
-		attributeResolverConfiguration.setEnabled(enable);
+		attributeResolverConfiguration.setNameIdConfigs(this.nameIdConfigs);
 		try {
 			final LdapOxTrustConfiguration conf = configurationFactory.loadConfigurationFromLdap();
 			conf.setAttributeResolverConfig(attributeResolverConfiguration);
@@ -156,13 +123,8 @@ public class AttributeResolverAction implements Serializable {
 			log.error("Failed to save Attribute Resolver configuration configuration", ex);
 			return OxTrustConstants.RESULT_FAILURE;
 		}
-
-		if (!enable) {
-			return OxTrustConstants.RESULT_FAILURE;
-		}
-
 		
-		boolean updateShib3Configuration = applicationConfiguration.isConfigGeneration(); 
+ 		boolean updateShib3Configuration = applicationConfiguration.isConfigGeneration(); 
 		if (updateShib3Configuration) {    
 			List<GluuSAMLTrustRelationship> trustRelationships = trustService.getAllActiveTrustRelationships();    
 			if (!shibboleth3ConfService.generateConfigurationFiles(trustRelationships)) {
@@ -170,15 +132,33 @@ public class AttributeResolverAction implements Serializable {
 				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update Shibboleth v3 configuration");			}
 		}
 
-		facesMessages.add(FacesMessage.SEVERITY_INFO, "Saml NameId configuration updated successfully.");
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 	
-	public String cancel(){
+	public String cancel() {
 		facesMessages.add(FacesMessage.SEVERITY_INFO, "Saml NameId configuration not updated");
-		conversationService.endConversation();
+//		conversationService.endConversation();
 
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
-	
+
+    public ArrayList<NameIdConfig> getNameIdConfigs() {
+        return nameIdConfigs;
+    }
+    
+    public void addNameIdConfig() {
+        NameIdConfig nameIdConfig = new NameIdConfig();
+        this.nameIdConfigs.add(nameIdConfig);
+    }
+    
+    public void removeNameIdConfig(NameIdConfig removenameIdConfig) {
+        for (Iterator<NameIdConfig> iterator = this.nameIdConfigs.iterator(); iterator.hasNext();) {
+            NameIdConfig nameIdConfig = iterator.next();
+            if (System.identityHashCode(removenameIdConfig) == System.identityHashCode(nameIdConfig)) {
+                iterator.remove();
+                return;
+            }
+        }
+    }
+
 }

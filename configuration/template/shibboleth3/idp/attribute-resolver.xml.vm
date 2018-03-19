@@ -34,12 +34,12 @@
 #end
 #end
 #if( $resovlerParams.size() > 0 )
-    #set( $attribute = $resovlerParams.get("name_id_attr_base") )
-    #set( $name_id_conf = $resovlerParams.get("name_id_conf") )
+    #foreach( $nameIdConfig in $resovlerParams.configs )
+    #set( $attribute = $resovlerParams.attributes.get($nameIdConfig.sourceAttribute) )
 
-    <resolver:AttributeDefinition xsi:type="ad:Simple" id="$name_id_conf.attributeName" sourceAttributeID="$attribute.name">
+    <resolver:AttributeDefinition xsi:type="ad:Simple" id="$nameIdConfig.attributeName" sourceAttributeID="$attribute.name">
         <resolver:Dependency ref="siteLDAP" />
-        <resolver:AttributeEncoder xsi:type="enc:SAML2StringNameID" nameFormat="urn:oasis:names:tc:SAML:2.0:nameid-format:$name_id_conf.nameIdType" />
+        <resolver:AttributeEncoder xsi:type="enc:SAML2StringNameID" nameFormat="urn:oasis:names:tc:SAML:2.0:nameid-format:$nameIdConfig.nameIdType" />
     </resolver:AttributeDefinition>
 #end
 
