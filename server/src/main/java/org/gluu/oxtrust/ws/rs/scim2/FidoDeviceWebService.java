@@ -162,7 +162,7 @@ public class FidoDeviceWebService extends BaseScimWebService implements IFidoDev
             FidoDeviceResource updatedResource=new FidoDeviceResource();
             transferAttributesToFidoResource(device, updatedResource, endpointUrl, userId);
 
-            long now=new Date().getTime();
+            long now = System.currentTimeMillis();
             updatedResource.getMeta().setLastModified(ISODateTimeFormat.dateTime().withZoneUTC().print(now));
 
             updatedResource=(FidoDeviceResource) ScimResourceUtil.transferToResourceReplace(fidoDeviceResource, updatedResource, extService.getResourceExtensions(updatedResource.getClass()));
@@ -179,7 +179,7 @@ public class FidoDeviceWebService extends BaseScimWebService implements IFidoDev
         }
         catch (InvalidAttributeValueException e){
             log.error(e.getMessage());
-            response=getErrorResponse(Response.Status.CONFLICT, ErrorScimType.MUTABILITY, e.getMessage());
+            response=getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.MUTABILITY, e.getMessage());
         }
         catch (Exception e){
             log.error("Failure at updateDevice method", e);
@@ -225,19 +225,20 @@ public class FidoDeviceWebService extends BaseScimWebService implements IFidoDev
     @RefAdjusted
     @ApiOperation(value = "Search devices", notes = "Returns a list of devices", response = ListResponse.class)
     public Response searchDevices(
+            @QueryParam("userId") String userId,
             @QueryParam(QUERY_PARAM_FILTER) String filter,
             @QueryParam(QUERY_PARAM_START_INDEX) Integer startIndex,
             @QueryParam(QUERY_PARAM_COUNT) Integer count,
             @QueryParam(QUERY_PARAM_SORT_BY) String sortBy,
             @QueryParam(QUERY_PARAM_SORT_ORDER) String sortOrder,
             @QueryParam(QUERY_PARAM_ATTRIBUTES) String attrsList,
-            @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList){
+            @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList) {
 
         Response response;
         try {
             log.debug("Executing web service method. searchDevices");
             sortBy=translateSortByAttribute(FidoDeviceResource.class, sortBy);
-            ListViewResponse<BaseScimResource> resources = searchDevices(filter, sortBy, SortOrder.getByValue(sortOrder), startIndex, count, endpointUrl);
+            ListViewResponse<BaseScimResource> resources = searchDevices(userId, filter, sortBy, SortOrder.getByValue(sortOrder), startIndex, count, endpointUrl);
 
             String json = getListResponseSerialized(resources.getTotalResults(), startIndex, resources.getResult(), attrsList, excludedAttrsList, count==0);
             response=Response.ok(json).location(new URI(endpointUrl)).build();
@@ -262,12 +263,12 @@ public class FidoDeviceWebService extends BaseScimWebService implements IFidoDev
     @ProtectedApi
     @RefAdjusted
     @ApiOperation(value = "Search devices POST /.search", notes = "Returns a list of fido devices", response = ListResponse.class)
-    public Response searchDevicesPost(SearchRequest searchRequest){
+    public Response searchDevicesPost(SearchRequest searchRequest, @QueryParam("userId") String userId) {
 
         log.debug("Executing web service method. searchDevicesPost");
 
         URI uri=null;
-        Response response = searchDevices(searchRequest.getFilter(), searchRequest.getStartIndex(), searchRequest.getCount(),
+        Response response = searchDevices(userId, searchRequest.getFilter(), searchRequest.getStartIndex(), searchRequest.getCount(),
                 searchRequest.getSortBy(), searchRequest.getSortOrder(), searchRequest.getAttributesStr(), searchRequest.getExcludedAttributesStr());
 
         try {
@@ -287,7 +288,7 @@ public class FidoDeviceWebService extends BaseScimWebService implements IFidoDev
         Meta meta=new Meta();
         meta.setResourceType(ScimResourceUtil.getType(res.getClass()));
         meta.setCreated(DateUtil.generalizedToISOStringDate(fidoDevice.getCreationDate()));
-        meta.setLastModified(DateUtil.generalizedToISOStringDate(fidoDevice.getMetaLastModified()));
+        meta.setLastModified(fidoDevice.getMetaLastModified());
         meta.setLocation(fidoDevice.getMetaLocation());
         if (meta.getLocation()==null)
             meta.setLocation(url + "/" + fidoDevice.getId());
@@ -296,7 +297,7 @@ public class FidoDeviceWebService extends BaseScimWebService implements IFidoDev
 
         //Set values in order of appearance in FidoDeviceResource class
         res.setUserId(userId);
-        res.setCreationDate(fidoDevice.getCreationDate());
+        res.setCreationDate(meta.getCreated());
         res.setApplication(fidoDevice.getApplication());
         res.setCounter(fidoDevice.getCounter());
 
@@ -314,7 +315,7 @@ public class FidoDeviceWebService extends BaseScimWebService implements IFidoDev
     }
 
     /**
-     * In practice, this transference of values will not modify original values in device...
+     * In practice, transference of values will not necessarily modify all original values in LDAP...
      * @param res
      * @param device
      */
@@ -337,7 +338,7 @@ public class FidoDeviceWebService extends BaseScimWebService implements IFidoDev
         device.setDescription(res.getDescription());
         device.setNickname(res.getNickname());
 
-        device.setMetaLastModified(DateUtil.ISOToGeneralizedStringDate(res.getMeta().getLastModified()));
+        device.setMetaLastModified(res.getMeta().getLastModified());
         device.setMetaLocation(res.getMeta().getLocation());
         device.setMetaVersion(res.getMeta().getVersion());
 
@@ -349,14 +350,14 @@ public class FidoDeviceWebService extends BaseScimWebService implements IFidoDev
         return deviceDn.substring(deviceDn.indexOf("inum=")+5);
     }
 
-    private ListViewResponse<BaseScimResource> searchDevices(String filter, String sortBy, SortOrder sortOrder, int startIndex,
+    private ListViewResponse<BaseScimResource> searchDevices(String userId, String filter, String sortBy, SortOrder sortOrder, int startIndex,
                                                     int count, String url) throws Exception {
 
         Filter ldapFilter=scimFilterParserService.createLdapFilter(filter, "oxId=*", FidoDeviceResource.class);
         log.info("Executing search for fido devices using: ldapfilter '{}', sortBy '{}', sortOrder '{}', startIndex '{}', count '{}'",
                 ldapFilter.toString(), sortBy, sortOrder.getValue(), startIndex, count);
 
-        ListViewResponse<GluuCustomFidoDevice> list=ldapEntryManager.findListViewResponse(fidoDeviceService.getDnForFidoDevice(null, null),
+        ListViewResponse<GluuCustomFidoDevice> list=ldapEntryManager.findListViewResponse(fidoDeviceService.getDnForFidoDevice(userId, null),
                 GluuCustomFidoDevice.class, ldapFilter, startIndex, count, getMaxCount(), sortBy, sortOrder, null);
         List<BaseScimResource> resources=new ArrayList<BaseScimResource>();
 

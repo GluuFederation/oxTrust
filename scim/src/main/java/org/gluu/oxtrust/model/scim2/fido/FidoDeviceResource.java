@@ -73,6 +73,7 @@ public class FidoDeviceResource extends BaseScimResource {
     private String deviceRegistrationConf;
 
     @Attribute(description = "The most recent dateTime when this device was used for authentication",
+            mutability = AttributeDefinition.Mutability.IMMUTABLE,
             type = AttributeDefinition.Type.DATETIME)
     @StoreReference(ref = "oxLastAccessTime")
     private String lastAccessTime;

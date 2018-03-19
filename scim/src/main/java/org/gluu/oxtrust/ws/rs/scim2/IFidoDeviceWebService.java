@@ -134,6 +134,7 @@ public interface IFidoDeviceWebService {
     @Produces({MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT, MediaType.APPLICATION_JSON + UTF8_CHARSET_FRAGMENT})
     @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
     Response searchDevices(
+            @QueryParam("userId") String userId,
             @QueryParam(QUERY_PARAM_FILTER) String filter,
             @QueryParam(QUERY_PARAM_START_INDEX) Integer startIndex,
             @QueryParam(QUERY_PARAM_COUNT) Integer count,
@@ -146,7 +147,7 @@ public interface IFidoDeviceWebService {
      * Sends a search query for Fido devices using POST (see section 3.4.3 of RFC 7644).
      * @param searchRequest An object containing the parameters for the query to execute. These are the same parameters
      *                      passed in the URL for searches, for example in
-     *                      {@link #searchDevices(String, Integer, Integer, String, String, String, String) searchDevices}
+     *                      {@link #searchDevices(String, String, Integer, Integer, String, String, String, String) searchDevices}
      * @return An object abstracting the response obtained from the server to this request.
      * A succesful response for this request should contain a status code of 200 and a {@link org.gluu.oxtrust.model.scim2.ListResponse
      * ListResponse} in the entity body (holding a collection of SCIM resources)
@@ -156,7 +157,7 @@ public interface IFidoDeviceWebService {
     @Consumes({MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
     @Produces({MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT, MediaType.APPLICATION_JSON + UTF8_CHARSET_FRAGMENT})
     @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
-    Response searchDevicesPost(SearchRequest searchRequest);
+    Response searchDevicesPost(SearchRequest searchRequest, @QueryParam("userId") String userId);
 
     /**
      * Service method that allows to modify a Fido device resource via PATCH (see section 3.5.2 of RFC 7644).

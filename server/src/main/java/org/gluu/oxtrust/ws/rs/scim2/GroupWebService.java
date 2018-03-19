@@ -171,7 +171,7 @@ public class GroupWebService extends BaseScimWebService implements IGroupWebServ
         }
         catch (InvalidAttributeValueException e){
             log.error(e.getMessage());
-            response=getErrorResponse(Response.Status.CONFLICT, ErrorScimType.MUTABILITY, e.getMessage());
+            response=getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.MUTABILITY, e.getMessage());
         }
         catch (Exception e){
             log.error("Failure at updateGroup method", e);
