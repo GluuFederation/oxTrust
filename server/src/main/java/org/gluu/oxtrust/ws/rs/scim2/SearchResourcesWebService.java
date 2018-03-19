@@ -219,7 +219,7 @@ public class SearchResourcesWebService extends BaseScimWebService {
                     r = groupWS.searchGroupsPost(searchRequest);
                     break;
                 case 2:
-                    r = fidoWS.searchDevicesPost(searchRequest);
+                    r = fidoWS.searchDevicesPost(searchRequest, null);
                     break;
             }
 
