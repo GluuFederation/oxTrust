@@ -139,7 +139,7 @@ public class FidoDeviceWebService extends BaseScimWebService implements IFidoDev
             FidoDeviceResource updatedResource=new FidoDeviceResource();
             transferAttributesToFidoResource(device, updatedResource, endpointUrl, userId);
 
-            long now=new Date().getTime();
+            long now = System.currentTimeMillis();
             updatedResource.getMeta().setLastModified(ISODateTimeFormat.dateTime().withZoneUTC().print(now));
 
             updatedResource=(FidoDeviceResource) ScimResourceUtil.transferToResourceReplace(fidoDeviceResource, updatedResource, extService.getResourceExtensions(updatedResource.getClass()));
@@ -156,7 +156,7 @@ public class FidoDeviceWebService extends BaseScimWebService implements IFidoDev
         }
         catch (InvalidAttributeValueException e){
             log.error(e.getMessage());
-            response=getErrorResponse(Response.Status.CONFLICT, ErrorScimType.MUTABILITY, e.getMessage());
+            response=getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.MUTABILITY, e.getMessage());
         }
         catch (Exception e){
             log.error("Failure at updateDevice method", e);
@@ -268,7 +268,7 @@ public class FidoDeviceWebService extends BaseScimWebService implements IFidoDev
         Meta meta=new Meta();
         meta.setResourceType(ScimResourceUtil.getType(res.getClass()));
         meta.setCreated(DateUtil.generalizedToISOStringDate(fidoDevice.getCreationDate()));
-        meta.setLastModified(DateUtil.generalizedToISOStringDate(fidoDevice.getMetaLastModified()));
+        meta.setLastModified(fidoDevice.getMetaLastModified());
         meta.setLocation(fidoDevice.getMetaLocation());
         if (meta.getLocation()==null)
             meta.setLocation(url + "/" + fidoDevice.getId());
@@ -277,7 +277,7 @@ public class FidoDeviceWebService extends BaseScimWebService implements IFidoDev
 
         //Set values in order of appearance in FidoDeviceResource class
         res.setUserId(userId);
-        res.setCreationDate(fidoDevice.getCreationDate());
+        res.setCreationDate(meta.getCreated());
         res.setApplication(fidoDevice.getApplication());
         res.setCounter(fidoDevice.getCounter());
 
@@ -295,7 +295,7 @@ public class FidoDeviceWebService extends BaseScimWebService implements IFidoDev
     }
 
     /**
-     * In practice, this transference of values will not modify original values in device...
+     * In practice, transference of values will not necessarily modify all original values in LDAP...
      * @param res
      * @param device
      */
@@ -318,7 +318,7 @@ public class FidoDeviceWebService extends BaseScimWebService implements IFidoDev
         device.setDescription(res.getDescription());
         device.setNickname(res.getNickname());
 
-        device.setMetaLastModified(DateUtil.ISOToGeneralizedStringDate(res.getMeta().getLastModified()));
+        device.setMetaLastModified(res.getMeta().getLastModified());
         device.setMetaLocation(res.getMeta().getLocation());
         device.setMetaVersion(res.getMeta().getVersion());
 
