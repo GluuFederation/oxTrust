@@ -51,10 +51,12 @@ public abstract class FidoDeviceWebServiceDecorator extends BaseScimWebService i
     private Response validateExistenceOfUser(String id) {
 
         Response response = null;
-        GluuCustomPerson person = StringUtils.isEmpty(id) ? null : personService.getPersonByInum(id);
+        if (StringUtils.isNotEmpty(id)) {
+            GluuCustomPerson person = personService.getPersonByInum(id);
 
-        if (person == null) {
-            response = getErrorResponse(Response.Status.NOT_FOUND, "User with id " + id + " not found");
+            if (person == null) {
+                response = getErrorResponse(Response.Status.NOT_FOUND, "User with id " + id + " not found");
+            }
         }
         return response;
 
