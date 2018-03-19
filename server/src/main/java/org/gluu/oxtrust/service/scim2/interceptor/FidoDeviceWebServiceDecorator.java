@@ -7,6 +7,8 @@ package org.gluu.oxtrust.service.scim2.interceptor;
 
 import org.apache.commons.lang.StringUtils;
 import org.gluu.oxtrust.ldap.service.IFidoDeviceService;
+import org.gluu.oxtrust.ldap.service.IPersonService;
+import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.exception.SCIMException;
 import org.gluu.oxtrust.model.fido.GluuCustomFidoDevice;
 import org.gluu.oxtrust.model.scim2.ErrorScimType;
@@ -42,6 +44,21 @@ public abstract class FidoDeviceWebServiceDecorator extends BaseScimWebService i
 
     @Inject
     private IFidoDeviceService fidoDeviceService;
+
+    @Inject
+    private IPersonService personService;
+
+    private Response validateExistenceOfUser(String id) {
+
+        Response response = null;
+        GluuCustomPerson person = StringUtils.isEmpty(id) ? null : personService.getPersonByInum(id);
+
+        if (person == null) {
+            response = getErrorResponse(Response.Status.NOT_FOUND, "User with id " + id + " not found");
+        }
+        return response;
+
+    }
 
     private Response validateExistenceOfDevice(String userId, String id) {
         //userId can be null here
@@ -98,22 +115,25 @@ public abstract class FidoDeviceWebServiceDecorator extends BaseScimWebService i
 
     }
 
-    public Response searchDevices(String filter, Integer startIndex, Integer count, String sortBy, String sortOrder,
-                                  String attrsList, String excludedAttrsList) {
+    public Response searchDevices(String userId, String filter, Integer startIndex, Integer count, String sortBy,
+                                  String sortOrder, String attrsList, String excludedAttrsList) {
 
         SearchRequest searchReq=new SearchRequest();
         Response response=prepareSearchRequest(searchReq.getSchemas(), filter, sortBy, sortOrder, startIndex, count,
                                 attrsList, excludedAttrsList, searchReq);
 
-        if (response==null) {
-            response = service.searchDevices(searchReq.getFilter(), searchReq.getStartIndex(), searchReq.getCount(),
+        if (response == null) {
+            response = validateExistenceOfUser(userId);
+            if (response == null) {
+                response = service.searchDevices(userId, searchReq.getFilter(), searchReq.getStartIndex(), searchReq.getCount(),
                         searchReq.getSortBy(), searchReq.getSortOrder(), searchReq.getAttributesStr(), searchReq.getExcludedAttributesStr());
+            }
         }
         return response;
 
     }
 
-    public Response searchDevicesPost(SearchRequest searchRequest) {
+    public Response searchDevicesPost(SearchRequest searchRequest, String userId) {
 
         SearchRequest searchReq = new SearchRequest();
         Response response = prepareSearchRequest(searchRequest.getSchemas(), searchRequest.getFilter(), searchRequest.getSortBy(),
@@ -121,7 +141,10 @@ public abstract class FidoDeviceWebServiceDecorator extends BaseScimWebService i
                                 searchRequest.getAttributesStr(), searchRequest.getExcludedAttributesStr(), searchReq);
 
         if (response==null) {
-            response = service.searchDevicesPost(searchReq);
+            response = validateExistenceOfUser(userId);
+            if (response == null) {
+                response = service.searchDevicesPost(searchReq, userId);
+            }
         }
         return response;
     }

@@ -202,13 +202,14 @@ public class FidoDeviceWebService extends BaseScimWebService implements IFidoDev
     @RefAdjusted
     @ApiOperation(value = "Search devices", notes = "Returns a list of devices", response = ListResponse.class)
     public Response searchDevices(
+            @QueryParam("userId") String userId,
             @QueryParam(QUERY_PARAM_FILTER) String filter,
             @QueryParam(QUERY_PARAM_START_INDEX) Integer startIndex,
             @QueryParam(QUERY_PARAM_COUNT) Integer count,
             @QueryParam(QUERY_PARAM_SORT_BY) String sortBy,
             @QueryParam(QUERY_PARAM_SORT_ORDER) String sortOrder,
             @QueryParam(QUERY_PARAM_ATTRIBUTES) String attrsList,
-            @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList){
+            @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList) {
 
         Response response;
         try {
@@ -216,7 +217,7 @@ public class FidoDeviceWebService extends BaseScimWebService implements IFidoDev
             VirtualListViewResponse vlv = new VirtualListViewResponse();
 
             sortBy=translateSortByAttribute(FidoDeviceResource.class, sortBy);
-            List<BaseScimResource> resources = searchDevices(filter, sortBy, SortOrder.getByValue(sortOrder), startIndex, count, vlv, endpointUrl);
+            List<BaseScimResource> resources = searchDevices(userId, filter, sortBy, SortOrder.getByValue(sortOrder), startIndex, count, vlv, endpointUrl);
 
             String json = getListResponseSerialized(vlv.getTotalResults(), startIndex, resources, attrsList, excludedAttrsList, count==0);
             response=Response.ok(json).location(new URI(endpointUrl)).build();
@@ -241,12 +242,13 @@ public class FidoDeviceWebService extends BaseScimWebService implements IFidoDev
     @ProtectedApi
     @RefAdjusted
     @ApiOperation(value = "Search devices POST /.search", notes = "Returns a list of fido devices", response = ListResponse.class)
-    public Response searchDevicesPost(SearchRequest searchRequest){
+    public Response searchDevicesPost(SearchRequest searchRequest,
+                                      @QueryParam("userId") String userId) {
 
         log.debug("Executing web service method. searchDevicesPost");
 
         URI uri=null;
-        Response response = searchDevices(searchRequest.getFilter(), searchRequest.getStartIndex(), searchRequest.getCount(),
+        Response response = searchDevices(userId, searchRequest.getFilter(), searchRequest.getStartIndex(), searchRequest.getCount(),
                 searchRequest.getSortBy(), searchRequest.getSortOrder(), searchRequest.getAttributesStr(), searchRequest.getExcludedAttributesStr());
 
         try {
@@ -328,14 +330,14 @@ public class FidoDeviceWebService extends BaseScimWebService implements IFidoDev
         return deviceDn.substring(deviceDn.indexOf("inum=")+5);
     }
 
-    private List<BaseScimResource> searchDevices(String filter, String sortBy, SortOrder sortOrder, int startIndex,
+    private List<BaseScimResource> searchDevices(String userId, String filter, String sortBy, SortOrder sortOrder, int startIndex,
                                                     int count, VirtualListViewResponse vlvResponse, String url) throws Exception {
 
         Filter ldapFilter=scimFilterParserService.createLdapFilter(filter, "oxId=*", FidoDeviceResource.class);
         log.info("Executing search for fido devices using: ldapfilter '{}', sortBy '{}', sortOrder '{}', startIndex '{}', count '{}'",
                 ldapFilter.toString(), sortBy, sortOrder.getValue(), startIndex, count);
 
-        List<GluuCustomFidoDevice> list=ldapEntryManager.findEntriesSearchSearchResult(fidoDeviceService.getDnForFidoDevice(null, null),
+        List<GluuCustomFidoDevice> list=ldapEntryManager.findEntriesSearchSearchResult(fidoDeviceService.getDnForFidoDevice(userId, null),
                 GluuCustomFidoDevice.class, ldapFilter, startIndex, count, getMaxCount(), sortBy, sortOrder, vlvResponse, null);
         List<BaseScimResource> resources=new ArrayList<BaseScimResource>();
 
