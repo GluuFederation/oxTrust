@@ -453,6 +453,10 @@ public class Authenticator implements Serializable {
 		log.info("Session validation successful. User is logged in");
 		UserInfoClient userInfoClient = new UserInfoClient(openIdConfiguration.getUserInfoEndpoint());
 		UserInfoResponse userInfoResponse = userInfoClient.execUserInfo(accessToken);
+        if (userInfoResponse == null) {
+            log.error("Get empty token response. User can't log into application");
+            return OxTrustConstants.RESULT_NO_PERMISSIONS;
+        }
 
 		OauthData oauthData = identity.getOauthData();
 

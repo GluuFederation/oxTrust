@@ -53,7 +53,8 @@ public class OpenIdClient<C extends AppConfiguration, L extends LdapAppConfigura
 
 	private final Logger logger = LoggerFactory.getLogger(OpenIdClient.class);
 
-	private static final String STATE_PARAMETER = "#oxauth_state_parameter";
+	private static final String STATE_PARAMETER = "#state_parameter";
+    private static final String NONCE_PARAMETER = "#nonce_parameter";
 
 	// Register new client earlier than old client was expired to allow execute authorization requests
 	private static final long NEW_CLIENT_EXPIRATION_OVERLAP = 60 * 1000;
@@ -194,6 +195,7 @@ public class OpenIdClient<C extends AppConfiguration, L extends LdapAppConfigura
 		authorizationRequest.setNonce(nonce);
 
 		context.setSessionAttribute(getName() + STATE_PARAMETER, state);
+        context.setSessionAttribute(getName() + NONCE_PARAMETER, nonce);
 
 		final String redirectionUrl = this.openIdConfiguration.getAuthorizationEndpoint() + "?" + authorizationRequest.getQueryString();
 		logger.debug("oxAuth redirection Url: '{}'", redirectionUrl);
@@ -262,7 +264,7 @@ public class OpenIdClient<C extends AppConfiguration, L extends LdapAppConfigura
 			final String accessToken = getAccessToken(credential);
 			final UserInfoResponse userInfoResponse = getUserInfo(accessToken);
 
-			final UserProfile profile = retrieveUserProfileFromUserInfoResponse(userInfoResponse);
+			final UserProfile profile = retrieveUserProfileFromUserInfoResponse(context, userInfoResponse);
 			logger.debug("User profile: '{}'", profile);
 
 			return profile;
@@ -300,8 +302,16 @@ public class OpenIdClient<C extends AppConfiguration, L extends LdapAppConfigura
 		return userInfoResponse;
 	}
 
-	protected CommonProfile retrieveUserProfileFromUserInfoResponse(final UserInfoResponse userInfoResponse) {
+	protected CommonProfile retrieveUserProfileFromUserInfoResponse(final WebContext context, final UserInfoResponse userInfoResponse) {
 		final CommonProfile profile = new CommonProfile();
+
+		String nonceResponse = getFirstClaim(userInfoResponse, JwtClaimName.NONCE);
+        final String nonceSession = (String) context.getSessionAttribute(getName() + NONCE_PARAMETER);
+        logger.debug("Session nonce: '{}'", nonceSession);
+        if (!StringHelper.equals(nonceSession, nonceResponse)) {
+            logger.error("User info response:  nonce is not matching.");
+            throw new CommunicationException("Nonce is not match");
+        }
 
 		String id = getFirstClaim(userInfoResponse, JwtClaimName.USER_NAME);
 		if (StringHelper.isEmpty(id)) {

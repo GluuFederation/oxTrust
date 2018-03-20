@@ -41,6 +41,14 @@
                 // TODO: Find a way how to expand panel in RichFaces 4. Maybe we can do that on server side
             }
         }
+        
+        function calcTime() {
+        	var spanvalue = document.querySelector('[id$=":lastrun"]');
+			var lastRunValue = new Date(spanvalue.innerHTML + " UTC");
+			var displayLastRun = (lastRunValue.toString()).replace(/GMT.+/,"");	
+			spanvalue.innerHTML = displayLastRun;    
+		}
+        
     </h:outputScript>
 
     <ox:changePasswordDialog id="bindPasswordDialogId" label="#{msg['organization.changeBackend']} '#{_configureCacheRefreshAction.activeLdapConfig.configId}' #{msg['organization.bindPassword']}" password="#{_configureCacheRefreshAction.activeLdapConfig.bindPassword}"
@@ -66,7 +74,7 @@
 
         <h:panelGroup columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
             <ox:decorate label="#{msg['organization.lastRun']}">
-                <h:outputText value="#{_configureCacheRefreshAction.appliance.vdsCacheRefreshLastUpdate}">
+                <h:outputText id="lastrun" value="#{_configureCacheRefreshAction.appliance.vdsCacheRefreshLastUpdate}">
                     <f:convertDateTime pattern="MMM. d yyyy hh:mm a" />
                 </h:outputText>
             </ox:decorate>
@@ -234,5 +242,8 @@
     </h:form>
 
     <ui:include src="/WEB-INF/incl/organization/cacheRefreshInterceptorValidationDialog.xhtml" />
+    <h:outputScript>
+    calcTime();
+    </h:outputScript>
 
 </ui:composition>

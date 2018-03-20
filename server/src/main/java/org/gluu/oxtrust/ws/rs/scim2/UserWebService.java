@@ -173,7 +173,7 @@ public class UserWebService extends BaseScimWebService implements IUserWebServic
         }
         catch (InvalidAttributeValueException e){
             log.error(e.getMessage());
-            response=getErrorResponse(Response.Status.CONFLICT, ErrorScimType.MUTABILITY, e.getMessage());
+            response=getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.MUTABILITY, e.getMessage());
         }
         catch (Exception e){
             log.error("Failure at updateUser method", e);

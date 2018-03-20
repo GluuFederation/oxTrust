@@ -25,6 +25,8 @@ public final class Configuration {
      * Represents the constant for where the OAuth data will be located in memory
      */
 	public static final String SESSION_OAUTH_DATA = "_oauth_data_";
+    public static final String SESSION_AUTH_STATE = "_auth_state_";
+    public static final String SESSION_AUTH_NONCE = "_auth_nonce_";
 
 	/**
 	 * OAuth constants
