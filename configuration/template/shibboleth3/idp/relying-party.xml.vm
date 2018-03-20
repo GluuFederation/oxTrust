@@ -108,7 +108,7 @@
                           p:signRequests="$signRequests"
                         #end
                         #if ($profileConfig.encryptNameIds == 'conditional')
-                          p:encryptNameIds-ref="EncryptNoConfidentiality"
+                          p:encryptNameIDs-ref="EncryptNoConfidentiality"
                         #{else}
                             #set($encryptNameIds = "#if ($profileConfig.encryptNameIds == 'always')true#{else}false#end")
                           p:encryptNameIDs="$encryptNameIds"
@@ -147,7 +147,7 @@
                           p:signRequests="$signRequests"
                         #end
                         #if ($profileConfig.encryptNameIds == 'conditional')
-                          p:encryptNameIds-ref="EncryptNoConfidentiality"
+                          p:encryptNameIDs-ref="EncryptNoConfidentiality"
                         #{else}
                             #set($encryptNameIds = "#if ($profileConfig.encryptNameIds == 'always')true#{else}false#end")
                           p:encryptNameIDs="$encryptNameIds"
@@ -185,7 +185,7 @@
                           p:signRequests="$signRequests"
                         #end
                         #if ($profileConfig.encryptNameIds == 'conditional')
-                          p:encryptNameIds-ref="EncryptNoConfidentiality"
+                          p:encryptNameIDs-ref="EncryptNoConfidentiality"
                         #{else}
                             #set($encryptNameIds = "#if ($profileConfig.encryptNameIds == 'always')true#{else}false#end")
                           p:encryptNameIDs="$encryptNameIds"
