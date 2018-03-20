@@ -195,6 +195,7 @@ public class Shibboleth3ConfService implements Serializable {
 
 		boolean result = (trustParams != null) && (attrParams != null) && (casParams != null) && (attrResolverParams != null);
 		if (!result) {
+                        log.error(">>>>>>>>>> Shibboleth3ConfService.generateConfigurationFiles() - params preparation failed, break files generation");
 			return result;
 		}
 		

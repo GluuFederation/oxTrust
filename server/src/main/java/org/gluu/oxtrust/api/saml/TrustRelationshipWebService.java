@@ -830,6 +830,7 @@ public class TrustRelationshipWebService {
 
         } catch (Exception e) {
             e.printStackTrace();
+            logger.error("Failed to generate certificate", e);
         }
 
 //			String certName = appConfiguration.getCertDir() + File.separator + StringHelper.removePunctuation(appConfiguration.getOrgInum())
