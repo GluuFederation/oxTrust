@@ -660,6 +660,11 @@
             "description": "Validate claim_token as id_token assuming it is issued by local idp.",
             "type": "boolean"
         },
+        "umaGrantAccessIfNoPolicies": {
+            "id": "umaGrantAccessIfNoPolicies",
+            "description": "Specify whether to grant access to resources if there is no any policies associated with scopes.",
+            "type": "boolean"
+        },
         "umaKeepClientDuringResourceSetRegistration": {
             "id": "umaKeepClientDuringResourceSetRegistration",
             "description": "Save client information during resource registration",
