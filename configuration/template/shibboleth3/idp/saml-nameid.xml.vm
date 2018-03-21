@@ -34,10 +34,11 @@
         <ref bean="shibboleth.SAML2TransientGenerator" />
 		
 #if( $resovlerParams.size() > 0 )
-#foreach( $nameIdConfig in $resovlerParams.configs )
+    #foreach( $nameIdConfig in $resovlerParams.configs )
     <bean parent="shibboleth.SAML2AttributeSourcedGenerator" 
         p:format="urn:oasis:names:tc:SAML:2.0:nameid-format:email"
         p:attributeSourceIds="#{ {'$nameIdConfig.attributeName'} }"/>
+    #end
 #end
         
         <!-- Uncommenting this bean requires configuration in saml-nameid.properties. -->
