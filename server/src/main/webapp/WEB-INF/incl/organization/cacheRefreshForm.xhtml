@@ -44,9 +44,12 @@
         
         function calcTime() {
         	var spanvalue = document.querySelector('[id$=":lastrun"]');
-			var lastRunValue = new Date(spanvalue.innerHTML + " UTC");
-			var displayLastRun = (lastRunValue.toString()).replace(/GMT.+/,"");	
-			spanvalue.innerHTML = displayLastRun;    
+        	console.log("spanvalue : " + spanvalue.innerHTML);
+        	if(spanvalue.innerHTML != ''){
+				var lastRunValue = new Date(spanvalue.innerHTML + " UTC");
+				var displayLastRun = (lastRunValue.toString()).replace(/GMT.+/,"");	
+				spanvalue.innerHTML = displayLastRun; 
+			}   
 		}
         
     </h:outputScript>
