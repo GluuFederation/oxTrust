@@ -44,7 +44,7 @@ public class OxTrustClient {
         verifier = initHostnameVerifier();
         Feature loggingFeature = new LoggingFeature(Logger.getLogger(getClass().getName()),
                 Level.ALL,
-                LoggingFeature.Verbosity.PAYLOAD_TEXT,
+                LoggingFeature.Verbosity.PAYLOAD_ANY,
                 32768);// all up to 32768 bytes
         client = ClientBuilder.newBuilder().sslContext(sslContext).hostnameVerifier(verifier)
         .register(loggingFeature)
