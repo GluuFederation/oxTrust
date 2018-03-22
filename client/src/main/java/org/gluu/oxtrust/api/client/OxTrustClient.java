@@ -28,8 +28,6 @@ import java.util.logging.Logger;
  */
 public class OxTrustClient {
     
-    private static Logger logger = Logger.getLogger(OxTrustClient.class.getName());
-    
     private final String baseURI;
     
     private final TrustRelationshipClient trustRelationshipClient;
@@ -44,9 +42,12 @@ public class OxTrustClient {
         this.baseURI = baseURI;
         sslContext = initSSLContext();
         verifier = initHostnameVerifier();
-        Feature feature = new LoggingFeature(logger, Level.INFO, null, null);
+        Feature loggingFeature = new LoggingFeature(Logger.getLogger(getClass().getName()),
+                Level.ALL,
+                LoggingFeature.Verbosity.PAYLOAD_TEXT,
+                32768);// all up to 32768 bytes
         client = ClientBuilder.newBuilder().sslContext(sslContext).hostnameVerifier(verifier)
-        .register(feature)
+        .register(loggingFeature)
         .build();
         
         //TODO: login
