@@ -107,9 +107,7 @@
 						<div class="tab-pane" id="ox-passport">
 							<ui:param name="_ldapoxPassport" 	value="#{_action.ldapOxPassportConfiguration}" />
 							<ui:param name="_ldapPassport" 	value="#{_action.ldapPassportConfigurations}" />
-                                                
-                                                
-							
+
 						<ox:decorate
 									id="PassportEnabledState" label="#{msg['manageAuthentication.passportSupport']}">
 									<h:selectOneMenu value="#{_action.passportEnable}" styleClass="form-control"  
@@ -122,17 +120,33 @@
 						</ox:decorate>	
 						<hr></hr>					
 							
- 					<h:panelGroup id="strategyId" rendered="#{_action.passportEnable.getValue()  eq 'enabled'}">
-	                    <rich:dataGrid iterationStatusVar="status" id="strategyConfigsId" value="#{_ldapPassport}" var="_passportConfig" columns="1" style="width: 100%;" border="0" columnClasses="noBorder">
-	                       <div style="display: inline-block;width: 75% !important;">
-	                        <ox:passportConf passportConfig="#{_passportConfig}" passportConfigFieldList="#{_passportConfig.fieldset}"
-	                            authenicationConfigAction="#{_action}" propertiesAction="#{_configureCacheRefreshAction}"  displayEnable="false"
-	                            renderAfterRomoval="strategyConfigsId"/> 
-	                  		</div> 
-	                    </rich:dataGrid>
-
+	 					<h:panelGroup id="strategyId" rendered="#{_action.passportEnable.getValue()  eq 'enabled'}">
+		                <a4j:region>
+						<a4j:repeat value="#{_ldapPassport}" var="_passportConfig">
+						  <h:panelGroup layout="block" class="card-body">
+								<a4j:commandLink  value="Delete Strategy" immediate="true" onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();" execute="@region" styleClass="btn btn-danger" style="; z-index:1;"/>
+			                    <h:panelGroup layout="block" class="form-script">
+									<ox:decorate id="text" label="Strategy">
+										<div class="row" style="float: left; margin-left: 3px;">
+											<h:inputText value="#{_passportConfig.strategy}"
+												required="true" immediate="true" size="40" maxlength="40"
+												styleClass="searchParameters form-control" />
+										</div>
+									</ox:decorate>
+						
+									<ox:simpleCustomPropertiesList labelAdd="add new property"
+										hideLabel="true" showRemoveDialogue="true"
+										properties="#{_passportConfig.fieldset}"
+										propertiesAction="#{_action}" hideValue="true" />
+								</h:panelGroup>
+	                  		</h:panelGroup>
+                            <ox:acceptRemovalDialog id="deleteConfirmation" subject="Strategy" value="#{_passportConfig.strategy}" deleteMethod="#{managePersonAuthenticationAction.removeStrategy(_passportConfig)}" render="strategyId"/>
+	                  		</a4j:repeat>
+	                    </a4j:region>
                     <h:panelGroup layout="block" styleClass="addConfig">
-                    	<a4j:commandLink styleClass="btn btn-link" value="#{msg['manageAuthentication.addStrategy']}" action="#{_action.addStrategy()}" render="strategyId" execute="@form" style="margin-right:1100px;margin-top:50px;"/>
+                    	<a4j:commandLink styleClass="btn btn-primary" style="font-size:13px !important;" value="#{msg['manageAuthentication.addStrategy']}" action="#{_action.addStrategy()}" render="strategyId" execute="@region">
+                        	<f:param name="sv" value="1" />
+                    	</a4j:commandLink>
                     </h:panelGroup>
                		 </h:panelGroup>
                                         </div>	
