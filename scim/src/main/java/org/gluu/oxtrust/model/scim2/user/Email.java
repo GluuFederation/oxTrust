@@ -81,4 +81,58 @@ public class Email {
         this.primary = primary;
     }
 
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((value == null) ? 0 : value.hashCode());
+        result = prime * result + ((display == null) ? 0 : display.hashCode());
+        result = prime * result + ((type == null) ? 0 : type.hashCode());
+        result = prime * result + ((primary == null) ? 0 : primary.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        Email other = (Email) obj;
+        if (value == null) {
+            if (other.value != null) {
+                return false;
+            }
+        } else if (!value.equals(other.value)) {
+            return false;
+        }
+        if (display == null) {
+            if (other.display != null) {
+                return false;
+            }
+        } else if (!display.equals(other.display)) {
+            return false;
+        }
+        if (type == null) {
+            if (other.type != null) {
+                return false;
+            }
+        } else if (!type.equals(other.type)) {
+            return false;
+        }
+        if (primary == null) {
+            if (other.primary != null) {
+                return false;
+            }
+        } else if (!primary.equals(other.primary)) {
+            return false;
+        }
+        return true;
+    }
+
 }

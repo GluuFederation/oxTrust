@@ -56,6 +56,7 @@ import org.w3c.dom.Document;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.config.oxtrust.AttributeResolverConfiguration;
 import org.xdi.config.oxtrust.LdapOxTrustConfiguration;
+import org.xdi.config.oxtrust.NameIdConfig;
 import org.xdi.config.oxtrust.ShibbolethCASProtocolConfiguration;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuUserRole;
@@ -107,6 +108,7 @@ public class Shibboleth3ConfService implements Serializable {
 	public static final String SHIB3_SP_SHIBBOLETH2_FILE = "shibboleth2.xml";
 	private static final String SHIB3_SP_READ_ME = "/WEB-INF/resources/doc/README_SP.pdf";
 	private static final String SHIB3_SP_READ_ME_WINDOWS = "/WEB-INF/resources/doc/README_SP_windows.pdf";
+	private static final String SHIB3_SAML_NAMEID_FILE = "saml-nameid.xml";
 
 	private static final String SHIB3_SP_METADATA_FILE_PATTERN = "%s-sp-metadata.xml";
 	// private static final String SHIB3_IDP_METADATA_FILE_PATTERN = "%s-idp-metadata.xml";
@@ -188,11 +190,12 @@ public class Shibboleth3ConfService implements Serializable {
 		initAttributes(trustRelationships);
 		HashMap<String, Object> trustParams = initTrustParamMap(trustRelationships);
 		HashMap<String, Object> attrParams = initAttributeParamMap(trustRelationships);
-        HashMap<String, Object> casParams = initCASParamMap();
-        HashMap<String, Object> attrResolverParams = initAttributeResolverParamMap();
+		HashMap<String, Object> casParams = initCASParamMap();
+		HashMap<String, Object> attrResolverParams = initAttributeResolverParamMap();
 
 		boolean result = (trustParams != null) && (attrParams != null) && (casParams != null) && (attrResolverParams != null);
 		if (!result) {
+                        log.error(">>>>>>>>>> Shibboleth3ConfService.generateConfigurationFiles() - params preparation failed, break files generation");
 			return result;
 		}
 		
@@ -212,6 +215,8 @@ public class Shibboleth3ConfService implements Serializable {
 		String casProtocol = templateService.generateConfFile(SHIB3_IDP_CAS_PROTOCOL_FILE, context);
 		// Generate shibboleth2.xml
 		String shibConfig = templateService.generateConfFile(SHIB3_SP_SHIBBOLETH2_FILE, context);
+		// Generate saml-nameid.xml
+		String samlnamedConfig = templateService.generateConfFile(SHIB3_SAML_NAMEID_FILE, context);
 		// Generate handler.xml
 		// String profileHandler = templateService.generateConfFile(SHIB3_IDP_PROFILE_HADLER, context);
 
@@ -234,6 +239,9 @@ public class Shibboleth3ConfService implements Serializable {
 		result &= templateService.writeConfFile(idpConfFolder + SHIB3_IDP_CAS_PROTOCOL_FILE, casProtocol);
 		// Write shibboleth2.xml
 		result &= templateService.writeConfFile(getSpShibboleth3FilePath(), shibConfig);
+		// Write saml-nameid.xml
+		result &= templateService.writeConfFile(idpConfFolder + SHIB3_SAML_NAMEID_FILE, samlnamedConfig);
+		
 		// Write handler.xml
 		// result &= templateService.writeConfFile(idpConfFolder + SHIB3_IDP_PROFILE_HADLER, profileHandler);
 
@@ -394,7 +402,7 @@ public class Shibboleth3ConfService implements Serializable {
 				}
 
 			} else {
-
+                                // add Part Of Federation
 				String federationInum = trustService.getTrustContainerFederation(trustRelationship).getInum();
 
 				if (deconstructedMap.get(federationInum) == null) {
@@ -493,7 +501,7 @@ public class Shibboleth3ConfService implements Serializable {
 		return attrParams;
 	}
         
-        private HashMap<String, Object> initCASParamMap() {
+    private HashMap<String, Object> initCASParamMap() {
 		HashMap<String, Object> casParams = new HashMap<String, Object>();
                 try {
                     ShibbolethCASProtocolConfiguration configuration = casService.loadCASConfiguration();
@@ -514,16 +522,27 @@ public class Shibboleth3ConfService implements Serializable {
     public HashMap<String, Object> initAttributeResolverParamMap() {
     	HashMap<String, Object> attributeResolverParams = new HashMap<String, Object>();
 
+    	List<NameIdConfig> nameIdConfigs = new ArrayList<NameIdConfig>();
+        Map<String, GluuAttribute> nameIdAttributes = new HashMap<String, GluuAttribute>();
+
     	final LdapOxTrustConfiguration conf = configurationFactory.loadConfigurationFromLdap();
 		AttributeResolverConfiguration attributeResolverConfiguration = conf.getAttributeResolverConfig();
-		if ((attributeResolverConfiguration != null) && (StringHelper.isNotEmpty(attributeResolverConfiguration.getAttributeBase()))) {
-			GluuAttribute attribute = attributeService.getAttributeByName(attributeResolverConfiguration.getAttributeBase());
-			
-	    	attributeResolverParams.put("name_id_conf", attributeResolverConfiguration);
-	    	attributeResolverParams.put("name_id_attr_base", attribute);
+		if ((attributeResolverConfiguration != null) && (attributeResolverConfiguration.getNameIdConfigs() != null)) {
+		    for (NameIdConfig nameIdConfig : attributeResolverConfiguration.getNameIdConfigs()) {
+	            if (StringHelper.isNotEmpty(nameIdConfig.getSourceAttribute()) && nameIdConfig.isEnabled()) {
+	                String attributeName = nameIdConfig.getSourceAttribute();
+	                GluuAttribute attribute = attributeService.getAttributeByName(attributeName);
+	                
+                    nameIdConfigs.add(nameIdConfig);
+                    nameIdAttributes.put(attributeName, attribute);
+	            }
+		    }
 		}
 
-		return attributeResolverParams;
+        attributeResolverParams.put("configs", nameIdConfigs);
+        attributeResolverParams.put("attributes", nameIdAttributes);
+
+        return attributeResolverParams;
     }
 
 	private VelocityContext prepareVelocityContext(HashMap<String, Object> trustParams, HashMap<String, Object> attrParams, HashMap<String, Object> casParams, HashMap<String, Object> attrResolverParams, String idpMetadataFolder) {
@@ -765,6 +784,7 @@ public class Shibboleth3ConfService implements Serializable {
 			byte[] spMetadataFileContentBytes = spMetadataFileContent.getBytes("UTF-8");
 			is = new ByteArrayInputStream(spMetadataFileContentBytes);
 		} catch (UnsupportedEncodingException ex) {
+                        log.error("saveSpMetadataFile exception", ex);
 			ex.printStackTrace();
 			return null;
 		}

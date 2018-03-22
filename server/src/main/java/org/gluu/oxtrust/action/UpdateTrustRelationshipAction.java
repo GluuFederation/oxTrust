@@ -1432,8 +1432,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 			os.close();
 			facesContext.responseComplete();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("generateSp() failed", e);
 		}
 
 		facesContext.responseComplete();

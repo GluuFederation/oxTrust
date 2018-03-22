@@ -44,7 +44,7 @@ public class GluuCustomFidoDevice extends Entry {
 	@LdapAttribute(name = "oxLastAccessTime", ignoreDuringUpdate = true)
 	private String lastAccessTime;
 
-	@LdapAttribute(name = "oxStatus", ignoreDuringUpdate = true)
+	@LdapAttribute(name = "oxStatus")
 	private String status;
 
 	@LdapAttribute(name = "displayName")
