@@ -5,6 +5,7 @@
  */
 package org.gluu.oxtrust.api.client;
 
+import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
@@ -47,7 +48,9 @@ public class OxTrustClient {
                 LoggingFeature.Verbosity.PAYLOAD_ANY,
                 32768);// all up to 32768 bytes
         client = ClientBuilder.newBuilder().sslContext(sslContext).hostnameVerifier(verifier)
+        .property(LoggingFeature.LOGGING_FEATURE_VERBOSITY_CLIENT, LoggingFeature.Verbosity.PAYLOAD_ANY)
         .register(loggingFeature)
+        .register(JacksonJsonProvider.class)
         .build();
         
         //TODO: login
