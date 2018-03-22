@@ -26,20 +26,13 @@
 
 #foreach( $trustRelationship in $trustParams.trusts )
 
-        #set ($profileConfigMap = $trustRelationship.profileConfigurations)
-        #if(!$profileConfigMap.isEmpty())
-
-            #* #set($providerId = $StringHelper.removePunctuation($trustRelationship.inum)) *#
-            #* #set($providerUrl = $trustParams.trustEntityIds.get($trustRelationship.inum).get(0)) *#
-            #* #set($providerId = $providerUrl.replaceAll(":[0-9]*$", "").replaceAll("^.*?//", "")) *#
-
-            #if($trustRelationship.spMetaDataSourceType.value == "file" || $trustRelationship.spMetaDataSourceType.value == "generate")
+    #if($trustRelationship.spMetaDataSourceType.value == "file" || $trustRelationship.spMetaDataSourceType.value == "generate")
 
     <MetadataProvider id="SiteSP$trustParams.trustIds.get($trustRelationship.inum)"
                       xsi:type="FilesystemMetadataProvider"
                       metadataFile="$medataFolder$trustRelationship.spMetaDataFN">
 
-            #elseif($trustRelationship.spMetaDataSourceType.value == "uri")
+    #elseif($trustRelationship.spMetaDataSourceType.value == "uri")
 
     <MetadataProvider id="SiteSP$trustParams.trustIds.get($trustRelationship.inum)"
                       xsi:type="FileBackedHTTPMetadataProvider"
@@ -47,42 +40,22 @@
                       metadataURL="$trustRelationship.spMetaDataURL"
                       backingFile="$medataFolder$trustRelationship.spMetaDataFN">
 
-            #end
+    #end
 
-            #if( $trustRelationship.gluuSAMLMetaDataFilter and $trustRelationship.getGluuSAMLMetaDataFilter().size() > 0 )
+    #if( $trustRelationship.gluuSAMLMetaDataFilter and $trustRelationship.getGluuSAMLMetaDataFilter().size() > 0 )
 
         <MetadataFilter xsi:type="ChainingFilter" xmlns="urn:mace:shibboleth:2.0:metadata">
-                #foreach( $filter in $trustRelationship.getGluuSAMLMetaDataFilter() )
+        #foreach( $filter in $trustRelationship.getGluuSAMLMetaDataFilter() )
             $filter
-                #end
+        #end
         </MetadataFilter>
 
-            #end
-
-            #if($trustRelationship.spMetaDataSourceType.value == 'file' || $trustRelationship.spMetaDataSourceType.value == "generate" || $trustRelationship.spMetaDataSourceType.value == 'uri')
-    </MetadataProvider>
-            #end
-
-        #end
-#end
-
-#foreach( $trustRelationship in $trustParams.deconstructed )
-    #set ($profileConfigMap = $trustRelationship.profileConfigurations)
-    
-    #if($trustRelationship.spMetaDataSourceType.value == "generate")
-        <MetadataProvider id="SiteSP$trustParams.trustIds.get($trustRelationship.inum)"
-          xsi:type="FilesystemMetadataProvider"
-          metadataFile="$medataFolder$trustRelationship.spMetaDataFN">
-        #if( $trustRelationship.gluuSAMLMetaDataFilter and $trustRelationship.getGluuSAMLMetaDataFilter().size() > 0 )
-            <MetadataFilter xsi:type="ChainingFilter" xmlns="urn:mace:shibboleth:2.0:metadata">
-                    #foreach( $filter in $trustRelationship.getGluuSAMLMetaDataFilter() )
-                $filter
-                    #end
-            </MetadataFilter>
-        #end
-        </MetadataProvider>
     #end
-        
+
+    #if($trustRelationship.spMetaDataSourceType.value == 'file' || $trustRelationship.spMetaDataSourceType.value == "generate" || $trustRelationship.spMetaDataSourceType.value == 'uri')
+    </MetadataProvider>
+    #end
+
 #end
 
 </MetadataProvider>
