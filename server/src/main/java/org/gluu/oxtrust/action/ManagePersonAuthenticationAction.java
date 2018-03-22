@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
+import java.util.Map.Entry;
 
 import javax.enterprise.context.ConversationScoped;
 import javax.faces.application.FacesMessage;
@@ -28,25 +29,25 @@ import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.EncryptionService;
-import org.gluu.oxtrust.ldap.service.ImageService;
-import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.ldap.service.PassportService;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.model.LdapConfigurationModel;
 import org.gluu.oxtrust.model.OxIDPAuthConf;
+import org.gluu.oxtrust.model.SimpleCustomPropertiesListModel;
 import org.gluu.oxtrust.model.SimplePropertiesListModel;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.exception.mapping.BaseMappingException;
 import org.gluu.persist.ldap.operation.impl.LdapConnectionProvider;
 import org.gluu.persist.model.base.GluuBoolean;
 import org.slf4j.Logger;
-import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.config.oxtrust.LdapOxPassportConfiguration;
+import org.xdi.ldap.model.GluuBoolean;
+import org.xdi.model.SimpleCustomProperty;
+import org.xdi.model.SimpleExtendedCustomProperty;
 import org.xdi.model.SimpleProperty;
 import org.xdi.model.custom.script.CustomScriptType;
 import org.xdi.model.custom.script.model.CustomScript;
 import org.xdi.model.ldap.GluuLdapConfiguration;
-import org.xdi.model.passport.FieldSet;
 import org.xdi.model.passport.PassportConfiguration;
 import org.xdi.service.custom.script.AbstractCustomScriptService;
 import org.xdi.service.security.Secure;
@@ -65,7 +66,7 @@ import org.xdi.util.security.StringEncrypter.EncryptionException;
 @ConversationScoped
 @Secure("#{permissionService.hasPermission('configuration', 'access')}")
 public class ManagePersonAuthenticationAction
-		implements SimplePropertiesListModel, LdapConfigurationModel, Serializable {
+		implements SimplePropertiesListModel, SimpleCustomPropertiesListModel, LdapConfigurationModel, Serializable {
 
 	private static final long serialVersionUID = -4470460481895022468L;
 
@@ -460,12 +461,13 @@ public class ManagePersonAuthenticationAction
 		this.ldapPassportConfigurations.add(passportConfiguration);
 	}
 
-	public void addField(PassportConfiguration passportConfiguration) {
-		String id = getId(passportConfiguration);
+	public void addField(PassportConfiguration removePassportConfiguration) {
 		for (PassportConfiguration passportConfig : this.ldapPassportConfigurations) {
-			String passportid = getId(passportConfig);
-			if (id.equals(passportid)) {
-				passportConfig.getFieldset().add(new FieldSet());
+			if (System.identityHashCode(removePassportConfiguration) == System.identityHashCode(passportConfig)) {
+			    if (passportConfig.getFieldset() == null) {
+			        passportConfig.setFieldset(new ArrayList<SimpleExtendedCustomProperty>());
+			    }
+                passportConfig.getFieldset().add(new SimpleExtendedCustomProperty());
 			}
 		}
 	}
@@ -542,5 +544,29 @@ public class ManagePersonAuthenticationAction
 	public void setActiveLdapConfig(GluuLdapConfiguration activeLdapConfig) {
 		this.activeLdapConfig = activeLdapConfig;
 	}
+
+    @Override
+    public void addItemToSimpleCustomProperties(List<SimpleCustomProperty> simpleCustomProperties) {
+        if (simpleCustomProperties != null) {
+            simpleCustomProperties.add(new SimpleExtendedCustomProperty("", ""));
+        }
+    }
+
+    @Override
+    public void removeItemFromSimpleCustomProperties(List<SimpleCustomProperty> simpleCustomProperties, SimpleCustomProperty simpleCustomProperty) {
+        if (simpleCustomProperties != null) {
+            simpleCustomProperties.remove(simpleCustomProperty);
+        }
+    }
+
+    public void removeStrategy(PassportConfiguration removePassportConfiguration) {
+        for (Iterator<PassportConfiguration> iterator = this.ldapPassportConfigurations.iterator(); iterator.hasNext();) {
+            PassportConfiguration passportConfiguration = iterator.next();
+            if (System.identityHashCode(removePassportConfiguration) == System.identityHashCode(passportConfiguration)) {
+                iterator.remove();
+                return;
+            }
+        }
+    }
 
 }
