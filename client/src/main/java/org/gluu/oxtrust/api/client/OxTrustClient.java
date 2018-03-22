@@ -8,6 +8,7 @@ package org.gluu.oxtrust.api.client;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
+import java.util.logging.Level;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
@@ -15,10 +16,10 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
-import org.glassfish.jersey.client.filter.EncodingFeature;
-import org.glassfish.jersey.filter.LoggingFilter;
-import org.glassfish.jersey.message.GZipEncoder;
+import javax.ws.rs.core.Feature;
+import org.glassfish.jersey.logging.LoggingFeature;
 import org.gluu.oxtrust.api.client.saml.TrustRelationshipClient;
+import java.util.logging.Logger;
 
 /**
  * oxTrust REST webservice client general class.
@@ -26,6 +27,8 @@ import org.gluu.oxtrust.api.client.saml.TrustRelationshipClient;
  * @author Dmitry Ognyannikov
  */
 public class OxTrustClient {
+    
+    private static Logger logger = Logger.getLogger(OxTrustClient.class.getName());
     
     private final String baseURI;
     
@@ -41,10 +44,10 @@ public class OxTrustClient {
         this.baseURI = baseURI;
         sslContext = initSSLContext();
         verifier = initHostnameVerifier();
+        Feature feature = new LoggingFeature(logger, Level.INFO, null, null);
         client = ClientBuilder.newBuilder().sslContext(sslContext).hostnameVerifier(verifier)
-        .register(new EncodingFeature("gzip", GZipEncoder.class))
+        .register(feature)
         .build();
-        client.register(new LoggingFilter(java.util.logging.Logger.global, true));
         
         //TODO: login
         
