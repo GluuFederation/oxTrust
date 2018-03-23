@@ -566,6 +566,32 @@
                                     </h:panelGroup>
                                 </ox:decorate>
 
+                                <ox:decorate id="authorizedOrigins" label="#{msg['clientForm.authorizedOrigin']}">
+                                    <h:panelGroup id="selectedauthorizedOriginsId">
+                                        <h:panelGroup columns="1" width="100%" border="0" cellpadding="0"
+                                                      cellspacing="0">
+                                            <a4j:repeat value="#{_clientAction.authorizedOrigins}" rowKeyVar="_authorizedOriginsIdx"
+                                                        var="_authorizedOrigin" iterationStatusVar="loop">
+                                                <div class="row-fluid">
+                                                    <div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
+                                                        <h:outputText value="#{_authorizedOrigin}"/>
+                                                        <h:outputText value="&#160;"/>
+                                                        <div class="span6 pull-right">
+                                                            <a4j:commandLink styleClass="glyphicon glyphicon-remove"
+                                                                             style="margin-top:-20px;"
+                                                                             action="#{_clientAction.removeAuthorizedOrigin(_authorizedOrigin)}"
+                                                                             execute="@this"
+                                                                             render="selectedAuthorizedOriginsId"
+                                                                             eventsQueue="clientQueue">
+                                                            </a4j:commandLink></div>
+                                                    </div></div>
+                                                <br/>
+                                            </a4j:repeat>
+                                            <richext:spacer height="16"/>
+                                        </h:panelGroup>
+                                    </h:panelGroup>
+                                </ox:decorate>
+
                                 <!-- <ox:decorate id="logoutUri" label="Logout URI">
                                     <rich:inplaceInput value="#{_client.logoutUri}" defaultLabel="click to enter a logout URI" maxlength="60" inputWidth="695" required="false" id="logoutUriId" />
                                 </ox:decorate> -->
@@ -689,6 +715,10 @@
                                             <a4j:commandButton styleClass="btn btn-primary"
                                                                value="#{msg['clientForm.addRequestURI']}"
                                                                oncomplete="#{rich:component('requestUri:inputText')}.show();"
+                                                               execute="@this" eventsQueue="clientQueue"/>
+                                            <a4j:commandButton styleClass="btn btn-primary"
+                                                               value="#{msg['clientForm.addAuthorizedOrigin']}"
+                                                               oncomplete="#{rich:component('authorizedOrigin:inputText')}.show();"
                                                                execute="@this" eventsQueue="clientQueue"/>
                                             <a4j:commandButton styleClass="btn btn-primary"
                                                                value="#{msg['clientForm.addFrontchannelLogoutURI']}"

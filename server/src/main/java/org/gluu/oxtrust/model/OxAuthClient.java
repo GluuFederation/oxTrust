@@ -30,7 +30,7 @@ import java.util.List;
  * @author Reda Zerrad Date: 06.08.2012
  * @author Yuriy Movchan Date: 05/22/2013
  * @author Javier Rojas Blum
- * @version February 6, 2016
+ * @version March 21, 2018
  */
 @LdapEntry(sortBy = {"displayName"})
 @LdapObjectClass(values = {"top", "oxAuthClient"})
@@ -186,6 +186,9 @@ public class OxAuthClient extends Entry implements Serializable {
 
     @LdapAttribute(name = "oxAuthRequestURI")
     private String[] requestUris;
+
+    @LdapAttribute(name = "oxAuthAuthorizedOrigins")
+    private String[] authorizedOrigins;
 
     @LdapAttribute(name = "oxDisabled")
     private boolean disabled;
@@ -569,6 +572,14 @@ public class OxAuthClient extends Entry implements Serializable {
 
     public void setRequestUris(String[] requestUris) {
         this.requestUris = requestUris;
+    }
+
+    public String[] getAuthorizedOrigins() {
+        return authorizedOrigins;
+    }
+
+    public void setAuthorizedOrigins(String[] authorizedOrigins) {
+        this.authorizedOrigins = authorizedOrigins;
     }
 
     public boolean isDisabled() {
