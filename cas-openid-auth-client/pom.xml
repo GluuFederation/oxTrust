@@ -11,7 +11,7 @@
 	<parent>
 		<groupId>org.xdi</groupId>
 		<artifactId>oxtrust</artifactId>
-		<version>2.4.4.sp3</version>
+		<version>2.4.4.sp3.1</version>
 	</parent>
 
 		<properties>
