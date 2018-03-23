@@ -403,6 +403,10 @@ public class TrustService implements Serializable {
 		}
 		return null;
 	}
+
+	public GluuSAMLTrustRelationship getTrustContainerFederation(GluuSAMLTrustRelationship trustRelationship) {
+        return getRelationshipByDn(trustRelationship.getGluuContainerFederation());
+    }
 	
 	public List<GluuSAMLTrustRelationship> searchSAMLTrustRelationships(String pattern, int sizeLimit) {
 		String[] targetArray = new String[] { pattern };
