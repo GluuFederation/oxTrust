@@ -49,7 +49,7 @@ public class OxTrustClient {
                 32768);// all up to 32768 bytes
         client = ClientBuilder.newBuilder().sslContext(sslContext).hostnameVerifier(verifier)
         .property(LoggingFeature.LOGGING_FEATURE_VERBOSITY_CLIENT, LoggingFeature.Verbosity.PAYLOAD_ANY)
-        .register(loggingFeature)
+        .register(new LoggingFeature())
         .register(JacksonJsonProvider.class)
         .build();
         

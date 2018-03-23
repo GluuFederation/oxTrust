@@ -9,6 +9,7 @@ import java.util.List;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.apache.logging.log4j.LogManager;
@@ -39,58 +40,74 @@ public class TrustRelationshipClient extends AbstractClient<GluuSAMLTrustRelatio
     
     public List<SAMLTrustRelationshipShort> list() {
         WebTarget resource = webTarget.path("list");
+        GenericType<List<SAMLTrustRelationshipShort>> responseType = new GenericType<List<SAMLTrustRelationshipShort>>() {};
+        
         return resource.request(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-                .get(List.class);
+                .get(responseType);
     }
     
     public List<SAMLTrustRelationshipShort> listAllFederations() {
         WebTarget resource = webTarget.path("list_all_federations");
+        GenericType<List<SAMLTrustRelationshipShort>> responseType = new GenericType<List<SAMLTrustRelationshipShort>>() {};
+        
         return resource.request(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-                .get(List.class);
+                .get(responseType);
     }
     
     public List<SAMLTrustRelationshipShort> listAllActiveTrustRelationships() {
         WebTarget resource = webTarget.path("list_all_active_trust_relationships");
+        GenericType<List<SAMLTrustRelationshipShort>> responseType = new GenericType<List<SAMLTrustRelationshipShort>>() {};
+        
         return resource.request(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-                .get(List.class);
+                .get(responseType);
     }
     
     public List<SAMLTrustRelationshipShort> listAllOtherFederations(String trustRelationshipInum) {
         WebTarget resource = webTarget.path("list_all_other_federations/{inum}").resolveTemplate("inum", trustRelationshipInum);
+        GenericType<List<SAMLTrustRelationshipShort>> responseType = new GenericType<List<SAMLTrustRelationshipShort>>() {};
+        
         return resource.request(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-                .get(List.class);
+                .get(responseType);
     }
     
     public List<SAMLTrustRelationshipShort> listAllSAMLTrustRelationships(int sizeLimit) {
-        WebTarget resource = webTarget.path("list_all_saml_trust_relationships").queryParam("size_limit", sizeLimit);;
+        WebTarget resource = webTarget.path("list_all_saml_trust_relationships").queryParam("size_limit", sizeLimit);
+        GenericType<List<SAMLTrustRelationshipShort>> responseType = new GenericType<List<SAMLTrustRelationshipShort>>() {};
+        
         return resource.request(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-                .get(List.class);
+                .get(responseType);
     }
     
     public List<SAMLTrustRelationshipShort> listDeconstructedTrustRelationships() {
         WebTarget resource = webTarget.path("list_deconstructed_trust_relationships/{inum}");
+        GenericType<List<SAMLTrustRelationshipShort>> responseType = new GenericType<List<SAMLTrustRelationshipShort>>() {};
+        
         return resource.request(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-                .get(List.class);
+                .get(responseType);
     }
     
     public List<SAMLTrustRelationshipShort> searchTrustRelationships(String pattern, int sizeLimit) {
         WebTarget resource = webTarget.path("search_trust_relationships").queryParam("pattern", pattern).queryParam("size_limit", sizeLimit);
+        GenericType<List<SAMLTrustRelationshipShort>> responseType = new GenericType<List<SAMLTrustRelationshipShort>>() {};
+        
         return resource.request(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-                .get(List.class);
+                .get(responseType);
     }
     
     public List<TrustContact> getContacts(String trustRelationshipInum) {
         WebTarget resource = webTarget.path("/get_contacts/{inum}").resolveTemplate("inum", trustRelationshipInum);
+        GenericType<List<TrustContact>> responseType = new GenericType<List<TrustContact>>() {};
+        
         return resource.request(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-                .get(List.class);
+                .get(responseType);
     }
     
     public void setContacts(String trustRelationshipInum, List<TrustContact> contacts) throws OxTrustAPIException {
