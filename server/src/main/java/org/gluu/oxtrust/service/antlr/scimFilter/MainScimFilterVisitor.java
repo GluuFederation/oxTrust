@@ -312,13 +312,11 @@ public class MainScimFilterVisitor extends ScimFilterBaseVisitor<String> {
     public String visitCriteria(ScimFilterParser.CriteriaContext ctx) {
 
         // logger.info(" visitCriteria() ");
-
         String result = ctx.getText();
-        result = result.replaceAll("^\"|\"$", "");
-        result = result.replaceAll("\\\\", "\5c");
-        result = result.replaceAll("\\*", "\2a");
-        result = result.replaceAll("\\(", "\28");
-        result = result.replaceAll("\\)", "\29");
+        result = result.replaceAll("^\"|\"$", "");  //...leaving this untouched (unsure of its usefulness)
+        result = result.replace("\\", "\\5c").replace("*", "\\2a")
+                .replace("(", "\\28").replace(")", "\\29")
+                .replace("\0", "\\00");
 
         return result;
     }
