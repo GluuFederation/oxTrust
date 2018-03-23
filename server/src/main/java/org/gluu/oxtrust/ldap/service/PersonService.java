@@ -6,8 +6,6 @@
 
 package org.gluu.oxtrust.ldap.service;
 
-import static org.gluu.oxtrust.ldap.service.AppInitializer.LDAP_ENTRY_MANAGER_NAME;
-
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -23,12 +21,12 @@ import javax.inject.Named;
 
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
-import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.User;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.exception.operation.DuplicateEntryException;
 import org.gluu.persist.ldap.impl.LdapEntryManager;
 import org.gluu.persist.model.AttributeData;
+import org.gluu.search.filter.Filter;
 import org.joda.time.format.ISODateTimeFormat;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
@@ -36,8 +34,6 @@ import org.xdi.util.ArrayHelper;
 import org.xdi.util.INumGenerator;
 import org.xdi.util.OxConstants;
 import org.xdi.util.StringHelper;
-
-import org.gluu.search.filter.Filter;
 
 /**
  * Provides operations with persons
