@@ -72,6 +72,10 @@
             <artifactId>jackson-module-jaxb-annotations</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.fasterxml.jackson.jaxrs</groupId>
+            <artifactId>jackson-jaxrs-json-provider</artifactId>
+        </dependency>
+        <dependency>
             <groupId>javax.ws.rs</groupId>
             <artifactId>javax.ws.rs-api</artifactId>
             <version>2.1</version>
@@ -81,11 +85,11 @@
             <artifactId>jersey-client</artifactId>
             <version>2.26</version>
         </dependency>
-        <!--<dependency>
+        <dependency>
             <groupId>org.glassfish.jersey.connectors</groupId>
-            <artifactId>jersey-grizzly-connector</artifactId>
+            <artifactId>jersey-jetty-connector</artifactId>
             <version>2.26</version>
-        </dependency>-->
+        </dependency>
         <dependency>
             <groupId>org.glassfish.jersey.media</groupId>
             <artifactId>jersey-media-jaxb</artifactId>

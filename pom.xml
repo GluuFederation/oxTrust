@@ -510,6 +510,11 @@
                 <artifactId>jackson-module-jaxb-annotations</artifactId>
                 <version>${jackson_fasterxml.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.jaxrs</groupId>
+                <artifactId>jackson-jaxrs-json-provider</artifactId>
+                <version>${jackson_fasterxml.version}</version>
+            </dependency>
 
 			<!-- Jettison -->
 			<dependency>
