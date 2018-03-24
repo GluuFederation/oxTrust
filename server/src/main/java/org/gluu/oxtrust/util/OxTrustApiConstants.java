@@ -10,9 +10,13 @@ public final class OxTrustApiConstants {
 	public static final String GROUPS="/groups";
 	public static final String PEOPLE="/people";
 	public static final String SCOPES="/scopes";
+	public static final String SEARCH="/search";
 	
 	
 	public static final String INUM_PARAM_PATH="/{inum}";
 	public static final String INUM="inum";
+	public static final String SIZE="size";
+	public static final String DISPLAY_NAME="displayName";
+	public static final String SEARCH_PATTERN="pattern";
 
 }
