@@ -30,34 +30,42 @@ public class OxTrustApiClient {
 		login = configuration.getProperty("login");
 		password = configuration.getProperty("password");
 		client = new OxTrustClient(baseURI, login, password);
-		System.out.println("Base Url:"+client.getBaseURI());
+		System.out.println("Base Url:" + client.getBaseURI());
 	}
 
 	public static void main(String[] args) {
 		OxTrustApiClient oxTrustApiClient = new OxTrustApiClient();
 		testGroupScenary(oxTrustApiClient);
+		testPeopleScenary(oxTrustApiClient);
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	private static void testGroupScenary(OxTrustApiClient oxTrustApiClient ) {
+
+	private static void testGroupScenary(OxTrustApiClient oxTrustApiClient) {
 		try {
 			oxTrustApiClient.initAndConnect();
 			GroupTestScenary groupTestScenary = GroupTestScenary.builder().withOxTrustClient(client).build();
 			groupTestScenary.performAdd();
-			//groupTestScenary.performFetchAll();
-			//String inum="@!619C.061B.1A7E.5AF4!0001!4377.CD0A!0003!BEB7.1E6E";
-			//groupTestScenary.performFetchById(inum);
-			//groupTestScenary.performDelete(inum);
+			groupTestScenary.performFetchAll();
+			String inum = "@!619C.061B.1A7E.5AF4!0001!4377.CD0A!0003!BEB7.1E6E";
+			groupTestScenary.performFetchById(inum);
+			groupTestScenary.performDelete(inum);
+		} catch (KeyManagementException e) {
+			logger.error("", e);
+		} catch (NoSuchAlgorithmException e) {
+			logger.error("", e);
+		} catch (IOException e) {
+			logger.error("", e);
+		}
+	}
+
+	private static void testPeopleScenary(OxTrustApiClient oxTrustApiClient) {
+		try {
+			oxTrustApiClient.initAndConnect();
+			PeopleTestScenary peopleTestScenary = PeopleTestScenary.builder().withOxTrustClient(client).build();
+			peopleTestScenary.performAdd();
+			peopleTestScenary.performFetchAll();
+			String inum = "@!619C.061B.1A7E.5AF4!0001!4377.CD0A!0000!E52A.6654.F278.6024";
+			peopleTestScenary.performFetchById(inum);
+			peopleTestScenary.performDelete(inum);
 		} catch (KeyManagementException e) {
 			logger.error("", e);
 		} catch (NoSuchAlgorithmException e) {

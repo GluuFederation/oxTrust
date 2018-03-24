@@ -20,6 +20,7 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.Feature;
 import org.glassfish.jersey.logging.LoggingFeature;
 import org.gluu.oxtrust.api.client.group.GroupClient;
+import org.gluu.oxtrust.api.client.people.PeopleClient;
 import org.gluu.oxtrust.api.client.saml.TrustRelationshipClient;
 import java.util.logging.Logger;
 
@@ -35,6 +36,7 @@ public class OxTrustClient {
 	private final TrustRelationshipClient trustRelationshipClient;
 
 	private final GroupClient groupClient;
+	private final PeopleClient peopleClient;
 
 	private final SSLContext sslContext;
 
@@ -57,6 +59,7 @@ public class OxTrustClient {
 
 		trustRelationshipClient = new TrustRelationshipClient(client, baseURI);
 		groupClient = new GroupClient(client, baseURI);
+		peopleClient = new PeopleClient(client, baseURI);
 
 	}
 
@@ -104,6 +107,10 @@ public class OxTrustClient {
 
 	public GroupClient getGroupClient() {
 		return groupClient;
+	}
+
+	public PeopleClient getPeopleClient() {
+		return peopleClient;
 	}
 
 	public void close() {
