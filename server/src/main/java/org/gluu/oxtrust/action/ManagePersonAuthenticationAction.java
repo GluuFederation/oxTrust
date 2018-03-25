@@ -13,7 +13,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
-import java.util.Map.Entry;
 
 import javax.enterprise.context.ConversationScoped;
 import javax.faces.application.FacesMessage;
@@ -41,7 +40,6 @@ import org.gluu.persist.ldap.operation.impl.LdapConnectionProvider;
 import org.gluu.persist.model.base.GluuBoolean;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.LdapOxPassportConfiguration;
-import org.xdi.ldap.model.GluuBoolean;
 import org.xdi.model.SimpleCustomProperty;
 import org.xdi.model.SimpleExtendedCustomProperty;
 import org.xdi.model.SimpleProperty;
