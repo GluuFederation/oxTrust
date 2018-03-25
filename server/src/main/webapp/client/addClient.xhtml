@@ -103,6 +103,13 @@
                                     render="selectedRequestUrisId" text="#{updateClientAction.availableRequestUri}"
                                     textId="requestUriTextId"/>
 
+                <ox:inputTextDialog acceptMethod="#{updateClientAction.acceptSelectAuthorizedOrigin()}"
+                                    cancelMethod="#{updateClientAction.cancelSelectAuthorizedOrigin()}" dialogWidth="600"
+                                    id="authorizedOrigin" inputLabel="#{msg['client.authorizedOrigin']}" inputWidth="80"
+                                    label="#{msg['client.selectAuthorizedOrigin']}" maxLength="256" queue="clientQueue"
+                                    render="selectedAuthorizedOriginsId" text="#{updateClientAction.availableAuthorizedOrigin}"
+                                    textId="authorizedOriginTextId"/>
+
                 <ox:inputTextDialog acceptMethod="#{updateClientAction.acceptSelectClientLogoutUri()}"
                                     cancelMethod="#{updateClientAction.cancelClientLogoutUri()}" dialogWidth="600"
                                     id="clientLogoutUri" inputLabel="#{msg['client.logoutURI']}" inputWidth="80"
