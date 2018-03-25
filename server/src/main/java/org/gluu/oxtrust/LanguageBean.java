@@ -1,5 +1,6 @@
 package org.gluu.oxtrust;
 
+import org.gluu.oxtrust.action.HomeAction;
 import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
@@ -29,6 +30,9 @@ public class LanguageBean implements Serializable {
 
 	@Inject
 	private PersonService personService;
+
+	@Inject
+	private HomeAction homeAction;
 
 	private static Map<String, Object> countries;
 
@@ -84,6 +88,7 @@ public class LanguageBean implements Serializable {
 				FacesContext.getCurrentInstance().getViewRoot().setLocale((Locale) entry.getValue());
 			}
 		}
+		homeAction.init();
 	}
 
 	private GluuCustomAttribute getLocaleOrNull(GluuCustomPerson gluuCustomPerson) {
