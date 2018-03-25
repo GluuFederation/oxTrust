@@ -13,7 +13,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
-import java.util.Map.Entry;
 
 import javax.enterprise.context.ConversationScoped;
 import javax.faces.application.FacesMessage;
