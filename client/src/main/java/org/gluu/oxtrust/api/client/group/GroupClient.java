@@ -23,7 +23,7 @@ public class GroupClient extends AbstractClient<GluuGroup> {
 	}
 
 	public List<GluuGroup> list() {
-		System.out.println("Final Url:" + webTarget.getUri().toString());
+		logger.debug("Final Url:" + webTarget.getUri().toString());
 		GenericType<List<GluuGroup>> responseType = new GenericType<List<GluuGroup>>() {
 		};
 		return webTarget.request().get(responseType);
@@ -31,14 +31,14 @@ public class GroupClient extends AbstractClient<GluuGroup> {
 
 	public List<GluuGroup> searchGroups(String pattern, int size) {
 		WebTarget resource = webTarget.path("search").queryParam("pattern", pattern).queryParam("size", size);
-		System.out.println("Final Url:" + resource.getUri().toString());
+		logger.debug("Final Url:" + resource.getUri().toString());
 		GenericType<List<GluuGroup>> responseType = new GenericType<List<GluuGroup>>() {
 		};
 		return resource.request(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON).get(responseType);
 	}
 
 	public GluuGroup getGroup(String inum) {
-		System.out.println("Final Url:" + webTarget.getUri().toString());
+		logger.debug("Final Url:" + webTarget.getUri().toString());
 		WebTarget resource = webTarget.path("/{inum}").resolveTemplate("inum", inum);
 		return resource.request(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON).get(GluuGroup.class);
 	}

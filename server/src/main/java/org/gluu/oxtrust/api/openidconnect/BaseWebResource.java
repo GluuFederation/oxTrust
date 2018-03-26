@@ -24,5 +24,9 @@ public class BaseWebResource {
 		}
 		return OxTrustConstants.RESULT_FAILURE;
 	}
+	
+	public void log(Logger logger, Exception e) {
+		logger.debug("", e);
+	}
 
 }
