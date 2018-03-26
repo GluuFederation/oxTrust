@@ -79,7 +79,6 @@ public class SamlTestScenary {
     
     private GluuSAMLTrustRelationship generateRandomeSingleTrustRelationship() {
         int randTestNumber = Math.abs(random.nextInt());
-        
         GluuSAMLTrustRelationship tr = new GluuSAMLTrustRelationship();
         tr.setDisplayName("test_TrustRelationship_#" + randTestNumber);
         tr.setDescription("test TrustRelationship #" + randTestNumber);
