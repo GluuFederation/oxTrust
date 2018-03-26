@@ -77,7 +77,6 @@ public class ClientWebResource extends BaseWebResource {
 	}
 
 	@POST
-	@Consumes({ MediaType.APPLICATION_JSON })
 	@Produces(MediaType.TEXT_PLAIN)
 	@ApiOperation(value = "Add an openidconnect client")
 	public String createClient(OxAuthClient client, @Context HttpServletResponse response) {
