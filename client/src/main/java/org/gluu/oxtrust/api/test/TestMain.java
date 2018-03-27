@@ -8,6 +8,8 @@ package org.gluu.oxtrust.api.test;
 import java.util.Properties;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.SimpleFormatter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.gluu.oxtrust.api.client.OxTrustClient;
@@ -46,6 +48,12 @@ public class TestMain {
         password = configuration.getProperty("password");
     }
     
+    public static void initLogging() {
+        ConsoleHandler handler = new ConsoleHandler();
+        handler.setFormatter(new SimpleFormatter());
+        java.util.logging.Logger.global.addHandler(handler);
+    }
+    
     /**
      * Run tests.
      * 
@@ -59,6 +67,7 @@ public class TestMain {
     }
     
     public static void main(String args[]) {
+        initLogging();
         try {
             TestMain test = new TestMain();
             test.init();

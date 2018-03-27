@@ -36,16 +36,16 @@ public class UmaAuthorizationClient {
     
     private String rpt;
 
-    private String umaAatClientId;
-    private String umaAatClientKeyId;
-    private String umaAatClientJksPath;
-    private String umaAatClientJksPassword;
+    private final String umaAatClientId;
+    private final String umaAatClientKeyId;
+    private final String umaAatClientJksPath;
+    private final String umaAatClientJksPassword;
     
-    private ResteasyClient client;
+    private final ResteasyClient client;
     
     /**
      * Constructs a UmaAuthorizationClient object with the specified parameters and service contract.
-     * @param domain The root URL of the SCIM service. Usually in the form {@code https://your.gluu-server.com/identity/restv1}
+     * @param domain The root URL of the oxTrust API service. Usually in the form {@code https://your.gluu-server.com/identity/restv1}
      * @param umaAatClientId Requesting party Client Id
      * @param umaAatClientJksPath Path to requesting party jks file in local filesystem
      * @param umaAatClientJksPassword Keystore password
@@ -106,8 +106,7 @@ public class UmaAuthorizationClient {
                     }
                 }
                 value= !StringHelper.isEmpty(asUri) && !StringHelper.isEmpty(permissionTicket) && obtainAuthorizedRpt(asUri, permissionTicket);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 throw new OxTrustAuthorizationException(e.getMessage(), e);
             }
         }
@@ -119,8 +118,7 @@ public class UmaAuthorizationClient {
 
         try {
             return StringUtils.isNotBlank(getAuthorizedRpt(asUri, ticket));
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new OxTrustAuthorizationException(e.getMessage(), e);
         }
 
@@ -152,8 +150,7 @@ public class UmaAuthorizationClient {
             this.rpt = rptResponse.getAccessToken();
 
             return rpt;
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             throw new OxTrustAuthorizationException(ex.getMessage(), ex);
         }
 
@@ -195,8 +192,7 @@ public class UmaAuthorizationClient {
             tokenRequest.setAudience(umaMetadata.getTokenEndpoint());
 
             return tokenRequest;
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             throw new OxTrustAuthorizationException("Failed to get client token", ex);
         }
 
