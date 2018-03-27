@@ -5,23 +5,22 @@
  */
 package org.gluu.oxtrust.api.client;
 
+import org.gluu.oxtrust.api.client.util.ClientResponseLoggingFilter;
+import org.gluu.oxtrust.api.client.util.ClientRequestLoggingFilter;
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
-import java.util.logging.Level;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.core.Feature;
 import org.gluu.oxtrust.api.client.group.GroupClient;
 import org.gluu.oxtrust.api.client.people.PeopleClient;
 import org.gluu.oxtrust.api.client.saml.TrustRelationshipClient;
-import java.util.logging.Logger;
+import org.jboss.resteasy.client.jaxrs.ResteasyClient;
+import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 
 /**
  * oxTrust REST webservice client general class.
@@ -35,22 +34,28 @@ public class OxTrustClient {
 	private final TrustRelationshipClient trustRelationshipClient;
 
 	private final GroupClient groupClient;
+        
 	private final PeopleClient peopleClient;
 
 	private final SSLContext sslContext;
 
 	private final HostnameVerifier verifier;
 
-	private final Client client;
+	private final ResteasyClient client;
 
 	public OxTrustClient(String baseURI, String user, String password)
 			throws NoSuchAlgorithmException, KeyManagementException {
 		this.baseURI = baseURI;
 		sslContext = initSSLContext();
 		verifier = initHostnameVerifier();
-		client = ClientBuilder.newBuilder().sslContext(sslContext).hostnameVerifier(verifier)
-				.register(JacksonJsonProvider.class).build();
-
+                client = new ResteasyClientBuilder()
+                        .sslContext(sslContext)
+                        .hostnameVerifier(verifier)
+                        .register(JacksonJsonProvider.class)
+                        .register(new ClientRequestLoggingFilter())
+                        .register(new ClientResponseLoggingFilter())
+                        .build();
+                
 		// TODO: login
 
 		trustRelationshipClient = new TrustRelationshipClient(client, baseURI);

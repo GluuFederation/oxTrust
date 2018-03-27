@@ -7,7 +7,7 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 
-import org.gluu.oxtrust.api.client.AbstractClient;
+import org.gluu.oxtrust.api.client.util.AbstractClient;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 
 public class PeopleClient extends AbstractClient<GluuCustomPerson> {

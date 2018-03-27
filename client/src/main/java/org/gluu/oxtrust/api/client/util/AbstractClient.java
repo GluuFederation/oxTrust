@@ -3,7 +3,7 @@
  *
  * Copyright (c) 2018, Gluu
  */
-package org.gluu.oxtrust.api.client;
+package org.gluu.oxtrust.api.client.util;
 
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.client.Client;
@@ -14,6 +14,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.gluu.oxtrust.api.client.OxTrustAPIException;
 
 /**
  * REST webservice CRUD template.
