@@ -1,5 +1,6 @@
 package org.gluu.oxtrust.api.group;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -23,12 +24,15 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.gluu.oxtrust.api.GluuGroupApi;
+import org.gluu.oxtrust.api.GluuPersonApi;
 import org.gluu.oxtrust.api.openidconnect.BaseWebResource;
 import org.gluu.oxtrust.ldap.service.GroupService;
+import org.gluu.oxtrust.ldap.service.OrganizationService;
+import org.gluu.oxtrust.ldap.service.PersonService;
+import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.util.OxTrustApiConstants;
 import org.slf4j.Logger;
-import org.xdi.config.oxtrust.AppConfiguration;
 
 import com.wordnik.swagger.annotations.ApiOperation;
 
@@ -40,9 +44,10 @@ public class GroupWebResource extends BaseWebResource {
 
 	@Inject
 	private GroupService groupService;
-
 	@Inject
-	private AppConfiguration appConfiguration;
+	private PersonService personService;
+	@Inject
+	private OrganizationService organizationService;
 
 	public GroupWebResource() {
 	}
@@ -51,7 +56,7 @@ public class GroupWebResource extends BaseWebResource {
 	@QueryParam(value = "size")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	@ApiOperation(value = "Get n groups ")
+	@ApiOperation(value = "Get groups ")
 	public Response listGroups(@DefaultValue("0") @QueryParam(OxTrustApiConstants.SIZE) int size,
 			@Context HttpServletResponse response) {
 		log("Get groups");
@@ -119,7 +124,7 @@ public class GroupWebResource extends BaseWebResource {
 			GluuGroup group = groupService.getGroupByInum(inum);
 			if (group != null) {
 				groupService.removeGroup(group);
-				return Response.ok(group).build();
+				return Response.ok().build();
 			} else {
 				return Response.status(Response.Status.NOT_FOUND).build();
 			}
@@ -130,21 +135,22 @@ public class GroupWebResource extends BaseWebResource {
 	}
 
 	@PUT
-	@Path(OxTrustApiConstants.INUM_PARAM_PATH)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Update a group")
-	public Response updateGroup(@PathParam(OxTrustApiConstants.INUM) @NotNull String inum, GluuGroupApi group,
-			@Context HttpServletResponse response) {
-		log("Update group " + group.getDisplayName());
+	public Response updateGroup(GluuGroupApi group) {
+		String inum = group.getInum();
+		log("Update group " + inum);
 		try {
 			Objects.requireNonNull(inum, "inum should not be null");
 			Objects.requireNonNull(group, "Attempt to update null group");
 			GluuGroup existingGroup = groupService.getGroupByInum(inum);
 			if (existingGroup != null) {
 				group.setInum(existingGroup.getInum());
-				groupService.updateGroup(copyAttributes(group));
-				return Response.ok(group).build();
+				GluuGroup groupToUpdate = updateValues(existingGroup,group);
+				groupToUpdate.setDn(groupService.getDnForGroup(inum));
+				groupService.updateGroup(groupToUpdate);
+				return Response.ok(convert(Arrays.asList(groupService.getGroupByInum(inum))).get(0)).build();
 			} else {
 				return Response.status(Response.Status.NOT_FOUND).build();
 			}
@@ -163,12 +169,94 @@ public class GroupWebResource extends BaseWebResource {
 		try {
 			Objects.requireNonNull(group, "Attempt to create null group");
 			GluuGroup gluuGroup = copyAttributes(group);
-			gluuGroup.setBaseDn(appConfiguration.getBaseDN());
 			String inum = groupService.generateInumForNewGroup();
+			gluuGroup.setDn(groupService.getDnForGroup(inum));
 			gluuGroup.setInum(inum);
-			log(gluuGroup.toString());
 			groupService.addGroup(gluuGroup);
-			return Response.ok(groupService.getGroupByInum(inum)).build();
+			return Response.ok(convert(Arrays.asList(groupService.getGroupByInum(inum))).get(0)).build();
+		} catch (Exception e) {
+			log(logger, e);
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+
+	@GET
+	@Path(OxTrustApiConstants.INUM_PARAM_PATH + OxTrustApiConstants.GROUP_MEMBERS)
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@ApiOperation(value = "Get a group members")
+	public Response getGroupMembers(@PathParam(OxTrustApiConstants.INUM) @NotNull String inum,
+			@Context HttpServletResponse response) {
+		log("Get members of group " + inum);
+		try {
+			Objects.requireNonNull(inum, "inum should not be null");
+			GluuGroup group = groupService.getGroupByInum(inum);
+			List<String> members = new ArrayList<>();
+			if (group != null) {
+				GluuGroupApi gluuGroupApi = convert(Arrays.asList(group)).get(0);
+				members = gluuGroupApi.getMembers();
+				return Response.ok(computeMembers(members)).build();
+			} else {
+				return Response.status(Response.Status.NOT_FOUND).build();
+			}
+		} catch (Exception e) {
+			log(logger, e);
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@ApiOperation(value = "Add group member")
+	@Path(OxTrustApiConstants.INUM_PARAM_PATH + OxTrustApiConstants.GROUP_MEMBERS
+			+ OxTrustApiConstants.MEMBER_INUM_PARAM_PATH)
+	public Response addGroupMember(@PathParam(OxTrustApiConstants.INUM) @NotNull String groupInum,
+			@PathParam(OxTrustApiConstants.MEMBER_INUM) @NotNull String memberInum) {
+		log("Add member " + memberInum + " to group" + groupInum);
+		try {
+			Objects.requireNonNull(groupInum, "Group's inum should not be null");
+			Objects.requireNonNull(memberInum, "Member's inum should not be null");
+			GluuGroup group = groupService.getGroupByInum(groupInum);
+			GluuCustomPerson person = personService.getPersonByInum(memberInum);
+			if (group != null && person != null) {
+				List<String> members = new ArrayList<>(group.getMembers());
+				members.add(personService.getDnForPerson(person.getInum()));
+				group.setMembers(members);
+				groupService.updateGroup(group);
+				return Response.ok(Response.Status.OK).build();
+			} else {
+				return Response.status(Response.Status.NOT_FOUND).build();
+			}
+		} catch (Exception e) {
+			log(logger, e);
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+
+	@DELETE
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@ApiOperation(value = "Remove a member from group")
+	@Path(OxTrustApiConstants.INUM_PARAM_PATH + OxTrustApiConstants.GROUP_MEMBERS
+			+ OxTrustApiConstants.MEMBER_INUM_PARAM_PATH)
+	public Response removeGroupMember(@PathParam(OxTrustApiConstants.INUM) @NotNull String groupInum,
+			@PathParam(OxTrustApiConstants.MEMBER_INUM) @NotNull String memberInum) {
+		log("Remove member " + memberInum + " from group" + groupInum);
+		try {
+			Objects.requireNonNull(groupInum, "Group's inum should not be null");
+			Objects.requireNonNull(memberInum, "Member's inum should not be null");
+			GluuGroup group = groupService.getGroupByInum(groupInum);
+			GluuCustomPerson person = personService.getPersonByInum(memberInum);
+			if (group != null && person != null) {
+				List<String> members = new ArrayList<>(group.getMembers());
+				members.remove(personService.getDnForPerson(person.getInum()));
+				group.setMembers(members);
+				groupService.updateGroup(group);
+				return Response.ok().build();
+			} else {
+				return Response.status(Response.Status.NOT_FOUND).build();
+			}
 		} catch (Exception e) {
 			log(logger, e);
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
@@ -177,14 +265,37 @@ public class GroupWebResource extends BaseWebResource {
 
 	private GluuGroup copyAttributes(GluuGroupApi group) {
 		GluuGroup gluuGroup = new GluuGroup();
-		gluuGroup.setInum(group.getInum());
 		gluuGroup.setIname(group.getIname());
 		gluuGroup.setDescription(group.getDescription());
 		gluuGroup.setDisplayName(group.getDisplayName());
-		gluuGroup.setMembers(group.getMembers());
 		gluuGroup.setOwner(group.getOwner());
 		gluuGroup.setStatus(group.getStatus());
+		gluuGroup.setOrganization(organizationService.getDnForOrganization());
+		gluuGroup.setMembers(group.getMembers());
 		return gluuGroup;
+	}
+	
+	private GluuGroup updateValues(GluuGroup gluuGroup,GluuGroupApi group) {
+		gluuGroup.setIname(group.getIname());
+		gluuGroup.setDescription(group.getDescription());
+		gluuGroup.setDisplayName(group.getDisplayName());
+		gluuGroup.setOwner(group.getOwner());
+		gluuGroup.setStatus(group.getStatus());
+		gluuGroup.setOrganization(organizationService.getDnForOrganization());
+		gluuGroup.setMembers(group.getMembers());
+		return gluuGroup;
+	}
+
+	private List<GluuPersonApi> computeMembers(List<String> membersAsString) {
+		List<GluuPersonApi> gluuCustomPersons = new ArrayList<>();
+		if (!membersAsString.isEmpty()) {
+			for (String memberAsString : membersAsString) {
+				String uncompleteinum = memberAsString.split(",")[0];
+				String inum = uncompleteinum.split("=")[1];
+				gluuCustomPersons.add(new GluuPersonApi(personService.getPersonByInum(inum)));
+			}
+		}
+		return gluuCustomPersons;
 	}
 
 	private List<GluuGroupApi> convert(List<GluuGroup> gluuGroups) {

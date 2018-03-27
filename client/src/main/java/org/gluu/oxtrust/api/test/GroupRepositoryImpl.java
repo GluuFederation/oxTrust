@@ -44,6 +44,13 @@ public class GroupRepositoryImpl extends BaseRepository {
 		return createdGroup;
 	}
 
+	public GluuGroupApi updateGroup(GluuGroupApi group) {
+		ResteasyWebTarget target = client.target(PATH);
+		GroupApiProxy simpleClient = target.proxy(GroupApiProxy.class);
+		GluuGroupApi createdGroup = simpleClient.updateGroup(group);
+		return createdGroup;
+	}
+
 	public void deleteGroup(String inum) {
 		ResteasyWebTarget target = client.target(PATH);
 		GroupApiProxy simpleClient = target.proxy(GroupApiProxy.class);
@@ -60,6 +67,7 @@ public class GroupRepositoryImpl extends BaseRepository {
 		String inum = null;
 		list();
 		inum = add();
+		update(inum);
 		getById();
 		search();
 		delete(inum);
@@ -85,12 +93,25 @@ public class GroupRepositoryImpl extends BaseRepository {
 		System.out.println("*******************");
 		System.out.println("Add new Group");
 		GluuGroupApi group = new GluuGroupApi();
-		group.setDescription("all IT students");
-		group.setDisplayName("STUDENTS");
+		group.setDescription("UDM Students");
+		group.setDisplayName("UDM");
 		group.setOrganization("o=@!619C.061B.1A7E.5AF4!0001!4377.CD0A,o=gluu");
 		group.setMembers(null);
 		GluuGroupApi gluuGroupApi = this.createGroup(group);
 		System.out.println("Group Added");
+		return gluuGroupApi.getInum();
+	}
+
+	private String update(String inum) {
+		System.out.println("*******************");
+		System.out.println("Update Group");
+		GluuGroupApi group = new GluuGroupApi();
+		group.setInum(inum);
+		group.setDisplayName("UDM");
+		group.setDescription("Machine learning students");
+		group.setOrganization("o=@!619C.061B.1A7E.5AF4!0001!4377.CD0A,o=gluu");
+		GluuGroupApi gluuGroupApi = this.updateGroup(group);
+		System.out.println("Group updated");
 		return gluuGroupApi.getInum();
 	}
 
