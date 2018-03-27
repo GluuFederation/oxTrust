@@ -18,7 +18,6 @@ import javax.net.ssl.X509TrustManager;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.Feature;
-import org.glassfish.jersey.logging.LoggingFeature;
 import org.gluu.oxtrust.api.client.group.GroupClient;
 import org.gluu.oxtrust.api.client.people.PeopleClient;
 import org.gluu.oxtrust.api.client.saml.TrustRelationshipClient;
@@ -49,11 +48,8 @@ public class OxTrustClient {
 		this.baseURI = baseURI;
 		sslContext = initSSLContext();
 		verifier = initHostnameVerifier();
-		Feature loggingFeature = new LoggingFeature(Logger.getLogger(getClass().getName()), Level.ALL,
-				LoggingFeature.Verbosity.PAYLOAD_ANY, 32768);// all up to 32768 bytes
 		client = ClientBuilder.newBuilder().sslContext(sslContext).hostnameVerifier(verifier)
-				.property(LoggingFeature.LOGGING_FEATURE_VERBOSITY_CLIENT, LoggingFeature.Verbosity.PAYLOAD_ANY)
-				.register(new LoggingFeature()).register(JacksonJsonProvider.class).build();
+				.register(JacksonJsonProvider.class).build();
 
 		// TODO: login
 
