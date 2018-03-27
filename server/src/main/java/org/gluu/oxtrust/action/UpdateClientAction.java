@@ -111,6 +111,14 @@ public class UpdateClientAction implements Serializable {
 	private String availableAuthorizedOrigin = "https://";
 	private String availableClaimRedirectUri = "https://";
 
+	public String getAvailableAuthorizedOrigin() {
+		return availableAuthorizedOrigin;
+	}
+
+	public void setAvailableAuthorizedOrigin(String availableAuthorizedOrigin) {
+		this.availableAuthorizedOrigin = availableAuthorizedOrigin;
+	}
+
 	public String getAvailableClaimRedirectUri() {
 		return availableClaimRedirectUri;
 	}
