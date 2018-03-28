@@ -3,7 +3,7 @@
  *
  * Copyright (c) 2018, Gluu
  */
-package org.gluu.oxtrust.api.client;
+package org.gluu.oxtrust.api.client.util;
 
 import java.util.List;
 import javax.ws.rs.core.Response;
