@@ -130,11 +130,6 @@
 				<artifactId>oxtrust-scim</artifactId>
 				<version>${project.version}</version>
 			</dependency>
-            <dependency>
-                <groupId>org.xdi</groupId>
-                <artifactId>oxtrust-model</artifactId>
-                <version>${project.version}</version>
-            </dependency>
 
 			<!-- oxAuth -->
 			<dependency>
