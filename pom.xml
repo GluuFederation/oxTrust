@@ -33,7 +33,7 @@
 		<weld.version>3.0.3.Final</weld.version>
 		<richfaces.version>4.5.17.Final</richfaces.version>
 		<jsf-api.version>2.2.16</jsf-api.version>
-		<jsf-impl.version>2.3.3.SP1</jsf-impl.version>
+		<jsf-impl.version>2.2.16</jsf-impl.version>
 		<uel.version>2.2</uel.version>
 		<omnifaces.version>2.6.8</omnifaces.version>
 
@@ -47,10 +47,10 @@
 
 		<jetty.version>9.4.7.v20170914</jetty.version>
 
-		<arquillian.version>1.1.11.Final</arquillian.version>
+		<arquillian.version>1.4.0.Final</arquillian.version>
 		<arquillian.rest.version>1.0.0.Alpha4</arquillian.rest.version>
 		<arquillian.drone.version>2.0.1.Final</arquillian.drone.version>
-		<arquillian.graphene.version>2.1.0.CR1</arquillian.graphene.version>
+		<arquillian.graphene.version>2.0.3.Final</arquillian.graphene.version>
 		<shrinkwrap.version>2.1.0</shrinkwrap.version>
 	</properties>
 
@@ -619,7 +619,7 @@
 			<dependency>
 				<groupId>org.testng</groupId>
 				<artifactId>testng</artifactId>
-				<version>6.14.2</version>
+				<version>6.11</version>
 				<scope>test</scope>
 			</dependency>
 
