@@ -7,7 +7,6 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -19,7 +18,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -37,6 +35,8 @@ import org.slf4j.Logger;
 import com.wordnik.swagger.annotations.ApiOperation;
 
 @Path(OxTrustApiConstants.BASE_API_URL + OxTrustApiConstants.GROUPS)
+@Consumes(MediaType.APPLICATION_JSON)
+@Produces(MediaType.APPLICATION_JSON)
 public class GroupWebResource extends BaseWebResource {
 
 	@Inject
@@ -53,12 +53,8 @@ public class GroupWebResource extends BaseWebResource {
 	}
 
 	@GET
-	@QueryParam(value = "size")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Get groups ")
-	public Response listGroups(@DefaultValue("0") @QueryParam(OxTrustApiConstants.SIZE) int size,
-			@Context HttpServletResponse response) {
+	public Response listGroups(@DefaultValue("0") @QueryParam(OxTrustApiConstants.SIZE) int size) {
 		log("Get groups");
 		try {
 			if (size <= 0) {
@@ -74,11 +70,8 @@ public class GroupWebResource extends BaseWebResource {
 
 	@GET
 	@Path(OxTrustApiConstants.INUM_PARAM_PATH)
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Get a group by inum")
-	public Response getGroupByInum(@PathParam(OxTrustApiConstants.INUM) @NotNull String inum,
-			@Context HttpServletResponse response) {
+	public Response getGroupByInum(@PathParam(OxTrustApiConstants.INUM) @NotNull String inum) {
 		log("Get group having group" + inum);
 		try {
 			Objects.requireNonNull(inum, "inum should not be null");
@@ -96,11 +89,9 @@ public class GroupWebResource extends BaseWebResource {
 
 	@GET
 	@Path(OxTrustApiConstants.SEARCH)
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Search groups")
 	public Response searchGroups(@QueryParam(OxTrustApiConstants.SEARCH_PATTERN) @NotNull String pattern,
-			@DefaultValue("1") @QueryParam(OxTrustApiConstants.SIZE) int size, @Context HttpServletResponse response) {
+			@DefaultValue("1") @QueryParam(OxTrustApiConstants.SIZE) int size) {
 		log("Search groups with pattern= " + pattern + " and size " + size);
 		try {
 			List<GluuGroup> groups = groupService.searchGroups(pattern, size);
@@ -113,11 +104,8 @@ public class GroupWebResource extends BaseWebResource {
 
 	@DELETE
 	@Path(OxTrustApiConstants.INUM_PARAM_PATH)
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Delete a group")
-	public Response deleteGroup(@PathParam(OxTrustApiConstants.INUM) @NotNull String inum,
-			@Context HttpServletResponse response) {
+	public Response deleteGroup(@PathParam(OxTrustApiConstants.INUM) @NotNull String inum) {
 		log("Delete group having inum " + inum);
 		try {
 			Objects.requireNonNull(inum, "inum should not be null");
@@ -135,8 +123,6 @@ public class GroupWebResource extends BaseWebResource {
 	}
 
 	@PUT
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Update a group")
 	public Response updateGroup(GluuGroupApi group) {
 		String inum = group.getInum();
@@ -147,7 +133,7 @@ public class GroupWebResource extends BaseWebResource {
 			GluuGroup existingGroup = groupService.getGroupByInum(inum);
 			if (existingGroup != null) {
 				group.setInum(existingGroup.getInum());
-				GluuGroup groupToUpdate = updateValues(existingGroup,group);
+				GluuGroup groupToUpdate = updateValues(existingGroup, group);
 				groupToUpdate.setDn(groupService.getDnForGroup(inum));
 				groupService.updateGroup(groupToUpdate);
 				return Response.ok(convert(Arrays.asList(groupService.getGroupByInum(inum))).get(0)).build();
@@ -161,8 +147,6 @@ public class GroupWebResource extends BaseWebResource {
 	}
 
 	@POST
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Add a group")
 	public Response createGroup(GluuGroupApi group) {
 		log("Adding group " + group.getDisplayName());
@@ -182,11 +166,8 @@ public class GroupWebResource extends BaseWebResource {
 
 	@GET
 	@Path(OxTrustApiConstants.INUM_PARAM_PATH + OxTrustApiConstants.GROUP_MEMBERS)
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Get a group members")
-	public Response getGroupMembers(@PathParam(OxTrustApiConstants.INUM) @NotNull String inum,
-			@Context HttpServletResponse response) {
+	public Response getGroupMembers(@PathParam(OxTrustApiConstants.INUM) @NotNull String inum) {
 		log("Get members of group " + inum);
 		try {
 			Objects.requireNonNull(inum, "inum should not be null");
@@ -206,8 +187,6 @@ public class GroupWebResource extends BaseWebResource {
 	}
 
 	@POST
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Add group member")
 	@Path(OxTrustApiConstants.INUM_PARAM_PATH + OxTrustApiConstants.GROUP_MEMBERS
 			+ OxTrustApiConstants.MEMBER_INUM_PARAM_PATH)
@@ -235,8 +214,6 @@ public class GroupWebResource extends BaseWebResource {
 	}
 
 	@DELETE
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Remove a member from group")
 	@Path(OxTrustApiConstants.INUM_PARAM_PATH + OxTrustApiConstants.GROUP_MEMBERS
 			+ OxTrustApiConstants.MEMBER_INUM_PARAM_PATH)
@@ -274,8 +251,8 @@ public class GroupWebResource extends BaseWebResource {
 		gluuGroup.setMembers(group.getMembers());
 		return gluuGroup;
 	}
-	
-	private GluuGroup updateValues(GluuGroup gluuGroup,GluuGroupApi group) {
+
+	private GluuGroup updateValues(GluuGroup gluuGroup, GluuGroupApi group) {
 		gluuGroup.setIname(group.getIname());
 		gluuGroup.setDescription(group.getDescription());
 		gluuGroup.setDisplayName(group.getDisplayName());
