@@ -198,12 +198,6 @@
 		<dependency>
 			<groupId>com.wywy</groupId>
 			<artifactId>log4j-plugin-fluency</artifactId>
-			<exclusions>
-				<exclusion>
-					<groupId>com.fasterxml.jackson.core</groupId>
-					<artifactId>jackson-databind</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<!-- oxTrust -->
 		<dependency>
@@ -217,14 +211,6 @@
                 <dependency>
                     <groupId>org.xdi</groupId>
                     <artifactId>oxtrust-model</artifactId>
-                    <exclusions>
-                    	<exclusion>
-                    		<groupId>
-                    			com.fasterxml.jackson.core
-                    		</groupId>
-                    		<artifactId>jackson-databind</artifactId>
-                    	</exclusion>
-                    </exclusions>
                 </dependency>
 		<dependency>
 			<groupId>org.xdi</groupId>
@@ -460,7 +446,11 @@
 			<groupId>org.codehaus.jackson</groupId>
 			<artifactId>jackson-mapper-asl</artifactId>
 		</dependency>
-
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+		</dependency>
+                
 		<!-- Asimba -->
 		<dependency>
 			<groupId>org.asimba</groupId>
