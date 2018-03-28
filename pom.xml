@@ -40,12 +40,12 @@
 		<shibboleth.jce.version>1.1.0</shibboleth.jce.version>
 		<shibboleth.idp.version>2.4.5</shibboleth.idp.version>
 
-		<swagger.version>1.5.18</swagger.version>
+		<swagger.version>1.5.3-M1</swagger.version>
 
 		<antlr4.version>4.7.1</antlr4.version>
 		<antlr4.visitor>true</antlr4.visitor>
 
-		<jetty.version>9.4.9.v20180320</jetty.version>
+		<jetty.version>9.4.7.v20170914</jetty.version>
 
 		<arquillian.version>1.4.0.Final</arquillian.version>
 		<arquillian.rest.version>1.0.0.Alpha4</arquillian.rest.version>
