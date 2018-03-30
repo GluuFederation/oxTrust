@@ -21,6 +21,8 @@ public class ClientRequestLoggingFilter implements ClientRequestFilter {
 
     @Override
     public void filter(ClientRequestContext requestContext) throws IOException {
+        logger.log(Level.INFO, "Request URI: {0}", requestContext.getUri());
+        logger.log(Level.INFO, "Request method: {0}", requestContext.getMethod());
         if (requestContext == null || requestContext.getEntity() == null) {
             logger.log(Level.INFO, "empty requestContext");
         }
