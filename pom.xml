@@ -18,15 +18,15 @@
 		<oxauth.version>3.1.3-SNAPSHOT</oxauth.version>
 		<oxasimba.version>3.1.3-SNAPSHOT</oxasimba.version>
 
-		<jackson.version>1.9.11</jackson.version>
-		<jettison.version>1.3.2</jettison.version>
-		<resteasy.version>3.0.21.Final</resteasy.version>
+		<jackson.version>1.9.12</jackson.version>
+		<jettison.version>1.3.8</jettison.version>
+		<resteasy.version>3.0.24.Final</resteasy.version>
 		<jaxr.version>3.0.12.Final</jaxr.version>
 
-		<httpcore.version>4.4.6</httpcore.version>
-		<httpclient.version>4.5.3</httpclient.version>
+		<httpcore.version>4.4.9</httpcore.version>
+		<httpclient.version>4.5.5</httpclient.version>
 
-		<log4j.version>2.8.2</log4j.version>
+		<log4j.version>2.11.0</log4j.version>
 		<slf4j.version>1.7.25</slf4j.version>
 
 		<weld.version>3.0.0.Final</weld.version>
@@ -253,19 +253,19 @@
 			<dependency>
 				<groupId>org.ocpsoft.rewrite</groupId>
 				<artifactId>rewrite-servlet</artifactId>
-				<version>3.4.1.Final</version>
+				<version>3.4.2.Final</version>
 			</dependency>
 			<dependency>
 				<groupId>org.ocpsoft.rewrite</groupId>
 				<artifactId>rewrite-config-prettyfaces</artifactId>
-				<version>3.4.1.Final</version>
+				<version>3.4.2.Final</version>
 			</dependency>
 
 			<!-- Commons libs -->
 			<dependency>
 				<groupId>commons-codec</groupId>
 				<artifactId>commons-codec</artifactId>
-				<version>1.7</version>
+				<version>1.11</version>
 			</dependency>
 			<dependency>
 				<groupId>commons-lang</groupId>
@@ -290,12 +290,12 @@
 			<dependency>
 				<groupId>commons-configuration</groupId>
 				<artifactId>commons-configuration</artifactId>
-				<version>1.9</version>
+				<version>1.10</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.commons</groupId>
 				<artifactId>commons-exec</artifactId>
-				<version>1.1</version>
+				<version>1.3</version>
 			</dependency>
 
 			<!-- Logging -->
@@ -481,7 +481,7 @@
 			<dependency>
 				<groupId>net.sf.ehcache</groupId>
 				<artifactId>ehcache-core</artifactId>
-				<version>2.4.3</version>
+				<version>2.6.11</version>
 			</dependency>
 			<dependency>
 				<groupId>com.googlecode.json-simple</groupId>
@@ -507,7 +507,7 @@
 			<dependency>
 				<groupId>joda-time</groupId>
 				<artifactId>joda-time</artifactId>
-				<version>2.9.3</version>
+				<version>2.9.9</version>
 			</dependency>
 			<dependency>
 				<groupId>net.sourceforge.jexcelapi</groupId>
