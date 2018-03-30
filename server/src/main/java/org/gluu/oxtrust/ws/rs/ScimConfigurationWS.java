@@ -53,6 +53,9 @@ public class ScimConfigurationWS {
     private GroupWebService groupService;
 
     @Inject
+    private FidoDeviceWebService fidoService;
+
+    @Inject
     private BulkWebService bulkService;
 
     @Inject
@@ -60,6 +63,9 @@ public class ScimConfigurationWS {
 
     @Inject
     private ResourceTypeWS resourceTypeService;
+
+    @Inject
+    private SchemaWebService schemaService;
 
     @GET
     @Produces({MediaType.APPLICATION_JSON})
@@ -78,11 +84,12 @@ public class ScimConfigurationWS {
             c2.setVersion("2.0");
             c2.setAuthorizationSupported(new String[]{"uma"});
             c2.setUserEndpoint(userService.getEndpointUrl());
-            c2.setUserSearchEndpoint(userService.getEndpointUrl() + "/" + BaseScimWebService.SEARCH_SUFFIX);
             c2.setGroupEndpoint(groupService.getEndpointUrl());
+            c2.setFidoDevicesEndpoint(fidoService.getEndpointUrl());
             c2.setBulkEndpoint(bulkService.getEndpointUrl());
             c2.setServiceProviderEndpoint(serviceProviderService.getEndpointUrl());
             c2.setResourceTypesEndpoint(resourceTypeService.getEndpointUrl());
+            c2.setSchemasEndpoint(schemaService.getEndpointUrl());
 
             cl.add(c2);
 
