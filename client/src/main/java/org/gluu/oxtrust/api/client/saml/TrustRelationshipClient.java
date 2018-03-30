@@ -83,8 +83,8 @@ public class TrustRelationshipClient extends AbstractClient<GluuSAMLTrustRelatio
                 .get(responseType);
     }
     
-    public List<SAMLTrustRelationshipShort> listDeconstructedTrustRelationships() {
-        WebTarget resource = webTarget.path("list_deconstructed_trust_relationships/{inum}");
+    public List<SAMLTrustRelationshipShort> listDeconstructedTrustRelationships(String trustRelationshipInum) {
+        WebTarget resource = webTarget.path("list_deconstructed_trust_relationships/{inum}").resolveTemplate("inum", trustRelationshipInum);
         GenericType<List<SAMLTrustRelationshipShort>> responseType = new GenericType<List<SAMLTrustRelationshipShort>>() {};
         
         return resource.request(MediaType.APPLICATION_JSON)

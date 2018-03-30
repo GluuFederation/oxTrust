@@ -74,6 +74,17 @@ public class SamlTestScenary {
             //TODO: all API calls
         }
         
+        // test list variants
+        trustRelationships = samlClient.listAllActiveTrustRelationships();
+        
+        trustRelationships = samlClient.listAllFederations();
+        
+        trustRelationships = samlClient.listAllSAMLTrustRelationships(10);
+        
+        //trustRelationships = samlClient.listDeconstructedTrustRelationships("@!38CB.AF15.F4E4.7082!0002!9736.F2AB");
+        
+        // test search
+        trustRelationships = samlClient.searchTrustRelationships("*", 10);
         
     }
     

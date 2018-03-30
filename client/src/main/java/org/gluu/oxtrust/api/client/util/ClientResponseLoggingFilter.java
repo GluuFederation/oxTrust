@@ -24,7 +24,7 @@ public class ClientResponseLoggingFilter implements ClientResponseFilter {
     public void filter(ClientRequestContext requestContext, ClientResponseContext responseContext) throws IOException {        
         logger.log(Level.INFO, "Response status: " + responseContext.getStatus());
         
-        if (responseContext == null || !responseContext.hasEntity()) {
+        if (!responseContext.hasEntity()) {
             logger.log(Level.INFO, "empty responseContext");
         }
     }
