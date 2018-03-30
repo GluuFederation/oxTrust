@@ -38,28 +38,32 @@ public class ScimConfiguration {
 	private String[] authorizationSupported;
 
 	@JsonProperty(value = "user_endpoint")
-	@ApiModelProperty(value = "The endpoint URI at which it's possible Retrieve, Add, Modify Users.", required = true)
+	@ApiModelProperty(value = "The endpoint URI at which it's possible Retrieve, Add, Delete, Modify Users.", required = true)
 	private String userEndpoint;
 
-	@JsonProperty(value = "user_search_endpoint")
-	@ApiModelProperty(value = "The endpoint URI at which it's possible Search Users.", required = true)
-	private String userSearchEndpoint;
-
 	@JsonProperty(value = "group_endpoint")
-	@ApiModelProperty(value = "The endpoint URI at which it's possible Retrieve, Add, Modify Groups.", required = true)
+	@ApiModelProperty(value = "The endpoint URI at which it's possible Retrieve, Add, Delete, Modify Groups.", required = true)
 	private String groupEndpoint;
+
+    @JsonProperty(value = "fido_devices_endpoint")
+    @ApiModelProperty(value = "The endpoint URI at which it's possible Retrieve, Delete, Modify Groups.", required = true)
+    private String fidoDevicesEndpoint;
 
 	@JsonProperty(value = "bulk_endpoint")
 	@ApiModelProperty(value = "The endpoint URI at which it's possible Bulk updates to one or more resources.", required = true)
 	private String bulkEndpoint;
 
 	@JsonProperty(value = "service_provider_endpoint")
-	@ApiModelProperty(value = "The endpoint URI at which it's possible to retreview Service Provider's configuration.", required = true)
+	@ApiModelProperty(value = "The endpoint URI at which it's possible to retrieve Service Provider's configuration.", required = true)
 	private String serviceProviderEndpoint;
 
 	@JsonProperty(value = "resource_types_endpoint")
-	@ApiModelProperty(value = "The endpoint URI at which it's possible to retreview supported Resource Types.", required = true)
+	@ApiModelProperty(value = "The endpoint URI at which it's possible to retrieve supported Resource Types.", required = true)
 	private String resourceTypesEndpoint;
+
+    @JsonProperty(value = "schemas_endpoint")
+    @ApiModelProperty(value = "The endpoint URI at which it's possible to retrieve information about resource schemas supported.", required = true)
+    private String schemasEndpoint;
 
 	public String getVersion() {
 		return version;
@@ -85,14 +89,6 @@ public class ScimConfiguration {
 		this.userEndpoint = userEndpoint;
 	}
 
-	public String getUserSearchEndpoint() {
-		return userSearchEndpoint;
-	}
-
-	public void setUserSearchEndpoint(String userSearchEndpoint) {
-		this.userSearchEndpoint = userSearchEndpoint;
-	}
-
 	public String getGroupEndpoint() {
 		return groupEndpoint;
 	}
@@ -101,7 +97,15 @@ public class ScimConfiguration {
 		this.groupEndpoint = groupEndpoint;
 	}
 
-	public String getBulkEndpoint() {
+    public String getFidoDevicesEndpoint() {
+        return fidoDevicesEndpoint;
+    }
+
+    public void setFidoDevicesEndpoint(String fidoDevicesEndpoint) {
+        this.fidoDevicesEndpoint = fidoDevicesEndpoint;
+    }
+
+    public String getBulkEndpoint() {
 		return bulkEndpoint;
 	}
 
@@ -125,4 +129,11 @@ public class ScimConfiguration {
 		this.resourceTypesEndpoint = resourceTypesEndpoint;
 	}
 
+    public String getSchemasEndpoint() {
+        return schemasEndpoint;
+    }
+
+    public void setSchemasEndpoint(String schemasEndpoint) {
+        this.schemasEndpoint = schemasEndpoint;
+    }
 }
