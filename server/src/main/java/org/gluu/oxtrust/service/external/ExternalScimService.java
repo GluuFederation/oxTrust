@@ -30,21 +30,6 @@ public class ExternalScimService extends ExternalScriptService {
         super(CustomScriptType.SCIM);
     }
 
-    private int executeExternalGetApiVersion(CustomScriptConfiguration customScriptConfiguration) {
-
-        int version=-1;
-        try{
-            log.debug("Executing python 'getApiVersion' method");
-            version=customScriptConfiguration.getExternalType().getApiVersion();
-        }
-        catch (Exception e){
-            log.error(e.getMessage(), e);
-            saveScriptError(customScriptConfiguration.getCustomScript(), e);
-        }
-        return version;
-
-    }
-
     public boolean executeScimCreateUserMethod(GluuCustomPerson user, CustomScriptConfiguration customScriptConfiguration) {
 
         try {
