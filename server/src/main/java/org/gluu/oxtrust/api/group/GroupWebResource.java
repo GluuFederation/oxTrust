@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
@@ -276,7 +275,11 @@ public class GroupWebResource extends BaseWebResource {
 	}
 
 	private List<GluuGroupApi> convert(List<GluuGroup> gluuGroups) {
-		return gluuGroups.stream().map(g -> new GluuGroupApi(g)).collect(Collectors.toList());
+		List<GluuGroupApi> result=new ArrayList<GluuGroupApi>();
+		for (GluuGroup  p:gluuGroups) {
+			result.add(new GluuGroupApi(p) );
+		}
+		return result;
 	}
 
 	private void log(String message) {

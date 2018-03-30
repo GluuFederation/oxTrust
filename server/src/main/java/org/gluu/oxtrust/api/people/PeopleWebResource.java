@@ -1,9 +1,9 @@
 package org.gluu.oxtrust.api.people;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
@@ -117,6 +117,7 @@ public class PeopleWebResource extends BaseWebResource {
 			GluuCustomPerson existingPerson = personService.getPersonByInum(inum);
 			if (existingPerson != null) {
 				person.setInum(existingPerson.getInum());
+				person.setPassword(existingPerson.getUserPassword());
 				GluuCustomPerson personToUpdate = updateValues(existingPerson, person);
 				personToUpdate.setDn(personService.getDnForPerson(inum));
 				personService.updatePerson(personToUpdate);
@@ -150,7 +151,11 @@ public class PeopleWebResource extends BaseWebResource {
 	}
 
 	private List<GluuPersonApi> convert(List<GluuCustomPerson> persons) {
-		return persons.stream().map(g -> new GluuPersonApi(g)).collect(Collectors.toList());
+		List<GluuPersonApi> result = new ArrayList<GluuPersonApi>();
+		for (GluuCustomPerson p : persons) {
+			result.add(new GluuPersonApi(p));
+		}
+		return result;
 	}
 
 	private void log(String message) {
@@ -168,6 +173,8 @@ public class PeopleWebResource extends BaseWebResource {
 		gluuCustomPerson.setSurname(person.getSurName());
 		gluuCustomPerson.setCreationDate(person.getCreationDate());
 		gluuCustomPerson.setStatus(person.getStatus());
+		gluuCustomPerson.setUserPassword(person.getPassword());
+		gluuCustomPerson.setAttribute("oxTrustActive", "true");
 		return gluuCustomPerson;
 	}
 
@@ -180,6 +187,8 @@ public class PeopleWebResource extends BaseWebResource {
 		gluuCustomPerson.setGivenName(person.getGivenName());
 		gluuCustomPerson.setStatus(person.getStatus());
 		gluuCustomPerson.setSurname(person.getSurName());
+		gluuCustomPerson.setUserPassword(person.getPassword());
+		gluuCustomPerson.setAttribute("oxTrustActive", "true");
 		return gluuCustomPerson;
 	}
 
