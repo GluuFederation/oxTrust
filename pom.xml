@@ -78,11 +78,6 @@
 			<name>maven central</name>
 			<url>http://repo1.maven.org/maven2</url>
 		</repository>
-		<repository>
-			<id>repository.redhat.com</id>
-			<name>Redhat Repository</name>
-			<url>https://maven.repository.redhat.com/ga</url>
-		</repository>
         <repository>
             <id>build.shibboleth.net</id>
             <name>shibboleth releases</name>
