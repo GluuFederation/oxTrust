@@ -521,10 +521,10 @@
 				<type>pom</type>
 			</dependency>
 			<dependency>
-				<groupId>org.apache.velocity</groupId>
-				<artifactId>velocity</artifactId>
-				<version>1.7.0.redhat-5</version>
-			</dependency>
+                <groupId>org.apache.velocity</groupId>
+                <artifactId>velocity-engine-core</artifactId>
+                <version>2.0</version>
+            </dependency>
 			<dependency>
 				<groupId>org.opensaml</groupId>
 				<artifactId>xmltooling</artifactId>
