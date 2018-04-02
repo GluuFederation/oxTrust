@@ -48,7 +48,8 @@ public class TestMain {
         password = configuration.getProperty("password");
     }
     
-    public static void initLogging() {
+    @SuppressWarnings("deprecation")
+	public static void initLogging() {
         ConsoleHandler handler = new ConsoleHandler();
         handler.setFormatter(new SimpleFormatter());
         java.util.logging.Logger.global.addHandler(handler);

@@ -75,7 +75,7 @@ public class OxAuthClientRepositoryImpl extends BaseRepository {
 		System.out.println("Done");
 	}
 
-	public String add() {
+	public GluuOxAuthClient addClient() {
 		System.out.println("==================");
 		System.out.println("Add new client");
 		System.out.println("==================");
@@ -84,7 +84,21 @@ public class OxAuthClientRepositoryImpl extends BaseRepository {
 		OxAuthClientProxy client = target.proxy(OxAuthClientProxy.class);
 		GluuOxAuthClient result = client.createClient(gluuOxAuthClient);
 		System.out.println("Client added");
-		return result.getInum();
+		return result;
+	}
+
+	public void updateClient(GluuOxAuthClient gluuOxAuthClient) {
+		gluuOxAuthClient.setOxAuthRedirectURIs(Arrays.asList("https://gasmyr.estelle.com/love"));
+		gluuOxAuthClient.setDisplayName("UpdatedClientName");
+		System.out.println("==================");
+		System.out.println("Update Client " + gluuOxAuthClient.getInum());
+		System.out.println("==================");
+		ResteasyWebTarget target = client.target(PATH);
+		OxAuthClientProxy client = target.proxy(OxAuthClientProxy.class);
+		GluuOxAuthClient updatedClient = client.updateClient(gluuOxAuthClient);
+		System.out.println(updatedClient.getDisplayName());
+		System.out.println("*******************");
+		System.out.println("Done");
 	}
 
 	private GluuOxAuthClient generatedOxAuthClient() {
@@ -105,7 +119,9 @@ public class OxAuthClientRepositoryImpl extends BaseRepository {
 		this.searchClients();
 		this.getClientScopes();
 		// this.deleteClient();
-		this.add();
+		GluuOxAuthClient gluuOxAuthClient = null;
+		gluuOxAuthClient = this.addClient();
+		this.updateClient(gluuOxAuthClient);
 	}
 
 }

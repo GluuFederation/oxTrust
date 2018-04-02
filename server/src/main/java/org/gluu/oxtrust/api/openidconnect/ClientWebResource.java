@@ -157,6 +157,60 @@ public class ClientWebResource extends BaseWebResource {
 		}
 	}
 
+	@POST
+	@Path(OxTrustApiConstants.INUM_PARAM_PATH + OxTrustApiConstants.SCOPES + OxTrustApiConstants.SCOPE_INUM_PARAM_PATH)
+	@ApiOperation(value = "Get client scopes")
+	public Response addScopeToClient(@PathParam(OxTrustApiConstants.INUM) @NotNull String inum,
+			@PathParam(OxTrustApiConstants.SCOPE_INUM) @NotNull String sinum) {
+		log("add new scope to client");
+		try {
+			OxAuthClient client = clientService.getClientByInum(inum);
+			OxAuthScope scope = scopeService.getScopeByInum(sinum);
+			Objects.requireNonNull(client);
+			Objects.requireNonNull(scope);
+			if (client != null && scope != null) {
+				List<String> scopes = new ArrayList<String>(client.getOxAuthScopes());
+				String scopeBaseDn = scopeService.getDnForScope(scope.getInum());
+				scopes.remove(scopeBaseDn);
+				scopes.add(scopeBaseDn);
+				client.setOxAuthScopes(scopes);
+				clientService.updateClient(client);
+				return Response.ok(scopes).build();
+			} else {
+				return Response.status(Response.Status.NOT_FOUND).build();
+			}
+		} catch (Exception e) {
+			log(logger, e);
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+
+	@DELETE
+	@Path(OxTrustApiConstants.INUM_PARAM_PATH + OxTrustApiConstants.SCOPES + OxTrustApiConstants.SCOPE_INUM_PARAM_PATH)
+	@ApiOperation(value = "Get client scopes")
+	public Response removeScopeToClient(@PathParam(OxTrustApiConstants.INUM) @NotNull String inum,
+			@PathParam(OxTrustApiConstants.SCOPE_INUM) @NotNull String sinum) {
+		log("add new scope to client");
+		try {
+			OxAuthClient client = clientService.getClientByInum(inum);
+			OxAuthScope scope = scopeService.getScopeByInum(sinum);
+			Objects.requireNonNull(client);
+			Objects.requireNonNull(scope);
+			if (client != null && scope != null) {
+				List<String> scopes = new ArrayList<String>(client.getOxAuthScopes());
+				scopes.remove(scopeService.getDnForScope(scope.getInum()));
+				client.setOxAuthScopes(scopes);
+				clientService.updateClient(client);
+				return Response.ok(scopes).build();
+			} else {
+				return Response.status(Response.Status.NOT_FOUND).build();
+			}
+		} catch (Exception e) {
+			log(logger, e);
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+
 	@DELETE
 	@Path(OxTrustApiConstants.INUM_PARAM_PATH)
 	@ApiOperation(value = "Delete an openidconnect client")
@@ -179,6 +233,12 @@ public class ClientWebResource extends BaseWebResource {
 
 	@DELETE
 	public Response deleteClients() {
+		return Response.status(Response.Status.UNAUTHORIZED).build();
+	}
+
+	@DELETE
+	@Path(OxTrustApiConstants.INUM_PARAM_PATH + OxTrustApiConstants.SCOPES)
+	public Response deleteClientScopes() {
 		return Response.status(Response.Status.UNAUTHORIZED).build();
 	}
 

@@ -238,9 +238,15 @@ public class GroupWebResource extends BaseWebResource {
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 		}
 	}
-	
+
 	@DELETE
 	public Response deleteGroups() {
+		return Response.status(Response.Status.UNAUTHORIZED).build();
+	}
+
+	@DELETE
+	@Path(OxTrustApiConstants.INUM_PARAM_PATH + OxTrustApiConstants.GROUP_MEMBERS)
+	public Response deleteGroupMembers() {
 		return Response.status(Response.Status.UNAUTHORIZED).build();
 	}
 
@@ -280,9 +286,9 @@ public class GroupWebResource extends BaseWebResource {
 	}
 
 	private List<GluuGroupApi> convert(List<GluuGroup> gluuGroups) {
-		List<GluuGroupApi> result=new ArrayList<GluuGroupApi>();
-		for (GluuGroup  p:gluuGroups) {
-			result.add(new GluuGroupApi(p) );
+		List<GluuGroupApi> result = new ArrayList<GluuGroupApi>();
+		for (GluuGroup p : gluuGroups) {
+			result.add(new GluuGroupApi(p));
 		}
 		return result;
 	}

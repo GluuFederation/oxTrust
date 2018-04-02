@@ -26,52 +26,62 @@ public class PeopleRepositoryImpl extends BaseRepository {
 	public void getAllPersons() {
 		System.out.println("==================");
 		System.out.println("List people");
+		System.out.println("==================");
 		ResteasyWebTarget target = client.target(PATH);
 		PeopleApiProxy peopleClient = target.proxy(PeopleApiProxy.class);
 		for (GluuPersonApi person : peopleClient.getAllPersons()) {
 			System.out.println(person.toString());
 			inum = person.getInum();
 		}
+		System.out.println("*******************");
 		System.out.println("Done");
 	}
 
 	public void getSearchPersons(String pattern) {
 		System.out.println("==================");
 		System.out.println("Search people");
+		System.out.println("==================");
 		ResteasyWebTarget target = client.target(PATH);
 		PeopleApiProxy peopleClient = target.proxy(PeopleApiProxy.class);
 		for (GluuPersonApi person : peopleClient.getSearchPersons(pattern)) {
 			System.out.println(person.toString());
 			inum = person.getInum();
 		}
+		System.out.println("*******************");
 		System.out.println("Done");
 	}
 
 	public void deletePerson(String inum) {
 		System.out.println("==================");
 		System.out.println("Delete person " + inum);
+		System.out.println("==================");
 		ResteasyWebTarget target = client.target(PATH);
 		PeopleApiProxy simpleClient = target.proxy(PeopleApiProxy.class);
 		simpleClient.deletePerson(inum);
+		System.out.println("*******************");
 		System.out.println("Done");
 	}
 
 	public void getPerson(String inum) {
 		System.out.println("==================");
 		System.out.println("Get person" + inum);
+		System.out.println("==================");
 		ResteasyWebTarget target = client.target(PATH);
 		PeopleApiProxy simpleClient = target.proxy(PeopleApiProxy.class);
 		System.out.println(simpleClient.getPerson(inum).toString());
+		System.out.println("*******************");
 		System.out.println("Done");
 	}
 
 	public GluuPersonApi createPerson(GluuPersonApi person) {
 		System.out.println("==================");
 		System.out.println("Add person");
+		System.out.println("==================");
 		ResteasyWebTarget target = client.target(PATH);
 		PeopleApiProxy simpleClient = target.proxy(PeopleApiProxy.class);
 		GluuPersonApi createPerson = simpleClient.createPerson(person);
 		System.out.println(createPerson.toString());
+		System.out.println("*******************");
 		System.out.println("Done");
 		return createPerson;
 	}
@@ -79,10 +89,12 @@ public class PeopleRepositoryImpl extends BaseRepository {
 	public void updatePerson(GluuPersonApi person) {
 		System.out.println("==================");
 		System.out.println("Update person" + person.getInum());
+		System.out.println("==================");
 		ResteasyWebTarget target = client.target(PATH);
 		PeopleApiProxy simpleClient = target.proxy(PeopleApiProxy.class);
 		GluuPersonApi updatedPerson = simpleClient.updatePerson(person);
 		System.out.println(updatedPerson.toString());
+		System.out.println("*******************");
 		System.out.println("Done");
 	}
 

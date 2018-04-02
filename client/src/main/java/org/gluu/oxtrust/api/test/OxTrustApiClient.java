@@ -6,8 +6,10 @@ public class OxTrustApiClient {
 		GroupRepositoryImpl groupRepositoryImpl = new GroupRepositoryImpl();
 		PeopleRepositoryImpl peopleRepositoryImpl = new PeopleRepositoryImpl();
 		OxAuthClientRepositoryImpl oxAuthClientRepositoryImpl = new OxAuthClientRepositoryImpl();
+		GluuScopeRepositoryImpl scopeRepositoryImpl=new GluuScopeRepositoryImpl();
 		groupRepositoryImpl.testAll();
 		peopleRepositoryImpl.testAll();
 		oxAuthClientRepositoryImpl.testAll();
+		scopeRepositoryImpl.testAll();
 	}
 }
