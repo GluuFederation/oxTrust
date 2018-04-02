@@ -150,6 +150,11 @@ public class PeopleWebResource extends BaseWebResource {
 		}
 	}
 
+	@DELETE
+	public Response deletePeople() {
+		return Response.status(Response.Status.UNAUTHORIZED).build();
+	}
+
 	private List<GluuPersonApi> convert(List<GluuCustomPerson> persons) {
 		List<GluuPersonApi> result = new ArrayList<GluuPersonApi>();
 		for (GluuCustomPerson p : persons) {

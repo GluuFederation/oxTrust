@@ -238,6 +238,11 @@ public class GroupWebResource extends BaseWebResource {
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 		}
 	}
+	
+	@DELETE
+	public Response deleteGroups() {
+		return Response.status(Response.Status.UNAUTHORIZED).build();
+	}
 
 	private GluuGroup copyAttributes(GluuGroupApi group) {
 		GluuGroup gluuGroup = new GluuGroup();

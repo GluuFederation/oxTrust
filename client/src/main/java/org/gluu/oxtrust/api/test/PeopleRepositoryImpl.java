@@ -49,7 +49,7 @@ public class PeopleRepositoryImpl extends BaseRepository {
 
 	public void deletePerson(String inum) {
 		System.out.println("==================");
-		System.out.println("Delete person" + inum);
+		System.out.println("Delete person " + inum);
 		ResteasyWebTarget target = client.target(PATH);
 		PeopleApiProxy simpleClient = target.proxy(PeopleApiProxy.class);
 		simpleClient.deletePerson(inum);

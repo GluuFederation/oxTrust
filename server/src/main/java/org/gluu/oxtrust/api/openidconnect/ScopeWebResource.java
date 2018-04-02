@@ -95,7 +95,7 @@ public class ScopeWebResource extends BaseWebResource {
 		String inum = scope.getInum();
 		try {
 			Objects.requireNonNull(scope, "Attempt to update scope null value");
-			Objects.requireNonNull(inum, "Attempt to update scope null value");
+			Objects.requireNonNull(inum);
 			OxAuthScope existingScope = scopeService.getScopeByInum(inum);
 			if (existingScope != null) {
 				scope.setInum(existingScope.getInum());
