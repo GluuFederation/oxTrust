@@ -171,7 +171,7 @@ public class GroupWebResource extends BaseWebResource {
 		try {
 			Objects.requireNonNull(inum, "inum should not be null");
 			GluuGroup group = groupService.getGroupByInum(inum);
-			List<String> members = new ArrayList<>();
+			List<String> members = new ArrayList<String>();
 			if (group != null) {
 				GluuGroupApi gluuGroupApi = convert(Arrays.asList(group)).get(0);
 				members = gluuGroupApi.getMembers();
@@ -198,7 +198,7 @@ public class GroupWebResource extends BaseWebResource {
 			GluuGroup group = groupService.getGroupByInum(groupInum);
 			GluuCustomPerson person = personService.getPersonByInum(memberInum);
 			if (group != null && person != null) {
-				List<String> members = new ArrayList<>(group.getMembers());
+				List<String> members = new ArrayList<String>(group.getMembers());
 				members.add(personService.getDnForPerson(person.getInum()));
 				group.setMembers(members);
 				groupService.updateGroup(group);
@@ -225,7 +225,7 @@ public class GroupWebResource extends BaseWebResource {
 			GluuGroup group = groupService.getGroupByInum(groupInum);
 			GluuCustomPerson person = personService.getPersonByInum(memberInum);
 			if (group != null && person != null) {
-				List<String> members = new ArrayList<>(group.getMembers());
+				List<String> members = new ArrayList<String>(group.getMembers());
 				members.remove(personService.getDnForPerson(person.getInum()));
 				group.setMembers(members);
 				groupService.updateGroup(group);
@@ -263,7 +263,7 @@ public class GroupWebResource extends BaseWebResource {
 	}
 
 	private List<GluuPersonApi> computeMembers(List<String> membersAsString) {
-		List<GluuPersonApi> gluuCustomPersons = new ArrayList<>();
+		List<GluuPersonApi> gluuCustomPersons = new ArrayList<GluuPersonApi>();
 		if (!membersAsString.isEmpty()) {
 			for (String memberAsString : membersAsString) {
 				String uncompleteinum = memberAsString.split(",")[0];
