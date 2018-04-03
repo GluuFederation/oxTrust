@@ -11,7 +11,12 @@ package org.gluu.oxtrust.api.test;
  * @author Dmitry Ognyannikov
  */
 public class APITestException extends Exception {
-    public APITestException(String message) {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -1229384905798189711L;
+
+	public APITestException(String message) {
         super(message);
     }
 }

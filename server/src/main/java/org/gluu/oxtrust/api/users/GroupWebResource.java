@@ -1,4 +1,4 @@
-package org.gluu.oxtrust.api.group;
+package org.gluu.oxtrust.api.users;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -239,6 +239,17 @@ public class GroupWebResource extends BaseWebResource {
 		}
 	}
 
+	@DELETE
+	public Response deleteGroups() {
+		return Response.status(Response.Status.UNAUTHORIZED).build();
+	}
+
+	@DELETE
+	@Path(OxTrustApiConstants.INUM_PARAM_PATH + OxTrustApiConstants.GROUP_MEMBERS)
+	public Response deleteGroupMembers() {
+		return Response.status(Response.Status.UNAUTHORIZED).build();
+	}
+
 	private GluuGroup copyAttributes(GluuGroupApi group) {
 		GluuGroup gluuGroup = new GluuGroup();
 		gluuGroup.setIname(group.getIname());
@@ -275,9 +286,9 @@ public class GroupWebResource extends BaseWebResource {
 	}
 
 	private List<GluuGroupApi> convert(List<GluuGroup> gluuGroups) {
-		List<GluuGroupApi> result=new ArrayList<GluuGroupApi>();
-		for (GluuGroup  p:gluuGroups) {
-			result.add(new GluuGroupApi(p) );
+		List<GluuGroupApi> result = new ArrayList<GluuGroupApi>();
+		for (GluuGroup p : gluuGroups) {
+			result.add(new GluuGroupApi(p));
 		}
 		return result;
 	}

@@ -1,4 +1,4 @@
-package org.gluu.oxtrust.api.people;
+package org.gluu.oxtrust.api.users;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -148,6 +148,11 @@ public class PeopleWebResource extends BaseWebResource {
 			log(logger, e);
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 		}
+	}
+
+	@DELETE
+	public Response deletePeople() {
+		return Response.status(Response.Status.UNAUTHORIZED).build();
 	}
 
 	private List<GluuPersonApi> convert(List<GluuCustomPerson> persons) {

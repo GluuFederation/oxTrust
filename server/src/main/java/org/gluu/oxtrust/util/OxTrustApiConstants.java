@@ -11,6 +11,7 @@ public final class OxTrustApiConstants {
 	public static final String GROUP_MEMBERS="/members";
 	public static final String PEOPLE="/people";
 	public static final String SCOPES="/scopes";
+	public static final String SECTORS="/sectoridentifiers";
 	public static final String SEARCH="/search";
 	
 	
@@ -18,8 +19,10 @@ public final class OxTrustApiConstants {
 	public static final String MEMBER_INUM_PARAM_PATH="/{minum}";
 	public static final String INUM="inum";
 	public static final String MEMBER_INUM="minum";
+	public static final String SCOPE_INUM="sinum";
 	public static final String SIZE="size";
 	public static final String DISPLAY_NAME="displayName";
 	public static final String SEARCH_PATTERN="pattern";
+	public static final String SCOPE_INUM_PARAM_PATH="/{sinum}";
 
 }

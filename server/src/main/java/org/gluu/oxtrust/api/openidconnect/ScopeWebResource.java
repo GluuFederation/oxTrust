@@ -40,6 +40,18 @@ public class ScopeWebResource extends BaseWebResource {
 	}
 
 	@GET
+	@ApiOperation(value = "Get all scopes")
+	public Response getAllScopes() {
+		log("Get all scopes ");
+		try {
+			return Response.ok(scopeService.searchScopes(null, 100)).build();
+		} catch (Exception e) {
+			log(logger, e);
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+
+	@GET
 	@Path(OxTrustApiConstants.INUM_PARAM_PATH)
 	@ApiOperation(value = "Get a specific openidconnect scope")
 	public Response getScopeByInum(@PathParam(OxTrustApiConstants.INUM) @NotNull String inum) {
@@ -60,8 +72,8 @@ public class ScopeWebResource extends BaseWebResource {
 	@GET
 	@Path(OxTrustApiConstants.SEARCH)
 	@ApiOperation(value = "Search scopes")
-	public Response searchScope(@QueryParam(OxTrustApiConstants.SEARCH_PATTERN) @NotNull String pattern,
-			@DefaultValue("1") @QueryParam(value = "size") int size) {
+	public Response searchScope(@QueryParam(OxTrustApiConstants.SEARCH_PATTERN) String pattern,
+			@DefaultValue("10") @QueryParam(value = "size") int size) {
 		log("Search scopes with pattern= " + pattern);
 		try {
 			List<OxAuthScope> scopes = scopeService.searchScopes(pattern, size);
@@ -75,7 +87,7 @@ public class ScopeWebResource extends BaseWebResource {
 	@POST
 	@ApiOperation(value = "Add an openidconnect scope")
 	public Response createScope(OxAuthScope scope) {
-		log("create scope");
+		log("Create scope");
 		try {
 			Objects.requireNonNull(scope, "Attempt to create null scope");
 			String inum = scopeService.generateInumForNewScope();
@@ -93,9 +105,10 @@ public class ScopeWebResource extends BaseWebResource {
 	@ApiOperation(value = "Update openidconect scope")
 	public Response updateScope(OxAuthScope scope) {
 		String inum = scope.getInum();
+		log("Update scope " + inum);
 		try {
 			Objects.requireNonNull(scope, "Attempt to update scope null value");
-			Objects.requireNonNull(inum, "Attempt to update scope null value");
+			Objects.requireNonNull(inum);
 			OxAuthScope existingScope = scopeService.getScopeByInum(inum);
 			if (existingScope != null) {
 				scope.setInum(existingScope.getInum());
@@ -114,6 +127,7 @@ public class ScopeWebResource extends BaseWebResource {
 	@Path(OxTrustApiConstants.INUM_PARAM_PATH)
 	@ApiOperation(value = "Delete an openidconnect scope")
 	public Response deleteScope(@PathParam(OxTrustApiConstants.INUM) @NotNull String inum) {
+		log("delete scope " + inum);
 		try {
 			OxAuthScope scope = scopeService.getScopeByInum(inum);
 			if (scope != null) {
@@ -126,6 +140,11 @@ public class ScopeWebResource extends BaseWebResource {
 			log(logger, e);
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 		}
+	}
+
+	@DELETE
+	public Response deleteScopes() {
+		return Response.status(Response.Status.UNAUTHORIZED).build();
 	}
 
 	private void log(String message) {
