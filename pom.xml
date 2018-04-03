@@ -475,6 +475,11 @@
 				<version>${jackson.databind.version}</version>
 			</dependency>
 			<dependency>
+				<groupId>com.fasterxml.jackson.core</groupId>
+				<artifactId>jackson-annotations</artifactId>
+				<version>${jackson.databind.version}</version>
+			</dependency>
+			<dependency>
 				<groupId>org.codehaus.jackson</groupId>
 				<artifactId>jackson-core-asl</artifactId>
 				<version>${jackson.prev.version}</version>
