@@ -1,4 +1,4 @@
-package org.gluu.oxtrust.api.people;
+package org.gluu.oxtrust.api.users;
 
 import java.util.ArrayList;
 import java.util.Arrays;
