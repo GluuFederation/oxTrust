@@ -555,6 +555,10 @@
 			</exclusions>
 		</dependency>
 		<dependency>
+		    <groupId>org.apache.santuario</groupId>
+		    <artifactId>xmlsec</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.tmatesoft.svnkit</groupId>
 			<artifactId>svnkit</artifactId>
 		</dependency>
