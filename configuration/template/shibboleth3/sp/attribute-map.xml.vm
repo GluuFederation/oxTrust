@@ -127,7 +127,8 @@
     -->
 
 #foreach( $attribute in $attrParams.attributes )
-    <Attribute name="urn:oid:$attrParams.attributeOids.get($attribute.name)" id="$attribute.name"/>
+    #set( $attributeOid = $attrParams.attributeSAML2Strings.get($attribute.name) )
+    <Attribute name="$attributeOid" id="$attribute.name"/>
 #end
 
 </Attributes>
