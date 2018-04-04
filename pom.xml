@@ -588,6 +588,11 @@
 				<version>1.4.4</version>
 			</dependency>
 			<dependency>
+			    <groupId>org.apache.santuario</groupId>
+			    <artifactId>xmlsec</artifactId>
+			    <version>1.5.8</version>
+			</dependency>
+			<dependency>
 				<groupId>org.tmatesoft.svnkit</groupId>
 				<artifactId>svnkit</artifactId>
 				<version>1.7.6</version>
