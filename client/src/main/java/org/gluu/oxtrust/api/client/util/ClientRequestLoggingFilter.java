@@ -5,12 +5,12 @@
  */
 package org.gluu.oxtrust.api.client.util;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ws.rs.client.ClientRequestContext;
 import javax.ws.rs.client.ClientRequestFilter;
+import org.codehaus.jackson.map.ObjectMapper;
 
 /**
  * HTTP request logger.

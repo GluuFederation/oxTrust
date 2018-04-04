@@ -7,7 +7,6 @@ package org.gluu.oxtrust.api.client;
 
 import org.gluu.oxtrust.api.client.util.ClientResponseLoggingFilter;
 import org.gluu.oxtrust.api.client.util.ClientRequestLoggingFilter;
-import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
@@ -16,6 +15,7 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
+import org.codehaus.jackson.jaxrs.JacksonJsonProvider;
 import org.gluu.oxtrust.api.client.group.GroupClient;
 import org.gluu.oxtrust.api.client.people.PeopleClient;
 import org.gluu.oxtrust.api.client.saml.TrustRelationshipClient;
