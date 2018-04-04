@@ -825,6 +825,11 @@ public class Shibboleth3ConfService implements Serializable {
 			return false;
 		}
 
+		if (StringHelper.isEmpty(trustRelationship.getUrl())) {
+		    log.error("Trust relationship URL is empty");
+            return false;
+        }
+
 		return templateService.writeConfFile(idpMetadataFolder + trustRelationship.getSpMetaDataFN(), spMetadataFileContent);
 	}
 	
