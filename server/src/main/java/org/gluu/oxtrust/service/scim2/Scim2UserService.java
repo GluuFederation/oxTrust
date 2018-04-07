@@ -5,8 +5,15 @@
  */
 package org.gluu.oxtrust.service.scim2;
 
+import static org.xdi.ldap.model.GluuBoolean.ACTIVE;
+import static org.xdi.ldap.model.GluuBoolean.INACTIVE;
+
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -15,7 +22,6 @@ import javax.management.InvalidAttributeValueException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response.Status;
 
-import com.unboundid.ldap.sdk.Filter;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.gluu.oxtrust.ldap.service.IGroupService;
@@ -27,12 +33,22 @@ import org.gluu.oxtrust.model.scim2.BaseScimResource;
 import org.gluu.oxtrust.model.scim2.Meta;
 import org.gluu.oxtrust.model.scim2.extensions.Extension;
 import org.gluu.oxtrust.model.scim2.extensions.ExtensionField;
-import org.gluu.oxtrust.model.scim2.user.*;
+import org.gluu.oxtrust.model.scim2.user.Address;
+import org.gluu.oxtrust.model.scim2.user.Email;
+import org.gluu.oxtrust.model.scim2.user.Entitlement;
+import org.gluu.oxtrust.model.scim2.user.Group;
+import org.gluu.oxtrust.model.scim2.user.InstantMessagingAddress;
+import org.gluu.oxtrust.model.scim2.user.Name;
+import org.gluu.oxtrust.model.scim2.user.PhoneNumber;
+import org.gluu.oxtrust.model.scim2.user.Photo;
+import org.gluu.oxtrust.model.scim2.user.Role;
+import org.gluu.oxtrust.model.scim2.user.UserResource;
+import org.gluu.oxtrust.model.scim2.user.X509Certificate;
 import org.gluu.oxtrust.model.scim2.util.IntrospectUtil;
+import org.gluu.oxtrust.model.scim2.util.ScimResourceUtil;
 import org.gluu.oxtrust.service.antlr.scimFilter.ScimFilterParserService;
 import org.gluu.oxtrust.service.external.ExternalScimService;
 import org.gluu.oxtrust.util.ServiceUtil;
-import org.gluu.oxtrust.model.scim2.util.ScimResourceUtil;
 import org.gluu.oxtrust.ws.rs.scim2.GroupWebService;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.joda.time.format.ISODateTimeFormat;
@@ -42,7 +58,7 @@ import org.xdi.ldap.model.GluuBoolean;
 import org.xdi.ldap.model.SortOrder;
 import org.xdi.ldap.model.VirtualListViewResponse;
 
-import static org.xdi.ldap.model.GluuBoolean.*;
+import com.unboundid.ldap.sdk.Filter;
 
 /**
  * This class holds the most important business logic of the SCIM service for the resource type "User". It's devoted to
