@@ -115,8 +115,8 @@
 							propertiesAction="#{cc.attrs.propertiesAction}" required="true"
 							rendered="#{cc.attrs.displayBaseDn}" />
 						
-						<ox:decorate>
-						<a4j:commandLink style= "margin-left:-12px;" styleClass="btn btn-link"
+						<ox:decorate hideLabel="true">
+						<a4j:commandLink style= "margin-left:-12px;" styleClass="btn btn-link col-sm-8"
 							value="#{msg['ldapConfig.changeBindPassword']}"
 							oncomplete="#{rich:component(cc.attrs.changePasswordDialogId)}.show();"
 							rendered="#{cc.attrs.changePasswordDialogId != null}"

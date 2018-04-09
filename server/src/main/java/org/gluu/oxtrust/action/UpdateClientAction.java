@@ -42,7 +42,7 @@ import java.util.*;
  * @author Reda Zerrad Date: 06.11.2012
  * @author Yuriy Movchan Date: 04/07/2014
  * @author Javier Rojas Blum
- * @version December 10, 2015
+ * @version March 21, 2018
  */
 @Named
 @ConversationScoped
@@ -94,6 +94,7 @@ public class UpdateClientAction implements Serializable {
 	private List<String> contacts;
 	private List<String> defaultAcrValues;
 	private List<String> requestUris;
+	private List<String> authorizedOrigins;
 
 	// @NotNull
 	// @Size(min = 2, max = 30, message =
@@ -107,7 +108,16 @@ public class UpdateClientAction implements Serializable {
 	private String availableContact = "";
 	private String availableDefaultAcrValue = "";
 	private String availableRequestUri = "https://";
+	private String availableAuthorizedOrigin = "https://";
 	private String availableClaimRedirectUri = "https://";
+
+	public String getAvailableAuthorizedOrigin() {
+		return availableAuthorizedOrigin;
+	}
+
+	public void setAvailableAuthorizedOrigin(String availableAuthorizedOrigin) {
+		this.availableAuthorizedOrigin = availableAuthorizedOrigin;
+	}
 
 	public String getAvailableClaimRedirectUri() {
 		return availableClaimRedirectUri;
@@ -140,6 +150,7 @@ public class UpdateClientAction implements Serializable {
 			this.contacts = getNonEmptyStringList(client.getContacts());
 			this.defaultAcrValues = getNonEmptyStringList(client.getDefaultAcrValues());
 			this.requestUris = getNonEmptyStringList(client.getRequestUris());
+			this.authorizedOrigins = getNonEmptyStringList(client.getAuthorizedOrigins());
 			this.claimRedirectURIList = getNonEmptyStringList(client.getClaimRedirectURI());
 		} catch (BaseMappingException ex) {
 			log.error("Failed to prepare lists", ex);
@@ -186,6 +197,7 @@ public class UpdateClientAction implements Serializable {
 			this.contacts = getNonEmptyStringList(client.getContacts());
 			this.defaultAcrValues = getNonEmptyStringList(client.getDefaultAcrValues());
 			this.requestUris = getNonEmptyStringList(client.getRequestUris());
+			this.authorizedOrigins = getNonEmptyStringList(client.getAuthorizedOrigins());
 			this.claimRedirectURIList = getNonEmptyStringList(client.getClaimRedirectURI());
 		} catch (BaseMappingException ex) {
 			log.error("Failed to prepare lists", ex);
@@ -237,6 +249,7 @@ public class UpdateClientAction implements Serializable {
 		updateContacts();
 		updateDefaultAcrValues();
 		updateRequestUris();
+		updateAuthorizedOrigins();
 		updateClaimredirectUri();
 
 		// Trim all URI properties
@@ -369,6 +382,20 @@ public class UpdateClientAction implements Serializable {
 		}
 	}
 
+	public void removeAuthorizedOrigin(String authorizedOrigin) {
+		if (StringUtils.isEmpty(authorizedOrigin)) {
+			return;
+		}
+
+		for (Iterator<String> iterator = authorizedOrigins.iterator(); iterator.hasNext();) {
+			String tmpAuthorizationOrigin = iterator.next();
+			if (authorizedOrigin.equals(tmpAuthorizationOrigin)) {
+				iterator.remove();
+				break;
+			}
+		}
+	}
+
 	private void removeFromList(List<String> uriList, String uri) {
 		if (StringUtils.isEmpty(uri)) {
 			return;
@@ -495,6 +522,18 @@ public class UpdateClientAction implements Serializable {
 		this.availableRequestUri = "https://";
 	}
 
+	public void acceptSelectAuthorizedOrigin() {
+		if (StringHelper.isEmpty(this.availableAuthorizedOrigin)) {
+			return;
+		}
+
+		if (!this.authorizedOrigins.contains(this.availableAuthorizedOrigin)) {
+			this.authorizedOrigins.add(this.availableAuthorizedOrigin);
+		}
+
+		this.availableAuthorizedOrigin = "https://";
+	}
+
 	public void acceptSelectScopes() {
 		if (this.availableScopes == null) {
 			return;
@@ -541,6 +580,9 @@ public class UpdateClientAction implements Serializable {
 	}
 
 	public void cancelSelectRequestUri() {
+	}
+
+	public void cancelSelectAuthorizedOrigin() {
 	}
 
 	private void updateLoginURIs() {
@@ -627,6 +669,20 @@ public class UpdateClientAction implements Serializable {
 		}
 
 		client.setRequestUris(tmpRequestUris.toArray(new String[tmpRequestUris.size()]));
+	}
+
+	private void updateAuthorizedOrigins() {
+		if (authorizedOrigins == null || authorizedOrigins.size() == 0) {
+			client.setAuthorizedOrigins(null);
+			return;
+		}
+
+		List<String> tmpAuthorizedOrigins = new ArrayList<String>();
+		for (String authorizedOrigin : authorizedOrigins) {
+			tmpAuthorizedOrigins.add(StringHelper.trimAll(authorizedOrigin));
+		}
+
+		client.setAuthorizedOrigins(tmpAuthorizedOrigins.toArray(new String[tmpAuthorizedOrigins.size()]));
 	}
 	
 	private void updateClaimredirectUri() {
@@ -941,6 +997,10 @@ public class UpdateClientAction implements Serializable {
 		return availableRequestUri;
 	}
 
+	public String availableAuthorizedOrigin() {
+		return availableAuthorizedOrigin;
+	}
+
 	public void setAvailableRequestUri(String availableRequestUri) {
 		this.availableRequestUri = availableRequestUri;
 	}
@@ -991,6 +1051,10 @@ public class UpdateClientAction implements Serializable {
 
 	public List<String> getRequestUris() {
 		return requestUris;
+	}
+
+	public List<String> getAuthorizedOrigins() {
+		return authorizedOrigins;
 	}
 
 	public String getSearchAvailableScopePattern() {

@@ -37,7 +37,7 @@
     #foreach( $nameIdConfig in $resovlerParams.configs )
     <bean parent="shibboleth.SAML2AttributeSourcedGenerator" 
         p:format="urn:oasis:names:tc:SAML:2.0:nameid-format:email"
-        p:attributeSourceIds="#{ {'$nameIdConfig.attributeName'} }"/>
+        p:attributeSourceIds="#{ {'$nameIdConfig.name'} }"/>
     #end
 #end
         

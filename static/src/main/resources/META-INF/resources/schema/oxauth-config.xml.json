@@ -1178,6 +1178,11 @@
             "id": "legacyDynamicRegistrationScopeParam",
             "description": "Legacy Dynamic Registration Scopes JSON Array Param.",
             "type": "boolean"
+        },
+        "skipAuthorizationForOpenIdScopeAndPairwiseId": {
+            "id": "skipAuthorizationForOpenIdScopeAndPairwiseId",
+            "description": "If a client has only openid scope and pairwise id, person should not have to authorize.",
+            "type": "boolean"
         }
     },
     "required": [
@@ -1289,6 +1294,7 @@
         "logClientIdOnClientAuthentication",
         "logClientNameOnClientAuthentication",
         "authorizationRequestCustomAllowedParameters",
-        "legacyDynamicRegistrationScopeParam"
+        "legacyDynamicRegistrationScopeParam",
+        "skipAuthorizationForOpenIdScopeAndPairwiseId"
     ]
 }

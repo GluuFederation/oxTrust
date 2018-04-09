@@ -61,16 +61,17 @@
 									  <ox:viewFileDialog id="viewScriptError" label="Error" text="#{_action.getCustomScriptError(_customScript)}" textHeight="370" textWidth="680"/>
 								  </h:panelGroup>
 								  <h:panelGroup layout="block" id="scriptErrorId">
-									  <a4j:commandLink value="Show Error" rendered="#{_action.hasCustomScriptError(_customScript)}" render="scriptErrorViewId" immediate="true" oncomplete="#{rich:component('viewScriptError:viewFile')}.show();" execute="@this" styleClass="btn btn-danger" style="top: 55px;" />
+									  <a4j:commandLink value="Show Error" rendered="#{_action.hasCustomScriptError(_customScript)}" render="scriptErrorViewId" immediate="true" oncomplete="#{rich:component('viewScriptError:viewFile')}.show();" execute="@this" styleClass="btn btn-danger" style="top: 55px; z-index:1;" />
 								  </h:panelGroup>
 								  <a4j:poll id="scriptErrorPoolId" enabled="#{_customScript.enabled}" interval="10000" render="scriptErrorId" immediate="true" limitRender="true"/>
 			                      <h:panelGroup layout="block" class="form-script">
 		                      			<div  class="form-group">
-			                      			<ox:decorate label="#{msg['customScript.name']}" forId="#{msg['customScript.name']}" tooltip="#{msg['customScript.name']}" oneColumn="true">
-												 <h:inputText value="#{_customScript.name}" size="90" required="true" validatorMessage="Script Name cannot contain space(s)" styleClass="form-control">
-														<f:validateRegex pattern="^[a-zA-Z0-9_]+$"/>						    
-												</h:inputText>
-											</ox:decorate>
+		                      			<h:outputLabel for="#{msg['customScript.name']}" value="#{msg['customScript.name']}" >
+											<span class="hello" data-toggle="tooltip" data-original-title="#{msg['customScript.name']}"><i class="fa fa-info-circle" aria-hidden="true"></i></span>
+										</h:outputLabel>
+										 <h:inputText value="#{_customScript.name}" size="90" required="#{empty param['sv']}" validatorMessage="Script Name cannot contain space(s)" styleClass="form-control" style="width: 90%;">
+												<f:validateRegex pattern="^[a-zA-Z0-9_]+$"/>						    
+										</h:inputText>
 		                                </div>
 
 		                                <div class="form-group">
@@ -180,7 +181,9 @@
 		                    </rich:dataGrid>
 		    
 		                    <h:panelGroup layout="block" styleClass="addConfig">
-		                        <a4j:commandLink styleClass="btn btn-primary" style="font-size:13px !important;" value="#{msg['customScript.addCustomScriptConfiguration']}" action="#{_action.addCustomScript(_scriptType)}" render="customScriptTypeId" execute="@this" />
+		                        <a4j:commandLink styleClass="btn btn-primary" style="font-size:13px !important;" value="#{msg['customScript.addCustomScriptConfiguration']}" action="#{_action.addCustomScript(_scriptType)}" render="customScriptTypeId" execute="@region">
+		                        	<f:param name="sv" value="1" />
+		                        </a4j:commandLink>
 		                    </h:panelGroup>
 
 		                </a4j:region>
