@@ -17,7 +17,7 @@ import org.gluu.oxtrust.model.GluuMetadataSourceType;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 
 /**
- * SAML-relater test requests.
+ * SAML-related test requests.
  * 
  * @author Dmitry Ognyannikov
  */
@@ -27,11 +27,11 @@ public class SamlTestScenary {
     
     private final OxTrustClient client;
     
+    private final Random random = new Random();
+    
     public SamlTestScenary(OxTrustClient client) {
         this.client = client;
     }
-    
-    private final Random random = new Random();
     
     /**
      * Run tests.

@@ -5,6 +5,7 @@
  */
 package org.gluu.oxtrust.api.client;
 
+import java.io.UnsupportedEncodingException;
 import org.gluu.oxtrust.api.client.util.ClientResponseLoggingFilter;
 import org.gluu.oxtrust.api.client.util.ClientRequestLoggingFilter;
 import java.security.KeyManagementException;
@@ -16,10 +17,12 @@ import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import org.codehaus.jackson.jaxrs.JacksonJsonProvider;
+import org.gluu.oxtrust.api.client.certificates.CertificatesClient;
 import org.gluu.oxtrust.api.client.group.GroupClient;
 import org.gluu.oxtrust.api.client.people.PeopleClient;
 import org.gluu.oxtrust.api.client.saml.TrustRelationshipClient;
 import org.gluu.oxtrust.api.client.util.ClientRequestAuthorizationFilter;
+import org.gluu.oxtrust.api.client.util.ClientRequestBASICAuthorizationFilter;
 import org.gluu.oxtrust.api.client.util.UmaAuthorizationClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
@@ -38,6 +41,8 @@ public class OxTrustClient {
 	private final GroupClient groupClient;
         
 	private final PeopleClient peopleClient;
+        
+        private final CertificatesClient certificatesClient;
 
 	private final SSLContext sslContext;
 
@@ -80,6 +85,7 @@ public class OxTrustClient {
 		trustRelationshipClient = new TrustRelationshipClient(client, baseURI);
 		groupClient = new GroupClient(client, baseURI);
 		peopleClient = new PeopleClient(client, baseURI);
+                certificatesClient = new CertificatesClient(client, baseURI);
 	}
 
         /**
@@ -92,7 +98,7 @@ public class OxTrustClient {
          * @throws KeyManagementException 
          */
 	public OxTrustClient(String baseURI, String user, String password)
-			throws NoSuchAlgorithmException, KeyManagementException {
+			throws NoSuchAlgorithmException, KeyManagementException, UnsupportedEncodingException {
 		this.baseURI = baseURI;
 		sslContext = initSSLContext();
 		verifier = initHostnameVerifier();
@@ -100,6 +106,7 @@ public class OxTrustClient {
                         .sslContext(sslContext)
                         .hostnameVerifier(verifier)
                         .register(JacksonJsonProvider.class)
+                        .register(new ClientRequestBASICAuthorizationFilter(user, password))
                         .register(new ClientRequestLoggingFilter())
                         .register(new ClientResponseLoggingFilter())
                         .build();
@@ -109,7 +116,7 @@ public class OxTrustClient {
 		trustRelationshipClient = new TrustRelationshipClient(client, baseURI);
 		groupClient = new GroupClient(client, baseURI);
 		peopleClient = new PeopleClient(client, baseURI);
-
+                certificatesClient = new CertificatesClient(client, baseURI);
 	}
 
 	private SSLContext initSSLContext() throws NoSuchAlgorithmException, KeyManagementException {
@@ -140,16 +147,10 @@ public class OxTrustClient {
 		};
 	}
 
-	/**
-	 * @return the baseURI
-	 */
 	public String getBaseURI() {
 		return baseURI;
 	}
 
-	/**
-	 * @return the trustRelationshipClient
-	 */
 	public TrustRelationshipClient getTrustRelationshipClient() {
 		return trustRelationshipClient;
 	}
@@ -161,6 +162,10 @@ public class OxTrustClient {
 	public PeopleClient getPeopleClient() {
 		return peopleClient;
 	}
+
+        public CertificatesClient getCertificatesClient() {
+		return certificatesClient;
+        }
 
 	public void close() {
 		client.close();
