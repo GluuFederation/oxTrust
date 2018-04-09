@@ -46,33 +46,33 @@ public class SamlTestScenary {
         List<SAMLTrustRelationshipShort> trustRelationships = samlClient.list();
         
         // prevent server data corrupton - work with empty dataset
-        if (trustRelationships.isEmpty()) {
-            GluuSAMLTrustRelationship trGenerated = generateRandomeSingleTrustRelationship();
+        GluuSAMLTrustRelationship trGenerated = generateRandomeSingleTrustRelationship();
 
-            // test create()
-            String inum = samlClient.create(trGenerated);
+        // test create()
+        String inum = samlClient.create(trGenerated);
 
-            // test read()
-            GluuSAMLTrustRelationship trReaded = samlClient.read(inum);
-            //TODO: compare etities
-            trReaded.setDescription("description changed");
+        // test read()
+        GluuSAMLTrustRelationship trReaded = samlClient.read(inum);
+        
+        // compare etities
+        if (!trGenerated.getDisplayName().equals(trReaded.getDisplayName()))
+            throw new APITestException("Readed TrustRelationship isn't equal to saved");
+         
+        trReaded.setDescription("description changed");
 
-            // test update()
-            samlClient.update(trReaded, inum);
-            
-            // test list()
-            trustRelationships = samlClient.list();
-            if (!checkListForTrustRelationship(trustRelationships, inum))
-                throw new APITestException("TrustRelationship really not saved");
-    //        
-    //        // test delete()
-            samlClient.delete(inum);
-            trustRelationships = samlClient.list();
-            if (checkListForTrustRelationship(trustRelationships, inum))
-                throw new APITestException("TrustRelationship really not deleted");
+        // test update()
+        samlClient.update(trReaded, inum);
 
-            //TODO: all API calls
-        }
+        // test list()
+        trustRelationships = samlClient.list();
+        if (!checkListForTrustRelationship(trustRelationships, inum))
+            throw new APITestException("TrustRelationship really not saved");
+//        
+//        // test delete()
+        samlClient.delete(inum);
+        trustRelationships = samlClient.list();
+        if (checkListForTrustRelationship(trustRelationships, inum))
+            throw new APITestException("TrustRelationship really not deleted");
         
         // test list variants
         trustRelationships = samlClient.listAllActiveTrustRelationships();
