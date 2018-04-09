@@ -46,10 +46,14 @@ public class OxTrustClient {
 	private final ResteasyClient client;
 
         /**
-         * Production constructor.
+         * Production oxTrust API client constructor.
          * 
-         * @param baseURI
-         * @param user
+         * @param baseURI  Example: "https://your.gluu-server.com/identity/"
+         * @param domain   Example: "https://your.gluu-server.com/identity/restv1/api"
+         * @param umaAatClientId
+         * @param umaAatClientJksPath
+         * @param umaAatClientJksPassword
+         * @param umaAatClientKeyId
          * @throws NoSuchAlgorithmException
          * @throws KeyManagementException 
          */
@@ -81,9 +85,9 @@ public class OxTrustClient {
         /**
          * Test constructor.
          * 
-         * @param baseURI
-         * @param user
-         * @param password
+         * @param baseURI Example: "https://localhost/identity/"
+         * @param user - test user
+         * @param password - test user password
          * @throws NoSuchAlgorithmException
          * @throws KeyManagementException 
          */
