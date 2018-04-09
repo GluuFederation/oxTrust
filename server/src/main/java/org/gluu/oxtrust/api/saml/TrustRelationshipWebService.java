@@ -75,7 +75,6 @@ import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 import com.wordnik.swagger.annotations.Authorization;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import javax.validation.constraints.NotNull;
 
@@ -158,7 +157,10 @@ public class TrustRelationshipWebService {
         try {
             String inum = trustService.generateInumForNewTrustRelationship();
             trustRelationship.setInum(inum);
-            trustService.addTrustRelationship(trustRelationship);
+            String dn = trustService.getDnForTrustRelationShip(inum);
+            // Save trustRelationship
+            trustRelationship.setDn(dn);
+            saveTR(trustRelationship, false);
             return inum;
         } catch (Exception e) {
             logger.error("create() Exception", e);

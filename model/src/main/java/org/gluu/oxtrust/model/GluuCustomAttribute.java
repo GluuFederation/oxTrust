@@ -6,8 +6,6 @@
 
 package org.gluu.oxtrust.model;
 
-import com.fasterxml.jackson.annotation.JsonSetter;
-import com.fasterxml.jackson.annotation.Nulls;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
@@ -17,7 +15,9 @@ import java.util.Set;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlTransient;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 import org.gluu.persist.model.base.GluuBoolean;
 import org.xdi.model.GluuAttribute;
@@ -30,6 +30,7 @@ import org.xdi.model.GluuAttributeDataType;
  */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
+@XmlSeeAlso({GluuAttribute.class, GluuBoolean.class})
 public class GluuCustomAttribute implements Serializable, Comparable<GluuCustomAttribute> {
 
 	private static final long serialVersionUID = 1468440094325406153L;
@@ -153,21 +154,20 @@ public class GluuCustomAttribute implements Serializable, Comparable<GluuCustomA
 		this.booleanValues = booleanValues;
 	}
         
-        @com.fasterxml.jackson.annotation.JsonIgnore
-        @org.codehaus.jackson.annotate.JsonIgnore
+        //@com.fasterxml.jackson.annotation.JsonIgnore
+        @JsonIgnore
         @XmlTransient
 	public void setValues(String[] values) {
 		this.values = values;
 	}
 
-        @JsonSetter(nulls = Nulls.AS_EMPTY)
 	public void setValues(Collection<String> values) {
 		this.values = values.toArray(new String[0]);
 	}
 
 	// To avoid extra code in CR interceptor script
-        @com.fasterxml.jackson.annotation.JsonIgnore
-        @org.codehaus.jackson.annotate.JsonIgnore
+        //@com.fasterxml.jackson.annotation.JsonIgnore
+        @JsonIgnore
         @XmlTransient
 	public void setValues(Set<String> values) {
 		this.values = values.toArray(new String[0]);

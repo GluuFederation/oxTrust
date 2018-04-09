@@ -43,36 +43,53 @@ public class SamlTestScenary {
     public void run() throws APITestException, OxTrustAPIException {
         TrustRelationshipClient samlClient = client.getTrustRelationshipClient();
         
-        GluuSAMLTrustRelationship trGenerated = generateRandomeSingleTrustRelationship();
-        
-        // test create()
-        String inum = samlClient.create(trGenerated);
-        
-        // test read()
-        GluuSAMLTrustRelationship trReaded = samlClient.read(inum);
-        //TODO: compare etities
-        trReaded.setDescription("description changed");
-        
-        // test update()
-        samlClient.update(trReaded, inum);
-        
-        // test list()
         List<SAMLTrustRelationshipShort> trustRelationships = samlClient.list();
-        if (!checkListForTrustRelationship(trustRelationships, inum))
-            throw new APITestException("TrustRelationship really not saved");
         
-        // test delete()
-        samlClient.delete(inum);
-        trustRelationships = samlClient.list();
-        if (checkListForTrustRelationship(trustRelationships, inum))
-            throw new APITestException("TrustRelationship really not deleted");
+        // prevent server data corrupton - work with empty dataset
+        if (trustRelationships.isEmpty()) {
+            GluuSAMLTrustRelationship trGenerated = generateRandomeSingleTrustRelationship();
+
+            // test create()
+            String inum = samlClient.create(trGenerated);
+
+            // test read()
+            GluuSAMLTrustRelationship trReaded = samlClient.read(inum);
+            //TODO: compare etities
+            trReaded.setDescription("description changed");
+
+            // test update()
+            samlClient.update(trReaded, inum);
+            
+            // test list()
+            trustRelationships = samlClient.list();
+            if (!checkListForTrustRelationship(trustRelationships, inum))
+                throw new APITestException("TrustRelationship really not saved");
+    //        
+    //        // test delete()
+            samlClient.delete(inum);
+            trustRelationships = samlClient.list();
+            if (checkListForTrustRelationship(trustRelationships, inum))
+                throw new APITestException("TrustRelationship really not deleted");
+
+            //TODO: all API calls
+        }
         
-        //TODO: all API calls
+        // test list variants
+        trustRelationships = samlClient.listAllActiveTrustRelationships();
+        
+        trustRelationships = samlClient.listAllFederations();
+        
+        trustRelationships = samlClient.listAllSAMLTrustRelationships(10);
+        
+        //trustRelationships = samlClient.listDeconstructedTrustRelationships("@!38CB.AF15.F4E4.7082!0002!9736.F2AB");
+        
+        // test search
+        trustRelationships = samlClient.searchTrustRelationships("*", 10);
+        
     }
     
     private GluuSAMLTrustRelationship generateRandomeSingleTrustRelationship() {
         int randTestNumber = Math.abs(random.nextInt());
-        
         GluuSAMLTrustRelationship tr = new GluuSAMLTrustRelationship();
         tr.setDisplayName("test_TrustRelationship_#" + randTestNumber);
         tr.setDescription("test TrustRelationship #" + randTestNumber);
