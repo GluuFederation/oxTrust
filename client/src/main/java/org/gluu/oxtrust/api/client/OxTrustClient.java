@@ -19,6 +19,8 @@ import org.codehaus.jackson.jaxrs.JacksonJsonProvider;
 import org.gluu.oxtrust.api.client.group.GroupClient;
 import org.gluu.oxtrust.api.client.people.PeopleClient;
 import org.gluu.oxtrust.api.client.saml.TrustRelationshipClient;
+import org.gluu.oxtrust.api.client.util.ClientRequestAuthorizationFilter;
+import org.gluu.oxtrust.api.client.util.UmaAuthorizationClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 
@@ -43,6 +45,48 @@ public class OxTrustClient {
 
 	private final ResteasyClient client;
 
+        /**
+         * Production constructor.
+         * 
+         * @param baseURI
+         * @param user
+         * @throws NoSuchAlgorithmException
+         * @throws KeyManagementException 
+         */
+	public OxTrustClient(String baseURI, String domain, String umaAatClientId, String umaAatClientJksPath, String umaAatClientJksPassword, String umaAatClientKeyId)
+			throws NoSuchAlgorithmException, KeyManagementException {
+		this.baseURI = baseURI;
+                
+                // Authorization
+                UmaAuthorizationClient umaAuthorizationClient = new UmaAuthorizationClient(domain, umaAatClientId, umaAatClientJksPath, umaAatClientJksPassword, umaAatClientKeyId);
+                String authenticationToken = umaAuthorizationClient.getAuthenticationHeader();
+                
+                // create REST client
+		sslContext = initSSLContext();
+		verifier = initHostnameVerifier();
+                client = new ResteasyClientBuilder()
+                        .sslContext(sslContext)
+                        .hostnameVerifier(verifier)
+                        .register(JacksonJsonProvider.class)
+                        .register(new ClientRequestAuthorizationFilter(authenticationToken))
+                        .register(new ClientRequestLoggingFilter())
+                        .register(new ClientResponseLoggingFilter())
+                        .build();
+
+		trustRelationshipClient = new TrustRelationshipClient(client, baseURI);
+		groupClient = new GroupClient(client, baseURI);
+		peopleClient = new PeopleClient(client, baseURI);
+	}
+
+        /**
+         * Test constructor.
+         * 
+         * @param baseURI
+         * @param user
+         * @param password
+         * @throws NoSuchAlgorithmException
+         * @throws KeyManagementException 
+         */
 	public OxTrustClient(String baseURI, String user, String password)
 			throws NoSuchAlgorithmException, KeyManagementException {
 		this.baseURI = baseURI;
@@ -56,7 +100,7 @@ public class OxTrustClient {
                         .register(new ClientResponseLoggingFilter())
                         .build();
                 
-		// TODO: login
+		// TODO: test login
 
 		trustRelationshipClient = new TrustRelationshipClient(client, baseURI);
 		groupClient = new GroupClient(client, baseURI);

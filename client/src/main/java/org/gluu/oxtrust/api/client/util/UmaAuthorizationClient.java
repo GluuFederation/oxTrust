@@ -45,6 +45,7 @@ public class UmaAuthorizationClient {
     
     /**
      * Constructs a UmaAuthorizationClient object with the specified parameters and service contract.
+     * 
      * @param domain The root URL of the oxTrust API service. Usually in the form {@code https://your.gluu-server.com/identity/restv1}
      * @param umaAatClientId Requesting party Client Id
      * @param umaAatClientJksPath Path to requesting party jks file in local filesystem
@@ -74,7 +75,7 @@ public class UmaAuthorizationClient {
      * @return String built or null if this instance has no RPT yet
      */
     //@Override
-    String getAuthenticationHeader() {
+    public String getAuthenticationHeader() {
     	return StringHelper.isEmpty(rpt) ?  null : "Bearer " + rpt;
     }
 
