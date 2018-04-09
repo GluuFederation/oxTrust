@@ -9,12 +9,10 @@ import javax.inject.Named;
 
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
+import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
 import org.slf4j.Logger;
 import org.xdi.util.StringHelper;
 
-import javax.ejb.Stateless;
-
-@Stateless
 @Named
 public class MemberService implements Serializable {
 
@@ -25,8 +23,9 @@ public class MemberService implements Serializable {
 
 	@Inject
 	private PersonService personService;
+
 	@Inject
-	private Logger logger;
+	private Logger log;
 
 	public void removePerson(GluuCustomPerson person) {
 		// TODO: Do we realy need to remove group if owner is removed?
@@ -43,25 +42,23 @@ public class MemberService implements Serializable {
 	}
 
 	private void removePersonFromGroups(GluuCustomPerson person) {
-		logger.debug("**************************");
-		logger.debug("Removing person from associated group before deletion");
-		String currentPersonDn = personService.getDnForPerson(person.getInum());
+		log.debug("Removing person from associated group before deletion");
+        String pesonDn = person.getDn();
 		// Remove person from associated groups
 		List<String> associatedGroupsDn = person.getMemberOf();
 		for (String groupDn : associatedGroupsDn) {
-			String uncompleteinum = groupDn.split(",")[0];
-			String inum = uncompleteinum.split("=")[1];
-			GluuGroup group = groupService.getGroupByInum(inum);
+			GluuGroup group = groupService.getGroupByDn(groupDn);
+
 			List<String> members = new ArrayList<String>(group.getMembers());
-			members.remove(currentPersonDn);
+			members.remove(pesonDn);
 			group.setMembers(members);
 			try {
 				groupService.updateGroup(group);
-			} catch (Exception e) {
-				e.printStackTrace();
+			} catch (EntryPersistenceException ex) {
+			    log.error("Failed to remove preson '{}' from group '{}'", ex);
 			}
 		}
-		logger.debug("Done");
+		log.debug("All group updated");
 	}
 
 }

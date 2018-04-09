@@ -74,7 +74,7 @@ public class GroupService implements Serializable, IGroupService {
 	 * @see org.gluu.oxtrust.ldap.service.IGroupService#updateGroup(org.gluu.oxtrust.model.GluuGroup)
 	 */
 	@Override
-	public void updateGroup(GluuGroup group) throws Exception {
+	public void updateGroup(GluuGroup group) {
 		ldapEntryManager.merge(group);
 
 	}
