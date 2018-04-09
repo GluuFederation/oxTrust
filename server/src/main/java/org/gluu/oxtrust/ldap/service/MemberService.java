@@ -9,7 +9,7 @@ import javax.inject.Named;
 
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
-import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
+import org.gluu.persist.exception.mapping.EntryPersistenceException;
 import org.slf4j.Logger;
 import org.xdi.util.StringHelper;
 
