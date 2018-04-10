@@ -442,6 +442,16 @@
             "type": "string",
             "minLength": 1
         },
+        "metricReporterInterval": {
+            "id": "metricReporterInterval",
+            "description": "The interval for metric reporter in seconds.",
+            "type": "integer",
+            "multipleOf": 1,
+            "maximum": 2147483647,
+            "minimum": 1,
+            "exclusiveMaximum": false,
+            "exclusiveMinimum": false
+        },
         "rptConnectionPoolUseConnectionPooling": {
             "id": "rptConnectionPoolUseConnectionPooling",
             "type": "boolean"
@@ -658,6 +668,7 @@
         "recaptchaSecretKey",
         "cssLocation",
         "jsLocation",
+        "metricReporterInterval",
         "rptConnectionPoolUseConnectionPooling",
         "rptConnectionPoolMaxTotal",
         "rptConnectionPoolDefaultMaxPerRoute",
