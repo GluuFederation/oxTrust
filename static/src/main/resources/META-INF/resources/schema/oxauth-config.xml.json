@@ -165,6 +165,13 @@
             "format": "url",
             "minLength": 1
         },
+        "oxElevenJwksEndpoint": {
+            "id": "oxElevenJwksEndpoint",
+            "description": "URL for the oxEleven JWKS Endpoint.",
+            "type": "string",
+            "format": "url",
+            "minLength": 1
+        },
         "openidSubAttribute": {
             "id": "openidSubAttribute",
             "description": "LDAP attribute used for the sub claim.",
@@ -1183,6 +1190,29 @@
             "id": "skipAuthorizationForOpenIdScopeAndPairwiseId",
             "description": "If a client has only openid scope and pairwise id, person should not have to authorize.",
             "type": "boolean"
+        },
+        "httpLoggingEnabled": {
+            "id": "httpLoggingEnabled",
+            "description": "Enable/Disable request/response logging filter",
+            "type": "boolean"
+        },
+        "httpLoggingExludePaths": {
+            "id": "httpLoggingExludePaths",
+            "description": "List of base URI for which request/response logging filter should not record activity.",
+            "type": "array",
+            "minItems": 0,
+            "uniqueItems": true,
+            "additionalItems": true,
+            "items": {
+                "type": "string",
+                "minLength": 1
+            }
+        },
+        "externalLoggerConfiguration": {
+            "id": "externalLoggerConfiguration",
+            "description": "Path to external log4j2 logging configuration.",
+            "type": "string",
+            "minLength": 1
         }
     },
     "required": [
@@ -1208,10 +1238,11 @@
         "oxElevenSignEndpoint",
         "oxElevenVerifySignatureEndpoint",
         "oxElevenDeleteKeyEndpoint",
+        "oxElevenJwksEndpoint",
         "openidSubAttribute",
         "responseTypesSupported",
         "grantTypesSupported",
-		"dynamicGrantTypeDefault",
+	"dynamicGrantTypeDefault",
         "subjectTypesSupported",
         "defaultSubjectType",
         "userInfoSigningAlgValuesSupported",
@@ -1295,6 +1326,9 @@
         "logClientNameOnClientAuthentication",
         "authorizationRequestCustomAllowedParameters",
         "legacyDynamicRegistrationScopeParam",
-        "skipAuthorizationForOpenIdScopeAndPairwiseId"
+        "skipAuthorizationForOpenIdScopeAndPairwiseId",
+        "httpLoggingEnabled",
+        "httpLoggingExludePaths",
+        "externalLoggerConfiguration"
     ]
 }
