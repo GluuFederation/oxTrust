@@ -41,6 +41,7 @@ public class GluuCustomPerson extends User
     private transient boolean selected;
 
     private String sourceServerName;
+    private String sourceServerUserDn;
 
     @LdapAttribute(name = "gluuWhitePagesListed")
     private String gluuAllowPublication;
@@ -296,6 +297,14 @@ public class GluuCustomPerson extends User
 
     public void setSourceServerName(String sourceServerName) {
         this.sourceServerName = sourceServerName;
+    }
+
+    public final String getSourceServerUserDn() {
+        return sourceServerUserDn;
+    }
+
+    public final void setSourceServerUserDn(String sourceServerUserDn) {
+        this.sourceServerUserDn = sourceServerUserDn;
     }
 
     public Date getCreationDate() {
