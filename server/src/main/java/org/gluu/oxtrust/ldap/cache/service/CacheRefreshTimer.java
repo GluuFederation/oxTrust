@@ -666,6 +666,7 @@ public class CacheRefreshTimer {
 		targetPerson.setCustomObjectClasses(targetCustomObjectClasses);
 
 		targetPerson.setSourceServerName(sourcePerson.getSourceServerName());
+        targetPerson.setSourceServerUserDn(sourcePerson.getDn());
 
 		cacheRefreshService.setTargetEntryAttributes(sourcePerson, targetServerAttributesMapping, targetPerson);
 
