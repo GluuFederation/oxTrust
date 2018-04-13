@@ -11,6 +11,9 @@
     </f:metadata>
 
     <ui:define name="body">
+    <link href="#{oxTrustConfigurationService.cssLocation}/../stylesheet/query-builder.default.min.css"     rel="stylesheet" type="text/css"/>
+    <script src="#{oxTrustConfigurationService.jsLocation}/query-builder.standalone.min.js"></script>
+    
         <section class="content-header">
             <h1 style="color: #333;">
                 #{msg['uma.uma']}
@@ -140,12 +143,22 @@
 
                                                                 </h:panelGroup>
                                                             </ox:decorate> -->
+                                       <h:panelGroup id="subselectiongroup"  rendered="#{updateResourceAction.scopeSelection eq 'ScopeExpression'}">
 
                                         <ox:decorate id="expression" label="#{msg['uma.scopeExpression']}" rendered="#{updateResourceAction.scopeSelection eq 'ScopeExpression'}">
-                                            <div class="col-sm-9">
-												<h:outputText value="#{gluufn:trimToLength(_resourceSet.scopeExpression, 160)}" />
-											</div>
+                                            							
+											                               
                                         </ox:decorate>
+                                        
+                                        <ui:decorate id="expresionui" template="/WEB-INF/incl/layout/jqueryJsonEditor.xhtml" rendered="#{updateResourceAction.scopeSelection eq 'ScopeExpression'}">
+                                            <ui:param name="id" value="expresionuiConfig"/>
+                                            <ui:param name="parentId" value="expresionui"/>
+                                            <ui:param name="json" value="#{_resourceSet.scopeExpression}"/>  
+                                            <ui:param name="saveBtnId" value="saveOxTrustConfigBtn"/>
+                                            <ui:param name="saveBtnLabel"  value="Update Scope Expression"/> 
+                                                                                     
+                                        </ui:decorate>
+                                        </h:panelGroup>
                                         </h:panelGroup>
                                         
                                         <ox:decorate id="clients" label="#{msg['uma.clients']}" rendered="#{updateResourceAction.clientList != null}">
@@ -223,6 +236,8 @@
                             <ox:acceptRemovalDialog deleteMethod="#{updateResourceAction.delete}"
                                                     id="deleteConfirmation" subject="resource set"
                                                     value="#{updateResourceAction.resource.id}"/>
+                                                    
+                                                                               
                         </div>
                     </div>
                 </div>
