@@ -1,0 +1,46 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core">
+	
+	
+	<h:inputHidden prependId="false" id="#{id}_hidden" value="#{json}" />
+	<div id="#{id}"></div>
+
+	<h:panelGroup  rendered="#{saveBtnLabelHide ne 'hide'}">
+	<button id="save_#{id}" type="button" class="btn btn-primary"
+		style="margin-left:5px !important;  margin-bottom: 20px !important; margin-top: 10px !important;">#{saveBtnLabel}</button>
+	</h:panelGroup>
+
+	<h:outputScript>  
+		
+	
+		var scopeExpressionJson = JSON.parse(document.getElementById("resourceid:#{id}_hidden").value);
+		console.log("ss " + scopeExpressionJson);
+		     		  
+		  $(#{id}).queryBuilder({
+		    filters: [ {
+		    	id:'name',
+		    	label:'var',
+		    	type:'string',
+		    	size:38,
+		    	unique:true,
+		    	operators: ['equal', 'not_equal']   	
+		    	
+		    } ],
+		     rules: scopeExpressionJson
+		    
+		  });		  
+		  
+		  document.getElementById('save_#{id}').onclick = function () {
+		  var result = $(#{id}).queryBuilder('getRules');
+		  console.log(result);
+		  var hiddenField = document.getElementById("resourceid:#{id}_hidden"); 
+		  var action = document.getElementById("save_#{id}");		  	
+		  hiddenField.value=JSON.stringify(result);
+		  action.click();
+		  return false;
+		} 	
+	    </h:outputScript>
+</ui:composition>
