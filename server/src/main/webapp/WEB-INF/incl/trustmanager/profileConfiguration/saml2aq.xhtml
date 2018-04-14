@@ -9,7 +9,7 @@
     xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
     xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
 
-    <h:panelGrid columns="2" id="saml2aq" columnClasses="half,half" width="560"
+    <h:panelGrid columns="2" id="saml2aq" columnClasses="half,half" width="100%"
         rendered="#{_relyingPartyAction.isProfileConfigurationSelected('SAML2AttributeQuery')}">
 
         <ui:param name="_profileConfigurationSelected" value="#{_relyingPartyAction.getProfileConfiguration('SAML2AttributeQuery')}" />

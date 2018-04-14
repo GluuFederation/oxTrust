@@ -8,7 +8,7 @@
     xmlns:rich="http://richfaces.org/rich"
     xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext">
 
-    <h:panelGrid columns="2" id="saml2sso" columnClasses="half,half" width="560"
+    <h:panelGrid columns="2" id="saml2sso" columnClasses="half,half" width="100%"
         rendered="#{_relyingPartyAction.isProfileConfigurationSelected('SAML2SSO')}">
 
         <ui:param name="_profileConfigurationSelected" value="#{_relyingPartyAction.getProfileConfiguration('SAML2SSO')}" />
