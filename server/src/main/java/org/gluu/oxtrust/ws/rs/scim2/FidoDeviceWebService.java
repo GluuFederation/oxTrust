@@ -337,8 +337,14 @@ public class FidoDeviceWebService extends BaseScimWebService implements IFidoDev
         log.info("Executing search for fido devices using: ldapfilter '{}', sortBy '{}', sortOrder '{}', startIndex '{}', count '{}'",
                 ldapFilter.toString(), sortBy, sortOrder.getValue(), startIndex, count);
 
-        List<GluuCustomFidoDevice> list=ldapEntryManager.findEntriesSearchSearchResult(fidoDeviceService.getDnForFidoDevice(userId, null),
-                GluuCustomFidoDevice.class, ldapFilter, startIndex, count, getMaxCount(), sortBy, sortOrder, vlvResponse, null);
+        List<GluuCustomFidoDevice> list = new ArrayList<GluuCustomFidoDevice>();
+        try {
+            list = ldapEntryManager.findEntriesSearchSearchResult(fidoDeviceService.getDnForFidoDevice(userId, null),
+                    GluuCustomFidoDevice.class, ldapFilter, startIndex, count, getMaxCount(), sortBy, sortOrder, vlvResponse, null);
+        } catch (Exception e){
+            log.info("Returning an empty list");
+            log.error(e.getMessage(), e);
+        }
         List<BaseScimResource> resources=new ArrayList<BaseScimResource>();
 
         for (GluuCustomFidoDevice device : list){
