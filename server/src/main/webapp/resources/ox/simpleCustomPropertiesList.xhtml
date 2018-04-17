@@ -93,7 +93,7 @@
    
                     <a4j:commandLink  action="#{cc.attrs.propertiesAction.addItemToSimpleCustomProperties(cc.attrs.properties)}" render="customList" execute="@this"
                         rendered="#{empty maxItems or maxItems gt properties.size()}">
-                        <h:outputText  style="margin-top:-5px" styleClass="btn btn-primary"  value="Add #{cc.attrs.labelAdd eq null ? cc.attrs.label : cc.attrs.labelAdd}" />
+                        <h:outputText  style="margin-top:-5px" styleClass="btn btn-primary"  value="#{cc.attrs.labelAdd eq null or  cc.attrs.labelAdd eq '' ? cc.attrs.label : cc.attrs.labelAdd}" />
                     </a4j:commandLink>
                 </a4j:region>
             </h:panelGroup>
