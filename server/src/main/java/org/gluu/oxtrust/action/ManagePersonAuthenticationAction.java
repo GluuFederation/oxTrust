@@ -85,10 +85,10 @@ public class ManagePersonAuthenticationAction
 
 	@Inject
 	private PassportService passportService;
-	
+
 	@Inject
 	private ConfigurationFactory configurationFactory;
-	
+
 	@Inject
 	private EncryptionService encryptionService;
 
@@ -114,22 +114,27 @@ public class ManagePersonAuthenticationAction
 	private List<PassportConfiguration> ldapPassportConfigurations;
 
 	public List<PassportConfiguration> getLdapPassportConfigurations() {
+		for (PassportConfiguration configuration : ldapPassportConfigurations) {
+			if (configuration.getFieldset() == null) {
+				configuration.setFieldset(new ArrayList<SimpleExtendedCustomProperty>());
+			}
+		}
 		return ldapPassportConfigurations;
 	}
 
-	public void setLdapPassportConfigurations(
-			List<PassportConfiguration> ldapPassportConfigurations) {
+	public void setLdapPassportConfigurations(List<PassportConfiguration> ldapPassportConfigurations) {
 		this.ldapPassportConfigurations = ldapPassportConfigurations;
 	}
 
 	public String modify() {
 		String outcome = modifyImpl();
-		
+
 		if (OxTrustConstants.RESULT_FAILURE.equals(outcome)) {
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to prepare for person authentication configuration update");
+			facesMessages.add(FacesMessage.SEVERITY_ERROR,
+					"Failed to prepare for person authentication configuration update");
 			conversationService.endConversation();
 		}
-		
+
 		return outcome;
 	}
 
@@ -152,7 +157,7 @@ public class ManagePersonAuthenticationAction
 			List<OxIDPAuthConf> list = getIDPAuthConfOrNull(appliance);
 			this.sourceConfigs = new ArrayList<GluuLdapConfiguration>();
 			if (list != null) {
-				for(OxIDPAuthConf oxIDPAuthConf : list){
+				for (OxIDPAuthConf oxIDPAuthConf : list) {
 					GluuLdapConfiguration oxldapConfig = mapLdapConfig(oxIDPAuthConf.getConfig());
 					this.sourceConfigs.add(oxldapConfig);
 				}
@@ -166,6 +171,9 @@ public class ManagePersonAuthenticationAction
 				ldapOxPassportConfiguration = new LdapOxPassportConfiguration();
 			}
 			this.ldapPassportConfigurations = ldapOxPassportConfiguration.getPassportConfigurations();
+			if (ldapPassportConfigurations == null) {
+				ldapPassportConfigurations = new ArrayList<PassportConfiguration>();
+			}
 		} catch (Exception ex) {
 			log.error("Failed to load appliance configuration", ex);
 
@@ -182,10 +190,10 @@ public class ManagePersonAuthenticationAction
 			// Reload entry to include latest changes
 			GluuAppliance appliance = applianceService.getAppliance();
 
- 			boolean updateAuthenticationMode = false;
- 			boolean updateOxTrustAuthenticationMode = false;
- 			
- 			String oldAuthName = getFirstConfigName(appliance.getOxIDPAuthentication());
+			boolean updateAuthenticationMode = false;
+			boolean updateOxTrustAuthenticationMode = false;
+
+			String oldAuthName = getFirstConfigName(appliance.getOxIDPAuthentication());
 			if (oldAuthName != null) {
 				if (oldAuthName.equals(this.authenticationMode)) {
 					updateAuthenticationMode = true;
@@ -197,9 +205,10 @@ public class ManagePersonAuthenticationAction
 
 			updateAuthConf(appliance);
 
- 			String newAuthName = getFirstConfigName(appliance.getOxIDPAuthentication());
+			String newAuthName = getFirstConfigName(appliance.getOxIDPAuthentication());
 			String updatedAuthMode = updateAuthenticationMode ? newAuthName : this.authenticationMode;
-			String updatedOxTrustAuthMode = updateOxTrustAuthenticationMode ? newAuthName : this.oxTrustAuthenticationMode;
+			String updatedOxTrustAuthMode = updateOxTrustAuthenticationMode ? newAuthName
+					: this.oxTrustAuthenticationMode;
 			appliance.setAuthenticationMode(updatedAuthMode);
 			appliance.setOxTrustAuthenticationMode(updatedOxTrustAuthMode);
 
@@ -244,7 +253,7 @@ public class ManagePersonAuthenticationAction
 	public String cancel() {
 		facesMessages.add(FacesMessage.SEVERITY_INFO, "Person authentication configuration not updated");
 		conversationService.endConversation();
-		
+
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
@@ -307,9 +316,9 @@ public class ManagePersonAuthenticationAction
 					this.customAuthenticationConfigNames.add(customScript.getName());
 				}
 			}
-			
+
 			boolean internalServerName = true;
-			
+
 			for (GluuLdapConfiguration ldapConfig : this.sourceConfigs) {
 				if ((ldapConfig != null) && StringHelper.isNotEmpty(ldapConfig.getConfigId())) {
 					this.customAuthenticationConfigNames.add(ldapConfig.getConfigId());
@@ -337,8 +346,8 @@ public class ManagePersonAuthenticationAction
 			properties.setProperty("bindPassword", ldapConfig.getBindPassword());
 			properties.setProperty("servers", buildServersString(ldapConfig.getServers()));
 			properties.setProperty("useSSL", Boolean.toString(ldapConfig.isUseSSL()));
-			LDAPConnectionProvider connectionProvider = new LDAPConnectionProvider(
-					PropertiesDecrypter.decryptProperties(properties, configurationFactory.getCryptoConfigurationSalt()));
+			LDAPConnectionProvider connectionProvider = new LDAPConnectionProvider(PropertiesDecrypter
+					.decryptProperties(properties, configurationFactory.getCryptoConfigurationSalt()));
 			if (connectionProvider.isConnected()) {
 				connectionProvider.closeConnectionPool();
 
@@ -387,7 +396,7 @@ public class ManagePersonAuthenticationAction
 
 		}
 	}
-	
+
 	public String updateLdapBindPassword(String bindPassword) {
 		String encryptedLdapBindPassword = null;
 		try {
@@ -403,7 +412,6 @@ public class ManagePersonAuthenticationAction
 	public boolean isExistLdapConfigIdpAuthConf() {
 		return existLdapConfigIdpAuthConf;
 	}
-
 
 	@Override
 	public void addItemToSimpleProperties(List<SimpleProperty> simpleProperties) {
@@ -462,10 +470,10 @@ public class ManagePersonAuthenticationAction
 	public void addField(PassportConfiguration removePassportConfiguration) {
 		for (PassportConfiguration passportConfig : this.ldapPassportConfigurations) {
 			if (System.identityHashCode(removePassportConfiguration) == System.identityHashCode(passportConfig)) {
-			    if (passportConfig.getFieldset() == null) {
-			        passportConfig.setFieldset(new ArrayList<SimpleExtendedCustomProperty>());
-			    }
-                passportConfig.getFieldset().add(new SimpleExtendedCustomProperty());
+				if (passportConfig.getFieldset() == null) {
+					passportConfig.setFieldset(new ArrayList<SimpleExtendedCustomProperty>());
+				}
+				passportConfig.getFieldset().add(new SimpleExtendedCustomProperty());
 			}
 		}
 	}
@@ -480,7 +488,7 @@ public class ManagePersonAuthenticationAction
 
 	private List<OxIDPAuthConf> getIDPAuthConfOrNull(GluuAppliance appliance) {
 		List<OxIDPAuthConf> idpConfs = appliance.getOxIDPAuthentication();
-		List<OxIDPAuthConf> authIdpConfs = new ArrayList<OxIDPAuthConf> ();
+		List<OxIDPAuthConf> authIdpConfs = new ArrayList<OxIDPAuthConf>();
 		if (idpConfs != null) {
 			for (OxIDPAuthConf idpConf : idpConfs) {
 				if (idpConf.getType().equalsIgnoreCase("auth")) {
@@ -491,7 +499,7 @@ public class ManagePersonAuthenticationAction
 		return authIdpConfs;
 
 	}
-	
+
 	public List<GluuLdapConfiguration> getSourceConfigs() {
 		return sourceConfigs;
 	}
@@ -499,18 +507,18 @@ public class ManagePersonAuthenticationAction
 	public void setSourceConfigs(List<GluuLdapConfiguration> sourceConfigs) {
 		this.sourceConfigs = sourceConfigs;
 	}
-	
+
 	public void addSourceConfig() {
 		addLdapConfig(this.getSourceConfigs());
 	}
-	
+
 	@Override
 	public void addLdapConfig(List<GluuLdapConfiguration> ldapConfigList) {
 		GluuLdapConfiguration ldapConfiguration = new GluuLdapConfiguration();
 		ldapConfiguration.setBindPassword("");
 		ldapConfigList.add(ldapConfiguration);
 	}
-	
+
 	@Override
 	public void removeLdapConfig(List<GluuLdapConfiguration> ldapConfigList, GluuLdapConfiguration removeLdapConfig) {
 		for (Iterator<GluuLdapConfiguration> iterator = ldapConfigList.iterator(); iterator.hasNext();) {
@@ -521,21 +529,21 @@ public class ManagePersonAuthenticationAction
 			}
 		}
 	}
-	
+
 	public GluuLdapConfiguration getActiveLdapConfig() {
 		return activeLdapConfig;
 	}
-	
+
 	public void updateBindPassword() {
 		if (this.activeLdapConfig == null) {
 			return;
 		}
 
 		try {
-        	this.activeLdapConfig.setBindPassword(encryptionService.encrypt(this.activeLdapConfig.getBindPassword()));
-        } catch (EncryptionException ex) {
-            log.error("Failed to encrypt password", ex);
-        }
+			this.activeLdapConfig.setBindPassword(encryptionService.encrypt(this.activeLdapConfig.getBindPassword()));
+		} catch (EncryptionException ex) {
+			log.error("Failed to encrypt password", ex);
+		}
 	}
 
 	@Override
@@ -543,28 +551,29 @@ public class ManagePersonAuthenticationAction
 		this.activeLdapConfig = activeLdapConfig;
 	}
 
-    @Override
-    public void addItemToSimpleCustomProperties(List<SimpleCustomProperty> simpleCustomProperties) {
-        if (simpleCustomProperties != null) {
-            simpleCustomProperties.add(new SimpleExtendedCustomProperty("", ""));
-        }
-    }
+	@Override
+	public void addItemToSimpleCustomProperties(List<SimpleCustomProperty> simpleCustomProperties) {
+		simpleCustomProperties.add(new SimpleExtendedCustomProperty("", ""));
+	}
 
-    @Override
-    public void removeItemFromSimpleCustomProperties(List<SimpleCustomProperty> simpleCustomProperties, SimpleCustomProperty simpleCustomProperty) {
-        if (simpleCustomProperties != null) {
-            simpleCustomProperties.remove(simpleCustomProperty);
-        }
-    }
+	@Override
+	public void removeItemFromSimpleCustomProperties(List<SimpleCustomProperty> simpleCustomProperties,
+			SimpleCustomProperty simpleCustomProperty) {
+		if (simpleCustomProperties != null) {
+			simpleCustomProperties.remove(simpleCustomProperty);
+		}
+	}
 
-    public void removeStrategy(PassportConfiguration removePassportConfiguration) {
-        for (Iterator<PassportConfiguration> iterator = this.ldapPassportConfigurations.iterator(); iterator.hasNext();) {
-            PassportConfiguration passportConfiguration = iterator.next();
-            if (System.identityHashCode(removePassportConfiguration) == System.identityHashCode(passportConfiguration)) {
-                iterator.remove();
-                return;
-            }
-        }
-    }
+	public void removeStrategy(PassportConfiguration removePassportConfiguration) {
+		for (Iterator<PassportConfiguration> iterator = this.ldapPassportConfigurations.iterator(); iterator
+				.hasNext();) {
+			PassportConfiguration passportConfiguration = iterator.next();
+			if (System.identityHashCode(removePassportConfiguration) == System
+					.identityHashCode(passportConfiguration)) {
+				iterator.remove();
+				return;
+			}
+		}
+	}
 
 }
