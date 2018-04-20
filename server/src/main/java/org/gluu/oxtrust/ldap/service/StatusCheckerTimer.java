@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
@@ -40,10 +41,13 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.beanutils.BeanUtilsBean2;
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.io.IOUtils;
 import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.model.GluuAppliance;
+import org.gluu.oxtrust.model.status.ApplianceStatus;
 import org.gluu.oxtrust.service.cdi.event.StatusCheckerTimerEvent;
 import org.gluu.oxtrust.util.NumberHelper;
 import org.gluu.oxtrust.util.OxTrustConstants;
@@ -143,44 +147,39 @@ public class StatusCheckerTimer {
 			return;
 		}
 
-		GluuAppliance appliance;
-		try {
-			appliance = applianceService.getAppliance();
-		} catch (LdapMappingException ex) {
-			log.error("Failed to load current appliance", ex);
-			return;
-		}
+		ApplianceStatus applianceStatus = new ApplianceStatus();
 
 		// Execute facter and update appliance attributes
-		setFactorAttributes(appliance);
+		setFactorAttributes(applianceStatus);
 
 		// Execute df and update appliance attributes
-		setDfAttributes(appliance);
+		setDfAttributes(applianceStatus);
 
 		// Set HTTPD attributes
-		setHttpdAttributes(appliance);
+		setHttpdAttributes(applianceStatus);
 
 		try {
-			setCertificateExpiryAttributes(appliance);
+			setCertificateExpiryAttributes(applianceStatus);
 		} catch (Exception ex) {
 			log.error("Failed to check certificate expiration", ex);
 		}
 
-//		setVDSAttributes(appliance);
+        GluuAppliance appliance = applianceService.getAppliance();
+        try {
+            // Copy gathered values
+            BeanUtils.copyProperties(appliance, applianceStatus);
+        } catch (Exception ex) {
+            log.error("Failed to copy status attributes", ex);
+        }
 
-    	Date currentDateTime = new Date();
-		appliance.setLastUpdate(currentDateTime);
+        Date currentDateTime = new Date();
+        appliance.setLastUpdate(currentDateTime);
 
-		try {
-			applianceService.updateAppliance(appliance);
-		} catch (LdapMappingException ex) {
-			log.error("Failed to update current appliance", ex);
-			return;
-		}
+        applianceService.updateAppliance(appliance);
 
 		if (centralLdapService.isUseCentralServer()) {
 			try {
-				GluuAppliance tmpAppliance = new GluuAppliance();
+			    GluuAppliance tmpAppliance = new GluuAppliance();
 				tmpAppliance.setDn(appliance.getDn());
 				boolean existAppliance = centralLdapService.containsAppliance(tmpAppliance);
 	
@@ -198,7 +197,7 @@ public class StatusCheckerTimer {
 		log.debug("Appliance status update finished");
 	}
 
-	private void setCertificateExpiryAttributes(GluuAppliance appliance) {
+	private void setCertificateExpiryAttributes(ApplianceStatus appliance) {
 		try {
 			URL destinationURL = new URL(appConfiguration.getApplianceUrl());
 			HttpsURLConnection conn = (HttpsURLConnection) destinationURL.openConnection();
@@ -218,76 +217,14 @@ public class StatusCheckerTimer {
 		}
 	}
 
-	private void setHttpdAttributes(GluuAppliance appliance) {
+	private void setHttpdAttributes(ApplianceStatus appliance) {
 		log.debug("Setting httpd attributes");
 		AppConfiguration appConfiguration = configurationFactory.getAppConfiguration();
 		String page = getHttpdPage(appConfiguration.getIdpUrl(), OxTrustConstants.HTTPD_TEST_PAGE_NAME);
 		appliance.setGluuHttpStatus(Boolean.toString(OxTrustConstants.HTTPD_TEST_PAGE_CONTENT.equals(page)));
 
 	}
-/*
-	private void setVDSAttributes(GluuAppliance appliance) {
-		log.debug("Setting VDS attributes");
-		appConfiguration appConfiguration = configurationFactory.getAppConfiguration();
-		// Run vds check only on if vds.test.filter is set
-		if (appConfiguration.getVdsFilter() == null) {
-			return;
-		}
-		String serverURL = appConfiguration.getVdsLdapServer().split(":")[0];
-		int serverPort = Integer.parseInt(appConfiguration.getVdsLdapServer().split(":")[1]);
-		String bindDN = appConfiguration.getVdsBindDn();
 
-		String bindPassword = null;
-		try {
-			bindPassword = encryptionService.defaultInstance().decrypt(appConfiguration.getVdsBindPassword());
-		} catch (EncryptionException e1) {
-			log.error("Failed to decrypt VDS bind password: %s", e1.getMessage());
-		}
-
-		String vdsFilter = appConfiguration.getVdsFilter();
-		String baseDN = appConfiguration.getBaseDN();
-
-		LDAPConnectionPool connectionPool = null;
-		String[] objectclasses = null;
-		try {
-			ServerSet vdsServerSet;
-			boolean useSSL = "ldaps".equals(appConfiguration.getVdsLdapProtocol());
-			if (useSSL) {
-				SSLUtil sslUtil = new SSLUtil(new TrustAllTrustManager());
-				vdsServerSet = new SingleServerSet(serverURL, serverPort, sslUtil.createSSLSocketFactory());
-			} else {
-				vdsServerSet = new SingleServerSet(serverURL, serverPort);
-			}
-			SimpleBindRequest bindRequest = new SimpleBindRequest(bindDN, bindPassword);
-			connectionPool = new LDAPConnectionPool(vdsServerSet, bindRequest, 10);
-			SearchResult entry = connectionPool.search(baseDN, SearchScope.BASE, vdsFilter);
-			objectclasses = entry.getSearchEntries().get(0).getAttribute("objectclass").getValues();
-
-		} catch (Exception e) {
-			appliance.setGluuVDSStatus(Boolean.toString(false));
-			log.error(String.format("Failed to get objectclass values from VDS. error: %s", e.getMessage()));
-		} finally {
-			if (connectionPool != null) {
-				connectionPool.close();
-			} else {
-				log.error(String.format("Unable to connect to VDS server. Is it running on %s:%s ?", serverURL, serverPort));
-			}
-
-		}
-		boolean topPresent = false;
-		boolean vdapcontainerPresent = false;
-		boolean vdlabelPresent = false;
-		boolean vdDirectoryViewPresent = false;
-		if (objectclasses != null && objectclasses.length > 0) {
-			Arrays.sort(objectclasses);
-			topPresent = Arrays.binarySearch(objectclasses, "top") >= 0;
-			vdapcontainerPresent = Arrays.binarySearch(objectclasses, "vdapcontainer") >= 0;
-			vdlabelPresent = Arrays.binarySearch(objectclasses, "vdlabel") >= 0;
-			vdDirectoryViewPresent = Arrays.binarySearch(objectclasses, "vdDirectoryView") >= 0;
-		}
-		appliance.setGluuVDSStatus(Boolean.toString(topPresent && vdapcontainerPresent && vdlabelPresent && vdDirectoryViewPresent));
-	}
-*/
 	private String getHttpdPage(String idpUrl, String httpdTestPageName) {
 		String[] urlParts = idpUrl.split("://");
 		if ("https".equals(urlParts[0])) {
@@ -338,7 +275,7 @@ public class StatusCheckerTimer {
 		return sb.toString();
 	}
 
-	private void setFactorAttributes(GluuAppliance appliance) {
+	private void setFactorAttributes(ApplianceStatus appliance) {
 		log.debug("Setting facter attributes");
 		// Run facter only on linux
 		if (!isLinux()) {
@@ -381,7 +318,7 @@ public class StatusCheckerTimer {
 		appliance.setSystemUptime(getFacterResult(outputLines, OxTrustConstants.FACTER_SYSTEM_UP_TIME));
 	}
 
-	private void getFacterBandwidth(String facterResult, GluuAppliance appliance) {
+	private void getFacterBandwidth(String facterResult, ApplianceStatus appliance) {
 		log.debug("Setting bandwidth attributes");
 		if (facterResult != null) {
 			String[] lines = facterResult.split("\n");
@@ -405,7 +342,7 @@ public class StatusCheckerTimer {
 
 	}
 
-	private void setDfAttributes(GluuAppliance appliance) {
+	private void setDfAttributes(ApplianceStatus appliance) {
 		log.debug("Setting df attributes");
 		// Run df only on linux
 		if (!isLinux()) {

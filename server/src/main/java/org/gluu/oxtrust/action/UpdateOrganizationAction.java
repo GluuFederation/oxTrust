@@ -173,13 +173,7 @@ public class UpdateOrganizationAction implements Serializable {
 		this.welcomeTitleText = organizationService.getOrganizationCustomMessage(OxTrustConstants.CUSTOM_MESSAGE_TITLE_TEXT);
 		initOxAuthSetting();
 		appliances = new ArrayList<GluuAppliance>();
-		try {
-			appliances.addAll(applianceService.getAppliances());
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
+		appliances.addAll(applianceService.getAppliances());
 		
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
@@ -223,7 +217,8 @@ public class UpdateOrganizationAction implements Serializable {
 			// Encrypt password and prepare SMTP configuration
 			applianceService.encryptedSmtpPassword(smtpConfiguration);
 			
-			applianceService.updateAppliance(this.appliance);
+			updateAppliance();
+
 			saveWebKeySettings();
 
 			/* Resolv.conf update */
@@ -241,7 +236,23 @@ public class UpdateOrganizationAction implements Serializable {
 		return modify();
 	}
 	
-	public void saveWebKeySettings() {
+	private void updateAppliance() {
+	    GluuAppliance applianceUpdate = applianceService.getAppliance();
+	    
+	    // Update properties which user might update
+        applianceUpdate.setPasswordResetAllowed(appliance.getPasswordResetAllowed());
+	    applianceUpdate.setPassportEnabled(appliance.getPassportEnabled());
+	    applianceUpdate.setScimEnabled(appliance.getScimEnabled());
+        applianceUpdate.setProfileManagment(appliance.getProfileManagment());
+
+        applianceUpdate.setApplianceDnsServer(appliance.getApplianceDnsServer());
+        applianceUpdate.setMaxLogSize(appliance.getMaxLogSize());
+        applianceUpdate.setContactEmail(appliance.getContactEmail());
+        
+        applianceService.updateAppliance(applianceUpdate);
+    }
+
+    public void saveWebKeySettings() {
 		String configurationDn = configurationFactory.getConfigurationDn();
 		ldapOxAuthConfiguration = organizationService.getOxAuthSetting(configurationDn);
 		WebKeysSettings oldwebKeysSettings = ldapOxAuthConfiguration.getOxWebKeysSettings();
