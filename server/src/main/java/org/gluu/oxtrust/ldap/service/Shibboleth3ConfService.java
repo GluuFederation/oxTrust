@@ -1476,7 +1476,6 @@ public class Shibboleth3ConfService implements Serializable {
 			log.error("Failed to gluu SP read certificate file.", e);
 		}
 
-		GluuAppliance appliance = null;
 		if (result) {
 			gluuSP.setStatus(GluuStatus.ACTIVE);
 			String inum = gluuSP.getInum();
@@ -1502,15 +1501,14 @@ public class Shibboleth3ConfService implements Serializable {
 			trustService.updateReleasedAttributes(gluuSP);
 			trustService.addTrustRelationship(gluuSP);
 
-			appliance = applianceService.getAppliance();
+	        GluuAppliance appliance = applianceService.getAppliance();
 			appliance.setGluuSPTR(gluuSP.getInum());
+            applianceService.updateAppliance(appliance);
 		}
 
 		if (result) {
-			applianceService.updateAppliance(appliance);
 			log.warn("gluuSP EntityID set to " + StringHelper.removePunctuation(gluuSP.getInum())
 					+ ". Shibboleth3 configuration should be updated.");
-			// applianceService.restartServices();
 		} else {
 			log.error("IDP configuration update failed. GluuSP was not generated.");
 		}

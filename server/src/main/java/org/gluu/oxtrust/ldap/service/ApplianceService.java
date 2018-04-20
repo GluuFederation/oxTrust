@@ -141,7 +141,7 @@ public class ApplianceService implements Serializable {
 	 * @return List of attributes
 	 * @throws Exception
 	 */
-	public List<GluuAppliance> getAppliances() throws Exception {
+	public List<GluuAppliance> getAppliances() {
 		List<GluuAppliance> applianceList = ldapEntryManager.findEntries(getDnForAppliance(null), GluuAppliance.class, null);
 
 		return applianceList;

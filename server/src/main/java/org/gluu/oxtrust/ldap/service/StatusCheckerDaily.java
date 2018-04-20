@@ -99,26 +99,21 @@ public class StatusCheckerDaily {
 			return;
 		}
 
-		GluuAppliance appliance;
-		try {
-			appliance = applianceService.getAppliance();
-		} catch (BaseMappingException ex) {
-			log.error("Failed to load current appliance", ex);
-			return;
-		}
+        log.debug("Getting data from ldap");
+        int groupCount = groupService.countGroups();
+        int personCount = personService.countPersons();
 
-		// Set LDAP attributes
-		setLdapAttributes(appliance);
+		GluuAppliance appliance = applianceService.getAppliance();
+
+        log.debug("Setting ldap attributes");
+        appliance.setGroupCount(String.valueOf(groupCount));
+        appliance.setPersonCount(String.valueOf(personCount)); 
+        appliance.setGluuDSStatus(Boolean.toString(groupCount > 0 && personCount > 0));
 
     	Date currentDateTime = new Date();
 		appliance.setLastUpdate(currentDateTime);
 
-		try {
-			applianceService.updateAppliance(appliance);
-		} catch (BaseMappingException ex) {
-			log.error("Failed to update current appliance", ex);
-			return;
-		}
+		applianceService.updateAppliance(appliance);
 
 		if (centralLdapService.isUseCentralServer()) {
 			try {
@@ -138,20 +133,6 @@ public class StatusCheckerDaily {
 		}
 
 		log.debug("Daily Appliance status update finished");
-	}
-
-	private void setLdapAttributes(GluuAppliance appliance) {
-		log.debug("Setting ldap attributes");
-		int groupCount = groupService.countGroups();
-		int personCount = personService.countPersons();
-
-		appliance.setGroupCount(String.valueOf(groupCount));
-		appliance.setPersonCount(String.valueOf(personCount)); 
-		appliance.setGluuDSStatus(Boolean.toString(groupCount > 0 && personCount > 0));
-	}
-
-	private String toIntString(Number number) {
-		return (number == null) ? null : String.valueOf(number.intValue());
 	}
 
 }
