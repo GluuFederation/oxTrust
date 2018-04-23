@@ -14,6 +14,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.regex.Pattern;
 
 import javax.enterprise.context.ConversationScoped;
 import javax.faces.application.FacesMessage;
@@ -56,6 +57,8 @@ import org.xdi.util.StringHelper;
 public class ManageCustomScriptAction implements SimplePropertiesListModel, SimpleCustomPropertiesListModel, Serializable {
 
 	private static final long serialVersionUID = -3823022039248381963L;
+
+	private static final Pattern NAME_PATTERN = Pattern.compile("^[a-zA-Z0-9_]+$");
 
 	@Inject
 	private Logger log;
@@ -140,14 +143,19 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 				List<CustomScript> customScripts = customScriptsByType.getValue();
 
 				for (CustomScript customScript : customScripts) {
-					
 					String configId = customScript.getName();
 					if (StringHelper.equalsIgnoreCase(configId, OxConstants.SCRIPT_TYPE_INTERNAL_RESERVED_NAME)) {
-						facesMessages.add(FacesMessage.SEVERITY_ERROR, "'{0}' is reserved script name", configId);
+						facesMessages.add(FacesMessage.SEVERITY_ERROR, "'%s' is reserved script name", configId);
 						return OxTrustConstants.RESULT_FAILURE;
 					}
+					
+					boolean nameValidation = NAME_PATTERN.matcher(customScript.getName()).matches();
+                    if (!nameValidation) {
+                        facesMessages.add(FacesMessage.SEVERITY_ERROR, "'%s' is invalid script name. Only alphabetic, numeric and underscore characters are allowed in Script Name", configId);
+                        return OxTrustConstants.RESULT_FAILURE;
+                    }
 
-					customScript.setRevision(customScript.getRevision() + 1);
+                    customScript.setRevision(customScript.getRevision() + 1);
 
 					boolean update = true;
 					String dn = customScript.getDn();

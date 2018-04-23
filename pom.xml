@@ -33,8 +33,8 @@
 
 		<weld.version>3.0.1.Final</weld.version>
 		<richfaces.version>4.5.17.Final</richfaces.version>
-		<jsf-api.version>2.2.16</jsf-api.version>
-		<jsf-impl.version>2.2.16</jsf-impl.version>
+		<jsf-api.version>2.2.17</jsf-api.version>
+		<jsf-impl.version>2.2.17</jsf-impl.version>
 		<uel.version>2.2</uel.version>
 		<omnifaces.version>2.6.8</omnifaces.version>
 
