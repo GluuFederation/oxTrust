@@ -597,9 +597,13 @@ public class OxAuthClient extends Entry implements Serializable {
             setEncodedClientSecret(encryptionService.encrypt(oxAuthClientSecret));
         }
     }
-
-    public String getOxAuthClientSecret() {
-        return oxAuthClientSecret;
+    
+    public String getOxAuthClientSecret() throws EncryptionException {
+        if (StringHelper.isNotEmpty(encodedClientSecret)) {
+        	EncryptionService decryptionService = CdiUtil.bean(EncryptionService.class);
+            return decryptionService.decrypt(encodedClientSecret);
+        }
+        return null;
     }
 
     public Date getClientSecretExpiresAt() {

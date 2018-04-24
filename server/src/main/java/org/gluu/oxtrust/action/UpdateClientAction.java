@@ -6,6 +6,7 @@
 
 package org.gluu.oxtrust.action;
 
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
@@ -28,6 +29,7 @@ import org.xdi.service.LookupService;
 import org.xdi.service.security.Secure;
 import org.xdi.util.StringHelper;
 import org.xdi.util.Util;
+import org.xdi.util.security.StringEncrypter.EncryptionException;
 
 import javax.enterprise.context.ConversationScoped;
 import javax.faces.application.FacesMessage;
@@ -271,7 +273,13 @@ public class UpdateClientAction implements Serializable {
 		} else {
 			this.inum = clientService.generateInumForNewClient();
 			String dn = clientService.getDnForClient(this.inum);
-
+			
+			if(this.client.getOxAuthClientSecret() == null || this.client.getOxAuthClientSecret().isEmpty()){
+				String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+				String pwd = RandomStringUtils.random( 24, characters );
+				log.info( pwd );
+				this.client.setOxAuthClientSecret( pwd);
+			}
 			// Save client
 			this.client.setDn(dn);
 			this.client.setInum(this.inum);
@@ -1149,6 +1157,14 @@ public class UpdateClientAction implements Serializable {
 		}
 
 		return true;
+	}
+	
+	public void generatePassword() throws EncryptionException{
+		String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+		String pwd = RandomStringUtils.random( 24, characters );
+		log.info( pwd );
+		this.client.setOxAuthClientSecret( pwd);
+		//return pwd;
 	}
 
 }
