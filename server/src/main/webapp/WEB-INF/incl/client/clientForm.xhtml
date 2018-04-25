@@ -41,9 +41,11 @@
        <h:outputScript>
        
       function valuesDisplay(element) {
-      var $element = $(element);
-      		console.log("csscs" + $element);
-      		var eye = element.previousElementSibling;
+      var element = $(element);
+      		
+      		var divvalue = document.getElementById('autogenrateid');
+      		console.log("div element " + element.val);
+      		var eye = divvalue.previousElementSibling;
     		var eyehide = eye.previousElementSibling;
       		console.log(eye);
 			console.log(eyehide);
@@ -149,11 +151,11 @@
 	                                                       id="clientSecretId"/>
 	                                   <h:graphicImage value="/img/eye-hidden.png" id="hidePassword"  onclick="return hideValue(this,'clientSecretId','viewPassword');"/>	                                
 	                                   <h:graphicImage value="/img/eye.png" id="viewPassword" style="display: none;" onclick="return viewValue(this,'clientSecretId','hidePassword');"/>
-							           
-	                                	<a4j:commandLink render="clientSecretId" style="margin-left:10px;margin-top:10px;"  styleClass="btn btn-primary"
-	                                                               value="Autogenerate Secret key :" 
+							           <div id="autogenrateid">
+	                                	<a4j:commandLink render="clientSecretId" style="margin-top:10px;"  styleClass="btn btn-primary"
+	                                                               value="Auto-Generate Secret Key" 
 	                                                               action="#{_clientAction.generatePassword()}" oncomplete="return valuesDisplay(this);" />
-	                                </ox:decorate>                               		                                	                                
+	                                </div></ox:decorate>                               		                                	                                
 								</h:panelGroup>
 								
                                 <ox:decorate id="applicatonType" label="#{msg['clientForm.applicationType']}">
