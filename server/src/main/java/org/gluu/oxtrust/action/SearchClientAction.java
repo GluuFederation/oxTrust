@@ -7,10 +7,7 @@
 package org.gluu.oxtrust.action;
 
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.enterprise.context.ConversationScoped;
 import javax.faces.application.FacesMessage;
@@ -57,11 +54,6 @@ public class SearchClientAction implements Serializable {
 
 	private List<OxAuthClient> clientList;
 	
-	private Map<OxAuthClient,Boolean> checkMap = new HashMap<OxAuthClient,Boolean>();
-	public Map<OxAuthClient, Boolean> getCheckMap() {
-		return checkMap;
-	}
-
 	@Inject
 	private ClientService clientService;
 
@@ -74,7 +66,11 @@ public class SearchClientAction implements Serializable {
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
 
-		try {
+		return searchImpl();
+	}
+
+    protected String searchImpl() {
+        try {
 			if(searchPattern == null || searchPattern.isEmpty()){
 				this.clientList = clientService.getAllClients(100);
 			}else{
@@ -92,7 +88,7 @@ public class SearchClientAction implements Serializable {
 		}
 
 		return OxTrustConstants.RESULT_SUCCESS;
-	}
+    }
 
 	public String getSearchPattern() {
 		return searchPattern;
@@ -106,16 +102,13 @@ public class SearchClientAction implements Serializable {
 		return clientList;
 	}
 
-	public String deleteClients() {
-		for(Entry<OxAuthClient,Boolean> entry : checkMap.entrySet()){
-			if (entry.getValue()) {
-				log.info( "result +  "+ entry.getKey());
-				clientService.removeClient(entry.getKey());
-				clientList.remove(entry.getKey());
-			}			
-		}
-		checkMap.clear();
-		
-		return OxTrustConstants.RESULT_SUCCESS;
-	}
+    public String deleteClients() {
+        for (OxAuthClient client : clientList) {
+            if (client.isSelected()) {
+                clientService.removeClient(client);
+            }
+        }
+
+        return searchImpl();
+    }
 }
