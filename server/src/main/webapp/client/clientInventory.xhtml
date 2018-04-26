@@ -112,9 +112,7 @@
                                                                 <f:facet name="header">
                                                                     delete
                                                                 </f:facet>
-                                                                <h:selectBooleanCheckbox id="selectid"  onchange="displayButton();" value="#{searchClientAction.checkMap[clt]}" >
-                                                           		
-                                                           		</h:selectBooleanCheckbox>
+                                                                <h:selectBooleanCheckbox id="selectId"  onchange="displayButton();" value="#{clt.selected}" />
                                                             </h:column>
                                                             <f:facet name="footer">
                                                                 <rich:dataScroller align="left" fastControls="hide"
@@ -125,7 +123,7 @@
                                                             </f:facet>
                                                         </h:dataTable>
                                                         
-                                                        <h:commandButton action="#{searchClientAction.deleteClients}"  id="deleteid" disabled="true"
+                                                        <h:commandButton action="#{searchClientAction.deleteClients}" id="deleteId"
                                                                  style="float:left;margin-left :3px;"
                                                                  styleClass="btn btn-primary"
                                                                  value="Delete"/>
@@ -145,18 +143,18 @@
             </div>
         </section>
         <h:outputScript> 
-	    	function displayButton(){  	
-		    	var elemtn = document.querySelectorAll('*[name$="selectid"]');
-		    	console.log("elemtn  : " + elemtn.length); 
-		    	i=0;
-		    	while(i &lt; elemtn.length){
-		    		console.log("elemtn [] :" + i +"  val : " + elemtn[i].parentElement.className);
-		    		if(elemtn[i].parentElement.classList.contains("hover") || elemtn[i].parentElement.classList.contains("checked")){
-		    			document.getElementById("clientsFormId:deleteid").disabled = false;
-		    		}
-		    		i++;
-		    	}		
+	    	function displayButton() {  	
+		    	var selectedIds = $("input[id$=selectId]:checked");
+		    	deleteBtn = $("input[id$=deleteId]");
+		    	
+		    	if (selectedIds.length == 0) {
+		    		deleteBtn.attr("disabled", "disabled");
+		    	} else {
+		    		deleteBtn.removeAttr("disabled");
+		    	}
+		    	
 	    	} 
+	    	displayButton();
    	</h:outputScript>
     </ui:define>
 </ui:composition>
