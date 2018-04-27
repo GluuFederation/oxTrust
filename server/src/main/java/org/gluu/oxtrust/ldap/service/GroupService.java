@@ -87,13 +87,15 @@ public class GroupService implements Serializable, IGroupService {
 		if (group.getMembers() != null) {
 			List<String> memberDNs = group.getMembers();
 			for (String memberDN : memberDNs) {
-				GluuCustomPerson person = personService.getPersonByDn(memberDN);
-				List<String> groupDNs = person.getMemberOf();
-				List<String> updatedGroupDNs = new ArrayList<String>();
-				updatedGroupDNs.addAll(groupDNs);
-				updatedGroupDNs.remove(group.getDn());
-				person.setMemberOf(updatedGroupDNs);
-				personService.updatePerson(person);
+			    if (personService.contains(memberDN)) {
+    				GluuCustomPerson person = personService.getPersonByDn(memberDN);
+    				List<String> groupDNs = person.getMemberOf();
+    				List<String> updatedGroupDNs = new ArrayList<String>();
+    				updatedGroupDNs.addAll(groupDNs);
+    				updatedGroupDNs.remove(group.getDn());
+    				person.setMemberOf(updatedGroupDNs);
+    				personService.updatePerson(person);
+			    }
 			}
 		}
 
