@@ -168,6 +168,10 @@ public class GroupService implements Serializable, IGroupService {
 		return ldapEntryManager.countEntries(gluuGroup);
 	}
 
+	public boolean contains(String groupDn) {
+        return ldapEntryManager.contains(GluuCustomPerson.class, groupDn);
+	}
+
 	/* (non-Javadoc)
 	 * @see org.gluu.oxtrust.ldap.service.IGroupService#generateInumForNewGroup()
 	 */
