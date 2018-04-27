@@ -28,7 +28,7 @@ public class MemberService implements Serializable {
 	private Logger log;
 
 	public void removePerson(GluuCustomPerson person) {
-		// TODO: Do we realy need to remove group if owner is removed?
+		// Remove groups where user is owner
 		List<GluuGroup> groups = groupService.getAllGroups();
 		for (GluuGroup group : groups) {
 			if (StringHelper.equalsIgnoreCase(group.getOwner(), person.getDn())) {
@@ -47,7 +47,11 @@ public class MemberService implements Serializable {
 		// Remove person from associated groups
 		List<String> associatedGroupsDn = person.getMemberOf();
 		for (String groupDn : associatedGroupsDn) {
-			GluuGroup group = groupService.getGroupByDn(groupDn);
+		    if (!groupService.contains(groupDn)) {
+		        continue;
+		    }
+
+		    GluuGroup group = groupService.getGroupByDn(groupDn);
 
 			List<String> members = new ArrayList<String>(group.getMembers());
 			members.remove(pesonDn);
