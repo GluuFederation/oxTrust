@@ -69,7 +69,7 @@
 		                      			<h:outputLabel for="#{msg['customScript.name']}" value="#{msg['customScript.name']}" >
 											<span class="hello" data-toggle="tooltip" data-original-title="#{msg['customScript.name']}"><i class="fa fa-info-circle" aria-hidden="true"></i></span>
 										</h:outputLabel>
-										 <h:inputText value="#{_customScript.name}" size="90" required="#{empty param['rq']}" validatorMessage="Only alphabetic, numeric and underscore characters are allowed in Script Name" styleClass="form-control" style="width: 90%;">
+										 <h:inputText value="#{_customScript.name}" size="90" required="#{empty param['rq']}" validatorMessage="#{msg['customScript.name.error']}" styleClass="form-control" style="width: 90%;">
 												<f:validateRegex pattern="^[a-zA-Z0-9_]+$"/>
 										</h:inputText>
 		                                </div>
