@@ -342,7 +342,7 @@ public class TrustRelationshipWebService {
     @ApiResponses(value = {
 		@ApiResponse(code = 200, message = "OK"),
 		@ApiResponse(code = 500, message = "Server error") })
-    public void setMetadata(@PathParam("inum") String trustRelationshipInum, String metadata, @Context HttpServletResponse response) {
+    public void setMetadata(@PathParam("inum") String trustRelationshipInum, @NotNull String metadata, @Context HttpServletResponse response) {
         try {
             GluuSAMLTrustRelationship trustRelationship = trustService.getRelationshipByInum(trustRelationshipInum);
             
@@ -355,7 +355,7 @@ public class TrustRelationshipWebService {
             
             trustRelationship.setSpMetaDataFN(metadataFileName);
             trustRelationship.setSpMetaDataSourceType(GluuMetadataSourceType.FILE);
-             trustService.updateTrustRelationship(trustRelationship);
+            trustService.updateTrustRelationship(trustRelationship);
         } catch (Exception e) {
             logger.error("addMetadata() Exception", e);
             try { response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "INTERNAL SERVER ERROR"); } catch (Exception ex) {}
@@ -369,7 +369,7 @@ public class TrustRelationshipWebService {
     @ApiResponses(value = {
 		@ApiResponse(code = 200, message = "OK"),
 		@ApiResponse(code = 500, message = "Server error") })
-    public void setMetadataURL(@PathParam("inum") String trustRelationshipInum, String url, @Context HttpServletResponse response) {
+    public void setMetadataURL(@PathParam("inum") String trustRelationshipInum, @NotNull String url, @Context HttpServletResponse response) {
         try {
             GluuSAMLTrustRelationship trustRelationship = trustService.getRelationshipByInum(trustRelationshipInum);
             
@@ -397,11 +397,17 @@ public class TrustRelationshipWebService {
     @ApiResponses(value = {
 		@ApiResponse(code = 200, message = "OK"),
 		@ApiResponse(code = 500, message = "Server error") })
-    public void addAttribute(@PathParam("inum") String trustRelationshipInum, String attribute, @Context HttpServletResponse response) {
+    public void addAttribute(@PathParam("inum") String trustRelationshipInum, @NotNull String attribute, @Context HttpServletResponse response) {
         try {
             GluuSAMLTrustRelationship trustRelationship = trustService.getRelationshipByInum(trustRelationshipInum);
-            //TODO
+            List<String> attributes = trustRelationship.getReleasedAttributes();
+            for (String lAttr : attributes) {
+                if (attribute.equals(lAttr)) 
+                    return; // Nothing to add
+            }
             
+            attributes.add(attribute);
+            trustService.updateReleasedAttributes(trustRelationship);
         } catch (Exception e) {
             logger.error("addAttribute() Exception", e);
             try { response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "INTERNAL SERVER ERROR"); } catch (Exception ex) {}
@@ -496,6 +502,29 @@ public class TrustRelationshipWebService {
             logger.error("Failed to remove attribute", e);
             try { response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "INTERNAL SERVER ERROR"); } catch (Exception ex) {}
         }        
+    }
+    
+    @PUT
+    @Path("/generate_configuration_files")
+    @Consumes({MediaType.TEXT_PLAIN})
+    @Produces(MediaType.TEXT_PLAIN)
+    @ApiOperation(value = "generate configuration files", notes = "Generate configuration files for Shibboleth IDP")
+    @ApiResponses(value = {
+		@ApiResponse(code = 200, message = "OK"),
+		@ApiResponse(code = 500, message = "Server error") })
+    public void generateConfigurationFiles(@Context HttpServletResponse response) {
+        try {
+            List<GluuSAMLTrustRelationship> trustRelationships = trustService.getAllActiveTrustRelationships();
+            if (!shibboleth3ConfService.generateConfigurationFiles(trustRelationships)) {
+                logger.error("Failed to update Shibboleth v3 configuration by web API request");
+                try { response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "INTERNAL SERVER ERROR"); } catch (Exception ex) {}
+            } else {
+                logger.info("Shibboleth v3 configuration updated successfully by web API request");
+            }
+        } catch (Exception e) {
+            logger.error("Failed to generateConfigurationFiles", e);
+            try { response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "INTERNAL SERVER ERROR"); } catch (Exception ex) {}
+        } 
     }
     
     /**
