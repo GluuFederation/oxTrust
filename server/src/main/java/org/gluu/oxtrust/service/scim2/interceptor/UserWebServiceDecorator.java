@@ -42,7 +42,7 @@ public class UserWebServiceDecorator extends BaseScimWebService implements IUser
     private Logger log;
 
     @Inject @Delegate @Any
-    IUserWebService service;
+    private IUserWebService service;
 
     @Inject
     private IPersonService personService;
