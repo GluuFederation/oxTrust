@@ -129,4 +129,18 @@ public class SAMLTrustRelationshipShort implements Serializable {
     public void setReleasedAttributes(List<String> releasedAttributes) {
         this.releasedAttributes = releasedAttributes;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof SAMLTrustRelationshipShort)) 
+            throw new IllegalArgumentException("Comparable object should has same type"); 
+        SAMLTrustRelationshipShort tr = (SAMLTrustRelationshipShort)obj;
+        
+        if (inum == null || displayName == null)
+            return inum == tr.inum && displayName == tr.displayName;
+        
+        return inum.equals(tr.inum) && displayName.equals(tr.displayName);
+    }
+    
+    
 }

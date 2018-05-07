@@ -5,20 +5,25 @@
  */
 package org.gluu.oxtrust.api.test;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.gluu.oxtrust.api.Certificates;
 import org.gluu.oxtrust.api.client.OxTrustAPIException;
 import org.gluu.oxtrust.api.client.OxTrustClient;
+import org.gluu.oxtrust.api.client.certificates.CertificatesClient;
 
 /**
- * Typical client lifecycle test requests (registration, document uploading, etc.).
+ * Certificates-related test requests.
  * 
  * @author Dmitry Ognyannikov
  */
-public class ClientTestScenary {
+public class CertificatesTestScenary {
     
+    private static final Logger logger = LogManager.getLogger(CertificatesTestScenary.class);
     
     private final OxTrustClient client;
     
-    public ClientTestScenary(OxTrustClient client) {
+    public CertificatesTestScenary(OxTrustClient client) {
         this.client = client;
     }
     
@@ -29,9 +34,9 @@ public class ClientTestScenary {
      * @throws OxTrustAPIException
      */
     public void run() throws APITestException, OxTrustAPIException {
-        SamlTestScenary saml = new SamlTestScenary(client);
-        saml.run();
-        CertificatesTestScenary certificates = new CertificatesTestScenary(client);
-        certificates.run();
+        CertificatesClient certificatesClient = client.getCertificatesClient();
+        
+        Certificates certificates = certificatesClient.list();
     }
+    
 }

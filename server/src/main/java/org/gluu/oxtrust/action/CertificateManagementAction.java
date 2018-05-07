@@ -28,7 +28,7 @@ import org.gluu.oxtrust.model.cert.TrustStoreCertificate;
 import org.gluu.oxtrust.service.asimba.AsimbaXMLConfigurationService;
 import org.gluu.oxtrust.util.KeystoreWrapper;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.oxtrust.util.X509CertificateShortInfo;
+import org.gluu.oxtrust.util.X509CertificateShortInfoView;
 import org.slf4j.Logger;
 import org.xdi.service.security.Secure;
 
@@ -65,11 +65,11 @@ public class CertificateManagementAction implements Serializable {
 
     private KeystoreWrapper asimbaKeystore;
     
-    private List<X509CertificateShortInfo> asimbaCertificates;
+    private List<X509CertificateShortInfoView> asimbaCertificates;
     
-    private List<X509CertificateShortInfo> trustStoreCertificates;
+    private List<X509CertificateShortInfoView> trustStoreCertificates;
     
-    private List<X509CertificateShortInfo> internalCertificates;
+    private List<X509CertificateShortInfoView> internalCertificates;
     
     @Size(min = 0, max = 30, message = "Length of search string should be less than 30")
     private String searchPattern = "";
@@ -90,7 +90,7 @@ public class CertificateManagementAction implements Serializable {
             if (asimbaXMLConfigurationService.isReady()) {
                 asimbaKeystore = asimbaXMLConfigurationService.getKeystore();
 
-                asimbaCertificates = asimbaKeystore.listCertificates();
+                asimbaCertificates = asimbaKeystore.listCertificatesForView();
             }
         } catch (Exception e) {
             log.error("Load Asimba keystore configuration exception", e); 
@@ -132,7 +132,7 @@ public class CertificateManagementAction implements Serializable {
      */
     private void updateTableView() {
         try {
-            for (X509CertificateShortInfo cert : asimbaCertificates) {
+            for (X509CertificateShortInfoView cert : asimbaCertificates) {
                 // check dates
                 cert.updateViewStyle();
             }
@@ -142,7 +142,7 @@ public class CertificateManagementAction implements Serializable {
         
         try {
             // load trustStoreCertificates
-            trustStoreCertificates = new ArrayList<X509CertificateShortInfo>();
+            trustStoreCertificates = new ArrayList<X509CertificateShortInfoView>();
 
             GluuAppliance appliance = applianceService.getAppliance();
 
@@ -154,7 +154,7 @@ public class CertificateManagementAction implements Serializable {
                         X509Certificate certs[] = SSLService.loadCertificates(trustStoreCertificate.getCertificate().getBytes());
 
                         for (X509Certificate cert : certs) {
-                            X509CertificateShortInfo entry = new X509CertificateShortInfo(trustStoreCertificate.getName(), cert);
+                            X509CertificateShortInfoView entry = new X509CertificateShortInfoView(trustStoreCertificate.getName(), cert);
                             trustStoreCertificates.add(entry);
                         }
                     } catch (Exception e) { log.error("Certificate load exception", e); }
@@ -166,21 +166,21 @@ public class CertificateManagementAction implements Serializable {
         
         try {
             // load internalCertificates
-            internalCertificates = new ArrayList<X509CertificateShortInfo>();
+            internalCertificates = new ArrayList<X509CertificateShortInfoView>();
             try {
                 X509Certificate openDJCerts[] = SSLService.loadCertificates(new FileInputStream(OPENDJ_CERTIFICATE_FILE));
                 for (X509Certificate openDJCert : openDJCerts)
-                    internalCertificates.add(new X509CertificateShortInfo("OpenDJ SSL", openDJCert));
+                    internalCertificates.add(new X509CertificateShortInfoView("OpenDJ SSL", openDJCert));
             } catch (Exception e) { log.error("Certificate load exception", e); }
             try {
                 X509Certificate httpdCerts[] = SSLService.loadCertificates(new FileInputStream(HTTPD_CERTIFICATE_FILE));
                 for (X509Certificate httpdCert : httpdCerts)
-                    internalCertificates.add(new X509CertificateShortInfo("HTTPD SSL", httpdCert));
+                    internalCertificates.add(new X509CertificateShortInfoView("HTTPD SSL", httpdCert));
             } catch (Exception e) { log.error("Certificate load exception", e); }
             try {
                 X509Certificate shibIDPCerts[] = SSLService.loadCertificates(new FileInputStream(SHIB_IDP_CERTIFICATE_FILE));
                 for (X509Certificate shibIDPCert : shibIDPCerts)
-                    internalCertificates.add(new X509CertificateShortInfo("Shibboleth IDP SAML Certificate", shibIDPCert));
+                    internalCertificates.add(new X509CertificateShortInfoView("Shibboleth IDP SAML Certificate", shibIDPCert));
             } catch (Exception e) { log.error("Certificate load exception", e); }
         } catch (Exception e) {
             log.error("Load internalCertificates configuration exception", e); 
@@ -190,9 +190,9 @@ public class CertificateManagementAction implements Serializable {
             // check for warning and search pattern
             final String searchPatternLC = this.searchPattern != null ? this.searchPattern.toLowerCase() : null;
 
-            Iterator<X509CertificateShortInfo> certsIterator = asimbaCertificates.iterator();
+            Iterator<X509CertificateShortInfoView> certsIterator = asimbaCertificates.iterator();
             while (certsIterator.hasNext()) {
-                X509CertificateShortInfo cert = certsIterator.next();
+                X509CertificateShortInfoView cert = certsIterator.next();
                 // apply warning flag
                 if (searchObsoleteWarning && !cert.isWarning())
                     certsIterator.remove();
@@ -207,7 +207,7 @@ public class CertificateManagementAction implements Serializable {
 
             certsIterator = trustStoreCertificates.iterator();
             while (certsIterator.hasNext()) {
-                X509CertificateShortInfo cert = certsIterator.next();
+                X509CertificateShortInfoView cert = certsIterator.next();
                 // apply warning flag
                 if (searchObsoleteWarning && !cert.isWarning())
                     certsIterator.remove();
@@ -222,7 +222,7 @@ public class CertificateManagementAction implements Serializable {
 
             certsIterator = internalCertificates.iterator();
             while (certsIterator.hasNext()) {
-                X509CertificateShortInfo cert = certsIterator.next();
+                X509CertificateShortInfoView cert = certsIterator.next();
                 // apply warning flag
                 if (searchObsoleteWarning && !cert.isWarning())
                     certsIterator.remove();
@@ -242,14 +242,14 @@ public class CertificateManagementAction implements Serializable {
     /**
      * @return the asimbaCertificates
      */
-    public List<X509CertificateShortInfo> getAsimbaCertificates() {
+    public List<X509CertificateShortInfoView> getAsimbaCertificates() {
         return asimbaCertificates;
     }
 
     /**
      * @param asimbaCertificates the asimbaCertificates to set
      */
-    public void setAsimbaCertificates(List<X509CertificateShortInfo> asimbaCertificates) {
+    public void setAsimbaCertificates(List<X509CertificateShortInfoView> asimbaCertificates) {
         this.asimbaCertificates = asimbaCertificates;
     }
 
@@ -270,28 +270,28 @@ public class CertificateManagementAction implements Serializable {
     /**
      * @return the trustStoreCertificates
      */
-    public List<X509CertificateShortInfo> getTrustStoreCertificates() {
+    public List<X509CertificateShortInfoView> getTrustStoreCertificates() {
         return trustStoreCertificates;
     }
 
     /**
      * @param trustStoreCertificates the trustStoreCertificates to set
      */
-    public void setTrustStoreCertificates(List<X509CertificateShortInfo> trustStoreCertificates) {
+    public void setTrustStoreCertificates(List<X509CertificateShortInfoView> trustStoreCertificates) {
         this.trustStoreCertificates = trustStoreCertificates;
     }
 
     /**
      * @return the internalCertificates
      */
-    public List<X509CertificateShortInfo> getInternalCertificates() {
+    public List<X509CertificateShortInfoView> getInternalCertificates() {
         return internalCertificates;
     }
 
     /**
      * @param internalCertificates the internalCertificates to set
      */
-    public void setInternalCertificates(List<X509CertificateShortInfo> internalCertificates) {
+    public void setInternalCertificates(List<X509CertificateShortInfoView> internalCertificates) {
         this.internalCertificates = internalCertificates;
     }
 

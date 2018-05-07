@@ -20,6 +20,7 @@ import java.util.Enumeration;
 import java.util.List;
 
 import javax.crypto.SecretKey;
+import org.gluu.oxtrust.api.X509CertificateShortInfo;
 
 /**
  * Provides utility methods for JKS KeyStores.
@@ -68,6 +69,27 @@ public class KeystoreWrapper {
     
     public void saveAs(String filepath, String password) throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException {
         keystore.store(new FileOutputStream(filepath), password.toCharArray());
+    }
+    
+    public List<X509CertificateShortInfoView> listCertificatesForView() throws KeyStoreException {
+        List<X509CertificateShortInfoView> certs = new ArrayList<X509CertificateShortInfoView>();
+        
+        Enumeration<String> aliases = keystore.aliases();
+        while (aliases.hasMoreElements()) {
+            String alias = aliases.nextElement();
+            
+            Certificate cert = keystore.getCertificate(alias);
+            
+            if (cert instanceof X509Certificate) {
+                X509Certificate certX509 = (X509Certificate)cert;
+
+                X509CertificateShortInfoView entry = new X509CertificateShortInfoView(alias, certX509);
+
+                certs.add(entry);
+            }
+        }
+        
+        return certs;
     }
     
     public List<X509CertificateShortInfo> listCertificates() throws KeyStoreException {
