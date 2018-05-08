@@ -72,6 +72,7 @@ public class GroupWebResource extends BaseWebResource {
 	@ApiOperation(value = "Get a group by inum")
 	public Response getGroupByInum(@PathParam(OxTrustApiConstants.INUM) @NotNull String inum) {
 		log("Get group having group" + inum);
+		inum=inum.equalsIgnoreCase("")?null:inum;
 		try {
 			Objects.requireNonNull(inum, "inum should not be null");
 			GluuGroup group = groupService.getGroupByInum(inum);
@@ -125,6 +126,7 @@ public class GroupWebResource extends BaseWebResource {
 	@ApiOperation(value = "Update a group")
 	public Response updateGroup(GluuGroupApi group) {
 		String inum = group.getInum();
+		inum=inum.equalsIgnoreCase("")?null:inum;
 		log("Update group " + inum);
 		try {
 			Objects.requireNonNull(inum, "inum should not be null");
@@ -168,6 +170,7 @@ public class GroupWebResource extends BaseWebResource {
 	@ApiOperation(value = "Get a group members")
 	public Response getGroupMembers(@PathParam(OxTrustApiConstants.INUM) @NotNull String inum) {
 		log("Get members of group " + inum);
+		inum=inum.equalsIgnoreCase("")?null:inum;
 		try {
 			Objects.requireNonNull(inum, "inum should not be null");
 			GluuGroup group = groupService.getGroupByInum(inum);
@@ -229,7 +232,7 @@ public class GroupWebResource extends BaseWebResource {
 				members.remove(personService.getDnForPerson(person.getInum()));
 				group.setMembers(members);
 				groupService.updateGroup(group);
-				return Response.ok().build();
+				return Response.ok(Response.Status.OK).build();
 			} else {
 				return Response.status(Response.Status.NOT_FOUND).build();
 			}
