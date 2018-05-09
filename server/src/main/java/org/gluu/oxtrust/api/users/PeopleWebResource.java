@@ -19,9 +19,11 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.gluu.oxtrust.api.GluuCustomAttributeApi;
 import org.gluu.oxtrust.api.GluuPersonApi;
 import org.gluu.oxtrust.api.openidconnect.BaseWebResource;
 import org.gluu.oxtrust.ldap.service.IPersonService;
+import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.util.OxTrustApiConstants;
 import org.slf4j.Logger;
@@ -100,6 +102,81 @@ public class PeopleWebResource extends BaseWebResource {
 			gluuPerson.setInum(inum);
 			personService.addPerson(gluuPerson);
 			return Response.ok(convert(Arrays.asList(personService.getPersonByInum(inum))).get(0)).build();
+		} catch (Exception e) {
+			log(logger, e);
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+
+	@GET
+	@ApiOperation(value = "List person custom attributes")
+	@Path(OxTrustApiConstants.INUM_PARAM_PATH + OxTrustApiConstants.ATTRIBUTES)
+	public Response getPersonCustomAttributes(@PathParam(OxTrustApiConstants.INUM) @NotNull String userInum) {
+		log("List person " + userInum + " custom attributes ");
+		try {
+			Objects.requireNonNull(userInum, "User inum should not be null");
+			GluuCustomPerson person = personService.getPersonByInum(userInum);
+			if (person != null) {
+				return Response.ok(convertTo(person.getCustomAttributes())).build();
+			} else {
+				return Response.status(Response.Status.NOT_FOUND).build();
+			}
+		} catch (Exception e) {
+			log(logger, e);
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+
+	@POST
+	@ApiOperation(value = "Add custom attribute to user")
+	@Path(OxTrustApiConstants.INUM_PARAM_PATH + OxTrustApiConstants.ATTRIBUTES)
+	public Response addCustomAttribute(@PathParam(OxTrustApiConstants.INUM) @NotNull String userInum,
+			GluuCustomAttribute customAttribute) {
+		Objects.requireNonNull(customAttribute, "Custom attribute should not be null");
+		log("Add custom attribute to " + customAttribute.toString());
+		try {
+			Objects.requireNonNull(userInum, "User inum should not be null");
+			GluuCustomPerson person = personService.getPersonByInum(userInum);
+			if (person != null) {
+				List<GluuCustomAttribute> attributes = new ArrayList<GluuCustomAttribute>(person.getCustomAttributes());
+				attributes.add(customAttribute);
+				person.setCustomAttributes(attributes);
+				personService.updatePerson(person);
+				return Response.ok(Response.Status.OK).build();
+			} else {
+				return Response.status(Response.Status.NOT_FOUND).build();
+			}
+		} catch (Exception e) {
+			log(logger, e);
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+
+	@DELETE
+	@ApiOperation(value = "Remove custom attribute to user")
+	@Path(OxTrustApiConstants.INUM_PARAM_PATH + OxTrustApiConstants.ATTRIBUTES)
+	public Response removeCustomAttribute(@PathParam(OxTrustApiConstants.INUM) @NotNull String userInum,
+			GluuCustomAttribute customAttribute) {
+		Objects.requireNonNull(customAttribute, "Custom attribute should not be null");
+		log("Remove custom attribute to " + customAttribute.toString());
+		try {
+			Objects.requireNonNull(userInum, "User inum should not be null");
+			GluuCustomPerson person = personService.getPersonByInum(userInum);
+			customAttribute = person.getGluuCustomAttribute(customAttribute.getName());
+			List<GluuCustomAttribute> customAttributes = person.getCustomAttributes();
+			if (person != null && customAttribute != null) {
+				for (GluuCustomAttribute gluuCustomAttribute : customAttributes) {
+					if (customAttribute.getName().equalsIgnoreCase(gluuCustomAttribute.getName())) {
+						customAttributes.remove(gluuCustomAttribute);
+						break;
+					}
+				}
+				person.setCustomAttributes(customAttributes);
+				personService.updatePerson(person);
+				return Response.ok(Response.Status.OK).build();
+			} else {
+				return Response.status(Response.Status.NOT_FOUND).build();
+			}
 		} catch (Exception e) {
 			log(logger, e);
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
@@ -195,6 +272,14 @@ public class PeopleWebResource extends BaseWebResource {
 		gluuCustomPerson.setUserPassword(person.getPassword());
 		gluuCustomPerson.setAttribute("oxTrustActive", "true");
 		return gluuCustomPerson;
+	}
+
+	private List<GluuCustomAttributeApi> convertTo(List<GluuCustomAttribute> gluuCustomAttributes) {
+		List<GluuCustomAttributeApi> results = new ArrayList<GluuCustomAttributeApi>();
+		for (GluuCustomAttribute gluuCustomAttribute : gluuCustomAttributes) {
+			results.add(new GluuCustomAttributeApi(gluuCustomAttribute.getName(), gluuCustomAttribute.getValue()));
+		}
+		return results;
 	}
 
 }
