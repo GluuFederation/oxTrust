@@ -14,6 +14,7 @@
 		<cc:attribute name="required" required="false" />
 		<cc:attribute name="rendered" required="false" type="java.lang.Boolean" />
 		<cc:attribute name="inputId" required="false" />
+		<cc:attribute name="title" required="false" />
 	</cc:interface>
 
 	<cc:implementation>
@@ -23,7 +24,7 @@
 				rendered="#{not cc.attrs.hideLabel}">
 
 				<span class="name #{cc.attrs.invalid ? 'errors' : 'new-label'}">
-					<h:outputLabel id="label" styleClass="#{cc.attrs.required ? 'break-word' : ''}" value="#{gluufn:trim(cc.attrs.label)}:" rendered="#{not cc.attrs.labelAsText}">
+					<h:outputLabel title="#{cc.attrs.title}" id="label" styleClass="#{cc.attrs.required ? 'break-word' : ''}" value="#{gluufn:trim(cc.attrs.label)}:" rendered="#{not cc.attrs.labelAsText}" for="#{cc.attrs.forId}">
 						<h:panelGroup styleClass="required" rendered="#{cc.attrs.required}">*</h:panelGroup>
 					</h:outputLabel>
 					<h:outputText value="#{cc.attrs.label}:" rendered="#{cc.attrs.labelAsText}">
