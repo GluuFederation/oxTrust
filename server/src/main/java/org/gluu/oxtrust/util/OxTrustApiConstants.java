@@ -11,6 +11,7 @@ public final class OxTrustApiConstants {
 	public static final String GROUP_MEMBERS="/members";
 	public static final String PEOPLE="/people";
 	public static final String SCOPES="/scopes";
+	public static final String CLAIMS="/claims";
 	public static final String SECTORS="/sectoridentifiers";
 	public static final String SEARCH="/search";
 	
