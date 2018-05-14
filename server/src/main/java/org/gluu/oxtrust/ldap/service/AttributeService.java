@@ -51,17 +51,18 @@ public class AttributeService extends org.xdi.service.AttributeService {
 
 	@Inject
 	private AppConfiguration appConfiguration;
-	
+
 	@Inject
 	private ApplianceService applianceService;
 
 	@Inject
 	private SchemaService schemaService;
-	
+
 	@Inject
 	private OrganizationService organizationService;
 
-	@Inject @Any
+	@Inject
+	@Any
 	private Event<Events> event;
 
 	public static final String CUSTOM_ATTRIBUTE_OBJECTCLASS_PREFIX = "ox-";
@@ -76,7 +77,8 @@ public class AttributeService extends org.xdi.service.AttributeService {
 	@SuppressWarnings("unchecked")
 	public List<GluuAttribute> getAllPersonAttributes(GluuUserRole gluuUserRole) {
 		String key = OxTrustConstants.CACHE_ATTRIBUTE_PERSON_KEY_LIST + "_" + gluuUserRole.getValue();
-		List<GluuAttribute> attributeList = (List<GluuAttribute>) cacheService.get(OxConstants.CACHE_ATTRIBUTE_NAME, key);
+		List<GluuAttribute> attributeList = (List<GluuAttribute>) cacheService.get(OxConstants.CACHE_ATTRIBUTE_NAME,
+				key);
 		if (attributeList == null) {
 			attributeList = getAllPersonAtributesImpl(gluuUserRole, getAllAttributes());
 			cacheService.put(OxConstants.CACHE_ATTRIBUTE_NAME, key, attributeList);
@@ -92,7 +94,8 @@ public class AttributeService extends org.xdi.service.AttributeService {
 	 *            List of attributes
 	 * @return List of organization attributes
 	 */
-	private List<GluuAttribute> getAllPersonAtributesImpl(GluuUserRole gluuUserRole, Collection<GluuAttribute> attributes) {
+	private List<GluuAttribute> getAllPersonAtributesImpl(GluuUserRole gluuUserRole,
+			Collection<GluuAttribute> attributes) {
 		List<GluuAttribute> returnAttributeList = new ArrayList<GluuAttribute>();
 
 		String[] objectClassTypes = appConfiguration.getPersonObjectClassTypes();
@@ -125,7 +128,8 @@ public class AttributeService extends org.xdi.service.AttributeService {
 	@SuppressWarnings("unchecked")
 	public List<GluuAttribute> getAllContactAttributes(GluuUserRole gluuUserRole) {
 		String key = OxTrustConstants.CACHE_ATTRIBUTE_CONTACT_KEY_LIST + "_" + gluuUserRole.getValue();
-		List<GluuAttribute> attributeList = (List<GluuAttribute>) cacheService.get(OxConstants.CACHE_ATTRIBUTE_NAME, key);
+		List<GluuAttribute> attributeList = (List<GluuAttribute>) cacheService.get(OxConstants.CACHE_ATTRIBUTE_NAME,
+				key);
 		if (attributeList == null) {
 			attributeList = getAllContactAtributesImpl(gluuUserRole, getAllAttributes());
 			cacheService.put(OxConstants.CACHE_ATTRIBUTE_NAME, key, attributeList);
@@ -141,7 +145,8 @@ public class AttributeService extends org.xdi.service.AttributeService {
 	 *            List of attributes
 	 * @return List of contact attributes
 	 */
-	private List<GluuAttribute> getAllContactAtributesImpl(GluuUserRole gluuUserRole, Collection<GluuAttribute> attributes) {
+	private List<GluuAttribute> getAllContactAtributesImpl(GluuUserRole gluuUserRole,
+			Collection<GluuAttribute> attributes) {
 		List<GluuAttribute> returnAttributeList = new ArrayList<GluuAttribute>();
 
 		String[] objectClassTypes = appConfiguration.getContactObjectClassTypes();
@@ -176,7 +181,8 @@ public class AttributeService extends org.xdi.service.AttributeService {
 				OxTrustConstants.CACHE_ATTRIBUTE_ORIGIN_KEY_LIST);
 		if (attributeOriginList == null) {
 			attributeOriginList = getAllAttributeOrigins(getAllAttributes());
-			cacheService.put(OxConstants.CACHE_ATTRIBUTE_NAME, OxTrustConstants.CACHE_ATTRIBUTE_ORIGIN_KEY_LIST, attributeOriginList);
+			cacheService.put(OxConstants.CACHE_ATTRIBUTE_NAME, OxTrustConstants.CACHE_ATTRIBUTE_ORIGIN_KEY_LIST,
+					attributeOriginList);
 		}
 
 		return attributeOriginList;
@@ -218,8 +224,8 @@ public class AttributeService extends org.xdi.service.AttributeService {
 	 *            List of display names for objectClasses
 	 * @return Map with key = origin and value = display name
 	 */
-	public Map<String, String> getAllAttributeOriginDisplayNames(List<String> attributeOriginList, String[] objectClassTypes,
-			String[] objectClassDisplayNames) {
+	public Map<String, String> getAllAttributeOriginDisplayNames(List<String> attributeOriginList,
+			String[] objectClassTypes, String[] objectClassDisplayNames) {
 		// Put displayNames = origins if user don't specify right mapping in
 		// properties file
 		Map<String, String> attributeOriginDisplayNameMap = new HashMap<String, String>();
@@ -256,7 +262,8 @@ public class AttributeService extends org.xdi.service.AttributeService {
 				}
 			}
 
-			cacheService.put(OxConstants.CACHE_ATTRIBUTE_NAME, OxTrustConstants.CACHE_ATTRIBUTE_CUSTOM_KEY_LIST, attributeList);
+			cacheService.put(OxConstants.CACHE_ATTRIBUTE_NAME, OxTrustConstants.CACHE_ATTRIBUTE_CUSTOM_KEY_LIST,
+					attributeList);
 		}
 
 		return attributeList;
@@ -339,7 +346,7 @@ public class AttributeService extends org.xdi.service.AttributeService {
 	public void removeAttribute(String inum) {
 		GluuAttribute attribute = new GluuAttribute();
 		attribute.setDn(getDnForAttribute(inum));
-		
+
 		removeAttribute(attribute);
 	}
 
@@ -509,8 +516,8 @@ public class AttributeService extends org.xdi.service.AttributeService {
 	 * 
 	 * @param inum
 	 *            Inum
-	 * @return DN string for specified attribute or DN for attributes branch if
-	 *         inum is null
+	 * @return DN string for specified attribute or DN for attributes branch if inum
+	 *         is null
 	 */
 	public String getDnForAttribute(String inum) {
 		String organizationDn = organizationService.getDnForOrganization();
@@ -520,7 +527,7 @@ public class AttributeService extends org.xdi.service.AttributeService {
 
 		return String.format("inum=%s,ou=attributes,%s", inum, organizationDn);
 	}
-	
+
 	/**
 	 * Return current custom origin
 	 * 
@@ -529,7 +536,7 @@ public class AttributeService extends org.xdi.service.AttributeService {
 	public String getCustomOrigin() {
 		return appConfiguration.getPersonCustomObjectClass();
 	}
-	
+
 	@Override
 	protected List<GluuAttribute> getAllAtributesImpl(String baseDn) {
 		List<GluuAttribute> attributeList = ldapEntryManager.findEntries(baseDn, GluuAttribute.class, null);
@@ -540,6 +547,7 @@ public class AttributeService extends org.xdi.service.AttributeService {
 
 		return attributeList;
 	}
+
 	/**
 	 * Set metadata for every custom attribute
 	 * 
@@ -608,8 +616,7 @@ public class AttributeService extends org.xdi.service.AttributeService {
 	 * 
 	 * @param inum
 	 *            Group Inum
-	 * @return DN string for specified group or DN for groups branch if inum is
-	 *         null
+	 * @return DN string for specified group or DN for groups branch if inum is null
 	 */
 	public String getDnForGroup(String inum) throws Exception {
 		String orgDn = organizationService.getDnForOrganization();
@@ -626,11 +633,12 @@ public class AttributeService extends org.xdi.service.AttributeService {
 	 */
 	public List<GluuAttribute> getAllActivePersonAttributes(GluuUserRole admin) {
 		@SuppressWarnings("unchecked")
-		List<GluuAttribute> activeAttributeList = (List<GluuAttribute>) cacheService.get(OxConstants.CACHE_ACTIVE_ATTRIBUTE_NAME,
-		        OxConstants.CACHE_ACTIVE_ATTRIBUTE_KEY_LIST);
+		List<GluuAttribute> activeAttributeList = (List<GluuAttribute>) cacheService
+				.get(OxConstants.CACHE_ACTIVE_ATTRIBUTE_NAME, OxConstants.CACHE_ACTIVE_ATTRIBUTE_KEY_LIST);
 		if (activeAttributeList == null) {
 			activeAttributeList = getAllActiveAtributesImpl(admin);
-			cacheService.put(OxConstants.CACHE_ACTIVE_ATTRIBUTE_NAME, OxConstants.CACHE_ATTRIBUTE_KEY_LIST, activeAttributeList);
+			cacheService.put(OxConstants.CACHE_ACTIVE_ATTRIBUTE_NAME, OxConstants.CACHE_ATTRIBUTE_KEY_LIST,
+					activeAttributeList);
 		}
 
 		return activeAttributeList;
@@ -642,14 +650,15 @@ public class AttributeService extends org.xdi.service.AttributeService {
 	 */
 	private List<GluuAttribute> getAllActiveAtributesImpl(GluuUserRole gluuUserRole) {
 		Filter filter = Filter.createEqualityFilter("gluuStatus", "active");
-		List<GluuAttribute> attributeList = ldapEntryManager.findEntries(getDnForAttribute(null), GluuAttribute.class, filter);
+		List<GluuAttribute> attributeList = ldapEntryManager.findEntries(getDnForAttribute(null), GluuAttribute.class,
+				filter);
 		String customOrigin = getCustomOrigin();
 		String[] objectClassTypes = appConfiguration.getPersonObjectClassTypes();
 		log.debug("objectClassTypes={}", Arrays.toString(objectClassTypes));
 		List<GluuAttribute> returnAttributeList = new ArrayList<GluuAttribute>();
 		for (GluuAttribute attribute : attributeList) {
-			if (StringHelper.equalsIgnoreCase(attribute.getOrigin(), appConfiguration.getPersonCustomObjectClass()) &&
-				(GluuUserRole.ADMIN == gluuUserRole)) {
+			if (StringHelper.equalsIgnoreCase(attribute.getOrigin(), appConfiguration.getPersonCustomObjectClass())
+					&& (GluuUserRole.ADMIN == gluuUserRole)) {
 				attribute.setCustom(true);
 				returnAttributeList.add(attribute);
 				continue;
@@ -684,14 +693,15 @@ public class AttributeService extends org.xdi.service.AttributeService {
 		Filter descriptionFilter = Filter.createSubstringFilter(OxTrustConstants.description, null, targetArray, null);
 		Filter nameFilter = Filter.createSubstringFilter(OxTrustConstants.attributeName, null, targetArray, null);
 		Filter inameFilter = Filter.createSubstringFilter(OxTrustConstants.iname, null, targetArray, null);
-		Filter searchFilter = Filter.createORFilter(displayNameFilter, descriptionFilter, inameFilter , nameFilter);
+		Filter searchFilter = Filter.createORFilter(displayNameFilter, descriptionFilter, inameFilter, nameFilter);
 
-		List<GluuAttribute> result = ldapEntryManager.findEntries(getDnForAttribute(null), GluuAttribute.class, searchFilter, sizeLimit);
+		List<GluuAttribute> result = ldapEntryManager.findEntries(getDnForAttribute(null), GluuAttribute.class,
+				searchFilter, sizeLimit);
 		String customOrigin = getCustomOrigin();
 		for (GluuAttribute attribute : result) {
 			attribute.setCustom(customOrigin.equals(attribute.getOrigin()));
 		}
-		
+
 		return result;
 	}
 
@@ -710,10 +720,14 @@ public class AttributeService extends org.xdi.service.AttributeService {
 		Filter originFilter = Filter.createORFilter(originFilters.toArray(new Filter[0]));
 		Filter filter = Filter.createANDFilter(searchFilter, originFilter);
 
-		List<GluuAttribute> result = ldapEntryManager.findEntries(getDnForAttribute(null), GluuAttribute.class, filter, sizeLimit);
+		List<GluuAttribute> result = ldapEntryManager.findEntries(getDnForAttribute(null), GluuAttribute.class, filter,
+				sizeLimit);
 
 		return result;
 	}
 
-	
+	public GluuAttribute getAttributeByDn(String Dn) throws Exception {
+		return ldapEntryManager.find(GluuAttribute.class, Dn);
+	}
+
 }

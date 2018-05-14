@@ -1,5 +1,6 @@
 package org.gluu.oxtrust.api.openidconnect;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -18,10 +19,12 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.ScopeService;
 import org.gluu.oxtrust.model.OxAuthScope;
 import org.gluu.oxtrust.util.OxTrustApiConstants;
 import org.slf4j.Logger;
+import org.xdi.model.GluuAttribute;
 
 import com.wordnik.swagger.annotations.ApiOperation;
 
@@ -35,6 +38,8 @@ public class ScopeWebResource extends BaseWebResource {
 
 	@Inject
 	private ScopeService scopeService;
+	@Inject
+	private AttributeService attributeService;
 
 	public ScopeWebResource() {
 	}
@@ -42,7 +47,7 @@ public class ScopeWebResource extends BaseWebResource {
 	@GET
 	@ApiOperation(value = "Get all scopes")
 	public Response getAllScopes() {
-		log("Get all scopes ");
+		log("List openid connect scopes ");
 		try {
 			return Response.ok(scopeService.searchScopes(null, 100)).build();
 		} catch (Exception e) {
@@ -53,9 +58,9 @@ public class ScopeWebResource extends BaseWebResource {
 
 	@GET
 	@Path(OxTrustApiConstants.INUM_PARAM_PATH)
-	@ApiOperation(value = "Get a specific openidconnect scope")
+	@ApiOperation(value = "Get a specific openid connect scope")
 	public Response getScopeByInum(@PathParam(OxTrustApiConstants.INUM) @NotNull String inum) {
-		log("Get scope " + inum);
+		log("Get openid connect scope by " + inum);
 		try {
 			OxAuthScope scope = scopeService.getScopeByInum(inum);
 			if (scope != null) {
@@ -71,10 +76,10 @@ public class ScopeWebResource extends BaseWebResource {
 
 	@GET
 	@Path(OxTrustApiConstants.SEARCH)
-	@ApiOperation(value = "Search scopes")
+	@ApiOperation(value = "Search openid connect scopes")
 	public Response searchScope(@QueryParam(OxTrustApiConstants.SEARCH_PATTERN) String pattern,
-			@DefaultValue("10") @QueryParam(value = "size") int size) {
-		log("Search scopes with pattern= " + pattern);
+			@DefaultValue("10") @QueryParam("size") int size) {
+		log("Search openid connect scopes with pattern= " + pattern);
 		try {
 			List<OxAuthScope> scopes = scopeService.searchScopes(pattern, size);
 			return Response.ok(scopes).build();
@@ -123,11 +128,36 @@ public class ScopeWebResource extends BaseWebResource {
 		}
 	}
 
+	@GET
+	@Path(OxTrustApiConstants.INUM_PARAM_PATH + OxTrustApiConstants.CLAIMS)
+	@ApiOperation(value = "List all claims of a scope")
+	public Response getScopeClaims(@PathParam(OxTrustApiConstants.INUM) @NotNull String inum) {
+		log("List all claims of scope ==> " + inum);
+		try {
+			Objects.requireNonNull(inum, "inum should not be null");
+			OxAuthScope oxAuthScope = scopeService.getScopeByInum(inum);
+			List<String> claimsDn = new ArrayList<String>();
+			List<GluuAttribute> attributes = new ArrayList<GluuAttribute>();
+			if (oxAuthScope != null) {
+				claimsDn = oxAuthScope.getOxAuthClaims();
+				for (String claimDn : claimsDn) {
+					attributes.add(attributeService.getAttributeByDn(claimDn));
+				}
+				return Response.ok(attributes).build();
+			} else {
+				return Response.status(Response.Status.NOT_FOUND).build();
+			}
+		} catch (Exception e) {
+			log(logger, e);
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+
 	@DELETE
 	@Path(OxTrustApiConstants.INUM_PARAM_PATH)
 	@ApiOperation(value = "Delete an openidconnect scope")
 	public Response deleteScope(@PathParam(OxTrustApiConstants.INUM) @NotNull String inum) {
-		log("delete scope " + inum);
+		log("Delete openidconnect scope " + inum);
 		try {
 			OxAuthScope scope = scopeService.getScopeByInum(inum);
 			if (scope != null) {
@@ -148,7 +178,7 @@ public class ScopeWebResource extends BaseWebResource {
 	}
 
 	private void log(String message) {
-		logger.debug("#################Request: " + message);
+		logger.debug("################# Request: " + message);
 	}
 
 }
