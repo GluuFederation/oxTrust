@@ -86,6 +86,8 @@ public class PasswordReminderAction implements Serializable {
 	@Inject
 	private RenderService renderService;
 
+	private boolean passwordResetIsEnable = false;
+
 	/**
 	 * @return the MESSAGE_NOT_FOUND
 	 */
@@ -139,8 +141,11 @@ public class PasswordReminderAction implements Serializable {
 			facesMessages.add(FacesMessage.SEVERITY_INFO,
 					facesMessages.evalResourceAsString("#{msg['person.passwordreset.emailLetterSent']}"));
 		} else if (OxTrustConstants.RESULT_FAILURE.equals(outcome)) {
-			facesMessages.add(FacesMessage.SEVERITY_ERROR,
-					facesMessages.evalResourceAsString("#{msg['person.passwordreset.letterNotSent']}"));
+			if (passwordResetIsEnable) {
+				facesMessages.add(FacesMessage.SEVERITY_ERROR,
+						facesMessages.evalResourceAsString("#{msg['person.passwordreset.letterNotSent']}"));
+			}
+
 		}
 
 		conversationService.endConversation();
@@ -242,10 +247,10 @@ public class PasswordReminderAction implements Serializable {
 						|| (smtpConfiguration.getUserName() != null && smtpConfiguration.getPassword() != null))
 				&& appliance.getPasswordResetAllowed() != null && appliance.getPasswordResetAllowed().isBooleanValue();
 		if (valid) {
+			passwordResetIsEnable = true;
 			if (recaptchaService.isEnabled()) {
 				valid = recaptchaService.verifyRecaptchaResponse();
 				if (!valid) {
-					facesMessages.add(FacesMessage.SEVERITY_ERROR, "Please check your input and CAPTCHA answer.");
 					facesMessages.add(FacesMessage.SEVERITY_ERROR, facesMessages
 							.evalResourceAsString("#{msg['person.passwordreset.catch.checkInputAndCaptcha']}"));
 				}
