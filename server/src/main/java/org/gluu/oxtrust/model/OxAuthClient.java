@@ -52,11 +52,6 @@ public class OxAuthClient extends Entry implements Serializable {
     private String displayName;
 
     @NotNull
-    @Size(min = 0, max = 250, message = "Length of the Description should not exceed 250")
-    @LdapAttribute
-    private String description;
-
-    @NotNull
     @LdapAttribute(name = "oxAuthAppType")
     private OxAuthApplicationType oxAuthAppType;
 
@@ -236,14 +231,6 @@ public class OxAuthClient extends Entry implements Serializable {
 
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
-    }
-
-    public final String getDescription() {
-        return description;
-    }
-
-    public final void setDescription(String description) {
-        this.description = description;
     }
 
     public OxAuthApplicationType getOxAuthAppType() {
@@ -597,9 +584,15 @@ public class OxAuthClient extends Entry implements Serializable {
             setEncodedClientSecret(encryptionService.encrypt(oxAuthClientSecret));
         }
     }
+    
+    
 
-    public String getOxAuthClientSecret() {
-        return oxAuthClientSecret;
+    public String getOxAuthClientSecret() throws EncryptionException {
+        if (StringHelper.isNotEmpty(encodedClientSecret)) {
+        	EncryptionService decryptionService = CdiUtil.bean(EncryptionService.class);
+            return decryptionService.decrypt(encodedClientSecret);
+        }
+        return null;
     }
 
     public Date getClientSecretExpiresAt() {

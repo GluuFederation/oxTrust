@@ -57,12 +57,7 @@
                                                        inputWidth="695" required="true" id="displayNameId"/>
                                 </ox:decorate>
 
-                                <ox:decorate id="description" label="#{msg['clientForm.clientDescription']}">
-					                <h:inputTextarea value="#{_client.description}" rows="3" cols="80"
-					                	maxlength="250" id="descriptionId" />
-                                </ox:decorate>
-
-                                <ox:decorate id="clientSecret" rendered="#{_new}"
+                                <ox:decorate id="clientSecret" rendered="#{not _new}"
                                              label="#{msg['clientForm.clientSecret']}">
                                     <rich:inplaceInput value="#{_client.oxAuthClientSecret}"
                                                        defaultLabel="click to enter Client Secret" maxlength="60"
