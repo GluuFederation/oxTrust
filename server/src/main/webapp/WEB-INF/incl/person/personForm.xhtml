@@ -105,6 +105,10 @@
 	background:none repeat scroll 0 0 #F9F9F9;
 	border-top:1px solid #BBBBBB;
 }
+.fixed-size {
+    table-layout: fixed;
+    word-wrap: break-word;
+}
     </h:outputStylesheet>
 
     <h:outputScript>
@@ -416,7 +420,7 @@
                                         
                                     <ox:decorate label="#{msg['person.authenticationmethods']}" rendered="#{updatePersonAction.deviceDataMap.size() gt 0}" />    
 									<h:dataTable value="#{updatePersonAction.deviceDataMap}" var="_value"
-						    			styleClass="order-table"
+						    			styleClass="order-table fixed-size"
 						    			headerClass="order-table-header"
 						    			rowClasses="order-table-odd-row,order-table-even-row" rendered="#{updatePersonAction.deviceDataMap.size() gt 0}">
 										
