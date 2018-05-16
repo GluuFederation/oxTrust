@@ -265,7 +265,7 @@ public class UpdatePersonAction implements Serializable {
 					String [] args = oxexternalStr.split(":");
 					GluuDeviceDataBean gluuDeviceDataBean= new GluuDeviceDataBean();
 					gluuDeviceDataBean.setNickName(args[0]);
-					gluuDeviceDataBean.setModality(args[0]);
+					gluuDeviceDataBean.setModality(args[1]);
 					gluuDeviceDataBean.setId(oxexternalStr);
 					deviceDataMap.add(gluuDeviceDataBean);
 					
