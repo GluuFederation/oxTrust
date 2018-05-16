@@ -13,10 +13,13 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.gluu.oxtrust.ldap.service.ClientService;
+import org.gluu.oxtrust.ldap.service.EncryptionService;
 import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.slf4j.Logger;
+import org.xdi.service.cdi.util.CdiUtil;
 import org.xdi.service.security.Secure;
+import org.xdi.util.StringHelper;
 import org.xdi.util.security.StringEncrypter.EncryptionException;
 
 @RequestScoped
@@ -35,6 +38,9 @@ public class ClientPasswordAction implements Serializable {
 
 	@Inject
 	private ClientService clientService;
+
+	@Inject
+	private EncryptionService encryptionService;
 	
 	@Inject
 	private Logger log;
@@ -56,6 +62,7 @@ public class ClientPasswordAction implements Serializable {
 		OxAuthClient client = clientService.getClientByDn(updateClientAction.getClient().getDn());
 		try {
 			client.setOxAuthClientSecret(newPassword);
+            client.setEncodedClientSecret(encryptionService.encrypt(newPassword));
 		} catch (EncryptionException e) {
 			log.error("Failed to encrypt password", e);
 		}

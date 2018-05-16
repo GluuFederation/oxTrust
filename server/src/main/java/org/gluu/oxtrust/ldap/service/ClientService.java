@@ -27,6 +27,7 @@ import org.gluu.persist.model.base.GluuBoolean;
 import org.gluu.search.filter.Filter;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
+import org.xdi.service.cdi.util.CdiUtil;
 import org.xdi.util.INumGenerator;
 import org.xdi.util.StringHelper;
 
@@ -51,10 +52,13 @@ public class ClientService implements Serializable {
 	private Logger logger;
 
 	@Inject
-	private AppConfiguration appConfiguration;
+    private EncryptionService encryptionService;
+
+    @Inject
+    private OrganizationService organizationService;
 
 	@Inject
-	private OrganizationService organizationService;
+	private AppConfiguration appConfiguration;
 
 	public boolean contains(String clientDn) {
 		return ldapEntryManager.contains(OxAuthClient.class, clientDn);
@@ -89,8 +93,14 @@ public class ClientService implements Serializable {
 		OxAuthClient result = null;
 		try {
 			result = ldapEntryManager.find(OxAuthClient.class, getDnForClient(inum), ldapReturnAttributes);
-		} catch (Exception e) {
-			logger.debug("", e);
+			
+            String encodedClientSecret = result.getEncodedClientSecret(); 
+	        if (StringHelper.isNotEmpty(encodedClientSecret)) {
+	            String clientSecret = encryptionService.decrypt(encodedClientSecret); 
+	            result.setOxAuthClientSecret(clientSecret);
+	        }
+		} catch (Exception ex) {
+			logger.debug("Failed to load client entry", ex);
 		}
 		return result;
 	}
@@ -107,7 +117,6 @@ public class ClientService implements Serializable {
 		OxAuthCustomClient result = ldapEntryManager.find(OxAuthCustomClient.class, getDnForClient(inum));
 
 		return result;
-
 	}
 
 	/**

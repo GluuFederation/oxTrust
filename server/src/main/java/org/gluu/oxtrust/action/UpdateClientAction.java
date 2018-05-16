@@ -6,12 +6,25 @@
 
 package org.gluu.oxtrust.action;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
+import javax.enterprise.context.ConversationScoped;
+import javax.faces.application.FacesMessage;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
-import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.ldap.service.ClientService;
+import org.gluu.oxtrust.ldap.service.EncryptionService;
 import org.gluu.oxtrust.ldap.service.ScopeService;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.OxAuthClient;
@@ -30,13 +43,6 @@ import org.xdi.service.security.Secure;
 import org.xdi.util.StringHelper;
 import org.xdi.util.Util;
 import org.xdi.util.security.StringEncrypter.EncryptionException;
-
-import javax.enterprise.context.ConversationScoped;
-import javax.faces.application.FacesMessage;
-import javax.inject.Inject;
-import javax.inject.Named;
-import java.io.Serializable;
-import java.util.*;
 
 /**
  * Action class for viewing and updating clients.
@@ -71,8 +77,8 @@ public class UpdateClientAction implements Serializable {
 	@Inject
 	private ConversationService conversationService;
 
-	@Inject
-	private ConfigurationFactory configurationFactory;
+    @Inject
+    private EncryptionService encryptionService;
 
 	@Inject
 	private AppConfiguration appConfiguration;
@@ -273,13 +279,11 @@ public class UpdateClientAction implements Serializable {
 		} else {
 			this.inum = clientService.generateInumForNewClient();
 			String dn = clientService.getDnForClient(this.inum);
-			
-			if(this.client.getOxAuthClientSecret() == null || this.client.getOxAuthClientSecret().isEmpty()){
-				String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-				String pwd = RandomStringUtils.random( 24, characters );
-				log.info( pwd );
-				this.client.setOxAuthClientSecret( pwd);
-			}
+
+            if (StringHelper.isEmpty(this.client.getEncodedClientSecret())) {
+                generatePassword();
+            }
+
 			// Save client
 			this.client.setDn(dn);
 			this.client.setInum(this.inum);
@@ -1159,12 +1163,11 @@ public class UpdateClientAction implements Serializable {
 		return true;
 	}
 	
-	public void generatePassword() throws EncryptionException{
-		String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-		String pwd = RandomStringUtils.random( 24, characters );
-		log.info( pwd );
-		this.client.setOxAuthClientSecret( pwd);
-		//return pwd;
-	}
+    public void generatePassword() throws EncryptionException {
+        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        String pwd = RandomStringUtils.random(24, characters);
+        this.client.setOxAuthClientSecret(pwd);
+        this.client.setEncodedClientSecret(encryptionService.encrypt(pwd));
+    }
 
 }
