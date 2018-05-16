@@ -6,7 +6,16 @@
 
 package org.gluu.oxtrust.model;
 
-import org.gluu.oxtrust.ldap.service.EncryptionService;
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
+
+import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+import org.gluu.persist.model.base.Entry;
+import org.gluu.persist.model.base.GluuBoolean;
 import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
 import org.gluu.site.ldap.persistence.annotation.LdapEntry;
 import org.gluu.site.ldap.persistence.annotation.LdapObjectClass;
@@ -14,15 +23,7 @@ import org.xdi.ldap.model.Entry;
 import org.xdi.ldap.model.GluuBoolean;
 import org.xdi.oxauth.model.common.GrantType;
 import org.xdi.oxauth.model.common.ResponseType;
-import org.xdi.service.cdi.util.CdiUtil;
-import org.xdi.util.StringHelper;
 import org.xdi.util.security.StringEncrypter.EncryptionException;
-
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
 
 /**
  * oxAuthClient
@@ -199,6 +200,7 @@ public class OxAuthClient extends Entry implements Serializable {
     @LdapAttribute(name = "oxdId")
     private String oxdId;
 
+    @Transient
     private String oxAuthClientSecret;
 
     public boolean isSelected() {
@@ -601,15 +603,11 @@ public class OxAuthClient extends Entry implements Serializable {
         this.disabled = disabled;
     }
 
-    public void setOxAuthClientSecret(String oxAuthClientSecret) throws EncryptionException {
+    public void setOxAuthClientSecret(String oxAuthClientSecret) {
         this.oxAuthClientSecret = oxAuthClientSecret;
-        if (StringHelper.isNotEmpty(oxAuthClientSecret)) {
-            EncryptionService encryptionService = CdiUtil.bean(EncryptionService.class);
-            setEncodedClientSecret(encryptionService.encrypt(oxAuthClientSecret));
-        }
     }
-
-    public String getOxAuthClientSecret() {
+    
+    public String getOxAuthClientSecret() throws EncryptionException {
         return oxAuthClientSecret;
     }
 

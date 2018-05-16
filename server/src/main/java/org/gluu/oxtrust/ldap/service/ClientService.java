@@ -25,7 +25,7 @@ import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.ldap.model.GluuBoolean;
+import org.xdi.service.cdi.util.CdiUtil;
 import org.xdi.util.INumGenerator;
 import org.xdi.util.StringHelper;
 
@@ -53,6 +53,9 @@ public class ClientService implements Serializable {
 
     @Inject
     private AppConfiguration appConfiguration;
+
+    @Inject
+    private EncryptionService encryptionService;
     
     @Inject
     private OrganizationService organizationService;
@@ -89,6 +92,11 @@ public class ClientService implements Serializable {
     public OxAuthClient getClientByInum(String inum, String... ldapReturnAttributes) {
 
         OxAuthClient result = ldapEntryManager.find(OxAuthClient.class, getDnForClient(inum), ldapReturnAttributes);
+        String encodedClientSecret = result.getEncodedClientSecret(); 
+	if (StringHelper.isNotEmpty(encodedClientSecret)) {
+	    String clientSecret = encryptionService.decrypt(encodedClientSecret); 
+	    result.setOxAuthClientSecret(clientSecret);
+	}
 
         return result;
     }
