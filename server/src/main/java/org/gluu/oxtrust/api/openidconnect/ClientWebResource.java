@@ -47,7 +47,7 @@ public class ClientWebResource extends BaseWebResource {
 	}
 
 	@GET
-	@ApiOperation(value = "Get openidconnect clients")
+	@ApiOperation(value = "Get openid connect clients")
 	public Response listClients() {
 		log("Get all clients ");
 		try {
@@ -68,12 +68,10 @@ public class ClientWebResource extends BaseWebResource {
 			Objects.requireNonNull(inum);
 			OxAuthClient client = clientService.getClientByInum(inum);
 			if (client != null) {
-				List<String> scopesAsString = client.getOxAuthScopes();
+				List<String> scopesDn = client.getOxAuthScopes();
 				List<OxAuthScope> scopes = new ArrayList<OxAuthScope>();
-				for (String scopeAsString : scopesAsString) {
-					String uncompleteInum = scopeAsString.split(",")[0];
-					String scopeInum = uncompleteInum.split("=")[1];
-					scopes.add(scopeService.getScopeByInum(scopeInum));
+				for (String scopeDn : scopesDn) {
+					scopes.add(scopeService.getScopeByDn(scopeDn));
 				}
 				return Response.ok(scopes).build();
 			} else {
@@ -187,7 +185,7 @@ public class ClientWebResource extends BaseWebResource {
 
 	@DELETE
 	@Path(OxTrustApiConstants.INUM_PARAM_PATH + OxTrustApiConstants.SCOPES + OxTrustApiConstants.SCOPE_INUM_PARAM_PATH)
-	@ApiOperation(value = "Get client scopes")
+	@ApiOperation(value = "Remove a client scope")
 	public Response removeScopeToClient(@PathParam(OxTrustApiConstants.INUM) @NotNull String inum,
 			@PathParam(OxTrustApiConstants.SCOPE_INUM) @NotNull String sinum) {
 		log("add new scope to client");
@@ -243,6 +241,6 @@ public class ClientWebResource extends BaseWebResource {
 	}
 
 	private void log(String message) {
-		logger.debug("#################Request: " + message);
+		logger.debug("################# Request: " + message);
 	}
 }
