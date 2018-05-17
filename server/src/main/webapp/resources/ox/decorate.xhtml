@@ -17,6 +17,8 @@
 		<cc:attribute name="required" required="false" />
 		<cc:attribute name="rendered" required="false" />
 		<cc:attribute name="inputId" required="false" />
+		<cc:attribute name="title" required="false" />
+		<cc:attribute name="styleClass" required="false" default=""/>
 	</cc:interface>
 
 	<cc:implementation>
@@ -26,7 +28,7 @@
 				rendered="#{not cc.attrs.hideLabel}">
 
 				<span class="name #{cc.attrs.invalid ? 'errors' : 'new-label'}">
-					<h:outputLabel id="label" styleClass="#{cc.attrs.required ? 'break-word' : ''}" value="#{gluufn:trim(cc.attrs.label)}:" rendered="#{not cc.attrs.labelAsText}" for="#{cc.attrs.forId}">
+					<h:outputLabel title="#{cc.attrs.title}"   id="label" styleClass="#{cc.attrs.required ? 'break-word' : cc.attrs.styleClass}" value="#{gluufn:trim(cc.attrs.label)}:" rendered="#{not cc.attrs.labelAsText}" for="#{cc.attrs.forId}">
 						<h:panelGroup styleClass="required" rendered="#{cc.attrs.required}">*</h:panelGroup>
 						<h:panelGroup rendered="#{cc.attrs.tooltip != null}">
 						<span class="hello"  data-toggle="tooltip" data-original-title="#{cc.attrs.tooltip}"><i class="fa fa-info-circle" aria-hidden="true"></i></span>
