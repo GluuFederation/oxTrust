@@ -49,96 +49,103 @@ import org.xdi.util.StringHelper;
 public class PasswordReminderAction implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	@Inject
 	private Logger log;
 
 	@Inject
-	private LdapEntryManager ldapEntryManager;	
+	private LdapEntryManager ldapEntryManager;
 
 	@Inject
 	private RecaptchaService recaptchaService;
-	
+
 	@Inject
 	private ApplianceService applianceService;
-	
+
 	@Inject
 	private OrganizationService organizationService;
 
 	@Inject
 	private AppConfiguration appConfiguration;
-	
+
 	@Inject
 	private PersonService personService;
 
-    @Inject
-    private FacesMessages facesMessages;
+	@Inject
+	private FacesMessages facesMessages;
 
-    @Inject
+	@Inject
 	private ConversationService conversationService;
 
-    @Inject
-    private RenderParameters rendererParameters;
+	@Inject
+	private RenderParameters rendererParameters;
 
-    @Inject
+	@Inject
 	private MailService mailService;
 
-    @Inject
-    private RenderService renderService;
+	@Inject
+	private RenderService renderService;
 
-    /**
-     * @return the MESSAGE_NOT_FOUND
-     */
-    public static String getMESSAGE_NOT_FOUND() {
-        return MESSAGE_NOT_FOUND;
-    }
+	private boolean passwordResetIsEnable = false;
 
-    /**
-     * @param aMESSAGE_NOT_FOUND the MESSAGE_NOT_FOUND to set
-     */
-    public static void setMESSAGE_NOT_FOUND(String aMESSAGE_NOT_FOUND) {
-        MESSAGE_NOT_FOUND = aMESSAGE_NOT_FOUND;
-    }
+	/**
+	 * @return the MESSAGE_NOT_FOUND
+	 */
+	public static String getMESSAGE_NOT_FOUND() {
+		return MESSAGE_NOT_FOUND;
+	}
 
-    /**
-     * @return the MESSAGE_FOUND
-     */
-    public static String getMESSAGE_FOUND() {
-        return MESSAGE_FOUND;
-    }
+	/**
+	 * @param aMESSAGE_NOT_FOUND
+	 *            the MESSAGE_NOT_FOUND to set
+	 */
+	public static void setMESSAGE_NOT_FOUND(String aMESSAGE_NOT_FOUND) {
+		MESSAGE_NOT_FOUND = aMESSAGE_NOT_FOUND;
+	}
 
-    /**
-     * @param aMESSAGE_FOUND the MESSAGE_FOUND to set
-     */
-    public static void setMESSAGE_FOUND(String aMESSAGE_FOUND) {
-        MESSAGE_FOUND = aMESSAGE_FOUND;
-    }
+	/**
+	 * @return the MESSAGE_FOUND
+	 */
+	public static String getMESSAGE_FOUND() {
+		return MESSAGE_FOUND;
+	}
+
+	/**
+	 * @param aMESSAGE_FOUND
+	 *            the MESSAGE_FOUND to set
+	 */
+	public static void setMESSAGE_FOUND(String aMESSAGE_FOUND) {
+		MESSAGE_FOUND = aMESSAGE_FOUND;
+	}
 
 	@Email
 	@NotEmpty
 	@NotBlank
 	private String email;
-	
-	private static String MESSAGE_NOT_FOUND = "You (or someone else) entered this email when trying to change the password of %1$s identity server account.\n\n" 
-											+ "However this email address is not on our database of registered users and therefore the attempted password change has failed.\n\n"
-											+ "If you are a %1$s identity server user and were expecting this email, please try again using the email address you gave when registering your account.\n\n"
-											+ "If you are not %1$s identity server user, please ignore this email.\n\n"
-											+ "Kind regards,\n"
-											+ "Support Team";
-	
-	private static String MESSAGE_FOUND = "Hello %1$s\n\n" 
+
+	private static String MESSAGE_NOT_FOUND = "You (or someone else) entered this email when trying to change the password of %1$s identity server account.\n\n"
+			+ "However this email address is not on our database of registered users and therefore the attempted password change has failed.\n\n"
+			+ "If you are a %1$s identity server user and were expecting this email, please try again using the email address you gave when registering your account.\n\n"
+			+ "If you are not %1$s identity server user, please ignore this email.\n\n" + "Kind regards,\n"
+			+ "Support Team";
+
+	private static String MESSAGE_FOUND = "Hello %1$s\n\n"
 			+ "We received a request to reset your password. You may click the button below to choose your new password.\n"
 			+ "If you did not make this request, you can safely ignore this message. \n\n"
 			+ "<a href='%3$s'> <button>Reset Password</button></a>";
-			
 
 	public String requestReminder() throws Exception {
 		String outcome = requestReminderImpl();
-		
+
 		if (OxTrustConstants.RESULT_SUCCESS.equals(outcome)) {
-			facesMessages.add(FacesMessage.SEVERITY_INFO,"We have sent a letter with password reset instructions to the specified email.");
+			facesMessages.add(FacesMessage.SEVERITY_INFO,
+					facesMessages.evalResourceAsString("#{msg['person.passwordreset.emailLetterSent']}"));
 		} else if (OxTrustConstants.RESULT_FAILURE.equals(outcome)) {
-			facesMessages.add(FacesMessage.SEVERITY_ERROR,"Instructions letter was not sent.");
+			if (passwordResetIsEnable) {
+				facesMessages.add(FacesMessage.SEVERITY_ERROR,
+						facesMessages.evalResourceAsString("#{msg['person.passwordreset.letterNotSent']}"));
+			}
+
 		}
 
 		conversationService.endConversation();
@@ -163,13 +170,13 @@ public class PasswordReminderAction implements Serializable {
 			GluuCustomPerson person = new GluuCustomPerson();
 			person.setMail(email);
 			List<GluuCustomPerson> matchedPersons = personService.findPersons(person, 0);
-			if(matchedPersons != null && matchedPersons.size()>0){
+			if (matchedPersons != null && matchedPersons.size() > 0) {
 				GluuAppliance appliance = applianceService.getAppliance();
 
 				OrganizationalUnit requests = new OrganizationalUnit();
 				requests.setOu("resetPasswordRequests");
 				requests.setDn("ou=resetPasswordRequests," + appliance.getDn());
-				if(! ldapEntryManager.contains(requests)){
+				if (!ldapEntryManager.contains(requests)) {
 					ldapEntryManager.persist(requests);
 				}
 
@@ -183,37 +190,45 @@ public class PasswordReminderAction implements Serializable {
 				} while (ldapEntryManager.contains(request));
 
 				rendererParameters.setParameter("givenName", matchedPersons.get(0).getGivenName());
-				rendererParameters.setParameter("organizationName", organizationService.getOrganization().getDisplayName());
-				rendererParameters.setParameter("resetLink", appConfiguration.getApplianceUrl() + httpServletRequest.getContextPath()
-						+ "/resetPassword/" + request.getOxGuid());
+				rendererParameters.setParameter("organizationName",
+						organizationService.getOrganization().getDisplayName());
+				rendererParameters.setParameter("resetLink", appConfiguration.getApplianceUrl()
+						+ httpServletRequest.getContextPath() + "/resetPassword/" + request.getOxGuid());
 
 				String subj = facesMessages.evalResourceAsString("#{msg['mail.reset.found.message.subject']}");
-				String messagePlain = facesMessages.evalResourceAsString("#{msg['mail.reset.found.message.plain.body']}");
+				String messagePlain = facesMessages
+						.evalResourceAsString("#{msg['mail.reset.found.message.plain.body']}");
 				String messageHtml = facesMessages.evalResourceAsString("#{msg['mail.reset.found.message.html.body']}");
 
-//				rendererParameters.setParameter("mail_body", messageHtml);
-//				String mailHtml = renderService.renderView("/WEB-INF/mail/reset_password.xhtml");
+				// rendererParameters.setParameter("mail_body", messageHtml);
+				// String mailHtml =
+				// renderService.renderView("/WEB-INF/mail/reset_password.xhtml");
 
 				mailService.sendMail(email, null, subj, messagePlain, messageHtml);
 
 				ldapEntryManager.persist(request);
-			}else{
+			} else {
 				GluuAppliance appliance = applianceService.getAppliance();
 				SmtpConfiguration smtpConfiguration = appliance.getSmtpConfiguration();
 
-				rendererParameters.setParameter("organizationName", organizationService.getOrganization().getDisplayName());
+				rendererParameters.setParameter("organizationName",
+						organizationService.getOrganization().getDisplayName());
 
 				String fromName = smtpConfiguration.getFromName();
-				if(fromName == null){
-					fromName = String.format("%1$s identity server" , organizationService.getOrganization().getDisplayName());
+				if (fromName == null) {
+					fromName = String.format("%1$s identity server",
+							organizationService.getOrganization().getDisplayName());
 				}
 
 				String subj = facesMessages.evalResourceAsString("#{msg['mail.reset.not_found.message.subject']}");
-				String messagePlain = facesMessages.evalResourceAsString("#{msg['mail.reset.not_found.message.plain.body']}");
-				String messageHtml = facesMessages.evalResourceAsString("#{msg['mail.reset.not_found.message.html.body']}");
+				String messagePlain = facesMessages
+						.evalResourceAsString("#{msg['mail.reset.not_found.message.plain.body']}");
+				String messageHtml = facesMessages
+						.evalResourceAsString("#{msg['mail.reset.not_found.message.html.body']}");
 
-//				rendererParameters.setParameter("mail_body", messageHtml);
-//				String mailHtml = renderService.renderView("/WEB-INF/mail/reset_password.xhtml");
+				// rendererParameters.setParameter("mail_body", messageHtml);
+				// String mailHtml =
+				// renderService.renderView("/WEB-INF/mail/reset_password.xhtml");
 
 				mailService.sendMail(null, fromName, email, null, subj, messagePlain, messageHtml);
 			}
@@ -222,29 +237,31 @@ public class PasswordReminderAction implements Serializable {
 		return OxTrustConstants.RESULT_FAILURE;
 	}
 
-	public boolean enabled(){
+	public boolean enabled() {
 		GluuAppliance appliance = applianceService.getAppliance();
 		SmtpConfiguration smtpConfiguration = appliance.getSmtpConfiguration();
 
-		boolean valid =	smtpConfiguration != null
-					&& smtpConfiguration.getHost() != null 
-					&& smtpConfiguration.getPort() != 0 
-					&&((! smtpConfiguration.isRequiresAuthentication()) 
-							|| (smtpConfiguration.getUserName() != null 
-								&& smtpConfiguration.getPassword() != null))
-					&& appliance.getPasswordResetAllowed()!=null 
-					&& appliance.getPasswordResetAllowed().isBooleanValue();
-		if(valid){
+		boolean valid = smtpConfiguration != null && smtpConfiguration.getHost() != null
+				&& smtpConfiguration.getPort() != 0
+				&& ((!smtpConfiguration.isRequiresAuthentication())
+						|| (smtpConfiguration.getUserName() != null && smtpConfiguration.getPassword() != null))
+				&& appliance.getPasswordResetAllowed() != null && appliance.getPasswordResetAllowed().isBooleanValue();
+		if (valid) {
+			passwordResetIsEnable = true;
 			if (recaptchaService.isEnabled()) {
 				valid = recaptchaService.verifyRecaptchaResponse();
-				if(!valid)
-					facesMessages.add(FacesMessage.SEVERITY_ERROR, "Please check your input and CAPTCHA answer.");
-			}			
-		}else{
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Sorry the Password Reminder functionality is not enabled.Please contact to administrator.");
+				if (!valid) {
+					facesMessages.add(FacesMessage.SEVERITY_ERROR, facesMessages
+							.evalResourceAsString("#{msg['person.passwordreset.catch.checkInputAndCaptcha']}"));
+				}
+
+			}
+		} else {
+			facesMessages.add(FacesMessage.SEVERITY_ERROR,
+					facesMessages.evalResourceAsString("#{msg['person.passwordreset.notActivate']}"));
 		}
 		return valid;
-		
+
 	}
 
 	public String getEmail() {
@@ -255,32 +272,34 @@ public class PasswordReminderAction implements Serializable {
 		this.email = email;
 	}
 
-    /**
-     * @return the ldapEntryManager
-     */
-    public LdapEntryManager getLdapEntryManager() {
-        return ldapEntryManager;
-    }
+	/**
+	 * @return the ldapEntryManager
+	 */
+	public LdapEntryManager getLdapEntryManager() {
+		return ldapEntryManager;
+	}
 
-    /**
-     * @param ldapEntryManager the ldapEntryManager to set
-     */
-    public void setLdapEntryManager(LdapEntryManager ldapEntryManager) {
-        this.ldapEntryManager = ldapEntryManager;
-    }
+	/**
+	 * @param ldapEntryManager
+	 *            the ldapEntryManager to set
+	 */
+	public void setLdapEntryManager(LdapEntryManager ldapEntryManager) {
+		this.ldapEntryManager = ldapEntryManager;
+	}
 
-    /**
-     * @return the recaptchaService
-     */
-    public RecaptchaService getRecaptchaService() {
-        return recaptchaService;
-    }
+	/**
+	 * @return the recaptchaService
+	 */
+	public RecaptchaService getRecaptchaService() {
+		return recaptchaService;
+	}
 
-    /**
-     * @param recaptchaService the recaptchaService to set
-     */
-    public void setRecaptchaService(RecaptchaService recaptchaService) {
-        this.recaptchaService = recaptchaService;
-    }
-	
+	/**
+	 * @param recaptchaService
+	 *            the recaptchaService to set
+	 */
+	public void setRecaptchaService(RecaptchaService recaptchaService) {
+		this.recaptchaService = recaptchaService;
+	}
+
 }
