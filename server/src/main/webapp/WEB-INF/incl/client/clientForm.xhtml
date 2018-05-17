@@ -38,6 +38,85 @@
             font-weight: bold;
         }
     </style>
+       <h:outputScript>
+       
+      function valuesDisplay(element) {
+      var element = $(element);
+      		
+      		var divvalue = document.getElementById('autogenrateid');
+      		console.log("div element " + element.val);
+      		var eye = divvalue.previousElementSibling;
+    		var eyehide = eye.previousElementSibling;
+      		console.log(eye);
+			console.log(eyehide);
+			eye.style.display = "none"; 
+			eyehide.style.display = "block";		
+		}
+		
+		
+		function isViewPassword(buttonelementid) {
+	    	isVisible = $("img[id$="+buttonelementid+"]").is(':visible');
+
+    		return isVisible;
+    	}
+    	
+    	function changeTextType(element,buttonelementid) {
+    		var $element = $(element);
+			if (isViewPassword(buttonelementid)) {
+	    		$element[0].childNodes[2].childNodes[0].setAttribute('type','text');
+			} else {
+	    		$element[0].childNodes[2].childNodes[0].setAttribute('type','password');
+			}
+		}
+
+		function hideSpanValue(element, value) {
+    		var newValue = '';
+    		for (i = 0;  i &lt; value.length ; i++)
+    			newValue += '&bull;';
+    		
+    		var $element = $(element);
+    		$element[0].childNodes[0].innerHTML = newValue;
+		}
+
+		function restoreSpanValue(element, value) {
+    		var $element = $(element);
+    		$element[0].childNodes[0].innerHTML = value;
+		}
+		
+		function viewValue(obj,elementid , eyeButtonid){
+			passwordElement = $("input[id$='"+elementid+"Input']");
+			passwordValue = passwordElement.val();
+
+			passwordElementSpan = $("span[id$='"+elementid+"Label']");
+			
+			restoreSpanValue(passwordElementSpan.parent()[0], passwordValue);
+
+			$(obj).css({"display":"none"});
+			$(obj).siblings("img[id$='"+eyeButtonid+"']").css({"display":"block"});
+		}
+				
+		function hideValue(obj,elementid,eyeButtonid){
+			passwordElement = $("input[id$='"+elementid+"Input']");
+			passwordValue = passwordElement.val();
+
+			passwordElementSpan = $("span[id$='"+elementid+"Label']");
+			
+			hideSpanValue(passwordElementSpan.parent()[0], passwordValue);
+
+			$(obj).css({"display":"none"});
+			$(obj).siblings("img[id$='"+eyeButtonid+"']").css({"display":"block"});
+		}
+		
+		function hidePasswordValue(element, value,buttonelementid) {
+			if (isViewPassword(buttonelementid)) {
+				return;
+			}
+			
+			hideSpanValue(element, value);
+		}
+		
+    </h:outputScript>
+    	
 
     <h:form id="clientForm">
         <div class="row">
@@ -52,7 +131,7 @@
                                 </ox:decorate>
 
                                 <ox:decorate id="displayName" label="#{msg['clientForm.clientName']}">
-                                    <rich:inplaceInput value="#{_client.displayName}"
+                                    <rich:inplaceInput value="#{_client.displayName}" requiredMessage="Please Enter the Client Name"
                                                        defaultLabel="click to enter the Client Name" maxlength="60"
                                                        inputWidth="695" required="true" id="displayNameId"/>
                                 </ox:decorate>
@@ -61,16 +140,24 @@
 					                <h:inputTextarea value="#{_client.description}" rows="3" cols="80"
 					                	maxlength="250" id="descriptionId" />
                                 </ox:decorate>
-
-                                <ox:decorate id="clientSecret" rendered="#{_new}"
-                                             label="#{msg['clientForm.clientSecret']}">
-                                    <rich:inplaceInput value="#{_client.oxAuthClientSecret}"
-                                                       defaultLabel="click to enter Client Secret" maxlength="60"
-                                                       inputWidth="695"
-                                                       required="#{_clientAction.checkClientSecretRequired()}"
-                                                       id="applicationTypeId"/>
-                                </ox:decorate>
-
+				
+								<h:panelGroup id="secretid">
+	                                <ox:decorate id="clientSecret"
+	                                             label="#{msg['clientForm.clientSecret']}">
+	                                    <rich:inplaceInput styleClass="togglefield" value="#{_client.oxAuthClientSecret}"
+	                                                       defaultLabel="click to enter Client Secret" maxlength="60"
+	                                                       inputWidth="695"
+	                                                       onfocus="changeTextType(this,'hidePassword');"
+	                                                       id="clientSecretId"/>
+	                                   <h:graphicImage value="/img/eye-hidden.png" id="hidePassword"  onclick="return hideValue(this,'clientSecretId','viewPassword');"/>	                                
+	                                   <h:graphicImage value="/img/eye.png" id="viewPassword" style="display: none;" onclick="return viewValue(this,'clientSecretId','hidePassword');"/>
+							           <div id="autogenrateid">
+	                                	<a4j:commandLink render="clientSecretId" style="margin-top:10px;"  styleClass="btn btn-primary"
+	                                                               value="Auto-Generate Secret Key" 
+	                                                               action="#{_clientAction.generatePassword()}" oncomplete="return valuesDisplay(this);" />
+	                                </div></ox:decorate>                               		                                	                                
+								</h:panelGroup>
+								
                                 <ox:decorate id="applicatonType" label="#{msg['clientForm.applicationType']}">
                                     <h:selectOneMenu styleClass="col-sm-9 form-control" value="#{_client.oxAuthAppType}"
                                                      id="applicationTypeId" required="true">
@@ -754,5 +841,6 @@
                 persisteClientAuthorizationsIdSelect.val("FALSE");
             }
         }
+
     </h:outputScript>
 </ui:composition>
