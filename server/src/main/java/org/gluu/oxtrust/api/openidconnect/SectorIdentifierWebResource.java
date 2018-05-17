@@ -104,7 +104,7 @@ public class SectorIdentifierWebResource extends BaseWebResource {
 	public Response updateSectorIdentifier(OxAuthSectorIdentifier identifier) {
 		Objects.requireNonNull(identifier);
 		String id = identifier.getId();
-		log("Update identifier " + id);
+		log(" Update identifier " + id);
 		try {
 			Objects.requireNonNull(id);
 			OxAuthSectorIdentifier existingIdentifier = sectorIdentifierService.getSectorIdentifierById(id);
