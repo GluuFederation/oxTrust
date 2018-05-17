@@ -157,23 +157,25 @@
                 <tbody>
                     <tr>
                         <td colspan="2" rowspan="1">
-            <h:selectBooleanCheckbox 
-                title="Enabled"
-                value="#{_spPool.enabled}" />
-            <h:outputLabel 
-                value="Enabled"/>
+                        <ox:decorate label="Enabled">
+	                        <h:selectBooleanCheckbox 
+				                title="Enabled"
+				                value="#{_spPool.enabled}" />
+                        
+                        </ox:decorate>
                         </td>
                         <td colspan="2" rowspan="1">
                         </td>
                     </tr>
                     <tr>
                         <td colspan="2" rowspan="1">
+            <ox:decorate   
+                title="#{msg['asimba.setsWhetherTheIDP']}"
+                value="#{msg['asimba.forcedAuthenticate']}">
             <h:selectBooleanCheckbox 
                 title="#{msg['asimba.setsWhetherTheIDP']}"
                 value="#{_spPool.forcedAuthenticate}" />
-            <h:outputLabel 
-                title="#{msg['asimba.setsWhetherTheIDP']}"
-                value="#{msg['asimba.forcedAuthenticate']}"/>
+            </ox:decorate>
                         </td>
                         <td colspan="2" rowspan="1">          
                         </td>

@@ -105,6 +105,10 @@
 	background:none repeat scroll 0 0 #F9F9F9;
 	border-top:1px solid #BBBBBB;
 }
+.fixed-size {
+    table-layout: fixed;
+    word-wrap: break-word;
+}
     </h:outputStylesheet>
 
     <h:outputScript>
@@ -273,18 +277,21 @@
                                                                 rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName ne 'Password')}">
 
 														<div class="col-xs-10">
-                                                            <rich:inplaceInput
-                                                                    attribute="#{_custAttr.metadata}"
-                                                                    value="#{_custAttr.values[_valueIdx]}"
-                                                                    defaultLabel="#{msg['person.clickToEnter']} #{_custAttr.metadata.displayName} #{_valueIdx == 0 ? '' : _valueIdx}"
-                                                                    id="custId_text_#{_custAttrIdx}"
-                                                                    required="#{_mustEnter}"
-                                                                    requiredMessage="#{msg['person.pleaseEnter']} #{_custAttr.metadata.displayName} #{_valueIdx == 0 ? '' : _valueIdx}. "
-                                                                    rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.dataType.value ne 'boolean') and (_custAttr.metadata.displayName ne 'Password') and (_custAttr.metadata.dataType.value ne 'certificate')}"
-                                                                    onkeyup="switchTab(event)" >
-																<rich:validator event="blur"/>
-																<f:validator validatorId="attributeValidator" />                                                              
-                                                            </rich:inplaceInput>
+														  <h:inputText  styleClass="form-control"
+															p:placeholder="#{msg['person.clickToEnter']} #{_custAttr.metadata.displayName} #{_valueIdx == 0 ? '' : _valueIdx}"
+															style="width:100%"
+															value="#{_custAttr.values[_valueIdx]}"
+															id="custId_text_#{_custAttrIdx}"
+															required="#{_mustEnter}"
+                                                            requiredMessage="#{msg['person.pleaseEnter']} #{_custAttr.metadata.displayName} #{_valueIdx == 0 ? '' : _valueIdx}. "
+                                                            rendered="#{(_custAttr.adminCanEdit or _mustEnter) and 
+			                                                            (_custAttr.metadata.dataType.value ne 'boolean') and 
+			                                                            (_custAttr.metadata.displayName ne 'Password') and 
+			                                                            (_custAttr.metadata.dataType.value ne 'certificate')}">
+															 	<rich:validator event="blur"/>
+																<f:validator validatorId="attributeValidator" />
+															 </h:inputText>
+                                                            
                                                             <h:selectOneMenu styleClass="form-control"
                                                                              value="#{updatePersonAction.gluuStatus}"
                                                                              required="#{_mustEnter}"
@@ -372,11 +379,11 @@
                                                         
                                                         
                                                  	<ox:decorate label="#{msg['person.password']}" rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'Password')}">
-														<div class="col-xs-10">                                                                                           
-                                                            
-                                                            <rich:inplaceInput
-                                                            		defaultLabel="#{msg['person.clickToEnter']} #{msg['person.password']}"
-                                                                    id="custpasswordId" styleClass="togglefield"
+														<div class="col-xs-10">  
+															<h:inputSecret 
+																	style="width:100%"
+																	p:placeholder="#{msg['person.clickToEnter']} #{msg['person.password']}"
+                                                                    id="custpasswordId" styleClass="form-control togglefield"
                                                                     validator="#{updatePersonAction.validateConfirmPassword}"
                                                                     required="#{_mustEnter}"
                                                                     requiredMessage="#{msg['person.pleaseEnter']} #{_custAttr.metadata.displayName}. "
@@ -384,7 +391,8 @@
                                                                     onfocus="changeTextType(this,'hidePassword');"
                                                                     onkeyup="switchTab(event)">
                                                                 <rich:validator event="blur" oncomplete="hidePasswordValue(this, #{rich:component('custpasswordId')}.getValue(),'hidePassword')"/>
-                                                            </rich:inplaceInput>                                                             
+                                                            </h:inputSecret>                                                                                         
+                                                                                                                         
 							                                <h:graphicImage value="/img/eye.png" id="viewPassword" onclick="return viewValue(this,'custpasswordId','hidePassword');"/>
 							                                <h:graphicImage value="/img/eye-hidden.png" id="hidePassword" style="display: none;" onclick="return hideValue(this,'custpasswordId','viewPassword');"/>
                                                         </div>
@@ -392,8 +400,9 @@
                                                         
                                                      <ox:decorate label="#{msg['person.confirmPassword']}" rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'Password')}">
 														<div class="col-xs-10">                                                                                           
-                                                            <rich:inplaceInput       
-                                                                    defaultLabel="#{msg['person.clickToEnter']} #{msg['person.confirmPassword']}"
+                                                            <h:inputSecret  styleClass="form-control"
+																	style="width:100%"       
+                                                                    p:placeholder="#{msg['person.clickToEnter']} #{msg['person.confirmPassword']}"
                                                                     maxlength="50" id="custconfirmpasswordId"
                                                                     validator="#{updatePersonAction.validateConfirmPassword}"
                                                                     required="#{_mustEnter}"
@@ -402,7 +411,7 @@
                                                                     onfocus="changeTextType(this,'hideCustPassword');"
                                                                     onkeyup="switchTab(event)">
                                                                 <rich:validator event="blur" oncomplete="hidePasswordValue(this, #{rich:component('custconfirmpasswordId')}.getValue(),'hideCustPassword')"/>
-                                                            </rich:inplaceInput> 
+                                                            </h:inputSecret> 
                                                             <h:graphicImage value="/img/eye.png" id="viewCustPassword" onclick="return viewValue(this,'custconfirmpasswordId','hideCustPassword');"/>
 							                                <h:graphicImage value="/img/eye-hidden.png" id="hideCustPassword" style="display: none;" onclick="return hideValue(this,'custconfirmpasswordId','viewCustPassword');"/>
                                                                                                                     
@@ -416,7 +425,7 @@
                                         
                                     <ox:decorate label="#{msg['person.authenticationmethods']}" rendered="#{updatePersonAction.deviceDataMap.size() gt 0}" />    
 									<h:dataTable value="#{updatePersonAction.deviceDataMap}" var="_value"
-						    			styleClass="order-table"
+						    			styleClass="order-table fixed-size"
 						    			headerClass="order-table-header"
 						    			rowClasses="order-table-odd-row,order-table-even-row" rendered="#{updatePersonAction.deviceDataMap.size() gt 0}">
 										
