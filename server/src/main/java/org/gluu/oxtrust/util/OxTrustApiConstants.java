@@ -14,6 +14,7 @@ public final class OxTrustApiConstants {
 	public static final String CLAIMS="/claims";
 	public static final String SECTORS="/sectoridentifiers";
 	public static final String SEARCH="/search";
+	public static final String UMA="/uma";
 	
 	
 	public static final String INUM_PARAM_PATH="/{inum}";
