@@ -14,8 +14,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-import org.gluu.oxtrust.api.GluuGroupApi;
-import org.xdi.model.GluuAttribute;
+import org.gluu.oxtrust.api.GluuAttributeApi;
 
 public interface AttributeProxy {
 	
@@ -25,31 +24,31 @@ public interface AttributeProxy {
 	@GET
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	List<GluuAttribute> getAllAttributes();
+	List<GluuAttributeApi> getAllAttributes();
 	
 	@GET
 	@Path("/active")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	List<GluuAttribute> getAllActiveAttributes();
+	List<GluuAttributeApi> getAllActiveAttributes();
 	
 	@GET
 	@Path("/inactive")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	List<GluuAttribute> getAllInActiveAttributes();
+	List<GluuAttributeApi> getAllInActiveAttributes();
 
 	@GET
 	@Path(PATH_INUM)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	GluuGroupApi getAttribute(@PathParam(INUM) String inum);
+	GluuAttributeApi getAttribute(@PathParam(INUM) String inum);
 
 	@GET
 	@Path("/search")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	List<GluuAttribute> getAttributes(@QueryParam(value = "pattern") @NotNull String pattern,
+	List<GluuAttributeApi> searchAttributes(@QueryParam(value = "pattern") @NotNull String pattern,
 			@QueryParam(value = "size") int size);
 
 	
@@ -62,11 +61,11 @@ public interface AttributeProxy {
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	GluuAttribute createAttribute(GluuAttribute attribute);
+	GluuAttributeApi createAttribute(GluuAttributeApi attribute);
 
 	@PUT
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	GluuAttribute updateAttribute(GluuAttribute attribute);
+	GluuAttributeApi updateAttribute(GluuAttributeApi attribute);
 
 }
