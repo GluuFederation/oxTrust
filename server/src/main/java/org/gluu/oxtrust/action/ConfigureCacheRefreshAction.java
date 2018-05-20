@@ -282,14 +282,14 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 		boolean result = true;
 		if (ldapConfig.getServers().size() == 0) {
 			log.error("{} LDAP configuration '{}' should contains at least one server", configType, ldapConfig.getConfigId());
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "%s LDAP configuration '%s' should contains at least one server", configType,
+			facesMessages.add(FacesMessage.SEVERITY_ERROR,"%s" + "#{msg['ConfigureCacheRefreshAction.missingServerDetail']}", configType,
 					ldapConfig.getConfigId());
 			result = false;
 		}
 
 		if (validateBaseDNs && (ldapConfig.getBaseDNs().size() == 0)) {
 			log.error("{} LDAP configuration '{}' should contains at least one Base DN", configType, ldapConfig.getConfigId());
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "%s LDAP configuration '%s' should contains at least one Base DN", configType,
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "%s" + "#{msg['ConfigureCacheRefreshAction.missingBaseDN']}", configType,
 					ldapConfig.getConfigId());
 			result = false;
 		}
@@ -300,7 +300,7 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 	private boolean validateList(List<String> values, String attributeName) {
 		if (values.size() == 0) {
 			log.error("{} should contains at least one {}", attributeName, attributeName);
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "%s should contains at least one '%s'", attributeName, attributeName);
+			facesMessages.add(FacesMessage.SEVERITY_ERROR,"%s" +  "#{msg['ConfigureCacheRefreshAction.atleastAttribute']}" + "'%s'", attributeName, attributeName);
 			return false;
 		}
 
@@ -308,7 +308,7 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 	}
 
 	public String cancel() {
-		facesMessages.add(FacesMessage.SEVERITY_INFO, "Cache configuration update were canceled");
+		facesMessages.add(FacesMessage.SEVERITY_INFO, "#{msg['ConfigureCacheRefreshAction.updateCancelled']}");
 		
 		conversationService.endConversation();
 
@@ -662,7 +662,7 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 	public void validateProperty(FacesContext context, UIComponent comp,
 			Object value) {
 
-		System.out.println("inside validate method");
+		log.info("inside validate method");
 		String newkeyAttr = (String) value;
 		int size= keyAttributes.size();
 		
@@ -673,7 +673,7 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 				if(i==2){
 				((UIInput) comp).setValid(false);
 				FacesMessage message = new FacesMessage(
-						"key attribute already Exist! ");
+						"#{msg['ConfigureCacheRefreshAction.keyExist']}");
 				//message.setSeverity(Severity.ERROR);
 				context.addMessage(comp.getClientId(context), message);
 				}
@@ -700,7 +700,7 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 					i=i+1;
 					if(i==2){
 					FacesContext context = FacesContext.getCurrentInstance();
-					context.addMessage( null, new FacesMessage( FacesMessage.SEVERITY_ERROR,"Key Attribute already Exist!" ,"Key Attribute already Exist!" ));
+					context.addMessage( null, new FacesMessage( FacesMessage.SEVERITY_ERROR,"#{msg['ConfigureCacheRefreshAction.keyExist']}" ,"#{msg['ConfigureCacheRefreshAction.keyExist']}" ));
 					return false;
 					}
 				}
