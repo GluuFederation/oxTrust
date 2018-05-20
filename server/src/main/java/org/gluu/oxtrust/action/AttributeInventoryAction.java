@@ -85,7 +85,7 @@ public class AttributeInventoryAction implements Serializable {
 			} catch (BaseMappingException ex) {
 				log.error("Failed to load attributes", ex);
 
-				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to load attributes");
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, "#{msg['AttributeInventoryAction.loadfail']}");
 				conversationService.endConversation();
 
 				return OxTrustConstants.RESULT_FAILURE;

@@ -348,7 +348,7 @@ public class Authenticator implements Serializable {
 		String oxAuthHost = getOxAuthHost(oxAuthAuthorizeUrl);
 		if (StringHelper.isEmpty(oxAuthHost)) {
 			log.info("Failed to determine oxAuth host using oxAuthAuthorizeUrl: '{}'", oxAuthAuthorizeUrl);
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Login failed, oxTrust wasn't allow to access user data");
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "#{msg['Authenticator.loginFailedNoPermission']}");
 			return OxTrustConstants.RESULT_NO_PERMISSIONS;
 		}
 
@@ -366,7 +366,7 @@ public class Authenticator implements Serializable {
             String error = requestParameterMap.get(OxTrustConstants.OXAUTH_ERROR);
             String errorDescription = requestParameterMap.get(OxTrustConstants.OXAUTH_ERROR_DESCRIPTION);
             log.error("No state sent. Error: " + error + ". Error description: " + errorDescription);
-            facesMessages.add(FacesMessage.SEVERITY_ERROR, "Login failed, oxTrust wasn't allow to access user data");
+            facesMessages.add(FacesMessage.SEVERITY_ERROR, "#{msg['Authenticator.loginFailedNoPermission']}");
 
             return OxTrustConstants.RESULT_NO_PERMISSIONS;
         }
@@ -382,7 +382,7 @@ public class Authenticator implements Serializable {
 			String errorDescription = requestParameterMap.get(OxTrustConstants.OXAUTH_ERROR_DESCRIPTION);
 
 			log.error("No authorization code sent. Error: " + error + ". Error description: " + errorDescription);
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Login failed, oxTrust wasn't allow to access user data");
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "#{msg['Authenticator.loginFailedNoPermission']}");
 
 			return OxTrustConstants.RESULT_NO_PERMISSIONS;
 		}
@@ -416,9 +416,9 @@ public class Authenticator implements Serializable {
 				clientPassword);
 		
 		if (OxTrustConstants.RESULT_NO_PERMISSIONS.equals(result)) {
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Login failed, oxTrust wasn't allow to access user data");
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "#{msg['Authenticator.loginFailedNoPermission']}");
 		} else if (OxTrustConstants.RESULT_FAILURE.equals(result)) {
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Login failed");
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "#{msg['Authenticator.loginFailed']}");
 		}
 
 		return result;

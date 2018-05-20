@@ -7,6 +7,7 @@
 package org.gluu.oxtrust.action;
 
 import java.io.Serializable;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -183,9 +184,9 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 		String outcome = updateImpl();
 		
 		if (OxTrustConstants.RESULT_SUCCESS.equals(outcome)) {
-			facesMessages.add(FacesMessage.SEVERITY_INFO, "Cache configuration updated");
+			facesMessages.add(FacesMessage.SEVERITY_INFO, "#{msg['ConfigureCacheRefreshAction.configUpdate']}");
 		} else if (OxTrustConstants.RESULT_FAILURE.equals(outcome)) {
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update cache refresh configuration");
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "#{msg['ConfigureCacheRefreshAction.configUpdateFailed']}");
 		}
 		
 		return outcome;
@@ -251,7 +252,7 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 
 		if ((interval == null) || (interval < 0)) {
 			log.error("Invalid cache refresh pooling interval specified: {}", intervalString);
-			facesMessages.add("vdsCacheRefreshPollingIntervalId", FacesMessage.SEVERITY_ERROR, "Invalid cache refresh pooling interval specified");
+			facesMessages.add("vdsCacheRefreshPollingIntervalId", FacesMessage.SEVERITY_ERROR, "#{msg['ConfigureCacheRefreshAction.invalidPoolingInterval']}");
 			return false;
 		}
 
