@@ -215,7 +215,7 @@ public class ScopeDescriptionService implements Serializable {
 		try {
 			umaScope = ldapEntryManager.find(UmaScopeDescription.class, getDnForScopeDescription(inum));
 		} catch (Exception e) {
-			log.error("Failed to find Person by Inum " + inum, e);
+			log.error("Failed to find scope by Inum " + inum, e);
 		}
 
 		return umaScope;
