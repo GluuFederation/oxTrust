@@ -146,6 +146,7 @@ public class ClientWebResource extends BaseWebResource {
 			OxAuthClient existingClient = clientService.getClientByInum(inum);
 			if (existingClient != null) {
 				client.setInum(existingClient.getInum());
+				client.setBaseDn(clientService.getDnForClient(inum));
 				clientService.updateClient(client);
 				return Response.ok(clientService.getClientByInum(existingClient.getInum())).build();
 			} else {
