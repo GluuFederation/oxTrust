@@ -52,7 +52,7 @@ public class OxAuthClientRepositoryImpl extends BaseRepository {
 	}
 
 	public void getClientScopes() {
-		inum = "@!619C.061B.1A7E.5AF4!0001!4377.CD0A!0008!19C7.70AA.4388.942E";
+		inum = "@!C378.2535.607C.A39E!0001!1CF4.0960!0008!828F.0E2D.15FE.97F7";
 		System.out.println("==================");
 		System.out.println("Get client " + inum + " scopes");
 		System.out.println("==================");

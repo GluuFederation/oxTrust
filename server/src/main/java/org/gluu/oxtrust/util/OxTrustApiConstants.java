@@ -13,7 +13,10 @@ public final class OxTrustApiConstants {
 	public static final String SCOPES = "/scopes";
 	public static final String CLAIMS = "/claims";
 	public static final String SECTORS = "/sectoridentifiers";
+	public static final String ATTRIBUTES = "/attributes";
 	public static final String SEARCH = "/search";
+	public static final String ACTIVE = "/active";
+	public static final String INACTIVE = "/inactive";
 	public static final String UMA = "/uma";
 	public static final String RESOURCES = "/resources";
 
