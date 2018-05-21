@@ -3,6 +3,7 @@ package org.gluu.oxtrust.api.test;
 public class OxTrustApiClient {
 
 	public static void main(String[] args) throws Exception {
+		AttributeRepository attributeRepository = new AttributeRepository();
 		GroupRepositoryImpl groupRepository = new GroupRepositoryImpl();
 		PeopleRepositoryImpl peopleRepositoryImpl = new PeopleRepositoryImpl();
 		OxAuthClientRepositoryImpl oxAuthClientRepositoryImpl = new OxAuthClientRepositoryImpl();
@@ -18,5 +19,6 @@ public class OxTrustApiClient {
 		oxAuthClientRepositoryImpl.testAll();
 		scopeRepositoryImpl.testAll();
 		sectorIdentifierRepositoryImpl.testAll();
+		attributeRepository.testAll();
 	}
 }
