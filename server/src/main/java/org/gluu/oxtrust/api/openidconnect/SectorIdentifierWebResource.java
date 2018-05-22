@@ -102,10 +102,10 @@ public class SectorIdentifierWebResource extends BaseWebResource {
 	@PUT
 	@ApiOperation(value = "Update sector identifier")
 	public Response updateSectorIdentifier(OxAuthSectorIdentifier identifier) {
+		Objects.requireNonNull(identifier);
 		String id = identifier.getId();
-		log("Update identifier " + id);
+		log(" Update identifier " + id);
 		try {
-			Objects.requireNonNull(identifier);
 			Objects.requireNonNull(id);
 			OxAuthSectorIdentifier existingIdentifier = sectorIdentifierService.getSectorIdentifierById(id);
 			if (existingIdentifier != null) {
@@ -137,7 +137,7 @@ public class SectorIdentifierWebResource extends BaseWebResource {
 	}
 
 	private void log(String message) {
-		logger.debug("#################Request: " + message);
+		logger.debug("################# Request: " + message);
 	}
 
 }
