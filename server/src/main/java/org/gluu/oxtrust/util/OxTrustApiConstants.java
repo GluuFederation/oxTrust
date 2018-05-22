@@ -17,9 +17,10 @@ public final class OxTrustApiConstants {
 	public static final String SEARCH = "/search";
 	public static final String ACTIVE = "/active";
 	public static final String INACTIVE = "/inactive";
+	public static final String CONFIGURATION = "/configuration";
+	public static final String STATUS = "/status";
 	public static final String UMA = "/uma";
 	public static final String RESOURCES = "/resources";
-
 	public static final String INUM_PARAM_PATH = "/{inum}";
 	public static final String ID_PARAM_PATH = "/{id}";
 	public static final String MEMBER_INUM_PARAM_PATH = "/{minum}";
