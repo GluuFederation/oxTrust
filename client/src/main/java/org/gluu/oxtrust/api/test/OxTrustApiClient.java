@@ -4,6 +4,8 @@ public class OxTrustApiClient {
 
 	public static void main(String[] args) throws Exception {
 		AttributeRepository attributeRepository = new AttributeRepository();
+		UmaScopeRepository umaScopeRepository=new UmaScopeRepository();
+		UmaResourceRepository umaResourceRepository=new UmaResourceRepository();
 		GroupRepositoryImpl groupRepository = new GroupRepositoryImpl();
 		PeopleRepositoryImpl peopleRepositoryImpl = new PeopleRepositoryImpl();
 		OxAuthClientRepositoryImpl oxAuthClientRepositoryImpl = new OxAuthClientRepositoryImpl();
@@ -20,5 +22,7 @@ public class OxTrustApiClient {
 		scopeRepositoryImpl.testAll();
 		sectorIdentifierRepositoryImpl.testAll();
 		attributeRepository.testAll();
+		umaScopeRepository.testAll();
+		umaResourceRepository.testAll();
 	}
 }
