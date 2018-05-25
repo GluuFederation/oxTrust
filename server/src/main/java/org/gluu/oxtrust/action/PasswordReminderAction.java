@@ -258,7 +258,11 @@ public class PasswordReminderAction implements Serializable {
 			}
 		} else {
 			facesMessages.add(FacesMessage.SEVERITY_ERROR,
-					facesMessages.evalResourceAsString("#{msg['person.passwordreset.notActivate']}"));
+					facesMessages.evalResourceAsString("#{msg['person.passwordreset.notActivate1']}"));
+			facesMessages.add(FacesMessage.SEVERITY_ERROR,
+					facesMessages.evalResourceAsString("#{msg['person.passwordreset.notActivate2']}"));
+			facesMessages.add(FacesMessage.SEVERITY_ERROR,
+					facesMessages.evalResourceAsString("#{msg['person.passwordreset.notActivate3']}"));
 		}
 		return valid;
 
