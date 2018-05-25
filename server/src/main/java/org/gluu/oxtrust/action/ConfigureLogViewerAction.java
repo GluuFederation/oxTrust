@@ -99,14 +99,14 @@ public class ConfigureLogViewerAction implements SimpleCustomPropertiesListModel
 
 	public String update() {
 		if (!validateLists()) {
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update log viewer configuration");
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "#{msg['ConfigureLogViewerAction.updateFailed']}");
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 
 		updateAppliance();
 		updateOxAuthConfiguration();
 
-    facesMessages.add(FacesMessage.SEVERITY_INFO, "Log viewer configuration updated");
+    facesMessages.add(FacesMessage.SEVERITY_INFO, "#{msg['ConfigureLogViewerAction.update']}");
 
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
@@ -131,7 +131,7 @@ public class ConfigureLogViewerAction implements SimpleCustomPropertiesListModel
 			jsonConfigurationService.saveOxAuthAppConfiguration(appConfiguration);
 		} catch (IOException e) {
 			log.error("Failed to update oxauth-config.json", e);
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update oxAuth configuration in LDAP");
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "#{msg['ConfigureLogViewerAction.updateOxauthConfFailed']}");
 		}
 	}
 
@@ -142,7 +142,7 @@ public class ConfigureLogViewerAction implements SimpleCustomPropertiesListModel
 	}
 
 	public String cancel() {
-		facesMessages.add(FacesMessage.SEVERITY_INFO, "Log viewer configuration update were canceled");
+		facesMessages.add(FacesMessage.SEVERITY_INFO, "#{msg['ConfigureLogViewerAction.cancelUpdate']}");
 		conversationService.endConversation();
 
 		return OxTrustConstants.RESULT_SUCCESS;
