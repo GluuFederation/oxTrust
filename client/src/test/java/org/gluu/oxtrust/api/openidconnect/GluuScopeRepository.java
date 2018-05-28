@@ -22,28 +22,28 @@ public class GluuScopeRepository extends BaseRepository {
 
 	public List<OxAuthScope> getAllScopes() {
 		ResteasyWebTarget target = client.target(PATH);
-		ScopeProxy client = target.proxy(ScopeProxy.class);
-		return client.getScopes();
+		ScopeProxy simpleClient = target.proxy(ScopeProxy.class);
+		return simpleClient.getScopes();
 
 	}
 
 	public List<OxAuthScope> getSearchScopes(String searchPattern) {
 		ResteasyWebTarget target = client.target(PATH);
-		ScopeProxy client = target.proxy(ScopeProxy.class);
-		return client.searchScopes(searchPattern, 100);
+		ScopeProxy simpleClient = target.proxy(ScopeProxy.class);
+		return simpleClient.searchScopes(searchPattern, 100);
 	}
 
 	public void deleteScope(String inum) {
 		ResteasyWebTarget target = client.target(PATH);
-		ScopeProxy client = target.proxy(ScopeProxy.class);
-		client.deleteScope(inum);
+		ScopeProxy simpleClient = target.proxy(ScopeProxy.class);
+		simpleClient.deleteScope(inum);
 	}
 
 	public OxAuthScope getScope(String inum) {
 		ResteasyWebTarget target = client.target(PATH);
-		ScopeProxy client = target.proxy(ScopeProxy.class);
+		ScopeProxy simpleClient = target.proxy(ScopeProxy.class);
 		try {
-			return client.getScope(inum);
+			return simpleClient.getScope(inum);
 		} catch (Exception e) {
 			return null;
 		}
@@ -51,14 +51,14 @@ public class GluuScopeRepository extends BaseRepository {
 
 	public OxAuthScope createScope(OxAuthScope person) {
 		ResteasyWebTarget target = client.target(PATH);
-		ScopeProxy client = target.proxy(ScopeProxy.class);
-		return client.createScope(person);
+		ScopeProxy simpleClient = target.proxy(ScopeProxy.class);
+		return simpleClient.createScope(person);
 	}
 
 	public OxAuthScope updateScope(OxAuthScope person) {
 		ResteasyWebTarget target = client.target(PATH);
-		ScopeProxy client = target.proxy(ScopeProxy.class);
-		return client.updateScope(person);
+		ScopeProxy simpleClient = target.proxy(ScopeProxy.class);
+		return simpleClient.updateScope(person);
 	}
 
 }

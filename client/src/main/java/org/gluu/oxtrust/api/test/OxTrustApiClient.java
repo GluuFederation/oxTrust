@@ -7,10 +7,8 @@ public class OxTrustApiClient {
 		UmaScopeRepository umaScopeRepository = new UmaScopeRepository();
 		UmaResourceRepository umaResourceRepository = new UmaResourceRepository();
 		OxAuthClientRepositoryImpl oxAuthClientRepositoryImpl = new OxAuthClientRepositoryImpl();
-		GluuScopeRepositoryImpl scopeRepositoryImpl = new GluuScopeRepositoryImpl();
 		SectorIdentifierRepositoryImpl sectorIdentifierRepositoryImpl = new SectorIdentifierRepositoryImpl();
 		oxAuthClientRepositoryImpl.testAll();
-		scopeRepositoryImpl.testAll();
 		sectorIdentifierRepositoryImpl.testAll();
 		attributeRepository.testAll();
 		umaScopeRepository.testAll();
