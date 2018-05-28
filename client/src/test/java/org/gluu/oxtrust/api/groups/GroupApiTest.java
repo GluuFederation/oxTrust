@@ -43,12 +43,14 @@ public class GroupApiTest {
 	}
 
 	@Test
-	public void getAllGroupsest() {
+	public void getAllGroupsTest() {
 		Assume.assumeTrue(canRunOtherTest);
 		System.out.println("==================");
 		System.out.println("List groups");
 		System.out.println("==================");
+		
 		List<GluuGroupApi> groups = groupRepository.getAllGroups();
+		
 		Assert.assertNotNull(groups);
 		System.out.println("*******************");
 		System.out.println("Done");
@@ -61,7 +63,9 @@ public class GroupApiTest {
 		System.out.println("Add Group");
 		System.out.println("==================");
 		int sizeBefore = groupRepository.getAllGroups().size();
+		
 		group = groupRepository.createGroup(generateNewGroup());
+		
 		int sizeAfter = groupRepository.getAllGroups().size();
 		Assert.assertNotNull(group);
 		Assert.assertNotNull(group.getInum());
@@ -80,7 +84,9 @@ public class GroupApiTest {
 		group.setDisplayName(displayName);
 		System.out.println("=================Update group: " + inum);
 		System.out.println("==================");
+		
 		group = groupRepository.updateGroup(group);
+		
 		Assert.assertEquals(displayName, group.getDisplayName());
 		Assert.assertEquals(inum, group.getInum());
 		System.out.println("*******************");
@@ -95,7 +101,9 @@ public class GroupApiTest {
 		System.out.println("==================");
 		System.out.println("Delete group  " + inum);
 		System.out.println("==================");
+		
 		groupRepository.deleteGroup(group.getInum());
+		
 		Assert.assertEquals(null, groupRepository.getGroup(inum));
 		Assert.assertTrue(inum.equalsIgnoreCase(group.getInum()));
 		System.out.println("*******************");
@@ -109,7 +117,9 @@ public class GroupApiTest {
 		System.out.println("Search groups");
 		System.out.println("==================");
 		String pattern = "user";
+		
 		List<GluuGroupApi> foundGroups = groupRepository.searchGroup(pattern, 10);
+		
 		Assert.assertNotNull(foundGroups);
 		System.out.println("*******************");
 		System.out.println("Done");
@@ -123,7 +133,9 @@ public class GroupApiTest {
 		System.out.println("==================");
 		System.out.println("Get group by inum:" + inum);
 		System.out.println("==================");
+		
 		group = groupRepository.getGroup(inum);
+		
 		Assert.assertNotNull(group);
 		Assert.assertTrue(inum.equalsIgnoreCase(group.getInum()));
 		System.out.println("*******************");
@@ -138,7 +150,9 @@ public class GroupApiTest {
 		System.out.println("==================");
 		System.out.println("Get group members:");
 		System.out.println("==================");
+		
 		List<GluuPersonApi> foundMembers = groupRepository.getGroupMembers(inum);
+		
 		Assert.assertNotNull(foundMembers);
 		Assert.assertTrue(foundMembers.size() == 0);
 		groupRepository.deleteGroup(inum);
@@ -156,7 +170,9 @@ public class GroupApiTest {
 		System.out.println("==================");
 		System.out.println("Add group member:" + group.getDisplayName());
 		System.out.println("==================");
+		
 		groupRepository.addGroupMember(inum, user.getInum());
+		
 		List<GluuPersonApi> foundMembers = groupRepository.getGroupMembers(inum);
 		Assert.assertNotNull(foundMembers);
 		groupRepository.deleteGroup(inum);
@@ -182,6 +198,7 @@ public class GroupApiTest {
 		Assert.assertTrue(foundMembers.size() == 1);
 
 		groupRepository.deleteGroupMember(inum, user.getInum());
+		
 		foundMembers = groupRepository.getGroupMembers(inum);
 		Assert.assertNotNull(foundMembers);
 		groupRepository.deleteGroup(inum);
