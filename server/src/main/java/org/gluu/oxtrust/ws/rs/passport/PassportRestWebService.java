@@ -46,18 +46,19 @@ public class PassportRestWebService {
 		Map <String,Map> strategies = new HashMap <String,Map>();
 
 		LdapOxPassportConfiguration ldapOxPassportConfiguration = passportService.loadConfigurationFromLdap();
-		if(ldapOxPassportConfiguration != null ){
+		if (ldapOxPassportConfiguration != null && ldapOxPassportConfiguration.getPassportConfigurations() != null) {
+
 			for (org.xdi.model.passport.PassportConfiguration passportConfiguration : ldapOxPassportConfiguration.getPassportConfigurations()) {
 				if(passportConfiguration != null){
 					Map<String, String> map = new HashMap<String, String>();
 					List<SimpleExtendedCustomProperty>  passList = passportConfiguration.getFieldset();
+
 					if (passList != null) {
-    					for( SimpleExtendedCustomProperty fieldset :  passList ){
+    					for (SimpleExtendedCustomProperty fieldset :  passList) {
     						map.put(fieldset.getValue1(), fieldset.getValue2());
     					}
-					}		
-					
-					strategies.put(passportConfiguration.getStrategy(),map);
+					}
+					strategies.put(passportConfiguration.getStrategy(), map);
 				}
 			}
 		}
