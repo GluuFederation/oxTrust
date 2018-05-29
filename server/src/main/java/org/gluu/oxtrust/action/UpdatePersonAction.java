@@ -8,13 +8,16 @@ package org.gluu.oxtrust.action;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.sql.Timestamp;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.TimeZone;
+import java.util.Map;
 
 import javax.enterprise.context.ConversationScoped;
 import javax.faces.application.FacesMessage;
@@ -35,9 +38,13 @@ import org.gluu.oxtrust.ldap.service.GroupService;
 import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.MemberService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
+import org.gluu.oxtrust.model.Device;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
+import org.gluu.oxtrust.model.MobileDevice;
+import org.gluu.oxtrust.model.OTPDevice;
+import org.gluu.oxtrust.model.Phone;
 import org.gluu.oxtrust.model.fido.GluuCustomFidoDevice;
 import org.gluu.oxtrust.model.fido.GluuDeviceDataBean;
 import org.gluu.oxtrust.service.external.ExternalUpdateUserService;
@@ -225,7 +232,9 @@ public class UpdatePersonAction implements Serializable {
 		try {
 		this.gluuStatus = this.person.getStatus();
 		List <String> oxexternal = this.person.getOxExternalUid();
+		String oxOTPDevices = this.person.getOxOTPDevices();
 		externalAuthCustomAttributes = new ArrayList<String>();
+		String oxMobileDevices = this.person.getOxMobileDevices();
 		if(oxexternal != null && oxexternal.size()>0){
 			for(String oxexternalStr : oxexternal){
 				String [] args = oxexternalStr.split(":");
@@ -258,18 +267,55 @@ public class UpdatePersonAction implements Serializable {
 	                gluuDeviceDataBean.setModality(modality);
 	                deviceDataMap.add(gluuDeviceDataBean); 
 				}
-			}
+			}			
 			
-			if(oxexternal != null && oxexternal.size()>0){
-				for(String oxexternalStr : oxexternal){
-					String [] args = oxexternalStr.split(":");
-					GluuDeviceDataBean gluuDeviceDataBean= new GluuDeviceDataBean();
+			if (oxOTPDevices != null && !oxOTPDevices.trim().equals("")) {
+				ObjectMapper mapper = new ObjectMapper();
+				OTPDevice oTPDevice = mapper.readValue(oxOTPDevices, OTPDevice.class);
+				ArrayList<Device> devices = oTPDevice.getDevices();
+
+				if (devices != null && devices.size() > 0) {
+					for (Device device : devices) {
+						GluuDeviceDataBean gluuDeviceDataBean = new GluuDeviceDataBean();
+						gluuDeviceDataBean.setNickName(device.getNickName());
+						gluuDeviceDataBean.setModality("OTP Device");
+						gluuDeviceDataBean.setId(device.getId());
+						Timestamp stamp = new Timestamp(Long.valueOf(device.getAddedOn()).longValue());
+						gluuDeviceDataBean.setCreationDate(stamp.toGMTString());
+						deviceDataMap.add(gluuDeviceDataBean);
+					}
+				}
+			}
+
+			if (oxMobileDevices != null && !oxMobileDevices.trim().equals("")) {
+				ObjectMapper mapper = new ObjectMapper();
+				MobileDevice mobileDevice = mapper.readValue(oxMobileDevices, MobileDevice.class);
+				ArrayList<Phone> phones = mobileDevice.getPhones();
+
+				if (phones != null && phones.size() > 0) {
+					for (Phone phone : phones) {
+						GluuDeviceDataBean gluuDeviceDataBean = new GluuDeviceDataBean();
+						gluuDeviceDataBean.setNickName(phone.getNickName());
+						gluuDeviceDataBean.setModality("Mobile Device");
+						gluuDeviceDataBean.setId(phone.getNumber());
+
+						Timestamp stamp = new Timestamp(Long.valueOf(phone.getAddedOn()).longValue());
+						gluuDeviceDataBean.setCreationDate(stamp.toGMTString());
+						deviceDataMap.add(gluuDeviceDataBean);
+					}
+				}
+			}
+			if (oxexternal != null && oxexternal.size() > 0) {
+				for (String oxexternalStr : oxexternal) {
+					String[] args = oxexternalStr.split(":");
+					GluuDeviceDataBean gluuDeviceDataBean = new GluuDeviceDataBean();
 					gluuDeviceDataBean.setNickName(args[0]);
-					gluuDeviceDataBean.setModality(args[1]);
-					gluuDeviceDataBean.setId(oxexternalStr);
+					gluuDeviceDataBean.setModality("Passport");
+					gluuDeviceDataBean.setId("-");
+					gluuDeviceDataBean.setCreationDate("-");					
 					deviceDataMap.add(gluuDeviceDataBean);
-					
-				}			
+
+				}
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -542,7 +588,7 @@ public class UpdatePersonAction implements Serializable {
 	public void removeDevice(GluuDeviceDataBean deleteDeviceData){		
 		try {
 			List<GluuCustomFidoDevice>  gluuCustomFidoDevices = fidoDeviceService.searchFidoDevices( this.person.getInum(),null);
-			
+			if(gluuCustomFidoDevices != null){
 			for( GluuCustomFidoDevice gluuCustomFidoDevice : gluuCustomFidoDevices){				
                 if(gluuCustomFidoDevice.getId().equals(deleteDeviceData.getId())){
                 	fidoDeviceService.removeGluuCustomFidoDevice(gluuCustomFidoDevice);
@@ -550,9 +596,10 @@ public class UpdatePersonAction implements Serializable {
                 	return;
                 } 
 			}
+			}
 			
-
 			List <String> list = new ArrayList<String>(this.person.getOxExternalUid());
+			if(list != null){
 			for( String external : list){				
                 if(deleteDeviceData.getId().trim().equals(external.trim())){
                 	list.remove(external);
@@ -561,6 +608,50 @@ public class UpdatePersonAction implements Serializable {
                 	return;
                 } 
 			}
+		}
+			
+			String oxOTPDevices = this.person.getOxOTPDevices();
+			if (oxOTPDevices != null && !oxOTPDevices.trim().equals("")) {
+				ObjectMapper mapper = new ObjectMapper();
+				OTPDevice oTPDevice = mapper.readValue(oxOTPDevices, OTPDevice.class);
+				ArrayList<Device> devices = oTPDevice.getDevices();
+
+				if (devices != null && devices.size() > 0) {
+					for (Device device : devices) {
+						if(deleteDeviceData.getId().equals(device.getId())){						
+							deviceDataMap.remove(deleteDeviceData);
+							devices.remove(device);
+							Map<String, ArrayList<Device>> map= new HashMap<String, ArrayList<Device>>();
+							map.put("devices", devices);
+							String jsonInString = mapper.writeValueAsString(map);
+							this.person.setOxOTPDevices(jsonInString);
+							return;
+						}
+					}
+				}
+			}
+
+			String oxMobileDevices = this.person.getOxMobileDevices();
+			if (oxMobileDevices != null && !oxMobileDevices.trim().equals("")) {
+				ObjectMapper mapper = new ObjectMapper();
+				MobileDevice mobileDevice = mapper.readValue(oxMobileDevices, MobileDevice.class);
+				ArrayList<Phone> phones = mobileDevice.getPhones();
+
+				if (phones != null && phones.size() > 0) {
+					for (Phone phone : phones) {
+						if(phone.getNumber().equals(deleteDeviceData.getId())){
+							deviceDataMap.remove(deleteDeviceData);
+							phones.remove(phone);
+							Map<String, ArrayList<Phone>> map= new HashMap<String, ArrayList<Phone>>();
+							map.put("phones", phones);
+							String jsonInString = mapper.writeValueAsString(map);
+							this.person.setOxMobileDevices(jsonInString);
+							return;
+						}
+					}
+				}
+			}
+			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			 log.error("Failed to remove device ", e);

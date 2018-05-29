@@ -60,8 +60,30 @@ public class GluuCustomPerson extends User
 
     @LdapAttribute(name = "oxExternalUid")
     private List<String> oxExternalUid;
+    
+    @LdapAttribute(name = "oxOTPDevices")
+    private String oxOTPDevices;
+    
+    @LdapAttribute(name = "oxMobileDevices")
+    private String oxMobileDevices;
 
-    @LdapAttribute(name = "oxCreationTimestamp")
+    public String getOxMobileDevices() {
+		return oxMobileDevices;
+	}
+
+	public void setOxMobileDevices(String oxMobileDevices) {
+		this.oxMobileDevices = oxMobileDevices;
+	}
+
+	public String getOxOTPDevices() {
+		return oxOTPDevices;
+	}
+
+	public void setOxOTPDevices(String oxOTPDevices) {
+		this.oxOTPDevices = oxOTPDevices;
+	}
+
+	@LdapAttribute(name = "oxCreationTimestamp")
     private Date creationDate;
 
     @LdapAttribute
