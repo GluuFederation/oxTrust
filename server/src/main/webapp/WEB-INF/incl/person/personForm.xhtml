@@ -438,10 +438,14 @@
 											<h:panelGroup id="U2fPanelid">
 												<a4j:commandLink id="u2fConfig"   action="#{updatePersonAction.fetchFidoRecord(_value.id)}"
 													value="#{_value.id}"
-													rendered="#{not _value.id.contains(':')}"
+													rendered="#{(not _value.id.contains(':')) and (_value.modality ne 'OTP Device') and ( _value.modality ne 'Mobile Device')}"
 													render=":U2fPanel"
 													oncomplete="#{rich:component('U2fPanel')}.show();"
 													execute="@this" />
+											</h:panelGroup>
+											
+											<h:panelGroup id="NoU2fPanelid" rendered="#{(_value.modality eq 'OTP Device') or ( _value.modality eq 'Mobile Device')}">
+											 #{_value.id}											
 											</h:panelGroup>
 										</h:column>
 						    			
