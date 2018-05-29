@@ -21,7 +21,7 @@ public class OpenIdConnetScopeApiTest {
 	public static void testConnection() {
 		try {
 			GluuScopeRepository scopeRepository = new GluuScopeRepository();
-			scopeRepository.getSearchScopes(searchPattern);
+			scopeRepository.searchScopes(searchPattern);
 			canRunOtherTest = true;
 		} catch (Exception e) {
 			System.out.println("***********************");
@@ -122,7 +122,7 @@ public class OpenIdConnetScopeApiTest {
 		System.out.println("Search scopes");
 		System.out.println("==================");
 
-		List<OxAuthScope> scopes = scopeRepository.getSearchScopes(searchPattern);
+		List<OxAuthScope> scopes = scopeRepository.searchScopes(searchPattern);
 
 		Assert.assertNotNull(scopes);
 		Assert.assertTrue(scopes.size() > 1);

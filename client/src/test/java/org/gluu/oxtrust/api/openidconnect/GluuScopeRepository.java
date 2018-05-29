@@ -27,7 +27,7 @@ public class GluuScopeRepository extends BaseRepository {
 
 	}
 
-	public List<OxAuthScope> getSearchScopes(String searchPattern) {
+	public List<OxAuthScope> searchScopes(String searchPattern) {
 		ResteasyWebTarget target = client.target(PATH);
 		ScopeProxy simpleClient = target.proxy(ScopeProxy.class);
 		return simpleClient.searchScopes(searchPattern, 100);
