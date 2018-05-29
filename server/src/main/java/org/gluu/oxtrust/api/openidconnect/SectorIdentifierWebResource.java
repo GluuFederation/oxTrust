@@ -2,6 +2,7 @@ package org.gluu.oxtrust.api.openidconnect;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
@@ -91,8 +92,13 @@ public class SectorIdentifierWebResource extends BaseWebResource {
 		log("Create a sector identifier");
 		try {
 			Objects.requireNonNull(identifier);
+			String oxId = identifier.getId();
+			if (oxId == null) {
+				oxId = UUID.randomUUID().toString();
+			}
+			identifier.setBaseDn(sectorIdentifierService.getDnForSectorIdentifier(oxId));
 			sectorIdentifierService.addSectorIdentifier(identifier);
-			return Response.ok().build();
+			return Response.ok(sectorIdentifierService.getSectorIdentifierById(oxId)).build();
 		} catch (Exception e) {
 			log(logger, e);
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
@@ -104,9 +110,11 @@ public class SectorIdentifierWebResource extends BaseWebResource {
 	public Response updateSectorIdentifier(OxAuthSectorIdentifier identifier) {
 		Objects.requireNonNull(identifier);
 		String id = identifier.getId();
-		log(" Update identifier " + id);
+		log(" Update sector identifier " + id);
 		try {
-			Objects.requireNonNull(id);
+			if (id == null) {
+				id = UUID.randomUUID().toString();
+			}
 			OxAuthSectorIdentifier existingIdentifier = sectorIdentifierService.getSectorIdentifierById(id);
 			if (existingIdentifier != null) {
 				identifier.setId(existingIdentifier.getId());
