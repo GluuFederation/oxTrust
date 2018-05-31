@@ -88,7 +88,7 @@ public class UmaInventoryAction implements Serializable {
 			umaResourcesService.prepareResourceBranch();
 		} catch (Exception ex) {
 			log.error("Failed to initialize form", ex);
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to initialize UMA inventory");
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "#{msg['UmaInventoryAction.initializeFailed']}");
 			conversationService.endConversation();
 
 			return OxTrustConstants.RESULT_FAILURE;
@@ -123,7 +123,7 @@ public class UmaInventoryAction implements Serializable {
 		} catch (Exception ex) {
 			log.error("Failed to find resource sets", ex);
 
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to filter UMA inventory by '#{umaInventoryAction.searchPattern}'");
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "#{msg['UmaInventoryAction.failedFilter']}" + " '#{umaInventoryAction.searchPattern}'");
 			conversationService.endConversation();
 
 			return OxTrustConstants.RESULT_FAILURE;
