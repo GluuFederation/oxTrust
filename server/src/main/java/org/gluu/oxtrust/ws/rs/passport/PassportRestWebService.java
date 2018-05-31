@@ -17,7 +17,7 @@ import org.gluu.oxtrust.ldap.service.PassportService;
 import org.gluu.oxtrust.model.passport.PassportConfigResponse;
 import org.gluu.oxtrust.service.filter.ProtectedApi;
 import org.xdi.config.oxtrust.LdapOxPassportConfiguration;
-import org.xdi.model.passport.FieldSet;
+import org.xdi.model.SimpleExtendedCustomProperty;
 import org.xdi.service.JsonService;
 
 /**
@@ -51,11 +51,11 @@ public class PassportRestWebService {
             for (org.xdi.model.passport.PassportConfiguration passportConfiguration : ldapOxPassportConfiguration.getPassportConfigurations()) {
                 if(passportConfiguration != null){
                     Map<String, String> map = new HashMap<String, String>();
-                    List<FieldSet>  passList = passportConfiguration.getFieldset();
+                    List<SimpleExtendedCustomProperty>  passList = passportConfiguration.getFieldset();
 
                     if (passList != null) {
-                        for (FieldSet fieldset :  passList) {
-                            map.put(fieldset.getKey(), fieldset.getValue());
+                        for (SimpleExtendedCustomProperty fieldset :  passList) {
+                            map.put(fieldset.getValue1(), fieldset.getValue1());
                         }
                     }
                     strategies.put(passportConfiguration.getStrategy(), map);
