@@ -85,7 +85,7 @@
 											<f:selectItem itemValue="Scopes" />
 											<f:selectItem itemValue="ScopeExpression" />
 											<a4j:ajax event="change" 
-												render="selectiongroup" 
+												render="selectiongroup addscope" 
 												limitRender="true" execute="@this" />
 										</h:selectOneMenu>
 										</ox:decorate>
@@ -155,7 +155,7 @@
                                             <ui:param name="parentId" value="expresionui"/>
                                             <ui:param name="json" value="#{_resourceSet.scopeExpression}"/>  
                                             <ui:param name="saveBtnId" value="saveOxTrustConfigBtn"/>
-                                            <ui:param name="saveBtnLabel"  value="Update Scope Expression"/> 
+                                            <ui:param name="saveBtnLabel"  value="Validate and Update Scope Expression"/> 
                                                                                      
                                         </ui:decorate>
                                         </h:panelGroup>
@@ -173,14 +173,14 @@
                                             </a4j:repeat>
                                          </ox:decorate>
                                          
-                                         <ox:decorate id="creatDate" label="#{msg['uma.creationTime']}" >
+                                         <ox:decorate id="creatDate" label="#{msg['uma.creationTime']}" rendered="#{updateResourceAction.update and _resourceSet.creationDate != null}">
                                             <div class="col-sm-9">
 												<h:outputText value="#{_resourceSet.creationDate}" />
 											</div>
                                         </ox:decorate>
 
-                                        <h:panelGroup>
-                                            <a4j:commandButton
+                                        <h:panelGroup id="addscope" >
+                                            <a4j:commandButton  rendered="#{updateResourceAction.scopeSelection eq 'Scopes'}"
                                                     onclick="#{rich:component('scope:selectEntityModalPanel')}.show();"
                                                     style="margin-left:3px;" styleClass="btn btn-primary"
                                                     value="#{msg['uma.addScope']}"/>
