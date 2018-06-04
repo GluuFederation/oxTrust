@@ -15,16 +15,12 @@ import org.gluu.oxtrust.util.OxTrustConstants;
 import org.slf4j.Logger;
 import org.xdi.service.JsonService;
 import org.xdi.service.security.Secure;
-import org.xdi.util.io.ReverseLineReader;
 
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
-import java.nio.charset.Charset;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -53,8 +49,7 @@ public class ViewLogFileAction implements Serializable {
 
 	private GluuAppliance appliance;
 
-	private LogViewerConfig logViewerConfiguration;
-	private Map<Integer, String> logFiles;
+	private LogFiles logFiles;
 
 	private boolean initialized;
 
@@ -63,7 +58,7 @@ public class ViewLogFileAction implements Serializable {
 	private int displayLastLinesCount;
 
 	public String init() {
-		if (this.logViewerConfiguration != null) {
+		if (this.logFiles != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
 
@@ -80,41 +75,19 @@ public class ViewLogFileAction implements Serializable {
 	}
 
 	private void initConfigurations() {
-		this.logViewerConfiguration = prepareLogViewerConfig();
-
-		this.logFiles = prepareLogFiles();
+		this.logFiles = new LogFiles(appliance, jsonService);
 	}
-
-    private LogViewerConfig prepareLogViewerConfig() {
-        LogViewerConfig logViewerConfig = null;
-
-        try {
-            logViewerConfig = new LogFiles().config(appliance, jsonService);
-        } catch (Exception ex) {
-            log.error("Failed to load log viewer configuration '{}'", appliance.getOxLogViewerConfig(), ex);
-        }
-
-        if (logViewerConfig == null) {
-            logViewerConfig = new LogViewerConfig();
-        }
-
-        return logViewerConfig;
-    }
-
-    private Map<Integer, String> prepareLogFiles() {
-        return new LogFiles().filesIndexedById(logViewerConfiguration);
-    }
 
 	public boolean isInitialized() {
 		return initialized;
 	}
 
 	public LogViewerConfig getLogViewerConfiguration() {
-		return logViewerConfiguration;
+		return logFiles.config();
 	}
 
 	public Map<Integer, String> getLogFiles() {
-		return logFiles;
+		return logFiles.filesIndexedById();
 	}
 
 	public String getTailOfLogFile() {
@@ -122,29 +95,11 @@ public class ViewLogFileAction implements Serializable {
 			return "";
 		}
 
-		File activeLogFile = new File(this.logFiles.get(activeLogFileIndex));
-		ReverseLineReader reverseLineReader = new ReverseLineReader(activeLogFile, Charset.defaultCharset().name());
 		try {
-			List<String> logFileLastLines = reverseLineReader.readLastLines(this.displayLastLinesCount);
-
-			StringBuilder sb = new StringBuilder();
-			for (String logFileLastLine : logFileLastLines) {
-				sb.append(logFileLastLine);
-				sb.append('\n');
-			}
-
-			return sb.toString();
+			return this.logFiles.logTailById(activeLogFileIndex, displayLastLinesCount);
 		} catch (IOException ex) {
-			log.error("Failed to read log file '{}'", this.logFiles.get(activeLogFileIndex), ex);
-			String result = String.format("Failed to read log file '%s'", this.logFiles.get(activeLogFileIndex));
-
-			return result;
-		} finally {
-			try {
-				reverseLineReader.close();
-			} catch (IOException ex) {
-				log.error("Failed to destory ReverseLineReader", ex);
-			}
+			log.error("Failed to read log file '{}'", logFiles.filesIndexedById().get(activeLogFileIndex), ex);
+			return String.format("Failed to read log file '%s'", logFiles.filesIndexedById().get(activeLogFileIndex));
 		}
 	}
 
