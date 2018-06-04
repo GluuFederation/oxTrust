@@ -33,6 +33,4 @@ public final class OxTrustApiConstants {
 	public static final String SEARCH_PATTERN = "pattern";
 	public static final String SCOPE_INUM_PARAM_PATH = "/{sinum}";
 
-	public static final String LOGS="/logs";
-
 }

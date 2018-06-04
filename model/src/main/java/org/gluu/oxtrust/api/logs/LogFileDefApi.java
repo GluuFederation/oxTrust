@@ -7,19 +7,19 @@ import javax.xml.bind.annotation.XmlType;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "gluulog")
-public class LogFileApi {
+@XmlType(name = "gluulogdef")
+public class LogFileDefApi {
 
     private int id;
-    private String content;
+    private String name;
 
-    public LogFileApi() {
+    public LogFileDefApi() {
         // default Ctor.
     }
 
-    public LogFileApi(int id, String content) {
+    public LogFileDefApi(int id, String name) {
         this.id = id;
-        this.content = content;
+        this.name = name;
     }
 
     public int getId() {
@@ -30,11 +30,11 @@ public class LogFileApi {
         this.id = id;
     }
 
-    public String getContent() {
-        return content;
+    public String getName() {
+        return name;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public void setName(String name) {
+        this.name = name;
     }
 }
