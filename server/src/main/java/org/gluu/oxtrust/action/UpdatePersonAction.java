@@ -177,7 +177,7 @@ public class UpdatePersonAction implements Serializable {
 	 */
 	public String add() {
 		if (!organizationService.isAllowPersonModification()) {
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new person");
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "#{msg['UpdatePersonAction.failAddNewPerson']}");
 			conversationService.endConversation();
 
 			return OxTrustConstants.RESULT_FAILURE;
@@ -212,7 +212,7 @@ public class UpdatePersonAction implements Serializable {
 		} catch (BaseMappingException ex) {
 			log.error("Failed to find person {}", inum, ex);
 
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to find person");
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "#{msg['UpdatePersonAction.failFinderson']}");
 			conversationService.endConversation();
 
 			return OxTrustConstants.RESULT_FAILURE;
@@ -280,9 +280,9 @@ public class UpdatePersonAction implements Serializable {
 
 	public String cancel() {
 		if (update) {
-			facesMessages.add(FacesMessage.SEVERITY_INFO, "Person '#{updatePersonAction.person.displayName}' not updated");
+			facesMessages.add(FacesMessage.SEVERITY_INFO, "'#{updatePersonAction.person.displayName}'"+ "#{msg['UpdatePersonAction.failUpdatePerson']}");
 		} else {
-			facesMessages.add(FacesMessage.SEVERITY_INFO, "New person not added");
+			facesMessages.add(FacesMessage.SEVERITY_INFO, "#{msg['UpdatePersonAction.failNewPersonAdd']}");
 		}
 
 		conversationService.endConversation();
@@ -336,15 +336,15 @@ public class UpdatePersonAction implements Serializable {
 				}
 			} catch (BaseMappingException ex) {
 				log.error("Failed to update person {}", inum, ex);
-				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update person '#{updatePersonAction.person.displayName}'");
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, "#{msg['UpdatePersonAction.failPersonUpdate']} '#{updatePersonAction.person.displayName}'");
 
 				return OxTrustConstants.RESULT_FAILURE;
 			}
 
-			facesMessages.add(FacesMessage.SEVERITY_INFO, "Person '#{updatePersonAction.person.displayName}' updated successfully");
+			facesMessages.add(FacesMessage.SEVERITY_INFO, "'#{updatePersonAction.person.displayName}' #{msg['UpdatePersonAction.successPersonUpdate']}");
 		} else {
 			if (personService.getPersonByUid(this.person.getUid()) != null) {
-				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Person with the uid '#{updatePersonAction.person.uid}' already exist'");
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, "#{msg['UpdatePersonAction.alreadyExistPerson']} '#{updatePersonAction.person.uid}'");
 				return OxTrustConstants.RESULT_DUPLICATE;
 			}
 
@@ -378,12 +378,12 @@ public class UpdatePersonAction implements Serializable {
 				}
 			} catch (Exception ex) {
 				log.error("Failed to add new person {}", this.person.getInum(), ex);
-				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new person'");
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, "#{msg['UpdatePersonAction.failAddNewPerson']}'");
 
 				return OxTrustConstants.RESULT_FAILURE;
 			}
 
-			facesMessages.add(FacesMessage.SEVERITY_INFO, "New person '#{updatePersonAction.person.displayName}' added successfully");
+			facesMessages.add(FacesMessage.SEVERITY_INFO, "'#{updatePersonAction.person.displayName}' #{msg['UpdatePersonAction.successPersonAdded']}");
 			conversationService.endConversation();
 
 			this.update = true;
@@ -411,7 +411,7 @@ public class UpdatePersonAction implements Serializable {
 	 */
 	public String delete() {
 		if (!organizationService.isAllowPersonModification()) {
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to remove person '#{updatePersonAction.person.displayName}'");
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "#{msg['UpdatePersonAction.failPersonRemove']}  '#{updatePersonAction.person.displayName}'");
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 
@@ -427,7 +427,7 @@ public class UpdatePersonAction implements Serializable {
 					externalUpdateUserService.executeExternalPostDeleteUserMethods(this.person);
 				}
 
-				facesMessages.add(FacesMessage.SEVERITY_INFO, "Person '#{updatePersonAction.person.displayName}' removed successfully");
+				facesMessages.add(FacesMessage.SEVERITY_INFO, "'#{updatePersonAction.person.displayName}' #{msg['UpdatePersonAction.successRemovePerson']}");
 				conversationService.endConversation();
 
 				return OxTrustConstants.RESULT_SUCCESS;
@@ -436,7 +436,7 @@ public class UpdatePersonAction implements Serializable {
 			}
 		}
 
-		facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to remove person '#{updatePersonAction.person.displayName}'");
+		facesMessages.add(FacesMessage.SEVERITY_ERROR, "#{msg['UpdatePersonAction.failPersonRemove']} '#{updatePersonAction.person.displayName}'");
 
 		return OxTrustConstants.RESULT_FAILURE;
 	}
@@ -595,14 +595,14 @@ public class UpdatePersonAction implements Serializable {
 	
 		GluuCustomPerson  gluuCustomPerson  = personService.getPersonByUid(person.getUid());
 		if (gluuCustomPerson != null){
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Add User failed. Uid already exist: %s",
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "#{msg['UpdatePersonAction.faileAddUserUidExist']} %s",
 					gluuCustomPerson.getUid());
 			return false;
 		}
 		
 		gluuCustomPerson  = personService.getPersonByEmail(person.getMail());
 		if (gluuCustomPerson != null){
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Add User failed. Mail id already exist: %s",
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "#{msg['UpdatePersonAction.faileAddUserMailidExist']} %s",
 					gluuCustomPerson.getMail());
 			return false;
 		}	

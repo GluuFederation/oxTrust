@@ -127,7 +127,7 @@ public class UserProfileAction implements Serializable {
 		}
 
 		if (this.person == null) {
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to load profile");
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "#{msg['UserProfileAction.failLoadProfile']}");
 			conversationService.endConversation();
 
 			return OxTrustConstants.RESULT_FAILURE;
@@ -171,14 +171,14 @@ public class UserProfileAction implements Serializable {
 			}
 		} catch (BaseMappingException ex) {
 			log.error("Failed to update profile {}", person.getInum(), ex);
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update profile '#{userProfileAction.person.displayName}'");
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "#{msg['UserProfileAction.failUpdateProfile']}" + "'#{userProfileAction.person.displayName}'");
 
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 
 		customAttributeAction.savePhotos();
 
-		facesMessages.add(FacesMessage.SEVERITY_INFO, "Profile '#{userProfileAction.person.displayName}' updated successfully");
+		facesMessages.add(FacesMessage.SEVERITY_INFO, "'#{userProfileAction.person.displayName}' " + "#{msg['UserProfileAction.successUpdateProfile']}");
 
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
@@ -189,7 +189,7 @@ public class UserProfileAction implements Serializable {
 	}
 
 	public String cancel() {
-		facesMessages.add(FacesMessage.SEVERITY_INFO, "Profile modification canceled");
+		facesMessages.add(FacesMessage.SEVERITY_INFO, "#{msg['UserProfileAction.cancelUpdateProfile']}");
 		conversationService.endConversation();
 
 		return OxTrustConstants.RESULT_SUCCESS;
