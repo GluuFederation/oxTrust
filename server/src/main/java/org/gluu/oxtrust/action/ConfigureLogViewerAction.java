@@ -137,7 +137,7 @@ public class ConfigureLogViewerAction implements SimpleCustomPropertiesListModel
 
 	private boolean validateLists() {
 		boolean result = true;
-
+		// Should be removed ?
 		return result;
 	}
 
