@@ -48,7 +48,6 @@ public class AttributeWebResource extends BaseWebResource {
 		log("Get all attributes");
 		try {
 			List<GluuAttribute> gluuAttributes = attributeService.getAllAttributes();
-			log(" SIZE IS : " + gluuAttributes.size());
 			return Response.ok(gluuAttributes).build();
 		} catch (Exception e) {
 			log(logger, e);
@@ -69,7 +68,6 @@ public class AttributeWebResource extends BaseWebResource {
 					gluuActivesAttributes.add(gluuAttribute);
 				}
 			}
-			log(" SIZE IS : " + gluuActivesAttributes.size());
 			return Response.ok(gluuActivesAttributes).build();
 		} catch (Exception e) {
 			log(logger, e);
@@ -90,7 +88,6 @@ public class AttributeWebResource extends BaseWebResource {
 					gluuInActivesAttributes.add(gluuAttribute);
 				}
 			}
-			log(" SIZE IS : " + gluuInActivesAttributes.size());
 			return Response.ok(gluuInActivesAttributes).build();
 		} catch (Exception e) {
 			log(logger, e);
