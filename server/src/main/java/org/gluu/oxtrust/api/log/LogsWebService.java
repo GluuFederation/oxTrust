@@ -3,10 +3,16 @@ package org.gluu.oxtrust.api.log;
 import com.wordnik.swagger.annotations.ApiOperation;
 import org.gluu.oxtrust.api.logs.LogFileApi;
 import org.gluu.oxtrust.api.logs.LogFileDefApi;
+import org.gluu.oxtrust.api.logs.LogFilesConfigApi;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
+import org.gluu.oxtrust.ldap.service.JsonConfigurationService;
+import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.model.log.LogFiles;
+import org.gluu.oxtrust.model.log.LogFilesConfig;
+import org.gluu.oxtrust.service.logger.LoggerService;
 import org.gluu.oxtrust.util.OxTrustApiConstants;
 import org.slf4j.Logger;
+import org.xdi.oxauth.model.configuration.AppConfiguration;
 import org.xdi.service.JsonService;
 
 import javax.annotation.security.DeclareRoles;
@@ -27,11 +33,14 @@ public class LogsWebService {
 
     @Inject
     private Logger log;
-
     @Inject
     private ApplianceService applianceService;
     @Inject
     private JsonService jsonService;
+    @Inject
+    private LoggerService loggerService;
+    @Inject
+    private JsonConfigurationService jsonConfigurationService;
 
     @GET
     @ApiOperation(value = "Get all logs")
@@ -73,4 +82,23 @@ public class LogsWebService {
         return new LogFileApi(id, content);
     }
 
+    @PUT
+    @ApiOperation(value = "Update log configuration")
+    public Response update(LogFilesConfigApi config) {
+        try {
+            AppConfiguration appConfiguration = jsonConfigurationService.getOxauthAppConfiguration();
+            GluuAppliance appliance = applianceService.getAppliance();
+            LogFilesConfig logFilesConfig = new LogFilesConfig(appliance, appConfiguration, jsonService);
+            logFilesConfig.updateWith(config);
+
+            jsonConfigurationService.saveOxAuthAppConfiguration(appConfiguration);
+            applianceService.updateAppliance(appliance);
+            loggerService.updateLoggerConfigLocation();
+
+            return Response.ok().build();
+        } catch (IOException e) {
+            log.error("Error loading logs", e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 }

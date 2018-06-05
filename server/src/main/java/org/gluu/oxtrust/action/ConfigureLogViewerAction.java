@@ -107,7 +107,7 @@ public class ConfigureLogViewerAction implements SimpleCustomPropertiesListModel
 		updateAppliance();
 		updateOxAuthConfiguration();
 
-    facesMessages.add(FacesMessage.SEVERITY_INFO, "Log viewer configuration updated");
+    	facesMessages.add(FacesMessage.SEVERITY_INFO, "Log viewer configuration updated");
 
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
@@ -136,9 +136,9 @@ public class ConfigureLogViewerAction implements SimpleCustomPropertiesListModel
 		}
 	}
 
+	@Deprecated // Should be removed ?
 	private boolean validateLists() {
 		boolean result = true;
-		// Should be removed ?
 		return result;
 	}
 
