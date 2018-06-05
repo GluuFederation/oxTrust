@@ -91,4 +91,13 @@ public class GluuServerStatus {
 	public void setFreeDiskSpace(String freeDiskSpace) {
 		this.freeDiskSpace = freeDiskSpace;
 	}
+
+	@Override
+	public String toString() {
+		return "GluuServerStatus [hostname=" + hostname + ", ipAddress=" + ipAddress + ", uptime=" + uptime
+				+ ", lastUpdate=" + lastUpdate + ", pollingInterval=" + pollingInterval + ", personCount=" + personCount
+				+ ", groupCount=" + groupCount + ", freeMemory=" + freeMemory + ", freeDiskSpace=" + freeDiskSpace
+				+ "]";
+	}
+
 }

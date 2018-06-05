@@ -72,7 +72,7 @@ public class GroupWebResource extends BaseWebResource {
 	@ApiOperation(value = "Get a group by inum")
 	public Response getGroupByInum(@PathParam(OxTrustApiConstants.INUM) @NotNull String inum) {
 		log("Get group having group" + inum);
-		inum=inum.equalsIgnoreCase("")?null:inum;
+		inum = inum.equalsIgnoreCase("") ? null : inum;
 		try {
 			Objects.requireNonNull(inum, "inum should not be null");
 			GluuGroup group = groupService.getGroupByInum(inum);
@@ -126,7 +126,7 @@ public class GroupWebResource extends BaseWebResource {
 	@ApiOperation(value = "Update a group")
 	public Response updateGroup(GluuGroupApi group) {
 		String inum = group.getInum();
-		inum=inum.equalsIgnoreCase("")?null:inum;
+		inum = inum.equalsIgnoreCase("") ? null : inum;
 		log("Update group " + inum);
 		try {
 			Objects.requireNonNull(inum, "inum should not be null");
@@ -170,7 +170,7 @@ public class GroupWebResource extends BaseWebResource {
 	@ApiOperation(value = "Get a group members")
 	public Response getGroupMembers(@PathParam(OxTrustApiConstants.INUM) @NotNull String inum) {
 		log("Get members of group " + inum);
-		inum=inum.equalsIgnoreCase("")?null:inum;
+		inum = inum.equalsIgnoreCase("") ? null : inum;
 		try {
 			Objects.requireNonNull(inum, "inum should not be null");
 			GluuGroup group = groupService.getGroupByInum(inum);
@@ -201,7 +201,10 @@ public class GroupWebResource extends BaseWebResource {
 			GluuGroup group = groupService.getGroupByInum(groupInum);
 			GluuCustomPerson person = personService.getPersonByInum(memberInum);
 			if (group != null && person != null) {
-				List<String> members = new ArrayList<String>(group.getMembers());
+				List<String> members = new ArrayList<String>();
+				if (group.getMembers() != null) {
+					members = group.getMembers();
+				}
 				members.add(personService.getDnForPerson(person.getInum()));
 				group.setMembers(members);
 				groupService.updateGroup(group);
@@ -276,13 +279,12 @@ public class GroupWebResource extends BaseWebResource {
 		return gluuGroup;
 	}
 
-	private List<GluuPersonApi> computeMembers(List<String> membersAsString) {
+	private List<GluuPersonApi> computeMembers(List<String> membersDn) {
 		List<GluuPersonApi> gluuCustomPersons = new ArrayList<GluuPersonApi>();
-		if (!membersAsString.isEmpty()) {
-			for (String memberAsString : membersAsString) {
-				String uncompleteinum = memberAsString.split(",")[0];
-				String inum = uncompleteinum.split("=")[1];
-				gluuCustomPersons.add(new GluuPersonApi(personService.getPersonByInum(inum)));
+		if (membersDn != null && !membersDn.isEmpty()) {
+
+			for (String memberDn : membersDn) {
+				gluuCustomPersons.add(new GluuPersonApi(personService.getPersonByDn(memberDn)));
 			}
 		}
 		return gluuCustomPersons;
@@ -297,7 +299,7 @@ public class GroupWebResource extends BaseWebResource {
 	}
 
 	private void log(String message) {
-		logger.debug("#################Request: " + message);
+		logger.debug("################# Request: " + message);
 	}
 
 }
