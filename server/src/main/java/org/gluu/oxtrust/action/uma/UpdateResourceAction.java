@@ -92,7 +92,7 @@ public class UpdateResourceAction implements Serializable {
 	private boolean update;
 	private String scopeSelection="Scopes";
 	
-	private List<OxAuthClient> clientList;
+	private List<OxAuthClient> clientList = new ArrayList<OxAuthClient>();;
 	
 	public List<OxAuthClient> getClientList() {
 		return clientList;
@@ -145,6 +145,7 @@ public class UpdateResourceAction implements Serializable {
 
 		this.scopes = new ArrayList<DisplayNameEntry>();
 		this.clients = new ArrayList<DisplayNameEntry>();
+		this.clientList = new ArrayList<OxAuthClient>();
 		this.resources = new ArrayList<String>();
 
 		return OxTrustConstants.RESULT_SUCCESS;
@@ -441,9 +442,8 @@ public class UpdateResourceAction implements Serializable {
 	public void cancelSelectClients() {
 	}
 
-	public void addClient(OxAuthClient clietn) {
-		DisplayNameEntry oneClient = new DisplayNameEntry(clietn.getDn(), clietn.getInum(), clietn.getDisplayName());
-		this.clients.add(oneClient);
+	public void addClient(OxAuthClient client) {
+		this.clientList.add(client);
 	}
 
 	public void removeClient(String inum) {
@@ -453,8 +453,8 @@ public class UpdateResourceAction implements Serializable {
 
 		String removeClientInum = clientService.getDnForClient(inum);
 
-		for (Iterator<DisplayNameEntry> iterator = this.clients.iterator(); iterator.hasNext();) {
-			DisplayNameEntry oneClient = iterator.next();
+		for (Iterator<OxAuthClient> iterator = this.clientList.iterator(); iterator.hasNext();) {
+			OxAuthClient oneClient = iterator.next();
 			if (removeClientInum.equals(oneClient.getDn())) {
 				iterator.remove();
 				break;
@@ -463,13 +463,13 @@ public class UpdateResourceAction implements Serializable {
 	}
 
 	private void updateClients() {
-		if ((this.clients == null) || (this.clients.size() == 0)) {
+		if ((this.clientList == null) || (this.clientList.size() == 0)) {
 			this.resource.setClients(null);
 			return;
 		}
 
 		List<String> tmpClients = new ArrayList<String>();
-		for (DisplayNameEntry client : this.clients) {
+		for (OxAuthClient client : this.clientList) {
 			tmpClients.add(client.getDn());
 		}
 
