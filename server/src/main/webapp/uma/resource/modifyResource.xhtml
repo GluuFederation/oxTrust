@@ -120,29 +120,34 @@
                                         </ox:decorate>
                                         
 
-                                        <!--                     <ox:decorate id="clients" label="Clients">
-                                                                <h:panelGroup id="selectedClientsId">
+                                                   <ox:decorate id="clients" label="Clients">
+                                                       <h:panelGroup id="selectedClientsId">
 
-                                                                    <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
+                                                           <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
 
-                                                                        <a4j:repeat value="#{updateResourceAction.clients}" rowKeyVar="_clientIdx" var="_client">
-                                                                        <div class = "col-sm-12">
-                                                                         <div class = "col-sm-6" >
-                                                                            <h:outputText value="#{_client.displayName}" style="margin-left:-29px;"/>
-                                                                            <h:outputText value="&#160;" />
-                                                                            </div>
-                                                                             <div class = "col-sm-6">
-                                                                            <a4j:commandLink styleClass="glyphicon glyphicon-remove" action="#{updateResourceAction.removeClient(_client.inum)}" render="selectedClientsId" eventsQueue="resourceSetQueue">
-                                                                                <h:graphicImage value="/img/remove.gif" />
-                                                                            </a4j:commandLink>
-                                                                            </div>
-                                                                          </div>
-                                                                        </a4j:repeat>
+                                                               <a4j:repeat value="#{updateResourceAction.clientList}" rowKeyVar="_clientIdx" var="_client">
+                                                               <div class = "col-sm-12">
+                                                                <div class = "col-sm-6" >
+                                                                   <!-- <h:outputText value="#{_client.displayName}" style="margin-left:-29px;"/> -->
+																	<h:link includeViewParams="false" style="margin-left:-29px;"
+																		outcome="/client/updateClient"
+																		value="#{_client.displayName}">
+																		<f:param name="inum" value="#{_client.inum}" />
+																	</h:link>
+																	<h:outputText value="&#160;" />
+                                                                   </div>
+                                                                    <div class = "col-sm-6">
+                                                                   <a4j:commandLink styleClass="glyphicon glyphicon-remove" action="#{updateResourceAction.removeClient(_client.inum)}" render="selectedClientsId" eventsQueue="resourceSetQueue">
+                                                                      
+                                                                   </a4j:commandLink>
+                                                                   </div>
+                                                                 </div>
+                                                               </a4j:repeat>
 
-                                                                    </h:panelGrid>
+                                                           </h:panelGrid>
 
-                                                                </h:panelGroup>
-                                                            </ox:decorate> -->
+                                                       </h:panelGroup>
+                                                   </ox:decorate>
                                        <h:panelGroup id="subselectiongroup"  rendered="#{updateResourceAction.scopeSelection eq 'ScopeExpression'}">
 
                                         <ox:decorate id="expression" label="#{msg['uma.scopeExpression']}" rendered="#{updateResourceAction.scopeSelection eq 'ScopeExpression'}">
@@ -160,33 +165,28 @@
                                         </ui:decorate>
                                         </h:panelGroup>
                                         </h:panelGroup>
-                                        
-                                        <ox:decorate id="clients" label="#{msg['uma.clients']}" rendered="#{updateResourceAction.clientList != null}">
-                                         	<a4j:repeat rowKeyVar="_clientIdx"
-                                                                value="#{updateResourceAction.clientList}"
-                                                                var="_cilent">
-                                                  <h:link includeViewParams="false"
-                                                                        outcome="/client/updateClient"
-                                                                        value="#{_cilent.displayName}">
-                                                      <f:param name="inum" value="#{_cilent.inum}"/>
-                                                  </h:link>
-                                            </a4j:repeat>
-                                         </ox:decorate>
                                          
                                          <ox:decorate id="creatDate" label="#{msg['uma.creationTime']}" rendered="#{updateResourceAction.update and _resourceSet.creationDate != null}">
                                             <div class="col-sm-9">
 												<h:outputText value="#{_resourceSet.creationDate}" />
 											</div>
                                         </ox:decorate>
-
+									
+                                    </h:panelGrid>
+                                    <div class="btn-group" style="margin-left:10px;">
                                         <h:panelGroup id="addscope" >
                                             <a4j:commandButton  rendered="#{updateResourceAction.scopeSelection eq 'Scopes'}"
                                                     onclick="#{rich:component('scope:selectEntityModalPanel')}.show();"
                                                     style="margin-left:3px;" styleClass="btn btn-primary"
                                                     value="#{msg['uma.addScope']}"/>
-                                            <!--  <a4j:commandButton value="Add Client" style = "margin-left:3px;" onclick="#{rich:component('client:selectEntityModalPanel')}.show();" styleClass="btn btn-primary"/> -->
                                         </h:panelGroup>
-                                    </h:panelGrid>
+                                        <h:panelGroup id="addclient">
+                                            <a4j:commandButton
+                                                    onclick="#{rich:component('client:selectEntityModalPanel')}.show();"
+                                                    style="margin-left:3px;" styleClass="btn btn-primary"
+                                                    value="#{msg['uma.addClient']}"/>
+                                         </h:panelGroup>
+                                     </div>
                                     <h:panelGroup>
                                         <div class="box-footer" style="margin-top:10px !important;">
                                             <h:panelGroup id="updateButtons" layout="block"
