@@ -551,13 +551,13 @@
 									$('#subMenuLinkUsers1').addClass('active');
 								}
 								
-								if (window.location.href.indexOf("person/personInventory") != -1) {
+								if (window.location.href.indexOf("person/personInventory") != -1 || window.location.href.indexOf("person/update")!= -1) {
 									$('#subMenuUsers').css('display', 'block');
 									$('#menuUsers').addClass('active');
 									$('#subMenuLinkUsers2').addClass('active');
 								}
 
-								if (window.location.href.indexOf("person/add") != -1 || window.location.href.indexOf("person/update")!= -1) {
+								if (window.location.href.indexOf("person/add") != -1 ) {
 									$('#subMenuUsers').css('display', 'block');
 									$('#menuUsers').addClass('active');
 									$('#subMenuLinkUsers3').addClass('active');
