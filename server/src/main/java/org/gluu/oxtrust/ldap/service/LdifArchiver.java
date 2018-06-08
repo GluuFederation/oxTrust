@@ -64,7 +64,7 @@ public class LdifArchiver implements DeleteNotifier {
 
 				log.error("Failed to write into log file", e);
 			}
-			String[] ldif = ldapEntryManager.getLDIF(dn);
+			String[] ldif = ldapEntryManager.exportEntry(dn);
 			for (String ldifValue : ldif) {
 				writer.println(ldifValue);
 			}
