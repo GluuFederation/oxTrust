@@ -80,11 +80,11 @@
 			<name>maven central</name>
 			<url>http://repo1.maven.org/maven2</url>
 		</repository>
-        <repository>
-            <id>build.shibboleth.net</id>
-            <name>shibboleth releases</name>
-            <url>https://build.shibboleth.net/nexus/content/repositories/releases</url>
-        </repository>
+		<repository>
+			<id>build.shibboleth.net</id>
+			<name>shibboleth releases</name>
+			<url>https://build.shibboleth.net/nexus/content/repositories/releases</url>
+		</repository>
 	</repositories>
 
 	<scm>
@@ -222,9 +222,9 @@
 				<version>${jsf.version}</version>
 			</dependency>
 			<dependency>
-			    <groupId>org.hibernate</groupId>
-			    <artifactId>hibernate-validator-cdi</artifactId>
-			    <version>5.4.1.Final</version>
+				<groupId>org.hibernate</groupId>
+				<artifactId>hibernate-validator-cdi</artifactId>
+				<version>5.4.1.Final</version>
 			</dependency>
 
 			<!-- Richfaces -->
@@ -527,25 +527,30 @@
 				<version>2.6.12</version>
 			</dependency>
 			<dependency>
+				<groupId>org.apache.poi</groupId>
+				<artifactId>poi-ooxml</artifactId>
+				<version>3.17</version>
+			</dependency>
+			<dependency>
 				<groupId>org.openid4java</groupId>
 				<artifactId>openid4java-consumer</artifactId>
 				<version>0.9.6</version>
 				<type>pom</type>
 			</dependency>
 			<dependency>
-                <groupId>org.apache.velocity</groupId>
-                <artifactId>velocity-engine-core</artifactId>
-                <version>2.0</version>
-            </dependency>
+				<groupId>org.apache.velocity</groupId>
+				<artifactId>velocity-engine-core</artifactId>
+				<version>2.0</version>
+			</dependency>
 			<dependency>
 				<groupId>org.opensaml</groupId>
 				<artifactId>xmltooling</artifactId>
 				<version>1.4.6</version>
 			</dependency>
 			<dependency>
-			    <groupId>org.apache.santuario</groupId>
-			    <artifactId>xmlsec</artifactId>
-			    <version>2.1.1</version>
+				<groupId>org.apache.santuario</groupId>
+				<artifactId>xmlsec</artifactId>
+				<version>2.1.1</version>
 			</dependency>
 			<dependency>
 				<groupId>org.tmatesoft.svnkit</groupId>
@@ -582,12 +587,12 @@
 				<artifactId>quartz</artifactId>
 				<version>2.2.3</version>
 			</dependency>
-			
+
 			<!-- Other -->
 			<dependency>
-			    <groupId>javax.validation</groupId>
-			    <artifactId>validation-api</artifactId>
-			    <version>2.0.0.Beta1</version>
+				<groupId>javax.validation</groupId>
+				<artifactId>validation-api</artifactId>
+				<version>2.0.0.Beta1</version>
 			</dependency>
 
 			<!-- Test -->
