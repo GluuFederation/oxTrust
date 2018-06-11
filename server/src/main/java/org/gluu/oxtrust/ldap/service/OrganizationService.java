@@ -10,7 +10,7 @@ import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.persist.exception.mapping.BaseMappingException;
+import org.gluu.persist.exception.BasePersistenceException;
 import org.gluu.persist.ldap.impl.LdapEntryManager;
 import org.gluu.persist.model.base.GluuBoolean;
 import org.gluu.persist.model.base.GluuStatus;
@@ -255,7 +255,7 @@ public class OrganizationService extends org.xdi.service.OrganizationService {
 			configurationDn = configurationDn.replace("ou=oxtrust", "ou=oxauth");
 			ldapOxAuthConfiguration = ldapEntryManager.find(LdapOxAuthConfiguration.class, configurationDn);
 			return ldapOxAuthConfiguration;
-		} catch (BaseMappingException ex) {
+		} catch (BasePersistenceException ex) {
 			log.error("Failed to load configuration from LDAP");
 		}
 

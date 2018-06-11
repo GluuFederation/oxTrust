@@ -16,7 +16,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.gluu.persist.exception.mapping.BaseMappingException;
+import org.gluu.persist.exception.BasePersistenceException;
 import org.gluu.persist.ldap.impl.LdapEntryManager;
 import org.gluu.persist.ldap.impl.LdifDataUtility;
 import org.slf4j.Logger;
@@ -108,7 +108,7 @@ public class LdifService implements Serializable {
 
 				ldifWriter.close();
 			} catch (IOException e) {
-				throw new BaseMappingException("Error writing to file, try again", e);
+				throw new BasePersistenceException("Error writing to file, try again", e);
 			}
 		}
 	}

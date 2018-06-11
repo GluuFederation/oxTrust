@@ -15,7 +15,7 @@ import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.persist.exception.mapping.BaseMappingException;
+import org.gluu.persist.exception.BasePersistenceException;
 import org.slf4j.Logger;
 import org.xdi.model.DisplayNameEntry;
 import org.xdi.model.SelectableEntity;
@@ -155,7 +155,7 @@ public class UpdateResourceAction implements Serializable {
 		try {
 			String resourceDn = umaResourcesService.getDnForResource(this.oxId);
 			this.resource = umaResourcesService.getResourceByDn(resourceDn);
-		} catch (BaseMappingException ex) {
+		} catch (BasePersistenceException ex) {
 			log.error("Failed to find resource set '{}'", this.oxId, ex);
 			return OxTrustConstants.RESULT_FAILURE;
 		}
@@ -210,7 +210,7 @@ public class UpdateResourceAction implements Serializable {
 			// Update resource set
 			try {
 				umaResourcesService.updateResource(this.resource);
-			} catch (BaseMappingException ex) {
+			} catch (BasePersistenceException ex) {
 				log.error("Failed to update resource set '{}'", this.resource.getInum(), ex);
 				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update UMA resource '#{updateResourceAction.resource.name}'");
 				return OxTrustConstants.RESULT_FAILURE;
@@ -231,7 +231,7 @@ public class UpdateResourceAction implements Serializable {
 			// Save resource set
 			try {
 				umaResourcesService.addResource(this.resource);
-			} catch (BaseMappingException ex) {
+			} catch (BasePersistenceException ex) {
 				log.error("Failed to add new resource set '{}'", this.resource.getInum(), ex);
 				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new UMA resource");
 
@@ -259,7 +259,7 @@ public class UpdateResourceAction implements Serializable {
 				conversationService.endConversation();
 
 				return OxTrustConstants.RESULT_SUCCESS;
-			} catch (BaseMappingException ex) {
+			} catch (BasePersistenceException ex) {
 				log.error("Failed to remove resource set {}", this.resource.getInum(), ex);
 			}
 		}

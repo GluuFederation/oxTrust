@@ -15,7 +15,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.gluu.oxtrust.config.ConfigurationFactory;
-import org.gluu.persist.exception.mapping.MappingException;
+import org.gluu.persist.exception.MappingException;
 import org.gluu.persist.ldap.impl.LdapEntryManager;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.LdapOxPassportConfiguration;

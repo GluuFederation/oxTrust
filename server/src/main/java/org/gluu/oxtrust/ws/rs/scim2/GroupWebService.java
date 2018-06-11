@@ -49,7 +49,7 @@ import org.gluu.oxtrust.service.scim2.Scim2GroupService;
 import org.gluu.oxtrust.service.scim2.Scim2PatchService;
 import org.gluu.oxtrust.service.scim2.interceptor.RefAdjusted;
 import org.gluu.oxtrust.service.filter.ProtectedApi;
-import org.gluu.persist.model.ListViewResponse;
+import org.gluu.persist.model.PagedResult;
 import org.gluu.persist.model.SortOrder;
 import org.joda.time.format.ISODateTimeFormat;
 
@@ -223,10 +223,10 @@ public class GroupWebService extends BaseScimWebService implements IGroupWebServ
         try {
             log.debug("Executing web service method. searchGroups");
             sortBy=translateSortByAttribute(GroupResource.class, sortBy);
-            ListViewResponse<BaseScimResource> resources = scim2GroupService.searchGroups(filter, sortBy, SortOrder.getByValue(sortOrder),
+            PagedResult<BaseScimResource> resources = scim2GroupService.searchGroups(filter, sortBy, SortOrder.getByValue(sortOrder),
                     startIndex, count, endpointUrl, userWebService.getEndpointUrl(), getMaxCount());
 
-            String json = getListResponseSerialized(resources.getTotalResults(), startIndex, resources.getResult(), attrsList, excludedAttrsList, count==0);
+            String json = getListResponseSerialized(resources.getTotalEntriesCount(), startIndex, resources.getEntries(), attrsList, excludedAttrsList, count==0);
             response=Response.ok(json).location(new URI(endpointUrl)).build();
         }
         catch (SCIMException e){

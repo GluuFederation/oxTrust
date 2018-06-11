@@ -56,7 +56,7 @@ import org.gluu.oxtrust.service.antlr.scimFilter.util.FilterUtil;
 import org.gluu.oxtrust.service.filter.ProtectedApi;
 import org.gluu.oxtrust.service.scim2.interceptor.RefAdjusted;
 import org.gluu.persist.ldap.impl.LdapEntryManager;
-import org.gluu.persist.model.ListViewResponse;
+import org.gluu.persist.model.PagedResult;
 import org.gluu.persist.model.SortOrder;
 import org.gluu.search.filter.Filter;
 import org.joda.time.format.ISODateTimeFormat;
@@ -238,9 +238,9 @@ public class FidoDeviceWebService extends BaseScimWebService implements IFidoDev
         try {
             log.debug("Executing web service method. searchDevices");
             sortBy=translateSortByAttribute(FidoDeviceResource.class, sortBy);
-            ListViewResponse<BaseScimResource> resources = searchDevices(userId, filter, sortBy, SortOrder.getByValue(sortOrder), startIndex, count, endpointUrl);
+            PagedResult<BaseScimResource> resources = searchDevices(userId, filter, sortBy, SortOrder.getByValue(sortOrder), startIndex, count, endpointUrl);
 
-            String json = getListResponseSerialized(resources.getTotalResults(), startIndex, resources.getResult(), attrsList, excludedAttrsList, count==0);
+            String json = getListResponseSerialized(resources.getTotalEntriesCount(), startIndex, resources.getEntries(), attrsList, excludedAttrsList, count==0);
             response=Response.ok(json).location(new URI(endpointUrl)).build();
         }
         catch (SCIMException e){
@@ -350,35 +350,35 @@ public class FidoDeviceWebService extends BaseScimWebService implements IFidoDev
         return deviceDn.substring(deviceDn.indexOf("inum=")+5);
     }
 
-    private ListViewResponse<BaseScimResource> searchDevices(String userId, String filter, String sortBy, SortOrder sortOrder, int startIndex,
+    private PagedResult<BaseScimResource> searchDevices(String userId, String filter, String sortBy, SortOrder sortOrder, int startIndex,
                                                     int count, String url) throws Exception {
 
         Filter ldapFilter=scimFilterParserService.createLdapFilter(filter, "oxId=*", FidoDeviceResource.class);
         log.info("Executing search for fido devices using: ldapfilter '{}', sortBy '{}', sortOrder '{}', startIndex '{}', count '{}'",
                 ldapFilter.toString(), sortBy, sortOrder.getValue(), startIndex, count);
 
-        ListViewResponse<GluuCustomFidoDevice> list;
+        PagedResult<GluuCustomFidoDevice> list;
         try {
-            list = ldapEntryManager.findListViewResponse(fidoDeviceService.getDnForFidoDevice(userId, null),
-                    GluuCustomFidoDevice.class, ldapFilter, startIndex, count, getMaxCount(), sortBy, sortOrder, null);
+            list = ldapEntryManager.findPagedEntries(fidoDeviceService.getDnForFidoDevice(userId, null),
+                    GluuCustomFidoDevice.class, ldapFilter, null, sortBy, sortOrder, startIndex, count, getMaxCount());
         } catch (Exception e) {
             log.info("Returning an empty listViewReponse");
             log.error(e.getMessage(), e);
-            list = new ListViewResponse<GluuCustomFidoDevice>();
-            list.setResult(new ArrayList<GluuCustomFidoDevice>());
+            list = new PagedResult<GluuCustomFidoDevice>();
+            list.setEntries(new ArrayList<GluuCustomFidoDevice>());
         }
         List<BaseScimResource> resources=new ArrayList<BaseScimResource>();
 
-        for (GluuCustomFidoDevice device : list.getResult()){
+        for (GluuCustomFidoDevice device : list.getEntries()){
             FidoDeviceResource scimDev=new FidoDeviceResource();
             transferAttributesToFidoResource(device, scimDev, url, getUserInumFromDN(device.getDn()));
             resources.add(scimDev);
         }
-        log.info ("Found {} matching entries - returning {}", list.getTotalResults(), list.getResult().size());
+        log.info ("Found {} matching entries - returning {}", list.getTotalEntriesCount(), list.getEntries().size());
 
-        ListViewResponse<BaseScimResource> result = new ListViewResponse<BaseScimResource>();
-        result.setResult(resources);
-        result.setTotalResults(list.getTotalResults());
+        PagedResult<BaseScimResource> result = new PagedResult<BaseScimResource>();
+        result.setEntries(resources);
+        result.setTotalEntriesCount(list.getTotalEntriesCount());
         
         return result;
 

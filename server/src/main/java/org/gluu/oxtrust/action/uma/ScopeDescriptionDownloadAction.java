@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.gluu.oxtrust.ldap.service.ImageService;
 import org.gluu.oxtrust.ldap.service.uma.ScopeDescriptionService;
-import org.gluu.persist.exception.mapping.BaseMappingException;
+import org.gluu.persist.exception.BasePersistenceException;
 import org.slf4j.Logger;
 import org.xdi.model.GluuImage;
 import org.xdi.oxauth.model.uma.persistence.UmaScopeDescription;
@@ -95,7 +95,7 @@ public class ScopeDescriptionDownloadAction implements Serializable {
 			}
 
 			scopeDescription = scopeDescriptions.get(0);
-		} catch (BaseMappingException ex) {
+		} catch (BasePersistenceException ex) {
 			log.error("Failed to find scope description '{}'", this.scopeId, ex);
 			return null;
 		}

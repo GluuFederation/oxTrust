@@ -25,7 +25,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.gluu.oxtrust.ldap.service.AppInitializer;
 import org.gluu.oxtrust.service.custom.LdapCentralConfigurationReload;
-import org.gluu.persist.exception.mapping.BaseMappingException;
+import org.gluu.persist.exception.BasePersistenceException;
 import org.gluu.persist.ldap.impl.LdapEntryManager;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
@@ -401,7 +401,7 @@ public class ConfigurationFactory {
 					returnAttributes);
 
 			return conf;
-		} catch (BaseMappingException ex) {
+		} catch (BasePersistenceException ex) {
 			log.error("Failed to load configuration from LDAP", ex);
 		}
 

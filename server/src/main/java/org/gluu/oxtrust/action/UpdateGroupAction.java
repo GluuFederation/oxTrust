@@ -31,7 +31,7 @@ import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.persist.exception.mapping.BaseMappingException;
+import org.gluu.persist.exception.BasePersistenceException;
 import org.gluu.persist.model.base.GluuBoolean;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
@@ -107,7 +107,7 @@ public class UpdateGroupAction implements Serializable {
 
 		try {
 			this.members = getMemberDisplayNameEntiries();
-		} catch (BaseMappingException ex) {
+		} catch (BasePersistenceException ex) {
 			log.error("Failed to prepare lists", ex);
 
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new group");
@@ -129,7 +129,7 @@ public class UpdateGroupAction implements Serializable {
 		try {
 			log.debug("inum : " + inum);
 			this.group = groupService.getGroupByInum(inum);
-		} catch (BaseMappingException ex) {
+		} catch (BasePersistenceException ex) {
 			log.error("Failed to find group {}", inum, ex);
 		}
 
@@ -144,7 +144,7 @@ public class UpdateGroupAction implements Serializable {
 
 		try {
 			this.members = getMemberDisplayNameEntiries();
-		} catch (BaseMappingException ex) {
+		} catch (BasePersistenceException ex) {
 			log.error("Failed to prepare lists", ex);
 
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to load group");
@@ -172,7 +172,7 @@ public class UpdateGroupAction implements Serializable {
 		List<DisplayNameEntry> oldMembers = null;
 		try {
 			oldMembers = getMemberDisplayNameEntiries();
-		} catch (BaseMappingException ex) {
+		} catch (BasePersistenceException ex) {
 			log.error("Failed to load person display names", ex);
 
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update group");
@@ -185,7 +185,7 @@ public class UpdateGroupAction implements Serializable {
 			try {
 				groupService.updateGroup(this.group);
 				updatePersons(oldMembers, this.members);
-			} catch (BaseMappingException ex) {
+			} catch (BasePersistenceException ex) {
 				log.error("Failed to update group {}", this.inum, ex);
 				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update group '#{updateGroupAction.group.displayName}'");
 
@@ -203,7 +203,7 @@ public class UpdateGroupAction implements Serializable {
 			try {
 				groupService.addGroup(this.group);
 				updatePersons(oldMembers, this.members);
-			} catch (BaseMappingException ex) {
+			} catch (BasePersistenceException ex) {
 				log.error("Failed to add new group {}", this.group.getInum(), ex);
 				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new group");
 
@@ -229,7 +229,7 @@ public class UpdateGroupAction implements Serializable {
 				conversationService.endConversation();
 
 				return OxTrustConstants.RESULT_SUCCESS;
-			} catch (BaseMappingException ex) {
+			} catch (BasePersistenceException ex) {
 				log.error("Failed to remove group {}", this.group.getInum(), ex);
 			}
 		}

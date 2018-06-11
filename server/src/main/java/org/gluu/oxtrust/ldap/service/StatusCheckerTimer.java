@@ -51,7 +51,7 @@ import org.gluu.oxtrust.model.status.ApplianceStatus;
 import org.gluu.oxtrust.service.cdi.event.StatusCheckerTimerEvent;
 import org.gluu.oxtrust.util.NumberHelper;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.persist.exception.mapping.BaseMappingException;
+import org.gluu.persist.exception.BasePersistenceException;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.service.cdi.event.Scheduled;
@@ -188,7 +188,7 @@ public class StatusCheckerTimer {
 				} else {
 					centralLdapService.addAppliance(appliance);
 				}
-			} catch (BaseMappingException ex) {
+			} catch (BasePersistenceException ex) {
 				log.error("Failed to update appliance at central server", ex);
 				return;
 			}

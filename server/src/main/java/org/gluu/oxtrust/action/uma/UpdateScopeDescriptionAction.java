@@ -17,7 +17,7 @@ import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.service.custom.CustomScriptService;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.persist.exception.mapping.BaseMappingException;
+import org.gluu.persist.exception.BasePersistenceException;
 import org.richfaces.event.FileUploadEvent;
 import org.richfaces.model.UploadedFile;
 import org.slf4j.Logger;
@@ -128,7 +128,7 @@ public class UpdateScopeDescriptionAction implements Serializable {
 
 		try {
 			scopeDescriptionService.prepareScopeDescriptionBranch();
-		} catch (BaseMappingException ex) {
+		} catch (BasePersistenceException ex) {
 			log.error("Failed to initialize form", ex);
 
 			if (update) {
@@ -184,7 +184,7 @@ public class UpdateScopeDescriptionAction implements Serializable {
 					}
 				}
 			}
-		} catch (BaseMappingException ex) {
+		} catch (BasePersistenceException ex) {
 			log.error("Failed to find scope description '{}'", this.scopeInum, ex);
 			return OxTrustConstants.RESULT_FAILURE;
 		}
@@ -219,7 +219,7 @@ public class UpdateScopeDescriptionAction implements Serializable {
 			// Update scope description
 			try {
 				scopeDescriptionService.updateScopeDescription(this.scopeDescription);
-			} catch (BaseMappingException ex) {
+			} catch (BasePersistenceException ex) {
 				log.error("Failed to update scope description '{}'", this.scopeDescription.getId(), ex);
 				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update UMA resource '#{updateScopeDescriptionAction.scopeDescription.displayName}'");
 				return OxTrustConstants.RESULT_FAILURE;
@@ -246,7 +246,7 @@ public class UpdateScopeDescriptionAction implements Serializable {
 			// Save scope description
 			try {
 				scopeDescriptionService.addScopeDescription(this.scopeDescription);
-			} catch (BaseMappingException ex) {
+			} catch (BasePersistenceException ex) {
 				log.error("Failed to add new UMA resource '{}'", this.scopeDescription.getId(), ex);
 				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new UMA resource");
 
@@ -274,7 +274,7 @@ public class UpdateScopeDescriptionAction implements Serializable {
 				conversationService.endConversation();
 
 				return OxTrustConstants.RESULT_SUCCESS;
-			} catch (BaseMappingException ex) {
+			} catch (BasePersistenceException ex) {
 				log.error("Failed to remove scope description {}", this.scopeDescription.getId(), ex);
 			}
 		}
@@ -442,7 +442,7 @@ public class UpdateScopeDescriptionAction implements Serializable {
 			
 			this.availableAuthorizationPolicies = tmpAvailableAuthorizationPolicies;
 			selectAddedAuthorizationPolicies();
-		} catch (BaseMappingException ex) {
+		} catch (BasePersistenceException ex) {
 			log.error("Failed to find available authorization policies", ex);
 		}
 

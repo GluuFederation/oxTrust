@@ -26,7 +26,7 @@ import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.LdifService;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.persist.exception.mapping.BaseMappingException;
+import org.gluu.persist.exception.BasePersistenceException;
 import org.gluu.persist.model.base.GluuStatus;
 import org.slf4j.Logger;
 import org.xdi.model.GluuAttribute;
@@ -82,7 +82,7 @@ public class AttributeInventoryAction implements Serializable {
 			try {
 				this.attributeList = attributeService.getAllPersonAttributes(GluuUserRole.ADMIN);
 				this.setActiveAttributeList(attributeService.getAllActivePersonAttributes(GluuUserRole.ADMIN));
-			} catch (BaseMappingException ex) {
+			} catch (BasePersistenceException ex) {
 				log.error("Failed to load attributes", ex);
 
 				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to load attributes");

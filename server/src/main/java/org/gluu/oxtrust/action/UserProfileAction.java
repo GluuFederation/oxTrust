@@ -28,7 +28,7 @@ import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.service.external.ExternalUpdateUserService;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.persist.exception.mapping.BaseMappingException;
+import org.gluu.persist.exception.BasePersistenceException;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.GluuAttribute;
@@ -122,7 +122,7 @@ public class UserProfileAction implements Serializable {
 
 		try {
 			this.person = identity.getUser();
-		} catch (BaseMappingException ex) {
+		} catch (BasePersistenceException ex) {
 			log.error("Failed to find person {}", identity.getUser().getInum(), ex);
 		}
 
@@ -169,7 +169,7 @@ public class UserProfileAction implements Serializable {
 			if (runScript) {
 				externalUpdateUserService.executeExternalPostUpdateUserMethods(this.person);
 			}
-		} catch (BaseMappingException ex) {
+		} catch (BasePersistenceException ex) {
 			log.error("Failed to update profile {}", person.getInum(), ex);
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update profile '#{userProfileAction.person.displayName}'");
 

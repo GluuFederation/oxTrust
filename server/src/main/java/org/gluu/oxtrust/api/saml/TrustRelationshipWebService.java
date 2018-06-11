@@ -58,7 +58,7 @@ import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.service.uma.annotations.UmaSecure;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.persist.exception.mapping.BaseMappingException;
+import org.gluu.persist.exception.BasePersistenceException;
 import org.gluu.persist.model.base.GluuStatus;
 import org.gluu.saml.metadata.SAMLMetadataParser;
 import org.slf4j.Logger;
@@ -641,7 +641,7 @@ public class TrustRelationshipWebService {
             if (update) {
                 try {
                     saveTR(trustRelationship, update);
-                } catch (BaseMappingException ex) {
+                } catch (BasePersistenceException ex) {
                     logger.error("Failed to update trust relationship {}", inum, ex);
                     return OxTrustConstants.RESULT_FAILURE;
                 }
@@ -651,7 +651,7 @@ public class TrustRelationshipWebService {
                 trustRelationship.setDn(dn);
                 try {
                         saveTR(trustRelationship, update);
-                } catch (BaseMappingException ex) {
+                } catch (BasePersistenceException ex) {
                         logger.error("Failed to add new trust relationship {}", trustRelationship.getInum(), ex);
                         return OxTrustConstants.RESULT_FAILURE;
                 }

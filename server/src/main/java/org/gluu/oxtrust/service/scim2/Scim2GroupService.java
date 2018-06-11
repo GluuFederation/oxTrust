@@ -30,7 +30,7 @@ import org.gluu.oxtrust.model.scim2.util.ScimResourceUtil;
 import org.gluu.oxtrust.service.antlr.scimFilter.ScimFilterParserService;
 import org.gluu.oxtrust.service.external.ExternalScimService;
 import org.gluu.persist.ldap.impl.LdapEntryManager;
-import org.gluu.persist.model.ListViewResponse;
+import org.gluu.persist.model.PagedResult;
 import org.gluu.persist.model.SortOrder;
 import org.gluu.persist.model.base.GluuStatus;
 import org.gluu.search.filter.Filter;
@@ -261,18 +261,18 @@ public class Scim2GroupService implements Serializable {
 
     }
 
-    public ListViewResponse<BaseScimResource> searchGroups(String filter, String sortBy, SortOrder sortOrder, int startIndex, int count,
+    public PagedResult<BaseScimResource> searchGroups(String filter, String sortBy, SortOrder sortOrder, int startIndex, int count,
                                                String groupsUrl, String usersUrl, int maxCount) throws Exception{
 
         Filter ldapFilter=scimFilterParserService.createLdapFilter(filter, "inum=*", GroupResource.class);
         log.info("Executing search for groups using: ldapfilter '{}', sortBy '{}', sortOrder '{}', startIndex '{}', count '{}'",
                 ldapFilter.toString(), sortBy, sortOrder.getValue(), startIndex, count);
 
-        ListViewResponse<GluuGroup> list=ldapEntryManager.findListViewResponse(groupService.getDnForGroup(null),
-                GluuGroup.class, ldapFilter, startIndex, count, maxCount, sortBy, sortOrder, null);
+        PagedResult<GluuGroup> list=ldapEntryManager.findPagedEntries(groupService.getDnForGroup(null),
+                GluuGroup.class, ldapFilter, null, sortBy, sortOrder, startIndex, count, maxCount);
         List<BaseScimResource> resources=new ArrayList<BaseScimResource>();
 
-        for (GluuGroup group: list.getResult()){
+        for (GluuGroup group: list.getEntries()){
             GroupResource scimGroup=new GroupResource();
             transferAttributesToGroupResource(group, scimGroup, groupsUrl, usersUrl);
             //TODO: Delete this IF in the future - added for backwards compatibility with SCIM-Client <= 3.1.2.
@@ -281,11 +281,11 @@ public class Scim2GroupService implements Serializable {
 
             resources.add(scimGroup);
         }
-        log.info ("Found {} matching entries - returning {}", list.getTotalResults(), list.getResult().size());
+        log.info ("Found {} matching entries - returning {}", list.getTotalEntriesCount(), list.getEntries().size());
         
-        ListViewResponse<BaseScimResource> result = new ListViewResponse<BaseScimResource>();
-        result.setResult(resources);
-        result.setTotalResults(list.getTotalResults());
+        PagedResult<BaseScimResource> result = new PagedResult<BaseScimResource>();
+        result.setEntries(resources);
+        result.setTotalEntriesCount(list.getTotalEntriesCount());
 
         return result;
 

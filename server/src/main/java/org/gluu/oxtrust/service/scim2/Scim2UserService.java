@@ -47,7 +47,7 @@ import org.gluu.oxtrust.service.external.ExternalScimService;
 import org.gluu.oxtrust.util.ServiceUtil;
 import org.gluu.oxtrust.ws.rs.scim2.GroupWebService;
 import org.gluu.persist.ldap.impl.LdapEntryManager;
-import org.gluu.persist.model.ListViewResponse;
+import org.gluu.persist.model.PagedResult;
 import org.gluu.persist.model.SortOrder;
 import org.gluu.persist.model.base.GluuBoolean;
 import org.gluu.persist.model.base.GluuStatus;
@@ -517,27 +517,27 @@ public class Scim2UserService implements Serializable {
 
     }
 
-    public ListViewResponse<BaseScimResource> searchUsers(String filter, String sortBy, SortOrder sortOrder, int startIndex, int count,
+    public PagedResult<BaseScimResource> searchUsers(String filter, String sortBy, SortOrder sortOrder, int startIndex, int count,
                                               String url, int maxCount) throws Exception{
 
         Filter ldapFilter=scimFilterParserService.createLdapFilter(filter, "inum=*", UserResource.class);
         log.info("Executing search for users using: ldapfilter '{}', sortBy '{}', sortOrder '{}', startIndex '{}', count '{}'",
                 ldapFilter.toString(), sortBy, sortOrder.getValue(), startIndex, count);
 
-        ListViewResponse<GluuCustomPerson> list=ldapEntryManager.findListViewResponse(personService.getDnForPerson(null),
-                GluuCustomPerson.class, ldapFilter, startIndex, count, maxCount, sortBy, sortOrder, null);
+        PagedResult<GluuCustomPerson> list=ldapEntryManager.findPagedEntries(personService.getDnForPerson(null),
+                GluuCustomPerson.class, ldapFilter, null, sortBy, sortOrder, startIndex, count, maxCount);
         List<BaseScimResource> resources=new ArrayList<BaseScimResource>();
 
-        for (GluuCustomPerson person : list.getResult()){
+        for (GluuCustomPerson person : list.getEntries()){
             UserResource scimUsr=new UserResource();
             transferAttributesToUserResource(person, scimUsr, url);
             resources.add(scimUsr);
         }
-        log.info ("Found {} matching entries - returning {}", list.getTotalResults(), list.getResult().size());
+        log.info ("Found {} matching entries - returning {}", list.getTotalEntriesCount(), list.getEntries().size());
 
-        ListViewResponse<BaseScimResource> result = new ListViewResponse<BaseScimResource>();
-        result.setResult(resources);
-        result.setTotalResults(list.getTotalResults());
+        PagedResult<BaseScimResource> result = new PagedResult<BaseScimResource>();
+        result.setEntries(resources);
+        result.setTotalEntriesCount(list.getTotalEntriesCount());
 
         return result;
 

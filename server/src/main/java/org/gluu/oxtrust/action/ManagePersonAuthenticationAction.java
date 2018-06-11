@@ -35,7 +35,7 @@ import org.gluu.oxtrust.model.OxIDPAuthConf;
 import org.gluu.oxtrust.model.SimpleCustomPropertiesListModel;
 import org.gluu.oxtrust.model.SimplePropertiesListModel;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.persist.exception.mapping.BaseMappingException;
+import org.gluu.persist.exception.BasePersistenceException;
 import org.gluu.persist.ldap.operation.impl.LdapConnectionProvider;
 import org.gluu.persist.model.base.GluuBoolean;
 import org.slf4j.Logger;
@@ -219,7 +219,7 @@ public class ManagePersonAuthenticationAction
 			ldapOxPassportConfiguration.setPassportConfigurations(ldapPassportConfigurations);
 
 			passportService.updateLdapOxPassportConfiguration(ldapOxPassportConfiguration);
-		} catch (BaseMappingException ex) {
+		} catch (BasePersistenceException ex) {
 			log.error("Failed to update appliance configuration", ex);
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update appliance");
 			return OxTrustConstants.RESULT_FAILURE;

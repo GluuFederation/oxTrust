@@ -11,7 +11,7 @@ import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.lang.StringUtils;
-import org.gluu.persist.exception.mapping.BaseMappingException;
+import org.gluu.persist.exception.BasePersistenceException;
 import org.gluu.persist.ldap.impl.LdapEntryManager;
 import org.gluu.persist.ldap.impl.LdapEntryManagerFactory;
 import org.slf4j.Logger;
@@ -183,7 +183,7 @@ public abstract class Configuration<C extends AppConfiguration, L extends LdapAp
 
 			final L ldapConf = this.ldapEntryManager.find(getAppConfigurationType(), dn, returnAttributes);
 			return ldapConf;
-		} catch (BaseMappingException ex) {
+		} catch (BasePersistenceException ex) {
 			logger.error(ex.getMessage());
 		}
 

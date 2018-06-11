@@ -50,8 +50,8 @@ import org.gluu.oxtrust.service.cdi.event.CacheRefreshEvent;
 import org.gluu.oxtrust.service.external.ExternalCacheRefreshService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.PropertyUtil;
-import org.gluu.persist.exception.mapping.BaseMappingException;
-import org.gluu.persist.exception.mapping.EntryPersistenceException;
+import org.gluu.persist.exception.BasePersistenceException;
+import org.gluu.persist.exception.EntryPersistenceException;
 import org.gluu.persist.ldap.impl.LdapEntryManager;
 import org.gluu.persist.ldap.impl.LdapEntryManagerFactory;
 import org.gluu.persist.model.SearchScope;
@@ -536,10 +536,10 @@ public class CacheRefreshTimer {
 		for (String changedInum : changedInums) {
 			String baseDn = "action=synchronizecache," + personService.getDnForPerson(changedInum);
 			try {
-				targetLdapEntryManager.findEntries(baseDn, GluuDummyEntry.class, filter, SearchScope.SUB, null, 0, cacheRefreshConfiguration.getLdapSearchSizeLimit());
+				targetLdapEntryManager.findEntries(baseDn, GluuDummyEntry.class, filter, SearchScope.SUB, null, null, 0, 0, cacheRefreshConfiguration.getLdapSearchSizeLimit());
 				result.add(changedInum);
 				log.debug("Updated entry with inum {}", changedInum);
-			} catch (BaseMappingException ex) {
+			} catch (BasePersistenceException ex) {
 				log.error("Failed to update entry with inum '{}' using baseDN {}", changedInum, baseDn, ex);
 			}
 		}
@@ -724,7 +724,7 @@ public class CacheRefreshTimer {
 				try {
 					inumDbLdapEntryManager.merge(removedInumMap);
 					result2.add(removedInumMap.getInum());
-				} catch (BaseMappingException ex) {
+				} catch (BasePersistenceException ex) {
 					log.error("Failed to update entry with inum '{}' and DN: {}", currentInumMap.getInum(), currentInumMap.getDn(), ex);
 					continue;
 				}
@@ -734,7 +734,7 @@ public class CacheRefreshTimer {
 			try {
 				targetLdapEntryManager.removeRecursively(removedPerson.getDn());
 				result1.add(inum);
-			} catch (BaseMappingException ex) {
+			} catch (BasePersistenceException ex) {
 				log.error("Failed to remove person entry with inum '{}' and DN: {}", inum, removedPerson.getDn(), ex);
 				continue;
 			}
@@ -795,7 +795,7 @@ public class CacheRefreshTimer {
 		Filter filterStatus = Filter.createNOTFilter(Filter.createEqualityFilter(OxTrustConstants.gluuStatus, GluuStatus.INACTIVE.getValue()));
 		Filter filter = Filter.createANDFilter(filterObjectClass, filterStatus);
 
-		return inumDbldapEntryManager.findEntries(inumbaseDn, GluuInumMap.class, filter, SearchScope.SUB, null, 0, cacheRefreshConfiguration.getLdapSearchSizeLimit());
+		return inumDbldapEntryManager.findEntries(inumbaseDn, GluuInumMap.class, filter, SearchScope.SUB, null, null, 0, 0, cacheRefreshConfiguration.getLdapSearchSizeLimit());
 	}
 
 	private List<GluuSimplePerson> loadSourceServerEntriesWithoutLimits(CacheRefreshConfiguration cacheRefreshConfiguration, LdapServerConnection[] sourceServerConnections) {
@@ -822,7 +822,7 @@ public class CacheRefreshTimer {
 
 			for (String baseDn : baseDns) {
 				List<GluuSimplePerson> currentSourcePersons = sourceLdapEntryManager.findEntries(baseDn, GluuSimplePerson.class,
-						filter, SearchScope.SUB, returnAttributes, 0, cacheRefreshConfiguration.getLdapSearchSizeLimit());
+						filter, SearchScope.SUB, returnAttributes, null, 0, 0, cacheRefreshConfiguration.getLdapSearchSizeLimit());
 
 				// Add to result and ignore root entry if needed
 				for (GluuSimplePerson currentSourcePerson : currentSourcePersons) {
@@ -868,7 +868,7 @@ public class CacheRefreshTimer {
 
 				for (String baseDn : baseDns) {
 					List<GluuSimplePerson> currentSourcePersons = sourceLdapEntryManager.findEntries(baseDn, GluuSimplePerson.class,
-							filter, SearchScope.SUB, returnAttributes, 0, cacheRefreshConfiguration.getLdapSearchSizeLimit());
+							filter, SearchScope.SUB, returnAttributes, null, 0, 0, cacheRefreshConfiguration.getLdapSearchSizeLimit());
 
 					// Add to result and ignore root entry if needed
 					for (GluuSimplePerson currentSourcePerson : currentSourcePersons) {
@@ -893,7 +893,7 @@ public class CacheRefreshTimer {
 		Filter filter = Filter.createEqualityFilter(OxConstants.OBJECT_CLASS, OxTrustConstants.objectClassPerson);
 
 		return targetLdapEntryManager.findEntries(personService.getDnForPerson(null), GluuSimplePerson.class, filter, SearchScope.SUB,
-				TARGET_PERSON_RETURN_ATTRIBUTES, 0, cacheRefreshConfiguration.getLdapSearchSizeLimit());
+				TARGET_PERSON_RETURN_ATTRIBUTES, null, 0, 0, cacheRefreshConfiguration.getLdapSearchSizeLimit());
 	}
 
 	private GluuInumMap addGluuInumMap(String inumbBaseDn, LdapEntryManager inumDbLdapEntryManager, String[] primaryKeyAttrName,

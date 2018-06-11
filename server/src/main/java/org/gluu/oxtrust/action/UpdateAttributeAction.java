@@ -19,7 +19,7 @@ import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.TrustService;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.persist.exception.mapping.BaseMappingException;
+import org.gluu.persist.exception.BasePersistenceException;
 import org.gluu.persist.model.base.GluuStatus;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
@@ -117,7 +117,7 @@ public class UpdateAttributeAction implements Serializable {
 	private boolean loadAttribute(String inum) {
 		try {
 			this.attribute = attributeService.getAttributeByInum(inum);
-		} catch (BaseMappingException ex) {
+		} catch (BasePersistenceException ex) {
 			log.error("Failed to find attribute {}", inum, ex);
 		}
 
@@ -219,7 +219,7 @@ public class UpdateAttributeAction implements Serializable {
 				}
 
 				attributeService.updateAttribute(this.attribute);
-			} catch (BaseMappingException ex) {
+			} catch (BasePersistenceException ex) {
 				log.error("Failed to update attribute {}", inum, ex);
 				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update attribute");
 				return OxTrustConstants.RESULT_FAILURE;
@@ -269,7 +269,7 @@ public class UpdateAttributeAction implements Serializable {
 
 		try {
 			attributeService.addAttribute(this.attribute);
-		} catch (BaseMappingException ex) {
+		} catch (BasePersistenceException ex) {
 			log.error("Failed to add new attribute {}", this.attribute.getInum(), ex);
 
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new attribute");
