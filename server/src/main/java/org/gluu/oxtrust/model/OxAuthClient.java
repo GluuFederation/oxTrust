@@ -29,7 +29,7 @@ import org.xdi.util.security.StringEncrypter.EncryptionException;
  * @author Reda Zerrad Date: 06.08.2012
  * @author Yuriy Movchan Date: 05/22/2013
  * @author Javier Rojas Blum
- * @version March 21, 2018
+ * @version Junr 13, 2018
  */
 @LdapEntry(sortBy = {"displayName"})
 @LdapObjectClass(values = {"top", "oxAuthClient"})
@@ -70,6 +70,9 @@ public class OxAuthClient extends Entry implements Serializable {
 
     @LdapAttribute(name = "oxAuthScope")
     private List<String> oxAuthScopes;
+
+    @LdapAttribute(name = "oxAuthClaim")
+    private List<String> oxAuthClaims;
 
     @NotNull
     @LdapAttribute(name = "oxAuthClientSecret")
@@ -284,6 +287,14 @@ public class OxAuthClient extends Entry implements Serializable {
 
     public void setOxAuthScopes(List<String> oxAuthScopes) {
         this.oxAuthScopes = oxAuthScopes;
+    }
+
+    public List<String> getOxAuthClaims() {
+        return oxAuthClaims;
+    }
+
+    public void setOxAuthClaims(List<String> oxAuthClaims) {
+        this.oxAuthClaims = oxAuthClaims;
     }
 
     public String getEncodedClientSecret() {
