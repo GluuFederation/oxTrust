@@ -23,6 +23,7 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
+import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.EncryptionService;
 import org.gluu.oxtrust.ldap.service.ScopeService;
@@ -34,6 +35,7 @@ import org.gluu.persist.exception.BasePersistenceException;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.DisplayNameEntry;
+import org.xdi.model.GluuAttribute;
 import org.xdi.model.SelectableEntity;
 import org.xdi.oxauth.model.common.GrantType;
 import org.xdi.oxauth.model.common.ResponseType;
@@ -50,7 +52,7 @@ import org.xdi.util.security.StringEncrypter.EncryptionException;
  * @author Reda Zerrad Date: 06.11.2012
  * @author Yuriy Movchan Date: 04/07/2014
  * @author Javier Rojas Blum
- * @version March 21, 2018
+ * @version June 13, 2018
  */
 @Named
 @ConversationScoped
@@ -67,6 +69,9 @@ public class UpdateClientAction implements Serializable {
 
 	@Inject
 	private ScopeService scopeService;
+
+	@Inject
+	private AttributeService attributeService;
 
 	@Inject
 	private LookupService lookupService;
@@ -92,11 +97,12 @@ public class UpdateClientAction implements Serializable {
 	private List<String> loginUris;
 	private List<String> logoutUris;
 	private List<String> clientlogoutUris;
-	private List<String> claimRedirectURIList ;
+	private List<String> claimRedirectURIList;
 
 
 
 	private List<DisplayNameEntry> scopes;
+	private List<DisplayNameEntry> claims;
 	private List<ResponseType> responseTypes;
 	private List<GrantType> grantTypes;
 	private List<String> contacts;
@@ -109,6 +115,9 @@ public class UpdateClientAction implements Serializable {
 	// "Length of search string should be between 2 and 30")
 	private String searchAvailableScopePattern;
 	private String oldSearchAvailableScopePattern;
+
+	private String searchAvailableClaimPattern;
+	private String oldSearchAvailableClaimPattern;
 
 	private String availableLoginUri = "https://";
 	private String availableLogoutUri = "https://";
@@ -136,6 +145,7 @@ public class UpdateClientAction implements Serializable {
 	}
 
 	private List<OxAuthScope> availableScopes;
+	private List<GluuAttribute> availableClaims;
 	private List<GluuGroup> availableGroups;
 	private List<SelectableEntity<ResponseType>> availableResponseTypes;
 	private List<SelectableEntity<GrantType>> availableGrantTypes;
@@ -153,6 +163,7 @@ public class UpdateClientAction implements Serializable {
 			this.logoutUris = getNonEmptyStringList(client.getOxAuthPostLogoutRedirectURIs());
 			this.clientlogoutUris = getNonEmptyStringList(client.getLogoutUri());
 			this.scopes = getInitialScopeDisplayNameEntiries();
+			this.claims = getInitialClaimDisplayNameEntries();
 			this.responseTypes = getInitialResponseTypes();
 			this.grantTypes = getInitialGrantTypes();
 			this.contacts = getNonEmptyStringList(client.getContacts());
@@ -200,6 +211,7 @@ public class UpdateClientAction implements Serializable {
 			this.logoutUris = getNonEmptyStringList(client.getOxAuthPostLogoutRedirectURIs());
 			this.clientlogoutUris = getNonEmptyStringList(client.getLogoutUri());
 			this.scopes = getInitialScopeDisplayNameEntiries();
+			this.claims = getInitialClaimDisplayNameEntries();
 			this.responseTypes = getInitialResponseTypes();
 			this.grantTypes = getInitialGrantTypes();
 			this.contacts = getNonEmptyStringList(client.getContacts());
@@ -252,6 +264,7 @@ public class UpdateClientAction implements Serializable {
 		updateLogoutURIs();
 		updateClientLogoutURIs();
 		updateScopes();
+		updateClaims();
 		updateResponseTypes();
 		updateGrantTypes();
 		updateContacts();
@@ -427,6 +440,11 @@ public class UpdateClientAction implements Serializable {
 		this.scopes.add(oneScope);
 	}
 
+	private void addClaim(GluuAttribute claim) {
+		DisplayNameEntry oneClaim = new DisplayNameEntry(claim.getDn(), claim.getInum(), claim.getDisplayName());
+		this.claims.add(oneClaim);
+	}
+
 	public void removeScope(String inum) throws Exception {
 		if (StringHelper.isEmpty(inum)) {
 			return;
@@ -437,6 +455,22 @@ public class UpdateClientAction implements Serializable {
 		for (Iterator<DisplayNameEntry> iterator = this.scopes.iterator(); iterator.hasNext();) {
 			DisplayNameEntry oneScope = iterator.next();
 			if (removeScopeInum.equals(oneScope.getDn())) {
+				iterator.remove();
+				break;
+			}
+		}
+	}
+
+	public void removeClaim(String inum) throws Exception {
+		if (StringHelper.isEmpty(inum)) {
+			return;
+		}
+
+		String removeClaimDn = attributeService.getDnForAttribute(inum);
+
+		for (Iterator<DisplayNameEntry> iterator = this.claims.iterator(); iterator.hasNext();) {
+			DisplayNameEntry oneClaim = iterator.next();
+			if (removeClaimDn.equals(oneClaim.getDn())) {
 				iterator.remove();
 				break;
 			}
@@ -563,7 +597,27 @@ public class UpdateClientAction implements Serializable {
 		}
 	}
 
+	public void acceptSelectClaims() {
+		if (this.availableClaims == null) {
+			return;
+		}
+
+		Set<String> addedClaimInums = new HashSet<String>();
+		for (DisplayNameEntry claim : claims) {
+			addedClaimInums.add(claim.getInum());
+		}
+
+		for (GluuAttribute aClaim : this.availableClaims) {
+			if (aClaim.isSelected() && !addedClaimInums.contains(aClaim.getInum())) {
+				addClaim(aClaim);
+			}
+		}
+	}
+
 	public void cancelSelectScopes() {
+	}
+
+	public void cancelSelectClaims() {
 	}
 
 	public void cancelSelectGroups() {
@@ -725,6 +779,20 @@ public class UpdateClientAction implements Serializable {
 		this.client.setOxAuthScopes(tmpScopes);
 	}
 
+	private void updateClaims() {
+		if (this.claims == null || this.claims.size() == 0) {
+			this.client.setOxAuthClaims(null);
+			return;
+		}
+
+		List<String> tmpClaims = new ArrayList<String>();
+		for (DisplayNameEntry claim : this.claims) {
+			tmpClaims.add(claim.getDn());
+		}
+
+		this.client.setOxAuthClaims(tmpClaims);
+	}
+
 	private void updateResponseTypes() {
 		List<ResponseType> currentResponseTypes = this.responseTypes;
 
@@ -762,6 +830,21 @@ public class UpdateClientAction implements Serializable {
 		}
 	}
 
+	public void selectAddedClaims() {
+		if (this.availableClaims == null) {
+			return;
+		}
+
+		Set<String> addedClaimInums = new HashSet<String>();
+		for (DisplayNameEntry claim : this.claims) {
+			addedClaimInums.add(claim.getInum());
+		}
+
+		for (GluuAttribute aClaim : this.availableClaims) {
+			aClaim.setSelected(addedClaimInums.contains(aClaim.getInum()));
+		}
+	}
+
 	public void searchAvailableScopes() {
 		if (Util.equals(this.oldSearchAvailableScopePattern, this.searchAvailableScopePattern)) {
 			return;
@@ -777,6 +860,20 @@ public class UpdateClientAction implements Serializable {
 		}
 	}
 
+	public void searchAvailableClaims() {
+		if (Util.equals(this.oldSearchAvailableClaimPattern, this.searchAvailableClaimPattern)) {
+			return;
+		}
+
+		try {
+			this.availableClaims = attributeService.searchAttributes(this.searchAvailableClaimPattern, OxTrustConstants.searchClientsSizeLimit);
+			this.oldSearchAvailableClaimPattern = this.searchAvailableClaimPattern;
+			selectAddedClaims();
+		} catch (Exception ex) {
+			log.error("Failed to find attributes", ex);
+		}
+	}
+
 	private List<DisplayNameEntry> getInitialScopeDisplayNameEntiries() throws Exception {
 		List<DisplayNameEntry> result = new ArrayList<DisplayNameEntry>();
 		if ((client.getOxAuthScopes() == null) || (client.getOxAuthScopes().size() == 0)) {
@@ -784,6 +881,20 @@ public class UpdateClientAction implements Serializable {
 		}
 
 		List<DisplayNameEntry> tmp = lookupService.getDisplayNameEntries(scopeService.getDnForScope(null), this.client.getOxAuthScopes());
+		if (tmp != null) {
+			result.addAll(tmp);
+		}
+
+		return result;
+	}
+
+	private List<DisplayNameEntry> getInitialClaimDisplayNameEntries() throws Exception {
+		List<DisplayNameEntry> result = new ArrayList<DisplayNameEntry>();
+		if ((client.getOxAuthClaims() == null) || (client.getOxAuthClaims().size() == 0)) {
+			return result;
+		}
+
+		List<DisplayNameEntry> tmp = lookupService.getDisplayNameEntries(attributeService.getDnForAttribute(null), this.client.getOxAuthClaims());
 		if (tmp != null) {
 			result.addAll(tmp);
 		}
@@ -1021,6 +1132,10 @@ public class UpdateClientAction implements Serializable {
 		return this.availableScopes;
 	}
 
+	public List<GluuAttribute> getAvailableClaims() {
+		return this.availableClaims;
+	}
+
 	public List<GluuGroup> getAvailableGroups() {
 		return this.availableGroups;
 	}
@@ -1043,6 +1158,10 @@ public class UpdateClientAction implements Serializable {
 
 	public List<DisplayNameEntry> getScopes() {
 		return this.scopes;
+	}
+
+	public List<DisplayNameEntry> getClaims() {
+		return this.claims;
 	}
 
 	public List<ResponseType> getResponseTypes() {
@@ -1075,6 +1194,14 @@ public class UpdateClientAction implements Serializable {
 
 	public void setSearchAvailableScopePattern(String searchAvailableScopePattern) {
 		this.searchAvailableScopePattern = searchAvailableScopePattern;
+	}
+
+	public String getSearchAvailableClaimPattern() {
+		return searchAvailableClaimPattern;
+	}
+
+	public void setSearchAvailableClaimPattern(String searchAvailableClaimPattern) {
+		this.searchAvailableClaimPattern = searchAvailableClaimPattern;
 	}
 
 	/**
