@@ -10,7 +10,7 @@ import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.model.LogViewerConfig;
-import org.gluu.oxtrust.model.log.LogFiles;
+import org.gluu.oxtrust.service.logger.log.LogFilesService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.slf4j.Logger;
 import org.xdi.service.JsonService;
@@ -49,7 +49,7 @@ public class ViewLogFileAction implements Serializable {
 
 	private GluuAppliance appliance;
 
-	private LogFiles logFiles;
+	private LogFilesService logFilesService;
 
 	private boolean initialized;
 
@@ -58,7 +58,7 @@ public class ViewLogFileAction implements Serializable {
 	private int displayLastLinesCount;
 
 	public String init() {
-		if (this.logFiles != null) {
+		if (this.logFilesService != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
 
@@ -75,7 +75,7 @@ public class ViewLogFileAction implements Serializable {
 	}
 
 	private void initConfigurations() {
-		this.logFiles = new LogFiles(appliance, jsonService);
+		this.logFilesService = new LogFilesService(appliance, jsonService);
 	}
 
 	public boolean isInitialized() {
@@ -83,11 +83,11 @@ public class ViewLogFileAction implements Serializable {
 	}
 
 	public LogViewerConfig getLogViewerConfiguration() {
-		return logFiles.config();
+		return logFilesService.config();
 	}
 
 	public Map<Integer, String> getLogFiles() {
-		return logFiles.filesIndexedById();
+		return logFilesService.filesIndexedById();
 	}
 
 	public String getTailOfLogFile() {
@@ -96,10 +96,10 @@ public class ViewLogFileAction implements Serializable {
 		}
 
 		try {
-			return this.logFiles.logTailById(activeLogFileIndex, displayLastLinesCount);
+			return this.logFilesService.logTailById(activeLogFileIndex, displayLastLinesCount);
 		} catch (IOException ex) {
-			log.error("Failed to read log file '{}'", logFiles.filesIndexedById().get(activeLogFileIndex), ex);
-			return String.format("Failed to read log file '%s'", logFiles.filesIndexedById().get(activeLogFileIndex));
+			log.error("Failed to read log file '{}'", logFilesService.filesIndexedById().get(activeLogFileIndex), ex);
+			return String.format("Failed to read log file '%s'", logFilesService.filesIndexedById().get(activeLogFileIndex));
 		}
 	}
 
