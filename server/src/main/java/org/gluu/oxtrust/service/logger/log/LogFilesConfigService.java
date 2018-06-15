@@ -1,4 +1,4 @@
-package org.gluu.oxtrust.model.log;
+package org.gluu.oxtrust.service.logger.log;
 
 import org.gluu.oxtrust.api.logs.LogFilesConfigApi;
 import org.gluu.oxtrust.model.GluuAppliance;
@@ -12,13 +12,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class LogFilesConfig {
+public class LogFilesConfigService {
 
     private final GluuAppliance updateAppliance;
     private final AppConfiguration appConfiguration;
     private final JsonService jsonService;
 
-    public LogFilesConfig(GluuAppliance updateAppliance, AppConfiguration appConfiguration, JsonService jsonService) {
+    public LogFilesConfigService(GluuAppliance updateAppliance, AppConfiguration appConfiguration, JsonService jsonService) {
         this.updateAppliance = updateAppliance;
         this.appConfiguration = appConfiguration;
         this.jsonService = jsonService;

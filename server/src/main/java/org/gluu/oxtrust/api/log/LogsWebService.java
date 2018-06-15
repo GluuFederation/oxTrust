@@ -7,15 +7,15 @@ import org.gluu.oxtrust.api.logs.LogFilesConfigApi;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.JsonConfigurationService;
 import org.gluu.oxtrust.model.GluuAppliance;
-import org.gluu.oxtrust.model.log.LogFiles;
-import org.gluu.oxtrust.model.log.LogFilesConfig;
+import org.gluu.oxtrust.service.logger.log.LogFilesService;
+import org.gluu.oxtrust.service.logger.log.LogFilesConfigService;
 import org.gluu.oxtrust.service.logger.LoggerService;
 import org.gluu.oxtrust.util.OxTrustApiConstants;
 import org.slf4j.Logger;
 import org.xdi.oxauth.model.configuration.AppConfiguration;
 import org.xdi.service.JsonService;
+import org.xdi.service.security.Secure;
 
-import javax.annotation.security.DeclareRoles;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -28,7 +28,7 @@ import java.util.Map;
 @Path(OxTrustApiConstants.BASE_API_URL + "/logs")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-@DeclareRoles({"access", "log"})
+@Secure("#{apiPermissionService.hasPermission('log', 'access')}")
 public class LogsWebService {
 
     @Inject
@@ -46,8 +46,8 @@ public class LogsWebService {
     @ApiOperation(value = "Get all logs")
     public Response logs() {
         try {
-            LogFiles logFiles = new LogFiles(applianceService.getAppliance(), jsonService);
-            return Response.ok(toDto(logFiles.filesIndexedById())).build();
+            LogFilesService logFilesService = new LogFilesService(applianceService.getAppliance(), jsonService);
+            return Response.ok(toDto(logFilesService.filesIndexedById())).build();
         } catch (Exception e) {
             log.error("Error loading logs", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
@@ -67,8 +67,8 @@ public class LogsWebService {
     @Path("/{id}/{numberOfLines}")
     public Response log(@PathParam("id") int id, @PathParam("numberOfLines") @DefaultValue("400") int numberOfLines) {
         try {
-            LogFiles logFiles = new LogFiles(applianceService.getAppliance(), jsonService);
-            return Response.ok(toDto(id, logFiles.logTailById(id, numberOfLines))).build();
+            LogFilesService logFilesService = new LogFilesService(applianceService.getAppliance(), jsonService);
+            return Response.ok(toDto(id, logFilesService.logTailById(id, numberOfLines))).build();
         } catch (IOException e) {
             log.error("Error loading log", e);
             return Response.status(Response.Status.NOT_FOUND).build();
@@ -88,8 +88,8 @@ public class LogsWebService {
         try {
             AppConfiguration appConfiguration = jsonConfigurationService.getOxauthAppConfiguration();
             GluuAppliance appliance = applianceService.getAppliance();
-            LogFilesConfig logFilesConfig = new LogFilesConfig(appliance, appConfiguration, jsonService);
-            logFilesConfig.updateWith(config);
+            LogFilesConfigService logFilesConfigService = new LogFilesConfigService(appliance, appConfiguration, jsonService);
+            logFilesConfigService.updateWith(config);
 
             jsonConfigurationService.saveOxAuthAppConfiguration(appConfiguration);
             applianceService.updateAppliance(appliance);

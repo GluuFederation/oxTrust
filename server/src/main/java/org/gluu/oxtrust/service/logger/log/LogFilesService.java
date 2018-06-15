@@ -1,4 +1,4 @@
-package org.gluu.oxtrust.model.log;
+package org.gluu.oxtrust.service.logger.log;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.filefilter.AndFileFilter;
@@ -21,9 +21,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class LogFiles {
+public class LogFilesService {
 
-    private static final Logger LOG = Logger.getLogger(LogFiles.class);
+    private static final Logger LOG = Logger.getLogger(LogFilesService.class);
 
     private final GluuAppliance appliance;
     private final JsonService jsonService;
@@ -31,7 +31,7 @@ public class LogFiles {
     private LogViewerConfig config;
     private Map<Integer, String> logFiles;
 
-    public LogFiles(GluuAppliance appliance, JsonService jsonService) {
+    public LogFilesService(GluuAppliance appliance, JsonService jsonService) {
         this.appliance = appliance;
         this.jsonService = jsonService;
         this.config = null;
