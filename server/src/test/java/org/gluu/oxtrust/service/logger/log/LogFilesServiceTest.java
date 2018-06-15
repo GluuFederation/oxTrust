@@ -1,21 +1,21 @@
-package org.gluu.oxtrust.model.log;
+package org.gluu.oxtrust.service.logger.log;
 
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.model.LogViewerConfig;
+import org.gluu.oxtrust.service.logger.log.LogFilesService;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.xdi.model.SimpleExtendedCustomProperty;
 import org.xdi.service.JsonService;
 
 import java.io.IOException;
-import java.util.Map;
 
 import static java.util.Arrays.asList;
 import static org.testng.Assert.assertEquals;
 
-public class LogFilesTest {
+public class LogFilesServiceTest {
 
-    private LogFiles logFiles;
+    private LogFilesService logFilesService;
     private GluuAppliance appliance;
     private JsonService jsonService;
 
@@ -25,20 +25,20 @@ public class LogFilesTest {
         jsonService = new JsonService();
         jsonService.init();
 
-        logFiles = new LogFiles(appliance, jsonService);
+        logFilesService = new LogFilesService(appliance, jsonService);
     }
 
     @Test
     public void testConfig() {
         appliance.setOxLogViewerConfig(createOxLogViewerConfig());
-        LogViewerConfig config = logFiles.config();
+        LogViewerConfig config = logFilesService.config();
         assertEquals(config.getLogTemplates().size(), 2);
         assertEquals(config.getLogTemplates().get(0).getValue2(), "/opt/gluu/jetty/oxauth/logs/*.log");
         assertEquals(config.getLogTemplates().get(1).getValue2(), "/opt/gluu/jetty/identity/logs/*.log");
 
         // When conf is empty.
         appliance.setOxLogViewerConfig("");
-        config = logFiles.config();
+        config = logFilesService.config();
         assertEquals(config.getLogTemplates().size(), 0);
     }
 
