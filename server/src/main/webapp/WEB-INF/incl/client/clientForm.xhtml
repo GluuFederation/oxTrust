@@ -426,10 +426,15 @@
                                                 </div>
                                             </a4j:repeat>
                                             <richext:spacer height="16"/>
+                                              <a4j:commandButton styleClass="btn btn-primary" style="margin-top: 5px;"
+                                                               value="#{msg['clientForm.addLoginReiderctURI']}"
+                                                               oncomplete="#{rich:component('loginRedirect:inputText')}.show();"
+                                                               execute="@this" eventsQueue="clientQueue"/>
+							
                                         </h:panelGroup>
                                     </h:panelGroup>
                                 </ox:decorate>
-
+                               
                                 <ox:decorate id="redirectLogoutUrls" label="#{msg['clientForm.redirectLogoutURIs']}">
                                     <h:panelGroup id="selectedLogoutURIsId">
                                         <h:panelGroup columns="1" width="100%" border="0" cellpadding="0"
@@ -453,9 +458,16 @@
                                                 <br/>
                                             </a4j:repeat>
                                             <richext:spacer height="16"/>
+                                             
+                                <a4j:commandButton styleClass="btn btn-primary" style="margin-top: 5px;"
+                                                               value="#{msg['clientForm.postLogoutRedirectURI']}"
+                                                               oncomplete="#{rich:component('logoutRedirect:inputText')}.show();"
+                                                               execute="@this" eventsQueue="clientQueue"/>
+								
                                         </h:panelGroup>
                                     </h:panelGroup>
                                 </ox:decorate>
+                               
 
                                 <!--  -->
 
@@ -482,6 +494,10 @@
                                                 <br/>
                                             </a4j:repeat>
                                             <richext:spacer height="16"/>
+                                            <a4j:commandButton styleClass="btn btn-primary" style="margin-top:5px"
+                                                               value="#{msg['clientForm.addClaimRedirectURI']}"
+                                                               oncomplete="#{rich:component('claimRedirectUri:inputText')}.show();"
+                                                               execute="@this" eventsQueue="clientQueue"/>
                                         </h:panelGroup>
                                     </h:panelGroup>
                                 </ox:decorate>
@@ -511,6 +527,10 @@
                                                 <br/>
                                             </a4j:repeat>
                                             <richext:spacer height="16"/>
+                                             <a4j:commandButton styleClass="btn btn-primary" style="margin-top:5px"
+                                                               value="#{msg['clientForm.addScope']}"
+                                                               oncomplete="#{rich:component('scope:selectScopeModalPanel')}.show();"
+                                                               execute="@this" eventsQueue="clientQueue"/>
                                         </h:panelGroup>
                                     </h:panelGroup>
                                 </ox:decorate>
@@ -562,6 +582,10 @@
                                                 <br/>
                                             </a4j:repeat>
                                             <richext:spacer height="16"/>
+                                            <a4j:commandButton styleClass="btn btn-primary" style="margin-top:5px"
+                                                               value="#{msg['clientForm.addResponseType']}"
+                                                               oncomplete="#{rich:component('responseType:selectEntityModalPanel')}.show();"
+                                                               execute="@this" eventsQueue="clientQueue"/>
                                         </h:panelGroup>
                                     </h:panelGroup>
                                 </ox:decorate>
@@ -588,6 +612,10 @@
                                                 <br/>
                                             </a4j:repeat>
                                             <richext:spacer height="16"/>
+                                            <a4j:commandButton styleClass="btn btn-primary" style="margin-top:5px"
+                                                               value="#{msg['clientForm.addGrantType']}"
+                                                               oncomplete="#{rich:component('grantType:selectEntityModalPanel')}.show();"
+                                                               execute="@this" eventsQueue="clientQueue"/>
                                         </h:panelGroup>
                                     </h:panelGroup>
                                 </ox:decorate>
@@ -614,6 +642,10 @@
                                                 <br/>
                                             </a4j:repeat>
                                             <richext:spacer height="16"/>
+                                             <a4j:commandButton styleClass="btn btn-primary" style="margin-top:5px"
+                                                               value="#{msg['clientForm.addContact']}"
+                                                               oncomplete="#{rich:component('contact:inputText')}.show();"
+                                                               execute="@this" eventsQueue="clientQueue"/>
                                         </h:panelGroup>
                                     </h:panelGroup>
                                 </ox:decorate>
@@ -641,6 +673,10 @@
                                                 <br/>
                                             </a4j:repeat>
                                             <richext:spacer height="16"/>
+                                            <a4j:commandButton styleClass="btn btn-primary" style="margin-top:5px"
+                                                               value="#{msg['clientForm.addDefaultACRvalue']}"
+                                                               oncomplete="#{rich:component('defaultAcrValue:inputText')}.show();"
+                                                               execute="@this" eventsQueue="clientQueue"/>
                                         </h:panelGroup>
                                     </h:panelGroup>
                                 </ox:decorate>
@@ -674,6 +710,10 @@
                                                 <br/>
                                             </a4j:repeat>
                                             <richext:spacer height="16"/>
+                                            <a4j:commandButton styleClass="btn btn-primary" style="margin-top:5px"
+                                                               value="#{msg['clientForm.addRequestURI']}"
+                                                               oncomplete="#{rich:component('requestUri:inputText')}.show();"
+                                                               execute="@this" eventsQueue="clientQueue"/>
                                         </h:panelGroup>
                                     </h:panelGroup>
                                 </ox:decorate>
@@ -700,6 +740,10 @@
                                                 <br/>
                                             </a4j:repeat>
                                             <richext:spacer height="16"/>
+                                            <a4j:commandButton styleClass="btn btn-primary" style="margin-top:5px"
+                                                               value="#{msg['clientForm.addAuthorizedOrigin']}"
+                                                               oncomplete="#{rich:component('authorizedOrigin:inputText')}.show();"
+                                                               execute="@this" eventsQueue="clientQueue"/>
                                         </h:panelGroup>
                                     </h:panelGroup>
                                 </ox:decorate>
@@ -731,6 +775,10 @@
                                                 <br/>
                                             </a4j:repeat>
                                             <richext:spacer height="16"/>
+                                            <a4j:commandButton styleClass="btn btn-primary" style="margin-top:5px"
+                                                               value="#{msg['clientForm.addFrontchannelLogoutURI']}"
+                                                               oncomplete="#{rich:component('clientLogoutUri:inputText')}.show();"
+                                                               execute="@this" eventsQueue="clientQueue"/>
                                         </h:panelGroup>
                                     </h:panelGroup>
                                 </ox:decorate>
@@ -792,62 +840,7 @@
                                                    style="width:300px"/>
                                 </ox:decorate>
 
-                                <ox:decorate id="command">
-                                    <h:panelGroup>
-                                        <div class="btn-group" role="group" aria-label="..." style="margin-left:105px;">
-
-                                            <a4j:commandButton styleClass="btn btn-primary"
-                                                               value="#{msg['clientForm.addLoginReiderctURI']}"
-                                                               oncomplete="#{rich:component('loginRedirect:inputText')}.show();"
-                                                               execute="@this" eventsQueue="clientQueue"/>
-                                            <a4j:commandButton styleClass="btn btn-primary"
-                                                               value="#{msg['clientForm.postLogoutRedirectURI']}"
-                                                               oncomplete="#{rich:component('logoutRedirect:inputText')}.show();"
-                                                               execute="@this" eventsQueue="clientQueue"/>
-                                            <a4j:commandButton styleClass="btn btn-primary"
-                                                               value="#{msg['clientForm.addScope']}"
-                                                               oncomplete="#{rich:component('scope:selectScopeModalPanel')}.show();"
-                                                               execute="@this" eventsQueue="clientQueue"/>
-                                            <a4j:commandButton styleClass="btn btn-primary"
-                                                               value="#{msg['clientForm.addClaim']}"
-                                                               oncomplete="#{rich:component('claim:selectClaimModalPanel')}.show();"
-                                                               execute="@this" eventsQueue="clientQueue"/>
-                                            <a4j:commandButton styleClass="btn btn-primary"
-                                                               value="#{msg['clientForm.addResponseType']}"
-                                                               oncomplete="#{rich:component('responseType:selectEntityModalPanel')}.show();"
-                                                               execute="@this" eventsQueue="clientQueue"/>
-                                            <a4j:commandButton styleClass="btn btn-primary"
-                                                               value="#{msg['clientForm.addGrantType']}"
-                                                               oncomplete="#{rich:component('grantType:selectEntityModalPanel')}.show();"
-                                                               execute="@this" eventsQueue="clientQueue"/>
-                                            <a4j:commandButton styleClass="btn btn-primary"
-                                                               value="#{msg['clientForm.addContact']}"
-                                                               oncomplete="#{rich:component('contact:inputText')}.show();"
-                                                               execute="@this" eventsQueue="clientQueue"/>
-                                            <a4j:commandButton styleClass="btn btn-primary"
-                                                               value="#{msg['clientForm.addDefaultACRvalue']}"
-                                                               oncomplete="#{rich:component('defaultAcrValue:inputText')}.show();"
-                                                               execute="@this" eventsQueue="clientQueue"/>
-                                            <a4j:commandButton styleClass="btn btn-primary"
-                                                               value="#{msg['clientForm.addRequestURI']}"
-                                                               oncomplete="#{rich:component('requestUri:inputText')}.show();"
-                                                               execute="@this" eventsQueue="clientQueue"/>
-                                            <a4j:commandButton styleClass="btn btn-primary"
-                                                               value="#{msg['clientForm.addAuthorizedOrigin']}"
-                                                               oncomplete="#{rich:component('authorizedOrigin:inputText')}.show();"
-                                                               execute="@this" eventsQueue="clientQueue"/>
-                                            <a4j:commandButton styleClass="btn btn-primary"
-                                                               value="#{msg['clientForm.addFrontchannelLogoutURI']}"
-                                                               oncomplete="#{rich:component('clientLogoutUri:inputText')}.show();"
-                                                               execute="@this" eventsQueue="clientQueue"/>
-
-                                            <a4j:commandButton styleClass="btn btn-primary"
-                                                               value="#{msg['clientForm.addClaimRedirectURI']}"
-                                                               oncomplete="#{rich:component('claimRedirectUri:inputText')}.show();"
-                                                               execute="@this" eventsQueue="clientQueue"/>
-                                        </div>
-                                    </h:panelGroup>
-                                </ox:decorate>
+                                
 
                             </h:panelGroup>
 
