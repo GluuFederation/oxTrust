@@ -130,33 +130,6 @@
 			hideSpanValue(element, value);
 		}
 
-		 function changeAttributeVisibility(attrId, show) {
-        	var attr = document.getElementById(attrId);
-
-            if (show) {
-	        	attr.style['display'] = '';
-            } else {
-	        	attr.style['display'] = 'none';
-            }
-        }
-				
-		function changePasswordtoTextType(obj,elementid , eyeButtonid){
-			console.log("changePasswordtoTextType");
-			var elements = document.querySelector('[id*="'+elementid+'"]');
-			console.log("changePasswordtoTextType" + elements.type);
-			elements.type="text";
-			$(obj).css({"display":"none"});
-			$(obj).siblings("img[id$='"+eyeButtonid+"']").css({"display":"block"});
-		}
-		
-		function changeTexttoPasswordType(obj,elementid , eyeButtonid){
-			var elements = document.querySelector('[id*="'+elementid+'"]'); 
-			console.log("changePasswordtoTextType" + elements.type); 
-			elements.type="password";
-			$(obj).css({"display":"none"});
-			$(obj).siblings("img[id$='"+eyeButtonid+"']").css({"display":"block"});
-		}
-
     </h:outputScript>
     <h:panelGroup id="summarygroup" >
      		<ox:clientSummary _clientAction="#{_clientAction}" _client="#{_client}" dialogWidth="600"
@@ -196,16 +169,15 @@
 								<h:panelGroup id="secretid">
 	                                <ox:decorate id="clientSecret"
 	                                             label="#{msg['clientForm.clientSecret']}">
-	                                    <h:inputSecret  styleClass="form-control togglefield"  value="#{_client.oxAuthClientSecret}" redisplay="true"
+	                                    <rich:inplaceInput styleClass="togglefield" value="#{_client.oxAuthClientSecret}"
 	                                                       defaultLabel="click to enter Client Secret" maxlength="60"
-	                                                       inputWidth="695" 
-	                                                       id="clientSecretId1"/>
-							          
-							          <h:graphicImage value="/img/eye.png" id="viewPassword" onclick="return changePasswordtoTextType(this,'clientSecretId1','hidePassword');"/>
-							           <h:graphicImage value="/img/eye-hidden.png" id="hidePassword" style="display: none;" onclick="return changeTexttoPasswordType(this,'clientSecretId1','viewPassword');"/>
-                                                        
+	                                                       inputWidth="695"
+	                                                       onfocus="changeTextType(this,'hidePassword');"
+	                                                       id="clientSecretId"/>
+	                                   <h:graphicImage value="/img/eye-hidden.png" id="hidePassword"  onclick="return hideValue(this,'clientSecretId','viewPassword');"/>
+	                                   <h:graphicImage value="/img/eye.png" id="viewPassword" style="display: none;" onclick="return viewValue(this,'clientSecretId','hidePassword');"/>
 							           <div id="autogenrateid">
-	                                	<a4j:commandLink render="clientSecretId1" style="margin-top:10px;"  styleClass="btn btn-primary"
+	                                	<a4j:commandLink render="clientSecretId" style="margin-top:10px;"  styleClass="btn btn-primary"
 	                                                               value="Auto-Generate Secret Key"
 	                                                               action="#{_clientAction.generatePassword()}" oncomplete="return valuesDisplay(this);" />
 	                                </div></ox:decorate>
@@ -479,7 +451,7 @@
                                                 </div>
                                             </a4j:repeat>
                                             <richext:spacer height="16"/>
-                                              <a4j:commandButton styleClass="btn btn-primary" style="margin-top: 5px;"
+                                              <a4j:commandButton styleClass="btn btn-primary AddRedirectLoginUriButton" style="margin-top: 5px;"
                                                                value="#{msg['clientForm.addLoginReiderctURI']}"
                                                                oncomplete="#{rich:component('loginRedirect:inputText')}.show();"
                                                                execute="@this" eventsQueue="clientQueue"/>
@@ -512,7 +484,7 @@
                                             </a4j:repeat>
                                             <richext:spacer height="16"/>
                                              
-                                <a4j:commandButton styleClass="btn btn-primary" style="margin-top: 5px;"
+                                <a4j:commandButton styleClass="btn btn-primary AddRedirectLOgoutUriButton" style="margin-top: 5px;"
                                                                value="#{msg['clientForm.postLogoutRedirectURI']}"
                                                                oncomplete="#{rich:component('logoutRedirect:inputText')}.show();"
                                                                execute="@this" eventsQueue="clientQueue"/>
@@ -547,7 +519,7 @@
                                                 <br/>
                                             </a4j:repeat>
                                             <richext:spacer height="16"/>
-                                            <a4j:commandButton styleClass="btn btn-primary" style="margin-top:5px"
+                                            <a4j:commandButton styleClass="btn btn-primary AddClaimRedirectUriButton" style="margin-top:5px"
                                                                value="#{msg['clientForm.addClaimRedirectURI']}"
                                                                oncomplete="#{rich:component('claimRedirectUri:inputText')}.show();"
                                                                execute="@this" eventsQueue="clientQueue"/>
@@ -580,7 +552,7 @@
                                                 <br/>
                                             </a4j:repeat>
                                             <richext:spacer height="16"/>
-                                             <a4j:commandButton styleClass="btn btn-primary" style="margin-top:5px"
+                                             <a4j:commandButton styleClass="btn btn-primary AddScopeButton" style="margin-top:5px"
                                                                value="#{msg['clientForm.addScope']}"
                                                                oncomplete="#{rich:component('scope:selectScopeModalPanel')}.show();"
                                                                execute="@this" eventsQueue="clientQueue"/>
@@ -635,7 +607,7 @@
                                                 <br/>
                                             </a4j:repeat>
                                             <richext:spacer height="16"/>
-                                            <a4j:commandButton styleClass="btn btn-primary" style="margin-top:5px"
+                                            <a4j:commandButton styleClass="btn btn-primary AddResponseTypeButton" style="margin-top:5px"
                                                                value="#{msg['clientForm.addResponseType']}"
                                                                oncomplete="#{rich:component('responseType:selectEntityModalPanel')}.show();"
                                                                execute="@this" eventsQueue="clientQueue"/>
@@ -665,7 +637,7 @@
                                                 <br/>
                                             </a4j:repeat>
                                             <richext:spacer height="16"/>
-                                            <a4j:commandButton styleClass="btn btn-primary" style="margin-top:5px"
+                                            <a4j:commandButton styleClass="btn btn-primary AddGrantTypeButton" style="margin-top:5px"
                                                                value="#{msg['clientForm.addGrantType']}"
                                                                oncomplete="#{rich:component('grantType:selectEntityModalPanel')}.show();"
                                                                execute="@this" eventsQueue="clientQueue"/>
@@ -695,7 +667,7 @@
                                                 <br/>
                                             </a4j:repeat>
                                             <richext:spacer height="16"/>
-                                             <a4j:commandButton styleClass="btn btn-primary" style="margin-top:5px"
+                                             <a4j:commandButton styleClass="btn btn-primary AddContactButton" style="margin-top:5px"
                                                                value="#{msg['clientForm.addContact']}"
                                                                oncomplete="#{rich:component('contact:inputText')}.show();"
                                                                execute="@this" eventsQueue="clientQueue"/>
@@ -726,7 +698,7 @@
                                                 <br/>
                                             </a4j:repeat>
                                             <richext:spacer height="16"/>
-                                            <a4j:commandButton styleClass="btn btn-primary" style="margin-top:5px"
+                                            <a4j:commandButton styleClass="btn btn-primary AddDefaultAcrButton" style="margin-top:5px"
                                                                value="#{msg['clientForm.addDefaultACRvalue']}"
                                                                oncomplete="#{rich:component('defaultAcrValue:inputText')}.show();"
                                                                execute="@this" eventsQueue="clientQueue"/>
@@ -763,7 +735,7 @@
                                                 <br/>
                                             </a4j:repeat>
                                             <richext:spacer height="16"/>
-                                            <a4j:commandButton styleClass="btn btn-primary" style="margin-top:5px"
+                                            <a4j:commandButton styleClass="btn btn-primary AddRequestUriButton" style="margin-top:5px"
                                                                value="#{msg['clientForm.addRequestURI']}"
                                                                oncomplete="#{rich:component('requestUri:inputText')}.show();"
                                                                execute="@this" eventsQueue="clientQueue"/>
@@ -793,7 +765,7 @@
                                                 <br/>
                                             </a4j:repeat>
                                             <richext:spacer height="16"/>
-                                            <a4j:commandButton styleClass="btn btn-primary" style="margin-top:5px"
+                                            <a4j:commandButton styleClass="btn btn-primary AddAuthorizeOriginButton" style="margin-top:5px"
                                                                value="#{msg['clientForm.addAuthorizedOrigin']}"
                                                                oncomplete="#{rich:component('authorizedOrigin:inputText')}.show();"
                                                                execute="@this" eventsQueue="clientQueue"/>
@@ -828,7 +800,7 @@
                                                 <br/>
                                             </a4j:repeat>
                                             <richext:spacer height="16"/>
-                                            <a4j:commandButton styleClass="btn btn-primary" style="margin-top:5px"
+                                            <a4j:commandButton styleClass="btn btn-primary addLogoutUriButton" style="margin-top:5px"
                                                                value="#{msg['clientForm.addFrontchannelLogoutURI']}"
                                                                oncomplete="#{rich:component('clientLogoutUri:inputText')}.show();"
                                                                execute="@this" eventsQueue="clientQueue"/>
