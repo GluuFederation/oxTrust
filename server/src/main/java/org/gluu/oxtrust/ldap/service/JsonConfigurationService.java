@@ -12,10 +12,15 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.service.OpenIdService;
+import org.gluu.oxtrust.service.config.OxAuthConfigObjectMapper;
+import org.gluu.oxtrust.service.config.OxAuthConfigurationDAO;
 import org.gluu.persist.exception.BasePersistenceException;
 import org.gluu.persist.PersistenceEntryManager;
 import org.slf4j.Logger;
-import org.xdi.config.oxtrust.*;
+import org.xdi.config.oxtrust.AppConfiguration;
+import org.xdi.config.oxtrust.CacheRefreshConfiguration;
+import org.xdi.config.oxtrust.ImportPersonConfig;
+import org.xdi.config.oxtrust.LdapOxTrustConfiguration;
 import org.xdi.service.JsonService;
 import org.xdi.service.cache.CacheConfiguration;
 
@@ -24,6 +29,8 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import java.io.IOException;
 import java.io.Serializable;
+
+import static org.gluu.oxtrust.ldap.service.AppInitializer.OX_AUTH_CONFIGURATION_DAO;
 
 /**
  * Provides operations with JSON oxAuth/oxTrust configuration
@@ -58,6 +65,10 @@ public class JsonConfigurationService implements Serializable {
 	
 	@Inject
 	private ApplianceService applianceService;
+
+	@Inject
+	@Named(OX_AUTH_CONFIGURATION_DAO)
+	private OxAuthConfigurationDAO oxAuthConfigurationDAO;
 
 	public AppConfiguration getOxTrustappConfiguration() {
 		LdapOxTrustConfiguration ldapOxTrustConfiguration = getOxTrustConfiguration();
@@ -94,10 +105,7 @@ public class JsonConfigurationService implements Serializable {
 	}
 
 	public String getOxAuthDynamicConfigJson() throws JsonGenerationException, JsonMappingException, IOException {
-		String configurationDn = configurationFactory.getConfigurationDn();
-
-		LdapOxAuthConfiguration ldapOxAuthConfiguration = loadOxAuthConfig(configurationDn);
-		return ldapOxAuthConfiguration.getOxAuthConfigDynamic();
+		return jsonService.objectToJson(oxAuthConfigurationDAO.find());
 	}
 
 	public org.xdi.oxauth.model.configuration.AppConfiguration getOxauthAppConfiguration() throws IOException {
@@ -139,12 +147,7 @@ public class JsonConfigurationService implements Serializable {
 	}
 
 	public boolean saveOxAuthDynamicConfigJson(String oxAuthDynamicConfigJson) throws JsonParseException, JsonMappingException, IOException {
-		String configurationDn = configurationFactory.getConfigurationDn();
-
-		LdapOxAuthConfiguration ldapOxAuthConfiguration = loadOxAuthConfig(configurationDn);
-		ldapOxAuthConfiguration.setOxAuthConfigDynamic(oxAuthDynamicConfigJson);
-		ldapOxAuthConfiguration.setRevision(ldapOxAuthConfiguration.getRevision() + 1);
-		ldapEntryManager.merge(ldapOxAuthConfiguration);
+		oxAuthConfigurationDAO.save(new OxAuthConfigObjectMapper().deserialize(oxAuthDynamicConfigJson));
 		return true;
 	}
 
@@ -152,18 +155,6 @@ public class JsonConfigurationService implements Serializable {
 		try {
 			LdapOxTrustConfiguration conf = ldapEntryManager.find(LdapOxTrustConfiguration.class, configurationDn);
 
-			return conf;
-		} catch (BasePersistenceException ex) {
-			log.error("Failed to load configuration from LDAP");
-		}
-
-		return null;
-	}
-
-	private LdapOxAuthConfiguration loadOxAuthConfig(String configurationDn) {
-		try {
-			configurationDn = configurationDn.replace("ou=oxtrust", "ou=oxauth");
-			LdapOxAuthConfiguration conf = ldapEntryManager.find(LdapOxAuthConfiguration.class, configurationDn);
 			return conf;
 		} catch (BasePersistenceException ex) {
 			log.error("Failed to load configuration from LDAP");

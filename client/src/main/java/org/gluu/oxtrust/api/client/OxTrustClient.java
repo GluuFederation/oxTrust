@@ -7,6 +7,7 @@ package org.gluu.oxtrust.api.client;
 
 import java.io.UnsupportedEncodingException;
 
+import org.gluu.oxtrust.api.client.configuration.OxAuthConfClient;
 import org.gluu.oxtrust.api.client.logs.LogClient;
 import org.gluu.oxtrust.api.client.logs.LogsDefClient;
 import org.gluu.oxtrust.api.client.util.ClientResponseLoggingFilter;
@@ -47,6 +48,7 @@ public class OxTrustClient {
 
 	private final LogsDefClient logsDefClient;
 	private final LogClient logClient;
+	private final OxAuthConfClient oxAuthConfClient;
 
         private final CertificatesClient certificatesClient;
 
@@ -92,6 +94,7 @@ public class OxTrustClient {
 		groupClient = new GroupClient(client, baseURI);
 		logsDefClient = new LogsDefClient(client, baseURI);
 		logClient = new LogClient(client, baseURI);
+		oxAuthConfClient = new OxAuthConfClient(client, baseURI);
 		peopleClient = new PeopleClient(client, baseURI);
                 certificatesClient = new CertificatesClient(client, baseURI);
 	}
@@ -125,6 +128,7 @@ public class OxTrustClient {
 		groupClient = new GroupClient(client, baseURI);
 		logsDefClient = new LogsDefClient(client, baseURI);
 		logClient = new LogClient(client, baseURI);
+		oxAuthConfClient = new OxAuthConfClient(client, baseURI);
 		peopleClient = new PeopleClient(client, baseURI);
                 certificatesClient = new CertificatesClient(client, baseURI);
 	}
@@ -187,5 +191,9 @@ public class OxTrustClient {
 
 	public LogsDefClient getLogsDefClient() {
 		return logsDefClient;
+	}
+
+	public OxAuthConfClient getOxAuthConfClient() {
+		return oxAuthConfClient;
 	}
 }

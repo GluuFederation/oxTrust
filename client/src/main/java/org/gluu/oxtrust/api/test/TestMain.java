@@ -39,7 +39,7 @@ public class TestMain {
      * @throws IOException
      */
     public void init() throws IOException {
-        final String confFile = "conf/configuration.properties";
+        final String confFile = "client/conf/configuration.properties";
         configuration = new Properties();
         configuration.load(new FileInputStream(confFile));
         

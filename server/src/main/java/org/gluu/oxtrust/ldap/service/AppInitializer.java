@@ -30,6 +30,10 @@ import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.ldap.cache.service.CacheRefreshTimer;
 import org.gluu.oxtrust.service.MetricService;
 import org.gluu.oxtrust.service.cdi.event.CentralLdap;
+import org.gluu.oxtrust.service.config.OxAuthConfigDynamicExtractor;
+import org.gluu.oxtrust.service.config.OxAuthConfigObjectMapper;
+import org.gluu.oxtrust.service.config.OxAuthConfigurationDAO;
+import org.gluu.oxtrust.service.config.OxAuthConfigurationExtractor;
 import org.gluu.oxtrust.service.custom.LdapCentralConfigurationReload;
 import org.gluu.oxtrust.service.logger.LoggerService;
 import org.gluu.oxtrust.service.status.ldap.LdapStatusTimer;
@@ -75,6 +79,7 @@ public class AppInitializer {
     public static final String LDAP_ENTRY_MANAGER_FACTORY_NAME = "ldapEntryManagerFactory";
     public static final String LDAP_ENTRY_MANAGER_NAME = "ldapEntryManager";
     public static final String LDAP_CENTRAL_ENTRY_MANAGER_NAME = "centralLdapEntryManager";
+    public static final String OX_AUTH_CONFIGURATION_DAO = "oxAuthConfigurationDAO";
 
     @Inject
     private Logger log;
@@ -253,10 +258,24 @@ public class AppInitializer {
         EncryptionService securityService = encryptionServiceInstance.get();
         Properties decryptedConnectionProperties = securityService.decryptProperties(connectionProperties);
 
-        PersistenceEntryManager ldapEntryManager = this.ldapEntryManagerFactory.createEntryManager(decryptedConnectionProperties); 
+        PersistenceEntryManager ldapEntryManager = this.ldapEntryManagerFactory.createEntryManager(decryptedConnectionProperties);
         log.info("Created {}: {}", new Object[] { LDAP_ENTRY_MANAGER_NAME, ldapEntryManager.getOperationService() });
 
         return ldapEntryManager;
+    }
+
+    @Produces
+    @ApplicationScoped
+    @Named(OX_AUTH_CONFIGURATION_DAO)
+    public OxAuthConfigurationDAO oxAuthConfigurationDAO() {
+        PersistenceEntryManager persistenceEntryManager = createLdapEntryManager();
+        OxAuthConfigurationExtractor oxAuthConfigurationExtractor = new OxAuthConfigurationExtractor(persistenceEntryManager);
+        OxAuthConfigObjectMapper oxAuthConfigObjectMapper = new OxAuthConfigObjectMapper();
+        return new OxAuthConfigurationDAO(oxAuthConfigurationExtractor,
+                oxAuthConfigObjectMapper,
+                new OxAuthConfigDynamicExtractor(configurationFactory, oxAuthConfigurationExtractor, oxAuthConfigObjectMapper),
+                configurationFactory,
+                persistenceEntryManager);
     }
 
     @Produces @ApplicationScoped @Named(LDAP_CENTRAL_ENTRY_MANAGER_NAME) @CentralLdap
@@ -271,7 +290,7 @@ public class AppInitializer {
         EncryptionService securityService = encryptionServiceInstance.get();
         Properties decryptedCentralConnectionProperties = securityService.decryptProperties(centralConnectionProperties);
 
-        PersistenceEntryManager centralLdapEntryManager = this.ldapEntryManagerFactory.createEntryManager(decryptedCentralConnectionProperties); 
+        PersistenceEntryManager centralLdapEntryManager = this.ldapEntryManagerFactory.createEntryManager(decryptedCentralConnectionProperties);
         log.info("Created {}: {}", new Object[] { LDAP_CENTRAL_ENTRY_MANAGER_NAME, centralLdapEntryManager.getOperationService() });
 
         return centralLdapEntryManager;
