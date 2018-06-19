@@ -128,6 +128,7 @@ public class UpdateOrganizationAction implements Serializable {
 
 		if (!StringHelper.equals(OxTrustConstants.RESULT_SUCCESS, resultOrganization)
 				|| !StringHelper.equals(OxTrustConstants.RESULT_SUCCESS, resultApplliance)) {
+			
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, facesMessages.evalResourceAsString("#{msg['organization.prepareUpdateFailed']}"));
 			conversationService.endConversation();
 
