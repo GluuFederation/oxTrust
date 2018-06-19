@@ -22,6 +22,7 @@ import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
 import org.gluu.site.ldap.persistence.annotation.LdapEntry;
+import org.gluu.site.ldap.persistence.annotation.LdapJsonObject;
 import org.gluu.site.ldap.persistence.annotation.LdapObjectClass;
 import org.xdi.ldap.model.GluuBoolean;
 import org.xdi.ldap.model.GluuStatus;
@@ -58,11 +59,13 @@ public class GluuCustomPerson extends User
     @LdapAttribute(name = "oxPPID")
     private List<String> oxPPID;
 
+   // @LdapJsonObject
     @LdapAttribute(name = "oxExternalUid")
     private List<String> oxExternalUid;
     
+    @LdapJsonObject
     @LdapAttribute(name = "oxOTPDevices")
-    private String oxOTPDevices;
+    private OTPDevice  oxOTPDevices;
     
     @LdapAttribute(name = "oxMobileDevices")
     private String oxMobileDevices;
@@ -75,11 +78,11 @@ public class GluuCustomPerson extends User
 		this.oxMobileDevices = oxMobileDevices;
 	}
 
-	public String getOxOTPDevices() {
+	public OTPDevice getOxOTPDevices() {
 		return oxOTPDevices;
 	}
 
-	public void setOxOTPDevices(String oxOTPDevices) {
+	public void setOxOTPDevices(OTPDevice oxOTPDevices) {
 		this.oxOTPDevices = oxOTPDevices;
 	}
 
