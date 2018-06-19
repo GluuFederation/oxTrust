@@ -232,7 +232,7 @@ public class UpdatePersonAction implements Serializable {
 		try {
 		this.gluuStatus = this.person.getStatus();
 		List <String> oxexternal = this.person.getOxExternalUid();
-		String oxOTPDevices = this.person.getOxOTPDevices();
+		OTPDevice oxOTPDevices = this.person.getOxOTPDevices();
 		externalAuthCustomAttributes = new ArrayList<String>();
 		String oxMobileDevices = this.person.getOxMobileDevices();
 		if(oxexternal != null && oxexternal.size()>0){
@@ -269,10 +269,10 @@ public class UpdatePersonAction implements Serializable {
 				}
 			}			
 			
-			if (oxOTPDevices != null && !oxOTPDevices.trim().equals("")) {
+			/*if (oxOTPDevices != null && !oxOTPDevices.trim().equals("")) {
 				ObjectMapper mapper = new ObjectMapper();
-				OTPDevice oTPDevice = mapper.readValue(oxOTPDevices, OTPDevice.class);
-				ArrayList<Device> devices = oTPDevice.getDevices();
+				OTPDevice oTPDevice = mapper.readValue(oxOTPDevices, OTPDevice.class);*/
+				ArrayList<Device> devices = oxOTPDevices.getDevices();
 
 				if (devices != null && devices.size() > 0) {
 					for (Device device : devices) {
@@ -285,7 +285,7 @@ public class UpdatePersonAction implements Serializable {
 						deviceDataMap.add(gluuDeviceDataBean);
 					}
 				}
-			}
+			//}
 
 			if (oxMobileDevices != null && !oxMobileDevices.trim().equals("")) {
 				ObjectMapper mapper = new ObjectMapper();
@@ -607,26 +607,27 @@ public class UpdatePersonAction implements Serializable {
 			}
 		}
 			
-			String oxOTPDevices = this.person.getOxOTPDevices();
-			if (oxOTPDevices != null && !oxOTPDevices.trim().equals("")) {
+			OTPDevice oxOTPDevices = this.person.getOxOTPDevices();
+			/*if (oxOTPDevices != null && !oxOTPDevices.trim().equals("")) {
 				ObjectMapper mapper = new ObjectMapper();
-				OTPDevice oTPDevice = mapper.readValue(oxOTPDevices, OTPDevice.class);
-				ArrayList<Device> devices = oTPDevice.getDevices();
+				OTPDevice oTPDevice = mapper.readValue(oxOTPDevices, OTPDevice.class);*/
+				ArrayList<Device> devices = oxOTPDevices.getDevices();
 
 				if (devices != null && devices.size() > 0) {
 					for (Device device : devices) {
 						if(deleteDeviceData.getId().equals(device.getId())){						
 							deviceDataMap.remove(deleteDeviceData);
 							devices.remove(device);
-							Map<String, ArrayList<Device>> map= new HashMap<String, ArrayList<Device>>();
+							/*Map<String, ArrayList<Device>> map= new HashMap<String, ArrayList<Device>>();
 							map.put("devices", devices);
-							String jsonInString = mapper.writeValueAsString(map);
-							this.person.setOxOTPDevices(jsonInString);
+							String jsonInString = mapper.writeValueAsString(map);*/
+							oxOTPDevices.setDevices(devices);
+							this.person.setOxOTPDevices(oxOTPDevices);
 							return;
 						}
 					}
 				}
-			}
+			//}
 
 			String oxMobileDevices = this.person.getOxMobileDevices();
 			if (oxMobileDevices != null && !oxMobileDevices.trim().equals("")) {
