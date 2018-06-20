@@ -131,7 +131,7 @@ public class ManagePersonAuthenticationAction
 
 		if (OxTrustConstants.RESULT_FAILURE.equals(outcome)) {
 			facesMessages.add(FacesMessage.SEVERITY_ERROR,
-					"Failed to prepare for person authentication configuration update");
+					facesMessages.evalResourceAsString("#{msg['configuration.manageAuthentication.failToPrepareUpdate']}"));
 			conversationService.endConversation();
 		}
 
@@ -227,7 +227,8 @@ public class ManagePersonAuthenticationAction
 
 		reset();
 
-		facesMessages.add(FacesMessage.SEVERITY_INFO, "Person authentication configuration updated successfully");
+		facesMessages.add(FacesMessage.SEVERITY_INFO, facesMessages.evalResourceAsString("#{msg['configuration.manageAuthentication.updateSucceed']}"));
+		
 		conversationService.endConversation();
 
 		return OxTrustConstants.RESULT_SUCCESS;
@@ -251,7 +252,7 @@ public class ManagePersonAuthenticationAction
 	}
 
 	public String cancel() {
-		facesMessages.add(FacesMessage.SEVERITY_INFO, "Person authentication configuration not updated");
+		facesMessages.add(FacesMessage.SEVERITY_INFO, facesMessages.evalResourceAsString("#{msg['configuration.manageAuthentication.updateFailed']}"));
 		conversationService.endConversation();
 
 		return OxTrustConstants.RESULT_SUCCESS;
@@ -351,7 +352,7 @@ public class ManagePersonAuthenticationAction
 			if (connectionProvider.isConnected()) {
 				connectionProvider.closeConnectionPool();
 
-				facesMessages.add(FacesMessage.SEVERITY_INFO, "LDAP Connection Test succeeded!");
+				facesMessages.add(FacesMessage.SEVERITY_INFO, facesMessages.evalResourceAsString("#{msg['configuration.manageAuthentication.ldap.testSucceed']}"));
 
 				return OxTrustConstants.RESULT_SUCCESS;
 
@@ -363,7 +364,7 @@ public class ManagePersonAuthenticationAction
 			log.error("Could not connect to LDAP", ex);
 		}
 
-		facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to connect to LDAP server");
+		facesMessages.add(FacesMessage.SEVERITY_ERROR, facesMessages.evalResourceAsString("#{msg['configuration.manageAuthentication.ldap.testFailed']}"));
 
 		return OxTrustConstants.RESULT_FAILURE;
 	}
