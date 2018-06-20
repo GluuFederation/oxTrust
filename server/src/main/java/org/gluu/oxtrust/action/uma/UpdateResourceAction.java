@@ -92,7 +92,7 @@ public class UpdateResourceAction implements Serializable {
 	private boolean update;
 	private String scopeSelection="Scopes";
 	
-	private List<OxAuthClient> clientList = new ArrayList<OxAuthClient>();;
+	private List<OxAuthClient> clientList;
 	
 	public List<OxAuthClient> getClientList() {
 		return clientList;
@@ -170,9 +170,9 @@ public class UpdateResourceAction implements Serializable {
 		this.clients = getClientDisplayNameEntries();
 		
 		
+		this.clientList = new ArrayList<OxAuthClient>();
 		List<String> list = this.resource.getClients();
 		if (list != null) {
-				clientList = new ArrayList<OxAuthClient>();
 				for (String clientDn : list) {
 					OxAuthClient oxAuthClient = clientService.getClientByDn(clientDn);
 					clientList.add(oxAuthClient);
