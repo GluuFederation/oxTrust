@@ -82,6 +82,13 @@
                                   searchResult="#{updateClientAction.availableScopes}"
                                   updateSelectionMethod="#{updateClientAction.selectAddedScopes}"/>
 
+            <ox:selectClaimDialog acceptMethod="#{updateClientAction.acceptSelectClaims}"
+                                  cancelMethod="#{updateClientAction.cancelSelectClaims}" id="claim" queue="clientQueue"
+                                  render="selectedClaimsId" searchMethod="#{updateClientAction.searchAvailableClaims}"
+                                  searchPattern="#{updateClientAction.searchAvailableClaimPattern}"
+                                  searchResult="#{updateClientAction.availableClaims}"
+                                  updateSelectionMethod="#{updateClientAction.selectAddedClaims}"/>
+
             <ox:selectSelectableEntityDialog acceptMethod="#{updateClientAction.acceptSelectResponseTypes}"
                                              cancelMethod="#{updateClientAction.cancelSelectResponseTypes}"
                                              displayNameProperty="entity.value" displaySearchForm="false"

@@ -428,6 +428,31 @@
                                     </h:panelGroup>
                                 </ox:decorate>
 
+                            <ox:decorate id="claims" label="#{msg['clientForm.claims']}">
+                                <h:panelGroup id="selectedClaimsId">
+                                    <h:panelGroup>
+                                        <a4j:repeat value="#{_clientAction.claims}" rowKeyVar="_claimIdx"
+                                                    var="_claim" iterationStatusVar="loop">
+                                            <div class="row-fluid">
+                                                <div class="#{(loop.index % 2 == 0) ? 'odd' : 'even'}">
+                                                    <h:outputText value="#{_claim.displayName}"/>
+                                                    <h:outputText value="&#160;"/>
+                                                    <div class="span6 pull-right">
+                                                        <a4j:commandLink styleClass="glyphicon glyphicon-remove"
+                                                                         style="margin-top: -20px;"
+                                                                         action="#{_clientAction.removeClaim(_claim.inum)}"
+                                                                         execute="@this" render="selectedClaimsId"
+                                                                         eventsQueue="clientQueue"></a4j:commandLink>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <br/>
+                                        </a4j:repeat>
+                                        <richext:spacer height="16"/>
+                                    </h:panelGroup>
+                                </h:panelGroup>
+                            </ox:decorate>
+
                                 <ox:decorate id="responseTypes" label="#{msg['clientForm.responseTypes']}">
                                     <h:panelGroup id="selectedResponseTypesId">
                                         <h:panelGroup>
@@ -695,6 +720,10 @@
                                             <a4j:commandButton styleClass="btn btn-primary"
                                                                value="#{msg['clientForm.addScope']}"
                                                                oncomplete="#{rich:component('scope:selectScopeModalPanel')}.show();"
+                                                               execute="@this" eventsQueue="clientQueue"/>
+                                            <a4j:commandButton styleClass="btn btn-primary"
+                                                               value="#{msg['clientForm.addClaim']}"
+                                                               oncomplete="#{rich:component('claim:selectClaimModalPanel')}.show();"
                                                                execute="@this" eventsQueue="clientQueue"/>
                                             <a4j:commandButton styleClass="btn btn-primary"
                                                                value="#{msg['clientForm.addResponseType']}"

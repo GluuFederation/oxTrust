@@ -30,7 +30,7 @@ import java.util.List;
  * @author Reda Zerrad Date: 06.08.2012
  * @author Yuriy Movchan Date: 05/22/2013
  * @author Javier Rojas Blum
- * @version March 21, 2018
+ * @version June 21, 2018
  */
 @LdapEntry(sortBy = {"displayName"})
 @LdapObjectClass(values = {"top", "oxAuthClient"})
@@ -71,6 +71,9 @@ public class OxAuthClient extends Entry implements Serializable {
 
     @LdapAttribute(name = "oxAuthScope")
     private List<String> oxAuthScopes;
+
+    @LdapAttribute(name = "oxAuthClaim")
+    private List<String> oxAuthClaims;
 
     @NotNull
     @LdapAttribute(name = "oxAuthClientSecret")
@@ -156,11 +159,11 @@ public class OxAuthClient extends Entry implements Serializable {
 
     @LdapAttribute(name = "oxAuthPostLogoutRedirectURI")
     private String[] postLogoutRedirectUris;
-    
-    @LdapAttribute(name = "oxClaimRedirectURI")
-    private String[] claimRedirectURI ;
 
-	@LdapAttribute(name = "oxAuthLogoutURI")
+    @LdapAttribute(name = "oxClaimRedirectURI")
+    private String[] claimRedirectURI;
+
+    @LdapAttribute(name = "oxAuthLogoutURI")
     private List<String> logoutUri;
 
     @LdapAttribute(name = "oxAuthLogoutSessionRequired")
@@ -205,14 +208,14 @@ public class OxAuthClient extends Entry implements Serializable {
     public void setSelected(boolean selected) {
         this.selected = selected;
     }
-    
-    public String[] getClaimRedirectURI() {
-		return claimRedirectURI;
-	}
 
-	public void setClaimRedirectURI(String[] claimRedirectURI) {
-		this.claimRedirectURI = claimRedirectURI;
-	}
+    public String[] getClaimRedirectURI() {
+        return claimRedirectURI;
+    }
+
+    public void setClaimRedirectURI(String[] claimRedirectURI) {
+        this.claimRedirectURI = claimRedirectURI;
+    }
 
     public String getInum() {
         return inum;
@@ -284,6 +287,14 @@ public class OxAuthClient extends Entry implements Serializable {
 
     public void setOxAuthScopes(List<String> oxAuthScopes) {
         this.oxAuthScopes = oxAuthScopes;
+    }
+
+    public List<String> getOxAuthClaims() {
+        return oxAuthClaims;
+    }
+
+    public void setOxAuthClaims(List<String> oxAuthClaims) {
+        this.oxAuthClaims = oxAuthClaims;
     }
 
     public String getEncodedClientSecret() {
@@ -593,7 +604,7 @@ public class OxAuthClient extends Entry implements Serializable {
     public void setOxAuthClientSecret(String oxAuthClientSecret) throws EncryptionException {
         this.oxAuthClientSecret = oxAuthClientSecret;
         if (StringHelper.isNotEmpty(oxAuthClientSecret)) {
-        	EncryptionService encryptionService = CdiUtil.bean(EncryptionService.class);
+            EncryptionService encryptionService = CdiUtil.bean(EncryptionService.class);
             setEncodedClientSecret(encryptionService.encrypt(oxAuthClientSecret));
         }
     }
