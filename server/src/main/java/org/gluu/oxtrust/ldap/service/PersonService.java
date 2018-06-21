@@ -415,7 +415,7 @@ public class PersonService implements Serializable, IPersonService {
      */
     @Override
     public boolean authenticate(String userName, String password) {
-        boolean result = ldapEntryManager.authenticate(userName, password, appConfiguration.getBaseDN());
+        boolean result = ldapEntryManager.authenticate(appConfiguration.getBaseDN(), userName, password);
 
         return result;
     }

@@ -261,7 +261,7 @@ public class AppInitializer {
     @Produces @ApplicationScoped @Named(LDAP_CENTRAL_ENTRY_MANAGER_NAME) @CentralLdap
     public LdapEntryManager createCentralLdapEntryManager() {
         if (!((configurationFactory.getLdapCentralConfiguration() != null) && configurationFactory.getAppConfiguration().isUpdateApplianceStatus())) {
-            return new LdapEntryManager(null);
+            return new LdapEntryManager();
         }
 
     	FileConfiguration ldapCentralConfig = configurationFactory.getLdapCentralConfiguration();
