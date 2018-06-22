@@ -20,7 +20,7 @@ import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.model.sql.InumSqlEntry;
-import org.gluu.persist.ldap.impl.LdapEntryManager;
+import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.model.base.InumEntry;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
@@ -76,7 +76,7 @@ public class InumService implements Serializable {
 	private Logger log;
 
 	@Inject
-	LdapEntryManager ldapEntryManager;
+	PersistenceEntryManager ldapEntryManager;
 
 	@Inject
 	OrganizationService organizationService;

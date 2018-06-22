@@ -24,7 +24,7 @@ import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.model.OrganizationalUnit;
 import org.gluu.oxtrust.service.render.RenderService;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.persist.ldap.impl.LdapEntryManager;
+import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.model.base.GluuStatus;
 import org.gluu.persist.model.base.InumEntry;
 import org.slf4j.Logger;
@@ -58,7 +58,7 @@ public class TrustService implements Serializable {
     private FacesMessages facesMessages;
 
 	@Inject
-	private LdapEntryManager ldapEntryManager;
+	private PersistenceEntryManager ldapEntryManager;
 
 	@Inject
 	private AttributeService attributeService;

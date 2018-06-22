@@ -28,7 +28,7 @@ import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.PasswordResetRequest;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.persist.ldap.impl.LdapEntryManager;
+import org.gluu.persist.PersistenceEntryManager;
 import org.python.antlr.PythonParser.return_stmt_return;
 import org.slf4j.Logger;
 
@@ -45,7 +45,7 @@ public class PasswordResetAction implements Serializable {
 	private Logger log;
 
 	@Inject
-	private LdapEntryManager ldapEntryManager;	
+	private PersistenceEntryManager ldapEntryManager;	
 
 	@Inject
 	private FacesMessages facesMessages;

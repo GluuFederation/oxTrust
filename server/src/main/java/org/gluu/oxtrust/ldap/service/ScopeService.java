@@ -17,7 +17,7 @@ import javax.inject.Named;
 
 import org.gluu.oxtrust.model.OxAuthScope;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.persist.ldap.impl.LdapEntryManager;
+import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.search.filter.Filter;
 import org.slf4j.Logger;
 import org.xdi.oxauth.model.common.ScopeType;
@@ -36,7 +36,7 @@ public class ScopeService implements Serializable {
 	private static final long serialVersionUID = 65734145678106186L;
 
 	@Inject
-	private LdapEntryManager ldapEntryManager;
+	private PersistenceEntryManager ldapEntryManager;
 	@Inject
 	private OrganizationService organizationService;
 

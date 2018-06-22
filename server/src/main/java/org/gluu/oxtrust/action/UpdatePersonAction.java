@@ -51,7 +51,7 @@ import org.gluu.oxtrust.service.external.ExternalUpdateUserService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.ServiceUtil;
 import org.gluu.persist.exception.BasePersistenceException;
-import org.gluu.persist.ldap.impl.LdapEntryManager;
+import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.model.base.GluuStatus;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
@@ -119,7 +119,7 @@ public class UpdatePersonAction implements Serializable {
 	private MemberService memberService;
 	
 	@Inject
-	private LdapEntryManager ldapEntryManager;
+	private PersistenceEntryManager ldapEntryManager;
 	
 	@Inject
 	private FidoDeviceService fidoDeviceService;

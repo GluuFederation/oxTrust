@@ -9,7 +9,7 @@ package org.gluu.oxtrust.ldap.service.uma;
 import org.gluu.search.filter.Filter;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.persist.ldap.impl.LdapEntryManager;
+import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.model.base.SimpleBranch;
 import org.slf4j.Logger;
 import org.xdi.oxauth.model.uma.persistence.UmaResource;
@@ -34,7 +34,7 @@ public class ResourceSetService implements Serializable {
 	private static final long serialVersionUID = -1537567020929600777L;
 
 	@Inject
-	private LdapEntryManager ldapEntryManager;	
+	private PersistenceEntryManager ldapEntryManager;	
 	@Inject
 	private OrganizationService organizationService;
 

@@ -14,7 +14,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.gluu.persist.ldap.impl.LdapEntryManager;
+import org.gluu.persist.PersistenceEntryManager;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.LdapShibbolethCASProtocolConfiguration;
 import org.xdi.config.oxtrust.ShibbolethCASProtocolConfiguration;
@@ -36,7 +36,7 @@ public class CASService implements Serializable {
     private Logger log;
     
     @Inject
-    private LdapEntryManager ldapEntryManager;
+    private PersistenceEntryManager ldapEntryManager;
     
     @Inject
     OrganizationService organizationService;

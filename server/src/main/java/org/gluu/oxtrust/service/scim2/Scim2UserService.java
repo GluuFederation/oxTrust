@@ -46,7 +46,7 @@ import org.gluu.oxtrust.service.antlr.scimFilter.ScimFilterParserService;
 import org.gluu.oxtrust.service.external.ExternalScimService;
 import org.gluu.oxtrust.util.ServiceUtil;
 import org.gluu.oxtrust.ws.rs.scim2.GroupWebService;
-import org.gluu.persist.ldap.impl.LdapEntryManager;
+import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.model.PagedResult;
 import org.gluu.persist.model.SortOrder;
 import org.gluu.persist.model.base.GluuBoolean;
@@ -98,7 +98,7 @@ public class Scim2UserService implements Serializable {
     private ScimFilterParserService scimFilterParserService;
 
     @Inject
-    private LdapEntryManager ldapEntryManager;
+    private PersistenceEntryManager ldapEntryManager;
 
     private String[] getComplexMultivaluedAsArray(List items){
 

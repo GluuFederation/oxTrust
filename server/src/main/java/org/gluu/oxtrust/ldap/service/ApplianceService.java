@@ -7,7 +7,7 @@
 package org.gluu.oxtrust.ldap.service;
 
 import org.gluu.oxtrust.model.GluuAppliance;
-import org.gluu.persist.ldap.impl.LdapEntryManager;
+import org.gluu.persist.PersistenceEntryManager;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.AuthenticationScriptUsageType;
@@ -40,7 +40,7 @@ public class ApplianceService implements Serializable {
 	private Logger log;
 
 	@Inject
-	private LdapEntryManager ldapEntryManager;	
+	private PersistenceEntryManager ldapEntryManager;	
 	@Inject
 	private OrganizationService organizationService;
 
