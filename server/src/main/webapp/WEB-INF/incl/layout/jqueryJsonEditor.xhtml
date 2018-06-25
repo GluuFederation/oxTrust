@@ -14,9 +14,17 @@
 	</h:panelGroup>
 
 	<h:outputScript>  
+		var scopeExpressionJson = "";
+		var scopeExpressionvar = document.getElementById("resourceid:#{id}_hidden").value;
+		 if (scopeExpressionvar === '' || scopeExpressionvar === null || scopeExpressionvar === undefined) {
+        	console.log("test" + scopeExpressionvar);
+        	scopeExpressionvar = "";
+        	
+    	} else{
+    		scopeExpressionJson = JSON.parse(scopeExpressionvar);
+    	}
 		
-	
-		var scopeExpressionJson = JSON.parse(document.getElementById("resourceid:#{id}_hidden").value);
+		
 		console.log("ss " + scopeExpressionJson);
 		     		  
 		  $(#{id}).queryBuilder({

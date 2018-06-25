@@ -55,7 +55,7 @@ import org.gluu.oxtrust.service.antlr.scimFilter.ScimFilterParserService;
 import org.gluu.oxtrust.service.antlr.scimFilter.util.FilterUtil;
 import org.gluu.oxtrust.service.filter.ProtectedApi;
 import org.gluu.oxtrust.service.scim2.interceptor.RefAdjusted;
-import org.gluu.persist.ldap.impl.LdapEntryManager;
+import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.model.PagedResult;
 import org.gluu.persist.model.SortOrder;
 import org.gluu.search.filter.Filter;
@@ -85,7 +85,7 @@ public class FidoDeviceWebService extends BaseScimWebService implements IFidoDev
     private IPersonService personService;
 
     @Inject
-    private LdapEntryManager ldapEntryManager;
+    private PersistenceEntryManager ldapEntryManager;
 
     @POST
     @Consumes({MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})

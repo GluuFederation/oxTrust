@@ -24,7 +24,7 @@ import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.User;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.exception.operation.DuplicateEntryException;
-import org.gluu.persist.ldap.impl.LdapEntryManager;
+import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.model.AttributeData;
 import org.gluu.search.filter.Filter;
 import org.joda.time.format.ISODateTimeFormat;
@@ -50,7 +50,7 @@ public class PersonService implements Serializable, IPersonService {
     private Logger log;
 
     @Inject
-    private LdapEntryManager ldapEntryManager;
+    private PersistenceEntryManager ldapEntryManager;
 
     @Inject
     private AttributeService attributeService;
@@ -415,7 +415,7 @@ public class PersonService implements Serializable, IPersonService {
      */
     @Override
     public boolean authenticate(String userName, String password) {
-        boolean result = ldapEntryManager.authenticate(userName, password, appConfiguration.getBaseDN());
+        boolean result = ldapEntryManager.authenticate(appConfiguration.getBaseDN(), userName, password);
 
         return result;
     }

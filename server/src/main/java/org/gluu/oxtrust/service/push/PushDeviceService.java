@@ -18,7 +18,7 @@ import javax.inject.Named;
 
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.model.push.PushDevice;
-import org.gluu.persist.ldap.impl.LdapEntryManager;
+import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.model.base.SimpleBranch;
 import org.slf4j.Logger;
 import org.xdi.util.StringHelper;
@@ -37,7 +37,7 @@ public class PushDeviceService implements Serializable {
 	private static final long serialVersionUID = -920736838757282684L;
 
 	@Inject
-	private LdapEntryManager ldapEntryManager;
+	private PersistenceEntryManager ldapEntryManager;
 	@Inject
 	private OrganizationService organizationService;
 

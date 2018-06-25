@@ -15,7 +15,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.gluu.oxtrust.model.User;
 import org.gluu.oxtrust.service.PermissionService;
-import org.gluu.persist.ldap.impl.LdapEntryManager;
+import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.model.base.Entry;
 import org.xdi.model.DisplayNameEntry;
 import org.xdi.service.LookupService;
@@ -161,7 +161,7 @@ public class JsfFunctions {
 			return timeStamp;
 		}
 		
-		return CdiUtil.bean(LdapEntryManager.class).decodeGeneralizedTime(timeStamp).toGMTString();
+		return CdiUtil.bean(PersistenceEntryManager.class).decodeGeneralizedTime(timeStamp).toGMTString();
 		
 	}
 

@@ -29,7 +29,7 @@ import org.gluu.oxtrust.model.scim2.user.UserResource;
 import org.gluu.oxtrust.model.scim2.util.ScimResourceUtil;
 import org.gluu.oxtrust.service.antlr.scimFilter.ScimFilterParserService;
 import org.gluu.oxtrust.service.external.ExternalScimService;
-import org.gluu.persist.ldap.impl.LdapEntryManager;
+import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.model.PagedResult;
 import org.gluu.persist.model.SortOrder;
 import org.gluu.persist.model.base.GluuStatus;
@@ -66,7 +66,7 @@ public class Scim2GroupService implements Serializable {
     private ScimFilterParserService scimFilterParserService;
 
     @Inject
-    private LdapEntryManager ldapEntryManager;
+    private PersistenceEntryManager ldapEntryManager;
 
     private void transferAttributesToGroup(GroupResource res, GluuGroup group, String usersUrl) {
 

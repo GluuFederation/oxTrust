@@ -11,7 +11,7 @@ import javax.inject.Named;
 import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.model.OxAuthSectorIdentifier;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.persist.ldap.impl.LdapEntryManager;
+import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.search.filter.Filter;
 import org.slf4j.Logger;
 import org.xdi.util.StringHelper;
@@ -32,7 +32,7 @@ public class SectorIdentifierService implements Serializable {
     private Logger log;
 
     @Inject
-    private LdapEntryManager ldapEntryManager;
+    private PersistenceEntryManager ldapEntryManager;
     
     @Inject
     private OrganizationService organizationService;

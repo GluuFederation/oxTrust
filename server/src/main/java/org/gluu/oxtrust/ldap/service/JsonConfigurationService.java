@@ -13,7 +13,7 @@ import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.service.OpenIdService;
 import org.gluu.persist.exception.BasePersistenceException;
-import org.gluu.persist.ldap.impl.LdapEntryManager;
+import org.gluu.persist.PersistenceEntryManager;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.*;
 import org.xdi.service.JsonService;
@@ -40,7 +40,7 @@ public class JsonConfigurationService implements Serializable {
 	private Logger log;
 
 	@Inject
-	private LdapEntryManager ldapEntryManager;
+	private PersistenceEntryManager ldapEntryManager;
 	@Inject
 	private JsonService jsonService;
 

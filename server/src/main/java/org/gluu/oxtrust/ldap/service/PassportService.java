@@ -16,7 +16,7 @@ import javax.inject.Named;
 
 import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.persist.exception.MappingException;
-import org.gluu.persist.ldap.impl.LdapEntryManager;
+import org.gluu.persist.PersistenceEntryManager;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.LdapOxPassportConfiguration;
 import org.xdi.service.JsonService;
@@ -41,7 +41,7 @@ public class PassportService implements Serializable {
 	private JsonService jsonService;
 
 	@Inject
-	private LdapEntryManager ldapEntryManager;
+	private PersistenceEntryManager ldapEntryManager;
 	@Inject
 	private ConfigurationFactory configurationFactory;
 

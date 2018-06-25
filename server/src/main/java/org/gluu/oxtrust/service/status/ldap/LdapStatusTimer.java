@@ -17,8 +17,10 @@ import javax.inject.Named;
 
 import org.gluu.oxtrust.ldap.service.AppInitializer;
 import org.gluu.oxtrust.ldap.service.CentralLdapService;
+import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.ldap.impl.LdapEntryManager;
 import org.gluu.persist.ldap.operation.impl.LdapConnectionProvider;
+import org.gluu.persist.operation.PersistenceOperationService;
 import org.slf4j.Logger;
 import org.xdi.service.cdi.event.LdapStatusEvent;
 import org.xdi.service.cdi.event.Scheduled;
@@ -45,10 +47,10 @@ public class LdapStatusTimer {
 	private Event<TimerEvent> timerEvent;
 
 	@Inject @Named(AppInitializer.LDAP_ENTRY_MANAGER_NAME)
-    private LdapEntryManager ldapEntryManager;
+    private PersistenceEntryManager ldapEntryManager;
 
 	@Inject @Named(AppInitializer.LDAP_CENTRAL_ENTRY_MANAGER_NAME)
-    private LdapEntryManager ldapCentralEntryManager;
+    private PersistenceEntryManager ldapCentralEntryManager;
 
     private AtomicBoolean isActive;
 
@@ -85,8 +87,13 @@ public class LdapStatusTimer {
     	}
     }
 
-	public void logConnectionProviderStatistic(LdapEntryManager ldapEntryManager, String connectionProviderName) {
-		LdapConnectionProvider ldapConnectionProvider = ldapEntryManager.getOperationService().getConnectionProvider();
+	public void logConnectionProviderStatistic(PersistenceEntryManager ldapEntryManager, String connectionProviderName) {
+	    PersistenceOperationService persistenceOperationService = ldapEntryManager.getOperationService();
+	    if (!(persistenceOperationService instanceof LdapEntryManager)) {
+	        return;
+	    }
+
+	    LdapConnectionProvider ldapConnectionProvider = (LdapConnectionProvider) persistenceOperationService;
         
         if (ldapConnectionProvider == null) {
         	log.error("{} is empty", connectionProviderName);

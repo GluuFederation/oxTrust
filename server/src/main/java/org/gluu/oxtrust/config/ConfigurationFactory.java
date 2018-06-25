@@ -26,7 +26,7 @@ import org.apache.commons.lang.StringUtils;
 import org.gluu.oxtrust.ldap.service.AppInitializer;
 import org.gluu.oxtrust.service.custom.LdapCentralConfigurationReload;
 import org.gluu.persist.exception.BasePersistenceException;
-import org.gluu.persist.ldap.impl.LdapEntryManager;
+import org.gluu.persist.PersistenceEntryManager;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.config.oxtrust.AttributeResolverConfiguration;
@@ -70,7 +70,7 @@ public class ConfigurationFactory {
 
 	@Inject
 	@Named(AppInitializer.LDAP_ENTRY_MANAGER_NAME)
-	private Instance<LdapEntryManager> ldapEntryManagerInstance;
+	private Instance<PersistenceEntryManager> ldapEntryManagerInstance;
 
 	@Inject
 	private Instance<Configuration> configurationInstance;
@@ -394,7 +394,7 @@ public class ConfigurationFactory {
 	}
 
 	public LdapOxTrustConfiguration loadConfigurationFromLdap(String... returnAttributes) {
-		final LdapEntryManager ldapEntryManager = ldapEntryManagerInstance.get();
+		final PersistenceEntryManager ldapEntryManager = ldapEntryManagerInstance.get();
 		final String configurationDn = getConfigurationDn();
 		try {
 			final LdapOxTrustConfiguration conf = ldapEntryManager.find(LdapOxTrustConfiguration.class, configurationDn,
