@@ -6,6 +6,10 @@
 package org.gluu.oxtrust.api.client;
 
 import java.io.UnsupportedEncodingException;
+
+import org.gluu.oxtrust.api.client.configuration.OxAuthConfClient;
+import org.gluu.oxtrust.api.client.logs.LogClient;
+import org.gluu.oxtrust.api.client.logs.LogsDefClient;
 import org.gluu.oxtrust.api.client.util.ClientResponseLoggingFilter;
 import org.gluu.oxtrust.api.client.util.ClientRequestLoggingFilter;
 import java.security.KeyManagementException;
@@ -41,7 +45,11 @@ public class OxTrustClient {
 	private final GroupClient groupClient;
         
 	private final PeopleClient peopleClient;
-        
+
+	private final LogsDefClient logsDefClient;
+	private final LogClient logClient;
+	private final OxAuthConfClient oxAuthConfClient;
+
         private final CertificatesClient certificatesClient;
 
 	private final SSLContext sslContext;
@@ -84,6 +92,9 @@ public class OxTrustClient {
 
 		trustRelationshipClient = new TrustRelationshipClient(client, baseURI);
 		groupClient = new GroupClient(client, baseURI);
+		logsDefClient = new LogsDefClient(client, baseURI);
+		logClient = new LogClient(client, baseURI);
+		oxAuthConfClient = new OxAuthConfClient(client, baseURI);
 		peopleClient = new PeopleClient(client, baseURI);
                 certificatesClient = new CertificatesClient(client, baseURI);
 	}
@@ -115,6 +126,9 @@ public class OxTrustClient {
 
 		trustRelationshipClient = new TrustRelationshipClient(client, baseURI);
 		groupClient = new GroupClient(client, baseURI);
+		logsDefClient = new LogsDefClient(client, baseURI);
+		logClient = new LogClient(client, baseURI);
+		oxAuthConfClient = new OxAuthConfClient(client, baseURI);
 		peopleClient = new PeopleClient(client, baseURI);
                 certificatesClient = new CertificatesClient(client, baseURI);
 	}
@@ -169,5 +183,17 @@ public class OxTrustClient {
 
 	public void close() {
 		client.close();
+	}
+
+	public LogClient getLogClient() {
+		return logClient;
+	}
+
+	public LogsDefClient getLogsDefClient() {
+		return logsDefClient;
+	}
+
+	public OxAuthConfClient getOxAuthConfClient() {
+		return oxAuthConfClient;
 	}
 }
