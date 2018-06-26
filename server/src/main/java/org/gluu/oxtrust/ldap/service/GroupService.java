@@ -20,7 +20,7 @@ import org.gluu.oxtrust.model.GluuGroupVisibility;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.exception.EntryPersistenceException;
 import org.gluu.persist.exception.operation.DuplicateEntryException;
-import org.gluu.persist.ldap.impl.LdapEntryManager;
+import org.gluu.persist.PersistenceEntryManager;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.util.ArrayHelper;
@@ -47,7 +47,7 @@ public class GroupService implements Serializable, IGroupService {
 	private AppConfiguration appConfiguration;
 
 	@Inject
-	private LdapEntryManager ldapEntryManager;	
+	private PersistenceEntryManager ldapEntryManager;	
 
 	@Inject
 	private OrganizationService organizationService;

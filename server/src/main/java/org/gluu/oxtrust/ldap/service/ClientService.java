@@ -22,7 +22,7 @@ import org.gluu.oxtrust.model.OxAuthCustomClient;
 import org.gluu.oxtrust.model.OxAuthSubjectType;
 import org.gluu.oxtrust.model.SignatureAlgorithm;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.persist.ldap.impl.LdapEntryManager;
+import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.model.base.GluuBoolean;
 import org.gluu.search.filter.Filter;
 import org.slf4j.Logger;
@@ -46,7 +46,7 @@ public class ClientService implements Serializable {
 	private static final long serialVersionUID = 7912416439116338984L;
 
 	@Inject
-	private LdapEntryManager ldapEntryManager;
+	private PersistenceEntryManager ldapEntryManager;
 
 	@Inject
 	private Logger logger;

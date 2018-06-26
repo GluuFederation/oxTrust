@@ -17,8 +17,11 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.gluu.persist.exception.BasePersistenceException;
-import org.gluu.persist.ldap.impl.LdapEntryManager;
+import org.apache.commons.lang.NotImplementedException;
+import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.ldap.impl.LdifDataUtility;
+import org.gluu.persist.ldap.operation.LdapOperationService;
+import org.gluu.persist.operation.PersistenceOperationService;
 import org.slf4j.Logger;
 
 import com.unboundid.ldap.sdk.LDAPConnection;
@@ -44,14 +47,21 @@ public class LdifService implements Serializable {
 	private Logger log;
 
 	@Inject
-	private LdapEntryManager ldapEntryManager;	
+	private PersistenceEntryManager ldapEntryManager;	
 	@Inject
 	private AttributeService attributeService;
 
 	public ResultCode importLdifFileInLdap(InputStream is) throws LDAPException {
 		ResultCode result = ResultCode.UNAVAILABLE;
 
-		LDAPConnection connection = ldapEntryManager.getOperationService().getConnection();
+		PersistenceOperationService persistenceOperationService = ldapEntryManager.getOperationService();
+        if (!(persistenceOperationService instanceof LdapOperationService)) {
+            throw new NotImplementedException("Current Persistence mechanism not allows to import data from LDIF!");
+        }
+
+        LdapOperationService ldapOperationService = (LdapOperationService) persistenceOperationService;
+
+		LDAPConnection connection = ldapOperationService.getConnection();
 		try {
 			LdifDataUtility ldifDataUtility = LdifDataUtility.instance();
 			LDIFReader importLdifReader = new LDIFReader(is);
@@ -61,7 +71,7 @@ public class LdifService implements Serializable {
 		} catch (Exception ex) {
 			log.error("Failed to import ldif file: ", ex);
 		} finally {
-			ldapEntryManager.getOperationService().releaseConnection(connection);
+		    ldapOperationService.releaseConnection(connection);
 		}
 
 		return result;
@@ -87,14 +97,20 @@ public class LdifService implements Serializable {
 	public void exportLDIFFile(List<String> checkedItems, OutputStream output)
 			throws LDAPException {
 		List<SearchResultEntry> result = null;
-		LDAPConnection connection = ldapEntryManager.getOperationService().getConnection();
+		PersistenceOperationService persistenceOperationService = ldapEntryManager.getOperationService();
+		if (!(persistenceOperationService instanceof LdapOperationService)) {
+		    throw new NotImplementedException("Current Persistence mechanism not allows to export data to LDIF!");
+		}
+
+		LdapOperationService ldapOperationService = (LdapOperationService) persistenceOperationService;
+		LDAPConnection connection = ldapOperationService.getConnection();
 		try {
 			LdifDataUtility ldifDataUtility = LdifDataUtility.instance();
 			result = ldifDataUtility.getAttributeResultEntryLDIF(connection,checkedItems, attributeService.getDnForAttribute(null));
 		} catch (Exception ex) {
 			log.error("Failed to export ldif file: ", ex);
 		} finally {
-			ldapEntryManager.getOperationService().releaseConnection(connection);
+		    ldapOperationService.releaseConnection(connection);
 		}
 
 		if (result != null && result.size() > 0) {

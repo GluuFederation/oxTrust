@@ -19,7 +19,7 @@ import javax.inject.Named;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.model.push.PushApplication;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.persist.ldap.impl.LdapEntryManager;
+import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.model.base.SimpleBranch;
 import org.slf4j.Logger;
 import org.xdi.util.StringHelper;
@@ -41,7 +41,7 @@ public class PushApplicationService implements Serializable {
 	private OrganizationService organizationService;
 
 	@Inject
-	private LdapEntryManager ldapEntryManager;
+	private PersistenceEntryManager ldapEntryManager;
 	@Inject
 	private Logger log;
 

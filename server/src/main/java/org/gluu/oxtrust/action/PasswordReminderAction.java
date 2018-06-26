@@ -31,7 +31,7 @@ import org.gluu.oxtrust.model.OrganizationalUnit;
 import org.gluu.oxtrust.model.PasswordResetRequest;
 import org.gluu.oxtrust.service.render.RenderService;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.persist.ldap.impl.LdapEntryManager;
+import org.gluu.persist.PersistenceEntryManager;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -54,7 +54,7 @@ public class PasswordReminderAction implements Serializable {
 	private Logger log;
 
 	@Inject
-	private LdapEntryManager ldapEntryManager;
+	private PersistenceEntryManager ldapEntryManager;
 
 	@Inject
 	private RecaptchaService recaptchaService;
@@ -270,21 +270,6 @@ public class PasswordReminderAction implements Serializable {
 
 	public void setEmail(String email) {
 		this.email = email;
-	}
-
-	/**
-	 * @return the ldapEntryManager
-	 */
-	public LdapEntryManager getLdapEntryManager() {
-		return ldapEntryManager;
-	}
-
-	/**
-	 * @param ldapEntryManager
-	 *            the ldapEntryManager to set
-	 */
-	public void setLdapEntryManager(LdapEntryManager ldapEntryManager) {
-		this.ldapEntryManager = ldapEntryManager;
 	}
 
 	/**

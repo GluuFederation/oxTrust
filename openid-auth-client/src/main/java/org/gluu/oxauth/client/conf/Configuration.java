@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.lang.StringUtils;
 import org.gluu.persist.exception.BasePersistenceException;
-import org.gluu.persist.ldap.impl.LdapEntryManager;
+import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.ldap.impl.LdapEntryManagerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,7 +58,7 @@ public abstract class Configuration<C extends AppConfiguration, L extends LdapAp
 
 	private String cryptoConfigurationSalt;
 
-	private LdapEntryManager ldapEntryManager;
+	private PersistenceEntryManager ldapEntryManager;
 
 	@SuppressWarnings("unused")
 	private long ldapFileLastModifiedTime;
@@ -190,19 +190,19 @@ public abstract class Configuration<C extends AppConfiguration, L extends LdapAp
 		return null;
 	}
 
-	private LdapEntryManager createLdapEntryManager() {
+	private PersistenceEntryManager createLdapEntryManager() {
 		Properties connectionProperties = (Properties) this.ldapConfiguration.getProperties();
 		Properties decryptedConnectionProperties = PropertiesDecrypter.decryptProperties(connectionProperties, this.cryptoConfigurationSalt);
 		
 		LdapEntryManagerFactory ldapEntryManagerFactory = new LdapEntryManagerFactory();
-		LdapEntryManager ldapEntryManager = ldapEntryManagerFactory.createEntryManager(decryptedConnectionProperties);
+		PersistenceEntryManager ldapEntryManager = ldapEntryManagerFactory.createEntryManager(decryptedConnectionProperties);
 
 		logger.debug("Created LdapEntryManager: {}", ldapEntryManager);
 
 		return ldapEntryManager;
 	}
 
-	private void destroyLdapEntryManager(final LdapEntryManager ldapEntryManager) {
+	private void destroyLdapEntryManager(final PersistenceEntryManager ldapEntryManager) {
 		boolean result = ldapEntryManager.destroy();
 		if (result) {
 			logger.debug("Destoyed LdapEntryManager: {}", ldapEntryManager);

@@ -25,7 +25,7 @@ import org.gluu.oxtrust.ldap.service.InumService;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.persist.ldap.impl.LdapEntryManager;
+import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.search.filter.Filter;
 import org.slf4j.Logger;
 import org.xdi.util.ArrayHelper;
@@ -99,15 +99,15 @@ public class CacheRefreshService implements Serializable {
 		return Filter.createPresenceFilter(OxConstants.OBJECT_CLASS);
 	}
 
-	public void addInumMap(LdapEntryManager ldapEntryManager, GluuInumMap inumMap) {
+	public void addInumMap(PersistenceEntryManager ldapEntryManager, GluuInumMap inumMap) {
 		ldapEntryManager.persist(inumMap);
 	}
 
-	public boolean containsInumMap(LdapEntryManager ldapEntryManager, GluuInumMap inumMap) {
+	public boolean containsInumMap(PersistenceEntryManager ldapEntryManager, GluuInumMap inumMap) {
 		return ldapEntryManager.contains(inumMap);
 	}
 
-	public String generateInumForNewInumMap(String inumbBaseDn, LdapEntryManager ldapEntryManager) {
+	public String generateInumForNewInumMap(String inumbBaseDn, PersistenceEntryManager ldapEntryManager) {
 		String newInum = generateInumForNewInumMapImpl();
 		String newDn = getDnForInum(inumbBaseDn, newInum);
 

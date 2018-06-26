@@ -14,7 +14,7 @@ import javax.inject.Named;
 
 import org.apache.commons.lang.StringUtils;
 import org.gluu.oxtrust.model.fido.GluuCustomFidoDevice;
-import org.gluu.persist.ldap.impl.LdapEntryManager;
+import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.model.PagedResult;
 import org.gluu.persist.model.SortOrder;
 import org.gluu.persist.model.base.SimpleBranch;
@@ -36,7 +36,7 @@ public class FidoDeviceService implements IFidoDeviceService, Serializable {
 	private IPersonService personService;
 
 	@Inject
-	private LdapEntryManager ldapEntryManager;
+	private PersistenceEntryManager ldapEntryManager;
 	
 	@Override
 	public String getDnForFidoDevice(String userId, String id) {

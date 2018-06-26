@@ -11,7 +11,7 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.exception.BasePersistenceException;
-import org.gluu.persist.ldap.impl.LdapEntryManager;
+import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.model.base.GluuBoolean;
 import org.gluu.persist.model.base.GluuStatus;
 import org.slf4j.Logger;
@@ -50,7 +50,7 @@ public class OrganizationService extends org.xdi.service.OrganizationService {
     private Logger log;
 
     @Inject
-    private LdapEntryManager ldapEntryManager;
+    private PersistenceEntryManager ldapEntryManager;
 
 	@Inject
 	private CacheService cacheService;

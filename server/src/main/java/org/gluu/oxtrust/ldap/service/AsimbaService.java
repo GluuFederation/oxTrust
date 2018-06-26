@@ -27,7 +27,7 @@ import org.gluu.asimba.util.ldap.sp.RequestorEntry;
 import org.gluu.asimba.util.ldap.sp.RequestorPoolEntry;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.ServiceUtil;
-import org.gluu.persist.ldap.impl.LdapEntryManager;
+import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.search.filter.Filter;
 import org.richfaces.model.UploadedFile;
 import org.slf4j.Logger;
@@ -50,7 +50,7 @@ public class AsimbaService implements Serializable {
     private Logger log;
     
     @Inject
-    private LdapEntryManager ldapEntryManager;
+    private PersistenceEntryManager ldapEntryManager;
     
     @Inject
     private OrganizationService organizationService;

@@ -18,7 +18,7 @@ import javax.inject.Named;
 
 import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.persist.ldap.impl.LdapEntryManager;
+import org.gluu.persist.PersistenceEntryManager;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.service.CacheService;
 import org.xdi.util.ArrayHelper;
@@ -38,7 +38,7 @@ public class AuthOrganizationService implements Serializable {
 	private static final long serialVersionUID = 5537567020929600777L;
 
 	@Inject @Named(LDAP_ENTRY_MANAGER_NAME)
-	private LdapEntryManager ldapAuthEntryManager;
+	private PersistenceEntryManager ldapEntryManager;
 
 	@Inject
 	private CacheService cacheService;
@@ -53,7 +53,7 @@ public class AuthOrganizationService implements Serializable {
 	 *            Organization
 	 */
 	public void updateOrganization(GluuOrganization organization) throws Exception {
-		ldapAuthEntryManager.merge(organization);
+	    ldapEntryManager.merge(organization);
 
 	}
 
@@ -77,7 +77,7 @@ public class AuthOrganizationService implements Serializable {
 		String key = OxConstants.CACHE_ORGANIZATION_KEY + "_" + inum;
 		GluuOrganization organization = (GluuOrganization) cacheService.get(OxConstants.CACHE_APPLICATION_NAME, key);
 		if (organization == null) {
-			organization = ldapAuthEntryManager.find(GluuOrganization.class, getDnForOrganization(inum));
+			organization = ldapEntryManager.find(GluuOrganization.class, getDnForOrganization(inum));
 			cacheService.put(OxConstants.CACHE_APPLICATION_NAME, key, organization);
 
 		}
