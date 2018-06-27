@@ -61,7 +61,7 @@
                     	<h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0" >
                             <h:panelGroup >
                             <div >
-                                <h:inputText id="fInput" style = "margin-right:5px;margin-bottom:10px;width:35%;float:left;" styleClass="col-md-4 form-control" value="#{_property.value1}" size="#{cc.attrs.inputWidth}" required="#{cc.attrs.requiredName and empty param['sv']}"/>
+                                <h:inputText id="fInput" style = "margin-right:5px;margin-bottom:10px;width:35%;float:left;" styleClass="col-md-4 form-control" value="#{_property.value1}" size="#{cc.attrs.inputWidth}" required="#{cc.attrs.requiredName and empty param['sv']}" readonly="#{(_property.value1) eq 'clientID' or (_property.value1) eq 'clientSecret'}"/>
                                 <h:message for="fInput" errorClass="invalid"/>
 
 	                            <h:inputText id="sInput1" styleClass="col-md-4 form-control togglefield" style = "width:35%;float:left;" value="#{_property.value2}" size="#{cc.attrs.inputWidth}" required="#{cc.attrs.requiredValue and empty param['sv']}" rendered="#{(cc.attrs.hideValue eq false) or (_property.hideValue eq false)}" />
@@ -79,7 +79,7 @@
                                     <f:param name="sv" value="1" />
                                 </a4j:commandLink>
                                 
-                                <a4j:commandLink styleClass="glyphicon glyphicon-remove col-md-3" rendered="#{cc.attrs.showRemoveDialogue eq true}"  style="float:left;margin-top: 8px;" onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();"
+                                <a4j:commandLink styleClass="glyphicon glyphicon-remove col-md-3" rendered="#{(cc.attrs.showRemoveDialogue) eq true and (_property.value1) ne 'clientID' and (_property.value1) ne 'clientSecret'}"  style="float:left;margin-top: 8px;" onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();"
                                   execute="@region">
                                    <!--  <h:graphicImage value="/img/remove.gif" /> -->
                                     <f:param name="sv" value="1" />
