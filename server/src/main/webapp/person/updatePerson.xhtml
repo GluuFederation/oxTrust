@@ -19,7 +19,7 @@
                 <ui:param name="_new" value="false"/>
 
                 <ui:define name="controlButtons">
-                    <h:panelGroup id="updateButtons" layout="block">
+                    <h:panelGroup id="updateButtons" class ="updateButtons" layout="block">
                         <a4j:commandButton
                                 onclick="#{rich:component('personPassword:changePasswordModalPanel')}.show();"
                                 styleClass="btn btn-primary" value="#{msg['person.changePassword']}"/>
