@@ -6,7 +6,7 @@
 
 package org.gluu.oxtrust.ldap.cache.service;
 
-import static org.gluu.oxtrust.ldap.service.AppInitializer.LDAP_ENTRY_MANAGER_FACTORY_NAME;
+import static org.gluu.oxtrust.ldap.service.AppInitializer.PERSISTENCE_ENTRY_MANAGER_FACTORY_NAME;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -113,7 +113,7 @@ public class CacheRefreshTimer {
 	@Inject
 	private PersistenceEntryManager ldapEntryManager;
 
-	@Inject @Named(LDAP_ENTRY_MANAGER_FACTORY_NAME)
+	@Inject @Named(PERSISTENCE_ENTRY_MANAGER_FACTORY_NAME)
 	private LdapEntryManagerFactory PersistenceEntryManagerFactory;
 
 	@Inject

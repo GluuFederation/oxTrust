@@ -71,7 +71,7 @@ public class ConfigurationFactory {
 
 	@Inject
 	@Named(AppInitializer.PERSISTENCE_ENTRY_MANAGER_NAME)
-	private Instance<PersistenceEntryManager> ldapEntryManagerInstance;
+	private Instance<PersistenceEntryManager> persistenceEntryManagerInstance;
 
 	@Inject
 	private Instance<PersistenceEntryManagerFactory> persistenceEntryManagerFactoryInstance;
@@ -415,7 +415,7 @@ public class ConfigurationFactory {
 	}
 
 	public LdapOxTrustConfiguration loadConfigurationFromLdap(String... returnAttributes) {
-		final PersistenceEntryManager ldapEntryManager = ldapEntryManagerInstance.get();
+		final PersistenceEntryManager ldapEntryManager = persistenceEntryManagerInstance.get();
 		final String configurationDn = getConfigurationDn();
 		try {
 			final LdapOxTrustConfiguration conf = ldapEntryManager.find(LdapOxTrustConfiguration.class, configurationDn,
