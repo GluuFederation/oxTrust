@@ -12,7 +12,6 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.annotation.PostConstruct;
-import org.xdi.service.cdi.async.Asynchronous;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
@@ -25,8 +24,9 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.gluu.oxtrust.ldap.service.AppInitializer;
 import org.gluu.oxtrust.service.custom.LdapCentralConfigurationReload;
-import org.gluu.persist.exception.BasePersistenceException;
 import org.gluu.persist.PersistenceEntryManager;
+import org.gluu.persist.PersistenceEntryManagerFactory;
+import org.gluu.persist.exception.BasePersistenceException;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.config.oxtrust.AttributeResolverConfiguration;
@@ -36,6 +36,7 @@ import org.xdi.config.oxtrust.ImportPersonConfig;
 import org.xdi.config.oxtrust.LdapOxTrustConfiguration;
 import org.xdi.exception.ConfigurationException;
 import org.xdi.service.JsonService;
+import org.xdi.service.cdi.async.Asynchronous;
 import org.xdi.service.cdi.event.ConfigurationEvent;
 import org.xdi.service.cdi.event.ConfigurationUpdate;
 import org.xdi.service.cdi.event.LdapConfigurationReload;
@@ -69,14 +70,17 @@ public class ConfigurationFactory {
 	private Event<String> event;
 
 	@Inject
-	@Named(AppInitializer.LDAP_ENTRY_MANAGER_NAME)
+	@Named(AppInitializer.PERSISTENCE_ENTRY_MANAGER_NAME)
 	private Instance<PersistenceEntryManager> ldapEntryManagerInstance;
+
+	@Inject
+	private Instance<PersistenceEntryManagerFactory> persistenceEntryManagerFactoryInstance;
 
 	@Inject
 	private Instance<Configuration> configurationInstance;
 
-	public final static String LDAP_CONFIGUARION_RELOAD_EVENT_TYPE = "ldapConfigurationReloadEvent";
-	public final static String LDAP_CENTRAL_CONFIGUARION_RELOAD_EVENT_TYPE = "ldapCentralConfigurationReloadEvent";
+	public final static String PERSISTENCE_CONFIGUARION_RELOAD_EVENT_TYPE = "persistenceConfigurationReloadEvent";
+	public final static String PERSISTENCE_CENTRAL_CONFIGUARION_RELOAD_EVENT_TYPE = "persistenceCentralConfigurationReloadEvent";
 
 	private final static int DEFAULT_INTERVAL = 30; // 30 seconds
 
@@ -98,6 +102,7 @@ public class ConfigurationFactory {
 	public static final String BASE_DIR;
 	public static final String DIR = BASE_DIR + File.separator + "conf" + File.separator;
 
+	private static final String GLUU_FILE_PATH = DIR + "gluu.properties";
 	public static final String LDAP_PROPERTIES_FILE = DIR + "oxtrust-ldap.properties";
 	public static final String LDAP_DEFAULT_PROPERTIES_FILE = DIR + "ox-ldap.properties";
 	public static final String LDAP_CENTRAL_PROPERTIES_FILE = DIR + "oxtrust-central-ldap.properties";
@@ -110,7 +115,9 @@ public class ConfigurationFactory {
 	private String confDir, configFilePath, cacheRefreshFilePath, logRotationFilePath, saltFilePath;
 
 	private boolean loaded = false;
-	private FileConfiguration ldapConfiguration;
+
+	private PersistenceConfiguration persistenceConfiguration;
+
 	private FileConfiguration ldapCentralConfiguration;
 	private AppConfiguration appConfiguration;
 	private CacheRefreshConfiguration cacheRefreshConfiguration;
@@ -120,8 +127,6 @@ public class ConfigurationFactory {
 
 	private AtomicBoolean isActive;
 
-	private String prevLdapFileName;
-	private long ldapFileLastModifiedTime = -1;
 	private long ldapCentralFileLastModifiedTime = -1;
 
 	private long loadedRevision = -1;
@@ -132,8 +137,7 @@ public class ConfigurationFactory {
 		this.isActive = new AtomicBoolean(true);
 		try {
 			log.info("Creating oxTrustConfiguration");
-			String ldapFileName = determineLdapConfigurationFileName();
-			this.prevLdapFileName = loadLdapConfiguration(ldapFileName);
+			this.persistenceConfiguration = loadPersistenceConfiguration();
 			loadLdapCentralConfiguration();
 			this.confDir = confDir();
 
@@ -147,6 +151,24 @@ public class ConfigurationFactory {
 			this.isActive.set(false);
 		}
 	}
+
+    protected PersistenceConfiguration loadPersistenceConfiguration() {
+        PersistenceConfiguration currentPersistenceConfiguration = null;
+
+        String gluuFileName = determineGluuConfigurationFileName();
+        if (gluuFileName != null) {
+            currentPersistenceConfiguration = loadPersistenceConfiguration(gluuFileName);
+        }
+
+        // Fall back to old LDAP persistence layer
+        if (currentPersistenceConfiguration == null) {
+            log.warn("Failed to load persistence configuration. Attempting to use LDAP layer");
+            String ldapFileName = determineLdapConfigurationFileName();
+            currentPersistenceConfiguration = loadLdapConfiguration(ldapFileName);
+        }
+        
+        return currentPersistenceConfiguration;
+    }
 
 	public void create() {
 		if (!createFromLdap(true)) {
@@ -187,18 +209,16 @@ public class ConfigurationFactory {
 	}
 
 	private void reloadConfiguration() {
-		// Reload LDAP configuration if needed
-		String ldapFileName = determineLdapConfigurationFileName();
-		File ldapFile = new File(ldapFileName);
-		if (ldapFile.exists()) {
-			final long lastModified = ldapFile.lastModified();
-			if (!StringHelper.equalsIgnoreCase(this.prevLdapFileName, ldapFileName)
-					|| (lastModified > ldapFileLastModifiedTime)) { // reload configuration only if it was modified
-				// Reload configuration only if it was modified
-				this.prevLdapFileName = loadLdapConfiguration(ldapFileName);
-				event.select(LdapConfigurationReload.Literal.INSTANCE).fire(LDAP_CONFIGUARION_RELOAD_EVENT_TYPE);
-			}
-		}
+        // Reload LDAP configuration if needed
+        PersistenceConfiguration newPersistenceConfiguration = loadPersistenceConfiguration();
+
+        if (newPersistenceConfiguration != null) {
+            if (!StringHelper.equalsIgnoreCase(this.persistenceConfiguration.getFileName(), newPersistenceConfiguration.getFileName()) || (newPersistenceConfiguration.getLastModifiedTime() > this.persistenceConfiguration.getLastModifiedTime())) {
+                // Reload configuration only if it was modified
+                this.persistenceConfiguration = newPersistenceConfiguration;
+                event.select(LdapConfigurationReload.Literal.INSTANCE).fire(PERSISTENCE_CONFIGUARION_RELOAD_EVENT_TYPE);
+            }
+        }
 
 		// Reload LDAP central configuration if needed
 		File ldapCentralFile = new File(LDAP_CENTRAL_PROPERTIES_FILE);
@@ -208,13 +228,13 @@ public class ConfigurationFactory {
 				// Reload configuration only if it was modified
 				loadLdapCentralConfiguration();
 				event.select(LdapCentralConfigurationReload.Literal.INSTANCE)
-						.fire(LDAP_CENTRAL_CONFIGUARION_RELOAD_EVENT_TYPE);
+						.fire(PERSISTENCE_CENTRAL_CONFIGUARION_RELOAD_EVENT_TYPE);
 			}
 		} else if (this.ldapCentralConfiguration != null) {
 			// Allow to remove not mandatory configuration file
 			this.ldapCentralConfiguration = null;
 			event.select(LdapCentralConfigurationReload.Literal.INSTANCE)
-					.fire(LDAP_CENTRAL_CONFIGUARION_RELOAD_EVENT_TYPE);
+					.fire(PERSISTENCE_CENTRAL_CONFIGUARION_RELOAD_EVENT_TYPE);
 		}
 
 		if (!loadedFromLdap) {
@@ -234,7 +254,7 @@ public class ConfigurationFactory {
 	}
 
 	public String confDir() {
-		final String confDir = getLdapConfiguration().getString("confDir", null);
+		final String confDir = this.persistenceConfiguration.getConfiguration().getString("confDir", null);
 		if (StringUtils.isNotBlank(confDir)) {
 			return confDir;
 		}
@@ -242,9 +262,10 @@ public class ConfigurationFactory {
 		return DIR;
 	}
 
-	public FileConfiguration getLdapConfiguration() {
-		return ldapConfiguration;
-	}
+    @ApplicationScoped
+    public PersistenceConfiguration getPersistenceConfiguration() {
+        return persistenceConfiguration;
+    }
 
 	public FileConfiguration getLdapCentralConfiguration() {
 		return ldapCentralConfiguration;
@@ -279,10 +300,10 @@ public class ConfigurationFactory {
 	}
 
 	public String getConfigurationDn() {
-		return getLdapConfiguration().getString("oxtrust_ConfigurationEntryDN");
-	}
+        return this.persistenceConfiguration.getConfiguration().getString("oxtrust_ConfigurationEntryDN");
+    }
 
-	private boolean createFromFile() {
+    private boolean createFromFile() {
 		boolean result = reloadAppConfFromFile();
 
 		return result;
@@ -416,27 +437,98 @@ public class ConfigurationFactory {
 		this.loadedRevision = conf.getRevision();
 	}
 
-	private String loadLdapConfiguration(String ldapFileName) {
-		log.info("########## ldapFileName = " + ldapFileName);
-		this.ldapConfiguration = createFileConfiguration(ldapFileName, true);
-		replaceWithSystemValues();
-		File ldapFile = new File(ldapFileName);
-		if (ldapFile.exists()) {
-			this.ldapFileLastModifiedTime = ldapFile.lastModified();
-		}
+    private PersistenceConfiguration loadLdapConfiguration(String ldapFileName) {
+        try {
+            FileConfiguration ldapConfiguration = new FileConfiguration(ldapFileName);
 
-		return ldapFileName;
-	}
+            // Allow to override value via environment variables
+            replaceWithSystemValues(ldapConfiguration);
 
-	private void replaceWithSystemValues() {
-		Set<Map.Entry<Object, Object>> ldapProperties = this.ldapConfiguration.getProperties().entrySet();
-		for (Map.Entry<Object, Object> ldapPropertyEntry : ldapProperties) {
-			String ldapPropertyKey = (String) ldapPropertyEntry.getKey();
-			if (System.getenv(ldapPropertyKey) != null) {
-				ldapPropertyEntry.setValue(System.getenv(ldapPropertyKey));
-			}
-		}
-	}
+            long ldapFileLastModifiedTime = -1;
+            File ldapFile = new File(ldapFileName);
+            if (ldapFile.exists()) {
+                ldapFileLastModifiedTime = ldapFile.lastModified();
+            }
+
+            PersistenceConfiguration persistenceConfiguration = new PersistenceConfiguration(ldapFileName, ldapConfiguration, org.gluu.persist.couchbase.impl.CouchbaseEntryManagerFactory.class, ldapFileLastModifiedTime);
+
+            return persistenceConfiguration;
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+
+        return null;
+    }
+
+    private PersistenceConfiguration loadPersistenceConfiguration(String gluuFileName) {
+        try {
+            // Determine persistence type
+            FileConfiguration gluuFileConf = new FileConfiguration(gluuFileName);
+            String persistenceType = gluuFileConf.getString("persistence.type");
+            
+            // Determine configuration file name and factory class type
+            String persistenceFileName = null; 
+            Class<? extends PersistenceEntryManagerFactory> persistenceEntryManagerFactoryType = null;
+            
+            for (PersistenceEntryManagerFactory persistenceEntryManagerFactory : persistenceEntryManagerFactoryInstance) {
+                log.debug("Found Persistence Entry Manager Factory with type '{}'", persistenceEntryManagerFactory);
+                if (StringHelper.equalsIgnoreCase(persistenceEntryManagerFactory.getPersistenceType(), persistenceType)) {
+                    persistenceFileName = persistenceEntryManagerFactory.getDefaultConfigurationFileName();
+                    persistenceEntryManagerFactoryType = (Class<? extends PersistenceEntryManagerFactory>) persistenceEntryManagerFactory.getClass().getSuperclass();
+                    break;
+                }
+            }
+            
+            if (persistenceFileName == null) {
+                log.error("Unable to get Persistence Entry Manager Factory by type '{}'", persistenceType);
+                return null;
+            }
+
+            String persistenceFileNamePath = DIR + persistenceFileName;
+
+            FileConfiguration persistenceFileConf = new FileConfiguration(persistenceFileNamePath);
+            if (!persistenceFileConf.isLoaded()) {
+                log.error("Unable to load configuration file '{}'", persistenceFileNamePath);
+                return null;
+            }
+
+            // Allow to override value via environment variables
+            replaceWithSystemValues(persistenceFileConf);
+
+            long persistenceFileLastModifiedTime = -1;
+            File persistenceFile = new File(persistenceFileNamePath);
+            if (persistenceFile.exists()) {
+                persistenceFileLastModifiedTime = persistenceFile.lastModified();
+            }
+
+            PersistenceConfiguration persistenceConfiguration = new PersistenceConfiguration(persistenceFileName, persistenceFileConf, persistenceEntryManagerFactoryType, persistenceFileLastModifiedTime);
+
+            return persistenceConfiguration;
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+
+        return null;
+    }
+
+    private void replaceWithSystemValues(FileConfiguration fileConfiguration) {
+        Set<Map.Entry<Object, Object>> ldapProperties = fileConfiguration.getProperties().entrySet();
+        for (Map.Entry<Object, Object> ldapPropertyEntry : ldapProperties) {
+            String ldapPropertyKey = (String) ldapPropertyEntry.getKey();
+            if (System.getenv(ldapPropertyKey) != null) {
+                ldapPropertyEntry.setValue(System.getenv(ldapPropertyKey));
+            }
+        }
+    }
+
+    private String determineGluuConfigurationFileName() {
+        File ldapFile = new File(GLUU_FILE_PATH);
+        if (ldapFile.exists()) {
+            return GLUU_FILE_PATH;
+        }
+
+        return null;
+    }
 
 	private String determineLdapConfigurationFileName() {
 		File ldapFile = new File(LDAP_PROPERTIES_FILE);
@@ -456,5 +548,36 @@ public class ConfigurationFactory {
 
 		return jetyBase + File.separator + "conf" + File.separator;
 	}
+    
+    public class PersistenceConfiguration {
+        private final String fileName;
+        private final FileConfiguration configuration;
+        private final Class<? extends PersistenceEntryManagerFactory> entryManagerFactoryType;
+        private final long lastModifiedTime;
+
+        public PersistenceConfiguration(String fileName, FileConfiguration configuration, Class<? extends PersistenceEntryManagerFactory> entryManagerFactoryType, long lastModifiedTime) {
+            this.fileName = fileName;
+            this.configuration = configuration;
+            this.entryManagerFactoryType = entryManagerFactoryType;
+            this.lastModifiedTime = lastModifiedTime;
+        }
+
+        public final String getFileName() {
+            return fileName;
+        }
+
+        public final FileConfiguration getConfiguration() {
+            return configuration;
+        }
+
+        public final Class<? extends PersistenceEntryManagerFactory> getEntryManagerFactoryType() {
+            return entryManagerFactoryType;
+        }
+
+        public final long getLastModifiedTime() {
+            return lastModifiedTime;
+        }
+
+    }
 
 }

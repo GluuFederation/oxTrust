@@ -6,7 +6,7 @@
 
 package org.gluu.oxtrust.ldap.service;
 
-import static org.gluu.oxtrust.ldap.service.AppInitializer.LDAP_ENTRY_MANAGER_NAME;
+import static org.gluu.oxtrust.ldap.service.AppInitializer.PERSISTENCE_ENTRY_MANAGER_NAME;
 
 import java.io.Serializable;
 
@@ -69,7 +69,7 @@ public class PassportService implements Serializable {
 	}
 
 	private String getConfigurationDn() {
-		FileConfiguration fc = configurationFactory.getLdapConfiguration();
+		FileConfiguration fc = configurationFactory.getPersistenceConfiguration().getConfiguration();
 		String configurationDn = fc.getString("oxpassport_ConfigurationEntryDN");
 		return configurationDn;
 	}
