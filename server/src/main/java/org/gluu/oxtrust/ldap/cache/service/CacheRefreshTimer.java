@@ -708,7 +708,7 @@ public class CacheRefreshTimer {
 	private Pair<List<String>, List<String>> removeTargetEntries(LdapServerConnection inumDbServerConnection, PersistenceEntryManager targetPersistenceEntryManager,
 			List<GluuSimplePerson> removedPersons, HashMap<String, GluuInumMap> inumInumMap) {
 
-		String runDate = ldapEntryManager.encodeGeneralizedTime(new Date(this.lastFinishedTime));
+		String runDate = ldapEntryManager.encodeTime(new Date(this.lastFinishedTime));
 
 		PersistenceEntryManager inumDbPersistenceEntryManager = inumDbServerConnection.getPersistenceEntryManager();
 		List<String> result1 = new ArrayList<String>();
