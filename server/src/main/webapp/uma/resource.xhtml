@@ -41,11 +41,11 @@
                                 <ox:decorate id="searchPattern" label="#{msg['uma.searchKey']}" style="height:60px;">
                                     <h:inputText alt="Search parameters for UMA resource set like Inum, Display Name"
                                                  id="searchPatternId" maxlength="30" placeholder="Search Key" size="30"
-                                                 style="width:50%;float: left;" styleClass="form-control"
+                                                 style="width:50%;float: left;" styleClass="form-control searchBoxClass"
                                                  value="#{umaInventoryAction.searchPattern}"/>
                                     <a4j:commandButton action="#{umaInventoryAction.search}"
                                                        render="resourcesListId, scopesListId"
-                                                       style="float: left;margin-left:5px;" styleClass="btn btn-primary"
+                                                       style="float: left;margin-left:5px;" styleClass="btn btn-primary searchButtonClass"
                                                        value="#{msg['uma.search']}"/>
                                 </ox:decorate>
 
@@ -65,7 +65,7 @@
                                                 <rich:dataTable id="resourcesListId"
                                                                 rendered="#{umaInventoryAction.resourcesList.size() gt 0}"
                                                                 rows="20" sortMode="single" style="width: 750px;"
-                                                                styleClass="data sortable"
+                                                                styleClass="data sortable resourceScopeListClass"
                                                                 value="#{umaInventoryAction.resourcesList}" var="_row">
                                                     <rich:column sortBy="#{_row.name}">
                                                         <f:facet name="header">#{msg['uma.name']}</f:facet>
