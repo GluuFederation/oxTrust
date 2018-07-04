@@ -58,14 +58,14 @@
 
                                     <h:panelGrid border="0" cellpadding="0" cellspacing="0" columns="1" width="100%">
 										<ox:decorate id="oxid" label="#{msg['uma.id']}">
-                                            <rich:inplaceInput defaultLabel="Click to enter Id"
+                                            <rich:inplaceInput styleClass="oxId" defaultLabel="Click to enter Id"
                                                                id="oxId" inputWidth="180" maxlength="60"
                                                                required="true" style="width:100% !important"
                                                                value="#{_scopeDescription.id}"/>
                                             <rich:tooltip value="Scope id, for example: edit, add, http://rs.com/scope/view." target="oxId"/>  
                                         </ox:decorate>
                                         <ox:decorate id="displayName" label="#{msg['uma.displayName']}">
-                                            <rich:inplaceInput defaultLabel="Click to enter Display Name"
+                                            <rich:inplaceInput styleClass="displayNameId" defaultLabel="Click to enter Display Name"
                                                                id="displayNameId" inputWidth="180" maxlength="60"
                                                                style="width:100% !important"
                                                                value="#{_scopeDescription.displayName}"/>
@@ -123,7 +123,7 @@
                                                                         action="#{updateScopeDescriptionAction.removeAuthorizationPolicy(_authorizationPolicy)}"
                                                                         execute="@this"
                                                                         render="selectedAuthorizationPolicyId"
-                                                                        styleClass="glyphicon glyphicon-remove ">
+                                                                        styleClass="glyphicon glyphicon-remove removeAuthorization">
                                                                     <!--  <h:graphicImage value="/img/remove.gif" /> -->
                                                                 </a4j:commandLink>
                                                             </div>
@@ -139,7 +139,7 @@
                                             <h:panelGroup>
                                                 <a4j:commandButton execute="@this"
                                                                    oncomplete="#{rich:component('authorizationPolicy:selectEntityModalPanel')}.show();"
-                                                                   styleClass="btn btn-primary"
+                                                                   styleClass="btn btn-primary AddAuthorizationButtonClass"
                                                                    value="#{msg['uma.addAuthorizationPolicy']}"/>
                                             </h:panelGroup>
                                         </ox:decorate>
@@ -162,12 +162,12 @@
                                 <div class="box-footer">
                                     <h:panelGroup id="updateButtons" layout="block">
                                         <h:commandButton action="#{updateScopeDescriptionAction.save}"
-                                                         styleClass="btn btn-primary"
+                                                         styleClass="btn btn-primary updateScopeButtonId"
                                                          value="#{updateScopeDescriptionAction.update ? 'Update' : 'Add Scope'}"/>
                                         <a4j:commandButton ajaxSingle="true"
                                                            onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();"
                                                            rendered="#{updateScopeDescriptionAction.update}"
-                                                           style="margin-left:3px;" styleClass="btn btn-primary"
+                                                           style="margin-left:3px;" styleClass="btn btn-primary deleteScopeButtonId"
                                                            value="Delete"/>
                                         <h:commandButton action="#{updateScopeDescriptionAction.cancel}" immediate="true" style="margin-left:3px;"
                                                   styleClass="btn btn-primary" value="#{msg['uma.cancel']}"/>
