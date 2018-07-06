@@ -6,12 +6,24 @@
 
 package org.gluu.oxtrust.action.uma;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
+import javax.annotation.PreDestroy;
+import javax.enterprise.context.ConversationScoped;
+import javax.faces.application.FacesMessage;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.uma.ResourceSetService;
 import org.gluu.oxtrust.ldap.service.uma.ScopeDescriptionService;
-import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.util.OxTrustConstants;
@@ -26,18 +38,6 @@ import org.xdi.service.security.Secure;
 import org.xdi.util.SelectableEntityHelper;
 import org.xdi.util.StringHelper;
 import org.xdi.util.Util;
-
-import javax.annotation.PreDestroy;
-import javax.enterprise.context.ConversationScoped;
-import javax.faces.application.FacesMessage;
-import javax.inject.Inject;
-import javax.inject.Named;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
 
 /**
  * Action class for view and update resource sets

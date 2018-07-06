@@ -5,6 +5,14 @@
  */
 package org.gluu.oxtrust.service.scim2.interceptor;
 
+import javax.annotation.Priority;
+import javax.decorator.Decorator;
+import javax.decorator.Delegate;
+import javax.enterprise.inject.Any;
+import javax.inject.Inject;
+import javax.interceptor.Interceptor;
+import javax.ws.rs.core.Response;
+
 import org.apache.commons.lang.StringUtils;
 import org.gluu.oxtrust.ldap.service.IFidoDeviceService;
 import org.gluu.oxtrust.ldap.service.IPersonService;
@@ -17,14 +25,6 @@ import org.gluu.oxtrust.model.scim2.fido.FidoDeviceResource;
 import org.gluu.oxtrust.ws.rs.scim2.BaseScimWebService;
 import org.gluu.oxtrust.ws.rs.scim2.IFidoDeviceWebService;
 import org.slf4j.Logger;
-
-import javax.annotation.Priority;
-import javax.decorator.Decorator;
-import javax.decorator.Delegate;
-import javax.enterprise.inject.Any;
-import javax.inject.Inject;
-import javax.interceptor.Interceptor;
-import javax.ws.rs.core.Response;
 
 /**
  * Aims at decorating SCIM fido service methods. Currently applies validations via ResourceValidator class or other custom

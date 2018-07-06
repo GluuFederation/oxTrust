@@ -17,9 +17,7 @@ import org.gluu.oxtrust.ldap.service.EncryptionService;
 import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.slf4j.Logger;
-import org.xdi.service.cdi.util.CdiUtil;
 import org.xdi.service.security.Secure;
-import org.xdi.util.StringHelper;
 import org.xdi.util.security.StringEncrypter.EncryptionException;
 
 @RequestScoped

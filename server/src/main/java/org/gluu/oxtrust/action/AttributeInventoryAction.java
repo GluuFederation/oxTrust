@@ -14,7 +14,6 @@ import java.util.Map;
 
 import javax.enterprise.context.ConversationScoped;
 import javax.faces.application.FacesMessage;
-import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;

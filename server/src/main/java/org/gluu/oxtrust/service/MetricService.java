@@ -23,7 +23,6 @@ import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.model.AuthenticationChartDto;
-import org.gluu.oxtrust.util.OxTrustConstants;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.ApplicationType;

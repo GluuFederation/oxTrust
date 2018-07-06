@@ -6,9 +6,11 @@
 package org.gluu.oxtrust.service.uma.annotations;
 
 import java.io.Serializable;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.security.Identity;

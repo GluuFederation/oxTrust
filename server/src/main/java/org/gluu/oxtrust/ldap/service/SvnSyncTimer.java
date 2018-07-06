@@ -14,7 +14,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.annotation.PostConstruct;
-import org.xdi.service.cdi.async.Asynchronous;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
@@ -27,6 +26,7 @@ import org.gluu.oxtrust.service.cdi.event.SvnSyncEvent;
 import org.javatuples.Pair;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
+import org.xdi.service.cdi.async.Asynchronous;
 import org.xdi.service.cdi.event.Scheduled;
 import org.xdi.service.timer.event.TimerEvent;
 import org.xdi.service.timer.schedule.TimerSchedule;

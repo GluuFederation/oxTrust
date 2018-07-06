@@ -22,7 +22,7 @@ import javax.inject.Named;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
-import org.gluu.oxtrust.ldap.service.AppInitializer;
+import org.gluu.oxtrust.ldap.service.ApplicationFactory;
 import org.gluu.oxtrust.service.custom.LdapCentralConfigurationReload;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.PersistenceEntryManagerFactory;
@@ -70,7 +70,7 @@ public class ConfigurationFactory {
 	private Event<String> event;
 
 	@Inject
-	@Named(AppInitializer.PERSISTENCE_ENTRY_MANAGER_NAME)
+	@Named(ApplicationFactory.PERSISTENCE_ENTRY_MANAGER_NAME)
 	private Instance<PersistenceEntryManager> persistenceEntryManagerInstance;
 
 	@Inject

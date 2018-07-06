@@ -5,18 +5,19 @@
  */
 package org.gluu.oxtrust.service.scim2.interceptor;
 
-import org.gluu.oxtrust.model.scim2.ErrorScimType;
-import org.gluu.oxtrust.ws.rs.scim2.BaseScimWebService;
-import org.slf4j.Logger;
+import static org.gluu.oxtrust.model.scim2.Constants.QUERY_PARAM_FILTER;
+
+import java.io.IOException;
 
 import javax.inject.Inject;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
-import java.io.IOException;
 
-import static org.gluu.oxtrust.model.scim2.Constants.QUERY_PARAM_FILTER;
+import org.gluu.oxtrust.model.scim2.ErrorScimType;
+import org.gluu.oxtrust.ws.rs.scim2.BaseScimWebService;
+import org.slf4j.Logger;
 
 /**
  * This class checks whether a filter query parameter was provided, and if so, blocks the processing and returns an error

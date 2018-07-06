@@ -5,11 +5,10 @@
  */
 package org.gluu.oxtrust.api.group;
 
-import javax.inject.Inject;
-
 import java.util.List;
 
 import javax.annotation.security.DeclareRoles;
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;

@@ -7,24 +7,15 @@
 package org.gluu.oxtrust.action;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.enterprise.context.ConversationScoped;
-import javax.faces.application.FacesMessage;
-import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
-import javax.faces.render.Renderer;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.IOUtils;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.FacesService;
 import org.gluu.oxtrust.security.Identity;
@@ -32,7 +23,6 @@ import org.gluu.oxtrust.util.OxTrustConstants;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.service.security.Secure;
-import org.xdi.util.StringHelper;
 
 /**
  * Action class for SSO login

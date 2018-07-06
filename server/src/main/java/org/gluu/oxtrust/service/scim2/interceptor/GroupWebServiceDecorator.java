@@ -5,18 +5,7 @@
  */
 package org.gluu.oxtrust.service.scim2.interceptor;
 
-import org.apache.commons.lang.StringUtils;
-import org.gluu.oxtrust.ldap.service.IGroupService;
-import org.gluu.oxtrust.model.GluuGroup;
-import org.gluu.oxtrust.model.exception.SCIMException;
-import org.gluu.oxtrust.model.scim2.ErrorScimType;
-import org.gluu.oxtrust.model.scim2.patch.PatchRequest;
-import org.gluu.oxtrust.model.scim2.SearchRequest;
-import org.gluu.oxtrust.model.scim2.group.GroupResource;
-import org.gluu.oxtrust.ws.rs.scim2.BaseScimWebService;
-import org.gluu.oxtrust.ws.rs.scim2.IGroupWebService;
-import org.gluu.persist.exception.operation.DuplicateEntryException;
-import org.slf4j.Logger;
+import java.util.List;
 
 import javax.annotation.Priority;
 import javax.decorator.Decorator;
@@ -25,7 +14,19 @@ import javax.enterprise.inject.Any;
 import javax.inject.Inject;
 import javax.interceptor.Interceptor;
 import javax.ws.rs.core.Response;
-import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
+import org.gluu.oxtrust.ldap.service.IGroupService;
+import org.gluu.oxtrust.model.GluuGroup;
+import org.gluu.oxtrust.model.exception.SCIMException;
+import org.gluu.oxtrust.model.scim2.ErrorScimType;
+import org.gluu.oxtrust.model.scim2.SearchRequest;
+import org.gluu.oxtrust.model.scim2.group.GroupResource;
+import org.gluu.oxtrust.model.scim2.patch.PatchRequest;
+import org.gluu.oxtrust.ws.rs.scim2.BaseScimWebService;
+import org.gluu.oxtrust.ws.rs.scim2.IGroupWebService;
+import org.gluu.persist.exception.operation.DuplicateEntryException;
+import org.slf4j.Logger;
 
 /**
  * Aims at decorating SCIM group service methods. Currently applies validations via ResourceValidator class or other custom

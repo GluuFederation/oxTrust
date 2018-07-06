@@ -6,20 +6,17 @@
 
 package org.gluu.oxtrust.ldap.service;
 
-import static org.gluu.oxtrust.ldap.service.AppInitializer.PERSISTENCE_ENTRY_MANAGER_NAME;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.Calendar;
 
-import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.gluu.persist.event.DeleteNotifier;
 import org.gluu.persist.PersistenceEntryManager;
+import org.gluu.persist.event.DeleteNotifier;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 

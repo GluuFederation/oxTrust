@@ -11,7 +11,7 @@ import static org.testng.Assert.assertNotNull;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.inject.Inject;import static org.gluu.oxtrust.ldap.service.AppInitializer.PERSISTENCE_ENTRY_MANAGER_NAME;
+import javax.inject.Inject;
 
 import org.gluu.oxtrust.action.test.BaseTest;
 import org.gluu.oxtrust.ldap.service.IGroupService;
@@ -21,7 +21,6 @@ import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.persist.exception.EntryPersistenceException;
 import org.testng.annotations.Parameters;
-import org.testng.annotations.Test;
 import org.xdi.util.StringHelper;
 
 /**

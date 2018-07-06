@@ -5,6 +5,25 @@
  */
 package org.gluu.oxtrust.service.antlr.scimFilter;
 
+import static org.gluu.oxtrust.service.antlr.scimFilter.enums.LdapFilterTemplate.BOOLEAN_EQUALS;
+import static org.gluu.oxtrust.service.antlr.scimFilter.enums.LdapFilterTemplate.BOOLEAN_EQUALS_INNER;
+import static org.gluu.oxtrust.service.antlr.scimFilter.enums.LdapFilterTemplate.NULL_EQUALS_INNER;
+import static org.gluu.oxtrust.service.antlr.scimFilter.enums.LdapFilterTemplate.NULL_NOT_EQUALS;
+import static org.gluu.oxtrust.service.antlr.scimFilter.enums.LdapFilterTemplate.NUMERIC_EQUALS;
+import static org.gluu.oxtrust.service.antlr.scimFilter.enums.LdapFilterTemplate.NUMERIC_EQUALS_INNER;
+import static org.gluu.oxtrust.service.antlr.scimFilter.enums.LdapFilterTemplate.NUMERIC_GREATER_THAN_OR_EQ;
+import static org.gluu.oxtrust.service.antlr.scimFilter.enums.LdapFilterTemplate.NUMERIC_LESS_THAN_OR_EQ;
+import static org.gluu.oxtrust.service.antlr.scimFilter.enums.LdapFilterTemplate.STRING_CONTAINS;
+import static org.gluu.oxtrust.service.antlr.scimFilter.enums.LdapFilterTemplate.STRING_CONTAINS_INNER;
+import static org.gluu.oxtrust.service.antlr.scimFilter.enums.LdapFilterTemplate.STRING_ENDSWITH;
+import static org.gluu.oxtrust.service.antlr.scimFilter.enums.LdapFilterTemplate.STRING_ENDSWITH_INNER;
+import static org.gluu.oxtrust.service.antlr.scimFilter.enums.LdapFilterTemplate.STRING_EQUALS;
+import static org.gluu.oxtrust.service.antlr.scimFilter.enums.LdapFilterTemplate.STRING_EQUALS_INNER;
+import static org.gluu.oxtrust.service.antlr.scimFilter.enums.LdapFilterTemplate.STRING_GREATER_THAN_OR_EQ;
+import static org.gluu.oxtrust.service.antlr.scimFilter.enums.LdapFilterTemplate.STRING_LESS_THAN_OR_EQ;
+import static org.gluu.oxtrust.service.antlr.scimFilter.enums.LdapFilterTemplate.STRING_STARTSWITH;
+import static org.gluu.oxtrust.service.antlr.scimFilter.enums.LdapFilterTemplate.STRING_STARTSWITH_INNER;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,8 +42,6 @@ import org.gluu.oxtrust.service.scim2.ExtensionService;
 import org.gluu.search.filter.Filter;
 import org.xdi.service.cdi.util.CdiUtil;
 import org.xdi.util.Pair;
-
-import static org.gluu.oxtrust.service.antlr.scimFilter.enums.LdapFilterTemplate.*;
 
 /**
  * Created by jgomer on 2017-12-09.

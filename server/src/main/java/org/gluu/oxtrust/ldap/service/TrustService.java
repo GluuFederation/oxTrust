@@ -27,6 +27,7 @@ import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.model.base.GluuStatus;
 import org.gluu.persist.model.base.InumEntry;
+import org.gluu.search.filter.Filter;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.GluuAttribute;
@@ -35,8 +36,6 @@ import org.xdi.service.MailService;
 import org.xdi.service.XmlService;
 import org.xdi.util.INumGenerator;
 import org.xdi.util.StringHelper;
-
-import org.gluu.search.filter.Filter;
 
 /**
  * Provides operations with trust relationships

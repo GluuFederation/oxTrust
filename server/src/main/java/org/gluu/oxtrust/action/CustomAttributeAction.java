@@ -44,7 +44,6 @@ import org.slf4j.Logger;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuAttributeDataType;
 import org.xdi.model.GluuImage;
-import org.xdi.service.security.Secure;
 import org.xdi.util.StringHelper;
 
 /**

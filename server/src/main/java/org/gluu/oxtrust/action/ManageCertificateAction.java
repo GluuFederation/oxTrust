@@ -50,7 +50,6 @@ import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.ldap.service.SSLService;
 import org.gluu.oxtrust.model.GluuAppliance;
-import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.cert.TrustStoreCertificate;
 import org.gluu.oxtrust.model.cert.TrustStoreConfiguration;
 import org.gluu.oxtrust.security.Identity;

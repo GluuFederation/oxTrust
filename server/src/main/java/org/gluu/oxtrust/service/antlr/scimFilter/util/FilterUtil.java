@@ -5,6 +5,10 @@
  */
 package org.gluu.oxtrust.service.antlr.scimFilter.util;
 
+import java.util.Map;
+import java.util.SortedSet;
+import java.util.regex.Pattern;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.gluu.oxtrust.model.scim2.AttributeDefinition.Type;
@@ -15,10 +19,6 @@ import org.gluu.oxtrust.service.antlr.scimFilter.antlr4.ScimFilterParser;
 import org.gluu.oxtrust.service.antlr.scimFilter.enums.CompValueType;
 import org.gluu.oxtrust.service.antlr.scimFilter.enums.ScimOperator;
 import org.xdi.util.Pair;
-
-import java.util.Map;
-import java.util.SortedSet;
-import java.util.regex.Pattern;
 
 /**
  * @author Val Pecaoco

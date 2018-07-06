@@ -8,20 +8,20 @@ package org.gluu.oxtrust.service.status.ldap;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.xdi.service.cdi.async.Asynchronous;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.gluu.oxtrust.ldap.service.AppInitializer;
+import org.gluu.oxtrust.ldap.service.ApplicationFactory;
 import org.gluu.oxtrust.ldap.service.CentralLdapService;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.ldap.impl.LdapEntryManager;
 import org.gluu.persist.ldap.operation.impl.LdapConnectionProvider;
 import org.gluu.persist.operation.PersistenceOperationService;
 import org.slf4j.Logger;
+import org.xdi.service.cdi.async.Asynchronous;
 import org.xdi.service.cdi.event.LdapStatusEvent;
 import org.xdi.service.cdi.event.Scheduled;
 import org.xdi.service.timer.event.TimerEvent;
@@ -46,10 +46,10 @@ public class LdapStatusTimer {
 	@Inject
 	private Event<TimerEvent> timerEvent;
 
-	@Inject @Named(AppInitializer.PERSISTENCE_ENTRY_MANAGER_NAME)
+	@Inject @Named(ApplicationFactory.PERSISTENCE_ENTRY_MANAGER_NAME)
     private PersistenceEntryManager ldapEntryManager;
 
-	@Inject @Named(AppInitializer.PERSISTENCE_CENTRAL_ENTRY_MANAGER_NAME)
+	@Inject @Named(ApplicationFactory.PERSISTENCE_CENTRAL_ENTRY_MANAGER_NAME)
     private PersistenceEntryManager ldapCentralEntryManager;
 
     private AtomicBoolean isActive;

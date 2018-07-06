@@ -16,9 +16,9 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.gluu.persist.exception.BasePersistenceException;
 import org.apache.commons.lang.NotImplementedException;
 import org.gluu.persist.PersistenceEntryManager;
+import org.gluu.persist.exception.BasePersistenceException;
 import org.gluu.persist.ldap.impl.LdifDataUtility;
 import org.gluu.persist.ldap.operation.LdapOperationService;
 import org.gluu.persist.operation.PersistenceOperationService;

@@ -27,7 +27,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.apache.commons.lang.StringUtils;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.service.AttributeService;
@@ -45,7 +44,6 @@ import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuUserRole;
-import org.xdi.service.security.Secure;
 import org.xdi.util.StringHelper;
 
 /**

@@ -6,6 +6,15 @@
 
 package org.gluu.oxtrust.action;
 
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.List;
+
+import javax.enterprise.context.ConversationScoped;
+import javax.faces.application.FacesMessage;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
@@ -21,14 +30,6 @@ import org.xdi.oxauth.model.configuration.AppConfiguration;
 import org.xdi.service.JsonService;
 import org.xdi.service.security.Secure;
 import org.xdi.util.StringHelper;
-
-import javax.enterprise.context.ConversationScoped;
-import javax.faces.application.FacesMessage;
-import javax.inject.Inject;
-import javax.inject.Named;
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.List;
 
 /**
  * Action class for configuring log viewer

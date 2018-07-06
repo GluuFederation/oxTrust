@@ -5,6 +5,9 @@
  */
 package org.gluu.oxtrust.service.antlr.scimFilter.util;
 
+import java.math.BigDecimal;
+import java.util.Map;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,9 +20,6 @@ import org.gluu.oxtrust.service.antlr.scimFilter.enums.CompValueType;
 import org.gluu.oxtrust.service.antlr.scimFilter.enums.ScimOperator;
 import org.gluu.oxtrust.service.scim2.ExtensionService;
 import org.joda.time.DateTime;
-
-import java.math.BigDecimal;
-import java.util.Map;
 
 /**
  * Created by jgomer on 2017-12-10.

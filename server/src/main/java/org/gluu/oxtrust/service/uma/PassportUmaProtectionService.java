@@ -13,7 +13,6 @@ import javax.inject.Inject;
 import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
 
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.model.GluuAppliance;

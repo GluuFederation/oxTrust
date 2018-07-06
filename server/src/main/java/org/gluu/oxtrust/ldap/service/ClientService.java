@@ -27,7 +27,6 @@ import org.gluu.persist.model.base.GluuBoolean;
 import org.gluu.search.filter.Filter;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.service.cdi.util.CdiUtil;
 import org.xdi.util.INumGenerator;
 import org.xdi.util.StringHelper;
 

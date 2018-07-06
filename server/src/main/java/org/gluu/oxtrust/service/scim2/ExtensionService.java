@@ -5,6 +5,21 @@
  */
 package org.gluu.oxtrust.service.scim2;
 
+import static org.gluu.oxtrust.model.scim2.Constants.USER_EXT_SCHEMA_DESCRIPTION;
+import static org.gluu.oxtrust.model.scim2.Constants.USER_EXT_SCHEMA_ID;
+import static org.gluu.oxtrust.model.scim2.Constants.USER_EXT_SCHEMA_NAME;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.model.scim2.BaseScimResource;
 import org.gluu.oxtrust.model.scim2.extensions.Extension;
@@ -14,13 +29,6 @@ import org.slf4j.Logger;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.OxMultivalued;
 import org.xdi.model.ScimCustomAtribute;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.inject.Named;
-import java.util.*;
-
-import static org.gluu.oxtrust.model.scim2.Constants.*;
 
 /**
  * Created by jgomer on 2017-09-29.

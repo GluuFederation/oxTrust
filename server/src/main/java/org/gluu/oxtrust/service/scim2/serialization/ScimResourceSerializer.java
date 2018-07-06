@@ -5,6 +5,20 @@
  */
 package org.gluu.oxtrust.service.scim2.serialization;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.codehaus.jackson.Version;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.module.SimpleModule;
@@ -16,11 +30,6 @@ import org.gluu.oxtrust.model.scim2.util.IntrospectUtil;
 import org.gluu.oxtrust.model.scim2.util.ScimResourceUtil;
 import org.gluu.oxtrust.service.scim2.ExtensionService;
 import org.slf4j.Logger;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.inject.Named;
-import java.util.*;
 
 /**
  * Created by jgomer on 2017-10-01.

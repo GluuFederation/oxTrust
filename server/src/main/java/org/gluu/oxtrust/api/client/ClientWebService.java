@@ -5,11 +5,10 @@
  */
 package org.gluu.oxtrust.api.client;
 
-import javax.inject.Inject;
-
 import java.util.List;
 
 import javax.annotation.security.DeclareRoles;
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -23,8 +22,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.gluu.oxtrust.ldap.service.ClientService;
-import org.gluu.oxtrust.ldap.service.IGroupService;
-import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.slf4j.Logger;

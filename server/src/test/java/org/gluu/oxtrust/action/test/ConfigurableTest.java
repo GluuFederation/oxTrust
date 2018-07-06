@@ -22,7 +22,6 @@ import org.jboss.arquillian.testng.Arquillian;
 import org.jboss.shrinkwrap.api.Archive;
 import org.testng.ITestContext;
 import org.testng.Reporter;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeSuite;
 import org.xdi.util.StringHelper;
 import org.xdi.util.properties.FileConfiguration;

@@ -1,18 +1,19 @@
 package org.gluu.oxtrust.service.logger;
 
+import java.io.File;
+import java.io.Serializable;
+
+import javax.ejb.Stateless;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.service.cdi.event.ConfigurationUpdate;
-
-import javax.ejb.Stateless;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
-import javax.inject.Named;
-import java.io.File;
-import java.io.Serializable;
 
 /**
  * Created by eugeniuparvan on 6/2/17.

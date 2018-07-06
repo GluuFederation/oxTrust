@@ -5,8 +5,11 @@
  */
 package org.gluu.oxtrust.service.scim2.interceptor;
 
-import org.gluu.oxtrust.model.scim2.SearchRequest;
-import org.slf4j.Logger;
+import static org.gluu.oxtrust.model.scim2.Constants.QUERY_PARAM_ATTRIBUTES;
+import static org.gluu.oxtrust.model.scim2.Constants.QUERY_PARAM_EXCLUDED_ATTRS;
+import static org.gluu.oxtrust.model.scim2.Constants.QUERY_PARAM_FILTER;
+
+import java.lang.annotation.Annotation;
 
 import javax.annotation.Priority;
 import javax.inject.Inject;
@@ -14,9 +17,9 @@ import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
 import javax.ws.rs.QueryParam;
-import java.lang.annotation.Annotation;
 
-import static org.gluu.oxtrust.model.scim2.Constants.*;
+import org.gluu.oxtrust.model.scim2.SearchRequest;
+import org.slf4j.Logger;
 
 /**
  * This class checks if filter, attributes or excludedAttributes query param contains resource references ($ref) and if so

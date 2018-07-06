@@ -7,6 +7,7 @@ package org.gluu.oxtrust.util;
 
 import java.security.cert.X509Certificate;
 import java.util.Date;
+
 import org.gluu.oxtrust.api.X509CertificateShortInfo;
 
 /**
