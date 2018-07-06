@@ -10,7 +10,7 @@
 	<parent>
 		<groupId>org.xdi</groupId>
 		<artifactId>oxtrust</artifactId>
-		<version>3.2.0-SNAPSHOT</version>
+		<version>4.0.0-SNAPSHOT</version>
 	</parent>
 
 	<properties>
@@ -251,6 +251,10 @@
 		<dependency>
 			<groupId>org.xdi</groupId>
 			<artifactId>oxcore-ldap</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.xdi</groupId>
+			<artifactId>oxcore-couchbase</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.xdi</groupId>

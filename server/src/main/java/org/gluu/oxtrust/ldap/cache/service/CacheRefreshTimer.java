@@ -6,7 +6,7 @@
 
 package org.gluu.oxtrust.ldap.cache.service;
 
-import static org.gluu.oxtrust.ldap.service.AppInitializer.LDAP_ENTRY_MANAGER_FACTORY_NAME;
+import static org.gluu.oxtrust.ldap.service.AppInitializer.PERSISTENCE_ENTRY_MANAGER_FACTORY_NAME;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -113,7 +113,7 @@ public class CacheRefreshTimer {
 	@Inject
 	private PersistenceEntryManager ldapEntryManager;
 
-	@Inject @Named(LDAP_ENTRY_MANAGER_FACTORY_NAME)
+	@Inject @Named(PERSISTENCE_ENTRY_MANAGER_FACTORY_NAME)
 	private LdapEntryManagerFactory PersistenceEntryManagerFactory;
 
 	@Inject
@@ -708,7 +708,7 @@ public class CacheRefreshTimer {
 	private Pair<List<String>, List<String>> removeTargetEntries(LdapServerConnection inumDbServerConnection, PersistenceEntryManager targetPersistenceEntryManager,
 			List<GluuSimplePerson> removedPersons, HashMap<String, GluuInumMap> inumInumMap) {
 
-		String runDate = ldapEntryManager.encodeGeneralizedTime(new Date(this.lastFinishedTime));
+		String runDate = ldapEntryManager.encodeTime(new Date(this.lastFinishedTime));
 
 		PersistenceEntryManager inumDbPersistenceEntryManager = inumDbServerConnection.getPersistenceEntryManager();
 		List<String> result1 = new ArrayList<String>();

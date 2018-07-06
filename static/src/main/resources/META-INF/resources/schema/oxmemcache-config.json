@@ -122,7 +122,19 @@
 			        "minimum": 1,
 			        "exclusiveMaximum": false,
 			        "exclusiveMinimum": false
-			    }
+			    },
+			    "useSsl" : {
+		            "id": "useSsl",
+		            "description": "useSsl ",
+		            "type": "boolean"
+		        },
+		        "sslTrustStoreFilePath": {
+		            "id": "useTrustStoreFilePath",
+		            "description": "useTrustStoreFilePath",
+		            "type": "string",
+		            "format": "url",
+		            "minLength": 1
+		        }
             }
 		}
     }

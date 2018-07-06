@@ -24,7 +24,7 @@ import org.xdi.service.CacheService;
 import org.xdi.util.ArrayHelper;
 import org.xdi.util.OxConstants;
 import org.xdi.util.StringHelper;
-import static org.gluu.oxtrust.ldap.service.AppInitializer.LDAP_ENTRY_MANAGER_NAME;
+import static org.gluu.oxtrust.ldap.service.AppInitializer.PERSISTENCE_ENTRY_MANAGER_NAME;
 
 /**
  * Provides operations with organization
@@ -37,7 +37,7 @@ public class AuthOrganizationService implements Serializable {
 
 	private static final long serialVersionUID = 5537567020929600777L;
 
-	@Inject @Named(LDAP_ENTRY_MANAGER_NAME)
+	@Inject @Named(PERSISTENCE_ENTRY_MANAGER_NAME)
 	private PersistenceEntryManager ldapEntryManager;
 
 	@Inject

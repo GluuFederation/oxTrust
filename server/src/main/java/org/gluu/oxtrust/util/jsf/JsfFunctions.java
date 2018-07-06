@@ -161,7 +161,7 @@ public class JsfFunctions {
 			return timeStamp;
 		}
 		
-		return CdiUtil.bean(PersistenceEntryManager.class).decodeGeneralizedTime(timeStamp).toGMTString();
+		return CdiUtil.bean(PersistenceEntryManager.class).decodeTime(timeStamp).toGMTString();
 		
 	}
 

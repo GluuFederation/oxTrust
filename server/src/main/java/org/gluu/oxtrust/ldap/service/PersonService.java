@@ -455,8 +455,7 @@ public class PersonService implements Serializable, IPersonService {
         }
         return sb.toString();
     }
-    
-    
+
     /* (non-Javadoc)
      * @see org.gluu.oxtrust.ldap.service.IPersonService#getPersonMailid(java.util.List)
      */

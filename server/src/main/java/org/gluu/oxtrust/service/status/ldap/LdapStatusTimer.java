@@ -46,10 +46,10 @@ public class LdapStatusTimer {
 	@Inject
 	private Event<TimerEvent> timerEvent;
 
-	@Inject @Named(AppInitializer.LDAP_ENTRY_MANAGER_NAME)
+	@Inject @Named(AppInitializer.PERSISTENCE_ENTRY_MANAGER_NAME)
     private PersistenceEntryManager ldapEntryManager;
 
-	@Inject @Named(AppInitializer.LDAP_CENTRAL_ENTRY_MANAGER_NAME)
+	@Inject @Named(AppInitializer.PERSISTENCE_CENTRAL_ENTRY_MANAGER_NAME)
     private PersistenceEntryManager ldapCentralEntryManager;
 
     private AtomicBoolean isActive;

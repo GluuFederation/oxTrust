@@ -6,7 +6,7 @@
 	<groupId>org.xdi</groupId>
 	<artifactId>oxtrust</artifactId>
 	<packaging>pom</packaging>
-	<version>3.2.0-SNAPSHOT</version>
+	<version>4.0.0-SNAPSHOT</version>
 	<name>oxTrust</name>
 	<url>http://www.gluu.org</url>
 
@@ -14,9 +14,9 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.min-version>3.3.9</maven.min-version>
 
-		<oxcore.version>3.2.0-SNAPSHOT</oxcore.version>
-		<oxauth.version>3.2.0-SNAPSHOT</oxauth.version>
-		<oxasimba.version>3.2.0-SNAPSHOT</oxasimba.version>
+		<oxcore.version>4.0.0-SNAPSHOT</oxcore.version>
+		<oxauth.version>4.0.0-SNAPSHOT</oxauth.version>
+		<oxasimba.version>4.0.0-SNAPSHOT</oxasimba.version>
 
 		<jackson.version>2.9.5</jackson.version>
 		<jackson.databind.version>2.9.5</jackson.databind.version>
@@ -172,6 +172,11 @@
 			<dependency>
 				<groupId>org.xdi</groupId>
 				<artifactId>oxcore-ldap</artifactId>
+				<version>${oxcore.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.xdi</groupId>
+				<artifactId>oxcore-couchbase</artifactId>
 				<version>${oxcore.version}</version>
 			</dependency>
 			<dependency>

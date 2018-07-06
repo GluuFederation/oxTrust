@@ -55,4 +55,8 @@ public class EncryptionService implements Serializable {
 		return PropertiesDecrypter.decryptProperties(stringEncrypter, connectionProperties);
 	}
 
+    public Properties decryptAllProperties(Properties connectionProperties) {
+        return PropertiesDecrypter.decryptAllProperties(stringEncrypter, connectionProperties);
+    }
+
 }
