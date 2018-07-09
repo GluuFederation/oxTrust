@@ -29,6 +29,9 @@ public class ClientTestScenary {
      * @throws OxTrustAPIException
      */
     public void run() throws APITestException, OxTrustAPIException {
+        OxTrustConfigurationTestCase oxTrustConfigurationTestCase = new OxTrustConfigurationTestCase(client);
+        oxTrustConfigurationTestCase.run();
+
         OxAuthConfigurationTestCase oxAuthConfigurationTestCase = new OxAuthConfigurationTestCase(client);
         oxAuthConfigurationTestCase.run();
 

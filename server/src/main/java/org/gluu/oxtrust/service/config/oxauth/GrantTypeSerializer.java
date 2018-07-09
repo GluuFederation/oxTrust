@@ -1,4 +1,4 @@
-package org.gluu.oxtrust.service.config;
+package org.gluu.oxtrust.service.config.oxauth;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;

@@ -1,4 +1,4 @@
-package org.gluu.oxtrust.service.config;
+package org.gluu.oxtrust.service.config.oxauth;
 
 import org.gluu.persist.PersistenceEntryManager;
 import org.xdi.config.oxtrust.LdapOxAuthConfiguration;

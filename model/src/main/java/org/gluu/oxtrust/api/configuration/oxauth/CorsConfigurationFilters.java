@@ -1,4 +1,4 @@
-package org.gluu.oxtrust.api.configuration;
+package org.gluu.oxtrust.api.configuration.oxauth;
 
 import org.apache.logging.log4j.core.config.plugins.validation.constraints.Required;
 

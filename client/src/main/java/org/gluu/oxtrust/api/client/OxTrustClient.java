@@ -8,6 +8,7 @@ package org.gluu.oxtrust.api.client;
 import java.io.UnsupportedEncodingException;
 
 import org.gluu.oxtrust.api.client.configuration.OxAuthConfClient;
+import org.gluu.oxtrust.api.client.configuration.OxTrustConfClient;
 import org.gluu.oxtrust.api.client.logs.LogClient;
 import org.gluu.oxtrust.api.client.logs.LogsDefClient;
 import org.gluu.oxtrust.api.client.util.ClientResponseLoggingFilter;
@@ -49,6 +50,7 @@ public class OxTrustClient {
 	private final LogsDefClient logsDefClient;
 	private final LogClient logClient;
 	private final OxAuthConfClient oxAuthConfClient;
+	private final OxTrustConfClient oxTrustConfClient;
 
         private final CertificatesClient certificatesClient;
 
@@ -95,6 +97,7 @@ public class OxTrustClient {
 		logsDefClient = new LogsDefClient(client, baseURI);
 		logClient = new LogClient(client, baseURI);
 		oxAuthConfClient = new OxAuthConfClient(client, baseURI);
+		oxTrustConfClient = new OxTrustConfClient(client, baseURI);
 		peopleClient = new PeopleClient(client, baseURI);
                 certificatesClient = new CertificatesClient(client, baseURI);
 	}
@@ -129,6 +132,7 @@ public class OxTrustClient {
 		logsDefClient = new LogsDefClient(client, baseURI);
 		logClient = new LogClient(client, baseURI);
 		oxAuthConfClient = new OxAuthConfClient(client, baseURI);
+		oxTrustConfClient = new OxTrustConfClient(client, baseURI);
 		peopleClient = new PeopleClient(client, baseURI);
                 certificatesClient = new CertificatesClient(client, baseURI);
 	}
@@ -195,5 +199,9 @@ public class OxTrustClient {
 
 	public OxAuthConfClient getOxAuthConfClient() {
 		return oxAuthConfClient;
+	}
+
+	public OxTrustConfClient getOxTrustConfClient() {
+		return oxTrustConfClient;
 	}
 }

@@ -1,10 +1,9 @@
-package org.gluu.oxtrust.api.configuration;
+package org.gluu.oxtrust.api.configuration.oxauth;
 
 import org.junit.Test;
 
 import java.util.regex.Pattern;
 
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class OxAuthConfigTest {

@@ -12,8 +12,9 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.service.OpenIdService;
-import org.gluu.oxtrust.service.config.OxAuthConfigObjectMapper;
-import org.gluu.oxtrust.service.config.OxAuthConfigurationService;
+import org.gluu.oxtrust.service.config.oxauth.OxAuthConfigObjectMapper;
+import org.gluu.oxtrust.service.config.oxauth.OxAuthConfigurationService;
+import org.gluu.oxtrust.service.config.oxtrust.OxTrustConfigurationExtractor;
 import org.gluu.persist.exception.BasePersistenceException;
 import org.gluu.persist.PersistenceEntryManager;
 import org.slf4j.Logger;
@@ -23,6 +24,7 @@ import org.xdi.config.oxtrust.ImportPersonConfig;
 import org.xdi.config.oxtrust.LdapOxTrustConfiguration;
 import org.xdi.service.JsonService;
 import org.xdi.service.cache.CacheConfiguration;
+import org.gluu.oxtrust.service.config.oxtrust.OxTrustConfigurationService;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -70,14 +72,18 @@ public class JsonConfigurationService implements Serializable {
 	@Inject
 	private OxAuthConfigObjectMapper oxAuthConfigObjectMapper;
 
+	@Inject
+	private OxTrustConfigurationService oxTrustConfigurationService;
+
+	@Inject
+	private OxTrustConfigurationExtractor oxTrustConfigurationExtractor;
+
 	public AppConfiguration getOxTrustappConfiguration() {
-		LdapOxTrustConfiguration ldapOxTrustConfiguration = getOxTrustConfiguration();
-		return ldapOxTrustConfiguration.getApplication();
+		return oxTrustConfigurationService.find();
 	}
 	
 	public CacheConfiguration getOxMemCacheConfiguration() {
-		CacheConfiguration cachedConfiguration = applianceService.getAppliance().getCacheConfiguration();
-		return cachedConfiguration;
+		return applianceService.getAppliance().getCacheConfiguration();
 	}
 	
 	public boolean saveOxMemCacheConfiguration(CacheConfiguration cachedConfiguration) {
@@ -88,20 +94,11 @@ public class JsonConfigurationService implements Serializable {
 	}
 
 	public ImportPersonConfig getOxTrustImportPersonConfiguration() {
-		LdapOxTrustConfiguration ldapOxTrustConfiguration = getOxTrustConfiguration();
-		return ldapOxTrustConfiguration.getImportPersonConfig();
+		return loadOxTrustConfig().getImportPersonConfig();
 	}
 
 	public CacheRefreshConfiguration getOxTrustCacheRefreshConfiguration() {
-		LdapOxTrustConfiguration ldapOxTrustConfiguration = getOxTrustConfiguration();
-		return ldapOxTrustConfiguration.getCacheRefresh();
-	}
-
-	private LdapOxTrustConfiguration getOxTrustConfiguration() {
-		String configurationDn = configurationFactory.getConfigurationDn();
-
-		LdapOxTrustConfiguration ldapOxTrustConfiguration = loadOxTrustConfig(configurationDn);
-		return ldapOxTrustConfiguration;
+		return loadOxTrustConfig().getCacheRefresh();
 	}
 
 	public String getOxAuthDynamicConfigJson() throws JsonGenerationException, JsonMappingException, IOException {
@@ -113,26 +110,17 @@ public class JsonConfigurationService implements Serializable {
 	}
 
 	public boolean saveOxTrustappConfiguration(AppConfiguration oxTrustappConfiguration) {
-		LdapOxTrustConfiguration ldapOxTrustConfiguration = getOxTrustConfiguration();
-		ldapOxTrustConfiguration.setApplication(oxTrustappConfiguration);
-		ldapOxTrustConfiguration.setRevision(ldapOxTrustConfiguration.getRevision() + 1);
-		ldapEntryManager.merge(ldapOxTrustConfiguration);
+		oxTrustConfigurationService.save(oxTrustappConfiguration);
 		return true;
 	}
 
 	public boolean saveOxTrustImportPersonConfiguration(ImportPersonConfig oxTrustImportPersonConfiguration) {
-		LdapOxTrustConfiguration ldapOxTrustConfiguration = getOxTrustConfiguration();
-		ldapOxTrustConfiguration.setImportPersonConfig(oxTrustImportPersonConfiguration);
-		ldapOxTrustConfiguration.setRevision(ldapOxTrustConfiguration.getRevision() + 1);
-		ldapEntryManager.merge(ldapOxTrustConfiguration);
+		oxTrustConfigurationService.save(oxTrustImportPersonConfiguration);
 		return true;
 	}
 
 	public boolean saveOxTrustCacheRefreshConfiguration(CacheRefreshConfiguration oxTrustCacheRefreshConfiguration) {
-		LdapOxTrustConfiguration ldapOxTrustConfiguration = getOxTrustConfiguration();
-		ldapOxTrustConfiguration.setCacheRefresh(oxTrustCacheRefreshConfiguration);
-		ldapOxTrustConfiguration.setRevision(ldapOxTrustConfiguration.getRevision() + 1);
-		ldapEntryManager.merge(ldapOxTrustConfiguration);
+		oxTrustConfigurationService.save(oxTrustCacheRefreshConfiguration);
 		return true;
 	}
 
@@ -151,11 +139,9 @@ public class JsonConfigurationService implements Serializable {
 		return true;
 	}
 
-	private LdapOxTrustConfiguration loadOxTrustConfig(String configurationDn) {
+	private LdapOxTrustConfiguration loadOxTrustConfig() {
 		try {
-			LdapOxTrustConfiguration conf = ldapEntryManager.find(LdapOxTrustConfiguration.class, configurationDn);
-
-			return conf;
+			return oxTrustConfigurationExtractor.extract();
 		} catch (BasePersistenceException ex) {
 			log.error("Failed to load configuration from LDAP");
 		}
