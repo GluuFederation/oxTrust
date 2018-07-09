@@ -1,6 +1,6 @@
-package org.gluu.oxtrust.api.configuration;
+package org.gluu.oxtrust.api.configuration.oxauth;
 
-public class ClientAuthenticationFilters {
+public class AuthenticationFilters {
     private String baseDn;
 
     private String bindPasswordAttribute;
@@ -42,3 +42,4 @@ public class ClientAuthenticationFilters {
     }
 
 }
+		
