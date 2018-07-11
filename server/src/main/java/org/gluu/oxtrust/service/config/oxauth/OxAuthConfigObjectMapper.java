@@ -1,9 +1,9 @@
-package org.gluu.oxtrust.service.config;
+package org.gluu.oxtrust.service.config.oxauth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import org.gluu.oxtrust.api.configuration.OxAuthConfig;
-import org.gluu.oxtrust.api.configuration.ResponseTypeApi;
+import org.gluu.oxtrust.api.configuration.oxauth.OxAuthConfig;
+import org.gluu.oxtrust.api.configuration.oxauth.ResponseTypeApi;
 import org.xdi.config.oxtrust.LdapOxAuthConfiguration;
 import org.xdi.oxauth.model.common.GrantType;
 

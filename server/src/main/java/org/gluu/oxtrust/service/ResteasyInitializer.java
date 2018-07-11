@@ -10,5 +10,5 @@ import javax.ws.rs.core.Application;
  * @version 0.1, 07/11/2017
  */
 @ApplicationPath("/restv1")
-public class ResteasyInitializer extends Application {	
+public class ResteasyInitializer extends Application {
 }

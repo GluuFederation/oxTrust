@@ -1,6 +1,6 @@
-package org.gluu.oxtrust.service.config;
+package org.gluu.oxtrust.service.config.oxauth;
 
-import org.gluu.oxtrust.api.configuration.OxAuthConfig;
+import org.gluu.oxtrust.api.configuration.oxauth.OxAuthConfig;
 import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.persist.PersistenceEntryManager;
 import org.xdi.config.oxtrust.LdapOxAuthConfiguration;
