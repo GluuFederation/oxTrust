@@ -224,7 +224,7 @@ public class AppInitializer {
         List<CustomScriptType> supportedCustomScriptTypes = Arrays.asList( CustomScriptType.CACHE_REFRESH, CustomScriptType.UPDATE_USER, CustomScriptType.USER_REGISTRATION, CustomScriptType.ID_GENERATOR, CustomScriptType.SCIM );
 
         // Start timer
-        quartzSchedulerManager.start();
+        initSchedulerService();
 
         // Schedule timer tasks
         metricService.initTimer();
@@ -240,6 +240,17 @@ public class AppInitializer {
         logFileSizeChecker.initTimer();
 
         loggerService.updateLoggerConfigLocation();
+    }
+
+    protected void initSchedulerService() {
+        quartzSchedulerManager.start();
+
+        String disableScheduler = System.getProperties().getProperty("gluu.disable.scheduler");
+        if ((disableScheduler != null) && Boolean.valueOf(disableScheduler)) {
+            this.log.warn("Suspending Quartz Scheduler Service...");
+            quartzSchedulerManager.standby();
+            return;
+        }
     }
 
     @Produces @ApplicationScoped
