@@ -9,6 +9,15 @@
                 xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
  		xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
                 xmlns:gluufn="http://www.gluu.org/jsf/functions">
+<style type="text/css">
+        .odd {
+            background-color: #ddd;
+        }
+
+        .even {
+            background-color: #eee;
+        }
+    </style>
 
     <section class="content-header">
         <h1 style="color: #333;">
@@ -60,11 +69,13 @@
                                             <h:panelGroup columns="1" width="100%" border="0" cellpadding="0"
                                                           cellspacing="0">
                                                 <a4j:repeat value="#{_sectorIdentifierAction.loginUris}"
-                                                            rowKeyVar="_urisIdx" var="_uri">
+                                                            rowKeyVar="_urisIdx" var="_uri" iterationStatusVar="loop">
+                                                      <div class="row-fluid">
+                                                     <div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
                                                     <h:outputText value="#{empty _uri ? _uri : _uri}"/>
                                                     <h:outputText value="&#160;"/>
 
-                                                    <div class="row-fluid">
+                                                   
                                                         <div class="span6 pull-right">
                                                             <a4j:commandLink styleClass="glyphicon glyphicon-remove"
                                                                              style="margin-top:-20px;"
@@ -74,7 +85,7 @@
                                                                              eventsQueue="clientQueue">
                                                                 <!--  <h:graphicImage value="/img/remove.gif" /> -->
                                                             </a4j:commandLink></div>
-                                                    </div>
+                                                    </div></div>
                                                     <br/>
                                                 </a4j:repeat>
                                                 <richext:spacer height="16"/>
@@ -84,28 +95,31 @@
 
                                     <ox:decorate id="clients" label="#{msg['sectorIdentifier.clients']}">
                                         <h:panelGroup id="selectedClientsId">
-                                            <h:panelGrid columns="1" width="100%" border="0" cellpadding="0"
+                                        <div class="col-sm-10 prop">
+                                            <h:panelGroup columns="1" width="100%" border="0" cellpadding="0"
                                                          cellspacing="0">
                                                 <a4j:repeat value="#{_sectorIdentifierAction.clientDisplayNameEntries}"
                                                             rowKeyVar="_clientIdx"
-                                                            var="_client">
-                                                    <div class="row">
-                                                        <div class="col-sm-11 prop">
+                                                            var="_client" iterationStatusVar="loop">
+                                                    <div class="row-fluid">
+                                                    <div class="row #{(loop.index % 2 == 0) ?'odd':'even'}">
+                                                        <!-- <div class="col-sm-10 prop"> -->
                                                             <h:outputText value="#{_client.inum}"/>
                                                             <h:outputText value="&nbsp;"/>
                                                             <h:outputText value="#{_client.displayName}"/>
                                                             <h:outputText value="&nbsp;"/>
-                                                        </div>
-                                                        <div class="col-sm-1 prop" style="margin-left:0px !important;">
+                                                        <!-- </div> -->
+                                                        <div class="span6 pull-right">
                                                             <a4j:commandLink styleClass="glyphicon glyphicon-remove"
                                                                              action="#{_sectorIdentifierAction.removeClient(_client.inum)}"
                                                                              render="selectedClientsId" execute="@this">
                                                             </a4j:commandLink>
                                                         </div>
-                                                    </div>
+                                                    </div></div>
                                                     <br/>
                                                 </a4j:repeat>
-                                            </h:panelGrid>
+                                            </h:panelGroup>
+                                            </div>
                                         </h:panelGroup>
                                     </ox:decorate>
 
