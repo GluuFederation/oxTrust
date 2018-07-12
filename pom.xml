@@ -46,9 +46,9 @@
 		<antlr4.version>4.5.2-1</antlr4.version>
 		<antlr4.visitor>true</antlr4.visitor>
 
-		<jetty.version>9.4.2.v20170220</jetty.version>
+		<jetty.version>9.4.9.v20180320</jetty.version>
 
-		<arquillian.version>1.1.11.Final</arquillian.version>
+		<arquillian.version>1.4.0.Final</arquillian.version>
 		<arquillian.rest.version>1.0.0.Alpha4</arquillian.rest.version>
 		<arquillian.drone.version>2.0.0.Final</arquillian.drone.version>
 		<arquillian.graphene.version>2.1.0.CR1</arquillian.graphene.version>
@@ -770,6 +770,8 @@
 					<artifactId>maven-surefire-plugin</artifactId>
 					<version>2.19.1</version>
 					<configuration>
+						<argLine>-Xms512m -Xmx1024m -XX:MaxMetaspaceSize=256m -XX:+DisableExplicitGC</argLine>
+
 						<!-- Needed as we have both junit and testng -->
 						<failIfNoTests>false</failIfNoTests>
 						<trimStackTrace>false</trimStackTrace>
