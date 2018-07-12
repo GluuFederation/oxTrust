@@ -102,9 +102,12 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
-					<argLine>-Dgluu.base=${project.build.directory}
+					<argLine>-Xms512m -Xmx1024m -XX:MaxMetaspaceSize=256m -XX:+DisableExplicitGC
+						-Dgluu.base=${project.build.directory}
 						-Dserver.base=${project.build.directory}
 						-Dlog.base=${project.build.directory}
+						-Dgluu.disable.scheduler=true
+ 
 					</argLine>
 					<suiteXmlFiles>
 						<suiteXmlFile>target/test-classes/testng.xml</suiteXmlFile>
