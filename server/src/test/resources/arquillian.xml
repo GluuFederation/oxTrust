@@ -8,7 +8,7 @@
 
 	<container qualifier="jetty" default="true">
 		<configuration>
-            <property name="bindHttpPort">9980</property>
+            <property name="bindHttpPort">9970</property>
             <property name="javaVmArguments">-Xms256m -Xmx512m -XX:MaxPermSize=256m</property>
 
 			<!-- property name="javaVmArguments">${additionalJvmArgs}</property -->
