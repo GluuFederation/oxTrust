@@ -589,6 +589,12 @@
 			<scope>test</scope>
 		</dependency>
 
+		<dependency>
+			<groupId>org.xdi</groupId>
+			<artifactId>oxtrust-client</artifactId>
+			<scope>test</scope>
+		</dependency>
+
 		<!-- Test: Arquillian container and extensions -->
 		<dependency>
 			<groupId>org.jboss.arquillian.testng</groupId>

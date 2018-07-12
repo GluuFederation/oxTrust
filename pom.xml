@@ -97,8 +97,8 @@
 		<module>static</module>
 		<module>configuration</module>
         <module>model</module>
-		<module>server</module>
         <module>client</module>
+		<module>server</module>
 		<module>scim</module>
 		<module>openid-auth-client</module>
 		<module>saml-openid-auth-client</module>
@@ -138,6 +138,11 @@
             <dependency>
                 <groupId>org.xdi</groupId>
                 <artifactId>oxtrust-model</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.xdi</groupId>
+                <artifactId>oxtrust-client</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
