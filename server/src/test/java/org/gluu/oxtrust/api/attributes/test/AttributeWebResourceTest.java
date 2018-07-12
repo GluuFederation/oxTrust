@@ -6,7 +6,8 @@
 
 package org.gluu.oxtrust.api.attributes.test;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
 
 import java.net.URI;
 import java.util.List;
@@ -15,22 +16,17 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.client.Client;
 
+import org.gluu.oxtrust.action.test.BaseTest;
 import org.gluu.oxtrust.api.GluuAttributeApi;
 import org.gluu.oxtrust.api.proxy.AttributeProxy;
-import org.gluu.oxtrust.util.OxTrustApiConstants;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.extension.rest.client.ArquillianResteasyResource;
 import org.jboss.arquillian.test.api.ArquillianResource;
-import org.jboss.resteasy.client.jaxrs.ResteasyClient;
-import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
-import org.testng.Reporter;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
-import org.gluu.oxtrust.action.test.BaseTest;
 
 /**
  * @author Yuriy Movchan
