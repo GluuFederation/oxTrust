@@ -45,10 +45,11 @@ public enum Validations {EMAIL, PHONE, PHOTO, COUNTRY, LOCALE, TIMEZONE;
                 break;
             case PHONE:
                 pass=true;
-                //TODO: implement phone validation
                 /*
                 From spec: The value SHOULD be specified according to the format defined in [RFC3966], e.g.,
                 'tel:+1-201-555-0123'.
+                IMPORTANT NOTE: Implementing this validation will rise compatibility problems in terms of data current customers
+                handle. More info at https://support.gluu.org/identity-management/5577/scim-address-validator-configurable-validators
                  */
                 break;
             case PHOTO:
