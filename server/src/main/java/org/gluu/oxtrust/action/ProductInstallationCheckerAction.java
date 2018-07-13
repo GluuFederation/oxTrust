@@ -13,6 +13,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.gluu.oxtrust.ldap.service.Shibboleth3ConfService;
+import org.gluu.oxtrust.service.config.cas.CASProtocolAvailability;
 import org.gluu.oxtrust.util.ProductInstallationChecker;
 import org.slf4j.Logger;
 import org.xdi.service.security.Secure;
@@ -38,8 +39,7 @@ public class ProductInstallationCheckerAction implements Serializable {
     private boolean showSAMLMenu = true;
     private boolean showAsimbaSubmenu = true;
     private boolean showSAMLSubmenu = true;
-    // CAS protocol through Shibboleth IDP
-    private boolean showIDP_CAS = true;
+    private CASProtocolAvailability casProtocolAvailability = CASProtocolAvailability.ENABLED;
     
     public ProductInstallationCheckerAction() {
     }
@@ -53,8 +53,8 @@ public class ProductInstallationCheckerAction implements Serializable {
         showAsimbaSubmenu = !ProductInstallationChecker.isGluuCE() || ProductInstallationChecker.isOxAsimbaInstalled();
         
         showSAMLSubmenu = !ProductInstallationChecker.isGluuCE() || shibboleth3ConfService.isIdpInstalled();
-        
-        showIDP_CAS = !ProductInstallationChecker.isGluuCE() || ProductInstallationChecker.isShibbolethIDP3Installed();
+
+        casProtocolAvailability = CASProtocolAvailability.get();
     }
 
     /**
@@ -103,14 +103,14 @@ public class ProductInstallationCheckerAction implements Serializable {
      * @return the showIDP_CAS
      */
     public boolean isShowIDP_CAS() {
-        return showIDP_CAS;
+        return casProtocolAvailability.isAvailable();
     }
 
     /**
      * @param showIDP_CAS the showIDP_CAS to set
      */
     public void setShowIDP_CAS(boolean showIDP_CAS) {
-        this.showIDP_CAS = showIDP_CAS;
+        this.casProtocolAvailability = CASProtocolAvailability.from(showIDP_CAS);
     }
     
     

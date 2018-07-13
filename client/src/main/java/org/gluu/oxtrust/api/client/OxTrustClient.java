@@ -7,6 +7,8 @@ package org.gluu.oxtrust.api.client;
 
 import java.io.UnsupportedEncodingException;
 
+import org.gluu.oxtrust.api.client.authentication.defaultAuthenticationMethod.DefaultAuthenticationClient;
+import org.gluu.oxtrust.api.client.authentication.ldap.LdapClient;
 import org.gluu.oxtrust.api.client.configuration.OxAuthConfClient;
 import org.gluu.oxtrust.api.client.configuration.OxTrustConfClient;
 import org.gluu.oxtrust.api.client.logs.LogClient;
@@ -51,8 +53,10 @@ public class OxTrustClient {
 	private final LogClient logClient;
 	private final OxAuthConfClient oxAuthConfClient;
 	private final OxTrustConfClient oxTrustConfClient;
+	private final LdapClient ldapClient;
+	private final DefaultAuthenticationClient defaultAuthenticationClient;
 
-        private final CertificatesClient certificatesClient;
+	private final CertificatesClient certificatesClient;
 
 	private final SSLContext sslContext;
 
@@ -98,6 +102,8 @@ public class OxTrustClient {
 		logClient = new LogClient(client, baseURI);
 		oxAuthConfClient = new OxAuthConfClient(client, baseURI);
 		oxTrustConfClient = new OxTrustConfClient(client, baseURI);
+		ldapClient = new LdapClient(client, baseURI);
+		defaultAuthenticationClient = new DefaultAuthenticationClient(client, baseURI);
 		peopleClient = new PeopleClient(client, baseURI);
                 certificatesClient = new CertificatesClient(client, baseURI);
 	}
@@ -133,6 +139,8 @@ public class OxTrustClient {
 		logClient = new LogClient(client, baseURI);
 		oxAuthConfClient = new OxAuthConfClient(client, baseURI);
 		oxTrustConfClient = new OxTrustConfClient(client, baseURI);
+		ldapClient = new LdapClient(client, baseURI);
+		defaultAuthenticationClient = new DefaultAuthenticationClient(client, baseURI);
 		peopleClient = new PeopleClient(client, baseURI);
                 certificatesClient = new CertificatesClient(client, baseURI);
 	}
@@ -203,5 +211,13 @@ public class OxTrustClient {
 
 	public OxTrustConfClient getOxTrustConfClient() {
 		return oxTrustConfClient;
+	}
+
+	public LdapClient getLdapClient() {
+		return ldapClient;
+	}
+
+	public DefaultAuthenticationClient getDefaultAuthenticationClient() {
+		return defaultAuthenticationClient;
 	}
 }
