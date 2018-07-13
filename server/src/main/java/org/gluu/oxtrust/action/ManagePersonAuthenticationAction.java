@@ -66,6 +66,10 @@ import org.xdi.util.security.StringEncrypter.EncryptionException;
 public class ManagePersonAuthenticationAction
 		implements SimplePropertiesListModel, SimpleCustomPropertiesListModel, LdapConfigurationModel, Serializable {
 
+	private static final String CLIENT_SECRET = "clientSecret";
+
+	private static final String CLIENT_ID = "clientID";
+
 	private static final long serialVersionUID = -4470460481895022468L;
 
 	@Inject
@@ -130,8 +134,8 @@ public class ManagePersonAuthenticationAction
 		String outcome = modifyImpl();
 
 		if (OxTrustConstants.RESULT_FAILURE.equals(outcome)) {
-			facesMessages.add(FacesMessage.SEVERITY_ERROR,
-					facesMessages.evalResourceAsString("#{msg['configuration.manageAuthentication.failToPrepareUpdate']}"));
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, facesMessages
+					.evalResourceAsString("#{msg['configuration.manageAuthentication.failToPrepareUpdate']}"));
 			conversationService.endConversation();
 		}
 
@@ -227,8 +231,9 @@ public class ManagePersonAuthenticationAction
 
 		reset();
 
-		facesMessages.add(FacesMessage.SEVERITY_INFO, facesMessages.evalResourceAsString("#{msg['configuration.manageAuthentication.updateSucceed']}"));
-		
+		facesMessages.add(FacesMessage.SEVERITY_INFO,
+				facesMessages.evalResourceAsString("#{msg['configuration.manageAuthentication.updateSucceed']}"));
+
 		conversationService.endConversation();
 
 		return OxTrustConstants.RESULT_SUCCESS;
@@ -252,7 +257,8 @@ public class ManagePersonAuthenticationAction
 	}
 
 	public String cancel() {
-		facesMessages.add(FacesMessage.SEVERITY_INFO, facesMessages.evalResourceAsString("#{msg['configuration.manageAuthentication.updateFailed']}"));
+		facesMessages.add(FacesMessage.SEVERITY_INFO,
+				facesMessages.evalResourceAsString("#{msg['configuration.manageAuthentication.updateFailed']}"));
 		conversationService.endConversation();
 
 		return OxTrustConstants.RESULT_SUCCESS;
@@ -352,7 +358,8 @@ public class ManagePersonAuthenticationAction
 			if (connectionProvider.isConnected()) {
 				connectionProvider.closeConnectionPool();
 
-				facesMessages.add(FacesMessage.SEVERITY_INFO, facesMessages.evalResourceAsString("#{msg['configuration.manageAuthentication.ldap.testSucceed']}"));
+				facesMessages.add(FacesMessage.SEVERITY_INFO, facesMessages
+						.evalResourceAsString("#{msg['configuration.manageAuthentication.ldap.testSucceed']}"));
 
 				return OxTrustConstants.RESULT_SUCCESS;
 
@@ -364,7 +371,8 @@ public class ManagePersonAuthenticationAction
 			log.error("Could not connect to LDAP", ex);
 		}
 
-		facesMessages.add(FacesMessage.SEVERITY_ERROR, facesMessages.evalResourceAsString("#{msg['configuration.manageAuthentication.ldap.testFailed']}"));
+		facesMessages.add(FacesMessage.SEVERITY_ERROR,
+				facesMessages.evalResourceAsString("#{msg['configuration.manageAuthentication.ldap.testFailed']}"));
 
 		return OxTrustConstants.RESULT_FAILURE;
 	}
@@ -461,10 +469,21 @@ public class ManagePersonAuthenticationAction
 	}
 
 	public void addStrategy() {
-		PassportConfiguration passportConfiguration = new PassportConfiguration();
 		if (ldapPassportConfigurations == null) {
 			ldapPassportConfigurations = new ArrayList<PassportConfiguration>();
 		}
+		SimpleExtendedCustomProperty clientIDField = new SimpleExtendedCustomProperty();
+		clientIDField.setValue1(CLIENT_ID);
+		clientIDField.setValue2(facesMessages
+				.evalResourceAsString("#{msg['manageAuthentication.passport.strategy.clientIDFieldHint']}"));
+		SimpleExtendedCustomProperty clientSecretField = new SimpleExtendedCustomProperty();
+		clientSecretField.setValue1(CLIENT_SECRET);
+		clientSecretField.setValue2(facesMessages
+				.evalResourceAsString("#{msg['manageAuthentication.passport.strategy.clientSecretFieldHint']}"));
+		PassportConfiguration passportConfiguration = new PassportConfiguration();
+		passportConfiguration.setFieldset(new ArrayList<SimpleExtendedCustomProperty>());
+		passportConfiguration.getFieldset().add(clientIDField);
+		passportConfiguration.getFieldset().add(clientSecretField);
 		this.ldapPassportConfigurations.add(passportConfiguration);
 	}
 

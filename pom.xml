@@ -35,7 +35,7 @@
 		<richfaces.version>4.5.17.Final</richfaces.version>
 		<jsf.version>2.2.16</jsf.version>
 		<uel.version>2.2</uel.version>
-		<omnifaces.version>2.6.6</omnifaces.version>
+		<omnifaces.version>2.6.9</omnifaces.version>
 
 		<shibboleth.jce.version>1.1.0</shibboleth.jce.version>
 		<shibboleth.idp.version>2.4.5</shibboleth.idp.version>
@@ -46,9 +46,9 @@
 		<antlr4.version>4.5.2-1</antlr4.version>
 		<antlr4.visitor>true</antlr4.visitor>
 
-		<jetty.version>9.4.2.v20170220</jetty.version>
+		<jetty.version>9.4.9.v20180320</jetty.version>
 
-		<arquillian.version>1.1.11.Final</arquillian.version>
+		<arquillian.version>1.4.0.Final</arquillian.version>
 		<arquillian.rest.version>1.0.0.Alpha4</arquillian.rest.version>
 		<arquillian.drone.version>2.0.0.Final</arquillian.drone.version>
 		<arquillian.graphene.version>2.1.0.CR1</arquillian.graphene.version>
@@ -605,7 +605,7 @@
 			<dependency>
 				<groupId>org.testng</groupId>
 				<artifactId>testng</artifactId>
-				<version>6.11</version>
+				<version>6.14.3</version>
 				<scope>test</scope>
 			</dependency>
 
@@ -692,7 +692,7 @@
 			<dependency>
 				<groupId>org.eu.ingwar.tools</groupId>
 				<artifactId>arquillian-suite-extension</artifactId>
-				<version>1.1.1</version>
+				<version>1.2.0</version>
 				<scope>test</scope>
 			</dependency>
 
@@ -770,6 +770,8 @@
 					<artifactId>maven-surefire-plugin</artifactId>
 					<version>2.19.1</version>
 					<configuration>
+						<argLine>-Xms512m -Xmx1024m -XX:MaxMetaspaceSize=256m -XX:+DisableExplicitGC</argLine>
+
 						<!-- Needed as we have both junit and testng -->
 						<failIfNoTests>false</failIfNoTests>
 						<trimStackTrace>false</trimStackTrace>
