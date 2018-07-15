@@ -346,11 +346,10 @@ public class UpdatePersonAction implements Serializable {
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 		
-		if(!update){
-			if(!validatePerson(this.person)){
-				return OxTrustConstants.RESULT_FAILURE;
-			}			
-		}
+		
+		if(!validatePerson(this.person)){
+			return OxTrustConstants.RESULT_FAILURE;
+		}			
 
 		updateCustomObjectClasses();
 
