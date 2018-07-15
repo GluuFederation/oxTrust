@@ -686,15 +686,26 @@ public class UpdatePersonAction implements Serializable {
 	
 		GluuCustomPerson  gluuCustomPerson  = personService.getPersonByUid(person.getUid());
 		if (gluuCustomPerson != null){
+			if(!update){
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Add User failed. Uid already exist: %s",
 					gluuCustomPerson.getUid());
+			}else{
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Update User failed. Uid already exist: %s",
+						gluuCustomPerson.getUid());	
+			}
+			
 			return false;
 		}
 		
 		gluuCustomPerson  = personService.getPersonByEmail(person.getMail());
 		if (gluuCustomPerson != null){
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Add User failed. Mail id already exist: %s",
+			if(!update){
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Add User failed. Mail id already exist: %s",
 					gluuCustomPerson.getMail());
+			}else{
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Update User failed. Mail id already exist: %s",
+						gluuCustomPerson.getMail());
+			}
 			return false;
 		}	
 		
