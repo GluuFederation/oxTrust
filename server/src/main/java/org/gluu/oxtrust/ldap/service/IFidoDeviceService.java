@@ -9,8 +9,6 @@ import java.util.List;
 
 import org.gluu.oxtrust.model.fido.GluuCustomFidoDevice;
 
-import org.gluu.search.filter.Filter;
-
 /**
  * @author Val Pecaoco
  */

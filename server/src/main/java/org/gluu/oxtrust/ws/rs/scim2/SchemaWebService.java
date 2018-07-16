@@ -6,13 +6,28 @@
 
 package org.gluu.oxtrust.ws.rs.scim2;
 
+import static org.gluu.oxtrust.model.scim2.Constants.MEDIA_TYPE_SCIM_JSON;
+import static org.gluu.oxtrust.model.scim2.Constants.UTF8_CHARSET_FRAGMENT;
+
+import java.lang.reflect.Field;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Named;
 import javax.lang.model.type.NullType;
-import javax.ws.rs.*;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
-import com.wordnik.swagger.annotations.Api;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.gluu.oxtrust.model.scim2.AttributeDefinition;
 import org.gluu.oxtrust.model.scim2.BaseScimResource;
@@ -22,19 +37,15 @@ import org.gluu.oxtrust.model.scim2.annotations.Attribute;
 import org.gluu.oxtrust.model.scim2.annotations.Schema;
 import org.gluu.oxtrust.model.scim2.extensions.Extension;
 import org.gluu.oxtrust.model.scim2.extensions.ExtensionField;
-import org.gluu.oxtrust.model.scim2.provider.resourcetypes.ResourceType;
 import org.gluu.oxtrust.model.scim2.provider.config.ServiceProviderConfig;
+import org.gluu.oxtrust.model.scim2.provider.resourcetypes.ResourceType;
 import org.gluu.oxtrust.model.scim2.provider.schema.SchemaAttribute;
 import org.gluu.oxtrust.model.scim2.provider.schema.SchemaResource;
 import org.gluu.oxtrust.model.scim2.util.IntrospectUtil;
 import org.gluu.oxtrust.model.scim2.util.ScimResourceUtil;
 import org.gluu.oxtrust.service.scim2.interceptor.RejectFilterParam;
 
-import java.lang.reflect.Field;
-import java.net.URI;
-import java.util.*;
-
-import static org.gluu.oxtrust.model.scim2.Constants.*;
+import com.wordnik.swagger.annotations.Api;
 
 /**
  * Web service for the /Schemas endpoint.

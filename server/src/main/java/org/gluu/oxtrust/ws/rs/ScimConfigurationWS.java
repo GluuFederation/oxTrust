@@ -19,7 +19,13 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.gluu.oxtrust.model.scim.ScimConfiguration;
-import org.gluu.oxtrust.ws.rs.scim2.*;
+import org.gluu.oxtrust.ws.rs.scim2.BulkWebService;
+import org.gluu.oxtrust.ws.rs.scim2.FidoDeviceWebService;
+import org.gluu.oxtrust.ws.rs.scim2.GroupWebService;
+import org.gluu.oxtrust.ws.rs.scim2.ResourceTypeWS;
+import org.gluu.oxtrust.ws.rs.scim2.SchemaWebService;
+import org.gluu.oxtrust.ws.rs.scim2.ServiceProviderConfigWS;
+import org.gluu.oxtrust.ws.rs.scim2.UserWebService;
 import org.slf4j.Logger;
 import org.xdi.service.JsonService;
 

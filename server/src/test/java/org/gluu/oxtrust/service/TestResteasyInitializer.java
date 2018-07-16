@@ -6,13 +6,19 @@
 
 package org.gluu.oxtrust.service;
 
-import org.gluu.oxtrust.ws.rs.scim2.*;
-
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.ws.rs.core.Application;
 import javax.ws.rs.ext.Provider;
+
+import org.gluu.oxtrust.api.attributes.AttributeWebResource;
+import org.gluu.oxtrust.ws.rs.scim2.BulkWebService;
+import org.gluu.oxtrust.ws.rs.scim2.GroupWebService;
+import org.gluu.oxtrust.ws.rs.scim2.ResourceTypeWS;
+import org.gluu.oxtrust.ws.rs.scim2.SchemaWebService;
+import org.gluu.oxtrust.ws.rs.scim2.ServiceProviderConfigWS;
+import org.gluu.oxtrust.ws.rs.scim2.UserWebService;
 
 /**
  * Integration with Resteasy
@@ -20,6 +26,7 @@ import javax.ws.rs.ext.Provider;
  * @author Yuriy Movchan
  * @version June 6, 2017
  */
+// TODO: Try to move to test source folder
 @Provider
 public class TestResteasyInitializer extends Application {
 
@@ -32,6 +39,9 @@ public class TestResteasyInitializer extends Application {
         classes.add(ResourceTypeWS.class);
         classes.add(SchemaWebService.class);
         classes.add(ServiceProviderConfigWS.class);
+
+        // API
+        classes.add(AttributeWebResource.class);
 
         return classes;
     }

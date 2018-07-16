@@ -6,6 +6,8 @@
 
 package org.gluu.oxtrust.ldap.service;
 
+import static org.gluu.oxtrust.ldap.service.Shibboleth3ConfService.SHIB3_IDP_METADATA_FOLDER;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
@@ -38,7 +40,6 @@ import org.xdi.util.StringHelper;
 import org.xdi.util.exception.InvalidConfigurationException;
 import org.xdi.util.io.FileUploadWrapper;
 import org.xml.sax.SAXException;
-import static org.gluu.oxtrust.ldap.service.Shibboleth3ConfService.SHIB3_IDP_METADATA_FOLDER;
 
 /**
  * Provides operations with metadata filters

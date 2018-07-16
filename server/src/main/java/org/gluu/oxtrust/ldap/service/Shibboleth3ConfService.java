@@ -46,7 +46,6 @@ import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.model.ProfileConfiguration;
 import org.gluu.oxtrust.model.SubversionFile;
 import org.gluu.oxtrust.util.EasyCASSLProtocolSocketFactory;
-import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.model.base.GluuStatus;
 import org.gluu.saml.metadata.SAMLMetadataParser;
 import org.opensaml.xml.schema.SchemaBuilder;

@@ -9,7 +9,7 @@ package org.gluu.oxtrust.service.test;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
-import javax.inject.Inject;import static org.gluu.oxtrust.ldap.service.AppInitializer.PERSISTENCE_ENTRY_MANAGER_NAME;
+import javax.inject.Inject;
 
 import org.gluu.oxtrust.action.test.BaseTest;
 import org.gluu.oxtrust.ldap.service.IGroupService;

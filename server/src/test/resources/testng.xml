@@ -30,5 +30,12 @@
         </classes>
     </test>
 
+    <!-- Rest API tests (embedded) -->
+    <test name="Check Attributes Rest API (embedded)" enabled="true">
+        <classes>
+            <class name="org.gluu.oxtrust.api.attributes.test.AttributeWebResourceTest" />
+        </classes>
+    </test>
+
 
 </suite>

@@ -7,16 +7,20 @@
 package org.gluu.oxtrust.service.test;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 import java.util.Date;
 
-import javax.inject.Inject;import static org.gluu.oxtrust.ldap.service.AppInitializer.PERSISTENCE_ENTRY_MANAGER_NAME;
+import javax.inject.Inject;
 
 import org.gluu.oxtrust.action.ApplianceStatusAction;
+import org.gluu.oxtrust.action.Authenticator;
 import org.gluu.oxtrust.action.test.BaseTest;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.model.GluuAppliance;
+import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.util.OxTrustConstants;
+import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
 /**
@@ -24,15 +28,31 @@ import org.testng.annotations.Test;
  */
 public class ApplianceStatusTest extends BaseTest {
 
+    @Inject
+    private Identity identity;
+
+    @Inject
+    private Authenticator authenticator;
+
 	@Inject
 	private ApplianceService applianceService;
 
 	@Inject
 	private ApplianceStatusAction applianceStatusAction;
 
+    public void loginUuser(String userUid) {
+        identity.getOauthData().setUserUid(userUid);
+        
+        boolean loggedIn = authenticator.authenticate();
+        assertTrue(loggedIn, "User is not logged in");
+    }
+
 	@Test
-	public void testIsApplianceStatus1() throws Exception {
-		GluuAppliance appliance = applianceService.getAppliance();
+    @Parameters({ "test.login.user.admin.uid" })
+	public void testIsApplianceStatus1(String userUid) {
+	    loginUuser(userUid);
+
+	    GluuAppliance appliance = applianceService.getAppliance();
 
 		Date currentDateTime = new Date();
 		appliance.setLastUpdate(currentDateTime);
@@ -43,7 +63,10 @@ public class ApplianceStatusTest extends BaseTest {
 	}
 
 	@Test(dependsOnMethods = { "testIsApplianceStatus1" })
-	public void testIsApplianceStatus2() throws Exception {
+    @Parameters({ "test.login.user.admin.uid" })
+	public void testIsApplianceStatus2(String userUid) {
+        loginUuser(userUid);
+
 		GluuAppliance appliance = applianceService.getAppliance();
 
 		long currentTime = System.currentTimeMillis() - 50 * 1000;
@@ -56,7 +79,10 @@ public class ApplianceStatusTest extends BaseTest {
 	}
 
 	@Test(dependsOnMethods = { "testIsApplianceStatus2" })
-	public void testIsApplianceStatus3() throws Exception {
+    @Parameters({ "test.login.user.admin.uid" })
+	public void testIsApplianceStatus3(String userUid) {
+        loginUuser(userUid);
+
 		GluuAppliance appliance = applianceService.getAppliance();
 
 		long currentTime = System.currentTimeMillis() - 101 * 1000;
@@ -65,7 +91,7 @@ public class ApplianceStatusTest extends BaseTest {
 
 		applianceService.updateAppliance(appliance);
 		assertEquals(applianceStatusAction.checkHealth(), OxTrustConstants.RESULT_SUCCESS);
-		assertEquals(applianceStatusAction.getHealth(), "OK");
+		assertEquals(applianceStatusAction.getHealth(), "FAIL");
 	}
 
 }

@@ -8,10 +8,8 @@ package org.gluu.oxtrust.service.test;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
 import org.gluu.oxtrust.action.test.AbstractAuthenticationTest;
-
 import org.testng.annotations.Test;
 
 

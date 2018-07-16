@@ -6,27 +6,21 @@
 package org.gluu.oxtrust.service.uma;
 
 import java.io.Serializable;
-import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.lang.StringUtils;
-import org.gluu.oxtrust.exception.UmaProtectionException;
 import org.gluu.oxtrust.service.OpenIdService;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.oxauth.client.ClientInfoClient;
 import org.xdi.oxauth.client.ClientInfoResponse;
-import org.xdi.oxauth.model.uma.wrapper.Token;
-import org.xdi.util.Pair;
 
 /**
  * Provides service to protect APIs Rest service endpoints with UMA scope.

@@ -5,32 +5,38 @@
  */
 package org.gluu.oxtrust.ws.rs.scim2;
 
-import com.wordnik.swagger.annotations.Api;
+import static org.gluu.oxtrust.model.scim2.Constants.MEDIA_TYPE_SCIM_JSON;
+import static org.gluu.oxtrust.model.scim2.Constants.UTF8_CHARSET_FRAGMENT;
+
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Response;
+
 import org.gluu.oxtrust.model.scim2.BaseScimResource;
 import org.gluu.oxtrust.model.scim2.ListResponse;
+import org.gluu.oxtrust.model.scim2.Meta;
 import org.gluu.oxtrust.model.scim2.annotations.Schema;
 import org.gluu.oxtrust.model.scim2.extensions.Extension;
 import org.gluu.oxtrust.model.scim2.fido.FidoDeviceResource;
 import org.gluu.oxtrust.model.scim2.group.GroupResource;
 import org.gluu.oxtrust.model.scim2.provider.resourcetypes.ResourceType;
 import org.gluu.oxtrust.model.scim2.provider.resourcetypes.SchemaExtensionHolder;
-import org.gluu.oxtrust.model.scim2.Meta;
 import org.gluu.oxtrust.model.scim2.user.UserResource;
 import org.gluu.oxtrust.model.scim2.util.ScimResourceUtil;
 import org.gluu.oxtrust.service.scim2.ExtensionService;
 import org.gluu.oxtrust.service.scim2.interceptor.RejectFilterParam;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Response;
-
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.gluu.oxtrust.model.scim2.Constants.*;
+import com.wordnik.swagger.annotations.Api;
 
 /**
  * @author Rahat Ali Date: 05.08.2015

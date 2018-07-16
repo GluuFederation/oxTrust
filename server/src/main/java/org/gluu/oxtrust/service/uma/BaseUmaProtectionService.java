@@ -1,5 +1,18 @@
 package org.gluu.oxtrust.service.uma;
 
+import java.io.Serializable;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.locks.ReentrantLock;
+
+import javax.inject.Inject;
+import javax.ws.rs.container.ResourceInfo;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.Response;
+
 import org.gluu.oxtrust.exception.UmaProtectionException;
 import org.gluu.oxtrust.ldap.service.EncryptionService;
 import org.gluu.oxtrust.service.filter.ProtectedApi;
@@ -11,19 +24,6 @@ import org.xdi.oxauth.model.uma.wrapper.Token;
 import org.xdi.util.Pair;
 import org.xdi.util.StringHelper;
 import org.xdi.util.security.StringEncrypter.EncryptionException;
-
-import javax.inject.Inject;
-import javax.ws.rs.container.ResourceInfo;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
-import java.io.Serializable;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Provide base methods to simplify work with UMA Rest services

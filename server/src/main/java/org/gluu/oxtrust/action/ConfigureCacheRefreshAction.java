@@ -51,7 +51,6 @@ import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.config.oxtrust.CacheRefreshAttributeMapping;
 import org.xdi.config.oxtrust.CacheRefreshConfiguration;
 import org.xdi.model.SimpleCustomProperty;
-import org.xdi.model.SimpleCustomProperty;
 import org.xdi.model.SimpleProperty;
 import org.xdi.model.ldap.GluuLdapConfiguration;
 import org.xdi.service.JsonService;

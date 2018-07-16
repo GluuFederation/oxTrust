@@ -22,7 +22,6 @@ import org.jboss.arquillian.testng.Arquillian;
 import org.jboss.shrinkwrap.api.Archive;
 import org.testng.ITestContext;
 import org.testng.Reporter;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeSuite;
 import org.xdi.util.StringHelper;
 import org.xdi.util.properties.FileConfiguration;
@@ -45,7 +44,7 @@ public abstract class ConfigurableTest extends Arquillian {
 
 	@BeforeSuite
     public void initTestSuite(ITestContext context) throws FileNotFoundException, IOException {
-        Reporter.log("Invoked init test suite method \n", true);
+        Reporter.log("Invoked init test suite method", true);
 
         String propertiesFile = context.getCurrentXmlTest().getParameter("propertiesFile");
         if (StringHelper.isEmpty(propertiesFile)) {
@@ -73,7 +72,7 @@ public abstract class ConfigurableTest extends Arquillian {
             parameters.put(key.toString(), value.toString());
         }
 
-        // Overrided test parameters
+        // Override test parameters
         context.getSuite().getXmlSuite().setParameters(parameters);
     }
 

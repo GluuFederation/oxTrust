@@ -1,11 +1,6 @@
 package org.gluu.oxtrust.exception;
 
-import org.apache.commons.lang.exception.ExceptionUtils;
-import org.gluu.oxtrust.security.Identity;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.xdi.service.cdi.util.CdiUtil;
-import org.xdi.service.security.SecurityEvaluationException;
+import java.util.Iterator;
 
 import javax.enterprise.context.NonexistentConversationException;
 import javax.faces.FacesException;
@@ -16,9 +11,13 @@ import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ExceptionQueuedEvent;
 import javax.faces.event.ExceptionQueuedEventContext;
-import javax.inject.Inject;
 
-import java.util.Iterator;
+import org.apache.commons.lang.exception.ExceptionUtils;
+import org.gluu.oxtrust.security.Identity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xdi.service.cdi.util.CdiUtil;
+import org.xdi.service.security.SecurityEvaluationException;
 
 /**
  * Created by eugeniuparvan on 5/23/17.

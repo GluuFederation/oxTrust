@@ -5,12 +5,12 @@
  */
 package org.gluu.oxtrust.service.filter;
 
-import javax.ws.rs.NameBinding;
-
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
 import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+import javax.ws.rs.NameBinding;
 
 /**
  * Created by jgomer on 2017-11-25.

@@ -20,6 +20,7 @@ import java.util.Enumeration;
 import java.util.List;
 
 import javax.crypto.SecretKey;
+
 import org.gluu.oxtrust.api.X509CertificateShortInfo;
 
 /**

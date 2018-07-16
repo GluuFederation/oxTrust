@@ -5,6 +5,22 @@
  */
 package org.gluu.oxtrust.service.scim2;
 
+import static org.gluu.oxtrust.model.scim2.AttributeDefinition.Mutability.IMMUTABLE;
+import static org.gluu.oxtrust.model.scim2.AttributeDefinition.Mutability.READ_ONLY;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.lang.model.type.NullType;
+import javax.management.InvalidAttributeValueException;
+
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -22,16 +38,6 @@ import org.gluu.oxtrust.service.antlr.scimFilter.ScimFilterParserService;
 import org.gluu.oxtrust.service.antlr.scimFilter.util.FilterUtil;
 import org.slf4j.Logger;
 import org.xdi.util.Pair;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.lang.model.type.NullType;
-import javax.management.InvalidAttributeValueException;
-import java.util.*;
-
-import static org.gluu.oxtrust.model.scim2.AttributeDefinition.Mutability.IMMUTABLE;
-import static org.gluu.oxtrust.model.scim2.AttributeDefinition.Mutability.READ_ONLY;
 
 /**
  * Created by jgomer on 2017-12-17.

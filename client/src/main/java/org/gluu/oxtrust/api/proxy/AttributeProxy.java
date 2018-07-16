@@ -16,6 +16,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.gluu.oxtrust.api.GluuAttributeApi;
 
+@Path("/api/attributes")
 public interface AttributeProxy {
 	
 	public static final String PATH_INUM = "/{inum}";

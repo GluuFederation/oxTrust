@@ -18,16 +18,15 @@ import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.GluuGroupVisibility;
 import org.gluu.oxtrust.util.OxTrustConstants;
+import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.exception.EntryPersistenceException;
 import org.gluu.persist.exception.operation.DuplicateEntryException;
-import org.gluu.persist.PersistenceEntryManager;
+import org.gluu.search.filter.Filter;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.util.ArrayHelper;
 import org.xdi.util.INumGenerator;
 import org.xdi.util.StringHelper;
-
-import org.gluu.search.filter.Filter;
 
 /**
  * Provides operations with groups

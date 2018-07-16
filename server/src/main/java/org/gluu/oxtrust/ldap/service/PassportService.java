@@ -6,8 +6,6 @@
 
 package org.gluu.oxtrust.ldap.service;
 
-import static org.gluu.oxtrust.ldap.service.AppInitializer.PERSISTENCE_ENTRY_MANAGER_NAME;
-
 import java.io.Serializable;
 
 import javax.ejb.Stateless;
@@ -15,8 +13,8 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.gluu.oxtrust.config.ConfigurationFactory;
-import org.gluu.persist.exception.MappingException;
 import org.gluu.persist.PersistenceEntryManager;
+import org.gluu.persist.exception.MappingException;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.LdapOxPassportConfiguration;
 import org.xdi.service.JsonService;

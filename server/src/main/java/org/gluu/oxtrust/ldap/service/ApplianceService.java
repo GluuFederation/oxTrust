@@ -6,6 +6,14 @@
 
 package org.gluu.oxtrust.ldap.service;
 
+import java.io.File;
+import java.io.Serializable;
+import java.util.List;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.persist.PersistenceEntryManager;
 import org.slf4j.Logger;
@@ -17,13 +25,6 @@ import org.xdi.model.SmtpConfiguration;
 import org.xdi.model.custom.script.CustomScriptType;
 import org.xdi.util.StringHelper;
 import org.xdi.util.security.StringEncrypter.EncryptionException;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.inject.Named;
-import java.io.File;
-import java.io.Serializable;
-import java.util.List;
 
 /**
  * GluuAppliance service

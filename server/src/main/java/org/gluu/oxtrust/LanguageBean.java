@@ -1,20 +1,21 @@
 package org.gluu.oxtrust;
 
-import org.gluu.oxtrust.action.HomeAction;
-import org.gluu.oxtrust.ldap.service.PersonService;
-import org.gluu.oxtrust.model.GluuCustomAttribute;
-import org.gluu.oxtrust.model.GluuCustomPerson;
-import org.gluu.oxtrust.security.Identity;
+import java.io.Serializable;
+import java.util.LinkedHashMap;
+import java.util.Locale;
+import java.util.Map;
 
 import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
-import java.io.Serializable;
-import java.util.LinkedHashMap;
-import java.util.Locale;
-import java.util.Map;
+
+import org.gluu.oxtrust.action.HomeAction;
+import org.gluu.oxtrust.ldap.service.PersonService;
+import org.gluu.oxtrust.model.GluuCustomAttribute;
+import org.gluu.oxtrust.model.GluuCustomPerson;
+import org.gluu.oxtrust.security.Identity;
 
 /**
  * Created by eugeniuparvan on 3/6/17.

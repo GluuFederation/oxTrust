@@ -36,7 +36,7 @@
 		<jsf-api.version>2.2.16</jsf-api.version>
 		<jsf-impl.version>2.2.16</jsf-impl.version>
 		<uel.version>2.2</uel.version>
-		<omnifaces.version>2.6.8</omnifaces.version>
+		<omnifaces.version>2.6.9</omnifaces.version>
 
 		<shibboleth.jce.version>1.1.0</shibboleth.jce.version>
 		<shibboleth.idp.version>2.4.5</shibboleth.idp.version>
@@ -46,12 +46,12 @@
 		<antlr4.version>4.7.1</antlr4.version>
 		<antlr4.visitor>true</antlr4.visitor>
 
-		<jetty.version>9.4.7.v20170914</jetty.version>
+		<jetty.version>9.4.9.v20180320</jetty.version>
 
-		<arquillian.version>1.1.11.Final</arquillian.version>
+		<arquillian.version>1.4.0.Final</arquillian.version>
 		<arquillian.rest.version>1.0.0.Alpha4</arquillian.rest.version>
-		<arquillian.drone.version>2.0.1.Final</arquillian.drone.version>
-		<arquillian.graphene.version>2.0.3.Final</arquillian.graphene.version>
+		<arquillian.drone.version>2.0.0.Final</arquillian.drone.version>
+		<arquillian.graphene.version>2.1.0.CR1</arquillian.graphene.version>
 		<shrinkwrap.version>2.1.0</shrinkwrap.version>
 	</properties>
 
@@ -97,8 +97,8 @@
 		<module>static</module>
 		<module>configuration</module>
         <module>model</module>
-		<module>server</module>
         <module>client</module>
+		<module>server</module>
 		<module>scim</module>
 		<module>openid-auth-client</module>
 		<module>saml-openid-auth-client</module>
@@ -138,6 +138,11 @@
             <dependency>
                 <groupId>org.xdi</groupId>
                 <artifactId>oxtrust-model</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.xdi</groupId>
+                <artifactId>oxtrust-client</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
@@ -655,7 +660,7 @@
 			<dependency>
 				<groupId>org.testng</groupId>
 				<artifactId>testng</artifactId>
-				<version>6.11</version>
+				<version>6.14.3</version>
 				<scope>test</scope>
 			</dependency>
 
@@ -742,7 +747,7 @@
 			<dependency>
 				<groupId>org.eu.ingwar.tools</groupId>
 				<artifactId>arquillian-suite-extension</artifactId>
-				<version>1.1.1</version>
+				<version>1.2.0</version>
 				<scope>test</scope>
 			</dependency>
 
@@ -820,6 +825,8 @@
 					<artifactId>maven-surefire-plugin</artifactId>
 					<version>2.19.1</version>
 					<configuration>
+						<argLine>-Xms512m -Xmx1024m -XX:MaxMetaspaceSize=256m -XX:+DisableExplicitGC</argLine>
+
 						<!-- Needed as we have both junit and testng -->
 						<failIfNoTests>false</failIfNoTests>
 						<trimStackTrace>false</trimStackTrace>

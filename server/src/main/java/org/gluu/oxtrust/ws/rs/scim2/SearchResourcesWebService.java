@@ -5,38 +5,44 @@
  */
 package org.gluu.oxtrust.ws.rs.scim2;
 
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.Version;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.module.SimpleModule;
-import org.gluu.oxtrust.service.filter.ProtectedApi;
-import org.gluu.oxtrust.model.scim2.ListResponse;
-import org.gluu.oxtrust.model.scim2.SearchRequest;
-import org.gluu.oxtrust.model.scim2.fido.FidoDeviceResource;
-import org.gluu.oxtrust.model.scim2.group.GroupResource;
-import org.gluu.oxtrust.model.scim2.user.UserResource;
-import org.gluu.oxtrust.model.scim2.util.ScimResourceUtil;
-import org.gluu.oxtrust.service.scim2.interceptor.RefAdjusted;
-import org.gluu.oxtrust.service.scim2.serialization.ListResponseJsonSerializer;
-import org.xdi.util.Pair;
-
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import static javax.ws.rs.core.Response.Status.OK;
+import static org.gluu.oxtrust.model.scim2.Constants.MEDIA_TYPE_SCIM_JSON;
+import static org.gluu.oxtrust.model.scim2.Constants.UTF8_CHARSET_FRAGMENT;
 
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import static org.gluu.oxtrust.model.scim2.Constants.*;
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
-import static javax.ws.rs.core.Response.Status.OK;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.Version;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.module.SimpleModule;
+import org.gluu.oxtrust.model.scim2.ListResponse;
+import org.gluu.oxtrust.model.scim2.SearchRequest;
+import org.gluu.oxtrust.model.scim2.fido.FidoDeviceResource;
+import org.gluu.oxtrust.model.scim2.group.GroupResource;
+import org.gluu.oxtrust.model.scim2.user.UserResource;
+import org.gluu.oxtrust.model.scim2.util.ScimResourceUtil;
+import org.gluu.oxtrust.service.filter.ProtectedApi;
+import org.gluu.oxtrust.service.scim2.interceptor.RefAdjusted;
+import org.gluu.oxtrust.service.scim2.serialization.ListResponseJsonSerializer;
+import org.xdi.util.Pair;
+
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
 
 /**
  * Implementation of the /.search endpoint for the root URL of the service

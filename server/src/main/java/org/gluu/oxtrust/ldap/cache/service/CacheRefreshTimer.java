@@ -6,8 +6,6 @@
 
 package org.gluu.oxtrust.ldap.cache.service;
 
-import static org.gluu.oxtrust.ldap.service.AppInitializer.PERSISTENCE_ENTRY_MANAGER_FACTORY_NAME;
-
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
@@ -39,6 +37,7 @@ import org.gluu.oxtrust.ldap.cache.model.CacheCompoundKey;
 import org.gluu.oxtrust.ldap.cache.model.GluuInumMap;
 import org.gluu.oxtrust.ldap.cache.model.GluuSimplePerson;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
+import org.gluu.oxtrust.ldap.service.ApplicationFactory;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.EncryptionService;
 import org.gluu.oxtrust.ldap.service.IPersonService;
@@ -54,7 +53,6 @@ import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.exception.BasePersistenceException;
 import org.gluu.persist.exception.EntryPersistenceException;
 import org.gluu.persist.ldap.impl.LdapEntryManager;
-import org.gluu.persist.ldap.impl.LdapEntryManagerFactory;
 import org.gluu.persist.model.SearchScope;
 import org.gluu.persist.model.base.GluuBoolean;
 import org.gluu.persist.model.base.GluuDummyEntry;
@@ -99,6 +97,9 @@ public class CacheRefreshTimer {
 	private Event<TimerEvent> timerEvent;
 
 	@Inject
+    protected ApplicationFactory applicationFactory;
+
+	@Inject
 	protected AttributeService attributeService;
 
 	@Inject
@@ -112,9 +113,6 @@ public class CacheRefreshTimer {
 
 	@Inject
 	private PersistenceEntryManager ldapEntryManager;
-
-	@Inject @Named(PERSISTENCE_ENTRY_MANAGER_FACTORY_NAME)
-	private LdapEntryManagerFactory PersistenceEntryManagerFactory;
 
 	@Inject
 	private ApplianceService applianceService;
@@ -1070,15 +1068,15 @@ public class CacheRefreshTimer {
 		Properties ldapProperties = toLdapProperties(ldapConfiguration);
 		Properties ldapDecryptedProperties = encryptionService.decryptProperties(ldapProperties);
 
-		PersistenceEntryManager customPersistenceEntryManager = PersistenceEntryManagerFactory.createEntryManager(ldapDecryptedProperties);
+        PersistenceEntryManager customPersistenceEntryManager = applicationFactory.getPersistenceEntryManagerFactory().createEntryManager(ldapDecryptedProperties);
+        log.info("Created Cache Refresh PersistenceEntryManager: {}", customPersistenceEntryManager);
 
-		if (!customPersistenceEntryManager.getOperationService().isConnected()) {
-			log.error("Failed to connect to LDAP server using configuration {}", ldapConfig);
-			return null;
-		}
-		
+        if (!customPersistenceEntryManager.getOperationService().isConnected()) {
+            log.error("Failed to connect to LDAP server using configuration {}", ldapConfig);
+            return null;
+        }
 
-		return new LdapServerConnection(ldapConfig, customPersistenceEntryManager, getBaseDNs(ldapConfiguration));
+        return new LdapServerConnection(ldapConfig, customPersistenceEntryManager, getBaseDNs(ldapConfiguration));
 	}
 
 	private void closeLdapServerConnection(LdapServerConnection... ldapServerConnections) {

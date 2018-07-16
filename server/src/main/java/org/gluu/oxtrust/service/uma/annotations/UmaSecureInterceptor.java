@@ -8,6 +8,7 @@ package org.gluu.oxtrust.service.uma.annotations;
 import java.lang.annotation.Annotation;
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.annotation.Priority;
 import javax.inject.Inject;
 import javax.interceptor.AroundInvoke;
@@ -15,6 +16,7 @@ import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.Response;
+
 import org.slf4j.Logger;
 import org.xdi.service.el.ExpressionEvaluator;
 import org.xdi.service.security.InterceptSecure;

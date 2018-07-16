@@ -6,8 +6,6 @@
 
 package org.gluu.oxtrust.service.push;
 
-import static org.gluu.oxtrust.ldap.service.AppInitializer.PERSISTENCE_ENTRY_MANAGER_NAME;
-
 import java.io.Serializable;
 import java.util.List;
 import java.util.UUID;
@@ -20,10 +18,9 @@ import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.model.push.PushDevice;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.model.base.SimpleBranch;
+import org.gluu.search.filter.Filter;
 import org.slf4j.Logger;
 import org.xdi.util.StringHelper;
-
-import org.gluu.search.filter.Filter;
 
 /**
  * Provides operations with oxPush devices
