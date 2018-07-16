@@ -25,7 +25,6 @@ import org.xdi.config.oxtrust.ImportPersonConfig;
 import org.xdi.config.oxtrust.LdapOxTrustConfiguration;
 import org.xdi.service.JsonService;
 import org.xdi.service.cache.CacheConfiguration;
-import org.gluu.oxtrust.service.config.oxtrust.OxTrustConfigurationService;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
