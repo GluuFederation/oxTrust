@@ -96,7 +96,7 @@
 
 								<ox:decorate
 									id="passwordReset" label="#{msg['organizationForm.selfServicePasswordReset']}">
-									<h:selectOneMenu value="#{_appliance.passwordResetAllowed}" styleClass="form-control"
+									<h:selectOneMenu value="#{_appliance.passwordResetAllowed}" styleClass="form-control passwordResetSelectBox"
 										id="passwordResetId">
 										<f:selectItems
 											value="#{organizationService.booleanSelectionTypes}"
@@ -107,7 +107,7 @@
 
 								<ox:decorate
 									id="scimEnabledState" label="#{msg['organizationForm.scimSupport']}">
-									<h:selectOneMenu value="#{_appliance.scimEnabled}" styleClass="form-control"
+									<h:selectOneMenu value="#{_appliance.scimEnabled}" styleClass="form-control scimEnableStateSelectBox"
 										id="scimEnabledStateId">
 										<f:selectItems
 											value="#{organizationService.booleanSelectionTypes}"
@@ -118,7 +118,7 @@
 
 								<ox:decorate
 									id="passportEnabledState" label="#{msg['organizationForm.passportSupport']}">
-									<h:selectOneMenu value="#{_appliance.passportEnabled}" styleClass="form-control"
+									<h:selectOneMenu value="#{_appliance.passportEnabled}" styleClass="form-control passportEnableStateSelectBox"
 										id="passportEnabledStateId">
 										<f:selectItems
 											value="#{organizationService.booleanSelectionTypes}"
@@ -129,20 +129,20 @@
 
 								<ox:decorate
 									id="dnsServer" label="#{msg['organizationForm.dnsServer']} 222">
-									<h:inputText styleClass="form-control"
+									<h:inputText styleClass="form-control dnsServerTextBox"
 										title="Multiple addresses can be specified using comma (,)"
 										value="#{_appliance.applianceDnsServer}" size="100" />
 								</ox:decorate>
 
 								<ox:decorate
 									id="maxLogSize" label="#{msg['organizationForm.maxLogSize']}">
-									<h:inputText value="#{_appliance.maxLogSize}" required="true" styleClass="form-control"
+									<h:inputText value="#{_appliance.maxLogSize}" required="true" styleClass="form-control maxLogSizeTextBox"
 										size="10" />
 								</ox:decorate>
 
 								<ox:decorate
 									id="profileManagment" label="#{msg['organizationForm.userCanEditProfile']}">
-									<h:selectOneMenu value="#{_appliance.profileManagment}" styleClass="form-control"
+									<h:selectOneMenu value="#{_appliance.profileManagment}" styleClass="form-control profileManagmentSelectBox"
 										id="profileManagmentStateId">
 										<f:selectItems
 											value="#{organizationService.booleanSelectionTypes}"
@@ -152,7 +152,7 @@
 								</ox:decorate>
 
 								<ox:decorate label="#{msg['organizationForm.contactEmail']}">
-									<h:inputText p:oninvalid="this.setCustomValidity('Please provide a valid email address.')" p:type="email" value="#{_appliance.contactEmail}" styleClass="form-control"/>
+									<h:inputText p:oninvalid="this.setCustomValidity('Please provide a valid email address.')" p:type="email" value="#{_appliance.contactEmail}" styleClass="form-control contactEmailTextBox"/>
 								</ox:decorate>
 
 							</h:panelGroup>
@@ -161,43 +161,43 @@
 							<h:panelGroup layout="block" style="width:80%;">
 
 								<ox:decorate label="#{msg['organizationForm.smtpHost']}">
-									<h:inputText value="#{_smtp.host}" styleClass="form-control"/>
+									<h:inputText value="#{_smtp.host}" styleClass="form-control smtpHostTextBox"/>
 								</ox:decorate>
 
 								<ox:decorate label="#{msg['organizationForm.fromName']}">
-									<h:inputText value="#{_smtp.fromName}" styleClass="form-control"/>
+									<h:inputText value="#{_smtp.fromName}" styleClass="form-control fromNameTextBox"/>
 								</ox:decorate>
 
 								<ox:decorate label="#{msg['organizationForm.fromEmailAddress']}">
-									<h:inputText value="#{_smtp.fromEmailAddress}" styleClass="form-control"/>
+									<h:inputText value="#{_smtp.fromEmailAddress}" styleClass="form-control fromEmailAddressTextBox"/>
 								</ox:decorate>
 
-								<ox:decorate label="#{msg['organizationForm.requiresAuthentication']}">
-									<h:selectBooleanCheckbox styleClass="form-control"
+								<ox:decorate id="requiresAuthenticationCheckBox" label="#{msg['organizationForm.requiresAuthentication']}">
+									<h:selectBooleanCheckbox styleClass="requiresAuthenticationCheckBox form-control"
 										value="#{_smtp.requiresAuthentication}" />
 								</ox:decorate>
 
 								<ox:decorate label="#{msg['organizationForm.smtpUserName']}">
-									<h:inputText value="#{_smtp.userName}" styleClass="form-control"/>
+									<h:inputText value="#{_smtp.userName}" styleClass="form-control smtpUserNameTextBox"/>
 								</ox:decorate>
 
 								<ox:decorate label="#{msg['organizationForm.smtpPassword']}">
-									<h:inputSecret value="#{_smtp.passwordDecrypted}" styleClass="form-control"
+									<h:inputSecret value="#{_smtp.passwordDecrypted}" styleClass="form-control smtpPasswordTextBox"
 										redisplay="true" />
 								</ox:decorate>
 
 								<ox:decorate label="#{msg['organizationForm.requiresSSL']}">
-									<h:selectBooleanCheckbox value="#{_smtp.requiresSsl}" styleClass="form-control"/>
+									<h:selectBooleanCheckbox value="#{_smtp.requiresSsl}" styleClass="form-control requiresSSLCheckBox"/>
 								</ox:decorate>
 								
 								<ox:decorate label="#{msg['organizationForm.trustserver']}">
-									<h:selectBooleanCheckbox value="#{_smtp.serverTrust}" styleClass="form-control"/>
+									<h:selectBooleanCheckbox value="#{_smtp.serverTrust}" styleClass="form-control trustserverCheckBox"/>
 								</ox:decorate>
 
 								<ox:decorate label="#{msg['organizationForm.smtpPort']}">
-									<h:inputText value="#{_smtp.port}" styleClass="form-control"/>
+									<h:inputText value="#{_smtp.port}" styleClass="form-control smtpPortTextBox"/>
 								</ox:decorate>
-								<h:commandButton value="#{msg['organizationForm.testConfiguration']}" styleClass="btn btn-success"
+								<h:commandButton value="#{msg['organizationForm.testConfiguration']}" styleClass="btn btn-success verifyButton"
 									action="#{updateOrganizationAction.verifySmtpConfiguration}"/>
 
 							</h:panelGroup>
@@ -356,7 +356,7 @@
 							<h:panelGroup layout="block" style="width:80%;">
 
 								<ox:decorate label="#{msg['organizationForm.serverip']}">
-									<h:inputText value="#{_webKeySettings.serverIP}" styleClass="form-control"/>
+									<h:inputText value="#{_webKeySettings.serverIP}" styleClass="form-control serverIpTextBox"/>
 								</ox:decorate>
 
 							</h:panelGroup>
