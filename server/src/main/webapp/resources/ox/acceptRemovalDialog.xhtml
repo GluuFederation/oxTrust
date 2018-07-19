@@ -26,7 +26,7 @@
             <h:graphicImage value="/img/close.gif" styleClass="hidelink" style="cursor:pointer" onclick="#{rich:component('acceptRemovalModalPanel')}.hide(); return false;" />
         </f:facet>
 
-        <h:panelGrid columns="1" border="0" cellpadding="0" cellspacing="0" width="100%" columnClasses="alignLeft">
+        <h:panelGrid styleClass="dialogBoxPanelFor#{cc.attrs.value}" columns="1" border="0" cellpadding="0" cellspacing="0" width="100%" columnClasses="alignLeft">
             <h:panelGroup>
                 <h:outputText value="Warning:&#160;" styleClass="bolded" />
                 <h:outputText
@@ -37,12 +37,12 @@
             <richext:spacer height="8" />
 
             <h:panelGroup>
-                <a4j:commandButton styleClass="btn btn-primary" value="Ok" onbegin="#{rich:component('acceptRemovalModalPanel')}.hide();" action="#{cc.attrs.deleteMethod}" render="#{cc.attrs.render}" execute="@this">
+                <a4j:commandButton styleClass="btn btn-primary confirmDialogButton" value="Ok" onbegin="#{rich:component('acceptRemovalModalPanel')}.hide();" action="#{cc.attrs.deleteMethod}" render="#{cc.attrs.render}" execute="@this">
 					<f:param name="sv" value="1" />
                 </a4j:commandButton>
                 &nbsp;
-                <a4j:commandButton styleClass="btn btn-primary" value="Cancel" oncomplete="#{rich:component('acceptRemovalModalPanel')}.hide(); return false;" rendered="#{cc.attrs.cancelMethod == null}" execute="@this"/>&nbsp;
-                <a4j:commandButton styleClass="btn btn-primary" value="Cancel" oncomplete="#{rich:component('acceptRemovalModalPanel')}.hide(); return false;" rendered="#{cc.attrs.cancelMethod != null}" execute="@this"
+                <a4j:commandButton styleClass="btn btn-primary cancelDialogButton" value="Cancel" oncomplete="#{rich:component('acceptRemovalModalPanel')}.hide(); return false;" rendered="#{cc.attrs.cancelMethod == null}" execute="@this"/>&nbsp;
+                <a4j:commandButton styleClass="btn btn-primary cancelDialogButton" value="Cancel" oncomplete="#{rich:component('acceptRemovalModalPanel')}.hide(); return false;" rendered="#{cc.attrs.cancelMethod != null}" execute="@this"
                     action="#{cc.attrs.cancelMethod}"/>&nbsp;
                 <a4j:status startText="Request in progress please wait......" stopText="" startStyle="color:red" />
             </h:panelGroup>
