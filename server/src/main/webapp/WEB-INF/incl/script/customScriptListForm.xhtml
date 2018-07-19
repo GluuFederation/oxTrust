@@ -138,11 +138,11 @@
 		                                    properties="#{_customScript.configurationProperties}" propertiesAction="#{_action}" hideValue="true" />
 		                                    
 		                                <h:panelGroup id="scriptAreaId">
-			                                <h:panelGroup layout="block" styleClass="form-group" rendered="#{_customScript.locationType.value ne 'file'}">
+			                                <h:panelGroup layout="block" styleClass="form-group scriptTextAreaBlock" rendered="#{_customScript.locationType.value ne 'file'}">
 			                               		<h:outputLabel  value="#{msg['customScript.script']}">
 													<span data-toggle="tooltip" data-original-title="#{msg['customScript.script']}"><i class="fa fa-info-circle" aria-hidden="true"></i></span>
 												</h:outputLabel>
-				                                <ox:decorate hideLabel="true" rendered="#{_customScript.locationType.value ne 'file'}" label="#{msg['customScript.script']}">
+				                                <ox:decorate hideLabel="true" styleClass="scriptTextAreaPane" id="scriptTextAreaPane" rendered="#{_customScript.locationType.value ne 'file'}" label="#{msg['customScript.script']}">
 				                                    <h:inputTextarea value="#{_customScript.script}" styleClass="scriptTextArea" cols="110" rows="10" />
 				                                </ox:decorate>
 				                            </h:panelGroup>
@@ -163,8 +163,8 @@
 		                				<h:outputLabel  value="#{msg['customScript.enabled']}">
 												<span data-toggle="tooltip" data-original-title="#{msg['customScript.enabled']}"><i class="fa fa-info-circle" aria-hidden="true"></i></span>
 											</h:outputLabel>
-		                                <ox:decorate hideLabel="true" styleClass="customScriptStatusCheckBox">
-		                                    <h:selectBooleanCheckbox value="#{_customScript.enabled}" />
+		                                <ox:decorate hideLabel="true">
+		                                    <h:selectBooleanCheckbox value="#{_customScript.enabled}" id="customScriptStatusCheckBox" styleClass="customScriptStatusCheckBox" />
 		                                </ox:decorate>
 		                                </h:panelGroup>
 <hr></hr>
