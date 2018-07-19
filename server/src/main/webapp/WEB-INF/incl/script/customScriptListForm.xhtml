@@ -140,9 +140,9 @@
 		                                    properties="#{_customScript.configurationProperties}" propertiesAction="#{_action}" hideValue="true" />
 		                                    
 		                                <h:panelGroup id="scriptAreaId">
-			                                <h:panelGroup layout="block" styleClass="form-group" rendered="#{_customScript.locationType.value ne 'file'}">
+			                                <h:panelGroup layout="block" styleClass="form-group scriptTextAreaBlock" rendered="#{_customScript.locationType.value ne 'file'}">
 			                               		
-				                                <ox:decorate label="#{msg['customScript.script']}"  forId="#{msg['customScript.script']}"  tooltip="#{msg['customScript.script']}"   rendered="#{_customScript.locationType.value ne 'file'}">
+				                                <ox:decorate label="#{msg['customScript.script']}"  forId="#{msg['customScript.script']}"  tooltip="#{msg['customScript.script']}" rendered="#{_customScript.locationType.value ne 'file'}" styleClass="scriptTextAreaPane" id="scriptTextAreaPane">
 				                                    <h:inputTextarea value="#{_customScript.script}" styleClass="scriptTextArea" cols="110" rows="10" />
 				                                </ox:decorate>
 				                            </h:panelGroup>
@@ -160,7 +160,7 @@
 		                				<h:panelGroup layout="block" styleClass="form-group" id="scriptEnableid">
 		                				
 		                                <ox:decorate  label="#{msg['customScript.enabled']}" forId="#{msg['customScript.enabled']}" tooltip="#{msg['customScript.enabled']}" >
-		                                    <h:selectBooleanCheckbox value="#{_customScript.enabled}" styleClass="customScriptStatusCheckBox"/>
+		                                    <h:selectBooleanCheckbox value="#{_customScript.enabled}" id="customScriptStatusCheckBox" styleClass="customScriptStatusCheckBox" />
 		                                </ox:decorate>
 		                                </h:panelGroup>
 <hr></hr>
