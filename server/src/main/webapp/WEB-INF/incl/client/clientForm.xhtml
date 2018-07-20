@@ -709,7 +709,7 @@
                                     <h:panelGroup>
                                         <div class="btn-group" role="group" aria-label="..." style="margin-left:105px;">
 
-                                            <a4j:commandButton styleClass="btn btn-primary"
+                                            <a4j:commandButton styleClass="btn btn-primary addLoginRedirectButton"
                                                                value="#{msg['clientForm.addLoginReiderctURI']}"
                                                                oncomplete="#{rich:component('loginRedirect:inputText')}.show();"
                                                                execute="@this" eventsQueue="clientQueue"/>
@@ -717,44 +717,44 @@
                                                                value="#{msg['clientForm.postLogoutRedirectURI']}"
                                                                oncomplete="#{rich:component('logoutRedirect:inputText')}.show();"
                                                                execute="@this" eventsQueue="clientQueue"/>
-                                            <a4j:commandButton styleClass="btn btn-primary"
+                                            <a4j:commandButton styleClass="btn btn-primary addScopeButton"
                                                                value="#{msg['clientForm.addScope']}"
                                                                oncomplete="#{rich:component('scope:selectScopeModalPanel')}.show();"
                                                                execute="@this" eventsQueue="clientQueue"/>
-                                            <a4j:commandButton styleClass="btn btn-primary"
+                                            <a4j:commandButton styleClass="btn btn-primary addClaimButton"
                                                                value="#{msg['clientForm.addClaim']}"
                                                                oncomplete="#{rich:component('claim:selectClaimModalPanel')}.show();"
                                                                execute="@this" eventsQueue="clientQueue"/>
-                                            <a4j:commandButton styleClass="btn btn-primary"
+                                            <a4j:commandButton styleClass="btn btn-primary addResponseTypeButton"
                                                                value="#{msg['clientForm.addResponseType']}"
                                                                oncomplete="#{rich:component('responseType:selectEntityModalPanel')}.show();"
                                                                execute="@this" eventsQueue="clientQueue"/>
-                                            <a4j:commandButton styleClass="btn btn-primary"
+                                            <a4j:commandButton styleClass="btn btn-primary addGrantTypeButton"
                                                                value="#{msg['clientForm.addGrantType']}"
                                                                oncomplete="#{rich:component('grantType:selectEntityModalPanel')}.show();"
                                                                execute="@this" eventsQueue="clientQueue"/>
-                                            <a4j:commandButton styleClass="btn btn-primary"
+                                            <a4j:commandButton styleClass="btn btn-primary addContactButton"
                                                                value="#{msg['clientForm.addContact']}"
                                                                oncomplete="#{rich:component('contact:inputText')}.show();"
                                                                execute="@this" eventsQueue="clientQueue"/>
-                                            <a4j:commandButton styleClass="btn btn-primary"
+                                            <a4j:commandButton styleClass="btn btn-primary addDefaultACRButton"
                                                                value="#{msg['clientForm.addDefaultACRvalue']}"
                                                                oncomplete="#{rich:component('defaultAcrValue:inputText')}.show();"
                                                                execute="@this" eventsQueue="clientQueue"/>
-                                            <a4j:commandButton styleClass="btn btn-primary"
+                                            <a4j:commandButton styleClass="btn btn-primary addRequestURIButton"
                                                                value="#{msg['clientForm.addRequestURI']}"
                                                                oncomplete="#{rich:component('requestUri:inputText')}.show();"
                                                                execute="@this" eventsQueue="clientQueue"/>
-                                            <a4j:commandButton styleClass="btn btn-primary"
+                                            <a4j:commandButton styleClass="btn btn-primary addAuthorizedOriginButton"
                                                                value="#{msg['clientForm.addAuthorizedOrigin']}"
                                                                oncomplete="#{rich:component('authorizedOrigin:inputText')}.show();"
                                                                execute="@this" eventsQueue="clientQueue"/>
-                                            <a4j:commandButton styleClass="btn btn-primary"
+                                            <a4j:commandButton styleClass="btn btn-primary addFrontChannelLogoutButton"
                                                                value="#{msg['clientForm.addFrontchannelLogoutURI']}"
                                                                oncomplete="#{rich:component('clientLogoutUri:inputText')}.show();"
                                                                execute="@this" eventsQueue="clientQueue"/>
                                                                
-                                            <a4j:commandButton styleClass="btn btn-primary"
+                                            <a4j:commandButton styleClass="btn btn-primary addClaimRedirectButton"
                                                                value="#{msg['clientForm.addClaimRedirectURI']}"
                                                                oncomplete="#{rich:component('claimRedirectUri:inputText')}.show();"
                                                                execute="@this" eventsQueue="clientQueue"/>
