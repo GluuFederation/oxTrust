@@ -23,13 +23,14 @@ public class Address {
 
     public enum Type {WORK, HOME, OTHER}
 
+    //No field is flagged as required in this class since a valid address can be any arbitrary combination of subattributes, see #1037
+
     @Attribute(description = "The full mailing address, formatted for display or use with a mailing label. This attribute" +
             " MAY contain newlines.")
     private String formatted;
 
     @Attribute(description = "The full street address component, which may include house number, street name, PO BOX, " +
-            "and multi-line extended street address information. This attribute MAY contain newlines.",
-            isRequired = true)  //specs says false but it doesn't make sense
+            "and multi-line extended street address information. This attribute MAY contain newlines.")
     private String streetAddress;
 
     @Attribute(description = "The city or locality component.")
