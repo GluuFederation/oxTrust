@@ -290,7 +290,7 @@
 											acceptedTypes="jpg, jpeg, gif, png, bmp"
 											ontyperejected="alert('Only JPG, GIF, PNG and BMP files are accepted');"
 											maxFilesQuantity="1" immediateUpload="true" listHeight="60px"
-											styleClass="uploadFile" style="width:80% !important;"
+											styleClass="uploadFile uploadLogo" style="width:80% !important;"
 											rendered="#{not _organizationAction.custLogoImageExist}">
 											<a4j:ajax event="uploadcomplete" execute="@none"
 												render="custLogoImagePanelId" />
@@ -304,7 +304,7 @@
 													src="#{request.contextPath}/servlet/logo?preview=true" />
 											</h:panelGroup>
 											<richext:spacer height="8" />
-											<a4j:commandLink value="Remove"
+											<a4j:commandLink value="Remove" styleClass="removeLogo"
 												action="#{_organizationAction.removeLogoImage()}"
 												render="custLogoImagePanelId"
 												eventsQueue="organizationQueue" />
@@ -320,7 +320,7 @@
 											acceptedTypes="ico, jpeg, jpg"
 											ontyperejected="alert('Only ICO, JPEG and JPG files are accepted');"
 											maxFilesQuantity="1" immediateUpload="true" listHeight="60px"
-											styleClass="uploadFile" style="width:80% !important;"
+											styleClass="uploadFile uploadFavicon" style="width:80% !important;"
 											rendered="#{not _organizationAction.faviconImageExist}">
 											<a4j:ajax event="uploadcomplete" execute="@none"
 												render="custFaviconImagePanelId" />
@@ -334,7 +334,7 @@
 													src="#{request.contextPath}/servlet/favicon?preview=true" />
 											</h:panelGroup>
 											<richext:spacer height="8" />
-											<a4j:commandLink value="Remove"
+											<a4j:commandLink value="Remove" styleClass="removeFavicon"
 												action="#{_organizationAction.removeFaviconImage()}"
 												render="custFaviconImagePanelId" ajaxSingle="true"
 												limitRender="true" eventsQueue="organizationQueue" />
