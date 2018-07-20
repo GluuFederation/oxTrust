@@ -200,21 +200,21 @@ public class ScimResourceSerializer {
 
     }
 
-    public String serialize(BaseScimResource resource, String attributes, String exclusions) throws Exception{
+    public String serialize(BaseScimResource resource, String attributes, String exclusions) throws Exception {
 
-        SortedSet<String> include =new TreeSet<String>();
-        Class<? extends BaseScimResource> resourceClass=resource.getClass();
+        SortedSet<String> include = new TreeSet<String>();
+        Class<? extends BaseScimResource> resourceClass = resource.getClass();
         buildIncludeSet(include, resourceClass, new ArrayList<String>(resource.getSchemas()), attributes, exclusions);
-        log.debug("serialize. Attributes to include: {}", include);
+        log.trace("serialize. Attributes to include: {}", include);
 
         //Do generic serialization. This works for any POJO (not only subclasses of BaseScimResource)
-        Map<String, Object> map = mapper.convertValue(resource, new TypeReference<Map<String, Object>>(){});
+        Map<String, Object> map = mapper.convertValue(resource, new TypeReference<Map<String, Object>>() { });
         //Using LinkedHashMap allows recursive routines to visit submaps in the same order as fields appear in java classes
-        LinkedHashMap<String, Object> newMap=new LinkedHashMap<String, Object>();
+        LinkedHashMap<String, Object> newMap = new LinkedHashMap<String, Object>();
         traverse("", map, newMap, include);
 
-        String result=mapper.writeValueAsString(newMap);
-        log.debug("serialize. Output is {}", result);
+        String result = mapper.writeValueAsString(newMap);
+        log.trace("serialize. Output is {}", result);
 
         return result;
     }
