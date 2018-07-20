@@ -113,7 +113,7 @@
 									<ox:decorate
 										id="auntheticationMode" label="#{msg['manageAuthentication.authenticationMode']}">
 										<h:selectOneMenu value="#{_action.authenticationMode}"
-											styleClass="form-control">
+											styleClass="form-control defaultAcrSelectBox">
 											<f:selectItems
 												value="#{_action.personAuthenticationConfigurationNames}"
 												var="_name" itemLabel="#{_name}" />
@@ -123,7 +123,7 @@
 									<ox:decorate
 										id="oxTrustAuntheticationMode" label="#{msg['manageAuthentication.oxTrustAuthenticationMode']}">
 										<h:selectOneMenu value="#{_action.oxTrustAuthenticationMode}"
-											styleClass="form-control">
+											styleClass="form-control oxTrustAcrSelectBox">
 											<f:selectItem noSelectionOption="true"  itemLabel="Default"/>
 											<f:selectItems
 												value="#{_action.personAuthenticationConfigurationNames}"
@@ -141,7 +141,7 @@
 
 						<ox:decorate
 									id="PassportEnabledState" label="#{msg['manageAuthentication.passportSupport']}">
-									<h:selectOneMenu value="#{_action.passportEnable}" styleClass="form-control"  
+									<h:selectOneMenu value="#{_action.passportEnable}" styleClass="form-control passportEnableSelectBox"  
 										id="scimEnabledStateId">
 										<f:selectItems
 											value="#{organizationService.booleanSelectionTypes}"
@@ -154,14 +154,14 @@
 	 					<h:panelGroup id="strategyId" rendered="#{_action.passportEnable.getValue()  eq 'enabled'}">
 		                <a4j:region>
 						<a4j:repeat value="#{_ldapPassport}" var="_passportConfig">
-						  <h:panelGroup layout="block" class="card-body">
+						  <h:panelGroup layout="block" class="card-body #{_passportConfig.strategy}">
 								<a4j:commandLink  value="#{msg['manageAuthentication.passport.strategy.deleteStrategy']}" immediate="true" onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();" execute="@region" styleClass="btn btn-danger" style="; z-index:1;"/>
 			                    <h:panelGroup layout="block" class="form-script">
 									<ox:decorate id="text" label="Strategy">
 										<div class="row" style="float: left; margin-left: 3px;">
 											<h:inputText value="#{_passportConfig.strategy}"
 												required="true" immediate="true" size="40" maxlength="40"
-												styleClass="searchParameters form-control" />
+												styleClass="searchParameters form-control strategyNameTextBox" />
 										</div>
 									</ox:decorate>
 						
@@ -175,7 +175,7 @@
 	                  		</a4j:repeat>
 	                    </a4j:region>
                     <h:panelGroup layout="block" styleClass="addConfig">
-                    	<a4j:commandLink styleClass="btn btn-primary" style="font-size:13px !important;" value="#{msg['manageAuthentication.addStrategy']}" action="#{_action.addStrategy()}" render="strategyId" execute="@region">
+                    	<a4j:commandLink styleClass="btn btn-primary addStrategyButton" style="font-size:13px !important;" value="#{msg['manageAuthentication.addStrategy']}" action="#{_action.addStrategy()}" render="strategyId" execute="@region">
                         	<f:param name="sv" value="1" />
                     	</a4j:commandLink>
                     </h:panelGroup>
@@ -188,7 +188,7 @@
                                                                 <ox:decorate
                                                                         id="casProtocolEnabled" label="#{msg['manageAuthentication.enabled']}">
                                                                         <h:selectBooleanCheckbox value="#{updateCASAction.configuration.enabled}"
-                                                                                styleClass="form-control"
+                                                                                styleClass="form-control enableCasProtocolSelectBox"
                                                                                 tabindex="0" >
                                                                         </h:selectBooleanCheckbox>
                                                                 </ox:decorate>
@@ -196,7 +196,7 @@
                                                                 <ox:decorate
                                                                         id="casProtocolSessionStorageType" label="#{msg['manageAuthentication.shibbolethSession']}">
                                                                         <h:selectOneMenu value="#{updateCASAction.configuration.sessionStorageType}"
-                                                                                styleClass="form-control"
+                                                                                styleClass="form-control casProtocolSessionStorageTypeSelectBox"
                                                                                 tabindex="1">
                                                                                 <f:selectItem noSelectionOption="true"  itemLabel="Default"/>
                                                                                 <f:selectItems
@@ -207,7 +207,7 @@
 
                                                                 <ox:decorate
                                                                         id="casProtocolBaseURL" label="#{msg['manageAuthentication.baseCASServerURL']}">
-                                                                        <h:outputText styleClass="form-control"
+                                                                        <h:outputText styleClass="form-control casProtocolBaseURLTextBox"
                                                                             title=""
                                                                             value="#{updateCASAction.casBaseURL}" size="100" />
                                                                 </ox:decorate>
@@ -222,7 +222,7 @@
 
                                                                 <ox:decorate
                                                                         id="casProtocolAuthorizedToProxy" label="#{msg['manageAuthentication.authorizedProxyPattern']}">
-                                                                        <h:inputText styleClass="form-control"
+                                                                        <h:inputText styleClass="form-control casProtocolAuthorizedToProxyTextBox"
                                                                             title=""
                                                                             value="#{updateCASAction.configuration.authorizedToProxyPattern}" size="100" tabindex="2" 
                                                                             required="false" disabled="true" />
@@ -230,13 +230,13 @@
 
                                                                 <ox:decorate
                                                                         id="casProtocolUnauthorizedToProxy" label="#{msg['manageAuthentication.unauthorizedProxyPattern']}">
-                                                                        <h:inputText styleClass="form-control"
+                                                                        <h:inputText styleClass="form-control casProtocolUnauthorizedToProxyTextBox"
                                                                             title=""
                                                                             value="#{updateCASAction.configuration.unauthorizedToProxyPattern}" size="100" tabindex="3" 
                                                                             required="false" disabled="true" />
                                                                 </ox:decorate>
 
-                                                                <h:commandButton styleClass="btn btn-primary"
+                                                                <h:commandButton styleClass="btn btn-primary saveCasButton"
                                                                     style="margin-left:4px" value="#{msg['manageAuthentication.updateConfigurationFiles']}"
                                                                     action="#{updateCASAction.save}" />
                                                         </h:panelGroup>
