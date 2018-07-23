@@ -155,7 +155,7 @@
 		                <a4j:region>
 						<a4j:repeat value="#{_ldapPassport}" var="_passportConfig">
 						  <h:panelGroup layout="block" class="card-body #{(_passportConfig.strategy ne null) ? (_passportConfig.strategy) :'NewEmptyStrategy'}">
-								<a4j:commandLink  value="#{msg['manageAuthentication.passport.strategy.deleteStrategy']}" immediate="true" onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();" execute="@region" styleClass="btn btn-danger" style="; z-index:1;"/>
+								<a4j:commandLink  value="#{msg['manageAuthentication.passport.strategy.deleteStrategy']}" immediate="true" onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();" execute="@region" styleClass="btn btn-danger deleteStrategy" style="; z-index:1;"/>
 			                    <h:panelGroup layout="block" class="form-script">
 									<ox:decorate id="text" label="Strategy">
 										<div class="row" style="float: left; margin-left: 3px;">
