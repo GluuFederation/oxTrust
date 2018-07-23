@@ -9,7 +9,6 @@ package org.gluu.oxtrust.api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
-import org.codehaus.jettison.json.JSONException;
 import org.gluu.oxtrust.api.client.RegistrationManagementRequest;
 import org.gluu.oxtrust.api.client.RegistrationManagementResponse;
 import org.gluu.oxtrust.ldap.service.AttributeService;
@@ -38,6 +37,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,6 +53,7 @@ public class RegistrationManagementService {
 
     public static final String SERVER_DENIED_THE_REQUEST = "Server denied the request.";
     public static final String MALFORMED_REQUEST = "The request is malformed.";
+
     @Inject
     private Logger log;
 
@@ -69,6 +70,13 @@ public class RegistrationManagementService {
     /**
      * This operation retrieves the configuration info for the specified findAttributesForPattern criteria,
      * or all the configurations if no findAttributesForPattern criteria specified.
+     * <p>
+     * Note:
+     * Due to some properties of {@link GluuAttribute} class, direct JSON mapping may result in JSON exceptions.
+     * This may not be an issue on browser side, however, the java clients that are calling this method
+     * should not rely on automatic conversion of JSON objects to {@link RegistrationManagementResponse} class
+     * and should rather use {@link org.codehaus.jackson.map.DeserializationConfig.Feature} class <code>FAIL_ON_UNKNOWN_PROPERTIES</code> properties
+     * for deserialization.
      *
      * @param searchPattern   Search pattern.
      * @param securityContext An injectable interface that provides access to security related information.
@@ -92,8 +100,9 @@ public class RegistrationManagementService {
         return response;
     }
 
-
     /**
+     * Saves the registration configuration data
+     *
      * @param requestJson     request parameters
      * @param httpRequest     http request object
      * @param securityContext An injectable interface that provides access to security related information.
@@ -116,9 +125,9 @@ public class RegistrationManagementService {
     public Response saveConfiguration(String requestJson, @HeaderParam("Authorization") String authorization, @Context HttpServletRequest httpRequest, @Context SecurityContext securityContext) {
         try {
             RegistrationManagementRequest request = RegistrationManagementRequest.fromJson(requestJson);
-            final String captchaDisabled = request.getCaptchaDisabled();
-            return save(Boolean.valueOf(captchaDisabled), request.getSelectedAttributes());
-        } catch (JSONException jsonEx) {
+            final Boolean captchaDisabled = request.getCaptchaDisabled();
+            return save(captchaDisabled, request.getSelectedAttributes());
+        } catch (IOException jsonEx) {
             log.error("Error while parsing request", jsonEx);
             return Response.status(Response.Status.BAD_REQUEST).build();
         } catch (Exception otherEx) {
@@ -158,7 +167,6 @@ public class RegistrationManagementService {
             regResponse.setCaptchaDisabled(config.isCaptchaDisabled());
             List<String> attributeList = config.getAdditionalAttributes();
             if (attributeList != null && !attributeList.isEmpty()) {
-               // configureRegistrationForm = true; // Is this needed in REST service ?
                 for (String attributeInum : attributeList) {
                     GluuAttribute attribute = attributeService.getAttributeByInum(attributeInum);
                     selectedAttributes.add(attribute);
@@ -170,7 +178,6 @@ public class RegistrationManagementService {
         regResponse.setOxTrustappConfiguration(oxTrustAppConfiguration);
         try {
             regResponse.setAttributes(findAttributesForPattern(selectedAttributes, searchPattern));
-
         } catch (Exception ex) {
             log.error("Failed to find attributes", ex);
             return Response.serverError();
@@ -186,12 +193,6 @@ public class RegistrationManagementService {
     Finds attribute list for specified search pattern.
      */
     private List<GluuAttribute> findAttributesForPattern(final List<GluuAttribute> selectedAttributes, final String searchPattern) throws Exception {
-        // We may not perform this comparison as rest is stateless.
-        // After confirming with business analyst implement a work around
-        // or delete the following block.
-       /* if (StringHelper.isNotEmpty(this.oldSearchPattern) && Util.equals(this.oldSearchPattern, this.searchPattern)) {
-            return OxTrustConstants.RESULT_SUCCESS;
-        }*/
         final List<GluuAttribute> attributes;
         if (StringHelper.isEmpty(searchPattern)) {
             attributes = attributeService.getAllAttributes();

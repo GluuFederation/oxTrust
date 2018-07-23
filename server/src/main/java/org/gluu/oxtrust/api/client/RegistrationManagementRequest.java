@@ -1,11 +1,14 @@
+/*
+ * oxTrust is available under the MIT License (2008). See http://opensource.org/licenses/MIT for full text.
+ *
+ * Copyright (c) 2014, Gluu
+ */
 package org.gluu.oxtrust.api.client;
 
 import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.gluu.oxtrust.model.registration.ManagementRegReqParam;
 import org.xdi.model.GluuAttribute;
 import org.xdi.oxauth.client.BaseRequest;
 
@@ -13,6 +16,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.codehaus.jackson.map.DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES;
 import static org.gluu.oxtrust.model.registration.ManagementRegReqParam.CAPTCHA_DISABLED;
 import static org.gluu.oxtrust.model.registration.ManagementRegReqParam.SELECTED_ATTRIBUTES;
 import static org.xdi.oxauth.model.util.StringUtils.toJSONArray;
@@ -23,19 +27,19 @@ import static org.xdi.oxauth.model.util.StringUtils.toJSONArray;
  * @author Shoeb Khan
  * @version July 06, 2018
  */
-public class RegistrationManagementRequest extends BaseRequest {
+public class RegistrationManagementRequest  {
 
 
     private List<GluuAttribute> selectedAttributes;
 
-    private String captchaDisabled;
+    private Boolean captchaDisabled;
 
-    private RegistrationManagementRequest() {
+    public RegistrationManagementRequest() {
 
         selectedAttributes = new ArrayList<GluuAttribute>();
     }
 
-    @Override
+
     public String getQueryString() {
         String jsonQueryString = null;
         try {
@@ -53,31 +57,11 @@ public class RegistrationManagementRequest extends BaseRequest {
      * @return RegistrationManagementRequest
      * @throws JSONException
      */
-    public static RegistrationManagementRequest fromJson(String requestJson) throws JSONException {
-        final JSONObject requestObject = new JSONObject(requestJson);
-        final List<GluuAttribute> selectedAttributes = new ArrayList<GluuAttribute>();
-        final RegistrationManagementRequest request = new RegistrationManagementRequest();
-        if (requestObject.has(SELECTED_ATTRIBUTES.toString())) {
-            JSONArray attributesJsonArray = requestObject.getJSONArray(SELECTED_ATTRIBUTES.toString());
-            for (int i = 0; i < attributesJsonArray.length(); i++) {
-                JSONObject attObj = attributesJsonArray.getJSONObject(i);
-                GluuAttribute attribute = null;
-                try {
-                    ObjectMapper mapper = new ObjectMapper()
-                            .configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES.FAIL_ON_UNKNOWN_PROPERTIES, false);
-                    attribute = mapper.readValue(attObj.toString(), GluuAttribute.class);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                selectedAttributes.add(attribute);
-            }
-        }
-        //
-        request.selectedAttributes = selectedAttributes;
-        //
-        if (requestObject.has(CAPTCHA_DISABLED.toString())) {
-            request.captchaDisabled = requestObject.getString(ManagementRegReqParam.CAPTCHA_DISABLED.toString());
-        }
+    public static RegistrationManagementRequest fromJson(String requestJson) throws IOException {
+        RegistrationManagementRequest request;
+        ObjectMapper mapper = new ObjectMapper()
+                .configure(FAIL_ON_UNKNOWN_PROPERTIES, false);
+        request = mapper.readValue(requestJson, RegistrationManagementRequest.class);
         return request;
 
     }
@@ -98,10 +82,27 @@ public class RegistrationManagementRequest extends BaseRequest {
     }
 
 
-    public String getCaptchaDisabled() {
+    public Boolean getCaptchaDisabled() {
         return captchaDisabled;
     }
 
+    public void setSelectedAttributes(List<GluuAttribute> selectedAttributes) {
+        this.selectedAttributes = selectedAttributes;
+    }
 
+    public void setCaptchaDisabled(Boolean captchaDisabled) {
+        this.captchaDisabled = captchaDisabled;
+    }
 
+    public String toJsonString() throws IOException {
+        ObjectMapper mapper = new ObjectMapper().configure(DeserializationConfig.Feature.FAIL_ON_NULL_FOR_PRIMITIVES, false);
+        return mapper.writeValueAsString(this);
+
+    }
+
+    public static void main(String[] args) throws IOException {
+        RegistrationManagementRequest request = new RegistrationManagementRequest();
+        request.setCaptchaDisabled(false);
+        request.toJsonString();
+    }
 }

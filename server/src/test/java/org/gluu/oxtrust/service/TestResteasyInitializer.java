@@ -12,6 +12,7 @@ import java.util.Set;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.ext.Provider;
 
+import org.gluu.oxtrust.api.RegistrationManagementService;
 import org.gluu.oxtrust.api.attributes.AttributeWebResource;
 import org.gluu.oxtrust.ws.rs.scim2.BulkWebService;
 import org.gluu.oxtrust.ws.rs.scim2.GroupWebService;
@@ -42,6 +43,7 @@ public class TestResteasyInitializer extends Application {
 
         // API
         classes.add(AttributeWebResource.class);
+        classes.add(RegistrationManagementService.class);
 
         return classes;
     }
