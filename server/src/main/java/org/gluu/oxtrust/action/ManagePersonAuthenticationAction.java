@@ -271,22 +271,17 @@ public class ManagePersonAuthenticationAction
 
 	public boolean updateAuthConf(GluuAppliance appliance) {
 		try {
-			String configId = null;
 			List<OxIDPAuthConf> idpConf = new ArrayList<OxIDPAuthConf>();
 			for (GluuLdapConfiguration ldapConfig : this.sourceConfigs) {
-				if (idpConf.isEmpty()) {
-					configId = ldapConfig.getConfigId();
-				}
 				if (ldapConfig.isUseAnonymousBind()) {
 					ldapConfig.setBindDN(null);
 				}
 
 				OxIDPAuthConf ldapConfigIdpAuthConf = new OxIDPAuthConf();
-				ldapConfig.setConfigId(configId);
 				ldapConfig.updateStringsLists();
 				ldapConfigIdpAuthConf.setType("auth");
 				ldapConfigIdpAuthConf.setVersion(ldapConfigIdpAuthConf.getVersion() + 1);
-				ldapConfigIdpAuthConf.setName(configId);
+				ldapConfigIdpAuthConf.setName(ldapConfig.getConfigId());
 				ldapConfigIdpAuthConf.setEnabled(ldapConfig.isEnabled());
 				ldapConfigIdpAuthConf.setConfig(objectToJson(ldapConfig));
 
