@@ -28,20 +28,20 @@
                     <a4j:repeat value="#{cc.attrs.properties}" var="_property">
                         <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
                             <h:panelGroup>
-                                 <div class="col-sm-11 prop" style="padding-left:0px;">
-                                    <h:inputText id="fInput" styleClass="col-md-6 form-control" style ="margin-bottom:5px;"  value="#{_property[cc.attrs.propertyName]}" size="#{cc.attrs.inputWidth}" required="#{cc.attrs.required}" />
+                                 <div class="col-sm-11 prop" style="padding-left:0px;" id="#{_property[cc.attrs.propertyName]}">
+                                    <h:inputText id="fInput" styleClass="col-md-6 form-control #{_property[cc.attrs.propertyName]}" style ="margin-bottom:5px;"  value="#{_property[cc.attrs.propertyName]}" size="#{cc.attrs.inputWidth}" required="#{cc.attrs.required}" />
                                  </div>
                                  <h:message for="fInput" errorClass="invalid"/>
                                  <h:graphicImage value="/img/error.gif" rendered="#{invalid}" styleClass="errors" />
                                 
-                                 <a4j:commandLink   style="margin-top:5px;font-size:23px !important;" styleClass="glyphicon glyphicon-remove" action="#{cc.attrs.propertiesAction.removeItemFromSimpleProperties(cc.attrs.properties, _property)}" render="propertiesList" execute="@this" />
+                                 <a4j:commandLink   style="margin-top:5px;font-size:23px !important;" styleClass="glyphicon glyphicon-remove removeItemButton" action="#{cc.attrs.propertiesAction.removeItemFromSimpleProperties(cc.attrs.properties, _property)}" render="propertiesList" execute="@this" />
                             </h:panelGroup>
                         </h:panelGrid>
                     </a4j:repeat>
     
                     <a4j:commandLink  action="#{cc.attrs.propertiesAction.addItemToSimpleProperties(cc.attrs.properties)}" render="propertiesList" execute="@this"
                         rendered="#{empty maxItems or maxItems gt properties.size()}">
-                        <h:outputText  style= "margin-left:-12px;" styleClass="btn btn-link" value="Add #{cc.attrs.labelAdd eq null ? cc.attrs.label : cc.attrs.labelAdd}" />
+                        <h:outputText  style= "margin-left:-12px;" styleClass="btn btn-link addItemButton" value="Add #{cc.attrs.labelAdd eq null ? cc.attrs.label : cc.attrs.labelAdd}" />
                     </a4j:commandLink>
                 </a4j:region>
             </h:panelGroup>
