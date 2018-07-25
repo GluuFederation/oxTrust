@@ -25,14 +25,14 @@
                 
                     <rich:fileUpload  id="fileUploadId" fileUploadListener="#{_importAction.uploadFile}" acceptedTypes="ldif"
                                 ontyperejected="alert('Only XLS files are accepted');" maxFilesQuantity="1" immediateUpload="true" listHeight="60px"
-                                styleClass="uploadFile" rendered="#{_importAction.uploadedFile == null}">
+                                styleClass="uploadFile fileUploader" rendered="#{_importAction.uploadedFile == null}">
                                 <a4j:ajax event="uploadcomplete" execute="@none" render="fileImportPanelId, controlButttonId"/>
                     </rich:fileUpload>
 
                     <h:panelGroup layout="block" rendered="#{_importAction.uploadedFile ne null}">
                         <h:outputText value="#{_importAction.uploadedFile.name}" />
                         <richext:spacer width="8" />
-                        <a4j:commandLink value="Remove" action="#{_importAction.removeFileToImport}" render="fileImportPanelId, controlButttonId" ajaxSingle="true" limitRender="true"
+                        <a4j:commandLink  styleClass="removeFileButton" value="Remove" action="#{_importAction.removeFileToImport}" render="fileImportPanelId, controlButttonId" ajaxSingle="true" limitRender="true"
                             eventsQueue="attributeImportQueue" />
                     </h:panelGroup>
                 </h:panelGroup>
@@ -58,9 +58,9 @@
 							<ui:insert name="controlButttons" />
 							<div id="updateButtons">
                         
-                     	<h:commandButton value="Validate" styleClass="btn btn-primary" action="#{_importAction.validateFileToImport()}" rendered="#{not _importAction.fileDataToImport.ready}" />
-                        <h:commandButton value="Import" styleClass="btn btn-primary" action="#{_importAction.importAttributes()}" rendered="#{_importAction.fileDataToImport.ready}" />
-                        <h:commandButton value="Cancel" styleClass="btn btn-primary" action="#{_importAction.cancel}" immediate="true" style="margin-left:5px;" />
+                     	<h:commandButton value="Validate" styleClass="btn btn-primary validateButton" action="#{_importAction.validateFileToImport()}" rendered="#{not _importAction.fileDataToImport.ready}" />
+                        <h:commandButton value="Import" styleClass="btn btn-primary importButton" action="#{_importAction.importAttributes()}" rendered="#{_importAction.fileDataToImport.ready}" />
+                        <h:commandButton value="Cancel" styleClass="btn btn-primary cancelButton" action="#{_importAction.cancel}" immediate="true" style="margin-left:5px;" />
                    </div></div>
         
 						
