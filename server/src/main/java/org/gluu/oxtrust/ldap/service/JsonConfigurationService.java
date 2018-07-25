@@ -16,7 +16,6 @@ import org.gluu.oxtrust.service.config.oxauth.OxAuthConfigObjectMapper;
 import org.gluu.oxtrust.service.config.oxauth.OxAuthConfigurationService;
 import org.gluu.oxtrust.service.config.oxtrust.OxTrustConfigurationExtractor;
 import org.gluu.oxtrust.service.config.oxtrust.OxTrustConfigurationService;
-import org.gluu.persist.exception.BasePersistenceException;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.exception.BasePersistenceException;
 import org.slf4j.Logger;
@@ -26,7 +25,6 @@ import org.xdi.config.oxtrust.ImportPersonConfig;
 import org.xdi.config.oxtrust.LdapOxTrustConfiguration;
 import org.xdi.service.JsonService;
 import org.xdi.service.cache.CacheConfiguration;
-import org.gluu.oxtrust.service.config.oxtrust.OxTrustConfigurationService;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
