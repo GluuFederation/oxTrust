@@ -52,13 +52,13 @@ public class GlobalExceptionHandler extends ExceptionHandlerWrapper {
 				if (isSecurityException(t)) {
 					performRedirect(externalContext, "/login");
 				} else if (isConversationException(t)) {
-					log.error(t.getMessage(), t);
+					log.debug(t.getMessage(), t);
 					performRedirect(externalContext, "/conversation_error");
 				} if (isViewExpiredException(t)) {
                     storeRequestURI();
                     performRedirect(externalContext, "/login");
 				} else {
-					log.error(t.getMessage(), t);
+					log.debug(t.getMessage(), t);
 					performRedirect(externalContext, "/error");
 				}
                 fc.renderResponse();
@@ -93,7 +93,7 @@ public class GlobalExceptionHandler extends ExceptionHandlerWrapper {
         try {
             externalContext.redirect(externalContext.getRequestContextPath() + viewId);
         } catch (Exception e) {
-            log.error("Can't perform redirect to viewId: " + viewId, e);
+            log.debug("Can't perform redirect to viewId: " + viewId, e);
         }
     }
 
