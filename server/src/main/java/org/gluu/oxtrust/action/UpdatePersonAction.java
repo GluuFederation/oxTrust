@@ -684,29 +684,44 @@ public class UpdatePersonAction implements Serializable {
 	
 	private boolean validatePerson(GluuCustomPerson person) throws Exception {
 	
-		GluuCustomPerson  gluuCustomPerson  = personService.getPersonByUid(person.getUid());
-		if (gluuCustomPerson != null){
+		List<GluuCustomPerson>  gluuCustomPersons  = personService.getPersonsByUid(person.getUid());
+		if (gluuCustomPersons != null){
 			if(!update){
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Add User failed. Uid already exist: %s",
-					gluuCustomPerson.getUid());
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "#{msg['UpdatePersonAction.faileAddUserUidExist']} %s",
+					person.getUid());
+					return false;
 			}else{
-				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Update User failed. Uid already exist: %s",
-						gluuCustomPerson.getUid());	
+				if(gluuCustomPersons.size()>0){
+					for(GluuCustomPerson gluuCustomPerson : gluuCustomPersons){
+						if(!gluuCustomPerson.getInum().trim().equals(person.getInum())){
+							facesMessages.add(FacesMessage.SEVERITY_ERROR, "#{msg['UpdatePersonAction.faileUpdateUserUidExist']} %s",
+									person.getUid());
+							return false;
+						}
+						
+					}
+				}	
 			}
-			
-			return false;
 		}
 		
-		gluuCustomPerson  = personService.getPersonByEmail(person.getMail());
-		if (gluuCustomPerson != null){
+		gluuCustomPersons  = personService.getPersonsByEmail(person.getMail());
+		if (gluuCustomPersons != null){
 			if(!update){
-				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Add User failed. Mail id already exist: %s",
-					gluuCustomPerson.getMail());
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, "#{msg['UpdatePersonAction.faileAddUserMailidExist']} %s",
+						person.getMail());
+				return false;
 			}else{
-				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Update User failed. Mail id already exist: %s",
-						gluuCustomPerson.getMail());
+				if(gluuCustomPersons.size()>0){
+					for(GluuCustomPerson gluuCustomPerson : gluuCustomPersons){
+						if(!gluuCustomPerson.getInum().trim().equals(person.getInum())){
+							facesMessages.add(FacesMessage.SEVERITY_ERROR, "#{msg['UpdatePersonAction.faileUpdateUserMailidExist']} %s",
+									person.getMail());
+							return false;
+						}
+					}
+				}
 			}
-			return false;
+			
 		}	
 		
 		return true;
