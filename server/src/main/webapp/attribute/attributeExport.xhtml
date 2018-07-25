@@ -83,7 +83,7 @@
                                                                                 <f:facet name="header">
                                                                                     <div style="text-align: center;">#{msg['attribute.exportText']}</div>
                                                                                 </f:facet>
-                                                                                <h:selectBooleanCheckbox
+                                                                                <h:selectBooleanCheckbox styleClass="rowCheckBox"
                                                                                         value="#{attributeInventoryAction.checked[attr.inum]}"/>
                                                                             </h:column>
 
@@ -146,7 +146,7 @@
                                 </div>
                             </div>
                         </div>
-                        <h:commandButton action="#{attributeInventoryAction.submit}" styleClass="btn btn-primary"
+                        <h:commandButton action="#{attributeInventoryAction.submit}" styleClass="btn btn-primary exportAttributeButton"
                                          value="Export"/>
                     </h:form>
 
