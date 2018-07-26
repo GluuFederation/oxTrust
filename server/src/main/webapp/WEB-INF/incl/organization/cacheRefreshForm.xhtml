@@ -77,24 +77,24 @@
 
         <h:panelGroup columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
             <ox:decorate label="#{msg['organization.lastRun']}">
-                <h:outputText id="lastrun" value="#{_configureCacheRefreshAction.appliance.vdsCacheRefreshLastUpdate}">
+                <h:outputText id="lastrun" styleClass="lastRunValueBox" value="#{_configureCacheRefreshAction.appliance.vdsCacheRefreshLastUpdate}">
                     <f:convertDateTime pattern="MMM. d yyyy hh:mm a" />
                 </h:outputText>
             </ox:decorate>
             <ox:decorate label="#{msg['organization.updatesAtTheLastRun']}">
-                <h:outputText  value="#{_configureCacheRefreshAction.appliance.vdsCacheRefreshLastUpdateCount}" />
+                <h:outputText styleClass="updatesAtTheLastRunValueBox" value="#{_configureCacheRefreshAction.appliance.vdsCacheRefreshLastUpdateCount}" />
             </ox:decorate>
             <ox:decorate label="#{msg['organization.problemsAtTheLastRun']}">
-                <h:outputText value="#{_configureCacheRefreshAction.appliance.vdsCacheRefreshProblemCount}" />
+                <h:outputText  styleClass="problemsAtTheLastRunValueBox" value="#{_configureCacheRefreshAction.appliance.vdsCacheRefreshProblemCount}" />
             </ox:decorate> <ox:decorate id="editType" label="#{msg['organization.refreshMethod']}">
-                <h:selectOneMenu styleClass="form-control"  value="#{_configureCacheRefreshAction.updateMethod}" required="true" id="refreshMethodId">
+                <h:selectOneMenu styleClass="form-control refreshMetodSelectBox"  value="#{_configureCacheRefreshAction.updateMethod}" required="true" id="refreshMethodId">
                     <f:selectItems value="#{_configureCacheRefreshAction.allCacheRefreshUpdateMethods}" var="_type" itemLabel="#{_type.displayName}" />
                     <f:converter converterId="org.gluu.jsf2.converter.EnumConverter" />
                     <a4j:ajax event="change" render="vdsTogglePanelGroup, copyTogglePanelGroup" execute="@this" limitRender="true" />
                 </h:selectOneMenu>
             </ox:decorate>
 			  <h:panelGroup id="copyTogglePanelGroup">
-                    <h:panelGroup columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
+                    <h:panelGroup id="properties" columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
                         <ox:simpleCustomPropertiesList rendered="#{_configureCacheRefreshAction.updateMethod.value eq 'copy'}" label="#{msg['organization.sourceAttributeToDesitnation']}"
                             properties="#{_configureCacheRefreshAction.attributeMapping}" propertiesAction="#{_configureCacheRefreshAction}" />
                     </h:panelGroup>
@@ -109,38 +109,38 @@
            </h:outputScript>
 
             <ox:decorate label="#{msg['organization.pollingInterval']}">
-                <h:inputText styleClass="form-control" value="#{_configureCacheRefreshAction.appliance.vdsCacheRefreshPollingInterval}" id="vdsCacheRefreshPollingIntervalId" size="5" />
+                <h:inputText styleClass="form-control pollingIntervalTextBox" value="#{_configureCacheRefreshAction.appliance.vdsCacheRefreshPollingInterval}" id="vdsCacheRefreshPollingIntervalId" size="5" />
             </ox:decorate>
 
             <ox:decorate label="#{msg['organization.serverIPAddress']}">
-                <h:inputText styleClass="form-control" value="#{_configureCacheRefreshAction.appliance.cacheRefreshServerIpAddress}" id="cacheRefreshServerIpAddressId" size="16" />
+                <h:inputText styleClass="form-control serverIpTextBox" value="#{_configureCacheRefreshAction.appliance.cacheRefreshServerIpAddress}" id="cacheRefreshServerIpAddressId" size="16" />
             </ox:decorate>
 
             <ox:decorate label="#{msg['organization.snapshotFolder']}">
-                <h:inputText styleClass="form-control" value="#{_configureCacheRefreshAction.cacheRefreshConfig.snapshotFolder}" size="48" required="true" />
+                <h:inputText styleClass="form-control snapshotFolderTextBox" value="#{_configureCacheRefreshAction.cacheRefreshConfig.snapshotFolder}" size="48" required="true" />
             </ox:decorate>
 
             <ox:decorate label="#{msg['organization.snapshotCount']}">
-                <h:inputText styleClass="form-control" value="#{_configureCacheRefreshAction.cacheRefreshConfig.snapshotMaxCount}" size="5" required="true" />
+                <h:inputText styleClass="form-control snapshotCount" value="#{_configureCacheRefreshAction.cacheRefreshConfig.snapshotMaxCount}" size="5" required="true" />
             </ox:decorate>
 
             <ox:decorate label="#{msg['organization.keepExternalPersons']}">
 
-                <h:selectBooleanCheckbox value="#{_configureCacheRefreshAction.cacheRefreshConfig.keepExternalPerson}"/>
+                <h:selectBooleanCheckbox styleClass="keepInternalPersonCheckBox" value="#{_configureCacheRefreshAction.cacheRefreshConfig.keepExternalPerson}"/>
             </ox:decorate>
 
             <ox:decorate label="#{msg['organization.loadSourceData']}">
 
-                <h:selectBooleanCheckbox value="#{_configureCacheRefreshAction.cacheRefreshConfig.useSearchLimit}"/>
+                <h:selectBooleanCheckbox styleClass="loadSourceDataCheckBox" value="#{_configureCacheRefreshAction.cacheRefreshConfig.useSearchLimit}"/>
             </ox:decorate>
 
             <ox:decorate label="#{msg['organization.searchSizeLimit']} ">
-                <h:inputText styleClass="form-control" value="#{_configureCacheRefreshAction.cacheRefreshConfig.ldapSearchSizeLimit}" size="6" required="false" />
+                <h:inputText styleClass="form-control searchLimitTextBox" value="#{_configureCacheRefreshAction.cacheRefreshConfig.ldapSearchSizeLimit}" size="6" required="false" />
             </ox:decorate>
 
             <ox:decorate
 									id="vdsCacheRefreshState" label="#{msg['organization.cacheRefresh']}">
-									<h:selectOneMenu value="#{_configureCacheRefreshAction.appliance.vdsCacheRefreshEnabled}" styleClass="form-control"
+									<h:selectOneMenu value="#{_configureCacheRefreshAction.appliance.vdsCacheRefreshEnabled}" styleClass="form-control enableCacheRefreshSelectBox"
 										id="vdsCacheRefreshStateId">
 										<f:selectItems
 											value="#{organizationService.booleanSelectionTypes}"
@@ -177,7 +177,7 @@
 
                     <ox:decorate id="customLdapFilter" label="#{msg['organization.customLDAPFilter']}">
                         <h:panelGroup>
-                            <h:inputText styleClass="form-control" value="#{_configureCacheRefreshAction.cacheRefreshConfig.customLdapFilter}" size="48" />
+                            <h:inputText styleClass="form-control customFilterTextBox" value="#{_configureCacheRefreshAction.cacheRefreshConfig.customLdapFilter}" size="48" />
 
                         </h:panelGroup>
                     </ox:decorate>
@@ -201,7 +201,7 @@
                     </rich:dataGrid>
 
                     <h:panelGroup layout="block" styleClass="addConfig">
-                        <a4j:commandLink styleClass="btn btn-link" value="#{msg['organization.addSourceLDAPServer']}" action="#{_configureCacheRefreshAction.addSourceConfig()}" render="sourceConfigsId" style="margin-right:1100px;margin-top:50px;"/>
+                        <a4j:commandLink styleClass="btn btn-link addSourceServerButton" value="#{msg['organization.addSourceLDAPServer']}" action="#{_configureCacheRefreshAction.addSourceConfig()}" render="sourceConfigsId" style="margin-right:1100px;margin-top:50px;"/>
                     </h:panelGroup>
                 </h:panelGroup></div></div>
 
@@ -210,7 +210,7 @@
         <h:panelGroup columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
 
             <ox:decorate label="#{msg['organization.defaultInumServer']}">
-                <h:selectBooleanCheckbox value="#{_configureCacheRefreshAction.cacheRefreshConfig.defaultInumServer}">
+                <h:selectBooleanCheckbox styleClass="defaultInumServerCheckBox" value="#{_configureCacheRefreshAction.cacheRefreshConfig.defaultInumServer}">
                     <a4j:ajax event="click" render="inumServerId" execute="@this" limitRender="true" />
                 </h:selectBooleanCheckbox>
             </ox:decorate>
@@ -233,10 +233,10 @@
 
      <rich:notifyMessages stayTime="2000" nonblocking="true" rendered="#{showGlobalMessages == 'false'}"/>
 
-     <h:commandButton styleClass="btn btn-primary" value="#{msg['organization.update']}"
+     <h:commandButton styleClass="btn btn-primary updateButon" value="#{msg['organization.update']}"
                       action="#{configureCacheRefreshAction.update}"/>
-                        <h:commandButton styleClass="btn btn-primary" value="#{msg['organization.cancel']}" action="#{configureCacheRefreshAction.cancel}" immediate="true" style="margin-left:5px" />
-                        <h:commandButton styleClass="btn btn-primary" value="#{msg['organization.update']} &amp; #{msg['organization.validateScript']}" action="#{configureCacheRefreshAction.validateInterceptorScript}" style="margin-left:5px" />
+                        <h:commandButton styleClass="btn btn-primary cancelButton" value="#{msg['organization.cancel']}" action="#{configureCacheRefreshAction.cancel}" immediate="true" style="margin-left:5px" />
+                        <h:commandButton styleClass="btn btn-primary validateButton" value="#{msg['organization.update']} &amp; #{msg['organization.validateScript']}" action="#{configureCacheRefreshAction.validateInterceptorScript}" style="margin-left:5px" />
 
  </div>
 					</div></div>

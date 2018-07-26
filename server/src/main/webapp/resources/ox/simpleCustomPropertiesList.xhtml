@@ -74,7 +74,7 @@
     
                                 <h:graphicImage value="/img/error.gif" rendered="#{invalid}" styleClass="errors" />
     							
-    							<a4j:commandLink styleClass="glyphicon glyphicon-remove col-md-3" rendered="#{cc.attrs.showRemoveDialogue eq false}"   style="float:left;margin-top: 8px;" action="#{cc.attrs.propertiesAction.removeItemFromSimpleCustomProperties(cc.attrs.properties, _property)}" render="customList" execute="@this" />
+    							<a4j:commandLink styleClass="glyphicon glyphicon-remove col-md-3 removePropertyButton" rendered="#{cc.attrs.showRemoveDialogue eq false}"   style="float:left;margin-top: 8px;" action="#{cc.attrs.propertiesAction.removeItemFromSimpleCustomProperties(cc.attrs.properties, _property)}" render="customList" execute="@this" />
                                 
                                 <a4j:commandLink styleClass="glyphicon glyphicon-remove col-md-3 removePropertyButton" rendered="#{(cc.attrs.showRemoveDialogue) eq true and (_property.value1) ne 'clientID' and (_property.value1) ne 'clientSecret'}"  style="float:left;margin-top: 8px;" onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();"
                                   execute="@region" />
