@@ -18,14 +18,14 @@ import org.apache.commons.lang.StringUtils;
 public enum ManagementRegReqParam {
 
     /**
-     Whether captcha is disabled
+     * Whether captcha is disabled
      */
     CAPTCHA_DISABLED("captchaDisabled"),
 
     /**
      * Selected Attributes
      */
-     SELECTED_ATTRIBUTES("selectedAttributes") ;
+    SELECTED_ATTRIBUTES("selectedAttributes");
 
     /**
      * Parameter name
@@ -70,11 +70,11 @@ public enum ManagementRegReqParam {
     /**
      * Returns whether custom parameter is valid.
      *
-     * @param p_parameterName parameter name
+     * @param parameterName parameter name
      * @return whether custom parameter is valid
      */
-    public static boolean isCustomParameterValid(String p_parameterName) {
-        return StringUtils.isNotBlank(p_parameterName) && !isStandard(p_parameterName);
+    public static boolean isCustomParameterValid(String parameterName) {
+        return !isStandard(parameterName);
     }
 
 

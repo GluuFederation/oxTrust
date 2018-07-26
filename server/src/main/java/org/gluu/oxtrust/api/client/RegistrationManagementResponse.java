@@ -28,17 +28,19 @@ public class RegistrationManagementResponse {
 
     private boolean captchaDisabled;
 
-    private AppConfiguration oxTrustappConfiguration;
+    private String cssLocation;
+
+    private String jsLocation;
+
+    private String getRecaptchaSecretKey;
+
+    private String getRecaptchaSiteKey;
 
     public RegistrationManagementResponse() {
+
+
     }
 
-    public RegistrationManagementResponse(List<GluuAttribute> selectedAttributes, List<GluuAttribute> attributes, boolean captchaDisabled, AppConfiguration oxTrustappConfiguration) {
-        this.selectedAttributes = selectedAttributes;
-        this.attributes = attributes;
-        this.captchaDisabled = captchaDisabled;
-        this.oxTrustappConfiguration = oxTrustappConfiguration;
-    }
 
     public List<GluuAttribute> getAttributes() {
         return attributes;
@@ -64,12 +66,37 @@ public class RegistrationManagementResponse {
         this.captchaDisabled = captchaDisabled;
     }
 
-    public AppConfiguration getOxTrustappConfiguration() {
-        return oxTrustappConfiguration;
+
+    public String getCssLocation() {
+        return cssLocation;
     }
 
-    public void setOxTrustappConfiguration(AppConfiguration oxTrustappConfiguration) {
-        this.oxTrustappConfiguration = oxTrustappConfiguration;
+    public void setCssLocation(String cssLocation) {
+        this.cssLocation = cssLocation;
+    }
+
+    public String getJsLocation() {
+        return jsLocation;
+    }
+
+    public void setJsLocation(String jsLocation) {
+        this.jsLocation = jsLocation;
+    }
+
+    public String getGetRecaptchaSecretKey() {
+        return getRecaptchaSecretKey;
+    }
+
+    public void setGetRecaptchaSecretKey(String getRecaptchaSecretKey) {
+        this.getRecaptchaSecretKey = getRecaptchaSecretKey;
+    }
+
+    public String getGetRecaptchaSiteKey() {
+        return getRecaptchaSiteKey;
+    }
+
+    public void setGetRecaptchaSiteKey(String getRecaptchaSiteKey) {
+        this.getRecaptchaSiteKey = getRecaptchaSiteKey;
     }
 
     /**

@@ -25,18 +25,14 @@ import org.xdi.model.GluuAttribute;
 import org.xdi.util.StringHelper;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -71,15 +67,8 @@ public class RegistrationManagementService {
      * This operation retrieves the configuration info for the specified findAttributesForPattern criteria,
      * or all the configurations if no findAttributesForPattern criteria specified.
      * <p>
-     * Note:
-     * Due to some properties of {@link GluuAttribute} class, direct JSON mapping may result in JSON exceptions.
-     * This may not be an issue on browser side, however, the java clients that are calling this method
-     * should not rely on automatic conversion of JSON objects to {@link RegistrationManagementResponse} class
-     * and should rather use {@link org.codehaus.jackson.map.DeserializationConfig.Feature} class <code>FAIL_ON_UNKNOWN_PROPERTIES</code> properties
-     * for deserialization.
      *
      * @param searchPattern   Search pattern.
-     * @param securityContext An injectable interface that provides access to security related information.
      * @return response
      */
     @GET
@@ -93,7 +82,7 @@ public class RegistrationManagementService {
                     SERVER_DENIED_THE_REQUEST),
             @ApiResponse(code = 200, response = RegistrationManagementResponse.class, message = "Success")
     })
-    public Response getConfiguration(@QueryParam(value = "searchPattern") String searchPattern, @HeaderParam("Authorization") String authorization, @Context HttpServletRequest httpRequest, @Context SecurityContext securityContext) {
+    public Response getConfiguration(@QueryParam(value = "searchPattern") String searchPattern) {
         log.debug("Attempting to read configurations: searchPattern = {}", searchPattern);
         Response.ResponseBuilder builder = search(searchPattern);
         Response response = builder.build();
@@ -104,8 +93,6 @@ public class RegistrationManagementService {
      * Saves the registration configuration data
      *
      * @param requestJson     request parameters
-     * @param httpRequest     http request object
-     * @param securityContext An injectable interface that provides access to security related information.
      * @return response
      */
     @PUT
@@ -122,8 +109,15 @@ public class RegistrationManagementService {
                     SERVER_DENIED_THE_REQUEST)
 
     })
-    public Response saveConfiguration(String requestJson, @HeaderParam("Authorization") String authorization, @Context HttpServletRequest httpRequest, @Context SecurityContext securityContext) {
+    public Response saveConfiguration(String requestJson) {
         try {
+            /* Note:
+             * Due to some properties of {@link GluuAttribute} class, direct JSON mapping may result in JSON exceptions.
+             * This may not be an issue on browser side, however, the java clients that are calling this method
+             * should not rely on automatic conversion of JSON objects to {@link RegistrationManagementResponse} class
+             * and should rather use {@link org.codehaus.jackson.map.DeserializationConfig.Feature} class <code>FAIL_ON_UNKNOWN_PROPERTIES</code> properties
+             * for deserialization.
+             */
             RegistrationManagementRequest request = RegistrationManagementRequest.fromJson(requestJson);
             final Boolean captchaDisabled = request.getCaptchaDisabled();
             return save(captchaDisabled, request.getSelectedAttributes());
@@ -175,7 +169,12 @@ public class RegistrationManagementService {
             }
         }
         regResponse.setSelectedAttributes(selectedAttributes);
-        regResponse.setOxTrustappConfiguration(oxTrustAppConfiguration);
+        if (oxTrustAppConfiguration != null) {
+            regResponse.setCssLocation(oxTrustAppConfiguration.getCssLocation());
+            regResponse.setGetRecaptchaSecretKey(oxTrustAppConfiguration.getRecaptchaSecretKey());
+            regResponse.setJsLocation(oxTrustAppConfiguration.getJsLocation());
+            regResponse.setGetRecaptchaSiteKey(oxTrustAppConfiguration.getRecaptchaSiteKey());
+        }
         try {
             regResponse.setAttributes(findAttributesForPattern(selectedAttributes, searchPattern));
         } catch (Exception ex) {

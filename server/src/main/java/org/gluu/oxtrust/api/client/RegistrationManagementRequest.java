@@ -9,9 +9,10 @@ import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.slf4j.Logger;
 import org.xdi.model.GluuAttribute;
-import org.xdi.oxauth.client.BaseRequest;
 
+import javax.inject.Inject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +35,10 @@ public class RegistrationManagementRequest  {
 
     private Boolean captchaDisabled;
 
+    @Inject
+    private Logger log;
+
+
     public RegistrationManagementRequest() {
 
         selectedAttributes = new ArrayList<GluuAttribute>();
@@ -45,7 +50,7 @@ public class RegistrationManagementRequest  {
         try {
             jsonQueryString = getJSONParameters().toString(4).replace("\\/", "/");
         } catch (JSONException e) {
-            e.printStackTrace();
+            log.error("Error parsing query string.", e);
         }
         return jsonQueryString;
     }
@@ -100,9 +105,5 @@ public class RegistrationManagementRequest  {
 
     }
 
-    public static void main(String[] args) throws IOException {
-        RegistrationManagementRequest request = new RegistrationManagementRequest();
-        request.setCaptchaDisabled(false);
-        request.toJsonString();
-    }
+
 }
