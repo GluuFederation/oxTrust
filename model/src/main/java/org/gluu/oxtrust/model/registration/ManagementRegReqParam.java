@@ -53,13 +53,13 @@ public enum ManagementRegReqParam {
     /**
      * Returns whether parameter is standard
      *
-     * @param p_parameterName parameter name
+     * @param parameterName parameter name
      * @return whether parameter is standard
      */
-    public static boolean isStandard(String p_parameterName) {
-        if (StringUtils.isNotBlank(p_parameterName)) {
+    public static boolean isStandard(String parameterName) {
+        if (StringUtils.isNotBlank(parameterName)) {
             for (ManagementRegReqParam t : values()) {
-                if (t.getName().equalsIgnoreCase(p_parameterName)) {
+                if (t.getName().equalsIgnoreCase(parameterName)) {
                     return true;
                 }
             }
