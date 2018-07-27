@@ -106,13 +106,13 @@
 							properties="#{cc.attrs.ldapConfig.servers}"
 							propertiesAction="#{cc.attrs.propertiesAction}"
 							inputWidth="#{cc.attrs.inputWidth}" required="true"
-							maxItems="#{cc.attrs.maxServerItems}" />
+							maxItems="#{cc.attrs.maxServerItems}" tableId="ServerList" />
 
 						<ox:simplePropertiesList label="#{msg['ldapConfig.baseDN']}" labelAdd="base DN"
 							maxItems="#{cc.attrs.maxBaseDnItems}"
 							properties="#{cc.attrs.ldapConfig.baseDNs}"
 							propertiesAction="#{cc.attrs.propertiesAction}" required="true"
-							rendered="#{cc.attrs.displayBaseDn}" />
+							rendered="#{cc.attrs.displayBaseDn}" tableId="BaseDnList"/>
 						
 						<ox:decorate hideLabel="true">
 						<a4j:commandLink style= "margin-left:-12px;" styleClass="btn btn-link col-sm-8 changeBindDnButton"
