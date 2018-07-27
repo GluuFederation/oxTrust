@@ -10,6 +10,7 @@
     xmlns:cc="http://xmlns.jcp.org/jsf/composite">
 
 <cc:interface>
+    <cc:attribute name="tableId" default="SimplePropertiesList" type="java.lang.String" />
     <cc:attribute name="label" default="" type="java.lang.String" />
     <cc:attribute name="labelAdd" default="" type="java.lang.String" />
     <cc:attribute name="inputWidth" default="48" required="false" type="java.lang.Integer" />
@@ -26,8 +27,8 @@
             <h:panelGroup id="propertiesList">
                 <a4j:region>
                     <a4j:repeat value="#{cc.attrs.properties}" var="_property">
-                        <h:panelGrid id="blockOne" columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
-                            <h:panelGroup styleClass="propertiesList">
+                        <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
+                            <h:panelGroup id="SimplePropertiesList" styleClass="#{cc.attrs.tableId}">
                                 <div class="col-sm-11 prop" style="padding-left:0px;" id="#{_property[cc.attrs.propertyName]}">
                                    <h:inputText id="fInput" styleClass="col-md-6 form-control #{_property[cc.attrs.propertyName] eq '' ? 'NewPropertyBox' : _property[cc.attrs.propertyName]}" style ="margin-bottom:5px;"  value="#{_property[cc.attrs.propertyName]}" size="#{cc.attrs.inputWidth}" required="#{cc.attrs.required and empty param['sv']}" />
                                 </div>

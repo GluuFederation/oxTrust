@@ -165,15 +165,15 @@
 
              <div class="tab-pane" id="key-attributes">
                 <div style="display: inline-block;width: 90% !important;">
-                <h:panelGroup id="mainBlock">
+                <h:panelGroup>
                     <ox:simplePropertiesList label="#{msg['organization.keyAttribute']}" labelAdd="key attribute" maxItems="3" properties="#{_configureCacheRefreshAction.keyAttributes}"
-                        propertiesAction="#{_configureCacheRefreshAction}" required="true" />
+                        propertiesAction="#{_configureCacheRefreshAction}" required="true" tableId="KeyAttributeList"/>
 
                     <ox:simplePropertiesList label="#{msg['organization.objectClass']}" labelAdd="object class" properties="#{_configureCacheRefreshAction.keyObjectClasses}"
-                        propertiesAction="#{_configureCacheRefreshAction}" required="true" />
+                        propertiesAction="#{_configureCacheRefreshAction}" required="true" tableId="ObjectClassList"/>
 
                     <ox:simplePropertiesList label="#{msg['organization.sourceAttribute']}" labelAdd="source attribute" properties="#{_configureCacheRefreshAction.sourceAttributes}"
-                        propertiesAction="#{_configureCacheRefreshAction}" required="true" />
+                        propertiesAction="#{_configureCacheRefreshAction}" required="true" tableId="SourceAttribeList" />
 
                     <ox:decorate id="customLdapFilter" label="#{msg['organization.customLDAPFilter']}">
                         <h:panelGroup>
