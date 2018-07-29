@@ -49,8 +49,9 @@
 								<ox:ldapConfig ldapConfig="#{_ldapConfig}"
 									ldapConfigAction="#{_action}" propertiesAction="#{_action}"
 									displayBaseDn="true" displayAnonymousBind="false"
-									displayRemoveButton="false" displayPrimaryKey="true"
+									displayRemoveButton="true" displayPrimaryKey="true"
 									displayLocalPrimaryKey="true" displayEnable="false"
+									ldapConfigList="#{_action.sourceConfigs}" renderAfterRomoval="sourceConfigsId"
 									changePasswordDialogId="bindPasswordDialogId:changePasswordModalPanel" />		
 									
 									
