@@ -8,6 +8,7 @@
                 xmlns:rich="http://richfaces.org/rich"
                 xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
                 xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
+                xmlns:p="http://primefaces.org/ui"
 >
     <style type="text/css">
         .odd {
@@ -37,7 +38,110 @@
         .tooltipData {
             font-weight: bold;
         }
+        
+        .ui-widget-header {
+		    background: none !important;
+		    repeat-x: top left #005000 !important;
+		    position: relative !important;
+		    padding-left: 10px !important;
+		    cursor: move !important;
+		    padding: 6px !important;
+		    background-color: #337AB7 !important;
+		    width: 100% !important;
+		    border-top-right-radius: 4px !important;
+		    border-top-left-radius: 4px !important;
+		    color:white !important;
+		}
     </style>
+       <h:outputScript>
+
+      function valuesDisplay(element) {
+      var element = $(element);
+
+      		var divvalue = document.getElementById('autogenrateid');
+      		console.log("div element " + element.val);
+      		var eye = divvalue.previousElementSibling;
+    		var eyehide = eye.previousElementSibling;
+      		console.log(eye);
+			console.log(eyehide);
+			eye.style.display = "none";
+			eyehide.style.display = "block";
+		}
+
+
+		function isViewPassword(buttonelementid) {
+	    	isVisible = $("img[id$="+buttonelementid+"]").is(':visible');
+
+    		return isVisible;
+    	}
+
+    	function changeTextType(element,buttonelementid) {
+    		var $element = $(element);
+			if (isViewPassword(buttonelementid)) {
+	    		$element[0].childNodes[2].childNodes[0].setAttribute('type','text');
+			} else {
+	    		$element[0].childNodes[2].childNodes[0].setAttribute('type','password');
+			}
+		}
+
+		function hideSpanValue(element, value) {
+    		var newValue = '';
+    		for (i = 0;  i &lt; value.length ; i++)
+    			newValue += '&bull;';
+
+    		var $element = $(element);
+    		$element[0].childNodes[0].innerHTML = newValue;
+		}
+
+		function restoreSpanValue(element, value) {
+    		var $element = $(element);
+    		$element[0].childNodes[0].innerHTML = value;
+		}
+
+		function viewValue(obj,elementid , eyeButtonid){
+			passwordElement = $("input[id$='"+elementid+"Input']");
+			passwordValue = passwordElement.val();
+
+			passwordElementSpan = $("span[id$='"+elementid+"Label']");
+
+			restoreSpanValue(passwordElementSpan.parent()[0], passwordValue);
+
+			$(obj).css({"display":"none"});
+			$(obj).siblings("img[id$='"+eyeButtonid+"']").css({"display":"block"});
+		}
+
+		function hideValue(obj,elementid,eyeButtonid){
+			passwordElement = $("input[id$='"+elementid+"Input']");
+			passwordValue = passwordElement.val();
+
+			passwordElementSpan = $("span[id$='"+elementid+"Label']");
+
+			hideSpanValue(passwordElementSpan.parent()[0], passwordValue);
+
+			$(obj).css({"display":"none"});
+			$(obj).siblings("img[id$='"+eyeButtonid+"']").css({"display":"block"});
+		}
+
+		function hidePasswordValue(element, value,buttonelementid) {
+			if (isViewPassword(buttonelementid)) {
+				return;
+			}
+
+			hideSpanValue(element, value);
+		}
+
+    </h:outputScript>
+    <h:panelGroup id="summarygroup" >
+     		<ox:clientSummary _clientAction="#{_clientAction}" _client="#{_client}" dialogWidth="600"
+                                    id="summary"  inputWidth="80"
+                                    label="#{msg['client.selectLogoutRedirectURI']}" maxLength="256"  />
+     
+     </h:panelGroup>
+
+		<h:panelGroup layout="block" style="padding-top: 1%;">
+					<p:commandButton value="Client Config Summary"  styleClass="btn btn-primary" type="button" onclick="PF('dlg1').show();" />
+					
+        </h:panelGroup>
 
     <h:form id="clientForm">
         <div class="row">
