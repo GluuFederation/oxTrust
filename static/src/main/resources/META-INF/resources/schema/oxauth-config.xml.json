@@ -531,6 +531,18 @@
                 "minLength": 1
             }
         },
+        "idTokenTokenBindingCnfValuesSupported": {
+            "id": "idTokenTokenBindingCnfValuesSupported",
+            "description": "Array containing a list of the JWT Confirmation Method member names supported by the OP for Token Binding of ID Tokens. The presence of this parameter indicates that the OpenID Provider supports Token Binding of ID Tokens. If omitted, the default is that the OpenID Provider does not support Token Binding of ID Tokens.",
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "additionalItems": true,
+            "items": {
+                "type": "string",
+                "minLength": 1
+            }
+        },
         "uiLocalesSupported": {
             "id": "uiLocalesSupported",
             "description": "Languages and scripts supported for the user interface.",
