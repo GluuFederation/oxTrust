@@ -38,8 +38,8 @@
 		             			   <a4j:region>
 									<rich:dataGrid id="nameIdConfigsId" value="#{configureNameIdAction.nameIdConfigs}" var="_nameIdConfig" columns="1" style="width: 100%;" border="0" columnClasses="noBorder">
 										<div style="display: inline-block; width: 75% !important;">
-											<h:panelGroup layout="block" class="card-body">
-												<a4j:commandLink  value="Delete NameId" onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();" execute="@region" styleClass="btn btn-danger" />
+											<h:panelGroup layout="block" class="card-body #{_nameIdConfig.name eq null ? 'NewNamedID' : _nameIdConfig.name}">
+												<a4j:commandLink  value="Delete NameId" onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();" execute="@region" styleClass="btn btn-danger deleteNameIDButton" />
 
 												<h:panelGroup layout="block" class="form-script">
 							                      	<div  class="form-group">
