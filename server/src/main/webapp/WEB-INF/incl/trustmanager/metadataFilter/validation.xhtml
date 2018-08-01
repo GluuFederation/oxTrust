@@ -7,6 +7,7 @@
     xmlns:a4j="http://richfaces.org/a4j"
     xmlns:rich="http://richfaces.org/rich"
     xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
+    xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
     xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
 
     <h:panelGrid columns="2" id="ValidationFilter" columnClasses="half,half"
@@ -35,9 +36,10 @@
             </rich:list>
             <h:panelGrid>
                 <h:outputText value="#{msg['trustmanager.enterNewExtensionSchema']}" />
-                <rich:inplaceInput defaultLabel="#{msg['trustmanager.clickToEnterExtensionSchema']}" value="#{_metadataFilterSelected.extensionSchema}">
+                <h:inputText  styleClass="form-control"
+							p:placeholder="#{msg['trustmanager.clickToEnterExtensionSchema']}" value="#{_metadataFilterSelected.extensionSchema}">
                     <a4j:ajax event="change" render="ValidationFilterMenu" />
-                </rich:inplaceInput>
+                </h:inputText>
             </h:panelGrid>
         </rich:panel>
     </h:panelGrid>
