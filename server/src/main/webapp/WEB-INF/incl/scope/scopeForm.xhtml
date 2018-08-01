@@ -8,6 +8,7 @@
     xmlns:rich="http://richfaces.org/rich"
     xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
     xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
+    xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
     xmlns:gluufn="http://www.gluu.org/jsf/functions">
     <style type="text/css">
         .odd {
@@ -32,7 +33,7 @@
             </ox:decorate>
 
             <ox:decorate id="displayName" label="#{msg['scope.displayName']}">
-                <rich:inplaceInput value="#{_scope.displayName}"  defaultLabel="Click to enter Display Name" maxlength="60" inputWidth="704"  required="true" id="displayNameId" />
+                <h:inputText  styleClass="form-control" p:placeholder="Click to enter Display Name" value="#{_scope.displayName}"  maxlength="60" inputWidth="704"  required="true" id="displayNameId" />
             </ox:decorate>
 
             <ox:decorate id="description" label="#{msg['scope.description']}">

@@ -94,8 +94,8 @@
                                                                      rendered="#{_custAttr.userCanAccess  and (_custAttr.metadata.dataType.value ne 'photo') and (_custAttr.metadata.displayName ne 'Inum') and (_custAttr.metadata.name ne 'gluuIMAPData')}"
                                                                      template="/WEB-INF/incl/layout/#{_custAttr.userCanEdit  ? 'edit' : 'view'}.xhtml">
                                                             <div class="col-sm-11">
-                                                                <rich:inplaceInput
-                                                                        defaultLabel="click to enter #{_custAttr.metadata.displayName}"
+                                                                <h:inputText  styleClass="form-control"
+																		p:placeholder="click to enter #{_custAttr.metadata.displayName}"
                                                                         id="custId" inputWidth="300" maxlength="60"
                                                                         rendered="#{_custAttr.userCanEdit and permissionService.hasPermission(applianceService.appliance, 'profile_management')}"
                                                                         value="#{_custAttr.value}"/>
@@ -195,8 +195,8 @@
                                                                          rendered="#{_custAttr.userCanAccess  and (_custAttr.metadata.name eq 'gluuIMAPData')}"
                                                                          template="/WEB-INF/incl/layout/#{_custAttr.userCanEdit  ? 'edit' : 'view'}.xhtml">
                                                                 <div class="col-sm-11">
-                                                                    <rich:inplaceInput
-                                                                            defaultLabel="click to enter Imap Host"
+                                                                   <h:inputText  styleClass="form-control"
+																			p:placeholder="click to enter Imap Host"
                                                                             id="custId" immediate="true"
                                                                             inputWidth="300" maxlength="60"
                                                                             rendered="#{_custAttr.userCanEdit and permissionService.hasPermission(applianceService.appliance, 'profile_management')}"
@@ -212,8 +212,8 @@
                                                                          rendered="#{_custAttr.userCanAccess  and (_custAttr.metadata.name eq 'gluuIMAPData')}"
                                                                          template="/WEB-INF/incl/layout/#{_custAttr.userCanEdit  ? 'edit' : 'view'}.xhtml">
                                                                 <div class="col-sm-11">
-                                                                    <rich:inplaceInput
-                                                                            defaultLabel="click to enter imap username"
+                                                                    <h:inputText  styleClass="form-control"
+																			p:placeholder="click to enter imap username"
                                                                             id="custId" immediate="true"
                                                                             inputWidth="300" maxlength="60"
                                                                             rendered="#{_custAttr.userCanEdit and permissionService.hasPermission(applianceService.appliance, 'profile_management')}"
@@ -229,8 +229,8 @@
                                                                          rendered="#{_custAttr.userCanAccess  and (_custAttr.metadata.name eq 'gluuIMAPData')}"
                                                                          template="/WEB-INF/incl/layout/#{_custAttr.userCanEdit  ? 'edit' : 'view'}.xhtml">
                                                                 <div class="col-sm-11">
-                                                                    <rich:inplaceInput
-                                                                            defaultLabel="click to enter imap port"
+                                                                    <h:inputText  styleClass="form-control"
+																			p:placeholder="click to enter imap port"
                                                                             id="custId" immediate="true"
                                                                             inputWidth="300" maxlength="60"
                                                                             rendered="#{_custAttr.userCanEdit and permissionService.hasPermission(applianceService.appliance, 'profile_management')}"
@@ -247,8 +247,8 @@
                                                                          rendered="#{_custAttr.userCanAccess  and (_custAttr.metadata.name eq 'gluuIMAPData')}"
                                                                          template="/WEB-INF/incl/layout/#{_custAttr.userCanEdit  ? 'edit' : 'view'}.xhtml">
                                                                 <div class="col-sm-11">
-                                                                    <rich:inplaceInput
-                                                                            defaultLabel="click to enter Imap Password encryptedString"
+                                                                    <h:inputText  styleClass="form-control"
+																			p:placeholder="click to enter Imap Password encryptedString"
                                                                             id="custId" immediate="true"
                                                                             inputWidth="300" maxlength="60"
                                                                             rendered="#{_custAttr.userCanEdit and permissionService.hasPermission(applianceService.appliance, 'profile_management')}"
@@ -264,8 +264,8 @@
                                                                          rendered="#{_custAttr.userCanAccess  and (_custAttr.metadata.name eq 'gluuIMAPData')}"
                                                                          template="/WEB-INF/incl/layout/#{_custAttr.userCanEdit  ? 'edit' : 'view'}.xhtml">
                                                                 <div class="col-sm-11">
-                                                                    <rich:inplaceInput
-                                                                            defaultLabel="click to enter Imap Password encryptedString"
+                                                                    <h:inputText  styleClass="form-control"
+																		p:placeholder="click to enter Imap Password encryptedString"
                                                                             id="custId" immediate="true"
                                                                             inputWidth="300" maxlength="60"
                                                                             rendered="#{_custAttr.userCanEdit and permissionService.hasPermission(applianceService.appliance, 'profile_management')}"
@@ -281,8 +281,8 @@
                                                                          rendered="#{_custAttr.userCanAccess  and (_custAttr.metadata.name eq 'gluuIMAPData')}"
                                                                          template="/WEB-INF/incl/layout/#{_custAttr.userCanEdit  ? 'edit' : 'view'}.xhtml">
                                                                 <div class="col-sm-11">
-                                                                    <rich:inplaceInput
-                                                                            defaultLabel="click to enter Imap Password mode"
+                                                                    <h:inputText  styleClass="form-control"
+																		p:placeholder="click to enter Imap Password mode"
                                                                             id="custId" immediate="true"
                                                                             inputWidth="300" maxlength="60"
                                                                             rendered="#{_custAttr.userCanEdit and permissionService.hasPermission(applianceService.appliance, 'profile_management')}"

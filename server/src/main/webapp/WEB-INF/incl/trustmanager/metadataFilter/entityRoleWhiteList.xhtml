@@ -7,6 +7,7 @@
     xmlns:a4j="http://richfaces.org/a4j"
     xmlns:rich="http://richfaces.org/rich"
     xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
+    xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
     xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
 
     <h:panelGrid columns="2" id="EntityRoleWhiteListFilter" columnClasses="half,half"
@@ -41,9 +42,10 @@
             </rich:list>
             <h:panelGrid>
                 <h:outputText value="#{msg['trustmanager.enterNewRetainedRole']}" />
-                <rich:inplaceInput defaultLabel="click to enter RetainedRole" value="#{_metadataFilterSelected.retainedRole}">
+                <h:inputText  styleClass="form-control"
+						p:placeholder="click to enter RetainedRole" value="#{_metadataFilterSelected.retainedRole}">
                     <a4j:ajax event="change" render="EntityRoleWhiteListFilterMenu" />
-                </rich:inplaceInput>
+                </h:inputText>
             </h:panelGrid>
         </rich:panel>
     </h:panelGrid>

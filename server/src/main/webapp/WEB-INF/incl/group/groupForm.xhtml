@@ -8,6 +8,7 @@
     xmlns:rich="http://richfaces.org/rich"
     xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
     xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
+    xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
     xmlns:gluufn="http://www.gluu.org/jsf/functions">
 
 <section class="content-header">
@@ -36,7 +37,8 @@
             </ox:decorate>
 
             <ox:decorate id="displayName" label="#{msg['group.displayName']}">
-                <rich:inplaceInput value="#{_group.displayName}" defaultLabel="click to enter display name" maxlength="60"  required="true" id="displayNameId" />
+                <h:inputText  styleClass="form-control"
+					p:placeholder="click to enter display name" value="#{_group.displayName}"  maxlength="60"  required="true" id="displayNameId" />
             </ox:decorate>
 
             <ox:decorate id="visibility" label="#{msg['group.type']}">

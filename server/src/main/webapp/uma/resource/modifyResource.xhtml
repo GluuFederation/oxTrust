@@ -2,7 +2,8 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:a4j="http://richfaces.org/a4j"
                 xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox" xmlns:rich="http://richfaces.org/rich"
-                xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
+                xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"                
+                xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
     <f:metadata>
        	<f:viewParam name="resource" value="#{updateResourceAction.oxId}" />
@@ -62,19 +63,21 @@
 
                                         <ox:decorate id="displayName" label="#{msg['uma.displayName']}">
                                             <div class="col-sm-9">
-                                                <rich:inplaceInput defaultLabel="Click to enter Display Name"
-                                                                   id="displayNameId" maxlength="60" required="true"
-                                                                   style="margin-left:-16px;"
-                                                                   value="#{_resourceSet.name}"/>
+                                                <h:inputText  styleClass="form-control"
+																p:placeholder="Click to enter Display Name"
+                                                                id="displayNameId" maxlength="60" required="true"
+                                                                style="margin-left:-16px;"
+                                                                value="#{_resourceSet.name}"/>
                                             </div>
                                         </ox:decorate>
 
                                         <ox:decorate label="#{msg['uma.iconURI']}">
                                             <div class="col-sm-9">
-                                                <rich:inplaceInput defaultLabel="Click to enter Icon Url" id="iconUrlId"
-                                                                   maxlength="60" required="true"
-                                                                   style="margin-left:-16px;"
-                                                                   value="#{_resourceSet.iconUri}"/>
+                                                <h:inputText  styleClass="form-control"
+																p:placeholder="Click to enter Icon Url" id="iconUrlId"
+                                                                maxlength="60" required="true"
+                                                                style="margin-left:-16px;"
+                                                                value="#{_resourceSet.iconUri}"/>
                                             </div>
                                         </ox:decorate>
                                                                                 
