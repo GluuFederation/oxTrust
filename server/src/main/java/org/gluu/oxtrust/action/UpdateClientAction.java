@@ -1310,7 +1310,7 @@ public class UpdateClientAction implements Serializable {
 		contacts.clear();
 		contacts.addAll(tmpContactsList);
 		if(shouldShowWarning) {
-			facesMessages.add(FacesMessage.SEVERITY_WARN, "Invilad contacts has been removed from contacts list");
+			facesMessages.add(FacesMessage.SEVERITY_WARN, "Invalid contacts have been removed from contacts list");
 		}
 	}
 
