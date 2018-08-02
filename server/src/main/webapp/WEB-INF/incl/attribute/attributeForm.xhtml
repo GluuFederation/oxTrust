@@ -104,8 +104,8 @@
                 <h:outputText value="#{_attribute.multivaluedAttribute.value}" rendered="#{not _attributeAction.canEdit()}"/>
              </ox:decorate>
 
-             <ox:decorate template="/WEB-INF/incl/layout/#{_attributeAction.canEdit() ? 'edit' : 'view'}.xhtml" id="claimName" styleClass="form-control claimNameField" label="#{msg['attribute.oxAuthClaimName']}">
-                <h:inputText value="#{_attribute.oxAuthClaimName}" size="30" maxlength="60" id="claimNameId" rendered="#{_attributeAction.canEdit()}"/>
+             <ox:decorate template="/WEB-INF/incl/layout/#{_attributeAction.canEdit() ? 'edit' : 'view'}.xhtml" id="claimName" label="#{msg['attribute.oxAuthClaimName']}">
+                <h:inputText styleClass="form-control claimNameField" value="#{_attribute.oxAuthClaimName}" size="30" maxlength="60" id="claimNameId" rendered="#{_attributeAction.canEdit()}"/>
                 <h:outputText value="#{_attribute.oxAuthClaimName}" rendered="#{not _attributeAction.canEdit()}"/>
              </ox:decorate>
              
@@ -120,12 +120,12 @@
              </ox:decorate>
 
              <ox:decorate id="description" label="#{msg['attribute.description']}">
-                <h:inputTextarea styleClass="form-control enableCustomValidationField" value="#{_attribute.description}" label="#{msg['attribute.description']}" rows="3" size="40" maxlength="4000" required="true" id="descriptionId" disabled="#{not _attributeAction.canEdit()}"/>
+                <h:inputTextarea styleClass="form-control setAttributeDescriptionField" value="#{_attribute.description}" label="#{msg['attribute.description']}" rows="3" size="40" maxlength="4000" required="true" id="descriptionId" disabled="#{not _attributeAction.canEdit()}"/>
              </ox:decorate>
             
-             <ox:decorate id="validationToggle" styleClass="form-control setValidationRegExp" label="#{msg['attribute.enableCustomValidation']}">
+             <ox:decorate id="validationToggle" styleClass="form-control" label="#{msg['attribute.enableCustomValidation']}">
                 <h:selectBooleanCheckbox value="#{_attributeAction.validationToggle}"
-                	id="validationToggleId" disabled="#{not _attributeAction.canEdit()}">
+                	id="validationToggleId" styleClass="enableCustomValidationValue" disabled="#{not _attributeAction.canEdit()}">
                 	<a4j:ajax  event="click"  render="validation" />
                 </h:selectBooleanCheckbox>
              </ox:decorate>
@@ -139,9 +139,9 @@
 	             </h:panelGroup>
              </h:panelGroup>
              
-             <ox:decorate template="/WEB-INF/incl/layout/#{_attributeAction.canEdit() ? 'edit' : 'view'}.xhtml" id="tooltipToggle" styleClass="form-control enableTooltipField" label="#{msg['attribute.enableTooltip']} ">
+             <ox:decorate template="/WEB-INF/incl/layout/#{_attributeAction.canEdit() ? 'edit' : 'view'}.xhtml" id="tooltipToggle" styleClass="form-control" label="#{msg['attribute.enableTooltip']} ">
                 <h:selectBooleanCheckbox value="#{_attributeAction.tooltipToggle}"
-                	id="tooltipToggleId" disabled="#{not _attributeAction.canEdit()}">
+                	id="tooltipToggleId" styleClass="enableTooltipField" disabled="#{not _attributeAction.canEdit()}">
                 	<a4j:ajax  event="click"  render="tooltip" />
                 </h:selectBooleanCheckbox>
              </ox:decorate>
