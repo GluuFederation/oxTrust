@@ -3,7 +3,8 @@
                 xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox" xmlns:rich="http://richfaces.org/rich"
                 xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"                
-                xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:p="http://xmlns.jcp.org/jsf/passthrough"                  
+                xmlns:pf="http://primefaces.org/ui" 
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
     <f:metadata>
        	<f:viewParam name="resource" value="#{updateResourceAction.oxId}" />
@@ -107,13 +108,13 @@
                                                                 <h:outputText value=" "/>
                                                             </div>
                                                             <div class="col-sm-6">
-                                                                <a4j:commandLink
+                                                                <pf:commandLink
                                                                         action="#{updateResourceAction.removeScope(_scope.inum)}"
-                                                                        eventsQueue="resourceSetQueue"
-                                                                        render="selectedScopesId"
+                                                                        eventsQueue="resourceid:resourceSetQueue"
+                                                                        update="resourceid:selectiongroup"
                                                                         styleClass="glyphicon glyphicon-remove">
                                                                     <!--   <h:graphicImage value="/img/remove.gif" /> -->
-                                                                </a4j:commandLink>
+                                                                </pf:commandLink>
                                                             </div>
                                                         </div>
                                                     </a4j:repeat>
@@ -140,9 +141,9 @@
 																	<h:outputText value="&#160;" />
                                                                    </div>
                                                                     <div class = "col-sm-6">
-                                                                   <a4j:commandLink styleClass="glyphicon glyphicon-remove" action="#{updateResourceAction.removeClient(_client.inum)}" render="selectedClientsId" eventsQueue="resourceSetQueue">
+                                                                   <pf:commandLink styleClass="glyphicon glyphicon-remove" action="#{updateResourceAction.removeClient(_client.inum)}" update="resourceid:selectiongroup" eventsQueue="resourceSetQueue">
                                                                       
-                                                                   </a4j:commandLink>
+                                                                   </pf:commandLink>
                                                                    </div>
                                                                  </div>
                                                                </a4j:repeat>

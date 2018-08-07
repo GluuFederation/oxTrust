@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:a4j="http://richfaces.org/a4j"
                 xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:h="http://xmlns.jcp.org/jsf/html"
-                xmlns:ui="http://xmlns.jcp.org/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets" 
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/incl/layout/newtemplate.xhtml">
     <f:metadata>
         <f:viewAction action="#{conversationService.initConversation}" />
         <f:viewAction action="#{attributeInventoryAction.start}"
@@ -40,15 +42,15 @@
 
 
                         <ui:fragment rendered="#{attributeInventoryAction.showInactive}">
-                            <a4j:commandLink action="#{attributeInventoryAction.toggleShowInactive}"
-                                             render="attributesFormId" style="margin-left:5px;padding:6px;"
+                            <p:commandLink action="#{attributeInventoryAction.toggleShowInactive}"
+                                             update="attributesFormId" style="margin-left:5px;padding:6px;"
                                              styleClass="label label-success"
                                              value="#{msg['attribute.showOnlyActiveAttributes']}"/>
                         </ui:fragment>
 
                         <ui:fragment rendered="#{not attributeInventoryAction.showInactive}">
-                            <a4j:commandLink action="#{attributeInventoryAction.toggleShowInactive}"
-                                             render="attributesFormId" style="margin-left:5px;padding:6px;"
+                            <p:commandLink action="#{attributeInventoryAction.toggleShowInactive}"
+                                             update="attributesFormId" style="margin-left:5px;padding:6px;"
                                              styleClass="label label-success"
                                              value="#{msg['attribute.showAllAttributes']}"/>
                         </ui:fragment>

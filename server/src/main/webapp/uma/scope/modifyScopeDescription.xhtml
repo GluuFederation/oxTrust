@@ -4,7 +4,8 @@
                 xmlns:o="http://omnifaces.org/ui"
                 xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox" xmlns:rich="http://richfaces.org/rich"
                 xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"                
-                xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:p="http://xmlns.jcp.org/jsf/passthrough"                  
+                xmlns:pf="http://primefaces.org/ui"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
     <f:metadata>    
         <f:viewParam name="scope" value="#{updateScopeDescriptionAction.scopeInum}" />
@@ -13,7 +14,7 @@
     </f:metadata>
 
     <ui:define name="body">
-        <h:form>
+        <h:form id="modifyScopeForm">
             <section class="content-header">
                 <h1 style="color: #333;">
                     #{msg['uma.uma']}
@@ -100,16 +101,17 @@
 
                                                         <richext:spacer height="8"/>
 
-                                                        <a4j:commandLink
+                                                        <pf:commandLink
                                                                 action="#{updateScopeDescriptionAction.removeIconImage()}"
-                                                                eventsQueue="scopeDescriptionQueue" execute="@this"
-                                                                render="iconPanelId" value="#{msg['uma.remove']}"/>
+                                                                eventsQueue="scopeDescriptionQueue" process="@this"
+                                                                update="modifyScopeForm:iconPanelId" value="#{msg['uma.remove']}"/>
                                                     </h:panelGrid>
                                                 </h:panelGrid>
                                         </h:panelGroup>
 
+										 <h:panelGroup id="selectedAuthorizationPolicyId">
                                         <ox:decorate id="responseTypes" label="#{msg['uma.authorizationPolicy']}">
-                                            <h:panelGroup id="selectedAuthorizationPolicyId">
+                                           
                                                 <h:panelGrid border="0" cellpadding="0" cellspacing="0" columns="1"
                                                              width="100%">
                                                     <a4j:repeat rowKeyVar="_authorizationPolicyIdx"
@@ -122,21 +124,22 @@
                                                                 <h:outputText value=" "/>
                                                             </div>
                                                             <div class="col-sm-6">
-                                                                <a4j:commandLink
+                                                                <pf:commandLink
                                                                         action="#{updateScopeDescriptionAction.removeAuthorizationPolicy(_authorizationPolicy)}"
-                                                                        execute="@this"
-                                                                        render="selectedAuthorizationPolicyId"
+                                                                        process="@this"
+                                                                        update="modifyScopeForm:selectedAuthorizationPolicyId"
                                                                         styleClass="glyphicon glyphicon-remove ">
                                                                     <!--  <h:graphicImage value="/img/remove.gif" /> -->
-                                                                </a4j:commandLink>
+                                                                </pf:commandLink>
                                                             </div>
                                                         </div>
 
                                                     </a4j:repeat>
                                                     <richext:spacer height="16"/>
                                                 </h:panelGrid>
-                                            </h:panelGroup>
+                                            
                                         </ox:decorate>
+										</h:panelGroup>
 
                                         <ox:decorate id="command">
                                             <h:panelGroup>
