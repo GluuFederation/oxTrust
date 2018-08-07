@@ -16,6 +16,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletResponse;
 
+import org.gluu.jsf2.io.ResponseHelper;
 import org.gluu.oxtrust.ldap.service.ImageService;
 import org.gluu.oxtrust.ldap.service.uma.ScopeDescriptionService;
 import org.gluu.persist.exception.BasePersistenceException;
@@ -25,7 +26,6 @@ import org.xdi.oxauth.model.uma.persistence.UmaScopeDescription;
 import org.xdi.service.security.Secure;
 import org.xdi.util.io.FileDownloader;
 import org.xdi.util.io.FileDownloader.ContentDisposition;
-import org.xdi.util.io.ResponseHelper;
 
 /**
  * Action class for download scope descriptions

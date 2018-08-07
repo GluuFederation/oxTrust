@@ -54,6 +54,7 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openssl.PEMWriter;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.util.encoders.Base64;
+import org.gluu.jsf2.io.ResponseHelper;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.service.AttributeService;
@@ -84,7 +85,6 @@ import org.xdi.service.SchemaService;
 import org.xdi.service.cdi.async.Asynchronous;
 import org.xdi.service.security.Secure;
 import org.xdi.util.StringHelper;
-import org.xdi.util.io.ResponseHelper;
 
 import com.unboundid.ldap.sdk.schema.AttributeTypeDefinition;
 
