@@ -141,6 +141,7 @@ public class PasswordReminderAction implements Serializable {
 			facesMessages.add(FacesMessage.SEVERITY_ERROR,"Instructions letter was not sent.");
 		}
 
+		this.email = null;
 		conversationService.endConversation();
 
 		return outcome;
