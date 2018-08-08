@@ -28,11 +28,11 @@ import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.search.filter.Filter;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.GluuAttribute;
-import org.xdi.model.GluuAttributeDataType;
-import org.xdi.model.GluuAttributeUsageType;
-import org.xdi.model.GluuUserRole;
-import org.xdi.model.OxMultivalued;
-import org.xdi.model.ScimCustomAtribute;
+import org.xdi.model.attribute.AttributeDataType;
+import org.xdi.model.attribute.AttributeUsageType;
+import org.xdi.model.attribute.Multivalued;
+import org.xdi.model.scim.ScimCustomAtribute;
+import org.xdi.model.user.UserRole;
 import org.xdi.service.SchemaService;
 import org.xdi.util.INumGenerator;
 import org.xdi.util.OxConstants;
@@ -75,7 +75,7 @@ public class AttributeService extends org.xdi.service.AttributeService {
 	 * @return List of person attributes
 	 */
 	@SuppressWarnings("unchecked")
-	public List<GluuAttribute> getAllPersonAttributes(GluuUserRole gluuUserRole) {
+	public List<GluuAttribute> getAllPersonAttributes(UserRole gluuUserRole) {
 		String key = OxTrustConstants.CACHE_ATTRIBUTE_PERSON_KEY_LIST + "_" + gluuUserRole.getValue();
 		List<GluuAttribute> attributeList = (List<GluuAttribute>) cacheService.get(OxConstants.CACHE_ATTRIBUTE_NAME,
 				key);
@@ -94,7 +94,7 @@ public class AttributeService extends org.xdi.service.AttributeService {
 	 *            List of attributes
 	 * @return List of organization attributes
 	 */
-	private List<GluuAttribute> getAllPersonAtributesImpl(GluuUserRole gluuUserRole,
+	private List<GluuAttribute> getAllPersonAtributesImpl(UserRole gluuUserRole,
 			Collection<GluuAttribute> attributes) {
 		List<GluuAttribute> returnAttributeList = new ArrayList<GluuAttribute>();
 
@@ -102,7 +102,7 @@ public class AttributeService extends org.xdi.service.AttributeService {
 		log.debug("objectClassTypes={}", Arrays.toString(objectClassTypes));
 		for (GluuAttribute attribute : attributes) {
 			if (StringHelper.equalsIgnoreCase(attribute.getOrigin(), appConfiguration.getPersonCustomObjectClass())
-					&& (GluuUserRole.ADMIN == gluuUserRole)) {
+					&& (UserRole.ADMIN == gluuUserRole)) {
 				attribute.setCustom(true);
 				returnAttributeList.add(attribute);
 				continue;
@@ -126,7 +126,7 @@ public class AttributeService extends org.xdi.service.AttributeService {
 	 * @return List of contact attributes
 	 */
 	@SuppressWarnings("unchecked")
-	public List<GluuAttribute> getAllContactAttributes(GluuUserRole gluuUserRole) {
+	public List<GluuAttribute> getAllContactAttributes(UserRole gluuUserRole) {
 		String key = OxTrustConstants.CACHE_ATTRIBUTE_CONTACT_KEY_LIST + "_" + gluuUserRole.getValue();
 		List<GluuAttribute> attributeList = (List<GluuAttribute>) cacheService.get(OxConstants.CACHE_ATTRIBUTE_NAME,
 				key);
@@ -145,14 +145,14 @@ public class AttributeService extends org.xdi.service.AttributeService {
 	 *            List of attributes
 	 * @return List of contact attributes
 	 */
-	private List<GluuAttribute> getAllContactAtributesImpl(GluuUserRole gluuUserRole,
+	private List<GluuAttribute> getAllContactAtributesImpl(UserRole gluuUserRole,
 			Collection<GluuAttribute> attributes) {
 		List<GluuAttribute> returnAttributeList = new ArrayList<GluuAttribute>();
 
 		String[] objectClassTypes = appConfiguration.getContactObjectClassTypes();
 		for (GluuAttribute attribute : attributes) {
 			if (StringHelper.equalsIgnoreCase(attribute.getOrigin(), appConfiguration.getPersonCustomObjectClass())
-					&& (GluuUserRole.ADMIN == gluuUserRole)) {
+					&& (UserRole.ADMIN == gluuUserRole)) {
 				attribute.setCustom(true);
 				returnAttributeList.add(attribute);
 				continue;
@@ -388,8 +388,8 @@ public class AttributeService extends org.xdi.service.AttributeService {
 	 * 
 	 * @return Array of data types
 	 */
-	public GluuAttributeDataType[] getDataTypes() {
-		return GluuAttributeDataType.values();
+	public AttributeDataType[] getDataTypes() {
+		return AttributeDataType.values();
 	}
 
 	/**
@@ -406,8 +406,8 @@ public class AttributeService extends org.xdi.service.AttributeService {
 	 * 
 	 * @return Array of data types
 	 */
-	public OxMultivalued[] getOxMultivalued() {
-		return OxMultivalued.values();
+	public Multivalued[] getOxMultivalued() {
+		return Multivalued.values();
 	}
 
 	/**
@@ -415,8 +415,8 @@ public class AttributeService extends org.xdi.service.AttributeService {
 	 * 
 	 * @return Array of attribute user roles
 	 */
-	public GluuUserRole[] getAttributeUserRoles() {
-		return new GluuUserRole[] { GluuUserRole.ADMIN, GluuUserRole.USER };
+	public UserRole[] getAttributeUserRoles() {
+		return new UserRole[] { UserRole.ADMIN, UserRole.USER };
 	}
 
 	/**
@@ -424,12 +424,12 @@ public class AttributeService extends org.xdi.service.AttributeService {
 	 * 
 	 * @return Array of attribute user roles
 	 */
-	public GluuUserRole[] getViewTypes() {
+	public UserRole[] getViewTypes() {
 		if (applianceService.getAppliance().getWhitePagesEnabled() != null
 				&& applianceService.getAppliance().getWhitePagesEnabled().isBooleanValue()) {
-			return new GluuUserRole[] { GluuUserRole.ADMIN, GluuUserRole.USER, GluuUserRole.WHITEPAGES };
+			return new UserRole[] { UserRole.ADMIN, UserRole.USER, UserRole.WHITEPAGES };
 		}
-		return new GluuUserRole[] { GluuUserRole.ADMIN, GluuUserRole.USER };
+		return new UserRole[] { UserRole.ADMIN, UserRole.USER };
 	}
 
 	/**
@@ -437,8 +437,8 @@ public class AttributeService extends org.xdi.service.AttributeService {
 	 * 
 	 * @return Array of Usage types
 	 */
-	public GluuAttributeUsageType[] getAttributeUsageTypes() {
-		return new GluuAttributeUsageType[] { GluuAttributeUsageType.OPENID };
+	public AttributeUsageType[] getAttributeUsageTypes() {
+		return new AttributeUsageType[] { AttributeUsageType.OPENID };
 	}
 
 	/**
@@ -631,7 +631,7 @@ public class AttributeService extends org.xdi.service.AttributeService {
 	 * @param admin
 	 * @return
 	 */
-	public List<GluuAttribute> getAllActivePersonAttributes(GluuUserRole admin) {
+	public List<GluuAttribute> getAllActivePersonAttributes(UserRole admin) {
 		@SuppressWarnings("unchecked")
 		List<GluuAttribute> activeAttributeList = (List<GluuAttribute>) cacheService
 				.get(OxConstants.CACHE_ACTIVE_ATTRIBUTE_NAME, OxConstants.CACHE_ACTIVE_ATTRIBUTE_KEY_LIST);
@@ -648,7 +648,7 @@ public class AttributeService extends org.xdi.service.AttributeService {
 	 * @return
 	 * @throws LDAPException
 	 */
-	private List<GluuAttribute> getAllActiveAtributesImpl(GluuUserRole gluuUserRole) {
+	private List<GluuAttribute> getAllActiveAtributesImpl(UserRole gluuUserRole) {
 		Filter filter = Filter.createEqualityFilter("gluuStatus", "active");
 		List<GluuAttribute> attributeList = ldapEntryManager.findEntries(getDnForAttribute(null), GluuAttribute.class,
 				filter);
@@ -658,7 +658,7 @@ public class AttributeService extends org.xdi.service.AttributeService {
 		List<GluuAttribute> returnAttributeList = new ArrayList<GluuAttribute>();
 		for (GluuAttribute attribute : attributeList) {
 			if (StringHelper.equalsIgnoreCase(attribute.getOrigin(), appConfiguration.getPersonCustomObjectClass())
-					&& (GluuUserRole.ADMIN == gluuUserRole)) {
+					&& (UserRole.ADMIN == gluuUserRole)) {
 				attribute.setCustom(true);
 				returnAttributeList.add(attribute);
 				continue;

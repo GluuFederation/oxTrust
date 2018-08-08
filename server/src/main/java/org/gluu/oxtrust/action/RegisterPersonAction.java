@@ -39,11 +39,11 @@ import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.model.RegistrationConfiguration;
 import org.gluu.oxtrust.service.external.ExternalUserRegistrationService;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.persist.model.base.GluuStatus;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.GluuAttribute;
-import org.xdi.model.GluuUserRole;
+import org.xdi.model.GluuStatus;
+import org.xdi.model.user.UserRole;
 import org.xdi.util.StringHelper;
 
 /**
@@ -311,7 +311,7 @@ public class RegisterPersonAction implements Serializable {
 	}
 
 	private void initAttributes() {
-		List<GluuAttribute> allPersonAttributes = attributeService.getAllActivePersonAttributes(GluuUserRole.ADMIN);
+		List<GluuAttribute> allPersonAttributes = attributeService.getAllActivePersonAttributes(UserRole.ADMIN);
 
 		List<String> allAttributOrigins = attributeService.getAllAttributeOrigins(allPersonAttributes);
 

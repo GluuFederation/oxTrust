@@ -28,7 +28,7 @@ import org.gluu.oxtrust.ldap.service.Shibboleth3ConfService;
 import org.gluu.oxtrust.model.GluuMetadataSourceType;
 import org.gluu.oxtrust.model.GluuSAMLFederationProposal;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.persist.model.base.GluuStatus;
+import org.xdi.model.GluuStatus;
 import org.xdi.service.security.Secure;
 import org.xdi.util.StringHelper;
 import org.xdi.util.io.ExcludeFilterInputStream;

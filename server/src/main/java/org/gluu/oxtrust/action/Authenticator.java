@@ -43,13 +43,13 @@ import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.security.OauthData;
 import org.gluu.oxtrust.service.OpenIdService;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.persist.model.base.GluuStatus;
 import org.jboss.resteasy.client.ClientRequest;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.model.GluuUserRole;
+import org.xdi.model.GluuStatus;
 import org.xdi.model.security.Credentials;
 import org.xdi.model.security.SimplePrincipal;
+import org.xdi.model.user.UserRole;
 import org.xdi.oxauth.client.OpenIdConfigurationResponse;
 import org.xdi.oxauth.client.TokenClient;
 import org.xdi.oxauth.client.TokenResponse;
@@ -160,13 +160,13 @@ public class Authenticator implements Serializable {
 		identity.setUser(person);
 
 		// Set user roles
-		GluuUserRole[] userRoles = securityService.getUserRoles(user);
+		UserRole[] userRoles = securityService.getUserRoles(user);
 		if (ArrayHelper.isNotEmpty(userRoles)) {
 			log.debug("Get '{}' user roles", Arrays.toString(userRoles));
 		} else {
 			log.debug("Get 0 user roles");
 		}
-		for (GluuUserRole userRole : userRoles) {
+		for (UserRole userRole : userRoles) {
 			identity.addRole(userRole.getRoleName());
 		}
 	}

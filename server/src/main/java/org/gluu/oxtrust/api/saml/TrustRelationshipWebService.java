@@ -61,11 +61,11 @@ import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.service.uma.annotations.UmaSecure;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.exception.BasePersistenceException;
-import org.gluu.persist.model.base.GluuStatus;
 import org.gluu.saml.metadata.SAMLMetadataParser;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.GluuAttribute;
+import org.xdi.model.GluuStatus;
 import org.xdi.model.TrustContact;
 import org.xdi.util.StringHelper;
 

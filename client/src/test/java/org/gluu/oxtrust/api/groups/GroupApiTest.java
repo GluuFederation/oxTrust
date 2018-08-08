@@ -6,12 +6,12 @@ import java.util.Random;
 import org.gluu.oxtrust.api.GluuGroupApi;
 import org.gluu.oxtrust.api.GluuPersonApi;
 import org.gluu.oxtrust.api.users.PeopleRepository;
-import org.gluu.persist.model.base.GluuStatus;
 import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.xdi.model.GluuStatus;
 
 public class GroupApiTest {
 

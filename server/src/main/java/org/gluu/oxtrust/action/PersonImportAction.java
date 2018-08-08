@@ -42,14 +42,14 @@ import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.exception.EntryPersistenceException;
 import org.gluu.persist.model.AttributeData;
 import org.gluu.persist.model.base.GluuBoolean;
-import org.gluu.persist.model.base.GluuStatus;
 import org.richfaces.event.FileUploadEvent;
 import org.richfaces.model.UploadedFile;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.GluuAttribute;
-import org.xdi.model.GluuAttributeDataType;
-import org.xdi.model.GluuUserRole;
+import org.xdi.model.GluuStatus;
+import org.xdi.model.attribute.AttributeDataType;
+import org.xdi.model.user.UserRole;
 import org.xdi.service.security.Secure;
 import org.xdi.util.StringHelper;
 
@@ -458,9 +458,9 @@ public class PersonImportAction implements Serializable {
 	}
 
 	private String getTypedValue(GluuAttribute attribute, String value) {
-		if (GluuAttributeDataType.STRING.equals(attribute.getDataType())) {
+		if (AttributeDataType.STRING.equals(attribute.getDataType())) {
 			return value;
-		} else if (GluuAttributeDataType.BOOLEAN.equals(attribute.getDataType())) {
+		} else if (AttributeDataType.BOOLEAN.equals(attribute.getDataType())) {
 			GluuBoolean gluuBoolean = GluuBoolean.getByValue(value);
 			if (gluuBoolean != null) {
 				return GluuBoolean.getByValue(value).toString();
@@ -531,7 +531,7 @@ public class PersonImportAction implements Serializable {
 	}
 	
 	private void initAttributes() {
-		List<GluuAttribute> attributes = attributeService.getAllPersonAttributes(GluuUserRole.ADMIN);
+		List<GluuAttribute> attributes = attributeService.getAllPersonAttributes(UserRole.ADMIN);
 		List<String> origins = attributeService.getAllAttributeOrigins(attributes);
 
 		List<GluuCustomAttribute> customAttributes = this.person.getCustomAttributes();

@@ -22,9 +22,9 @@ import javax.ws.rs.core.Response;
 import org.gluu.oxtrust.api.openidconnect.BaseWebResource;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.util.OxTrustApiConstants;
-import org.gluu.persist.model.base.GluuStatus;
 import org.slf4j.Logger;
 import org.xdi.model.GluuAttribute;
+import org.xdi.model.GluuStatus;
 
 import com.wordnik.swagger.annotations.ApiOperation;
 

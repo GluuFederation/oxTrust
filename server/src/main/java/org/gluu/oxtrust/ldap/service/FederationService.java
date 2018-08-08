@@ -19,9 +19,9 @@ import org.gluu.oxtrust.model.GluuMetadataSourceType;
 import org.gluu.oxtrust.model.GluuSAMLFederationProposal;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.PersistenceEntryManager;
-import org.gluu.persist.model.base.GluuStatus;
 import org.gluu.persist.model.base.InumEntry;
 import org.xdi.config.oxtrust.AppConfiguration;
+import org.xdi.model.GluuStatus;
 import org.xdi.util.INumGenerator;
 import org.xdi.util.StringHelper;
 

@@ -49,11 +49,11 @@ import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.ServiceUtil;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.exception.BasePersistenceException;
-import org.gluu.persist.model.base.GluuStatus;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.GluuAttribute;
-import org.xdi.model.GluuUserRole;
+import org.xdi.model.GluuStatus;
+import org.xdi.model.user.UserRole;
 import org.xdi.oxauth.model.fido.u2f.protocol.DeviceData;
 import org.xdi.service.security.Secure;
 import org.xdi.util.ArrayHelper;
@@ -491,7 +491,7 @@ public class UpdatePersonAction implements Serializable {
 			externalUpdateUserService.executeExternalNewUserMethods(this.person);
 		}
 
-		List<GluuAttribute> attributes = attributeService.getAllPersonAttributes(GluuUserRole.ADMIN);
+		List<GluuAttribute> attributes = attributeService.getAllPersonAttributes(UserRole.ADMIN);
 		List<String> origins = attributeService.getAllAttributeOrigins(attributes);
 
 		List<GluuCustomAttribute> customAttributes = this.person.getCustomAttributes();

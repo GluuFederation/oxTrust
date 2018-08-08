@@ -42,8 +42,8 @@ import org.richfaces.event.FileUploadEvent;
 import org.richfaces.model.UploadedFile;
 import org.slf4j.Logger;
 import org.xdi.model.GluuAttribute;
-import org.xdi.model.GluuAttributeDataType;
 import org.xdi.model.GluuImage;
+import org.xdi.model.attribute.AttributeDataType;
 import org.xdi.util.StringHelper;
 
 /**
@@ -543,7 +543,7 @@ public class CustomAttributeAction implements Serializable {
 
 	public void deletePhotos() {
 		for (GluuCustomAttribute customAttribute : this.customAttributes) {
-			if (GluuAttributeDataType.BINARY.equals(customAttribute.getMetadata().getDataType())) {
+			if (AttributeDataType.BINARY.equals(customAttribute.getMetadata().getDataType())) {
 				removePhoto(customAttribute.getMetadata().getInum());
 			}
 		}

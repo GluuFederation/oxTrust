@@ -17,7 +17,7 @@ import javax.inject.Named;
 import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.model.User;
 import org.slf4j.Logger;
-import org.xdi.model.GluuUserRole;
+import org.xdi.model.user.UserRole;
 
 /**
  * Provides operations with groups
@@ -51,20 +51,20 @@ public class SecurityService implements Serializable {
 	 * @throws Exception
 	 *             exception
 	 */
-	public GluuUserRole[] getUserRoles(User user) {
+	public UserRole[] getUserRoles(User user) {
 		GluuOrganization organization = organizationService.getOrganization();
 		// String ownerGroupDn = organization.getOwnerGroup();
 		String managerGroupDn = organization.getManagerGroup();
 
 		String personDN = user.getDn();
 
-		Set<GluuUserRole> userRoles = new HashSet<GluuUserRole>();
+		Set<UserRole> userRoles = new HashSet<UserRole>();
 		// if (groupService.isMemberOrOwner(ownerGroupDn, personDN)) {
 		// userRoles.add(GluuUserRole.OWNER);
 		// }
 
 		if (groupService.isMemberOrOwner(managerGroupDn, personDN)) {
-			userRoles.add(GluuUserRole.MANAGER);
+			userRoles.add(UserRole.MANAGER);
 		}
 
 		if ((userRoles.size() == 0) /*
@@ -72,19 +72,19 @@ public class SecurityService implements Serializable {
 									 * (GluuStatus.ACTIVE.equals(person.getStatus
 									 * ()))
 									 */) {
-			userRoles.add(GluuUserRole.USER);
+			userRoles.add(UserRole.USER);
 		}
 
-		return userRoles.toArray(new GluuUserRole[userRoles.size()]);
+		return userRoles.toArray(new UserRole[userRoles.size()]);
 	}
 
 	public boolean isUseAdminUser(String userName) {
 		try {
 			User user = personService.getUserByUid(userName);
-			GluuUserRole[] roles = getUserRoles(user);
+			UserRole[] roles = getUserRoles(user);
 			
-			for (GluuUserRole role: roles) {
-				if (GluuUserRole.MANAGER.equals(role)) {
+			for (UserRole role: roles) {
+				if (UserRole.MANAGER.equals(role)) {
 					return true;
 				}
 			}

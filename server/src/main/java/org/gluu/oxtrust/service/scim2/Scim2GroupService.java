@@ -32,10 +32,10 @@ import org.gluu.oxtrust.service.external.ExternalScimService;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.model.PagedResult;
 import org.gluu.persist.model.SortOrder;
-import org.gluu.persist.model.base.GluuStatus;
 import org.gluu.search.filter.Filter;
 import org.joda.time.format.ISODateTimeFormat;
 import org.slf4j.Logger;
+import org.xdi.model.GluuStatus;
 
 /**
  * @author Val Pecaoco

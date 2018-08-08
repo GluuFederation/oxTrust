@@ -25,7 +25,7 @@ import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.slf4j.Logger;
 import org.xdi.model.GluuAttribute;
-import org.xdi.model.GluuUserRole;
+import org.xdi.model.user.UserRole;
 import org.xdi.service.security.Secure;
 
 /**
@@ -104,7 +104,7 @@ public class TrustRelationshipInventoryAction implements Serializable {
 	}
 
 	private void setCustomAttributes(List<GluuSAMLTrustRelationship> trustRelationships) {
-		List<GluuAttribute> attributes = attributeService.getAllPersonAttributes(GluuUserRole.ADMIN);
+		List<GluuAttribute> attributes = attributeService.getAllPersonAttributes(UserRole.ADMIN);
 		HashMap<String, GluuAttribute> attributesByDNs = attributeService.getAttributeMapByDNs(attributes);
 
 		for (GluuSAMLTrustRelationship trustRelationship : trustRelationships) {
