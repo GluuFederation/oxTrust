@@ -273,6 +273,13 @@
 				<artifactId>omnifaces</artifactId>
 				<version>${omnifaces.version}</version>
 			</dependency>
+			
+			<!-- Primefaces -->			
+			<dependency>
+				<groupId>org.primefaces</groupId>
+				<artifactId>primefaces</artifactId>
+				<version>6.2</version>
+			</dependency>
 
 			<!-- Prettyfaces -->
 			<dependency>
