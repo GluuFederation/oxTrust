@@ -95,13 +95,13 @@
              </ox:decorate>
 
              <ox:decorate id="multivalued" label="#{msg['attribute.multivalued']}">
-                <h:selectOneMenu styleClass="form-control" value="#{_attribute.oxMultivaluedAttribute}" label="#{msg['attribute.multivalued']}" required="true" id="multivaluedId" rendered="#{_attributeAction.canEdit()}">
+                <h:selectOneMenu styleClass="form-control" value="#{_attribute.multivaluedAttribute}" label="#{msg['attribute.multivalued']}" required="true" id="multivaluedId" rendered="#{_attributeAction.canEdit()}">
                     <f:selectItem noSelectionOption="true"  itemLabel="Multivalued"/>
                     <f:selectItems value="#{attributeService.oxMultivalued}"
                               var="_custom" itemLabel="#{_custom.displayName}"/>
                     <f:converter converterId="org.gluu.jsf2.converter.EnumConverter"/>
                 </h:selectOneMenu>
-                <h:outputText value="#{_attribute.oxMultivaluedAttribute.value}" rendered="#{not _attributeAction.canEdit()}"/>
+                <h:outputText value="#{_attribute.multivaluedAttribute.value}" rendered="#{not _attributeAction.canEdit()}"/>
              </ox:decorate>
 
              <ox:decorate template="/WEB-INF/incl/layout/#{_attributeAction.canEdit() ? 'edit' : 'view'}.xhtml" id="claimName" label="#{msg['attribute.oxAuthClaimName']}">
