@@ -148,6 +148,7 @@ public class PasswordReminderAction implements Serializable {
 
 		}
 
+		this.email = null;
 		conversationService.endConversation();
 
 		return outcome;
