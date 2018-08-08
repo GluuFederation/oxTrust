@@ -55,7 +55,7 @@ public class ExtensionService {
                 for (GluuAttribute attribute : attrService.getSCIMRelatedAttributes()) {
                     if (attribute.getOxSCIMCustomAttribute().equals(ScimCustomAtribute.TRUE)) {
                         //first non-null check is needed because certain entries do not have the multivalue attribute set
-                        boolean multi=attribute.getOxMultivaluedAttribute()!=null && attribute.getOxMultivaluedAttribute().equals(Multivalued.TRUE);
+                        boolean multi=attribute.getMultivaluedAttribute()!=null && attribute.getMultivaluedAttribute().equals(Multivalued.TRUE);
 
                         ExtensionField field=new ExtensionField();
                         field.setDescription(attribute.getDescription());
