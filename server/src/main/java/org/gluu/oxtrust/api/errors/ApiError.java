@@ -27,6 +27,9 @@ public class ApiError {
     static ApiError of(Throwable throwable, Object message) {
         return new ApiError(UUID.randomUUID().toString(), new Date(), message, throwable.getClass());
     }
+    static ApiError of(Throwable throwable) {
+        return new ApiError(UUID.randomUUID().toString(), new Date(), throwable.getMessage(), throwable.getClass());
+    }
 
     public String getReference() {
         return reference;

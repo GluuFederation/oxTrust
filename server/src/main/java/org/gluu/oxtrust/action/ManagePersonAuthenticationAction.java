@@ -34,6 +34,12 @@ import org.gluu.oxtrust.model.LdapConfigurationModel;
 import org.gluu.oxtrust.model.OxIDPAuthConf;
 import org.gluu.oxtrust.model.SimpleCustomPropertiesListModel;
 import org.gluu.oxtrust.model.SimplePropertiesListModel;
+import org.gluu.oxtrust.service.config.authentication.AuthenticationMethod;
+import org.gluu.oxtrust.service.config.authentication.AuthenticationMethodService;
+import org.gluu.oxtrust.service.config.authentication.PassportAuthenticationMethod;
+import org.gluu.oxtrust.service.config.ldap.ConnectionStatus;
+import org.gluu.oxtrust.service.config.ldap.LdapConfigurationService;
+import org.gluu.oxtrust.service.config.ldap.LdapConnectionData;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.exception.BasePersistenceException;
 import org.gluu.persist.ldap.operation.impl.LdapConnectionProvider;
@@ -57,7 +63,7 @@ import org.xdi.util.security.StringEncrypter.EncryptionException;
 
 /**
  * Action class for configuring person authentication
- * 
+ *
  * @author Yuriy Movchan Date: 16/11/2010
  */
 @Named("managePersonAuthenticationAction")
@@ -67,6 +73,9 @@ public class ManagePersonAuthenticationAction
 		implements SimplePropertiesListModel, SimpleCustomPropertiesListModel, LdapConfigurationModel, Serializable {
 
 	private static final long serialVersionUID = -4470460481895022468L;
+
+	private static final String DEFAULT_AUTHENTICATION_MODE = "auth_ldap_server";
+	private static final String DEFAULT_OX_TRUST_AUTHENTICATION_MODE = null;
 
 	@Inject
 	private Logger log;
@@ -92,6 +101,15 @@ public class ManagePersonAuthenticationAction
 	@Inject
 	private EncryptionService encryptionService;
 
+	@Inject
+	transient private LdapConfigurationService ldapConfigurationService;
+
+	@Inject
+	transient private AuthenticationMethodService authenticationMethodService;
+
+	@Inject
+	transient private ConnectionStatus connectionStatus;
+
 	private boolean existLdapConfigIdpAuthConf;
 
 	private List<CustomScript> customScripts;
@@ -100,16 +118,11 @@ public class ManagePersonAuthenticationAction
 
 	private GluuLdapConfiguration activeLdapConfig;
 
-	private String authenticationMode = "auth_ldap_server";
-	private String oxTrustAuthenticationMode;
+    private AuthenticationMethod authenticationMethod;
 
 	private List<String> customAuthenticationConfigNames;
 
 	private boolean initialized;
-
-	private GluuBoolean passportEnable = GluuBoolean.DISABLED;
-
-	private LdapOxPassportConfiguration ldapOxPassportConfiguration;
 
 	private List<PassportConfiguration> ldapPassportConfigurations;
 
@@ -144,38 +157,26 @@ public class ManagePersonAuthenticationAction
 		}
 
 		try {
-			GluuAppliance appliance = applianceService.getAppliance();
-
-			if (appliance == null) {
-				return OxTrustConstants.RESULT_FAILURE;
-			}
-			passportEnable = appliance.getPassportEnabled();
-			log.info("passport enabled value  : '{}'", passportEnable);
 			this.customScripts = customScriptService.findCustomScripts(
 					Arrays.asList(CustomScriptType.PERSON_AUTHENTICATION), "displayName", "oxLevel", "gluuStatus");
 
-			List<OxIDPAuthConf> list = getIDPAuthConfOrNull(appliance);
-			this.sourceConfigs = new ArrayList<GluuLdapConfiguration>();
-			if (list != null) {
-				for (OxIDPAuthConf oxIDPAuthConf : list) {
-					GluuLdapConfiguration oxldapConfig = mapLdapConfig(oxIDPAuthConf.getConfig());
-					this.sourceConfigs.add(oxldapConfig);
-				}
-			}
+			this.sourceConfigs = new ArrayList<GluuLdapConfiguration>(ldapConfigurationService.findLdapConfigurations());
 
-			this.authenticationMode = appliance.getAuthenticationMode();
-			this.oxTrustAuthenticationMode = appliance.getOxTrustAuthenticationMode();
+            authenticationMethod = authenticationMethodService.findAuthenticationMode();
 
-			ldapOxPassportConfiguration = passportService.loadConfigurationFromLdap();
-			if (ldapOxPassportConfiguration == null) {
-				ldapOxPassportConfiguration = new LdapOxPassportConfiguration();
-			}
-			this.ldapPassportConfigurations = ldapOxPassportConfiguration.getPassportConfigurations();
+			this.ldapPassportConfigurations = authenticationMethod.getPassportAuthenticationMethod()
+					.getLdapOxPassportConfiguration().getPassportConfigurations();
+
 			if (ldapPassportConfigurations == null) {
 				ldapPassportConfigurations = new ArrayList<PassportConfiguration>();
 			}
 		} catch (Exception ex) {
 			log.error("Failed to load appliance configuration", ex);
+
+			if (authenticationMethod == null) {
+				authenticationMethod = new AuthenticationMethod(DEFAULT_AUTHENTICATION_MODE,
+						DEFAULT_OX_TRUST_AUTHENTICATION_MODE, PassportAuthenticationMethod.disabled());
+			}
 
 			return OxTrustConstants.RESULT_FAILURE;
 		}
@@ -195,30 +196,25 @@ public class ManagePersonAuthenticationAction
 
 			String oldAuthName = getFirstConfigName(appliance.getOxIDPAuthentication());
 			if (oldAuthName != null) {
-				if (oldAuthName.equals(this.authenticationMode)) {
+				if (authenticationMethod.hasAuthenticationMode(oldAuthName)) {
 					updateAuthenticationMode = true;
 				}
-				if (oldAuthName.equals(this.oxTrustAuthenticationMode)) {
+				if (authenticationMethod.hasOxTrustAuthenticationMode(oldAuthName)) {
 					updateOxTrustAuthenticationMode = true;
 				}
 			}
 
-			updateAuthConf(appliance);
+			updateAuthConf();
+			appliance = applianceService.getAppliance();
 
 			String newAuthName = getFirstConfigName(appliance.getOxIDPAuthentication());
-			String updatedAuthMode = updateAuthenticationMode ? newAuthName : this.authenticationMode;
+			String updatedAuthMode = updateAuthenticationMode ? newAuthName : this.authenticationMethod.getAuthenticationMode();
 			String updatedOxTrustAuthMode = updateOxTrustAuthenticationMode ? newAuthName
-					: this.oxTrustAuthenticationMode;
-			appliance.setAuthenticationMode(updatedAuthMode);
-			appliance.setOxTrustAuthenticationMode(updatedOxTrustAuthMode);
+					: this.authenticationMethod.getOxTrustAuthenticationMode();
 
-			appliance.setPassportEnabled(passportEnable);
-
-			applianceService.updateAppliance(appliance);
-
-			ldapOxPassportConfiguration.setPassportConfigurations(ldapPassportConfigurations);
-
-			passportService.updateLdapOxPassportConfiguration(ldapOxPassportConfiguration);
+			authenticationMethod.getPassportAuthenticationMethod().getLdapOxPassportConfiguration().setPassportConfigurations(ldapPassportConfigurations);
+			authenticationMethodService.save(new AuthenticationMethod(updatedAuthMode, updatedOxTrustAuthMode,
+					authenticationMethod.getPassportAuthenticationMethod()));
 		} catch (BasePersistenceException ex) {
 			log.error("Failed to update appliance configuration", ex);
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update appliance");
@@ -245,11 +241,6 @@ public class ManagePersonAuthenticationAction
 		this.customAuthenticationConfigNames = null;
 	}
 
-	private GluuLdapConfiguration mapLdapConfig(String config)
-			throws JsonParseException, JsonMappingException, IOException {
-		return (GluuLdapConfiguration) jsonToObject(config, GluuLdapConfiguration.class);
-	}
-
 	public String cancel() {
 		facesMessages.add(FacesMessage.SEVERITY_INFO, "Person authentication configuration not updated");
 		conversationService.endConversation();
@@ -257,41 +248,16 @@ public class ManagePersonAuthenticationAction
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	private Object jsonToObject(String json, Class<?> clazz)
-			throws JsonParseException, JsonMappingException, IOException {
-		ObjectMapper mapper = new ObjectMapper();
-		Object clazzObject = mapper.readValue(json, clazz);
-		return clazzObject;
-	}
-
 	private String objectToJson(Object obj) throws JsonGenerationException, JsonMappingException, IOException {
 		ObjectMapper mapper = new ObjectMapper();
 		return mapper.writeValueAsString(obj);
 	}
 
-	public boolean updateAuthConf(GluuAppliance appliance) {
+	public boolean updateAuthConf() {
 		try {
-			List<OxIDPAuthConf> idpConf = new ArrayList<OxIDPAuthConf>();
-			for (GluuLdapConfiguration ldapConfig : this.sourceConfigs) {
-				if (ldapConfig.isUseAnonymousBind()) {
-					ldapConfig.setBindDN(null);
-				}
-
-				OxIDPAuthConf ldapConfigIdpAuthConf = new OxIDPAuthConf();
-				ldapConfig.updateStringsLists();
-				ldapConfigIdpAuthConf.setType("auth");
-				ldapConfigIdpAuthConf.setVersion(ldapConfigIdpAuthConf.getVersion() + 1);
-				ldapConfigIdpAuthConf.setName(ldapConfig.getConfigId());
-				ldapConfigIdpAuthConf.setEnabled(ldapConfig.isEnabled());
-				ldapConfigIdpAuthConf.setConfig(objectToJson(ldapConfig));
-
-				idpConf.add(ldapConfigIdpAuthConf);
-			}
-
-			appliance.setOxIDPAuthentication(idpConf);
+			ldapConfigurationService.save(sourceConfigs);
 		} catch (Exception ex) {
 			log.error("An Error occured ", ex);
-
 			return false;
 		}
 
@@ -332,28 +298,9 @@ public class ManagePersonAuthenticationAction
 
 	public String testLdapConnection(GluuLdapConfiguration ldapConfig) {
 		try {
-			FileConfiguration configuration = new FileConfiguration(ConfigurationFactory.LDAP_PROPERTIES_FILE);
-			if (!configuration.isLoaded()) {
-				configuration = new FileConfiguration(ConfigurationFactory.LDAP_DEFAULT_PROPERTIES_FILE);
-			}
-			Properties properties = configuration.getProperties();
-			properties.setProperty("bindDN", ldapConfig.getBindDN());
-			properties.setProperty("bindPassword", ldapConfig.getBindPassword());
-			properties.setProperty("servers", buildServersString(ldapConfig.getServers()));
-			properties.setProperty("useSSL", Boolean.toString(ldapConfig.isUseSSL()));
-
-			LdapConnectionProvider connectionProvider = new LdapConnectionProvider(
-					PropertiesDecrypter.decryptProperties(properties, configurationFactory.getCryptoConfigurationSalt()));
-			if (connectionProvider.isConnected()) {
-				connectionProvider.closeConnectionPool();
-
+            if (connectionStatus.isUp(LdapConnectionData.from(ldapConfig))) {
 				facesMessages.add(FacesMessage.SEVERITY_INFO, "LDAP Connection Test succeeded!");
-
 				return OxTrustConstants.RESULT_SUCCESS;
-
-			}
-			if (connectionProvider.getConnectionPool() != null) {
-				connectionProvider.closeConnectionPool();
 			}
 		} catch (Exception ex) {
 			log.error("Could not connect to LDAP", ex);
@@ -364,33 +311,11 @@ public class ManagePersonAuthenticationAction
 		return OxTrustConstants.RESULT_FAILURE;
 	}
 
-	private String buildServersString(List<SimpleProperty> servers) {
-		StringBuilder sb = new StringBuilder();
-
-		if (servers == null) {
-			return sb.toString();
-		}
-
-		boolean first = true;
-		for (SimpleProperty server : servers) {
-			if (first) {
-				first = false;
-			} else {
-				sb.append(",");
-			}
-
-			sb.append(server.getValue());
-		}
-
-		return sb.toString();
-	}
-
+	@Deprecated
 	public void updateLdapBindPassword(GluuLdapConfiguration ldapConfig) {
-		log.info("hello setting passoword" + ldapConfig.getPrimaryKey());
-		for (Iterator<GluuLdapConfiguration> iterator = sourceConfigs.iterator(); iterator.hasNext();) {
-			GluuLdapConfiguration ldapConfig1 = iterator.next();
-
-		}
+		// This method does nothing.
+		// Should be removed.
+		// Is this used somewhere in the UI ?
 	}
 
 	public String updateLdapBindPassword(String bindPassword) {
@@ -424,19 +349,19 @@ public class ManagePersonAuthenticationAction
 	}
 
 	public String getAuthenticationMode() {
-		return authenticationMode;
+		return this.authenticationMethod.getAuthenticationMode();
 	}
 
 	public void setAuthenticationMode(String authenticationMode) {
-		this.authenticationMode = authenticationMode;
-	}
+		this.authenticationMethod.setAuthenticationMode(authenticationMode);
+    }
 
 	public String getOxTrustAuthenticationMode() {
-		return oxTrustAuthenticationMode;
+		return this.authenticationMethod.getOxTrustAuthenticationMode();
 	}
 
 	public void setOxTrustAuthenticationMode(String oxTrustAuthenticationMode) {
-		this.oxTrustAuthenticationMode = oxTrustAuthenticationMode;
+        this.authenticationMethod.setOxTrustAuthenticationMode(oxTrustAuthenticationMode);
 	}
 
 	public boolean isInitialized() {
@@ -444,11 +369,11 @@ public class ManagePersonAuthenticationAction
 	}
 
 	public LdapOxPassportConfiguration getLdapOxPassportConfiguration() {
-		return ldapOxPassportConfiguration;
+		return authenticationMethod.getPassportAuthenticationMethod().getLdapOxPassportConfiguration();
 	}
 
 	public void setLdapOxPassportConfiguration(LdapOxPassportConfiguration ldapOxPassportConfiguration) {
-		this.ldapOxPassportConfiguration = ldapOxPassportConfiguration;
+		this.authenticationMethod.getPassportAuthenticationMethod().setLdapOxPassportConfiguration(ldapOxPassportConfiguration);
 	}
 
 	public String getId(Object obj) {
@@ -475,25 +400,11 @@ public class ManagePersonAuthenticationAction
 	}
 
 	public GluuBoolean getPassportEnable() {
-		return passportEnable;
+		return authenticationMethod.getPassportAuthenticationMethod().asGluuBoolean();
 	}
 
 	public void setPassportEnable(GluuBoolean passportEnable) {
-		this.passportEnable = passportEnable;
-	}
-
-	private List<OxIDPAuthConf> getIDPAuthConfOrNull(GluuAppliance appliance) {
-		List<OxIDPAuthConf> idpConfs = appliance.getOxIDPAuthentication();
-		List<OxIDPAuthConf> authIdpConfs = new ArrayList<OxIDPAuthConf>();
-		if (idpConfs != null) {
-			for (OxIDPAuthConf idpConf : idpConfs) {
-				if (idpConf.getType().equalsIgnoreCase("auth")) {
-					authIdpConfs.add(idpConf);
-				}
-			}
-		}
-		return authIdpConfs;
-
+		authenticationMethodService.change(authenticationMethod, passportEnable);
 	}
 
 	public List<GluuLdapConfiguration> getSourceConfigs() {

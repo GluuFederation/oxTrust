@@ -28,7 +28,7 @@ import java.util.Map;
 @Path(OxTrustApiConstants.BASE_API_URL + "/logs")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-@Secure("#{apiPermissionService.hasPermission('log', 'access')}")
+// TODO Uma
 public class LogsWebService {
 
     @Inject
