@@ -96,7 +96,7 @@
 
              <ox:decorate id="multivalued" label="#{msg['attribute.multivalued']}">
                 <h:selectOneMenu styleClass="form-control" value="#{_attribute.oxMultivaluedAttribute}" label="#{msg['attribute.multivalued']}" required="true" id="multivaluedId" rendered="#{_attributeAction.canEdit()}">
-                    <f:selectItem noSelectionOption="true"  itemLabel="Multivalued"/>
+                    <f:selectItem noSelectionOption="true"  itemLabel="#{_attribute.oxMultivaluedAttribute}"/>
                     <f:selectItems value="#{attributeService.oxMultivalued}"
                               var="_custom" itemLabel="#{_custom.displayName}"/>
                     <f:converter converterId="org.gluu.jsf2.converter.EnumConverter"/>
