@@ -83,7 +83,6 @@ public class FaviconImageServlet extends HttpServlet {
 					file = imageService.getSourceFile(image);
 				} catch (Exception ex) {
 					log.error("an Error Occured", ex);
-
 				}
 				try {
 					is = FileUtils.openInputStream(file);

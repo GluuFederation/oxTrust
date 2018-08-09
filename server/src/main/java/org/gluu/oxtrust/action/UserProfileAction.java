@@ -122,7 +122,7 @@ public class UserProfileAction implements Serializable {
 
 		try {
 			this.person = identity.getUser();
-		} catch (BaseMappingException ex) {
+		} catch (LdapMappingException ex) {
 			log.error("Failed to find person {}", identity.getUser().getInum(), ex);
 		}
 

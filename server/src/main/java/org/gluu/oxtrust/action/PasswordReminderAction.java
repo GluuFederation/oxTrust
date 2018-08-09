@@ -274,21 +274,6 @@ public class PasswordReminderAction implements Serializable {
 	}
 
 	/**
-	 * @return the ldapEntryManager
-	 */
-	public LdapEntryManager getLdapEntryManager() {
-		return ldapEntryManager;
-	}
-
-	/**
-	 * @param ldapEntryManager
-	 *            the ldapEntryManager to set
-	 */
-	public void setLdapEntryManager(LdapEntryManager ldapEntryManager) {
-		this.ldapEntryManager = ldapEntryManager;
-	}
-
-	/**
 	 * @return the recaptchaService
 	 */
 	public RecaptchaService getRecaptchaService() {
