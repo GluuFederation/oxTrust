@@ -7,7 +7,7 @@ package org.gluu.oxtrust.model.scim2.extensions;
 
 import org.gluu.oxtrust.model.scim2.AttributeDefinition.Type;
 import org.gluu.oxtrust.model.scim2.util.DateUtil;
-import org.xdi.model.GluuAttributeDataType;
+import org.xdi.model.attribute.AttributeDataType;
 
 import java.util.regex.Pattern;
 
@@ -42,7 +42,7 @@ public class ExtensionField {
 
     private String name;
     private boolean multiValued;
-    private GluuAttributeDataType type;
+    private AttributeDataType type;
     private String description;
 
     /**
@@ -194,7 +194,7 @@ public class ExtensionField {
         return multiValued;
     }
 
-    public GluuAttributeDataType getType() {
+    public AttributeDataType getType() {
         return type;
     }
 
@@ -202,7 +202,7 @@ public class ExtensionField {
         this.multiValued = multiValued;
     }
 
-    public void setType(GluuAttributeDataType type) {
+    public void setType(AttributeDataType type) {
         this.type = type;
     }
 

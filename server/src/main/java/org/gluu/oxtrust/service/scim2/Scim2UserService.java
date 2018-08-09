@@ -50,11 +50,11 @@ import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.model.PagedResult;
 import org.gluu.persist.model.SortOrder;
 import org.gluu.persist.model.base.GluuBoolean;
-import org.gluu.persist.model.base.GluuStatus;
 import org.gluu.search.filter.Filter;
 import org.joda.time.format.ISODateTimeFormat;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
+import org.xdi.model.GluuStatus;
 
 /**
  * This class holds the most important business logic of the SCIM service for the resource type "User". It's devoted to

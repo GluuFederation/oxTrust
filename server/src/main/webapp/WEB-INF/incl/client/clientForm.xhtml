@@ -8,6 +8,7 @@
                 xmlns:rich="http://richfaces.org/rich"
                 xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
                 xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
+                xmlns:p="http://primefaces.org/ui"
 >
     <style type="text/css">
         .odd {
@@ -37,6 +38,20 @@
         .tooltipData {
             font-weight: bold;
         }
+        
+        .ui-widget-header {
+		    background: none !important;
+		    repeat-x: top left #005000 !important;
+		    position: relative !important;
+		    padding-left: 10px !important;
+		    cursor: move !important;
+		    padding: 6px !important;
+		    background-color: #337AB7 !important;
+		    width: 100% !important;
+		    border-top-right-radius: 4px !important;
+		    border-top-left-radius: 4px !important;
+		    color:white !important;
+		}
     </style>
        <h:outputScript>
 
@@ -116,7 +131,17 @@
 		}
 
     </h:outputScript>
+    <h:panelGroup id="summarygroup" >
+     		<ox:clientSummary _clientAction="#{_clientAction}" _client="#{_client}" dialogWidth="600"
+                                    id="summary"  inputWidth="80"
+                                    label="#{msg['client.selectLogoutRedirectURI']}" maxLength="256"  />
+     
+     </h:panelGroup>
 
+		<h:panelGroup layout="block" style="padding-top: 1%;">
+					<p:commandButton value="Client Config Summary"  styleClass="btn btn-primary" type="button" onclick="PF('dlg1').show();" />
+					
+        </h:panelGroup>
 
     <h:form id="clientForm">
         <div class="row">

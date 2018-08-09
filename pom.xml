@@ -31,11 +31,14 @@
 		<log4j.version>2.11.0</log4j.version>
 		<slf4j.version>1.7.25</slf4j.version>
 
-		<weld.version>3.0.1.Final</weld.version>
-		<richfaces.version>4.5.17.Final</richfaces.version>
-		<jsf-api.version>2.2.16</jsf-api.version>
-		<jsf-impl.version>2.2.16</jsf-impl.version>
-		<uel.version>2.2</uel.version>
+		<weld.version>3.0.5.Final</weld.version>
+		<richfaces.version>4.5.17-gluu.Final</richfaces.version>
+
+		<jsf-api.version>2.2.17</jsf-api.version>
+		<jsf-impl.version>2.2.17</jsf-impl.version>
+		<uel-api.version>2.2.1-b04</uel-api.version>
+		<uel-impl.version>2.2.1-b05</uel-impl.version>
+
 		<omnifaces.version>2.6.9</omnifaces.version>
 
 		<shibboleth.jce.version>1.1.0</shibboleth.jce.version>
@@ -227,7 +230,7 @@
 			<dependency>
 				<groupId>org.glassfish.web</groupId>
 				<artifactId>el-impl</artifactId>
-				<version>${uel.version}</version>
+				<version>${uel-impl.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>javax.websocket</groupId>
@@ -235,13 +238,8 @@
 				<version>1.1</version>
 			</dependency>
 			<dependency>
-				<groupId>com.sun.faces</groupId>
-				<artifactId>jsf-api</artifactId>
-				<version>${jsf-api.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.sun.faces</groupId>
-				<artifactId>jsf-impl</artifactId>
+			    <groupId>org.glassfish</groupId>
+			    <artifactId>javax.faces</artifactId>
 				<version>${jsf-impl.version}</version>
 			</dependency>
 			<dependency>
@@ -272,6 +270,13 @@
 				<groupId>org.omnifaces</groupId>
 				<artifactId>omnifaces</artifactId>
 				<version>${omnifaces.version}</version>
+			</dependency>
+			
+			<!-- Primefaces -->			
+			<dependency>
+				<groupId>org.primefaces</groupId>
+				<artifactId>primefaces</artifactId>
+				<version>6.2</version>
 			</dependency>
 
 			<!-- Prettyfaces -->
@@ -661,6 +666,13 @@
 				<groupId>org.testng</groupId>
 				<artifactId>testng</artifactId>
 				<version>6.14.3</version>
+				<scope>test</scope>
+			</dependency>
+            <!--Can be removed once TestNG dependency contains JCommander 1.74 or newer-->
+            <dependency>
+                <groupId>com.beust</groupId>
+                <artifactId>jcommander</artifactId>
+                <version>1.72</version>
 				<scope>test</scope>
 			</dependency>
 

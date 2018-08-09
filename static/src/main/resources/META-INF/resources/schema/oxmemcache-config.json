@@ -1,7 +1,7 @@
 {
     "$schema": "http://json-schema.org/draft-04/schema#",
     "id": "/",
-    "title": "oxMemCache-Config",
+    "title": "Cache Configuration",
     "type": "object",
     "additionalProperties": true,
     "properties": {
@@ -12,7 +12,8 @@
             "enum": [
                 "IN_MEMORY",
                 "MEMCACHED",
-                "REDIS"
+                "REDIS",
+				"NATIVE_PERSISTENCE"
             ]
     },
     "memcachedConfiguration":{
@@ -136,6 +137,22 @@
 		            "minLength": 1
 		        }
             }
+		},
+		"nativePersistenceConfiguration": {
+			"type":"object",
+			"additionalProperties":false,
+			"properties":{
+				"defaultPutExpiration" : {
+					"id": "defaultPutExpiration",
+					"description": "defaultPutExpiration timeout value",
+					"type": "integer",
+					"multipleOf": 1,
+					"maximum": 2147483647,
+					"minimum": 1,
+					"exclusiveMaximum": false,
+					"exclusiveMinimum": false
+				}
+			}
 		}
     }
 }

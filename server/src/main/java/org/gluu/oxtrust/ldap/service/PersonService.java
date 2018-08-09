@@ -500,6 +500,35 @@ public class PersonService implements Serializable, IPersonService {
 
         return null;
     }
+    
+    /* (non-Javadoc)
+     * @see org.gluu.oxtrust.ldap.service.IPersonService#getPersonsByUid(java.lang.String)
+     */
+    @Override
+    public List<GluuCustomPerson> getPersonsByUid(String uid) {
+        GluuCustomPerson person = new GluuCustomPerson();
+        person.setBaseDn(getDnForPerson(null));
+        person.setUid(uid);
+
+        List<GluuCustomPerson> persons = ldapEntryManager.findEntries(person);
+
+        return persons;
+    }
+
+
+    /* (non-Javadoc)
+     * @see org.gluu.oxtrust.ldap.service.IPersonService#getPersonsByEmail(java.lang.String)
+     */
+    @Override
+    public List<GluuCustomPerson> getPersonsByEmail(String email) {
+        GluuCustomPerson person = new GluuCustomPerson();
+        person.setBaseDn(getDnForPerson(null));
+        person.setMail(email);
+
+        List<GluuCustomPerson> persons = ldapEntryManager.findEntries(person);
+
+        return persons ;
+    }
 
     /* (non-Javadoc)
      * @see org.gluu.oxtrust.ldap.service.IPersonService#getPersonByAttribute(java.lang.String, java.lang.String)

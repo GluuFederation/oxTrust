@@ -9,7 +9,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.gluu.oxtrust.model.GluuGroup;
-import org.gluu.persist.model.base.GluuStatus;
+import org.xdi.model.GluuStatus;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)

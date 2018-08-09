@@ -16,7 +16,7 @@ import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.security.Identity;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.model.GluuUserRole;
+import org.xdi.model.user.UserRole;
 import org.xdi.util.StringHelper;
 
 /**
@@ -68,7 +68,7 @@ public class PermissionService implements Serializable {
             return false;
         }
 
-        if (identity.hasRole(GluuUserRole.MANAGER.getValue()) || identity.hasRole(GluuUserRole.USER.getValue())) {
+        if (identity.hasRole(UserRole.MANAGER.getValue()) || identity.hasRole(UserRole.USER.getValue())) {
             if (StringHelper.equalsIgnoreCase("profile_management", action)) {
                 GluuAppliance appliance = applianceService.getAppliance();
                 GluuAppliance targetAppliance = (GluuAppliance) target;
@@ -92,7 +92,7 @@ public class PermissionService implements Serializable {
             }
         }
 
-        if (identity.hasRole(GluuUserRole.MANAGER.getValue())) {
+        if (identity.hasRole(UserRole.MANAGER.getValue())) {
             for (String[] managerAction : managerActions) {
                 String targetString = (String) target;
                 if (StringHelper.equals(managerAction[0], targetString) && StringHelper.equals(managerAction[1], action)) {
@@ -101,7 +101,7 @@ public class PermissionService implements Serializable {
             }
         }
         
-        if (identity.hasRole(GluuUserRole.USER.getValue())) {
+        if (identity.hasRole(UserRole.USER.getValue())) {
             for (String[] managerAction : managerActions) {
                 String targetString = (String) target;
                 if (StringHelper.equals("profile", targetString) && StringHelper.equals(managerAction[0], targetString) && StringHelper.equals(managerAction[1], action)) {

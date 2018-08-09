@@ -21,6 +21,7 @@ import javax.inject.Named;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.gluu.jsf2.io.ResponseHelper;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.oxtrust.ldap.service.FederationService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
@@ -28,12 +29,11 @@ import org.gluu.oxtrust.ldap.service.Shibboleth3ConfService;
 import org.gluu.oxtrust.model.GluuMetadataSourceType;
 import org.gluu.oxtrust.model.GluuSAMLFederationProposal;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.persist.model.base.GluuStatus;
+import org.xdi.model.GluuStatus;
 import org.xdi.service.security.Secure;
 import org.xdi.util.StringHelper;
 import org.xdi.util.io.ExcludeFilterInputStream;
 import org.xdi.util.io.FileUploadWrapper;
-import org.xdi.util.io.ResponseHelper;
 
 @ConversationScoped
 @Named("joinFederationAction")

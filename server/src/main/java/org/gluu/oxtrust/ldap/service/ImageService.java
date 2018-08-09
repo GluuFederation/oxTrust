@@ -20,8 +20,8 @@ import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.richfaces.model.UploadedFile;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.model.GluuAttributeDataType;
 import org.xdi.model.GluuImage;
+import org.xdi.model.attribute.AttributeDataType;
 import org.xdi.service.XmlService;
 import org.xdi.util.StringHelper;
 import org.xdi.util.repository.RepositoryUtility;
@@ -126,7 +126,7 @@ public class ImageService {
 	 */
 	public GluuImage getImage(GluuCustomAttribute customAttribute) {
 		if ((customAttribute == null) || StringHelper.isEmpty(customAttribute.getValue())
-				|| !GluuAttributeDataType.BINARY.equals(customAttribute.getMetadata().getDataType())) {
+				|| !AttributeDataType.BINARY.equals(customAttribute.getMetadata().getDataType())) {
 			return null;
 		}
 

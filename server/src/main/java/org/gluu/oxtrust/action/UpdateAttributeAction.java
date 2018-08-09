@@ -20,13 +20,13 @@ import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.TrustService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.exception.BasePersistenceException;
-import org.gluu.persist.model.base.GluuStatus;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.model.AttributeValidation;
 import org.xdi.model.GluuAttribute;
-import org.xdi.model.GluuUserRole;
+import org.xdi.model.GluuStatus;
 import org.xdi.model.SchemaEntry;
+import org.xdi.model.attribute.AttributeValidation;
+import org.xdi.model.user.UserRole;
 import org.xdi.service.SchemaService;
 import org.xdi.service.security.Secure;
 import org.xdi.util.ArrayHelper;
@@ -88,7 +88,7 @@ public class UpdateAttributeAction implements Serializable {
 		attribute.setAttributeValidation(new AttributeValidation());
 
 		this.attribute.setStatus(GluuStatus.ACTIVE);
-		this.attribute.setEditType(new GluuUserRole[] { GluuUserRole.ADMIN });
+		this.attribute.setEditType(new UserRole[] { UserRole.ADMIN });
 
 		this.canEdit = true;
 
@@ -357,7 +357,7 @@ public class UpdateAttributeAction implements Serializable {
 	}
 
 	public boolean validateEditType() {
-		if (!(this.attribute.allowEditBy(GluuUserRole.USER) || this.attribute.allowEditBy(GluuUserRole.ADMIN))) {
+		if (!(this.attribute.allowEditBy(UserRole.USER) || this.attribute.allowEditBy(UserRole.ADMIN))) {
 			facesMessages.add(FacesMessage.SEVERITY_WARN, "Please select Edit Type.");
 			return false;
 		}

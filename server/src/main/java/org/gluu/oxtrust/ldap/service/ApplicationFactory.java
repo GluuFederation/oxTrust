@@ -15,9 +15,11 @@ import javax.inject.Named;
 
 import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.config.ConfigurationFactory.PersistenceConfiguration;
+import org.apache.commons.lang.StringUtils;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.persist.PersistenceEntryManagerFactory;
 import org.slf4j.Logger;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.SmtpConfiguration;
 import org.xdi.service.cache.CacheConfiguration;
 import org.xdi.service.cache.InMemoryConfiguration;
@@ -43,11 +45,15 @@ public class ApplicationFactory {
     @Inject
     private Instance<PersistenceEntryManagerFactory> persistenceEntryManagerFactoryInstance;
 
+    @Inject
+    private AppConfiguration appConfiguration;
+
     public static final String PERSISTENCE_ENTRY_MANAGER_FACTORY_NAME = "persistenceEntryManagerFactory";
 
     public static final String PERSISTENCE_ENTRY_MANAGER_NAME = "persistenceEntryManager";
 
     public static final String PERSISTENCE_CENTRAL_ENTRY_MANAGER_NAME = "centralPersistenceEntryManager";
+
 
     @Produces @ApplicationScoped
    	public CacheConfiguration getCacheConfiguration() {
@@ -61,7 +67,9 @@ public class ApplicationFactory {
    			cacheConfiguration.setInMemoryConfiguration(new InMemoryConfiguration());
 
    			log.info("IN-MEMORY cache configuration is created.");
-   		}
+   		} else if (cacheConfiguration.getNativePersistenceConfiguration() != null) {
+			cacheConfiguration.getNativePersistenceConfiguration().setBaseDn(appConfiguration.getBaseDN());
+		}
    		log.info("Cache configuration: " + cacheConfiguration);
    		return cacheConfiguration;
    	}

@@ -22,7 +22,7 @@ import org.gluu.persist.exception.EntryPersistenceException;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.ImportPerson;
 import org.xdi.model.GluuAttribute;
-import org.xdi.model.GluuAttributeDataType;
+import org.xdi.model.attribute.AttributeDataType;
 import org.xdi.util.StringHelper;
 import org.xdi.util.properties.FileConfiguration;
 
@@ -103,7 +103,7 @@ public class ImportPersonConfiguration {
 		boolean required = importConfiguration.getBoolean(prefix + ATTRIBUTE_DATA_REQUIRED_SUFFIX, false);
 
 		if (StringHelper.isNotEmpty(attributeName) && StringHelper.isNotEmpty(displayName) && StringHelper.isNotEmpty(dataType)) {
-			GluuAttributeDataType attributeDataType = GluuAttributeDataType.getByValue(dataType);
+			AttributeDataType attributeDataType = AttributeDataType.getByValue(dataType);
 			if (attributeDataType != null) {
 				GluuAttribute attr = new GluuAttribute();
 				attr.setName(attributeName);
@@ -125,7 +125,7 @@ public class ImportPersonConfiguration {
 		boolean required = importPerson.getRequired();
 
 		if (StringHelper.isNotEmpty(attributeName) && StringHelper.isNotEmpty(displayName) && StringHelper.isNotEmpty(dataType)) {
-			GluuAttributeDataType attributeDataType = GluuAttributeDataType.getByValue(dataType);
+			AttributeDataType attributeDataType = AttributeDataType.getByValue(dataType);
 			if (attributeDataType != null) {
 				GluuAttribute attr = new GluuAttribute();
 				attr.setName(attributeName);

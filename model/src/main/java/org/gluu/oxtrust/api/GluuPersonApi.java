@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 
 import org.gluu.oxtrust.model.GluuCustomPerson;
-import org.gluu.persist.model.base.GluuStatus;
+import org.xdi.model.GluuStatus;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "gluuperson")

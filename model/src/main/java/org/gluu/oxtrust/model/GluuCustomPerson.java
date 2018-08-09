@@ -14,11 +14,11 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.gluu.persist.model.base.GluuBoolean;
-import org.gluu.persist.model.base.GluuStatus;
 import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
 import org.gluu.site.ldap.persistence.annotation.LdapEntry;
 import org.gluu.site.ldap.persistence.annotation.LdapJsonObject;
 import org.gluu.site.ldap.persistence.annotation.LdapObjectClass;
+import org.xdi.model.GluuStatus;
 
 /**
  * Person

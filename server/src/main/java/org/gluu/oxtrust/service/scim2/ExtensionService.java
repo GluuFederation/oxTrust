@@ -27,8 +27,8 @@ import org.gluu.oxtrust.model.scim2.extensions.ExtensionField;
 import org.gluu.oxtrust.model.scim2.user.UserResource;
 import org.slf4j.Logger;
 import org.xdi.model.GluuAttribute;
-import org.xdi.model.OxMultivalued;
-import org.xdi.model.ScimCustomAtribute;
+import org.xdi.model.attribute.Multivalued;
+import org.xdi.model.scim.ScimCustomAtribute;
 
 /**
  * Created by jgomer on 2017-09-29.
@@ -55,7 +55,7 @@ public class ExtensionService {
                 for (GluuAttribute attribute : attrService.getSCIMRelatedAttributes()) {
                     if (attribute.getOxSCIMCustomAttribute().equals(ScimCustomAtribute.TRUE)) {
                         //first non-null check is needed because certain entries do not have the multivalue attribute set
-                        boolean multi=attribute.getOxMultivaluedAttribute()!=null && attribute.getOxMultivaluedAttribute().equals(OxMultivalued.TRUE);
+                        boolean multi=attribute.getMultivaluedAttribute()!=null && attribute.getMultivaluedAttribute().equals(Multivalued.TRUE);
 
                         ExtensionField field=new ExtensionField();
                         field.setDescription(attribute.getDescription());

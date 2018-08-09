@@ -54,6 +54,7 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openssl.PEMWriter;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.util.encoders.Base64;
+import org.gluu.jsf2.io.ResponseHelper;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.service.AttributeService;
@@ -73,18 +74,17 @@ import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.exception.BasePersistenceException;
-import org.gluu.persist.model.base.GluuStatus;
 import org.gluu.saml.metadata.SAMLMetadataParser;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.GluuAttribute;
-import org.xdi.model.GluuUserRole;
+import org.xdi.model.GluuStatus;
 import org.xdi.model.SchemaEntry;
+import org.xdi.model.user.UserRole;
 import org.xdi.service.SchemaService;
 import org.xdi.service.cdi.async.Asynchronous;
 import org.xdi.service.security.Secure;
 import org.xdi.util.StringHelper;
-import org.xdi.util.io.ResponseHelper;
 
 import com.unboundid.ldap.sdk.schema.AttributeTypeDefinition;
 
@@ -471,12 +471,12 @@ public class UpdateTrustRelationshipAction implements Serializable {
 	}
 
 	private List<GluuAttribute> getAllAttributes() {
-		List<GluuAttribute> attributes = attributeService.getAllPersonAttributes(GluuUserRole.ADMIN);
+		List<GluuAttribute> attributes = attributeService.getAllPersonAttributes(UserRole.ADMIN);
 		return attributes;
 	}
 	
 	private List<GluuAttribute> getAllActiveAttributes() {
-		List<GluuAttribute> attributes = attributeService.getAllActivePersonAttributes(GluuUserRole.ADMIN);
+		List<GluuAttribute> attributes = attributeService.getAllActivePersonAttributes(UserRole.ADMIN);
 		attributes.remove(attributeService.getAttributeByName("userPassword"));
 		return attributes;
 	}

@@ -29,7 +29,7 @@ import org.gluu.oxtrust.util.OxTrustConstants;
 import org.slf4j.Logger;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuImage;
-import org.xdi.model.GluuUserRole;
+import org.xdi.model.user.UserRole;
 import org.xdi.service.security.Secure;
 
 /**
@@ -133,7 +133,7 @@ public class WhitePagesAction implements Serializable {
 	}
 
 	public byte[] getPhotoThumbData(GluuCustomPerson person) {
-		List<GluuAttribute> attributes = attributeService.getAllPersonAttributes(GluuUserRole.USER);
+		List<GluuAttribute> attributes = attributeService.getAllPersonAttributes(UserRole.USER);
 		GluuAttribute photoAttribute = attributeService.getAttributeByName(PHOTO_NAME, attributes);
 		GluuCustomAttribute customAttribute = new GluuCustomAttribute(PHOTO_NAME, person.getAttribute(PHOTO_NAME));
 		customAttribute.setMetadata(photoAttribute);
@@ -151,7 +151,7 @@ public class WhitePagesAction implements Serializable {
 
 		List<GluuCustomAttribute> releasedAttributes = new ArrayList<GluuCustomAttribute>();
 		for (GluuCustomAttribute attribute : person.getCustomAttributes()) {
-			List<GluuAttribute> attributes = attributeService.getAllPersonAttributes(GluuUserRole.USER);
+			List<GluuAttribute> attributes = attributeService.getAllPersonAttributes(UserRole.USER);
 			GluuAttribute metadata = attributeService.getAttributeByName(attribute.getName(), attributes);
 			if (metadata != null && metadata.isWhitePagesCanView() && !tableAttributes.contains(attribute.getName())) {
 				attribute.setMetadata(metadata);
