@@ -102,7 +102,6 @@
 		<module>configuration</module>
 		<module>model</module>
 		<module>server</module>
-        <module>client</module>
 		<module>scim</module>
 		<module>openid-auth-client</module>
 		<module>saml-openid-auth-client</module>
