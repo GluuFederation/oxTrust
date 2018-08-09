@@ -12,8 +12,10 @@ import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.lang.StringUtils;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.slf4j.Logger;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.SmtpConfiguration;
 import org.xdi.service.cache.CacheConfiguration;
 import org.xdi.service.cache.InMemoryConfiguration;
@@ -35,6 +37,9 @@ public class ApplicationFactory {
     @Inject
     private ApplianceService applianceService;
 
+    @Inject
+	private AppConfiguration appConfiguration;
+
     @Produces @ApplicationScoped
    	public CacheConfiguration getCacheConfiguration() {
    		CacheConfiguration cacheConfiguration = applianceService.getAppliance().getCacheConfiguration();
@@ -47,7 +52,9 @@ public class ApplicationFactory {
    			cacheConfiguration.setInMemoryConfiguration(new InMemoryConfiguration());
 
    			log.info("IN-MEMORY cache configuration is created.");
-   		}
+   		} else if (cacheConfiguration.getNativePersistenceConfiguration() != null) {
+			cacheConfiguration.getNativePersistenceConfiguration().setBaseDn(appConfiguration.getBaseDN());
+		}
    		log.info("Cache configuration: " + cacheConfiguration);
    		return cacheConfiguration;
    	}
