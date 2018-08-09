@@ -61,7 +61,7 @@
                     	<h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0" >
                             <h:panelGroup >
                             <div >
-                                <h:inputText id="fInput" style = "margin-right:5px;margin-bottom:10px;width:35%;float:left;" styleClass="col-md-4 form-control" value="#{_property.value1}" size="#{cc.attrs.inputWidth}" required="#{cc.attrs.requiredName}"/>
+                                <h:inputText id="fInput" style = "margin-right:5px;margin-bottom:10px;width:35%;float:left;" styleClass="col-md-4 form-control" value="#{_property.value1}" size="#{cc.attrs.inputWidth}" required="#{cc.attrs.requiredName}" readonly="#{(_property.value1) eq 'clientID' or (_property.value1) eq 'clientSecret'}"/>
                                 <h:message for="fInput" errorClass="invalid"/>
 
 	                            <h:inputText id="sInput1" styleClass="col-md-4 form-control togglefield" style = "width:35%;float:left;" value="#{_property.value2}" size="#{cc.attrs.inputWidth}" required="#{cc.attrs.requiredValue}" rendered="#{(cc.attrs.hideValue eq false) or (_property.hideValue eq false)}" />
@@ -76,7 +76,8 @@
     							
     							<a4j:commandLink styleClass="glyphicon glyphicon-remove col-md-3" rendered="#{cc.attrs.showRemoveDialogue eq false}"   style="float:left;margin-top: 8px;" action="#{cc.attrs.propertiesAction.removeItemFromSimpleCustomProperties(cc.attrs.properties, _property)}" render="customList" execute="@this" />
                                 
-                                <a4j:commandLink styleClass="glyphicon glyphicon-remove col-md-3" rendered="#{cc.attrs.showRemoveDialogue eq true}"  style="float:left;margin-top: 8px;" onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();" execute="@this" />
+                                <a4j:commandLink styleClass="glyphicon glyphicon-remove col-md-3" rendered="#{(cc.attrs.showRemoveDialogue) eq true and (_property.value1) ne 'clientID' and (_property.value1) ne 'clientSecret'}"  style="float:left;margin-top: 8px;" onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();"
+                                  execute="@region" />
                                 
                                 <h:graphicImage value="/img/eye.png" style="display: none;"  id="view" onclick="return viewValue(this);" rendered="#{cc.attrs.hideValue eq true}"/>
                                 <h:graphicImage value="/img/eye-hidden.png" style="display: none;" id="hide" onclick="return hideValue(this);" rendered="#{cc.attrs.hideValue eq true}"/>

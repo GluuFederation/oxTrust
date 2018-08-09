@@ -44,13 +44,12 @@
 
 				<h:panelGroup columns="2" columnClasses="alignLeft, removeConfig"
 					width="100%" border="0" cellpadding="0" cellspacing="0">
-					<a4j:commandLink styleClass="glyphicon glyphicon-remove"
-						style="margin-left:1000px;margin-top:-21px;"
-						action="#{cc.attrs.ldapConfigAction.removeLdapConfig(cc.attrs.ldapConfigList, cc.attrs.ldapConfig)}"
-						rendered="#{cc.attrs.displayRemoveButton}"
-						render="#{cc.attrs.renderAfterRomoval}" execute="@this">
-						<!--  <h:graphicImage value="/img/remove.gif" />-->
-					</a4j:commandLink>
+					<a4j:commandLink style="margin-right:10%; border-radius:5px;" styleClass="btn btn-danger"
+									value="Remove source"
+									execute="@this"
+									rendered="#{cc.attrs.displayRemoveButton}"
+									render="#{cc.attrs.renderAfterRomoval}"
+									action="#{cc.attrs.ldapConfigAction.removeLdapConfig(cc.attrs.ldapConfigList, cc.attrs.ldapConfig)}"/>
 					<h:panelGroup columns="1" width="100%" border="0" cellpadding="0"
 						cellspacing="0">
 						<ox:decorate id="name" label="#{msg['ldapConfig.name']}">
@@ -98,7 +97,7 @@
 								size="46" />
 						</ox:decorate>
 
-						<ox:decorate label="#{msg['ldapConfig.level']}">
+						<ox:decorate label="#{msg['ldapConfig.level']}" rendered="false">
 							<rich:inputNumberSpinner value="#{cc.attrs.ldapConfig.level}"
 								inputSize="2" minValue="0" maxValue="100" />
 						</ox:decorate>

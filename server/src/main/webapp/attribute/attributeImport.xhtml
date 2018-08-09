@@ -10,9 +10,9 @@
     <ui:define name="body">
         <section class="content-header">
             <h1 style="color: #333;">
-                Import/Export Attributes
+                #{msg['attribute.importExports']}
                 <small>
-                    <i class="fa fa-caret-right" style="color: #333 !important;"/> Import Attribute
+                    <i class="fa fa-caret-right" style="color: #333 !important;"/> #{msg['attribute.import']}
                 </small>
             </h1>
             <ol class="breadcrumb">
@@ -22,7 +22,7 @@
                     </a>
                 </li>
                 <li class="organization/configuration">
-                    <a href="#{request.contextPath}/attribute/import">Import Attribute</a>
+                    <a href="#{request.contextPath}/attribute/import">#{msg['attribute.import']}</a>
                 </li>
             </ol>
         </section>

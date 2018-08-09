@@ -23,8 +23,8 @@
             <ox:decorate label="#{msg['person.fileToImport']}">
                 <h:panelGroup id="fileImportPanelId" columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
                 
-                    <rich:fileUpload  id="fileUploadId" fileUploadListener="#{_importAction.uploadFile}" acceptedTypes="xls"
-                                ontyperejected="alert('Only XLS files are accepted');" maxFilesQuantity="1" immediateUpload="true" listHeight="60px"
+                    <rich:fileUpload  id="fileUploadId" fileUploadListener="#{_importAction.uploadFile}" acceptedTypes="xls,xlsx"
+                                ontyperejected="alert('Only Excel files are accepted');" maxFilesQuantity="1" immediateUpload="true" listHeight="60px"
                                 styleClass="uploadFile" rendered="#{_importAction.uploadedFile == null}">
                                 <a4j:ajax event="uploadcomplete" execute="@none" render="fileImportPanelId, controlButttonId"/>
                     </rich:fileUpload>
