@@ -156,7 +156,7 @@
                                 </ox:decorate>
 
                                 <ox:decorate id="displayName" label="#{msg['clientForm.clientName']}">
-                                    <rich:inplaceInput value="#{_client.displayName}"
+                                    <rich:inplaceInput value="#{_client.displayName}" requiredMessage="Please Enter the Client Name"
                                                        defaultLabel="click to enter the Client Name" maxlength="60"
                                                        inputWidth="695" required="true" id="displayNameId"/>
                                 </ox:decorate>
@@ -166,14 +166,22 @@
 					                	maxlength="250" id="descriptionId" />
                                 </ox:decorate>
 
-                                <ox:decorate id="clientSecret" rendered="#{_new}"
-                                             label="#{msg['clientForm.clientSecret']}">
-                                    <rich:inplaceInput value="#{_client.oxAuthClientSecret}"
-                                                       defaultLabel="click to enter Client Secret" maxlength="60"
-                                                       inputWidth="695"
-                                                       required="#{_clientAction.checkClientSecretRequired()}"
-                                                       id="applicationTypeId"/>
-                                </ox:decorate>
+								<h:panelGroup id="secretid">
+	                                <ox:decorate id="clientSecret"
+	                                             label="#{msg['clientForm.clientSecret']}">
+	                                    <rich:inplaceInput styleClass="togglefield" value="#{_client.oxAuthClientSecret}"
+	                                                       defaultLabel="click to enter Client Secret" maxlength="60"
+	                                                       inputWidth="695"
+	                                                       onfocus="changeTextType(this,'hidePassword');"
+	                                                       id="clientSecretId"/>
+	                                   <h:graphicImage value="/img/eye-hidden.png" id="hidePassword"  onclick="return hideValue(this,'clientSecretId','viewPassword');"/>
+	                                   <h:graphicImage value="/img/eye.png" id="viewPassword" style="display: none;" onclick="return viewValue(this,'clientSecretId','hidePassword');"/>
+							           <div id="autogenrateid">
+	                                	<a4j:commandLink render="clientSecretId" style="margin-top:10px;"  styleClass="btn btn-primary"
+	                                                               value="Auto-Generate Secret Key"
+	                                                               action="#{_clientAction.generatePassword()}" oncomplete="return valuesDisplay(this);" />
+	                                </div></ox:decorate>
+								</h:panelGroup>
 
                                 <ox:decorate id="applicatonType" label="#{msg['clientForm.applicationType']}">
                                     <h:selectOneMenu styleClass="col-sm-9 form-control" value="#{_client.oxAuthAppType}"
@@ -265,7 +273,7 @@
                                              label="#{msg['clientForm.jWSAlgorithmForSigning']}">
                                     <h:selectOneMenu styleClass="col-sm-9 form-control"
                                                      value="#{_client.idTokenSignedResponseAlg}"
-                                                     id="idTokenSignedResponseAlgId" 
+                                                     id="idTokenSignedResponseAlgId"
                                                      required="false">
                                         <f:selectItem noSelectionOption="true" itemLabel=""/>
                                         <f:selectItems value="#{clientService.signatureAlgorithmsWithoutNone}"
@@ -278,7 +286,7 @@
                                              label="#{msg['clientForm.jweAlgorithmForEncrypting']}">
                                     <h:selectOneMenu styleClass="col-sm-9 form-control"
                                                      value="#{_client.idTokenEncryptedResponseAlg}"
-                                                     id="idTokenEncryptedResponseAlgId" 
+                                                     id="idTokenEncryptedResponseAlgId"
                                                      required="false">
                                         <f:selectItem noSelectionOption="true" itemLabel=""/>
                                         <f:selectItems value="#{clientService.keyEncryptionAlgorithms}" var="_type"
@@ -291,7 +299,7 @@
                                              label="#{msg['clientForm.jweEncAlgorithmForEncrypting']}">
                                     <h:selectOneMenu styleClass="col-sm-9 form-control"
                                                      value="#{_client.idTokenEncryptedResponseEnc}"
-                                                     id="idTokenEncryptedResponseEncId" 
+                                                     id="idTokenEncryptedResponseEncId"
                                                      required="false">
                                         <f:selectItem noSelectionOption="true" itemLabel=""/>
                                         <f:selectItems value="#{clientService.blockEncryptionAlgorithms}" var="_type"
@@ -304,7 +312,7 @@
                                              label="#{msg['clientForm.jwsAlgAlgorithm']}">
                                     <h:selectOneMenu styleClass="col-sm-9 form-control"
                                                      value="#{_client.userInfoSignedResponseAlg}"
-                                                     id="userInfoSignedResponseAlgId" 
+                                                     id="userInfoSignedResponseAlgId"
                                                      required="false">
                                         <f:selectItem noSelectionOption="true" itemLabel=""/>
                                         <f:selectItems value="#{clientService.signatureAlgorithms}" var="_type"
@@ -317,7 +325,7 @@
                                              label="#{msg['clientForm.jweAlgAlgorithm']}">
                                     <h:selectOneMenu styleClass="col-sm-9 form-control"
                                                      value="#{_client.userInfoEncryptedResponseAlg}"
-                                                     id="userInfoEncryptedResponseAlgId" 
+                                                     id="userInfoEncryptedResponseAlgId"
                                                      required="false">
                                         <f:selectItem noSelectionOption="true" itemLabel=""/>
                                         <f:selectItems value="#{clientService.keyEncryptionAlgorithms}" var="_type"
@@ -330,7 +338,7 @@
                                              label="#{msg['clientForm.jweEncAlgorithm']}">
                                     <h:selectOneMenu styleClass="col-sm-9 form-control"
                                                      value="#{_client.userInfoEncryptedResponseEnc}"
-                                                     id="userInfoEncryptedResponseEncId" 
+                                                     id="userInfoEncryptedResponseEncId"
                                                      required="false">
                                         <f:selectItem noSelectionOption="true" itemLabel=""/>
                                         <f:selectItems value="#{clientService.blockEncryptionAlgorithms}" var="_type"
@@ -343,7 +351,7 @@
                                              label="#{msg['clientForm.jwsAlgAlgorithmForSigningRequestObjects']}">
                                     <h:selectOneMenu styleClass="col-sm-9 form-control"
                                                      value="#{_client.requestObjectSigningAlg}"
-                                                     id="requestObjectSigningAlgId" 
+                                                     id="requestObjectSigningAlgId"
                                                      required="false">
                                         <f:selectItem noSelectionOption="true" itemLabel=""/>
                                         <f:selectItems value="#{clientService.signatureAlgorithms}" var="_type"
@@ -356,7 +364,7 @@
                                              label="#{msg['clientForm.jweAlgAlgorithmforEncryptingRequestObjects']}">
                                     <h:selectOneMenu styleClass="col-sm-9 form-control"
                                                      value="#{_client.requestObjectEncryptionAlg}"
-                                                     id="requestObjectEncryptionAlgId" 
+                                                     id="requestObjectEncryptionAlgId"
                                                      required="false">
                                         <f:selectItem noSelectionOption="true" itemLabel=""/>
                                         <f:selectItems value="#{clientService.keyEncryptionAlgorithms}" var="_type"
@@ -369,7 +377,7 @@
                                              label="#{msg['clientForm.jweEncAlgorithmForEncryptingRequestObjects']}">
                                     <h:selectOneMenu styleClass="col-sm-9 form-control"
                                                      value="#{_client.requestObjectEncryptionEnc}"
-                                                     id="requestObjectEncryptionEncId" 
+                                                     id="requestObjectEncryptionEncId"
                                                      required="false">
                                         <f:selectItem noSelectionOption="true" itemLabel=""/>
                                         <f:selectItems value="#{clientService.blockEncryptionAlgorithms}" var="_type"
@@ -393,7 +401,7 @@
                                              label="#{msg['clientForm.jwsAlgAlgorithmForAuthentication']}">
                                     <h:selectOneMenu styleClass="col-sm-9 form-control"
                                                      value="#{_client.tokenEndpointAuthSigningAlg}"
-                                                     id="tokenEndpointAuthSigningAlgId" 
+                                                     id="tokenEndpointAuthSigningAlgId"
                                                      required="false">
                                         <f:selectItem noSelectionOption="true" itemLabel=""/>
                                         <f:selectItems value="#{clientService.signatureAlgorithms}" var="_type"
@@ -473,9 +481,9 @@
                                         </h:panelGroup>
                                     </h:panelGroup>
                                 </ox:decorate>
-                                
+
                                 <!--  -->
-                                
+
                                 <ox:decorate id="claimRedirectUrls" label="#{msg['clientForm.claimRedirectURI']}">
                                     <h:panelGroup id="selectedClaimRedirectURIIsId">
                                         <h:panelGroup columns="1" width="100%" border="0" cellpadding="0"
@@ -486,7 +494,7 @@
                                                 <div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
                                                 <h:outputText value="#{empty _uri ? _uri : _uri}"/>
                                                 <h:outputText value="&#160;"/>
-                                                
+
                                                     <div class="span6 pull-right">
                                                         <a4j:commandLink styleClass="glyphicon glyphicon-remove"
                                                                          style="margin-top:-20px;"
@@ -502,7 +510,7 @@
                                         </h:panelGroup>
                                     </h:panelGroup>
                                 </ox:decorate>
-                                
+
                                 <!--  -->
 
                                 <ox:decorate id="scopes" label="#{msg['clientForm.scopes']}">
@@ -532,30 +540,30 @@
                                     </h:panelGroup>
                                 </ox:decorate>
 
-                            <ox:decorate id="claims" label="#{msg['clientForm.claims']}">
-                                <h:panelGroup id="selectedClaimsId">
-                                    <h:panelGroup>
-                                        <a4j:repeat value="#{_clientAction.claims}" rowKeyVar="_claimIdx"
-                                                    var="_claim" iterationStatusVar="loop">
-                                            <div class="row-fluid">
-                                                <div class="#{(loop.index % 2 == 0) ? 'odd' : 'even'}">
-                                                    <h:outputText value="#{_claim.displayName}"/>
-                                                    <h:outputText value="&#160;"/>
-                                                    <div class="span6 pull-right">
-                                                        <a4j:commandLink styleClass="glyphicon glyphicon-remove"
-                                                                         style="margin-top: -20px;"
-                                                                         action="#{_clientAction.removeClaim(_claim.inum)}"
-                                                                         execute="@this" render="selectedClaimsId"
-                                                                         eventsQueue="clientQueue"></a4j:commandLink>
+                                <ox:decorate id="claims" label="#{msg['clientForm.claims']}">
+                                    <h:panelGroup id="selectedClaimsId">
+                                        <h:panelGroup>
+                                            <a4j:repeat value="#{_clientAction.claims}" rowKeyVar="_claimIdx"
+                                                        var="_claim" iterationStatusVar="loop">
+                                                <div class="row-fluid">
+                                                    <div class="#{(loop.index % 2 == 0) ? 'odd' : 'even'}">
+                                                        <h:outputText value="#{_claim.displayName}"/>
+                                                        <h:outputText value="&#160;"/>
+                                                        <div class="span6 pull-right">
+                                                            <a4j:commandLink styleClass="glyphicon glyphicon-remove"
+                                                                             style="margin-top: -20px;"
+                                                                             action="#{_clientAction.removeClaim(_claim.inum)}"
+                                                                             execute="@this" render="selectedClaimsId"
+                                                                             eventsQueue="clientQueue"></a4j:commandLink>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <br/>
-                                        </a4j:repeat>
-                                        <richext:spacer height="16"/>
+                                                <br/>
+                                            </a4j:repeat>
+                                            <richext:spacer height="16"/>
+                                        </h:panelGroup>
                                     </h:panelGroup>
-                                </h:panelGroup>
-                            </ox:decorate>
+                                </ox:decorate>
 
                                 <ox:decorate id="responseTypes" label="#{msg['clientForm.responseTypes']}">
                                     <h:panelGroup id="selectedResponseTypesId">
@@ -857,7 +865,7 @@
                                                                value="#{msg['clientForm.addFrontchannelLogoutURI']}"
                                                                oncomplete="#{rich:component('clientLogoutUri:inputText')}.show();"
                                                                execute="@this" eventsQueue="clientQueue"/>
-                                                               
+
                                             <a4j:commandButton styleClass="btn btn-primary"
                                                                value="#{msg['clientForm.addClaimRedirectURI']}"
                                                                oncomplete="#{rich:component('claimRedirectUri:inputText')}.show();"
@@ -887,5 +895,6 @@
                 persisteClientAuthorizationsIdSelect.val("FALSE");
             }
         }
+
     </h:outputScript>
 </ui:composition>
