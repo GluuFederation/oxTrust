@@ -67,6 +67,8 @@ public class ViewLogFileAction implements Serializable {
 	private boolean initialized;
 
 	private int activeLogFileIndex;
+	
+	private String currentLogFileName="";
 
 	private int displayLastLinesCount;
 
@@ -155,9 +157,9 @@ public class ViewLogFileAction implements Serializable {
 
 	public String getTailOfLogFile() {
 		if (this.activeLogFileIndex == -1) {
-			return "";
+			return "Not Content available";
 		}
-
+		setCurrentLogFileName(this.logFiles.get(activeLogFileIndex));
 		File activeLogFile = new File(this.logFiles.get(activeLogFileIndex));
 		ReverseLineReader reverseLineReader = new ReverseLineReader(activeLogFile, Charset.defaultCharset().name());
 		try {
@@ -190,6 +192,7 @@ public class ViewLogFileAction implements Serializable {
 
 	public void setActiveLogFileIndex(int activeLogFileIndex) {
 		this.activeLogFileIndex = activeLogFileIndex;
+		setCurrentLogFileName(this.logFiles.get(this.activeLogFileIndex));
 	}
 
 
@@ -200,5 +203,15 @@ public class ViewLogFileAction implements Serializable {
 	public void setDisplayLastLinesCount(int displayLinesCount) {
 		this.displayLastLinesCount = displayLinesCount;
 	}
+
+	public String getCurrentLogFileName() {
+		return currentLogFileName;
+	}
+
+	public void setCurrentLogFileName(String currentLogFileName) {
+		this.currentLogFileName = currentLogFileName;
+	}
+	
+	
 
 }
