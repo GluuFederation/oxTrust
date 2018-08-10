@@ -208,30 +208,6 @@ public class PasswordReminderAction implements Serializable {
 				mailService.sendMail(email, null, subj, messagePlain, messageHtml);
 
 				ldapEntryManager.persist(request);
-			} else {
-				GluuAppliance appliance = applianceService.getAppliance();
-				SmtpConfiguration smtpConfiguration = appliance.getSmtpConfiguration();
-
-				rendererParameters.setParameter("organizationName",
-						organizationService.getOrganization().getDisplayName());
-
-				String fromName = smtpConfiguration.getFromName();
-				if (fromName == null) {
-					fromName = String.format("%1$s identity server",
-							organizationService.getOrganization().getDisplayName());
-				}
-
-				String subj = facesMessages.evalResourceAsString("#{msg['mail.reset.not_found.message.subject']}");
-				String messagePlain = facesMessages
-						.evalResourceAsString("#{msg['mail.reset.not_found.message.plain.body']}");
-				String messageHtml = facesMessages
-						.evalResourceAsString("#{msg['mail.reset.not_found.message.html.body']}");
-
-				// rendererParameters.setParameter("mail_body", messageHtml);
-				// String mailHtml =
-				// renderService.renderView("/WEB-INF/mail/reset_password.xhtml");
-
-				mailService.sendMail(null, fromName, email, null, subj, messagePlain, messageHtml);
 			}
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
