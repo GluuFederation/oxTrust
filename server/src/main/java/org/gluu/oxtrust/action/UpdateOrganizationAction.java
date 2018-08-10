@@ -128,7 +128,7 @@ public class UpdateOrganizationAction implements Serializable {
 
 		if (!StringHelper.equals(OxTrustConstants.RESULT_SUCCESS, resultOrganization)
 				|| !StringHelper.equals(OxTrustConstants.RESULT_SUCCESS, resultApplliance)) {
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to prepare for organization configuration update");
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, facesMessages.evalResourceAsString("#{msg['organization.prepareUpdateFailed']}"));
 			conversationService.endConversation();
 
 			return OxTrustConstants.RESULT_FAILURE;
@@ -224,12 +224,12 @@ public class UpdateOrganizationAction implements Serializable {
 			/* Resolv.conf update */
 		} catch (BasePersistenceException ex) {
 			log.error("Failed to update organization", ex);
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update organization");
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, facesMessages.evalResourceAsString("#{msg['organization.UpdateFailed']}"));
 
 			return OxTrustConstants.RESULT_FAILURE;
 		}
-		
-		facesMessages.add(FacesMessage.SEVERITY_INFO, "Organization configuration updated successfully");
+
+		facesMessages.add(FacesMessage.SEVERITY_INFO, facesMessages.evalResourceAsString("#{msg['organization.UpdateSucceed']}"));
 
 		return modify();
 	}

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>oxtrust-server</artifactId>
 	<name>oxTrust Server</name>
@@ -444,8 +444,12 @@
 			<groupId>org.jboss.resteasy</groupId>
 			<artifactId>resteasy-jackson-provider</artifactId>
 		</dependency>
-                
-        <!-- Jackson -->
+		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>jaxrs-api</artifactId>
+		</dependency>
+
+		<!-- Jackson -->
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-core</artifactId>
@@ -462,11 +466,7 @@
 			<groupId>org.codehaus.jackson</groupId>
 			<artifactId>jackson-mapper-asl</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-databind</artifactId>
-		</dependency>
-                
+
 		<!-- Asimba -->
 		<dependency>
 			<groupId>org.asimba</groupId>
@@ -516,6 +516,10 @@
 					<artifactId>log4j</artifactId>
 				</exclusion>
 			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.openid4java</groupId>
@@ -571,8 +575,8 @@
 			</exclusions>
 		</dependency>
 		<dependency>
-		    <groupId>org.apache.santuario</groupId>
-		    <artifactId>xmlsec</artifactId>
+			<groupId>org.apache.santuario</groupId>
+			<artifactId>xmlsec</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.tmatesoft.svnkit</groupId>

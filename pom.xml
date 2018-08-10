@@ -34,8 +34,8 @@
 		<weld.version>3.0.5.Final</weld.version>
 		<richfaces.version>4.5.17-gluu.Final</richfaces.version>
 
-		<jsf-api.version>2.2.17</jsf-api.version>
-		<jsf-impl.version>2.2.17</jsf-impl.version>
+		<jsf-api.version>2.2.16</jsf-api.version>
+		<jsf-impl.version>2.2.16</jsf-impl.version>
 		<uel-api.version>2.2.1-b04</uel-api.version>
 		<uel-impl.version>2.2.1-b05</uel-impl.version>
 
@@ -83,11 +83,11 @@
 			<name>maven central</name>
 			<url>http://repo1.maven.org/maven2</url>
 		</repository>
-        <repository>
-            <id>build.shibboleth.net</id>
-            <name>shibboleth releases</name>
-            <url>https://build.shibboleth.net/nexus/content/repositories/releases</url>
-        </repository>
+		<repository>
+			<id>build.shibboleth.net</id>
+			<name>shibboleth releases</name>
+			<url>https://build.shibboleth.net/nexus/content/repositories/releases</url>
+		</repository>
 	</repositories>
 
 	<scm>
@@ -243,9 +243,9 @@
 				<version>${jsf-impl.version}</version>
 			</dependency>
 			<dependency>
-			    <groupId>org.hibernate</groupId>
-			    <artifactId>hibernate-validator-cdi</artifactId>
-			    <version>5.4.1.Final</version>
+				<groupId>org.hibernate</groupId>
+				<artifactId>hibernate-validator-cdi</artifactId>
+				<version>5.4.1.Final</version>
 			</dependency>
 
 			<!-- Richfaces -->
@@ -592,6 +592,11 @@
 				<version>2.6.12</version>
 			</dependency>
 			<dependency>
+				<groupId>org.apache.poi</groupId>
+				<artifactId>poi-ooxml</artifactId>
+				<version>3.17</version>
+			</dependency>
+			<dependency>
 				<groupId>org.openid4java</groupId>
 				<artifactId>openid4java-consumer</artifactId>
 				<version>0.9.6</version>
@@ -608,9 +613,9 @@
 				<version>1.4.6</version>
 			</dependency>
 			<dependency>
-			    <groupId>org.apache.santuario</groupId>
-			    <artifactId>xmlsec</artifactId>
-			    <version>2.1.1</version>
+				<groupId>org.apache.santuario</groupId>
+				<artifactId>xmlsec</artifactId>
+				<version>2.1.1</version>
 			</dependency>
 			<dependency>
 				<groupId>org.tmatesoft.svnkit</groupId>
@@ -647,12 +652,12 @@
 				<artifactId>quartz</artifactId>
 				<version>2.2.3</version>
 			</dependency>
-			
+
 			<!-- Other -->
 			<dependency>
-			    <groupId>javax.validation</groupId>
-			    <artifactId>validation-api</artifactId>
-			    <version>2.0.0.Beta1</version>
+				<groupId>javax.validation</groupId>
+				<artifactId>validation-api</artifactId>
+				<version>2.0.0.Beta1</version>
 			</dependency>
 
 			<!-- Test -->
