@@ -100,13 +100,15 @@
                                         </div>
                                     </div>
                                     <div class="tab-pane" id="tail">
-
+   
                                         <div style="display: inline-block; width: 75% !important;">
-
+                                            
                                             <h:panelGroup id="viewLogPanelId" layout="block" styleClass="overflowed">
+                                            <h1>#{viewLogFileAction.getCurrentLogFileName()}</h1>
 											<pre>
                             <h:outputText value="#{viewLogFileAction.getTailOfLogFile()}"/>
                         </pre>
+                                            <h1>#{viewLogFileAction.getCurrentLogFileName()}</h1>
                                             </h:panelGroup>
                                         </div>
                                     </div>
