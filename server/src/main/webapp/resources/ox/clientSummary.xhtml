@@ -81,13 +81,7 @@
 	                                                       inputWidth="695"
 	                                                       onfocus="changeTextType(this,'hidePassword');"
 	                                                       id="clientSecretId"/>
-	                                   <h:graphicImage value="/img/eye-hidden.png" id="hidePassword"  onclick="return hideValue(this,'clientSecretId','viewPassword');"/>
-	                                   <h:graphicImage value="/img/eye.png" id="viewPassword" style="display: none;" onclick="return viewValue(this,'clientSecretId','hidePassword');"/>
-							           <div id="autogenrateid">
-	                                	<a4j:commandLink render="clientSecretId" style="margin-top:10px;"  styleClass="btn btn-primary"
-	                                                               value="Auto-Generate Secret Key"
-	                                                               action="#{_clientAction.generatePassword()}" oncomplete="return valuesDisplay(this);" />
-	                                </div></ox:decorate>
+	                                   </ox:decorate>
 								</h:panelGroup>
 
                                 <ox:decorate id="applicatonType" label="#{msg['clientForm.applicationType']}" rendered="#{!empty _client.oxAuthAppType and _client.oxAuthAppType ne null }">
