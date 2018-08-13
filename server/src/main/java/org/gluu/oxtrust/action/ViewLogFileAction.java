@@ -55,6 +55,8 @@ public class ViewLogFileAction implements Serializable {
 
 	private int activeLogFileIndex;
 
+	private String currentLogFileName = "";
+
 	private int displayLastLinesCount;
 
 	public String init() {
@@ -92,14 +94,15 @@ public class ViewLogFileAction implements Serializable {
 
 	public String getTailOfLogFile() {
 		if (this.activeLogFileIndex == -1) {
-			return "";
+			return "No Content available";
 		}
 
 		try {
 			return this.logFilesService.logTailById(activeLogFileIndex, displayLastLinesCount);
 		} catch (IOException ex) {
 			log.error("Failed to read log file '{}'", logFilesService.filesIndexedById().get(activeLogFileIndex), ex);
-			return String.format("Failed to read log file '%s'", logFilesService.filesIndexedById().get(activeLogFileIndex));
+			return String.format("Failed to read log file '%s'",
+					logFilesService.filesIndexedById().get(activeLogFileIndex));
 		}
 	}
 
@@ -109,8 +112,8 @@ public class ViewLogFileAction implements Serializable {
 
 	public void setActiveLogFileIndex(int activeLogFileIndex) {
 		this.activeLogFileIndex = activeLogFileIndex;
+		setCurrentLogFileName(this.logFilesService.getLogName(activeLogFileIndex));
 	}
-
 
 	public int getDisplayLastLinesCount() {
 		return displayLastLinesCount;
@@ -118,6 +121,14 @@ public class ViewLogFileAction implements Serializable {
 
 	public void setDisplayLastLinesCount(int displayLinesCount) {
 		this.displayLastLinesCount = displayLinesCount;
+	}
+
+	public String getCurrentLogFileName() {
+		return currentLogFileName;
+	}
+
+	public void setCurrentLogFileName(String currentLogFileName) {
+		this.currentLogFileName = currentLogFileName;
 	}
 
 }

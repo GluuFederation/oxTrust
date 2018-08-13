@@ -1225,6 +1225,11 @@
             "description": "Path to external log4j2 logging configuration.",
             "type": "string",
             "minLength": 1
+        },
+        "disableU2fEndpoint": {
+            "id": "disableU2fEndpoint",
+            "description": "Enable/Disable U2F endpoints.",
+            "type": "boolean"
         }
     },
     "required": [
@@ -1341,6 +1346,7 @@
         "skipAuthorizationForOpenIdScopeAndPairwiseId",
         "httpLoggingEnabled",
         "httpLoggingExludePaths",
-        "externalLoggerConfiguration"
+        "externalLoggerConfiguration",
+        "disableU2fEndpoint"
     ]
 }
