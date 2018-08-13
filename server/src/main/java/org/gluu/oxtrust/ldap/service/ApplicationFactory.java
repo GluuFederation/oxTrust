@@ -6,23 +6,22 @@
 
 package org.gluu.oxtrust.ldap.service;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.context.RequestScoped;
-import javax.enterprise.inject.Instance;
-import javax.enterprise.inject.Produces;
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.config.ConfigurationFactory.PersistenceConfiguration;
-import org.apache.commons.lang.StringUtils;
-import org.gluu.oxtrust.model.GluuAppliance;
+import org.gluu.oxtrust.service.config.smtp.SmtpConfigurationService;
 import org.gluu.persist.PersistenceEntryManagerFactory;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.SmtpConfiguration;
 import org.xdi.service.cache.CacheConfiguration;
 import org.xdi.service.cache.InMemoryConfiguration;
+
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.RequestScoped;
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Produces;
+import javax.inject.Inject;
+import javax.inject.Named;
 
 /**
  * Holds factory methods to create services
@@ -41,6 +40,9 @@ public class ApplicationFactory {
 
     @Inject
     private ApplianceService applianceService;
+
+    @Inject
+	private SmtpConfigurationService smtpConfigurationService;
 
     @Inject
     private Instance<PersistenceEntryManagerFactory> persistenceEntryManagerFactoryInstance;
@@ -76,16 +78,7 @@ public class ApplicationFactory {
 
 	@Produces @RequestScoped
 	public SmtpConfiguration getSmtpConfiguration() {
-		GluuAppliance appliance = applianceService.getAppliance();
-		SmtpConfiguration smtpConfiguration = appliance.getSmtpConfiguration();
-		
-		if (smtpConfiguration == null) {
-			return new SmtpConfiguration();
-		}
-
-		applianceService.decryptSmtpPassword(smtpConfiguration);
-
-		return smtpConfiguration;
+		return smtpConfigurationService.findSmtpConfiguration();
 	}
 
     public PersistenceEntryManagerFactory getPersistenceEntryManagerFactory() {
