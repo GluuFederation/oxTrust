@@ -808,13 +808,12 @@
                                 <ox:decorate label="#{msg['clientForm.disabled']}">
                                     <h:selectBooleanCheckbox value="#{_client.disabled}" styleClass="form-control"/>
                                 </ox:decorate>
-
                                 <ox:decorate id="clientsecretexpiry"
                                              rendered="#{_client.clientSecretExpiresAt != null || !_clientAction.update}"
                                              label="#{msg['clientForm.clientSecretExpires']}">
-                                    <rich:calendar value="#{_client.clientSecretExpiresAt}" showApplyButton="true"
-                                                   datePattern="d/M/yy HH:mm" cellWidth="24px" cellHeight="22px"
-                                                   style="width:300px"/>
+                                     <rich:calendar value="#{_client.clientSecretExpiresAt}" id="calendar"
+                                        popup="false" datePattern="d/M/yy HH:mm" showApplyButton="true" style="width:300px">
+                                     </rich:calendar>
                                 </ox:decorate>
 
                                 <ox:decorate id="command">
