@@ -83,8 +83,8 @@ public class UpdateClientAction implements Serializable {
 	@Inject
 	private ConversationService conversationService;
 
-    @Inject
-    private EncryptionService encryptionService;
+	@Inject
+	private EncryptionService encryptionService;
 
 	@Inject
 	private AppConfiguration appConfiguration;
@@ -295,9 +295,9 @@ public class UpdateClientAction implements Serializable {
 			this.inum = clientService.generateInumForNewClient();
 			String dn = clientService.getDnForClient(this.inum);
 
-            if (StringHelper.isEmpty(this.client.getEncodedClientSecret())) {
-                generatePassword();
-            }
+			if (StringHelper.isEmpty(this.client.getEncodedClientSecret())) {
+				generatePassword();
+			}
 
 			// Save client
 			this.client.setDn(dn);
@@ -513,6 +513,7 @@ public class UpdateClientAction implements Serializable {
 				addClaim(aClaim);
 			}
 		}
+		this.searchAvailableClaimPattern = "";
 	}
 
 	public void acceptSelectLogoutUri() {
@@ -617,9 +618,12 @@ public class UpdateClientAction implements Serializable {
 				addScope(aScope);
 			}
 		}
+		this.searchAvailableScopePattern = "";
+		this.availableScopes = new ArrayList<OxAuthScope>();
 	}
 
 	public void cancelSelectScopes() {
+		this.searchAvailableScopePattern = "";
 	}
 
 	public void cancelSelectClaims() {
@@ -645,6 +649,7 @@ public class UpdateClientAction implements Serializable {
 	}
 
 	public void cancelSelectContact() {
+		this.availableContact = "";
 	}
 
 	public void cancelSelectDefaultAcrValue() {
@@ -1305,26 +1310,26 @@ public class UpdateClientAction implements Serializable {
 		String regex = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$";
 		Pattern pattern = Pattern.compile(regex);
 		List<String> tmpContactsList = new ArrayList<String>();
-		boolean shouldShowWarning=false;
+		boolean shouldShowWarning = false;
 		for (String contact : contacts) {
 			if (pattern.matcher(contact).matches()) {
 				tmpContactsList.add(contact);
-			}else {
-				shouldShowWarning=true;
+			} else {
+				shouldShowWarning = true;
 			}
 		}
 		contacts.clear();
 		contacts.addAll(tmpContactsList);
-		if(shouldShowWarning) {
+		if (shouldShowWarning) {
 			facesMessages.add(FacesMessage.SEVERITY_WARN, "Invalid contacts have been removed from contacts list");
 		}
 	}
-	
-    public void generatePassword() throws EncryptionException {
-        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        String pwd = RandomStringUtils.random(24, characters);
-        this.client.setOxAuthClientSecret(pwd);
-        this.client.setEncodedClientSecret(encryptionService.encrypt(pwd));
-    }
+
+	public void generatePassword() throws EncryptionException {
+		String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+		String pwd = RandomStringUtils.random(24, characters);
+		this.client.setOxAuthClientSecret(pwd);
+		this.client.setEncodedClientSecret(encryptionService.encrypt(pwd));
+	}
 
 }
