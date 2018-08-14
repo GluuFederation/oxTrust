@@ -29,6 +29,9 @@ public class CentralLdapService {
 	
 	@Inject
 	private ConfigurationFactory configurationFactory;
+	
+	@Inject
+	private OxTrustAuditService oxTrustAuditService;
 
 	/**
 	 * Add appliance entry
@@ -38,6 +41,7 @@ public class CentralLdapService {
 	 */
 	public void addAppliance(GluuAppliance appliance) {
 		centralLdapEntryManager.persist(appliance);
+		oxTrustAuditService.audit("APPLIANCE "+appliance.getDisplayName()+" SUCCESSFULLY ADDED");
 	}
 
 	/**
@@ -48,6 +52,7 @@ public class CentralLdapService {
 	 */
 	public void updateAppliance(GluuAppliance appliance) {
 		centralLdapEntryManager.merge(appliance);
+		oxTrustAuditService.audit("APPLIANCE "+appliance.getDisplayName()+" SUCCESSFULLY UPDATED");
 	}
 
 	/**

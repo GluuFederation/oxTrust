@@ -13,7 +13,6 @@ import javax.inject.Named;
 
 import org.gluu.oxtrust.service.external.ExternalIdGeneratorService;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.slf4j.Logger;
 import org.xdi.util.INumGenerator;
 import org.xdi.util.StringHelper;
 
@@ -26,9 +25,6 @@ import org.xdi.util.StringHelper;
 @Named
 public class IdGenService {
 
-    @Inject
-    private Logger log;
-    
     @Inject
     private ExternalIdGeneratorService externalIdGenerationService;
 

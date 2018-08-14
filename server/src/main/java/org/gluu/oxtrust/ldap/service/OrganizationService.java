@@ -6,12 +6,21 @@
 
 package org.gluu.oxtrust.ldap.service;
 
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+
+import javax.ejb.Stateless;
+import javax.faces.context.FacesContext;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
-import org.xdi.config.oxauth.WebKeysSettings;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.config.oxtrust.LdapOxAuthConfiguration;
 import org.xdi.ldap.model.GluuBoolean;
@@ -20,17 +29,6 @@ import org.xdi.model.ProgrammingLanguage;
 import org.xdi.service.CacheService;
 import org.xdi.util.ArrayHelper;
 import org.xdi.util.StringHelper;
-
-import javax.ejb.Stateless;
-import javax.faces.context.FacesContext;
-import javax.inject.Inject;
-import javax.inject.Named;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
 
 /**
  * Provides operations with organization
@@ -57,7 +55,7 @@ public class OrganizationService extends org.xdi.service.OrganizationService {
 	 */
 	public void updateOrganization(GluuOrganization organization) {
 		ldapEntryManager.merge(organization);
-
+        
 	}
 	
 	/**

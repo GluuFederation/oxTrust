@@ -6,8 +6,6 @@
 
 package org.gluu.oxtrust.ldap.service;
 
-import static org.gluu.oxtrust.ldap.service.AppInitializer.LDAP_ENTRY_MANAGER_NAME;
-
 import java.io.Serializable;
 
 import javax.ejb.Stateless;
@@ -19,7 +17,6 @@ import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.gluu.site.ldap.persistence.exception.MappingException;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.LdapOxPassportConfiguration;
-import org.xdi.service.JsonService;
 import org.xdi.util.StringHelper;
 import org.xdi.util.properties.FileConfiguration;
 
@@ -36,9 +33,9 @@ public class PassportService implements Serializable {
 
 	@Inject
 	private Logger log;
-
+	
 	@Inject
-	private JsonService jsonService;
+	private OxTrustAuditService oxTrustAuditService;
 
 	@Inject
 	private LdapEntryManager ldapEntryManager;
@@ -86,8 +83,10 @@ public class PassportService implements Serializable {
 		boolean contains = containsPassportConfiguration();
 		if (contains) {
 			ldapEntryManager.merge(ldapOxPassportConfiguration);
+			oxTrustAuditService.audit("OXPASSORT CONFIG "+ldapOxPassportConfiguration.getBaseDn()+ " SUCCESSFULLY UPDATE");
 		} else {
 			ldapEntryManager.persist(ldapOxPassportConfiguration);
+			oxTrustAuditService.audit("OXPASSORT CONFIG "+ldapOxPassportConfiguration.getBaseDn()+ " SUCCESSFULLY ADDED");
 		}
 
 	}

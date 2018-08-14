@@ -44,7 +44,11 @@ import com.unboundid.ldap.sdk.Filter;
 @ApplicationScoped
 @Named
 public class AsimbaService implements Serializable {
-    public static String METADATA_IDP_CONFIGURATION_DIR = "${webapp.root}/WEB-INF/sample-data/";
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -2153351932813075972L;
+	public static String METADATA_IDP_CONFIGURATION_DIR = "${webapp.root}/WEB-INF/sample-data/";
     public static String METADATA_SP_CONFIGURATION_DIR = "${webapp.root}/WEB-INF/sample-data/";
     
     @Inject
