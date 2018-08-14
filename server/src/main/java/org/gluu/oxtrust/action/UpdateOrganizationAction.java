@@ -102,9 +102,6 @@ public class UpdateOrganizationAction implements Serializable {
 	protected String welcomePageCustomMessage;
 	protected String welcomeTitleText;
 
-	private String buildDate;
-	private String buildNumber;
-
 	private GluuImage curFaviconImage, oldFaviconImage;
 
 	private GluuAppliance appliance;
@@ -325,37 +322,7 @@ public class UpdateOrganizationAction implements Serializable {
 			this.organization.setCustomMessages(null);
 		}
 	}
-
-	public String getBuildDate() {
-		if (this.buildDate != null) {
-			return this.buildDate;
-		}
-
-		DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm");
-		try {
-			String buildDate = appInitializer.getGluuBuildDate();
-			if (StringHelper.isEmpty(buildDate)) {
-				return buildDate;
-			}
-
-			final Date date = formatter.parse(buildDate);
-			this.buildDate = new SimpleDateFormat("hh:mm MMM dd yyyy").format(date) + " UTC";
-		} catch (ParseException e) {
-			log.error("Error formating date. Build process is invalid.", e);
-
-		}
-		return this.buildDate;
-	}
-
-	public String getBuildNumber() {
-		if (this.buildNumber != null) {
-			return this.buildNumber;
-		}
-
-		this.buildNumber = appInitializer.getGluuBuildNumber();
-		return this.buildNumber;
-	}
-
+	
 	public String cancel() throws Exception {
 		cancelLogoImage();
 		cancelFaviconImage();
