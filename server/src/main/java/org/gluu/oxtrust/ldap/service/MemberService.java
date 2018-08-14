@@ -23,6 +23,9 @@ public class MemberService implements Serializable {
 
 	@Inject
 	private PersonService personService;
+	
+	@Inject
+	private OxTrustAuditService oxTrustAuditService;
 
 	@Inject
 	private Logger log;
@@ -58,6 +61,7 @@ public class MemberService implements Serializable {
 			group.setMembers(members);
 			try {
 				groupService.updateGroup(group);
+				oxTrustAuditService.audit("USER "+ pesonDn+ " REMOVED FROM GROUP "+ group.getDisplayName());
 			} catch (EntryPersistenceException ex) {
 			    log.error("Failed to remove preson '{}' from group '{}'", ex);
 			}

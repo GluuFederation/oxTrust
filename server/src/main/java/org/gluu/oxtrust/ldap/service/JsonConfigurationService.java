@@ -50,17 +50,8 @@ public class JsonConfigurationService implements Serializable {
 	private JsonService jsonService;
 
 	@Inject
-	private OpenIdService openIdService;
-
-	@Inject
 	private ConfigurationFactory configurationFactory;
 
-	@Inject
-	private AppConfiguration appConfiguration;
-
-	@Inject
-	private EncryptionService encryptionService;
-	
 	@Inject
 	private ApplianceService applianceService;
 

@@ -15,6 +15,16 @@
 			</Policies>
 			<DefaultRolloverStrategy max="30" />
 		</RollingFile>
+		
+		<RollingFile name="OXTRUST_AUDIT" fileName="${sys:log.base}/logs/oxtrust_audit.log" filePattern="${sys:log.base}/logs/oxtrust_audit-%d{yyyy-MM-dd}-%i.log">
+			<PatternLayout pattern="|========>%m on %d{MM-dd-yyyy HH:mm:ss}%n" />
+
+			<Policies>
+				<TimeBasedTriggeringPolicy interval="1" modulate="true" />
+				<SizeBasedTriggeringPolicy size="250 MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="30" />
+		</RollingFile>
 
 		<RollingFile name="OX_PERSISTENCE_FILE" fileName="${sys:log.base}/logs/oxtrust_persistence.log" filePattern="${sys:log.base}/logs/oxtrust_persistence-%d{yyyy-MM-dd}-%i.log">
 			<PatternLayout pattern="%d %-5p [%t] [%C{6}] (%F:%L) - %m%n" />
@@ -127,6 +137,9 @@
 
 		<logger name="org.gluu.oxtrust.service.status.ldap" level="${log4j.default.log.level}" additivity="false">
 			<AppenderRef ref="OX_PERSISTENCE_LDAP_STATISTICS_FILE" />
+		</logger>
+		<logger name="org.gluu.oxtrust.ldap.service.OxTrustAuditService" level="${log4j.default.log.level}" additivity="false">
+			<AppenderRef ref="OXTRUST_AUDIT" />
 		</logger>
 
 		<logger name="org.gluu.oxtrust.service.external.ExternalCacheRefreshService" level="${log4j.default.log.level}" additivity="false">

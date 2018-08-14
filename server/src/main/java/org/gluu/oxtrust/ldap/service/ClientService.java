@@ -55,6 +55,9 @@ public class ClientService implements Serializable {
 
     @Inject
     private OrganizationService organizationService;
+    
+    @Inject
+	private OxTrustAuditService oxTrustAuditService;
 
 	@Inject
 	private AppConfiguration appConfiguration;
@@ -70,6 +73,7 @@ public class ClientService implements Serializable {
 	 */
 	public void addClient(OxAuthClient client) {
 		ldapEntryManager.persist(client);
+        oxTrustAuditService.audit("CLIENT "+client.getDisplayName()+ " SUCCESSFULLY ADDED");
 	}
 
 	/**
@@ -79,6 +83,7 @@ public class ClientService implements Serializable {
 	 */
 	public void removeClient(OxAuthClient client) {
 		ldapEntryManager.removeRecursively(client.getDn());
+        oxTrustAuditService.audit("CLIENT "+client.getDisplayName()+ " SUCCESSFULLY REMOVED");
 	}
 
 	/**
@@ -143,7 +148,7 @@ public class ClientService implements Serializable {
 	 */
 	public void updateClient(OxAuthClient client) {
 		ldapEntryManager.merge(client);
-
+        oxTrustAuditService.audit("CLIENT "+client.getDisplayName()+ "SUCCESSFULLY UPDATED");
 	}
 
 	/**
@@ -154,7 +159,7 @@ public class ClientService implements Serializable {
 	 */
 	public void updateCustomClient(OxAuthCustomClient client) {
 		ldapEntryManager.merge(client);
-
+        oxTrustAuditService.audit("CLIENT "+client.getDisplayName()+ "SUCCESSFULLY UPDATED");2
 	}
 
 	/**

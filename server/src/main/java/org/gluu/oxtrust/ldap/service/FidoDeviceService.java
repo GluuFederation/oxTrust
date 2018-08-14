@@ -27,6 +27,11 @@ import org.slf4j.Logger;
 @Named
 public class FidoDeviceService implements IFidoDeviceService, Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -206231314840676189L;
+
 	@Inject
 	private Logger log;
 
@@ -35,6 +40,9 @@ public class FidoDeviceService implements IFidoDeviceService, Serializable {
 
 	@Inject
 	private PersistenceEntryManager ldapEntryManager;
+	
+	@Inject
+	private OxTrustAuditService oxTrustAuditService;
 	
 	@Override
 	public String getDnForFidoDevice(String userId, String id) {
@@ -87,11 +95,13 @@ public class FidoDeviceService implements IFidoDeviceService, Serializable {
 	@Override
 	public void updateGluuCustomFidoDevice(GluuCustomFidoDevice gluuCustomFidoDevice) {
 		ldapEntryManager.merge(gluuCustomFidoDevice);
+		oxTrustAuditService.audit("CLIENT "+gluuCustomFidoDevice.getDisplayName()+ " SUCCESSFULLY MERGED");
 	}
 
 	@Override
 	public void removeGluuCustomFidoDevice(GluuCustomFidoDevice gluuCustomFidoDevice) {
-		ldapEntryManager.removeRecursively(gluuCustomFidoDevice.getDn());
+		ldapEntryManager.removeWithSubtree(gluuCustomFidoDevice.getDn());
+		oxTrustAuditService.audit("CLIENT "+gluuCustomFidoDevice.getDisplayName()+ " SUCCESSFULLY REMOVED");
 	}
 	
 	@Override

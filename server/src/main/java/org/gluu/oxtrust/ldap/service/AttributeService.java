@@ -33,7 +33,6 @@ import org.xdi.model.attribute.AttributeUsageType;
 import org.xdi.model.attribute.Multivalued;
 import org.xdi.model.scim.ScimCustomAtribute;
 import org.xdi.model.user.UserRole;
-import org.xdi.service.SchemaService;
 import org.xdi.util.INumGenerator;
 import org.xdi.util.OxConstants;
 import org.xdi.util.StringHelper;
@@ -56,10 +55,10 @@ public class AttributeService extends org.xdi.service.AttributeService {
 	private ApplianceService applianceService;
 
 	@Inject
-	private SchemaService schemaService;
+	private OrganizationService organizationService;
 
 	@Inject
-	private OrganizationService organizationService;
+	private OxTrustAuditService oxTrustAuditService;
 
 	@Inject
 	@Any
@@ -334,6 +333,7 @@ public class AttributeService extends org.xdi.service.AttributeService {
 	public void addAttribute(GluuAttribute attribute) {
 		ldapEntryManager.persist(attribute);
 
+		oxTrustAuditService.audit("ATTRIBUTE " + attribute.getDisplayName() + "SUCCESSFULLY ADDED");
 		event.select(new EventTypeQualifier(Events.EVENT_CLEAR_ATTRIBUTES)).fire(Events.EVENT_CLEAR_ATTRIBUTES);
 	}
 
