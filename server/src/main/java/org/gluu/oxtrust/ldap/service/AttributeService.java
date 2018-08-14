@@ -360,6 +360,7 @@ public class AttributeService extends org.xdi.service.AttributeService {
 		log.trace("Removing attribute {}", attribute.getDisplayName());
 		ldapEntryManager.remove(attribute);
 
+		oxTrustAuditService.audit("ATTRIBUTE " + attribute.getDisplayName() + "SUCCESSFULLY REOMVED");
 		event.select(new EventTypeQualifier(Events.EVENT_CLEAR_ATTRIBUTES)).fire(Events.EVENT_CLEAR_ATTRIBUTES);
 	}
 
