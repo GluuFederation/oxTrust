@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import javax.enterprise.context.ConversationScoped;
 import javax.faces.application.FacesMessage;
@@ -615,23 +616,6 @@ public class UpdateClientAction implements Serializable {
 		}
 		this.searchAvailableScopePattern = "";
 		this.availableScopes = new ArrayList<OxAuthScope>();
-	}
-
-	public void acceptSelectClaims() {
-		if (this.availableClaims == null) {
-			return;
-		}
-
-		Set<String> addedClaimInums = new HashSet<String>();
-		for (DisplayNameEntry claim : claims) {
-			addedClaimInums.add(claim.getInum());
-		}
-
-		for (GluuAttribute aClaim : this.availableClaims) {
-			if (aClaim.isSelected() && !addedClaimInums.contains(aClaim.getInum())) {
-				addClaim(aClaim);
-			}
-		}
 	}
 
 	public void cancelSelectScopes() {

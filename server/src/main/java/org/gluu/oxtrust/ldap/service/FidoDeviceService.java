@@ -100,7 +100,7 @@ public class FidoDeviceService implements IFidoDeviceService, Serializable {
 
 	@Override
 	public void removeGluuCustomFidoDevice(GluuCustomFidoDevice gluuCustomFidoDevice) {
-		ldapEntryManager.removeWithSubtree(gluuCustomFidoDevice.getDn());
+		ldapEntryManager.removeRecursively(gluuCustomFidoDevice.getDn());
 		oxTrustAuditService.audit("CLIENT "+gluuCustomFidoDevice.getDisplayName()+ " SUCCESSFULLY REMOVED");
 	}
 	

@@ -159,7 +159,7 @@ public class ClientService implements Serializable {
 	 */
 	public void updateCustomClient(OxAuthCustomClient client) {
 		ldapEntryManager.merge(client);
-        oxTrustAuditService.audit("CLIENT "+client.getDisplayName()+ "SUCCESSFULLY UPDATED");2
+        oxTrustAuditService.audit("CLIENT "+client.getDisplayName()+ "SUCCESSFULLY UPDATED");
 	}
 
 	/**
