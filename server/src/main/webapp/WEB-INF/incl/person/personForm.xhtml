@@ -334,26 +334,26 @@
                                                                     render="selectedCustomAttributesId"
                                                                     styleClass="glyphicon glyphicon-remove"
                                                                     onbegin="changeAttributeVisibility('#{_aid}', true);"
-                                                                    rendered="#{_custAttr.adminCanEdit and not _mandatory and not _custAttr.metadata.oxMultivaluedAttribute.value}" execute="@this">
+                                                                    rendered="#{_custAttr.adminCanEdit and not _mandatory and not _custAttr.metadata.multivaluedAttribute.value}" execute="@this">
                                                             </a4j:commandLink>
                                                             <a4j:commandLink
                                                                     action="#{_customAttributeAction.removeCustomAttribute(_custAttr.metadata.inum)}"
                                                                     render="selectedCustomAttributesId"
                                                                     styleClass="glyphicon glyphicon-remove"
                                                                     onbegin="changeAttributeVisibility('#{_aid}', true);"
-                                                                    rendered="#{_custAttr.adminCanEdit and not _mandatory and _custAttr.metadata.oxMultivaluedAttribute.value and fn:length(_custAttr.values) eq 1 }" execute="@this">
+                                                                    rendered="#{_custAttr.adminCanEdit and not _mandatory and _custAttr.metadata.multivaluedAttribute.value and fn:length(_custAttr.values) eq 1 }" execute="@this">
                                                             </a4j:commandLink>
                                                             <a4j:commandLink
                                                                     action="#{_customAttributeAction.removeMultiValuesInAttributes(_custAttr.metadata.inum,_mandatory,_custAttr.values[_valueIdx])}"
                                                                     render="selectedCustomAttributesId"
                                                                     styleClass="glyphicon glyphicon-remove"
-                                                                    rendered="#{_custAttr.adminCanEdit and not _mandatory and _custAttr.metadata.oxMultivaluedAttribute.value and fn:length(_custAttr.values) gt 1 }" execute="@this">
+                                                                    rendered="#{_custAttr.adminCanEdit and not _mandatory and _custAttr.metadata.multivaluedAttribute.value and fn:length(_custAttr.values) gt 1 }" execute="@this">
                                                             </a4j:commandLink>
                                                             <a4j:commandLink
                                                             		action="#{_customAttributeAction.addMultiValuesInAttributes(_custAttr.metadata.inum,_mandatory)}"
                                                                     render="selectedCustomAttributesId"
                                                                     styleClass="glyphicon glyphicon-plus"
-                                                                    rendered="#{_custAttr.adminCanEdit and _custAttr.metadata.oxMultivaluedAttribute.value and _valueIdx == 0}" execute="@this">
+                                                                    rendered="#{_custAttr.adminCanEdit and _custAttr.metadata.multivaluedAttribute.value and _valueIdx == 0}" execute="@this">
                                                             </a4j:commandLink>
                                                             
                                                             <!-- </div> -->
