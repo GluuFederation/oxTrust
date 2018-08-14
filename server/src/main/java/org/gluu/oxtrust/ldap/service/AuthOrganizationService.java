@@ -55,7 +55,7 @@ public class AuthOrganizationService implements Serializable {
 	 *            Organization
 	 */
 	public void updateOrganization(GluuOrganization organization) throws Exception {
-		ldapAuthEntryManager.merge(organization);
+		ldapEntryManager.merge(organization);
 		oxTrustAuditService.audit("ORGANIZATION " + organization.getDisplayName() + "SUCCESSFULLY UPDATED");
 	}
 
