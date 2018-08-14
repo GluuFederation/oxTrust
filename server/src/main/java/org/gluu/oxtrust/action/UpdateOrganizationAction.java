@@ -246,7 +246,8 @@ public class UpdateOrganizationAction implements Serializable {
         applianceUpdate.setApplianceDnsServer(appliance.getApplianceDnsServer());
         applianceUpdate.setMaxLogSize(appliance.getMaxLogSize());
         applianceUpdate.setContactEmail(appliance.getContactEmail());
-        
+        applianceUpdate.setSmtpConfiguration(smtpConfiguration);
+
         applianceService.updateAppliance(applianceUpdate);
     }
 
