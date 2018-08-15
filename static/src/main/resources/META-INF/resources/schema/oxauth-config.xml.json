@@ -912,11 +912,11 @@
         },
         "sessionIdLifetime": {
             "id": "sessionIdLifetime",
-            "description": "The lifetime of session id in seconds.",
+            "description": "The lifetime of session id in seconds. If 0 or -1 then expiration is not set. `session_id` cookie expires when browser session ends.",
             "type": "integer",
             "multipleOf": 1,
             "maximum": 2147483647,
-            "minimum": 1,
+            "minimum": -1,
             "exclusiveMaximum": false,
             "exclusiveMinimum": false
         },
