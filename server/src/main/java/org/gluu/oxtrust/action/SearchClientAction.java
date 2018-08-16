@@ -78,6 +78,7 @@ public class SearchClientAction implements Serializable {
 			}
 			
 			this.oldSearchPattern = this.searchPattern;
+			this.searchPattern="";
 		} catch (Exception ex) {
 			log.error("Failed to find clients", ex);
 

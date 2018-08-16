@@ -121,95 +121,20 @@
 	        	attr.style['display'] = 'none';
             }
         }
-		
-		function isViewPassword(buttonelementid) {
-	    	isVisible = $("img[id$="+buttonelementid+"]").is(':visible');
-
-    		return isVisible;
-    	}
-    	
-    	function changeTextType(element,buttonelementid) {
-    		var $element = $(element);
-			if (isViewPassword(buttonelementid)) {
-	    		$element[0].childNodes[2].childNodes[0].setAttribute('type','text');
-			} else {
-	    		$element[0].childNodes[2].childNodes[0].setAttribute('type','password');
-			}
-		}
-
-		function hideSpanValue(element, value) {
-    		var newValue = '';
-    		for (i = 0;  i &lt; value.length ; i++)
-    			newValue += '&bull;';
-    		
-    		var $element = $(element);
-    		$element[0].childNodes[0].innerHTML = newValue;
-		}
-
-		function restoreSpanValue(element, value) {
-    		var $element = $(element);
-    		$element[0].childNodes[0].innerHTML = value;
-		}
-		
-		function addIndex(){ 
-			console.log("test index");
-			$("input.rf-ii-fld").each(function(index){ 
-				$(this).parent().parent().attr("tabIndex", index);
-			});
-			
-			$("span[tabindex='0']").focus();
-			
-			//$("span:focus").keyup();
-		}
-		
-		function switchTab(e) {
-				var keyCode = e.keyCode || e.which; 
-				if(keyCode === 9){ 
-					var currentTabIndex = $(e.currentTarget).attr("tabindex");
-					if(undefined !== currentTabIndex){
-						currentTabIndex = (currentTabIndex == 0)  ? currentTabIndex+1 : currentTabIndex;
-						currentTabIndex = parseInt(currentTabIndex);
-						$("span[tabindex='"+currentTabIndex+"']").focus();
-					}
-				}
-			}
-		
-		function viewValue(obj,elementid , eyeButtonid){
-			passwordElement = $("input[id$='"+elementid+"Input']");
-			passwordValue = passwordElement.val();
-
-			passwordElementSpan = $("span[id$='"+elementid+"Label']");
-			
-			restoreSpanValue(passwordElementSpan.parent()[0], passwordValue);
-
-			$(obj).css({"display":"none"});
-			$(obj).siblings("img[id$='"+eyeButtonid+"']").css({"display":"block"});
-		}
 				
-		function hideValue(obj,elementid,eyeButtonid){
-			passwordElement = $("input[id$='"+elementid+"Input']");
-			passwordValue = passwordElement.val();
-
-			passwordElementSpan = $("span[id$='"+elementid+"Label']");
-			
-			hideSpanValue(passwordElementSpan.parent()[0], passwordValue);
-
+		function changePasswordtoTextType(obj,elementid , eyeButtonid){
+			var elements = document.querySelector('[id*="'+elementid+'"]');
+			elements.type="text";
 			$(obj).css({"display":"none"});
 			$(obj).siblings("img[id$='"+eyeButtonid+"']").css({"display":"block"});
 		}
 		
-		function hidePasswordValue(element, value,buttonelementid) {
-			if (isViewPassword(buttonelementid)) {
-				return;
-			}
-			
-			hideSpanValue(element, value);
+		function changeTexttoPasswordType(obj,elementid , eyeButtonid){
+			var elements = document.querySelector('[id*="'+elementid+'"]');  
+			elements.type="password";
+			$(obj).css({"display":"none"});
+			$(obj).siblings("img[id$='"+eyeButtonid+"']").css({"display":"block"});
 		}
-		
-		
-		$(document).ready(function(){
-  			addIndex();
-		});
 		
     </h:outputScript>
     	<ui:include
@@ -393,8 +318,8 @@
                                                                 <rich:validator event="blur" oncomplete="hidePasswordValue(this, #{rich:component('custpasswordId')}.getValue(),'hidePassword')"/>
                                                             </h:inputSecret>                                                                                         
                                                                                                                          
-							                                <h:graphicImage value="/img/eye.png" id="viewPassword" onclick="return viewValue(this,'custpasswordId','hidePassword');"/>
-							                                <h:graphicImage value="/img/eye-hidden.png" id="hidePassword" style="display: none;" onclick="return hideValue(this,'custpasswordId','viewPassword');"/>
+							                                <h:graphicImage value="/img/eye.png" id="viewPassword" onclick="return changePasswordtoTextType(this,'custpasswordId','hidePassword');"/>
+							                                <h:graphicImage value="/img/eye-hidden.png" id="hidePassword" style="display: none;" onclick="return changeTexttoPasswordType(this,'custpasswordId','viewPassword');"/>
                                                         </div>
                                                      </ox:decorate>               
                                                         
@@ -412,8 +337,8 @@
                                                                     onkeyup="switchTab(event)">
                                                                 <rich:validator event="blur" oncomplete="hidePasswordValue(this, #{rich:component('custconfirmpasswordId')}.getValue(),'hideCustPassword')"/>
                                                             </h:inputSecret> 
-                                                            <h:graphicImage value="/img/eye.png" id="viewCustPassword" onclick="return viewValue(this,'custconfirmpasswordId','hideCustPassword');"/>
-							                                <h:graphicImage value="/img/eye-hidden.png" id="hideCustPassword" style="display: none;" onclick="return hideValue(this,'custconfirmpasswordId','viewCustPassword');"/>
+                                                            <h:graphicImage value="/img/eye.png" id="viewCustPassword" onclick="return changePasswordtoTextType(this,'custconfirmpasswordId','hideCustPassword');"/>
+							                                <h:graphicImage value="/img/eye-hidden.png" id="hideCustPassword" style="display: none;" onclick="return changeTexttoPasswordType(this,'custconfirmpasswordId','viewCustPassword');"/>
                                                                                                                     
                                                         </div>
                                                      </ox:decorate>                                                        

@@ -8,6 +8,7 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
 	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
+	xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
 	xmlns:gluufn="http://www.gluu.org/jsf/functions">
 
 	<h:outputStylesheet>
@@ -151,7 +152,7 @@
 								</ox:decorate>
 
 								<ox:decorate label="#{msg['organizationForm.contactEmail']}">
-									<h:inputText value="#{_appliance.contactEmail}" styleClass="form-control"/>
+									<h:inputText p:type="email" value="#{_appliance.contactEmail}" styleClass="form-control"/>
 								</ox:decorate>
 
 							</h:panelGroup>
@@ -214,15 +215,6 @@
 									<h:outputText value="#{_organization.iname}" />
 								</ox:decorate>
  -->
-								<ox:decorate
-									id="buildDate" label="#{msg['organizationForm.buildDate']}">
-									<h:outputText value="#{_organizationAction.buildDate}" />
-								</ox:decorate>
-
-								<ox:decorate
-									id="buildNumber" label="#{msg['organizationForm.buildNumber']}">
-									<h:outputText value="#{_organizationAction.buildNumber}" />
-								</ox:decorate>
 
 <!-- 								<ox:decorate -->
 <!-- 									id="title"> -->

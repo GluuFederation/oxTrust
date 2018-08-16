@@ -22,7 +22,6 @@ import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuMetadataSourceType;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.model.OrganizationalUnit;
-import org.gluu.oxtrust.service.render.RenderService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.slf4j.Logger;
@@ -79,7 +78,7 @@ public class TrustService implements Serializable {
     private RenderParameters rendererParameters;
 
     @Inject
-    private RenderService renderService;
+    private OxTrustAuditService oxTrustAuditService;
 
 	public static final String GENERATED_SSL_ARTIFACTS_DIR = "ssl";
 
@@ -106,8 +105,10 @@ public class TrustService implements Serializable {
 		            ldapEntryManager.persist(ou);
 		        }
 				ldapEntryManager.persist(trustRelationship);
+				oxTrustAuditService.audit("TRUST RELATIONSHIP "+trustRelationship.getDisplayName()+ " SUCCESSFULLY ADDED");
 			}else{
 				ldapEntryManager.merge(trustRelationship);
+				oxTrustAuditService.audit("TRUST RELATIONSHIP "+trustRelationship.getDisplayName()+ " SUCCESSFULLY UPDATED");
 			}
 		}
 		trustRelationship.setDn(dn);
@@ -130,6 +131,7 @@ public class TrustService implements Serializable {
 			if(containsTrustRelationship(tr)){
 				log.trace("Updating TR" + clusteredDN);
 				ldapEntryManager.merge(trustRelationship);
+				oxTrustAuditService.audit("TRUST RELATIONSHIP "+trustRelationship.getDisplayName()+ " SUCCESSFULLY UPDATED");
 			}else{
 			    OrganizationalUnit ou = new OrganizationalUnit();
                 ou.setDn(getDnForTrustRelationShip(null));
@@ -137,6 +139,7 @@ public class TrustService implements Serializable {
                     ldapEntryManager.persist(ou);
                 }
 				ldapEntryManager.persist(trustRelationship);
+				oxTrustAuditService.audit("TRUST RELATIONSHIP "+trustRelationship.getDisplayName()+ " SUCCESSFULLY ADDED");
 			}
 		}
 		trustRelationship.setDn(dn);
@@ -159,6 +162,7 @@ public class TrustService implements Serializable {
 			if(containsTrustRelationship(tr)){
 				log.debug("Removing TR" + clusteredDN);
 				ldapEntryManager.remove(trustRelationship);
+				oxTrustAuditService.audit("TRUST RELATIONSHIP "+trustRelationship.getDisplayName()+ " SUCCESSFULLY REMOVED");
 			}
 		}
 		trustRelationship.setDn(dn);
