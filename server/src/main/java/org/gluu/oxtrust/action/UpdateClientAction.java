@@ -277,6 +277,8 @@ public class UpdateClientAction implements Serializable {
 		// Trim all URI properties
 		trimUriProperties();
 
+		this.client.setEncodedClientSecret(encryptionService.encrypt(this.client.getOxAuthClientSecret()));
+
 		if (update) {
 			// Update client
 			try {

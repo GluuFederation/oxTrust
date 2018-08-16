@@ -1217,18 +1217,4 @@ public class CacheRefreshTimer {
 		return ldapConfiguration.getBaseDNsStringsList().toArray(new String[0]);
 	}
 
-	public static void main(String[] args) {
-		String LETTERS_FOR_SEARCH = "abcdefghijklmnopqrstuvwxyz1";
-		char[] characters = LETTERS_FOR_SEARCH.toCharArray();
-		int lettersCount = characters.length;
-
-		String[] result = new String[lettersCount * lettersCount];
-		for (int i = 0; i < lettersCount; i++) {
-			for (int j = 0; j < lettersCount; j++) {
-				result[i * lettersCount + j] = "" + characters[i] + characters[j];
-			}
-		}
-		System.out.println(result.length);
-	}
-
 }
