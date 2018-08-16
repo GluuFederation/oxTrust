@@ -54,6 +54,9 @@ public class GroupService implements Serializable, IGroupService {
 	
 	@Inject
 	private PersonService personService;
+	
+	@Inject
+	private OxTrustAuditService oxTrustAuditService;
 
 	/* (non-Javadoc)
 	 * @see org.gluu.oxtrust.ldap.service.IGroupService#addGroup(org.gluu.oxtrust.model.GluuGroup)
@@ -65,6 +68,7 @@ public class GroupService implements Serializable, IGroupService {
 		List<GluuGroup> groups= findGroups(displayNameGroup, 1);
 		if (groups == null || groups.size() == 0) {
 			ldapEntryManager.persist(group);
+			oxTrustAuditService.audit("GROUP "+group.getDisplayName()+ " ADDED SUCCESSFULLY");
 		} else {
 			throw new DuplicateEntryException("Duplicate displayName: " + group.getDisplayName());
 		}
@@ -76,7 +80,7 @@ public class GroupService implements Serializable, IGroupService {
 	@Override
 	public void updateGroup(GluuGroup group) {
 		ldapEntryManager.merge(group);
-
+		oxTrustAuditService.audit("GROUP "+group.getDisplayName()+ " UPDATED SUCCESSFULLY");
 	}
 
 	/* (non-Javadoc)
@@ -100,6 +104,7 @@ public class GroupService implements Serializable, IGroupService {
 		}
 
 		ldapEntryManager.remove(group);
+		oxTrustAuditService.audit("GROUP "+group.getDisplayName()+ " REMOVED SUCCESSFULLY");
 		// clear references in gluuPerson entries
 	}
 

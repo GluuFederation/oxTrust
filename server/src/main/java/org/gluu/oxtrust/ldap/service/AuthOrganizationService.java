@@ -44,6 +44,9 @@ public class AuthOrganizationService implements Serializable {
 
 	@Inject
 	private AppConfiguration appConfiguration;
+	
+	@Inject
+	private OxTrustAuditService oxTrustAuditService;
 
 	/**
 	 * Update organization entry
@@ -53,7 +56,7 @@ public class AuthOrganizationService implements Serializable {
 	 */
 	public void updateOrganization(GluuOrganization organization) throws Exception {
 		ldapAuthEntryManager.merge(organization);
-
+		oxTrustAuditService.audit("ORGANIZATION " + organization.getDisplayName() + "SUCCESSFULLY UPDATED");
 	}
 
 	/**
