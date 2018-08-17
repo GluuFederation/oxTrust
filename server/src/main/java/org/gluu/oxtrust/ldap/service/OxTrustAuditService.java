@@ -24,7 +24,7 @@ public class OxTrustAuditService implements Serializable {
 	public void audit(String message, GluuCustomPerson user, HttpServletRequest request) {
 		String ipAddress = request.getHeader("X-FORWARDED-FOR") != null ? request.getHeader("X-FORWARDED-FOR")
 				: request.getRemoteAddr();
-		String fullMessage = "+" + message.concat(" BY USER " + user.getInum() + " FROM IP ADDRESS " + ipAddress
+		String fullMessage = "+" + message.concat(" BY USER " + user.getDisplayName() + " FROM IP ADDRESS " + ipAddress
 				+ " ON " + dayOfWeek + " " + format.format(new Date()) + " +");
 		StringBuffer buffer = new StringBuffer();
 		for (int i = 0; i < fullMessage.length(); i++) {
@@ -32,7 +32,6 @@ public class OxTrustAuditService implements Serializable {
 		}
 		log.info(buffer.toString());
 		log.info(fullMessage);
-		log.info(buffer.toString());
 	}
 
 }

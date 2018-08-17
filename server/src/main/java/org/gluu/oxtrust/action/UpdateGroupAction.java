@@ -16,8 +16,10 @@ import java.util.Set;
 
 import javax.enterprise.context.ConversationScoped;
 import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -26,6 +28,7 @@ import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.service.IGroupService;
 import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
+import org.gluu.oxtrust.ldap.service.OxTrustAuditService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.GluuOrganization;
@@ -55,6 +58,9 @@ public class UpdateGroupAction implements Serializable {
 
 	@Inject
 	private Logger log;
+	
+	@Inject
+	private OxTrustAuditService oxTrustAuditService;
 
 	private String inum;
 	private boolean update;
@@ -184,6 +190,9 @@ public class UpdateGroupAction implements Serializable {
 			// Update group
 			try {
 				groupService.updateGroup(this.group);
+				oxTrustAuditService.audit("GROUP " + this.group.getInum() + " UPDATED",
+						identity.getUser(),
+						(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 				updatePersons(oldMembers, this.members);
 			} catch (LdapMappingException ex) {
 				log.error("Failed to update group {}", this.inum, ex);
@@ -202,6 +211,9 @@ public class UpdateGroupAction implements Serializable {
 			this.group.setInum(this.inum);
 			try {
 				groupService.addGroup(this.group);
+				oxTrustAuditService.audit("GROUP " + this.group.getInum() + " ADDED",
+						identity.getUser(),
+						(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 				updatePersons(oldMembers, this.members);
 			} catch (LdapMappingException ex) {
 				log.error("Failed to add new group {}", this.group.getInum(), ex);
@@ -224,7 +236,9 @@ public class UpdateGroupAction implements Serializable {
 			// Remove group
 			try {
 				groupService.removeGroup(this.group);
-
+				oxTrustAuditService.audit("GROUP " + this.group.getInum() + " REMOVED",
+						identity.getUser(),
+						(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 				facesMessages.add(FacesMessage.SEVERITY_INFO, "Group '#{updateGroupAction.group.displayName}' removed successfully");
 				conversationService.endConversation();
 

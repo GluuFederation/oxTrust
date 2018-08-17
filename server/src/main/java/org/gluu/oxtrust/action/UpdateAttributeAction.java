@@ -11,13 +11,17 @@ import java.util.Set;
 
 import javax.enterprise.context.ConversationScoped;
 import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.servlet.http.HttpServletRequest;
 
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.service.AttributeService;
+import org.gluu.oxtrust.ldap.service.OxTrustAuditService;
 import org.gluu.oxtrust.ldap.service.TrustService;
+import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.slf4j.Logger;
@@ -64,6 +68,12 @@ public class UpdateAttributeAction implements Serializable {
 
 	@Inject
 	private AppConfiguration appConfiguration;
+	
+	@Inject
+	private Identity identity;
+	
+	@Inject
+	private OxTrustAuditService oxTrustAuditService;
 
 	private String inum;
 	private GluuAttribute attribute;
@@ -219,6 +229,9 @@ public class UpdateAttributeAction implements Serializable {
 				}
 
 				attributeService.updateAttribute(this.attribute);
+				oxTrustAuditService.audit("ATTRIBUTE " + this.attribute.getInum() + " UPDATED",
+						identity.getUser(),
+						(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 			} catch (LdapMappingException ex) {
 				log.error("Failed to update attribute {}", inum, ex);
 				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update attribute");
@@ -269,6 +282,9 @@ public class UpdateAttributeAction implements Serializable {
 
 		try {
 			attributeService.addAttribute(this.attribute);
+			oxTrustAuditService.audit("ATTRIBUTE " + this.attribute.getInum() + " ADDED",
+					identity.getUser(),
+					(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 		} catch (LdapMappingException ex) {
 			log.error("Failed to add new attribute {}", this.attribute.getInum(), ex);
 
@@ -340,6 +356,9 @@ public class UpdateAttributeAction implements Serializable {
 			showAttributeDeleteConfirmation = false;
 
 			if (trustService.removeAttribute(this.attribute)) {
+				oxTrustAuditService.audit("ATTRIBUTE " + this.attribute.getInum() + " REMOVED",
+						identity.getUser(),
+						(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 				facesMessages.add(FacesMessage.SEVERITY_INFO, "Attribute '#{updateAttributeAction.attribute.displayName}' removed successfully");
 				conversationService.endConversation();
 
