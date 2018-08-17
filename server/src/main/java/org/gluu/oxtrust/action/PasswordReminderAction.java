@@ -23,19 +23,19 @@ import org.gluu.jsf2.model.RenderParameters;
 import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
+import org.gluu.oxtrust.ldap.service.OxTrustAuditService;
 import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.ldap.service.RecaptchaService;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.OrganizationalUnit;
 import org.gluu.oxtrust.model.PasswordResetRequest;
-import org.gluu.oxtrust.service.render.RenderService;
+import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.PersistenceEntryManager;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
-import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.SmtpConfiguration;
 import org.xdi.service.MailService;
@@ -50,8 +50,6 @@ public class PasswordReminderAction implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	@Inject
-	private Logger log;
 
 	@Inject
 	private PersistenceEntryManager ldapEntryManager;
@@ -83,8 +81,12 @@ public class PasswordReminderAction implements Serializable {
 	@Inject
 	private MailService mailService;
 
+	
 	@Inject
-	private RenderService renderService;
+	private Identity identity;
+
+	@Inject
+	private OxTrustAuditService oxTrustAuditService;
 
 	private boolean passwordResetIsEnable = false;
 
@@ -208,6 +210,9 @@ public class PasswordReminderAction implements Serializable {
 				mailService.sendMail(email, null, subj, messagePlain, messageHtml);
 
 				ldapEntryManager.persist(request);
+				oxTrustAuditService.audit("PASSWORD REMINDER REQUEST" + request.getBaseDn() + " ADDED",
+						identity.getUser(),
+						(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 			}
 			return OxTrustConstants.RESULT_SUCCESS;
 		}

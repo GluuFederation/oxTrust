@@ -23,6 +23,7 @@ import javax.faces.component.UIInput;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.servlet.http.HttpServletRequest;
 
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -35,6 +36,7 @@ import org.gluu.oxtrust.ldap.service.GroupService;
 import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.MemberService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
+import org.gluu.oxtrust.ldap.service.OxTrustAuditService;
 import org.gluu.oxtrust.model.Device;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
@@ -44,6 +46,7 @@ import org.gluu.oxtrust.model.OTPDevice;
 import org.gluu.oxtrust.model.Phone;
 import org.gluu.oxtrust.model.fido.GluuCustomFidoDevice;
 import org.gluu.oxtrust.model.fido.GluuDeviceDataBean;
+import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.service.external.ExternalUpdateUserService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.ServiceUtil;
@@ -120,6 +123,12 @@ public class UpdatePersonAction implements Serializable {
 	
 	@Inject
 	private FidoDeviceService fidoDeviceService;
+	
+	@Inject
+	private Identity identity;
+	
+	@Inject
+	private OxTrustAuditService oxTrustAuditService;
 
 	private GluuStatus gluuStatus;
 
@@ -376,6 +385,9 @@ public class UpdatePersonAction implements Serializable {
 					externalUpdateUserService.executeExternalUpdateUserMethods(this.person);
 				}
 				personService.updatePerson(this.person);
+				oxTrustAuditService.audit("USER " + this.person.getInum() + " UPDATED",
+						identity.getUser(),
+						(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 				if (runScript) {
 					externalUpdateUserService.executeExternalPostUpdateUserMethods(this.person);
 				}
@@ -418,6 +430,9 @@ public class UpdatePersonAction implements Serializable {
 					externalUpdateUserService.executeExternalAddUserMethods(this.person);
 				}
 				personService.addPerson(this.person);
+				oxTrustAuditService.audit("USER " + this.person.getInum() + " ADDED",
+						identity.getUser(),
+						(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 				if (runScript) {
 					externalUpdateUserService.executeExternalPostAddUserMethods(this.person);
 				}
@@ -468,6 +483,9 @@ public class UpdatePersonAction implements Serializable {
 					externalUpdateUserService.executeExternalDeleteUserMethods(this.person);
 				}
 				memberService.removePerson(this.person);
+				oxTrustAuditService.audit("USER " + this.person.getInum() + " REMOVED",
+						identity.getUser(),
+						(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 				if (runScript) {
 					externalUpdateUserService.executeExternalPostDeleteUserMethods(this.person);
 				}
