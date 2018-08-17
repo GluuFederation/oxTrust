@@ -14,8 +14,10 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ConversationScoped;
 import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.servlet.http.HttpServletRequest;
 
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
@@ -23,6 +25,7 @@ import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.ImageService;
 import org.gluu.oxtrust.ldap.service.ImapDataService;
+import org.gluu.oxtrust.ldap.service.OxTrustAuditService;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.security.Identity;
@@ -87,6 +90,9 @@ public class UserProfileAction implements Serializable {
 
 	@Inject
 	private Identity identity;
+	
+	@Inject
+	private OxTrustAuditService oxTrustAuditService;
 
 	@Inject
 	private ExternalUpdateUserService externalUpdateUserService;
@@ -166,6 +172,9 @@ public class UserProfileAction implements Serializable {
 				externalUpdateUserService.executeExternalUpdateUserMethods(this.person);
 			}
 			personService.updatePerson(this.person);
+			oxTrustAuditService.audit(this.person.getDisplayName()+" PROFILE UPDATED",
+					identity.getUser(),
+					(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 			if (runScript) {
 				externalUpdateUserService.executeExternalPostUpdateUserMethods(this.person);
 			}

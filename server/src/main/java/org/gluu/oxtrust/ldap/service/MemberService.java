@@ -25,9 +25,6 @@ public class MemberService implements Serializable {
 	private PersonService personService;
 	
 	@Inject
-	private OxTrustAuditService oxTrustAuditService;
-
-	@Inject
 	private Logger log;
 
 	public void removePerson(GluuCustomPerson person) {
@@ -61,7 +58,6 @@ public class MemberService implements Serializable {
 			group.setMembers(members);
 			try {
 				groupService.updateGroup(group);
-				oxTrustAuditService.audit("USER "+ pesonDn+ " REMOVED FROM GROUP "+ group.getDisplayName());
 			} catch (EntryPersistenceException ex) {
 			    log.error("Failed to remove preson '{}' from group '{}'", ex);
 			}

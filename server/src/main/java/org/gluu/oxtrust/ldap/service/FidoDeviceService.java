@@ -41,9 +41,6 @@ public class FidoDeviceService implements IFidoDeviceService, Serializable {
 	@Inject
 	private PersistenceEntryManager ldapEntryManager;
 	
-	@Inject
-	private OxTrustAuditService oxTrustAuditService;
-	
 	@Override
 	public String getDnForFidoDevice(String userId, String id) {
 		String baseDn;
@@ -95,13 +92,11 @@ public class FidoDeviceService implements IFidoDeviceService, Serializable {
 	@Override
 	public void updateGluuCustomFidoDevice(GluuCustomFidoDevice gluuCustomFidoDevice) {
 		ldapEntryManager.merge(gluuCustomFidoDevice);
-		oxTrustAuditService.audit("CLIENT "+gluuCustomFidoDevice.getDisplayName()+ " SUCCESSFULLY MERGED");
 	}
 
 	@Override
 	public void removeGluuCustomFidoDevice(GluuCustomFidoDevice gluuCustomFidoDevice) {
 		ldapEntryManager.removeRecursively(gluuCustomFidoDevice.getDn());
-		oxTrustAuditService.audit("CLIENT "+gluuCustomFidoDevice.getDisplayName()+ " SUCCESSFULLY REMOVED");
 	}
 	
 	@Override

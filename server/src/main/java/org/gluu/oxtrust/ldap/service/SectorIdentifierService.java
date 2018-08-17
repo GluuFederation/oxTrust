@@ -39,8 +39,6 @@ public class SectorIdentifierService implements Serializable {
     
     @Inject
     private ClientService clientService;
-    @Inject
-    private OxTrustAuditService oxTrustAuditService;
 
     /**
      * Build DN string for sector identifier
@@ -128,7 +126,6 @@ public class SectorIdentifierService implements Serializable {
      */
     public void addSectorIdentifier(OxAuthSectorIdentifier sectorIdentifier) {
         ldapEntryManager.persist(sectorIdentifier);
-        oxTrustAuditService.audit("SECTOR IDENTIFIER "+sectorIdentifier.getId()+ " SUCCESSFULLY ADDED");
     }
 
     /**
@@ -138,7 +135,6 @@ public class SectorIdentifierService implements Serializable {
      */
     public void updateSectorIdentifier(OxAuthSectorIdentifier sectorIdentifier) {
         ldapEntryManager.merge(sectorIdentifier);
-        oxTrustAuditService.audit("SECTOR IDENTIFIER "+sectorIdentifier.getId()+ " SUCCESSFULLY UPDATED");
     }
 
     /**
@@ -159,7 +155,6 @@ public class SectorIdentifierService implements Serializable {
         }
 
         ldapEntryManager.remove(sectorIdentifier);
-        oxTrustAuditService.audit("SECTOR IDENTIFIER "+sectorIdentifier.getId()+ " SUCCESSFULLY REMOVED");
     }
     
 }

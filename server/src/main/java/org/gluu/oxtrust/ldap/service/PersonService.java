@@ -61,9 +61,6 @@ public class PersonService implements Serializable, IPersonService {
     @Inject
     private OrganizationService organizationService;
 
-	@Inject
-	private OxTrustAuditService oxTrustAuditService;
-
     private List<GluuCustomAttribute> mandatoryAttributes;
 
     /* (non-Javadoc)
@@ -102,7 +99,6 @@ public class PersonService implements Serializable, IPersonService {
         if (persons == null || persons.size() == 0) {
             person.setCreationDate(new Date());
             ldapEntryManager.persist(person);
-            oxTrustAuditService.audit("USER " + person.getDisplayName() + " ADDED SUCCEFULLY");
         } else {
             throw new DuplicateEntryException("Duplicate UID value: " + person.getUid());
         }
@@ -121,7 +117,6 @@ public class PersonService implements Serializable, IPersonService {
             person.setAttribute("oxTrustMetaLastModified", ISODateTimeFormat.dateTime().withZoneUTC().print(updateDate.getTime()));
         }
         ldapEntryManager.merge(person);
-        oxTrustAuditService.audit("USER " + person.getDisplayName() + " UPDATED SUCCEFULLY");
     }
 
     /* (non-Javadoc)
@@ -131,7 +126,6 @@ public class PersonService implements Serializable, IPersonService {
     public void removePerson(GluuCustomPerson person) {
         // Remove person
         ldapEntryManager.removeRecursively(person.getDn());
-	oxTrustAuditService.audit("USER " + person.getDisplayName() + " REMOVED SUCCEFULLY");
     }
 
     /* (non-Javadoc)
@@ -422,12 +416,6 @@ public class PersonService implements Serializable, IPersonService {
     public boolean authenticate(String userName, String password) {
         boolean result = ldapEntryManager.authenticate(appConfiguration.getBaseDN(), userName, password);
 
-		if(result) {
-			oxTrustAuditService.audit("USER " + userName + " AUTHENTICATED SUCCEFULLY");
-		}else {
-			oxTrustAuditService.audit("USER " + userName + " AUTHENTICATION FAILED");
-		}
-
         return result;
     }
 
@@ -572,7 +560,6 @@ public class PersonService implements Serializable, IPersonService {
 
         List<User> users = ldapEntryManager.findEntries(user);// getLdapEntryManagerInstance().findEntries(person);
         if ((users != null) && (users.size() > 0)) {
-		oxTrustAuditService.audit("USER " + users.get(0).getDisplayName() + " RETRIEVED SUCCEFULLY");
             return users.get(0);
         }
 

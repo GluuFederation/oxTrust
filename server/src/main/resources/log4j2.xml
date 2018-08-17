@@ -17,7 +17,7 @@
 		</RollingFile>
 		
 		<RollingFile name="OXTRUST_AUDIT" fileName="${sys:log.base}/logs/oxtrust_audit.log" filePattern="${sys:log.base}/logs/oxtrust_audit-%d{yyyy-MM-dd}-%i.log">
-			<PatternLayout pattern="|========>%m on %d{MM-dd-yyyy HH:mm:ss}%n" />
+                <PatternLayout pattern="%m%n" />
 
 			<Policies>
 				<TimeBasedTriggeringPolicy interval="1" modulate="true" />

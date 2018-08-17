@@ -33,9 +33,6 @@ public class PassportService implements Serializable {
 
 	@Inject
 	private Logger log;
-	
-	@Inject
-	private OxTrustAuditService oxTrustAuditService;
 
 	@Inject
 	private PersistenceEntryManager ldapEntryManager;
@@ -83,10 +80,8 @@ public class PassportService implements Serializable {
 		boolean contains = containsPassportConfiguration();
 		if (contains) {
 			ldapEntryManager.merge(ldapOxPassportConfiguration);
-			oxTrustAuditService.audit("OXPASSORT CONFIG "+ldapOxPassportConfiguration.getBaseDn()+ " SUCCESSFULLY UPDATE");
 		} else {
 			ldapEntryManager.persist(ldapOxPassportConfiguration);
-			oxTrustAuditService.audit("OXPASSORT CONFIG "+ldapOxPassportConfiguration.getBaseDn()+ " SUCCESSFULLY ADDED");
 		}
 
 	}
