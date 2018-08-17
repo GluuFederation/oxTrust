@@ -69,6 +69,7 @@ public class SearchScopeAction implements Serializable {
 		try {
 			this.scopeList = scopeService.searchScopes(this.searchPattern, 100);
 			this.oldSearchPattern = this.searchPattern;
+			this.searchPattern="";
 		} catch (Exception ex) {
 			log.error("Failed to find scopes", ex);
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to find scopes");

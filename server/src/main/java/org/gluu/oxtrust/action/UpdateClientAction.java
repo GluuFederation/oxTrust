@@ -286,6 +286,8 @@ public class UpdateClientAction implements Serializable {
 		// Trim all URI properties
 		trimUriProperties();
 
+		this.client.setEncodedClientSecret(encryptionService.encrypt(this.client.getOxAuthClientSecret()));
+
 		if (update) {
 			// Update client
 			try {
@@ -531,6 +533,7 @@ public class UpdateClientAction implements Serializable {
 				addClaim(aClaim);
 			}
 		}
+		this.searchAvailableClaimPattern = "";
 	}
 
 	public void acceptSelectLogoutUri() {
@@ -635,9 +638,12 @@ public class UpdateClientAction implements Serializable {
 				addScope(aScope);
 			}
 		}
+		this.searchAvailableScopePattern = "";
+		this.availableScopes = new ArrayList<OxAuthScope>();
 	}
 
 	public void cancelSelectScopes() {
+		this.searchAvailableScopePattern = "";
 	}
 
 	public void cancelSelectClaims() {
@@ -663,6 +669,7 @@ public class UpdateClientAction implements Serializable {
 	}
 
 	public void cancelSelectContact() {
+		this.availableContact = "";
 	}
 
 	public void cancelSelectDefaultAcrValue() {
