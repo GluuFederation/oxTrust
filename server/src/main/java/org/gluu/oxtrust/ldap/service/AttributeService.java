@@ -60,8 +60,6 @@ public class AttributeService extends org.xdi.service.AttributeService {
 	
 	@Inject
 	private OrganizationService organizationService;
-	@Inject
-	private OxTrustAuditService oxTrustAuditService;
 
 	@Inject
 	@Any
@@ -335,7 +333,6 @@ public class AttributeService extends org.xdi.service.AttributeService {
 	 */
 	public void addAttribute(GluuAttribute attribute) {
 		ldapEntryManager.persist(attribute);
-		oxTrustAuditService.audit("ATTRIBUTE " + attribute.getDisplayName() + "SUCCESSFULLY ADDED");
 		event.select(new EventTypeQualifier(Events.EVENT_CLEAR_ATTRIBUTES)).fire(Events.EVENT_CLEAR_ATTRIBUTES);
 	}
 
@@ -361,7 +358,6 @@ public class AttributeService extends org.xdi.service.AttributeService {
 	public void removeAttribute(GluuAttribute attribute) {
 		log.trace("Removing attribute {}", attribute.getDisplayName());
 		ldapEntryManager.remove(attribute);
-		oxTrustAuditService.audit("ATTRIBUTE " + attribute.getDisplayName() + "SUCCESSFULLY REOMVED");
 		event.select(new EventTypeQualifier(Events.EVENT_CLEAR_ATTRIBUTES)).fire(Events.EVENT_CLEAR_ATTRIBUTES);
 	}
 

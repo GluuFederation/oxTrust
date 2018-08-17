@@ -17,8 +17,10 @@ import java.util.regex.Pattern;
 
 import javax.enterprise.context.ConversationScoped;
 import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
@@ -27,10 +29,12 @@ import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.EncryptionService;
+import org.gluu.oxtrust.ldap.service.OxTrustAuditService;
 import org.gluu.oxtrust.ldap.service.ScopeService;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.model.OxAuthScope;
+import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.slf4j.Logger;
@@ -83,11 +87,17 @@ public class UpdateClientAction implements Serializable {
 	@Inject
 	private ConversationService conversationService;
 
-    @Inject
-    private EncryptionService encryptionService;
+	@Inject
+	private EncryptionService encryptionService;
 
 	@Inject
 	private AppConfiguration appConfiguration;
+
+	@Inject
+	private OxTrustAuditService oxTrustAuditService;
+
+	@Inject
+	private Identity identity;
 
 	private String inum;
 
@@ -280,6 +290,9 @@ public class UpdateClientAction implements Serializable {
 			// Update client
 			try {
 				clientService.updateClient(this.client);
+				oxTrustAuditService.audit("OPENID CLIENT " + this.client.getDisplayName() + " UPDATED",
+						identity.getUser(),
+						(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 			} catch (LdapMappingException ex) {
 
 				log.error("Failed to update client {}", this.inum, ex);
@@ -295,15 +308,18 @@ public class UpdateClientAction implements Serializable {
 			this.inum = clientService.generateInumForNewClient();
 			String dn = clientService.getDnForClient(this.inum);
 
-            if (StringHelper.isEmpty(this.client.getEncodedClientSecret())) {
-                generatePassword();
-            }
+			if (StringHelper.isEmpty(this.client.getEncodedClientSecret())) {
+				generatePassword();
+			}
 
 			// Save client
 			this.client.setDn(dn);
 			this.client.setInum(this.inum);
 			try {
 				clientService.addClient(this.client);
+				oxTrustAuditService.audit("OPENID CLIENT " + this.client.getDisplayName() + " ADDED ",
+						identity.getUser(),
+						(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 			} catch (LdapMappingException ex) {
 				log.error("Failed to add new client {}", this.inum, ex);
 
@@ -337,7 +353,9 @@ public class UpdateClientAction implements Serializable {
 			// Remove client
 			try {
 				clientService.removeClient(this.client);
-
+				oxTrustAuditService.audit("OPENID CLIENT " + this.client.getDisplayName() + " DELETED ",
+						identity.getUser(),
+						(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 				facesMessages.add(FacesMessage.SEVERITY_INFO,
 						"Client '#{updateClientAction.client.displayName}' removed successfully");
 				conversationService.endConversation();
@@ -1305,26 +1323,26 @@ public class UpdateClientAction implements Serializable {
 		String regex = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$";
 		Pattern pattern = Pattern.compile(regex);
 		List<String> tmpContactsList = new ArrayList<String>();
-		boolean shouldShowWarning=false;
+		boolean shouldShowWarning = false;
 		for (String contact : contacts) {
 			if (pattern.matcher(contact).matches()) {
 				tmpContactsList.add(contact);
-			}else {
-				shouldShowWarning=true;
+			} else {
+				shouldShowWarning = true;
 			}
 		}
 		contacts.clear();
 		contacts.addAll(tmpContactsList);
-		if(shouldShowWarning) {
+		if (shouldShowWarning) {
 			facesMessages.add(FacesMessage.SEVERITY_WARN, "Invalid contacts have been removed from contacts list");
 		}
 	}
-	
-    public void generatePassword() throws EncryptionException {
-        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        String pwd = RandomStringUtils.random(24, characters);
-        this.client.setOxAuthClientSecret(pwd);
-        this.client.setEncodedClientSecret(encryptionService.encrypt(pwd));
-    }
+
+	public void generatePassword() throws EncryptionException {
+		String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+		String pwd = RandomStringUtils.random(24, characters);
+		this.client.setOxAuthClientSecret(pwd);
+		this.client.setEncodedClientSecret(encryptionService.encrypt(pwd));
+	}
 
 }
