@@ -205,6 +205,15 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 		return stats;
 	}
 
+    @Override
+    public boolean isMetricReporterEnabled() {
+        if (this.appConfiguration.getMetricReporterEnabled() == null) {
+            return false;
+        }
+
+        return this.appConfiguration.getMetricReporterEnabled();
+    }
+
 	private void dump(List<CounterMetricEntry> metrics) {
 		for (CounterMetricEntry metric : metrics) {
 			Date date = metric.getCreationDate();
