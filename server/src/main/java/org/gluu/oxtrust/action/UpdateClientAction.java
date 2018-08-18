@@ -100,7 +100,7 @@ public class UpdateClientAction implements Serializable {
 	private Identity identity;
 
 	@Inject
-	transient private PasswordGenerator passwordGenerator;
+	private PasswordGenerator passwordGenerator;
 
 	private String inum;
 
