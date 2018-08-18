@@ -1,3 +1,4 @@
 /target/
 /test-output/
 nb-configuration.xml
+/weld-validation-report.html
