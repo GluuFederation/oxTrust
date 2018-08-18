@@ -152,7 +152,7 @@
 								</ox:decorate>
 
 								<ox:decorate label="#{msg['organizationForm.contactEmail']}">
-									<h:inputText p:type="email" value="#{_appliance.contactEmail}" styleClass="form-control"/>
+									<h:inputText p:oninvalid="this.setCustomValidity('Please provide a valid email address.')" p:type="email" value="#{_appliance.contactEmail}" styleClass="form-control"/>
 								</ox:decorate>
 
 							</h:panelGroup>
@@ -215,15 +215,6 @@
 									<h:outputText value="#{_organization.iname}" />
 								</ox:decorate>
  -->
-								<ox:decorate
-									id="buildDate" label="#{msg['organizationForm.buildDate']}">
-									<h:outputText value="#{_organizationAction.buildDate}" />
-								</ox:decorate>
-
-								<ox:decorate
-									id="buildNumber" label="#{msg['organizationForm.buildNumber']}">
-									<h:outputText value="#{_organizationAction.buildNumber}" />
-								</ox:decorate>
 
 <!-- 								<ox:decorate -->
 <!-- 									id="title"> -->

@@ -279,15 +279,13 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 	private boolean validateList(GluuLdapConfiguration ldapConfig, String configType, boolean validateBaseDNs) {
 		boolean result = true;
 		if (ldapConfig.getServers().size() == 0) {
-			log.error("{} LDAP configuration '{}' should contains at least one server", configType, ldapConfig.getConfigId());
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "%s LDAP configuration '%s' should contains at least one server", configType,
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "%s LDAP configuration '%s' should contain at least one server", configType,
 					ldapConfig.getConfigId());
 			result = false;
 		}
 
 		if (validateBaseDNs && (ldapConfig.getBaseDNs().size() == 0)) {
-			log.error("{} LDAP configuration '{}' should contains at least one Base DN", configType, ldapConfig.getConfigId());
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "%s LDAP configuration '%s' should contains at least one Base DN", configType,
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "%s LDAP configuration '%s' should contain at least one Base DN", configType,
 					ldapConfig.getConfigId());
 			result = false;
 		}
@@ -297,8 +295,7 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 
 	private boolean validateList(List<String> values, String attributeName) {
 		if (values.size() == 0) {
-			log.error("{} should contains at least one {}", attributeName, attributeName);
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "%s should contains at least one '%s'", attributeName, attributeName);
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "%s should contain at least one '%s'", attributeName, attributeName);
 			return false;
 		}
 
