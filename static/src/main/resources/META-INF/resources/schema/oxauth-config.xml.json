@@ -978,6 +978,11 @@
             "exclusiveMaximum": false,
             "exclusiveMinimum": false
         },
+        "metricReporterEnabled": {
+            "id": "metricReporterEnabled",
+            "description": "Boolean value specifying whether to enable Metric Reporter.",
+            "type": "boolean"
+        },
         "pairwiseIdType": {
             "id": "pairwiseIdType",
             "description": "The pairwise ID type.",
@@ -1328,6 +1333,7 @@
         "imgLocation",
         "metricReporterInterval",
         "metricReporterKeepDataDays",
+        "metricReporterEnabled",
         "pairwiseIdType",
         "pairwiseCalculationKey",
         "pairwiseCalculationSalt",
