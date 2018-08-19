@@ -54,6 +54,7 @@ import org.xdi.service.JsonService;
 import org.xdi.service.PythonService;
 import org.xdi.service.cdi.event.ConfigurationUpdate;
 import org.xdi.service.cdi.event.LdapConfigurationReload;
+import org.xdi.service.cdi.event.LoggerUpdateEvent;
 import org.xdi.service.cdi.util.CdiUtil;
 import org.xdi.service.custom.lib.CustomLibrariesLoader;
 import org.xdi.service.custom.script.CustomScriptManager;
@@ -202,6 +203,7 @@ public class AppInitializer {
         // Schedule timer tasks
         metricService.initTimer();
         configurationFactory.initTimer();
+        loggerService.initTimer();
         ldapStatusTimer.initTimer();
         metadataValidationTimer.initTimer();
         entityIDMonitoringService.initTimer();
@@ -211,8 +213,6 @@ public class AppInitializer {
         statusCheckerTimer.initTimer();
         svnSyncTimer.initTimer();
         logFileSizeChecker.initTimer();
-
-        loggerService.updateLoggerConfigLocation();
     }
 
     protected void initSchedulerService() {
@@ -386,32 +386,6 @@ public class AppInitializer {
         }
 
         return umaConfigurationEndpoint;
-    }
-
-    public void updateLoggingSeverity(@Observes @ConfigurationUpdate AppConfiguration appConfiguration) {
-        String loggingLevel = appConfiguration.getLoggingLevel();
-        if (StringHelper.isEmpty(loggingLevel)) {
-            return;
-        }
-
-        log.info("Setting loggers level to: '{}'", loggingLevel);
-
-        LoggerContext loggerContext = LoggerContext.getContext(false);
-
-        if (StringHelper.equalsIgnoreCase("DEFAULT", loggingLevel)) {
-            log.info("Reloadming log4j configuration");
-            loggerContext.reconfigure();
-            return;
-        }
-
-        Level level = Level.toLevel(loggingLevel, Level.INFO);
-
-        for (org.apache.logging.log4j.core.Logger logger : loggerContext.getLoggers()) {
-            String loggerName = logger.getName();
-            if (loggerName.startsWith("org.xdi.service") || loggerName.startsWith("org.xdi.oxauth") || loggerName.startsWith("org.gluu")) {
-                logger.setLevel(level);
-            }
-        }
     }
 
     public void destroy(@Observes @BeforeDestroyed(ApplicationScoped.class) ServletContext init) {
