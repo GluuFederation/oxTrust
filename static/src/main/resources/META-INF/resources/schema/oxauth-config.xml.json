@@ -1240,6 +1240,11 @@
             "id": "disableU2fEndpoint",
             "description": "Enable/Disable U2F endpoints.",
             "type": "boolean"
+        },
+        "disableJdkLogger": {
+            "id": "disableJdkLogger",
+            "description": "Boolean value specifying whether to enable JDK Loggers.",
+            "type": "boolean"
         }
     },
     "required": [
@@ -1349,6 +1354,7 @@
         "updateClientAccessTime",
         "enableClientGrantTypeUpdate",
         "loggingLevel",
+        "disableJdkLogger",
         "corsConfigurationFilters",
         "logClientIdOnClientAuthentication",
         "logClientNameOnClientAuthentication",
