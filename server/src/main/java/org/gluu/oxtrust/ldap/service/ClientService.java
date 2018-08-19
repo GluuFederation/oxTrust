@@ -53,9 +53,15 @@ public class ClientService implements Serializable {
 
     @Inject
     private AppConfiguration appConfiguration;
+
+    @Inject
+    private EncryptionService encryptionService;
     
     @Inject
     private OrganizationService organizationService;
+    
+    @Inject
+	private OxTrustAuditService oxTrustAuditService;
 
     public boolean contains(String clientDn) {
         return ldapEntryManager.contains(OxAuthClient.class, clientDn);
@@ -68,6 +74,7 @@ public class ClientService implements Serializable {
      */
     public void addClient(OxAuthClient client) {
         ldapEntryManager.persist(client);
+        oxTrustAuditService.audit("CLIENT "+client.getDisplayName()+ " SUCCESSFULLY ADDED");
 
     }
 
@@ -78,6 +85,7 @@ public class ClientService implements Serializable {
      */
     public void removeClient(OxAuthClient client) {
         ldapEntryManager.removeWithSubtree(client.getDn());
+        oxTrustAuditService.audit("CLIENT "+client.getDisplayName()+ " SUCCESSFULLY REMOVED");
     }
 
     /**
@@ -87,9 +95,18 @@ public class ClientService implements Serializable {
      * @return client
      */
     public OxAuthClient getClientByInum(String inum, String... ldapReturnAttributes) {
+        OxAuthClient result = null;
+        try {
+            result = ldapEntryManager.find(OxAuthClient.class, getDnForClient(inum), ldapReturnAttributes);
 
-        OxAuthClient result = ldapEntryManager.find(OxAuthClient.class, getDnForClient(inum), ldapReturnAttributes);
-
+            String encodedClientSecret = result.getEncodedClientSecret();
+            if (StringHelper.isNotEmpty(encodedClientSecret)) {
+                String clientSecret = encryptionService.decrypt(encodedClientSecret);
+                result.setOxAuthClientSecret(clientSecret);
+            }
+        } catch (Exception ex) {
+            log.debug("Failed to load client entry", ex);
+        }
         return result;
     }
 
@@ -130,7 +147,7 @@ public class ClientService implements Serializable {
      */
     public void updateClient(OxAuthClient client) {
         ldapEntryManager.merge(client);
-
+        oxTrustAuditService.audit("CLIENT "+client.getDisplayName()+ "SUCCESSFULLY UPDATED");
     }
 
     /**
@@ -140,7 +157,7 @@ public class ClientService implements Serializable {
      */
     public void updateCustomClient(OxAuthCustomClient client) {
         ldapEntryManager.merge(client);
-
+        oxTrustAuditService.audit("CLIENT "+client.getDisplayName()+ "SUCCESSFULLY UPDATED");
     }
 
     /**

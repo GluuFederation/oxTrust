@@ -1,0 +1,536 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:gluufn="http://www.gluu.org/jsf/functions"
+	xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
+	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
+	xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+	xmlns:p="http://primefaces.org/ui" >
+    <style type="text/css">
+        .odd {
+            background-color: #ddd;
+        }
+
+        .even {
+            background-color: #eee;
+        }
+
+        .tooltip {
+            background-color: #{richSkin.generalBackgroundColor};
+            border-width: 3px;
+            padding: 10px;
+        }
+
+        .tooltip-text {
+            width: 350px;
+            height: 80px;
+            cursor: arrow;
+            border-width: 2px;
+            text-align: center;
+            display: table-cell;
+            vertical-align: middle;
+        }
+
+        .tooltipData {
+            font-weight: bold;
+        }
+        
+  
+    </style>
+
+<cc:interface>
+	<cc:attribute name="_clientAction" required="true"
+		type="org.gluu.oxtrust.action.UpdateClientAction" />
+	<cc:attribute name="_client" required="false"
+		type="org.gluu.oxtrust.model.OxAuthClient" />	
+</cc:interface>
+
+<cc:implementation>
+	<p:dialog  header="Client Summary"  widgetVar="dlg1"  closeOnEscape="true" position="120,70" height="520"  width="80%">
+   
+
+    <h:form id="clientForm" >
+        <div>
+            <div >
+                <div >
+                    <div>
+                        <div>
+
+                            <h:panelGroup>
+                                <ox:decorate id="inum" rendered="#{not _new and _client.inum ne '' and _client.inum ne null}" label="#{msg['clientForm.inum']}">
+                                    <h:outputText  value="#{_client.inum}"/>
+                                </ox:decorate>
+
+                                <ox:decorate id="displayName" label="#{msg['clientForm.clientName']}" rendered="#{!empty _client.displayName and _client.displayName ne null }">
+                                    <h:outputText value="#{_client.displayName}"/>
+                                </ox:decorate>
+
+                                <ox:decorate id="description" label="#{msg['clientForm.clientDescription']}" rendered="#{!empty _client.description and _client.description ne null }">
+					                <h:outputText value="#{_client.description}"  />
+                                </ox:decorate>
+
+								<h:panelGroup id="secretid" rendered="#{!empty _client.oxAuthClientSecret and _client.oxAuthClientSecret ne null }">
+	                                <ox:decorate id="clientSecret"
+	                                             label="#{msg['clientForm.clientSecret']}">
+	                                    <h:outputText styleClass="togglefield" value="#{_client.oxAuthClientSecret}"
+	                                                       defaultLabel="click to enter Client Secret" maxlength="60"
+	                                                       inputWidth="695"
+	                                                       onfocus="changeTextType(this,'hidePassword');"
+	                                                       id="clientSecretId"/>
+	                                   <h:graphicImage value="/img/eye-hidden.png" id="hidePassword"  onclick="return hideValue(this,'clientSecretId','viewPassword');"/>
+	                                   <h:graphicImage value="/img/eye.png" id="viewPassword" style="display: none;" onclick="return viewValue(this,'clientSecretId','hidePassword');"/>
+							           <div id="autogenrateid">
+	                                	<a4j:commandLink render="clientSecretId" style="margin-top:10px;"  styleClass="btn btn-primary"
+	                                                               value="Auto-Generate Secret Key"
+	                                                               action="#{_clientAction.generatePassword()}" oncomplete="return valuesDisplay(this);" />
+	                                </div></ox:decorate>
+								</h:panelGroup>
+
+                                <ox:decorate id="applicatonType" label="#{msg['clientForm.applicationType']}" rendered="#{!empty _client.oxAuthAppType and _client.oxAuthAppType ne null }">
+                                    <h:outputText value="#{_client.oxAuthAppType}"/>
+                                </ox:decorate>
+
+                                <ox:decorate id="oxAuthTrustedClientBox" label="#{msg['clientForm.preAuthorization']}" rendered="#{!empty _client.oxAuthTrustedClient and _client.oxAuthTrustedClient ne null }">
+                                    <h:outputText id="trustedClientId"
+                                                     value="#{_client.oxAuthTrustedClient}"/>
+                                </ox:decorate>
+
+                                <ox:decorate id="persistClientAuthorizations" rendered="#{!empty _client.oxAuthPersistClientAuthorizations and _client.oxAuthPersistClientAuthorizations ne null }"
+                                             label="#{msg['clientForm.persistClientAuthorization']}">
+                                    <h:outputText id="persisteClientAuthorizationsId"
+                                                     
+                                                     value="#{_client.oxAuthPersistClientAuthorizations}"
+                                                     />
+                                </ox:decorate>
+
+                                <ox:decorate id="logoUri" label="#{msg['clientForm.logoURI']}" rendered="#{!empty _client.logoUri and _client.logoUri ne null }">
+                                    <h:outputText value="#{_client.logoUri}"/>
+                                </ox:decorate>
+
+                                <ox:decorate id="clientUri" label="#{msg['clientForm.clientUri']}" rendered="#{!empty _client.clientUri and _client.clientUri ne null }">
+                                    <h:outputText value="#{_client.clientUri}" id="clientUriId"/>
+                                </ox:decorate>
+
+                                <ox:decorate id="policyUri" label="#{msg['clientForm.policyUri']}" rendered="#{!empty _client.policyUri and _client.policyUri ne null }">
+                                    <h:outputText value="#{_client.policyUri}" />
+                                </ox:decorate>
+
+                                <ox:decorate id="tosUri" label="#{msg['clientForm.termsOfServiceURI']}" rendered="#{!empty _client.tosUri and _client.tosUri ne null }">
+                                    <h:outputText value="#{_client.tosUri}" id="tosUriId"/>
+                                </ox:decorate>
+
+                                <ox:decorate id="jwksUri" label="#{msg['clientForm.jwksURI']}" rendered="#{!empty _client.jwksUri and _client.jwksUri ne null }">
+                                    <h:outputText value="#{_client.jwksUri}" id="jwksUriId"/>
+                                </ox:decorate>
+
+                                <ox:decorate id="jwks" label="#{msg['clientForm.jwks']}" rendered="#{!empty _client.jwks and _client.jwks ne null }">
+                                    <h:outputText style="max-width: 150px;word-wrap:break-word;" value="#{_client.jwks}" id="jwksId" />
+                                </ox:decorate>
+
+                                <ox:decorate id="sectorIdentifierUri" label="#{msg['clientForm.sectorIdentifierURI']}" rendered="#{!empty _client.sectorIdentifierUri and _client.sectorIdentifierUri ne null }">
+                                    <h:outputText value="#{_client.sectorIdentifierUri}" id="sectorIdentifierUriId"/>
+                                </ox:decorate>
+
+                                <ox:decorate id="subjectType" label="#{msg['clientForm.subjectType']}" rendered="#{!empty _client.subjectType and _client.subjectType ne null }">
+                                    <h:outputText  value="#{_client.subjectType}"
+                                                     id="subjectTypeId" />
+                                </ox:decorate>
+
+                                <ox:decorate id="idTokenSignedResponseAlg" rendered="#{!empty _client.idTokenSignedResponseAlg and _client.idTokenSignedResponseAlg ne null }"
+                                             label="#{msg['clientForm.jWSAlgorithmForSigning']}">
+                                    <h:outputText value="#{_client.idTokenSignedResponseAlg}"
+                                                     id="idTokenSignedResponseAlgId"
+                                                     />
+                                </ox:decorate>
+
+                                <ox:decorate id="idTokenEncryptedResponseAlg" rendered="#{!empty _client.idTokenEncryptedResponseAlg and _client.idTokenEncryptedResponseAlg ne null }"
+                                             label="#{msg['clientForm.jweAlgorithmForEncrypting']}">
+                                    <h:outputText 
+                                                     value="#{_client.idTokenEncryptedResponseAlg}"
+                                                     id="idTokenEncryptedResponseAlgId"
+                                                     />
+                                </ox:decorate>
+
+                                <ox:decorate id="idTokenEncryptedResponseEnc" rendered="#{!empty _client.idTokenEncryptedResponseEnc and _client.idTokenEncryptedResponseEnc ne null }"
+                                             label="#{msg['clientForm.jweEncAlgorithmForEncrypting']}">
+                                    <h:outputText 
+                                                     value="#{_client.idTokenEncryptedResponseEnc}"
+                                                     id="idTokenEncryptedResponseEncId"
+                                                     />
+                                </ox:decorate>
+
+                                <ox:decorate id="userInfoSignedResponseAlg" rendered="#{!empty _client.userInfoSignedResponseAlg and _client.userInfoSignedResponseAlg ne null }"
+                                             label="#{msg['clientForm.jwsAlgAlgorithm']}">
+                                    <h:outputText 
+                                                     value="#{_client.userInfoSignedResponseAlg}"
+                                                     id="userInfoSignedResponseAlgId"
+                                                     />
+                                </ox:decorate>
+
+                                <ox:decorate id="userInfoEncryptedResponseAlg" rendered="#{!empty _client.userInfoEncryptedResponseAlg and _client.userInfoEncryptedResponseAlg ne null }"
+                                             label="#{msg['clientForm.jweAlgAlgorithm']}">
+                                    <h:outputText 
+                                                     value="#{_client.userInfoEncryptedResponseAlg}"
+                                                     id="userInfoEncryptedResponseAlgId"
+                                                     />
+                                </ox:decorate>
+
+                                <ox:decorate id="userInfoEncryptedResponseEnc" rendered="#{!empty _client.userInfoEncryptedResponseEnc and _client.userInfoEncryptedResponseEnc ne null }"
+                                             label="#{msg['clientForm.jweEncAlgorithm']}">
+                                    <h:outputText 
+                                                     value="#{_client.userInfoEncryptedResponseEnc}"
+                                                     id="userInfoEncryptedResponseEncId"
+                                                     />
+                                </ox:decorate>
+
+                                <ox:decorate id="requestObjectSigningAlg" rendered="#{!empty _client.requestObjectSigningAlg and _client.requestObjectSigningAlg ne null }"
+                                             label="#{msg['clientForm.jwsAlgAlgorithmForSigningRequestObjects']}">
+                                    <h:outputText 
+                                                     value="#{_client.requestObjectSigningAlg}"
+                                                     id="requestObjectSigningAlgId"
+                                                     />
+                                </ox:decorate>
+
+                                <ox:decorate id="requestObjectEncryptionAlg" rendered="#{!empty _client.requestObjectEncryptionAlg and _client.requestObjectEncryptionAlg ne null }"
+                                             label="#{msg['clientForm.jweAlgAlgorithmforEncryptingRequestObjects']}">
+                                    <h:outputText  
+                                                     value="#{_client.requestObjectEncryptionAlg}"
+                                                     id="requestObjectEncryptionAlgId"
+                                                     />
+                                </ox:decorate>
+
+                                <ox:decorate id="requestObjectEncryptionEnc" rendered="#{!empty _client.requestObjectEncryptionEnc and _client.requestObjectEncryptionEnc ne null }"
+                                             label="#{msg['clientForm.jweEncAlgorithmForEncryptingRequestObjects']}">
+                                    <h:outputText  
+                                                     value="#{_client.requestObjectEncryptionEnc}"
+                                                     id="requestObjectEncryptionEncId"
+                                                     />
+                                </ox:decorate>
+
+                                <ox:decorate id="tokenEndpointAuthMethod" rendered="#{!empty _client.tokenEndpointAuthMethod and _client.tokenEndpointAuthMethod ne null }"
+                                             label="#{msg['clientForm.authenticationMethod']}">
+                                    <h:outputText  
+                                                     value="#{_client.tokenEndpointAuthMethod}"
+                                                     id="tokenEndpointAuthMethodId" />
+                                </ox:decorate>
+
+                                <ox:decorate id="tokenEndpointAuthSigningAlg" rendered="#{!empty _client.tokenEndpointAuthSigningAlg and _client.tokenEndpointAuthSigningAlg ne null }"
+                                             label="#{msg['clientForm.jwsAlgAlgorithmForAuthentication']}">
+                                    <h:outputText  
+                                                     value="#{_client.tokenEndpointAuthSigningAlg}"
+                                                     id="tokenEndpointAuthSigningAlgId"
+                                                     />
+                                </ox:decorate>
+
+                                <ox:decorate id="defaultMaxAge" rendered="#{!empty _client.defaultMaxAge and _client.defaultMaxAge ne null }"
+                                             label="#{msg['clientForm.defaultMaximumAuthenticationAge']}">
+                                    <h:outputText  value="#{_client.defaultMaxAge}"
+                                                       id="defaultMaxAgeId"/>
+                                </ox:decorate>
+
+                                <ox:decorate id="requireAuthTime" rendered="#{!empty _client.requireAuthTime and _client.requireAuthTime ne null }" 
+                                label="#{msg['clientForm.requireAuthTime']}">
+                                    <h:outputText  
+                                                     value="#{_client.requireAuthTime}" />
+                                </ox:decorate>
+
+                                <ox:decorate id="redirectLoginUrls" rendered="#{!empty _clientAction.loginUris and _clientAction.loginUris ne null }"
+                                	label="#{msg['clientForm.redirectLoginURIs']}">
+                                    <h:panelGroup id="selectedLoginURIsId">
+                                        <h:panelGroup columns="1" width="100%" border="0" cellpadding="0"
+                                                      cellspacing="0">
+                                            <a4j:repeat value="#{_clientAction.loginUris}" rowKeyVar="_urisIdx"
+                                                        var="_uri" iterationStatusVar="loop">
+                                                <div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
+                                                    <h:outputText value="#{empty _uri ? _uri : _uri}"/>
+                                                    
+                                                    <br/>
+                                                </div>
+                                            </a4j:repeat>
+                                            <richext:spacer height="16"/>
+                                        </h:panelGroup>
+                                    </h:panelGroup>
+                                </ox:decorate>
+
+                                <ox:decorate id="redirectLogoutUrls" rendered="#{!empty _clientAction.logoutUris and _clientAction.logoutUris ne null }" 
+                                	label="#{msg['clientForm.redirectLogoutURIs']}">
+                                    <h:panelGroup id="selectedLogoutURIsId">
+                                        <h:panelGroup columns="1" width="100%" border="0" cellpadding="0"
+                                                      cellspacing="0">
+                                            <a4j:repeat value="#{_clientAction.logoutUris}" rowKeyVar="_urisIdx"
+                                                        var="_uri" iterationStatusVar="loop">
+                                                <div class="row-fluid">
+                                                <div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
+                                                <h:outputText value="#{empty _uri ? _uri : _uri}"/>
+                                                </div>
+                                                </div>
+                                                <br/>
+                                            </a4j:repeat>
+                                            <richext:spacer height="16"/>
+                                        </h:panelGroup>
+                                    </h:panelGroup>
+                                </ox:decorate>
+
+                                <!--  -->
+
+                                <ox:decorate id="claimRedirectUrls" rendered="#{!empty _clientAction.claimRedirectURIList and _clientAction.claimRedirectURIList ne null }"
+                                	label="#{msg['clientForm.claimRedirectURI']}" >
+                                    <h:panelGroup id="selectedClaimRedirectURIIsId">
+                                        <h:panelGroup columns="1" width="100%" border="0" cellpadding="0"
+                                                      cellspacing="0">
+                                            <a4j:repeat value="#{_clientAction.claimRedirectURIList}" rowKeyVar="_urisIdx"
+                                                        var="_uri" iterationStatusVar="loop">
+                                                <div class="row-fluid">
+                                                <div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
+                                                <h:outputText value="#{empty _uri ? _uri : _uri}"/>
+                                                </div>
+                                                </div>
+                                                <br/>
+                                            </a4j:repeat>
+                                            <richext:spacer height="16"/>
+                                        </h:panelGroup>
+                                    </h:panelGroup>
+                                </ox:decorate>
+
+                                <!--  -->
+
+                                <ox:decorate id="scopes" rendered="#{!empty _clientAction.scopes and _clientAction.scopes ne null }"
+                                 label="#{msg['clientForm.scopes']}">
+                                    <h:panelGroup id="selectedScopesId">
+                                        <h:panelGroup>
+                                            <a4j:repeat value="#{_clientAction.scopes}" rowKeyVar="_scopeIdx"
+                                                        var="_scope" iterationStatusVar="loop">
+                                                <div class="row-fluid">
+                                                <div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
+                                                <h:outputText
+                                                        value="#{empty _scope.displayName ? _scope.displayName : _scope.displayName}"/>
+                                                </div>
+                                                </div>
+                                                <br/>
+                                            </a4j:repeat>
+                                            <richext:spacer height="16"/>
+                                        </h:panelGroup>
+                                    </h:panelGroup>
+                                </ox:decorate>
+
+                                <ox:decorate id="claims" rendered="#{!empty _clientAction.claims and _clientAction.claims ne null }"
+                                 label="#{msg['clientForm.claims']}">
+                                    <h:panelGroup id="selectedClaimsId">
+                                        <h:panelGroup>
+                                            <a4j:repeat value="#{_clientAction.claims}" rowKeyVar="_claimIdx"
+                                                        var="_claim" iterationStatusVar="loop">
+                                                <div class="row-fluid">
+                                                    <div class="#{(loop.index % 2 == 0) ? 'odd' : 'even'}">
+                                                        <h:outputText value="#{_claim.displayName}"/>
+                                                        
+                                                    </div>
+                                                </div>
+                                                <br/>
+                                            </a4j:repeat>
+                                            <richext:spacer height="16"/>
+                                        </h:panelGroup>
+                                    </h:panelGroup>
+                                </ox:decorate>
+
+                                <ox:decorate id="responseTypes" rendered="#{!empty _clientAction.responseTypes and _clientAction.responseTypes ne null }"
+                                	label="#{msg['clientForm.responseTypes']}">
+                                    <h:panelGroup id="selectedResponseTypesId">
+                                        <h:panelGroup>
+                                            <a4j:repeat value="#{_clientAction.responseTypes}"
+                                                        rowKeyVar="_responseTypeIdx" var="_responseType" iterationStatusVar="loop">
+                                                <div class="row-fluid">
+                                                <div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
+                                                <h:outputText value="#{_responseType.value}"/>
+                                                
+                                                </div></div>
+                                                <br/>
+                                            </a4j:repeat>
+                                            <richext:spacer height="16"/>
+                                        </h:panelGroup>
+                                    </h:panelGroup>
+                                </ox:decorate>
+
+                                <ox:decorate id="grantTypes" rendered="#{!empty _clientAction.grantTypes and _clientAction.grantTypes ne null }" 
+                                	label="#{msg['clientForm.grantTypes']}">
+                                    <h:panelGroup id="selectedGrantTypesId">
+                                        <h:panelGroup>
+                                            <a4j:repeat value="#{_clientAction.grantTypes}" rowKeyVar="_grantTypeIdx"
+                                                        var="_grantType" iterationStatusVar="loop">
+                                                <div class="row-fluid">
+                                                <div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
+                                                <h:outputText value="#{_grantType.value}"/>
+                                                
+                                                    </div>
+                                                </div>
+                                                <br/>
+                                            </a4j:repeat>
+                                            <richext:spacer height="16"/>
+                                        </h:panelGroup>
+                                    </h:panelGroup>
+                                </ox:decorate>
+
+                                <ox:decorate id="contacts" rendered="#{not empty _clientAction.contacts and  _clientAction.contacts ne null }"
+                                	 label="#{msg['clientForm.contacts']}">
+                                    <h:panelGroup id="selectedContactsId">
+                                        <h:panelGroup columns="1" width="100%" border="0" cellpadding="0"
+                                                      cellspacing="0">
+                                            <a4j:repeat value="#{_clientAction.contacts}" rowKeyVar="_contactsIdx"
+                                                        var="_contact" iterationStatusVar="loop">
+                                                <div class="row-fluid">
+                                                <div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
+                                                <h:outputText value="#{empty _contact ? _contact : _contact}"/>
+                                                <h:outputText value="&#160;"/>
+                                                    
+                                                </div></div>
+                                                <br/>
+                                            </a4j:repeat>
+                                            <richext:spacer height="16"/>
+                                        </h:panelGroup>
+                                    </h:panelGroup>
+                                </ox:decorate>
+
+                                <ox:decorate id="defaultAcrValues" rendered="#{not empty _clientAction.defaultAcrValues and _clientAction.defaultAcrValues ne null }"
+                                             label="#{msg['clientForm.defaultRequestedAuthenticationContextClass']}">
+                                    <h:panelGroup id="selectedDefaultAcrValuesId">
+                                        <h:panelGroup columns="1" width="100%" border="0" cellpadding="0"
+                                                      cellspacing="0">
+                                            <a4j:repeat value="#{_clientAction.defaultAcrValues}"
+                                                        rowKeyVar="_defaultAcrValuesIdx" var="_defaultAcrValue" iterationStatusVar="loop">
+                                                <div class="row-fluid">
+                                                <div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
+                                                <h:outputText value="#{_defaultAcrValue}"/>
+                                                
+                                                </div></div>
+                                                <br/>
+                                            </a4j:repeat>
+                                            <richext:spacer height="16"/>
+                                        </h:panelGroup>
+                                    </h:panelGroup>
+                                </ox:decorate>
+
+                                <ox:decorate id="initiateLoginUri" rendered="#{!empty _client.initiateLoginUri and _client.initiateLoginUri ne null }" 
+                                	label="#{msg['clientForm.initiateLoginURI']}">
+                                    <h:outputText  value="#{_client.initiateLoginUri}"
+                                                       id="initiateLoginUriId"/>
+                                </ox:decorate>
+
+                                <ox:decorate id="requestUris" rendered="#{!empty _clientAction.requestUris and _clientAction.requestUris ne null }" 
+                                	label="#{msg['clientForm.requestURI']}">
+                                    <h:panelGroup id="selectedRequestUrisId">
+                                        <h:panelGroup columns="1" width="100%" border="0" cellpadding="0"
+                                                      cellspacing="0">
+                                            <a4j:repeat value="#{_clientAction.requestUris}" rowKeyVar="_requestUrisIdx"
+                                                        var="_requestUri" iterationStatusVar="loop">
+                                                <div class="row-fluid">
+                                                <div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
+                                                <h:outputText value="#{_requestUri}"/>
+                                                    
+                                                </div></div>
+                                                <br/>
+                                            </a4j:repeat>
+                                            <richext:spacer height="16"/>
+                                        </h:panelGroup>
+                                    </h:panelGroup>
+                                </ox:decorate>
+
+                                <ox:decorate id="authorizedOrigins" rendered="#{!empty _clientAction.authorizedOrigins and _clientAction.authorizedOrigins ne null }" 
+                                	label="#{msg['clientForm.authorizedOrigin']}">
+                                    <h:panelGroup id="selectedAuthorizedOriginsId">
+                                        <h:panelGroup columns="1" width="100%" border="0" cellpadding="0"
+                                                      cellspacing="0">
+                                            <a4j:repeat value="#{_clientAction.authorizedOrigins}" rowKeyVar="_authorizedOriginsIdx"
+                                                        var="_authorizedOrigin" iterationStatusVar="loop">
+                                                <div class="row-fluid">
+                                                    <div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
+                                                        <h:outputText value="#{_authorizedOrigin}"/>
+                                                        
+                                                    </div></div>
+                                                <br/>
+                                            </a4j:repeat>
+                                            <richext:spacer height="16"/>
+                                        </h:panelGroup>
+                                    </h:panelGroup>
+                                </ox:decorate>
+
+                                <!-- <ox:decorate id="logoutUri" label="Logout URI">
+                                    <rich:inplaceInput value="#{_client.logoutUri}" defaultLabel="click to enter a logout URI" maxlength="60" inputWidth="695" required="false" id="logoutUriId" />
+                                </ox:decorate> -->
+
+
+                                <ox:decorate id="clientLogoutUrls" rendered="#{!empty _clientAction.clientlogoutUris and _clientAction.clientlogoutUris ne null  }" 
+                                	label="#{msg['clientForm.frontChannelLogoutURI']}">
+                                    <h:panelGroup id="selectedClientUrisId">
+                                        <h:panelGroup columns="1" width="100%" border="0" cellpadding="0"
+                                                      cellspacing="0">
+                                            <a4j:repeat value="#{_clientAction.clientlogoutUris}" rowKeyVar="_urisIdx"
+                                                        var="_uri" iterationStatusVar="loop">
+                                                <div class="row-fluid">
+                                                <div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
+                                                <h:outputText value="#{empty _uri ? _uri : _uri}"/>
+                                                
+                                                </div></div>
+                                                <br/>
+                                            </a4j:repeat>
+                                            <richext:spacer height="16"/>
+                                        </h:panelGroup>
+                                    </h:panelGroup>
+                                </ox:decorate>
+
+                                <ox:decorate id="logoutSessionRequired" rendered="#{!empty _client.logoutSessionRequired and _client.logoutSessionRequired ne null }"
+                                             label="#{msg['clientForm.logoutSessionRequired']}">
+                                    <h:outputText  value="#{_client.logoutSessionRequired}" />
+                                    
+                                </ox:decorate>
+
+                                <a4j:outputPanel>
+                                    <ox:decorate id="includeClaimsInIdToken" rendered="#{!empty _client.oxIncludeClaimsInIdToken and _client.oxIncludeClaimsInIdToken ne null }"
+                                                 label="#{msg['clientForm.includeClaimsInIdToken']}">
+                                       <h:outputText  
+                                                         value="#{_client.oxIncludeClaimsInIdToken}"
+                                                         />
+                                    </ox:decorate>
+                                    
+                                </a4j:outputPanel>
+
+                                <ox:decorate id="oxRefreshTokenLifetime" rendered="#{!empty _client.oxRefreshTokenLifetime and _client.oxRefreshTokenLifetime ne null }"
+                                             label="#{msg['clientForm.oxRefreshTokenLifetime']}">
+                                   <h:outputText  value="#{_client.oxRefreshTokenLifetime}"                                                       
+                                                       id="oxRefreshTokenLifetimeId"/>
+                                </ox:decorate>
+
+                                <ox:decorate id="oxdId" rendered="#{!empty _client.oxdId and _client.oxdId ne null }"
+                                	 label="#{msg['clientForm.oxdId']}">
+                                    <h:outputText  value="#{_client.oxdId}" id="oxdIdId"/>
+                                </ox:decorate>
+
+                                <ox:decorate rendered="#{!empty _client.disabled and _client.disabled ne null }"
+                                	label="#{msg['clientForm.disabled']}">
+                                    <h:outputText  value="#{_client.disabled}"/>
+                                </ox:decorate>
+
+                                <ox:decorate id="clientsecretexpiry"
+                                             rendered="#{_client.clientSecretExpiresAt != null || !_clientAction.update}"
+                                             label="#{msg['clientForm.clientSecretExpires']}">
+                                    <h:outputText  value="#{_client.clientSecretExpiresAt}" />
+                                </ox:decorate>
+
+                            </h:panelGroup>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </h:form>
+
+    <h:outputScript>
+
+    </h:outputScript>
+   	</p:dialog>
+</cc:implementation>
+
+</html>

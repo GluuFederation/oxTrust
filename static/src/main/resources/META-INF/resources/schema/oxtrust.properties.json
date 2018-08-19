@@ -452,6 +452,21 @@
             "exclusiveMaximum": false,
             "exclusiveMinimum": false
         },
+        "metricReporterKeepDataDays": {
+            "id": "metricReporterKeepDataDays",
+            "description": "The days to keep metric reported data.",
+            "type": "integer",
+            "multipleOf": 1,
+            "maximum": 2147483647,
+            "minimum": 1,
+            "exclusiveMaximum": false,
+            "exclusiveMinimum": false
+        },
+        "metricReporterEnabled": {
+            "id": "metricReporterEnabled",
+            "description": "Boolean value specifying whether to enable Metric Reporter.",
+            "type": "boolean"
+        },
         "rptConnectionPoolUseConnectionPooling": {
             "id": "rptConnectionPoolUseConnectionPooling",
             "type": "boolean"
@@ -669,6 +684,8 @@
         "cssLocation",
         "jsLocation",
         "metricReporterInterval",
+        "metricReporterKeepDataDays",
+        "metricReporterEnabled",
         "rptConnectionPoolUseConnectionPooling",
         "rptConnectionPoolMaxTotal",
         "rptConnectionPoolDefaultMaxPerRoute",

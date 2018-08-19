@@ -9,22 +9,30 @@
 
 	<cc:interface componentType="org.gluu.oxtrust.util.jsf.InputContainer">
 		<cc:attribute name="label" required="false" />
+		<cc:attribute name="forId" required="false" default="" />
+		<cc:attribute name="tooltip" required="false" default="#{null}" />
 		<cc:attribute name="hideLabel" required="false" default="false" />
 		<cc:attribute name="labelAsText" required="false" default="false" />
+		<cc:attribute name="oneColumn" required="false" default="false" />
 		<cc:attribute name="required" required="false" />
 		<cc:attribute name="rendered" required="false" type="java.lang.Boolean" />
 		<cc:attribute name="inputId" required="false" />
+		<cc:attribute name="title" required="false" />
+		<cc:attribute name="styleClass" required="false" default=""/>
 	</cc:interface>
 
 	<cc:implementation>
 		<h:panelGroup layout="block" id="#{not empty cc.attrs.inputId ? cc.attrs.inputId : 'output'}Region" class="row"
 			style="padding:5px;margin-bottom: 5px;margin-left:0px" rendered="#{cc.attrs.rendered}">
-			<h:panelGroup layout="block" id="#{not empty cc.attrs.inputId ? cc.attrs.inputId : 'output'}LabelPanel" styleClass="col-sm-2"
+			<h:panelGroup id="#{not empty cc.attrs.inputId ? cc.attrs.inputId : 'output'}LabelPanel" styleClass="#{cc.attrs.oneColumn ? '' : 'col-sm-2'}"
 				rendered="#{not cc.attrs.hideLabel}">
 
 				<span class="name #{cc.attrs.invalid ? 'errors' : 'new-label'}">
-					<h:outputLabel id="label" styleClass="#{cc.attrs.required ? 'break-word' : ''}" value="#{gluufn:trim(cc.attrs.label)}:" rendered="#{not cc.attrs.labelAsText}">
+					<h:outputLabel title="#{cc.attrs.title}" id="label" styleClass="#{cc.attrs.required ? 'break-word' : cc.attrs.styleClass}" value="#{gluufn:trim(cc.attrs.label)}:" rendered="#{not cc.attrs.labelAsText}" for="#{cc.attrs.forId}">
 						<h:panelGroup styleClass="required" rendered="#{cc.attrs.required}">*</h:panelGroup>
+						<h:panelGroup rendered="#{cc.attrs.tooltip != null}">
+						<span class="hello"  data-toggle="tooltip" data-original-title="#{cc.attrs.tooltip}"><i class="fa fa-info-circle" aria-hidden="true"></i></span>
+						</h:panelGroup>
 					</h:outputLabel>
 					<h:outputText value="#{cc.attrs.label}:" rendered="#{cc.attrs.labelAsText}">
 						<h:panelGroup styleClass="required" rendered="#{cc.attrs.required}">*</h:panelGroup>
@@ -32,7 +40,7 @@
 				</span>
 			</h:panelGroup>
 
-			<h:panelGroup layout="block" id="#{not empty cc.attrs.inputId ? cc.attrs.inputId : 'output'}InputPanel" styleClass="col-sm-10 prop"
+			<h:panelGroup id="#{not empty cc.attrs.inputId ? cc.attrs.inputId : 'output'}InputPanel" styleClass="col-sm-10 prop"
 				style="padding-left:0px;">
 				<span class="value #{cc.attrs.invalid ? 'errors' : 'input'}">
 					<cc:insertChildren />

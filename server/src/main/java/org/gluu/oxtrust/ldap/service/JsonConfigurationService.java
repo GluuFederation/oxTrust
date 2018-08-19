@@ -6,24 +6,28 @@
 
 package org.gluu.oxtrust.ldap.service;
 
+import java.io.IOException;
+import java.io.Serializable;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.model.GluuAppliance;
-import org.gluu.oxtrust.service.OpenIdService;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.slf4j.Logger;
-import org.xdi.config.oxtrust.*;
+import org.xdi.config.oxtrust.AppConfiguration;
+import org.xdi.config.oxtrust.CacheRefreshConfiguration;
+import org.xdi.config.oxtrust.ImportPersonConfig;
+import org.xdi.config.oxtrust.LdapOxAuthConfiguration;
+import org.xdi.config.oxtrust.LdapOxTrustConfiguration;
 import org.xdi.service.JsonService;
 import org.xdi.service.cache.CacheConfiguration;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.inject.Named;
-import java.io.IOException;
-import java.io.Serializable;
 
 /**
  * Provides operations with JSON oxAuth/oxTrust configuration
@@ -45,17 +49,8 @@ public class JsonConfigurationService implements Serializable {
 	private JsonService jsonService;
 
 	@Inject
-	private OpenIdService openIdService;
-
-	@Inject
 	private ConfigurationFactory configurationFactory;
 
-	@Inject
-	private AppConfiguration appConfiguration;
-
-	@Inject
-	private EncryptionService encryptionService;
-	
 	@Inject
 	private ApplianceService applianceService;
 

@@ -33,6 +33,7 @@ import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuOrganization;
+import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.service.render.RenderService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
@@ -69,7 +70,7 @@ public class UpdateOrganizationAction implements Serializable {
 	private ConversationService conversationService;
 
 	@Inject
-	private GluuCustomPerson currentPerson;
+	private Identity identity;
 
 	@Inject
 	private ImageService imageService;
@@ -101,9 +102,6 @@ public class UpdateOrganizationAction implements Serializable {
 	protected String loginPageCustomMessage;
 	protected String welcomePageCustomMessage;
 	protected String welcomeTitleText;
-
-	private String buildDate;
-	private String buildNumber;
 
 	private GluuImage curFaviconImage, oldFaviconImage;
 
@@ -331,37 +329,7 @@ public class UpdateOrganizationAction implements Serializable {
 			this.organization.setCustomMessages(null);
 		}
 	}
-
-	public String getBuildDate() {
-		if (this.buildDate != null) {
-			return this.buildDate;
-		}
-
-		DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm");
-		try {
-			String buildDate = appInitializer.getGluuBuildDate();
-			if (StringHelper.isEmpty(buildDate)) {
-				return buildDate;
-			}
-
-			final Date date = formatter.parse(buildDate);
-			this.buildDate = new SimpleDateFormat("hh:mm MMM dd yyyy").format(date) + " UTC";
-		} catch (ParseException e) {
-			log.error("Error formating date. Build process is invalid.", e);
-
-		}
-		return this.buildDate;
-	}
-
-	public String getBuildNumber() {
-		if (this.buildNumber != null) {
-			return this.buildNumber;
-		}
-
-		this.buildNumber = appInitializer.getGluuBuildNumber();
-		return this.buildNumber;
-	}
-
+	
 	public String cancel() throws Exception {
 		cancelLogoImage();
 		cancelFaviconImage();
@@ -388,7 +356,7 @@ public class UpdateOrganizationAction implements Serializable {
 	private void setCustLogoImageImpl(UploadedFile uploadedFile) {
 		removeLogoImage();
 
-		GluuImage newLogoImage = imageService.constructImage(currentPerson, uploadedFile);
+		GluuImage newLogoImage = imageService.constructImage(identity.getUser(), uploadedFile);
 		newLogoImage.setStoreTemporary(true);
 		newLogoImage.setLogo(true);
 		try {
@@ -479,7 +447,7 @@ public class UpdateOrganizationAction implements Serializable {
 	public void setFaviconImageImpl(UploadedFile uploadedFile) {
 		removeFaviconImage();
 
-		GluuImage newFaviconImage = imageService.constructImage(currentPerson, uploadedFile);
+		GluuImage newFaviconImage = imageService.constructImage(identity.getUser(), uploadedFile);
 		newFaviconImage.setStoreTemporary(true);
 		newFaviconImage.setLogo(false);
 		try {

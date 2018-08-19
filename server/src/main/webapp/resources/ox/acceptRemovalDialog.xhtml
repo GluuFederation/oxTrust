@@ -37,9 +37,7 @@
             <richext:spacer height="8" />
 
             <h:panelGroup>
-                <a4j:commandButton styleClass="btn btn-primary confirmDialogButton" value="Ok" onbegin="#{rich:component('acceptRemovalModalPanel')}.hide();" action="#{cc.attrs.deleteMethod}" render="#{cc.attrs.render}" execute="@this">
-					<f:param name="sv" value="1" />
-                </a4j:commandButton>
+                <a4j:commandButton styleClass="btn btn-primary confirmDialogButton" value="Ok" onbegin="#{rich:component('acceptRemovalModalPanel')}.hide();" action="#{cc.attrs.deleteMethod}" render="#{cc.attrs.render}" execute="@this" />
                 &nbsp;
                 <a4j:commandButton styleClass="btn btn-primary cancelDialogButton" value="Cancel" oncomplete="#{rich:component('acceptRemovalModalPanel')}.hide(); return false;" rendered="#{cc.attrs.cancelMethod == null}" execute="@this"/>&nbsp;
                 <a4j:commandButton styleClass="btn btn-primary cancelDialogButton" value="Cancel" oncomplete="#{rich:component('acceptRemovalModalPanel')}.hide(); return false;" rendered="#{cc.attrs.cancelMethod != null}" execute="@this"

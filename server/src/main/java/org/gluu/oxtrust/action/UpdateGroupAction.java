@@ -29,6 +29,7 @@ import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.GluuOrganization;
+import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.slf4j.Logger;
@@ -71,7 +72,7 @@ public class UpdateGroupAction implements Serializable {
 	private List<GluuCustomPerson> availableMembers;
 
 	@Inject
-	protected GluuCustomPerson currentPerson;
+	private Identity identity;
 	
 	@Inject
 	private OrganizationService organizationService;
@@ -101,7 +102,7 @@ public class UpdateGroupAction implements Serializable {
 
 		this.update = false;
 		this.group = new GluuGroup();
-		this.group.setOwner(currentPerson.getDn());
+		this.group.setOwner(identity.getUser().getDn());
 		this.group.setOrganization(organizationService.getOrganization().getDn());
 
 		try {

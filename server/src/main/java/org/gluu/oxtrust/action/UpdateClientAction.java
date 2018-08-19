@@ -20,12 +20,13 @@ import javax.faces.application.FacesMessage;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
-import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.ClientService;
+import org.gluu.oxtrust.ldap.service.EncryptionService;
 import org.gluu.oxtrust.ldap.service.ScopeService;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.OxAuthClient;
@@ -44,6 +45,7 @@ import org.xdi.service.LookupService;
 import org.xdi.service.security.Secure;
 import org.xdi.util.StringHelper;
 import org.xdi.util.Util;
+import org.xdi.util.security.StringEncrypter.EncryptionException;
 
 /**
  * Action class for viewing and updating clients.
@@ -82,7 +84,7 @@ public class UpdateClientAction implements Serializable {
 	private ConversationService conversationService;
 
 	@Inject
-	private ConfigurationFactory configurationFactory;
+	private EncryptionService encryptionService;
 
 	@Inject
 	private AppConfiguration appConfiguration;
@@ -274,6 +276,8 @@ public class UpdateClientAction implements Serializable {
 		// Trim all URI properties
 		trimUriProperties();
 
+		this.client.setEncodedClientSecret(encryptionService.encrypt(this.client.getOxAuthClientSecret()));
+
 		if (update) {
 			// Update client
 			try {
@@ -292,6 +296,10 @@ public class UpdateClientAction implements Serializable {
 		} else {
 			this.inum = clientService.generateInumForNewClient();
 			String dn = clientService.getDnForClient(this.inum);
+
+			if (StringHelper.isEmpty(this.client.getEncodedClientSecret())) {
+				generatePassword();
+			}
 
 			// Save client
 			this.client.setDn(dn);
@@ -507,6 +515,7 @@ public class UpdateClientAction implements Serializable {
 				addClaim(aClaim);
 			}
 		}
+		this.searchAvailableClaimPattern = "";
 	}
 
 	public void acceptSelectLogoutUri() {
@@ -611,9 +620,12 @@ public class UpdateClientAction implements Serializable {
 				addScope(aScope);
 			}
 		}
+		this.searchAvailableScopePattern = "";
+		this.availableScopes = new ArrayList<OxAuthScope>();
 	}
 
 	public void cancelSelectScopes() {
+		this.searchAvailableScopePattern = "";
 	}
 
 	public void cancelSelectClaims() {
@@ -639,6 +651,7 @@ public class UpdateClientAction implements Serializable {
 	}
 
 	public void cancelSelectContact() {
+		this.availableContact = "";
 	}
 
 	public void cancelSelectDefaultAcrValue() {
@@ -1299,19 +1312,26 @@ public class UpdateClientAction implements Serializable {
 		String regex = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$";
 		Pattern pattern = Pattern.compile(regex);
 		List<String> tmpContactsList = new ArrayList<String>();
-		boolean shouldShowWarning=false;
+		boolean shouldShowWarning = false;
 		for (String contact : contacts) {
 			if (pattern.matcher(contact).matches()) {
 				tmpContactsList.add(contact);
-			}else {
-				shouldShowWarning=true;
+			} else {
+				shouldShowWarning = true;
 			}
 		}
 		contacts.clear();
 		contacts.addAll(tmpContactsList);
-		if(shouldShowWarning) {
+		if (shouldShowWarning) {
 			facesMessages.add(FacesMessage.SEVERITY_WARN, "Invalid contacts have been removed from contacts list");
 		}
+	}
+
+	public void generatePassword() throws EncryptionException {
+		String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+		String pwd = RandomStringUtils.random(24, characters);
+		this.client.setOxAuthClientSecret(pwd);
+		this.client.setEncodedClientSecret(encryptionService.encrypt(pwd));
 	}
 
 }

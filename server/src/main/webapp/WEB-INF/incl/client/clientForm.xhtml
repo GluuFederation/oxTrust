@@ -8,6 +8,7 @@
                 xmlns:rich="http://richfaces.org/rich"
                 xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
                 xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
+                xmlns:p="http://primefaces.org/ui"
 >
     <style type="text/css">
         .odd {
@@ -37,7 +38,110 @@
         .tooltipData {
             font-weight: bold;
         }
+        
+        .ui-widget-header {
+		    background: none !important;
+		    repeat-x: top left #005000 !important;
+		    position: relative !important;
+		    padding-left: 10px !important;
+		    cursor: move !important;
+		    padding: 6px !important;
+		    background-color: #337AB7 !important;
+		    width: 100% !important;
+		    border-top-right-radius: 4px !important;
+		    border-top-left-radius: 4px !important;
+		    color:white !important;
+		}
     </style>
+       <h:outputScript>
+
+      function valuesDisplay(element) {
+      var element = $(element);
+
+      		var divvalue = document.getElementById('autogenrateid');
+      		console.log("div element " + element.val);
+      		var eye = divvalue.previousElementSibling;
+    		var eyehide = eye.previousElementSibling;
+      		console.log(eye);
+			console.log(eyehide);
+			eye.style.display = "none";
+			eyehide.style.display = "block";
+		}
+
+
+		function isViewPassword(buttonelementid) {
+	    	isVisible = $("img[id$="+buttonelementid+"]").is(':visible');
+
+    		return isVisible;
+    	}
+
+    	function changeTextType(element,buttonelementid) {
+    		var $element = $(element);
+			if (isViewPassword(buttonelementid)) {
+	    		$element[0].childNodes[2].childNodes[0].setAttribute('type','text');
+			} else {
+	    		$element[0].childNodes[2].childNodes[0].setAttribute('type','password');
+			}
+		}
+
+		function hideSpanValue(element, value) {
+    		var newValue = '';
+    		for (i = 0;  i &lt; value.length ; i++)
+    			newValue += '&bull;';
+
+    		var $element = $(element);
+    		$element[0].childNodes[0].innerHTML = newValue;
+		}
+
+		function restoreSpanValue(element, value) {
+    		var $element = $(element);
+    		$element[0].childNodes[0].innerHTML = value;
+		}
+
+		function viewValue(obj,elementid , eyeButtonid){
+			passwordElement = $("input[id$='"+elementid+"Input']");
+			passwordValue = passwordElement.val();
+
+			passwordElementSpan = $("span[id$='"+elementid+"Label']");
+
+			restoreSpanValue(passwordElementSpan.parent()[0], passwordValue);
+
+			$(obj).css({"display":"none"});
+			$(obj).siblings("img[id$='"+eyeButtonid+"']").css({"display":"block"});
+		}
+
+		function hideValue(obj,elementid,eyeButtonid){
+			passwordElement = $("input[id$='"+elementid+"Input']");
+			passwordValue = passwordElement.val();
+
+			passwordElementSpan = $("span[id$='"+elementid+"Label']");
+
+			hideSpanValue(passwordElementSpan.parent()[0], passwordValue);
+
+			$(obj).css({"display":"none"});
+			$(obj).siblings("img[id$='"+eyeButtonid+"']").css({"display":"block"});
+		}
+
+		function hidePasswordValue(element, value,buttonelementid) {
+			if (isViewPassword(buttonelementid)) {
+				return;
+			}
+
+			hideSpanValue(element, value);
+		}
+
+    </h:outputScript>
+    <h:panelGroup id="summarygroup" >
+     		<ox:clientSummary _clientAction="#{_clientAction}" _client="#{_client}" dialogWidth="600"
+                                    id="summary"  inputWidth="80"
+                                    label="#{msg['client.selectLogoutRedirectURI']}" maxLength="256"  />
+     
+     </h:panelGroup>
+
+		<h:panelGroup layout="block" style="padding-top: 1%;">
+					<p:commandButton value="Client Config Summary"  styleClass="btn btn-primary" type="button" onclick="PF('dlg1').show();" />
+					
+        </h:panelGroup>
 
     <h:form id="clientForm">
         <div class="row">
@@ -52,7 +156,7 @@
                                 </ox:decorate>
 
                                 <ox:decorate id="displayName" label="#{msg['clientForm.clientName']}">
-                                    <rich:inplaceInput value="#{_client.displayName}"
+                                    <rich:inplaceInput value="#{_client.displayName}" requiredMessage="Please Enter the Client Name"
                                                        defaultLabel="click to enter the Client Name" maxlength="60"
                                                        inputWidth="695" required="true" id="displayNameId"/>
                                 </ox:decorate>
@@ -62,14 +166,22 @@
 					                	maxlength="250" id="descriptionId" />
                                 </ox:decorate>
 
-                                <ox:decorate id="clientSecret" rendered="#{_new}"
-                                             label="#{msg['clientForm.clientSecret']}">
-                                    <rich:inplaceInput value="#{_client.oxAuthClientSecret}"
-                                                       defaultLabel="click to enter Client Secret" maxlength="60"
-                                                       inputWidth="695"
-                                                       required="#{_clientAction.checkClientSecretRequired()}"
-                                                       id="applicationTypeId"/>
-                                </ox:decorate>
+								<h:panelGroup id="secretid">
+	                                <ox:decorate id="clientSecret"
+	                                             label="#{msg['clientForm.clientSecret']}">
+	                                    <rich:inplaceInput styleClass="togglefield" value="#{_client.oxAuthClientSecret}"
+	                                                       defaultLabel="click to enter Client Secret" maxlength="60"
+	                                                       inputWidth="695"
+	                                                       onfocus="changeTextType(this,'hidePassword');"
+	                                                       id="clientSecretId"/>
+	                                   <h:graphicImage value="/img/eye-hidden.png" id="hidePassword"  onclick="return hideValue(this,'clientSecretId','viewPassword');"/>
+	                                   <h:graphicImage value="/img/eye.png" id="viewPassword" style="display: none;" onclick="return viewValue(this,'clientSecretId','hidePassword');"/>
+							           <div id="autogenrateid">
+	                                	<a4j:commandLink render="clientSecretId" style="margin-top:10px;"  styleClass="btn btn-primary"
+	                                                               value="Auto-Generate Secret Key"
+	                                                               action="#{_clientAction.generatePassword()}" oncomplete="return valuesDisplay(this);" />
+	                                </div></ox:decorate>
+								</h:panelGroup>
 
                                 <ox:decorate id="applicatonType" label="#{msg['clientForm.applicationType']}">
                                     <h:selectOneMenu styleClass="col-sm-9 form-control" value="#{_client.oxAuthAppType}"
@@ -161,7 +273,7 @@
                                              label="#{msg['clientForm.jWSAlgorithmForSigning']}">
                                     <h:selectOneMenu styleClass="col-sm-9 form-control"
                                                      value="#{_client.idTokenSignedResponseAlg}"
-                                                     id="idTokenSignedResponseAlgId" 
+                                                     id="idTokenSignedResponseAlgId"
                                                      required="false">
                                         <f:selectItem noSelectionOption="true" itemLabel=""/>
                                         <f:selectItems value="#{clientService.signatureAlgorithmsWithoutNone}"
@@ -174,7 +286,7 @@
                                              label="#{msg['clientForm.jweAlgorithmForEncrypting']}">
                                     <h:selectOneMenu styleClass="col-sm-9 form-control"
                                                      value="#{_client.idTokenEncryptedResponseAlg}"
-                                                     id="idTokenEncryptedResponseAlgId" 
+                                                     id="idTokenEncryptedResponseAlgId"
                                                      required="false">
                                         <f:selectItem noSelectionOption="true" itemLabel=""/>
                                         <f:selectItems value="#{clientService.keyEncryptionAlgorithms}" var="_type"
@@ -187,7 +299,7 @@
                                              label="#{msg['clientForm.jweEncAlgorithmForEncrypting']}">
                                     <h:selectOneMenu styleClass="col-sm-9 form-control"
                                                      value="#{_client.idTokenEncryptedResponseEnc}"
-                                                     id="idTokenEncryptedResponseEncId" 
+                                                     id="idTokenEncryptedResponseEncId"
                                                      required="false">
                                         <f:selectItem noSelectionOption="true" itemLabel=""/>
                                         <f:selectItems value="#{clientService.blockEncryptionAlgorithms}" var="_type"
@@ -200,7 +312,7 @@
                                              label="#{msg['clientForm.jwsAlgAlgorithm']}">
                                     <h:selectOneMenu styleClass="col-sm-9 form-control"
                                                      value="#{_client.userInfoSignedResponseAlg}"
-                                                     id="userInfoSignedResponseAlgId" 
+                                                     id="userInfoSignedResponseAlgId"
                                                      required="false">
                                         <f:selectItem noSelectionOption="true" itemLabel=""/>
                                         <f:selectItems value="#{clientService.signatureAlgorithms}" var="_type"
@@ -213,7 +325,7 @@
                                              label="#{msg['clientForm.jweAlgAlgorithm']}">
                                     <h:selectOneMenu styleClass="col-sm-9 form-control"
                                                      value="#{_client.userInfoEncryptedResponseAlg}"
-                                                     id="userInfoEncryptedResponseAlgId" 
+                                                     id="userInfoEncryptedResponseAlgId"
                                                      required="false">
                                         <f:selectItem noSelectionOption="true" itemLabel=""/>
                                         <f:selectItems value="#{clientService.keyEncryptionAlgorithms}" var="_type"
@@ -226,7 +338,7 @@
                                              label="#{msg['clientForm.jweEncAlgorithm']}">
                                     <h:selectOneMenu styleClass="col-sm-9 form-control"
                                                      value="#{_client.userInfoEncryptedResponseEnc}"
-                                                     id="userInfoEncryptedResponseEncId" 
+                                                     id="userInfoEncryptedResponseEncId"
                                                      required="false">
                                         <f:selectItem noSelectionOption="true" itemLabel=""/>
                                         <f:selectItems value="#{clientService.blockEncryptionAlgorithms}" var="_type"
@@ -239,7 +351,7 @@
                                              label="#{msg['clientForm.jwsAlgAlgorithmForSigningRequestObjects']}">
                                     <h:selectOneMenu styleClass="col-sm-9 form-control"
                                                      value="#{_client.requestObjectSigningAlg}"
-                                                     id="requestObjectSigningAlgId" 
+                                                     id="requestObjectSigningAlgId"
                                                      required="false">
                                         <f:selectItem noSelectionOption="true" itemLabel=""/>
                                         <f:selectItems value="#{clientService.signatureAlgorithms}" var="_type"
@@ -252,7 +364,7 @@
                                              label="#{msg['clientForm.jweAlgAlgorithmforEncryptingRequestObjects']}">
                                     <h:selectOneMenu styleClass="col-sm-9 form-control"
                                                      value="#{_client.requestObjectEncryptionAlg}"
-                                                     id="requestObjectEncryptionAlgId" 
+                                                     id="requestObjectEncryptionAlgId"
                                                      required="false">
                                         <f:selectItem noSelectionOption="true" itemLabel=""/>
                                         <f:selectItems value="#{clientService.keyEncryptionAlgorithms}" var="_type"
@@ -265,7 +377,7 @@
                                              label="#{msg['clientForm.jweEncAlgorithmForEncryptingRequestObjects']}">
                                     <h:selectOneMenu styleClass="col-sm-9 form-control"
                                                      value="#{_client.requestObjectEncryptionEnc}"
-                                                     id="requestObjectEncryptionEncId" 
+                                                     id="requestObjectEncryptionEncId"
                                                      required="false">
                                         <f:selectItem noSelectionOption="true" itemLabel=""/>
                                         <f:selectItems value="#{clientService.blockEncryptionAlgorithms}" var="_type"
@@ -289,7 +401,7 @@
                                              label="#{msg['clientForm.jwsAlgAlgorithmForAuthentication']}">
                                     <h:selectOneMenu styleClass="col-sm-9 form-control"
                                                      value="#{_client.tokenEndpointAuthSigningAlg}"
-                                                     id="tokenEndpointAuthSigningAlgId" 
+                                                     id="tokenEndpointAuthSigningAlgId"
                                                      required="false">
                                         <f:selectItem noSelectionOption="true" itemLabel=""/>
                                         <f:selectItems value="#{clientService.signatureAlgorithms}" var="_type"
@@ -339,10 +451,15 @@
                                                 </div>
                                             </a4j:repeat>
                                             <richext:spacer height="16"/>
+                                              <a4j:commandButton styleClass="btn btn-primary AddRedirectLoginUriButton" style="margin-top: 5px;"
+                                                               value="#{msg['clientForm.addLoginReiderctURI']}"
+                                                               oncomplete="#{rich:component('loginRedirect:inputText')}.show();"
+                                                               execute="@this" eventsQueue="clientQueue"/>
+							
                                         </h:panelGroup>
                                     </h:panelGroup>
                                 </ox:decorate>
-
+                               
                                 <ox:decorate id="redirectLogoutUrls" label="#{msg['clientForm.redirectLogoutURIs']}">
                                     <h:panelGroup id="selectedLogoutURIsId">
                                         <h:panelGroup columns="1" width="100%" border="0" cellpadding="0"
@@ -366,12 +483,19 @@
                                                 <br/>
                                             </a4j:repeat>
                                             <richext:spacer height="16"/>
+                                             
+                                <a4j:commandButton styleClass="btn btn-primary AddRedirectLOgoutUriButton" style="margin-top: 5px;"
+                                                               value="#{msg['clientForm.postLogoutRedirectURI']}"
+                                                               oncomplete="#{rich:component('logoutRedirect:inputText')}.show();"
+                                                               execute="@this" eventsQueue="clientQueue"/>
+								
                                         </h:panelGroup>
                                     </h:panelGroup>
                                 </ox:decorate>
-                                
+                               
+
                                 <!--  -->
-                                
+
                                 <ox:decorate id="claimRedirectUrls" label="#{msg['clientForm.claimRedirectURI']}">
                                     <h:panelGroup id="selectedClaimRedirectURIIsId">
                                         <h:panelGroup columns="1" width="100%" border="0" cellpadding="0"
@@ -382,7 +506,7 @@
                                                 <div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
                                                 <h:outputText value="#{empty _uri ? _uri : _uri}"/>
                                                 <h:outputText value="&#160;"/>
-                                                
+
                                                     <div class="span6 pull-right">
                                                         <a4j:commandLink styleClass="glyphicon glyphicon-remove"
                                                                          style="margin-top:-20px;"
@@ -395,10 +519,14 @@
                                                 <br/>
                                             </a4j:repeat>
                                             <richext:spacer height="16"/>
+                                            <a4j:commandButton styleClass="btn btn-primary AddClaimRedirectUriButton" style="margin-top:5px"
+                                                               value="#{msg['clientForm.addClaimRedirectURI']}"
+                                                               oncomplete="#{rich:component('claimRedirectUri:inputText')}.show();"
+                                                               execute="@this" eventsQueue="clientQueue"/>
                                         </h:panelGroup>
                                     </h:panelGroup>
                                 </ox:decorate>
-                                
+
                                 <!--  -->
 
                                 <ox:decorate id="scopes" label="#{msg['clientForm.scopes']}">
@@ -424,34 +552,38 @@
                                                 <br/>
                                             </a4j:repeat>
                                             <richext:spacer height="16"/>
+                                             <a4j:commandButton styleClass="btn btn-primary AddScopeButton" style="margin-top:5px"
+                                                               value="#{msg['clientForm.addScope']}"
+                                                               oncomplete="#{rich:component('scope:selectScopeModalPanel')}.show();"
+                                                               execute="@this" eventsQueue="clientQueue"/>
                                         </h:panelGroup>
                                     </h:panelGroup>
                                 </ox:decorate>
 
-                            <ox:decorate id="claims" label="#{msg['clientForm.claims']}">
-                                <h:panelGroup id="selectedClaimsId">
-                                    <h:panelGroup>
-                                        <a4j:repeat value="#{_clientAction.claims}" rowKeyVar="_claimIdx"
-                                                    var="_claim" iterationStatusVar="loop">
-                                            <div class="row-fluid">
-                                                <div class="#{(loop.index % 2 == 0) ? 'odd' : 'even'}">
-                                                    <h:outputText value="#{_claim.displayName}"/>
-                                                    <h:outputText value="&#160;"/>
-                                                    <div class="span6 pull-right">
-                                                        <a4j:commandLink styleClass="glyphicon glyphicon-remove"
-                                                                         style="margin-top: -20px;"
-                                                                         action="#{_clientAction.removeClaim(_claim.inum)}"
-                                                                         execute="@this" render="selectedClaimsId"
-                                                                         eventsQueue="clientQueue"></a4j:commandLink>
+                                <ox:decorate id="claims" label="#{msg['clientForm.claims']}">
+                                    <h:panelGroup id="selectedClaimsId">
+                                        <h:panelGroup>
+                                            <a4j:repeat value="#{_clientAction.claims}" rowKeyVar="_claimIdx"
+                                                        var="_claim" iterationStatusVar="loop">
+                                                <div class="row-fluid">
+                                                    <div class="#{(loop.index % 2 == 0) ? 'odd' : 'even'}">
+                                                        <h:outputText value="#{_claim.displayName}"/>
+                                                        <h:outputText value="&#160;"/>
+                                                        <div class="span6 pull-right">
+                                                            <a4j:commandLink styleClass="glyphicon glyphicon-remove"
+                                                                             style="margin-top: -20px;"
+                                                                             action="#{_clientAction.removeClaim(_claim.inum)}"
+                                                                             execute="@this" render="selectedClaimsId"
+                                                                             eventsQueue="clientQueue"></a4j:commandLink>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <br/>
-                                        </a4j:repeat>
-                                        <richext:spacer height="16"/>
+                                                <br/>
+                                            </a4j:repeat>
+                                            <richext:spacer height="16"/>
+                                        </h:panelGroup>
                                     </h:panelGroup>
-                                </h:panelGroup>
-                            </ox:decorate>
+                                </ox:decorate>
 
                                 <ox:decorate id="responseTypes" label="#{msg['clientForm.responseTypes']}">
                                     <h:panelGroup id="selectedResponseTypesId">
@@ -475,6 +607,10 @@
                                                 <br/>
                                             </a4j:repeat>
                                             <richext:spacer height="16"/>
+                                            <a4j:commandButton styleClass="btn btn-primary AddResponseTypeButton" style="margin-top:5px"
+                                                               value="#{msg['clientForm.addResponseType']}"
+                                                               oncomplete="#{rich:component('responseType:selectEntityModalPanel')}.show();"
+                                                               execute="@this" eventsQueue="clientQueue"/>
                                         </h:panelGroup>
                                     </h:panelGroup>
                                 </ox:decorate>
@@ -501,6 +637,10 @@
                                                 <br/>
                                             </a4j:repeat>
                                             <richext:spacer height="16"/>
+                                            <a4j:commandButton styleClass="btn btn-primary AddGrantTypeButton" style="margin-top:5px"
+                                                               value="#{msg['clientForm.addGrantType']}"
+                                                               oncomplete="#{rich:component('grantType:selectEntityModalPanel')}.show();"
+                                                               execute="@this" eventsQueue="clientQueue"/>
                                         </h:panelGroup>
                                     </h:panelGroup>
                                 </ox:decorate>
@@ -527,6 +667,10 @@
                                                 <br/>
                                             </a4j:repeat>
                                             <richext:spacer height="16"/>
+                                             <a4j:commandButton styleClass="btn btn-primary AddContactButton" style="margin-top:5px"
+                                                               value="#{msg['clientForm.addContact']}"
+                                                               oncomplete="#{rich:component('contact:inputText')}.show();"
+                                                               execute="@this" eventsQueue="clientQueue"/>
                                         </h:panelGroup>
                                     </h:panelGroup>
                                 </ox:decorate>
@@ -554,6 +698,10 @@
                                                 <br/>
                                             </a4j:repeat>
                                             <richext:spacer height="16"/>
+                                            <a4j:commandButton styleClass="btn btn-primary AddDefaultAcrButton" style="margin-top:5px"
+                                                               value="#{msg['clientForm.addDefaultACRvalue']}"
+                                                               oncomplete="#{rich:component('defaultAcrValue:inputText')}.show();"
+                                                               execute="@this" eventsQueue="clientQueue"/>
                                         </h:panelGroup>
                                     </h:panelGroup>
                                 </ox:decorate>
@@ -587,6 +735,10 @@
                                                 <br/>
                                             </a4j:repeat>
                                             <richext:spacer height="16"/>
+                                            <a4j:commandButton styleClass="btn btn-primary AddRequestUriButton" style="margin-top:5px"
+                                                               value="#{msg['clientForm.addRequestURI']}"
+                                                               oncomplete="#{rich:component('requestUri:inputText')}.show();"
+                                                               execute="@this" eventsQueue="clientQueue"/>
                                         </h:panelGroup>
                                     </h:panelGroup>
                                 </ox:decorate>
@@ -613,6 +765,10 @@
                                                 <br/>
                                             </a4j:repeat>
                                             <richext:spacer height="16"/>
+                                            <a4j:commandButton styleClass="btn btn-primary AddAuthorizeOriginButton" style="margin-top:5px"
+                                                               value="#{msg['clientForm.addAuthorizedOrigin']}"
+                                                               oncomplete="#{rich:component('authorizedOrigin:inputText')}.show();"
+                                                               execute="@this" eventsQueue="clientQueue"/>
                                         </h:panelGroup>
                                     </h:panelGroup>
                                 </ox:decorate>
@@ -644,6 +800,10 @@
                                                 <br/>
                                             </a4j:repeat>
                                             <richext:spacer height="16"/>
+                                            <a4j:commandButton styleClass="btn btn-primary addLogoutUriButton" style="margin-top:5px"
+                                                               value="#{msg['clientForm.addFrontchannelLogoutURI']}"
+                                                               oncomplete="#{rich:component('clientLogoutUri:inputText')}.show();"
+                                                               execute="@this" eventsQueue="clientQueue"/>
                                         </h:panelGroup>
                                     </h:panelGroup>
                                 </ox:decorate>
@@ -696,71 +856,15 @@
                                 <ox:decorate label="#{msg['clientForm.disabled']}">
                                     <h:selectBooleanCheckbox value="#{_client.disabled}" styleClass="form-control"/>
                                 </ox:decorate>
-
                                 <ox:decorate id="clientsecretexpiry"
                                              rendered="#{_client.clientSecretExpiresAt != null || !_clientAction.update}"
                                              label="#{msg['clientForm.clientSecretExpires']}">
-                                    <rich:calendar value="#{_client.clientSecretExpiresAt}" showApplyButton="true"
-                                                   datePattern="d/M/yy HH:mm" cellWidth="24px" cellHeight="22px"
-                                                   style="width:300px"/>
+                                     <rich:calendar value="#{_client.clientSecretExpiresAt}" id="calendar"
+                                        popup="false" datePattern="d/M/yy HH:mm" showApplyButton="true" style="width:300px">
+                                     </rich:calendar>
                                 </ox:decorate>
 
-                                <ox:decorate id="command">
-                                    <h:panelGroup>
-                                        <div class="btn-group" role="group" aria-label="..." style="margin-left:105px;">
-
-                                            <a4j:commandButton styleClass="btn btn-primary addLoginRedirectButton"
-                                                               value="#{msg['clientForm.addLoginReiderctURI']}"
-                                                               oncomplete="#{rich:component('loginRedirect:inputText')}.show();"
-                                                               execute="@this" eventsQueue="clientQueue"/>
-                                            <a4j:commandButton styleClass="btn btn-primary"
-                                                               value="#{msg['clientForm.postLogoutRedirectURI']}"
-                                                               oncomplete="#{rich:component('logoutRedirect:inputText')}.show();"
-                                                               execute="@this" eventsQueue="clientQueue"/>
-                                            <a4j:commandButton styleClass="btn btn-primary addScopeButton"
-                                                               value="#{msg['clientForm.addScope']}"
-                                                               oncomplete="#{rich:component('scope:selectScopeModalPanel')}.show();"
-                                                               execute="@this" eventsQueue="clientQueue"/>
-                                            <a4j:commandButton styleClass="btn btn-primary addClaimButton"
-                                                               value="#{msg['clientForm.addClaim']}"
-                                                               oncomplete="#{rich:component('claim:selectClaimModalPanel')}.show();"
-                                                               execute="@this" eventsQueue="clientQueue"/>
-                                            <a4j:commandButton styleClass="btn btn-primary addResponseTypeButton"
-                                                               value="#{msg['clientForm.addResponseType']}"
-                                                               oncomplete="#{rich:component('responseType:selectEntityModalPanel')}.show();"
-                                                               execute="@this" eventsQueue="clientQueue"/>
-                                            <a4j:commandButton styleClass="btn btn-primary addGrantTypeButton"
-                                                               value="#{msg['clientForm.addGrantType']}"
-                                                               oncomplete="#{rich:component('grantType:selectEntityModalPanel')}.show();"
-                                                               execute="@this" eventsQueue="clientQueue"/>
-                                            <a4j:commandButton styleClass="btn btn-primary addContactButton"
-                                                               value="#{msg['clientForm.addContact']}"
-                                                               oncomplete="#{rich:component('contact:inputText')}.show();"
-                                                               execute="@this" eventsQueue="clientQueue"/>
-                                            <a4j:commandButton styleClass="btn btn-primary addDefaultACRButton"
-                                                               value="#{msg['clientForm.addDefaultACRvalue']}"
-                                                               oncomplete="#{rich:component('defaultAcrValue:inputText')}.show();"
-                                                               execute="@this" eventsQueue="clientQueue"/>
-                                            <a4j:commandButton styleClass="btn btn-primary addRequestURIButton"
-                                                               value="#{msg['clientForm.addRequestURI']}"
-                                                               oncomplete="#{rich:component('requestUri:inputText')}.show();"
-                                                               execute="@this" eventsQueue="clientQueue"/>
-                                            <a4j:commandButton styleClass="btn btn-primary addAuthorizedOriginButton"
-                                                               value="#{msg['clientForm.addAuthorizedOrigin']}"
-                                                               oncomplete="#{rich:component('authorizedOrigin:inputText')}.show();"
-                                                               execute="@this" eventsQueue="clientQueue"/>
-                                            <a4j:commandButton styleClass="btn btn-primary addFrontChannelLogoutButton"
-                                                               value="#{msg['clientForm.addFrontchannelLogoutURI']}"
-                                                               oncomplete="#{rich:component('clientLogoutUri:inputText')}.show();"
-                                                               execute="@this" eventsQueue="clientQueue"/>
-                                                               
-                                            <a4j:commandButton styleClass="btn btn-primary addClaimRedirectButton"
-                                                               value="#{msg['clientForm.addClaimRedirectURI']}"
-                                                               oncomplete="#{rich:component('claimRedirectUri:inputText')}.show();"
-                                                               execute="@this" eventsQueue="clientQueue"/>
-                                        </div>
-                                    </h:panelGroup>
-                                </ox:decorate>
+                                
 
                             </h:panelGroup>
 
@@ -783,5 +887,6 @@
                 persisteClientAuthorizationsIdSelect.val("FALSE");
             }
         }
+
     </h:outputScript>
 </ui:composition>
