@@ -31,7 +31,7 @@ import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.PasswordResetRequest;
 import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.site.ldap.persistence.LdapEntryManager;
+import org.gluu.persist.PersistenceEntryManager;
 
 /**
  * User: Dejan Maric
@@ -44,7 +44,7 @@ public class PasswordResetAction implements Serializable {
 
 
 	@Inject
-	private LdapEntryManager ldapEntryManager;
+	private PersistenceEntryManager ldapEntryManager;
 
 	@Inject
 	private FacesMessages facesMessages;
