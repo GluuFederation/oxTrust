@@ -35,7 +35,7 @@
             <div id="formArea">
                 <h:panelGroup border="0" cellpadding="0" cellspacing="0" columns="1" width="100%">
                     <h:form id="attributesFormId">
-                        <h:link includeViewParams="false" outcome="/attribute/addAttribute" style="padding:6px;"
+                        <h:link id="register" includeViewParams="false" outcome="/attribute/addAttribute" style="padding:6px;"
                                 styleClass="label label-success" value="#{msg['attribute.registerAttribute']}"/>
 
 
@@ -49,7 +49,7 @@
                         <ui:fragment rendered="#{not attributeInventoryAction.showInactive}">
                             <a4j:commandLink action="#{attributeInventoryAction.toggleShowInactive}"
                                              render="attributesFormId" style="margin-left:5px;padding:6px;"
-                                             styleClass="label label-success"
+                                             styleClass="label label-success showAllAttributesButton"
                                              value="#{msg['attribute.showAllAttributes']}"/>
                         </ui:fragment>
 

@@ -19,17 +19,17 @@
                 <ui:param name="_new" value="false"/>
 
                 <ui:define name="controlButtons">
-                    <h:panelGroup id="updateButtons" layout="block">
+                    <h:panelGroup id="updateButtons" class ="updateButtons" layout="block">
                         <a4j:commandButton
                                 onclick="#{rich:component('personPassword:changePasswordModalPanel')}.show();"
-                                styleClass="btn btn-primary" value="#{msg['person.changePassword']}"/>
+                                styleClass="btn btn-primary changePasswordButton" value="#{msg['person.changePassword']}"/>
                         <h:commandButton action="#{updatePersonAction.save}"
                                          rendered="#{organizationService.allowPersonModification}"
-                                         styleClass="btn btn-primary" value="#{msg['person.update']}"/>
+                                         styleClass="btn btn-primary savePersonButon" value="#{msg['person.update']}"/>
                         <a4j:commandButton eventsQueue="personQueue"
                                            onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();"
                                            rendered="#{not _new and organizationService.allowPersonModification}"
-                                           styleClass="btn btn-primary" value="#{msg['person.delete']}"/>
+                                           styleClass="btn btn-primary deletePersonButton" value="#{msg['person.delete']}"/>
                         <h:commandButton action="#{updatePersonAction.cancel}" immediate="true"
                                          styleClass="btn btn-primary"
                                          value="#{organizationService.allowPersonModification ? 'Cancel' : 'Back' }"/>

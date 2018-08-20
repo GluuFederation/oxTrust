@@ -58,9 +58,9 @@
 							<ui:insert name="controlButttons" />
 							<div id="updateButtons">
                         
-                     	<h:commandButton value="Validate" styleClass="btn btn-primary" action="#{_importAction.validateFileToImport()}" rendered="#{not _importAction.fileDataToImport.ready}" />
-                        <h:commandButton value="Import" styleClass="btn btn-primary" action="#{_importAction.importAttributes()}" rendered="#{_importAction.fileDataToImport.ready}" />
-                        <h:commandButton value="Cancel" styleClass="btn btn-primary" action="#{_importAction.cancel}" immediate="true" style="margin-left:5px;" />
+                     	<h:commandButton value="Validate" styleClass="btn btn-primary validateButton" action="#{_importAction.validateFileToImport()}" rendered="#{not _importAction.fileDataToImport.ready}" />
+                        <h:commandButton value="Import" styleClass="btn btn-primary importButton" action="#{_importAction.importAttributes()}" rendered="#{_importAction.fileDataToImport.ready}" />
+                        <h:commandButton value="Cancel" styleClass="btn btn-primary cancelButton" action="#{_importAction.cancel}" immediate="true" style="margin-left:5px;" />
                    </div></div>
         
 						

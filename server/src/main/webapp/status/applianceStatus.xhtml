@@ -37,42 +37,42 @@
                                 <h:panelGrid border="0" cellpadding="0" cellspacing="0" columns="1" id="statusTable"
                                              width="100%">
                                     <ox:decorate label="#{msg['applianceStatus.hostName']}">
-                                        <h:outputText value="#{_appliance.hostname}"/>
+                                        <h:outputText styleClass="hostnameValueBox" value="#{_appliance.hostname}"/>
                                     </ox:decorate>
 
                                     <ox:decorate label="#{msg['applianceStatus.ipAddress']}">
-                                        <h:outputText value="#{_appliance.ipAddress}"/>
+                                        <h:outputText styleClass="ipAddressValueBox" value="#{_appliance.ipAddress}"/>
                                     </ox:decorate>
 
                                     <ox:decorate label="#{msg['applianceStatus.systemUptime']}">
-                                        <h:outputText converter="uptimeConverter" value="#{_appliance.systemUptime}"/>
+                                        <h:outputText styleClass="systemUptimeValueBox" converter="uptimeConverter" value="#{_appliance.systemUptime}"/>
                                     </ox:decorate>
 
                                     <ox:decorate label="#{msg['applianceStatus.lastUpdate']}">
-                                        <h:outputText value="#{_appliance.lastUpdate}">
+                                        <h:outputText  styleClass="lastUpdateValueBox" value="#{_appliance.lastUpdate}">
                                             <f:convertDateTime pattern="MMM. d yyyy hh:mm a"/>
                                         </h:outputText>
                                     </ox:decorate>
 
                                     <ox:decorate label="#{msg['applianceStatus.pollingInterval']}">
-                                        <h:outputText value="60 seconds"/>
+                                        <h:outputText styleClass="pollingIntervalValueBox" value="60 seconds"/>
                                     </ox:decorate>
 
                                     <ox:decorate label="#{msg['applianceStatus.personCount']}">
-                                        <h:outputText value="#{_appliance.personCount}"/>
+                                        <h:outputText styleClass="personCountValueBox" value="#{_appliance.personCount}"/>
                                     </ox:decorate>
 
                                     <ox:decorate label="#{msg['applianceStatus.groupCount']}">
-                                        <h:outputText value="#{_appliance.groupCount}"/>
+                                        <h:outputText styleClass="groupCountValueBox" value="#{_appliance.groupCount}"/>
                                     </ox:decorate>
 
                                     <ox:decorate label="#{msg['applianceStatus.freeMemory']}">
-                                        <h:outputText value="#{_appliance.freeMemory}"/>
+                                        <h:outputText styleClass="freeMemoryValueBox" value="#{_appliance.freeMemory}"/>
                                         <h:outputText value="%"/>
                                     </ox:decorate>
 
                                     <ox:decorate label="#{msg['applianceStatus.freeDiskSpace']}">
-                                        <h:outputText value="#{_appliance.freeDiskSpace}"/>
+                                        <h:outputText styleClass="freeDiskSpaceValueBox" value="#{_appliance.freeDiskSpace}"/>
                                         <h:outputText value="%"/>
                                     </ox:decorate>
                                 </h:panelGrid>

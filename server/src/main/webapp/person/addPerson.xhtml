@@ -22,7 +22,7 @@
                         <h:panelGroup id="updateButtons" layout="block" style="margin-bottom:6px;">
                             <h:commandButton action="#{updatePersonAction.save}"
                                              rendered="#{organizationService.allowPersonModification}"
-                                             styleClass="btn btn-primary" value="#{msg['person.add']}"/>
+                                             styleClass="btn btn-primary saveButton" value="#{msg['person.add']}"/>
                             <h:commandButton action="#{updatePersonAction.cancel}" immediate="true"
                                              style="margin-left:3px;" styleClass="btn btn-primary"
                                              value="#{msg['person.cancel']}"/>
