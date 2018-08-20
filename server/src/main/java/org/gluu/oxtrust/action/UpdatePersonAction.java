@@ -23,7 +23,6 @@ import javax.faces.component.UIInput;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.servlet.http.HttpServletRequest;
 
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -36,7 +35,6 @@ import org.gluu.oxtrust.ldap.service.GroupService;
 import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.MemberService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
-import org.gluu.oxtrust.ldap.service.OxTrustAuditService;
 import org.gluu.oxtrust.model.Device;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
@@ -46,7 +44,6 @@ import org.gluu.oxtrust.model.OTPDevice;
 import org.gluu.oxtrust.model.Phone;
 import org.gluu.oxtrust.model.fido.GluuCustomFidoDevice;
 import org.gluu.oxtrust.model.fido.GluuDeviceDataBean;
-import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.service.external.ExternalUpdateUserService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.ServiceUtil;
@@ -123,12 +120,6 @@ public class UpdatePersonAction implements Serializable {
 	
 	@Inject
 	private FidoDeviceService fidoDeviceService;
-	
-	@Inject
-	private Identity identity;
-	
-	@Inject
-	private OxTrustAuditService oxTrustAuditService;
 
 	private GluuStatus gluuStatus;
 
@@ -385,9 +376,6 @@ public class UpdatePersonAction implements Serializable {
 					externalUpdateUserService.executeExternalUpdateUserMethods(this.person);
 				}
 				personService.updatePerson(this.person);
-				oxTrustAuditService.audit("USER " + this.person.getInum() + " UPDATED",
-						identity.getUser(),
-						(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 				if (runScript) {
 					externalUpdateUserService.executeExternalPostUpdateUserMethods(this.person);
 				}
@@ -430,9 +418,6 @@ public class UpdatePersonAction implements Serializable {
 					externalUpdateUserService.executeExternalAddUserMethods(this.person);
 				}
 				personService.addPerson(this.person);
-				oxTrustAuditService.audit("USER " + this.person.getInum() + " ADDED",
-						identity.getUser(),
-						(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 				if (runScript) {
 					externalUpdateUserService.executeExternalPostAddUserMethods(this.person);
 				}
@@ -483,9 +468,6 @@ public class UpdatePersonAction implements Serializable {
 					externalUpdateUserService.executeExternalDeleteUserMethods(this.person);
 				}
 				memberService.removePerson(this.person);
-				oxTrustAuditService.audit("USER " + this.person.getInum() + " REMOVED",
-						identity.getUser(),
-						(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 				if (runScript) {
 					externalUpdateUserService.executeExternalPostDeleteUserMethods(this.person);
 				}
@@ -698,6 +680,58 @@ public class UpdatePersonAction implements Serializable {
 			this.deviceDetail = null;
 		}
 		 
+	}
+
+	public boolean userNameIsUniqAtCreationTime(String uid) {
+ 		boolean userNameIsUniq = true;
+ 		List<GluuCustomPerson> gluuCustomPersons = personService.getPersonsByUid(uid);
+ 		if (gluuCustomPersons != null && gluuCustomPersons.size() > 0) {
+ 			for (GluuCustomPerson gluuCustomPerson : gluuCustomPersons) {
+ 				if (gluuCustomPerson.getUid().equalsIgnoreCase(uid)) {
+ 					userNameIsUniq = false;
+ 					break;
+ 				}
+ 			}
+ 		}
+ 		return userNameIsUniq;
+ 	}
+ 
+	public boolean userNameIsUniqAtEditionTime(String uid) {
+		boolean userNameIsUniq = false;
+		List<GluuCustomPerson> gluuCustomPersons = personService.getPersonsByUid(uid);
+		if (gluuCustomPersons == null || gluuCustomPersons.isEmpty()) {
+			userNameIsUniq = true;
+		}
+		if (gluuCustomPersons.size() == 1 && gluuCustomPersons.get(0).getUid().equalsIgnoreCase(uid)) {
+			userNameIsUniq = true;
+		}
+ 		return userNameIsUniq;
+ 	}
+ 
+ 	public boolean userEmailIsUniqAtCreationTime(String email) {
+ 		boolean emailIsUniq = true;
+ 		List<GluuCustomPerson> gluuCustomPersons = personService.getPersonsByEmail(email);
+ 		if (gluuCustomPersons != null && gluuCustomPersons.size() > 0) {
+ 			for (GluuCustomPerson gluuCustomPerson : gluuCustomPersons) {
+ 				if (gluuCustomPerson.getAttribute("mail").equalsIgnoreCase(email)) {
+ 					emailIsUniq = false;
+ 					break;
+ 				}
+ 			}
+ 		}
+ 		return emailIsUniq;
+ 	}
+ 
+	public boolean userEmailIsUniqAtEditionTime(String email) {
+		boolean emailIsUniq = false;
+		List<GluuCustomPerson> gluuCustomPersons = personService.getPersonsByEmail(email);
+		if (gluuCustomPersons == null || gluuCustomPersons.isEmpty()) {
+			emailIsUniq = true;
+		}
+		if (gluuCustomPersons.size() == 1 && gluuCustomPersons.get(0).getAttribute("mail").equalsIgnoreCase(email)) {
+			emailIsUniq = true;
+		}
+		return emailIsUniq;
 	}
 	
 	private boolean validatePerson(GluuCustomPerson person) throws Exception {
