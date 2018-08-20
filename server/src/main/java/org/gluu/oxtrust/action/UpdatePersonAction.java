@@ -106,7 +106,6 @@ public class UpdatePersonAction implements Serializable {
 	@Inject
 	private UserPasswordAction userPasswordAction;
 
-
 	@Inject
 	private AppConfiguration appConfiguration;
 
@@ -744,6 +743,9 @@ public class UpdatePersonAction implements Serializable {
 	public boolean userNameIsUniqAtEditionTime(String uid) {
 		boolean userNameIsUniq = false;
 		List<GluuCustomPerson> gluuCustomPersons = personService.getPersonsByUid(uid);
+		if (gluuCustomPersons == null || gluuCustomPersons.isEmpty()) {
+			userNameIsUniq = true;
+		}
 		if (gluuCustomPersons.size() == 1 && gluuCustomPersons.get(0).getUid().equalsIgnoreCase(uid)) {
 			userNameIsUniq = true;
 		}
@@ -767,9 +769,13 @@ public class UpdatePersonAction implements Serializable {
 	public boolean userEmailIsUniqAtEditionTime(String email) {
 		boolean emailIsUniq = false;
 		List<GluuCustomPerson> gluuCustomPersons = personService.getPersonsByEmail(email);
+		if (gluuCustomPersons == null || gluuCustomPersons.isEmpty()) {
+			emailIsUniq = true;
+		}
 		if (gluuCustomPersons.size() == 1 && gluuCustomPersons.get(0).getAttribute("mail").equalsIgnoreCase(email)) {
 			emailIsUniq = true;
 		}
+
 		return emailIsUniq;
 	}
 
