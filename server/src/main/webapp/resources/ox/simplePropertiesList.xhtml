@@ -27,15 +27,16 @@
             <h:panelGroup id="propertiesList">
                 <a4j:region>
                     <a4j:repeat value="#{cc.attrs.properties}" var="_property">
-                        <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
-                            <h:panelGroup id="SimplePropertiesList" styleClass="#{cc.attrs.tableId}">
-                                 <div class="col-sm-11 prop" style="padding-left:0px;" id="#{_property[cc.attrs.propertyName]}">
+                        <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0" styleClass="#{cc.attrs.tableId}">
+                            <h:panelGroup>
+                                <div class="col-sm-11 prop" style="padding-left:0px;">
                                    <h:inputText id="fInput" styleClass="col-md-6 form-control #{_property[cc.attrs.propertyName] eq '' ? 'NewPropertyBox' : _property[cc.attrs.propertyName]}" style ="margin-bottom:5px;"  value="#{_property[cc.attrs.propertyName]}" size="#{cc.attrs.inputWidth}" required="#{cc.attrs.required}" />
-                                 </div>
-                                 <h:message for="fInput" errorClass="invalid"/>
-                                 <h:graphicImage value="/img/error.gif" rendered="#{invalid}" styleClass="errors" />
+                                </div>
+
+                                <h:message for="fInput" errorClass="invalid"/>
+                                <h:graphicImage value="/img/error.gif" rendered="#{invalid}" styleClass="errors" />
                                 
-                                 <a4j:commandLink   style="margin-top:5px;font-size:23px !important;" styleClass="glyphicon glyphicon-remove removeItemButton" action="#{cc.attrs.propertiesAction.removeItemFromSimpleProperties(cc.attrs.properties, _property)}" render="propertiesList" execute="@this" />
+                                <a4j:commandLink   style="margin-top:5px;font-size:23px !important;" styleClass="glyphicon glyphicon-remove removePropertyButton" action="#{cc.attrs.propertiesAction.removeItemFromSimpleProperties(cc.attrs.properties, _property)}" render="propertiesList" execute="@this" />
                             </h:panelGroup>
                         </h:panelGrid>
                     </a4j:repeat>
