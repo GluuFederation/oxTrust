@@ -148,7 +148,7 @@ public class JsonConfigurationAction implements Serializable {
 			this.cacheConfiguration = convertToCacheConfiguration(this.cacheConfigurationJson);
 			
 			jsonConfigurationService.saveOxMemCacheConfiguration(this.cacheConfiguration);
-			facesMessages.add(FacesMessage.SEVERITY_INFO, "OxMemcache  Configuration is updated.");
+			facesMessages.add(FacesMessage.SEVERITY_INFO, "Сache Configuration is updated.");
 
 			return OxTrustConstants.RESULT_SUCCESS;
 		} catch (Exception ex) {

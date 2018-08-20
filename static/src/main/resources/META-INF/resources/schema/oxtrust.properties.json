@@ -452,6 +452,21 @@
             "exclusiveMaximum": false,
             "exclusiveMinimum": false
         },
+        "metricReporterKeepDataDays": {
+            "id": "metricReporterKeepDataDays",
+            "description": "The days to keep metric reported data.",
+            "type": "integer",
+            "multipleOf": 1,
+            "maximum": 2147483647,
+            "minimum": 1,
+            "exclusiveMaximum": false,
+            "exclusiveMinimum": false
+        },
+        "metricReporterEnabled": {
+            "id": "metricReporterEnabled",
+            "description": "Boolean value specifying whether to enable Metric Reporter.",
+            "type": "boolean"
+        },
         "rptConnectionPoolUseConnectionPooling": {
             "id": "rptConnectionPoolUseConnectionPooling",
             "type": "boolean"
@@ -587,8 +602,12 @@
             "maximum": 2147483647
           }
         }
-      }
-
+        },
+        "disableJdkLogger": {
+            "id": "disableJdkLogger",
+            "description": "Boolean value specifying whether to enable JDK Loggers.",
+            "type": "boolean"
+        }
     },
     "required": [
         "baseDN",
@@ -669,6 +688,8 @@
         "cssLocation",
         "jsLocation",
         "metricReporterInterval",
+        "metricReporterKeepDataDays",
+        "metricReporterEnabled",
         "rptConnectionPoolUseConnectionPooling",
         "rptConnectionPoolMaxTotal",
         "rptConnectionPoolDefaultMaxPerRoute",
@@ -682,6 +703,7 @@
         "idp3SigningCert",
         "idp3EncryptionCert",
         "oxIncommonFlag",
-        "loggingLevel"
+        "loggingLevel",
+        "disableJdkLogger"
     ]
 }

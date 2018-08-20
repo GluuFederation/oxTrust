@@ -6,8 +6,6 @@
 
 package org.gluu.oxtrust.ldap.service;
 
-import static org.gluu.oxtrust.ldap.service.AppInitializer.LDAP_ENTRY_MANAGER_NAME;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,6 +39,8 @@ public class ScopeService implements Serializable {
 	private LdapEntryManager ldapEntryManager;	
 	@Inject
 	private OrganizationService organizationService;
+	@Inject
+	private OxTrustAuditService oxTrustAuditService;
 
 	// @Inject
 	// private Logger log;
@@ -53,7 +53,7 @@ public class ScopeService implements Serializable {
 	 */
 	public void addScope(OxAuthScope scope) throws Exception {
 		ldapEntryManager.persist(scope);
-
+		oxTrustAuditService.audit("SCOPE "+scope.getDisplayName()+ " SUCCESSFULLY ADDED");
 	}
 
 	/**
@@ -65,7 +65,7 @@ public class ScopeService implements Serializable {
 	public void removeScope(OxAuthScope scope) throws Exception {
 
 		ldapEntryManager.remove(scope);
-
+		oxTrustAuditService.audit("SCOPE "+scope.getDisplayName()+ " SUCCESSFULLY REMOVED");
 	}
 
 	/**
@@ -109,7 +109,7 @@ public class ScopeService implements Serializable {
 	 */
 	public void updateScope(OxAuthScope scope) throws Exception {
 		ldapEntryManager.merge(scope);
-
+		oxTrustAuditService.audit("ADDED "+scope.getDisplayName()+ " SUCCESSFULLY UPDATED"); 
 	}
 
 	/**

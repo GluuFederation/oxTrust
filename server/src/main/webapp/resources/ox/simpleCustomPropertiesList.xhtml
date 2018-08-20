@@ -61,29 +61,23 @@
                     	<h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0" >
                             <h:panelGroup >
                             <div >
-                                <h:inputText id="fInput" style = "margin-right:5px;margin-bottom:10px;width:35%;float:left;" styleClass="col-md-4 form-control" value="#{_property.value1}" size="#{cc.attrs.inputWidth}" required="#{cc.attrs.requiredName and empty param['sv']}" readonly="#{(_property.value1) eq 'clientID' or (_property.value1) eq 'clientSecret'}"/>
+                                <h:inputText id="fInput" style = "margin-right:5px;margin-bottom:10px;width:35%;float:left;" styleClass="col-md-4 form-control" value="#{_property.value1}" size="#{cc.attrs.inputWidth}" required="#{cc.attrs.requiredName}" readonly="#{(_property.value1) eq 'clientID' or (_property.value1) eq 'clientSecret'}"/>
                                 <h:message for="fInput" errorClass="invalid"/>
 
-	                            <h:inputText id="sInput1" styleClass="col-md-4 form-control togglefield" style = "width:35%;float:left;" value="#{_property.value2}" size="#{cc.attrs.inputWidth}" required="#{cc.attrs.requiredValue and empty param['sv']}" rendered="#{(cc.attrs.hideValue eq false) or (_property.hideValue eq false)}" />
+	                            <h:inputText id="sInput1" styleClass="col-md-4 form-control togglefield" style = "width:35%;float:left;" value="#{_property.value2}" size="#{cc.attrs.inputWidth}" required="#{cc.attrs.requiredValue}" rendered="#{(cc.attrs.hideValue eq false) or (_property.hideValue eq false)}" />
 	                            <h:message for="sInput1" errorClass="invalid" rendered="#{cc.attrs.hideValue eq false}"/>
 	                            
-                                <h:inputSecret id="sInput" styleClass="col-md-4 form-control togglefield" style = "width:35%;float:left;" value="#{_property.value2}" size="#{cc.attrs.inputWidth}" required="#{cc.attrs.requiredValue and empty param['sv']}" redisplay="true" rendered="#{(cc.attrs.hideValue eq true) and (_property.hideValue eq true)}" />
+                                <h:inputSecret id="sInput" styleClass="col-md-4 form-control togglefield" style = "width:35%;float:left;" value="#{_property.value2}" size="#{cc.attrs.inputWidth}" required="#{cc.attrs.requiredValue}" redisplay="true" rendered="#{(cc.attrs.hideValue eq true) and (_property.hideValue eq true)}" />
                                 <h:message for="sInput" errorClass="invalid" rendered="#{cc.attrs.hideValue eq true}"/>
                                 
                    	            <h:inputHidden value="#{_property.hideValue}" rendered="#{cc.attrs.hideValue eq true}" id="hv" />
     
                                 <h:graphicImage value="/img/error.gif" rendered="#{invalid}" styleClass="errors" />
     							
-    							<a4j:commandLink styleClass="glyphicon glyphicon-remove col-md-3" rendered="#{cc.attrs.showRemoveDialogue eq false}"   style="float:left;margin-top: 8px;" action="#{cc.attrs.propertiesAction.removeItemFromSimpleCustomProperties(cc.attrs.properties, _property)}" render="customList" execute="@region">
-                                   <!--  <h:graphicImage value="/img/remove.gif" /> -->
-                                    <f:param name="sv" value="1" />
-                                </a4j:commandLink>
+    							<a4j:commandLink styleClass="glyphicon glyphicon-remove col-md-3" rendered="#{cc.attrs.showRemoveDialogue eq false}"   style="float:left;margin-top: 8px;" action="#{cc.attrs.propertiesAction.removeItemFromSimpleCustomProperties(cc.attrs.properties, _property)}" render="customList" execute="@this" />
                                 
                                 <a4j:commandLink styleClass="glyphicon glyphicon-remove col-md-3" rendered="#{(cc.attrs.showRemoveDialogue) eq true and (_property.value1) ne 'clientID' and (_property.value1) ne 'clientSecret'}"  style="float:left;margin-top: 8px;" onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();"
-                                  execute="@region">
-                                   <!--  <h:graphicImage value="/img/remove.gif" /> -->
-                                    <f:param name="sv" value="1" />
-                                </a4j:commandLink>
+                                  execute="@region" />
                                 
                                 <h:graphicImage value="/img/eye.png" style="display: none;"  id="view" onclick="return viewValue(this);" rendered="#{cc.attrs.hideValue eq true}"/>
                                 <h:graphicImage value="/img/eye-hidden.png" style="display: none;" id="hide" onclick="return hideValue(this);" rendered="#{cc.attrs.hideValue eq true}"/>
@@ -98,10 +92,9 @@
                     </a4j:repeat>
                     
    
-                    <a4j:commandLink  action="#{cc.attrs.propertiesAction.addItemToSimpleCustomProperties(cc.attrs.properties)}" render="customList" execute="@region"
+                    <a4j:commandLink  action="#{cc.attrs.propertiesAction.addItemToSimpleCustomProperties(cc.attrs.properties)}" render="customList" execute="@this"
                         rendered="#{empty maxItems or maxItems gt properties.size()}">
                         <h:outputText  style="margin-top:-5px" styleClass="btn btn-primary"  value="#{cc.attrs.labelAdd eq null or  cc.attrs.labelAdd eq '' ? cc.attrs.label : cc.attrs.labelAdd}" />
-                        <f:param name="sv" value="1" />
                     </a4j:commandLink>
                 </a4j:region>
             </h:panelGroup>

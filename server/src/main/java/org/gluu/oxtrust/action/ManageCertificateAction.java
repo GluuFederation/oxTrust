@@ -45,6 +45,7 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.jce.provider.JCERSAPrivateCrtKey;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.util.encoders.Base64;
+import org.gluu.jsf2.io.ResponseHelper;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
@@ -53,6 +54,7 @@ import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.cert.TrustStoreCertificate;
 import org.gluu.oxtrust.model.cert.TrustStoreConfiguration;
+import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.richfaces.event.FileUploadEvent;
@@ -62,7 +64,6 @@ import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.service.security.Secure;
 import org.xdi.util.StringHelper;
 import org.xdi.util.io.FileHelper;
-import org.xdi.util.io.ResponseHelper;
 
 /**
  * Manages SSL certificates
@@ -99,7 +100,7 @@ public class ManageCertificateAction implements Serializable {
 	private ApplianceService applianceService;
 
 	@Inject
-	protected GluuCustomPerson currentPerson;
+	private Identity identity;
 
 	private TrustStoreConfiguration trustStoreConfiguration;
 	private List<TrustStoreCertificate> trustStoreCertificates;
@@ -552,7 +553,7 @@ public class ManageCertificateAction implements Serializable {
 			this.trustStoreCertificateUploadMarker.setCertificate(certificate);
 
 			this.trustStoreCertificateUploadMarker.setAddedAt(new Date());
-			this.trustStoreCertificateUploadMarker.setAddedBy(currentPerson.getDn());
+			this.trustStoreCertificateUploadMarker.setAddedBy(identity.getUser().getDn());
 
 		} catch (IOException ex) {
 			log.error("Failed to upload key", ex);
@@ -586,7 +587,7 @@ public class ManageCertificateAction implements Serializable {
 	public void addPublicCertificate() {
 		TrustStoreCertificate trustStoreCertificate = new TrustStoreCertificate();
 		trustStoreCertificate.setAddedAt(new Date());
-		trustStoreCertificate.setAddedBy(currentPerson.getDn());
+		trustStoreCertificate.setAddedBy(identity.getUser().getDn());
 
 		this.trustStoreCertificates.add(trustStoreCertificate);
 	}

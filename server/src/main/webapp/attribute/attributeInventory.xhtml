@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:a4j="http://richfaces.org/a4j"
-                xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
     <f:metadata>
         <f:viewAction action="#{conversationService.initConversation}" />
@@ -80,6 +80,18 @@
                                                                     <h3 class="box-title">#{msg['attribute.updateAttribute']}</h3>
                                                                 </div>
                                                                 <!-- /.box-header -->
+                                                                <h:form>
+                                        						   <ox:decorate hideLabel="true" id="searchPattern">
+                                                                      <h:inputText alt="search parameters for group like uid,iname,email"
+                                                                         id="searchPatternId" maxlength="30" size="30"
+                                                                          style="float: left;width: 60%; margin-left:30%;"
+                                                                           styleClass="searchParameters searchAttributeTextArea form-control"
+                                                                           value="#{attributeInventoryAction.searchPattern}"/>
+                                                                       <h:commandButton action="#{attributeInventoryAction.search}"
+                                                                        class="btn btn-primary searchAttributeButton" style="float:left;"
+                                                                         value="#{msg['group.search']}"/>
+                                                                   </ox:decorate>
+                                                                 </h:form>
                                                                 <!-- form start -->
                                                                 <div class="box-body">
                                                                     <div class="table-responsive"

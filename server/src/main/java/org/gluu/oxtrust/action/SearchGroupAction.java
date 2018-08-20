@@ -75,6 +75,7 @@ public class SearchGroupAction implements Serializable {
 			
 			log.debug("Found '{}' groups.", this.groupList.size());
 			this.oldSearchPattern = this.searchPattern;
+			this.searchPattern="";
 		} catch (Exception ex) {
 			log.error("Failed to find groups", ex);
 

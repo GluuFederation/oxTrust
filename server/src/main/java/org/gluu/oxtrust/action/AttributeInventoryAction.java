@@ -14,12 +14,13 @@ import java.util.Map;
 
 import javax.enterprise.context.ConversationScoped;
 import javax.faces.application.FacesMessage;
-import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
@@ -32,6 +33,7 @@ import org.xdi.ldap.model.GluuStatus;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuUserRole;
 import org.xdi.service.security.Secure;
+import org.xdi.util.Util;
 
 /**
  * Action class for displaying attributes
@@ -62,7 +64,13 @@ public class AttributeInventoryAction implements Serializable {
 	private AttributeService attributeService;
 
 	private List<GluuAttribute> activeAttributeList;
-	
+
+	@NotNull
+	@Size(min = 0, max = 30, message = "Length of search string should be between 0 and 30")
+	private String searchPattern;
+
+	private String oldSearchPattern;
+
 	@Inject
 	private LdifService ldifService;
 
@@ -106,6 +114,53 @@ public class AttributeInventoryAction implements Serializable {
 
 	}
 
+	public String search() {
+		if ((this.searchPattern != null) && Util.equals(this.oldSearchPattern, this.searchPattern)) {
+			return OxTrustConstants.RESULT_SUCCESS;
+		}
+
+		try {
+			if (searchPattern == null || searchPattern.isEmpty()) {
+				try {
+					this.attributeList = attributeService.getAllPersonAttributes(GluuUserRole.ADMIN);
+					this.setActiveAttributeList(attributeService.getAllActivePersonAttributes(GluuUserRole.ADMIN));
+				} catch (LdapMappingException ex) {
+					log.error("Failed to load attributes", ex);
+					facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to load attributes");
+				}
+			}
+			if (searchPattern != null && !searchPattern.isEmpty() && isShowInactive()) {
+				log.info("######################################");
+				log.info("SEARCH ATTRIBUTES");
+				this.attributeList = attributeService.searchAttributes(this.searchPattern,
+						OxTrustConstants.searchPersonsSizeLimit);
+			}
+			if (searchPattern != null && !searchPattern.isEmpty() && !isShowInactive()) {
+				log.info("######################################");
+				log.info("SEARCH ATTRIBUTES");
+				this.activeAttributeList = attributeService.searchAttributes(this.searchPattern,
+						OxTrustConstants.searchPersonsSizeLimit);
+			}
+			this.oldSearchPattern = this.searchPattern;
+		} catch (Exception ex) {
+			log.error("Failed to find attributes", ex);
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to find attributes");
+			conversationService.endConversation();
+
+			return OxTrustConstants.RESULT_FAILURE;
+		}
+
+		return OxTrustConstants.RESULT_SUCCESS;
+	}
+
+	public String getSearchPattern() {
+		return searchPattern;
+	}
+
+	public void setSearchPattern(String searchPattern) {
+		this.searchPattern = searchPattern;
+	}
+
 	/**
 	 * @return the showInactive
 	 */
@@ -145,35 +200,34 @@ public class AttributeInventoryAction implements Serializable {
 		this.activeAttributeList = activeAttributeList;
 	}
 
-    public void submit() {
+	public void submit() {
 		FacesContext facesContext = FacesContext.getCurrentInstance();
-    	
-    	List<String> checkedItems = new ArrayList<String>();
 
-        for (GluuAttribute item : activeAttributeList) {
-            if (checked.get(item.getInum())) {
-                checkedItems.add(item.getInum());
-            }
-        }
-        log.info("the selections are : {}", checkedItems.size());
-        HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
+		List<String> checkedItems = new ArrayList<String>();
+
+		for (GluuAttribute item : activeAttributeList) {
+			if (checked.get(item.getInum())) {
+				checkedItems.add(item.getInum());
+			}
+		}
+		log.info("the selections are : {}", checkedItems.size());
+		HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
 		response.setContentType("text/plain");
 		response.addHeader("Content-disposition", "attachment; filename=\"attributes.ldif\"");
 		try {
 			ServletOutputStream os = response.getOutputStream();
-			ldifService.exportLDIFFile(checkedItems,os);
+			ldifService.exportLDIFFile(checkedItems, os);
 			os.flush();
 			os.close();
 			facesContext.responseComplete();
 		} catch (Exception e) {
 			log.error("\nFailure : " + e.toString() + "\n");
 		}
-        checked.clear();
-    }
+		checked.clear();
+	}
 
 	public boolean isInitialized() {
 		return initialized;
 	}
 
 }
-      

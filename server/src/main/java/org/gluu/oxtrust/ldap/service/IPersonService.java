@@ -218,5 +218,9 @@ public interface IPersonService {
 	String getPersonUids(List<GluuCustomPerson> persons) throws Exception;
 
 	String getPersonMailids(List<GluuCustomPerson> persons) throws Exception;
+
+	List<GluuCustomPerson> getPersonsByUid(String uid);
+
+	List<GluuCustomPerson> getPersonsByEmail(String email);
 	
 }

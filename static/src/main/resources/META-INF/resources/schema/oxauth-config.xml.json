@@ -123,6 +123,11 @@
             "format": "url",
             "minLength": 1
         },
+        "introspectionAccessTokenMustHaveUmaProtectionScope": {
+            "id": "introspectionAccessTokenMustHaveUmaProtectionScope",
+            "description":"Reject introspection requests if access_token in Authorization header does not have uma_protection scope.",
+            "type": "boolean"
+        },
         "umaConfigurationEndpoint": {
             "id": "umaConfigurationEndpoint",
             "description": "URL for the UMA Configuration Endpoint.",
@@ -917,11 +922,11 @@
         },
         "sessionIdLifetime": {
             "id": "sessionIdLifetime",
-            "description": "The lifetime of session id in seconds.",
+            "description": "The lifetime of session id in seconds. If 0 or -1 then expiration is not set. `session_id` cookie expires when browser session ends.",
             "type": "integer",
             "multipleOf": 1,
             "maximum": 2147483647,
-            "minimum": 1,
+            "minimum": -1,
             "exclusiveMaximum": false,
             "exclusiveMinimum": false
         },
@@ -982,6 +987,11 @@
             "minimum": 1,
             "exclusiveMaximum": false,
             "exclusiveMinimum": false
+        },
+        "metricReporterEnabled": {
+            "id": "metricReporterEnabled",
+            "description": "Boolean value specifying whether to enable Metric Reporter.",
+            "type": "boolean"
         },
         "pairwiseIdType": {
             "id": "pairwiseIdType",
@@ -1235,6 +1245,16 @@
             "description": "Path to external log4j2 logging configuration.",
             "type": "string",
             "minLength": 1
+        },
+        "disableU2fEndpoint": {
+            "id": "disableU2fEndpoint",
+            "description": "Enable/Disable U2F endpoints.",
+            "type": "boolean"
+        },
+        "disableJdkLogger": {
+            "id": "disableJdkLogger",
+            "description": "Boolean value specifying whether to enable JDK Loggers.",
+            "type": "boolean"
         }
     },
     "required": [
@@ -1328,6 +1348,7 @@
         "imgLocation",
         "metricReporterInterval",
         "metricReporterKeepDataDays",
+        "metricReporterEnabled",
         "pairwiseIdType",
         "pairwiseCalculationKey",
         "pairwiseCalculationSalt",
@@ -1343,6 +1364,7 @@
         "updateClientAccessTime",
         "enableClientGrantTypeUpdate",
         "loggingLevel",
+        "disableJdkLogger",
         "corsConfigurationFilters",
         "logClientIdOnClientAuthentication",
         "logClientNameOnClientAuthentication",
@@ -1351,6 +1373,7 @@
         "skipAuthorizationForOpenIdScopeAndPairwiseId",
         "httpLoggingEnabled",
         "httpLoggingExludePaths",
-        "externalLoggerConfiguration"
+        "externalLoggerConfiguration",
+        "disableU2fEndpoint"
     ]
 }

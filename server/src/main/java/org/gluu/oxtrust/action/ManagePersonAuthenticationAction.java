@@ -28,6 +28,7 @@ import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.EncryptionService;
+import org.gluu.oxtrust.ldap.service.JsonConfigurationService;
 import org.gluu.oxtrust.ldap.service.PassportService;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.model.LdapConfigurationModel;
@@ -38,6 +39,7 @@ import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.LDAPConnectionProvider;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.slf4j.Logger;
+import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.config.oxtrust.LdapOxPassportConfiguration;
 import org.xdi.ldap.model.GluuBoolean;
 import org.xdi.model.SimpleCustomProperty;
@@ -106,16 +108,33 @@ public class ManagePersonAuthenticationAction
 
 	private String authenticationMode = "auth_ldap_server";
 	private String oxTrustAuthenticationMode;
+	
+	private String recaptchaSiteKey ;
+	private String recaptchaSecretKey;
 
 	private List<String> customAuthenticationConfigNames;
 
 	private boolean initialized;
 
 	private GluuBoolean passportEnable = GluuBoolean.DISABLED;
+	private boolean authenticationRecaptchaEnabled = false;
+
+	public boolean isAuthenticationRecaptchaEnabled() {
+		return authenticationRecaptchaEnabled;
+	}
+
+	public void setAuthenticationRecaptchaEnabled(boolean authenticationRecaptchaEnabled) {
+		this.authenticationRecaptchaEnabled = authenticationRecaptchaEnabled;
+	}
 
 	private LdapOxPassportConfiguration ldapOxPassportConfiguration;
 
 	private List<PassportConfiguration> ldapPassportConfigurations;
+	
+	@Inject
+	private JsonConfigurationService jsonConfigurationService;
+
+	private AppConfiguration oxTrustappConfiguration;
 
 	public List<PassportConfiguration> getLdapPassportConfigurations() {
 		for (PassportConfiguration configuration : ldapPassportConfigurations) {
@@ -166,7 +185,7 @@ public class ManagePersonAuthenticationAction
 					this.sourceConfigs.add(oxldapConfig);
 				}
 			}
-
+			getAuthenticationRecaptcha();
 			this.authenticationMode = appliance.getAuthenticationMode();
 			this.oxTrustAuthenticationMode = appliance.getOxTrustAuthenticationMode();
 
@@ -215,7 +234,7 @@ public class ManagePersonAuthenticationAction
 					: this.oxTrustAuthenticationMode;
 			appliance.setAuthenticationMode(updatedAuthMode);
 			appliance.setOxTrustAuthenticationMode(updatedOxTrustAuthMode);
-
+			setAuthenticationRecaptcha();
 			appliance.setPassportEnabled(passportEnable);
 
 			applianceService.updateAppliance(appliance);
@@ -278,22 +297,17 @@ public class ManagePersonAuthenticationAction
 
 	public boolean updateAuthConf(GluuAppliance appliance) {
 		try {
-			String configId = null;
 			List<OxIDPAuthConf> idpConf = new ArrayList<OxIDPAuthConf>();
 			for (GluuLdapConfiguration ldapConfig : this.sourceConfigs) {
-				if (idpConf.isEmpty()) {
-					configId = ldapConfig.getConfigId();
-				}
 				if (ldapConfig.isUseAnonymousBind()) {
 					ldapConfig.setBindDN(null);
 				}
 
 				OxIDPAuthConf ldapConfigIdpAuthConf = new OxIDPAuthConf();
-				ldapConfig.setConfigId(configId);
 				ldapConfig.updateStringsLists();
 				ldapConfigIdpAuthConf.setType("auth");
 				ldapConfigIdpAuthConf.setVersion(ldapConfigIdpAuthConf.getVersion() + 1);
-				ldapConfigIdpAuthConf.setName(configId);
+				ldapConfigIdpAuthConf.setName(ldapConfig.getConfigId());
 				ldapConfigIdpAuthConf.setEnabled(ldapConfig.isEnabled());
 				ldapConfigIdpAuthConf.setConfig(objectToJson(ldapConfig));
 
@@ -594,6 +608,47 @@ public class ManagePersonAuthenticationAction
 				return;
 			}
 		}
+	}
+
+	public String getRecaptchaSiteKey() {
+		return recaptchaSiteKey;
+	}
+
+	public void setRecaptchaSiteKey(String recaptchaSiteKey) {
+		this.recaptchaSiteKey = recaptchaSiteKey;
+	}
+
+	public String getRecaptchaSecretKey() {
+		return recaptchaSecretKey;
+	}
+
+	public void setRecaptchaSecretKey(String recaptchaSecretKey) {
+		this.recaptchaSecretKey = recaptchaSecretKey;
+	}
+	
+	private void setAuthenticationRecaptcha(){
+		this.oxTrustappConfiguration=jsonConfigurationService.getOxTrustappConfiguration();
+		oxTrustappConfiguration.setRecaptchaSecretKey(this.recaptchaSecretKey);
+		oxTrustappConfiguration.setRecaptchaSiteKey(this.recaptchaSiteKey);
+		oxTrustappConfiguration.setAuthenticationRecaptchaEnabled(authenticationRecaptchaEnabled);
+		jsonConfigurationService.saveOxTrustappConfiguration(this.oxTrustappConfiguration);
+		
+	}
+	
+	private void getAuthenticationRecaptcha(){
+		this.oxTrustappConfiguration=jsonConfigurationService.getOxTrustappConfiguration();
+		this.recaptchaSecretKey = oxTrustappConfiguration.getRecaptchaSecretKey();
+		this.recaptchaSiteKey = oxTrustappConfiguration.getRecaptchaSiteKey();
+		this.authenticationRecaptchaEnabled = oxTrustappConfiguration.isAuthenticationRecaptchaEnabled();
+		
+	}
+
+	public AppConfiguration getOxTrustappConfiguration() {
+		return oxTrustappConfiguration;
+	}
+
+	public void setOxTrustappConfiguration(AppConfiguration oxTrustappConfiguration) {
+		this.oxTrustappConfiguration = oxTrustappConfiguration;
 	}
 
 }

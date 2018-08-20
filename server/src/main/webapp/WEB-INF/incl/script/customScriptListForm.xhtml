@@ -66,69 +66,71 @@
 								  <a4j:poll id="scriptErrorPoolId" enabled="#{_customScript.enabled}" interval="10000" render="scriptErrorId" immediate="true" limitRender="true"/>
 			                      <h:panelGroup layout="block" class="form-script">
 		                      			<div  class="form-group">
-		                      			<h:outputLabel for="#{msg['customScript.name']}" value="#{msg['customScript.name']}" >
-											<span class="hello" data-toggle="tooltip" data-original-title="#{msg['customScript.name']}"><i class="fa fa-info-circle" aria-hidden="true"></i></span>
-										</h:outputLabel>
+		                      			
+										<ox:decorate label="#{msg['customScript.name']}" forId="#{msg['customScript.name']}" tooltip="#{msg['customScript.name']}" oneColumn="true">
 										 <h:inputText value="#{_customScript.name}" size="90" required="#{empty param['rq']}" validatorMessage="#{msg['customScript.name.error']}" styleClass="form-control" style="width: 90%;">
 												<f:validateRegex pattern="^[a-zA-Z0-9_]+$"/>
 										</h:inputText>
+										</ox:decorate>
 		                                </div>
 
 		                                <div class="form-group">
-		                                <h:outputLabel  value="#{msg['customScript.description']}" >
-											<span data-toggle="tooltip" data-original-title="#{msg['customScript.description']}"><i class="fa fa-info-circle" aria-hidden="true"></i></span>
-										</h:outputLabel>
-										<h:inputText value="#{_customScript.description}" size="90" styleClass="form-control" />
+		                                
+										<ox:decorate label="#{msg['customScript.description']}" required="true" styleClass="break-word" forId="#{msg['customScript.description']}" tooltip="#{msg['customScript.description']}" oneColumn="true">
+										 <h:inputText value="#{_customScript.description}" size="90"  styleClass="form-control" style="width: 90%;">
+												
+										</h:inputText>
+										</ox:decorate>
 		                                </div>
 		                                
 										<div class="form-group">
 										<div class="left">
-		                                <h:outputLabel  value="#{msg['customScript.programmingLanguage']}" >
-											<span data-toggle="tooltip" data-original-title="#{msg['customScript.programmingLanguage']}"><i class="fa fa-info-circle" aria-hidden="true"></i></span>
-										</h:outputLabel>
+										<ox:decorate label="#{msg['customScript.programmingLanguage']}" required="true" styleClass="break-word" forId="#{msg['customScript.description']}" tooltip="#{msg['customScript.description']}" oneColumn="true">
+										
 		                                <h:selectOneMenu value="#{_customScript.programmingLanguage}" required="true" disabled="true" styleClass="form-control">
 		                                        <f:selectItems value="#{applianceService.programmingLanguages}" var="_type" itemLabel="#{_type.displayName}"/>
 		                                </h:selectOneMenu>
+		                                </ox:decorate>
 		                                </div>
 		                                
 										<div class="right">
-		                                <h:outputLabel  value="#{(_scriptType.value != 'uma_claims_gathering')   ? msg['customScript.level']  : msg['customScript.priority']}">
-											<span data-toggle="tooltip" data-original-title=""><i class="fa fa-info-circle" aria-hidden="true"></i></span>
-										</h:outputLabel>
-										<rich:inputNumberSpinner value="#{_customScript.level}"  styleClass="form-control"  inputSize="2" minValue="0" maxValue="100"/>
+										<ox:decorate label="#{(_scriptType.value != 'uma_claims_gathering')   ? msg['customScript.level']  : msg['customScript.priority']}" required="true" styleClass="break-word" forId="#{msg['customScript.description']}" tooltip="#{msg['customScript.description']}" oneColumn="true">
+										 
+										<rich:inputNumberSpinner value="#{_customScril}"  styleClass="form-control"  inputSize="2" minValue="0" maxValue="100"/>
+		                          		</ox:decorate>
 		                          		</div>
+		                          		
 		                          		</div>
 		                          		
 		                          		<div class="form-group">
 										<div class="left">
-										<h:outputLabel  value="#{msg['customScript.locationType']}" >
-											<span data-toggle="tooltip" data-original-title="#{msg['customScript.locationType']}"><i class="fa fa-info-circle" aria-hidden="true"></i></span>
-										</h:outputLabel>
+										<ox:decorate label="#{msg['customScript.locationType']}" styleClass="break-word" forId="#{msg['customScript.locationType']}" tooltip="#{msg['customScript.locationType']}" oneColumn="true">
+										
 										<h:selectOneMenu value="#{_customScript.locationType}" required="false" styleClass="form-control">
 		                                        <f:selectItems value="#{applianceService.locationTypes}" var="_type" itemLabel="#{_type.displayName}"/>
 		                                        <a4j:ajax event="change" render="scriptAreaId, scriptPathId" limitRender="true" execute="@this">
 		                                        </a4j:ajax>
 		                                </h:selectOneMenu>
+		                                </ox:decorate>
 										</div>
 											
 
 		                                <!-- Person Authentication specific parameters -->
 		                                <h:panelGroup layout="block" styleClass="right" rendered="#{_scriptType.value eq 'person_authentication'}">
-		                                
-		                                <h:outputLabel  value="#{msg['customScript.usageType']}">
-											<span data-toggle="tooltip" data-original-title="#{msg['customScript.usageType']}"><i class="fa fa-info-circle" aria-hidden="true"></i></span>
-										</h:outputLabel>
+		                                <ox:decorate label="#{_customScript.usageType}" required="true" forId="#{_customScript.usageType}" tooltip="#{_customScript.usageType}" oneColumn="true">
+										
 										<h:selectOneMenu value="#{_customScript.usageType}" required="true" styleClass="form-control">
 			                                        <f:selectItems value="#{applianceService.scriptUsageTypes}" var="_usageType" itemLabel="#{_usageType.displayName}"/>
 			                            </h:selectOneMenu>
-		                                </h:panelGroup>
+			                            </ox:decorate>
+		                                </h:panelGroup>		                                
 										</div>
 										
 										<div class="form-group">
 											<div class="left">
-											<h:outputLabel  value="#{msg['customScript.customProperty']}">
-												<span data-toggle="tooltip" data-original-title="#{msg['customScript.customProperty']}"><i class="fa fa-info-circle" aria-hidden="true"></i></span>
-											</h:outputLabel>
+											<ox:decorate label="#{msg['customScript.customProperty']}" styleClass="break-word" forId="#{msg['customScript.customProperty']}" tooltip="#{msg['customScript.customProperty']}" oneColumn="true">
+										
+											</ox:decorate>
 											</div>
 											<div class="right">
 											</div>
@@ -139,10 +141,8 @@
 		                                    
 		                                <h:panelGroup id="scriptAreaId">
 			                                <h:panelGroup layout="block" styleClass="form-group" rendered="#{_customScript.locationType.value ne 'file'}">
-			                               		<h:outputLabel  value="#{msg['customScript.script']}">
-													<span data-toggle="tooltip" data-original-title="#{msg['customScript.script']}"><i class="fa fa-info-circle" aria-hidden="true"></i></span>
-												</h:outputLabel>
-				                                <ox:decorate hideLabel="true" rendered="#{_customScript.locationType.value ne 'file'}" label="#{msg['customScript.script']}">
+			                               		
+				                                <ox:decorate label="#{msg['customScript.script']}"  forId="#{msg['customScript.script']}"  tooltip="#{msg['customScript.script']}"   rendered="#{_customScript.locationType.value ne 'file'}">
 				                                    <h:inputTextarea value="#{_customScript.script}" cols="110" rows="10" />
 				                                </ox:decorate>
 				                            </h:panelGroup>
@@ -150,20 +150,16 @@
 		                
 		                                <h:panelGroup id="scriptPathId">
 			                                <h:panelGroup layout="block" styleClass="form-group" rendered="#{_customScript.locationType.value eq 'file'}">
-				                                <h:outputLabel  value="#{msg['customScript.scriptPath']}">
-													<span data-toggle="tooltip" data-original-title="#{msg['customScript.scriptPath']}"><i class="fa fa-info-circle" aria-hidden="true"></i></span>
-												</h:outputLabel>
-				                                <ox:decorate hideLabel="true" rendered="#{_customScript.locationType.value eq 'file'}" label="#{msg['customScript.scriptPath']}">
+				                                
+				                                <ox:decorate  label="#{msg['customScript.scriptPath']}" forId="#{msg['customScript.scriptPath']}"  tooltip="#{msg['customScript.scriptPath']}" rendered="#{_customScript.locationType.value eq 'file'}">
 				                                    <h:inputText value="#{_customScript.locationPath}" size="90" styleClass="form-control" />
 				                                </ox:decorate>
 				                            </h:panelGroup>
 				                        </h:panelGroup>
 		                
 		                				<h:panelGroup layout="block" styleClass="form-group" id="scriptEnableid">
-		                				<h:outputLabel  value="#{msg['customScript.enabled']}">
-												<span data-toggle="tooltip" data-original-title="#{msg['customScript.enabled']}"><i class="fa fa-info-circle" aria-hidden="true"></i></span>
-											</h:outputLabel>
-		                                <ox:decorate hideLabel="true" >
+		                				
+		                                <ox:decorate  label="#{msg['customScript.enabled']}" forId="#{msg['customScript.enabled']}" tooltip="#{msg['customScript.enabled']}" >
 		                                    <h:selectBooleanCheckbox value="#{_customScript.enabled}" />
 		                                </ox:decorate>
 		                                </h:panelGroup>

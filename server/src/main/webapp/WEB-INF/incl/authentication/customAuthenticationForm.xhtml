@@ -33,6 +33,7 @@
 				<div class="nav-tabs-custom" style="margin-bottom: 0px;">
 					<ul class="nav nav-tabs">
 						<li class="active"><a href="#manage-ldap" data-toggle="tab">#{msg['manageAuthentication.manageLDAPAuthentication']}</a></li>
+						<li><a href="#authentication-recaptcha" data-toggle="tab">#{msg['manageAuthentication.manageAuthenticationRecaptcha']}</a></li>
 						<li><a href="#authentication-method" data-toggle="tab">#{msg['manageAuthentication.defaultAuthentication']}</a></li>
 						<li><a href="#ox-passport" data-toggle="tab">#{msg['manageAuthentication.passportAuthenticationMethod']}</a></li>
 						<li><a href="#cas" data-toggle="tab">#{msg['manageAuthentication.casProtocol']}</a></li>
@@ -41,6 +42,7 @@
 						<!-- System Configuration -->
 						<div class="tab-pane active" id="manage-ldap">
 						<div style="display: inline-block; width: 75% !important;">
+							
 							<h:panelGroup id="ldapManagementGroupId">
 							
 							<rich:dataGrid id="sourceConfigsId" value="#{_action.sourceConfigs}" var="_ldapConfig" columns="1" style="width: 100%;" border="0" columnClasses="noBorder">
@@ -49,8 +51,9 @@
 								<ox:ldapConfig ldapConfig="#{_ldapConfig}"
 									ldapConfigAction="#{_action}" propertiesAction="#{_action}"
 									displayBaseDn="true" displayAnonymousBind="false"
-									displayRemoveButton="false" displayPrimaryKey="true"
+									displayRemoveButton="true" displayPrimaryKey="true"
 									displayLocalPrimaryKey="true" displayEnable="false"
+									ldapConfigList="#{_action.sourceConfigs}" renderAfterRomoval="sourceConfigsId"
 									changePasswordDialogId="bindPasswordDialogId:changePasswordModalPanel" />		
 									
 									
@@ -76,6 +79,34 @@
 							
 							</div>
 						</div>
+						<div class="tab-pane" id="authentication-recaptcha">
+						<div style="display: inline-block; width: 75% !important;">
+						
+						<ox:decorate label="#{msg['manageAuthentication.enableCaptcha']}">
+                                            <h:selectBooleanCheckbox
+                                                    value="#{managePersonAuthenticationAction.authenticationRecaptchaEnabled}">
+                                            </h:selectBooleanCheckbox>
+                        </ox:decorate>
+                                        
+						<ox:decorate label="#{msg['manageAuthentication.recaptchaSiteKey']}" >
+								
+								  <h:inputText  styleClass="form-control"
+									value="#{managePersonAuthenticationAction.recaptchaSiteKey}"
+									id="recaptchaSiteKeyid"	>								
+								</h:inputText>
+							
+						</ox:decorate>
+						<ox:decorate label="#{msg['manageAuthentication.recaptchaSecretKey']}" >
+								
+								  <h:inputText  styleClass="form-control"
+									value="#{managePersonAuthenticationAction.recaptchaSecretKey}"
+									id="recaptchaSecretKeyid"	>								
+								</h:inputText>
+							
+						</ox:decorate>	
+						</div>
+						</div>
+						
 						<div class="tab-pane" id="authentication-method">
 							<div style="display: inline-block; width: 75% !important;">
 								<h:panelGroup>

@@ -35,8 +35,8 @@ import org.xdi.service.CacheService;
 /**
  * Store and retrieve metric
  *
+ * @author Yuriy Movchan Date: 06/28/2015
  * @author Rahat Ali Date: 07/30/2015
- * @author Yuriy Movchan Date: 08/28/2015
  */
 @Stateless
 @Named(MetricService.METRIC_SERVICE_COMPONENT_NAME)
@@ -131,7 +131,7 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 
 		Date startDate = calendar.getTime();
 
-		Map<MetricType, List<? extends MetricEntry>> entries = findMetricEntry(ApplicationType.OX_AUTH, appConfiguration
+		Map<MetricType, List<? extends MetricEntry>> entries = findMetricEntry(ApplicationType.OX_TRUST, appConfiguration
 				.getApplianceInum(), metricTypes, startDate, endDate);
 
 		return entries;
@@ -204,6 +204,20 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 
 		return stats;
 	}
+
+    @Override
+    public boolean isMetricReporterEnabled() {
+        if (this.appConfiguration.getMetricReporterEnabled() == null) {
+            return false;
+        }
+
+        return this.appConfiguration.getMetricReporterEnabled();
+    }
+
+    @Override
+    public ApplicationType getApplicationType() {
+        return ApplicationType.OX_TRUST;
+    }
 
 	private void dump(List<CounterMetricEntry> metrics) {
 		for (CounterMetricEntry metric : metrics) {
