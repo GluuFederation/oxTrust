@@ -602,8 +602,12 @@
             "maximum": 2147483647
           }
         }
-      }
-
+        },
+        "disableJdkLogger": {
+            "id": "disableJdkLogger",
+            "description": "Boolean value specifying whether to enable JDK Loggers.",
+            "type": "boolean"
+        }
     },
     "required": [
         "baseDN",
@@ -699,6 +703,7 @@
         "idp3SigningCert",
         "idp3EncryptionCert",
         "oxIncommonFlag",
-        "loggingLevel"
+        "loggingLevel",
+        "disableJdkLogger"
     ]
 }

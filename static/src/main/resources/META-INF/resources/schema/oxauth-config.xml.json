@@ -654,6 +654,16 @@
             "exclusiveMaximum": false,
             "exclusiveMinimum": false
         },
+        "umaTicketLifetime": {
+            "id": "umaTicketLifetime",
+            "description": "UMA ticket lifetime",
+            "type": "integer",
+            "multipleOf": 1,
+            "maximum": 2147483647,
+            "minimum": 1,
+            "exclusiveMaximum": false,
+            "exclusiveMinimum": false
+         },
         "umaPctLifetime": {
             "id": "umaPctLifetime",
             "description": "UMA PCT lifetime",
@@ -1240,6 +1250,11 @@
             "id": "disableU2fEndpoint",
             "description": "Enable/Disable U2F endpoints.",
             "type": "boolean"
+        },
+        "disableJdkLogger": {
+            "id": "disableJdkLogger",
+            "description": "Boolean value specifying whether to enable JDK Loggers.",
+            "type": "boolean"
         }
     },
     "required": [
@@ -1349,6 +1364,7 @@
         "updateClientAccessTime",
         "enableClientGrantTypeUpdate",
         "loggingLevel",
+        "disableJdkLogger",
         "corsConfigurationFilters",
         "logClientIdOnClientAuthentication",
         "logClientNameOnClientAuthentication",
