@@ -17,8 +17,10 @@ import java.util.regex.Pattern;
 
 import javax.enterprise.context.ConversationScoped;
 import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
@@ -27,10 +29,12 @@ import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.EncryptionService;
+import org.gluu.oxtrust.ldap.service.OxTrustAuditService;
 import org.gluu.oxtrust.ldap.service.ScopeService;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.model.OxAuthScope;
+import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.slf4j.Logger;
@@ -88,6 +92,12 @@ public class UpdateClientAction implements Serializable {
 
 	@Inject
 	private AppConfiguration appConfiguration;
+
+	@Inject
+	private OxTrustAuditService oxTrustAuditService;
+
+	@Inject
+	private Identity identity;
 
 	private String inum;
 
@@ -282,6 +292,9 @@ public class UpdateClientAction implements Serializable {
 			// Update client
 			try {
 				clientService.updateClient(this.client);
+				oxTrustAuditService.audit("OPENID CLIENT " + this.client.getDisplayName() + " UPDATED",
+						identity.getUser(),
+						(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 			} catch (LdapMappingException ex) {
 
 				log.error("Failed to update client {}", this.inum, ex);
@@ -306,6 +319,9 @@ public class UpdateClientAction implements Serializable {
 			this.client.setInum(this.inum);
 			try {
 				clientService.addClient(this.client);
+				oxTrustAuditService.audit("OPENID CLIENT " + this.client.getDisplayName() + " ADDED ",
+						identity.getUser(),
+						(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 			} catch (LdapMappingException ex) {
 				log.error("Failed to add new client {}", this.inum, ex);
 
@@ -339,7 +355,9 @@ public class UpdateClientAction implements Serializable {
 			// Remove client
 			try {
 				clientService.removeClient(this.client);
-
+				oxTrustAuditService.audit("OPENID CLIENT " + this.client.getDisplayName() + " DELETED ",
+						identity.getUser(),
+						(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 				facesMessages.add(FacesMessage.SEVERITY_INFO,
 						"Client '#{updateClientAction.client.displayName}' removed successfully");
 				conversationService.endConversation();

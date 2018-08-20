@@ -27,17 +27,18 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.apache.commons.lang.StringUtils;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
+import org.gluu.oxtrust.ldap.service.OxTrustAuditService;
 import org.gluu.oxtrust.ldap.service.RecaptchaService;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.model.RegistrationConfiguration;
+import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.service.external.ExternalUserRegistrationService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.slf4j.Logger;
@@ -45,7 +46,6 @@ import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.ldap.model.GluuStatus;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuUserRole;
-import org.xdi.service.security.Secure;
 import org.xdi.util.StringHelper;
 
 /**
@@ -83,6 +83,12 @@ public class RegisterPersonAction implements Serializable {
 
 	@Inject
 	private IPersonService personService;
+	
+	@Inject
+	private Identity identity;
+	
+	@Inject
+	private OxTrustAuditService oxTrustAuditService;
 
 	@NotNull
 	@Size(min = 2, max = 30, message = "Length of password should be between 2 and 30")
@@ -268,8 +274,14 @@ public class RegisterPersonAction implements Serializable {
 				}
 				if ((this.inum != null) && !this.inum.isEmpty()) {
 					personService.updatePerson(this.person);
+					oxTrustAuditService.audit(this.person.getInum()+" REGISTRATION UPDATED",
+							identity.getUser(),
+							(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 				} else {
 					personService.addPerson(this.person);
+					oxTrustAuditService.audit(this.person.getInum()+" REGISTERED",
+							identity.getUser(),
+							(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 				}
 				
 				result = externalUserRegistrationService.executeExternalPostRegistrationMethods(this.person, requestParameters);
