@@ -649,6 +649,16 @@
             "exclusiveMaximum": false,
             "exclusiveMinimum": false
         },
+        "umaTicketLifetime": {
+            "id": "umaTicketLifetime",
+            "description": "UMA ticket lifetime",
+            "type": "integer",
+            "multipleOf": 1,
+            "maximum": 2147483647,
+            "minimum": 1,
+            "exclusiveMaximum": false,
+            "exclusiveMinimum": false
+         },
         "umaPctLifetime": {
             "id": "umaPctLifetime",
             "description": "UMA PCT lifetime",
