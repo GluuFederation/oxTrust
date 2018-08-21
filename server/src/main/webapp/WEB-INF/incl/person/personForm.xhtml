@@ -212,9 +212,21 @@
                                                             rendered="#{(_custAttr.adminCanEdit or _mustEnter) and 
 			                                                            (_custAttr.metadata.dataType.value ne 'boolean') and 
 			                                                            (_custAttr.metadata.displayName ne 'Password') and 
-			                                                            (_custAttr.metadata.dataType.value ne 'certificate')}">
+			                                                            (_custAttr.metadata.dataType.value ne 'certificate') and 
+			                                                            (_custAttr.metadata.displayName ne 'Email')}">
 															 	<rich:validator event="blur"/>
 																<f:validator validatorId="attributeValidator" />
+															 </h:inputText>
+															 
+															 <h:inputText  styleClass="form-control #{_custAttr.metadata.displayName}"
+															p:placeholder="#{msg['person.clickToEnter']} email" style="width:100%"
+															value="#{_custAttr.values[_valueIdx]}" id="Email" required="#{_mustEnter}"
+                                                            p:oninvalid="this.setCustomValidity('Please provide a valid email address.')" p:type="email"
+                                                            rendered="#{(_custAttr.adminCanEdit or _mustEnter) and 
+			                                                            (_custAttr.metadata.dataType.value ne 'boolean') and 
+			                                                            (_custAttr.metadata.displayName ne 'Password') and 
+			                                                            (_custAttr.metadata.dataType.value ne 'certificate') and
+			                                                            (_custAttr.metadata.displayName eq 'Email')}">
 															 </h:inputText>
                                                             
                                                             <h:selectOneMenu styleClass="form-control #{_custAttr.metadata.displayName}"
