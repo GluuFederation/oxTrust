@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>oxTrust - RP iframe</title>
+  <script type="text/javascript" src="#{request.contextPath}/js/crypto-js-3.1.2/rollups/sha256.js"></script>
+  <script type="text/javascript">
+    var stat = "unchanged";
+    var client_id = "#{ oxTrustConfiguration.applicationConfiguration.oxAuthClientId }";
+    var check_interval = 5*1000;
+    var source_origin = window.location.origin;
+    var target_origin = "#{ oxTrustConfiguration.applicationConfiguration.applianceUrl }";
+    var session_state = "#{ oauthData.sessionState }";
+    var salt = CryptoJS.lib.WordArray.random(128 / 8);
+    var mes = client_id + " " + CryptoJS.SHA256(client_id + " " + source_origin + " " + session_state + " " + salt) + "." + salt;
+    var reauthorize_url = "#{request.contextPath}/authentication/finishlogout";
+
+    function checkSession() {
+      var opiframe = window.parent.document.getElementById("opiframe").contentWindow;
+      opiframe.postMessage( mes, target_origin);
+    }
+
+    window.addEventListener("message", receiveMessage, false);
+    function receiveMessage(e) {
+      if (e.origin !== target_origin) { return console.log('rpiframe received wrong target origin: ' + target_origin); }
+      stat = e.data;
+
+      if (stat == "changed") {
+        window.parent.location.href = reauthorize_url;
+      }
+    }
+  </script>
+</head>
+<body></body>
+</html>
