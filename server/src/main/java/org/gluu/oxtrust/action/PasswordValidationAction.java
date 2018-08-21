@@ -14,11 +14,15 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.Size;
 
+import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.oxtrust.ldap.service.IPersonService;
+import org.gluu.oxtrust.ldap.service.OxTrustAuditService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
+import org.gluu.oxtrust.security.Identity;
 import org.gluu.site.ldap.persistence.exception.AuthenticationException;
 import org.slf4j.Logger;
 import org.xdi.service.security.Secure;
@@ -41,6 +45,15 @@ public class PasswordValidationAction implements Cloneable, Serializable {
 
 	@Inject
 	private IPersonService personService;
+
+	@Inject
+	private Identity identity;
+
+	@Inject
+	private OxTrustAuditService oxTrustAuditService;
+
+	@Inject
+	private FacesMessages facesMessages;
 
 	private String oldPassword = "";
 
@@ -74,30 +87,26 @@ public class PasswordValidationAction implements Cloneable, Serializable {
 
 			if (!resultValidateOldPassword) {
 				if (graphValidator == null) {
-					FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-							"Old password isn't valid!", "Old password isn't valid!"));
+					facesMessages.add(FacesMessage.SEVERITY_ERROR, "Old password isn't valid!",
+							"Old password isn't valid!");
 
 				} else {
-					FacesContext.getCurrentInstance().addMessage(graphValidator.getClientId(), new FacesMessage(
-							FacesMessage.SEVERITY_ERROR, "Old password isn't valid!", "Old password isn't valid!"));
+					facesMessages.add(FacesMessage.SEVERITY_ERROR, "Old password isn't valid!",
+							"Old password isn't valid!");
 				}
 			}
 		} else {
-			if (isSame()) {
+			if (this.password.equals(this.confirm)) {
 				person.setUserPassword(this.password);
 				personService.updatePerson(person);
-				FacesContext.getCurrentInstance().addMessage(null,
-						new FacesMessage(FacesMessage.SEVERITY_INFO, "Successfully changed!", "Successfully changed!"));
+				oxTrustAuditService.audit("USER " + person.getInum() + " PASSWORD UPDATED", identity.getUser(),
+						(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
+				facesMessages.add(FacesMessage.SEVERITY_INFO, "Successfully changed!", "Successfully changed!");
 			} else {
-				FacesContext.getCurrentInstance().addMessage(graphValidator.getClientId(),
-						new FacesMessage(FacesMessage.SEVERITY_ERROR, "Password and confirm password value don't match",
-								"Password and confirm password value don't match"));
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Password and confirm password value don't match",
+						"Password and confirm password value don't match");
 			}
 		}
-	}
-
-	private boolean isSame() {
-		return this.password.equals(this.confirm);
 	}
 
 	public UIComponent getGraphValidator() {
