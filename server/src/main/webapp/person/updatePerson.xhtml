@@ -39,6 +39,8 @@
 
             <ox:changePasswordDialog id="personPassword" label="#{msg['person.changePersonPassword']}"
                                      password="#{userPasswordAction.newPassword}"
+                                     person="#{updatePersonAction.person}"
+                                     verifyOldPassword="false"
                                      setPasswordMethod="#{userPasswordAction.update}"/>
 
             <ox:acceptRemovalDialog deleteMethod="#{updatePersonAction.delete}" id="deleteConfirmation"
