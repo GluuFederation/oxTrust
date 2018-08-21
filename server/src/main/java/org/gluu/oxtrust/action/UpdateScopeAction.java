@@ -16,14 +16,18 @@ import java.util.Set;
 
 import javax.enterprise.context.ConversationScoped;
 import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.servlet.http.HttpServletRequest;
 
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.service.AttributeService;
+import org.gluu.oxtrust.ldap.service.OxTrustAuditService;
 import org.gluu.oxtrust.ldap.service.ScopeService;
 import org.gluu.oxtrust.model.OxAuthScope;
+import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.service.custom.CustomScriptService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
@@ -50,7 +54,8 @@ public class UpdateScopeAction implements Serializable {
 
 	private static final long serialVersionUID = 8198574569820157032L;
 
-	private static final String[] CUSTOM_SCRIPT_RETURN_ATTRIBUTES = { "inum", "displayName", "description", "gluuStatus" };
+	private static final String[] CUSTOM_SCRIPT_RETURN_ATTRIBUTES = { "inum", "displayName", "description",
+			"gluuStatus" };
 
 	@Inject
 	private Logger log;
@@ -87,10 +92,15 @@ public class UpdateScopeAction implements Serializable {
 	@Inject
 	private CustomScriptService customScriptService;
 
+	@Inject
+	private Identity identity;
+
+	@Inject
+	private OxTrustAuditService oxTrustAuditService;
+
 	private List<CustomScript> dynamicScripts;
 	private List<SelectableEntity<CustomScript>> availableDynamicScripts;
 
-	
 	public String add() throws Exception {
 		if (this.scope != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -114,9 +124,8 @@ public class UpdateScopeAction implements Serializable {
 
 			return OxTrustConstants.RESULT_FAILURE;
 		}
-		
-		this.dynamicScripts = getInitialDynamicScripts();
 
+		this.dynamicScripts = getInitialDynamicScripts();
 
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
@@ -180,17 +189,6 @@ public class UpdateScopeAction implements Serializable {
 	}
 
 	public String save() throws Exception {
-		// List<DisplayNameEntry> oldClaims = null;
-		// try {
-		// oldClaims = getClaimDisplayNameEntiries();
-
-		// } catch (LdapMappingException ex) {
-		// log.error("error getting oldClaims",ex);
-		//
-		// facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update scope");
-		// return Configuration.RESULT_FAILURE;
-		// }
-
 		this.scope.setDisplayName(this.scope.getDisplayName().trim());
 		updateDynamicScripts();
 		updateClaims();
@@ -198,14 +196,19 @@ public class UpdateScopeAction implements Serializable {
 			// Update scope
 			try {
 				scopeService.updateScope(this.scope);
+				oxTrustAuditService.audit("OPENID SCOPE " + this.scope.getDisplayName() + " UPDATED",
+						identity.getUser(),
+						(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 			} catch (LdapMappingException ex) {
 				log.error("Failed to update scope {}", this.inum, ex);
 
-				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update scope '#{updateScopeAction.scope.displayName}'");
+				facesMessages.add(FacesMessage.SEVERITY_ERROR,
+						"Failed to update scope '#{updateScopeAction.scope.displayName}'");
 				return OxTrustConstants.RESULT_FAILURE;
 			}
 
-			facesMessages.add(FacesMessage.SEVERITY_INFO, "Scope '#{updateScopeAction.scope.displayName}' updated successfully");
+			facesMessages.add(FacesMessage.SEVERITY_INFO,
+					"Scope '#{updateScopeAction.scope.displayName}' updated successfully");
 		} else {
 			this.inum = scopeService.generateInumForNewScope();
 			String dn = scopeService.getDnForScope(this.inum);
@@ -215,6 +218,9 @@ public class UpdateScopeAction implements Serializable {
 			this.scope.setInum(this.inum);
 			try {
 				scopeService.addScope(this.scope);
+				oxTrustAuditService.audit("OPENID SCOPE " + this.scope.getDisplayName() + " ADDED",
+						identity.getUser(),
+						(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 			} catch (Exception ex) {
 				log.error("Failed to add new scope {}", this.scope.getInum(), ex);
 
@@ -222,7 +228,8 @@ public class UpdateScopeAction implements Serializable {
 				return OxTrustConstants.RESULT_FAILURE;
 			}
 
-			facesMessages.add(FacesMessage.SEVERITY_INFO, "New scope '#{updateScopeAction.scope.displayName}' added successfully");
+			facesMessages.add(FacesMessage.SEVERITY_INFO,
+					"New scope '#{updateScopeAction.scope.displayName}' added successfully");
 
 			conversationService.endConversation();
 
@@ -233,8 +240,8 @@ public class UpdateScopeAction implements Serializable {
 	}
 
 	private void updateClaims() {
-		if ((org.xdi.oxauth.model.common.ScopeType.DYNAMIC == this.scope.getScopeType()) ||
-			(this.claims == null) || (this.claims.size() == 0)) {
+		if ((org.xdi.oxauth.model.common.ScopeType.DYNAMIC == this.scope.getScopeType()) || (this.claims == null)
+				|| (this.claims.size() == 0)) {
 			this.scope.setOxAuthClaims(null);
 			return;
 		}
@@ -254,8 +261,11 @@ public class UpdateScopeAction implements Serializable {
 			// Remove scope
 			try {
 				scopeService.removeScope(this.scope);
-
-				facesMessages.add(FacesMessage.SEVERITY_INFO, "Scope '#{updateScopeAction.scope.displayName}' removed successfully");
+				oxTrustAuditService.audit("OPENID SCOPE " + this.scope.getDisplayName() + " REMOVED",
+						identity.getUser(),
+						(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
+				facesMessages.add(FacesMessage.SEVERITY_INFO,
+						"Scope '#{updateScopeAction.scope.displayName}' removed successfully");
 
 				conversationService.endConversation();
 
@@ -308,8 +318,8 @@ public class UpdateScopeAction implements Serializable {
 		}
 
 		try {
-			this.availableClaims = attributeService
-					.searchAttributes(this.searchAvailableClaimPattern, OxTrustConstants.searchSizeLimit);
+			this.availableClaims = attributeService.searchAttributes(this.searchAvailableClaimPattern,
+					OxTrustConstants.searchSizeLimit);
 			//
 			removeDuplicates();
 			this.oldSearchAvailableClaimPattern = this.searchAvailableClaimPattern;
@@ -323,7 +333,8 @@ public class UpdateScopeAction implements Serializable {
 		List<GluuAttribute> tempAvailableClaims = new ArrayList<GluuAttribute>();
 		for (int i = 0; i < this.availableClaims.size(); i++) {
 			for (int j = i + 1; j < this.availableClaims.size();) {
-				if (this.availableClaims.get(i).getDisplayName().equalsIgnoreCase(this.availableClaims.get(j).getDisplayName())) {
+				if (this.availableClaims.get(i).getDisplayName()
+						.equalsIgnoreCase(this.availableClaims.get(j).getDisplayName())) {
 					this.availableClaims.remove(j);
 				} else {
 					j++;
@@ -427,7 +438,8 @@ public class UpdateScopeAction implements Serializable {
 				this.scope.getDynamicScopeScripts());
 		if (displayNameEntries != null) {
 			for (DisplayNameEntry displayNameEntry : displayNameEntries) {
-				result.add(new CustomScript(displayNameEntry.getDn(), displayNameEntry.getInum(), displayNameEntry.getDisplayName()));
+				result.add(new CustomScript(displayNameEntry.getDn(), displayNameEntry.getInum(),
+						displayNameEntry.getDisplayName()));
 			}
 		}
 
@@ -441,7 +453,7 @@ public class UpdateScopeAction implements Serializable {
 		}
 
 		List<String> resultDynamicScripts = new ArrayList<String>();
-		for (CustomScript dynamicScript: this.dynamicScripts) {
+		for (CustomScript dynamicScript : this.dynamicScripts) {
 			resultDynamicScripts.add(dynamicScript.getDn());
 		}
 
@@ -485,14 +497,14 @@ public class UpdateScopeAction implements Serializable {
 
 		for (Iterator<CustomScript> it = this.dynamicScripts.iterator(); it.hasNext();) {
 			CustomScript dynamicScript = (CustomScript) it.next();
-			
+
 			if (StringHelper.equalsIgnoreCase(removeDynamicScript.getInum(), dynamicScript.getInum())) {
 				it.remove();
 				break;
 			}
 		}
 	}
-	
+
 	public void searchAvailableDynamicScripts() {
 		if (this.availableDynamicScripts != null) {
 			selectAddedDynamicScripts();
@@ -500,15 +512,16 @@ public class UpdateScopeAction implements Serializable {
 		}
 
 		try {
-			List<CustomScript> availableScripts = customScriptService.findCustomScripts(Arrays.asList(CustomScriptType.DYNAMIC_SCOPE), CUSTOM_SCRIPT_RETURN_ATTRIBUTES);
+			List<CustomScript> availableScripts = customScriptService
+					.findCustomScripts(Arrays.asList(CustomScriptType.DYNAMIC_SCOPE), CUSTOM_SCRIPT_RETURN_ATTRIBUTES);
 
 			List<SelectableEntity<CustomScript>> tmpAvailableDynamicScripts = new ArrayList<SelectableEntity<CustomScript>>();
 			for (CustomScript dynamicScript : availableScripts) {
-				if(dynamicScript.isEnabled()){
+				if (dynamicScript.isEnabled()) {
 					tmpAvailableDynamicScripts.add(new SelectableEntity<CustomScript>(dynamicScript));
 				}
 			}
-			
+
 			this.availableDynamicScripts = tmpAvailableDynamicScripts;
 			selectAddedDynamicScripts();
 		} catch (LdapMappingException ex) {
@@ -521,7 +534,8 @@ public class UpdateScopeAction implements Serializable {
 		Set<String> addedDynamicScriptInums = getAddedDynamicScriptInums();
 
 		for (SelectableEntity<CustomScript> availableDynamicScript : this.availableDynamicScripts) {
-			availableDynamicScript.setSelected(addedDynamicScriptInums.contains(availableDynamicScript.getEntity().getInum()));
+			availableDynamicScript
+					.setSelected(addedDynamicScriptInums.contains(availableDynamicScript.getEntity().getInum()));
 		}
 	}
 
@@ -542,8 +556,7 @@ public class UpdateScopeAction implements Serializable {
 	public List<CustomScript> getDynamicScripts() {
 		return dynamicScripts;
 	}
-	
-	
+
 	public boolean isUpdate() {
 		return update;
 	}

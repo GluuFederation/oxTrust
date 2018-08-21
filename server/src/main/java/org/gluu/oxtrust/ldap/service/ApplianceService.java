@@ -49,8 +49,6 @@ public class ApplianceService implements Serializable {
 	
 	@Inject
 	private EncryptionService encryptionService;
-	@Inject
-	private OxTrustAuditService oxTrustAuditService;
 
 	public boolean contains(String applianceDn) {
 		return ldapEntryManager.contains(GluuAppliance.class, applianceDn);
@@ -64,7 +62,6 @@ public class ApplianceService implements Serializable {
 	 */
 	public void addAppliance(GluuAppliance appliance) {
 		ldapEntryManager.persist(appliance);
-		oxTrustAuditService.audit("APPLIANCE " +appliance.getDisplayName()+" SUCCESSFULLY ADDED");
 	}
 
 	/**
@@ -75,7 +72,6 @@ public class ApplianceService implements Serializable {
 	 */
 	public void updateAppliance(GluuAppliance appliance) {
 		ldapEntryManager.merge(appliance);
-		oxTrustAuditService.audit("APPLIANCE " +appliance.getDisplayName()+" SUCCESSFULLY UPDATED");
 	}
 
 	/**

@@ -7,7 +7,6 @@
 package org.gluu.oxtrust.action;
 
 import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
@@ -22,8 +21,10 @@ import java.util.Set;
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.ConversationScoped;
 import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -35,9 +36,11 @@ import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.ExcelService;
 import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
+import org.gluu.oxtrust.ldap.service.OxTrustAuditService;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.table.Table;
+import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.service.external.ExternalUpdateUserService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.AttributeData;
@@ -101,6 +104,12 @@ public class PersonImportAction implements Serializable {
 
 	@Inject
 	private CustomAttributeAction customAttributeAction;
+	
+	@Inject
+	private Identity identity;
+	
+	@Inject
+	private OxTrustAuditService oxTrustAuditService;
 
 	private UploadedFile uploadedFile;
 	private FileDataToImport fileDataToImport;
@@ -159,6 +168,9 @@ public class PersonImportAction implements Serializable {
 		}
 
 		log.info("All {} persons added successfully", fileDataToImport.getPersons().size());
+		oxTrustAuditService.audit(fileDataToImport.getPersons().size()+ " USERS IMPORTED ",
+				identity.getUser(),
+				(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 		facesMessages.add(FacesMessage.SEVERITY_INFO, "Users successfully imported");
 
 		removeFileToImport();

@@ -62,8 +62,6 @@ public class PersonService implements Serializable, IPersonService {
 	private OrganizationService organizationService;
 	private List<GluuCustomAttribute> mandatoryAttributes;
 	
-	@Inject
-	private OxTrustAuditService oxTrustAuditService;
 
 	/*
 	 * (non-Javadoc)
@@ -109,7 +107,6 @@ public class PersonService implements Serializable, IPersonService {
 		if (persons == null || persons.size() == 0) {
 			person.setCreationDate(new Date());
 			ldapEntryManager.persist(person);
-			oxTrustAuditService.audit("USER " + person.getDisplayName() + " ADDED SUCCEFULLY");
 		} else {
 			throw new DuplicateEntryException("Duplicate UID value: " + person.getUid());
 		}
@@ -133,7 +130,6 @@ public class PersonService implements Serializable, IPersonService {
 					ISODateTimeFormat.dateTime().withZoneUTC().print(updateDate.getTime()));
 		}
 		ldapEntryManager.merge(person);
-		oxTrustAuditService.audit("USER " + person.getDisplayName() + " UPDATED SUCCEFULLY");
 	}
 
 	/*
@@ -147,7 +143,6 @@ public class PersonService implements Serializable, IPersonService {
 	public void removePerson(GluuCustomPerson person) {
 		// Remove person
 		ldapEntryManager.removeWithSubtree(person.getDn());
-		oxTrustAuditService.audit("USER " + person.getDisplayName() + " REMOVED SUCCEFULLY");
 	}
 
 	/*
@@ -504,12 +499,6 @@ public class PersonService implements Serializable, IPersonService {
 	@Override
 	public boolean authenticate(String userName, String password) {
 		boolean result = ldapEntryManager.authenticate(userName, password, appConfiguration.getBaseDN());
-		if(result) {
-			oxTrustAuditService.audit("USER " + userName + " AUTHENTICATED SUCCEFULLY");
-		}else {
-			oxTrustAuditService.audit("USER " + userName + " AUTHENTICATION FAILED");
-		}
-		
 		return result;
 	}
 
@@ -677,7 +666,6 @@ public class PersonService implements Serializable, IPersonService {
 
 		List<User> users = ldapEntryManager.findEntries(user);// getLdapEntryManagerInstance().findEntries(person);
 		if ((users != null) && (users.size() > 0)) {
-			oxTrustAuditService.audit("USER " + users.get(0).getDisplayName() + " RETRIEVED SUCCEFULLY"); 
 			return users.get(0);
 		}
 

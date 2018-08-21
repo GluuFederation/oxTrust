@@ -130,6 +130,33 @@
 			hideSpanValue(element, value);
 		}
 
+		 function changeAttributeVisibility(attrId, show) {
+        	var attr = document.getElementById(attrId);
+
+            if (show) {
+	        	attr.style['display'] = '';
+            } else {
+	        	attr.style['display'] = 'none';
+            }
+        }
+				
+		function changePasswordtoTextType(obj,elementid , eyeButtonid){
+			console.log("changePasswordtoTextType");
+			var elements = document.querySelector('[id*="'+elementid+'"]');
+			console.log("changePasswordtoTextType" + elements.type);
+			elements.type="text";
+			$(obj).css({"display":"none"});
+			$(obj).siblings("img[id$='"+eyeButtonid+"']").css({"display":"block"});
+		}
+		
+		function changeTexttoPasswordType(obj,elementid , eyeButtonid){
+			var elements = document.querySelector('[id*="'+elementid+'"]'); 
+			console.log("changePasswordtoTextType" + elements.type); 
+			elements.type="password";
+			$(obj).css({"display":"none"});
+			$(obj).siblings("img[id$='"+eyeButtonid+"']").css({"display":"block"});
+		}
+
     </h:outputScript>
     <h:panelGroup id="summarygroup" >
      		<ox:clientSummary _clientAction="#{_clientAction}" _client="#{_client}" dialogWidth="600"
@@ -169,15 +196,16 @@
 								<h:panelGroup id="secretid">
 	                                <ox:decorate id="clientSecret"
 	                                             label="#{msg['clientForm.clientSecret']}">
-	                                    <rich:inplaceInput styleClass="togglefield" value="#{_client.oxAuthClientSecret}"
+	                                    <h:inputSecret  styleClass="form-control togglefield"  value="#{_client.oxAuthClientSecret}" redisplay="true"
 	                                                       defaultLabel="click to enter Client Secret" maxlength="60"
-	                                                       inputWidth="695"
-	                                                       onfocus="changeTextType(this,'hidePassword');"
-	                                                       id="clientSecretId"/>
-	                                   <h:graphicImage value="/img/eye-hidden.png" id="hidePassword"  onclick="return hideValue(this,'clientSecretId','viewPassword');"/>
-	                                   <h:graphicImage value="/img/eye.png" id="viewPassword" style="display: none;" onclick="return viewValue(this,'clientSecretId','hidePassword');"/>
+	                                                       inputWidth="695" 
+	                                                       id="clientSecretId1"/>
+							          
+							          <h:graphicImage value="/img/eye.png" id="viewPassword" onclick="return changePasswordtoTextType(this,'clientSecretId1','hidePassword');"/>
+							           <h:graphicImage value="/img/eye-hidden.png" id="hidePassword" style="display: none;" onclick="return changeTexttoPasswordType(this,'clientSecretId1','viewPassword');"/>
+                                                        
 							           <div id="autogenrateid">
-	                                	<a4j:commandLink render="clientSecretId" style="margin-top:10px;"  styleClass="btn btn-primary"
+	                                	<a4j:commandLink render="clientSecretId1" style="margin-top:10px;"  styleClass="btn btn-primary"
 	                                                               value="Auto-Generate Secret Key"
 	                                                               action="#{_clientAction.generatePassword()}" oncomplete="return valuesDisplay(this);" />
 	                                </div></ox:decorate>
