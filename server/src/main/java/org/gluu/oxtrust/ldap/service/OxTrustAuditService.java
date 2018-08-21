@@ -34,5 +34,9 @@ public class OxTrustAuditService implements Serializable {
 		log.info(fullMessage);
 		log.info(buffer.toString());
 	}
+	
+	public void audit(String message) {
+		log.info(message);
+	}
 
 }
