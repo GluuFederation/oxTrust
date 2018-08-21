@@ -488,11 +488,11 @@ public class ManagePersonAuthenticationAction
 		}
 		SimpleExtendedCustomProperty clientIDField = new SimpleExtendedCustomProperty();
 		clientIDField.setValue1(CLIENT_ID);
-		clientIDField.setValue2(facesMessages
+		clientIDField.setDescription(facesMessages
 				.evalResourceAsString("#{msg['manageAuthentication.passport.strategy.clientIDFieldHint']}"));
 		SimpleExtendedCustomProperty clientSecretField = new SimpleExtendedCustomProperty();
 		clientSecretField.setValue1(CLIENT_SECRET);
-		clientSecretField.setValue2(facesMessages
+		clientSecretField.setDescription(facesMessages
 				.evalResourceAsString("#{msg['manageAuthentication.passport.strategy.clientSecretFieldHint']}"));
 		PassportConfiguration passportConfiguration = new PassportConfiguration();
 		passportConfiguration.setFieldset(new ArrayList<SimpleExtendedCustomProperty>());
