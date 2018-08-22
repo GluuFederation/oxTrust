@@ -55,7 +55,7 @@ public class PassportRestWebService {
 
                     if (passList != null) {
                         for (SimpleExtendedCustomProperty fieldset :  passList) {
-                            map.put(fieldset.getValue1(), fieldset.getValue1());
+                            map.put(fieldset.getValue1(), fieldset.getValue2());
                         }
                     }
                     strategies.put(passportConfiguration.getStrategy(), map);
