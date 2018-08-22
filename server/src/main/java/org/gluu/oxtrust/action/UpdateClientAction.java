@@ -30,9 +30,11 @@ import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.EncryptionService;
 import org.gluu.oxtrust.ldap.service.OxTrustAuditService;
 import org.gluu.oxtrust.ldap.service.ScopeService;
+import org.gluu.oxtrust.ldap.service.SectorIdentifierService;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.model.OxAuthScope;
+import org.gluu.oxtrust.model.OxAuthSectorIdentifier;
 import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.service.PasswordGenerator;
 import org.gluu.oxtrust.util.OxTrustConstants;
@@ -101,6 +103,9 @@ public class UpdateClientAction implements Serializable {
 
 	@Inject
 	private PasswordGenerator passwordGenerator;
+
+	@Inject
+	private SectorIdentifierService sectorIdentifierService;
 
 	private String inum;
 
@@ -510,12 +515,37 @@ public class UpdateClientAction implements Serializable {
 		if (!this.loginUris.contains(this.availableLoginUri) && checkWhiteListRedirectUris(availableLoginUri)
 				&& checkBlackListRedirectUris(availableLoginUri)) {
 
-			this.loginUris.add(this.availableLoginUri);
+			if (this.loginUris.size() < 1) {
+				this.loginUris.add(this.availableLoginUri);
+			} else if (this.loginUris.size() >= 1 && sectorExist()) {
+				this.loginUris.add(this.availableLoginUri);
+			} else {
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, "A sector identifier must be defined first.",
+						"A sector identifier must be defined first.");
+			}
+
 		} else {
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "The URL is not valid or may be Blacklisted.");
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "The URL is not valid or may be Blacklisted.",
+					"The URL is not valid or may be Blacklisted.");
 		}
 
 		this.availableLoginUri = "https://";
+	}
+
+	private boolean sectorExist() {
+		String sectorUri = this.client.getSectorIdentifierUri();
+		if (sectorUri != null && !sectorUri.isEmpty()) {
+			String[] paths = sectorUri.split("/");
+			String id = paths[paths.length - 1];
+			OxAuthSectorIdentifier result = sectorIdentifierService.getSectorIdentifierById(id);
+			if (result != null && result.getId().equalsIgnoreCase(id)) {
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			return false;
+		}
 	}
 
 	public void acceptSelectClaims() {
