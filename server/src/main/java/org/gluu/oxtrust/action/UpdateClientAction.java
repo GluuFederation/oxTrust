@@ -22,7 +22,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
@@ -35,6 +34,7 @@ import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.model.OxAuthScope;
 import org.gluu.oxtrust.security.Identity;
+import org.gluu.oxtrust.service.PasswordGenerator;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.exception.BasePersistenceException;
 import org.slf4j.Logger;
@@ -98,6 +98,9 @@ public class UpdateClientAction implements Serializable {
 
 	@Inject
 	private Identity identity;
+
+	@Inject
+	transient private PasswordGenerator passwordGenerator;
 
 	private String inum;
 
@@ -1337,8 +1340,7 @@ public class UpdateClientAction implements Serializable {
 	}
 
 	public void generatePassword() throws EncryptionException {
-		String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-		String pwd = RandomStringUtils.random(24, characters);
+		String pwd = passwordGenerator.generate();
 		this.client.setOxAuthClientSecret(pwd);
 		this.client.setEncodedClientSecret(encryptionService.encrypt(pwd));
 	}
