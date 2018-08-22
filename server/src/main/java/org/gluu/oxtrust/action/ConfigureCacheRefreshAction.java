@@ -26,17 +26,15 @@ import javax.inject.Named;
 
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
-import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.ldap.cache.model.GluuSimplePerson;
 import org.gluu.oxtrust.ldap.cache.service.CacheRefreshService;
 import org.gluu.oxtrust.ldap.cache.service.CacheRefreshUpdateMethod;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
-import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.EncryptionService;
 import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.InumService;
 import org.gluu.oxtrust.ldap.service.JsonConfigurationService;
-import org.gluu.oxtrust.ldap.service.TemplateService;
+import org.gluu.oxtrust.ldap.service.OxTrustAuditService;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
@@ -51,10 +49,8 @@ import org.xdi.config.oxtrust.CacheRefreshAttributeMapping;
 import org.xdi.config.oxtrust.CacheRefreshConfiguration;
 import org.xdi.ldap.model.GluuStatus;
 import org.xdi.model.SimpleCustomProperty;
-import org.xdi.model.SimpleCustomProperty;
 import org.xdi.model.SimpleProperty;
 import org.xdi.model.ldap.GluuLdapConfiguration;
-import org.xdi.service.JsonService;
 import org.xdi.service.security.Secure;
 import org.xdi.util.StringHelper;
 import org.xdi.util.security.StringEncrypter.EncryptionException;
@@ -67,7 +63,8 @@ import org.xdi.util.security.StringEncrypter.EncryptionException;
 @Named("configureCacheRefreshAction")
 @ConversationScoped
 @Secure("#{permissionService.hasPermission('configuration', 'access')}")
-public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, SimpleCustomPropertiesListModel, LdapConfigurationModel, Serializable {
+public class ConfigureCacheRefreshAction
+		implements SimplePropertiesListModel, SimpleCustomPropertiesListModel, LdapConfigurationModel, Serializable {
 
 	private static final long serialVersionUID = -5210460481895022468L;
 
@@ -75,13 +72,7 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 	private Logger log;
 
 	@Inject
-	private ConfigurationFactory configurationFactory;
-
-	@Inject
 	private ApplianceService applianceService;
-
-	@Inject
-	private TemplateService templateService;
 
 	@Inject
 	private IPersonService personService;
@@ -93,16 +84,13 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 	private InumService inumService;
 
 	@Inject
-	private AttributeService attributeService;
-
-	@Inject
 	private CacheRefreshService cacheRefreshService;
 
 	@Inject
-	private JsonConfigurationService jsonConfigurationService;
+	private OxTrustAuditService oxTrustAuditService;
 
 	@Inject
-	private JsonService jsonService;
+	private JsonConfigurationService jsonConfigurationService;
 
 	@Inject
 	private FacesMessages facesMessages;
@@ -112,7 +100,7 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 
 	@Inject
 	private AppConfiguration appConfiguration;
-	
+
 	@Inject
 	private EncryptionService encryptionService;
 
@@ -137,7 +125,7 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 	private boolean initialized;
 
 	private CacheRefreshUpdateMethod updateMethod;
-	
+
 	public String init() {
 		if (initialized) {
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -155,8 +143,9 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 	}
 
 	private CacheRefreshConfiguration getOxTrustCacheRefreshConfig() {
-		CacheRefreshConfiguration cacheRefreshConfiguration = jsonConfigurationService.getOxTrustCacheRefreshConfiguration();
-		
+		CacheRefreshConfiguration cacheRefreshConfiguration = jsonConfigurationService
+				.getOxTrustCacheRefreshConfiguration();
+
 		if (cacheRefreshConfiguration == null) {
 			cacheRefreshConfiguration = new CacheRefreshConfiguration();
 			cacheRefreshConfiguration.setUpdateMethod(CacheRefreshUpdateMethod.COPY.getValue());
@@ -169,7 +158,7 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 			cacheRefreshConfiguration.setAttributeMapping(new ArrayList<CacheRefreshAttributeMapping>());
 			cacheRefreshConfiguration.setDefaultInumServer(true);
 		}
-		
+
 		this.updateMethod = CacheRefreshUpdateMethod.getByValue(cacheRefreshConfiguration.getUpdateMethod());
 		this.keyAttributes = toSimpleProperties(cacheRefreshConfiguration.getKeyAttributes());
 		this.keyObjectClasses = toSimpleProperties(cacheRefreshConfiguration.getKeyObjectClasses());
@@ -181,19 +170,19 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 
 	public String update() {
 		String outcome = updateImpl();
-		
+
 		if (OxTrustConstants.RESULT_SUCCESS.equals(outcome)) {
 			facesMessages.add(FacesMessage.SEVERITY_INFO, "Cache configuration updated");
 		} else if (OxTrustConstants.RESULT_FAILURE.equals(outcome)) {
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update cache refresh configuration");
 		}
-		
+
 		return outcome;
 	}
 
 	public String updateImpl() {
 		checkDuplicateKetattribute();
-		
+
 		if (!vdsCacheRefreshPollingInterval()) {
 			return OxTrustConstants.RESULT_FAILURE;
 		}
@@ -207,7 +196,7 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 		fixLdapConfigurations(this.cacheRefreshConfiguration.getSourceConfigs());
 		fixLdapConfiguration(this.cacheRefreshConfiguration.getInumConfig());
 		fixLdapConfiguration(this.cacheRefreshConfiguration.getTargetConfig());
-		
+
 		try {
 			jsonConfigurationService.saveOxTrustCacheRefreshConfiguration(this.cacheRefreshConfiguration);
 
@@ -236,7 +225,8 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 		applianceService.updateAppliance(updateAppliance);
 	}
 
-	// TODO: Yuriy Movchan: Use @Min property annotation + convert type from String to Integer 
+	// TODO: Yuriy Movchan: Use @Min property annotation + convert type from String
+	// to Integer
 	private boolean vdsCacheRefreshPollingInterval() {
 		String intervalString = this.appliance.getVdsCacheRefreshPollingInterval();
 		if (StringHelper.isEmpty(intervalString)) {
@@ -251,7 +241,8 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 
 		if ((interval == null) || (interval < 0)) {
 			log.error("Invalid cache refresh pooling interval specified: {}", intervalString);
-			facesMessages.add("vdsCacheRefreshPollingIntervalId", FacesMessage.SEVERITY_ERROR, "Invalid cache refresh pooling interval specified");
+			facesMessages.add("vdsCacheRefreshPollingIntervalId", FacesMessage.SEVERITY_ERROR,
+					"Invalid cache refresh pooling interval specified");
 			return false;
 		}
 
@@ -280,13 +271,15 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 	private boolean validateList(GluuLdapConfiguration ldapConfig, String configType, boolean validateBaseDNs) {
 		boolean result = true;
 		if (ldapConfig.getServers().size() == 0) {
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "%s LDAP configuration '%s' should contain at least one server", configType,
+			facesMessages.add(FacesMessage.SEVERITY_ERROR,
+					"%s LDAP configuration '%s' should contain at least one server", configType,
 					ldapConfig.getConfigId());
 			result = false;
 		}
 
 		if (validateBaseDNs && (ldapConfig.getBaseDNs().size() == 0)) {
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "%s LDAP configuration '%s' should contain at least one Base DN", configType,
+			facesMessages.add(FacesMessage.SEVERITY_ERROR,
+					"%s LDAP configuration '%s' should contain at least one Base DN", configType,
 					ldapConfig.getConfigId());
 			result = false;
 		}
@@ -296,7 +289,8 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 
 	private boolean validateList(List<String> values, String attributeName) {
 		if (values.size() == 0) {
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "%s should contain at least one '%s'", attributeName, attributeName);
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "%s should contain at least one '%s'", attributeName,
+					attributeName);
 			return false;
 		}
 
@@ -305,7 +299,7 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 
 	public String cancel() {
 		facesMessages.add(FacesMessage.SEVERITY_INFO, "Cache configuration update were canceled");
-		
+
 		conversationService.endConversation();
 
 		return OxTrustConstants.RESULT_SUCCESS;
@@ -349,11 +343,13 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 		return result;
 	}
 
-	private List<CacheRefreshAttributeMapping> toAttributeMappingList(List<SimpleCustomProperty> simpleCustomProperties) {
+	private List<CacheRefreshAttributeMapping> toAttributeMappingList(
+			List<SimpleCustomProperty> simpleCustomProperties) {
 		List<CacheRefreshAttributeMapping> result = new ArrayList<CacheRefreshAttributeMapping>();
 
 		for (SimpleCustomProperty simpleCustomProperty : simpleCustomProperties) {
-			result.add(new CacheRefreshAttributeMapping(simpleCustomProperty.getValue1(), simpleCustomProperty.getValue2()));
+			result.add(new CacheRefreshAttributeMapping(simpleCustomProperty.getValue1(),
+					simpleCustomProperty.getValue2()));
 		}
 
 		return result;
@@ -382,13 +378,13 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 	public GluuAppliance getAppliance() {
 		return appliance;
 	}
-	
+
 	private GluuLdapConfiguration fixLdapConfiguration(GluuLdapConfiguration ldapConfig) {
 		ldapConfig.updateStringsLists();
 		if (ldapConfig.isUseAnonymousBind()) {
 			ldapConfig.setBindDN(null);
 		}
-		
+
 		return ldapConfig;
 	}
 
@@ -396,7 +392,7 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 		for (GluuLdapConfiguration ldapConfig : ldapConfigs) {
 			fixLdapConfiguration(ldapConfig);
 		}
-		
+
 		return ldapConfigs;
 	}
 
@@ -471,11 +467,14 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 			return;
 		}
 
-		log.info("Script has been executed successfully.\n\nSample source entry is:\n'{}'.\n\nSample result entry is:\n'{}'",
-				getGluuSimplePersonAttributesWithValues(sourcePerson), getGluuCustomPersonAttributesWithValues(targetPerson));
+		log.info(
+				"Script has been executed successfully.\n\nSample source entry is:\n'{}'.\n\nSample result entry is:\n'{}'",
+				getGluuSimplePersonAttributesWithValues(sourcePerson),
+				getGluuCustomPersonAttributesWithValues(targetPerson));
 		this.interceptorValidationMessage = String.format(
 				"Script has been executed successfully.\n\nSample source entry is:\n%s.\n\nSample result entry is:\n%s",
-				getGluuSimplePersonAttributesWithValues(sourcePerson), getGluuCustomPersonAttributesWithValues(targetPerson));
+				getGluuSimplePersonAttributesWithValues(sourcePerson),
+				getGluuCustomPersonAttributesWithValues(targetPerson));
 	}
 
 	private String getGluuSimplePersonAttributesWithValues(GluuSimplePerson gluuSimplePerson) {
@@ -539,6 +538,10 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 
 	@Override
 	public void addItemToSimpleProperties(List<SimpleProperty> simpleProperties) {
+		oxTrustAuditService.audit("addItemToSimpleProperties:" + simpleProperties.size());
+		if(simpleProperties.size() >=1) {
+			oxTrustAuditService.audit("Value:" + simpleProperties.get(0).getValue());
+		}
 		if (checkDuplicateKetattribute() && simpleProperties != null) {
 			simpleProperties.add(new SimpleProperty(""));
 		}
@@ -553,7 +556,6 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 
 	@Override
 	public void addItemToSimpleCustomProperties(List<SimpleCustomProperty> simpleCustomProperties) {
-		
 		if (simpleCustomProperties != null) {
 			simpleCustomProperties.add(new SimpleCustomProperty("", ""));
 		}
@@ -577,10 +579,10 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 		}
 
 		try {
-        	this.activeLdapConfig.setBindPassword(encryptionService.encrypt(this.activeLdapConfig.getBindPassword()));
-        } catch (EncryptionException ex) {
-            log.error("Failed to encrypt password", ex);
-        }
+			this.activeLdapConfig.setBindPassword(encryptionService.encrypt(this.activeLdapConfig.getBindPassword()));
+		} catch (EncryptionException ex) {
+			log.error("Failed to encrypt password", ex);
+		}
 	}
 
 	@Override
@@ -622,7 +624,8 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 		return result;
 	}
 
-	private Map<String, String> getTargetServerAttributesMapping(CacheRefreshConfiguration cacheRefreshConfigurationuration) {
+	private Map<String, String> getTargetServerAttributesMapping(
+			CacheRefreshConfiguration cacheRefreshConfigurationuration) {
 		Map<String, String> result = new HashMap<String, String>();
 		for (CacheRefreshAttributeMapping attributeMapping : cacheRefreshConfigurationuration.getAttributeMapping()) {
 			result.put(attributeMapping.getDestination(), attributeMapping.getSource());
@@ -654,57 +657,42 @@ public class ConfigureCacheRefreshAction implements SimplePropertiesListModel, S
 	public List<SimpleCustomProperty> getAttributeMapping() {
 		return attributeMapping;
 	}
-	
-	public void validateProperty(FacesContext context, UIComponent comp,
-			Object value) {
 
-		System.out.println("inside validate method");
+	public void validateProperty(FacesContext context, UIComponent comp, Object value) {
 		String newkeyAttr = (String) value;
-		int size= keyAttributes.size();
-		
-		for(SimpleProperty keyAttribute :  keyAttributes){
+		oxTrustAuditService.audit("Validation");
+		for (SimpleProperty keyAttribute : keyAttributes) {
 			int i = 0;
-			if(newkeyAttr.equalsIgnoreCase(keyAttribute.getValue())){
-				i=i+1;
-				if(i==2){
-				((UIInput) comp).setValid(false);
-				FacesMessage message = new FacesMessage(
-						"key attribute already Exist! ");
-				//message.setSeverity(Severity.ERROR);
-				context.addMessage(comp.getClientId(context), message);
+			if (newkeyAttr.equalsIgnoreCase(keyAttribute.getValue())) {
+				i = i + 1;
+				if (i == 2) {
+					((UIInput) comp).setValid(false);
+					FacesMessage message = new FacesMessage("key attribute already Exist! ");
+					context.addMessage(comp.getClientId(context), message);
 				}
 			}
-			
-		}		
+
+		}
 	}
-	
-	
-	
+
 	public boolean checkDuplicateKetattribute() {
-
-		System.out.println("inside validate method");
-
-		
-		for(SimpleProperty keyAttribute1 :  keyAttributes){
+		for (SimpleProperty keyAttribute1 : keyAttributes) {
 			String checkValue = keyAttribute1.getValue();
-			int i =0;
-			
-			for(SimpleProperty keyAttribute :  keyAttributes){
+			int i = 0;
+
+			for (SimpleProperty keyAttribute : keyAttributes) {
 				String value = keyAttribute.getValue();
 
-				if(checkValue.equals(value)){
-					i=i+1;
-					if(i==2){
-					FacesContext context = FacesContext.getCurrentInstance();
-					context.addMessage( null, new FacesMessage( FacesMessage.SEVERITY_ERROR,"Key Attribute already Exist!" ,"Key Attribute already Exist!" ));
-					return false;
+				if (checkValue.equals(value) && !checkValue.isEmpty() && !value.isEmpty()) {
+					i = i + 1;
+					if (i == 2) {
+						facesMessages.add(FacesMessage.SEVERITY_ERROR, "Key Attribute already Exist!",
+								"Key Attribute already Exist!");
+						return false;
 					}
 				}
 			}
 		}
 		return true;
-			
-	}		
-	
-
+	}
 }
