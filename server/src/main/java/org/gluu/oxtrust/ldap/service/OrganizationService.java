@@ -64,7 +64,7 @@ public class OrganizationService extends org.xdi.service.OrganizationService {
 	 */
 	public void updateOrganization(GluuOrganization organization) {
 		ldapEntryManager.merge(organization);
-
+        
 	}
 	
 	/**

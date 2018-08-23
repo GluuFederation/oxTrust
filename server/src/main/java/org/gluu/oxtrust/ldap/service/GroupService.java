@@ -53,7 +53,7 @@ public class GroupService implements Serializable, IGroupService {
 	
 	@Inject
 	private PersonService personService;
-
+	
 	/* (non-Javadoc)
 	 * @see org.gluu.oxtrust.ldap.service.IGroupService#addGroup(org.gluu.oxtrust.model.GluuGroup)
 	 */
@@ -75,7 +75,6 @@ public class GroupService implements Serializable, IGroupService {
 	@Override
 	public void updateGroup(GluuGroup group) {
 		ldapEntryManager.merge(group);
-
 	}
 
 	/* (non-Javadoc)

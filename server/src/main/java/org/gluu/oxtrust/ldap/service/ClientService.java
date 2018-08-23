@@ -55,7 +55,7 @@ public class ClientService implements Serializable {
 
     @Inject
     private OrganizationService organizationService;
-
+    
 	@Inject
 	private AppConfiguration appConfiguration;
 
@@ -143,7 +143,6 @@ public class ClientService implements Serializable {
 	 */
 	public void updateClient(OxAuthClient client) {
 		ldapEntryManager.merge(client);
-
 	}
 
 	/**
@@ -154,7 +153,6 @@ public class ClientService implements Serializable {
 	 */
 	public void updateCustomClient(OxAuthCustomClient client) {
 		ldapEntryManager.merge(client);
-
 	}
 
 	/**

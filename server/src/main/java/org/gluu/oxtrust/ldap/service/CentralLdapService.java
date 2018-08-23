@@ -58,9 +58,10 @@ public class CentralLdapService {
 	public boolean containsAppliance(GluuAppliance appliance) {
 		return centralLdapEntryManager.contains(appliance);
 	}
-	
+
 	public boolean isUseCentralServer() {
-		return (configurationFactory.getLdapCentralConfiguration() != null) && configurationFactory.getAppConfiguration().isUpdateApplianceStatus();
+		return (configurationFactory.getLdapCentralConfiguration() != null)
+				&& configurationFactory.getAppConfiguration().isUpdateApplianceStatus();
 	}
 
 }

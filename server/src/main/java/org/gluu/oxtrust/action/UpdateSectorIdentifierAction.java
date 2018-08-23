@@ -10,8 +10,10 @@ import java.util.Set;
 
 import javax.enterprise.context.ConversationScoped;
 import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -19,9 +21,11 @@ import org.apache.commons.lang.StringUtils;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.service.ClientService;
+import org.gluu.oxtrust.ldap.service.OxTrustAuditService;
 import org.gluu.oxtrust.ldap.service.SectorIdentifierService;
 import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.model.OxAuthSectorIdentifier;
+import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.exception.BasePersistenceException;
 import org.slf4j.Logger;
@@ -47,6 +51,12 @@ public class UpdateSectorIdentifierAction implements Serializable {
 
     @Inject
     private Logger log;
+    
+    @Inject
+	private Identity identity;
+	
+	@Inject
+	private OxTrustAuditService oxTrustAuditService;
 
     private String id;
     private boolean update;
@@ -183,6 +193,9 @@ public class UpdateSectorIdentifierAction implements Serializable {
             // Update sectorIdentifier
             try {
                 sectorIdentifierService.updateSectorIdentifier(this.sectorIdentifier);
+                oxTrustAuditService.audit("SECTOR ID " + this.sectorIdentifier.getId() + " UPDATED",
+						identity.getUser(),
+						(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
                 updateClients(oldClientDisplayNameEntries, this.clientDisplayNameEntries);
             } catch (BasePersistenceException ex) {
                 log.info("error updating sector identifier ", ex);
@@ -204,6 +217,9 @@ public class UpdateSectorIdentifierAction implements Serializable {
             this.sectorIdentifier.setId(this.id);
             try {
                 sectorIdentifierService.addSectorIdentifier(this.sectorIdentifier);
+                oxTrustAuditService.audit("SECTOR ID " + this.sectorIdentifier.getId() + " ADDED",
+						identity.getUser(),
+						(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
                 updateClients(oldClientDisplayNameEntries, this.clientDisplayNameEntries);
             } catch (BasePersistenceException ex) {
                 log.info("error saving sector identifier ");
@@ -229,7 +245,9 @@ public class UpdateSectorIdentifierAction implements Serializable {
             // Remove sectorIdentifier
             try {
                 sectorIdentifierService.removeSectorIdentifier(this.sectorIdentifier);
-
+                oxTrustAuditService.audit("SECTOR ID " + this.sectorIdentifier.getId() + " REMOVED",
+						identity.getUser(),
+						(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
                 facesMessages.add(FacesMessage.SEVERITY_INFO, "Sector identifier '#{updateSectorIdentifierAction.sectorIdentifier.id}' removed successfully");
 				conversationService.endConversation();
 

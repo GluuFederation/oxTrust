@@ -70,6 +70,7 @@ public class SearchSectorIdentifierAction implements Serializable {
 
 			log.debug("Found \"" + this.sectorIdentifierList.size() + "\" sector identifiers.");
             this.oldSearchPattern = this.searchPattern;
+            this.searchPattern="";
         } catch (Exception ex) {
             log.error("Failed to find sector identifiers", ex);
 

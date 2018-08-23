@@ -50,6 +50,11 @@ import org.xml.sax.SAXException;
 @Named("filterService")
 public class FilterService implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3450258050259083556L;
+
 	public static final String VALIDATION_TYPE = "SchemaValidation";
 
 	public static final Object ENTITY_ROLE_WHITE_LIST_TYPE = "EntityRoleWhiteList";

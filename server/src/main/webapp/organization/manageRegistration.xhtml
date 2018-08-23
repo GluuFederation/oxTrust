@@ -146,18 +146,18 @@
                                 <h:panelGroup>
                                     <a4j:region>
                                         <ox:decorate label="#{msg['organization.disableCaptcha']}">
-                                            <h:selectBooleanCheckbox
+                                            <h:selectBooleanCheckbox styleClass="enbaleCaptchaSelectBox"
                                                     value="#{registrationManagementAction.captchaDisabled}">
                                             </h:selectBooleanCheckbox>
                                         </ox:decorate>
                                         <ox:decorate label="#{msg['organization.configureRegistrationAttributes']}">
-                                            <h:selectBooleanCheckbox  id="selectConfigureRegistration" styleClass="checkbox checkbox2"
+                                            <h:selectBooleanCheckbox  id="selectConfigureRegistration" styleClass="checkbox checkbox2 registrationSelectBox"
                                                                      value="#{registrationManagementAction.configureRegistrationForm}">
                                                 <a4j:ajax event="click" render="attributeGroup" execute="@this" limitRender="true"/>                                                                  
                                             </h:selectBooleanCheckbox>
                                         </ox:decorate>
 											<ox:decorate id="recaptchasiteid" label="Recaptcha Site Key">
-												<h:inputText styleClass="form-control"
+												<h:inputText styleClass="form-control recaptchaSiteKeyTextBox"
 													value="#{registrationManagementAction.oxTrustappConfiguration.recaptchaSiteKey}" size="30"
 													 id="recaptchaSiteKeyId"/>
 												<!-- <h:outputText value="#{_attribute.name}"
@@ -165,7 +165,7 @@
 											</ox:decorate>
 											
 											<ox:decorate id="recaptchakeyid" label="Recaptcha Secret Key">
-												<h:inputText styleClass="form-control"
+												<h:inputText styleClass="form-control recaptchaSiteSecretTextBox"
 													value="#{registrationManagementAction.oxTrustappConfiguration.recaptchaSecretKey}" size="30"
 													 id="recaptchaSiteKeyId"/>
 												<!-- <h:outputText value="#{_attribute.name}"
@@ -173,7 +173,7 @@
 											</ox:decorate>
 											
 											<ox:decorate id="csslocationid" label="Design CSS Location">
-												<h:inputText styleClass="form-control"
+												<h:inputText styleClass="form-control cssLocationTextBox"
 													value="#{registrationManagementAction.oxTrustappConfiguration.cssLocation}" size="30"
 													 id="recaptchaSiteKeyId"/>
 												<!-- <h:outputText value="#{_attribute.name}"
@@ -181,7 +181,7 @@
 											</ox:decorate>
 											
 											<ox:decorate id="jslocationid" label="Javascript Location">
-												<h:inputText styleClass="form-control"
+												<h:inputText styleClass="form-control javascriptLocationTextBox"
 													value="#{registrationManagementAction.oxTrustappConfiguration.jsLocation}" size="30"
 													 id="recaptchaSiteKeyId"/>
 												<!-- <h:outputText value="#{_attribute.name}"
@@ -189,7 +189,7 @@
 											</ox:decorate>
 											
 											
-											<h:panelGroup id="attributeGroup" styleClass="checkbox2Div">
+											<h:panelGroup id="attributeGroup" styleClass="checkbox2Div attributeGroup">
 												<ui:fragment rendered="#{registrationManagementAction.configureRegistrationForm}">
 													<a4j:region>
 	                                                    <ox:decorate id="searchPattern"
@@ -197,7 +197,7 @@
 	                                                        <h:inputText
 	                                                                alt="search parameters for attribute like name,iname,description"
 	                                                                id="searchPatternId" maxlength="30" size="30"
-	                                                                styleClass="form-control"
+	                                                                styleClass="form-control searchTextBox"
 	                                                                title="#{msg['organization.enterAtLeastTwoCharacters']}"
 	                                                                value="#{registrationManagementAction.searchPattern}">
 	

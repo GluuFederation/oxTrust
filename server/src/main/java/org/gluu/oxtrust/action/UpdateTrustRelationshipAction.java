@@ -61,6 +61,7 @@ import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.MetadataValidationTimer;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
+import org.gluu.oxtrust.ldap.service.OxTrustAuditService;
 import org.gluu.oxtrust.ldap.service.SSLService;
 import org.gluu.oxtrust.ldap.service.Shibboleth3ConfService;
 import org.gluu.oxtrust.ldap.service.SvnSyncTimer;
@@ -178,6 +179,9 @@ public class UpdateTrustRelationshipAction implements Serializable {
 	private List<String> filteredEntities;
 
 	private String filterString;
+		
+	@Inject
+	private OxTrustAuditService oxTrustAuditService;
 /*
 	private String metadata;
 	public String getMetadata() {
@@ -649,6 +653,9 @@ public class UpdateTrustRelationshipAction implements Serializable {
 				}
 			}
 			trustService.updateTrustRelationship(this.trustRelationship);
+			oxTrustAuditService.audit("TR "+this.trustRelationship.getDisplayName()+" UPDATED",
+					identity.getUser(),
+					(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 
 			if(oxClientUpdateNeeded){
 				OxAuthClient client = clientService.getClientByInum(appConfiguration.getOxAuthClientId());
@@ -669,12 +676,16 @@ public class UpdateTrustRelationshipAction implements Serializable {
 					client.setPostLogoutRedirectUris(updatedLogoutRedirectUris.toArray(new String[0]));
 				}
 				clientService.updateClient(client);
+				
 			}
 			
 			
 			svnSyncTimer.updateTrustRelationship(this.trustRelationship, identity.getCredentials().getUsername());
 		} else {
 			trustService.addTrustRelationship(this.trustRelationship);
+			oxTrustAuditService.audit("TR "+this.trustRelationship.getDisplayName()+" ADDED",
+					identity.getUser(),
+					(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 			svnSyncTimer.addTrustRelationship(this.trustRelationship, identity.getCredentials().getUsername());
 		}
 		
@@ -855,6 +866,9 @@ public class UpdateTrustRelationshipAction implements Serializable {
 					}
 					shibboleth3ConfService.removeSpMetadataFile(this.trustRelationship.getSpMetaDataFN());
 					trustService.removeTrustRelationship(this.trustRelationship);
+					oxTrustAuditService.audit("TR "+this.trustRelationship.getDisplayName()+" REMOVED",
+							identity.getUser(),
+							(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 					svnSyncTimer.removeTrustRelationship(this.trustRelationship, identity.getCredentials().getUsername());
 				}
 				result = OxTrustConstants.RESULT_SUCCESS;

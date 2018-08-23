@@ -22,7 +22,6 @@ import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuMetadataSourceType;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.model.OrganizationalUnit;
-import org.gluu.oxtrust.service.render.RenderService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.model.base.InumEntry;
@@ -53,8 +52,8 @@ public class TrustService implements Serializable {
 	@Inject
 	private Logger log;
 
-    @Inject
-    private FacesMessages facesMessages;
+	@Inject
+	private FacesMessages facesMessages;
 
 	@Inject
 	private PersistenceEntryManager ldapEntryManager;
@@ -71,14 +70,11 @@ public class TrustService implements Serializable {
 	@Inject
 	private AppConfiguration appConfiguration;
 
-    @Inject
+	@Inject
 	private MailService mailService;
 
-    @Inject
-    private RenderParameters rendererParameters;
-
-    @Inject
-    private RenderService renderService;
+	@Inject
+	private RenderParameters rendererParameters;
 
 	public static final String GENERATED_SSL_ARTIFACTS_DIR = "ssl";
 
@@ -97,15 +93,15 @@ public class TrustService implements Serializable {
 			trustRelationship.setDn(clusteredDN);
 			GluuSAMLTrustRelationship tr = new GluuSAMLTrustRelationship();
 			tr.setDn(trustRelationship.getDn());
-			if(! containsTrustRelationship(tr)){
+			if (!containsTrustRelationship(tr)) {
 				log.debug("Adding TR" + clusteredDN);
 				OrganizationalUnit ou = new OrganizationalUnit();
 				ou.setDn(getDnForTrustRelationShip(null));
-		        if(! ldapEntryManager.contains(ou)){
-		            ldapEntryManager.persist(ou);
-		        }
+				if (!ldapEntryManager.contains(ou)) {
+					ldapEntryManager.persist(ou);
+				}
 				ldapEntryManager.persist(trustRelationship);
-			}else{
+			} else {
 				ldapEntryManager.merge(trustRelationship);
 			}
 		}
@@ -126,15 +122,15 @@ public class TrustService implements Serializable {
 			trustRelationship.setDn(clusteredDN);
 			GluuSAMLTrustRelationship tr = new GluuSAMLTrustRelationship();
 			tr.setDn(trustRelationship.getDn());
-			if(containsTrustRelationship(tr)){
+			if (containsTrustRelationship(tr)) {
 				log.trace("Updating TR" + clusteredDN);
 				ldapEntryManager.merge(trustRelationship);
-			}else{
-			    OrganizationalUnit ou = new OrganizationalUnit();
-                ou.setDn(getDnForTrustRelationShip(null));
-                if(! ldapEntryManager.contains(ou)){
-                    ldapEntryManager.persist(ou);
-                }
+			} else {
+				OrganizationalUnit ou = new OrganizationalUnit();
+				ou.setDn(getDnForTrustRelationShip(null));
+				if (!ldapEntryManager.contains(ou)) {
+					ldapEntryManager.persist(ou);
+				}
 				ldapEntryManager.persist(trustRelationship);
 			}
 		}
@@ -155,7 +151,7 @@ public class TrustService implements Serializable {
 			trustRelationship.setDn(clusteredDN);
 			GluuSAMLTrustRelationship tr = new GluuSAMLTrustRelationship();
 			tr.setDn(trustRelationship.getDn());
-			if(containsTrustRelationship(tr)){
+			if (containsTrustRelationship(tr)) {
 				log.debug("Removing TR" + clusteredDN);
 				ldapEntryManager.remove(trustRelationship);
 			}
@@ -176,8 +172,8 @@ public class TrustService implements Serializable {
 	}
 
 	/**
-	 * This is a LDAP operation as LDAP and IDP will always be in sync. We can
-	 * just call LDAP to fetch all Trust Relationships.
+	 * This is a LDAP operation as LDAP and IDP will always be in sync. We can just
+	 * call LDAP to fetch all Trust Relationships.
 	 */
 	public List<GluuSAMLTrustRelationship> getAllTrustRelationships() {
 		return ldapEntryManager.findEntries(getDnForTrustRelationShip(null), GluuSAMLTrustRelationship.class, null);
@@ -209,8 +205,7 @@ public class TrustService implements Serializable {
 	}
 
 	/**
-	 * Check if LDAP server contains trust relationship with specified
-	 * attributes
+	 * Check if LDAP server contains trust relationship with specified attributes
 	 * 
 	 * @return True if trust relationship with specified attributes exist
 	 */
@@ -242,7 +237,8 @@ public class TrustService implements Serializable {
 	 * @return New inum for trust relationship
 	 */
 	private String generateInumForNewTrustRelationshipImpl() {
-		return getApplianceInum() + OxTrustConstants.inumDelimiter + "0006" + OxTrustConstants.inumDelimiter + INumGenerator.generate(2);
+		return getApplianceInum() + OxTrustConstants.inumDelimiter + "0006" + OxTrustConstants.inumDelimiter
+				+ INumGenerator.generate(2);
 	}
 
 	/**
@@ -300,38 +296,41 @@ public class TrustService implements Serializable {
 			releasedAttributes.add(customAttribute.getMetadata().getDn());
 		}
 
-                // send email notification
+		// send email notification
 		if (!StringUtils.isEmpty(mailMsgPlain)) {
 			try {
 				GluuAppliance appliance = applianceService.getAppliance();
-                                
-                if (appliance.getContactEmail() == null || appliance.getContactEmail().isEmpty()) 
-                    log.warn("Failed to send the 'Attributes released' notification email: unconfigured contact email");
-                else if (appliance.getSmtpConfiguration() == null || StringHelper.isEmpty(appliance.getSmtpConfiguration().getHost())) 
-                    log.warn("Failed to send the 'Attributes released' notification email: unconfigured SMTP server");
-                else {
-                    String subj = facesMessages.evalResourceAsString("#{msg['mail.trust.released.subject']}");
 
-                    rendererParameters.setParameter("trustRelationshipName", trustRelationship.getDisplayName());
-                    rendererParameters.setParameter("trustRelationshipInum", trustRelationship.getInum());
+				if (appliance.getContactEmail() == null || appliance.getContactEmail().isEmpty())
+					log.warn("Failed to send the 'Attributes released' notification email: unconfigured contact email");
+				else if (appliance.getSmtpConfiguration() == null
+						|| StringHelper.isEmpty(appliance.getSmtpConfiguration().getHost()))
+					log.warn("Failed to send the 'Attributes released' notification email: unconfigured SMTP server");
+				else {
+					String subj = facesMessages.evalResourceAsString("#{msg['mail.trust.released.subject']}");
 
-                    String preMsgPlain = facesMessages.evalResourceAsString("#{msg['mail.trust.released.name.plain']}");
-                    String preMsgHtml = facesMessages.evalResourceAsString("#{msg['mail.trust.released.name.html']}");
+					rendererParameters.setParameter("trustRelationshipName", trustRelationship.getDisplayName());
+					rendererParameters.setParameter("trustRelationshipInum", trustRelationship.getInum());
 
-//            		rendererParameters.setParameter("mail_body", preMsgHtml + mailMsgHtml);
-//            		String mailHtml = renderService.renderView("/WEB-INF/mail/trust_relationship.xhtml");
-                    
-    				boolean result = mailService.sendMail(appliance.getContactEmail(), null, subj, preMsgPlain + mailMsgPlain, preMsgHtml + mailMsgHtml);
-    				
-    				if (!result) {
-    					log.error("Failed to send the notification email");
-    				}
-                }
+					String preMsgPlain = facesMessages.evalResourceAsString("#{msg['mail.trust.released.name.plain']}");
+					String preMsgHtml = facesMessages.evalResourceAsString("#{msg['mail.trust.released.name.html']}");
+
+					// rendererParameters.setParameter("mail_body", preMsgHtml + mailMsgHtml);
+					// String mailHtml =
+					// renderService.renderView("/WEB-INF/mail/trust_relationship.xhtml");
+
+					boolean result = mailService.sendMail(appliance.getContactEmail(), null, subj,
+							preMsgPlain + mailMsgPlain, preMsgHtml + mailMsgHtml);
+
+					if (!result) {
+						log.error("Failed to send the notification email");
+					}
+				}
 			} catch (Exception ex) {
 				log.error("Failed to send the notification email: ", ex);
 			}
 		}
-                
+
 		if (!releasedAttributes.isEmpty()) {
 			trustRelationship.setReleasedAttributes(releasedAttributes);
 		} else {
@@ -384,7 +383,8 @@ public class TrustService implements Serializable {
 	// trustRelationship.setGluuTrustDeconstruction(gluuTrustDeconstruction);
 	// }
 
-	public List<GluuSAMLTrustRelationship> getDeconstructedTrustRelationships(GluuSAMLTrustRelationship trustRelationship) {
+	public List<GluuSAMLTrustRelationship> getDeconstructedTrustRelationships(
+			GluuSAMLTrustRelationship trustRelationship) {
 		List<GluuSAMLTrustRelationship> result = new ArrayList<GluuSAMLTrustRelationship>();
 		for (GluuSAMLTrustRelationship trust : getAllTrustRelationships()) {
 			if (trustRelationship.equals(getTrustContainerFederation(trust))) {
@@ -459,7 +459,7 @@ public class TrustService implements Serializable {
 				}
 			}
 		}
-		
+
 		attributeService.removeAttribute(attribute);
 
 		return true;
