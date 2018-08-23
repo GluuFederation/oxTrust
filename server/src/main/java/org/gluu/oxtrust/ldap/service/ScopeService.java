@@ -51,7 +51,6 @@ public class ScopeService implements Serializable {
 	 */
 	public void addScope(OxAuthScope scope) throws Exception {
 		ldapEntryManager.persist(scope);
-
 	}
 
 	/**
@@ -63,7 +62,6 @@ public class ScopeService implements Serializable {
 	public void removeScope(OxAuthScope scope) throws Exception {
 
 		ldapEntryManager.remove(scope);
-
 	}
 
 	/**
@@ -108,7 +106,6 @@ public class ScopeService implements Serializable {
 	 */
 	public void updateScope(OxAuthScope scope) throws Exception {
 		ldapEntryManager.merge(scope);
-
 	}
 
 	/**

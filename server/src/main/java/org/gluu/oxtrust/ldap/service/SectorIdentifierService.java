@@ -157,7 +157,4 @@ public class SectorIdentifierService implements Serializable {
         ldapEntryManager.remove(sectorIdentifier);
     }
     
-    public static void main(String[] args) {
-        System.out.println(UUID.randomUUID().toString());
-    }
 }

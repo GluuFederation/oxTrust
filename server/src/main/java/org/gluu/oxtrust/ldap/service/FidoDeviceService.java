@@ -27,6 +27,11 @@ import org.slf4j.Logger;
 @Named
 public class FidoDeviceService implements IFidoDeviceService, Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -206231314840676189L;
+
 	@Inject
 	private Logger log;
 

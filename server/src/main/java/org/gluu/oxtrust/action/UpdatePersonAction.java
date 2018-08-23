@@ -681,17 +681,68 @@ public class UpdatePersonAction implements Serializable {
 		}
 		 
 	}
+
+	public boolean userNameIsUniqAtCreationTime(String uid) {
+ 		boolean userNameIsUniq = true;
+ 		List<GluuCustomPerson> gluuCustomPersons = personService.getPersonsByUid(uid);
+ 		if (gluuCustomPersons != null && gluuCustomPersons.size() > 0) {
+ 			for (GluuCustomPerson gluuCustomPerson : gluuCustomPersons) {
+ 				if (gluuCustomPerson.getUid().equalsIgnoreCase(uid)) {
+ 					userNameIsUniq = false;
+ 					break;
+ 				}
+ 			}
+ 		}
+ 		return userNameIsUniq;
+ 	}
+ 
+	public boolean userNameIsUniqAtEditionTime(String uid) {
+		boolean userNameIsUniq = false;
+		List<GluuCustomPerson> gluuCustomPersons = personService.getPersonsByUid(uid);
+		if (gluuCustomPersons == null || gluuCustomPersons.isEmpty()) {
+			userNameIsUniq = true;
+		}
+		if (gluuCustomPersons.size() == 1 && gluuCustomPersons.get(0).getUid().equalsIgnoreCase(uid)) {
+			userNameIsUniq = true;
+		}
+ 		return userNameIsUniq;
+ 	}
+ 
+ 	public boolean userEmailIsUniqAtCreationTime(String email) {
+ 		boolean emailIsUniq = true;
+ 		List<GluuCustomPerson> gluuCustomPersons = personService.getPersonsByEmail(email);
+ 		if (gluuCustomPersons != null && gluuCustomPersons.size() > 0) {
+ 			for (GluuCustomPerson gluuCustomPerson : gluuCustomPersons) {
+ 				if (gluuCustomPerson.getAttribute("mail").equalsIgnoreCase(email)) {
+ 					emailIsUniq = false;
+ 					break;
+ 				}
+ 			}
+ 		}
+ 		return emailIsUniq;
+ 	}
+ 
+	public boolean userEmailIsUniqAtEditionTime(String email) {
+		boolean emailIsUniq = false;
+		List<GluuCustomPerson> gluuCustomPersons = personService.getPersonsByEmail(email);
+		if (gluuCustomPersons == null || gluuCustomPersons.isEmpty()) {
+			emailIsUniq = true;
+		}
+		if (gluuCustomPersons.size() == 1 && gluuCustomPersons.get(0).getAttribute("mail").equalsIgnoreCase(email)) {
+			emailIsUniq = true;
+		}
+		return emailIsUniq;
+	}
 	
 	private boolean validatePerson(GluuCustomPerson person) throws Exception {
 	
 		List<GluuCustomPerson>  gluuCustomPersons  = personService.getPersonsByUid(person.getUid());
-		if (gluuCustomPersons != null){
+		if (gluuCustomPersons != null && gluuCustomPersons.size()>0){
 			if(!update){
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "#{msg['UpdatePersonAction.faileAddUserUidExist']} %s",
 					person.getUid());
 					return false;
 			}else{
-				if(gluuCustomPersons.size()>0){
 					for(GluuCustomPerson gluuCustomPerson : gluuCustomPersons){
 						if(!gluuCustomPerson.getInum().trim().equals(person.getInum())){
 							facesMessages.add(FacesMessage.SEVERITY_ERROR, "#{msg['UpdatePersonAction.faileUpdateUserUidExist']} %s",
@@ -700,18 +751,17 @@ public class UpdatePersonAction implements Serializable {
 						}
 						
 					}
-				}	
+					
 			}
 		}
 		
 		gluuCustomPersons  = personService.getPersonsByEmail(person.getMail());
-		if (gluuCustomPersons != null){
+		if (gluuCustomPersons != null && gluuCustomPersons.size()>0){
 			if(!update){
 				facesMessages.add(FacesMessage.SEVERITY_ERROR, "#{msg['UpdatePersonAction.faileAddUserMailidExist']} %s",
 						person.getMail());
 				return false;
 			}else{
-				if(gluuCustomPersons.size()>0){
 					for(GluuCustomPerson gluuCustomPerson : gluuCustomPersons){
 						if(!gluuCustomPerson.getInum().trim().equals(person.getInum())){
 							facesMessages.add(FacesMessage.SEVERITY_ERROR, "#{msg['UpdatePersonAction.faileUpdateUserMailidExist']} %s",
@@ -719,7 +769,7 @@ public class UpdatePersonAction implements Serializable {
 							return false;
 						}
 					}
-				}
+				
 			}
 			
 		}	

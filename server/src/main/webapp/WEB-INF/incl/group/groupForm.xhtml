@@ -35,12 +35,12 @@
                 <h:outputText value="#{_organization.displayName}" />
             </ox:decorate>
 
-            <ox:decorate id="displayName" label="#{msg['group.displayName']}">
-                <rich:inplaceInput value="#{_group.displayName}" defaultLabel="click to enter display name" maxlength="60"  required="true" id="displayNameId" />
+            <ox:decorate  id="displayName" label="#{msg['group.displayName']}">
+                <rich:inplaceInput class="displayNameField" value="#{_group.displayName}" defaultLabel="click to enter display name" maxlength="60"  required="true" id="displayNameId" />
             </ox:decorate>
 
             <ox:decorate id="visibility" label="#{msg['group.type']}">
-                <h:selectOneMenu value="#{_group.visibility}" id="visibilityId" styleClass="form-control">
+                <h:selectOneMenu value="#{_group.visibility}" id="visibilityId" styleClass="visibilityField form-control">
                     <f:selectItem noSelectionOption="true"  itemLabel="Visibility type"/>
                     <f:selectItems value="#{groupService.visibilityTypes}" var="_type" itemLabel="#{_type.displayName}" />
                     <f:converter converterId="org.gluu.jsf2.converter.EnumConverter" />
@@ -48,11 +48,11 @@
             </ox:decorate>
 
             <ox:decorate id="description" label="#{msg['group.description']}">
-                <h:inputTextarea value="#{_group.description}" rows="3" size="40" maxlength="4000" id="descriptionId" styleClass="form-control" />
+                <h:inputTextarea class="descriptionField" value="#{_group.description}" rows="3" size="40" maxlength="4000" id="descriptionId" styleClass="form-control" />
             </ox:decorate>
 
             <ox:decorate id="members" label="#{msg['group.users']}">
-                <h:panelGroup id="selectedMembersId">
+                <h:panelGroup id="selectedMembersId" class="selectedMembersId">
                     <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
                         <a4j:repeat value="#{_groupAction.members}" rowKeyVar="_memberIdx" var="_member">
                          <div class="row"  >
@@ -72,7 +72,7 @@
 
                         
 
-                        <a4j:commandButton style="margin-top:10px;" styleClass="btn btn-primary" value="Add member" action="#{_groupAction.selectAddedMembers}" oncomplete="#{rich:component('member:selectMemberModalPanel')}.show();" execute="@this" />
+                        <a4j:commandButton style="margin-top:10px;" styleClass="btn btn-primary AddMember" value="Add member" action="#{_groupAction.selectAddedMembers}" oncomplete="#{rich:component('member:selectMemberModalPanel')}.show();" execute="@this" />
                     </h:panelGrid>
                 </h:panelGroup>
             </ox:decorate>

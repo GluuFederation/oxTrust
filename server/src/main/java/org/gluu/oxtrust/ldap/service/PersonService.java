@@ -117,7 +117,6 @@ public class PersonService implements Serializable, IPersonService {
             person.setAttribute("oxTrustMetaLastModified", ISODateTimeFormat.dateTime().withZoneUTC().print(updateDate.getTime()));
         }
         ldapEntryManager.merge(person);
-
     }
 
     /* (non-Javadoc)
@@ -561,7 +560,6 @@ public class PersonService implements Serializable, IPersonService {
 
         List<User> users = ldapEntryManager.findEntries(user);// getLdapEntryManagerInstance().findEntries(person);
         if ((users != null) && (users.size() > 0)) {
-
             return users.get(0);
         }
 

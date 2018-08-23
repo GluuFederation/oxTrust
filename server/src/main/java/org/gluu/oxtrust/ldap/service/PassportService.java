@@ -17,7 +17,6 @@ import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.exception.MappingException;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.LdapOxPassportConfiguration;
-import org.xdi.service.JsonService;
 import org.xdi.util.StringHelper;
 import org.xdi.util.properties.FileConfiguration;
 
@@ -34,9 +33,6 @@ public class PassportService implements Serializable {
 
 	@Inject
 	private Logger log;
-
-	@Inject
-	private JsonService jsonService;
 
 	@Inject
 	private PersistenceEntryManager ldapEntryManager;

@@ -44,6 +44,7 @@ public class AuthOrganizationService implements Serializable {
 
 	@Inject
 	private AppConfiguration appConfiguration;
+	
 
 	/**
 	 * Update organization entry
@@ -52,8 +53,7 @@ public class AuthOrganizationService implements Serializable {
 	 *            Organization
 	 */
 	public void updateOrganization(GluuOrganization organization) throws Exception {
-	    ldapEntryManager.merge(organization);
-
+		ldapEntryManager.merge(organization);
 	}
 
 	/**

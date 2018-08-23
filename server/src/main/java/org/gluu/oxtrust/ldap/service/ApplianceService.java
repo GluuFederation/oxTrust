@@ -63,7 +63,6 @@ public class ApplianceService implements Serializable {
 	 */
 	public void addAppliance(GluuAppliance appliance) {
 		ldapEntryManager.persist(appliance);
-
 	}
 
 	/**
@@ -74,7 +73,6 @@ public class ApplianceService implements Serializable {
 	 */
 	public void updateAppliance(GluuAppliance appliance) {
 		ldapEntryManager.merge(appliance);
-
 	}
 
 	/**

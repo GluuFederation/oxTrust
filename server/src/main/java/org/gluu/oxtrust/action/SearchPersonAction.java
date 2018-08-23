@@ -69,6 +69,7 @@ public class SearchPersonAction implements Serializable {
 		try {
 			this.personList = personService.searchPersons(this.searchPattern);
 			this.oldSearchPattern = this.searchPattern;
+			this.searchPattern="";
 		} catch (Exception ex) {
 			log.error("Failed to find persons", ex);
 			

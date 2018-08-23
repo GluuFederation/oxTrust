@@ -23,7 +23,7 @@ public class MemberService implements Serializable {
 
 	@Inject
 	private PersonService personService;
-
+	
 	@Inject
 	private Logger log;
 

@@ -33,7 +33,6 @@ import org.xdi.model.attribute.AttributeUsageType;
 import org.xdi.model.attribute.Multivalued;
 import org.xdi.model.scim.ScimCustomAtribute;
 import org.xdi.model.user.UserRole;
-import org.xdi.service.SchemaService;
 import org.xdi.util.INumGenerator;
 import org.xdi.util.OxConstants;
 import org.xdi.util.StringHelper;
@@ -54,9 +53,6 @@ public class AttributeService extends org.xdi.service.AttributeService {
 
 	@Inject
 	private ApplianceService applianceService;
-
-	@Inject
-	private SchemaService schemaService;
 
 	@Inject
 	private OrganizationService organizationService;
@@ -333,7 +329,6 @@ public class AttributeService extends org.xdi.service.AttributeService {
 	 */
 	public void addAttribute(GluuAttribute attribute) {
 		ldapEntryManager.persist(attribute);
-
 		event.select(new EventTypeQualifier(Events.EVENT_CLEAR_ATTRIBUTES)).fire(Events.EVENT_CLEAR_ATTRIBUTES);
 	}
 
@@ -359,7 +354,6 @@ public class AttributeService extends org.xdi.service.AttributeService {
 	public void removeAttribute(GluuAttribute attribute) {
 		log.trace("Removing attribute {}", attribute.getDisplayName());
 		ldapEntryManager.remove(attribute);
-
 		event.select(new EventTypeQualifier(Events.EVENT_CLEAR_ATTRIBUTES)).fire(Events.EVENT_CLEAR_ATTRIBUTES);
 	}
 
