@@ -117,6 +117,12 @@ public class OxAuthClient extends Entry implements Serializable {
     @LdapAttribute(name = "oxAuthSubjectType")
     private OxAuthSubjectType subjectType;
 
+    @LdapAttribute(name = "oxAccessTokenAsJwt")
+    private boolean accessTokenAsJwt = false;
+
+    @LdapAttribute(name = "oxAccessTokenSigningAlg")
+    private String accessTokenSigningAlg;
+
     @LdapAttribute(name = "oxAuthIdTokenSignedResponseAlg")
     private SignatureAlgorithm idTokenSignedResponseAlg;
 
@@ -158,7 +164,7 @@ public class OxAuthClient extends Entry implements Serializable {
 
     @LdapAttribute(name = "oxAuthPostLogoutRedirectURI")
     private String[] postLogoutRedirectUris;
-    
+
     @LdapAttribute(name = "oxClaimRedirectURI")
     private String[] claimRedirectURI ;
 
@@ -208,7 +214,7 @@ public class OxAuthClient extends Entry implements Serializable {
     public void setSelected(boolean selected) {
         this.selected = selected;
     }
-    
+
     public String[] getClaimRedirectURI() {
 		return claimRedirectURI;
 	}
@@ -407,6 +413,22 @@ public class OxAuthClient extends Entry implements Serializable {
 
     public void setSubjectType(OxAuthSubjectType subjectType) {
         this.subjectType = subjectType;
+    }
+
+    public boolean isAccessTokenAsJwt() {
+        return accessTokenAsJwt;
+    }
+
+    public void setAccessTokenAsJwt(boolean accessTokenAsJwt) {
+        this.accessTokenAsJwt = accessTokenAsJwt;
+    }
+
+    public String getAccessTokenSigningAlg() {
+        return accessTokenSigningAlg;
+    }
+
+    public void setAccessTokenSigningAlg(String accessTokenSigningAlg) {
+        this.accessTokenSigningAlg = accessTokenSigningAlg;
     }
 
     public SignatureAlgorithm getIdTokenSignedResponseAlg() {

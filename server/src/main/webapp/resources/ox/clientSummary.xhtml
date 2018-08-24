@@ -134,6 +134,16 @@
                                                      id="subjectTypeId" />
                                 </ox:decorate>
 
+                                <ox:decorate id="accessTokenAsJwt" rendered="#{!empty _client.accessTokenAsJwt and _client.accessTokenAsJwt ne null }"
+                                             label="#{msg['clientForm.accessTokenAsJwt']}">
+                                    <h:outputText value="#{_client.accessTokenAsJwt}" id="accessTokenAsJwtId" />
+                                </ox:decorate>
+
+                                <ox:decorate id="accessTokenSigningAlg" rendered="#{!empty _client.accessTokenSigningAlg and _client.accessTokenSigningAlg ne null }"
+                                             label="#{msg['clientForm.accessTokenSigningAlg']}">
+                                    <h:outputText value="#{_client.accessTokenSigningAlg}" id="accessTokenSigningAlgId" />
+                                </ox:decorate>
+
                                 <ox:decorate id="idTokenSignedResponseAlg" rendered="#{!empty _client.idTokenSignedResponseAlg and _client.idTokenSignedResponseAlg ne null }"
                                              label="#{msg['clientForm.jWSAlgorithmForSigning']}">
                                     <h:outputText value="#{_client.idTokenSignedResponseAlg}"
