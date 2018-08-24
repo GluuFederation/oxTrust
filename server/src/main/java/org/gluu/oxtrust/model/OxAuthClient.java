@@ -6,14 +6,6 @@
 
 package org.gluu.oxtrust.model;
 
-import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
-
-import javax.persistence.Transient;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
 import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
 import org.gluu.site.ldap.persistence.annotation.LdapEntry;
 import org.gluu.site.ldap.persistence.annotation.LdapObjectClass;
@@ -22,6 +14,13 @@ import org.xdi.ldap.model.GluuBoolean;
 import org.xdi.oxauth.model.common.GrantType;
 import org.xdi.oxauth.model.common.ResponseType;
 import org.xdi.util.security.StringEncrypter.EncryptionException;
+
+import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
 
 /**
  * oxAuthClient
@@ -116,6 +115,12 @@ public class OxAuthClient extends Entry implements Serializable {
 
     @LdapAttribute(name = "oxAuthSubjectType")
     private OxAuthSubjectType subjectType;
+
+    @LdapAttribute(name = "oxAccessTokenAsJwt")
+    private boolean accessTokenAsJwt = false;
+
+    @LdapAttribute(name = "oxAccessTokenSigningAlg")
+    private String accessTokenSigningAlg;
 
     @LdapAttribute(name = "oxAuthIdTokenSignedResponseAlg")
     private SignatureAlgorithm idTokenSignedResponseAlg;
@@ -407,6 +412,22 @@ public class OxAuthClient extends Entry implements Serializable {
 
     public void setSubjectType(OxAuthSubjectType subjectType) {
         this.subjectType = subjectType;
+    }
+
+    public boolean isAccessTokenAsJwt() {
+        return accessTokenAsJwt;
+    }
+
+    public void setAccessTokenAsJwt(boolean accessTokenAsJwt) {
+        this.accessTokenAsJwt = accessTokenAsJwt;
+    }
+
+    public String getAccessTokenSigningAlg() {
+        return accessTokenSigningAlg;
+    }
+
+    public void setAccessTokenSigningAlg(String accessTokenSigningAlg) {
+        this.accessTokenSigningAlg = accessTokenSigningAlg;
     }
 
     public SignatureAlgorithm getIdTokenSignedResponseAlg() {
