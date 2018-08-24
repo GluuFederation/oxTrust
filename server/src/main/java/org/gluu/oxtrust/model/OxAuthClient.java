@@ -120,7 +120,7 @@ public class OxAuthClient extends Entry implements Serializable {
     private boolean accessTokenAsJwt = false;
 
     @LdapAttribute(name = "oxAccessTokenSigningAlg")
-    private String accessTokenSigningAlg;
+    private SignatureAlgorithm accessTokenSigningAlg;
 
     @LdapAttribute(name = "oxAuthIdTokenSignedResponseAlg")
     private SignatureAlgorithm idTokenSignedResponseAlg;
@@ -422,11 +422,11 @@ public class OxAuthClient extends Entry implements Serializable {
         this.accessTokenAsJwt = accessTokenAsJwt;
     }
 
-    public String getAccessTokenSigningAlg() {
+    public SignatureAlgorithm getAccessTokenSigningAlg() {
         return accessTokenSigningAlg;
     }
 
-    public void setAccessTokenSigningAlg(String accessTokenSigningAlg) {
+    public void setAccessTokenSigningAlg(SignatureAlgorithm accessTokenSigningAlg) {
         this.accessTokenSigningAlg = accessTokenSigningAlg;
     }
 
