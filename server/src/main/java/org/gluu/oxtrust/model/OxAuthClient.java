@@ -414,7 +414,7 @@ public class OxAuthClient extends Entry implements Serializable {
         this.subjectType = subjectType;
     }
 
-    public GluuBoolean isAccessTokenAsJwt() {
+    public GluuBoolean getAccessTokenAsJwt() {
         return accessTokenAsJwt;
     }
 
