@@ -118,7 +118,7 @@ public class OxAuthClient extends Entry implements Serializable {
     private OxAuthSubjectType subjectType;
 
     @LdapAttribute(name = "oxAccessTokenAsJwt")
-    private GluuBoolean accessTokenAsJwt = false;
+    private GluuBoolean accessTokenAsJwt;
 
     @LdapAttribute(name = "oxAccessTokenSigningAlg")
     private SignatureAlgorithm accessTokenSigningAlg;
