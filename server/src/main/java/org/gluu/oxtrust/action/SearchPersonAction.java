@@ -13,8 +13,6 @@ import javax.enterprise.context.ConversationScoped;
 import javax.faces.application.FacesMessage;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
@@ -46,11 +44,11 @@ public class SearchPersonAction implements Serializable {
 	@Inject
 	private ConversationService conversationService;
 
-	@NotNull
-	@Size(min = 2, max = 30, message = "Length of search string should be between 2 and 30")
 	private String searchPattern;
 
 	private String oldSearchPattern;
+
+	private boolean firstLaunch = false;
 
 	private List<GluuCustomPerson> personList;
 
@@ -58,24 +56,31 @@ public class SearchPersonAction implements Serializable {
 	private IPersonService personService;
 
 	public String start() {
+		firstLaunch = true;
 		return search();
 	}
 
 	public String search() {
-		if (Util.equals(this.oldSearchPattern, this.searchPattern)) {
+		if (!firstLaunch && (this.searchPattern.isEmpty() || this.searchPattern.length() < 2)) {
+			firstLaunch = false;
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Length of search string should be between 2 and 30");
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
-
+		if (Util.equals(this.oldSearchPattern, this.searchPattern)) {
+			firstLaunch = false;
+			return OxTrustConstants.RESULT_SUCCESS;
+		}
 		try {
 			this.personList = personService.searchPersons(this.searchPattern);
 			this.oldSearchPattern = this.searchPattern;
-			this.searchPattern="";
+			this.searchPattern = "";
+			firstLaunch = false;
 		} catch (Exception ex) {
 			log.error("Failed to find persons", ex);
-			
+
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to find persons");
 			conversationService.endConversation();
-
+			firstLaunch = false;
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 
