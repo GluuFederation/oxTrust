@@ -123,7 +123,7 @@
                 <h:inputTextarea styleClass="form-control setAttributeDescriptionField" value="#{_attribute.description}" label="#{msg['attribute.description']}" rows="3" size="40" maxlength="4000" required="true" id="descriptionId" disabled="#{not _attributeAction.canEdit()}"/>
              </ox:decorate>
             
-             <ox:decorate id="validationToggle" styleClass="form-control" label="#{msg['attribute.enableCustomValidation']}">
+             <ox:decorate id="validationToggle" label="#{msg['attribute.enableCustomValidation']}">
                 <h:selectBooleanCheckbox value="#{_attributeAction.validationToggle}"
                 	id="validationToggleId" styleClass="enableCustomValidationValue" disabled="#{not _attributeAction.canEdit()}">
                 	<a4j:ajax  event="click"  render="validation" />
@@ -139,7 +139,7 @@
 	             </h:panelGroup>
              </h:panelGroup>
              
-             <ox:decorate template="/WEB-INF/incl/layout/#{_attributeAction.canEdit() ? 'edit' : 'view'}.xhtml" id="tooltipToggle" styleClass="form-control" label="#{msg['attribute.enableTooltip']} ">
+             <ox:decorate template="/WEB-INF/incl/layout/#{_attributeAction.canEdit() ? 'edit' : 'view'}.xhtml" id="tooltipToggle" label="#{msg['attribute.enableTooltip']} ">
                 <h:selectBooleanCheckbox value="#{_attributeAction.tooltipToggle}"
                 	id="tooltipToggleId" styleClass="enableTooltipField" disabled="#{not _attributeAction.canEdit()}">
                 	<a4j:ajax  event="click"  render="tooltip" />
