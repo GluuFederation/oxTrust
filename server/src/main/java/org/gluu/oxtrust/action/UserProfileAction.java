@@ -81,7 +81,7 @@ public class UserProfileAction implements Serializable {
 
 	@Inject
 	private WhitePagesAction whitePagesAction;
-	
+
 	@Inject
 	private ImapDataService imapDataService;
 
@@ -90,7 +90,7 @@ public class UserProfileAction implements Serializable {
 
 	@Inject
 	private Identity identity;
-	
+
 	@Inject
 	private OxTrustAuditService oxTrustAuditService;
 
@@ -100,23 +100,22 @@ public class UserProfileAction implements Serializable {
 	private GluuCustomPerson person;
 
 	private List<String> optOuts;
-	
-	
+
 	private GluuIMAPData imapData;
 
-    public GluuIMAPData getImapData() {
+	public GluuIMAPData getImapData() {
 		return imapData;
 	}
 
 	public void setImapData(GluuIMAPData imapData) {
 		this.imapData = imapData;
 	}
-	
+
 	@PostConstruct
 	public void init() {
 		this.imapData = new GluuIMAPData();
 		this.imapData.setImapPassword(new ImapPassword());
-		
+
 	}
 
 	private static final String photoAttributes[][] = new String[][] { { "gluuPerson", "photo1" }, };
@@ -143,8 +142,8 @@ public class UserProfileAction implements Serializable {
 		addOpts();
 		addPhotoAttribute();
 		userPasswordAction.setPerson(this.person);
-		if(this.person.getGluuIMAPData() != null){
-			this.imapData=imapDataService.getGluuIMAPDataFromJson(this.person.getGluuIMAPData());
+		if (this.person.getGluuIMAPData() != null) {
+			this.imapData = imapDataService.getGluuIMAPDataFromJson(this.person.getGluuIMAPData());
 		}
 
 		return OxTrustConstants.RESULT_SUCCESS;
@@ -152,17 +151,21 @@ public class UserProfileAction implements Serializable {
 
 	public String update() {
 		try {
+			if (!userEmailIsUniqAtEditionTime(this.person.getAttribute("mail"))) {
+				facesMessages.add(FacesMessage.SEVERITY_ERROR,
+						"#{msg['UpdatePersonAction.faileUpdateUserMailidExist']} %s", person.getMail());
+				return OxTrustConstants.RESULT_FAILURE;
+			}
 			if (this.imapData != null) {
-				List<GluuCustomAttribute> customAttributes = this.person
-						.getCustomAttributes();
+				List<GluuCustomAttribute> customAttributes = this.person.getCustomAttributes();
 				for (GluuCustomAttribute gluuCustomAttribute : customAttributes) {
 					if (gluuCustomAttribute.getName().equals("gluuIMAPData")) {
-						gluuCustomAttribute.setValue(imapDataService
-								.getJsonStringFromImap(this.imapData));
+						gluuCustomAttribute.setValue(imapDataService.getJsonStringFromImap(this.imapData));
+						break;
 					}
 				}
 			}
-			
+
 			GluuCustomPerson person = this.person;
 			// TODO: Reffactor
 			person.setGluuOptOuts(optOuts.size() == 0 ? null : optOuts);
@@ -172,27 +175,28 @@ public class UserProfileAction implements Serializable {
 				externalUpdateUserService.executeExternalUpdateUserMethods(this.person);
 			}
 			personService.updatePerson(this.person);
-			oxTrustAuditService.audit(this.person.getDisplayName()+" PROFILE UPDATED",
-					identity.getUser(),
+			oxTrustAuditService.audit(this.person.getDisplayName() + " PROFILE UPDATED", identity.getUser(),
 					(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 			if (runScript) {
 				externalUpdateUserService.executeExternalPostUpdateUserMethods(this.person);
 			}
 		} catch (LdapMappingException ex) {
 			log.error("Failed to update profile {}", person.getInum(), ex);
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update profile '#{userProfileAction.person.displayName}'");
+			facesMessages.add(FacesMessage.SEVERITY_ERROR,
+					"Failed to update profile '#{userProfileAction.person.displayName}'");
 
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 
 		customAttributeAction.savePhotos();
 
-		facesMessages.add(FacesMessage.SEVERITY_INFO, "Profile '#{userProfileAction.person.displayName}' updated successfully");
+		facesMessages.add(FacesMessage.SEVERITY_INFO,
+				"Profile '#{userProfileAction.person.displayName}' updated successfully");
 
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
-	
-	public void removeImapData(String inum) {		
+
+	public void removeImapData(String inum) {
 		this.imapData = null;
 		customAttributeAction.removeCustomAttribute(inum);
 	}
@@ -210,8 +214,8 @@ public class UserProfileAction implements Serializable {
 
 		List<GluuCustomAttribute> customAttributes = this.person.getCustomAttributes();
 
-		customAttributeAction.initCustomAttributes(attributes, customAttributes, origins, appConfiguration
-				.getPersonObjectClassTypes(), appConfiguration.getPersonObjectClassDisplayNames());
+		customAttributeAction.initCustomAttributes(attributes, customAttributes, origins,
+				appConfiguration.getPersonObjectClassTypes(), appConfiguration.getPersonObjectClassDisplayNames());
 	}
 
 	public void addOpts() {
@@ -284,5 +288,22 @@ public class UserProfileAction implements Serializable {
 			return imageService.getBlankPhotoData();
 		}
 		return imageService.getThumImageData(image);
+	}
+
+	public boolean userEmailIsUniqAtEditionTime(String email) {
+		boolean emailIsUniq = false;
+		oxTrustAuditService.audit("userEmailIsUniqAtEditionTime email:"+email);
+		List<GluuCustomPerson> gluuCustomPersons = personService.getPersonsByEmail(email);
+		oxTrustAuditService.audit("gluuCustomPersons size:" + gluuCustomPersons.size());
+		if (gluuCustomPersons == null || gluuCustomPersons.isEmpty()) {
+			emailIsUniq = true;
+		}
+		oxTrustAuditService.audit("gluuCustomPersons size:" + gluuCustomPersons.get(0).getUid());
+		if (gluuCustomPersons.size() == 1 && gluuCustomPersons.get(0).getAttribute("mail").equalsIgnoreCase(email)
+				&& gluuCustomPersons.get(0).getInum().equalsIgnoreCase(this.person.getInum())) {
+			emailIsUniq = true;
+		}
+
+		return emailIsUniq;
 	}
 }

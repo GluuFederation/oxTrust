@@ -91,17 +91,17 @@
 
            input[type=text]:focus, input[type=email]:focus, input[type=password]:focus, input[autocomplete=off]:focus, input[type=url]{
              border-radius: 5px !important;
-             border: 2px solid #ccc;
+             border: 1px solid #ccc;
            }
            
            input[type=checkbox]{
              border-radius: 5O% !important;
-             border: 1px solid #337ab7 !important
+             border: 2px solid #ccc !important;
            }
            
            input[type=checkbox]:focus{
             border-radius: 5O% !important;
-            border: 1px solid #337ab7 !important
+            border:none;
            }
            
            textarea:focus{
@@ -128,6 +128,11 @@
           } 
           .icheckbox_square-blue{
             border-radius: 50% !important;
+            border: 1px solid #ccc !important
+          }
+          .icheckbox_square-blue:focus{
+            border-radius: 50% !important;
+            border: none;
           }
           
           select{

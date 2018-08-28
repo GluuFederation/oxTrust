@@ -10,7 +10,7 @@
         <f:viewAction action="#{registerPersonAction.initPerson}" if="#{registerPersonAction.person == null}"
                       onPostback="false"/>
     </f:metadata>
-
+    
     <ui:define name="head">
         <style>
             .login-box, .register-box {
@@ -26,6 +26,7 @@
             <script async="async" defer="defer" src="https://www.google.com/recaptcha/api.js"/>
         </ui:fragment>
     </ui:define>
+    	
 
     <ui:define name="body">
         <div id="formArea">
@@ -81,7 +82,7 @@
                                                         <h:inputText class="form-control" id="custId_#{_custAttr.metadata.displayName}"
                                                                      label="#{(empty _custAttr.metadata) ? _custAttr.name : _custAttr.metadata.displayName }"
                                                                      maxlength="60"
-                                                                     rendered="#{not _custAttr.readonly and (_custAttr.metadata.dataType ne 'DATE')}"
+                                                                     rendered="#{not _custAttr.readonly and (_custAttr.metadata.dataType ne 'DATE') and (_custAttr.metadata.displayName ne 'Gender, male or female') }"
                                                                      required="#{_mandatory}" size="40"
                                                                      tabindex="#{_custAttrIdx + 1}"
                                                                      value="#{_custAttr.value}">
@@ -96,6 +97,11 @@
                                                             <rich:validator event="keyup"/>
 
                                                         </h:inputText>
+                                                        <h:selectOneMenu value="#{_custAttr.value}" styleClass="form-control"
+																  rendered="#{not _custAttr.readonly and (_custAttr.metadata.dataType ne 'DATE') and (_custAttr.metadata.displayName eq 'Gender, male or female') }">
+																	<f:selectItem itemValue="female" itemLabel="female" />
+																	<f:selectItem itemValue="male" itemLabel="male" />
+																</h:selectOneMenu>
                                                         <h:message for="custId_#{_custAttr.metadata.displayName}"/>
                                                         <!-- Read-only Attribute -->
                                                         <h:outputText id="custIdText" rendered="#{_custAttr.readonly}"
