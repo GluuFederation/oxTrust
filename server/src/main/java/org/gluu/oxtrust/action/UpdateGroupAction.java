@@ -190,7 +190,7 @@ public class UpdateGroupAction implements Serializable {
 			// Update group
 			try {
 				groupService.updateGroup(this.group);
-				oxTrustAuditService.audit("GROUP " + this.group.getInum() + " UPDATED",
+				oxTrustAuditService.audit("GROUP " + this.group.getInum() + " **"+this.group.getDisplayName()+ "** UPDATED",
 						identity.getUser(),
 						(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 				updatePersons(oldMembers, this.members);
@@ -211,7 +211,7 @@ public class UpdateGroupAction implements Serializable {
 			this.group.setInum(this.inum);
 			try {
 				groupService.addGroup(this.group);
-				oxTrustAuditService.audit("GROUP " + this.group.getInum() + " ADDED",
+				oxTrustAuditService.audit("GROUP " + this.group.getInum() + " "+this.group.getDisplayName()+ " ADDED",
 						identity.getUser(),
 						(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 				updatePersons(oldMembers, this.members);
@@ -236,7 +236,7 @@ public class UpdateGroupAction implements Serializable {
 			// Remove group
 			try {
 				groupService.removeGroup(this.group);
-				oxTrustAuditService.audit("GROUP " + this.group.getInum() + " REMOVED",
+				oxTrustAuditService.audit("GROUP " + this.group.getInum() + " **"+this.group.getDisplayName()+ "** REMOVED",
 						identity.getUser(),
 						(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 				facesMessages.add(FacesMessage.SEVERITY_INFO, "Group '#{updateGroupAction.group.displayName}' removed successfully");

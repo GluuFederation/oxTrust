@@ -172,7 +172,7 @@ public class UserProfileAction implements Serializable {
 				externalUpdateUserService.executeExternalUpdateUserMethods(this.person);
 			}
 			personService.updatePerson(this.person);
-			oxTrustAuditService.audit(this.person.getDisplayName()+" PROFILE UPDATED",
+			oxTrustAuditService.audit(this.person.getInum()+ " **"+this.person.getDisplayName()+"** PROFILE UPDATED",
 					identity.getUser(),
 					(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 			if (runScript) {
