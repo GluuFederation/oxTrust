@@ -96,7 +96,7 @@
 										<div class="right">
 										<ox:decorate label="#{(_scriptType.value != 'uma_claims_gathering')   ? msg['customScript.level']  : msg['customScript.priority']}" required="true" styleClass="break-word" forId="#{msg['customScript.description']}" tooltip="#{msg['customScript.description']}" oneColumn="true">
 										 
-										<rich:inputNumberSpinner value="#{_customScril}"  styleClass="form-control inputNumberSpinnerBox"  inputSize="2" minValue="0" maxValue="100"/>
+										<rich:inputNumberSpinner value="#{_customScript.level}"  styleClass="inputNumberSpinnerBox"  inputSize="4" minValue="0" maxValue="100"/>
 		                          		</ox:decorate>
 		                          		</div>
 		                          		

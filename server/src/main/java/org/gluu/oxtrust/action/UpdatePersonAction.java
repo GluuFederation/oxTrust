@@ -104,9 +104,6 @@ public class UpdatePersonAction implements Serializable {
 	private CustomAttributeAction customAttributeAction;
 
 	@Inject
-	private UserPasswordAction userPasswordAction;
-
-	@Inject
 	private AppConfiguration appConfiguration;
 
 	@Inject
@@ -120,10 +117,10 @@ public class UpdatePersonAction implements Serializable {
 
 	@Inject
 	private FidoDeviceService fidoDeviceService;
-	
+
 	@Inject
 	private Identity identity;
-	
+
 	@Inject
 	private OxTrustAuditService oxTrustAuditService;
 
@@ -326,9 +323,6 @@ public class UpdatePersonAction implements Serializable {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-		userPasswordAction.setPerson(this.person);
-
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
@@ -746,7 +740,8 @@ public class UpdatePersonAction implements Serializable {
 		if (gluuCustomPersons == null || gluuCustomPersons.isEmpty()) {
 			userNameIsUniq = true;
 		}
-		if (gluuCustomPersons.size() == 1 && gluuCustomPersons.get(0).getUid().equalsIgnoreCase(uid)) {
+		if (gluuCustomPersons.size() == 1 && gluuCustomPersons.get(0).getUid().equalsIgnoreCase(uid)
+				&& gluuCustomPersons.get(0).getInum().equalsIgnoreCase(this.person.getInum())) {
 			userNameIsUniq = true;
 		}
 		return userNameIsUniq;
@@ -772,7 +767,8 @@ public class UpdatePersonAction implements Serializable {
 		if (gluuCustomPersons == null || gluuCustomPersons.isEmpty()) {
 			emailIsUniq = true;
 		}
-		if (gluuCustomPersons.size() == 1 && gluuCustomPersons.get(0).getAttribute("mail").equalsIgnoreCase(email)) {
+		if (gluuCustomPersons.size() == 1 && gluuCustomPersons.get(0).getAttribute("mail").equalsIgnoreCase(email)
+				&& gluuCustomPersons.get(0).getInum().equalsIgnoreCase(this.person.getInum())) {
 			emailIsUniq = true;
 		}
 
