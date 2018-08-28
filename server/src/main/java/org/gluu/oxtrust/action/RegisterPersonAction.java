@@ -274,12 +274,12 @@ public class RegisterPersonAction implements Serializable {
 				}
 				if ((this.inum != null) && !this.inum.isEmpty()) {
 					personService.updatePerson(this.person);
-					oxTrustAuditService.audit(this.person.getInum()+" REGISTRATION UPDATED",
+					oxTrustAuditService.audit(this.person.getInum()+ " **"+this.person.getDisplayName()+"** REGISTRATION UPDATED",
 							identity.getUser(),
 							(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 				} else {
 					personService.addPerson(this.person);
-					oxTrustAuditService.audit(this.person.getInum()+" REGISTERED",
+					oxTrustAuditService.audit(this.person.getInum()+ " **"+this.person.getDisplayName()+ "** REGISTERED",
 							identity.getUser(),
 							(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 				}

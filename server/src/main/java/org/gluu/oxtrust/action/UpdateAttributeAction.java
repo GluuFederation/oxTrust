@@ -229,7 +229,7 @@ public class UpdateAttributeAction implements Serializable {
 				}
 
 				attributeService.updateAttribute(this.attribute);
-				oxTrustAuditService.audit("ATTRIBUTE " + this.attribute.getInum() + " UPDATED",
+				oxTrustAuditService.audit("ATTRIBUTE " + this.attribute.getInum() + " **"+this.attribute.getDisplayName()+ "** UPDATED",
 						identity.getUser(),
 						(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 			} catch (LdapMappingException ex) {
@@ -282,7 +282,7 @@ public class UpdateAttributeAction implements Serializable {
 
 		try {
 			attributeService.addAttribute(this.attribute);
-			oxTrustAuditService.audit("ATTRIBUTE " + this.attribute.getInum() + " ADDED",
+			oxTrustAuditService.audit("ATTRIBUTE " + this.attribute.getInum() + " **"+this.attribute.getDisplayName()+ "** ADDED",
 					identity.getUser(),
 					(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 		} catch (LdapMappingException ex) {
@@ -356,7 +356,7 @@ public class UpdateAttributeAction implements Serializable {
 			showAttributeDeleteConfirmation = false;
 
 			if (trustService.removeAttribute(this.attribute)) {
-				oxTrustAuditService.audit("ATTRIBUTE " + this.attribute.getInum() + " REMOVED",
+				oxTrustAuditService.audit("ATTRIBUTE " + this.attribute.getInum() + " **"+this.attribute.getDisplayName()+ "** REMOVED",
 						identity.getUser(),
 						(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 				facesMessages.add(FacesMessage.SEVERITY_INFO, "Attribute '#{updateAttributeAction.attribute.displayName}' removed successfully");

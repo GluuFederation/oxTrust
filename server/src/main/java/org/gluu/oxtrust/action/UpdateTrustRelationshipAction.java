@@ -653,7 +653,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 				}
 			}
 			trustService.updateTrustRelationship(this.trustRelationship);
-			oxTrustAuditService.audit("TR "+this.trustRelationship.getDisplayName()+" UPDATED",
+			oxTrustAuditService.audit("TR "  +this.trustRelationship.getInum()+" **"+this.trustRelationship.getDisplayName()+"** UPDATED",
 					identity.getUser(),
 					(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 
@@ -683,7 +683,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 			svnSyncTimer.updateTrustRelationship(this.trustRelationship, identity.getCredentials().getUsername());
 		} else {
 			trustService.addTrustRelationship(this.trustRelationship);
-			oxTrustAuditService.audit("TR "+this.trustRelationship.getDisplayName()+" ADDED",
+			oxTrustAuditService.audit("TR "+this.trustRelationship.getInum()+" **"+this.trustRelationship.getDisplayName()+"** ADDED",
 					identity.getUser(),
 					(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 			svnSyncTimer.addTrustRelationship(this.trustRelationship, identity.getCredentials().getUsername());
@@ -866,7 +866,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 					}
 					shibboleth3ConfService.removeSpMetadataFile(this.trustRelationship.getSpMetaDataFN());
 					trustService.removeTrustRelationship(this.trustRelationship);
-					oxTrustAuditService.audit("TR "+this.trustRelationship.getDisplayName()+" REMOVED",
+					oxTrustAuditService.audit("TR "+this.trustRelationship.getInum()+" **"+this.trustRelationship.getDisplayName()+"** REMOVED",
 							identity.getUser(),
 							(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 					svnSyncTimer.removeTrustRelationship(this.trustRelationship, identity.getCredentials().getUsername());
