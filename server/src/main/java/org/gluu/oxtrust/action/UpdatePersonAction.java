@@ -379,7 +379,8 @@ public class UpdatePersonAction implements Serializable {
 					externalUpdateUserService.executeExternalUpdateUserMethods(this.person);
 				}
 				personService.updatePerson(this.person);
-				oxTrustAuditService.audit("USER " + this.person.getInum() + " UPDATED", identity.getUser(),
+				oxTrustAuditService.audit("USER " + this.person.getInum() + " **"+this.person.getDisplayName()+"** UPDATED",
+						identity.getUser(),
 						(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 				if (runScript) {
 					externalUpdateUserService.executeExternalPostUpdateUserMethods(this.person);
@@ -423,7 +424,8 @@ public class UpdatePersonAction implements Serializable {
 					externalUpdateUserService.executeExternalAddUserMethods(this.person);
 				}
 				personService.addPerson(this.person);
-				oxTrustAuditService.audit("USER " + this.person.getInum() + " ADDED", identity.getUser(),
+				oxTrustAuditService.audit("USER " + this.person.getInum() + " **"+this.person.getDisplayName()+ "** ADDED",
+						identity.getUser(),
 						(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 				if (runScript) {
 					externalUpdateUserService.executeExternalPostAddUserMethods(this.person);
@@ -475,7 +477,8 @@ public class UpdatePersonAction implements Serializable {
 					externalUpdateUserService.executeExternalDeleteUserMethods(this.person);
 				}
 				memberService.removePerson(this.person);
-				oxTrustAuditService.audit("USER " + this.person.getInum() + " REMOVED", identity.getUser(),
+				oxTrustAuditService.audit("USER " + this.person.getInum() + " **"+this.person.getDisplayName()+ "** REMOVED",
+						identity.getUser(),
 						(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 				if (runScript) {
 					externalUpdateUserService.executeExternalPostDeleteUserMethods(this.person);
