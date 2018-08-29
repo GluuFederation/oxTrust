@@ -47,6 +47,70 @@
                     }
                 </style>
             </ui:fragment>
+     <h:outputStylesheet>
+           input[type=text], input[type=email], input[type=password],input[autocomplete=off], input[type=url]{
+           padding:5px; 
+           border: 2px solid #ccc;
+           margin-left:2px !important;
+           border-radius: 5px !important;
+           }
+
+           input[type=text]:focus, input[type=email]:focus, input[type=password]:focus, input[autocomplete=off]:focus, input[type=url]{
+             border-radius: 5px !important;
+             border: 1px solid #ccc;
+           }
+           
+           input[type=checkbox]{
+             border-radius: 5O% !important;
+             border: 2px solid #ccc !important;
+           }
+           
+           input[type=checkbox]:focus{
+            border-radius: 5O% !important;
+            border:none;
+           }
+           
+           textarea:focus{
+             border-radius: 5px !important;
+             margin-left:2px !important;
+             border: 2px solid #ccc;
+           }
+           
+           textarea{
+             padding:5px; 
+             margin-left:2px !important;
+             border-radius: 5px !important;
+           }
+
+            input[type=submit] {
+            padding:5px 15px; 
+            cursor:pointer;
+            border-radius: 5px !important;
+          }
+          .btn-primary, .btn-success , .btn-danger{
+            border:0 none;
+            cursor:pointer;
+            border-radius: 5px !important;
+          } 
+          .icheckbox_square-blue{
+            border-radius: 50% !important;
+            border: 1px solid #ccc !important
+          }
+          .icheckbox_square-blue:focus{
+            border-radius: 50% !important;
+            border: none;
+          }
+          
+          select{
+           border-radius: 5px !important;
+          }
+          
+         .roundedSelectBox{
+             border: 2px solid #ccc;
+             border-radius: 5px !important;
+          }
+             
+     </h:outputStylesheet>
         </h:head>
         <h:body styleClass="login-page">
             <div class="wrapper">

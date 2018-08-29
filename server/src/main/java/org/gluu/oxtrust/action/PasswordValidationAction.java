@@ -99,7 +99,7 @@ public class PasswordValidationAction implements Cloneable, Serializable {
 			if (this.password.equals(this.confirm)) {
 				person.setUserPassword(this.password);
 				personService.updatePerson(person);
-				oxTrustAuditService.audit("USER " + person.getInum() + " PASSWORD UPDATED", identity.getUser(),
+				oxTrustAuditService.audit("USER " + person.getInum() + " **"+person.getDisplayName()+"** PASSWORD UPDATED", identity.getUser(),
 						(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 				facesMessages.add(FacesMessage.SEVERITY_INFO, "Successfully changed!", "Successfully changed!");
 			} else {

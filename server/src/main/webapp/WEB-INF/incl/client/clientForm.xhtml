@@ -297,6 +297,31 @@
                                     </h:selectOneMenu>
                                 </ox:decorate>
 
+                                <ox:decorate id="accessTokenAsJwt"
+                                             label="#{msg['clientForm.accessTokenAsJwt']}">
+                                    <h:selectOneMenu id="accessTokenAsJwtId"
+                                                     styleClass="col-sm-9 form-control"
+                                                     value="#{_client.accessTokenAsJwt}"
+                                                     required="false">
+                                        <f:selectItems value="#{organizationService.javaBooleanSelectionTypes}"
+                                                       var="_type" itemLabel="#{_type.displayName}"/>
+                                        <f:converter converterId="org.gluu.jsf2.converter.EnumConverter"/>
+                                    </h:selectOneMenu>
+                                </ox:decorate>
+
+                                <ox:decorate id="accessTokenSigningAlg"
+                                             label="#{msg['clientForm.accessTokenSigningAlg']}">
+                                    <h:selectOneMenu styleClass="col-sm-9 form-control"
+                                                     value="#{_client.accessTokenSigningAlg}"
+                                                     id="accessTokenSigningAlgId"
+                                                     required="false">
+                                        <f:selectItem noSelectionOption="true" itemLabel=""/>
+                                        <f:selectItems value="#{clientService.signatureAlgorithmsWithoutNone}"
+                                                       var="_type" itemLabel="#{_type.displayName}"/>
+                                        <f:converter converterId="org.gluu.jsf2.converter.EnumConverter"/>
+                                    </h:selectOneMenu>
+                                </ox:decorate>
+
                                 <ox:decorate id="idTokenSignedResponseAlg"
                                              label="#{msg['clientForm.jWSAlgorithmForSigning']}">
                                     <h:selectOneMenu styleClass="col-sm-9 form-control"

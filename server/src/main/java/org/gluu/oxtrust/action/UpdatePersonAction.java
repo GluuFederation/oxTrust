@@ -117,7 +117,13 @@ public class UpdatePersonAction implements Serializable {
 	
 	@Inject
 	private PersistenceEntryManager ldapEntryManager;
-	
+
+	@Inject
+	private FidoDeviceService fidoDeviceService;
+
+	@Inject
+	private Identity identity;
+
 	@Inject
 	private FidoDeviceService fidoDeviceService;
 
@@ -318,9 +324,6 @@ public class UpdatePersonAction implements Serializable {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-		userPasswordAction.setPerson(this.person);
-
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
@@ -376,6 +379,9 @@ public class UpdatePersonAction implements Serializable {
 					externalUpdateUserService.executeExternalUpdateUserMethods(this.person);
 				}
 				personService.updatePerson(this.person);
+				oxTrustAuditService.audit("USER " + this.person.getInum() + " **"+this.person.getDisplayName()+"** UPDATED",
+						identity.getUser(),
+						(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 				if (runScript) {
 					externalUpdateUserService.executeExternalPostUpdateUserMethods(this.person);
 				}
@@ -418,6 +424,9 @@ public class UpdatePersonAction implements Serializable {
 					externalUpdateUserService.executeExternalAddUserMethods(this.person);
 				}
 				personService.addPerson(this.person);
+				oxTrustAuditService.audit("USER " + this.person.getInum() + " **"+this.person.getDisplayName()+ "** ADDED",
+						identity.getUser(),
+						(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 				if (runScript) {
 					externalUpdateUserService.executeExternalPostAddUserMethods(this.person);
 				}
@@ -468,6 +477,9 @@ public class UpdatePersonAction implements Serializable {
 					externalUpdateUserService.executeExternalDeleteUserMethods(this.person);
 				}
 				memberService.removePerson(this.person);
+				oxTrustAuditService.audit("USER " + this.person.getInum() + " **"+this.person.getDisplayName()+ "** REMOVED",
+						identity.getUser(),
+						(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 				if (runScript) {
 					externalUpdateUserService.executeExternalPostDeleteUserMethods(this.person);
 				}
@@ -702,7 +714,8 @@ public class UpdatePersonAction implements Serializable {
 		if (gluuCustomPersons == null || gluuCustomPersons.isEmpty()) {
 			userNameIsUniq = true;
 		}
-		if (gluuCustomPersons.size() == 1 && gluuCustomPersons.get(0).getUid().equalsIgnoreCase(uid)) {
+		if (gluuCustomPersons.size() == 1 && gluuCustomPersons.get(0).getUid().equalsIgnoreCase(uid)
+				&& gluuCustomPersons.get(0).getInum().equalsIgnoreCase(this.person.getInum())) {
 			userNameIsUniq = true;
 		}
  		return userNameIsUniq;
@@ -728,7 +741,8 @@ public class UpdatePersonAction implements Serializable {
 		if (gluuCustomPersons == null || gluuCustomPersons.isEmpty()) {
 			emailIsUniq = true;
 		}
-		if (gluuCustomPersons.size() == 1 && gluuCustomPersons.get(0).getAttribute("mail").equalsIgnoreCase(email)) {
+		if (gluuCustomPersons.size() == 1 && gluuCustomPersons.get(0).getAttribute("mail").equalsIgnoreCase(email)
+				&& gluuCustomPersons.get(0).getInum().equalsIgnoreCase(this.person.getInum())) {
 			emailIsUniq = true;
 		}
 		return emailIsUniq;

@@ -196,7 +196,7 @@ public class UpdateScopeAction implements Serializable {
 			// Update scope
 			try {
 				scopeService.updateScope(this.scope);
-				oxTrustAuditService.audit("OPENID SCOPE " + this.scope.getDisplayName() + " UPDATED",
+				oxTrustAuditService.audit("OPENID SCOPE " +this.scope.getInum()+" **"+ this.scope.getDisplayName() + "** UPDATED",
 						identity.getUser(),
 						(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 			} catch (BasePersistenceException ex) {
@@ -218,7 +218,7 @@ public class UpdateScopeAction implements Serializable {
 			this.scope.setInum(this.inum);
 			try {
 				scopeService.addScope(this.scope);
-				oxTrustAuditService.audit("OPENID SCOPE " + this.scope.getDisplayName() + " ADDED",
+				oxTrustAuditService.audit("OPENID SCOPE " +this.scope.getInum()+ " **"+ this.scope.getDisplayName() + "** ADDED",
 						identity.getUser(),
 						(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 			} catch (Exception ex) {
@@ -261,7 +261,7 @@ public class UpdateScopeAction implements Serializable {
 			// Remove scope
 			try {
 				scopeService.removeScope(this.scope);
-				oxTrustAuditService.audit("OPENID SCOPE " + this.scope.getDisplayName() + " REMOVED",
+				oxTrustAuditService.audit("OPENID SCOPE " +this.scope.getInum()+ " **" + this.scope.getDisplayName() + "** REMOVED",
 						identity.getUser(),
 						(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 				facesMessages.add(FacesMessage.SEVERITY_INFO,

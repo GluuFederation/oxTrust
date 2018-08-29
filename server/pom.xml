@@ -324,10 +324,10 @@
 		</dependency>
 		
 		<!-- Primfaces -->
-		<dependency>
+		<!--<dependency>
 				<groupId>org.primefaces</groupId>
 				<artifactId>primefaces</artifactId>
-			</dependency>
+			</dependency>-->
 
 		<!-- Commons libs -->
 		<dependency>
