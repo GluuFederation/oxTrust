@@ -60,6 +60,8 @@
                     </div>
                 </ui:define>
             </ui:decorate>
+            
+            <ox:clientSummary _clientAction="#{updateClientAction}" _client="#{updateClientAction.client}" id="summary"   />
 
             <ox:inputTextDialog acceptMethod="#{updateClientAction.acceptSelectLoginUri}"
                                 cancelMethod="#{updateClientAction.cancelSelectLoginUri}" dialogWidth="600"
