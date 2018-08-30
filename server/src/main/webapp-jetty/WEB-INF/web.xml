@@ -50,7 +50,7 @@
 	</context-param>
 	<context-param>
 		<param-name>org.richfaces.fileUpload.maxRequestSize</param-name>
-		<param-value>2000000</param-value>
+		<param-value>30000000</param-value>
 	</context-param>
 	<!-- Suppress spurious stylesheets -->
 	<context-param>
