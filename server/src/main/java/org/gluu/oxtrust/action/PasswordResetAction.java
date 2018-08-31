@@ -78,8 +78,18 @@ public class PasswordResetAction implements Serializable {
 
 	public String start() throws ParseException {
 		GluuAppliance appliance = applianceService.getAppliance();
-		this.request = ldapEntryManager.find(PasswordResetRequest.class,
-				"oxGuid=" + this.guid + ",ou=resetPasswordRequests," + appliance.getDn());
+		try {
+			this.request = ldapEntryManager.find(PasswordResetRequest.class,
+					"oxGuid=" + this.guid + ",ou=resetPasswordRequests," + appliance.getDn());
+		}catch (Exception e) {
+			facesMessages.add(FacesMessage.SEVERITY_ERROR,
+					"The reset link is no more valid."
+					+ "It has already been used to reset your password or it has expired."
+					+ "Re-enter your e-mail to generate a new link.");
+			conversationService.endConversation();
+			return OxTrustConstants.RESULT_FAILURE;
+		}
+		
 		Calendar requestCalendarExpiry = Calendar.getInstance();
 		Calendar currentCalendar = Calendar.getInstance();
 		if (request != null) {
