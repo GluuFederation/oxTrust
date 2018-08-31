@@ -50,7 +50,6 @@ public class PasswordReminderAction implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-
 	@Inject
 	private PersistenceEntryManager ldapEntryManager;
 
@@ -81,7 +80,6 @@ public class PasswordReminderAction implements Serializable {
 	@Inject
 	private MailService mailService;
 
-	
 	@Inject
 	private Identity identity;
 
@@ -210,9 +208,13 @@ public class PasswordReminderAction implements Serializable {
 				mailService.sendMail(email, null, subj, messagePlain, messageHtml);
 
 				ldapEntryManager.persist(request);
-				oxTrustAuditService.audit("PASSWORD REMINDER REQUEST" + request.getBaseDn() + " ADDED",
-						identity.getUser(),
-						(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
+				try {
+					oxTrustAuditService.audit("PASSWORD REMINDER REQUEST" + request.getBaseDn() + " ADDED",
+							identity.getUser(),
+							(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
+				} catch (Exception e) {
+				}
+
 			}
 			return OxTrustConstants.RESULT_SUCCESS;
 		}

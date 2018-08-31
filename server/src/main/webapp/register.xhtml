@@ -45,7 +45,7 @@
                             <div class="row" style="margin-bottom:20px;">
                                 <div class="col-md-12">
                                     <div id="register" style="color:white;">
-                                        <h1>#{msg['register.signUp']}</h1>
+                                        <h1 class="text-center">#{msg['register.signUp']}</h1>
                                         #{msg['register.toCreateAnAccount']}
                                         <richext:spacer width="4"/>
                                         <h:link includeViewParams="false" outcome="/login"
@@ -58,7 +58,7 @@
                             <rich:messages layout="list" showDetail="false" showSummary="true">
                             </rich:messages>
 
-                            <div class="login-box-body">
+                            <div class="login-box-body text-center" style="border-radius:10px; background:#F9F6F6;">
                                 <div class="formColumn row">
                                     <div class="col-md-12">
                                         <ui:param name="_mandatoryAttributes"
