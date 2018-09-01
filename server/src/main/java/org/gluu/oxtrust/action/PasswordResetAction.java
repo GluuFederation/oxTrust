@@ -9,11 +9,8 @@ package org.gluu.oxtrust.action;
 import java.io.Serializable;
 import java.text.ParseException;
 import java.util.Calendar;
-<<<<<<< HEAD
-=======
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
->>>>>>> 25852818... Implement token expiration logic for password reset oxAuth #881
 
 import javax.enterprise.context.ConversationScoped;
 import javax.faces.application.FacesMessage;
@@ -38,7 +35,7 @@ import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.service.PasswordResetService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.PersistenceEntryManager;
-import org.python.jline.internal.Log;
+import org.gluu.persist.exception.EntryPersistenceException;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.util.StringHelper;
