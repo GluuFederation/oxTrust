@@ -29,6 +29,7 @@ import org.apache.logging.log4j.core.LoggerContext;
 import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.config.ConfigurationFactory.PersistenceConfiguration;
 import org.gluu.oxtrust.ldap.cache.service.CacheRefreshTimer;
+import org.gluu.oxtrust.service.CleanerTimer;
 import org.gluu.oxtrust.service.MetricService;
 import org.gluu.oxtrust.service.cdi.event.CentralLdap;
 import org.gluu.oxtrust.service.custom.LdapCentralConfigurationReload;
@@ -153,6 +154,9 @@ public class AppInitializer {
 
     @Inject
     private LoggerService loggerService;
+    
+    @Inject
+    private CleanerTimer cleanerTimer;
 
     private AtomicBoolean isActive;
     private long lastFinishedTime;
@@ -209,6 +213,7 @@ public class AppInitializer {
         entityIDMonitoringService.initTimer();
         cacheRefreshTimer.initTimer();
         customScriptManager.initTimer(supportedCustomScriptTypes);
+        cleanerTimer.initTimer();
         statusCheckerDaily.initTimer();
         statusCheckerTimer.initTimer();
         svnSyncTimer.initTimer();
