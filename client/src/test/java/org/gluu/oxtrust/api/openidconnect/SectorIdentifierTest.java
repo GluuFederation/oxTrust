@@ -144,7 +144,7 @@ public class SectorIdentifierTest {
 		OxAuthSectorIdentifier sector = new OxAuthSectorIdentifier();
 		sector.setId(UUID.randomUUID().toString());
 		sector.setSelected(true);
-		List<String> redirectUris = new ArrayList<>();
+		List<String> redirectUris = new ArrayList<String>();
 		redirectUris.add("https://simple.redirect.com" + new Random().nextInt(100));
 		sector.setRedirectUris(redirectUris);
 		return sector;
