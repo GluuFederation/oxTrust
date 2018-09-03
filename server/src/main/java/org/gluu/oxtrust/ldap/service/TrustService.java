@@ -79,7 +79,7 @@ public class TrustService implements Serializable {
 	public static final String GENERATED_SSL_ARTIFACTS_DIR = "ssl";
 
 	public void addTrustRelationship(GluuSAMLTrustRelationship trustRelationship) {
-		log.info("Creating TR " + trustRelationship.getInum());
+		trustRelationship.setGluuContainerFederation(getRightDn(trustRelationship.getGluuContainerFederation()));
 		String[] clusterMembers = appConfiguration.getClusteredInums();
 		String applianceInum = appConfiguration.getApplianceInum();
 		if (clusterMembers == null || clusterMembers.length == 0) {
@@ -161,14 +161,37 @@ public class TrustService implements Serializable {
 	}
 
 	public GluuSAMLTrustRelationship getRelationshipByInum(String inum) {
-		return ldapEntryManager.find(GluuSAMLTrustRelationship.class, getDnForTrustRelationShip(inum));
+		try {
+			return ldapEntryManager.find(GluuSAMLTrustRelationship.class, getDnForTrustRelationShip(inum));
+		} catch (Exception e) {
+			log.error(e.getMessage());
+			return null;
+		}
+
 	}
 
 	public GluuSAMLTrustRelationship getRelationshipByDn(String dn) {
+		if (dn != null && dn.contains("Entry")) {
+			dn = getRightDn(dn);
+		}
 		if (StringHelper.isNotEmpty(dn)) {
-			return ldapEntryManager.find(GluuSAMLTrustRelationship.class, dn);
+			try {
+				return ldapEntryManager.find(GluuSAMLTrustRelationship.class, dn);
+			} catch (Exception e) {
+				log.info(e.getMessage());
+			}
+
 		}
 		return null;
+	}
+
+	private String getRightDn(String dn) {
+		String newDn1 = dn.split("\\[")[1];
+		String newDn2 = newDn1.substring(3);
+		String[] newDn3 = newDn2.split("\\,");
+		String valueToBeRemoved = newDn3[newDn3.length - 1];
+		dn = newDn2.replace(",".concat(valueToBeRemoved), "");
+		return dn;
 	}
 
 	/**
@@ -402,11 +425,11 @@ public class TrustService implements Serializable {
 		}
 		return null;
 	}
-        
-        public GluuSAMLTrustRelationship getTrustContainerFederation(GluuSAMLTrustRelationship trustRelationship) {
-            return getRelationshipByDn(trustRelationship.getGluuContainerFederation());
-        }
-	
+	public GluuSAMLTrustRelationship getTrustContainerFederation(GluuSAMLTrustRelationship trustRelationship) {
+		GluuSAMLTrustRelationship relationshipByDn = getRelationshipByDn(trustRelationship.getDn());
+		return relationshipByDn;
+	}
+
 	public List<GluuSAMLTrustRelationship> searchSAMLTrustRelationships(String pattern, int sizeLimit) {
 		String[] targetArray = new String[] { pattern };
 		Filter displayNameFilter = Filter.createSubstringFilter(OxTrustConstants.displayName, null, targetArray, null);
