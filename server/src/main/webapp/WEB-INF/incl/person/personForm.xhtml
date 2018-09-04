@@ -198,7 +198,7 @@
                                                     <f:event type="postValidate" listener="#{_customAttributeAction.validateAttributeValues}" />
                                                     <ui:param name="_aid"
                                                               value="#{_customAttributeAction.attributeIds[_custAttr.metadata]}"/>
-                                                    <ox:decorate label="#{_custAttr.metadata.displayName} #{_valueIdx == 0 ? '' : _valueIdx}"
+                                                    <ox:decorate label="#{_custAttr.metadata.displayName eq 'Gender, male or female' ? 'Gender' : _custAttr.metadata.displayName } #{_valueIdx == 0 ? '' : _valueIdx}"
                                                                 rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName ne 'Password')}">
 
 														<div class="col-xs-10">
@@ -212,6 +212,7 @@
                                                             rendered="#{(_custAttr.adminCanEdit or _mustEnter) and 
 			                                                            (_custAttr.metadata.dataType.value ne 'boolean') and 
 			                                                            (_custAttr.metadata.displayName ne 'Password') and 
+			                                                            (_custAttr.metadata.displayName ne 'Gender, male or female') and
 			                                                            (_custAttr.metadata.dataType.value ne 'certificate') and 
 			                                                            (_custAttr.metadata.displayName ne 'Email')}">
 															 	<rich:validator event="blur"/>
@@ -225,6 +226,7 @@
                                                             rendered="#{(_custAttr.adminCanEdit or _mustEnter) and 
 			                                                            (_custAttr.metadata.dataType.value ne 'boolean') and 
 			                                                            (_custAttr.metadata.displayName ne 'Password') and 
+			                                                            (_custAttr.metadata.displayName ne 'Gender, male or female') and
 			                                                            (_custAttr.metadata.dataType.value ne 'certificate') and
 			                                                            (_custAttr.metadata.displayName eq 'Email')}">
 															 </h:inputText>
@@ -239,6 +241,14 @@
                                                                         var="_type" itemLabel="#{_type.displayName}"/>
                                                                 <f:converter
                                                                         converterId="org.gluu.jsf2.converter.EnumConverter"/>
+                                                            </h:selectOneMenu>
+                                                            <h:selectOneMenu styleClass="form-control #{_custAttr.metadata.displayName}"
+                                                                             value="#{_custAttr.value}"
+                                                                             required="#{_mustEnter}"
+                                                                             id="GenderId"
+                                                                             rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'Gender, male or female') }">
+                                                                    <f:selectItem itemValue="female" itemLabel="female" />
+																	<f:selectItem itemValue="male" itemLabel="male" />
                                                             </h:selectOneMenu>
                                                             <h:selectOneMenu styleClass="form-control #{_custAttr.metadata.displayName}"
                                                                              value="#{_custAttr.booleanValues[_valueIdx]}"
