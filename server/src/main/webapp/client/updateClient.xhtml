@@ -51,6 +51,10 @@
                                 onclick="#{rich:component('clientPassword:changePasswordModalPanel')}.show();"
                                 style="margin-left:3px;" styleClass="btn btn-primary"
                                 value="#{msg['client.changeClientSecret']}"/>
+                        <a4j:commandButton styleClass="btn btn-primary " style="margin-left:3px;" rendered="true"
+                                                               value="#{msg['clientForm.clientSummary']}"
+                                                               onclick="#{rich:component('summary:clientSummary')}.show();"
+                                                               eventsQueue="clientQueue"/>        
                         <a4j:commandButton ajaxSingle="true" eventsQueue="clientQueue"
                                            onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();"
                                            rendered="#{not _new}" style="margin-left:3px;" styleClass="btn btn-primary"
