@@ -8,7 +8,6 @@
                 xmlns:rich="http://richfaces.org/rich"
                 xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
                 xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
-                xmlns:p="http://primefaces.org/ui"
 >
     <style type="text/css">
         .odd {
@@ -158,17 +157,6 @@
 		}
 
     </h:outputScript>
-    <h:panelGroup id="summarygroup" >
-     		<ox:clientSummary _clientAction="#{_clientAction}" _client="#{_client}" dialogWidth="600"
-                                    id="summary"  inputWidth="80"
-                                    label="#{msg['client.selectLogoutRedirectURI']}" maxLength="256"  />
-     
-     </h:panelGroup>
-
-		<h:panelGroup layout="block" style="padding-top: 1%;">
-					<p:commandButton value="Client Config Summary"  styleClass="btn btn-primary" type="button" onclick="PF('dlg1').show();" />
-					
-        </h:panelGroup>
 
     <h:form id="clientForm">
         <div class="row">
@@ -176,7 +164,11 @@
                 <div class="box box-primary">
                     <div class="box-header">
                         <div style="display: inline-block;width: 75% !important;">
-
+							
+							<a4j:commandButton styleClass="btn btn-primary " style="margin-top: 5px;" rendered="#{not _new}"
+                                                               value="#{msg['clientForm.clientSummary']}"
+                                                               oncomplete="#{rich:component('summary:clientSummary')}.show();"
+                                                               execute="@this" eventsQueue="clientQueue"/>
                             <h:panelGroup>
                                 <ox:decorate id="inum" rendered="#{not _new}" label="#{msg['clientForm.inum']}">
                                     <h:outputText styleClass="form-control" value="#{_client.inum}"/>
@@ -913,7 +905,7 @@
                                              rendered="#{_client.clientSecretExpiresAt != null || !_clientAction.update}"
                                              label="#{msg['clientForm.clientSecretExpires']}">
                                      <rich:calendar value="#{_client.clientSecretExpiresAt}" id="calendar"
-                                        popup="false" datePattern="d/M/yy HH:mm" showApplyButton="true" style="width:300px">
+                                        popup="false" datePattern="dd/MM/yyyy HH:mm" showApplyButton="true" style="width:300px">
                                      </rich:calendar>
                                 </ox:decorate>
 

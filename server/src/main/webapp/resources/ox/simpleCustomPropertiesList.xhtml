@@ -98,7 +98,7 @@
                     </a4j:repeat>
                     
    
-                    <a4j:commandLink  action="#{cc.attrs.propertiesAction.addItemToSimpleCustomProperties(cc.attrs.properties)}" render="customList" execute="@this"
+                    <a4j:commandLink  action="#{cc.attrs.propertiesAction.addItemToSimpleCustomProperties(cc.attrs.properties)}" render="customList" execute="@region"
                         rendered="#{empty maxItems or maxItems gt properties.size()}">
                         <h:outputText  style="margin-top:-5px" styleClass="btn btn-primary addNewPropertyButton"  value="#{cc.attrs.labelAdd eq null or  cc.attrs.labelAdd eq '' ? cc.attrs.label : cc.attrs.labelAdd}" />
                     </a4j:commandLink>

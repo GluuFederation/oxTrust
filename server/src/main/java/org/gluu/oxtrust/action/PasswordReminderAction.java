@@ -31,6 +31,7 @@ import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.OrganizationalUnit;
 import org.gluu.oxtrust.model.PasswordResetRequest;
 import org.gluu.oxtrust.security.Identity;
+import org.gluu.oxtrust.service.PasswordResetService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.PersistenceEntryManager;
 import org.hibernate.validator.constraints.Email;
@@ -49,7 +50,6 @@ import org.xdi.util.StringHelper;
 public class PasswordReminderAction implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-
 
 	@Inject
 	private PersistenceEntryManager ldapEntryManager;
@@ -81,7 +81,9 @@ public class PasswordReminderAction implements Serializable {
 	@Inject
 	private MailService mailService;
 
-	
+    @Inject
+    private PasswordResetService passwordResetService;
+
 	@Inject
 	private Identity identity;
 
@@ -174,23 +176,15 @@ public class PasswordReminderAction implements Serializable {
 			person.setMail(email);
 			List<GluuCustomPerson> matchedPersons = personService.findPersons(person, 0);
 			if (matchedPersons != null && matchedPersons.size() > 0) {
-				GluuAppliance appliance = applianceService.getAppliance();
-
-				OrganizationalUnit requests = new OrganizationalUnit();
-				requests.setOu("resetPasswordRequests");
-				requests.setDn("ou=resetPasswordRequests," + appliance.getDn());
-				if (!ldapEntryManager.contains(requests)) {
-					ldapEntryManager.persist(requests);
-				}
+				passwordResetService.prepareBranch();
 
 				PasswordResetRequest request = new PasswordResetRequest();
-				do {
-					request.setCreationDate(Calendar.getInstance().getTime());
-					request.setPersonInum(matchedPersons.get(0).getInum());
-					request.setOxGuid(StringHelper.getRandomString(16));
-					request.setBaseDn(
-							"oxGuid=" + request.getOxGuid() + ", ou=resetPasswordRequests," + appliance.getDn());
-				} while (ldapEntryManager.contains(request));
+				String guid = passwordResetService.generateGuidForNewPasswordResetRequest();
+
+				request.setCreationDate(Calendar.getInstance().getTime());
+                request.setPersonInum(matchedPersons.get(0).getInum());
+                request.setOxGuid(guid);
+                request.setDn(passwordResetService.getDnForPasswordResetRequest(guid));
 
 				rendererParameters.setParameter("givenName", matchedPersons.get(0).getGivenName());
 				rendererParameters.setParameter("organizationName",
@@ -209,10 +203,14 @@ public class PasswordReminderAction implements Serializable {
 
 				mailService.sendMail(email, null, subj, messagePlain, messageHtml);
 
-				ldapEntryManager.persist(request);
-				oxTrustAuditService.audit("PASSWORD REMINDER REQUEST" + request.getBaseDn() + " ADDED",
-						identity.getUser(),
-						(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
+                passwordResetService.addPasswordResetRequest(request);
+				try {
+					oxTrustAuditService.audit("PASSWORD REMINDER REQUEST" + request.getBaseDn() + " ADDED",
+							identity.getUser(),
+							(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
+				} catch (Exception e) {
+				}
+
 			}
 			return OxTrustConstants.RESULT_SUCCESS;
 		}

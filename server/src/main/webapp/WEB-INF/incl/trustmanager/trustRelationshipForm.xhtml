@@ -257,7 +257,7 @@
 
 								<h:panelGroup id="FederationWizardEntitySelection">
 									<h:panelGroup
-										rendered="#{(trustService.getTrustContainerFederation(_trustRelationship) ne null) and (_trustRelationship.spMetaDataSourceType.value eq 'federation')}">
+										rendered="#{(trustService.getTrustContainerFederation(_trustRelationship) eq null) and (_trustRelationship.spMetaDataSourceType.value eq 'federation')}">
 										<ox:decorate
 											id="spMetaDataSourceTypeFederationEntitySelection" label="#{msg['trustmanager.entityID']}">
 

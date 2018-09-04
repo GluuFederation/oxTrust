@@ -607,6 +607,26 @@
             "id": "disableJdkLogger",
             "description": "Boolean value specifying whether to enable JDK Loggers.",
             "type": "boolean"
+        },
+        "passwordResetRequestExpirationTime": {
+            "id": "passwordResetRequestExpirationTime",
+            "description": "Expiration time in seconds for password reset requests.",
+            "type": "integer",
+            "multipleOf": 1,
+            "maximum": 2147483647,
+            "minimum": 0,
+            "exclusiveMaximum": false,
+            "exclusiveMinimum": false
+        },
+        "cleanServiceInterval": {
+            "id": "cleanServiceInterval",
+            "description": "Time interval for the Clean Service in seconds.",
+            "type": "integer",
+            "multipleOf": 1,
+            "maximum": 2147483647,
+            "minimum": 1,
+            "exclusiveMaximum": false,
+            "exclusiveMinimum": false
         }
     },
     "required": [
@@ -704,6 +724,8 @@
         "idp3EncryptionCert",
         "oxIncommonFlag",
         "loggingLevel",
-        "disableJdkLogger"
+        "disableJdkLogger",
+        "cleanServiceInterval",
+        "passwordResetRequestExpirationTime"
     ]
 }

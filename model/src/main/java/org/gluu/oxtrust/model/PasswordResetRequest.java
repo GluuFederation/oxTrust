@@ -17,7 +17,7 @@ import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
 import org.gluu.site.ldap.persistence.annotation.LdapEntry;
 import org.gluu.site.ldap.persistence.annotation.LdapObjectClass;
 
-@LdapEntry
+@LdapEntry(sortBy = "creationDate")
 @LdapObjectClass(values = { "top", "gluuPasswordResetRequest" })
 public class PasswordResetRequest extends Entry implements Serializable {
 
