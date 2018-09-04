@@ -164,11 +164,7 @@
                 <div class="box box-primary">
                     <div class="box-header">
                         <div style="display: inline-block;width: 75% !important;">
-							
-							<a4j:commandButton styleClass="btn btn-primary " style="margin-top: 5px;" rendered="#{not _new}"
-                                                               value="#{msg['clientForm.clientSummary']}"
-                                                               oncomplete="#{rich:component('summary:clientSummary')}.show();"
-                                                               execute="@this" eventsQueue="clientQueue"/>
+                        
                             <h:panelGroup>
                                 <ox:decorate id="inum" rendered="#{not _new}" label="#{msg['clientForm.inum']}">
                                     <h:outputText styleClass="form-control" value="#{_client.inum}"/>
