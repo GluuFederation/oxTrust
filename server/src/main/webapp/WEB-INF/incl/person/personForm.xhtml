@@ -155,7 +155,8 @@
                 <div class="box box-primary">
                     <div class="box-header">
                     </div>
-                    <div style="display: inline-block; width: 100% !important;">
+<!--                     <div style="display: inline-block; width: 100% !important;"> -->
+                        <div class="container-fluid">
                         <h:form>
                             <h:panelGrid columns="3" width="100%" columnClasses="attributeColumn, , formColumn"
                                          border="0" cellpadding="0" cellspacing="0">
@@ -200,9 +201,9 @@
                                                               value="#{_customAttributeAction.attributeIds[_custAttr.metadata]}"/>
                                                     <ox:decorate label="#{_custAttr.metadata.displayName eq 'Gender, male or female' ? 'Gender' : _custAttr.metadata.displayName } #{_valueIdx == 0 ? '' : _valueIdx}"
                                                                 rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName ne 'Password')}"
-                                                                 >
+                                                                 leftClass="col-sm-3" rightClass="col-sm-9">
 
-<!-- 														<div class="col-xs-10"> -->
+														<div class="col-xs-10">
 														  <h:inputText  styleClass="form-control #{_custAttr.metadata.displayName}"
 															p:placeholder="#{msg['person.clickToEnter']} #{_custAttr.metadata.displayName} #{_valueIdx == 0 ? '' : _valueIdx}"
 															style="width:100%"
@@ -272,11 +273,11 @@
 																<rich:validator event="blur"/>
 																<f:validator validatorId="attributeValidator" />                                                              
                                                             </h:inputTextarea>
-<!--                                                         </div> -->
+                                                        </div>
                                                         
                                                         <h:outputText value="&#160;"/>                                                        
                                                         
-                                                        <!-- <div class="col-xs-2"> -->
+                                                        <div class="col-xs-2">
                                                             <a4j:commandLink
                                                                     action="#{_customAttributeAction.removeCustomAttribute(_custAttr.metadata.inum)}"
                                                                     render="selectedCustomAttributesId"
@@ -304,12 +305,12 @@
                                                                     rendered="#{_custAttr.adminCanEdit and _custAttr.metadata.oxMultivaluedAttribute.value and _valueIdx == 0}" execute="@this">
                                                             </a4j:commandLink>
                                                             
-                                                            <!-- </div> -->
+                                                            </div>
                                                     </ox:decorate>
 
                                                     <ox:decorate
                                                                 rendered="#{not (_custAttr.adminCanEdit or _mustEnter)}" label="#{_custAttr.metadata.displayName}"
-                                                                >
+                                                                leftClass="col-sm-3" rightClass="col-sm-9">
                                                         <h:outputText style="margin-left:19px;"
                                                                       value="#{_custAttr.values[_valueIdx]}"
                                                                       rendered="#{not (_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName ne 'memberOf')}"/>
@@ -328,8 +329,8 @@
                                                         
                                                         
                                                  	<ox:decorate label="#{msg['person.password']}" rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'Password')}"
-                                                 	   >
-														<div class="col-xs-12">  
+                                                 	   leftClass="col-sm-3" rightClass="col-sm-9">
+														<div class="col-xs-10">  
 															<h:inputSecret 
 																	style="width:100%"
 																	p:placeholder="#{msg['person.clickToEnter']} #{msg['person.password']}"
@@ -343,14 +344,14 @@
                                                                 <rich:validator event="blur" oncomplete="hidePasswordValue(this, #{rich:component('custpasswordId')}.getValue(),'hidePassword')"/>
                                                             </h:inputSecret>                                                                                         
                                                                                                                          
-							                                <h:graphicImage value="/img/eye.png" id="viewPassword" onclick="return changePasswordtoTextType(this,'custpasswordId','hidePassword');"/>
-							                                <h:graphicImage value="/img/eye-hidden.png" id="hidePassword" style="display: none;" onclick="return changeTexttoPasswordType(this,'custpasswordId','viewPassword');"/>
+							                                <h:graphicImage value="/img/eye.png" id="viewPassword" style="margin-left:90%; margin-top:-50px;" onclick="return changePasswordtoTextType(this,'custpasswordId','hidePassword');"/>
+							                                <h:graphicImage value="/img/eye-hidden.png" id="hidePassword" style="display: none; margin-left:90%; margin-top:-20px;" onclick="return changeTexttoPasswordType(this,'custpasswordId','viewPassword');"/>
                                                         </div>
                                                      </ox:decorate>               
                                                         
                                                      <ox:decorate label="#{msg['person.confirmPassword']}" rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'Password')}"
-                                                      >
-														<div class="col-xs-12">                                                                                           
+                                                       leftClass="col-sm-3" rightClass="col-sm-9">
+														<div class="col-xs-10">                                                                                           
                                                             <h:inputSecret  styleClass="form-control #{_custAttr.metadata.displayName}"
 																	style="width:100%"       
                                                                     p:placeholder="#{msg['person.clickToEnter']} #{msg['person.confirmPassword']}"
@@ -363,8 +364,8 @@
                                                                     onkeyup="switchTab(event)">
                                                                 <rich:validator event="blur" oncomplete="hidePasswordValue(this, #{rich:component('custconfirmpasswordId')}.getValue(),'hideCustPassword')"/>
                                                             </h:inputSecret> 
-                                                            <h:graphicImage value="/img/eye.png" id="viewCustPassword" onclick="return changePasswordtoTextType(this,'custconfirmpasswordId','hideCustPassword');"/>
-							                                <h:graphicImage value="/img/eye-hidden.png" id="hideCustPassword" style="display: none;" onclick="return changeTexttoPasswordType(this,'custconfirmpasswordId','viewCustPassword');"/>
+                                                            <h:graphicImage value="/img/eye.png" style="margin-left:90%; margin-top:-50px;" id="viewCustPassword" onclick="return changePasswordtoTextType(this,'custconfirmpasswordId','hideCustPassword');"/>
+							                                <h:graphicImage value="/img/eye-hidden.png" id="hideCustPassword" style="display: none; margin-left:90%; margin-top:-50px;" onclick="return changeTexttoPasswordType(this,'custconfirmpasswordId','viewCustPassword');"/>
                                                                                                                     
                                                         </div>
                                                      </ox:decorate>                                                        
