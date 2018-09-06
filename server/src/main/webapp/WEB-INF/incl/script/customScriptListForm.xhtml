@@ -67,7 +67,8 @@
 			                      <h:panelGroup layout="block" class="form-script">
 		                      			<div  class="form-group">
 		                      			
-										<ox:decorate label="#{msg['customScript.name']}" forId="#{msg['customScript.name']}" tooltip="#{msg['customScript.name']}" oneColumn="true">
+										<ox:decorate label="#{msg['customScript.name']}" forId="#{msg['customScript.name']}" tooltip="#{msg['customScript.name']}" 
+										leftClass="col-sm-3" rightClass="col-sm-8" >
 										 <h:inputText value="#{_customScript.name}" size="90" required="#{empty param['rq']}" validatorMessage="#{msg['customScript.name.error']}" styleClass="form-control scriptNameTextBox" style="width: 90%;">
 												<f:validateRegex pattern="^[a-zA-Z0-9_]+$"/>
 										</h:inputText>
@@ -76,7 +77,8 @@
 
 		                                <div class="form-group">
 		                                
-										<ox:decorate label="#{msg['customScript.description']}" required="true" styleClass="break-word" forId="#{msg['customScript.description']}" tooltip="#{msg['customScript.description']}" oneColumn="true">
+										<ox:decorate label="#{msg['customScript.description']}" required="true" styleClass="break-word" forId="#{msg['customScript.description']}" tooltip="#{msg['customScript.description']}" 
+										leftClass="col-sm-3" rightClass="col-sm-8">
 										 <h:inputText value="#{_customScript.description}" size="90"  styleClass="form-control descriptionTextBox" style="width: 90%;">
 												
 										</h:inputText>
@@ -128,7 +130,7 @@
 										
 										<div class="form-group">
 											<div class="left">
-											<ox:decorate label="#{msg['customScript.customProperty']}" styleClass="break-word" forId="#{msg['customScript.customProperty']}" tooltip="#{msg['customScript.customProperty']}" oneColumn="true">
+											<ox:decorate label="#{msg['customScript.customProperty']}" styleClass="break-word" forId="#{msg['customScript.customProperty']}" tooltip="#{msg['customScript.customProperty']}" leftClass="col-sm-8" rightClass="col-sm-3">
 										
 											</ox:decorate>
 											</div>
