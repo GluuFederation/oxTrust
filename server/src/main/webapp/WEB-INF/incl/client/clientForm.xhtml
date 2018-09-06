@@ -295,7 +295,7 @@ px
 				<div class="box box-primary">
 					<div class="box-header">
 
-						<a4j:commandButton styleClass="btn btn-primary "
+						<a4j:commandButton styleClass="btn btn-primary showOIDCSummaryButton"
 							style="margin-left:4%;" rendered="#{not _new}"
 							value="#{msg['clientForm.clientSummary']}"
 							onclick="#{rich:component('summary:clientSummary')}.show();"
@@ -303,12 +303,12 @@ px
 
 						<a4j:commandButton rendered="#{not _new}"
 							onclick="#{rich:component('clientPassword:changePasswordModalPanel')}.show();"
-							style="margin-left:3px;" styleClass="btn btn-primary"
+							style="margin-left:3px;" styleClass="btn btn-primary changeOIDCSecretButton"
 							value="#{msg['client.changeClientSecret']}" />
 						<a4j:commandButton ajaxSingle="true" eventsQueue="clientQueue"
 							onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();"
-							rendered="#{not _new}" styleClass="btn btn-primary"
-							style="margin-left:3px; background: red !important; background-color: red !important;"
+							rendered="#{not _new}" styleClass="btn btn-primary deleteOIDCButton"
+							style="float: right; margin-right:1%; width:150px; border:none; background: #d62728 !important; background-color: #d62728 !important;"
 							value="#{msg['client.delete']}" />
 						<div class="container-fluid">
 							<h:panelGroup>
@@ -343,7 +343,7 @@ px
 											</ox:decorate>
 											<div id="autogenrateid">
 												<a4j:commandLink render="clientSecretId1"
-													style="margin-top:2px; margin-left:25%;"
+													style="margin-top:2px; margin-left:32%;"
 													styleClass="btn btn-primary"
 													value="Auto-Generate Secret Key"
 													action="#{_clientAction.generatePassword()}"
