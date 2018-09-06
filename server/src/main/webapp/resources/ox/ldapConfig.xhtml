@@ -44,7 +44,8 @@
 
 				<h:panelGroup columns="2" columnClasses="alignLeft, removeConfig"
 					width="100%" border="0" cellpadding="0" cellspacing="0">
-					<a4j:commandLink style="margin-right:5%;" styleClass="btn btn-danger deleteSourceServerButton"
+					<a4j:commandButton styleClass="btn btn-primary deleteSourceServerButton"
+					                style="float: right; color: white;margin-bottom:5px; margin-top:-25px; margin-right:-35%; background: #d62728 !important; background-color: #d62728 !important;"
 									value="Remove source server"
 									execute="@this"
 									rendered="#{cc.attrs.displayRemoveButton}"
