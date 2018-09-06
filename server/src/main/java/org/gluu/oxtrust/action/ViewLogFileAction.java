@@ -157,7 +157,7 @@ public class ViewLogFileAction implements Serializable {
 
 	public String getTailOfLogFile() {
 		if (this.activeLogFileIndex == -1) {
-			return "Not Content available";
+			return "No content available";
 		}
 		setCurrentLogFileName(this.logFiles.get(activeLogFileIndex));
 		File activeLogFile = new File(this.logFiles.get(activeLogFileIndex));
