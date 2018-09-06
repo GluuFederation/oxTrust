@@ -199,9 +199,10 @@
                                                     <ui:param name="_aid"
                                                               value="#{_customAttributeAction.attributeIds[_custAttr.metadata]}"/>
                                                     <ox:decorate label="#{_custAttr.metadata.displayName eq 'Gender, male or female' ? 'Gender' : _custAttr.metadata.displayName } #{_valueIdx == 0 ? '' : _valueIdx}"
-                                                                rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName ne 'Password')}">
+                                                                rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName ne 'Password')}"
+                                                                 >
 
-														<div class="col-xs-10">
+<!-- 														<div class="col-xs-10"> -->
 														  <h:inputText  styleClass="form-control #{_custAttr.metadata.displayName}"
 															p:placeholder="#{msg['person.clickToEnter']} #{_custAttr.metadata.displayName} #{_valueIdx == 0 ? '' : _valueIdx}"
 															style="width:100%"
@@ -271,7 +272,7 @@
 																<rich:validator event="blur"/>
 																<f:validator validatorId="attributeValidator" />                                                              
                                                             </h:inputTextarea>
-                                                        </div>
+<!--                                                         </div> -->
                                                         
                                                         <h:outputText value="&#160;"/>                                                        
                                                         
@@ -307,7 +308,8 @@
                                                     </ox:decorate>
 
                                                     <ox:decorate
-                                                                rendered="#{not (_custAttr.adminCanEdit or _mustEnter)}" label="#{_custAttr.metadata.displayName}">
+                                                                rendered="#{not (_custAttr.adminCanEdit or _mustEnter)}" label="#{_custAttr.metadata.displayName}"
+                                                                >
                                                         <h:outputText style="margin-left:19px;"
                                                                       value="#{_custAttr.values[_valueIdx]}"
                                                                       rendered="#{not (_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName ne 'memberOf')}"/>
@@ -325,8 +327,9 @@
                                                  	</ox:decorate>
                                                         
                                                         
-                                                 	<ox:decorate label="#{msg['person.password']}" rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'Password')}">
-														<div class="col-xs-10">  
+                                                 	<ox:decorate label="#{msg['person.password']}" rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'Password')}"
+                                                 	   >
+														<div class="col-xs-12">  
 															<h:inputSecret 
 																	style="width:100%"
 																	p:placeholder="#{msg['person.clickToEnter']} #{msg['person.password']}"
@@ -345,8 +348,9 @@
                                                         </div>
                                                      </ox:decorate>               
                                                         
-                                                     <ox:decorate label="#{msg['person.confirmPassword']}" rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'Password')}">
-														<div class="col-xs-10">                                                                                           
+                                                     <ox:decorate label="#{msg['person.confirmPassword']}" rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'Password')}"
+                                                      >
+														<div class="col-xs-12">                                                                                           
                                                             <h:inputSecret  styleClass="form-control #{_custAttr.metadata.displayName}"
 																	style="width:100%"       
                                                                     p:placeholder="#{msg['person.clickToEnter']} #{msg['person.confirmPassword']}"
