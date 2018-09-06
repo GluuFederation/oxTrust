@@ -9,6 +9,7 @@ package org.gluu.oxtrust.action;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -279,6 +280,14 @@ public class UpdateClientAction implements Serializable {
 	}
 
 	public String save() throws Exception {
+		if (this.client.getClientSecretExpiresAt() == null && !update) {
+			this.client.setClientSecretExpiresAt(new Date());
+		}
+		if (this.client.getClientSecretExpiresAt().before(new Date())) {
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "This client has expired. Update the expiration date in order to save changes");
+			return OxTrustConstants.RESULT_FAILURE;
+		}
+
 		updateLoginURIs();
 		updateLogoutURIs();
 		updateClientLogoutURIs();
@@ -301,7 +310,8 @@ public class UpdateClientAction implements Serializable {
 			// Update client
 			try {
 				clientService.updateClient(this.client);
-				oxTrustAuditService.audit("OPENID CLIENT " +this.client.getInum()+ " **" + this.client.getDisplayName() + "** UPDATED",
+				oxTrustAuditService.audit(
+						"OPENID CLIENT " + this.client.getInum() + " **" + this.client.getDisplayName() + "** UPDATED",
 						identity.getUser(),
 						(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 			} catch (BasePersistenceException ex) {
@@ -326,7 +336,8 @@ public class UpdateClientAction implements Serializable {
 			this.client.setInum(this.inum);
 			try {
 				clientService.addClient(this.client);
-				oxTrustAuditService.audit("OPENID CLIENT "+this.client.getInum()+ " **" + this.client.getDisplayName() + "** ADDED ",
+				oxTrustAuditService.audit(
+						"OPENID CLIENT " + this.client.getInum() + " **" + this.client.getDisplayName() + "** ADDED ",
 						identity.getUser(),
 						(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 			} catch (BasePersistenceException ex) {
@@ -361,7 +372,8 @@ public class UpdateClientAction implements Serializable {
 			// Remove client
 			try {
 				clientService.removeClient(this.client);
-				oxTrustAuditService.audit("OPENID CLIENT " +this.client.getInum()+ " **"+ this.client.getDisplayName() + "** DELETED ",
+				oxTrustAuditService.audit(
+						"OPENID CLIENT " + this.client.getInum() + " **" + this.client.getDisplayName() + "** DELETED ",
 						identity.getUser(),
 						(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 				facesMessages.add(FacesMessage.SEVERITY_INFO,
@@ -674,6 +686,7 @@ public class UpdateClientAction implements Serializable {
 
 	public void cancelSelectScopes() {
 		this.searchAvailableScopePattern = "";
+		this.availableScopes = new ArrayList<OxAuthScope>();
 	}
 
 	public void cancelSelectClaims() {
@@ -1374,5 +1387,4 @@ public class UpdateClientAction implements Serializable {
 		this.client.setOxAuthClientSecret(pwd);
 		this.client.setEncodedClientSecret(encryptionService.encrypt(pwd));
 	}
-
 }
