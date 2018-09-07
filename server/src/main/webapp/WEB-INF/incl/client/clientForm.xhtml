@@ -370,16 +370,16 @@ px
 									</div>
 									<div class="col-sm-6 col-lg-6" style="padding: 0px;">
 										<ox:decorate id="inum" rendered="#{not _new}"
-											label="#{msg['clientForm.inum']}" leftClass="col-sm-2"
-											rightClass="col-sm-10">
-											<h:outputText styleClass="col-sm-12 col-lg-12 form-control"
+											label="#{msg['clientForm.inum']}" leftClass="col-sm-1"
+											rightClass="col-sm-11">
+											<h:outputText style="margin-left:15px;margin-right:15px;" styleClass="col-sm-12 col-lg-12 form-control rounded"
 												value="#{_client.inum}" />
 										</ox:decorate>
 										<ox:decorate id="description"
 											label="#{msg['clientForm.clientDescription']}"
 											leftClass="col-sm-4" rightClass="col-sm-8">
 											<h:inputTextarea value="#{_client.description}" rows="3"
-												styleClass="col-sm-12 form-control" cols="80"
+												styleClass="col-sm-12 form-control rounded" cols="80"
 												maxlength="250" id="descriptionId" />
 										</ox:decorate>
 									</div>
@@ -423,7 +423,7 @@ px
 											label="#{msg['clientForm.persistClientAuthorization']}"
 											leftClass="col-sm-6" rightClass="col-sm-6">
 											<h:selectOneMenu id="persisteClientAuthorizationsId"
-												styleClass="col-sm-9 form-control"
+												styleClass="col-sm-9 form-control rounded"
 												value="#{_client.oxAuthPersistClientAuthorizations}"
 												required="true" onchange="togglePersistAuthorization()">
 												<f:selectItems
@@ -437,7 +437,7 @@ px
 											label="#{msg['clientForm.preAuthorization']}"
 											leftClass="col-sm-6" rightClass="col-sm-6">
 											<h:selectOneMenu id="trustedClientId"
-												styleClass="col-sm-9 form-control"
+												styleClass="col-sm-9 form-control rounded"
 												value="#{_client.oxAuthTrustedClient}" required="true"
 												onchange="togglePersistAuthorization()">
 												<f:selectItems value="#{clientService.oxAuthTrustedClient}"
@@ -449,7 +449,7 @@ px
 										<ox:decorate id="applicatonType"
 											label="#{msg['clientForm.applicationType']}"
 											leftClass="col-sm-6" rightClass="col-sm-6">
-											<h:selectOneMenu styleClass="col-sm-12 form-control"
+											<h:selectOneMenu styleClass="col-sm-12 form-control rounded"
 												value="#{_client.oxAuthAppType}" id="applicationTypeId"
 												required="true">
 												<f:selectItems value="#{clientService.applicationType}"
@@ -462,7 +462,7 @@ px
 										<ox:decorate id="subjectType"
 											label="#{msg['clientForm.subjectType']}" leftClass="col-sm-6"
 											rightClass="col-sm-6">
-											<h:selectOneMenu styleClass="col-sm-9 form-control"
+											<h:selectOneMenu styleClass="col-sm-9 form-control rounded"
 												value="#{_client.subjectType}" id="subjectTypeId"
 												required="true">
 												<f:selectItems value="#{clientService.subjectTypes}"
@@ -475,7 +475,7 @@ px
 											label="#{msg['clientForm.accessTokenAsJwt']}"
 											leftClass="col-sm-6" rightClass="col-sm-6">
 											<h:selectOneMenu id="accessTokenAsJwtId"
-												styleClass="col-sm-9 form-control"
+												styleClass="col-sm-9 form-control rounded"
 												value="#{_client.accessTokenAsJwt}" required="false">
 												<f:selectItems
 													value="#{organizationService.javaBooleanSelectionTypes}"
@@ -498,7 +498,7 @@ px
 										</ox:decorate>
 										<ox:decorate id="jwks" label="#{msg['clientForm.jwks']}"
 											leftClass="col-sm-3" rightClass="col-sm-9">
-											<h:inputTextarea styleClass="form-control"
+											<h:inputTextarea styleClass="form-control rounded"
 												value="#{_client.jwks}" rows="3" cols="80" maxlength="4000"
 												id="jwksId" />
 										</ox:decorate>
@@ -547,7 +547,7 @@ px
 										<ox:decorate id="accessTokenSigningAlg"
 											label="#{msg['clientForm.accessTokenSigningAlg']}"
 											leftClass="col-sm-6" rightClass="col-sm-6">
-											<h:selectOneMenu styleClass="col-sm-9 form-control"
+											<h:selectOneMenu styleClass="col-sm-9 form-control rounded"
 												value="#{_client.accessTokenSigningAlg}"
 												id="accessTokenSigningAlgId" required="false">
 												<f:selectItem noSelectionOption="true" itemLabel="" />
@@ -561,7 +561,7 @@ px
 										<ox:decorate id="idTokenEncryptedResponseAlg"
 											label="#{msg['clientForm.jweAlgorithmForEncrypting']}"
 											leftClass="col-sm-6" rightClass="col-sm-6">
-											<h:selectOneMenu styleClass="col-sm-9 form-control"
+											<h:selectOneMenu styleClass="col-sm-9 form-control rounded"
 												value="#{_client.idTokenEncryptedResponseAlg}"
 												id="idTokenEncryptedResponseAlgId" required="false">
 												<f:selectItem noSelectionOption="true" itemLabel="" />
@@ -575,7 +575,7 @@ px
 										<ox:decorate id="idTokenSignedResponseAlg"
 											label="#{msg['clientForm.jWSAlgorithmForSigning']}"
 											leftClass="col-sm-6" rightClass="col-sm-6">
-											<h:selectOneMenu styleClass="col-sm-9 form-control"
+											<h:selectOneMenu styleClass="col-sm-9 form-control rounded"
 												value="#{_client.idTokenSignedResponseAlg}"
 												id="idTokenSignedResponseAlgId" required="false">
 												<f:selectItem noSelectionOption="true" itemLabel="" />
@@ -589,7 +589,7 @@ px
 										<ox:decorate id="idTokenEncryptedResponseEnc"
 											label="#{msg['clientForm.jweEncAlgorithmForEncrypting']}"
 											leftClass="col-sm-6" rightClass="col-sm-6">
-											<h:selectOneMenu styleClass="col-sm-9 form-control"
+											<h:selectOneMenu styleClass="col-sm-9 form-control rounded"
 												value="#{_client.idTokenEncryptedResponseEnc}"
 												id="idTokenEncryptedResponseEncId" required="false">
 												<f:selectItem noSelectionOption="true" itemLabel="" />
@@ -603,7 +603,7 @@ px
 										<ox:decorate id="userInfoSignedResponseAlg"
 											label="#{msg['clientForm.jwsAlgAlgorithm']}"
 											leftClass="col-sm-6" rightClass="col-sm-6">
-											<h:selectOneMenu styleClass="col-sm-9 form-control"
+											<h:selectOneMenu styleClass="col-sm-9 form-control rounded"
 												value="#{_client.userInfoSignedResponseAlg}"
 												id="userInfoSignedResponseAlgId" required="false">
 												<f:selectItem noSelectionOption="true" itemLabel="" />
@@ -616,7 +616,7 @@ px
 										<ox:decorate id="userInfoEncryptedResponseAlg"
 											label="#{msg['clientForm.jweAlgAlgorithm']}"
 											leftClass="col-sm-6" rightClass="col-sm-6">
-											<h:selectOneMenu styleClass="col-sm-9 form-control"
+											<h:selectOneMenu styleClass="col-sm-9 form-control rounded"
 												value="#{_client.userInfoEncryptedResponseAlg}"
 												id="userInfoEncryptedResponseAlgId" required="false">
 												<f:selectItem noSelectionOption="true" itemLabel="" />
@@ -630,7 +630,7 @@ px
 										<ox:decorate id="userInfoEncryptedResponseEnc"
 											label="#{msg['clientForm.jweEncAlgorithm']}"
 											leftClass="col-sm-6" rightClass="col-sm-6">
-											<h:selectOneMenu styleClass="col-sm-9 form-control"
+											<h:selectOneMenu styleClass="col-sm-9 form-control rounded"
 												value="#{_client.userInfoEncryptedResponseEnc}"
 												id="userInfoEncryptedResponseEncId" required="false">
 												<f:selectItem noSelectionOption="true" itemLabel="" />
@@ -644,7 +644,7 @@ px
 										<ox:decorate id="requestObjectSigningAlg"
 											label="#{msg['clientForm.jwsAlgAlgorithmForSigningRequestObjects']}"
 											leftClass="col-sm-6" rightClass="col-sm-6">
-											<h:selectOneMenu styleClass="col-sm-9 form-control"
+											<h:selectOneMenu styleClass="col-sm-9 form-control rounded"
 												value="#{_client.requestObjectSigningAlg}"
 												id="requestObjectSigningAlgId" required="false">
 												<f:selectItem noSelectionOption="true" itemLabel="" />
@@ -663,7 +663,7 @@ px
 										<ox:decorate id="requestObjectEncryptionAlg"
 											label="#{msg['clientForm.jweAlgAlgorithmforEncryptingRequestObjects']}"
 											leftClass="col-sm-6" rightClass="col-sm-6">
-											<h:selectOneMenu styleClass="col-sm-9 form-control"
+											<h:selectOneMenu styleClass="col-sm-9 form-control rounded"
 												value="#{_client.requestObjectEncryptionAlg}"
 												id="requestObjectEncryptionAlgId" required="false">
 												<f:selectItem noSelectionOption="true" itemLabel="" />
@@ -677,7 +677,7 @@ px
 										<ox:decorate id="requestObjectEncryptionEnc"
 											label="#{msg['clientForm.jweEncAlgorithmForEncryptingRequestObjects']}"
 											leftClass="col-sm-6" rightClass="col-sm-6">
-											<h:selectOneMenu styleClass="col-sm-9 form-control"
+											<h:selectOneMenu styleClass="col-sm-9 form-control rounded"
 												value="#{_client.requestObjectEncryptionEnc}"
 												id="requestObjectEncryptionEncId" required="false">
 												<f:selectItem noSelectionOption="true" itemLabel="" />
@@ -691,7 +691,7 @@ px
 										<ox:decorate id="tokenEndpointAuthMethod"
 											label="#{msg['clientForm.authenticationMethod']}"
 											leftClass="col-sm-6" rightClass="col-sm-6">
-											<h:selectOneMenu styleClass="col-sm-9 form-control"
+											<h:selectOneMenu styleClass="col-sm-9 form-control rounded"
 												value="#{_client.tokenEndpointAuthMethod}"
 												id="tokenEndpointAuthMethodId" required="false">
 												<f:selectItems
@@ -704,7 +704,7 @@ px
 										<ox:decorate id="tokenEndpointAuthSigningAlg"
 											label="#{msg['clientForm.jwsAlgAlgorithmForAuthentication']}"
 											leftClass="col-sm-6" rightClass="col-sm-6">
-											<h:selectOneMenu styleClass="col-sm-9 form-control"
+											<h:selectOneMenu styleClass="col-sm-9 form-control rounded"
 												value="#{_client.tokenEndpointAuthSigningAlg}"
 												id="tokenEndpointAuthSigningAlgId" required="false">
 												<f:selectItem noSelectionOption="true" itemLabel="" />
@@ -719,7 +719,7 @@ px
 										<ox:decorate id="requireAuthTime"
 											label="#{msg['clientForm.requireAuthTime']}"
 											leftClass="col-sm-6" rightClass="col-sm-6">
-											<h:selectOneMenu styleClass="col-sm-9 form-control"
+											<h:selectOneMenu styleClass="col-sm-9 form-control rounded"
 												value="#{_client.requireAuthTime}" required="false">
 												<f:selectItem itemLabel="Please select a value."
 													noSelectionOption="true" />
@@ -734,7 +734,7 @@ px
 											<ox:decorate id="includeClaimsInIdToken"
 												label="#{msg['clientForm.includeClaimsInIdToken']}"
 												leftClass="col-sm-6" rightClass="col-sm-6">
-												<h:selectOneMenu styleClass="col-sm-9 form-control"
+												<h:selectOneMenu styleClass="col-sm-9 form-control rounded"
 													value="#{_client.oxIncludeClaimsInIdToken}" required="true"
 													disabled="#{!jsonConfigurationService.getOxauthAppConfiguration().legacyIdTokenClaims}">
 													<f:selectItems
@@ -753,7 +753,7 @@ px
 										<ox:decorate id="logoutSessionRequired"
 											label="#{msg['clientForm.logoutSessionRequired']}"
 											leftClass="col-sm-6" rightClass="col-sm-6">
-											<h:selectOneMenu styleClass="col-sm-9 form-control"
+											<h:selectOneMenu styleClass="col-sm-9 form-control rounded"
 												value="#{_client.logoutSessionRequired}" required="true">
 												<f:selectItems
 													value="#{organizationService.javaBooleanSelectionTypes}"

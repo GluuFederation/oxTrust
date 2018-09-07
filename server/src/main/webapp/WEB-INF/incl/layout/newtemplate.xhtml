@@ -84,14 +84,13 @@
 		<h:outputStylesheet>
            input[type=text], input[type=email], input[type=password],input[autocomplete=off], input[type=url]{
            padding:5px; 
-           border: 2px solid #ccc;
-           margin-left:2px !important;
+           border: 1px solid #ccc;
            border-radius: 5px !important;
            }
 
            input[type=text]:focus, input[type=email]:focus, input[type=password]:focus, input[autocomplete=off]:focus, input[type=url]{
              border-radius: 5px !important;
-             border: 1px solid #ccc;
+             border: 2px solid #2e6da4 !important;
            }
            
            input[type=checkbox]{
@@ -104,19 +103,34 @@
             border:none;
            }
            
-           textarea:focus{
+           input[autocomplete=off]{
+             border: 1px solid #ccc !important;
              border-radius: 5px !important;
-             margin-left:2px !important;
-             border: 2px solid #ccc;
+           }
+           input[autocomplete=off]:focus{
+             border: 2px solid #2e6da4 !important;
+             border-radius: 5px !important;
+           }
+           .rounded{
+             border: 1px solid #ccc !important;
+             border-radius: 5px !important;
+           }
+          .rounded:focus{
+             border: 2px solid #2e6da4 !important;
+             border-radius: 5px !important;
            }
            
            textarea{
-             padding:5px; 
-             margin-left:2px !important;
+             padding:5px;
              border-radius: 5px !important;
            }
+           
+           textarea:focus{
+             border-radius: 5px !important;
+             border: 2px solid #2e6da4 !important;
+           }
 
-            input[type=submit] {
+           input[type=submit] {
             padding:5px 15px; 
             cursor:pointer;
             border-radius: 5px !important;
@@ -143,6 +157,10 @@
              border: 2px solid #ccc;
              border-radius: 5px !important;
           }
+          .rf-ii-fld-cntr:focus{
+           outline: none !important;
+          }
+          
              
      </h:outputStylesheet>
 	</h:head>
