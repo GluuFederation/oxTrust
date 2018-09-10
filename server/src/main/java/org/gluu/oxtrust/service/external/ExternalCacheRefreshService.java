@@ -15,6 +15,7 @@ import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.xdi.model.SimpleCustomProperty;
 import org.xdi.model.custom.script.CustomScriptType;
 import org.xdi.model.custom.script.conf.CustomScriptConfiguration;
+import org.xdi.model.custom.script.model.bind.BindCredentials;
 import org.xdi.model.custom.script.type.user.CacheRefreshType;
 import org.xdi.service.custom.script.ExternalScriptService;
 import org.xdi.util.StringHelper;
@@ -48,7 +49,7 @@ public class ExternalCacheRefreshService extends ExternalScriptService {
 		return false;
 	}
 
-    public String executeExternalGetBindCredentialsMethod(CustomScriptConfiguration customScriptConfiguration, String configId) {
+    public BindCredentials executeExternalGetBindCredentialsMethod(CustomScriptConfiguration customScriptConfiguration, String configId) {
         try {
             log.debug("Executing python 'getBindCredentialsMethod' method");
             CacheRefreshType externalType = (CacheRefreshType) customScriptConfiguration.getExternalType();
@@ -78,11 +79,11 @@ public class ExternalCacheRefreshService extends ExternalScriptService {
 		return result;
 	}
 
-    public String executeExternalGetBindCredentialsMethods(String configId) {
-        String result = null;
+    public BindCredentials executeExternalGetBindCredentialsMethods(String configId) {
+        BindCredentials result = null;
         for (CustomScriptConfiguration customScriptConfiguration : this.customScriptConfigurations) {
             result = executeExternalGetBindCredentialsMethod(customScriptConfiguration, configId);
-            if (StringHelper.isNotEmpty(result)) {
+            if (result != null) {
                 return result;
             }
         }

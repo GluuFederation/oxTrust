@@ -63,6 +63,10 @@ import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.config.oxtrust.CacheRefreshAttributeMapping;
 import org.xdi.config.oxtrust.CacheRefreshConfiguration;
 import org.xdi.model.GluuStatus;
+import org.xdi.ldap.model.GluuBoolean;
+import org.xdi.ldap.model.GluuDummyEntry;
+import org.xdi.ldap.model.GluuStatus;
+import org.xdi.model.custom.script.model.bind.BindCredentials;
 import org.xdi.model.ldap.GluuLdapConfiguration;
 import org.xdi.service.ObjectSerializationService;
 import org.xdi.service.SchemaService;
@@ -1070,10 +1074,11 @@ public class CacheRefreshTimer {
 		Properties ldapDecryptedProperties = encryptionService.decryptProperties(ldapProperties);
 
 		// Try to get updated password via script
-		String updatedPassword = externalCacheRefreshService.executeExternalGetBindCredentialsMethods(ldapConfig);
-        if (StringHelper.isNotEmpty(updatedPassword)) {
+		BindCredentials bindCredentials = externalCacheRefreshService.executeExternalGetBindCredentialsMethods(ldapConfig);
+        if (bindCredentials != null) {
             log.error("Using updated password which got from getBindCredentials method");
-            ldapDecryptedProperties.setProperty(PropertiesDecrypter.bindPassword, updatedPassword);
+            decryptedLdapProperties.setProperty("bindDN", bindCredentials.getBindDn());
+            decryptedLdapProperties.setProperty(PropertiesDecrypter.bindPassword, bindCredentials.getBindPassword());
         }
 
         PersistenceEntryManager customPersistenceEntryManager = applicationFactory.getPersistenceEntryManagerFactory().createEntryManager(ldapDecryptedProperties);
