@@ -72,6 +72,7 @@ import org.xdi.service.timer.schedule.TimerSchedule;
 import org.xdi.util.ArrayHelper;
 import org.xdi.util.Pair;
 import org.xdi.util.StringHelper;
+import org.xdi.util.security.PropertiesDecrypter;
 
 import com.unboundid.ldap.sdk.Filter;
 
@@ -1062,8 +1063,16 @@ public class CacheRefreshTimer {
 		}
 
 		Properties ldapProperties = toLdapProperties(ldapConfiguration);
+		Properties decryptedLdapProperties = encryptionService.decryptProperties(ldapProperties);
 
-		LDAPConnectionProvider ldapConnectionProvider = new LDAPConnectionProvider(encryptionService.decryptProperties(ldapProperties));
+		// Try to get updated password via script
+		String updatedPassword = externalCacheRefreshService.executeExternalGetBindCredentialsMethods(ldapConfig);
+        if (StringHelper.isNotEmpty(updatedPassword)) {
+            log.error("Using updated password which got from getBindCredentials method");
+            decryptedLdapProperties.setProperty(PropertiesDecrypter.bindPassword, updatedPassword);
+        }
+
+		LDAPConnectionProvider ldapConnectionProvider = new LDAPConnectionProvider(decryptedLdapProperties);
 
 		if (!ldapConnectionProvider.isConnected()) {
 			log.error("Failed to connect to LDAP server using configuration {}", ldapConfig);
