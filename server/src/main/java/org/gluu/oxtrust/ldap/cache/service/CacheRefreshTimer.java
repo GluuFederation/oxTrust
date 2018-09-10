@@ -74,6 +74,7 @@ import org.xdi.util.ArrayHelper;
 import org.xdi.util.OxConstants;
 import org.xdi.util.Pair;
 import org.xdi.util.StringHelper;
+import org.xdi.util.security.PropertiesDecrypter;
 
 /**
  * Check periodically if source servers contains updates and trigger target
@@ -1067,6 +1068,13 @@ public class CacheRefreshTimer {
 
 		Properties ldapProperties = toLdapProperties(ldapConfiguration);
 		Properties ldapDecryptedProperties = encryptionService.decryptProperties(ldapProperties);
+
+		// Try to get updated password via script
+		String updatedPassword = externalCacheRefreshService.executeExternalGetBindCredentialsMethods(ldapConfig);
+        if (StringHelper.isNotEmpty(updatedPassword)) {
+            log.error("Using updated password which got from getBindCredentials method");
+            ldapDecryptedProperties.setProperty(PropertiesDecrypter.bindPassword, updatedPassword);
+        }
 
         PersistenceEntryManager customPersistenceEntryManager = applicationFactory.getPersistenceEntryManagerFactory().createEntryManager(ldapDecryptedProperties);
         log.info("Created Cache Refresh PersistenceEntryManager: {}", customPersistenceEntryManager);

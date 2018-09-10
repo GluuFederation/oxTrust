@@ -17,6 +17,7 @@ import org.xdi.model.custom.script.CustomScriptType;
 import org.xdi.model.custom.script.conf.CustomScriptConfiguration;
 import org.xdi.model.custom.script.type.user.CacheRefreshType;
 import org.xdi.service.custom.script.ExternalScriptService;
+import org.xdi.util.StringHelper;
 
 /**
  * Provides factory methods needed to create external cache refresh extension
@@ -47,6 +48,24 @@ public class ExternalCacheRefreshService extends ExternalScriptService {
 		return false;
 	}
 
+    public String executeExternalGetBindCredentialsMethod(CustomScriptConfiguration customScriptConfiguration, String configId) {
+        try {
+            log.debug("Executing python 'getBindCredentialsMethod' method");
+            CacheRefreshType externalType = (CacheRefreshType) customScriptConfiguration.getExternalType();
+            Map<String, SimpleCustomProperty> configurationAttributes = customScriptConfiguration.getConfigurationAttributes();
+            
+            // Execute only if API > 1
+            if (externalType.getApiVersion() > 1) {
+                return externalType.getBindCredentials(configId, configurationAttributes);
+            }
+        } catch (Exception ex) {
+            log.error(ex.getMessage(), ex);
+            saveScriptError(customScriptConfiguration.getCustomScript(), ex);
+        }
+
+        return null;
+    }
+
 	public boolean executeExternalUpdateUserMethods(GluuCustomPerson user) {
 		boolean result = true;
 		for (CustomScriptConfiguration customScriptConfiguration : this.customScriptConfigurations) {
@@ -58,5 +77,17 @@ public class ExternalCacheRefreshService extends ExternalScriptService {
 
 		return result;
 	}
+
+    public String executeExternalGetBindCredentialsMethods(String configId) {
+        String result = null;
+        for (CustomScriptConfiguration customScriptConfiguration : this.customScriptConfigurations) {
+            result = executeExternalGetBindCredentialsMethod(customScriptConfiguration, configId);
+            if (StringHelper.isNotEmpty(result)) {
+                return result;
+            }
+        }
+
+        return result;
+    }
 
 }
