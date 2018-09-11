@@ -327,7 +327,7 @@ px
 										<ox:decorate id="displayName"
 											label="#{msg['clientForm.clientName']}" leftClass="col-sm-3"
 											rightClass="col-sm-9">
-											<rich:inplaceInput value="#{_client.displayName}"
+											<rich:inplaceInput value="#{_client.displayName}" styleClass="clientNameTextBox"
 												requiredMessage="Please Enter the Client Name"
 												defaultLabel="click to enter the Client Name" maxlength="60"
 												required="true" id="displayNameId" />
@@ -336,7 +336,7 @@ px
 											<ox:decorate id="clientSecret"
 												label="#{msg['clientForm.clientSecret']}"
 												leftClass="col-sm-3" rightClass="col-sm-6">
-												<h:inputSecret styleClass="form-control togglefield"
+												<h:inputSecret styleClass="form-control togglefield clientSecretTextBox"
 													value="#{_client.oxAuthClientSecret}" redisplay="true"
 													defaultLabel="click to enter Client Secret" maxlength="60"
 													id="clientSecretId1" />
@@ -354,7 +354,7 @@ px
 												<div class="col-sm-6 col-lg-6">
 													<a4j:commandLink render="clientSecretId1"
 														style="margin-top:2px;"
-														styleClass="btn btn-primary"
+														styleClass="btn btn-primary generateClientSecretButton"
 														value="Auto-Generate Secret Key"
 														action="#{_clientAction.generatePassword()}"
 														oncomplete="return valuesDisplay(this);" />
@@ -362,7 +362,7 @@ px
 												<div class="col-sm-6 col-lg-6" style="padding: 0px;">
 													<a4j:commandButton rendered="#{not _new}"
 														onclick="#{rich:component('clientPassword:changePasswordModalPanel')}.show();"
-														styleClass="btn btn-primary changeOIDCSecretButton"
+														styleClass="btn btn-primary changeClientSecretButton"
 														value="#{msg['client.changeClientSecret']}" />
 												</div>
 											</div>
@@ -372,14 +372,14 @@ px
 										<ox:decorate id="inum" rendered="#{not _new}"
 											label="#{msg['clientForm.inum']}" leftClass="col-sm-1"
 											rightClass="col-sm-11">
-											<h:outputText style="margin-left:15px;margin-right:15px;" styleClass="col-sm-12 col-lg-12 form-control rounded"
+											<h:outputText style="margin-left:15px;margin-right:15px;" styleClass="col-sm-12 col-lg-12 form-control rounded clientId"
 												value="#{_client.inum}" />
 										</ox:decorate>
 										<ox:decorate id="description"
 											label="#{msg['clientForm.clientDescription']}"
 											leftClass="col-sm-4" rightClass="col-sm-8">
 											<h:inputTextarea value="#{_client.description}" rows="3"
-												styleClass="col-sm-12 form-control rounded" cols="80"
+												styleClass="col-sm-12 form-control rounded clientDescriptionTextArea" cols="80"
 												maxlength="250" id="descriptionId" />
 										</ox:decorate>
 									</div>
@@ -423,7 +423,7 @@ px
 											label="#{msg['clientForm.persistClientAuthorization']}"
 											leftClass="col-sm-6" rightClass="col-sm-6">
 											<h:selectOneMenu id="persisteClientAuthorizationsId"
-												styleClass="col-sm-9 form-control rounded"
+												styleClass="col-sm-9 form-control rounded persistClientAuthorizationSelectBox"
 												value="#{_client.oxAuthPersistClientAuthorizations}"
 												required="true" onchange="togglePersistAuthorization()">
 												<f:selectItems
@@ -437,7 +437,7 @@ px
 											label="#{msg['clientForm.preAuthorization']}"
 											leftClass="col-sm-6" rightClass="col-sm-6">
 											<h:selectOneMenu id="trustedClientId"
-												styleClass="col-sm-9 form-control rounded"
+												styleClass="col-sm-9 form-control rounded oxAuthTrustedClientSelectBox"
 												value="#{_client.oxAuthTrustedClient}" required="true"
 												onchange="togglePersistAuthorization()">
 												<f:selectItems value="#{clientService.oxAuthTrustedClient}"
@@ -449,7 +449,7 @@ px
 										<ox:decorate id="applicatonType"
 											label="#{msg['clientForm.applicationType']}"
 											leftClass="col-sm-6" rightClass="col-sm-6">
-											<h:selectOneMenu styleClass="col-sm-12 form-control rounded"
+											<h:selectOneMenu styleClass="col-sm-12 form-control rounded applicationTypeSelectBox"
 												value="#{_client.oxAuthAppType}" id="applicationTypeId"
 												required="true">
 												<f:selectItems value="#{clientService.applicationType}"
@@ -462,7 +462,7 @@ px
 										<ox:decorate id="subjectType"
 											label="#{msg['clientForm.subjectType']}" leftClass="col-sm-6"
 											rightClass="col-sm-6">
-											<h:selectOneMenu styleClass="col-sm-9 form-control rounded"
+											<h:selectOneMenu styleClass="col-sm-9 form-control rounded subjectTypeSelectBox"
 												value="#{_client.subjectType}" id="subjectTypeId"
 												required="true">
 												<f:selectItems value="#{clientService.subjectTypes}"
@@ -691,7 +691,7 @@ px
 										<ox:decorate id="tokenEndpointAuthMethod"
 											label="#{msg['clientForm.authenticationMethod']}"
 											leftClass="col-sm-6" rightClass="col-sm-6">
-											<h:selectOneMenu styleClass="col-sm-9 form-control rounded"
+											<h:selectOneMenu styleClass="col-sm-9 form-control rounded tokenEndpointAuthMethodSelectBox"
 												value="#{_client.tokenEndpointAuthMethod}"
 												id="tokenEndpointAuthMethodId" required="false">
 												<f:selectItems

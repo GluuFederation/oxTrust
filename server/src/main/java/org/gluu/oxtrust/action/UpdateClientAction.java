@@ -7,6 +7,8 @@
 package org.gluu.oxtrust.action;
 
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -280,10 +282,13 @@ public class UpdateClientAction implements Serializable {
 	}
 
 	public String save() throws Exception {
+		LocalDate localDate = LocalDate.now();
+	    LocalDate tomorrow = localDate.plusDays(1);
+	    Date today = Date.from(tomorrow.atStartOfDay(ZoneId.systemDefault()).toInstant());
 		if (this.client.getClientSecretExpiresAt() == null && !update) {
-			this.client.setClientSecretExpiresAt(new Date());
+			this.client.setClientSecretExpiresAt(today);
 		}
-		if (this.client.getClientSecretExpiresAt().before(new Date())) {
+		if (this.client.getClientSecretExpiresAt().before(today)) {
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "This client has expired. Update the expiration date in order to save changes");
 			return OxTrustConstants.RESULT_FAILURE;
 		}
