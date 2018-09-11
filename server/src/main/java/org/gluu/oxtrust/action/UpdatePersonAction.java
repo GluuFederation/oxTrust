@@ -351,23 +351,23 @@ public class UpdatePersonAction implements Serializable {
 		if (!update) {
 			if (!userNameIsUniqAtCreationTime(this.person.getUid())) {
 				facesMessages.add(FacesMessage.SEVERITY_ERROR, "#{msg['UpdatePersonAction.faileAddUserUidExist']} %s",
-						person.getUid());
+						this.person.getUid());
 				return OxTrustConstants.RESULT_FAILURE;
 			}
 			if (!userEmailIsUniqAtCreationTime(this.person.getAttribute("mail"))) {
 				facesMessages.add(FacesMessage.SEVERITY_ERROR,
-						"#{msg['UpdatePersonAction.faileUpdateUserMailidExist']} %s", person.getMail());
+						"#{msg['UpdatePersonAction.faileUpdateUserMailidExist']} %s", this.person.getAttribute("mail"));
 				return OxTrustConstants.RESULT_FAILURE;
 			}
 		} else {
 			if (!userNameIsUniqAtEditionTime(this.person.getUid())) {
 				facesMessages.add(FacesMessage.SEVERITY_ERROR, "#{msg['UpdatePersonAction.faileAddUserUidExist']} %s",
-						person.getUid());
+						this.person.getUid());
 				return OxTrustConstants.RESULT_FAILURE;
 			}
 			if (!userEmailIsUniqAtEditionTime(this.person.getAttribute("mail"))) {
 				facesMessages.add(FacesMessage.SEVERITY_ERROR,
-						"#{msg['UpdatePersonAction.faileUpdateUserMailidExist']} %s", person.getMail());
+						"#{msg['UpdatePersonAction.faileUpdateUserMailidExist']} %s", this.person.getAttribute("mail"));
 				return OxTrustConstants.RESULT_FAILURE;
 			}
 		}
@@ -722,6 +722,9 @@ public class UpdatePersonAction implements Serializable {
 
 	public boolean userNameIsUniqAtCreationTime(String uid) {
 		boolean userNameIsUniq = true;
+		if(uid == null) {
+			return userNameIsUniq;
+		}
 		List<GluuCustomPerson> gluuCustomPersons = personService.getPersonsByUid(uid);
 		if (gluuCustomPersons != null && gluuCustomPersons.size() > 0) {
 			for (GluuCustomPerson gluuCustomPerson : gluuCustomPersons) {
@@ -735,6 +738,9 @@ public class UpdatePersonAction implements Serializable {
 	}
 
 	public boolean userNameIsUniqAtEditionTime(String uid) {
+		if(uid == null) {
+			return true;
+		}
 		boolean userNameIsUniq = false;
 		List<GluuCustomPerson> gluuCustomPersons = personService.getPersonsByUid(uid);
 		if (gluuCustomPersons == null || gluuCustomPersons.isEmpty()) {
@@ -748,6 +754,9 @@ public class UpdatePersonAction implements Serializable {
 	}
 
 	public boolean userEmailIsUniqAtCreationTime(String email) {
+		if(email == null) {
+			return true;
+		}
 		boolean emailIsUniq = true;
 		List<GluuCustomPerson> gluuCustomPersons = personService.getPersonsByEmail(email);
 		if (gluuCustomPersons != null && gluuCustomPersons.size() > 0) {
@@ -763,6 +772,9 @@ public class UpdatePersonAction implements Serializable {
 
 	public boolean userEmailIsUniqAtEditionTime(String email) {
 		boolean emailIsUniq = false;
+		if(email == null) {
+			return true;
+		}
 		List<GluuCustomPerson> gluuCustomPersons = personService.getPersonsByEmail(email);
 		if (gluuCustomPersons == null || gluuCustomPersons.isEmpty()) {
 			emailIsUniq = true;
