@@ -67,7 +67,10 @@
                                 <h:message for="fInput" errorClass="invalid"/>
 
 	                            <h:inputText id="sInput1" styleClass="col-md-5 form-control togglefield propertyValueTextBox" style = "width:35%;float:left;"
-                                             value="#{_property.value2}" p:placeholder="#{_property.description}" size="#{cc.attrs.inputWidth}" required="#{cc.attrs.requiredValue}"
+                                             value="#{_property.value2 eq 'Twilio phone number with SMS capabilities' 
+                                             || _property.value2 eq 'Twilio account SID'
+                                             || _property.value2 eq 'Twilio API token'
+                                              ? null : _property.value2}" p:placeholder="#{_property.description eq '' ? _property.value2 : _property.description}" size="#{cc.attrs.inputWidth}" required="#{cc.attrs.requiredValue}"
                                              rendered="#{(cc.attrs.hideValue eq false) or (_property.hideValue eq false)}" />
 
                                 <h:message for="sInput1" errorClass="invalid" rendered="#{cc.attrs.hideValue eq false}"/>
