@@ -25,8 +25,7 @@
         <ui:fragment rendered="#{not registerPersonAction.captchaDisabled}">
             <script async="async" defer="defer" src="https://www.google.com/recaptcha/api.js"/>
         </ui:fragment>
-    </ui:define>
-    	
+    </ui:define>	
 
     <ui:define name="body">
         <div id="formArea">
@@ -46,11 +45,10 @@
                                 <div class="col-md-12">
                                     <div id="register" style="color:white;">
                                         <h1 class="text-center">#{msg['register.signUp']}</h1>
-                                        #{msg['register.toCreateAnAccount']}
-                                        <richext:spacer width="4"/>
+                                        <p class="text-center"> #{msg['register.toCreateAnAccount']} 
                                         <h:link includeViewParams="false" outcome="/login"
-                                                rendered="#{not identity.loggedIn and not isLogin}"
-                                                style="color:white;font-weight:bold;" value="#{msg['register.login']}"/>
+                                          style="color:white;font-weight:bold;" value="#{msg['register.alreadyHaveAnAccount']}"/>
+                                        </p>
                                     </div>
                                 </div>
                             </div>
