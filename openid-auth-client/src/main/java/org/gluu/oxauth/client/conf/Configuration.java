@@ -32,22 +32,25 @@ public abstract class Configuration<C extends AppConfiguration, L extends LdapAp
 
 	private final Logger logger = LoggerFactory.getLogger(Configuration.class);
 
-	static {
+    static {
         if (System.getProperty("gluu.base") != null) {
             BASE_DIR = System.getProperty("gluu.base");
-        } else if ((System.getProperty("catalina.base") != null) && (System.getProperty("catalina.base.ignore") == null)) {
-			BASE_DIR = System.getProperty("catalina.base");
-		} else if (System.getProperty("catalina.home") != null) {
-			BASE_DIR = System.getProperty("catalina.home");
-		} else if (System.getProperty("jboss.home.dir") != null) {
-			BASE_DIR = System.getProperty("jboss.home.dir");
-		} else {
-			BASE_DIR = null;
-		}
-	}
+        } else if ((System.getProperty("catalina.base") != null)
+                && (System.getProperty("catalina.base.ignore") == null)) {
+            BASE_DIR = System.getProperty("catalina.base");
+        } else if (System.getProperty("catalina.home") != null) {
+            BASE_DIR = System.getProperty("catalina.home");
+        } else if (System.getProperty("jboss.home.dir") != null) {
+            BASE_DIR = System.getProperty("jboss.home.dir");
+        } else {
+            BASE_DIR = null;
+        }
+    }
 
-	private static final String BASE_DIR;
-	private static final String DIR = BASE_DIR + File.separator + "conf" + File.separator;
+    public static final String BASE_DIR;
+    public static final String DIR = BASE_DIR + File.separator + "conf" + File.separator;
+
+    public static final String LDAP_DEFAULT_PROPERTIES_FILE = DIR + "ox-ldap.properties";
 
 	private static final String SALT_FILE_NAME = "salt";
 
