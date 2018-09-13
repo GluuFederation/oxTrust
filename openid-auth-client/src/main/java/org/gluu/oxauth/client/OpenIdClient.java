@@ -8,6 +8,8 @@ package org.gluu.oxauth.client;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.commons.lang.RandomStringUtils;
@@ -171,18 +173,17 @@ public class OpenIdClient<C extends AppConfiguration, L extends LdapAppConfigura
 		return response;
 	}
 
-	/**
-	 * {@InheritDoc}
-	 */
 	@Override
 	public String getName() {
 		return this.getClass().getSimpleName();
 	}
 
-	/**
-	 * {@InheritDoc}
-	 */
-	public String getRedirectionUrl(final WebContext context) {
+        
+    public String getRedirectionUrl(final WebContext context) {
+        return getRedirectionUrl(context, null);
+    }
+
+    public String getRedirectionUrl(final WebContext context, final Map<String, String> customParameters) {
 		init();
 
 		final String state = RandomStringUtils.randomAlphanumeric(10);
@@ -196,6 +197,12 @@ public class OpenIdClient<C extends AppConfiguration, L extends LdapAppConfigura
 
 		context.setSessionAttribute(getName() + STATE_PARAMETER, state);
         context.setSessionAttribute(getName() + NONCE_PARAMETER, nonce);
+        
+        if (customParameters != null) {
+            for (Entry<String, String> entry : customParameters.entrySet()) {
+                authorizationRequest.addCustomParameter(entry.getKey(), entry.getValue());
+            }
+        }
 
 		final String redirectionUrl = this.openIdConfiguration.getAuthorizationEndpoint() + "?" + authorizationRequest.getQueryString();
 		logger.debug("oxAuth redirection Url: '{}'", redirectionUrl);
@@ -203,9 +210,6 @@ public class OpenIdClient<C extends AppConfiguration, L extends LdapAppConfigura
 		return redirectionUrl;
 	}
 
-	/**
-	 * {@InheritDoc}
-	 */
 	@Override
 	public boolean isAuthorizationResponse(final WebContext context) {
 		final String authorizationCode = context.getRequestParameter(ResponseType.CODE.getValue());
@@ -217,9 +221,6 @@ public class OpenIdClient<C extends AppConfiguration, L extends LdapAppConfigura
 		return result;
 	}
 
-	/**
-	 * {@InheritDoc}
-	 */
 	@Override
 	public boolean isValidRequestState(final WebContext context) {
 		final String state = context.getRequestParameter("state");
@@ -239,9 +240,6 @@ public class OpenIdClient<C extends AppConfiguration, L extends LdapAppConfigura
 		return result;
 	}
 
-	/**
-	 * {@InheritDoc}
-	 */
 	@Override
 	public final OpenIdCredentials getCredentials(final WebContext context) {
 		final String authorizationCode = context.getRequestParameter(ResponseType.CODE.getValue());
@@ -253,9 +251,6 @@ public class OpenIdClient<C extends AppConfiguration, L extends LdapAppConfigura
 		return clientCredential;
 	}
 
-	/**
-	 * {@InheritDoc}
-	 */
 	@Override
 	public UserProfile getUserProfile(final OpenIdCredentials credential, final WebContext context) {
 		init();
