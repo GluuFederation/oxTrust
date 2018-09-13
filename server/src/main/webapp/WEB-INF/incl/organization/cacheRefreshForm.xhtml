@@ -54,7 +54,7 @@
         
     </h:outputScript>
 
-    <ox:changePasswordDialog id="bindPasswordDialogId" label="#{msg['organization.changeBackend']} '#{_configureCacheRefreshAction.activeLdapConfig.configId}' #{msg['organization.bindPassword']}" password="#{_configureCacheRefreshAction.activeLdapConfig.bindPassword}"
+    <ox:changeBindPasswordDialog id="bindPasswordDialogId" label="#{msg['organization.changeBackend']} '#{_configureCacheRefreshAction.activeLdapConfig.configId}' #{msg['organization.bindPassword']}" password="#{_configureCacheRefreshAction.activeLdapConfig.bindPassword}"
 	   setPasswordMethod="#{configureCacheRefreshAction.updateBindPassword}"/>
 
     <h:form id="cacheRefreshForm">
