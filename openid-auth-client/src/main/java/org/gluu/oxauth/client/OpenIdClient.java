@@ -180,10 +180,10 @@ public class OpenIdClient<C extends AppConfiguration, L extends LdapAppConfigura
 
         
     public String getRedirectionUrl(final WebContext context) {
-        return getRedirectionUrl(context, null);
+        return getRedirectionUrl(context, null, null);
     }
 
-    public String getRedirectionUrl(final WebContext context, final Map<String, String> customParameters) {
+    public String getRedirectionUrl(final WebContext context, Map<String, String> customResponseHeaders, final Map<String, String> customParameters) {
 		init();
 
 		final String state = RandomStringUtils.randomAlphanumeric(10);
@@ -197,6 +197,10 @@ public class OpenIdClient<C extends AppConfiguration, L extends LdapAppConfigura
 
 		context.setSessionAttribute(getName() + STATE_PARAMETER, state);
         context.setSessionAttribute(getName() + NONCE_PARAMETER, nonce);
+        
+        if (customResponseHeaders != null) {
+            authorizationRequest.setCustomResponseHeaders(customResponseHeaders);
+        }
         
         if (customParameters != null) {
             for (Entry<String, String> entry : customParameters.entrySet()) {
