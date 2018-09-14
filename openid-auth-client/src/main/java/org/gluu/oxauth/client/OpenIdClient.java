@@ -37,6 +37,8 @@ import org.xdi.oxauth.client.UserInfoResponse;
 import org.xdi.oxauth.model.common.AuthenticationMethod;
 import org.xdi.oxauth.model.common.ResponseType;
 import org.xdi.oxauth.model.crypto.signature.SignatureAlgorithm;
+import org.xdi.oxauth.model.exception.InvalidJwtException;
+import org.xdi.oxauth.model.jwt.Jwt;
 import org.xdi.oxauth.model.jwt.JwtClaimName;
 import org.xdi.oxauth.model.register.ApplicationType;
 import org.xdi.util.StringHelper;
@@ -260,32 +262,39 @@ public class OpenIdClient<C extends AppConfiguration, L extends LdapAppConfigura
 		init();
 
 		try {
-			final String accessToken = getAccessToken(credential);
-			final UserInfoResponse userInfoResponse = getUserInfo(accessToken);
+	        // Request access token using the authorization code
+	        logger.debug("Getting access token");
 
-			final UserProfile profile = retrieveUserProfileFromUserInfoResponse(context, userInfoResponse);
+	        final TokenClient tokenClient = new TokenClient(this.openIdConfiguration.getTokenEndpoint());
+
+	        final TokenResponse tokenResponse = tokenClient.execAuthorizationCode(credential.getAuthorizationCode(), this.appConfiguration.getOpenIdRedirectUrl(), this.clientId, this.clientSecret);
+	        logger.trace("tokenResponse.getStatus(): '{}'", tokenResponse.getStatus());
+	        logger.trace("tokenResponse.getErrorType(): '{}'", tokenResponse.getErrorType());
+
+	        final String accessToken = tokenResponse.getAccessToken();
+	        logger.trace("accessToken : " + accessToken);
+
+	        final String idToken = tokenResponse.getIdToken();
+            logger.trace("idToken : " + idToken);
+
+            // Parse JWT
+            Jwt jwt;
+            try {
+                jwt = Jwt.parse(idToken);
+            } catch (InvalidJwtException ex) {
+                logger.error("Failed to parse id_token: {}", idToken);
+                throw new CommunicationException("Failed to parse id_token");
+            }
+
+	        final UserInfoResponse userInfoResponse = getUserInfo(accessToken);
+
+			final UserProfile profile = retrieveUserProfileFromUserInfoResponse(context, jwt, userInfoResponse);
 			logger.debug("User profile: '{}'", profile);
 
 			return profile;
 		} catch (final Exception ex) {
 			throw new CommunicationException(ex);
 		}
-	}
-
-	private String getAccessToken(final OpenIdCredentials credential) {
-		// Request access token using the authorization code
-		logger.debug("Getting access token");
-
-		final TokenClient tokenClient = new TokenClient(this.openIdConfiguration.getTokenEndpoint());
-
-		final TokenResponse tokenResponse = tokenClient.execAuthorizationCode(credential.getAuthorizationCode(), this.appConfiguration.getOpenIdRedirectUrl(), this.clientId, this.clientSecret);
-		logger.trace("tokenResponse.getStatus(): '{}'", tokenResponse.getStatus());
-		logger.trace("tokenResponse.getErrorType(): '{}'", tokenResponse.getErrorType());
-
-		final String accessToken = tokenResponse.getAccessToken();
-		logger.trace("accessToken : " + accessToken);
-
-		return accessToken;
 	}
 
 	private UserInfoResponse getUserInfo(final String accessToken) {
@@ -301,15 +310,15 @@ public class OpenIdClient<C extends AppConfiguration, L extends LdapAppConfigura
 		return userInfoResponse;
 	}
 
-	protected CommonProfile retrieveUserProfileFromUserInfoResponse(final WebContext context, final UserInfoResponse userInfoResponse) {
+	protected CommonProfile retrieveUserProfileFromUserInfoResponse(final WebContext context, final Jwt jwt, final UserInfoResponse userInfoResponse) {
 		final CommonProfile profile = new CommonProfile();
 
-		String nonceResponse = getFirstClaim(userInfoResponse, JwtClaimName.NONCE);
+		String nonceResponse = (String) jwt.getClaims().getClaim(JwtClaimName.NONCE);
         final String nonceSession = (String) context.getSessionAttribute(getName() + NONCE_PARAMETER);
         logger.debug("Session nonce: '{}'", nonceSession);
         if (!StringHelper.equals(nonceSession, nonceResponse)) {
             logger.error("User info response:  nonce is not matching.");
-            throw new CommunicationException("Nonce is not match");
+            throw new CommunicationException("Nonce is not match" + nonceResponse + " : " + nonceSession);
         }
 
 		String id = getFirstClaim(userInfoResponse, JwtClaimName.USER_NAME);
