@@ -14,6 +14,8 @@
 <cc:interface>
     <cc:attribute name="label" default="" type="java.lang.String" />
     <cc:attribute name="labelAdd" default="" type="java.lang.String" />
+    <cc:attribute name="leftClass" default="col-sm-1" type="java.lang.String" />
+    <cc:attribute name="rightClass" default="col-sm-10" type="java.lang.String" />
     <cc:attribute name="hideLabel" default="false" type="java.lang.Boolean" />
     <cc:attribute name="inputWidth" default="24" required="false" type="java.lang.Integer" />
     <cc:attribute name="maxItems" type="java.lang.Integer" />
@@ -55,8 +57,8 @@
 
 	</h:outputScript>
     <a4j:region>
-        <ox:decorate label="#{cc.attrs.label}"  hideLabel="#{cc.attrs.hideLabel}" leftClass="col-sm-1"
-											rightClass="col-sm-10">
+        <ox:decorate label="#{cc.attrs.label}"  hideLabel="#{cc.attrs.hideLabel}" leftClass="#{cc.attrs.leftClass}"
+											rightClass="#{cc.attrs.rightClass}">
             <h:panelGroup id="customList">
                 <a4j:region styleClass="col-sm-12 col-lg-12">
                     <a4j:repeat value="#{cc.attrs.properties}" var="_property">
