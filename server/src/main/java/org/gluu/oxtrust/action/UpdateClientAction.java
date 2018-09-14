@@ -110,6 +110,8 @@ public class UpdateClientAction implements Serializable {
 	private String inum;
 
 	private boolean update;
+	
+	private Date previousClientExpirationDate;
 
 	private OxAuthClient client;
 
@@ -210,6 +212,7 @@ public class UpdateClientAction implements Serializable {
 		try {
 			log.debug("inum : " + inum);
 			this.client = clientService.getClientByInum(inum);
+			previousClientExpirationDate=this.client.getClientSecretExpiresAt();
 		} catch (LdapMappingException ex) {
 			log.error("Failed to find client {}", inum, ex);
 		}
@@ -284,7 +287,7 @@ public class UpdateClientAction implements Serializable {
 		if (this.client.getClientSecretExpiresAt() == null && !update) {
 			this.client.setClientSecretExpiresAt(today);
 		}
-		if (this.client.getClientSecretExpiresAt().before(today)) {
+		if (previousClientExpirationDate!=null && this.client.getClientSecretExpiresAt().before(today)) {
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "This client has expired. Update the expiration date in order to save changes");
 			return OxTrustConstants.RESULT_FAILURE;
 		}
