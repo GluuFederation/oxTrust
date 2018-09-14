@@ -229,5 +229,11 @@ public class PasswordReminderAction implements Serializable {
 	public void setRecaptchaService(RecaptchaService recaptchaService) {
 		this.recaptchaService = recaptchaService;
 	}
+	
+	public boolean getAuthenticationRecaptchaEnabled(){
+		this.oxTrustappConfiguration=jsonConfigurationService.getOxTrustappConfiguration();		
+		return oxTrustappConfiguration.isAuthenticationRecaptchaEnabled();
+		
+	}
 
 }
