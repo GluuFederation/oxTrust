@@ -49,6 +49,14 @@ public interface Client<U extends UserProfile> {
 	public boolean isValidRequestState(final WebContext context);
 
 	/**
+     * Get state parameter from request
+     * 
+     * @param context
+     * @return result of check
+     */
+    public String getRequestState(final WebContext context);
+
+	/**
 	 * Get the credentials from the web context
 	 * 
 	 * @param context

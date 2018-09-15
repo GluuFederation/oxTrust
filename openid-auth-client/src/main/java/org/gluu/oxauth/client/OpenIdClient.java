@@ -34,12 +34,14 @@ import org.xdi.oxauth.client.TokenClient;
 import org.xdi.oxauth.client.TokenResponse;
 import org.xdi.oxauth.client.UserInfoClient;
 import org.xdi.oxauth.client.UserInfoResponse;
+import org.xdi.oxauth.model.authorize.AuthorizeRequestParam;
 import org.xdi.oxauth.model.common.AuthenticationMethod;
 import org.xdi.oxauth.model.common.ResponseType;
 import org.xdi.oxauth.model.crypto.signature.SignatureAlgorithm;
 import org.xdi.oxauth.model.exception.InvalidJwtException;
 import org.xdi.oxauth.model.jwt.Jwt;
 import org.xdi.oxauth.model.jwt.JwtClaimName;
+import org.xdi.oxauth.model.jwt.JwtType;
 import org.xdi.oxauth.model.register.ApplicationType;
 import org.xdi.util.StringHelper;
 import org.xdi.util.exception.ConfigurationException;
@@ -185,11 +187,30 @@ public class OpenIdClient<C extends AppConfiguration, L extends LdapAppConfigura
         return getRedirectionUrl(context, null, null);
     }
 
-    public String getRedirectionUrl(final WebContext context, Map<String, String> customResponseHeaders, final Map<String, String> customParameters) {
+    public String getRedirectionUrl(final WebContext context, Map<String, String> customStateParameters, final Map<String, String> customParameters) {
 		init();
 
-		final String state = RandomStringUtils.randomAlphanumeric(10);
-		final String nonce = RandomStringUtils.randomAlphanumeric(10);
+		String state = RandomStringUtils.randomAlphanumeric(10);
+		String nonce = RandomStringUtils.randomAlphanumeric(10);
+        
+        if (customStateParameters != null) {
+            Jwt jwt = new Jwt();
+            // Header
+            jwt.getHeader().setType(JwtType.JWT);
+            jwt.getHeader().setAlgorithm(SignatureAlgorithm.NONE);
+
+            // Claims
+            for (Entry<String, String> entry : customStateParameters.entrySet()) {
+                jwt.getClaims().setClaim(entry.getKey(), entry.getValue());
+            }
+
+            // Put state
+            jwt.getClaims().setClaim(AuthorizeRequestParam.STATE, state);
+
+            // Store jwt in state
+            state = jwt.toString();
+        }
+        
 
 		final AuthorizationRequest authorizationRequest = new AuthorizationRequest(Arrays.asList(ResponseType.CODE), this.clientId, this.appConfiguration.getOpenIdScopes(),
 				this.appConfiguration.getOpenIdRedirectUrl(), null);
@@ -199,10 +220,6 @@ public class OpenIdClient<C extends AppConfiguration, L extends LdapAppConfigura
 
 		context.setSessionAttribute(getName() + STATE_PARAMETER, state);
         context.setSessionAttribute(getName() + NONCE_PARAMETER, nonce);
-        
-        if (customResponseHeaders != null) {
-            authorizationRequest.setCustomResponseHeaders(customResponseHeaders);
-        }
         
         if (customParameters != null) {
             for (Entry<String, String> entry : customParameters.entrySet()) {
@@ -229,7 +246,7 @@ public class OpenIdClient<C extends AppConfiguration, L extends LdapAppConfigura
 
 	@Override
 	public boolean isValidRequestState(final WebContext context) {
-		final String state = context.getRequestParameter("state");
+		final String state = context.getRequestParameter(AuthorizeRequestParam.STATE);
 		logger.debug("oxAuth request state: '{}'", state);
 
 		final Object sessionState = context.getSessionAttribute(getName() + STATE_PARAMETER);
@@ -247,6 +264,13 @@ public class OpenIdClient<C extends AppConfiguration, L extends LdapAppConfigura
 	}
 
 	@Override
+    public String getRequestState(WebContext context) {
+        final String state = context.getRequestParameter(AuthorizeRequestParam.STATE);
+        
+        return state;
+    }
+
+    @Override
 	public final OpenIdCredentials getCredentials(final WebContext context) {
 		final String authorizationCode = context.getRequestParameter(ResponseType.CODE.getValue());
 
