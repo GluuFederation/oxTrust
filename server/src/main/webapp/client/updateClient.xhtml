@@ -42,19 +42,11 @@
                 <ui:param name="_client" value="#{updateClientAction.client}"/>
                 <ui:param name="_clientAction" value="#{updateClientAction}"/>
                 <ui:param name="_new" value="false"/>
-
+                
                 <ui:define name="controlButttons">
                     <div id="updateButtons">
                         <h:commandButton action="#{updateClientAction.save}" styleClass="btn btn-primary"
                                          value="#{msg['client.update']}"/>
-                        <a4j:commandButton
-                                onclick="#{rich:component('clientPassword:changePasswordModalPanel')}.show();"
-                                style="margin-left:3px;" styleClass="btn btn-primary"
-                                value="#{msg['client.changeClientSecret']}"/>
-                        <a4j:commandButton ajaxSingle="true" eventsQueue="clientQueue"
-                                           onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();"
-                                           rendered="#{not _new}" style="margin-left:3px;" styleClass="btn btn-primary"
-                                           value="#{msg['client.delete']}"/>
                         <h:commandButton action="#{updateClientAction.cancel}" immediate="true" style="margin-left:3px;"
                                          styleClass="btn btn-primary" value="#{msg['client.cancel']}"/>
                     </div>

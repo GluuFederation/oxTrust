@@ -125,7 +125,7 @@ public class OAuthValidationFilter extends AbstractOAuthFilter {
         String authorizationState = request.getParameter(Configuration.OAUTH_STATE);
         final String stateSession = session != null ? (String) session.getAttribute(Configuration.SESSION_AUTH_STATE) : null;
         if (!StringHelper.equals(stateSession, authorizationState)) {
-            log.error("Login failed, oxTrust wasn't allow to access user data");
+            log.error("Login failed, oxTrust wasn't allowed to access user data");
             return null;
         }
 

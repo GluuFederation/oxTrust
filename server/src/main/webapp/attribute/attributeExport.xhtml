@@ -34,12 +34,12 @@
         <section class="content">
             <div id="formArea">
                 <h:panelGroup border="0" cellpadding="0" cellspacing="0" columns="1" width="100%">
+                
+                
                     <h:form id="attributesFormId">
-
                         <h:link includeViewParams="false" outcome="/attribute/attributeImport"
                                 style="margin-left:5px;padding:6px;" styleClass="label label-success"
                                 value="Import Attribute LDIF"/>
-
                         <div class="row" style="padding-top:20px">
                             <div class="col-xs-12">
                                 <div class="nav-tabs-custom" style="margin-bottom: 0px;">
@@ -50,12 +50,13 @@
                                         </li>
                                     </ul>
                                     <div class="tab-content">
-                                        <!-- System Configuration -->
+                                        <!-- Export attributes -->
                                         <div class="tab-pane active" id="attributeInventory">
 
                                             <div style="display: inline-block; width: 75% !important;">
                                                 <h:panelGroup>
-
+                                                    <h:commandButton style="margin-top:10px;margin-bottom: 5px;" action="#{attributeInventoryAction.submit}" styleClass="btn btn-primary exportAttributeButton"
+                                         value="Export"/>
                                                     <div class="row">
                                                         <div id="update" runat="server" visible="false">
                                                             <!-- general form elements -->
@@ -139,6 +140,8 @@
                                                             </div>
                                                         </div>
                                                     </div>
+                                                    <h:commandButton style="margin-top:10px;margin-bottom: 5px;" action="#{attributeInventoryAction.submit}" styleClass="btn btn-primary exportAttributeButton"
+                                         value="Export"/>
                                                 </h:panelGroup>
                                             </div>
                                         </div>
@@ -146,10 +149,7 @@
                                 </div>
                             </div>
                         </div>
-                        <h:commandButton action="#{attributeInventoryAction.submit}" styleClass="btn btn-primary exportAttributeButton"
-                                         value="Export"/>
                     </h:form>
-
                 </h:panelGroup>
             </div>
         </section>

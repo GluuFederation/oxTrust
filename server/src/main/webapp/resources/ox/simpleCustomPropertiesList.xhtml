@@ -14,6 +14,8 @@
 <cc:interface>
     <cc:attribute name="label" default="" type="java.lang.String" />
     <cc:attribute name="labelAdd" default="" type="java.lang.String" />
+    <cc:attribute name="leftClass" default="col-sm-1" type="java.lang.String" />
+    <cc:attribute name="rightClass" default="col-sm-10" type="java.lang.String" />
     <cc:attribute name="hideLabel" default="false" type="java.lang.Boolean" />
     <cc:attribute name="inputWidth" default="24" required="false" type="java.lang.Integer" />
     <cc:attribute name="maxItems" type="java.lang.Integer" />
@@ -34,7 +36,7 @@
 			    if(typeValue === "password") {
 			    	$(this).siblings("img[id$='view']").css({"display": "block"});
 			    } else {
-			    	$(this).siblings("img[id$='hide']").css({"display": "block"});
+			    	$(this).siblings("img[id$='hide']").css({"display": "none"});
 			    }
 			});
 		});
@@ -55,23 +57,24 @@
 
 	</h:outputScript>
     <a4j:region>
-        <ox:decorate label="#{cc.attrs.label}"  hideLabel="#{cc.attrs.hideLabel}">
+        <ox:decorate label="#{cc.attrs.label}"  hideLabel="#{cc.attrs.hideLabel}" leftClass="#{cc.attrs.leftClass}"
+											rightClass="#{cc.attrs.rightClass}">
             <h:panelGroup id="customList">
-                <a4j:region>
+                <a4j:region styleClass="col-sm-12 col-lg-12">
                     <a4j:repeat value="#{cc.attrs.properties}" var="_property">
-                    	<h:panelGrid styleClass="propertiesList" columns="1" width="100%" border="0" cellpadding="0" cellspacing="0" >
+                    	<h:panelGrid styleClass="propertiesList col-sm-12 col-lg-12" columns="1" width="100%" border="0" cellpadding="0" cellspacing="0" >
                             <h:panelGroup id="propertiesList">
                             <div >
                                 <h:inputText id="fInput" style = "margin-right:5px;margin-bottom:10px;width:35%;float:left;" styleClass="col-md-4 form-control propertyLabelTextBox" value="#{_property.value1}" size="#{cc.attrs.inputWidth}" required="#{cc.attrs.requiredName}" readonly="#{(_property.value1) eq 'clientID' or (_property.value1) eq 'clientSecret'}"/>
                                 <h:message for="fInput" errorClass="invalid"/>
 
-	                            <h:inputText id="sInput1" styleClass="col-md-4 form-control togglefield propertyValueTextBox" style = "width:35%;float:left;"
+	                            <h:inputText id="sInput1" styleClass="col-md-5 form-control togglefield propertyValueTextBox" style = "width:35%;float:left;"
                                              value="#{_property.value2}" p:placeholder="#{_property.description}" size="#{cc.attrs.inputWidth}" required="#{cc.attrs.requiredValue}"
                                              rendered="#{(cc.attrs.hideValue eq false) or (_property.hideValue eq false)}" />
 
                                 <h:message for="sInput1" errorClass="invalid" rendered="#{cc.attrs.hideValue eq false}"/>
 	                            
-                                <h:inputSecret id="sInput" styleClass="col-md-4 form-control togglefield" style = "width:35%;float:left;"
+                                <h:inputSecret id="sInput" styleClass="col-md-5 form-control togglefield" style = "width:35%;float:left;"
                                                value="#{_property.value2}" p:placeholder="#{_property.description}" size="#{cc.attrs.inputWidth}" required="#{cc.attrs.requiredValue}"
                                                redisplay="true" rendered="#{(cc.attrs.hideValue eq true) and (_property.hideValue eq true)}" />
                                 <h:message for="sInput" errorClass="invalid" rendered="#{cc.attrs.hideValue eq true}"/>
@@ -80,12 +83,12 @@
     
                                 <h:graphicImage value="/img/error.gif" rendered="#{invalid}" styleClass="errors" />
                                 
-                                <h:graphicImage styleClass="col-md-2 col-lg-1" value="/img/eye.png" style="display: none;"  id="view" onclick="return viewValue(this);" rendered="#{cc.attrs.hideValue eq true}"/>
-                                <h:graphicImage styleClass="col-md-2 col-lg-1" value="/img/eye-hidden.png" style="display: none;" id="hide" onclick="return hideValue(this);" rendered="#{cc.attrs.hideValue eq true}"/>
+                                <h:graphicImage styleClass="col-md-1 col-lg-1" value="/img/eye.png" id="view" onclick="return viewValue(this);" rendered="#{cc.attrs.hideValue eq true}"/>
+                                <h:graphicImage styleClass="col-md-1 col-lg-1" value="/img/eye-hidden.png" style="display: none;" id="hide" onclick="return hideValue(this);" rendered="#{cc.attrs.hideValue eq true}"/>
                                 
-                                <a4j:commandLink styleClass="glyphicon glyphicon-remove col-md-2 col-lg-1 removePropertyButton" rendered="#{cc.attrs.showRemoveDialogue eq false}"   style="float:left;margin-right:10px;margin-top: 8px;" action="#{cc.attrs.propertiesAction.removeItemFromSimpleCustomProperties(cc.attrs.properties, _property)}" render="customList" execute="@this" />
+                                <a4j:commandLink styleClass="glyphicon glyphicon-remove col-md-2 col-lg-2 removePropertyButton" rendered="#{cc.attrs.showRemoveDialogue eq false}"   style="float:left;margin-right:10px;margin-top: 8px;" action="#{cc.attrs.propertiesAction.removeItemFromSimpleCustomProperties(cc.attrs.properties, _property)}" render="customList" execute="@this" />
                                 
-                                <a4j:commandLink styleClass="glyphicon glyphicon-remove col-md-2 col-lg-1 removePropertyButton" rendered="#{(cc.attrs.showRemoveDialogue) eq true and (_property.value1) ne 'clientID' and (_property.value1) ne 'clientSecret'}"  style="float:left;margin-right:10px;margin-top: 8px;" onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();"
+                                <a4j:commandLink styleClass="glyphicon glyphicon-remove col-md-2 col-lg-2 removePropertyButton" rendered="#{(cc.attrs.showRemoveDialogue) eq true and (_property.value1) ne 'clientID' and (_property.value1) ne 'clientSecret'}"  style="float:left;margin-right:10px;margin-top: 8px;" onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();"
                                   execute="@region" />
                                 </div>
                             </h:panelGroup>                            

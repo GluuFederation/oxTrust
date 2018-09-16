@@ -1,58 +1,201 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-                xmlns:f="http://xmlns.jcp.org/jsf/core"
-                xmlns:h="http://xmlns.jcp.org/jsf/html"
-                xmlns:a4j="http://richfaces.org/a4j"
-                xmlns:rich="http://richfaces.org/rich"
-                xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
-                xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
->
-    <style type="text/css">
-        .odd {
-            background-color: #ddd;
-        }
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
+	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox">
+	<style type="text/css">
+.odd {
+	background-color: #ddd;
+}
 
-        .even {
-            background-color: #eee;
-        }
+.even {
+	background-color: #eee;
+}
 
-        .tooltip {
-            background-color: #{richSkin.generalBackgroundColor};
-            border-width: 3px;
-            padding: 10px;
-        }
+.tooltip {
+	background-color: #{richSkin.generalBackgroundColor
+}
 
-        .tooltip-text {
-            width: 350px;
-            height: 80px;
-            cursor: arrow;
-            border-width: 2px;
-            text-align: center;
-            display: table-cell;
-            vertical-align: middle;
-        }
+;
+border-width
 
-        .tooltipData {
-            font-weight: bold;
-        }
-        
-        .ui-widget-header {
-		    background: none !important;
-		    repeat-x: top left #005000 !important;
-		    position: relative !important;
-		    padding-left: 10px !important;
-		    cursor: move !important;
-		    padding: 6px !important;
-		    background-color: #337AB7 !important;
-		    width: 100% !important;
-		    border-top-right-radius: 4px !important;
-		    border-top-left-radius: 4px !important;
-		    color:white !important;
-		}
-    </style>
-       <h:outputScript>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+:
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+3
+px
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+;
+padding
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+:
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+10
+px
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+;
+}
+.tooltip-text {
+	width: 350px;
+	height: 80px;
+	cursor: arrow;
+	border-width: 2px;
+	text-align: center;
+	display: table-cell;
+	vertical-align: middle;
+}
+
+.tooltipData {
+	font-weight: bold;
+}
+
+.ui-widget-header {
+	background: none !important;
+	repeat-x: top left #005000 !important;
+	position: relative !important;
+	padding-left: 10px !important;
+	cursor: move !important;
+	padding: 6px !important;
+	background-color: #337AB7 !important;
+	width: 100% !important;
+	border-top-right-radius: 4px !important;
+	border-top-left-radius: 4px !important;
+	color: white !important;
+}
+</style>
+	<h:outputScript>
 
       function valuesDisplay(element) {
       var element = $(element);
@@ -158,772 +301,911 @@
 
     </h:outputScript>
 
-    <h:form id="clientForm">
-        <div class="row">
-            <div class="col-xs-12">
-                <div class="box box-primary">
-                    <div class="box-header">
-                        <div style="display: inline-block;width: 75% !important;">
-							
-							<a4j:commandButton styleClass="btn btn-primary " style="margin-top: 5px;" rendered="#{not _new}"
-                                                               value="#{msg['clientForm.clientSummary']}"
-                                                               oncomplete="#{rich:component('summary:clientSummary')}.show();"
-                                                               execute="@this" eventsQueue="clientQueue"/>
-                            <h:panelGroup>
-                                <ox:decorate id="inum" rendered="#{not _new}" label="#{msg['clientForm.inum']}">
-                                    <h:outputText styleClass="form-control" value="#{_client.inum}"/>
-                                </ox:decorate>
+	<h:form id="clientForm">
+		<div class="row">
+			<div class="col-xs-12 col-sm-12 col-lg-12">
+				<div class="box box-primary">
+					<div class="box-header">
 
-                                <ox:decorate id="displayName" label="#{msg['clientForm.clientName']}">
-                                    <rich:inplaceInput value="#{_client.displayName}" requiredMessage="Please Enter the Client Name"
-                                                       defaultLabel="click to enter the Client Name" maxlength="60"
-                                                       inputWidth="695" required="true" id="displayNameId"/>
-                                </ox:decorate>
+						<a4j:commandButton
+							styleClass="btn btn-primary showOIDCSummaryButton"
+							style="margin-left:4%;" rendered="#{not _new}"
+							value="#{msg['clientForm.clientSummary']}"
+							onclick="#{rich:component('summary:clientSummary')}.show();"
+							eventsQueue="clientQueue" />
+						<a4j:commandButton ajaxSingle="true" eventsQueue="clientQueue"
+							onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();"
+							rendered="#{not _new}"
+							styleClass="btn btn-primary deleteOIDCButton"
+							style="float: right; margin-right:1%; width:150px; border:none; background: #d62728 !important; background-color: #d62728 !important;"
+							value="#{msg['client.delete']}" />
+						<div class="container-fluid">
+							<h:panelGroup>
+								<!-- First row -->
+								<div class="row" style="margin-left: 5px; margin-right: 5px;">
+									<div class="col-sm-6 col-lg-6" style="padding: 0px;">
+										<ox:decorate id="displayName"
+											label="#{msg['clientForm.clientName']}" leftClass="col-sm-3"
+											rightClass="col-sm-9">
+											<rich:inplaceInput value="#{_client.displayName}" styleClass="clientNameTextBox"
+												requiredMessage="Please Enter the Client Name"
+												defaultLabel="click to enter the Client Name" maxlength="60"
+												required="true" id="displayNameId" />
+										</ox:decorate>
+										<h:panelGroup id="secretid">
+											<ox:decorate id="clientSecret"
+												label="#{msg['clientForm.clientSecret']}"
+												leftClass="col-sm-3" rightClass="col-sm-6">
+												<h:inputSecret styleClass="form-control togglefield clientSecretTextBox"
+													value="#{_client.oxAuthClientSecret}" redisplay="true"
+													defaultLabel="click to enter Client Secret" maxlength="60"
+													id="clientSecretId1" />
 
-                                <ox:decorate id="description" label="#{msg['clientForm.clientDescription']}">
-					                <h:inputTextarea value="#{_client.description}" rows="3" cols="80"
-					                	maxlength="250" id="descriptionId" />
-                                </ox:decorate>
+												<h:graphicImage value="/img/eye.png" id="viewPassword"
+													style="margin-top:-35px; margin-left: 55px;float:right;"
+													onclick="return changePasswordtoTextType(this,'clientSecretId1','hidePassword');" />
+												<h:graphicImage value="/img/eye-hidden.png"
+													style="margin-top:-35px; margin-left: 55px; float:right; display: none;"
+													id="hidePassword"
+													onclick="return changeTexttoPasswordType(this,'clientSecretId1','viewPassword');" />
 
-								<h:panelGroup id="secretid">
-	                                <ox:decorate id="clientSecret"
-	                                             label="#{msg['clientForm.clientSecret']}">
-	                                    <h:inputSecret  styleClass="form-control togglefield"  value="#{_client.oxAuthClientSecret}" redisplay="true"
-	                                                       defaultLabel="click to enter Client Secret" maxlength="60"
-	                                                       inputWidth="695" 
-	                                                       id="clientSecretId1"/>
-							          
-							          <h:graphicImage value="/img/eye.png" id="viewPassword" onclick="return changePasswordtoTextType(this,'clientSecretId1','hidePassword');"/>
-							           <h:graphicImage value="/img/eye-hidden.png" id="hidePassword" style="display: none;" onclick="return changeTexttoPasswordType(this,'clientSecretId1','viewPassword');"/>
-                                                        
-							           <div id="autogenrateid">
-	                                	<a4j:commandLink render="clientSecretId1" style="margin-top:10px;"  styleClass="btn btn-primary"
-	                                                               value="Auto-Generate Secret Key"
-	                                                               action="#{_clientAction.generatePassword()}" oncomplete="return valuesDisplay(this);" />
-	                                </div></ox:decorate>
-								</h:panelGroup>
+											</ox:decorate>
+											<div class="row" style="margin-left: 5px; margin-right: 5px;">
+												<div class="col-sm-6 col-lg-6">
+													<a4j:commandLink render="clientSecretId1"
+														style="margin-top:2px;"
+														styleClass="btn btn-primary generateClientSecretButton"
+														value="Auto-Generate Secret Key"
+														action="#{_clientAction.generatePassword()}"
+														oncomplete="return valuesDisplay(this);" />
+												</div>
+												<div class="col-sm-6 col-lg-6" style="padding: 0px;">
+													<a4j:commandButton rendered="#{not _new}"
+														onclick="#{rich:component('clientPassword:changePasswordModalPanel')}.show();"
+														styleClass="btn btn-primary changeClientSecretButton"
+														value="#{msg['client.changeClientSecret']}" />
+												</div>
+											</div>
+										</h:panelGroup>
+									</div>
+									<div class="col-sm-6 col-lg-6" style="padding: 0px;">
+										<ox:decorate id="inum" rendered="#{not _new}"
+											label="#{msg['clientForm.inum']}" leftClass="col-sm-1"
+											rightClass="col-sm-11">
+											<h:outputText style="margin-left:15px;margin-right:15px;" styleClass="col-sm-12 col-lg-12 form-control rounded clientId"
+												value="#{_client.inum}" />
+										</ox:decorate>
+										<ox:decorate id="description"
+											label="#{msg['clientForm.clientDescription']}"
+											leftClass="col-sm-4" rightClass="col-sm-8">
+											<h:inputTextarea value="#{_client.description}" rows="3"
+												styleClass="col-sm-12 form-control rounded clientDescriptionTextArea" cols="80"
+												maxlength="250" id="descriptionId" />
+										</ox:decorate>
+									</div>
 
-                                <ox:decorate id="applicatonType" label="#{msg['clientForm.applicationType']}">
-                                    <h:selectOneMenu styleClass="col-sm-9 form-control" value="#{_client.oxAuthAppType}"
-                                                     id="applicationTypeId" required="true">
-                                        <f:selectItems value="#{clientService.applicationType}" var="_type"
-                                                       itemLabel="#{_type.displayName}"/>
-                                        <f:converter converterId="org.gluu.jsf2.converter.EnumConverter"/>
-                                    </h:selectOneMenu>
-                                </ox:decorate>
+								</div>
+								<!--  second row -->
+								<div class="row" style="margin-left: 5px; margin-right: 5px;">
+									<div class="col-sm-6 col-lg-6" style="padding: 0px;">
+										<ox:decorate id="logoUri" label="#{msg['clientForm.logoURI']}"
+											leftClass="col-sm-3" rightClass="col-sm-9">
+											<rich:inplaceInput value="#{_client.logoUri}"
+												defaultLabel="click to enter a logo for the Client application"
+												maxlength="60" inputWidth="695" required="false"
+												id="logoUriId" />
+										</ox:decorate>
+										<ox:decorate id="policyUri"
+											label="#{msg['clientForm.policyUri']}" leftClass="col-sm-3"
+											rightClass="col-sm-9">
+											<rich:inplaceInput value="#{_client.policyUri}"
+												defaultLabel="click to enter the Policy URI" maxlength="60"
+												inputWidth="695" required="false" id="policyUriId" />
+										</ox:decorate>
+										<ox:decorate id="clientUri"
+											label="#{msg['clientForm.clientUri']}" leftClass="col-sm-3"
+											rightClass="col-sm-9">
+											<rich:inplaceInput value="#{_client.clientUri}"
+												defaultLabel="click to enter the home page of the Client"
+												maxlength="60" inputWidth="695" required="false"
+												id="clientUriId" />
+										</ox:decorate>
+										<ox:decorate id="tosUri"
+											label="#{msg['clientForm.termsOfServiceURI']}"
+											leftClass="col-sm-3" rightClass="col-sm-9">
+											<rich:inplaceInput value="#{_client.tosUri}"
+												defaultLabel="click to enter the TOS URI" maxlength="60"
+												inputWidth="695" required="false" id="tosUriId" />
+										</ox:decorate>
+									</div>
+									<div class="col-sm-6 col-lg-6" style="padding: 0px;">
+										<ox:decorate id="persistClientAuthorizations"
+											label="#{msg['clientForm.persistClientAuthorization']}"
+											leftClass="col-sm-6" rightClass="col-sm-6">
+											<h:selectOneMenu id="persisteClientAuthorizationsId"
+												styleClass="col-sm-9 form-control rounded persistClientAuthorizationSelectBox"
+												value="#{_client.oxAuthPersistClientAuthorizations}"
+												required="true" onchange="togglePersistAuthorization()">
+												<f:selectItems
+													value="#{organizationService.javaBooleanSelectionTypes}"
+													var="_type" itemLabel="#{_type.displayName}" />
+												<f:converter
+													converterId="org.gluu.jsf2.converter.EnumConverter" />
+											</h:selectOneMenu>
+										</ox:decorate>
+										<ox:decorate id="oxAuthTrustedClientBox"
+											label="#{msg['clientForm.preAuthorization']}"
+											leftClass="col-sm-6" rightClass="col-sm-6">
+											<h:selectOneMenu id="trustedClientId"
+												styleClass="col-sm-9 form-control rounded oxAuthTrustedClientSelectBox"
+												value="#{_client.oxAuthTrustedClient}" required="true"
+												onchange="togglePersistAuthorization()">
+												<f:selectItems value="#{clientService.oxAuthTrustedClient}"
+													var="_type" itemLabel="#{_type.displayName}" />
+												<f:converter
+													converterId="org.gluu.jsf2.converter.EnumConverter" />
+											</h:selectOneMenu>
+										</ox:decorate>
+										<ox:decorate id="applicatonType"
+											label="#{msg['clientForm.applicationType']}"
+											leftClass="col-sm-6" rightClass="col-sm-6">
+											<h:selectOneMenu styleClass="col-sm-12 form-control rounded applicationTypeSelectBox"
+												value="#{_client.oxAuthAppType}" id="applicationTypeId"
+												required="true">
+												<f:selectItems value="#{clientService.applicationType}"
+													var="_type" itemLabel="#{_type.displayName}" />
+												<f:converter
+													converterId="org.gluu.jsf2.converter.EnumConverter" />
+											</h:selectOneMenu>
 
-                                <ox:decorate id="oxAuthTrustedClientBox" label="#{msg['clientForm.preAuthorization']}">
-                                    <h:selectOneMenu id="trustedClientId"
-                                                     styleClass="col-sm-9 form-control"
-                                                     value="#{_client.oxAuthTrustedClient}"
-                                                     required="true"
-                                                     onchange="togglePersistAuthorization()">
-                                        <f:selectItems value="#{clientService.oxAuthTrustedClient}" var="_type"
-                                                       itemLabel="#{_type.displayName}"/>
-                                        <f:converter converterId="org.gluu.jsf2.converter.EnumConverter"/>
-                                    </h:selectOneMenu>
-                                </ox:decorate>
+										</ox:decorate>
+										<ox:decorate id="subjectType"
+											label="#{msg['clientForm.subjectType']}" leftClass="col-sm-6"
+											rightClass="col-sm-6">
+											<h:selectOneMenu styleClass="col-sm-9 form-control rounded subjectTypeSelectBox"
+												value="#{_client.subjectType}" id="subjectTypeId"
+												required="true">
+												<f:selectItems value="#{clientService.subjectTypes}"
+													var="_subjectType" label="#{_subjectType.displayName}" />
+												<f:converter
+													converterId="org.gluu.jsf2.converter.EnumConverter" />
+											</h:selectOneMenu>
+										</ox:decorate>
+										<ox:decorate id="accessTokenAsJwt"
+											label="#{msg['clientForm.accessTokenAsJwt']}"
+											leftClass="col-sm-6" rightClass="col-sm-6">
+											<h:selectOneMenu id="accessTokenAsJwtId"
+												styleClass="col-sm-9 form-control rounded"
+												value="#{_client.accessTokenAsJwt}" required="false">
+												<f:selectItems
+													value="#{organizationService.javaBooleanSelectionTypes}"
+													var="_type" itemLabel="#{_type.displayName}" />
+												<f:converter
+													converterId="org.gluu.jsf2.converter.EnumConverter" />
+											</h:selectOneMenu>
+										</ox:decorate>
+									</div>
+								</div>
+								<!--  thirth row -->
+								<div class="row" style="margin-left: 5px; margin-right: 5px;">
+									<div class="col-sm-6 col-lg-6" style="padding: 0px;">
+										<ox:decorate id="jwksUri" label="#{msg['clientForm.jwksURI']}"
+											leftClass="col-sm-3" rightClass="col-sm-9">
+											<rich:inplaceInput value="#{_client.jwksUri}"
+												defaultLabel="click to enter the URL for the Client's JSON Web Key Set"
+												maxlength="60" inputWidth="695" required="false"
+												id="jwksUriId" />
+										</ox:decorate>
+										<ox:decorate id="jwks" label="#{msg['clientForm.jwks']}"
+											leftClass="col-sm-3" rightClass="col-sm-9">
+											<h:inputTextarea styleClass="form-control rounded"
+												value="#{_client.jwks}" rows="3" cols="80" maxlength="4000"
+												id="jwksId" />
+										</ox:decorate>
+										<ox:decorate id="sectorIdentifierUri"
+											label="#{msg['clientForm.sectorIdentifierURI']}">
+											<rich:inplaceInput value="#{_client.sectorIdentifierUri}"
+												defaultLabel="click to enter the Sector Identifier URL"
+												maxlength="60" inputWidth="695" required="false"
+												id="sectorIdentifierUriId" />
+										</ox:decorate>
 
-                                <ox:decorate id="persistClientAuthorizations"
-                                             label="#{msg['clientForm.persistClientAuthorization']}">
-                                    <h:selectOneMenu id="persisteClientAuthorizationsId"
-                                                     styleClass="col-sm-9 form-control"
-                                                     value="#{_client.oxAuthPersistClientAuthorizations}"
-                                                     required="true"
-                                                     onchange="togglePersistAuthorization()">
-                                        <f:selectItems value="#{organizationService.javaBooleanSelectionTypes}"
-                                                       var="_type" itemLabel="#{_type.displayName}"/>
-                                        <f:converter converterId="org.gluu.jsf2.converter.EnumConverter"/>
-                                    </h:selectOneMenu>
-                                </ox:decorate>
+										<ox:decorate id="defaultMaxAge"
+											label="#{msg['clientForm.defaultMaximumAuthenticationAge']}">
+											<rich:inplaceInput value="#{_client.defaultMaxAge}"
+												defaultLabel="Maximum Authentication Age (value in seconds)"
+												maxlength="60" inputWidth="695" required="false"
+												id="defaultMaxAgeId" />
+										</ox:decorate>
+										<ox:decorate id="initiateLoginUri"
+											label="#{msg['clientForm.initiateLoginURI']}"
+											leftClass="col-sm-3" rightClass="col-sm-9">
+											<rich:inplaceInput value="#{_client.initiateLoginUri}"
+												defaultLabel="Enter an URI using the https scheme use to initiate a login by the RP"
+												maxlength="60" inputWidth="695" required="false"
+												id="initiateLoginUriId" />
+										</ox:decorate>
+										<ox:decorate id="oxRefreshTokenLifetime"
+											label="#{msg['clientForm.oxRefreshTokenLifetime']}">
+											<rich:inplaceInput value="#{_client.oxRefreshTokenLifetime}"
+												defaultLabel="#{msg['clientForm.oxRefreshTokenLifetimeLabel']}"
+												maxlength="60" inputWidth="695" required="false"
+												id="oxRefreshTokenLifetimeId" />
+										</ox:decorate>
+										<ox:decorate id="oxdId" label="#{msg['clientForm.oxdId']}">
+											<rich:inplaceInput value="#{_client.oxdId}"
+												defaultLabel="Enter a oxd Id for the Client application"
+												maxlength="60" inputWidth="64" required="false" id="oxdIdId" />
+										</ox:decorate>
 
-                                <ox:decorate id="logoUri" label="#{msg['clientForm.logoURI']}">
-                                    <rich:inplaceInput value="#{_client.logoUri}"
-                                                       defaultLabel="click to enter a logo for the Client application"
-                                                       maxlength="60" inputWidth="695" required="false" id="logoUriId"/>
-                                </ox:decorate>
+										<ox:decorate label="#{msg['clientForm.disabled']}">
+											<h:selectBooleanCheckbox value="#{_client.disabled}"
+												styleClass="form-control" />
+										</ox:decorate>
+									</div>
+									<div class="col-sm-6 col-lg-6" style="padding: 0px;">
+										<ox:decorate id="accessTokenSigningAlg"
+											label="#{msg['clientForm.accessTokenSigningAlg']}"
+											leftClass="col-sm-6" rightClass="col-sm-6">
+											<h:selectOneMenu styleClass="col-sm-9 form-control rounded"
+												value="#{_client.accessTokenSigningAlg}"
+												id="accessTokenSigningAlgId" required="false">
+												<f:selectItem noSelectionOption="true" itemLabel="" />
+												<f:selectItems
+													value="#{clientService.signatureAlgorithmsWithoutNone}"
+													var="_type" itemLabel="#{_type.displayName}" />
+												<f:converter
+													converterId="org.gluu.jsf2.converter.EnumConverter" />
+											</h:selectOneMenu>
+										</ox:decorate>
+										<ox:decorate id="idTokenEncryptedResponseAlg"
+											label="#{msg['clientForm.jweAlgorithmForEncrypting']}"
+											leftClass="col-sm-6" rightClass="col-sm-6">
+											<h:selectOneMenu styleClass="col-sm-9 form-control rounded"
+												value="#{_client.idTokenEncryptedResponseAlg}"
+												id="idTokenEncryptedResponseAlgId" required="false">
+												<f:selectItem noSelectionOption="true" itemLabel="" />
+												<f:selectItems
+													value="#{clientService.keyEncryptionAlgorithms}"
+													var="_type" itemLabel="#{_type.displayName}" />
+												<f:converter
+													converterId="org.gluu.jsf2.converter.EnumConverter" />
+											</h:selectOneMenu>
+										</ox:decorate>
+										<ox:decorate id="idTokenSignedResponseAlg"
+											label="#{msg['clientForm.jWSAlgorithmForSigning']}"
+											leftClass="col-sm-6" rightClass="col-sm-6">
+											<h:selectOneMenu styleClass="col-sm-9 form-control rounded"
+												value="#{_client.idTokenSignedResponseAlg}"
+												id="idTokenSignedResponseAlgId" required="false">
+												<f:selectItem noSelectionOption="true" itemLabel="" />
+												<f:selectItems
+													value="#{clientService.signatureAlgorithmsWithoutNone}"
+													var="_type" itemLabel="#{_type.displayName}" />
+												<f:converter
+													converterId="org.gluu.jsf2.converter.EnumConverter" />
+											</h:selectOneMenu>
+										</ox:decorate>
+										<ox:decorate id="idTokenEncryptedResponseEnc"
+											label="#{msg['clientForm.jweEncAlgorithmForEncrypting']}"
+											leftClass="col-sm-6" rightClass="col-sm-6">
+											<h:selectOneMenu styleClass="col-sm-9 form-control rounded"
+												value="#{_client.idTokenEncryptedResponseEnc}"
+												id="idTokenEncryptedResponseEncId" required="false">
+												<f:selectItem noSelectionOption="true" itemLabel="" />
+												<f:selectItems
+													value="#{clientService.blockEncryptionAlgorithms}"
+													var="_type" itemLabel="#{_type.displayName}" />
+												<f:converter
+													converterId="org.gluu.jsf2.converter.EnumConverter" />
+											</h:selectOneMenu>
+										</ox:decorate>
+										<ox:decorate id="userInfoSignedResponseAlg"
+											label="#{msg['clientForm.jwsAlgAlgorithm']}"
+											leftClass="col-sm-6" rightClass="col-sm-6">
+											<h:selectOneMenu styleClass="col-sm-9 form-control rounded"
+												value="#{_client.userInfoSignedResponseAlg}"
+												id="userInfoSignedResponseAlgId" required="false">
+												<f:selectItem noSelectionOption="true" itemLabel="" />
+												<f:selectItems value="#{clientService.signatureAlgorithms}"
+													var="_type" itemLabel="#{_type.displayName}" />
+												<f:converter
+													converterId="org.gluu.jsf2.converter.EnumConverter" />
+											</h:selectOneMenu>
+										</ox:decorate>
+										<ox:decorate id="userInfoEncryptedResponseAlg"
+											label="#{msg['clientForm.jweAlgAlgorithm']}"
+											leftClass="col-sm-6" rightClass="col-sm-6">
+											<h:selectOneMenu styleClass="col-sm-9 form-control rounded"
+												value="#{_client.userInfoEncryptedResponseAlg}"
+												id="userInfoEncryptedResponseAlgId" required="false">
+												<f:selectItem noSelectionOption="true" itemLabel="" />
+												<f:selectItems
+													value="#{clientService.keyEncryptionAlgorithms}"
+													var="_type" itemLabel="#{_type.displayName}" />
+												<f:converter
+													converterId="org.gluu.jsf2.converter.EnumConverter" />
+											</h:selectOneMenu>
+										</ox:decorate>
+										<ox:decorate id="userInfoEncryptedResponseEnc"
+											label="#{msg['clientForm.jweEncAlgorithm']}"
+											leftClass="col-sm-6" rightClass="col-sm-6">
+											<h:selectOneMenu styleClass="col-sm-9 form-control rounded"
+												value="#{_client.userInfoEncryptedResponseEnc}"
+												id="userInfoEncryptedResponseEncId" required="false">
+												<f:selectItem noSelectionOption="true" itemLabel="" />
+												<f:selectItems
+													value="#{clientService.blockEncryptionAlgorithms}"
+													var="_type" itemLabel="#{_type.displayName}" />
+												<f:converter
+													converterId="org.gluu.jsf2.converter.EnumConverter" />
+											</h:selectOneMenu>
+										</ox:decorate>
+										<ox:decorate id="requestObjectSigningAlg"
+											label="#{msg['clientForm.jwsAlgAlgorithmForSigningRequestObjects']}"
+											leftClass="col-sm-6" rightClass="col-sm-6">
+											<h:selectOneMenu styleClass="col-sm-9 form-control rounded"
+												value="#{_client.requestObjectSigningAlg}"
+												id="requestObjectSigningAlgId" required="false">
+												<f:selectItem noSelectionOption="true" itemLabel="" />
+												<f:selectItems value="#{clientService.signatureAlgorithms}"
+													var="_type" itemLabel="#{_type.displayName}" />
+												<f:converter
+													converterId="org.gluu.jsf2.converter.EnumConverter" />
+											</h:selectOneMenu>
+										</ox:decorate>
+									</div>
+								</div>
 
-                                <ox:decorate id="clientUri" label="#{msg['clientForm.clientUri']}">
-                                    <rich:inplaceInput value="#{_client.clientUri}"
-                                                       defaultLabel="click to enter the home page of the Client"
-                                                       maxlength="60" inputWidth="695" required="false"
-                                                       id="clientUriId"/>
-                                </ox:decorate>
+								<!--  row six -->
+								<div class="row" style="margin-left: 5px; margin-right: 5px;">
+									<div class="col-sm-6 col-lg-6" style="padding: 0px;">
+										<ox:decorate id="requestObjectEncryptionAlg"
+											label="#{msg['clientForm.jweAlgAlgorithmforEncryptingRequestObjects']}"
+											leftClass="col-sm-6" rightClass="col-sm-6">
+											<h:selectOneMenu styleClass="col-sm-9 form-control rounded"
+												value="#{_client.requestObjectEncryptionAlg}"
+												id="requestObjectEncryptionAlgId" required="false">
+												<f:selectItem noSelectionOption="true" itemLabel="" />
+												<f:selectItems
+													value="#{clientService.keyEncryptionAlgorithms}"
+													var="_type" itemLabel="#{_type.displayName}" />
+												<f:converter
+													converterId="org.gluu.jsf2.converter.EnumConverter" />
+											</h:selectOneMenu>
+										</ox:decorate>
+										<ox:decorate id="requestObjectEncryptionEnc"
+											label="#{msg['clientForm.jweEncAlgorithmForEncryptingRequestObjects']}"
+											leftClass="col-sm-6" rightClass="col-sm-6">
+											<h:selectOneMenu styleClass="col-sm-9 form-control rounded"
+												value="#{_client.requestObjectEncryptionEnc}"
+												id="requestObjectEncryptionEncId" required="false">
+												<f:selectItem noSelectionOption="true" itemLabel="" />
+												<f:selectItems
+													value="#{clientService.blockEncryptionAlgorithms}"
+													var="_type" itemLabel="#{_type.displayName}" />
+												<f:converter
+													converterId="org.gluu.jsf2.converter.EnumConverter" />
+											</h:selectOneMenu>
+										</ox:decorate>
+										<ox:decorate id="tokenEndpointAuthMethod"
+											label="#{msg['clientForm.authenticationMethod']}"
+											leftClass="col-sm-6" rightClass="col-sm-6">
+											<h:selectOneMenu styleClass="col-sm-9 form-control rounded tokenEndpointAuthMethodSelectBox"
+												value="#{_client.tokenEndpointAuthMethod}"
+												id="tokenEndpointAuthMethodId" required="false">
+												<f:selectItems
+													value="#{clientService.authenticationMethods}"
+													var="_method" label="#{_method.displayName}" />
+												<f:converter
+													converterId="org.gluu.jsf2.converter.EnumConverter" />
+											</h:selectOneMenu>
+										</ox:decorate>
+										<ox:decorate id="tokenEndpointAuthSigningAlg"
+											label="#{msg['clientForm.jwsAlgAlgorithmForAuthentication']}"
+											leftClass="col-sm-6" rightClass="col-sm-6">
+											<h:selectOneMenu styleClass="col-sm-9 form-control rounded"
+												value="#{_client.tokenEndpointAuthSigningAlg}"
+												id="tokenEndpointAuthSigningAlgId" required="false">
+												<f:selectItem noSelectionOption="true" itemLabel="" />
+												<f:selectItems value="#{clientService.signatureAlgorithms}"
+													var="_type" itemLabel="#{_type.displayName}" />
+												<f:converter
+													converterId="org.gluu.jsf2.converter.EnumConverter" />
+											</h:selectOneMenu>
+										</ox:decorate>
+									</div>
+									<div class="col-sm-6 col-lg-6" style="padding: 0px;">
+										<ox:decorate id="requireAuthTime"
+											label="#{msg['clientForm.requireAuthTime']}"
+											leftClass="col-sm-6" rightClass="col-sm-6">
+											<h:selectOneMenu styleClass="col-sm-9 form-control rounded"
+												value="#{_client.requireAuthTime}" required="false">
+												<f:selectItem itemLabel="Please select a value."
+													noSelectionOption="true" />
+												<f:selectItems
+													value="#{organizationService.javaBooleanSelectionTypes}"
+													var="_type" itemLabel="#{_type.displayName}" />
+												<f:converter
+													converterId="org.gluu.jsf2.converter.EnumConverter" />
+											</h:selectOneMenu>
+										</ox:decorate>
+										<a4j:outputPanel>
+											<ox:decorate id="includeClaimsInIdToken"
+												label="#{msg['clientForm.includeClaimsInIdToken']}"
+												leftClass="col-sm-6" rightClass="col-sm-6">
+												<h:selectOneMenu styleClass="col-sm-9 form-control rounded"
+													value="#{_client.oxIncludeClaimsInIdToken}" required="true"
+													disabled="#{!jsonConfigurationService.getOxauthAppConfiguration().legacyIdTokenClaims}">
+													<f:selectItems
+														value="#{organizationService.javaBooleanSelectionTypes}"
+														var="_type" itemLabel="#{_type.displayName}" />
+													<f:converter
+														converterId="org.gluu.jsf2.converter.EnumConverter" />
+												</h:selectOneMenu>
+											</ox:decorate>
+											<rich:tooltip
+												rendered="#{!jsonConfigurationService.getOxauthAppConfiguration().legacyIdTokenClaims}">
+												<span style="white-space: nowrap">
+													#{msg['clientForm.includeClaimsInIdTokenTooltip']} </span>
+											</rich:tooltip>
+										</a4j:outputPanel>
+										<ox:decorate id="logoutSessionRequired"
+											label="#{msg['clientForm.logoutSessionRequired']}"
+											leftClass="col-sm-6" rightClass="col-sm-6">
+											<h:selectOneMenu styleClass="col-sm-9 form-control rounded"
+												value="#{_client.logoutSessionRequired}" required="true">
+												<f:selectItems
+													value="#{organizationService.javaBooleanSelectionTypes}"
+													var="_type" itemLabel="#{_type.displayName}" />
+												<f:converter
+													converterId="org.gluu.jsf2.converter.EnumConverter" />
+											</h:selectOneMenu>
+										</ox:decorate>
+									</div>
+								</div>
 
-                                <ox:decorate id="policyUri" label="#{msg['clientForm.policyUri']}">
-                                    <rich:inplaceInput value="#{_client.policyUri}"
-                                                       defaultLabel="click to enter the Policy URI" maxlength="60"
-                                                       inputWidth="695" required="false" id="policyUriId"/>
-                                </ox:decorate>
+								<div class="row" style="margin-left: 5px; margin-right: 5px;">
+									<div class="col-sm-6 col-lg-6" style="padding: 0px;">
+										<ox:decorate id="redirectLoginUrls"
+											label="#{msg['clientForm.redirectLoginURIs']}">
+											<h:panelGroup id="selectedLoginURIsId">
+												<h:panelGroup columns="1" width="100%" border="0"
+													cellpadding="0" cellspacing="0">
+													<a4j:repeat value="#{_clientAction.loginUris}"
+														rowKeyVar="_urisIdx" var="_uri" iterationStatusVar="loop">
+														<div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
+															<h:outputText value="#{empty _uri ? _uri : _uri}" />
+															<h:outputText value="&#160;" />
+															<div class="span6 pull-right">
+																<a4j:commandLink styleClass="glyphicon glyphicon-remove"
+																	style="margin-top:-20px;"
+																	action="#{_clientAction.removeLoginURI(_uri)}"
+																	execute="@this" render="selectedLoginURIsId"
+																	eventsQueue="clientQueue">
+																	<!--  <h:graphicImage value="/img/remove.gif" /> -->
+																</a4j:commandLink>
+															</div>
+															<br />
+														</div>
+													</a4j:repeat>
+													<richext:spacer height="16" />
+													<a4j:commandButton
+														styleClass="btn btn-primary AddRedirectLoginUriButton"
+														style="margin-top: 5px;"
+														value="#{msg['clientForm.addLoginReiderctURI']}"
+														oncomplete="#{rich:component('loginRedirect:inputText')}.show();"
+														execute="@this" eventsQueue="clientQueue" />
 
-                                <ox:decorate id="tosUri" label="#{msg['clientForm.termsOfServiceURI']}">
-                                    <rich:inplaceInput value="#{_client.tosUri}"
-                                                       defaultLabel="click to enter the TOS URI" maxlength="60"
-                                                       inputWidth="695" required="false" id="tosUriId"/>
-                                </ox:decorate>
+												</h:panelGroup>
+											</h:panelGroup>
+										</ox:decorate>
+										<ox:decorate id="claimRedirectUrls"
+											label="#{msg['clientForm.claimRedirectURI']}">
+											<h:panelGroup id="selectedClaimRedirectURIIsId">
+												<h:panelGroup columns="1" width="100%" border="0"
+													cellpadding="0" cellspacing="0">
+													<a4j:repeat value="#{_clientAction.claimRedirectURIList}"
+														rowKeyVar="_urisIdx" var="_uri" iterationStatusVar="loop">
+														<div class="row-fluid">
+															<div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
+																<h:outputText value="#{empty _uri ? _uri : _uri}" />
+																<h:outputText value="&#160;" />
 
-                                <ox:decorate id="jwksUri" label="#{msg['clientForm.jwksURI']}">
-                                    <rich:inplaceInput value="#{_client.jwksUri}"
-                                                       defaultLabel="click to enter the URL for the Client's JSON Web Key Set"
-                                                       maxlength="60" inputWidth="695" required="false" id="jwksUriId"/>
-                                </ox:decorate>
+																<div class="span6 pull-right">
+																	<a4j:commandLink
+																		styleClass="glyphicon glyphicon-remove"
+																		style="margin-top:-20px;"
+																		action="#{_clientAction.removeClaimRedirectURI(_uri)}"
+																		execute="@this" render="selectedClaimRedirectURIIsId"
+																		eventsQueue="clientQueue">
+																		<!-- <h:graphicImage value="/img/remove.gif" /> -->
+																	</a4j:commandLink>
+																</div>
+															</div>
+														</div>
+														<br />
+													</a4j:repeat>
+													<richext:spacer height="16" />
+													<a4j:commandButton
+														styleClass="btn btn-primary AddClaimRedirectUriButton"
+														style="margin-top:5px"
+														value="#{msg['clientForm.addClaimRedirectURI']}"
+														oncomplete="#{rich:component('claimRedirectUri:inputText')}.show();"
+														execute="@this" eventsQueue="clientQueue" />
+												</h:panelGroup>
+											</h:panelGroup>
+										</ox:decorate>
+										<ox:decorate id="claims" label="#{msg['clientForm.claims']}"
+											rendered="#{_clientAction.claims.size() > 0 }"
+											render="#{_clientAction.claims.size() > 0}">
+											<h:panelGroup id="selectedClaimsId">
+												<h:panelGroup>
+													<a4j:repeat value="#{_clientAction.claims}"
+														rowKeyVar="_claimIdx" var="_claim"
+														iterationStatusVar="loop">
+														<div class="row-fluid">
+															<div class="#{(loop.index % 2 == 0) ? 'odd' : 'even'}">
+																<h:outputText value="#{_claim.displayName}" />
+																<h:outputText value="&#160;" />
+																<div class="span6 pull-right">
+																	<a4j:commandLink
+																		styleClass="glyphicon glyphicon-remove"
+																		style="margin-top: -20px;"
+																		action="#{_clientAction.removeClaim(_claim.inum)}"
+																		execute="@this" render="selectedClaimsId"
+																		eventsQueue="clientQueue"></a4j:commandLink>
+																</div>
+															</div>
+														</div>
+														<br />
+													</a4j:repeat>
+													<richext:spacer height="16" />
+												</h:panelGroup>
+											</h:panelGroup>
+										</ox:decorate>
+										<ox:decorate id="grantTypes"
+											label="#{msg['clientForm.grantTypes']}">
+											<h:panelGroup id="selectedGrantTypesId">
+												<h:panelGroup>
+													<a4j:repeat value="#{_clientAction.grantTypes}"
+														rowKeyVar="_grantTypeIdx" var="_grantType"
+														iterationStatusVar="loop">
+														<div class="row-fluid">
+															<div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
+																<h:outputText value="#{_grantType.value}" />
+																<h:outputText value="&#160;" />
+																<div class="span6 pull-right">
+																	<a4j:commandLink
+																		styleClass="glyphicon glyphicon-remove"
+																		style="margin-top:-20px;"
+																		action="#{_clientAction.removeGrantType(_grantType.value)}"
+																		execute="@this" render="selectedGrantTypesId"
+																		eventsQueue="clientQueue">
+																	</a4j:commandLink>
+																</div>
+															</div>
+														</div>
+														<br />
+													</a4j:repeat>
+													<richext:spacer height="16" />
+													<a4j:commandButton
+														styleClass="btn btn-primary AddGrantTypeButton"
+														style="margin-top:5px"
+														value="#{msg['clientForm.addGrantType']}"
+														oncomplete="#{rich:component('grantType:selectEntityModalPanel')}.show();"
+														execute="@this" eventsQueue="clientQueue" />
+												</h:panelGroup>
+											</h:panelGroup>
+										</ox:decorate>
+										<ox:decorate id="requestUris"
+											label="#{msg['clientForm.requestURI']}">
+											<h:panelGroup id="selectedRequestUrisId">
+												<h:panelGroup columns="1" width="100%" border="0"
+													cellpadding="0" cellspacing="0">
+													<a4j:repeat value="#{_clientAction.requestUris}"
+														rowKeyVar="_requestUrisIdx" var="_requestUri"
+														iterationStatusVar="loop">
+														<div class="row-fluid">
+															<div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
+																<h:outputText value="#{_requestUri}" />
+																<h:outputText value="&#160;" />
+																<div class="span6 pull-right">
+																	<a4j:commandLink
+																		styleClass="glyphicon glyphicon-remove"
+																		style="margin-top:-20px;"
+																		action="#{_clientAction.removeRequestUri(_requestUri)}"
+																		execute="@this" render="selectedRequestUrisId"
+																		eventsQueue="clientQueue">
+																	</a4j:commandLink>
+																</div>
+															</div>
+														</div>
+														<br />
+													</a4j:repeat>
+													<richext:spacer height="16" />
+													<a4j:commandButton
+														styleClass="btn btn-primary AddRequestUriButton"
+														style="margin-top:5px"
+														value="#{msg['clientForm.addRequestURI']}"
+														oncomplete="#{rich:component('requestUri:inputText')}.show();"
+														execute="@this" eventsQueue="clientQueue" />
+												</h:panelGroup>
+											</h:panelGroup>
+										</ox:decorate>
+										<ox:decorate id="authorizedOrigins"
+											label="#{msg['clientForm.authorizedOrigin']}">
+											<h:panelGroup id="selectedAuthorizedOriginsId">
+												<h:panelGroup columns="1" width="100%" border="0"
+													cellpadding="0" cellspacing="0">
+													<a4j:repeat value="#{_clientAction.authorizedOrigins}"
+														rowKeyVar="_authorizedOriginsIdx" var="_authorizedOrigin"
+														iterationStatusVar="loop">
+														<div class="row-fluid">
+															<div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
+																<h:outputText value="#{_authorizedOrigin}" />
+																<h:outputText value="&#160;" />
+																<div class="span6 pull-right">
+																	<a4j:commandLink
+																		styleClass="glyphicon glyphicon-remove"
+																		style="margin-top:-20px;"
+																		action="#{_clientAction.removeAuthorizedOrigin(_authorizedOrigin)}"
+																		execute="@this" render="selectedAuthorizedOriginsId"
+																		eventsQueue="clientQueue">
+																	</a4j:commandLink>
+																</div>
+															</div>
+														</div>
+														<br />
+													</a4j:repeat>
+													<richext:spacer height="16" />
+													<a4j:commandButton
+														styleClass="btn btn-primary AddAuthorizeOriginButton"
+														style="margin-top:5px"
+														value="#{msg['clientForm.addAuthorizedOrigin']}"
+														oncomplete="#{rich:component('authorizedOrigin:inputText')}.show();"
+														execute="@this" eventsQueue="clientQueue" />
+												</h:panelGroup>
+											</h:panelGroup>
+										</ox:decorate>
+										<ox:decorate id="clientLogoutUrls"
+											label="#{msg['clientForm.frontChannelLogoutURI']}">
+											<h:panelGroup id="selectedClientUrisId">
+												<h:panelGroup columns="1" width="100%" border="0"
+													cellpadding="0" cellspacing="0">
+													<a4j:repeat value="#{_clientAction.clientlogoutUris}"
+														rowKeyVar="_urisIdx" var="_uri" iterationStatusVar="loop">
+														<div class="row-fluid">
+															<div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
+																<h:outputText value="#{empty _uri ? _uri : _uri}" />
+																<h:outputText value="&#160;" />
+																<div class="span6 pull-right">
+																	<a4j:commandLink
+																		styleClass="glyphicon glyphicon-remove"
+																		style="margin-top:-20px;"
+																		action="#{_clientAction.removeClientLogoutURI(_uri)}"
+																		execute="@this" render="selectedClientUrisId"
+																		eventsQueue="clientQueue">
+																		<!-- <h:graphicImage value="/img/remove.gif" /> -->
+																	</a4j:commandLink>
+																</div>
+															</div>
+														</div>
+														<br />
+													</a4j:repeat>
+													<richext:spacer height="16" />
+													<a4j:commandButton
+														styleClass="btn btn-primary addLogoutUriButton"
+														style="margin-top:5px"
+														value="#{msg['clientForm.addFrontchannelLogoutURI']}"
+														oncomplete="#{rich:component('clientLogoutUri:inputText')}.show();"
+														execute="@this" eventsQueue="clientQueue" />
+												</h:panelGroup>
+											</h:panelGroup>
+										</ox:decorate>
+									</div>
+									<div class="col-sm-6 col-lg-6" style="padding: 0px;">
+										<ox:decorate id="redirectLogoutUrls"
+											label="#{msg['clientForm.redirectLogoutURIs']}">
+											<h:panelGroup id="selectedLogoutURIsId">
+												<h:panelGroup columns="1" width="100%" border="0"
+													cellpadding="0" cellspacing="0">
+													<a4j:repeat value="#{_clientAction.logoutUris}"
+														rowKeyVar="_urisIdx" var="_uri" iterationStatusVar="loop">
+														<div class="row-fluid">
+															<div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
+																<h:outputText value="#{empty _uri ? _uri : _uri}" />
+																<h:outputText value="&#160;" />
+																<!-- <div class="row-fluid"> -->
+																<div class="span6 pull-right">
+																	<a4j:commandLink
+																		styleClass="glyphicon glyphicon-remove"
+																		style="margin-top:-20px;"
+																		action="#{_clientAction.removeLogoutURI(_uri)}"
+																		execute="@this" render="selectedLogoutURIsId"
+																		eventsQueue="clientQueue">
+																	</a4j:commandLink>
+																</div>
+															</div>
+														</div>
+														<br />
+													</a4j:repeat>
+													<richext:spacer height="16" />
 
-                                <ox:decorate id="jwks" label="#{msg['clientForm.jwks']}">
-                                    <h:inputTextarea styleClass="form-control" value="#{_client.jwks}" rows="3"
-                                                     cols="80" maxlength="4000" id="jwksId"/>
-                                </ox:decorate>
+													<a4j:commandButton
+														styleClass="btn btn-primary AddRedirectLOgoutUriButton"
+														style="margin-top: 5px;"
+														value="#{msg['clientForm.postLogoutRedirectURI']}"
+														oncomplete="#{rich:component('logoutRedirect:inputText')}.show();"
+														execute="@this" eventsQueue="clientQueue" />
 
-                                <ox:decorate id="sectorIdentifierUri" label="#{msg['clientForm.sectorIdentifierURI']}">
-                                    <rich:inplaceInput value="#{_client.sectorIdentifierUri}"
-                                                       defaultLabel="click to enter the Sector Identifier URL"
-                                                       maxlength="60" inputWidth="695" required="false"
-                                                       id="sectorIdentifierUriId"/>
-                                </ox:decorate>
-
-                                <ox:decorate id="subjectType" label="#{msg['clientForm.subjectType']}">
-                                    <h:selectOneMenu styleClass="col-sm-9 form-control" value="#{_client.subjectType}"
-                                                     id="subjectTypeId" required="true">
-                                        <f:selectItems value="#{clientService.subjectTypes}" var="_subjectType"
-                                                       label="#{_subjectType.displayName}"/>
-                                        <f:converter converterId="org.gluu.jsf2.converter.EnumConverter"/>
-                                    </h:selectOneMenu>
-                                </ox:decorate>
-
-                                <ox:decorate id="accessTokenAsJwt"
-                                             label="#{msg['clientForm.accessTokenAsJwt']}">
-                                    <h:selectOneMenu id="accessTokenAsJwtId"
-                                                     styleClass="col-sm-9 form-control"
-                                                     value="#{_client.accessTokenAsJwt}"
-                                                     required="false">
-                                        <f:selectItems value="#{organizationService.javaBooleanSelectionTypes}"
-                                                       var="_type" itemLabel="#{_type.displayName}"/>
-                                        <f:converter converterId="org.gluu.jsf2.converter.EnumConverter"/>
-                                    </h:selectOneMenu>
-                                </ox:decorate>
-
-                                <ox:decorate id="accessTokenSigningAlg"
-                                             label="#{msg['clientForm.accessTokenSigningAlg']}">
-                                    <h:selectOneMenu styleClass="col-sm-9 form-control"
-                                                     value="#{_client.accessTokenSigningAlg}"
-                                                     id="accessTokenSigningAlgId"
-                                                     required="false">
-                                        <f:selectItem noSelectionOption="true" itemLabel=""/>
-                                        <f:selectItems value="#{clientService.signatureAlgorithmsWithoutNone}"
-                                                       var="_type" itemLabel="#{_type.displayName}"/>
-                                        <f:converter converterId="org.gluu.jsf2.converter.EnumConverter"/>
-                                    </h:selectOneMenu>
-                                </ox:decorate>
-
-                                <ox:decorate id="idTokenSignedResponseAlg"
-                                             label="#{msg['clientForm.jWSAlgorithmForSigning']}">
-                                    <h:selectOneMenu styleClass="col-sm-9 form-control"
-                                                     value="#{_client.idTokenSignedResponseAlg}"
-                                                     id="idTokenSignedResponseAlgId"
-                                                     required="false">
-                                        <f:selectItem noSelectionOption="true" itemLabel=""/>
-                                        <f:selectItems value="#{clientService.signatureAlgorithmsWithoutNone}"
-                                                       var="_type" itemLabel="#{_type.displayName}"/>
-                                        <f:converter converterId="org.gluu.jsf2.converter.EnumConverter"/>
-                                    </h:selectOneMenu>
-                                </ox:decorate>
-
-                                <ox:decorate id="idTokenEncryptedResponseAlg"
-                                             label="#{msg['clientForm.jweAlgorithmForEncrypting']}">
-                                    <h:selectOneMenu styleClass="col-sm-9 form-control"
-                                                     value="#{_client.idTokenEncryptedResponseAlg}"
-                                                     id="idTokenEncryptedResponseAlgId"
-                                                     required="false">
-                                        <f:selectItem noSelectionOption="true" itemLabel=""/>
-                                        <f:selectItems value="#{clientService.keyEncryptionAlgorithms}" var="_type"
-                                                       itemLabel="#{_type.displayName}"/>
-                                        <f:converter converterId="org.gluu.jsf2.converter.EnumConverter"/>
-                                    </h:selectOneMenu>
-                                </ox:decorate>
-
-                                <ox:decorate id="idTokenEncryptedResponseEnc"
-                                             label="#{msg['clientForm.jweEncAlgorithmForEncrypting']}">
-                                    <h:selectOneMenu styleClass="col-sm-9 form-control"
-                                                     value="#{_client.idTokenEncryptedResponseEnc}"
-                                                     id="idTokenEncryptedResponseEncId"
-                                                     required="false">
-                                        <f:selectItem noSelectionOption="true" itemLabel=""/>
-                                        <f:selectItems value="#{clientService.blockEncryptionAlgorithms}" var="_type"
-                                                       itemLabel="#{_type.displayName}"/>
-                                        <f:converter converterId="org.gluu.jsf2.converter.EnumConverter"/>
-                                    </h:selectOneMenu>
-                                </ox:decorate>
-
-                                <ox:decorate id="userInfoSignedResponseAlg"
-                                             label="#{msg['clientForm.jwsAlgAlgorithm']}">
-                                    <h:selectOneMenu styleClass="col-sm-9 form-control"
-                                                     value="#{_client.userInfoSignedResponseAlg}"
-                                                     id="userInfoSignedResponseAlgId"
-                                                     required="false">
-                                        <f:selectItem noSelectionOption="true" itemLabel=""/>
-                                        <f:selectItems value="#{clientService.signatureAlgorithms}" var="_type"
-                                                       itemLabel="#{_type.displayName}"/>
-                                        <f:converter converterId="org.gluu.jsf2.converter.EnumConverter"/>
-                                    </h:selectOneMenu>
-                                </ox:decorate>
-
-                                <ox:decorate id="userInfoEncryptedResponseAlg"
-                                             label="#{msg['clientForm.jweAlgAlgorithm']}">
-                                    <h:selectOneMenu styleClass="col-sm-9 form-control"
-                                                     value="#{_client.userInfoEncryptedResponseAlg}"
-                                                     id="userInfoEncryptedResponseAlgId"
-                                                     required="false">
-                                        <f:selectItem noSelectionOption="true" itemLabel=""/>
-                                        <f:selectItems value="#{clientService.keyEncryptionAlgorithms}" var="_type"
-                                                       itemLabel="#{_type.displayName}"/>
-                                        <f:converter converterId="org.gluu.jsf2.converter.EnumConverter"/>
-                                    </h:selectOneMenu>
-                                </ox:decorate>
-
-                                <ox:decorate id="userInfoEncryptedResponseEnc"
-                                             label="#{msg['clientForm.jweEncAlgorithm']}">
-                                    <h:selectOneMenu styleClass="col-sm-9 form-control"
-                                                     value="#{_client.userInfoEncryptedResponseEnc}"
-                                                     id="userInfoEncryptedResponseEncId"
-                                                     required="false">
-                                        <f:selectItem noSelectionOption="true" itemLabel=""/>
-                                        <f:selectItems value="#{clientService.blockEncryptionAlgorithms}" var="_type"
-                                                       itemLabel="#{_type.displayName}"/>
-                                        <f:converter converterId="org.gluu.jsf2.converter.EnumConverter"/>
-                                    </h:selectOneMenu>
-                                </ox:decorate>
-
-                                <ox:decorate id="requestObjectSigningAlg"
-                                             label="#{msg['clientForm.jwsAlgAlgorithmForSigningRequestObjects']}">
-                                    <h:selectOneMenu styleClass="col-sm-9 form-control"
-                                                     value="#{_client.requestObjectSigningAlg}"
-                                                     id="requestObjectSigningAlgId"
-                                                     required="false">
-                                        <f:selectItem noSelectionOption="true" itemLabel=""/>
-                                        <f:selectItems value="#{clientService.signatureAlgorithms}" var="_type"
-                                                       itemLabel="#{_type.displayName}"/>
-                                        <f:converter converterId="org.gluu.jsf2.converter.EnumConverter"/>
-                                    </h:selectOneMenu>
-                                </ox:decorate>
-
-                                <ox:decorate id="requestObjectEncryptionAlg"
-                                             label="#{msg['clientForm.jweAlgAlgorithmforEncryptingRequestObjects']}">
-                                    <h:selectOneMenu styleClass="col-sm-9 form-control"
-                                                     value="#{_client.requestObjectEncryptionAlg}"
-                                                     id="requestObjectEncryptionAlgId"
-                                                     required="false">
-                                        <f:selectItem noSelectionOption="true" itemLabel=""/>
-                                        <f:selectItems value="#{clientService.keyEncryptionAlgorithms}" var="_type"
-                                                       itemLabel="#{_type.displayName}"/>
-                                        <f:converter converterId="org.gluu.jsf2.converter.EnumConverter"/>
-                                    </h:selectOneMenu>
-                                </ox:decorate>
-
-                                <ox:decorate id="requestObjectEncryptionEnc"
-                                             label="#{msg['clientForm.jweEncAlgorithmForEncryptingRequestObjects']}">
-                                    <h:selectOneMenu styleClass="col-sm-9 form-control"
-                                                     value="#{_client.requestObjectEncryptionEnc}"
-                                                     id="requestObjectEncryptionEncId"
-                                                     required="false">
-                                        <f:selectItem noSelectionOption="true" itemLabel=""/>
-                                        <f:selectItems value="#{clientService.blockEncryptionAlgorithms}" var="_type"
-                                                       itemLabel="#{_type.displayName}"/>
-                                        <f:converter converterId="org.gluu.jsf2.converter.EnumConverter"/>
-                                    </h:selectOneMenu>
-                                </ox:decorate>
-
-                                <ox:decorate id="tokenEndpointAuthMethod"
-                                             label="#{msg['clientForm.authenticationMethod']}">
-                                    <h:selectOneMenu styleClass="col-sm-9 form-control"
-                                                     value="#{_client.tokenEndpointAuthMethod}"
-                                                     id="tokenEndpointAuthMethodId" required="false">
-                                        <f:selectItems value="#{clientService.authenticationMethods}" var="_method"
-                                                       label="#{_method.displayName}"/>
-                                        <f:converter converterId="org.gluu.jsf2.converter.EnumConverter"/>
-                                    </h:selectOneMenu>
-                                </ox:decorate>
-
-                                <ox:decorate id="tokenEndpointAuthSigningAlg"
-                                             label="#{msg['clientForm.jwsAlgAlgorithmForAuthentication']}">
-                                    <h:selectOneMenu styleClass="col-sm-9 form-control"
-                                                     value="#{_client.tokenEndpointAuthSigningAlg}"
-                                                     id="tokenEndpointAuthSigningAlgId"
-                                                     required="false">
-                                        <f:selectItem noSelectionOption="true" itemLabel=""/>
-                                        <f:selectItems value="#{clientService.signatureAlgorithms}" var="_type"
-                                                       itemLabel="#{_type.displayName}"/>
-                                        <f:converter converterId="org.gluu.jsf2.converter.EnumConverter"/>
-                                    </h:selectOneMenu>
-                                </ox:decorate>
-
-                                <ox:decorate id="defaultMaxAge"
-                                             label="#{msg['clientForm.defaultMaximumAuthenticationAge']}">
-                                    <rich:inplaceInput value="#{_client.defaultMaxAge}"
-                                                       defaultLabel="click to enter the Default Maximum Authentication Age (value in seconds)"
-                                                       maxlength="60" inputWidth="695" required="false"
-                                                       id="defaultMaxAgeId"/>
-                                </ox:decorate>
-
-                                <ox:decorate id="requireAuthTime" label="#{msg['clientForm.requireAuthTime']}">
-                                    <h:selectOneMenu styleClass="col-sm-9 form-control"
-                                                     value="#{_client.requireAuthTime}" required="false">
-                                        <f:selectItem itemLabel="Please select a value." noSelectionOption="true"/>
-                                        <f:selectItems value="#{organizationService.javaBooleanSelectionTypes}"
-                                                       var="_type" itemLabel="#{_type.displayName}"/>
-                                        <f:converter converterId="org.gluu.jsf2.converter.EnumConverter"/>
-                                    </h:selectOneMenu>
-                                </ox:decorate>
-
-                                <ox:decorate id="redirectLoginUrls" label="#{msg['clientForm.redirectLoginURIs']}">
-                                    <h:panelGroup id="selectedLoginURIsId">
-                                        <h:panelGroup columns="1" width="100%" border="0" cellpadding="0"
-                                                      cellspacing="0">
-                                            <a4j:repeat value="#{_clientAction.loginUris}" rowKeyVar="_urisIdx"
-                                                        var="_uri" iterationStatusVar="loop">
-                                                <div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
-                                                    <h:outputText value="#{empty _uri ? _uri : _uri}"/>
-                                                    <h:outputText value="&#160;"/>
-                                                        <div class="span6 pull-right">
-                                                            <a4j:commandLink styleClass="glyphicon glyphicon-remove"
-                                                                             style="margin-top:-20px;"
-                                                                             action="#{_clientAction.removeLoginURI(_uri)}"
-                                                                             execute="@this"
-                                                                             render="selectedLoginURIsId"
-                                                                             eventsQueue="clientQueue">
-                                                                <!--  <h:graphicImage value="/img/remove.gif" /> -->
-                                                            </a4j:commandLink>
-                                                    </div>
-                                                    <br/>
-                                                </div>
-                                            </a4j:repeat>
-                                            <richext:spacer height="16"/>
-                                              <a4j:commandButton styleClass="btn btn-primary AddRedirectLoginUriButton" style="margin-top: 5px;"
-                                                               value="#{msg['clientForm.addLoginReiderctURI']}"
-                                                               oncomplete="#{rich:component('loginRedirect:inputText')}.show();"
-                                                               execute="@this" eventsQueue="clientQueue"/>
-							
-                                        </h:panelGroup>
-                                    </h:panelGroup>
-                                </ox:decorate>
-                               
-                                <ox:decorate id="redirectLogoutUrls" label="#{msg['clientForm.redirectLogoutURIs']}">
-                                    <h:panelGroup id="selectedLogoutURIsId">
-                                        <h:panelGroup columns="1" width="100%" border="0" cellpadding="0"
-                                                      cellspacing="0">
-                                            <a4j:repeat value="#{_clientAction.logoutUris}" rowKeyVar="_urisIdx"
-                                                        var="_uri" iterationStatusVar="loop">
-                                                <div class="row-fluid">
-                                                <div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
-                                                <h:outputText value="#{empty _uri ? _uri : _uri}"/>
-                                                <h:outputText value="&#160;"/>
-                                                <!-- <div class="row-fluid"> -->
-                                                    <div class="span6 pull-right">
-                                                        <a4j:commandLink styleClass="glyphicon glyphicon-remove"
-                                                                         style="margin-top:-20px;"
-                                                                         action="#{_clientAction.removeLogoutURI(_uri)}"
-                                                                         execute="@this" render="selectedLogoutURIsId"
-                                                                         eventsQueue="clientQueue">
-                                                            <!-- <h:graphicImage value="/img/remove.gif" /> -->
-                                                        </a4j:commandLink></div></div>
-                                                </div>
-                                                <br/>
-                                            </a4j:repeat>
-                                            <richext:spacer height="16"/>
-                                             
-                                <a4j:commandButton styleClass="btn btn-primary AddRedirectLOgoutUriButton" style="margin-top: 5px;"
-                                                               value="#{msg['clientForm.postLogoutRedirectURI']}"
-                                                               oncomplete="#{rich:component('logoutRedirect:inputText')}.show();"
-                                                               execute="@this" eventsQueue="clientQueue"/>
-								
-                                        </h:panelGroup>
-                                    </h:panelGroup>
-                                </ox:decorate>
-                               
-
-                                <!--  -->
-
-                                <ox:decorate id="claimRedirectUrls" label="#{msg['clientForm.claimRedirectURI']}">
-                                    <h:panelGroup id="selectedClaimRedirectURIIsId">
-                                        <h:panelGroup columns="1" width="100%" border="0" cellpadding="0"
-                                                      cellspacing="0">
-                                            <a4j:repeat value="#{_clientAction.claimRedirectURIList}" rowKeyVar="_urisIdx"
-                                                        var="_uri" iterationStatusVar="loop">
-                                                <div class="row-fluid">
-                                                <div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
-                                                <h:outputText value="#{empty _uri ? _uri : _uri}"/>
-                                                <h:outputText value="&#160;"/>
-
-                                                    <div class="span6 pull-right">
-                                                        <a4j:commandLink styleClass="glyphicon glyphicon-remove"
-                                                                         style="margin-top:-20px;"
-                                                                         action="#{_clientAction.removeClaimRedirectURI(_uri)}"
-                                                                         execute="@this" render="selectedClaimRedirectURIIsId"
-                                                                         eventsQueue="clientQueue">
-                                                            <!-- <h:graphicImage value="/img/remove.gif" /> -->
-                                                        </a4j:commandLink></div></div>
-                                                </div>
-                                                <br/>
-                                            </a4j:repeat>
-                                            <richext:spacer height="16"/>
-                                            <a4j:commandButton styleClass="btn btn-primary AddClaimRedirectUriButton" style="margin-top:5px"
-                                                               value="#{msg['clientForm.addClaimRedirectURI']}"
-                                                               oncomplete="#{rich:component('claimRedirectUri:inputText')}.show();"
-                                                               execute="@this" eventsQueue="clientQueue"/>
-                                        </h:panelGroup>
-                                    </h:panelGroup>
-                                </ox:decorate>
-
-                                <!--  -->
-
-                                <ox:decorate id="scopes" label="#{msg['clientForm.scopes']}">
-                                    <h:panelGroup id="selectedScopesId">
-                                        <h:panelGroup>
-                                            <a4j:repeat value="#{_clientAction.scopes}" rowKeyVar="_scopeIdx"
-                                                        var="_scope" iterationStatusVar="loop">
-                                                <div class="row-fluid">
-                                                <div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
-                                                <h:outputText
-                                                        value="#{empty _scope.displayName ? _scope.displayName : _scope.displayName}"/>
-                                                <h:outputText value="&#160;"/>
-                                                    <div class="span6 pull-right">
-                                                        <a4j:commandLink styleClass="glyphicon glyphicon-remove"
-                                                                         style="margin-top:-20px;"
-                                                                         action="#{_clientAction.removeScope(_scope.inum)}"
-                                                                         execute="@this" render="selectedScopesId"
-                                                                         eventsQueue="clientQueue">
-                                                            <!--   <h:graphicImage value="/img/remove.gif" />-->
-
-                                                        </a4j:commandLink></div></div>
-                                                </div>
-                                                <br/>
-                                            </a4j:repeat>
-                                            <richext:spacer height="16"/>
-                                             <a4j:commandButton styleClass="btn btn-primary AddScopeButton" style="margin-top:5px"
-                                                               value="#{msg['clientForm.addScope']}"
-                                                               oncomplete="#{rich:component('scope:selectScopeModalPanel')}.show();"
-                                                               execute="@this" eventsQueue="clientQueue"/>
-                                        </h:panelGroup>
-                                    </h:panelGroup>
-                                </ox:decorate>
-
-                                <ox:decorate id="claims" label="#{msg['clientForm.claims']}">
-                                    <h:panelGroup id="selectedClaimsId">
-                                        <h:panelGroup>
-                                            <a4j:repeat value="#{_clientAction.claims}" rowKeyVar="_claimIdx"
-                                                        var="_claim" iterationStatusVar="loop">
-                                                <div class="row-fluid">
-                                                    <div class="#{(loop.index % 2 == 0) ? 'odd' : 'even'}">
-                                                        <h:outputText value="#{_claim.displayName}"/>
-                                                        <h:outputText value="&#160;"/>
-                                                        <div class="span6 pull-right">
-                                                            <a4j:commandLink styleClass="glyphicon glyphicon-remove"
-                                                                             style="margin-top: -20px;"
-                                                                             action="#{_clientAction.removeClaim(_claim.inum)}"
-                                                                             execute="@this" render="selectedClaimsId"
-                                                                             eventsQueue="clientQueue"></a4j:commandLink>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <br/>
-                                            </a4j:repeat>
-                                            <richext:spacer height="16"/>
-                                        </h:panelGroup>
-                                    </h:panelGroup>
-                                </ox:decorate>
-
-                                <ox:decorate id="responseTypes" label="#{msg['clientForm.responseTypes']}">
-                                    <h:panelGroup id="selectedResponseTypesId">
-                                        <h:panelGroup>
-                                            <a4j:repeat value="#{_clientAction.responseTypes}"
-                                                        rowKeyVar="_responseTypeIdx" var="_responseType" iterationStatusVar="loop">
-                                                <div class="row-fluid">
-                                                <div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
-                                                <h:outputText value="#{_responseType.value}"/>
-                                                <h:outputText value="&#160;"/>
-                                                    <div class="span6 pull-right">
-                                                        <a4j:commandLink styleClass="glyphicon glyphicon-remove"
-                                                                         style="margin-top:-20px;"
-                                                                         action="#{_clientAction.removeResponseType(_responseType.value)}"
-                                                                         execute="@this"
-                                                                         render="selectedResponseTypesId"
-                                                                         eventsQueue="clientQueue">
-                                                        </a4j:commandLink>
-                                                    </div>
-                                                </div></div>
-                                                <br/>
-                                            </a4j:repeat>
-                                            <richext:spacer height="16"/>
-                                            <a4j:commandButton styleClass="btn btn-primary AddResponseTypeButton" style="margin-top:5px"
-                                                               value="#{msg['clientForm.addResponseType']}"
-                                                               oncomplete="#{rich:component('responseType:selectEntityModalPanel')}.show();"
-                                                               execute="@this" eventsQueue="clientQueue"/>
-                                        </h:panelGroup>
-                                    </h:panelGroup>
-                                </ox:decorate>
-
-                                <ox:decorate id="grantTypes" label="#{msg['clientForm.grantTypes']}">
-                                    <h:panelGroup id="selectedGrantTypesId">
-                                        <h:panelGroup>
-                                            <a4j:repeat value="#{_clientAction.grantTypes}" rowKeyVar="_grantTypeIdx"
-                                                        var="_grantType" iterationStatusVar="loop">
-                                                <div class="row-fluid">
-                                                <div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
-                                                <h:outputText value="#{_grantType.value}"/>
-                                                <h:outputText value="&#160;"/>
-                                                    <div class="span6 pull-right">
-                                                        <a4j:commandLink styleClass="glyphicon glyphicon-remove"
-                                                                         style="margin-top:-20px;"
-                                                                         action="#{_clientAction.removeGrantType(_grantType.value)}"
-                                                                         execute="@this" render="selectedGrantTypesId"
-                                                                         eventsQueue="clientQueue">
-                                                        </a4j:commandLink>
-                                                    </div>
-                                                    </div>
-                                                </div>
-                                                <br/>
-                                            </a4j:repeat>
-                                            <richext:spacer height="16"/>
-                                            <a4j:commandButton styleClass="btn btn-primary AddGrantTypeButton" style="margin-top:5px"
-                                                               value="#{msg['clientForm.addGrantType']}"
-                                                               oncomplete="#{rich:component('grantType:selectEntityModalPanel')}.show();"
-                                                               execute="@this" eventsQueue="clientQueue"/>
-                                        </h:panelGroup>
-                                    </h:panelGroup>
-                                </ox:decorate>
-
-                                <ox:decorate id="contacts" label="#{msg['clientForm.contacts']}">
-                                    <h:panelGroup id="selectedContactsId">
-                                        <h:panelGroup columns="1" width="100%" border="0" cellpadding="0"
-                                                      cellspacing="0">
-                                            <a4j:repeat value="#{_clientAction.contacts}" rowKeyVar="_contactsIdx"
-                                                        var="_contact" iterationStatusVar="loop">
-                                                <div class="row-fluid">
-                                                <div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
-                                                <h:outputText value="#{empty _contact ? _contact : _contact}"/>
-                                                <h:outputText value="&#160;"/>
-                                                    <div class="span6 pull-right">
-                                                        <a4j:commandLink styleClass="glyphicon glyphicon-remove"
-                                                                         style="margin-top:-20px;"
-                                                                         action="#{_clientAction.removeContact(_contact)}"
-                                                                         execute="@this"
-                                                                         render="selectedContactsId"
-                                                                         eventsQueue="clientQueue">
-                                                        </a4j:commandLink></div>
-                                                </div></div>
-                                                <br/>
-                                            </a4j:repeat>
-                                            <richext:spacer height="16"/>
-                                             <a4j:commandButton styleClass="btn btn-primary AddContactButton" style="margin-top:5px"
-                                                               value="#{msg['clientForm.addContact']}"
-                                                               oncomplete="#{rich:component('contact:inputText')}.show();"
-                                                               execute="@this" eventsQueue="clientQueue"/>
-                                        </h:panelGroup>
-                                    </h:panelGroup>
-                                </ox:decorate>
-
-                                <ox:decorate id="defaultAcrValues"
-                                             label="#{msg['clientForm.defaultRequestedAuthenticationContextClass']}">
-                                    <h:panelGroup id="selectedDefaultAcrValuesId">
-                                        <h:panelGroup columns="1" width="100%" border="0" cellpadding="0"
-                                                      cellspacing="0">
-                                            <a4j:repeat value="#{_clientAction.defaultAcrValues}"
-                                                        rowKeyVar="_defaultAcrValuesIdx" var="_defaultAcrValue" iterationStatusVar="loop">
-                                                <div class="row-fluid">
-                                                <div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
-                                                <h:outputText value="#{_defaultAcrValue}"/>
-                                                <h:outputText value="&#160;"/>
-                                                    <div class="span6 pull-right">
-                                                        <a4j:commandLink styleClass="glyphicon glyphicon-remove"
-                                                                         style="margin-top:-20px;"
-                                                                         action="#{_clientAction.removeDefaultAcrValue(_defaultAcrValue)}"
-                                                                         execute="@this"
-                                                                         render="selectedDefaultAcrValuesId"
-                                                                         eventsQueue="clientQueue">
-                                                        </a4j:commandLink></div>
-                                                </div></div>
-                                                <br/>
-                                            </a4j:repeat>
-                                            <richext:spacer height="16"/>
-                                            <a4j:commandButton styleClass="btn btn-primary AddDefaultAcrButton" style="margin-top:5px"
-                                                               value="#{msg['clientForm.addDefaultACRvalue']}"
-                                                               oncomplete="#{rich:component('defaultAcrValue:inputText')}.show();"
-                                                               execute="@this" eventsQueue="clientQueue"/>
-                                        </h:panelGroup>
-                                    </h:panelGroup>
-                                </ox:decorate>
-
-                                <ox:decorate id="initiateLoginUri" label="#{msg['clientForm.initiateLoginURI']}">
-                                    <rich:inplaceInput value="#{_client.initiateLoginUri}"
-                                                       defaultLabel="click to enter an URI using the https scheme that a third party can use to initiate a login by the RP"
-                                                       maxlength="60" inputWidth="695" required="false"
-                                                       id="initiateLoginUriId"/>
-                                </ox:decorate>
-
-                                <ox:decorate id="requestUris" label="#{msg['clientForm.requestURI']}">
-                                    <h:panelGroup id="selectedRequestUrisId">
-                                        <h:panelGroup columns="1" width="100%" border="0" cellpadding="0"
-                                                      cellspacing="0">
-                                            <a4j:repeat value="#{_clientAction.requestUris}" rowKeyVar="_requestUrisIdx"
-                                                        var="_requestUri" iterationStatusVar="loop">
-                                                <div class="row-fluid">
-                                                <div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
-                                                <h:outputText value="#{_requestUri}"/>
-                                                <h:outputText value="&#160;"/>
-                                                    <div class="span6 pull-right">
-                                                        <a4j:commandLink styleClass="glyphicon glyphicon-remove"
-                                                                         style="margin-top:-20px;"
-                                                                         action="#{_clientAction.removeRequestUri(_requestUri)}"
-                                                                         execute="@this"
-                                                                         render="selectedRequestUrisId"
-                                                                         eventsQueue="clientQueue">
-                                                        </a4j:commandLink></div>
-                                                </div></div>
-                                                <br/>
-                                            </a4j:repeat>
-                                            <richext:spacer height="16"/>
-                                            <a4j:commandButton styleClass="btn btn-primary AddRequestUriButton" style="margin-top:5px"
-                                                               value="#{msg['clientForm.addRequestURI']}"
-                                                               oncomplete="#{rich:component('requestUri:inputText')}.show();"
-                                                               execute="@this" eventsQueue="clientQueue"/>
-                                        </h:panelGroup>
-                                    </h:panelGroup>
-                                </ox:decorate>
-
-                                <ox:decorate id="authorizedOrigins" label="#{msg['clientForm.authorizedOrigin']}">
-                                    <h:panelGroup id="selectedAuthorizedOriginsId">
-                                        <h:panelGroup columns="1" width="100%" border="0" cellpadding="0"
-                                                      cellspacing="0">
-                                            <a4j:repeat value="#{_clientAction.authorizedOrigins}" rowKeyVar="_authorizedOriginsIdx"
-                                                        var="_authorizedOrigin" iterationStatusVar="loop">
-                                                <div class="row-fluid">
-                                                    <div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
-                                                        <h:outputText value="#{_authorizedOrigin}"/>
-                                                        <h:outputText value="&#160;"/>
-                                                        <div class="span6 pull-right">
-                                                            <a4j:commandLink styleClass="glyphicon glyphicon-remove"
-                                                                             style="margin-top:-20px;"
-                                                                             action="#{_clientAction.removeAuthorizedOrigin(_authorizedOrigin)}"
-                                                                             execute="@this"
-                                                                             render="selectedAuthorizedOriginsId"
-                                                                             eventsQueue="clientQueue">
-                                                            </a4j:commandLink></div>
-                                                    </div></div>
-                                                <br/>
-                                            </a4j:repeat>
-                                            <richext:spacer height="16"/>
-                                            <a4j:commandButton styleClass="btn btn-primary AddAuthorizeOriginButton" style="margin-top:5px"
-                                                               value="#{msg['clientForm.addAuthorizedOrigin']}"
-                                                               oncomplete="#{rich:component('authorizedOrigin:inputText')}.show();"
-                                                               execute="@this" eventsQueue="clientQueue"/>
-                                        </h:panelGroup>
-                                    </h:panelGroup>
-                                </ox:decorate>
-
-                                <!-- <ox:decorate id="logoutUri" label="Logout URI">
-                                    <rich:inplaceInput value="#{_client.logoutUri}" defaultLabel="click to enter a logout URI" maxlength="60" inputWidth="695" required="false" id="logoutUriId" />
-                                </ox:decorate> -->
+												</h:panelGroup>
+											</h:panelGroup>
+										</ox:decorate>
+										<ox:decorate id="scopes" label="#{msg['clientForm.scopes']}">
+											<h:panelGroup id="selectedScopesId">
+												<h:panelGroup>
+													<a4j:repeat value="#{_clientAction.scopes}"
+														rowKeyVar="_scopeIdx" var="_scope"
+														iterationStatusVar="loop">
+														<div class="row-fluid">
+															<div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
+																<h:outputText
+																	value="#{empty _scope.displayName ? _scope.displayName : _scope.displayName}" />
+																<h:outputText value="&#160;" />
+																<div class="span6 pull-right">
+																	<a4j:commandLink
+																		styleClass="glyphicon glyphicon-remove"
+																		style="margin-top:-20px;"
+																		action="#{_clientAction.removeScope(_scope.inum)}"
+																		execute="@this" render="selectedScopesId"
+																		eventsQueue="clientQueue">
+																	</a4j:commandLink>
+																</div>
+															</div>
+														</div>
+														<br />
+													</a4j:repeat>
+													<richext:spacer height="16" />
+													<a4j:commandButton
+														styleClass="btn btn-primary AddScopeButton"
+														style="margin-top:5px"
+														value="#{msg['clientForm.addScope']}"
+														oncomplete="#{rich:component('scope:selectScopeModalPanel')}.show();"
+														execute="@this" eventsQueue="clientQueue" />
+												</h:panelGroup>
+											</h:panelGroup>
+										</ox:decorate>
+										<ox:decorate id="responseTypes"
+											label="#{msg['clientForm.responseTypes']}">
+											<h:panelGroup id="selectedResponseTypesId">
+												<h:panelGroup>
+													<a4j:repeat value="#{_clientAction.responseTypes}"
+														rowKeyVar="_responseTypeIdx" var="_responseType"
+														iterationStatusVar="loop">
+														<div class="row-fluid">
+															<div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
+																<h:outputText value="#{_responseType.value}" />
+																<h:outputText value="&#160;" />
+																<div class="span6 pull-right">
+																	<a4j:commandLink
+																		styleClass="glyphicon glyphicon-remove"
+																		style="margin-top:-20px;"
+																		action="#{_clientAction.removeResponseType(_responseType.value)}"
+																		execute="@this" render="selectedResponseTypesId"
+																		eventsQueue="clientQueue">
+																	</a4j:commandLink>
+																</div>
+															</div>
+														</div>
+														<br />
+													</a4j:repeat>
+													<richext:spacer height="16" />
+													<a4j:commandButton
+														styleClass="btn btn-primary AddResponseTypeButton"
+														style="margin-top:5px"
+														value="#{msg['clientForm.addResponseType']}"
+														oncomplete="#{rich:component('responseType:selectEntityModalPanel')}.show();"
+														execute="@this" eventsQueue="clientQueue" />
+												</h:panelGroup>
+											</h:panelGroup>
+										</ox:decorate>
+										<ox:decorate id="contacts"
+											label="#{msg['clientForm.contacts']}">
+											<h:panelGroup id="selectedContactsId">
+												<h:panelGroup columns="1" width="100%" border="0"
+													cellpadding="0" cellspacing="0">
+													<a4j:repeat value="#{_clientAction.contacts}"
+														rowKeyVar="_contactsIdx" var="_contact"
+														iterationStatusVar="loop">
+														<div class="row-fluid">
+															<div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
+																<h:outputText
+																	value="#{empty _contact ? _contact : _contact}" />
+																<h:outputText value="&#160;" />
+																<div class="span6 pull-right">
+																	<a4j:commandLink
+																		styleClass="glyphicon glyphicon-remove"
+																		style="margin-top:-20px;"
+																		action="#{_clientAction.removeContact(_contact)}"
+																		execute="@this" render="selectedContactsId"
+																		eventsQueue="clientQueue">
+																	</a4j:commandLink>
+																</div>
+															</div>
+														</div>
+														<br />
+													</a4j:repeat>
+													<richext:spacer height="16" />
+													<a4j:commandButton
+														styleClass="btn btn-primary AddContactButton"
+														style="margin-top:5px"
+														value="#{msg['clientForm.addContact']}"
+														oncomplete="#{rich:component('contact:inputText')}.show();"
+														execute="@this" eventsQueue="clientQueue" />
+												</h:panelGroup>
+											</h:panelGroup>
+										</ox:decorate>
+										<ox:decorate id="defaultAcrValues"
+											label="#{msg['clientForm.defaultRequestedAuthenticationContextClass']}">
+											<h:panelGroup id="selectedDefaultAcrValuesId">
+												<h:panelGroup columns="1" width="100%" border="0"
+													cellpadding="0" cellspacing="0">
+													<a4j:repeat value="#{_clientAction.defaultAcrValues}"
+														rowKeyVar="_defaultAcrValuesIdx" var="_defaultAcrValue"
+														iterationStatusVar="loop">
+														<div class="row-fluid">
+															<div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
+																<h:outputText value="#{_defaultAcrValue}" />
+																<h:outputText value="&#160;" />
+																<div class="span6 pull-right">
+																	<a4j:commandLink
+																		styleClass="glyphicon glyphicon-remove"
+																		style="margin-top:-20px;"
+																		action="#{_clientAction.removeDefaultAcrValue(_defaultAcrValue)}"
+																		execute="@this" render="selectedDefaultAcrValuesId"
+																		eventsQueue="clientQueue">
+																	</a4j:commandLink>
+																</div>
+															</div>
+														</div>
+														<br />
+													</a4j:repeat>
+													<richext:spacer height="16" />
+													<a4j:commandButton
+														styleClass="btn btn-primary AddDefaultAcrButton"
+														style="margin-top:5px"
+														value="#{msg['clientForm.addDefaultACRvalue']}"
+														oncomplete="#{rich:component('defaultAcrValue:inputText')}.show();"
+														execute="@this" eventsQueue="clientQueue" />
+												</h:panelGroup>
+											</h:panelGroup>
+										</ox:decorate>
+										<ox:decorate id="clientsecretexpiry"
+											rendered="#{_client.clientSecretExpiresAt != null || !_clientAction.update}"
+											label="#{msg['clientForm.clientSecretExpires']}">
+											<rich:calendar value="#{_client.clientSecretExpiresAt}"
+												id="calendar" popup="false" datePattern="dd/MM/yyyy HH:mm"
+												showApplyButton="true" style="width:300px">
+											</rich:calendar>
+										</ox:decorate>
+									</div>
+								</div>
 
 
-                                <ox:decorate id="clientLogoutUrls" label="#{msg['clientForm.frontChannelLogoutURI']}">
-                                    <h:panelGroup id="selectedClientUrisId">
-                                        <h:panelGroup columns="1" width="100%" border="0" cellpadding="0"
-                                                      cellspacing="0">
-                                            <a4j:repeat value="#{_clientAction.clientlogoutUris}" rowKeyVar="_urisIdx"
-                                                        var="_uri" iterationStatusVar="loop">
-                                                <div class="row-fluid">
-                                                <div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
-                                                <h:outputText value="#{empty _uri ? _uri : _uri}"/>
-                                                <h:outputText value="&#160;"/>
-                                                    <div class="span6 pull-right">
-                                                        <a4j:commandLink styleClass="glyphicon glyphicon-remove"
-                                                                         style="margin-top:-20px;"
-                                                                         action="#{_clientAction.removeClientLogoutURI(_uri)}"
-                                                                         execute="@this" render="selectedClientUrisId"
-                                                                         eventsQueue="clientQueue">
-                                                            <!-- <h:graphicImage value="/img/remove.gif" /> -->
-                                                        </a4j:commandLink></div>
-                                                </div></div>
-                                                <br/>
-                                            </a4j:repeat>
-                                            <richext:spacer height="16"/>
-                                            <a4j:commandButton styleClass="btn btn-primary addLogoutUriButton" style="margin-top:5px"
-                                                               value="#{msg['clientForm.addFrontchannelLogoutURI']}"
-                                                               oncomplete="#{rich:component('clientLogoutUri:inputText')}.show();"
-                                                               execute="@this" eventsQueue="clientQueue"/>
-                                        </h:panelGroup>
-                                    </h:panelGroup>
-                                </ox:decorate>
+							</h:panelGroup>
 
-                                <ox:decorate id="logoutSessionRequired"
-                                             label="#{msg['clientForm.logoutSessionRequired']}">
-                                    <h:selectOneMenu styleClass="col-sm-9 form-control"
-                                                     value="#{_client.logoutSessionRequired}" required="true">
-                                        <f:selectItems value="#{organizationService.javaBooleanSelectionTypes}"
-                                                       var="_type" itemLabel="#{_type.displayName}"/>
-                                        <f:converter converterId="org.gluu.jsf2.converter.EnumConverter"/>
-                                    </h:selectOneMenu>
-                                </ox:decorate>
+						</div>
+						<div class="box-footer">
+							<ui:insert name="controlButttons" />
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</h:form>
 
-                                <a4j:outputPanel>
-                                    <ox:decorate id="includeClaimsInIdToken"
-                                                 label="#{msg['clientForm.includeClaimsInIdToken']}">
-                                        <h:selectOneMenu styleClass="col-sm-9 form-control"
-                                                         value="#{_client.oxIncludeClaimsInIdToken}"
-                                                         required="true"
-                                                         disabled="#{!jsonConfigurationService.getOxauthAppConfiguration().legacyIdTokenClaims}">
-                                            <f:selectItems value="#{organizationService.javaBooleanSelectionTypes}"
-                                                           var="_type"
-                                                           itemLabel="#{_type.displayName}"/>
-                                            <f:converter converterId="org.gluu.jsf2.converter.EnumConverter"/>
-                                        </h:selectOneMenu>
-                                    </ox:decorate>
-                                    <rich:tooltip
-                                            rendered="#{!jsonConfigurationService.getOxauthAppConfiguration().legacyIdTokenClaims}">
-                                        <span style="white-space:nowrap">
-                                            #{msg['clientForm.includeClaimsInIdTokenTooltip']}
-                                        </span>
-                                    </rich:tooltip>
-                                </a4j:outputPanel>
-
-                                <ox:decorate id="oxRefreshTokenLifetime"
-                                             label="#{msg['clientForm.oxRefreshTokenLifetime']}">
-                                    <rich:inplaceInput value="#{_client.oxRefreshTokenLifetime}"
-                                                       defaultLabel="#{msg['clientForm.oxRefreshTokenLifetimeLabel']}"
-                                                       maxlength="60" inputWidth="695" required="false"
-                                                       id="oxRefreshTokenLifetimeId"/>
-                                </ox:decorate>
-
-                                <ox:decorate id="oxdId" label="#{msg['clientForm.oxdId']}">
-                                    <rich:inplaceInput value="#{_client.oxdId}"
-                                                       defaultLabel="click to enter a oxd Id for the Client application"
-                                                       maxlength="60" inputWidth="64" required="false" id="oxdIdId"/>
-                                </ox:decorate>
-
-                                <ox:decorate label="#{msg['clientForm.disabled']}">
-                                    <h:selectBooleanCheckbox value="#{_client.disabled}" styleClass="form-control"/>
-                                </ox:decorate>
-                                <ox:decorate id="clientsecretexpiry"
-                                             rendered="#{_client.clientSecretExpiresAt != null || !_clientAction.update}"
-                                             label="#{msg['clientForm.clientSecretExpires']}">
-                                     <rich:calendar value="#{_client.clientSecretExpiresAt}" id="calendar"
-                                        popup="false" datePattern="dd/MM/yyyy HH:mm" showApplyButton="true" style="width:300px">
-                                     </rich:calendar>
-                                </ox:decorate>
-
-                                
-
-                            </h:panelGroup>
-
-                        </div>
-                        <div class="box-footer">
-                            <ui:insert name="controlButttons"/>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </h:form>
-
-    <h:outputScript>
+	<h:outputScript>
         function togglePersistAuthorization() {
             var trustedClientIdSelect = $("select[id='clientForm:oxAuthTrustedClientBox:trustedClientId']");
             var persisteClientAuthorizationsIdSelect = $("select[id='clientForm:persistClientAuthorizations:persisteClientAuthorizationsId']");

@@ -22,18 +22,17 @@ import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.model.RenderParameters;
 import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
+import org.gluu.oxtrust.ldap.service.JsonConfigurationService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.ldap.service.OxTrustAuditService;
 import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.ldap.service.RecaptchaService;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.model.GluuCustomPerson;
-import org.gluu.oxtrust.model.OrganizationalUnit;
 import org.gluu.oxtrust.model.PasswordResetRequest;
 import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.service.PasswordResetService;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.persist.PersistenceEntryManager;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -50,9 +49,6 @@ import org.xdi.util.StringHelper;
 public class PasswordReminderAction implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-
-	@Inject
-	private PersistenceEntryManager ldapEntryManager;
 
 	@Inject
 	private RecaptchaService recaptchaService;
@@ -81,8 +77,8 @@ public class PasswordReminderAction implements Serializable {
 	@Inject
 	private MailService mailService;
 
-    @Inject
-    private PasswordResetService passwordResetService;
+	@Inject
+	private PasswordResetService passwordResetService;
 
 	@Inject
 	private Identity identity;
@@ -92,53 +88,18 @@ public class PasswordReminderAction implements Serializable {
 
 	private boolean passwordResetIsEnable = false;
 
-	/**
-	 * @return the MESSAGE_NOT_FOUND
-	 */
-	public static String getMESSAGE_NOT_FOUND() {
-		return MESSAGE_NOT_FOUND;
-	}
+	private AppConfiguration oxTrustappConfiguration;
 
-	/**
-	 * @param aMESSAGE_NOT_FOUND
-	 *            the MESSAGE_NOT_FOUND to set
-	 */
-	public static void setMESSAGE_NOT_FOUND(String aMESSAGE_NOT_FOUND) {
-		MESSAGE_NOT_FOUND = aMESSAGE_NOT_FOUND;
-	}
-
-	/**
-	 * @return the MESSAGE_FOUND
-	 */
-	public static String getMESSAGE_FOUND() {
-		return MESSAGE_FOUND;
-	}
-
-	/**
-	 * @param aMESSAGE_FOUND
-	 *            the MESSAGE_FOUND to set
-	 */
-	public static void setMESSAGE_FOUND(String aMESSAGE_FOUND) {
-		MESSAGE_FOUND = aMESSAGE_FOUND;
-	}
+	@Inject
+	private JsonConfigurationService jsonConfigurationService;
 
 	@Email
 	@NotEmpty
 	@NotBlank
 	private String email;
 
-	private static String MESSAGE_NOT_FOUND = "You (or someone else) entered this email when trying to change the password of %1$s identity server account.\n\n"
-			+ "However this email address is not on our database of registered users and therefore the attempted password change has failed.\n\n"
-			+ "If you are a %1$s identity server user and were expecting this email, please try again using the email address you gave when registering your account.\n\n"
-			+ "If you are not %1$s identity server user, please ignore this email.\n\n" + "Kind regards,\n"
-			+ "Support Team";
-
-	private static String MESSAGE_FOUND = "Hello %1$s\n\n"
-			+ "We received a request to reset your password. You may click the button below to choose your new password.\n"
-			+ "If you did not make this request, you can safely ignore this message. \n\n"
-			+ "<a href='%3$s'> <button>Reset Password</button></a>";
-
 	public String requestReminder() throws Exception {
+		this.oxTrustappConfiguration = jsonConfigurationService.getOxTrustappConfiguration();
 		String outcome = requestReminderImpl();
 
 		if (OxTrustConstants.RESULT_SUCCESS.equals(outcome)) {
@@ -182,10 +143,13 @@ public class PasswordReminderAction implements Serializable {
 				String guid = passwordResetService.generateGuidForNewPasswordResetRequest();
 
 				request.setCreationDate(Calendar.getInstance().getTime());
-                request.setPersonInum(matchedPersons.get(0).getInum());
-                request.setOxGuid(guid);
-                request.setDn(passwordResetService.getDnForPasswordResetRequest(guid));
+				request.setPersonInum(matchedPersons.get(0).getInum());
+				request.setOxGuid(guid);
+				request.setDn(passwordResetService.getDnForPasswordResetRequest(guid));
 
+				double value = new Double(this.oxTrustappConfiguration.getPasswordResetRequestExpirationTime()) / 60;
+				String expirationTime = value + " minute(s)";
+				rendererParameters.setParameter("expirationTime", expirationTime);
 				rendererParameters.setParameter("givenName", matchedPersons.get(0).getGivenName());
 				rendererParameters.setParameter("organizationName",
 						organizationService.getOrganization().getDisplayName());
@@ -203,7 +167,7 @@ public class PasswordReminderAction implements Serializable {
 
 				mailService.sendMail(email, null, subj, messagePlain, messageHtml);
 
-                passwordResetService.addPasswordResetRequest(request);
+				passwordResetService.addPasswordResetRequest(request);
 				try {
 					oxTrustAuditService.audit("PASSWORD REMINDER REQUEST" + request.getBaseDn() + " ADDED",
 							identity.getUser(),
