@@ -147,8 +147,8 @@ public class PasswordReminderAction implements Serializable {
 				request.setOxGuid(guid);
 				request.setDn(passwordResetService.getDnForPasswordResetRequest(guid));
 
-				double value = new Double(this.oxTrustappConfiguration.getPasswordResetRequestExpirationTime()) / 60;
-				String expirationTime = value + " minute(s)";
+				int value = this.oxTrustappConfiguration.getPasswordResetRequestExpirationTime() / 60;
+				String expirationTime = Integer.toString(value) + " minute(s)";
 				rendererParameters.setParameter("expirationTime", expirationTime);
 				rendererParameters.setParameter("givenName", matchedPersons.get(0).getGivenName());
 				rendererParameters.setParameter("organizationName",

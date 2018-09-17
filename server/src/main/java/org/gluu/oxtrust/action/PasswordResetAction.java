@@ -34,8 +34,8 @@ import org.gluu.oxtrust.model.PasswordResetRequest;
 import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.service.PasswordResetService;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.persist.PersistenceEntryManager;
-import org.gluu.persist.exception.EntryPersistenceException;
+import org.gluu.site.ldap.persistence.LdapEntryManager;
+import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.util.StringHelper;
@@ -47,13 +47,13 @@ import org.xdi.util.StringHelper;
 @Named("passwordResetAction")
 public class PasswordResetAction implements Serializable {
 
-    private static final long serialVersionUID = 6457422770824016614L;
+	private static final long serialVersionUID = 6457422770824016614L;
 
-    @Inject
-    private Logger log;
+	@Inject
+	private Logger log;
 
-    @Inject
-	private PersistenceEntryManager ldapEntryManager;
+	@Inject
+	private LdapEntryManager ldapEntryManager;
 
 	@Inject
 	private FacesMessages facesMessages;
@@ -80,7 +80,7 @@ public class PasswordResetAction implements Serializable {
 	private OxTrustAuditService oxTrustAuditService;
 
 	@Inject
-    private AppConfiguration appConfiguration;
+	private AppConfiguration appConfiguration;
 
 	private PasswordResetRequest request;
 	private String guid;
@@ -92,54 +92,56 @@ public class PasswordResetAction implements Serializable {
 	private String confirm;
 
 	public String start() throws ParseException {
-        if (StringHelper.isEmpty(guid)) {
-            sendExpirationError();
-            return OxTrustConstants.RESULT_FAILURE;
-        }
+		if (StringHelper.isEmpty(guid)) {
+			sendExpirationError();
+			return OxTrustConstants.RESULT_FAILURE;
+		}
 
-        // Load requested entry
-        PasswordResetRequest passwordResetRequest;
-        try {
-            passwordResetRequest = passwordResetService.findPasswordResetRequest(guid);
-        } catch (EntryPersistenceException ex) {
-            log.error("Failed to find password reset request by '{}'", guid, ex);
-            sendExpirationError();
-            return OxTrustConstants.RESULT_FAILURE;
-        }
+		// Load requested entry
+		PasswordResetRequest passwordResetRequest;
+		try {
+			passwordResetRequest = passwordResetService.findPasswordResetRequest(guid);
+		} catch (EntryPersistenceException ex) {
+			log.error("Failed to find password reset request by '{}'", guid, ex);
+			sendExpirationError();
+			return OxTrustConstants.RESULT_FAILURE;
+		}
 
-        if (passwordResetRequest == null) {
-            sendExpirationError();
-            return OxTrustConstants.RESULT_FAILURE;
-        }
-        
-        // Load latest entry by person inum
-        PasswordResetRequest personPasswordResetRequest = passwordResetService.findActualPasswordResetRequest(passwordResetRequest.getPersonInum());
-        if (personPasswordResetRequest == null) {
-            sendExpirationError();
-            return OxTrustConstants.RESULT_FAILURE;
-        }
-        
-        // Check if requested entry is actual one
-        if (!StringHelper.equalsIgnoreCase(guid, personPasswordResetRequest.getOxGuid())) {
-            sendExpirationError();
-            return OxTrustConstants.RESULT_FAILURE;
-        }
-        
-        this.request = personPasswordResetRequest;
-		
-        Calendar requestCalendarExpiry = new GregorianCalendar(TimeZone.getTimeZone("UTC"));
-        Calendar currentCalendar = new GregorianCalendar(TimeZone.getTimeZone("UTC"));
+		if (passwordResetRequest == null) {
+			sendExpirationError();
+			return OxTrustConstants.RESULT_FAILURE;
+		}
 
-        if (request != null) {
-            requestCalendarExpiry.setTime(request.getCreationDate());
-        }
-        currentCalendar.add(Calendar.SECOND, -appConfiguration.getPasswordResetRequestExpirationTime());
+		// Load latest entry by person inum
+		PasswordResetRequest personPasswordResetRequest = passwordResetService
+				.findActualPasswordResetRequest(passwordResetRequest.getPersonInum());
+		if (personPasswordResetRequest == null) {
+			sendExpirationError();
+			return OxTrustConstants.RESULT_FAILURE;
+		}
+
+		// Check if requested entry is actual one
+		if (!StringHelper.equalsIgnoreCase(guid, personPasswordResetRequest.getOxGuid())) {
+			sendExpirationError();
+			return OxTrustConstants.RESULT_FAILURE;
+		}
+
+		this.request = personPasswordResetRequest;
+
+		Calendar requestCalendarExpiry = new GregorianCalendar(TimeZone.getTimeZone("UTC"));
+		Calendar currentCalendar = new GregorianCalendar(TimeZone.getTimeZone("UTC"));
+
+		if (request != null) {
+			requestCalendarExpiry.setTime(request.getCreationDate());
+		}
+		currentCalendar.add(Calendar.SECOND, -appConfiguration.getPasswordResetRequestExpirationTime());
 		GluuCustomPerson person = personService.getPersonByInum(request.getPersonInum());
 
 		GluuCustomAttribute question = null;
 		if (person != null) {
 			question = person.getGluuCustomAttribute("secretQuestion");
 		}
+
 		if ((request != null) && requestCalendarExpiry.after(currentCalendar)) {
 			if (question != null) {
 				securityQuestion = question.getValue();
@@ -154,17 +156,21 @@ public class PasswordResetAction implements Serializable {
 		}
 	}
 
-    protected void sendExpirationError() {
-        facesMessages.add(FacesMessage.SEVERITY_ERROR, "The reset link is no more valid."
-                + "It has already been used to reset your password or it has expired. Re-enter your e-mail to generate a new link.");
-        conversationService.endConversation();
-    }
+	protected void sendExpirationError() {
+		facesMessages.add(FacesMessage.SEVERITY_ERROR, "The reset link is no more valid.");
+		facesMessages.add(FacesMessage.SEVERITY_ERROR, "\n\n");
+		facesMessages.add(FacesMessage.SEVERITY_ERROR,
+				"It has already been used to reset your password or it has expired.");
+		facesMessages.add(FacesMessage.SEVERITY_ERROR, "\n\n");
+		facesMessages.add(FacesMessage.SEVERITY_ERROR, "Re-enter your e-mail to generate a new link.");
+		conversationService.endConversation();
+	}
 
 	public String update() throws ParseException {
 		String outcome = updateImpl();
 
 		if (OxTrustConstants.RESULT_SUCCESS.equals(outcome)) {
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Password reset successful.");
+			facesMessages.add(FacesMessage.SEVERITY_INFO, "Password reset successful.");
 			conversationService.endConversation();
 		} else if (OxTrustConstants.RESULT_FAILURE.equals(outcome)) {
 			facesMessages.add(FacesMessage.SEVERITY_ERROR,

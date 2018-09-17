@@ -99,7 +99,9 @@ public class PasswordValidationAction implements Cloneable, Serializable {
 			if (this.password.equals(this.confirm)) {
 				person.setUserPassword(this.password);
 				personService.updatePerson(person);
-				oxTrustAuditService.audit("USER " + person.getInum() + " **"+person.getDisplayName()+"** PASSWORD UPDATED", identity.getUser(),
+				oxTrustAuditService.audit(
+						"USER " + person.getInum() + " **" + person.getDisplayName() + "** PASSWORD UPDATED",
+						identity.getUser(),
 						(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 				facesMessages.add(FacesMessage.SEVERITY_INFO, "Successfully changed!", "Successfully changed!");
 			} else {
@@ -108,9 +110,15 @@ public class PasswordValidationAction implements Cloneable, Serializable {
 			}
 		}
 	}
-	
+
 	public void notifyBindPasswordChange() {
-		facesMessages.add(FacesMessage.SEVERITY_INFO, "Bind password successfully changed!", "Bind password successfully changed!");
+		facesMessages.add(FacesMessage.SEVERITY_INFO, "Bind password successfully changed!",
+				"Bind password successfully changed!");
+	}
+
+	public void notifyClientPasswordChange() {
+		facesMessages.add(FacesMessage.SEVERITY_INFO, "Client secret successfully changed!",
+				"Client secret successfully changed!");
 	}
 
 	public UIComponent getGraphValidator() {

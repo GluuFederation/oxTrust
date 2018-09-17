@@ -114,7 +114,7 @@ public class UpdateClientAction implements Serializable {
 	private String inum;
 
 	private boolean update;
-	
+
 	private Date previousClientExpirationDate;
 
 	private OxAuthClient client;
@@ -216,7 +216,7 @@ public class UpdateClientAction implements Serializable {
 		try {
 			log.debug("inum : " + inum);
 			this.client = clientService.getClientByInum(inum);
-			previousClientExpirationDate=this.client.getClientSecretExpiresAt();
+			previousClientExpirationDate = this.client.getClientSecretExpiresAt();
 		} catch (LdapMappingException ex) {
 			log.error("Failed to find client {}", inum, ex);
 		}
@@ -286,13 +286,14 @@ public class UpdateClientAction implements Serializable {
 
 	public String save() throws Exception {
 		LocalDate localDate = LocalDate.now();
-	    LocalDate tomorrow = localDate.plusDays(1);
-	    Date today = Date.from(tomorrow.atStartOfDay(ZoneId.systemDefault()).toInstant());
+		LocalDate tomorrow = localDate.plusDays(1);
+		Date today = Date.from(tomorrow.atStartOfDay(ZoneId.systemDefault()).toInstant());
 		if (this.client.getClientSecretExpiresAt() == null && !update) {
 			this.client.setClientSecretExpiresAt(today);
 		}
-		if (previousClientExpirationDate!=null && this.client.getClientSecretExpiresAt().before(today)) {
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "This client has expired. Update the expiration date in order to save changes");
+		if (previousClientExpirationDate != null && this.client.getClientSecretExpiresAt().before(today)) {
+			facesMessages.add(FacesMessage.SEVERITY_ERROR,
+					"This client has expired. Update the expiration date in order to save changes");
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 
@@ -1403,6 +1404,11 @@ public class UpdateClientAction implements Serializable {
 	public void generatePassword() throws EncryptionException {
 		String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 		String pwd = RandomStringUtils.random(24, characters);
+		this.client.setOxAuthClientSecret(pwd);
+		this.client.setEncodedClientSecret(encryptionService.encrypt(pwd));
+	}
+
+	public void setSecret(String pwd) throws EncryptionException {
 		this.client.setOxAuthClientSecret(pwd);
 		this.client.setEncodedClientSecret(encryptionService.encrypt(pwd));
 	}
