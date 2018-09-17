@@ -1268,7 +1268,7 @@
         },
         "authenticationProtectionConfiguration": {
             "id": "authenticationProtectionConfiguration",
-            "description": "Authentication Bruto Force Protection Configuration.",
+            "description": "Authentication Brute Force Protection Configuration.",
             "type": "object",
             "properties": {
                 "attemptExpiration": {
