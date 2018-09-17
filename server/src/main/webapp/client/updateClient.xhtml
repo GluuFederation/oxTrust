@@ -132,7 +132,7 @@
                                 label="Logout URI" maxLength="256" queue="clientQueue" render="selectedClientUrisId"
                                 text="#{updateClientAction.availableClientlogoutUri}" textId="clientLogoutTextId"/>
 
-            <ox:changePasswordDialog id="clientPassword" label="#{msg['client.changeClientSecret']}"
+            <ox:changeClientPasswordDialog id="clientPassword" label="#{msg['client.changeClientSecret']}"
                                      password="#{clientPasswordAction.newPassword}"
                                      setPasswordMethod="#{clientPasswordAction.update}"/>
 
