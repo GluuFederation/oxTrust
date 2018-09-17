@@ -240,7 +240,12 @@ public class OpenIdClient<C extends AppConfiguration, L extends LdapAppConfigura
     public String getLogoutRedirectionUrl(WebContext context) {
         final String state = RandomStringUtils.randomAlphanumeric(10);
         final String postLogoutRedirectUri = this.appConfiguration.getOpenIdPostLogoutRedirectUri();
-        final String idToken = (String) context.getSessionAttribute(getName() + SESSION_ID_TOKEN_PARAMETER);
+        String idToken = (String) context.getSessionAttribute(getName() + SESSION_ID_TOKEN_PARAMETER);
+        
+        // Allow to send logout request if session is expired 
+        if (idToken == null) {
+            idToken = "";
+        }
         
         final EndSessionRequest endSessionRequest = new EndSessionRequest(idToken, postLogoutRedirectUri, state);
 
