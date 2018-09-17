@@ -238,6 +238,8 @@ public class OpenIdClient<C extends AppConfiguration, L extends LdapAppConfigura
 
 	@Override
     public String getLogoutRedirectionUrl(WebContext context) {
+        init();
+
         final String state = RandomStringUtils.randomAlphanumeric(10);
         final String postLogoutRedirectUri = this.appConfiguration.getOpenIdPostLogoutRedirectUri();
         String idToken = (String) context.getSessionAttribute(getName() + SESSION_ID_TOKEN_PARAMETER);
