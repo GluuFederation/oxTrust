@@ -25,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xdi.context.WebContext;
 import org.xdi.oxauth.client.AuthorizationRequest;
+import org.xdi.oxauth.client.EndSessionRequest;
 import org.xdi.oxauth.client.OpenIdConfigurationClient;
 import org.xdi.oxauth.client.OpenIdConfigurationResponse;
 import org.xdi.oxauth.client.RegisterClient;
@@ -59,8 +60,9 @@ public class OpenIdClient<C extends AppConfiguration, L extends LdapAppConfigura
 
 	private final Logger logger = LoggerFactory.getLogger(OpenIdClient.class);
 
-	private static final String STATE_PARAMETER = "#state_parameter";
-    private static final String NONCE_PARAMETER = "#nonce_parameter";
+	private static final String SESSION_STATE_PARAMETER = "#session_state_parameter";
+    private static final String SESSION_NONCE_PARAMETER = "#session_nonce_parameter";
+    private static final String SESSION_ID_TOKEN_PARAMETER = "#session_id_token";
 
 	// Register new client earlier than old client was expired to allow execute authorization requests
 	private static final long NEW_CLIENT_EXPIRATION_OVERLAP = 60 * 1000;
@@ -182,11 +184,12 @@ public class OpenIdClient<C extends AppConfiguration, L extends LdapAppConfigura
 		return this.getClass().getSimpleName();
 	}
 
-        
+    @Override
     public String getRedirectionUrl(final WebContext context) {
         return getRedirectionUrl(context, null, null);
     }
 
+    @Override
     public String getRedirectionUrl(final WebContext context, Map<String, String> customStateParameters, final Map<String, String> customParameters) {
 		init();
 
@@ -218,8 +221,8 @@ public class OpenIdClient<C extends AppConfiguration, L extends LdapAppConfigura
 		authorizationRequest.setState(state);
 		authorizationRequest.setNonce(nonce);
 
-		context.setSessionAttribute(getName() + STATE_PARAMETER, state);
-        context.setSessionAttribute(getName() + NONCE_PARAMETER, nonce);
+		context.setSessionAttribute(getName() + SESSION_STATE_PARAMETER, state);
+        context.setSessionAttribute(getName() + SESSION_NONCE_PARAMETER, nonce);
         
         if (customParameters != null) {
             for (Entry<String, String> entry : customParameters.entrySet()) {
@@ -234,6 +237,20 @@ public class OpenIdClient<C extends AppConfiguration, L extends LdapAppConfigura
 	}
 
 	@Override
+    public String getLogoutRedirectionUrl(WebContext context) {
+        final String state = RandomStringUtils.randomAlphanumeric(10);
+        final String postLogoutRedirectUri = this.appConfiguration.getOpenIdPostLogoutRedirectUri();
+        final String idToken = (String) context.getSessionAttribute(getName() + SESSION_ID_TOKEN_PARAMETER);
+        
+        final EndSessionRequest endSessionRequest = new EndSessionRequest(idToken, postLogoutRedirectUri, state);
+
+        final String redirectionUrl = this.openIdConfiguration.getEndSessionEndpoint() + "?" + endSessionRequest.getQueryString();
+        logger.debug("oxAuth redirection Url: '{}'", redirectionUrl);
+
+        return redirectionUrl;
+    }
+
+    @Override
 	public boolean isAuthorizationResponse(final WebContext context) {
 		final String authorizationCode = context.getRequestParameter(ResponseType.CODE.getValue());
 		logger.debug("oxAuth authorization code: '{}'", authorizationCode);
@@ -249,7 +266,7 @@ public class OpenIdClient<C extends AppConfiguration, L extends LdapAppConfigura
 		final String state = context.getRequestParameter(AuthorizeRequestParam.STATE);
 		logger.debug("oxAuth request state: '{}'", state);
 
-		final Object sessionState = context.getSessionAttribute(getName() + STATE_PARAMETER);
+		final Object sessionState = context.getSessionAttribute(getName() + SESSION_STATE_PARAMETER);
 		logger.debug("Session context state: '{}'", sessionState);
 
 		final boolean emptySessionState = StringHelper.isEmptyString(sessionState);
@@ -301,6 +318,9 @@ public class OpenIdClient<C extends AppConfiguration, L extends LdapAppConfigura
 	        final String idToken = tokenResponse.getIdToken();
             logger.trace("idToken : " + idToken);
 
+            // Store id_token in session
+            context.setSessionAttribute(getName() + SESSION_ID_TOKEN_PARAMETER, idToken);
+
             // Parse JWT
             Jwt jwt;
             try {
@@ -338,7 +358,7 @@ public class OpenIdClient<C extends AppConfiguration, L extends LdapAppConfigura
 		final CommonProfile profile = new CommonProfile();
 
 		String nonceResponse = (String) jwt.getClaims().getClaim(JwtClaimName.NONCE);
-        final String nonceSession = (String) context.getSessionAttribute(getName() + NONCE_PARAMETER);
+        final String nonceSession = (String) context.getSessionAttribute(getName() + SESSION_NONCE_PARAMETER);
         logger.debug("Session nonce: '{}'", nonceSession);
         if (!StringHelper.equals(nonceSession, nonceResponse)) {
             logger.error("User info response:  nonce is not matching.");

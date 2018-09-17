@@ -6,6 +6,8 @@
 
 package org.gluu.oxauth.client;
 
+import java.util.Map;
+
 import org.gluu.oxauth.client.auth.principal.OpenIdCredentials;
 import org.gluu.oxauth.client.auth.user.UserProfile;
 import org.xdi.context.WebContext;
@@ -31,6 +33,24 @@ public interface Client<U extends UserProfile> {
 	 * @return url with authorization request
 	 */
 	public String getRedirectionUrl(final WebContext context);
+
+    /**
+     * Get url for oxAuth authentication
+     * 
+     * @param context
+     * @param customStateParameters
+     * @param customParameters
+     * @return url with authorization request
+     */
+	public String getRedirectionUrl(final WebContext context, Map<String, String> customStateParameters, final Map<String, String> customParameters);
+
+    /**
+     * Get logout url for oxAuth authentication
+     * 
+     * @param context
+     * @return logout url with authorization request
+     */
+    public String getLogoutRedirectionUrl(final WebContext context);
 
 	/**
 	 * Check if web context provides authentication credentials
