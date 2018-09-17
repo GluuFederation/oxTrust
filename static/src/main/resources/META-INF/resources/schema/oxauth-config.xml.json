@@ -1280,15 +1280,6 @@
                     "exclusiveMaximum": false,
                     "exclusiveMinimum": false
                 },
-                "maximumAllowedAttempts": {
-                    "id": "maximumAllowedAttempts",
-                    "type": "integer",
-                    "multipleOf": 1,
-                    "maximum": 2147483647,
-                    "minimum": 1,
-                    "exclusiveMaximum": false,
-                    "exclusiveMinimum": false
-                },
                 "maximumAllowedAttemptsWithoutDelay": {
                     "id": "maximumAllowedAttemptsWithoutDelay",
                     "type": "integer",
