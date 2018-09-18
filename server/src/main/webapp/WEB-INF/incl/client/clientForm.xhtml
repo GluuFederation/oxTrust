@@ -471,6 +471,13 @@ px
 													converterId="org.gluu.jsf2.converter.EnumConverter" />
 											</h:selectOneMenu>
 										</ox:decorate>
+                                        <ox:decorate id="idTokenTokenBindingCnf"
+                                                     label="#{msg['clientForm.idTokenTokenBindingCnf']}">
+                                            <rich:inplaceInput value="#{_client.idTokenTokenBindingCnf}"
+                                                               defaultLabel="click to enter the ID Token Confirmation Method for Token Binding"
+                                                               maxlength="60" inputWidth="695" required="false"
+                                                               id="idTokenTokenBindingCnfId" />
+                                        </ox:decorate>
 										<ox:decorate id="accessTokenAsJwt"
 											label="#{msg['clientForm.accessTokenAsJwt']}"
 											leftClass="col-sm-6" rightClass="col-sm-6">
