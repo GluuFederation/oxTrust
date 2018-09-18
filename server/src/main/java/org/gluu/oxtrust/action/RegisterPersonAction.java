@@ -227,7 +227,9 @@ public class RegisterPersonAction implements Serializable {
 		boolean registrationFormValid = StringHelper.equals(password, repeatPassword);
 
 		if (!captchaDisabled) {
-			boolean reCaptchaResponse = recaptchaService.verifyRecaptchaResponse();
+			String gRecaptchaRresponse = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap()
+					.get("g-recaptcha-response");
+			boolean reCaptchaResponse = recaptchaService.verifyRecaptchaResponse(gRecaptchaRresponse);
 			registrationFormValid &= reCaptchaResponse;
 		}
 
