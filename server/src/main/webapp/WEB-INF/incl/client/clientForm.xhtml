@@ -21,151 +21,27 @@
 	background-color: #{richSkin.generalBackgroundColor
 }
 
-;
 border-width
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 :
-
-
-
-
-
-
-
-
-
-
-
- 
-
-
-
-
-
-
-
-
-
 
 
 3
 px
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ;
+
+
+
+
 padding
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 :
+10px;
 
 
 
-
-
-
-
-
-
-
-
- 
-
-
-
-
-
-
-
-
-
-
-
-10
-px
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-;
 }
 .tooltip-text {
 	width: 350px;
@@ -196,107 +72,22 @@ px
 }
 </style>
 	<h:outputScript>
-
-      function valuesDisplay(element) {
-      var element = $(element);
-
-      		var divvalue = document.getElementById('autogenrateid');
-      		console.log("div element " + element.val);
-      		var eye = divvalue.previousElementSibling;
-    		var eyehide = eye.previousElementSibling;
-      		console.log(eye);
-			console.log(eyehide);
-			eye.style.display = "none";
-			eyehide.style.display = "block";
-		}
-
-
-		function isViewPassword(buttonelementid) {
-	    	isVisible = $("img[id$="+buttonelementid+"]").is(':visible');
-
-    		return isVisible;
-    	}
-
-    	function changeTextType(element,buttonelementid) {
-    		var $element = $(element);
-			if (isViewPassword(buttonelementid)) {
-	    		$element[0].childNodes[2].childNodes[0].setAttribute('type','text');
-			} else {
-	    		$element[0].childNodes[2].childNodes[0].setAttribute('type','password');
-			}
-		}
-
-		function hideSpanValue(element, value) {
-    		var newValue = '';
-    		for (i = 0;  i &lt; value.length ; i++)
-    			newValue += '&bull;';
-
-    		var $element = $(element);
-    		$element[0].childNodes[0].innerHTML = newValue;
-		}
-
-		function restoreSpanValue(element, value) {
-    		var $element = $(element);
-    		$element[0].childNodes[0].innerHTML = value;
-		}
-
-		function viewValue(obj,elementid , eyeButtonid){
-			passwordElement = $("input[id$='"+elementid+"Input']");
-			passwordValue = passwordElement.val();
-
-			passwordElementSpan = $("span[id$='"+elementid+"Label']");
-
-			restoreSpanValue(passwordElementSpan.parent()[0], passwordValue);
-
-			$(obj).css({"display":"none"});
-			$(obj).siblings("img[id$='"+eyeButtonid+"']").css({"display":"block"});
-		}
-
-		function hideValue(obj,elementid,eyeButtonid){
-			passwordElement = $("input[id$='"+elementid+"Input']");
-			passwordValue = passwordElement.val();
-
-			passwordElementSpan = $("span[id$='"+elementid+"Label']");
-
-			hideSpanValue(passwordElementSpan.parent()[0], passwordValue);
-
-			$(obj).css({"display":"none"});
-			$(obj).siblings("img[id$='"+eyeButtonid+"']").css({"display":"block"});
-		}
-
-		function hidePasswordValue(element, value,buttonelementid) {
-			if (isViewPassword(buttonelementid)) {
-				return;
-			}
-
-			hideSpanValue(element, value);
-		}
-
-		 function changeAttributeVisibility(attrId, show) {
-        	var attr = document.getElementById(attrId);
-
-            if (show) {
-	        	attr.style['display'] = '';
-            } else {
-	        	attr.style['display'] = 'none';
-            }
-        }
-				
-		function changePasswordtoTextType(obj,elementid , eyeButtonid){
-			console.log("changePasswordtoTextType");
-			var elements = document.querySelector('[id*="'+elementid+'"]');
-			console.log("changePasswordtoTextType" + elements.type);
-			elements.type="text";
-			$(obj).css({"display":"none"});
-			$(obj).siblings("img[id$='"+eyeButtonid+"']").css({"display":"block"});
+		function showClientSecret(){
+		   var secretField = document.getElementById("clientForm:clientSecret:clientSecretId1");
+		   secretField.setAttribute('type','text'); 
+		   document.getElementById("clientForm:clientSecret:hidePassword").style.display = 'block';
+		   document.getElementById("clientForm:clientSecret:viewPassword").style.display = 'none';
 		}
 		
-		function changeTexttoPasswordType(obj,elementid , eyeButtonid){
-			var elements = document.querySelector('[id*="'+elementid+'"]'); 
-			console.log("changePasswordtoTextType" + elements.type); 
-			elements.type="password";
-			$(obj).css({"display":"none"});
-			$(obj).siblings("img[id$='"+eyeButtonid+"']").css({"display":"block"});
+		function hideClientSecret(){
+		   var secretField = document.getElementById("clientForm:clientSecret:clientSecretId1");
+		   secretField.setAttribute('type','password'); 
+		   document.getElementById("clientForm:clientSecret:hidePassword").style.display = 'none';
+		   document.getElementById("clientForm:clientSecret:viewPassword").style.display = 'block';
+		}
+		
+		function takeFocus(x){
+		   x.focus();
 		}
 
     </h:outputScript>
@@ -327,7 +118,8 @@ px
 										<ox:decorate id="displayName"
 											label="#{msg['clientForm.clientName']}" leftClass="col-sm-3"
 											rightClass="col-sm-9">
-											<rich:inplaceInput value="#{_client.displayName}" styleClass="clientNameTextBox"
+											<rich:inplaceInput value="#{_client.displayName}"
+												styleClass="clientNameTextBox"
 												requiredMessage="Please Enter the Client Name"
 												defaultLabel="click to enter the Client Name" maxlength="60"
 												required="true" id="displayNameId" />
@@ -336,18 +128,21 @@ px
 											<ox:decorate id="clientSecret"
 												label="#{msg['clientForm.clientSecret']}"
 												leftClass="col-sm-3" rightClass="col-sm-6">
-												<h:inputSecret styleClass="form-control togglefield clientSecretTextBox"
+												<h:inputSecret
+													styleClass="form-control togglefield clientSecretTextBox"
 													value="#{_client.oxAuthClientSecret}" redisplay="true"
 													defaultLabel="click to enter Client Secret" maxlength="60"
 													id="clientSecretId1" />
 
 												<h:graphicImage value="/img/eye.png" id="viewPassword"
-													style="margin-top:-35px; margin-left: 55px;float:right;"
-													onclick="return changePasswordtoTextType(this,'clientSecretId1','hidePassword');" />
+													style="margin-top:-35px; margin-right: -55px; float:right;"
+													onmouseover="takeFocus(this);"
+													onclick="showClientSecret(); return false;" />
 												<h:graphicImage value="/img/eye-hidden.png"
-													style="margin-top:-35px; margin-left: 55px; float:right; display: none;"
+													style="margin-top:-35px; margin-right: -55px; float:right; display: none;"
 													id="hidePassword"
-													onclick="return changeTexttoPasswordType(this,'clientSecretId1','viewPassword');" />
+													onmouseover="takeFocus(this);"
+													onclick="hideClientSecret(); return false;" />
 
 											</ox:decorate>
 											<div class="row" style="margin-left: 5px; margin-right: 5px;">
@@ -372,15 +167,16 @@ px
 										<ox:decorate id="inum" rendered="#{not _new}"
 											label="#{msg['clientForm.inum']}" leftClass="col-sm-1"
 											rightClass="col-sm-11">
-											<h:outputText style="margin-left:15px;margin-right:15px;" styleClass="col-sm-12 col-lg-12 form-control rounded clientId"
+											<h:outputText style="margin-left:15px;margin-right:15px;"
+												styleClass="col-sm-12 col-lg-12 form-control rounded clientId"
 												value="#{_client.inum}" />
 										</ox:decorate>
 										<ox:decorate id="description"
 											label="#{msg['clientForm.clientDescription']}"
 											leftClass="col-sm-4" rightClass="col-sm-8">
 											<h:inputTextarea value="#{_client.description}" rows="3"
-												styleClass="col-sm-12 form-control rounded clientDescriptionTextArea" cols="80"
-												maxlength="250" id="descriptionId" />
+												styleClass="col-sm-12 form-control rounded clientDescriptionTextArea"
+												cols="80" maxlength="250" id="descriptionId" />
 										</ox:decorate>
 									</div>
 
@@ -449,7 +245,8 @@ px
 										<ox:decorate id="applicatonType"
 											label="#{msg['clientForm.applicationType']}"
 											leftClass="col-sm-6" rightClass="col-sm-6">
-											<h:selectOneMenu styleClass="col-sm-12 form-control rounded applicationTypeSelectBox"
+											<h:selectOneMenu
+												styleClass="col-sm-12 form-control rounded applicationTypeSelectBox"
 												value="#{_client.oxAuthAppType}" id="applicationTypeId"
 												required="true">
 												<f:selectItems value="#{clientService.applicationType}"
@@ -462,7 +259,8 @@ px
 										<ox:decorate id="subjectType"
 											label="#{msg['clientForm.subjectType']}" leftClass="col-sm-6"
 											rightClass="col-sm-6">
-											<h:selectOneMenu styleClass="col-sm-9 form-control rounded subjectTypeSelectBox"
+											<h:selectOneMenu
+												styleClass="col-sm-9 form-control rounded subjectTypeSelectBox"
 												value="#{_client.subjectType}" id="subjectTypeId"
 												required="true">
 												<f:selectItems value="#{clientService.subjectTypes}"
@@ -698,7 +496,8 @@ px
 										<ox:decorate id="tokenEndpointAuthMethod"
 											label="#{msg['clientForm.authenticationMethod']}"
 											leftClass="col-sm-6" rightClass="col-sm-6">
-											<h:selectOneMenu styleClass="col-sm-9 form-control rounded tokenEndpointAuthMethodSelectBox"
+											<h:selectOneMenu
+												styleClass="col-sm-9 form-control rounded tokenEndpointAuthMethodSelectBox"
 												value="#{_client.tokenEndpointAuthMethod}"
 												id="tokenEndpointAuthMethodId" required="false">
 												<f:selectItems
