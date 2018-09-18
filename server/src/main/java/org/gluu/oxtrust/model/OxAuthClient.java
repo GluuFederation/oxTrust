@@ -117,6 +117,9 @@ public class OxAuthClient extends Entry implements Serializable {
     @LdapAttribute(name = "oxAuthSubjectType")
     private OxAuthSubjectType subjectType;
 
+    @LdapAttribute(name = "oxIdTokenTokenBindingCnf")
+    private String idTokenTokenBindingCnf;
+
     @LdapAttribute(name = "oxAccessTokenAsJwt")
     private GluuBoolean accessTokenAsJwt = GluuBoolean.FALSE;
 
@@ -413,6 +416,14 @@ public class OxAuthClient extends Entry implements Serializable {
 
     public void setSubjectType(OxAuthSubjectType subjectType) {
         this.subjectType = subjectType;
+    }
+
+    public String getIdTokenTokenBindingCnf() {
+        return idTokenTokenBindingCnf;
+    }
+
+    public void setIdTokenTokenBindingCnf(String idTokenTokenBindingCnf) {
+        this.idTokenTokenBindingCnf = idTokenTokenBindingCnf;
     }
 
     public GluuBoolean getAccessTokenAsJwt() {
