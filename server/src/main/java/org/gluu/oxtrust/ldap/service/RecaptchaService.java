@@ -27,7 +27,7 @@ public class RecaptchaService implements Serializable {
 
 	@Inject
 	private AppConfiguration appConfiguration;
-	
+
 	@Inject
 	private RecaptchaUtil recaptchaUtil;
 
@@ -42,7 +42,20 @@ public class RecaptchaService implements Serializable {
 			return false;
 		}
 
-		return recaptchaUtil.verifyGoogleRecaptchaFromServletContext(getRecaptchaSecretKey());
+		String recaptchaSecretKey = getRecaptchaSecretKey();
+		boolean result = recaptchaUtil.verifyGoogleRecaptchaFromServletContext(recaptchaSecretKey);
+		return result;
+	}
+
+	public boolean verifyRecaptchaResponse(String response) {
+		boolean enabled = isEnabled();
+		if (!enabled) {
+			return false;
+		}
+		String recaptchaSecretKey = getRecaptchaSecretKey();
+		boolean result = recaptchaUtil.verify(response, recaptchaSecretKey);
+		log.info("Result:" + result);
+		return result;
 	}
 
 	public boolean isEnabled() {
