@@ -96,7 +96,7 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 			return authenticationChartDto;
 		}
 		
-		Map<MetricType, List<? extends MetricEntry>> entries = findAuthenticationMetrics(-countDays);
+		Map<MetricType, List<? extends MetricEntry>> entries = findAuthenticationMetrics(ApplicationType.OX_AUTH, -countDays);
 
 		String[] labels = new String[countDays];
 		Map<String, Long> successStats = calculateCounterStatistics(countDays, (List<CounterMetricEntry>) entries.get(MetricType.OXAUTH_USER_AUTHENTICATION_SUCCESS));
@@ -120,7 +120,7 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 		return authenticationChartDto;
 	}
 
-	private Map<MetricType, List<? extends MetricEntry>> findAuthenticationMetrics(int countDays) {
+	private Map<MetricType, List<? extends MetricEntry>> findAuthenticationMetrics(ApplicationType applicationType, int countDays) {
 		List<MetricType> metricTypes = new ArrayList<MetricType>();
 		metricTypes.add(MetricType.OXAUTH_USER_AUTHENTICATION_FAILURES);
 		metricTypes.add(MetricType.OXAUTH_USER_AUTHENTICATION_SUCCESS);
@@ -131,7 +131,7 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 
 		Date startDate = calendar.getTime();
 
-		Map<MetricType, List<? extends MetricEntry>> entries = findMetricEntry(ApplicationType.OX_TRUST, appConfiguration
+		Map<MetricType, List<? extends MetricEntry>> entries = findMetricEntry(applicationType, appConfiguration
 				.getApplianceInum(), metricTypes, startDate, endDate);
 
 		return entries;
