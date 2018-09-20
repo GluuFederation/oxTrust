@@ -626,7 +626,7 @@ public class ManagePersonAuthenticationAction
 		this.oxTrustappConfiguration=jsonConfigurationService.getOxTrustappConfiguration();
 		oxTrustappConfiguration.setRecaptchaSecretKey(this.recaptchaSecretKey);
 		oxTrustappConfiguration.setRecaptchaSiteKey(this.recaptchaSiteKey);
-		oxTrustappConfiguration.setAuthenticationRecaptchaEnabled(authenticationRecaptchaEnabled);
+		oxTrustappConfiguration.setAuthenticationRecaptchaEnabled(!authenticationRecaptchaEnabled);
 		jsonConfigurationService.saveOxTrustappConfiguration(this.oxTrustappConfiguration);
 		
 	}
@@ -635,7 +635,7 @@ public class ManagePersonAuthenticationAction
 		this.oxTrustappConfiguration=jsonConfigurationService.getOxTrustappConfiguration();
 		this.recaptchaSecretKey = oxTrustappConfiguration.getRecaptchaSecretKey();
 		this.recaptchaSiteKey = oxTrustappConfiguration.getRecaptchaSiteKey();
-		this.authenticationRecaptchaEnabled = oxTrustappConfiguration.isAuthenticationRecaptchaEnabled();
+		this.authenticationRecaptchaEnabled = !oxTrustappConfiguration.isAuthenticationRecaptchaEnabled();
 		
 	}
 
