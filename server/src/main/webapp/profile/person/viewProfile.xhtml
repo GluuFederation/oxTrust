@@ -33,8 +33,10 @@
             </h:outputScript>
 			<ox:changePasswordDialog id="appliancePassword"
 				label="#{msg['profile.changeAppliancePassword']}"
-				password="#{appliancePasswordAction.newPassword}"
-				setPasswordMethod="#{appliancePasswordAction.update}" />
+				password="#{userProfileAction.person.getUserPassword()}"
+				person="#{userProfileAction.person}"
+				verifyOldPassword="true"
+				setPasswordMethod="#{userPasswordAction.update}" />
 			<section class="content-header">
 				<h1 style="color: #333;">
 					Personal <small> <i class="fa fa-caret-right"
