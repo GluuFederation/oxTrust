@@ -293,13 +293,10 @@ public class UserProfileAction implements Serializable {
 
 	public boolean userEmailIsUniqAtEditionTime(String email) {
 		boolean emailIsUniq = false;
-		oxTrustAuditService.audit("userEmailIsUniqAtEditionTime email:"+email);
 		List<GluuCustomPerson> gluuCustomPersons = personService.getPersonsByEmail(email);
-		oxTrustAuditService.audit("gluuCustomPersons size:" + gluuCustomPersons.size());
 		if (gluuCustomPersons == null || gluuCustomPersons.isEmpty()) {
 			emailIsUniq = true;
 		}
-		oxTrustAuditService.audit("gluuCustomPersons size:" + gluuCustomPersons.get(0).getUid());
 		if (gluuCustomPersons.size() == 1 && gluuCustomPersons.get(0).getAttribute("mail").equalsIgnoreCase(email)
 				&& gluuCustomPersons.get(0).getInum().equalsIgnoreCase(this.person.getInum())) {
 			emailIsUniq = true;
