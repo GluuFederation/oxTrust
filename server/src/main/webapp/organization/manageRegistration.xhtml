@@ -155,22 +155,7 @@
                                                                      value="#{registrationManagementAction.configureRegistrationForm}">
                                                 <a4j:ajax event="click" render="attributeGroup" execute="@this" limitRender="true"/>                                                                  
                                             </h:selectBooleanCheckbox>
-                                        </ox:decorate>
-											<ox:decorate id="recaptchasiteid" label="Recaptcha Site Key">
-												<h:inputText styleClass="form-control recaptchaSiteKeyTextBox"
-													value="#{registrationManagementAction.oxTrustappConfiguration.recaptchaSiteKey}" size="30"
-													 id="recaptchaSiteKeyId"/>
-												<!-- <h:outputText value="#{_attribute.name}"
-													rendered="#{not _new}" /> -->
-											</ox:decorate>
-											
-											<ox:decorate id="recaptchakeyid" label="Recaptcha Secret Key">
-												<h:inputText styleClass="form-control recaptchaSiteSecretTextBox"
-													value="#{registrationManagementAction.oxTrustappConfiguration.recaptchaSecretKey}" size="30"
-													 id="recaptchaSiteKeyId"/>
-												<!-- <h:outputText value="#{_attribute.name}"
-													rendered="#{not _new}" /> -->
-											</ox:decorate>
+                                        </ox:decorate>											
 											
 											<ox:decorate id="csslocationid" label="Design CSS Location">
 												<h:inputText styleClass="form-control cssLocationTextBox"
