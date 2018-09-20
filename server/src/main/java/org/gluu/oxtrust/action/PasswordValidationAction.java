@@ -94,6 +94,14 @@ public class PasswordValidationAction implements Cloneable, Serializable {
 					facesMessages.add(FacesMessage.SEVERITY_ERROR, "Old password isn't valid!",
 							"Old password isn't valid!");
 				}
+			} else {
+				person.setUserPassword(this.password);
+				personService.updatePerson(person);
+				oxTrustAuditService.audit(
+						"USER " + person.getInum() + " **" + person.getDisplayName() + "** PASSWORD UPDATED",
+						identity.getUser(),
+						(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
+				facesMessages.add(FacesMessage.SEVERITY_INFO, "Successfully changed!", "Successfully changed!");
 			}
 		} else {
 			if (this.password.equals(this.confirm)) {
