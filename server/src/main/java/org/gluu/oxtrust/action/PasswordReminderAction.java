@@ -182,7 +182,7 @@ public class PasswordReminderAction implements Serializable {
 				&& appliance.getPasswordResetAllowed() != null && appliance.getPasswordResetAllowed().isBooleanValue();
 		if (valid) {
 			passwordResetIsEnable = true;
-			if (recaptchaService.isEnabled()) {
+			if (recaptchaService.isEnabled() && getAuthenticationRecaptchaEnabled()) {
 				valid = recaptchaService.verifyRecaptchaResponse();
 				if (!valid) {
 					facesMessages.add(FacesMessage.SEVERITY_ERROR, facesMessages
