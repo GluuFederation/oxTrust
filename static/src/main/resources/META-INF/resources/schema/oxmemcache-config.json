@@ -124,7 +124,7 @@
 			        "exclusiveMaximum": false,
 			        "exclusiveMinimum": false
 			    },
-			    "useSsl" : {
+			    "useSSL" : {
 		            "id": "useSSL",
 		            "description": "Enable SSL communication between Gluu Server and Redis cache ",
 		            "type": "boolean"
