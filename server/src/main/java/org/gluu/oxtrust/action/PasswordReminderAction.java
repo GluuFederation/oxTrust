@@ -160,20 +160,19 @@ public class PasswordReminderAction implements Serializable {
 				String messagePlain = facesMessages
 						.evalResourceAsString("#{msg['mail.reset.found.message.plain.body']}");
 				String messageHtml = facesMessages.evalResourceAsString("#{msg['mail.reset.found.message.html.body']}");
-
-				// rendererParameters.setParameter("mail_body", messageHtml);
-				// String mailHtml =
-				// renderService.renderView("/WEB-INF/mail/reset_password.xhtml");
-
 				mailService.sendMail(email, null, subj, messagePlain, messageHtml);
 
 				passwordResetService.addPasswordResetRequest(request);
+				facesMessages.add(FacesMessage.SEVERITY_INFO,
+						facesMessages.evalResourceAsString("#{msg['resetPasswordSuccess.pleaseCheckYourEmail']}"));
 				try {
 					oxTrustAuditService.audit("PASSWORD REMINDER REQUEST" + request.getBaseDn() + " ADDED",
 							identity.getUser(),
 							(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 				} catch (Exception e) {
 				}
+				Thread.sleep(10000);
+				externalContext.redirect(externalContext.getRequestContextPath());
 
 			}
 			return OxTrustConstants.RESULT_SUCCESS;
