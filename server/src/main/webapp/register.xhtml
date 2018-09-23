@@ -30,6 +30,16 @@
 			<script async="async" defer="defer"
 				src="https://www.google.com/recaptcha/api.js" />
 		</ui:fragment>
+		<ui:fragment >
+			<script type="text/javascript">
+				function load() {
+					var url=window.location.origin+ "/oxauth/ext/resources/img/logo.png";
+					  var element = document.getElementById("logoObject");
+					  element.data=url;
+					}
+			    window.onload=load;
+			</script>
+		</ui:fragment>
 	</ui:define>
 
 	<ui:define name="body">
@@ -41,9 +51,11 @@
 					<rich:panel>
 						<div class="login-box">
 							<div class="login-logo">
-								<a href="#" style="font-size: 35px;"> <img
-									src="#{oxTrustConfigurationService.cssLocation}/../theme/dist/img/logo.png" />
-								</a>
+								<object id="logoObject" data="" height="150" width="150"
+									type="image/png">
+									<img
+										src="#{oxTrustConfigurationService.cssLocation}/../theme/dist/img/logo.png" />
+								</object>
 							</div>
 							<!-- /.login-logo -->
 							<div class="row" style="margin-bottom: 20px;">
