@@ -100,11 +100,7 @@ public class PasswordReminderAction implements Serializable {
 	public String requestReminder() throws Exception {
 		this.oxTrustappConfiguration = jsonConfigurationService.getOxTrustappConfiguration();
 		String outcome = requestReminderImpl();
-
-		if (OxTrustConstants.RESULT_SUCCESS.equals(outcome)) {
-			facesMessages.add(FacesMessage.SEVERITY_INFO,
-					facesMessages.evalResourceAsString("#{msg['person.passwordreset.emailLetterSent']}"));
-		} else if (OxTrustConstants.RESULT_FAILURE.equals(outcome)) {
+		if (OxTrustConstants.RESULT_FAILURE.equals(outcome)) {
 			if (passwordResetIsEnable) {
 				facesMessages.add(FacesMessage.SEVERITY_ERROR,
 						facesMessages.evalResourceAsString("#{msg['person.passwordreset.letterNotSent']}"));
@@ -114,7 +110,6 @@ public class PasswordReminderAction implements Serializable {
 
 		this.email = null;
 		conversationService.endConversation();
-
 		return outcome;
 	}
 
@@ -160,7 +155,6 @@ public class PasswordReminderAction implements Serializable {
 						.evalResourceAsString("#{msg['mail.reset.found.message.plain.body']}");
 				String messageHtml = facesMessages.evalResourceAsString("#{msg['mail.reset.found.message.html.body']}");
 				mailService.sendMail(email, null, subj, messagePlain, messageHtml);
-
 				passwordResetService.addPasswordResetRequest(request);
 				facesMessages.add(FacesMessage.SEVERITY_INFO,
 						facesMessages.evalResourceAsString("#{msg['resetPasswordSuccess.pleaseCheckYourEmail']}"));
@@ -170,9 +164,6 @@ public class PasswordReminderAction implements Serializable {
 							(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 				} catch (Exception e) {
 				}
-				Thread.sleep(10000);
-				externalContext.redirect(externalContext.getRequestContextPath());
-
 			}
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
@@ -228,11 +219,11 @@ public class PasswordReminderAction implements Serializable {
 	public void setRecaptchaService(RecaptchaService recaptchaService) {
 		this.recaptchaService = recaptchaService;
 	}
-	
-	public boolean getAuthenticationRecaptchaEnabled(){
-		this.oxTrustappConfiguration=jsonConfigurationService.getOxTrustappConfiguration();		
+
+	public boolean getAuthenticationRecaptchaEnabled() {
+		this.oxTrustappConfiguration = jsonConfigurationService.getOxTrustappConfiguration();
 		return oxTrustappConfiguration.isAuthenticationRecaptchaEnabled();
-		
+
 	}
 
 }
