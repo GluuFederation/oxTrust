@@ -31,6 +31,7 @@ import org.xdi.model.metric.counter.CounterMetricEntry;
 import org.xdi.model.metric.ldap.MetricEntry;
 import org.xdi.service.CacheService;
 import org.xdi.util.OxConstants;
+import org.slf4j.Logger;
 
 /**
  * Store and retrieve metric

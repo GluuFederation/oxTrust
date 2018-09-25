@@ -50,13 +50,13 @@ import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.service.external.ExternalUpdateUserService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.ServiceUtil;
-import org.gluu.site.ldap.persistence.LdapEntryManager;
-import org.gluu.site.ldap.persistence.exception.LdapMappingException;
+import org.gluu.persist.PersistenceEntryManager;
+import org.gluu.persist.exception.BasePersistenceException;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.ldap.model.GluuStatus;
 import org.xdi.model.GluuAttribute;
-import org.xdi.model.GluuUserRole;
+import org.xdi.model.GluuStatus;
+import org.xdi.model.user.UserRole;
 import org.xdi.oxauth.model.fido.u2f.protocol.DeviceData;
 import org.xdi.service.security.Secure;
 import org.xdi.util.ArrayHelper;
@@ -112,8 +112,8 @@ public class UpdatePersonAction implements Serializable {
 	@Inject
 	private MemberService memberService;
 
-	@Inject
-	private LdapEntryManager ldapEntryManager;
+    @Inject
+    private PersistenceEntryManager ldapEntryManager;   
 
 	@Inject
 	private FidoDeviceService fidoDeviceService;
@@ -218,7 +218,7 @@ public class UpdatePersonAction implements Serializable {
 		this.update = true;
 		try {
 			this.person = personService.getPersonByInum(inum);
-		} catch (LdapMappingException ex) {
+		} catch (BasePersistenceException ex) {
 			log.error("Failed to find person {}", inum, ex);
 
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to find person");
@@ -247,8 +247,7 @@ public class UpdatePersonAction implements Serializable {
 			if (gluuCustomFidoDevices != null) {
 				for (GluuCustomFidoDevice gluuCustomFidoDevice : gluuCustomFidoDevices) {
 					GluuDeviceDataBean gluuDeviceDataBean = new GluuDeviceDataBean();
-					gluuDeviceDataBean.setCreationDate(ldapEntryManager
-							.decodeGeneralizedTime(gluuCustomFidoDevice.getCreationDate()).toGMTString());
+					gluuDeviceDataBean.setCreationDate(ldapEntryManager.decodeTime(gluuCustomFidoDevice.getCreationDate()).toGMTString());
 					gluuDeviceDataBean.setId(gluuCustomFidoDevice.getId());
 					String devicedata = gluuCustomFidoDevice.getDeviceData();
 					String modality = "";
@@ -403,7 +402,7 @@ public class UpdatePersonAction implements Serializable {
 				if (runScript) {
 					externalUpdateUserService.executeExternalPostUpdateUserMethods(this.person);
 				}
-			} catch (LdapMappingException ex) {
+			} catch (Exception ex) {
 				log.error("Failed to update person {}", inum, ex);
 				facesMessages.add(FacesMessage.SEVERITY_ERROR,
 						"Failed to update person '#{updatePersonAction.person.displayName}'");
@@ -451,7 +450,7 @@ public class UpdatePersonAction implements Serializable {
 				if (runScript) {
 					externalUpdateUserService.executeExternalPostAddUserMethods(this.person);
 				}
-			} catch (Exception ex) {
+			} catch (BasePersistenceException ex) {
 				log.error("Failed to add new person {}", this.person.getInum(), ex);
 				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new person'");
 
@@ -512,7 +511,7 @@ public class UpdatePersonAction implements Serializable {
 				conversationService.endConversation();
 
 				return OxTrustConstants.RESULT_SUCCESS;
-			} catch (LdapMappingException ex) {
+			} catch (BasePersistenceException ex) {
 				log.error("Failed to remove person {}", this.person.getInum(), ex);
 			}
 		}
@@ -528,7 +527,7 @@ public class UpdatePersonAction implements Serializable {
 			externalUpdateUserService.executeExternalNewUserMethods(this.person);
 		}
 
-		List<GluuAttribute> attributes = attributeService.getAllPersonAttributes(GluuUserRole.ADMIN);
+		List<GluuAttribute> attributes = attributeService.getAllPersonAttributes(UserRole.ADMIN);
 		List<String> origins = attributeService.getAllAttributeOrigins(attributes);
 
 		List<GluuCustomAttribute> customAttributes = this.person.getCustomAttributes();

@@ -34,8 +34,8 @@ import org.gluu.oxtrust.model.PasswordResetRequest;
 import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.service.PasswordResetService;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.site.ldap.persistence.LdapEntryManager;
-import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
+import org.gluu.persist.PersistenceEntryManager;
+import org.gluu.persist.exception.EntryPersistenceException;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.util.StringHelper;
@@ -53,7 +53,7 @@ public class PasswordResetAction implements Serializable {
 	private Logger log;
 
 	@Inject
-	private LdapEntryManager ldapEntryManager;
+	private PersistenceEntryManager ldapEntryManager;
 
 	@Inject
 	private FacesMessages facesMessages;
