@@ -296,7 +296,7 @@
                                                                     render="selectedCustomAttributesId"
                                                                     styleClass="glyphicon glyphicon-remove removeAttributeButton"
                                                                     onbegin="changeAttributeVisibility('#{_aid}', true);"
-                                                                    rendered="#{_custAttr.adminCanEdit and not _mandatory and not _custAttr.metadata.oxMultivaluedAttribute.value}" execute="@this">
+                                                                    rendered="#{_custAttr.adminCanEdit and not _mandatory and not _custAttr.metadata.oxMultivaluedAttribute.value and _custAttr.metadata.displayName ne 'Username' and _custAttr.metadata.displayName ne 'Email' and _custAttr.metadata.displayName ne 'Inum'}" execute="@this">
                                                             </a4j:commandLink>
                                                             <a4j:commandLink
                                                                     action="#{_customAttributeAction.removeCustomAttribute(_custAttr.metadata.inum)}"
