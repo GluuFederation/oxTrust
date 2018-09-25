@@ -157,7 +157,7 @@ public class PasswordResetAction implements Serializable {
 	}
 
 	protected void sendExpirationError() {
-		facesMessages.add(FacesMessage.SEVERITY_ERROR, "The reset link is no more valid.");
+		facesMessages.add(FacesMessage.SEVERITY_ERROR, "The reset link is no longer valid.");
 		facesMessages.add(FacesMessage.SEVERITY_ERROR, "\n\n");
 		facesMessages.add(FacesMessage.SEVERITY_ERROR,
 				"It has already been used to reset your password or it has expired.");

@@ -72,8 +72,8 @@
 
 										<ox:decorate id="displayName"
 											label="#{msg['uma.displayName']}">
-											<div class="col-sm-11">
-												<rich:inplaceInput styleClass="form-control"
+											<div class="col-sm-12">
+												<rich:inplaceInput 
 													defaultLabel="Click to enter Display Name"
 													id="displayNameId" maxlength="60" required="true"
 													style="margin-left:-16px;" value="#{_resourceSet.name}" />
@@ -81,15 +81,16 @@
 										</ox:decorate>
 
 										<ox:decorate label="#{msg['uma.iconURI']}">
-											<div class="col-sm-11">
-												<rich:inplaceInput styleClass="form-control" defaultLabel="Click to enter Icon Url"
+											<div class="col-sm-12">
+												<rich:inplaceInput  defaultLabel="Click to enter Icon Url"
 													id="iconUrlId" maxlength="60" required="true"
 													style="margin-left:-16px;" value="#{_resourceSet.iconUri}" />
 											</div>
 										</ox:decorate>
 
 										<ox:decorate id="selecctionid" label="Scope Selection">
-											<h:selectOneMenu styleClass="form-control" immediate="true"
+										<div class="col-sm-12">
+											<h:selectOneMenu immediate="true" styleClass="form-Control col-sm-10"
 												value="#{updateResourceAction.scopeSelection}"
 												id="selectionid">
 												<f:selectItem itemValue="Scopes" />
@@ -97,6 +98,7 @@
 												<a4j:ajax event="change" render="selectiongroup addscope"
 													limitRender="true" execute="@this" />
 											</h:selectOneMenu>
+											</div>
 										</ox:decorate>
 
 										<h:panelGroup id="selectiongroup">
