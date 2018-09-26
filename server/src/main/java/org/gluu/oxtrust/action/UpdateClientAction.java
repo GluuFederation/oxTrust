@@ -6,7 +6,11 @@
 
 package org.gluu.oxtrust.action;
 
+import java.io.IOException;
 import java.io.Serializable;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.charset.Charset;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -25,8 +29,11 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.service.AttributeService;
@@ -34,11 +41,9 @@ import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.EncryptionService;
 import org.gluu.oxtrust.ldap.service.OxTrustAuditService;
 import org.gluu.oxtrust.ldap.service.ScopeService;
-import org.gluu.oxtrust.ldap.service.SectorIdentifierService;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.model.OxAuthScope;
-import org.gluu.oxtrust.model.OxAuthSectorIdentifier;
 import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
@@ -103,9 +108,6 @@ public class UpdateClientAction implements Serializable {
 
 	@Inject
 	private Identity identity;
-
-	@Inject
-	private SectorIdentifierService sectorIdentifierService;
 
 	private String inum;
 
@@ -535,10 +537,7 @@ public class UpdateClientAction implements Serializable {
 
 		if (!this.loginUris.contains(this.availableLoginUri) && checkWhiteListRedirectUris(availableLoginUri)
 				&& checkBlackListRedirectUris(availableLoginUri)) {
-
-			if (this.loginUris.size() < 1) {
-				this.loginUris.add(this.availableLoginUri);
-			} else if (this.loginUris.size() >= 1 && sectorExist()) {
+			if (isAcceptable(this.availableLoginUri)) {
 				this.loginUris.add(this.availableLoginUri);
 			} else {
 				facesMessages.add(FacesMessage.SEVERITY_ERROR, "A sector identifier must be defined first.",
@@ -553,20 +552,57 @@ public class UpdateClientAction implements Serializable {
 		this.availableLoginUri = "https://";
 	}
 
-	private boolean sectorExist() {
-		String sectorUri = this.client.getSectorIdentifierUri();
-		if (sectorUri != null && !sectorUri.isEmpty()) {
-			String[] paths = sectorUri.split("/");
-			String id = paths[paths.length - 1];
-			OxAuthSectorIdentifier result = sectorIdentifierService.getSectorIdentifierById(id);
-			if (result != null && result.getId().equalsIgnoreCase(id)) {
-				return true;
-			} else {
-				return false;
+	private boolean isAcceptable(String availableLoginUri) {
+		boolean result = false;
+		try {
+			if (this.loginUris.size() < 1) {
+				result = true;
+			} else if (this.loginUris.size() >= 1 && hasSameHostname(this.availableLoginUri)) {
+				result = true;
+			} else if (this.loginUris.size() >= 1 && !hasSameHostname(this.availableLoginUri) && sectorExist()) {
+				result = true;
 			}
-		} else {
-			return false;
+		} catch (MalformedURLException e) {
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "One of the url is no malformed",
+					"One of the url is no malformed");
+			log.error(e.getMessage());
 		}
+		return result;
+	}
+
+	private boolean hasSameHostname(String url1) throws MalformedURLException {
+		boolean result = true;
+		URL uri1 = new URL(url1);
+		for (String url : this.loginUris) {
+			URL uri = new URL(url);
+			if (!(uri1.getHost().equalsIgnoreCase(uri.getHost()))) {
+				result = false;
+				break;
+			}
+		}
+		return result;
+	}
+
+	private boolean sectorExist() {
+		boolean result = false;
+		String sectorUri = this.client.getSectorIdentifierUri();
+		try {
+			if (sectorUri != null && !sectorUri.isEmpty()) {
+				JSONArray json = new JSONArray(IOUtils.toString(new URL(sectorUri), Charset.forName("UTF-8")));
+				if (json != null) {
+					result = true;
+				}
+			}
+		} catch (MalformedURLException e) {
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "The url of the sector assigned to this client is malformed",
+					"The url of the sector assigned to this client is malformed");
+			log.error(e.getMessage());
+		} catch (IOException e) {
+			log.error(e.getMessage());
+		} catch (JSONException e) {
+			log.error(e.getMessage());
+		}
+		return result;
 	}
 
 	public void acceptSelectClaims() {
