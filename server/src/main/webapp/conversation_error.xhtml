@@ -48,7 +48,7 @@
 			<object id="logoObject" data="" height="150" width="150"
 				type="image/png">
 				<img
-					src="#{oxTrustConfigurationService.cssLocation}/../theme/dist/img/logo.png" />
+					src="#{oxTrustConfigurationService.cssLocation}/../theme/dist/img/logo1.png" />
 			</object>
 		</div>
 		<div class="bs-docs-section"
@@ -80,10 +80,10 @@
 						<div class="padding_spc"
 							style="padding-bottom: 5px; padding-top: 5px;">
 							<p>
-								<h:outputText value="#{msgs['common.gluuInc']}" />
+								<h:outputText value="Gluu, Inc" />
 								| <a target="_blank"
-									href="https://github.com/GluuFederation/oxAuth/blob/master/LICENSE"><h:outputText
-										value="#{msgs['common.caution']}" escape="false" /></a>
+									href="https://github.com/GluuFederation/oxTrust/blob/master/LICENSE"><h:outputText
+										value="Use subject to MIT LICENSE" escape="false" /></a>
 								<h:panelGroup rendered='#{!empty client.policyUri}'>
 					| <a target="_blank" href="#{client.policyUri}"><h:outputText
 											value="#{msgs['common.privacyPolicy']}" escape="false" /></a>
