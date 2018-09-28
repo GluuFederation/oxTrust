@@ -23,7 +23,6 @@ import org.gluu.oxtrust.util.OxTrustConstants;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.config.oxtrust.ImportPersonConfig;
-import org.xdi.service.CacheService;
 import org.xdi.service.JsonService;
 import org.xdi.service.cache.CacheConfiguration;
 import org.xdi.service.security.Secure;
@@ -79,16 +78,11 @@ public class JsonConfigurationAction implements Serializable {
 
 	private String cacheConfigurationJson;
 
-	@Inject
-	private CacheService cacheService;
-
-	private boolean metricWasEnable = false;
 
 	public String init() {
 		try {
 			log.debug("Loading oxauth-config.json and oxtrust-config.json");
 			this.oxTrustappConfiguration = jsonConfigurationService.getOxTrustappConfiguration();
-			metricWasEnable = this.oxTrustappConfiguration.getMetricReporterEnabled();
 			this.oxTrustImportPersonConfiguration = jsonConfigurationService.getOxTrustImportPersonConfiguration();
 			this.cacheConfiguration = jsonConfigurationService.getOxMemCacheConfiguration();
 
@@ -132,13 +126,8 @@ public class JsonConfigurationAction implements Serializable {
 		try {
 			log.debug("Saving oxtrust-config.json:" + this.oxTrustConfigJson);
 			this.oxTrustappConfiguration = convertToOxTrustappConfiguration(this.oxTrustConfigJson);
-			boolean metricIsEnable = this.oxTrustappConfiguration.getMetricReporterEnabled();
 			// Trim all URI properties
 			trimUriProperties();
-			if ((metricIsEnable != metricWasEnable) && !metricIsEnable) {
-				String key = OxTrustConstants.CACHE_METRICS_KEY + "#home";
-				cacheService.remove(OxTrustConstants.CACHE_METRICS_NAME, key);
-			}
 			jsonConfigurationService.saveOxTrustappConfiguration(this.oxTrustappConfiguration);
 			facesMessages.add(FacesMessage.SEVERITY_INFO, "oxTrust Configuration is updated.");
 
