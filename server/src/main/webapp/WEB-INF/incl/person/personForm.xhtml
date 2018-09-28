@@ -109,6 +109,12 @@
     table-layout: fixed;
     word-wrap: break-word;
 }
+
+  .iconButtonRemove{
+  }
+  .iconButtonAdd{
+    margin-left: 15px;
+  }
     </h:outputStylesheet>
 
     <h:outputScript>
@@ -290,31 +296,31 @@
                                                         
                                                         <h:outputText value="&#160;"/>                                                        
                                                         
-                                                        <div class="col-xs-2">
+                                                        <div class="col-xs-2" style="margin-top: -15px;">
                                                             <a4j:commandLink
                                                                     action="#{_customAttributeAction.removeCustomAttribute(_custAttr.metadata.inum)}"
                                                                     render="selectedCustomAttributesId"
-                                                                    styleClass="glyphicon glyphicon-remove removeAttributeButton"
+                                                                    styleClass="glyphicon glyphicon-remove removeAttributeButton iconButtonRemove"
                                                                     onbegin="changeAttributeVisibility('#{_aid}', true);"
                                                                     rendered="#{_custAttr.adminCanEdit and not _mandatory and not _custAttr.metadata.oxMultivaluedAttribute.value and _custAttr.metadata.displayName ne 'Username' and _custAttr.metadata.displayName ne 'Email' and _custAttr.metadata.displayName ne 'Inum'}" execute="@this">
                                                             </a4j:commandLink>
                                                             <a4j:commandLink
                                                                     action="#{_customAttributeAction.removeCustomAttribute(_custAttr.metadata.inum)}"
                                                                     render="selectedCustomAttributesId"
-                                                                    styleClass="glyphicon glyphicon-remove removeAttributeButton"
+                                                                    styleClass="glyphicon glyphicon-remove removeAttributeButton iconButtonRemove"
                                                                     onbegin="changeAttributeVisibility('#{_aid}', true);"
                                                                     rendered="#{_custAttr.adminCanEdit and not _mandatory and _custAttr.metadata.oxMultivaluedAttribute.value and fn:length(_custAttr.values) eq 1 }" execute="@this">
                                                             </a4j:commandLink>
                                                             <a4j:commandLink
                                                                     action="#{_customAttributeAction.removeMultiValuesInAttributes(_custAttr.metadata.inum,_mandatory,_custAttr.values[_valueIdx])}"
                                                                     render="selectedCustomAttributesId"
-                                                                    styleClass="glyphicon glyphicon-remove removeMultiValueAttributeButton"
+                                                                    styleClass="glyphicon glyphicon-remove removeMultiValueAttributeButton iconButtonRemove"
                                                                     rendered="#{_custAttr.adminCanEdit and not _mandatory and _custAttr.metadata.oxMultivaluedAttribute.value and fn:length(_custAttr.values) gt 1 }" execute="@this">
                                                             </a4j:commandLink>
                                                             <a4j:commandLink
                                                             		action="#{_customAttributeAction.addMultiValuesInAttributes(_custAttr.metadata.inum,_mandatory)}"
                                                                     render="selectedCustomAttributesId"
-                                                                    styleClass="glyphicon glyphicon-plus addMultiValueAttributeButton"
+                                                                    styleClass="glyphicon glyphicon-plus addMultiValueAttributeButton iconButtonAdd"
                                                                     rendered="#{_custAttr.adminCanEdit and _custAttr.metadata.oxMultivaluedAttribute.value and _valueIdx == 0}" execute="@this">
                                                             </a4j:commandLink>
                                                             
