@@ -157,7 +157,7 @@ public class FederationDeconstructionAction implements Serializable {
 			newTR.setMaxRefreshDelay("PT8H");
 			newTR.setOwner(organizationService.getOrganization().getDn());
 			newTR.setSpMetaDataSourceType(GluuMetadataSourceType.FEDERATION);
-			newTR.setContainerFederation(trustRelationship);
+			newTR.setGluuContainerFederation(trustRelationship.getDn());
 			newTR.setEntityId(entityName);
 			newTR.setDisplayName(entityName);
 			newTR.setDescription(entityName);

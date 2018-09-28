@@ -1335,13 +1335,13 @@ public class UpdateTrustRelationshipAction implements Serializable {
 	}
 
 	public void setContainerFederation(SelectItem federation) {
-		this.trustRelationship.setContainerFederation((GluuSAMLTrustRelationship) federation.getValue());
+		this.trustRelationship.setGluuContainerFederation(((GluuSAMLTrustRelationship) federation.getValue()).getDn());
 	}
 
 	public SelectItem getContainerFederation() {
-		return new SelectItem(trustRelationship.getContainerFederation(),
-				trustRelationship.getContainerFederation() == null ? "Select Federation"
-						: trustRelationship.getContainerFederation().getDisplayName());
+	    GluuSAMLTrustRelationship containerFederation = trustService.getTrustContainerFederation(trustRelationship);
+        return new SelectItem(containerFederation,
+                containerFederation == null ? "Select Federation" : containerFederation .getDisplayName());
 	}
 
 	public ArrayList<SelectItem> getAllFederations() {
@@ -1389,49 +1389,49 @@ public class UpdateTrustRelationshipAction implements Serializable {
 	}
 
 	public void filterEntities() {
-		filteredEntities = null;
-		if (StringHelper.isNotEmpty(getFilterString())) {
-			filteredEntities = new ArrayList<String>();
-			for (String entity : trustRelationship.getContainerFederation().getGluuEntityId()) {
-				if (entity.toLowerCase().contains(getFilterString().toLowerCase())) {
-					filteredEntities.add(entity);
-				}
-			}
-		}
+        filteredEntities = null;
+        if (StringHelper.isNotEmpty(getFilterString())) {
+            filteredEntities = new ArrayList<String>();
+            for (String entity : trustService.getTrustContainerFederation(trustRelationship).getGluuEntityId()) {
+                if (entity.toLowerCase().contains(getFilterString().toLowerCase())) {
+                    filteredEntities.add(entity);
+                }
+            }
+        }
 	}
 
 	public void setAvailableEntities(List<String> availableEntities) {
-
 		this.availableEntities.removeAll(availableEntitiesFiltered);
 		this.availableEntities.addAll(availableEntities);
 	}
 
 	public List<String> getAvailableEntities() {
-		if (trustRelationship.getContainerFederation() == null) {
-			return null;
-		} else {
-			if (!trustRelationship.getContainerFederation().getGluuEntityId()
-					.contains(trustRelationship.getEntityId())) {
-				trustRelationship.setEntityId(null);
-				availableEntities = null;
-			}
-		}
+        GluuSAMLTrustRelationship containerFederation = trustService.getTrustContainerFederation(trustRelationship);
+        if (containerFederation == null) {
+            return null;
+        } else {
+            if (!containerFederation.getGluuEntityId().contains(trustRelationship.getEntityId())) {
+                trustRelationship.setEntityId(null);
+                availableEntities = null;
+            }
+        }
 
-		if (availableEntities == null) {
-			availableEntities = new ArrayList<String>();
-			if (trustRelationship.getContainerFederation() != null) {
-				availableEntities.addAll(trustRelationship.getContainerFederation().getGluuEntityId());
-			}
+        if (availableEntities == null) {
+            availableEntities = new ArrayList<String>();
+            if (containerFederation != null) {
+                availableEntities.addAll(containerFederation.getGluuEntityId());
+            }
 
-		}
-		availableEntitiesFiltered = new ArrayList<String>();
-		availableEntitiesFiltered.addAll(availableEntities);
+        }
+        availableEntitiesFiltered = new ArrayList<String>();
+        availableEntitiesFiltered.addAll(availableEntities);
 
-		if (filteredEntities != null) {
-			availableEntitiesFiltered.retainAll(filteredEntities);
+        if (filteredEntities != null) {
+            availableEntitiesFiltered.retainAll(filteredEntities);
 
-		}
-		return availableEntitiesFiltered;
+        }
+
+        return availableEntitiesFiltered;
 	}
 
 	public void setFilterString(String filterString) {

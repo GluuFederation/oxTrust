@@ -149,10 +149,6 @@ public class GluuSAMLTrustRelationship extends InumEntry implements Serializable
 		return Boolean.parseBoolean(gluuIsFederation);
 	}
 
-	public void setContainerFederation(GluuSAMLTrustRelationship containerFederation) {
-		this.gluuContainerFederation = containerFederation.getDn();
-	}
-
 	@Override
 	public boolean equals(Object o) {
 		if (!(o instanceof GluuSAMLTrustRelationship)) {
