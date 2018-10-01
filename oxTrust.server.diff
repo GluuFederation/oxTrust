@@ -1,0 +1,24 @@
+diff -aur --ignore-all-space --exclude=.git --exclude=update.bat --exclude=clone.bat 3.1.4/oxTrust/server\src\main\webapp\profile\person\viewProfile.xhtml master/oxTrust/server\src\main\webapp\profile\person\viewProfile.xhtml
+--- 3.1.4/oxTrust/server\src\main\webapp\profile\person\viewProfile.xhtml	Tue Sep 25 18:56:23 2018
++++ master/oxTrust/server\src\main\webapp\profile\person\viewProfile.xhtml	Tue Sep 25 09:49:52 2018
+@@ -356,15 +356,13 @@
+ 						<a4j:commandButton
+ 							onclick="#{rich:component('personPassword:changePasswordModalPanel')}.show();"
+ 							rendered="#{permissionService.hasPermission(applianceService.appliance, 'profile_management')}"
+-							styleClass="btn btn-success"
+-							value="#{msg['profile.changePassword']}" />
++                                styleClass="btn btn-success changePasswordButton" value="#{msg['profile.changePassword']}"/>
+ 						<h:commandButton action="#{userProfileAction.update}"
+ 							rendered="#{permissionService.hasPermission(applianceService.appliance, 'profile_management')}"
+-							styleClass="btn btn-success" value="Update" />
+-						<h:commandButton action="#{userProfileAction.cancel}"
+-							immediate="true"
++                                         styleClass="btn btn-success UpdateButton" value="Update"/>
++                        <h:commandButton action="#{userProfileAction.cancel}" immediate="true"
+ 							rendered="#{permissionService.hasPermission(applianceService.appliance, 'profile_management')}"
+-							styleClass="btn btn-success" value="Cancel" />
++                                         styleClass="btn btn-success cancelButton" value="Cancel"/>
+ 
+ 						<!-- 								<div id="updateButtons"> -->
+ 						<!-- 									<a4j:commandButton value="Change Password" -->
+ 									

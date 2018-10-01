@@ -32,7 +32,7 @@
                     <h:panelGroup layout="block" rendered="#{_importAction.uploadedFile ne null}">
                         <h:outputText value="#{_importAction.uploadedFile.name}" />
                         <richext:spacer width="8" />
-                        <a4j:commandLink  styleClass="removeFileButton" value="Remove" action="#{_importAction.removeFileToImport}" render="fileImportPanelId, controlButttonId" ajaxSingle="true" limitRender="true"
+                        <a4j:commandLink value="Remove" action="#{_importAction.removeFileToImport}" render="fileImportPanelId, controlButttonId" ajaxSingle="true" limitRender="true"
                             eventsQueue="attributeImportQueue" />
                     </h:panelGroup>
                 </h:panelGroup>

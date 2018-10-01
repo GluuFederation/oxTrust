@@ -353,16 +353,18 @@
 					</div>
 					<div class="box-footer">
 
-                        <a4j:commandButton
-                                onclick="#{rich:component('personPassword:changePasswordModalPanel')}.show();"
-                                rendered="#{permissionService.hasPermission(applianceService.appliance, 'profile_management')}"
-                                styleClass="btn btn-success changePasswordButton" value="#{msg['profile.changePassword']}"/>
-                        <h:commandButton action="#{userProfileAction.update}"
-                                         rendered="#{permissionService.hasPermission(applianceService.appliance, 'profile_management')}"
-                                         styleClass="btn btn-success UpdateButton" value="Update"/>
-                        <h:commandButton action="#{userProfileAction.cancel}" immediate="true"
-                                         rendered="#{permissionService.hasPermission(applianceService.appliance, 'profile_management')}"
-                                         styleClass="btn btn-success cancelButton" value="Cancel"/>
+						<a4j:commandButton
+							onclick="#{rich:component('personPassword:changePasswordModalPanel')}.show();"
+							rendered="#{permissionService.hasPermission(applianceService.appliance, 'profile_management')}"
+							styleClass="btn btn-success"
+							value="#{msg['profile.changePassword']}" />
+						<h:commandButton action="#{userProfileAction.update}"
+							rendered="#{permissionService.hasPermission(applianceService.appliance, 'profile_management')}"
+							styleClass="btn btn-success" value="Update" />
+						<h:commandButton action="#{userProfileAction.cancel}"
+							immediate="true"
+							rendered="#{permissionService.hasPermission(applianceService.appliance, 'profile_management')}"
+							styleClass="btn btn-success" value="Cancel" />
 
 						<!-- 								<div id="updateButtons"> -->
 						<!-- 									<a4j:commandButton value="Change Password" -->
