@@ -138,8 +138,7 @@ public class RegisterPersonAction implements Serializable {
 					"You cannot enter this page. Please contact site administration.");
 			conversationService.endConversation();
 		} else if (OxTrustConstants.RESULT_NO_PERMISSIONS.equals(outcome)) {
-			facesMessages.add(FacesMessage.SEVERITY_ERROR,
-					"Failed to execute registration script. Please contact site administration.");
+			log.error("Failed to execute registration script.Please contact site administration.");
 			conversationService.endConversation();
 		}
 
