@@ -72,6 +72,8 @@ import org.xdi.util.security.StringEncrypter.EncryptionException;
 @SessionScoped
 public class Authenticator implements Serializable {
 
+	private static final String LOGIN_FAILED_OX_TRUST = "Login failed, oxTrust wasn't allowed to access user data";
+
 	private static final long serialVersionUID = -3975272457541385597L;
 
 	@Inject
@@ -358,7 +360,7 @@ public class Authenticator implements Serializable {
 		String oxAuthHost = getOxAuthHost(oxAuthAuthorizeUrl);
 		if (StringHelper.isEmpty(oxAuthHost)) {
 			log.info("Failed to determine oxAuth host using oxAuthAuthorizeUrl: '{}'", oxAuthAuthorizeUrl);
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Login failed, oxTrust wasn't allow to access user data");
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, LOGIN_FAILED_OX_TRUST);
 			return OxTrustConstants.RESULT_NO_PERMISSIONS;
 		}
 
@@ -376,7 +378,7 @@ public class Authenticator implements Serializable {
             String error = requestParameterMap.get(OxTrustConstants.OXAUTH_ERROR);
             String errorDescription = requestParameterMap.get(OxTrustConstants.OXAUTH_ERROR_DESCRIPTION);
             log.error("No state sent. Error: " + error + ". Error description: " + errorDescription);
-            facesMessages.add(FacesMessage.SEVERITY_ERROR, "Login failed, oxTrust wasn't allow to access user data");
+            facesMessages.add(FacesMessage.SEVERITY_ERROR, LOGIN_FAILED_OX_TRUST);
 
             return OxTrustConstants.RESULT_NO_PERMISSIONS;
         }
@@ -392,7 +394,7 @@ public class Authenticator implements Serializable {
 			String errorDescription = requestParameterMap.get(OxTrustConstants.OXAUTH_ERROR_DESCRIPTION);
 
 			log.error("No authorization code sent. Error: " + error + ". Error description: " + errorDescription);
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Login failed, oxTrust wasn't allow to access user data");
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, LOGIN_FAILED_OX_TRUST);
 
 			return OxTrustConstants.RESULT_NO_PERMISSIONS;
 		}
@@ -426,7 +428,7 @@ public class Authenticator implements Serializable {
 				clientPassword);
 		
 		if (OxTrustConstants.RESULT_NO_PERMISSIONS.equals(result)) {
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Login failed, oxTrust wasn't allow to access user data");
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, LOGIN_FAILED_OX_TRUST);
 		} else if (OxTrustConstants.RESULT_FAILURE.equals(result)) {
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Login failed");
 		}

@@ -108,6 +108,10 @@ public class PasswordValidationAction implements Cloneable, Serializable {
 			}
 		}
 	}
+	
+	public void notifyBindPasswordChange() {
+		facesMessages.add(FacesMessage.SEVERITY_INFO, "Bind password successfully changed!", "Bind password successfully changed!");
+	}
 
 	public UIComponent getGraphValidator() {
 		return graphValidator;

@@ -14,6 +14,8 @@
 		<cc:attribute name="hideLabel" required="false" default="false" />
 		<cc:attribute name="labelAsText" required="false" default="false" />
 		<cc:attribute name="oneColumn" required="false" default="false" />
+		<cc:attribute name="leftClass" required="false" type="java.lang.String" />
+		<cc:attribute name="rightClass" required="false" type="java.lang.String" />
 		<cc:attribute name="required" required="false" />
 		<cc:attribute name="rendered" required="false" type="java.lang.Boolean" />
 		<cc:attribute name="inputId" required="false" />
@@ -24,7 +26,7 @@
 	<cc:implementation>
 		<h:panelGroup layout="block" id="#{not empty cc.attrs.inputId ? cc.attrs.inputId : 'output'}Region" class="row"
 			style="padding:5px;margin-bottom: 5px;margin-left:0px" rendered="#{cc.attrs.rendered}">
-			<h:panelGroup id="#{not empty cc.attrs.inputId ? cc.attrs.inputId : 'output'}LabelPanel" styleClass="#{cc.attrs.oneColumn ? '' : 'col-sm-2'}"
+			<h:panelGroup id="#{not empty cc.attrs.inputId ? cc.attrs.inputId : 'output'}LabelPanel" styleClass="#{cc.attrs.leftClass !=null ? cc.attrs.leftClass : 'col-sm-4 col-lg-4'}"
 				rendered="#{not cc.attrs.hideLabel}">
 
 				<span class="name #{cc.attrs.invalid ? 'errors' : 'new-label'}">
@@ -40,7 +42,7 @@
 				</span>
 			</h:panelGroup>
 
-			<h:panelGroup id="#{not empty cc.attrs.inputId ? cc.attrs.inputId : 'output'}InputPanel" styleClass="col-sm-10 prop"
+			<h:panelGroup id="#{not empty cc.attrs.inputId ? cc.attrs.inputId : 'output'}InputPanel" styleClass="#{cc.attrs.rightClass !=null ? cc.attrs.rightClass : 'col-sm-8 col-lg-8'}"
 				style="padding-left:0px;">
 				<span class="value #{cc.attrs.invalid ? 'errors' : 'input'}">
 					<cc:insertChildren />
