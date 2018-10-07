@@ -4,7 +4,6 @@ import java.util.Iterator;
 
 import javax.enterprise.context.NonexistentConversationException;
 import javax.faces.FacesException;
-import javax.faces.application.ConfigurableNavigationHandler;
 import javax.faces.context.ExceptionHandler;
 import javax.faces.context.ExceptionHandlerWrapper;
 import javax.faces.context.ExternalContext;
@@ -46,7 +45,6 @@ public class GlobalExceptionHandler extends ExceptionHandlerWrapper {
             Throwable t = context.getException();
             final FacesContext fc = FacesContext.getCurrentInstance();
             final ExternalContext externalContext = fc.getExternalContext();
-            final ConfigurableNavigationHandler nav = (ConfigurableNavigationHandler) fc.getApplication().getNavigationHandler();
             try {
 				if (isSecurityException(t)) {
 					performRedirect(externalContext, "/login");

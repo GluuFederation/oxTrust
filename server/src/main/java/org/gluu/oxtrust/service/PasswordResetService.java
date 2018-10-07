@@ -18,6 +18,7 @@ import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.model.PasswordResetRequest;
 import org.gluu.persist.PersistenceEntryManager;
+import org.gluu.persist.exception.EntryPersistenceException;
 import org.gluu.persist.model.BatchOperation;
 import org.gluu.persist.model.ProcessBatchOperation;
 import org.gluu.persist.model.SearchScope;
@@ -164,25 +165,27 @@ public class PasswordResetService implements Serializable {
         return passwordResetRequests;
     }
 
-    public void cleanup(final Date expirationDate) {
-        BatchOperation<PasswordResetRequest> passwordResetRequestBatchService = new ProcessBatchOperation<PasswordResetRequest>() {
-            @Override
-            public void performAction(List<PasswordResetRequest> entries) {
-                for (PasswordResetRequest passwordResetRequest : entries) {
-                    try {
-                        log.debug("Removing PasswordResetRequest: {}, Creation date: {}",
-                                passwordResetRequest.getOxGuid(),
-                                passwordResetRequest.getCreationDate());
-                        removePasswordResetRequest(passwordResetRequest);
-                    } catch (Exception ex) {
-                        log.error("Failed to remove entry", ex);
-                    }
-                }
-            }
-        };
+    
 
-        getExpiredPasswordResetRequests(passwordResetRequestBatchService, expirationDate, new String[] {"oxGuid", "creationDate"}, 0, CleanerTimer.BATCH_SIZE);
-    }
+	  public void cleanup(final Date expirationDate) {
+	        BatchOperation<PasswordResetRequest> passwordResetRequestBatchService = new ProcessBatchOperation<PasswordResetRequest>() {
+	            @Override
+	            public void performAction(List<PasswordResetRequest> entries) {
+	                for (PasswordResetRequest passwordResetRequest : entries) {
+	                    try {
+	                        log.debug("Removing PasswordResetRequest: {}, Creation date: {}",
+	                                passwordResetRequest.getOxGuid(),
+	                                passwordResetRequest.getCreationDate());
+	                        removePasswordResetRequest(passwordResetRequest);
+	                    } catch (Exception ex) {
+	                        log.error("Failed to remove entry", ex);
+	                    }
+	                }
+	            }
+	        };
+
+	        getExpiredPasswordResetRequests(passwordResetRequestBatchService, expirationDate, new String[] {"oxGuid", "creationDate"}, 0, CleanerTimer.BATCH_SIZE);
+	    }
 
 	/**
 	 * Generate new guid for password reset request
