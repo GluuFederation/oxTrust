@@ -29,8 +29,8 @@
 				style="cursor:pointer"
 				onclick="#{rich:component('clientSummary')}.hide(); return false;" />
 		</f:facet>
-		<div class="container">
-			<h:panelGroup style="overflow:scroll;">
+		<div class="container" style="overflow-y:scroll; height: 470px; margin-bottom: 20px;" >
+			<h:panelGroup>
 				<div class="row">
 					<div class="col-sm-6 col-lg-6">
 						<ox:decorate id="inum"
@@ -383,7 +383,8 @@
 						<ox:decorate id="jwks" label="#{msg['clientForm.jwks']}"
 							rendered="#{!empty cc.attrs._client.jwks and cc.attrs._client.jwks ne null }">
 							<h:outputText style="max-width: 150px;word-wrap:break-word;"
-								value="#{cc.attrs._client.jwks}" id="jwksId" escape="false" />
+								value="#{cc.attrs._client.jwks.length() gt 100 ? cc.attrs._client.jwks.substring(0,97).concat('...') : cc.attrs._client.jwks}" 
+								id="jwksId" escape="false" />
 						</ox:decorate>
 						<ox:decorate id="subjectType"
 							label="#{msg['clientForm.subjectType']}"
