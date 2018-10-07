@@ -13,7 +13,6 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.ApplicationType;
@@ -40,9 +39,6 @@ public class CleanerTimer {
 
     @Inject
     private Logger log;
-
-    @Inject
-    private LdapEntryManager ldapEntryManager;
 
     @Inject
     private PasswordResetService passwordResetService;
