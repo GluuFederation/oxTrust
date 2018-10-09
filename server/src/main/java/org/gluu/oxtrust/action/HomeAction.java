@@ -57,7 +57,7 @@ public class HomeAction implements Serializable {
 	private boolean generateAuthenticationChart() {
 		if (metricService.isMetricReporterEnabled()) {
 			try {
-				this.authenticationChartDto = metricService.genereateAuthenticationChartDto(7);
+				this.authenticationChartDto = metricService.genereateAuthenticationChartDto(6);
 				this.authenticationChartJson = jsonService.objectToJson(authenticationChartDto);
 			} catch (Exception ex) {
 				log.error("Failed to prepare authentication chart", ex);

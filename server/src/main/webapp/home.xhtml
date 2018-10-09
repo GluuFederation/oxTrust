@@ -116,7 +116,8 @@
 					<div class="col-md-12">
 						<div class="box">
 							<div class="box-header with-border">
-								<h3 class="box-title">#{msg['home.authenticationRequests']}</h3>
+								<h5 class="box-title">#{msg['home.authenticationRequests']}</h5>
+								<h3 class="description-header text-center">#{msg['home.lastDaysStatistics']}</h3>
 								<div class="box-tools pull-right">
 									<button class="btn btn-box-tool" data-widget="collapse">
 										<i class="fa fa-minus" />
@@ -163,15 +164,7 @@
 							<!-- ./box-body -->
 							<div class="box-footer">
 								<div class="row">
-
-									<div class="col-sm-3 col-xs-6">
-										<div class="description-block">
-											<h5 class="description-header">#{msg['home.lastDaysStatistics']}</h5>
-											<span class="description-text" />
-										</div>
-
-									</div>
-									<div class="col-sm-3 col-xs-6">
+									<div class="col-sm-4 col-xs-6">
 										<div class="description-block border-right">
 											<h5 class="description-header">#{homeAction.authenticationChartDto.totalRequest}</h5>
 											<span class="description-text">#{msg['home.totalAuthenticationRequests']}</span>
@@ -179,7 +172,7 @@
 
 									</div>
 
-									<div class="col-sm-3 col-xs-6">
+									<div class="col-sm-4 col-xs-6">
 										<div class="description-block border-right">
 											<h5 class="description-header">#{homeAction.authenticationChartDto.totalSuccess}</h5>
 											<span class="description-text">#{msg['home.totalSuccessfulLogin']}</span>
@@ -187,7 +180,7 @@
 
 									</div>
 
-									<div class="col-sm-3 col-xs-6">
+									<div class="col-sm-4 col-xs-6">
 										<div class="description-block border-right">
 											<h5 class="description-header">#{homeAction.authenticationChartDto.totalFailure}</h5>
 											<span class="description-text">#{msg['home.totalFailedLogin']}</span>
