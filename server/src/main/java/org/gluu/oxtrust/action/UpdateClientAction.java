@@ -284,12 +284,13 @@ public class UpdateClientAction implements Serializable {
 
 	public String save() throws Exception {
 		LocalDate localDate = LocalDate.now();
-		LocalDate tomorrow = localDate.plusDays(1);
-		Date today = Date.from(tomorrow.atStartOfDay(ZoneId.systemDefault()).toInstant());
-		if (this.client.getClientSecretExpiresAt() == null && !update) {
-			this.client.setClientSecretExpiresAt(today);
+		LocalDate nextCentury = localDate.plusYears(100);
+		Date nextCenturyDate = Date.from(nextCentury.atStartOfDay(ZoneId.systemDefault()).toInstant());
+		if (this.client.getClientSecretExpiresAt() != null && this.client.getClientSecretExpiresAt()
+				.before(Date.from(LocalDate.now().plusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant()))) {
+			this.client.setClientSecretExpiresAt(nextCenturyDate);
 		}
-		if (previousClientExpirationDate != null && this.client.getClientSecretExpiresAt().before(today)) {
+		if (previousClientExpirationDate != null && this.client.getClientSecretExpiresAt().before(new Date())) {
 			facesMessages.add(FacesMessage.SEVERITY_ERROR,
 					"This client has expired. Update the expiration date in order to save changes");
 			return OxTrustConstants.RESULT_FAILURE;
