@@ -427,7 +427,6 @@
 											</ox:decorate>
 											<ox:decorate id="clientsecretexpiry" leftClass="col-sm-6"
 												rightClass="col-sm-6"
-												rendered="#{_client.clientSecretExpiresAt != null || !_clientAction.update}"
 												label="#{msg['clientForm.clientSecretExpires']}">
 												<rich:calendar value="#{_client.clientSecretExpiresAt}"
 													id="calendar" popup="false" datePattern="dd/MM/yyyy HH:mm"
@@ -829,8 +828,8 @@
 														maxlength="60" inputWidth="64" required="false"
 														id="oxdIdId" />
 												</ox:decorate>
-												<ox:decorate id="defaultMaxAge" leftClass="col-sm-6"
-													rightClass="col-sm-6"
+												<ox:decorate id="defaultMaxAge" leftClass="col-sm-3"
+													rightClass="col-sm-9"
 													label="#{msg['clientForm.defaultMaximumAuthenticationAge']}">
 													<rich:inplaceInput value="#{_client.defaultMaxAge}"
 														defaultLabel="Maximum Authentication Age (value in seconds)"
