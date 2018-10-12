@@ -67,27 +67,26 @@
 		function takeFocus(x){
 		   x.focus();
 		}
-
     </h:outputScript>
 
 	<h:form id="clientForm">
 		<input type='hidden' name='cid' value='#{conversation.id}' />
 		<div class="row">
-			<div class="col-xs-12 col-sm-12 col-lg-12" style="margin-top:5px;">
-				<div class="box box-primary">
+			<div class="col-xs-12 col-sm-12 col-lg-12" style="margin-top: 5px;">
+				<div class="box box-primary" id="mainContent">
 					<div class="box-header">
-					<a4j:commandButton
-								styleClass="btn btn-primary showOIDCSummaryButton"
-								style="margin-left:4%;" rendered="#{not _new}"
-								value="#{msg['clientForm.clientSummary']}"
-								onclick="#{rich:component('summary:clientSummary')}.show();"
-								eventsQueue="clientQueue" />
-							<a4j:commandButton ajaxSingle="true" eventsQueue="clientQueue"
-								onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();"
-								rendered="#{not _new}"
-								styleClass="btn btn-primary deleteOIDCButton"
-								style="float: right; margin-right:1%; width:150px; border:none !important; background: #d62728 !important; background-color: #d62728 !important;"
-								value="#{msg['client.delete']}" />
+						<a4j:commandButton
+							styleClass="btn btn-primary showOIDCSummaryButton"
+							style="margin-left:4%;" rendered="#{not _new}"
+							value="#{msg['clientForm.clientSummary']}"
+							onclick="#{rich:component('summary:clientSummary')}.show();"
+							eventsQueue="clientQueue" />
+						<a4j:commandButton ajaxSingle="true" eventsQueue="clientQueue"
+							onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();"
+							rendered="#{not _new}"
+							styleClass="btn btn-primary deleteOIDCButton"
+							style="float: right; margin-right:1%; width:150px; border:none !important; background: #d62728 !important; background-color: #d62728 !important;"
+							value="#{msg['client.delete']}" />
 					</div>
 					<div class="nav-tabs-custom"
 						style="margin-bottom: 0px; overflow: auto;">
@@ -100,7 +99,8 @@
 								class="EncryptionTab" data-toggle="tab">#{msg['clientForm.tab.encryption']}</a></li>
 						</ul>
 						<div class="tab-content">
-							<div class="tab-pane active box box-primary" id="standardSettings">
+							<div class="tab-pane active box box-primary"
+								id="standardSettings">
 								<h:panelGroup columns="1" width="100%">
 									<div class="row" style="margin-left: 5px; margin-right: 5px;">
 										<ox:decorate id="inum" rendered="#{not _new}"
@@ -122,6 +122,11 @@
 													requiredMessage="Please Enter the Client Name"
 													defaultLabel="click to enter the Client Name"
 													maxlength="60" required="true" id="displayNameId" />
+											</ox:decorate>
+											<ox:decorate label="#{msg['clientForm.disabled']}"
+												leftClass="col-sm-3" rightClass="col-sm-3">
+												<h:selectBooleanCheckbox value="#{_client.disabled}"
+													styleClass="form-control" />
 											</ox:decorate>
 											<ox:decorate id="description"
 												label="#{msg['clientForm.clientDescription']}"
@@ -201,7 +206,8 @@
 														</h:panelGroup>
 													</h:panelGroup>
 												</ox:decorate>
-												<hr></hr>
+												<hr
+													style="height: 1px; background: green; border-color: green; border-width: 0px;"></hr>
 												<ox:decorate id="scopes" label="#{msg['clientForm.scopes']}">
 													<h:panelGroup id="selectedScopesId">
 														<h:panelGroup>
@@ -236,7 +242,8 @@
 														</h:panelGroup>
 													</h:panelGroup>
 												</ox:decorate>
-												<hr></hr>
+												<hr
+													style="height: 1px; background: green; border-color: green; border-width: 0px;"></hr>
 												<ox:decorate id="responseTypes"
 													label="#{msg['clientForm.responseTypes']}">
 													<h:panelGroup id="selectedResponseTypesId">
@@ -271,7 +278,8 @@
 														</h:panelGroup>
 													</h:panelGroup>
 												</ox:decorate>
-												<hr></hr>
+												<hr
+													style="height: 1px; background: green; border-color: green; border-width: 0px;"></hr>
 												<ox:decorate id="grantTypes"
 													label="#{msg['clientForm.grantTypes']}">
 													<h:panelGroup id="selectedGrantTypesId">
@@ -306,7 +314,46 @@
 														</h:panelGroup>
 													</h:panelGroup>
 												</ox:decorate>
+												<hr
+													style="height: 1px; background: green; border-color: green; border-width: 0px;"></hr>
+												<ox:decorate id="redirectLogoutUrls"
+													label="#{msg['clientForm.redirectLogoutURIs']}">
+													<h:panelGroup id="selectedLogoutURIsId">
+														<h:panelGroup columns="1" width="100%" border="0"
+															cellpadding="0" cellspacing="0">
+															<a4j:repeat value="#{_clientAction.logoutUris}"
+																rowKeyVar="_urisIdx" var="_uri"
+																iterationStatusVar="loop">
+																<div class="row-fluid">
+																	<div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
+																		<h:outputText value="#{empty _uri ? _uri : _uri}" />
+																		<h:outputText value="&#160;" />
+																		<!-- <div class="row-fluid"> -->
+																		<div class="span6 pull-right">
+																			<a4j:commandLink
+																				styleClass="glyphicon glyphicon-remove"
+																				style="margin-top:-20px;"
+																				action="#{_clientAction.removeLogoutURI(_uri)}"
+																				execute="@this" render="selectedLogoutURIsId"
+																				eventsQueue="clientQueue">
+																			</a4j:commandLink>
+																		</div>
+																	</div>
+																</div>
+																<br />
+															</a4j:repeat>
+															<richext:spacer height="16" />
 
+															<a4j:commandButton
+																styleClass="btn btn-primary AddRedirectLOgoutUriButton"
+																style="margin-top: 5px;"
+																value="#{msg['clientForm.postLogoutRedirectURI']}"
+																oncomplete="#{rich:component('logoutRedirect:inputText')}.show();"
+																execute="@this" eventsQueue="clientQueue" />
+
+														</h:panelGroup>
+													</h:panelGroup>
+												</ox:decorate>
 											</h:panelGroup>
 										</div>
 										<div class="col-sm-6 col-lg-6" style="padding: 0px;">
@@ -387,46 +434,20 @@
 													showApplyButton="true" style="width:300px">
 												</rich:calendar>
 											</ox:decorate>
-											<ox:decorate id="redirectLogoutUrls"
-												label="#{msg['clientForm.redirectLogoutURIs']}">
-												<h:panelGroup id="selectedLogoutURIsId">
-													<h:panelGroup columns="1" width="100%" border="0"
-														cellpadding="0" cellspacing="0">
-														<a4j:repeat value="#{_clientAction.logoutUris}"
-															rowKeyVar="_urisIdx" var="_uri" iterationStatusVar="loop">
-															<div class="row-fluid">
-																<div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
-																	<h:outputText value="#{empty _uri ? _uri : _uri}" />
-																	<h:outputText value="&#160;" />
-																	<!-- <div class="row-fluid"> -->
-																	<div class="span6 pull-right">
-																		<a4j:commandLink
-																			styleClass="glyphicon glyphicon-remove"
-																			style="margin-top:-20px;"
-																			action="#{_clientAction.removeLogoutURI(_uri)}"
-																			execute="@this" render="selectedLogoutURIsId"
-																			eventsQueue="clientQueue">
-																		</a4j:commandLink>
-																	</div>
-																</div>
-															</div>
-															<br />
-														</a4j:repeat>
-														<richext:spacer height="16" />
-
-														<a4j:commandButton
-															styleClass="btn btn-primary AddRedirectLOgoutUriButton"
-															style="margin-top: 5px;"
-															value="#{msg['clientForm.postLogoutRedirectURI']}"
-															oncomplete="#{rich:component('logoutRedirect:inputText')}.show();"
-															execute="@this" eventsQueue="clientQueue" />
-
-													</h:panelGroup>
-												</h:panelGroup>
+											<ox:decorate id="logoUri"
+												label="#{msg['clientForm.logoURI']}" leftClass="col-sm-3"
+												rightClass="col-sm-9">
+												<rich:inplaceInput value="#{_client.logoUri}"
+													defaultLabel="click to enter a logo for the Client application"
+													maxlength="60" inputWidth="695" required="false"
+													id="logoUriId" />
 											</ox:decorate>
-											<ox:decorate label="#{msg['clientForm.disabled']}">
-												<h:selectBooleanCheckbox value="#{_client.disabled}"
-													styleClass="form-control" />
+											<ox:decorate id="policyUri"
+												label="#{msg['clientForm.policyUri']}" leftClass="col-sm-3"
+												rightClass="col-sm-9">
+												<rich:inplaceInput value="#{_client.policyUri}"
+													defaultLabel="click to enter the Policy URI" maxlength="60"
+													inputWidth="695" required="false" id="policyUriId" />
 											</ox:decorate>
 										</div>
 
@@ -502,82 +523,6 @@
 											</a4j:outputPanel>
 										</div>
 									</div>
-									<!-- Second row -->
-									<div class="row" style="margin-left: 5px; margin-right: 5px;">
-										<div class="col-sm-12 col-lg-12" style="padding: 0px;">
-											<ox:decorate id="logoUri"
-												label="#{msg['clientForm.logoURI']}" leftClass="col-sm-3"
-												rightClass="col-sm-9">
-												<rich:inplaceInput value="#{_client.logoUri}"
-													defaultLabel="click to enter a logo for the Client application"
-													maxlength="60" inputWidth="695" required="false"
-													id="logoUriId" />
-											</ox:decorate>
-											<ox:decorate id="policyUri"
-												label="#{msg['clientForm.policyUri']}" leftClass="col-sm-3"
-												rightClass="col-sm-9">
-												<rich:inplaceInput value="#{_client.policyUri}"
-													defaultLabel="click to enter the Policy URI" maxlength="60"
-													inputWidth="695" required="false" id="policyUriId" />
-											</ox:decorate>
-											<ox:decorate id="clientUri"
-												label="#{msg['clientForm.clientUri']}" leftClass="col-sm-3"
-												rightClass="col-sm-9">
-												<rich:inplaceInput value="#{_client.clientUri}"
-													defaultLabel="click to enter the home page of the Client"
-													maxlength="60" inputWidth="695" required="false"
-													id="clientUriId" />
-											</ox:decorate>
-											<ox:decorate id="tosUri"
-												label="#{msg['clientForm.termsOfServiceURI']}"
-												leftClass="col-sm-3" rightClass="col-sm-9">
-												<rich:inplaceInput value="#{_client.tosUri}"
-													defaultLabel="click to enter the TOS URI" maxlength="60"
-													inputWidth="695" required="false" id="tosUriId" />
-											</ox:decorate>
-											<ox:decorate id="idTokenTokenBindingCnf" leftClass="col-sm-3"
-												rightClass="col-sm-9"
-												label="#{msg['clientForm.idTokenTokenBindingCnf']}">
-												<rich:inplaceInput value="#{_client.idTokenTokenBindingCnf}"
-													defaultLabel="click to enter the ID Token Confirmation Method for Token Binding"
-													maxlength="60" inputWidth="695" required="false"
-													id="idTokenTokenBindingCnfId" />
-											</ox:decorate>
-											<ox:decorate id="sectorIdentifierUri" leftClass="col-sm-3"
-												rightClass="col-sm-9"
-												label="#{msg['clientForm.sectorIdentifierURI']}">
-												<rich:inplaceInput value="#{_client.sectorIdentifierUri}"
-													defaultLabel="click to enter the Sector Identifier URL"
-													maxlength="60" inputWidth="695" required="false"
-													id="sectorIdentifierUriId" />
-											</ox:decorate>
-
-											<ox:decorate id="initiateLoginUri"
-												label="#{msg['clientForm.initiateLoginURI']}"
-												leftClass="col-sm-3" rightClass="col-sm-9">
-												<rich:inplaceInput value="#{_client.initiateLoginUri}"
-													defaultLabel="Enter an URI using the https scheme use to initiate a login by the RP"
-													maxlength="60" inputWidth="695" required="false"
-													id="initiateLoginUriId" />
-											</ox:decorate>
-											<ox:decorate id="oxRefreshTokenLifetime" leftClass="col-sm-3"
-												rightClass="col-sm-9"
-												label="#{msg['clientForm.oxRefreshTokenLifetime']}">
-												<rich:inplaceInput value="#{_client.oxRefreshTokenLifetime}"
-													defaultLabel="#{msg['clientForm.oxRefreshTokenLifetimeLabel']}"
-													maxlength="60" inputWidth="695" required="false"
-													id="oxRefreshTokenLifetimeId" />
-											</ox:decorate>
-											<ox:decorate id="oxdId" leftClass="col-sm-3"
-												rightClass="col-sm-9" label="#{msg['clientForm.oxdId']}">
-												<rich:inplaceInput value="#{_client.oxdId}"
-													defaultLabel="Enter a oxd Id for the Client application"
-													maxlength="60" inputWidth="64" required="false"
-													id="oxdIdId" />
-											</ox:decorate>
-										</div>
-									</div>
-									<!-- Third row -->
 									<div class="row" style="margin-left: 5px; margin-right: 5px;">
 										<div class="col-sm-6 col-lg-6" style="padding: 0px;">
 											<ox:decorate id="claimRedirectUrls"
@@ -825,11 +770,81 @@
 												</h:panelGroup>
 											</ox:decorate>
 										</div>
+										<div class="row" style="margin-left: 5px; margin-right: 5px;">
+											<div class="col-sm-12 col-lg-12" style="padding: 0px;">
+												<ox:decorate id="clientUri"
+													label="#{msg['clientForm.clientUri']}" leftClass="col-sm-3"
+													rightClass="col-sm-9">
+													<rich:inplaceInput value="#{_client.clientUri}"
+														defaultLabel="click to enter the home page of the Client"
+														maxlength="60" inputWidth="695" required="false"
+														id="clientUriId" />
+												</ox:decorate>
+												<ox:decorate id="tosUri"
+													label="#{msg['clientForm.termsOfServiceURI']}"
+													leftClass="col-sm-3" rightClass="col-sm-9">
+													<rich:inplaceInput value="#{_client.tosUri}"
+														defaultLabel="click to enter the TOS URI" maxlength="60"
+														inputWidth="695" required="false" id="tosUriId" />
+												</ox:decorate>
+												<ox:decorate id="idTokenTokenBindingCnf"
+													leftClass="col-sm-3" rightClass="col-sm-9"
+													label="#{msg['clientForm.idTokenTokenBindingCnf']}">
+													<rich:inplaceInput
+														value="#{_client.idTokenTokenBindingCnf}"
+														defaultLabel="click to enter the ID Token Confirmation Method for Token Binding"
+														maxlength="60" inputWidth="695" required="false"
+														id="idTokenTokenBindingCnfId" />
+												</ox:decorate>
+												<ox:decorate id="sectorIdentifierUri" leftClass="col-sm-3"
+													rightClass="col-sm-9"
+													label="#{msg['clientForm.sectorIdentifierURI']}">
+													<rich:inplaceInput value="#{_client.sectorIdentifierUri}"
+														defaultLabel="click to enter the Sector Identifier URL"
+														maxlength="60" inputWidth="695" required="false"
+														id="sectorIdentifierUriId" />
+												</ox:decorate>
+
+												<ox:decorate id="initiateLoginUri"
+													label="#{msg['clientForm.initiateLoginURI']}"
+													leftClass="col-sm-3" rightClass="col-sm-9">
+													<rich:inplaceInput value="#{_client.initiateLoginUri}"
+														defaultLabel="Enter an URI using the https scheme use to initiate a login by the RP"
+														maxlength="60" inputWidth="695" required="false"
+														id="initiateLoginUriId" />
+												</ox:decorate>
+												<ox:decorate id="oxRefreshTokenLifetime"
+													leftClass="col-sm-3" rightClass="col-sm-9"
+													label="#{msg['clientForm.oxRefreshTokenLifetime']}">
+													<rich:inplaceInput
+														value="#{_client.oxRefreshTokenLifetime}"
+														defaultLabel="#{msg['clientForm.oxRefreshTokenLifetimeLabel']}"
+														maxlength="60" inputWidth="695" required="false"
+														id="oxRefreshTokenLifetimeId" />
+												</ox:decorate>
+												<ox:decorate id="oxdId" leftClass="col-sm-3"
+													rightClass="col-sm-9" label="#{msg['clientForm.oxdId']}">
+													<rich:inplaceInput value="#{_client.oxdId}"
+														defaultLabel="Enter a oxd Id for the Client application"
+														maxlength="60" inputWidth="64" required="false"
+														id="oxdIdId" />
+												</ox:decorate>
+												<ox:decorate id="defaultMaxAge" leftClass="col-sm-6"
+													rightClass="col-sm-6"
+													label="#{msg['clientForm.defaultMaximumAuthenticationAge']}">
+													<rich:inplaceInput value="#{_client.defaultMaxAge}"
+														defaultLabel="Maximum Authentication Age (value in seconds)"
+														maxlength="60" inputWidth="695" required="false"
+														id="defaultMaxAgeId" />
+												</ox:decorate>
+											</div>
+										</div>
 									</div>
 								</h:panelGroup>
 							</div>
 							<!-- Encryption tab -->
-							<div class="tab-pane box box-primary" id="encryptionsigningSettings">
+							<div class="tab-pane box box-primary"
+								id="encryptionsigningSettings">
 								<h:panelGroup columns="1" width="100%">
 									<div class="row" style="margin-left: 5px; margin-right: 5px;">
 										<div class="col-sm-6 col-lg-6" style="padding: 0px;">
@@ -861,12 +876,12 @@
 														converterId="org.gluu.jsf2.converter.EnumConverter" />
 												</h:selectOneMenu>
 											</ox:decorate>
-											<ox:decorate id="tokenEndpointAuthSigningAlg"
-												label="#{msg['clientForm.jwsAlgAlgorithmForAuthentication']}"
+											<ox:decorate id="requestObjectSigningAlg"
+												label="#{msg['clientForm.jwsAlgAlgorithmForSigningRequestObjects']}"
 												leftClass="col-sm-6" rightClass="col-sm-6">
 												<h:selectOneMenu styleClass="col-sm-9 form-control rounded"
-													value="#{_client.tokenEndpointAuthSigningAlg}"
-													id="tokenEndpointAuthSigningAlgId" required="false">
+													value="#{_client.requestObjectSigningAlg}"
+													id="requestObjectSigningAlgId" required="false">
 													<f:selectItem noSelectionOption="true" itemLabel="" />
 													<f:selectItems value="#{clientService.signatureAlgorithms}"
 														var="_type" itemLabel="#{_type.displayName}" />
@@ -902,12 +917,12 @@
 														converterId="org.gluu.jsf2.converter.EnumConverter" />
 												</h:selectOneMenu>
 											</ox:decorate>
-											<ox:decorate id="requestObjectSigningAlg"
-												label="#{msg['clientForm.jwsAlgAlgorithmForSigningRequestObjects']}"
+											<ox:decorate id="userInfoSignedResponseAlg"
+												label="#{msg['clientForm.jwsAlgAlgorithm']}"
 												leftClass="col-sm-6" rightClass="col-sm-6">
 												<h:selectOneMenu styleClass="col-sm-9 form-control rounded"
-													value="#{_client.requestObjectSigningAlg}"
-													id="requestObjectSigningAlgId" required="false">
+													value="#{_client.userInfoSignedResponseAlg}"
+													id="userInfoSignedResponseAlgId" required="false">
 													<f:selectItem noSelectionOption="true" itemLabel="" />
 													<f:selectItems value="#{clientService.signatureAlgorithms}"
 														var="_type" itemLabel="#{_type.displayName}" />
@@ -973,26 +988,18 @@
 														converterId="org.gluu.jsf2.converter.EnumConverter" />
 												</h:selectOneMenu>
 											</ox:decorate>
-											<ox:decorate id="userInfoSignedResponseAlg"
-												label="#{msg['clientForm.jwsAlgAlgorithm']}"
+											<ox:decorate id="tokenEndpointAuthSigningAlg"
+												label="#{msg['clientForm.jwsAlgAlgorithmForAuthentication']}"
 												leftClass="col-sm-6" rightClass="col-sm-6">
 												<h:selectOneMenu styleClass="col-sm-9 form-control rounded"
-													value="#{_client.userInfoSignedResponseAlg}"
-													id="userInfoSignedResponseAlgId" required="false">
+													value="#{_client.tokenEndpointAuthSigningAlg}"
+													id="tokenEndpointAuthSigningAlgId" required="false">
 													<f:selectItem noSelectionOption="true" itemLabel="" />
 													<f:selectItems value="#{clientService.signatureAlgorithms}"
 														var="_type" itemLabel="#{_type.displayName}" />
 													<f:converter
 														converterId="org.gluu.jsf2.converter.EnumConverter" />
 												</h:selectOneMenu>
-											</ox:decorate>
-											<ox:decorate id="defaultMaxAge" leftClass="col-sm-6"
-												rightClass="col-sm-6"
-												label="#{msg['clientForm.defaultMaximumAuthenticationAge']}">
-												<rich:inplaceInput value="#{_client.defaultMaxAge}"
-													defaultLabel="Maximum Authentication Age (value in seconds)"
-													maxlength="60" inputWidth="695" required="false"
-													id="defaultMaxAgeId" />
 											</ox:decorate>
 										</div>
 									</div>
