@@ -29,7 +29,7 @@ import org.xdi.util.security.StringEncrypter.EncryptionException;
  * @author Reda Zerrad Date: 06.08.2012
  * @author Yuriy Movchan Date: 05/22/2013
  * @author Javier Rojas Blum
- * @version Junr 13, 2018
+ * @version June 21, 2018
  */
 @LdapEntry(sortBy = {"displayName"})
 @LdapObjectClass(values = {"top", "oxAuthClient"})
@@ -643,7 +643,11 @@ public class OxAuthClient extends Entry implements Serializable {
     }
 
     public Date getClientSecretExpiresAt() {
-        return clientSecretExpiresAt;
+        if (clientSecretExpiresAt == null) {
+			return new Date();
+		} else {
+			return clientSecretExpiresAt;
+		}
     }
 
     public void setClientSecretExpiresAt(Date clientSecretExpiresAt) {
