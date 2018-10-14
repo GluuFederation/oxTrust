@@ -10,6 +10,7 @@ public class AuthenticationChartDto implements Serializable {
 	Long[] success;
 	Long[] failure;
 	Long totalRequest;
+	Long yearlyRequest;
 	Long totalSuccess;
 	Long totalFailure;
 
@@ -17,7 +18,7 @@ public class AuthenticationChartDto implements Serializable {
 		totalRequest = 0L;
 		totalSuccess = 0L;
 		totalFailure = 0L;
-
+		yearlyRequest = 0L;
 	}
 
 	public String[] getLabels() {
@@ -49,6 +50,7 @@ public class AuthenticationChartDto implements Serializable {
 	}
 
 	public void setFailure(Long[] failure) {
+		
 		if (failure != null) {
 			for (Long number : failure) {
 				totalRequest = totalRequest + number;
@@ -66,6 +68,14 @@ public class AuthenticationChartDto implements Serializable {
 
 	public void setTotalRequest(Long totalRequest) {
 		this.totalRequest = totalRequest;
+	}
+
+	public Long getYearlyRequest() {
+		return yearlyRequest;
+	}
+
+	public void setYearlyRequest(Long yearlyRequest) {
+		this.yearlyRequest = yearlyRequest;
 	}
 
 	public Long getTotalSuccess() {

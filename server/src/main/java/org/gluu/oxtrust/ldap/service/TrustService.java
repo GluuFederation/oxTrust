@@ -79,7 +79,7 @@ public class TrustService implements Serializable {
 	public static final String GENERATED_SSL_ARTIFACTS_DIR = "ssl";
 
 	public void addTrustRelationship(GluuSAMLTrustRelationship trustRelationship) {
-		trustRelationship.setGluuContainerFederation(getRightDn(trustRelationship.getGluuContainerFederation()));
+		trustRelationship.setGluuContainerFederation(trustRelationship.getGluuContainerFederation());
 		String[] clusterMembers = appConfiguration.getClusteredInums();
 		String applianceInum = appConfiguration.getApplianceInum();
 		if (clusterMembers == null || clusterMembers.length == 0) {
@@ -171,9 +171,6 @@ public class TrustService implements Serializable {
 	}
 
 	public GluuSAMLTrustRelationship getRelationshipByDn(String dn) {
-		if (dn != null && dn.contains("Entry")) {
-			dn = getRightDn(dn);
-		}
 		if (StringHelper.isNotEmpty(dn)) {
 			try {
 				return ldapEntryManager.find(GluuSAMLTrustRelationship.class, dn);
@@ -185,14 +182,14 @@ public class TrustService implements Serializable {
 		return null;
 	}
 
-	private String getRightDn(String dn) {
-		String newDn1 = dn.split("\\[")[1];
-		String newDn2 = newDn1.substring(3);
-		String[] newDn3 = newDn2.split("\\,");
-		String valueToBeRemoved = newDn3[newDn3.length - 1];
-		dn = newDn2.replace(",".concat(valueToBeRemoved), "");
-		return dn;
-	}
+	// private String getRightDn(String dn) {
+	// String newDn1 = dn.split("\\[")[1];
+	// String newDn2 = newDn1.substring(3);
+	// String[] newDn3 = newDn2.split("\\,");
+	// String valueToBeRemoved = newDn3[newDn3.length - 1];
+	// dn = newDn2.replace(",".concat(valueToBeRemoved), "");
+	// return dn;
+	// }
 
 	/**
 	 * This is a LDAP operation as LDAP and IDP will always be in sync. We can just
@@ -427,6 +424,11 @@ public class TrustService implements Serializable {
 	}
 	public GluuSAMLTrustRelationship getTrustContainerFederation(GluuSAMLTrustRelationship trustRelationship) {
 		GluuSAMLTrustRelationship relationshipByDn = getRelationshipByDn(trustRelationship.getDn());
+		return relationshipByDn;
+	}
+
+	public GluuSAMLTrustRelationship getTrustContainerFederation(String dn) {
+		GluuSAMLTrustRelationship relationshipByDn = getRelationshipByDn(dn);
 		return relationshipByDn;
 	}
 

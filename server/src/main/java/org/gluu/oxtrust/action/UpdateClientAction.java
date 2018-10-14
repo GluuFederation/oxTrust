@@ -6,9 +6,16 @@
 
 package org.gluu.oxtrust.action;
 
+import java.io.IOException;
 import java.io.Serializable;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.charset.Charset;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -22,7 +29,11 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.service.AttributeService;
@@ -30,11 +41,9 @@ import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.EncryptionService;
 import org.gluu.oxtrust.ldap.service.OxTrustAuditService;
 import org.gluu.oxtrust.ldap.service.ScopeService;
-import org.gluu.oxtrust.ldap.service.SectorIdentifierService;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.model.OxAuthScope;
-import org.gluu.oxtrust.model.OxAuthSectorIdentifier;
 import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.service.PasswordGenerator;
 import org.gluu.oxtrust.util.OxTrustConstants;
@@ -59,7 +68,7 @@ import org.xdi.util.security.StringEncrypter.EncryptionException;
  * @author Reda Zerrad Date: 06.11.2012
  * @author Yuriy Movchan Date: 04/07/2014
  * @author Javier Rojas Blum
- * @version June 13, 2018
+ * @version June 21, 2018
  */
 @Named
 @ConversationScoped
@@ -104,12 +113,11 @@ public class UpdateClientAction implements Serializable {
 	@Inject
 	private PasswordGenerator passwordGenerator;
 
-	@Inject
-	private SectorIdentifierService sectorIdentifierService;
-
 	private String inum;
 
 	private boolean update;
+
+	private Date previousClientExpirationDate;
 
 	private OxAuthClient client;
 
@@ -117,8 +125,6 @@ public class UpdateClientAction implements Serializable {
 	private List<String> logoutUris;
 	private List<String> clientlogoutUris;
 	private List<String> claimRedirectURIList;
-
-
 
 	private List<DisplayNameEntry> scopes;
 	private List<DisplayNameEntry> claims;
@@ -212,6 +218,7 @@ public class UpdateClientAction implements Serializable {
 		try {
 			log.debug("inum : " + inum);
 			this.client = clientService.getClientByInum(inum);
+			previousClientExpirationDate = this.client.getClientSecretExpiresAt();
 		} catch (BasePersistenceException ex) {
 			log.error("Failed to find client {}", inum, ex);
 		}
@@ -268,7 +275,8 @@ public class UpdateClientAction implements Serializable {
 
 	public String cancel() {
 		if (update) {
-			facesMessages.add(FacesMessage.SEVERITY_INFO, "Client '#{updateClientAction.client.displayName}' not updated");
+			facesMessages.add(FacesMessage.SEVERITY_INFO,
+					"Client '#{updateClientAction.client.displayName}' not updated");
 		} else {
 			facesMessages.add(FacesMessage.SEVERITY_INFO, "New client not added");
 		}
@@ -279,6 +287,19 @@ public class UpdateClientAction implements Serializable {
 	}
 
 	public String save() throws Exception {
+		LocalDate localDate = LocalDate.now();
+		LocalDate nextCentury = localDate.plusYears(100);
+		Date nextCenturyDate = Date.from(nextCentury.atStartOfDay(ZoneId.systemDefault()).toInstant());
+		if (this.client.getClientSecretExpiresAt() != null && this.client.getClientSecretExpiresAt()
+				.before(Date.from(LocalDate.now().plusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant()))) {
+			this.client.setClientSecretExpiresAt(nextCenturyDate);
+		}
+		if (previousClientExpirationDate != null && this.client.getClientSecretExpiresAt().before(new Date())) {
+			facesMessages.add(FacesMessage.SEVERITY_ERROR,
+					"This client has expired. Update the expiration date in order to save changes");
+			return OxTrustConstants.RESULT_FAILURE;
+		}
+
 		updateLoginURIs();
 		updateLogoutURIs();
 		updateClientLogoutURIs();
@@ -301,18 +322,21 @@ public class UpdateClientAction implements Serializable {
 			// Update client
 			try {
 				clientService.updateClient(this.client);
-				oxTrustAuditService.audit("OPENID CLIENT " +this.client.getInum()+ " **" + this.client.getDisplayName() + "** UPDATED",
+				oxTrustAuditService.audit(
+						"OPENID CLIENT " + this.client.getInum() + " **" + this.client.getDisplayName() + "** UPDATED",
 						identity.getUser(),
 						(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 			} catch (BasePersistenceException ex) {
 
 				log.error("Failed to update client {}", this.inum, ex);
 
-				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update client '#{updateClientAction.client.displayName}'");
+				facesMessages.add(FacesMessage.SEVERITY_ERROR,
+						"Failed to update client '#{updateClientAction.client.displayName}'");
 				return OxTrustConstants.RESULT_FAILURE;
 			}
 
-			facesMessages.add(FacesMessage.SEVERITY_INFO, "Client '#{updateClientAction.client.displayName}' updated successfully");
+			facesMessages.add(FacesMessage.SEVERITY_INFO,
+					"Client '#{updateClientAction.client.displayName}' updated successfully");
 		} else {
 			this.inum = clientService.generateInumForNewClient();
 			String dn = clientService.getDnForClient(this.inum);
@@ -326,7 +350,8 @@ public class UpdateClientAction implements Serializable {
 			this.client.setInum(this.inum);
 			try {
 				clientService.addClient(this.client);
-				oxTrustAuditService.audit("OPENID CLIENT "+this.client.getInum()+ " **" + this.client.getDisplayName() + "** ADDED ",
+				oxTrustAuditService.audit(
+						"OPENID CLIENT " + this.client.getInum() + " **" + this.client.getDisplayName() + "** ADDED ",
 						identity.getUser(),
 						(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 			} catch (BasePersistenceException ex) {
@@ -336,7 +361,8 @@ public class UpdateClientAction implements Serializable {
 				return OxTrustConstants.RESULT_FAILURE;
 			}
 
-			facesMessages.add(FacesMessage.SEVERITY_INFO, "New client '#{updateClientAction.client.displayName}' added successfully");
+			facesMessages.add(FacesMessage.SEVERITY_INFO,
+					"New client '#{updateClientAction.client.displayName}' added successfully");
 
 			conversationService.endConversation();
 
@@ -361,7 +387,8 @@ public class UpdateClientAction implements Serializable {
 			// Remove client
 			try {
 				clientService.removeClient(this.client);
-				oxTrustAuditService.audit("OPENID CLIENT " +this.client.getInum()+ " **"+ this.client.getDisplayName() + "** DELETED ",
+				oxTrustAuditService.audit(
+						"OPENID CLIENT " + this.client.getInum() + " **" + this.client.getDisplayName() + "** DELETED ",
 						identity.getUser(),
 						(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 				facesMessages.add(FacesMessage.SEVERITY_INFO,
@@ -374,7 +401,8 @@ public class UpdateClientAction implements Serializable {
 			}
 		}
 
-		facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to remove client '#{updateClientAction.client.displayName}'");
+		facesMessages.add(FacesMessage.SEVERITY_ERROR,
+				"Failed to remove client '#{updateClientAction.client.displayName}'");
 
 		return OxTrustConstants.RESULT_FAILURE;
 	}
@@ -390,7 +418,7 @@ public class UpdateClientAction implements Serializable {
 	public void removeClientLogoutURI(String uri) {
 		removeFromList(this.clientlogoutUris, uri);
 	}
-	
+
 	public void removeClaimRedirectURI(String uri) {
 		removeFromList(this.claimRedirectURIList, uri);
 	}
@@ -514,10 +542,7 @@ public class UpdateClientAction implements Serializable {
 
 		if (!this.loginUris.contains(this.availableLoginUri) && checkWhiteListRedirectUris(availableLoginUri)
 				&& checkBlackListRedirectUris(availableLoginUri)) {
-
-			if (this.loginUris.size() < 1) {
-				this.loginUris.add(this.availableLoginUri);
-			} else if (this.loginUris.size() >= 1 && sectorExist()) {
+			if (isAcceptable(this.availableLoginUri)) {
 				this.loginUris.add(this.availableLoginUri);
 			} else {
 				facesMessages.add(FacesMessage.SEVERITY_ERROR, "A sector identifier must be defined first.",
@@ -532,20 +557,57 @@ public class UpdateClientAction implements Serializable {
 		this.availableLoginUri = "https://";
 	}
 
-	private boolean sectorExist() {
-		String sectorUri = this.client.getSectorIdentifierUri();
-		if (sectorUri != null && !sectorUri.isEmpty()) {
-			String[] paths = sectorUri.split("/");
-			String id = paths[paths.length - 1];
-			OxAuthSectorIdentifier result = sectorIdentifierService.getSectorIdentifierById(id);
-			if (result != null && result.getId().equalsIgnoreCase(id)) {
-				return true;
-			} else {
-				return false;
+	private boolean isAcceptable(String availableLoginUri) {
+		boolean result = false;
+		try {
+			if (this.loginUris.size() < 1) {
+				result = true;
+			} else if (this.loginUris.size() >= 1 && hasSameHostname(this.availableLoginUri)) {
+				result = true;
+			} else if (this.loginUris.size() >= 1 && !hasSameHostname(this.availableLoginUri) && sectorExist()) {
+				result = true;
 			}
-		} else {
-			return false;
+		} catch (MalformedURLException e) {
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "One of the url is no malformed",
+					"One of the url is no malformed");
+			log.error(e.getMessage());
 		}
+		return result;
+	}
+
+	private boolean hasSameHostname(String url1) throws MalformedURLException {
+		boolean result = true;
+		URL uri1 = new URL(url1);
+		for (String url : this.loginUris) {
+			URL uri = new URL(url);
+			if (!(uri1.getHost().equalsIgnoreCase(uri.getHost()))) {
+				result = false;
+				break;
+			}
+		}
+		return result;
+	}
+
+	private boolean sectorExist() {
+		boolean result = false;
+		String sectorUri = this.client.getSectorIdentifierUri();
+		try {
+			if (sectorUri != null && !sectorUri.isEmpty()) {
+				JSONArray json = new JSONArray(IOUtils.toString(new URL(sectorUri), Charset.forName("UTF-8")));
+				if (json != null) {
+					result = true;
+				}
+			}
+		} catch (MalformedURLException e) {
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "The url of the sector assigned to this client is malformed",
+					"The url of the sector assigned to this client is malformed");
+			log.error(e.getMessage());
+		} catch (IOException e) {
+			log.error(e.getMessage());
+		} catch (JSONException e) {
+			log.error(e.getMessage());
+		}
+		return result;
 	}
 
 	public void acceptSelectClaims() {
@@ -592,7 +654,7 @@ public class UpdateClientAction implements Serializable {
 
 		this.availableClientlogoutUri = "https://";
 	}
-	
+
 	public void acceptSelectClaimRedirectUri() {
 		if (StringHelper.isEmpty(this.availableClaimRedirectUri)) {
 			return;
@@ -674,6 +736,7 @@ public class UpdateClientAction implements Serializable {
 
 	public void cancelSelectScopes() {
 		this.searchAvailableScopePattern = "";
+		this.availableScopes = new ArrayList<OxAuthScope>();
 	}
 
 	public void cancelSelectClaims() {
@@ -693,7 +756,7 @@ public class UpdateClientAction implements Serializable {
 	public void cancelClientLogoutUri() {
 		this.availableClientlogoutUri = "http://";
 	}
-	
+
 	public void cancelClaimRedirectUri() {
 		this.availableClaimRedirectUri = "http://";
 	}
@@ -756,6 +819,7 @@ public class UpdateClientAction implements Serializable {
 	}
 
 	private void updateContacts() {
+		validateContacts();
 		if (contacts == null || contacts.size() == 0) {
 			client.setContacts(null);
 			return;
@@ -810,7 +874,7 @@ public class UpdateClientAction implements Serializable {
 
 		client.setAuthorizedOrigins(tmpAuthorizedOrigins.toArray(new String[tmpAuthorizedOrigins.size()]));
 	}
-	
+
 	private void updateClaimredirectUri() {
 		if (claimRedirectURIList == null || claimRedirectURIList.size() == 0) {
 			client.setClaimRedirectURI(null);
@@ -912,7 +976,8 @@ public class UpdateClientAction implements Serializable {
 
 		try {
 
-			this.availableScopes = scopeService.searchScopes(this.searchAvailableScopePattern, OxTrustConstants.searchClientsSizeLimit);
+			this.availableScopes = scopeService.searchScopes(this.searchAvailableScopePattern,
+					OxTrustConstants.searchClientsSizeLimit);
 			this.oldSearchAvailableScopePattern = this.searchAvailableScopePattern;
 			selectAddedScopes();
 		} catch (Exception ex) {
@@ -926,7 +991,8 @@ public class UpdateClientAction implements Serializable {
 		}
 
 		try {
-			this.availableClaims = attributeService.searchAttributes(this.searchAvailableClaimPattern, OxTrustConstants.searchClientsSizeLimit);
+			this.availableClaims = attributeService.searchAttributes(this.searchAvailableClaimPattern,
+					OxTrustConstants.searchClientsSizeLimit);
 			this.oldSearchAvailableClaimPattern = this.searchAvailableClaimPattern;
 			selectAddedClaims();
 		} catch (Exception ex) {
@@ -940,7 +1006,8 @@ public class UpdateClientAction implements Serializable {
 			return result;
 		}
 
-		List<DisplayNameEntry> tmp = lookupService.getDisplayNameEntries(scopeService.getDnForScope(null), this.client.getOxAuthScopes());
+		List<DisplayNameEntry> tmp = lookupService.getDisplayNameEntries(scopeService.getDnForScope(null),
+				this.client.getOxAuthScopes());
 		if (tmp != null) {
 			result.addAll(tmp);
 		}
@@ -954,7 +1021,8 @@ public class UpdateClientAction implements Serializable {
 			return result;
 		}
 
-		List<DisplayNameEntry> tmp = lookupService.getDisplayNameEntries(attributeService.getDnForAttribute(null), this.client.getOxAuthClaims());
+		List<DisplayNameEntry> tmp = lookupService.getDisplayNameEntries(attributeService.getDnForAttribute(null),
+				this.client.getOxAuthClaims());
 		if (tmp != null) {
 			result.addAll(tmp);
 		}
@@ -1119,7 +1187,7 @@ public class UpdateClientAction implements Serializable {
 			availableGrantType.setSelected(addedGrantTypes.contains(availableGrantType.getEntity()));
 		}
 	}
-	
+
 	public List<String> getClaimRedirectURIList() {
 		return claimRedirectURIList;
 	}
@@ -1335,7 +1403,8 @@ public class UpdateClientAction implements Serializable {
 
 	public boolean checkClientSecretRequired() {
 		for (ResponseType responseType : this.responseTypes) {
-			if (responseType.getValue().equalsIgnoreCase("token") || responseType.getValue().equalsIgnoreCase("id_token")) {
+			if (responseType.getValue().equalsIgnoreCase("token")
+					|| responseType.getValue().equalsIgnoreCase("id_token")) {
 				return false;
 			}
 		}
@@ -1370,9 +1439,14 @@ public class UpdateClientAction implements Serializable {
 	}
 
 	public void generatePassword() throws EncryptionException {
-		String pwd = passwordGenerator.generate();
+		String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+		String pwd = RandomStringUtils.random(24, characters);
 		this.client.setOxAuthClientSecret(pwd);
 		this.client.setEncodedClientSecret(encryptionService.encrypt(pwd));
 	}
 
+	public void setSecret(String pwd) throws EncryptionException {
+		this.client.setOxAuthClientSecret(pwd);
+		this.client.setEncodedClientSecret(encryptionService.encrypt(pwd));
+	}
 }

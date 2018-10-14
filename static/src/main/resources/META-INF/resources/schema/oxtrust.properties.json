@@ -627,6 +627,11 @@
             "minimum": 1,
             "exclusiveMaximum": false,
             "exclusiveMinimum": false
+        },
+        "authenticationRecaptchaEnabled": {
+            "id": "authenticationRecaptchaEnabled",
+            "description": "Boolean value specifying whether to enable Recaptcha on authentication.",
+            "type": "boolean"
         }
     },
     "required": [
@@ -726,6 +731,7 @@
         "loggingLevel",
         "disableJdkLogger",
         "cleanServiceInterval",
-        "passwordResetRequestExpirationTime"
+        "passwordResetRequestExpirationTime",
+        "authenticationRecaptchaEnabled"
     ]
 }

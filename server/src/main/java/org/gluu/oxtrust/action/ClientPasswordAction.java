@@ -30,7 +30,7 @@ public class ClientPasswordAction implements Serializable {
 	private String newPassword;
 	private String newPasswordConfirmation;
 	private String passwordMessage;
-	
+
 	@Inject
 	private UpdateClientAction updateClientAction;
 
@@ -39,7 +39,7 @@ public class ClientPasswordAction implements Serializable {
 
 	@Inject
 	private EncryptionService encryptionService;
-	
+
 	@Inject
 	private Logger log;
 
@@ -60,13 +60,11 @@ public class ClientPasswordAction implements Serializable {
 		OxAuthClient client = clientService.getClientByDn(updateClientAction.getClient().getDn());
 		try {
 			client.setOxAuthClientSecret(newPassword);
-            client.setEncodedClientSecret(encryptionService.encrypt(newPassword));
+			client.setEncodedClientSecret(encryptionService.encrypt(newPassword));
 		} catch (EncryptionException e) {
 			log.error("Failed to encrypt password", e);
 		}
-		
 		clientService.updateClient(client);
-		
 		// Update client password in action class
 		updateClientAction.getClient().setEncodedClientSecret(client.getEncodedClientSecret());
 

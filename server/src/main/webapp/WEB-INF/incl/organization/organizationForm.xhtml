@@ -77,6 +77,12 @@
 	}
 
 	addToBodyOnload(loadColorPicker);
+	
+    $(document).keypress( function(event){
+          if (event.which == '13') {
+          event.preventDefault();
+         }
+     });   
     </h:outputScript>
 
 	<h:form id="organizationForm">
@@ -205,64 +211,12 @@
 
 						<div class="tab-pane" id="ox-trust">
 							<h:panelGroup layout="block" style="overflow-y:auto;overflow-x:hidden;">
-								<!-- 
-								<ox:decorate id="inum" label="Inum">
-									<h:outputText value="#{_organization.inum}" />
-								</ox:decorate>
-
-								<ox:decorate
-									id="iname" label="Iname">
-									<h:outputText value="#{_organization.iname}" />
-								</ox:decorate>
- -->
-
-<!-- 								<ox:decorate -->
-<!-- 									id="title"> -->
-<!-- 									label="Organization Title"> -->
-<!-- 									<h:inputText value="#{_organization.title}" size="100" styleClass="form-control"/> -->
-<!-- 								</ox:decorate> -->
 
 								<ox:decorate
 									id="displayName" label="#{msg['organizationForm.organizationName']}">
 									<h:inputText value="#{_organization.displayName}" size="100" styleClass="form-control" style="width:80%;"/>
 								</ox:decorate>
 
-<!-- 								<ox:decorate -->
-<!-- 									id="shortName"> -->
-<!-- 									label="Organization Short name"> -->
-<!-- 									<h:inputText value="#{_organization.shortName}" size="100" styleClass="form-control"/> -->
-<!-- 								</ox:decorate> -->
-
-<!-- 								<ox:decorate -->
-<!-- 									id="description"> -->
-<!-- 									label="Description"> -->
-<!-- 									<h:inputTextarea value="#{_organization.description}" -->
-<!-- 										cols="100" rows="3" /> -->
-<!-- 								</ox:decorate> -->
-
-<!-- 								<ox:decorate -->
-<!-- 									id="loginPageCustomMessage"> -->
-<!-- 									label="Login page message"> -->
-<!-- 									<h:inputTextarea -->
-<!-- 										value="#{_organizationAction.loginPageCustomMessage}" -->
-<!-- 										cols="100" rows="3" /> -->
-<!-- 								</ox:decorate> -->
-
-<!-- 								<ox:decorate -->
-<!-- 									id="welcomeTitleText"> -->
-<!-- 									label="Welcome Title Text"> -->
-<!-- 									<h:inputTextarea -->
-<!-- 										value="#{_organizationAction.welcomeTitleText}" cols="100" -->
-<!-- 										rows="3" /> -->
-<!-- 								</ox:decorate> -->
-
-<!-- 								<ox:decorate -->
-<!-- 									id="welcomePageCustomMessage"> -->
-<!-- 									label="Welcome Page Message"> -->
-<!-- 									<h:inputTextarea -->
-<!-- 										value="#{_organizationAction.welcomePageCustomMessage}" -->
-<!-- 										cols="100" rows="3" /> -->
-<!-- 								</ox:decorate> -->
 								
 								<ui:param name="_managerGroup"
 									value="#{gluufn:getDisplayNameEntry(_organization.managerGroup)}" />
@@ -333,21 +287,6 @@
 										</h:panelGrid>
 									</h:panelGrid>
 								</ox:decorate>
-
-								<!-- 				<ox:decorate template="/WEB-INF/incl/layout/view.xhtml"> -->
-								<!-- 					label="Menu Color"> -->
-								<!-- 					<h:panelGrid id="custThemeColorPanelId" columns="1" width="100%" -->
-								<!-- 						cellspacing="0" cellpadding="0" border="0" -->
-								<!-- 						columnClasses="alignCenter"> -->
-								<!-- 						<div id="colorSelector"> -->
-								<!-- 						</div> -->
-								<!-- 						<h:inputHidden value="#{_organization.themeColor}" id="themeColor" /> -->
-								<!-- 						<richext:spacer height="8" /> -->
-								<!-- 						<a4j:commandLink value="Remove" -->
-								<!-- 							action="#{_organizationAction.removeThemeColor()}" -->
-								<!-- 							render="custThemeColorPanelId" limitRender="true" /> -->
-								<!-- 					</h:panelGrid> -->
-								<!-- 				</ox:decorate> -->
 
 							</h:panelGroup>
 						</div>
