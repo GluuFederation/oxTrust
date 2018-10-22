@@ -698,41 +698,6 @@
 													</h:panelGroup>
 												</h:panelGroup>
 											</ox:decorate>
-											<ox:decorate id="defaultAcrValues"
-												label="#{msg['clientForm.defaultRequestedAuthenticationContextClass']}">
-												<h:panelGroup id="selectedDefaultAcrValuesId">
-													<h:panelGroup columns="1" width="100%" border="0"
-														cellpadding="0" cellspacing="0">
-														<a4j:repeat value="#{_clientAction.defaultAcrValues}"
-															rowKeyVar="_defaultAcrValuesIdx" var="_defaultAcrValue"
-															iterationStatusVar="loop">
-															<div class="row-fluid">
-																<div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
-																	<h:outputText value="#{_defaultAcrValue}" />
-																	<h:outputText value="&#160;" />
-																	<div class="span6 pull-right">
-																		<a4j:commandLink
-																			styleClass="glyphicon glyphicon-remove"
-																			style="margin-top:-20px;"
-																			action="#{_clientAction.removeDefaultAcrValue(_defaultAcrValue)}"
-																			execute="@this" render="selectedDefaultAcrValuesId"
-																			eventsQueue="clientQueue">
-																		</a4j:commandLink>
-																	</div>
-																</div>
-															</div>
-															<br />
-														</a4j:repeat>
-														<richext:spacer height="16" />
-														<a4j:commandButton
-															styleClass="btn btn-primary AddDefaultAcrButton"
-															style="margin-top:5px"
-															value="#{msg['clientForm.addDefaultACRvalue']}"
-															oncomplete="#{rich:component('defaultAcrValue:inputText')}.show();"
-															execute="@this" eventsQueue="clientQueue" />
-													</h:panelGroup>
-												</h:panelGroup>
-											</ox:decorate>
 											<ox:decorate id="clientLogoutUrls"
 												label="#{msg['clientForm.frontChannelLogoutURI']}">
 												<h:panelGroup id="selectedClientUrisId">
@@ -764,6 +729,40 @@
 															style="margin-top:5px"
 															value="#{msg['clientForm.addFrontchannelLogoutURI']}"
 															oncomplete="#{rich:component('clientLogoutUri:inputText')}.show();"
+															execute="@this" eventsQueue="clientQueue" />
+													</h:panelGroup>
+												</h:panelGroup>
+											</ox:decorate>
+											<ox:decorate id="defaultAcr"
+												label="#{msg['clientForm.defaultRequestedAuthenticationContextClass']}">
+												<h:panelGroup id="selectedCustomScriptAcrsId">
+													<h:panelGroup>
+														<a4j:repeat value="#{_clientAction.customScripts}"
+															rowKeyVar="_acrIdx" var="_acr"
+															iterationStatusVar="loop">
+															<div class="row-fluid">
+																<div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
+																	<h:outputText value="#{_acr.name}" />
+																	<h:outputText value="&#160;" />
+																	<div class="span6 pull-right">
+																		<a4j:commandLink
+																			styleClass="glyphicon glyphicon-remove"
+																			style="margin-top:-20px;"
+																			action="#{_clientAction.removeCustomScript(_acr.name)}"
+																			execute="@this" render="selectedCustomScriptAcrsId"
+																			eventsQueue="clientQueue">
+																		</a4j:commandLink>
+																	</div>
+																</div>
+															</div>
+															<br />
+														</a4j:repeat>
+														<richext:spacer height="16" />
+														<a4j:commandButton
+															styleClass="btn btn-primary AddDefaultAcrButton"
+															style="margin-top:5px"
+															value="#{msg['clientForm.addDefaultACRvalue']}"
+															oncomplete="#{rich:component('defaultAcr:selectEntityModalPanel')}.show();"
 															execute="@this" eventsQueue="clientQueue" />
 													</h:panelGroup>
 												</h:panelGroup>

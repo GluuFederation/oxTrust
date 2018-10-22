@@ -53,10 +53,13 @@ import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.DisplayNameEntry;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.SelectableEntity;
+import org.xdi.model.custom.script.CustomScriptType;
+import org.xdi.model.custom.script.model.CustomScript;
 import org.xdi.oxauth.model.common.GrantType;
 import org.xdi.oxauth.model.common.ResponseType;
 import org.xdi.oxauth.model.util.URLPatternList;
 import org.xdi.service.LookupService;
+import org.xdi.service.custom.script.AbstractCustomScriptService;
 import org.xdi.service.security.Secure;
 import org.xdi.util.StringHelper;
 import org.xdi.util.Util;
@@ -88,6 +91,9 @@ public class UpdateClientAction implements Serializable {
 
 	@Inject
 	private AttributeService attributeService;
+
+	@Inject
+	private AbstractCustomScriptService customScriptService;
 
 	@Inject
 	private LookupService lookupService;
@@ -129,9 +135,9 @@ public class UpdateClientAction implements Serializable {
 	private List<DisplayNameEntry> scopes;
 	private List<DisplayNameEntry> claims;
 	private List<ResponseType> responseTypes;
+	private List<CustomScript> customScripts;
 	private List<GrantType> grantTypes;
 	private List<String> contacts;
-	private List<String> defaultAcrValues;
 	private List<String> requestUris;
 	private List<String> authorizedOrigins;
 
@@ -148,7 +154,6 @@ public class UpdateClientAction implements Serializable {
 	private String availableLogoutUri = "https://";
 	private String availableClientlogoutUri = "https://";
 	private String availableContact = "";
-	private String availableDefaultAcrValue = "";
 	private String availableRequestUri = "https://";
 	private String availableAuthorizedOrigin = "https://";
 	private String availableClaimRedirectUri = "https://";
@@ -173,6 +178,7 @@ public class UpdateClientAction implements Serializable {
 	private List<GluuAttribute> availableClaims;
 	private List<GluuGroup> availableGroups;
 	private List<SelectableEntity<ResponseType>> availableResponseTypes;
+	private List<SelectableEntity<CustomScript>> availableCustomScripts;
 	private List<SelectableEntity<GrantType>> availableGrantTypes;
 
 	public String add() throws Exception {
@@ -192,10 +198,10 @@ public class UpdateClientAction implements Serializable {
 			this.responseTypes = getInitialResponseTypes();
 			this.grantTypes = getInitialGrantTypes();
 			this.contacts = getNonEmptyStringList(client.getContacts());
-			this.defaultAcrValues = getNonEmptyStringList(client.getDefaultAcrValues());
 			this.requestUris = getNonEmptyStringList(client.getRequestUris());
 			this.authorizedOrigins = getNonEmptyStringList(client.getAuthorizedOrigins());
 			this.claimRedirectURIList = getNonEmptyStringList(client.getClaimRedirectURI());
+			this.customScripts = getInitialAcrs();
 		} catch (BasePersistenceException ex) {
 			log.error("Failed to prepare lists", ex);
 
@@ -206,6 +212,18 @@ public class UpdateClientAction implements Serializable {
 		}
 
 		return OxTrustConstants.RESULT_SUCCESS;
+	}
+
+	private List<CustomScript> getInitialAcrs() {
+		this.customScripts = new ArrayList<CustomScript>();
+		if (this.client.getDefaultAcrValues() != null && this.client.getDefaultAcrValues().length >= 1) {
+			for (String scriptName : this.client.getDefaultAcrValues()) {
+				CustomScript customScript = new CustomScript();
+				customScript.setName(scriptName);
+				this.customScripts.add(customScript);
+			}
+		}
+		return this.customScripts;
 	}
 
 	public String update() throws Exception {
@@ -241,10 +259,10 @@ public class UpdateClientAction implements Serializable {
 			this.responseTypes = getInitialResponseTypes();
 			this.grantTypes = getInitialGrantTypes();
 			this.contacts = getNonEmptyStringList(client.getContacts());
-			this.defaultAcrValues = getNonEmptyStringList(client.getDefaultAcrValues());
 			this.requestUris = getNonEmptyStringList(client.getRequestUris());
 			this.authorizedOrigins = getNonEmptyStringList(client.getAuthorizedOrigins());
 			this.claimRedirectURIList = getNonEmptyStringList(client.getClaimRedirectURI());
+			this.customScripts = getInitialAcrs();
 		} catch (BasePersistenceException ex) {
 			log.error("Failed to prepare lists", ex);
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to load client");
@@ -306,9 +324,9 @@ public class UpdateClientAction implements Serializable {
 		updateScopes();
 		updateClaims();
 		updateResponseTypes();
+		updateCustomScripts();
 		updateGrantTypes();
 		updateContacts();
-		updateDefaultAcrValues();
 		updateRequestUris();
 		updateAuthorizedOrigins();
 		updateClaimredirectUri();
@@ -431,20 +449,6 @@ public class UpdateClientAction implements Serializable {
 		for (Iterator<String> iterator = contacts.iterator(); iterator.hasNext();) {
 			String tmpContact = iterator.next();
 			if (contact.equals(tmpContact)) {
-				iterator.remove();
-				break;
-			}
-		}
-	}
-
-	public void removeDefaultAcrValue(String defaultAcrValue) {
-		if (StringUtils.isEmpty(defaultAcrValue)) {
-			return;
-		}
-
-		for (Iterator<String> iterator = defaultAcrValues.iterator(); iterator.hasNext();) {
-			String tmpDefaultAcrValue = iterator.next();
-			if (defaultAcrValue.equals(tmpDefaultAcrValue)) {
 				iterator.remove();
 				break;
 			}
@@ -679,18 +683,6 @@ public class UpdateClientAction implements Serializable {
 		this.availableContact = "";
 	}
 
-	public void acceptSelectDefaultAcrValue() {
-		if (StringHelper.isEmpty(this.availableDefaultAcrValue)) {
-			return;
-		}
-
-		if (!defaultAcrValues.contains((availableDefaultAcrValue))) {
-			defaultAcrValues.add(availableDefaultAcrValue);
-		}
-
-		this.availableDefaultAcrValue = "";
-	}
-
 	public void acceptSelectRequestUri() {
 		if (StringHelper.isEmpty(this.availableRequestUri)) {
 			return;
@@ -833,20 +825,6 @@ public class UpdateClientAction implements Serializable {
 		client.setContacts(tmpContacts);
 	}
 
-	private void updateDefaultAcrValues() {
-		if (defaultAcrValues == null || defaultAcrValues.size() == 0) {
-			client.setDefaultAcrValues(null);
-			return;
-		}
-
-		List<String> tmpDefaultAcrValues = new ArrayList<String>();
-		for (String defaultAcrValue : defaultAcrValues) {
-			tmpDefaultAcrValues.add(defaultAcrValue);
-		}
-
-		client.setDefaultAcrValues(tmpDefaultAcrValues.toArray(new String[tmpDefaultAcrValues.size()]));
-	}
-
 	private void updateRequestUris() {
 		if (requestUris == null || requestUris.size() == 0) {
 			client.setRequestUris(null);
@@ -930,13 +908,25 @@ public class UpdateClientAction implements Serializable {
 
 	private void updateGrantTypes() {
 		List<GrantType> currentGrantTypes = this.grantTypes;
-
 		if (currentGrantTypes == null || currentGrantTypes.size() == 0) {
 			this.client.setGrantTypes(null);
 			return;
 		}
 
 		this.client.setGrantTypes(currentGrantTypes.toArray(new GrantType[currentGrantTypes.size()]));
+	}
+
+	private void updateCustomScripts() {
+		List<CustomScript> currentCustomScripts = this.customScripts;
+		if (currentCustomScripts == null || currentCustomScripts.size() == 0) {
+			this.client.setDefaultAcrValues(null);
+			return;
+		}
+		List<String> customScripts = new ArrayList<String>();
+		for (CustomScript customScript : currentCustomScripts) {
+			customScripts.add(customScript.getName());
+		}
+		this.client.setDefaultAcrValues(customScripts.toArray(new String[customScripts.size()]));
 	}
 
 	public void selectAddedScopes() {
@@ -1071,6 +1061,44 @@ public class UpdateClientAction implements Serializable {
 		}
 	}
 
+	public void acceptSelectCustomScripts() {
+		List<CustomScript> addedCustomScripts = getCustomScripts();
+		for (SelectableEntity<CustomScript> availableCustomScript : this.availableCustomScripts) {
+			CustomScript customScript = availableCustomScript.getEntity();
+			if (availableCustomScript.isSelected() && !addedCustomScripts.contains(customScript)) {
+				addCustomScript(customScript.getName());
+			}
+
+			if (!availableCustomScript.isSelected() && addedCustomScripts.contains(customScript)) {
+				removeCustomScript(customScript.getName());
+			}
+		}
+	}
+
+	private void addCustomScript(String name) {
+		if (StringHelper.isEmpty(name)) {
+			return;
+		}
+		CustomScript addCustomScript = new CustomScript();
+		addCustomScript.setName(name);
+		if (addCustomScript != null) {
+			this.customScripts.add(addCustomScript);
+		}
+
+	}
+
+	public void removeCustomScript(String value) {
+		if (StringHelper.isEmpty(value)) {
+			return;
+		}
+		for (CustomScript customScript : customScripts) {
+			if (customScript.getName().equalsIgnoreCase(value)) {
+				this.customScripts.remove(customScript);
+				break;
+			}
+		}
+	}
+
 	public void acceptSelectGrantTypes() {
 		List<GrantType> addedGrantTypes = getGrantTypes();
 
@@ -1084,6 +1112,10 @@ public class UpdateClientAction implements Serializable {
 				removeGrantType(grantType.toString());
 			}
 		}
+	}
+
+	public void cancelSelectCustomScripts() {
+
 	}
 
 	public void cancelSelectResponseTypes() {
@@ -1152,6 +1184,23 @@ public class UpdateClientAction implements Serializable {
 		selectAddedResponseTypes();
 	}
 
+	public void searchAvailableCustomScripts() {
+		if (this.availableCustomScripts != null) {
+			selectAddedCustomScripts();
+			return;
+		}
+		List<SelectableEntity<CustomScript>> tmpAvailableCustomScripts = new ArrayList<SelectableEntity<CustomScript>>();
+		CustomScriptType[] allowedCustomScriptTypes = { CustomScriptType.PERSON_AUTHENTICATION };
+		List<CustomScript> customScripts = customScriptService
+				.findCustomScripts(Arrays.asList(allowedCustomScriptTypes));
+		for (CustomScript customScript : customScripts) {
+			tmpAvailableCustomScripts.add(new SelectableEntity<CustomScript>(customScript));
+		}
+
+		this.availableCustomScripts = tmpAvailableCustomScripts;
+		selectAddedCustomScripts();
+	}
+
 	public void searchAvailableGrantTypes() {
 		if (this.availableGrantTypes != null) {
 			selectAddedGrantTypes();
@@ -1177,6 +1226,13 @@ public class UpdateClientAction implements Serializable {
 
 		for (SelectableEntity<ResponseType> availableResponseType : this.availableResponseTypes) {
 			availableResponseType.setSelected(addedResponseTypes.contains(availableResponseType.getEntity()));
+		}
+	}
+
+	private void selectAddedCustomScripts() {
+		List<CustomScript> addedCustomScripts = getCustomScripts();
+		for (SelectableEntity<CustomScript> availableCustomScript : this.availableCustomScripts) {
+			availableCustomScript.setSelected(addedCustomScripts.contains(availableCustomScript.getEntity()));
 		}
 	}
 
@@ -1236,14 +1292,6 @@ public class UpdateClientAction implements Serializable {
 		this.availableContact = availableContact;
 	}
 
-	public String getAvailableDefaultAcrValue() {
-		return availableDefaultAcrValue;
-	}
-
-	public void setAvailableDefaultAcrValue(String availableDefaultAcrValue) {
-		this.availableDefaultAcrValue = availableDefaultAcrValue;
-	}
-
 	public String getAvailableRequestUri() {
 		return availableRequestUri;
 	}
@@ -1272,6 +1320,10 @@ public class UpdateClientAction implements Serializable {
 		return this.availableResponseTypes;
 	}
 
+	public List<SelectableEntity<CustomScript>> getAvailableCustomScripts() {
+		return this.availableCustomScripts;
+	}
+
 	public List<SelectableEntity<GrantType>> getAvailableGrantTypes() {
 		return this.availableGrantTypes;
 	}
@@ -1296,16 +1348,16 @@ public class UpdateClientAction implements Serializable {
 		return responseTypes;
 	}
 
+	public List<CustomScript> getCustomScripts() {
+		return customScripts;
+	}
+
 	public List<GrantType> getGrantTypes() {
 		return grantTypes;
 	}
 
 	public List<String> getContacts() {
 		return contacts;
-	}
-
-	public List<String> getDefaultAcrValues() {
-		return defaultAcrValues;
 	}
 
 	public List<String> getRequestUris() {

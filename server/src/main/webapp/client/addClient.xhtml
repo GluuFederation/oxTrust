@@ -73,6 +73,14 @@
                                                  nameProperty="entity.value" render="selectedResponseTypesId"
                                                  searchMethod="#{updateClientAction.searchAvailableResponseTypes}"
                                                  searchResult="#{updateClientAction.availableResponseTypes}"/>
+                 
+                 <ox:selectSelectableEntityDialog acceptMethod="#{updateClientAction.acceptSelectCustomScripts}"
+                                                 cancelMethod="#{updateClientAction.cancelSelectCustomScripts}"
+                                                 displayNameProperty="entity.description" displaySearchForm="false"
+                                                 id="defaultAcr" label="#{msg['client.defaultAcrValue']}"
+                                                 nameProperty="entity.name" render="selectedCustomScriptAcrsId"
+                                                 searchMethod="#{updateClientAction.searchAvailableCustomScripts}"
+                                                 searchResult="#{updateClientAction.availableCustomScripts}"/>                                
 
                 <ox:selectSelectableEntityDialog acceptMethod="#{updateClientAction.acceptSelectGrantTypes}"
                                                  cancelMethod="#{updateClientAction.cancelSelectGrantTypes}"
@@ -88,14 +96,7 @@
                                     label="#{msg['client.selectContact']}" maxLength="256" queue="clientQueue"
                                     render="selectedContactsId" text="#{updateClientAction.availableContact}"
                                     textId="contactTextId"/>
-
-                <ox:inputTextDialog acceptMethod="#{updateClientAction.acceptSelectDefaultAcrValue()}"
-                                    cancelMethod="#{updateClientAction.cancelSelectDefaultAcrValue()}" dialogWidth="600"
-                                    id="defaultAcrValue" inputLabel="#{msg['client.defaultAcrValue']}" inputWidth="80"
-                                    label="#{msg['client.selectDefaultAcrValue']}" maxLength="256" queue="clientQueue"
-                                    render="selectedDefaultAcrValuesId"
-                                    text="#{updateClientAction.availableDefaultAcrValue}" textId="contactTextId"/>
-
+                                    
                 <ox:inputTextDialog acceptMethod="#{updateClientAction.acceptSelectRequestUri()}"
                                     cancelMethod="#{updateClientAction.cancelSelectRequestUri()}" dialogWidth="600"
                                     id="requestUri" inputLabel="#{msg['client.requestURI']}" inputWidth="80"
