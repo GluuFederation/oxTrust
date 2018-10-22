@@ -29,7 +29,8 @@
 				style="cursor:pointer"
 				onclick="#{rich:component('clientSummary')}.hide(); return false;" />
 		</f:facet>
-		<div class="container" style="overflow-y:scroll; height: 470px; margin-bottom: 20px;" >
+		<div class="container"
+			style="overflow-y: scroll; height: 470px; margin-bottom: 20px;">
 			<h:panelGroup>
 				<div class="row">
 					<div class="col-sm-6 col-lg-6">
@@ -152,19 +153,16 @@
 							</h:panelGroup>
 						</ox:decorate>
 
-						<ox:decorate id="defaultAcrValues"
-							rendered="#{not empty cc.attrs._clientAction.defaultAcrValues and cc.attrs._clientAction.defaultAcrValues ne null }"
+						<ox:decorate id="acrs"
+							rendered="#{!empty cc.attrs._clientAction.customScripts and cc.attrs._clientAction.customScripts ne null }"
 							label="#{msg['clientForm.defaultRequestedAuthenticationContextClass']}">
 							<h:panelGroup id="selectedDefaultAcrValuesId">
-								<h:panelGroup columns="1" width="100%" border="0"
-									cellpadding="0" cellspacing="0">
-									<a4j:repeat value="#{cc.attrs._clientAction.defaultAcrValues}"
-										rowKeyVar="_defaultAcrValuesIdx" var="_defaultAcrValue"
-										iterationStatusVar="loop">
+								<h:panelGroup>
+									<a4j:repeat value="#{cc.attrs._clientAction.customScripts}"
+										rowKeyVar="_acrIdx" var="_acr" iterationStatusVar="loop">
 										<div class="row-fluid">
 											<div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
-												<h:outputText value="#{_defaultAcrValue}" />
-
+												<h:outputText value="#{_acr.name}" />
 											</div>
 										</div>
 										<br />
@@ -173,7 +171,7 @@
 								</h:panelGroup>
 							</h:panelGroup>
 						</ox:decorate>
-
+						
 						<ox:decorate id="initiateLoginUri"
 							rendered="#{!empty cc.attrs._client.initiateLoginUri and cc.attrs._client.initiateLoginUri ne null }"
 							label="#{msg['clientForm.initiateLoginURI']}">
@@ -383,7 +381,7 @@
 						<ox:decorate id="jwks" label="#{msg['clientForm.jwks']}"
 							rendered="#{!empty cc.attrs._client.jwks and cc.attrs._client.jwks ne null }">
 							<h:outputText style="max-width: 150px;word-wrap:break-word;"
-								value="#{cc.attrs._client.jwks.length() gt 100 ? cc.attrs._client.jwks.substring(0,97).concat('...') : cc.attrs._client.jwks}" 
+								value="#{cc.attrs._client.jwks.length() gt 100 ? cc.attrs._client.jwks.substring(0,97).concat('...') : cc.attrs._client.jwks}"
 								id="jwksId" escape="false" />
 						</ox:decorate>
 						<ox:decorate id="subjectType"
@@ -523,7 +521,7 @@
 							label="#{msg['clientForm.clientSecretExpires']}">
 							<h:outputText value="#{cc.attrs._client.clientSecretExpiresAt}" />
 						</ox:decorate>
-						
+
 					</div>
 				</div>
 			</h:panelGroup>
