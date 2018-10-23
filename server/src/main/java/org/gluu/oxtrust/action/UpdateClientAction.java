@@ -184,6 +184,7 @@ public class UpdateClientAction implements Serializable {
 			this.logoutUris = getNonEmptyStringList(client.getOxAuthPostLogoutRedirectURIs());
 			this.clientlogoutUris = getNonEmptyStringList(client.getLogoutUri());
 			this.scopes = getInitialEntries();
+			this.claims = getInitialClaimDisplayNameEntries();
 			this.responseTypes = getInitialResponseTypes();
 			this.grantTypes = getInitialGrantTypes();
 			this.contacts = getNonEmptyStringList(client.getContacts());
@@ -215,17 +216,18 @@ public class UpdateClientAction implements Serializable {
 		return this.customScripts;
 	}
 
-	private List<OxAuthScope> getInitialEntries() throws Exception {
+	private List<OxAuthScope> getInitialEntries() {
 		List<OxAuthScope> existingScopes = new ArrayList<OxAuthScope>();
 		if ((client.getOxAuthScopes() == null) || (client.getOxAuthScopes().size() == 0)) {
 			return existingScopes;
 		}
 		for (String dn : client.getOxAuthScopes()) {
 			String dnString = dn.split(",")[0];
-			log.info("########################"+dnString);
 			String inum = dnString.split("=")[1];
-			log.info("########################"+inum);
-			existingScopes.add(scopeService.getScopeByInum(inum));
+			try {
+				existingScopes.add(scopeService.getScopeByInum(inum));
+			} catch (Exception e) {
+			}
 		}
 		return existingScopes;
 	}
@@ -1149,17 +1151,13 @@ public class UpdateClientAction implements Serializable {
 			selectAddedGrantTypes();
 			return;
 		}
-
 		List<SelectableEntity<GrantType>> tmpAvailableGrantTypes = new ArrayList<SelectableEntity<GrantType>>();
-
 		tmpAvailableGrantTypes.add(new SelectableEntity<GrantType>(GrantType.AUTHORIZATION_CODE));
 		tmpAvailableGrantTypes.add(new SelectableEntity<GrantType>(GrantType.IMPLICIT));
 		tmpAvailableGrantTypes.add(new SelectableEntity<GrantType>(GrantType.REFRESH_TOKEN));
 		tmpAvailableGrantTypes.add(new SelectableEntity<GrantType>(GrantType.CLIENT_CREDENTIALS));
 		tmpAvailableGrantTypes.add(new SelectableEntity<GrantType>(GrantType.RESOURCE_OWNER_PASSWORD_CREDENTIALS));
-		// tmpAvailableGrantTypes.add(new
-		// SelectableEntity<GrantType>(GrantType.OXAUTH_UMA_TICKET));
-
+		tmpAvailableGrantTypes.add(new SelectableEntity<GrantType>(GrantType.OXAUTH_UMA_TICKET));
 		this.availableGrantTypes = tmpAvailableGrantTypes;
 		selectAddedGrantTypes();
 	}
