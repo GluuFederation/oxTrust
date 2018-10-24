@@ -28,6 +28,7 @@ import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.search.filter.Filter;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.GluuAttribute;
+import org.xdi.model.GluuUserRole;
 import org.xdi.model.attribute.AttributeDataType;
 import org.xdi.model.attribute.AttributeUsageType;
 import org.xdi.model.attribute.Multivalued;
@@ -47,6 +48,11 @@ import com.unboundid.ldap.sdk.LDAPException;
 @Stateless
 @Named
 public class AttributeService extends org.xdi.service.AttributeService {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8223624816948822765L;
 
 	@Inject
 	private AppConfiguration appConfiguration;
@@ -71,7 +77,7 @@ public class AttributeService extends org.xdi.service.AttributeService {
 	 * @return List of person attributes
 	 */
 	@SuppressWarnings("unchecked")
-	public List<GluuAttribute> getAllPersonAttributes(UserRole gluuUserRole) {
+	public List<GluuAttribute> getAllPersonAttributes(GluuUserRole gluuUserRole) {
 		String key = OxTrustConstants.CACHE_ATTRIBUTE_PERSON_KEY_LIST + "_" + gluuUserRole.getValue();
 		List<GluuAttribute> attributeList = (List<GluuAttribute>) cacheService.get(OxConstants.CACHE_ATTRIBUTE_NAME,
 				key);
@@ -90,7 +96,7 @@ public class AttributeService extends org.xdi.service.AttributeService {
 	 *            List of attributes
 	 * @return List of organization attributes
 	 */
-	private List<GluuAttribute> getAllPersonAtributesImpl(UserRole gluuUserRole,
+	private List<GluuAttribute> getAllPersonAtributesImpl(GluuUserRole gluuUserRole,
 			Collection<GluuAttribute> attributes) {
 		List<GluuAttribute> returnAttributeList = new ArrayList<GluuAttribute>();
 
@@ -98,7 +104,7 @@ public class AttributeService extends org.xdi.service.AttributeService {
 		log.debug("objectClassTypes={}", Arrays.toString(objectClassTypes));
 		for (GluuAttribute attribute : attributes) {
 			if (StringHelper.equalsIgnoreCase(attribute.getOrigin(), appConfiguration.getPersonCustomObjectClass())
-					&& (UserRole.ADMIN == gluuUserRole)) {
+					&& (GluuUserRole.ADMIN == gluuUserRole)) {
 				attribute.setCustom(true);
 				returnAttributeList.add(attribute);
 				continue;
@@ -122,7 +128,7 @@ public class AttributeService extends org.xdi.service.AttributeService {
 	 * @return List of contact attributes
 	 */
 	@SuppressWarnings("unchecked")
-	public List<GluuAttribute> getAllContactAttributes(UserRole gluuUserRole) {
+	public List<GluuAttribute> getAllContactAttributes(GluuUserRole gluuUserRole) {
 		String key = OxTrustConstants.CACHE_ATTRIBUTE_CONTACT_KEY_LIST + "_" + gluuUserRole.getValue();
 		List<GluuAttribute> attributeList = (List<GluuAttribute>) cacheService.get(OxConstants.CACHE_ATTRIBUTE_NAME,
 				key);
@@ -141,14 +147,14 @@ public class AttributeService extends org.xdi.service.AttributeService {
 	 *            List of attributes
 	 * @return List of contact attributes
 	 */
-	private List<GluuAttribute> getAllContactAtributesImpl(UserRole gluuUserRole,
+	private List<GluuAttribute> getAllContactAtributesImpl(GluuUserRole gluuUserRole,
 			Collection<GluuAttribute> attributes) {
 		List<GluuAttribute> returnAttributeList = new ArrayList<GluuAttribute>();
 
 		String[] objectClassTypes = appConfiguration.getContactObjectClassTypes();
 		for (GluuAttribute attribute : attributes) {
 			if (StringHelper.equalsIgnoreCase(attribute.getOrigin(), appConfiguration.getPersonCustomObjectClass())
-					&& (UserRole.ADMIN == gluuUserRole)) {
+					&& (GluuUserRole.ADMIN == gluuUserRole)) {
 				attribute.setCustom(true);
 				returnAttributeList.add(attribute);
 				continue;
@@ -625,7 +631,7 @@ public class AttributeService extends org.xdi.service.AttributeService {
 	 * @param admin
 	 * @return
 	 */
-	public List<GluuAttribute> getAllActivePersonAttributes(UserRole admin) {
+	public List<GluuAttribute> getAllActivePersonAttributes(GluuUserRole admin) {
 		@SuppressWarnings("unchecked")
 		List<GluuAttribute> activeAttributeList = (List<GluuAttribute>) cacheService
 				.get(OxConstants.CACHE_ACTIVE_ATTRIBUTE_NAME, OxConstants.CACHE_ACTIVE_ATTRIBUTE_KEY_LIST);
@@ -642,7 +648,7 @@ public class AttributeService extends org.xdi.service.AttributeService {
 	 * @return
 	 * @throws LDAPException
 	 */
-	private List<GluuAttribute> getAllActiveAtributesImpl(UserRole gluuUserRole) {
+	private List<GluuAttribute> getAllActiveAtributesImpl(GluuUserRole gluuUserRole) {
 		Filter filter = Filter.createEqualityFilter("gluuStatus", "active");
 		List<GluuAttribute> attributeList = ldapEntryManager.findEntries(getDnForAttribute(null), GluuAttribute.class,
 				filter);
@@ -652,7 +658,7 @@ public class AttributeService extends org.xdi.service.AttributeService {
 		List<GluuAttribute> returnAttributeList = new ArrayList<GluuAttribute>();
 		for (GluuAttribute attribute : attributeList) {
 			if (StringHelper.equalsIgnoreCase(attribute.getOrigin(), appConfiguration.getPersonCustomObjectClass())
-					&& (UserRole.ADMIN == gluuUserRole)) {
+					&& (GluuUserRole.ADMIN == gluuUserRole)) {
 				attribute.setCustom(true);
 				returnAttributeList.add(attribute);
 				continue;
