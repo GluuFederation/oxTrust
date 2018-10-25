@@ -14,9 +14,33 @@
 		type="org.gluu.oxtrust.action.UpdateClientAction" />
 	<cc:attribute name="_client" required="false"
 		type="org.gluu.oxtrust.model.OxAuthClient" />
+	<cc:attribute name="_markdown" required="false" type="java.lang.String" />
 </cc:interface>
 
 <cc:implementation>
+
+	<script>
+	  $( document ).ready(function() {
+		  var jsfAreaValue = document.getElementById("summary:OIDCMarkdownTexArea").value;
+		  document.getElementById("OIDCMarkdownTexArea2").value = jsfAreaValue;
+		  new ClipboardJS('.showOIDCSummaryMarkdownButton',{
+				    text: function (trigger) {
+				          return document.getElementById("OIDCMarkdownTexArea2").value;
+				     }
+				}
+			  );
+				  
+	  });
+	  
+	  function notify(){
+		  document.getElementById("feedback").style.display='block';
+		  setTimeout(function() {
+			  document.getElementById("feedback").style.display='none';
+			  }, 2000);
+	  }
+   </script>
+
+
 
 	<rich:popupPanel id="clientSummary"
 		onmaskclick="#{rich:component('clientSummary')}.hide()" zindex="2000"
@@ -31,6 +55,23 @@
 		</f:facet>
 		<div class="container"
 			style="overflow-y: scroll; height: 470px; margin-bottom: 20px;">
+			<div class="row">
+				<div class="col-sm-3 col-lg-3">
+					<input type="button"
+						class="btn btn-primary showOIDCSummaryMarkdownButton"
+						style="margin-left: 4%;" onclick="notify()"
+						data-clipboard-target="#OIDCMarkdownTexArea2"
+						value="Copy as markdown to clipboard" />
+				</div>
+				<div class="col-sm-8 col-lg-8">
+					<span id="feedback" style="color: green; display: none;"><b>copied
+						to clip board</b></span>
+					<h:inputTextarea id="OIDCMarkdownTexArea"
+						class="OIDCMarkdownTexArea" rows="3" cols="80" maxlength="250"
+						style="display: none;" value="#{cc.attrs._markdown}" />
+					<input type='hidden' id="OIDCMarkdownTexArea2" />
+				</div>
+			</div>
 			<h:panelGroup>
 				<div class="row">
 					<div class="col-sm-6 col-lg-6">
@@ -171,7 +212,7 @@
 								</h:panelGroup>
 							</h:panelGroup>
 						</ox:decorate>
-						
+
 						<ox:decorate id="initiateLoginUri"
 							rendered="#{!empty cc.attrs._client.initiateLoginUri and cc.attrs._client.initiateLoginUri ne null }"
 							label="#{msg['clientForm.initiateLoginURI']}">

@@ -208,40 +208,6 @@
 												</ox:decorate>
 												<hr
 													style="height: 1px; background: green; border-color: green; border-width: 0px;"></hr>
-<!-- 												<ox:decorate id="scopes" label="#{msg['clientForm.scopes']}"> -->
-<!-- 													<h:panelGroup id="selectedScopesId"> -->
-<!-- 														<h:panelGroup> -->
-<!-- 															<a4j:repeat value="#{_clientAction.scopes}" -->
-<!-- 																rowKeyVar="_scopeIdx" var="_scope" -->
-<!-- 																iterationStatusVar="loop"> -->
-<!-- 																<div class="row-fluid"> -->
-<!-- 																	<div class="#{(loop.index % 2 == 0) ?'odd':'even'}"> -->
-<!-- 																		<h:outputText -->
-<!-- 																			value="#{empty _scope.displayName ? _scope.displayName : _scope.displayName}" /> -->
-<!-- 																		<h:outputText value="&#160;" /> -->
-<!-- 																		<div class="span6 pull-right"> -->
-<!-- 																			<a4j:commandLink -->
-<!-- 																				styleClass="glyphicon glyphicon-remove" -->
-<!-- 																				style="margin-top:-20px;" -->
-<!-- 																				action="#{_clientAction.removeScope(_scope.inum)}" -->
-<!-- 																				execute="@this" render="selectedScopesId" -->
-<!-- 																				eventsQueue="clientQueue"> -->
-<!-- 																			</a4j:commandLink> -->
-<!-- 																		</div> -->
-<!-- 																	</div> -->
-<!-- 																</div> -->
-<!-- 																<br /> -->
-<!-- 															</a4j:repeat> -->
-<!-- 															<richext:spacer height="16" /> -->
-<!-- 															<a4j:commandButton -->
-<!-- 																styleClass="btn btn-primary AddScopeButton" -->
-<!-- 																style="margin-top:5px" -->
-<!-- 																value="#{msg['clientForm.addScope']}" -->
-<!-- 																oncomplete="#{rich:component('scope:selectScopeModalPanel')}.show();" -->
-<!-- 																execute="@this" eventsQueue="clientQueue" /> -->
-<!-- 														</h:panelGroup> -->
-<!-- 													</h:panelGroup> -->
-<!-- 												</ox:decorate> -->
 												<ox:decorate id="scopes"
 													label="#{msg['clientForm.scopes']}">
 													<h:panelGroup id="selectedScopesId">

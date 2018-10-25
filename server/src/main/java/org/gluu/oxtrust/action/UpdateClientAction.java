@@ -64,6 +64,10 @@ import org.xdi.util.StringHelper;
 import org.xdi.util.Util;
 import org.xdi.util.security.StringEncrypter.EncryptionException;
 
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 /**
  * Action class for viewing and updating clients.
  *
@@ -116,6 +120,8 @@ public class UpdateClientAction implements Serializable {
 	private Identity identity;
 
 	private String inum;
+	
+	private String markDown="";
 
 	private boolean update;
 
@@ -1440,5 +1446,20 @@ public class UpdateClientAction implements Serializable {
 	public void setSecret(String pwd) throws EncryptionException {
 		this.client.setOxAuthClientSecret(pwd);
 		this.client.setEncodedClientSecret(encryptionService.encrypt(pwd));
+	}
+
+	public String getMarkDown() {
+		ObjectMapper mapper = new ObjectMapper();
+	    mapper.setSerializationInclusion(Include.NON_NULL);
+		try {
+			markDown=mapper.writeValueAsString(client);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
+		return markDown;
+	}
+
+	public void setMarkDown(String markDown) {
+		this.markDown = markDown;
 	}
 }
