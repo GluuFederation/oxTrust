@@ -12,4 +12,7 @@ nb-configuration.xml
 target
 
 server/.tern-project
+server/profiles/
+!server/profiles/default
+!server/profiles/setup
 /bin/
