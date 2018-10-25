@@ -12,8 +12,11 @@ import java.util.Set;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.ext.Provider;
 
+import org.gluu.oxtrust.api.CustomScriptManagementService;
 import org.gluu.oxtrust.api.RegistrationManagementService;
 import org.gluu.oxtrust.api.attributes.AttributeWebResource;
+import org.gluu.oxtrust.api.errors.InvalidScriptDataExceptionMapper;
+import org.gluu.oxtrust.api.errors.ScriptNotFoundExceptionMapper;
 import org.gluu.oxtrust.ws.rs.scim2.BulkWebService;
 import org.gluu.oxtrust.ws.rs.scim2.GroupWebService;
 import org.gluu.oxtrust.ws.rs.scim2.ResourceTypeWS;
@@ -44,6 +47,11 @@ public class TestResteasyInitializer extends Application {
         // API
         classes.add(AttributeWebResource.class);
         classes.add(RegistrationManagementService.class);
+        classes.add(CustomScriptManagementService.class);
+
+        // Providers
+        classes.add(InvalidScriptDataExceptionMapper.class);
+        classes.add(ScriptNotFoundExceptionMapper.class);
 
         return classes;
     }
