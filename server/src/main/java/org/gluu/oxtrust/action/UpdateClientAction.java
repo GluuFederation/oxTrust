@@ -45,7 +45,6 @@ import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.model.OxAuthScope;
 import org.gluu.oxtrust.security.Identity;
-import org.gluu.oxtrust.service.PasswordGenerator;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.exception.BasePersistenceException;
 import org.slf4j.Logger;
@@ -115,9 +114,6 @@ public class UpdateClientAction implements Serializable {
 
 	@Inject
 	private Identity identity;
-
-	@Inject
-	private PasswordGenerator passwordGenerator;
 
 	private String inum;
 

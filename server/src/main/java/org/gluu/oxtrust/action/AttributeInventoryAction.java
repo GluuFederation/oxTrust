@@ -29,7 +29,7 @@ import org.gluu.persist.exception.BasePersistenceException;
 import org.slf4j.Logger;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuStatus;
-import org.xdi.model.user.UserRole;
+import org.xdi.model.GluuUserRole;
 import org.xdi.service.security.Secure;
 
 /**
@@ -79,8 +79,8 @@ public class AttributeInventoryAction implements Serializable {
 	public String start() {
 		if (attributeList == null) {
 			try {
-				this.attributeList = attributeService.getAllPersonAttributes(UserRole.ADMIN);
-				this.setActiveAttributeList(attributeService.getAllActivePersonAttributes(UserRole.ADMIN));
+				this.attributeList = attributeService.getAllPersonAttributes(GluuUserRole.ADMIN);
+				this.setActiveAttributeList(attributeService.getAllActivePersonAttributes(GluuUserRole.ADMIN));
 			} catch (BasePersistenceException ex) {
 				log.error("Failed to load attributes", ex);
 
