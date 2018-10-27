@@ -64,9 +64,8 @@ import org.xdi.util.StringHelper;
 import org.xdi.util.Util;
 import org.xdi.util.security.StringEncrypter.EncryptionException;
 
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import net.steppschuh.markdowngenerator.list.UnorderedList;
+import net.steppschuh.markdowngenerator.text.heading.Heading;
 
 /**
  * Action class for viewing and updating clients.
@@ -120,8 +119,8 @@ public class UpdateClientAction implements Serializable {
 	private Identity identity;
 
 	private String inum;
-	
-	private String markDown="";
+
+	private String markDown = "";
 
 	private boolean update;
 
@@ -1449,13 +1448,69 @@ public class UpdateClientAction implements Serializable {
 	}
 
 	public String getMarkDown() {
-		ObjectMapper mapper = new ObjectMapper();
-	    mapper.setSerializationInclusion(Include.NON_NULL);
-		try {
-			markDown=mapper.writeValueAsString(client);
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
+		StringBuilder sb = new StringBuilder();
+		sb.append(new Heading("OPENID CONNECT CLIENTS DETAILS", 2)).append("\n");
+		List<Object> items = new ArrayList<Object>();
+		if (client.getDisplayName() != null && !client.getDisplayName().isEmpty()) {
+			items.add("**Name:** " + client.getDisplayName());
 		}
+		if (client.getDescription() != null && !client.getDescription().isEmpty()) {
+			items.add("**Description:** " + client.getDescription());
+		}
+
+		if (client.getInum() != null && !client.getInum().isEmpty()) {
+			items.add("**Client ID:** " + client.getInum());
+		}
+
+		if (client.getSubjectType() != null && !client.getSubjectType().name().isEmpty()) {
+			items.add("**Subject Type:** " + client.getSubjectType());
+		}
+
+		if (client.getClientSecretExpiresAt() != null && !client.getClientSecretExpiresAt().toString().isEmpty()) {
+			items.add("**Expirattion date:** " + client.getClientSecretExpiresAt());
+		}
+		if (client.getOxAuthClientSecret() != null && !client.getOxAuthClientSecret().toString().isEmpty()) {
+			items.add("**ClientSecret:** " + client.getOxAuthClientSecret());
+		}
+
+		if (client.getClientUri() != null && !client.getClientUri().toString().isEmpty()) {
+			items.add("**Client Uri:** " + client.getClientUri());
+		}
+		if (client.getIdTokenTokenBindingCnf() != null && !client.getIdTokenTokenBindingCnf().toString().isEmpty()) {
+			items.add("**TokenTokenBindingCnf:** " + client.getIdTokenTokenBindingCnf());
+		}
+		if (client.getOxAuthAppType().getValue() != null && !client.getOxAuthAppType().getValue().isEmpty()) {
+			items.add("**Application Type:** " + client.getOxAuthAppType().getValue());
+		}
+		items.add("**Persist Client Authorizations:** " + client.getOxAuthPersistClientAuthorizations());
+		items.add("**Pre-Authorization:** " + client.getOxAuthTrustedClient());
+		items.add("**Authentication method for the Token Endpoint:** " + client.getTokenEndpointAuthMethod());
+		items.add("**Logout Session Required:** " + client.getLogoutSessionRequired());
+		items.add("**Include Claims In Id Token:** " + client.getOxIncludeClaimsInIdToken());
+		items.add("**Disabled:** " + client.isDisabled());
+
+		if (client.getLogoutUri() != null && !client.getLogoutUri().isEmpty()) {
+			items.add("**LogoutUri:** " + client.getLogoutUri().toString());
+		}
+		if (client.getOxAuthScopes() != null && !client.getOxAuthScopes().isEmpty()) {
+			List<String> scopes = new ArrayList<String>();
+			for (OxAuthScope scope : this.scopes) {
+				scopes.add(scope.getDisplayName());
+			}
+			items.add("**Scopes:** " + scopes.toString());
+		}
+		if (client.getGrantTypes() != null && client.getGrantTypes().length > 0) {
+			items.add("**Grant types:** " + this.grantTypes.toString());
+		}
+
+		if (client.getResponseTypes() != null && client.getResponseTypes().length > 0) {
+			items.add("**Response types:** " + this.responseTypes.toString());
+		}
+		if (client.getContacts() != null && !client.getContacts().toString().isEmpty()) {
+			items.add("**Contacts:** " + this.contacts.toString());
+		}
+		sb.append(new UnorderedList<Object>(items)).append("\n");
+		markDown = sb.toString();
 		return markDown;
 	}
 

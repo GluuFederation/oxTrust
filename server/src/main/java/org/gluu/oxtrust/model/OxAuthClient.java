@@ -638,12 +638,14 @@ public class OxAuthClient extends Entry implements Serializable {
         this.oxAuthClientSecret = oxAuthClientSecret;
     }
     
-    public String getOxAuthClientSecret() throws EncryptionException {
-        return oxAuthClientSecret;
-    }
+  
 
-    public Date getClientSecretExpiresAt() {
-        if (clientSecretExpiresAt == null) {
+	public String getOxAuthClientSecret(){
+		return oxAuthClientSecret;
+	}
+
+	public Date getClientSecretExpiresAt() {
+		if (clientSecretExpiresAt == null) {
 			return new Date();
 		} else {
 			return clientSecretExpiresAt;
