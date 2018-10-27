@@ -21,7 +21,6 @@ import org.xdi.ldap.model.Entry;
 import org.xdi.ldap.model.GluuBoolean;
 import org.xdi.oxauth.model.common.GrantType;
 import org.xdi.oxauth.model.common.ResponseType;
-import org.xdi.util.security.StringEncrypter.EncryptionException;
 
 /**
  * oxAuthClient
@@ -638,7 +637,7 @@ public class OxAuthClient extends Entry implements Serializable {
 		this.oxAuthClientSecret = oxAuthClientSecret;
 	}
 
-	public String getOxAuthClientSecret() throws EncryptionException {
+	public String getOxAuthClientSecret(){
 		return oxAuthClientSecret;
 	}
 
