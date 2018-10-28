@@ -9,8 +9,8 @@ import org.junit.Assume;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.xdi.model.GluuAttributeDataType;
 import org.xdi.model.GluuStatus;
-import org.xdi.model.attribute.AttributeDataType;
 
 public class AttributeApiTest {
 	private AttributeRepository attributeRepository;
@@ -180,7 +180,7 @@ public class AttributeApiTest {
 		String displayName = "AtrributeAddByTest" + next1 + next2;
 		gluuAttributeApi.setDescription("My new Attribute");
 		gluuAttributeApi.setDisplayName(displayName);
-		gluuAttributeApi.setDataType(AttributeDataType.STRING);
+		gluuAttributeApi.setDataType(GluuAttributeDataType.STRING);
 		gluuAttributeApi.setStatus(GluuStatus.ACTIVE);
 		gluuAttributeApi.setName("kudiaId");
 		gluuAttributeApi.setOrigin("gluuPerson");

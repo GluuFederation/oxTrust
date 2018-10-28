@@ -80,8 +80,8 @@ import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuStatus;
+import org.xdi.model.GluuUserRole;
 import org.xdi.model.SchemaEntry;
-import org.xdi.model.user.UserRole;
 import org.xdi.service.SchemaService;
 import org.xdi.service.cdi.async.Asynchronous;
 import org.xdi.service.security.Secure;
@@ -479,12 +479,12 @@ public class UpdateTrustRelationshipAction implements Serializable {
 	}
 
 	private List<GluuAttribute> getAllAttributes() {
-		List<GluuAttribute> attributes = attributeService.getAllPersonAttributes(UserRole.ADMIN);
+		List<GluuAttribute> attributes = attributeService.getAllPersonAttributes(GluuUserRole.ADMIN);
 		return attributes;
 	}
 
 	private List<GluuAttribute> getAllActiveAttributes() {
-		List<GluuAttribute> attributes = attributeService.getAllActivePersonAttributes(UserRole.ADMIN);
+		List<GluuAttribute> attributes = attributeService.getAllActivePersonAttributes(GluuUserRole.ADMIN);
 		attributes.remove(attributeService.getAttributeByName("userPassword"));
 		return attributes;
 	}
