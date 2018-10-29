@@ -1469,7 +1469,7 @@ public class UpdateClientAction implements Serializable {
 			items.add("**Expirattion date:** " + client.getClientSecretExpiresAt());
 		}
 		if (client.getOxAuthClientSecret() != null && !client.getOxAuthClientSecret().toString().isEmpty()) {
-			items.add("**ClientSecret:** " + client.getOxAuthClientSecret());
+			items.add("**ClientSecret:** XXXXXXXXXXX");
 		}
 
 		if (client.getClientUri() != null && !client.getClientUri().toString().isEmpty()) {
@@ -1487,9 +1487,20 @@ public class UpdateClientAction implements Serializable {
 		items.add("**Logout Session Required:** " + client.getLogoutSessionRequired());
 		items.add("**Include Claims In Id Token:** " + client.getOxIncludeClaimsInIdToken());
 		items.add("**Disabled:** " + client.isDisabled());
-
 		if (client.getLogoutUri() != null && !client.getLogoutUri().isEmpty()) {
-			items.add("**LogoutUri:** " + client.getLogoutUri().toString());
+			items.add("**Logout Uri:** " + client.getLogoutUri().toString());
+		}
+		if (client.getOxAuthPostLogoutRedirectURIs() != null && !client.getOxAuthPostLogoutRedirectURIs().isEmpty()) {
+			items.add("**Logout Redirect URIs:** " + client.getOxAuthPostLogoutRedirectURIs().toString());
+		}
+		if (client.getOxAuthRedirectURIs() != null && !client.getOxAuthRedirectURIs().isEmpty()) {
+			items.add("**Login Redirect URIs:** " + client.getOxAuthRedirectURIs().toString());
+		}
+		if (client.getOxAuthClaims() != null && !client.getOxAuthClaims().isEmpty()) {
+			items.add("**Claims:** " + client.getOxAuthClaims().toString());
+		}
+		if (client.getAccessTokenSigningAlg() != null && !client.getAccessTokenSigningAlg().name().isEmpty()) {
+			items.add("**AccessTokenSigningAlg:** " + client.getAccessTokenSigningAlg().name().toString());
 		}
 		if (client.getOxAuthScopes() != null && !client.getOxAuthScopes().isEmpty()) {
 			List<String> scopes = new ArrayList<String>();
@@ -1507,6 +1518,9 @@ public class UpdateClientAction implements Serializable {
 		}
 		if (client.getContacts() != null && !client.getContacts().toString().isEmpty()) {
 			items.add("**Contacts:** " + this.contacts.toString());
+		}
+		if (client.getDefaultAcrValues() != null && client.getDefaultAcrValues().length > 0) {
+			items.add("**DefaultAcrValues:** " + client.getDefaultAcrValues().toString());
 		}
 		sb.append(new UnorderedList<Object>(items)).append("\n");
 		markDown = sb.toString();
