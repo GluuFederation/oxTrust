@@ -105,13 +105,15 @@
 															label="#{_custAttr.metadata.displayName eq 'Gender, male or female' ? 'Gender' : _custAttr.metadata.displayName }  "
 															rendered="#{_custAttr.userCanAccess  and (_custAttr.metadata.dataType.value ne 'photo') and (_custAttr.metadata.displayName ne 'Inum') and (_custAttr.metadata.name ne 'gluuIMAPData')}"
 															template="/WEB-INF/incl/layout/#{_custAttr.userCanEdit  ? 'edit' : 'view'}.xhtml">
-															<div class="col-sm-11">
-																<rich:inplaceInput
+															<div class="col-sm-11" tabindex="0">
+																<h:inputText
+																    tabindex="1"
 																	defaultLabel="click to enter #{_custAttr.metadata.displayName}"
 																	id="custId" inputWidth="300" maxlength="60"
+																	styleClass="form-control"
 																	rendered="#{_custAttr.userCanEdit and _custAttr.metadata.displayName ne 'Gender, male or female' and permissionService.hasPermission(applianceService.appliance, 'profile_management')}"
 																	value="#{_custAttr.value}" />
-																<h:selectOneMenu value="#{_custAttr.value}" styleClass="form-control"
+																<h:selectOneMenu value="#{_custAttr.value}" styleClass="form-control" tabindex="1"
 																  rendered="#{_custAttr.userCanEdit and _custAttr.metadata.displayName eq 'Gender, male or female' and permissionService.hasPermission(applianceService.appliance, 'profile_management')}">
 																	<f:selectItem itemValue="female" itemLabel="female" />
 																	<f:selectItem itemValue="male" itemLabel="male" />
@@ -206,10 +208,12 @@
 															<ox:decorate label="#{msg['profile.imapHost']}"
 																rendered="#{_custAttr.userCanAccess  and (_custAttr.metadata.name eq 'gluuIMAPData')}"
 																template="/WEB-INF/incl/layout/#{_custAttr.userCanEdit  ? 'edit' : 'view'}.xhtml">
-																<div class="col-sm-11">
-																	<rich:inplaceInput
+																<div class="col-sm-11" tabindex="0">
+																	<h:inputText
+																	    tabindex="1"
 																		defaultLabel="click to enter Imap Host" id="custId"
 																		immediate="true" inputWidth="300" maxlength="60"
+																		styleClass="form-control"
 																		rendered="#{_custAttr.userCanEdit and permissionService.hasPermission(applianceService.appliance, 'profile_management')}"
 																		value="#{userProfileAction.imapData.imaphost}" />
 																	<h:outputText
@@ -222,11 +226,13 @@
 															<ox:decorate label="#{msg['profile.imapUsername']}"
 																rendered="#{_custAttr.userCanAccess  and (_custAttr.metadata.name eq 'gluuIMAPData')}"
 																template="/WEB-INF/incl/layout/#{_custAttr.userCanEdit  ? 'edit' : 'view'}.xhtml">
-																<div class="col-sm-11">
-																	<rich:inplaceInput
+																<div class="col-sm-11" tabindex="0">
+																	<h:inputText
+																	    tabindex="1"
 																		defaultLabel="click to enter imap username"
 																		id="custId" immediate="true" inputWidth="300"
 																		maxlength="60"
+																		styleClass="form-control"
 																		rendered="#{_custAttr.userCanEdit and permissionService.hasPermission(applianceService.appliance, 'profile_management')}"
 																		value="#{userProfileAction.imapData.imapusername}" />
 																	<h:outputText
@@ -239,10 +245,12 @@
 															<ox:decorate label="#{msg['profile.imapPort']}"
 																rendered="#{_custAttr.userCanAccess  and (_custAttr.metadata.name eq 'gluuIMAPData')}"
 																template="/WEB-INF/incl/layout/#{_custAttr.userCanEdit  ? 'edit' : 'view'}.xhtml">
-																<div class="col-sm-11">
-																	<rich:inplaceInput
+																<div class="col-sm-11" tabindex="0">
+																	<h:inputText
+																	    tabindex="1"
 																		defaultLabel="click to enter imap port" id="custId"
 																		immediate="true" inputWidth="300" maxlength="60"
+																		styleClass="form-control"
 																		rendered="#{_custAttr.userCanEdit and permissionService.hasPermission(applianceService.appliance, 'profile_management')}"
 																		value="#{userProfileAction.imapData.imapport}" />
 																	<h:outputText
@@ -257,11 +265,13 @@
 																label="#{msg['profile.imapPasswordEncrypted']}"
 																rendered="#{_custAttr.userCanAccess  and (_custAttr.metadata.name eq 'gluuIMAPData')}"
 																template="/WEB-INF/incl/layout/#{_custAttr.userCanEdit  ? 'edit' : 'view'}.xhtml">
-																<div class="col-sm-11">
-																	<rich:inplaceInput
+																<div class="col-sm-11" tabindex="0">
+																	<h:inputText
+																	    tabindex="1"
 																		defaultLabel="click to enter Imap Password encryptedString"
 																		id="custId" immediate="true" inputWidth="300"
 																		maxlength="60"
+																		styleClass="form-control"
 																		rendered="#{_custAttr.userCanEdit and permissionService.hasPermission(applianceService.appliance, 'profile_management')}"
 																		value="#{userProfileAction.imapData.imapPassword.encryptedString}" />
 																	<h:outputText
@@ -274,11 +284,13 @@
 															<ox:decorate label="#{msg['profile.imapPasswordCipher']}"
 																rendered="#{_custAttr.userCanAccess  and (_custAttr.metadata.name eq 'gluuIMAPData')}"
 																template="/WEB-INF/incl/layout/#{_custAttr.userCanEdit  ? 'edit' : 'view'}.xhtml">
-																<div class="col-sm-11">
-																	<rich:inplaceInput
+																<div class="col-sm-11" tabindex="0">
+																	<h:inputText
+																	    tabindex="1"
 																		defaultLabel="click to enter Imap Password encryptedString"
 																		id="custId" immediate="true" inputWidth="300"
 																		maxlength="60"
+																		styleClass="form-control"
 																		rendered="#{_custAttr.userCanEdit and permissionService.hasPermission(applianceService.appliance, 'profile_management')}"
 																		value="#{userProfileAction.imapData.imapPassword.cipher}" />
 																	<h:outputText
@@ -291,11 +303,13 @@
 															<ox:decorate label="#{msg['profile.imapPasswordMode']}"
 																rendered="#{_custAttr.userCanAccess  and (_custAttr.metadata.name eq 'gluuIMAPData')}"
 																template="/WEB-INF/incl/layout/#{_custAttr.userCanEdit  ? 'edit' : 'view'}.xhtml">
-																<div class="col-sm-11">
-																	<rich:inplaceInput
+																<div class="col-sm-11" tabindex="0">
+																	<h:inputText
+																	    tabindex="1"
 																		defaultLabel="click to enter Imap Password mode"
 																		id="custId" immediate="true" inputWidth="300"
 																		maxlength="60"
+																		styleClass="form-control"
 																		rendered="#{_custAttr.userCanEdit and permissionService.hasPermission(applianceService.appliance, 'profile_management')}"
 																		value="#{userProfileAction.imapData.imapPassword.mode}" />
 																	<h:outputText
@@ -365,13 +379,6 @@
 							immediate="true"
 							rendered="#{permissionService.hasPermission(applianceService.appliance, 'profile_management')}"
 							styleClass="btn btn-success" value="Cancel" />
-
-						<!-- 								<div id="updateButtons"> -->
-						<!-- 									<a4j:commandButton value="Change Password" -->
-						<!-- 										styleClass="btn btn-success" -->
-						<!-- 										onclick="#{rich:component('appliancePassword:changePasswordModalPanel')}.show();" /> -->
-
-						<!-- 								</div> -->
 					</div>
 				</h:form>
 			</section>
