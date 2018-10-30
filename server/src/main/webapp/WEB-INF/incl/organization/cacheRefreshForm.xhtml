@@ -65,7 +65,7 @@
 				<div class="col-xs-12">
 					<div class="nav-tabs-custom"
 						style="margin-bottom: 0px; overflow: auto;">
-						<ul class="nav nav-tabs">
+						<ul class="nav nav-tabs" id="cacheRefreshFormtab">
 							<li class="active"><a href="#cache-refresh"
 								data-toggle="tab">#{msg['organization.cacheRefresh']}</a></li>
 							<li><a href="#key-attributes" data-toggle="tab">#{msg['organization.customerBackend']}</a></li>
@@ -337,5 +337,28 @@
 	<h:outputScript>
     calcTime();
     </h:outputScript>
+    <script>
+	    $('#cacheRefreshFormtab a').click(function(e) {
+		  e.preventDefault();
+		  $(this).tab('show');
+		});
+
+		// store the currently selected tab in the local storage
+		$("ul.nav-tabs > li > a").on("shown.bs.tab", function(e) {
+		  var id = $(e.target).attr("href").substr(1);
+		  window.localStorage.setItem('cacheRefreshFormtab', id);
+		  var storeValue = window.localStorage.getItem('cacheRefreshFormtab');
+		});
+     
+		// on load of the page: switch to the currently selected tab
+		 $(document).ready(function() {
+			    var value =  window.localStorage.getItem('cacheRefreshFormtab');
+            	if (value) {
+            		var activeTab = "#";
+            		activeTab = activeTab.concat(value);  
+            		$('#cacheRefreshFormtab a[href="' + activeTab + '"]').tab('show');
+            	}
+       });
+    </script>
 
 </ui:composition>

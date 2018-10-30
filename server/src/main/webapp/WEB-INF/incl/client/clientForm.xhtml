@@ -90,7 +90,7 @@
 					</div>
 					<div class="nav-tabs-custom"
 						style="margin-bottom: 0px; overflow: auto;">
-						<ul class="nav nav-tabs">
+						<ul class="nav nav-tabs" id="oidctab">
 							<li class="active"><a href="#standardSettings"
 								class="StandardTab" data-toggle="tab">#{msg['clientForm.tab.standard']}</a></li>
 							<li><a href="#advancedSettings" class="AdvancedTab"
@@ -208,8 +208,7 @@
 												</ox:decorate>
 												<hr
 													style="height: 1px; background: green; border-color: green; border-width: 0px;"></hr>
-												<ox:decorate id="scopes"
-													label="#{msg['clientForm.scopes']}">
+												<ox:decorate id="scopes" label="#{msg['clientForm.scopes']}">
 													<h:panelGroup id="selectedScopesId">
 														<h:panelGroup>
 															<a4j:repeat value="#{_clientAction.scopes}"
@@ -738,8 +737,7 @@
 												<h:panelGroup id="selectedCustomScriptAcrsId">
 													<h:panelGroup>
 														<a4j:repeat value="#{_clientAction.customScripts}"
-															rowKeyVar="_acrIdx" var="_acr"
-															iterationStatusVar="loop">
+															rowKeyVar="_acrIdx" var="_acr" iterationStatusVar="loop">
 															<div class="row-fluid">
 																<div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
 																	<h:outputText value="#{_acr.name}" />
@@ -1033,6 +1031,29 @@
 
 	</h:form>
 
+	<script>
+	    $('#oidctab a').click(function(e) {
+		  e.preventDefault();
+		  $(this).tab('show');
+		});
+
+		// store the currently selected tab in the local storage
+		$("ul.nav-tabs > li > a").on("shown.bs.tab", function(e) {
+		  var id = $(e.target).attr("href").substr(1);
+		  window.localStorage.setItem('oidctab', id);
+		  var storeValue = window.localStorage.getItem('oidctab');
+		});
+     
+		// on load of the page: switch to the currently selected tab
+		 $(document).ready(function() {
+			    var value =  window.localStorage.getItem('oidctab');
+            	if (value) {
+            		var activeTab = "#";
+            		activeTab = activeTab.concat(value);  
+            		$('#oidctab a[href="' + activeTab + '"]').tab('show');
+            	}
+       });
+    </script>
 	<h:outputScript>
         function togglePersistAuthorization() {
             var trustedClientIdSelect = $("select[id='clientForm:oxAuthTrustedClientBox:trustedClientId']");
