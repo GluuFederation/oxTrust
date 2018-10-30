@@ -1037,18 +1037,21 @@
 		  $(this).tab('show');
 		});
 
-		// store the currently selected tab in the hash value
+		// store the currently selected tab in the local storage
 		$("ul.nav-tabs > li > a").on("shown.bs.tab", function(e) {
 		  var id = $(e.target).attr("href").substr(1);
-		  window.localStorage.setItem('oidcformactiveTab', id)
+		  window.localStorage.setItem('oidctab', id);
+		  var storeValue = window.localStorage.getItem('oidctab');
 		});
      
 		// on load of the page: switch to the currently selected tab
 		 $(document).ready(function() {
-            	var activeTab =  window.localStorage.getItem('oidcformactiveTab');
-            	if (activeTab) {
-        		$('#oidctab a[href="' + activeTab + '"]').tab('show');
-                }
+			    var value =  window.localStorage.getItem('oidctab');
+            	if (value) {
+            		var activeTab = "#";
+            		activeTab = activeTab.concat(value);  
+            		$('#oidctab a[href="' + activeTab + '"]').tab('show');
+            	}
        });
     </script>
 	<h:outputScript>
