@@ -31,7 +31,7 @@
 		<div class="row">
 			<div class="col-xs-12">
 				<div class="nav-tabs-custom" style="margin-bottom: 0px;">
-					<ul class="nav nav-tabs">
+					<ul class="nav nav-tabs" id="customAuthenticationFormtab">
 						<li class="active"><a href="#manage-ldap" data-toggle="tab">#{msg['manageAuthentication.manageLDAPAuthentication']}</a></li>
 						<li><a href="#authentication-recaptcha" data-toggle="tab">#{msg['manageAuthentication.manageAuthenticationRecaptcha']}</a></li>
 						<li><a href="#authentication-method" data-toggle="tab">#{msg['manageAuthentication.defaultAuthentication']}</a></li>
@@ -251,4 +251,28 @@
 
 		<ui:insert name="controlButttons" />
 	</h:form>
+	
+	<script>
+	    $('#customAuthenticationFormtab a').click(function(e) {
+		  e.preventDefault();
+		  $(this).tab('show');
+		});
+
+		// store the currently selected tab in the local storage
+		$("ul.nav-tabs > li > a").on("shown.bs.tab", function(e) {
+		  var id = $(e.target).attr("href").substr(1);
+		  window.localStorage.setItem('customAuthenticationFormtab', id);
+		  var storeValue = window.localStorage.getItem('customAuthenticationFormtab');
+		});
+     
+		// on load of the page: switch to the currently selected tab
+		 $(document).ready(function() {
+			    var value =  window.localStorage.getItem('customAuthenticationFormtab');
+            	if (value) {
+            		var activeTab = "#";
+            		activeTab = activeTab.concat(value);  
+            		$('#customAuthenticationFormtab a[href="' + activeTab + '"]').tab('show');
+            	}
+       });
+    </script>
 </ui:composition>
