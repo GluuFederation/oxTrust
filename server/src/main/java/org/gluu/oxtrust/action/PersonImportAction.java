@@ -52,8 +52,8 @@ import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuStatus;
+import org.xdi.model.GluuUserRole;
 import org.xdi.model.attribute.AttributeDataType;
-import org.xdi.model.user.UserRole;
 import org.xdi.service.security.Secure;
 import org.xdi.util.StringHelper;
 
@@ -562,7 +562,7 @@ public class PersonImportAction implements Serializable {
 	}
 
 	private void initAttributes() {
-		List<GluuAttribute> attributes = attributeService.getAllPersonAttributes(UserRole.ADMIN);
+		List<GluuAttribute> attributes = attributeService.getAllPersonAttributes(GluuUserRole.ADMIN);
 		List<String> origins = attributeService.getAllAttributeOrigins(attributes);
 
 		List<GluuCustomAttribute> customAttributes = this.person.getCustomAttributes();

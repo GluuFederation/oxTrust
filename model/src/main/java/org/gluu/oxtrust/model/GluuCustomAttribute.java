@@ -12,16 +12,17 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlTransient;
-import org.codehaus.jackson.annotate.JsonIgnore;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.gluu.persist.model.base.GluuBoolean;
 import org.xdi.model.GluuAttribute;
-import org.xdi.model.attribute.AttributeDataType;
+import org.xdi.model.GluuAttributeDataType;
 
 /**
  * Attribute
@@ -134,7 +135,7 @@ public class GluuCustomAttribute implements Serializable, Comparable<GluuCustomA
 
 	public String[] getValues() {
 		if (this.metadata != null) {
-			if ((AttributeDataType.BOOLEAN == this.metadata.getDataType()) && this.usedBooleanValues) {
+			if ((GluuAttributeDataType.BOOLEAN == this.metadata.getDataType()) && this.usedBooleanValues) {
 				this.values = toStringValuesFromBooleanValues(this.booleanValues);
 			}
 		}
@@ -247,7 +248,7 @@ public class GluuCustomAttribute implements Serializable, Comparable<GluuCustomA
 		this.metadata = metadata;
 		
 		if (this.metadata != null) {
-			if (AttributeDataType.BOOLEAN == this.metadata.getDataType()) {
+			if (GluuAttributeDataType.BOOLEAN == this.metadata.getDataType()) {
 				this.booleanValues = toBooleanValuesFromStringValues(this.values);
 			}
 		}
