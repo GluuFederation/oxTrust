@@ -6,13 +6,27 @@
 
 package org.gluu.oxtrust.action.uma;
 
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
+import javax.annotation.PreDestroy;
+import javax.enterprise.context.ConversationScoped;
+import javax.faces.application.FacesMessage;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.ImageService;
 import org.gluu.oxtrust.ldap.service.uma.ResourceSetService;
 import org.gluu.oxtrust.ldap.service.uma.ScopeDescriptionService;
-import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.service.custom.CustomScriptService;
@@ -26,27 +40,12 @@ import org.xdi.model.GluuImage;
 import org.xdi.model.SelectableEntity;
 import org.xdi.model.custom.script.CustomScriptType;
 import org.xdi.model.custom.script.model.CustomScript;
-import org.xdi.oxauth.model.uma.UmaMetadata;
 import org.xdi.oxauth.model.uma.persistence.UmaResource;
 import org.xdi.oxauth.model.uma.persistence.UmaScopeDescription;
 import org.xdi.service.JsonService;
 import org.xdi.service.LookupService;
 import org.xdi.service.security.Secure;
 import org.xdi.util.StringHelper;
-
-import javax.annotation.PreDestroy;
-import javax.enterprise.context.ConversationScoped;
-import javax.faces.application.FacesMessage;
-import javax.inject.Inject;
-import javax.inject.Named;
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
 
 /**
  * Action class for view and update UMA resource
@@ -79,24 +78,21 @@ public class UpdateScopeDescriptionAction implements Serializable {
 
 	@Inject
 	private ImageService imageService;
-	
+
 	@Inject
 	private JsonService jsonService;
 
 	@Inject
 	private LookupService lookupService;
-	
+
 	@Inject
 	private CustomScriptService customScriptService;
 
-    @Inject
-   	private UmaMetadata umaMetadataConfiguration;
-    
-    @Inject
-   	private ResourceSetService resourceSetService;
-    
-    @Inject
-   	private ClientService clientService;
+	@Inject
+	private ResourceSetService resourceSetService;
+
+	@Inject
+	private ClientService clientService;
 
 	private String scopeInum;
 
@@ -108,9 +104,9 @@ public class UpdateScopeDescriptionAction implements Serializable {
 	private List<SelectableEntity<CustomScript>> availableAuthorizationPolicies;
 
 	private boolean update;
-	
+
 	private List<OxAuthClient> clientList;
-	
+
 	public List<OxAuthClient> getClientList() {
 		return clientList;
 	}
@@ -170,7 +166,7 @@ public class UpdateScopeDescriptionAction implements Serializable {
 			String scopeDn = scopeDescriptionService.getDnForScopeDescription(this.scopeInum);
 			this.scopeDescription = scopeDescriptionService.getScopeDescriptionByDn(scopeDn);
 			this.authorizationPolicies = getInitialAuthorizationPolicies();
-			
+
 			List<UmaResource> umaResourceList = resourceSetService.findResourcesByScope(scopeDn);
 			if (umaResourceList != null) {
 				for (UmaResource umaResource : umaResourceList) {
@@ -201,7 +197,8 @@ public class UpdateScopeDescriptionAction implements Serializable {
 
 	public String cancel() {
 		if (update) {
-			facesMessages.add(FacesMessage.SEVERITY_INFO, "UMA resource '#{updateScopeDescriptionAction.scopeDescription.displayName}' not updated");
+			facesMessages.add(FacesMessage.SEVERITY_INFO,
+					"UMA resource '#{updateScopeDescriptionAction.scopeDescription.displayName}' not updated");
 		} else {
 			facesMessages.add(FacesMessage.SEVERITY_INFO, "New UMA resource not added");
 		}
@@ -211,22 +208,25 @@ public class UpdateScopeDescriptionAction implements Serializable {
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	public String save() {
-		updateAuthorizationPolicies();
+	public String save() throws Exception {
 		this.scopeDescription.setDisplayName(this.scopeDescription.getDisplayName().trim());
-
+		if (validateDisplayName(this.scopeDescription.getDisplayName())) {
+			return OxTrustConstants.RESULT_FAILURE;
+		}
+		updateAuthorizationPolicies();
 		if (this.update) {
 			// Update scope description
 			try {
 				scopeDescriptionService.updateScopeDescription(this.scopeDescription);
 			} catch (LdapMappingException ex) {
 				log.error("Failed to update scope description '{}'", this.scopeDescription.getId(), ex);
-				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update UMA resource '#{updateScopeDescriptionAction.scopeDescription.displayName}'");
+				facesMessages.add(FacesMessage.SEVERITY_ERROR,
+						"Failed to update UMA resource '#{updateScopeDescriptionAction.scopeDescription.displayName}'");
 				return OxTrustConstants.RESULT_FAILURE;
 			}
-
-	        log.debug("Scope description were updated successfully");
-			facesMessages.add(FacesMessage.SEVERITY_INFO, "UMA resource '#{updateScopeDescriptionAction.scopeDescription.displayName}' updated successfully");
+			log.debug("Scope description were updated successfully");
+			facesMessages.add(FacesMessage.SEVERITY_INFO,
+					"UMA resource '#{updateScopeDescriptionAction.scopeDescription.displayName}' updated successfully");
 
 			return OxTrustConstants.RESULT_SUCCESS;
 		} else {
@@ -241,7 +241,7 @@ public class UpdateScopeDescriptionAction implements Serializable {
 			this.scopeDescription.setInum(inum);
 			this.scopeDescription.setDn(scopeDescriptionDn);
 			this.scopeDescription.setOwner(identity.getUser().getDn());
-            this.scopeDescription.setId(scopeDescription.getId());
+			this.scopeDescription.setId(scopeDescription.getId());
 
 			// Save scope description
 			try {
@@ -250,15 +250,16 @@ public class UpdateScopeDescriptionAction implements Serializable {
 				log.error("Failed to add new UMA resource '{}'", this.scopeDescription.getId(), ex);
 				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new UMA resource");
 
-                return OxTrustConstants.RESULT_FAILURE;
+				return OxTrustConstants.RESULT_FAILURE;
 			}
 
-	        log.debug("Scope description were add successfully");
-			facesMessages.add(FacesMessage.SEVERITY_INFO, "New UMA resource '#{updateScopeDescriptionAction.scopeDescription.displayName}' added successfully");
+			log.debug("Scope description were add successfully");
+			facesMessages.add(FacesMessage.SEVERITY_INFO,
+					"New UMA resource '#{updateScopeDescriptionAction.scopeDescription.displayName}' added successfully");
 			conversationService.endConversation();
 
 			this.update = true;
-			this.scopeInum = inum; 
+			this.scopeInum = inum;
 
 			return OxTrustConstants.RESULT_UPDATE;
 		}
@@ -270,7 +271,8 @@ public class UpdateScopeDescriptionAction implements Serializable {
 			try {
 				scopeDescriptionService.removeScopeDescription(this.scopeDescription);
 
-				facesMessages.add(FacesMessage.SEVERITY_INFO, "UMA resource '#{updateScopeDescriptionAction.scopeDescription.displayName}' removed successfully");
+				facesMessages.add(FacesMessage.SEVERITY_INFO,
+						"UMA resource '#{updateScopeDescriptionAction.scopeDescription.displayName}' removed successfully");
 				conversationService.endConversation();
 
 				return OxTrustConstants.RESULT_SUCCESS;
@@ -279,7 +281,8 @@ public class UpdateScopeDescriptionAction implements Serializable {
 			}
 		}
 
-		facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to remove UMA resource '#{updateScopeDescriptionAction.scopeDescription.displayName}'");
+		facesMessages.add(FacesMessage.SEVERITY_ERROR,
+				"Failed to remove UMA resource '#{updateScopeDescriptionAction.scopeDescription.displayName}'");
 
 		return OxTrustConstants.RESULT_FAILURE;
 	}
@@ -352,7 +355,8 @@ public class UpdateScopeDescriptionAction implements Serializable {
 
 	private List<CustomScript> getInitialAuthorizationPolicies() {
 		List<CustomScript> result = new ArrayList<CustomScript>();
-		if ((this.scopeDescription.getAuthorizationPolicies() == null) || (this.scopeDescription.getAuthorizationPolicies().size() == 0)) {
+		if ((this.scopeDescription.getAuthorizationPolicies() == null)
+				|| (this.scopeDescription.getAuthorizationPolicies().size() == 0)) {
 			return result;
 		}
 
@@ -360,7 +364,8 @@ public class UpdateScopeDescriptionAction implements Serializable {
 				this.scopeDescription.getAuthorizationPolicies());
 		if (displayNameEntries != null) {
 			for (DisplayNameEntry displayNameEntry : displayNameEntries) {
-				result.add(new CustomScript(displayNameEntry.getDn(), displayNameEntry.getInum(), displayNameEntry.getDisplayName()));
+				result.add(new CustomScript(displayNameEntry.getDn(), displayNameEntry.getInum(),
+						displayNameEntry.getDisplayName()));
 			}
 		}
 
@@ -390,11 +395,13 @@ public class UpdateScopeDescriptionAction implements Serializable {
 
 		for (SelectableEntity<CustomScript> availableAuthorizationPolicy : this.availableAuthorizationPolicies) {
 			CustomScript authorizationPolicy = availableAuthorizationPolicy.getEntity();
-			if (availableAuthorizationPolicy.isSelected() && !addedAuthorizationPolicyInums.contains(authorizationPolicy.getInum())) {
+			if (availableAuthorizationPolicy.isSelected()
+					&& !addedAuthorizationPolicyInums.contains(authorizationPolicy.getInum())) {
 				addAuthorizationPolicy(authorizationPolicy);
 			}
 
-			if (!availableAuthorizationPolicy.isSelected() && addedAuthorizationPolicyInums.contains(authorizationPolicy.getInum())) {
+			if (!availableAuthorizationPolicy.isSelected()
+					&& addedAuthorizationPolicyInums.contains(authorizationPolicy.getInum())) {
 				removeAuthorizationPolicy(authorizationPolicy);
 			}
 		}
@@ -418,14 +425,14 @@ public class UpdateScopeDescriptionAction implements Serializable {
 
 		for (Iterator<CustomScript> it = this.authorizationPolicies.iterator(); it.hasNext();) {
 			CustomScript authorizationPolicy = (CustomScript) it.next();
-			
+
 			if (StringHelper.equalsIgnoreCase(removeAuthorizationPolicy.getInum(), authorizationPolicy.getInum())) {
 				it.remove();
 				break;
 			}
 		}
 	}
-	
+
 	public void searchAvailableAuthorizationPolicies() {
 		if (this.availableAuthorizationPolicies != null) {
 			selectAddedAuthorizationPolicies();
@@ -433,13 +440,14 @@ public class UpdateScopeDescriptionAction implements Serializable {
 		}
 
 		try {
-			List<CustomScript> availableScripts = customScriptService.findCustomScripts(Arrays.asList(CustomScriptType.UMA_RPT_POLICY), CUSTOM_SCRIPT_RETURN_ATTRIBUTES);
+			List<CustomScript> availableScripts = customScriptService
+					.findCustomScripts(Arrays.asList(CustomScriptType.UMA_RPT_POLICY), CUSTOM_SCRIPT_RETURN_ATTRIBUTES);
 
 			List<SelectableEntity<CustomScript>> tmpAvailableAuthorizationPolicies = new ArrayList<SelectableEntity<CustomScript>>();
 			for (CustomScript authorizationPolicy : availableScripts) {
 				tmpAvailableAuthorizationPolicies.add(new SelectableEntity<CustomScript>(authorizationPolicy));
 			}
-			
+
 			this.availableAuthorizationPolicies = tmpAvailableAuthorizationPolicies;
 			selectAddedAuthorizationPolicies();
 		} catch (LdapMappingException ex) {
@@ -452,7 +460,8 @@ public class UpdateScopeDescriptionAction implements Serializable {
 		Set<String> addedAuthorizationPolicyInums = getAddedAuthorizationPolicyInums();
 
 		for (SelectableEntity<CustomScript> availableAuthorizationPolicy : this.availableAuthorizationPolicies) {
-			availableAuthorizationPolicy.setSelected(addedAuthorizationPolicyInums.contains(availableAuthorizationPolicy.getEntity().getInum()));
+			availableAuthorizationPolicy.setSelected(
+					addedAuthorizationPolicyInums.contains(availableAuthorizationPolicy.getEntity().getInum()));
 		}
 	}
 
@@ -489,4 +498,20 @@ public class UpdateScopeDescriptionAction implements Serializable {
 	public List<CustomScript> getAuthorizationPolicies() {
 		return authorizationPolicies;
 	}
+
+	private boolean validateDisplayName(String displayName) throws Exception {
+		List<UmaScopeDescription> allScopes = scopeDescriptionService.getAllScopeDescriptions(1000);
+		boolean rejected = false;
+		for (UmaScopeDescription scope : allScopes) {
+			if (scope.getDisplayName().equalsIgnoreCase(displayName)) {
+				rejected = true;
+				break;
+			}
+		}
+		if (rejected) {
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "A UMA scope named '" + displayName + "' already exists");
+		}
+		return rejected;
+	}
+
 }
