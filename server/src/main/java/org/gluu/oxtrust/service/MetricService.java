@@ -23,6 +23,7 @@ import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.model.AuthenticationChartDto;
 import org.gluu.oxtrust.util.OxTrustConstants;
+import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.ldap.impl.LdapEntryManager;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
@@ -66,6 +67,9 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 
 	@Inject
 	private AppConfiguration appConfiguration;
+
+	@Inject
+    private PersistenceEntryManager ldapEntryManager;
 
 	public void initTimer() {
 		initTimer(this.appConfiguration.getMetricReporterInterval());
@@ -246,5 +250,18 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 	public ApplicationType getApplicationType() {
 		return ApplicationType.OX_TRUST;
 	}
+
+	private void dump(List<CounterMetricEntry> metrics) {
+		for (CounterMetricEntry metric : metrics) {
+			Date date = metric.getCreationDate();
+			long count = metric.getMetricData().getCount();
+			System.out.println(date + " : " + count);
+		}
+	}
+
+    @Override
+    public PersistenceEntryManager getEntryManager() {
+        return ldapEntryManager;
+    }
 
 }
