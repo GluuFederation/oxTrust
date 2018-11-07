@@ -23,6 +23,7 @@ import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.model.AuthenticationChartDto;
 import org.gluu.oxtrust.util.OxTrustConstants;
+import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.ApplicationType;
 import org.slf4j.Logger;
@@ -65,6 +66,9 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 
 	@Inject
 	private Logger logger;
+
+	@Inject
+    private LdapEntryManager ldapEntryManager;
 
 	public void initTimer() {
 		initTimer(this.appConfiguration.getMetricReporterInterval());
@@ -253,5 +257,10 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 			System.out.println(date + " : " + count);
 		}
 	}
+
+    @Override
+    public LdapEntryManager getEntryManager() {
+        return ldapEntryManager;
+    }
 
 }
