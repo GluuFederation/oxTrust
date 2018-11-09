@@ -164,5 +164,14 @@ public class JsfFunctions {
 		return CdiUtil.bean(PersistenceEntryManager.class).decodeTime(timeStamp).toGMTString();
 		
 	}
+    
+    public static long hashCode(String value) {
+        if ((value == null) || (value.length() == 0)) {
+            return 0;
+        }
+        
+        return value.hashCode();
+        
+    }
 
 }

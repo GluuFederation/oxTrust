@@ -58,7 +58,7 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 
 	private static final long serialVersionUID = -3823022039248381963L;
 
-	private static final Pattern NAME_PATTERN = Pattern.compile("^[a-zA-Z0-9_-]+$");
+	private static final Pattern NAME_PATTERN = Pattern.compile("^[a-zA-Z0-9_\\-\\:\\/\\.]+$");
 
 	@Inject
 	private Logger log;
