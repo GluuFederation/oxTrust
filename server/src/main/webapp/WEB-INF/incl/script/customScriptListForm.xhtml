@@ -70,7 +70,7 @@
 										<ox:decorate label="#{msg['customScript.name']}" forId="#{msg['customScript.name']}" tooltip="#{msg['customScript.name']}" 
 										leftClass="col-sm-3" rightClass="col-sm-8" >
 										 <h:inputText value="#{_customScript.name}" size="90" required="#{empty param['rq']}" validatorMessage="#{msg['customScript.name.error']}" styleClass="form-control scriptNameTextBox" style="width: 90%;">
-												<f:validateRegex pattern="^[a-zA-Z0-9_-]+$"/>
+												<f:validateRegex pattern="^[a-zA-Z0-9_-:/.]+$"/>
 										</h:inputText>
 										</ox:decorate>
 		                                </div>
