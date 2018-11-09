@@ -9,10 +9,7 @@
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	template="/WEB-INF/incl/layout/fullWidthEmpty.xhtml">
 	<f:metadata>
-		<f:viewParam name="inum" value="#{registerPersonAction.inum}" />
-		<f:viewAction action="#{conversationService.initConversation}" />
-		<f:viewAction action="#{registerPersonAction.initPerson}"
-			if="#{registerPersonAction.person == null}" onPostback="false" />
+		<f:viewAction action="#{authenticator.postLogout}" onPostback="false" />
 	</f:metadata>
 
 	<ui:define name="head">
@@ -44,7 +41,7 @@
 	</ui:define>
 
 	<ui:define name="body">
-	    <div class="login-logo">
+		<div class="login-logo">
 			<object id="logoObject" data="" height="150" width="150"
 				type="image/png">
 				<img
@@ -53,7 +50,7 @@
 		</div>
 		<div class="bs-docs-section"
 			style="border-top: 2px solid #1ab26b !important; margin-bottom: 5px !important; margin-top: 1px !important; padding-top: 1px !important;"></div>
-		<!-- /.login-logo --> 
+		<!-- /.login-logo -->
 		<div class="lockscreen-wrapper" style="text-align: center;">
 			<div class="lockscreen-logo"
 				style="margin-bottom: 0px !important; margin-top: 10%;">
