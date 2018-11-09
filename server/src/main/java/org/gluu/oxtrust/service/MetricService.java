@@ -68,7 +68,7 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 	private Logger logger;
 
 	@Inject
-    private LdapEntryManager ldapEntryManager;
+	private LdapEntryManager ldapEntryManager;
 
 	public void initTimer() {
 		initTimer(this.appConfiguration.getMetricReporterInterval());
@@ -258,9 +258,8 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 		}
 	}
 
-    @Override
-    public LdapEntryManager getEntryManager() {
-        return ldapEntryManager;
-    }
+	public LdapEntryManager getEntryManager() {
+		return ldapEntryManager;
+	}
 
 }
