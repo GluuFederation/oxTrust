@@ -5,7 +5,10 @@
         xsi:schemaLocation="urn:mace:shibboleth:2.0:afp http://shibboleth.net/schema/idp/shibboleth-afp.xsd">
 
 #foreach( $trustRelationship in $trustParams.trusts )
-    #set ($isFederation = ($trustParams.trustEntityIds.get($trustRelationship.inum).size() > 1))
+    #if ($trustParams.trustEntityIds.get($trustRelationship.inum))
+      #set ($isFederation = ($trustParams.trustEntityIds.get($trustRelationship.inum).size() > 1))
+    #else
+    #end
     #if ($trustParams.trustIds.get($trustRelationship.inum))
 
     <!-- Release some attributes to an SP. -->
