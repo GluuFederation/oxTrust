@@ -1,34 +1,27 @@
 package org.gluu.oxtrust.api.openidconnect;
 
-import java.util.List;
-import java.util.UUID;
-
-import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
 import com.google.common.base.Preconditions;
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiResponse;
+import com.wordnik.swagger.annotations.ApiResponses;
 import org.gluu.oxtrust.ldap.service.SectorIdentifierService;
 import org.gluu.oxtrust.model.OxAuthSectorIdentifier;
 import org.gluu.oxtrust.util.OxTrustApiConstants;
 import org.slf4j.Logger;
 
-import com.wordnik.swagger.annotations.ApiOperation;
+import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.util.List;
+import java.util.UUID;
 
-@Path(OxTrustApiConstants.BASE_API_URL + OxTrustApiConstants.SECTORS)
+	@Path(OxTrustApiConstants.BASE_API_URL + OxTrustApiConstants.SECTORS)
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
+@Api(value = OxTrustApiConstants.BASE_API_URL + OxTrustApiConstants.SECTORS, description = "Sector Identifiers webservice")
 public class SectorIdentifierWebResource extends BaseWebResource {
 	@Inject
 	private Logger logger;
@@ -36,11 +29,14 @@ public class SectorIdentifierWebResource extends BaseWebResource {
 	@Inject
 	private SectorIdentifierService sectorIdentifierService;
 
-	public SectorIdentifierWebResource() {
-	}
-
 	@GET
 	@ApiOperation(value = "Get all sectors identifiers")
+	@ApiResponses(
+			value = {
+					@ApiResponse(code = 200, response = OxAuthSectorIdentifier[].class, message = "Success"),
+					@ApiResponse(code = 500, message = "Server error")
+			}
+	)
 	public Response getAllSectorIdentifiers() {
 		try {
 			return Response.ok(sectorIdentifierService.getAllSectorIdentifiers()).build();
@@ -53,6 +49,13 @@ public class SectorIdentifierWebResource extends BaseWebResource {
 	@GET
 	@Path(OxTrustApiConstants.INUM_PARAM_PATH)
 	@ApiOperation(value = "Get a sector identifier")
+	@ApiResponses(
+			value = {
+					@ApiResponse(code = 200, response = OxAuthSectorIdentifier.class, message = "Success"),
+					@ApiResponse(code = 404, message = "Not found"),
+					@ApiResponse(code = 500, message = "Server error")
+			}
+	)
 	public Response getSectorIdentifierById(@PathParam(OxTrustApiConstants.INUM) @NotNull String id) {
 		try {
 			OxAuthSectorIdentifier sectorIdentifier = sectorIdentifierService.getSectorIdentifierById(id);
@@ -70,6 +73,12 @@ public class SectorIdentifierWebResource extends BaseWebResource {
 	@GET
 	@Path(OxTrustApiConstants.SEARCH)
 	@ApiOperation(value = "Search sectors identifiers")
+	@ApiResponses(
+			value = {
+					@ApiResponse(code = 200, response = OxAuthSectorIdentifier[].class, message = "Success"),
+					@ApiResponse(code = 500, message = "Server error")
+			}
+	)
 	public Response searchSectorIdentifier(@QueryParam(OxTrustApiConstants.SEARCH_PATTERN) String pattern,
 			@DefaultValue("10") @QueryParam(value = "size") int size) {
 		try {
@@ -84,6 +93,12 @@ public class SectorIdentifierWebResource extends BaseWebResource {
 
 	@POST
 	@ApiOperation(value = "Add a sector identifier")
+	@ApiResponses(
+			value = {
+					@ApiResponse(code = 200, response = OxAuthSectorIdentifier.class, message = "Success"),
+					@ApiResponse(code = 500, message = "Server error")
+			}
+	)
 	public Response createSectorIdentifier(OxAuthSectorIdentifier identifier) {
 		try {
 			Preconditions.checkNotNull(identifier);
@@ -102,6 +117,13 @@ public class SectorIdentifierWebResource extends BaseWebResource {
 
 	@PUT
 	@ApiOperation(value = "Update sector identifier")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 200, response = OxAuthSectorIdentifier[].class, message = "Success"),
+                    @ApiResponse(code = 404, message = "Not found"),
+                    @ApiResponse(code = 500, message = "Server error")
+            }
+    )
 	public Response updateSectorIdentifier(OxAuthSectorIdentifier identifier) {
 		Preconditions.checkNotNull(identifier);
 		String id = identifier.getId();
@@ -125,12 +147,22 @@ public class SectorIdentifierWebResource extends BaseWebResource {
 
 	@DELETE
 	@Path(OxTrustApiConstants.INUM_PARAM_PATH)
-	@ApiOperation(value = "Delete a sector identifier")
+    @ApiOperation(value = "Delete a sector identifier")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 204, response = OxAuthSectorIdentifier[].class, message = "Success"),
+                    @ApiResponse(code = 404, message = "Not found"),
+                    @ApiResponse(code = 500, message = "Server error")
+            }
+    )
 	public Response deleteSectorIdentifier(@PathParam(OxTrustApiConstants.INUM) @NotNull String id) {
 		try {
 			OxAuthSectorIdentifier sectorIdentifier = sectorIdentifierService.getSectorIdentifierById(id);
+			if (sectorIdentifier == null) {
+				return Response.status(Response.Status.NOT_FOUND).build();
+			}
 			sectorIdentifierService.removeSectorIdentifier(sectorIdentifier);
-			return Response.ok().build();
+			return Response.noContent().build();
 		} catch (Exception e) {
 			log(logger, e);
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
