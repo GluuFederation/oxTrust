@@ -245,7 +245,7 @@ public class UpdateScopeAction implements Serializable {
 	}
 
 	private boolean validateDisplayName(String displayName) throws Exception {
-		List<OxAuthScope> allScopes = scopeService.getAllScopesList();
+		List<OxAuthScope> allScopes = scopeService.searchScopes(displayName, 100);
 		boolean rejected = false;
 		for (OxAuthScope scope : allScopes) {
 			if (scope.getDisplayName().equalsIgnoreCase(displayName)) {
