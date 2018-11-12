@@ -2,7 +2,6 @@ package org.gluu.oxtrust.api.uma;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 
 import javax.inject.Inject;
@@ -19,6 +18,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import com.google.common.base.Preconditions;
 import org.gluu.oxtrust.api.openidconnect.BaseWebResource;
 import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.uma.ResourceSetService;
@@ -51,7 +51,6 @@ public class UmaResourceWebResource extends BaseWebResource {
 	@GET
 	@ApiOperation(value = "Get uma resources")
 	public Response listUmaResources() {
-		log("Get uma resources");
 		try {
 			List<UmaResource> umaResources = umaResourcesService.getAllResources(100);
 			return Response.ok(umaResources).build();
@@ -66,7 +65,6 @@ public class UmaResourceWebResource extends BaseWebResource {
 	@ApiOperation(value = "Search uma resources")
 	public Response searchUmaResources(@QueryParam(OxTrustApiConstants.SEARCH_PATTERN) @NotNull String pattern,
 			@QueryParam(OxTrustApiConstants.SIZE) @NotNull int size) {
-		log("Search uma resources with pattern = " + pattern + " and size = " + size);
 		try {
 			List<UmaResource> ressources = umaResourcesService.findResources(pattern, size);
 			return Response.ok(ressources).build();
@@ -80,9 +78,8 @@ public class UmaResourceWebResource extends BaseWebResource {
 	@Path(OxTrustApiConstants.ID_PARAM_PATH)
 	@ApiOperation(value = "Get a uma resource by id")
 	public Response getUmaResourceById(@PathParam(OxTrustApiConstants.ID) @NotNull String id) {
-		log("Get uma resource by id " + id);
 		try {
-			Objects.requireNonNull(id, "id should not be null");
+			Preconditions.checkNotNull(id, "id should not be null");
 			List<UmaResource> resources = umaResourcesService.findResourcesById(id);
 			if (resources != null && !resources.isEmpty()) {
 				return Response.ok(resources.get(0)).build();
@@ -99,9 +96,8 @@ public class UmaResourceWebResource extends BaseWebResource {
 	@Path(OxTrustApiConstants.ID_PARAM_PATH + OxTrustApiConstants.CLIENTS)
 	@ApiOperation(value = "Get clients of uma resource")
 	public Response getUmaResourceClients(@PathParam(OxTrustApiConstants.ID) @NotNull String id) {
-		log("Get clients of uma resource having id " + id);
 		try {
-			Objects.requireNonNull(id, "id should not be null");
+			Preconditions.checkNotNull(id, "id should not be null");
 			List<UmaResource> resources = umaResourcesService.findResourcesById(id);
 			if (resources != null && !resources.isEmpty()) {
 				UmaResource resource = resources.get(0);
@@ -126,9 +122,8 @@ public class UmaResourceWebResource extends BaseWebResource {
 	@Path(OxTrustApiConstants.ID_PARAM_PATH + OxTrustApiConstants.SCOPES)
 	@ApiOperation(value = "Get scopes of uma resource")
 	public Response getUmaResourceScopes(@PathParam(OxTrustApiConstants.ID) @NotNull String id) {
-		log("Get scopes of uma resource having id " + id);
 		try {
-			Objects.requireNonNull(id, "id should not be null");
+			Preconditions.checkNotNull(id, "id should not be null");
 			List<UmaResource> resources = umaResourcesService.findResourcesById(id);
 			if (resources != null && !resources.isEmpty()) {
 				UmaResource resource = resources.get(0);
@@ -154,10 +149,9 @@ public class UmaResourceWebResource extends BaseWebResource {
 	@Path(OxTrustApiConstants.ID_PARAM_PATH + OxTrustApiConstants.CLIENTS + OxTrustApiConstants.INUM_PARAM_PATH)
 	public Response addClientToUmaResource(@PathParam(OxTrustApiConstants.ID) @NotNull String id,
 			@PathParam(OxTrustApiConstants.INUM) @NotNull String clientInum) {
-		log("Add client " + clientInum + " to uma resource " + id);
 		try {
-			Objects.requireNonNull(id, "Uma id should not be null");
-			Objects.requireNonNull(clientInum, "Client inum should not be null");
+			Preconditions.checkNotNull(id, "Uma id should not be null");
+			Preconditions.checkNotNull(clientInum, "Client inum should not be null");
 			List<UmaResource> resources = umaResourcesService.findResourcesById(id);
 			OxAuthClient client = clientService.getClientByInum(clientInum);
 			if (resources != null && !resources.isEmpty() && client != null) {
@@ -184,10 +178,9 @@ public class UmaResourceWebResource extends BaseWebResource {
 	@Path(OxTrustApiConstants.ID_PARAM_PATH + OxTrustApiConstants.CLIENTS + OxTrustApiConstants.INUM_PARAM_PATH)
 	public Response removeClientToUmaResource(@PathParam(OxTrustApiConstants.ID) @NotNull String id,
 			@PathParam(OxTrustApiConstants.INUM) @NotNull String clientInum) {
-		log("Remove client " + clientInum + " from uma resource " + id);
 		try {
-			Objects.requireNonNull(id, "Uma id should not be null");
-			Objects.requireNonNull(clientInum, "Client inum should not be null");
+			Preconditions.checkNotNull(id, "Uma id should not be null");
+			Preconditions.checkNotNull(clientInum, "Client inum should not be null");
 			List<UmaResource> resources = umaResourcesService.findResourcesById(id);
 			OxAuthClient client = clientService.getClientByInum(clientInum);
 			if (resources != null && !resources.isEmpty() && client != null) {
@@ -214,10 +207,9 @@ public class UmaResourceWebResource extends BaseWebResource {
 	@Path(OxTrustApiConstants.ID_PARAM_PATH + OxTrustApiConstants.SCOPES + OxTrustApiConstants.INUM_PARAM_PATH)
 	public Response addScopeToUmaResource(@PathParam(OxTrustApiConstants.ID) @NotNull String id,
 			@PathParam(OxTrustApiConstants.INUM) @NotNull String scopeInum) {
-		log("Add scope " + scopeInum + " to uma resource " + id);
 		try {
-			Objects.requireNonNull(id, "Uma id should not be null");
-			Objects.requireNonNull(scopeInum, "scope inum should not be null");
+			Preconditions.checkNotNull(id, "Uma id should not be null");
+			Preconditions.checkNotNull(scopeInum, "scope inum should not be null");
 			List<UmaResource> resources = umaResourcesService.findResourcesById(id);
 			UmaScopeDescription umaScope = scopeDescriptionService.getUmaScopeByInum(scopeInum);
 			if (resources != null && !resources.isEmpty() && umaScope != null) {
@@ -244,10 +236,9 @@ public class UmaResourceWebResource extends BaseWebResource {
 	@Path(OxTrustApiConstants.ID_PARAM_PATH + OxTrustApiConstants.SCOPES + OxTrustApiConstants.INUM_PARAM_PATH)
 	public Response removeScopeToUmaResource(@PathParam(OxTrustApiConstants.ID) @NotNull String id,
 			@PathParam(OxTrustApiConstants.INUM) @NotNull String scopeInum) {
-		log("Remove scope " + scopeInum + " from uma resource " + id);
 		try {
-			Objects.requireNonNull(id, "Uma id should not be null");
-			Objects.requireNonNull(scopeInum, "scope inum should not be null");
+			Preconditions.checkNotNull(id, "Uma id should not be null");
+			Preconditions.checkNotNull(scopeInum, "scope inum should not be null");
 			List<UmaResource> resources = umaResourcesService.findResourcesById(id);
 			UmaScopeDescription umaScope = scopeDescriptionService.getUmaScopeByInum(scopeInum);
 			if (resources != null && !resources.isEmpty() && umaScope != null) {
@@ -272,9 +263,8 @@ public class UmaResourceWebResource extends BaseWebResource {
 	@POST
 	@ApiOperation(value = "Add new uma resource")
 	public Response createUmaResource(UmaResource umaResource) {
-		log("Add new uma resource");
 		try {
-			Objects.requireNonNull(umaResource, "Attempt to create null resource");
+			Preconditions.checkNotNull(umaResource, "Attempt to create null resource");
 			if (umaResource.getId() == null) {
 				umaResource.setId(UUID.randomUUID().toString());
 			}
@@ -294,10 +284,9 @@ public class UmaResourceWebResource extends BaseWebResource {
 	@ApiOperation(value = "Update uma resource")
 	public Response updateUmaResource(UmaResource umaResource) {
 		String id = umaResource.getId();
-		log("Update uma resource having id " + id);
 		try {
-			Objects.requireNonNull(id, " id should not be null");
-			Objects.requireNonNull(umaResource, "Attempt to update null uma resource");
+			Preconditions.checkNotNull(id, " id should not be null");
+			Preconditions.checkNotNull(umaResource, "Attempt to update null uma resource");
 			List<UmaResource> existingResources = umaResourcesService.findResourcesById(id);
 			if (existingResources != null && !existingResources.isEmpty()) {
 				umaResource.setDn(umaResourcesService.getDnForResource(id));
@@ -316,7 +305,6 @@ public class UmaResourceWebResource extends BaseWebResource {
 	@Path(OxTrustApiConstants.ID_PARAM_PATH)
 	@ApiOperation(value = "Delete a uma resource")
 	public Response deleteUmaResource(@PathParam(OxTrustApiConstants.ID) @NotNull String id) {
-		log("Delete a uma resource having id " + id);
 		try {
 			List<UmaResource> resources = umaResourcesService.findResourcesById(id);
 			if (resources != null && !resources.isEmpty()) {
@@ -329,9 +317,5 @@ public class UmaResourceWebResource extends BaseWebResource {
 			log(logger, e);
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 		}
-	}
-
-	private void log(String message) {
-		logger.debug("################# Request: " + message);
 	}
 }
