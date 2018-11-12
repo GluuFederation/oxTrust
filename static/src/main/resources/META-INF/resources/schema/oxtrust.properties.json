@@ -181,11 +181,6 @@
             "format": "url",
             "minLength": 1
         },
-        "velocityLog": {
-            "id": "velocityLog",
-            "type": "string",
-            "minLength": 1
-        },
         "spMetadataPath": {
             "id": "spMetadataPath",
             "type": "string",
@@ -662,7 +657,6 @@
         "keystorePassword",
         "allowPersonModification",
         "idpUrl",
-        "velocityLog",
         "spMetadataPath",
         "logoLocation",
         "idpSecurityKey",
