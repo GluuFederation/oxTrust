@@ -66,10 +66,6 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 
 	@Inject
 	private AppConfiguration appConfiguration;
-	
-	@Inject
-	private LdapEntryManager ldapEntryManager;
-
 
 	public void initTimer() {
 		initTimer(this.appConfiguration.getMetricReporterInterval());
@@ -249,18 +245,6 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 	@Override
 	public ApplicationType getApplicationType() {
 		return ApplicationType.OX_TRUST;
-	}
-
-	private void dump(List<CounterMetricEntry> metrics) {
-		for (CounterMetricEntry metric : metrics) {
-			Date date = metric.getCreationDate();
-			long count = metric.getMetricData().getCount();
-			System.out.println(date + " : " + count);
-		}
-	}
-
-	public LdapEntryManager getEntryManager() {
-		return ldapEntryManager;
 	}
 
 }
