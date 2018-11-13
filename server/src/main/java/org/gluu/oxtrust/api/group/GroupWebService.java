@@ -5,126 +5,138 @@
  */
 package org.gluu.oxtrust.api.group;
 
-import java.util.List;
-
-import javax.annotation.security.DeclareRoles;
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiResponse;
+import com.wordnik.swagger.annotations.ApiResponses;
+import com.wordnik.swagger.annotations.ResponseHeader;
 import org.gluu.oxtrust.ldap.service.IGroupService;
 import org.gluu.oxtrust.model.GluuGroup;
-import org.gluu.oxtrust.service.filter.ProtectedApi;
-import org.gluu.oxtrust.util.OxTrustConstants;
+import org.gluu.oxtrust.util.OxTrustApiConstants;
 import org.slf4j.Logger;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import javax.inject.Inject;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
+import java.util.List;
 
-/**
- * WS endpoint for Group actions.
- * 
- * @author Shekhar L.
- */
-@Path("/api/v1/group")
-@Consumes({ MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN })
-@DeclareRoles("administrator")
-@ProtectedApi(scopes = { "/api/group/access" })
+@Path(OxTrustApiConstants.BASE_API_URL + "/v1/group")
+@Consumes(MediaType.APPLICATION_JSON)
+@Produces(MediaType.APPLICATION_JSON)
 public class GroupWebService {
-    
-    @Inject
-    private Logger logger;    
 
-	@Inject
-	private IGroupService groupService;
-    
-    //TODO
-    
+    @Inject
+    private Logger logger;
+
+    @Inject
+    private IGroupService groupService;
+
     @GET
-    @Path("/read/{inum}")
-    @Produces(MediaType.APPLICATION_JSON)
-    @ProtectedApi(scopes = { "/api/group/read" })
-    public GluuGroup read(@PathParam("inum") String inum, @Context HttpServletResponse response) {
+    @ApiOperation(value = "Get all the groups")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 200, response = GluuGroup.class, message = "Success"),
+                    @ApiResponse(code = 500, message = "Server error")
+            }
+    )
+    public Response list() {
+        try {
+            List<GluuGroup> groupList = groupService.getAllGroups();
+            return Response.ok(groupList).build();
+        } catch (Exception e) {
+            logger.error("delete() Exception", e);
+            return Response.serverError().build();
+        }
+    }
+
+    @GET
+    @Path("/{inum}")
+    @ApiOperation(value = "Find a group by inum")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 200, response = GluuGroup.class, message = "Success"),
+                    @ApiResponse(code = 500, message = "Server error")
+            }
+    )
+    public Response read(@PathParam("inum") String inum) {
         try {
             GluuGroup gluuGroup = groupService.getGroupByInum(inum);
-
-            return gluuGroup;
+            return Response.ok(gluuGroup).build();
         } catch (Exception e) {
             logger.error("read() Exception", e);
-            try { response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "INTERNAL SERVER ERROR"); } catch (Exception ex) {}
-            return null;
+            return Response.serverError().build();
         }
     }
-    
+
     @POST
-    @Path("/create")
-    @Produces(MediaType.TEXT_PLAIN)
-    public String create(GluuGroup gluuGroup, @Context HttpServletResponse response) {
+    @ApiOperation(value = "Create a new group")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 201, responseHeaders = {@ResponseHeader(name = "Location", description = "url of the created group")}, message = "Success"),
+                    @ApiResponse(code = 500, message = "Server error")
+            }
+    )
+    public Response create(GluuGroup gluuGroup, @Context UriInfo uriInfo) {
         try {
-            String inum = null;
-            //TODO
-            return inum;
+            Group group = new Group(gluuGroup);
+            group.save(groupService);
+
+            return Response.created(uriInfo.getAbsolutePathBuilder()
+                    .path(GroupWebService.class)
+                    .path(String.format("/%s", group.id())).build()).build();
         } catch (Exception e) {
             logger.error("create() Exception", e);
-            try { response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "INTERNAL SERVER ERROR"); } catch (Exception ex) {}
-            return null;
+            return Response.serverError().build();
         }
     }
-    
+
     @PUT
-    @Path("/update/{inum}")
-    @Produces(MediaType.TEXT_PLAIN)
-    public String update(@PathParam("inum") String inum, GluuGroup gluuGroup, @Context HttpServletResponse response) {
+    @Path("/{inum}")
+    @ApiOperation(value = "Update a group by inum")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 204, message = "Success"),
+                    @ApiResponse(code = 404, message = "inum not found"),
+                    @ApiResponse(code = 500, message = "Server error")
+            }
+    )
+    public Response update(@PathParam("inum") String inum, GluuGroup gluuGroup) {
         try {
-            //TODO
-            return OxTrustConstants.RESULT_SUCCESS;
+            Group group = new Group(gluuGroup);
+            group.update(inum, groupService);
+
+            return Response.noContent().build();
         } catch (Exception e) {
             logger.error("update() Exception", e);
-            try { response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "INTERNAL SERVER ERROR"); } catch (Exception ex) {}
-            return OxTrustConstants.RESULT_FAILURE;
+            return Response.serverError().build();
         }
     }
-    
+
     @DELETE
-    @Path("/delete/{inum}")
-    @Produces(MediaType.TEXT_PLAIN)
-    public String delete(@PathParam("inum") String inum, @Context HttpServletResponse response) {
+    @Path("/{inum}")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 204, message = "Success"),
+                    @ApiResponse(code = 404, message = "inum not found"),
+                    @ApiResponse(code = 500, message = "Server error")
+            }
+    )
+    public Response delete(@PathParam("inum") String inum) {
         try {
-            //TODO
-            return OxTrustConstants.RESULT_SUCCESS;
+            GluuGroup group = groupService.getGroupByInum(inum);
+            if (group == null) {
+                return Response.status(Response.Status.NOT_FOUND).build();
+            }
+            groupService.removeGroup(group);
+
+            return Response.noContent().build();
         } catch (Exception e) {
             logger.error("delete() Exception", e);
-            try { response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "INTERNAL SERVER ERROR"); } catch (Exception ex) {}
-            return OxTrustConstants.RESULT_FAILURE;
+            return Response.serverError().build();
         }
     }
-    
-    @GET
-    @Path("/list")
-    @Produces(MediaType.APPLICATION_JSON)
-    public String list(@Context HttpServletResponse response) {
-        try {
-        	
-            List <GluuGroup> groupList = groupService.getAllGroups();
-            ObjectMapper mapper = new ObjectMapper();
-            String gluuList = mapper.writeValueAsString(groupList);
-            response.setStatus(HttpServletResponse.SC_OK);
-            return gluuList;
-            
-        } catch (Exception e) {
-            logger.error("delete() Exception", e);
-            try { response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "INTERNAL SERVER ERROR"); } catch (Exception ex) {}
-            return OxTrustConstants.RESULT_FAILURE;
-        }
-    }
-    
-    
+
+
 }
