@@ -33,6 +33,8 @@ import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.security.Identity;
+import org.gluu.oxtrust.service.config.organization.WebKeySettingsService;
+import org.gluu.oxtrust.service.config.smtp.SmtpConfigurationService;
 import org.gluu.oxtrust.service.render.RenderService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.exception.BasePersistenceException;
@@ -95,6 +97,12 @@ public class UpdateOrganizationAction implements Serializable {
     @Inject
     private RenderService renderService;
 
+    @Inject
+	private SmtpConfigurationService smtpConfigurationService;
+
+    @Inject
+	private WebKeySettingsService webKeySettingsService;
+
 	private GluuOrganization organization;
 
 	protected GluuImage oldLogoImage, curLogoImage;
@@ -105,7 +113,7 @@ public class UpdateOrganizationAction implements Serializable {
 	private GluuImage curFaviconImage, oldFaviconImage;
 
 	private GluuAppliance appliance;
-	
+
 	private List<GluuAppliance> appliances;
 
 	private boolean initialized;
@@ -174,14 +182,8 @@ public class UpdateOrganizationAction implements Serializable {
 	}
 
 	private void initOxAuthSetting(){
-		String configurationDn = configurationFactory.getConfigurationDn();
 		try {
-			 ldapOxAuthConfiguration =  organizationService.getOxAuthSetting(configurationDn);
-			 this.webKeysSettings =  ldapOxAuthConfiguration.getOxWebKeysSettings() ;
-			 
-			 if(webKeysSettings == null){
-				 webKeysSettings = new WebKeysSettings(); 
-			 } 			 
+			webKeysSettings = webKeySettingsService.find();
 		} catch (BasePersistenceException ex) {
 			log.error("Failed to load configuration from LDAP");
 		}
@@ -209,9 +211,6 @@ public class UpdateOrganizationAction implements Serializable {
 			setCustomMessages();
 			organizationService.updateOrganization(this.organization);
 
-			// Encrypt password and prepare SMTP configuration
-			applianceService.encryptedSmtpPassword(smtpConfiguration);
-			
 			updateAppliance();
 
 			saveWebKeySettings();
@@ -232,6 +231,8 @@ public class UpdateOrganizationAction implements Serializable {
 	}
 	
 	private void updateAppliance() {
+		smtpConfigurationService.save(this.smtpConfiguration);
+
 	    GluuAppliance applianceUpdate = applianceService.getAppliance();
 	    
 	    // Update properties which user might update
@@ -260,11 +261,6 @@ public class UpdateOrganizationAction implements Serializable {
 	}
 
 	public String verifySmtpConfiguration() {
-		log.info("HostName: " + smtpConfiguration.getHost() + " Port: " + smtpConfiguration.getPort() + " RequireSSL: " + smtpConfiguration.isRequiresSsl()
-				+ " RequireSSL: " + smtpConfiguration.isRequiresAuthentication());
-		log.debug("UserName: " + smtpConfiguration.getUserName() + " Password: " + smtpConfiguration.getPasswordDecrypted());
-
-
 		String messageSubject = facesMessages.evalResourceAsString("#{msg['mail.verify.message.subject']}");
 		String messagePlain = facesMessages.evalResourceAsString("#{msg['mail.verify.message.plain.body']}");
 		String messageHtml = facesMessages.evalResourceAsString("#{msg['mail.verify.message.html.body']}");
@@ -276,7 +272,6 @@ public class UpdateOrganizationAction implements Serializable {
 				messageSubject, messagePlain, messageHtml);
 
 		if (result) {
-			log.info("Connection Successful");
 			facesMessages.add(FacesMessage.SEVERITY_INFO, "SMTP Test succeeded!");
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
@@ -291,18 +286,9 @@ public class UpdateOrganizationAction implements Serializable {
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
 		try {
-			this.appliance = applianceService.getAppliance();
-			if (this.appliance == null) {
-				return OxTrustConstants.RESULT_FAILURE;
-			}
-			this.smtpConfiguration = this.appliance.getSmtpConfiguration(); 
-			if (this.smtpConfiguration == null) {
-				this.smtpConfiguration = new SmtpConfiguration();
-				this.appliance.setSmtpConfiguration(smtpConfiguration);
-			}
-			
-			applianceService.decryptSmtpPassword(smtpConfiguration);
- 
+			this.smtpConfiguration = smtpConfigurationService.findSmtpConfiguration();
+			appliance = applianceService.getAppliance();
+			appliance.setSmtpConfiguration(smtpConfiguration);
 			return OxTrustConstants.RESULT_SUCCESS;
 		} catch (Exception ex) {
 			log.error("an error occured", ex);

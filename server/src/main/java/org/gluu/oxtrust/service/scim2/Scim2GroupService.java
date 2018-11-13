@@ -84,14 +84,16 @@ public class Scim2GroupService implements Serializable {
         Set<Member> members=res.getMembers();
         if (members!=null && members.size()>0){
             List<String> listMembers = new ArrayList<String>();
+            List<Member> invalidMembers = new ArrayList<Member>();
 
             for (Member member : members){
                 String inum=member.getValue();  //it's not null as it is required in GroupResource
                 GluuCustomPerson person=personService.getPersonByInum(inum);
 
-                if (person==null)
+                if (person == null) {
                     log.info("Member identified by {} does not exist. Ignored", inum);
-                else{
+                    invalidMembers.add(member);
+                } else {
                     member.setDisplay(person.getDisplayName());
                     member.setRef(usersUrl + "/" + inum);
                     member.setType(ScimResourceUtil.getType(UserResource.class));
@@ -100,6 +102,10 @@ public class Scim2GroupService implements Serializable {
                 }
             }
             group.setMembers(listMembers);
+
+            members.removeAll(invalidMembers);
+            members = members.size() == 0 ? null : members;
+            res.setMembers(members);
         }
     }
 

@@ -6,6 +6,14 @@
 
 package org.gluu.oxtrust.action;
 
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.Map;
+
+import javax.enterprise.context.ConversationScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.model.GluuAppliance;
@@ -16,16 +24,9 @@ import org.slf4j.Logger;
 import org.xdi.service.JsonService;
 import org.xdi.service.security.Secure;
 
-import javax.enterprise.context.ConversationScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.Map;
-
 /**
  * Action class for configuring log viewer
- *
+ * 
  * @author Yuriy Movchan Date: 07/08/2013
  */
 @ConversationScoped
@@ -37,7 +38,7 @@ public class ViewLogFileAction implements Serializable {
 
 	@Inject
 	private Logger log;
-
+	
 	@Inject
 	private ApplianceService applianceService;
 
@@ -94,9 +95,8 @@ public class ViewLogFileAction implements Serializable {
 
 	public String getTailOfLogFile() {
 		if (this.activeLogFileIndex == -1) {
-			return "No Content available";
+			return "No content available";
 		}
-
 		try {
 			return this.logFilesService.logTailById(activeLogFileIndex, displayLastLinesCount);
 		} catch (IOException ex) {
@@ -115,6 +115,7 @@ public class ViewLogFileAction implements Serializable {
 		setCurrentLogFileName(this.logFilesService.getLogName(activeLogFileIndex));
 	}
 
+
 	public int getDisplayLastLinesCount() {
 		return displayLastLinesCount;
 	}
@@ -130,5 +131,7 @@ public class ViewLogFileAction implements Serializable {
 	public void setCurrentLogFileName(String currentLogFileName) {
 		this.currentLogFileName = currentLogFileName;
 	}
+	
+	
 
 }

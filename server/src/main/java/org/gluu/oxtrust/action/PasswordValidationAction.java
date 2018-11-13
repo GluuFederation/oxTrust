@@ -94,12 +94,22 @@ public class PasswordValidationAction implements Cloneable, Serializable {
 					facesMessages.add(FacesMessage.SEVERITY_ERROR, "Old password isn't valid!",
 							"Old password isn't valid!");
 				}
+			} else {
+				person.setUserPassword(this.password);
+				personService.updatePerson(person);
+				oxTrustAuditService.audit(
+						"USER " + person.getInum() + " **" + person.getDisplayName() + "** PASSWORD UPDATED",
+						identity.getUser(),
+						(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
+				facesMessages.add(FacesMessage.SEVERITY_INFO, "Successfully changed!", "Successfully changed!");
 			}
 		} else {
 			if (this.password.equals(this.confirm)) {
 				person.setUserPassword(this.password);
 				personService.updatePerson(person);
-				oxTrustAuditService.audit("USER " + person.getInum() + " **"+person.getDisplayName()+"** PASSWORD UPDATED", identity.getUser(),
+				oxTrustAuditService.audit(
+						"USER " + person.getInum() + " **" + person.getDisplayName() + "** PASSWORD UPDATED",
+						identity.getUser(),
 						(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 				facesMessages.add(FacesMessage.SEVERITY_INFO, "Successfully changed!", "Successfully changed!");
 			} else {
@@ -107,6 +117,16 @@ public class PasswordValidationAction implements Cloneable, Serializable {
 						"Password and confirm password value don't match");
 			}
 		}
+	}
+
+	public void notifyBindPasswordChange() {
+		facesMessages.add(FacesMessage.SEVERITY_INFO, "Bind password successfully changed!",
+				"Bind password successfully changed!");
+	}
+
+	public void notifyClientPasswordChange() {
+		facesMessages.add(FacesMessage.SEVERITY_INFO, "Client secret successfully changed!",
+				"Client secret successfully changed!");
 	}
 
 	public UIComponent getGraphValidator() {

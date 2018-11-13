@@ -2,7 +2,6 @@ package org.gluu.oxtrust.api.attributes;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
@@ -19,6 +18,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import com.google.common.base.Preconditions;
 import org.gluu.oxtrust.api.openidconnect.BaseWebResource;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.util.OxTrustApiConstants;
@@ -45,7 +45,6 @@ public class AttributeWebResource extends BaseWebResource {
 	@GET
 	@ApiOperation(value = "Get all attributes")
 	public Response getAllAttributes() {
-		log("Get all attributes");
 		try {
 			List<GluuAttribute> gluuAttributes = attributeService.getAllAttributes();
 			return Response.ok(gluuAttributes).build();
@@ -59,7 +58,6 @@ public class AttributeWebResource extends BaseWebResource {
 	@Path(OxTrustApiConstants.ACTIVE)
 	@ApiOperation(value = "Get all actives attributes")
 	public Response getAllActivesAttributes() {
-		log("Get all actives attributes");
 		try {
 			List<GluuAttribute> gluuActivesAttributes = new ArrayList<GluuAttribute>();
 			List<GluuAttribute> gluuAttributes = attributeService.getAllAttributes();
@@ -79,7 +77,6 @@ public class AttributeWebResource extends BaseWebResource {
 	@Path(OxTrustApiConstants.INACTIVE)
 	@ApiOperation(value = "Get all inactives attributes")
 	public Response getAllInActivesAttributes() {
-		log("Get all inactives attributes");
 		try {
 			List<GluuAttribute> gluuInActivesAttributes = new ArrayList<GluuAttribute>();
 			List<GluuAttribute> gluuAttributes = attributeService.getAllAttributes();
@@ -100,8 +97,7 @@ public class AttributeWebResource extends BaseWebResource {
 	@ApiOperation(value = "Get attribute by inum")
 	public Response getAttributeByInum(@PathParam(OxTrustApiConstants.INUM) @NotNull String inum) {
 		try {
-			Objects.requireNonNull(inum);
-			log("Get attribute by inum : " + inum);
+			Preconditions.checkNotNull(inum);
 			return Response.ok(attributeService.getAttributeByInum(inum)).build();
 		} catch (Exception e) {
 			log(logger, e);
@@ -114,7 +110,6 @@ public class AttributeWebResource extends BaseWebResource {
 	@ApiOperation(value = "Search attributes")
 	public Response searchAttributes(@QueryParam(OxTrustApiConstants.SEARCH_PATTERN) @NotNull String pattern,
 			@DefaultValue("1") @QueryParam(OxTrustApiConstants.SIZE) int size) {
-		log("Search attributes with pattern = " + pattern + " and size " + size);
 		try {
 			List<GluuAttribute> attributes = attributeService.searchAttributes(pattern, size);
 			return Response.ok(attributes).build();
@@ -127,9 +122,8 @@ public class AttributeWebResource extends BaseWebResource {
 	@POST
 	@ApiOperation(value = "Add new attribute")
 	public Response createAttribute(GluuAttribute gluuAttribute) {
-		log("Add new attribute");
 		try {
-			Objects.requireNonNull(gluuAttribute, "Attempt to create null attribute");
+			Preconditions.checkNotNull(gluuAttribute, "Attempt to create null attribute");
 			String inum = attributeService.generateInumForNewAttribute();
 			gluuAttribute.setInum(inum);
 			gluuAttribute.setDn(attributeService.getDnForAttribute(inum));
@@ -145,9 +139,9 @@ public class AttributeWebResource extends BaseWebResource {
 	@ApiOperation(value = "Update new attribute")
 	public Response updateAttribute(GluuAttribute gluuAttribute) {
 		try {
-			Objects.requireNonNull(gluuAttribute, "Attempt to update null attribute");
+			Preconditions.checkNotNull(gluuAttribute, "Attempt to update null attribute");
 			String inum = gluuAttribute.getInum();
-			log("Update new attribute " + inum);
+
 			GluuAttribute existingAttribute = attributeService.getAttributeByInum(inum);
 			if (existingAttribute != null) {
 				gluuAttribute.setInum(existingAttribute.getInum());
@@ -166,9 +160,8 @@ public class AttributeWebResource extends BaseWebResource {
 	@Path(OxTrustApiConstants.INUM_PARAM_PATH)
 	@ApiOperation(value = "Delete an attribute")
 	public Response deleteAttribute(@PathParam(OxTrustApiConstants.INUM) @NotNull String inum) {
-		log("Delete an attribute " + inum);
 		try {
-			Objects.requireNonNull(inum);
+			Preconditions.checkNotNull(inum);
 			GluuAttribute gluuAttribute = attributeService.getAttributeByInum(inum);
 			if (gluuAttribute != null) {
 				attributeService.removeAttribute(gluuAttribute);
@@ -180,10 +173,6 @@ public class AttributeWebResource extends BaseWebResource {
 			log(logger, e);
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 		}
-	}
-
-	private void log(String message) {
-		logger.debug("################# Request: " + message);
 	}
 
 }

@@ -30,7 +30,7 @@
     <navigation-case>
       <from-action>#{registerPersonAction.register}</from-action>
       <from-outcome>disabled</from-outcome>
-      <to-view-id>/login.xhtml</to-view-id>
+      <to-view-id>/postRegister.xhtml</to-view-id>
       <redirect/>
     </navigation-case>
 

@@ -1,249 +1,280 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:a4j="http://richfaces.org/a4j"
-                xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:h="http://xmlns.jcp.org/jsf/html"
-                xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox" xmlns:rich="http://richfaces.org/rich"
-                xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
-                xmlns:ui="http://xmlns.jcp.org/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
-    <f:metadata>
-       	<f:viewParam name="resource" value="#{updateResourceAction.oxId}" />
-        <f:viewAction action="#{conversationService.initConversation}" />
-        <f:viewAction action="#{updateResourceAction.modify}" onPostback="false"/>
-    </f:metadata>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/WEB-INF/incl/layout/newtemplate.xhtml">
+	<f:metadata>
+		<f:viewParam name="resource" value="#{updateResourceAction.oxId}" />
+		<f:viewAction action="#{conversationService.initConversation}" />
+		<f:viewAction action="#{updateResourceAction.modify}"
+			onPostback="false" />
+	</f:metadata>
 
-    <ui:define name="body">
-    <link href="#{oxTrustConfigurationService.cssLocation}/../stylesheet/query-builder.default.min.css"     rel="stylesheet" type="text/css"/>
-    <script src="#{oxTrustConfigurationService.jsLocation}/query-builder.standalone.min.js"></script>
-    
-        <section class="content-header">
-            <h1 style="color: #333;">
-                #{msg['uma.uma']}
-                <small>
-                    <i class="fa fa-caret-right" style="color: #333 !important;"/> #{msg['uma.resources']}</small>
-                <small>
-                    <i class="fa fa-caret-right" style="color: #333 !important;"/> #{msg['uma.updateResources']}</small>
-            </h1>
-            <ol class="breadcrumb">
-                <li>
-                    <a href="#{request.contextPath}/home">
-                        <i class="fa fa-home"/>
-                    </a>
-                </li>
-                <li class="organization/configuration">
-                    <a href="#{request.contextPath}/uma/resourcehome">#{msg['uma.resourcesAndScopes']}</a>
-                </li>
-                <li class="organization/configuration">
-                    <a href="#{request.contextPath}/uma/resource/add">#{msg['uma.updateResources']}</a>
-                </li>
-            </ol>
-        </section>
+	<ui:define name="body">
+		<link
+			href="#{oxTrustConfigurationService.cssLocation}/../stylesheet/query-builder.default.min.css"
+			rel="stylesheet" type="text/css" />
+		<script
+			src="#{oxTrustConfigurationService.jsLocation}/interact.min.js"></script>
+		<script
+			src="#{oxTrustConfigurationService.jsLocation}/query-builder.standalone.min.js"></script>
 
-        <section class="content">
-            <div class="row">
-                <div class="col-xs-12">
-                    <div class="box box-primary">
-                        <div class="box-header">
-                        </div>
-                        <div style="display: inline-block; width: 100% !important;">
-                            <h:panelGroup id="formArea" layout="block">
-                                <h:outputStylesheet>
+
+		<section class="content-header">
+			<h1 style="color: #333;">
+				#{msg['uma.uma']} <small> <i class="fa fa-caret-right"
+					style="color: #333 !important;" /> #{msg['uma.resources']}
+				</small> <small> <i class="fa fa-caret-right"
+					style="color: #333 !important;" /> #{msg['uma.updateResources']}
+				</small>
+			</h1>
+			<ol class="breadcrumb">
+				<li><a href="#{request.contextPath}/home"> <i
+						class="fa fa-home" />
+				</a></li>
+				<li class="organization/configuration"><a
+					href="#{request.contextPath}/uma/resourcehome">#{msg['uma.resourcesAndScopes']}</a>
+				</li>
+				<li class="organization/configuration"><a
+					href="#{request.contextPath}/uma/resource/add">#{msg['uma.updateResources']}</a>
+				</li>
+			</ol>
+		</section>
+
+		<section class="content">
+			<div class="row">
+				<div class="col-xs-12">
+					<div class="box box-primary">
+						<div class="box-header"></div>
+						<div style="display: inline-block; width: 100% !important;">
+							<h:panelGroup id="formArea" layout="block">
+								<h:outputStylesheet>
                                     .uploadFile {
                                         width: 300px;
                                     }
                                 </h:outputStylesheet>
 
-                                <ui:param name="_resourceSet" value="#{updateResourceAction.resource}"/>
+								<ui:param name="_resourceSet"
+									value="#{updateResourceAction.resource}" />
 
-                                <h:form id="resourceid">
-                                    <h:panelGrid border="0" cellpadding="0" cellspacing="0" columns="1" width="100%">
-                                        <ox:decorate id="resourceSet" label="#{msg['uma.resource']}"
-                                                     rendered="#{updateResourceAction.update}">
-                                            <h:outputText value="#{_resourceSet.id}"/>
-                                        </ox:decorate>
+								<h:form id="resourceid">
+									<h:panelGrid border="0" cellpadding="0" cellspacing="0"
+										columns="1" width="100%">
+										<ox:decorate id="resourceSet" label="#{msg['uma.resource']}"
+											rendered="#{updateResourceAction.update}">
+											<h:outputText value="#{_resourceSet.id}" />
+										</ox:decorate>
 
-                                        <ox:decorate id="displayName" label="#{msg['uma.displayName']}">
-                                            <div class="col-sm-9">
-                                                <rich:inplaceInput defaultLabel="Click to enter Display Name"
-                                                                   id="displayNameId" maxlength="60" required="true"
-                                                                   style="margin-left:-16px;"
-                                                                   value="#{_resourceSet.name}"/>
-                                            </div>
-                                        </ox:decorate>
+										<ox:decorate id="displayName"
+											label="#{msg['uma.displayName']}">
+											<div class="col-sm-12">
+												<rich:inplaceInput 
+													defaultLabel="Click to enter Display Name"
+													id="displayNameId" maxlength="60" required="true"
+													style="margin-left:-16px;" value="#{_resourceSet.name}" />
+											</div>
+										</ox:decorate>
 
-                                        <ox:decorate label="#{msg['uma.iconURI']}">
-                                            <div class="col-sm-9">
-                                                <rich:inplaceInput defaultLabel="Click to enter Icon Url" id="iconUrlId"
-                                                                   maxlength="60" required="true"
-                                                                   style="margin-left:-16px;"
-                                                                   value="#{_resourceSet.iconUri}"/>
-                                            </div>
-                                        </ox:decorate>
-                                                                                
-                                        <ox:decorate id="selecctionid" label="Scope Selection">
-										<h:selectOneMenu styleClass="form-control" immediate="true"
-										value="#{updateResourceAction.scopeSelection}" 
-										id="selectionid" >
-											<f:selectItem itemValue="Scopes" />
-											<f:selectItem itemValue="ScopeExpression" />
-											<a4j:ajax event="change" 
-												render="selectiongroup addscope" 
-												limitRender="true" execute="@this" />
-										</h:selectOneMenu>
+										<ox:decorate label="#{msg['uma.iconURI']}">
+											<div class="col-sm-12">
+												<rich:inplaceInput  defaultLabel="Click to enter Icon Url"
+													id="iconUrlId" maxlength="60" required="true"
+													style="margin-left:-16px;" value="#{_resourceSet.iconUri}" />
+											</div>
+										</ox:decorate>
+
+										<ox:decorate id="selecctionid" label="Scope Selection">
+										<div class="col-sm-12">
+											<h:selectOneMenu immediate="true" styleClass="form-Control col-sm-10"
+												value="#{updateResourceAction.scopeSelection}"
+												id="selectionid">
+												<f:selectItem itemValue="Scopes" />
+												<f:selectItem itemValue="ScopeExpression" />
+												<a4j:ajax event="change" render="selectiongroup addscope"
+													limitRender="true" execute="@this" />
+											</h:selectOneMenu>
+											</div>
 										</ox:decorate>
 
 										<h:panelGroup id="selectiongroup">
-                                        <ox:decorate id="scopesid"  label="#{msg['uma.scope']}" rendered="#{updateResourceAction.scopeSelection eq 'Scopes'}">
-                                            <h:panelGroup id="selectedScopesId">
-                                                <h:panelGrid border="0" cellpadding="0" cellspacing="0" columns="1"
-                                                             width="100%">
-                                                    <a4j:repeat rowKeyVar="_scopeIdx"
-                                                                value="#{updateResourceAction.scopes}" var="_scope">
-                                                        <div class="col-sm-12">
-                                                            <div class="col-sm-6">
-                                                                <h:outputText style="margin-left:-29px;"
-                                                                              value="#{_scope.displayName}"/>
-                                                                <h:outputText value=" "/>
-                                                            </div>
-                                                            <div class="col-sm-6">
-                                                                <a4j:commandLink
-                                                                        action="#{updateResourceAction.removeScope(_scope.inum)}"
-                                                                        eventsQueue="resourceSetQueue"
-                                                                        render="selectedScopesId"
-                                                                        styleClass="glyphicon glyphicon-remove">
-                                                                    <!--   <h:graphicImage value="/img/remove.gif" /> -->
-                                                                </a4j:commandLink>
-                                                            </div>
-                                                        </div>
-                                                    </a4j:repeat>
-                                                    <richext:spacer height="8"/>
-                                                </h:panelGrid>
-                                            </h:panelGroup>
-                                        </ox:decorate>
-                                        
+											<ox:decorate id="scopesid" label="#{msg['uma.scope']}"
+												rendered="#{updateResourceAction.scopeSelection eq 'Scopes'}">
+												<h:panelGroup id="selectedScopesId">
+													<h:panelGrid border="0" cellpadding="0" cellspacing="0"
+														columns="1" width="100%">
+														<a4j:repeat rowKeyVar="_scopeIdx"
+															value="#{updateResourceAction.scopes}" var="_scope">
+															<div class="col-sm-12">
+																<div class="col-sm-6">
+																	<h:outputText style="margin-left:-29px;"
+																		value="#{_scope.displayName}" />
+																	<h:outputText value=" " />
+																</div>
+																<div class="col-sm-6">
+																	<a4j:commandLink
+																		action="#{updateResourceAction.removeScope(_scope.inum)}"
+																		eventsQueue="resourceSetQueue"
+																		render="selectedScopesId"
+																		styleClass="glyphicon glyphicon-remove">
+																		<!--   <h:graphicImage value="/img/remove.gif" /> -->
+																	</a4j:commandLink>
+																</div>
+															</div>
+														</a4j:repeat>
+														<richext:spacer height="8" />
+													</h:panelGrid>
+												</h:panelGroup>
+											</ox:decorate>
 
-                                                   <ox:decorate id="clients" label="Clients">
-                                                       <h:panelGroup id="selectedClientsId">
 
-                                                           <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
+											<ox:decorate id="clients" label="Clients">
+												<h:panelGroup id="selectedClientsId">
 
-                                                               <a4j:repeat value="#{updateResourceAction.clientList}" rowKeyVar="_clientIdx" var="_client">
-                                                               <div class = "col-sm-12">
-                                                                <div class = "col-sm-6" >
-                                                                   <!-- <h:outputText value="#{_client.displayName}" style="margin-left:-29px;"/> -->
-																	<h:link includeViewParams="false" style="margin-left:-29px;"
+													<h:panelGrid columns="1" width="100%" border="0"
+														cellpadding="0" cellspacing="0">
+
+														<a4j:repeat value="#{updateResourceAction.clientList}"
+															rowKeyVar="_clientIdx" var="_client">
+															<div class="col-sm-12">
+																<div class="col-sm-6">
+																	<!-- <h:outputText value="#{_client.displayName}" style="margin-left:-29px;"/> -->
+																	<h:link includeViewParams="false"
+																		style="margin-left:-29px;"
 																		outcome="/client/updateClient"
 																		value="#{_client.displayName}">
 																		<f:param name="inum" value="#{_client.inum}" />
 																	</h:link>
 																	<h:outputText value="&#160;" />
-                                                                   </div>
-                                                                    <div class = "col-sm-6">
-                                                                   <a4j:commandLink styleClass="glyphicon glyphicon-remove" action="#{updateResourceAction.removeClient(_client.inum)}" render="selectedClientsId" eventsQueue="resourceSetQueue">
-                                                                      
-                                                                   </a4j:commandLink>
-                                                                   </div>
-                                                                 </div>
-                                                               </a4j:repeat>
+																</div>
+																<div class="col-sm-6">
+																	<a4j:commandLink
+																		styleClass="glyphicon glyphicon-remove"
+																		action="#{updateResourceAction.removeClient(_client.inum)}"
+																		render="selectedClientsId"
+																		eventsQueue="resourceSetQueue">
 
-                                                           </h:panelGrid>
+																	</a4j:commandLink>
+																</div>
+															</div>
+														</a4j:repeat>
 
-                                                       </h:panelGroup>
-                                                   </ox:decorate>
-                                       <h:panelGroup id="subselectiongroup"  rendered="#{updateResourceAction.scopeSelection eq 'ScopeExpression'}">
+													</h:panelGrid>
 
-                                        <ox:decorate id="expression" label="#{msg['uma.scopeExpression']}" rendered="#{updateResourceAction.scopeSelection eq 'ScopeExpression'}">
-                                            							
-											                               
-                                        </ox:decorate>
-                                        
-                                        <ui:decorate id="expresionui" template="/WEB-INF/incl/layout/jqueryJsonEditor.xhtml" rendered="#{updateResourceAction.scopeSelection eq 'ScopeExpression'}">
-                                            <ui:param name="id" value="expresionuiConfig"/>
-                                            <ui:param name="parentId" value="expresionui"/>
-                                            <ui:param name="json" value="#{_resourceSet.scopeExpression}"/>  
-                                            <ui:param name="saveBtnId" value="saveOxTrustConfigBtn"/>
-                                            <ui:param name="saveBtnLabel"  value="Validate and Update Scope Expression"/> 
-                                                                                     
-                                        </ui:decorate>
-                                        </h:panelGroup>
-                                        </h:panelGroup>
-                                         
-                                         <ox:decorate id="creatDate" label="#{msg['uma.creationTime']}" rendered="#{updateResourceAction.update and _resourceSet.creationDate != null}">
-                                            <div class="col-sm-9">
+												</h:panelGroup>
+											</ox:decorate>
+											<h:panelGroup id="subselectiongroup"
+												rendered="#{updateResourceAction.scopeSelection eq 'ScopeExpression'}">
+
+												<ox:decorate id="expression"
+													label="#{msg['uma.scopeExpression']}"
+													rendered="#{updateResourceAction.scopeSelection eq 'ScopeExpression'}">
+												</ox:decorate>
+												<ui:decorate id="expresionui"
+													template="/WEB-INF/incl/layout/jqueryJsonEditor.xhtml"
+													rendered="#{updateResourceAction.scopeSelection eq 'ScopeExpression'}">
+													<ui:param name="id" value="expresionuiConfig" />
+													<ui:param name="parentId" value="expresionui" />
+													<ui:param name="json"
+														value="#{_resourceSet.scopeExpression}" />
+													<ui:param name="saveBtnId" value="saveOxTrustConfigBtn" />
+													<ui:param name="saveBtnLabel"
+														value="Validate and Update Scope Expression" />
+
+												</ui:decorate>
+											</h:panelGroup>
+										</h:panelGroup>
+
+										<ox:decorate id="creatDate" label="#{msg['uma.creationTime']}"
+											rendered="#{updateResourceAction.update and _resourceSet.creationDate != null}">
+											<div class="col-sm-9">
 												<h:outputText value="#{_resourceSet.creationDate}" />
 											</div>
-                                        </ox:decorate>
-									
-                                    </h:panelGrid>
-                                    <div class="btn-group" style="margin-left:10px;">
-                                        <h:panelGroup id="addscope" >
-                                            <a4j:commandButton  rendered="#{updateResourceAction.scopeSelection eq 'Scopes'}"
-                                                    onclick="#{rich:component('scope:selectEntityModalPanel')}.show();"
-                                                    style="margin-left:3px;" styleClass="btn btn-primary"
-                                                    value="#{msg['uma.addScope']}"/>
-                                        </h:panelGroup>
-                                        <h:panelGroup id="addclient">
-                                            <a4j:commandButton
-                                                    onclick="#{rich:component('client:selectEntityModalPanel')}.show();"
-                                                    style="margin-left:3px;" styleClass="btn btn-primary"
-                                                    value="#{msg['uma.addClient']}"/>
-                                         </h:panelGroup>
-                                     </div>
-                                    <h:panelGroup>
-                                        <div class="box-footer" style="margin-top:10px !important;">
-                                            <h:panelGroup id="updateButtons" layout="block"
-                                                          style="margin-top:10px;margin-bottom: 10px;">
-                                                <h:commandButton action="#{updateResourceAction.save}"
-                                                                 style="margin-left:3px;" styleClass="btn btn-primary"
-                                                                 value="#{updateResourceAction.update ? 'Update' : 'Add'}"/>
-                                                <a4j:commandButton ajaxSingle="true"
-                                                                   onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();"
-                                                                   rendered="#{updateResourceAction.update}"
-                                                                   style="margin-left:3px;" styleClass="btn btn-primary"
-                                                                   value="Delete"/>
-                                                <h:commandButton action="#{updateResourceAction.cancel}" immediate="true" style="margin-left:3px;"
-                                                	styleClass="btn btn-primary" value="Cancel"/>
-                                            </h:panelGroup>
-                                        </div>
-                                    </h:panelGroup>
+										</ox:decorate>
 
-                                </h:form>
-                            </h:panelGroup>
+									</h:panelGrid>
+									<div class="btn-group" style="margin-left: 10px;">
+										<h:panelGroup id="addscope">
+											<a4j:commandButton
+												rendered="#{updateResourceAction.scopeSelection eq 'Scopes'}"
+												onclick="#{rich:component('scope:selectEntityModalPanel')}.show();"
+												style="margin-left:3px;" styleClass="btn btn-primary"
+												value="#{msg['uma.addScope']}" />
+										</h:panelGroup>
+										<h:panelGroup id="addclient">
+											<a4j:commandButton
+												onclick="#{rich:component('client:selectEntityModalPanel')}.show();"
+												style="margin-left:3px;" styleClass="btn btn-primary"
+												value="#{msg['uma.addClient']}" />
+										</h:panelGroup>
+									</div>
+									<h:panelGroup>
+										<div class="box-footer" style="margin-top: 10px !important;">
+											<h:panelGroup id="updateButtons" layout="block"
+												style="margin-top:10px;margin-bottom: 10px;">
+												<h:commandButton action="#{updateResourceAction.save}"
+													style="margin-left:3px;" styleClass="btn btn-primary"
+													value="#{updateResourceAction.update ? 'Update' : 'Add'}" />
+												<a4j:commandButton ajaxSingle="true"
+													onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();"
+													rendered="#{updateResourceAction.update}"
+													style="margin-left:3px;" styleClass="btn btn-primary"
+													value="Delete" />
+												<h:commandButton action="#{updateResourceAction.cancel}"
+													immediate="true" style="margin-left:3px;"
+													styleClass="btn btn-primary" value="Cancel" />
+											</h:panelGroup>
+										</div>
+									</h:panelGroup>
 
-                            <ox:inputTextDialog acceptMethod="#{updateResourceAction.acceptResource}"
-                                                cancelMethod="#{updateResourceAction.cancelResource}"
-                                                dialogWidth="600" id="resource" inputLabel="#{msg['uma.resource']}"
-                                                inputWidth="80" label="#{msg['uma.addResource']}" maxLength="256"
-                                                queue="resourceSetQueue" render="selectedResourcesId"
-                                                text="#{updateResourceAction.newResource}"/>
+								</h:form>
+							</h:panelGroup>
 
-                            <ox:selectSelectableEntityDialog
-                                    acceptMethod="#{updateResourceAction.acceptSelectScopes}"
-                                    cancelMethod="#{updateResourceAction.cancelSelectScopes}"
-                                    displayNameProperty="entity.displayName" id="scope" label="#{msg['uma.addScope']}"
-                                    nameProperty="entity.id" render="selectedScopesId"
-                                    searchMethod="#{updateResourceAction.searchAvailableScopes}"
-                                    searchPattern="#{updateResourceAction.searchAvailableScopePattern}"
-                                    searchResult="#{updateResourceAction.availableScopes}"/>
+							<ox:inputTextDialog
+								acceptMethod="#{updateResourceAction.acceptResource}"
+								cancelMethod="#{updateResourceAction.cancelResource}"
+								dialogWidth="600" id="resource"
+								inputLabel="#{msg['uma.resource']}" inputWidth="80"
+								label="#{msg['uma.addResource']}" maxLength="256"
+								queue="resourceSetQueue" render="selectedResourcesId"
+								text="#{updateResourceAction.newResource}" />
 
-                            <ox:selectSelectableEntityDialog
-                                    acceptMethod="#{updateResourceAction.acceptSelectClients}"
-                                    cancelMethod="#{updateResourceAction.cancelSelectClients}"
-                                    displayNameProperty="entity.displayName" id="client" label="#{msg['uma.addClient']}"
-                                    nameProperty="entity.inum" render="selectedClientsId"
-                                    searchMethod="#{updateResourceAction.searchAvailableClients}"
-                                    searchPattern="#{updateResourceAction.searchAvailableClientPattern}"
-                                    searchResult="#{updateResourceAction.availableClients}"/>
+							<ox:selectSelectableEntityDialog
+								acceptMethod="#{updateResourceAction.acceptSelectScopes}"
+								cancelMethod="#{updateResourceAction.cancelSelectScopes}"
+								displayNameProperty="entity.displayName" id="scope"
+								label="#{msg['uma.addScope']}" nameProperty="entity.id"
+								render="selectedScopesId"
+								searchMethod="#{updateResourceAction.searchAvailableScopes}"
+								searchPattern="#{updateResourceAction.searchAvailableScopePattern}"
+								searchResult="#{updateResourceAction.availableScopes}" />
 
-                            <ox:acceptRemovalDialog deleteMethod="#{updateResourceAction.delete}"
-                                                    id="deleteConfirmation" subject="resource set"
-                                                    value="#{updateResourceAction.resource.id}"/>
-                                                    
-                                                                               
-                        </div>
-                    </div>
-                </div>
-            </div>
+							<ox:selectSelectableEntityDialog
+								acceptMethod="#{updateResourceAction.acceptSelectClients}"
+								cancelMethod="#{updateResourceAction.cancelSelectClients}"
+								displayNameProperty="entity.displayName" id="client"
+								label="#{msg['uma.addClient']}" nameProperty="entity.inum"
+								render="selectedClientsId"
+								searchMethod="#{updateResourceAction.searchAvailableClients}"
+								searchPattern="#{updateResourceAction.searchAvailableClientPattern}"
+								searchResult="#{updateResourceAction.availableClients}" />
 
-        </section>
-    </ui:define>
+							<ox:acceptRemovalDialog
+								deleteMethod="#{updateResourceAction.delete}"
+								id="deleteConfirmation" subject="resource set"
+								value="#{updateResourceAction.resource.id}" />
+
+
+						</div>
+					</div>
+				</div>
+			</div>
+
+		</section>
+	</ui:define>
 
 </ui:composition>

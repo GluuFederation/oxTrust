@@ -3,8 +3,9 @@
  *
  * Copyright (c) 2014, Gluu
  */
-
 package org.gluu.oxtrust.util;
+
+import org.xdi.util.OxConstants;
 
 /**
  * Constants loads the LDAP schema attribute names like uid, iname
@@ -13,7 +14,7 @@ package org.gluu.oxtrust.util;
  * @author Javier Rojas Blum
  * @version January 15, 2016
  */
-public final class OxTrustConstants {
+public final class OxTrustConstants extends OxConstants {
 
     public static final String CURRENT_PERSON = "currentPerson";
 

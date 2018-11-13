@@ -42,6 +42,7 @@ public class ApplianceService implements Serializable {
 
 	@Inject
 	private PersistenceEntryManager ldapEntryManager;	
+
 	@Inject
 	private OrganizationService organizationService;
 

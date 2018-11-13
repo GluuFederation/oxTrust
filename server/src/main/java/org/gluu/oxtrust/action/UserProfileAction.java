@@ -37,8 +37,8 @@ import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuIMAPData;
 import org.xdi.model.GluuImage;
+import org.xdi.model.GluuUserRole;
 import org.xdi.model.ImapPassword;
-import org.xdi.model.user.UserRole;
 import org.xdi.service.security.Secure;
 
 /**
@@ -210,7 +210,7 @@ public class UserProfileAction implements Serializable {
 	}
 
 	private void initAttributes() {
-		List<GluuAttribute> attributes = attributeService.getAllPersonAttributes(UserRole.USER);
+		List<GluuAttribute> attributes = attributeService.getAllPersonAttributes(GluuUserRole.USER);
 		List<String> origins = Arrays.asList(tabName);
 
 		List<GluuCustomAttribute> customAttributes = this.person.getCustomAttributes();
@@ -280,7 +280,7 @@ public class UserProfileAction implements Serializable {
 	}
 
 	public byte[] getPhotoThumbData() {
-		List<GluuAttribute> attributes = attributeService.getAllPersonAttributes(UserRole.USER);
+		List<GluuAttribute> attributes = attributeService.getAllPersonAttributes(GluuUserRole.USER);
 		GluuAttribute photoAttribute = attributeService.getAttributeByName("photo1", attributes);
 		GluuCustomAttribute customAttribute = new GluuCustomAttribute("photo1", this.person.getAttribute("photo1"));
 		customAttribute.setMetadata(photoAttribute);
@@ -293,13 +293,10 @@ public class UserProfileAction implements Serializable {
 
 	public boolean userEmailIsUniqAtEditionTime(String email) {
 		boolean emailIsUniq = false;
-		oxTrustAuditService.audit("userEmailIsUniqAtEditionTime email:"+email);
 		List<GluuCustomPerson> gluuCustomPersons = personService.getPersonsByEmail(email);
-		oxTrustAuditService.audit("gluuCustomPersons size:" + gluuCustomPersons.size());
 		if (gluuCustomPersons == null || gluuCustomPersons.isEmpty()) {
 			emailIsUniq = true;
 		}
-		oxTrustAuditService.audit("gluuCustomPersons size:" + gluuCustomPersons.get(0).getUid());
 		if (gluuCustomPersons.size() == 1 && gluuCustomPersons.get(0).getAttribute("mail").equalsIgnoreCase(email)
 				&& gluuCustomPersons.get(0).getInum().equalsIgnoreCase(this.person.getInum())) {
 			emailIsUniq = true;

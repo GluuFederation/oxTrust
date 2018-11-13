@@ -30,7 +30,6 @@ import org.gluu.site.ldap.persistence.annotation.LdapEntry;
 import org.gluu.site.ldap.persistence.annotation.LdapObjectClass;
 import org.slf4j.Logger;
 import org.xdi.model.GluuStatus;
-import org.gluu.persist.model.base.InumEntry;
 import org.xdi.service.cdi.util.CdiUtil;
 import javax.xml.bind.annotation.XmlTransient;
 import org.codehaus.jackson.annotate.JsonIgnore;
@@ -148,10 +147,6 @@ public class GluuSAMLTrustRelationship extends InumEntry implements Serializable
 
 	public boolean isFederation() {
 		return Boolean.parseBoolean(gluuIsFederation);
-	}
-
-	public void setContainerFederation(GluuSAMLTrustRelationship containerFederation) {
-		this.gluuContainerFederation = containerFederation.getDn();
 	}
 
 	@Override

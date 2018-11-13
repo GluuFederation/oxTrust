@@ -124,14 +124,14 @@
 			        "exclusiveMaximum": false,
 			        "exclusiveMinimum": false
 			    },
-			    "useSsl" : {
-		            "id": "useSsl",
-		            "description": "useSsl ",
+			    "useSSL" : {
+		            "id": "useSSL",
+		            "description": "Enable SSL communication between Gluu Server and Redis cache ",
 		            "type": "boolean"
 		        },
 		        "sslTrustStoreFilePath": {
 		            "id": "useTrustStoreFilePath",
-		            "description": "useTrustStoreFilePath",
+		            "description": "Directory Path to Trust Store",
 		            "type": "string",
 		            "format": "url",
 		            "minLength": 1

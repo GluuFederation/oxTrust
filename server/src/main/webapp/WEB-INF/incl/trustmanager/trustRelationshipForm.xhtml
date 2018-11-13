@@ -233,12 +233,12 @@
 											id="spMetaDataSourceTypeFederation"
 											 label="#{msg['trustmanager.federationName']}">
 											<h:selectOneMenu styleClass="form-control"
-												value="#{_trustRelationship.gluuContainerFederation}"
+												value="#{_trustRelationship.containerFederation}"
 												id="spMetaDataSourceTypeFederationId"
 												 required="true">
 												<f:selectItem noSelectionOption="true"  itemLabel="Select Federation"/>
 												<f:selectItems
-													value="#{trustService.getAllOtherFederations(_trustRelationship.inum)}"
+													value="#{_trustRelationshipAction.getAllOtherFederations(_trustRelationship.inum)}"
 													var="_type"
                                                                                                         itemValue="#{_type.getDn()}"
 													itemLabel="#{_type.displayName}" />
@@ -248,7 +248,7 @@
 											</h:selectOneMenu>
 										</ox:decorate>
 										<h:outputText
-											rendered="#{(_trustRelationship.spMetaDataSourceType.value eq 'federation') and (trustService.getAllOtherFederations(_trustRelationship.inum).size() eq 0)}">
+											rendered="#{(_trustRelationship.spMetaDataSourceType.value eq 'federation') and (_trustRelationshipAction.getAllOtherFederations(_trustRelationship.inum).size() eq 0)}">
 											#{msg['trustmanager.youHaveNoFederation']}
 	                                </h:outputText>
 	
@@ -257,7 +257,7 @@
 
 								<h:panelGroup id="FederationWizardEntitySelection">
 									<h:panelGroup
-										rendered="#{(trustService.getTrustContainerFederation(_trustRelationship) eq null) and (_trustRelationship.spMetaDataSourceType.value eq 'federation')}">
+										rendered="#{(_trustRelationshipAction.getTrustContainerFederation(_trustRelationship) ne null) and (_trustRelationship.spMetaDataSourceType.value eq 'federation')}">
 										<ox:decorate
 											id="spMetaDataSourceTypeFederationEntitySelection" label="#{msg['trustmanager.entityID']}">
 

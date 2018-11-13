@@ -2,7 +2,6 @@ package org.gluu.oxtrust.api.openidconnect;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
@@ -19,6 +18,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import com.google.common.base.Preconditions;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.ScopeService;
 import org.gluu.oxtrust.model.OxAuthScope;
@@ -47,7 +47,6 @@ public class ScopeWebResource extends BaseWebResource {
 	@GET
 	@ApiOperation(value = "Get all scopes")
 	public Response getAllScopes() {
-		log("List openid connect scopes ");
 		try {
 			return Response.ok(scopeService.searchScopes(null, 100)).build();
 		} catch (Exception e) {
@@ -60,7 +59,6 @@ public class ScopeWebResource extends BaseWebResource {
 	@Path(OxTrustApiConstants.INUM_PARAM_PATH)
 	@ApiOperation(value = "Get a specific openid connect scope")
 	public Response getScopeByInum(@PathParam(OxTrustApiConstants.INUM) @NotNull String inum) {
-		log("Get openid connect scope by " + inum);
 		try {
 			OxAuthScope scope = scopeService.getScopeByInum(inum);
 			if (scope != null) {
@@ -79,7 +77,6 @@ public class ScopeWebResource extends BaseWebResource {
 	@ApiOperation(value = "Search openid connect scopes")
 	public Response searchScope(@QueryParam(OxTrustApiConstants.SEARCH_PATTERN) String pattern,
 			@DefaultValue("10") @QueryParam("size") int size) {
-		log("Search openid connect scopes with pattern= " + pattern);
 		try {
 			List<OxAuthScope> scopes = scopeService.searchScopes(pattern, size);
 			return Response.ok(scopes).build();
@@ -92,9 +89,8 @@ public class ScopeWebResource extends BaseWebResource {
 	@POST
 	@ApiOperation(value = "Add an openidconnect scope")
 	public Response createScope(OxAuthScope scope) {
-		log("Create scope");
 		try {
-			Objects.requireNonNull(scope, "Attempt to create null scope");
+			Preconditions.checkNotNull(scope, "Attempt to create null scope");
 			String inum = scopeService.generateInumForNewScope();
 			scope.setInum(inum);
 			scope.setDn(scopeService.getDnForScope(inum));
@@ -110,10 +106,9 @@ public class ScopeWebResource extends BaseWebResource {
 	@ApiOperation(value = "Update openidconect scope")
 	public Response updateScope(OxAuthScope scope) {
 		String inum = scope.getInum();
-		log("Update scope " + inum);
 		try {
-			Objects.requireNonNull(scope, "Attempt to update scope null value");
-			Objects.requireNonNull(inum);
+			Preconditions.checkNotNull(scope, "Attempt to update scope null value");
+			Preconditions.checkNotNull(inum);
 			OxAuthScope existingScope = scopeService.getScopeByInum(inum);
 			if (existingScope != null) {
 				scope.setInum(existingScope.getInum());
@@ -132,9 +127,8 @@ public class ScopeWebResource extends BaseWebResource {
 	@Path(OxTrustApiConstants.INUM_PARAM_PATH + OxTrustApiConstants.CLAIMS)
 	@ApiOperation(value = "List all claims of a scope")
 	public Response getScopeClaims(@PathParam(OxTrustApiConstants.INUM) @NotNull String inum) {
-		log("List all claims of scope ==> " + inum);
 		try {
-			Objects.requireNonNull(inum, "inum should not be null");
+			Preconditions.checkNotNull(inum, "inum should not be null");
 			OxAuthScope oxAuthScope = scopeService.getScopeByInum(inum);
 			List<String> claimsDn = new ArrayList<String>();
 			List<GluuAttribute> attributes = new ArrayList<GluuAttribute>();
@@ -157,7 +151,6 @@ public class ScopeWebResource extends BaseWebResource {
 	@Path(OxTrustApiConstants.INUM_PARAM_PATH)
 	@ApiOperation(value = "Delete an openidconnect scope")
 	public Response deleteScope(@PathParam(OxTrustApiConstants.INUM) @NotNull String inum) {
-		log("Delete openidconnect scope " + inum);
 		try {
 			OxAuthScope scope = scopeService.getScopeByInum(inum);
 			if (scope != null) {
@@ -170,15 +163,6 @@ public class ScopeWebResource extends BaseWebResource {
 			log(logger, e);
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 		}
-	}
-
-	@DELETE
-	public Response deleteScopes() {
-		return Response.status(Response.Status.UNAUTHORIZED).build();
-	}
-
-	private void log(String message) {
-		logger.debug("################# Request: " + message);
 	}
 
 }

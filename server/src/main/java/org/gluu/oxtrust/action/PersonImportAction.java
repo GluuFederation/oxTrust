@@ -52,8 +52,8 @@ import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuStatus;
+import org.xdi.model.GluuUserRole;
 import org.xdi.model.attribute.AttributeDataType;
-import org.xdi.model.user.UserRole;
 import org.xdi.service.security.Secure;
 import org.xdi.util.StringHelper;
 
@@ -178,38 +178,47 @@ public class PersonImportAction implements Serializable {
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	public void validateFileToImport() throws Exception {
-		removeFileDataToImport();
-
-		if (uploadedFile == null) {
-			return;
-		}
-
-		Table table;
-		InputStream is = new ByteArrayInputStream(this.fileData);
+	public String validateFileToImport() {
 		try {
-			table = excelService.read(is);
-		} finally {
-			IOUtils.closeQuietly(is);
-		}
+			removeFileDataToImport();
 
-		this.fileDataToImport.setTable(table);
-
-		if (table != null) {
-			this.fileDataToImport.setFileName(FilenameUtils.getName(uploadedFile.getName()));
-			this.fileDataToImport.setImportAttributes(getAttributesForImport(table));
-			this.fileDataToImport.setReady(true);
-		}
-
-		if (this.fileDataToImport.isReady()) {
-			boolean valid = prepareAndValidateImportData(this.fileDataToImport.getTable(),
-					this.fileDataToImport.getImportAttributes());
-			this.fileDataToImport.setReady(valid);
-
-			if (!valid) {
-				removeFileDataToImport();
+			if (uploadedFile == null) {
+				return OxTrustConstants.RESULT_FAILURE;
 			}
+
+			Table table;
+			InputStream is = new ByteArrayInputStream(this.fileData);
+			try {
+				table = excelService.read(is);
+			} finally {
+				IOUtils.closeQuietly(is);
+			}
+
+			this.fileDataToImport.setTable(table);
+
+			if (table != null) {
+				this.fileDataToImport.setFileName(FilenameUtils.getName(uploadedFile.getName()));
+				this.fileDataToImport.setImportAttributes(getAttributesForImport(table));
+				this.fileDataToImport.setReady(true);
+			}
+
+			if (this.fileDataToImport.isReady()) {
+				boolean valid = prepareAndValidateImportData(this.fileDataToImport.getTable(),
+						this.fileDataToImport.getImportAttributes());
+				this.fileDataToImport.setReady(valid);
+
+				if (!valid) {
+					removeFileDataToImport();
+				}
+			}
+			return OxTrustConstants.RESULT_SUCCESS;
+		}catch (Exception e) {
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Invalid file content");
+			
+			log.error(e.getMessage());
+			return OxTrustConstants.RESULT_FAILURE;
 		}
+		
 	}
 
 	public String cancel() {
@@ -553,7 +562,7 @@ public class PersonImportAction implements Serializable {
 	}
 
 	private void initAttributes() {
-		List<GluuAttribute> attributes = attributeService.getAllPersonAttributes(UserRole.ADMIN);
+		List<GluuAttribute> attributes = attributeService.getAllPersonAttributes(GluuUserRole.ADMIN);
 		List<String> origins = attributeService.getAllAttributeOrigins(attributes);
 
 		List<GluuCustomAttribute> customAttributes = this.person.getCustomAttributes();
