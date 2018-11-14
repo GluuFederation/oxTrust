@@ -18,7 +18,7 @@ import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.UUID;
 
-	@Path(OxTrustApiConstants.BASE_API_URL + OxTrustApiConstants.SECTORS)
+@Path(OxTrustApiConstants.BASE_API_URL + OxTrustApiConstants.SECTORS)
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @Api(value = OxTrustApiConstants.BASE_API_URL + OxTrustApiConstants.SECTORS, description = "Sector Identifiers webservice")

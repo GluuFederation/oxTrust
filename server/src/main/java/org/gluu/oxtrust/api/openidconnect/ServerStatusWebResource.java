@@ -1,5 +1,15 @@
 package org.gluu.oxtrust.api.openidconnect;
 
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiResponse;
+import com.wordnik.swagger.annotations.ApiResponses;
+import org.gluu.oxtrust.api.GluuServerStatus;
+import org.gluu.oxtrust.ldap.service.ApplianceService;
+import org.gluu.oxtrust.model.GluuAppliance;
+import org.gluu.oxtrust.util.OxTrustApiConstants;
+import org.slf4j.Logger;
+
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -7,18 +17,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
-import org.gluu.oxtrust.api.GluuServerStatus;
-import org.gluu.oxtrust.ldap.service.ApplianceService;
-import org.gluu.oxtrust.model.GluuAppliance;
-import org.gluu.oxtrust.model.OxAuthSectorIdentifier;
-import org.gluu.oxtrust.util.OxTrustApiConstants;
-import org.slf4j.Logger;
-
-import com.wordnik.swagger.annotations.ApiOperation;
 
 @Path(OxTrustApiConstants.BASE_API_URL + OxTrustApiConstants.CONFIGURATION + OxTrustApiConstants.STATUS)
 @Consumes(MediaType.APPLICATION_JSON)

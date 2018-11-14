@@ -1,7 +1,10 @@
 package org.gluu.oxtrust.api.users;
 
 import com.google.common.base.Preconditions;
+import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiResponse;
+import com.wordnik.swagger.annotations.ApiResponses;
 import org.gluu.oxtrust.api.GluuPersonApi;
 import org.gluu.oxtrust.api.openidconnect.BaseWebResource;
 import org.gluu.oxtrust.ldap.service.IPersonService;
@@ -21,6 +24,7 @@ import java.util.List;
 @Path(OxTrustApiConstants.BASE_API_URL + OxTrustApiConstants.PEOPLE)
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
+@Api(value = OxTrustApiConstants.BASE_API_URL +OxTrustApiConstants.PEOPLE, description = "Peoples webservice")
 public class PeopleWebResource extends BaseWebResource {
 
 	@Inject
@@ -34,6 +38,12 @@ public class PeopleWebResource extends BaseWebResource {
 
 	@GET
 	@ApiOperation(value = "Get people")
+	@ApiResponses(
+			value = {
+					@ApiResponse(code = 200, response = GluuPersonApi[].class, message = "Success"),
+					@ApiResponse(code = 500, message = "Server error")
+			}
+	)
 	public Response listPeople() {
 		try {
 			List<GluuPersonApi> groups = convert(personService.findAllPersons(null));
@@ -47,6 +57,12 @@ public class PeopleWebResource extends BaseWebResource {
 	@GET
 	@Path(OxTrustApiConstants.SEARCH)
 	@ApiOperation(value = "Search person")
+	@ApiResponses(
+			value = {
+					@ApiResponse(code = 200, response = GluuCustomPerson[].class, message = "Success"),
+					@ApiResponse(code = 500, message = "Server error")
+			}
+	)
 	public Response searchGroups(@QueryParam(OxTrustApiConstants.SEARCH_PATTERN) @NotNull String pattern) {
 		try {
 			List<GluuCustomPerson> groups = personService.searchPersons(pattern);
@@ -60,6 +76,13 @@ public class PeopleWebResource extends BaseWebResource {
 	@GET
 	@Path(OxTrustApiConstants.INUM_PARAM_PATH)
 	@ApiOperation(value = "Get a person by inum")
+	@ApiResponses(
+			value = {
+					@ApiResponse(code = 200, response = GluuPersonApi.class, message = "Success"),
+					@ApiResponse(code = 404, message = "Not found"),
+					@ApiResponse(code = 500, message = "Server error")
+			}
+	)
 	public Response getPersonByInum(@PathParam(OxTrustApiConstants.INUM) @NotNull String inum) {
 		try {
 			Preconditions.checkNotNull(inum, "inum should not be null");
@@ -77,6 +100,12 @@ public class PeopleWebResource extends BaseWebResource {
 
 	@POST
 	@ApiOperation(value = "Add a person")
+	@ApiResponses(
+			value = {
+					@ApiResponse(code = 200, response = GluuPersonApi.class, message = "Success"),
+					@ApiResponse(code = 500, message = "Server error")
+			}
+	)
 	public Response createPerson(GluuPersonApi person) {
 		try {
 			Preconditions.checkNotNull(person, "Attempt to create null person");
@@ -94,6 +123,13 @@ public class PeopleWebResource extends BaseWebResource {
 
 	@PUT
 	@ApiOperation(value = "Update a person")
+	@ApiResponses(
+			value = {
+					@ApiResponse(code = 200, response = GluuPersonApi.class, message = "Success"),
+					@ApiResponse(code = 404, message = "Not found"),
+					@ApiResponse(code = 500, message = "Server error")
+			}
+	)
 	public Response updateGroup(GluuPersonApi person) {
 		String inum = person.getInum();
 		try {
@@ -119,12 +155,19 @@ public class PeopleWebResource extends BaseWebResource {
 	@DELETE
 	@Path(OxTrustApiConstants.INUM_PARAM_PATH)
 	@ApiOperation(value = "Delete a person")
+	@ApiResponses(
+			value = {
+					@ApiResponse(code = 204, message = "Success"),
+					@ApiResponse(code = 404, message = "Not found"),
+					@ApiResponse(code = 500, message = "Server error")
+			}
+	)
 	public Response deletePerson(@PathParam(OxTrustApiConstants.INUM) @NotNull String inum) {
 		try {
 			GluuCustomPerson existingPerson = personService.getPersonByInum(inum);
 			if (existingPerson != null) {
 				personService.removePerson(existingPerson);
-				return Response.ok().build();
+				return Response.noContent().build();
 			} else {
 				return Response.status(Response.Status.NOT_FOUND).build();
 			}
