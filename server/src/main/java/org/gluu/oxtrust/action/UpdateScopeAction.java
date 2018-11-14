@@ -190,13 +190,17 @@ public class UpdateScopeAction implements Serializable {
 
 	public String save() throws Exception {
 		this.scope.setDisplayName(this.scope.getDisplayName().trim());
+		if(validateDisplayName(this.scope.getDisplayName())) {
+			return OxTrustConstants.RESULT_FAILURE;
+		}
 		updateDynamicScripts();
 		updateClaims();
 		if (update) {
 			// Update scope
 			try {
 				scopeService.updateScope(this.scope);
-				oxTrustAuditService.audit("OPENID SCOPE " +this.scope.getInum()+" **"+ this.scope.getDisplayName() + "** UPDATED",
+				oxTrustAuditService.audit(
+						"OPENID SCOPE " + this.scope.getInum() + " **" + this.scope.getDisplayName() + "** UPDATED",
 						identity.getUser(),
 						(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 			} catch (BasePersistenceException ex) {
@@ -218,7 +222,8 @@ public class UpdateScopeAction implements Serializable {
 			this.scope.setInum(this.inum);
 			try {
 				scopeService.addScope(this.scope);
-				oxTrustAuditService.audit("OPENID SCOPE " +this.scope.getInum()+ " **"+ this.scope.getDisplayName() + "** ADDED",
+				oxTrustAuditService.audit(
+						"OPENID SCOPE " + this.scope.getInum() + " **" + this.scope.getDisplayName() + "** ADDED",
 						identity.getUser(),
 						(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 			} catch (Exception ex) {
@@ -237,6 +242,22 @@ public class UpdateScopeAction implements Serializable {
 		}
 		log.debug(" returning success updating or saving scope");
 		return OxTrustConstants.RESULT_SUCCESS;
+	}
+
+	private boolean validateDisplayName(String displayName) throws Exception {
+		List<OxAuthScope> allScopes = scopeService.searchScopes(displayName, 100);
+		boolean rejected = false;
+		for (OxAuthScope scope : allScopes) {
+			if (scope.getDisplayName().equalsIgnoreCase(displayName)) {
+				rejected = true;
+				break;
+			}
+		}
+		if (rejected) {
+			facesMessages.add(FacesMessage.SEVERITY_ERROR,
+					"A scope named '#{updateScopeAction.scope.displayName}' already exists");
+		}
+		return rejected;
 	}
 
 	private void updateClaims() {
@@ -261,7 +282,8 @@ public class UpdateScopeAction implements Serializable {
 			// Remove scope
 			try {
 				scopeService.removeScope(this.scope);
-				oxTrustAuditService.audit("OPENID SCOPE " +this.scope.getInum()+ " **" + this.scope.getDisplayName() + "** REMOVED",
+				oxTrustAuditService.audit(
+						"OPENID SCOPE " + this.scope.getInum() + " **" + this.scope.getDisplayName() + "** REMOVED",
 						identity.getUser(),
 						(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 				facesMessages.add(FacesMessage.SEVERITY_INFO,

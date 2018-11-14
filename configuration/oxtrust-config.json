@@ -56,7 +56,6 @@
 
     "shibboleth3FederationRootDir":"${base.root}/opt/shibboleth-federation",
 
-    "velocityLog":"${base.root}/opt/tomcat/logs/velocity.log",
 
     "spMetadataPath":"${base.root}/opt/shibboleth-idp/metadata",
 
