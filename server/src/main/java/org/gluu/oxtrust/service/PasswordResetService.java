@@ -18,7 +18,6 @@ import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.model.PasswordResetRequest;
 import org.gluu.site.ldap.persistence.BatchOperation;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
-import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
 import org.slf4j.Logger;
 import org.xdi.ldap.model.SearchScope;
 import org.xdi.ldap.model.SimpleBranch;
@@ -35,10 +34,10 @@ import com.unboundid.ldap.sdk.Filter;
 @Named("passwordResetService")
 public class PasswordResetService implements Serializable {
 
-    private static final long serialVersionUID = -4107684257624615866L;
+	private static final long serialVersionUID = -4107684257624615866L;
 
-    @Inject
-    private ApplianceService applianceService;
+	@Inject
+	private ApplianceService applianceService;
 
 	@Inject
 	private LdapEntryManager ldapEntryManager;
@@ -46,60 +45,64 @@ public class PasswordResetService implements Serializable {
 	@Inject
 	private Logger log;
 
-    public void addBranch() {
-        SimpleBranch branch = new SimpleBranch();
-        branch.setOrganizationalUnitName("resetPasswordRequests");
-        branch.setDn(getDnForPasswordResetRequest(null));
+	public void addBranch() {
+		SimpleBranch branch = new SimpleBranch();
+		branch.setOrganizationalUnitName("resetPasswordRequests");
+		branch.setDn(getDnForPasswordResetRequest(null));
 
-        ldapEntryManager.persist(branch);
-    }
+		ldapEntryManager.persist(branch);
+	}
 
-    public boolean containsBranch() {
-        return ldapEntryManager.contains(SimpleBranch.class, getDnForPasswordResetRequest(null));
-    }
+	public boolean containsBranch() {
+		return ldapEntryManager.contains(SimpleBranch.class, getDnForPasswordResetRequest(null));
+	}
 
-    public void prepareBranch() {
-        // Create reset password requests branch if needed
-        if (!containsBranch()) {
-            addBranch();
-        }
-    }
+	public void prepareBranch() {
+		// Create reset password requests branch if needed
+		if (!containsBranch()) {
+			addBranch();
+		}
+	}
 
-    /**
-     * Get password reset request by DN
-     * 
-     * @param DN password reset request DN
-     * @return PasswordResetRequest Password reset request
-     */
+	/**
+	 * Get password reset request by DN
+	 * 
+	 * @param DN
+	 *            password reset request DN
+	 * @return PasswordResetRequest Password reset request
+	 */
 	public PasswordResetRequest findPasswordResetRequest(String guid) {
-        String passwordResetRequestDn = getDnForPasswordResetRequest(guid);
+		String passwordResetRequestDn = getDnForPasswordResetRequest(guid);
 
-        return ldapEntryManager.find(PasswordResetRequest.class, passwordResetRequestDn);
+		return ldapEntryManager.find(PasswordResetRequest.class, passwordResetRequestDn);
 
 	}
 
 	/**
 	 * Add new password reset request
 	 * 
-	 * @param PasswordResetRequest Password reset request
+	 * @param PasswordResetRequest
+	 *            Password reset request
 	 */
 	public void addPasswordResetRequest(PasswordResetRequest passwordResetRequest) {
 		ldapEntryManager.persist(passwordResetRequest);
 	}
 
 	/**
-     * Update new password reset request
+	 * Update new password reset request
 	 * 
-     * @param PasswordResetRequest Password reset request
+	 * @param PasswordResetRequest
+	 *            Password reset request
 	 */
 	public void updatePasswordResetRequest(PasswordResetRequest passwordResetRequest) {
 		ldapEntryManager.merge(passwordResetRequest);
 	}
 
 	/**
-     * Remove new password reset request
+	 * Remove new password reset request
 	 * 
-     * @param PasswordResetRequest Password reset request
+	 * @param PasswordResetRequest
+	 *            Password reset request
 	 */
 	public void removePasswordResetRequest(PasswordResetRequest passwordResetRequest) {
 		ldapEntryManager.remove(passwordResetRequest);
@@ -117,7 +120,8 @@ public class PasswordResetService implements Serializable {
 	/**
 	 * Get password reset requests by example
 	 * 
-	 * @param PasswordResetRequest passwordResetRequest
+	 * @param PasswordResetRequest
+	 *            passwordResetRequest
 	 * @return List of PasswordResetRequests which conform example
 	 */
 	public List<PasswordResetRequest> findPasswordResetRequests(PasswordResetRequest passwordResetRequest) {
@@ -130,57 +134,62 @@ public class PasswordResetService implements Serializable {
 	 * @return List of password reset requests
 	 */
 	public List<PasswordResetRequest> getAllPasswordResetRequests(String... ldapReturnAttributes) {
-		return ldapEntryManager.findEntries(getDnForPasswordResetRequest(null), PasswordResetRequest.class, ldapReturnAttributes, null);
+		return ldapEntryManager.findEntries(getDnForPasswordResetRequest(null), PasswordResetRequest.class,
+				ldapReturnAttributes, null);
 	}
 
 	/**
 	 * Search latest user password reset request by person inum
 	 * 
-	 * @param pattern Pattern
-	 * @param sizeLimit Maximum count of results
+	 * @param pattern
+	 *            Pattern
+	 * @param sizeLimit
+	 *            Maximum count of results
 	 * @return List of password reset requests
 	 */
 	public PasswordResetRequest findActualPasswordResetRequest(String personInum) {
 		Filter oxPersonInumFilter = Filter.createEqualityFilter("personInum", personInum);
 
-		List<PasswordResetRequest> result = ldapEntryManager.findEntries(getDnForPasswordResetRequest(null), PasswordResetRequest.class, oxPersonInumFilter, 0, 0);
-		
+		List<PasswordResetRequest> result = ldapEntryManager.findEntries(getDnForPasswordResetRequest(null),
+				PasswordResetRequest.class, oxPersonInumFilter, 0, 0);
+
 		if (result.size() == 0) {
-		    return null;
+			return null;
 		}
 
 		return result.get(result.size() - 1);
 	}
 
-    public void cleanup(final Date now) {
-    	try {
-    		BatchOperation<PasswordResetRequest> rptBatchService = new BatchOperation<PasswordResetRequest>(ldapEntryManager) {
-                @Override
-                protected List<PasswordResetRequest> getChunkOrNull(int chunkSize) {
-                    return ldapEntryManager.findEntries(getDnForPasswordResetRequest(null), PasswordResetRequest.class, getFilter(), SearchScope.SUB, null, this, 0, chunkSize, chunkSize);
-                }
+	public void cleanup(final Date now) {
+		if (containsBranch()) {
+			BatchOperation<PasswordResetRequest> rptBatchService = new BatchOperation<PasswordResetRequest>(
+					ldapEntryManager) {
+				@Override
+				protected List<PasswordResetRequest> getChunkOrNull(int chunkSize) {
+					return ldapEntryManager.findEntries(getDnForPasswordResetRequest(null), PasswordResetRequest.class,
+							getFilter(), SearchScope.SUB, null, this, 0, chunkSize, chunkSize);
+				}
 
-                @Override
-                protected void performAction(List<PasswordResetRequest> entries) {
-                    for (PasswordResetRequest p : entries) {
-                        try {
-                            ldapEntryManager.remove(p);
-                        } catch (Exception e) {
-                            log.error("Failed to remove entry", e);
-                        }
-                    }
-                }
+				@Override
+				protected void performAction(List<PasswordResetRequest> entries) {
+					for (PasswordResetRequest p : entries) {
+						try {
+							ldapEntryManager.remove(p);
+						} catch (Exception e) {
+							log.error("Failed to remove entry", e);
+						}
+					}
+				}
 
-                private Filter getFilter() {
-                    Filter expirationFilter = Filter.createLessOrEqualFilter("creationDate", ldapEntryManager.encodeGeneralizedTime(now));
-                    return expirationFilter;
-                }
-            };
-            rptBatchService.iterateAllByChunks(CleanerTimer.BATCH_SIZE);
-    	}catch (EntryPersistenceException e) {
-    		log.warn("Trying to clean expired password reset requests when the corresponding dn don't exist yet.");
-		}        
-    }
+				private Filter getFilter() {
+					Filter expirationFilter = Filter.createLessOrEqualFilter("creationDate",
+							ldapEntryManager.encodeGeneralizedTime(now));
+					return expirationFilter;
+				}
+			};
+			rptBatchService.iterateAllByChunks(CleanerTimer.BATCH_SIZE);
+		}
+	}
 
 	/**
 	 * Generate new guid for password reset request
@@ -212,7 +221,7 @@ public class PasswordResetService implements Serializable {
 	 * Build DN string for password reset request
 	 */
 	public String getDnForPasswordResetRequest(String guid) {
-        String applianceDn = applianceService.getAppliance().getDn();
+		String applianceDn = applianceService.getAppliance().getDn();
 
 		if (StringHelper.isEmpty(guid)) {
 			return String.format("ou=resetPasswordRequests,%s", applianceDn);

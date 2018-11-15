@@ -105,9 +105,7 @@ public class PasswordReminderAction implements Serializable {
 				facesMessages.add(FacesMessage.SEVERITY_ERROR,
 						facesMessages.evalResourceAsString("#{msg['person.passwordreset.letterNotSent']}"));
 			}
-
 		}
-
 		this.email = null;
 		conversationService.endConversation();
 		return outcome;
@@ -116,31 +114,22 @@ public class PasswordReminderAction implements Serializable {
 	public String requestReminderImpl() throws Exception {
 		if (enabled()) {
 			FacesContext facesContext = FacesContext.getCurrentInstance();
-			if (facesContext == null) {
-				return OxTrustConstants.RESULT_FAILURE;
-			}
-
 			ExternalContext externalContext = facesContext.getExternalContext();
-			if (externalContext == null) {
+			if (facesContext == null || externalContext == null) {
 				return OxTrustConstants.RESULT_FAILURE;
 			}
-
 			HttpServletRequest httpServletRequest = (HttpServletRequest) externalContext.getRequest();
-
 			GluuCustomPerson person = new GluuCustomPerson();
 			person.setMail(email);
 			List<GluuCustomPerson> matchedPersons = personService.findPersons(person, 0);
 			if (matchedPersons != null && matchedPersons.size() > 0) {
 				passwordResetService.prepareBranch();
-
 				PasswordResetRequest request = new PasswordResetRequest();
 				String guid = passwordResetService.generateGuidForNewPasswordResetRequest();
-
 				request.setCreationDate(Calendar.getInstance().getTime());
 				request.setPersonInum(matchedPersons.get(0).getInum());
 				request.setOxGuid(guid);
 				request.setDn(passwordResetService.getDnForPasswordResetRequest(guid));
-
 				int value = this.oxTrustappConfiguration.getPasswordResetRequestExpirationTime() / 60;
 				String expirationTime = Integer.toString(value) + " minute(s)";
 				rendererParameters.setParameter("expirationTime", expirationTime);
@@ -156,8 +145,6 @@ public class PasswordReminderAction implements Serializable {
 				String messageHtml = facesMessages.evalResourceAsString("#{msg['mail.reset.found.message.html.body']}");
 				mailService.sendMail(email, null, subj, messagePlain, messageHtml);
 				passwordResetService.addPasswordResetRequest(request);
-				facesMessages.add(FacesMessage.SEVERITY_INFO,
-						facesMessages.evalResourceAsString("#{msg['resetPasswordSuccess.pleaseCheckYourEmail']}"));
 				try {
 					oxTrustAuditService.audit("PASSWORD REMINDER REQUEST" + request.getBaseDn() + " ADDED",
 							identity.getUser(),
@@ -165,6 +152,8 @@ public class PasswordReminderAction implements Serializable {
 				} catch (Exception e) {
 				}
 			}
+			facesMessages.add(FacesMessage.SEVERITY_INFO,
+					facesMessages.evalResourceAsString("#{msg['resetPasswordSuccess.pleaseCheckYourEmail']}"));
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
 		return OxTrustConstants.RESULT_FAILURE;
@@ -173,12 +162,8 @@ public class PasswordReminderAction implements Serializable {
 	public boolean enabled() {
 		GluuAppliance appliance = applianceService.getAppliance();
 		SmtpConfiguration smtpConfiguration = appliance.getSmtpConfiguration();
-
-		boolean valid = smtpConfiguration != null && smtpConfiguration.getHost() != null
-				&& smtpConfiguration.getPort() != 0
-				&& ((!smtpConfiguration.isRequiresAuthentication())
-						|| (smtpConfiguration.getUserName() != null && smtpConfiguration.getPassword() != null))
-				&& appliance.getPasswordResetAllowed() != null && appliance.getPasswordResetAllowed().isBooleanValue();
+		boolean valid = smtpConfigurationIsValid(smtpConfiguration) && appliance.getPasswordResetAllowed() != null
+				&& appliance.getPasswordResetAllowed().isBooleanValue();
 		if (valid) {
 			passwordResetIsEnable = true;
 			if (recaptchaService.isEnabled() && getAuthenticationRecaptchaEnabled()) {
@@ -194,7 +179,14 @@ public class PasswordReminderAction implements Serializable {
 					facesMessages.evalResourceAsString("#{msg['person.passwordreset.notActivate']}"));
 		}
 		return valid;
+	}
 
+	// this method shouldn't be implemented in this Class but in SmtpConfiguration
+	// Class
+	private boolean smtpConfigurationIsValid(SmtpConfiguration smtpConfiguration) {
+		return smtpConfiguration != null && smtpConfiguration.getHost() != null && smtpConfiguration.getPort() != 0
+				&& ((!smtpConfiguration.isRequiresAuthentication())
+						|| (smtpConfiguration.getUserName() != null && smtpConfiguration.getPassword() != null));
 	}
 
 	public String getEmail() {
@@ -205,25 +197,15 @@ public class PasswordReminderAction implements Serializable {
 		this.email = email;
 	}
 
-	/**
-	 * @return the recaptchaService
-	 */
 	public RecaptchaService getRecaptchaService() {
 		return recaptchaService;
 	}
 
-	/**
-	 * @param recaptchaService
-	 *            the recaptchaService to set
-	 */
 	public void setRecaptchaService(RecaptchaService recaptchaService) {
 		this.recaptchaService = recaptchaService;
 	}
 
 	public boolean getAuthenticationRecaptchaEnabled() {
-		this.oxTrustappConfiguration = jsonConfigurationService.getOxTrustappConfiguration();
-		return oxTrustappConfiguration.isAuthenticationRecaptchaEnabled();
-
+		return jsonConfigurationService.getOxTrustappConfiguration().isAuthenticationRecaptchaEnabled();
 	}
-
 }
