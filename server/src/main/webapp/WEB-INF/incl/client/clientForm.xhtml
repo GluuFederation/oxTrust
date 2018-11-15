@@ -431,6 +431,8 @@
 													id="calendar" popup="false" datePattern="dd/MM/yyyy HH:mm"
 													showApplyButton="true" style="width:300px">
 												</rich:calendar>
+												<h:commandButton rendered="#{_new}" styleClass="btn btn-primary" value="clear current calendar value"
+													onclick="#{rich:component('calendar')}.setValue(''); return false;" />
 											</ox:decorate>
 											<ox:decorate id="logoUri"
 												label="#{msg['clientForm.logoURI']}" leftClass="col-sm-3"
