@@ -15,10 +15,8 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.gluu.oxtrust.ldap.service.ApplianceService;
-import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.model.PasswordResetRequest;
 import org.gluu.persist.PersistenceEntryManager;
-import org.gluu.persist.exception.EntryPersistenceException;
 import org.gluu.persist.model.BatchOperation;
 import org.gluu.persist.model.ProcessBatchOperation;
 import org.gluu.persist.model.SearchScope;
@@ -37,9 +35,6 @@ import org.xdi.util.StringHelper;
 public class PasswordResetService implements Serializable {
 
     private static final long serialVersionUID = -4107684257624615866L;
-
-    @Inject
-	private OrganizationService organizationService;
 
     @Inject
     private ApplianceService applianceService;
