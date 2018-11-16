@@ -24,6 +24,7 @@ import javax.validation.constraints.Size;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
+import org.gluu.oxtrust.ldap.service.JsonConfigurationService;
 import org.gluu.oxtrust.ldap.service.OxTrustAuditService;
 import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.ldap.service.RecaptchaService;
@@ -81,6 +82,9 @@ public class PasswordResetAction implements Serializable {
 
 	@Inject
 	private AppConfiguration appConfiguration;
+	
+	@Inject
+	private JsonConfigurationService jsonConfigurationService;
 
 	private PasswordResetRequest request;
 	private String guid;
@@ -282,6 +286,10 @@ public class PasswordResetAction implements Serializable {
 
 	public void setConfirm(String confirm) {
 		this.confirm = confirm;
+	}
+	
+	public boolean getAuthenticationRecaptchaEnabled() {
+		return jsonConfigurationService.getOxTrustappConfiguration().isAuthenticationRecaptchaEnabled();
 	}
 
 }
