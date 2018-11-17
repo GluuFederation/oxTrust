@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import javax.enterprise.context.ConversationScoped;
@@ -26,6 +27,7 @@ import javax.inject.Named;
 
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
+import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.ldap.cache.model.GluuSimplePerson;
 import org.gluu.oxtrust.ldap.cache.service.CacheRefreshService;
 import org.gluu.oxtrust.ldap.cache.service.CacheRefreshUpdateMethod;
@@ -43,6 +45,7 @@ import org.gluu.oxtrust.model.SimpleCustomPropertiesListModel;
 import org.gluu.oxtrust.model.SimplePropertiesListModel;
 import org.gluu.oxtrust.service.external.ExternalCacheRefreshService;
 import org.gluu.oxtrust.util.OxTrustConstants;
+import org.gluu.site.ldap.LDAPConnectionProvider;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.config.oxtrust.CacheRefreshAttributeMapping;
@@ -53,6 +56,8 @@ import org.xdi.model.SimpleProperty;
 import org.xdi.model.ldap.GluuLdapConfiguration;
 import org.xdi.service.security.Secure;
 import org.xdi.util.StringHelper;
+import org.xdi.util.properties.FileConfiguration;
+import org.xdi.util.security.PropertiesDecrypter;
 import org.xdi.util.security.StringEncrypter.EncryptionException;
 
 /**
@@ -106,6 +111,9 @@ public class ConfigureCacheRefreshAction
 
 	@Inject
 	private CacheRefreshConfiguration cacheRefreshConfiguration;
+
+	@Inject
+	private ConfigurationFactory configurationFactory;
 
 	private boolean cacheRefreshEnabled;
 	private int cacheRefreshEnabledIntervalMinutes;
@@ -539,7 +547,7 @@ public class ConfigureCacheRefreshAction
 	@Override
 	public void addItemToSimpleProperties(List<SimpleProperty> simpleProperties) {
 		oxTrustAuditService.audit("addItemToSimpleProperties:" + simpleProperties.size());
-		if(simpleProperties.size() >=1) {
+		if (simpleProperties.size() >= 1) {
 			oxTrustAuditService.audit("Value:" + simpleProperties.get(0).getValue());
 		}
 		if (checkDuplicateKetattribute() && simpleProperties != null) {
@@ -694,5 +702,54 @@ public class ConfigureCacheRefreshAction
 			}
 		}
 		return true;
+	}
+
+	public String testLdapConnection(GluuLdapConfiguration ldapConfig) {
+		try {
+			FileConfiguration configuration = new FileConfiguration(ConfigurationFactory.LDAP_PROPERTIES_FILE);
+			if (!configuration.isLoaded()) {
+				configuration = new FileConfiguration(ConfigurationFactory.LDAP_DEFAULT_PROPERTIES_FILE);
+			}
+			Properties properties = configuration.getProperties();
+			properties.setProperty("bindDN", ldapConfig.getBindDN());
+			properties.setProperty("bindPassword", ldapConfig.getBindPassword());
+			properties.setProperty("servers", buildServersString(ldapConfig.getServers()));
+			properties.setProperty("useSSL", Boolean.toString(ldapConfig.isUseSSL()));
+			LDAPConnectionProvider connectionProvider = new LDAPConnectionProvider(PropertiesDecrypter
+					.decryptProperties(properties, configurationFactory.getCryptoConfigurationSalt()));
+			if (connectionProvider.isConnected()) {
+				connectionProvider.closeConnectionPool();
+				facesMessages.add(FacesMessage.SEVERITY_INFO, facesMessages
+						.evalResourceAsString("#{msg['configuration.manageAuthentication.ldap.testSucceed']}"));
+				return OxTrustConstants.RESULT_SUCCESS;
+			}
+			if (connectionProvider.getConnectionPool() != null) {
+				connectionProvider.closeConnectionPool();
+			}
+		} catch (Exception ex) {
+			log.error("Could not connect to LDAP", ex);
+		}
+
+		facesMessages.add(FacesMessage.SEVERITY_ERROR,
+				facesMessages.evalResourceAsString("#{msg['configuration.manageAuthentication.ldap.testFailed']}"));
+
+		return OxTrustConstants.RESULT_FAILURE;
+	}
+
+	private String buildServersString(List<SimpleProperty> servers) {
+		StringBuilder sb = new StringBuilder();
+		if (servers == null) {
+			return sb.toString();
+		}
+		boolean first = true;
+		for (SimpleProperty server : servers) {
+			if (first) {
+				first = false;
+			} else {
+				sb.append(",");
+			}
+			sb.append(server.getValue());
+		}
+		return sb.toString();
 	}
 }
