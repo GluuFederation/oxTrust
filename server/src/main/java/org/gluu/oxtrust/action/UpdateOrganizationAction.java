@@ -8,9 +8,6 @@ package org.gluu.oxtrust.action;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -23,18 +20,14 @@ import javax.inject.Named;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.gluu.jsf2.message.FacesMessages;
-import org.gluu.jsf2.model.RenderParameters;
 import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.config.ConfigurationFactory;
-import org.gluu.oxtrust.ldap.service.AppInitializer;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.ImageService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.model.GluuAppliance;
-import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.security.Identity;
-import org.gluu.oxtrust.service.render.RenderService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.richfaces.event.FileUploadEvent;
@@ -85,16 +78,7 @@ public class UpdateOrganizationAction implements Serializable {
 	private ConfigurationFactory configurationFactory;
 
 	@Inject
-	private AppInitializer appInitializer;
-
-	@Inject
 	private MailService mailService;
-
-	@Inject
-	private RenderParameters rendererParameters;
-
-	@Inject
-	private RenderService renderService;
 
 	private GluuOrganization organization;
 
@@ -126,8 +110,9 @@ public class UpdateOrganizationAction implements Serializable {
 
 		if (!StringHelper.equals(OxTrustConstants.RESULT_SUCCESS, resultOrganization)
 				|| !StringHelper.equals(OxTrustConstants.RESULT_SUCCESS, resultApplliance)) {
-			
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, facesMessages.evalResourceAsString("#{msg['organization.prepareUpdateFailed']}"));
+
+			facesMessages.add(FacesMessage.SEVERITY_ERROR,
+					facesMessages.evalResourceAsString("#{msg['organization.prepareUpdateFailed']}"));
 			conversationService.endConversation();
 
 			return OxTrustConstants.RESULT_FAILURE;
@@ -226,12 +211,14 @@ public class UpdateOrganizationAction implements Serializable {
 			/* Resolv.conf update */
 		} catch (LdapMappingException ex) {
 			log.error("Failed to update organization", ex);
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, facesMessages.evalResourceAsString("#{msg['organization.UpdateFailed']}"));
+			facesMessages.add(FacesMessage.SEVERITY_ERROR,
+					facesMessages.evalResourceAsString("#{msg['organization.UpdateFailed']}"));
 
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 
-		facesMessages.add(FacesMessage.SEVERITY_INFO, facesMessages.evalResourceAsString("#{msg['organization.UpdateSucceed']}"));
+		facesMessages.add(FacesMessage.SEVERITY_INFO,
+				facesMessages.evalResourceAsString("#{msg['organization.UpdateSucceed']}"));
 
 		return modify();
 	}
@@ -269,27 +256,18 @@ public class UpdateOrganizationAction implements Serializable {
 				+ smtpConfiguration.isRequiresSsl() + " RequireSSL: " + smtpConfiguration.isRequiresAuthentication());
 		log.debug("UserName: " + smtpConfiguration.getUserName() + " Password: "
 				+ smtpConfiguration.getPasswordDecrypted());
-
-		String messageSubject = facesMessages.evalResourceAsString("#{msg['mail.verify.message.subject']}");
-		String messagePlain = facesMessages.evalResourceAsString("#{msg['mail.verify.message.plain.body']}");
-		String messageHtml = facesMessages.evalResourceAsString("#{msg['mail.verify.message.html.body']}");
-
-		// rendererParameters.setParameter("mail_body", messageHtml);
-		// String mailHtml =
-		// renderService.renderView("/WEB-INF/mail/verify_settings.xhtml");
-
 		boolean result = mailService.sendMail(smtpConfiguration, smtpConfiguration.getFromEmailAddress(),
-				smtpConfiguration.getFromName(), smtpConfiguration.getFromEmailAddress(), null, messageSubject,
-				messagePlain, messageHtml);
+				smtpConfiguration.getFromName(), smtpConfiguration.getFromEmailAddress(), null,
+				facesMessages.evalResourceAsString("#{msg['mail.verify.message.subject']}"),
+				facesMessages.evalResourceAsString("#{msg['mail.verify.message.plain.body']}"),
+				facesMessages.evalResourceAsString("#{msg['mail.verify.message.html.body']}"));
 
 		if (result) {
 			log.info("Connection Successful");
 			facesMessages.add(FacesMessage.SEVERITY_INFO, "SMTP Test succeeded!");
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
-
 		facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to connect to SMTP server");
-
 		return OxTrustConstants.RESULT_FAILURE;
 	}
 
@@ -329,7 +307,7 @@ public class UpdateOrganizationAction implements Serializable {
 			this.organization.setCustomMessages(null);
 		}
 	}
-	
+
 	public String cancel() throws Exception {
 		cancelLogoImage();
 		cancelFaviconImage();
