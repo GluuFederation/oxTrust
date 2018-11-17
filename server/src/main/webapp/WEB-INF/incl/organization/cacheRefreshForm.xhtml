@@ -256,9 +256,10 @@
 											<div style="display: inline-block; width: 75% !important;">
 												<ox:ldapConfig ldapConfig="#{_ldapConfig}"
 													ldapConfigList="#{_configureCacheRefreshAction.sourceConfigs}"
-													ldapConfigAction="#{configureCacheRefreshAction}"
+													ldapConfigAction="#{_configureCacheRefreshAction}"
 													propertiesAction="#{_configureCacheRefreshAction}"
 													displayEnable="false" renderAfterRomoval="sourceConfigsId"
+													showTestButton="true"
 													displayAnonymousBind="false"
 													changePasswordDialogId="bindPasswordDialogId:changePasswordModalPanel" />
 											</div>
