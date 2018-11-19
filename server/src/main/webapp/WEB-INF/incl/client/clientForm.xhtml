@@ -491,8 +491,6 @@
 												leftClass="col-sm-6" rightClass="col-sm-6">
 												<h:selectOneMenu styleClass="col-sm-9 form-control rounded"
 													value="#{_client.requireAuthTime}" required="false">
-													<f:selectItem itemLabel="Please select a value."
-														noSelectionOption="true" />
 													<f:selectItems
 														value="#{organizationService.javaBooleanSelectionTypes}"
 														var="_type" itemLabel="#{_type.displayName}" />
