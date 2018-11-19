@@ -72,6 +72,8 @@ import org.xdi.util.StringHelper;
 @Secure("#{permissionService.hasPermission('person', 'access')}")
 public class UpdatePersonAction implements Serializable {
 
+	private static final String MAIL = "mail";
+
 	private static final long serialVersionUID = -3242167044333943689L;
 
 	@Inject
@@ -273,8 +275,10 @@ public class UpdatePersonAction implements Serializable {
 			 * mapper = new ObjectMapper(); OTPDevice oTPDevice =
 			 * mapper.readValue(oxOTPDevices, OTPDevice.class);
 			 */
-			ArrayList<Device> devices = oxOTPDevices.getDevices();
-
+			ArrayList<Device> devices = new ArrayList<Device>();
+			if (oxOTPDevices != null) {
+				devices = oxOTPDevices.getDevices();
+			}
 			if (devices != null && devices.size() > 0) {
 				for (Device device : devices) {
 					GluuDeviceDataBean gluuDeviceDataBean = new GluuDeviceDataBean();
@@ -312,15 +316,15 @@ public class UpdatePersonAction implements Serializable {
 					GluuDeviceDataBean gluuDeviceDataBean = new GluuDeviceDataBean();
 					gluuDeviceDataBean.setNickName(args[0]);
 					gluuDeviceDataBean.setModality("Passport");
-					gluuDeviceDataBean.setId("-");
+					gluuDeviceDataBean.setId(args[1]);
 					gluuDeviceDataBean.setCreationDate("-");
 					deviceDataMap.add(gluuDeviceDataBean);
 
 				}
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error(e.getMessage(), e);
+			return OxTrustConstants.RESULT_FAILURE;
 		}
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
@@ -353,9 +357,9 @@ public class UpdatePersonAction implements Serializable {
 						this.person.getUid());
 				return OxTrustConstants.RESULT_FAILURE;
 			}
-			if (!userEmailIsUniqAtCreationTime(this.person.getAttribute("mail"))) {
+			if (!userEmailIsUniqAtCreationTime(this.person.getAttribute(MAIL))) {
 				facesMessages.add(FacesMessage.SEVERITY_ERROR,
-						"#{msg['UpdatePersonAction.faileUpdateUserMailidExist']} %s", this.person.getAttribute("mail"));
+						"#{msg['UpdatePersonAction.faileUpdateUserMailidExist']} %s", this.person.getAttribute(MAIL));
 				return OxTrustConstants.RESULT_FAILURE;
 			}
 		} else {
@@ -364,9 +368,9 @@ public class UpdatePersonAction implements Serializable {
 						this.person.getUid());
 				return OxTrustConstants.RESULT_FAILURE;
 			}
-			if (!userEmailIsUniqAtEditionTime(this.person.getAttribute("mail"))) {
+			if (!userEmailIsUniqAtEditionTime(this.person.getAttribute(MAIL))) {
 				facesMessages.add(FacesMessage.SEVERITY_ERROR,
-						"#{msg['UpdatePersonAction.faileUpdateUserMailidExist']} %s", this.person.getAttribute("mail"));
+						"#{msg['UpdatePersonAction.faileUpdateUserMailidExist']} %s", this.person.getAttribute(MAIL));
 				return OxTrustConstants.RESULT_FAILURE;
 			}
 		}
@@ -396,7 +400,8 @@ public class UpdatePersonAction implements Serializable {
 					externalUpdateUserService.executeExternalUpdateUserMethods(this.person);
 				}
 				personService.updatePerson(this.person);
-				oxTrustAuditService.audit("USER " + this.person.getInum() + " **"+this.person.getDisplayName()+"** UPDATED",
+				oxTrustAuditService.audit(
+						"USER " + this.person.getInum() + " **" + this.person.getDisplayName() + "** UPDATED",
 						identity.getUser(),
 						(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 				if (runScript) {
@@ -444,7 +449,8 @@ public class UpdatePersonAction implements Serializable {
 					externalUpdateUserService.executeExternalAddUserMethods(this.person);
 				}
 				personService.addPerson(this.person);
-				oxTrustAuditService.audit("USER " + this.person.getInum() + " **"+this.person.getDisplayName()+ "** ADDED",
+				oxTrustAuditService.audit(
+						"USER " + this.person.getInum() + " **" + this.person.getDisplayName() + "** ADDED",
 						identity.getUser(),
 						(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 				if (runScript) {
@@ -499,7 +505,8 @@ public class UpdatePersonAction implements Serializable {
 					externalUpdateUserService.executeExternalDeleteUserMethods(this.person);
 				}
 				memberService.removePerson(this.person);
-				oxTrustAuditService.audit("USER " + this.person.getInum() + " **"+this.person.getDisplayName()+ "** REMOVED",
+				oxTrustAuditService.audit(
+						"USER " + this.person.getInum() + " **" + this.person.getDisplayName() + "** REMOVED",
 						identity.getUser(),
 						(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 				if (runScript) {
@@ -631,7 +638,7 @@ public class UpdatePersonAction implements Serializable {
 			List<String> list = new ArrayList<String>(this.person.getOxExternalUid());
 			if (list != null) {
 				for (String external : list) {
-					if (deleteDeviceData.getId().trim().equals(external.trim())) {
+					if (deleteDeviceData.getId().equals(external.split(":")[1])) {
 						list.remove(external);
 						this.person.setOxExternalUid(list);
 						this.deviceDataMap.remove(deleteDeviceData);
@@ -646,8 +653,10 @@ public class UpdatePersonAction implements Serializable {
 			 * mapper = new ObjectMapper(); OTPDevice oTPDevice =
 			 * mapper.readValue(oxOTPDevices, OTPDevice.class);
 			 */
-			ArrayList<Device> devices = oxOTPDevices.getDevices();
-
+			ArrayList<Device> devices = new ArrayList<Device>();
+			if (oxOTPDevices != null) {
+				devices = oxOTPDevices.getDevices();
+			}
 			if (devices != null && devices.size() > 0) {
 				for (Device device : devices) {
 					if (deleteDeviceData.getId().equals(device.getId())) {
@@ -688,26 +697,20 @@ public class UpdatePersonAction implements Serializable {
 			}
 
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			log.error("Failed to remove device ", e);
 		}
 	}
 
 	private DeviceData getDeviceata(String data) {
 		ObjectMapper mapper = new ObjectMapper();
-
-		// JSON from file to Object
 		DeviceData obj = null;
 		try {
 			obj = mapper.readValue(data, DeviceData.class);
 		} catch (JsonParseException e) {
-			// TODO Auto-generated catch block
 			log.error("Failed to convert device string to object JsonParseException", e);
 		} catch (JsonMappingException e) {
-			// TODO Auto-generated catch block
 			log.error("Failed to convert device string to object JsonMappingException", e);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			log.error("Failed to convert device string to object IOException", e);
 		}
 		return obj;
@@ -725,7 +728,7 @@ public class UpdatePersonAction implements Serializable {
 
 	public boolean userNameIsUniqAtCreationTime(String uid) {
 		boolean userNameIsUniq = true;
-		if(uid == null) {
+		if (uid == null) {
 			return userNameIsUniq;
 		}
 		List<GluuCustomPerson> gluuCustomPersons = personService.getPersonsByUid(uid);
@@ -741,7 +744,7 @@ public class UpdatePersonAction implements Serializable {
 	}
 
 	public boolean userNameIsUniqAtEditionTime(String uid) {
-		if(uid == null) {
+		if (uid == null) {
 			return true;
 		}
 		boolean userNameIsUniq = false;
@@ -757,14 +760,14 @@ public class UpdatePersonAction implements Serializable {
 	}
 
 	public boolean userEmailIsUniqAtCreationTime(String email) {
-		if(email == null) {
+		if (email == null) {
 			return true;
 		}
 		boolean emailIsUniq = true;
 		List<GluuCustomPerson> gluuCustomPersons = personService.getPersonsByEmail(email);
 		if (gluuCustomPersons != null && gluuCustomPersons.size() > 0) {
 			for (GluuCustomPerson gluuCustomPerson : gluuCustomPersons) {
-				if (gluuCustomPerson.getAttribute("mail").equalsIgnoreCase(email)) {
+				if (gluuCustomPerson.getAttribute(MAIL).equalsIgnoreCase(email)) {
 					emailIsUniq = false;
 					break;
 				}
@@ -775,14 +778,14 @@ public class UpdatePersonAction implements Serializable {
 
 	public boolean userEmailIsUniqAtEditionTime(String email) {
 		boolean emailIsUniq = false;
-		if(email == null) {
+		if (email == null) {
 			return true;
 		}
 		List<GluuCustomPerson> gluuCustomPersons = personService.getPersonsByEmail(email);
 		if (gluuCustomPersons == null || gluuCustomPersons.isEmpty()) {
 			emailIsUniq = true;
 		}
-		if (gluuCustomPersons.size() == 1 && gluuCustomPersons.get(0).getAttribute("mail").equalsIgnoreCase(email)
+		if (gluuCustomPersons.size() == 1 && gluuCustomPersons.get(0).getAttribute(MAIL).equalsIgnoreCase(email)
 				&& gluuCustomPersons.get(0).getInum().equalsIgnoreCase(this.person.getInum())) {
 			emailIsUniq = true;
 		}
