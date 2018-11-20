@@ -98,10 +98,10 @@ public class UpdateOrganizationAction implements Serializable {
     private RenderService renderService;
 
     @Inject
-	transient private SmtpConfigurationService smtpConfigurationService;
+	private SmtpConfigurationService smtpConfigurationService;
 
     @Inject
-	transient private WebKeySettingsService webKeySettingsService;
+	private WebKeySettingsService webKeySettingsService;
 
 	private GluuOrganization organization;
 

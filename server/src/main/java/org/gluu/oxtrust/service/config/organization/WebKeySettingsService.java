@@ -5,9 +5,11 @@ import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.xdi.config.oxauth.WebKeysSettings;
 import org.xdi.config.oxtrust.LdapOxAuthConfiguration;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import java.util.Date;
 
+@ApplicationScoped
 public class WebKeySettingsService {
 
     @Inject
