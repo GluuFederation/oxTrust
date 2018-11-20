@@ -19,20 +19,18 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.model.AuthenticationChartDto;
 import org.gluu.oxtrust.util.OxTrustConstants;
+import org.gluu.persist.ldap.impl.LdapEntryManager;
+import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.ApplicationType;
-import org.slf4j.Logger;
 import org.xdi.model.metric.MetricType;
 import org.xdi.model.metric.counter.CounterMetricEntry;
 import org.xdi.model.metric.ldap.MetricEntry;
 import org.xdi.service.CacheService;
-import org.xdi.util.OxConstants;
-import org.slf4j.Logger;
 
 /**
  * Store and retrieve metric
@@ -68,9 +66,6 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 
 	@Inject
 	private AppConfiguration appConfiguration;
-
-	@Inject
-	private Logger logger;
 
 	public void initTimer() {
 		initTimer(this.appConfiguration.getMetricReporterInterval());
@@ -250,14 +245,6 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 	@Override
 	public ApplicationType getApplicationType() {
 		return ApplicationType.OX_TRUST;
-	}
-
-	private void dump(List<CounterMetricEntry> metrics) {
-		for (CounterMetricEntry metric : metrics) {
-			Date date = metric.getCreationDate();
-			long count = metric.getMetricData().getCount();
-			System.out.println(date + " : " + count);
-		}
 	}
 
 }

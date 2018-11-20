@@ -89,7 +89,7 @@
 		<div class="row">
 			<div class="col-xs-12">
 				<div class="nav-tabs-custom" style="margin-bottom: 0px;">
-					<ul class="nav nav-tabs">
+					<ul class="nav nav-tabs" id="organizationFormtab">
 						<li class="active"><a href="#sys-config" data-toggle="tab">#{msg['organizationForm.systemConfiguration']}</a></li>
 						<li><a href="#smtp-server" data-toggle="tab">#{msg['organizationForm.smtpServerConfiguration']}</a></li>
 						<li><a href="#ox-trust" data-toggle="tab">#{msg['organizationForm.oxTrustSettings']}</a></li>
@@ -308,4 +308,27 @@
 		<richext:spacer height="16" />
 		<ui:insert name="controlButttons" />
 	</h:form>
+	<script>
+	    $('#organizationFormtab a').click(function(e) {
+		  e.preventDefault();
+		  $(this).tab('show');
+		});
+
+		// store the currently selected tab in the local storage
+		$("ul.nav-tabs > li > a").on("shown.bs.tab", function(e) {
+		  var id = $(e.target).attr("href").substr(1);
+		  window.localStorage.setItem('organizationFormtab', id);
+		  var storeValue = window.localStorage.getItem('organizationFormtab');
+		});
+     
+		// on load of the page: switch to the currently selected tab
+		 $(document).ready(function() {
+			    var value =  window.localStorage.getItem('organizationFormtab');
+            	if (value) {
+            		var activeTab = "#";
+            		activeTab = activeTab.concat(value);  
+            		$('#organizationFormtab a[href="' + activeTab + '"]').tab('show');
+            	}
+       });
+    </script>
 </ui:composition>
