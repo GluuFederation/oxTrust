@@ -45,7 +45,7 @@ import org.gluu.oxtrust.model.SimpleCustomPropertiesListModel;
 import org.gluu.oxtrust.model.SimplePropertiesListModel;
 import org.gluu.oxtrust.service.external.ExternalCacheRefreshService;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.site.ldap.LDAPConnectionProvider;
+import org.gluu.persist.ldap.operation.impl.LdapConnectionProvider;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.config.oxtrust.CacheRefreshAttributeMapping;
@@ -715,7 +715,7 @@ public class ConfigureCacheRefreshAction
 			properties.setProperty("bindPassword", ldapConfig.getBindPassword());
 			properties.setProperty("servers", buildServersString(ldapConfig.getServers()));
 			properties.setProperty("useSSL", Boolean.toString(ldapConfig.isUseSSL()));
-			LDAPConnectionProvider connectionProvider = new LDAPConnectionProvider(PropertiesDecrypter
+			LdapConnectionProvider connectionProvider = new LdapConnectionProvider(PropertiesDecrypter
 					.decryptProperties(properties, configurationFactory.getCryptoConfigurationSalt()));
 			if (connectionProvider.isConnected()) {
 				connectionProvider.closeConnectionPool();
