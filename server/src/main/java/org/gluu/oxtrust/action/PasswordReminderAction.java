@@ -9,6 +9,7 @@ package org.gluu.oxtrust.action;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.List;
+import java.util.TimeZone;
 
 import javax.enterprise.context.ConversationScoped;
 import javax.faces.application.FacesMessage;
@@ -39,7 +40,6 @@ import org.hibernate.validator.constraints.NotEmpty;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.SmtpConfiguration;
 import org.xdi.service.MailService;
-import org.xdi.util.StringHelper;
 
 /**
  * User: Dejan Maric
@@ -127,7 +127,7 @@ public class PasswordReminderAction implements Serializable {
 				passwordResetService.prepareBranch();
 				PasswordResetRequest request = new PasswordResetRequest();
 				String guid = passwordResetService.generateGuidForNewPasswordResetRequest();
-				request.setCreationDate(Calendar.getInstance().getTime());
+				request.setCreationDate(Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTime());
 				request.setPersonInum(matchedPersons.get(0).getInum());
 				request.setOxGuid(guid);
 				request.setDn(passwordResetService.getDnForPasswordResetRequest(guid));
