@@ -45,11 +45,13 @@ public class PasswordResetService implements Serializable {
 	@Inject
 	private Logger log;
 
+	@Inject
+	private CleanUpLogger cleanUpLogger;
+
 	public void addBranch() {
 		SimpleBranch branch = new SimpleBranch();
 		branch.setOrganizationalUnitName("resetPasswordRequests");
 		branch.setDn(getDnForPasswordResetRequest(null));
-
 		ldapEntryManager.persist(branch);
 	}
 
@@ -58,7 +60,6 @@ public class PasswordResetService implements Serializable {
 	}
 
 	public void prepareBranch() {
-		// Create reset password requests branch if needed
 		if (!containsBranch()) {
 			addBranch();
 		}
@@ -73,7 +74,6 @@ public class PasswordResetService implements Serializable {
 	 */
 	public PasswordResetRequest findPasswordResetRequest(String guid) {
 		String passwordResetRequestDn = getDnForPasswordResetRequest(guid);
-
 		return ldapEntryManager.find(PasswordResetRequest.class, passwordResetRequestDn);
 
 	}
@@ -149,46 +149,61 @@ public class PasswordResetService implements Serializable {
 	 */
 	public PasswordResetRequest findActualPasswordResetRequest(String personInum) {
 		Filter oxPersonInumFilter = Filter.createEqualityFilter("personInum", personInum);
-
 		List<PasswordResetRequest> result = ldapEntryManager.findEntries(getDnForPasswordResetRequest(null),
 				PasswordResetRequest.class, oxPersonInumFilter, 0, 0);
-
 		if (result.size() == 0) {
 			return null;
 		}
-
 		return result.get(result.size() - 1);
 	}
 
 	public void cleanup(final Date now) {
+		cleanUpLogger.addNewLogLine("-Start actual password reset clean up: " + ldapEntryManager.encodeGeneralizedTime(now));
 		if (containsBranch()) {
 			BatchOperation<PasswordResetRequest> rptBatchService = new BatchOperation<PasswordResetRequest>(
 					ldapEntryManager) {
 				@Override
 				protected List<PasswordResetRequest> getChunkOrNull(int chunkSize) {
-					return ldapEntryManager.findEntries(getDnForPasswordResetRequest(null), PasswordResetRequest.class,
-							getFilter(), SearchScope.SUB, null, this, 0, chunkSize, chunkSize);
+					List<PasswordResetRequest> entries = ldapEntryManager.findEntries(
+							getDnForPasswordResetRequest(null), PasswordResetRequest.class, getFilter(),
+							SearchScope.SUB, null, this, 0, chunkSize, chunkSize);
+					if (entries != null) {
+						cleanUpLogger.addNewLogLine("-Password reset entries to removed:" + entries.size());
+					} else {
+						cleanUpLogger.addNewLogLine("-Password reset entries to removed: 0");
+					}
+					return entries;
 				}
 
 				@Override
 				protected void performAction(List<PasswordResetRequest> entries) {
+					cleanUpLogger.addNewLogLine("-Removing password reset entries at:" + new Date());
 					for (PasswordResetRequest p : entries) {
 						try {
 							ldapEntryManager.remove(p);
+							cleanUpLogger.addNewLogLine("-Removing entry:" + p.toString());
 						} catch (Exception e) {
 							log.error("Failed to remove entry", e);
+							cleanUpLogger.addNewLogLineAsError("-Failed removing password reset entry: " + p.toString());
 						}
 					}
+					cleanUpLogger.addNewLogLine("-Removing password reset entries done at :" + new Date());
 				}
 
 				private Filter getFilter() {
 					Filter expirationFilter = Filter.createLessOrEqualFilter("creationDate",
 							ldapEntryManager.encodeGeneralizedTime(now));
+					cleanUpLogger.addNewLogLine(
+							"Filter is removing password reset entries with creationDate less or equals to : "
+									+ ldapEntryManager.encodeGeneralizedTime(now));
 					return expirationFilter;
 				}
 			};
 			rptBatchService.iterateAllByChunks(CleanerTimer.BATCH_SIZE);
+		} else {
+			cleanUpLogger.addNewLogLineAsWarning("The password resets DN is no present yet.");
 		}
+		cleanUpLogger.addNewLogLine("Actual password reset clean up done at " + new Date());
 	}
 
 	/**
@@ -222,11 +237,9 @@ public class PasswordResetService implements Serializable {
 	 */
 	public String getDnForPasswordResetRequest(String guid) {
 		String applianceDn = applianceService.getAppliance().getDn();
-
 		if (StringHelper.isEmpty(guid)) {
 			return String.format("ou=resetPasswordRequests,%s", applianceDn);
 		}
-
 		return String.format("oxGuid=%s,ou=resetPasswordRequests,%s", guid, applianceDn);
 	}
 
