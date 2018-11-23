@@ -1303,6 +1303,40 @@
                     "type": "boolean"
                 }
             }
+        },
+        "fido2Configuration": {
+            "id": "fido2Configuration",
+            "description": "Fido2 Configuration.",
+            "type": "object",
+            "properties": {
+            	"certFilesFolder": {
+                    "id": "certFilesFolder",
+                    "description": "Folder with certificates.",
+                    "type": "string",
+                    "minLength": 1
+                },
+
+            	"mdsTocRootFileLocation": {
+                    "id": "mdsTocRootFileLocation",
+                    "description": "mdsTocRootFileLocation.",
+                    "type": "string",
+                    "minLength": 1
+                },
+
+            	"mdsTocFilesFolder": {
+                    "id": "mdsTocFilesFolder",
+                    "description": "mdsTocFilesFolder.",
+                    "type": "string",
+                    "minLength": 1
+                },
+
+            	"certificationServerMetadataFolder": {
+                    "id": "certificationServerMetadataFolder",
+                    "description": "certificationServerMetadataFolder.",
+                    "type": "string",
+                    "minLength": 1
+                }
+            }
         }
     },
     "required": [
@@ -1424,6 +1458,7 @@
         "httpLoggingExludePaths",
         "externalLoggerConfiguration",
         "disableU2fEndpoint",
-        "authenticationProtectionConfiguration"
+        "authenticationProtectionConfiguration",
+        "fido2Configuration"
     ]
 }
