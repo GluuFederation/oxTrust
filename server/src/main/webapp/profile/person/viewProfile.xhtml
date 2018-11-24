@@ -370,11 +370,11 @@
 						<a4j:commandButton
 							onclick="#{rich:component('personPassword:changePasswordModalPanel')}.show();"
 							rendered="#{permissionService.hasPermission(applianceService.appliance, 'profile_management')}"
-							styleClass="btn btn-success"
+							styleClass="btn btn-success changeUserPasswordButton"
 							value="#{msg['profile.changePassword']}" />
 						<h:commandButton action="#{userProfileAction.update}"
 							rendered="#{permissionService.hasPermission(applianceService.appliance, 'profile_management')}"
-							styleClass="btn btn-success" value="Update" />
+							styleClass="btn btn-success updateProfileButton" value="Update" />
 						<h:commandButton action="#{userProfileAction.cancel}"
 							immediate="true"
 							rendered="#{permissionService.hasPermission(applianceService.appliance, 'profile_management')}"
