@@ -1233,6 +1233,11 @@
             "description": "If a client has only openid scope and pairwise id, person should not have to authorize.",
             "type": "boolean"
         },
+        "allowPostLogoutRedirectWithoutValidation": {
+            "id": "allowPostLogoutRedirectWithoutValidation",
+            "description": "Allows post logout redirect without validation for End Session Endpoint.",
+            "type": "boolean"
+        },
         "httpLoggingEnabled": {
             "id": "httpLoggingEnabled",
             "description": "Enable/Disable request/response logging filter",
