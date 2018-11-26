@@ -45,7 +45,7 @@ import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuStatus;
-import org.xdi.model.user.UserRole;
+import org.xdi.model.GluuUserRole;
 import org.xdi.util.StringHelper;
 
 /**
@@ -132,26 +132,22 @@ public class RegisterPersonAction implements Serializable {
 	 */
 	public String initPerson() {
 		String outcome = initPersonImpl();
-
 		if (OxTrustConstants.RESULT_FAILURE.equals(outcome)) {
 			facesMessages.add(FacesMessage.SEVERITY_ERROR,
 					"You cannot enter this page. Please contact site administration.");
 			conversationService.endConversation();
 		} else if (OxTrustConstants.RESULT_NO_PERMISSIONS.equals(outcome)) {
 			facesMessages.add(FacesMessage.SEVERITY_ERROR,
-					"Failed to execute registration script. Please contact site administration.");
+					"Failed to execute registration script.Please contact site administration.");
 			conversationService.endConversation();
 		}
-
 		return outcome;
 	}
 
 	public String initPersonImpl() {
 		initRecaptcha();
-
 		String result = sanityCheck();
 		if (result.equals(OxTrustConstants.RESULT_SUCCESS)) {
-
 			if (!externalUserRegistrationService.isEnabled()) {
 				return OxTrustConstants.RESULT_NO_PERMISSIONS;
 			}
@@ -333,8 +329,7 @@ public class RegisterPersonAction implements Serializable {
 		String code = request.getParameter("code");
 		requestParameters.put("code", new String[] { code });
 		try {
-			boolean result = externalUserRegistrationService.executeExternalConfirmRegistrationMethods(this.person,
-					requestParameters);
+			externalUserRegistrationService.executeExternalConfirmRegistrationMethods(this.person, requestParameters);
 		} catch (Exception ex) {
 			log.error("Failed to confirm registration.", ex);
 		}
@@ -348,7 +343,7 @@ public class RegisterPersonAction implements Serializable {
 	}
 
 	private void initAttributes() {
-		List<GluuAttribute> allPersonAttributes = attributeService.getAllActivePersonAttributes(UserRole.ADMIN);
+		List<GluuAttribute> allPersonAttributes = attributeService.getAllActivePersonAttributes(GluuUserRole.ADMIN);
 
 		List<String> allAttributOrigins = attributeService.getAllAttributeOrigins(allPersonAttributes);
 

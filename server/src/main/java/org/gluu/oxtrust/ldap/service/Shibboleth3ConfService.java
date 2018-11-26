@@ -58,8 +58,8 @@ import org.xdi.config.oxtrust.NameIdConfig;
 import org.xdi.config.oxtrust.ShibbolethCASProtocolConfiguration;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuStatus;
+import org.xdi.model.GluuUserRole;
 import org.xdi.model.SchemaEntry;
-import org.xdi.model.user.UserRole;
 import org.xdi.service.SchemaService;
 import org.xdi.service.XmlService;
 import org.xdi.util.INumGenerator;
@@ -258,7 +258,7 @@ public class Shibboleth3ConfService implements Serializable {
 	 */
 	private void initAttributes(List<GluuSAMLTrustRelationship> trustRelationships) {
 
-		List<GluuAttribute> attributes = attributeService.getAllPersonAttributes(UserRole.ADMIN);
+		List<GluuAttribute> attributes = attributeService.getAllPersonAttributes(GluuUserRole.ADMIN);
 		HashMap<String, GluuAttribute> attributesByDNs = attributeService.getAttributeMapByDNs(attributes);
 
 		GluuAttribute uid = attributeService.getAttributeByName(OxConstants.UID);
@@ -1482,7 +1482,7 @@ public class Shibboleth3ConfService implements Serializable {
 
 			gluuSP.setDn(dn);
 			List<GluuCustomAttribute> customAttributes = new ArrayList<GluuCustomAttribute>();
-			List<GluuAttribute> attributes = attributeService.getAllPersonAttributes(UserRole.ADMIN);
+			List<GluuAttribute> attributes = attributeService.getAllPersonAttributes(GluuUserRole.ADMIN);
 			HashMap<String, GluuAttribute> attributesByDNs = attributeService.getAttributeMapByDNs(attributes);
 			List<String> customAttributeDNs = new ArrayList<String>();
 			List<String> attributeNames = new ArrayList<String>();

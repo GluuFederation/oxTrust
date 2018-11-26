@@ -8,6 +8,8 @@ package org.gluu.oxauth.client;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.commons.lang.RandomStringUtils;
@@ -23,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xdi.context.WebContext;
 import org.xdi.oxauth.client.AuthorizationRequest;
+import org.xdi.oxauth.client.EndSessionRequest;
 import org.xdi.oxauth.client.OpenIdConfigurationClient;
 import org.xdi.oxauth.client.OpenIdConfigurationResponse;
 import org.xdi.oxauth.client.RegisterClient;
@@ -32,10 +35,14 @@ import org.xdi.oxauth.client.TokenClient;
 import org.xdi.oxauth.client.TokenResponse;
 import org.xdi.oxauth.client.UserInfoClient;
 import org.xdi.oxauth.client.UserInfoResponse;
+import org.xdi.oxauth.model.authorize.AuthorizeRequestParam;
 import org.xdi.oxauth.model.common.AuthenticationMethod;
 import org.xdi.oxauth.model.common.ResponseType;
 import org.xdi.oxauth.model.crypto.signature.SignatureAlgorithm;
+import org.xdi.oxauth.model.exception.InvalidJwtException;
+import org.xdi.oxauth.model.jwt.Jwt;
 import org.xdi.oxauth.model.jwt.JwtClaimName;
+import org.xdi.oxauth.model.jwt.JwtType;
 import org.xdi.oxauth.model.register.ApplicationType;
 import org.xdi.util.StringHelper;
 import org.xdi.util.exception.ConfigurationException;
@@ -53,8 +60,9 @@ public class OpenIdClient<C extends AppConfiguration, L extends LdapAppConfigura
 
 	private final Logger logger = LoggerFactory.getLogger(OpenIdClient.class);
 
-	private static final String STATE_PARAMETER = "#state_parameter";
-    private static final String NONCE_PARAMETER = "#nonce_parameter";
+	private static final String SESSION_STATE_PARAMETER = "#session_state_parameter";
+    private static final String SESSION_NONCE_PARAMETER = "#session_nonce_parameter";
+    private static final String SESSION_ID_TOKEN_PARAMETER = "#session_id_token";
 
 	// Register new client earlier than old client was expired to allow execute authorization requests
 	private static final long NEW_CLIENT_EXPIRATION_OVERLAP = 60 * 1000;
@@ -171,22 +179,41 @@ public class OpenIdClient<C extends AppConfiguration, L extends LdapAppConfigura
 		return response;
 	}
 
-	/**
-	 * {@InheritDoc}
-	 */
 	@Override
 	public String getName() {
 		return this.getClass().getSimpleName();
 	}
 
-	/**
-	 * {@InheritDoc}
-	 */
-	public String getRedirectionUrl(final WebContext context) {
+    @Override
+    public String getRedirectionUrl(final WebContext context) {
+        return getRedirectionUrl(context, null, null);
+    }
+
+    @Override
+    public String getRedirectionUrl(final WebContext context, Map<String, String> customStateParameters, final Map<String, String> customParameters) {
 		init();
 
-		final String state = RandomStringUtils.randomAlphanumeric(10);
-		final String nonce = RandomStringUtils.randomAlphanumeric(10);
+		String state = RandomStringUtils.randomAlphanumeric(10);
+		String nonce = RandomStringUtils.randomAlphanumeric(10);
+        
+        if (customStateParameters != null) {
+            Jwt jwt = new Jwt();
+            // Header
+            jwt.getHeader().setType(JwtType.JWT);
+            jwt.getHeader().setAlgorithm(SignatureAlgorithm.NONE);
+
+            // Claims
+            for (Entry<String, String> entry : customStateParameters.entrySet()) {
+                jwt.getClaims().setClaim(entry.getKey(), entry.getValue());
+            }
+
+            // Put state
+            jwt.getClaims().setClaim(AuthorizeRequestParam.STATE, state);
+
+            // Store jwt in state
+            state = jwt.toString();
+        }
+        
 
 		final AuthorizationRequest authorizationRequest = new AuthorizationRequest(Arrays.asList(ResponseType.CODE), this.clientId, this.appConfiguration.getOpenIdScopes(),
 				this.appConfiguration.getOpenIdRedirectUrl(), null);
@@ -194,8 +221,14 @@ public class OpenIdClient<C extends AppConfiguration, L extends LdapAppConfigura
 		authorizationRequest.setState(state);
 		authorizationRequest.setNonce(nonce);
 
-		context.setSessionAttribute(getName() + STATE_PARAMETER, state);
-        context.setSessionAttribute(getName() + NONCE_PARAMETER, nonce);
+		context.setSessionAttribute(getName() + SESSION_STATE_PARAMETER, state);
+        context.setSessionAttribute(getName() + SESSION_NONCE_PARAMETER, nonce);
+        
+        if (customParameters != null) {
+            for (Entry<String, String> entry : customParameters.entrySet()) {
+                authorizationRequest.addCustomParameter(entry.getKey(), entry.getValue());
+            }
+        }
 
 		final String redirectionUrl = this.openIdConfiguration.getAuthorizationEndpoint() + "?" + authorizationRequest.getQueryString();
 		logger.debug("oxAuth redirection Url: '{}'", redirectionUrl);
@@ -203,10 +236,28 @@ public class OpenIdClient<C extends AppConfiguration, L extends LdapAppConfigura
 		return redirectionUrl;
 	}
 
-	/**
-	 * {@InheritDoc}
-	 */
 	@Override
+    public String getLogoutRedirectionUrl(WebContext context) {
+        init();
+
+        final String state = RandomStringUtils.randomAlphanumeric(10);
+        final String postLogoutRedirectUri = this.appConfiguration.getOpenIdPostLogoutRedirectUri();
+        String idToken = (String) context.getSessionAttribute(getName() + SESSION_ID_TOKEN_PARAMETER);
+        
+        // Allow to send logout request if session is expired 
+        if (idToken == null) {
+            idToken = "";
+        }
+        
+        final EndSessionRequest endSessionRequest = new EndSessionRequest(idToken, postLogoutRedirectUri, state);
+
+        final String redirectionUrl = this.openIdConfiguration.getEndSessionEndpoint() + "?" + endSessionRequest.getQueryString();
+        logger.debug("oxAuth redirection Url: '{}'", redirectionUrl);
+
+        return redirectionUrl;
+    }
+
+    @Override
 	public boolean isAuthorizationResponse(final WebContext context) {
 		final String authorizationCode = context.getRequestParameter(ResponseType.CODE.getValue());
 		logger.debug("oxAuth authorization code: '{}'", authorizationCode);
@@ -217,15 +268,12 @@ public class OpenIdClient<C extends AppConfiguration, L extends LdapAppConfigura
 		return result;
 	}
 
-	/**
-	 * {@InheritDoc}
-	 */
 	@Override
 	public boolean isValidRequestState(final WebContext context) {
-		final String state = context.getRequestParameter("state");
+		final String state = context.getRequestParameter(AuthorizeRequestParam.STATE);
 		logger.debug("oxAuth request state: '{}'", state);
 
-		final Object sessionState = context.getSessionAttribute(getName() + STATE_PARAMETER);
+		final Object sessionState = context.getSessionAttribute(getName() + SESSION_STATE_PARAMETER);
 		logger.debug("Session context state: '{}'", sessionState);
 
 		final boolean emptySessionState = StringHelper.isEmptyString(sessionState);
@@ -239,10 +287,14 @@ public class OpenIdClient<C extends AppConfiguration, L extends LdapAppConfigura
 		return result;
 	}
 
-	/**
-	 * {@InheritDoc}
-	 */
 	@Override
+    public String getRequestState(WebContext context) {
+        final String state = context.getRequestParameter(AuthorizeRequestParam.STATE);
+        
+        return state;
+    }
+
+    @Override
 	public final OpenIdCredentials getCredentials(final WebContext context) {
 		final String authorizationCode = context.getRequestParameter(ResponseType.CODE.getValue());
 
@@ -253,40 +305,47 @@ public class OpenIdClient<C extends AppConfiguration, L extends LdapAppConfigura
 		return clientCredential;
 	}
 
-	/**
-	 * {@InheritDoc}
-	 */
 	@Override
 	public UserProfile getUserProfile(final OpenIdCredentials credential, final WebContext context) {
 		init();
 
 		try {
-			final String accessToken = getAccessToken(credential);
-			final UserInfoResponse userInfoResponse = getUserInfo(accessToken);
+	        // Request access token using the authorization code
+	        logger.debug("Getting access token");
 
-			final UserProfile profile = retrieveUserProfileFromUserInfoResponse(context, userInfoResponse);
+	        final TokenClient tokenClient = new TokenClient(this.openIdConfiguration.getTokenEndpoint());
+
+	        final TokenResponse tokenResponse = tokenClient.execAuthorizationCode(credential.getAuthorizationCode(), this.appConfiguration.getOpenIdRedirectUrl(), this.clientId, this.clientSecret);
+	        logger.trace("tokenResponse.getStatus(): '{}'", tokenResponse.getStatus());
+	        logger.trace("tokenResponse.getErrorType(): '{}'", tokenResponse.getErrorType());
+
+	        final String accessToken = tokenResponse.getAccessToken();
+	        logger.trace("accessToken : " + accessToken);
+
+	        final String idToken = tokenResponse.getIdToken();
+            logger.trace("idToken : " + idToken);
+
+            // Store id_token in session
+            context.setSessionAttribute(getName() + SESSION_ID_TOKEN_PARAMETER, idToken);
+
+            // Parse JWT
+            Jwt jwt;
+            try {
+                jwt = Jwt.parse(idToken);
+            } catch (InvalidJwtException ex) {
+                logger.error("Failed to parse id_token: {}", idToken);
+                throw new CommunicationException("Failed to parse id_token");
+            }
+
+	        final UserInfoResponse userInfoResponse = getUserInfo(accessToken);
+
+			final UserProfile profile = retrieveUserProfileFromUserInfoResponse(context, jwt, userInfoResponse);
 			logger.debug("User profile: '{}'", profile);
 
 			return profile;
 		} catch (final Exception ex) {
 			throw new CommunicationException(ex);
 		}
-	}
-
-	private String getAccessToken(final OpenIdCredentials credential) {
-		// Request access token using the authorization code
-		logger.debug("Getting access token");
-
-		final TokenClient tokenClient = new TokenClient(this.openIdConfiguration.getTokenEndpoint());
-
-		final TokenResponse tokenResponse = tokenClient.execAuthorizationCode(credential.getAuthorizationCode(), this.appConfiguration.getOpenIdRedirectUrl(), this.clientId, this.clientSecret);
-		logger.trace("tokenResponse.getStatus(): '{}'", tokenResponse.getStatus());
-		logger.trace("tokenResponse.getErrorType(): '{}'", tokenResponse.getErrorType());
-
-		final String accessToken = tokenResponse.getAccessToken();
-		logger.trace("accessToken : " + accessToken);
-
-		return accessToken;
 	}
 
 	private UserInfoResponse getUserInfo(final String accessToken) {
@@ -302,15 +361,15 @@ public class OpenIdClient<C extends AppConfiguration, L extends LdapAppConfigura
 		return userInfoResponse;
 	}
 
-	protected CommonProfile retrieveUserProfileFromUserInfoResponse(final WebContext context, final UserInfoResponse userInfoResponse) {
+	protected CommonProfile retrieveUserProfileFromUserInfoResponse(final WebContext context, final Jwt jwt, final UserInfoResponse userInfoResponse) {
 		final CommonProfile profile = new CommonProfile();
 
-		String nonceResponse = getFirstClaim(userInfoResponse, JwtClaimName.NONCE);
-        final String nonceSession = (String) context.getSessionAttribute(getName() + NONCE_PARAMETER);
+		String nonceResponse = (String) jwt.getClaims().getClaim(JwtClaimName.NONCE);
+        final String nonceSession = (String) context.getSessionAttribute(getName() + SESSION_NONCE_PARAMETER);
         logger.debug("Session nonce: '{}'", nonceSession);
         if (!StringHelper.equals(nonceSession, nonceResponse)) {
             logger.error("User info response:  nonce is not matching.");
-            throw new CommunicationException("Nonce is not match");
+            throw new CommunicationException("Nonce is not match" + nonceResponse + " : " + nonceSession);
         }
 
 		String id = getFirstClaim(userInfoResponse, JwtClaimName.USER_NAME);

@@ -24,15 +24,40 @@
 .login-logo, .register-logo {
 	margin-bottom: 0px;
 }
+iframe{
+margin-left: 86%;
+}
 </style>
 
 		<ui:fragment rendered="#{not registerPersonAction.captchaDisabled}">
 			<script async="async" defer="defer"
 				src="https://www.google.com/recaptcha/api.js" />
 		</ui:fragment>
+		<ui:fragment>
+			<script type="text/javascript">
+				function load() {
+					var url = window.location.origin
+							+ "/oxauth/ext/resources/img/logo.png";
+					var element = document.getElementById("logoObject");
+					element.data = url;
+				}
+				window.onload = load;
+			</script>
+		</ui:fragment>
 	</ui:define>
 
 	<ui:define name="body">
+
+		<div class="login-logo">
+			<object id="logoObject" data="" height="150" width="150"
+				type="image/png">
+				<img
+					src="#{oxTrustConfigurationService.cssLocation}/../theme/dist/img/logo1.png" />
+			</object>
+		</div>
+		<div class="bs-docs-section"
+			style="border-top: 2px solid #1ab26b !important; margin-bottom: 5px !important; margin-top: 1px !important; padding-top: 1px !important;"></div>
+		<!-- /.login-logo -->
 		<div id="formArea">
 
 			<div id="addPerson">
@@ -40,20 +65,14 @@
 				<h:form id="personRegistrationForm">
 					<rich:panel>
 						<div class="login-box">
-							<div class="login-logo">
-								<a href="#" style="font-size: 35px;"> <img
-									src="#{oxTrustConfigurationService.cssLocation}/../theme/dist/img/logo.png" />
-								</a>
-							</div>
-							<!-- /.login-logo -->
-							<div class="row" style="margin-bottom: 20px;">
+							<div class="row" style="margin-bottom: 1px;">
 								<div class="col-md-12">
-									<div id="register" style="color: white;">
+									<div id="register" style="color: #1ab26b;">
 										<h1 class="text-center">#{msg['register.signUp']}</h1>
 										<p class="text-center">
 											#{msg['register.toCreateAnAccount']}
-											<h:link includeViewParams="false" outcome="/login"
-												style="color:white;font-weight:bold;"
+											<h:link styleClass="text-center" includeViewParams="false" outcome="/login"
+												style="color:blue;font-weight:bold;"
 												value="#{msg['register.alreadyHaveAnAccount']}" />
 										</p>
 									</div>
@@ -65,7 +84,7 @@
 							</rich:messages>
 
 							<div class="login-box-body text-center"
-								style="border-radius: 10px; background: #F9F6F6;">
+								style="border-radius: 10px; background: #1ab26b;color: black;">
 								<div class="formColumn row">
 									<div class="col-md-12">
 										<ui:param name="_mandatoryAttributes"
@@ -200,7 +219,7 @@
 										<!-- Captcha -->
 										<ui:fragment
 											rendered="#{not registerPersonAction.captchaDisabled}">
-											<s class="g-recaptcha text-center"
+											<s class="g-recaptcha text-center" style="magirn-left:20%;"
 												data-sitekey="#{recaptchaService.recaptchaSiteKey}" />
 										</ui:fragment>
 										<div class="row">
@@ -222,16 +241,7 @@
 							</div>
 							<!-- /.login-box-body -->
 						</div>
-						<!-- /.login-box -->
-						<script type="text/javascript">
-							$(document).ready(function() {
-								$('input').icheck({
-									checkboxClass : 'icheckbox_square-blue',
-									radioClass : 'iradio_square-blue',
-									increaseArea : '20%' // optional
-								});
-							});
-						</script>
+						
 
 					</rich:panel>
 
@@ -240,6 +250,32 @@
 				</h:form>
 			</div>
 
+		</div>
+		<div class="footer-copyright text-center py-3"
+			style="background: #1ab26b; position: fixed; left: 0; bottom: 0; width: 100%; text-align: center;">
+			<div class="footer">
+				<div class="row">
+					<div class="col-md-12">
+						<div class="padding_spc"
+							style="padding-bottom: 5px; padding-top: 5px;">
+							<p>
+								<h:outputText value="Gluu, Inc" />
+								| <a target="_blank"
+									href="https://github.com/GluuFederation/oxTrust/blob/master/LICENSE"><h:outputText
+										value="Use subject to MIT LICENSE" escape="false" /></a>
+								<h:panelGroup rendered='#{!empty client.policyUri}'>
+					| <a target="_blank" href="#{client.policyUri}"><h:outputText
+											value="#{msgs['common.privacyPolicy']}" escape="false" /></a>
+								</h:panelGroup>
+								<h:panelGroup rendered='#{!empty client.tosUri}'>
+					| <a target="_blank" href="#{client.tosUri}"><h:outputText
+											value="#{msgs['common.termsOfService']}" escape="false" /></a>
+								</h:panelGroup>
+							</p>
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
 	</ui:define>
 </ui:composition>

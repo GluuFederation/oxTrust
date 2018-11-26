@@ -35,7 +35,7 @@
     <h:form id="customScriptForm">
     <div class="row">
 			<div class="col-xs-12">
-			<h:panelGroupp id="customScriptForm">
+			<h:panelGroup id="customScriptForm">
 								
 			<rich:tabPanel switchType="ajax" id="scriptTypeTabPanelId" >
 			<a4j:repeat value="#{applianceService.customScriptTypes}" var="_scriptType">
@@ -43,7 +43,7 @@
 	            <rich:tab styleClass="#{_scriptType.displayName}" header="#{_scriptType.displayName}">
 		            <h:panelGrid columns="1" width="100%" border="0" cellpadding="0" cellspacing="0" >
 		            <div id="accordion" role="tablist">
-		            <div class="card" #{_scriptType.displayName}" id="#{_scriptType.displayName}">
+		            <div class="card #{_scriptType.displayName}" id="#{_scriptType.displayName}">
 		                <a4j:region>
 		                    <rich:dataGrid id="customScriptTypeId" styleClass="allScriptFor#{_scriptType.displayName}" columns="1" value="#{_customScripts}" var="_customScript" style="width: 100%;">	
 					       <h:panelGroup layout="block" styleClass="#{(_customScript.enabled) ?  'card-header active' : 'card-header'}" style="#{(_customScript.enabled and _action.hasCustomScriptError(_customScript)) ?  'background: red' : ''}" id="headingOne" >
@@ -70,7 +70,7 @@
 										<ox:decorate label="#{msg['customScript.name']}" forId="#{msg['customScript.name']}" tooltip="#{msg['customScript.name']}" 
 										leftClass="col-sm-3" rightClass="col-sm-8" >
 										 <h:inputText value="#{_customScript.name}" size="90" required="#{empty param['rq']}" validatorMessage="#{msg['customScript.name.error']}" styleClass="form-control scriptNameTextBox" style="width: 90%;">
-												<f:validateRegex pattern="^[a-zA-Z0-9_]+$"/>
+												<f:validateRegex pattern="^[a-zA-Z0-9_-]+$"/>
 										</h:inputText>
 										</ox:decorate>
 		                                </div>

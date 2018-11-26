@@ -19,10 +19,11 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.model.AuthenticationChartDto;
+import org.gluu.oxtrust.util.OxTrustConstants;
+import org.gluu.persist.ldap.impl.LdapEntryManager;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.ApplicationType;
@@ -30,7 +31,6 @@ import org.xdi.model.metric.MetricType;
 import org.xdi.model.metric.counter.CounterMetricEntry;
 import org.xdi.model.metric.ldap.MetricEntry;
 import org.xdi.service.CacheService;
-import org.xdi.util.OxConstants;
 
 /**
  * Store and retrieve metric
@@ -42,6 +42,8 @@ import org.xdi.util.OxConstants;
 @Named(MetricService.METRIC_SERVICE_COMPONENT_NAME)
 public class MetricService extends org.xdi.service.metric.MetricService {
 
+	private static final int YEARLY = 365;
+
 	private static final long serialVersionUID = 7875838160379126796L;
 
 	public static final String METRIC_SERVICE_COMPONENT_NAME = "metricService";
@@ -51,7 +53,7 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 	private Logger log;
 
 	@Inject
-    private Instance<MetricService> instance;
+	private Instance<MetricService> instance;
 
 	@Inject
 	private CacheService cacheService;
@@ -63,14 +65,11 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 	private OrganizationService organizationService;
 
 	@Inject
-	private ConfigurationFactory configurationFactory;
-
-	@Inject
 	private AppConfiguration appConfiguration;
 
-    public void initTimer() {
-    	initTimer(this.appConfiguration.getMetricReporterInterval());
-    }
+	public void initTimer() {
+		initTimer(this.appConfiguration.getMetricReporterInterval());
+	}
 
 	@Override
 	public String baseDn() {
@@ -90,16 +89,37 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 	}
 
 	public AuthenticationChartDto genereateAuthenticationChartDto(int countDays) {
-		String key = OxConstants.CACHE_METRICS_KEY + "#home";
-		AuthenticationChartDto authenticationChartDto = (AuthenticationChartDto) cacheService.get(OxConstants.CACHE_METRICS_NAME, key);
+		String key = OxTrustConstants.CACHE_METRICS_KEY + "#home";
+		AuthenticationChartDto authenticationChartDto = (AuthenticationChartDto) cacheService
+				.get(OxTrustConstants.CACHE_METRICS_NAME, key);
 		if (authenticationChartDto != null) {
 			return authenticationChartDto;
 		}
-		
-		Map<MetricType, List<? extends MetricEntry>> entries = findAuthenticationMetrics(-countDays);
+
+		Map<MetricType, List<? extends MetricEntry>> entries = findAuthenticationMetrics(ApplicationType.OX_AUTH,
+				-countDays);
+
+		Map<MetricType, List<? extends MetricEntry>> yearlyEntris = findAuthenticationMetrics(ApplicationType.OX_AUTH,
+				-YEARLY);
+		Map<String, Long> yearlySuccessStats = calculateCounterStatistics(YEARLY,
+				(List<CounterMetricEntry>) yearlyEntris.get(MetricType.OXAUTH_USER_AUTHENTICATION_SUCCESS));
+		Long[] yearlyValues = new Long[YEARLY];
+		yearlyValues = yearlySuccessStats.values().toArray(yearlyValues);
+		Long yearlyRequest = 0L;
+		for (Long number : yearlyValues) {
+			yearlyRequest = yearlyRequest + number;
+		}
+		Map<String, Long> yearlyFailureStats = calculateCounterStatistics(YEARLY,
+				(List<CounterMetricEntry>) yearlyEntris.get(MetricType.OXAUTH_USER_AUTHENTICATION_FAILURES));
+		yearlyValues = new Long[YEARLY];
+		yearlyValues = yearlyFailureStats.values().toArray(yearlyValues);
+		for (Long number : yearlyValues) {
+			yearlyRequest = yearlyRequest + number;
+		}
 
 		String[] labels = new String[countDays];
-		Map<String, Long> successStats = calculateCounterStatistics(countDays, (List<CounterMetricEntry>) entries.get(MetricType.OXAUTH_USER_AUTHENTICATION_SUCCESS));
+		Map<String, Long> successStats = calculateCounterStatistics(countDays,
+				(List<CounterMetricEntry>) entries.get(MetricType.OXAUTH_USER_AUTHENTICATION_SUCCESS));
 		labels = successStats.keySet().toArray(labels);
 
 		Long[] values = new Long[countDays];
@@ -110,17 +130,21 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 		authenticationChartDto.setLabels(labels);
 		authenticationChartDto.setSuccess(values);
 
-		Map<String, Long> failureStats = calculateCounterStatistics(countDays, (List<CounterMetricEntry>) entries.get(MetricType.OXAUTH_USER_AUTHENTICATION_FAILURES));
+		Map<String, Long> failureStats = calculateCounterStatistics(countDays,
+				(List<CounterMetricEntry>) entries.get(MetricType.OXAUTH_USER_AUTHENTICATION_FAILURES));
 		values = new Long[countDays];
 		values = failureStats.values().toArray(values);
 		authenticationChartDto.setFailure(values);
 
-		cacheService.put(OxConstants.CACHE_METRICS_NAME, key, authenticationChartDto);
+		authenticationChartDto.setYearlyRequest(yearlyRequest);
+
+		cacheService.put(OxTrustConstants.CACHE_METRICS_NAME, key, authenticationChartDto);
 
 		return authenticationChartDto;
 	}
 
-	private Map<MetricType, List<? extends MetricEntry>> findAuthenticationMetrics(int countDays) {
+	private Map<MetricType, List<? extends MetricEntry>> findAuthenticationMetrics(ApplicationType applicationType,
+			int countDays) {
 		List<MetricType> metricTypes = new ArrayList<MetricType>();
 		metricTypes.add(MetricType.OXAUTH_USER_AUTHENTICATION_FAILURES);
 		metricTypes.add(MetricType.OXAUTH_USER_AUTHENTICATION_SUCCESS);
@@ -131,8 +155,8 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 
 		Date startDate = calendar.getTime();
 
-		Map<MetricType, List<? extends MetricEntry>> entries = findMetricEntry(ApplicationType.OX_TRUST, appConfiguration
-				.getApplianceInum(), metricTypes, startDate, endDate);
+		Map<MetricType, List<? extends MetricEntry>> entries = findMetricEntry(applicationType,
+				appConfiguration.getApplianceInum(), metricTypes, startDate, endDate);
 
 		return entries;
 	}
@@ -152,7 +176,9 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 		}
 
 		// Detect servers restart and readjust counts
-		// Server restart condition: previous entry CounterMetricEntry.CounterMetricEntry.count > current entry CounterMetricEntry.CounterMetricEntry.count
+		// Server restart condition: previous entry
+		// CounterMetricEntry.CounterMetricEntry.count > current entry
+		// CounterMetricEntry.CounterMetricEntry.count
 		CounterMetricEntry prevMetric = null;
 		long prevDayCount = 0L;
 		long adjust = 0;
@@ -161,21 +187,23 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 			calendar.setTime(date);
 
 			// Detect server restarts
-			if ((prevMetric != null) && (prevMetric.getMetricData().getCount() > metric.getMetricData().getCount() + adjust)) {
+			if ((prevMetric != null)
+					&& (prevMetric.getMetricData().getCount() > metric.getMetricData().getCount() + adjust)) {
 				// Last count before server restart
 				long count = prevMetric.getMetricData().getCount();
 
 				// Change adjust value
 				adjust = count;
 			}
-			
+
 			long count = metric.getMetricData().getCount();
 			metric.getMetricData().setCount(count + adjust);
-			
+
 			prevMetric = metric;
 		}
 
-		// Iterate through ordered by MetricEntry.startDate list and just make value snapshot at the end of the day
+		// Iterate through ordered by MetricEntry.startDate list and just make value
+		// snapshot at the end of the day
 		int prevDay = -1;
 		prevMetric = null;
 		prevDayCount = 0L;
@@ -188,11 +216,11 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 				long count = prevMetric.getMetricData().getCount();
 				String dateString = df.format(prevMetric.getCreationDate());
 				stats.put(dateString, count - prevDayCount);
-				
+
 				// Show only difference, not total
 				prevDayCount = count;
 			}
-			
+
 			prevMetric = metric;
 			prevDay = currDay;
 		}
@@ -205,26 +233,18 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 		return stats;
 	}
 
-    @Override
-    public boolean isMetricReporterEnabled() {
-        if (this.appConfiguration.getMetricReporterEnabled() == null) {
-            return false;
-        }
-
-        return this.appConfiguration.getMetricReporterEnabled();
-    }
-
-    @Override
-    public ApplicationType getApplicationType() {
-        return ApplicationType.OX_TRUST;
-    }
-
-	private void dump(List<CounterMetricEntry> metrics) {
-		for (CounterMetricEntry metric : metrics) {
-			Date date = metric.getCreationDate();
-			long count = metric.getMetricData().getCount();
-			System.out.println(date + " : " + count);
+	@Override
+	public boolean isMetricReporterEnabled() {
+		if (this.appConfiguration.getMetricReporterEnabled() == null) {
+			return false;
 		}
+
+		return this.appConfiguration.getMetricReporterEnabled();
+	}
+
+	@Override
+	public ApplicationType getApplicationType() {
+		return ApplicationType.OX_TRUST;
 	}
 
 }

@@ -24,6 +24,7 @@ import javax.validation.constraints.Size;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
+import org.gluu.oxtrust.ldap.service.JsonConfigurationService;
 import org.gluu.oxtrust.ldap.service.OxTrustAuditService;
 import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.ldap.service.RecaptchaService;
@@ -34,8 +35,8 @@ import org.gluu.oxtrust.model.PasswordResetRequest;
 import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.service.PasswordResetService;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.site.ldap.persistence.LdapEntryManager;
-import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
+import org.gluu.persist.PersistenceEntryManager;
+import org.gluu.persist.exception.EntryPersistenceException;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.util.StringHelper;
@@ -53,7 +54,7 @@ public class PasswordResetAction implements Serializable {
 	private Logger log;
 
 	@Inject
-	private LdapEntryManager ldapEntryManager;
+	private PersistenceEntryManager ldapEntryManager;
 
 	@Inject
 	private FacesMessages facesMessages;
@@ -81,6 +82,9 @@ public class PasswordResetAction implements Serializable {
 
 	@Inject
 	private AppConfiguration appConfiguration;
+
+	@Inject
+	private JsonConfigurationService jsonConfigurationService;
 
 	private PasswordResetRequest request;
 	private String guid;
@@ -157,18 +161,13 @@ public class PasswordResetAction implements Serializable {
 	}
 
 	protected void sendExpirationError() {
-		facesMessages.add(FacesMessage.SEVERITY_ERROR, "The reset link is no more valid.");
-		facesMessages.add(FacesMessage.SEVERITY_ERROR, "\n\n");
 		facesMessages.add(FacesMessage.SEVERITY_ERROR,
-				"It has already been used to reset your password or it has expired.");
-		facesMessages.add(FacesMessage.SEVERITY_ERROR, "\n\n");
-		facesMessages.add(FacesMessage.SEVERITY_ERROR, "Re-enter your e-mail to generate a new link.");
+				"The reset link is no longer valid.\n\n " + "Re-enter your e-mail to generate a new link.");
 		conversationService.endConversation();
 	}
 
-	public String update() throws ParseException {
+	public String update() {
 		String outcome = updateImpl();
-
 		if (OxTrustConstants.RESULT_SUCCESS.equals(outcome)) {
 			facesMessages.add(FacesMessage.SEVERITY_INFO, "Password reset successful.");
 			conversationService.endConversation();
@@ -177,13 +176,12 @@ public class PasswordResetAction implements Serializable {
 					"Your secret answer or Captcha code may have been wrong. Please try to correct it or contact your administrator to change your password.");
 			conversationService.endConversation();
 		}
-
 		return outcome;
 	}
 
-	public String updateImpl() throws ParseException {
+	public String updateImpl() {
 		boolean valid = true;
-		if (recaptchaService.isEnabled()) {
+		if (recaptchaService.isEnabled() && getAuthenticationRecaptchaEnabled()) {
 			valid = recaptchaService.verifyRecaptchaResponse();
 		}
 
@@ -209,9 +207,12 @@ public class PasswordResetAction implements Serializable {
 				PasswordResetRequest removeRequest = new PasswordResetRequest();
 				removeRequest.setBaseDn(request.getBaseDn());
 				ldapEntryManager.remove(removeRequest);
-				oxTrustAuditService.audit("PASSWORD RESET REQUEST" + removeRequest.getBaseDn() + " REMOVED",
-						identity.getUser(),
-						(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
+				try {
+					oxTrustAuditService.audit("PASSWORD RESET REQUEST" + removeRequest.getBaseDn() + " REMOVED",
+							identity.getUser(),
+							(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
+				} catch (Exception e) {
+				}
 				if (question != null && answer != null) {
 					String correctAnswer = answer.getValue();
 					Boolean securityQuestionAnswered = (securityAnswer != null) && securityAnswer.equals(correctAnswer);
@@ -286,6 +287,10 @@ public class PasswordResetAction implements Serializable {
 
 	public void setConfirm(String confirm) {
 		this.confirm = confirm;
+	}
+
+	public boolean getAuthenticationRecaptchaEnabled() {
+		return jsonConfigurationService.getOxTrustappConfiguration().isAuthenticationRecaptchaEnabled();
 	}
 
 }

@@ -14,9 +14,33 @@
 		type="org.gluu.oxtrust.action.UpdateClientAction" />
 	<cc:attribute name="_client" required="false"
 		type="org.gluu.oxtrust.model.OxAuthClient" />
+	<cc:attribute name="_markdown" required="false" type="java.lang.String" />
 </cc:interface>
 
 <cc:implementation>
+
+	<script>
+	  $( document ).ready(function() {
+		  var jsfAreaValue = document.getElementById("summary:OIDCMarkdownTexArea").value;
+		  document.getElementById("OIDCMarkdownTexArea2").value = jsfAreaValue;
+		  new ClipboardJS('.showOIDCSummaryMarkdownButton',{
+				    text: function (trigger) {
+				          return document.getElementById("OIDCMarkdownTexArea2").value;
+				     }
+				}
+			  );
+				  
+	  });
+	  
+	  function notify(){
+		  document.getElementById("feedback").style.display='block';
+		  setTimeout(function() {
+			  document.getElementById("feedback").style.display='none';
+			  }, 2000);
+	  }
+   </script>
+
+
 
 	<rich:popupPanel id="clientSummary"
 		onmaskclick="#{rich:component('clientSummary')}.hide()" zindex="2000"
@@ -29,8 +53,26 @@
 				style="cursor:pointer"
 				onclick="#{rich:component('clientSummary')}.hide(); return false;" />
 		</f:facet>
-		<div class="container">
-			<h:panelGroup style="overflow:scroll;">
+		<div class="container"
+			style="overflow-y: scroll; height: 470px; margin-bottom: 20px;">
+			<div class="row">
+				<div class="col-sm-3 col-lg-3">
+					<input type="button"
+						class="btn btn-primary showOIDCSummaryMarkdownButton"
+						style="margin-left: 4%;" onclick="notify()"
+						data-clipboard-target="#OIDCMarkdownTexArea2"
+						value="Copy as markdown to clipboard" />
+				</div>
+				<div class="col-sm-8 col-lg-8">
+					<span id="feedback" style="color: green; display: none;"><b>copied
+						to clip board</b></span>
+					<h:inputTextarea id="OIDCMarkdownTexArea"
+						class="OIDCMarkdownTexArea" rows="3" cols="80" maxlength="250"
+						style="display: none;" value="#{cc.attrs._markdown}" />
+					<input type='hidden' id="OIDCMarkdownTexArea2" />
+				</div>
+			</div>
+			<h:panelGroup>
 				<div class="row">
 					<div class="col-sm-6 col-lg-6">
 						<ox:decorate id="inum"
@@ -152,19 +194,16 @@
 							</h:panelGroup>
 						</ox:decorate>
 
-						<ox:decorate id="defaultAcrValues"
-							rendered="#{not empty cc.attrs._clientAction.defaultAcrValues and cc.attrs._clientAction.defaultAcrValues ne null }"
+						<ox:decorate id="acrs"
+							rendered="#{!empty cc.attrs._clientAction.customScripts and cc.attrs._clientAction.customScripts ne null }"
 							label="#{msg['clientForm.defaultRequestedAuthenticationContextClass']}">
 							<h:panelGroup id="selectedDefaultAcrValuesId">
-								<h:panelGroup columns="1" width="100%" border="0"
-									cellpadding="0" cellspacing="0">
-									<a4j:repeat value="#{cc.attrs._clientAction.defaultAcrValues}"
-										rowKeyVar="_defaultAcrValuesIdx" var="_defaultAcrValue"
-										iterationStatusVar="loop">
+								<h:panelGroup>
+									<a4j:repeat value="#{cc.attrs._clientAction.customScripts}"
+										rowKeyVar="_acrIdx" var="_acr" iterationStatusVar="loop">
 										<div class="row-fluid">
 											<div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
-												<h:outputText value="#{_defaultAcrValue}" />
-
+												<h:outputText value="#{_acr.name}" />
 											</div>
 										</div>
 										<br />
@@ -383,7 +422,8 @@
 						<ox:decorate id="jwks" label="#{msg['clientForm.jwks']}"
 							rendered="#{!empty cc.attrs._client.jwks and cc.attrs._client.jwks ne null }">
 							<h:outputText style="max-width: 150px;word-wrap:break-word;"
-								value="#{cc.attrs._client.jwks}" id="jwksId" escape="false" />
+								value="#{cc.attrs._client.jwks.length() gt 100 ? cc.attrs._client.jwks.substring(0,97).concat('...') : cc.attrs._client.jwks}"
+								id="jwksId" escape="false" />
 						</ox:decorate>
 						<ox:decorate id="subjectType"
 							label="#{msg['clientForm.subjectType']}"
@@ -522,7 +562,7 @@
 							label="#{msg['clientForm.clientSecretExpires']}">
 							<h:outputText value="#{cc.attrs._client.clientSecretExpiresAt}" />
 						</ox:decorate>
-						
+
 					</div>
 				</div>
 			</h:panelGroup>

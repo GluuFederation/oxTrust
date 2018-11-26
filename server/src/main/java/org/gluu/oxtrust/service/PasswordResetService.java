@@ -15,7 +15,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.gluu.oxtrust.ldap.service.ApplianceService;
-import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.model.PasswordResetRequest;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.model.BatchOperation;
@@ -35,74 +34,77 @@ import org.xdi.util.StringHelper;
 @Named("passwordResetService")
 public class PasswordResetService implements Serializable {
 
-    private static final long serialVersionUID = -4107684257624615866L;
+	private static final long serialVersionUID = -4107684257624615866L;
 
-    @Inject
-	private OrganizationService organizationService;
-
-    @Inject
-    private ApplianceService applianceService;
+	@Inject
+	private ApplianceService applianceService;
 
 	@Inject
 	private PersistenceEntryManager ldapEntryManager;
 
 	@Inject
 	private Logger log;
+	@Inject
+	private CleanUpLogger logger;
 
-    public void addBranch() {
-        SimpleBranch branch = new SimpleBranch();
-        branch.setOrganizationalUnitName("resetPasswordRequests");
-        branch.setDn(getDnForPasswordResetRequest(null));
+	public void addBranch() {
+		SimpleBranch branch = new SimpleBranch();
+		branch.setOrganizationalUnitName("resetPasswordRequests");
+		branch.setDn(getDnForPasswordResetRequest(null));
 
-        ldapEntryManager.persist(branch);
-    }
+		ldapEntryManager.persist(branch);
+	}
 
-    public boolean containsBranch() {
-        return ldapEntryManager.contains(SimpleBranch.class, getDnForPasswordResetRequest(null));
-    }
+	public boolean containsBranch() {
+		return ldapEntryManager.contains(SimpleBranch.class, getDnForPasswordResetRequest(null));
+	}
 
-    public void prepareBranch() {
-        // Create reset password requests branch if needed
-        if (!containsBranch()) {
-            addBranch();
-        }
-    }
+	public void prepareBranch() {
+		// Create reset password requests branch if needed
+		if (!containsBranch()) {
+			addBranch();
+		}
+	}
 
-    /**
-     * Get password reset request by DN
-     * 
-     * @param DN password reset request DN
-     * @return PasswordResetRequest Password reset request
-     */
+	/**
+	 * Get password reset request by DN
+	 * 
+	 * @param DN
+	 *            password reset request DN
+	 * @return PasswordResetRequest Password reset request
+	 */
 	public PasswordResetRequest findPasswordResetRequest(String guid) {
-        String passwordResetRequestDn = getDnForPasswordResetRequest(guid);
+		String passwordResetRequestDn = getDnForPasswordResetRequest(guid);
 
-        return ldapEntryManager.find(PasswordResetRequest.class, passwordResetRequestDn);
+		return ldapEntryManager.find(PasswordResetRequest.class, passwordResetRequestDn);
 
 	}
 
 	/**
 	 * Add new password reset request
 	 * 
-	 * @param PasswordResetRequest Password reset request
+	 * @param PasswordResetRequest
+	 *            Password reset request
 	 */
 	public void addPasswordResetRequest(PasswordResetRequest passwordResetRequest) {
 		ldapEntryManager.persist(passwordResetRequest);
 	}
 
 	/**
-     * Update new password reset request
+	 * Update new password reset request
 	 * 
-     * @param PasswordResetRequest Password reset request
+	 * @param PasswordResetRequest
+	 *            Password reset request
 	 */
 	public void updatePasswordResetRequest(PasswordResetRequest passwordResetRequest) {
 		ldapEntryManager.merge(passwordResetRequest);
 	}
 
 	/**
-     * Remove new password reset request
+	 * Remove new password reset request
 	 * 
-     * @param PasswordResetRequest Password reset request
+	 * @param PasswordResetRequest
+	 *            Password reset request
 	 */
 	public void removePasswordResetRequest(PasswordResetRequest passwordResetRequest) {
 		ldapEntryManager.remove(passwordResetRequest);
@@ -120,7 +122,8 @@ public class PasswordResetService implements Serializable {
 	/**
 	 * Get password reset requests by example
 	 * 
-	 * @param PasswordResetRequest passwordResetRequest
+	 * @param PasswordResetRequest
+	 *            passwordResetRequest
 	 * @return List of PasswordResetRequests which conform example
 	 */
 	public List<PasswordResetRequest> findPasswordResetRequests(PasswordResetRequest passwordResetRequest) {
@@ -133,56 +136,69 @@ public class PasswordResetService implements Serializable {
 	 * @return List of password reset requests
 	 */
 	public List<PasswordResetRequest> getAllPasswordResetRequests(String... ldapReturnAttributes) {
-		return ldapEntryManager.findEntries(getDnForPasswordResetRequest(null), PasswordResetRequest.class, null, ldapReturnAttributes);
+		return ldapEntryManager.findEntries(getDnForPasswordResetRequest(null), PasswordResetRequest.class, null,
+				ldapReturnAttributes);
 	}
 
 	/**
 	 * Search latest user password reset request by person inum
 	 * 
-	 * @param pattern Pattern
-	 * @param sizeLimit Maximum count of results
+	 * @param pattern
+	 *            Pattern
+	 * @param sizeLimit
+	 *            Maximum count of results
 	 * @return List of password reset requests
 	 */
 	public PasswordResetRequest findActualPasswordResetRequest(String personInum) {
 		Filter oxPersonInumFilter = Filter.createEqualityFilter("personInum", personInum);
 
-		List<PasswordResetRequest> result = ldapEntryManager.findEntries(getDnForPasswordResetRequest(null), PasswordResetRequest.class, oxPersonInumFilter);
-		
+		List<PasswordResetRequest> result = ldapEntryManager.findEntries(getDnForPasswordResetRequest(null),
+				PasswordResetRequest.class, oxPersonInumFilter);
+
 		if (result.size() == 0) {
-		    return null;
+			return null;
 		}
 
 		return result.get(result.size() - 1);
 	}
 
-	public List<PasswordResetRequest> getExpiredPasswordResetRequests(BatchOperation<PasswordResetRequest> batchOperation, Date expirationDate, String[] returnAttributes, int sizeLimit, int chunkSize) {
-        final String baseDn = getDnForPasswordResetRequest(null);
-        Filter expirationFilter = Filter.createLessOrEqualFilter("creationDate", ldapEntryManager.encodeTime(expirationDate));
+	public List<PasswordResetRequest> getExpiredPasswordResetRequests(
+			BatchOperation<PasswordResetRequest> batchOperation, Date expirationDate, String[] returnAttributes,
+			int sizeLimit, int chunkSize) {
+		final String baseDn = getDnForPasswordResetRequest(null);
+		Filter expirationFilter = Filter.createLessOrEqualFilter("creationDate",
+				ldapEntryManager.encodeTime(expirationDate));
 
-        List<PasswordResetRequest> passwordResetRequests = ldapEntryManager.findEntries(baseDn, PasswordResetRequest.class, expirationFilter, SearchScope.SUB, returnAttributes, batchOperation, 0, sizeLimit, chunkSize);
+		List<PasswordResetRequest> passwordResetRequests = ldapEntryManager.findEntries(baseDn,
+				PasswordResetRequest.class, expirationFilter, SearchScope.SUB, returnAttributes, batchOperation, 0,
+				sizeLimit, chunkSize);
 
-        return passwordResetRequests;
-    }
+		return passwordResetRequests;
+	}
 
-    public void cleanup(final Date expirationDate) {
-        BatchOperation<PasswordResetRequest> passwordResetRequestBatchService = new ProcessBatchOperation<PasswordResetRequest>() {
-            @Override
-            public void performAction(List<PasswordResetRequest> entries) {
-                for (PasswordResetRequest passwordResetRequest : entries) {
-                    try {
-                        log.debug("Removing PasswordResetRequest: {}, Creation date: {}",
-                                passwordResetRequest.getOxGuid(),
-                                passwordResetRequest.getCreationDate());
-                        removePasswordResetRequest(passwordResetRequest);
-                    } catch (Exception ex) {
-                        log.error("Failed to remove entry", ex);
-                    }
-                }
-            }
-        };
+	public void cleanup(final Date expirationDate) {
+		logger.addNewLogLine("Start actual password reset clean up with expiration date: " + expirationDate);
+		BatchOperation<PasswordResetRequest> passwordResetRequestBatchService = new ProcessBatchOperation<PasswordResetRequest>() {
+			@Override
+			public void performAction(List<PasswordResetRequest> entries) {
+				for (PasswordResetRequest passwordResetRequest : entries) {
+					try {
+						log.debug("Removing PasswordResetRequest: {}, Creation date: {}",
+								passwordResetRequest.getOxGuid(), passwordResetRequest.getCreationDate());
+						logger.addNewLogLine("Removing PasswordResetRequest" + passwordResetRequest.getOxGuid()
+								+ " , create date :" + passwordResetRequest.getCreationDate());
+						removePasswordResetRequest(passwordResetRequest);
+					} catch (Exception ex) {
+						log.error("Failed to remove entry", ex);
+					}
+				}
+			}
+		};
 
-        getExpiredPasswordResetRequests(passwordResetRequestBatchService, expirationDate, new String[] {"oxGuid", "creationDate"}, 0, CleanerTimer.BATCH_SIZE);
-    }
+		getExpiredPasswordResetRequests(passwordResetRequestBatchService, expirationDate,
+				new String[] { "oxGuid", "creationDate" }, 0, CleanerTimer.BATCH_SIZE);
+		logger.addNewLogLine("Password reset clean up done at: " + new Date());
+	}
 
 	/**
 	 * Generate new guid for password reset request
@@ -214,7 +230,7 @@ public class PasswordResetService implements Serializable {
 	 * Build DN string for password reset request
 	 */
 	public String getDnForPasswordResetRequest(String guid) {
-        String applianceDn = applianceService.getAppliance().getDn();
+		String applianceDn = applianceService.getAppliance().getDn();
 
 		if (StringHelper.isEmpty(guid)) {
 			return String.format("ou=resetPasswordRequests,%s", applianceDn);

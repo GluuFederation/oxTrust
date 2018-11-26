@@ -76,14 +76,12 @@ import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.exception.BasePersistenceException;
 import org.gluu.saml.metadata.SAMLMetadataParser;
-import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.ldap.model.GluuStatus;
 import org.xdi.model.GluuAttribute;
+import org.xdi.model.GluuStatus;
 import org.xdi.model.GluuUserRole;
 import org.xdi.model.SchemaEntry;
-import org.xdi.model.user.UserRole;
 import org.xdi.service.SchemaService;
 import org.xdi.service.cdi.async.Asynchronous;
 import org.xdi.service.security.Secure;
@@ -246,7 +244,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 		this.update = true;
 		try {
 			this.trustRelationship = trustService.getRelationshipByInum(inum);
-		} catch (LdapMappingException ex) {
+		} catch (BasePersistenceException ex) {
 			log.error("Failed to find trust relationship {}", inum, ex);
 		}
 
@@ -413,7 +411,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 			if (update) {
 				try {
 					saveTR(update);
-				} catch (LdapMappingException ex) {
+				} catch (BasePersistenceException ex) {
 					log.error("Failed to update trust relationship {}", inum, ex);
 					return OxTrustConstants.RESULT_FAILURE;
 				}
@@ -423,7 +421,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 				this.trustRelationship.setDn(dn);
 				try {
 					saveTR(update);
-				} catch (LdapMappingException ex) {
+				} catch (BasePersistenceException ex) {
 					log.error("Failed to add new trust relationship {}", this.trustRelationship.getInum(), ex);
 					return OxTrustConstants.RESULT_FAILURE;
 				}
@@ -746,7 +744,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 						.getRelationshipByInum(this.trustRelationship.getInum());
 				tmpTrustRelationship.setStatus(GluuStatus.INACTIVE);
 				saveTR(update);
-			} catch (LdapMappingException ex) {
+			} catch (BasePersistenceException ex) {
 				log.error("Failed to update trust relationship {}", inum, ex);
 			}
 		} else {
@@ -898,7 +896,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 							identity.getCredentials().getUsername());
 				}
 				result = OxTrustConstants.RESULT_SUCCESS;
-			} catch (LdapMappingException ex) {
+			} catch (BasePersistenceException ex) {
 				result = OxTrustConstants.RESULT_FAILURE;
 				log.error("Failed to remove trust relationship {}", this.trustRelationship.getInum(), ex);
 			} catch (InterruptedException e) {
@@ -1337,13 +1335,13 @@ public class UpdateTrustRelationshipAction implements Serializable {
 	}
 
 	public void setContainerFederation(SelectItem federation) {
-		this.trustRelationship.setContainerFederation((GluuSAMLTrustRelationship) federation.getValue());
+		this.trustRelationship.setGluuContainerFederation(((GluuSAMLTrustRelationship) federation.getValue()).getDn());
 	}
 
 	public SelectItem getContainerFederation() {
-		return new SelectItem(trustRelationship.getContainerFederation(),
-				trustRelationship.getContainerFederation() == null ? "Select Federation"
-						: trustRelationship.getContainerFederation().getDisplayName());
+	    GluuSAMLTrustRelationship containerFederation = trustService.getTrustContainerFederation(trustRelationship);
+        return new SelectItem(containerFederation,
+                containerFederation == null ? "Select Federation" : containerFederation .getDisplayName());
 	}
 
 	public ArrayList<SelectItem> getAllFederations() {
@@ -1391,49 +1389,49 @@ public class UpdateTrustRelationshipAction implements Serializable {
 	}
 
 	public void filterEntities() {
-		filteredEntities = null;
-		if (StringHelper.isNotEmpty(getFilterString())) {
-			filteredEntities = new ArrayList<String>();
-			for (String entity : trustRelationship.getContainerFederation().getGluuEntityId()) {
-				if (entity.toLowerCase().contains(getFilterString().toLowerCase())) {
-					filteredEntities.add(entity);
-				}
-			}
-		}
+        filteredEntities = null;
+        if (StringHelper.isNotEmpty(getFilterString())) {
+            filteredEntities = new ArrayList<String>();
+            for (String entity : trustService.getTrustContainerFederation(trustRelationship).getGluuEntityId()) {
+                if (entity.toLowerCase().contains(getFilterString().toLowerCase())) {
+                    filteredEntities.add(entity);
+                }
+            }
+        }
 	}
 
 	public void setAvailableEntities(List<String> availableEntities) {
-
 		this.availableEntities.removeAll(availableEntitiesFiltered);
 		this.availableEntities.addAll(availableEntities);
 	}
 
 	public List<String> getAvailableEntities() {
-		if (trustRelationship.getContainerFederation() == null) {
-			return null;
-		} else {
-			if (!trustRelationship.getContainerFederation().getGluuEntityId()
-					.contains(trustRelationship.getEntityId())) {
-				trustRelationship.setEntityId(null);
-				availableEntities = null;
-			}
-		}
+        GluuSAMLTrustRelationship containerFederation = trustService.getTrustContainerFederation(trustRelationship);
+        if (containerFederation == null) {
+            return null;
+        } else {
+            if (!containerFederation.getGluuEntityId().contains(trustRelationship.getEntityId())) {
+                trustRelationship.setEntityId(null);
+                availableEntities = null;
+            }
+        }
 
-		if (availableEntities == null) {
-			availableEntities = new ArrayList<String>();
-			if (trustRelationship.getContainerFederation() != null) {
-				availableEntities.addAll(trustRelationship.getContainerFederation().getGluuEntityId());
-			}
+        if (availableEntities == null) {
+            availableEntities = new ArrayList<String>();
+            if (containerFederation != null) {
+                availableEntities.addAll(containerFederation.getGluuEntityId());
+            }
 
-		}
-		availableEntitiesFiltered = new ArrayList<String>();
-		availableEntitiesFiltered.addAll(availableEntities);
+        }
+        availableEntitiesFiltered = new ArrayList<String>();
+        availableEntitiesFiltered.addAll(availableEntities);
 
-		if (filteredEntities != null) {
-			availableEntitiesFiltered.retainAll(filteredEntities);
+        if (filteredEntities != null) {
+            availableEntitiesFiltered.retainAll(filteredEntities);
 
-		}
-		return availableEntitiesFiltered;
+        }
+
+        return availableEntitiesFiltered;
 	}
 
 	public void setFilterString(String filterString) {

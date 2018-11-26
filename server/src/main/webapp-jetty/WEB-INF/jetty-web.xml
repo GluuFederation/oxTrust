@@ -6,6 +6,6 @@
 		<Arg>-org.eclipse.jetty.</Arg>
 	</Call>
 
-	<Set name="maxFormContentSize" type="int">600000</Set>
+	<Set name="maxFormContentSize" type="int">50000000</Set>
 
 </Configure>

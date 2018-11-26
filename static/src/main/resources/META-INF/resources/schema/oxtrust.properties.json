@@ -181,11 +181,6 @@
             "format": "url",
             "minLength": 1
         },
-        "velocityLog": {
-            "id": "velocityLog",
-            "type": "string",
-            "minLength": 1
-        },
         "spMetadataPath": {
             "id": "spMetadataPath",
             "type": "string",
@@ -627,6 +622,11 @@
             "minimum": 1,
             "exclusiveMaximum": false,
             "exclusiveMinimum": false
+        },
+        "authenticationRecaptchaEnabled": {
+            "id": "authenticationRecaptchaEnabled",
+            "description": "Boolean value specifying whether to enable Recaptcha on authentication.",
+            "type": "boolean"
         }
     },
     "required": [
@@ -657,7 +657,6 @@
         "keystorePassword",
         "allowPersonModification",
         "idpUrl",
-        "velocityLog",
         "spMetadataPath",
         "logoLocation",
         "idpSecurityKey",
@@ -726,6 +725,7 @@
         "loggingLevel",
         "disableJdkLogger",
         "cleanServiceInterval",
-        "passwordResetRequestExpirationTime"
+        "passwordResetRequestExpirationTime",
+        "authenticationRecaptchaEnabled"
     ]
 }
