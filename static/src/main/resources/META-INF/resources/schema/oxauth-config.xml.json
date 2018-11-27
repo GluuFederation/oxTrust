@@ -1320,21 +1320,18 @@
                     "type": "string",
                     "minLength": 1
                 },
-
-            	"mdsTocRootFileLocation": {
-                    "id": "mdsTocRootFileLocation",
-                    "description": "mdsTocRootFileLocation.",
+            	"mdsTocRootCertFile": {
+                    "id": "mdsTocRootCertFile",
+                    "description": "MDS TOC root certificate file.",
                     "type": "string",
                     "minLength": 1
                 },
-
             	"mdsTocFilesFolder": {
                     "id": "mdsTocFilesFolder",
-                    "description": "mdsTocFilesFolder.",
+                    "description": "MDS TOC files folder.",
                     "type": "string",
                     "minLength": 1
                 },
-
             	"certificationServerMetadataFolder": {
                     "id": "certificationServerMetadataFolder",
                     "description": "certificationServerMetadataFolder.",
