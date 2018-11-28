@@ -6,6 +6,7 @@
 
 package org.gluu.oxtrust.service;
 
+import java.io.IOException;
 import java.io.Serializable;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -29,45 +30,49 @@ import org.xdi.util.init.Initializable;
 @Named("openIdService")
 public class OpenIdService extends Initializable implements Serializable {
 
-	private static final long serialVersionUID = 7875838160379126796L;
+    private static final long serialVersionUID = 7875838160379126796L;
 
-	@Inject
-	private Logger log;
+    @Inject
+    private Logger log;
 
-	@Inject
-	private AppConfiguration appConfiguration;
+    @Inject
+    private AppConfiguration appConfiguration;
 
-	private OpenIdConfigurationResponse openIdConfiguration;
+    private OpenIdConfigurationResponse openIdConfiguration;
 
-	@Override
-	protected void initInternal() {
-		loadOpenIdConfiguration();
-	}
+    @Override
+    protected void initInternal() {
+        try {
+            loadOpenIdConfiguration();
+        } catch (IOException ex) {
+            throw new ConfigurationException("Failed to load oxAuth configuration");
+        }
+    }
 
-	private void loadOpenIdConfiguration() {
-		String openIdProvider = appConfiguration.getOxAuthIssuer();
-		if (StringHelper.isEmpty(openIdProvider)) {
-			throw new ConfigurationException("OpenIdProvider Url is invalid");
-		}
-		
-		openIdProvider = openIdProvider + "/.well-known/openid-configuration";
+    private void loadOpenIdConfiguration() throws IOException {
+        String openIdProvider = appConfiguration.getOxAuthIssuer();
+        if (StringHelper.isEmpty(openIdProvider)) {
+            throw new ConfigurationException("OpenIdProvider Url is invalid");
+        }
 
-		final OpenIdConfigurationClient openIdConfigurationClient = new OpenIdConfigurationClient(openIdProvider);
-		final OpenIdConfigurationResponse response = openIdConfigurationClient.execOpenIdConfiguration();
-		if ((response == null) || (response.getStatus() != 200)) {
-			throw new ConfigurationException("Failed to load oxAuth configuration");
-		}
+        openIdProvider = openIdProvider + "/.well-known/openid-configuration";
 
-		log.info("Successfully loaded oxAuth configuration");
+        final OpenIdConfigurationClient openIdConfigurationClient = new OpenIdConfigurationClient(openIdProvider);
+        final OpenIdConfigurationResponse response = openIdConfigurationClient.execOpenIdConfiguration();
+        if ((response == null) || (response.getStatus() != 200)) {
+            throw new ConfigurationException("Failed to load oxAuth configuration");
+        }
 
-		this.openIdConfiguration = response;
-	}
+        log.info("Successfully loaded oxAuth configuration");
 
-	public OpenIdConfigurationResponse getOpenIdConfiguration() {
-		// Call each time to allows retry
-		init();
+        this.openIdConfiguration = response;
+    }
 
-		return openIdConfiguration;
-	}
+    public OpenIdConfigurationResponse getOpenIdConfiguration() {
+        // Call each time to allows retry
+        init();
+
+        return openIdConfiguration;
+    }
 
 }

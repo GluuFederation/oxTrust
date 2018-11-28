@@ -352,7 +352,12 @@ public class AppInitializer {
 
         OpenIdConfigurationClient client = new OpenIdConfigurationClient(configurationEndpoint);
 
-        OpenIdConfigurationResponse openIdConfiguration = client.execOpenIdConfiguration();
+        OpenIdConfigurationResponse openIdConfiguration;
+        try {
+            openIdConfiguration = client.execOpenIdConfiguration();
+        } catch (IOException e) {
+            throw new OxIntializationException("Failed to load OpenId configuration!");
+        }
 
         if (openIdConfiguration.getStatus() != 200) {
             throw new OxIntializationException("OpenId configuration response is invalid!");
