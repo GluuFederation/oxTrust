@@ -1144,6 +1144,11 @@
                         "type": "string",
                         "minLength": 1
                     },
+                    "corsEnabled": {
+                        "id": "corsEnabled",
+                        "description": "",
+                        "type": "boolean"
+                    },
                     "corsAllowedOrigins": {
                         "id": "corsAllowedOrigins",
                         "description": "",
