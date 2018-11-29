@@ -106,6 +106,8 @@ public class Scim2GroupService implements Serializable {
             members.removeAll(invalidMembers);
             members = members.size() == 0 ? null : members;
             res.setMembers(members);
+        } else {
+            group.setMembers(null);
         }
     }
 
