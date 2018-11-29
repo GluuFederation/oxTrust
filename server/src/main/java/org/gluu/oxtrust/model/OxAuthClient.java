@@ -28,7 +28,7 @@ import org.xdi.oxauth.model.common.ResponseType;
  * @author Reda Zerrad Date: 06.08.2012
  * @author Yuriy Movchan Date: 05/22/2013
  * @author Javier Rojas Blum
- * @version June 21, 2018
+ * @version November 29, 2018
  */
 @LdapEntry(sortBy = { "displayName" })
 @LdapObjectClass(values = { "top", "oxAuthClient" })
