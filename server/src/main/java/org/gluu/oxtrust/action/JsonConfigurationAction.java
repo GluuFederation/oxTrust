@@ -25,6 +25,7 @@ import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.config.oxtrust.ImportPersonConfig;
 import org.xdi.service.JsonService;
 import org.xdi.service.cache.CacheConfiguration;
+import org.xdi.service.cache.RedisConfiguration;
 import org.xdi.service.security.Secure;
 import org.xdi.util.StringHelper;
 import org.xdi.util.security.StringEncrypter.EncryptionException;
@@ -78,14 +79,12 @@ public class JsonConfigurationAction implements Serializable {
 
 	private String cacheConfigurationJson;
 
-
 	public String init() {
 		try {
 			log.debug("Loading oxauth-config.json and oxtrust-config.json");
 			this.oxTrustappConfiguration = jsonConfigurationService.getOxTrustappConfiguration();
 			this.oxTrustImportPersonConfiguration = jsonConfigurationService.getOxTrustImportPersonConfiguration();
 			this.cacheConfiguration = jsonConfigurationService.getOxMemCacheConfiguration();
-
 			this.oxTrustConfigJson = getProtectedOxTrustappConfiguration(this.oxTrustappConfiguration);
 			this.oxTrustImportPersonConfigJson = getOxTrustImportPersonConfiguration(
 					this.oxTrustImportPersonConfiguration);
@@ -145,10 +144,8 @@ public class JsonConfigurationAction implements Serializable {
 		try {
 			log.debug("Saving memcache-config.json:" + this.cacheConfigurationJson);
 			this.cacheConfiguration = convertToCacheConfiguration(this.cacheConfigurationJson);
-
 			jsonConfigurationService.saveOxMemCacheConfiguration(this.cacheConfiguration);
 			facesMessages.add(FacesMessage.SEVERITY_INFO, "Сache Configuration is updated.");
-
 			return OxTrustConstants.RESULT_SUCCESS;
 		} catch (Exception ex) {
 			log.error("Failed to update oxMemcache-config.json", ex);
@@ -266,26 +263,32 @@ public class JsonConfigurationAction implements Serializable {
 
 	private CacheConfiguration convertToCacheConfiguration(String oxCacheConfigurationJson) {
 		try {
-			CacheConfiguration cachedConfiguration = jsonService.jsonToObject(cacheConfigurationJson,
+			CacheConfiguration cacheConfiguration = jsonService.jsonToObject(oxCacheConfigurationJson,
 					CacheConfiguration.class);
-
-			return cachedConfiguration;
+			RedisConfiguration redisConfiguration = cacheConfiguration.getRedisConfiguration();
+			processRedisPasswordProperty(redisConfiguration, "password");
+			cacheConfiguration.setRedisConfiguration(redisConfiguration);
+			return cacheConfiguration;
 		} catch (Exception ex) {
-			log.error("Failed to prepare ImportPersonConfig from JSON: '{}'", oxTrustImportPersonConfigJson, ex);
+			log.error("Failed to prepare CacheConfiguration from JSON: '{}'", oxCacheConfigurationJson, ex);
 		}
 
 		return null;
+	}
+
+	private void processRedisPasswordProperty(RedisConfiguration current, String property)
+			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, EncryptionException {
+		String currentValue = BeanUtils.getProperty(current, property);
+		BeanUtils.setProperty(current, property, encryptionService.encrypt(currentValue));
 	}
 
 	private void processPasswordProperty(AppConfiguration source, AppConfiguration current, String property)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, EncryptionException {
 		String currentValue = BeanUtils.getProperty(current, property);
 		if (StringHelper.equals(currentValue, HIDDEN_PASSWORD_TEXT)) {
-			String sourceValue = BeanUtils.getSimpleProperty(source, property);
-			BeanUtils.setProperty(current, property, sourceValue);
+			BeanUtils.setProperty(current, property, BeanUtils.getSimpleProperty(source, property));
 		} else {
-			String currentValueEncrypted = encryptionService.encrypt(currentValue);
-			BeanUtils.setProperty(current, property, currentValueEncrypted);
+			BeanUtils.setProperty(current, property, encryptionService.encrypt(currentValue));
 		}
 	}
 
