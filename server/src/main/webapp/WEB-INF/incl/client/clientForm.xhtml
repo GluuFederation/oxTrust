@@ -431,6 +431,8 @@
 													id="calendar" popup="false" datePattern="dd/MM/yyyy HH:mm"
 													showApplyButton="true" style="width:300px">
 												</rich:calendar>
+												<h:commandButton rendered="#{_new}" styleClass="btn btn-primary" value="clear current calendar value"
+													onclick="#{rich:component('calendar')}.setValue(''); return false;" />
 											</ox:decorate>
 											<ox:decorate id="logoUri"
 												label="#{msg['clientForm.logoURI']}" leftClass="col-sm-3"
@@ -489,8 +491,6 @@
 												leftClass="col-sm-6" rightClass="col-sm-6">
 												<h:selectOneMenu styleClass="col-sm-9 form-control rounded"
 													value="#{_client.requireAuthTime}" required="false">
-													<f:selectItem itemLabel="Please select a value."
-														noSelectionOption="true" />
 													<f:selectItems
 														value="#{organizationService.javaBooleanSelectionTypes}"
 														var="_type" itemLabel="#{_type.displayName}" />
@@ -832,6 +832,14 @@
 														defaultLabel="Maximum Authentication Age (value in seconds)"
 														maxlength="60" inputWidth="695" required="false"
 														id="defaultMaxAgeId" />
+												</ox:decorate>
+												<ox:decorate id="accessTokenLifetime" leftClass="col-sm-3"
+															 rightClass="col-sm-9"
+															 label="#{msg['clientForm.accessTokenLifetime']}">
+													<rich:inplaceInput value="#{_client.accessTokenLifetime}"
+																	   defaultLabel="Client-specific access token expiration (value in seconds). Leave it to empty or zero to use the system default value."
+																	   maxlength="60" inputWidth="695" required="false"
+																	   id="accessTokenLifetime" />
 												</ox:decorate>
 											</div>
 										</div>

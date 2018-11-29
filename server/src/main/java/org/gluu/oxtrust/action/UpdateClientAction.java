@@ -981,7 +981,7 @@ public class UpdateClientAction implements Serializable {
 		List<OxAuthScope> addedScopes = getScopes();
 		for (SelectableEntity<OxAuthScope> availableScope : this.availableScopes) {
 			OxAuthScope scope = availableScope.getEntity();
-			if (availableScope.isSelected() && !addedScopes.contains(scope)) {
+			if (availableScope.isSelected() && !contain(addedScopes, scope)) {
 				addScope(scope.getInum());
 			}
 			if (!availableScope.isSelected() && addedScopes.contains(scope)) {
@@ -990,15 +990,15 @@ public class UpdateClientAction implements Serializable {
 		}
 	}
 
-	private void addCustomScript(String name) {
-		if (StringHelper.isEmpty(name)) {
-			return;
+	private boolean contain(List<OxAuthScope> scopes, OxAuthScope element) {
+		boolean found = false;
+		for (OxAuthScope scope : scopes) {
+			if (scope.getInum().equalsIgnoreCase(element.getInum())) {
+				found = true;
+				break;
+			}
 		}
-		CustomScript addCustomScript = new CustomScript();
-		addCustomScript.setName(name);
-		if (addCustomScript != null) {
-			this.customScripts.add(addCustomScript);
-		}
+		return found;
 	}
 
 	private void addScope(String inum) {
@@ -1011,9 +1011,19 @@ public class UpdateClientAction implements Serializable {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		addScope.setInum(inum);
 		if (addScope != null) {
 			this.scopes.add(addScope);
+		}
+	}
+
+	private void addCustomScript(String name) {
+		if (StringHelper.isEmpty(name)) {
+			return;
+		}
+		CustomScript addCustomScript = new CustomScript();
+		addCustomScript.setName(name);
+		if (addCustomScript != null) {
+			this.customScripts.add(addCustomScript);
 		}
 	}
 
@@ -1031,7 +1041,6 @@ public class UpdateClientAction implements Serializable {
 
 	public void acceptSelectGrantTypes() {
 		List<GrantType> addedGrantTypes = getGrantTypes();
-
 		for (SelectableEntity<GrantType> availableGrantType : this.availableGrantTypes) {
 			GrantType grantType = availableGrantType.getEntity();
 			if (availableGrantType.isSelected() && !addedGrantTypes.contains(grantType)) {

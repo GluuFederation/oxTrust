@@ -8,9 +8,6 @@ package org.gluu.oxtrust.action;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -88,11 +85,11 @@ public class UpdateOrganizationAction implements Serializable {
 	@Inject
 	private AppInitializer appInitializer;
 
-    @Inject
+       @Inject
 	private MailService mailService;
 
-    @Inject
-    private RenderParameters rendererParameters;
+       @Inject
+       private RenderParameters rendererParameters;
 
     @Inject
     private RenderService renderService;
@@ -123,7 +120,7 @@ public class UpdateOrganizationAction implements Serializable {
 
 	private SmtpConfiguration smtpConfiguration;
 
-	public String modify()  {
+	public String modify() {
 		if (this.initialized) {
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
@@ -133,7 +130,9 @@ public class UpdateOrganizationAction implements Serializable {
 
 		if (!StringHelper.equals(OxTrustConstants.RESULT_SUCCESS, resultOrganization)
 				|| !StringHelper.equals(OxTrustConstants.RESULT_SUCCESS, resultApplliance)) {
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, facesMessages.evalResourceAsString("#{msg['organization.prepareUpdateFailed']}"));
+
+			facesMessages.add(FacesMessage.SEVERITY_ERROR,
+					facesMessages.evalResourceAsString("#{msg['organization.prepareUpdateFailed']}"));
 			conversationService.endConversation();
 
 			return OxTrustConstants.RESULT_FAILURE;
@@ -144,7 +143,7 @@ public class UpdateOrganizationAction implements Serializable {
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	private String modifyOrganization()  {
+	private String modifyOrganization() {
 		if (this.organization != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
@@ -177,13 +176,19 @@ public class UpdateOrganizationAction implements Serializable {
 		initOxAuthSetting();
 		appliances = new ArrayList<GluuAppliance>();
 		appliances.addAll(applianceService.getAppliances());
-		
+
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	private void initOxAuthSetting(){
+	private void initOxAuthSetting() {
+		String configurationDn = configurationFactory.getConfigurationDn();
 		try {
-			webKeysSettings = webKeySettingsService.find();
+			ldapOxAuthConfiguration = organizationService.getOxAuthSetting(configurationDn);
+			this.webKeysSettings = ldapOxAuthConfiguration.getOxWebKeysSettings();
+
+			if (webKeysSettings == null) {
+				webKeysSettings = new WebKeysSettings();
+			}
 		} catch (BasePersistenceException ex) {
 			log.error("Failed to load configuration from LDAP");
 		}
@@ -210,6 +215,9 @@ public class UpdateOrganizationAction implements Serializable {
 
 			setCustomMessages();
 			organizationService.updateOrganization(this.organization);
+
+			// Encrypt password and prepare SMTP configuration
+			applianceService.encryptedSmtpPassword(smtpConfiguration);
 
 			updateAppliance();
 
@@ -241,15 +249,21 @@ public class UpdateOrganizationAction implements Serializable {
 	    applianceUpdate.setScimEnabled(appliance.getScimEnabled());
         applianceUpdate.setProfileManagment(appliance.getProfileManagment());
 
-        applianceUpdate.setApplianceDnsServer(appliance.getApplianceDnsServer());
-        applianceUpdate.setMaxLogSize(appliance.getMaxLogSize());
-        applianceUpdate.setContactEmail(appliance.getContactEmail());
-        applianceUpdate.setSmtpConfiguration(smtpConfiguration);
+		// Update properties which user might update
+		applianceUpdate.setPasswordResetAllowed(appliance.getPasswordResetAllowed());
+		applianceUpdate.setPassportEnabled(appliance.getPassportEnabled());
+		applianceUpdate.setScimEnabled(appliance.getScimEnabled());
+		applianceUpdate.setProfileManagment(appliance.getProfileManagment());
+		applianceUpdate.setSmtpConfiguration(smtpConfiguration);
 
-        applianceService.updateAppliance(applianceUpdate);
-    }
+		applianceUpdate.setApplianceDnsServer(appliance.getApplianceDnsServer());
+		applianceUpdate.setMaxLogSize(appliance.getMaxLogSize());
+		applianceUpdate.setContactEmail(appliance.getContactEmail());
 
-    public void saveWebKeySettings() {
+		applianceService.updateAppliance(applianceUpdate);
+	}
+
+	public void saveWebKeySettings() {
 		String configurationDn = configurationFactory.getConfigurationDn();
 		ldapOxAuthConfiguration = organizationService.getOxAuthSetting(configurationDn);
 		WebKeysSettings oldwebKeysSettings = ldapOxAuthConfiguration.getOxWebKeysSettings();
@@ -272,6 +286,7 @@ public class UpdateOrganizationAction implements Serializable {
 				messageSubject, messagePlain, messageHtml);
 
 		if (result) {
+			log.info("Connection Successful");
 			facesMessages.add(FacesMessage.SEVERITY_INFO, "SMTP Test succeeded!");
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
@@ -308,14 +323,14 @@ public class UpdateOrganizationAction implements Serializable {
 			this.organization.setCustomMessages(null);
 		}
 	}
-	
+
 	public String cancel() throws Exception {
 		cancelLogoImage();
 		cancelFaviconImage();
-		
+
 		facesMessages.add(FacesMessage.SEVERITY_INFO, "Organization configuration not updated");
 		conversationService.endConversation();
-		
+
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
@@ -479,8 +494,8 @@ public class UpdateOrganizationAction implements Serializable {
 
 	public void saveFaviconImage() {
 		// Remove old favicon image if user upload new image
-		if ((this.oldFaviconImage != null)
-				&& ((this.curFaviconImage == null) || !this.oldFaviconImage.getUuid().equals(this.curFaviconImage.getUuid()))) {
+		if ((this.oldFaviconImage != null) && ((this.curFaviconImage == null)
+				|| !this.oldFaviconImage.getUuid().equals(this.curFaviconImage.getUuid()))) {
 			try {
 				imageService.deleteImage(this.oldFaviconImage);
 			} catch (Exception ex) {
@@ -551,7 +566,8 @@ public class UpdateOrganizationAction implements Serializable {
 	}
 
 	/**
-	 * @param appliances the appliances to set
+	 * @param appliances
+	 *            the appliances to set
 	 */
 	public void setAppliances(List<GluuAppliance> appliances) {
 		this.appliances = appliances;
