@@ -28,7 +28,7 @@ import org.xdi.oxauth.model.common.ResponseType;
  * @author Reda Zerrad Date: 06.08.2012
  * @author Yuriy Movchan Date: 05/22/2013
  * @author Javier Rojas Blum
- * @version June 21, 2018
+ * @version November 29, 2018
  */
 @LdapEntry(sortBy = { "displayName" })
 @LdapObjectClass(values = { "top", "oxAuthClient" })
@@ -184,6 +184,9 @@ public class OxAuthClient extends Entry implements Serializable {
 
 	@LdapAttribute(name = "oxRefreshTokenLifetime")
 	private Integer oxRefreshTokenLifetime;
+
+	@LdapAttribute(name = "oxAccessTokenLifetime")
+	private Integer accessTokenLifetime;
 
 	@LdapAttribute(name = "oxAuthDefaultAcrValues")
 	private String[] defaultAcrValues;
@@ -591,6 +594,14 @@ public class OxAuthClient extends Entry implements Serializable {
 
 	public void setOxRefreshTokenLifetime(Integer oxRefreshTokenLifetime) {
 		this.oxRefreshTokenLifetime = oxRefreshTokenLifetime;
+	}
+
+	public Integer getAccessTokenLifetime() {
+		return accessTokenLifetime;
+	}
+
+	public void setAccessTokenLifetime(Integer accessTokenLifetime) {
+		this.accessTokenLifetime = accessTokenLifetime;
 	}
 
 	public String[] getDefaultAcrValues() {

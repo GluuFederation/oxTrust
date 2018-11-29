@@ -833,6 +833,14 @@
 														maxlength="60" inputWidth="695" required="false"
 														id="defaultMaxAgeId" />
 												</ox:decorate>
+												<ox:decorate id="accessTokenLifetime" leftClass="col-sm-3"
+															 rightClass="col-sm-9"
+															 label="#{msg['clientForm.accessTokenLifetime']}">
+													<rich:inplaceInput value="#{_client.accessTokenLifetime}"
+																	   defaultLabel="Client-specific access token expiration (value in seconds). Leave it to empty or zero to use the system default value."
+																	   maxlength="60" inputWidth="695" required="false"
+																	   id="accessTokenLifetime" />
+												</ox:decorate>
 											</div>
 										</div>
 									</div>
