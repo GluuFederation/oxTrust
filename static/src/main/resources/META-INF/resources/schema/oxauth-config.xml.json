@@ -1095,6 +1095,11 @@
             "description": "Boolean value to specify whether to persist all objects into cache during Implicit Flow.",
             "type": "boolean"
         },
+        "invalidateSessionCookiesAfterAuthorizationFlow": {
+            "id": "invalidateSessionCookiesAfterAuthorizationFlow",
+            "description": "Boolean value to specify whether to invalidate `session_id` and `consent_session_id` cookies right after successful or unsuccessful authorization",
+            "type": "boolean"
+        },
         "updateUserLastLogonTime": {
         	"id": "updateUserLastLogonTime",
             "description": "Boolean value to specify if application should update oxLastLogonTime attribute on user authentication.",
