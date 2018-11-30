@@ -19,6 +19,7 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.gluu.oxtrust.ldap.service.AppInitializer;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.model.AuthenticationChartDto;
@@ -31,6 +32,7 @@ import org.xdi.model.metric.MetricType;
 import org.xdi.model.metric.counter.CounterMetricEntry;
 import org.xdi.model.metric.ldap.MetricEntry;
 import org.xdi.service.CacheService;
+import org.xdi.service.metric.inject.ReportMetric;
 
 /**
  * Store and retrieve metric
@@ -67,8 +69,8 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 	@Inject
 	private Logger logger;
 
-	@Inject
-	private LdapEntryManager ldapEntryManager;
+	@Inject @Named(AppInitializer.LDAP_METRIC_ENTRY_MANAGER_NAME) @ReportMetric 
+    private LdapEntryManager ldapMetricEntryManager;
 
 	public void initTimer() {
 		initTimer(this.appConfiguration.getMetricReporterInterval());
@@ -76,9 +78,7 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 
 	@Override
 	public String baseDn() {
-		String orgDn = organizationService.getDnForOrganization();
-		String baseDn = String.format("ou=metric,%s", orgDn);
-		return baseDn;
+		return "ou=statistic,o=metric";
 	}
 
 	@Override
@@ -259,7 +259,7 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 	}
 
 	public LdapEntryManager getEntryManager() {
-		return ldapEntryManager;
+		return ldapMetricEntryManager;
 	}
 
 }

@@ -127,7 +127,7 @@ public class CleanerTimer {
 		cleanUpLogger.addNewLogLine(String.format(
 				"#Ready to remove expired entries with parameters batch size: %s, expiration date: %s and appliance inum %s",
 				BATCH_SIZE, expirationDate, metricService.applianceInum()));
-		metricService.removeExpiredMetricEntries(BATCH_SIZE, expirationDate, ApplicationType.OX_AUTH,
+		metricService.removeExpiredMetricEntries(BATCH_SIZE, expirationDate, ApplicationType.OX_TRUST,
 				metricService.applianceInum());
 		log.debug("End metric entries clean up");
 		cleanUpLogger.addNewLogLine("#Processing Metric entries done at:" + new Date());
