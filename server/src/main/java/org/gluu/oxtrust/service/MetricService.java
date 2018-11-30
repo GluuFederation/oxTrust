@@ -24,7 +24,6 @@ import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.model.AuthenticationChartDto;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.PersistenceEntryManager;
-import org.gluu.persist.ldap.impl.LdapEntryManager;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.ApplicationType;
