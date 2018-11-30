@@ -151,10 +151,12 @@ public class UserProfileAction implements Serializable {
 
 	public String update() {
 		try {
-			if (!userEmailIsUniqAtEditionTime(this.person.getAttribute("mail"))) {
-				facesMessages.add(FacesMessage.SEVERITY_ERROR,
-						"#{msg['UpdatePersonAction.faileUpdateUserMailidExist']} %s", person.getMail());
-				return OxTrustConstants.RESULT_FAILURE;
+			if (appConfiguration.getEnforceEmailUniqueness()) {
+				if (!userEmailIsUniqAtEditionTime(this.person.getAttribute("mail"))) {
+					facesMessages.add(FacesMessage.SEVERITY_ERROR,
+							"#{msg['UpdatePersonAction.faileUpdateUserMailidExist']} %s", person.getMail());
+					return OxTrustConstants.RESULT_FAILURE;
+				}
 			}
 			if (this.imapData != null) {
 				List<GluuCustomAttribute> customAttributes = this.person.getCustomAttributes();
@@ -175,7 +177,8 @@ public class UserProfileAction implements Serializable {
 				externalUpdateUserService.executeExternalUpdateUserMethods(this.person);
 			}
 			personService.updatePerson(this.person);
-			oxTrustAuditService.audit(this.person.getInum()+ " **"+this.person.getDisplayName()+"** PROFILE UPDATED",
+			oxTrustAuditService.audit(
+					this.person.getInum() + " **" + this.person.getDisplayName() + "** PROFILE UPDATED",
 					identity.getUser(),
 					(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 			if (runScript) {

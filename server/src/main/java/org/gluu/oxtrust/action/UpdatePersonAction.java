@@ -352,26 +352,35 @@ public class UpdatePersonAction implements Serializable {
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 		if (!update) {
+
 			if (!userNameIsUniqAtCreationTime(this.person.getUid())) {
 				facesMessages.add(FacesMessage.SEVERITY_ERROR, "#{msg['UpdatePersonAction.faileAddUserUidExist']} %s",
 						this.person.getUid());
 				return OxTrustConstants.RESULT_FAILURE;
 			}
-			if (!userEmailIsUniqAtCreationTime(this.person.getAttribute(MAIL))) {
-				facesMessages.add(FacesMessage.SEVERITY_ERROR,
-						"#{msg['UpdatePersonAction.faileUpdateUserMailidExist']} %s", this.person.getAttribute(MAIL));
-				return OxTrustConstants.RESULT_FAILURE;
+			if (appConfiguration.getEnforceEmailUniqueness()) {
+				if (!userEmailIsUniqAtCreationTime(this.person.getAttribute(MAIL))) {
+					facesMessages.add(FacesMessage.SEVERITY_ERROR,
+							"#{msg['UpdatePersonAction.faileUpdateUserMailidExist']} %s",
+							this.person.getAttribute(MAIL));
+					return OxTrustConstants.RESULT_FAILURE;
+				}
 			}
+
 		} else {
+
 			if (!userNameIsUniqAtEditionTime(this.person.getUid())) {
 				facesMessages.add(FacesMessage.SEVERITY_ERROR, "#{msg['UpdatePersonAction.faileAddUserUidExist']} %s",
 						this.person.getUid());
 				return OxTrustConstants.RESULT_FAILURE;
 			}
-			if (!userEmailIsUniqAtEditionTime(this.person.getAttribute(MAIL))) {
-				facesMessages.add(FacesMessage.SEVERITY_ERROR,
-						"#{msg['UpdatePersonAction.faileUpdateUserMailidExist']} %s", this.person.getAttribute(MAIL));
-				return OxTrustConstants.RESULT_FAILURE;
+			if (appConfiguration.getEnforceEmailUniqueness()) {
+				if (!userEmailIsUniqAtEditionTime(this.person.getAttribute(MAIL))) {
+					facesMessages.add(FacesMessage.SEVERITY_ERROR,
+							"#{msg['UpdatePersonAction.faileUpdateUserMailidExist']} %s",
+							this.person.getAttribute(MAIL));
+					return OxTrustConstants.RESULT_FAILURE;
+				}
 			}
 		}
 

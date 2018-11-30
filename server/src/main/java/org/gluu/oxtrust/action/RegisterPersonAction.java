@@ -485,7 +485,7 @@ public class RegisterPersonAction implements Serializable {
 		}
 
 		GluuCustomPerson gluuCustomPerson = personService.getPersonByEmail(email);
-		if (gluuCustomPerson != null) {
+		if (gluuCustomPerson != null && appConfiguration.getEnforceEmailUniqueness()) {
 			FacesMessage message = new FacesMessage("Email Address Already Registered.");
 			message.setSeverity(FacesMessage.SEVERITY_ERROR);
 			throw new ValidatorException(message);
