@@ -627,6 +627,11 @@
             "id": "authenticationRecaptchaEnabled",
             "description": "Boolean value specifying whether to enable Recaptcha on authentication.",
             "type": "boolean"
+        },
+        "enforceEmailUniqueness": {
+            "id": "enforceEmailUniqueness",
+            "description": "Boolean value specifying whether to enforce email uniqueness on oxtrust side.",
+            "type": "boolean"
         }
     },
     "required": [
@@ -726,6 +731,7 @@
         "disableJdkLogger",
         "cleanServiceInterval",
         "passwordResetRequestExpirationTime",
-        "authenticationRecaptchaEnabled"
+        "authenticationRecaptchaEnabled",
+        "enforceEmailUniqueness"
     ]
 }
