@@ -1,148 +1,155 @@
 {
-    "$schema": "http://json-schema.org/draft-04/schema#",
-    "id": "/",
-    "title": "Cache Configuration",
-    "type": "object",
-    "additionalProperties": true,
-    "properties": {
-    "cacheProviderType": {
-            "id": "cacheProviderType",
-            "description": "The cacheProvider Type.",
-            "type": "string",
-            "enum": [
-                "IN_MEMORY",
-                "MEMCACHED",
-                "REDIS",
+	"$schema": "http://json-schema.org/draft-04/schema#",
+	"id": "/",
+	"title": "Cache Configuration",
+	"type": "object",
+	"additionalProperties": true,
+	"properties": {
+		"cacheProviderType": {
+			"id": "cacheProviderType",
+			"description": "The cacheProvider Type.",
+			"type": "string",
+			"enum": [
+				"IN_MEMORY",
+				"MEMCACHED",
+				"REDIS",
 				"NATIVE_PERSISTENCE"
-            ]
-    },
-    "memcachedConfiguration":{
-    	 "type":"object",
-         "additionalProperties":false,
-         "properties":{
-		        "servers": {
-		            "id": "servers",
-		            "description": "server details separated by spaces",
-		            "title": "servers",
-		            "type": "string",
-		            "format": "url",
-		            "minLength": 1
-		        },
-		        "maxOperationQueueLength": {
-		            "id": "maxOperationQueueLength",
-		            "description": "Maximum operation Queue Length.",
-		            "type": "integer",
-		            "multipleOf": 1,
-		            "maximum": 2147483647,
-		            "minimum": 1,
-		            "exclusiveMaximum": false,
-		            "exclusiveMinimum": false
-		        },
-		        "bufferSize": {
-		            "id": "bufferSize",
-		            "description": "Buffer Size.",
-		            "type": "integer",
-		            "multipleOf": 1,
-		            "maximum": 2147483647,
-		            "minimum": 1,
-		            "exclusiveMaximum": false,
-		            "exclusiveMinimum": false
-		        },
-		        "defaultPutExpiration": {
-		            "id": "defaultPutExpiration",
-		            "description": "Expiration timeout value",
-		            "type": "integer",
-		            "multipleOf": 1,
-		            "maximum": 2147483647,
-		            "minimum": 1,
-		            "exclusiveMaximum": false,
-		            "exclusiveMinimum": false
-		        },
-		        "MemcachedConnectionFactoryType": {
-		           	"id": "MemcachedConnectionFactoryType",
-            		"description": "The MemcachedConnectionFactoryType Type.",
-            		"type": "string",
-            		"enum": [
-                		"IN_MEMORY",
-                		"MEMCACHED"
-            		]
-        		}
-        	},
-			    "required": [
-			        "servers",
-			        "maxOperationQueueLength",
-			        "bufferSize",
-			        "defaultPutExpiration",
-			        "MemcachedConnectionFactoryType"
-			    ]
-       },
-      	"inMemoryConfiguration": {
-      	 "type":"object",
-         "additionalProperties":false,
-         "properties":{
-			      	"defaultPutExpiration" : {
-						"id": "defaultPutExpiration",
-			            "description": "defaultPutExpiration timeout value",
-			            "type": "integer",
-			            "multipleOf": 1,
-			            "maximum": 2147483647,
-			            "minimum": 1,
-			            "exclusiveMaximum": false,
-			            "exclusiveMinimum": false
-			            }
-           		}
+			]
 		},
-      	"redisConfiguration": {
-      	    "type":"object",
-            "additionalProperties":false,
-            "properties":{
-                "redisProviderType": {
-		           	"id": "redisProviderType",
-            		"description": "Type of connection.",
-            		"type": "string",
-            		"enum": [
-                		"STANDALONE",
-                		"CLUSTER",
-                		"SHARDED"
-            		]
-        		},
-        		"servers": {
-                    "id": "servers",
-                    "description": "server details separated by comma, e.g. 'server1:8080,server2:8081'",
-       	            "title": "servers",
-                    "type": "string",
-             	    "format": "url",
-             	    "minLength": 3
-                },
-			    "defaultPutExpiration" : {
+		"memcachedConfiguration": {
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"servers": {
+					"id": "servers",
+					"description": "server details separated by spaces",
+					"title": "servers",
+					"type": "string",
+					"format": "url",
+					"minLength": 1
+				},
+				"maxOperationQueueLength": {
+					"id": "maxOperationQueueLength",
+					"description": "Maximum operation Queue Length.",
+					"type": "integer",
+					"multipleOf": 1,
+					"maximum": 2147483647,
+					"minimum": 1,
+					"exclusiveMaximum": false,
+					"exclusiveMinimum": false
+				},
+				"bufferSize": {
+					"id": "bufferSize",
+					"description": "Buffer Size.",
+					"type": "integer",
+					"multipleOf": 1,
+					"maximum": 2147483647,
+					"minimum": 1,
+					"exclusiveMaximum": false,
+					"exclusiveMinimum": false
+				},
+				"defaultPutExpiration": {
 					"id": "defaultPutExpiration",
-			        "description": "defaultPutExpiration timeout value",
-			        "type": "integer",
-			        "multipleOf": 1,
-			        "maximum": 2147483647,
-			        "minimum": 1,
-			        "exclusiveMaximum": false,
-			        "exclusiveMinimum": false
-			    },
-			    "useSSL" : {
-		            "id": "useSSL",
-		            "description": "Enable SSL communication between Gluu Server and Redis cache ",
-		            "type": "boolean"
-		        },
-		        "sslTrustStoreFilePath": {
-		            "id": "useTrustStoreFilePath",
-		            "description": "Directory Path to Trust Store",
-		            "type": "string",
-		            "format": "url",
-		            "minLength": 1
-		        }
-            }
+					"description": "Expiration timeout value",
+					"type": "integer",
+					"multipleOf": 1,
+					"maximum": 2147483647,
+					"minimum": 1,
+					"exclusiveMaximum": false,
+					"exclusiveMinimum": false
+				},
+				"MemcachedConnectionFactoryType": {
+					"id": "MemcachedConnectionFactoryType",
+					"description": "The MemcachedConnectionFactoryType Type.",
+					"type": "string",
+					"enum": [
+						"IN_MEMORY",
+						"MEMCACHED"
+					]
+				}
+			},
+			"required": [
+				"servers",
+				"maxOperationQueueLength",
+				"bufferSize",
+				"defaultPutExpiration",
+				"MemcachedConnectionFactoryType"
+			]
+		},
+		"inMemoryConfiguration": {
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"defaultPutExpiration": {
+					"id": "defaultPutExpiration",
+					"description": "defaultPutExpiration timeout value",
+					"type": "integer",
+					"multipleOf": 1,
+					"maximum": 2147483647,
+					"minimum": 1,
+					"exclusiveMaximum": false,
+					"exclusiveMinimum": false
+				}
+			}
+		},
+		"redisConfiguration": {
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"redisProviderType": {
+					"id": "redisProviderType",
+					"description": "Type of connection.",
+					"type": "string",
+					"enum": [
+						"STANDALONE",
+						"CLUSTER",
+						"SHARDED"
+					]
+				},
+				"servers": {
+					"id": "servers",
+					"description": "server details separated by comma, e.g. 'server1:8080,server2:8081'",
+					"title": "servers",
+					"type": "string",
+					"format": "url",
+					"minLength": 3
+				},
+				"password": {
+					"id": "password",
+					"description": "Redis password",
+					"title": "password",
+					"type": "string",
+					"minLength": 1
+				},
+				"defaultPutExpiration": {
+					"id": "defaultPutExpiration",
+					"description": "defaultPutExpiration timeout value",
+					"type": "integer",
+					"multipleOf": 1,
+					"maximum": 2147483647,
+					"minimum": 1,
+					"exclusiveMaximum": false,
+					"exclusiveMinimum": false
+				},
+				"useSSL": {
+					"id": "useSSL",
+					"description": "Enable SSL communication between Gluu Server and Redis cache ",
+					"type": "boolean"
+				},
+				"sslTrustStoreFilePath": {
+					"id": "useTrustStoreFilePath",
+					"description": "Directory Path to Trust Store",
+					"type": "string",
+					"format": "url",
+					"minLength": 1
+				}
+			}
 		},
 		"nativePersistenceConfiguration": {
-			"type":"object",
-			"additionalProperties":false,
-			"properties":{
-				"defaultPutExpiration" : {
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"defaultPutExpiration": {
 					"id": "defaultPutExpiration",
 					"description": "defaultPutExpiration timeout value",
 					"type": "integer",
@@ -154,5 +161,5 @@
 				}
 			}
 		}
-    }
+	}
 }
