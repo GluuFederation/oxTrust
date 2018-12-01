@@ -234,8 +234,10 @@ public class Scim2UserService implements Serializable {
                     for (String attribute : attrsMap.keySet()) {
                         Object value = attrsMap.get(attribute);
 
-                        //Ignore if the attribute is unassigned in this resource: destination will not be changed in this regard
-                        if (value != null) {
+                        if (value == null) {
+                            //Attribute was unassigned in this resource: drop it from destination too
+                            person.setAttribute(attribute, new String[0]);
+                        } else {
                             //Get properly formatted string representations for the value(s) associated to the attribute
                             List<String> values=extService.getStringAttributeValues(extension.getFields().get(attribute), value);
                             log.debug("transferExtendedAttributesToPerson. Setting attribute '{}' with values {}", attribute, values.toString());
