@@ -100,6 +100,10 @@ public class Scim2UserService implements Serializable {
     @Inject
     private PersistenceEntryManager ldapEntryManager;
 
+    private String[] arrOf(String value) {
+        return value == null ? new String[0] : new String[]{value};
+    }
+
     private String[] getComplexMultivaluedAsArray(List items){
 
         String array[]=null;
@@ -150,8 +154,10 @@ public class Scim2UserService implements Serializable {
 
         log.debug("transferAttributesToPerson");
 
+        //NOTE: calling person.setAttribute("ATTR", null) does not change the attribute in LDAP
+
         //Set values trying to follow the order found in BaseScimResource class
-        person.setAttribute("oxTrustExternalId", res.getExternalId());
+        person.setAttribute("oxTrustExternalId", arrOf(res.getExternalId()));
         person.setAttribute("oxTrustMetaCreated", res.getMeta().getCreated());
         person.setAttribute("oxTrustMetaLastModified", res.getMeta().getLastModified());
         //When creating user, location will be set again when having an inum
@@ -160,36 +166,35 @@ public class Scim2UserService implements Serializable {
         //Set values trying to follow the order found in UserResource class
         person.setUid(res.getUserName());
 
-        if (res.getName()!=null){
-            person.setGivenName(res.getName().getGivenName());
-            person.setSurname(res.getName().getFamilyName());
-            person.setAttribute("middleName", res.getName().getMiddleName());
-            person.setAttribute("oxTrusthonorificPrefix", res.getName().getHonorificPrefix());
-            person.setAttribute("oxTrusthonorificSuffix", res.getName().getHonorificSuffix());
-            person.setAttribute("oxTrustNameFormatted", res.getName().computeFormattedName());
+        if (res.getName() != null) {
+            person.setAttribute("givenName", arrOf(res.getName().getGivenName()));
+            person.setAttribute("sn", arrOf(res.getName().getFamilyName()));
+            person.setAttribute("middleName", arrOf(res.getName().getMiddleName()));
+            person.setAttribute("oxTrusthonorificPrefix", arrOf(res.getName().getHonorificPrefix()));
+            person.setAttribute("oxTrusthonorificSuffix", arrOf(res.getName().getHonorificSuffix()));
+            person.setAttribute("oxTrustNameFormatted", arrOf(res.getName().computeFormattedName()));
         }
-        person.setDisplayName(res.getDisplayName());
+        person.setAttribute("displayName", arrOf(res.getDisplayName()));
 
-        person.setAttribute("nickname", res.getNickName());
-        person.setAttribute("oxTrustProfileURL", res.getProfileUrl());
-        person.setAttribute("oxTrustTitle", res.getTitle());
-        person.setAttribute("oxTrustUserType", res.getUserType());
+        person.setAttribute("nickname", arrOf(res.getNickName()));
+        person.setAttribute("oxTrustProfileURL", arrOf(res.getProfileUrl()));
+        person.setAttribute("oxTrustTitle", arrOf(res.getTitle()));
+        person.setAttribute("oxTrustUserType", arrOf(res.getUserType()));
 
-        person.setPreferredLanguage(res.getPreferredLanguage());
-        person.setAttribute("locale", res.getLocale());
-        person.setTimezone(res.getTimezone());
+        person.setAttribute("preferredLanguage", arrOf(res.getPreferredLanguage()));
+        person.setAttribute("locale", arrOf(res.getLocale()));
+        person.setAttribute("zoneinfo", arrOf(res.getTimezone()));
 
         //Why are both gluuStatus and oxTrustActive used for active? it's for active being used in filter queries?
-        Boolean active=res.getActive()!=null && res.getActive();
-        person.setAttribute("oxTrustActive", active.toString());
-        person.setAttribute("gluuStatus", active ? GluuStatus.ACTIVE.getValue() : GluuStatus.INACTIVE.getValue());
+        Boolean active = res.getActive() != null && res.getActive();
+        person.setAttribute("oxTrustActive", arrOf(active.toString()));
+        person.setAttribute("gluuStatus", arrOf(active ? GluuStatus.ACTIVE.getValue() : GluuStatus.INACTIVE.getValue()));
         person.setUserPassword(res.getPassword());
 
         person.setAttribute("oxTrustEmail", getComplexMultivaluedAsArray(res.getEmails()));
         try {
             person = serviceUtil.syncEmailForward(person, true);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             log.error("Problem syncing emails forward", e);
         }
 
@@ -222,7 +227,7 @@ public class Scim2UserService implements Serializable {
         try {
             //Gets all the extended attributes for this resource
             Map<String, Object> extendedAttrs= resource.getCustomAttributes();
-            
+
             //Iterates over all extensions this type of resource might have
             for (Extension extension : extService.getResourceExtensions(resource.getClass())){
                 Object val=extendedAttrs.get(extension.getUrn());
@@ -236,6 +241,7 @@ public class Scim2UserService implements Serializable {
 
                         if (value == null) {
                             //Attribute was unassigned in this resource: drop it from destination too
+                            log.debug("transferExtendedAttributesToPerson. Flushing attribute {}", attribute);
                             person.setAttribute(attribute, new String[0]);
                         } else {
                             //Get properly formatted string representations for the value(s) associated to the attribute
