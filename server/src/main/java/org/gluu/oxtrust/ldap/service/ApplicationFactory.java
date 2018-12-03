@@ -51,9 +51,11 @@ public class ApplicationFactory {
     public static final String PERSISTENCE_ENTRY_MANAGER_FACTORY_NAME = "persistenceEntryManagerFactory";
 
     public static final String PERSISTENCE_ENTRY_MANAGER_NAME = "persistenceEntryManager";
+    public static final String PERSISTENCE_METRIC_ENTRY_MANAGER_NAME = "persistenceMetricEntryManager";
 
     public static final String PERSISTENCE_CENTRAL_ENTRY_MANAGER_NAME = "centralPersistenceEntryManager";
-
+    
+    public static final String PERSISTENCE_METRIC_CONFIG_GROUP_NAME = "metric";
 
     @Produces @ApplicationScoped
    	public CacheConfiguration getCacheConfiguration() {
