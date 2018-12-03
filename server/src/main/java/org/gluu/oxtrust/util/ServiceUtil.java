@@ -357,6 +357,8 @@ public class ServiceUtil implements Serializable {
 
             }
             gluuCustomPerson.setAttribute("mail", newMails);
+        } else {
+            gluuCustomPerson.setAttribute("mail", new String[0]);
         }
 
         logger.info(" LEAVING Utils.syncEmailForward()...");
