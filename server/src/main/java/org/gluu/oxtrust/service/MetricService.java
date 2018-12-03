@@ -20,6 +20,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.gluu.oxtrust.ldap.service.ApplianceService;
+import org.gluu.oxtrust.ldap.service.ApplicationFactory;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.model.AuthenticationChartDto;
 import org.gluu.oxtrust.util.OxTrustConstants;
@@ -31,6 +32,7 @@ import org.xdi.model.metric.MetricType;
 import org.xdi.model.metric.counter.CounterMetricEntry;
 import org.xdi.model.metric.ldap.MetricEntry;
 import org.xdi.service.CacheService;
+import org.xdi.service.metric.inject.ReportMetric;
 
 /**
  * Store and retrieve metric
@@ -68,6 +70,8 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 	private AppConfiguration appConfiguration;
 
 	@Inject
+	@Named(ApplicationFactory.PERSISTENCE_METRIC_ENTRY_MANAGER_NAME)
+    @ReportMetric
     private PersistenceEntryManager ldapEntryManager;
 
 	public void initTimer() {

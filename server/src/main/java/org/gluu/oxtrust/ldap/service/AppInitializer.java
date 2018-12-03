@@ -6,6 +6,7 @@
 
 package org.gluu.oxtrust.ldap.service;
 
+import java.lang.annotation.Annotation;
 import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.List;
@@ -54,6 +55,7 @@ import org.xdi.service.cdi.event.LdapConfigurationReload;
 import org.xdi.service.cdi.util.CdiUtil;
 import org.xdi.service.custom.lib.CustomLibrariesLoader;
 import org.xdi.service.custom.script.CustomScriptManager;
+import org.xdi.service.metric.inject.ReportMetric;
 import org.xdi.service.timer.QuartzSchedulerManager;
 import org.xdi.util.StringHelper;
 import org.xdi.util.properties.FileConfiguration;
@@ -78,6 +80,11 @@ public class AppInitializer {
 	@Inject
 	@Named(ApplicationFactory.PERSISTENCE_ENTRY_MANAGER_NAME)
 	private Instance<PersistenceEntryManager> persistenceEntryManagerInstance;
+
+    @Inject
+    @Named(ApplicationFactory.PERSISTENCE_METRIC_ENTRY_MANAGER_NAME)
+    @ReportMetric
+    private Instance<PersistenceEntryManager> persistenceMetricEntryManagerInstance;
 
 	@Inject
 	@Named(ApplicationFactory.PERSISTENCE_CENTRAL_ENTRY_MANAGER_NAME)
@@ -255,24 +262,66 @@ public class AppInitializer {
 				getGluuRevisionDate(), getGluuBuildNumber());
 	}
 
+    protected Properties preparePersistanceProperties() {
+        PersistenceConfiguration persistenceConfiguration = this.configurationFactory.getPersistenceConfiguration();
+        FileConfiguration persistenceConfig = persistenceConfiguration.getConfiguration();
+        Properties connectionProperties = (Properties) persistenceConfig.getProperties();
+
+        EncryptionService securityService = encryptionServiceInstance.get();
+        Properties decryptedConnectionProperties = securityService.decryptAllProperties(connectionProperties);
+        return decryptedConnectionProperties;
+    }
+
+    protected Properties prepareCustomPersistanceProperties(String configId) {
+        Properties connectionProperties = preparePersistanceProperties();
+        if (StringHelper.isNotEmpty(configId)) {
+            // Replace properties names 'configId.xyz' to 'configId.xyz' in order to
+            // override default values
+            connectionProperties = (Properties) connectionProperties.clone();
+
+            String baseGroup = configId + ".";
+            for (Object key : connectionProperties.keySet()) {
+                String propertyName = (String) key;
+                if (propertyName.startsWith(baseGroup)) {
+                    propertyName = propertyName.substring(baseGroup.length());
+
+                    Object value = connectionProperties.get(key);
+                    connectionProperties.put(propertyName, value);
+                }
+            }
+        }
+
+        return connectionProperties;
+    }
+
 	@Produces
 	@ApplicationScoped
 	@Named(ApplicationFactory.PERSISTENCE_ENTRY_MANAGER_NAME)
 	public PersistenceEntryManager createPersistenceEntryManager() {
-		PersistenceConfiguration persistenceConfiguration = this.configurationFactory.getPersistenceConfiguration();
-		FileConfiguration persistenceConfig = persistenceConfiguration.getConfiguration();
-		Properties connectionProperties = (Properties) persistenceConfig.getProperties();
-
-		EncryptionService securityService = encryptionServiceInstance.get();
-		Properties decryptedConnectionProperties = securityService.decryptAllProperties(connectionProperties);
+        Properties connectionProperties = preparePersistanceProperties();
 
 		PersistenceEntryManager persistenceEntryManager = applicationFactory.getPersistenceEntryManagerFactory()
-				.createEntryManager(decryptedConnectionProperties);
-		log.info("Created {}: {}",
-				new Object[] { ApplicationFactory.PERSISTENCE_ENTRY_MANAGER_NAME, persistenceEntryManager });
+				.createEntryManager(connectionProperties);
+		log.info("Created {}: {} with operation service: {}",
+				new Object[] { ApplicationFactory.PERSISTENCE_ENTRY_MANAGER_NAME, persistenceEntryManager, persistenceEntryManager.getOperationService() });
 
 		return persistenceEntryManager;
 	}
+
+    @Produces
+    @ApplicationScoped
+    @Named(ApplicationFactory.PERSISTENCE_METRIC_ENTRY_MANAGER_NAME)
+    @ReportMetric
+    public PersistenceEntryManager createMetricPersistenceEntryManager() {
+        Properties connectionProperties = prepareCustomPersistanceProperties(ApplicationFactory.PERSISTENCE_METRIC_CONFIG_GROUP_NAME);
+
+        PersistenceEntryManager persistenceEntryManager = applicationFactory.getPersistenceEntryManagerFactory()
+                .createEntryManager(connectionProperties);
+        log.info("Created {}: {} with operation service: {}",
+                new Object[] { ApplicationFactory.PERSISTENCE_METRIC_ENTRY_MANAGER_NAME, persistenceEntryManager, persistenceEntryManager.getOperationService() });
+
+        return persistenceEntryManager;
+    }
 
 	@Produces
 	@ApplicationScoped
@@ -300,27 +349,33 @@ public class AppInitializer {
 		return centralLdapEntryManager;
 	}
 
-	public void recreateLdapEntryManager(@Observes @LdapConfigurationReload String event) {
-		// Get existing application scoped instance
-		PersistenceEntryManager oldLdapEntryManager = CdiUtil.getContextBean(beanManager, PersistenceEntryManager.class,
-				ApplicationFactory.PERSISTENCE_ENTRY_MANAGER_NAME);
+	public void recreatePersistanceEntryManager(@Observes @LdapConfigurationReload String event) {
+		recreatePersistanceEntryManagerImpl(persistenceEntryManagerInstance, ApplicationFactory.PERSISTENCE_ENTRY_MANAGER_NAME);
 
-		// Close existing connections
-		closeLdapEntryManager(oldLdapEntryManager);
-
-		// Force to create new bean
-		PersistenceEntryManager ldapEntryManager = persistenceEntryManagerInstance.get();
-		persistenceEntryManagerInstance.destroy(ldapEntryManager);
-		log.info("Recreated instance {}: {}", ApplicationFactory.PERSISTENCE_ENTRY_MANAGER_NAME, ldapEntryManager);
+		recreatePersistanceEntryManagerImpl(persistenceEntryManagerInstance, ApplicationFactory.PERSISTENCE_METRIC_ENTRY_MANAGER_NAME, ReportMetric.Literal.INSTANCE);
 	}
 
-	public void recreateCentralLdapEntryManager(@Observes @LdapCentralConfigurationReload String event) {
+    protected void recreatePersistanceEntryManagerImpl(Instance<PersistenceEntryManager> instance, String persistenceEntryManagerName, Annotation... qualifiers) {
+        // Get existing application scoped instance
+		PersistenceEntryManager oldLdapEntryManager = CdiUtil.getContextBean(beanManager, PersistenceEntryManager.class,
+		        persistenceEntryManagerName, qualifiers);
+
+		// Close existing connections
+		closePersistanceEntryManager(oldLdapEntryManager, persistenceEntryManagerName);
+
+		// Force to create new bean
+		PersistenceEntryManager ldapEntryManager = instance.get();
+		instance.destroy(ldapEntryManager);
+		log.info("Recreated instance {}: {} with operation service: {}", persistenceEntryManagerName, ldapEntryManager, ldapEntryManager.getOperationService());
+    }
+
+	public void recreateCentralPersistanceEntryManager(@Observes @LdapCentralConfigurationReload String event) {
 		// Get existing application scoped instance
 		PersistenceEntryManager oldCentralLdapEntryManager = CdiUtil.getContextBean(beanManager,
 				PersistenceEntryManager.class, ApplicationFactory.PERSISTENCE_CENTRAL_ENTRY_MANAGER_NAME);
 
 		// Close existing connections
-		closeLdapEntryManager(oldCentralLdapEntryManager);
+		closePersistanceEntryManager(oldCentralLdapEntryManager, ApplicationFactory.PERSISTENCE_CENTRAL_ENTRY_MANAGER_NAME);
 
 		// Force to create new bean
 		PersistenceEntryManager ldapCentralEntryManager = persistenceCentralEntryManagerInstance.get();
@@ -329,12 +384,13 @@ public class AppInitializer {
 				ldapCentralEntryManager);
 	}
 
-	private void closeLdapEntryManager(PersistenceEntryManager oldLdapEntryManager) {
+	private void closePersistanceEntryManager(PersistenceEntryManager oldLdapEntryManager, String persistenceEntryManagerName) {
 		// Close existing connections
-		log.debug("Attempting to destroy {}: {}", ApplicationFactory.PERSISTENCE_ENTRY_MANAGER_NAME,
-				oldLdapEntryManager);
+		log.debug("Attempting to destroy {}:{} with operation service: {}", persistenceEntryManagerName,
+				oldLdapEntryManager, oldLdapEntryManager.getOperationService());
 		oldLdapEntryManager.destroy();
-		log.debug("Destroyed {}: {}", ApplicationFactory.PERSISTENCE_ENTRY_MANAGER_NAME, oldLdapEntryManager);
+		log.debug("Destroyed {}:{} with operation service: {}", persistenceEntryManagerName, oldLdapEntryManager,
+		        oldLdapEntryManager.getOperationService());
 	}
 
 	private void initializeLdifArchiver(PersistenceEntryManager ldapEntryManager) {
@@ -424,12 +480,15 @@ public class AppInitializer {
 
 	public void destroy(@Observes @BeforeDestroyed(ApplicationScoped.class) ServletContext init) {
 		log.info("Closing LDAP connection at server shutdown...");
-		PersistenceEntryManager ldapEntryManager = persistenceEntryManagerInstance.get();
-		closeLdapEntryManager(ldapEntryManager);
+		PersistenceEntryManager persistanceEntryManager = persistenceEntryManagerInstance.get();
+		closePersistanceEntryManager(persistanceEntryManager, ApplicationFactory.PERSISTENCE_ENTRY_MANAGER_NAME);
 
-		PersistenceEntryManager ldapCentralEntryManager = persistenceCentralEntryManagerInstance.get();
-		if (ldapCentralEntryManager != null) {
-			closeLdapEntryManager(ldapCentralEntryManager);
+		PersistenceEntryManager persistanceMetricEntryManager = persistenceMetricEntryManagerInstance.get();
+        closePersistanceEntryManager(persistanceMetricEntryManager, ApplicationFactory.PERSISTENCE_METRIC_ENTRY_MANAGER_NAME);
+
+		PersistenceEntryManager persistanceCentralEntryManager = persistenceCentralEntryManagerInstance.get();
+		if (persistanceCentralEntryManager != null) {
+			closePersistanceEntryManager(persistanceCentralEntryManager, ApplicationFactory.PERSISTENCE_CENTRAL_ENTRY_MANAGER_NAME);
 		}
 	}
 
