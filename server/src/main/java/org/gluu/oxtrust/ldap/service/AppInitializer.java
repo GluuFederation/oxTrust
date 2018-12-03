@@ -386,11 +386,13 @@ public class AppInitializer {
 
     private void closePersistenceEntryManager(PersistenceEntryManager oldPersistenceEntryManager, String persistenceEntryManagerName) {
         // Close existing connections
-        log.debug("Attempting to destroy {}:{} with operation service: {}", persistenceEntryManagerName,
-                oldPersistenceEntryManager, oldPersistenceEntryManager.getOperationService());
-        oldPersistenceEntryManager.destroy();
-        log.debug("Destroyed {}:{} with operation service: {}", persistenceEntryManagerName, oldPersistenceEntryManager,
-                oldPersistenceEntryManager.getOperationService());
+        if ((oldPersistenceEntryManager != null) && (oldPersistenceEntryManager.getOperationService() != null)) {
+            log.debug("Attempting to destroy {}:{} with operation service: {}", persistenceEntryManagerName,
+                    oldPersistenceEntryManager, oldPersistenceEntryManager.getOperationService());
+            oldPersistenceEntryManager.destroy();
+            log.debug("Destroyed {}:{} with operation service: {}", persistenceEntryManagerName, oldPersistenceEntryManager,
+                    oldPersistenceEntryManager.getOperationService());
+        }
     }
 
 	private void initializeLdifArchiver(PersistenceEntryManager ldapEntryManager) {
