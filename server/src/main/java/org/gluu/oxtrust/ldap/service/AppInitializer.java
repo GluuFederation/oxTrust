@@ -361,7 +361,7 @@ public class AppInitializer {
 		        persistenceEntryManagerName, qualifiers);
 
 		// Close existing connections
-		closePersistanceEntryManager(oldLdapEntryManager, persistenceEntryManagerName);
+		closePersistenceEntryManager(oldLdapEntryManager, persistenceEntryManagerName);
 
 		// Force to create new bean
 		PersistenceEntryManager ldapEntryManager = instance.get();
@@ -375,7 +375,7 @@ public class AppInitializer {
 				PersistenceEntryManager.class, ApplicationFactory.PERSISTENCE_CENTRAL_ENTRY_MANAGER_NAME);
 
 		// Close existing connections
-		closePersistanceEntryManager(oldCentralLdapEntryManager, ApplicationFactory.PERSISTENCE_CENTRAL_ENTRY_MANAGER_NAME);
+		closePersistenceEntryManager(oldCentralLdapEntryManager, ApplicationFactory.PERSISTENCE_CENTRAL_ENTRY_MANAGER_NAME);
 
 		// Force to create new bean
 		PersistenceEntryManager ldapCentralEntryManager = persistenceCentralEntryManagerInstance.get();
@@ -384,14 +384,14 @@ public class AppInitializer {
 				ldapCentralEntryManager);
 	}
 
-	private void closePersistanceEntryManager(PersistenceEntryManager oldLdapEntryManager, String persistenceEntryManagerName) {
-		// Close existing connections
-		log.debug("Attempting to destroy {}:{} with operation service: {}", persistenceEntryManagerName,
-				oldLdapEntryManager, oldLdapEntryManager.getOperationService());
-		oldLdapEntryManager.destroy();
-		log.debug("Destroyed {}:{} with operation service: {}", persistenceEntryManagerName, oldLdapEntryManager,
-		        oldLdapEntryManager.getOperationService());
-	}
+    private void closePersistenceEntryManager(PersistenceEntryManager oldPersistenceEntryManager, String persistenceEntryManagerName) {
+        // Close existing connections
+        log.debug("Attempting to destroy {}:{} with operation service: {}", persistenceEntryManagerName,
+                oldPersistenceEntryManager, oldPersistenceEntryManager.getOperationService());
+        oldPersistenceEntryManager.destroy();
+        log.debug("Destroyed {}:{} with operation service: {}", persistenceEntryManagerName, oldPersistenceEntryManager,
+                oldPersistenceEntryManager.getOperationService());
+    }
 
 	private void initializeLdifArchiver(PersistenceEntryManager ldapEntryManager) {
 		ldifArchiver.init();
@@ -481,14 +481,14 @@ public class AppInitializer {
 	public void destroy(@Observes @BeforeDestroyed(ApplicationScoped.class) ServletContext init) {
 		log.info("Closing LDAP connection at server shutdown...");
 		PersistenceEntryManager persistanceEntryManager = persistenceEntryManagerInstance.get();
-		closePersistanceEntryManager(persistanceEntryManager, ApplicationFactory.PERSISTENCE_ENTRY_MANAGER_NAME);
+		closePersistenceEntryManager(persistanceEntryManager, ApplicationFactory.PERSISTENCE_ENTRY_MANAGER_NAME);
 
 		PersistenceEntryManager persistanceMetricEntryManager = persistenceMetricEntryManagerInstance.get();
-        closePersistanceEntryManager(persistanceMetricEntryManager, ApplicationFactory.PERSISTENCE_METRIC_ENTRY_MANAGER_NAME);
+        closePersistenceEntryManager(persistanceMetricEntryManager, ApplicationFactory.PERSISTENCE_METRIC_ENTRY_MANAGER_NAME);
 
 		PersistenceEntryManager persistanceCentralEntryManager = persistenceCentralEntryManagerInstance.get();
 		if (persistanceCentralEntryManager != null) {
-			closePersistanceEntryManager(persistanceCentralEntryManager, ApplicationFactory.PERSISTENCE_CENTRAL_ENTRY_MANAGER_NAME);
+			closePersistenceEntryManager(persistanceCentralEntryManager, ApplicationFactory.PERSISTENCE_CENTRAL_ENTRY_MANAGER_NAME);
 		}
 	}
 
