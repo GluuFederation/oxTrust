@@ -18,20 +18,6 @@
             "format": "url",
             "minLength": 1
         },
-        "loginPage": {
-            "id": "loginPage",
-            "description": "URL of the login page.",
-            "type": "string",
-            "format": "url",
-            "minLength": 1
-        },
-        "authorizationPage": {
-            "id": "authorizationPage",
-            "description": "URL of the oxAuth authorization page.",
-            "type": "string",
-            "format": "url",
-            "minLength": 1
-        },
         "baseEndpoint": {
             "id": "baseEndpoint",
             "description": "Base URL of the Endpoints.",
@@ -1353,8 +1339,6 @@
     },
     "required": [
         "issuer",
-        "loginPage",
-        "authorizationPage",
         "baseEndpoint",
         "authorizationEndpoint",
         "tokenEndpoint",
