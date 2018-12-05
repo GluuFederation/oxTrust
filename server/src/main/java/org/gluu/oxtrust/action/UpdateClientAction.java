@@ -125,7 +125,7 @@ public class UpdateClientAction implements Serializable {
 	private boolean update;
 
 	private Date previousClientExpirationDate;
-
+	
 	private OxAuthClient client;
 
 	private List<String> loginUris;
@@ -316,9 +316,7 @@ public class UpdateClientAction implements Serializable {
 	}
 
 	public String save() throws Exception {
-		LocalDate localDate = LocalDate.now();
-		LocalDate nextCentury = localDate.plusYears(100);
-		Date nextCenturyDate = Date.from(nextCentury.atStartOfDay(ZoneId.systemDefault()).toInstant());
+		Date nextCenturyDate = Date.from(LocalDate.now().plusYears(100).atStartOfDay(ZoneId.systemDefault()).toInstant());
 		if (this.client.getClientSecretExpiresAt() != null && this.client.getClientSecretExpiresAt()
 				.before(Date.from(LocalDate.now().plusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant()))) {
 			this.client.setClientSecretExpiresAt(nextCenturyDate);
