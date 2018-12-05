@@ -22,7 +22,7 @@
         </cc:interface>
 
         <cc:implementation>
-            <rich:popupPanel id="selectEntityModalPanel" onmaskclick="#{rich:component('selectEntityModalPanel')}.hide()" zindex="2000" moveable="true" autosized="true" width="725" height="460" onbeforeshow="if (#{not cc.attrs.displaySearchForm}) {executeSearch#{cc.attrs.id}();}">
+            <rich:popupPanel left="300" top="100" id="selectEntityModalPanel" onmaskclick="#{rich:component('selectEntityModalPanel')}.hide()" zindex="2000" moveable="true" autosized="true" width="725" height="460" onbeforeshow="if (#{not cc.attrs.displaySearchForm}) {executeSearch#{cc.attrs.id}();}">
                 <f:facet name="header">
                     <h:outputText value="#{cc.attrs.label}" />
                 </f:facet>
@@ -48,7 +48,7 @@
                             <h:outputText value="No Search Result Found" />
                         </h:panelGroup>
 
-                        <h:panelGroup style="overflow-y:auto; width:715px;#{cc.attrs.searchResult.size() gt 5 ? ' height:310px;' : ''}" layout="block" rendered="#{cc.attrs.searchResult.size() gt 0}">
+                        <h:panelGroup style="overflow-y:auto; width:715px;#{cc.attrs.searchResult.size() gt 5 ? ' height:auto;' : ''}" layout="block" rendered="#{cc.attrs.searchResult.size() gt 0}">
                             <rich:dataTable  sortMode="single" id="selectableListId" value="#{cc.attrs.searchResult}" styleClass="data sortable" var="prs" style="width:100%">
                                 <rich:column width="35">
                                     <f:facet name="header">X</f:facet>

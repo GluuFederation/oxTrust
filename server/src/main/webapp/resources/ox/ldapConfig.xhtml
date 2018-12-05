@@ -37,6 +37,8 @@
 	<cc:attribute name="changePasswordDialogId" type="java.lang.String" />
 	<cc:attribute name="ldapConfigAction" rerquired="true"
 		type="org.gluu.oxtrust.model.LdapConfigurationModel" />
+	<cc:attribute name="showTestButton" required="false" default="false"
+		type="java.lang.Boolean" />	
 </cc:interface>
 
 <cc:implementation>
@@ -125,16 +127,19 @@
 							action="#{cc.attrs.ldapConfigAction.setActiveLdapConfig(cc.attrs.ldapConfig)}"
 							execute="@this" />
 							</ox:decorate>
-							
 							<ox:decorate
 							id="maxConnection" label="#{msg['ldapConfig.useSSL']}">
 							<h:selectBooleanCheckbox value="#{cc.attrs.ldapConfig.useSSL}"
-								required="true" styleClass="useSSLSelectBox"/>
-						</ox:decorate>
+								required="true" styleClass="useSSLSelectBox"/>			
+						    </ox:decorate>
 
 						<ox:decorate rendered="#{cc.attrs.displayEnable}" label="#{msg['ldapConfig.enabled']}">
 							<h:selectBooleanCheckbox value="#{cc.attrs.ldapConfig.enabled}"  />
 						</ox:decorate>
+						<h:commandButton style= "margin-left:15px;" styleClass="btn btn-success buttonTestConnection"
+									value="#{msg['manageAuthentication.testLDAPConnection']}"
+									rendered="#{cc.attrs.showTestButton}"
+									action="#{cc.attrs.ldapConfigAction.testLdapConnection(cc.attrs.ldapConfig)}"/>
 					</h:panelGroup>
 					
 					

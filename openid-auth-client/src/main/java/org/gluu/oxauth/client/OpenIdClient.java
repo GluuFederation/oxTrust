@@ -6,6 +6,7 @@
 
 package org.gluu.oxauth.client;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -107,10 +108,14 @@ public class OpenIdClient<C extends AppConfiguration, L extends LdapAppConfigura
 
 		this.preRegisteredClient = StringHelper.isNotEmpty(this.clientId) && StringHelper.isNotEmpty(this.clientSecret);
 
-		loadOpenIdConfiguration();
+        try {
+            loadOpenIdConfiguration();
+        } catch (IOException ex) {
+            throw new ConfigurationException("Failed to load oxAuth configuration");
+        }
 	}
 
-	private void loadOpenIdConfiguration() {
+	private void loadOpenIdConfiguration() throws IOException {
 		String openIdProvider = appConfiguration.getOpenIdProviderUrl();
 		if (StringHelper.isEmpty(openIdProvider)) {
 			throw new ConfigurationException("OpenIdProvider Url is invalid");
