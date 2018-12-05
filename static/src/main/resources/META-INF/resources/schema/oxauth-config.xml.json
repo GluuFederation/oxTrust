@@ -1086,6 +1086,11 @@
             "description": "Boolean value to specify whether to invalidate `session_id` and `consent_session_id` cookies right after successful or unsuccessful authorization",
             "type": "boolean"
         },
+        "allowAuthorizationByAccessToken": {
+            "id": "allowAuthorizationByAccessToken",
+            "description": "DEPRECATED. Boolean value to specify whether to allow authorization by `access_token` at Authorization Endpoint. It will be removed in CE 4.0",
+            "type": "boolean"
+        },
         "updateUserLastLogonTime": {
         	"id": "updateUserLastLogonTime",
             "description": "Boolean value to specify if application should update oxLastLogonTime attribute on user authentication.",
