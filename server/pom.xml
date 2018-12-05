@@ -107,7 +107,7 @@
 						-Dserver.base=${project.build.directory}
 						-Dlog.base=${project.build.directory}
 						-Dgluu.disable.scheduler=true
- 
+
 					</argLine>
 					<suiteXmlFiles>
 						<suiteXmlFile>target/test-classes/testng.xml</suiteXmlFile>
@@ -193,6 +193,42 @@
 					<scanIntervalSeconds>3</scanIntervalSeconds>
 				</configuration>
 			</plugin>
+            <plugin>
+				<groupId>com.github.kongchen</groupId>
+				<artifactId>swagger-maven-plugin</artifactId>
+				<configuration>
+					<apiSources>
+						<apiSource>
+							<springmvc>false</springmvc>
+							<locations>org.gluu.oxtrust.api</locations>
+							<!-- <host>yourhost.com</host> -->
+							<basePath>/</basePath>
+							<info>
+								<title>oxTrust api</title>
+								<version>${project.version}</version>
+								<description>oxTrust api description</description>
+								<termsOfService>Terms of services</termsOfService>
+								<contact>
+									<email>contact@gluu.com</email>
+									<name>Contact QA</name>
+									<url>http://gluu.org</url>
+								</contact>
+							</info>
+							<swaggerDirectory>${project.basedir}/docs/swagger</swaggerDirectory>
+							<outputFormats>yaml</outputFormats>
+						</apiSource>
+					</apiSources>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>compile</phase>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
 		</plugins>
 	</build>
 
@@ -322,7 +358,7 @@
 			<artifactId>javax.websocket-api</artifactId>
 			<scope>provided</scope>
 		</dependency>
-		
+
 		<!-- Primfaces -->
 		<!--<dependency>
 				<groupId>org.primefaces</groupId>

@@ -1,0 +1,1685 @@
+---
+swagger: "2.0"
+info:
+  description: "oxTrust api description"
+  version: "4.0.0-SNAPSHOT"
+  title: "oxTrust api"
+  termsOfService: "Terms of services"
+  contact:
+    name: "Contact QA"
+    url: "http://gluu.org"
+    email: "contact@gluu.com"
+basePath: "/"
+paths:
+  /api/attributes:
+    get:
+      operationId: "getAllAttributes"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        default:
+          description: "successful operation"
+    post:
+      operationId: "createAttribute"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        default:
+          description: "successful operation"
+    put:
+      operationId: "updateAttribute"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        default:
+          description: "successful operation"
+  /api/attributes/active:
+    get:
+      operationId: "getAllActivesAttributes"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        default:
+          description: "successful operation"
+  /api/attributes/inactive:
+    get:
+      operationId: "getAllInActivesAttributes"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        default:
+          description: "successful operation"
+  /api/attributes/search:
+    get:
+      operationId: "searchAttributes"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "pattern"
+        in: "query"
+        required: true
+        type: "string"
+      - name: "size"
+        in: "query"
+        required: false
+        type: "integer"
+        default: 1
+        format: "int32"
+      responses:
+        default:
+          description: "successful operation"
+  /api/attributes/{inum}:
+    get:
+      operationId: "getAttributeByInum"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "inum"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        default:
+          description: "successful operation"
+    delete:
+      operationId: "deleteAttribute"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "inum"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        default:
+          description: "successful operation"
+  /api/certificates/list:
+    get:
+      operationId: "list"
+      consumes:
+      - "application/json"
+      - "text/plain"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "string"
+  /api/clients:
+    get:
+      operationId: "listClients"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        default:
+          description: "successful operation"
+    post:
+      operationId: "createClient"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        default:
+          description: "successful operation"
+    put:
+      operationId: "updateClient"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        default:
+          description: "successful operation"
+  /api/clients/search:
+    get:
+      operationId: "searchGroups"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "pattern"
+        in: "query"
+        required: true
+        type: "string"
+      - name: "size"
+        in: "query"
+        required: false
+        type: "integer"
+        default: 1
+        format: "int32"
+      responses:
+        default:
+          description: "successful operation"
+  /api/clients/{inum}:
+    get:
+      operationId: "getClientByInum"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "inum"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        default:
+          description: "successful operation"
+    delete:
+      operationId: "deleteClient"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "inum"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        default:
+          description: "successful operation"
+  /api/clients/{inum}/scopes:
+    get:
+      operationId: "getClientScope"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "inum"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        default:
+          description: "successful operation"
+  /api/clients/{inum}/scopes/{sinum}:
+    post:
+      operationId: "addScopeToClient"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "inum"
+        in: "path"
+        required: true
+        type: "string"
+      - name: "sinum"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        default:
+          description: "successful operation"
+    delete:
+      operationId: "removeScopeToClient"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "inum"
+        in: "path"
+        required: true
+        type: "string"
+      - name: "sinum"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        default:
+          description: "successful operation"
+  /api/configuration/status:
+    get:
+      operationId: "getServerStatus"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        default:
+          description: "successful operation"
+  /api/configurations/auth/auth-method:
+    get:
+      operationId: "read"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        default:
+          description: "successful operation"
+    put:
+      operationId: "update"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        default:
+          description: "successful operation"
+  /api/configurations/auth/cas-protocol:
+    get:
+      operationId: "read"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        default:
+          description: "successful operation"
+    put:
+      operationId: "update"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        default:
+          description: "successful operation"
+  /api/configurations/auth/ldap:
+    get:
+      operationId: "read"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        default:
+          description: "successful operation"
+    post:
+      operationId: "create"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        default:
+          description: "successful operation"
+    put:
+      operationId: "update"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        default:
+          description: "successful operation"
+  /api/configurations/auth/ldap/status:
+    post:
+      operationId: "status"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        default:
+          description: "successful operation"
+  /api/configurations/auth/ldap/{name}:
+    delete:
+      operationId: "delete"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        default:
+          description: "successful operation"
+  /api/configurations/auth/ldap/{name}/status:
+    get:
+      operationId: "status"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "name"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        default:
+          description: "successful operation"
+  /api/configurations/oxauth:
+    get:
+      operationId: "read"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        default:
+          description: "successful operation"
+    put:
+      operationId: "update"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        default:
+          description: "successful operation"
+  /api/configurations/oxtrust:
+    get:
+      operationId: "read"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        default:
+          description: "successful operation"
+    put:
+      operationId: "save"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        default:
+          description: "successful operation"
+  /api/configurations/registration:
+    get:
+      operationId: "getConfiguration"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "searchPattern"
+        in: "query"
+        required: false
+        type: "string"
+      responses:
+        default:
+          description: "successful operation"
+    put:
+      operationId: "saveConfiguration"
+      consumes:
+      - "application/json"
+      parameters: []
+      responses:
+        default:
+          description: "successful operation"
+  /api/groups:
+    get:
+      operationId: "listGroups"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "size"
+        in: "query"
+        required: false
+        type: "integer"
+        default: 0
+        format: "int32"
+      responses:
+        default:
+          description: "successful operation"
+    post:
+      operationId: "createGroup"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        default:
+          description: "successful operation"
+    put:
+      operationId: "updateGroup"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        default:
+          description: "successful operation"
+  /api/groups/search:
+    get:
+      operationId: "searchGroups"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "pattern"
+        in: "query"
+        required: true
+        type: "string"
+      - name: "size"
+        in: "query"
+        required: false
+        type: "integer"
+        default: 1
+        format: "int32"
+      responses:
+        default:
+          description: "successful operation"
+  /api/groups/{inum}:
+    get:
+      operationId: "getGroupByInum"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "inum"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        default:
+          description: "successful operation"
+    delete:
+      operationId: "deleteGroup"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "inum"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        default:
+          description: "successful operation"
+  /api/groups/{inum}/members:
+    get:
+      operationId: "getGroupMembers"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "inum"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        default:
+          description: "successful operation"
+  /api/groups/{inum}/members/{minum}:
+    post:
+      operationId: "addGroupMember"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "inum"
+        in: "path"
+        required: true
+        type: "string"
+      - name: "minum"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        default:
+          description: "successful operation"
+    delete:
+      operationId: "removeGroupMember"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "inum"
+        in: "path"
+        required: true
+        type: "string"
+      - name: "minum"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        default:
+          description: "successful operation"
+  /api/logs:
+    get:
+      operationId: "logs"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        default:
+          description: "successful operation"
+    put:
+      operationId: "update"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        default:
+          description: "successful operation"
+  /api/logs/{id}/{numberOfLines}:
+    get:
+      operationId: "log"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        type: "integer"
+        format: "int32"
+      - name: "numberOfLines"
+        in: "path"
+        required: true
+        type: "integer"
+        default: 400
+        format: "int32"
+      responses:
+        default:
+          description: "successful operation"
+  /api/organization:
+    get:
+      operationId: "read"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        default:
+          description: "successful operation"
+    put:
+      operationId: "update"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        default:
+          description: "successful operation"
+  /api/organization/images/{id}:
+    get:
+      operationId: "read"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        default:
+          description: "successful operation"
+  /api/organization/smtp:
+    get:
+      operationId: "read"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        default:
+          description: "successful operation"
+    put:
+      operationId: "update"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        default:
+          description: "successful operation"
+  /api/organization/smtp/status:
+    get:
+      operationId: "status"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        default:
+          description: "successful operation"
+  /api/people:
+    get:
+      operationId: "listPeople"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        default:
+          description: "successful operation"
+    post:
+      operationId: "createPerson"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        default:
+          description: "successful operation"
+    put:
+      operationId: "updateGroup"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        default:
+          description: "successful operation"
+  /api/people/search:
+    get:
+      operationId: "searchGroups"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "pattern"
+        in: "query"
+        required: true
+        type: "string"
+      responses:
+        default:
+          description: "successful operation"
+  /api/people/{inum}:
+    get:
+      operationId: "getPersonByInum"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "inum"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        default:
+          description: "successful operation"
+    delete:
+      operationId: "deletePerson"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "inum"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        default:
+          description: "successful operation"
+  /api/saml/tr/add_attribute/{inum}:
+    post:
+      operationId: "addAttribute"
+      consumes:
+      - "application/json"
+      produces:
+      - "text/plain"
+      parameters:
+      - name: "inum"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        default:
+          description: "successful operation"
+  /api/saml/tr/create:
+    post:
+      operationId: "create"
+      consumes:
+      - "application/json"
+      produces:
+      - "text/plain"
+      parameters: []
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "string"
+  /api/saml/tr/delete/{inum}:
+    delete:
+      operationId: "delete"
+      consumes:
+      - "application/json"
+      - "text/plain"
+      produces:
+      - "text/plain"
+      parameters:
+      - name: "inum"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        default:
+          description: "successful operation"
+  /api/saml/tr/generate_configuration_files:
+    put:
+      operationId: "generateConfigurationFiles"
+      consumes:
+      - "text/plain"
+      produces:
+      - "text/plain"
+      parameters: []
+      responses:
+        default:
+          description: "successful operation"
+  /api/saml/tr/generate_inum_for_new_trust_relationship:
+    get:
+      operationId: "generateInumForNewTrustRelationship"
+      consumes:
+      - "application/json"
+      - "text/plain"
+      produces:
+      - "text/plain"
+      parameters: []
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "string"
+  /api/saml/tr/get_contacts/{inum}:
+    get:
+      operationId: "getContacts"
+      consumes:
+      - "application/json"
+      - "text/plain"
+      produces:
+      - "text/plain"
+      parameters:
+      - name: "inum"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "string"
+  /api/saml/tr/list:
+    get:
+      operationId: "list"
+      consumes:
+      - "application/json"
+      - "text/plain"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "string"
+  /api/saml/tr/list_all_active_trust_relationships:
+    get:
+      operationId: "listAllActiveTrustRelationships"
+      consumes:
+      - "application/json"
+      - "text/plain"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "string"
+  /api/saml/tr/list_all_federations:
+    get:
+      operationId: "listAllFederations"
+      consumes:
+      - "application/json"
+      - "text/plain"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "string"
+  /api/saml/tr/list_all_other_federations/{inum}:
+    get:
+      operationId: "listAllOtherFederations"
+      consumes:
+      - "application/json"
+      - "text/plain"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "inum"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "string"
+  /api/saml/tr/list_all_saml_trust_relationships:
+    get:
+      operationId: "listAllSAMLTrustRelationships"
+      consumes:
+      - "application/json"
+      - "text/plain"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "size_limit"
+        in: "query"
+        required: false
+        type: "integer"
+        format: "int32"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "string"
+  /api/saml/tr/list_deconstructed_trust_relationships/{inum}:
+    get:
+      operationId: "listDeconstructedTrustRelationships"
+      consumes:
+      - "application/json"
+      - "text/plain"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "inum"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "string"
+  /api/saml/tr/read/{inum}:
+    get:
+      operationId: "read"
+      consumes:
+      - "application/json"
+      - "text/plain"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "inum"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "string"
+  /api/saml/tr/remove_attribute:
+    delete:
+      operationId: "removeAttribute"
+      consumes:
+      - "text/plain"
+      produces:
+      - "text/plain"
+      parameters: []
+      responses:
+        default:
+          description: "successful operation"
+  /api/saml/tr/search_trust_relationships:
+    get:
+      operationId: "searchTrustRelationships"
+      consumes:
+      - "application/json"
+      - "text/plain"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "pattern"
+        in: "query"
+        required: true
+        type: "string"
+      - name: "size_limit"
+        in: "query"
+        required: false
+        type: "integer"
+        format: "int32"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "string"
+  /api/saml/tr/set_certificate/{inum}:
+    post:
+      operationId: "setCertificate"
+      consumes:
+      - "text/plain"
+      produces:
+      - "text/plain"
+      parameters:
+      - name: "inum"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        default:
+          description: "successful operation"
+  /api/saml/tr/set_contacts/{inum}:
+    post:
+      operationId: "setContacts"
+      consumes:
+      - "application/json"
+      produces:
+      - "text/plain"
+      parameters:
+      - name: "inum"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        default:
+          description: "successful operation"
+  /api/saml/tr/set_metadata/{inum}:
+    post:
+      operationId: "setMetadata"
+      consumes:
+      - "application/xml"
+      - "text/plain"
+      produces:
+      - "text/plain"
+      parameters:
+      - name: "inum"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        default:
+          description: "successful operation"
+  /api/saml/tr/set_metadata_url/{inum}:
+    post:
+      operationId: "setMetadataURL"
+      consumes:
+      - "text/plain"
+      produces:
+      - "text/plain"
+      parameters:
+      - name: "inum"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        default:
+          description: "successful operation"
+  /api/saml/tr/update/{inum}:
+    put:
+      operationId: "update"
+      consumes:
+      - "application/json"
+      produces:
+      - "text/plain"
+      parameters:
+      - name: "inum"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        default:
+          description: "successful operation"
+  /api/scopes:
+    get:
+      operationId: "getAllScopes"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        default:
+          description: "successful operation"
+    post:
+      operationId: "createScope"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        default:
+          description: "successful operation"
+    put:
+      operationId: "updateScope"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        default:
+          description: "successful operation"
+  /api/scopes/search:
+    get:
+      operationId: "searchScope"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "pattern"
+        in: "query"
+        required: false
+        type: "string"
+      - name: "size"
+        in: "query"
+        required: false
+        type: "integer"
+        default: 10
+        format: "int32"
+      responses:
+        default:
+          description: "successful operation"
+  /api/scopes/{inum}:
+    get:
+      operationId: "getScopeByInum"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "inum"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        default:
+          description: "successful operation"
+    delete:
+      operationId: "deleteScope"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "inum"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        default:
+          description: "successful operation"
+  /api/scopes/{inum}/claims:
+    get:
+      operationId: "getScopeClaims"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "inum"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        default:
+          description: "successful operation"
+  /api/sectoridentifiers:
+    get:
+      operationId: "getAllSectorIdentifiers"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        default:
+          description: "successful operation"
+    post:
+      operationId: "createSectorIdentifier"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        default:
+          description: "successful operation"
+    put:
+      operationId: "updateSectorIdentifier"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        default:
+          description: "successful operation"
+  /api/sectoridentifiers/search:
+    get:
+      operationId: "searchSectorIdentifier"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "pattern"
+        in: "query"
+        required: false
+        type: "string"
+      - name: "size"
+        in: "query"
+        required: false
+        type: "integer"
+        default: 10
+        format: "int32"
+      responses:
+        default:
+          description: "successful operation"
+  /api/sectoridentifiers/{inum}:
+    get:
+      operationId: "getSectorIdentifierById"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "inum"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        default:
+          description: "successful operation"
+    delete:
+      operationId: "deleteSectorIdentifier"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "inum"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        default:
+          description: "successful operation"
+  /api/uma/resources:
+    get:
+      operationId: "listUmaResources"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        default:
+          description: "successful operation"
+    post:
+      operationId: "createUmaResource"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        default:
+          description: "successful operation"
+    put:
+      operationId: "updateUmaResource"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        default:
+          description: "successful operation"
+  /api/uma/resources/search:
+    get:
+      operationId: "searchUmaResources"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "pattern"
+        in: "query"
+        required: true
+        type: "string"
+      - name: "size"
+        in: "query"
+        required: true
+        type: "integer"
+        format: "int32"
+      responses:
+        default:
+          description: "successful operation"
+  /api/uma/resources/{id}:
+    get:
+      operationId: "getUmaResourceById"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        default:
+          description: "successful operation"
+    delete:
+      operationId: "deleteUmaResource"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        default:
+          description: "successful operation"
+  /api/uma/resources/{id}/clients:
+    get:
+      operationId: "getUmaResourceClients"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        default:
+          description: "successful operation"
+  /api/uma/resources/{id}/clients/{inum}:
+    post:
+      operationId: "addClientToUmaResource"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        type: "string"
+      - name: "inum"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        default:
+          description: "successful operation"
+    delete:
+      operationId: "removeClientToUmaResource"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        type: "string"
+      - name: "inum"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        default:
+          description: "successful operation"
+  /api/uma/resources/{id}/scopes:
+    get:
+      operationId: "getUmaResourceScopes"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        default:
+          description: "successful operation"
+  /api/uma/resources/{id}/scopes/{inum}:
+    post:
+      operationId: "addScopeToUmaResource"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        type: "string"
+      - name: "inum"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        default:
+          description: "successful operation"
+    delete:
+      operationId: "removeScopeToUmaResource"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        type: "string"
+      - name: "inum"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        default:
+          description: "successful operation"
+  /api/uma/scopes:
+    get:
+      operationId: "listUmaScopes"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        default:
+          description: "successful operation"
+    post:
+      operationId: "createUmaScope"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        default:
+          description: "successful operation"
+    put:
+      operationId: "updateUmaScopeDescription"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        default:
+          description: "successful operation"
+  /api/uma/scopes/search:
+    get:
+      operationId: "searchUmaScopes"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "pattern"
+        in: "query"
+        required: true
+        type: "string"
+      responses:
+        default:
+          description: "successful operation"
+  /api/uma/scopes/{inum}:
+    get:
+      operationId: "getUmaScopeByInum"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "inum"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        default:
+          description: "successful operation"
+    delete:
+      operationId: "deleteUmaScope"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "inum"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        default:
+          description: "successful operation"
+  /api/v1/group:
+    get:
+      operationId: "list"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        default:
+          description: "successful operation"
+    post:
+      operationId: "create"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        default:
+          description: "successful operation"
+  /api/v1/group/{inum}:
+    get:
+      operationId: "read"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "inum"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        default:
+          description: "successful operation"
+    put:
+      operationId: "update"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "inum"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        default:
+          description: "successful operation"
+    delete:
+      operationId: "delete"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "inum"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        default:
+          description: "successful operation"
+  /client/create:
+    post:
+      operationId: "create"
+      consumes:
+      - "application/json"
+      - "text/plain"
+      produces:
+      - "text/plain"
+      parameters: []
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "string"
+  /client/delete/{inum}:
+    delete:
+      operationId: "delete"
+      consumes:
+      - "application/json"
+      - "text/plain"
+      produces:
+      - "text/plain"
+      parameters:
+      - name: "inum"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "string"
+  /client/list:
+    get:
+      operationId: "list"
+      consumes:
+      - "application/json"
+      - "text/plain"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "string"
+  /client/read/{inum}:
+    get:
+      operationId: "read"
+      consumes:
+      - "application/json"
+      - "text/plain"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "inum"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "string"
+  /client/update/{inum}:
+    put:
+      operationId: "update"
+      consumes:
+      - "application/json"
+      - "text/plain"
+      produces:
+      - "text/plain"
+      parameters:
+      - name: "inum"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "string"
+  /inum/{type}:
+    get:
+      operationId: "generateJsonInum"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "type"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "string"
