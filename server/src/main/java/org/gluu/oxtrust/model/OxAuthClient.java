@@ -7,6 +7,8 @@
 package org.gluu.oxtrust.model;
 
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 
@@ -648,13 +650,13 @@ public class OxAuthClient extends Entry implements Serializable {
 		this.oxAuthClientSecret = oxAuthClientSecret;
 	}
 
-	public String getOxAuthClientSecret(){
+	public String getOxAuthClientSecret() {
 		return oxAuthClientSecret;
 	}
 
 	public Date getClientSecretExpiresAt() {
 		if (clientSecretExpiresAt == null) {
-			return new Date();
+			return inOneCentury();
 		} else {
 			return clientSecretExpiresAt;
 		}
@@ -671,6 +673,11 @@ public class OxAuthClient extends Entry implements Serializable {
 
 	public final void setOxdId(String oxdId) {
 		this.oxdId = oxdId;
+	}
+
+	private Date inOneCentury() {
+		LocalDate nextCentury = LocalDate.now().plusYears(100);
+		return Date.from(nextCentury.atStartOfDay(ZoneId.systemDefault()).toInstant());
 	}
 
 }
