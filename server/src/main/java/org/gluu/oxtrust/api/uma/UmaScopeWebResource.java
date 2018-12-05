@@ -17,6 +17,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import com.google.common.base.Preconditions;
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiResponse;
+import com.wordnik.swagger.annotations.ApiResponses;
 import org.gluu.oxtrust.api.openidconnect.BaseWebResource;
 import org.gluu.oxtrust.ldap.service.uma.ScopeDescriptionService;
 import org.gluu.oxtrust.util.OxTrustApiConstants;
@@ -28,6 +31,7 @@ import com.wordnik.swagger.annotations.ApiOperation;
 @Path(OxTrustApiConstants.BASE_API_URL + OxTrustApiConstants.UMA + OxTrustApiConstants.SCOPES)
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
+@Api(value = OxTrustApiConstants.BASE_API_URL +OxTrustApiConstants.UMA + OxTrustApiConstants.SCOPES, description = "Uma scope webservice")
 public class UmaScopeWebResource extends BaseWebResource {
 
 	@Inject
@@ -38,6 +42,12 @@ public class UmaScopeWebResource extends BaseWebResource {
 
 	@GET
 	@ApiOperation(value = "Get uma scopes")
+	@ApiResponses(
+			value = {
+					@ApiResponse(code = 200, response = UmaScopeDescription[].class, message = "Success"),
+					@ApiResponse(code = 500, message = "Server error")
+			}
+	)
 	public Response listUmaScopes() {
 		try {
 			List<UmaScopeDescription> umaScopeDescriptions = scopeDescriptionService.getAllScopeDescriptions(100);
@@ -51,6 +61,12 @@ public class UmaScopeWebResource extends BaseWebResource {
 	@GET
 	@Path(OxTrustApiConstants.SEARCH)
 	@ApiOperation(value = "Search uma scopes")
+	@ApiResponses(
+			value = {
+					@ApiResponse(code = 200, response = UmaScopeDescription[].class, message = "Success"),
+					@ApiResponse(code = 500, message = "Server error")
+			}
+	)
 	public Response searchUmaScopes(@QueryParam(OxTrustApiConstants.SEARCH_PATTERN) @NotNull String pattern) {
 		try {
 			List<UmaScopeDescription> scopes = scopeDescriptionService.findScopeDescriptions(pattern, 100);
@@ -64,6 +80,13 @@ public class UmaScopeWebResource extends BaseWebResource {
 	@GET
 	@Path(OxTrustApiConstants.INUM_PARAM_PATH)
 	@ApiOperation(value = "Get a uma scope by inum")
+	@ApiResponses(
+			value = {
+					@ApiResponse(code = 200, response = UmaScopeDescription.class, message = "Success"),
+					@ApiResponse(code = 404, message = "Not found"),
+					@ApiResponse(code = 500, message = "Server error")
+			}
+	)
 	public Response getUmaScopeByInum(@PathParam(OxTrustApiConstants.INUM) @NotNull String inum) {
 		try {
 			Preconditions.checkNotNull(inum, "inum should not be null");
@@ -81,6 +104,12 @@ public class UmaScopeWebResource extends BaseWebResource {
 
 	@POST
 	@ApiOperation(value = "Add new uma scope")
+	@ApiResponses(
+			value = {
+					@ApiResponse(code = 200, response = UmaScopeDescription.class, message = "Success"),
+					@ApiResponse(code = 500, message = "Server error")
+			}
+	)
 	public Response createUmaScope(UmaScopeDescription umaScopeDescription) {
 		try {
 			Preconditions.checkNotNull(umaScopeDescription, "Attempt to create null uma scope");
@@ -97,6 +126,13 @@ public class UmaScopeWebResource extends BaseWebResource {
 
 	@PUT
 	@ApiOperation(value = "Update uma scope")
+	@ApiResponses(
+			value = {
+					@ApiResponse(code = 200, response = UmaScopeDescription.class, message = "Success"),
+					@ApiResponse(code = 404, message = "Not found"),
+					@ApiResponse(code = 500, message = "Server error")
+			}
+	)
 	public Response updateUmaScopeDescription(UmaScopeDescription umaScopeDescription) {
 		String inum = umaScopeDescription.getInum();
 		try {
@@ -119,12 +155,19 @@ public class UmaScopeWebResource extends BaseWebResource {
 	@DELETE
 	@Path(OxTrustApiConstants.INUM_PARAM_PATH)
 	@ApiOperation(value = "Delete a uma scope")
+	@ApiResponses(
+			value = {
+					@ApiResponse(code = 204, response = UmaScopeDescription.class, message = "Success"),
+					@ApiResponse(code = 404, message = "Not found"),
+					@ApiResponse(code = 500, message = "Server error")
+			}
+	)
 	public Response deleteUmaScope(@PathParam(OxTrustApiConstants.INUM) @NotNull String inum) {
 		try {
 			UmaScopeDescription existingScope = scopeDescriptionService.getUmaScopeByInum(inum);
 			if (existingScope != null) {
 				scopeDescriptionService.removeScopeDescription(existingScope);
-				return Response.ok().build();
+				return Response.noContent().build();
 			} else {
 				return Response.status(Response.Status.NOT_FOUND).build();
 			}

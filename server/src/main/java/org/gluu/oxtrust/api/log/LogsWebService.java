@@ -1,12 +1,16 @@
 package org.gluu.oxtrust.api.log;
 
+import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiResponse;
+import com.wordnik.swagger.annotations.ApiResponses;
 import org.gluu.oxtrust.api.logs.LogFileApi;
 import org.gluu.oxtrust.api.logs.LogFileDefApi;
 import org.gluu.oxtrust.api.logs.LogFilesConfigApi;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.JsonConfigurationService;
 import org.gluu.oxtrust.model.GluuAppliance;
+import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.service.logger.log.LogFilesService;
 import org.gluu.oxtrust.service.logger.log.LogFilesConfigService;
 import org.gluu.oxtrust.service.logger.LoggerService;
@@ -28,7 +32,7 @@ import java.util.Map;
 @Path(OxTrustApiConstants.BASE_API_URL + "/logs")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-// TODO Uma
+@Api(value = OxTrustApiConstants.BASE_API_URL + "/logs", description = "Logs webservice")
 public class LogsWebService {
 
     @Inject
@@ -44,6 +48,12 @@ public class LogsWebService {
 
     @GET
     @ApiOperation(value = "Get all logs")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 200, response = LogFileDefApi[].class, message = "Success"),
+                    @ApiResponse(code = 500, message = "Server error")
+            }
+    )
     public Response logs() {
         try {
             LogFilesService logFilesService = new LogFilesService(applianceService.getAppliance(), jsonService);
@@ -63,8 +73,14 @@ public class LogsWebService {
     }
 
     @GET
-    @ApiOperation(value = "Get #numberOfLines log by id")
     @Path("/{id}/{numberOfLines}")
+    @ApiOperation(value = "Get #numberOfLines log by id")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 200, response = LogFileDefApi.class, message = "Success"),
+                    @ApiResponse(code = 500, message = "Server error")
+            }
+    )
     public Response log(@PathParam("id") int id, @PathParam("numberOfLines") @DefaultValue("400") int numberOfLines) {
         try {
             LogFilesService logFilesService = new LogFilesService(applianceService.getAppliance(), jsonService);
@@ -84,6 +100,12 @@ public class LogsWebService {
 
     @PUT
     @ApiOperation(value = "Update log configuration")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 204, message = "Success"),
+                    @ApiResponse(code = 500, message = "Server error")
+            }
+    )
     public Response update(LogFilesConfigApi config) {
         try {
             AppConfiguration appConfiguration = jsonConfigurationService.getOxauthAppConfiguration();
@@ -95,7 +117,7 @@ public class LogsWebService {
             applianceService.updateAppliance(appliance);
             loggerService.updateLoggerConfigLocation();
 
-            return Response.ok().build();
+            return Response.noContent().build();
         } catch (IOException e) {
             log.error("Error loading logs", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();

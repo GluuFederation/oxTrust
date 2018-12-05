@@ -19,6 +19,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import com.google.common.base.Preconditions;
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiResponse;
+import com.wordnik.swagger.annotations.ApiResponses;
 import org.gluu.oxtrust.api.openidconnect.BaseWebResource;
 import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.uma.ResourceSetService;
@@ -34,6 +37,7 @@ import com.wordnik.swagger.annotations.ApiOperation;
 @Path(OxTrustApiConstants.BASE_API_URL + OxTrustApiConstants.UMA + OxTrustApiConstants.RESOURCES)
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
+@Api(value = OxTrustApiConstants.BASE_API_URL +OxTrustApiConstants.UMA + OxTrustApiConstants.RESOURCES, description = "Uma resource webservice")
 public class UmaResourceWebResource extends BaseWebResource {
 
 	@Inject
@@ -50,7 +54,13 @@ public class UmaResourceWebResource extends BaseWebResource {
 
 	@GET
 	@ApiOperation(value = "Get uma resources")
-	public Response listUmaResources() {
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 200, response = UmaResource[].class, message = "Success"),
+                    @ApiResponse(code = 500, message = "Server error")
+            }
+    )
+    public Response listUmaResources() {
 		try {
 			List<UmaResource> umaResources = umaResourcesService.getAllResources(100);
 			return Response.ok(umaResources).build();
@@ -63,6 +73,12 @@ public class UmaResourceWebResource extends BaseWebResource {
 	@GET
 	@Path(OxTrustApiConstants.SEARCH)
 	@ApiOperation(value = "Search uma resources")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 200, response = UmaResource[].class, message = "Success"),
+                    @ApiResponse(code = 500, message = "Server error")
+            }
+    )
 	public Response searchUmaResources(@QueryParam(OxTrustApiConstants.SEARCH_PATTERN) @NotNull String pattern,
 			@QueryParam(OxTrustApiConstants.SIZE) @NotNull int size) {
 		try {
@@ -77,7 +93,14 @@ public class UmaResourceWebResource extends BaseWebResource {
 	@GET
 	@Path(OxTrustApiConstants.ID_PARAM_PATH)
 	@ApiOperation(value = "Get a uma resource by id")
-	public Response getUmaResourceById(@PathParam(OxTrustApiConstants.ID) @NotNull String id) {
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 200, response = UmaResource.class, message = "Success"),
+                    @ApiResponse(code = 404, message = "uma not found"),
+                    @ApiResponse(code = 500, message = "Server error")
+            }
+    )
+    public Response getUmaResourceById(@PathParam(OxTrustApiConstants.ID) @NotNull String id) {
 		try {
 			Preconditions.checkNotNull(id, "id should not be null");
 			List<UmaResource> resources = umaResourcesService.findResourcesById(id);
@@ -95,7 +118,14 @@ public class UmaResourceWebResource extends BaseWebResource {
 	@GET
 	@Path(OxTrustApiConstants.ID_PARAM_PATH + OxTrustApiConstants.CLIENTS)
 	@ApiOperation(value = "Get clients of uma resource")
-	public Response getUmaResourceClients(@PathParam(OxTrustApiConstants.ID) @NotNull String id) {
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 200, response = OxAuthClient[].class, message = "Success"),
+                    @ApiResponse(code = 404, message = "Uma clients not found"),
+                    @ApiResponse(code = 500, message = "Server error")
+            }
+    )
+    public Response getUmaResourceClients(@PathParam(OxTrustApiConstants.ID) @NotNull String id) {
 		try {
 			Preconditions.checkNotNull(id, "id should not be null");
 			List<UmaResource> resources = umaResourcesService.findResourcesById(id);
@@ -121,7 +151,14 @@ public class UmaResourceWebResource extends BaseWebResource {
 	@GET
 	@Path(OxTrustApiConstants.ID_PARAM_PATH + OxTrustApiConstants.SCOPES)
 	@ApiOperation(value = "Get scopes of uma resource")
-	public Response getUmaResourceScopes(@PathParam(OxTrustApiConstants.ID) @NotNull String id) {
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 200, response = UmaScopeDescription[].class, message = "Success"),
+                    @ApiResponse(code = 404, message = "Uma scopes not found"),
+                    @ApiResponse(code = 500, message = "Server error")
+            }
+    )
+    public Response getUmaResourceScopes(@PathParam(OxTrustApiConstants.ID) @NotNull String id) {
 		try {
 			Preconditions.checkNotNull(id, "id should not be null");
 			List<UmaResource> resources = umaResourcesService.findResourcesById(id);
@@ -145,8 +182,15 @@ public class UmaResourceWebResource extends BaseWebResource {
 	}
 
 	@POST
-	@ApiOperation(value = "add client to uma resource")
 	@Path(OxTrustApiConstants.ID_PARAM_PATH + OxTrustApiConstants.CLIENTS + OxTrustApiConstants.INUM_PARAM_PATH)
+	@ApiOperation(value = "add client to uma resource")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 200, response = UmaResource.class, message = "Success"),
+                    @ApiResponse(code = 404, message = "Uma client not found"),
+                    @ApiResponse(code = 500, message = "Server error")
+            }
+    )
 	public Response addClientToUmaResource(@PathParam(OxTrustApiConstants.ID) @NotNull String id,
 			@PathParam(OxTrustApiConstants.INUM) @NotNull String clientInum) {
 		try {
@@ -172,10 +216,17 @@ public class UmaResourceWebResource extends BaseWebResource {
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 		}
 	}
-	
+
 	@DELETE
-	@ApiOperation(value = "Remove client from uma resource")
 	@Path(OxTrustApiConstants.ID_PARAM_PATH + OxTrustApiConstants.CLIENTS + OxTrustApiConstants.INUM_PARAM_PATH)
+	@ApiOperation(value = "Remove client from uma resource")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 200, response = UmaResource.class, message = "Success"),
+                    @ApiResponse(code = 404, message = "Uma client not found"),
+                    @ApiResponse(code = 500, message = "Server error")
+            }
+    )
 	public Response removeClientToUmaResource(@PathParam(OxTrustApiConstants.ID) @NotNull String id,
 			@PathParam(OxTrustApiConstants.INUM) @NotNull String clientInum) {
 		try {
@@ -203,8 +254,15 @@ public class UmaResourceWebResource extends BaseWebResource {
 	}
 
 	@POST
-	@ApiOperation(value = "add scope to uma resource")
 	@Path(OxTrustApiConstants.ID_PARAM_PATH + OxTrustApiConstants.SCOPES + OxTrustApiConstants.INUM_PARAM_PATH)
+	@ApiOperation(value = "add scope to uma resource")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 200, response = UmaResource.class, message = "Success"),
+                    @ApiResponse(code = 404, message = "Uma scopes not found"),
+                    @ApiResponse(code = 500, message = "Server error")
+            }
+    )
 	public Response addScopeToUmaResource(@PathParam(OxTrustApiConstants.ID) @NotNull String id,
 			@PathParam(OxTrustApiConstants.INUM) @NotNull String scopeInum) {
 		try {
@@ -230,10 +288,17 @@ public class UmaResourceWebResource extends BaseWebResource {
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 		}
 	}
-	
+
 	@DELETE
-	@ApiOperation(value = "remove a scope from uma resource")
 	@Path(OxTrustApiConstants.ID_PARAM_PATH + OxTrustApiConstants.SCOPES + OxTrustApiConstants.INUM_PARAM_PATH)
+	@ApiOperation(value = "remove a scope from uma resource")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 200, response = UmaResource.class, message = "Success"),
+                    @ApiResponse(code = 404, message = "Uma scopes not found"),
+                    @ApiResponse(code = 500, message = "Server error")
+            }
+    )
 	public Response removeScopeToUmaResource(@PathParam(OxTrustApiConstants.ID) @NotNull String id,
 			@PathParam(OxTrustApiConstants.INUM) @NotNull String scopeInum) {
 		try {
@@ -262,6 +327,12 @@ public class UmaResourceWebResource extends BaseWebResource {
 
 	@POST
 	@ApiOperation(value = "Add new uma resource")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 200, response = UmaResource.class, message = "Success"),
+                    @ApiResponse(code = 500, message = "Server error")
+            }
+    )
 	public Response createUmaResource(UmaResource umaResource) {
 		try {
 			Preconditions.checkNotNull(umaResource, "Attempt to create null resource");
@@ -282,6 +353,13 @@ public class UmaResourceWebResource extends BaseWebResource {
 
 	@PUT
 	@ApiOperation(value = "Update uma resource")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 200, response = UmaResource.class, message = "Success"),
+                    @ApiResponse(code = 404, message = "Uma resource not found"),
+                    @ApiResponse(code = 500, message = "Server error")
+            }
+    )
 	public Response updateUmaResource(UmaResource umaResource) {
 		String id = umaResource.getId();
 		try {
@@ -304,12 +382,19 @@ public class UmaResourceWebResource extends BaseWebResource {
 	@DELETE
 	@Path(OxTrustApiConstants.ID_PARAM_PATH)
 	@ApiOperation(value = "Delete a uma resource")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 204, message = "Success"),
+                    @ApiResponse(code = 404, message = "Uma scopes not found"),
+                    @ApiResponse(code = 500, message = "Server error")
+            }
+    )
 	public Response deleteUmaResource(@PathParam(OxTrustApiConstants.ID) @NotNull String id) {
 		try {
 			List<UmaResource> resources = umaResourcesService.findResourcesById(id);
 			if (resources != null && !resources.isEmpty()) {
 				umaResourcesService.removeResource(resources.get(0));
-				return Response.ok().build();
+				return Response.noContent().build();
 			} else {
 				return Response.status(Response.Status.NOT_FOUND).build();
 			}

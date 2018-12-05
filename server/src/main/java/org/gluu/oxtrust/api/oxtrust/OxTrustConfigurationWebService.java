@@ -1,5 +1,6 @@
 package org.gluu.oxtrust.api.oxtrust;
 
+import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
@@ -18,7 +19,7 @@ import javax.ws.rs.core.Response;
 @Path(OxTrustApiConstants.BASE_API_URL + "/configurations/oxtrust")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-// TODO Uma
+@Api(value = OxTrustApiConstants.BASE_API_URL + "/configurations/oxtrust", description = "oxTrust configuration webservice")
 public class OxTrustConfigurationWebService {
 
     @Inject
@@ -30,7 +31,10 @@ public class OxTrustConfigurationWebService {
     @GET
     @ApiOperation("Get the existing configuration")
     @ApiResponses(
-            value = {@ApiResponse(code = 200, response = OxTrustConfig.class, message = "Success")}
+            value = {
+                    @ApiResponse(code = 200, response = OxTrustConfig.class, message = "Success"),
+                    @ApiResponse(code = 500, message = "Server error")
+            }
     )
     public Response read() {
         AppConfiguration appConfiguration = oxTrustConfigurationService.find();

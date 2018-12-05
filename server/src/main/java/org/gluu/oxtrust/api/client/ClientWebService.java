@@ -5,135 +5,145 @@
  */
 package org.gluu.oxtrust.api.client;
 
-import java.util.List;
-
-import javax.annotation.security.DeclareRoles;
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-
+import com.wordnik.swagger.annotations.*;
 import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.model.OxAuthClient;
-import org.gluu.oxtrust.util.OxTrustConstants;
+import org.gluu.oxtrust.util.OxTrustApiConstants;
 import org.slf4j.Logger;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import javax.inject.Inject;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
+import java.util.List;
 
 /**
  * WS endpoint for Client actions.
- * 
+ *
  * @author Shekhar L.
  */
-@Path("/client")
-@Consumes({ MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN })
-@DeclareRoles("administrator")
+@Path(OxTrustApiConstants.BASE_API_URL + "/client")
+@Consumes(MediaType.APPLICATION_JSON)
+@Produces(MediaType.APPLICATION_JSON)
+@Api(value = OxTrustApiConstants.BASE_API_URL + "/client", description = "Clients webservice")
 public class ClientWebService {
-    
-    @Inject
-    private Logger logger;    
 
-	@Inject
-	private ClientService clientService;
-    
-    //TODO
-    
+    @Inject
+    private Logger logger;
+
+    @Inject
+    private ClientService clientService;
+
     @GET
-    @Path("/read/{inum}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public String read(@PathParam("inum") String inum, @Context HttpServletResponse response) {
+    @ApiOperation("Get all clients")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 200, response = OxAuthClient[].class, message = "Success"),
+                    @ApiResponse(code = 500, message = "Server error")
+            }
+    )
+    public Response list() {
         try {
-            String result = null;
-            OxAuthClient client = clientService.getClientByInum(inum);
-            //TODO
-            ObjectMapper mapper = new ObjectMapper();
-            String clientJson = mapper.writeValueAsString(client);
-            response.setStatus(HttpServletResponse.SC_OK);
-            return clientJson;
+            List<OxAuthClient> clients = clientService.getAllClients();
+            return Response.ok(clients).build();
         } catch (Exception e) {
-            logger.error("read() Exception", e);
-            try { response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "INTERNAL SERVER ERROR"); } catch (Exception ex) {}
-            return null;
+            logger.error("delete() Exception", e);
+            return Response.serverError().build();
         }
     }
-    
+
+    @GET
+    @Path("/{inum}")
+    @ApiOperation("Get a client by inum")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 200, response = OxAuthClient.class, message = "Success"),
+                    @ApiResponse(code = 404, message = "Not found"),
+                    @ApiResponse(code = 500, message = "Server error")
+            }
+    )
+    public Response read(@PathParam("inum") String inum) {
+        try {
+            OxAuthClient client = clientService.getClientByInum(inum);
+            if (client == null) {
+                return Response.status(Response.Status.NOT_FOUND).build();
+            }
+            return Response.ok(client).build();
+        } catch (Exception e) {
+            logger.error("read() Exception", e);
+            return Response.serverError().build();
+        }
+    }
+
     @POST
-    @Path("/create")
-    @Produces(MediaType.TEXT_PLAIN)
-    public String create(OxAuthClient client , @Context HttpServletResponse response) {
+    @ApiOperation("Create a new client")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 201, responseHeaders = {
+                            @ResponseHeader(name = "Location", description = "url of the created client")
+                    }, message = "Success"),
+                    @ApiResponse(code = 500, message = "Server error")
+            }
+    )
+    public Response create(OxAuthClient client, @Context UriInfo uriInfo) {
         try {
             String inum = clientService.generateInumForNewClient();
             client.setInum(inum);
             clientService.addClient(client);
-            response.setStatus(HttpServletResponse.SC_CREATED);
-            //TODO
-            return inum;
+
+            return Response.created(uriInfo.getAbsolutePathBuilder()
+                    .path(ClientWebService.class)
+                    .path(String.format("/%s", inum))
+                    .build()).build();
         } catch (Exception e) {
             logger.error("create() Exception", e);
-            try { response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "INTERNAL SERVER ERROR"); } catch (Exception ex) {}
-            return null;
+            return Response.serverError().build();
         }
     }
-    
-    @PUT
-    @Path("/update/{inum}")
-    @Produces(MediaType.TEXT_PLAIN)
-    public String update(@PathParam("inum") String inum, OxAuthClient client, @Context HttpServletResponse response) {
-        try {
-            //TODO
-        	clientService.updateClient(client);
-        	OxAuthClient updatedClient = clientService.getClientByInum(inum);
 
-            ObjectMapper mapper = new ObjectMapper();
-            String clientJson = mapper.writeValueAsString(updatedClient);
-            return OxTrustConstants.RESULT_SUCCESS;
+    @PUT
+    @Path("/{inum}")
+    @ApiOperation("Update a client by inum")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 204, response = OxAuthClient.class, message = "Success"),
+                    @ApiResponse(code = 500, message = "Server error")
+            }
+    )
+    public Response update(@PathParam("inum") String inum, OxAuthClient client) {
+        try {
+            clientService.updateClient(client);
+            return Response.noContent().build();
         } catch (Exception e) {
             logger.error("update() Exception", e);
-            try { response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "INTERNAL SERVER ERROR"); } catch (Exception ex) {}
-            return OxTrustConstants.RESULT_FAILURE;
+            return Response.serverError().build();
         }
     }
-    
+
     @DELETE
-    @Path("/delete/{inum}")
-    @Produces(MediaType.TEXT_PLAIN)
-    public String delete(@PathParam("inum") String inum, @Context HttpServletResponse response) {
+    @Path("/{inum}")
+    @ApiOperation("Delete a client by inum")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 204, response = OxAuthClient.class, message = "Success"),
+                    @ApiResponse(code = 404, message = "Not found"),
+                    @ApiResponse(code = 500, message = "Server error")
+            }
+    )
+    public Response delete(@PathParam("inum") String inum) {
         try {
-            //TODO
-            return OxTrustConstants.RESULT_SUCCESS;
+            OxAuthClient client = clientService.getClientByInum(inum);
+            if (client == null) {
+                return Response.status(Response.Status.NOT_FOUND).build();
+            }
+            clientService.removeClient(client);
+            return Response.noContent().build();
         } catch (Exception e) {
             logger.error("delete() Exception", e);
-            try { response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "INTERNAL SERVER ERROR"); } catch (Exception ex) {}
-            return OxTrustConstants.RESULT_FAILURE;
+            return Response.serverError().build();
         }
     }
-    
-    @GET
-    @Path("/list")
-    @Produces(MediaType.APPLICATION_JSON)
-    public String list(@Context HttpServletResponse response) {
-        try {
-        	
-            List<OxAuthClient> clientList = clientService.getAllClients();
-            ObjectMapper mapper = new ObjectMapper();
-            String clientListJson = mapper.writeValueAsString(clientList);
-            response.setStatus(HttpServletResponse.SC_OK);
-            return clientListJson;
-            
-        } catch (Exception e) {
-            logger.error("delete() Exception", e);
-            try { response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "INTERNAL SERVER ERROR"); } catch (Exception ex) {}
-            return OxTrustConstants.RESULT_FAILURE;
-        }
-    }
-    
-    
+
 }
