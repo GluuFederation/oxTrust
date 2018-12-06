@@ -31,18 +31,22 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.service.AttributeService;
+import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.FidoDeviceService;
 import org.gluu.oxtrust.ldap.service.GroupService;
 import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.MemberService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.ldap.service.OxTrustAuditService;
+import org.gluu.oxtrust.ldap.service.PairwiseIdService;
 import org.gluu.oxtrust.model.Device;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
+import org.gluu.oxtrust.model.GluuUserPairwiseIdentifier;
 import org.gluu.oxtrust.model.MobileDevice;
 import org.gluu.oxtrust.model.OTPDevice;
+import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.model.Phone;
 import org.gluu.oxtrust.model.fido.GluuCustomFidoDevice;
 import org.gluu.oxtrust.model.fido.GluuDeviceDataBean;
@@ -103,6 +107,9 @@ public class UpdatePersonAction implements Serializable {
 	private IPersonService personService;
 
 	@Inject
+	private ClientService clientService;
+
+	@Inject
 	private CustomAttributeAction customAttributeAction;
 
 	@Inject
@@ -121,6 +128,9 @@ public class UpdatePersonAction implements Serializable {
 	private FidoDeviceService fidoDeviceService;
 
 	@Inject
+	private PairwiseIdService pairwiseIdService;
+
+	@Inject
 	private Identity identity;
 
 	@Inject
@@ -133,6 +143,16 @@ public class UpdatePersonAction implements Serializable {
 	private String confirmPassword;
 
 	private List<GluuDeviceDataBean> deviceDataMap;
+
+	private List<GluuUserPairwiseIdentifier> userPairWideIdentifiers = new ArrayList<GluuUserPairwiseIdentifier>();
+
+	public List<GluuUserPairwiseIdentifier> getUserPairWideIdentifiers() {
+		return userPairWideIdentifiers;
+	}
+
+	public void setUserPairWideIdentifiers(List<GluuUserPairwiseIdentifier> userPairWideIdentifiers) {
+		this.userPairWideIdentifiers = userPairWideIdentifiers;
+	}
 
 	private GluuCustomFidoDevice fidoDevice;
 
@@ -228,7 +248,8 @@ public class UpdatePersonAction implements Serializable {
 
 			return OxTrustConstants.RESULT_FAILURE;
 		}
-
+		userPairWideIdentifiers.clear();
+		userPairWideIdentifiers.addAll(pairwiseIdService.findAllUserPairwiseIdentifiers(person));
 		initAttributes(false);
 		try {
 			this.gluuStatus = this.person.getStatus();
@@ -627,6 +648,16 @@ public class UpdatePersonAction implements Serializable {
 		}
 	}
 
+	public void removePairWiseIdentifier(GluuUserPairwiseIdentifier current) {
+		this.userPairWideIdentifiers.remove(current);
+		boolean result = pairwiseIdService.removePairWiseIdentifier(this.person, current);
+		if (result) {
+			facesMessages.add(FacesMessage.SEVERITY_INFO, "Successfully remove");
+		} else {
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Error while removing: check the log for details");
+		}
+	}
+
 	public void removeDevice(GluuDeviceDataBean deleteDeviceData) {
 		try {
 			List<GluuCustomFidoDevice> gluuCustomFidoDevices = fidoDeviceService
@@ -797,6 +828,15 @@ public class UpdatePersonAction implements Serializable {
 		}
 
 		return emailIsUniq;
+	}
+
+	public String getClientName(String inum) {
+        OxAuthClient result=clientService.getClientByInum(inum, null);
+        if(result!=null) {
+        	return result.getDisplayName();
+        }else {
+        	return "";
+        }
 	}
 
 }
