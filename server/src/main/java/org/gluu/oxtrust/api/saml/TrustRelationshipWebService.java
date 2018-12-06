@@ -9,7 +9,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.math.BigInteger;
-import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.SecureRandom;
@@ -40,6 +39,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.input.CharSequenceInputStream;
+import org.apache.commons.lang3.CharEncoding;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.cert.X509v3CertificateBuilder;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
@@ -804,7 +804,7 @@ public class TrustRelationshipWebService {
                 trustService.updateTrustRelationship(trustRelationship);
             }
         }
-        String result = shibboleth3ConfService.saveSpMetadataFile(spMetadataFileName, new CharSequenceInputStream(metadata, StandardCharsets.UTF_8));
+        String result = shibboleth3ConfService.saveSpMetadataFile(spMetadataFileName, new CharSequenceInputStream(metadata, CharEncoding.UTF_8));
         if (StringHelper.isNotEmpty(result)) {
             metadataValidationTimer.queue(result);
         } else {
