@@ -1,7 +1,7 @@
 package org.gluu.oxtrust.api.custom.script.test;
 
 import org.gluu.oxtrust.action.test.BaseTest;
-import org.gluu.oxtrust.model.CustomScriptDTO;
+import org.gluu.oxtrust.api.customscripts.CustomScriptDTO;
 import org.gluu.oxtrust.util.OxTrustApiConstants;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.extension.rest.client.ArquillianResteasyResource;
@@ -93,7 +93,7 @@ public class CustomScriptMgmtSvcTest extends BaseTest {
             script.setModuleProperties(new ArrayList<SimpleCustomProperty>());
             script.setLocationPath("");
             script.setName("test-script");
-            script.setProgrammingLanguage(ProgrammingLanguage.PYTHON);
+            script.setProgrammingLanguage(ProgrammingLanguage.PYTHON.getValue());
 
             final Entity<CustomScriptDTO> entity = Entity.entity(script, APPLICATION_JSON_TYPE);
             response = builder.buildPut(entity).invoke();
@@ -124,15 +124,18 @@ public class CustomScriptMgmtSvcTest extends BaseTest {
         try {
             final Invocation.Builder builder = prepareBuilder(webTarget, API_URL);
 
-            final CustomScript script = new CustomScript();
+            final CustomScriptDTO script = new CustomScriptDTO();
             script.setModuleProperties(new ArrayList<SimpleCustomProperty>());
             script.setLocationPath("");
             script.setName("test_script_123");
+            script.setProgrammingLanguage("");
 
-            final Entity<CustomScript> entity = Entity.entity(script, APPLICATION_JSON_TYPE);
-            response = builder.buildPut(entity).invoke();
+            final Entity<CustomScriptDTO> entity = Entity.entity(script, APPLICATION_JSON_TYPE);
+            final Invocation invocation = builder.buildPut(entity);
+            response = invocation.invoke();
 
             assertNotNull(response);
+
             assertEquals(response.getStatus(), 400);
 
         } finally {
@@ -205,8 +208,6 @@ public class CustomScriptMgmtSvcTest extends BaseTest {
 
     }
 
-
-
     /**
      * Tests script saving functionality
      */
@@ -252,7 +253,7 @@ public class CustomScriptMgmtSvcTest extends BaseTest {
         Response response = null;
         try {
 
-            final Invocation.Builder builder = prepareBuilder(webTarget, API_URL + "/inum/blah-blah");
+            final Invocation.Builder builder = prepareBuilder(webTarget, API_URL + "/blah-blah");
 
             response = builder.delete();
 
@@ -276,7 +277,7 @@ public class CustomScriptMgmtSvcTest extends BaseTest {
         Response response = null;
 
         try {
-            final String url = API_URL + "/errors/all";
+            final String url = API_URL + "/errors";
             final Invocation.Builder builder = prepareBuilder(webTarget, url);
 
             response = builder.buildGet().invoke();
@@ -305,14 +306,14 @@ public class CustomScriptMgmtSvcTest extends BaseTest {
             saveScriptWithErrorStack(webTarget);
         }
 
-        final String url = API_URL + "/errors/inum/" + lastSavedScript.getInum();
+        final String url = API_URL + "/errors/" + lastSavedScript.getInum();
 
         Response response = null;
 
         try {
 
             final Invocation.Builder builder = prepareBuilder(webTarget, url);
-            builder.accept(MediaType.TEXT_PLAIN);
+            builder.accept(MediaType.APPLICATION_JSON);
 
             response = builder.buildGet().invoke();
 
@@ -343,7 +344,7 @@ public class CustomScriptMgmtSvcTest extends BaseTest {
         Response response = null;
         try {
 
-            final String url = API_URL + "/inum/" + inum;
+            final String url = API_URL + "/" + inum;
             final Invocation.Builder builder = prepareBuilder(webTarget, url);
 
             response = builder.delete();
@@ -399,7 +400,7 @@ public class CustomScriptMgmtSvcTest extends BaseTest {
 
         script.setName("test_script_234");
         script.setScriptType(CustomScriptType.PERSON_AUTHENTICATION.getValue());
-        script.setProgrammingLanguage(ProgrammingLanguage.PYTHON);
+        script.setProgrammingLanguage(ProgrammingLanguage.PYTHON.getValue());
         script.setUsageType(AuthenticationScriptUsageType.INTERACTIVE);
         script.setLocationType(ScriptLocationType.LDAP.getValue());
     }

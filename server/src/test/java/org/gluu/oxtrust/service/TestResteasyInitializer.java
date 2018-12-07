@@ -6,23 +6,22 @@
 
 package org.gluu.oxtrust.service;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.ws.rs.core.Application;
-import javax.ws.rs.ext.Provider;
-
-import org.gluu.oxtrust.api.CustomScriptManagementService;
 import org.gluu.oxtrust.api.RegistrationManagementService;
 import org.gluu.oxtrust.api.attributes.AttributeWebResource;
+import org.gluu.oxtrust.api.customscripts.CustomScriptManagementService;
+import org.gluu.oxtrust.api.errors.ConstraintViolationExceptionMapper;
 import org.gluu.oxtrust.api.errors.InvalidScriptDataExceptionMapper;
-import org.gluu.oxtrust.api.errors.ScriptNotFoundExceptionMapper;
 import org.gluu.oxtrust.ws.rs.scim2.BulkWebService;
 import org.gluu.oxtrust.ws.rs.scim2.GroupWebService;
 import org.gluu.oxtrust.ws.rs.scim2.ResourceTypeWS;
 import org.gluu.oxtrust.ws.rs.scim2.SchemaWebService;
 import org.gluu.oxtrust.ws.rs.scim2.ServiceProviderConfigWS;
 import org.gluu.oxtrust.ws.rs.scim2.UserWebService;
+
+import javax.ws.rs.core.Application;
+import javax.ws.rs.ext.Provider;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Integration with Resteasy
@@ -51,7 +50,7 @@ public class TestResteasyInitializer extends Application {
 
         // Providers
         classes.add(InvalidScriptDataExceptionMapper.class);
-        classes.add(ScriptNotFoundExceptionMapper.class);
+        classes.add(ConstraintViolationExceptionMapper.class);
 
         return classes;
     }
