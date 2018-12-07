@@ -1338,7 +1338,27 @@
                     "description": "certificationServerMetadataFolder.",
                     "type": "string",
                     "minLength": 1
+                },
+                "disable": {
+                    "id": "disable",
+                    "description": "Enable/Disable Fido2 endpoints.",
+                    "type": "boolean"
                 }
+            }
+        },
+        "errorHandlingMethod": {
+            "id": "errorHandlingMethod",
+            "description": "A list of possible error handling methods.",
+            "type": "array",
+            "format": "select",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+                "type": "string",
+                "enum": [
+                    "internal",
+                    "remote"
+                ]
             }
         }
     },
@@ -1367,7 +1387,7 @@
         "openidSubAttribute",
         "responseTypesSupported",
         "grantTypesSupported",
-	"dynamicGrantTypeDefault",
+        "dynamicGrantTypeDefault",
         "subjectTypesSupported",
         "defaultSubjectType",
         "userInfoSigningAlgValuesSupported",
@@ -1460,6 +1480,7 @@
         "externalLoggerConfiguration",
         "disableU2fEndpoint",
         "authenticationProtectionConfiguration",
-        "fido2Configuration"
+        "fido2Configuration",
+        "errorHandlingMethod"
     ]
 }
