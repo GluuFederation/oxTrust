@@ -1349,17 +1349,11 @@
         "errorHandlingMethod": {
             "id": "errorHandlingMethod",
             "description": "A list of possible error handling methods.",
-            "type": "array",
-            "format": "select",
-            "minItems": 1,
-            "uniqueItems": true,
-            "items": {
-                "type": "string",
-                "enum": [
-                    "internal",
-                    "remote"
-                ]
-            }
+            "type": "string",
+            "enum": [
+                "internal",
+                "remote"
+            ]
         }
     },
     "required": [
