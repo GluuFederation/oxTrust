@@ -25,6 +25,7 @@ import java.util.Map;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.validation.Schema;
 import javax.xml.xpath.XPath;
@@ -343,15 +344,7 @@ public class Shibboleth3ConfService implements Serializable {
 
 				trustEntityIds.put(trustRelationship.getInum(), entityIds);
 
-				try {
-
-					filterService.parseFilters(trustRelationship);
-					profileConfigurationService.parseProfileConfigurations(trustRelationship);
-
-				} catch (Exception e) {
-					log.error("Failed to parse stored metadataFilter configuration for trustRelationship " + trustRelationship.getDn(), e);
-					e.printStackTrace();
-				}
+				initProfileConfiguration(trustRelationship);
 
 				if (trustRelationship.getMetadataFilters().get("signatureValidation") != null) {
 
@@ -400,6 +393,7 @@ public class Shibboleth3ConfService implements Serializable {
 				}
 
 			} else {
+                initProfileConfiguration(trustRelationship);
 
 				String federationInum = trustRelationship.getContainerFederation().getInum();
 
@@ -432,6 +426,15 @@ public class Shibboleth3ConfService implements Serializable {
 
 		return trustParams;
 	}
+
+    protected void initProfileConfiguration(GluuSAMLTrustRelationship trustRelationship) throws FactoryConfigurationError {
+        try {
+            filterService.parseFilters(trustRelationship);
+            profileConfigurationService.parseProfileConfigurations(trustRelationship);
+        } catch (Exception e) {
+            log.error("Failed to parse stored metadataFilter configuration for trustRelationship " + trustRelationship.getDn(), e);
+        }
+    }
 
 	private HashMap<String, Object> initAttributeParamMap(List<GluuSAMLTrustRelationship> trustRelationships) {
 
