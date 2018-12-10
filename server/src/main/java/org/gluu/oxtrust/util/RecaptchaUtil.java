@@ -95,7 +95,7 @@ public class RecaptchaUtil {
 
 			return Boolean.parseBoolean(map.get("success"));
 		} catch (Exception e) {
-			log.error("Exception happened while verifying recaptcha ", e);
+			log.warn("Exception happened while verifying recaptcha, check your internet connection", e);
 			return result;
 		}
 	}

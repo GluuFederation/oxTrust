@@ -227,6 +227,9 @@ public class PasswordResetAction implements Serializable {
 					return OxTrustConstants.RESULT_SUCCESS;
 				}
 			}
+		}else {
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, facesMessages
+					.evalResourceAsString("#{msg['person.passwordreset.catch.checkInputAndCaptcha']}"));
 		}
 
 		return OxTrustConstants.RESULT_FAILURE;
