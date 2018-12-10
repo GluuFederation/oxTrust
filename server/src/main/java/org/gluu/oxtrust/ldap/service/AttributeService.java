@@ -562,7 +562,7 @@ public class AttributeService extends org.xdi.service.AttributeService {
 		for (GluuCustomAttribute personAttribute : customAttributes) {
 			GluuAttribute tmpAttribute = getAttributeByName(personAttribute.getName(), attributes);
 			if (tmpAttribute == null) {
-				log.error("Failed to find attribute '{}' metadata", personAttribute.getName());
+				log.warn("Failed to find attribute '{}' metadata", personAttribute.getName());
 			}
 
 			personAttribute.setMetadata(tmpAttribute);
