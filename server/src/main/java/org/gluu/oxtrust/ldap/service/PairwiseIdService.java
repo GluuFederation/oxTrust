@@ -55,13 +55,18 @@ public class PairwiseIdService implements IPairwiseIdService, Serializable {
 
 	@Override
 	public List<GluuUserPairwiseIdentifier> findAllUserPairwiseIdentifiers(GluuCustomPerson person) {
-		List<GluuUserPairwiseIdentifier> results = ldapEntryManager.findEntries(
-				getDnForPairWiseIdentifier(null, person.getInum()), GluuUserPairwiseIdentifier.class, null);
-		log.info("############################################Result :" + results);
-		if (results == null) {
+		try {
+			List<GluuUserPairwiseIdentifier> results = ldapEntryManager.findEntries(
+					getDnForPairWiseIdentifier(null, person.getInum()), GluuUserPairwiseIdentifier.class, null);
+			if (results == null) {
+				return new ArrayList<GluuUserPairwiseIdentifier>();
+			}
+			return results;
+		} catch (Exception e) {
+			log.warn("Current user don't pairwise identifiers");
 			return new ArrayList<GluuUserPairwiseIdentifier>();
 		}
-		return results;
+
 	}
 
 }
