@@ -50,7 +50,6 @@
 										<ox:decorate label="#{msg['scope.scopeType']}">
 											<h:selectOneMenu styleClass="col-sm-9 form-control scopeType"
 												value="#{_scope.scopeType}">
-												<f:selectItem noSelectionOption="true" itemLabel="Default" />
 												<f:selectItems value="#{scopeService.scopeTypes}"
 													var="_type" itemLabel="#{_type.displayName}" />
 												<f:converter
@@ -65,7 +64,6 @@
 											<h:selectOneMenu
 												styleClass="col-sm-9 form-control registrationType"
 												value="#{_scope.defaultScope}">
-												<f:selectItem noSelectionOption="true" itemLabel="Select" />
 												<f:selectItems
 													value="#{organizationService.javaBooleanSelectionTypes}"
 													var="_type" itemLabel="#{_type.displayName}" />
