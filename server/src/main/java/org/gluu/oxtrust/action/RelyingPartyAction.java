@@ -22,6 +22,7 @@ import org.gluu.oxtrust.ldap.service.ProfileConfigurationService;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.model.ProfileConfiguration;
 import org.gluu.oxtrust.util.OxTrustConstants;
+import org.slf4j.Logger;
 import org.xdi.service.security.Secure;
 import org.xdi.util.StringHelper;
 import org.xdi.util.io.FileUploadWrapper;
@@ -43,6 +44,8 @@ public class RelyingPartyAction implements Serializable{
 
 	private ProfileConfiguration profileConfigurationSelected;
 
+    @Inject
+    private Logger log;
 	
 	@Inject
 	private ProfileConfigurationService profileConfigurationService;
@@ -62,8 +65,7 @@ public class RelyingPartyAction implements Serializable{
 			try {
 				profileConfigurationService.parseProfileConfigurations(trustRelationship);
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+                log.error("Failed to parse stored metadataFilter configuration for trustRelationship " + trustRelationship.getDn(), e);
 			}
 			
 			availableProfileConfigurations = new ArrayList<String>();
