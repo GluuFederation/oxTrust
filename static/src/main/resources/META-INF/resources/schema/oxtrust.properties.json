@@ -572,15 +572,13 @@
             "type": "string",
             "format": "select",
             "enum": [
-                "DEFAULT",
-                "OFF",
-                "FATAL",
-                "ERROR",
-                "WARN",
-                "INFO",
-                "DEBUG",
                 "TRACE",
-                "ALL"
+                "DEBUG",
+                "INFO",
+                "WARN",
+                "ERROR",
+                "FATAL",
+                "OFF"
             ]
         },
       "ScimProperties":{
