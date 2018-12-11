@@ -8,7 +8,7 @@ import javax.inject.Inject;
 
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuUserPairwiseIdentifier;
-import org.gluu.site.ldap.persistence.LdapEntryManager;
+import org.gluu.persist.ldap.impl.LdapEntryManager;
 import org.slf4j.Logger;
 import org.xdi.util.StringHelper;
 
@@ -33,7 +33,7 @@ public class PairwiseIdService implements IPairwiseIdService, Serializable {
 		try {
 			String finalDn = String.format("oxId=%s,ou=pairwiseIdentifiers,", pairwiseIdentifier.getOxId());
 			finalDn = finalDn.concat(person.getDn());
-			ldapEntryManager.removeWithSubtree(finalDn);
+			ldapEntryManager.removeRecursively(finalDn);
 			return true;
 		} catch (Exception e) {
 			log.error("", e);

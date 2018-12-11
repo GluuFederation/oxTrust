@@ -2,10 +2,10 @@ package org.gluu.oxtrust.model;
 
 import java.io.Serializable;
 
+import org.gluu.persist.model.base.BaseEntry;
 import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
 import org.gluu.site.ldap.persistence.annotation.LdapEntry;
 import org.gluu.site.ldap.persistence.annotation.LdapObjectClass;
-import org.xdi.ldap.model.BaseEntry;
 
 @LdapEntry(sortBy = { "oxId" })
 @LdapObjectClass(values = { "top", "pairwiseIdentifier" })

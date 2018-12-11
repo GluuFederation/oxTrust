@@ -396,7 +396,7 @@ public class Shibboleth3ConfService implements Serializable {
 			} else {
 		                initProfileConfiguration(trustRelationship);
 
-				String federationInum = trustRelationship.getContainerFederation().getInum();
+				String federationInum = trustRelationship.getGluuContainerFederation();
 
 				if (deconstructedMap.get(federationInum) == null) {
 					deconstructedMap.put(federationInum, new ArrayList<String>());
