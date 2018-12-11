@@ -1148,7 +1148,7 @@ public class UpdateClientAction implements Serializable {
 		List<SelectableEntity<OxAuthScope>> tmpAvailableScopes = new ArrayList<SelectableEntity<OxAuthScope>>();
 		List<OxAuthScope> scopes = new ArrayList<OxAuthScope>();
 		try {
-			scopes = scopeService.getAllScopesList();
+			scopes = scopeService.getAllScopesList(100);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
