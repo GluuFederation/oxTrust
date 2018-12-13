@@ -210,7 +210,7 @@ public class UpdateScopeDescriptionAction implements Serializable {
 
 	public String save() throws Exception {
 		this.scopeDescription.setDisplayName(this.scopeDescription.getDisplayName().trim());
-		if (validateDisplayName(this.scopeDescription.getDisplayName())) {
+		if (!isValidScope()) {
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 		updateAuthorizationPolicies();
@@ -498,20 +498,34 @@ public class UpdateScopeDescriptionAction implements Serializable {
 	public List<CustomScript> getAuthorizationPolicies() {
 		return authorizationPolicies;
 	}
-
-	private boolean validateDisplayName(String displayName) throws Exception {
+	
+	private boolean isValidScope() throws Exception {
 		List<UmaScopeDescription> allScopes = scopeDescriptionService.getAllScopeDescriptions(1000);
-		boolean rejected = false;
-		for (UmaScopeDescription scope : allScopes) {
-			if (scope.getDisplayName().equalsIgnoreCase(displayName)) {
-				rejected = true;
-				break;
+		boolean result = true;
+		int count = 0;
+		if (this.scopeDescription.getInum() != null) {
+			for (UmaScopeDescription aScope : allScopes) {
+				if (aScope.getDisplayName().equalsIgnoreCase(this.scopeDescription.getDisplayName())) {
+					count++;
+				}
+			}
+			if (count != 1 && count != 0) {
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, "A UMA scope named '" + this.scopeDescription.getDisplayName() + "' already exists");
+				result = false;
+			}
+		} else {
+			for (UmaScopeDescription aScope : allScopes) {
+				if (aScope.getDisplayName().equalsIgnoreCase(this.scopeDescription.getDisplayName())) {
+					count++;
+				}
+			}
+			if (count != 0) {
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, "A UMA scope named '" + this.scopeDescription.getDisplayName() + "' already exists");
+				result = false;
 			}
 		}
-		if (rejected) {
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "A UMA scope named '" + displayName + "' already exists");
-		}
-		return rejected;
+		return result;
 	}
+
 
 }
