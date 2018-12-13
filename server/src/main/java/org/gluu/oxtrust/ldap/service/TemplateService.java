@@ -81,8 +81,6 @@ public class TemplateService implements Serializable {
 		try {
 			properties.load(is);
 			String loaderType = properties.getProperty("resource.loader").trim();
-			properties.setProperty("runtime.log", appConfiguration.getVelocityLog());
-
 			// Set right folder for file loader
 			if (loaderType.indexOf("file") == 0) {
 				String idpTemplatesLocation = configurationFactory.getIDPTemplatesLocation();
