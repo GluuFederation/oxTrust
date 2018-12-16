@@ -195,6 +195,7 @@
 
 									<h:panelGroup id="vdsTogglePanelGroup">
 										<ox:ldapConfig
+										    id="vdstpg"
 											ldapConfig="#{_configureCacheRefreshAction.targetConfig}"
 											ldapConfigAction="#{configureCacheRefreshAction}"
 											propertiesAction="#{_configureCacheRefreshAction}"
@@ -208,9 +209,10 @@
 							</div>
 
 							<div class="tab-pane" id="key-attributes">
-								<div style="display: inline-block; width: 90% !important;">
-									<h:panelGroup>
+								<div id="kadiv" style="display: inline-block; width: 90% !important;">
+									<h:panelGroup id="kp">
 										<ox:simplePropertiesList
+										    id="ka1"
 											label="#{msg['organization.keyAttribute']}"
 											labelAdd="key attribute" maxItems="3"
 											properties="#{_configureCacheRefreshAction.keyAttributes}"
@@ -218,6 +220,7 @@
 											required="true" tableId="KeyAttributeList" />
 
 										<ox:simplePropertiesList
+										    id="ka2"
 											label="#{msg['organization.objectClass']}"
 											labelAdd="object class"
 											properties="#{_configureCacheRefreshAction.keyObjectClasses}"
@@ -225,6 +228,7 @@
 											required="true" tableId="ObjectClassList" />
 
 										<ox:simplePropertiesList
+										    id="ka3"
 											label="#{msg['organization.sourceAttribute']}"
 											labelAdd="source attribute"
 											properties="#{_configureCacheRefreshAction.sourceAttributes}"
@@ -255,6 +259,7 @@
 											columnClasses="noBorder">
 											<div style="display: inline-block; width: 75% !important;">
 												<ox:ldapConfig ldapConfig="#{_ldapConfig}"
+												    id="scId"
 													ldapConfigList="#{_configureCacheRefreshAction.sourceConfigs}"
 													ldapConfigAction="#{_configureCacheRefreshAction}"
 													propertiesAction="#{_configureCacheRefreshAction}"
@@ -294,6 +299,7 @@
 										<h:panelGroup id="inumServerId">
 
 											<ox:ldapConfig
+											    id="isId"
 												ldapConfig="#{_configureCacheRefreshAction.inumConfig}"
 												ldapConfigAction="#{configureCacheRefreshAction}"
 												propertiesAction="#{_configureCacheRefreshAction}"
@@ -344,15 +350,13 @@
 		  $(this).tab('show');
 		});
 
-		// store the currently selected tab in the local storage
 		$("ul.nav-tabs > li > a").on("shown.bs.tab", function(e) {
 		  var id = $(e.target).attr("href").substr(1);
 		  window.localStorage.setItem('cacheRefreshFormtab', id);
 		  var storeValue = window.localStorage.getItem('cacheRefreshFormtab');
 		});
      
-		// on load of the page: switch to the currently selected tab
-		 $(document).ready(function() {
+		$(document).ready(function() {
 			    var value =  window.localStorage.getItem('cacheRefreshFormtab');
             	if (value) {
             		var activeTab = "#";

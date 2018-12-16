@@ -44,7 +44,7 @@
 <cc:implementation>
 	
 
-				<h:panelGroup columns="2" columnClasses="alignLeft, removeConfig"
+				<h:panelGroup id="lc1" columns="2" columnClasses="alignLeft, removeConfig"
 					width="100%" border="0" cellpadding="0" cellspacing="0">
 					<a4j:commandButton styleClass="btn btn-primary deleteSourceServerButton"
 					                style="float: right; color: white;margin-bottom:5px; margin-top:5px; margin-right:-32%; border:none !important; background: #d62728 !important; background-color: #d62728 !important;"
@@ -53,7 +53,7 @@
 									rendered="#{cc.attrs.displayRemoveButton}"
 									render="#{cc.attrs.renderAfterRomoval}"
 									action="#{cc.attrs.ldapConfigAction.removeLdapConfig(cc.attrs.ldapConfigList, cc.attrs.ldapConfig)}"/>
-					<h:panelGroup columns="1" width="100%" border="0" cellpadding="0"
+					<h:panelGroup id="lc2" columns="1" width="100%" border="0" cellpadding="0"
 						cellspacing="0">
 						<ox:decorate id="name" label="#{msg['ldapConfig.name']}">
 							<h:inputText styleClass="form-control nameTextBox"
@@ -86,38 +86,40 @@
 								required="true" />
 						</ox:decorate>
 
-						<ox:decorate
+						<ox:decorate id="PrimaryKey"
 							rendered="#{cc.attrs.displayPrimaryKey}" label="#{msg['ldapConfig.primaryKey']}">
 							<h:inputText styleClass="form-control primaryKeyTextBox"
 								value="#{cc.attrs.ldapConfig.primaryKey}" required="true"
 								size="46" />
 						</ox:decorate>
 
-						<ox:decorate
+						<ox:decorate id="LocalPrimaryKey"
 							rendered="#{cc.attrs.displayLocalPrimaryKey}" label="#{msg['ldapConfig.localPrimaryKey']}">
 							<h:inputText styleClass="form-control localPrimaryKeyTextBox"
 								value="#{cc.attrs.ldapConfig.localPrimaryKey}" required="true"
 								size="46" />
 						</ox:decorate>
 
-						<ox:decorate label="#{msg['ldapConfig.level']}" rendered="false">
+						<ox:decorate id="level" label="#{msg['ldapConfig.level']}" rendered="false">
 							<rich:inputNumberSpinner value="#{cc.attrs.ldapConfig.level}"
 								inputSize="2" minValue="0" maxValue="100" styleClass="ldapLevelSpinnerBox" />
 						</ox:decorate>
 
 			<ox:simplePropertiesList label="#{msg['ldapConfig.server']}" labelAdd="server"
+			                id="serverIds"
 							properties="#{cc.attrs.ldapConfig.servers}"
 							propertiesAction="#{cc.attrs.propertiesAction}"
 							inputWidth="#{cc.attrs.inputWidth}" required="true"
 							maxItems="#{cc.attrs.maxServerItems}" tableId="ServerList" />
 
 						<ox:simplePropertiesList label="#{msg['ldapConfig.baseDN']}" labelAdd="base DN"
+						    id="baseDnIds"
 							maxItems="#{cc.attrs.maxBaseDnItems}"
 							properties="#{cc.attrs.ldapConfig.baseDNs}"
 							propertiesAction="#{cc.attrs.propertiesAction}" required="true"
 							rendered="#{cc.attrs.displayBaseDn}" tableId="BaseDnList"/>
 						
-						<ox:decorate hideLabel="true">
+						<ox:decorate hideLabel="true" id="CBDP">
 						<a4j:commandLink style= "margin-left:-12px;" styleClass="btn btn-link col-sm-8 changeBindDnButton"
 							value="#{msg['ldapConfig.changeBindPassword']}"
 							oncomplete="#{rich:component(cc.attrs.changePasswordDialogId)}.show();"
@@ -133,7 +135,7 @@
 								required="true" styleClass="useSSLSelectBox"/>			
 						    </ox:decorate>
 
-						<ox:decorate rendered="#{cc.attrs.displayEnable}" label="#{msg['ldapConfig.enabled']}">
+						<ox:decorate id="enable" rendered="#{cc.attrs.displayEnable}" label="#{msg['ldapConfig.enabled']}">
 							<h:selectBooleanCheckbox value="#{cc.attrs.ldapConfig.enabled}"  />
 						</ox:decorate>
 						<h:commandButton style= "margin-left:15px;" styleClass="btn btn-success buttonTestConnection"
