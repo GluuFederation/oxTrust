@@ -120,7 +120,7 @@
 							rendered="#{cc.attrs.displayBaseDn}" tableId="BaseDnList"/>
 						
 						<ox:decorate hideLabel="true" id="CBDP">
-						<a4j:commandLink style= "margin-left:-12px;" styleClass="btn btn-link col-sm-8 changeBindDnButton"
+						<a4j:commandLink style= "margin-left:12px;" styleClass="btn btn-primary changeBindDnButton"
 							value="#{msg['ldapConfig.changeBindPassword']}"
 							oncomplete="#{rich:component(cc.attrs.changePasswordDialogId)}.show();"
 							rendered="#{cc.attrs.changePasswordDialogId != null}"
@@ -138,7 +138,7 @@
 						<ox:decorate id="enable" rendered="#{cc.attrs.displayEnable}" label="#{msg['ldapConfig.enabled']}">
 							<h:selectBooleanCheckbox value="#{cc.attrs.ldapConfig.enabled}"  />
 						</ox:decorate>
-						<h:commandButton style= "margin-left:15px;" styleClass="btn btn-success buttonTestConnection"
+						<h:commandButton style= "margin-left:15px;" styleClass="btn btn-primary buttonTestConnection"
 									value="#{msg['manageAuthentication.testLDAPConnection']}"
 									rendered="#{cc.attrs.showTestButton}"
 									action="#{cc.attrs.ldapConfigAction.testLdapConnection(cc.attrs.ldapConfig)}"/>
