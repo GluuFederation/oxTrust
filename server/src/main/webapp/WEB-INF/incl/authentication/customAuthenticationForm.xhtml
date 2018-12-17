@@ -58,11 +58,11 @@
 									
 									
 								<a4j:commandButton value="#{msg['manageAuthentication.activate']}" action="#{_ldapConfig.setEnabled(true)}" rendered="#{not _ldapConfig.enabled}"
-							                    render="ldapManagementGroupId" limitRender="true" styleClass="btn btn-success buttonActivate"  style= "margin-left:20px;"/>
+							                    render="ldapManagementGroupId" limitRender="true" styleClass="btn btn-primary buttonActivate"  style= "margin-left:20px;"/>
 				                <a4j:commandButton value="#{msg['manageAuthentication.deactivate']}" action="#{_ldapConfig.setEnabled(false)}" rendered="#{_ldapConfig.enabled}"
-			                    render="ldapManagementGroupId" limitRender="true" immediate="true" styleClass="btn btn-success buttonDeActivate"  style= "margin-left:20px;"/>
+			                    render="ldapManagementGroupId" limitRender="true" immediate="true" styleClass="btn btn-primary buttonDeActivate"  style= "margin-left:20px;"/>
 			                    	
-								<a4j:commandLink style= "margin-left:5px;" styleClass="btn btn-success buttonTestConnection"
+								<a4j:commandLink style= "margin-left:5px;" styleClass="btn btn-primary buttonTestConnection"
 									value="#{msg['manageAuthentication.testLDAPConnection']}"
 									rendered="#{_ldapConfig.enabled}"
 									action="#{_action.testLdapConnection(_ldapConfig)}"/>
@@ -71,7 +71,7 @@
 							</rich:dataGrid>
 
 		                    <h:panelGroup layout="block" styleClass="addConfig">
-		                        <a4j:commandLink styleClass="btn btn-link addSourceLDAPServer" value="#{msg['organization.addSourceLDAPServer']}" action="#{_action.addSourceConfig()}" render="sourceConfigsId" execute="@this" style="margin-right:1100px;margin-top:50px;"/>
+		                        <a4j:commandLink styleClass="btn btn-primary addSourceLDAPServer" value="#{msg['organization.addSourceLDAPServer']}" action="#{_action.addSourceConfig()}" render="sourceConfigsId" execute="@this" style="margin-right:1100px;margin-top:50px;"/>
 		                    </h:panelGroup>
 
 							</h:panelGroup>

@@ -62,9 +62,9 @@
             <h:panelGroup id="customList">
                 <a4j:region styleClass="col-sm-12 col-lg-12">
                     <a4j:repeat value="#{cc.attrs.properties}" var="_property">
-                    	<h:panelGrid styleClass="propertiesList col-sm-12 col-lg-12" columns="1" width="100%" border="0" cellpadding="0" cellspacing="0" >
+                    	<h:panelGrid id="mPG" styleClass="propertiesList col-sm-12 col-lg-12" columns="1" width="100%" border="0" cellpadding="0" cellspacing="0" >
                             <h:panelGroup id="propertiesList">
-                            <div >
+                            <div id="mDiv">
                                 <h:inputText id="key" style = "margin-right:5px;margin-bottom:10px;width:35%;float:left;" styleClass="col-md-4 form-control propertyLabelTextBox" value="#{_property.value1}" size="#{cc.attrs.inputWidth}" required="#{cc.attrs.requiredName}" readonly="#{(_property.value1) eq 'clientID' or (_property.value1) eq 'clientSecret'}"/>
 
 	                            <h:inputText id="value" styleClass="col-md-5 form-control togglefield propertyValueTextBox" style = "width:35%;float:left;"
