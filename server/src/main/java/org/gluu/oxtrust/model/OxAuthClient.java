@@ -6,16 +6,6 @@
 
 package org.gluu.oxtrust.model;
 
-import java.io.Serializable;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.Date;
-import java.util.List;
-
-import javax.persistence.Transient;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
 import org.gluu.persist.model.base.Entry;
 import org.gluu.persist.model.base.GluuBoolean;
 import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
@@ -23,7 +13,15 @@ import org.gluu.site.ldap.persistence.annotation.LdapEntry;
 import org.gluu.site.ldap.persistence.annotation.LdapObjectClass;
 import org.xdi.oxauth.model.common.GrantType;
 import org.xdi.oxauth.model.common.ResponseType;
-import org.xdi.util.security.StringEncrypter.EncryptionException;
+
+import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
+import java.util.List;
 
 /**
  * oxAuthClient
@@ -31,7 +29,7 @@ import org.xdi.util.security.StringEncrypter.EncryptionException;
  * @author Reda Zerrad Date: 06.08.2012
  * @author Yuriy Movchan Date: 05/22/2013
  * @author Javier Rojas Blum
- * @version November 29, 2018
+ * @version December 4, 2018
  */
 @LdapEntry(sortBy = {"displayName"})
 @LdapObjectClass(values = {"top", "oxAuthClient"})
@@ -171,9 +169,9 @@ public class OxAuthClient extends Entry implements Serializable {
     private String[] postLogoutRedirectUris;
 
     @LdapAttribute(name = "oxClaimRedirectURI")
-    private String[] claimRedirectURI ;
+    private String[] claimRedirectURI;
 
-	@LdapAttribute(name = "oxAuthLogoutURI")
+    @LdapAttribute(name = "oxAuthLogoutURI")
     private List<String> logoutUri;
 
     @LdapAttribute(name = "oxAuthLogoutSessionRequired")
@@ -206,6 +204,15 @@ public class OxAuthClient extends Entry implements Serializable {
     @LdapAttribute(name = "oxAuthAuthorizedOrigins")
     private String[] authorizedOrigins;
 
+    @LdapAttribute(name = "oxSoftwareId")
+    private String softwareId;
+
+    @LdapAttribute(name = "oxSoftwareVersion")
+    private String softwareVersion;
+
+    @LdapAttribute(name = "oxSoftwareStatement")
+    private String softwareStatement;
+
     @LdapAttribute(name = "oxDisabled")
     private boolean disabled;
 
@@ -224,12 +231,12 @@ public class OxAuthClient extends Entry implements Serializable {
     }
 
     public String[] getClaimRedirectURI() {
-		return claimRedirectURI;
-	}
+        return claimRedirectURI;
+    }
 
-	public void setClaimRedirectURI(String[] claimRedirectURI) {
-		this.claimRedirectURI = claimRedirectURI;
-	}
+    public void setClaimRedirectURI(String[] claimRedirectURI) {
+        this.claimRedirectURI = claimRedirectURI;
+    }
 
     public String getInum() {
         return inum;
@@ -602,6 +609,7 @@ public class OxAuthClient extends Entry implements Serializable {
     public Integer getAccessTokenLifetime() {
         return accessTokenLifetime;
     }
+
     public void setAccessTokenLifetime(Integer accessTokenLifetime) {
         this.accessTokenLifetime = accessTokenLifetime;
     }
@@ -638,6 +646,30 @@ public class OxAuthClient extends Entry implements Serializable {
         this.authorizedOrigins = authorizedOrigins;
     }
 
+    public String getSoftwareId() {
+        return softwareId;
+    }
+
+    public void setSoftwareId(String softwareId) {
+        this.softwareId = softwareId;
+    }
+
+    public String getSoftwareVersion() {
+        return softwareVersion;
+    }
+
+    public void setSoftwareVersion(String softwareVersion) {
+        this.softwareVersion = softwareVersion;
+    }
+
+    public String getSoftwareStatement() {
+        return softwareStatement;
+    }
+
+    public void setSoftwareStatement(String softwareStatement) {
+        this.softwareStatement = softwareStatement;
+    }
+
     public boolean isDisabled() {
         return disabled;
     }
@@ -649,19 +681,17 @@ public class OxAuthClient extends Entry implements Serializable {
     public void setOxAuthClientSecret(String oxAuthClientSecret) {
         this.oxAuthClientSecret = oxAuthClientSecret;
     }
-    
-  
 
-	public String getOxAuthClientSecret() {
-		return oxAuthClientSecret;
-	}
+    public String getOxAuthClientSecret() {
+        return oxAuthClientSecret;
+    }
 
-	public Date getClientSecretExpiresAt() {
-		if (clientSecretExpiresAt == null) {
-			return inOneCentury();
-		} else {
-			return clientSecretExpiresAt;
-		}
+    public Date getClientSecretExpiresAt() {
+        if (clientSecretExpiresAt == null) {
+            return new Date();
+        } else {
+            return clientSecretExpiresAt;
+        }
     }
 
     public void setClientSecretExpiresAt(Date clientSecretExpiresAt) {
@@ -676,9 +706,9 @@ public class OxAuthClient extends Entry implements Serializable {
         this.oxdId = oxdId;
     }
 
-	private Date inOneCentury() {
-		LocalDate nextCentury = LocalDate.now().plusYears(100);
-		return Date.from(nextCentury.atStartOfDay(ZoneId.systemDefault()).toInstant());
-	}
+    private Date inOneCentury() {
+        LocalDate nextCentury = LocalDate.now().plusYears(100);
+        return Date.from(nextCentury.atStartOfDay(ZoneId.systemDefault()).toInstant());
+    }
 
 }
