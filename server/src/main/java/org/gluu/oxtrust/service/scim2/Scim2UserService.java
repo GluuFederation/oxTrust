@@ -102,7 +102,7 @@ public class Scim2UserService implements Serializable {
     private PersistenceEntryManager ldapEntryManager;
 
     private String[] arrOf(String value) {
-        return value == null ? new String[0] : new String[]{value};
+        return (value == null || value.length() == 0) ? new String[0] : new String[]{value};
     }
 
     private String[] getComplexMultivaluedAsArray(List items){
