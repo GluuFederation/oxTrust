@@ -559,8 +559,8 @@ public class UpdateClientAction implements Serializable {
 				result = true;
 			}
 		} catch (MalformedURLException e) {
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "One of the url is no malformed",
-					"One of the url is no malformed");
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "The url is malformed",
+					"The url is malformed");
 			log.error(e.getMessage());
 		}
 		return result;
