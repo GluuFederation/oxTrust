@@ -99,7 +99,7 @@
 										<ox:decorate id="editType"
 											label="#{msg['organization.refreshMethod']}">
 											<h:selectOneMenu
-												styleClass="form-control refreshMetodSelectBox"
+												styleClass="rounded form-control refreshMetodSelectBox"
 												value="#{_configureCacheRefreshAction.updateMethod}"
 												required="true" id="refreshMethodId">
 												<f:selectItems
@@ -161,7 +161,7 @@
 											label="#{msg['organization.keepExternalPersons']}">
 
 											<h:selectBooleanCheckbox
-												styleClass="keepInternalPersonCheckBox"
+												styleClass="rounded keepInternalPersonCheckBox"
 												value="#{_configureCacheRefreshAction.cacheRefreshConfig.keepExternalPerson}" />
 										</ox:decorate>
 
@@ -181,7 +181,7 @@
 											label="#{msg['organization.cacheRefresh']}">
 											<h:selectOneMenu
 												value="#{_configureCacheRefreshAction.appliance.vdsCacheRefreshEnabled}"
-												styleClass="form-control enableCacheRefreshSelectBox"
+												styleClass="rounded form-control enableCacheRefreshSelectBox"
 												id="vdsCacheRefreshStateId">
 												<f:selectItems
 													value="#{organizationService.booleanSelectionTypes}"
@@ -272,7 +272,7 @@
 
 										<h:panelGroup layout="block" styleClass="addConfig">
 											<a4j:commandLink
-												styleClass="btn btn-link addSourceServerButton"
+												styleClass="btn btn-primary addSourceServerButton"
 												value="#{msg['organization.addSourceLDAPServer']}"
 												action="#{_configureCacheRefreshAction.addSourceConfig()}"
 												render="sourceConfigsId"
@@ -289,7 +289,7 @@
 
 										<ox:decorate label="#{msg['organization.defaultInumServer']}">
 											<h:selectBooleanCheckbox
-												styleClass="defaultInumServerCheckBox"
+												styleClass="rounded defaultInumServerCheckBox"
 												value="#{_configureCacheRefreshAction.cacheRefreshConfig.defaultInumServer}">
 												<a4j:ajax event="click" render="inumServerId"
 													execute="@this" limitRender="true" />
