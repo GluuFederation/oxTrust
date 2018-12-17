@@ -10,6 +10,7 @@ import static org.xdi.ldap.model.GluuBoolean.INACTIVE;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -106,7 +107,7 @@ public class Scim2UserService implements Serializable {
     private LdapEntryManager ldapEntryManager;
 
     private String[] arrOf(String value) {
-        return value == null ? new String[0] : new String[]{value};
+        return (value == null || value.length() == 0) ? new String[0] : new String[]{value};
     }
 
     private String[] getComplexMultivaluedAsArray(List items){
@@ -249,9 +250,10 @@ public class Scim2UserService implements Serializable {
                             person.setAttribute(attribute, new String[0]);
                         } else {
                             //Get properly formatted string representations for the value(s) associated to the attribute
-                            List<String> values=extService.getStringAttributeValues(extension.getFields().get(attribute), value);
+                            List<String> values = extService.getStringAttributeValues(extension.getFields().get(attribute), value);
+                            values.removeAll(Collections.singleton(""));
                             log.debug("transferExtendedAttributesToPerson. Setting attribute '{}' with values {}", attribute, values.toString());
-                            person.setAttribute(attribute, values.toArray(new String[]{}));
+                            person.setAttribute(attribute, values.toArray(new String[0]));
                         }
                     }
                 }
