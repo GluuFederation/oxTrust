@@ -202,14 +202,10 @@ public class RegisterPersonAction implements Serializable {
 		String outcome = registerImpl();
 
 		if (OxTrustConstants.RESULT_SUCCESS.equals(outcome)) {
-			facesMessages.add(FacesMessage.SEVERITY_INFO, "You successfully registered.");
-			conversationService.endConversation();
+			setPostRegistrationInformation("You successfully registered. Enjoy!");
 		} else if (OxTrustConstants.RESULT_DISABLED.equals(outcome)) {
-			facesMessages.add(FacesMessage.SEVERITY_INFO, "You successfully registered. But your account is disabled.");
-			conversationService.endConversation();
+			setPostRegistrationInformation("You successfully registered. But your account is disabled. Please contact site administration.");
 		} else if (OxTrustConstants.RESULT_FAILURE.equals(outcome)) {
-			log.error(
-					"Failed to register new user. Please make sure you are not registering a duplicate account or try another username.");
 			facesMessages.add(FacesMessage.SEVERITY_ERROR,
 					"Failed to register new user. Please make sure you are not registering a duplicate account or try another username.");
 		} else if (OxTrustConstants.RESULT_CAPTCHA_VALIDATION_FAILED.equals(outcome)) {
@@ -462,6 +458,10 @@ public class RegisterPersonAction implements Serializable {
 
 	public String getPostRegistrationInformation() {
 		return postRegistrationInformation;
+	}
+
+	public void setPostRegistrationInformation(String postRegistrationInformation) {
+		this.postRegistrationInformation = postRegistrationInformation;
 	}
 
 	public void validateEmail(FacesContext context, UIComponent component, Object value) throws ValidatorException {
