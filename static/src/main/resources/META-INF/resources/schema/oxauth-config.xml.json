@@ -1331,6 +1331,31 @@
                     "type": "string",
                     "minLength": 1
                 },
+                "userAutoEnrollment": {
+                    "id": "userAutoEnrollment",
+                    "description": "Allow to enroll users on enrollment/authentication requests.",
+                    "type": "boolean"
+                },
+                "unfinishedRequestExpiration": {
+                    "id": "unfinishedRequestExpiration",
+                    "description": "Expiration time in seconds for pending enrollment/authentication requests",
+                    "type": "integer",
+                    "multipleOf": 1,
+                    "maximum": 2147483647,
+                    "minimum": 0,
+                    "exclusiveMaximum": false,
+                    "exclusiveMinimum": false
+                },
+                "authenticationHistoryExpiration": {
+                    "id": "authenticationHistoryExpiration",
+                    "description": "Expiration time in seconds for approved authentication requests.",
+                    "type": "integer",
+                    "multipleOf": 1,
+                    "maximum": 2147483647,
+                    "minimum": 0,
+                    "exclusiveMaximum": false,
+                    "exclusiveMinimum": false
+                },
             	"certificationServerMetadataFolder": {
                     "id": "certificationServerMetadataFolder",
                     "description": "certificationServerMetadataFolder.",
