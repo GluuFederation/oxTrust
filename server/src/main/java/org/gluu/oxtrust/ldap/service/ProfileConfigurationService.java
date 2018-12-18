@@ -66,7 +66,7 @@ public class ProfileConfigurationService implements Serializable {
 
 	@Inject
 	private XmlService xmlService;
-	
+
 	@Inject
 	private ConfigurationFactory configurationFactory;
 

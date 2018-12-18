@@ -16,7 +16,7 @@ $(function() {
 			datasets : [
 
 			{
-				label : "Successful Login",
+				label : "Successful Logins",
 				fill : false,
 				backgroundColor : "#00BE79",
 				borderColor: "#00BE79",

@@ -1112,15 +1112,13 @@
             "type": "string",
             "format": "select",
             "enum": [
-                "DEFAULT",
-                "OFF",
-                "FATAL",
-                "ERROR",
-                "WARN",
-                "INFO",
-                "DEBUG",
                 "TRACE",
-                "ALL"
+                "DEBUG",
+                "INFO",
+                "WARN",
+                "ERROR",
+                "FATAL",
+                "OFF"
             ]
         },
         "corsConfigurationFilters": {
@@ -1338,8 +1336,22 @@
                     "description": "certificationServerMetadataFolder.",
                     "type": "string",
                     "minLength": 1
+                },
+                "disable": {
+                    "id": "disable",
+                    "description": "Enable/Disable Fido2 endpoints.",
+                    "type": "boolean"
                 }
             }
+        },
+        "errorHandlingMethod": {
+            "id": "errorHandlingMethod",
+            "description": "A list of possible error handling methods.",
+            "type": "string",
+            "enum": [
+                "internal",
+                "remote"
+            ]
         }
     },
     "required": [
@@ -1367,7 +1379,7 @@
         "openidSubAttribute",
         "responseTypesSupported",
         "grantTypesSupported",
-	"dynamicGrantTypeDefault",
+        "dynamicGrantTypeDefault",
         "subjectTypesSupported",
         "defaultSubjectType",
         "userInfoSigningAlgValuesSupported",
@@ -1460,6 +1472,7 @@
         "externalLoggerConfiguration",
         "disableU2fEndpoint",
         "authenticationProtectionConfiguration",
-        "fido2Configuration"
+        "fido2Configuration",
+        "errorHandlingMethod"
     ]
 }

@@ -18,6 +18,14 @@
             text-align: left;
             vertical-align: top;
         }
+        .pairwiseIdsHearder {
+          background:#00BE79;
+          color:white;
+          margin: 10px;
+          background-color:#00BE79 !important;
+          border: 5px solid #00BE79 !important;
+          text-align:center;
+        }
 
         .formColumn {
             text-align: left;
@@ -481,6 +489,40 @@
 												render="selectedCustomAttributesId"
 												styleClass="glyphicon glyphicon-remove">
 											</a4j:commandLink>
+										</h:column>
+									</h:dataTable>
+									<h:dataTable style="border-raduis:5px; margin:10px;" value="#{updatePersonAction.userPairWideIdentifiers}"
+										var="_value" styleClass="order-table fixed-size"
+										headerClass="pairwiseIdsHearder"
+										rowClasses="order-table-odd-row,order-table-even-row"
+										rendered="#{updatePersonAction.userPairWideIdentifiers.size() gt 0}">
+										<h:column>
+											<f:facet name="header">PairWise ID</f:facet>
+											<h:panelGroup id="pairWideId"
+												rendered="true">
+											 #{_value.oxId}											
+											</h:panelGroup>
+										</h:column>
+										<h:column>
+											<f:facet name="header">OIDC Client</f:facet>
+											<h:panelGroup id="pairWideClientId"
+												rendered="true">
+											 #{updatePersonAction.getClientName(_value.clientId)}											
+											</h:panelGroup>
+										</h:column>
+										<h:column>
+											<f:facet name="header">SP Hostname</f:facet>
+											<h:panelGroup id="pairWideSp"
+												rendered="true">
+											 #{_value.sp}											
+											</h:panelGroup>
+										</h:column>
+										<h:column>
+										<f:facet name="header">Actions</f:facet>
+										<a4j:commandLink value = "Remove" 
+										action="#{updatePersonAction.removePairWiseIdentifier(_value)}"
+										styleClass="btn-primary">
+										</a4j:commandLink>
 										</h:column>
 									</h:dataTable>
 								</h:panelGroup>

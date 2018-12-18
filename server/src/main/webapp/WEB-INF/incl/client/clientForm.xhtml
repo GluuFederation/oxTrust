@@ -841,6 +841,28 @@
 																	   maxlength="60" inputWidth="695" required="false"
 																	   id="accessTokenLifetime" />
 												</ox:decorate>
+												<ox:decorate id="softwareId" leftClass="col-sm-3"
+															 rightClass="col-sm-9"
+															 label="#{msg['clientForm.softwareId']}">
+													<rich:inplaceInput value="#{_client.softwareId}"
+																	   defaultLabel="Unique identifier string (UUID) assigned by the client developer or software publisher to identify the client software."
+																	   maxlength="60" inputWidth="695" required="false"
+																	   id="softwareId" />
+												</ox:decorate>
+												<ox:decorate id="softwareVersion" leftClass="col-sm-3"
+															 rightClass="col-sm-9"
+															 label="#{msg['clientForm.softwareVersion']}">
+													<rich:inplaceInput value="#{_client.softwareId}"
+																	   defaultLabel="Version identifier for the client software."
+																	   maxlength="60" inputWidth="695" required="false"
+																	   id="softwareVersion" />
+												</ox:decorate>
+												<ox:decorate id="softwareStatement" label="#{msg['clientForm.softwareStatement']}"
+															 leftClass="col-sm-3" rightClass="col-sm-9">
+													<h:inputTextarea styleClass="form-control rounded" readonly="true"
+																	 value="#{_client.softwareStatement}" rows="3" cols="80" maxlength="4000"
+																	 id="softwareStatement" />
+												</ox:decorate>
 											</div>
 										</div>
 									</div>

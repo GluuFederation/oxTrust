@@ -229,7 +229,10 @@ public class ScimResourceUtil {
             for (Extension ext : extensions)
                 if (ext.getUrn().equals(path)){
                     Map<String, Object> submap=IntrospectUtil.strObjMap(source.get(path));
-                    submap.put(key, null);
+                    //get method above could have returned null (no extended attributes for source object)
+                    if (submap != null) {
+                        submap.put(key, null);
+                    }
                 }
 
         }

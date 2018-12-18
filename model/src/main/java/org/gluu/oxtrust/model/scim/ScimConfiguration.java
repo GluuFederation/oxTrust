@@ -10,7 +10,6 @@ import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.annotate.JsonPropertyOrder;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
-import org.jboss.resteasy.annotations.providers.jaxb.IgnoreMediaTypes;
 
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
@@ -20,7 +19,6 @@ import com.wordnik.swagger.annotations.ApiModelProperty;
  *
  * @author Yuriy Movchan Date: 11/06/2015
  */
-@IgnoreMediaTypes("application/*+json")
 // try to ignore jettison as it's recommended here:
 // http://docs.jboss.org/resteasy/docs/2.3.4.Final/userguide/html/json.html
 @JsonPropertyOrder({ "version", "authorization_supported", "user_endpoint", "group_endpoint", "bulk_endpoint", "service_provider_endpoint",

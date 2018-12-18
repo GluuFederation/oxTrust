@@ -39,6 +39,7 @@ import org.gluu.persist.model.base.GluuBoolean;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.DisplayNameEntry;
+import org.xdi.model.GluuStatus;
 import org.xdi.service.LookupService;
 import org.xdi.service.security.Secure;
 import org.xdi.util.StringHelper;
@@ -110,7 +111,7 @@ public class UpdateGroupAction implements Serializable {
 		this.group = new GluuGroup();
 		this.group.setOwner(identity.getUser().getDn());
 		this.group.setOrganization(organizationService.getOrganization().getDn());
-
+                this.group.setStatus(GluuStatus.ACTIVE);
 		try {
 			this.members = getMemberDisplayNameEntiries();
 		} catch (BasePersistenceException ex) {
