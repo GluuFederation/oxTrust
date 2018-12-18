@@ -459,19 +459,32 @@
 								<h:panelGroup columns="1" width="100%">
 									<div class="row" style="margin-left: 5px; margin-right: 5px;">
 										<div class="col-sm-6 col-lg-6" style="padding: 0px;">
-											<ox:decorate id="accessTokenAsJwt"
-												label="#{msg['clientForm.accessTokenAsJwt']}"
-												leftClass="col-sm-6" rightClass="col-sm-6">
-												<h:selectOneMenu id="accessTokenAsJwtId"
-													styleClass="col-sm-9 form-control rounded"
-													value="#{_client.accessTokenAsJwt}" required="false">
-													<f:selectItems
-														value="#{organizationService.javaBooleanSelectionTypes}"
-														var="_type" itemLabel="#{_type.displayName}" />
-													<f:converter
-														converterId="org.gluu.jsf2.converter.EnumConverter" />
-												</h:selectOneMenu>
-											</ox:decorate>
+                                            <ox:decorate id="accessTokenAsJwt"
+                                                         label="#{msg['clientForm.accessTokenAsJwt']}"
+                                                         leftClass="col-sm-6" rightClass="col-sm-6">
+                                                <h:selectOneMenu id="accessTokenAsJwtId"
+                                                                 styleClass="col-sm-9 form-control rounded"
+                                                                 value="#{_client.accessTokenAsJwt}" required="false">
+                                                    <f:selectItems
+                                                            value="#{organizationService.javaBooleanSelectionTypes}"
+                                                            var="_type" itemLabel="#{_type.displayName}" />
+                                                    <f:converter
+                                                            converterId="org.gluu.jsf2.converter.EnumConverter" />
+                                                </h:selectOneMenu>
+                                            </ox:decorate>
+                                            <ox:decorate id="rptAsJwt"
+                                                         label="#{msg['clientForm.rptAsJwt']}"
+                                                         leftClass="col-sm-6" rightClass="col-sm-6">
+                                                <h:selectOneMenu id="rptAsJwtId"
+                                                                 styleClass="col-sm-9 form-control rounded"
+                                                                 value="#{_client.rptAsJwt}" required="false">
+                                                    <f:selectItems
+                                                            value="#{organizationService.javaBooleanSelectionTypes}"
+                                                            var="_type" itemLabel="#{_type.displayName}" />
+                                                    <f:converter
+                                                            converterId="org.gluu.jsf2.converter.EnumConverter" />
+                                                </h:selectOneMenu>
+                                            </ox:decorate>
 											<ox:decorate id="logoutSessionRequired"
 												label="#{msg['clientForm.logoutSessionRequired']}"
 												leftClass="col-sm-6" rightClass="col-sm-6">
