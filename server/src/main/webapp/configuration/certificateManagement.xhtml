@@ -23,39 +23,38 @@
             <ol class="breadcrumb">
                 <li><a href="#{request.contextPath}/configuration/certificateManagement"><i
                         class="fa fa-home"></i> #{msg['configuration.certificates']}</a></li>
-                <!--<li class="organization/configuration"><a
-                        href="#{request.contextPath}/configuration/addCertificate">Add Certificate</a></li>-->
             </ol>
         </section>
 
-        <section class="content">
-            <!--<div style="margin-left: 16px;">
-                <h:link includeViewParams="false" outcome="/trustmanager/addCertificate" value="Add Certificate" styleClass="addPerson btn btn-primary" />
-            </div>-->
-
+        <section class="content" style="background:white;">
             <h:panelGrid columns="1" border="0" cellpadding="0" cellspacing="0" width="100%">
                 <richext:spacer height="16"/>
 
                 <h:form>
-                    <ox:decorate id="searchPattern" hideLabel="true">
-                        <h:inputText value="#{certificateManagementAction.searchPattern}" size="30" maxlength="30"
+                    <div class="row">
+                        <div class="col-md-6" id="searchPattern">
+                          <h:inputText value="#{certificateManagementAction.searchPattern}" size="30" maxlength="30"
                                      required="false" id="searchPatternId" styleClass="searchParameters form-control"
-                                     style="width: 50%; float: left;"
+                                     style="width: 100%; float: left;"
                                      alt="search parameters for certificate like email,CN,C,O"/>
-                        <h:outputText value=" "/>
-                        <h:selectBooleanCheckbox value="#{certificateManagementAction.searchObsoleteWarning}"
-                                                 styleClass="form-control"/>
-                        <h:outputText value="#{msg['configuration.withObsoleteWarningOnly']}"/>
-                        <h:commandButton value="#{msg['configuration.search']}"
+                          <h:outputText value=" "/>
+                        </div>
+                        <div class="col-md-3">
+                           <h:selectBooleanCheckbox  value="#{certificateManagementAction.searchObsoleteWarning}"/>
+                           <h:outputText style="margin-left:5px;" value="#{msg['configuration.withObsoleteWarningOnly']}"/>
+                        </div>
+                        <div class="col-md-3">
+                           <h:commandButton value="#{msg['configuration.search']}" style="float: left;"
                                          action="#{certificateManagementAction.search}" styleClass="btn btn-primary"/>
-                    </ox:decorate>
+                        </div>
+                     </div>
                 </h:form>
 
                 <richext:spacer height="16"/>
 
                 <h:form id="internalCertificatesFormId">
-                    <H3>#{msg['configuration.internalGluuCertificates']}</H3>
-
+                    <h2 style="font-style: bold;">#{msg['configuration.internalGluuCertificates']}</h2>
+                      <hr style="border:dotted 2px green;"></hr>
                     <ui:fragment rendered="#{certificateManagementAction.internalCertificates.size() eq 0}">
                         <richext:spacer height="30"/>
                         <h:outputText value="#{msg['configuration.noSearchResultFound']}"/>
@@ -80,13 +79,6 @@
                             </f:facet>
                             <h:outputText value="#{cert.issuer}" class="col-xs-12"/>
                         </h:column>
-
-                        <!--<h:column>
-                            <f:facet name="header">
-                                <div style="text-align: center;"> Subject</div>
-                            </f:facet>
-                            <h:outputText value="#{cert.subject}" class="col-xs-12" />
-                        </h:column>-->
 
                         <h:column>
                             <f:facet name="header">
@@ -142,13 +134,6 @@
                             <h:outputText value="#{cert.issuer}" class="col-xs-12"/>
                         </h:column>
 
-                        <!--<h:column>
-                            <f:facet name="header">
-                                <div style="text-align: center;"> Subject</div>
-                            </f:facet>
-                            <h:outputText value="#{cert.subject}" class="col-xs-12" />
-                        </h:column>-->
-
                         <h:column>
                             <f:facet name="header">
                                 <div style="text-align: center;"> #{msg['configuration.algorithm']}</div>
@@ -202,13 +187,6 @@
                             </f:facet>
                             <h:outputText value="#{cert.issuer}" class="col-xs-12"/>
                         </h:column>
-
-                        <!--<h:column>
-                            <f:facet name="header">
-                                <div style="text-align: center;"> Subject</div>
-                            </f:facet>
-                            <h:outputText value="#{cert.subject}" class="col-xs-12" />
-                        </h:column>-->
 
                         <h:column>
                             <f:facet name="header">
