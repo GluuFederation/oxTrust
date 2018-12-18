@@ -133,9 +133,6 @@ public class AttributeImportAction implements Serializable {
 
 	public String cancel() {
 		destroy();
-
-		conversationService.endConversation();
-
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
