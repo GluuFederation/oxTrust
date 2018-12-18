@@ -767,7 +767,7 @@
         },
         "dynamicRegistrationExpirationTime": {
             "id": "dynamicRegistrationExpirationTime",
-            "description": "Expiration time in seconds for clients created with dynamic registration, 0 means never expire.",
+            "description": "Expiration time in seconds for clients created with dynamic registration, -1 means never expire.",
             "type": "integer",
             "multipleOf": 1,
             "maximum": 2147483647,
