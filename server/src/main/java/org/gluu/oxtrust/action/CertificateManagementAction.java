@@ -46,7 +46,8 @@ public class CertificateManagementAction implements Serializable {
 
 	private static final String OPENDJ_CERTIFICATE_FILE = "/etc/certs/opendj.crt";
 	private static final String HTTPD_CERTIFICATE_FILE = "/etc/certs/httpd.crt";
-	private static final String SHIB_IDP_CERTIFICATE_FILE = "/etc/certs/shibIDP.crt";
+	private static final String IDP_SIGNING_CERTIFICATE_FILE = "/etc/certs/idp-signing.crt";
+	private static final String IDP_ENCRYPT_CERTIFICATE_FILE = "/etc/certs/idp-encryption.crt";
 
 	@Inject
 	private Logger log;
@@ -173,27 +174,29 @@ public class CertificateManagementAction implements Serializable {
 			try {
 				X509Certificate openDJCerts[] = SSLService
 						.loadCertificates(new FileInputStream(OPENDJ_CERTIFICATE_FILE));
-				for (X509Certificate openDJCert : openDJCerts)
+				for (X509Certificate openDJCert : openDJCerts) {
 					internalCertificates.add(new X509CertificateShortInfo("OpenDJ SSL", openDJCert));
-			} catch (Exception e) {
-				log.error("Certificate load exception", e);
-			}
-			try {
+				}
 				X509Certificate httpdCerts[] = SSLService.loadCertificates(new FileInputStream(HTTPD_CERTIFICATE_FILE));
-				for (X509Certificate httpdCert : httpdCerts)
+				for (X509Certificate httpdCert : httpdCerts) {
 					internalCertificates.add(new X509CertificateShortInfo("HTTPD SSL", httpdCert));
-			} catch (Exception e) {
-				log.error("Certificate load exception", e);
-			}
-			try {
-				X509Certificate shibIDPCerts[] = SSLService
-						.loadCertificates(new FileInputStream(SHIB_IDP_CERTIFICATE_FILE));
-				for (X509Certificate shibIDPCert : shibIDPCerts)
+				}
+				X509Certificate idpSigingCerts[] = SSLService
+						.loadCertificates(new FileInputStream(IDP_SIGNING_CERTIFICATE_FILE));
+				for (X509Certificate idpSigingCert : idpSigingCerts) {
 					internalCertificates
-							.add(new X509CertificateShortInfo("Shibboleth IDP SAML Certificate", shibIDPCert));
+					.add(new X509CertificateShortInfo("IDP SIGNING", idpSigingCert));
+				}
+				X509Certificate idpEncryptionCerts[] = SSLService
+						.loadCertificates(new FileInputStream(IDP_ENCRYPT_CERTIFICATE_FILE));
+				for (X509Certificate idpEncryptionCert : idpEncryptionCerts) {
+					internalCertificates
+					.add(new X509CertificateShortInfo("IDP ENCRYPTION", idpEncryptionCert));
+				}
 			} catch (Exception e) {
 				log.error("Certificate load exception", e);
 			}
+			
 		} catch (Exception e) {
 			log.error("Load internalCertificates configuration exception", e);
 		}
