@@ -18,7 +18,7 @@
             text-align: left;
             vertical-align: top;
         }
-        .pairwiseIdsHearder {
+        .tableHearder {
           background:#00BE79;
           color:white;
           margin: 10px;
@@ -447,7 +447,7 @@
 										rendered="#{updatePersonAction.deviceDataMap.size() gt 0}" />
 									<h:dataTable value="#{updatePersonAction.deviceDataMap}"
 										var="_value" styleClass="order-table fixed-size"
-										headerClass="order-table-header"
+										headerClass="tableHearder"
 										rowClasses="order-table-odd-row,order-table-even-row"
 										rendered="#{updatePersonAction.deviceDataMap.size() gt 0}">
 										<h:column>
@@ -493,7 +493,7 @@
 									</h:dataTable>
 									<h:dataTable style="border-raduis:5px; margin:10px;" value="#{updatePersonAction.userPairWideIdentifiers}"
 										var="_value" styleClass="order-table fixed-size"
-										headerClass="pairwiseIdsHearder"
+										headerClass="tableHearder"
 										rowClasses="order-table-odd-row,order-table-even-row"
 										rendered="#{updatePersonAction.userPairWideIdentifiers.size() gt 0}">
 										<h:column>
