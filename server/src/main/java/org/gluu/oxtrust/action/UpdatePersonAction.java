@@ -374,6 +374,11 @@ public class UpdatePersonAction implements Serializable {
 		}
 		if (!update) {
 
+			if (!isValidPassword()) {
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Password length must be between 3 and 60 characters");
+				return OxTrustConstants.RESULT_FAILURE;
+			}
+
 			if (!userNameIsUniqAtCreationTime(this.person.getUid())) {
 				facesMessages.add(FacesMessage.SEVERITY_ERROR, "#{msg['UpdatePersonAction.faileAddUserUidExist']} %s",
 						this.person.getUid());
@@ -651,6 +656,14 @@ public class UpdatePersonAction implements Serializable {
 		}
 	}
 
+	public boolean isValidPassword() {
+		return isValid(this.password) && isValid(this.confirmPassword);
+	}
+
+	private boolean isValid(String password) {
+		return password != null && password.length() >= 3 && password.length() < 60;
+	}
+
 	public void removePairWiseIdentifier(GluuUserPairwiseIdentifier current) {
 		this.userPairWideIdentifiers.remove(current);
 		boolean result = pairwiseIdService.removePairWiseIdentifier(this.person, current);
@@ -834,12 +847,12 @@ public class UpdatePersonAction implements Serializable {
 	}
 
 	public String getClientName(String inum) {
-        OxAuthClient result=clientService.getClientByInum(inum, null);
-        if(result!=null) {
-        	return result.getDisplayName();
-        }else {
-        	return "";
-        }
+		OxAuthClient result = clientService.getClientByInum(inum, null);
+		if (result != null) {
+			return result.getDisplayName();
+		} else {
+			return "";
+		}
 	}
 
 }
