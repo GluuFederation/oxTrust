@@ -39,6 +39,7 @@ $idpEncryptionCertificate
         <SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST-SimpleSign" Location="$idpHost/idp/profile/SAML2/POST-SimpleSign/SLO"/>
         <SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP" Location="$idpHost/idp/profile/SAML2/SOAP/SLO"/>
         
+        <NameIDFormat>urn:mace:shibboleth:1.0:nameIdentifier</NameIDFormat>
         <NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</NameIDFormat>
         <NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:persistent</NameIDFormat>
         
@@ -75,9 +76,13 @@ $idpEncryptionCertificate
             </ds:KeyInfo>
         </KeyDescriptor>
 
+        <AttributeService Binding="urn:oasis:names:tc:SAML:1.0:bindings:SOAP-binding"
+                          Location="$idpHost/idp/profile/SAML1/SOAP/AttributeQuery"/>
+
         <AttributeService Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP"
                           Location="$idpHost/idp/profile/SAML2/SOAP/AttributeQuery"/>
 
+        <NameIDFormat>urn:mace:shibboleth:1.0:nameIdentifier</NameIDFormat>
         <NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</NameIDFormat>
         <NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:persistent</NameIDFormat>
 
