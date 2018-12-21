@@ -6,21 +6,6 @@
 
 package org.gluu.oxtrust.action;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.regex.Pattern;
-
-import javax.enterprise.context.ConversationScoped;
-import javax.faces.application.FacesMessage;
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
@@ -46,6 +31,21 @@ import org.xdi.util.INumGenerator;
 import org.xdi.util.OxConstants;
 import org.xdi.util.StringHelper;
 
+import javax.enterprise.context.ConversationScoped;
+import javax.faces.application.FacesMessage;
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.regex.Pattern;
+
 /**
  * Add/Modify custom script configurations
  * 
@@ -60,7 +60,12 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 
 	private static final Pattern NAME_PATTERN = Pattern.compile("^[a-zA-Z0-9_-]+$");
 
-	@Inject
+    private static final String STR_RESERVED_NAME_ERR = "'%s' is reserved script name";
+
+    private static final String STR_INVALID_SCRIPT_NAME_ERR = "'%s' is invalid script name. Only alphabetic, numeric and underscore characters are allowed in Script Name";
+
+
+    @Inject
 	private Logger log;
 
 	@Inject
@@ -91,34 +96,13 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 		}
 		
 		CustomScriptType[] allowedCustomScriptTypes = this.applianceService.getCustomScriptTypes();
-
-		this.customScriptsByTypes = new HashMap<CustomScriptType, List<CustomScript>>();
-		for (CustomScriptType customScriptType : allowedCustomScriptTypes) {
-			this.customScriptsByTypes.put(customScriptType, new ArrayList<CustomScript>());
-		}
+        this.customScriptsByTypes = new HashMap<CustomScriptType, List<CustomScript>>();
 
 		try {
-			List<CustomScript> customScripts = customScriptService.findCustomScripts(Arrays.asList(allowedCustomScriptTypes));
-			
-			for (CustomScript customScript : customScripts) {
-				CustomScriptType customScriptType = customScript.getScriptType();
-				List<CustomScript> customScriptsByType = this.customScriptsByTypes.get(customScriptType);
-				
-				CustomScript typedCustomScript = customScript;
-				if (CustomScriptType.PERSON_AUTHENTICATION == customScriptType) {
-					typedCustomScript = new AuthenticationCustomScript(customScript);
-				}
 
-				if (typedCustomScript.getConfigurationProperties() == null) {
-					typedCustomScript.setConfigurationProperties(new ArrayList<SimpleExtendedCustomProperty>());
-				}
-				
-				if (typedCustomScript.getModuleProperties() == null) {
-					typedCustomScript.setModuleProperties(new ArrayList<SimpleCustomProperty>());
-				}
+            final List<CustomScript> customScripts = customScriptService.findCustomScripts(Arrays.asList(allowedCustomScriptTypes));
+			customScriptsByTypes = loadScriptsMap(allowedCustomScriptTypes, customScripts );
 
-				customScriptsByType.add(typedCustomScript);
-			}
 		} catch (Exception ex) {
 			log.error("Failed to load custom scripts ", ex);
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to load custom scripts");
@@ -133,87 +117,151 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
+	public static Map<CustomScriptType, List<CustomScript>> loadScriptsMap(CustomScriptType[] allowedCustomScriptTypes, List<CustomScript> customScriptList) {
+
+		final Map<CustomScriptType, List<CustomScript>> customScriptsByTypes = new HashMap<CustomScriptType, List<CustomScript>>();
+
+		for (CustomScriptType customScriptType : allowedCustomScriptTypes) {
+			customScriptsByTypes.put(customScriptType, new ArrayList<CustomScript>());
+		}
+
+		for (CustomScript customScript : customScriptList) {
+			CustomScriptType customScriptType = customScript.getScriptType();
+			List<CustomScript> customScriptsByType = customScriptsByTypes.get(customScriptType);
+
+			CustomScript typedCustomScript = customScript;
+			if (CustomScriptType.PERSON_AUTHENTICATION == customScriptType) {
+				typedCustomScript = new AuthenticationCustomScript(customScript);
+			}
+
+			if (typedCustomScript.getConfigurationProperties() == null) {
+				typedCustomScript.setConfigurationProperties(new ArrayList<SimpleExtendedCustomProperty>());
+			}
+
+			if (typedCustomScript.getModuleProperties() == null) {
+				typedCustomScript.setModuleProperties(new ArrayList<SimpleCustomProperty>());
+			}
+
+			customScriptsByType.add(typedCustomScript);
+		}
+		return customScriptsByTypes;
+	}
+
 	public String save() {
 		try {
-			List<CustomScript> oldCustomScripts = customScriptService.findCustomScripts(Arrays.asList(this.applianceService.getCustomScriptTypes()), "dn", "inum");
 
-			List<String> updatedInums = new ArrayList<String>();
+			final List<CustomScript> oldCustomScripts = customScriptService.findCustomScripts(Arrays.asList(this.applianceService.getCustomScriptTypes()), "dn", "inum");
 
-			for (Entry<CustomScriptType, List<CustomScript>> customScriptsByType : this.customScriptsByTypes.entrySet()) {
-				List<CustomScript> customScripts = customScriptsByType.getValue();
+            final Set<Entry<CustomScriptType, List<CustomScript>>> scriptByTypeEntrySet = this.customScriptsByTypes.entrySet();
 
-				for (CustomScript customScript : customScripts) {
-					String configId = customScript.getName();
-					if (StringHelper.equalsIgnoreCase(configId, OxConstants.SCRIPT_TYPE_INTERNAL_RESERVED_NAME)) {
-						facesMessages.add(FacesMessage.SEVERITY_ERROR, "'%s' is reserved script name", configId);
-						return OxTrustConstants.RESULT_FAILURE;
-					}
-					
-					boolean nameValidation = NAME_PATTERN.matcher(customScript.getName()).matches();
-                    if (!nameValidation) {
-                        facesMessages.add(FacesMessage.SEVERITY_ERROR, "'%s' is invalid script name. Only alphabetic, numeric and underscore characters are allowed in Script Name", configId);
-                        return OxTrustConstants.RESULT_FAILURE;
-                    }
+            final List<String> updatedInums = saveCustomScriptList(scriptByTypeEntrySet, organizationService, customScriptService);
 
-                    customScript.setRevision(customScript.getRevision() + 1);
+            removeOldCustomScripts(oldCustomScripts, updatedInums, customScriptService);
 
-					boolean update = true;
-					String dn = customScript.getDn();
-					String customScriptId = customScript.getInum();
-					if (StringHelper.isEmpty(dn)) {
-						String basedInum = organizationService.getOrganizationInum();
-						customScriptId = basedInum + "!" + INumGenerator.generate(2);
-						dn = customScriptService.buildDn(customScriptId);
-	
-						customScript.setDn(dn);
-						customScript.setInum(customScriptId);
-						update = false;
-					};
 
-					customScript.setDn(dn);
-					customScript.setInum(customScriptId);
-					
-					if (ScriptLocationType.LDAP == customScript.getLocationType()) {
-						customScript.removeModuleProperty(CustomScript.LOCATION_PATH_MODEL_PROPERTY);
-					}
-					
-					if ((customScript.getConfigurationProperties() != null) && (customScript.getConfigurationProperties().size() == 0)) {
-						customScript.setConfigurationProperties(null);
-					}
-					
-					if ((customScript.getConfigurationProperties() != null) && (customScript.getModuleProperties().size() == 0)) {
-						customScript.setModuleProperties(null);
-					}
-					
-					updatedInums.add(customScriptId);
-	
-					if (update) {
-						customScriptService.update(customScript);
-					} else {
-						customScriptService.add(customScript);
-					}
-				}
-			}
-			
-			// Remove removed scripts
-			for (CustomScript oldCustomScript : oldCustomScripts) {
-				if (!updatedInums.contains(oldCustomScript.getInum())) {
-					customScriptService.remove(oldCustomScript);
-				}
-			}
-		} catch (BasePersistenceException ex) {
+        } catch (BasePersistenceException ex) {
+
 			log.error("Failed to update custom scripts", ex);
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update custom script configuration");
-
 			return OxTrustConstants.RESULT_FAILURE;
-		}
+
+		} catch (IllegalArgumentException ex) {
+
+		    log.error(ex.getMessage(), ex);
+            facesMessages.add(FacesMessage.SEVERITY_ERROR, ex.getMessage());
+		    return OxTrustConstants.RESULT_FAILURE;
+
+        }
 
 		facesMessages.add(FacesMessage.SEVERITY_INFO, "Custom script configuration updated successfully");
 
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	public String cancel() throws Exception {
+    /**
+     *
+     * @param scriptByTypeEntrySet
+     * @param organizationService
+     * @param customScriptService
+     * @return
+     */
+    public static List<String> saveCustomScriptList( Set<Entry<CustomScriptType, List<CustomScript>>> scriptByTypeEntrySet, OrganizationService organizationService, AbstractCustomScriptService customScriptService) {
+        List<String> updatedInums = new ArrayList<String>();
+
+        for (Entry<CustomScriptType, List<CustomScript>> customScriptsByType : scriptByTypeEntrySet) {
+            List<CustomScript> customScripts = customScriptsByType.getValue();
+
+            for (CustomScript customScript : customScripts) {
+                validateScriptName(customScript.getName());
+                saveScript(updatedInums, customScript, organizationService, customScriptService);
+            }
+        }
+
+        return updatedInums;
+    }
+
+    private static boolean isValidName(String configId) {
+
+	    if (configId == null) throw new IllegalArgumentException("Custom script name is null");
+
+        return NAME_PATTERN.matcher(configId).matches();
+    }
+
+    public static boolean isReservedName(String configId) {
+
+        return StringHelper.equalsIgnoreCase(configId, OxConstants.SCRIPT_TYPE_INTERNAL_RESERVED_NAME);
+    }
+
+    public static void saveScript(List<String> updatedInums, CustomScript customScript, OrganizationService organizationService, AbstractCustomScriptService customScriptService) {
+        customScript.setRevision(customScript.getRevision() + 1);
+
+        boolean update = true;
+        String dn = customScript.getDn();
+        String customScriptId = customScript.getInum();
+        if (StringHelper.isEmpty(dn)) {
+            String basedInum = organizationService.getOrganizationInum();
+            customScriptId = basedInum + "!" + INumGenerator.generate(2);
+            dn = customScriptService.buildDn(customScriptId);
+
+            customScript.setDn(dn);
+            customScript.setInum(customScriptId);
+            update = false;
+        }
+
+        customScript.setDn(dn);
+        customScript.setInum(customScriptId);
+
+        if (ScriptLocationType.LDAP == customScript.getLocationType()) {
+            customScript.removeModuleProperty(CustomScript.LOCATION_PATH_MODEL_PROPERTY);
+        }
+
+        if ((customScript.getConfigurationProperties() != null) && (customScript.getConfigurationProperties().size() == 0)) {
+            customScript.setConfigurationProperties(null);
+        }
+
+        if ((customScript.getConfigurationProperties() != null) && (customScript.getModuleProperties().size() == 0)) {
+            customScript.setModuleProperties(null);
+        }
+
+        updatedInums.add(customScriptId);
+
+        if (update) {
+            customScriptService.update(customScript);
+        } else {
+            customScriptService.add(customScript);
+        }
+    }
+
+    public static void removeOldCustomScripts(List<CustomScript> oldCustomScripts, List<String> updatedInums, AbstractCustomScriptService customScriptService) {
+        // Remove removed scripts
+        for (CustomScript oldCustomScript : oldCustomScripts) {
+            if (!updatedInums.contains(oldCustomScript.getInum())) {
+                customScriptService.remove(oldCustomScript);
+            }
+        }
+    }
+
+    public String cancel() throws Exception {
 		facesMessages.add(FacesMessage.SEVERITY_INFO, "Custom script configuration not updated");
 
 		conversationService.endConversation();
@@ -229,7 +277,7 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 		return "c" + System.identityHashCode(obj) + "Id";
 	}
 
-	public void addCustomScript(CustomScriptType scriptType) {
+    public void addCustomScript(CustomScriptType scriptType) {
 		List<CustomScript> customScriptsByType = this.customScriptsByTypes.get(scriptType);
 
 		CustomScript customScript;
@@ -250,7 +298,7 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 		customScript.setConfigurationProperties(new ArrayList<SimpleExtendedCustomProperty>());
 
 		customScriptsByType.add(customScript);
-	}
+    }
 
 	public void removeCustomScript(CustomScript removeCustomScript) {
 		for (Entry<CustomScriptType, List<CustomScript>> customScriptsByType : this.customScriptsByTypes.entrySet()) {
@@ -315,5 +363,19 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 	public boolean isInitialized() {
 		return initialized;
 	}
+
+	public static void validateScriptName(String configId) {
+
+		if (isReservedName(configId)) {
+            String errMsg = String.format(STR_RESERVED_NAME_ERR, configId);
+            throw new IllegalArgumentException(errMsg);
+        }
+
+        boolean nameValidation = isValidName(configId);
+        if (!nameValidation) {
+            String errMsg = String.format(STR_INVALID_SCRIPT_NAME_ERR, configId);
+            throw new IllegalArgumentException(errMsg);
+        }
+    }
 
 }
