@@ -214,7 +214,7 @@ public class ApplianceService implements Serializable {
 	public CustomScriptType[] getCustomScriptTypes() {
 		return new CustomScriptType[] { CustomScriptType.PERSON_AUTHENTICATION, CustomScriptType.CONSENT_GATHERING, CustomScriptType.UPDATE_USER,
 				CustomScriptType.USER_REGISTRATION, CustomScriptType.CLIENT_REGISTRATION, CustomScriptType.DYNAMIC_SCOPE, CustomScriptType.ID_GENERATOR,
-				CustomScriptType.CACHE_REFRESH, CustomScriptType.UMA_RPT_POLICY, CustomScriptType.UMA_CLAIMS_GATHERING, CustomScriptType.INTROSPECTION, CustomScriptType.APPLICATION_SESSION, CustomScriptType.SCIM };
+				CustomScriptType.CACHE_REFRESH, CustomScriptType.UMA_RPT_POLICY, CustomScriptType.UMA_CLAIMS_GATHERING, CustomScriptType.INTROSPECTION, CustomScriptType.RESOURCE_OWNER_PASSWORD_CREDENTIALS, CustomScriptType.APPLICATION_SESSION, CustomScriptType.SCIM };
 	}
 
 	public void encryptedSmtpPassword(SmtpConfiguration smtpConfiguration) {
