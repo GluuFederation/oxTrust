@@ -204,7 +204,7 @@ public class RegisterPersonAction implements Serializable {
 		if (OxTrustConstants.RESULT_SUCCESS.equals(outcome)) {
 			setPostRegistrationInformation("You successfully registered. Enjoy!");
 		} else if (OxTrustConstants.RESULT_DISABLED.equals(outcome)) {
-			setPostRegistrationInformation("You successfully registered. But your account is disabled. Please contact site administration.");
+			setPostRegistrationInformation("You successfully registered. Please contact site administration to enable your account.");
 		} else if (OxTrustConstants.RESULT_FAILURE.equals(outcome)) {
 			facesMessages.add(FacesMessage.SEVERITY_ERROR,
 					"Failed to register new user. Please make sure you are not registering a duplicate account or try another username.");
