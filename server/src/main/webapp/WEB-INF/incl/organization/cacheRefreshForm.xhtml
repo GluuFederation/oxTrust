@@ -326,6 +326,7 @@
 						<h:commandButton styleClass="btn btn-primary cancelButton"
 							value="#{msg['organization.cancel']}"
 							action="#{configureCacheRefreshAction.cancel}" immediate="true"
+							onclick="lock();" ondbclick="lock();" oncomplete="unlock();"
 							style="margin-left:5px" />
 						<h:commandButton styleClass="btn btn-primary validateButton"
 							value="#{msg['organization.update']} &amp; #{msg['organization.validateScript']}"

@@ -307,9 +307,7 @@ public class ConfigureCacheRefreshAction
 
 	public String cancel() {
 		facesMessages.add(FacesMessage.SEVERITY_INFO, "Cache configuration update were canceled");
-
 		conversationService.endConversation();
-
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
