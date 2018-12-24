@@ -49,6 +49,7 @@
                                                  value="#{msg['updateorganization.update']}"/>
                                 <h:commandButton action="#{updateOrganizationAction.cancel}" immediate="true"
                                                  style="margin-left:5px" styleClass="btn btn-primary"
+                                                 onclick="lock();" ondbclick="lock();" oncomplete="unlock();"
                                                  value="#{msg['updateorganization.cancel']}"/>
                             </h:panelGroup>
                         </div>
