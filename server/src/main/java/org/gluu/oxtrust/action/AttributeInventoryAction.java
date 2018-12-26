@@ -130,14 +130,10 @@ public class AttributeInventoryAction implements Serializable {
 				}
 			}
 			if (searchPattern != null && !searchPattern.isEmpty() && isShowInactive()) {
-				log.info("######################################");
-				log.info("SEARCH ATTRIBUTES");
 				this.attributeList = attributeService.searchAttributes(this.searchPattern,
 						OxTrustConstants.searchPersonsSizeLimit);
 			}
 			if (searchPattern != null && !searchPattern.isEmpty() && !isShowInactive()) {
-				log.info("######################################");
-				log.info("SEARCH ATTRIBUTES");
 				this.activeAttributeList = attributeService.searchAttributes(this.searchPattern,
 						OxTrustConstants.searchPersonsSizeLimit);
 			}
