@@ -1313,20 +1313,20 @@
             "description": "Fido2 Configuration.",
             "type": "object",
             "properties": {
-            	"certFilesFolder": {
-                    "id": "certFilesFolder",
-                    "description": "Folder with certificates.",
+            	"authenticatorCertsFolder": {
+                    "id": "authenticatorCertsFolder",
+                    "description": "Authenticators certificates fodler.",
                     "type": "string",
                     "minLength": 1
                 },
-            	"mdsTocRootCertFile": {
-                    "id": "mdsTocRootCertFile",
-                    "description": "MDS TOC root certificate file.",
+            	"mdsCertsFolder": {
+                    "id": "mdsCertsFolder",
+                    "description": "MDS TOC root certificates folder.",
                     "type": "string",
                     "minLength": 1
                 },
-            	"mdsTocFilesFolder": {
-                    "id": "mdsTocFilesFolder",
+            	"mdsTocsFolder": {
+                    "id": "mdsTocsFolder",
                     "description": "MDS TOC files folder.",
                     "type": "string",
                     "minLength": 1
@@ -1356,9 +1356,9 @@
                     "exclusiveMaximum": false,
                     "exclusiveMinimum": false
                 },
-            	"certificationServerMetadataFolder": {
-                    "id": "certificationServerMetadataFolder",
-                    "description": "certificationServerMetadataFolder.",
+            	"serverMetadataFolder": {
+                    "id": "serverMetadataFolder",
+                    "description": "Authenticators metadata in json format. Example: virtual devices.",
                     "type": "string",
                     "minLength": 1
                 },
