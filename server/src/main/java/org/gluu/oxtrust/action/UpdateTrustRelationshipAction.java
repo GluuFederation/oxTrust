@@ -281,28 +281,35 @@ public class UpdateTrustRelationshipAction implements Serializable {
 	}
 
 	public String save() {
-		boolean currentUpdate = update;
-		String outcome = saveImpl();
+		try {
+			boolean currentUpdate = update;
+			String outcome = saveImpl();
 
-		if (currentUpdate) {
-			if (OxTrustConstants.RESULT_SUCCESS.equals(outcome)) {
-				facesMessages.add(FacesMessage.SEVERITY_INFO,
-						"Relationship '#{updateTrustRelationshipAction.trustRelationship.displayName}' updateted successfully'");
-			} else if (OxTrustConstants.RESULT_FAILURE.equals(outcome)) {
-				facesMessages.add(FacesMessage.SEVERITY_ERROR,
-						"Failed to update relationship '#{updateTrustRelationshipAction.trustRelationship.displayName}'");
+			if (currentUpdate) {
+				if (OxTrustConstants.RESULT_SUCCESS.equals(outcome)) {
+					facesMessages.add(FacesMessage.SEVERITY_INFO,
+							"Relationship '#{updateTrustRelationshipAction.trustRelationship.displayName}' updateted successfully'");
+				} else if (OxTrustConstants.RESULT_FAILURE.equals(outcome)) {
+					facesMessages.add(FacesMessage.SEVERITY_ERROR,
+							"Failed to update relationship '#{updateTrustRelationshipAction.trustRelationship.displayName}'");
+				}
+			} else {
+				if (OxTrustConstants.RESULT_SUCCESS.equals(outcome)) {
+					facesMessages.add(FacesMessage.SEVERITY_INFO,
+							"Relationship '#{updateTrustRelationshipAction.trustRelationship.displayName}' added successfully");
+					conversationService.endConversation();
+				} else if (OxTrustConstants.RESULT_FAILURE.equals(outcome)) {
+					facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new relationship");
+				}
 			}
-		} else {
-			if (OxTrustConstants.RESULT_SUCCESS.equals(outcome)) {
-				facesMessages.add(FacesMessage.SEVERITY_INFO,
-						"Relationship '#{updateTrustRelationshipAction.trustRelationship.displayName}' added successfully");
-				conversationService.endConversation();
-			} else if (OxTrustConstants.RESULT_FAILURE.equals(outcome)) {
-				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new relationship");
-			}
+
+			return outcome;
+		} catch (Exception e) {
+			log.info("", e);
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Error during update operation, check the TR status and metadata.");
+			return OxTrustConstants.RESULT_FAILURE;
 		}
 
-		return outcome;
 	}
 
 	public String saveImpl() {

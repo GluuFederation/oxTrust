@@ -188,7 +188,7 @@
 						
 						<ox:decorate
 								id="entityType" label="#{msg['trustmanager.entityType']}">
-								<h:selectOneMenu styleClass="form-control"
+								<h:selectOneMenu styleClass="rounded form-control"
 									value="#{_trustRelationship.entityType}"
 									required="true" id="entityTypeId" converter="omnifaces.GenericEnumConverter">
 									<f:selectItem noSelectionOption="true"  itemLabel=""/>
@@ -204,7 +204,7 @@
 						<h:panelGroup id="metadataType">
 						<a4j:region>	
 						<ox:decorate id="spMetaDataSourceType" label="#{msg['trustmanager.metadataLocation']}">
-								<h:selectOneMenu styleClass="form-control"
+								<h:selectOneMenu styleClass=" rounded form-control"
 									value="#{_trustRelationship.spMetaDataSourceType}" onchange="changeEvent(this)"
 									required="true" id="spMetaDataSourceTypeId" converter="omnifaces.GenericEnumConverter">
 									<f:selectItem noSelectionOption="true"  itemLabel="Metadata type"/>
@@ -232,7 +232,7 @@
 										<ox:decorate 
 											id="spMetaDataSourceTypeFederation"
 											 label="#{msg['trustmanager.federationName']}">
-											<h:selectOneMenu styleClass="form-control"
+											<h:selectOneMenu styleClass="rounded form-control"
 												value="#{_trustRelationship.containerFederation}"
 												id="spMetaDataSourceTypeFederationId"
 												 required="true">
