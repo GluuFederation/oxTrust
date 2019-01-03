@@ -497,21 +497,21 @@
 										rowClasses="order-table-odd-row,order-table-even-row"
 										rendered="#{updatePersonAction.userPairWideIdentifiers.size() gt 0}">
 										<h:column>
-											<f:facet name="header">PairWise ID</f:facet>
+											<f:facet name="header">Pairwise ID</f:facet>
 											<h:panelGroup id="pairWideId"
 												rendered="true">
 											 #{_value.oxId}											
 											</h:panelGroup>
 										</h:column>
 										<h:column>
-											<f:facet name="header">OIDC Client</f:facet>
+											<f:facet name="header">Client</f:facet>
 											<h:panelGroup id="pairWideClientId"
 												rendered="true">
 											 #{updatePersonAction.getClientName(_value.clientId)}											
 											</h:panelGroup>
 										</h:column>
 										<h:column>
-											<f:facet name="header">SP Hostname</f:facet>
+											<f:facet name="header">Hostname</f:facet>
 											<h:panelGroup id="pairWideSp"
 												rendered="true">
 											 #{_value.sp}											
