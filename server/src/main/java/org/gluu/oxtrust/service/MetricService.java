@@ -68,17 +68,31 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 
 	@Inject
 	private Logger logger;
+	
+	private String detectedBaseDn;
 
 	@Inject @Named(AppInitializer.LDAP_METRIC_ENTRY_MANAGER_NAME) @ReportMetric 
     private LdapEntryManager ldapMetricEntryManager;
 
 	public void initTimer() {
+	    this.detectedBaseDn = detectBaseDn();
 		initTimer(this.appConfiguration.getMetricReporterInterval());
+	}
+	
+	private String detectBaseDn() {
+	    boolean hasMetricBackend = containsBranch("o=metric");
+	    if (hasMetricBackend) {
+	        return "ou=statistic,o=metric";
+	    } else {
+	        String orgDn = organizationService.getDnForOrganization();
+	        String baseDn = String.format("ou=metric,%s", orgDn);
+	        return baseDn;
+	    }
 	}
 
 	@Override
 	public String baseDn() {
-		return "ou=statistic,o=metric";
+		return detectedBaseDn;
 	}
 
 	@Override
