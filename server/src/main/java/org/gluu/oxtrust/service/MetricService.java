@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import javax.ejb.Stateless;
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -25,9 +25,9 @@ import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.model.AuthenticationChartDto;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
+import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.ApplicationType;
-import org.slf4j.Logger;
 import org.xdi.model.metric.MetricType;
 import org.xdi.model.metric.counter.CounterMetricEntry;
 import org.xdi.model.metric.ldap.MetricEntry;
@@ -40,7 +40,7 @@ import org.xdi.service.metric.inject.ReportMetric;
  * @author Yuriy Movchan Date: 06/28/2015
  * @author Rahat Ali Date: 07/30/2015
  */
-@Stateless
+@ApplicationScoped
 @Named(MetricService.METRIC_SERVICE_COMPONENT_NAME)
 public class MetricService extends org.xdi.service.metric.MetricService {
 
