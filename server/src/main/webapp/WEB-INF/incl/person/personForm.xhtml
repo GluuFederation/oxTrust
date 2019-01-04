@@ -276,7 +276,7 @@
 														</h:inputText>
 
 														<h:selectOneMenu
-															styleClass="form-control #{_custAttr.metadata.displayName}"
+															styleClass="rounded form-control #{_custAttr.metadata.displayName}"
 															value="#{updatePersonAction.gluuStatus}"
 															required="#{_mustEnter}" id="statusId"
 															rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.dataType.value eq 'boolean') and (_custAttr.metadata.displayName eq 'User Status') }">
@@ -287,7 +287,7 @@
 																converterId="org.gluu.jsf2.converter.EnumConverter" />
 														</h:selectOneMenu>
 														<h:selectOneMenu
-															styleClass="form-control #{_custAttr.metadata.displayName}"
+															styleClass="rounded form-control #{_custAttr.metadata.displayName}"
 															value="#{_custAttr.value}" required="#{_mustEnter}"
 															id="GenderId"
 															rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'Gender, male or female') }">
@@ -295,7 +295,7 @@
 															<f:selectItem itemValue="male" itemLabel="male" />
 														</h:selectOneMenu>
 														<h:selectOneMenu
-															styleClass="form-control #{_custAttr.metadata.displayName}"
+															styleClass="rounded form-control #{_custAttr.metadata.displayName}"
 															value="#{_custAttr.booleanValues[_valueIdx]}"
 															required="#{_mustEnter}"
 															id="custId_boolean#{_custAttrIdx}"
