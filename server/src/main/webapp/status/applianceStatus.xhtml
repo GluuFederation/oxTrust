@@ -8,6 +8,9 @@
 	<f:metadata>
 		<f:viewAction
 			action="#{permissionService.hasPermission('configuration', 'access')}" />
+		<f:viewAction action="#{conversationService.initConversation}" />
+		<f:viewAction action="#{applianceStatusAction.init}"
+			onPostback="false" />
 	</f:metadata>
 
 	<ui:define name="body">
