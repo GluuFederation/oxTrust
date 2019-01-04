@@ -113,7 +113,7 @@
 																	styleClass="form-control"
 																	rendered="#{_custAttr.userCanEdit and _custAttr.metadata.displayName ne 'Gender, male or female' and permissionService.hasPermission(applianceService.appliance, 'profile_management')}"
 																	value="#{_custAttr.value}" />
-																<h:selectOneMenu value="#{_custAttr.value}" styleClass="form-control" tabindex="1"
+																<h:selectOneMenu value="#{_custAttr.value}" styleClass="rounded form-control" tabindex="1"
 																  rendered="#{_custAttr.userCanEdit and _custAttr.metadata.displayName eq 'Gender, male or female' and permissionService.hasPermission(applianceService.appliance, 'profile_management')}">
 																	<f:selectItem itemValue="female" itemLabel="female" />
 																	<f:selectItem itemValue="male" itemLabel="male" />
