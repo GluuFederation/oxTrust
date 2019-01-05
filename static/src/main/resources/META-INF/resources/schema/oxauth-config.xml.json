@@ -1362,8 +1362,8 @@
                     "type": "string",
                     "minLength": 1
                 },
-                "disable": {
-                    "id": "disable",
+                "disableFido2": {
+                    "id": "disableFido2",
                     "description": "Enable/Disable Fido2 endpoints.",
                     "type": "boolean"
                 }
