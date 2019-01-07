@@ -5,8 +5,11 @@
  */
 package org.gluu.oxtrust.action;
 
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.io.Serializable;
+import java.nio.file.Files;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -15,10 +18,14 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.Size;
 
+import org.apache.commons.io.IOUtils;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.SSLService;
@@ -46,7 +53,8 @@ public class CertificateManagementAction implements Serializable {
 
 	private static final String OPENDJ_CERTIFICATE_FILE = "/etc/certs/opendj.crt";
 	private static final String HTTPD_CERTIFICATE_FILE = "/etc/certs/httpd.crt";
-	private static final String SHIB_IDP_CERTIFICATE_FILE = "/etc/certs/shibIDP.crt";
+	private static final String IDP_SIGNING_CERTIFICATE_FILE = "/etc/certs/idp-signing.crt";
+	private static final String IDP_ENCRYPT_CERTIFICATE_FILE = "/etc/certs/idp-encryption.crt";
 
 	@Inject
 	private Logger log;
@@ -173,27 +181,31 @@ public class CertificateManagementAction implements Serializable {
 			try {
 				X509Certificate openDJCerts[] = SSLService
 						.loadCertificates(new FileInputStream(OPENDJ_CERTIFICATE_FILE));
-				for (X509Certificate openDJCert : openDJCerts)
-					internalCertificates.add(new X509CertificateShortInfo("OpenDJ SSL", openDJCert));
-			} catch (Exception e) {
-				log.error("Certificate load exception", e);
-			}
-			try {
-				X509Certificate httpdCerts[] = SSLService.loadCertificates(new FileInputStream(HTTPD_CERTIFICATE_FILE));
-				for (X509Certificate httpdCert : httpdCerts)
-					internalCertificates.add(new X509CertificateShortInfo("HTTPD SSL", httpdCert));
-			} catch (Exception e) {
-				log.error("Certificate load exception", e);
-			}
-			try {
-				X509Certificate shibIDPCerts[] = SSLService
-						.loadCertificates(new FileInputStream(SHIB_IDP_CERTIFICATE_FILE));
-				for (X509Certificate shibIDPCert : shibIDPCerts)
+				for (X509Certificate openDJCert : openDJCerts) {
 					internalCertificates
-							.add(new X509CertificateShortInfo("Shibboleth IDP SAML Certificate", shibIDPCert));
+							.add(new X509CertificateShortInfo(OPENDJ_CERTIFICATE_FILE, "OpenDJ SSL", openDJCert));
+				}
+				X509Certificate httpdCerts[] = SSLService.loadCertificates(new FileInputStream(HTTPD_CERTIFICATE_FILE));
+				for (X509Certificate httpdCert : httpdCerts) {
+					internalCertificates
+							.add(new X509CertificateShortInfo(HTTPD_CERTIFICATE_FILE, "HTTPD SSL", httpdCert));
+				}
+				X509Certificate idpSigingCerts[] = SSLService
+						.loadCertificates(new FileInputStream(IDP_SIGNING_CERTIFICATE_FILE));
+				for (X509Certificate idpSigingCert : idpSigingCerts) {
+					internalCertificates.add(
+							new X509CertificateShortInfo(IDP_SIGNING_CERTIFICATE_FILE, "IDP SIGNING", idpSigingCert));
+				}
+				X509Certificate idpEncryptionCerts[] = SSLService
+						.loadCertificates(new FileInputStream(IDP_ENCRYPT_CERTIFICATE_FILE));
+				for (X509Certificate idpEncryptionCert : idpEncryptionCerts) {
+					internalCertificates.add(new X509CertificateShortInfo(IDP_ENCRYPT_CERTIFICATE_FILE,
+							"IDP ENCRYPTION", idpEncryptionCert));
+				}
 			} catch (Exception e) {
 				log.error("Certificate load exception", e);
 			}
+
 		} catch (Exception e) {
 			log.error("Load internalCertificates configuration exception", e);
 		}
@@ -324,5 +336,24 @@ public class CertificateManagementAction implements Serializable {
 	 */
 	public void setSearchObsoleteWarning(boolean searchObsoleteWarning) {
 		this.searchObsoleteWarning = searchObsoleteWarning;
+	}
+
+	public void download(X509CertificateShortInfo cert) {
+		FacesContext facesContext = FacesContext.getCurrentInstance();
+		HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
+		response.setContentType("text/plain");
+		String header = "attachment; filename=\"" + cert.getName() + "\"";
+		response.addHeader("Content-disposition", header);
+		try {
+			ServletOutputStream os = response.getOutputStream();
+			File file = new File(cert.getPath());
+			InputStream in = Files.newInputStream(file.toPath());
+			IOUtils.copy(in, os);
+			os.flush();
+			os.close();
+			facesContext.responseComplete();
+		} catch (Exception e) {
+			log.error("", e);
+		}
 	}
 }

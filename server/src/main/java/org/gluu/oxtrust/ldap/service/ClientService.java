@@ -236,9 +236,14 @@ public class ClientService implements Serializable {
      */
 
     public OxAuthClient getClientByDn(String Dn) {
-        OxAuthClient result = ldapEntryManager.find(OxAuthClient.class, Dn);
-
-        return result;
+    	try {
+    		 OxAuthClient result = ldapEntryManager.find(OxAuthClient.class, Dn);
+    	        return result;
+    	}catch (Exception e) {
+			log.warn("Error retrieving client "+Dn);
+			return null;
+		}
+       
     }
 
     /**

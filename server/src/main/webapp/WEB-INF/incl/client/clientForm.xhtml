@@ -117,8 +117,8 @@
 											<ox:decorate id="displayName"
 												label="#{msg['clientForm.clientName']}" leftClass="col-sm-3"
 												rightClass="col-sm-9">
-												<rich:inplaceInput value="#{_client.displayName}"
-													styleClass="clientNameTextBox"
+												<h:inputText value="#{_client.displayName}"
+													styleClass="clientNameTextBox" style="width:100%;"
 													requiredMessage="Please Enter the Client Name"
 													defaultLabel="click to enter the Client Name"
 													maxlength="60" required="true" id="displayNameId" />
@@ -437,7 +437,7 @@
 											<ox:decorate id="logoUri"
 												label="#{msg['clientForm.logoURI']}" leftClass="col-sm-3"
 												rightClass="col-sm-9">
-												<rich:inplaceInput value="#{_client.logoUri}"
+												<h:inputText value="#{_client.logoUri}" style="width:100%;"
 													defaultLabel="click to enter a logo for the Client application"
 													maxlength="60" inputWidth="695" required="false"
 													id="logoUriId" />
@@ -445,7 +445,7 @@
 											<ox:decorate id="policyUri"
 												label="#{msg['clientForm.policyUri']}" leftClass="col-sm-3"
 												rightClass="col-sm-9">
-												<rich:inplaceInput value="#{_client.policyUri}"
+												<h:inputText value="#{_client.policyUri}" style="width:100%;"
 													defaultLabel="click to enter the Policy URI" maxlength="60"
 													inputWidth="695" required="false" id="policyUriId" />
 											</ox:decorate>
@@ -459,19 +459,32 @@
 								<h:panelGroup columns="1" width="100%">
 									<div class="row" style="margin-left: 5px; margin-right: 5px;">
 										<div class="col-sm-6 col-lg-6" style="padding: 0px;">
-											<ox:decorate id="accessTokenAsJwt"
-												label="#{msg['clientForm.accessTokenAsJwt']}"
-												leftClass="col-sm-6" rightClass="col-sm-6">
-												<h:selectOneMenu id="accessTokenAsJwtId"
-													styleClass="col-sm-9 form-control rounded"
-													value="#{_client.accessTokenAsJwt}" required="false">
-													<f:selectItems
-														value="#{organizationService.javaBooleanSelectionTypes}"
-														var="_type" itemLabel="#{_type.displayName}" />
-													<f:converter
-														converterId="org.gluu.jsf2.converter.EnumConverter" />
-												</h:selectOneMenu>
-											</ox:decorate>
+                                            <ox:decorate id="accessTokenAsJwt"
+                                                         label="#{msg['clientForm.accessTokenAsJwt']}"
+                                                         leftClass="col-sm-6" rightClass="col-sm-6">
+                                                <h:selectOneMenu id="accessTokenAsJwtId"
+                                                                 styleClass="col-sm-9 form-control rounded"
+                                                                 value="#{_client.accessTokenAsJwt}" required="false">
+                                                    <f:selectItems
+                                                            value="#{organizationService.javaBooleanSelectionTypes}"
+                                                            var="_type" itemLabel="#{_type.displayName}" />
+                                                    <f:converter
+                                                            converterId="org.gluu.jsf2.converter.EnumConverter" />
+                                                </h:selectOneMenu>
+                                            </ox:decorate>
+                                            <ox:decorate id="rptAsJwt"
+                                                         label="#{msg['clientForm.rptAsJwt']}"
+                                                         leftClass="col-sm-6" rightClass="col-sm-6">
+                                                <h:selectOneMenu id="rptAsJwtId"
+                                                                 styleClass="col-sm-9 form-control rounded"
+                                                                 value="#{_client.rptAsJwt}" required="false">
+                                                    <f:selectItems
+                                                            value="#{organizationService.javaBooleanSelectionTypes}"
+                                                            var="_type" itemLabel="#{_type.displayName}" />
+                                                    <f:converter
+                                                            converterId="org.gluu.jsf2.converter.EnumConverter" />
+                                                </h:selectOneMenu>
+                                            </ox:decorate>
 											<ox:decorate id="logoutSessionRequired"
 												label="#{msg['clientForm.logoutSessionRequired']}"
 												leftClass="col-sm-6" rightClass="col-sm-6">
@@ -771,7 +784,7 @@
 												<ox:decorate id="clientUri"
 													label="#{msg['clientForm.clientUri']}" leftClass="col-sm-3"
 													rightClass="col-sm-9">
-													<rich:inplaceInput value="#{_client.clientUri}"
+													<h:inputText value="#{_client.clientUri}" style="width:100%;"
 														defaultLabel="click to enter the home page of the Client"
 														maxlength="60" inputWidth="695" required="false"
 														id="clientUriId" />
@@ -779,15 +792,15 @@
 												<ox:decorate id="tosUri"
 													label="#{msg['clientForm.termsOfServiceURI']}"
 													leftClass="col-sm-3" rightClass="col-sm-9">
-													<rich:inplaceInput value="#{_client.tosUri}"
+													<h:inputText value="#{_client.tosUri}" style="width:100%;"
 														defaultLabel="click to enter the TOS URI" maxlength="60"
 														inputWidth="695" required="false" id="tosUriId" />
 												</ox:decorate>
 												<ox:decorate id="idTokenTokenBindingCnf"
 													leftClass="col-sm-3" rightClass="col-sm-9"
 													label="#{msg['clientForm.idTokenTokenBindingCnf']}">
-													<rich:inplaceInput
-														value="#{_client.idTokenTokenBindingCnf}"
+													<h:inputText
+														value="#{_client.idTokenTokenBindingCnf}" style="width:100%;"
 														defaultLabel="click to enter the ID Token Confirmation Method for Token Binding"
 														maxlength="60" inputWidth="695" required="false"
 														id="idTokenTokenBindingCnfId" />
@@ -795,7 +808,7 @@
 												<ox:decorate id="sectorIdentifierUri" leftClass="col-sm-3"
 													rightClass="col-sm-9"
 													label="#{msg['clientForm.sectorIdentifierURI']}">
-													<rich:inplaceInput value="#{_client.sectorIdentifierUri}"
+													<h:inputText value="#{_client.sectorIdentifierUri}" style="width:100%;"
 														defaultLabel="click to enter the Sector Identifier URL"
 														maxlength="60" inputWidth="695" required="false"
 														id="sectorIdentifierUriId" />
@@ -804,7 +817,7 @@
 												<ox:decorate id="initiateLoginUri"
 													label="#{msg['clientForm.initiateLoginURI']}"
 													leftClass="col-sm-3" rightClass="col-sm-9">
-													<rich:inplaceInput value="#{_client.initiateLoginUri}"
+													<h:inputText value="#{_client.initiateLoginUri}" style="width:100%;"
 														defaultLabel="Enter an URI using the https scheme use to initiate a login by the RP"
 														maxlength="60" inputWidth="695" required="false"
 														id="initiateLoginUriId" />
@@ -812,15 +825,15 @@
 												<ox:decorate id="oxRefreshTokenLifetime"
 													leftClass="col-sm-3" rightClass="col-sm-9"
 													label="#{msg['clientForm.oxRefreshTokenLifetime']}">
-													<rich:inplaceInput
-														value="#{_client.oxRefreshTokenLifetime}"
+													<h:inputText
+														value="#{_client.oxRefreshTokenLifetime}" style="width:100%;"
 														defaultLabel="#{msg['clientForm.oxRefreshTokenLifetimeLabel']}"
 														maxlength="60" inputWidth="695" required="false"
 														id="oxRefreshTokenLifetimeId" />
 												</ox:decorate>
 												<ox:decorate id="oxdId" leftClass="col-sm-3"
 													rightClass="col-sm-9" label="#{msg['clientForm.oxdId']}">
-													<rich:inplaceInput value="#{_client.oxdId}"
+													<h:inputText value="#{_client.oxdId}" style="width:100%;"
 														defaultLabel="Enter a oxd Id for the Client application"
 														maxlength="60" inputWidth="64" required="false"
 														id="oxdIdId" />
@@ -828,7 +841,7 @@
 												<ox:decorate id="defaultMaxAge" leftClass="col-sm-3"
 													rightClass="col-sm-9"
 													label="#{msg['clientForm.defaultMaximumAuthenticationAge']}">
-													<rich:inplaceInput value="#{_client.defaultMaxAge}"
+													<h:inputText value="#{_client.defaultMaxAge}" style="width:100%;"
 														defaultLabel="Maximum Authentication Age (value in seconds)"
 														maxlength="60" inputWidth="695" required="false"
 														id="defaultMaxAgeId" />
@@ -836,7 +849,7 @@
 												<ox:decorate id="accessTokenLifetime" leftClass="col-sm-3"
 															 rightClass="col-sm-9"
 															 label="#{msg['clientForm.accessTokenLifetime']}">
-													<rich:inplaceInput value="#{_client.accessTokenLifetime}"
+													<h:inputText value="#{_client.accessTokenLifetime}" style="width:100%;"
 																	   defaultLabel="Client-specific access token expiration (value in seconds). Leave it to empty or zero to use the system default value."
 																	   maxlength="60" inputWidth="695" required="false"
 																	   id="accessTokenLifetime" />
@@ -844,7 +857,7 @@
 												<ox:decorate id="softwareId" leftClass="col-sm-3"
 															 rightClass="col-sm-9"
 															 label="#{msg['clientForm.softwareId']}">
-													<rich:inplaceInput value="#{_client.softwareId}"
+													<h:inputText value="#{_client.softwareId}" style="width:100%;"
 																	   defaultLabel="Unique identifier string (UUID) assigned by the client developer or software publisher to identify the client software."
 																	   maxlength="60" inputWidth="695" required="false"
 																	   id="softwareId" />
@@ -852,7 +865,7 @@
 												<ox:decorate id="softwareVersion" leftClass="col-sm-3"
 															 rightClass="col-sm-9"
 															 label="#{msg['clientForm.softwareVersion']}">
-													<rich:inplaceInput value="#{_client.softwareId}"
+													<h:inputText value="#{_client.softwareVersion}" style="width:100%;"
 																	   defaultLabel="Version identifier for the client software."
 																	   maxlength="60" inputWidth="695" required="false"
 																	   id="softwareVersion" />
@@ -1034,7 +1047,7 @@
 											<ox:decorate id="jwksUri"
 												label="#{msg['clientForm.jwksURI']}" leftClass="col-sm-3"
 												rightClass="col-sm-9">
-												<rich:inplaceInput value="#{_client.jwksUri}"
+												<h:inputText value="#{_client.jwksUri}" style="width:100%;"
 													defaultLabel="click to enter the URL for the Client's JSON Web Key Set"
 													maxlength="60" inputWidth="695" required="false"
 													id="jwksUriId" />

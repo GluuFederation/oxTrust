@@ -58,11 +58,11 @@
 									
 									
 								<a4j:commandButton value="#{msg['manageAuthentication.activate']}" action="#{_ldapConfig.setEnabled(true)}" rendered="#{not _ldapConfig.enabled}"
-							                    render="ldapManagementGroupId" limitRender="true" styleClass="btn btn-success buttonActivate"  style= "margin-left:20px;"/>
+							                    render="ldapManagementGroupId" limitRender="true" styleClass="btn btn-primary buttonActivate"  style= "margin-left:20px;"/>
 				                <a4j:commandButton value="#{msg['manageAuthentication.deactivate']}" action="#{_ldapConfig.setEnabled(false)}" rendered="#{_ldapConfig.enabled}"
-			                    render="ldapManagementGroupId" limitRender="true" immediate="true" styleClass="btn btn-success buttonDeActivate"  style= "margin-left:20px;"/>
+			                    render="ldapManagementGroupId" limitRender="true" immediate="true" styleClass="btn btn-primary buttonDeActivate"  style= "margin-left:20px;"/>
 			                    	
-								<a4j:commandLink style= "margin-left:5px;" styleClass="btn btn-success buttonTestConnection"
+								<a4j:commandLink style= "margin-left:5px;" styleClass="btn btn-primary buttonTestConnection"
 									value="#{msg['manageAuthentication.testLDAPConnection']}"
 									rendered="#{_ldapConfig.enabled}"
 									action="#{_action.testLdapConnection(_ldapConfig)}"/>
@@ -71,7 +71,7 @@
 							</rich:dataGrid>
 
 		                    <h:panelGroup layout="block" styleClass="addConfig">
-		                        <a4j:commandLink styleClass="btn btn-link addSourceLDAPServer" value="#{msg['organization.addSourceLDAPServer']}" action="#{_action.addSourceConfig()}" render="sourceConfigsId" execute="@this" style="margin-right:1100px;margin-top:50px;"/>
+		                        <a4j:commandLink styleClass="btn btn-primary addSourceLDAPServer" value="#{msg['organization.addSourceLDAPServer']}" action="#{_action.addSourceConfig()}" render="sourceConfigsId" execute="@this" style="margin-right:1100px;margin-top:50px;"/>
 		                    </h:panelGroup>
 
 							</h:panelGroup>
@@ -97,7 +97,7 @@
 									<ox:decorate
 										id="auntheticationMode" label="#{msg['manageAuthentication.authenticationMode']}">
 										<h:selectOneMenu value="#{_action.authenticationMode}"
-											styleClass="form-control defaultAcrSelectBox">
+											styleClass="rounded form-control defaultAcrSelectBox">
 											<f:selectItems
 												value="#{_action.personAuthenticationConfigurationNames}"
 												var="_name" itemLabel="#{_name}" />
@@ -107,7 +107,7 @@
 									<ox:decorate
 										id="oxTrustAuntheticationMode" label="#{msg['manageAuthentication.oxTrustAuthenticationMode']}">
 										<h:selectOneMenu value="#{_action.oxTrustAuthenticationMode}"
-											styleClass="form-control oxTrustAcrSelectBox">
+											styleClass="rounded form-control oxTrustAcrSelectBox">
 											<f:selectItems
 												value="#{_action.personAuthenticationConfigurationNames}"
 												var="_name" itemLabel="#{_name}" />
@@ -124,7 +124,7 @@
 
 						<ox:decorate
 									id="PassportEnabledState" label="#{msg['manageAuthentication.passportSupport']}">
-									<h:selectOneMenu value="#{_action.passportEnable}" styleClass="form-control passportEnableSelectBox"  
+									<h:selectOneMenu value="#{_action.passportEnable}" styleClass="rounded form-control passportEnableSelectBox"  
 										id="scimEnabledStateId">
 										<f:selectItems
 											value="#{organizationService.booleanSelectionTypes}"
@@ -132,13 +132,13 @@
 										<f:converter converterId="org.gluu.jsf2.converter.EnumConverter"/>
 									</h:selectOneMenu>
 						</ox:decorate>	
-						<hr></hr>					
+						<hr style="border: solid 1px green; margin-left: 10%; margin-right: 10%"></hr>					
 							
 	 					<h:panelGroup id="strategyId" rendered="#{_action.passportEnable.getValue()  eq 'enabled'}">
 		                <a4j:region>
 						<a4j:repeat value="#{_ldapPassport}" var="_passportConfig">
-						  <h:panelGroup layout="block" class="card-body #{(_passportConfig.strategy ne null) ? (_passportConfig.strategy) :'NewEmptyStrategy'}">
-								<a4j:commandLink  value="#{msg['manageAuthentication.passport.strategy.deleteStrategy']}" immediate="true" onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();" execute="@region" styleClass="btn btn-danger deleteStrategy" style="; z-index:1;"/>
+						  <h:panelGroup layout="block" style="border: dashed 2px green; border-radius:5px;" class="card-body #{(_passportConfig.strategy ne null) ? (_passportConfig.strategy) :'NewEmptyStrategy'}">
+								<a4j:commandLink  value="#{msg['manageAuthentication.passport.strategy.deleteStrategy']}" immediate="true" onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();" execute="@region" styleClass="btn btn-danger deleteStrategy" style="z-index:1; color: white !important;"/>
 			                    <h:panelGroup layout="block" class="form-script">
 									<ox:decorate id="text" label="Strategy">
 										<div class="row" style="float: left; margin-left: 3px;">
@@ -179,7 +179,7 @@
                                                                 <ox:decorate
                                                                         id="casProtocolSessionStorageType" label="#{msg['manageAuthentication.shibbolethSession']}">
                                                                         <h:selectOneMenu value="#{updateCASAction.configuration.sessionStorageType}"
-                                                                                styleClass="form-control casProtocolSessionStorageTypeSelectBox"
+                                                                                styleClass="rounded form-control casProtocolSessionStorageTypeSelectBox"
                                                                                 tabindex="1">
                                                                                 <f:selectItem noSelectionOption="true"  itemLabel="Default"/>
                                                                                 <f:selectItems
@@ -190,18 +190,10 @@
 
                                                                 <ox:decorate
                                                                         id="casProtocolBaseURL" label="#{msg['manageAuthentication.baseCASServerURL']}">
-                                                                        <h:outputText styleClass="form-control casProtocolBaseURLTextBox"
+                                                                        <h:outputText styleClass="rounded form-control casProtocolBaseURLTextBox"
                                                                             title=""
                                                                             value="#{updateCASAction.casBaseURL}" size="100" />
                                                                 </ox:decorate>
-
-<!--                                                                 <ox:decorate
-                                                                        id="casProtocolToProxyPatternsEnabled" label="#{msg['manageAuthentication.enableProxyPatterns']}">
-                                                                        <h:selectBooleanCheckbox value="#{updateCASAction.configuration.enableToProxyPatterns}"
-                                                                                styleClass="form-control"
-                                                                                tabindex="0" >
-                                                                        </h:selectBooleanCheckbox>
-                                                                </ox:decorate> -->
 
                                                                 <ox:decorate
                                                                         id="casProtocolAuthorizedToProxy" label="#{msg['manageAuthentication.authorizedProxyPattern']}">

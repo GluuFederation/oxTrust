@@ -122,6 +122,8 @@ public class RegisterPersonAction implements Serializable {
 
 	private boolean captchaDisabled = false;
 
+	private boolean confirmationOkay = false;
+
 	private String postRegistrationInformation;
 
 	/**
@@ -202,14 +204,11 @@ public class RegisterPersonAction implements Serializable {
 		String outcome = registerImpl();
 
 		if (OxTrustConstants.RESULT_SUCCESS.equals(outcome)) {
-			facesMessages.add(FacesMessage.SEVERITY_INFO, "You successfully registered.");
-			conversationService.endConversation();
+			setPostRegistrationInformation("You successfully registered. Enjoy!");
 		} else if (OxTrustConstants.RESULT_DISABLED.equals(outcome)) {
-			facesMessages.add(FacesMessage.SEVERITY_INFO, "You successfully registered. But your account is disabled.");
-			conversationService.endConversation();
+			setPostRegistrationInformation(
+					"You successfully registered. Please contact site administration to enable your account.");
 		} else if (OxTrustConstants.RESULT_FAILURE.equals(outcome)) {
-			log.error(
-					"Failed to register new user. Please make sure you are not registering a duplicate account or try another username.");
 			facesMessages.add(FacesMessage.SEVERITY_ERROR,
 					"Failed to register new user. Please make sure you are not registering a duplicate account or try another username.");
 		} else if (OxTrustConstants.RESULT_CAPTCHA_VALIDATION_FAILED.equals(outcome)) {
@@ -329,7 +328,8 @@ public class RegisterPersonAction implements Serializable {
 		String code = request.getParameter("code");
 		requestParameters.put("code", new String[] { code });
 		try {
-			externalUserRegistrationService.executeExternalConfirmRegistrationMethods(this.person, requestParameters);
+			confirmationOkay = externalUserRegistrationService.executeExternalConfirmRegistrationMethods(this.person,
+					requestParameters);
 		} catch (Exception ex) {
 			log.error("Failed to confirm registration.", ex);
 		}
@@ -464,6 +464,10 @@ public class RegisterPersonAction implements Serializable {
 		return postRegistrationInformation;
 	}
 
+	public void setPostRegistrationInformation(String postRegistrationInformation) {
+		this.postRegistrationInformation = postRegistrationInformation;
+	}
+
 	public void validateEmail(FacesContext context, UIComponent component, Object value) throws ValidatorException {
 		String email = (String) value;
 
@@ -490,6 +494,14 @@ public class RegisterPersonAction implements Serializable {
 			message.setSeverity(FacesMessage.SEVERITY_ERROR);
 			throw new ValidatorException(message);
 		}
+	}
+
+	public boolean isConfirmationOkay() {
+		return confirmationOkay;
+	}
+
+	public void setConfirmationOkay(boolean confirmationOkay) {
+		this.confirmationOkay = confirmationOkay;
 	}
 
 }

@@ -18,7 +18,7 @@
             text-align: left;
             vertical-align: top;
         }
-        .pairwiseIdsHearder {
+        .tableHearder {
           background:#00BE79;
           color:white;
           margin: 10px;
@@ -276,7 +276,7 @@
 														</h:inputText>
 
 														<h:selectOneMenu
-															styleClass="form-control #{_custAttr.metadata.displayName}"
+															styleClass="rounded form-control #{_custAttr.metadata.displayName}"
 															value="#{updatePersonAction.gluuStatus}"
 															required="#{_mustEnter}" id="statusId"
 															rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.dataType.value eq 'boolean') and (_custAttr.metadata.displayName eq 'User Status') }">
@@ -287,7 +287,7 @@
 																converterId="org.gluu.jsf2.converter.EnumConverter" />
 														</h:selectOneMenu>
 														<h:selectOneMenu
-															styleClass="form-control #{_custAttr.metadata.displayName}"
+															styleClass="rounded form-control #{_custAttr.metadata.displayName}"
 															value="#{_custAttr.value}" required="#{_mustEnter}"
 															id="GenderId"
 															rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'Gender, male or female') }">
@@ -295,7 +295,7 @@
 															<f:selectItem itemValue="male" itemLabel="male" />
 														</h:selectOneMenu>
 														<h:selectOneMenu
-															styleClass="form-control #{_custAttr.metadata.displayName}"
+															styleClass="rounded form-control #{_custAttr.metadata.displayName}"
 															value="#{_custAttr.booleanValues[_valueIdx]}"
 															required="#{_mustEnter}"
 															id="custId_boolean#{_custAttrIdx}"
@@ -447,7 +447,7 @@
 										rendered="#{updatePersonAction.deviceDataMap.size() gt 0}" />
 									<h:dataTable value="#{updatePersonAction.deviceDataMap}"
 										var="_value" styleClass="order-table fixed-size"
-										headerClass="order-table-header"
+										headerClass="tableHearder"
 										rowClasses="order-table-odd-row,order-table-even-row"
 										rendered="#{updatePersonAction.deviceDataMap.size() gt 0}">
 										<h:column>
@@ -493,25 +493,25 @@
 									</h:dataTable>
 									<h:dataTable style="border-raduis:5px; margin:10px;" value="#{updatePersonAction.userPairWideIdentifiers}"
 										var="_value" styleClass="order-table fixed-size"
-										headerClass="pairwiseIdsHearder"
+										headerClass="tableHearder"
 										rowClasses="order-table-odd-row,order-table-even-row"
 										rendered="#{updatePersonAction.userPairWideIdentifiers.size() gt 0}">
 										<h:column>
-											<f:facet name="header">PairWise ID</f:facet>
+											<f:facet name="header">Pairwise ID</f:facet>
 											<h:panelGroup id="pairWideId"
 												rendered="true">
 											 #{_value.oxId}											
 											</h:panelGroup>
 										</h:column>
 										<h:column>
-											<f:facet name="header">OIDC Client</f:facet>
+											<f:facet name="header">Client</f:facet>
 											<h:panelGroup id="pairWideClientId"
 												rendered="true">
 											 #{updatePersonAction.getClientName(_value.clientId)}											
 											</h:panelGroup>
 										</h:column>
 										<h:column>
-											<f:facet name="header">SP Hostname</f:facet>
+											<f:facet name="header">Hostname</f:facet>
 											<h:panelGroup id="pairWideSp"
 												rendered="true">
 											 #{_value.sp}											

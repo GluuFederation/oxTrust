@@ -10,6 +10,7 @@ import static org.xdi.ldap.model.GluuBoolean.INACTIVE;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -106,7 +107,7 @@ public class Scim2UserService implements Serializable {
     private LdapEntryManager ldapEntryManager;
 
     private String[] arrOf(String value) {
-        return value == null ? new String[0] : new String[]{value};
+        return (value == null || value.length() == 0) ? new String[0] : new String[]{value};
     }
 
     private String[] getComplexMultivaluedAsArray(List items){
@@ -121,7 +122,7 @@ public class Scim2UserService implements Serializable {
                 for (Object item : items)
                     itemList.add(mapper.writeValueAsString(item));
 
-                array = itemList.toArray(new String[]{});
+                array = itemList.toArray(new String[0]);
             }
         }
         catch (Exception e){
@@ -133,7 +134,7 @@ public class Scim2UserService implements Serializable {
 
     private <T> List<T> getAttributeListValue(GluuCustomPerson source, Class<T> clazz, String attrName) {
 
-        List<T> items = null;
+        List<T> items = new ArrayList<T>();
         try {
             ObjectMapper mapper = ServiceUtil.getObjectMapper();
             //This is already disabled in ServiceUtil
@@ -141,7 +142,6 @@ public class Scim2UserService implements Serializable {
 
             String[] attributeArray = source.getAttributeArray(attrName);
             if (attributeArray != null) {
-                items = new ArrayList<T>();
                 for (String attribute : attributeArray) {
                     T item = mapper.readValue(attribute, clazz);
                     items.add(item);
@@ -151,7 +151,7 @@ public class Scim2UserService implements Serializable {
         catch (Exception e){
             log.error(e.getMessage(), e);
         }
-        return items;
+        return items.size() == 0 ? null : items;
 
     }
 
@@ -250,9 +250,10 @@ public class Scim2UserService implements Serializable {
                             person.setAttribute(attribute, new String[0]);
                         } else {
                             //Get properly formatted string representations for the value(s) associated to the attribute
-                            List<String> values=extService.getStringAttributeValues(extension.getFields().get(attribute), value);
+                            List<String> values = extService.getStringAttributeValues(extension.getFields().get(attribute), value);
+                            values.removeAll(Collections.singleton(""));
                             log.debug("transferExtendedAttributesToPerson. Setting attribute '{}' with values {}", attribute, values.toString());
-                            person.setAttribute(attribute, values.toArray(new String[]{}));
+                            person.setAttribute(attribute, values.toArray(new String[0]));
                         }
                     }
                 }
@@ -386,14 +387,15 @@ public class Scim2UserService implements Serializable {
                 //Gets the values associated to this attribute that were found in LDAP
                 String values[]=person.getAttributes(attr);
 
-                if (values!=null){
-                    log.debug("transferExtendedAttributesToResource. Copying to resource the value(s) for attribute '{}'", attr);
+                if (values!=null) {
 
-                    ExtensionField field=fields.get(attr);
-                    if (field.isMultiValued())
-                        map.put(attr, extService.convertValues(field, values));
-                    else
-                        map.put(attr, extService.convertValues(field, values).get(0));
+                    log.debug("transferExtendedAttributesToResource. Copying to resource the value(s) for attribute '{}'", attr);
+                    ExtensionField field = fields.get(attr);
+                    List<Object> convertedValues = extService.convertValues(field, values);
+
+                    if (convertedValues.size() > 0) {
+                        map.put(attr, field.isMultiValued() ? convertedValues : convertedValues.get(0));
+                    }
                 }
             }
             //Stores all extended attributes (with their values) in the resource object

@@ -11,6 +11,7 @@ import java.util.Date;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.model.GluuAppliance;
@@ -24,6 +25,7 @@ import org.xdi.service.security.Secure;
  * @author Oleksiy Tataryn Date: 11.14.2013
  */
 @RequestScoped
+@Named("applianceStatusAction")
 @Secure("#{permissionService.hasPermission('configuration', 'access')}")
 public class ApplianceStatusAction implements Serializable {
 
@@ -36,6 +38,10 @@ public class ApplianceStatusAction implements Serializable {
 	private ApplianceService applianceService;
 
 	private String health;
+	
+	public String init(){
+		return OxTrustConstants.RESULT_SUCCESS;
+	}
 
 	public String checkHealth() {
 		GluuAppliance appliance = applianceService.getAppliance();

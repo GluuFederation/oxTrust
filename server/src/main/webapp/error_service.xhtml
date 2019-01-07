@@ -19,10 +19,6 @@
 }
 </style>
 
-		<ui:fragment rendered="#{not registerPersonAction.captchaDisabled}">
-			<script async="async" defer="defer"
-				src="https://www.google.com/recaptcha/api.js" />
-		</ui:fragment>
 		<ui:fragment>
 			<script type="text/javascript">
 				function load() {
@@ -52,7 +48,7 @@
 		<div class="lockscreen-wrapper" style="text-align: center;">
 			<div class="lockscreen-logo"
 				style="margin-bottom: 0px !important; margin-top: 10%;">
-				<b style="font-size: 1.5em !important; color: darkred;">#{msg['error.errorEncountered']}</b>
+				<b style="font-size: 1.5em !important; color: black;">#{msg['error.errorEncountered']}</b>
 			</div>
 			<!-- User name -->
 			<div class="lockscreen-name"

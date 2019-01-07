@@ -1,90 +1,122 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://xmlns.jcp.org/jsf/core"
-                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
-                xmlns:ui="http://xmlns.jcp.org/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
-    <f:metadata>
-        <f:viewAction action="#{permissionService.hasPermission('configuration', 'access')}"/>
-    </f:metadata>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/WEB-INF/incl/layout/newtemplate.xhtml">
+	<f:metadata>
+		<f:viewAction
+			action="#{permissionService.hasPermission('configuration', 'access')}" />
+		<f:viewAction action="#{conversationService.initConversation}" />
+		<f:viewAction action="#{applianceStatusAction.init}"
+			onPostback="false" />
+	</f:metadata>
 
-    <ui:define name="body">
-        <section class="content-header">
-            <h1 style="color: #333;">
-                #{msg['applianceStatus.configuration']}
-                <small>
-                    <i class="fa fa-caret-right"
-                       style="color: #333 !important;"/> #{msg['applianceStatus.serverStatus']}</small>
-            </h1>
-            <ol class="breadcrumb">
-                <li>
-                    <a href="#{request.contextPath}/home">
-                        <i class="fa fa-home"/>
-                    </a>
-                </li>
-                <li class="organization/configuration">
-                    <a href="#{request.contextPath}/status/appliance">#{msg['applianceStatus.serverStatus']}</a>
-                </li>
-            </ol>
-        </section>
-        <section class="content">
-            <h:panelGroup id="formArea" layout="block">
-                <div class="row">
-                    <div class="col-xs-12">
-                        <div class="box box-primary">
-                            <div class="box-header">
-                            </div>
-                            <div style="display: inline-block;width: 75% !important;">
-                                <ui:param name="_appliance" value="#{applianceService.appliance}"/>
-                                <h:panelGrid border="0" cellpadding="0" cellspacing="0" columns="1" id="statusTable"
-                                             width="100%">
-                                    <ox:decorate label="#{msg['applianceStatus.hostName']}">
-                                        <h:outputText styleClass="hostnameValueBox" value="#{_appliance.hostname}"/>
-                                    </ox:decorate>
+	<ui:define name="body">
+		<section class="content-header">
+			<h1 style="color: #333;">
+				#{msg['applianceStatus.configuration']} <small> <i
+					class="fa fa-caret-right" style="color: #333 !important;" />
+					#{msg['applianceStatus.serverStatus']}
+				</small>
+			</h1>
+			<ol class="breadcrumb">
+				<li><a href="#{request.contextPath}/home"> <i
+						class="fa fa-home" />
+				</a></li>
+				<li class="organization/configuration"><a
+					href="#{request.contextPath}/status/appliance">#{msg['applianceStatus.serverStatus']}</a>
+				</li>
+			</ol>
+		</section>
+		<section class="content">
+			<h:panelGroup id="formArea" layout="block">
+				<div class="row">
+					<div class="col-xs-12">
+						<div class="box box-primary">
+							<div class="box-header"></div>
+							<div style="display: inline-block; width: 95% !important;">
+								<ui:param name="_appliance"
+									value="#{applianceService.appliance}" />
+								<div class="row" style="margin-left: 5px; margin-right: 5px;">
+									<div class="col-sm-6 col-lg-6" style="padding: 0px;">
+										<h:panelGrid border="0" cellpadding="0" cellspacing="0"
+											columns="1" id="statusTable1" width="100%">
+											<ox:decorate label="#{msg['applianceStatus.hostName']}"
+												leftClass="col-sm-6" rightClass="col-sm-6">
+												<h:outputText styleClass="hostnameValueBox"
+													value="#{_appliance.hostname}" />
+											</ox:decorate>
 
-                                    <ox:decorate label="#{msg['applianceStatus.ipAddress']}">
-                                        <h:outputText styleClass="ipAddressValueBox" value="#{_appliance.ipAddress}"/>
-                                    </ox:decorate>
+											<ox:decorate label="#{msg['applianceStatus.ipAddress']}"
+												leftClass="col-sm-6" rightClass="col-sm-6">
+												<h:outputText styleClass="ipAddressValueBox"
+													value="#{_appliance.ipAddress}" />
+											</ox:decorate>
 
-                                    <ox:decorate label="#{msg['applianceStatus.systemUptime']}">
-                                        <h:outputText styleClass="systemUptimeValueBox" converter="uptimeConverter" value="#{_appliance.systemUptime}"/>
-                                    </ox:decorate>
+											<ox:decorate label="#{msg['applianceStatus.systemUptime']}"
+												leftClass="col-sm-6" rightClass="col-sm-6">
+												<h:outputText styleClass="systemUptimeValueBox"
+													converter="uptimeConverter"
+													value="#{_appliance.systemUptime}" />
+											</ox:decorate>
 
-                                    <ox:decorate label="#{msg['applianceStatus.lastUpdate']}">
-                                        <h:outputText  styleClass="lastUpdateValueBox" value="#{_appliance.lastUpdate}">
-                                            <f:convertDateTime pattern="MMM. d yyyy hh:mm a"/>
-                                        </h:outputText>
-                                    </ox:decorate>
+											<ox:decorate label="#{msg['applianceStatus.lastUpdate']}"
+												leftClass="col-sm-6" rightClass="col-sm-6">
+												<h:outputText styleClass="lastUpdateValueBox"
+													value="#{_appliance.lastUpdate}">
+													<f:convertDateTime pattern="MMM. d yyyy hh:mm a" />
+												</h:outputText>
+											</ox:decorate>
+											<ox:decorate label="#{msg['applianceStatus.freeDiskSpace']}"
+												leftClass="col-sm-6" rightClass="col-sm-6">
+												<h:outputText styleClass="freeDiskSpaceValueBox"
+													value="#{_appliance.freeDiskSpace}" />
+												<h:outputText value="%" />
+											</ox:decorate>
+										</h:panelGrid>
+									</div>
+									<div class="col-sm-6 col-lg-6" style="padding: 0px;">
+										<h:panelGrid border="0" cellpadding="0" cellspacing="0"
+											columns="1" id="statusTable2" width="100%">
+											<ox:decorate
+												label="#{msg['applianceStatus.pollingInterval']}"
+												leftClass="col-sm-6" rightClass="col-sm-6">
+												<h:outputText styleClass="pollingIntervalValueBox"
+													value="60 seconds" />
+											</ox:decorate>
 
-                                    <ox:decorate label="#{msg['applianceStatus.pollingInterval']}">
-                                        <h:outputText styleClass="pollingIntervalValueBox" value="60 seconds"/>
-                                    </ox:decorate>
+											<ox:decorate label="#{msg['applianceStatus.personCount']}"
+												leftClass="col-sm-6" rightClass="col-sm-6">
+												<h:outputText styleClass="personCountValueBox"
+													value="#{_appliance.personCount}" />
+											</ox:decorate>
 
-                                    <ox:decorate label="#{msg['applianceStatus.personCount']}">
-                                        <h:outputText styleClass="personCountValueBox" value="#{_appliance.personCount}"/>
-                                    </ox:decorate>
+											<ox:decorate label="#{msg['applianceStatus.groupCount']}"
+												leftClass="col-sm-6" rightClass="col-sm-6">
+												<h:outputText styleClass="groupCountValueBox"
+													value="#{_appliance.groupCount}" />
+											</ox:decorate>
 
-                                    <ox:decorate label="#{msg['applianceStatus.groupCount']}">
-                                        <h:outputText styleClass="groupCountValueBox" value="#{_appliance.groupCount}"/>
-                                    </ox:decorate>
-
-                                    <ox:decorate label="#{msg['applianceStatus.freeMemory']}">
-                                        <h:outputText styleClass="freeMemoryValueBox" value="#{_appliance.freeMemory}"/>
-                                        <h:outputText value="%"/>
-                                    </ox:decorate>
-
-                                    <ox:decorate label="#{msg['applianceStatus.freeDiskSpace']}">
-                                        <h:outputText styleClass="freeDiskSpaceValueBox" value="#{_appliance.freeDiskSpace}"/>
-                                        <h:outputText value="%"/>
-                                    </ox:decorate>
-                                </h:panelGrid>
-                                <div class="box-footer">
-                                    <ui:insert name="controlButttons"/>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </h:panelGroup>
-        </section>
-    </ui:define>
+											<ox:decorate label="#{msg['applianceStatus.freeMemory']}"
+												leftClass="col-sm-6" rightClass="col-sm-6">
+												<h:outputText styleClass="freeMemoryValueBox"
+													value="#{_appliance.freeMemory}" />
+												<h:outputText value="%" />
+											</ox:decorate>
+										</h:panelGrid>
+									</div>
+								</div>
+								<div class="box-footer">
+									<ui:insert name="controlButttons" />
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</h:panelGroup>
+		</section>
+	</ui:define>
 
 </ui:composition>

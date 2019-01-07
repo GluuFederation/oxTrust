@@ -30,6 +30,7 @@ import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.SimpleCustomProperty;
+import org.xdi.service.security.Secure;
 import org.xdi.util.StringHelper;
 import org.xdi.util.Util;
 
@@ -40,6 +41,7 @@ import org.xdi.util.Util;
  */
 @ConversationScoped
 @Named("registrationManagementAction")
+@Secure("#{permissionService.hasPermission('configuration', 'access')}")
 public class RegistrationManagementAction implements SimpleCustomPropertiesListModel, Serializable {
 
 	private static final long serialVersionUID = -3832167044333943686L;

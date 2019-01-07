@@ -102,7 +102,7 @@
 
 								<ox:decorate
 									id="passwordReset" label="#{msg['organizationForm.selfServicePasswordReset']}">
-									<h:selectOneMenu value="#{_appliance.passwordResetAllowed}" styleClass="form-control passwordResetSelectBox"
+									<h:selectOneMenu value="#{_appliance.passwordResetAllowed}" styleClass="rounded form-control passwordResetSelectBox"
 										id="passwordResetId">
 										<f:selectItems
 											value="#{organizationService.booleanSelectionTypes}"
@@ -113,7 +113,7 @@
 
 								<ox:decorate
 									id="scimEnabledState" label="#{msg['organizationForm.scimSupport']}">
-									<h:selectOneMenu value="#{_appliance.scimEnabled}" styleClass="form-control scimEnableStateSelectBox"
+									<h:selectOneMenu value="#{_appliance.scimEnabled}" styleClass="rounded form-control scimEnableStateSelectBox"
 										id="scimEnabledStateId">
 										<f:selectItems
 											value="#{organizationService.booleanSelectionTypes}"
@@ -124,7 +124,7 @@
 
 								<ox:decorate
 									id="passportEnabledState" label="#{msg['organizationForm.passportSupport']}">
-									<h:selectOneMenu value="#{_appliance.passportEnabled}" styleClass="form-control passportEnableStateSelectBox"
+									<h:selectOneMenu value="#{_appliance.passportEnabled}" styleClass="rounded form-control passportEnableStateSelectBox"
 										id="passportEnabledStateId">
 										<f:selectItems
 											value="#{organizationService.booleanSelectionTypes}"
@@ -135,20 +135,20 @@
 
 								<ox:decorate
 									id="dnsServer" label="#{msg['organizationForm.dnsServer']}">
-									<h:inputText styleClass="form-control dnsServerTextBox"
+									<h:inputText styleClass="rounded form-control dnsServerTextBox"
 										title="Multiple addresses can be specified using comma (,)"
 										value="#{_appliance.applianceDnsServer}" size="100" />
 								</ox:decorate>
 
 								<ox:decorate
 									id="maxLogSize" label="#{msg['organizationForm.maxLogSize']}">
-									<h:inputText value="#{_appliance.maxLogSize}" required="true" styleClass="form-control maxLogSizeTextBox"
+									<h:inputText value="#{_appliance.maxLogSize}" required="true" styleClass="rounded form-control maxLogSizeTextBox"
 										size="10" />
 								</ox:decorate>
 
 								<ox:decorate
 									id="profileManagment" label="#{msg['organizationForm.userCanEditProfile']}">
-									<h:selectOneMenu value="#{_appliance.profileManagment}" styleClass="form-control profileManagmentSelectBox"
+									<h:selectOneMenu value="#{_appliance.profileManagment}" styleClass="rounded form-control profileManagmentSelectBox"
 										id="profileManagmentStateId">
 										<f:selectItems
 											value="#{organizationService.booleanSelectionTypes}"
@@ -158,7 +158,7 @@
 								</ox:decorate>
 
 								<ox:decorate label="#{msg['organizationForm.contactEmail']}">
-									<h:inputText p:oninvalid="this.setCustomValidity('Please provide a valid email address.')" p:type="email" value="#{_appliance.contactEmail}" styleClass="form-control contactEmailTextBox"/>
+									<h:inputText p:oninvalid="this.setCustomValidity('Please provide a valid email address.')" p:type="email" value="#{_appliance.contactEmail}" styleClass="rounded form-control contactEmailTextBox"/>
 								</ox:decorate>
 
 							</h:panelGroup>

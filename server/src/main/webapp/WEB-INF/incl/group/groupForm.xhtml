@@ -40,14 +40,14 @@
             </ox:decorate>
 
             <ox:decorate id="visibility" label="#{msg['group.type']}">
-                <h:selectOneMenu value="#{_group.visibility}" id="visibilityId" styleClass="visibilityField form-control">
+                <h:selectOneMenu value="#{_group.visibility}" id="visibilityId" styleClass="rounded visibilityField form-control">
                     <f:selectItems value="#{groupService.visibilityTypes}" var="_type" itemLabel="#{_type.displayName}" />
                     <f:converter converterId="org.gluu.jsf2.converter.EnumConverter" />
                 </h:selectOneMenu>
             </ox:decorate>
 
             <ox:decorate id="description" label="#{msg['group.description']}">
-                <h:inputTextarea class="descriptionField" value="#{_group.description}" rows="3" size="40" maxlength="4000" id="descriptionId" styleClass="form-control" />
+                <h:inputTextarea class="rounded descriptionField" value="#{_group.description}" rows="3" size="40" maxlength="4000" id="descriptionId" styleClass="form-control" />
             </ox:decorate>
 
             <ox:decorate id="members" label="#{msg['group.users']}">
