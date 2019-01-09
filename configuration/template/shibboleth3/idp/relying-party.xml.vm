@@ -73,7 +73,7 @@
         #set ($profileConfigMap = $trustRelationship.profileConfigurations)
         <!--#if(!$profileConfigMap.isEmpty())-->
 
-        #set($entityId = $trustParams.trustEntityIds.get($trustRelationship.inum).get(0))
+        #set($entityId = $trustRelationship.getEntityId())
         #set($relyingPartyId = $StringHelper.removePunctuation($trustRelationship.inum))
 
         <bean parent="RelyingPartyByName" id="$relyingPartyId" c:relyingPartyIds="$entityId">
