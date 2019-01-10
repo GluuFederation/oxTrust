@@ -280,13 +280,20 @@ public class StatusCheckerTimer {
 			return;
 		}
 
-		String programPath = OxTrustConstants.PROGRAM_FACTER;
+        String programPath = OxTrustConstants.PROGRAM_FACTER;
 
-		ByteArrayOutputStream bos = new ByteArrayOutputStream(4096);
+        ByteArrayOutputStream bos = new ByteArrayOutputStream(4096);
 		try {
-			boolean result = ProcessHelper.executeProgram(programPath, false, 0, bos);
+	        CommandLine commandLine = new CommandLine(programPath);
+	        commandLine.addArgument("--show-legacy");
+
+	        boolean result = ProcessHelper.executeProgram(commandLine, false, 0, bos);
 			if (!result) {
-				return;
+			    bos.reset();
+	            result = ProcessHelper.executeProgram(programPath, false, 0, bos);
+	            if (!result) {
+	                return;
+	            }
 			}
 		} finally {
 			IOUtils.closeQuietly(bos);
