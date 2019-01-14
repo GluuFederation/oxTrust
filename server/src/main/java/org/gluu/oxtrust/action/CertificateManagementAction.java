@@ -185,17 +185,29 @@ public class CertificateManagementAction implements Serializable {
 					internalCertificates
 							.add(new X509CertificateShortInfo(OPENDJ_CERTIFICATE_FILE, "OpenDJ SSL", openDJCert));
 				}
+			} catch (Exception e) {
+				log.error("Certificate load exception", e);
+			}
+			try {
 				X509Certificate httpdCerts[] = SSLService.loadCertificates(new FileInputStream(HTTPD_CERTIFICATE_FILE));
 				for (X509Certificate httpdCert : httpdCerts) {
 					internalCertificates
 							.add(new X509CertificateShortInfo(HTTPD_CERTIFICATE_FILE, "HTTPD SSL", httpdCert));
 				}
+			} catch (Exception e) {
+				log.error("Certificate load exception", e);
+			}
+			try {
 				X509Certificate idpSigingCerts[] = SSLService
 						.loadCertificates(new FileInputStream(IDP_SIGNING_CERTIFICATE_FILE));
 				for (X509Certificate idpSigingCert : idpSigingCerts) {
 					internalCertificates.add(
 							new X509CertificateShortInfo(IDP_SIGNING_CERTIFICATE_FILE, "IDP SIGNING", idpSigingCert));
 				}
+			} catch (Exception e) {
+				log.error("Certificate load exception", e);
+			}
+			try {
 				X509Certificate idpEncryptionCerts[] = SSLService
 						.loadCertificates(new FileInputStream(IDP_ENCRYPT_CERTIFICATE_FILE));
 				for (X509Certificate idpEncryptionCert : idpEncryptionCerts) {
@@ -206,7 +218,9 @@ public class CertificateManagementAction implements Serializable {
 				log.error("Certificate load exception", e);
 			}
 
-		} catch (Exception e) {
+		} catch (
+
+		Exception e) {
 			log.error("Load internalCertificates configuration exception", e);
 		}
 
