@@ -39,6 +39,13 @@
             "format": "url",
             "minLength": 1
         },
+        "tokenRevocationEndpoint": {
+            "id": "tokenRevocationEndpoint",
+            "description": "The URL of the Token (access_token or refresh_token) Revocation Endpoint.",
+            "type": "string",
+            "format": "url",
+            "minLength": 1
+        },
         "userInfoEndpoint": {
             "id": "userInfoEndpoint",
             "description": "The URL of the User Info Endpoint.",
@@ -1384,6 +1391,7 @@
         "baseEndpoint",
         "authorizationEndpoint",
         "tokenEndpoint",
+        "tokenRevocationEndpoint",
         "userInfoEndpoint",
         "clientInfoEndpoint",
         "checkSessionIFrame",
