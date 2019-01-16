@@ -8,7 +8,7 @@ import javax.inject.Inject;
 
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuUserPairwiseIdentifier;
-import org.gluu.persist.ldap.impl.LdapEntryManager;
+import org.gluu.persist.PersistenceEntryManager;
 import org.slf4j.Logger;
 import org.xdi.util.StringHelper;
 
@@ -23,7 +23,7 @@ public class PairwiseIdService implements IPairwiseIdService, Serializable {
 	private Logger log;
 
 	@Inject
-	private LdapEntryManager ldapEntryManager;
+	private PersistenceEntryManager ldapEntryManager;
 
 	@Inject
 	private OrganizationService organizationService;
