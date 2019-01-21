@@ -8,8 +8,6 @@ package org.gluu.oxtrust.util;
 import java.security.cert.X509Certificate;
 import java.util.Date;
 
-import org.gluu.oxtrust.api.X509CertificateShortInfo;
-
 /**
  * Short information about X509 Certificate in keystore.
  * For view in HTML/JSF table.
@@ -18,7 +16,12 @@ import org.gluu.oxtrust.api.X509CertificateShortInfo;
  */
 public class X509CertificateShortInfoView extends X509CertificateShortInfo {
     
-    private static final String HIGHLIGHT_STYLE_UNVALID = "background-color: rgb(255, 0, 0);";
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 7323704327690340323L;
+
+	private static final String HIGHLIGHT_STYLE_UNVALID = "background-color: rgb(255, 0, 0);";
     
     private static final String HIGHLIGHT_STYLE_VALID = "";
     
