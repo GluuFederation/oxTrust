@@ -25,7 +25,7 @@
                 
                     <rich:fileUpload  id="fileUploadId" fileUploadListener="#{_importAction.uploadFile}" acceptedTypes="ldif"
                                 ontyperejected="alert('Only LDIF files are accepted');" maxFilesQuantity="1" immediateUpload="true" listHeight="60px"
-                                styleClass="uploadFile fileUploader" rendered="#{_importAction.uploadedFile == null}">
+                                styleClass="uploadFile" rendered="#{_importAction.uploadedFile == null}">
                                 <a4j:ajax event="uploadcomplete" execute="@none" render="fileImportPanelId, controlButttonId"/>
                     </rich:fileUpload>
 
