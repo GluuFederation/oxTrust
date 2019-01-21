@@ -12,6 +12,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.gluu.oxtrust.util.X509CertificateShortInfo;
+
 /**
  * Information about Gluu Server certificates (expiration date, etc).
  * 
@@ -22,7 +24,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 @ApiModel(value = "Information about Gluu Server certificates (expiration date, etc).")
 public class Certificates implements Serializable {
     
-    private List<X509CertificateShortInfo> asimbaCertificates;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -2763806434704894667L;
+
+	private List<X509CertificateShortInfo> asimbaCertificates;
     
     private List<X509CertificateShortInfo> trustStoreCertificates;
     

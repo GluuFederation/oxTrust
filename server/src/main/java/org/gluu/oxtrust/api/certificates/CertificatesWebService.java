@@ -20,7 +20,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.gluu.oxtrust.api.Certificates;
-import org.gluu.oxtrust.api.X509CertificateShortInfo;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.SSLService;
 import org.gluu.oxtrust.model.GluuAppliance;
@@ -28,6 +27,7 @@ import org.gluu.oxtrust.model.cert.TrustStoreCertificate;
 import org.gluu.oxtrust.service.asimba.AsimbaXMLConfigurationService;
 import org.gluu.oxtrust.service.uma.annotations.UmaSecure;
 import org.gluu.oxtrust.util.KeystoreWrapper;
+import org.gluu.oxtrust.util.X509CertificateShortInfo;
 import org.slf4j.Logger;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
