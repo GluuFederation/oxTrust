@@ -235,12 +235,11 @@
 											<h:selectOneMenu styleClass="rounded form-control"
 												value="#{_trustRelationship.containerFederation}"
 												id="spMetaDataSourceTypeFederationId"
-												 required="true">
+												converter="federationConverter" required="true">
 												<f:selectItem noSelectionOption="true"  itemLabel="Select Federation"/>
 												<f:selectItems
 													value="#{_trustRelationshipAction.getAllOtherFederations(_trustRelationship.inum)}"
 													var="_type"
-                                                                                                        itemValue="#{_type.getDn()}"
 													itemLabel="#{_type.displayName}" />
 												<a4j:ajax event="change"
 													render="FederationWizardEntitySelection, EntityIds"
