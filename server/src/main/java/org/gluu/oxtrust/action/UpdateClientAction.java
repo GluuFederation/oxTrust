@@ -352,7 +352,6 @@ public class UpdateClientAction implements Serializable {
 						identity.getUser(),
 						(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 			} catch (BasePersistenceException ex) {
-
 				log.error("Failed to update client {}", this.inum, ex);
 				facesMessages.add(FacesMessage.SEVERITY_ERROR,
 						"Failed to update client '#{updateClientAction.client.displayName}'");
@@ -560,8 +559,7 @@ public class UpdateClientAction implements Serializable {
 				result = true;
 			}
 		} catch (MalformedURLException e) {
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "The url is malformed",
-					"The url is malformed");
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "The url is malformed", "The url is malformed");
 			log.error(e.getMessage());
 		}
 		return result;
@@ -1149,7 +1147,7 @@ public class UpdateClientAction implements Serializable {
 		List<SelectableEntity<OxAuthScope>> tmpAvailableScopes = new ArrayList<SelectableEntity<OxAuthScope>>();
 		List<OxAuthScope> scopes = new ArrayList<OxAuthScope>();
 		try {
-			scopes = scopeService.searchScopes("", 500);
+			scopes = scopeService.getAllScopesList(100);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
