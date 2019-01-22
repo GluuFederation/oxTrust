@@ -76,6 +76,10 @@ import org.xdi.util.StringHelper;
 @Secure("#{permissionService.hasPermission('person', 'access')}")
 public class UpdatePersonAction implements Serializable {
 
+	private static final String HOTP = "hotp";
+
+	private static final String TOTP = "totp";
+
 	private static final String COLON = ":";
 
 	private static final String DASH = "-";
@@ -263,13 +267,33 @@ public class UpdatePersonAction implements Serializable {
 
 	private void addExternalUids() {
 		if (oxExternalUids != null && oxExternalUids.size() > 0) {
-			for (String oxexternalStr : oxExternalUids) {
-				String[] args = oxexternalStr.split(COLON);
+			for (String oxExternalUid : oxExternalUids) {
+				String[] args = oxExternalUid.split(COLON);
 				GluuDeviceDataBean gluuDeviceDataBean = new GluuDeviceDataBean();
-				gluuDeviceDataBean.setNickName(args[0]);
-				gluuDeviceDataBean.setModality(PASSPORT);
-				gluuDeviceDataBean.setId(args[1]);
-				gluuDeviceDataBean.setCreationDate(DASH);
+				String firstPart = args[0];
+				if (firstPart.equalsIgnoreCase(TOTP) || firstPart.equalsIgnoreCase(HOTP)) {
+					String key = oxExternalUid.replaceFirst("hotp:", "").replaceFirst("totp:", "");
+					int idx = key.indexOf(";");
+					if (idx > 0) {
+						key = key.substring(0, idx);
+					}
+					int id = key.hashCode();
+					gluuDeviceDataBean.setNickName(DASH);
+					gluuDeviceDataBean.setModality(firstPart);
+					gluuDeviceDataBean.setId(String.valueOf(id));
+					gluuDeviceDataBean.setCreationDate(DASH);
+				} else if(firstPart.startsWith(PASSPORT) || firstPart.startsWith(PASSPORT.toLowerCase()) ){
+					gluuDeviceDataBean.setNickName(firstPart);
+					gluuDeviceDataBean.setModality(PASSPORT);
+					gluuDeviceDataBean.setId(args[1]);
+					gluuDeviceDataBean.setCreationDate(DASH);
+				}
+				else {
+					gluuDeviceDataBean.setNickName(firstPart);
+					gluuDeviceDataBean.setModality(DASH);
+					gluuDeviceDataBean.setId(args[1]);
+					gluuDeviceDataBean.setCreationDate(DASH);
+				}
 				deviceDataMap.add(gluuDeviceDataBean);
 			}
 		}
