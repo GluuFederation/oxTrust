@@ -7,6 +7,7 @@
 package org.gluu.oxtrust.action;
 
 import java.io.Serializable;
+import java.util.regex.Pattern;
 
 import javax.enterprise.context.RequestScoped;
 import javax.faces.application.FacesMessage;
@@ -15,12 +16,13 @@ import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.validation.constraints.AssertTrue;
-import javax.validation.constraints.Size;
 
+import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.site.ldap.persistence.exception.AuthenticationException;
 import org.slf4j.Logger;
+import org.xdi.model.AttributeValidation;
 import org.xdi.service.security.Secure;
 import org.xdi.util.StringHelper;
 
@@ -43,18 +45,24 @@ public class PasswordValidationAction implements Cloneable, Serializable {
 	private IPersonService personService;
 
 	private String oldPassword = "";
-
-	@Size(min = 3, max = 60, message = "Password length must be between {min} and {max} characters.")
 	private String password = "";
-
-	@Size(min = 3, max = 60, message = "Password length must be between {min} and {max} characters.")
 	private String confirm = "";
 
 	private UIComponent graphValidator;
 
-	@AssertTrue(message = "Different passwords entered!")
+	@Inject
+	private AttributeService attributeService;
+
+	@AssertTrue(message = "Passwords are different or they don't match the requirements define by site administrator.")
 	public boolean isPasswordsEquals() {
-		return password.equals(confirm);
+		AttributeValidation validation = attributeService.getAttributeByName("userPassword").getAttributeValidation();
+		if (validation != null && validation.getRegexp() != null && !validation.getRegexp().isEmpty()) {
+			Pattern pattern = Pattern.compile(validation.getRegexp());
+			return password.equals(confirm) && pattern.matcher(password).matches()
+					&& pattern.matcher(confirm).matches();
+		} else {
+			return password.equals(confirm);
+		}
 	}
 
 	public void reset() {
@@ -74,12 +82,12 @@ public class PasswordValidationAction implements Cloneable, Serializable {
 
 			if (!resultValidateOldPassword) {
 				if (graphValidator == null) {
-					FacesContext.getCurrentInstance().addMessage(null,
-							new FacesMessage(FacesMessage.SEVERITY_ERROR, "Old password isn't valid!", "Old password isn't valid!"));
-					
+					FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+							"Old password isn't valid!", "Old password isn't valid!"));
+
 				} else {
-					FacesContext.getCurrentInstance().addMessage(graphValidator.getClientId(),
-							new FacesMessage(FacesMessage.SEVERITY_ERROR, "Old password isn't valid!", "Old password isn't valid!"));
+					FacesContext.getCurrentInstance().addMessage(graphValidator.getClientId(), new FacesMessage(
+							FacesMessage.SEVERITY_ERROR, "Old password isn't valid!", "Old password isn't valid!"));
 				}
 			}
 		}
