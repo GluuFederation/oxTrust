@@ -721,7 +721,7 @@ public class UpdatePersonAction implements Serializable {
 		if (!StringHelper.equalsIgnoreCase(password, confirmPassword)) {
 			((UIInput) comp).setValid(false);
 			FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR,
-					"Password and Confirm Password should be same!", "Password and Confirm Password should be same!");
+					"Password and Confirm Password should be the same!", "Password and Confirm Password should be the same!");
 			context.addMessage(comp.getClientId(context), message);
 		}
 		if (canValidate && (!pattern.matcher(password).matches() || !pattern.matcher(confirmPassword).matches())) {
