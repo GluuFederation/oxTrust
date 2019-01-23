@@ -166,8 +166,7 @@ public class ScopeService implements Serializable {
 	}
 	
 	public List<OxAuthScope> getAllScopesList(int size) throws Exception {
-
-		List<OxAuthScope> result = ldapEntryManager.findEntries(getDnForScope(null), 0);
+		List<OxAuthScope> result = ldapEntryManager.findEntries(getDnForScope(null), OxAuthScope.class, null, 0);
 
 		return result;
 	}
