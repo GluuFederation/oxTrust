@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import javax.enterprise.context.ConversationScoped;
 import javax.faces.application.FacesMessage;
@@ -59,6 +60,7 @@ import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.ldap.model.GluuStatus;
+import org.xdi.model.AttributeValidation;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuUserRole;
 import org.xdi.oxauth.model.fido.u2f.protocol.DeviceData;
@@ -680,16 +682,28 @@ public class UpdatePersonAction implements Serializable {
 	}
 
 	public void validateConfirmPassword(FacesContext context, UIComponent comp, Object value) {
+		Pattern pattern = null;
+		AttributeValidation validation = attributeService.getAttributeByName("userPassword").getAttributeValidation();
+		boolean canValidate = validation != null && validation.getRegexp() != null && !validation.getRegexp().isEmpty();
 		if (comp.getClientId().endsWith("custpasswordId")) {
 			this.password = (String) value;
 		} else if (comp.getClientId().endsWith("custconfirmpasswordId")) {
 			this.confirmPassword = (String) value;
 		}
-
+		if (canValidate) {
+			pattern = Pattern.compile(validation.getRegexp());
+		}
 		if (!StringHelper.equalsIgnoreCase(password, confirmPassword)) {
 			((UIInput) comp).setValid(false);
 			FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR,
 					"Password and Confirm Password should be same!", "Password and Confirm Password should be same!");
+			context.addMessage(comp.getClientId(context), message);
+		}
+		if (canValidate && (!pattern.matcher(password).matches() || !pattern.matcher(confirmPassword).matches())) {
+			((UIInput) comp).setValid(false);
+			FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					facesMessages.evalResourceAsString("#{msg['password.validation.invalid']}"),
+					facesMessages.evalResourceAsString("#{msg['password.validation.invalid']}"));
 			context.addMessage(comp.getClientId(context), message);
 		}
 	}
