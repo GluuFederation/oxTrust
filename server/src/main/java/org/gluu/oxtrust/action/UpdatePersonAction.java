@@ -346,12 +346,17 @@ public class UpdatePersonAction implements Serializable {
 		if (fidoDevices != null) {
 			for (GluuCustomFidoDevice gluuCustomFidoDevice : fidoDevices) {
 				GluuDeviceDataBean gluuDeviceDataBean = new GluuDeviceDataBean();
-				gluuDeviceDataBean.setCreationDate(
-						ldapEntryManager.decodeGeneralizedTime(gluuCustomFidoDevice.getCreationDate()).toGMTString());
+				String creationDate = gluuCustomFidoDevice.getCreationDate();
+				if(creationDate!=null) {
+					gluuDeviceDataBean.setCreationDate(
+							ldapEntryManager.decodeGeneralizedTime(creationDate).toGMTString());
+				}else {
+					gluuDeviceDataBean.setCreationDate(DASH);
+				}
 				gluuDeviceDataBean.setId(gluuCustomFidoDevice.getId());
 				String devicedata = gluuCustomFidoDevice.getDeviceData();
-				String modality = "";
-				String nickName = "";
+				String modality = DASH;
+				String nickName = DASH;
 				if (devicedata != null) {
 					nickName = gluuCustomFidoDevice.getNickname();
 					modality = "Super-Gluu Device";
