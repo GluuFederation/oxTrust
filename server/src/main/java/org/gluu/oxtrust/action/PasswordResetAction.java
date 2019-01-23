@@ -11,7 +11,6 @@ import java.text.ParseException;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
-import java.util.regex.Pattern;
 
 import javax.enterprise.context.ConversationScoped;
 import javax.faces.application.FacesMessage;
@@ -24,7 +23,6 @@ import javax.validation.constraints.AssertTrue;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
-import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.JsonConfigurationService;
 import org.gluu.oxtrust.ldap.service.OxTrustAuditService;
 import org.gluu.oxtrust.ldap.service.PersonService;
@@ -40,7 +38,6 @@ import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.model.AttributeValidation;
 import org.xdi.util.StringHelper;
 
 /**
@@ -51,8 +48,6 @@ import org.xdi.util.StringHelper;
 public class PasswordResetAction implements Serializable {
 
 	private static final long serialVersionUID = 6457422770824016614L;
-
-	private static final String USER_PASSWORD = "userPassword";
 
 	@Inject
 	private Logger log;
@@ -89,9 +84,6 @@ public class PasswordResetAction implements Serializable {
 
 	@Inject
 	private JsonConfigurationService jsonConfigurationService;
-
-	@Inject
-	private AttributeService attributeService;
 
 	private PasswordResetRequest request;
 	private String guid;
@@ -172,34 +164,16 @@ public class PasswordResetAction implements Serializable {
 	}
 
 	public String update() {
-		log.info("Starting 1");
-		boolean hasValidation = false;
-		Pattern pattern = null;
-		AttributeValidation validation = attributeService.getAttributeByName(USER_PASSWORD).getAttributeValidation();
-		log.info("Starting 2");
-		if (validation != null && validation.getRegexp() != null && !validation.getRegexp().isEmpty()) {
-			log.info("Starting 3");
-			pattern = Pattern.compile(validation.getRegexp());
-			hasValidation = true;
-		}
-		if (hasValidation && (!pattern.matcher(password).matches() || !pattern.matcher(confirm).matches())) {
-			log.info("Starting 4");
+		String outcome = updateImpl();
+		if (OxTrustConstants.RESULT_SUCCESS.equals(outcome)) {
+			facesMessages.add(FacesMessage.SEVERITY_INFO, "Password reset successful.");
+			conversationService.endConversation();
+		} else if (OxTrustConstants.RESULT_FAILURE.equals(outcome)) {
 			facesMessages.add(FacesMessage.SEVERITY_ERROR,
-					"Gasmyr");
-			return OxTrustConstants.RESULT_FAILURE;
-		} else {
-			log.info("Starting 5");
-			String outcome = updateImpl();
-			if (OxTrustConstants.RESULT_SUCCESS.equals(outcome)) {
-				facesMessages.add(FacesMessage.SEVERITY_INFO, "Password reset successful.");
-				conversationService.endConversation();
-			} else if (OxTrustConstants.RESULT_FAILURE.equals(outcome)) {
-				facesMessages.add(FacesMessage.SEVERITY_ERROR,
-						"Your secret answer or Captcha code may have been wrong. Please try to correct it or contact your administrator to change your password.");
-				conversationService.endConversation();
-			}
-			return outcome;
+					"Your secret answer or Captcha code may have been wrong. Please try to correct it or contact your administrator to change your password.");
+			conversationService.endConversation();
 		}
+		return outcome;
 	}
 
 	public String updateImpl() {
