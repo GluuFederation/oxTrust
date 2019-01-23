@@ -189,59 +189,65 @@ public class UpdateScopeAction implements Serializable {
 	}
 
 	public String save() throws Exception {
-		this.scope.setDisplayName(this.scope.getDisplayName().trim());
-		if (!isValidScope(this.scope)) {
+		try {
+			this.scope.setDisplayName(this.scope.getDisplayName().trim());
+			if (!isValidScope(this.scope)) {
+				return OxTrustConstants.RESULT_FAILURE;
+			}
+			updateDynamicScripts();
+			updateClaims();
+			if (update) {
+				// Update scope
+				try {
+					scopeService.updateScope(this.scope);
+					oxTrustAuditService.audit(
+							"OPENID SCOPE " + this.scope.getInum() + " **" + this.scope.getDisplayName() + "** UPDATED",
+							identity.getUser(),
+							(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
+				} catch (BasePersistenceException ex) {
+					log.error("Failed to update scope {}", this.inum, ex);
+
+					facesMessages.add(FacesMessage.SEVERITY_ERROR,
+							"Failed to update scope '#{updateScopeAction.scope.displayName}'");
+					return OxTrustConstants.RESULT_FAILURE;
+				}
+
+				facesMessages.add(FacesMessage.SEVERITY_INFO,
+						"Scope '#{updateScopeAction.scope.displayName}' updated successfully");
+			} else {
+				this.inum = scopeService.generateInumForNewScope();
+				String dn = scopeService.getDnForScope(this.inum);
+
+				// Save scope
+				this.scope.setDn(dn);
+				this.scope.setInum(this.inum);
+				try {
+					scopeService.addScope(this.scope);
+					oxTrustAuditService.audit(
+							"OPENID SCOPE " + this.scope.getInum() + " **" + this.scope.getDisplayName() + "** ADDED",
+							identity.getUser(),
+							(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
+				} catch (Exception ex) {
+					log.error("Failed to add new scope {}", this.scope.getInum(), ex);
+
+					facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new scope");
+					return OxTrustConstants.RESULT_FAILURE;
+				}
+
+				facesMessages.add(FacesMessage.SEVERITY_INFO,
+						"New scope '#{updateScopeAction.scope.displayName}' added successfully");
+
+				conversationService.endConversation();
+
+				this.update = true;
+			}
+			log.debug(" returning success updating or saving scope");
+			return OxTrustConstants.RESULT_SUCCESS;
+		} catch (Exception e) {
+			log.info("", e);
 			return OxTrustConstants.RESULT_FAILURE;
 		}
-		updateDynamicScripts();
-		updateClaims();
-		if (update) {
-			// Update scope
-			try {
-				scopeService.updateScope(this.scope);
-				oxTrustAuditService.audit(
-						"OPENID SCOPE " + this.scope.getInum() + " **" + this.scope.getDisplayName() + "** UPDATED",
-						identity.getUser(),
-						(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
-			} catch (BasePersistenceException ex) {
-				log.error("Failed to update scope {}", this.inum, ex);
 
-				facesMessages.add(FacesMessage.SEVERITY_ERROR,
-						"Failed to update scope '#{updateScopeAction.scope.displayName}'");
-				return OxTrustConstants.RESULT_FAILURE;
-			}
-
-			facesMessages.add(FacesMessage.SEVERITY_INFO,
-					"Scope '#{updateScopeAction.scope.displayName}' updated successfully");
-		} else {
-			this.inum = scopeService.generateInumForNewScope();
-			String dn = scopeService.getDnForScope(this.inum);
-
-			// Save scope
-			this.scope.setDn(dn);
-			this.scope.setInum(this.inum);
-			try {
-				scopeService.addScope(this.scope);
-				oxTrustAuditService.audit(
-						"OPENID SCOPE " + this.scope.getInum() + " **" + this.scope.getDisplayName() + "** ADDED",
-						identity.getUser(),
-						(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
-			} catch (Exception ex) {
-				log.error("Failed to add new scope {}", this.scope.getInum(), ex);
-
-				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new scope");
-				return OxTrustConstants.RESULT_FAILURE;
-			}
-
-			facesMessages.add(FacesMessage.SEVERITY_INFO,
-					"New scope '#{updateScopeAction.scope.displayName}' added successfully");
-
-			conversationService.endConversation();
-
-			this.update = true;
-		}
-		log.debug(" returning success updating or saving scope");
-		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
 	private boolean isValidScope(OxAuthScope scope) throws Exception {
