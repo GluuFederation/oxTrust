@@ -78,6 +78,8 @@ import org.xdi.util.StringHelper;
 @Secure("#{permissionService.hasPermission('person', 'access')}")
 public class UpdatePersonAction implements Serializable {
 
+	private static final String OTP_DEVICE = "OTP Device";
+
 	private static final String HOTP = "hotp";
 
 	private static final String TOTP = "totp";
@@ -268,6 +270,9 @@ public class UpdatePersonAction implements Serializable {
 	}
 
 	private void addExternalUids() {
+		ArrayList<Device> devices = new ArrayList<Device>();
+		OTPDevice oxOTPDevices = this.person.getOxOTPDevices();
+		devices.addAll(oxOTPDevices.getDevices());
 		if (oxExternalUids != null && oxExternalUids.size() > 0) {
 			for (String oxExternalUid : oxExternalUids) {
 				String[] args = oxExternalUid.split(COLON);
@@ -279,24 +284,35 @@ public class UpdatePersonAction implements Serializable {
 					if (idx > 0) {
 						key = key.substring(0, idx);
 					}
-					int id = key.hashCode();
-					gluuDeviceDataBean.setNickName(DASH);
-					gluuDeviceDataBean.setModality(firstPart);
-					gluuDeviceDataBean.setId(String.valueOf(id));
+					gluuDeviceDataBean.setNickName(firstPart);
+					gluuDeviceDataBean.setModality(OTP_DEVICE);
+					gluuDeviceDataBean.setId(key);
 					gluuDeviceDataBean.setCreationDate(DASH);
-				} else if(firstPart.startsWith(PASSPORT) || firstPart.startsWith(PASSPORT.toLowerCase()) ){
+					boolean canAdd = true;
+					for (Device device : devices) {
+						if (device.getId().equalsIgnoreCase("" + key.hashCode())) {
+							canAdd = false;
+							break;
+						}
+					}
+					if (canAdd) {
+						deviceDataMap.add(gluuDeviceDataBean);
+					}
+
+				} else if (firstPart.startsWith(PASSPORT) || firstPart.startsWith(PASSPORT.toLowerCase())) {
 					gluuDeviceDataBean.setNickName(firstPart);
 					gluuDeviceDataBean.setModality(PASSPORT);
 					gluuDeviceDataBean.setId(args[1]);
 					gluuDeviceDataBean.setCreationDate(DASH);
-				}
-				else {
+					deviceDataMap.add(gluuDeviceDataBean);
+				} else {
 					gluuDeviceDataBean.setNickName(firstPart);
 					gluuDeviceDataBean.setModality(DASH);
 					gluuDeviceDataBean.setId(args[1]);
 					gluuDeviceDataBean.setCreationDate(DASH);
+					deviceDataMap.add(gluuDeviceDataBean);
 				}
-				deviceDataMap.add(gluuDeviceDataBean);
+
 			}
 		}
 	}
@@ -330,11 +346,30 @@ public class UpdatePersonAction implements Serializable {
 			devices = oxOTPDevices.getDevices();
 		}
 		if (devices != null && devices.size() > 0) {
+			List<String> oxExternalUids = this.person.getOxExternalUid();
 			for (Device device : devices) {
 				GluuDeviceDataBean gluuDeviceDataBean = new GluuDeviceDataBean();
 				gluuDeviceDataBean.setNickName(device.getNickName());
-				gluuDeviceDataBean.setModality("OTP Device");
-				gluuDeviceDataBean.setId(device.getId());
+				gluuDeviceDataBean.setModality(OTP_DEVICE);
+				String hash = device.getId();
+				if (oxExternalUids != null && oxExternalUids.size() > 0) {
+					for (String oxExternalUid : oxExternalUids) {
+						String firstPart = oxExternalUid.split(COLON)[0];
+						if (firstPart.equalsIgnoreCase(TOTP) || firstPart.equalsIgnoreCase(HOTP)) {
+							String key = oxExternalUid.replaceFirst("hotp:", "").replaceFirst("totp:", "");
+							int idx = key.indexOf(";");
+							if (idx > 0) {
+								key = key.substring(0, idx);
+							}
+							if (String.valueOf(key.hashCode()).equalsIgnoreCase(hash)) {
+								gluuDeviceDataBean.setId(key);
+								break;
+							}
+						}
+					}
+				} else {
+					gluuDeviceDataBean.setId(hash);
+				}
 				Timestamp stamp = new Timestamp(Long.valueOf(device.getAddedOn()).longValue());
 				gluuDeviceDataBean.setCreationDate(stamp.toGMTString());
 				deviceDataMap.add(gluuDeviceDataBean);
@@ -344,29 +379,34 @@ public class UpdatePersonAction implements Serializable {
 
 	@SuppressWarnings("deprecation")
 	private void addFidoDevices() {
-		List<GluuCustomFidoDevice> fidoDevices = fidoDeviceService.searchFidoDevices(this.person.getInum(), null, null);
+		List<GluuCustomFidoDevice> fidoDevices = fidoDeviceService.searchFidoDevices(this.person.getInum(), null);
 		if (fidoDevices != null) {
 			for (GluuCustomFidoDevice gluuCustomFidoDevice : fidoDevices) {
 				GluuDeviceDataBean gluuDeviceDataBean = new GluuDeviceDataBean();
 				String creationDate = gluuCustomFidoDevice.getCreationDate();
-				if(creationDate!=null) {
-					gluuDeviceDataBean.setCreationDate(
-							ldapEntryManager.decodeGeneralizedTime(creationDate).toGMTString());
-				}else {
+				if (creationDate != null) {
+					gluuDeviceDataBean
+							.setCreationDate(ldapEntryManager.decodeGeneralizedTime(creationDate).toGMTString());
+				} else {
 					gluuDeviceDataBean.setCreationDate(DASH);
 				}
 				gluuDeviceDataBean.setId(gluuCustomFidoDevice.getId());
 				String devicedata = gluuCustomFidoDevice.getDeviceData();
 				String modality = DASH;
-				String nickName = DASH;
 				if (devicedata != null) {
-					nickName = gluuCustomFidoDevice.getNickname();
 					modality = "Super-Gluu Device";
 				} else {
-					nickName = gluuCustomFidoDevice.getNickname();
-					modality = "U2F device";
+					modality = "Security Key";
 				}
-				gluuDeviceDataBean.setNickName(nickName);
+				if (gluuCustomFidoDevice.getDisplayName() != null) {
+					gluuDeviceDataBean.setNickName(gluuCustomFidoDevice.getDisplayName());
+				}
+				if (gluuDeviceDataBean.getNickName() == null || gluuDeviceDataBean.getNickName().isEmpty()) {
+					gluuDeviceDataBean.setNickName(gluuCustomFidoDevice.getDescription());
+				}
+				if (gluuDeviceDataBean.getNickName() == null || gluuDeviceDataBean.getNickName().isEmpty()) {
+					gluuDeviceDataBean.setNickName(DASH);
+				}
 				gluuDeviceDataBean.setModality(modality);
 				deviceDataMap.add(gluuDeviceDataBean);
 			}
@@ -729,7 +769,7 @@ public class UpdatePersonAction implements Serializable {
 	public void removeDevice(GluuDeviceDataBean deleteDeviceData) {
 		try {
 			List<GluuCustomFidoDevice> gluuCustomFidoDevices = fidoDeviceService
-					.searchFidoDevices(this.person.getInum(), null, null);
+					.searchFidoDevices(this.person.getInum(), null);
 			if (gluuCustomFidoDevices != null) {
 				for (GluuCustomFidoDevice gluuCustomFidoDevice : gluuCustomFidoDevices) {
 					if (gluuCustomFidoDevice.getId().equals(deleteDeviceData.getId())) {
