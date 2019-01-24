@@ -463,11 +463,11 @@
 											</h:panelGroup>
 											<h:panelGroup id="NoU2fPanelid"
 												rendered="#{(_value.modality eq 'OTP Device') or ( _value.modality eq 'Mobile Device')}">
-											 #{_value.id}											
+											  #{_value.id.length() gt 13 ? _value.id.substring(0,13).concat('...') : _value.id}											
 											</h:panelGroup>
 											<h:panelGroup id="PassportPanelid"
 												rendered="#{(_value.modality eq 'Passport')}">
-											 #{_value.id.length() gt 10 ? _value.id.substring(0,7).concat('...') : _value.id}											
+											 #{_value.id.length() gt 13 ? _value.id.substring(0,13).concat('...') : _value.id}											
 											</h:panelGroup>
 										</h:column>
 										<h:column>
