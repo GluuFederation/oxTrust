@@ -14,33 +14,19 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.inject.Inject;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlSeeAlso;
 
 import org.gluu.persist.model.base.InumEntry;
 import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
 import org.gluu.site.ldap.persistence.annotation.LdapEntry;
 import org.gluu.site.ldap.persistence.annotation.LdapObjectClass;
-import org.slf4j.Logger;
 import org.xdi.model.GluuStatus;
-import org.xdi.service.cdi.util.CdiUtil;
-import javax.xml.bind.annotation.XmlTransient;
-import org.codehaus.jackson.annotate.JsonIgnore;
 
 @LdapEntry
 @LdapObjectClass(values = { "top", "gluuSAMLconfig" })
-
-@XmlRootElement
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlSeeAlso({GluuEntityType.class, GluuMetadataSourceType.class, GluuStatus.class, GluuValidationStatus.class, 
-    GluuCustomAttribute.class, MetadataFilter.class, ProfileConfiguration.class, DeconstructedTrustRelationship.class})
 public class GluuSAMLTrustRelationship extends InumEntry implements Serializable {
 
 	private static final long serialVersionUID = 5907443836820485369L;
@@ -136,10 +122,6 @@ public class GluuSAMLTrustRelationship extends InumEntry implements Serializable
 	@LdapAttribute(name = "gluuEntityType")
 	private GluuEntityType entityType;
 	
-	@Inject
-	private Logger log;
-
-	
 
 	public void setFederation(boolean isFederation) {
 		this.gluuIsFederation = Boolean.toString(isFederation);
@@ -148,6 +130,11 @@ public class GluuSAMLTrustRelationship extends InumEntry implements Serializable
 	public boolean isFederation() {
 		return Boolean.parseBoolean(gluuIsFederation);
 	}
+
+	public void setContainerFederation(GluuSAMLTrustRelationship containerFederation) {
+		this.gluuContainerFederation = containerFederation.getDn();
+	}
+
 
 	@Override
 	public boolean equals(Object o) {
@@ -165,16 +152,12 @@ public class GluuSAMLTrustRelationship extends InumEntry implements Serializable
 	public List<String> getGluuEntityId() {
 		return gluuEntityId;
 	}
-        
-        //@com.fasterxml.jackson.annotation.JsonIgnore
-        @JsonIgnore
-        @XmlTransient
+
 	public void setGluuEntityId(Set<String> gluuEntityId) {
 		this.gluuEntityId = new ArrayList<String>(gluuEntityId);
 	}
-        
-	/*
-	 * This method is for ldap persistance only. For purposes of crud - plea00se use setGluuEntityId(Set<String> gluuEntityId)
+	/**
+	 * This method is for ldap persistance only. For purposes of crud - please use setGluuEntityId(Set<String> gluuEntityId)
 	 */
 	@Deprecated
 	public void setGluuEntityId(List<String> gluuEntityId) {
@@ -182,7 +165,7 @@ public class GluuSAMLTrustRelationship extends InumEntry implements Serializable
 	}
 
 
-	/*
+	/**
 	 * This method returns entityId for site TRs only.
 	 */
 	public String getEntityId() {
@@ -425,12 +408,10 @@ public class GluuSAMLTrustRelationship extends InumEntry implements Serializable
         this.researchBundleEnabled = researchBundleEnabled;
     }
 
-    
     public boolean isResearchBundle() {
         return Boolean.parseBoolean(researchBundleEnabled);
     }
     
-    @JsonIgnore
     public boolean getResearchBundle() {
         return Boolean.parseBoolean(researchBundleEnabled);
     }
