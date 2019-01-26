@@ -9,7 +9,7 @@
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	template="/WEB-INF/incl/layout/fullWidthEmpty.xhtml">
 	<f:metadata>
-		<f:viewAction action="#{authenticator.postLogout}" onPostback="false" />
+		<f:viewAction action="#{logoutAction.postLogout}" onPostback="false" />
 	</f:metadata>
 
 	<ui:define name="head">
@@ -23,10 +23,6 @@
 }
 </style>
 
-		<ui:fragment rendered="#{not registerPersonAction.captchaDisabled}">
-			<script async="async" defer="defer"
-				src="https://www.google.com/recaptcha/api.js" />
-		</ui:fragment>
 		<ui:fragment>
 			<script type="text/javascript">
 				function load() {

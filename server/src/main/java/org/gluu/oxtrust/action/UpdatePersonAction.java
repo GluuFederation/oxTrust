@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import javax.enterprise.context.ConversationScoped;
 import javax.faces.application.FacesMessage;
@@ -59,6 +60,7 @@ import org.gluu.site.ldap.persistence.exception.LdapMappingException;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.ldap.model.GluuStatus;
+import org.xdi.model.AttributeValidation;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuUserRole;
 import org.xdi.oxauth.model.fido.u2f.protocol.DeviceData;
@@ -75,6 +77,18 @@ import org.xdi.util.StringHelper;
 @Named("updatePersonAction")
 @Secure("#{permissionService.hasPermission('person', 'access')}")
 public class UpdatePersonAction implements Serializable {
+
+	private static final String OTP_DEVICE = "OTP Device";
+
+	private static final String HOTP = "hotp";
+
+	private static final String TOTP = "totp";
+
+	private static final String COLON = ":";
+
+	private static final String DASH = "-";
+
+	private static final String PASSPORT = "Passport";
 
 	private static final String MAIL = "mail";
 
@@ -142,7 +156,7 @@ public class UpdatePersonAction implements Serializable {
 
 	private String confirmPassword;
 
-	private List<GluuDeviceDataBean> deviceDataMap;
+	private List<GluuDeviceDataBean> deviceDataMap = new ArrayList<GluuDeviceDataBean>();
 
 	private List<GluuUserPairwiseIdentifier> userPairWideIdentifiers = new ArrayList<GluuUserPairwiseIdentifier>();
 
@@ -172,8 +186,8 @@ public class UpdatePersonAction implements Serializable {
 		this.deviceDataMap = deviceDataMap;
 	}
 
-	private List<String> externalAuthCustomAttributes;
-
+	private List<String> externalAuthCustomAttributes = new ArrayList<String>();
+	private List<String> oxExternalUids = new ArrayList<String>();
 	private DeviceData deviceDetail;
 
 	public DeviceData getDeviceDetail() {
@@ -210,19 +224,15 @@ public class UpdatePersonAction implements Serializable {
 		if (!organizationService.isAllowPersonModification()) {
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new person");
 			conversationService.endConversation();
-
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 
 		if (this.person != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
-
 		this.update = false;
 		this.person = new GluuCustomPerson();
-
 		initAttributes(true);
-
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
@@ -236,119 +246,192 @@ public class UpdatePersonAction implements Serializable {
 		if (this.person != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
-
 		this.update = true;
 		try {
 			this.person = personService.getPersonByInum(inum);
 		} catch (LdapMappingException ex) {
-			log.error("Failed to find person {}", inum, ex);
-
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to find person");
-			conversationService.endConversation();
-
-			return OxTrustConstants.RESULT_FAILURE;
+			return handleFailure(ex);
 		}
-		userPairWideIdentifiers.clear();
-		userPairWideIdentifiers.addAll(pairwiseIdService.findAllUserPairwiseIdentifiers(person));
+		loadUserPairwiseIdentifiers();
 		initAttributes(false);
 		try {
 			this.gluuStatus = this.person.getStatus();
-			List<String> oxexternal = this.person.getOxExternalUid();
-			OTPDevice oxOTPDevices = this.person.getOxOTPDevices();
-			externalAuthCustomAttributes = new ArrayList<String>();
-			String oxMobileDevices = this.person.getOxMobileDevices();
-			if (oxexternal != null && oxexternal.size() > 0) {
-				for (String oxexternalStr : oxexternal) {
-					String[] args = oxexternalStr.split(":");
-					externalAuthCustomAttributes.add(args[0]);
-				}
-			}
-
-			List<GluuCustomFidoDevice> gluuCustomFidoDevices = fidoDeviceService
-					.searchFidoDevices(this.person.getInum(), null);
-			deviceDataMap = new ArrayList<GluuDeviceDataBean>();
-			if (gluuCustomFidoDevices != null) {
-				for (GluuCustomFidoDevice gluuCustomFidoDevice : gluuCustomFidoDevices) {
-					GluuDeviceDataBean gluuDeviceDataBean = new GluuDeviceDataBean();
-					gluuDeviceDataBean.setCreationDate(ldapEntryManager
-							.decodeGeneralizedTime(gluuCustomFidoDevice.getCreationDate()).toGMTString());
-					gluuDeviceDataBean.setId(gluuCustomFidoDevice.getId());
-					String devicedata = gluuCustomFidoDevice.getDeviceData();
-					String modality = "";
-					String nickName = "";
-					if (devicedata != null) {
-						DeviceData deviceData = getDeviceata(devicedata);
-						// nickName = deviceData.getName();
-						nickName = gluuCustomFidoDevice.getNickname();
-						modality = "Super-Gluu Device";
-					} else {
-						// nickName = "U2F";
-						nickName = gluuCustomFidoDevice.getNickname();
-						modality = "U2F device";
-					}
-					gluuDeviceDataBean.setNickName(nickName);
-					gluuDeviceDataBean.setModality(modality);
-					deviceDataMap.add(gluuDeviceDataBean);
-				}
-			}
-
-			/*
-			 * if (oxOTPDevices != null && !oxOTPDevices.trim().equals("")) { ObjectMapper
-			 * mapper = new ObjectMapper(); OTPDevice oTPDevice =
-			 * mapper.readValue(oxOTPDevices, OTPDevice.class);
-			 */
-			ArrayList<Device> devices = new ArrayList<Device>();
-			if (oxOTPDevices != null) {
-				devices = oxOTPDevices.getDevices();
-			}
-			if (devices != null && devices.size() > 0) {
-				for (Device device : devices) {
-					GluuDeviceDataBean gluuDeviceDataBean = new GluuDeviceDataBean();
-					gluuDeviceDataBean.setNickName(device.getNickName());
-					gluuDeviceDataBean.setModality("OTP Device");
-					gluuDeviceDataBean.setId(device.getId());
-					Timestamp stamp = new Timestamp(Long.valueOf(device.getAddedOn()).longValue());
-					gluuDeviceDataBean.setCreationDate(stamp.toGMTString());
-					deviceDataMap.add(gluuDeviceDataBean);
-				}
-			}
-			// }
-
-			if (oxMobileDevices != null && !oxMobileDevices.trim().equals("")) {
-				ObjectMapper mapper = new ObjectMapper();
-				MobileDevice mobileDevice = mapper.readValue(oxMobileDevices, MobileDevice.class);
-				ArrayList<Phone> phones = mobileDevice.getPhones();
-
-				if (phones != null && phones.size() > 0) {
-					for (Phone phone : phones) {
-						GluuDeviceDataBean gluuDeviceDataBean = new GluuDeviceDataBean();
-						gluuDeviceDataBean.setNickName(phone.getNickName());
-						gluuDeviceDataBean.setModality("Mobile Device");
-						gluuDeviceDataBean.setId(phone.getNumber());
-
-						Timestamp stamp = new Timestamp(Long.valueOf(phone.getAddedOn()).longValue());
-						gluuDeviceDataBean.setCreationDate(stamp.toGMTString());
-						deviceDataMap.add(gluuDeviceDataBean);
-					}
-				}
-			}
-			if (oxexternal != null && oxexternal.size() > 0) {
-				for (String oxexternalStr : oxexternal) {
-					String[] args = oxexternalStr.split(":");
-					GluuDeviceDataBean gluuDeviceDataBean = new GluuDeviceDataBean();
-					gluuDeviceDataBean.setNickName(args[0]);
-					gluuDeviceDataBean.setModality("Passport");
-					gluuDeviceDataBean.setId(args[1]);
-					gluuDeviceDataBean.setCreationDate("-");
-					deviceDataMap.add(gluuDeviceDataBean);
-
-				}
-			}
+			this.oxExternalUids = this.person.getOxExternalUid();
+			fillExternalAuthCustomAttributes();
+			addFidoDevices();
+			addOtpDevices();
+			addMobileDevices();
+			addExternalUids();
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 		return OxTrustConstants.RESULT_SUCCESS;
+	}
+
+	private void addExternalUids() {
+		ArrayList<Device> devices = new ArrayList<Device>();
+		OTPDevice oxOTPDevices = this.person.getOxOTPDevices();
+		devices.addAll(oxOTPDevices.getDevices());
+		if (oxExternalUids != null && oxExternalUids.size() > 0) {
+			for (String oxExternalUid : oxExternalUids) {
+				String[] args = oxExternalUid.split(COLON);
+				GluuDeviceDataBean gluuDeviceDataBean = new GluuDeviceDataBean();
+				String firstPart = args[0];
+				if (firstPart.equalsIgnoreCase(TOTP) || firstPart.equalsIgnoreCase(HOTP)) {
+					String key = oxExternalUid.replaceFirst("hotp:", "").replaceFirst("totp:", "");
+					int idx = key.indexOf(";");
+					if (idx > 0) {
+						key = key.substring(0, idx);
+					}
+					gluuDeviceDataBean.setNickName(firstPart);
+					gluuDeviceDataBean.setModality(OTP_DEVICE);
+					gluuDeviceDataBean.setId(key);
+					gluuDeviceDataBean.setCreationDate(DASH);
+					boolean canAdd = true;
+					for (Device device : devices) {
+						if (device.getId().equalsIgnoreCase("" + key.hashCode())) {
+							canAdd = false;
+							break;
+						}
+					}
+					if (canAdd) {
+						deviceDataMap.add(gluuDeviceDataBean);
+					}
+
+				} else if (firstPart.startsWith(PASSPORT) || firstPart.startsWith(PASSPORT.toLowerCase())) {
+					gluuDeviceDataBean.setNickName(firstPart);
+					gluuDeviceDataBean.setModality(PASSPORT);
+					gluuDeviceDataBean.setId(args[1]);
+					gluuDeviceDataBean.setCreationDate(DASH);
+					deviceDataMap.add(gluuDeviceDataBean);
+				} else {
+					gluuDeviceDataBean.setNickName(firstPart);
+					gluuDeviceDataBean.setModality(DASH);
+					gluuDeviceDataBean.setId(args[1]);
+					gluuDeviceDataBean.setCreationDate(DASH);
+					deviceDataMap.add(gluuDeviceDataBean);
+				}
+
+			}
+		}
+	}
+
+	@SuppressWarnings("deprecation")
+	private void addMobileDevices() throws IOException, JsonParseException, JsonMappingException {
+		String oxMobileDevices = this.person.getOxMobileDevices();
+		if (oxMobileDevices != null && !oxMobileDevices.trim().equals("")) {
+			ObjectMapper mapper = new ObjectMapper();
+			MobileDevice mobileDevice = mapper.readValue(oxMobileDevices, MobileDevice.class);
+			ArrayList<Phone> phones = mobileDevice.getPhones();
+			if (phones != null && phones.size() > 0) {
+				for (Phone phone : phones) {
+					GluuDeviceDataBean gluuDeviceDataBean = new GluuDeviceDataBean();
+					gluuDeviceDataBean.setNickName(phone.getNickName());
+					gluuDeviceDataBean.setModality("Mobile Device");
+					gluuDeviceDataBean.setId(phone.getNumber());
+					Timestamp stamp = new Timestamp(Long.valueOf(phone.getAddedOn()).longValue());
+					gluuDeviceDataBean.setCreationDate(stamp.toGMTString());
+					deviceDataMap.add(gluuDeviceDataBean);
+				}
+			}
+		}
+	}
+
+	@SuppressWarnings("deprecation")
+	private void addOtpDevices() {
+		ArrayList<Device> devices = new ArrayList<Device>();
+		OTPDevice oxOTPDevices = this.person.getOxOTPDevices();
+		if (oxOTPDevices != null) {
+			devices = oxOTPDevices.getDevices();
+		}
+		if (devices != null && devices.size() > 0) {
+			List<String> oxExternalUids = this.person.getOxExternalUid();
+			for (Device device : devices) {
+				GluuDeviceDataBean gluuDeviceDataBean = new GluuDeviceDataBean();
+				gluuDeviceDataBean.setNickName(device.getNickName());
+				gluuDeviceDataBean.setModality(OTP_DEVICE);
+				String hash = device.getId();
+				if (oxExternalUids != null && oxExternalUids.size() > 0) {
+					for (String oxExternalUid : oxExternalUids) {
+						String firstPart = oxExternalUid.split(COLON)[0];
+						if (firstPart.equalsIgnoreCase(TOTP) || firstPart.equalsIgnoreCase(HOTP)) {
+							String key = oxExternalUid.replaceFirst("hotp:", "").replaceFirst("totp:", "");
+							int idx = key.indexOf(";");
+							if (idx > 0) {
+								key = key.substring(0, idx);
+							}
+							if (String.valueOf(key.hashCode()).equalsIgnoreCase(hash)) {
+								gluuDeviceDataBean.setId(key);
+								break;
+							}
+						}
+					}
+				} else {
+					gluuDeviceDataBean.setId(hash);
+				}
+				Timestamp stamp = new Timestamp(Long.valueOf(device.getAddedOn()).longValue());
+				gluuDeviceDataBean.setCreationDate(stamp.toGMTString());
+				deviceDataMap.add(gluuDeviceDataBean);
+			}
+		}
+	}
+
+	@SuppressWarnings("deprecation")
+	private void addFidoDevices() {
+		List<GluuCustomFidoDevice> fidoDevices = fidoDeviceService.searchFidoDevices(this.person.getInum(), null);
+		if (fidoDevices != null) {
+			for (GluuCustomFidoDevice gluuCustomFidoDevice : fidoDevices) {
+				GluuDeviceDataBean gluuDeviceDataBean = new GluuDeviceDataBean();
+				String creationDate = gluuCustomFidoDevice.getCreationDate();
+				if (creationDate != null) {
+					gluuDeviceDataBean
+							.setCreationDate(ldapEntryManager.decodeGeneralizedTime(creationDate).toGMTString());
+				} else {
+					gluuDeviceDataBean.setCreationDate(DASH);
+				}
+				gluuDeviceDataBean.setId(gluuCustomFidoDevice.getId());
+				String devicedata = gluuCustomFidoDevice.getDeviceData();
+				String modality = DASH;
+				if (devicedata != null) {
+					modality = "Super-Gluu Device";
+				} else {
+					modality = "Security Key";
+				}
+				if (gluuCustomFidoDevice.getDisplayName() != null) {
+					gluuDeviceDataBean.setNickName(gluuCustomFidoDevice.getDisplayName());
+				}
+				if (gluuDeviceDataBean.getNickName() == null || gluuDeviceDataBean.getNickName().isEmpty()) {
+					gluuDeviceDataBean.setNickName(gluuCustomFidoDevice.getDescription());
+				}
+				if (gluuDeviceDataBean.getNickName() == null || gluuDeviceDataBean.getNickName().isEmpty()) {
+					gluuDeviceDataBean.setNickName(DASH);
+				}
+				gluuDeviceDataBean.setModality(modality);
+				deviceDataMap.add(gluuDeviceDataBean);
+			}
+		}
+	}
+
+	private void fillExternalAuthCustomAttributes() {
+		if (oxExternalUids != null && oxExternalUids.size() > 0) {
+			for (String oxExternalUid : oxExternalUids) {
+				String[] args = oxExternalUid.split(COLON);
+				externalAuthCustomAttributes.add(args[0]);
+			}
+		}
+	}
+
+	private void loadUserPairwiseIdentifiers() {
+		userPairWideIdentifiers.clear();
+		userPairWideIdentifiers.addAll(pairwiseIdService.findAllUserPairwiseIdentifiers(person));
+	}
+
+	private String handleFailure(Exception ex) {
+		log.error("Failed to find person {}", inum, ex);
+		facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to find person");
+		conversationService.endConversation();
+		return OxTrustConstants.RESULT_FAILURE;
 	}
 
 	public String cancel() {
@@ -639,16 +722,28 @@ public class UpdatePersonAction implements Serializable {
 	}
 
 	public void validateConfirmPassword(FacesContext context, UIComponent comp, Object value) {
+		Pattern pattern = null;
+		AttributeValidation validation = attributeService.getAttributeByName("userPassword").getAttributeValidation();
+		boolean canValidate = validation != null && validation.getRegexp() != null && !validation.getRegexp().isEmpty();
 		if (comp.getClientId().endsWith("custpasswordId")) {
 			this.password = (String) value;
 		} else if (comp.getClientId().endsWith("custconfirmpasswordId")) {
 			this.confirmPassword = (String) value;
 		}
-
+		if (canValidate) {
+			pattern = Pattern.compile(validation.getRegexp());
+		}
 		if (!StringHelper.equalsIgnoreCase(password, confirmPassword)) {
 			((UIInput) comp).setValid(false);
 			FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR,
 					"Password and Confirm Password should be same!", "Password and Confirm Password should be same!");
+			context.addMessage(comp.getClientId(context), message);
+		}
+		if (canValidate && (!pattern.matcher(password).matches() || !pattern.matcher(confirmPassword).matches())) {
+			((UIInput) comp).setValid(false);
+			FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					facesMessages.evalResourceAsString("#{msg['password.validation.invalid']}"),
+					facesMessages.evalResourceAsString("#{msg['password.validation.invalid']}"));
 			context.addMessage(comp.getClientId(context), message);
 		}
 	}
@@ -688,7 +783,7 @@ public class UpdatePersonAction implements Serializable {
 			List<String> list = new ArrayList<String>(this.person.getOxExternalUid());
 			if (list != null) {
 				for (String external : list) {
-					if (deleteDeviceData.getId().equals(external.split(":")[1])) {
+					if (deleteDeviceData.getId().equals(external.split(COLON)[1])) {
 						list.remove(external);
 						this.person.setOxExternalUid(list);
 						this.deviceDataMap.remove(deleteDeviceData);
@@ -698,11 +793,6 @@ public class UpdatePersonAction implements Serializable {
 			}
 
 			OTPDevice oxOTPDevices = this.person.getOxOTPDevices();
-			/*
-			 * if (oxOTPDevices != null && !oxOTPDevices.trim().equals("")) { ObjectMapper
-			 * mapper = new ObjectMapper(); OTPDevice oTPDevice =
-			 * mapper.readValue(oxOTPDevices, OTPDevice.class);
-			 */
 			ArrayList<Device> devices = new ArrayList<Device>();
 			if (oxOTPDevices != null) {
 				devices = oxOTPDevices.getDevices();
@@ -712,18 +802,12 @@ public class UpdatePersonAction implements Serializable {
 					if (deleteDeviceData.getId().equals(device.getId())) {
 						deviceDataMap.remove(deleteDeviceData);
 						devices.remove(device);
-						/*
-						 * Map<String, ArrayList<Device>> map= new HashMap<String, ArrayList<Device>>();
-						 * map.put("devices", devices); String jsonInString =
-						 * mapper.writeValueAsString(map);
-						 */
 						oxOTPDevices.setDevices(devices);
 						this.person.setOxOTPDevices(oxOTPDevices);
 						return;
 					}
 				}
 			}
-			// }
 
 			String oxMobileDevices = this.person.getOxMobileDevices();
 			if (oxMobileDevices != null && !oxMobileDevices.trim().equals("")) {
@@ -844,7 +928,7 @@ public class UpdatePersonAction implements Serializable {
 	}
 
 	public String getClientName(String inum) {
-		OxAuthClient result = clientService.getClientByInum(inum, null);
+		OxAuthClient result = clientService.getClientByInum(inum, null, null);
 		if (result != null) {
 			return result.getDisplayName();
 		} else {

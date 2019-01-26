@@ -3,48 +3,57 @@ package org.gluu.oxtrust.model;
 public class Device {
 	private String addedOn;
 
-    private String id;
+	private String id;
 
-    private String nickName;
+	private String nickName;
 
-    
-    public String getAddedOn() {
-        return addedOn;
-    }
+	private boolean soft = false;
 
-    public void setAddedOn(String addedOn) {
-        this.addedOn = addedOn;
-    }
+	public String getAddedOn() {
+		return addedOn;
+	}
 
-    public String getId() {
-        return id;
-    }
+	public void setAddedOn(String addedOn) {
+		this.addedOn = addedOn;
+	}
 
-    public void setId(String id) {
-        this.id = id;
-    }
+	public String getId() {
+		return id;
+	}
 
-    public String getNickName() {
-        return nickName;
-    }
+	public void setId(String id) {
+		this.id = id;
+	}
 
-    public void setNickName(String nickName) {
-        this.nickName = nickName;
-        updateHash();
-    }
+	public String getNickName() {
+		return nickName;
+	}
 
-    public void updateHash() {
+	public void setNickName(String nickName) {
+		this.nickName = nickName;
+		updateHash();
+	}
 
-        if (nickName == null) {
-            id = "";
-        } else {
-            String str = nickName.replaceFirst("hotp:", "").replaceFirst("totp:", "");
-            int idx = str.indexOf(";");
-            if (idx > 0) {
-                str = str.substring(0, idx);
-            }
-            id = str;
-        }
-    }
+	public boolean isSoft() {
+		return soft;
+	}
+
+	public void setSoft(boolean soft) {
+		this.soft = soft;
+	}
+
+	public void updateHash() {
+
+		if (nickName == null) {
+			id = "";
+		} else {
+			String str = nickName.replaceFirst("hotp:", "").replaceFirst("totp:", "");
+			int idx = str.indexOf(";");
+			if (idx > 0) {
+				str = str.substring(0, idx);
+			}
+			id = str;
+		}
+	}
 
 }

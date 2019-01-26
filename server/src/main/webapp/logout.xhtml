@@ -2,7 +2,7 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://xmlns.jcp.org/jsf/core"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets" template="/WEB-INF/incl/layout/fullWidthEmpty.xhtml">
     <f:metadata>
-        <f:viewAction action="#{authenticator.processLogout}" onPostback="false"/>
+        <f:viewAction action="#{logoutAction.processLogout}" onPostback="false"/>
     </f:metadata>
 
     <ui:param name="showGlobalMessages" value="false"/>

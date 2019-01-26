@@ -19,7 +19,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.AssertTrue;
-import javax.validation.constraints.Size;
 
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
@@ -90,9 +89,7 @@ public class PasswordResetAction implements Serializable {
 	private String guid;
 	private String securityQuestion;
 	private String securityAnswer;
-	@Size(min = 3, max = 60, message = "Password length must be between {min} and {max} characters.")
 	private String password;
-	@Size(min = 3, max = 60, message = "Password length must be between {min} and {max} characters.")
 	private String confirm;
 
 	public String start() throws ParseException {
@@ -227,9 +224,9 @@ public class PasswordResetAction implements Serializable {
 					return OxTrustConstants.RESULT_SUCCESS;
 				}
 			}
-		}else {
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, facesMessages
-					.evalResourceAsString("#{msg['person.passwordreset.catch.checkInputAndCaptcha']}"));
+		} else {
+			facesMessages.add(FacesMessage.SEVERITY_ERROR,
+					facesMessages.evalResourceAsString("#{msg['person.passwordreset.catch.checkInputAndCaptcha']}"));
 		}
 
 		return OxTrustConstants.RESULT_FAILURE;
