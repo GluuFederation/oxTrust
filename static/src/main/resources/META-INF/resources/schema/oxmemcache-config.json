@@ -156,6 +156,7 @@
 					"multipleOf": 1,
 					"maximum": 2147483647,
 					"minimum": 1,
+					"default": 60,
 					"exclusiveMaximum": false,
 					"exclusiveMinimum": false
 				},
@@ -166,6 +167,7 @@
 					"multipleOf": 1,
 					"maximum": 2147483647,
 					"minimum": 25,
+					"default": 25,
 					"exclusiveMaximum": false,
 					"exclusiveMinimum": false
 				}
