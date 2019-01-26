@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.ApplicationType;
 import org.xdi.service.CacheService;
+import org.xdi.service.cache.CacheProvider;
 import org.xdi.service.cache.NativePersistenceCacheProvider;
 import org.xdi.service.cdi.async.Asynchronous;
 import org.xdi.service.cdi.event.CleanerEvent;
@@ -44,7 +45,7 @@ public class CleanerTimer {
 	private PasswordResetService passwordResetService;
 
 	@Inject
-	private CacheService cacheService;
+	private CacheProvider cacheProvider;
 
 	@Inject
 	private MetricService metricService;
@@ -106,9 +107,7 @@ public class CleanerTimer {
 	private void processCache(Date now) {
 		cleanUpLogger.addNewLogLine("~Starting processing cache at:" + now);
 		try {
-			if (cacheService.getCacheProvider() instanceof NativePersistenceCacheProvider) {
-				((NativePersistenceCacheProvider) cacheService.getCacheProvider()).cleanup(now, BATCH_SIZE);
-			}
+            cacheProvider.cleanup(now);
 		} catch (Exception e) {
 			log.error("Failed to clean up cache.", e);
 			cleanUpLogger.addNewLogLineAsError("~Error occurs while processing cache");
