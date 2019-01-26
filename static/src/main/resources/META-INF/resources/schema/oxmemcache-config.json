@@ -158,6 +158,16 @@
 					"minimum": 1,
 					"exclusiveMaximum": false,
 					"exclusiveMinimum": false
+				},
+				"defaultCleanupBatchSize": {
+					"id": "defaultCleanupBatchSize",
+					"description": "defaultCleanupBatchSize page size",
+					"type": "integer",
+					"multipleOf": 1,
+					"maximum": 2147483647,
+					"minimum": 25,
+					"exclusiveMaximum": false,
+					"exclusiveMinimum": false
 				}
 			}
 		}
