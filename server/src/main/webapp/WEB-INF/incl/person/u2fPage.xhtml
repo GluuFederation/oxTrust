@@ -9,61 +9,6 @@
     xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
     xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
 	<h:outputStylesheet>
-		.rf-pick-btn {
-		    width: 100%;
-		    white-space: nowrap;
-		    background-image: url(../org.richfaces.images/autocompleteButtonGradient.png);
-		    background-repeat: repeat-x;
-		    background-position: top left;
-		    background-color: #337AB7;
-		    border-left-width: 1px;
-		    border-left-style: solid;
-		    border-left-color: #337AB7;
-		    display: inline-block;
-		    vertical-align: top;
-		    cursor: pointer;
-		    text-align: left;
-		}
-		
-		.rf-pick-sel {
-		    width: 100%;
-		    background-color: #337AB7;
-		    border-width: 1px;
-		    border-style: dotted;
-		    border-color: #000000;
-		}
-		
-		button[disabled], input[type="reset"][disabled], input[type="submit"][disabled], input[type="button"][disabled] {
-		    color: #337AB7;
-		    border-color: #cccccc;
-		    background-color: #cccccc;
-		    background-image: url(org.richfaces.images/buttonDisabledBackgroundImage.png);
-		    background-position: top left;
-		}
-		
-		button:hover, input[type="reset"]:hover, input[type="submit"]:hover, input[type="button"]:hover {
-		    background-position: bottom left !important;;
-		    background-repeat: repeat-x !important;
-		   	background-image:none ;
-		}
-		
-		
-		button, input[type="reset"], input[type="submit"], input[type="button"] {
-		    border-width: 1px;
-		    border-color: #C0C0C0;
-		    font-size: 11px;
-		    font-family: Arial, Verdana, sans-serif;
-		    color: #FFFFFF;
-		    background-repeat: repeat-x;
-		    background-position: top left;
-		    background-color: #337AB7;
-		    background-image:none ;
-		}
-		
-	    .rf-pp-cntr {
-    		width: 95% !important;
-		}
-
     </h:outputStylesheet>
     <script src="#{oxTrustConfigurationService.jsLocation}/jsoneditor.min.js" type="text/javascript"/>
         <script>
@@ -72,7 +17,7 @@
             JSONEditor.defaults.iconlib = 'bootstrap3';
         </script>
 
-	<rich:popupPanel id="U2fPanel" onmaskclick="#{rich:component('U2fPanel')}.hide()" keepVisualState="true"  zindex="1000" minHeight="1000" top="60" >
+	<rich:popupPanel id="U2fPanel" onmaskclick="#{rich:component('U2fPanel')}.hide()" keepVisualState="true"  zindex="1000"  top="60" width="500" height="600" >
         <f:facet name="header">
             <h:outputText value="Device Detail" />
         </f:facet>
@@ -82,7 +27,7 @@
         </f:facet>
 
         <h:form>
-            <h:panelGrid columns="1" id="U2fMenu" width="700"  style="margin: 0 auto; ">                
+            <h:panelGrid columns="1" id="U2fMenu" style="margin: 0 auto; width: 100%;">                
 
                 <h:panelGroup id="U2fConfigMenu">
                     <h:panelGroup style="overflow:auto; height: 300px; width: 100%;" layout="block">
@@ -93,21 +38,8 @@
 
                     <h:outputText value="Device Key Handle :" style="margin-top: 10px;display: block;" />
                     <h:inputText value="#{updatePersonAction.fidoDevice.deviceKeyHandle}" disabled="true" id="devicekey" autocomplete="off" styleClass="form-control" style="margin-top: 10px;">
-                        
                     </h:inputText>
-                    
-                    <ui:decorate id="DeviceRegiConfig" prependId="false"
-                                                     template="/WEB-INF/incl/layout/jsoneditor.xhtml">
-                                            <ui:param name="id" value="DeviceRegiConf"/>
-                                            <ui:param name="parentId" value="DeviceRegiConfig"/>
-                                            <ui:param name="json" value="#{updatePersonAction.fidoDevice.deviceRegistrationConf}"/>
-                                            <ui:param name="jsonSchema"
-                                                      value="#{request.contextPath}/schema/u2f.properties.json"/>
-                                            <ui:param name="saveBtnId" value="saveOxTrustConfigBtn"/>
-                                            <ui:param name="saveBtnLabelHide"
-                                                      value="hide"/>
-                    </ui:decorate>
-                    
+                                    
                     <h:panelGroup id="U2fDeviceConfigMenu"  rendered="#{updatePersonAction.deviceDetail != null}">
                     
                     <h:outputText value="UUID :" style="margin-top: 10px;display: block;" />
