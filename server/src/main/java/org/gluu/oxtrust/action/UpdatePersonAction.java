@@ -11,10 +11,8 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 import javax.enterprise.context.ConversationScoped;
@@ -258,10 +256,8 @@ public class UpdatePersonAction implements Serializable {
 			this.gluuStatus = this.person.getStatus();
 			this.oxExternalUids = this.person.getOxExternalUid();
 			fillExternalAuthCustomAttributes();
-			addFidoDevices();
-			addOtpDevices();
-			addMobileDevices();
 			addExternalUids();
+			addFidoDevices();
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 			return OxTrustConstants.RESULT_FAILURE;
@@ -272,7 +268,9 @@ public class UpdatePersonAction implements Serializable {
 	private void addExternalUids() {
 		ArrayList<Device> devices = new ArrayList<Device>();
 		OTPDevice oxOTPDevices = this.person.getOxOTPDevices();
-		devices.addAll(oxOTPDevices.getDevices());
+		if (oxOTPDevices !=null && oxOTPDevices.getDevices() != null) {
+			devices.addAll(oxOTPDevices.getDevices());
+		}
 		if (oxExternalUids != null && oxExternalUids.size() > 0) {
 			for (String oxExternalUid : oxExternalUids) {
 				String[] args = oxExternalUid.split(COLON);
@@ -293,6 +291,8 @@ public class UpdatePersonAction implements Serializable {
 						if (device.getId().equalsIgnoreCase("" + key.hashCode())) {
 							canAdd = false;
 							break;
+						} else if (!canBeConvertToInteger(device.getId())) {
+							canAdd = false;
 						}
 					}
 					if (canAdd) {
@@ -314,6 +314,15 @@ public class UpdatePersonAction implements Serializable {
 				}
 
 			}
+		}
+	}
+
+	private boolean canBeConvertToInteger(String id) {
+		try {
+			Double.valueOf(id);
+			return true;
+		} catch (Exception e) {
+			return false;
 		}
 	}
 
@@ -347,12 +356,14 @@ public class UpdatePersonAction implements Serializable {
 		}
 		if (devices != null && devices.size() > 0) {
 			List<String> oxExternalUids = this.person.getOxExternalUid();
+			boolean canProceed = false;
+			canProceed = oxExternalUids != null && oxExternalUids.size() > 0;
 			for (Device device : devices) {
 				GluuDeviceDataBean gluuDeviceDataBean = new GluuDeviceDataBean();
 				gluuDeviceDataBean.setNickName(device.getNickName());
 				gluuDeviceDataBean.setModality(OTP_DEVICE);
 				String hash = device.getId();
-				if (oxExternalUids != null && oxExternalUids.size() > 0) {
+				if (canProceed && canBeConvertToInteger(device.getId())) {
 					for (String oxExternalUid : oxExternalUids) {
 						String firstPart = oxExternalUid.split(COLON)[0];
 						if (firstPart.equalsIgnoreCase(TOTP) || firstPart.equalsIgnoreCase(HOTP)) {
@@ -770,9 +781,10 @@ public class UpdatePersonAction implements Serializable {
 		try {
 			List<GluuCustomFidoDevice> gluuCustomFidoDevices = fidoDeviceService
 					.searchFidoDevices(this.person.getInum(), null);
+			String idOfDeviceToRemove = deleteDeviceData.getId();
 			if (gluuCustomFidoDevices != null) {
 				for (GluuCustomFidoDevice gluuCustomFidoDevice : gluuCustomFidoDevices) {
-					if (gluuCustomFidoDevice.getId().equals(deleteDeviceData.getId())) {
+					if (gluuCustomFidoDevice.getId().equals(idOfDeviceToRemove)) {
 						fidoDeviceService.removeGluuCustomFidoDevice(gluuCustomFidoDevice);
 						this.deviceDataMap.remove(deleteDeviceData);
 						return;
@@ -783,49 +795,11 @@ public class UpdatePersonAction implements Serializable {
 			List<String> list = new ArrayList<String>(this.person.getOxExternalUid());
 			if (list != null) {
 				for (String external : list) {
-					if (deleteDeviceData.getId().equals(external.split(COLON)[1])) {
+					if (idOfDeviceToRemove.equals(external.split(COLON)[0])) {
 						list.remove(external);
 						this.person.setOxExternalUid(list);
 						this.deviceDataMap.remove(deleteDeviceData);
 						return;
-					}
-				}
-			}
-
-			OTPDevice oxOTPDevices = this.person.getOxOTPDevices();
-			ArrayList<Device> devices = new ArrayList<Device>();
-			if (oxOTPDevices != null) {
-				devices = oxOTPDevices.getDevices();
-			}
-			if (devices != null && devices.size() > 0) {
-				for (Device device : devices) {
-					if (deleteDeviceData.getId().equals(device.getId())) {
-						deviceDataMap.remove(deleteDeviceData);
-						devices.remove(device);
-						oxOTPDevices.setDevices(devices);
-						this.person.setOxOTPDevices(oxOTPDevices);
-						return;
-					}
-				}
-			}
-
-			String oxMobileDevices = this.person.getOxMobileDevices();
-			if (oxMobileDevices != null && !oxMobileDevices.trim().equals("")) {
-				ObjectMapper mapper = new ObjectMapper();
-				MobileDevice mobileDevice = mapper.readValue(oxMobileDevices, MobileDevice.class);
-				ArrayList<Phone> phones = mobileDevice.getPhones();
-
-				if (phones != null && phones.size() > 0) {
-					for (Phone phone : phones) {
-						if (phone.getNumber().equals(deleteDeviceData.getId())) {
-							deviceDataMap.remove(deleteDeviceData);
-							phones.remove(phone);
-							Map<String, ArrayList<Phone>> map = new HashMap<String, ArrayList<Phone>>();
-							map.put("phones", phones);
-							String jsonInString = mapper.writeValueAsString(map);
-							this.person.setOxMobileDevices(jsonInString);
-							return;
-						}
 					}
 				}
 			}
