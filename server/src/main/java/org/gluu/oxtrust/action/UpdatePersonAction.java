@@ -60,11 +60,10 @@ import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.exception.BasePersistenceException;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.ldap.model.GluuStatus;
-import org.xdi.model.AttributeValidation;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuStatus;
 import org.xdi.model.GluuUserRole;
+import org.xdi.model.attribute.AttributeValidation;
 import org.xdi.oxauth.model.fido.u2f.protocol.DeviceData;
 import org.xdi.service.security.Secure;
 import org.xdi.util.ArrayHelper;
@@ -254,7 +253,7 @@ public class UpdatePersonAction implements Serializable {
 		this.update = true;
 		try {
 			this.person = personService.getPersonByInum(inum);
-		} catch (LdapMappingException ex) {
+		} catch (BasePersistenceException ex) {
 			return handleFailure(ex);
 		}
 		loadUserPairwiseIdentifiers();
@@ -378,7 +377,7 @@ public class UpdatePersonAction implements Serializable {
 				String creationDate = gluuCustomFidoDevice.getCreationDate();
 				if (creationDate != null) {
 					gluuDeviceDataBean
-							.setCreationDate(ldapEntryManager.decodeGeneralizedTime(creationDate).toGMTString());
+							.setCreationDate(ldapEntryManager.decodeTime(creationDate).toGMTString());
 				} else {
 					gluuDeviceDataBean.setCreationDate(DASH);
 				}
@@ -512,7 +511,7 @@ public class UpdatePersonAction implements Serializable {
 				if (runScript) {
 					externalUpdateUserService.executeExternalPostUpdateUserMethods(this.person);
 				}
-			} catch (LdapMappingException ex) {
+			} catch (BasePersistenceException ex) {
 				log.error("Failed to update person {}", inum, ex);
 				facesMessages.add(FacesMessage.SEVERITY_ERROR,
 						"Failed to update person '#{updatePersonAction.person.displayName}'");
@@ -619,7 +618,7 @@ public class UpdatePersonAction implements Serializable {
 				conversationService.endConversation();
 
 				return OxTrustConstants.RESULT_SUCCESS;
-			} catch (LdapMappingException ex) {
+			} catch (BasePersistenceException ex) {
 				log.error("Failed to remove person {}", this.person.getInum(), ex);
 			}
 		}
