@@ -1,16 +1,20 @@
 package org.gluu.oxtrust.service;
 
+import java.util.Collections;
+
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.security.Identity;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.GluuUserRole;
+import org.xdi.service.el.ExpressionEvaluator;
+import org.xdi.service.security.SecurityEvaluationException;
 import org.xdi.util.StringHelper;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
 
 /**
  * @author Yuriy Movchan Date: 05/17/2017
@@ -30,6 +34,9 @@ public class PermissionService {
 
     @Inject
     private ApplianceService applianceService;
+
+    @Inject
+    private ExpressionEvaluator expressionEvaluator;
 
     private String[][] managerActions = new String[][]{
             {"attribute", "access"},
@@ -101,7 +108,16 @@ public class PermissionService {
             }
         }
 
-
         return false;
     }
+
+    public void requestPermission(String constraint) {
+        Boolean expressionValue = expressionEvaluator.evaluateValueExpression(constraint, Boolean.class, Collections.<String, Object>emptyMap());
+
+        if ((expressionValue == null) || !expressionValue) {
+            log.debug("Cconstrain '{}' evaluation is null or false!", constraint);
+            throw new SecurityEvaluationException();
+        }
+    }
+
 }
