@@ -1319,6 +1319,12 @@
                     "type": "string",
                     "minLength": 1
                 },
+            	"mdsAccessToken": {
+                    "id": "mdsAccessToken",
+                    "description": "MDS Access token.",
+                    "type": "string",
+                    "minLength": 1
+                },
             	"mdsCertsFolder": {
                     "id": "mdsCertsFolder",
                     "description": "MDS TOC root certificates folder.",
