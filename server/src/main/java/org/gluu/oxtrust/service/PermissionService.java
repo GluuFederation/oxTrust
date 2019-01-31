@@ -6,6 +6,8 @@
 package org.gluu.oxtrust.service;
 
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.Map;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -17,6 +19,8 @@ import org.gluu.oxtrust.security.Identity;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.user.UserRole;
+import org.xdi.service.el.ExpressionEvaluator;
+import org.xdi.service.security.SecurityEvaluationException;
 import org.xdi.util.StringHelper;
 
 /**
@@ -39,6 +43,9 @@ public class PermissionService implements Serializable {
 
     @Inject
     private ApplianceService applianceService;
+
+    @Inject
+    private ExpressionEvaluator expressionEvaluator;
 
     private String[][] managerActions = new String[][]{
             {"attribute", "access"},
@@ -113,4 +120,14 @@ public class PermissionService implements Serializable {
 
         return false;
     }
+
+    public void requestPermission(String constraint) {
+        Boolean expressionValue = expressionEvaluator.evaluateValueExpression(constraint, Boolean.class, Collections.<String, Object>emptyMap());
+
+        if ((expressionValue == null) || !expressionValue) {
+            log.debug("Cconstrain '{}' evaluation is null or false!", constraint);
+            throw new SecurityEvaluationException();
+        }
+    }
+
 }
