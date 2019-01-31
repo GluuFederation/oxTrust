@@ -3,10 +3,10 @@ package org.gluu.oxtrust.model;
 import java.util.ArrayList;
 
 public class MobileDevice {
-	
+
 	private ArrayList<Phone> phones;
 
-	  public ArrayList<Phone> getPhones() {
+	public ArrayList<Phone> getPhones() {
 		return phones;
 	}
 

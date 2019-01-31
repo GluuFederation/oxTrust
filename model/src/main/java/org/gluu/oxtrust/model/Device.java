@@ -29,9 +29,13 @@ public class Device {
 		return nickName;
 	}
 
+	@Override
+	public String toString() {
+		return "Device [addedOn=" + addedOn + ", id=" + id + ", nickName=" + nickName + ", soft=" + soft + "]";
+	}
+
 	public void setNickName(String nickName) {
 		this.nickName = nickName;
-		updateHash();
 	}
 
 	public boolean isSoft() {
@@ -41,19 +45,4 @@ public class Device {
 	public void setSoft(boolean soft) {
 		this.soft = soft;
 	}
-
-	public void updateHash() {
-
-		if (nickName == null) {
-			id = "";
-		} else {
-			String str = nickName.replaceFirst("hotp:", "").replaceFirst("totp:", "");
-			int idx = str.indexOf(";");
-			if (idx > 0) {
-				str = str.substring(0, idx);
-			}
-			id = str;
-		}
-	}
-
 }

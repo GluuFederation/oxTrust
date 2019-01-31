@@ -31,5 +31,10 @@ public class Phone {
 		this.nickName = nickName;
 	}
 
+	@Override
+	public String toString() {
+		return "Phone [addedOn=" + addedOn + ", number=" + number + ", nickName=" + nickName + "]";
+	}
+
 
 }

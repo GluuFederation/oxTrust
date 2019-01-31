@@ -11,8 +11,10 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import javax.enterprise.context.ConversationScoped;
@@ -24,6 +26,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 
+import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -75,6 +78,8 @@ import org.xdi.util.StringHelper;
 @Named("updatePersonAction")
 @Secure("#{permissionService.hasPermission('person', 'access')}")
 public class UpdatePersonAction implements Serializable {
+
+	private static final String MOBILE = "mobile";
 
 	private static final String OTP_DEVICE = "OTP Device";
 
@@ -243,6 +248,7 @@ public class UpdatePersonAction implements Serializable {
 	public String update() {
 		if (this.person != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
+
 		}
 		this.update = true;
 		try {
@@ -258,6 +264,8 @@ public class UpdatePersonAction implements Serializable {
 			fillExternalAuthCustomAttributes();
 			addExternalUids();
 			addFidoDevices();
+			addOtpDevices();
+			addMobileDevices();
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 			return OxTrustConstants.RESULT_FAILURE;
@@ -266,45 +274,18 @@ public class UpdatePersonAction implements Serializable {
 	}
 
 	private void addExternalUids() {
-		ArrayList<Device> devices = new ArrayList<Device>();
-		OTPDevice oxOTPDevices = this.person.getOxOTPDevices();
-		if (oxOTPDevices !=null && oxOTPDevices.getDevices() != null) {
-			devices.addAll(oxOTPDevices.getDevices());
-		}
 		if (oxExternalUids != null && oxExternalUids.size() > 0) {
 			for (String oxExternalUid : oxExternalUids) {
 				String[] args = oxExternalUid.split(COLON);
 				GluuDeviceDataBean gluuDeviceDataBean = new GluuDeviceDataBean();
 				String firstPart = args[0];
-				if (firstPart.equalsIgnoreCase(TOTP) || firstPart.equalsIgnoreCase(HOTP)) {
-					String key = oxExternalUid.replaceFirst("hotp:", "").replaceFirst("totp:", "");
-					int idx = key.indexOf(";");
-					if (idx > 0) {
-						key = key.substring(0, idx);
-					}
-					gluuDeviceDataBean.setNickName(firstPart);
-					gluuDeviceDataBean.setModality(OTP_DEVICE);
-					gluuDeviceDataBean.setId(key);
-					gluuDeviceDataBean.setCreationDate(DASH);
-					boolean canAdd = true;
-					for (Device device : devices) {
-						if (device.getId().equalsIgnoreCase("" + key.hashCode())) {
-							canAdd = false;
-							break;
-						} else if (!canBeConvertToInteger(device.getId())) {
-							canAdd = false;
-						}
-					}
-					if (canAdd) {
-						deviceDataMap.add(gluuDeviceDataBean);
-					}
-
-				} else if (firstPart.startsWith(PASSPORT) || firstPart.startsWith(PASSPORT.toLowerCase())) {
+				if (firstPart.startsWith(PASSPORT) || firstPart.startsWith(PASSPORT.toLowerCase())) {
 					gluuDeviceDataBean.setNickName(firstPart);
 					gluuDeviceDataBean.setModality(PASSPORT);
 					gluuDeviceDataBean.setId(args[1]);
 					gluuDeviceDataBean.setCreationDate(DASH);
 					deviceDataMap.add(gluuDeviceDataBean);
+				} else if (firstPart.equalsIgnoreCase(TOTP) || firstPart.equalsIgnoreCase(HOTP)) {
 				} else {
 					gluuDeviceDataBean.setNickName(firstPart);
 					gluuDeviceDataBean.setModality(DASH);
@@ -312,14 +293,13 @@ public class UpdatePersonAction implements Serializable {
 					gluuDeviceDataBean.setCreationDate(DASH);
 					deviceDataMap.add(gluuDeviceDataBean);
 				}
-
 			}
 		}
 	}
 
 	private boolean canBeConvertToInteger(String id) {
 		try {
-			Double.valueOf(id);
+			Long.valueOf(id);
 			return true;
 		} catch (Exception e) {
 			return false;
@@ -362,8 +342,9 @@ public class UpdatePersonAction implements Serializable {
 				GluuDeviceDataBean gluuDeviceDataBean = new GluuDeviceDataBean();
 				gluuDeviceDataBean.setNickName(device.getNickName());
 				gluuDeviceDataBean.setModality(OTP_DEVICE);
+				gluuDeviceDataBean.setId(device.getId());
 				String hash = device.getId();
-				if (canProceed && canBeConvertToInteger(device.getId())) {
+				if (canProceed && canBeConvertToInteger(hash)) {
 					for (String oxExternalUid : oxExternalUids) {
 						String firstPart = oxExternalUid.split(COLON)[0];
 						if (firstPart.equalsIgnoreCase(TOTP) || firstPart.equalsIgnoreCase(HOTP)) {
@@ -378,11 +359,9 @@ public class UpdatePersonAction implements Serializable {
 							}
 						}
 					}
-				} else {
-					gluuDeviceDataBean.setId(hash);
 				}
-				Timestamp stamp = new Timestamp(Long.valueOf(device.getAddedOn()).longValue());
-				gluuDeviceDataBean.setCreationDate(stamp.toGMTString());
+				gluuDeviceDataBean
+						.setCreationDate(new Timestamp(Long.valueOf(device.getAddedOn()).longValue()).toGMTString());
 				deviceDataMap.add(gluuDeviceDataBean);
 			}
 		}
@@ -427,8 +406,7 @@ public class UpdatePersonAction implements Serializable {
 	private void fillExternalAuthCustomAttributes() {
 		if (oxExternalUids != null && oxExternalUids.size() > 0) {
 			for (String oxExternalUid : oxExternalUids) {
-				String[] args = oxExternalUid.split(COLON);
-				externalAuthCustomAttributes.add(args[0]);
+				externalAuthCustomAttributes.add(oxExternalUid.split(COLON)[0]);
 			}
 		}
 	}
@@ -504,12 +482,9 @@ public class UpdatePersonAction implements Serializable {
 				}
 			}
 		}
-
 		updateCustomObjectClasses();
-
 		List<GluuCustomAttribute> removedAttributes = customAttributeAction.detectRemovedAttributes();
 		customAttributeAction.updateOriginCustomAttributes();
-
 		List<GluuCustomAttribute> customAttributes = customAttributeAction.getCustomAttributes();
 		for (GluuCustomAttribute customAttribute : customAttributes) {
 			if (customAttribute.getName().equalsIgnoreCase("gluuStatus")) {
@@ -519,10 +494,8 @@ public class UpdatePersonAction implements Serializable {
 		}
 		this.person.setCustomAttributes(customAttributeAction.getCustomAttributes());
 		this.person.getCustomAttributes().addAll(removedAttributes);
-
 		// Sync email, in reverse ("oxTrustEmail" <- "mail")
 		this.person = ServiceUtil.syncEmailReverse(this.person, true);
-
 		boolean runScript = externalUpdateUserService.isEnabled();
 		if (update) {
 			try {
@@ -779,33 +752,124 @@ public class UpdatePersonAction implements Serializable {
 
 	public void removeDevice(GluuDeviceDataBean deleteDeviceData) {
 		try {
-			List<GluuCustomFidoDevice> gluuCustomFidoDevices = fidoDeviceService
-					.searchFidoDevices(this.person.getInum(), null);
 			String idOfDeviceToRemove = deleteDeviceData.getId();
-			if (gluuCustomFidoDevices != null) {
-				for (GluuCustomFidoDevice gluuCustomFidoDevice : gluuCustomFidoDevices) {
-					if (gluuCustomFidoDevice.getId().equals(idOfDeviceToRemove)) {
-						fidoDeviceService.removeGluuCustomFidoDevice(gluuCustomFidoDevice);
-						this.deviceDataMap.remove(deleteDeviceData);
-						return;
-					}
-				}
-			}
-
-			List<String> list = new ArrayList<String>(this.person.getOxExternalUid());
-			if (list != null) {
-				for (String external : list) {
-					if (idOfDeviceToRemove.equals(external.split(COLON)[0])) {
-						list.remove(external);
-						this.person.setOxExternalUid(list);
-						this.deviceDataMap.remove(deleteDeviceData);
-						return;
-					}
-				}
-			}
-
+			removeFidoDevice(deleteDeviceData, idOfDeviceToRemove);
+			removeOxExternalUid(deleteDeviceData, idOfDeviceToRemove);
+			removeOTPDevices(deleteDeviceData, idOfDeviceToRemove);
+			removeMobileDevice(deleteDeviceData, idOfDeviceToRemove);
 		} catch (Exception e) {
 			log.error("Failed to remove device ", e);
+		}
+	}
+
+	private void removeOxExternalUid(GluuDeviceDataBean deleteDeviceData, String idOfDeviceToRemove) {
+		List<String> oxExternalUids = new ArrayList<String>(this.person.getOxExternalUid());
+		if (oxExternalUids != null) {
+			for (String oxExternalUid : oxExternalUids) {
+				if (idOfDeviceToRemove.equals(oxExternalUid.split(COLON)[1])) {
+					if (!oxExternalUid.startsWith(HOTP) && !oxExternalUid.startsWith(TOTP)) {
+						oxExternalUids.remove(oxExternalUid);
+						this.person.setOxExternalUid(oxExternalUids);
+						this.deviceDataMap.remove(deleteDeviceData);
+						break;
+					}
+				}
+			}
+			return;
+		}
+
+	}
+
+	private void removeFidoDevice(GluuDeviceDataBean deleteDeviceData, String idOfDeviceToRemove) {
+		List<GluuCustomFidoDevice> gluuCustomFidoDevices = fidoDeviceService.searchFidoDevices(this.person.getInum(),
+				null);
+		if (gluuCustomFidoDevices != null) {
+			for (GluuCustomFidoDevice gluuCustomFidoDevice : gluuCustomFidoDevices) {
+				if (gluuCustomFidoDevice.getId().equals(idOfDeviceToRemove)) {
+					fidoDeviceService.removeGluuCustomFidoDevice(gluuCustomFidoDevice);
+					this.deviceDataMap.remove(deleteDeviceData);
+					return;
+				}
+			}
+		}
+	}
+
+	private void removeMobileDevice(GluuDeviceDataBean deleteDeviceData, String idOfDeviceToRemove)
+			throws IOException, JsonParseException, JsonMappingException, JsonGenerationException {
+		String oxMobileDevices = this.person.getOxMobileDevices();
+		if (oxMobileDevices != null && !oxMobileDevices.trim().equals("")) {
+			ObjectMapper mapper = new ObjectMapper();
+			MobileDevice mobileDevice = mapper.readValue(oxMobileDevices, MobileDevice.class);
+			ArrayList<Phone> phones = mobileDevice.getPhones();
+			if (phones != null && phones.size() > 0) {
+				for (Phone phone : phones) {
+					if (phone.getNumber().equals(idOfDeviceToRemove)) {
+						deviceDataMap.remove(deleteDeviceData);
+						phones.remove(phone);
+						Map<String, ArrayList<Phone>> map = new HashMap<String, ArrayList<Phone>>();
+						map.put("phones", phones);
+						String jsonInString = mapper.writeValueAsString(map);
+						this.person.setOxMobileDevices(jsonInString);
+						String[] mobiles = this.person.getAttributes(MOBILE);
+						if (mobiles != null && mobiles.length > 0) {
+							List<String> values = new ArrayList<String>(Arrays.asList(mobiles));
+							for (String mobile : values) {
+								if (mobile.equalsIgnoreCase(idOfDeviceToRemove)) {
+									values.remove(mobile);
+									this.person.setAttribute(MOBILE, values.toArray(new String[values.size()]));
+									break;
+								}
+							}
+						}
+
+						return;
+					}
+				}
+			}
+		}
+	}
+
+	private void removeOTPDevices(GluuDeviceDataBean deleteDeviceData, String idOfDeviceToRemove) {
+		OTPDevice oxOTPDevices = this.person.getOxOTPDevices();
+		ArrayList<Device> devices = new ArrayList<Device>();
+		if (oxOTPDevices != null) {
+			devices = oxOTPDevices.getDevices();
+		}
+
+		String entry = null;
+		String code = null;
+		List<String> uids = new ArrayList<String>(this.person.getOxExternalUid());
+		if (uids != null) {
+			for (String oxExternalUid : uids) {
+				String firstPart = oxExternalUid.split(COLON)[0];
+				if (firstPart.equalsIgnoreCase(TOTP) || firstPart.equalsIgnoreCase(HOTP)) {
+					String key = oxExternalUid.replaceFirst("hotp:", "").replaceFirst("totp:", "");
+					int idx = key.indexOf(";");
+					if (idx > 0) {
+						key = key.substring(0, idx);
+					}
+					if (idOfDeviceToRemove.equalsIgnoreCase(key)) {
+						entry = oxExternalUid;
+						code = String.valueOf(key.hashCode());
+						break;
+					}
+				}
+			}
+		}
+		if (entry != null && code != null) {
+			uids.remove(entry);
+			this.person.setOxExternalUid(uids);
+			if (devices != null && devices.size() > 0) {
+				for (Device device : devices) {
+					if (device.getId().equalsIgnoreCase(code)) {
+						devices.remove(device);
+						this.person.getOxOTPDevices().setDevices(devices);
+						this.deviceDataMap.remove(deleteDeviceData);
+						break;
+					}
+				}
+			}
+			return;
 		}
 	}
 
