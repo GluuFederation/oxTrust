@@ -121,6 +121,14 @@ public class PermissionService implements Serializable {
         return false;
     }
 
+    public void requestPermission(Object target, String action) {
+        boolean hasPermission = hasPermission(target, action);
+        
+        if (!hasPermission) {
+            throw new SecurityEvaluationException();
+        }
+    }
+
     public void requestPermission(String constraint) {
         Boolean expressionValue = expressionEvaluator.evaluateValueExpression(constraint, Boolean.class, Collections.<String, Object>emptyMap());
 
