@@ -3,6 +3,7 @@
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
     <f:metadata>
+        <f:viewAction action="#{permissionService.requestPermission('trust', 'access')}" />
         <f:viewParam name="inum" value="#{updateAsimbaSelectorAction.editEntryInum}" />
         <f:viewAction action="#{conversationService.initConversation}" />
         <f:viewAction action="#{updateAsimbaSelectorAction.edit}" phase="UPDATE_MODEL_VALUES" onPostback="false" />

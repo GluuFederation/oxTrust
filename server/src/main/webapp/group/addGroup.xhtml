@@ -3,6 +3,7 @@
                 xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
     <f:metadata>
+        <f:viewAction action="#{permissionService.requestPermission('group', 'access')}" />
     	<f:viewParam name="inum" value="#{updateGroupAction.inum}" />
         <f:viewAction action="#{conversationService.initConversation}" />
         <f:viewAction action="#{updateGroupAction.add}" onPostback="false"/>

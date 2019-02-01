@@ -4,6 +4,7 @@
                 xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox" xmlns:rich="http://richfaces.org/rich"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
     <f:metadata>
+        <f:viewAction action="#{permissionService.requestPermission('sectorIdentifier', 'access')}" />
         <f:viewParam name="id" value="#{updateSectorIdentifierAction.id}" />
         <f:viewAction action="#{conversationService.initConversation}" />
         <f:viewAction action="#{updateSectorIdentifierAction.update}"

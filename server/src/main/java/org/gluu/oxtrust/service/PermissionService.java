@@ -7,7 +7,6 @@ package org.gluu.oxtrust.service;
 
 import java.io.Serializable;
 import java.util.Collections;
-import java.util.Map;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -133,7 +132,7 @@ public class PermissionService implements Serializable {
         Boolean expressionValue = expressionEvaluator.evaluateValueExpression(constraint, Boolean.class, Collections.<String, Object>emptyMap());
 
         if ((expressionValue == null) || !expressionValue) {
-            log.debug("Cconstrain '{}' evaluation is null or false!", constraint);
+            log.debug("constraint '{}' evaluation is null or false!", constraint);
             throw new SecurityEvaluationException();
         }
     }

@@ -8,6 +8,7 @@
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	template="/WEB-INF/incl/layout/newtemplate.xhtml">
 	<f:metadata>
+	    <f:viewAction action="#{permissionService.requestPermission('log', 'access')}" />
 		<f:viewAction action="#{conversationService.initConversation}" />
 		<f:viewAction action="#{viewLogFileAction.init}" onPostback="false" />
 	</f:metadata>
