@@ -263,6 +263,25 @@ public class OpenIdClient<C extends AppConfiguration, L extends LdapAppConfigura
     }
 
     @Override
+    public boolean isAuthorized(WebContext context) {
+        init();
+
+        String idToken = (String) context.getSessionAttribute(getName() + SESSION_ID_TOKEN_PARAMETER);
+        if (idToken == null) {
+            return false;
+        }
+        
+        return true;
+    }
+
+    @Override
+    public void clearAuthorized(WebContext context) {
+        init();
+
+        context.setSessionAttribute(getName() + SESSION_ID_TOKEN_PARAMETER, null);
+    }
+
+    @Override
 	public boolean isAuthorizationResponse(final WebContext context) {
 		final String authorizationCode = context.getRequestParameter(ResponseType.CODE.getValue());
 		logger.debug("oxAuth authorization code: '{}'", authorizationCode);
