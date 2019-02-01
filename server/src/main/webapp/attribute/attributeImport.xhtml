@@ -3,6 +3,7 @@
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
     <f:metadata>
+        <f:viewAction action="#{permissionService.requestPermission('attribute', 'access')}" />
         <f:viewAction action="#{conversationService.initConversation}" />
         <f:viewAction action="#{attributeImportAction.init}" onPostback="false"/>
     </f:metadata>

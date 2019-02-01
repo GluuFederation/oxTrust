@@ -11,6 +11,7 @@
 	xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
 	template="/WEB-INF/incl/layout/newtemplate.xhtml">
 	<f:metadata>
+	    <f:viewAction action="#{permissionService.requestPermission('profile', 'access')}" />
 		<f:viewAction action="#{conversationService.initConversation}" />
 		<f:viewAction action="#{userProfileAction.show}" onPostback="false" />
 	</f:metadata>

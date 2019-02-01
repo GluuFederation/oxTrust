@@ -2,6 +2,7 @@
 <f:view xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://xmlns.jcp.org/jsf/core" contentType="text/html"
         locale="#{language.localeCode}">
     <f:metadata>
+        <f:viewAction action="#{permissionService.requestPermission('trust', 'access')}" />
         <f:viewAction action="#{updateTrustRelationshipAction.downloadConfiguration}"
                       onPostback="false"/>
     </f:metadata>

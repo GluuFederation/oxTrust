@@ -6,6 +6,7 @@
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	template="/WEB-INF/incl/layout/newtemplate.xhtml">
 	<f:metadata>
+	    <f:viewAction action="#{permissionService.requestPermission('client', 'access')}" />
 		<f:viewParam name="inum" value="#{updateClientAction.inum}" />
 		<f:viewAction action="#{conversationService.initConversation}" />
 		<f:viewAction action="#{updateClientAction.add}" onPostback="false" />

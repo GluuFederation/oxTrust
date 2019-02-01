@@ -9,6 +9,7 @@
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	template="/WEB-INF/incl/layout/newtemplate.xhtml">
 	<f:metadata>
+	    <f:viewAction action="#{permissionService.requestPermission('uma', 'access')}" />
 		<f:viewParam name="resource" value="#{updateResourceAction.oxId}" />
 		<f:viewAction action="#{conversationService.initConversation}" />
 		<f:viewAction action="#{updateResourceAction.modify}"

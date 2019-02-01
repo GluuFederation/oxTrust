@@ -5,6 +5,7 @@
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	template="/WEB-INF/incl/layout/newtemplate.xhtml">
 	<f:metadata>
+	    <f:viewAction action="#{permissionService.requestPermission('#{identity.loggedIn}')}" />
 		<f:viewAction action="#{conversationService.endConversation}" />
 		<f:viewAction action="#{homeAction.init}" onPostback="false" />
 	</f:metadata>
