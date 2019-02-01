@@ -60,6 +60,22 @@ public interface Client<U extends UserProfile> {
 	 */
 	public boolean isAuthorizationResponse(final WebContext context);
 
+    /**
+     * Check if web context provides contain id_token
+     * 
+     * @param context
+     * @return result of check
+     */
+    boolean isAuthorized(WebContext context);
+
+    /**
+     * Remove id_token from web context
+     * 
+     * @param context
+     * @return result of check
+     */
+    void clearAuthorized(WebContext context);
+
 	/**
 	 * Check if request state is valid
 	 * 
