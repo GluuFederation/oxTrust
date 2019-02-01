@@ -23,6 +23,8 @@ import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.gluu.site.ldap.persistence.exception.EntryPersistenceException;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
+import org.xdi.ldap.model.SearchScope;
+import org.xdi.ldap.model.SimpleBranch;
 import org.xdi.util.ArrayHelper;
 import org.xdi.util.INumGenerator;
 import org.xdi.util.StringHelper;
@@ -163,10 +165,7 @@ public class GroupService implements Serializable, IGroupService {
 	 */
 	@Override
 	public int countGroups() {
-		GluuGroup gluuGroup = new GluuGroup();
-		gluuGroup.setBaseDn(getDnForGroup(null));
-
-		return ldapEntryManager.countEntries(gluuGroup);
+        return ldapEntryManager.countEntries(getDnForGroup(null), SimpleBranch.class, null, SearchScope.BASE);
 	}
 
 	public boolean contains(String groupDn) {

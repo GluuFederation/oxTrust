@@ -29,6 +29,8 @@ import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.joda.time.format.ISODateTimeFormat;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
+import org.xdi.ldap.model.SearchScope;
+import org.xdi.ldap.model.SimpleBranch;
 import org.xdi.util.ArrayHelper;
 import org.xdi.util.INumGenerator;
 import org.xdi.util.StringHelper;
@@ -407,10 +409,7 @@ public class PersonService implements Serializable, IPersonService {
 	 */
 	@Override
 	public int countPersons() {
-		GluuCustomPerson gluuBasePerson = new GluuCustomPerson();
-		gluuBasePerson.setBaseDn(getDnForPerson(null));
-
-		return ldapEntryManager.countEntries(gluuBasePerson);
+		return ldapEntryManager.countEntries(getDnForPerson(null), SimpleBranch.class, null, SearchScope.BASE);
 	}
 
 	/*
