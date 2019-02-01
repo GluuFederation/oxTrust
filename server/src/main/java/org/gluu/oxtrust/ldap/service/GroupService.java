@@ -21,6 +21,8 @@ import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.exception.EntryPersistenceException;
 import org.gluu.persist.exception.operation.DuplicateEntryException;
+import org.gluu.persist.model.SearchScope;
+import org.gluu.persist.model.base.SimpleBranch;
 import org.gluu.search.filter.Filter;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
@@ -162,10 +164,7 @@ public class GroupService implements Serializable, IGroupService {
 	 */
 	@Override
 	public int countGroups() {
-		GluuGroup gluuGroup = new GluuGroup();
-		gluuGroup.setBaseDn(getDnForGroup(null));
-
-		return ldapEntryManager.countEntries(gluuGroup);
+        return ldapEntryManager.countEntries(getDnForGroup(null), SimpleBranch.class, null, SearchScope.BASE);
 	}
 
 	public boolean contains(String groupDn) {

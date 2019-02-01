@@ -26,6 +26,8 @@ import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.exception.operation.DuplicateEntryException;
 import org.gluu.persist.model.AttributeData;
+import org.gluu.persist.model.SearchScope;
+import org.gluu.persist.model.base.SimpleBranch;
 import org.gluu.search.filter.Filter;
 import org.joda.time.format.ISODateTimeFormat;
 import org.slf4j.Logger;
@@ -332,15 +334,14 @@ public class PersonService implements Serializable, IPersonService {
         return null;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.gluu.oxtrust.ldap.service.IPersonService#countPersons()
      */
     @Override
     public int countPersons() {
-        GluuCustomPerson gluuBasePerson = new GluuCustomPerson();
-        gluuBasePerson.setBaseDn(getDnForPerson(null));
-
-        return ldapEntryManager.countEntries(gluuBasePerson);
+        return ldapEntryManager.countEntries(getDnForPerson(null), SimpleBranch.class, null, SearchScope.BASE);
     }
 
     /* (non-Javadoc)
