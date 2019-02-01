@@ -6,6 +6,7 @@
                 xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
     <f:metadata>    
+        <f:viewAction action="#{permissionService.requestPermission('uma', 'access')}" />
         <f:viewParam name="scope" value="#{updateScopeDescriptionAction.scopeInum}" />
         <f:viewAction action="#{conversationService.initConversation}" />
         <f:viewAction action="#{updateScopeDescriptionAction.modify}" onPostback="false"/>

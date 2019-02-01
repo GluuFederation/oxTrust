@@ -4,6 +4,7 @@
                 xmlns:rich="http://richfaces.org/rich" xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
     <f:metadata>
+        <f:viewAction action="#{permissionService.requestPermission('scope', 'access')}" />
     	<f:viewParam name="searchPattern" value="#{searchScopeAction.searchPattern}" />
         <f:viewAction action="#{conversationService.initConversation}" />
         <f:viewAction action="#{searchScopeAction.start}" if="#{searchScopeAction.scopeList == null}" onPostback="false"/>

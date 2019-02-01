@@ -1,5 +1,11 @@
+/*
+ * oxTrust is available under the MIT License (2008). See http://opensource.org/licenses/MIT for full text.
+ *
+ * Copyright (c) 2017, Gluu
+ */
 package org.gluu.oxtrust.service;
 
+import java.io.Serializable;
 import java.util.Collections;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -21,7 +27,9 @@ import org.xdi.util.StringHelper;
  */
 @ApplicationScoped
 @Named
-public class PermissionService {
+public class PermissionService implements Serializable {
+    
+    private static final long serialVersionUID = 8880839485161960537L;
 
     @Inject
     private Logger log;
@@ -108,6 +116,7 @@ public class PermissionService {
             }
         }
 
+
         return false;
     }
 
@@ -123,7 +132,7 @@ public class PermissionService {
         Boolean expressionValue = expressionEvaluator.evaluateValueExpression(constraint, Boolean.class, Collections.<String, Object>emptyMap());
 
         if ((expressionValue == null) || !expressionValue) {
-            log.debug("Cconstrain '{}' evaluation is null or false!", constraint);
+            log.debug("constraint '{}' evaluation is null or false!", constraint);
             throw new SecurityEvaluationException();
         }
     }

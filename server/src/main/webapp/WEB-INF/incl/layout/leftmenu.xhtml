@@ -33,7 +33,7 @@
 						</ul>
 						<li class="header" style="text-align: center;"><h4>#{msg['leftmenu.gluuIdentityAppliance']}</h4></li>
 						<ui:fragment
-							rendered="#{permissionService.hasPermission('configuration', 'access') or permissionService.hasPermission('scim', 'access') or permissionService.hasPermission('attribute', 'access') or permissionService.hasPermission('configuration', 'access')}">
+							rendered="#{permissionService.hasPermission('configuration', 'access') or permissionService.hasPermission('scim', 'access') or permissionService.hasPermission('attribute', 'access')}">
 							<li class="treeview" id="menuConfiguration"><a href="#">
 									<i class="fa fa-wrench"></i> <span>#{msg['leftmenu.configuration']}</span>
 									<i class="fa fa-angle-left pull-right"></i>

@@ -9,6 +9,7 @@
 	template="/WEB-INF/incl/layout/newtemplate.xhtml">
 
 	<f:metadata>
+	    <f:viewAction action="#{permissionService.requestPermission('trust', 'access')}" />
 		<f:viewAction action="#{conversationService.initConversation}" />
 		<f:viewAction action="#{configureNameIdAction.init}" onPostback="false" />
 	</f:metadata>
