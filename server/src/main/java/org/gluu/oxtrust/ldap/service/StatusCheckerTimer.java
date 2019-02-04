@@ -67,7 +67,7 @@ import org.xdi.util.process.ProcessHelper;
 @Named
 public class StatusCheckerTimer {
 
-    private final static int DEFAULT_INTERVAL = 60; // 1 minute
+	private final static int DEFAULT_INTERVAL = 60; // 1 minute
 
 	@Inject
 	private Logger log;
@@ -95,40 +95,40 @@ public class StatusCheckerTimer {
 
 	private NumberFormat numberFormat;
 
-    private AtomicBoolean isActive;
+	private AtomicBoolean isActive;
 
 	@PostConstruct
 	public void create() {
 		this.numberFormat = NumberFormat.getNumberInstance(Locale.US);
 	}
 
-    public void initTimer() {
-        log.info("Initializing Daily Status Cheker Timer");
-        this.isActive = new AtomicBoolean(false);
+	public void initTimer() {
+		log.info("Initializing Daily Status Cheker Timer");
+		this.isActive = new AtomicBoolean(false);
 
 		final int delay = 1 * 60;
 		final int interval = DEFAULT_INTERVAL;
 
 		timerEvent.fire(new TimerEvent(new TimerSchedule(delay, interval), new StatusCheckerTimerEvent(),
 				Scheduled.Literal.INSTANCE));
-    }
+	}
 
-    @Asynchronous
-    public void process(@Observes @Scheduled StatusCheckerTimerEvent statusCheckerTimerEvent) {
-        if (this.isActive.get()) {
-            return;
-        }
+	@Asynchronous
+	public void process(@Observes @Scheduled StatusCheckerTimerEvent statusCheckerTimerEvent) {
+		if (this.isActive.get()) {
+			return;
+		}
 
-        if (!this.isActive.compareAndSet(false, true)) {
-            return;
-        }
+		if (!this.isActive.compareAndSet(false, true)) {
+			return;
+		}
 
-        try {
-            processInt();
-        } finally {
-            this.isActive.set(false);
-        }
-    }
+		try {
+			processInt();
+		} finally {
+			this.isActive.set(false);
+		}
+	}
 
 	/**
 	 * Gather periodically site and server status
@@ -142,12 +142,12 @@ public class StatusCheckerTimer {
 		log.debug("Starting update of appliance status");
 		AppConfiguration appConfiguration = configurationFactory.getAppConfiguration();
 		if (!appConfiguration.isUpdateApplianceStatus()) {
+			log.info("isUpdateApplianceStatus");
 			return;
 		}
-
 		ApplianceStatus applianceStatus = new ApplianceStatus();
-
 		// Execute facter and update appliance attributes
+		log.info("Setting FactorAttributes");
 		setFactorAttributes(applianceStatus);
 
 		// Execute df and update appliance attributes
@@ -162,25 +162,25 @@ public class StatusCheckerTimer {
 			log.error("Failed to check certificate expiration", ex);
 		}
 
-        GluuAppliance appliance = applianceService.getAppliance();
-        try {
-            // Copy gathered values
-            BeanUtils.copyProperties(appliance, applianceStatus);
-        } catch (Exception ex) {
-            log.error("Failed to copy status attributes", ex);
-        }
+		GluuAppliance appliance = applianceService.getAppliance();
+		try {
+			// Copy gathered values
+			BeanUtils.copyProperties(appliance, applianceStatus);
+		} catch (Exception ex) {
+			log.error("Failed to copy status attributes", ex);
+		}
 
-        Date currentDateTime = new Date();
-        appliance.setLastUpdate(currentDateTime);
+		Date currentDateTime = new Date();
+		appliance.setLastUpdate(currentDateTime);
 
-        applianceService.updateAppliance(appliance);
+		applianceService.updateAppliance(appliance);
 
 		if (centralLdapService.isUseCentralServer()) {
 			try {
-			    GluuAppliance tmpAppliance = new GluuAppliance();
+				GluuAppliance tmpAppliance = new GluuAppliance();
 				tmpAppliance.setDn(appliance.getDn());
 				boolean existAppliance = centralLdapService.containsAppliance(tmpAppliance);
-	
+
 				if (existAppliance) {
 					centralLdapService.updateAppliance(appliance);
 				} else {
@@ -201,16 +201,15 @@ public class StatusCheckerTimer {
 			HttpsURLConnection conn = (HttpsURLConnection) destinationURL.openConnection();
 			conn.connect();
 			Certificate[] certs = conn.getServerCertificates();
-			if(certs.length > 0) {
-				if(certs[0] instanceof X509Certificate) {
+			if (certs.length > 0) {
+				if (certs[0] instanceof X509Certificate) {
 					X509Certificate x509Certificate = (X509Certificate) certs[0];
 					Date expirationDate = x509Certificate.getNotAfter();
 					long expiresAfter = TimeUnit.MILLISECONDS.toDays(expirationDate.getTime() - new Date().getTime());
 					appliance.setSslExpiry(toIntString(expiresAfter));
 				}
 			}
-		}
-		catch (IOException e){
+		} catch (IOException e) {
 			log.error("Can not download ssl certificate", e);
 		}
 	}
@@ -274,26 +273,24 @@ public class StatusCheckerTimer {
 	}
 
 	private void setFactorAttributes(ApplianceStatus appliance) {
-		log.debug("Setting facter attributes");
 		// Run facter only on linux
 		if (!isLinux()) {
 			return;
 		}
 
-        String programPath = OxTrustConstants.PROGRAM_FACTER;
-
-        ByteArrayOutputStream bos = new ByteArrayOutputStream(4096);
+		String programPath = OxTrustConstants.PROGRAM_FACTER;
+		ByteArrayOutputStream bos = new ByteArrayOutputStream(4096);
 		try {
-	        CommandLine commandLine = new CommandLine(programPath);
-	        commandLine.addArgument("--show-legacy");
+			CommandLine commandLine = new CommandLine(programPath);
+			commandLine.addArgument("--show-legacy");
 
-	        boolean result = ProcessHelper.executeProgram(commandLine, false, 0, bos);
+			boolean result = ProcessHelper.executeProgram(commandLine, false, 0, bos);
 			if (!result) {
-			    bos.reset();
-	            result = ProcessHelper.executeProgram(programPath, false, 0, bos);
-	            if (!result) {
-	                return;
-	            }
+				bos.reset();
+				result = ProcessHelper.executeProgram(programPath, false, 0, bos);
+				if (!result) {
+					return;
+				}
 			}
 		} finally {
 			IOUtils.closeQuietly(bos);
@@ -308,17 +305,14 @@ public class StatusCheckerTimer {
 		}
 
 		String[] outputLines = resultOutput.split("\\r?\\n");
-
 		// Update appliance attributes
-		appliance.setFreeMemory(toIntString(getFacterPercentResult(outputLines, OxTrustConstants.FACTER_FREE_MEMORY,
-				OxTrustConstants.FACTER_FREE_MEMORY_TOTAL)));
+		appliance.setFreeMemory(getFreeMemory(outputLines, OxTrustConstants.FACTER_FREE_MEMORY_MB,
+				OxTrustConstants.FACTER_MEMORY_SIZE_MB));
 		appliance.setFreeSwap(toIntString(getFacterPercentResult(outputLines, OxTrustConstants.FACTER_FREE_SWAP,
 				OxTrustConstants.FACTER_FREE_SWAP_TOTAL)));
 		appliance.setHostname(getFacterResult(outputLines, OxTrustConstants.FACTER_HOST_NAME));
 		appliance.setIpAddress(getFacterResult(outputLines, OxTrustConstants.FACTER_IP_ADDRESS));
-
 		appliance.setLoadAvg(getFacterResult(outputLines, OxTrustConstants.FACTER_LOAD_AVERAGE));
-
 		getFacterBandwidth(getFacterResult(outputLines, OxTrustConstants.FACTER_BANDWIDTH_USAGE), appliance);
 		appliance.setSystemUptime(getFacterResult(outputLines, OxTrustConstants.FACTER_SYSTEM_UP_TIME));
 	}
@@ -426,11 +420,12 @@ public class StatusCheckerTimer {
 
 				log.debug(line);
 
-			} else { //check if there are any additional lines
+			} else { // check if there are any additional lines
 				int index = line.indexOf(OxTrustConstants.FACTER_PARAM_VALUE_DIVIDER);
-				if (index == -1) { // this line has no value name, so it must be continuation of the previous value.
+				if (index == -1) { // this line has no value name, so it must be continuation of the previous
+									// value.
 					value += "\n" + line;
-				}else{ // this line has it's own value, so the value we were looking for has ended. 
+				} else { // this line has it's own value, so the value we were looking for has ended.
 					valueStarted = false;
 					continue;
 				}
@@ -452,8 +447,15 @@ public class StatusCheckerTimer {
 	private Number getFacterPercentResult(String[] lines, String paramValue, String paramTotal) {
 		Number value = getFacterNumberResult(lines, paramValue);
 		Number total = getFacterNumberResult(lines, paramTotal);
-
 		return getNumber(value, total);
+	}
+
+	private String getFreeMemory(String[] lines, String paramValue, String paramTotal) {
+		Number value = getFacterNumberResult(lines, paramValue);
+		Number total = getFacterNumberResult(lines, paramTotal);
+		double result=(value.doubleValue() / total.doubleValue()) * 100;
+		return String.format ("%.2f", result);
+		
 	}
 
 	private Number getNumber(String value) {
