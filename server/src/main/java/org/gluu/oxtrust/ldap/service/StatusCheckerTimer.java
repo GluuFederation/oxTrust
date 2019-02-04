@@ -79,12 +79,6 @@ public class StatusCheckerTimer {
 	private ApplianceService applianceService;
 
 	@Inject
-	private IGroupService groupService;
-
-	@Inject
-	private IPersonService personService;
-
-	@Inject
 	private CentralLdapService centralLdapService;
 
 	@Inject
@@ -149,10 +143,8 @@ public class StatusCheckerTimer {
 		// Execute facter and update appliance attributes
 		log.info("Setting FactorAttributes");
 		setFactorAttributes(applianceStatus);
-
 		// Execute df and update appliance attributes
 		setDfAttributes(applianceStatus);
-
 		// Set HTTPD attributes
 		setHttpdAttributes(applianceStatus);
 
@@ -272,38 +264,35 @@ public class StatusCheckerTimer {
 		return sb.toString();
 	}
 
+	@SuppressWarnings("deprecation")
 	private void setFactorAttributes(ApplianceStatus appliance) {
-		// Run facter only on linux
 		if (!isLinux()) {
 			return;
 		}
-
-		String programPath = OxTrustConstants.PROGRAM_FACTER;
+		CommandLine commandLine = new CommandLine(OxTrustConstants.PROGRAM_FACTER);
+		String facterVersion = getFacterVersion();
+		log.info("Facter version: "+facterVersion);
+		String resultOutput;
+		if (facterVersion == null) {
+			return;
+		}
+		if (Integer.valueOf(facterVersion.substring(0, 1)) >= 3) {
+			log.info("Running facter in legacy mode");
+			commandLine.addArgument("--show-legacy");
+		}
 		ByteArrayOutputStream bos = new ByteArrayOutputStream(4096);
 		try {
-			CommandLine commandLine = new CommandLine(programPath);
-			commandLine.addArgument("--show-legacy");
-
 			boolean result = ProcessHelper.executeProgram(commandLine, false, 0, bos);
 			if (!result) {
-				bos.reset();
-				result = ProcessHelper.executeProgram(programPath, false, 0, bos);
-				if (!result) {
-					return;
-				}
+				return;
 			}
+			resultOutput = new String(bos.toByteArray(), "UTF-8");
+		} catch (UnsupportedEncodingException ex) {
+			log.error("Failed to parse program {} output", OxTrustConstants.PROGRAM_FACTER, ex);
+			return;
 		} finally {
 			IOUtils.closeQuietly(bos);
 		}
-
-		String resultOutput = null;
-		try {
-			resultOutput = new String(bos.toByteArray(), "UTF-8");
-		} catch (UnsupportedEncodingException ex) {
-			log.error("Failed to parse program {} output", programPath, ex);
-			return;
-		}
-
 		String[] outputLines = resultOutput.split("\\r?\\n");
 		// Update appliance attributes
 		appliance.setFreeMemory(getFreeMemory(outputLines, OxTrustConstants.FACTER_FREE_MEMORY_MB,
@@ -315,6 +304,23 @@ public class StatusCheckerTimer {
 		appliance.setLoadAvg(getFacterResult(outputLines, OxTrustConstants.FACTER_LOAD_AVERAGE));
 		getFacterBandwidth(getFacterResult(outputLines, OxTrustConstants.FACTER_BANDWIDTH_USAGE), appliance);
 		appliance.setSystemUptime(getFacterResult(outputLines, OxTrustConstants.FACTER_SYSTEM_UP_TIME));
+	}
+
+	@SuppressWarnings("deprecation")
+	private String getFacterVersion() {
+		ByteArrayOutputStream bos = new ByteArrayOutputStream(4096);
+		try {
+			CommandLine commandLine = new CommandLine(OxTrustConstants.PROGRAM_FACTER);
+			commandLine.addArgument("--version");
+			ProcessHelper.executeProgram(commandLine, false, 0, bos);
+			return new String(bos.toByteArray(), "UTF-8");
+		} catch (UnsupportedEncodingException ex) {
+			log.error("Failed to parse program {} output", OxTrustConstants.PROGRAM_FACTER, ex);
+			return null;
+		} finally {
+			IOUtils.closeQuietly(bos);
+		}
+
 	}
 
 	private void getFacterBandwidth(String facterResult, ApplianceStatus appliance) {
@@ -341,6 +347,7 @@ public class StatusCheckerTimer {
 
 	}
 
+	@SuppressWarnings("deprecation")
 	private void setDfAttributes(ApplianceStatus appliance) {
 		log.debug("Setting df attributes");
 		// Run df only on linux
@@ -453,9 +460,9 @@ public class StatusCheckerTimer {
 	private String getFreeMemory(String[] lines, String paramValue, String paramTotal) {
 		Number value = getFacterNumberResult(lines, paramValue);
 		Number total = getFacterNumberResult(lines, paramTotal);
-		double result=(value.doubleValue() / total.doubleValue()) * 100;
-		return String.format ("%.2f", result);
-		
+		double result = (value.doubleValue() / total.doubleValue()) * 100;
+		return String.format("%.2f", result);
+
 	}
 
 	private Number getNumber(String value) {
