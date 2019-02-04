@@ -13,40 +13,45 @@ import org.gluu.oxtrust.model.GluuCustomPerson;
 @Named
 public class Identity extends org.xdi.model.security.Identity {
 
-	private static final long serialVersionUID = 2751659008033189259L;
+    private static final long serialVersionUID = 2751659008033189259L;
 
-	private OauthData oauthData;
-	private GluuCustomPerson user;
-	private Map<String, Object> sessionMap;
+    private OauthData oauthData;
+    private GluuCustomPerson user;
+    private Map<String, Object> sessionMap;
 
-	private String savedRequestUri;
-	
-	@PostConstruct
-	public void create() {
-		super.create();
-		this.sessionMap = new HashMap<String, Object>();
-		this.oauthData = new OauthData();
-	}
+    private String savedRequestUri;
 
-	public OauthData getOauthData() {
-		return oauthData;
-	}
+    @PostConstruct
+    public void create() {
+        super.create();
+        reset();
+    }
 
-	public void setOauthData(OauthData oauthData) {
-		this.oauthData = oauthData;
-	}
+    @Override
+    public void logout() {
+        reset();
+        super.logout();
+    }
 
-	public GluuCustomPerson getUser() {
-		return user;
-	}
+    public OauthData getOauthData() {
+        return oauthData;
+    }
 
-	public void setUser(GluuCustomPerson user) {
-		this.user = user;
-	}
+    public void setOauthData(OauthData oauthData) {
+        this.oauthData = oauthData;
+    }
 
-	public Map<String, Object> getSessionMap() {
-		return sessionMap;
-	}
+    public GluuCustomPerson getUser() {
+        return user;
+    }
+
+    public void setUser(GluuCustomPerson user) {
+        this.user = user;
+    }
+
+    public Map<String, Object> getSessionMap() {
+        return sessionMap;
+    }
 
     public String getSavedRequestUri() {
         return savedRequestUri;
@@ -54,6 +59,12 @@ public class Identity extends org.xdi.model.security.Identity {
 
     public void setSavedRequestUri(String savedRequestUri) {
         this.savedRequestUri = savedRequestUri;
+    }
+
+    private void reset() {
+        this.sessionMap = new HashMap<String, Object>();
+        this.oauthData = new OauthData();
+        this.savedRequestUri = null;
     }
 
 }
