@@ -5,13 +5,15 @@
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:rich="http://richfaces.org/rich"
-    xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
+	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
 	template="/WEB-INF/incl/layout/newtemplate.xhtml">
 
 	<f:metadata>
-	    <f:viewAction action="#{permissionService.requestPermission('trust', 'access')}" />
+		<f:viewAction
+			action="#{permissionService.requestPermission('trust', 'access')}" />
 		<f:viewAction action="#{conversationService.initConversation}" />
-		<f:viewAction action="#{configureNameIdAction.init}" onPostback="false" />
+		<f:viewAction action="#{configureNameIdAction.init}"
+			onPostback="false" />
 	</f:metadata>
 
 	<ui:define name="head">
@@ -24,7 +26,8 @@
 					style="color: #333 !important;"></i> #{msg['leftmenu.nameId']}</small>
 			</h1>
 			<ol class="breadcrumb">
-				<li><a href="#{request.contextPath}/home"><i class="fa fa-home"></i></a></li>
+				<li><a href="#{request.contextPath}/home"><i
+						class="fa fa-home"></i></a></li>
 				<li class="organization/configuration">Configure NameId</li>
 			</ol>
 		</section>
@@ -36,55 +39,78 @@
 						<div class="col-xs-12">
 							<div class="box box-primary">
 								<div class="box-header">
-		             			   <a4j:region>
-									<rich:dataGrid id="nameIdConfigsId" value="#{configureNameIdAction.nameIdConfigs}" var="_nameIdConfig" columns="1" style="width: 100%;" border="0" columnClasses="noBorder">
-										<div style="display: inline-block; width: 75% !important;">
-											<h:panelGroup layout="block" class="card-body #{_nameIdConfig.name eq null ? 'NewNamedID' : _nameIdConfig.name}">
-												<a4j:commandLink  value="Delete NameId" onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();" execute="@region" styleClass="btn btn-danger deleteNameIDButton" />
+									<a4j:region>
+										<rich:dataGrid id="nameIdConfigsId"
+											value="#{configureNameIdAction.nameIdConfigs}"
+											var="_nameIdConfig" columns="1" style="width: 100%;"
+											border="0" columnClasses="noBorder">
+											<div style="display: inline-block; width: 75% !important;">
+												<h:panelGroup layout="block"
+													class="card-body #{_nameIdConfig.name eq null ? 'NewNamedID' : _nameIdConfig.name}">
+													<a4j:commandLink value="Delete NameId"
+														onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();"
+														execute="@region"
+														styleClass="btn btn-danger deleteNameIDButton" />
 
-												<h:panelGroup layout="block" class="form-script">
-							                      	<div  class="form-group">
-														<ox:decorate id="enabled" label="#{msg['nameId.enabled']}">
-															<h:selectBooleanCheckbox styleClass="enableCheckBoxButton" id="enabled" value="#{_nameIdConfig.enabled}" />
-														</ox:decorate>
-					
-														<ox:decorate id="sourceAttribute" label="#{msg['nameId.sourceAttribute']}">
-															<h:selectOneMenu
-																value="#{_nameIdConfig.sourceAttribute}"
-																styleClass="form-control sourceAttributeSelectBox">
-																<f:selectItems var="_attribute"
-																	value="#{configureNameIdAction.attributes}"
-																	itemLabel="#{_attribute.displayName}"
-																	itemValue="#{_attribute.name}" />
-															</h:selectOneMenu>
-														</ox:decorate>
-						
-														<ox:decorate id="name" label="#{msg['nameId.name']}">
-															<h:inputText value="#{_nameIdConfig.name}" styleClass="form-control nameTextBox" />
-														</ox:decorate>
-					
-														<ox:decorate id="nameIdType" label="#{msg['nameId.nameIdType']}">
-															<h:selectOneMenu value="#{_nameIdConfig.nameIdType}"
-																styleClass="form-control nameIdTypeSelectBox">
-																<f:selectItem itemLabel="emailAddress"
-																	itemValue="emailAddress" />
-																<f:selectItem itemLabel="unspecified"
-																	itemValue="unspecified" />
-															</h:selectOneMenu>
-														</ox:decorate>
-													</div>
+													<h:panelGroup layout="block" class="form-script">
+														<div class="form-group">
+															<ox:decorate id="enabled"
+																label="#{msg['nameId.enabled']}">
+																<h:selectBooleanCheckbox
+																	styleClass="rounded enableCheckBoxButton" id="enabled"
+																	value="#{_nameIdConfig.enabled}" />
+															</ox:decorate>
+
+															<ox:decorate id="sourceAttribute"
+																label="#{msg['nameId.sourceAttribute']}">
+																<h:selectOneMenu
+																	value="#{_nameIdConfig.sourceAttribute}"
+																	styleClass="rounded form-control sourceAttributeSelectBox">
+																	<f:selectItems var="_attribute"
+																		value="#{configureNameIdAction.attributes}"
+																		itemLabel="#{_attribute.displayName}"
+																		itemValue="#{_attribute.name}" />
+																</h:selectOneMenu>
+															</ox:decorate>
+
+															<ox:decorate id="name" label="#{msg['nameId.name']}">
+																<h:inputText value="#{_nameIdConfig.name}"
+																	styleClass="form-control nameTextBox" />
+															</ox:decorate>
+
+															<ox:decorate id="nameIdType"
+																label="#{msg['nameId.nameIdType']}">
+																<h:selectOneMenu value="#{_nameIdConfig.nameIdType}"
+																	styleClass="rounded form-control nameIdTypeSelectBox">
+																	<f:selectItem itemLabel="" itemValue="null" />
+																	<f:selectItem itemLabel="emailAddress"
+																		itemValue="emailAddress" />
+																	<f:selectItem itemLabel="unspecified"
+																		itemValue="unspecified" />
+																	<f:selectItem itemLabel="persistent"
+																		itemValue="urn:oasis:names:tc:SAML:2.0:nameid-format:persistent" />
+																</h:selectOneMenu>
+															</ox:decorate>
+														</div>
+													</h:panelGroup>
 												</h:panelGroup>
-											</h:panelGroup>
-										</div>
+											</div>
 
-							            <ox:acceptRemovalDialog id="deleteConfirmation" subject="nameId" value="#{_nameIdConfig.name}" deleteMethod="#{configureNameIdAction.removeNameIdConfig(_nameIdConfig)}" render="nameIdConfigsId" />
-									</rich:dataGrid>
+											<ox:acceptRemovalDialog id="deleteConfirmation"
+												subject="nameId" value="#{_nameIdConfig.name}"
+												deleteMethod="#{configureNameIdAction.removeNameIdConfig(_nameIdConfig)}"
+												render="nameIdConfigsId" />
+										</rich:dataGrid>
 									</a4j:region>
-				
-				
-								    <h:panelGroup layout="block" styleClass="addConfig">
-										<a4j:commandLink styleClass="btn btn-primary addConfigButton" style="font-size:13px !important;" value="#{msg['nameId.addNameIdConfiguration']}" action="#{configureNameIdAction.addNameIdConfig()}" render="nameIdConfigsId" execute="@region"/>
-				                    </h:panelGroup>
+
+
+									<h:panelGroup layout="block" styleClass="addConfig">
+										<a4j:commandLink styleClass="btn btn-primary addConfigButton"
+											style="font-size:13px !important;"
+											value="#{msg['nameId.addNameIdConfiguration']}"
+											action="#{configureNameIdAction.addNameIdConfig()}"
+											render="nameIdConfigsId" execute="@region" />
+									</h:panelGroup>
 								</div>
 							</div>
 						</div>
