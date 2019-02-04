@@ -54,6 +54,10 @@ public class LogoutAction implements Serializable {
         identity.logout();
 	}
 
+	public void processSsoLogout() throws Exception {
+        identity.logout();
+    }
+
 	public String postLogout() {
         identity.logout();
 
@@ -74,12 +78,6 @@ public class LogoutAction implements Serializable {
 		clientRequest.queryParameter(OxTrustConstants.OXAUTH_ID_TOKEN_HINT, oauthData.getIdToken());
 		clientRequest.queryParameter(OxTrustConstants.OXAUTH_POST_LOGOUT_REDIRECT_URI,
 				appConfiguration.getLogoutRedirectUrl());
-
-		// Clean up OAuth token
-		oauthData.setUserUid(null);
-		oauthData.setIdToken(null);
-		oauthData.setSessionState(null);
-		oauthData = null;
 
 		facesService.redirectToExternalURL(clientRequest.getUri());
 	}
