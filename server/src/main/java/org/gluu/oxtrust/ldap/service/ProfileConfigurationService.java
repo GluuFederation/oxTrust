@@ -54,6 +54,7 @@ public class ProfileConfigurationService implements Serializable {
 	private static final String SAML1_ARTIFACT_RESOLUTION = "SAML1ArtifactResolution";
 	private static final String SAML1_ATTRIBUTE_QUERY = "SAML1AttributeQuery";
 	private static final String SAML2_SSO = "SAML2SSO";
+    private static final String SAML2_LOGOUT = "SAML2Logout";
 	private static final String SAML2_ARTIFACT_RESOLUTION = "SAML2ArtifactResolution";
 	private static final String SAML2_ATTRIBUTE_QUERY = "SAML2AttributeQuery";
 
@@ -128,6 +129,14 @@ public class ProfileConfigurationService implements Serializable {
 			profileConfiguration.setEncryptAssertions("conditional");
 			profileConfiguration.setEncryptNameIds("never");
 		}
+
+        if (SAML2_LOGOUT.equals(profileConfigurationName)) {
+            profileConfiguration.setAssertionLifetime(300000);
+            profileConfiguration.setSignResponses("conditional");
+            profileConfiguration.setSignAssertions("never");
+            profileConfiguration.setSignRequests("conditional");
+            profileConfiguration.setEncryptAssertions("conditional");
+        }
 
 		if (SAML2_ARTIFACT_RESOLUTION.equals(profileConfigurationName)) {
 			profileConfiguration.setSignResponses("conditional");
@@ -250,6 +259,28 @@ public class ProfileConfigurationService implements Serializable {
 					trustRelationship.getProfileConfigurations().put(SAML2_SSO, profileConfiguration);
 					continue;
 				}
+
+                if (xmlDocument.getFirstChild().getAttributes().getNamedItem("xsi:type").getNodeValue().contains(SAML2_LOGOUT)) {
+                    ProfileConfiguration profileConfiguration = createProfileConfiguration(SAML2_LOGOUT);
+
+                    profileConfiguration.setAssertionLifetime(Integer.parseInt(xmlDocument.getFirstChild().getAttributes()
+                            .getNamedItem("assertionLifetime").getNodeValue()));
+                    profileConfiguration.setSignResponses(xmlDocument.getFirstChild().getAttributes().getNamedItem("signResponses")
+                            .getNodeValue());
+                    profileConfiguration.setSignAssertions(xmlDocument.getFirstChild().getAttributes().getNamedItem("signAssertions")
+                            .getNodeValue());
+                    profileConfiguration.setSignRequests(xmlDocument.getFirstChild().getAttributes().getNamedItem("signRequests")
+                            .getNodeValue());
+                    profileConfiguration.setEncryptAssertions(xmlDocument.getFirstChild().getAttributes().getNamedItem("encryptAssertions")
+                            .getNodeValue());
+                    Node attribute = xmlDocument.getFirstChild().getAttributes().getNamedItem("signingCredentialRef");
+                    if (attribute != null) {
+                        profileConfiguration.setProfileConfigurationCertFileName(attribute.getNodeValue());
+                    }
+
+                    trustRelationship.getProfileConfigurations().put(SAML2_LOGOUT, profileConfiguration);
+                    continue;
+                }
 
 				if (xmlDocument.getFirstChild().getAttributes().getNamedItem("xsi:type").getNodeValue().contains(SAML2_ARTIFACT_RESOLUTION)) {
 					ProfileConfiguration profileConfiguration = createProfileConfiguration(SAML2_ARTIFACT_RESOLUTION);
@@ -382,6 +413,19 @@ public class ProfileConfigurationService implements Serializable {
 				context.put(SAML2_SSO + "SigningCredentialRef", certName);
 			}
 		}
+        if (trustRelationship.getProfileConfigurations().get(SAML2_LOGOUT) != null) {
+            ProfileConfiguration profileConfiguration = trustRelationship.getProfileConfigurations().get(SAML2_LOGOUT);
+            context.put(SAML2_LOGOUT + "AssertionLifetime", profileConfiguration.getAssertionLifetime());
+            context.put(SAML2_LOGOUT + "SignResponses", profileConfiguration.getSignResponses());
+            context.put(SAML2_LOGOUT + "SignAssertions", profileConfiguration.getSignAssertions());
+            context.put(SAML2_LOGOUT + "SignRequests", profileConfiguration.getSignRequests());
+            context.put(SAML2_LOGOUT + "EncryptAssertions", profileConfiguration.getEncryptAssertions());
+            saveCertificate(trustRelationship, fileWrappers, SAML2_LOGOUT);
+            String certName = trustRelationship.getProfileConfigurations().get(SAML2_LOGOUT).getProfileConfigurationCertFileName();
+            if (StringHelper.isNotEmpty(certName)) {
+                context.put(SAML2_LOGOUT + "SigningCredentialRef", certName);
+            }
+        }
 
 		if (trustRelationship.getProfileConfigurations().get(SAML2_ARTIFACT_RESOLUTION) != null) {
 			ProfileConfiguration profileConfiguration = trustRelationship.getProfileConfigurations().get(SAML2_ARTIFACT_RESOLUTION);
