@@ -109,4 +109,8 @@ public interface Client<U extends UserProfile> {
 	 */
 	public U getUserProfile(final OpenIdCredentials credentials, final WebContext context);
 
+    void setAttribute(WebContext context, String attributeName, Object attributeValue);
+
+    Object getAttribute(WebContext context, String attributeName);
+
 }
