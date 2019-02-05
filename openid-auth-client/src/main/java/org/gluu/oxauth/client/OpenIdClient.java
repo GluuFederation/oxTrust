@@ -443,4 +443,18 @@ public class OpenIdClient<C extends AppConfiguration, L extends LdapAppConfigura
 		return openIdConfiguration;
 	}
 
+    @Override
+    public void setAttribute(WebContext context, String attributeName, Object attributeValue) {
+        init();
+
+        context.setSessionAttribute(getName() + attributeName, attributeValue);
+    }
+
+    @Override
+    public Object getAttribute(WebContext context, String attributeName) {
+        init();
+
+        return context.getSessionAttribute(getName() + attributeName);
+    }
+
 }
