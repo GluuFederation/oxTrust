@@ -105,6 +105,10 @@
                         <ui:decorate template="/WEB-INF/incl/trustmanager/profileConfiguration/saml2sso.xhtml">
                             <ui:param name="_relyingPartyAction" value="#{relyingPartyAction}" />
                         </ui:decorate>
+
+                        <ui:decorate template="/WEB-INF/incl/trustmanager/profileConfiguration/saml2logout.xhtml">
+                            <ui:param name="_relyingPartyAction" value="#{relyingPartyAction}" />
+                        </ui:decorate>
     
                         <ui:decorate template="/WEB-INF/incl/trustmanager/profileConfiguration/saml2ar.xhtml">
                             <ui:param name="_relyingPartyAction" value="#{relyingPartyAction}" />
