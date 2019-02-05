@@ -1,0 +1,11 @@
+<rp:ProfileConfiguration xsi:type="saml:SAML2LogoutProfile" 
+#if($SAML2LogoutSigningCredentialRef)
+	signingCredentialRef="$SAML2LogoutSigningCredentialRef"
+#end	
+	assertionLifetime="$SAML2LogoutAssertionLifetime"
+	assertionProxyCount="$SAML2LogoutAssertionProxyCount"
+	signResponses="$SAML2LogoutSignResponses"
+	signAssertions="$SAML2LogoutSignAssertions"
+	signRequests="$SAML2LogoutSignRequests"
+	encryptAssertions="$SAML2LogoutEncryptAssertions"
+/>
