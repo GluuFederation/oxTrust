@@ -130,7 +130,7 @@
                         #end
 
                     />
-                    #elseif($mapEntry.key == "SAML2SSO")
+                    #elseif($mapEntry.key == "SAML2Logout")
 
                     <bean parent="SAML2.Logout"
                           p:assertionLifetime="$profileConfig.assertionLifetime"
