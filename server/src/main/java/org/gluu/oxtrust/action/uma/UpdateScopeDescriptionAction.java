@@ -175,7 +175,10 @@ public class UpdateScopeDescriptionAction implements Serializable {
 						clientList = new ArrayList<OxAuthClient>();
 						for (String clientDn : list) {
 							OxAuthClient oxAuthClient = clientService.getClientByDn(clientDn);
-							clientList.add(oxAuthClient);
+							if (oxAuthClient != null) {
+								clientList.add(oxAuthClient);
+							}
+
 						}
 					}
 				}
@@ -498,7 +501,7 @@ public class UpdateScopeDescriptionAction implements Serializable {
 	public List<CustomScript> getAuthorizationPolicies() {
 		return authorizationPolicies;
 	}
-	
+
 	private boolean isValidScope() throws Exception {
 		List<UmaScopeDescription> allScopes = scopeDescriptionService.getAllScopeDescriptions(1000);
 		boolean result = true;
@@ -510,7 +513,8 @@ public class UpdateScopeDescriptionAction implements Serializable {
 				}
 			}
 			if (count != 1 && count != 0) {
-				facesMessages.add(FacesMessage.SEVERITY_ERROR, "A UMA scope named '" + this.scopeDescription.getDisplayName() + "' already exists");
+				facesMessages.add(FacesMessage.SEVERITY_ERROR,
+						"A UMA scope named '" + this.scopeDescription.getDisplayName() + "' already exists");
 				result = false;
 			}
 		} else {
@@ -520,12 +524,12 @@ public class UpdateScopeDescriptionAction implements Serializable {
 				}
 			}
 			if (count != 0) {
-				facesMessages.add(FacesMessage.SEVERITY_ERROR, "A UMA scope named '" + this.scopeDescription.getDisplayName() + "' already exists");
+				facesMessages.add(FacesMessage.SEVERITY_ERROR,
+						"A UMA scope named '" + this.scopeDescription.getDisplayName() + "' already exists");
 				result = false;
 			}
 		}
 		return result;
 	}
-
 
 }
