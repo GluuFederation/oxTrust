@@ -54,6 +54,10 @@ public class LogoutAction implements Serializable {
         identity.logout();
 	}
 
+	public void processSsoLogout() throws Exception {
+        identity.logout();
+    }
+
 	public String postLogout() {
         identity.logout();
 
@@ -61,36 +65,20 @@ public class LogoutAction implements Serializable {
 	}
 
 	protected void opLogout() throws Exception {
-		boolean requireOpLogout = isRequireOpLogout();
-		if (!requireOpLogout) {
-		    return;
-		}
-
 		OauthData oauthData = identity.getOauthData();
 
 		ClientRequest clientRequest = new ClientRequest(openIdService.getOpenIdConfiguration().getEndSessionEndpoint());
 
-		clientRequest.queryParameter(OxTrustConstants.OXAUTH_SESSION_STATE, oauthData.getSessionState());
-		clientRequest.queryParameter(OxTrustConstants.OXAUTH_ID_TOKEN_HINT, oauthData.getIdToken());
+		if (oauthData.getSessionState() != null) {
+		    clientRequest.queryParameter(OxTrustConstants.OXAUTH_SESSION_STATE, oauthData.getSessionState());
+		}
+        if (oauthData.getIdToken() != null) {
+            clientRequest.queryParameter(OxTrustConstants.OXAUTH_ID_TOKEN_HINT, oauthData.getIdToken());
+        }
 		clientRequest.queryParameter(OxTrustConstants.OXAUTH_POST_LOGOUT_REDIRECT_URI,
 				appConfiguration.getLogoutRedirectUrl());
 
-		// Clean up OAuth token
-		oauthData.setUserUid(null);
-		oauthData.setIdToken(null);
-		oauthData.setSessionState(null);
-		oauthData = null;
-
 		facesService.redirectToExternalURL(clientRequest.getUri());
 	}
-
-	private boolean isRequireOpLogout() {
-        OauthData oauthData = identity.getOauthData();
-		if (StringHelper.isEmpty(oauthData.getUserUid())) {
-			return false;
-		}
-
-		return true;
-    }
 
 }

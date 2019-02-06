@@ -130,6 +130,39 @@
                         #end
 
                     />
+                    #elseif($mapEntry.key == "SAML2Logout")
+
+                    <bean parent="SAML2.Logout"
+                          p:assertionLifetime="$profileConfig.assertionLifetime"
+                        #if ($profileConfig.signResponses == 'conditional')
+                          p:signResponses-ref="SignNoIntegrity"
+                        #{else}
+                            #set($signResponses = "#if ($profileConfig.signResponses == 'always')true#{else}false#end")
+                          p:signResponses="$signResponses"
+                        #end
+                        #if ($profileConfig.signAssertions == 'conditional')
+                          p:signAssertions-ref="SignNoIntegrity"
+                        #{else}
+                            #set($signAssertions = "#if ($profileConfig.signAssertions == 'always')true#{else}false#end")
+                          p:signAssertions="$signAssertions"
+                        #end
+                        #if ($profileConfig.signRequests == 'conditional')
+                          p:signRequests-ref="SignNoIntegrity"
+                        #{else}
+                            #set($signRequests = "#if ($profileConfig.signRequests == 'always')true#{else}false#end")
+                          p:signRequests="$signRequests"
+                        #end
+                        #if ($profileConfig.encryptAssertions == 'conditional')
+                          p:encryptAssertions-ref="EncryptNoConfidentiality"
+                        #{else}
+                            #set($encryptAssertions = "#if ($profileConfig.encryptAssertions == 'always')true#{else}false#end")
+                          p:encryptAssertions="$encryptAssertions"
+                        #end
+                        #if($profileConfig.signingCredentialRef)
+                          p:signingCredentialRef="$profileConfig.signingCredentialRef"
+                        #end
+
+                    />
                     #elseif($mapEntry.key == "SAML2AttributeQuery")
 
                     <bean parent="SAML2.AttributeQuery"
