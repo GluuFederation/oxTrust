@@ -156,9 +156,6 @@ public class GluuSAMLTrustRelationship extends InumEntry implements Serializable
 	}
 
 	/**
-	 * * This method is for ldap persistance only. For purposes of crud - please use
-	 * setGluuEntityId(Set<String> gluuEntityId)
-	 * 
 	 * @param gluuEntityId
 	 */
 	@Deprecated
