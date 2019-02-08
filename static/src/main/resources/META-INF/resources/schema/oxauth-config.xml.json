@@ -271,7 +271,10 @@
                     "RS512",
                     "ES256",
                     "ES384",
-                    "ES512"
+                    "ES512",
+                    "PS256",
+                    "PS384",
+                    "PS512"
                 ]
             }
         },
@@ -328,7 +331,10 @@
                     "RS512",
                     "ES256",
                     "ES384",
-                    "ES512"
+                    "ES512",
+                    "PS256",
+                    "PS384",
+                    "PS512"
                 ]
             }
         },
@@ -385,7 +391,10 @@
                     "RS512",
                     "ES256",
                     "ES384",
-                    "ES512"
+                    "ES512",
+                    "PS256",
+                    "PS384",
+                    "PS512"
                 ]
             }
         },
@@ -458,7 +467,10 @@
                     "RS512",
                     "ES256",
                     "ES384",
-                    "ES512"
+                    "ES512",
+                    "PS256",
+                    "PS384",
+                    "PS512"
                 ]
             }
         },
@@ -738,7 +750,10 @@
                 "RS512",
                 "ES256",
                 "ES384",
-                "ES512"
+                "ES512",
+                "PS256",
+                "PS384",
+                "PS512"
             ]
         },
         "oxOpenIdConnectVersion": {
@@ -1108,7 +1123,7 @@
         },
         "loggingLevel": {
             "id": "loggingLevel",
-            "description": "Logging level for oxAuth logers.",
+            "description": "Logging level for oxAuth loggers.",
             "type": "string",
             "format": "select",
             "enum": [

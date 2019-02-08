@@ -6,21 +6,8 @@
 
 package org.gluu.oxtrust.ldap.service;
 
-import java.io.Serializable;
-import java.util.List;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.inject.Named;
-
-import org.gluu.oxtrust.model.AuthenticationMethod;
-import org.gluu.oxtrust.model.BlockEncryptionAlgorithm;
-import org.gluu.oxtrust.model.KeyEncryptionAlgorithm;
-import org.gluu.oxtrust.model.OxAuthApplicationType;
-import org.gluu.oxtrust.model.OxAuthClient;
-import org.gluu.oxtrust.model.OxAuthCustomClient;
-import org.gluu.oxtrust.model.OxAuthSubjectType;
-import org.gluu.oxtrust.model.SignatureAlgorithm;
+import com.unboundid.ldap.sdk.Filter;
+import org.gluu.oxtrust.model.*;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.LdapEntryManager;
 import org.slf4j.Logger;
@@ -29,14 +16,18 @@ import org.xdi.ldap.model.GluuBoolean;
 import org.xdi.util.INumGenerator;
 import org.xdi.util.StringHelper;
 
-import com.unboundid.ldap.sdk.Filter;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.io.Serializable;
+import java.util.List;
 
 /**
  * Provides operations with clients
  *
  * @author Reda Zerrad Date: 06.08.2012
  * @author Javier Rojas Blum
- * @version July 19, 2016
+ * @version February 8, 2019
  */
 
 @Stateless
@@ -56,10 +47,10 @@ public class ClientService implements Serializable {
 
     @Inject
     private EncryptionService encryptionService;
-    
+
     @Inject
     private OrganizationService organizationService;
-    
+
     public boolean contains(String clientDn) {
         return ldapEntryManager.contains(OxAuthClient.class, clientDn);
     }
@@ -209,9 +200,9 @@ public class ClientService implements Serializable {
 
         return result;
     }
-    
-    public List<OxAuthClient> getAllClients(int sizeLimit) {		
-		return ldapEntryManager.findEntries(getDnForClient(null), OxAuthClient.class, null, 0, sizeLimit);
+
+    public List<OxAuthClient> getAllClients(int sizeLimit) {
+        return ldapEntryManager.findEntries(getDnForClient(null), OxAuthClient.class, null, 0, sizeLimit);
     }
 
     /**
@@ -236,14 +227,14 @@ public class ClientService implements Serializable {
      */
 
     public OxAuthClient getClientByDn(String Dn) {
-    	try {
-    		 OxAuthClient result = ldapEntryManager.find(OxAuthClient.class, Dn);
-    	        return result;
-    	}catch (Exception e) {
-			log.warn("Error retrieving client "+Dn);
-			return null;
-		}
-       
+        try {
+            OxAuthClient result = ldapEntryManager.find(OxAuthClient.class, Dn);
+            return result;
+        } catch (Exception e) {
+            log.warn("Error retrieving client " + Dn);
+            return null;
+        }
+
     }
 
     /**
@@ -394,6 +385,9 @@ public class ClientService implements Serializable {
                 SignatureAlgorithm.ES256,
                 SignatureAlgorithm.ES384,
                 SignatureAlgorithm.ES512,
+                SignatureAlgorithm.PS256,
+                SignatureAlgorithm.PS384,
+                SignatureAlgorithm.PS512
         };
     }
 

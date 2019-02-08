@@ -6,60 +6,61 @@
 
 package org.gluu.oxtrust.model;
 
+import org.gluu.site.ldap.persistence.annotation.LdapEnum;
+
 import java.util.HashMap;
 import java.util.Map;
 
-import org.gluu.site.ldap.persistence.annotation.LdapEnum;
-
 /**
  * oxAuth IdToken Signed Response Algorithm
- * 
+ *
  * @author Reda Zerrad Date: 06.15.2012
  * @author Javier Rojas Blum
- * @version November 10, 2015
+ * @version February 8, 2019
  */
 public enum SignatureAlgorithm implements LdapEnum {
 
     NONE("none", "none"),
-	HS256("HS256", "HS256"), HS384("HS384", "HS384"), HS512("HS512", "HS512"),
+    HS256("HS256", "HS256"), HS384("HS384", "HS384"), HS512("HS512", "HS512"),
     RS256("RS256", "RS256"), RS384("RS384", "RS384"), RS512("RS512", "RS512"),
-    ES256("ES256", "ES256"), ES384("ES384", "ES384"), ES512("ES512", "ES512");
+    ES256("ES256", "ES256"), ES384("ES384", "ES384"), ES512("ES512", "ES512"),
+    PS256("PS256", "PS256"), PS384("PS384", "PS384"), PS512("PS512", "PS512");
 
-	private String value;
-	private String displayName;
+    private String value;
+    private String displayName;
 
-	private static Map<String, SignatureAlgorithm> mapByValues = new HashMap<String, SignatureAlgorithm>();
+    private static Map<String, SignatureAlgorithm> mapByValues = new HashMap<String, SignatureAlgorithm>();
 
-	static {
-		for (SignatureAlgorithm enumType : values()) {
-			mapByValues.put(enumType.getValue(), enumType);
-		}
-	}
+    static {
+        for (SignatureAlgorithm enumType : values()) {
+            mapByValues.put(enumType.getValue(), enumType);
+        }
+    }
 
-	private SignatureAlgorithm(String value, String displayName) {
-		this.value = value;
-		this.displayName = displayName;
-	}
+    SignatureAlgorithm(String value, String displayName) {
+        this.value = value;
+        this.displayName = displayName;
+    }
 
-	public String getValue() {
-		return value;
-	}
+    public String getValue() {
+        return value;
+    }
 
-	public String getDisplayName() {
-		return displayName;
-	}
+    public String getDisplayName() {
+        return displayName;
+    }
 
-	public static SignatureAlgorithm getByValue(String value) {
-		return mapByValues.get(value);
-	}
+    public static SignatureAlgorithm getByValue(String value) {
+        return mapByValues.get(value);
+    }
 
-	public Enum<? extends LdapEnum> resolveByValue(String value) {
-		return getByValue(value);
-	}
+    public Enum<? extends LdapEnum> resolveByValue(String value) {
+        return getByValue(value);
+    }
 
-	@Override
-	public String toString() {
-		return value;
-	}
+    @Override
+    public String toString() {
+        return value;
+    }
 
 }
