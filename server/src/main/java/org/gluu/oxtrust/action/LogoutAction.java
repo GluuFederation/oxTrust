@@ -56,6 +56,7 @@ public class LogoutAction implements Serializable {
 
 	public void processSsoLogout() throws Exception {
         identity.logout();
+        identity.setWorkingParameter(OxTrustConstants.OXAUTH_SSO_SESSION_STATE, Boolean.TRUE);
     }
 
 	public String postLogout() {
@@ -65,6 +66,13 @@ public class LogoutAction implements Serializable {
 	}
 
 	protected void opLogout() throws Exception {
+	    Object ssoSessionState = identity.getWorkingParameter(OxTrustConstants.OXAUTH_SSO_SESSION_STATE);
+
+	    if (Boolean.TRUE.equals(ssoSessionState)) {
+	        facesService.redirectToExternalURL(appConfiguration.getLogoutRedirectUrl());
+	        return;
+	    }
+	    
 		OauthData oauthData = identity.getOauthData();
 
 		ClientRequest clientRequest = new ClientRequest(openIdService.getOpenIdConfiguration().getEndSessionEndpoint());
