@@ -8,7 +8,8 @@
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	template="/WEB-INF/incl/layout/newtemplate.xhtml">
 	<f:metadata>
-	    <f:viewAction action="#{permissionService.requestPermission('client', 'access')}" />
+		<f:viewAction
+			action="#{permissionService.requestPermission('client', 'access')}" />
 		<f:viewParam name="inum" value="#{updateClientAction.inum}" />
 		<f:viewAction action="#{conversationService.initConversation}" />
 		<f:viewAction action="#{updateClientAction.update}" onPostback="false" />
@@ -59,7 +60,8 @@
 			</ui:decorate>
 
 			<ox:clientSummary _clientAction="#{updateClientAction}"
-				_client="#{updateClientAction.client}" id="summary" _markdown="#{updateClientAction.markDown}"/>
+				_client="#{updateClientAction.client}" id="summary"
+				_markdown="#{updateClientAction.markDown}" />
 
 			<ox:inputTextDialog
 				acceptMethod="#{updateClientAction.acceptSelectLoginUri}"
@@ -107,6 +109,15 @@
 				searchMethod="#{updateClientAction.searchAvailableResponseTypes}"
 				searchResult="#{updateClientAction.availableResponseTypes}" />
 
+			<ox:selectSelectableEntityDialog
+				acceptMethod="#{updateClientAction.acceptSelectSectors}"
+				cancelMethod="#{updateClientAction.cancelSelectSectors}"
+				displayNameProperty="entity.description" displaySearchForm="false"
+				id="sector" label="Pick one sector from the list" nameProperty="entity.id"
+				render="selectedSectorId"
+				searchMethod="#{updateClientAction.searchAvailableSectors}"
+				searchResult="#{updateClientAction.availableSectors}" />
+				
 			<ox:selectSelectableEntityDialog
 				acceptMethod="#{updateClientAction.acceptSelectCustomScripts}"
 				cancelMethod="#{updateClientAction.cancelSelectCustomScripts}"

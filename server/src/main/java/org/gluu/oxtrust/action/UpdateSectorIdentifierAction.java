@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.ConversationScoped;
 import javax.faces.application.FacesMessage;
@@ -36,6 +37,8 @@ import org.xdi.service.security.Secure;
 import org.xdi.util.StringHelper;
 import org.xdi.util.Util;
 
+import com.google.common.base.Strings;
+
 /**
  * Action class for view and update sector identifier form.
  *
@@ -47,44 +50,44 @@ import org.xdi.util.Util;
 @Secure("#{permissionService.hasPermission('sectorIdentifier', 'access')}")
 public class UpdateSectorIdentifierAction implements Serializable {
 
-    private static final long serialVersionUID = 572441515451149802L;
+	private static final long serialVersionUID = 572441515451149802L;
 
-    @Inject
-    private Logger log;
-    
-    @Inject
+	@Inject
+	private Logger log;
+
+	@Inject
 	private Identity identity;
-	
+
 	@Inject
 	private OxTrustAuditService oxTrustAuditService;
 
-    private String id;
-    private boolean update;
+	private String id;
+	private boolean update;
 
-    private OxAuthSectorIdentifier sectorIdentifier;
+	private OxAuthSectorIdentifier sectorIdentifier;
 
-    private List<String> loginUris;
+	private List<String> loginUris;
 
-    private List<DisplayNameEntry> clientDisplayNameEntries;
+	private List<DisplayNameEntry> clientDisplayNameEntries;
 
-    @NotNull
+	@NotNull
 	@Size(min = 0, max = 30, message = "Length of search string should be less than 30")
-    private String searchAvailableClientPattern;
+	private String searchAvailableClientPattern;
 
-    private String oldSearchAvailableClientPattern;
+	private String oldSearchAvailableClientPattern;
 
-    private String availableLoginUri = "https://";
+	private String availableLoginUri = "https://";
 
-    private List<OxAuthClient> availableClients;
+	private List<OxAuthClient> availableClients;
 
-    @Inject
-    private SectorIdentifierService sectorIdentifierService;
+	@Inject
+	private SectorIdentifierService sectorIdentifierService;
 
-    @Inject
-    private LookupService lookupService;
+	@Inject
+	private LookupService lookupService;
 
-    @Inject
-    private ClientService clientService;
+	@Inject
+	private ClientService clientService;
 
 	@Inject
 	private FacesMessages facesMessages;
@@ -92,81 +95,82 @@ public class UpdateSectorIdentifierAction implements Serializable {
 	@Inject
 	private ConversationService conversationService;
 
-    @Inject
-    private AppConfiguration appConfiguration;
+	@Inject
+	private AppConfiguration appConfiguration;
 
-    public String add() throws Exception {
-        if (this.sectorIdentifier != null) {
-            return OxTrustConstants.RESULT_SUCCESS;
-        }
-
-        this.update = false;
-        this.sectorIdentifier = new OxAuthSectorIdentifier();
-
-        try {
-            this.loginUris = getNonEmptyStringList(sectorIdentifier.getRedirectUris());
-            if(sectorIdentifier.getClientIds() != null && sectorIdentifier.getClientIds().size()>0)
-            	this.loginUris.addAll(clientRedirectUriList(sectorIdentifier.getClientIds()));
-            this.clientDisplayNameEntries = loadClientDisplayNameEntries();
-        } catch (BasePersistenceException ex) {
-            log.error("Failed to load login Uris", ex);
-
-            facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new sector identifier");
-			conversationService.endConversation();
-
-            return OxTrustConstants.RESULT_FAILURE;
-        }
-
-        return OxTrustConstants.RESULT_SUCCESS;
-    }
-    
-    public String update() {
-    	String outcome = updateImpl();
-    	
-    	if (OxTrustConstants.RESULT_FAILURE.equals(outcome)) {
-            facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to find sector identifier");
-			conversationService.endConversation();
-    	}
-    	
-    	return outcome;
-    }
-
-    public String updateImpl() {
-        if (this.sectorIdentifier != null) {
-            return OxTrustConstants.RESULT_SUCCESS;
-        }
-
-        this.update = true;
-        log.info("this.update : " + this.update);
-        try {
-            log.info("id : " + id);
-            this.sectorIdentifier = sectorIdentifierService.getSectorIdentifierById(id);
-        } catch (BasePersistenceException ex) {
-            log.error("Failed to find sector identifier {}", id, ex);
-        }
-
-        if (this.sectorIdentifier == null) {
-            log.info("Sector identifier is null ");
-            return OxTrustConstants.RESULT_FAILURE;
-        }
-
-        try {
-            this.loginUris = getNonEmptyStringList(sectorIdentifier.getRedirectUris());
-            this.clientDisplayNameEntries = loadClientDisplayNameEntries();
-        } catch (Exception ex) {
-            log.error("Failed to load person display names", ex);
-
-            return OxTrustConstants.RESULT_FAILURE;
+	public String add() throws Exception {
+		if (this.sectorIdentifier != null) {
+			return OxTrustConstants.RESULT_SUCCESS;
 		}
 
-        log.info("returning Success");
+		this.update = false;
+		this.sectorIdentifier = new OxAuthSectorIdentifier();
 
-        return OxTrustConstants.RESULT_SUCCESS;
-    }
+		try {
+			this.loginUris = getNonEmptyStringList(sectorIdentifier.getRedirectUris());
+			if (sectorIdentifier.getClientIds() != null && sectorIdentifier.getClientIds().size() > 0)
+				this.loginUris.addAll(clientRedirectUriList(sectorIdentifier.getClientIds()));
+			this.clientDisplayNameEntries = loadClientDisplayNameEntries();
+		} catch (BasePersistenceException ex) {
+			log.error("Failed to load login Uris", ex);
+
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new sector identifier");
+			conversationService.endConversation();
+
+			return OxTrustConstants.RESULT_FAILURE;
+		}
+
+		return OxTrustConstants.RESULT_SUCCESS;
+	}
+
+	public String update() {
+		String outcome = updateImpl();
+
+		if (OxTrustConstants.RESULT_FAILURE.equals(outcome)) {
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to find sector identifier");
+			conversationService.endConversation();
+		}
+
+		return outcome;
+	}
+
+	public String updateImpl() {
+		if (this.sectorIdentifier != null) {
+			return OxTrustConstants.RESULT_SUCCESS;
+		}
+
+		this.update = true;
+		log.info("this.update : " + this.update);
+		try {
+			log.info("id : " + id);
+			this.sectorIdentifier = sectorIdentifierService.getSectorIdentifierById(id);
+		} catch (BasePersistenceException ex) {
+			log.error("Failed to find sector identifier {}", id, ex);
+		}
+
+		if (this.sectorIdentifier == null) {
+			log.info("Sector identifier is null ");
+			return OxTrustConstants.RESULT_FAILURE;
+		}
+
+		try {
+			this.loginUris = getNonEmptyStringList(sectorIdentifier.getRedirectUris());
+			this.clientDisplayNameEntries = loadClientDisplayNameEntries();
+		} catch (Exception ex) {
+			log.error("Failed to load person display names", ex);
+
+			return OxTrustConstants.RESULT_FAILURE;
+		}
+
+		log.info("returning Success");
+
+		return OxTrustConstants.RESULT_SUCCESS;
+	}
 
 	public String cancel() {
 		if (update) {
-			facesMessages.add(FacesMessage.SEVERITY_INFO, "Sector identifier '#{updateSectorIdentifierAction.sectorIdentifier.id}' not updated");
+			facesMessages.add(FacesMessage.SEVERITY_INFO,
+					"Sector identifier '#{updateSectorIdentifierAction.sectorIdentifier.id}' not updated");
 		} else {
 			facesMessages.add(FacesMessage.SEVERITY_INFO, "New sector identifier not added");
 		}
@@ -175,370 +179,378 @@ public class UpdateSectorIdentifierAction implements Serializable {
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-    public String save() throws Exception {
-        List<DisplayNameEntry> oldClientDisplayNameEntries = null;
-        try {
-            oldClientDisplayNameEntries = loadClientDisplayNameEntries();
-        } catch (BasePersistenceException ex) {
-            log.info("error getting old clients");
-            log.error("Failed to load client display names", ex);
+	public String save() throws Exception {
+		List<DisplayNameEntry> oldClientDisplayNameEntries = null;
+		try {
+			oldClientDisplayNameEntries = loadClientDisplayNameEntries();
+		} catch (BasePersistenceException ex) {
+			log.info("error getting old clients");
+			log.error("Failed to load client display names", ex);
 
-            facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update sector identifier");
-            return OxTrustConstants.RESULT_FAILURE;
-        }
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update sector identifier");
+			return OxTrustConstants.RESULT_FAILURE;
+		}
 
-        updateLoginURIs();
-        updateClientDisplayNameEntries();
-        if (update) {
-            // Update sectorIdentifier
-            try {
-                sectorIdentifierService.updateSectorIdentifier(this.sectorIdentifier);
-                oxTrustAuditService.audit("SECTOR ID " + this.sectorIdentifier.getId() + " UPDATED",
-						identity.getUser(),
+		updateLoginURIs();
+		updateClientDisplayNameEntries();
+		if (update) {
+			// Update sectorIdentifier
+			try {
+				sectorIdentifierService.updateSectorIdentifier(this.sectorIdentifier);
+				oxTrustAuditService.audit("SECTOR ID " + this.sectorIdentifier.getId() + " UPDATED", identity.getUser(),
 						(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
-                updateClients(oldClientDisplayNameEntries, this.clientDisplayNameEntries);
-            } catch (BasePersistenceException ex) {
-                log.info("error updating sector identifier ", ex);
-                log.error("Failed to update sector identifier {}", this.id, ex);
-
-                facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update sector identifier '#{updateSectorIdentifierAction.sectorIdentifier.id}'");
-                return OxTrustConstants.RESULT_FAILURE;
-            } catch (Exception ex) {
+				updateClients(oldClientDisplayNameEntries, this.clientDisplayNameEntries);
+			} catch (BasePersistenceException ex) {
+				log.info("error updating sector identifier ", ex);
 				log.error("Failed to update sector identifier {}", this.id, ex);
-            }
 
-            facesMessages.add(FacesMessage.SEVERITY_INFO, "Sector identifier '#{updateSectorIdentifierAction.sectorIdentifier.id}' updated successfully");
-        } else {
-            this.id = sectorIdentifierService.generateIdForNewSectorIdentifier();
-            String dn = sectorIdentifierService.getDnForSectorIdentifier(this.id);
+				facesMessages.add(FacesMessage.SEVERITY_ERROR,
+						"Failed to update sector identifier '#{updateSectorIdentifierAction.sectorIdentifier.id}'");
+				return OxTrustConstants.RESULT_FAILURE;
+			} catch (Exception ex) {
+				log.error("Failed to update sector identifier {}", this.id, ex);
+			}
 
-            // Save sectorIdentifier
-            this.sectorIdentifier.setDn(dn);
-            this.sectorIdentifier.setId(this.id);
-            try {
-                sectorIdentifierService.addSectorIdentifier(this.sectorIdentifier);
-                oxTrustAuditService.audit("SECTOR ID " + this.sectorIdentifier.getId() + " ADDED",
-						identity.getUser(),
+			facesMessages.add(FacesMessage.SEVERITY_INFO,
+					"Sector identifier '#{updateSectorIdentifierAction.sectorIdentifier.id}' updated successfully");
+		} else {
+			this.id = sectorIdentifierService.generateIdForNewSectorIdentifier();
+			String dn = sectorIdentifierService.getDnForSectorIdentifier(this.id);
+
+			// Save sectorIdentifier
+			this.sectorIdentifier.setDn(dn);
+			this.sectorIdentifier.setId(this.id);
+			try {
+				sectorIdentifierService.addSectorIdentifier(this.sectorIdentifier);
+				oxTrustAuditService.audit("SECTOR ID " + this.sectorIdentifier.getId() + " ADDED", identity.getUser(),
 						(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
-                updateClients(oldClientDisplayNameEntries, this.clientDisplayNameEntries);
-            } catch (BasePersistenceException ex) {
-                log.info("error saving sector identifier ");
-                log.error("Failed to add new sector identifier {}", this.sectorIdentifier.getId(), ex);
+				updateClients(oldClientDisplayNameEntries, this.clientDisplayNameEntries);
+			} catch (BasePersistenceException ex) {
+				log.info("error saving sector identifier ");
+				log.error("Failed to add new sector identifier {}", this.sectorIdentifier.getId(), ex);
 
-                facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new sector identifier");
-                return OxTrustConstants.RESULT_FAILURE;
-            }
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new sector identifier");
+				return OxTrustConstants.RESULT_FAILURE;
+			}
 
-			facesMessages.add(FacesMessage.SEVERITY_INFO, "New sector identifier '#{updateSectorIdentifierAction.sectorIdentifier.id}' added successfully");
+			facesMessages.add(FacesMessage.SEVERITY_INFO,
+					"New sector identifier '#{updateSectorIdentifierAction.sectorIdentifier.id}' added successfully");
 			conversationService.endConversation();
 
-            this.update = true;
-        }
+			this.update = true;
+		}
 
-        log.info(" returning success updating or saving sector identifier");
+		log.info(" returning success updating or saving sector identifier");
 
-        return OxTrustConstants.RESULT_SUCCESS;
-    }
+		return OxTrustConstants.RESULT_SUCCESS;
+	}
 
-    public String delete() throws Exception {
-        if (update) {
-            // Remove sectorIdentifier
-            try {
-                sectorIdentifierService.removeSectorIdentifier(this.sectorIdentifier);
-                oxTrustAuditService.audit("SECTOR ID " + this.sectorIdentifier.getId() + " REMOVED",
-						identity.getUser(),
+	public String delete() throws Exception {
+		if (update) {
+			// Remove sectorIdentifier
+			try {
+				sectorIdentifierService.removeSectorIdentifier(this.sectorIdentifier);
+				oxTrustAuditService.audit("SECTOR ID " + this.sectorIdentifier.getId() + " REMOVED", identity.getUser(),
 						(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
-                facesMessages.add(FacesMessage.SEVERITY_INFO, "Sector identifier '#{updateSectorIdentifierAction.sectorIdentifier.id}' removed successfully");
+				facesMessages.add(FacesMessage.SEVERITY_INFO,
+						"Sector identifier '#{updateSectorIdentifierAction.sectorIdentifier.id}' removed successfully");
 				conversationService.endConversation();
 
 				return OxTrustConstants.RESULT_SUCCESS;
-            } catch (BasePersistenceException ex) {
-                log.error("Failed to remove sector identifier {}", this.sectorIdentifier.getId(), ex);
-            }
-        }
+			} catch (BasePersistenceException ex) {
+				log.error("Failed to remove sector identifier {}", this.sectorIdentifier.getId(), ex);
+			}
+		}
 
-        facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to remove sector identifier '#{updateSectorIdentifierAction.sectorIdentifier.id}'");
+		facesMessages.add(FacesMessage.SEVERITY_ERROR,
+				"Failed to remove sector identifier '#{updateSectorIdentifierAction.sectorIdentifier.id}'");
 
-        return OxTrustConstants.RESULT_FAILURE;
-    }
+		return OxTrustConstants.RESULT_FAILURE;
+	}
 
-    private List<DisplayNameEntry> loadClientDisplayNameEntries() throws Exception {
-        List<DisplayNameEntry> result = new ArrayList<DisplayNameEntry>();
-        List<DisplayNameEntry> tmp = lookupService.getDisplayNameEntries(clientService.getDnForClient(null), this.sectorIdentifier.getClientIds());
-        if (tmp != null) {
-            result.addAll(tmp);
-        }
+	private List<DisplayNameEntry> loadClientDisplayNameEntries() throws Exception {
+		List<DisplayNameEntry> result = new ArrayList<DisplayNameEntry>();
+		List<DisplayNameEntry> tmp = lookupService.getDisplayNameEntries(clientService.getDnForClient(null),
+				this.sectorIdentifier.getClientIds());
+		if (tmp != null) {
+			result.addAll(tmp);
+		}
 
-        return result;
-    }
+		return result;
+	}
 
-    private List<String> getNonEmptyStringList(List<String> currentList) {
-        if (currentList != null && currentList.size() > 0) {
-            return new ArrayList<String>(currentList);
-        } else {
-            return new ArrayList<String>();
-        }
-    }
+	private List<String> getNonEmptyStringList(List<String> currentList) {
+		if (currentList != null && currentList.size() > 0) {
+			return new ArrayList<String>(currentList);
+		} else {
+			return new ArrayList<String>();
+		}
+	}
 
-    public void addClient(OxAuthClient client) {
-        DisplayNameEntry displayNameEntry = new DisplayNameEntry(client.getDn(), client.getInum(), client.getDisplayName());
-        this.clientDisplayNameEntries.add(displayNameEntry);
-    }
+	public void addClient(OxAuthClient client) {
+		DisplayNameEntry displayNameEntry = new DisplayNameEntry(client.getDn(), client.getInum(),
+				client.getDisplayName());
+		this.clientDisplayNameEntries.add(displayNameEntry);
+	}
 
-    public void removeClient(String inum) throws Exception {
-        if (StringHelper.isEmpty(inum)) {
-            return;
-        }
+	public void removeClient(String inum) throws Exception {
+		if (Strings.isNullOrEmpty(inum)) {
+			return;
+		}
+		OxAuthClient client = clientService.getClientByDn(clientService.getDnForClient(inum));
+		for (Iterator<DisplayNameEntry> iterator = this.clientDisplayNameEntries.iterator(); iterator.hasNext();) {
+			DisplayNameEntry displayNameEntry = iterator.next();
+			if (client != null && client.getDn().equals(displayNameEntry.getDn())) {
+				iterator.remove();
+				break;
+			}
+		}
+	}
 
-        String removeClientInum = clientService.getDnForClient(inum);
+	public String getSearchAvailableClientPattern() {
+		return this.searchAvailableClientPattern;
+	}
 
-        for (Iterator<DisplayNameEntry> iterator = this.clientDisplayNameEntries.iterator(); iterator.hasNext(); ) {
-            DisplayNameEntry displayNameEntry = iterator.next();
-            if (removeClientInum.equals(displayNameEntry.getDn())) {
-                iterator.remove();
-                break;
-            }
-        }
-    }
+	public void setSearchAvailableClientPattern(String searchAvailableClientPattern) {
+		this.searchAvailableClientPattern = searchAvailableClientPattern;
+	}
 
-    public String getSearchAvailableClientPattern() {
-        return this.searchAvailableClientPattern;
-    }
+	public List<OxAuthClient> getAvailableClients() {
+		return this.availableClients;
+	}
 
-    public void setSearchAvailableClientPattern(String searchAvailableClientPattern) {
-        this.searchAvailableClientPattern = searchAvailableClientPattern;
-    }
+	public void searchAvailableClients() {
+		if (Util.equals(this.oldSearchAvailableClientPattern, this.searchAvailableClientPattern)) {
+			return;
+		}
 
-    public List<OxAuthClient> getAvailableClients() {
-        return this.availableClients;
-    }
+		try {
+			this.availableClients = clientService.searchClients(this.searchAvailableClientPattern,
+					OxTrustConstants.searchClientsSizeLimit);
+			this.oldSearchAvailableClientPattern = this.searchAvailableClientPattern;
+			selectAddedClients();
+		} catch (Exception ex) {
+			log.error("Failed to find clients", ex);
+		}
+	}
 
-    public void searchAvailableClients() {
-        if (Util.equals(this.oldSearchAvailableClientPattern, this.searchAvailableClientPattern)) {
-            return;
-        }
+	public void selectAddedClients() {
+		if (this.availableClients == null) {
+			return;
+		}
 
-        try {
-            this.availableClients = clientService.searchClients(this.searchAvailableClientPattern, OxTrustConstants.searchClientsSizeLimit);
-            this.oldSearchAvailableClientPattern = this.searchAvailableClientPattern;
-            selectAddedClients();
-        } catch (Exception ex) {
-            log.error("Failed to find clients", ex);
-        }
-    }
+		Set<String> addedClientInums = new HashSet<String>();
+		for (DisplayNameEntry entry : clientDisplayNameEntries) {
+			addedClientInums.add(entry.getInum());
+		}
 
-    public void selectAddedClients() {
-        if (this.availableClients == null) {
-            return;
-        }
+		for (OxAuthClient client : this.availableClients) {
+			client.setSelected(addedClientInums.contains(client.getInum()));
+		}
+	}
 
-        Set<String> addedClientInums = new HashSet<String>();
-        for (DisplayNameEntry entry : clientDisplayNameEntries) {
-            addedClientInums.add(entry.getInum());
-        }
+	public void acceptSelectClients() {
+		if (this.availableClients == null) {
+			return;
+		}
 
-        for (OxAuthClient client : this.availableClients) {
-            client.setSelected(addedClientInums.contains(client.getInum()));
-        }
-    }
+		Set<String> addedClientInums = new HashSet<String>();
+		for (DisplayNameEntry entry : clientDisplayNameEntries) {
+			addedClientInums.add(entry.getInum());
+		}
 
-    public void acceptSelectClients() {
-        if (this.availableClients == null) {
-            return;
-        }
+		for (OxAuthClient client : this.availableClients) {
+			if (client.isSelected() && !addedClientInums.contains(client.getInum())) {
+				addClient(client);
+				if (client.getOxAuthRedirectURIs() != null && client.getOxAuthRedirectURIs().size() > 0) {
+					Set<String> existingList = new HashSet<String>();
+					existingList.addAll(this.loginUris);
+					existingList.addAll(client.getOxAuthRedirectURIs());
+					existingList = existingList.stream().map(e -> e.trim()).collect(Collectors.toSet());
+					this.loginUris = new ArrayList<>(existingList);
+				}
+			}
+		}
+	}
 
-        Set<String> addedClientInums = new HashSet<String>();
-        for (DisplayNameEntry entry : clientDisplayNameEntries) {
-            addedClientInums.add(entry.getInum());
-        }
+	public void cancelSelectClients() {
+	}
 
-        for (OxAuthClient client : this.availableClients) {
-            if (client.isSelected() && !addedClientInums.contains(client.getInum())) {
-                addClient(client);
-                if(client.getOxAuthRedirectURIs() != null && client.getOxAuthRedirectURIs().size()>0)
-                	this.loginUris.addAll(client.getOxAuthRedirectURIs());
-            }
-        }
-    }
+	private void updateClientDisplayNameEntries() {
+		List<String> clientDisplayNameEntries = new ArrayList<String>();
+		this.sectorIdentifier.setClientIds(clientDisplayNameEntries);
 
-    public void cancelSelectClients() {
-    }
+		for (DisplayNameEntry displayNameEntry : this.clientDisplayNameEntries) {
+			clientDisplayNameEntries.add(displayNameEntry.getDn());
+		}
+	}
 
-    private void updateClientDisplayNameEntries() {
-        List<String> clientDisplayNameEntries = new ArrayList<String>();
-        this.sectorIdentifier.setClientIds(clientDisplayNameEntries);
+	private void updateClients(List<DisplayNameEntry> oldClientDisplayNameEntries,
+			List<DisplayNameEntry> newClientDisplayNameEntries) throws Exception {
+		log.debug("Old clients: {}", oldClientDisplayNameEntries);
+		log.debug("New clients: {}", newClientDisplayNameEntries);
 
-        for (DisplayNameEntry displayNameEntry : this.clientDisplayNameEntries) {
-            clientDisplayNameEntries.add(displayNameEntry.getDn());
-        }
-    }
+		String sectorIdentifierDn = this.sectorIdentifier.getDn();
 
-    private void updateClients(List<DisplayNameEntry> oldClientDisplayNameEntries, List<DisplayNameEntry> newClientDisplayNameEntries) throws Exception {
-        log.debug("Old clients: {}", oldClientDisplayNameEntries);
-        log.debug("New clients: {}", newClientDisplayNameEntries);
+		// Convert members to array of DNs
+		String[] oldClientDns = convertToDNsArray(oldClientDisplayNameEntries);
+		String[] newClientDns = convertToDNsArray(newClientDisplayNameEntries);
 
-        String sectorIdentifierDn = this.sectorIdentifier.getDn();
+		Arrays.sort(oldClientDns);
+		Arrays.sort(newClientDns);
 
-        // Convert members to array of DNs
-        String[] oldClientDns = convertToDNsArray(oldClientDisplayNameEntries);
-        String[] newClientDns = convertToDNsArray(newClientDisplayNameEntries);
+		boolean[] retainOldClients = new boolean[oldClientDns.length];
+		Arrays.fill(retainOldClients, false);
 
-        Arrays.sort(oldClientDns);
-        Arrays.sort(newClientDns);
+		List<String> addedMembers = new ArrayList<String>();
+		List<String> removedMembers = new ArrayList<String>();
+		List<String> existingMembers = new ArrayList<String>();
 
-        boolean[] retainOldClients = new boolean[oldClientDns.length];
-        Arrays.fill(retainOldClients, false);
+		// Add new values
+		for (String value : newClientDns) {
+			int idx = Arrays.binarySearch(oldClientDns, value);
+			if (idx >= 0) {
+				// Old members array contains member. Retain member
+				retainOldClients[idx] = true;
+			} else {
+				// This is new member
+				addedMembers.add(value);
+			}
+		}
 
-        List<String> addedMembers = new ArrayList<String>();
-        List<String> removedMembers = new ArrayList<String>();
-        List<String> existingMembers = new ArrayList<String>();
+		// Remove clients which we don't have in new clients
+		for (int i = 0; i < oldClientDns.length; i++) {
+			if (retainOldClients[i]) {
+				existingMembers.add(oldClientDns[i]);
+			} else {
+				removedMembers.add(oldClientDns[i]);
+			}
+		}
 
-        // Add new values
-        for (String value : newClientDns) {
-            int idx = Arrays.binarySearch(oldClientDns, value);
-            if (idx >= 0) {
-                // Old members array contains member. Retain member
-                retainOldClients[idx] = true;
-            } else {
-                // This is new member
-                addedMembers.add(value);
-            }
-        }
+		for (String dn : addedMembers) {
+			OxAuthClient client = clientService.getClientByDn(dn);
+			log.debug("Adding sector identifier {} to client {}", sectorIdentifierDn, client.getDisplayName());
 
-        // Remove clients which we don't have in new clients
-        for (int i = 0; i < oldClientDns.length; i++) {
-            if (retainOldClients[i]) {
-                existingMembers.add(oldClientDns[i]);
-            } else {
-                removedMembers.add(oldClientDns[i]);
-            }
-        }
+			client.setSectorIdentifierUri(getSectorIdentifierUrl());
 
-        for (String dn : addedMembers) {
-            OxAuthClient client = clientService.getClientByDn(dn);
-            log.debug("Adding sector identifier {} to client {}", sectorIdentifierDn, client.getDisplayName());
+			clientService.updateClient(client);
+		}
 
-            client.setSectorIdentifierUri(getSectorIdentifierUrl());
+		for (String dn : removedMembers) {
+			OxAuthClient client = clientService.getClientByDn(dn);
+			log.debug("Removing sector identifier {} from client {}", sectorIdentifierDn, client.getDisplayName());
 
-            clientService.updateClient(client);
-        }
+			client.setSectorIdentifierUri(null);
 
-        for (String dn : removedMembers) {
-            OxAuthClient client = clientService.getClientByDn(dn);
-            log.debug("Removing sector identifier {} from client {}", sectorIdentifierDn, client.getDisplayName());
+			clientService.updateClient(client);
+		}
+	}
 
-            client.setSectorIdentifierUri(null);
+	private String[] convertToDNsArray(List<DisplayNameEntry> clientDisplayNameEntries) {
+		String[] dns = new String[clientDisplayNameEntries.size()];
+		int i = 0;
+		for (DisplayNameEntry displayNameEntry : clientDisplayNameEntries) {
+			dns[i++] = displayNameEntry.getDn();
+		}
 
-            clientService.updateClient(client);
-        }
-    }
+		return dns;
+	}
 
-    private String[] convertToDNsArray(List<DisplayNameEntry> clientDisplayNameEntries) {
-        String[] dns = new String[clientDisplayNameEntries.size()];
-        int i = 0;
-        for (DisplayNameEntry displayNameEntry : clientDisplayNameEntries) {
-            dns[i++] = displayNameEntry.getDn();
-        }
+	public void acceptSelectLoginUri() {
+		if (StringHelper.isEmpty(this.availableLoginUri)) {
+			return;
+		}
 
-        return dns;
-    }
+		if (!this.loginUris.contains(this.availableLoginUri)) {
+			this.loginUris.add(this.availableLoginUri);
+		}
 
-    public void acceptSelectLoginUri() {
-        if (StringHelper.isEmpty(this.availableLoginUri)) {
-            return;
-        }
+		this.availableLoginUri = "https://";
+	}
 
-        if (!this.loginUris.contains(this.availableLoginUri)) {
-            this.loginUris.add(this.availableLoginUri);
-        }
+	public void cancelSelectLoginUri() {
+		this.availableLoginUri = "http://";
+	}
 
-        this.availableLoginUri = "https://";
-    }
+	private void updateLoginURIs() {
+		if (this.loginUris == null || this.loginUris.size() == 0) {
+			this.sectorIdentifier.setRedirectUris(null);
+			return;
+		}
 
-    public void cancelSelectLoginUri() {
-        this.availableLoginUri = "http://";
-    }
+		List<String> tmpUris = new ArrayList<String>();
+		for (String uri : this.loginUris) {
+			tmpUris.add(uri);
+		}
 
-    private void updateLoginURIs() {
-        if (this.loginUris == null || this.loginUris.size() == 0) {
-            this.sectorIdentifier.setRedirectUris(null);
-            return;
-        }
+		this.sectorIdentifier.setRedirectUris(tmpUris);
+	}
 
-        List<String> tmpUris = new ArrayList<String>();
-        for (String uri : this.loginUris) {
-            tmpUris.add(uri);
-        }
+	public void removeLoginURI(String uri) {
+		removeFromList(this.loginUris, uri);
+	}
 
-        this.sectorIdentifier.setRedirectUris(tmpUris);
-    }
+	private void removeFromList(List<String> uriList, String uri) {
+		if (StringUtils.isEmpty(uri)) {
+			return;
+		}
 
-    public void removeLoginURI(String uri) {
-        removeFromList(this.loginUris, uri);
-    }
+		for (Iterator<String> iterator = uriList.iterator(); iterator.hasNext();) {
+			String tmpUri = iterator.next();
+			if (uri.equals(tmpUri)) {
+				iterator.remove();
+				break;
+			}
+		}
+	}
 
-    private void removeFromList(List<String> uriList, String uri) {
-        if (StringUtils.isEmpty(uri)) {
-            return;
-        }
+	public String getSectorIdentifierUrl() {
+		return appConfiguration.getOxAuthSectorIdentifierUrl() + "/" + id;
+	}
 
-        for (Iterator<String> iterator = uriList.iterator(); iterator.hasNext(); ) {
-            String tmpUri = iterator.next();
-            if (uri.equals(tmpUri)) {
-                iterator.remove();
-                break;
-            }
-        }
-    }
+	public String getId() {
+		return id;
+	}
 
-    public String getSectorIdentifierUrl() {
-        return appConfiguration.getOxAuthSectorIdentifierUrl() + "/" + id;
-    }
+	public void setId(String id) {
+		this.id = id;
+	}
 
-    public String getId() {
-        return id;
-    }
+	public OxAuthSectorIdentifier getSectorIdentifier() {
+		return sectorIdentifier;
+	}
 
-    public void setId(String id) {
-        this.id = id;
-    }
+	public List<String> getLoginUris() {
+		return loginUris;
+	}
 
-    public OxAuthSectorIdentifier getSectorIdentifier() {
-        return sectorIdentifier;
-    }
+	public void setLoginUris(List<String> loginUris) {
+		this.loginUris = loginUris;
+	}
 
-    public List<String> getLoginUris() {
-        return loginUris;
-    }
+	public List<DisplayNameEntry> getClientDisplayNameEntries() {
+		return clientDisplayNameEntries;
+	}
 
-    public void setLoginUris(List<String> loginUris) {
-        this.loginUris = loginUris;
-    }
+	public boolean isUpdate() {
+		return update;
+	}
 
-    public List<DisplayNameEntry> getClientDisplayNameEntries() {
-        return clientDisplayNameEntries;
-    }
+	public String getAvailableLoginUri() {
+		return availableLoginUri;
+	}
 
-    public boolean isUpdate() {
-        return update;
-    }
+	public void setAvailableLoginUri(String availableLoginUri) {
+		this.availableLoginUri = availableLoginUri;
+	}
 
-    public String getAvailableLoginUri() {
-        return availableLoginUri;
-    }
-
-    public void setAvailableLoginUri(String availableLoginUri) {
-        this.availableLoginUri = availableLoginUri;
-    }
-    
 	private List<String> clientRedirectUriList(List<String> clientInum) {
-		List<String> clientRedirectUri = new  ArrayList <String>();
+		List<String> clientRedirectUri = new ArrayList<String>();
 		for (int i = 0; i < clientInum.size(); i++) {
-			OxAuthClient OxAuthClient = clientService.getClientByInum(clientInum
-					.get(i));
+			OxAuthClient OxAuthClient = clientService.getClientByInum(clientInum.get(i));
 			clientRedirectUri.addAll(OxAuthClient.getOxAuthRedirectURIs());
-		}		
+		}
 		return clientRedirectUri;
 	}
-    
+
 }

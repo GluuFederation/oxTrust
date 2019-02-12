@@ -353,6 +353,42 @@
 														</h:panelGroup>
 													</h:panelGroup>
 												</ox:decorate>
+												<hr
+													style="height: 1px; background: green; border-color: green; border-width: 0px;"></hr>
+												<ox:decorate id="sectorIdentifiers"
+													label="#{msg['clientForm.sectorIdentifierURI']}">
+													<h:panelGroup id="selectedSectorId">
+														<h:panelGroup>
+															<a4j:repeat value="#{_clientAction.sectorIdentifiers}"
+																rowKeyVar="_sectorIdentifierIdx" var="_sectorIdentifier"
+																iterationStatusVar="loop">
+																<div class="row-fluid">
+																	<div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
+																		<h:outputText value="#{_sectorIdentifier.id}" />
+																		<h:outputText value="&#160;" />
+																		<div class="span6 pull-right">
+																			<a4j:commandLink
+																				styleClass="glyphicon glyphicon-remove"
+																				style="margin-top:-20px;"
+																				action="#{_clientAction.removeSector(_sectorIdentifier)}"
+																				execute="@this" render="selectedSectorId"
+																				eventsQueue="clientQueue">
+																			</a4j:commandLink>
+																		</div>
+																	</div>
+																</div>
+																<br />
+															</a4j:repeat>
+															<richext:spacer height="16" />
+															<a4j:commandButton
+																styleClass="btn btn-primary AddSectorIdentifierButton"
+																style="margin-top:5px"
+																value="Set Sector identifier"
+																oncomplete="#{rich:component('sector:selectEntityModalPanel')}.show();"
+																execute="@this" eventsQueue="clientQueue" />
+														</h:panelGroup>
+													</h:panelGroup>
+												</ox:decorate>
 											</h:panelGroup>
 										</div>
 										<div class="col-sm-6 col-lg-6" style="padding: 0px;">
@@ -431,7 +467,9 @@
 													id="calendar" popup="false" datePattern="dd/MM/yyyy HH:mm"
 													showApplyButton="true" style="width:300px">
 												</rich:calendar>
-												<h:commandButton rendered="#{_new}" styleClass="btn btn-primary" value="clear current calendar value"
+												<h:commandButton rendered="#{_new}"
+													styleClass="btn btn-primary"
+													value="clear current calendar value"
 													onclick="#{rich:component('calendar')}.setValue(''); return false;" />
 											</ox:decorate>
 											<ox:decorate id="logoUri"
@@ -445,7 +483,8 @@
 											<ox:decorate id="policyUri"
 												label="#{msg['clientForm.policyUri']}" leftClass="col-sm-3"
 												rightClass="col-sm-9">
-												<h:inputText value="#{_client.policyUri}" style="width:100%;"
+												<h:inputText value="#{_client.policyUri}"
+													style="width:100%;"
 													defaultLabel="click to enter the Policy URI" maxlength="60"
 													inputWidth="695" required="false" id="policyUriId" />
 											</ox:decorate>
@@ -459,32 +498,32 @@
 								<h:panelGroup columns="1" width="100%">
 									<div class="row" style="margin-left: 5px; margin-right: 5px;">
 										<div class="col-sm-6 col-lg-6" style="padding: 0px;">
-                                            <ox:decorate id="accessTokenAsJwt"
-                                                         label="#{msg['clientForm.accessTokenAsJwt']}"
-                                                         leftClass="col-sm-6" rightClass="col-sm-6">
-                                                <h:selectOneMenu id="accessTokenAsJwtId"
-                                                                 styleClass="col-sm-9 form-control rounded"
-                                                                 value="#{_client.accessTokenAsJwt}" required="false">
-                                                    <f:selectItems
-                                                            value="#{organizationService.javaBooleanSelectionTypes}"
-                                                            var="_type" itemLabel="#{_type.displayName}" />
-                                                    <f:converter
-                                                            converterId="org.gluu.jsf2.converter.EnumConverter" />
-                                                </h:selectOneMenu>
-                                            </ox:decorate>
-                                            <ox:decorate id="rptAsJwt"
-                                                         label="#{msg['clientForm.rptAsJwt']}"
-                                                         leftClass="col-sm-6" rightClass="col-sm-6">
-                                                <h:selectOneMenu id="rptAsJwtId"
-                                                                 styleClass="col-sm-9 form-control rounded"
-                                                                 value="#{_client.rptAsJwt}" required="false">
-                                                    <f:selectItems
-                                                            value="#{organizationService.javaBooleanSelectionTypes}"
-                                                            var="_type" itemLabel="#{_type.displayName}" />
-                                                    <f:converter
-                                                            converterId="org.gluu.jsf2.converter.EnumConverter" />
-                                                </h:selectOneMenu>
-                                            </ox:decorate>
+											<ox:decorate id="accessTokenAsJwt"
+												label="#{msg['clientForm.accessTokenAsJwt']}"
+												leftClass="col-sm-6" rightClass="col-sm-6">
+												<h:selectOneMenu id="accessTokenAsJwtId"
+													styleClass="col-sm-9 form-control rounded"
+													value="#{_client.accessTokenAsJwt}" required="false">
+													<f:selectItems
+														value="#{organizationService.javaBooleanSelectionTypes}"
+														var="_type" itemLabel="#{_type.displayName}" />
+													<f:converter
+														converterId="org.gluu.jsf2.converter.EnumConverter" />
+												</h:selectOneMenu>
+											</ox:decorate>
+											<ox:decorate id="rptAsJwt"
+												label="#{msg['clientForm.rptAsJwt']}" leftClass="col-sm-6"
+												rightClass="col-sm-6">
+												<h:selectOneMenu id="rptAsJwtId"
+													styleClass="col-sm-9 form-control rounded"
+													value="#{_client.rptAsJwt}" required="false">
+													<f:selectItems
+														value="#{organizationService.javaBooleanSelectionTypes}"
+														var="_type" itemLabel="#{_type.displayName}" />
+													<f:converter
+														converterId="org.gluu.jsf2.converter.EnumConverter" />
+												</h:selectOneMenu>
+											</ox:decorate>
 											<ox:decorate id="logoutSessionRequired"
 												label="#{msg['clientForm.logoutSessionRequired']}"
 												leftClass="col-sm-6" rightClass="col-sm-6">
@@ -784,7 +823,8 @@
 												<ox:decorate id="clientUri"
 													label="#{msg['clientForm.clientUri']}" leftClass="col-sm-3"
 													rightClass="col-sm-9">
-													<h:inputText value="#{_client.clientUri}" style="width:100%;"
+													<h:inputText value="#{_client.clientUri}"
+														style="width:100%;"
 														defaultLabel="click to enter the home page of the Client"
 														maxlength="60" inputWidth="695" required="false"
 														id="clientUriId" />
@@ -799,25 +839,18 @@
 												<ox:decorate id="idTokenTokenBindingCnf"
 													leftClass="col-sm-3" rightClass="col-sm-9"
 													label="#{msg['clientForm.idTokenTokenBindingCnf']}">
-													<h:inputText
-														value="#{_client.idTokenTokenBindingCnf}" style="width:100%;"
+													<h:inputText value="#{_client.idTokenTokenBindingCnf}"
+														style="width:100%;"
 														defaultLabel="click to enter the ID Token Confirmation Method for Token Binding"
 														maxlength="60" inputWidth="695" required="false"
 														id="idTokenTokenBindingCnfId" />
-												</ox:decorate>
-												<ox:decorate id="sectorIdentifierUri" leftClass="col-sm-3"
-													rightClass="col-sm-9"
-													label="#{msg['clientForm.sectorIdentifierURI']}">
-													<h:inputText value="#{_client.sectorIdentifierUri}" style="width:100%;"
-														defaultLabel="click to enter the Sector Identifier URL"
-														maxlength="60" inputWidth="695" required="false"
-														id="sectorIdentifierUriId" />
 												</ox:decorate>
 
 												<ox:decorate id="initiateLoginUri"
 													label="#{msg['clientForm.initiateLoginURI']}"
 													leftClass="col-sm-3" rightClass="col-sm-9">
-													<h:inputText value="#{_client.initiateLoginUri}" style="width:100%;"
+													<h:inputText value="#{_client.initiateLoginUri}"
+														style="width:100%;"
 														defaultLabel="Enter an URI using the https scheme use to initiate a login by the RP"
 														maxlength="60" inputWidth="695" required="false"
 														id="initiateLoginUriId" />
@@ -825,8 +858,8 @@
 												<ox:decorate id="oxRefreshTokenLifetime"
 													leftClass="col-sm-3" rightClass="col-sm-9"
 													label="#{msg['clientForm.oxRefreshTokenLifetime']}">
-													<h:inputText
-														value="#{_client.oxRefreshTokenLifetime}" style="width:100%;"
+													<h:inputText value="#{_client.oxRefreshTokenLifetime}"
+														style="width:100%;"
 														defaultLabel="#{msg['clientForm.oxRefreshTokenLifetimeLabel']}"
 														maxlength="60" inputWidth="695" required="false"
 														id="oxRefreshTokenLifetimeId" />
@@ -841,40 +874,45 @@
 												<ox:decorate id="defaultMaxAge" leftClass="col-sm-3"
 													rightClass="col-sm-9"
 													label="#{msg['clientForm.defaultMaximumAuthenticationAge']}">
-													<h:inputText value="#{_client.defaultMaxAge}" style="width:100%;"
+													<h:inputText value="#{_client.defaultMaxAge}"
+														style="width:100%;"
 														defaultLabel="Maximum Authentication Age (value in seconds)"
 														maxlength="60" inputWidth="695" required="false"
 														id="defaultMaxAgeId" />
 												</ox:decorate>
 												<ox:decorate id="accessTokenLifetime" leftClass="col-sm-3"
-															 rightClass="col-sm-9"
-															 label="#{msg['clientForm.accessTokenLifetime']}">
-													<h:inputText value="#{_client.accessTokenLifetime}" style="width:100%;"
-																	   defaultLabel="Client-specific access token expiration (value in seconds). Leave it to empty or zero to use the system default value."
-																	   maxlength="60" inputWidth="695" required="false"
-																	   id="accessTokenLifetime" />
+													rightClass="col-sm-9"
+													label="#{msg['clientForm.accessTokenLifetime']}">
+													<h:inputText value="#{_client.accessTokenLifetime}"
+														style="width:100%;"
+														defaultLabel="Client-specific access token expiration (value in seconds). Leave it to empty or zero to use the system default value."
+														maxlength="60" inputWidth="695" required="false"
+														id="accessTokenLifetime" />
 												</ox:decorate>
 												<ox:decorate id="softwareId" leftClass="col-sm-3"
-															 rightClass="col-sm-9"
-															 label="#{msg['clientForm.softwareId']}">
-													<h:inputText value="#{_client.softwareId}" style="width:100%;"
-																	   defaultLabel="Unique identifier string (UUID) assigned by the client developer or software publisher to identify the client software."
-																	   maxlength="60" inputWidth="695" required="false"
-																	   id="softwareId" />
+													rightClass="col-sm-9"
+													label="#{msg['clientForm.softwareId']}">
+													<h:inputText value="#{_client.softwareId}"
+														style="width:100%;"
+														defaultLabel="Unique identifier string (UUID) assigned by the client developer or software publisher to identify the client software."
+														maxlength="60" inputWidth="695" required="false"
+														id="softwareId" />
 												</ox:decorate>
 												<ox:decorate id="softwareVersion" leftClass="col-sm-3"
-															 rightClass="col-sm-9"
-															 label="#{msg['clientForm.softwareVersion']}">
-													<h:inputText value="#{_client.softwareVersion}" style="width:100%;"
-																	   defaultLabel="Version identifier for the client software."
-																	   maxlength="60" inputWidth="695" required="false"
-																	   id="softwareVersion" />
+													rightClass="col-sm-9"
+													label="#{msg['clientForm.softwareVersion']}">
+													<h:inputText value="#{_client.softwareVersion}"
+														style="width:100%;"
+														defaultLabel="Version identifier for the client software."
+														maxlength="60" inputWidth="695" required="false"
+														id="softwareVersion" />
 												</ox:decorate>
-												<ox:decorate id="softwareStatement" label="#{msg['clientForm.softwareStatement']}"
-															 leftClass="col-sm-3" rightClass="col-sm-9">
-													<h:inputTextarea styleClass="form-control rounded" readonly="true"
-																	 value="#{_client.softwareStatement}" rows="3" cols="80" maxlength="4000"
-																	 id="softwareStatement" />
+												<ox:decorate id="softwareStatement"
+													label="#{msg['clientForm.softwareStatement']}"
+													leftClass="col-sm-3" rightClass="col-sm-9">
+													<h:inputTextarea styleClass="form-control rounded"
+														readonly="true" value="#{_client.softwareStatement}"
+														rows="3" cols="80" maxlength="4000" id="softwareStatement" />
 												</ox:decorate>
 											</div>
 										</div>
