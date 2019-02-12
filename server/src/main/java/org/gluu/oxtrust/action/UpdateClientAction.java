@@ -41,9 +41,11 @@ import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.EncryptionService;
 import org.gluu.oxtrust.ldap.service.OxTrustAuditService;
 import org.gluu.oxtrust.ldap.service.ScopeService;
+import org.gluu.oxtrust.ldap.service.SectorIdentifierService;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.model.OxAuthScope;
+import org.gluu.oxtrust.model.OxAuthSectorIdentifier;
 import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.exception.BasePersistenceException;
@@ -90,6 +92,8 @@ public class UpdateClientAction implements Serializable {
 
 	@Inject
 	private ScopeService scopeService;
+	@Inject
+	private SectorIdentifierService sectorIdentifierService;
 
 	@Inject
 	private AttributeService attributeService;
@@ -141,6 +145,7 @@ public class UpdateClientAction implements Serializable {
 	private List<String> contacts;
 	private List<String> requestUris;
 	private List<String> authorizedOrigins;
+	private List<OxAuthSectorIdentifier> sectorIdentifiers = new ArrayList<>();
 
 	private String searchAvailableClaimPattern;
 	private String oldSearchAvailableClaimPattern;
@@ -175,6 +180,7 @@ public class UpdateClientAction implements Serializable {
 	private List<SelectableEntity<CustomScript>> availableCustomScripts;
 	private List<SelectableEntity<GrantType>> availableGrantTypes;
 	private List<SelectableEntity<OxAuthScope>> availableScopes;
+	private List<SelectableEntity<OxAuthSectorIdentifier>> availableSectors;
 
 	public String add() throws Exception {
 		if (this.client != null) {
@@ -197,6 +203,7 @@ public class UpdateClientAction implements Serializable {
 			this.authorizedOrigins = getNonEmptyStringList(client.getAuthorizedOrigins());
 			this.claimRedirectURIList = getNonEmptyStringList(client.getClaimRedirectURI());
 			this.customScripts = getInitialAcrs();
+			this.sectorIdentifiers = initSectors();
 		} catch (BasePersistenceException ex) {
 			log.error("Failed to prepare lists", ex);
 
@@ -274,6 +281,7 @@ public class UpdateClientAction implements Serializable {
 			this.authorizedOrigins = getNonEmptyStringList(client.getAuthorizedOrigins());
 			this.claimRedirectURIList = getNonEmptyStringList(client.getClaimRedirectURI());
 			this.customScripts = getInitialAcrs();
+			this.sectorIdentifiers = initSectors();
 		} catch (BasePersistenceException ex) {
 			log.error("Failed to prepare lists", ex);
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to load client");
@@ -284,6 +292,15 @@ public class UpdateClientAction implements Serializable {
 		}
 
 		return OxTrustConstants.RESULT_SUCCESS;
+	}
+
+	private List<OxAuthSectorIdentifier> initSectors() {
+		String existing = client.getSectorIdentifierUri();
+		if (existing != null) {
+			String[] values = existing.split("/");
+			this.sectorIdentifiers.add(sectorIdentifierService.getSectorIdentifierById(values[values.length-1]));
+		}
+		return this.sectorIdentifiers;
 	}
 
 	private List<String> getNonEmptyStringList(List<String> currentList) {
@@ -332,6 +349,7 @@ public class UpdateClientAction implements Serializable {
 		updateLogoutURIs();
 		updateClientLogoutURIs();
 		updateScopes();
+		updateSector();
 		updateClaims();
 		updateResponseTypes();
 		updateCustomScripts();
@@ -853,6 +871,13 @@ public class UpdateClientAction implements Serializable {
 		this.client.setOxAuthScopes(scopes);
 	}
 
+	private void updateSector() {
+		if (this.sectorIdentifiers != null && this.sectorIdentifiers.size() > 0) {
+			String url = appConfiguration.getOxAuthSectorIdentifierUrl() + "/" + this.sectorIdentifiers.get(0).getId();
+			this.client.setSectorIdentifierUri(url);
+		}
+	}
+
 	private void updateGrantTypes() {
 		List<GrantType> currentGrantTypes = this.grantTypes;
 		if (currentGrantTypes == null || currentGrantTypes.size() == 0) {
@@ -959,6 +984,23 @@ public class UpdateClientAction implements Serializable {
 				removeResponseType(responseType.getValue());
 			}
 		}
+	}
+
+	public void acceptSelectSectors() {
+		List<OxAuthSectorIdentifier> addedSectors = getSectorIdentifiers();
+		for (SelectableEntity<OxAuthSectorIdentifier> availableSector : this.availableSectors) {
+			OxAuthSectorIdentifier sector = availableSector.getEntity();
+			if (availableSector.isSelected() && !addedSectors.contains(sector) && addedSectors.size() == 0) {
+				addSector(sector);
+			}
+			if (!availableSector.isSelected() && addedSectors.contains(sector)) {
+				removeSector(sector);
+			}
+		}
+	}
+
+	public void cancelSelectSectors() {
+
 	}
 
 	public void acceptSelectCustomScripts() {
@@ -1073,6 +1115,13 @@ public class UpdateClientAction implements Serializable {
 		}
 	}
 
+	public void addSector(OxAuthSectorIdentifier value) {
+		if (value == null) {
+			return;
+		}
+		this.sectorIdentifiers.add(value);
+	}
+
 	public void addGrantType(String value) {
 		if (StringHelper.isEmpty(value)) {
 			return;
@@ -1093,6 +1142,13 @@ public class UpdateClientAction implements Serializable {
 		if (removeResponseType != null) {
 			this.responseTypes.remove(removeResponseType);
 		}
+	}
+
+	public void removeSector(OxAuthSectorIdentifier value) {
+		if (value == null) {
+			return;
+		}
+		this.sectorIdentifiers.remove(value);
 	}
 
 	public void removeGrantType(String value) {
@@ -1158,6 +1214,19 @@ public class UpdateClientAction implements Serializable {
 		selectAddedScopes();
 	}
 
+	public void searchAvailableSectors() {
+		if (this.availableSectors != null) {
+			selectAddedSector();
+			return;
+		}
+		List<SelectableEntity<OxAuthSectorIdentifier>> tmpAvailableSectors = new ArrayList<SelectableEntity<OxAuthSectorIdentifier>>();
+		for (OxAuthSectorIdentifier sector : sectorIdentifierService.getAllSectorIdentifiers()) {
+			tmpAvailableSectors.add(new SelectableEntity<OxAuthSectorIdentifier>(sector));
+		}
+		this.availableSectors = tmpAvailableSectors;
+		selectAddedSector();
+	}
+
 	public void searchAvailableGrantTypes() {
 		if (this.availableGrantTypes != null) {
 			selectAddedGrantTypes();
@@ -1178,6 +1247,13 @@ public class UpdateClientAction implements Serializable {
 		List<ResponseType> addedResponseTypes = getResponseTypes();
 		for (SelectableEntity<ResponseType> availableResponseType : this.availableResponseTypes) {
 			availableResponseType.setSelected(addedResponseTypes.contains(availableResponseType.getEntity()));
+		}
+	}
+
+	private void selectAddedSector() {
+		List<OxAuthSectorIdentifier> addedSectors = getSectorIdentifiers();
+		for (SelectableEntity<OxAuthSectorIdentifier> availableSector : this.availableSectors) {
+			availableSector.setSelected(addedSectors.contains(availableSector.getEntity()));
 		}
 	}
 
@@ -1291,6 +1367,10 @@ public class UpdateClientAction implements Serializable {
 		return loginUris;
 	}
 
+	public void setLoginUris(List<String> values) {
+		this.loginUris = values;
+	}
+
 	public List<String> getLogoutUris() {
 		return logoutUris;
 	}
@@ -1305,6 +1385,14 @@ public class UpdateClientAction implements Serializable {
 
 	public List<ResponseType> getResponseTypes() {
 		return responseTypes;
+	}
+
+	public List<OxAuthSectorIdentifier> getSectorIdentifiers() {
+		return sectorIdentifiers;
+	}
+
+	public void setSectorIdentifiers(List<OxAuthSectorIdentifier> sectorIdentifiers) {
+		this.sectorIdentifiers = sectorIdentifiers;
 	}
 
 	public List<CustomScript> getCustomScripts() {
@@ -1333,6 +1421,14 @@ public class UpdateClientAction implements Serializable {
 
 	public void setSearchAvailableClaimPattern(String searchAvailableClaimPattern) {
 		this.searchAvailableClaimPattern = searchAvailableClaimPattern;
+	}
+
+	public List<SelectableEntity<OxAuthSectorIdentifier>> getAvailableSectors() {
+		return availableSectors;
+	}
+
+	public void setAvailableSectors(List<SelectableEntity<OxAuthSectorIdentifier>> availableSectors) {
+		this.availableSectors = availableSectors;
 	}
 
 	/**
