@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.gluu.jsf2.message.FacesMessages;
@@ -42,6 +43,7 @@ import org.gluu.oxtrust.ldap.service.EncryptionService;
 import org.gluu.oxtrust.ldap.service.OxTrustAuditService;
 import org.gluu.oxtrust.ldap.service.ScopeService;
 import org.gluu.oxtrust.ldap.service.SectorIdentifierService;
+import org.gluu.oxtrust.model.ClientAttributes;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.model.OxAuthScope;
@@ -157,6 +159,7 @@ public class UpdateClientAction implements Serializable {
 	private String availableRequestUri = "https://";
 	private String availableAuthorizedOrigin = "https://";
 	private String availableClaimRedirectUri = "https://";
+	private String oxAttributesJson;
 
 	public String getAvailableAuthorizedOrigin() {
 		return availableAuthorizedOrigin;
@@ -188,6 +191,8 @@ public class UpdateClientAction implements Serializable {
 		}
 
 		this.update = false;
+		this.oxAttributesJson = getClientAttributesJson(this.client);
+		log.info("+++++++++++++ClientAttributesJson:" + this.oxAttributesJson);
 		this.client = new OxAuthClient();
 
 		try {
@@ -282,6 +287,7 @@ public class UpdateClientAction implements Serializable {
 			this.claimRedirectURIList = getNonEmptyStringList(client.getClaimRedirectURI());
 			this.customScripts = getInitialAcrs();
 			this.sectorIdentifiers = initSectors();
+			this.oxAttributesJson = getClientAttributesJson(this.client);
 		} catch (BasePersistenceException ex) {
 			log.error("Failed to prepare lists", ex);
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to load client");
@@ -298,7 +304,7 @@ public class UpdateClientAction implements Serializable {
 		String existing = client.getSectorIdentifierUri();
 		if (existing != null) {
 			String[] values = existing.split("/");
-			this.sectorIdentifiers.add(sectorIdentifierService.getSectorIdentifierById(values[values.length-1]));
+			this.sectorIdentifiers.add(sectorIdentifierService.getSectorIdentifierById(values[values.length - 1]));
 		}
 		return this.sectorIdentifiers;
 	}
@@ -358,6 +364,7 @@ public class UpdateClientAction implements Serializable {
 		updateRequestUris();
 		updateAuthorizedOrigins();
 		updateClaimredirectUri();
+		saveAttributesJson();
 		// Trim all URI properties
 		trimUriProperties();
 		this.client.setEncodedClientSecret(encryptionService.encrypt(this.client.getOxAuthClientSecret()));
@@ -407,6 +414,16 @@ public class UpdateClientAction implements Serializable {
 			this.update = true;
 		}
 		return OxTrustConstants.RESULT_SUCCESS;
+	}
+
+	private void saveAttributesJson() {
+		ClientAttributes clientAttributes = new ClientAttributes();
+		try {
+			clientAttributes = new ObjectMapper().readValue(this.oxAttributesJson, ClientAttributes.class);
+		} catch (Exception e) {
+			log.info("erorr parsing json:" + e);
+		}
+		this.client.setAttributes(clientAttributes);
 	}
 
 	private void trimUriProperties() {
@@ -1638,5 +1655,27 @@ public class UpdateClientAction implements Serializable {
 
 	public void setMarkDown(String markDown) {
 		this.markDown = markDown;
+	}
+
+	public String getOxAttributesJson() {
+		return oxAttributesJson;
+	}
+
+	public void setOxAttributesJson(String oxAttributesJson) {
+		this.oxAttributesJson = oxAttributesJson;
+	}
+
+	private String getClientAttributesJson(OxAuthClient client) {
+		log.info("+++++++++++++Calling getClientAttributesJson:" + client);
+		if (client != null) {
+			try {
+				return new ObjectMapper().writeValueAsString(this.client.getAttributes());
+			} catch (Exception e) {
+				return "{}";
+			}
+		} else {
+			return "{}";
+		}
+
 	}
 }
