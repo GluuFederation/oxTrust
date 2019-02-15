@@ -9,9 +9,6 @@ assignees: ''
 
 !!! Note 
 Unless you are Gluu staff, please first review and open an issue on https://support.gluu.org before opening an issue here. Thanks!
-<aside class="notice">
-Unless you are Gluu staff, please first review and open an issue on https://support.gluu.org before opening an issue here. Thanks!
-</aside>
 
 **Describe the issue**
 A clear and concise description of what the issue is.
