@@ -10,23 +10,26 @@ assignees: ''
 !!! Note 
 Unless you are Gluu staff, please first review and open an issue on https://support.gluu.org before opening an issue here. Thanks!
 
-**Describe the issue**
+:arrow_right: **Describe the issue**
 A clear and concise description of what the issue is.
 
-**Steps To Reproduce**
+:arrow_right: **Steps To Reproduce**
 Steps to reproduce the behavior:
 1. Go to '...'
 2. Click on '....'
 3. Scroll down to '....'
 4. See error
 
-**Expected behavior**
+:arrow_right: **Expected behavior**
 A clear and concise description of what you expected to happen.
 
-**Screenshots**
+:arrow_right: **Actual behavior**
+A clear and concise description of what happen.
+
+:arrow_right: **Screenshots**
 If applicable, add screenshots to help explain your problem.
 
-**Desktop (please complete the following information):**
+:arrow_right: **Desktop (please complete the following information):**
  - OS: [e.g. Ubuntu16.04LTS]
  - Gluu version(If applicable)
  - Casa version(If applicable)
@@ -34,12 +37,12 @@ If applicable, add screenshots to help explain your problem.
  - Browser [e.g. chrome, safari]
  - Version [e.g. 22]
 
-**Smartphone (please complete the following information if applicable):**
+:arrow_right: **Smartphone (please complete the following information if applicable):**
 If applicable
  - Device: [e.g. iPhone6]
  - OS: [e.g. iOS8.1]
  - Browser [e.g. stock browser, safari]
  - Version [e.g. 22]
 
-**Additional context**
+:arrow_right: **Additional context**
 Add any other context about the problem here.
