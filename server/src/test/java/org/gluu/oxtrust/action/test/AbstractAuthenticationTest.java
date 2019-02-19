@@ -13,6 +13,7 @@ import static org.testng.Assert.assertTrue;
 import javax.inject.Inject;
 
 import org.gluu.oxtrust.action.Authenticator;
+import org.gluu.oxtrust.action.LogoutAction;
 import org.gluu.oxtrust.security.Identity;
 
 /**
@@ -24,9 +25,12 @@ public abstract class AbstractAuthenticationTest extends ConfigurableTest {
 	
 	@Inject
 	private Identity identity;
-	
+
 	@Inject
 	private Authenticator authenticator;
+
+    @Inject
+    private LogoutAction logoutAction;
 
 	/**
 	 * Make attempt to login using specified userPropsKey. 
@@ -67,7 +71,7 @@ public abstract class AbstractAuthenticationTest extends ConfigurableTest {
 	 * Process user logout
 	 */
 	protected void logoutUser() throws Exception {
-		authenticator.postLogout();
+	    logoutAction.postLogout();
 
 		assertFalse(identity.isLoggedIn());
 	}

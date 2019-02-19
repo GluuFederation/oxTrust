@@ -10,15 +10,11 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.Principal;
 import java.util.Arrays;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
@@ -26,9 +22,7 @@ import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.FacesService;
@@ -47,8 +41,6 @@ import org.jboss.resteasy.client.ClientRequest;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.GluuStatus;
-import org.xdi.model.security.Credentials;
-import org.xdi.model.security.SimplePrincipal;
 import org.xdi.model.user.UserRole;
 import org.xdi.oxauth.client.OpenIdConfigurationResponse;
 import org.xdi.oxauth.client.TokenClient;
@@ -83,9 +75,6 @@ public class Authenticator implements Serializable {
 	private Identity identity;
 
 	@Inject
-	private Credentials credentials;
-
-	@Inject
 	private FacesService facesService;
 
 	@Inject
@@ -93,9 +82,6 @@ public class Authenticator implements Serializable {
 
 	@Inject
 	private SecurityService securityService;
-
-	@Inject
-	private SsoLoginAction ssoLoginAction;
 
 	@Inject
 	private ApplianceService applianceService;
@@ -193,117 +179,6 @@ public class Authenticator implements Serializable {
 		}
 
 		return person;
-	}
-
-	public void processLogout() throws Exception {
-		ssoLoginAction.logout();
-		oAuthlLogout();
-
-		postLogout();
-	}
-
-	public String postLogout() {
-		if (identity.isLoggedIn()) {
-			identity.logout();
-		}
-
-		return OxTrustConstants.RESULT_SUCCESS;
-	}
-
-	public void oAuthlLogout() throws Exception {
-		OauthData oauthData = identity.getOauthData();
-		if (StringHelper.isEmpty(oauthData.getUserUid())) {
-			return;
-		}
-
-		ClientRequest clientRequest = new ClientRequest(openIdService.getOpenIdConfiguration().getEndSessionEndpoint());
-
-		clientRequest.queryParameter(OxTrustConstants.OXAUTH_SESSION_STATE, oauthData.getSessionState());
-		clientRequest.queryParameter(OxTrustConstants.OXAUTH_ID_TOKEN_HINT, oauthData.getIdToken());
-		clientRequest.queryParameter(OxTrustConstants.OXAUTH_POST_LOGOUT_REDIRECT_URI,
-				appConfiguration.getLogoutRedirectUrl());
-
-		// Clean up OAuth token
-		oauthData.setUserUid(null);
-		oauthData.setIdToken(null);
-		oauthData.setSessionState(null);
-		oauthData = null;
-
-		FacesContext.getCurrentInstance().getExternalContext().redirect(clientRequest.getUri());
-	}
-
-	/**
-	 * Authenticate using credentials passed from web request header
-	 */
-	public boolean Shibboleth3Authenticate() {
-		log.debug("Checking if user authenticated with shibboleth already");
-		boolean result = false;
-		HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext()
-				.getRequest();
-
-		String authType = request.getAuthType();
-		String userUid = request.getHeader("REMOTE_USER");
-		String userUidlower = request.getHeader("remote_user");
-		Enumeration<?> headerNames = request.getHeaderNames();
-		while (headerNames.hasMoreElements()) {
-			String headerName = (String) headerNames.nextElement();
-			log.trace(headerName + "-->" + request.getHeader(headerName));
-		}
-		log.debug("Username is " + userUid);
-		log.debug("UsernameLower is " + userUidlower);
-		log.debug("AuthType is " + authType);
-
-		Map<String, String[]> headers = FacesContext.getCurrentInstance().getExternalContext()
-				.getRequestHeaderValuesMap();
-		for (String name : headers.keySet()) {
-			log.trace(name + "==>" + StringUtils.join(headers.get(name)));
-		}
-
-		if (StringHelper.isEmpty(userUid) || StringHelper.isEmpty(authType) || !authType.equals("shibboleth")) {
-			result = false;
-			return result;
-		}
-
-		Pattern pattern = Pattern.compile(".+@.+\\.[a-z]+");
-		Matcher matcher = pattern.matcher(userUid);
-
-		User user = null;
-		if (matcher.matches()) {
-			// Find user by uid
-			user = personService.getPersonByEmail(userUid);
-		} else {
-			// Find user by uid
-			user = personService.getUserByUid(userUid);
-		}
-
-		if (user == null) {
-			result = false;
-			return result;
-		}
-		log.debug("Person Inum is " + user.getInum());
-
-		if (GluuStatus.ACTIVE.getValue().equals(user.getAttribute("gluuStatus"))) {
-
-			credentials.setUsername(user.getUid());
-			// credentials.setPassword("");
-			Principal principal = new SimplePrincipal(user.getUid());
-			log.debug("Principal is " + principal.toString());
-
-			identity.acceptExternallyAuthenticatedPrincipal(principal);
-
-			log.info("User '{}' authenticated with shibboleth already", userUid);
-			identity.quietLogin();
-			postLogin(user);
-
-			identity.getSessionMap().put(OxTrustConstants.APPLICATION_AUTHORIZATION_TYPE,
-					OxTrustConstants.APPLICATION_AUTHORIZATION_NAME_SHIBBOLETH3);
-
-			result = true;
-		} else {
-			result = false;
-		}
-
-		return result;
 	}
 
 	/**
@@ -470,10 +345,6 @@ public class Authenticator implements Serializable {
             return OxTrustConstants.RESULT_NO_PERMISSIONS;
         }
 
-		OauthData oauthData = identity.getOauthData();
-
-		oauthData.setHost(oxAuthHost);
-
 		// Parse JWT
 		Jwt jwt;
         try {
@@ -521,6 +392,9 @@ public class Authenticator implements Serializable {
 				return OxTrustConstants.RESULT_NO_PERMISSIONS;
 			}
 		}
+        OauthData oauthData = identity.getOauthData();
+
+        oauthData.setHost(oxAuthHost);
 
 		oauthData.setUserUid(uidValues.get(0));
 		oauthData.setAccessToken(accessToken);
@@ -528,6 +402,8 @@ public class Authenticator implements Serializable {
 		oauthData.setScopes(scopes);
 		oauthData.setIdToken(idToken);
 		oauthData.setSessionState(sessionState);
+
+		identity.setWorkingParameter(OxTrustConstants.OXAUTH_SSO_SESSION_STATE, Boolean.FALSE);
 
 		log.info("user uid:" + oauthData.getUserUid());
 
