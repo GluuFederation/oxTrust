@@ -76,10 +76,11 @@ public class BaseScimResource {
      * @param map A Map holding attribute names (Strings) and values (Objects).
      */
     @JsonAnySetter
-    public void addCustomAttributes(String uri, Map<String, Object> map){
+    public void addCustomAttributes(String uri, Map<String, Object> map) {
         //This is a workaround to support incoming malformed custom attributes sent by SCIM-Client version 3.1.2 and earlier
-        map=reshapeMalformedCustAttrs(map);
+        map = reshapeMalformedCustAttrs(map);
         extendedAttrs.put(uri, map);
+        schemas.add(uri);
     }
 
     /**
