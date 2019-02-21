@@ -136,6 +136,7 @@ public class ManagePersonAuthenticationAction
 
 	private AppConfiguration oxTrustappConfiguration;
 
+	/*
 	public List<PassportConfiguration> getLdapPassportConfigurations() {
 		for (PassportConfiguration configuration : ldapPassportConfigurations) {
 			if (configuration.getFieldset() == null) {
@@ -143,7 +144,7 @@ public class ManagePersonAuthenticationAction
 			}
 		}
 		return ldapPassportConfigurations;
-	}
+	}*/
 
 	public void setLdapPassportConfigurations(List<PassportConfiguration> ldapPassportConfigurations) {
 		this.ldapPassportConfigurations = ldapPassportConfigurations;
@@ -477,7 +478,7 @@ public class ManagePersonAuthenticationAction
 	public String getId(Object obj) {
 		return "c" + System.identityHashCode(obj) + "Id";
 	}
-
+/*
 	public void addStrategy() {
 		if (ldapPassportConfigurations == null) {
 			ldapPassportConfigurations = new ArrayList<PassportConfiguration>();
@@ -506,7 +507,7 @@ public class ManagePersonAuthenticationAction
 				passportConfig.getFieldset().add(new SimpleExtendedCustomProperty());
 			}
 		}
-	}
+	}*/
 
 	public GluuBoolean getPassportEnable() {
 		return passportEnable;
