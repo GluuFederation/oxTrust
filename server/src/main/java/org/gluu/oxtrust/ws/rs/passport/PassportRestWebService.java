@@ -41,6 +41,7 @@ public class PassportRestWebService {
 	@Produces({ MediaType.APPLICATION_JSON })
     @ProtectedApi
 	public Response getPassportConfig() {
+	    /*
 		PassportConfigResponse passportConfigResponse = new PassportConfigResponse();
 		
 		Map <String,Map> strategies = new HashMap <String,Map>();
@@ -72,6 +73,8 @@ public class PassportRestWebService {
 		}
 
 		return Response.status(Response.Status.OK).entity(passportConfigResponseJson).build();
+		*/
+	    return Response.status(Response.Status.OK).entity("{}").build();
 	}
 
 

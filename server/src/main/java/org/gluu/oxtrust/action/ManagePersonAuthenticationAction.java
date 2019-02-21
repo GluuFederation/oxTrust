@@ -189,7 +189,7 @@ public class ManagePersonAuthenticationAction
 			this.authenticationMode = appliance.getAuthenticationMode();
 			this.oxTrustAuthenticationMode = appliance.getOxTrustAuthenticationMode();
 
-			ldapOxPassportConfiguration = passportService.loadConfigurationFromLdap();
+			//ldapOxPassportConfiguration = passportService.loadConfigurationFromLdap();
 			if (ldapOxPassportConfiguration == null) {
 				ldapOxPassportConfiguration = new LdapOxPassportConfiguration();
 			}
@@ -239,9 +239,9 @@ public class ManagePersonAuthenticationAction
 
 			applianceService.updateAppliance(appliance);
 
-			ldapOxPassportConfiguration.setPassportConfigurations(ldapPassportConfigurations);
+			//ldapOxPassportConfiguration.setPassportConfigurations(ldapPassportConfigurations);
 
-			passportService.updateLdapOxPassportConfiguration(ldapOxPassportConfiguration);
+			//passportService.updateLdapOxPassportConfiguration(ldapOxPassportConfiguration);
 		} catch (BasePersistenceException ex) {
 			log.error("Failed to update appliance configuration", ex);
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update appliance");
