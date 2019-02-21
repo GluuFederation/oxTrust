@@ -1,9 +1,7 @@
 package org.gluu.oxtrust.ws.rs.passport;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.Collections;
+import java.util.Optional;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -14,11 +12,12 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.gluu.oxtrust.ldap.service.PassportService;
-import org.gluu.oxtrust.model.passport.PassportConfigResponse;
 import org.gluu.oxtrust.service.filter.ProtectedApi;
+import org.slf4j.Logger;
 import org.xdi.config.oxtrust.LdapOxPassportConfiguration;
-import org.xdi.model.SimpleExtendedCustomProperty;
 import org.xdi.service.JsonService;
+
+import static javax.ws.rs.core.Response.Status;
 
 /**
  * PassportConfigurationEndPoint Implementation
@@ -31,6 +30,9 @@ import org.xdi.service.JsonService;
 @Path("/passport/config")
 public class PassportRestWebService {
 
+    @Inject
+    private Logger log;
+
 	@Inject
 	private PassportService passportService;
 
@@ -41,45 +43,26 @@ public class PassportRestWebService {
 	@Produces({ MediaType.APPLICATION_JSON })
     @ProtectedApi
 	public Response getPassportConfig() {
-	    /*
-		PassportConfigResponse passportConfigResponse = new PassportConfigResponse();
-		
-		Map <String,Map> strategies = new HashMap <String,Map>();
 
-		LdapOxPassportConfiguration ldapOxPassportConfiguration = passportService.loadConfigurationFromLdap();
-        if (ldapOxPassportConfiguration != null && ldapOxPassportConfiguration.getPassportConfigurations() != null) {
+	    Status status;
+        String jsonResponse;
 
-            for (org.xdi.model.passport.PassportConfiguration passportConfiguration : ldapOxPassportConfiguration.getPassportConfigurations()) {
-                if(passportConfiguration != null){
-                    Map<String, String> map = new HashMap<String, String>();
-                    List<SimpleExtendedCustomProperty>  passList = passportConfiguration.getFieldset();
+        try {
+            Object obj = Optional.ofNullable(passportService.loadConfigurationFromLdap())
+                    .map(LdapOxPassportConfiguration::getPassportConfigurations)
+                    .map(list -> list.isEmpty() ? Collections.emptyMap() : list.get(0));
 
-                    if (passList != null) {
-                        for (SimpleExtendedCustomProperty fieldset :  passList) {
-                            map.put(fieldset.getValue1(), fieldset.getValue2());
-                        }
-                    }
-                    strategies.put(passportConfiguration.getStrategy(), map);
-                }
-            }
+            jsonResponse = jsonService.objectToPerttyJson(obj);
+            status = Status.OK;
+        } catch (Exception e) {
+            jsonResponse = "Failed to prepare configuration: " + e.getMessage();
+            status = Status.INTERNAL_SERVER_ERROR;
+            log.error(e.getMessage(), e);
         }
-		passportConfigResponse.setPassportStrategies(strategies);
 
-		String passportConfigResponseJson;
-		try {
-			passportConfigResponseJson = jsonService.objectToPerttyJson(passportConfigResponse);
-		} catch (IOException ex) {
-			return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, "Failed to prepare configuration");
-		}
+        log.trace("Passport endpoint config response is\n{}", jsonResponse);
+        return Response.status(status).entity(jsonResponse).build();
 
-		return Response.status(Response.Status.OK).entity(passportConfigResponseJson).build();
-		*/
-	    return Response.status(Response.Status.OK).entity("{}").build();
-	}
-
-
-	protected Response getErrorResponse(Response.Status status, String detail) {
-		return Response.status(status).entity(detail).build();
 	}
 
 }
