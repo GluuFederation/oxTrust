@@ -34,6 +34,7 @@ public class ApplicationDriver {
 		if (driver == null) {
 			readConfiguration();
 			initDriverOptions();
+			options.setHeadless(true);
 			if (settings.getOs().equalsIgnoreCase(WIN) && settings.getBrowser().startsWith(CHROME)) {
 				System.setProperty("webdriver.chrome.driver",
 						getResourceFile("chromedriver-win.exe").getAbsolutePath());
@@ -45,7 +46,7 @@ public class ApplicationDriver {
 				driver = new ChromeDriver();
 				return driver;
 			} else if (settings.getOs().equalsIgnoreCase(LINUX) && settings.getBrowser().startsWith(CHROME)) {
-				System.setProperty("webdriver.chrome.driver", getResourceFile("chromedriver-linux").getAbsolutePath());
+//				System.setProperty("webdriver.chrome.driver", getResourceFile("chromedriver-linux").getAbsolutePath());
 				startService();
 				driver = new RemoteWebDriver(service.getUrl(), options);
 				return driver;
