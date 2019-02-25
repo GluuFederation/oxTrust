@@ -1,10 +1,11 @@
-package org.gluu.oxtrust.api.users;
+package org.api.server.api.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
@@ -22,7 +23,6 @@ import javax.ws.rs.core.Response;
 
 import org.gluu.oxtrust.api.GluuGroupApi;
 import org.gluu.oxtrust.api.GluuPersonApi;
-import org.gluu.oxtrust.api.openidconnect.BaseWebResource;
 import org.gluu.oxtrust.ldap.service.GroupService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.ldap.service.PersonService;
@@ -36,6 +36,7 @@ import com.wordnik.swagger.annotations.ApiOperation;
 @Path(OxTrustApiConstants.BASE_API_URL + OxTrustApiConstants.GROUPS)
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
+@ApplicationScoped
 public class GroupWebResource extends BaseWebResource {
 
 	@Inject

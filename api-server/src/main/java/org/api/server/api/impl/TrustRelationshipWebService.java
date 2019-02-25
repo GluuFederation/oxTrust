@@ -3,7 +3,7 @@
  *
  * Copyright (c) 2017, Gluu
  */
-package org.gluu.oxtrust.api.saml;
+package org.api.server.api.impl;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
@@ -49,6 +50,7 @@ import org.bouncycastle.openssl.PEMWriter;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.util.encoders.Base64;
 import org.gluu.oxtrust.action.TrustContactsAction;
+import org.gluu.oxtrust.api.saml.SAMLTrustRelationshipShort;
 import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.MetadataValidationTimer;
 import org.gluu.oxtrust.ldap.service.Shibboleth3ConfService;
@@ -87,6 +89,7 @@ import com.wordnik.swagger.annotations.Authorization;
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN })
 @Api(value = "/api/saml/tr", description = "SAML UI API Endpoint", authorizations = {@Authorization(value = "Authorization", type = "uma")})
 @UmaSecure(scope = "'api_saml', '/auth/oxtrust.allow-saml-config-all', '/auth/oxtrust.allow-saml-modify-all'")
+@ApplicationScoped
 public class TrustRelationshipWebService {
     
     @Inject
