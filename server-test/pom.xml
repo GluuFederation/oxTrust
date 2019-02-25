@@ -22,6 +22,28 @@
 		<finalName>${project.artifactId}</finalName>
 
 		<plugins>
+<!--
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.7</version>
+                <executions>
+                    <execution>
+                        <id>build-ipd-war</id>
+                        <phase>process-sources</phase>
+                        <configuration>
+                            <target>
+                                <property name="oxtrust.server.basedir" value="${project.build.directory}/oxtrust-server-4.0.0-SNAPSHOT"/>
+                                <unwar dest="${project.build.directory}/${project.build.finalName}" src="${oxtrust.server.basedir}/target/${project.build.finalName}.war" />
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+-->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
@@ -37,19 +59,44 @@
 					</archive>
                     <packagingExcludes>WEB-INF/lib/oxtrust-server-${project.version}.jar</packagingExcludes>
 				</configuration>
+                <executions>
+                    <execution>
+                        <id>prepare-war</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>exploded</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>default-war</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>war</goal>
+                        </goals>
+                        <configuration>
+                            <warSourceDirectory>${project.build.directory}/${project.build.finalName}</warSourceDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
 			</plugin>
 		</plugins>
     </build>
 	<dependencies>
 		<dependency>
 			<groupId>org.xdi</groupId>
-			<artifactId>oxtrust-server</artifactId>
-			<type>war</type>
+			<artifactId>api-server</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.xdi</groupId>
+					<artifactId>oxtrust-server</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.xdi</groupId>
-			<artifactId>api-server</artifactId>
+			<artifactId>oxtrust-server</artifactId>
+			<type>war</type>
 		</dependency>
-	</dependencies>
+ 	</dependencies>
 
 </project>
