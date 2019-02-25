@@ -19,8 +19,6 @@ import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.service.cdi.event.StatusCheckerDailyEvent;
 import org.gluu.persist.exception.BasePersistenceException;
-import org.oxtrust.service.IGroupService;
-import org.oxtrust.service.IPersonService;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.service.cdi.async.Asynchronous;

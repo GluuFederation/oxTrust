@@ -22,8 +22,8 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.api.server.util.Constants;
+import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.model.OxAuthClient;
-import org.oxtrust.service.IClientService;
 import org.slf4j.Logger;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -42,7 +42,7 @@ public class ClientWebService {
 	private Logger logger;
 
 	@Inject
-	private IClientService clientService;
+	private ClientService clientService;
 
 	@GET
 	@Path("/read/{inum}")

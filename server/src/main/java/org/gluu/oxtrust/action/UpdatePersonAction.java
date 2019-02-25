@@ -33,12 +33,14 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.service.AttributeService;
+import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.FidoDeviceService;
 import org.gluu.oxtrust.ldap.service.GroupService;
 import org.gluu.oxtrust.ldap.service.MemberService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.ldap.service.OxTrustAuditService;
 import org.gluu.oxtrust.ldap.service.PairwiseIdService;
+import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.model.Device;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
@@ -56,8 +58,6 @@ import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.ServiceUtil;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.exception.BasePersistenceException;
-import org.oxtrust.service.IClientService;
-import org.oxtrust.service.IPersonService;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.GluuAttribute;
@@ -121,10 +121,10 @@ public class UpdatePersonAction implements Serializable {
 	private AttributeService attributeService;
 
 	@Inject
-	private IPersonService personService;
+	private PersonService personService;
 
 	@Inject
-	private IClientService clientService;
+	private ClientService clientService;
 
 	@Inject
 	private CustomAttributeAction customAttributeAction;

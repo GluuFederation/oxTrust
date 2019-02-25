@@ -21,6 +21,8 @@ import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.gluu.oxtrust.ldap.service.IGroupService;
+import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.scim2.BaseScimResource;
@@ -50,8 +52,6 @@ import org.gluu.persist.model.SortOrder;
 import org.gluu.persist.model.base.GluuBoolean;
 import org.gluu.search.filter.Filter;
 import org.joda.time.format.ISODateTimeFormat;
-import org.oxtrust.service.IGroupService;
-import org.oxtrust.service.IPersonService;
 import org.slf4j.Logger;
 import org.xdi.model.GluuStatus;
 

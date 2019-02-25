@@ -20,10 +20,10 @@ import javax.validation.constraints.Size;
 
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.oxtrust.ldap.service.OxTrustAuditService;
+import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.security.Identity;
 import org.gluu.persist.exception.AuthenticationException;
-import org.oxtrust.service.IPersonService;
 import org.slf4j.Logger;
 import org.xdi.service.security.Secure;
 import org.xdi.util.StringHelper;
@@ -44,7 +44,7 @@ public class PasswordValidationAction implements Cloneable, Serializable {
 	private Logger log;
 
 	@Inject
-	private IPersonService personService;
+	private PersonService personService;
 
 	@Inject
 	private Identity identity;

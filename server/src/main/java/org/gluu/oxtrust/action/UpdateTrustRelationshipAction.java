@@ -58,6 +58,7 @@ import org.gluu.jsf2.io.ResponseHelper;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.service.AttributeService;
+import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.MetadataValidationTimer;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.ldap.service.OxTrustAuditService;
@@ -75,7 +76,6 @@ import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.exception.BasePersistenceException;
 import org.gluu.saml.metadata.SAMLMetadataParser;
-import org.oxtrust.service.IClientService;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.GluuAttribute;
@@ -131,7 +131,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 	private TrustService trustService;
 
 	@Inject
-	private IClientService clientService;
+	private ClientService clientService;
 
 	@Inject
 	private Identity identity;

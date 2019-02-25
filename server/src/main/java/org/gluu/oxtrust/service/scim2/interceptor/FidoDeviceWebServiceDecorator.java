@@ -14,6 +14,8 @@ import javax.interceptor.Interceptor;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
+import org.gluu.oxtrust.ldap.service.IFidoDeviceService;
+import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.exception.SCIMException;
 import org.gluu.oxtrust.model.fido.GluuCustomFidoDevice;
@@ -22,8 +24,6 @@ import org.gluu.oxtrust.model.scim2.SearchRequest;
 import org.gluu.oxtrust.model.scim2.fido.FidoDeviceResource;
 import org.gluu.oxtrust.ws.rs.scim2.BaseScimWebService;
 import org.gluu.oxtrust.ws.rs.scim2.IFidoDeviceWebService;
-import org.oxtrust.service.IFidoDeviceService;
-import org.oxtrust.service.IPersonService;
 import org.slf4j.Logger;
 
 /**

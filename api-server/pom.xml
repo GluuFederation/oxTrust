@@ -23,7 +23,7 @@
 		<servlet-api-version>2.5</servlet-api-version>
 	</properties>
 	<build>
-		<finalName>oxauth-api-server</finalName>
+		<finalName>oxtrust-api-server</finalName>
 
 		<resources>
 			<resource>
@@ -57,7 +57,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.3.2</version>
 				<configuration>
 					<source>1.8</source>
 					<target>1.8</target>
@@ -159,10 +158,6 @@
 		<dependency>
 			<groupId>org.xdi</groupId>
 			<artifactId>oxtrust-model</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.xdi</groupId>
-			<artifactId>oxtrust-service</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.xdi</groupId>

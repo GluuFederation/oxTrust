@@ -25,8 +25,10 @@ import javax.validation.constraints.Size;
 
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
+import org.gluu.oxtrust.ldap.service.GroupService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.ldap.service.OxTrustAuditService;
+import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.GluuOrganization;
@@ -34,8 +36,6 @@ import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.exception.BasePersistenceException;
 import org.gluu.persist.model.base.GluuBoolean;
-import org.oxtrust.service.IGroupService;
-import org.oxtrust.service.IPersonService;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.DisplayNameEntry;
@@ -85,7 +85,7 @@ public class UpdateGroupAction implements Serializable {
 	private OrganizationService organizationService;
 
 	@Inject
-	private IGroupService groupService;
+	private GroupService groupService;
 
 	@Inject
 	private LookupService lookupService;
@@ -97,7 +97,7 @@ public class UpdateGroupAction implements Serializable {
 	private ConversationService conversationService;
 
 	@Inject
-	private IPersonService personService;
+	private PersonService personService;
 
 	@Inject
 	private AppConfiguration appConfiguration;

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
@@ -20,10 +21,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.api.server.util.OxTrustApiConstants;
+import org.gluu.oxtrust.ldap.service.ClientService;
+import org.gluu.oxtrust.ldap.service.ScopeService;
 import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.model.OxAuthScope;
-import org.oxtrust.service.IClientService;
-import org.oxtrust.service.IOidcScopeService;
 import org.slf4j.Logger;
 
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -33,16 +34,17 @@ import com.wordnik.swagger.annotations.ApiOperation;
 @Path(OxTrustApiConstants.BASE_API_URL + OxTrustApiConstants.CLIENTS)
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
+@ApplicationScoped
 public class ClientWebResource extends BaseWebResource {
 
 	@Inject
 	private Logger logger;
 
 	@Inject
-	private IClientService clientService;
+	private ClientService clientService;
 
 	@Inject
-	private IOidcScopeService scopeService;
+	private ScopeService scopeService;
 
 	@Inject
 	public ClientWebResource() {
@@ -53,7 +55,7 @@ public class ClientWebResource extends BaseWebResource {
 	public Response listClients() {
 		log("Get all clients ");
 		try {
-			List<OxAuthClient> clientList = clientService.getAllClients().subList(1, 2);
+			List<OxAuthClient> clientList = clientService.getAllClients();
 			return Response.ok(clientList).build();
 		} catch (Exception e) {
 			log(logger, e);

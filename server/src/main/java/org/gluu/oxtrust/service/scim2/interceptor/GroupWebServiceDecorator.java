@@ -16,6 +16,7 @@ import javax.interceptor.Interceptor;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
+import org.gluu.oxtrust.ldap.service.IGroupService;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.exception.SCIMException;
 import org.gluu.oxtrust.model.scim2.ErrorScimType;
@@ -25,7 +26,6 @@ import org.gluu.oxtrust.model.scim2.patch.PatchRequest;
 import org.gluu.oxtrust.ws.rs.scim2.BaseScimWebService;
 import org.gluu.oxtrust.ws.rs.scim2.IGroupWebService;
 import org.gluu.persist.exception.operation.DuplicateEntryException;
-import org.oxtrust.service.IGroupService;
 import org.slf4j.Logger;
 
 /**

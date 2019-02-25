@@ -19,11 +19,11 @@ import javax.validation.constraints.Size;
 
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
+import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.ImageService;
 import org.gluu.oxtrust.ldap.service.uma.ResourceSetService;
 import org.gluu.oxtrust.ldap.service.uma.ScopeDescriptionService;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.oxtrust.service.IClientService;
 import org.slf4j.Logger;
 import org.xdi.model.DisplayNameEntry;
 import org.xdi.oxauth.model.uma.UmaMetadata;
@@ -59,7 +59,7 @@ public class UmaInventoryAction implements Serializable {
 	private ResourceSetService umaResourcesService;
 
 	@Inject
-	private IClientService clientService;
+	private ClientService clientService;
 
 	@Inject
 	private ScopeDescriptionService scopeDescriptionService;

@@ -17,8 +17,6 @@ import org.gluu.oxtrust.model.fido.GluuCustomFidoDevice;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.model.base.SimpleBranch;
 import org.gluu.search.filter.Filter;
-import org.oxtrust.service.IFidoDeviceService;
-import org.oxtrust.service.IPersonService;
 import org.slf4j.Logger;
 
 /**

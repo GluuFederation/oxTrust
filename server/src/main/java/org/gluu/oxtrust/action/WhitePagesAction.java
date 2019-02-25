@@ -22,10 +22,10 @@ import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.ImageService;
+import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.oxtrust.service.IPersonService;
 import org.slf4j.Logger;
 import org.xdi.model.GluuAttribute;
 import org.xdi.model.GluuImage;
@@ -64,7 +64,7 @@ public class WhitePagesAction implements Serializable {
 	private ImageService imageService;
 
 	@Inject
-	private IPersonService personService;
+	private PersonService personService;
 
 	private String tableState;
 

@@ -36,6 +36,7 @@ import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.ExcelService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.ldap.service.OxTrustAuditService;
+import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.table.Table;
@@ -45,7 +46,6 @@ import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.exception.EntryPersistenceException;
 import org.gluu.persist.model.AttributeData;
 import org.gluu.persist.model.base.GluuBoolean;
-import org.oxtrust.service.IPersonService;
 import org.richfaces.event.FileUploadEvent;
 import org.richfaces.model.UploadedFile;
 import org.slf4j.Logger;
@@ -81,7 +81,7 @@ public class PersonImportAction implements Serializable {
 	private OrganizationService organizationService;
 
 	@Inject
-	private IPersonService personService;
+	private PersonService personService;
 
 	@Inject
 	private AttributeService attributeService;

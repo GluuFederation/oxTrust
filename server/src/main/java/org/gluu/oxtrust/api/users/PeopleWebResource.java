@@ -21,9 +21,9 @@ import javax.ws.rs.core.Response;
 
 import org.gluu.oxtrust.api.GluuPersonApi;
 import org.gluu.oxtrust.api.openidconnect.BaseWebResource;
+import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.util.OxTrustApiConstants;
-import org.oxtrust.service.IPersonService;
 import org.slf4j.Logger;
 
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -37,7 +37,7 @@ public class PeopleWebResource extends BaseWebResource {
 	private Logger logger;
 
 	@Inject
-	private IPersonService personService;
+	private PersonService personService;
 
 	public PeopleWebResource() {
 	}

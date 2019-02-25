@@ -16,8 +16,6 @@ import javax.inject.Named;
 
 import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.model.User;
-import org.oxtrust.service.IGroupService;
-import org.oxtrust.service.IPersonService;
 import org.slf4j.Logger;
 import org.xdi.model.user.UserRole;
 

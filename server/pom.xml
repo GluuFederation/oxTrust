@@ -269,10 +269,6 @@
 		</dependency>
 		<dependency>
 			<groupId>org.xdi</groupId>
-			<artifactId>oxtrust-service</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.xdi</groupId>
 			<artifactId>oxtrust-configuration</artifactId>
 		</dependency>
 		<dependency>

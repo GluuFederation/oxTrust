@@ -16,6 +16,8 @@ import javax.inject.Named;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response.Status;
 
+import org.gluu.oxtrust.ldap.service.IGroupService;
+import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
@@ -32,8 +34,6 @@ import org.gluu.persist.model.PagedResult;
 import org.gluu.persist.model.SortOrder;
 import org.gluu.search.filter.Filter;
 import org.joda.time.format.ISODateTimeFormat;
-import org.oxtrust.service.IGroupService;
-import org.oxtrust.service.IPersonService;
 import org.slf4j.Logger;
 import org.xdi.model.GluuStatus;
 

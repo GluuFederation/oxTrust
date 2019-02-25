@@ -19,7 +19,6 @@ import org.gluu.oxtrust.model.OxAuthScope;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.search.filter.Filter;
-import org.oxtrust.service.IOidcScopeService;
 import org.slf4j.Logger;
 import org.xdi.oxauth.model.common.ScopeType;
 import org.xdi.util.INumGenerator;
@@ -32,7 +31,7 @@ import org.xdi.util.StringHelper;
  */
 @Stateless
 @Named
-public class ScopeService implements IOidcScopeService, Serializable {
+public class ScopeService implements Serializable {
 
 	private static final long serialVersionUID = 65734145678106186L;
 

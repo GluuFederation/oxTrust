@@ -25,7 +25,6 @@ import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.model.base.GluuBoolean;
 import org.gluu.search.filter.Filter;
-import org.oxtrust.service.IClientService;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.util.INumGenerator;
@@ -41,7 +40,7 @@ import org.xdi.util.StringHelper;
 
 @Stateless
 @Named
-public class ClientService implements IClientService, Serializable {
+public class ClientService implements Serializable {
 
 	private static final long serialVersionUID = 7912416439116338984L;
 
@@ -407,7 +406,6 @@ public class ClientService implements IClientService, Serializable {
 		return AuthenticationMethod.values();
 	}
 
-	@Override
 	public OxAuthClient getClientByInum(String inum) {
 		OxAuthClient result = null;
 		try {

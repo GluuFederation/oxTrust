@@ -49,6 +49,7 @@ import org.bouncycastle.openssl.PEMWriter;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.util.encoders.Base64;
 import org.gluu.oxtrust.action.TrustContactsAction;
+import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.MetadataValidationTimer;
 import org.gluu.oxtrust.ldap.service.Shibboleth3ConfService;
 import org.gluu.oxtrust.ldap.service.SvnSyncTimer;
@@ -61,7 +62,6 @@ import org.gluu.oxtrust.service.uma.annotations.UmaSecure;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.exception.BasePersistenceException;
 import org.gluu.saml.metadata.SAMLMetadataParser;
-import org.oxtrust.service.IClientService;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.GluuAttribute;
@@ -99,7 +99,7 @@ public class TrustRelationshipWebService {
     private Identity identity;
 	
     @Inject
-    private IClientService clientService;
+    private ClientService clientService;
 
     @Inject
     private AppConfiguration appConfiguration;

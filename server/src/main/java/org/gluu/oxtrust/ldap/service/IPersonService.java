@@ -3,7 +3,7 @@
  *
  * Copyright (c) 2014, Gluu
  */
-package org.oxtrust.service;
+package org.gluu.oxtrust.ldap.service;
 
 import java.util.List;
 import java.util.Map;
