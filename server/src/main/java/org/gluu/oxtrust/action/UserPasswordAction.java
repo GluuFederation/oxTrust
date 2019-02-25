@@ -12,7 +12,7 @@ import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.gluu.oxtrust.ldap.service.IPersonService;
+import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.exception.AuthenticationException;
@@ -38,7 +38,7 @@ public class UserPasswordAction implements Serializable {
 	private GluuCustomPerson person;
 
 	@Inject
-	private IPersonService personService;
+	private PersonService personService;
 
 	public String validatePassword() {
 		String result;

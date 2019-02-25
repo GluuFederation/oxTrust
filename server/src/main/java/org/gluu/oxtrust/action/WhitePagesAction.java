@@ -21,8 +21,8 @@ import javax.inject.Named;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.service.AttributeService;
-import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.ImageService;
+import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.util.OxTrustConstants;
@@ -64,7 +64,7 @@ public class WhitePagesAction implements Serializable {
 	private ImageService imageService;
 
 	@Inject
-	private IPersonService personService;
+	private PersonService personService;
 
 	private String tableState;
 

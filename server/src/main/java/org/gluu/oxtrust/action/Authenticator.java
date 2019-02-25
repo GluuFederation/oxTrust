@@ -28,7 +28,7 @@ import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.FacesService;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.EncryptionService;
-import org.gluu.oxtrust.ldap.service.IPersonService;
+import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.ldap.service.SecurityService;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.model.GluuCustomPerson;
@@ -78,7 +78,7 @@ public class Authenticator implements Serializable {
 	private FacesService facesService;
 
 	@Inject
-	private IPersonService personService;
+	private PersonService personService;
 
 	@Inject
 	private SecurityService securityService;

@@ -43,7 +43,7 @@ public abstract class FidoDeviceWebServiceDecorator extends BaseScimWebService i
     IFidoDeviceWebService service;
 
     @Inject
-    private IFidoDeviceService fidoDeviceService;
+	private IFidoDeviceService fidoDeviceService;
 
     @Inject
     private IPersonService personService;

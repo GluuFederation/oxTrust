@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>oxtrust-server-test</artifactId>
+	<name>oxTrust Server Test</name>
+	<packaging>war</packaging>
+	<url>http://www.gluu.org</url>
+
+	<parent>
+		<groupId>org.xdi</groupId>
+		<artifactId>oxtrust</artifactId>
+		<version>4.0.0-SNAPSHOT</version>
+	</parent>
+
+	<prerequisites>
+		<maven>${maven.min-version}</maven>
+	</prerequisites>
+
+	<build>
+		<finalName>${project.artifactId}</finalName>
+
+		<plugins>
+<!--
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.7</version>
+                <executions>
+                    <execution>
+                        <id>build-ipd-war</id>
+                        <phase>process-sources</phase>
+                        <configuration>
+                            <target>
+                                <property name="oxtrust.server.basedir" value="${project.build.directory}/oxtrust-server-4.0.0-SNAPSHOT"/>
+                                <unwar dest="${project.build.directory}/${project.build.finalName}" src="${oxtrust.server.basedir}/target/${project.build.finalName}.war" />
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+-->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<configuration>
+					<failOnMissingWebXml>false</failOnMissingWebXml>
+					<archive>
+						<manifest>
+							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+						</manifest>
+						<manifestEntries>
+							<Implementation-Build>${buildNumber}</Implementation-Build>
+						</manifestEntries>
+					</archive>
+                    <packagingExcludes>WEB-INF/lib/oxtrust-server-${project.version}.jar</packagingExcludes>
+				</configuration>
+                <executions>
+                    <execution>
+                        <id>prepare-war</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>exploded</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>default-war</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>war</goal>
+                        </goals>
+                        <configuration>
+                            <warSourceDirectory>${project.build.directory}/${project.build.finalName}</warSourceDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+			</plugin>
+		</plugins>
+    </build>
+	<dependencies>
+		<dependency>
+			<groupId>org.xdi</groupId>
+			<artifactId>api-server</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.xdi</groupId>
+					<artifactId>oxtrust-server</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.xdi</groupId>
+			<artifactId>oxtrust-server</artifactId>
+			<type>war</type>
+		</dependency>
+ 	</dependencies>
+
+</project>

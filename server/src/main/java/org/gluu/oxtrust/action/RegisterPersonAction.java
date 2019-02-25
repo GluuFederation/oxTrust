@@ -30,9 +30,9 @@ import javax.validation.constraints.Size;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.service.AttributeService;
-import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.ldap.service.OxTrustAuditService;
+import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.ldap.service.RecaptchaService;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
@@ -82,7 +82,7 @@ public class RegisterPersonAction implements Serializable {
 	private GluuCustomPerson person;
 
 	@Inject
-	private IPersonService personService;
+	private PersonService personService;
 
 	@Inject
 	private Identity identity;

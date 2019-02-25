@@ -18,7 +18,7 @@ import javax.validation.constraints.Size;
 
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
-import org.gluu.oxtrust.ldap.service.IGroupService;
+import org.gluu.oxtrust.ldap.service.GroupService;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.slf4j.Logger;
@@ -55,7 +55,7 @@ public class SearchGroupAction implements Serializable {
 	private List<GluuGroup> groupList;
 
 	@Inject
-	private IGroupService groupService;
+	private GroupService groupService;
 
 	public String start() {
 		return search();

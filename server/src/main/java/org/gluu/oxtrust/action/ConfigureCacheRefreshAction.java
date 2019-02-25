@@ -33,10 +33,10 @@ import org.gluu.oxtrust.ldap.cache.service.CacheRefreshService;
 import org.gluu.oxtrust.ldap.cache.service.CacheRefreshUpdateMethod;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.EncryptionService;
-import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.InumService;
 import org.gluu.oxtrust.ldap.service.JsonConfigurationService;
 import org.gluu.oxtrust.ldap.service.OxTrustAuditService;
+import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
@@ -80,7 +80,7 @@ public class ConfigureCacheRefreshAction
 	private ApplianceService applianceService;
 
 	@Inject
-	private IPersonService personService;
+	private PersonService personService;
 
 	@Inject
 	private ExternalCacheRefreshService externalCacheRefreshService;

@@ -34,9 +34,9 @@ import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.load.conf.ImportPersonConfiguration;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.ExcelService;
-import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.ldap.service.OxTrustAuditService;
+import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.table.Table;
@@ -81,7 +81,7 @@ public class PersonImportAction implements Serializable {
 	private OrganizationService organizationService;
 
 	@Inject
-	private IPersonService personService;
+	private PersonService personService;
 
 	@Inject
 	private AttributeService attributeService;
