@@ -102,6 +102,7 @@
 		<module>configuration</module>
 		<module>model</module>
 		<module>client</module>
+		<module>service</module>
 		<module>server</module>
 		<module>scim</module>
 		<module>openid-auth-client</module>
@@ -109,7 +110,6 @@
 		<module>cas-openid-auth-client</module>
 		<module>oxtrust-qa</module>
 		<module>api-server</module>
-		<module>oxtrust-service</module>
 	</modules>
 
 	<dependencyManagement>
@@ -130,6 +130,11 @@
 			<dependency>
 				<groupId>org.xdi</groupId>
 				<artifactId>oxtrust-service</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.xdi</groupId>
+				<artifactId>oxtrust-server</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
