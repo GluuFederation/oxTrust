@@ -16,7 +16,6 @@ import javax.interceptor.Interceptor;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
-import org.gluu.oxtrust.ldap.service.IGroupService;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.exception.SCIMException;
 import org.gluu.oxtrust.model.scim2.ErrorScimType;
@@ -26,11 +25,12 @@ import org.gluu.oxtrust.model.scim2.patch.PatchRequest;
 import org.gluu.oxtrust.ws.rs.scim2.BaseScimWebService;
 import org.gluu.oxtrust.ws.rs.scim2.IGroupWebService;
 import org.gluu.persist.exception.operation.DuplicateEntryException;
+import org.oxtrust.service.IGroupService;
 import org.slf4j.Logger;
 
 /**
- * Aims at decorating SCIM group service methods. Currently applies validations via ResourceValidator class or other custom
- * validation logic
+ * Aims at decorating SCIM group service methods. Currently applies validations
+ * via ResourceValidator class or other custom validation logic
  *
  * Created by jgomer on 2017-10-18.
  */
@@ -38,177 +38,177 @@ import org.slf4j.Logger;
 @Decorator
 public class GroupWebServiceDecorator extends BaseScimWebService implements IGroupWebService {
 
-    @Inject
-    private Logger log;
+	@Inject
+	private Logger log;
 
-    @Inject @Delegate @Any
-    IGroupWebService service;
+	@Inject
+	@Delegate
+	@Any
+	IGroupWebService service;
 
-    @Inject
-    private IGroupService groupService;
+	@Inject
+	private IGroupService groupService;
 
-    private Response validateExistenceOfGroup(String id){
+	private Response validateExistenceOfGroup(String id) {
 
-        Response response=null;
-        GluuGroup group = StringUtils.isEmpty(id) ? null : groupService.getGroupByInum(id);
+		Response response = null;
+		GluuGroup group = StringUtils.isEmpty(id) ? null : groupService.getGroupByInum(id);
 
-        if (group==null) {
-            log.info("Group with inum {} not found", id);
-            response = getErrorResponse(Response.Status.NOT_FOUND, "Resource " + id + " not found");
-        }
-        return response;
+		if (group == null) {
+			log.info("Group with inum {} not found", id);
+			response = getErrorResponse(Response.Status.NOT_FOUND, "Resource " + id + " not found");
+		}
+		return response;
 
-    }
+	}
 
-    private void checkDisplayNameExistence(String displayName) throws DuplicateEntryException{
+	private void checkDisplayNameExistence(String displayName) throws DuplicateEntryException {
 
-        boolean flag=false;
-        try {
-            flag=groupService.getGroupByDisplayName(displayName) != null;
-        }
-        catch (Exception e){
-            log.error(e.getMessage(), e);
-        }
-        if (flag)
-            throw new DuplicateEntryException("Duplicate group displayName value: " + displayName);
+		boolean flag = false;
+		try {
+			flag = groupService.getGroupByDisplayName(displayName) != null;
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+		}
+		if (flag)
+			throw new DuplicateEntryException("Duplicate group displayName value: " + displayName);
 
-    }
+	}
 
-    private void checkDisplayNameExistence(String displayName, String id) throws DuplicateEntryException{
-        //Validate if there is an attempt to supply a displayName already in use by a group other than current
+	private void checkDisplayNameExistence(String displayName, String id) throws DuplicateEntryException {
+		// Validate if there is an attempt to supply a displayName already in use by a
+		// group other than current
 
-        GluuGroup groupToFind = new GluuGroup();
-        groupToFind.setDisplayName(displayName);
+		GluuGroup groupToFind = new GluuGroup();
+		groupToFind.setDisplayName(displayName);
 
-        List<GluuGroup> list=groupService.findGroups(groupToFind,2 );
-        if (list!=null){
-            for (GluuGroup g : list)
-                if (!g.getInum().equals(id))
-                    throw new DuplicateEntryException("Duplicate group displayName value: " + displayName);
-        }
+		List<GluuGroup> list = groupService.findGroups(groupToFind, 2);
+		if (list != null) {
+			for (GluuGroup g : list)
+				if (!g.getInum().equals(id))
+					throw new DuplicateEntryException("Duplicate group displayName value: " + displayName);
+		}
 
-    }
+	}
 
-    public Response createGroup(GroupResource group, String attrsList, String excludedAttrsList){
+	public Response createGroup(GroupResource group, String attrsList, String excludedAttrsList) {
 
-        Response response;
-        try {
-            //empty externalId, no place to store it in LDAP
-            group.setExternalId(null);
+		Response response;
+		try {
+			// empty externalId, no place to store it in LDAP
+			group.setExternalId(null);
 
-            executeDefaultValidation(group);
-            checkDisplayNameExistence(group.getDisplayName());
-            assignMetaInformation(group);
-            //Proceed with actual implementation of createGroup method
-            response=service.createGroup(group, attrsList, excludedAttrsList);
-        }
-        catch (DuplicateEntryException e){
-            log.error(e.getMessage());
-            response=getErrorResponse(Response.Status.CONFLICT, ErrorScimType.UNIQUENESS, e.getMessage());
-        }
-        catch (SCIMException e){
-            log.error("Validation check at createGroup returned: {}", e.getMessage());
-            response = getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.INVALID_VALUE, e.getMessage());
-        }
-        return response;
+			executeDefaultValidation(group);
+			checkDisplayNameExistence(group.getDisplayName());
+			assignMetaInformation(group);
+			// Proceed with actual implementation of createGroup method
+			response = service.createGroup(group, attrsList, excludedAttrsList);
+		} catch (DuplicateEntryException e) {
+			log.error(e.getMessage());
+			response = getErrorResponse(Response.Status.CONFLICT, ErrorScimType.UNIQUENESS, e.getMessage());
+		} catch (SCIMException e) {
+			log.error("Validation check at createGroup returned: {}", e.getMessage());
+			response = getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.INVALID_VALUE, e.getMessage());
+		}
+		return response;
 
-    }
+	}
 
-    public Response getGroupById(String id, String attrsList, String excludedAttrsList){
+	public Response getGroupById(String id, String attrsList, String excludedAttrsList) {
 
-        Response response=validateExistenceOfGroup(id);
-        if (response==null)
-            //Proceed with actual implementation of getGroupById method
-            response=service.getGroupById(id, attrsList, excludedAttrsList);
+		Response response = validateExistenceOfGroup(id);
+		if (response == null)
+			// Proceed with actual implementation of getGroupById method
+			response = service.getGroupById(id, attrsList, excludedAttrsList);
 
-        return response;
+		return response;
 
-    }
+	}
 
-    public Response updateGroup(GroupResource group, String id, String attrsList, String excludedAttrsList){
+	public Response updateGroup(GroupResource group, String id, String attrsList, String excludedAttrsList) {
 
-        Response response;
-        try{
-            //empty externalId, no place to store it in LDAP
-            group.setExternalId(null);
+		Response response;
+		try {
+			// empty externalId, no place to store it in LDAP
+			group.setExternalId(null);
 
-            //Check if the ids match in case the group coming has one
-            if (group.getId()!=null && !group.getId().equals(id))
-                throw new SCIMException("Parameter id does not match with id attribute of Group");
+			// Check if the ids match in case the group coming has one
+			if (group.getId() != null && !group.getId().equals(id))
+				throw new SCIMException("Parameter id does not match with id attribute of Group");
 
-            response=validateExistenceOfGroup(id);
-            if (response==null) {
+			response = validateExistenceOfGroup(id);
+			if (response == null) {
 
-                executeValidation(group, true);
-                if (StringUtils.isNotEmpty(group.getDisplayName()))
-                    checkDisplayNameExistence(group.getDisplayName(), id);
+				executeValidation(group, true);
+				if (StringUtils.isNotEmpty(group.getDisplayName()))
+					checkDisplayNameExistence(group.getDisplayName(), id);
 
-                //Proceed with actual implementation of updateGroup method
-                response = service.updateGroup(group, id, attrsList, excludedAttrsList);
-            }
-        }
-        catch (DuplicateEntryException e){
-            log.error(e.getMessage());
-            response=getErrorResponse(Response.Status.CONFLICT, ErrorScimType.UNIQUENESS, e.getMessage());
-        }
-        catch (SCIMException e){
-            log.error("Validation check at updateGroup returned: {}", e.getMessage());
-            response = getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.INVALID_VALUE, e.getMessage());
-        }
-        return response;
-    }
+				// Proceed with actual implementation of updateGroup method
+				response = service.updateGroup(group, id, attrsList, excludedAttrsList);
+			}
+		} catch (DuplicateEntryException e) {
+			log.error(e.getMessage());
+			response = getErrorResponse(Response.Status.CONFLICT, ErrorScimType.UNIQUENESS, e.getMessage());
+		} catch (SCIMException e) {
+			log.error("Validation check at updateGroup returned: {}", e.getMessage());
+			response = getErrorResponse(Response.Status.BAD_REQUEST, ErrorScimType.INVALID_VALUE, e.getMessage());
+		}
+		return response;
+	}
 
-    public Response deleteGroup(String id){
+	public Response deleteGroup(String id) {
 
-        Response response=validateExistenceOfGroup(id);
-        if (response==null)
-            //Proceed with actual implementation of deleteGroup method
-            response= service.deleteGroup(id);
+		Response response = validateExistenceOfGroup(id);
+		if (response == null)
+			// Proceed with actual implementation of deleteGroup method
+			response = service.deleteGroup(id);
 
-        return response;
+		return response;
 
-    }
+	}
 
-    public Response searchGroups(String filter, Integer startIndex, Integer count, String sortBy, String sortOrder,
-                                 String attrsList, String excludedAttrsList){
+	public Response searchGroups(String filter, Integer startIndex, Integer count, String sortBy, String sortOrder,
+			String attrsList, String excludedAttrsList) {
 
-        SearchRequest searchReq=new SearchRequest();
-        Response response=prepareSearchRequest(searchReq.getSchemas(), filter, sortBy, sortOrder, startIndex, count,
-                            attrsList, excludedAttrsList, searchReq);
+		SearchRequest searchReq = new SearchRequest();
+		Response response = prepareSearchRequest(searchReq.getSchemas(), filter, sortBy, sortOrder, startIndex, count,
+				attrsList, excludedAttrsList, searchReq);
 
-        if (response==null) {
-            response = service.searchGroups(searchReq.getFilter(), searchReq.getStartIndex(), searchReq.getCount(),
-                        searchReq.getSortBy(), searchReq.getSortOrder(), searchReq.getAttributesStr(), searchReq.getExcludedAttributesStr());
-        }
-        return response;
+		if (response == null) {
+			response = service.searchGroups(searchReq.getFilter(), searchReq.getStartIndex(), searchReq.getCount(),
+					searchReq.getSortBy(), searchReq.getSortOrder(), searchReq.getAttributesStr(),
+					searchReq.getExcludedAttributesStr());
+		}
+		return response;
 
-    }
+	}
 
-    public Response searchGroupsPost(SearchRequest searchRequest){
+	public Response searchGroupsPost(SearchRequest searchRequest) {
 
-        SearchRequest searchReq=new SearchRequest();
-        Response response=prepareSearchRequest(searchRequest.getSchemas(), searchRequest.getFilter(), searchRequest.getSortBy(),
-                searchRequest.getSortOrder(), searchRequest.getStartIndex(), searchRequest.getCount(),
-                searchRequest.getAttributesStr(), searchRequest.getExcludedAttributesStr(), searchReq);
+		SearchRequest searchReq = new SearchRequest();
+		Response response = prepareSearchRequest(searchRequest.getSchemas(), searchRequest.getFilter(),
+				searchRequest.getSortBy(), searchRequest.getSortOrder(), searchRequest.getStartIndex(),
+				searchRequest.getCount(), searchRequest.getAttributesStr(), searchRequest.getExcludedAttributesStr(),
+				searchReq);
 
-        if (response==null) {
-            response = service.searchGroupsPost(searchReq);
-        }
-        return response;
+		if (response == null) {
+			response = service.searchGroupsPost(searchReq);
+		}
+		return response;
 
-    }
+	}
 
-    public Response patchGroup(PatchRequest request, String id, String attrsList, String excludedAttrsList){
+	public Response patchGroup(PatchRequest request, String id, String attrsList, String excludedAttrsList) {
 
-        Response response=inspectPatchRequest(request, GroupResource.class);
-        if (response==null) {
-            response=validateExistenceOfGroup(id);
+		Response response = inspectPatchRequest(request, GroupResource.class);
+		if (response == null) {
+			response = validateExistenceOfGroup(id);
 
-            if (response==null)
-                response = service.patchGroup(request, id, attrsList, excludedAttrsList);
-        }
-        return response;
+			if (response == null)
+				response = service.patchGroup(request, id, attrsList, excludedAttrsList);
+		}
+		return response;
 
-    }
+	}
 
 }

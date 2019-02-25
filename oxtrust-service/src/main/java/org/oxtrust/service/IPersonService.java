@@ -3,7 +3,7 @@
  *
  * Copyright (c) 2014, Gluu
  */
-package org.gluu.oxtrust.ldap.service;
+package org.oxtrust.service;
 
 import java.util.List;
 import java.util.Map;
@@ -54,8 +54,8 @@ public interface IPersonService {
 	 *            Maximum count of results
 	 * @return List of persons
 	 */
-	public abstract List<GluuCustomPerson> searchPersons(String pattern, int sizeLimit);	
-	
+	public abstract List<GluuCustomPerson> searchPersons(String pattern, int sizeLimit);
+
 	/**
 	 * Search persons by pattern
 	 * 
@@ -63,7 +63,7 @@ public interface IPersonService {
 	 *            Pattern
 	 * @return List of persons
 	 */
-	public abstract List<GluuCustomPerson> searchPersons(String pattern) ;	
+	public abstract List<GluuCustomPerson> searchPersons(String pattern);
 
 	/**
 	 * Search persons by sample object
@@ -88,12 +88,13 @@ public interface IPersonService {
 	 *            list of uids that we don't want returned by service
 	 * @return List of persons
 	 */
-	public abstract List<GluuCustomPerson> searchPersons(String pattern, int sizeLimit, List<GluuCustomPerson> excludedPersons)
-			throws Exception;
+	public abstract List<GluuCustomPerson> searchPersons(String pattern, int sizeLimit,
+			List<GluuCustomPerson> excludedPersons) throws Exception;
 
 	public abstract List<GluuCustomPerson> findAllPersons(String[] returnAttributes);
 
-	public abstract List<GluuCustomPerson> findPersonsByUids(List<String> uids, String[] returnAttributes) throws Exception;
+	public abstract List<GluuCustomPerson> findPersonsByUids(List<String> uids, String[] returnAttributes)
+			throws Exception;
 
 	public abstract GluuCustomPerson findPersonByDn(String dn, String... returnAttributes);
 
@@ -119,8 +120,7 @@ public interface IPersonService {
 	 * Get person by inum
 	 * 
 	 * @param returnClass
-	 *            POJO class which EntryManager should use to return entry
-	 *            object
+	 *            POJO class which EntryManager should use to return entry object
 	 * @param inum
 	 *            Inum
 	 * @return Person
@@ -152,8 +152,8 @@ public interface IPersonService {
 	 * 
 	 * @param inum
 	 *            Inum
-	 * @return DN string for specified person or DN for persons branch if inum
-	 *         is null
+	 * @return DN string for specified person or DN for persons branch if inum is
+	 *         null
 	 * @throws Exception
 	 */
 	public abstract String getDnForPerson(String inum);
@@ -171,7 +171,8 @@ public interface IPersonService {
 
 	public abstract List<GluuCustomAttribute> getMandatoryAtributes();
 
-	public abstract List<GluuCustomPerson> createEntities(Map<String, List<AttributeData>> entriesAttributes) throws Exception;
+	public abstract List<GluuCustomPerson> createEntities(Map<String, List<AttributeData>> entriesAttributes)
+			throws Exception;
 
 	/**
 	 * Get person by email
@@ -222,5 +223,5 @@ public interface IPersonService {
 	List<GluuCustomPerson> getPersonsByUid(String uid);
 
 	List<GluuCustomPerson> getPersonsByEmail(String email);
-	
+
 }

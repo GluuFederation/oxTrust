@@ -20,9 +20,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.gluu.oxtrust.ldap.service.AttributeService;
-import org.gluu.oxtrust.ldap.service.ScopeService;
 import org.gluu.oxtrust.model.OxAuthScope;
 import org.gluu.oxtrust.util.OxTrustApiConstants;
+import org.oxtrust.service.IOidcScopeService;
 import org.slf4j.Logger;
 import org.xdi.model.GluuAttribute;
 
@@ -37,7 +37,7 @@ public class ScopeWebResource extends BaseWebResource {
 	private Logger logger;
 
 	@Inject
-	private ScopeService scopeService;
+	private IOidcScopeService scopeService;
 	@Inject
 	private AttributeService attributeService;
 

@@ -12,10 +12,10 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.EncryptionService;
 import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.util.OxTrustConstants;
+import org.oxtrust.service.IClientService;
 import org.slf4j.Logger;
 import org.xdi.service.security.Secure;
 import org.xdi.util.security.StringEncrypter.EncryptionException;
@@ -35,7 +35,7 @@ public class ClientPasswordAction implements Serializable {
 	private UpdateClientAction updateClientAction;
 
 	@Inject
-	private ClientService clientService;
+	private IClientService clientService;
 
 	@Inject
 	private EncryptionService encryptionService;

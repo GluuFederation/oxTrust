@@ -33,10 +33,8 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.service.AttributeService;
-import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.FidoDeviceService;
 import org.gluu.oxtrust.ldap.service.GroupService;
-import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.MemberService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.ldap.service.OxTrustAuditService;
@@ -58,6 +56,8 @@ import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.ServiceUtil;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.exception.BasePersistenceException;
+import org.oxtrust.service.IClientService;
+import org.oxtrust.service.IPersonService;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.GluuAttribute;
@@ -124,7 +124,7 @@ public class UpdatePersonAction implements Serializable {
 	private IPersonService personService;
 
 	@Inject
-	private ClientService clientService;
+	private IClientService clientService;
 
 	@Inject
 	private CustomAttributeAction customAttributeAction;
@@ -967,7 +967,7 @@ public class UpdatePersonAction implements Serializable {
 	}
 
 	public String getClientName(String inum) {
-		OxAuthClient result = clientService.getClientByInum(inum, null, null);
+		OxAuthClient result = clientService.getClientByInum(inum);
 		if (result != null) {
 			return result.getDisplayName();
 		} else {

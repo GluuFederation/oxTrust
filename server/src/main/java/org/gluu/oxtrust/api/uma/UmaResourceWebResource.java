@@ -20,11 +20,11 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.gluu.oxtrust.api.openidconnect.BaseWebResource;
-import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.uma.ResourceSetService;
 import org.gluu.oxtrust.ldap.service.uma.ScopeDescriptionService;
 import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.util.OxTrustApiConstants;
+import org.oxtrust.service.IClientService;
 import org.slf4j.Logger;
 import org.xdi.oxauth.model.uma.persistence.UmaResource;
 import org.xdi.oxauth.model.uma.persistence.UmaScopeDescription;
@@ -46,7 +46,7 @@ public class UmaResourceWebResource extends BaseWebResource {
 	private ScopeDescriptionService scopeDescriptionService;
 
 	@Inject
-	private ClientService clientService;
+	private IClientService clientService;
 
 	@GET
 	@ApiOperation(value = "Get uma resources")

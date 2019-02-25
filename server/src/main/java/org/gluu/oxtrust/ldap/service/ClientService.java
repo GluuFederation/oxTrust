@@ -25,6 +25,7 @@ import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.model.base.GluuBoolean;
 import org.gluu.search.filter.Filter;
+import org.oxtrust.service.IClientService;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.util.INumGenerator;
@@ -40,7 +41,7 @@ import org.xdi.util.StringHelper;
 
 @Stateless
 @Named
-public class ClientService implements Serializable {
+public class ClientService implements IClientService, Serializable {
 
 	private static final long serialVersionUID = 7912416439116338984L;
 
@@ -51,11 +52,11 @@ public class ClientService implements Serializable {
 	private Logger logger;
 
 	@Inject
-    private EncryptionService encryptionService;
+	private EncryptionService encryptionService;
 
-    @Inject
-    private OrganizationService organizationService;
-    
+	@Inject
+	private OrganizationService organizationService;
+
 	@Inject
 	private AppConfiguration appConfiguration;
 
@@ -92,12 +93,12 @@ public class ClientService implements Serializable {
 		OxAuthClient result = null;
 		try {
 			result = ldapEntryManager.find(OxAuthClient.class, getDnForClient(inum), ldapReturnAttributes);
-			
-            String encodedClientSecret = result.getEncodedClientSecret(); 
-	        if (StringHelper.isNotEmpty(encodedClientSecret)) {
-	            String clientSecret = encryptionService.decrypt(encodedClientSecret); 
-	            result.setOxAuthClientSecret(clientSecret);
-	        }
+
+			String encodedClientSecret = result.getEncodedClientSecret();
+			if (StringHelper.isNotEmpty(encodedClientSecret)) {
+				String clientSecret = encryptionService.decrypt(encodedClientSecret);
+				result.setOxAuthClientSecret(clientSecret);
+			}
 		} catch (Exception ex) {
 			logger.debug("Failed to load client entry", ex);
 		}
@@ -404,5 +405,16 @@ public class ClientService implements Serializable {
 	 */
 	public AuthenticationMethod[] getAuthenticationMethods() {
 		return AuthenticationMethod.values();
+	}
+
+	@Override
+	public OxAuthClient getClientByInum(String inum) {
+		OxAuthClient result = null;
+		try {
+			result = ldapEntryManager.find(OxAuthClient.class, getDnForClient(inum));
+		} catch (Exception ex) {
+			logger.debug("Failed to load client entry", ex);
+		}
+		return result;
 	}
 }

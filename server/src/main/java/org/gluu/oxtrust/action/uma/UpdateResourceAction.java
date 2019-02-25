@@ -21,13 +21,13 @@ import javax.inject.Named;
 
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
-import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.uma.ResourceSetService;
 import org.gluu.oxtrust.ldap.service.uma.ScopeDescriptionService;
 import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.exception.BasePersistenceException;
+import org.oxtrust.service.IClientService;
 import org.slf4j.Logger;
 import org.xdi.model.DisplayNameEntry;
 import org.xdi.model.SelectableEntity;
@@ -70,7 +70,7 @@ public class UpdateResourceAction implements Serializable {
 	private ScopeDescriptionService scopeDescriptionService;
 
 	@Inject
-	private ClientService clientService;
+	private IClientService clientService;
 
 	@Inject
 	private LookupService lookupService;

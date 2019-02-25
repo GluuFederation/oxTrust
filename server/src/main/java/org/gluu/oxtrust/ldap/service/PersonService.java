@@ -30,6 +30,7 @@ import org.gluu.persist.model.SearchScope;
 import org.gluu.persist.model.base.SimpleBranch;
 import org.gluu.search.filter.Filter;
 import org.joda.time.format.ISODateTimeFormat;
+import org.oxtrust.service.IPersonService;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.util.ArrayHelper;

@@ -19,28 +19,28 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.gluu.oxtrust.ldap.service.ClientService;
-import org.gluu.oxtrust.ldap.service.ScopeService;
 import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.model.OxAuthScope;
 import org.gluu.oxtrust.util.OxTrustApiConstants;
+import org.oxtrust.service.IClientService;
+import org.oxtrust.service.IOidcScopeService;
 import org.slf4j.Logger;
 
 import com.wordnik.swagger.annotations.ApiOperation;
 
-@Path(OxTrustApiConstants.BASE_API_URL + OxTrustApiConstants.CLIENTS)
-@Consumes(MediaType.APPLICATION_JSON)
-@Produces(MediaType.APPLICATION_JSON)
+//@Path(OxTrustApiConstants.BASE_API_URL + OxTrustApiConstants.CLIENTS)
+//@Consumes(MediaType.APPLICATION_JSON)
+//@Produces(MediaType.APPLICATION_JSON)
 public class ClientWebResource extends BaseWebResource {
 
 	@Inject
 	private Logger logger;
 
 	@Inject
-	private ClientService clientService;
+	private IClientService clientService;
 
 	@Inject
-	private ScopeService scopeService;
+	private IOidcScopeService scopeService;
 
 	@Inject
 	public ClientWebResource() {

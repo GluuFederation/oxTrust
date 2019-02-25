@@ -12,10 +12,10 @@ import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.exception.AuthenticationException;
+import org.oxtrust.service.IPersonService;
 import org.xdi.service.security.Secure;
 
 /**

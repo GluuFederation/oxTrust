@@ -19,6 +19,7 @@ import org.gluu.oxtrust.model.OxAuthScope;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.search.filter.Filter;
+import org.oxtrust.service.IOidcScopeService;
 import org.slf4j.Logger;
 import org.xdi.oxauth.model.common.ScopeType;
 import org.xdi.util.INumGenerator;
@@ -31,7 +32,7 @@ import org.xdi.util.StringHelper;
  */
 @Stateless
 @Named
-public class ScopeService implements Serializable {
+public class ScopeService implements IOidcScopeService, Serializable {
 
 	private static final long serialVersionUID = 65734145678106186L;
 
@@ -135,7 +136,7 @@ public class ScopeService implements Serializable {
 	 * @return List of scopes
 	 * @throws Exception
 	 */
-	public List<OxAuthScope> searchScopes(String pattern, int sizeLimit) throws Exception {
+	public List<OxAuthScope> searchScopes(String pattern, int sizeLimit) {
 		Filter searchFilter = null;
 		if (StringHelper.isNotEmpty(pattern)) {
 			String[] targetArray = new String[] { pattern };
@@ -146,8 +147,12 @@ public class ScopeService implements Serializable {
 			Filter inameFilter = Filter.createSubstringFilter(OxTrustConstants.iname, null, targetArray, null);
 			searchFilter = Filter.createORFilter(displayNameFilter, descriptionFilter, inameFilter);
 		}
-		List<OxAuthScope> result = ldapEntryManager.findEntries(getDnForScope(null), OxAuthScope.class, searchFilter,
-				sizeLimit);
+		List<OxAuthScope> result = new ArrayList<>();
+		try {
+			result = ldapEntryManager.findEntries(getDnForScope(null), OxAuthScope.class, searchFilter, sizeLimit);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
 		return result;
 	}
@@ -164,7 +169,7 @@ public class ScopeService implements Serializable {
 				+ INumGenerator.generate(2);
 
 	}
-	
+
 	public List<OxAuthScope> getAllScopesList(int size) throws Exception {
 		List<OxAuthScope> result = ldapEntryManager.findEntries(getDnForScope(null), OxAuthScope.class, null, 0);
 
@@ -213,5 +218,4 @@ public class ScopeService implements Serializable {
 
 		return null;
 	}
-
 }

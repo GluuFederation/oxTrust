@@ -25,12 +25,12 @@ import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.OxTrustAuditService;
-import org.gluu.oxtrust.ldap.service.ScopeService;
 import org.gluu.oxtrust.model.OxAuthScope;
 import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.service.custom.CustomScriptService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.exception.BasePersistenceException;
+import org.oxtrust.service.IOidcScopeService;
 import org.slf4j.Logger;
 import org.xdi.model.DisplayNameEntry;
 import org.xdi.model.GluuAttribute;
@@ -81,7 +81,7 @@ public class UpdateScopeAction implements Serializable {
 	private List<GluuAttribute> availableClaims;
 
 	@Inject
-	private ScopeService scopeService;
+	private IOidcScopeService scopeService;
 
 	@Inject
 	private LookupService lookupService;

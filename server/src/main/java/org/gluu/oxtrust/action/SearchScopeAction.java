@@ -18,9 +18,9 @@ import javax.validation.constraints.Size;
 
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
-import org.gluu.oxtrust.ldap.service.ScopeService;
 import org.gluu.oxtrust.model.OxAuthScope;
 import org.gluu.oxtrust.util.OxTrustConstants;
+import org.oxtrust.service.IOidcScopeService;
 import org.slf4j.Logger;
 import org.xdi.service.security.Secure;
 import org.xdi.util.Util;
@@ -47,7 +47,7 @@ public class SearchScopeAction implements Serializable {
 	private ConversationService conversationService;
 
 	@Inject
-	private ScopeService scopeService;
+	private IOidcScopeService scopeService;
 
 	@NotNull
 	@Size(min = 0, max = 30, message = "Length of search string should be less than 30")

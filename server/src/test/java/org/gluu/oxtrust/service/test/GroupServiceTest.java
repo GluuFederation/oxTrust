@@ -12,7 +12,7 @@ import static org.testng.Assert.assertTrue;
 import javax.inject.Inject;
 
 import org.gluu.oxtrust.action.test.BaseTest;
-import org.gluu.oxtrust.ldap.service.IGroupService;
+import org.oxtrust.service.IGroupService;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
@@ -22,7 +22,7 @@ import org.testng.annotations.Test;
  * @author Yuriy Movchan Date: 02/06/2014
  */
 public class GroupServiceTest extends BaseTest {
-	
+
 	@Inject
 	private IGroupService groupService;
 

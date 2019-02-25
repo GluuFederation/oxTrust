@@ -38,10 +38,8 @@ import org.codehaus.jettison.json.JSONException;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.service.AttributeService;
-import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.EncryptionService;
 import org.gluu.oxtrust.ldap.service.OxTrustAuditService;
-import org.gluu.oxtrust.ldap.service.ScopeService;
 import org.gluu.oxtrust.ldap.service.SectorIdentifierService;
 import org.gluu.oxtrust.model.ClientAttributes;
 import org.gluu.oxtrust.model.GluuGroup;
@@ -51,6 +49,8 @@ import org.gluu.oxtrust.model.OxAuthSectorIdentifier;
 import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.exception.BasePersistenceException;
+import org.oxtrust.service.IClientService;
+import org.oxtrust.service.IOidcScopeService;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.DisplayNameEntry;
@@ -90,10 +90,10 @@ public class UpdateClientAction implements Serializable {
 	private Logger log;
 
 	@Inject
-	private ClientService clientService;
+	private IClientService clientService;
 
 	@Inject
-	private ScopeService scopeService;
+	private IOidcScopeService scopeService;
 	@Inject
 	private SectorIdentifierService sectorIdentifierService;
 
