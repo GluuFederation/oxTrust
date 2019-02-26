@@ -283,19 +283,18 @@ public class GroupWebResource extends BaseWebResource {
 	private List<GluuPersonApi> computeMembers(List<String> membersDn) {
 		List<GluuPersonApi> gluuCustomPersons = new ArrayList<GluuPersonApi>();
 		if (membersDn != null && !membersDn.isEmpty()) {
-
-			for (String memberDn : membersDn) {
-				gluuCustomPersons.add(new GluuPersonApi(personService.getPersonByDn(memberDn)));
-			}
+			membersDn.stream().forEach(e -> {
+				gluuCustomPersons.add(new GluuPersonApi(personService.getPersonByDn(e)));
+			});
 		}
 		return gluuCustomPersons;
 	}
 
 	private List<GluuGroupApi> convert(List<GluuGroup> gluuGroups) {
 		List<GluuGroupApi> result = new ArrayList<GluuGroupApi>();
-		for (GluuGroup p : gluuGroups) {
-			result.add(new GluuGroupApi(p));
-		}
+		gluuGroups.stream().forEach(e -> {
+			result.add(new GluuGroupApi(e));
+		});
 		return result;
 	}
 

@@ -19,6 +19,9 @@ import org.gluu.site.ldap.persistence.annotation.LdapEntry;
 import org.gluu.site.ldap.persistence.annotation.LdapObjectClass;
 import org.xdi.oxauth.model.common.ScopeType;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 /**
  * oxAuth scope
  * 
@@ -27,6 +30,7 @@ import org.xdi.oxauth.model.common.ScopeType;
  */
 @LdapEntry(sortBy = { "displayName" })
 @LdapObjectClass(values = { "top", "oxAuthCustomScope" })
+@JsonInclude(Include.NON_NULL)
 public class OxAuthScope extends Entry implements Serializable {
 
 	private static final long serialVersionUID = 4308826784917052508L;

@@ -18,7 +18,10 @@ public final class OxTrustApiConstants {
 	public static final String SEARCH = "/search";
 	public static final String ACTIVE = "/active";
 	public static final String INACTIVE = "/inactive";
+	public static final String TEST = "/test";
 	public static final String CONFIGURATION = "/configuration";
+	public static final String SMTP = "/smtp";
+	public static final String OXTRUST_SETTINGS = "/settings";
 	public static final String STATUS = "/status";
 	public static final String UMA = "/uma";
 	public static final String RESOURCES = "/resources";
