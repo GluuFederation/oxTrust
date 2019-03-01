@@ -87,10 +87,6 @@
 							styleClass="btn btn-primary deleteOIDCButton"
 							style="float: right; margin-right:1%; width:150px; border:none !important; background: #d62728 !important; background-color: #d62728 !important;"
 							value="#{msg['client.delete']}" />
-						<a4j:commandLink ajaxSingle="true" rendered="true"
-							styleClass="btn btn-primary editOIDCClientButton"
-							style="float: right; margin-right:1%; width:150px; border:none !important;"
-							value="Unlock" />
 					</div>
 					<div class="nav-tabs-custom"
 						style="margin-bottom: 0px; overflow: auto;">
@@ -107,13 +103,15 @@
 								id="standardSettings">
 								<h:panelGroup columns="1" width="100%">
 									<div class="row" style="margin-left: 5px; margin-right: 5px;">
-										<ox:decorate id="inum" rendered="#{not _new}"
-											label="#{msg['clientForm.inum']}" leftClass="col-sm-2"
-											rightClass="col-sm-9">
-											<h:outputText
-												styleClass="col-sm-12 col-lg-12 form-control rounded clientId text-center"
-												value="#{_client.inum}" />
-										</ox:decorate>
+										<div class="col-sm-12 col-lg-12" style="padding: 0px;">
+											<ox:decorate id="inum" rendered="#{not _new}"
+												label="#{msg['clientForm.inum']}" leftClass="col-sm-3"
+												rightClass="col-sm-9">
+												<h:outputText style="margin-left: -17%;"
+													styleClass="col-sm-12 col-lg-12 form-control rounded text-center"
+													value="#{_client.inum}" />
+											</ox:decorate>
+										</div>
 									</div>
 									<div class="row" style="margin-left: 5px; margin-right: 5px;">
 										<div class="col-sm-6 col-lg-6" style="padding: 0px;">
@@ -1129,22 +1127,4 @@
         }
 
     </h:outputScript>
-	<script>
-    $(document).ready(function() {
-    	$("#clientForm :input").attr("readonly", true);
-    });
- 
-    $(document).on("click",".editOIDCClientButton", function () {
-	 var state = $("#clientForm").find(":input").first().attr("readonly");
-	 if(state){
-		 $("#clientForm").find(":input").attr("readonly", false);
-		 $(".editOIDCClientButton").text("Lock");
-	 }else{
-		 $("#clientForm").find(":input").attr("readonly", true);
-		 $(".editOIDCClientButton").text("Unlock");
-	 }
-	  
-	});
- 
-</script>
 </ui:composition>
