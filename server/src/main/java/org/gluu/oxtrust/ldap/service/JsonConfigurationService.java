@@ -18,7 +18,6 @@ import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.model.GluuAppliance;
-import org.gluu.oxtrust.service.OpenIdService;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.exception.BasePersistenceException;
 import org.slf4j.Logger;
@@ -59,12 +58,12 @@ public class JsonConfigurationService implements Serializable {
 		LdapOxTrustConfiguration ldapOxTrustConfiguration = getOxTrustConfiguration();
 		return ldapOxTrustConfiguration.getApplication();
 	}
-	
+
 	public CacheConfiguration getOxMemCacheConfiguration() {
 		CacheConfiguration cachedConfiguration = applianceService.getAppliance().getCacheConfiguration();
 		return cachedConfiguration;
 	}
-	
+
 	public boolean saveOxMemCacheConfiguration(CacheConfiguration cachedConfiguration) {
 		GluuAppliance gluuAppliance = applianceService.getAppliance();
 		gluuAppliance.setCacheConfiguration(cachedConfiguration);
@@ -97,7 +96,8 @@ public class JsonConfigurationService implements Serializable {
 	}
 
 	public org.xdi.oxauth.model.configuration.AppConfiguration getOxauthAppConfiguration() throws IOException {
-		return jsonService.jsonToObject(getOxAuthDynamicConfigJson(), org.xdi.oxauth.model.configuration.AppConfiguration.class);
+		return jsonService.jsonToObject(getOxAuthDynamicConfigJson(),
+				org.xdi.oxauth.model.configuration.AppConfiguration.class);
 	}
 
 	public boolean saveOxTrustappConfiguration(AppConfiguration oxTrustappConfiguration) {
@@ -134,7 +134,8 @@ public class JsonConfigurationService implements Serializable {
 		return false;
 	}
 
-	public boolean saveOxAuthDynamicConfigJson(String oxAuthDynamicConfigJson) throws JsonParseException, JsonMappingException, IOException {
+	public boolean saveOxAuthDynamicConfigJson(String oxAuthDynamicConfigJson)
+			throws JsonParseException, JsonMappingException, IOException {
 		String configurationDn = configurationFactory.getConfigurationDn();
 
 		LdapOxAuthConfiguration ldapOxAuthConfiguration = loadOxAuthConfig(configurationDn);

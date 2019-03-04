@@ -30,7 +30,7 @@ import com.wordnik.swagger.annotations.ApiResponses;
 @Api(value = OxTrustApiConstants.BASE_API_URL + OxTrustApiConstants.CONFIGURATION
 		+ OxTrustApiConstants.OXTRUST_SETTINGS, description = "Oxtrust settings web service")
 @ApplicationScoped
-public class OxtrustConfigurationWebResource extends BaseWebResource {
+public class OxtrustSettingWebResource extends BaseWebResource {
 	@Inject
 	private Logger logger;
 
@@ -44,12 +44,13 @@ public class OxtrustConfigurationWebResource extends BaseWebResource {
 			@ApiResponse(code = 500, message = "Server error") })
 	public Response getOxtrustSettings() {
 		try {
+			log(logger, "Processing oxtrust settings retrieval request");
 			GluuAppliance applianceUpdate = applianceService.getAppliance();
 			OxtrustSetting setting = new OxtrustSetting();
-			setting.setAllowPasswordReset(applianceUpdate.getPasswordResetAllowed().name());
-			setting.setAllowProfileManagement(applianceUpdate.getProfileManagment().name());
-			setting.setEnablePassport(applianceUpdate.getPassportEnabled().name());
-			setting.setEnableScim(applianceUpdate.getScimEnabled().name());
+			setting.setAllowPasswordReset(applianceUpdate.getPasswordResetAllowed().toString());
+			setting.setAllowProfileManagement(applianceUpdate.getProfileManagment().toString());
+			setting.setEnablePassport(applianceUpdate.getPassportEnabled().toString());
+			setting.setEnableScim(applianceUpdate.getScimEnabled().toString());
 			return Response.ok(setting).build();
 		} catch (Exception e) {
 			log(logger, e);
@@ -64,18 +65,30 @@ public class OxtrustConfigurationWebResource extends BaseWebResource {
 			@ApiResponse(code = 404, message = "Not found"), @ApiResponse(code = 500, message = "Server error") })
 	public Response updateOxtrustSetting(OxtrustSetting oxtrustSetting) {
 		try {
+			log(logger, "Processing oxtrust settings update request");
 			Preconditions.checkNotNull(oxtrustSetting, "Attempt to update null oxtrust settings");
 			GluuAppliance applianceUpdate = applianceService.getAppliance();
-			applianceUpdate.setScimEnabled(GluuBoolean.valueOf(oxtrustSetting.getEnableScim()));
-			applianceUpdate.setPassportEnabled(GluuBoolean.valueOf(oxtrustSetting.getEnablePassport()));
-			applianceUpdate.setPasswordResetAllowed(GluuBoolean.valueOf(oxtrustSetting.getAllowPasswordReset()));
-			applianceUpdate.setProfileManagment(GluuBoolean.valueOf(oxtrustSetting.getAllowProfileManagement()));
+			applianceUpdate.setScimEnabled(valueOfName(oxtrustSetting.getEnableScim()));
+			applianceUpdate.setPassportEnabled(valueOfName(oxtrustSetting.getEnablePassport()));
+			applianceUpdate.setPasswordResetAllowed(valueOfName(oxtrustSetting.getAllowPasswordReset()));
+			applianceUpdate.setProfileManagment(valueOfName(oxtrustSetting.getAllowProfileManagement()));
 			applianceService.updateAppliance(applianceUpdate);
 			return Response.ok(Constants.RESULT_SUCCESS).build();
 		} catch (Exception e) {
 			log(logger, e);
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 		}
+	}
+
+	GluuBoolean valueOfName(String name) {
+		GluuBoolean result = GluuBoolean.DISABLED;
+		for (GluuBoolean value : GluuBoolean.values()) {
+			String valueName = value.toString();
+			if (valueName.equalsIgnoreCase(name)) {
+				result = value;
+			}
+		}
+		return result;
 	}
 
 }

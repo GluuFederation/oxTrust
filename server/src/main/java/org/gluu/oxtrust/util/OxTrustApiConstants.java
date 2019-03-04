@@ -22,6 +22,8 @@ public final class OxTrustApiConstants {
 	public static final String CONFIGURATION = "/configuration";
 	public static final String SMTP = "/smtp";
 	public static final String OXTRUST_SETTINGS = "/settings";
+	public static final String OXTRUST_JSONSETTINGS = "/oxtrust/settings";
+	public static final String OXAUTH_JSONSETTINGS = "/oxauth/settings";
 	public static final String STATUS = "/status";
 	public static final String UMA = "/uma";
 	public static final String RESOURCES = "/resources";
