@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.Properties;
 
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -16,8 +15,6 @@ import org.oxtrust.qa.pages.AbstractPage;
 
 public class ApplicationDriver {
 
-	private static final String WIN = "WIN";
-	private static final String MAC = "MAC";
 	private static final String LINUX = "LINUX";
 	private static final String CHROME = "CHROM";
 	private static final String GLUU_SERVER_URL = "GLUU_SERVER_URL";
@@ -34,18 +31,9 @@ public class ApplicationDriver {
 		if (driver == null) {
 			readConfiguration();
 			initDriverOptions();
-			if (settings.getOs().equalsIgnoreCase(WIN) && settings.getBrowser().startsWith(CHROME)) {
-				System.setProperty("webdriver.chrome.driver",
-						getResourceFile("chromedriver-win.exe").getAbsolutePath());
-
-				driver = new ChromeDriver();
-				return driver;
-			} else if (settings.getOs().equalsIgnoreCase(MAC) && settings.getBrowser().startsWith(CHROME)) {
-				System.setProperty("webdriver.chrome.driver", getResourceFile("chromedriver-mac").getAbsolutePath());
-				driver = new ChromeDriver();
-				return driver;
-			} else if (settings.getOs().equalsIgnoreCase(LINUX) && settings.getBrowser().startsWith(CHROME)) {
-				System.setProperty("webdriver.chrome.driver", getResourceFile("chromedriver-linux").getAbsolutePath());
+			options.setHeadless(true);
+			if (settings.getOs().equalsIgnoreCase(LINUX) && settings.getBrowser().startsWith(CHROME)) {
+				System.setProperty("webdriver.chrome.driver", "usr/local/bin/chromedriver");
 				startService();
 				driver = new RemoteWebDriver(service.getUrl(), options);
 				return driver;
@@ -93,8 +81,8 @@ public class ApplicationDriver {
 
 	public static void startService() {
 		if (service == null) {
-			service = new ChromeDriverService.Builder().usingDriverExecutable(getResourceFile("chromedriver-linux"))
-					.usingAnyFreePort().build();
+			File file = new File("/usr/local/bin/chromedriver");
+			service = new ChromeDriverService.Builder().usingDriverExecutable(file).usingAnyFreePort().build();
 		}
 		try {
 			service.start();

@@ -1,5 +1,5 @@
 Feature: Configure custom NameId 
-@gluuQAPending
+@gluuQA
 Scenario: Configure new custom NameId 
 	When 	I sign in as administrator 
 	Then 	I should see gluu home page 
