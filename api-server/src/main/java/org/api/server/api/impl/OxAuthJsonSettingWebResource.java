@@ -10,11 +10,13 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.api.server.model.OxAuthJsonConfiguration;
 import org.api.server.util.Constants;
 import org.gluu.oxtrust.ldap.service.JsonConfigurationService;
 import org.gluu.oxtrust.util.OxTrustApiConstants;
 import org.slf4j.Logger;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Preconditions;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -38,12 +40,16 @@ public class OxAuthJsonSettingWebResource extends BaseWebResource {
 
 	@GET
 	@ApiOperation(value = "Get json oxauth settings")
-	@ApiResponses(value = { @ApiResponse(code = 200, response = String.class, message = Constants.RESULT_SUCCESS),
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, response = OxAuthJsonConfiguration.class, message = Constants.RESULT_SUCCESS),
 			@ApiResponse(code = 500, message = "Server error") })
 	public Response getOxAuthJsonSettings() {
 		try {
+			log(logger, "Processing oxauth json settings retrieval request");
 			this.oxAuthDynamicConfigJson = jsonConfigurationService.getOxAuthDynamicConfigJson();
-			return Response.ok(this.oxAuthDynamicConfigJson).build();
+			OxAuthJsonConfiguration configuration = new ObjectMapper().readValue(this.oxAuthDynamicConfigJson,
+					OxAuthJsonConfiguration.class);
+			return Response.ok(configuration).build();
 		} catch (Exception e) {
 			log(logger, e);
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
@@ -52,12 +58,15 @@ public class OxAuthJsonSettingWebResource extends BaseWebResource {
 
 	@PUT
 	@ApiOperation(value = "Update json oxauth settings")
-	@ApiResponses(value = { @ApiResponse(code = 200, response = String.class, message = Constants.RESULT_SUCCESS),
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, response = OxAuthJsonConfiguration.class, message = Constants.RESULT_SUCCESS),
 			@ApiResponse(code = 404, message = "Not found"), @ApiResponse(code = 500, message = "Server error") })
-	public Response updateOxauthJsonSetting(String oxtrustJsonSetting) {
+	public Response updateOxauthJsonSetting(OxAuthJsonConfiguration oxAuthJsonSetting) {
 		try {
-			Preconditions.checkNotNull(oxtrustJsonSetting, "Attempt to update null oxauth json settings");
-			jsonConfigurationService.saveOxAuthDynamicConfigJson(oxtrustJsonSetting);
+			log(logger, "Processing oxauth json settings update request");
+			Preconditions.checkNotNull(oxAuthJsonSetting, "Attempt to update null oxauth json settings");
+			String value = new ObjectMapper().writeValueAsString(oxAuthJsonSetting);
+			jsonConfigurationService.saveOxAuthDynamicConfigJson(value);
 			return Response.ok(Constants.RESULT_SUCCESS).build();
 		} catch (Exception e) {
 			log(logger, e);

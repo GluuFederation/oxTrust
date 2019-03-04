@@ -28,7 +28,7 @@ import org.slf4j.Logger;
 
 import com.wordnik.swagger.annotations.ApiOperation;
 
-@Path(OxTrustApiConstants.BASE_API_URL + OxTrustApiConstants.PEOPLE)
+@Path(OxTrustApiConstants.BASE_API_URL + OxTrustApiConstants.USERS)
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @ApplicationScoped
