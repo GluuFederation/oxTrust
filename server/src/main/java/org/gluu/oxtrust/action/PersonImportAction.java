@@ -34,9 +34,9 @@ import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.load.conf.ImportPersonConfiguration;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.ExcelService;
-import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.ldap.service.OxTrustAuditService;
+import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.table.Table;
@@ -67,6 +67,8 @@ import org.xdi.util.StringHelper;
 @Secure("#{permissionService.hasPermission('person', 'import')}")
 public class PersonImportAction implements Serializable {
 
+	private static final String SEPARATOR = ";";
+
 	private static final long serialVersionUID = -1270460481895022468L;
 
 	private static final String[] PERSON_IMPORT_PERSON_LOCKUP_RETURN_ATTRIBUTES = { "uid", "displayName", "mail" };
@@ -79,7 +81,7 @@ public class PersonImportAction implements Serializable {
 	private OrganizationService organizationService;
 
 	@Inject
-	private IPersonService personService;
+	private PersonService personService;
 
 	@Inject
 	private AttributeService attributeService;
@@ -104,10 +106,10 @@ public class PersonImportAction implements Serializable {
 
 	@Inject
 	private CustomAttributeAction customAttributeAction;
-	
+
 	@Inject
 	private Identity identity;
-	
+
 	@Inject
 	private OxTrustAuditService oxTrustAuditService;
 
@@ -168,8 +170,7 @@ public class PersonImportAction implements Serializable {
 		}
 
 		log.info("All {} persons added successfully", fileDataToImport.getPersons().size());
-		oxTrustAuditService.audit(fileDataToImport.getPersons().size()+ " USERS IMPORTED ",
-				identity.getUser(),
+		oxTrustAuditService.audit(fileDataToImport.getPersons().size() + " USERS IMPORTED ", identity.getUser(),
 				(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 		facesMessages.add(FacesMessage.SEVERITY_INFO, "Users successfully imported");
 
@@ -212,13 +213,13 @@ public class PersonImportAction implements Serializable {
 				}
 			}
 			return OxTrustConstants.RESULT_SUCCESS;
-		}catch (Exception e) {
+		} catch (Exception e) {
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Invalid file content");
-			
+
 			log.error(e.getMessage());
 			return OxTrustConstants.RESULT_FAILURE;
 		}
-		
+
 	}
 
 	public String cancel() {
@@ -431,7 +432,6 @@ public class PersonImportAction implements Serializable {
 					}
 					continue;
 				}
-
 				String ldapValue = getTypedValue(attribute, cellValue);
 				if (StringHelper.isEmpty(ldapValue)) {
 					facesMessages.add(FacesMessage.SEVERITY_ERROR,
@@ -440,8 +440,13 @@ public class PersonImportAction implements Serializable {
 					validTable = false;
 					continue;
 				}
+				AttributeData attributeData = null;
+				if (ldapValue.contains(SEPARATOR)) {
+					attributeData = new AttributeData(attribute.getName(), ldapValue.split(SEPARATOR));
+				} else {
+					attributeData = new AttributeData(attribute.getName(), ldapValue);
+				}
 
-				AttributeData attributeData = new AttributeData(attribute.getName(), ldapValue);
 				attributeDataList.add(attributeData);
 			}
 			entriesAttributes.put(Integer.toString(i), attributeDataList);

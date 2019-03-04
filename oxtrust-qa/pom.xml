@@ -92,7 +92,7 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
-					<skipTests>false</skipTests>
+					<skipTests>false</skipTests>  <!-- set it to false when test sources appear -->
 				</configuration>
 			</plugin>
 			<plugin>

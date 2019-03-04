@@ -22,7 +22,7 @@ import org.testng.annotations.Test;
  * @author Yuriy Movchan Date: 02/06/2014
  */
 public class GroupServiceTest extends BaseTest {
-	
+
 	@Inject
 	private IGroupService groupService;
 

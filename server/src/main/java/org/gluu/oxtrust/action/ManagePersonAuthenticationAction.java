@@ -136,6 +136,7 @@ public class ManagePersonAuthenticationAction
 
 	private AppConfiguration oxTrustappConfiguration;
 
+	/*
 	public List<PassportConfiguration> getLdapPassportConfigurations() {
 		for (PassportConfiguration configuration : ldapPassportConfigurations) {
 			if (configuration.getFieldset() == null) {
@@ -143,7 +144,7 @@ public class ManagePersonAuthenticationAction
 			}
 		}
 		return ldapPassportConfigurations;
-	}
+	}*/
 
 	public void setLdapPassportConfigurations(List<PassportConfiguration> ldapPassportConfigurations) {
 		this.ldapPassportConfigurations = ldapPassportConfigurations;
@@ -189,7 +190,7 @@ public class ManagePersonAuthenticationAction
 			this.authenticationMode = appliance.getAuthenticationMode();
 			this.oxTrustAuthenticationMode = appliance.getOxTrustAuthenticationMode();
 
-			ldapOxPassportConfiguration = passportService.loadConfigurationFromLdap();
+			//ldapOxPassportConfiguration = passportService.loadConfigurationFromLdap();
 			if (ldapOxPassportConfiguration == null) {
 				ldapOxPassportConfiguration = new LdapOxPassportConfiguration();
 			}
@@ -239,9 +240,9 @@ public class ManagePersonAuthenticationAction
 
 			applianceService.updateAppliance(appliance);
 
-			ldapOxPassportConfiguration.setPassportConfigurations(ldapPassportConfigurations);
+			//ldapOxPassportConfiguration.setPassportConfigurations(ldapPassportConfigurations);
 
-			passportService.updateLdapOxPassportConfiguration(ldapOxPassportConfiguration);
+			//passportService.updateLdapOxPassportConfiguration(ldapOxPassportConfiguration);
 		} catch (BasePersistenceException ex) {
 			log.error("Failed to update appliance configuration", ex);
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update appliance");
@@ -477,7 +478,7 @@ public class ManagePersonAuthenticationAction
 	public String getId(Object obj) {
 		return "c" + System.identityHashCode(obj) + "Id";
 	}
-
+/*
 	public void addStrategy() {
 		if (ldapPassportConfigurations == null) {
 			ldapPassportConfigurations = new ArrayList<PassportConfiguration>();
@@ -506,7 +507,7 @@ public class ManagePersonAuthenticationAction
 				passportConfig.getFieldset().add(new SimpleExtendedCustomProperty());
 			}
 		}
-	}
+	}*/
 
 	public GluuBoolean getPassportEnable() {
 		return passportEnable;

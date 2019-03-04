@@ -21,7 +21,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-import org.gluu.oxtrust.ldap.service.IGroupService;
+import org.gluu.oxtrust.ldap.service.GroupService;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.service.filter.ProtectedApi;
 import org.gluu.oxtrust.util.OxTrustConstants;
@@ -44,7 +44,7 @@ public class GroupWebService {
     private Logger logger;    
 
 	@Inject
-	private IGroupService groupService;
+	private GroupService groupService;
     
     //TODO
     

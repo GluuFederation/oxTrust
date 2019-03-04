@@ -36,11 +36,11 @@ import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.FidoDeviceService;
 import org.gluu.oxtrust.ldap.service.GroupService;
-import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.MemberService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.ldap.service.OxTrustAuditService;
 import org.gluu.oxtrust.ldap.service.PairwiseIdService;
+import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.model.Device;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
@@ -121,7 +121,7 @@ public class UpdatePersonAction implements Serializable {
 	private AttributeService attributeService;
 
 	@Inject
-	private IPersonService personService;
+	private PersonService personService;
 
 	@Inject
 	private ClientService clientService;
@@ -967,7 +967,7 @@ public class UpdatePersonAction implements Serializable {
 	}
 
 	public String getClientName(String inum) {
-		OxAuthClient result = clientService.getClientByInum(inum, null, null);
+		OxAuthClient result = clientService.getClientByInum(inum);
 		if (result != null) {
 			return result.getDisplayName();
 		} else {

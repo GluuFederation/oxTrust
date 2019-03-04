@@ -51,11 +51,11 @@ public class ClientService implements Serializable {
 	private Logger logger;
 
 	@Inject
-    private EncryptionService encryptionService;
+	private EncryptionService encryptionService;
 
-    @Inject
-    private OrganizationService organizationService;
-    
+	@Inject
+	private OrganizationService organizationService;
+
 	@Inject
 	private AppConfiguration appConfiguration;
 
@@ -92,12 +92,12 @@ public class ClientService implements Serializable {
 		OxAuthClient result = null;
 		try {
 			result = ldapEntryManager.find(OxAuthClient.class, getDnForClient(inum), ldapReturnAttributes);
-			
-            String encodedClientSecret = result.getEncodedClientSecret(); 
-	        if (StringHelper.isNotEmpty(encodedClientSecret)) {
-	            String clientSecret = encryptionService.decrypt(encodedClientSecret); 
-	            result.setOxAuthClientSecret(clientSecret);
-	        }
+
+			String encodedClientSecret = result.getEncodedClientSecret();
+			if (StringHelper.isNotEmpty(encodedClientSecret)) {
+				String clientSecret = encryptionService.decrypt(encodedClientSecret);
+				result.setOxAuthClientSecret(clientSecret);
+			}
 		} catch (Exception ex) {
 			logger.debug("Failed to load client entry", ex);
 		}
@@ -404,5 +404,15 @@ public class ClientService implements Serializable {
 	 */
 	public AuthenticationMethod[] getAuthenticationMethods() {
 		return AuthenticationMethod.values();
+	}
+
+	public OxAuthClient getClientByInum(String inum) {
+		OxAuthClient result = null;
+		try {
+			result = ldapEntryManager.find(OxAuthClient.class, getDnForClient(inum));
+		} catch (Exception ex) {
+			logger.debug("Failed to load client entry", ex);
+		}
+		return result;
 	}
 }

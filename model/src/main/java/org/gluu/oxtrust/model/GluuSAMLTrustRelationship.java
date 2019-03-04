@@ -71,7 +71,7 @@ public class GluuSAMLTrustRelationship extends InumEntry implements Serializable
 
 	@LdapAttribute(name = "gluuSAMLmaxRefreshDelay")
 	private String maxRefreshDelay;
-	
+
 	@Transient
 	private transient List<GluuCustomAttribute> releasedCustomAttributes = new ArrayList<GluuCustomAttribute>();
 
@@ -105,11 +105,11 @@ public class GluuSAMLTrustRelationship extends InumEntry implements Serializable
 	@LdapAttribute(name = "gluuSpecificRelyingPartyConfig")
 	private String gluuSpecificRelyingPartyConfig;
 
-	@Pattern(regexp="^(https?|http)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]", message = "Please enter a valid SP url, including protocol (http/https)")
+	@Pattern(regexp = "^(https?|http)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]", message = "Please enter a valid SP url, including protocol (http/https)")
 	@LdapAttribute(name = "url")
 	private String url;
-	
-	@Pattern(regexp="^$|(^(https?|http)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|])", message = "Please enter a valid url, including protocol (http/https)")
+
+	@Pattern(regexp = "^$|(^(https?|http)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|])", message = "Please enter a valid url, including protocol (http/https)")
 	@LdapAttribute(name = "oxAuthPostLogoutRedirectURI")
 	private String spLogoutURL;
 
@@ -118,10 +118,9 @@ public class GluuSAMLTrustRelationship extends InumEntry implements Serializable
 
 	@LdapAttribute(name = "researchAndScholarshipEnabled")
 	private String researchBundleEnabled;
-	
+
 	@LdapAttribute(name = "gluuEntityType")
 	private GluuEntityType entityType;
-	
 
 	public void setFederation(boolean isFederation) {
 		this.gluuIsFederation = Boolean.toString(isFederation);
@@ -134,7 +133,6 @@ public class GluuSAMLTrustRelationship extends InumEntry implements Serializable
 	public void setContainerFederation(GluuSAMLTrustRelationship containerFederation) {
 		this.gluuContainerFederation = containerFederation.getDn();
 	}
-
 
 	@Override
 	public boolean equals(Object o) {
@@ -156,17 +154,17 @@ public class GluuSAMLTrustRelationship extends InumEntry implements Serializable
 	public void setGluuEntityId(Set<String> gluuEntityId) {
 		this.gluuEntityId = new ArrayList<String>(gluuEntityId);
 	}
+
 	/**
-	 * This method is for ldap persistance only. For purposes of crud - please use setGluuEntityId(Set<String> gluuEntityId)
+	 * @param gluuEntityId
 	 */
 	@Deprecated
 	public void setGluuEntityId(List<String> gluuEntityId) {
 		this.gluuEntityId = gluuEntityId;
 	}
 
-
 	/**
-	 * This method returns entityId for site TRs only.
+	 * @return
 	 */
 	public String getEntityId() {
 		if ((gluuEntityId != null) && (gluuEntityId.size() == 1)) {
@@ -183,7 +181,6 @@ public class GluuSAMLTrustRelationship extends InumEntry implements Serializable
 		setGluuEntityId(entityIds);
 	}
 
-
 	public void setSpecificRelyingPartyConfig(boolean specificRelyingPartyConfig) {
 		this.gluuSpecificRelyingPartyConfig = Boolean.toString(specificRelyingPartyConfig);
 	}
@@ -192,234 +189,234 @@ public class GluuSAMLTrustRelationship extends InumEntry implements Serializable
 		return Boolean.parseBoolean(gluuSpecificRelyingPartyConfig);
 	}
 
-    public List<DeconstructedTrustRelationship> getDeconstructedTrustRelationships() {
-        return deconstructedTrustRelationships;
-    }
+	public List<DeconstructedTrustRelationship> getDeconstructedTrustRelationships() {
+		return deconstructedTrustRelationships;
+	}
 
-    public void setDeconstructedTrustRelationships(List<DeconstructedTrustRelationship> deconstructedTrustRelationships) {
-        this.deconstructedTrustRelationships = deconstructedTrustRelationships;
-    }
+	public void setDeconstructedTrustRelationships(
+			List<DeconstructedTrustRelationship> deconstructedTrustRelationships) {
+		this.deconstructedTrustRelationships = deconstructedTrustRelationships;
+	}
 
-    public String getDescription() {
-        return description;
-    }
+	public String getDescription() {
+		return description;
+	}
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+	public void setDescription(String description) {
+		this.description = description;
+	}
 
-    public String getDisplayName() {
-        return displayName;
-    }
+	public String getDisplayName() {
+		return displayName;
+	}
 
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
-    }
+	public void setDisplayName(String displayName) {
+		this.displayName = displayName;
+	}
 
-    public String getGluuContainerFederation() {
-        return gluuContainerFederation;
-    }
+	public String getGluuContainerFederation() {
+		return gluuContainerFederation;
+	}
 
-    public void setGluuContainerFederation(String gluuContainerFederation) {
-        this.gluuContainerFederation = gluuContainerFederation;
-    }
+	public void setGluuContainerFederation(String gluuContainerFederation) {
+		this.gluuContainerFederation = gluuContainerFederation;
+	}
 
-    public String getGluuIsFederation() {
-        return gluuIsFederation;
-    }
+	public String getGluuIsFederation() {
+		return gluuIsFederation;
+	}
 
-    public void setGluuIsFederation(String gluuIsFederation) {
-        this.gluuIsFederation = gluuIsFederation;
-    }
+	public void setGluuIsFederation(String gluuIsFederation) {
+		this.gluuIsFederation = gluuIsFederation;
+	}
 
-    public List<String> getGluuProfileConfiguration() {
-        return gluuProfileConfiguration;
-    }
+	public List<String> getGluuProfileConfiguration() {
+		return gluuProfileConfiguration;
+	}
 
-    public void setGluuProfileConfiguration(List<String> gluuProfileConfiguration) {
-        this.gluuProfileConfiguration = gluuProfileConfiguration;
-    }
+	public void setGluuProfileConfiguration(List<String> gluuProfileConfiguration) {
+		this.gluuProfileConfiguration = gluuProfileConfiguration;
+	}
 
-    public List<String> getGluuSAMLMetaDataFilter() {
-        return gluuSAMLMetaDataFilter;
-    }
+	public List<String> getGluuSAMLMetaDataFilter() {
+		return gluuSAMLMetaDataFilter;
+	}
 
-    public void setGluuSAMLMetaDataFilter(List<String> gluuSAMLMetaDataFilter) {
-        this.gluuSAMLMetaDataFilter = gluuSAMLMetaDataFilter;
-    }
+	public void setGluuSAMLMetaDataFilter(List<String> gluuSAMLMetaDataFilter) {
+		this.gluuSAMLMetaDataFilter = gluuSAMLMetaDataFilter;
+	}
 
-    public String getGluuSpecificRelyingPartyConfig() {
-        return gluuSpecificRelyingPartyConfig;
-    }
+	public String getGluuSpecificRelyingPartyConfig() {
+		return gluuSpecificRelyingPartyConfig;
+	}
 
-    public void setGluuSpecificRelyingPartyConfig(String gluuSpecificRelyingPartyConfig) {
-        this.gluuSpecificRelyingPartyConfig = gluuSpecificRelyingPartyConfig;
-    }
+	public void setGluuSpecificRelyingPartyConfig(String gluuSpecificRelyingPartyConfig) {
+		this.gluuSpecificRelyingPartyConfig = gluuSpecificRelyingPartyConfig;
+	}
 
-    public List<String> getGluuTrustContact() {
-        return gluuTrustContact;
-    }
+	public List<String> getGluuTrustContact() {
+		return gluuTrustContact;
+	}
 
-    public void setGluuTrustContact(List<String> gluuTrustContact) {
-        this.gluuTrustContact = gluuTrustContact;
-    }
+	public void setGluuTrustContact(List<String> gluuTrustContact) {
+		this.gluuTrustContact = gluuTrustContact;
+	}
 
-    public List<String> getGluuTrustDeconstruction() {
-        return gluuTrustDeconstruction;
-    }
+	public List<String> getGluuTrustDeconstruction() {
+		return gluuTrustDeconstruction;
+	}
 
-    public void setGluuTrustDeconstruction(List<String> gluuTrustDeconstruction) {
-        this.gluuTrustDeconstruction = gluuTrustDeconstruction;
-    }
+	public void setGluuTrustDeconstruction(List<String> gluuTrustDeconstruction) {
+		this.gluuTrustDeconstruction = gluuTrustDeconstruction;
+	}
 
-    public String getIname() {
-        return iname;
-    }
+	public String getIname() {
+		return iname;
+	}
 
-    public void setIname(String iname) {
-        this.iname = iname;
-    }
+	public void setIname(String iname) {
+		this.iname = iname;
+	}
 
-    public String getInum() {
-        return inum;
-    }
+	public String getInum() {
+		return inum;
+	}
 
-    public void setInum(String inum) {
-        this.inum = inum;
-    }
+	public void setInum(String inum) {
+		this.inum = inum;
+	}
 
-    public String getMaxRefreshDelay() {
-        return maxRefreshDelay;
-    }
+	public String getMaxRefreshDelay() {
+		return maxRefreshDelay;
+	}
 
-    public void setMaxRefreshDelay(String maxRefreshDelay) {
-        this.maxRefreshDelay = maxRefreshDelay;
-    }
+	public void setMaxRefreshDelay(String maxRefreshDelay) {
+		this.maxRefreshDelay = maxRefreshDelay;
+	}
 
-    public Map<String, MetadataFilter> getMetadataFilters() {
-        return metadataFilters;
-    }
+	public Map<String, MetadataFilter> getMetadataFilters() {
+		return metadataFilters;
+	}
 
-    public void setMetadataFilters(Map<String, MetadataFilter> metadataFilters) {
-        this.metadataFilters = metadataFilters;
-    }
+	public void setMetadataFilters(Map<String, MetadataFilter> metadataFilters) {
+		this.metadataFilters = metadataFilters;
+	}
 
-    public String getOwner() {
-        return owner;
-    }
+	public String getOwner() {
+		return owner;
+	}
 
-    public void setOwner(String owner) {
-        this.owner = owner;
-    }
+	public void setOwner(String owner) {
+		this.owner = owner;
+	}
 
-    public Map<String, ProfileConfiguration> getProfileConfigurations() {
-        return profileConfigurations;
-    }
+	public Map<String, ProfileConfiguration> getProfileConfigurations() {
+		return profileConfigurations;
+	}
 
-    public void setProfileConfigurations(Map<String, ProfileConfiguration> profileConfigurations) {
-        this.profileConfigurations = profileConfigurations;
-    }
+	public void setProfileConfigurations(Map<String, ProfileConfiguration> profileConfigurations) {
+		this.profileConfigurations = profileConfigurations;
+	}
 
-    public List<String> getReleasedAttributes() {
-        return releasedAttributes;
-    }
+	public List<String> getReleasedAttributes() {
+		return releasedAttributes;
+	}
 
-    public void setReleasedAttributes(List<String> releasedAttributes) {
-        this.releasedAttributes = releasedAttributes;
-    }
+	public void setReleasedAttributes(List<String> releasedAttributes) {
+		this.releasedAttributes = releasedAttributes;
+	}
 
-    public List<GluuCustomAttribute> getReleasedCustomAttributes() {
-        return releasedCustomAttributes;
-    }
+	public List<GluuCustomAttribute> getReleasedCustomAttributes() {
+		return releasedCustomAttributes;
+	}
 
-    public void setReleasedCustomAttributes(List<GluuCustomAttribute> releasedCustomAttributes) {
-        this.releasedCustomAttributes = releasedCustomAttributes;
-    }
+	public void setReleasedCustomAttributes(List<GluuCustomAttribute> releasedCustomAttributes) {
+		this.releasedCustomAttributes = releasedCustomAttributes;
+	}
 
-    public String getSpLogoutURL() {
-        return spLogoutURL;
-    }
+	public String getSpLogoutURL() {
+		return spLogoutURL;
+	}
 
-    public void setSpLogoutURL(String spLogoutURL) {
-        this.spLogoutURL = spLogoutURL;
-    }
+	public void setSpLogoutURL(String spLogoutURL) {
+		this.spLogoutURL = spLogoutURL;
+	}
 
-    public String getSpMetaDataFN() {
-        return spMetaDataFN;
-    }
+	public String getSpMetaDataFN() {
+		return spMetaDataFN;
+	}
 
-    public void setSpMetaDataFN(String spMetaDataFN) {
-        this.spMetaDataFN = spMetaDataFN;
-    }
+	public void setSpMetaDataFN(String spMetaDataFN) {
+		this.spMetaDataFN = spMetaDataFN;
+	}
 
-    public GluuMetadataSourceType getSpMetaDataSourceType() {
-        return spMetaDataSourceType;
-    }
+	public GluuMetadataSourceType getSpMetaDataSourceType() {
+		return spMetaDataSourceType;
+	}
 
-    public void setSpMetaDataSourceType(GluuMetadataSourceType spMetaDataSourceType) {
-        this.spMetaDataSourceType = spMetaDataSourceType;
-    }
+	public void setSpMetaDataSourceType(GluuMetadataSourceType spMetaDataSourceType) {
+		this.spMetaDataSourceType = spMetaDataSourceType;
+	}
 
-    public String getSpMetaDataURL() {
-        return spMetaDataURL;
-    }
+	public String getSpMetaDataURL() {
+		return spMetaDataURL;
+	}
 
-    public void setSpMetaDataURL(String spMetaDataURL) {
-        this.spMetaDataURL = spMetaDataURL;
-    }
+	public void setSpMetaDataURL(String spMetaDataURL) {
+		this.spMetaDataURL = spMetaDataURL;
+	}
 
-    public GluuStatus getStatus() {
-        return status;
-    }
+	public GluuStatus getStatus() {
+		return status;
+	}
 
-    public void setStatus(GluuStatus status) {
-        this.status = status;
-    }
+	public void setStatus(GluuStatus status) {
+		this.status = status;
+	}
 
-    public String getUrl() {
-        return url;
-    }
+	public String getUrl() {
+		return url;
+	}
 
-    public void setUrl(String url) {
-        this.url = url;
-    }
+	public void setUrl(String url) {
+		this.url = url;
+	}
 
-    public List<String> getValidationLog() {
-        return validationLog;
-    }
+	public List<String> getValidationLog() {
+		return validationLog;
+	}
 
-    public void setValidationLog(List<String> validationLog) {
-        this.validationLog = validationLog;
-    }
+	public void setValidationLog(List<String> validationLog) {
+		this.validationLog = validationLog;
+	}
 
-    public GluuValidationStatus getValidationStatus() {
-        return validationStatus;
-    }
+	public GluuValidationStatus getValidationStatus() {
+		return validationStatus;
+	}
 
-    public void setValidationStatus(GluuValidationStatus validationStatus) {
-        this.validationStatus = validationStatus;
-    }
+	public void setValidationStatus(GluuValidationStatus validationStatus) {
+		this.validationStatus = validationStatus;
+	}
 
-    public String getResearchBundleEnabled() {
-        return researchBundleEnabled;
-    }
+	public String getResearchBundleEnabled() {
+		return researchBundleEnabled;
+	}
 
-    public void setResearchBundleEnabled(String researchBundleEnabled) {
-        this.researchBundleEnabled = researchBundleEnabled;
-    }
+	public void setResearchBundleEnabled(String researchBundleEnabled) {
+		this.researchBundleEnabled = researchBundleEnabled;
+	}
 
-    public boolean isResearchBundle() {
-        return Boolean.parseBoolean(researchBundleEnabled);
-    }
-    
-    public boolean getResearchBundle() {
-        return Boolean.parseBoolean(researchBundleEnabled);
-    }
-    
-    
-    public void setResearchBundle(boolean researchBundle) {
-        this.researchBundleEnabled = Boolean.toString(researchBundle);
-    }
+	public boolean isResearchBundle() {
+		return Boolean.parseBoolean(researchBundleEnabled);
+	}
+
+	public boolean getResearchBundle() {
+		return Boolean.parseBoolean(researchBundleEnabled);
+	}
+
+	public void setResearchBundle(boolean researchBundle) {
+		this.researchBundleEnabled = Boolean.toString(researchBundle);
+	}
 
 	public GluuEntityType getEntityType() {
 		return entityType;

@@ -1,9 +1,10 @@
-package org.gluu.oxtrust.api.openidconnect;
+package org.api.server.api.impl;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
@@ -19,18 +20,21 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.api.server.util.OxTrustApiConstants;
 import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.ScopeService;
 import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.model.OxAuthScope;
-import org.gluu.oxtrust.util.OxTrustApiConstants;
 import org.slf4j.Logger;
 
 import com.wordnik.swagger.annotations.ApiOperation;
 
+//import com.wordnik.swagger.annotations.ApiOperation;
+
 @Path(OxTrustApiConstants.BASE_API_URL + OxTrustApiConstants.CLIENTS)
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
+@ApplicationScoped
 public class ClientWebResource extends BaseWebResource {
 
 	@Inject

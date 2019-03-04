@@ -50,7 +50,7 @@ import org.xdi.service.security.Secure;
 public class CertificateManagementAction implements Serializable {
 
 	private static final long serialVersionUID = -1938167091985945238L;
-
+	private static final String OPENLDAP_CERTIFICATE_FILE = "/etc/certs/openldap.crt";
 	private static final String OPENDJ_CERTIFICATE_FILE = "/etc/certs/opendj.crt";
 	private static final String HTTPD_CERTIFICATE_FILE = "/etc/certs/httpd.crt";
 	private static final String IDP_SIGNING_CERTIFICATE_FILE = "/etc/certs/idp-signing.crt";
@@ -139,10 +139,7 @@ public class CertificateManagementAction implements Serializable {
 	 */
 	private void updateTableView() {
 		try {
-			for (X509CertificateShortInfo cert : asimbaCertificates) {
-				// check dates
-				cert.updateViewStyle();
-			}
+			asimbaCertificates.stream().forEach(cert -> cert.updateViewStyle());
 		} catch (Exception e) {
 			log.error("Load Asimba keystore configuration exception", e);
 		}
@@ -186,7 +183,7 @@ public class CertificateManagementAction implements Serializable {
 							.add(new X509CertificateShortInfo(OPENDJ_CERTIFICATE_FILE, "OpenDJ SSL", openDJCert));
 				}
 			} catch (Exception e) {
-				log.error("Certificate load exception", e);
+				log.warn("OPENDJ certificate load exception");
 			}
 			try {
 				X509Certificate httpdCerts[] = SSLService.loadCertificates(new FileInputStream(HTTPD_CERTIFICATE_FILE));
@@ -195,7 +192,7 @@ public class CertificateManagementAction implements Serializable {
 							.add(new X509CertificateShortInfo(HTTPD_CERTIFICATE_FILE, "HTTPD SSL", httpdCert));
 				}
 			} catch (Exception e) {
-				log.error("Certificate load exception", e);
+				log.warn("HTTPD Certificate load exception");
 			}
 			try {
 				X509Certificate idpSigingCerts[] = SSLService
@@ -205,7 +202,7 @@ public class CertificateManagementAction implements Serializable {
 							new X509CertificateShortInfo(IDP_SIGNING_CERTIFICATE_FILE, "IDP SIGNING", idpSigingCert));
 				}
 			} catch (Exception e) {
-				log.error("Certificate load exception", e);
+				log.warn("IDP SIGNING certificate load exception");
 			}
 			try {
 				X509Certificate idpEncryptionCerts[] = SSLService
@@ -215,7 +212,18 @@ public class CertificateManagementAction implements Serializable {
 							"IDP ENCRYPTION", idpEncryptionCert));
 				}
 			} catch (Exception e) {
-				log.error("Certificate load exception", e);
+				log.warn("IDP ENCRYPTION certificate load exception");
+			}
+
+			try {
+				X509Certificate idpEncryptionCerts[] = SSLService
+						.loadCertificates(new FileInputStream(OPENLDAP_CERTIFICATE_FILE));
+				for (X509Certificate idpEncryptionCert : idpEncryptionCerts) {
+					internalCertificates.add(new X509CertificateShortInfo(OPENLDAP_CERTIFICATE_FILE,
+							"OpenLDAP ENCRYPTION", idpEncryptionCert));
+				}
+			} catch (Exception e) {
+				log.error("OpenLDAP certificate load exception");
 			}
 
 		} catch (
@@ -358,13 +366,11 @@ public class CertificateManagementAction implements Serializable {
 		response.setContentType("text/plain");
 		String header = "attachment; filename=\"" + cert.getName() + "\"";
 		response.addHeader("Content-disposition", header);
-		try {
-			ServletOutputStream os = response.getOutputStream();
+		try (ServletOutputStream os = response.getOutputStream()){
 			File file = new File(cert.getPath());
 			InputStream in = Files.newInputStream(file.toPath());
 			IOUtils.copy(in, os);
 			os.flush();
-			os.close();
 			facesContext.responseComplete();
 		} catch (Exception e) {
 			log.error("", e);

@@ -74,7 +74,7 @@ import com.wordnik.swagger.annotations.ApiOperation;
 public class FidoDeviceWebService extends BaseScimWebService implements IFidoDeviceWebService {
 
     @Inject
-    private IFidoDeviceService fidoDeviceService;
+	private IFidoDeviceService fidoDeviceService;
 
     @Inject
     private ScimFilterParserService scimFilterParserService;

@@ -1,0 +1,14 @@
+{
+"$schema": "http://json-schema.org/draft-04/schema#",
+    "id": "/",
+    "type": "object",
+    "title": "oxAttributes",
+    "additionalProperties": true,
+    "properties": {
+       "tlsClientAuthSubjectDn":
+           {
+            "type":"string",
+            "id":"tlsClientAuthSubjectDn"
+           }
+    }
+}
