@@ -50,7 +50,7 @@ public class PassportRestWebService {
         try {
             Object obj = Optional.ofNullable(passportService.loadConfigurationFromLdap())
                     .map(LdapOxPassportConfiguration::getPassportConfigurations)
-                    .map(list -> list.isEmpty() ? Collections.emptyMap() : list.get(0));
+                    .map(list -> list.isEmpty() ? (Object) null : list.get(0)).orElse(Collections.emptyMap());
 
             jsonResponse = jsonService.objectToPerttyJson(obj);
             status = Status.OK;
