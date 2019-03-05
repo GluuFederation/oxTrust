@@ -118,7 +118,7 @@
 											<ox:decorate id="clientSecret"
 												label="#{msg['clientForm.clientSecret']}"
 												leftClass="col-sm-3" rightClass="col-sm-6">
-												<h:outputText
+												<h:inputText
 													styleClass="form-control togglefield clientSecretTextBox"
 													value="#{_client.oxAuthClientSecret}" redisplay="true"
 													defaultLabel="click to enter Client Secret" maxlength="60"
@@ -141,7 +141,7 @@
 													styleClass="btn btn-primary changeClientSecretButton"
 													value="#{msg['client.changeClientSecret']}" />
 											</div>
-											<div class="col-sm-6 col-lg-6">
+											<div class="col-sm-6 col-lg-6" style="padding: 0px;">
 												<a4j:commandLink render="clientSecretId1"
 													style="margin-top:2px;" rendered="#{_new}"
 													styleClass="btn btn-primary generateClientSecretButton"
@@ -361,6 +361,19 @@
 											</h:panelGroup>
 										</div>
 										<div class="col-sm-6 col-lg-6" style="padding: 0px;">
+											<ox:decorate id="oxAuthTrustedClientBox"
+												label="#{msg['clientForm.preAuthorization']}"
+												leftClass="col-sm-6" rightClass="col-sm-6">
+												<h:selectOneMenu id="trustedClientId"
+													styleClass="col-sm-9 form-control rounded oxAuthTrustedClientSelectBox"
+													value="#{_client.oxAuthTrustedClient}" required="true"
+													onchange="togglePersistAuthorization()">
+													<f:selectItems value="#{clientService.oxAuthTrustedClient}"
+														var="_type" itemLabel="#{_type.displayName}" />
+													<f:converter
+														converterId="org.gluu.jsf2.converter.EnumConverter" />
+												</h:selectOneMenu>
+											</ox:decorate>
 											<ox:decorate id="persistClientAuthorizations"
 												label="#{msg['clientForm.persistClientAuthorization']}"
 												leftClass="col-sm-6" rightClass="col-sm-6">
@@ -370,19 +383,6 @@
 													required="true" onchange="togglePersistAuthorization()">
 													<f:selectItems
 														value="#{organizationService.javaBooleanSelectionTypes}"
-														var="_type" itemLabel="#{_type.displayName}" />
-													<f:converter
-														converterId="org.gluu.jsf2.converter.EnumConverter" />
-												</h:selectOneMenu>
-											</ox:decorate>
-											<ox:decorate id="oxAuthTrustedClientBox"
-												label="#{msg['clientForm.preAuthorization']}"
-												leftClass="col-sm-6" rightClass="col-sm-6">
-												<h:selectOneMenu id="trustedClientId"
-													styleClass="col-sm-9 form-control rounded oxAuthTrustedClientSelectBox"
-													value="#{_client.oxAuthTrustedClient}" required="true"
-													onchange="togglePersistAuthorization()">
-													<f:selectItems value="#{clientService.oxAuthTrustedClient}"
 														var="_type" itemLabel="#{_type.displayName}" />
 													<f:converter
 														converterId="org.gluu.jsf2.converter.EnumConverter" />
