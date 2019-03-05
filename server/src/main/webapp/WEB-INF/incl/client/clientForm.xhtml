@@ -136,12 +136,10 @@
 										</div>
 										<div class="col-sm-6 col-lg-6" style="padding: 0px;">
 											<div class="col-sm-6 col-lg-6" style="padding: 0px;">
-												<a4j:commandButton rendered="#{not _new}"
-													onclick="#{rich:component('clientPassword:changePasswordModalPanel')}.show();"
-													styleClass="btn btn-primary changeClientSecretButton"
-													value="#{msg['client.changeClientSecret']}" />
-											</div>
-											<div class="col-sm-6 col-lg-6" style="padding: 0px;">
+												<a4j:commandLink rendered="#{not _new}"
+													style="margin-left: 10px;"
+													styleClass="btn btn-primary lockClientSecretField"
+													value="Unlock Secret" />
 												<a4j:commandLink render="clientSecretId1"
 													style="margin-top:2px;" rendered="#{_new}"
 													styleClass="btn btn-primary generateClientSecretButton"
@@ -149,6 +147,14 @@
 													action="#{_clientAction.generatePassword()}"
 													oncomplete="return valuesDisplay(this);" />
 											</div>
+											<div class="col-sm-6 col-lg-6" style="padding: 0px;">
+												<a4j:commandButton rendered="#{not _new}"
+													style="margin-left:15px;"
+													onclick="#{rich:component('clientPassword:changePasswordModalPanel')}.show();"
+													styleClass="btn btn-primary changeClientSecretButton"
+													value="#{msg['client.changeClientSecret']}" />
+											</div>
+
 										</div>
 									</div>
 									<!-- First row -->
@@ -1111,7 +1117,20 @@
             		activeTab = activeTab.concat(value);  
             		$('#oidctab a[href="' + activeTab + '"]').tab('show');
             	}
+            	 $(".clientSecretTextBox").attr("readonly", true);
        });
+		
+		 $(document).on("click",".lockClientSecretField", function () {
+			 var state = $(".clientSecretTextBox").attr("readonly");
+			 if(state){
+				 $(".clientSecretTextBox").attr("readonly", false);
+				 $(".lockClientSecretField").text("Lock Secret Field");
+			 }else{
+				 $(".clientSecretTextBox").attr("readonly", true);
+				 $(".lockClientSecretField").text("Unlock Secret Field");
+			 }
+			  
+			});
     </script>
 	<h:outputScript>
         function togglePersistAuthorization() {
@@ -1119,9 +1138,13 @@
             var persisteClientAuthorizationsIdSelect = $("select[id='clientForm:persistClientAuthorizations:persisteClientAuthorizationsId']");
 
             if (trustedClientIdSelect.val() == "TRUE") {
-                persisteClientAuthorizationsIdSelect.val("FALSE");
+                persisteClientAuthorizationsIdSelect.val("TRUE");
+                $(".persistClientAuthorizationSelectBox").attr("readonly", true);
+            }else{
+                $(".persistClientAuthorizationSelectBox").attr("readonly", false);
             }
-        }
+            
+            }
         function reload(){
             setTimeout(function(){ window.location.reload(); }, 2000);
         }
