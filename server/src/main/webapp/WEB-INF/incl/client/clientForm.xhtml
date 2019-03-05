@@ -135,25 +135,23 @@
 											</ox:decorate>
 										</div>
 										<div class="col-sm-6 col-lg-6" style="padding: 0px;">
-											<div class="col-sm-6 col-lg-6" style="padding: 0px;">
-												<a4j:commandLink rendered="#{not _new}"
-													style="margin-left: 10px;"
-													styleClass="btn btn-primary lockClientSecretField"
-													value="Unlock Secret" />
-												<a4j:commandLink render="clientSecretId1"
-													style="margin-top:2px;" rendered="#{_new}"
-													styleClass="btn btn-primary generateClientSecretButton"
-													value="Auto-Generate Secret Key"
-													action="#{_clientAction.generatePassword()}"
-													oncomplete="return valuesDisplay(this);" />
-											</div>
-											<div class="col-sm-6 col-lg-6" style="padding: 0px;">
-												<a4j:commandButton rendered="#{not _new}"
-													style="margin-left:15px;"
-													onclick="#{rich:component('clientPassword:changePasswordModalPanel')}.show();"
-													styleClass="btn btn-primary changeClientSecretButton"
-													value="#{msg['client.changeClientSecret']}" />
-											</div>
+											<a4j:commandLink rendered="true" style="margin-left: 10px;"
+												styleClass="btn btn-primary lockClientSecretField"
+												value="Unlock Secret" />
+											<a4j:commandLink render="clientSecretId1" rendered="#{_new}"
+												styleClass="btn btn-primary generateClientSecretButton"
+												value="Generate Client Secret"
+												style="margin-left: 10px;"
+												action="#{_clientAction.generatePassword()}"
+												oncomplete="return valuesDisplay(this);" />
+											<!-- 											</div> -->
+											<!-- 											<div class="col-sm-6 col-lg-6" style="padding: 0px;"> -->
+											<a4j:commandButton rendered="#{not _new}"
+												style="margin-left:15px;"
+												onclick="#{rich:component('clientPassword:changePasswordModalPanel')}.show();"
+												styleClass="btn btn-primary changeClientSecretButton"
+												value="#{msg['client.changeClientSecret']}" />
+											<!-- 											</div> -->
 
 										</div>
 									</div>
@@ -1118,6 +1116,7 @@
             		$('#oidctab a[href="' + activeTab + '"]').tab('show');
             	}
             	 $(".clientSecretTextBox").attr("readonly", true);
+            	 hideClientSecret();
        });
 		
 		 $(document).on("click",".lockClientSecretField", function () {
