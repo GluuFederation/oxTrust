@@ -104,12 +104,13 @@
 								<h:panelGroup columns="1" width="100%">
 									<div class="row" style="margin-left: 5px; margin-right: 5px;">
 										<div class="col-sm-12 col-lg-12" style="padding: 0px;">
-											<ox:decorate id="inum" rendered="#{not _new}"
+											<ox:decorate id="inum" rendered="true"
 												label="#{msg['clientForm.inum']}" leftClass="col-sm-3"
 												rightClass="col-sm-9">
-												<h:outputText style="margin-left: -17%;"
-													styleClass="col-sm-12 col-lg-12 form-control rounded text-center"
-													value="#{_client.inum}" />
+												<h:outputText
+													style="margin-left: -17%; background: #00BE79; color:white;"
+													styleClass="col-sm-12 col-lg-12 form-control rounded text-center clientGeneratedInum"
+													value="#{_new ? 'The value will be generated after adding the new client.' : _client.inum}" />
 											</ox:decorate>
 										</div>
 									</div>
@@ -135,23 +136,20 @@
 											</ox:decorate>
 										</div>
 										<div class="col-sm-6 col-lg-6" style="padding: 0px;">
-											<a4j:commandLink rendered="true" style="margin-left: 10px;"
-												styleClass="btn btn-primary lockClientSecretField"
-												value="Unlock Secret" />
 											<a4j:commandLink render="clientSecretId1" rendered="#{_new}"
 												styleClass="btn btn-primary generateClientSecretButton"
-												value="Generate Client Secret"
-												style="margin-left: 10px;"
+												value="Generate Client Secret" style="margin-left: 10px;"
 												action="#{_clientAction.generatePassword()}"
 												oncomplete="return valuesDisplay(this);" />
-											<!-- 											</div> -->
-											<!-- 											<div class="col-sm-6 col-lg-6" style="padding: 0px;"> -->
+											<a4j:commandLink rendered="#{_new}"
+												style="margin-left: 10px;"
+												styleClass="btn btn-primary lockClientSecretField"
+												value="Lock Secret Field" />
 											<a4j:commandButton rendered="#{not _new}"
 												style="margin-left:15px;"
 												onclick="#{rich:component('clientPassword:changePasswordModalPanel')}.show();"
 												styleClass="btn btn-primary changeClientSecretButton"
 												value="#{msg['client.changeClientSecret']}" />
-											<!-- 											</div> -->
 
 										</div>
 									</div>
@@ -1115,8 +1113,20 @@
             		activeTab = activeTab.concat(value);  
             		$('#oidctab a[href="' + activeTab + '"]').tab('show');
             	}
-            	 $(".clientSecretTextBox").attr("readonly", true);
-            	 hideClientSecret();
+            	var value = $(".clientGeneratedInum").text();
+            	var n = value.startsWith("@!");
+            	if(n){
+            		 $(".clientSecretTextBox").attr("readonly", true);
+            	}
+            	hideClientSecret();
+            	$(".clientSecretTextBox").keyup(function(){
+            		var value = $(".clientSecretTextBox").val();
+            		if(value.length > 2){
+            			 $(".lockClientSecretField").show(); 
+            		}else{
+            			 $(".lockClientSecretField").hide(); 
+            		}
+            	});
        });
 		
 		 $(document).on("click",".lockClientSecretField", function () {
@@ -1139,8 +1149,10 @@
             if (trustedClientIdSelect.val() == "TRUE") {
                 persisteClientAuthorizationsIdSelect.val("TRUE");
                 $(".persistClientAuthorizationSelectBox").attr("readonly", true);
+                $(".persistClientAuthorizationSelectBox").prop('disabled', 'disabled');
             }else{
                 $(".persistClientAuthorizationSelectBox").attr("readonly", false);
+                $(".persistClientAuthorizationSelectBox").prop('disabled', false);
             }
             
             }
