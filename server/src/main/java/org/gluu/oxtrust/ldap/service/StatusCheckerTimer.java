@@ -13,6 +13,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.text.NumberFormat;
@@ -271,7 +273,7 @@ public class StatusCheckerTimer {
 		}
 		CommandLine commandLine = new CommandLine(OxTrustConstants.PROGRAM_FACTER);
 		String facterVersion = getFacterVersion();
-		log.info("Facter version: "+facterVersion);
+		log.info("Facter version: " + facterVersion);
 		String resultOutput;
 		if (facterVersion == null) {
 			return;
@@ -299,7 +301,15 @@ public class StatusCheckerTimer {
 				OxTrustConstants.FACTER_MEMORY_SIZE_MB));
 		appliance.setFreeSwap(toIntString(getFacterPercentResult(outputLines, OxTrustConstants.FACTER_FREE_SWAP,
 				OxTrustConstants.FACTER_FREE_SWAP_TOTAL)));
-		appliance.setHostname(getFacterResult(outputLines, OxTrustConstants.FACTER_HOST_NAME));
+		String hostname = getFacterResult(outputLines, OxTrustConstants.FACTER_HOST_NAME);
+		if (hostname.equalsIgnoreCase("localhost")) {
+			try {
+				hostname = Files.readAllLines(Paths.get("/install/community-edition-setup/output/hostname")).get(0);
+			} catch (IOException e) {
+				log.warn("+++++++++++++++++++++++++++++++++","reading reding hostname from file");
+			}
+		}
+		appliance.setHostname(hostname);
 		appliance.setIpAddress(getFacterResult(outputLines, OxTrustConstants.FACTER_IP_ADDRESS));
 		appliance.setLoadAvg(getFacterResult(outputLines, OxTrustConstants.FACTER_LOAD_AVERAGE));
 		getFacterBandwidth(getFacterResult(outputLines, OxTrustConstants.FACTER_BANDWIDTH_USAGE), appliance);

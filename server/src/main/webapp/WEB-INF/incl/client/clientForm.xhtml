@@ -382,7 +382,7 @@
 												<h:selectOneMenu id="persisteClientAuthorizationsId"
 													styleClass="col-sm-9 form-control rounded persistClientAuthorizationSelectBox"
 													value="#{_client.oxAuthPersistClientAuthorizations}"
-													required="true" onchange="togglePersistAuthorization()">
+													required="true">
 													<f:selectItems
 														value="#{organizationService.javaBooleanSelectionTypes}"
 														var="_type" itemLabel="#{_type.displayName}" />
@@ -1119,14 +1119,7 @@
             		 $(".clientSecretTextBox").attr("readonly", true);
             	}
             	hideClientSecret();
-            	$(".clientSecretTextBox").keyup(function(){
-            		var value = $(".clientSecretTextBox").val();
-            		if(value.length > 2){
-            			 $(".lockClientSecretField").show(); 
-            		}else{
-            			 $(".lockClientSecretField").hide(); 
-            		}
-            	});
+            	togglePersistAuthorization();
        });
 		
 		 $(document).on("click",".lockClientSecretField", function () {
@@ -1147,12 +1140,10 @@
             var persisteClientAuthorizationsIdSelect = $("select[id='clientForm:persistClientAuthorizations:persisteClientAuthorizationsId']");
 
             if (trustedClientIdSelect.val() == "TRUE") {
-                persisteClientAuthorizationsIdSelect.val("TRUE");
+                $(".persistClientAuthorizationSelectBox option:contains(True)").attr('selected', 'selected');
                 $(".persistClientAuthorizationSelectBox").attr("readonly", true);
-                $(".persistClientAuthorizationSelectBox").prop('disabled', 'disabled');
             }else{
                 $(".persistClientAuthorizationSelectBox").attr("readonly", false);
-                $(".persistClientAuthorizationSelectBox").prop('disabled', false);
             }
             
             }

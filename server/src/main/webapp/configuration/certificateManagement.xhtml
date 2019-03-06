@@ -32,34 +32,6 @@
 		<section class="content" style="background:white;"> <h:panelGrid
 			columns="1" border="0" cellpadding="0" cellspacing="0" width="80%">
 			<richext:spacer height="16" />
-
-			<h:form>
-				<div class="row">
-					<div class="col-md-6" id="searchPattern">
-						<h:inputText value="#{certificateManagementAction.searchPattern}"
-							size="30" maxlength="30" required="false" id="searchPatternId"
-							styleClass="searchParameters form-control"
-							style="width: 100%; float: left;"
-							alt="search parameters for certificate like email,CN,C,O" />
-						<h:outputText value=" " />
-					</div>
-					<div class="col-md-3">
-						<h:selectBooleanCheckbox
-							value="#{certificateManagementAction.searchObsoleteWarning}" />
-						<h:outputText style="margin-left:5px;"
-							value="#{msg['configuration.withObsoleteWarningOnly']}" />
-					</div>
-					<div class="col-md-3">
-						<h:commandButton value="#{msg['configuration.search']}"
-							style="float: left;"
-							action="#{certificateManagementAction.search}"
-							styleClass="btn btn-primary" />
-					</div>
-				</div>
-			</h:form>
-
-			<richext:spacer height="16" />
-
 			<h:form id="internalCertificatesFormId" style="width:100%;">
 				<h2 style="font-style: bold;">#{msg['configuration.internalGluuCertificates']}</h2>
 				<hr style="border: dotted 2px green;"></hr>

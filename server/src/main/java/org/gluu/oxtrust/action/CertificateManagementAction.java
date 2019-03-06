@@ -12,7 +12,6 @@ import java.io.Serializable;
 import java.nio.file.Files;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -23,13 +22,11 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.Size;
 
 import org.apache.commons.io.IOUtils;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.SSLService;
-import org.gluu.oxtrust.ldap.service.SvnSyncTimer;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.model.cert.TrustStoreCertificate;
 import org.gluu.oxtrust.service.asimba.AsimbaXMLConfigurationService;
@@ -63,9 +60,6 @@ public class CertificateManagementAction implements Serializable {
 	private FacesMessages facesMessages;
 
 	@Inject
-	private SvnSyncTimer svnSyncTimer;
-
-	@Inject
 	private AsimbaXMLConfigurationService asimbaXMLConfigurationService;
 
 	@Inject
@@ -78,11 +72,6 @@ public class CertificateManagementAction implements Serializable {
 	private List<X509CertificateShortInfo> trustStoreCertificates;
 
 	private List<X509CertificateShortInfo> internalCertificates;
-
-	@Size(min = 0, max = 30, message = "Length of search string should be less than 30")
-	private String searchPattern = "";
-
-	private boolean searchObsoleteWarning = false;
 
 	@PostConstruct
 	public void init() {
@@ -107,28 +96,9 @@ public class CertificateManagementAction implements Serializable {
 		updateTableView();
 	}
 
-	public String add() {
-		log.info("add");
-		// save
-		synchronized (svnSyncTimer) {
-			// TODO
-		}
-		refresh();
-		return OxTrustConstants.RESULT_SUCCESS;
-	}
-
 	public String cancel() {
 		log.info("cancel CertificateManagement");
-
 		facesMessages.add(FacesMessage.SEVERITY_INFO, "Certificates not updated");
-		return OxTrustConstants.RESULT_SUCCESS;
-	}
-
-	public String search() {
-		log.info("search() CertificateManagement searchPattern:", searchPattern);
-
-		// TODO
-
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
@@ -223,58 +193,6 @@ public class CertificateManagementAction implements Serializable {
 		Exception e) {
 			log.error("Load internalCertificates configuration exception", e);
 		}
-
-		try {
-			// check for warning and search pattern
-			final String searchPatternLC = this.searchPattern != null ? this.searchPattern.toLowerCase() : null;
-
-			Iterator<X509CertificateShortInfo> certsIterator = asimbaCertificates.iterator();
-			while (certsIterator.hasNext()) {
-				X509CertificateShortInfo cert = certsIterator.next();
-				// apply warning flag
-				if (searchObsoleteWarning && !cert.isWarning())
-					certsIterator.remove();
-				// apply search pattern
-				if (searchPatternLC != null && !searchPatternLC.isEmpty() && cert.getAlias() != null
-						&& cert.getIssuer() != null) {
-					if (!cert.getAlias().toLowerCase().contains(searchPatternLC)
-							&& !cert.getIssuer().toLowerCase().contains(searchPatternLC))
-						certsIterator.remove();
-				}
-			}
-
-			certsIterator = trustStoreCertificates.iterator();
-			while (certsIterator.hasNext()) {
-				X509CertificateShortInfo cert = certsIterator.next();
-				// apply warning flag
-				if (searchObsoleteWarning && !cert.isWarning())
-					certsIterator.remove();
-				// apply search pattern
-				if (searchPatternLC != null && !searchPatternLC.isEmpty() && cert.getAlias() != null
-						&& cert.getIssuer() != null) {
-					if (!cert.getAlias().toLowerCase().contains(searchPatternLC)
-							&& !cert.getIssuer().toLowerCase().contains(searchPatternLC))
-						certsIterator.remove();
-				}
-			}
-
-			certsIterator = internalCertificates.iterator();
-			while (certsIterator.hasNext()) {
-				X509CertificateShortInfo cert = certsIterator.next();
-				// apply warning flag
-				if (searchObsoleteWarning && !cert.isWarning())
-					certsIterator.remove();
-				// apply search pattern
-				if (searchPatternLC != null && !searchPatternLC.isEmpty() && cert.getAlias() != null
-						&& cert.getIssuer() != null) {
-					if (!cert.getAlias().toLowerCase().contains(searchPatternLC)
-							&& !cert.getIssuer().toLowerCase().contains(searchPatternLC))
-						certsIterator.remove();
-				}
-			}
-		} catch (Exception e) {
-			log.error("Update certificates status view exception", e);
-		}
 	}
 
 	/**
@@ -290,21 +208,6 @@ public class CertificateManagementAction implements Serializable {
 	 */
 	public void setAsimbaCertificates(List<X509CertificateShortInfo> asimbaCertificates) {
 		this.asimbaCertificates = asimbaCertificates;
-	}
-
-	/**
-	 * @return the searchPattern
-	 */
-	public String getSearchPattern() {
-		return searchPattern;
-	}
-
-	/**
-	 * @param searchPattern
-	 *            the searchPattern to set
-	 */
-	public void setSearchPattern(String searchPattern) {
-		this.searchPattern = searchPattern;
 	}
 
 	/**
@@ -335,21 +238,6 @@ public class CertificateManagementAction implements Serializable {
 	 */
 	public void setInternalCertificates(List<X509CertificateShortInfo> internalCertificates) {
 		this.internalCertificates = internalCertificates;
-	}
-
-	/**
-	 * @return the searchObsoleteWarning
-	 */
-	public boolean isSearchObsoleteWarning() {
-		return searchObsoleteWarning;
-	}
-
-	/**
-	 * @param searchObsoleteWarning
-	 *            the searchObsoleteWarning to set
-	 */
-	public void setSearchObsoleteWarning(boolean searchObsoleteWarning) {
-		this.searchObsoleteWarning = searchObsoleteWarning;
 	}
 
 	public void download(X509CertificateShortInfo cert) {
