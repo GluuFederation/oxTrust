@@ -6,7 +6,8 @@
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	template="/WEB-INF/incl/layout/newtemplate.xhtml">
 	<f:metadata>
-	        <f:viewAction action="#{permissionService.requestPermission('client', 'access')}" />
+		<f:viewAction
+			action="#{permissionService.requestPermission('client', 'access')}" />
 		<f:viewParam name="inum" value="#{updateClientAction.inum}" />
 		<f:viewAction action="#{conversationService.initConversation}" />
 		<f:viewAction action="#{updateClientAction.add}" onPostback="false" />
@@ -39,6 +40,7 @@
 					<ui:define name="controlButttons">
 						<div id="updateButtons">
 							<h:commandButton action="#{updateClientAction.save}"
+								onclick=" $('.persistClientAuthorizationSelectBox').prop('disabled', false); return true;"
 								styleClass="btn btn-primary" value="#{msg['client.add']}" />
 							<h:commandButton action="#{updateClientAction.cancel}"
 								immediate="true" style="margin-left:3px;"

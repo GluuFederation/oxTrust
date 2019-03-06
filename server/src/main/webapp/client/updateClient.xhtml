@@ -50,6 +50,7 @@
 				<ui:define name="controlButttons">
 					<div id="updateButtons">
 						<h:commandButton action="#{updateClientAction.save}"
+						    onclick=" $('.persistClientAuthorizationSelectBox').prop('disabled', false); return true;"
 							styleClass="btn btn-primary" value="#{msg['client.update']}" />
 						<h:commandButton action="#{updateClientAction.cancel}"
 							immediate="true" style="margin-left:3px;"
