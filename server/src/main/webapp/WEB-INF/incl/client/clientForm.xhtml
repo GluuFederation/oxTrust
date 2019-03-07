@@ -140,6 +140,7 @@
 												styleClass="btn btn-primary generateClientSecretButton"
 												value="Generate Client Secret" style="margin-left: 10px;"
 												action="#{_clientAction.generatePassword()}"
+												execute="@this"
 												oncomplete="return valuesDisplay(this);" />
 											<a4j:commandLink rendered="#{_new}"
 												style="margin-left: 10px;"
@@ -381,7 +382,8 @@
 												leftClass="col-sm-6" rightClass="col-sm-6">
 												<h:selectOneMenu id="persisteClientAuthorizationsId"
 													styleClass="col-sm-9 form-control rounded persistClientAuthorizationSelectBox"
-													value="#{_client.oxAuthPersistClientAuthorizations}">
+													value="#{_client.oxAuthPersistClientAuthorizations}"
+													onchange="togglePersistAuthorization()">
 													<f:selectItems
 														value="#{organizationService.javaBooleanSelectionTypes}"
 														var="_type" itemLabel="#{_type.displayName}" />
@@ -1137,15 +1139,17 @@
         function togglePersistAuthorization() {
             var trustedClientIdSelect = $("select[id='clientForm:oxAuthTrustedClientBox:trustedClientId']");
             var persisteClientAuthorizationsIdSelect = $("select[id='clientForm:persistClientAuthorizations:persisteClientAuthorizationsId']");
-
             if (trustedClientIdSelect.val() == "TRUE") {
-                $(".persistClientAuthorizationSelectBox option:contains(True)").attr('selected', 'selected');
-                $(".persistClientAuthorizationSelectBox").prop('disabled', 'disabled');
+                 $(".persistClientAuthorizationSelectBox option:contains(True)").attr('selected', 'selected');
+                 persisteClientAuthorizationsIdSelect.val("TRUE");
+                 $(".persistClientAuthorizationSelectBox").prop('disabled', 'disabled');
             }else{
                 $(".persistClientAuthorizationSelectBox").prop('disabled', false);
+            }  
+            if(trustedClientIdSelect.val() == "FALSE"){
+               $(".persistClientAuthorizationSelectBox").prop('disabled', false);
             }
-            
-            }
+         }
         function reload(){
             setTimeout(function(){ window.location.reload(); }, 2000);
         }
