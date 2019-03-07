@@ -202,8 +202,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 		if (GluuEntityType.FederationAggregate.equals(trustRelationship.getEntityType())) {
 			List<GluuMetadataSourceType> GluuMetadataSourceTypeSubList = new ArrayList<GluuMetadataSourceType>();
 			for (GluuMetadataSourceType enumType : GluuMetadataSourceType.values()) {
-				if (!GluuMetadataSourceType.GENERATE.equals(enumType)
-						&& !GluuMetadataSourceType.FEDERATION.equals(enumType)) {
+				if (!GluuMetadataSourceType.FEDERATION.equals(enumType)) {
 					GluuMetadataSourceTypeSubList.add(enumType);
 				}
 			}
@@ -305,7 +304,8 @@ public class UpdateTrustRelationshipAction implements Serializable {
 			return outcome;
 		} catch (Exception e) {
 			log.info("", e);
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Error during update operation, check the TR status and metadata.");
+			facesMessages.add(FacesMessage.SEVERITY_ERROR,
+					"Error during update operation, check the TR status and metadata.");
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 
@@ -325,25 +325,6 @@ public class UpdateTrustRelationshipAction implements Serializable {
 			oxTrustAuditService.audit("updateShib3Configuration:" + updateShib3Configuration);
 			oxTrustAuditService.audit("SpMetaDataSourceType:" + trustRelationship.getSpMetaDataSourceType());
 			switch (trustRelationship.getSpMetaDataSourceType()) {
-			case GENERATE:
-				try {
-					String certificate = getCertForGeneratedSP();
-					GluuStatus status = StringHelper.isNotEmpty(certificate) ? GluuStatus.ACTIVE : GluuStatus.INACTIVE;
-					this.trustRelationship.setStatus(status);
-					if (generateSpMetaDataFile(certificate)) {
-						setEntityId();
-					} else {
-						log.error("Failed to generate SP meta-data file");
-						return OxTrustConstants.RESULT_FAILURE;
-					}
-				} catch (IOException ex) {
-					log.error("Failed to download SP certificate", ex);
-					facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to download SP certificate");
-
-					return OxTrustConstants.RESULT_FAILURE;
-				}
-
-				break;
 			case FILE:
 				try {
 					if (saveSpMetaDataFileSourceTypeFile()) {
@@ -405,8 +386,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 			trustService.updateReleasedAttributes(this.trustRelationship);
 
 			// We call it from TR validation timer
-			if (trustRelationship.getSpMetaDataSourceType().equals(GluuMetadataSourceType.GENERATE)
-					|| (trustRelationship.getSpMetaDataSourceType().equals(GluuMetadataSourceType.FEDERATION))) {
+			if (trustRelationship.getSpMetaDataSourceType().equals(GluuMetadataSourceType.FEDERATION)) {
 				boolean federation = shibboleth3ConfService.isFederation(this.trustRelationship);
 				this.trustRelationship.setFederation(federation);
 			}

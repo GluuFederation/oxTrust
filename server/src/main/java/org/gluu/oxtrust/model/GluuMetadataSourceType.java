@@ -18,7 +18,7 @@ import org.gluu.site.ldap.persistence.annotation.LdapEnum;
  */
 public enum GluuMetadataSourceType implements LdapEnum {
 
-	NONE("none", "None") ,FILE("file", "File"), URI("uri", "URI"), GENERATE("generate", "Generate"), FEDERATION("federation", "Federation");
+	NONE("none", "None") ,FILE("file", "File"), URI("uri", "URI"), FEDERATION("federation", "Federation");
 
 	private final String value;
 	private final String displayName;
