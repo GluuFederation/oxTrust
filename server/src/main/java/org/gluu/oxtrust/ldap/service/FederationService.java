@@ -186,7 +186,6 @@ public class FederationService implements Serializable {
 		List<GluuMetadataSourceType> trTypes = Arrays.asList(GluuMetadataSourceType.values());
 		List<GluuMetadataSourceType> proposalTypes = new ArrayList<GluuMetadataSourceType>(trTypes);
 		proposalTypes.remove(GluuMetadataSourceType.FEDERATION);
-		proposalTypes.remove(GluuMetadataSourceType.GENERATE);
 		return proposalTypes.toArray(new GluuMetadataSourceType[] {});
 	}
 
