@@ -18,6 +18,9 @@ import org.gluu.site.ldap.persistence.annotation.LdapJsonObject;
 import org.gluu.site.ldap.persistence.annotation.LdapObjectClass;
 import org.xdi.model.GluuStatus;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 /**
  * Group
  * 
@@ -25,6 +28,7 @@ import org.xdi.model.GluuStatus;
  */
 @LdapEntry(sortBy = { "displayName" })
 @LdapObjectClass(values = { "top", "gluuOrganization" })
+@JsonInclude(Include.NON_NULL)
 public class GluuOrganization extends Entry implements Serializable {
 
 	private static final long serialVersionUID = -8284018077740582699L;

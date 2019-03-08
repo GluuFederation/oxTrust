@@ -12,6 +12,9 @@ import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
 import org.gluu.site.ldap.persistence.annotation.LdapEntry;
 import org.gluu.site.ldap.persistence.annotation.LdapObjectClass;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 /**
  * Sector Identifier
  *
@@ -20,6 +23,7 @@ import org.gluu.site.ldap.persistence.annotation.LdapObjectClass;
  */
 @LdapEntry(sortBy = { "description" })
 @LdapObjectClass(values = { "top", "oxSectorIdentifier" })
+@JsonInclude(Include.NON_NULL)
 public class OxAuthSectorIdentifier extends Entry implements Serializable {
 
 	private static final long serialVersionUID = -2812480357430436514L;

@@ -25,6 +25,9 @@ import org.gluu.site.ldap.persistence.annotation.LdapObjectClass;
 import org.xdi.oxauth.model.common.GrantType;
 import org.xdi.oxauth.model.common.ResponseType;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 /**
  * oxAuthClient
  *
@@ -35,6 +38,7 @@ import org.xdi.oxauth.model.common.ResponseType;
  */
 @LdapEntry(sortBy = { "displayName" })
 @LdapObjectClass(values = { "top", "oxAuthClient" })
+@JsonInclude(Include.NON_NULL)
 public class OxAuthClient extends Entry implements Serializable {
 
 	private static final long serialVersionUID = -2310140703735705346L;

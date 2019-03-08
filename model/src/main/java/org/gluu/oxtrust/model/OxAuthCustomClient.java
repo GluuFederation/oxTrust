@@ -15,8 +15,12 @@ import org.gluu.site.ldap.persistence.annotation.LdapAttributesList;
 import org.gluu.site.ldap.persistence.annotation.LdapEntry;
 import org.gluu.site.ldap.persistence.annotation.LdapObjectClass;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 @LdapEntry(sortBy = { "displayName" })
 @LdapObjectClass(values = { "top", "oxAuthClient"})
+@JsonInclude(Include.NON_NULL)
 public class OxAuthCustomClient extends CustomEntry implements Serializable {
 
 	/**
