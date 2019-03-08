@@ -8,6 +8,8 @@ public final class OxTrustApiConstants {
 	public static final String BASE_API_URL = "/api";
 	public static final String GROUP_MEMBERS = "/members";
 	public static final String CERTIFICATES = "/certificates";
+	public static final String TRUSTS = "/trusts";
+	public static final String FEDERATIONS = "/federations";
 	public static final String USERS = "/users";
 	public static final String SCOPES = "/scopes";
 	public static final String CLIENTS = "/clients";

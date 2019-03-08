@@ -85,7 +85,6 @@ public class AttributeService extends org.xdi.service.AttributeService {
 			attributeList = getAllPersonAtributesImpl(gluuUserRole, getAllAttributes());
 			cacheService.put(OxConstants.CACHE_ATTRIBUTE_NAME, key, attributeList);
 		}
-
 		return attributeList;
 	}
 
@@ -98,28 +97,25 @@ public class AttributeService extends org.xdi.service.AttributeService {
 	 */
 	private List<GluuAttribute> getAllPersonAtributesImpl(GluuUserRole gluuUserRole,
 			Collection<GluuAttribute> attributes) {
-		List<GluuAttribute> returnAttributeList = new ArrayList<GluuAttribute>();
-
+		List<GluuAttribute> attributeList = new ArrayList<GluuAttribute>();
 		String[] objectClassTypes = appConfiguration.getPersonObjectClassTypes();
 		log.debug("objectClassTypes={}", Arrays.toString(objectClassTypes));
 		for (GluuAttribute attribute : attributes) {
 			if (StringHelper.equalsIgnoreCase(attribute.getOrigin(), appConfiguration.getPersonCustomObjectClass())
 					&& (GluuUserRole.ADMIN == gluuUserRole)) {
 				attribute.setCustom(true);
-				returnAttributeList.add(attribute);
+				attributeList.add(attribute);
 				continue;
 			}
-
 			for (String objectClassType : objectClassTypes) {
 				if (attribute.getOrigin().equals(objectClassType)
 						&& ((attribute.allowViewBy(gluuUserRole) || attribute.allowEditBy(gluuUserRole)))) {
-					returnAttributeList.add(attribute);
+					attributeList.add(attribute);
 					break;
 				}
 			}
 		}
-
-		return returnAttributeList;
+		return attributeList;
 	}
 
 	/**
@@ -136,7 +132,6 @@ public class AttributeService extends org.xdi.service.AttributeService {
 			attributeList = getAllContactAtributesImpl(gluuUserRole, getAllAttributes());
 			cacheService.put(OxConstants.CACHE_ATTRIBUTE_NAME, key, attributeList);
 		}
-
 		return attributeList;
 	}
 
@@ -150,7 +145,6 @@ public class AttributeService extends org.xdi.service.AttributeService {
 	private List<GluuAttribute> getAllContactAtributesImpl(GluuUserRole gluuUserRole,
 			Collection<GluuAttribute> attributes) {
 		List<GluuAttribute> returnAttributeList = new ArrayList<GluuAttribute>();
-
 		String[] objectClassTypes = appConfiguration.getContactObjectClassTypes();
 		for (GluuAttribute attribute : attributes) {
 			if (StringHelper.equalsIgnoreCase(attribute.getOrigin(), appConfiguration.getPersonCustomObjectClass())
@@ -168,7 +162,6 @@ public class AttributeService extends org.xdi.service.AttributeService {
 				}
 			}
 		}
-
 		return returnAttributeList;
 	}
 
@@ -186,7 +179,6 @@ public class AttributeService extends org.xdi.service.AttributeService {
 			cacheService.put(OxConstants.CACHE_ATTRIBUTE_NAME, OxTrustConstants.CACHE_ATTRIBUTE_ORIGIN_KEY_LIST,
 					attributeOriginList);
 		}
-
 		return attributeOriginList;
 	}
 
@@ -199,19 +191,16 @@ public class AttributeService extends org.xdi.service.AttributeService {
 	 */
 	public List<String> getAllAttributeOrigins(Collection<GluuAttribute> attributes) {
 		List<String> attributeOriginList = new ArrayList<String>();
-
 		for (GluuAttribute attribute : attributes) {
 			String origin = attribute.getOrigin();
 			if (!attributeOriginList.contains(origin)) {
 				attributeOriginList.add(attribute.getOrigin());
 			}
 		}
-
 		String customOrigin = getCustomOrigin();
 		if (!attributeOriginList.contains(customOrigin)) {
 			attributeOriginList.add(customOrigin);
 		}
-
 		return attributeOriginList;
 	}
 
@@ -228,13 +217,10 @@ public class AttributeService extends org.xdi.service.AttributeService {
 	 */
 	public Map<String, String> getAllAttributeOriginDisplayNames(List<String> attributeOriginList,
 			String[] objectClassTypes, String[] objectClassDisplayNames) {
-		// Put displayNames = origins if user don't specify right mapping in
-		// properties file
 		Map<String, String> attributeOriginDisplayNameMap = new HashMap<String, String>();
 		for (String origin : attributeOriginList) {
 			attributeOriginDisplayNameMap.put(origin, origin);
 		}
-
 		if (objectClassTypes.length == objectClassDisplayNames.length) {
 			for (int i = 0; i < objectClassTypes.length; i++) {
 				String objectClass = objectClassTypes[i];
@@ -243,7 +229,6 @@ public class AttributeService extends org.xdi.service.AttributeService {
 				}
 			}
 		}
-
 		return attributeOriginDisplayNameMap;
 	}
 
@@ -263,11 +248,9 @@ public class AttributeService extends org.xdi.service.AttributeService {
 					attributeList.add(attribute);
 				}
 			}
-
 			cacheService.put(OxConstants.CACHE_ATTRIBUTE_NAME, OxTrustConstants.CACHE_ATTRIBUTE_CUSTOM_KEY_LIST,
 					attributeList);
 		}
-
 		return attributeList;
 	}
 
@@ -288,7 +271,6 @@ public class AttributeService extends org.xdi.service.AttributeService {
 				return attribute;
 			}
 		}
-
 		return null;
 	}
 
@@ -309,21 +291,15 @@ public class AttributeService extends org.xdi.service.AttributeService {
 	 * @return list of Attributes
 	 */
 	public List<GluuAttribute> getSCIMRelatedAttributesImpl(List<GluuAttribute> attributes) throws Exception {
-
 		List<GluuAttribute> result = new ArrayList<GluuAttribute>();
-
 		for (GluuAttribute attribute : attributes) {
-
 			boolean isEmpty = attribute.getOxSCIMCustomAttribute() == null;
-
 			if (!isEmpty) {
-
 				if (attribute.getOxSCIMCustomAttribute().getValue().equalsIgnoreCase("true")) {
 					result.add(attribute);
 				}
 			}
 		}
-
 		return result;
 	}
 
@@ -347,7 +323,6 @@ public class AttributeService extends org.xdi.service.AttributeService {
 	public void removeAttribute(String inum) {
 		GluuAttribute attribute = new GluuAttribute();
 		attribute.setDn(getDnForAttribute(inum));
-
 		removeAttribute(attribute);
 	}
 
@@ -371,13 +346,13 @@ public class AttributeService extends org.xdi.service.AttributeService {
 	 */
 	public void updateAttribute(GluuAttribute attribute) {
 		ldapEntryManager.merge(attribute);
-
 		event.select(new EventTypeQualifier(Events.EVENT_CLEAR_ATTRIBUTES)).fire(Events.EVENT_CLEAR_ATTRIBUTES);
 	}
 
 	/**
 	 * Clear attributes cache after receiving event that attributes were changed
 	 */
+	@SuppressWarnings("deprecation")
 	public void clearAttributesCache(@Observes @EventType(Events.EVENT_CLEAR_ATTRIBUTES) Events event) {
 		log.debug("Removing attributes from cache");
 		cacheService.removeAll(OxConstants.CACHE_ATTRIBUTE_NAME);
@@ -566,7 +541,6 @@ public class AttributeService extends org.xdi.service.AttributeService {
 			if (tmpAttribute == null) {
 				log.warn("Failed to find attribute '{}' metadata", personAttribute.getName());
 			}
-
 			personAttribute.setMetadata(tmpAttribute);
 		}
 	}
@@ -585,7 +559,6 @@ public class AttributeService extends org.xdi.service.AttributeService {
 		if (attributeDNs == null) {
 			return customAttributes;
 		}
-
 		for (String releasedAttributeDn : attributeDNs) {
 			GluuAttribute attribute = attributesByDNs.get(releasedAttributeDn);
 			if (attribute != null) {
@@ -594,7 +567,6 @@ public class AttributeService extends org.xdi.service.AttributeService {
 				customAttributes.add(customAttribute);
 			}
 		}
-
 		return customAttributes;
 	}
 
@@ -603,7 +575,6 @@ public class AttributeService extends org.xdi.service.AttributeService {
 		for (GluuAttribute attribute : attributes) {
 			attributeDns.put(attribute.getDn(), attribute);
 		}
-
 		return attributeDns;
 	}
 
@@ -640,7 +611,6 @@ public class AttributeService extends org.xdi.service.AttributeService {
 			cacheService.put(OxConstants.CACHE_ACTIVE_ATTRIBUTE_NAME, OxConstants.CACHE_ATTRIBUTE_KEY_LIST,
 					activeAttributeList);
 		}
-
 		return activeAttributeList;
 	}
 
@@ -663,7 +633,6 @@ public class AttributeService extends org.xdi.service.AttributeService {
 				returnAttributeList.add(attribute);
 				continue;
 			}
-
 			for (String objectClassType : objectClassTypes) {
 				if (attribute.getOrigin().equals(objectClassType)
 						&& ((attribute.allowViewBy(gluuUserRole) || attribute.allowEditBy(gluuUserRole)))) {
@@ -673,7 +642,6 @@ public class AttributeService extends org.xdi.service.AttributeService {
 				}
 			}
 		}
-
 		return returnAttributeList;
 	}
 
@@ -719,11 +687,7 @@ public class AttributeService extends org.xdi.service.AttributeService {
 		Filter searchFilter = Filter.createORFilter(displayNameFilter, descriptionFilter, inameFilter);
 		Filter originFilter = Filter.createORFilter(originFilters.toArray(new Filter[0]));
 		Filter filter = Filter.createANDFilter(searchFilter, originFilter);
-
-		List<GluuAttribute> result = ldapEntryManager.findEntries(getDnForAttribute(null), GluuAttribute.class, filter,
-				sizeLimit);
-
-		return result;
+		return ldapEntryManager.findEntries(getDnForAttribute(null), GluuAttribute.class, filter, sizeLimit);
 	}
 
 	public GluuAttribute getAttributeByDn(String Dn) throws Exception {

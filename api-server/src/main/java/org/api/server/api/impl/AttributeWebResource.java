@@ -193,4 +193,9 @@ public class AttributeWebResource extends BaseWebResource {
 		}
 	}
 
+	@DELETE
+	public Response deleteAttributes() {
+		return Response.status(Response.Status.UNAUTHORIZED).build();
+	}
+
 }

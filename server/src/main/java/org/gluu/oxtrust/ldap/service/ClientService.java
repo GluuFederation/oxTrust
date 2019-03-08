@@ -92,7 +92,6 @@ public class ClientService implements Serializable {
 		OxAuthClient result = null;
 		try {
 			result = ldapEntryManager.find(OxAuthClient.class, getDnForClient(inum), ldapReturnAttributes);
-
 			String encodedClientSecret = result.getEncodedClientSecret();
 			if (StringHelper.isNotEmpty(encodedClientSecret)) {
 				String clientSecret = encryptionService.decrypt(encodedClientSecret);
@@ -112,10 +111,7 @@ public class ClientService implements Serializable {
 	 * @return client
 	 */
 	public OxAuthCustomClient getClientByInumCustom(String inum) {
-
-		OxAuthCustomClient result = ldapEntryManager.find(OxAuthCustomClient.class, getDnForClient(inum));
-
-		return result;
+		return ldapEntryManager.find(OxAuthCustomClient.class, getDnForClient(inum));
 	}
 
 	/**
@@ -131,7 +127,6 @@ public class ClientService implements Serializable {
 		if (StringHelper.isEmpty(inum)) {
 			return String.format("ou=clients,%s", orgDn);
 		}
-
 		return String.format("inum=%s,ou=clients,%s", inum, orgDn);
 	}
 
@@ -209,11 +204,7 @@ public class ClientService implements Serializable {
 		Filter inameFilter = Filter.createSubstringFilter(OxTrustConstants.iname, null, targetArray, null);
 		Filter inumFilter = Filter.createSubstringFilter(OxTrustConstants.inum, null, targetArray, null);
 		Filter searchFilter = Filter.createORFilter(displayNameFilter, descriptionFilter, inameFilter, inumFilter);
-
-		List<OxAuthClient> result = ldapEntryManager.findEntries(getDnForClient(null), OxAuthClient.class, searchFilter,
-				sizeLimit);
-
-		return result;
+		return ldapEntryManager.findEntries(getDnForClient(null), OxAuthClient.class, searchFilter, sizeLimit);
 	}
 
 	public List<OxAuthClient> getAllClients(int sizeLimit) {
@@ -231,9 +222,7 @@ public class ClientService implements Serializable {
 	 */
 
 	public OxAuthClient getClientByDn(String Dn) {
-		OxAuthClient result = ldapEntryManager.find(OxAuthClient.class, Dn);
-
-		return result;
+		return ldapEntryManager.find(OxAuthClient.class, Dn);
 	}
 
 	/**
@@ -243,9 +232,7 @@ public class ClientService implements Serializable {
 	 */
 
 	public OxAuthCustomClient getClientByDnCustom(String Dn) {
-		OxAuthCustomClient result = ldapEntryManager.find(OxAuthCustomClient.class, Dn);
-
-		return result;
+		return ldapEntryManager.find(OxAuthCustomClient.class, Dn);
 	}
 
 	/**
@@ -264,13 +251,10 @@ public class ClientService implements Serializable {
 		OxAuthClient client = new OxAuthClient();
 		client.setBaseDn(getDnForClient(null));
 		client.setIname(iname);
-
 		List<OxAuthClient> clients = ldapEntryManager.findEntries(client);
-
 		if ((clients != null) && (clients.size() > 0)) {
 			return clients.get(0);
 		}
-
 		return null;
 	}
 
@@ -285,9 +269,7 @@ public class ClientService implements Serializable {
 		OxAuthClient client = new OxAuthClient();
 		client.setBaseDn(getDnForClient(null));
 		client.setDisplayName(DisplayName);
-
 		List<OxAuthClient> clients = ldapEntryManager.findEntries(client);
-
 		if ((clients != null) && (clients.size() > 0)) {
 			return clients.get(0);
 		}
@@ -310,28 +292,16 @@ public class ClientService implements Serializable {
 			if (name.equalsIgnoreCase("inum")) {
 				return getClientByInumCustom(value);
 			}
-
-			logger.info("creating a new instance of OxAuthCustomClient ");
 			OxAuthCustomClient client = new OxAuthCustomClient();
-			logger.info("getting dn for client ");
 			client.setBaseDn(getDnForClient(null));
-			logger.info("name ", name);
-			logger.info("value ", value);
-			logger.info("setting attribute value ");
 			client.setAttribute(name, value);
-
-			logger.info("finding entries ");
 			List<OxAuthCustomClient> clients = ldapEntryManager.findEntries(client);
-
 			if ((clients != null) && (clients.size() > 0)) {
-				logger.info("entry found ");
 				return clients.get(0);
 			}
-			logger.info("no entry ");
 			return null;
 		} catch (Exception ex) {
-			logger.error("an error occured ", ex);
-
+			logger.info("", ex);
 			return null;
 		}
 
@@ -411,7 +381,7 @@ public class ClientService implements Serializable {
 		try {
 			result = ldapEntryManager.find(OxAuthClient.class, getDnForClient(inum));
 		} catch (Exception ex) {
-			logger.debug("Failed to load client entry", ex);
+			logger.error("Failed to load client entry", ex);
 		}
 		return result;
 	}
