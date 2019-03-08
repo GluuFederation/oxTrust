@@ -6,18 +6,26 @@ public final class OxTrustApiConstants {
 	}
 
 	public static final String BASE_API_URL = "/api";
-	public static final String CLIENTS = "/clients";
-	public static final String GROUPS = "/groups";
 	public static final String GROUP_MEMBERS = "/members";
-	public static final String PEOPLE = "/people";
+	public static final String CERTIFICATES = "/certificates";
+	public static final String TRUSTS = "/trusts";
+	public static final String FEDERATIONS = "/federations";
+	public static final String USERS = "/users";
 	public static final String SCOPES = "/scopes";
+	public static final String CLIENTS = "/clients";
+	public static final String ATTRIBUTES = "/attributes";
+	public static final String GROUPS = "/groups";
 	public static final String CLAIMS = "/claims";
 	public static final String SECTORS = "/sectoridentifiers";
-	public static final String ATTRIBUTES = "/attributes";
 	public static final String SEARCH = "/search";
 	public static final String ACTIVE = "/active";
 	public static final String INACTIVE = "/inactive";
+	public static final String TEST = "/test";
 	public static final String CONFIGURATION = "/configuration";
+	public static final String SMTP = "/smtp";
+	public static final String OXTRUST_SETTINGS = "/settings";
+	public static final String OXTRUST_JSONSETTINGS = "/oxtrust/settings";
+	public static final String OXAUTH_JSONSETTINGS = "/oxauth/settings";
 	public static final String STATUS = "/status";
 	public static final String UMA = "/uma";
 	public static final String RESOURCES = "/resources";

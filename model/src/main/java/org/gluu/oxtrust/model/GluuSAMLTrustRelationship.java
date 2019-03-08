@@ -25,8 +25,12 @@ import org.gluu.site.ldap.persistence.annotation.LdapEntry;
 import org.gluu.site.ldap.persistence.annotation.LdapObjectClass;
 import org.xdi.model.GluuStatus;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 @LdapEntry
 @LdapObjectClass(values = { "top", "gluuSAMLconfig" })
+@JsonInclude(Include.NON_NULL)
 public class GluuSAMLTrustRelationship extends InumEntry implements Serializable {
 
 	private static final long serialVersionUID = 5907443836820485369L;

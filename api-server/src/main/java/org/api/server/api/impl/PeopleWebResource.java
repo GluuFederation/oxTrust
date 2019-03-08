@@ -1,10 +1,11 @@
-package org.gluu.oxtrust.api.users;
+package org.api.server.api.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
@@ -20,7 +21,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.gluu.oxtrust.api.GluuPersonApi;
-import org.gluu.oxtrust.api.openidconnect.BaseWebResource;
 import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.util.OxTrustApiConstants;
@@ -28,9 +28,10 @@ import org.slf4j.Logger;
 
 import com.wordnik.swagger.annotations.ApiOperation;
 
-@Path(OxTrustApiConstants.BASE_API_URL + OxTrustApiConstants.PEOPLE)
+@Path(OxTrustApiConstants.BASE_API_URL + OxTrustApiConstants.USERS)
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
+@ApplicationScoped
 public class PeopleWebResource extends BaseWebResource {
 
 	@Inject
@@ -45,8 +46,8 @@ public class PeopleWebResource extends BaseWebResource {
 	@GET
 	@ApiOperation(value = "Get people")
 	public Response listPeople() {
-		log("Get people");
 		try {
+			log(logger, "Get people");
 			List<GluuPersonApi> groups = convert(personService.findAllPersons(null));
 			return Response.ok(groups).build();
 		} catch (Exception e) {
@@ -59,8 +60,8 @@ public class PeopleWebResource extends BaseWebResource {
 	@Path(OxTrustApiConstants.SEARCH)
 	@ApiOperation(value = "Search person")
 	public Response searchGroups(@QueryParam(OxTrustApiConstants.SEARCH_PATTERN) @NotNull String pattern) {
-		log("Search person with pattern= " + pattern);
 		try {
+			log(logger, "Search person with pattern= " + pattern);
 			List<GluuCustomPerson> groups = personService.searchPersons(pattern);
 			return Response.ok(convert(groups)).build();
 		} catch (Exception e) {
@@ -73,7 +74,7 @@ public class PeopleWebResource extends BaseWebResource {
 	@Path(OxTrustApiConstants.INUM_PARAM_PATH)
 	@ApiOperation(value = "Get a person by inum")
 	public Response getPersonByInum(@PathParam(OxTrustApiConstants.INUM) @NotNull String inum) {
-		log("Get person " + inum);
+		log(logger, "Get person " + inum);
 		try {
 			Objects.requireNonNull(inum, "inum should not be null");
 			GluuCustomPerson person = personService.getPersonByInum(inum);
@@ -91,7 +92,7 @@ public class PeopleWebResource extends BaseWebResource {
 	@POST
 	@ApiOperation(value = "Add a person")
 	public Response createPerson(GluuPersonApi person) {
-		log("Adding person " + person.getDisplayName());
+		log(logger, "Adding person " + person.getDisplayName());
 		try {
 			Objects.requireNonNull(person, "Attempt to create null person");
 			GluuCustomPerson gluuPerson = copyAttributes(person);
@@ -110,7 +111,7 @@ public class PeopleWebResource extends BaseWebResource {
 	@ApiOperation(value = "Update a person")
 	public Response updateGroup(GluuPersonApi person) {
 		String inum = person.getInum();
-		log("Update group " + inum);
+		log(logger, "Update group " + inum);
 		try {
 			Objects.requireNonNull(inum, "inum should not be null");
 			Objects.requireNonNull(person, "Attempt to update null person");
@@ -135,7 +136,7 @@ public class PeopleWebResource extends BaseWebResource {
 	@Path(OxTrustApiConstants.INUM_PARAM_PATH)
 	@ApiOperation(value = "Delete a person")
 	public Response deletePerson(@PathParam(OxTrustApiConstants.INUM) @NotNull String inum) {
-		log("Delete person having inum " + inum);
+		log(logger, "Delete person having inum " + inum);
 		try {
 			GluuCustomPerson existingPerson = personService.getPersonByInum(inum);
 			if (existingPerson != null) {
@@ -161,10 +162,6 @@ public class PeopleWebResource extends BaseWebResource {
 			result.add(new GluuPersonApi(p));
 		}
 		return result;
-	}
-
-	private void log(String message) {
-		logger.debug("#################Request: " + message);
 	}
 
 	private GluuCustomPerson copyAttributes(GluuPersonApi person) {

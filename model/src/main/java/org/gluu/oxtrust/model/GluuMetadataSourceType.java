@@ -18,7 +18,7 @@ import org.gluu.site.ldap.persistence.annotation.LdapEnum;
  */
 public enum GluuMetadataSourceType implements LdapEnum {
 
-	NONE("none", "None") ,FILE("file", "File"), URI("uri", "URI"), GENERATE("generate", "Generate"), FEDERATION("federation", "Federation");
+	NONE("none", "None"), FILE("file", "File"), URI("uri", "URI"), FEDERATION("federation", "Federation");
 
 	private final String value;
 	private final String displayName;
@@ -35,7 +35,7 @@ public enum GluuMetadataSourceType implements LdapEnum {
 		this.displayName = displayName;
 	}
 
-        @Override
+	@Override
 	public String getValue() {
 		return value;
 	}
@@ -48,7 +48,7 @@ public enum GluuMetadataSourceType implements LdapEnum {
 		return mapByValues.get(value);
 	}
 
-        @Override
+	@Override
 	public Enum<? extends LdapEnum> resolveByValue(String value) {
 		return getByValue(value);
 	}

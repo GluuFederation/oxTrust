@@ -12,7 +12,6 @@ import java.util.Set;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.ext.Provider;
 
-import org.gluu.oxtrust.api.attributes.AttributeWebResource;
 import org.gluu.oxtrust.ws.rs.scim2.BulkWebService;
 import org.gluu.oxtrust.ws.rs.scim2.GroupWebService;
 import org.gluu.oxtrust.ws.rs.scim2.ResourceTypeWS;
@@ -30,20 +29,16 @@ import org.gluu.oxtrust.ws.rs.scim2.UserWebService;
 @Provider
 public class TestResteasyInitializer extends Application {
 
-    @Override
-    public Set<Class<?>> getClasses() {
-        HashSet<Class<?>> classes = new HashSet<Class<?>>();
-        classes.add(UserWebService.class);
-        classes.add(GroupWebService.class);
-        classes.add(BulkWebService.class);
-        classes.add(ResourceTypeWS.class);
-        classes.add(SchemaWebService.class);
-        classes.add(ServiceProviderConfigWS.class);
-
-        // API
-        classes.add(AttributeWebResource.class);
-
-        return classes;
-    }
+	@Override
+	public Set<Class<?>> getClasses() {
+		HashSet<Class<?>> classes = new HashSet<Class<?>>();
+		classes.add(UserWebService.class);
+		classes.add(GroupWebService.class);
+		classes.add(BulkWebService.class);
+		classes.add(ResourceTypeWS.class);
+		classes.add(SchemaWebService.class);
+		classes.add(ServiceProviderConfigWS.class);
+		return classes;
+	}
 
 }

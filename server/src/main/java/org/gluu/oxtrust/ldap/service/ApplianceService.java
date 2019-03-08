@@ -41,14 +41,14 @@ public class ApplianceService implements Serializable {
 	private Logger log;
 
 	@Inject
-	private PersistenceEntryManager ldapEntryManager;	
+	private PersistenceEntryManager ldapEntryManager;
 
 	@Inject
 	private OrganizationService organizationService;
 
 	@Inject
 	private AppConfiguration appConfiguration;
-	
+
 	@Inject
 	private EncryptionService encryptionService;
 
@@ -82,9 +82,7 @@ public class ApplianceService implements Serializable {
 	 * @return True if appliance with specified attributes exist
 	 */
 	public boolean containsAppliance(GluuAppliance appliance) {
-		boolean result = ldapEntryManager.contains(appliance);
-
-		return result;
+		return ldapEntryManager.contains(appliance);
 	}
 
 	/**
@@ -96,10 +94,7 @@ public class ApplianceService implements Serializable {
 	 * @throws Exception
 	 */
 	public GluuAppliance getApplianceByInum(String inum) {
-		GluuAppliance result = ldapEntryManager.find(GluuAppliance.class, getDnForAppliance(inum));
-
-		return result;
-
+		return ldapEntryManager.find(GluuAppliance.class, getDnForAppliance(inum));
 	}
 
 	/**
@@ -110,18 +105,17 @@ public class ApplianceService implements Serializable {
 	 */
 	public GluuAppliance getAppliance(String[] returnAttributes) {
 		GluuAppliance result = null;
-		if(ldapEntryManager.contains(GluuAppliance.class, getDnForAppliance(getApplianceInum()))){
-			result = ldapEntryManager.find(GluuAppliance.class, getDnForAppliance(getApplianceInum()), returnAttributes);
-		}else{
+		if (ldapEntryManager.contains(GluuAppliance.class, getDnForAppliance(getApplianceInum()))) {
+			result = ldapEntryManager.find(GluuAppliance.class, getDnForAppliance(getApplianceInum()),
+					returnAttributes);
+		} else {
 			result = new GluuAppliance();
 			result.setInum(getApplianceInum());
 			result.setDn(getDnForAppliance(getApplianceInum()));
 
 			ldapEntryManager.persist(result);
-			
 		}
 		return result;
-
 	}
 
 	/**
@@ -132,9 +126,8 @@ public class ApplianceService implements Serializable {
 	 */
 	public GluuAppliance getAppliance() {
 		return getAppliance(null);
-
 	}
-	
+
 	/**
 	 * Get all appliances
 	 * 
@@ -142,9 +135,7 @@ public class ApplianceService implements Serializable {
 	 * @throws Exception
 	 */
 	public List<GluuAppliance> getAppliances() {
-		List<GluuAppliance> applianceList = ldapEntryManager.findEntries(getDnForAppliance(null), GluuAppliance.class, null);
-
-		return applianceList;
+		return ldapEntryManager.findEntries(getDnForAppliance(null), GluuAppliance.class, null);
 	}
 
 	/**
@@ -152,8 +143,8 @@ public class ApplianceService implements Serializable {
 	 * 
 	 * @param inum
 	 *            Inum
-	 * @return DN string for specified appliance or DN for appliances branch if
-	 *         inum is null
+	 * @return DN string for specified appliance or DN for appliances branch if inum
+	 *         is null
 	 * @throws Exception
 	 */
 	public String getDnForAppliance(String inum) {
@@ -161,7 +152,6 @@ public class ApplianceService implements Serializable {
 		if (StringHelper.isEmpty(inum)) {
 			return String.format("ou=appliances,%s", baseDn);
 		}
-
 		return String.format("inum=%s,ou=appliances,%s", inum, baseDn);
 	}
 
@@ -190,7 +180,6 @@ public class ApplianceService implements Serializable {
 			log.info("Removing " + triggerFileName);
 			File triggerFile = new File(triggerFileName);
 			if (triggerFile.isFile()) {
-
 				log.debug("Result of deletion is : " + triggerFile.delete());
 			} else {
 				log.error(triggerFileName + " does not exist or not file");
@@ -199,8 +188,8 @@ public class ApplianceService implements Serializable {
 	}
 
 	public AuthenticationScriptUsageType[] getScriptUsageTypes() {
-		return new AuthenticationScriptUsageType[] { AuthenticationScriptUsageType.INTERACTIVE, AuthenticationScriptUsageType.SERVICE,
-				AuthenticationScriptUsageType.BOTH };
+		return new AuthenticationScriptUsageType[] { AuthenticationScriptUsageType.INTERACTIVE,
+				AuthenticationScriptUsageType.SERVICE, AuthenticationScriptUsageType.BOTH };
 	}
 
 	public ProgrammingLanguage[] getProgrammingLanguages() {
@@ -208,20 +197,22 @@ public class ApplianceService implements Serializable {
 	}
 
 	public ScriptLocationType[] getLocationTypes() {
-		return new ScriptLocationType[] { ScriptLocationType.LDAP,  ScriptLocationType.FILE };
+		return new ScriptLocationType[] { ScriptLocationType.LDAP, ScriptLocationType.FILE };
 	}
 
 	public CustomScriptType[] getCustomScriptTypes() {
-		return new CustomScriptType[] { CustomScriptType.PERSON_AUTHENTICATION, CustomScriptType.CONSENT_GATHERING, CustomScriptType.UPDATE_USER,
-				CustomScriptType.USER_REGISTRATION, CustomScriptType.CLIENT_REGISTRATION, CustomScriptType.DYNAMIC_SCOPE, CustomScriptType.ID_GENERATOR,
-				CustomScriptType.CACHE_REFRESH, CustomScriptType.UMA_RPT_POLICY, CustomScriptType.UMA_CLAIMS_GATHERING, CustomScriptType.INTROSPECTION, CustomScriptType.RESOURCE_OWNER_PASSWORD_CREDENTIALS, CustomScriptType.APPLICATION_SESSION, CustomScriptType.SCIM };
+		return new CustomScriptType[] { CustomScriptType.PERSON_AUTHENTICATION, CustomScriptType.CONSENT_GATHERING,
+				CustomScriptType.UPDATE_USER, CustomScriptType.USER_REGISTRATION, CustomScriptType.CLIENT_REGISTRATION,
+				CustomScriptType.DYNAMIC_SCOPE, CustomScriptType.ID_GENERATOR, CustomScriptType.CACHE_REFRESH,
+				CustomScriptType.UMA_RPT_POLICY, CustomScriptType.UMA_CLAIMS_GATHERING, CustomScriptType.INTROSPECTION,
+				CustomScriptType.RESOURCE_OWNER_PASSWORD_CREDENTIALS, CustomScriptType.APPLICATION_SESSION,
+				CustomScriptType.SCIM };
 	}
 
 	public void encryptedSmtpPassword(SmtpConfiguration smtpConfiguration) {
 		if (smtpConfiguration == null) {
 			return;
 		}
-
 		String password = smtpConfiguration.getPasswordDecrypted();
 		if (StringHelper.isNotEmpty(password)) {
 			try {
@@ -237,7 +228,6 @@ public class ApplianceService implements Serializable {
 		if (smtpConfiguration == null) {
 			return;
 		}
-
 		String password = smtpConfiguration.getPassword();
 		if (StringHelper.isNotEmpty(password)) {
 			try {

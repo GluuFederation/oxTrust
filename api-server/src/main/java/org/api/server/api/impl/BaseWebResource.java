@@ -8,7 +8,11 @@ public class BaseWebResource {
 	}
 
 	public void log(Logger logger, Exception e) {
-		logger.debug("", e);
+		logger.debug("++++++++++API-ERROR", e);
+	}
+
+	public void log(Logger logger, String message) {
+		logger.info(message);
 	}
 
 }

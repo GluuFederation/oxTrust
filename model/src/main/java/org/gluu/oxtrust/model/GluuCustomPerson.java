@@ -20,6 +20,9 @@ import org.gluu.site.ldap.persistence.annotation.LdapJsonObject;
 import org.gluu.site.ldap.persistence.annotation.LdapObjectClass;
 import org.xdi.model.GluuStatus;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 /**
  * Person
  *
@@ -27,6 +30,7 @@ import org.xdi.model.GluuStatus;
  */
 @LdapEntry(sortBy = { "displayName" })
 @LdapObjectClass(values = { "top", "gluuPerson"})
+@JsonInclude(Include.NON_NULL)
 public class GluuCustomPerson extends User 
                                     implements Serializable {
 

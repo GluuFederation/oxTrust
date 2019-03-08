@@ -36,7 +36,8 @@ public class AuthOrganizationService implements Serializable {
 
 	private static final long serialVersionUID = 5537567020929600777L;
 
-	@Inject @Named(ApplicationFactory.PERSISTENCE_ENTRY_MANAGER_NAME)
+	@Inject
+	@Named(ApplicationFactory.PERSISTENCE_ENTRY_MANAGER_NAME)
 	private PersistenceEntryManager ldapEntryManager;
 
 	@Inject
@@ -44,7 +45,6 @@ public class AuthOrganizationService implements Serializable {
 
 	@Inject
 	private AppConfiguration appConfiguration;
-	
 
 	/**
 	 * Update organization entry
@@ -78,9 +78,7 @@ public class AuthOrganizationService implements Serializable {
 		if (organization == null) {
 			organization = ldapEntryManager.find(GluuOrganization.class, getDnForOrganization(inum));
 			cacheService.put(OxConstants.CACHE_APPLICATION_NAME, key, organization);
-
 		}
-
 		return organization;
 	}
 
@@ -96,7 +94,8 @@ public class AuthOrganizationService implements Serializable {
 
 		String key = OxTrustConstants.CACHE_ORGANIZATION_CUSTOM_MESSAGE_KEY + "_" + organization.getInum();
 		@SuppressWarnings("unchecked")
-		Map<String, String> organizationCustomMessage = (Map<String, String>) cacheService.get(OxConstants.CACHE_APPLICATION_NAME, key);
+		Map<String, String> organizationCustomMessage = (Map<String, String>) cacheService
+				.get(OxConstants.CACHE_APPLICATION_NAME, key);
 		if (organizationCustomMessage == null) {
 			organizationCustomMessage = new HashMap<String, String>();
 
@@ -175,12 +174,7 @@ public class AuthOrganizationService implements Serializable {
 	}
 
 	public boolean isAllowPersonModification() throws Exception {
-		return appConfiguration.isAllowPersonModification(); // todo &&
-																		// applianceService.getAppliance().getManageIdentityPermission()
-																		// !=
-																		// null
-																		// &&
-																		// applianceService.getAppliance().getProfileManagment().isBooleanValue();
+		return appConfiguration.isAllowPersonModification();
 	}
 
 	public String getOrganizationInum() throws Exception {
