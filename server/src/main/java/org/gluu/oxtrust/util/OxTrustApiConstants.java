@@ -14,6 +14,7 @@ public final class OxTrustApiConstants {
 	public static final String SCOPES = "/scopes";
 	public static final String CLIENTS = "/clients";
 	public static final String ATTRIBUTES = "/attributes";
+	public static final String ACRS = "/acrs";
 	public static final String GROUPS = "/groups";
 	public static final String CLAIMS = "/claims";
 	public static final String SECTORS = "/sectoridentifiers";
@@ -22,6 +23,7 @@ public final class OxTrustApiConstants {
 	public static final String INACTIVE = "/inactive";
 	public static final String TEST = "/test";
 	public static final String CONFIGURATION = "/configuration";
+	public static final String STRATEGIES = "/strategies";
 	public static final String SMTP = "/smtp";
 	public static final String OXTRUST_SETTINGS = "/settings";
 	public static final String OXTRUST_JSONSETTINGS = "/oxtrust/settings";

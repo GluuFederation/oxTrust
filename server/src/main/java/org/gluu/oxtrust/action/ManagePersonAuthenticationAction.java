@@ -108,8 +108,8 @@ public class ManagePersonAuthenticationAction
 
 	private String authenticationMode = "auth_ldap_server";
 	private String oxTrustAuthenticationMode;
-	
-	private String recaptchaSiteKey ;
+
+	private String recaptchaSiteKey;
 	private String recaptchaSecretKey;
 
 	private List<String> customAuthenticationConfigNames;
@@ -130,13 +130,12 @@ public class ManagePersonAuthenticationAction
 	private LdapOxPassportConfiguration ldapOxPassportConfiguration;
 
 	private List<PassportConfiguration> ldapPassportConfigurations;
-	
+
 	@Inject
 	private JsonConfigurationService jsonConfigurationService;
 
 	private AppConfiguration oxTrustappConfiguration;
 
-	/*
 	public List<PassportConfiguration> getLdapPassportConfigurations() {
 		for (PassportConfiguration configuration : ldapPassportConfigurations) {
 			if (configuration.getFieldset() == null) {
@@ -144,7 +143,7 @@ public class ManagePersonAuthenticationAction
 			}
 		}
 		return ldapPassportConfigurations;
-	}*/
+	}
 
 	public void setLdapPassportConfigurations(List<PassportConfiguration> ldapPassportConfigurations) {
 		this.ldapPassportConfigurations = ldapPassportConfigurations;
@@ -154,8 +153,8 @@ public class ManagePersonAuthenticationAction
 		String outcome = modifyImpl();
 
 		if (OxTrustConstants.RESULT_FAILURE.equals(outcome)) {
-			facesMessages.add(FacesMessage.SEVERITY_ERROR,
-					facesMessages.evalResourceAsString("#{msg['configuration.manageAuthentication.failToPrepareUpdate']}"));
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, facesMessages
+					.evalResourceAsString("#{msg['configuration.manageAuthentication.failToPrepareUpdate']}"));
 			conversationService.endConversation();
 		}
 
@@ -190,7 +189,7 @@ public class ManagePersonAuthenticationAction
 			this.authenticationMode = appliance.getAuthenticationMode();
 			this.oxTrustAuthenticationMode = appliance.getOxTrustAuthenticationMode();
 
-			//ldapOxPassportConfiguration = passportService.loadConfigurationFromLdap();
+			ldapOxPassportConfiguration = passportService.loadConfigurationFromLdap();
 			if (ldapOxPassportConfiguration == null) {
 				ldapOxPassportConfiguration = new LdapOxPassportConfiguration();
 			}
@@ -240,9 +239,9 @@ public class ManagePersonAuthenticationAction
 
 			applianceService.updateAppliance(appliance);
 
-			//ldapOxPassportConfiguration.setPassportConfigurations(ldapPassportConfigurations);
+			ldapOxPassportConfiguration.setPassportConfigurations(ldapPassportConfigurations);
 
-			//passportService.updateLdapOxPassportConfiguration(ldapOxPassportConfiguration);
+			passportService.updateLdapOxPassportConfiguration(ldapOxPassportConfiguration);
 		} catch (BasePersistenceException ex) {
 			log.error("Failed to update appliance configuration", ex);
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update appliance");
@@ -251,7 +250,9 @@ public class ManagePersonAuthenticationAction
 
 		reset();
 
-		facesMessages.add(FacesMessage.SEVERITY_INFO, facesMessages.evalResourceAsString("#{msg['configuration.manageAuthentication.updateSucceed']}"));
+		facesMessages.add(FacesMessage.SEVERITY_INFO,
+				facesMessages.evalResourceAsString("#{msg['configuration.manageAuthentication.updateSucceed']}"));
+
 		conversationService.endConversation();
 
 		return OxTrustConstants.RESULT_SUCCESS;
@@ -275,7 +276,8 @@ public class ManagePersonAuthenticationAction
 	}
 
 	public String cancel() {
-		facesMessages.add(FacesMessage.SEVERITY_INFO, facesMessages.evalResourceAsString("#{msg['configuration.manageAuthentication.updateFailed']}"));
+		facesMessages.add(FacesMessage.SEVERITY_INFO,
+				facesMessages.evalResourceAsString("#{msg['configuration.manageAuthentication.updateFailed']}"));
 		conversationService.endConversation();
 
 		return OxTrustConstants.RESULT_SUCCESS;
@@ -365,13 +367,13 @@ public class ManagePersonAuthenticationAction
 			properties.setProperty("bindPassword", ldapConfig.getBindPassword());
 			properties.setProperty("servers", buildServersString(ldapConfig.getServers()));
 			properties.setProperty("useSSL", Boolean.toString(ldapConfig.isUseSSL()));
-
-			LdapConnectionProvider connectionProvider = new LdapConnectionProvider(
-					PropertiesDecrypter.decryptProperties(properties, configurationFactory.getCryptoConfigurationSalt()));
+			LdapConnectionProvider connectionProvider = new LdapConnectionProvider(PropertiesDecrypter
+					.decryptProperties(properties, configurationFactory.getCryptoConfigurationSalt()));
 			if (connectionProvider.isConnected()) {
 				connectionProvider.closeConnectionPool();
 
-				facesMessages.add(FacesMessage.SEVERITY_INFO, facesMessages.evalResourceAsString("#{msg['configuration.manageAuthentication.ldap.testSucceed']}"));
+				facesMessages.add(FacesMessage.SEVERITY_INFO, facesMessages
+						.evalResourceAsString("#{msg['configuration.manageAuthentication.ldap.testSucceed']}"));
 
 				return OxTrustConstants.RESULT_SUCCESS;
 
@@ -383,7 +385,8 @@ public class ManagePersonAuthenticationAction
 			log.error("Could not connect to LDAP", ex);
 		}
 
-		facesMessages.add(FacesMessage.SEVERITY_ERROR, facesMessages.evalResourceAsString("#{msg['configuration.manageAuthentication.ldap.testFailed']}"));
+		facesMessages.add(FacesMessage.SEVERITY_ERROR,
+				facesMessages.evalResourceAsString("#{msg['configuration.manageAuthentication.ldap.testFailed']}"));
 
 		return OxTrustConstants.RESULT_FAILURE;
 	}
@@ -411,10 +414,6 @@ public class ManagePersonAuthenticationAction
 
 	public void updateLdapBindPassword(GluuLdapConfiguration ldapConfig) {
 		log.info("hello setting passoword" + ldapConfig.getPrimaryKey());
-		for (Iterator<GluuLdapConfiguration> iterator = sourceConfigs.iterator(); iterator.hasNext();) {
-			GluuLdapConfiguration ldapConfig1 = iterator.next();
-
-		}
 	}
 
 	public String updateLdapBindPassword(String bindPassword) {
@@ -478,7 +477,7 @@ public class ManagePersonAuthenticationAction
 	public String getId(Object obj) {
 		return "c" + System.identityHashCode(obj) + "Id";
 	}
-/*
+
 	public void addStrategy() {
 		if (ldapPassportConfigurations == null) {
 			ldapPassportConfigurations = new ArrayList<PassportConfiguration>();
@@ -507,7 +506,7 @@ public class ManagePersonAuthenticationAction
 				passportConfig.getFieldset().add(new SimpleExtendedCustomProperty());
 			}
 		}
-	}*/
+	}
 
 	public GluuBoolean getPassportEnable() {
 		return passportEnable;
@@ -622,22 +621,22 @@ public class ManagePersonAuthenticationAction
 	public void setRecaptchaSecretKey(String recaptchaSecretKey) {
 		this.recaptchaSecretKey = recaptchaSecretKey;
 	}
-	
-	private void setAuthenticationRecaptcha(){
-		this.oxTrustappConfiguration=jsonConfigurationService.getOxTrustappConfiguration();
+
+	private void setAuthenticationRecaptcha() {
+		this.oxTrustappConfiguration = jsonConfigurationService.getOxTrustappConfiguration();
 		oxTrustappConfiguration.setRecaptchaSecretKey(this.recaptchaSecretKey);
 		oxTrustappConfiguration.setRecaptchaSiteKey(this.recaptchaSiteKey);
 		oxTrustappConfiguration.setAuthenticationRecaptchaEnabled(!authenticationRecaptchaEnabled);
 		jsonConfigurationService.saveOxTrustappConfiguration(this.oxTrustappConfiguration);
-		
+
 	}
-	
-	private void getAuthenticationRecaptcha(){
-		this.oxTrustappConfiguration=jsonConfigurationService.getOxTrustappConfiguration();
+
+	private void getAuthenticationRecaptcha() {
+		this.oxTrustappConfiguration = jsonConfigurationService.getOxTrustappConfiguration();
 		this.recaptchaSecretKey = oxTrustappConfiguration.getRecaptchaSecretKey();
 		this.recaptchaSiteKey = oxTrustappConfiguration.getRecaptchaSiteKey();
 		this.authenticationRecaptchaEnabled = !oxTrustappConfiguration.isAuthenticationRecaptchaEnabled();
-		
+
 	}
 
 	public AppConfiguration getOxTrustappConfiguration() {
