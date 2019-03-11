@@ -69,7 +69,7 @@
 		}
     </h:outputScript>
 
-	<h:form id="clientForm" prependId="false">
+	<h:form id="clientForm">
 		<input type='hidden' name='cid' value='#{conversation.id}' />
 		<div class="row">
 			<div class="col-xs-12 col-sm-12 col-lg-12" style="margin-top: 5px;">
@@ -105,13 +105,55 @@
 								id="standardSettings">
 								<h:panelGroup columns="1" width="100%">
 									<div class="row" style="margin-left: 5px; margin-right: 5px;">
-										<ox:decorate id="inum" rendered="#{not _new}"
-											label="#{msg['clientForm.inum']}" leftClass="col-sm-3"
-											rightClass="col-sm-9">
-											<h:outputText
-												styleClass="col-sm-12 col-lg-12 form-control rounded clientId text-center"
-												value="#{_client.inum}" />
-										</ox:decorate>
+										<div class="col-sm-12 col-lg-12" style="padding: 0px;">
+											<ox:decorate id="inum" rendered="true"
+												label="#{msg['clientForm.inum']}" leftClass="col-sm-3"
+												rightClass="col-sm-9">
+												<h:outputText
+													style="margin-left: -17%; background: #00BE79; color:white;"
+													styleClass="col-sm-12 col-lg-12 form-control rounded text-center clientGeneratedInum"
+													value="#{_new ? 'The value will be generated after adding the new client.' : _client.inum}" />
+											</ox:decorate>
+										</div>
+									</div>
+									<div class="row" style="margin-left: 5px; margin-right: 5px;">
+										<div class="col-sm-6 col-lg-6" style="padding: 0px;">
+											<ox:decorate id="clientSecret"
+												label="#{msg['clientForm.clientSecret']}"
+												leftClass="col-sm-3" rightClass="col-sm-6">
+												<h:inputText
+													styleClass="form-control togglefield clientSecretTextBox"
+													value="#{_client.oxAuthClientSecret}" redisplay="true"
+													defaultLabel="click to enter Client Secret" maxlength="60"
+													id="clientSecretId1" />
+
+												<h:graphicImage value="/img/eye.png" id="viewPassword"
+													style="margin-top:-35px; margin-right: -55px; float:right;"
+													onmouseover="takeFocus(this);"
+													onclick="showClientSecret(); return false;" />
+												<h:graphicImage value="/img/eye-hidden.png"
+													style="margin-top:-35px; margin-right: -55px; float:right; display: none;"
+													id="hidePassword" onmouseover="takeFocus(this);"
+													onclick="hideClientSecret(); return false;" />
+											</ox:decorate>
+										</div>
+										<div class="col-sm-6 col-lg-6" style="padding: 0px;">
+											<a4j:commandLink render="clientSecretId1" rendered="#{_new}"
+												styleClass="btn btn-primary generateClientSecretButton"
+												value="Generate Client Secret" style="margin-left: 10px;"
+												action="#{_clientAction.generatePassword()}" execute="@this"
+												oncomplete="return valuesDisplay(this);" />
+											<a4j:commandLink rendered="#{_new}"
+												style="margin-left: 10px;"
+												styleClass="btn btn-primary lockClientSecretField"
+												value="Lock Secret Field" execute="@this" />
+											<a4j:commandButton rendered="#{not _new}"
+												style="margin-left:15px;"
+												onclick="#{rich:component('clientPassword:changePasswordModalPanel')}.show();"
+												styleClass="btn btn-primary changeClientSecretButton"
+												value="#{msg['client.changeClientSecret']}" />
+
+										</div>
 									</div>
 									<!-- First row -->
 									<div class="row" style="margin-left: 5px; margin-right: 5px;">
@@ -125,11 +167,6 @@
 													defaultLabel="click to enter the Client Name"
 													maxlength="60" required="true" id="displayNameId" />
 											</ox:decorate>
-											<ox:decorate label="#{msg['clientForm.disabled']}"
-												leftClass="col-sm-3" rightClass="col-sm-3">
-												<h:selectBooleanCheckbox value="#{_client.disabled}"
-													styleClass="form-control" />
-											</ox:decorate>
 											<ox:decorate id="description"
 												label="#{msg['clientForm.clientDescription']}"
 												leftClass="col-sm-3" rightClass="col-sm-9">
@@ -137,42 +174,12 @@
 													styleClass="col-sm-12 form-control rounded clientDescriptionTextArea"
 													cols="80" maxlength="250" id="descriptionId" />
 											</ox:decorate>
+											<ox:decorate label="#{msg['clientForm.disabled']}"
+												leftClass="col-sm-3" rightClass="col-sm-3">
+												<h:selectBooleanCheckbox value="#{_client.disabled}"
+													styleClass="form-control" />
+											</ox:decorate>
 											<h:panelGroup id="secretid">
-												<ox:decorate id="clientSecret"
-													label="#{msg['clientForm.clientSecret']}"
-													leftClass="col-sm-3" rightClass="col-sm-6">
-													<h:inputSecret
-														styleClass="form-control togglefield clientSecretTextBox"
-														value="#{_client.oxAuthClientSecret}" redisplay="true"
-														defaultLabel="click to enter Client Secret" maxlength="60"
-														id="clientSecretId1" />
-
-													<h:graphicImage value="/img/eye.png" id="viewPassword"
-														style="margin-top:-35px; margin-right: -55px; float:right;"
-														onmouseover="takeFocus(this);"
-														onclick="showClientSecret(); return false;" />
-													<h:graphicImage value="/img/eye-hidden.png"
-														style="margin-top:-35px; margin-right: -55px; float:right; display: none;"
-														id="hidePassword" onmouseover="takeFocus(this);"
-														onclick="hideClientSecret(); return false;" />
-												</ox:decorate>
-												<div class="row"
-													style="margin-left: 5px; margin-right: 5px; margin-bottom: 10px;">
-													<div class="col-sm-6 col-lg-6">
-														<a4j:commandLink render="clientSecretId1"
-															style="margin-top:2px;"
-															styleClass="btn btn-primary generateClientSecretButton"
-															value="Auto-Generate Secret Key"
-															action="#{_clientAction.generatePassword()}"
-															oncomplete="return valuesDisplay(this);" />
-													</div>
-													<div class="col-sm-6 col-lg-6" style="padding: 0px;">
-														<a4j:commandButton rendered="#{not _new}"
-															onclick="#{rich:component('clientPassword:changePasswordModalPanel')}.show();"
-															styleClass="btn btn-primary changeClientSecretButton"
-															value="#{msg['client.changeClientSecret']}" />
-													</div>
-												</div>
 												<ox:decorate id="redirectLoginUrls"
 													label="#{msg['clientForm.redirectLoginURIs']}">
 													<h:panelGroup id="selectedLoginURIsId">
@@ -393,20 +400,6 @@
 											</h:panelGroup>
 										</div>
 										<div class="col-sm-6 col-lg-6" style="padding: 0px;">
-											<ox:decorate id="persistClientAuthorizations"
-												label="#{msg['clientForm.persistClientAuthorization']}"
-												leftClass="col-sm-6" rightClass="col-sm-6">
-												<h:selectOneMenu id="persisteClientAuthorizationsId"
-													styleClass="col-sm-9 form-control rounded persistClientAuthorizationSelectBox"
-													value="#{_client.oxAuthPersistClientAuthorizations}"
-													required="true" onchange="togglePersistAuthorization()">
-													<f:selectItems
-														value="#{organizationService.javaBooleanSelectionTypes}"
-														var="_type" itemLabel="#{_type.displayName}" />
-													<f:converter
-														converterId="org.gluu.jsf2.converter.EnumConverter" />
-												</h:selectOneMenu>
-											</ox:decorate>
 											<ox:decorate id="oxAuthTrustedClientBox"
 												label="#{msg['clientForm.preAuthorization']}"
 												leftClass="col-sm-6" rightClass="col-sm-6">
@@ -415,6 +408,20 @@
 													value="#{_client.oxAuthTrustedClient}" required="true"
 													onchange="togglePersistAuthorization()">
 													<f:selectItems value="#{clientService.oxAuthTrustedClient}"
+														var="_type" itemLabel="#{_type.displayName}" />
+													<f:converter
+														converterId="org.gluu.jsf2.converter.EnumConverter" />
+												</h:selectOneMenu>
+											</ox:decorate>
+											<ox:decorate id="persistClientAuthorizations"
+												label="#{msg['clientForm.persistClientAuthorization']}"
+												leftClass="col-sm-6" rightClass="col-sm-6">
+												<h:selectOneMenu id="persisteClientAuthorizationsId"
+													styleClass="col-sm-9 form-control rounded persistClientAuthorizationSelectBox"
+													value="#{_client.oxAuthPersistClientAuthorizations}"
+													onchange="togglePersistAuthorization()">
+													<f:selectItems
+														value="#{organizationService.javaBooleanSelectionTypes}"
 														var="_type" itemLabel="#{_type.displayName}" />
 													<f:converter
 														converterId="org.gluu.jsf2.converter.EnumConverter" />
@@ -846,7 +853,6 @@
 														maxlength="60" inputWidth="695" required="false"
 														id="idTokenTokenBindingCnfId" />
 												</ox:decorate>
-
 												<ox:decorate id="initiateLoginUri"
 													label="#{msg['clientForm.initiateLoginURI']}"
 													leftClass="col-sm-3" rightClass="col-sm-9">
@@ -1101,7 +1107,6 @@
 									</div>
 								</h:panelGroup>
 							</div>
-
 							<!-- clientAttributes tab -->
 							<div class="tab-pane box box-primary" id="clientAttributes"
 								style="background-color: white;">
@@ -1133,6 +1138,7 @@
 		<div class="box-footer">
 			<ui:insert name="controlButttons" />
 		</div>
+
 	</h:form>
 
 	<script>
@@ -1156,17 +1162,42 @@
             		activeTab = activeTab.concat(value);  
             		$('#oidctab a[href="' + activeTab + '"]').tab('show');
             	}
+            	var value = $(".clientGeneratedInum").text();
+            	var n = value.startsWith("@!");
+            	if(n){
+            		 $(".clientSecretTextBox").attr("readonly", true);
+            	}
+            	hideClientSecret();
+            	togglePersistAuthorization();
        });
+		
+		 $(document).on("click",".lockClientSecretField", function () {
+			 var state = $(".clientSecretTextBox").attr("readonly");
+			 if(state){
+				 $(".clientSecretTextBox").attr("readonly", false);
+				 $(".lockClientSecretField").text("Lock Secret Field");
+			 }else{
+				 $(".clientSecretTextBox").attr("readonly", true);
+				 $(".lockClientSecretField").text("Unlock Secret Field");
+			 }
+			  
+			});
     </script>
 	<h:outputScript>
         function togglePersistAuthorization() {
             var trustedClientIdSelect = $("select[id='clientForm:oxAuthTrustedClientBox:trustedClientId']");
             var persisteClientAuthorizationsIdSelect = $("select[id='clientForm:persistClientAuthorizations:persisteClientAuthorizationsId']");
-
             if (trustedClientIdSelect.val() == "TRUE") {
-                persisteClientAuthorizationsIdSelect.val("FALSE");
+                 $(".persistClientAuthorizationSelectBox option:contains(True)").attr('selected', 'selected');
+                 persisteClientAuthorizationsIdSelect.val("TRUE");
+                 $(".persistClientAuthorizationSelectBox").prop('disabled', 'disabled');
+            }else{
+                $(".persistClientAuthorizationSelectBox").prop('disabled', false);
+            }  
+            if(trustedClientIdSelect.val() == "FALSE"){
+               $(".persistClientAuthorizationSelectBox").prop('disabled', false);
             }
-        }
+         }
         function reload(){
             setTimeout(function(){ window.location.reload(); }, 2000);
         }
