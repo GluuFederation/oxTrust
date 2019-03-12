@@ -29,7 +29,6 @@ import org.slf4j.Logger;
 
 import com.wordnik.swagger.annotations.ApiOperation;
 
-
 @Path(OxTrustApiConstants.BASE_API_URL + OxTrustApiConstants.CLIENTS)
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
@@ -52,7 +51,7 @@ public class ClientWebResource extends BaseWebResource {
 	@GET
 	@ApiOperation(value = "Get openid connect clients")
 	public Response listClients() {
-		log("Get all clients ");
+		log(logger, "Get all clients ");
 		try {
 			List<OxAuthClient> clientList = clientService.getAllClients();
 			return Response.ok(clientList).build();
@@ -66,7 +65,7 @@ public class ClientWebResource extends BaseWebResource {
 	@Path(OxTrustApiConstants.INUM_PARAM_PATH + OxTrustApiConstants.SCOPES)
 	@ApiOperation(value = "Get client scopes")
 	public Response getClientScope(@PathParam(OxTrustApiConstants.INUM) @NotNull String inum) {
-		log("Get client scopes");
+		log(logger, "Get client scopes");
 		try {
 			Objects.requireNonNull(inum);
 			OxAuthClient client = clientService.getClientByInum(inum);
@@ -90,7 +89,7 @@ public class ClientWebResource extends BaseWebResource {
 	@Path(OxTrustApiConstants.INUM_PARAM_PATH)
 	@ApiOperation(value = "Get a specific openidconnect client")
 	public Response getClientByInum(@PathParam(OxTrustApiConstants.INUM) @NotNull String inum) {
-		log("Get client " + inum);
+		log(logger, "Get client " + inum);
 		try {
 			Objects.requireNonNull(inum);
 			OxAuthClient client = clientService.getClientByInum(inum);
@@ -110,7 +109,7 @@ public class ClientWebResource extends BaseWebResource {
 	@ApiOperation(value = "Search clients")
 	public Response searchGroups(@QueryParam(OxTrustApiConstants.SEARCH_PATTERN) @NotNull String pattern,
 			@DefaultValue("1") @QueryParam(OxTrustApiConstants.SIZE) int size) {
-		log("Search client with pattern= " + pattern + " and size " + size);
+		log(logger, "Search client with pattern= " + pattern + " and size " + size);
 		try {
 			List<OxAuthClient> clients = clientService.searchClients(pattern, size);
 			return Response.ok(clients).build();
@@ -123,7 +122,7 @@ public class ClientWebResource extends BaseWebResource {
 	@POST
 	@ApiOperation(value = "Add an openidconnect client")
 	public Response createClient(OxAuthClient client) {
-		log("Add new client ");
+		log(logger, "Add new client ");
 		try {
 			Objects.requireNonNull(client, "Attempt to create null client");
 			String inum = clientService.generateInumForNewClient();
@@ -143,7 +142,7 @@ public class ClientWebResource extends BaseWebResource {
 		try {
 			Objects.requireNonNull(client, "Attempt to update null client");
 			String inum = client.getInum();
-			log("Update client " + inum);
+			log(logger, "Update client " + inum);
 			OxAuthClient existingClient = clientService.getClientByInum(inum);
 			if (existingClient != null) {
 				client.setInum(existingClient.getInum());
@@ -164,7 +163,7 @@ public class ClientWebResource extends BaseWebResource {
 	@ApiOperation(value = "Get client scopes")
 	public Response addScopeToClient(@PathParam(OxTrustApiConstants.INUM) @NotNull String inum,
 			@PathParam(OxTrustApiConstants.SCOPE_INUM) @NotNull String sinum) {
-		log("add new scope to client");
+		log(logger, "add new scope to client");
 		try {
 			OxAuthClient client = clientService.getClientByInum(inum);
 			OxAuthScope scope = scopeService.getScopeByInum(sinum);
@@ -192,7 +191,7 @@ public class ClientWebResource extends BaseWebResource {
 	@ApiOperation(value = "Remove a client scope")
 	public Response removeScopeToClient(@PathParam(OxTrustApiConstants.INUM) @NotNull String inum,
 			@PathParam(OxTrustApiConstants.SCOPE_INUM) @NotNull String sinum) {
-		log("add new scope to client");
+		log(logger, "add new scope to client");
 		try {
 			OxAuthClient client = clientService.getClientByInum(inum);
 			OxAuthScope scope = scopeService.getScopeByInum(sinum);
@@ -217,7 +216,7 @@ public class ClientWebResource extends BaseWebResource {
 	@Path(OxTrustApiConstants.INUM_PARAM_PATH)
 	@ApiOperation(value = "Delete an openidconnect client")
 	public Response deleteClient(@PathParam(OxTrustApiConstants.INUM) @NotNull String inum) {
-		log("Delete client " + inum);
+		log(logger, "Delete client " + inum);
 		try {
 			Objects.requireNonNull(inum);
 			OxAuthClient client = clientService.getClientByInum(inum);
@@ -242,9 +241,5 @@ public class ClientWebResource extends BaseWebResource {
 	@Path(OxTrustApiConstants.INUM_PARAM_PATH + OxTrustApiConstants.SCOPES)
 	public Response deleteClientScopes() {
 		return Response.status(Response.Status.UNAUTHORIZED).build();
-	}
-
-	private void log(String message) {
-		logger.debug("################# Request: " + message);
 	}
 }

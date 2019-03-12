@@ -14,7 +14,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.gluu.asimba.util.ldap.idp.IDPEntry;
-import org.gluu.oxtrust.ldap.service.AsimbaService;
 import org.gluu.oxtrust.ldap.service.SvnSyncTimer;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.slf4j.Logger;
@@ -30,74 +29,73 @@ import org.xdi.service.security.Secure;
 @Secure("#{permissionService.hasPermission('trust', 'access')}")
 public class AsimbaAddIDPAction implements Serializable {
 
-    private static final long serialVersionUID = -1024167091985943689L;
-    
-    @Inject
-    private Logger log;
+	private static final long serialVersionUID = -1024167091985943689L;
 
-    @Inject
-    private SvnSyncTimer svnSyncTimer;
-    
-    @Inject
-    private AsimbaService asimbaService;
-    
-    private IDPEntry idp;
-    
-    private String idpURL;
-    
-    @PostConstruct
-    public void init() {        
-        log.info("init() IDP call");
-    }
-    
-    public void refresh() {
-        log.info("refresh() IDP call");
-        
-        idp = new IDPEntry();
-    }
-    
-    public String add() {
-        log.info("add new IDP", idp);
-        // save
-        synchronized (svnSyncTimer) {
-            //TODO
-        }
-        refresh();
-        return OxTrustConstants.RESULT_SUCCESS;
-    }
-    
-    public String cancel() {
-        log.info("cancel IDP", idp);
-        
-        return OxTrustConstants.RESULT_SUCCESS;
-    }
+	@Inject
+	private Logger log;
 
-    /**
-     * @return the idp
-     */
-    public IDPEntry getIdp() {
-        return idp;
-    }
+	@Inject
+	private SvnSyncTimer svnSyncTimer;
 
-    /**
-     * @param idp the idp to set
-     */
-    public void setIdp(IDPEntry idp) {
-        this.idp = idp;
-    }
+	private IDPEntry idp;
 
-    /**
-     * @return the idpURL
-     */
-    public String getIdpURL() {
-        return idpURL;
-    }
+	private String idpURL;
 
-    /**
-     * @param idpURL the idpURL to set
-     */
-    public void setIdpURL(String idpURL) {
-        this.idpURL = idpURL;
-    }
-    
+	@PostConstruct
+	public void init() {
+		log.info("init() IDP call");
+	}
+
+	public void refresh() {
+		log.info("refresh() IDP call");
+
+		idp = new IDPEntry();
+	}
+
+	public String add() {
+		log.info("add new IDP", idp);
+		// save
+		synchronized (svnSyncTimer) {
+			// TODO
+		}
+		refresh();
+		return OxTrustConstants.RESULT_SUCCESS;
+	}
+
+	public String cancel() {
+		log.info("cancel IDP", idp);
+
+		return OxTrustConstants.RESULT_SUCCESS;
+	}
+
+	/**
+	 * @return the idp
+	 */
+	public IDPEntry getIdp() {
+		return idp;
+	}
+
+	/**
+	 * @param idp
+	 *            the idp to set
+	 */
+	public void setIdp(IDPEntry idp) {
+		this.idp = idp;
+	}
+
+	/**
+	 * @return the idpURL
+	 */
+	public String getIdpURL() {
+		return idpURL;
+	}
+
+	/**
+	 * @param idpURL
+	 *            the idpURL to set
+	 */
+	public void setIdpURL(String idpURL) {
+		this.idpURL = idpURL;
+	}
+
 }

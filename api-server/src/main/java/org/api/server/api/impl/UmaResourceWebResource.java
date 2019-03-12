@@ -52,8 +52,8 @@ public class UmaResourceWebResource extends BaseWebResource {
 	@GET
 	@ApiOperation(value = "Get uma resources")
 	public Response listUmaResources() {
-		log(logger, "Get uma resources");
 		try {
+			log(logger, "Get uma resources");
 			List<UmaResource> umaResources = umaResourcesService.getAllResources(100);
 			return Response.ok(umaResources).build();
 		} catch (Exception e) {
@@ -67,8 +67,8 @@ public class UmaResourceWebResource extends BaseWebResource {
 	@ApiOperation(value = "Search uma resources")
 	public Response searchUmaResources(@QueryParam(OxTrustApiConstants.SEARCH_PATTERN) @NotNull String pattern,
 			@QueryParam(OxTrustApiConstants.SIZE) @NotNull int size) {
-		log(logger, "Search uma resources with pattern = " + pattern + " and size = " + size);
 		try {
+			log(logger, "Search uma resources with pattern = " + pattern + " and size = " + size);
 			List<UmaResource> ressources = umaResourcesService.findResources(pattern, size);
 			return Response.ok(ressources).build();
 		} catch (Exception e) {
@@ -81,8 +81,8 @@ public class UmaResourceWebResource extends BaseWebResource {
 	@Path(OxTrustApiConstants.ID_PARAM_PATH)
 	@ApiOperation(value = "Get a uma resource by id")
 	public Response getUmaResourceById(@PathParam(OxTrustApiConstants.ID) @NotNull String id) {
-		log(logger, "Get uma resource by id " + id);
 		try {
+			log(logger, "Get uma resource by id " + id);
 			Objects.requireNonNull(id, "id should not be null");
 			List<UmaResource> resources = umaResourcesService.findResourcesById(id);
 			if (resources != null && !resources.isEmpty()) {
@@ -100,8 +100,8 @@ public class UmaResourceWebResource extends BaseWebResource {
 	@Path(OxTrustApiConstants.ID_PARAM_PATH + OxTrustApiConstants.CLIENTS)
 	@ApiOperation(value = "Get clients of uma resource")
 	public Response getUmaResourceClients(@PathParam(OxTrustApiConstants.ID) @NotNull String id) {
-		log(logger, "Get clients of uma resource having id " + id);
 		try {
+			log(logger, "Get clients of uma resource having id " + id);
 			Objects.requireNonNull(id, "id should not be null");
 			List<UmaResource> resources = umaResourcesService.findResourcesById(id);
 			if (resources != null && !resources.isEmpty()) {
@@ -127,8 +127,8 @@ public class UmaResourceWebResource extends BaseWebResource {
 	@Path(OxTrustApiConstants.ID_PARAM_PATH + OxTrustApiConstants.SCOPES)
 	@ApiOperation(value = "Get scopes of uma resource")
 	public Response getUmaResourceScopes(@PathParam(OxTrustApiConstants.ID) @NotNull String id) {
-		log(logger, "Get scopes of uma resource having id " + id);
 		try {
+			log(logger, "Get scopes of uma resource having id " + id);
 			Objects.requireNonNull(id, "id should not be null");
 			List<UmaResource> resources = umaResourcesService.findResourcesById(id);
 			if (resources != null && !resources.isEmpty()) {
@@ -155,8 +155,8 @@ public class UmaResourceWebResource extends BaseWebResource {
 	@Path(OxTrustApiConstants.ID_PARAM_PATH + OxTrustApiConstants.CLIENTS + OxTrustApiConstants.INUM_PARAM_PATH)
 	public Response addClientToUmaResource(@PathParam(OxTrustApiConstants.ID) @NotNull String id,
 			@PathParam(OxTrustApiConstants.INUM) @NotNull String clientInum) {
-		log(logger, "Add client " + clientInum + " to uma resource " + id);
 		try {
+			log(logger, "Add client " + clientInum + " to uma resource " + id);
 			Objects.requireNonNull(id, "Uma id should not be null");
 			Objects.requireNonNull(clientInum, "Client inum should not be null");
 			List<UmaResource> resources = umaResourcesService.findResourcesById(id);
@@ -185,8 +185,8 @@ public class UmaResourceWebResource extends BaseWebResource {
 	@Path(OxTrustApiConstants.ID_PARAM_PATH + OxTrustApiConstants.CLIENTS + OxTrustApiConstants.INUM_PARAM_PATH)
 	public Response removeClientToUmaResource(@PathParam(OxTrustApiConstants.ID) @NotNull String id,
 			@PathParam(OxTrustApiConstants.INUM) @NotNull String clientInum) {
-		log(logger, "Remove client " + clientInum + " from uma resource " + id);
 		try {
+			log(logger, "Remove client " + clientInum + " from uma resource " + id);
 			Objects.requireNonNull(id, "Uma id should not be null");
 			Objects.requireNonNull(clientInum, "Client inum should not be null");
 			List<UmaResource> resources = umaResourcesService.findResourcesById(id);
@@ -245,8 +245,8 @@ public class UmaResourceWebResource extends BaseWebResource {
 	@Path(OxTrustApiConstants.ID_PARAM_PATH + OxTrustApiConstants.SCOPES + OxTrustApiConstants.INUM_PARAM_PATH)
 	public Response removeScopeToUmaResource(@PathParam(OxTrustApiConstants.ID) @NotNull String id,
 			@PathParam(OxTrustApiConstants.INUM) @NotNull String scopeInum) {
-		log(logger, "Remove scope " + scopeInum + " from uma resource " + id);
 		try {
+			log(logger, "Remove scope " + scopeInum + " from uma resource " + id);
 			Objects.requireNonNull(id, "Uma id should not be null");
 			Objects.requireNonNull(scopeInum, "scope inum should not be null");
 			List<UmaResource> resources = umaResourcesService.findResourcesById(id);
@@ -273,8 +273,8 @@ public class UmaResourceWebResource extends BaseWebResource {
 	@POST
 	@ApiOperation(value = "Add new uma resource")
 	public Response createUmaResource(UmaResource umaResource) {
-		log(logger, "Add new uma resource");
 		try {
+			log(logger, "Add new uma resource");
 			Objects.requireNonNull(umaResource, "Attempt to create null resource");
 			if (umaResource.getId() == null) {
 				umaResource.setId(UUID.randomUUID().toString());
@@ -294,9 +294,9 @@ public class UmaResourceWebResource extends BaseWebResource {
 	@PUT
 	@ApiOperation(value = "Update uma resource")
 	public Response updateUmaResource(UmaResource umaResource) {
-		String id = umaResource.getId();
-		log(logger, "Update uma resource having id " + id);
 		try {
+			String id = umaResource.getId();
+			log(logger, "Update uma resource having id " + id);
 			Objects.requireNonNull(id, " id should not be null");
 			Objects.requireNonNull(umaResource, "Attempt to update null uma resource");
 			List<UmaResource> existingResources = umaResourcesService.findResourcesById(id);
