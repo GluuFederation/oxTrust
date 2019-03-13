@@ -9,7 +9,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.math.BigInteger;
-import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.SecureRandom;
@@ -21,7 +20,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -41,7 +39,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.input.CharSequenceInputStream;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.cert.X509v3CertificateBuilder;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
@@ -50,22 +47,17 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openssl.PEMWriter;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.util.encoders.Base64;
-import org.gluu.oxtrust.action.TrustContactsAction;
 import org.gluu.oxtrust.api.saml.SAMLTrustRelationshipShort;
 import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.MetadataValidationTimer;
 import org.gluu.oxtrust.ldap.service.Shibboleth3ConfService;
-import org.gluu.oxtrust.ldap.service.SvnSyncTimer;
 import org.gluu.oxtrust.ldap.service.TrustService;
 import org.gluu.oxtrust.model.GluuMetadataSourceType;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.model.OxAuthClient;
-import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.service.uma.annotations.UmaSecure;
 import org.gluu.oxtrust.util.OxTrustApiConstants;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.persist.exception.BasePersistenceException;
-import org.gluu.saml.metadata.SAMLMetadataParser;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.GluuAttribute;
@@ -104,22 +96,14 @@ public class TrustRelationshipWebResource extends BaseWebResource {
 	private TrustService trustService;
 
 	@Inject
-	private Identity identity;
-
-	@Inject
 	private ClientService clientService;
 
 	@Inject
 	private AppConfiguration appConfiguration;
 
-	@Inject
-	private SvnSyncTimer svnSyncTimer;
 
 	@Inject
 	private MetadataValidationTimer metadataValidationTimer;
-
-	@Inject
-	private TrustContactsAction trustContactsAction;
 
 	@Inject
 	private Shibboleth3ConfService shibboleth3ConfService;
@@ -564,125 +548,7 @@ public class TrustRelationshipWebResource extends BaseWebResource {
 	 *            - need for FILE type TR, optional for GENERATE type TR
 	 * @return
 	 */
-	private String saveTR(GluuSAMLTrustRelationship trustRelationship, String metadata, String certificate) {
-		String inum;
-		boolean update = false;
-		synchronized (svnSyncTimer) {
-			if (StringHelper.isEmpty(trustRelationship.getInum())) {
-				inum = trustService.generateInumForNewTrustRelationship();
-				trustRelationship.setInum(inum);
-			} else {
-				inum = trustRelationship.getInum();
-				if (trustRelationship.getSpMetaDataFN() == null)
-					update = true;
-			}
-
-			boolean updateShib3Configuration = appConfiguration.isConfigGeneration();
-			switch (trustRelationship.getSpMetaDataSourceType()) {
-			case FILE:
-				try {
-					if (saveSpMetaDataFileSourceTypeFile(trustRelationship, inum, metadata)) {
-						// update = true;
-						updateTRCertificate(trustRelationship, certificate);
-						// setEntityId();
-						if (!update) {
-							trustRelationship.setStatus(GluuStatus.ACTIVE);
-						}
-					} else {
-						logger.error("Failed to save SP metadata file {}", metadata);
-						return OxTrustConstants.RESULT_FAILURE;
-					}
-				} catch (IOException ex) {
-					logger.error("Failed to download SP metadata", ex);
-					// facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to download SP
-					// metadata");
-
-					return OxTrustConstants.RESULT_FAILURE;
-				}
-
-				break;
-			case URI:
-				try {
-					// if (saveSpMetaDataFileSourceTypeURI()) {
-					// setEntityId();
-					boolean result = shibboleth3ConfService.existsResourceUri(trustRelationship.getSpMetaDataURL());
-					if (result) {
-						saveSpMetaDataFileSourceTypeURI(trustRelationship);
-					} else {
-						logger.info("There is no resource found Uri : {}", trustRelationship.getSpMetaDataURL());
-					}
-					if (!update) {
-						trustRelationship.setStatus(GluuStatus.ACTIVE);
-					}
-					/*
-					 * } else { log.error("Failed to save SP meta-data file {}", fileWrapper);
-					 * return OxTrustConstants.RESULT_FAILURE; }
-					 */
-				} catch (Exception e) {
-					// facesMessages.add(FacesMessage.SEVERITY_ERROR, "Unable to download
-					// metadata");
-					return "unable_download_metadata";
-				}
-				break;
-			case FEDERATION:
-				if (!update) {
-					trustRelationship.setStatus(GluuStatus.ACTIVE);
-				}
-				if (trustRelationship.getEntityId() == null) {
-					// facesMessages.add(FacesMessage.SEVERITY_ERROR, "EntityID must be set to a
-					// value");
-					return "invalid_entity_id";
-				}
-
-				break;
-			default:
-
-				break;
-			}
-
-			trustService.updateReleasedAttributes(trustRelationship);
-			if (trustRelationship.getSpMetaDataSourceType().equals(GluuMetadataSourceType.FEDERATION)) {
-				boolean federation = shibboleth3ConfService.isFederation(trustRelationship);
-				trustRelationship.setFederation(federation);
-			}
-
-			trustContactsAction.saveContacts();
-
-			if (update) {
-				try {
-					saveTR(trustRelationship, update);
-				} catch (BasePersistenceException ex) {
-					logger.error("Failed to update trust relationship {}", inum, ex);
-					return OxTrustConstants.RESULT_FAILURE;
-				}
-			} else {
-				String dn = trustService.getDnForTrustRelationShip(inum);
-				// Save trustRelationship
-				trustRelationship.setDn(dn);
-				try {
-					saveTR(trustRelationship, update);
-				} catch (BasePersistenceException ex) {
-					logger.error("Failed to add new trust relationship {}", trustRelationship.getInum(), ex);
-					return OxTrustConstants.RESULT_FAILURE;
-				}
-
-				update = true;
-			}
-
-			if (updateShib3Configuration) {
-				List<GluuSAMLTrustRelationship> trustRelationships = trustService.getAllActiveTrustRelationships();
-				if (!shibboleth3ConfService.generateConfigurationFiles(trustRelationships)) {
-					logger.error("Failed to update Shibboleth v3 configuration");
-					return "Failed to update Shibboleth v3 configuration";
-				} else {
-					logger.info("Shibboleth v3 configuration updated successfully");
-					return "Shibboleth v3 configuration updated successfully";
-				}
-			}
-		}
-		return OxTrustConstants.RESULT_SUCCESS;
-	}
-
+	//
 	private void saveTR(GluuSAMLTrustRelationship trustRelationship, boolean isUpdate) {
 		logger.trace("Saving Trust Relationship");
 		if (isUpdate) {
@@ -713,11 +579,8 @@ public class TrustRelationshipWebResource extends BaseWebResource {
 				}
 				clientService.updateClient(client);
 			}
-
-			svnSyncTimer.updateTrustRelationship(trustRelationship, identity.getCredentials().getUsername());
 		} else {
 			trustService.addTrustRelationship(trustRelationship);
-			svnSyncTimer.addTrustRelationship(trustRelationship, identity.getCredentials().getUsername());
 		}
 	}
 
@@ -727,25 +590,6 @@ public class TrustRelationshipWebResource extends BaseWebResource {
 	 * 
 	 * @author �Oleksiy Tataryn�
 	 */
-	private void setEntityId(GluuSAMLTrustRelationship trustRelationship) {
-		String idpMetadataFolder = appConfiguration.getShibboleth3IdpRootDir() + File.separator
-				+ Shibboleth3ConfService.SHIB3_IDP_METADATA_FOLDER + File.separator;
-		File metadataFile = new File(idpMetadataFolder + trustRelationship.getSpMetaDataFN());
-
-		List<String> entityIdList = SAMLMetadataParser.getEntityIdFromMetadataFile(metadataFile);
-		Set<String> entityIdSet = new TreeSet<String>();
-
-		if (entityIdList != null && !entityIdList.isEmpty()) {
-			Set<String> duplicatesSet = new TreeSet<String>();
-			for (String entityId : entityIdList) {
-				if (!entityIdSet.add(entityId)) {
-					duplicatesSet.add(entityId);
-				}
-			}
-		}
-
-		trustRelationship.setGluuEntityId(entityIdSet);
-	}
 
 	public boolean saveSpMetaDataFileSourceTypeURI(GluuSAMLTrustRelationship trustRelationship) throws IOException {
 		String spMetadataFileName = trustRelationship.getSpMetaDataFN();
@@ -765,57 +609,6 @@ public class TrustRelationshipWebResource extends BaseWebResource {
 		}
 
 		return StringHelper.isNotEmpty(result);
-	}
-
-	private boolean saveSpMetaDataFileSourceTypeFile(GluuSAMLTrustRelationship trustRelationship, String inum,
-			String metadata) throws IOException {
-		logger.trace("Saving metadata file source type: File");
-		String spMetadataFileName = trustRelationship.getSpMetaDataFN();
-		boolean emptySpMetadataFileName = StringHelper.isEmpty(spMetadataFileName);
-
-		if (StringHelper.isEmpty(metadata)) {
-			if (emptySpMetadataFileName) {
-				return false;
-			}
-
-			// Admin doesn't provide new file. Check if we already has this file
-			String filePath = shibboleth3ConfService.getSpMetadataFilePath(spMetadataFileName);
-			if (filePath == null) {
-				return false;
-			}
-
-			File file = new File(filePath);
-			if (!file.exists()) {
-				return false;
-			}
-
-			// File already exist
-			return true;
-		}
-
-		if (emptySpMetadataFileName) {
-			// Generate new file name
-			spMetadataFileName = shibboleth3ConfService.getSpNewMetadataFileName(trustRelationship);
-			trustRelationship.setSpMetaDataFN(spMetadataFileName);
-			if (trustRelationship.getDn() == null) {
-				String dn = trustService.getDnForTrustRelationShip(inum);
-				trustRelationship.setDn(dn);
-				trustService.addTrustRelationship(trustRelationship);
-			} else {
-				trustService.updateTrustRelationship(trustRelationship);
-			}
-		}
-		String result = shibboleth3ConfService.saveSpMetadataFile(spMetadataFileName,
-				new CharSequenceInputStream(metadata, StandardCharsets.UTF_8));
-		if (StringHelper.isNotEmpty(result)) {
-			metadataValidationTimer.queue(result);
-		} else {
-			// facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to save SP meta-data
-			// file. Please check if you provide correct file");
-		}
-
-		return StringHelper.isNotEmpty(result);
-
 	}
 
 	/**
@@ -900,18 +693,6 @@ public class TrustRelationshipWebResource extends BaseWebResource {
 		}
 
 		return certificate;
-	}
-
-	private boolean generateSpMetaDataFile(GluuSAMLTrustRelationship trustRelationship, String certificate) {
-		String spMetadataFileName = trustRelationship.getSpMetaDataFN();
-
-		if (StringHelper.isEmpty(spMetadataFileName)) {
-			// Generate new file name
-			spMetadataFileName = shibboleth3ConfService.getSpNewMetadataFileName(trustRelationship);
-			trustRelationship.setSpMetaDataFN(spMetadataFileName);
-		}
-
-		return shibboleth3ConfService.generateSpMetadataFile(trustRelationship, certificate);
 	}
 
 	private void updateTRCertificate(GluuSAMLTrustRelationship trustRelationship, String certificate)

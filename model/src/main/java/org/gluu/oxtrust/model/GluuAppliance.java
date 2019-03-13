@@ -51,12 +51,6 @@ public class GluuAppliance extends InumEntry implements Serializable {
 	@LdapAttribute
 	private String displayName;
 
-	@LdapAttribute(name = "o")
-	private String owner;
-
-	@LdapAttribute(name = "c")
-	private String country;
-
 	@LdapAttribute(name = "gluuFreeDiskSpace", updateOnly = true)
 	private String freeDiskSpace;
 
@@ -113,12 +107,6 @@ public class GluuAppliance extends InumEntry implements Serializable {
 
 	@LdapAttribute(name = "gluuVDSstatus", updateOnly = true)
 	private String gluuVDSStatus;
-
-	@LdapAttribute(name = "gluuBandwidthTX", updateOnly = true)
-	private String gluuBandwidthTX;
-
-	@LdapAttribute(name = "gluuBandwidthRX", updateOnly = true)
-	private String gluuBandwidthRX;
 
 	@LdapAttribute(name = "gluuSPTR")
 	private String gluuSPTR;
@@ -247,14 +235,6 @@ public class GluuAppliance extends InumEntry implements Serializable {
 		this.cacheRefreshServerIpAddress = cacheRefreshServerIpAddress;
 	}
 
-	public String getCountry() {
-		return country;
-	}
-
-	public void setCountry(String country) {
-		this.country = country;
-	}
-
 	public String getDescription() {
 		return description;
 	}
@@ -293,22 +273,6 @@ public class GluuAppliance extends InumEntry implements Serializable {
 
 	public void setFreeSwap(String freeSwap) {
 		this.freeSwap = freeSwap;
-	}
-
-	public String getGluuBandwidthRX() {
-		return gluuBandwidthRX;
-	}
-
-	public void setGluuBandwidthRX(String gluuBandwidthRX) {
-		this.gluuBandwidthRX = gluuBandwidthRX;
-	}
-
-	public String getGluuBandwidthTX() {
-		return gluuBandwidthTX;
-	}
-
-	public void setGluuBandwidthTX(String gluuBandwidthTX) {
-		this.gluuBandwidthTX = gluuBandwidthTX;
 	}
 
 	public String getGluuDSStatus() {
@@ -375,14 +339,6 @@ public class GluuAppliance extends InumEntry implements Serializable {
 		this.inum = inum;
 	}
 
-	public String getInumFN() {
-		return inumFN;
-	}
-
-	public void setInumFN(String inumFN) {
-		this.inumFN = inumFN;
-	}
-
 	public String getIpAddress() {
 		return ipAddress;
 	}
@@ -421,14 +377,6 @@ public class GluuAppliance extends InumEntry implements Serializable {
 
 	public void setMaxLogSize(String maxLogSize) {
 		this.maxLogSize = maxLogSize;
-	}
-
-	public String getOwner() {
-		return owner;
-	}
-
-	public void setOwner(String owner) {
-		this.owner = owner;
 	}
 
 	public List<OxIDPAuthConf> getOxIDPAuthentication() {
@@ -650,21 +598,19 @@ public class GluuAppliance extends InumEntry implements Serializable {
 	@Override
 	public String toString() {
 		return "GluuAppliance [inum=" + inum + ", inumFN=" + inumFN + ", iname=" + iname + ", description="
-				+ description + ", displayName=" + displayName + ", owner=" + owner + ", country=" + country
-				+ ", freeDiskSpace=" + freeDiskSpace + ", freeMemory=" + freeMemory + ", freeSwap=" + freeSwap
-				+ ", groupCount=" + groupCount + ", hostname=" + hostname + ", ipAddress=" + ipAddress
-				+ ", personCount=" + personCount + ", shibAssertionsIssued=" + shibAssertionsIssued
-				+ ", shibFailedAuth=" + shibFailedAuth + ", shibSecurityEvents=" + shibSecurityEvents
-				+ ", shibSuccessfulAuths=" + shibSuccessfulAuths + ", systemUptime=" + systemUptime + ", lastUpdate="
-				+ lastUpdate + ", pollingInterval=" + pollingInterval + ", status=" + status + ", userPassword="
-				+ userPassword + ", gluuHttpStatus=" + gluuHttpStatus + ", gluuDSStatus=" + gluuDSStatus
-				+ ", gluuVDSStatus=" + gluuVDSStatus + ", gluuBandwidthTX=" + gluuBandwidthTX + ", gluuBandwidthRX="
-				+ gluuBandwidthRX + ", gluuSPTR=" + gluuSPTR + ", sslExpiry=" + sslExpiry + ", profileManagment="
-				+ profileManagment + ", whitePagesEnabled=" + whitePagesEnabled + ", manageIdentityPermission="
-				+ manageIdentityPermission + ", vdsCacheRefreshEnabled=" + vdsCacheRefreshEnabled
-				+ ", cacheRefreshServerIpAddress=" + cacheRefreshServerIpAddress + ", vdsCacheRefreshPollingInterval="
-				+ vdsCacheRefreshPollingInterval + ", vdsCacheRefreshLastUpdate=" + vdsCacheRefreshLastUpdate
-				+ ", vdsCacheRefreshLastUpdateCount=" + vdsCacheRefreshLastUpdateCount
+				+ description + ", displayName=" + displayName + ", freeDiskSpace=" + freeDiskSpace + ", freeMemory="
+				+ freeMemory + ", freeSwap=" + freeSwap + ", groupCount=" + groupCount + ", hostname=" + hostname
+				+ ", ipAddress=" + ipAddress + ", personCount=" + personCount + ", shibAssertionsIssued="
+				+ shibAssertionsIssued + ", shibFailedAuth=" + shibFailedAuth + ", shibSecurityEvents="
+				+ shibSecurityEvents + ", shibSuccessfulAuths=" + shibSuccessfulAuths + ", systemUptime=" + systemUptime
+				+ ", lastUpdate=" + lastUpdate + ", pollingInterval=" + pollingInterval + ", status=" + status
+				+ ", userPassword=" + userPassword + ", gluuHttpStatus=" + gluuHttpStatus + ", gluuDSStatus="
+				+ gluuDSStatus + ", gluuVDSStatus=" + gluuVDSStatus + ", gluuSPTR=" + gluuSPTR + ", sslExpiry="
+				+ sslExpiry + ", profileManagment=" + profileManagment + ", whitePagesEnabled=" + whitePagesEnabled
+				+ ", manageIdentityPermission=" + manageIdentityPermission + ", vdsCacheRefreshEnabled="
+				+ vdsCacheRefreshEnabled + ", cacheRefreshServerIpAddress=" + cacheRefreshServerIpAddress
+				+ ", vdsCacheRefreshPollingInterval=" + vdsCacheRefreshPollingInterval + ", vdsCacheRefreshLastUpdate="
+				+ vdsCacheRefreshLastUpdate + ", vdsCacheRefreshLastUpdateCount=" + vdsCacheRefreshLastUpdateCount
 				+ ", vdsCacheRefreshProblemCount=" + vdsCacheRefreshProblemCount + ", scimEnabled=" + scimEnabled
 				+ ", passportEnabled=" + passportEnabled + ", contactEmail=" + contactEmail + ", smtpConfiguration="
 				+ smtpConfiguration + ", applianceDnsServer=" + applianceDnsServer + ", maxLogSize=" + maxLogSize

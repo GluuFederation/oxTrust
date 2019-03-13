@@ -39,17 +39,10 @@ public class ShibbolethInitializer {
 	public boolean createShibbolethConfiguration() {
 		boolean createConfig = appConfiguration.isConfigGeneration();
 		log.info("IDP config generation is set to " + createConfig);
-		
 		if (createConfig) {
-
-			String gluuSPInum;
 			GluuSAMLTrustRelationship gluuSP;
-
 			try {
-				gluuSPInum = applianceService.getAppliance().getGluuSPTR();
-
-				// log.info("########## gluuSPInum = " + gluuSPInum);
-
+				String gluuSPInum = applianceService.getAppliance().getGluuSPTR();
 				gluuSP = new GluuSAMLTrustRelationship();
 				gluuSP.setDn(trustService.getDnForTrustRelationShip(gluuSPInum));
 
@@ -57,41 +50,13 @@ public class ShibbolethInitializer {
 				log.error("Failed to determine SP inum", ex);
 				return false;
 			}
-
-			// log.info("########## gluuSP.getDn() = " + gluuSP.getDn());
-
 			boolean servicesNeedRestarting = false;
-//			if (gluuSPInum == null || ! trustService.containsTrustRelationship(gluuSP)) {
-//
-//				log.info("No trust relationships exist in LDAP. Adding gluuSP");
-//				GluuAppliance appliance = applianceService.getAppliance();
-//				appliance.setGluuSPTR(null);
-//				applianceService.updateAppliance(appliance);
-//				shibboleth3ConfService.addGluuSP();
-//				servicesNeedRestarting = true;
-//			}
-
 			gluuSP = trustService.getRelationshipByInum(applianceService.getAppliance().getGluuSPTR());
-
 			List<GluuSAMLTrustRelationship> trustRelationships = trustService.getAllActiveTrustRelationships();
-
-			/*
-			if (trustRelationships != null && !trustRelationships.isEmpty()) {
-				for (GluuSAMLTrustRelationship gluuSAMLTrustRelationship : trustRelationships) {
-					log.info("########## gluuSAMLTrustRelationship.getDn() = " + gluuSAMLTrustRelationship.getDn());
-				}
-			}
-			*/
-
 			String shibbolethVersion = appConfiguration.getShibbolethVersion();
 			log.info("########## shibbolethVersion = " + shibbolethVersion);
-
 			shibboleth3ConfService.generateMetadataFiles(gluuSP);
 			shibboleth3ConfService.generateConfigurationFiles(trustRelationships);
-
-			shibboleth3ConfService.removeUnusedCredentials();
-			shibboleth3ConfService.removeUnusedMetadata();
-
 			if (servicesNeedRestarting) {
 				applianceService.restartServices();
 			}

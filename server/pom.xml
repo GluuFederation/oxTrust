@@ -637,10 +637,6 @@
 			<artifactId>xmlsec</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.tmatesoft.svnkit</groupId>
-			<artifactId>svnkit</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>org.javatuples</groupId>
 			<artifactId>javatuples</artifactId>
 		</dependency>
