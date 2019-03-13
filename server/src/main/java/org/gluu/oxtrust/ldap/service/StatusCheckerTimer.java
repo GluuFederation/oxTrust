@@ -141,7 +141,7 @@ public class StatusCheckerTimer {
 		}
 		ApplianceStatus applianceStatus = new ApplianceStatus();
 		// Execute facter and update appliance attributes
-		log.info("Setting FactorAttributes");
+		log.debug("Setting FactorAttributes");
 		setFactorAttributes(applianceStatus);
 		// Execute df and update appliance attributes
 		setDfAttributes(applianceStatus);
@@ -271,13 +271,13 @@ public class StatusCheckerTimer {
 		}
 		CommandLine commandLine = new CommandLine(OxTrustConstants.PROGRAM_FACTER);
 		String facterVersion = getFacterVersion();
-		log.info("Facter version: "+facterVersion);
+		log.debug("Facter version: "+facterVersion);
 		String resultOutput;
 		if (facterVersion == null) {
 			return;
 		}
 		if (Integer.valueOf(facterVersion.substring(0, 1)) >= 3) {
-			log.info("Running facter in legacy mode");
+			log.debug("Running facter in legacy mode");
 			commandLine.addArgument("--show-legacy");
 		}
 		ByteArrayOutputStream bos = new ByteArrayOutputStream(4096);
