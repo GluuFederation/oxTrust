@@ -25,9 +25,7 @@ import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.SSLService;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.model.cert.TrustStoreCertificate;
-import org.gluu.oxtrust.service.asimba.AsimbaXMLConfigurationService;
 import org.gluu.oxtrust.service.uma.annotations.UmaSecure;
-import org.gluu.oxtrust.util.KeystoreWrapper;
 import org.gluu.oxtrust.util.OxTrustApiConstants;
 import org.gluu.oxtrust.util.X509CertificateShortInfo;
 import org.slf4j.Logger;
@@ -62,9 +60,6 @@ public class CertificatesWebService {
 	private Logger logger;
 
 	@Inject
-	private AsimbaXMLConfigurationService asimbaXMLConfigurationService;
-
-	@Inject
 	private ApplianceService applianceService;
 
 	ObjectMapper objectMapper;
@@ -84,21 +79,10 @@ public class CertificatesWebService {
 	public String list(@Context HttpServletResponse response) {
 		try {
 			Certificates certificates = new Certificates();
-
-			// collect Asimba's certificates
-			if (asimbaXMLConfigurationService.isReady()) {
-				KeystoreWrapper asimbaKeystore = asimbaXMLConfigurationService.getKeystore();
-
-				certificates.setAsimbaCertificates(asimbaKeystore.listCertificates());
-			}
-
 			// collect trustStoreCertificates
 			List<X509CertificateShortInfo> trustStoreCertificates = new ArrayList<X509CertificateShortInfo>();
-
 			GluuAppliance appliance = applianceService.getAppliance();
-
 			List<TrustStoreCertificate> trustStoreCertificatesList = appliance.getTrustStoreCertificates();
-
 			if (trustStoreCertificatesList != null) {
 				for (TrustStoreCertificate trustStoreCertificate : trustStoreCertificatesList) {
 					try {
@@ -144,8 +128,6 @@ public class CertificatesWebService {
 				logger.error("Certificate load exception", e);
 			}
 			certificates.setInternalCertificates(internalCertificates);
-
-			// convert to JSON
 			return objectMapper.writeValueAsString(certificates);
 		} catch (Exception e) {
 			logger.error("list() Exception", e);

@@ -17,7 +17,6 @@
 
 		<oxcore.version>4.0.0-SNAPSHOT</oxcore.version>
 		<oxauth.version>4.0.0-SNAPSHOT</oxauth.version>
-		<oxasimba.version>4.0.0-SNAPSHOT</oxasimba.version>
 
 		<jackson.version>2.9.8</jackson.version>
 		<jackson.databind.version>2.9.8</jackson.databind.version>
@@ -473,32 +472,6 @@
 				<artifactId>resteasy-jackson-provider</artifactId>
 				<version>${resteasy.version}</version>
 			</dependency>
-
-			<!-- Asimba -->
-			<dependency>
-				<groupId>org.asimba</groupId>
-				<artifactId>asimba-utility-ldap</artifactId>
-				<version>${oxasimba.version}</version>
-				<exclusions>
-					<exclusion>
-						<artifactId>slf4j-api</artifactId>
-						<groupId>org.slf4j</groupId>
-					</exclusion>
-					<exclusion>
-						<artifactId>commons-logging</artifactId>
-						<groupId>commons-logging</groupId>
-					</exclusion>
-					<exclusion>
-						<groupId>log4j</groupId>
-						<artifactId>log4j</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>org.xdi</groupId>
-						<artifactId>oxService</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
-
 			<!-- Jackson -->
 			<dependency>
 				<groupId>com.fasterxml.jackson.core</groupId>
