@@ -41,7 +41,7 @@ public class BulkBase {
         this.operations = operations;
     }
 
-    //TODO: Delete this method in the future - added for backwards compatibility with SCIM-Client <= 3.1.2.
+    //Writing JSON without the capital letter "O" is a common error. We should keep this method
     @JsonProperty("operations")
     public void setOperations2(List<BulkOperation> misSpelledOperations) {
         setOperations(misSpelledOperations);

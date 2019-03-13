@@ -28,7 +28,7 @@ public class ServiceProviderConfig extends BaseScimResource {
 
     @Attribute(description = "An HTTP-addressable URL pointing to the service provider's human-consumable help documentation.",
             mutability = AttributeDefinition.Mutability.READ_ONLY)
-	private String documentationUri = "https://www.gluu.org/docs/";
+	private String documentationUri = "https://gluu.org/docs/ce/user-management/scim2/";
 
     @Attribute(description = "A complex type that specifies PATCH configuration options.",
             isRequired = true,
