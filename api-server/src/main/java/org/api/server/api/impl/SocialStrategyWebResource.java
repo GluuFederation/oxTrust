@@ -22,8 +22,8 @@ import org.gluu.oxtrust.ldap.service.PassportService;
 import org.gluu.oxtrust.util.OxTrustApiConstants;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.LdapOxPassportConfiguration;
-import org.xdi.model.SimpleExtendedCustomProperty;
 import org.xdi.model.passport.PassportConfiguration;
+import org.xdi.model.passport.ProviderDetails;
 
 import com.google.common.base.Preconditions;
 import com.wordnik.swagger.annotations.Api;
@@ -62,8 +62,8 @@ public class SocialStrategyWebResource extends BaseWebResource {
 			List<PassportConfiguration> ldapPassportConfigurations = ldapOxPassportConfiguration
 					.getPassportConfigurations();
 			for (PassportConfiguration configuration : ldapPassportConfigurations) {
-				if (configuration.getFieldset() == null) {
-					configuration.setFieldset(new ArrayList<SimpleExtendedCustomProperty>());
+				if (configuration.getProviders() == null) {
+					configuration.setProviders(new ArrayList<ProviderDetails>());
 				}
 			}
 			return Response.ok(ldapPassportConfigurations).build();
@@ -103,13 +103,14 @@ public class SocialStrategyWebResource extends BaseWebResource {
 		try {
 			log(logger, "Processing update strategy request");
 			Preconditions.checkNotNull(configuration, "Attempt to update empty strategy");
-			String strategy = configuration.getStrategy();
+			String strategy = configuration.getProviders().get(0).getDisplayName();
 			ldapOxPassportConfiguration = passportService.loadConfigurationFromLdap();
 			List<PassportConfiguration> configurations = ldapOxPassportConfiguration.getPassportConfigurations();
 			boolean found = false;
 			PassportConfiguration existingValue = null;
 			for (PassportConfiguration config : configurations) {
-				if (config.getStrategy().equalsIgnoreCase(strategy)) {
+				String strategyName = config.getProviders().get(0).getDisplayName();
+				if (strategyName.equalsIgnoreCase(strategy)) {
 					existingValue = config;
 					found = true;
 					break;
@@ -144,7 +145,7 @@ public class SocialStrategyWebResource extends BaseWebResource {
 			boolean found = false;
 			PassportConfiguration existingValue = null;
 			for (PassportConfiguration config : configurations) {
-				if (config.getStrategy().equalsIgnoreCase(inum)) {
+				if (config.getProviders() != null) {
 					existingValue = config;
 					found = true;
 					break;

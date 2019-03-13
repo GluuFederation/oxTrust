@@ -49,6 +49,7 @@ import org.xdi.model.custom.script.CustomScriptType;
 import org.xdi.model.custom.script.model.CustomScript;
 import org.xdi.model.ldap.GluuLdapConfiguration;
 import org.xdi.model.passport.PassportConfiguration;
+import org.xdi.model.passport.ProviderDetails;
 import org.xdi.service.custom.script.AbstractCustomScriptService;
 import org.xdi.service.security.Secure;
 import org.xdi.util.OxConstants;
@@ -138,8 +139,8 @@ public class ManagePersonAuthenticationAction
 
 	public List<PassportConfiguration> getLdapPassportConfigurations() {
 		for (PassportConfiguration configuration : ldapPassportConfigurations) {
-			if (configuration.getFieldset() == null) {
-				configuration.setFieldset(new ArrayList<SimpleExtendedCustomProperty>());
+			if (configuration.getProviders() == null) {
+				configuration.setProviders(new ArrayList<ProviderDetails>());
 			}
 		}
 		return ldapPassportConfigurations;
@@ -491,19 +492,18 @@ public class ManagePersonAuthenticationAction
 		clientSecretField.setDescription(facesMessages
 				.evalResourceAsString("#{msg['manageAuthentication.passport.strategy.clientSecretFieldHint']}"));
 		PassportConfiguration passportConfiguration = new PassportConfiguration();
-		passportConfiguration.setFieldset(new ArrayList<SimpleExtendedCustomProperty>());
-		passportConfiguration.getFieldset().add(clientIDField);
-		passportConfiguration.getFieldset().add(clientSecretField);
+		passportConfiguration.setProviders(new ArrayList<ProviderDetails>());
+		passportConfiguration.getProviders().add(new ProviderDetails());
 		this.ldapPassportConfigurations.add(passportConfiguration);
 	}
 
 	public void addField(PassportConfiguration removePassportConfiguration) {
 		for (PassportConfiguration passportConfig : this.ldapPassportConfigurations) {
 			if (System.identityHashCode(removePassportConfiguration) == System.identityHashCode(passportConfig)) {
-				if (passportConfig.getFieldset() == null) {
-					passportConfig.setFieldset(new ArrayList<SimpleExtendedCustomProperty>());
+				if (passportConfig.getProviders() == null) {
+					passportConfig.setProviders(new ArrayList<ProviderDetails>());
 				}
-				passportConfig.getFieldset().add(new SimpleExtendedCustomProperty());
+				passportConfig.getProviders().add(new ProviderDetails());
 			}
 		}
 	}
