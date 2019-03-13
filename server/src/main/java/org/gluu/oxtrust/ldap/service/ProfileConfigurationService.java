@@ -55,7 +55,7 @@ public class ProfileConfigurationService implements Serializable {
 	private static final String SAML1_ARTIFACT_RESOLUTION = "SAML1ArtifactResolution";
 	private static final String SAML1_ATTRIBUTE_QUERY = "SAML1AttributeQuery";
 	private static final String SAML2_SSO = "SAML2SSO";
-    private static final String SAML2_LOGOUT = "SAML2Logout";
+	private static final String SAML2_LOGOUT = "SAML2Logout";
 	private static final String SAML2_ARTIFACT_RESOLUTION = "SAML2ArtifactResolution";
 	private static final String SAML2_ATTRIBUTE_QUERY = "SAML2AttributeQuery";
 
@@ -76,8 +76,11 @@ public class ProfileConfigurationService implements Serializable {
 
 	public List<ProfileConfiguration> getAvailableProfileConfigurations() {
 		String idpTemplatesLocation = configurationFactory.getIDPTemplatesLocation();
-		// File profileConfigurationFolder = new File(configurationFactory.DIR + "shibboleth3" + File.separator + "idp" + File.separator + "ProfileConfiguration");
-		File profileConfigurationFolder = new File(idpTemplatesLocation + "shibboleth3" + File.separator + "idp" + File.separator + "ProfileConfiguration");
+		// File profileConfigurationFolder = new File(configurationFactory.DIR +
+		// "shibboleth3" + File.separator + "idp" + File.separator +
+		// "ProfileConfiguration");
+		File profileConfigurationFolder = new File(idpTemplatesLocation + "shibboleth3" + File.separator + "idp"
+				+ File.separator + "ProfileConfiguration");
 
 		File[] profileConfigurationTemplates = null;
 		List<ProfileConfiguration> profileConfigurations = new ArrayList<ProfileConfiguration>();
@@ -89,10 +92,11 @@ public class ProfileConfigurationService implements Serializable {
 				}
 			});
 			for (File profileConfigurationTemplate : profileConfigurationTemplates) {
-				profileConfigurations.add(createProfileConfiguration(profileConfigurationTemplate.getName().split("ProfileConfiguration")[0]));
+				profileConfigurations.add(createProfileConfiguration(
+						profileConfigurationTemplate.getName().split("ProfileConfiguration")[0]));
 			}
 		}
-		
+
 		return profileConfigurations;
 	}
 
@@ -131,13 +135,13 @@ public class ProfileConfigurationService implements Serializable {
 			profileConfiguration.setEncryptNameIds("never");
 		}
 
-        if (SAML2_LOGOUT.equals(profileConfigurationName)) {
-            profileConfiguration.setAssertionLifetime(300000);
-            profileConfiguration.setSignResponses("conditional");
-            profileConfiguration.setSignAssertions("never");
-            profileConfiguration.setSignRequests("conditional");
-            profileConfiguration.setEncryptAssertions("conditional");
-        }
+		if (SAML2_LOGOUT.equals(profileConfigurationName)) {
+			profileConfiguration.setAssertionLifetime(300000);
+			profileConfiguration.setSignResponses("conditional");
+			profileConfiguration.setSignAssertions("never");
+			profileConfiguration.setSignRequests("conditional");
+			profileConfiguration.setEncryptAssertions("conditional");
+		}
 
 		if (SAML2_ARTIFACT_RESOLUTION.equals(profileConfigurationName)) {
 			profileConfiguration.setSignResponses("conditional");
@@ -168,24 +172,25 @@ public class ProfileConfigurationService implements Serializable {
 		return profileConfigurations;
 	}
 
-	public void parseProfileConfigurations(GluuSAMLTrustRelationship trustRelationship) throws SAXException, IOException,
-			ParserConfigurationException, FactoryConfigurationError, XPathExpressionException {
+	public void parseProfileConfigurations(GluuSAMLTrustRelationship trustRelationship) throws SAXException,
+			IOException, ParserConfigurationException, FactoryConfigurationError, XPathExpressionException {
 		if (trustRelationship.getGluuProfileConfiguration() != null) {
 			for (String profileConfigurationXML : trustRelationship.getGluuProfileConfiguration()) {
 				Document xmlDocument = xmlService.getXmlDocument(profileConfigurationXML.getBytes(), true);
-				if (xmlDocument.getFirstChild().getAttributes().getNamedItem("xsi:type").getNodeValue().contains(SHIBBOLETH_SSO)) {
+				if (xmlDocument.getFirstChild().getAttributes().getNamedItem("xsi:type").getNodeValue()
+						.contains(SHIBBOLETH_SSO)) {
 					ProfileConfiguration profileConfiguration = createProfileConfiguration(SHIBBOLETH_SSO);
 
-					profileConfiguration.setIncludeAttributeStatement(Boolean.parseBoolean(xmlDocument.getFirstChild().getAttributes()
-							.getNamedItem("includeAttributeStatement").getNodeValue()));
-					profileConfiguration.setAssertionLifetime(Integer.parseInt(xmlDocument.getFirstChild().getAttributes()
-							.getNamedItem("assertionLifetime").getNodeValue()));
-					profileConfiguration.setSignResponses(xmlDocument.getFirstChild().getAttributes().getNamedItem("signResponses")
-							.getNodeValue());
-					profileConfiguration.setSignAssertions(xmlDocument.getFirstChild().getAttributes().getNamedItem("signAssertions")
-							.getNodeValue());
-					profileConfiguration.setSignRequests(xmlDocument.getFirstChild().getAttributes().getNamedItem("signRequests")
-							.getNodeValue());
+					profileConfiguration.setIncludeAttributeStatement(Boolean.parseBoolean(xmlDocument.getFirstChild()
+							.getAttributes().getNamedItem("includeAttributeStatement").getNodeValue()));
+					profileConfiguration.setAssertionLifetime(Integer.parseInt(xmlDocument.getFirstChild()
+							.getAttributes().getNamedItem("assertionLifetime").getNodeValue()));
+					profileConfiguration.setSignResponses(
+							xmlDocument.getFirstChild().getAttributes().getNamedItem("signResponses").getNodeValue());
+					profileConfiguration.setSignAssertions(
+							xmlDocument.getFirstChild().getAttributes().getNamedItem("signAssertions").getNodeValue());
+					profileConfiguration.setSignRequests(
+							xmlDocument.getFirstChild().getAttributes().getNamedItem("signRequests").getNodeValue());
 					Node attribute = xmlDocument.getFirstChild().getAttributes().getNamedItem("signingCredentialRef");
 					if (attribute != null) {
 						profileConfiguration.setProfileConfigurationCertFileName(attribute.getNodeValue());
@@ -195,15 +200,16 @@ public class ProfileConfigurationService implements Serializable {
 					continue;
 				}
 
-				if (xmlDocument.getFirstChild().getAttributes().getNamedItem("xsi:type").getNodeValue().contains(SAML1_ARTIFACT_RESOLUTION)) {
+				if (xmlDocument.getFirstChild().getAttributes().getNamedItem("xsi:type").getNodeValue()
+						.contains(SAML1_ARTIFACT_RESOLUTION)) {
 					ProfileConfiguration profileConfiguration = createProfileConfiguration(SAML1_ARTIFACT_RESOLUTION);
 
-					profileConfiguration.setSignResponses(xmlDocument.getFirstChild().getAttributes().getNamedItem("signResponses")
-							.getNodeValue());
-					profileConfiguration.setSignAssertions(xmlDocument.getFirstChild().getAttributes().getNamedItem("signAssertions")
-							.getNodeValue());
-					profileConfiguration.setSignRequests(xmlDocument.getFirstChild().getAttributes().getNamedItem("signRequests")
-							.getNodeValue());
+					profileConfiguration.setSignResponses(
+							xmlDocument.getFirstChild().getAttributes().getNamedItem("signResponses").getNodeValue());
+					profileConfiguration.setSignAssertions(
+							xmlDocument.getFirstChild().getAttributes().getNamedItem("signAssertions").getNodeValue());
+					profileConfiguration.setSignRequests(
+							xmlDocument.getFirstChild().getAttributes().getNamedItem("signRequests").getNodeValue());
 					Node attribute = xmlDocument.getFirstChild().getAttributes().getNamedItem("signingCredentialRef");
 					if (attribute != null) {
 						profileConfiguration.setProfileConfigurationCertFileName(attribute.getNodeValue());
@@ -213,17 +219,18 @@ public class ProfileConfigurationService implements Serializable {
 					continue;
 				}
 
-				if (xmlDocument.getFirstChild().getAttributes().getNamedItem("xsi:type").getNodeValue().contains(SAML1_ATTRIBUTE_QUERY)) {
+				if (xmlDocument.getFirstChild().getAttributes().getNamedItem("xsi:type").getNodeValue()
+						.contains(SAML1_ATTRIBUTE_QUERY)) {
 					ProfileConfiguration profileConfiguration = createProfileConfiguration(SAML1_ATTRIBUTE_QUERY);
 
-					profileConfiguration.setAssertionLifetime(Integer.parseInt(xmlDocument.getFirstChild().getAttributes()
-							.getNamedItem("assertionLifetime").getNodeValue()));
-					profileConfiguration.setSignResponses(xmlDocument.getFirstChild().getAttributes().getNamedItem("signResponses")
-							.getNodeValue());
-					profileConfiguration.setSignAssertions(xmlDocument.getFirstChild().getAttributes().getNamedItem("signAssertions")
-							.getNodeValue());
-					profileConfiguration.setSignRequests(xmlDocument.getFirstChild().getAttributes().getNamedItem("signRequests")
-							.getNodeValue());
+					profileConfiguration.setAssertionLifetime(Integer.parseInt(xmlDocument.getFirstChild()
+							.getAttributes().getNamedItem("assertionLifetime").getNodeValue()));
+					profileConfiguration.setSignResponses(
+							xmlDocument.getFirstChild().getAttributes().getNamedItem("signResponses").getNodeValue());
+					profileConfiguration.setSignAssertions(
+							xmlDocument.getFirstChild().getAttributes().getNamedItem("signAssertions").getNodeValue());
+					profileConfiguration.setSignRequests(
+							xmlDocument.getFirstChild().getAttributes().getNamedItem("signRequests").getNodeValue());
 					Node attribute = xmlDocument.getFirstChild().getAttributes().getNamedItem("signingCredentialRef");
 					if (attribute != null) {
 						profileConfiguration.setProfileConfigurationCertFileName(attribute.getNodeValue());
@@ -233,25 +240,26 @@ public class ProfileConfigurationService implements Serializable {
 					continue;
 				}
 
-				if (xmlDocument.getFirstChild().getAttributes().getNamedItem("xsi:type").getNodeValue().contains(SAML2_SSO)) {
+				if (xmlDocument.getFirstChild().getAttributes().getNamedItem("xsi:type").getNodeValue()
+						.contains(SAML2_SSO)) {
 					ProfileConfiguration profileConfiguration = createProfileConfiguration(SAML2_SSO);
 
-					profileConfiguration.setIncludeAttributeStatement(Boolean.parseBoolean(xmlDocument.getFirstChild().getAttributes()
-							.getNamedItem("includeAttributeStatement").getNodeValue()));
-					profileConfiguration.setAssertionLifetime(Integer.parseInt(xmlDocument.getFirstChild().getAttributes()
-							.getNamedItem("assertionLifetime").getNodeValue()));
-					profileConfiguration.setAssertionProxyCount(Integer.parseInt(xmlDocument.getFirstChild().getAttributes()
-							.getNamedItem("assertionProxyCount").getNodeValue()));
-					profileConfiguration.setSignResponses(xmlDocument.getFirstChild().getAttributes().getNamedItem("signResponses")
-							.getNodeValue());
-					profileConfiguration.setSignAssertions(xmlDocument.getFirstChild().getAttributes().getNamedItem("signAssertions")
-							.getNodeValue());
-					profileConfiguration.setSignRequests(xmlDocument.getFirstChild().getAttributes().getNamedItem("signRequests")
-							.getNodeValue());
-					profileConfiguration.setEncryptAssertions(xmlDocument.getFirstChild().getAttributes().getNamedItem("encryptAssertions")
-							.getNodeValue());
-					profileConfiguration.setEncryptNameIds(xmlDocument.getFirstChild().getAttributes().getNamedItem("encryptNameIds")
-							.getNodeValue());
+					profileConfiguration.setIncludeAttributeStatement(Boolean.parseBoolean(xmlDocument.getFirstChild()
+							.getAttributes().getNamedItem("includeAttributeStatement").getNodeValue()));
+					profileConfiguration.setAssertionLifetime(Integer.parseInt(xmlDocument.getFirstChild()
+							.getAttributes().getNamedItem("assertionLifetime").getNodeValue()));
+					profileConfiguration.setAssertionProxyCount(Integer.parseInt(xmlDocument.getFirstChild()
+							.getAttributes().getNamedItem("assertionProxyCount").getNodeValue()));
+					profileConfiguration.setSignResponses(
+							xmlDocument.getFirstChild().getAttributes().getNamedItem("signResponses").getNodeValue());
+					profileConfiguration.setSignAssertions(
+							xmlDocument.getFirstChild().getAttributes().getNamedItem("signAssertions").getNodeValue());
+					profileConfiguration.setSignRequests(
+							xmlDocument.getFirstChild().getAttributes().getNamedItem("signRequests").getNodeValue());
+					profileConfiguration.setEncryptAssertions(xmlDocument.getFirstChild().getAttributes()
+							.getNamedItem("encryptAssertions").getNodeValue());
+					profileConfiguration.setEncryptNameIds(
+							xmlDocument.getFirstChild().getAttributes().getNamedItem("encryptNameIds").getNodeValue());
 					Node attribute = xmlDocument.getFirstChild().getAttributes().getNamedItem("signingCredentialRef");
 					if (attribute != null) {
 						profileConfiguration.setProfileConfigurationCertFileName(attribute.getNodeValue());
@@ -261,41 +269,43 @@ public class ProfileConfigurationService implements Serializable {
 					continue;
 				}
 
-                if (xmlDocument.getFirstChild().getAttributes().getNamedItem("xsi:type").getNodeValue().contains(SAML2_LOGOUT)) {
-                    ProfileConfiguration profileConfiguration = createProfileConfiguration(SAML2_LOGOUT);
+				if (xmlDocument.getFirstChild().getAttributes().getNamedItem("xsi:type").getNodeValue()
+						.contains(SAML2_LOGOUT)) {
+					ProfileConfiguration profileConfiguration = createProfileConfiguration(SAML2_LOGOUT);
 
-                    profileConfiguration.setAssertionLifetime(Integer.parseInt(xmlDocument.getFirstChild().getAttributes()
-                            .getNamedItem("assertionLifetime").getNodeValue()));
-                    profileConfiguration.setSignResponses(xmlDocument.getFirstChild().getAttributes().getNamedItem("signResponses")
-                            .getNodeValue());
-                    profileConfiguration.setSignAssertions(xmlDocument.getFirstChild().getAttributes().getNamedItem("signAssertions")
-                            .getNodeValue());
-                    profileConfiguration.setSignRequests(xmlDocument.getFirstChild().getAttributes().getNamedItem("signRequests")
-                            .getNodeValue());
-                    profileConfiguration.setEncryptAssertions(xmlDocument.getFirstChild().getAttributes().getNamedItem("encryptAssertions")
-                            .getNodeValue());
-                    Node attribute = xmlDocument.getFirstChild().getAttributes().getNamedItem("signingCredentialRef");
-                    if (attribute != null) {
-                        profileConfiguration.setProfileConfigurationCertFileName(attribute.getNodeValue());
-                    }
+					profileConfiguration.setAssertionLifetime(Integer.parseInt(xmlDocument.getFirstChild()
+							.getAttributes().getNamedItem("assertionLifetime").getNodeValue()));
+					profileConfiguration.setSignResponses(
+							xmlDocument.getFirstChild().getAttributes().getNamedItem("signResponses").getNodeValue());
+					profileConfiguration.setSignAssertions(
+							xmlDocument.getFirstChild().getAttributes().getNamedItem("signAssertions").getNodeValue());
+					profileConfiguration.setSignRequests(
+							xmlDocument.getFirstChild().getAttributes().getNamedItem("signRequests").getNodeValue());
+					profileConfiguration.setEncryptAssertions(xmlDocument.getFirstChild().getAttributes()
+							.getNamedItem("encryptAssertions").getNodeValue());
+					Node attribute = xmlDocument.getFirstChild().getAttributes().getNamedItem("signingCredentialRef");
+					if (attribute != null) {
+						profileConfiguration.setProfileConfigurationCertFileName(attribute.getNodeValue());
+					}
 
-                    trustRelationship.getProfileConfigurations().put(SAML2_LOGOUT, profileConfiguration);
-                    continue;
-                }
+					trustRelationship.getProfileConfigurations().put(SAML2_LOGOUT, profileConfiguration);
+					continue;
+				}
 
-				if (xmlDocument.getFirstChild().getAttributes().getNamedItem("xsi:type").getNodeValue().contains(SAML2_ARTIFACT_RESOLUTION)) {
+				if (xmlDocument.getFirstChild().getAttributes().getNamedItem("xsi:type").getNodeValue()
+						.contains(SAML2_ARTIFACT_RESOLUTION)) {
 					ProfileConfiguration profileConfiguration = createProfileConfiguration(SAML2_ARTIFACT_RESOLUTION);
 
-					profileConfiguration.setSignResponses(xmlDocument.getFirstChild().getAttributes().getNamedItem("signResponses")
-							.getNodeValue());
-					profileConfiguration.setSignAssertions(xmlDocument.getFirstChild().getAttributes().getNamedItem("signAssertions")
-							.getNodeValue());
-					profileConfiguration.setSignRequests(xmlDocument.getFirstChild().getAttributes().getNamedItem("signRequests")
-							.getNodeValue());
-					profileConfiguration.setEncryptAssertions(xmlDocument.getFirstChild().getAttributes().getNamedItem("encryptNameIds")
-							.getNodeValue());
-					profileConfiguration.setEncryptNameIds(xmlDocument.getFirstChild().getAttributes().getNamedItem("encryptNameIds")
-							.getNodeValue());
+					profileConfiguration.setSignResponses(
+							xmlDocument.getFirstChild().getAttributes().getNamedItem("signResponses").getNodeValue());
+					profileConfiguration.setSignAssertions(
+							xmlDocument.getFirstChild().getAttributes().getNamedItem("signAssertions").getNodeValue());
+					profileConfiguration.setSignRequests(
+							xmlDocument.getFirstChild().getAttributes().getNamedItem("signRequests").getNodeValue());
+					profileConfiguration.setEncryptAssertions(
+							xmlDocument.getFirstChild().getAttributes().getNamedItem("encryptNameIds").getNodeValue());
+					profileConfiguration.setEncryptNameIds(
+							xmlDocument.getFirstChild().getAttributes().getNamedItem("encryptNameIds").getNodeValue());
 					Node attribute = xmlDocument.getFirstChild().getAttributes().getNamedItem("signingCredentialRef");
 					if (attribute != null) {
 						profileConfiguration.setProfileConfigurationCertFileName(attribute.getNodeValue());
@@ -305,23 +315,24 @@ public class ProfileConfigurationService implements Serializable {
 					continue;
 				}
 
-				if (xmlDocument.getFirstChild().getAttributes().getNamedItem("xsi:type").getNodeValue().contains(SAML2_ATTRIBUTE_QUERY)) {
+				if (xmlDocument.getFirstChild().getAttributes().getNamedItem("xsi:type").getNodeValue()
+						.contains(SAML2_ATTRIBUTE_QUERY)) {
 					ProfileConfiguration profileConfiguration = createProfileConfiguration(SAML2_ATTRIBUTE_QUERY);
 
-					profileConfiguration.setAssertionLifetime(Integer.parseInt(xmlDocument.getFirstChild().getAttributes()
-							.getNamedItem("assertionLifetime").getNodeValue()));
-					profileConfiguration.setAssertionProxyCount(Integer.parseInt(xmlDocument.getFirstChild().getAttributes()
-							.getNamedItem("assertionProxyCount").getNodeValue()));
-					profileConfiguration.setSignResponses(xmlDocument.getFirstChild().getAttributes().getNamedItem("signResponses")
-							.getNodeValue());
-					profileConfiguration.setSignAssertions(xmlDocument.getFirstChild().getAttributes().getNamedItem("signAssertions")
-							.getNodeValue());
-					profileConfiguration.setSignRequests(xmlDocument.getFirstChild().getAttributes().getNamedItem("signRequests")
-							.getNodeValue());
-					profileConfiguration.setEncryptAssertions(xmlDocument.getFirstChild().getAttributes().getNamedItem("encryptNameIds")
-							.getNodeValue());
-					profileConfiguration.setEncryptNameIds(xmlDocument.getFirstChild().getAttributes().getNamedItem("encryptNameIds")
-							.getNodeValue());
+					profileConfiguration.setAssertionLifetime(Integer.parseInt(xmlDocument.getFirstChild()
+							.getAttributes().getNamedItem("assertionLifetime").getNodeValue()));
+					profileConfiguration.setAssertionProxyCount(Integer.parseInt(xmlDocument.getFirstChild()
+							.getAttributes().getNamedItem("assertionProxyCount").getNodeValue()));
+					profileConfiguration.setSignResponses(
+							xmlDocument.getFirstChild().getAttributes().getNamedItem("signResponses").getNodeValue());
+					profileConfiguration.setSignAssertions(
+							xmlDocument.getFirstChild().getAttributes().getNamedItem("signAssertions").getNodeValue());
+					profileConfiguration.setSignRequests(
+							xmlDocument.getFirstChild().getAttributes().getNamedItem("signRequests").getNodeValue());
+					profileConfiguration.setEncryptAssertions(
+							xmlDocument.getFirstChild().getAttributes().getNamedItem("encryptNameIds").getNodeValue());
+					profileConfiguration.setEncryptNameIds(
+							xmlDocument.getFirstChild().getAttributes().getNamedItem("encryptNameIds").getNodeValue());
 					Node attribute = xmlDocument.getFirstChild().getAttributes().getNamedItem("signingCredentialRef");
 					if (attribute != null) {
 						profileConfiguration.setProfileConfigurationCertFileName(attribute.getNodeValue());
@@ -336,44 +347,53 @@ public class ProfileConfigurationService implements Serializable {
 
 	}
 
-	public boolean isProfileConfigurationPresent(GluuSAMLTrustRelationship trustRelationship, ProfileConfiguration profileConfiguration) {
-		if(trustRelationship.getProfileConfigurations().keySet().contains(profileConfiguration.getName())){
-			ProfileConfiguration storedConfiguration = trustRelationship.getProfileConfigurations().get(profileConfiguration.getName());
+	public boolean isProfileConfigurationPresent(GluuSAMLTrustRelationship trustRelationship,
+			ProfileConfiguration profileConfiguration) {
+		if (trustRelationship.getProfileConfigurations().keySet().contains(profileConfiguration.getName())) {
+			ProfileConfiguration storedConfiguration = trustRelationship.getProfileConfigurations()
+					.get(profileConfiguration.getName());
 			return profileConfiguration.equals(storedConfiguration);
 		}
 		return false;
 	}
 
-	public void updateProfileConfiguration(GluuSAMLTrustRelationship trustRelationship, ProfileConfiguration profileConfiguration) {
+	public void updateProfileConfiguration(GluuSAMLTrustRelationship trustRelationship,
+			ProfileConfiguration profileConfiguration) {
 		trustRelationship.getProfileConfigurations().put(profileConfiguration.getName(), profileConfiguration);
 
 	}
 
-	public void removeProfileConfiguration(GluuSAMLTrustRelationship trustRelationship, ProfileConfiguration profileConfiguration) {
+	public void removeProfileConfiguration(GluuSAMLTrustRelationship trustRelationship,
+			ProfileConfiguration profileConfiguration) {
 		trustRelationship.getProfileConfigurations().remove(profileConfiguration.getName());
 
 	}
 
-	public void saveProfileConfigurations(GluuSAMLTrustRelationship trustRelationship, Map<String, FileUploadWrapper> fileWrappers) {
+	public void saveProfileConfigurations(GluuSAMLTrustRelationship trustRelationship,
+			Map<String, FileUploadWrapper> fileWrappers) {
 		VelocityContext context = new VelocityContext();
 
 		if (trustRelationship.getProfileConfigurations().get(SHIBBOLETH_SSO) != null) {
-			ProfileConfiguration profileConfiguration = trustRelationship.getProfileConfigurations().get(SHIBBOLETH_SSO);
-			context.put(SHIBBOLETH_SSO + "IncludeAttributeStatement", profileConfiguration.isIncludeAttributeStatement());
+			ProfileConfiguration profileConfiguration = trustRelationship.getProfileConfigurations()
+					.get(SHIBBOLETH_SSO);
+			context.put(SHIBBOLETH_SSO + "IncludeAttributeStatement",
+					profileConfiguration.isIncludeAttributeStatement());
 			context.put(SHIBBOLETH_SSO + "AssertionLifetime", profileConfiguration.getAssertionLifetime());
 			context.put(SHIBBOLETH_SSO + "SignResponses", profileConfiguration.getSignResponses());
 			context.put(SHIBBOLETH_SSO + "SignAssertions", profileConfiguration.getSignAssertions());
 			context.put(SHIBBOLETH_SSO + "SignRequests", profileConfiguration.getSignRequests());
 
 			saveCertificate(trustRelationship, fileWrappers, SHIBBOLETH_SSO);
-			String certName = trustRelationship.getProfileConfigurations().get(SHIBBOLETH_SSO).getProfileConfigurationCertFileName();
+			String certName = trustRelationship.getProfileConfigurations().get(SHIBBOLETH_SSO)
+					.getProfileConfigurationCertFileName();
 			if (StringHelper.isNotEmpty(certName)) {
 				context.put(SHIBBOLETH_SSO + "SigningCredentialRef", certName);
 			}
 		}
 
 		if (trustRelationship.getProfileConfigurations().get(SAML1_ARTIFACT_RESOLUTION) != null) {
-			ProfileConfiguration profileConfiguration = trustRelationship.getProfileConfigurations().get(SAML1_ARTIFACT_RESOLUTION);
+			ProfileConfiguration profileConfiguration = trustRelationship.getProfileConfigurations()
+					.get(SAML1_ARTIFACT_RESOLUTION);
 			context.put(SAML1_ARTIFACT_RESOLUTION + "SignResponses", profileConfiguration.getSignResponses());
 			context.put(SAML1_ARTIFACT_RESOLUTION + "SignAssertions", profileConfiguration.getSignAssertions());
 			context.put(SAML1_ARTIFACT_RESOLUTION + "SignRequests", profileConfiguration.getSignRequests());
@@ -386,13 +406,15 @@ public class ProfileConfigurationService implements Serializable {
 		}
 
 		if (trustRelationship.getProfileConfigurations().get(SAML1_ATTRIBUTE_QUERY) != null) {
-			ProfileConfiguration profileConfiguration = trustRelationship.getProfileConfigurations().get(SAML1_ATTRIBUTE_QUERY);
+			ProfileConfiguration profileConfiguration = trustRelationship.getProfileConfigurations()
+					.get(SAML1_ATTRIBUTE_QUERY);
 			context.put(SAML1_ATTRIBUTE_QUERY + "AssertionLifetime", profileConfiguration.getAssertionLifetime());
 			context.put(SAML1_ATTRIBUTE_QUERY + "SignResponses", profileConfiguration.getSignResponses());
 			context.put(SAML1_ATTRIBUTE_QUERY + "SignAssertions", profileConfiguration.getSignAssertions());
 			context.put(SAML1_ATTRIBUTE_QUERY + "SignRequests", profileConfiguration.getSignRequests());
 			saveCertificate(trustRelationship, fileWrappers, SAML1_ATTRIBUTE_QUERY);
-			String certName = trustRelationship.getProfileConfigurations().get(SAML1_ATTRIBUTE_QUERY).getProfileConfigurationCertFileName();
+			String certName = trustRelationship.getProfileConfigurations().get(SAML1_ATTRIBUTE_QUERY)
+					.getProfileConfigurationCertFileName();
 			if (StringHelper.isNotEmpty(certName)) {
 				context.put(SAML1_ATTRIBUTE_QUERY + "SigningCredentialRef", certName);
 			}
@@ -409,27 +431,30 @@ public class ProfileConfigurationService implements Serializable {
 			context.put(SAML2_SSO + "EncryptNameIds", profileConfiguration.getEncryptNameIds());
 			context.put(SAML2_SSO + "EncryptAssertions", profileConfiguration.getEncryptAssertions());
 			saveCertificate(trustRelationship, fileWrappers, SAML2_SSO);
-			String certName = trustRelationship.getProfileConfigurations().get(SAML2_SSO).getProfileConfigurationCertFileName();
+			String certName = trustRelationship.getProfileConfigurations().get(SAML2_SSO)
+					.getProfileConfigurationCertFileName();
 			if (StringHelper.isNotEmpty(certName)) {
 				context.put(SAML2_SSO + "SigningCredentialRef", certName);
 			}
 		}
-        if (trustRelationship.getProfileConfigurations().get(SAML2_LOGOUT) != null) {
-            ProfileConfiguration profileConfiguration = trustRelationship.getProfileConfigurations().get(SAML2_LOGOUT);
-            context.put(SAML2_LOGOUT + "AssertionLifetime", profileConfiguration.getAssertionLifetime());
-            context.put(SAML2_LOGOUT + "SignResponses", profileConfiguration.getSignResponses());
-            context.put(SAML2_LOGOUT + "SignAssertions", profileConfiguration.getSignAssertions());
-            context.put(SAML2_LOGOUT + "SignRequests", profileConfiguration.getSignRequests());
-            context.put(SAML2_LOGOUT + "EncryptAssertions", profileConfiguration.getEncryptAssertions());
-            saveCertificate(trustRelationship, fileWrappers, SAML2_LOGOUT);
-            String certName = trustRelationship.getProfileConfigurations().get(SAML2_LOGOUT).getProfileConfigurationCertFileName();
-            if (StringHelper.isNotEmpty(certName)) {
-                context.put(SAML2_LOGOUT + "SigningCredentialRef", certName);
-            }
-        }
+		if (trustRelationship.getProfileConfigurations().get(SAML2_LOGOUT) != null) {
+			ProfileConfiguration profileConfiguration = trustRelationship.getProfileConfigurations().get(SAML2_LOGOUT);
+			context.put(SAML2_LOGOUT + "AssertionLifetime", profileConfiguration.getAssertionLifetime());
+			context.put(SAML2_LOGOUT + "SignResponses", profileConfiguration.getSignResponses());
+			context.put(SAML2_LOGOUT + "SignAssertions", profileConfiguration.getSignAssertions());
+			context.put(SAML2_LOGOUT + "SignRequests", profileConfiguration.getSignRequests());
+			context.put(SAML2_LOGOUT + "EncryptAssertions", profileConfiguration.getEncryptAssertions());
+			saveCertificate(trustRelationship, fileWrappers, SAML2_LOGOUT);
+			String certName = trustRelationship.getProfileConfigurations().get(SAML2_LOGOUT)
+					.getProfileConfigurationCertFileName();
+			if (StringHelper.isNotEmpty(certName)) {
+				context.put(SAML2_LOGOUT + "SigningCredentialRef", certName);
+			}
+		}
 
 		if (trustRelationship.getProfileConfigurations().get(SAML2_ARTIFACT_RESOLUTION) != null) {
-			ProfileConfiguration profileConfiguration = trustRelationship.getProfileConfigurations().get(SAML2_ARTIFACT_RESOLUTION);
+			ProfileConfiguration profileConfiguration = trustRelationship.getProfileConfigurations()
+					.get(SAML2_ARTIFACT_RESOLUTION);
 			context.put(SAML2_ARTIFACT_RESOLUTION + "SignResponses", profileConfiguration.getSignResponses());
 			context.put(SAML2_ARTIFACT_RESOLUTION + "SignAssertions", profileConfiguration.getSignAssertions());
 			context.put(SAML2_ARTIFACT_RESOLUTION + "SignRequests", profileConfiguration.getSignRequests());
@@ -444,7 +469,8 @@ public class ProfileConfigurationService implements Serializable {
 		}
 
 		if (trustRelationship.getProfileConfigurations().get(SAML2_ATTRIBUTE_QUERY) != null) {
-			ProfileConfiguration profileConfiguration = trustRelationship.getProfileConfigurations().get(SAML2_ATTRIBUTE_QUERY);
+			ProfileConfiguration profileConfiguration = trustRelationship.getProfileConfigurations()
+					.get(SAML2_ATTRIBUTE_QUERY);
 			context.put(SAML2_ATTRIBUTE_QUERY + "AssertionLifetime", profileConfiguration.getAssertionLifetime());
 			context.put(SAML2_ATTRIBUTE_QUERY + "AssertionProxyCount", profileConfiguration.getAssertionProxyCount());
 			context.put(SAML2_ATTRIBUTE_QUERY + "SignResponses", profileConfiguration.getSignResponses());
@@ -453,31 +479,34 @@ public class ProfileConfigurationService implements Serializable {
 			context.put(SAML2_ATTRIBUTE_QUERY + "EncryptAssertions", profileConfiguration.getEncryptAssertions());
 			context.put(SAML2_ATTRIBUTE_QUERY + "EncryptNameIds", profileConfiguration.getEncryptNameIds());
 			saveCertificate(trustRelationship, fileWrappers, SAML2_ATTRIBUTE_QUERY);
-			String certName = trustRelationship.getProfileConfigurations().get(SAML2_ATTRIBUTE_QUERY).getProfileConfigurationCertFileName();
+			String certName = trustRelationship.getProfileConfigurations().get(SAML2_ATTRIBUTE_QUERY)
+					.getProfileConfigurationCertFileName();
 			if (StringHelper.isNotEmpty(certName)) {
 				context.put(SAML2_ATTRIBUTE_QUERY + "SigningCredentialRef", certName);
 			}
 		}
-		
-		if(! trustRelationship.getProfileConfigurations().isEmpty()){
+
+		if (!trustRelationship.getProfileConfigurations().isEmpty()) {
 			trustRelationship.setGluuProfileConfiguration(new ArrayList<String>());
-	
+
 			for (String profileConfigurationName : trustRelationship.getProfileConfigurations().keySet()) {
-				trustRelationship.getGluuProfileConfiguration().add(
-						templateService.generateConfFile(profileConfigurationName + "ProfileConfiguration.xml", context));
+				trustRelationship.getGluuProfileConfiguration().add(templateService
+						.generateConfFile(profileConfigurationName + "ProfileConfiguration.xml", context));
 			}
-		}else{
+		} else {
 			trustRelationship.setGluuProfileConfiguration(null);
 		}
 
 	}
 
-	private void saveCertificate(GluuSAMLTrustRelationship trustRelationship, Map<String, FileUploadWrapper> fileWrappers, String name) {
+	private void saveCertificate(GluuSAMLTrustRelationship trustRelationship,
+			Map<String, FileUploadWrapper> fileWrappers, String name) {
 		if (fileWrappers.get(name) != null && fileWrappers.get(name).getStream() != null) {
-			String profileConfigurationCertFileName = StringHelper.removePunctuation(name + trustRelationship.getInum());
+			String profileConfigurationCertFileName = StringHelper
+					.removePunctuation(name + trustRelationship.getInum());
 			saveProfileConfigurationCert(profileConfigurationCertFileName, fileWrappers.get(name).getStream());
-			trustRelationship.getProfileConfigurations().get(name)
-					.setProfileConfigurationCertFileName(StringHelper.removePunctuation(profileConfigurationCertFileName));
+			trustRelationship.getProfileConfigurations().get(name).setProfileConfigurationCertFileName(
+					StringHelper.removePunctuation(profileConfigurationCertFileName));
 		}
 
 	}
@@ -486,15 +515,15 @@ public class ProfileConfigurationService implements Serializable {
 
 		if (appConfiguration.getShibboleth3IdpRootDir() == null) {
 			IOUtils.closeQuietly(stream);
-			throw new InvalidConfigurationException("Failed to save Profile Configuration file due to undefined IDP root folder");
+			throw new InvalidConfigurationException(
+					"Failed to save Profile Configuration file due to undefined IDP root folder");
 		}
 
-		String idpMetadataFolder = appConfiguration.getShibboleth3IdpRootDir() + File.separator + SHIB3_IDP_METADATA_FOLDER + File.separator + "credentials" + File.separator;
+		String idpMetadataFolder = appConfiguration.getShibboleth3IdpRootDir() + File.separator
+				+ SHIB3_IDP_METADATA_FOLDER + File.separator + "credentials" + File.separator;
 		File filterCertFile = new File(idpMetadataFolder + profileConfigurationCertFileName);
 
-		FileOutputStream os = null;
-		try {
-			os = FileUtils.openOutputStream(filterCertFile);
+		try (FileOutputStream os = FileUtils.openOutputStream(filterCertFile)) {
 			IOUtils.copy(stream, os);
 			os.flush();
 		} catch (IOException ex) {
@@ -502,7 +531,6 @@ public class ProfileConfigurationService implements Serializable {
 			ex.printStackTrace();
 			return null;
 		} finally {
-			IOUtils.closeQuietly(os);
 			IOUtils.closeQuietly(stream);
 		}
 

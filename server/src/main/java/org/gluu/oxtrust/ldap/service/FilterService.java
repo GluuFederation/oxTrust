@@ -261,10 +261,7 @@ public class FilterService implements Serializable {
 		String idpMetadataFolder = appConfiguration.getShibboleth3IdpRootDir() + File.separator + SHIB3_IDP_METADATA_FOLDER + File.separator
 				+ "credentials" + File.separator;
 		File filterCertFile = new File(idpMetadataFolder + filterCertFileName);
-
-		FileOutputStream os = null;
-		try {
-			os = FileUtils.openOutputStream(filterCertFile);
+		try (FileOutputStream os = FileUtils.openOutputStream(filterCertFile)){
 			IOUtils.copy(input, os);
 			os.flush();
 		} catch (IOException ex) {
@@ -272,7 +269,6 @@ public class FilterService implements Serializable {
 			ex.printStackTrace();
 			return null;
 		} finally {
-			IOUtils.closeQuietly(os);
 			IOUtils.closeQuietly(input);
 		}
 

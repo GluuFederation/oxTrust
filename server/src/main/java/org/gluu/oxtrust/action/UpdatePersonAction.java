@@ -370,7 +370,7 @@ public class UpdatePersonAction implements Serializable {
 
 	@SuppressWarnings("deprecation")
 	private void addFidoDevices() {
-		List<GluuCustomFidoDevice> fidoDevices = fidoDeviceService.searchFidoDevices(this.person.getInum(), null);
+		List<GluuCustomFidoDevice> fidoDevices = fidoDeviceService.searchFidoDevices(this.person.getInum());
 		if (fidoDevices != null) {
 			for (GluuCustomFidoDevice gluuCustomFidoDevice : fidoDevices) {
 				GluuDeviceDataBean gluuDeviceDataBean = new GluuDeviceDataBean();
@@ -782,8 +782,7 @@ public class UpdatePersonAction implements Serializable {
 	}
 
 	private void removeFidoDevice(GluuDeviceDataBean deleteDeviceData, String idOfDeviceToRemove) {
-		List<GluuCustomFidoDevice> gluuCustomFidoDevices = fidoDeviceService.searchFidoDevices(this.person.getInum(),
-				null);
+		List<GluuCustomFidoDevice> gluuCustomFidoDevices = fidoDeviceService.searchFidoDevices(this.person.getInum());
 		if (gluuCustomFidoDevices != null) {
 			for (GluuCustomFidoDevice gluuCustomFidoDevice : gluuCustomFidoDevices) {
 				if (gluuCustomFidoDevice.getId().equals(idOfDeviceToRemove)) {
