@@ -27,92 +27,73 @@ import org.xdi.service.security.Secure;
 @Secure("#{identity.loggedIn}")
 public class ProductInstallationCheckerAction implements Serializable {
 
-    private static final long serialVersionUID = 1125167091541923404L;
-    
-    @Inject
-    private Logger log;
+	private static final long serialVersionUID = 1125167091541923404L;
 
-    @Inject
-    private Shibboleth3ConfService shibboleth3ConfService;
-    
-    private boolean showSAMLMenu = true;
-    private boolean showAsimbaSubmenu = true;
-    private boolean showSAMLSubmenu = true;
-    // CAS protocol through Shibboleth IDP
-    private boolean showIDP_CAS = true;
-    
-    public ProductInstallationCheckerAction() {
-    }
-    
-    @PostConstruct
-    public void init() {        
-        log.info("init() ProductInstallationCheckerAction call");
-        
-        showSAMLMenu = !ProductInstallationChecker.isGluuCE() || ProductInstallationChecker.isOxAsimbaInstalled() || (shibboleth3ConfService.isIdpInstalled() && ProductInstallationChecker.isShibbolethIDP3Installed());
-        
-        showAsimbaSubmenu = !ProductInstallationChecker.isGluuCE() || ProductInstallationChecker.isOxAsimbaInstalled();
-        
-        showSAMLSubmenu = !ProductInstallationChecker.isGluuCE() || shibboleth3ConfService.isIdpInstalled();
-        
-        showIDP_CAS = !ProductInstallationChecker.isGluuCE() || ProductInstallationChecker.isShibbolethIDP3Installed();
-    }
+	@Inject
+	private Logger log;
 
-    /**
-     * @return the showSAMLMenu
-     */
-    public boolean isShowSAMLMenu() {
-        return showSAMLMenu;
-    }
+	@Inject
+	private Shibboleth3ConfService shibboleth3ConfService;
 
-    /**
-     * @param showSAMLMenu the showSAMLMenu to set
-     */
-    public void setShowSAMLMenu(boolean showSAMLMenu) {
-        this.showSAMLMenu = showSAMLMenu;
-    }
+	private boolean showSAMLMenu = true;
+	private boolean showSAMLSubmenu = true;
+	private boolean showIDP_CAS = true;
 
-    /**
-     * @return the showAsimbaSubmenu
-     */
-    public boolean isShowAsimbaSubmenu() {
-        return showAsimbaSubmenu;
-    }
+	public ProductInstallationCheckerAction() {
+	}
 
-    /**
-     * @param showAsimbaSubmenu the showAsimbaSubmenu to set
-     */
-    public void setShowAsimbaSubmenu(boolean showAsimbaSubmenu) {
-        this.showAsimbaSubmenu = showAsimbaSubmenu;
-    }
+	@PostConstruct
+	public void init() {
+		log.debug("init() ProductInstallationCheckerAction call");
+		showSAMLMenu = !ProductInstallationChecker.isGluuCE() || ProductInstallationChecker.isOxAsimbaInstalled()
+				|| (shibboleth3ConfService.isIdpInstalled() && ProductInstallationChecker.isShibbolethIDP3Installed());
+		showSAMLSubmenu = !ProductInstallationChecker.isGluuCE() || shibboleth3ConfService.isIdpInstalled();
+		showIDP_CAS = !ProductInstallationChecker.isGluuCE() || ProductInstallationChecker.isShibbolethIDP3Installed();
+	}
 
-    /**
-     * @return the showSAMLSubmenu
-     */
-    public boolean isShowSAMLSubmenu() {
-        return showSAMLSubmenu;
-    }
+	/**
+	 * @return the showSAMLMenu
+	 */
+	public boolean isShowSAMLMenu() {
+		return showSAMLMenu;
+	}
 
-    /**
-     * @param showSAMLSubmenu the showSAMLSubmenu to set
-     */
-    public void setShowSAMLSubmenu(boolean showSAMLSubmenu) {
-        this.showSAMLSubmenu = showSAMLSubmenu;
-    }
+	/**
+	 * @param showSAMLMenu
+	 *            the showSAMLMenu to set
+	 */
+	public void setShowSAMLMenu(boolean showSAMLMenu) {
+		this.showSAMLMenu = showSAMLMenu;
+	}
 
-    /**
-     * @return the showIDP_CAS
-     */
-    public boolean isShowIDP_CAS() {
-        return showIDP_CAS;
-    }
+	/**
+	 * @return the showSAMLSubmenu
+	 */
+	public boolean isShowSAMLSubmenu() {
+		return showSAMLSubmenu;
+	}
 
-    /**
-     * @param showIDP_CAS the showIDP_CAS to set
-     */
-    public void setShowIDP_CAS(boolean showIDP_CAS) {
-        this.showIDP_CAS = showIDP_CAS;
-    }
-    
-    
-    
+	/**
+	 * @param showSAMLSubmenu
+	 *            the showSAMLSubmenu to set
+	 */
+	public void setShowSAMLSubmenu(boolean showSAMLSubmenu) {
+		this.showSAMLSubmenu = showSAMLSubmenu;
+	}
+
+	/**
+	 * @return the showIDP_CAS
+	 */
+	public boolean isShowIDP_CAS() {
+		return showIDP_CAS;
+	}
+
+	/**
+	 * @param showIDP_CAS
+	 *            the showIDP_CAS to set
+	 */
+	public void setShowIDP_CAS(boolean showIDP_CAS) {
+		this.showIDP_CAS = showIDP_CAS;
+	}
+
 }

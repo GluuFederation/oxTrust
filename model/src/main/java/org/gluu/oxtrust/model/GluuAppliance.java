@@ -199,6 +199,14 @@ public class GluuAppliance extends InumEntry implements Serializable {
 		return applianceDnsServer;
 	}
 
+	public String getInumFN() {
+		return inumFN;
+	}
+
+	public void setInumFN(String inumFN) {
+		this.inumFN = inumFN;
+	}
+
 	public void setApplianceDnsServer(String applianceDnsServer) {
 		this.applianceDnsServer = applianceDnsServer;
 	}

@@ -524,24 +524,6 @@
 			<groupId>org.codehaus.jackson</groupId>
 			<artifactId>jackson-mapper-asl</artifactId>
 		</dependency>
-
-		<!-- Asimba -->
-		<dependency>
-			<groupId>org.asimba</groupId>
-			<artifactId>asimba-utility-ldap</artifactId>
-			<!-- Remove after updating Asimba dependencies -->
-			<exclusions>
-				<exclusion>
-					<groupId>org.xdi</groupId>
-					<artifactId>oxLdap</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.xdi</groupId>
-					<artifactId>oxLdap-annotations</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
 		<!-- Other -->
 		<dependency>
 			<groupId>org.codehaus.jettison</groupId>

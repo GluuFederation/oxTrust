@@ -29,8 +29,6 @@ import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.SSLService;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.model.cert.TrustStoreCertificate;
-import org.gluu.oxtrust.service.asimba.AsimbaXMLConfigurationService;
-import org.gluu.oxtrust.util.KeystoreWrapper;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.X509CertificateShortInfo;
 import org.slf4j.Logger;
@@ -60,14 +58,7 @@ public class CertificateManagementAction implements Serializable {
 	private FacesMessages facesMessages;
 
 	@Inject
-	private AsimbaXMLConfigurationService asimbaXMLConfigurationService;
-
-	@Inject
 	private ApplianceService applianceService;
-
-	private KeystoreWrapper asimbaKeystore;
-
-	private List<X509CertificateShortInfo> asimbaCertificates = new ArrayList<X509CertificateShortInfo>();
 
 	private List<X509CertificateShortInfo> trustStoreCertificates;
 
@@ -81,18 +72,6 @@ public class CertificateManagementAction implements Serializable {
 
 	public void refresh() {
 		log.info("refresh() CertificateManagement call");
-		try {
-			if (asimbaXMLConfigurationService.isReady()) {
-				asimbaKeystore = asimbaXMLConfigurationService.getKeystore();
-				List<X509CertificateShortInfo> listCertificates = asimbaKeystore.listCertificates();
-				if (listCertificates != null) {
-					asimbaCertificates.addAll(listCertificates);
-				}
-			}
-		} catch (Exception e) {
-			log.error("Load Asimba keystore configuration exception", e);
-		}
-
 		updateTableView();
 	}
 
@@ -110,25 +89,14 @@ public class CertificateManagementAction implements Serializable {
 	 */
 	private void updateTableView() {
 		try {
-			asimbaCertificates.stream().forEach(cert -> cert.updateViewStyle());
-		} catch (Exception e) {
-			log.error("Load Asimba keystore configuration exception", e);
-		}
-
-		try {
-			// load trustStoreCertificates
 			trustStoreCertificates = new ArrayList<X509CertificateShortInfo>();
-
 			GluuAppliance appliance = applianceService.getAppliance();
-
 			List<TrustStoreCertificate> trustStoreCertificatesList = appliance.getTrustStoreCertificates();
-
 			if (trustStoreCertificatesList != null) {
 				for (TrustStoreCertificate trustStoreCertificate : trustStoreCertificatesList) {
 					try {
 						X509Certificate certs[] = SSLService
 								.loadCertificates(trustStoreCertificate.getCertificate().getBytes());
-
 						for (X509Certificate cert : certs) {
 							X509CertificateShortInfo entry = new X509CertificateShortInfo(
 									trustStoreCertificate.getName(), cert);
@@ -202,21 +170,6 @@ public class CertificateManagementAction implements Serializable {
 		Exception e) {
 			log.error("Load internalCertificates configuration exception", e);
 		}
-	}
-
-	/**
-	 * @return the asimbaCertificates
-	 */
-	public List<X509CertificateShortInfo> getAsimbaCertificates() {
-		return asimbaCertificates;
-	}
-
-	/**
-	 * @param asimbaCertificates
-	 *            the asimbaCertificates to set
-	 */
-	public void setAsimbaCertificates(List<X509CertificateShortInfo> asimbaCertificates) {
-		this.asimbaCertificates = asimbaCertificates;
 	}
 
 	/**
