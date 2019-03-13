@@ -50,7 +50,7 @@ import java.util.Optional;
 /**
  * Created by jgomer on 2017-12-09.
  */
-public class LdapFilterListener extends ScimFilterBaseListener {
+public class FilterListener extends ScimFilterBaseListener {
 
     private Logger log = LogManager.getLogger(getClass());
     private Deque<Filter> filter;
@@ -58,7 +58,7 @@ public class LdapFilterListener extends ScimFilterBaseListener {
     private String error;
     private ExtensionService extService;
 
-    public LdapFilterListener(Class<? extends BaseScimResource> resourceClass) {
+    public FilterListener(Class<? extends BaseScimResource> resourceClass) {
         filter = new ArrayDeque<>();
         extService = CdiUtil.bean(ExtensionService.class);
         this.resourceClass = resourceClass;
