@@ -273,13 +273,17 @@ public class StatusCheckerTimer {
 		}
 		CommandLine commandLine = new CommandLine(OxTrustConstants.PROGRAM_FACTER);
 		String facterVersion = getFacterVersion();
-		log.info("Facter version: " + facterVersion);
+		boolean isOldVersion = false;
+		log.debug("Facter version: " + facterVersion);
 		String resultOutput;
 		if (facterVersion == null) {
 			return;
 		}
+		if (Integer.valueOf(facterVersion.substring(0, 1)) <= 1) {
+			isOldVersion = true;
+		}
 		if (Integer.valueOf(facterVersion.substring(0, 1)) >= 3) {
-			log.info("Running facter in legacy mode");
+			log.debug("Running facter in legacy mode");
 			commandLine.addArgument("--show-legacy");
 		}
 		ByteArrayOutputStream bos = new ByteArrayOutputStream(4096);
@@ -296,18 +300,24 @@ public class StatusCheckerTimer {
 			IOUtils.closeQuietly(bos);
 		}
 		String[] outputLines = resultOutput.split("\\r?\\n");
-		// Update appliance attributes
-		appliance.setFreeMemory(getFreeMemory(outputLines, OxTrustConstants.FACTER_FREE_MEMORY_MB,
-				OxTrustConstants.FACTER_MEMORY_SIZE_MB));
+
+		if (isOldVersion) {
+			appliance.setFreeMemory(getFreeMemory(outputLines, OxTrustConstants.FACTER_FREE_MEMORY,
+					OxTrustConstants.FACTER_MEMORY_SIZE));
+		} else {
+			appliance.setFreeMemory(getFreeMemory(outputLines, OxTrustConstants.FACTER_FREE_MEMORY_MB,
+					OxTrustConstants.FACTER_MEMORY_SIZE_MB));
+		}
 		appliance.setFreeSwap(toIntString(getFacterPercentResult(outputLines, OxTrustConstants.FACTER_FREE_SWAP,
 				OxTrustConstants.FACTER_FREE_SWAP_TOTAL)));
-		String hostname = getFacterResult(outputLines, OxTrustConstants.FACTER_HOST_NAME);
+		String hostname = "";
+		try {
+			hostname = Files.readAllLines(Paths.get("/install/community-edition-setup/output/hostname")).get(0);
+		} catch (IOException e) {
+			log.warn("+++++++++++++++++++++++++++++++++", "Error reading hostname from file");
+		}
 		if (hostname.equalsIgnoreCase("localhost")) {
-			try {
-				hostname = Files.readAllLines(Paths.get("/install/community-edition-setup/output/hostname")).get(0);
-			} catch (IOException e) {
-				log.warn("+++++++++++++++++++++++++++++++++","reading reding hostname from file");
-			}
+			hostname = getFacterResult(outputLines, OxTrustConstants.FACTER_HOST_NAME);
 		}
 		appliance.setHostname(hostname);
 		appliance.setIpAddress(getFacterResult(outputLines, OxTrustConstants.FACTER_IP_ADDRESS));
@@ -472,7 +482,6 @@ public class StatusCheckerTimer {
 		Number total = getFacterNumberResult(lines, paramTotal);
 		double result = (value.doubleValue() / total.doubleValue()) * 100;
 		return String.format("%.2f", result);
-
 	}
 
 	private Number getNumber(String value) {

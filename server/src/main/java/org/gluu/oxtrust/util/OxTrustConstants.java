@@ -94,6 +94,8 @@ public final class OxTrustConstants extends OxConstants {
 
     public static final String FACTER_PARAM_VALUE_DIVIDER = " => ";
     public static final String FACTER_FREE_MEMORY_MB = "memoryfree_mb";
+    public static final String FACTER_FREE_MEMORY = "memoryfree";
+    public static final String FACTER_MEMORY_SIZE = "memorysize";
     public static final String FACTER_MEMORY_SIZE_MB = "memorysize_mb";
     public static final String FACTER_FREE_SWAP = "swapfree";
     public static final String FACTER_FREE_SWAP_TOTAL = "swapsize";
