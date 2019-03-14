@@ -56,10 +56,6 @@ public class SearchRequest {
     }
 
     public void setSchemas(List<String> schemas) {
-        //TODO: Delete this IF lines in the future - added for backwards compatibility with SCIM-Client <= 3.1.2.
-        if (schemas.remove("urn:ietf:params:scim:schemas:core:2.0:SearchRequest"))
-            schemas.add(SEARCH_REQUEST_SCHEMA_ID);
-
         this.schemas = schemas;
     }
 
