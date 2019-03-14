@@ -152,8 +152,7 @@
 
 
 								<ul class="treeview-menu" id="subMenuSAML">
-									<li id="menuSAMLShibboleth"><h:panelGroup
-											rendered="false">
+									<li id="menuSAMLShibboleth"><h:panelGroup rendered="false">
 											<a href="#"> <i class="fa fa-pencil-square-o"></i> <span>#{msg['leftmenu.outbound']}</span>
 												<i class="fa fa-angle-left pull-right"></i></a>
 										</h:panelGroup> <!--Shibboleth-->
@@ -183,8 +182,45 @@
 												style="float: left; margin-top: 2px;"></i>
 										</h:commandLink></li></li>
 					</ul>
-                    </li>
+					</li>
 					</ui:fragment>
+
+					<!-- Start Passport Section -->
+					<ui:fragment
+						rendered="#{permissionService.hasPermission('uma', 'access')}">
+
+						<li class="treeview" id="menuPassport"><a href="#"> <i
+								class="fa fa-id-card-o"></i> <span>Passport</span> <i
+								class="fa fa-angle-left pull-right"></i>
+						</a>
+							<ul class="treeview-menu" id="subMenuPassport">
+								<li id="menuPassportBasicConfig"><h:commandLink
+										value="Basic Configuration" onclick="lock();"
+										ondbclick="lock();" oncomplete="unlock();"
+										action="#{menuAction.endConversation('/passport/basic_config.xhtml')}"
+										rendered="#{permissionService.hasPermission('uma', 'access')}">
+										<i class="fa fa-chevron-right"
+											style="float: left; margin-top: 2px;"></i>
+									</h:commandLink></li>
+								<li id="menuPassportProviders"><h:commandLink
+										value="Providers Configuration" onclick="lock();"
+										ondbclick="lock();" oncomplete="unlock();"
+										action="#{menuAction.endConversation('/passport/providers.xhtml')}"
+										rendered="#{permissionService.hasPermission('uma', 'access')}">
+										<i class="fa fa-chevron-right"
+											style="float: left; margin-top: 2px;"></i>
+									</h:commandLink></li>
+								<li id="menuPassportIdpInitiated"><h:commandLink
+										value="IDP Initiated Flows" onclick="lock();"
+										ondbclick="lock();" oncomplete="unlock();"
+										action="#{menuAction.endConversation('/passport/idpInitiatedFlows.xhtml')}"
+										rendered="#{permissionService.hasPermission('uma', 'access')}">
+										<i class="fa fa-chevron-right"
+											style="float: left; margin-top: 2px;"></i>
+									</h:commandLink></li>
+							</ul></li>
+					</ui:fragment>
+					<!-- End Passport Section -->
 					<ui:fragment
 						rendered="#{permissionService.hasPermission('oxauth', 'access')}">
 						<li class="treeview" id="menuOpenID"><a href="#"> <i
@@ -468,36 +504,33 @@
 								$('#subMenuLinkSAML3').addClass('active');
 							}
 
-							//Menu Highlights - SAML Asimba
-							if (window.location.href.indexOf("asimba/idps") != -1
+							//Menu Highlights - Passport
+							if (window.location.href
+									.indexOf("passport/basic_config") != -1
 									|| window.location.href
-											.indexOf("asimba/editIDP") != -1) {
-								$('#subMenuSAML').css('display', 'block');
-								$('#menuSAML').addClass('active');
-								$('#subMenuLinkAsimba1').addClass('active');
-							}
-							if (window.location.href.indexOf("asimba/spPools") != -1
-									|| window.location.href
-											.indexOf("asimba/editSPPool") != -1) {
-								$('#subMenuSAML').css('display', 'block');
-								$('#menuSAML').addClass('active');
-								$('#subMenuLinkAsimba2').addClass('active');
+											.indexOf("passport/basic_config") != -1) {
+								$('#subMenuPassport').css('display', 'block');
+								$('#menuPassport').addClass('active');
+								$('#menuPassportBasicConfig')
+										.addClass('active');
 							}
 							if (window.location.href
-									.indexOf("asimba/spRequestors") != -1
+									.indexOf("passport/providers") != -1
 									|| window.location.href
-											.indexOf("asimba/editSPRequestor") != -1) {
-								$('#subMenuSAML').css('display', 'block');
-								$('#menuSAML').addClass('active');
-								$('#subMenuLinkAsimba3').addClass('active');
+											.indexOf("passport/providers") != -1) {
+								$('#subMenuPassport').css('display', 'block');
+								$('#menuPassport').addClass('active');
+								$('#menuPassportProviders').addClass('active');
 							}
+
 							if (window.location.href
-									.indexOf("asimba/selectors") != -1
+									.indexOf("passport/idpInitiatedFlows") != -1
 									|| window.location.href
-											.indexOf("asimba/editSelector") != -1) {
-								$('#subMenuSAML').css('display', 'block');
-								$('#menuSAML').addClass('active');
-								$('#subMenuLinkAsimba4').addClass('active');
+											.indexOf("passport/idpInitiatedFlows") != -1) {
+								$('#subMenuPassport').css('display', 'block');
+								$('#menuPassport').addClass('active');
+								$('#menuPassportIdpInitiated').addClass(
+										'active');
 							}
 
 							//Menu Highlights - OpenID Connect

@@ -16,7 +16,6 @@ import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.security.Identity;
 import org.slf4j.Logger;
-import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.user.UserRole;
 import org.xdi.service.el.ExpressionEvaluator;
 import org.xdi.service.security.SecurityEvaluationException;
@@ -36,9 +35,6 @@ public class PermissionService implements Serializable {
 
     @Inject
     private Identity identity;
-
-    @Inject
-    private AppConfiguration appConfiguration;
 
     @Inject
     private ApplianceService applianceService;
@@ -64,6 +60,7 @@ public class PermissionService implements Serializable {
             {"scope", "access"},
             {"oxauth", "access"},
             {"uma", "access"},
+            {"passport", "access"},
             {"super-gluu", "access"},
             {"linktrack", "access"},
     };

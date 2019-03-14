@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/WEB-INF/incl/layout/newtemplate.xhtml">
+	<f:metadata>
+		<f:viewAction
+			action="#{permissionService.requestPermission('uma', 'access')}" />
+		<f:viewAction action="#{conversationService.initConversation}" />
+		<f:viewAction action="#{passportProvidersAction.init}" onPostback="false" />
+	</f:metadata>
+
+	<ui:define name="body">
+
+		<section class="content-header">
+			<h1 style="color: #333;">
+				Passport <small> <i class="fa fa-caret-right"
+					style="color: #333 !important;" />Providers
+				</small>
+			</h1>
+			<ol class="breadcrumb">
+				<li><a href="#{request.contextPath}/home"> <i
+						class="fa fa-home" />
+				</a></li>
+				<li class="organization/configuration"><a
+					href="#{request.contextPath}/passport/idpInitiatedFlows">IDP-Initiated
+						Flows</a></li>
+			</ol>
+		</section>
+		<section class="content">
+			<div class="row">
+				<div class="col-xs-12">
+					<div class="box box-primary" style="min-height: 400px;">
+						<div class="box-header"></div>
+						<!-- start providers list-->
+						<h:panelGroup id="providersTable">
+							<div class="box-body">
+								<div class="table-responsive" style="overflow: auto">
+									<h:form id="providersForm">
+										<ui:fragment
+											rendered="#{passportProvidersAction.providers.size() eq 0}">
+
+											<h:outputText value="No result" />
+										</ui:fragment>
+
+										<h:dataTable id="providersTableId"
+											rendered="#{passportProvidersAction.providers.size() gt 0}"
+											rows="20" sortMode="single"
+											styleClass="table table-hover rt providersListClass"
+											value="#{passportProvidersAction.providers}" var="clt">
+											<h:column sortBy="#{clt.displayName}">
+												<f:facet name="header">
+                                                                    #{msg['client.displayName']}
+                                                                </f:facet>
+												<h:link includeViewParams="false"
+													outcome="/passport/updateClient" value="#{clt.displayName}">
+													<f:param name="inum" value="#{clt.inum}" />
+												</h:link>
+											</h:column>
+											<h:column sortBy="#{clt.iname}">
+												<f:facet name="header">
+													<div style="margin-left: 20px;">#{msg['client.inum']}</div>
+												</f:facet>
+												<h:outputText class="col-xs-12" value="#{clt.inum}" />
+											</h:column>
+											<h:column>
+												<f:facet name="header">
+                                                                    #{msg['client.applicationType']}
+                                                                </f:facet>
+												<h:outputText class="col-xs-12" value="#{clt.oxAuthAppType}" />
+											</h:column>
+											<h:column>
+												<f:facet name="header">
+                                                                    Delete
+                                                                </f:facet>
+												<h:selectBooleanCheckbox id="selectId"
+													onchange="displayButton();" value="#{clt.selected}" />
+											</h:column>
+											<f:facet name="footer">
+												<rich:dataScroller align="left" fastControls="hide"
+													for="providersListId" maxPages="10"
+													renderIfSinglePage="false"
+													rendered="#{passportProvidersAction.providers.size() gt 0}"
+													stepControls="auto" />
+											</f:facet>
+										</h:dataTable>
+										<a4j:commandButton ajaxSingle="true" id="deleteId"
+											eventsQueue="clientQueue"
+											rendered="#{passportProvidersAction.providers.size() gt 0}"
+											onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();"
+											styleClass="btn btn-primary DeleteBulkProviders"
+											style="float:left;margin-left :3px;" value="Delete" />
+									</h:form>
+								</div>
+							</div>
+						</h:panelGroup>
+						<!-- end providers list-->
+					</div>
+				</div>
+			</div>
+		</section>
+	</ui:define>
+</ui:composition>

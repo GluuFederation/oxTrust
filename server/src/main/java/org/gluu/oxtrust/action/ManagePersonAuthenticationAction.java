@@ -49,7 +49,7 @@ import org.xdi.model.custom.script.CustomScriptType;
 import org.xdi.model.custom.script.model.CustomScript;
 import org.xdi.model.ldap.GluuLdapConfiguration;
 import org.xdi.model.passport.PassportConfiguration;
-import org.xdi.model.passport.ProviderDetails;
+import org.xdi.model.passport.Provider;
 import org.xdi.service.custom.script.AbstractCustomScriptService;
 import org.xdi.service.security.Secure;
 import org.xdi.util.OxConstants;
@@ -68,11 +68,6 @@ import org.xdi.util.security.StringEncrypter.EncryptionException;
 @Secure("#{permissionService.hasPermission('configuration', 'access')}")
 public class ManagePersonAuthenticationAction
 		implements SimplePropertiesListModel, SimpleCustomPropertiesListModel, LdapConfigurationModel, Serializable {
-
-	private static final String CLIENT_SECRET = "clientSecret";
-
-	private static final String CLIENT_ID = "clientID";
-
 	private static final long serialVersionUID = -4470460481895022468L;
 
 	@Inject
@@ -114,6 +109,7 @@ public class ManagePersonAuthenticationAction
 	private String recaptchaSecretKey;
 
 	private List<String> customAuthenticationConfigNames;
+	private List<Provider> providers;
 
 	private boolean initialized;
 
@@ -130,24 +126,20 @@ public class ManagePersonAuthenticationAction
 
 	private LdapOxPassportConfiguration ldapOxPassportConfiguration;
 
-	private List<PassportConfiguration> ldapPassportConfigurations;
+	private PassportConfiguration passportConfiguration;
 
 	@Inject
 	private JsonConfigurationService jsonConfigurationService;
 
 	private AppConfiguration oxTrustappConfiguration;
 
-	public List<PassportConfiguration> getLdapPassportConfigurations() {
-		for (PassportConfiguration configuration : ldapPassportConfigurations) {
-			if (configuration.getProviders() == null) {
-				configuration.setProviders(new ArrayList<ProviderDetails>());
-			}
-		}
-		return ldapPassportConfigurations;
+	public List<Provider> getProviders() {
+		this.providers = this.passportConfiguration.getProviders();
+		return this.providers;
 	}
 
-	public void setLdapPassportConfigurations(List<PassportConfiguration> ldapPassportConfigurations) {
-		this.ldapPassportConfigurations = ldapPassportConfigurations;
+	public void setProviders(List<Provider> providers) {
+		this.passportConfiguration.setProviders(providers);
 	}
 
 	public String modify() {
@@ -194,9 +186,9 @@ public class ManagePersonAuthenticationAction
 			if (ldapOxPassportConfiguration == null) {
 				ldapOxPassportConfiguration = new LdapOxPassportConfiguration();
 			}
-			this.ldapPassportConfigurations = ldapOxPassportConfiguration.getPassportConfigurations();
-			if (ldapPassportConfigurations == null) {
-				ldapPassportConfigurations = new ArrayList<PassportConfiguration>();
+			this.passportConfiguration = ldapOxPassportConfiguration.getPassportConfiguration();
+			if (this.passportConfiguration == null) {
+				this.providers = new ArrayList<Provider>();
 			}
 		} catch (Exception ex) {
 			log.error("Failed to load appliance configuration", ex);
@@ -239,8 +231,7 @@ public class ManagePersonAuthenticationAction
 			appliance.setPassportEnabled(passportEnable);
 
 			applianceService.updateAppliance(appliance);
-
-			ldapOxPassportConfiguration.setPassportConfigurations(ldapPassportConfigurations);
+			ldapOxPassportConfiguration.setPassportConfiguration(passportConfiguration);
 
 			passportService.updateLdapOxPassportConfiguration(ldapOxPassportConfiguration);
 		} catch (BasePersistenceException ex) {
@@ -480,32 +471,11 @@ public class ManagePersonAuthenticationAction
 	}
 
 	public void addStrategy() {
-		if (ldapPassportConfigurations == null) {
-			ldapPassportConfigurations = new ArrayList<PassportConfiguration>();
-		}
-		SimpleExtendedCustomProperty clientIDField = new SimpleExtendedCustomProperty();
-		clientIDField.setValue1(CLIENT_ID);
-		clientIDField.setDescription(facesMessages
-				.evalResourceAsString("#{msg['manageAuthentication.passport.strategy.clientIDFieldHint']}"));
-		SimpleExtendedCustomProperty clientSecretField = new SimpleExtendedCustomProperty();
-		clientSecretField.setValue1(CLIENT_SECRET);
-		clientSecretField.setDescription(facesMessages
-				.evalResourceAsString("#{msg['manageAuthentication.passport.strategy.clientSecretFieldHint']}"));
-		PassportConfiguration passportConfiguration = new PassportConfiguration();
-		passportConfiguration.setProviders(new ArrayList<ProviderDetails>());
-		passportConfiguration.getProviders().add(new ProviderDetails());
-		this.ldapPassportConfigurations.add(passportConfiguration);
+
 	}
 
 	public void addField(PassportConfiguration removePassportConfiguration) {
-		for (PassportConfiguration passportConfig : this.ldapPassportConfigurations) {
-			if (System.identityHashCode(removePassportConfiguration) == System.identityHashCode(passportConfig)) {
-				if (passportConfig.getProviders() == null) {
-					passportConfig.setProviders(new ArrayList<ProviderDetails>());
-				}
-				passportConfig.getProviders().add(new ProviderDetails());
-			}
-		}
+
 	}
 
 	public GluuBoolean getPassportEnable() {
@@ -595,15 +565,7 @@ public class ManagePersonAuthenticationAction
 	}
 
 	public void removeStrategy(PassportConfiguration removePassportConfiguration) {
-		for (Iterator<PassportConfiguration> iterator = this.ldapPassportConfigurations.iterator(); iterator
-				.hasNext();) {
-			PassportConfiguration passportConfiguration = iterator.next();
-			if (System.identityHashCode(removePassportConfiguration) == System
-					.identityHashCode(passportConfiguration)) {
-				iterator.remove();
-				return;
-			}
-		}
+
 	}
 
 	public String getRecaptchaSiteKey() {

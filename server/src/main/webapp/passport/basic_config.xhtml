@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/WEB-INF/incl/layout/newtemplate.xhtml">
+	<f:metadata>
+		<f:viewAction
+			action="#{permissionService.requestPermission('uma', 'access')}" />
+		<f:viewAction action="#{conversationService.initConversation}" />
+		<f:viewAction action="#{umaInventoryAction.start}" onPostback="false" />
+	</f:metadata>
+
+	<ui:define name="body">
+
+		<section class="content-header">
+			<h1 style="color: #333;">
+				Passport <small> <i class="fa fa-caret-right"
+					style="color: #333 !important;" /> Basic configuration
+				</small>
+			</h1>
+			<ol class="breadcrumb">
+				<li><a href="#{request.contextPath}/home"> <i
+						class="fa fa-home" />
+				</a></li>
+				<li class="organization/configuration"><a
+					href="#{request.contextPath}/passport/providers">Providers</a></li>
+			</ol>
+		</section>
+		<section class="content">
+			<div class="row">
+				<div class="col-xs-12">
+					<div class="box box-primary" style="min-height: 400px;">
+						<div class="box-header"></div>
+
+					</div>
+				</div>
+			</div>
+		</section>
+
+	</ui:define>
+</ui:composition>
