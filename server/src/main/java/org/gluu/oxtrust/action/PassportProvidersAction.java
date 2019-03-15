@@ -8,6 +8,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.gluu.oxtrust.ldap.service.PassportService;
+import org.gluu.oxtrust.util.PassportProviderType;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.LdapOxPassportConfiguration;
 import org.xdi.model.passport.PassportConfiguration;
@@ -33,16 +34,19 @@ public class PassportProvidersAction implements Serializable {
 	private PassportService passportService;
 
 	private List<Provider> providers;
+	private Provider provider;
 	private LdapOxPassportConfiguration ldapOxPassportConfiguration;
 	private PassportConfiguration passportConfiguration;
 	private IIConfiguration idpInitiated;
 	private Configuration configuration;
 
 	public void init() {
+		log.info("++++++++++++++++++++++++++++++++++++++");
 		log.debug("Load passport configuration");
 		this.ldapOxPassportConfiguration = passportService.loadConfigurationFromLdap();
 		this.passportConfiguration = this.ldapOxPassportConfiguration.getPassportConfiguration();
 		this.providers = this.passportConfiguration.getProviders();
+		setProvider(providers.get(0));
 		this.configuration = this.passportConfiguration.getConf();
 		this.idpInitiated = this.passportConfiguration.getIdpInitiated();
 		log.debug("Load passport configuration done");
@@ -70,5 +74,17 @@ public class PassportProvidersAction implements Serializable {
 
 	public void setConfiguration(Configuration configuration) {
 		this.configuration = configuration;
+	}
+
+	public Provider getProvider() {
+		return provider;
+	}
+
+	public void setProvider(Provider provider) {
+		this.provider = provider;
+	}
+
+	public PassportProviderType[] getProvidersTypes() {
+		return PassportProviderType.values();
 	}
 }
