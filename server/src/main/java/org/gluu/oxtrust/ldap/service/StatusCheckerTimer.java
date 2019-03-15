@@ -13,6 +13,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.text.NumberFormat;
@@ -29,6 +31,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.annotation.PostConstruct;
+import org.xdi.service.cdi.async.Asynchronous;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
@@ -271,10 +274,14 @@ public class StatusCheckerTimer {
 		}
 		CommandLine commandLine = new CommandLine(OxTrustConstants.PROGRAM_FACTER);
 		String facterVersion = getFacterVersion();
-		log.debug("Facter version: "+facterVersion);
+		boolean isOldVersion = false;
+		log.debug("Facter version: " + facterVersion);
 		String resultOutput;
 		if (facterVersion == null) {
 			return;
+		}
+		if (Integer.valueOf(facterVersion.substring(0, 1)) <= 1) {
+			isOldVersion = true;
 		}
 		if (Integer.valueOf(facterVersion.substring(0, 1)) >= 3) {
 			log.debug("Running facter in legacy mode");
@@ -294,12 +301,26 @@ public class StatusCheckerTimer {
 			IOUtils.closeQuietly(bos);
 		}
 		String[] outputLines = resultOutput.split("\\r?\\n");
-		// Update appliance attributes
-		appliance.setFreeMemory(getFreeMemory(outputLines, OxTrustConstants.FACTER_FREE_MEMORY_MB,
-				OxTrustConstants.FACTER_MEMORY_SIZE_MB));
+
+		if (isOldVersion) {
+			appliance.setFreeMemory(getFreeMemory(outputLines, OxTrustConstants.FACTER_FREE_MEMORY,
+					OxTrustConstants.FACTER_MEMORY_SIZE));
+		} else {
+			appliance.setFreeMemory(getFreeMemory(outputLines, OxTrustConstants.FACTER_FREE_MEMORY_MB,
+					OxTrustConstants.FACTER_MEMORY_SIZE_MB));
+		}
 		appliance.setFreeSwap(toIntString(getFacterPercentResult(outputLines, OxTrustConstants.FACTER_FREE_SWAP,
 				OxTrustConstants.FACTER_FREE_SWAP_TOTAL)));
-		appliance.setHostname(getFacterResult(outputLines, OxTrustConstants.FACTER_HOST_NAME));
+		String hostname = "";
+		try {
+			hostname = Files.readAllLines(Paths.get("/install/community-edition-setup/output/hostname")).get(0);
+		} catch (IOException e) {
+			log.warn("+++++++++++++++++++++++++++++++++", "Error reading hostname from file");
+		}
+		if (hostname.equalsIgnoreCase("localhost")) {
+			hostname = getFacterResult(outputLines, OxTrustConstants.FACTER_HOST_NAME);
+		}
+		appliance.setHostname(hostname);
 		appliance.setIpAddress(getFacterResult(outputLines, OxTrustConstants.FACTER_IP_ADDRESS));
 		appliance.setLoadAvg(getFacterResult(outputLines, OxTrustConstants.FACTER_LOAD_AVERAGE));
 		getFacterBandwidth(getFacterResult(outputLines, OxTrustConstants.FACTER_BANDWIDTH_USAGE), appliance);
