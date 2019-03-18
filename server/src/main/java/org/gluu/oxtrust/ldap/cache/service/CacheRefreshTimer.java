@@ -213,10 +213,10 @@ public class CacheRefreshTimer {
 		}
 
 		String cacheRefreshServerIpAddress = currentAppliance.getCacheRefreshServerIpAddress();
-		if (StringHelper.isEmpty(cacheRefreshServerIpAddress)) {
-			log.debug("There is no master Cache Refresh server");
-			return false;
-		}
+//		if (StringHelper.isEmpty(cacheRefreshServerIpAddress)) {
+//			log.debug("There is no master Cache Refresh server");
+//			return false;
+//		}
 
 		// Compare server IP address with cacheRefreshServerIp
 		boolean cacheRefreshServer = false;
@@ -240,7 +240,11 @@ public class CacheRefreshTimer {
 		}
         
         if (!cacheRefreshServer) {
-			log.debug("This server isn't master Cache Refresh server");
+        	cacheRefreshServer = externalCacheRefreshService.executeExternalIsStartProcessMethods();
+        }
+        
+        if (!cacheRefreshServer) {
+        	log.debug("This server isn't master Cache Refresh server");
 			return false;
         }
 
