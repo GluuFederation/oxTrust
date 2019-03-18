@@ -47,7 +47,6 @@
 		<swagger.version>1.5.3-M1</swagger.version>
 
 		<antlr4.version>4.7.1</antlr4.version>
-		<antlr4.visitor>true</antlr4.visitor>
 
 		<jetty.version>9.4.9.v20180320</jetty.version>
 
