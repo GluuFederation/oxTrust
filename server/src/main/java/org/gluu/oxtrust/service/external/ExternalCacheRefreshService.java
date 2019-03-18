@@ -73,7 +73,7 @@ public class ExternalCacheRefreshService extends ExternalScriptService {
             CacheRefreshType externalType = (CacheRefreshType) customScriptConfiguration.getExternalType();
             Map<String, SimpleCustomProperty> configurationAttributes = customScriptConfiguration.getConfigurationAttributes();
             
-            // Execute only if API > 1
+            // Execute only if API > 2
             if (externalType.getApiVersion() > 2) {
                 return externalType.isStartProcess(configurationAttributes);
             }
