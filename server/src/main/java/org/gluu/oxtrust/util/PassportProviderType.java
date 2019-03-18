@@ -1,7 +1,7 @@
 package org.gluu.oxtrust.util;
 
 public enum PassportProviderType {
-	OPENID_OWD("openidconnect-oxd"), SAML("saml"), OAUTH("oauth"), OPENID("openidconnect");
+	OPENID_OXD("openidconnect-oxd"), SAML("saml"), OAUTH("oauth"), OPENID("openidconnect");
 
 	private String properValue;
 

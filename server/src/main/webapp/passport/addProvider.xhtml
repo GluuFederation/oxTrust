@@ -17,11 +17,10 @@
 	</f:metadata>
 
 	<ui:define name="body">
-
 		<section class="content-header">
 			<h1 style="color: #333;">
-				Passport <small> <i class="fa fa-caret-right"
-					style="color: #333 !important;" />Providers
+				#{msg['passport.title']} <small> <i
+					class="fa fa-caret-right" style="color: #333 !important;" />#{msg['passport.providers']}
 				</small>
 			</h1>
 			<ol class="breadcrumb">
@@ -29,8 +28,7 @@
 						class="fa fa-home" />
 				</a></li>
 				<li class="organization/configuration"><a
-					href="#{request.contextPath}/passport/idpInitiatedFlows">IDP-Initiated
-						Flows</a></li>
+					href="#{request.contextPath}/passport/idpInitiatedFlows">#{msg['passport.idpInitiated']}</a></li>
 			</ol>
 		</section>
 		<section class="content">
@@ -41,13 +39,14 @@
 						<div class="box box-primary" style="min-height: 400px;">
 							<div class="box-header"></div>
 							<!-- start provider add-->
-							<h:panelGroup columns="1" width="100%">
+							<h:panelGroup columns="1" width="100%" id="mainContentID">
 								<!-- First row-->
 								<div class="row" style="margin-left: 5px; margin-right: 5px;">
 									<!-- First column-->
 									<div class="col-sm-6 col-lg-6" style="padding: 0px;">
-										<ox:decorate label="Display Name" rendered="true"
-											leftClass="col-sm-3" rightClass="col-sm-9">
+										<ox:decorate
+											label="#{msg['passport.provider.form.displayName']}"
+											rendered="true" leftClass="col-sm-3" rightClass="col-sm-9">
 											<h:inputText styleClass="form-control DisplayName"
 												style="width:100%"
 												value="#{passportProvidersAction.provider.displayName}"
@@ -55,8 +54,9 @@
 												<rich:validator event="blur" />
 											</h:inputText>
 										</ox:decorate>
-										<ox:decorate label="Provider Strategy Id" rendered="true"
-											leftClass="col-sm-3" rightClass="col-sm-9">
+										<ox:decorate
+											label="#{msg['passport.provider.form.strategyId']}"
+											rendered="true" leftClass="col-sm-3" rightClass="col-sm-9">
 											<h:inputText styleClass="form-control PassportStrategyId"
 												style="width:100%"
 												value="#{passportProvidersAction.provider.passportStrategyId}"
@@ -64,8 +64,8 @@
 												<rich:validator event="blur" />
 											</h:inputText>
 										</ox:decorate>
-										<ox:decorate label="Provider Logo image" rendered="true"
-											leftClass="col-sm-3" rightClass="col-sm-9">
+										<ox:decorate label="#{msg['passport.provider.form.logoPath']}"
+											rendered="true" leftClass="col-sm-3" rightClass="col-sm-9">
 											<h:inputText styleClass="form-control LogoImg"
 												style="width:100%"
 												value="#{passportProvidersAction.provider.logoImg}"
@@ -76,12 +76,13 @@
 									</div>
 									<!-- Second column-->
 									<div class="col-sm-6 col-lg-6" style="padding: 0px;">
-										<ox:decorate label="Provider Type" rendered="true"
-											leftClass="col-sm-3" rightClass="col-sm-9">
+										<ox:decorate label="#{msg['passport.provider.form.type']}"
+											rendered="true" leftClass="col-sm-3" rightClass="col-sm-9">
 											<h:selectOneMenu
 												styleClass="rounded form-control ProviderType"
 												value="#{passportProvidersAction.provider.type}"
-												id="ProviderTypeId" rendered="true">
+												id="ProviderTypeId" rendered="true" onchange="toggleType();">
+												<f:selectItem noSelectionOption="true" itemLabel="" />
 												<f:selectItems
 													value="#{passportProvidersAction.getProvidersTypes()}"
 													var="_type" itemLabel="#{_type.getProperValue()}" />
@@ -89,48 +90,131 @@
 													converterId="org.gluu.jsf2.converter.EnumConverter" />
 											</h:selectOneMenu>
 										</ox:decorate>
-										<ox:decorate label="Provider Mapping" rendered="true"
-											leftClass="col-sm-3" rightClass="col-sm-9">
-											<h:inputText styleClass="form-control Mapping"
+										<ox:decorate label="#{msg['passport.provider.form.mapping']}"
+											rendered="true" leftClass="col-sm-3" rightClass="col-sm-9">
+											<h:inputText styleClass="form-control MappingId"
 												style="width:100%"
 												value="#{passportProvidersAction.provider.mapping}"
 												id="MappingId" rendered="true">
 												<rich:validator event="blur" />
 											</h:inputText>
 										</ox:decorate>
-										<ox:decorate label="Enable" leftClass="col-sm-3"
-											rightClass="col-sm-1">
+										<ox:decorate
+											label="#{msg['passport.provider.form.passportAuthnParams']}"
+											rendered="true" leftClass="col-sm-3" rightClass="col-sm-9">
+											<h:inputText styleClass="form-control AuthnParams"
+												style="width:100%"
+												value="#{passportProvidersAction.provider.passportAuthnParams}"
+												id="AuthnParamsId" rendered="true">
+												<rich:validator event="blur" />
+											</h:inputText>
+										</ox:decorate>
+									</div>
+								</div>
+								<!-- Second row-->
+								<div class="row"
+									style="margin-left: 5px; margin-right: 5px; margin-top: 15px;">
+									<!-- First column-->
+									<div class="col-sm-4 col-lg-4" style="padding: 0px;">
+										<ox:decorate label="#{msg['passport.provider.form.enable']}"
+											leftClass="col-sm-5" rightClass="col-sm-2">
 											<h:selectBooleanCheckbox
 												value="#{passportProvidersAction.provider.enabled}"
 												styleClass="form-control" />
 										</ox:decorate>
-										<ox:decorate label="Request For Email" leftClass="col-sm-3"
-											rightClass="col-sm-1">
+									</div>
+									<!-- Second column-->
+									<div class="col-sm-4 col-lg-4" style="padding: 0px;">
+										<ox:decorate
+											label="#{msg['passport.provider.form.requestForEmail']}"
+											leftClass="col-sm-7" rightClass="col-sm-2">
 											<h:selectBooleanCheckbox
 												value="#{passportProvidersAction.provider.requestForEmail}"
 												styleClass="form-control" />
 										</ox:decorate>
-										<ox:decorate label="Email Linking Safe" leftClass="col-sm-3"
-											rightClass="col-sm-1">
+									</div>
+									<!-- Third inner column-->
+									<div class="col-sm-4 col-lg-4" style="padding: 0px;">
+										<ox:decorate
+											label="#{msg['passport.provider.form.enableEmailLinkage']}"
+											leftClass="col-sm-7" rightClass="col-sm-2">
 											<h:selectBooleanCheckbox
 												value="#{passportProvidersAction.provider.emailLinkingSafe}"
 												styleClass="form-control" />
 										</ox:decorate>
 									</div>
 								</div>
-								<!-- Second row-->
+
+								<!-- Third row-->
+								<div class="row"
+									style="margin-left: 5px; margin-right: 5px; margin-top: 15px;">
+									<div class="col-sm-offset-1 col-sm-8 col-lg-8"
+										style="padding: 0px;">
+										<span style="font-family: bold; color: black;">Providers
+											Options</span>
+										<hr
+											style="height: 1px; background: green; border-color: green; border-width: 0px;"></hr>
+									</div>
+								</div>
+								<!-- Fourth row-->
 								<div class="row" style="margin-left: 5px; margin-right: 5px;">
 									<!-- First column-->
-									<div class="col-sm-6 col-lg-6" style="padding: 0px;"></div>
+									<div class="col-sm-1 col-lg-1" style="padding: 0px;"></div>
 									<!-- Second column-->
-									<div class="col-sm-6 col-lg-6" style="padding: 0px;"></div>
+									<div class="col-sm-10 col-lg-10" style="padding: 0px;">
+										<ox:simpleMapProperties
+											label="#{msg['manageAuthentication.passport.strategy.addProperty']}"
+											hideLabel="true" showRemoveDialogue="true"
+											properties="#{passportProvidersAction.getOptionsKeys()}"
+											propertiesAction="#{passportProvidersAction}"
+											hideValue="true" />
+									</div>
 								</div>
-
 							</h:panelGroup>
+							<h:panelGroup columns="1" width="100%" id="footerSection">
+								<div class="row" style="margin-left: 15px; margin-right: 15px;">
+									<div id="updateButtons">
+										<h:commandButton action="#{passportProvidersAction.save}"
+											styleClass="btn btn-primary" value="#{msg['client.add']}" />
+										<h:commandButton action="#{passportProvidersAction.cancel}"
+											immediate="true" style="margin-left:3px;"
+											styleClass="btn btn-primary" value="#{msg['client.cancel']}" />
+									</div>
+								</div>
+							</h:panelGroup>
+
 						</div>
 					</div>
 				</div>
+
 			</h:form>
+			<script>
+				$(document).ready(function() {
+				});
+			</script>
+			<h:outputScript>
+        function toggleType() {
+            var type = $(".ProviderType").val();
+            alert(type);
+            if( type == "OPENID"){
+               $(".PassportStrategyId").val("passport-openidconnect");
+               $(".MappingId").val("openidconnect-default");
+            }
+            if( type == "OPENID_OXD"){
+             $(".PassportStrategyId").val("passport-oxd");
+             $(".MappingId").val("oxd-default");
+            }
+            if( type == "SAML"){
+             $(".PassportStrategyId").val("passport-saml");
+             $(".MappingId").val("saml_ldap_profile");
+            }
+            if( type == "OAUTH"){
+             $(".PassportStrategyId").val("");
+             $(".MappingId").val("");
+            }
+            
+         }
+    </h:outputScript>
 		</section>
 	</ui:define>
 </ui:composition>

@@ -1,13 +1,19 @@
 package org.gluu.oxtrust.action;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import javax.enterprise.context.ConversationScoped;
+import javax.faces.application.FacesMessage;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.gluu.jsf2.message.FacesMessages;
+import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.service.PassportService;
+import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.PassportProviderType;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.LdapOxPassportConfiguration;
@@ -33,7 +39,14 @@ public class PassportProvidersAction implements Serializable {
 	@Inject
 	private PassportService passportService;
 
+	@Inject
+	private FacesMessages facesMessages;
+
+	@Inject
+	private ConversationService conversationService;
+
 	private List<Provider> providers;
+	private List<String> optionsKeys;
 	private Provider provider;
 	private LdapOxPassportConfiguration ldapOxPassportConfiguration;
 	private PassportConfiguration passportConfiguration;
@@ -47,6 +60,7 @@ public class PassportProvidersAction implements Serializable {
 		this.passportConfiguration = this.ldapOxPassportConfiguration.getPassportConfiguration();
 		this.providers = this.passportConfiguration.getProviders();
 		setProvider(providers.get(0));
+		optionsKeys = new ArrayList<>(provider.getOptions().keySet());
 		this.configuration = this.passportConfiguration.getConf();
 		this.idpInitiated = this.passportConfiguration.getIdpInitiated();
 		log.debug("Load passport configuration done");
@@ -87,4 +101,53 @@ public class PassportProvidersAction implements Serializable {
 	public PassportProviderType[] getProvidersTypes() {
 		return PassportProviderType.values();
 	}
+
+	public List<String> getOptionsKeys() {
+		return optionsKeys;
+	}
+
+	public void setOptionsKeys(List<String> optionsKeys) {
+		this.optionsKeys = optionsKeys;
+	}
+
+	public String getMapValue(String key) {
+		return this.provider.getOptions().get(key);
+	}
+
+	public void removeEntry(String key) {
+		this.provider.getOptions().remove(key);
+		optionsKeys.remove(key);
+	}
+
+	public void addEntry() {
+		String newKey = "DefaultKey" + UUID.randomUUID().toString().substring(1, 6);
+		this.provider.getOptions().put(newKey, "");
+		optionsKeys.add(newKey);
+	}
+
+	public void save() {
+		this.ldapOxPassportConfiguration = passportService.loadConfigurationFromLdap();
+		this.passportConfiguration = this.ldapOxPassportConfiguration.getPassportConfiguration();
+		this.providers = this.passportConfiguration.getProviders();
+		for (Provider pro : this.providers) {
+			if (pro.getId().equalsIgnoreCase(this.provider.getId())) {
+				this.providers.remove(pro);
+				this.providers.add(provider);
+				break;
+			}
+		}
+		this.passportConfiguration.setProviders(this.providers);
+		this.ldapOxPassportConfiguration.setPassportConfiguration(this.passportConfiguration);
+		this.passportService.updateLdapOxPassportConfiguration(this.ldapOxPassportConfiguration);
+		facesMessages.add(FacesMessage.SEVERITY_INFO,
+				"New client '#{updateClientAction.provider.displayName}' added successfully");
+		conversationService.endConversation();
+	}
+
+	public String cancel() {
+		facesMessages.add(FacesMessage.SEVERITY_INFO, "New client not added");
+		conversationService.endConversation();
+		return OxTrustConstants.RESULT_SUCCESS;
+	}
+
 }

@@ -14,14 +14,16 @@
 		<f:viewAction action="#{conversationService.initConversation}" />
 		<f:viewAction action="#{passportProvidersAction.init}"
 			onPostback="false" />
+		<f:viewParam name="inum"
+			value="#{passportProvidersAction.provider.id}" />
 	</f:metadata>
 
 	<ui:define name="body">
 
 		<section class="content-header">
 			<h1 style="color: #333;">
-				Passport <small> <i class="fa fa-caret-right"
-					style="color: #333 !important;" />Providers
+				#{msg['passport.title']} <small> <i
+					class="fa fa-caret-right" style="color: #333 !important;" />#{msg['passport.providers']}
 				</small>
 			</h1>
 			<ol class="breadcrumb">
@@ -29,8 +31,7 @@
 						class="fa fa-home" />
 				</a></li>
 				<li class="organization/configuration"><a
-					href="#{request.contextPath}/passport/idpInitiatedFlows">IDP-Initiated
-						Flows</a></li>
+					href="#{request.contextPath}/passport/idpInitiatedFlows">#{msg['passport.idpInitiated']}</a></li>
 			</ol>
 		</section>
 		<section class="content">
@@ -42,9 +43,10 @@
 						<h:panelGroup id="providersTable">
 							<div class="row"
 								style="padding: 5px; margin-bottom: 5px; margin-left: 15px">
-								<h:link includeViewParams="false" outcome="/passport/addProvider"
+								<h:link includeViewParams="false"
+									outcome="/passport/addProvider"
 									styleClass="btn btn-primary addProviderButtonClass"
-									value="Add New Provider" />
+									value="#{msg['passport.addNewProvider']}" />
 							</div>
 							<div class="box-body">
 								<div class="table-responsive" style="overflow: auto">
@@ -61,28 +63,28 @@
 											value="#{passportProvidersAction.providers}" var="clt">
 											<h:column sortBy="#{clt.displayName}">
 												<f:facet name="header">
-                                                                    #{msg['client.displayName']}
+                                                                    #{msg['passport.provider.form.displayName']}
                                                                 </f:facet>
 												<h:link includeViewParams="false"
-													outcome="/passport/updateClient" value="#{clt.displayName}">
+													outcome="/passport/addProvider" value="#{clt.displayName}">
 													<f:param name="id" value="#{clt.id}" />
 												</h:link>
 											</h:column>
 											<h:column sortBy="#{clt.id}">
 												<f:facet name="header">
-													<div style="margin-left: 20px;">#{msg['client.inum']}</div>
+													<div style="margin-left: 20px;">#{msg['passport.provider.form.id']}</div>
 												</f:facet>
 												<h:outputText class="col-xs-12" value="#{clt.id}" />
 											</h:column>
 											<h:column>
 												<f:facet name="header">
-                                                                    #{msg['client.applicationType']}
+                                                                    #{msg['passport.provider.form.type']}
                                                                 </f:facet>
 												<h:outputText class="col-xs-12" value="#{clt.type}" />
 											</h:column>
 											<h:column>
 												<f:facet name="header">
-                                                                    Delete
+                                                                     #{msg['passport.deleteProvider']}
                                                                 </f:facet>
 												<h:selectBooleanCheckbox id="selectId"
 													onchange="displayButton();" value="false" />
@@ -96,15 +98,20 @@
 											</f:facet>
 										</h:dataTable>
 										<a4j:commandButton ajaxSingle="true" id="deleteId"
-											eventsQueue="clientQueue"
+											eventsQueue="providerQueue"
 											rendered="#{passportProvidersAction.providers.size() gt 0}"
 											onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();"
 											styleClass="btn btn-primary DeleteBulkProviders"
-											style="float:left;margin-left :3px;" value="Delete" />
+											style="float:left;margin-left :3px;"
+											value="#{msg['passport.deleteProvider']}" />
 									</h:form>
 								</div>
 							</div>
 						</h:panelGroup>
+						<script>
+						$(document).ready(function() {
+			       });
+						</script>
 						<!-- end providers list-->
 					</div>
 				</div>
