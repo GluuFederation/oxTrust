@@ -13,9 +13,10 @@
 			action="#{permissionService.requestPermission('uma', 'access')}" />
 		<f:viewParam name="id" value="#{passportProviderAction.id}" />
 		<f:viewAction action="#{conversationService.initConversation}" />
-		<f:viewAction action="#{passportProviderAction.add}"
+		<f:viewAction action="#{passportProviderAction.update}"
 			onPostback="false" />
 	</f:metadata>
+
 
 	<ui:define name="body">
 		<section class="content-header">
@@ -41,7 +42,7 @@
 				<ui:define name="controlButttons">
 					<div id="updateButtons">
 						<h:commandButton action="#{passportProviderAction.save}"
-							styleClass="btn btn-primary" value="#{msg['client.add']}" />
+							styleClass="btn btn-primary" value="#{msg['client.update']}" />
 						<h:commandButton action="#{passportProviderAction.cancel}"
 							immediate="true" style="margin-left:3px;"
 							styleClass="btn btn-primary" value="#{msg['client.cancel']}" />

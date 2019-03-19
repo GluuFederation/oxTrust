@@ -42,6 +42,9 @@ public class PassportProvidersAction implements Serializable {
 	@Inject
 	private FacesMessages facesMessages;
 
+	private boolean update = false;
+	private String id;
+
 	@Inject
 	private ConversationService conversationService;
 
@@ -54,7 +57,7 @@ public class PassportProvidersAction implements Serializable {
 	private Configuration configuration;
 
 	public void init() {
-		log.info("++++++++++++++++++++++++++++++++++++++");
+		log.info("+++++++++++++++++++Initiation+++++++++++++++++++");
 		log.debug("Load passport configuration");
 		this.ldapOxPassportConfiguration = passportService.loadConfigurationFromLdap();
 		this.passportConfiguration = this.ldapOxPassportConfiguration.getPassportConfiguration();
@@ -125,7 +128,36 @@ public class PassportProvidersAction implements Serializable {
 		optionsKeys.add(newKey);
 	}
 
+	public String add() {
+		log.info("+++++++++++++++++++Add+++++++++++++++++++");
+		if (this.provider != null) {
+			return OxTrustConstants.RESULT_SUCCESS;
+		}
+		this.update = false;
+		this.provider = new Provider();
+		return OxTrustConstants.RESULT_SUCCESS;
+	}
+
+	public String update() {
+		log.info("+++++++++++++++++++Update+++++++++++++++++++");
+		if (this.provider != null) {
+			return OxTrustConstants.RESULT_SUCCESS;
+		}
+		this.update = true;
+		this.ldapOxPassportConfiguration = passportService.loadConfigurationFromLdap();
+		this.passportConfiguration = this.ldapOxPassportConfiguration.getPassportConfiguration();
+		this.providers = this.passportConfiguration.getProviders();
+		for (Provider pro : providers) {
+			if (pro.getId().equalsIgnoreCase(id)) {
+				this.provider = pro;
+				break;
+			}
+		}
+		return OxTrustConstants.RESULT_SUCCESS;
+	}
+
 	public void save() {
+		log.info("+++++++++++++++++++Saving+++++++++++++++++++");
 		this.ldapOxPassportConfiguration = passportService.loadConfigurationFromLdap();
 		this.passportConfiguration = this.ldapOxPassportConfiguration.getPassportConfiguration();
 		this.providers = this.passportConfiguration.getProviders();
