@@ -14,12 +14,8 @@
 		<f:viewAction action="#{conversationService.initConversation}" />
 		<f:viewAction action="#{passportProvidersAction.init}"
 			onPostback="false" />
-		<f:viewParam name="inum"
-			value="#{passportProvidersAction.provider.id}" />
 	</f:metadata>
-
 	<ui:define name="body">
-
 		<section class="content-header">
 			<h1 style="color: #333;">
 				#{msg['passport.title']} <small> <i
@@ -60,34 +56,46 @@
 											rendered="#{passportProvidersAction.providers.size() gt 0}"
 											rows="20" sortMode="single"
 											styleClass="table table-hover rt providersListClass"
-											value="#{passportProvidersAction.providers}" var="clt">
-											<h:column sortBy="#{clt.displayName}">
+											value="#{passportProvidersAction.providerSelections}" var="clt">
+											<h:column sortBy="#{clt.provider.id}">
+												<f:facet name="header">
+													<div style="margin-left: 20px;">#{msg['passport.provider.form.id']}</div>
+												</f:facet>
+												<h:link includeViewParams="false"
+													outcome="/passport/editProvider" value="#{clt.provider.id}">
+													<f:param name="id" value="#{clt.provider.id}" />
+												</h:link>
+											</h:column>
+											<h:column sortBy="#{clt.provider.displayName}">
 												<f:facet name="header">
                                                                     #{msg['passport.provider.form.displayName']}
                                                                 </f:facet>
 												<h:link includeViewParams="false"
-													outcome="/passport/addProvider" value="#{clt.displayName}">
-													<f:param name="id" value="#{clt.id}" />
+													outcome="/passport/editProvider" value="#{clt.provider.displayName}">
+													<f:param name="id" value="#{clt.provider.id}" />
 												</h:link>
 											</h:column>
-											<h:column sortBy="#{clt.id}">
+											<h:column>
 												<f:facet name="header">
-													<div style="margin-left: 20px;">#{msg['passport.provider.form.id']}</div>
-												</f:facet>
-												<h:outputText class="col-xs-12" value="#{clt.id}" />
+                                                                    #{msg['passport.provider.form.strategyId']}
+                                                                </f:facet>
+												<h:outputText class="col-xs-12"
+													value="#{clt.provider.passportStrategyId}" />
 											</h:column>
 											<h:column>
 												<f:facet name="header">
                                                                     #{msg['passport.provider.form.type']}
                                                                 </f:facet>
-												<h:outputText class="col-xs-12" value="#{clt.type}" />
+												<h:outputText class="col-xs-12" value="#{clt.provider.type}" />
 											</h:column>
 											<h:column>
 												<f:facet name="header">
                                                                      #{msg['passport.deleteProvider']}
                                                                 </f:facet>
 												<h:selectBooleanCheckbox id="selectId"
-													onchange="displayButton();" value="false" />
+													onchange="displayButton();" value="#{clt.checked}">
+												</h:selectBooleanCheckbox>
+
 											</h:column>
 											<f:facet name="footer">
 												<rich:dataScroller align="left" fastControls="hide"
@@ -106,6 +114,11 @@
 											value="#{msg['passport.deleteProvider']}" />
 									</h:form>
 								</div>
+								<ox:acceptRemovalDialog
+									deleteMethod="#{passportProvidersAction.deleteProviders}"
+									render="providersTableId" id="deleteConfirmation"
+									queue="providerQueue" subject="provider"
+									value="all selected providers" />
 							</div>
 						</h:panelGroup>
 						<script>
@@ -117,5 +130,19 @@
 				</div>
 			</div>
 		</section>
+		<h:outputScript> 
+	    	function displayButton() {  	
+		    	var selectedIds = $("input[id$=selectId]:checked");
+		    	deleteBtn = $("input[id$=deleteId]");
+		    	
+		    	if (selectedIds.length == 0) {
+		    		deleteBtn.attr("disabled", "disabled");
+		    	} else {
+		    		deleteBtn.removeAttr("disabled");
+		    	}
+		    	
+	    	} 
+	    	displayButton();
+   	</h:outputScript>
 	</ui:define>
 </ui:composition>

@@ -11,9 +11,9 @@
 	<f:metadata>
 		<f:viewAction
 			action="#{permissionService.requestPermission('uma', 'access')}" />
-		<f:viewParam name="id" value="#{passportProviderAction.id}" />
+		<f:viewParam name="id" value="#{passportProvidersAction.id}" />
 		<f:viewAction action="#{conversationService.initConversation}" />
-		<f:viewAction action="#{passportProviderAction.add}"
+		<f:viewAction action="#{passportProvidersAction.add}"
 			onPostback="false" />
 	</f:metadata>
 
@@ -35,14 +35,14 @@
 		<section class="content">
 			<ui:decorate template="/WEB-INF/incl/passport/providerForm.xhtml">
 				<ui:param name="_provider"
-					value="#{passportProviderAction.provider}" />
-				<ui:param name="_providerAction" value="#{passportProviderAction}" />
+					value="#{passportProvidersAction.provider}" />
+				<ui:param name="_providerAction" value="#{passportProvidersAction}" />
 				<ui:param name="_new" value="true" />
 				<ui:define name="controlButttons">
 					<div id="updateButtons">
-						<h:commandButton action="#{passportProviderAction.save}"
+						<h:commandButton action="#{passportProvidersAction.save}"
 							styleClass="btn btn-primary" value="#{msg['client.add']}" />
-						<h:commandButton action="#{passportProviderAction.cancel}"
+						<h:commandButton action="#{passportProvidersAction.cancel}"
 							immediate="true" style="margin-left:3px;"
 							styleClass="btn btn-primary" value="#{msg['client.cancel']}" />
 					</div>
@@ -55,20 +55,19 @@
 			<h:outputScript>
         function toggleType() {
             var type = $(".ProviderType").val();
-            alert(type);
-            if( type == "OPENID"){
+            if( type == "openidconnect"){
                $(".PassportStrategyId").val("passport-openidconnect");
                $(".MappingId").val("openidconnect-default");
             }
-            if( type == "OPENID_OXD"){
+            if( type == "openidconnect-oxd"){
              $(".PassportStrategyId").val("passport-oxd");
              $(".MappingId").val("oxd-default");
             }
-            if( type == "SAML"){
+            if( type == "saml"){
              $(".PassportStrategyId").val("passport-saml");
              $(".MappingId").val("saml_ldap_profile");
             }
-            if( type == "OAUTH"){
+            if( type == "oauth"){
              $(".PassportStrategyId").val("");
              $(".MappingId").val("");
             }

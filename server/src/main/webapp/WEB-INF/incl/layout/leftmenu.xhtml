@@ -187,34 +187,34 @@
 
 					<!-- Start Passport Section -->
 					<ui:fragment
-						rendered="#{permissionService.hasPermission('uma', 'access')}">
+						rendered="#{permissionService.hasPermission('passport', 'access')}">
 
 						<li class="treeview" id="menuPassport"><a href="#"> <i
-								class="fa fa-id-card-o"></i> <span>Passport</span> <i
+								class="fa fa-id-card-o"></i> <span>#{msg['passport.title']}</span> <i
 								class="fa fa-angle-left pull-right"></i>
 						</a>
 							<ul class="treeview-menu" id="subMenuPassport">
 								<li id="menuPassportBasicConfig"><h:commandLink
-										value="Basic Configuration" onclick="lock();"
+										value="#{msg['passport.basic.configuration']}" onclick="lock();"
 										ondbclick="lock();" oncomplete="unlock();"
 										action="#{menuAction.endConversation('/passport/basic_config.xhtml')}"
-										rendered="#{permissionService.hasPermission('uma', 'access')}">
+										rendered="#{permissionService.hasPermission('passport', 'access')}">
 										<i class="fa fa-chevron-right"
 											style="float: left; margin-top: 2px;"></i>
 									</h:commandLink></li>
 								<li id="menuPassportProviders"><h:commandLink
-										value="Providers" onclick="lock();"
+										value="#{msg['passport.providers']}" onclick="lock();"
 										ondbclick="lock();" oncomplete="unlock();"
 										action="#{menuAction.endConversation('/passport/providers.xhtml')}"
-										rendered="#{permissionService.hasPermission('uma', 'access')}">
+										rendered="#{permissionService.hasPermission('passport', 'access')}">
 										<i class="fa fa-chevron-right"
 											style="float: left; margin-top: 2px;"></i>
 									</h:commandLink></li>
 								<li id="menuPassportIdpInitiated"><h:commandLink
-										value="IDP Initiated Flows" onclick="lock();"
+										value="#{msg['passport.idpInitiated']}" onclick="lock();"
 										ondbclick="lock();" oncomplete="unlock();"
 										action="#{menuAction.endConversation('/passport/idpInitiatedFlows.xhtml')}"
-										rendered="#{permissionService.hasPermission('uma', 'access')}">
+										rendered="#{permissionService.hasPermission('passport', 'access')}">
 										<i class="fa fa-chevron-right"
 											style="float: left; margin-top: 2px;"></i>
 									</h:commandLink></li>
