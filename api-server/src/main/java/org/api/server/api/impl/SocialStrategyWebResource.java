@@ -23,7 +23,7 @@ import org.gluu.oxtrust.util.OxTrustApiConstants;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.LdapOxPassportConfiguration;
 import org.xdi.model.passport.PassportConfiguration;
-import org.xdi.model.passport.ProviderDetails;
+import org.xdi.model.passport.Provider;
 
 import com.google.common.base.Preconditions;
 import com.wordnik.swagger.annotations.Api;
@@ -49,7 +49,7 @@ public class SocialStrategyWebResource extends BaseWebResource {
 
 	public SocialStrategyWebResource() {
 	}
-
+/*
 	@GET
 	@ApiOperation(value = "Get all strategies")
 	@ApiResponses(value = {
@@ -63,7 +63,7 @@ public class SocialStrategyWebResource extends BaseWebResource {
 					.getPassportConfigurations();
 			for (PassportConfiguration configuration : ldapPassportConfigurations) {
 				if (configuration.getProviders() == null) {
-					configuration.setProviders(new ArrayList<ProviderDetails>());
+					configuration.setProviders(new ArrayList<Provider>());
 				}
 			}
 			return Response.ok(ldapPassportConfigurations).build();
@@ -169,5 +169,5 @@ public class SocialStrategyWebResource extends BaseWebResource {
 	public Response deleteStrategies() {
 		return Response.status(Response.Status.UNAUTHORIZED).build();
 	}
-
+*/
 }

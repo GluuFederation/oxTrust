@@ -49,7 +49,7 @@ import org.xdi.model.custom.script.CustomScriptType;
 import org.xdi.model.custom.script.model.CustomScript;
 import org.xdi.model.ldap.GluuLdapConfiguration;
 import org.xdi.model.passport.PassportConfiguration;
-import org.xdi.model.passport.ProviderDetails;
+import org.xdi.model.passport.Provider;
 import org.xdi.service.custom.script.AbstractCustomScriptService;
 import org.xdi.service.security.Secure;
 import org.xdi.util.OxConstants;
@@ -140,7 +140,7 @@ public class ManagePersonAuthenticationAction
 	public List<PassportConfiguration> getLdapPassportConfigurations() {
 		for (PassportConfiguration configuration : ldapPassportConfigurations) {
 			if (configuration.getProviders() == null) {
-				configuration.setProviders(new ArrayList<ProviderDetails>());
+				configuration.setProviders(new ArrayList<Provider>());
 			}
 		}
 		return ldapPassportConfigurations;
@@ -194,10 +194,11 @@ public class ManagePersonAuthenticationAction
 			if (ldapOxPassportConfiguration == null) {
 				ldapOxPassportConfiguration = new LdapOxPassportConfiguration();
 			}
+			/*
 			this.ldapPassportConfigurations = ldapOxPassportConfiguration.getPassportConfigurations();
 			if (ldapPassportConfigurations == null) {
 				ldapPassportConfigurations = new ArrayList<PassportConfiguration>();
-			}
+			}*/
 		} catch (Exception ex) {
 			log.error("Failed to load appliance configuration", ex);
 
@@ -240,7 +241,7 @@ public class ManagePersonAuthenticationAction
 
 			applianceService.updateAppliance(appliance);
 
-			ldapOxPassportConfiguration.setPassportConfigurations(ldapPassportConfigurations);
+			//ldapOxPassportConfiguration.setPassportConfigurations(ldapPassportConfigurations);
 
 			passportService.updateLdapOxPassportConfiguration(ldapOxPassportConfiguration);
 		} catch (BasePersistenceException ex) {
@@ -492,8 +493,8 @@ public class ManagePersonAuthenticationAction
 		clientSecretField.setDescription(facesMessages
 				.evalResourceAsString("#{msg['manageAuthentication.passport.strategy.clientSecretFieldHint']}"));
 		PassportConfiguration passportConfiguration = new PassportConfiguration();
-		passportConfiguration.setProviders(new ArrayList<ProviderDetails>());
-		passportConfiguration.getProviders().add(new ProviderDetails());
+		passportConfiguration.setProviders(new ArrayList<>());
+		passportConfiguration.getProviders().add(new Provider());
 		this.ldapPassportConfigurations.add(passportConfiguration);
 	}
 
@@ -501,9 +502,9 @@ public class ManagePersonAuthenticationAction
 		for (PassportConfiguration passportConfig : this.ldapPassportConfigurations) {
 			if (System.identityHashCode(removePassportConfiguration) == System.identityHashCode(passportConfig)) {
 				if (passportConfig.getProviders() == null) {
-					passportConfig.setProviders(new ArrayList<ProviderDetails>());
+					passportConfig.setProviders(new ArrayList<>());
 				}
-				passportConfig.getProviders().add(new ProviderDetails());
+				passportConfig.getProviders().add(new Provider());
 			}
 		}
 	}
