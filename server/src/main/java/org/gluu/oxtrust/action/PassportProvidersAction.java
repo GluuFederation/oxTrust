@@ -94,22 +94,20 @@ public class PassportProvidersAction implements Serializable {
 
 	}
 
-	public void handleRequiredOptionsDuringAdd(ValueChangeEvent e) {
+	public void handleRequiredOptions(ValueChangeEvent e) {
 		log.info("+++++++++++++++++++++++++++++++++++++");
-		log.info("++++++++++++++Type" + e.getNewValue().toString());
-		if (this.update && this.provider.getType() != null) {
-			log.info("+++++++++++++++++++++++++++++++++++++updating");
-		}
-		if (!this.update && this.provider.getType() != null) {
-			log.info("+++++++++++++++++++++++++++++++++++++adding");
-			if (this.provider.getType().equalsIgnoreCase(providerTypes[0])) {
+		String type = e.getNewValue().toString();
+		if (!this.update && type != null) {
+			if (type.equalsIgnoreCase(providerTypes[0])) {
+				this.options = new ArrayList<>();
 				this.options.add(new OptionEntry("clientID", ""));
 				this.options.add(new OptionEntry("clientSecret", ""));
 				this.options.add(new OptionEntry("oxdID", ""));
 				this.options.add(new OptionEntry("issuer", "https://server.example.com"));
 				this.options.add(new OptionEntry("oxdServer", "https://oxd-server.acme.com:8443"));
 			}
-			if (this.provider.getType().equalsIgnoreCase(providerTypes[1])) {
+			if (type.equalsIgnoreCase(providerTypes[1])) {
+				this.options = new ArrayList<>();
 				this.options.add(new OptionEntry("clientID", ""));
 				this.options.add(new OptionEntry("clientSecret", ""));
 				this.options.add(new OptionEntry("issuer", "https://server.example.com"));
@@ -118,7 +116,8 @@ public class PassportProvidersAction implements Serializable {
 				this.options.add(new OptionEntry("userInfoURL", "https://server.example.com/userinfo"));
 				this.options.add(new OptionEntry("scope", "openid"));
 			}
-			if (this.provider.getType().equalsIgnoreCase(providerTypes[2])) {
+			if (type.equalsIgnoreCase(providerTypes[2])) {
+				this.options = new ArrayList<>();
 				this.options.add(new OptionEntry("entryPoint", "https://idp.example.com/idp/profile/SAML2/POST/SSO"));
 				this.options.add(
 						new OptionEntry("identifierFormat", "urn:oasis:names:tc:SAML:2.0:nameid-format:transient"));
@@ -126,7 +125,8 @@ public class PassportProvidersAction implements Serializable {
 				this.options.add(new OptionEntry("issuer", ""));
 				this.options.add(new OptionEntry("cert", ""));
 			}
-			if (this.provider.getType().equalsIgnoreCase(providerTypes[2])) {
+			if (type.equalsIgnoreCase(providerTypes[3])) {
+				this.options = new ArrayList<>();
 				this.options.add(new OptionEntry("clientID", ""));
 				this.options.add(new OptionEntry("clientSecret", ""));
 			}

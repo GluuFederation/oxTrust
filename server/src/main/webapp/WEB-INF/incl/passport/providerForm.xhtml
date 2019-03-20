@@ -54,9 +54,9 @@
 								<ox:decorate label="#{msg['passport.provider.form.type']}"
 									leftClass="col-sm-3" rightClass="col-sm-9">
 									<h:selectOneMenu styleClass="rounded form-control ProviderType"
-									    valueChangeListener="#{_providerAction.handleRequiredOptionsDuringAdd}"
+									    valueChangeListener="#{_providerAction.handleRequiredOptions}"
 										value="#{_providerAction.provider.type}" id="ProviderTypeId"
-										rendered="true" required="true" onchange="toggleType();">
+										rendered="true" required="true" onchange="toggleType(); submit();">
 										<f:selectItem noSelectionOption="true" itemLabel="" />
 										<f:selectItems value="#{_providerAction.providerTypes}"
 											var="_type" itemLabel="#{_type}" />
