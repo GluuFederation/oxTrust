@@ -95,7 +95,6 @@ public class PassportProvidersAction implements Serializable {
 	}
 
 	public void handleRequiredOptions(ValueChangeEvent e) {
-		log.info("+++++++++++++++++++++++++++++++++++++");
 		String type = e.getNewValue().toString();
 		if (!this.update && type != null) {
 			if (type.equalsIgnoreCase(providerTypes[0])) {
@@ -220,7 +219,7 @@ public class PassportProvidersAction implements Serializable {
 			return OxTrustConstants.RESULT_SUCCESS;
 		} catch (Exception e) {
 			log.debug("", e);
-			return OxTrustConstants.RESULT_SUCCESS;
+			return OxTrustConstants.RESULT_FAILURE;
 		}
 
 	}
