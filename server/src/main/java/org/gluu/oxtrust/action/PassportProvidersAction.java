@@ -9,12 +9,14 @@ import java.util.stream.Collectors;
 
 import javax.enterprise.context.ConversationScoped;
 import javax.faces.application.FacesMessage;
+import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.service.PassportService;
+import org.gluu.oxtrust.model.OptionEntry;
 import org.gluu.oxtrust.model.PassportProvider;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.slf4j.Logger;
@@ -52,12 +54,13 @@ public class PassportProvidersAction implements Serializable {
 	private List<PassportProvider> providerSelections = new ArrayList<>();
 	private List<Provider> providers = new ArrayList<>();
 	private List<String> optionsKeys = new ArrayList<>();
+	private List<OptionEntry> options = new ArrayList<>();
 	private Provider provider = new Provider();
 	private LdapOxPassportConfiguration ldapOxPassportConfiguration;
 	private PassportConfiguration passportConfiguration;
 	private IIConfiguration idpInitiated;
 	private Configuration configuration;
-	private String[] providerTypes = { "openidconnect-oxd", "saml", "openidconnect", "oauth" };
+	private String[] providerTypes = { "openidconnect-oxd", "openidconnect", "saml", "oauth" };
 
 	public String init() {
 		try {
@@ -80,12 +83,53 @@ public class PassportProvidersAction implements Serializable {
 			this.update = false;
 			this.provider = new Provider();
 			this.provider.setOptions(new HashMap<>());
-			this.optionsKeys = new ArrayList<>(this.provider.getOptions().keySet());
+			this.options = this.provider.getOptions().entrySet().stream()
+					.map(e -> new OptionEntry(e.getKey(), e.getValue())).collect(Collectors.toList());
 			return OxTrustConstants.RESULT_SUCCESS;
 		} catch (Exception e) {
 			log.debug("", e);
 			conversationService.endConversation();
 			return OxTrustConstants.RESULT_FAILURE;
+		}
+
+	}
+
+	public void handleRequiredOptionsDuringAdd(ValueChangeEvent e) {
+		log.info("+++++++++++++++++++++++++++++++++++++");
+		log.info("++++++++++++++Type" + e.getNewValue().toString());
+		if (this.update && this.provider.getType() != null) {
+			log.info("+++++++++++++++++++++++++++++++++++++updating");
+		}
+		if (!this.update && this.provider.getType() != null) {
+			log.info("+++++++++++++++++++++++++++++++++++++adding");
+			if (this.provider.getType().equalsIgnoreCase(providerTypes[0])) {
+				this.options.add(new OptionEntry("clientID", ""));
+				this.options.add(new OptionEntry("clientSecret", ""));
+				this.options.add(new OptionEntry("oxdID", ""));
+				this.options.add(new OptionEntry("issuer", "https://server.example.com"));
+				this.options.add(new OptionEntry("oxdServer", "https://oxd-server.acme.com:8443"));
+			}
+			if (this.provider.getType().equalsIgnoreCase(providerTypes[1])) {
+				this.options.add(new OptionEntry("clientID", ""));
+				this.options.add(new OptionEntry("clientSecret", ""));
+				this.options.add(new OptionEntry("issuer", "https://server.example.com"));
+				this.options.add(new OptionEntry("authorizationURL", "https://server.example.com/authorize"));
+				this.options.add(new OptionEntry("tokenURL", "https://server.example.com/token"));
+				this.options.add(new OptionEntry("userInfoURL", "https://server.example.com/userinfo"));
+				this.options.add(new OptionEntry("scope", "openid"));
+			}
+			if (this.provider.getType().equalsIgnoreCase(providerTypes[2])) {
+				this.options.add(new OptionEntry("entryPoint", "https://idp.example.com/idp/profile/SAML2/POST/SSO"));
+				this.options.add(
+						new OptionEntry("identifierFormat", "urn:oasis:names:tc:SAML:2.0:nameid-format:transient"));
+				this.options.add(new OptionEntry("authnRequestBinding", "HTTP-POST"));
+				this.options.add(new OptionEntry("issuer", ""));
+				this.options.add(new OptionEntry("cert", ""));
+			}
+			if (this.provider.getType().equalsIgnoreCase(providerTypes[2])) {
+				this.options.add(new OptionEntry("clientID", ""));
+				this.options.add(new OptionEntry("clientSecret", ""));
+			}
 		}
 
 	}
@@ -103,6 +147,8 @@ public class PassportProvidersAction implements Serializable {
 					break;
 				}
 			}
+			this.options = this.provider.getOptions().entrySet().stream()
+					.map(e -> new OptionEntry(e.getKey(), e.getValue())).collect(Collectors.toList());
 			return OxTrustConstants.RESULT_SUCCESS;
 		} catch (Exception e) {
 			log.debug("", e);
@@ -117,11 +163,15 @@ public class PassportProvidersAction implements Serializable {
 			if (!update) {
 				this.provider.setId(UUID.randomUUID().toString());
 				this.id = this.provider.getId();
+				this.provider.setOptions(options.stream().filter(e -> e.getKey() != null)
+						.collect(Collectors.toMap(OptionEntry::getKey, OptionEntry::getValue)));
 				this.ldapOxPassportConfiguration = passportService.loadConfigurationFromLdap();
 				this.passportConfiguration = this.ldapOxPassportConfiguration.getPassportConfiguration();
 				this.providers = this.passportConfiguration.getProviders();
 				this.providers.add(provider);
 			} else {
+				this.provider.setOptions(options.stream().filter(e -> e.getKey() != null)
+						.collect(Collectors.toMap(OptionEntry::getKey, OptionEntry::getValue)));
 				this.ldapOxPassportConfiguration = passportService.loadConfigurationFromLdap();
 				this.passportConfiguration = this.ldapOxPassportConfiguration.getPassportConfiguration();
 				this.providers = this.passportConfiguration.getProviders();
@@ -161,7 +211,11 @@ public class PassportProvidersAction implements Serializable {
 
 	public String cancel() {
 		try {
-			facesMessages.add(FacesMessage.SEVERITY_INFO, "No provider added");
+			if (update) {
+				facesMessages.add(FacesMessage.SEVERITY_INFO, "No change performed");
+			} else {
+				facesMessages.add(FacesMessage.SEVERITY_INFO, "No provider added");
+			}
 			conversationService.endConversation();
 			return OxTrustConstants.RESULT_SUCCESS;
 		} catch (Exception e) {
@@ -215,15 +269,12 @@ public class PassportProvidersAction implements Serializable {
 		return this.provider.getOptions().get(key);
 	}
 
-	public void removeEntry(String key) {
-		this.provider.getOptions().remove(key);
-		optionsKeys.remove(key);
+	public void removeEntry(List<OptionEntry> options, OptionEntry entry) {
+		options.remove(entry);
 	}
 
-	public void addEntry() {
-		String newKey = "DefaultKey" + UUID.randomUUID().toString().substring(1, 6);
-		this.provider.getOptions().put(newKey, "");
-		optionsKeys.add(newKey);
+	public void addEntry(List<OptionEntry> options) {
+		options.add(new OptionEntry("", ""));
 	}
 
 	public void deleteProviders() {
@@ -242,6 +293,14 @@ public class PassportProvidersAction implements Serializable {
 
 	public void setId(String id) {
 		this.id = id;
+	}
+
+	public List<OptionEntry> getOptions() {
+		return options;
+	}
+
+	public void setOptions(List<OptionEntry> options) {
+		this.options = options;
 	}
 
 	public String[] getProviderTypes() {
