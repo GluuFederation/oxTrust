@@ -25,9 +25,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.gluu.jsf2.message.FacesMessages;
-import org.gluu.oxtrust.ldap.service.ApplianceService;
+import org.gluu.oxtrust.ldap.service.ConfigurationService;
 import org.gluu.oxtrust.ldap.service.SSLService;
-import org.gluu.oxtrust.model.GluuAppliance;
+import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.oxtrust.model.cert.TrustStoreCertificate;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.X509CertificateShortInfo;
@@ -58,7 +58,7 @@ public class CertificateManagementAction implements Serializable {
 	private FacesMessages facesMessages;
 
 	@Inject
-	private ApplianceService applianceService;
+	private ConfigurationService configurationService;
 
 	private List<X509CertificateShortInfo> trustStoreCertificates;
 
@@ -90,8 +90,8 @@ public class CertificateManagementAction implements Serializable {
 	private void updateTableView() {
 		try {
 			trustStoreCertificates = new ArrayList<X509CertificateShortInfo>();
-			GluuAppliance appliance = applianceService.getAppliance();
-			List<TrustStoreCertificate> trustStoreCertificatesList = appliance.getTrustStoreCertificates();
+			GluuConfiguration configuration = configurationService.getConfiguration();
+			List<TrustStoreCertificate> trustStoreCertificatesList = configuration.getTrustStoreCertificates();
 			if (trustStoreCertificatesList != null) {
 				for (TrustStoreCertificate trustStoreCertificate : trustStoreCertificatesList) {
 					try {

@@ -25,14 +25,14 @@ import org.xdi.model.SmtpConfiguration;
 import org.xdi.service.cache.CacheConfiguration;
 
 /**
- * GluuAppliance
+ * GluuConfiguration
  * 
  * @author Reda Zerrad Date: 08.10.2012
  * @author Yuriy Movchan Date: 04/20/2014
  */
 @LdapEntry
-@LdapObjectClass(values = { "top", "gluuAppliance" })
-public class GluuAppliance extends InumEntry implements Serializable {
+@LdapObjectClass(values = { "top", "gluuConfiguration" })
+public class GluuConfiguration extends InumEntry implements Serializable {
 
 	private static final long serialVersionUID = -1817003894646725601L;
 
@@ -90,7 +90,7 @@ public class GluuAppliance extends InumEntry implements Serializable {
 	@LdapAttribute(name = "gluuLastUpdate", updateOnly = true)
 	private Date lastUpdate;
 
-	@LdapAttribute(name = "gluuAppliancePollingInterval")
+	@LdapAttribute(name = "gluuConfigurationPollingInterval")
 	private String pollingInterval;
 
 	@LdapAttribute(name = "gluuStatus", updateOnly = true)
@@ -154,8 +154,8 @@ public class GluuAppliance extends InumEntry implements Serializable {
 	@LdapJsonObject
 	private SmtpConfiguration smtpConfiguration;
 
-	@LdapAttribute(name = "gluuApplianceDnsServer")
-	private String applianceDnsServer;
+	@LdapAttribute(name = "gluuConfigurationDnsServer")
+	private String configurationDnsServer;
 
 	@Min(value = 200)
 	@LdapAttribute(name = "gluuMaxLogSize")
@@ -195,8 +195,8 @@ public class GluuAppliance extends InumEntry implements Serializable {
 	@LdapJsonObject
 	private CacheConfiguration cacheConfiguration;
 
-	public String getApplianceDnsServer() {
-		return applianceDnsServer;
+	public String getConfigurationDnsServer() {
+		return configurationDnsServer;
 	}
 
 	public String getInumFN() {
@@ -207,8 +207,8 @@ public class GluuAppliance extends InumEntry implements Serializable {
 		this.inumFN = inumFN;
 	}
 
-	public void setApplianceDnsServer(String applianceDnsServer) {
-		this.applianceDnsServer = applianceDnsServer;
+	public void setConfigurationDnsServer(String configurationDnsServer) {
+		this.configurationDnsServer = configurationDnsServer;
 	}
 
 	public final SmtpConfiguration getSmtpConfiguration() {
@@ -605,7 +605,7 @@ public class GluuAppliance extends InumEntry implements Serializable {
 
 	@Override
 	public String toString() {
-		return "GluuAppliance [inum=" + inum + ", inumFN=" + inumFN + ", iname=" + iname + ", description="
+		return "GluuConfiguration [inum=" + inum + ", inumFN=" + inumFN + ", iname=" + iname + ", description="
 				+ description + ", displayName=" + displayName + ", freeDiskSpace=" + freeDiskSpace + ", freeMemory="
 				+ freeMemory + ", freeSwap=" + freeSwap + ", groupCount=" + groupCount + ", hostname=" + hostname
 				+ ", ipAddress=" + ipAddress + ", personCount=" + personCount + ", shibAssertionsIssued="
@@ -621,7 +621,7 @@ public class GluuAppliance extends InumEntry implements Serializable {
 				+ vdsCacheRefreshLastUpdate + ", vdsCacheRefreshLastUpdateCount=" + vdsCacheRefreshLastUpdateCount
 				+ ", vdsCacheRefreshProblemCount=" + vdsCacheRefreshProblemCount + ", scimEnabled=" + scimEnabled
 				+ ", passportEnabled=" + passportEnabled + ", contactEmail=" + contactEmail + ", smtpConfiguration="
-				+ smtpConfiguration + ", applianceDnsServer=" + applianceDnsServer + ", maxLogSize=" + maxLogSize
+				+ smtpConfiguration + ", configurationDnsServer=" + configurationDnsServer + ", maxLogSize=" + maxLogSize
 				+ ", loadAvg=" + loadAvg + ", oxIDPAuthentication=" + oxIDPAuthentication + ", authenticationMode="
 				+ authenticationMode + ", oxTrustAuthenticationMode=" + oxTrustAuthenticationMode
 				+ ", oxLogViewerConfig=" + oxLogViewerConfig + ", oxLogConfigLocation=" + oxLogConfigLocation

@@ -26,11 +26,11 @@ import javax.servlet.http.Cookie;
 import org.codehaus.jettison.json.JSONException;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.FacesService;
-import org.gluu.oxtrust.ldap.service.ApplianceService;
+import org.gluu.oxtrust.ldap.service.ConfigurationService;
 import org.gluu.oxtrust.ldap.service.EncryptionService;
 import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.ldap.service.SecurityService;
-import org.gluu.oxtrust.model.GluuAppliance;
+import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.User;
 import org.gluu.oxtrust.security.Identity;
@@ -84,7 +84,7 @@ public class Authenticator implements Serializable {
 	private SecurityService securityService;
 
 	@Inject
-	private ApplianceService applianceService;
+	private ConfigurationService configurationService;
 
 	@Inject
 	private OpenIdService openIdService;
@@ -208,8 +208,8 @@ public class Authenticator implements Serializable {
         identity.getSessionMap().put(OxTrustConstants.OXAUTH_NONCE, nonce);
         identity.getSessionMap().put(OxTrustConstants.OXAUTH_STATE, state);
 
-        GluuAppliance appliance = applianceService.getAppliance(new String[] { "oxTrustAuthenticationMode" });
-		String acrValues = appliance.getOxTrustAuthenticationMode();
+        GluuConfiguration configuration = configurationService.getConfiguration(new String[] { "oxTrustAuthenticationMode" });
+		String acrValues = configuration.getOxTrustAuthenticationMode();
 		if (StringHelper.isNotEmpty(acrValues)) {
 			clientRequest.queryParameter(OxTrustConstants.OXAUTH_ACR_VALUES, acrValues);
 

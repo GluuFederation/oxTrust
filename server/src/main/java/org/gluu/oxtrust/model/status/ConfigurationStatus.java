@@ -9,11 +9,11 @@ package org.gluu.oxtrust.model.status;
 import java.io.Serializable;
 
 /**
- * Appliance status
+ * Configuration status
  * 
  * @author Yuriy Movchan Date: 04/20/2018
  */
-public class ApplianceStatus implements Serializable {
+public class ConfigurationStatus implements Serializable {
 
     private static final long serialVersionUID = -1499003894646725601L;
 

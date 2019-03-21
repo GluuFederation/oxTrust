@@ -13,8 +13,8 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.gluu.oxtrust.ldap.service.ApplianceService;
-import org.gluu.oxtrust.model.GluuAppliance;
+import org.gluu.oxtrust.ldap.service.ConfigurationService;
+import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.slf4j.Logger;
 import org.xdi.service.security.Secure;
@@ -25,9 +25,9 @@ import org.xdi.service.security.Secure;
  * @author Oleksiy Tataryn Date: 11.14.2013
  */
 @RequestScoped
-@Named("applianceStatusAction")
+@Named("configurationStatusAction")
 @Secure("#{permissionService.hasPermission('configuration', 'access')}")
-public class ApplianceStatusAction implements Serializable {
+public class ConfigurationStatusAction implements Serializable {
 
 	private static final long serialVersionUID = -7470520478553992898L;
 
@@ -35,7 +35,7 @@ public class ApplianceStatusAction implements Serializable {
     private Logger log;
 
 	@Inject
-	private ApplianceService applianceService;
+	private ConfigurationService configurationService;
 
 	private String health;
 	
@@ -44,8 +44,8 @@ public class ApplianceStatusAction implements Serializable {
 	}
 
 	public String checkHealth() {
-		GluuAppliance appliance = applianceService.getAppliance();
-		Date lastUpdateDateTime = appliance.getLastUpdate();
+		GluuConfiguration configuration = configurationService.getConfiguration();
+		Date lastUpdateDateTime = configuration.getLastUpdate();
 		long lastUpdate = 0;
 		if (lastUpdateDateTime != null) {
 			lastUpdate = lastUpdateDateTime.getTime();

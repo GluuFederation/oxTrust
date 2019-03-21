@@ -38,7 +38,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.velocity.VelocityContext;
 import org.gluu.oxtrust.config.ConfigurationFactory;
-import org.gluu.oxtrust.model.GluuAppliance;
+import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuMetadataSourceType;
 import org.gluu.oxtrust.model.GluuSAMLFederationProposal;
@@ -127,7 +127,7 @@ public class Shibboleth3ConfService implements Serializable {
 	private FilterService filterService;
 
 	@Inject
-	private ApplianceService applianceService;
+	private ConfigurationService configurationService;
 
 	@Inject
 	private ConfigurationFactory configurationFactory;
@@ -563,7 +563,7 @@ public class Shibboleth3ConfService implements Serializable {
 		context.put("casParams", casParams);
 		context.put("resovlerParams", attrResolverParams);
 		context.put("medataFolder", idpMetadataFolder);
-		context.put("applianceInum", StringHelper.removePunctuation(applianceService.getApplianceInum()));
+		context.put("configurationInum", StringHelper.removePunctuation(configurationService.getConfigurationInum()));
 		context.put("orgInum", StringHelper.removePunctuation(organizationService.getOrganizationInum()));
 		context.put("orgSupportEmail", appConfiguration.getOrgSupportEmail());
 
@@ -573,11 +573,11 @@ public class Shibboleth3ConfService implements Serializable {
 		String idpHost = idpUrl.replaceAll(":[0-9]*$", "");
 		context.put("idpHost", idpHost);
 
-		String spUrl = appConfiguration.getApplianceUrl();
+		String spUrl = appConfiguration.getConfigurationUrl();
 		context.put("spUrl", spUrl);
 		String spHost = spUrl.replaceAll(":[0-9]*$", "").replaceAll("^.*?//", "");
 		context.put("spHost", spHost);
-		String gluuSPInum = applianceService.getAppliance().getGluuSPTR();
+		String gluuSPInum = configurationService.getConfiguration().getGluuSPTR();
 		String gluuSPEntityId = trustService.getRelationshipByInum(gluuSPInum).getEntityId();
 		context.put("gluuSPEntityId", gluuSPEntityId);
 		String regx = "\\s*(=>|,|\\s)\\s*";// white spaces or comma
@@ -1075,7 +1075,7 @@ public class Shibboleth3ConfService implements Serializable {
 	}
 
 	/**
-	 * Generate metadata files needed for appliance operations: gluuSP metadata and
+	 * Generate metadata files needed for configuration operations: gluuSP metadata and
 	 * idp metadata.
 	 */
 	public boolean generateMetadataFiles(GluuSAMLTrustRelationship gluuSP) {
@@ -1129,7 +1129,7 @@ public class Shibboleth3ConfService implements Serializable {
 					.replaceAll("-{5}.*?-{5}", "");
 
 			if (gluuSP.getUrl() == null || "".equals(gluuSP.getUrl())) {
-				gluuSP.setUrl(appConfiguration.getApplianceUrl());
+				gluuSP.setUrl(appConfiguration.getConfigurationUrl());
 			}
 
 			generateSpMetadataFile(gluuSP, spCertificate);
@@ -1220,13 +1220,13 @@ public class Shibboleth3ConfService implements Serializable {
 		String metadataFN = getSpNewMetadataFileName(gluuSPInum);
 		GluuSAMLTrustRelationship gluuSP = new GluuSAMLTrustRelationship();
 		gluuSP.setInum(gluuSPInum);
-		gluuSP.setDisplayName("gluu SP on appliance");
+		gluuSP.setDisplayName("gluu SP on configuration");
 		gluuSP.setDescription("Trust Relationship for the SP");
 		gluuSP.setSpMetaDataSourceType(GluuMetadataSourceType.FILE);
 		gluuSP.setSpMetaDataFN(metadataFN);
 		// TODO:
 		gluuSP.setEntityId(StringHelper.removePunctuation(gluuSP.getInum()));
-		gluuSP.setUrl(appConfiguration.getApplianceUrl());
+		gluuSP.setUrl(appConfiguration.getConfigurationUrl());
 
 		String certificate = "";
 		boolean result = false;
@@ -1266,9 +1266,9 @@ public class Shibboleth3ConfService implements Serializable {
 			trustService.updateReleasedAttributes(gluuSP);
 			trustService.addTrustRelationship(gluuSP);
 
-			GluuAppliance appliance = applianceService.getAppliance();
-			appliance.setGluuSPTR(gluuSP.getInum());
-			applianceService.updateAppliance(appliance);
+			GluuConfiguration configuration = configurationService.getConfiguration();
+			configuration.setGluuSPTR(gluuSP.getInum());
+			configurationService.updateConfiguration(configuration);
 		}
 
 		if (result) {

@@ -47,10 +47,10 @@ import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.util.encoders.Base64;
 import org.gluu.jsf2.io.ResponseHelper;
 import org.gluu.jsf2.message.FacesMessages;
-import org.gluu.oxtrust.ldap.service.ApplianceService;
+import org.gluu.oxtrust.ldap.service.ConfigurationService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.ldap.service.SSLService;
-import org.gluu.oxtrust.model.GluuAppliance;
+import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.oxtrust.model.cert.TrustStoreCertificate;
 import org.gluu.oxtrust.model.cert.TrustStoreConfiguration;
 import org.gluu.oxtrust.security.Identity;
@@ -96,7 +96,7 @@ public class ManageCertificateAction implements Serializable {
 	private AppConfiguration appConfiguration;
 
 	@Inject
-	private ApplianceService applianceService;
+	private ConfigurationService configurationService;
 
 	@Inject
 	private Identity identity;
@@ -130,23 +130,23 @@ public class ManageCertificateAction implements Serializable {
 		this.idpCertFN = orgInumFN + "-shib.crt";
 
 		try {
-			GluuAppliance appliance = applianceService.getAppliance();
+			GluuConfiguration configuration = configurationService.getConfiguration();
 
-			if (appliance == null) {
+			if (configuration == null) {
 				return OxTrustConstants.RESULT_FAILURE;
 			}
 
-			trustStoreConfiguration = appliance.getTrustStoreConfiguration();
+			trustStoreConfiguration = configuration.getTrustStoreConfiguration();
 			if (trustStoreConfiguration == null) {
 				trustStoreConfiguration = new TrustStoreConfiguration();
 			}
 
-			trustStoreCertificates = appliance.getTrustStoreCertificates();
+			trustStoreCertificates = configuration.getTrustStoreCertificates();
 			if (trustStoreCertificates == null) {
 				trustStoreCertificates = new ArrayList<TrustStoreCertificate>();
 			}
 		} catch (Exception ex) {
-			log.error("Failed to load appliance configuration", ex);
+			log.error("Failed to load configuration configuration", ex);
 
 			return OxTrustConstants.RESULT_FAILURE;
 		}
@@ -423,10 +423,10 @@ public class ManageCertificateAction implements Serializable {
 	private boolean updateTrustCertificates() {
 		try {
 			// Reload entry to include latest changes
-			GluuAppliance tmpAppliance = applianceService.getAppliance();
+			GluuConfiguration tmpConfiguration = configurationService.getConfiguration();
 
-			TrustStoreConfiguration currTrustStoreConfiguration = tmpAppliance.getTrustStoreConfiguration();
-			List<TrustStoreCertificate> currTrustStoreCertificates = tmpAppliance.getTrustStoreCertificates();
+			TrustStoreConfiguration currTrustStoreConfiguration = tmpConfiguration.getTrustStoreConfiguration();
+			List<TrustStoreCertificate> currTrustStoreCertificates = tmpConfiguration.getTrustStoreCertificates();
 			if (currTrustStoreCertificates == null) {
 				currTrustStoreCertificates = new ArrayList<TrustStoreCertificate>(0);
 			}
@@ -436,18 +436,18 @@ public class ManageCertificateAction implements Serializable {
 				this.wereAnyChanges = true;
 			}
 
-			tmpAppliance.setTrustStoreConfiguration(trustStoreConfiguration);
+			tmpConfiguration.setTrustStoreConfiguration(trustStoreConfiguration);
 
 			if (trustStoreCertificates.size() == 0) {
-				tmpAppliance.setTrustStoreCertificates(null);
+				tmpConfiguration.setTrustStoreCertificates(null);
 			} else {
-				tmpAppliance.setTrustStoreCertificates(trustStoreCertificates);
+				tmpConfiguration.setTrustStoreCertificates(trustStoreCertificates);
 			}
 
-			applianceService.updateAppliance(tmpAppliance);
+			configurationService.updateConfiguration(tmpConfiguration);
 		} catch (BasePersistenceException ex) {
-			log.error("Failed to update appliance configuration", ex);
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update appliance");
+			log.error("Failed to update configuration configuration", ex);
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update configuration");
 			return false;
 		}
 
@@ -506,10 +506,10 @@ public class ManageCertificateAction implements Serializable {
 			log.info("Deleting %s : %s", orgInumFN + "-java.pem", pem.delete());
 			log.info("Deleting %s : %s", orgInumFN + "-java.jks", jks.delete());
 
-			applianceService.restartServices();
+			configurationService.restartServices();
 
 			facesMessages.add(FacesMessage.SEVERITY_WARN,
-					"Certificates were updated and appliance service will be restarted. Please log in again in 5 minutes.");
+					"Certificates were updated and configuration service will be restarted. Please log in again in 5 minutes.");
 
 			this.wereAnyChanges = false;
 		}

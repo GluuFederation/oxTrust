@@ -408,7 +408,7 @@ public class UpdateGroupAction implements Serializable {
 			GluuCustomPerson person = personService.getPersonByDn(dn);
 			log.debug("Adding group {} to person {} memberOf", groupDn, person.getDisplayName());
 
-			if (appConfiguration.isUpdateApplianceStatus()) {
+			if (appConfiguration.isUpdateStatus()) {
 				GluuBoolean slaManager = isSLAManager(organizationGroups, person);
 				person.setSLAManager(slaManager);
 			}
@@ -424,7 +424,7 @@ public class UpdateGroupAction implements Serializable {
 			GluuCustomPerson person = personService.getPersonByDn(dn);
 			log.debug("Removing group {} from person {} memberOf", groupDn, person.getDisplayName());
 
-			if (appConfiguration.isUpdateApplianceStatus()) {
+			if (appConfiguration.isUpdateStatus()) {
 				GluuBoolean slaManager = isSLAManager(organizationGroups, person);
 				person.setSLAManager(slaManager);
 			}
@@ -436,7 +436,7 @@ public class UpdateGroupAction implements Serializable {
 			personService.updatePerson(person);
 		}
 
-		if (appConfiguration.isUpdateApplianceStatus()) {
+		if (appConfiguration.isUpdateStatus()) {
 			// Update existing members if needed
 			for (String dn : existingMembers) {
 				GluuCustomPerson person = personService.getPersonByDn(dn);

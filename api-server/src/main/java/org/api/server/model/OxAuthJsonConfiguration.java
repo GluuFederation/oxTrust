@@ -38,7 +38,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 		"skipAuthorizationForOpenIdScopeAndPairwiseId", "dynamicRegistrationScopesParamEnabled",
 		"dynamicRegistrationCustomObjectClass", "personCustomObjectClassList", "persistIdTokenInLdap",
 		"persistRefreshTokenInLdap", "authenticationFiltersEnabled", "invalidateSessionCookiesAfterAuthorizationFlow",
-		"clientAuthenticationFiltersEnabled", "authenticationFilters", "clientAuthenticationFilters", "applianceInum",
+		"clientAuthenticationFiltersEnabled", "authenticationFilters", "clientAuthenticationFilters", "configurationInum",
 		"sessionIdUnusedLifetime", "sessionIdUnauthenticatedUnusedLifetime", "sessionIdEnabled",
 		"sessionIdPersistOnPromptNone", "sessionIdLifetime", "configurationUpdateInterval", "cssLocation", "jsLocation",
 		"imgLocation", "metricReporterInterval", "metricReporterKeepDataDays", "pairwiseIdType",
@@ -235,8 +235,8 @@ public class OxAuthJsonConfiguration {
 	private List<AuthenticationFilter> authenticationFilters = null;
 	@JsonProperty("clientAuthenticationFilters")
 	private List<ClientAuthenticationFilter> clientAuthenticationFilters = null;
-	@JsonProperty("applianceInum")
-	private String applianceInum;
+	@JsonProperty("configurationInum")
+	private String configurationInum;
 	@JsonProperty("sessionIdUnusedLifetime")
 	private Integer sessionIdUnusedLifetime;
 	@JsonProperty("sessionIdUnauthenticatedUnusedLifetime")
@@ -1237,14 +1237,14 @@ public class OxAuthJsonConfiguration {
 		this.clientAuthenticationFilters = clientAuthenticationFilters;
 	}
 
-	@JsonProperty("applianceInum")
-	public String getApplianceInum() {
-		return applianceInum;
+	@JsonProperty("configurationInum")
+	public String getConfigurationInum() {
+		return configurationInum;
 	}
 
-	@JsonProperty("applianceInum")
-	public void setApplianceInum(String applianceInum) {
-		this.applianceInum = applianceInum;
+	@JsonProperty("configurationInum")
+	public void setConfigurationInum(String configurationInum) {
+		this.configurationInum = configurationInum;
 	}
 
 	@JsonProperty("sessionIdUnusedLifetime")

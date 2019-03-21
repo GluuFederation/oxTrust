@@ -22,13 +22,13 @@ import javax.servlet.http.HttpServletRequest;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.model.RenderParameters;
 import org.gluu.jsf2.service.ConversationService;
-import org.gluu.oxtrust.ldap.service.ApplianceService;
+import org.gluu.oxtrust.ldap.service.ConfigurationService;
 import org.gluu.oxtrust.ldap.service.JsonConfigurationService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.ldap.service.OxTrustAuditService;
 import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.ldap.service.RecaptchaService;
-import org.gluu.oxtrust.model.GluuAppliance;
+import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.PasswordResetRequest;
 import org.gluu.oxtrust.security.Identity;
@@ -54,7 +54,7 @@ public class PasswordReminderAction implements Serializable {
 	private RecaptchaService recaptchaService;
 
 	@Inject
-	private ApplianceService applianceService;
+	private ConfigurationService configurationService;
 
 	@Inject
 	private OrganizationService organizationService;
@@ -137,7 +137,7 @@ public class PasswordReminderAction implements Serializable {
 				rendererParameters.setParameter("givenName", matchedPersons.get(0).getGivenName());
 				rendererParameters.setParameter("organizationName",
 						organizationService.getOrganization().getDisplayName());
-				rendererParameters.setParameter("resetLink", appConfiguration.getApplianceUrl()
+				rendererParameters.setParameter("resetLink", appConfiguration.getApplicationUrl()
 						+ httpServletRequest.getContextPath() + "/resetPassword/" + request.getOxGuid());
 
 				String subj = facesMessages.evalResourceAsString("#{msg['mail.reset.found.message.subject']}");
@@ -161,10 +161,10 @@ public class PasswordReminderAction implements Serializable {
 	}
 
 	public boolean enabled() {
-		GluuAppliance appliance = applianceService.getAppliance();
-		SmtpConfiguration smtpConfiguration = appliance.getSmtpConfiguration();
-		boolean valid = smtpConfigurationIsValid(smtpConfiguration) && appliance.getPasswordResetAllowed() != null
-				&& appliance.getPasswordResetAllowed().isBooleanValue();
+		GluuConfiguration configuration = configurationService.getConfiguration();
+		SmtpConfiguration smtpConfiguration = configuration.getSmtpConfiguration();
+		boolean valid = smtpConfigurationIsValid(smtpConfiguration) && configuration.getPasswordResetAllowed() != null
+				&& configuration.getPasswordResetAllowed().isBooleanValue();
 		if (valid) {
 			passwordResetIsEnable = true;
 			if (recaptchaService.isEnabled() && getAuthenticationRecaptchaEnabled()) {

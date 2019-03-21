@@ -31,7 +31,7 @@
 								target="_blank"> <span>#{msg['leftmenu.supportForum']}</span>
 							</a></li>
 						</ul>
-						<li class="header" style="text-align: center;"><h4>#{msg['leftmenu.gluuIdentityAppliance']}</h4></li>
+						<li class="header" style="text-align: center;"><h4>#{msg['leftmenu.gluuIdentityConfiguration']}</h4></li>
 						<ui:fragment
 							rendered="#{permissionService.hasPermission('configuration', 'access') or permissionService.hasPermission('scim', 'access') or permissionService.hasPermission('attribute', 'access')}">
 							<li class="treeview" id="menuConfiguration"><a href="#">
@@ -125,7 +125,7 @@
 									<li id="subMenuLinkConfiguration11"><h:commandLink
 											value="#{msg['leftmenu.serverStatus']}" onclick="lock();"
 											ondbclick="lock();" oncomplete="unlock();"
-											action="#{menuAction.endConversation('/status/applianceStatus.xhtml')}"
+											action="#{menuAction.endConversation('/status/applicationStatus.xhtml')}"
 											rendered="#{permissionService.hasPermission('configuration', 'access')}">
 											<i class="fa fa-chevron-right"
 												style="float: left; margin-top: 2px;"></i>
@@ -288,7 +288,7 @@
 							</ul></li>
 					</ui:fragment>
 					<ui:fragment
-						rendered="#{permissionService.hasPermission('profile', 'access') or permissionService.hasPermission(applianceService.appliance, 'whitePagesEnabled')}">
+						rendered="#{permissionService.hasPermission('profile', 'access') or permissionService.hasPermission(configurationService.configuration, 'whitePagesEnabled')}">
 						<li class="treeview" id="menuPersonal"><a href="#"> <i
 								class="fa fa-user"></i> <span>#{msg['leftmenu.personal']}</span>
 								<i class="fa fa-angle-left pull-right"></i>
@@ -420,7 +420,7 @@
 							}
 
 							if (window.location.href
-									.indexOf("status/appliance") != -1) {
+									.indexOf("status/configuration") != -1) {
 								$('#subMenuConfiguration').css('display',
 										'block');
 								$('#menuConfiguration').addClass('active');

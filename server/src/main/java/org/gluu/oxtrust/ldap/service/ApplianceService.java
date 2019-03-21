@@ -14,7 +14,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.gluu.oxtrust.model.GluuAppliance;
+import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.persist.PersistenceEntryManager;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
@@ -27,13 +27,13 @@ import org.xdi.util.StringHelper;
 import org.xdi.util.security.StringEncrypter.EncryptionException;
 
 /**
- * GluuAppliance service
+ * GluuConfiguration service
  * 
  * @author Reda Zerrad Date: 08.10.2012
  */
 @Stateless
-@Named("applianceService")
-public class ApplianceService implements Serializable {
+@Named("configurationService")
+public class ConfigurationService implements Serializable {
 
 	private static final long serialVersionUID = 8842838732456296435L;
 
@@ -52,66 +52,66 @@ public class ApplianceService implements Serializable {
 	@Inject
 	private EncryptionService encryptionService;
 
-	public boolean contains(String applianceDn) {
-		return ldapEntryManager.contains(GluuAppliance.class, applianceDn);
+	public boolean contains(String configurationDn) {
+		return ldapEntryManager.contains(GluuConfiguration.class, configurationDn);
 	}
 
 	/**
-	 * Add new appliance
+	 * Add new configuration
 	 * 
-	 * @param appliance
-	 *            Appliance
+	 * @param configuration
+	 *            Configuration
 	 */
-	public void addAppliance(GluuAppliance appliance) {
-		ldapEntryManager.persist(appliance);
+	public void addConfiguration(GluuConfiguration configuration) {
+		ldapEntryManager.persist(configuration);
 	}
 
 	/**
-	 * Update appliance entry
+	 * Update configuration entry
 	 * 
-	 * @param appliance
-	 *            GluuAppliance
+	 * @param configuration
+	 *            GluuConfiguration
 	 */
-	public void updateAppliance(GluuAppliance appliance) {
-		ldapEntryManager.merge(appliance);
+	public void updateConfiguration(GluuConfiguration configuration) {
+		ldapEntryManager.merge(configuration);
 	}
 
 	/**
-	 * Check if LDAP server contains appliance with specified attributes
+	 * Check if LDAP server contains configuration with specified attributes
 	 * 
-	 * @return True if appliance with specified attributes exist
+	 * @return True if configuration with specified attributes exist
 	 */
-	public boolean containsAppliance(GluuAppliance appliance) {
-		return ldapEntryManager.contains(appliance);
+	public boolean containsConfiguration(GluuConfiguration configuration) {
+		return ldapEntryManager.contains(configuration);
 	}
 
 	/**
-	 * Get appliance by inum
+	 * Get configuration by inum
 	 * 
 	 * @param inum
-	 *            Appliance Inum
-	 * @return Appliance
+	 *            Configuration Inum
+	 * @return Configuration
 	 * @throws Exception
 	 */
-	public GluuAppliance getApplianceByInum(String inum) {
-		return ldapEntryManager.find(GluuAppliance.class, getDnForAppliance(inum));
+	public GluuConfiguration getConfigurationByInum(String inum) {
+		return ldapEntryManager.find(GluuConfiguration.class, getDnForConfiguration(inum));
 	}
 
 	/**
-	 * Get appliance
+	 * Get configuration
 	 * 
-	 * @return Appliance
+	 * @return Configuration
 	 * @throws Exception
 	 */
-	public GluuAppliance getAppliance(String[] returnAttributes) {
-		GluuAppliance result = null;
-		if (ldapEntryManager.contains(GluuAppliance.class, getDnForAppliance(getApplianceInum()))) {
-			result = ldapEntryManager.find(GluuAppliance.class, getDnForAppliance(getApplianceInum()),
+	public GluuConfiguration getConfiguration(String[] returnAttributes) {
+		GluuConfiguration result = null;
+		if (ldapEntryManager.contains(GluuConfiguration.class, getDnForConfiguration(getConfigurationInum()))) {
+			result = ldapEntryManager.find(GluuConfiguration.class, getDnForConfiguration(getConfigurationInum()),
 					returnAttributes);
 		} else {
-			result = new GluuAppliance();
-			result.setInum(getApplianceInum());
-			result.setDn(getDnForAppliance(getApplianceInum()));
+			result = new GluuConfiguration();
+			result.setInum(getConfigurationInum());
+			result.setDn(getDnForConfiguration(getConfigurationInum()));
 
 			ldapEntryManager.persist(result);
 		}
@@ -119,54 +119,54 @@ public class ApplianceService implements Serializable {
 	}
 
 	/**
-	 * Get appliance
+	 * Get configuration
 	 * 
-	 * @return Appliance
+	 * @return Configuration
 	 * @throws Exception
 	 */
-	public GluuAppliance getAppliance() {
-		return getAppliance(null);
+	public GluuConfiguration getConfiguration() {
+		return getConfiguration(null);
 	}
 
 	/**
-	 * Get all appliances
+	 * Get all configurations
 	 * 
 	 * @return List of attributes
 	 * @throws Exception
 	 */
-	public List<GluuAppliance> getAppliances() {
-		return ldapEntryManager.findEntries(getDnForAppliance(null), GluuAppliance.class, null);
+	public List<GluuConfiguration> getConfigurations() {
+		return ldapEntryManager.findEntries(getDnForConfiguration(null), GluuConfiguration.class, null);
 	}
 
 	/**
-	 * Build DN string for appliance
+	 * Build DN string for configuration
 	 * 
 	 * @param inum
 	 *            Inum
-	 * @return DN string for specified appliance or DN for appliances branch if inum
+	 * @return DN string for specified configuration or DN for configurations branch if inum
 	 *         is null
 	 * @throws Exception
 	 */
-	public String getDnForAppliance(String inum) {
+	public String getDnForConfiguration(String inum) {
 		String baseDn = organizationService.getBaseDn();
 		if (StringHelper.isEmpty(inum)) {
-			return String.format("ou=appliances,%s", baseDn);
+			return String.format("ou=configurations,%s", baseDn);
 		}
-		return String.format("inum=%s,ou=appliances,%s", inum, baseDn);
+		return String.format("inum=%s,ou=configurations,%s", inum, baseDn);
 	}
 
 	/**
-	 * Build DN string for appliance
+	 * Build DN string for configuration
 	 * 
-	 * @return DN string for appliance
+	 * @return DN string for configuration
 	 * @throws Exception
 	 */
-	public String getDnForAppliance() {
-		return getDnForAppliance(getApplianceInum());
+	public String getDnForConfiguration() {
+		return getDnForConfiguration(getConfigurationInum());
 	}
 
-	public String getApplianceInum() {
-		return appConfiguration.getApplianceInum();
+	public String getConfigurationInum() {
+		return appConfiguration.getConfigurationInum();
 	}
 
 	/**

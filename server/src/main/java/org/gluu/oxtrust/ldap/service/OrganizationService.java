@@ -192,11 +192,11 @@ public class OrganizationService extends org.xdi.service.OrganizationService {
 
 	public boolean isAllowPersonModification() {
 		return appConfiguration.isAllowPersonModification(); // todo &&
-																		// applianceService.getAppliance().getManageIdentityPermission()
+																		// configurationService.getConfiguration().getManageIdentityPermission()
 																		// !=
 																		// null
 																		// &&
-																		// applianceService.getAppliance().getProfileManagment().isBooleanValue();
+																		// configurationService.getConfiguration().getProfileManagment().isBooleanValue();
 	}
 
 	public String getOrganizationInum() {

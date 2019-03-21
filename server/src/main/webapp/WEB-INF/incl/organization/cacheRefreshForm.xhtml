@@ -82,19 +82,19 @@
 										cellpadding="0" cellspacing="0">
 										<ox:decorate label="#{msg['organization.lastRun']}">
 											<h:outputText id="lastrun" styleClass="lastRunValueBox"
-												value="#{_configureCacheRefreshAction.appliance.vdsCacheRefreshLastUpdate}">
+												value="#{_configureCacheRefreshAction.configuration.vdsCacheRefreshLastUpdate}">
 												<f:convertDateTime pattern="MMM. d yyyy hh:mm a" />
 											</h:outputText>
 										</ox:decorate>
 										<ox:decorate
 											label="#{msg['organization.updatesAtTheLastRun']}">
 											<h:outputText styleClass="updatesAtTheLastRunValueBox"
-												value="#{_configureCacheRefreshAction.appliance.vdsCacheRefreshLastUpdateCount}" />
+												value="#{_configureCacheRefreshAction.configuration.vdsCacheRefreshLastUpdateCount}" />
 										</ox:decorate>
 										<ox:decorate
 											label="#{msg['organization.problemsAtTheLastRun']}">
 											<h:outputText styleClass="problemsAtTheLastRunValueBox"
-												value="#{_configureCacheRefreshAction.appliance.vdsCacheRefreshProblemCount}" />
+												value="#{_configureCacheRefreshAction.configuration.vdsCacheRefreshProblemCount}" />
 										</ox:decorate>
 										<ox:decorate id="editType"
 											label="#{msg['organization.refreshMethod']}">
@@ -135,13 +135,13 @@
 
 										<ox:decorate label="#{msg['organization.pollingInterval']}">
 											<h:inputText styleClass="form-control pollingIntervalTextBox"
-												value="#{_configureCacheRefreshAction.appliance.vdsCacheRefreshPollingInterval}"
+												value="#{_configureCacheRefreshAction.configuration.vdsCacheRefreshPollingInterval}"
 												id="vdsCacheRefreshPollingIntervalId" size="5" />
 										</ox:decorate>
 
 										<ox:decorate label="#{msg['organization.serverIPAddress']}">
 											<h:inputText styleClass="form-control serverIpTextBox"
-												value="#{_configureCacheRefreshAction.appliance.cacheRefreshServerIpAddress}"
+												value="#{_configureCacheRefreshAction.configuration.cacheRefreshServerIpAddress}"
 												id="cacheRefreshServerIpAddressId" size="16" />
 										</ox:decorate>
 
@@ -180,7 +180,7 @@
 										<ox:decorate id="vdsCacheRefreshState"
 											label="#{msg['organization.cacheRefresh']}">
 											<h:selectOneMenu
-												value="#{_configureCacheRefreshAction.appliance.vdsCacheRefreshEnabled}"
+												value="#{_configureCacheRefreshAction.configuration.vdsCacheRefreshEnabled}"
 												styleClass="rounded form-control enableCacheRefreshSelectBox"
 												id="vdsCacheRefreshStateId">
 												<f:selectItems
