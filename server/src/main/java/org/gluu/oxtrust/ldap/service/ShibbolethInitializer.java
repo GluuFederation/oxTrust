@@ -28,7 +28,7 @@ public class ShibbolethInitializer {
 	private AppConfiguration appConfiguration;
 	
 	@Inject
-	private ApplianceService applianceService;
+	private ConfigurationService configurationService;
 	
 	@Inject
 	private TrustService trustService;
@@ -42,7 +42,7 @@ public class ShibbolethInitializer {
 		if (createConfig) {
 			GluuSAMLTrustRelationship gluuSP;
 			try {
-				String gluuSPInum = applianceService.getAppliance().getGluuSPTR();
+				String gluuSPInum = configurationService.getConfiguration().getGluuSPTR();
 				gluuSP = new GluuSAMLTrustRelationship();
 				gluuSP.setDn(trustService.getDnForTrustRelationShip(gluuSPInum));
 
@@ -51,14 +51,14 @@ public class ShibbolethInitializer {
 				return false;
 			}
 			boolean servicesNeedRestarting = false;
-			gluuSP = trustService.getRelationshipByInum(applianceService.getAppliance().getGluuSPTR());
+			gluuSP = trustService.getRelationshipByInum(configurationService.getConfiguration().getGluuSPTR());
 			List<GluuSAMLTrustRelationship> trustRelationships = trustService.getAllActiveTrustRelationships();
 			String shibbolethVersion = appConfiguration.getShibbolethVersion();
 			log.info("########## shibbolethVersion = " + shibbolethVersion);
 			shibboleth3ConfService.generateMetadataFiles(gluuSP);
 			shibboleth3ConfService.generateConfigurationFiles(trustRelationships);
 			if (servicesNeedRestarting) {
-				applianceService.restartServices();
+				configurationService.restartServices();
 			}
 		}
 

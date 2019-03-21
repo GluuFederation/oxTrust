@@ -892,12 +892,6 @@
                 }
             }
         },
-        "applianceInum": {
-            "id": "applianceInum",
-            "description": "The Appliance Inum",
-            "type": "string",
-            "minLength": 1
-        },
         "sessionIdUnusedLifetime": {
             "id": "sessionIdUnusedLifetime",
             "description": "The lifetime for unused session states.",
@@ -1470,7 +1464,6 @@
         "clientAuthenticationFiltersEnabled",
         "authenticationFilters",
         "clientAuthenticationFilters",
-        "applianceInum",
         "sessionIdUnusedLifetime",
         "sessionIdUnauthenticatedUnusedLifetime",
         "sessionIdEnabled",

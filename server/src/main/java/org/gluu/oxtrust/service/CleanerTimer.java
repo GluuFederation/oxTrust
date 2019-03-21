@@ -124,10 +124,9 @@ public class CleanerTimer {
 		calendar.add(Calendar.DATE, -keepDataDays);
 		Date expirationDate = calendar.getTime();
 		cleanUpLogger.addNewLogLine(String.format(
-				"#Ready to remove expired entries with parameters batch size: %s, expiration date: %s and appliance inum %s",
-				BATCH_SIZE, expirationDate, metricService.applianceInum()));
-		metricService.removeExpiredMetricEntries(expirationDate, ApplicationType.OX_TRUST, metricService.applianceInum(),
-				0, BATCH_SIZE);
+				"#Ready to remove expired entries with parameters batch size: %s, expiration date: %s",
+				BATCH_SIZE, expirationDate));
+		metricService.removeExpiredMetricEntries(expirationDate, ApplicationType.OX_TRUST, 0, BATCH_SIZE);
 		log.debug("End metric entries clean up");
 		cleanUpLogger.addNewLogLine("#Processing Metric entries done at:" + new Date());
 	}

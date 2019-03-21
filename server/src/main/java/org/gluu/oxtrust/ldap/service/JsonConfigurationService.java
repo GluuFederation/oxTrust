@@ -17,7 +17,7 @@ import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.gluu.oxtrust.config.ConfigurationFactory;
-import org.gluu.oxtrust.model.GluuAppliance;
+import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.exception.BasePersistenceException;
 import org.slf4j.Logger;
@@ -52,7 +52,7 @@ public class JsonConfigurationService implements Serializable {
 	private ConfigurationFactory configurationFactory;
 
 	@Inject
-	private ApplianceService applianceService;
+	private ConfigurationService configurationService;
 
 	public AppConfiguration getOxTrustappConfiguration() {
 		LdapOxTrustConfiguration ldapOxTrustConfiguration = getOxTrustConfiguration();
@@ -60,14 +60,14 @@ public class JsonConfigurationService implements Serializable {
 	}
 
 	public CacheConfiguration getOxMemCacheConfiguration() {
-		CacheConfiguration cachedConfiguration = applianceService.getAppliance().getCacheConfiguration();
+		CacheConfiguration cachedConfiguration = configurationService.getConfiguration().getCacheConfiguration();
 		return cachedConfiguration;
 	}
 
 	public boolean saveOxMemCacheConfiguration(CacheConfiguration cachedConfiguration) {
-		GluuAppliance gluuAppliance = applianceService.getAppliance();
-		gluuAppliance.setCacheConfiguration(cachedConfiguration);
-		applianceService.updateAppliance(gluuAppliance);
+		GluuConfiguration gluuConfiguration = configurationService.getConfiguration();
+		gluuConfiguration.setCacheConfiguration(cachedConfiguration);
+		configurationService.updateConfiguration(gluuConfiguration);
 		return true;
 	}
 

@@ -12,8 +12,8 @@ import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.gluu.oxtrust.ldap.service.ApplianceService;
-import org.gluu.oxtrust.model.GluuAppliance;
+import org.gluu.oxtrust.ldap.service.ConfigurationService;
+import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.slf4j.Logger;
 import org.xdi.service.security.Secure;
@@ -34,7 +34,7 @@ public class ScimConfigureAction implements Serializable {
 	private Logger log;
 
 	@Inject
-	private ApplianceService applianceService;
+	private ConfigurationService configurationService;
 
 	private boolean isInitialized = false;
 
@@ -43,8 +43,8 @@ public class ScimConfigureAction implements Serializable {
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
 
-		GluuAppliance appliance = applianceService.getAppliance();
-		if ((appliance.getScimEnabled() == null) || !appliance.getScimEnabled().isBooleanValue()) {
+		GluuConfiguration configuration = configurationService.getConfiguration();
+		if ((configuration.getScimEnabled() == null) || !configuration.getScimEnabled().isBooleanValue()) {
 			return OxTrustConstants.RESULT_DISABLED;
 		}
 

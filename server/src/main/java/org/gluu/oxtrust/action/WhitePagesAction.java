@@ -76,7 +76,7 @@ public class WhitePagesAction implements Serializable {
 		this.tableAttributes = Arrays.asList("cn", "photo1", "mail", "phone");
 	}
 
-	@Secure("#{permissionService.hasPermission(applianceService.appliance, 'whitePagesEnabled')}")
+	@Secure("#{permissionService.hasPermission(configurationService.configuration, 'whitePagesEnabled')}")
 	public String start() {
 		if (persons != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -85,7 +85,7 @@ public class WhitePagesAction implements Serializable {
 		return search();
 	}
 
-	@Secure("#{permissionService.hasPermission(applianceService.appliance, 'whitePagesEnabled')}")
+	@Secure("#{permissionService.hasPermission(configurationService.configuration, 'whitePagesEnabled')}")
 	public String search() {
 		try {
 			GluuCustomPerson person = new GluuCustomPerson();

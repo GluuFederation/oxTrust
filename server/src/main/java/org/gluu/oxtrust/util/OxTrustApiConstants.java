@@ -11,7 +11,6 @@ public final class OxTrustApiConstants {
 	public static final String TRUSTS = "/trusts";
 	public static final String FEDERATIONS = "/federations";
 	public static final String USERS = "/users";
-	public static final String APPLIANCE = "/appliance";
 	public static final String SCOPES = "/scopes";
 	public static final String CLIENTS = "/clients";
 	public static final String ATTRIBUTES = "/attributes";

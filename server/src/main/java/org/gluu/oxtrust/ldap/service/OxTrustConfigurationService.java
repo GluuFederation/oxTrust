@@ -16,7 +16,7 @@ import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.util.StringHelper;
 
 /**
- * GluuAppliance service
+ * GluuConfiguration service
  * 
  * @author Oleksiy Tataryn Date: 08.07.2014
  */

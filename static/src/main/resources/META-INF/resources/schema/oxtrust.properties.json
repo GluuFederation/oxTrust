@@ -26,13 +26,8 @@
             "format": "email",
             "minLength": 1
         },
-        "applianceInum": {
-            "id": "applianceInum",
-            "type": "string",
-            "minLength": 1
-        },
-        "applianceUrl": {
-            "id": "applianceUrl",
+        "applicationUrl": {
+            "id": "applicationUrl",
             "type": "string",
             "format": "url",
             "minLength": 1
@@ -147,8 +142,8 @@
             "id": "pokenApplicationSecret",
             "type": "string"
         },
-        "updateApplianceStatus": {
-            "id": "updateApplianceStatus",
+        "updateStatus": {
+            "id": "updateStatus",
             "type": "boolean"
         },
         "svnConfigurationStoreRoot": {
@@ -637,8 +632,7 @@
         "orgInum",
         "orgIname",
         "orgSupportEmail",
-        "applianceInum",
-        "applianceUrl",
+        "applicationUrl",
         "baseEndpoint",
         "personObjectClassTypes",
         "personCustomObjectClass",
@@ -653,7 +647,7 @@
         "authMode",
         "ldifStore",
         "pokenApplicationSecret",
-        "updateApplianceStatus",
+        "updateStatus",
         "svnConfigurationStoreRoot",
         "svnConfigurationStorePassword",
         "keystorePath",

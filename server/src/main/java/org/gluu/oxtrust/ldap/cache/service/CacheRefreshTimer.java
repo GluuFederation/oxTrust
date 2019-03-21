@@ -36,13 +36,13 @@ import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.ldap.cache.model.CacheCompoundKey;
 import org.gluu.oxtrust.ldap.cache.model.GluuInumMap;
 import org.gluu.oxtrust.ldap.cache.model.GluuSimplePerson;
-import org.gluu.oxtrust.ldap.service.ApplianceService;
+import org.gluu.oxtrust.ldap.service.ConfigurationService;
 import org.gluu.oxtrust.ldap.service.ApplicationFactory;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.EncryptionService;
 import org.gluu.oxtrust.ldap.service.InumService;
 import org.gluu.oxtrust.ldap.service.PersonService;
-import org.gluu.oxtrust.model.GluuAppliance;
+import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.service.cdi.event.CacheRefreshEvent;
@@ -117,7 +117,7 @@ public class CacheRefreshTimer {
 	private PersistenceEntryManager ldapEntryManager;
 
 	@Inject
-	private ApplianceService applianceService;
+	private ConfigurationService configurationService;
 
 	@Inject
 	private CacheRefreshSnapshotFileService cacheRefreshSnapshotFileService;
@@ -189,14 +189,14 @@ public class CacheRefreshTimer {
 		CacheRefreshConfiguration cacheRefreshConfiguration = configurationFactory.getCacheRefreshConfiguration();
 
 		try {
-			GluuAppliance currentAppliance = applianceService.getAppliance();
-			if (!isStartCacheRefresh(cacheRefreshConfiguration, currentAppliance)) {
+			GluuConfiguration currentConfiguration = configurationService.getConfiguration();
+			if (!isStartCacheRefresh(cacheRefreshConfiguration, currentConfiguration)) {
 				log.debug("Starting conditions aren't reached");
 				return;
 			}
 
-			processImpl(cacheRefreshConfiguration, currentAppliance);
-			updateApplianceStatus(currentAppliance, System.currentTimeMillis());
+			processImpl(cacheRefreshConfiguration, currentConfiguration);
+			updateStatus(currentConfiguration, System.currentTimeMillis());
 
 			this.lastFinishedTime = System.currentTimeMillis();
 		} catch (Throwable ex) {
@@ -205,17 +205,17 @@ public class CacheRefreshTimer {
 	}
 
 	private boolean isStartCacheRefresh(CacheRefreshConfiguration cacheRefreshConfiguration,
-			GluuAppliance currentAppliance) {
-		if (!GluuBoolean.ENABLED.equals(currentAppliance.getVdsCacheRefreshEnabled())) {
+			GluuConfiguration currentConfiguration) {
+		if (!GluuBoolean.ENABLED.equals(currentConfiguration.getVdsCacheRefreshEnabled())) {
 			return false;
 		}
 
-		long poolingInterval = StringHelper.toInteger(currentAppliance.getVdsCacheRefreshPollingInterval()) * 60 * 1000;
+		long poolingInterval = StringHelper.toInteger(currentConfiguration.getVdsCacheRefreshPollingInterval()) * 60 * 1000;
 		if (poolingInterval < 0) {
 			return false;
 		}
 
-		String cacheRefreshServerIpAddress = currentAppliance.getCacheRefreshServerIpAddress();
+		String cacheRefreshServerIpAddress = currentConfiguration.getCacheRefreshServerIpAddress();
 //		if (StringHelper.isEmpty(cacheRefreshServerIpAddress)) {
 //			log.debug("There is no master Cache Refresh server");
 //			return false;
@@ -262,7 +262,7 @@ public class CacheRefreshTimer {
 		return timeDiffrence >= poolingInterval;
 	}
 
-	private void processImpl(CacheRefreshConfiguration cacheRefreshConfiguration, GluuAppliance currentAppliance) {
+	private void processImpl(CacheRefreshConfiguration cacheRefreshConfiguration, GluuConfiguration currentConfiguration) {
 		CacheRefreshUpdateMethod updateMethod = getUpdateMethod(cacheRefreshConfiguration);
 
 		// Prepare and check connections to LDAP servers
@@ -295,7 +295,7 @@ public class CacheRefreshTimer {
 					|| (isVdsUpdate && (targetServerConnection == null))) {
 				log.error("Skipping cache refresh due to invalid server configuration");
 			} else {
-				detectChangedEntries(cacheRefreshConfiguration, currentAppliance, sourceServerConnections,
+				detectChangedEntries(cacheRefreshConfiguration, currentConfiguration, sourceServerConnections,
 						inumDbServerConnection, targetServerConnection, updateMethod);
 			}
 		} finally {
@@ -324,7 +324,7 @@ public class CacheRefreshTimer {
 
 	@SuppressWarnings("unchecked")
 	private boolean detectChangedEntries(CacheRefreshConfiguration cacheRefreshConfiguration,
-			GluuAppliance currentAppliance, LdapServerConnection[] sourceServerConnections,
+			GluuConfiguration currentConfiguration, LdapServerConnection[] sourceServerConnections,
 			LdapServerConnection inumDbServerConnection, LdapServerConnection targetServerConnection,
 			CacheRefreshUpdateMethod updateMethod) {
 		boolean isVDSMode = CacheRefreshUpdateMethod.VDS.equals(updateMethod);
@@ -430,7 +430,7 @@ public class CacheRefreshTimer {
 				cacheRefreshConfiguration.getSnapshotMaxCount());
 
 		// Save changedInums as problem list to disk
-		currentAppliance.setVdsCacheRefreshProblemCount(String.valueOf(changedInums.size()));
+		currentConfiguration.setVdsCacheRefreshProblemCount(String.valueOf(changedInums.size()));
 		cacheRefreshSnapshotFileService.writeProblemList(cacheRefreshConfiguration, changedInums);
 
 		// Prepare list of persons for removal
@@ -468,7 +468,7 @@ public class CacheRefreshTimer {
 		// Strore all inum entries into local disk cache
 		objectSerializationService.saveObject(inumCachePath, currentInumMaps);
 
-		currentAppliance
+		currentConfiguration
 				.setVdsCacheRefreshLastUpdateCount(String.valueOf(updatedInums.size() + removedPersonInums.size()));
 
 		return true;
@@ -1177,15 +1177,15 @@ public class CacheRefreshTimer {
 		return result;
 	}
 
-	private void updateApplianceStatus(GluuAppliance currentAppliance, long lastRun) {
-		GluuAppliance appliance = applianceService.getAppliance();
+	private void updateStatus(GluuConfiguration currentConfiguration, long lastRun) {
+		GluuConfiguration configuration = configurationService.getConfiguration();
 
 		Date currentDateTime = new Date();
-		appliance.setVdsCacheRefreshLastUpdate(currentDateTime);
-		appliance.setVdsCacheRefreshLastUpdateCount(currentAppliance.getVdsCacheRefreshLastUpdateCount());
-		appliance.setVdsCacheRefreshProblemCount(currentAppliance.getVdsCacheRefreshProblemCount());
+		configuration.setVdsCacheRefreshLastUpdate(currentDateTime);
+		configuration.setVdsCacheRefreshLastUpdateCount(currentConfiguration.getVdsCacheRefreshLastUpdateCount());
+		configuration.setVdsCacheRefreshProblemCount(currentConfiguration.getVdsCacheRefreshProblemCount());
 
-		applianceService.updateAppliance(appliance);
+		configurationService.updateConfiguration(configuration);
 	}
 
 	private String getInumCachePath(CacheRefreshConfiguration cacheRefreshConfiguration) {

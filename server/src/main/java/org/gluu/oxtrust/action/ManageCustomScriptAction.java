@@ -23,7 +23,7 @@ import javax.inject.Named;
 
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
-import org.gluu.oxtrust.ldap.service.ApplianceService;
+import org.gluu.oxtrust.ldap.service.ConfigurationService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.model.SimpleCustomPropertiesListModel;
 import org.gluu.oxtrust.model.SimplePropertiesListModel;
@@ -73,7 +73,7 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 	private OrganizationService organizationService;
 
 	@Inject
-	private ApplianceService applianceService;
+	private ConfigurationService configurationService;
 
 	@Inject
 	private AbstractCustomScriptService customScriptService;
@@ -90,7 +90,7 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
 		
-		CustomScriptType[] allowedCustomScriptTypes = this.applianceService.getCustomScriptTypes();
+		CustomScriptType[] allowedCustomScriptTypes = this.configurationService.getCustomScriptTypes();
 
 		this.customScriptsByTypes = new HashMap<CustomScriptType, List<CustomScript>>();
 		for (CustomScriptType customScriptType : allowedCustomScriptTypes) {
@@ -135,7 +135,7 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 
 	public String save() {
 		try {
-			List<CustomScript> oldCustomScripts = customScriptService.findCustomScripts(Arrays.asList(this.applianceService.getCustomScriptTypes()), "dn", "inum");
+			List<CustomScript> oldCustomScripts = customScriptService.findCustomScripts(Arrays.asList(this.configurationService.getCustomScriptTypes()), "dn", "inum");
 
 			List<String> updatedInums = new ArrayList<String>();
 

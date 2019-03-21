@@ -11,8 +11,8 @@ import javax.ws.rs.core.Response;
 
 import org.api.server.model.AuthenticationMethod;
 import org.api.server.util.Constants;
-import org.gluu.oxtrust.ldap.service.ApplianceService;
-import org.gluu.oxtrust.model.GluuAppliance;
+import org.gluu.oxtrust.ldap.service.ConfigurationService;
+import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.oxtrust.util.OxTrustApiConstants;
 import org.slf4j.Logger;
 
@@ -32,7 +32,7 @@ public class AcrWebResource extends BaseWebResource {
 	private Logger logger;
 
 	@Inject
-	private ApplianceService applianceService;
+	private ConfigurationService configurationService;
 
 	public AcrWebResource() {
 	}
@@ -44,10 +44,10 @@ public class AcrWebResource extends BaseWebResource {
 			@ApiResponse(code = 500, message = "Server error") })
 	public Response getCurrentAuthentication() {
 		try {
-			GluuAppliance appliance = applianceService.getAppliance();
+			GluuConfiguration configuration = configurationService.getConfiguration();
 			AuthenticationMethod method = new AuthenticationMethod();
-			method.setDefaultAcr(appliance.getAuthenticationMode());
-			method.setOxtrustAcr(appliance.getOxTrustAuthenticationMode());
+			method.setDefaultAcr(configuration.getAuthenticationMode());
+			method.setOxtrustAcr(configuration.getOxTrustAuthenticationMode());
 			return Response.ok(method).build();
 		} catch (Exception e) {
 			log(logger, e);

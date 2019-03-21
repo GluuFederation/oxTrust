@@ -500,7 +500,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 
 		if ((cert == null) && (trustRelationship.getUrl() != null)) {
 			facesMessages.add(FacesMessage.SEVERITY_ERROR,
-					"Certificate were not provided, or was incorrect. Appliance will create a self-signed certificate.");
+					"Certificate were not provided, or was incorrect. Configuration will create a self-signed certificate.");
 			if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
 				Security.addProvider(new BouncyCastleProvider());
 			}
@@ -559,7 +559,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 
 		} else {
 			facesMessages.add(FacesMessage.SEVERITY_ERROR,
-					"Certificate were not provided, or was incorrect. Appliance will create a self-signed certificate.");
+					"Certificate were not provided, or was incorrect. Configuration will create a self-signed certificate.");
 		}
 
 		return certificate;

@@ -15,7 +15,7 @@ import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 
-import org.gluu.oxtrust.model.GluuAppliance;
+import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
@@ -36,7 +36,7 @@ https://github.com/GluuFederation/docs/blob/master/sources/reference/api/id-gene
 | -------- | -------------------- | -------------------------------------- |
 | 0000     | people               | Person object                          |
 | 0001     | organization         | Organization object                    |
-| 0002     | appliance            | Appliance object                       |
+| 0002     | configuration            | Configuration object                       |
 | 0003     | group                | Group object                           |
 | 0004     | server               | Server object                          |
 | 0005     | attribute            | User attribute (claim) object          |
@@ -57,7 +57,7 @@ public class InumService implements Serializable {
 
 	private static final String PEOPLE = "0000";
 	// private static final String ORGANIZATION = "0001";
-	// private static final String APPLIANCE = "0002";
+	// private static final String CONFIGURATION = "0002";
 	private static final String GROUP = "0003";
 	// private static final String SERVER = "0004";
 	private static final String ATTRIBUTE = "0005";
@@ -92,8 +92,8 @@ public class InumService implements Serializable {
 			contains = containsPerson(inum, gluuInum);
 		} else if ("organization".equals(type)) {
 			contains = containsOrganization(inum, gluuInum);
-		} else if ("appliance".equals(type)) {
-			contains = containsAppliance(inum, gluuInum);
+		} else if ("configuration".equals(type)) {
+			contains = containsConfiguration(inum, gluuInum);
 		} else if ("group".equals(type)) {
 			contains = containsGroup(inum, gluuInum);
 		} else if ("server".equals(type)) {
@@ -143,10 +143,10 @@ public class InumService implements Serializable {
 		return contains;
 	}
 
-	public boolean containsAppliance(String inum, String gluuInum) {
-		GluuAppliance appliance = new GluuAppliance();
-		appliance.setBaseDn(String.format("inum=%s,ou=appliances,o=gluu", inum));
-		return ldapEntryManager.contains(appliance);
+	public boolean containsConfiguration(String inum, String gluuInum) {
+		GluuConfiguration configuration = new GluuConfiguration();
+		configuration.setBaseDn(String.format("inum=%s,ou=configurations,o=gluu", inum));
+		return ldapEntryManager.contains(configuration);
 	}
 
 	public boolean containsTrustRelationship(String inum, String gluuInum) {
@@ -156,9 +156,9 @@ public class InumService implements Serializable {
 	}
 
 	public boolean containsServer(String inum, String gluuInum) {
-		GluuAppliance appliance = new GluuAppliance();
-		appliance.setBaseDn(String.format("inum=%s,ou=servers,o=gluu", inum));
-		return ldapEntryManager.contains(appliance);
+		GluuConfiguration configuration = new GluuConfiguration();
+		configuration.setBaseDn(String.format("inum=%s,ou=servers,o=gluu", inum));
+		return ldapEntryManager.contains(configuration);
 	}
 
 	public boolean containsOrganization(String inum, String gluuInum) {

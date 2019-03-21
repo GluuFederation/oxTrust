@@ -21,9 +21,9 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.gluu.oxtrust.api.Certificates;
-import org.gluu.oxtrust.ldap.service.ApplianceService;
+import org.gluu.oxtrust.ldap.service.ConfigurationService;
 import org.gluu.oxtrust.ldap.service.SSLService;
-import org.gluu.oxtrust.model.GluuAppliance;
+import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.oxtrust.model.cert.TrustStoreCertificate;
 import org.gluu.oxtrust.service.uma.annotations.UmaSecure;
 import org.gluu.oxtrust.util.OxTrustApiConstants;
@@ -60,7 +60,7 @@ public class CertificatesWebService {
 	private Logger logger;
 
 	@Inject
-	private ApplianceService applianceService;
+	private ConfigurationService configurationService;
 
 	ObjectMapper objectMapper;
 
@@ -81,8 +81,8 @@ public class CertificatesWebService {
 			Certificates certificates = new Certificates();
 			// collect trustStoreCertificates
 			List<X509CertificateShortInfo> trustStoreCertificates = new ArrayList<X509CertificateShortInfo>();
-			GluuAppliance appliance = applianceService.getAppliance();
-			List<TrustStoreCertificate> trustStoreCertificatesList = appliance.getTrustStoreCertificates();
+			GluuConfiguration configuration = configurationService.getConfiguration();
+			List<TrustStoreCertificate> trustStoreCertificatesList = configuration.getTrustStoreCertificates();
 			if (trustStoreCertificatesList != null) {
 				for (TrustStoreCertificate trustStoreCertificate : trustStoreCertificatesList) {
 					try {

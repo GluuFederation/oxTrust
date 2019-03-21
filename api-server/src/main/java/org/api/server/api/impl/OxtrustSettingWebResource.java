@@ -12,8 +12,8 @@ import javax.ws.rs.core.Response;
 
 import org.api.server.model.OxtrustSetting;
 import org.api.server.util.Constants;
-import org.gluu.oxtrust.ldap.service.ApplianceService;
-import org.gluu.oxtrust.model.GluuAppliance;
+import org.gluu.oxtrust.ldap.service.ConfigurationService;
+import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.oxtrust.util.OxTrustApiConstants;
 import org.gluu.persist.model.base.GluuBoolean;
 import org.slf4j.Logger;
@@ -35,7 +35,7 @@ public class OxtrustSettingWebResource extends BaseWebResource {
 	private Logger logger;
 
 	@Inject
-	private ApplianceService applianceService;
+	private ConfigurationService configurationService;
 
 	@GET
 	@ApiOperation(value = "Get oxtrust settings")
@@ -45,12 +45,12 @@ public class OxtrustSettingWebResource extends BaseWebResource {
 	public Response getOxtrustSettings() {
 		try {
 			log(logger, "Processing oxtrust settings retrieval request");
-			GluuAppliance applianceUpdate = applianceService.getAppliance();
+			GluuConfiguration configurationUpdate = configurationService.getConfiguration();
 			OxtrustSetting setting = new OxtrustSetting();
-			setting.setAllowPasswordReset(applianceUpdate.getPasswordResetAllowed().toString());
-			setting.setAllowProfileManagement(applianceUpdate.getProfileManagment().toString());
-			setting.setEnablePassport(applianceUpdate.getPassportEnabled().toString());
-			setting.setEnableScim(applianceUpdate.getScimEnabled().toString());
+			setting.setAllowPasswordReset(configurationUpdate.getPasswordResetAllowed().toString());
+			setting.setAllowProfileManagement(configurationUpdate.getProfileManagment().toString());
+			setting.setEnablePassport(configurationUpdate.getPassportEnabled().toString());
+			setting.setEnableScim(configurationUpdate.getScimEnabled().toString());
 			return Response.ok(setting).build();
 		} catch (Exception e) {
 			log(logger, e);
@@ -67,12 +67,12 @@ public class OxtrustSettingWebResource extends BaseWebResource {
 		try {
 			log(logger, "Processing oxtrust settings update request");
 			Preconditions.checkNotNull(oxtrustSetting, "Attempt to update null oxtrust settings");
-			GluuAppliance applianceUpdate = applianceService.getAppliance();
-			applianceUpdate.setScimEnabled(valueOfName(oxtrustSetting.getEnableScim()));
-			applianceUpdate.setPassportEnabled(valueOfName(oxtrustSetting.getEnablePassport()));
-			applianceUpdate.setPasswordResetAllowed(valueOfName(oxtrustSetting.getAllowPasswordReset()));
-			applianceUpdate.setProfileManagment(valueOfName(oxtrustSetting.getAllowProfileManagement()));
-			applianceService.updateAppliance(applianceUpdate);
+			GluuConfiguration configurationUpdate = configurationService.getConfiguration();
+			configurationUpdate.setScimEnabled(valueOfName(oxtrustSetting.getEnableScim()));
+			configurationUpdate.setPassportEnabled(valueOfName(oxtrustSetting.getEnablePassport()));
+			configurationUpdate.setPasswordResetAllowed(valueOfName(oxtrustSetting.getAllowPasswordReset()));
+			configurationUpdate.setProfileManagment(valueOfName(oxtrustSetting.getAllowProfileManagement()));
+			configurationService.updateConfiguration(configurationUpdate);
 			return Response.ok(Constants.RESULT_SUCCESS).build();
 		} catch (Exception e) {
 			log(logger, e);
