@@ -2,6 +2,7 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
 	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
 	xmlns:rich="http://richfaces.org/rich"
@@ -12,15 +13,17 @@
 		<f:viewAction
 			action="#{permissionService.requestPermission('uma', 'access')}" />
 		<f:viewAction action="#{conversationService.initConversation}" />
-		<f:viewAction action="#{umaInventoryAction.start}" onPostback="false" />
+		<f:viewAction action="#{passportConfigurationAction.init}"
+			onPostback="false" />
 	</f:metadata>
 
 	<ui:define name="body">
 
 		<section class="content-header">
 			<h1 style="color: #333;">
-				Passport <small> <i class="fa fa-caret-right"
-					style="color: #333 !important;" /> Basic configuration
+				#{msg['passport.title']} <small> <i
+					class="fa fa-caret-right" style="color: #333 !important;" />
+					#{msg['passport.basic.configuration']}
 				</small>
 			</h1>
 			<ol class="breadcrumb">
@@ -28,7 +31,7 @@
 						class="fa fa-home" />
 				</a></li>
 				<li class="organization/configuration"><a
-					href="#{request.contextPath}/passport/providers">Providers</a></li>
+					href="#{request.contextPath}/passport/providers">#{msg['passport.providers']}</a></li>
 			</ol>
 		</section>
 		<section class="content">
@@ -36,6 +39,200 @@
 				<div class="col-xs-12">
 					<div class="box box-primary" style="min-height: 400px;">
 						<div class="box-header"></div>
+
+
+						<h:form id="providerForm">
+							<input type='hidden' name='cid' value='#{conversation.id}' />
+							<div class="row">
+								<div class="col-xs-12">
+									<!-- start provider add-->
+									<h:panelGroup columns="1" width="100%" id="mainContentID">
+										<!-- First row-->
+										<div class="row" style="margin-left: 5px; margin-right: 5px;">
+											<!-- First column-->
+											<div class="col-sm-6 col-lg-6" style="padding: 0px;">
+												<ox:decorate
+													label="#{msg['passport.basicconfig.form.serverURI']}"
+													leftClass="col-sm-3" rightClass="col-sm-9">
+													<h:inputText styleClass="form-control ServerURIId"
+														style="width:100%" required="true"
+														value="#{passportConfigurationAction.configuration.serverURI}"
+														id="ServerURIId" rendered="true">
+														<rich:validator event="blur" />
+													</h:inputText>
+												</ox:decorate>
+												<ox:decorate id="serverPortID"
+													label="#{msg['passport.basicconfig.form.serverPort']}"
+													leftClass="col-sm-3" rightClass="col-sm-9">
+													<rich:inputNumberSpinner
+														value="#{passportConfigurationAction.configuration.serverWebPort}"
+														styleClass="rounded serverPortID" inputSize="4"
+														style="width:50%;" required="true" minValue="0"
+														maxValue="10000" id="serverPortID" />
+												</ox:decorate>
+												<ox:decorate
+													label="#{msg['passport.basicconfig.form.postProfileEndpoint']}"
+													leftClass="col-sm-3" rightClass="col-sm-9"
+													id="PostProfileEndpointID">
+													<h:inputText
+														styleClass="form-control PostProfileEndpointID"
+														style="width:100%" required="true"
+														value="#{passportConfigurationAction.configuration.postProfileEndpoint}"
+														id="PostProfileEndpointID">
+														<rich:validator event="blur" />
+													</h:inputText>
+												</ox:decorate>
+											</div>
+											<!-- Second column-->
+											<div class="col-sm-6 col-lg-6" style="padding: 0px;">
+												<ox:decorate
+													label="#{msg['passport.basicconfig.form.spTLSCert']}"
+													leftClass="col-sm-3" rightClass="col-sm-9">
+													<h:inputText styleClass="rounded form-control SpTLSCertID"
+														id="SpTLSCertID" style="width:100%" required="true"
+														value="#{passportConfigurationAction.configuration.spTLSCert}">
+														<rich:validator event="blur" />
+													</h:inputText>
+												</ox:decorate>
+												<ox:decorate
+													label="#{msg['passport.basicconfig.form.spTLSKey']}"
+													leftClass="col-sm-3" rightClass="col-sm-9">
+													<h:inputText
+														styleClass="rounded form-control SpTLSCertKeyID"
+														id="SpTLSCertKeyID" style="width:100%" required="true"
+														value="#{passportConfigurationAction.configuration.spTLSKey}">
+														<rich:validator event="blur" />
+													</h:inputText>
+												</ox:decorate>
+											</div>
+										</div>
+										<h:panelGroup>
+											<div class="row"
+												style="margin-left: 50px; margin-right: 5px; margin-top: 10px;">
+												<div class="col-sm-3 col-lg-3" style="padding: 0px;">
+													<span
+														style="font-weight: bold; font-size: medium; color: #00BE79; text-transform: uppercase;">
+														#{msg['passport.basic.config.logging.title']}</span>
+												</div>
+												<div class="col-sm-9 col-lg-9" style="padding: 0px;">
+													<hr
+														style="height: 1px; background: green; border-color: green; border-width: 0px;"></hr>
+												</div>
+											</div>
+											<div class="row"
+												style="margin-left: 50px; margin-right: 5px;">
+												<div class="col-sm-6 col-lg-6" style="padding: 0px;">
+													<ox:decorate
+														label="#{msg['passport.basicconfig.logging.form.level']}"
+														leftClass="col-sm-3" rightClass="col-sm-9">
+														<h:selectOneMenu
+															styleClass="rounded form-control PassportLogLevelID"
+															value="#{passportConfigurationAction.configuration.logging.level}"
+															id="PassportLogLevelID" rendered="true" required="true">
+															<f:selectItem noSelectionOption="true" itemLabel="" />
+															<f:selectItems
+																value="#{passportConfigurationAction.loggingLevels}"
+																var="_level" itemLabel="#{_level}" />
+														</h:selectOneMenu>
+													</ox:decorate>
+												</div>
+												<div class="col-sm-6 col-lg-6" style="padding: 0px;">
+													<ox:decorate
+														label="#{msg['passport.basicconfig.logging.form.consoleLogOnly']}"
+														leftClass="col-sm-7" rightClass="col-sm-1">
+														<h:selectBooleanCheckbox
+															value="#{passportConfigurationAction.configuration.logging.consoleLogOnly}"
+															styleClass="form-control ConsoleLogOnlyID"
+															required="true" />
+													</ox:decorate>
+												</div>
+											</div>
+											<h:panelGroup style="">
+												<div class="row"
+													style="margin-left: 90px; margin-right: 5px; margin-top: 10px;">
+													<div class="col-sm-3 col-lg-3" style="padding: 0px;">
+														<span
+															style="font-weight: bold; font-size: medium; color: #00BE79; text-transform: uppercase;">
+															#{msg['passport.basic.config.logging.mq.title']}</span>
+													</div>
+													<div class="col-sm-9 col-lg-9" style="padding: 0px;">
+														<hr
+															style="height: 1px; background: green; border-color: green; border-width: 0px;"></hr>
+													</div>
+												</div>
+												<div class="row"
+													style="margin-left: 90px; margin-right: 5px;">
+													<div class="col-sm-6 col-lg-6" style="padding: 0px;">
+														<ox:decorate
+															label="#{msg['passport.basicconfig.logging.mq.form.host']}"
+															leftClass="col-sm-3" rightClass="col-sm-9">
+															<h:inputText styleClass="form-control MQServerHostID"
+																style="width:100%"
+																value="#{passportConfigurationAction.configuration.logging.activeMQConf.host}"
+																id="MQServerHostID" rendered="true">
+																<rich:validator event="blur" />
+															</h:inputText>
+														</ox:decorate>
+														<ox:decorate id="MQServerHostPortID"
+															label="#{msg['passport.basicconfig.logging.mq.form.port']}"
+															leftClass="col-sm-3" rightClass="col-sm-9">
+															<rich:inputNumberSpinner
+																value="#{passportConfigurationAction.configuration.logging.activeMQConf.port}"
+																styleClass="rounded MQServerHostPortID" inputSize="4"
+																style="width:50%;" minValue="0" maxValue="10000"
+																id="MQServerHostPortID" />
+														</ox:decorate>
+														<ox:decorate
+															label="#{msg['passport.basicconfig.logging.mq.form.enabled']}"
+															leftClass="col-sm-4" rightClass="col-sm-1">
+															<h:selectBooleanCheckbox
+																value="#{passportConfigurationAction.configuration.logging.activeMQConf.enabled}"
+																styleClass="form-control MQStatusID" />
+														</ox:decorate>
+													</div>
+													<div class="col-sm-6 col-lg-6" style="padding: 0px;">
+														<ox:decorate
+															label="#{msg['passport.basicconfig.logging.mq.form.username']}"
+															leftClass="col-sm-3" rightClass="col-sm-9"
+															id="UserNameID">
+															<h:inputText styleClass="form-control UserNameID"
+																style="width:100%"
+																value="#{passportConfigurationAction.configuration.logging.activeMQConf.username}"
+																id="UserNameID">
+																<rich:validator event="blur" />
+															</h:inputText>
+														</ox:decorate>
+														<ox:decorate
+															label="#{msg['passport.basicconfig.logging.mq.form.password']}"
+															leftClass="col-sm-3" rightClass="col-sm-9"
+															id="PasswordID">
+															<h:inputText styleClass="form-control PasswordID"
+																style="width:100%"
+																value="#{passportConfigurationAction.configuration.logging.activeMQConf.password}"
+																id="PasswordID">
+																<rich:validator event="blur" />
+															</h:inputText>
+														</ox:decorate>
+													</div>
+												</div>
+											</h:panelGroup>
+										</h:panelGroup>
+									</h:panelGroup>
+
+								</div>
+							</div>
+							<!-- Footer -->
+							<div class="box-footer">
+								<div id="updateButtons">
+									<h:commandButton action="#{passportConfigurationAction.save}"
+										styleClass="btn btn-primary" value="#{msg['client.update']}" />
+									<h:commandButton action="#{passportConfigurationAction.cancel}"
+										immediate="true" style="margin-left:3px;"
+										styleClass="btn btn-primary" value="#{msg['client.cancel']}" />
+								</div>
+							</div>
+						</h:form>
+
 
 					</div>
 				</div>
