@@ -154,7 +154,6 @@ public class UserResource extends BaseScimResource {
             returned = AttributeDefinition.Returned.REQUEST,
             multiValueClass = String.class)
     //TODO: this attribute name is mistyped, fixing it will introduce incompatibilities for users of <=3.1.2
-    //...Refactoring pending for version 3.3
     @StoreReference(ref = "oxPPID")
     private List<String> pairwiseIdentitifers;
 

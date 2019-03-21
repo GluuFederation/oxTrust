@@ -67,6 +67,24 @@ public class ExternalCacheRefreshService extends ExternalScriptService {
         return null;
     }
 
+    public boolean executeExternalIsStartProcessMethod(CustomScriptConfiguration customScriptConfiguration) {
+        try {
+            log.debug("Executing python 'executeExternalIsStartProcessMethod' method");
+            CacheRefreshType externalType = (CacheRefreshType) customScriptConfiguration.getExternalType();
+            Map<String, SimpleCustomProperty> configurationAttributes = customScriptConfiguration.getConfigurationAttributes();
+            
+            // Execute only if API > 2
+            if (externalType.getApiVersion() > 2) {
+                return externalType.isStartProcess(configurationAttributes);
+            }
+        } catch (Exception ex) {
+            log.error(ex.getMessage(), ex);
+            saveScriptError(customScriptConfiguration.getCustomScript(), ex);
+        }
+
+        return false;
+    }
+
 	public boolean executeExternalUpdateUserMethods(GluuCustomPerson user) {
 		boolean result = true;
 		for (CustomScriptConfiguration customScriptConfiguration : this.customScriptConfigurations) {
@@ -90,5 +108,17 @@ public class ExternalCacheRefreshService extends ExternalScriptService {
 
         return result;
     }
+
+	public boolean executeExternalIsStartProcessMethods() {
+		boolean result = true;
+		for (CustomScriptConfiguration customScriptConfiguration : this.customScriptConfigurations) {
+			result &= executeExternalIsStartProcessMethod(customScriptConfiguration);
+			if (!result) {
+				return result;
+			}
+		}
+
+		return result;
+	}
 
 }

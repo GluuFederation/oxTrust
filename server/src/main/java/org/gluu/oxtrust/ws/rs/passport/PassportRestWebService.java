@@ -30,8 +30,8 @@ import static javax.ws.rs.core.Response.Status;
 @Path("/passport/config")
 public class PassportRestWebService {
 
-	@Inject
-	private Logger log;
+    @Inject
+    private Logger log;
 
 	@Inject
 	private PassportService passportService;
@@ -41,28 +41,28 @@ public class PassportRestWebService {
 
 	@GET
 	@Produces({ MediaType.APPLICATION_JSON })
-	@ProtectedApi
+    @ProtectedApi
 	public Response getPassportConfig() {
 
-		Status status;
-		String jsonResponse;
+	    Status status;
+        String jsonResponse;
 
-		try {
-			// Object obj = Optional.ofNullable(passportService.loadConfigurationFromLdap())
-			// .map(LdapOxPassportConfiguration::getPassportConfigurations)
-			// .map(list -> list.isEmpty() ? (Object) null :
-			// list.get(0)).orElse(Collections.emptyMap());
-			Object obj = new Object();
-			jsonResponse = jsonService.objectToPerttyJson(obj);
-			status = Status.OK;
-		} catch (Exception e) {
-			jsonResponse = "Failed to prepare configuration: " + e.getMessage();
-			status = Status.INTERNAL_SERVER_ERROR;
-			log.error(e.getMessage(), e);
-		}
+        try {
+            Object obj = Optional.ofNullable(passportService.loadConfigurationFromLdap())
+                    .map(LdapOxPassportConfiguration::getPassportConfiguration)
+                    .map(Object.class::cast)
+                    .orElse(Collections.emptyMap());
 
-		log.trace("Passport endpoint config response is\n{}", jsonResponse);
-		return Response.status(status).entity(jsonResponse).build();
+            jsonResponse = jsonService.objectToPerttyJson(obj);
+            status = Status.OK;
+        } catch (Exception e) {
+            jsonResponse = "Failed to prepare configuration: " + e.getMessage();
+            status = Status.INTERNAL_SERVER_ERROR;
+            log.error(e.getMessage(), e);
+        }
+
+        log.trace("Passport endpoint config response is\n{}", jsonResponse);
+        return Response.status(status).entity(jsonResponse).build();
 
 	}
 

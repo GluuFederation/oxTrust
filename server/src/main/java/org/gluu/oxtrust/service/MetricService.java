@@ -6,19 +6,6 @@
 
 package org.gluu.oxtrust.service;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
-import javax.ejb.Stateless;
-import javax.enterprise.inject.Instance;
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.ApplicationFactory;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
@@ -33,6 +20,13 @@ import org.xdi.model.metric.counter.CounterMetricEntry;
 import org.xdi.model.metric.ldap.MetricEntry;
 import org.xdi.service.CacheService;
 import org.xdi.service.metric.inject.ReportMetric;
+
+import javax.ejb.Stateless;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * Store and retrieve metric
@@ -75,7 +69,7 @@ public class MetricService extends org.xdi.service.metric.MetricService {
     private PersistenceEntryManager ldapEntryManager;
 
 	public void initTimer() {
-		initTimer(this.appConfiguration.getMetricReporterInterval());
+		initTimer(this.appConfiguration.getMetricReporterInterval(), this.appConfiguration.getMetricReporterKeepDataDays());
 	}
 
 	@Override

@@ -29,7 +29,6 @@ import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.ldap.service.ApplianceService;
 import org.gluu.oxtrust.ldap.service.EncryptionService;
 import org.gluu.oxtrust.ldap.service.JsonConfigurationService;
-import org.gluu.oxtrust.ldap.service.PassportService;
 import org.gluu.oxtrust.model.GluuAppliance;
 import org.gluu.oxtrust.model.LdapConfigurationModel;
 import org.gluu.oxtrust.model.OxIDPAuthConf;
@@ -41,7 +40,6 @@ import org.gluu.persist.ldap.operation.impl.LdapConnectionProvider;
 import org.gluu.persist.model.base.GluuBoolean;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.config.oxtrust.LdapOxPassportConfiguration;
 import org.xdi.model.SimpleCustomProperty;
 import org.xdi.model.SimpleExtendedCustomProperty;
 import org.xdi.model.SimpleProperty;
@@ -49,7 +47,6 @@ import org.xdi.model.custom.script.CustomScriptType;
 import org.xdi.model.custom.script.model.CustomScript;
 import org.xdi.model.ldap.GluuLdapConfiguration;
 import org.xdi.model.passport.PassportConfiguration;
-import org.xdi.model.passport.Provider;
 import org.xdi.service.custom.script.AbstractCustomScriptService;
 import org.xdi.service.security.Secure;
 import org.xdi.util.OxConstants;
@@ -86,9 +83,6 @@ public class ManagePersonAuthenticationAction
 	private AbstractCustomScriptService customScriptService;
 
 	@Inject
-	private PassportService passportService;
-
-	@Inject
 	private ConfigurationFactory configurationFactory;
 
 	@Inject
@@ -109,7 +103,6 @@ public class ManagePersonAuthenticationAction
 	private String recaptchaSecretKey;
 
 	private List<String> customAuthenticationConfigNames;
-	private List<Provider> providers;
 
 	private boolean initialized;
 
@@ -124,23 +117,12 @@ public class ManagePersonAuthenticationAction
 		this.authenticationRecaptchaEnabled = authenticationRecaptchaEnabled;
 	}
 
-	private LdapOxPassportConfiguration ldapOxPassportConfiguration;
-
-	private PassportConfiguration passportConfiguration;
+	// private LdapOxPassportConfiguration ldapOxPassportConfiguration;
 
 	@Inject
 	private JsonConfigurationService jsonConfigurationService;
 
 	private AppConfiguration oxTrustappConfiguration;
-
-	public List<Provider> getProviders() {
-		this.providers = this.passportConfiguration.getProviders();
-		return this.providers;
-	}
-
-	public void setProviders(List<Provider> providers) {
-		this.passportConfiguration.setProviders(providers);
-	}
 
 	public String modify() {
 		String outcome = modifyImpl();
@@ -181,15 +163,6 @@ public class ManagePersonAuthenticationAction
 			getAuthenticationRecaptcha();
 			this.authenticationMode = appliance.getAuthenticationMode();
 			this.oxTrustAuthenticationMode = appliance.getOxTrustAuthenticationMode();
-
-			ldapOxPassportConfiguration = passportService.loadConfigurationFromLdap();
-			if (ldapOxPassportConfiguration == null) {
-				ldapOxPassportConfiguration = new LdapOxPassportConfiguration();
-			}
-			this.passportConfiguration = ldapOxPassportConfiguration.getPassportConfiguration();
-			if (this.passportConfiguration == null) {
-				this.providers = new ArrayList<Provider>();
-			}
 		} catch (Exception ex) {
 			log.error("Failed to load appliance configuration", ex);
 
@@ -229,11 +202,7 @@ public class ManagePersonAuthenticationAction
 			appliance.setOxTrustAuthenticationMode(updatedOxTrustAuthMode);
 			setAuthenticationRecaptcha();
 			appliance.setPassportEnabled(passportEnable);
-
 			applianceService.updateAppliance(appliance);
-			ldapOxPassportConfiguration.setPassportConfiguration(passportConfiguration);
-
-			passportService.updateLdapOxPassportConfiguration(ldapOxPassportConfiguration);
 		} catch (BasePersistenceException ex) {
 			log.error("Failed to update appliance configuration", ex);
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update appliance");
@@ -456,14 +425,6 @@ public class ManagePersonAuthenticationAction
 
 	public boolean isInitialized() {
 		return initialized;
-	}
-
-	public LdapOxPassportConfiguration getLdapOxPassportConfiguration() {
-		return ldapOxPassportConfiguration;
-	}
-
-	public void setLdapOxPassportConfiguration(LdapOxPassportConfiguration ldapOxPassportConfiguration) {
-		this.ldapOxPassportConfiguration = ldapOxPassportConfiguration;
 	}
 
 	public String getId(Object obj) {
