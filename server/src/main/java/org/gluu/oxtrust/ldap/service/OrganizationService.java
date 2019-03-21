@@ -82,7 +82,7 @@ public class OrganizationService extends org.xdi.service.OrganizationService {
 	 * @return Organization entry
 	 */
 	public GluuOrganization getOrganization() {
-		return getOrganizationByInum(getInumForOrganization());
+		return getOrganizationByInum("gluu");
 	}
 
 	/**
@@ -96,15 +96,15 @@ public class OrganizationService extends org.xdi.service.OrganizationService {
 		String key = OxConstants.CACHE_ORGANIZATION_KEY + "_" + inum;
 		GluuOrganization organization = (GluuOrganization) cacheService.get(OxConstants.CACHE_APPLICATION_NAME, key);
 		if (organization == null) {
-			organization = ldapEntryManager.find(GluuOrganization.class, getDnForOrganization(inum));
+			organization = ldapEntryManager.find(GluuOrganization.class, getDnForOrganization(String.format("o=%s", inum)));
 			cacheService.put(OxConstants.CACHE_APPLICATION_NAME, key, organization);
 		}
 
 		return organization;
 	}
 
-	public String getDnForOrganization(String inum) {
-		return getDnForOrganization(inum, appConfiguration.getBaseDN());
+	public String getDnForOrganization() {
+		return getDnForOrganization(appConfiguration.getBaseDN());
 	}
 
 	/**
@@ -166,23 +166,12 @@ public class OrganizationService extends org.xdi.service.OrganizationService {
 	 * 
 	 * @return DN string for organization
 	 */
-	public String getDnForOrganization() {
-		return getDnForOrganization(getInumForOrganization());
-	}
-
-
-
-	/**
-	 * Build DN string for organization
-	 * 
-	 * @return DN string for organization
-	 */
 	public String getBaseDn() {
 		return appConfiguration.getBaseDN();
 	}
 
 	public String getInumForOrganization() {
-		return "o=gluu";
+		return "gluu";
 	}
 	
 	public boolean isAllowPersonModification() {

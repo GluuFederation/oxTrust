@@ -94,7 +94,7 @@ public class ConfigurationService implements Serializable {
 	 * @throws Exception
 	 */
 	public GluuConfiguration getConfigurationByInum(String inum) {
-		return ldapEntryManager.find(GluuConfiguration.class, getDnForConfiguration(inum));
+		return ldapEntryManager.find(GluuConfiguration.class, getDnForConfiguration());
 	}
 
 	/**
@@ -105,13 +105,13 @@ public class ConfigurationService implements Serializable {
 	 */
 	public GluuConfiguration getConfiguration(String[] returnAttributes) {
 		GluuConfiguration result = null;
-		if (ldapEntryManager.contains(GluuConfiguration.class, getDnForConfiguration(getConfigurationInum()))) {
-			result = ldapEntryManager.find(GluuConfiguration.class, getDnForConfiguration(getConfigurationInum()),
+		if (ldapEntryManager.contains(GluuConfiguration.class, getDnForConfiguration())) {
+			result = ldapEntryManager.find(GluuConfiguration.class, getDnForConfiguration(),
 					returnAttributes);
 		} else {
 			result = new GluuConfiguration();
 			result.setInum(getConfigurationInum());
-			result.setDn(getDnForConfiguration(getConfigurationInum()));
+			result.setDn(getDnForConfiguration());
 
 			ldapEntryManager.persist(result);
 		}
@@ -135,34 +135,19 @@ public class ConfigurationService implements Serializable {
 	 * @throws Exception
 	 */
 	public List<GluuConfiguration> getConfigurations() {
-		return ldapEntryManager.findEntries(getDnForConfiguration(null), GluuConfiguration.class, null);
+		return ldapEntryManager.findEntries(getDnForConfiguration(), GluuConfiguration.class, null);
 	}
 
 	/**
 	 * Build DN string for configuration
 	 * 
-	 * @param inum
-	 *            Inum
 	 * @return DN string for specified configuration or DN for configurations branch if inum
 	 *         is null
 	 * @throws Exception
 	 */
-	public String getDnForConfiguration(String inum) {
-		String baseDn = organizationService.getBaseDn();
-		if (StringHelper.isEmpty(inum)) {
-			return String.format("ou=configurations,%s", baseDn);
-		}
-		return String.format("inum=%s,ou=configurations,%s", inum, baseDn);
-	}
-
-	/**
-	 * Build DN string for configuration
-	 * 
-	 * @return DN string for configuration
-	 * @throws Exception
-	 */
 	public String getDnForConfiguration() {
-		return getDnForConfiguration(getConfigurationInum());
+		String baseDn = organizationService.getBaseDn();
+		return String.format("ou=configurations,%s", baseDn);
 	}
 
 	public String getConfigurationInum() {

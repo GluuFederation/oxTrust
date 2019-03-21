@@ -65,6 +65,9 @@ public class TrustService implements Serializable {
 	private ConfigurationService configurationService;
 
 	@Inject
+	private OrganizationService organizationService;
+
+	@Inject
 	private XmlService xmlService;
 
 	@Inject
@@ -288,12 +291,12 @@ public class TrustService implements Serializable {
 	 *         relationships branch if inum is null
 	 */
 	public String getDnForTrustRelationShip(String inum) {
-		String configurationDN = configurationService.getDnForConfiguration();
+		String organizationDN = organizationService.getDnForOrganization();
 		if (StringHelper.isEmpty(inum)) {
-			return String.format("ou=trustRelationships,%s", configurationDN);
+			return String.format("ou=trustRelationships,%s", organizationDN);
 		}
 
-		return String.format("inum=%s,ou=trustRelationships,%s", inum, configurationDN);
+		return String.format("inum=%s,ou=trustRelationships,%s", inum, organizationDN);
 	}
 
 	public void updateReleasedAttributes(GluuSAMLTrustRelationship trustRelationship) {

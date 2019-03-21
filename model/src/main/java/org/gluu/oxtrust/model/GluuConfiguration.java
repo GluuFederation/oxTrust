@@ -31,7 +31,7 @@ import org.xdi.service.cache.CacheConfiguration;
  * @author Yuriy Movchan Date: 04/20/2014
  */
 @LdapEntry
-@LdapObjectClass(values = { "top", "gluuConfiguration" })
+@LdapObjectClass(values = { "top", "organizationalUnit", "gluuConfiguration" })
 public class GluuConfiguration extends InumEntry implements Serializable {
 
 	private static final long serialVersionUID = -1817003894646725601L;
