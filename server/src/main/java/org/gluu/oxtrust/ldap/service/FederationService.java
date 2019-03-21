@@ -44,7 +44,7 @@ public class FederationService implements Serializable {
 
 	public void addFederationProposal(GluuSAMLFederationProposal federationProposal) {
 		String[] clusterMembers = appConfiguration.getClusteredInums();
-		String configurationInum = appConfiguration.getConfigurationInum();
+		String configurationInum = appConfiguration.getApplicationInum();
 		if (clusterMembers == null || clusterMembers.length == 0) {
 			clusterMembers = new String[] { configurationInum };
 		}
@@ -82,7 +82,7 @@ public class FederationService implements Serializable {
 	 * @return New inum for federation proposal
 	 */
 	private String generateInumForNewFederationProposalImpl() {
-		return getConfigurationInum() + OxTrustConstants.inumDelimiter + "0006" + OxTrustConstants.inumDelimiter
+		return getApplicationInum() + OxTrustConstants.inumDelimiter + "0006" + OxTrustConstants.inumDelimiter
 				+ INumGenerator.generate(2);
 	}
 
@@ -100,8 +100,8 @@ public class FederationService implements Serializable {
 	 * 
 	 * @return Current organization inum
 	 */
-	private String getConfigurationInum() {
-		return appConfiguration.getConfigurationInum();
+	private String getApplicationInum() {
+		return appConfiguration.getApplicationInum();
 	}
 
 	/**
@@ -122,7 +122,7 @@ public class FederationService implements Serializable {
 
 	public void updateFederationProposal(GluuSAMLFederationProposal federationProposal) {
 		String[] clusterMembers = appConfiguration.getClusteredInums();
-		String configurationInum = appConfiguration.getConfigurationInum();
+		String configurationInum = appConfiguration.getApplicationInum();
 		if (clusterMembers == null || clusterMembers.length == 0) {
 			clusterMembers = new String[] { configurationInum };
 		}
@@ -161,7 +161,7 @@ public class FederationService implements Serializable {
 		}
 
 		String[] clusterMembers = appConfiguration.getClusteredInums();
-		String configurationInum = appConfiguration.getConfigurationInum();
+		String configurationInum = appConfiguration.getApplicationInum();
 		if (clusterMembers == null || clusterMembers.length == 0) {
 			clusterMembers = new String[] { configurationInum };
 		}
