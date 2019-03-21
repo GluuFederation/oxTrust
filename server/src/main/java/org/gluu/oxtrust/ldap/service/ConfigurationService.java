@@ -147,7 +147,7 @@ public class ConfigurationService implements Serializable {
 	 */
 	public String getDnForConfiguration() {
 		String baseDn = organizationService.getBaseDn();
-		return String.format("ou=configurations,%s", baseDn);
+		return String.format("ou=configuration,%s", baseDn);
 	}
 
 	public String getConfigurationInum() {
