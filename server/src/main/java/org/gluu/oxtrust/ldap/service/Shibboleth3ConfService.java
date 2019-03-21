@@ -564,7 +564,7 @@ public class Shibboleth3ConfService implements Serializable {
 		context.put("resovlerParams", attrResolverParams);
 		context.put("medataFolder", idpMetadataFolder);
 		context.put("configurationInum", StringHelper.removePunctuation(configurationService.getConfigurationInum()));
-		context.put("orgInum", StringHelper.removePunctuation(organizationService.getOrganizationInum()));
+		context.put("orgInum", StringHelper.removePunctuation("gluu"));
 		context.put("orgSupportEmail", appConfiguration.getOrgSupportEmail());
 
 		String idpUrl = appConfiguration.getIdpUrl();

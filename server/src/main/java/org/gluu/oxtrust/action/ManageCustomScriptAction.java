@@ -14,6 +14,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 import javax.enterprise.context.ConversationScoped;
@@ -161,8 +162,7 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 					String dn = customScript.getDn();
 					String customScriptId = customScript.getInum();
 					if (StringHelper.isEmpty(dn)) {
-						String basedInum = organizationService.getOrganizationInum();
-						customScriptId = basedInum + "!" + INumGenerator.generate(2);
+						customScriptId = UUID.randomUUID().toString();
 						dn = customScriptService.buildDn(customScriptId);
 	
 						customScript.setDn(dn);

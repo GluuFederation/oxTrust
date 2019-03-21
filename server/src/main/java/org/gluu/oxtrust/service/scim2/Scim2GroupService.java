@@ -122,8 +122,6 @@ public class Scim2GroupService implements Serializable {
 
 		gluuGroup.setInum(inum);
 		gluuGroup.setDn(dn);
-		gluuGroup.setIname(groupService.generateInameForNewGroup(gluuGroup.getDisplayName().replaceAll(" ", "")));
-
 	}
 
 	public void transferAttributesToGroupResource(GluuGroup gluuGroup, GroupResource res, String groupsUrl,

@@ -125,7 +125,6 @@ public class ManageCertificateAction implements Serializable {
 
 		this.certsMmanagePossible = prepareTempWorkspace();
 
-		this.orgInumFN = StringHelper.removePunctuation(organizationService.getOrganizationInum());
 		this.tomcatCertFN = orgInumFN + "-java.crt";
 		this.idpCertFN = orgInumFN + "-shib.crt";
 

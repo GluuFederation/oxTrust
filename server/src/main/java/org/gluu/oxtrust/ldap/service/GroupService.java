@@ -9,6 +9,7 @@ package org.gluu.oxtrust.ldap.service;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -199,14 +200,6 @@ public class GroupService implements Serializable, IGroupService {
     }
 
 	/* (non-Javadoc)
-	 * @see org.gluu.oxtrust.ldap.service.IGroupService#generateInameForNewGroup(java.lang.String)
-	 */
-	@Override
-	public String generateInameForNewGroup(String name) throws Exception {
-		return String.format("%s*group*%s", appConfiguration.getOrgIname(), name);
-	}
-
-	/* (non-Javadoc)
 	 * @see org.gluu.oxtrust.ldap.service.IGroupService#searchGroups(java.lang.String, int)
 	 */
 	@Override
@@ -241,9 +234,7 @@ public class GroupService implements Serializable, IGroupService {
 	 * @return New inum for group
 	 */
 	private String generateInumForNewGroupImpl() throws Exception {
-		String orgInum = organizationService.getInumForOrganization();
-		return orgInum + OxTrustConstants.inumDelimiter + OxTrustConstants.INUM_GROUP_OBJECTTYPE + OxTrustConstants.inumDelimiter
-				+ INumGenerator.generate(2);
+		return UUID.randomUUID().toString();
 	}
 
 	/* (non-Javadoc)

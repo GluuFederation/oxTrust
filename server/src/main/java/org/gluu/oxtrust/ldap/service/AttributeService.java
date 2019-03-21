@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.ejb.Stateless;
 import javax.enterprise.event.Event;
@@ -463,8 +464,7 @@ public class AttributeService extends org.xdi.service.AttributeService {
 	 * @throws Exception
 	 */
 	private String generateInumForNewAttributeImpl() {
-		String orgInum = organizationService.getInumForOrganization();
-		return orgInum + OxTrustConstants.inumDelimiter + "0005" + OxTrustConstants.inumDelimiter + generateInum();
+		return UUID.randomUUID().toString();
 	}
 
 	private String generateInum() {

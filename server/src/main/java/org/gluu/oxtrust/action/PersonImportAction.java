@@ -356,9 +356,6 @@ public class PersonImportAction implements Serializable {
 			}
 			person.setDisplayName(person.getCommonName());
 
-			String iname = personService.generateInameForNewPerson(person.getUid());
-			person.setIname(iname);
-
 			if (isGeneratePassword && StringHelper.isEmpty(person.getUserPassword())) {
 				person.setUserPassword(RandomStringUtils.randomAlphanumeric(16));
 			}
@@ -597,13 +594,11 @@ public class PersonImportAction implements Serializable {
 		}
 
 		this.inum = personService.generateInumForNewPerson();
-		String iname = personService.generateInameForNewPerson(this.person.getUid());
 		String dn = personService.getDnForPerson(this.inum);
 
 		// Save person
 		this.person.setDn(dn);
 		this.person.setInum(this.inum);
-		this.person.setIname(iname);
 
 		List<GluuCustomAttribute> personAttributes = this.person.getCustomAttributes();
 		if (!personAttributes.contains(new GluuCustomAttribute("cn", ""))) {

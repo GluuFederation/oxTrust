@@ -524,13 +524,11 @@ public class UpdatePersonAction implements Serializable {
 		} else {
 
 			this.inum = personService.generateInumForNewPerson();
-			String iname = personService.generateInameForNewPerson(this.person.getUid());
 			String dn = personService.getDnForPerson(this.inum);
 
 			// Save person
 			this.person.setDn(dn);
 			this.person.setInum(this.inum);
-			this.person.setIname(iname);
 			this.person.setUserPassword(this.password);
 
 			List<GluuCustomAttribute> personAttributes = this.person.getCustomAttributes();

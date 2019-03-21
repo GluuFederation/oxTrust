@@ -85,13 +85,6 @@ public interface IGroupService {
 	public abstract String generateInumForNewGroup() throws Exception;
 
 	/**
-	 * Generate new iname for group
-	 * 
-	 * @return New iname for group
-	 */
-	public abstract String generateInameForNewGroup(String name) throws Exception;
-
-	/**
 	 * Search groups by pattern
 	 * 
 	 * @param pattern

@@ -855,7 +855,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 			context.put("idpUrl", idpUrl);
 			String idpHost = idpUrl.replaceAll(":[0-9]*$", "").replaceAll("^.*?//", "");
 			context.put("idpHost", idpHost);
-			context.put("orgInum", StringHelper.removePunctuation(organizationService.getOrganizationInum()));
+			context.put("orgInum", StringHelper.removePunctuation("gluu"));
 			context.put("orgSupportEmail", appConfiguration.getOrgSupportEmail());
 
 			String spShibboleth3FilePath = shibboleth3ConfService.getSpShibboleth3FilePath();

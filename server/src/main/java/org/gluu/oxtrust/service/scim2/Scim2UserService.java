@@ -433,7 +433,6 @@ public class Scim2UserService implements Serializable {
 
 		person.setInum(inum);
 		person.setDn(dn);
-		person.setIname(personService.generateInameForNewPerson(person.getUid()));
 		writeCommonName(person);
 
 	}

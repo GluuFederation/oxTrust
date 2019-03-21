@@ -39,6 +39,9 @@ public class AuthOrganizationService implements Serializable {
 	@Inject
 	@Named(ApplicationFactory.PERSISTENCE_ENTRY_MANAGER_NAME)
 	private PersistenceEntryManager ldapEntryManager;
+	
+	@Inject
+	private OrganizationService organizationService;
 
 	@Inject
 	private CacheService cacheService;
@@ -62,7 +65,7 @@ public class AuthOrganizationService implements Serializable {
 	 * @return Organization entry
 	 */
 	public GluuOrganization getOrganization() throws Exception {
-		return getOrganizationByInum(getInumForOrganization());
+		return organizationService.getOrganization();
 	}
 
 	/**
@@ -142,15 +145,6 @@ public class AuthOrganizationService implements Serializable {
 	 * 
 	 * @return DN string for organization
 	 */
-	public String getDnForOrganization() throws Exception {
-		return getDnForOrganization(getOrganizationInum());
-	}
-
-	/**
-	 * Build DN string for organization
-	 * 
-	 * @return DN string for organization
-	 */
 	public String getDnForOrganization(String inum) throws Exception {
 		return String.format("o=%s,%s", inum, appConfiguration.getBaseDN());
 	}
@@ -164,21 +158,8 @@ public class AuthOrganizationService implements Serializable {
 		return appConfiguration.getBaseDN();
 	}
 
-	/**
-	 * Get Inum for organization
-	 * 
-	 * @return Inum for organization
-	 */
-	public String getInumForOrganization() throws Exception {
-		return appConfiguration.getOrgInum();
-	}
-
 	public boolean isAllowPersonModification() throws Exception {
 		return appConfiguration.isAllowPersonModification();
-	}
-
-	public String getOrganizationInum() throws Exception {
-		return appConfiguration.getOrgInum();
 	}
 
 }

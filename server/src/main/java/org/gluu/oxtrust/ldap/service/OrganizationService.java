@@ -167,7 +167,7 @@ public class OrganizationService extends org.xdi.service.OrganizationService {
 	 * @return DN string for organization
 	 */
 	public String getDnForOrganization() {
-		return getDnForOrganization(getOrganizationInum());
+		return getDnForOrganization(getInumForOrganization());
 	}
 
 
@@ -181,15 +181,10 @@ public class OrganizationService extends org.xdi.service.OrganizationService {
 		return appConfiguration.getBaseDN();
 	}
 
-	/**
-	 * Get Inum for organization
-	 * 
-	 * @return Inum for organization
-	 */
 	public String getInumForOrganization() {
-		return appConfiguration.getOrgInum();
+		return "o=gluu";
 	}
-
+	
 	public boolean isAllowPersonModification() {
 		return appConfiguration.isAllowPersonModification(); // todo &&
 																		// configurationService.getConfiguration().getManageIdentityPermission()
@@ -198,12 +193,6 @@ public class OrganizationService extends org.xdi.service.OrganizationService {
 																		// &&
 																		// configurationService.getConfiguration().getProfileManagment().isBooleanValue();
 	}
-
-	public String getOrganizationInum() {
-		return appConfiguration.getOrgInum();
-	}
-
-
 
 	public GluuBoolean[] getBooleanSelectionTypes() {
 		return new GluuBoolean[] { GluuBoolean.DISABLED, GluuBoolean.ENABLED };

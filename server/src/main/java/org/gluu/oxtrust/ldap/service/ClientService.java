@@ -8,6 +8,7 @@ package org.gluu.oxtrust.ldap.service;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.UUID;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -173,19 +174,7 @@ public class ClientService implements Serializable {
 	 * @return New inum for client
 	 */
 	private String generateInumForNewClientImpl() {
-		String orgInum = organizationService.getInumForOrganization();
-		return orgInum + OxTrustConstants.inumDelimiter + "0008" + OxTrustConstants.inumDelimiter
-				+ INumGenerator.generate(4);
-
-	}
-
-	/**
-	 * Generate new iname for client
-	 *
-	 * @return New iname for client
-	 */
-	public String generateInameForNewClient(String name) {
-		return String.format("%s*clients*%s", appConfiguration.getOrgIname(), name);
+		return UUID.randomUUID().toString();
 	}
 
 	/**

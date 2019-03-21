@@ -145,8 +145,6 @@ public interface IPersonService {
 	 */
 	public abstract String generateInumForNewPerson();
 
-	public abstract String generateInameForNewPerson(String uid);
-
 	/**
 	 * Build DN string for person
 	 * 

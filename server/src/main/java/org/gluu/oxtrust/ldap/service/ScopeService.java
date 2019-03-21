@@ -10,6 +10,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -163,10 +164,7 @@ public class ScopeService implements Serializable {
 	 * @throws Exception
 	 */
 	private String generateInumForNewScopeImpl() throws Exception {
-		String orgInum = organizationService.getInumForOrganization();
-		return orgInum + OxTrustConstants.inumDelimiter + "0009" + OxTrustConstants.inumDelimiter
-				+ INumGenerator.generate(2);
-
+		return UUID.randomUUID().toString();
 	}
 
 	public List<OxAuthScope> getAllScopesList(int size) throws Exception {
