@@ -81,7 +81,7 @@ public class TrustService implements Serializable {
 	public void addTrustRelationship(GluuSAMLTrustRelationship trustRelationship) {
 		trustRelationship.setGluuContainerFederation(trustRelationship.getGluuContainerFederation());
 		String[] clusterMembers = appConfiguration.getClusteredInums();
-		String configurationInum = appConfiguration.getConfigurationInum();
+		String configurationInum = appConfiguration.getApplicationInum();
 		if (clusterMembers == null || clusterMembers.length == 0) {
 			log.debug("there is no cluster configuration. Assuming standalone configuration.");
 			clusterMembers = new String[] { configurationInum };
@@ -111,7 +111,7 @@ public class TrustService implements Serializable {
 	public void updateTrustRelationship(GluuSAMLTrustRelationship trustRelationship) {
 		log.debug("Updating TR " + trustRelationship.getInum());
 		String[] clusterMembers = appConfiguration.getClusteredInums();
-		String configurationInum = appConfiguration.getConfigurationInum();
+		String configurationInum = appConfiguration.getApplicationInum();
 		if (clusterMembers == null || clusterMembers.length == 0) {
 			log.debug("there is no cluster configuration. Assuming standalone configuration.");
 			clusterMembers = new String[] { configurationInum };
@@ -140,7 +140,7 @@ public class TrustService implements Serializable {
 	public void removeTrustRelationship(GluuSAMLTrustRelationship trustRelationship) {
 		log.info("Removing TR " + trustRelationship.getInum());
 		String[] clusterMembers = appConfiguration.getClusteredInums();
-		String configurationInum = appConfiguration.getConfigurationInum();
+		String configurationInum = appConfiguration.getApplicationInum();
 		if (clusterMembers == null || clusterMembers.length == 0) {
 			log.debug("there is no cluster configuration. Assuming standalone configuration.");
 			clusterMembers = new String[] { configurationInum };
@@ -267,7 +267,7 @@ public class TrustService implements Serializable {
 	 * @return Current organization inum
 	 */
 	private String getConfigurationInum() {
-		return appConfiguration.getConfigurationInum();
+		return appConfiguration.getApplicationInum();
 	}
 
 	/**

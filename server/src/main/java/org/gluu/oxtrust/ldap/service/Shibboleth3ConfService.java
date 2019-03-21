@@ -573,7 +573,7 @@ public class Shibboleth3ConfService implements Serializable {
 		String idpHost = idpUrl.replaceAll(":[0-9]*$", "");
 		context.put("idpHost", idpHost);
 
-		String spUrl = appConfiguration.getConfigurationUrl();
+		String spUrl = appConfiguration.getApplicationUrl();
 		context.put("spUrl", spUrl);
 		String spHost = spUrl.replaceAll(":[0-9]*$", "").replaceAll("^.*?//", "");
 		context.put("spHost", spHost);
@@ -1129,7 +1129,7 @@ public class Shibboleth3ConfService implements Serializable {
 					.replaceAll("-{5}.*?-{5}", "");
 
 			if (gluuSP.getUrl() == null || "".equals(gluuSP.getUrl())) {
-				gluuSP.setUrl(appConfiguration.getConfigurationUrl());
+				gluuSP.setUrl(appConfiguration.getApplicationUrl());
 			}
 
 			generateSpMetadataFile(gluuSP, spCertificate);
@@ -1226,7 +1226,7 @@ public class Shibboleth3ConfService implements Serializable {
 		gluuSP.setSpMetaDataFN(metadataFN);
 		// TODO:
 		gluuSP.setEntityId(StringHelper.removePunctuation(gluuSP.getInum()));
-		gluuSP.setUrl(appConfiguration.getConfigurationUrl());
+		gluuSP.setUrl(appConfiguration.getApplicationUrl());
 
 		String certificate = "";
 		boolean result = false;

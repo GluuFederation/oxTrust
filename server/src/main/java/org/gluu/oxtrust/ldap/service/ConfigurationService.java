@@ -166,7 +166,7 @@ public class ConfigurationService implements Serializable {
 	}
 
 	public String getConfigurationInum() {
-		return appConfiguration.getConfigurationInum();
+		return appConfiguration.getApplicationInum();
 	}
 
 	/**

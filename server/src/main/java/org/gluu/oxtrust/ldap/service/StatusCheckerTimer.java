@@ -192,7 +192,7 @@ public class StatusCheckerTimer {
 
 	private void setCertificateExpiryAttributes(ConfigurationStatus configuration) {
 		try {
-			URL destinationURL = new URL(appConfiguration.getConfigurationUrl());
+			URL destinationURL = new URL(appConfiguration.getApplicationUrl());
 			HttpsURLConnection conn = (HttpsURLConnection) destinationURL.openConnection();
 			conn.connect();
 			Certificate[] certs = conn.getServerCertificates();
