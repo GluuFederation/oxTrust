@@ -10,16 +10,6 @@
             "type": "string",
             "minLength": 1
         },
-        "orgInum": {
-            "id": "orgInum",
-            "type": "string",
-            "minLength": 1
-        },
-        "orgIname": {
-            "id": "orgIname",
-            "type": "string",
-            "minLength": 1
-        },
         "orgSupportEmail": {
             "id": "orgSupportEmail",
             "type": "string",
@@ -629,8 +619,6 @@
     },
     "required": [
         "baseDN",
-        "orgInum",
-        "orgIname",
         "orgSupportEmail",
         "applicationUrl",
         "baseEndpoint",
