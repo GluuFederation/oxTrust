@@ -401,10 +401,6 @@ public class AttributeService extends org.xdi.service.AttributeService {
 	 * @return Array of attribute user roles
 	 */
 	public UserRole[] getViewTypes() {
-		if (configurationService.getConfiguration().getWhitePagesEnabled() != null
-				&& configurationService.getConfiguration().getWhitePagesEnabled().isBooleanValue()) {
-			return new UserRole[] { UserRole.ADMIN, UserRole.USER, UserRole.WHITEPAGES };
-		}
 		return new UserRole[] { UserRole.ADMIN, UserRole.USER };
 	}
 

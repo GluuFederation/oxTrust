@@ -505,8 +505,6 @@ public class ManageCertificateAction implements Serializable {
 			log.info("Deleting %s : %s", orgInumFN + "-java.pem", pem.delete());
 			log.info("Deleting %s : %s", orgInumFN + "-java.jks", jks.delete());
 
-			configurationService.restartServices();
-
 			facesMessages.add(FacesMessage.SEVERITY_WARN,
 					"Certificates were updated and configuration service will be restarted. Please log in again in 5 minutes.");
 

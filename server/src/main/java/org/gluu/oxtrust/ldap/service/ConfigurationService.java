@@ -6,7 +6,6 @@
 
 package org.gluu.oxtrust.ldap.service;
 
-import java.io.File;
 import java.io.Serializable;
 import java.util.List;
 
@@ -152,24 +151,6 @@ public class ConfigurationService implements Serializable {
 
 	public String getConfigurationInum() {
 		return appConfiguration.getApplicationInum();
-	}
-
-	/**
-	 * Restarts services using puppet trigger file.
-	 * 
-	 * @author �Oleksiy Tataryn�
-	 */
-	public void restartServices() {
-		String triggerFileName = appConfiguration.getServicesRestartTrigger();
-		if (StringHelper.isNotEmpty(triggerFileName)) {
-			log.info("Removing " + triggerFileName);
-			File triggerFile = new File(triggerFileName);
-			if (triggerFile.isFile()) {
-				log.debug("Result of deletion is : " + triggerFile.delete());
-			} else {
-				log.error(triggerFileName + " does not exist or not file");
-			}
-		}
 	}
 
 	public AuthenticationScriptUsageType[] getScriptUsageTypes() {

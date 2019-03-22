@@ -85,17 +85,6 @@ public class PermissionService implements Serializable {
                     return false;
                 }
             }
-
-            if (StringHelper.equalsIgnoreCase("whitePagesEnabled", action)) {
-                GluuConfiguration configuration = configurationService.getConfiguration();
-                GluuConfiguration targetConfiguration = (GluuConfiguration) target;
-                if (((configuration.getWhitePagesEnabled() != null) && configuration.getWhitePagesEnabled().isBooleanValue())
-                        && StringHelper.equals(configurationService.getConfiguration().getInum(), targetConfiguration.getInum())) {
-                    return true;
-                } else {
-                    return false;
-                }
-            }
         }
 
         if (identity.hasRole(UserRole.MANAGER.getValue())) {

@@ -58,9 +58,6 @@ public class GluuOrganization extends Entry implements Serializable {
 	@LdapAttribute(name = "gluuStatus")
 	private GluuStatus status;
 
-	@LdapAttribute(name = "gluuCommunityAttribute")
-	private String communityAttribute;
-
 	@LdapAttribute(name = "gluuManagerGroup")
 	private String managerGroup;
 
@@ -107,14 +104,6 @@ public class GluuOrganization extends Entry implements Serializable {
 		}
 		return title;
 	}
-
-    public String getCommunityAttribute() {
-        return communityAttribute;
-    }
-
-    public void setCommunityAttribute(String communityAttribute) {
-        this.communityAttribute = communityAttribute;
-    }
 
     public String getCountryName() {
         return countryName;

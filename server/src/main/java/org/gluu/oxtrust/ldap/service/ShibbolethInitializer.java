@@ -57,9 +57,6 @@ public class ShibbolethInitializer {
 			log.info("########## shibbolethVersion = " + shibbolethVersion);
 			shibboleth3ConfService.generateMetadataFiles(gluuSP);
 			shibboleth3ConfService.generateConfigurationFiles(trustRelationships);
-			if (servicesNeedRestarting) {
-				configurationService.restartServices();
-			}
 		}
 
 		return true;

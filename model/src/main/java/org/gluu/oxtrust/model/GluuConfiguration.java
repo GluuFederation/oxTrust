@@ -36,15 +36,6 @@ public class GluuConfiguration extends InumEntry implements Serializable {
 
 	private static final long serialVersionUID = -1817003894646725601L;
 
-	@LdapAttribute(ignoreDuringUpdate = true)
-	private String inum;
-
-	@LdapAttribute(ignoreDuringUpdate = true)
-	private String inumFN;
-
-	@LdapAttribute
-	private String iname;
-
 	@LdapAttribute
 	private String description;
 
@@ -63,26 +54,14 @@ public class GluuConfiguration extends InumEntry implements Serializable {
 	@LdapAttribute(name = "gluuGroupCount", updateOnly = true)
 	private String groupCount;
 
+	@LdapAttribute(name = "gluuPersonCount", updateOnly = true)
+	private String personCount;
+
 	@LdapAttribute(name = "gluuHostname", updateOnly = true)
 	private String hostname;
 
 	@LdapAttribute(name = "gluuIpAddress", updateOnly = true)
 	private String ipAddress;
-
-	@LdapAttribute(name = "gluuPersonCount", updateOnly = true)
-	private String personCount;
-
-	@LdapAttribute(name = "gluuShibAssertionsIssued")
-	private String shibAssertionsIssued;
-
-	@LdapAttribute(name = "gluuShibFailedAuth")
-	private String shibFailedAuth;
-
-	@LdapAttribute(name = "gluuShibSecurityEvents")
-	private String shibSecurityEvents;
-
-	@LdapAttribute(name = "gluuShibSuccessfulAuths")
-	private String shibSuccessfulAuths;
 
 	@LdapAttribute(name = "gluuSystemUptime", updateOnly = true)
 	private String systemUptime;
@@ -116,9 +95,6 @@ public class GluuConfiguration extends InumEntry implements Serializable {
 
 	@LdapAttribute(name = "gluuOrgProfileMgt")
 	private GluuBoolean profileManagment;
-
-	@LdapAttribute(name = "gluuWhitePagesEnabled")
-	private GluuBoolean whitePagesEnabled;
 
 	@LdapAttribute(name = "gluuManageIdentityPermission")
 	private GluuBoolean manageIdentityPermission;
@@ -195,28 +171,20 @@ public class GluuConfiguration extends InumEntry implements Serializable {
 	@LdapJsonObject
 	private CacheConfiguration cacheConfiguration;
 
-	public String getConfigurationDnsServer() {
-		return configurationDnsServer;
-	}
-
-	public String getInumFN() {
-		return inumFN;
-	}
-
-	public void setInumFN(String inumFN) {
-		this.inumFN = inumFN;
-	}
-
-	public void setConfigurationDnsServer(String configurationDnsServer) {
-		this.configurationDnsServer = configurationDnsServer;
-	}
-
 	public final SmtpConfiguration getSmtpConfiguration() {
 		return smtpConfiguration;
 	}
 
 	public final void setSmtpConfiguration(SmtpConfiguration smtpConfiguration) {
 		this.smtpConfiguration = smtpConfiguration;
+	}
+
+	public String getConfigurationDnsServer() {
+		return configurationDnsServer;
+	}
+
+	public void setConfigurationDnsServer(String configurationDnsServer) {
+		this.configurationDnsServer = configurationDnsServer;
 	}
 
 	public String getAuthenticationMode() {
@@ -299,20 +267,20 @@ public class GluuConfiguration extends InumEntry implements Serializable {
 		this.gluuHttpStatus = gluuHttpStatus;
 	}
 
-	public String getGluuSPTR() {
-		return gluuSPTR;
-	}
-
-	public void setGluuSPTR(String gluuSPTR) {
-		this.gluuSPTR = gluuSPTR;
-	}
-
 	public String getGluuVDSStatus() {
 		return gluuVDSStatus;
 	}
 
 	public void setGluuVDSStatus(String gluuVDSStatus) {
 		this.gluuVDSStatus = gluuVDSStatus;
+	}
+
+	public String getGluuSPTR() {
+		return gluuSPTR;
+	}
+
+	public void setGluuSPTR(String gluuSPTR) {
+		this.gluuSPTR = gluuSPTR;
 	}
 
 	public String getGroupCount() {
@@ -329,22 +297,6 @@ public class GluuConfiguration extends InumEntry implements Serializable {
 
 	public void setHostname(String hostname) {
 		this.hostname = hostname;
-	}
-
-	public String getIname() {
-		return iname;
-	}
-
-	public void setIname(String iname) {
-		this.iname = iname;
-	}
-
-	public String getInum() {
-		return inum;
-	}
-
-	public void setInum(String inum) {
-		this.inum = inum;
 	}
 
 	public String getIpAddress() {
@@ -459,38 +411,6 @@ public class GluuConfiguration extends InumEntry implements Serializable {
 		this.scimEnabled = scimEnabled;
 	}
 
-	public String getShibAssertionsIssued() {
-		return shibAssertionsIssued;
-	}
-
-	public void setShibAssertionsIssued(String shibAssertionsIssued) {
-		this.shibAssertionsIssued = shibAssertionsIssued;
-	}
-
-	public String getShibFailedAuth() {
-		return shibFailedAuth;
-	}
-
-	public void setShibFailedAuth(String shibFailedAuth) {
-		this.shibFailedAuth = shibFailedAuth;
-	}
-
-	public String getShibSecurityEvents() {
-		return shibSecurityEvents;
-	}
-
-	public void setShibSecurityEvents(String shibSecurityEvents) {
-		this.shibSecurityEvents = shibSecurityEvents;
-	}
-
-	public String getShibSuccessfulAuths() {
-		return shibSuccessfulAuths;
-	}
-
-	public void setShibSuccessfulAuths(String shibSuccessfulAuths) {
-		this.shibSuccessfulAuths = shibSuccessfulAuths;
-	}
-
 	public String getSslExpiry() {
 		return sslExpiry;
 	}
@@ -579,14 +499,6 @@ public class GluuConfiguration extends InumEntry implements Serializable {
 		this.vdsCacheRefreshProblemCount = vdsCacheRefreshProblemCount;
 	}
 
-	public GluuBoolean getWhitePagesEnabled() {
-		return whitePagesEnabled;
-	}
-
-	public void setWhitePagesEnabled(GluuBoolean whitePagesEnabled) {
-		this.whitePagesEnabled = whitePagesEnabled;
-	}
-
 	public GluuBoolean getPassportEnabled() {
 		return passportEnabled;
 	}
@@ -605,28 +517,22 @@ public class GluuConfiguration extends InumEntry implements Serializable {
 
 	@Override
 	public String toString() {
-		return "GluuConfiguration [inum=" + inum + ", inumFN=" + inumFN + ", iname=" + iname + ", description="
-				+ description + ", displayName=" + displayName + ", freeDiskSpace=" + freeDiskSpace + ", freeMemory="
-				+ freeMemory + ", freeSwap=" + freeSwap + ", groupCount=" + groupCount + ", hostname=" + hostname
-				+ ", ipAddress=" + ipAddress + ", personCount=" + personCount + ", shibAssertionsIssued="
-				+ shibAssertionsIssued + ", shibFailedAuth=" + shibFailedAuth + ", shibSecurityEvents="
-				+ shibSecurityEvents + ", shibSuccessfulAuths=" + shibSuccessfulAuths + ", systemUptime=" + systemUptime
-				+ ", lastUpdate=" + lastUpdate + ", pollingInterval=" + pollingInterval + ", status=" + status
-				+ ", userPassword=" + userPassword + ", gluuHttpStatus=" + gluuHttpStatus + ", gluuDSStatus="
-				+ gluuDSStatus + ", gluuVDSStatus=" + gluuVDSStatus + ", gluuSPTR=" + gluuSPTR + ", sslExpiry="
-				+ sslExpiry + ", profileManagment=" + profileManagment + ", whitePagesEnabled=" + whitePagesEnabled
-				+ ", manageIdentityPermission=" + manageIdentityPermission + ", vdsCacheRefreshEnabled="
-				+ vdsCacheRefreshEnabled + ", cacheRefreshServerIpAddress=" + cacheRefreshServerIpAddress
-				+ ", vdsCacheRefreshPollingInterval=" + vdsCacheRefreshPollingInterval + ", vdsCacheRefreshLastUpdate="
-				+ vdsCacheRefreshLastUpdate + ", vdsCacheRefreshLastUpdateCount=" + vdsCacheRefreshLastUpdateCount
-				+ ", vdsCacheRefreshProblemCount=" + vdsCacheRefreshProblemCount + ", scimEnabled=" + scimEnabled
-				+ ", passportEnabled=" + passportEnabled + ", contactEmail=" + contactEmail + ", smtpConfiguration="
-				+ smtpConfiguration + ", configurationDnsServer=" + configurationDnsServer + ", maxLogSize=" + maxLogSize
-				+ ", loadAvg=" + loadAvg + ", oxIDPAuthentication=" + oxIDPAuthentication + ", authenticationMode="
-				+ authenticationMode + ", oxTrustAuthenticationMode=" + oxTrustAuthenticationMode
-				+ ", oxLogViewerConfig=" + oxLogViewerConfig + ", oxLogConfigLocation=" + oxLogConfigLocation
-				+ ", passwordResetAllowed=" + passwordResetAllowed + ", trustStoreConfiguration="
-				+ trustStoreConfiguration + ", trustStoreCertificates=" + trustStoreCertificates
+		return "GluuConfiguration [description=" + description + ", displayName=" + displayName + ", freeDiskSpace=" + freeDiskSpace
+				+ ", freeMemory=" + freeMemory + ", freeSwap=" + freeSwap + ", groupCount=" + groupCount + ", personCount=" + personCount
+				+ ", hostname=" + hostname + ", ipAddress=" + ipAddress + ", systemUptime=" + systemUptime + ", lastUpdate=" + lastUpdate
+				+ ", pollingInterval=" + pollingInterval + ", status=" + status + ", userPassword=" + userPassword + ", gluuHttpStatus="
+				+ gluuHttpStatus + ", gluuDSStatus=" + gluuDSStatus + ", gluuVDSStatus=" + gluuVDSStatus + ", gluuSPTR=" + gluuSPTR
+				+ ", sslExpiry=" + sslExpiry + ", profileManagment=" + profileManagment + ", manageIdentityPermission="
+				+ manageIdentityPermission + ", vdsCacheRefreshEnabled=" + vdsCacheRefreshEnabled + ", cacheRefreshServerIpAddress="
+				+ cacheRefreshServerIpAddress + ", vdsCacheRefreshPollingInterval=" + vdsCacheRefreshPollingInterval
+				+ ", vdsCacheRefreshLastUpdate=" + vdsCacheRefreshLastUpdate + ", vdsCacheRefreshLastUpdateCount="
+				+ vdsCacheRefreshLastUpdateCount + ", vdsCacheRefreshProblemCount=" + vdsCacheRefreshProblemCount + ", scimEnabled="
+				+ scimEnabled + ", passportEnabled=" + passportEnabled + ", contactEmail=" + contactEmail + ", smtpConfiguration="
+				+ smtpConfiguration + ", configurationDnsServer=" + configurationDnsServer + ", maxLogSize=" + maxLogSize + ", loadAvg="
+				+ loadAvg + ", oxIDPAuthentication=" + oxIDPAuthentication + ", authenticationMode=" + authenticationMode
+				+ ", oxTrustAuthenticationMode=" + oxTrustAuthenticationMode + ", oxLogViewerConfig=" + oxLogViewerConfig
+				+ ", oxLogConfigLocation=" + oxLogConfigLocation + ", passwordResetAllowed=" + passwordResetAllowed
+				+ ", trustStoreConfiguration=" + trustStoreConfiguration + ", trustStoreCertificates=" + trustStoreCertificates
 				+ ", cacheConfiguration=" + cacheConfiguration + "]";
 	}
 }
