@@ -33,12 +33,6 @@ public class GluuOrganization extends Entry implements Serializable {
 
 	private static final long serialVersionUID = -8284018077740582699L;
 
-	@LdapAttribute(ignoreDuringUpdate = true)
-	private String inum;
-
-	@LdapAttribute(ignoreDuringUpdate = true)
-	private String iname;
-
 	@NotNull
 	@Size(min = 0, max = 60, message = "Length of the Display Name should not exceed 60")
 	@LdapAttribute
@@ -63,9 +57,6 @@ public class GluuOrganization extends Entry implements Serializable {
 
 	@LdapAttribute(name = "gluuStatus")
 	private GluuStatus status;
-
-	@LdapAttribute(name = "gluuCommunityAttribute")
-	private String communityAttribute;
 
 	@LdapAttribute(name = "gluuManagerGroup")
 	private String managerGroup;
@@ -114,14 +105,6 @@ public class GluuOrganization extends Entry implements Serializable {
 		return title;
 	}
 
-    public String getCommunityAttribute() {
-        return communityAttribute;
-    }
-
-    public void setCommunityAttribute(String communityAttribute) {
-        this.communityAttribute = communityAttribute;
-    }
-
     public String getCountryName() {
         return countryName;
     }
@@ -160,22 +143,6 @@ public class GluuOrganization extends Entry implements Serializable {
 
     public void setFaviconImage(String faviconImage) {
         this.faviconImage = faviconImage;
-    }
-
-    public String getIname() {
-        return iname;
-    }
-
-    public void setIname(String iname) {
-        this.iname = iname;
-    }
-
-    public String getInum() {
-        return inum;
-    }
-
-    public void setInum(String inum) {
-        this.inum = inum;
     }
 
     public Boolean getLinktrackEnabled() {

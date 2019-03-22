@@ -31,13 +31,13 @@ import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.ldap.cache.model.GluuSimplePerson;
 import org.gluu.oxtrust.ldap.cache.service.CacheRefreshService;
 import org.gluu.oxtrust.ldap.cache.service.CacheRefreshUpdateMethod;
-import org.gluu.oxtrust.ldap.service.ApplianceService;
+import org.gluu.oxtrust.ldap.service.ConfigurationService;
 import org.gluu.oxtrust.ldap.service.EncryptionService;
 import org.gluu.oxtrust.ldap.service.InumService;
 import org.gluu.oxtrust.ldap.service.JsonConfigurationService;
 import org.gluu.oxtrust.ldap.service.OxTrustAuditService;
 import org.gluu.oxtrust.ldap.service.PersonService;
-import org.gluu.oxtrust.model.GluuAppliance;
+import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.LdapConfigurationModel;
@@ -77,7 +77,7 @@ public class ConfigureCacheRefreshAction
 	private Logger log;
 
 	@Inject
-	private ApplianceService applianceService;
+	private ConfigurationService configurationService;
 
 	@Inject
 	private PersonService personService;
@@ -120,7 +120,7 @@ public class ConfigureCacheRefreshAction
 
 	private GluuLdapConfiguration activeLdapConfig;
 
-	private GluuAppliance appliance;
+	private GluuConfiguration configuration;
 
 	private List<SimpleProperty> keyAttributes;
 	private List<SimpleProperty> keyObjectClasses;
@@ -141,7 +141,7 @@ public class ConfigureCacheRefreshAction
 
 		this.showInterceptorValidationDialog = false;
 
-		this.appliance = applianceService.getAppliance();
+		this.configuration = configurationService.getConfiguration();
 
 		this.cacheRefreshConfiguration = getOxTrustCacheRefreshConfig();
 
@@ -208,7 +208,7 @@ public class ConfigureCacheRefreshAction
 		try {
 			jsonConfigurationService.saveOxTrustCacheRefreshConfiguration(this.cacheRefreshConfiguration);
 
-			updateAppliance();
+			updateConfiguration();
 		} catch (Exception ex) {
 			log.error("Failed to save Cache Refresh configuration", ex);
 			return OxTrustConstants.RESULT_FAILURE;
@@ -225,18 +225,18 @@ public class ConfigureCacheRefreshAction
 		cacheRefreshConfiguration.setAttributeMapping(toAttributeMappingList(this.attributeMapping));
 	}
 
-	private void updateAppliance() {
-		GluuAppliance updateAppliance = applianceService.getAppliance();
-		updateAppliance.setVdsCacheRefreshEnabled(this.appliance.getVdsCacheRefreshEnabled());
-		updateAppliance.setVdsCacheRefreshPollingInterval(this.appliance.getVdsCacheRefreshPollingInterval());
-		updateAppliance.setCacheRefreshServerIpAddress(this.appliance.getCacheRefreshServerIpAddress());
-		applianceService.updateAppliance(updateAppliance);
+	private void updateConfiguration() {
+		GluuConfiguration updateConfiguration = configurationService.getConfiguration();
+		updateConfiguration.setVdsCacheRefreshEnabled(this.configuration.getVdsCacheRefreshEnabled());
+		updateConfiguration.setVdsCacheRefreshPollingInterval(this.configuration.getVdsCacheRefreshPollingInterval());
+		updateConfiguration.setCacheRefreshServerIpAddress(this.configuration.getCacheRefreshServerIpAddress());
+		configurationService.updateConfiguration(updateConfiguration);
 	}
 
 	// TODO: Yuriy Movchan: Use @Min property annotation + convert type from String
 	// to Integer
 	private boolean vdsCacheRefreshPollingInterval() {
-		String intervalString = this.appliance.getVdsCacheRefreshPollingInterval();
+		String intervalString = this.configuration.getVdsCacheRefreshPollingInterval();
 		if (StringHelper.isEmpty(intervalString)) {
 			return true;
 		}
@@ -381,8 +381,8 @@ public class ConfigureCacheRefreshAction
 		return this.cacheRefreshConfiguration;
 	}
 
-	public GluuAppliance getAppliance() {
-		return appliance;
+	public GluuConfiguration getConfiguration() {
+		return configuration;
 	}
 
 	private GluuLdapConfiguration fixLdapConfiguration(GluuLdapConfiguration ldapConfig) {

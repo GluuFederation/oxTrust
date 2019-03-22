@@ -11,9 +11,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.api.server.util.Constants;
-import org.gluu.oxtrust.ldap.service.ApplianceService;
+import org.gluu.oxtrust.ldap.service.ConfigurationService;
 import org.gluu.oxtrust.ldap.service.EncryptionService;
-import org.gluu.oxtrust.model.GluuAppliance;
+import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.oxtrust.util.OxTrustApiConstants;
 import org.slf4j.Logger;
 import org.xdi.model.SmtpConfiguration;
@@ -36,7 +36,7 @@ public class SmtpConfigurationWebResource extends BaseWebResource {
 	private Logger logger;
 
 	@Inject
-	private ApplianceService applianceService;
+	private ConfigurationService configurationService;
 
 	@Inject
 	private MailService mailService;
@@ -51,7 +51,7 @@ public class SmtpConfigurationWebResource extends BaseWebResource {
 			@ApiResponse(code = 500, message = "Server error") })
 	public Response getSmtpServerConfiguration() {
 		try {
-			SmtpConfiguration smtpConfiguration = applianceService.getAppliance().getSmtpConfiguration();
+			SmtpConfiguration smtpConfiguration = configurationService.getConfiguration().getSmtpConfiguration();
 			return Response.ok(smtpConfiguration).build();
 		} catch (Exception e) {
 			log(logger, e);
@@ -67,10 +67,10 @@ public class SmtpConfigurationWebResource extends BaseWebResource {
 	public Response updateSmtpConfiguration(SmtpConfiguration smtpConfiguration) {
 		try {
 			Preconditions.checkNotNull(smtpConfiguration, "Attempt to update null smtpConfiguration");
-			applianceService.encryptedSmtpPassword(smtpConfiguration);
-			GluuAppliance applianceUpdate = applianceService.getAppliance();
-			applianceUpdate.setSmtpConfiguration(smtpConfiguration);
-			applianceService.updateAppliance(applianceUpdate);
+			configurationService.encryptedSmtpPassword(smtpConfiguration);
+			GluuConfiguration configurationUpdate = configurationService.getConfiguration();
+			configurationUpdate.setSmtpConfiguration(smtpConfiguration);
+			configurationService.updateConfiguration(configurationUpdate);
 			return Response.ok(Constants.RESULT_SUCCESS).build();
 		} catch (Exception e) {
 			log(logger, e);
@@ -86,7 +86,7 @@ public class SmtpConfigurationWebResource extends BaseWebResource {
 			@ApiResponse(code = 500, message = "Server error") })
 	public Response testSmtpConfiguration() {
 		try {
-			SmtpConfiguration smtpConfiguration = applianceService.getAppliance().getSmtpConfiguration();
+			SmtpConfiguration smtpConfiguration = configurationService.getConfiguration().getSmtpConfiguration();
 			String password = encryptionService.decrypt(smtpConfiguration.getPassword());
 			smtpConfiguration.setPasswordDecrypted(password);
 			boolean result = mailService.sendMail(smtpConfiguration, smtpConfiguration.getFromEmailAddress(),

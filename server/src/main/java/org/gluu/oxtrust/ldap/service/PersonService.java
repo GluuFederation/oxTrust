@@ -14,6 +14,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -433,38 +434,7 @@ public class PersonService implements Serializable, IPersonService {
 	 * @throws Exception
 	 */
 	private String generateInumForNewPersonImpl() {
-		String orgInum = organizationService.getInumForOrganization();
-		return orgInum + OxTrustConstants.inumDelimiter + OxTrustConstants.INUM_PERSON_OBJECTTYPE
-				+ OxTrustConstants.inumDelimiter + generateInum();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.gluu.oxtrust.ldap.service.IPersonService#generateInameForNewPerson(java.
-	 * lang.String)
-	 */
-	@Override
-	public String generateInameForNewPerson(String uid) {
-		return String.format("%s*person*%s", appConfiguration.getOrgIname(), uid);
-	}
-
-	private String generateInum() {
-		String inum = "";
-		while (true) {
-			inum = INumGenerator.generate(4);
-			try {
-				BigInteger value = new BigInteger(inum.replace(".", ""), 16);
-				if (value.doubleValue() < 7.0) {
-					continue;
-				}
-			} catch (Exception ex) {
-				log.error("Error generating inum: ", ex);
-			}
-			break;
-		}
-		return inum;
+		return UUID.randomUUID().toString();
 	}
 
 	/*

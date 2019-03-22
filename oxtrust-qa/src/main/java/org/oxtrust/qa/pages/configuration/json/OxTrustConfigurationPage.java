@@ -38,13 +38,13 @@ public class OxTrustConfigurationPage extends AbstractPage {
 		Assert.assertNotNull(element);
 	}
 
-	public void assertApplianceInumIsPresent() {
-		WebElement element = webDriver.findElement(By.name("root[applianceInum]"));
+	public void assertConfigurationInumIsPresent() {
+		WebElement element = webDriver.findElement(By.name("root[configurationInum]"));
 		Assert.assertNotNull(element);
 	}
 
 	public void assertApplicationUrlIsPresent() {
-		WebElement element = webDriver.findElement(By.name("root[applianceUrl]"));
+		WebElement element = webDriver.findElement(By.name("root[configurationUrl]"));
 		Assert.assertNotNull(element);
 	}
 

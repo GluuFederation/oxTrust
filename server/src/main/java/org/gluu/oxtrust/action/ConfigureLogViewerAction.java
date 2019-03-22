@@ -17,9 +17,9 @@ import javax.inject.Named;
 
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
-import org.gluu.oxtrust.ldap.service.ApplianceService;
+import org.gluu.oxtrust.ldap.service.ConfigurationService;
 import org.gluu.oxtrust.ldap.service.JsonConfigurationService;
-import org.gluu.oxtrust.model.GluuAppliance;
+import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.oxtrust.model.LogViewerConfig;
 import org.gluu.oxtrust.model.SimpleCustomPropertiesListModel;
 import org.gluu.oxtrust.service.logger.LoggerService;
@@ -47,7 +47,7 @@ public class ConfigureLogViewerAction implements SimpleCustomPropertiesListModel
 	private Logger log;
 
 	@Inject
-	private ApplianceService applianceService;
+	private ConfigurationService configurationService;
 
 	@Inject
 	private FacesMessages facesMessages;
@@ -64,7 +64,7 @@ public class ConfigureLogViewerAction implements SimpleCustomPropertiesListModel
 	@Inject
 	private JsonConfigurationService jsonConfigurationService;
 
-	private GluuAppliance appliance;
+	private GluuConfiguration configuration;
 
 	private String oxTrustLogConfigLocation;
 	private String oxAuthLogConfigLocation;
@@ -78,8 +78,8 @@ public class ConfigureLogViewerAction implements SimpleCustomPropertiesListModel
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
 
-		this.appliance = applianceService.getAppliance();
-		this.oxTrustLogConfigLocation = appliance.getOxLogConfigLocation();
+		this.configuration = configurationService.getConfiguration();
+		this.oxTrustLogConfigLocation = configuration.getOxLogConfigLocation();
 		
 		try {
 			this.oxAuthLogConfigLocation = jsonConfigurationService.getOxauthAppConfiguration().getExternalLoggerConfiguration();
@@ -104,7 +104,7 @@ public class ConfigureLogViewerAction implements SimpleCustomPropertiesListModel
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 
-		updateAppliance();
+		updateConfiguration();
 		updateOxAuthConfiguration();
 
     facesMessages.add(FacesMessage.SEVERITY_INFO, "Log viewer configuration updated");
@@ -112,13 +112,13 @@ public class ConfigureLogViewerAction implements SimpleCustomPropertiesListModel
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	private void updateAppliance() {
-		GluuAppliance updateAppliance = applianceService.getAppliance();
+	private void updateConfiguration() {
+		GluuConfiguration updateConfiguration = configurationService.getConfiguration();
 		try {
-			updateAppliance.setOxLogViewerConfig(jsonService.objectToJson(logViewerConfiguration));
-			updateAppliance.setOxLogConfigLocation(oxTrustLogConfigLocation);
+			updateConfiguration.setOxLogViewerConfig(jsonService.objectToJson(logViewerConfiguration));
+			updateConfiguration.setOxLogConfigLocation(oxTrustLogConfigLocation);
 
-			applianceService.updateAppliance(updateAppliance);
+			configurationService.updateConfiguration(updateConfiguration);
 			loggerService.updateLoggerConfigLocation();
 		} catch (Exception ex) {
 			log.error("Failed to save log viewer configuration '{}'", ex);
@@ -152,10 +152,10 @@ public class ConfigureLogViewerAction implements SimpleCustomPropertiesListModel
 	private LogViewerConfig prepareLogViewerConfig() {
 		LogViewerConfig logViewerConfig = null;
 
-		String oxLogViewerConfig = appliance.getOxLogViewerConfig();
+		String oxLogViewerConfig = configuration.getOxLogViewerConfig();
 		if (StringHelper.isNotEmpty(oxLogViewerConfig)) {
 			try {
-				logViewerConfig = jsonService.jsonToObject(appliance.getOxLogViewerConfig(), LogViewerConfig.class);
+				logViewerConfig = jsonService.jsonToObject(configuration.getOxLogViewerConfig(), LogViewerConfig.class);
 			} catch (Exception ex) {
 				log.error("Failed to load log viewer configuration '{}'", oxLogViewerConfig, ex);
 			}

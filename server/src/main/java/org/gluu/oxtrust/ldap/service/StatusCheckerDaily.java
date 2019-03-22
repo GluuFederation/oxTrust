@@ -16,7 +16,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.gluu.oxtrust.config.ConfigurationFactory;
-import org.gluu.oxtrust.model.GluuAppliance;
+import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.oxtrust.service.cdi.event.StatusCheckerDailyEvent;
 import org.gluu.persist.exception.BasePersistenceException;
 import org.slf4j.Logger;
@@ -40,7 +40,7 @@ public class StatusCheckerDaily {
 	private Event<TimerEvent> timerEvent;
 
 	@Inject
-	private ApplianceService applianceService;
+	private ConfigurationService configurationService;
 
 	@Inject
 	private IGroupService groupService;
@@ -95,7 +95,7 @@ public class StatusCheckerDaily {
 	private void processInt() {
 		log.debug("Starting daily status checker");
 		AppConfiguration appConfiguration = configurationFactory.getAppConfiguration();
-		if (!appConfiguration.isUpdateApplianceStatus()) {
+		if (!appConfiguration.isUpdateStatus()) {
 			return;
 		}
 
@@ -103,36 +103,36 @@ public class StatusCheckerDaily {
         int groupCount = groupService.countGroups();
         int personCount = personService.countPersons();
 
-		GluuAppliance appliance = applianceService.getAppliance();
+		GluuConfiguration configuration = configurationService.getConfiguration();
 
         log.debug("Setting ldap attributes");
-        appliance.setGroupCount(String.valueOf(groupCount));
-        appliance.setPersonCount(String.valueOf(personCount)); 
-        appliance.setGluuDSStatus(Boolean.toString(groupCount > 0 && personCount > 0));
+        configuration.setGroupCount(String.valueOf(groupCount));
+        configuration.setPersonCount(String.valueOf(personCount)); 
+        configuration.setGluuDSStatus(Boolean.toString(groupCount > 0 && personCount > 0));
 
     	Date currentDateTime = new Date();
-		appliance.setLastUpdate(currentDateTime);
+		configuration.setLastUpdate(currentDateTime);
 
-		applianceService.updateAppliance(appliance);
+		configurationService.updateConfiguration(configuration);
 
 		if (centralLdapService.isUseCentralServer()) {
 			try {
-				GluuAppliance tmpAppliance = new GluuAppliance();
-				tmpAppliance.setDn(appliance.getDn());
-				boolean existAppliance = centralLdapService.containsAppliance(tmpAppliance);
+				GluuConfiguration tmpConfiguration = new GluuConfiguration();
+				tmpConfiguration.setDn(configuration.getDn());
+				boolean existConfiguration = centralLdapService.containsConfiguration(tmpConfiguration);
 	
-				if (existAppliance) {
-					centralLdapService.updateAppliance(appliance);
+				if (existConfiguration) {
+					centralLdapService.updateConfiguration(configuration);
 				} else {
-					centralLdapService.addAppliance(appliance);
+					centralLdapService.addConfiguration(configuration);
 				}
 			} catch (BasePersistenceException ex) {
-				log.error("Failed to update appliance at central server", ex);        
+				log.error("Failed to update configuration at central server", ex);        
 				return;
 			}
 		}
 
-		log.debug("Daily Appliance status update finished");
+		log.debug("Daily Configuration status update finished");
 	}
 
 }

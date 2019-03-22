@@ -10,8 +10,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.api.server.util.Constants;
-import org.gluu.oxtrust.ldap.service.ApplianceService;
-import org.gluu.oxtrust.model.GluuAppliance;
+import org.gluu.oxtrust.ldap.service.ConfigurationService;
+import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.oxtrust.util.OxTrustApiConstants;
 import org.slf4j.Logger;
 
@@ -19,29 +19,29 @@ import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
-@Path(OxTrustApiConstants.BASE_API_URL + OxTrustApiConstants.APPLIANCE)
+@Path(OxTrustApiConstants.BASE_API_URL + OxTrustApiConstants.CONFIGURATION)
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @ApplicationScoped
-public class ApplianceWebResource extends BaseWebResource {
+public class ConfigurationWebResource extends BaseWebResource {
 
 	@Inject
 	private Logger logger;
 
 	@Inject
-	private ApplianceService applianceService;
+	private ConfigurationService configurationService;
 
-	public ApplianceWebResource() {
+	public ConfigurationWebResource() {
 	}
 
 	@GET
-	@ApiOperation(value = "Get appliance")
+	@ApiOperation(value = "Get configuration")
 	@ApiResponses(value = {
-			@ApiResponse(code = 200, response = GluuAppliance.class, message = Constants.RESULT_SUCCESS),
+			@ApiResponse(code = 200, response = GluuConfiguration.class, message = Constants.RESULT_SUCCESS),
 			@ApiResponse(code = 500, message = "Server error") })
-	public Response getAppliance() {
+	public Response getConfiguration() {
 		try {
-			return Response.ok(applianceService.getAppliance()).build();
+			return Response.ok(configurationService.getConfiguration()).build();
 		} catch (Exception e) {
 			log(logger, e);
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();

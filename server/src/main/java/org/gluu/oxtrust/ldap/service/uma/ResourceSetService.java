@@ -8,6 +8,7 @@ package org.gluu.oxtrust.ldap.service.uma;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.UUID;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -183,8 +184,7 @@ public class ResourceSetService implements Serializable {
 	 * @return New inum for resource set
 	 */
 	private String generateInumForNewResourceImpl() {
-		String orgInum = organizationService.getInumForOrganization();
-		return orgInum + OxTrustConstants.inumDelimiter + INumGenerator.generate(2);
+		return UUID.randomUUID().toString();
 	}
 
 	/**

@@ -46,8 +46,8 @@ public class InumRestWebService {
 			typeText = "people";
 		} else if ("organization".equals(type)) {
 			typeText = "organization";
-		} else if ("appliance".equals(type)) {
-			typeText = "appliance";
+		} else if ("configuration".equals(type)) {
+			typeText = "configuration";
 		} else if ("group".equals(type)) {
 			typeText = "group";
 		} else if ("server".equals(type)) {
@@ -75,8 +75,8 @@ public class InumRestWebService {
 			titleText = "New Unique People Inum Generator";
 		} else if ("organization".equals(type)) {
 			titleText = "New Unique Organization Inum Generator";
-		} else if ("appliance".equals(type)) {
-			titleText = "New Unique Appliance Inum Generator";
+		} else if ("configuration".equals(type)) {
+			titleText = "New Unique Configuration Inum Generator";
 		} else if ("group".equals(type)) {
 			titleText = "New Unique Group Inum Generator";
 		} else if ("server".equals(type)) {

@@ -6,7 +6,7 @@
 
 package org.gluu.oxtrust.service;
 
-import org.gluu.oxtrust.ldap.service.ApplianceService;
+import org.gluu.oxtrust.ldap.service.ConfigurationService;
 import org.gluu.oxtrust.ldap.service.ApplicationFactory;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.model.AuthenticationChartDto;
@@ -55,7 +55,7 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 	private CacheService cacheService;
 
 	@Inject
-	private ApplianceService applianceService;
+	private ConfigurationService configurationService;
 
 	@Inject
 	private OrganizationService organizationService;
@@ -74,14 +74,8 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 
 	@Override
 	public String baseDn() {
-		String orgDn = organizationService.getDnForOrganization();
-		String baseDn = String.format("ou=metric,%s", orgDn);
+		String baseDn = String.format("ou=statistic,o=metric");
 		return baseDn;
-	}
-
-	@Override
-	public String applianceInum() {
-		return applianceService.getApplianceInum();
 	}
 
 	@Override
@@ -156,8 +150,7 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 
 		Date startDate = calendar.getTime();
 
-		Map<MetricType, List<? extends MetricEntry>> entries = findMetricEntry(applicationType,
-				appConfiguration.getApplianceInum(), metricTypes, startDate, endDate);
+		Map<MetricType, List<? extends MetricEntry>> entries = findMetricEntry(applicationType, metricTypes, startDate, endDate);
 
 		return entries;
 	}

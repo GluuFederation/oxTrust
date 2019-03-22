@@ -14,6 +14,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 import javax.enterprise.context.ConversationScoped;
@@ -23,7 +24,7 @@ import javax.inject.Named;
 
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
-import org.gluu.oxtrust.ldap.service.ApplianceService;
+import org.gluu.oxtrust.ldap.service.ConfigurationService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.model.SimpleCustomPropertiesListModel;
 import org.gluu.oxtrust.model.SimplePropertiesListModel;
@@ -73,7 +74,7 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 	private OrganizationService organizationService;
 
 	@Inject
-	private ApplianceService applianceService;
+	private ConfigurationService configurationService;
 
 	@Inject
 	private AbstractCustomScriptService customScriptService;
@@ -90,7 +91,7 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
 		
-		CustomScriptType[] allowedCustomScriptTypes = this.applianceService.getCustomScriptTypes();
+		CustomScriptType[] allowedCustomScriptTypes = this.configurationService.getCustomScriptTypes();
 
 		this.customScriptsByTypes = new HashMap<CustomScriptType, List<CustomScript>>();
 		for (CustomScriptType customScriptType : allowedCustomScriptTypes) {
@@ -135,7 +136,7 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 
 	public String save() {
 		try {
-			List<CustomScript> oldCustomScripts = customScriptService.findCustomScripts(Arrays.asList(this.applianceService.getCustomScriptTypes()), "dn", "inum");
+			List<CustomScript> oldCustomScripts = customScriptService.findCustomScripts(Arrays.asList(this.configurationService.getCustomScriptTypes()), "dn", "inum");
 
 			List<String> updatedInums = new ArrayList<String>();
 
@@ -161,8 +162,7 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 					String dn = customScript.getDn();
 					String customScriptId = customScript.getInum();
 					if (StringHelper.isEmpty(dn)) {
-						String basedInum = organizationService.getOrganizationInum();
-						customScriptId = basedInum + "!" + INumGenerator.generate(2);
+						customScriptId = UUID.randomUUID().toString();
 						dn = customScriptService.buildDn(customScriptId);
 	
 						customScript.setDn(dn);

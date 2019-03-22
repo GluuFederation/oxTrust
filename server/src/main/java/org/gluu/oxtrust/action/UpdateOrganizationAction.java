@@ -22,10 +22,10 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.config.ConfigurationFactory;
-import org.gluu.oxtrust.ldap.service.ApplianceService;
+import org.gluu.oxtrust.ldap.service.ConfigurationService;
 import org.gluu.oxtrust.ldap.service.ImageService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
-import org.gluu.oxtrust.model.GluuAppliance;
+import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.util.OxTrustConstants;
@@ -72,7 +72,7 @@ public class UpdateOrganizationAction implements Serializable {
 	private OrganizationService organizationService;
 
 	@Inject
-	private ApplianceService applianceService;
+	private ConfigurationService configurationService;
 
 	@Inject
 	private ConfigurationFactory configurationFactory;
@@ -89,9 +89,9 @@ public class UpdateOrganizationAction implements Serializable {
 
 	private GluuImage curFaviconImage, oldFaviconImage;
 
-	private GluuAppliance appliance;
+	private GluuConfiguration configuration;
 
-	private List<GluuAppliance> appliances;
+	private List<GluuConfiguration> configurations;
 
 	private boolean initialized;
 	private WebKeysSettings webKeysSettings;
@@ -157,8 +157,8 @@ public class UpdateOrganizationAction implements Serializable {
 		this.welcomeTitleText = organizationService
 				.getOrganizationCustomMessage(OxTrustConstants.CUSTOM_MESSAGE_TITLE_TEXT);
 		initOxAuthSetting();
-		appliances = new ArrayList<GluuAppliance>();
-		appliances.addAll(applianceService.getAppliances());
+		configurations = new ArrayList<GluuConfiguration>();
+		configurations.addAll(configurationService.getConfigurations());
 
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
@@ -200,9 +200,9 @@ public class UpdateOrganizationAction implements Serializable {
 			organizationService.updateOrganization(this.organization);
 
 			// Encrypt password and prepare SMTP configuration
-			applianceService.encryptedSmtpPassword(smtpConfiguration);
+			configurationService.encryptedSmtpPassword(smtpConfiguration);
 
-			updateAppliance();
+			updateConfiguration();
 
 			saveWebKeySettings();
 
@@ -223,21 +223,21 @@ public class UpdateOrganizationAction implements Serializable {
 		return modify();
 	}
 
-	private void updateAppliance() {
-		GluuAppliance applianceUpdate = applianceService.getAppliance();
+	private void updateConfiguration() {
+		GluuConfiguration configurationUpdate = configurationService.getConfiguration();
 
 		// Update properties which user might update
-		applianceUpdate.setPasswordResetAllowed(appliance.getPasswordResetAllowed());
-		applianceUpdate.setPassportEnabled(appliance.getPassportEnabled());
-		applianceUpdate.setScimEnabled(appliance.getScimEnabled());
-		applianceUpdate.setProfileManagment(appliance.getProfileManagment());
-		applianceUpdate.setSmtpConfiguration(smtpConfiguration);
+		configurationUpdate.setPasswordResetAllowed(configuration.getPasswordResetAllowed());
+		configurationUpdate.setPassportEnabled(configuration.getPassportEnabled());
+		configurationUpdate.setScimEnabled(configuration.getScimEnabled());
+		configurationUpdate.setProfileManagment(configuration.getProfileManagment());
+		configurationUpdate.setSmtpConfiguration(smtpConfiguration);
 
-		applianceUpdate.setApplianceDnsServer(appliance.getApplianceDnsServer());
-		applianceUpdate.setMaxLogSize(appliance.getMaxLogSize());
-		applianceUpdate.setContactEmail(appliance.getContactEmail());
+		configurationUpdate.setConfigurationDnsServer(configuration.getConfigurationDnsServer());
+		configurationUpdate.setMaxLogSize(configuration.getMaxLogSize());
+		configurationUpdate.setContactEmail(configuration.getContactEmail());
 
-		applianceService.updateAppliance(applianceUpdate);
+		configurationService.updateConfiguration(configurationUpdate);
 	}
 
 	public void saveWebKeySettings() {
@@ -272,21 +272,21 @@ public class UpdateOrganizationAction implements Serializable {
 	}
 
 	private String modifyApplliance() {
-		if (this.appliance != null) {
+		if (this.configuration != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
 		try {
-			this.appliance = applianceService.getAppliance();
-			if (this.appliance == null) {
+			this.configuration = configurationService.getConfiguration();
+			if (this.configuration == null) {
 				return OxTrustConstants.RESULT_FAILURE;
 			}
-			this.smtpConfiguration = this.appliance.getSmtpConfiguration();
+			this.smtpConfiguration = this.configuration.getSmtpConfiguration();
 			if (this.smtpConfiguration == null) {
 				this.smtpConfiguration = new SmtpConfiguration();
-				this.appliance.setSmtpConfiguration(smtpConfiguration);
+				this.configuration.setSmtpConfiguration(smtpConfiguration);
 			}
 
-			applianceService.decryptSmtpPassword(smtpConfiguration);
+			configurationService.decryptSmtpPassword(smtpConfiguration);
 
 			return OxTrustConstants.RESULT_SUCCESS;
 		} catch (Exception ex) {
@@ -538,23 +538,23 @@ public class UpdateOrganizationAction implements Serializable {
 		this.welcomeTitleText = welcomeTitleText;
 	}
 
-	public GluuAppliance getAppliance() {
-		return this.appliance;
+	public GluuConfiguration getConfiguration() {
+		return this.configuration;
 	}
 
 	/**
-	 * @return the appliances
+	 * @return the configurations
 	 */
-	public List<GluuAppliance> getAppliances() {
-		return appliances;
+	public List<GluuConfiguration> getConfigurations() {
+		return configurations;
 	}
 
 	/**
-	 * @param appliances
-	 *            the appliances to set
+	 * @param configurations
+	 *            the configurations to set
 	 */
-	public void setAppliances(List<GluuAppliance> appliances) {
-		this.appliances = appliances;
+	public void setConfigurations(List<GluuConfiguration> configurations) {
+		this.configurations = configurations;
 	}
 
 	public WebKeysSettings getWebKeysSettings() {

@@ -314,7 +314,7 @@ public class AppInitializer {
 	@CentralLdap
 	public PersistenceEntryManager createCentralLdapEntryManager() {
 		if (!((configurationFactory.getLdapCentralConfiguration() != null)
-				&& configurationFactory.getAppConfiguration().isUpdateApplianceStatus())) {
+				&& configurationFactory.getAppConfiguration().isUpdateStatus())) {
 			return new LdapEntryManager();
 		}
 

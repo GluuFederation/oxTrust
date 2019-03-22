@@ -2,10 +2,10 @@
 
 <suite name="oxTrustServer" parallel="false">
 
-    <!-- Appliance Status Test (embedded) -->
-    <test name="Appliance Status Test (embedded)" enabled="true">
+    <!-- Configuration Status Test (embedded) -->
+    <test name="Configuration Status Test (embedded)" enabled="true">
         <classes>
-            <class name="org.gluu.oxtrust.service.test.ApplianceStatusTest"/>
+            <class name="org.gluu.oxtrust.service.test.ConfigurationStatusTest"/>
         </classes>
     </test>
 

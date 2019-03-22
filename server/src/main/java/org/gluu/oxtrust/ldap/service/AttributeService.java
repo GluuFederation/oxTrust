@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.ejb.Stateless;
 import javax.enterprise.event.Event;
@@ -58,7 +59,7 @@ public class AttributeService extends org.xdi.service.AttributeService {
 	private AppConfiguration appConfiguration;
 
 	@Inject
-	private ApplianceService applianceService;
+	private ConfigurationService configurationService;
 
 	@Inject
 	private OrganizationService organizationService;
@@ -400,10 +401,6 @@ public class AttributeService extends org.xdi.service.AttributeService {
 	 * @return Array of attribute user roles
 	 */
 	public UserRole[] getViewTypes() {
-		if (applianceService.getAppliance().getWhitePagesEnabled() != null
-				&& applianceService.getAppliance().getWhitePagesEnabled().isBooleanValue()) {
-			return new UserRole[] { UserRole.ADMIN, UserRole.USER, UserRole.WHITEPAGES };
-		}
 		return new UserRole[] { UserRole.ADMIN, UserRole.USER };
 	}
 
@@ -463,8 +460,7 @@ public class AttributeService extends org.xdi.service.AttributeService {
 	 * @throws Exception
 	 */
 	private String generateInumForNewAttributeImpl() {
-		String orgInum = organizationService.getInumForOrganization();
-		return orgInum + OxTrustConstants.inumDelimiter + "0005" + OxTrustConstants.inumDelimiter + generateInum();
+		return UUID.randomUUID().toString();
 	}
 
 	private String generateInum() {

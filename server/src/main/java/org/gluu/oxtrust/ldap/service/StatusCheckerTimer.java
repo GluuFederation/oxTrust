@@ -46,8 +46,8 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.io.IOUtils;
 import org.gluu.oxtrust.config.ConfigurationFactory;
-import org.gluu.oxtrust.model.GluuAppliance;
-import org.gluu.oxtrust.model.status.ApplianceStatus;
+import org.gluu.oxtrust.model.GluuConfiguration;
+import org.gluu.oxtrust.model.status.ConfigurationStatus;
 import org.gluu.oxtrust.service.cdi.event.StatusCheckerTimerEvent;
 import org.gluu.oxtrust.util.NumberHelper;
 import org.gluu.oxtrust.util.OxTrustConstants;
@@ -79,7 +79,7 @@ public class StatusCheckerTimer {
 	private Event<TimerEvent> timerEvent;
 
 	@Inject
-	private ApplianceService applianceService;
+	private ConfigurationService configurationService;
 
 	@Inject
 	private CentralLdapService centralLdapService;
@@ -136,63 +136,63 @@ public class StatusCheckerTimer {
 	 *            Interval
 	 */
 	private void processInt() {
-		log.debug("Starting update of appliance status");
+		log.debug("Starting update of configuration status");
 		AppConfiguration appConfiguration = configurationFactory.getAppConfiguration();
-		if (!appConfiguration.isUpdateApplianceStatus()) {
-			log.info("isUpdateApplianceStatus");
+		if (!appConfiguration.isUpdateStatus()) {
+			log.info("isUpdateStatus");
 			return;
 		}
-		ApplianceStatus applianceStatus = new ApplianceStatus();
-		// Execute facter and update appliance attributes
+		ConfigurationStatus configurationStatus = new ConfigurationStatus();
+		// Execute facter and update configuration attributes
 		log.debug("Setting FactorAttributes");
-		setFactorAttributes(applianceStatus);
-		// Execute df and update appliance attributes
-		setDfAttributes(applianceStatus);
+		setFactorAttributes(configurationStatus);
+		// Execute df and update configuration attributes
+		setDfAttributes(configurationStatus);
 		// Set HTTPD attributes
-		setHttpdAttributes(applianceStatus);
+		setHttpdAttributes(configurationStatus);
 
 		try {
-			setCertificateExpiryAttributes(applianceStatus);
+			setCertificateExpiryAttributes(configurationStatus);
 		} catch (Exception ex) {
 			log.error("Failed to check certificate expiration", ex);
 		}
 
-		GluuAppliance appliance = applianceService.getAppliance();
+		GluuConfiguration configuration = configurationService.getConfiguration();
 		try {
 			// Copy gathered values
-			BeanUtils.copyProperties(appliance, applianceStatus);
+			BeanUtils.copyProperties(configuration, configurationStatus);
 		} catch (Exception ex) {
 			log.error("Failed to copy status attributes", ex);
 		}
 
 		Date currentDateTime = new Date();
-		appliance.setLastUpdate(currentDateTime);
+		configuration.setLastUpdate(currentDateTime);
 
-		applianceService.updateAppliance(appliance);
+		configurationService.updateConfiguration(configuration);
 
 		if (centralLdapService.isUseCentralServer()) {
 			try {
-				GluuAppliance tmpAppliance = new GluuAppliance();
-				tmpAppliance.setDn(appliance.getDn());
-				boolean existAppliance = centralLdapService.containsAppliance(tmpAppliance);
+				GluuConfiguration tmpConfiguration = new GluuConfiguration();
+				tmpConfiguration.setDn(configuration.getDn());
+				boolean existConfiguration = centralLdapService.containsConfiguration(tmpConfiguration);
 
-				if (existAppliance) {
-					centralLdapService.updateAppliance(appliance);
+				if (existConfiguration) {
+					centralLdapService.updateConfiguration(configuration);
 				} else {
-					centralLdapService.addAppliance(appliance);
+					centralLdapService.addConfiguration(configuration);
 				}
 			} catch (BasePersistenceException ex) {
-				log.error("Failed to update appliance at central server", ex);
+				log.error("Failed to update configuration at central server", ex);
 				return;
 			}
 		}
 
-		log.debug("Appliance status update finished");
+		log.debug("Configuration status update finished");
 	}
 
-	private void setCertificateExpiryAttributes(ApplianceStatus appliance) {
+	private void setCertificateExpiryAttributes(ConfigurationStatus configuration) {
 		try {
-			URL destinationURL = new URL(appConfiguration.getApplianceUrl());
+			URL destinationURL = new URL(appConfiguration.getApplicationUrl());
 			HttpsURLConnection conn = (HttpsURLConnection) destinationURL.openConnection();
 			conn.connect();
 			Certificate[] certs = conn.getServerCertificates();
@@ -201,7 +201,7 @@ public class StatusCheckerTimer {
 					X509Certificate x509Certificate = (X509Certificate) certs[0];
 					Date expirationDate = x509Certificate.getNotAfter();
 					long expiresAfter = TimeUnit.MILLISECONDS.toDays(expirationDate.getTime() - new Date().getTime());
-					appliance.setSslExpiry(toIntString(expiresAfter));
+					configuration.setSslExpiry(toIntString(expiresAfter));
 				}
 			}
 		} catch (IOException e) {
@@ -209,11 +209,11 @@ public class StatusCheckerTimer {
 		}
 	}
 
-	private void setHttpdAttributes(ApplianceStatus appliance) {
+	private void setHttpdAttributes(ConfigurationStatus configuration) {
 		log.debug("Setting httpd attributes");
 		AppConfiguration appConfiguration = configurationFactory.getAppConfiguration();
 		String page = getHttpdPage(appConfiguration.getIdpUrl(), OxTrustConstants.HTTPD_TEST_PAGE_NAME);
-		appliance.setGluuHttpStatus(Boolean.toString(OxTrustConstants.HTTPD_TEST_PAGE_CONTENT.equals(page)));
+		configuration.setGluuHttpStatus(Boolean.toString(OxTrustConstants.HTTPD_TEST_PAGE_CONTENT.equals(page)));
 
 	}
 
@@ -268,7 +268,7 @@ public class StatusCheckerTimer {
 	}
 
 	@SuppressWarnings("deprecation")
-	private void setFactorAttributes(ApplianceStatus appliance) {
+	private void setFactorAttributes(ConfigurationStatus configuration) {
 		if (!isLinux()) {
 			return;
 		}
@@ -303,13 +303,13 @@ public class StatusCheckerTimer {
 		String[] outputLines = resultOutput.split("\\r?\\n");
 
 		if (isOldVersion) {
-			appliance.setFreeMemory(getFreeMemory(outputLines, OxTrustConstants.FACTER_FREE_MEMORY,
+			configuration.setFreeMemory(getFreeMemory(outputLines, OxTrustConstants.FACTER_FREE_MEMORY,
 					OxTrustConstants.FACTER_MEMORY_SIZE));
 		} else {
-			appliance.setFreeMemory(getFreeMemory(outputLines, OxTrustConstants.FACTER_FREE_MEMORY_MB,
+			configuration.setFreeMemory(getFreeMemory(outputLines, OxTrustConstants.FACTER_FREE_MEMORY_MB,
 					OxTrustConstants.FACTER_MEMORY_SIZE_MB));
 		}
-		appliance.setFreeSwap(toIntString(getFacterPercentResult(outputLines, OxTrustConstants.FACTER_FREE_SWAP,
+		configuration.setFreeSwap(toIntString(getFacterPercentResult(outputLines, OxTrustConstants.FACTER_FREE_SWAP,
 				OxTrustConstants.FACTER_FREE_SWAP_TOTAL)));
 		String hostname = "";
 		try {
@@ -320,11 +320,11 @@ public class StatusCheckerTimer {
 		if (hostname.equalsIgnoreCase("localhost")) {
 			hostname = getFacterResult(outputLines, OxTrustConstants.FACTER_HOST_NAME);
 		}
-		appliance.setHostname(hostname);
-		appliance.setIpAddress(getFacterResult(outputLines, OxTrustConstants.FACTER_IP_ADDRESS));
-		appliance.setLoadAvg(getFacterResult(outputLines, OxTrustConstants.FACTER_LOAD_AVERAGE));
-		getFacterBandwidth(getFacterResult(outputLines, OxTrustConstants.FACTER_BANDWIDTH_USAGE), appliance);
-		appliance.setSystemUptime(getFacterResult(outputLines, OxTrustConstants.FACTER_SYSTEM_UP_TIME));
+		configuration.setHostname(hostname);
+		configuration.setIpAddress(getFacterResult(outputLines, OxTrustConstants.FACTER_IP_ADDRESS));
+		configuration.setLoadAvg(getFacterResult(outputLines, OxTrustConstants.FACTER_LOAD_AVERAGE));
+		getFacterBandwidth(getFacterResult(outputLines, OxTrustConstants.FACTER_BANDWIDTH_USAGE), configuration);
+		configuration.setSystemUptime(getFacterResult(outputLines, OxTrustConstants.FACTER_SYSTEM_UP_TIME));
 	}
 
 	@SuppressWarnings("deprecation")
@@ -344,7 +344,7 @@ public class StatusCheckerTimer {
 
 	}
 
-	private void getFacterBandwidth(String facterResult, ApplianceStatus appliance) {
+	private void getFacterBandwidth(String facterResult, ConfigurationStatus configuration) {
 		log.debug("Setting bandwidth attributes");
 		if (facterResult != null) {
 			String[] lines = facterResult.split("\n");
@@ -357,19 +357,19 @@ public class StatusCheckerTimer {
 				if (match.find()) {
 					line = line.replaceAll("^\\s*" + month, "");
 					String[] values = line.split("\\|");
-					appliance.setGluuBandwidthRX(values[0].replaceAll("^\\s*", "").replaceAll("\\s*$", ""));
-					appliance.setGluuBandwidthTX(values[1].replaceAll("^\\s*", "").replaceAll("\\s*$", ""));
+					configuration.setGluuBandwidthRX(values[0].replaceAll("^\\s*", "").replaceAll("\\s*$", ""));
+					configuration.setGluuBandwidthTX(values[1].replaceAll("^\\s*", "").replaceAll("\\s*$", ""));
 				}
 			}
 		} else {
-			appliance.setGluuBandwidthRX("-1");
-			appliance.setGluuBandwidthTX("-1");
+			configuration.setGluuBandwidthRX("-1");
+			configuration.setGluuBandwidthTX("-1");
 		}
 
 	}
 
 	@SuppressWarnings("deprecation")
-	private void setDfAttributes(ApplianceStatus appliance) {
+	private void setDfAttributes(ConfigurationStatus configuration) {
 		log.debug("Setting df attributes");
 		// Run df only on linux
 		if (!isLinux()) {
@@ -415,8 +415,8 @@ public class StatusCheckerTimer {
 			Number usedDiskSpace = getNumber(outputValues[4]);
 			Number freeDiskSpace = usedDiskSpace == null ? null : 100 - usedDiskSpace.doubleValue();
 
-			// Update appliance attributes
-			appliance.setFreeDiskSpace(toIntString(freeDiskSpace));
+			// Update configuration attributes
+			configuration.setFreeDiskSpace(toIntString(freeDiskSpace));
 		}
 	}
 

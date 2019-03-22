@@ -241,11 +241,6 @@ public class RegisterPersonAction implements Serializable {
 				this.person.setInum(inum);
 			}
 
-			if (person.getIname() == null) {
-				String iname = personService.generateInameForNewPerson(this.person.getUid());
-				this.person.setIname(iname);
-			}
-
 			if (person.getDn() == null) {
 				String dn = personService.getDnForPerson(this.person.getInum());
 				this.person.setDn(dn);

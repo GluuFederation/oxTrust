@@ -11,7 +11,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.gluu.oxtrust.config.ConfigurationFactory;
-import org.gluu.oxtrust.model.GluuAppliance;
+import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.oxtrust.service.cdi.event.CentralLdap;
 import org.gluu.persist.PersistenceEntryManager;
 
@@ -31,37 +31,37 @@ public class CentralLdapService {
 	private ConfigurationFactory configurationFactory;
 
 	/**
-	 * Add appliance entry
+	 * Add configuration entry
 	 * 
-	 * @param appliance
-	 *            GluuAppliance
+	 * @param configuration
+	 *            GluuConfiguration
 	 */
-	public void addAppliance(GluuAppliance appliance) {
-		centralLdapEntryManager.persist(appliance);
+	public void addConfiguration(GluuConfiguration configuration) {
+		centralLdapEntryManager.persist(configuration);
 	}
 
 	/**
-	 * Update appliance entry
+	 * Update configuration entry
 	 * 
-	 * @param appliance
-	 *            GluuAppliance
+	 * @param configuration
+	 *            GluuConfiguration
 	 */
-	public void updateAppliance(GluuAppliance appliance) {
-		centralLdapEntryManager.merge(appliance);
+	public void updateConfiguration(GluuConfiguration configuration) {
+		centralLdapEntryManager.merge(configuration);
 	}
 
 	/**
-	 * Check if LDAP server contains appliance with specified attributes
+	 * Check if LDAP server contains configuration with specified attributes
 	 * 
-	 * @return True if appliance with specified attributes exist
+	 * @return True if configuration with specified attributes exist
 	 */
-	public boolean containsAppliance(GluuAppliance appliance) {
-		return centralLdapEntryManager.contains(appliance);
+	public boolean containsConfiguration(GluuConfiguration configuration) {
+		return centralLdapEntryManager.contains(configuration);
 	}
 
 	public boolean isUseCentralServer() {
 		return (configurationFactory.getLdapCentralConfiguration() != null)
-				&& configurationFactory.getAppConfiguration().isUpdateApplianceStatus();
+				&& configurationFactory.getAppConfiguration().isUpdateStatus();
 	}
 
 }

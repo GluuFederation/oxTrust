@@ -32,8 +32,8 @@
 		            }
 		        }
             </h:outputScript>
-			<ox:changePasswordDialog id="appliancePassword"
-				label="#{msg['profile.changeAppliancePassword']}"
+			<ox:changePasswordDialog id="configurationPassword"
+				label="#{msg['profile.change�onfigurationPassword']}"
 				password="#{userProfileAction.person.getUserPassword()}"
 				person="#{userProfileAction.person}"
 				verifyOldPassword="true"
@@ -112,15 +112,15 @@
 																	defaultLabel="click to enter #{_custAttr.metadata.displayName}"
 																	id="custId" inputWidth="300" maxlength="60"
 																	styleClass="form-control"
-																	rendered="#{_custAttr.userCanEdit and _custAttr.metadata.displayName ne 'Gender, male or female' and permissionService.hasPermission(applianceService.appliance, 'profile_management')}"
+																	rendered="#{_custAttr.userCanEdit and _custAttr.metadata.displayName ne 'Gender, male or female' and permissionService.hasPermission(configurationService.configuration, 'profile_management')}"
 																	value="#{_custAttr.value}" />
 																<h:selectOneMenu value="#{_custAttr.value}" styleClass="rounded form-control" tabindex="1"
-																  rendered="#{_custAttr.userCanEdit and _custAttr.metadata.displayName eq 'Gender, male or female' and permissionService.hasPermission(applianceService.appliance, 'profile_management')}">
+																  rendered="#{_custAttr.userCanEdit and _custAttr.metadata.displayName eq 'Gender, male or female' and permissionService.hasPermission(configurationService.configuration, 'profile_management')}">
 																	<f:selectItem itemValue="female" itemLabel="female" />
 																	<f:selectItem itemValue="male" itemLabel="male" />
 																</h:selectOneMenu>
 																<h:outputText
-																	rendered="#{not (_custAttr.userCanEdit and permissionService.hasPermission(applianceService.appliance, 'profile_management'))}"
+																	rendered="#{not (_custAttr.userCanEdit and permissionService.hasPermission(configurationService.configuration, 'profile_management'))}"
 																	value="#{_custAttr.value}" />
 																<h:outputText value=" " />
 															</div>
@@ -129,7 +129,7 @@
 																limitRender="true"
 																onbeforedomupdate="changeAttributeVisibility('#{_aid}', true);"
 																render="selectedCustomAttributesId"
-																rendered="#{_custAttr.userCanEdit and (not _mandatory) and permissionService.hasPermission(applianceService.appliance, 'profile_management')}"
+																rendered="#{_custAttr.userCanEdit and (not _mandatory) and permissionService.hasPermission(configurationService.configuration, 'profile_management')}"
 																styleClass="glyphicon glyphicon-remove" execute="@this">
 															</a4j:commandLink>
 
@@ -202,7 +202,7 @@
 																limitRender="true"
 																onbeforedomupdate="changeAttributeVisibility('#{_aid}', true);"
 																render="selectedCustomAttributesId"
-																rendered="#{_custAttr.userCanEdit and (not _mandatory) and permissionService.hasPermission(applianceService.appliance, 'profile_management')}"
+																rendered="#{_custAttr.userCanEdit and (not _mandatory) and permissionService.hasPermission(configurationService.configuration, 'profile_management')}"
 																styleClass="glyphicon glyphicon-remove" execute="@this">
 															</a4j:commandLink>
 
@@ -215,10 +215,10 @@
 																		defaultLabel="click to enter Imap Host" id="custId"
 																		immediate="true" inputWidth="300" maxlength="60"
 																		styleClass="form-control"
-																		rendered="#{_custAttr.userCanEdit and permissionService.hasPermission(applianceService.appliance, 'profile_management')}"
+																		rendered="#{_custAttr.userCanEdit and permissionService.hasPermission(configurationService.configuration, 'profile_management')}"
 																		value="#{userProfileAction.imapData.imaphost}" />
 																	<h:outputText
-																		rendered="#{not (_custAttr.userCanEdit and permissionService.hasPermission(applianceService.appliance, 'profile_management'))}"
+																		rendered="#{not (_custAttr.userCanEdit and permissionService.hasPermission(configurationService.configuration, 'profile_management'))}"
 																		value="#{_custAttr.value}" />
 																	<h:outputText value=" " />
 																</div>
@@ -234,10 +234,10 @@
 																		id="custId" immediate="true" inputWidth="300"
 																		maxlength="60"
 																		styleClass="form-control"
-																		rendered="#{_custAttr.userCanEdit and permissionService.hasPermission(applianceService.appliance, 'profile_management')}"
+																		rendered="#{_custAttr.userCanEdit and permissionService.hasPermission(configurationService.configuration, 'profile_management')}"
 																		value="#{userProfileAction.imapData.imapusername}" />
 																	<h:outputText
-																		rendered="#{not (_custAttr.userCanEdit and permissionService.hasPermission(applianceService.appliance, 'profile_management'))}"
+																		rendered="#{not (_custAttr.userCanEdit and permissionService.hasPermission(configurationService.configuration, 'profile_management'))}"
 																		value="#{_custAttr.value}" />
 																	<h:outputText value=" " />
 																</div>
@@ -252,10 +252,10 @@
 																		defaultLabel="click to enter imap port" id="custId"
 																		immediate="true" inputWidth="300" maxlength="60"
 																		styleClass="form-control"
-																		rendered="#{_custAttr.userCanEdit and permissionService.hasPermission(applianceService.appliance, 'profile_management')}"
+																		rendered="#{_custAttr.userCanEdit and permissionService.hasPermission(configurationService.configuration, 'profile_management')}"
 																		value="#{userProfileAction.imapData.imapport}" />
 																	<h:outputText
-																		rendered="#{not (_custAttr.userCanEdit and permissionService.hasPermission(applianceService.appliance, 'profile_management'))}"
+																		rendered="#{not (_custAttr.userCanEdit and permissionService.hasPermission(configurationService.configuration, 'profile_management'))}"
 																		value="#{_custAttr.value}" />
 																	<h:outputText value=" " />
 																</div>
@@ -273,10 +273,10 @@
 																		id="custId" immediate="true" inputWidth="300"
 																		maxlength="60"
 																		styleClass="form-control"
-																		rendered="#{_custAttr.userCanEdit and permissionService.hasPermission(applianceService.appliance, 'profile_management')}"
+																		rendered="#{_custAttr.userCanEdit and permissionService.hasPermission(configurationService.configuration, 'profile_management')}"
 																		value="#{userProfileAction.imapData.imapPassword.encryptedString}" />
 																	<h:outputText
-																		rendered="#{not (_custAttr.userCanEdit and permissionService.hasPermission(applianceService.appliance, 'profile_management'))}"
+																		rendered="#{not (_custAttr.userCanEdit and permissionService.hasPermission(configurationService.configuration, 'profile_management'))}"
 																		value="#{_custAttr.value}" />
 																	<h:outputText value=" " />
 																</div>
@@ -292,10 +292,10 @@
 																		id="custId" immediate="true" inputWidth="300"
 																		maxlength="60"
 																		styleClass="form-control"
-																		rendered="#{_custAttr.userCanEdit and permissionService.hasPermission(applianceService.appliance, 'profile_management')}"
+																		rendered="#{_custAttr.userCanEdit and permissionService.hasPermission(configurationService.configuration, 'profile_management')}"
 																		value="#{userProfileAction.imapData.imapPassword.cipher}" />
 																	<h:outputText
-																		rendered="#{not (_custAttr.userCanEdit and permissionService.hasPermission(applianceService.appliance, 'profile_management'))}"
+																		rendered="#{not (_custAttr.userCanEdit and permissionService.hasPermission(configurationService.configuration, 'profile_management'))}"
 																		value="#{_custAttr.value}" />
 																	<h:outputText value=" " />
 																</div>
@@ -311,10 +311,10 @@
 																		id="custId" immediate="true" inputWidth="300"
 																		maxlength="60"
 																		styleClass="form-control"
-																		rendered="#{_custAttr.userCanEdit and permissionService.hasPermission(applianceService.appliance, 'profile_management')}"
+																		rendered="#{_custAttr.userCanEdit and permissionService.hasPermission(configurationService.configuration, 'profile_management')}"
 																		value="#{userProfileAction.imapData.imapPassword.mode}" />
 																	<h:outputText
-																		rendered="#{not (_custAttr.userCanEdit and permissionService.hasPermission(applianceService.appliance, 'profile_management'))}"
+																		rendered="#{not (_custAttr.userCanEdit and permissionService.hasPermission(configurationService.configuration, 'profile_management'))}"
 																		value="#{_custAttr.value}" />
 																	<h:outputText value=" " />
 																</div>
@@ -333,7 +333,7 @@
 									</div>
 									<div class="col-xs-4">
 										<h:panelGroup id="attributeTabPanelGroupId" layout="block"
-											rendered="#{permissionService.hasPermission(applianceService.appliance, 'profile_management')}"
+											rendered="#{permissionService.hasPermission(configurationService.configuration, 'profile_management')}"
 											style="{vertical-align:bottom;};border: 1px solid rgb(204, 204, 204);padding: 0px 0px 7px;padding-bottom: 7px;margin-bottom: 10px;">
 											<div
 												style="background: #1E282C; padding: 15px; color: white; font-weight: bold;">#{msg['profile.customAttributes']}</div>
@@ -370,15 +370,15 @@
 
 						<a4j:commandButton
 							onclick="#{rich:component('personPassword:changePasswordModalPanel')}.show();"
-							rendered="#{permissionService.hasPermission(applianceService.appliance, 'profile_management')}"
+							rendered="#{permissionService.hasPermission(configurationService.configuration, 'profile_management')}"
 							styleClass="btn btn-success changeUserPasswordButton"
 							value="#{msg['profile.changePassword']}" />
 						<h:commandButton action="#{userProfileAction.update}"
-							rendered="#{permissionService.hasPermission(applianceService.appliance, 'profile_management')}"
+							rendered="#{permissionService.hasPermission(configurationService.configuration, 'profile_management')}"
 							styleClass="btn btn-success updateProfileButton" value="Update" />
 						<h:commandButton action="#{userProfileAction.cancel}"
 							immediate="true"
-							rendered="#{permissionService.hasPermission(applianceService.appliance, 'profile_management')}"
+							rendered="#{permissionService.hasPermission(configurationService.configuration, 'profile_management')}"
 							styleClass="btn btn-success" value="Cancel" />
 					</div>
 				</h:form>

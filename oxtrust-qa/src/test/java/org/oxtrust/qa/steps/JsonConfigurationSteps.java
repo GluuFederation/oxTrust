@@ -55,9 +55,9 @@ public class JsonConfigurationSteps extends BaseSteps {
 		oxTrustConfigurationPage.assertEmailIsPresent();
 	}
 
-	@And("^I should see that the appliance inum is present$")
-	public void checkApplianceInumNotEmpty() {
-		oxTrustConfigurationPage.assertApplianceInumIsPresent();
+	@And("^I should see that the configuration inum is present$")
+	public void checkConfigurationInumNotEmpty() {
+		oxTrustConfigurationPage.assertConfigurationInumIsPresent();
 	}
 
 	@And("^I should see that the application url is present$")

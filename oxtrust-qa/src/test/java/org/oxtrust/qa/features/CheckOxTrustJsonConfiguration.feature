@@ -8,7 +8,7 @@ Scenario: Oxtrust json configuration
 	And 	I should see the base dn is present 
 	And 	I should see the org iname is present 
 	And 	I should see that the support mail is present 
-	And 	I should see that the appliance inum is present 
+	And 	I should see that the configuration inum is present 
 	And 	I should see that the application url is present 
 	And 	I should see that the base endpoint is present 
 	And 	I should see that the log level is present 

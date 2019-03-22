@@ -500,7 +500,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 
 		if ((cert == null) && (trustRelationship.getUrl() != null)) {
 			facesMessages.add(FacesMessage.SEVERITY_ERROR,
-					"Certificate were not provided, or was incorrect. Appliance will create a self-signed certificate.");
+					"Certificate were not provided, or was incorrect. Configuration will create a self-signed certificate.");
 			if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
 				Security.addProvider(new BouncyCastleProvider());
 			}
@@ -559,7 +559,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 
 		} else {
 			facesMessages.add(FacesMessage.SEVERITY_ERROR,
-					"Certificate were not provided, or was incorrect. Appliance will create a self-signed certificate.");
+					"Certificate were not provided, or was incorrect. Configuration will create a self-signed certificate.");
 		}
 
 		return certificate;
@@ -855,7 +855,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 			context.put("idpUrl", idpUrl);
 			String idpHost = idpUrl.replaceAll(":[0-9]*$", "").replaceAll("^.*?//", "");
 			context.put("idpHost", idpHost);
-			context.put("orgInum", StringHelper.removePunctuation(organizationService.getOrganizationInum()));
+			context.put("orgInum", StringHelper.removePunctuation("gluu"));
 			context.put("orgSupportEmail", appConfiguration.getOrgSupportEmail());
 
 			String spShibboleth3FilePath = shibboleth3ConfService.getSpShibboleth3FilePath();

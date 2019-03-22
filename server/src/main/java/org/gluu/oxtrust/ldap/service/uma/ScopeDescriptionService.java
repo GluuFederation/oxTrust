@@ -8,6 +8,7 @@ package org.gluu.oxtrust.ldap.service.uma;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.UUID;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -194,8 +195,7 @@ public class ScopeDescriptionService implements Serializable {
 	 * @return New inum for scope description
 	 */
 	private String generateInumForNewScopeDescriptionImpl() {
-		String orgInum = organizationService.getInumForOrganization();
-		return orgInum + OxTrustConstants.inumDelimiter + INumGenerator.generate(2);
+		return UUID.randomUUID().toString();
 	}
 
 	/**

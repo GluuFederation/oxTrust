@@ -26,10 +26,11 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.config.ConfigurationFactory;
-import org.gluu.oxtrust.ldap.service.ApplianceService;
+import org.gluu.oxtrust.ldap.service.ConfigurationService;
 import org.gluu.oxtrust.ldap.service.EncryptionService;
 import org.gluu.oxtrust.ldap.service.JsonConfigurationService;
-import org.gluu.oxtrust.model.GluuAppliance;
+import org.gluu.oxtrust.ldap.service.PassportService;
+import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.oxtrust.model.LdapConfigurationModel;
 import org.gluu.oxtrust.model.OxIDPAuthConf;
 import org.gluu.oxtrust.model.SimpleCustomPropertiesListModel;
@@ -77,7 +78,7 @@ public class ManagePersonAuthenticationAction
 	private ConversationService conversationService;
 
 	@Inject
-	private ApplianceService applianceService;
+	private ConfigurationService configurationService;
 
 	@Inject
 	private AbstractCustomScriptService customScriptService;
@@ -117,7 +118,6 @@ public class ManagePersonAuthenticationAction
 		this.authenticationRecaptchaEnabled = authenticationRecaptchaEnabled;
 	}
 
-	// private LdapOxPassportConfiguration ldapOxPassportConfiguration;
 
 	@Inject
 	private JsonConfigurationService jsonConfigurationService;
@@ -142,17 +142,17 @@ public class ManagePersonAuthenticationAction
 		}
 
 		try {
-			GluuAppliance appliance = applianceService.getAppliance();
+			GluuConfiguration configuration = configurationService.getConfiguration();
 
-			if (appliance == null) {
+			if (configuration == null) {
 				return OxTrustConstants.RESULT_FAILURE;
 			}
-			passportEnable = appliance.getPassportEnabled();
+			passportEnable = configuration.getPassportEnabled();
 			log.info("passport enabled value  : '{}'", passportEnable);
 			this.customScripts = customScriptService.findCustomScripts(
 					Arrays.asList(CustomScriptType.PERSON_AUTHENTICATION), "displayName", "oxLevel", "gluuStatus");
 
-			List<OxIDPAuthConf> list = getIDPAuthConfOrNull(appliance);
+			List<OxIDPAuthConf> list = getIDPAuthConfOrNull(configuration);
 			this.sourceConfigs = new ArrayList<GluuLdapConfiguration>();
 			if (list != null) {
 				for (OxIDPAuthConf oxIDPAuthConf : list) {
@@ -161,10 +161,10 @@ public class ManagePersonAuthenticationAction
 				}
 			}
 			getAuthenticationRecaptcha();
-			this.authenticationMode = appliance.getAuthenticationMode();
-			this.oxTrustAuthenticationMode = appliance.getOxTrustAuthenticationMode();
+			this.authenticationMode = configuration.getAuthenticationMode();
+			this.oxTrustAuthenticationMode = configuration.getOxTrustAuthenticationMode();
 		} catch (Exception ex) {
-			log.error("Failed to load appliance configuration", ex);
+			log.error("Failed to load configuration configuration", ex);
 
 			return OxTrustConstants.RESULT_FAILURE;
 		}
@@ -177,12 +177,12 @@ public class ManagePersonAuthenticationAction
 	public String save() throws JsonParseException, JsonMappingException, IOException {
 		try {
 			// Reload entry to include latest changes
-			GluuAppliance appliance = applianceService.getAppliance();
+			GluuConfiguration configuration = configurationService.getConfiguration();
 
 			boolean updateAuthenticationMode = false;
 			boolean updateOxTrustAuthenticationMode = false;
 
-			String oldAuthName = getFirstConfigName(appliance.getOxIDPAuthentication());
+			String oldAuthName = getFirstConfigName(configuration.getOxIDPAuthentication());
 			if (oldAuthName != null) {
 				if (oldAuthName.equals(this.authenticationMode)) {
 					updateAuthenticationMode = true;
@@ -192,20 +192,21 @@ public class ManagePersonAuthenticationAction
 				}
 			}
 
-			updateAuthConf(appliance);
+			updateAuthConf(configuration);
 
-			String newAuthName = getFirstConfigName(appliance.getOxIDPAuthentication());
+			String newAuthName = getFirstConfigName(configuration.getOxIDPAuthentication());
 			String updatedAuthMode = updateAuthenticationMode ? newAuthName : this.authenticationMode;
 			String updatedOxTrustAuthMode = updateOxTrustAuthenticationMode ? newAuthName
 					: this.oxTrustAuthenticationMode;
-			appliance.setAuthenticationMode(updatedAuthMode);
-			appliance.setOxTrustAuthenticationMode(updatedOxTrustAuthMode);
+			configuration.setAuthenticationMode(updatedAuthMode);
+			configuration.setOxTrustAuthenticationMode(updatedOxTrustAuthMode);
 			setAuthenticationRecaptcha();
-			appliance.setPassportEnabled(passportEnable);
-			applianceService.updateAppliance(appliance);
+			configuration.setPassportEnabled(passportEnable);
+
+			configurationService.updateConfiguration(configuration);
 		} catch (BasePersistenceException ex) {
-			log.error("Failed to update appliance configuration", ex);
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update appliance");
+			log.error("Failed to update configuration configuration", ex);
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update configuration");
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 
@@ -256,7 +257,7 @@ public class ManagePersonAuthenticationAction
 		return mapper.writeValueAsString(obj);
 	}
 
-	public boolean updateAuthConf(GluuAppliance appliance) {
+	public boolean updateAuthConf(GluuConfiguration configuration) {
 		try {
 			List<OxIDPAuthConf> idpConf = new ArrayList<OxIDPAuthConf>();
 			for (GluuLdapConfiguration ldapConfig : this.sourceConfigs) {
@@ -275,7 +276,7 @@ public class ManagePersonAuthenticationAction
 				idpConf.add(ldapConfigIdpAuthConf);
 			}
 
-			appliance.setOxIDPAuthentication(idpConf);
+			configuration.setOxIDPAuthentication(idpConf);
 		} catch (Exception ex) {
 			log.error("An Error occured ", ex);
 
@@ -447,8 +448,8 @@ public class ManagePersonAuthenticationAction
 		this.passportEnable = passportEnable;
 	}
 
-	private List<OxIDPAuthConf> getIDPAuthConfOrNull(GluuAppliance appliance) {
-		List<OxIDPAuthConf> idpConfs = appliance.getOxIDPAuthentication();
+	private List<OxIDPAuthConf> getIDPAuthConfOrNull(GluuConfiguration configuration) {
+		List<OxIDPAuthConf> idpConfs = configuration.getOxIDPAuthentication();
 		List<OxIDPAuthConf> authIdpConfs = new ArrayList<OxIDPAuthConf>();
 		if (idpConfs != null) {
 			for (OxIDPAuthConf idpConf : idpConfs) {
