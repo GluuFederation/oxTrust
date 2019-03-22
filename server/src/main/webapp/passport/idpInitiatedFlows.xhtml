@@ -12,15 +12,16 @@
 		<f:viewAction
 			action="#{permissionService.requestPermission('uma', 'access')}" />
 		<f:viewAction action="#{conversationService.initConversation}" />
-		<f:viewAction action="#{umaInventoryAction.start}" onPostback="false" />
+		<f:viewAction action="#{passportIdpInitiatedAction.init}"
+			onPostback="false" />
 	</f:metadata>
 
 	<ui:define name="body">
 
 		<section class="content-header">
 			<h1 style="color: #333;">
-				Passport <small> <i class="fa fa-caret-right"
-					style="color: #333 !important;" />IDP-Initiated Flows
+				#{msg['passport.title']} <small> <i
+					class="fa fa-caret-right" style="color: #333 !important;" />#{msg['passport.idpInitiated']}
 				</small>
 			</h1>
 			<ol class="breadcrumb">
@@ -28,8 +29,7 @@
 						class="fa fa-home" />
 				</a></li>
 				<li class="organization/configuration"><a
-					href="#{request.contextPath}/passport/idpInitiatedFlows">IDP-Initiated
-						Flows</a></li>
+					href="#{request.contextPath}/passport/idpInitiatedFlows">#{msg['passport.idpInitiated']}</a></li>
 			</ol>
 		</section>
 		<section class="content">
@@ -37,6 +37,205 @@
 				<div class="col-xs-12">
 					<div class="box box-primary" style="min-height: 400px;">
 						<div class="box-header"></div>
+
+						<h:form id="IdpInitiatedForm">
+							<input type='hidden' name='cid' value='#{conversation.id}' />
+							<div class="row">
+								<div class="col-xs-12">
+									<!-- OIDC client section-->
+									<h:panelGroup columns="1" width="100%"
+										id="openIDConnectSection">
+										<div class="row"
+											style="margin-left: 5px; margin-right: 5px; margin-top: 10px;">
+											<div class="col-sm-3 col-lg-3" style="padding: 0px;">
+												<span
+													style="font-weight: bold; font-size: medium; color: #00BE79; text-transform: uppercase;">
+													#{msg['passport.idpinitiated.oidc.title']}</span>
+											</div>
+											<div class="col-sm-9 col-lg-9" style="padding: 0px;">
+												<hr
+													style="height: 1px; background: green; border-color: green; border-width: 0px;"></hr>
+											</div>
+										</div>
+
+										<!-- First row-->
+										<div class="row" style="margin-left: 5px; margin-right: 5px;">
+											<!-- First column-->
+											<div class="col-sm-6 col-lg-6" style="padding: 0px;">
+												<ox:decorate
+													label="#{msg['passport.idpinitiated.oidc.passport.authorizationEndpoint']}"
+													leftClass="col-sm-3" rightClass="col-sm-9">
+													<h:inputText
+														styleClass="form-control AuthorizationEndPointID"
+														style="width:100%" required="true"
+														value="#{passportIdpInitiatedAction.iiConfiguration.authorizationEndpoint}"
+														id="AuthorizationEndPointID" rendered="true">
+														<rich:validator event="blur" />
+													</h:inputText>
+												</ox:decorate>
+												<ox:decorate
+													label="#{msg['passport.idpinitiated.oidc.passport.acrValues']}"
+													leftClass="col-sm-3" rightClass="col-sm-9"
+													id="PostProfileEndpointID">
+													<h:outputText styleClass="form-control AcrValuesID"
+														style="width:100%" required="true"
+														value="#{passportIdpInitiatedAction.iiConfiguration.acrValues}"
+														id="AcrValuesID">
+													</h:outputText>
+												</ox:decorate>
+											</div>
+											<!-- Second column-->
+											<div class="col-sm-6 col-lg-6" style="padding: 0px;">
+												<ox:decorate
+													label="#{msg['passport.idpinitiated.oidc.passport.clientId']}"
+													leftClass="col-sm-3" rightClass="col-sm-9">
+													<h:inputText styleClass="rounded form-control clientID"
+														id="clientID" style="width:100%" required="true"
+														value="#{passportIdpInitiatedAction.iiConfiguration.authorizationEndpoint.clientId}">
+														<rich:validator event="blur" />
+													</h:inputText>
+												</ox:decorate>
+											</div>
+										</div>
+									</h:panelGroup>
+									<!-- AuthorizationParams section-->
+									<h:panelGroup columns="1" width="100%" id="AuthParamsSection">
+										<div class="row"
+											style="margin-left: 5px; margin-right: 5px; margin-top: 10px;">
+											<div class="col-sm-3 col-lg-3" style="padding: 0px;">
+												<span
+													style="font-weight: bold; font-size: medium; color: #00BE79; text-transform: uppercase;">
+													#{msg['passport.idpinitiated.authParams.title']}</span>
+											</div>
+											<div class="col-sm-9 col-lg-9" style="padding: 0px;">
+												<hr
+													style="height: 1px; background: green; border-color: green; border-width: 0px;"></hr>
+											</div>
+										</div>
+										<!-- AuthorizationParams List section-->
+										<div class="row" style="margin-left: 5px; margin-right: 5px;">
+											<h:outputText class="col-sm-offset-4 col-sm-4 col-xs-12"
+												rendered="#{passportIdpInitiatedAction.authzParams.size() eq 0}"
+												value="No Authenticate paramaters available yet." />
+											<a4j:commandButton styleClass="btn btn-primary addNewParam"
+												value="Add New AuthZParam"
+												action="#{passportIdpInitiatedAction.activateForm}"
+												render="IdpInitiatedForm:AuthParamsSection" execute="@this" />
+										</div>
+
+										<!-- Add new Param form-->
+										<h:panelGroup id="ParamFormID"
+											rendered="#{passportIdpInitiatedAction.showForm}">
+											<div class="row"
+												style="margin-left: 5px; margin-right: 5px; margin-top: 10px; margin-bottom: 20px; border: 1px solid green; border-radius: 5px">
+												<!-- First column-->
+												<div class="col-sm-6 col-lg-6" style="padding: 0px;">
+													<ox:decorate
+														label="#{msg['passport.idpinitiated.authParams.provider']}"
+														leftClass="col-sm-3" rightClass="col-sm-9">
+														<h:inputText styleClass="form-control ProviderID"
+															style="width:100%" required="true"
+															value="#{passportIdpInitiatedAction.authzParam.provider}"
+															id="ProviderID" rendered="true">
+															<rich:validator event="blur" />
+														</h:inputText>
+													</ox:decorate>
+													<ox:decorate
+														label="#{msg['passport.idpinitiated.authParams.redirectUri']}"
+														leftClass="col-sm-3" rightClass="col-sm-9"
+														id="RedirectURI">
+														<h:outputText styleClass="form-control clientID"
+															style="width:100%" required="true"
+															value="#{passportIdpInitiatedAction.authzParam.redirectUri}"
+															id="RedirectURI">
+														</h:outputText>
+													</ox:decorate>
+												</div>
+												<!-- Second column-->
+												<div class="col-sm-6 col-lg-6" style="padding: 0px;">
+													<ox:decorate
+														label="#{msg['passport.idpinitiated.authParams.responseType']}"
+														leftClass="col-sm-3" rightClass="col-sm-9">
+														<h:inputText
+															styleClass="rounded form-control ResponseTypeID"
+															id="ResponseTypeID" style="width:100%" required="true"
+															value="#{passportIdpInitiatedAction.authzParam.responseType}">
+															<rich:validator event="blur" />
+														</h:inputText>
+													</ox:decorate>
+													<ox:decorate
+														label="#{msg['passport.idpinitiated.authParams.scope']}"
+														leftClass="col-sm-3" rightClass="col-sm-9">
+														<h:inputText styleClass="rounded form-control ScopeID"
+															id="ScopeID" style="width:100%" required="true"
+															value="#{passportIdpInitiatedAction.authzParam.scopes}">
+															<rich:validator event="blur" />
+														</h:inputText>
+													</ox:decorate>
+												</div>
+												<!-- Form footer-->
+												<div class="row"
+													style="margin-left: 50px; margin-right: 5px; margin-bottom: 20px;">
+													<div id="updateButtons">
+														<a4j:commandButton
+															styleClass="btn btn-primary saveAuthParamId"
+															value="#{msg['client.add']}" style="margin-left: 5px;"
+															action="#{passportIdpInitiatedAction.addAuthParam}"
+															render="IdpInitiatedForm:ParamFormID" execute="@this" />
+														<a4j:commandButton
+															styleClass="btn btn-primary cancelAuthParamId"
+															value="#{msg['client.cancel']}" style="margin-left: 5px;"
+															action="#{passportIdpInitiatedAction.cancelParamAdd}"
+															render="IdpInitiatedForm:ParamFormID" execute="@this" />
+													</div>
+												</div>
+											</div>
+										</h:panelGroup>
+										<!-- AuthorizationParams List not empty-->
+										<div class="row" style="margin-left: 5px; margin-right: 5px;">
+											<h:dataTable id="paramsTableId"
+												rendered="#{passportIdpInitiatedAction.authzParams.size() gt 0}"
+												rows="20" sortMode="single"
+												styleClass="table table-hover rt paramsTableId"
+												value="#{passportIdpInitiatedAction.authzParams}" var="clt">
+												<h:column sortBy="#{clt.provider}">
+													<f:facet name="header">
+                                                                    #{msg['passport.idpinitiated.authParams.provider']}
+                                                                </f:facet>
+													<h:outputText class="col-xs-12" value="#{clt.provider}" />
+												</h:column>
+												<h:column>
+													<f:facet name="header">
+                                                                    #{msg['passport.idpinitiated.authParams.responseType']}
+                                                                </f:facet>
+													<h:outputText class="col-xs-12" value="#{clt.responseType}" />
+												</h:column>
+												<h:column>
+													<f:facet name="header">
+                                                                    #{msg['passport.idpinitiated.authParams.scope']}
+                                                                </f:facet>
+													<h:outputText class="col-xs-12" value="#{clt.scopes}" />
+												</h:column>
+												<h:column>
+													<f:facet name="header">
+                                                                    #{msg['passport.idpinitiated.authParams.redirectUri']}
+                                                                </f:facet>
+													<h:outputText class="col-xs-12" value="#{clt.redirectUri}" />
+												</h:column>
+												<f:facet name="footer">
+													<rich:dataScroller align="left" fastControls="hide"
+														for="paramsTableId" maxPages="10"
+														renderIfSinglePage="false"
+														rendered="#{passportIdpInitiatedAction.authzParams.size() gt 0}"
+														stepControls="auto" />
+												</f:facet>
+											</h:dataTable>
+										</div>
+
+									</h:panelGroup>
+								</div>
+							</div>
+						</h:form>
 
 					</div>
 				</div>
