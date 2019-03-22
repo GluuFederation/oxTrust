@@ -74,8 +74,7 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 
 	@Override
 	public String baseDn() {
-		String orgDn = organizationService.getDnForOrganization();
-		String baseDn = String.format("ou=metric,%s", orgDn);
+		String baseDn = String.format("ou=statistic,o=metric");
 		return baseDn;
 	}
 

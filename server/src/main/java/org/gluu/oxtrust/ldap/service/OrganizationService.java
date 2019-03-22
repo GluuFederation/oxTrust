@@ -79,24 +79,14 @@ public class OrganizationService extends org.xdi.service.OrganizationService {
 	/**
 	 * Get organization
 	 * 
-	 * @return Organization entry
-	 */
-	public GluuOrganization getOrganization() {
-		return getOrganizationByInum("gluu");
-	}
-
-	/**
-	 * Get organization by DN
-	 * 
-	 * @param inum
-	 *            inum
 	 * @return Organization
 	 */
-	public GluuOrganization getOrganizationByInum(String inum) {
-		String key = OxConstants.CACHE_ORGANIZATION_KEY + "_" + inum;
+	public GluuOrganization getOrganization() {
+		String key = OxConstants.CACHE_ORGANIZATION_KEY;
 		GluuOrganization organization = (GluuOrganization) cacheService.get(OxConstants.CACHE_APPLICATION_NAME, key);
 		if (organization == null) {
-			organization = ldapEntryManager.find(GluuOrganization.class, getDnForOrganization(String.format("o=%s", inum)));
+			String orgDn = getDnForOrganization();
+			organization = ldapEntryManager.find(GluuOrganization.class, orgDn);
 			cacheService.put(OxConstants.CACHE_APPLICATION_NAME, key, organization);
 		}
 
@@ -117,7 +107,7 @@ public class OrganizationService extends org.xdi.service.OrganizationService {
 	public String getOrganizationCustomMessage(String customMessageId) {
 		GluuOrganization organization = getOrganization();
 
-		String key = OxTrustConstants.CACHE_ORGANIZATION_CUSTOM_MESSAGE_KEY + "_" + organization.getInum();
+		String key = OxTrustConstants.CACHE_ORGANIZATION_CUSTOM_MESSAGE_KEY;
 		@SuppressWarnings("unchecked")
 		Map<String, String> organizationCustomMessage = (Map<String, String>) cacheService.get(OxConstants.CACHE_APPLICATION_NAME, key);
 		if (organizationCustomMessage == null) {
@@ -168,10 +158,6 @@ public class OrganizationService extends org.xdi.service.OrganizationService {
 	 */
 	public String getBaseDn() {
 		return appConfiguration.getBaseDN();
-	}
-
-	public String getInumForOrganization() {
-		return "gluu";
 	}
 	
 	public boolean isAllowPersonModification() {

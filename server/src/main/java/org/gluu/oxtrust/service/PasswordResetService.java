@@ -15,6 +15,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.gluu.oxtrust.ldap.service.ConfigurationService;
+import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.model.PasswordResetRequest;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.model.BatchOperation;
@@ -37,7 +38,7 @@ public class PasswordResetService implements Serializable {
 	private static final long serialVersionUID = -4107684257624615866L;
 
 	@Inject
-	private ConfigurationService configurationService;
+	private OrganizationService organizationService;
 
 	@Inject
 	private PersistenceEntryManager ldapEntryManager;
@@ -230,7 +231,7 @@ public class PasswordResetService implements Serializable {
 	 * Build DN string for password reset request
 	 */
 	public String getDnForPasswordResetRequest(String guid) {
-		String configurationDn = configurationService.getConfiguration().getDn();
+		String configurationDn = organizationService.getBaseDn();
 
 		if (StringHelper.isEmpty(guid)) {
 			return String.format("ou=resetPasswordRequests,%s", configurationDn);
