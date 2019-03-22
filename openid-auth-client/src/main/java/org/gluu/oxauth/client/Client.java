@@ -42,7 +42,7 @@ public interface Client<U extends UserProfile> {
      * @param customParameters
      * @return url with authorization request
      */
-	public String getRedirectionUrl(final WebContext context, Map<String, String> customStateParameters, final Map<String, String> customParameters);
+	public String getRedirectionUrl(final WebContext context, Map<String, String> customStateParameters, final Map<String, String> customParameters, final boolean force);
 
     /**
      * Get logout url for oxAuth authentication

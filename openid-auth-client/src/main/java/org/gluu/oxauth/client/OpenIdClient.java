@@ -38,6 +38,7 @@ import org.xdi.oxauth.client.UserInfoClient;
 import org.xdi.oxauth.client.UserInfoResponse;
 import org.xdi.oxauth.model.authorize.AuthorizeRequestParam;
 import org.xdi.oxauth.model.common.AuthenticationMethod;
+import org.xdi.oxauth.model.common.Prompt;
 import org.xdi.oxauth.model.common.ResponseType;
 import org.xdi.oxauth.model.crypto.signature.SignatureAlgorithm;
 import org.xdi.oxauth.model.exception.InvalidJwtException;
@@ -191,11 +192,11 @@ public class OpenIdClient<C extends AppConfiguration, L extends LdapAppConfigura
 
     @Override
     public String getRedirectionUrl(final WebContext context) {
-        return getRedirectionUrl(context, null, null);
+        return getRedirectionUrl(context, null, null, false);
     }
 
     @Override
-    public String getRedirectionUrl(final WebContext context, Map<String, String> customStateParameters, final Map<String, String> customParameters) {
+    public String getRedirectionUrl(final WebContext context, Map<String, String> customStateParameters, final Map<String, String> customParameters, final boolean force) {
 		init();
 
 		String state = RandomStringUtils.randomAlphanumeric(10);
@@ -225,6 +226,10 @@ public class OpenIdClient<C extends AppConfiguration, L extends LdapAppConfigura
 
 		authorizationRequest.setState(state);
 		authorizationRequest.setNonce(nonce);
+		
+		if (force) {
+			authorizationRequest.setPrompts(Arrays.asList(Prompt.LOGIN));
+		}
 
 		context.setSessionAttribute(getName() + SESSION_STATE_PARAMETER, state);
         context.setSessionAttribute(getName() + SESSION_NONCE_PARAMETER, nonce);
