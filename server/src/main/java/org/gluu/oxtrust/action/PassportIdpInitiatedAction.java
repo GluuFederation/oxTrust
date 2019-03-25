@@ -11,11 +11,16 @@ import javax.inject.Named;
 
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
+import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.PassportService;
+import org.gluu.oxtrust.ldap.service.ScopeService;
+import org.gluu.oxtrust.model.OxAuthClient;
+import org.gluu.oxtrust.model.OxAuthScope;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.LdapOxPassportConfiguration;
 import org.xdi.model.passport.PassportConfiguration;
+import org.xdi.model.passport.Provider;
 import org.xdi.model.passport.idpinitiated.AuthzParams;
 import org.xdi.model.passport.idpinitiated.IIConfiguration;
 import org.xdi.service.security.Secure;
@@ -36,15 +41,26 @@ public class PassportIdpInitiatedAction implements Serializable {
 	@Inject
 	private FacesMessages facesMessages;
 	private boolean showForm = false;
+	private boolean isEdition = false;
 	@Inject
 	private ConversationService conversationService;
+
+	@Inject
+	private ClientService clientService;
+
+	@Inject
+	private ScopeService scopeService;
 
 	private LdapOxPassportConfiguration ldapOxPassportConfiguration;
 	private PassportConfiguration passportConfiguration;
 	private IIConfiguration iiConfiguration;
 	private List<AuthzParams> authzParams = new ArrayList<>();
+	private List<OxAuthClient> clients = new ArrayList<>();
+	private List<Provider> providers = new ArrayList<>();
+	private List<OxAuthScope> scopes = new ArrayList<>();
 
 	private AuthzParams authzParam = new AuthzParams();
+	private AuthzParams previousParam;
 
 	public String init() {
 		try {
@@ -53,6 +69,9 @@ public class PassportIdpInitiatedAction implements Serializable {
 			this.passportConfiguration = this.ldapOxPassportConfiguration.getPassportConfiguration();
 			this.iiConfiguration = this.passportConfiguration.getIdpInitiated();
 			this.authzParams = this.iiConfiguration.getAuthorizationParams();
+			this.clients = clientService.getAllClients();
+			this.providers = this.passportConfiguration.getProviders();
+			this.scopes = scopeService.getAllScopesList(1000);
 			log.debug("Load passport idp initiated configuration done");
 			return OxTrustConstants.RESULT_SUCCESS;
 		} catch (Exception e) {
@@ -63,6 +82,7 @@ public class PassportIdpInitiatedAction implements Serializable {
 
 	public String save() {
 		try {
+			this.iiConfiguration.setAuthorizationParams(authzParams);
 			this.passportConfiguration.setIdpInitiated(iiConfiguration);
 			this.ldapOxPassportConfiguration.setPassportConfiguration(this.passportConfiguration);
 			passportService.updateLdapOxPassportConfiguration(ldapOxPassportConfiguration);
@@ -105,21 +125,37 @@ public class PassportIdpInitiatedAction implements Serializable {
 	}
 
 	public void addAuthParam() {
-		this.authzParams.add(this.authzParam);
+		if (this.isEdition) {
+			this.authzParams.remove(this.previousParam);
+			this.authzParams.add(this.authzParam);
+		} else {
+			this.authzParams.add(this.authzParam);
+		}
+		this.showForm = false;
+		this.isEdition = false;
+		this.authzParam = new AuthzParams();
+		this.previousParam = null;
 	}
 
-	public void removeAuthParam() {
-		this.authzParams.remove(this.authzParam);
-		this.showForm=false;
+	public void removeAuthParam(AuthzParams param) {
+		this.authzParams.remove(param);
+		this.showForm = false;
+	}
+
+	public void editAuthParam(AuthzParams param) {
+		this.previousParam = param;
+		this.authzParam = param;
+		this.isEdition = true;
+		this.showForm = true;
 	}
 
 	public void cancelParamAdd() {
 		this.authzParam = new AuthzParams();
-		this.showForm=false;
+		this.showForm = false;
+		this.previousParam = null;
 	}
 
 	public boolean isShowForm() {
-		log.info("+++++++++++++isShowForm");
 		return showForm;
 	}
 
@@ -128,9 +164,8 @@ public class PassportIdpInitiatedAction implements Serializable {
 	}
 
 	public void activateForm() {
-		log.info("+++++++++++++Activation");
+		this.authzParam = new AuthzParams();
 		this.showForm = true;
-		log.info("+++++++++++++Done: "+this.showForm);
 	}
 
 	public AuthzParams getAuthzParam() {
@@ -141,4 +176,43 @@ public class PassportIdpInitiatedAction implements Serializable {
 		this.authzParam = authzParam;
 	}
 
+	public boolean isEdition() {
+		return isEdition;
+	}
+
+	public void setEdition(boolean isEdition) {
+		this.isEdition = isEdition;
+	}
+
+	public AuthzParams getPreviousParam() {
+		return previousParam;
+	}
+
+	public void setPreviousParam(AuthzParams previousParam) {
+		this.previousParam = previousParam;
+	}
+
+	public List<OxAuthClient> getClients() {
+		return clients;
+	}
+
+	public void setClients(List<OxAuthClient> clients) {
+		this.clients = clients;
+	}
+
+	public List<Provider> getProviders() {
+		return providers;
+	}
+
+	public void setProviders(List<Provider> providers) {
+		this.providers = providers;
+	}
+
+	public List<OxAuthScope> getScopes() {
+		return scopes;
+	}
+
+	public void setScopes(List<OxAuthScope> scopes) {
+		this.scopes = scopes;
+	}
 }
