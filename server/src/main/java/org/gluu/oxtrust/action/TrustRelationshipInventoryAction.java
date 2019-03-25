@@ -41,7 +41,7 @@ import org.xdi.service.security.Secure;
 public class TrustRelationshipInventoryAction implements Serializable {
 
 	private static final long serialVersionUID = 8388485274418394665L;
-	
+
 	@Inject
 	private FacesMessages facesMessages;
 
@@ -83,10 +83,10 @@ public class TrustRelationshipInventoryAction implements Serializable {
 
 	public String search() {
 		try {
-			if(searchPattern == null || searchPattern.isEmpty()){
+			if (searchPattern == null || searchPattern.isEmpty()) {
 				this.trustedSpList = trustService.getAllSAMLTrustRelationships(100);
-			}else{
-				this.trustedSpList = trustService.searchSAMLTrustRelationships(searchPattern,100);
+			} else {
+				this.trustedSpList = trustService.searchSAMLTrustRelationships(searchPattern, 100);
 			}
 			this.oldSearchPattern = this.searchPattern;
 
@@ -108,8 +108,8 @@ public class TrustRelationshipInventoryAction implements Serializable {
 		HashMap<String, GluuAttribute> attributesByDNs = attributeService.getAttributeMapByDNs(attributes);
 
 		for (GluuSAMLTrustRelationship trustRelationship : trustRelationships) {
-			trustRelationship.setReleasedCustomAttributes(attributeService.getCustomAttributesByAttributeDNs(
-					trustRelationship.getReleasedAttributes(), attributesByDNs));
+			trustRelationship.setReleasedCustomAttributes(attributeService
+					.getCustomAttributesByAttributeDNs(trustRelationship.getReleasedAttributes(), attributesByDNs));
 		}
 	}
 

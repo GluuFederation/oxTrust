@@ -1104,6 +1104,7 @@
 		  var id = $(e.target).attr("href").substr(1);
 		  window.localStorage.setItem('oidctab', id);
 		  var storeValue = window.localStorage.getItem('oidctab');
+		  alert(storeValue);
 		});
      
 		// on load of the page: switch to the currently selected tab
