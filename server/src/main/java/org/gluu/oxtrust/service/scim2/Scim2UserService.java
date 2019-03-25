@@ -551,7 +551,7 @@ public class Scim2UserService implements Serializable {
 	public PagedResult<BaseScimResource> searchUsers(String filter, String sortBy, SortOrder sortOrder, int startIndex,
 			int count, String url, int maxCount) throws Exception {
 
-		Filter ldapFilter = scimFilterParserService.createLdapFilter(filter, "inum=*", UserResource.class);
+		Filter ldapFilter = scimFilterParserService.createFilter(filter, Filter.createPresenceFilter("inum"), UserResource.class);
 		log.info(
 				"Executing search for users using: ldapfilter '{}', sortBy '{}', sortOrder '{}', startIndex '{}', count '{}'",
 				ldapFilter.toString(), sortBy, sortOrder.getValue(), startIndex, count);
