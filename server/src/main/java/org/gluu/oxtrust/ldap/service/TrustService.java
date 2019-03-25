@@ -425,10 +425,20 @@ public class TrustService implements Serializable {
 	}
 
 	public GluuSAMLTrustRelationship getTrustContainerFederation(GluuSAMLTrustRelationship trustRelationship) {
-		GluuSAMLTrustRelationship relationshipByDn = getRelationshipByDn(trustRelationship.getDn());
+		if (trustRelationship == null) {
+			return null;
+		}
+		
+		if (trustRelationship.getGluuContainerFederation() == null) {
+			return null;
+		}
+
+		GluuSAMLTrustRelationship relationshipByDn = getRelationshipByDn(trustRelationship.getGluuContainerFederation());
 		return relationshipByDn;
 	}
 
+	@Deprecated
+	// Invalid method it just loads TR. Use above method instead of this
 	public GluuSAMLTrustRelationship getTrustContainerFederation(String dn) {
 		GluuSAMLTrustRelationship relationshipByDn = getRelationshipByDn(dn);
 		return relationshipByDn;
