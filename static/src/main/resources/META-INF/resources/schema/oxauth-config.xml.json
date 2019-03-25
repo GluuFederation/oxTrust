@@ -1463,6 +1463,8 @@
         "umaAddScopesAutomatically",
         "umaKeepClientDuringResourceSetRegistration",
         "cleanServiceInterval",
+        "cleanServiceBatchChunkSize",
+        "cleanServiceBaseDns",
         "keyRegenerationEnabled",
         "keyRegenerationInterval",
         "defaultSignatureAlgorithm",
