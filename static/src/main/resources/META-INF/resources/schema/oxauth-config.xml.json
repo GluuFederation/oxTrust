@@ -717,6 +717,28 @@
             "exclusiveMaximum": false,
             "exclusiveMinimum": false
         },
+        "cleanServiceBaseDns": {
+            "id": "cleanServiceBaseDns",
+            "description": "List of additional base dns under which AS will look up for expired entities ",
+            "type": "array",
+            "minItems": 0,
+            "uniqueItems": true,
+            "additionalItems": true,
+            "items": {
+                "type": "string",
+                "minLength": 1
+            }
+        },
+        "cleanServiceBatchChunkSize": {
+            "id": "cleanServiceBatchChunkSize",
+            "description": "Each clean up iteration fetches chunk of expired data per base dn and removes it from storage.",
+            "type": "integer",
+            "multipleOf": 1,
+            "maximum": 2147483647,
+            "minimum": 1,
+            "exclusiveMaximum": false,
+            "exclusiveMinimum": false
+        },
         "keyRegenerationEnabled": {
             "id": "keyRegenerationEnabled",
             "description": "Boolean value specifying whether to regenerate keys.",
