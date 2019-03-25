@@ -277,7 +277,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.xdi</groupId>
-			<artifactId>openid-auth-client</artifactId>
+			<artifactId>oxtrust-openid-auth-client</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.xdi</groupId>

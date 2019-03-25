@@ -84,7 +84,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.xdi</groupId>
-			<artifactId>api-server</artifactId>
+			<artifactId>oxtrust-api-server</artifactId>
 			<exclusions>
 				<exclusion>
 					<groupId>org.xdi</groupId>

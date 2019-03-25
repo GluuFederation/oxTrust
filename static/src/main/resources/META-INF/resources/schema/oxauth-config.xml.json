@@ -754,12 +754,6 @@
             "type": "string",
             "minLength": 1
         },
-        "organizationInum": {
-            "id": "organizationInum",
-            "description": "The Organization Inum.",
-            "type": "string",
-            "minLength": 1
-        },
         "oxId": {
             "id": "oxId",
             "description": "URL for the Inum generator Service.",
@@ -1451,7 +1445,6 @@
         "keyRegenerationInterval",
         "defaultSignatureAlgorithm",
         "oxOpenIdConnectVersion",
-        "organizationInum",
         "oxId",
         "dynamicRegistrationEnabled",
         "dynamicRegistrationExpirationTime",

@@ -23,7 +23,15 @@ public interface Client<U extends UserProfile> {
 
 	public String getRedirectionUrl(final WebContext context);
 
-	public String getRedirectionUrl(final WebContext context, Map<String, String> customStateParameters, final Map<String, String> customParameters);
+    /**
+     * Get url for oxAuth authentication
+     * 
+     * @param context
+     * @param customStateParameters
+     * @param customParameters
+     * @return url with authorization request
+     */
+	public String getRedirectionUrl(final WebContext context, Map<String, String> customStateParameters, final Map<String, String> customParameters, final boolean force);
 
     public String getLogoutRedirectionUrl(final WebContext context);
 

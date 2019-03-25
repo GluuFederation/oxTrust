@@ -139,7 +139,7 @@ public class StatusCheckerTimer {
 		log.debug("Starting update of configuration status");
 		AppConfiguration appConfiguration = configurationFactory.getAppConfiguration();
 		if (!appConfiguration.isUpdateStatus()) {
-			log.info("isUpdateStatus");
+			log.debug("isUpdateStatus");
 			return;
 		}
 		ConfigurationStatus configurationStatus = new ConfigurationStatus();

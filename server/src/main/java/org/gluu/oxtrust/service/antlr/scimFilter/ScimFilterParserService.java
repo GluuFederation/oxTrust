@@ -75,13 +75,13 @@ public class ScimFilterParserService {
 
     }
 
-    public Filter createLdapFilter(String filter, String defaultStr, Class<? extends BaseScimResource> clazz) throws SCIMException {
+    public Filter createFilter(String filter, Filter defaultFilter, Class<? extends BaseScimResource> clazz) throws SCIMException {
 
         try {
             Filter ldapFilter;
 
             if (StringUtils.isEmpty(filter))
-                ldapFilter=Filter.create(defaultStr);
+                ldapFilter=defaultFilter;
             else {
                 FilterListener filterListener = new FilterListener(clazz);
                 walkTree(FilterUtil.preprocess(filter, clazz), filterListener);

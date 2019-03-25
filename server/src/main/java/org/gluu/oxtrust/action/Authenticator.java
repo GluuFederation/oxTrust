@@ -336,6 +336,11 @@ public class Authenticator implements Serializable {
 
 		String idToken = tokenResponse.getIdToken();
         log.debug(" idToken : " + idToken);
+        
+        if (idToken == null) {
+            log.error("Failed to get id_token");
+            return OxTrustConstants.RESULT_NO_PERMISSIONS;
+        }
 
 		log.info("Session validation successful. User is logged in");
 		UserInfoClient userInfoClient = new UserInfoClient(openIdConfiguration.getUserInfoEndpoint());
