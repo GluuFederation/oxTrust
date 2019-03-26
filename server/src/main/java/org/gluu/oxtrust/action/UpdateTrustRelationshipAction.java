@@ -754,6 +754,14 @@ public class UpdateTrustRelationshipAction implements Serializable {
 		}
 	}
 
+	private void updateShibboleth3ConfigurationForDelete(List<GluuSAMLTrustRelationship> trustRelationships) {
+		if (!shibboleth3ConfService.generateConfigurationFiles(trustRelationships)) {
+
+			log.error("Failed to update Shibboleth v3 configuration");
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update Shibboleth v3 configuration");
+		}
+	}
+
 	private boolean generateSpMetaDataFile(String certificate) {
 		boolean result = generateSpMetaDataFileImpl(certificate);
 
@@ -860,6 +868,8 @@ public class UpdateTrustRelationshipAction implements Serializable {
 							log.error(
 									"Failed to remove federation trust relationship {}, there are still active federated Trust Relationships left.",
 									this.trustRelationship.getInum());
+							facesMessages.add(FacesMessage.SEVERITY_ERROR,
+									"'#{updateTrustRelationshipAction.trustRelationship.displayName}' is associated with active Trust Relationships and cannot be deleted. Please disable the TRs and try again.");
 							return result;
 						}
 					}
@@ -888,7 +898,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 						e);
 			} finally {
 				List<GluuSAMLTrustRelationship> trustRelationships = trustService.getAllActiveTrustRelationships();
-				updateShibboleth3Configuration(trustRelationships);
+				updateShibboleth3ConfigurationForDelete(trustRelationships);
 			}
 		}
 
