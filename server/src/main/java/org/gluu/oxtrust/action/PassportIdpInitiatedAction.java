@@ -3,6 +3,7 @@ package org.gluu.oxtrust.action;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.ConversationScoped;
 import javax.faces.application.FacesMessage;
@@ -15,7 +16,6 @@ import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.PassportService;
 import org.gluu.oxtrust.ldap.service.ScopeService;
 import org.gluu.oxtrust.model.OxAuthClient;
-import org.gluu.oxtrust.model.OxAuthScope;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.LdapOxPassportConfiguration;
@@ -23,7 +23,10 @@ import org.xdi.model.passport.PassportConfiguration;
 import org.xdi.model.passport.Provider;
 import org.xdi.model.passport.idpinitiated.AuthzParams;
 import org.xdi.model.passport.idpinitiated.IIConfiguration;
+import org.xdi.oxauth.model.common.ResponseType;
 import org.xdi.service.security.Secure;
+
+import com.google.common.collect.Lists;
 
 @Named("passportIdpInitiatedAction")
 @ConversationScoped
@@ -57,7 +60,8 @@ public class PassportIdpInitiatedAction implements Serializable {
 	private List<AuthzParams> authzParams = new ArrayList<>();
 	private List<OxAuthClient> clients = new ArrayList<>();
 	private List<Provider> providers = new ArrayList<>();
-	private List<OxAuthScope> scopes = new ArrayList<>();
+	private List<String> scopes = new ArrayList<>();
+	private List<String> responseTypes = new ArrayList<>();
 
 	private AuthzParams authzParam = new AuthzParams();
 	private AuthzParams previousParam;
@@ -71,7 +75,10 @@ public class PassportIdpInitiatedAction implements Serializable {
 			this.authzParams = this.iiConfiguration.getAuthorizationParams();
 			this.clients = clientService.getAllClients();
 			this.providers = this.passportConfiguration.getProviders();
-			this.scopes = scopeService.getAllScopesList(1000);
+			this.scopes = scopeService.getAllScopesList(1000).stream().map(e -> e.getDisplayName())
+					.collect(Collectors.toList());
+			this.responseTypes = Lists.newArrayList(ResponseType.values()).stream().map(e -> e.getValue())
+					.collect(Collectors.toList());
 			log.debug("Load passport idp initiated configuration done");
 			return OxTrustConstants.RESULT_SUCCESS;
 		} catch (Exception e) {
@@ -208,11 +215,19 @@ public class PassportIdpInitiatedAction implements Serializable {
 		this.providers = providers;
 	}
 
-	public List<OxAuthScope> getScopes() {
+	public List<String> getScopes() {
 		return scopes;
 	}
 
-	public void setScopes(List<OxAuthScope> scopes) {
+	public void setScopes(List<String> scopes) {
 		this.scopes = scopes;
+	}
+
+	public List<String> getResponseTypes() {
+		return responseTypes;
+	}
+
+	public void setResponseTypes(List<String> responseTypes) {
+		this.responseTypes = responseTypes;
 	}
 }

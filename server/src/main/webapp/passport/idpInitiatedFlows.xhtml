@@ -209,16 +209,6 @@
 									style="margin-left: 5px; margin-right: 5px; margin-top: 10px; margin-bottom: 20px; border: 1px solid green; border-radius: 5px">
 									<!-- First column-->
 									<div class="col-sm-6 col-lg-6" style="padding: 0px;">
-										<ox:decorate
-											label=""
-											leftClass="col-sm-3" rightClass="col-sm-9">
-											<h:inputText styleClass="form-control ProviderID"
-												style="width:100%" required="true"
-												value="#{passportIdpInitiatedAction.authzParam.provider}"
-												id="ProviderID" rendered="true">
-												<rich:validator event="blur" />
-											</h:inputText>
-										</ox:decorate>
 										<b:form horizontal="true">
 											<b:formGroup>
 												<b:selectOneMenu id="ProviderID"
@@ -228,8 +218,8 @@
 													<f:selectItem itemLabel="(Please select a provider"
 														itemValue="" />
 													<f:selectItems
-														value="#{passportIdpInitiatedAction.providers}" var="provider"
-														itemValue="#{provider.id}"
+														value="#{passportIdpInitiatedAction.providers}"
+														var="provider" itemValue="#{provider.id}"
 														itemLabel="#{provider.displayName}" />
 												</b:selectOneMenu>
 											</b:formGroup>
@@ -246,24 +236,28 @@
 									</div>
 									<!-- Second column-->
 									<div class="col-sm-6 col-lg-6" style="padding: 0px;">
-										<ox:decorate
-											label="#{msg['passport.idpinitiated.authParams.responseType']}"
-											leftClass="col-sm-3" rightClass="col-sm-9">
-											<h:inputText styleClass="rounded form-control ResponseTypeID"
-												id="ResponseTypeID" style="width:100%" required="true"
-												value="#{passportIdpInitiatedAction.authzParam.responseType}">
-												<rich:validator event="blur" />
-											</h:inputText>
-										</ox:decorate>
-										<ox:decorate
-											label="#{msg['passport.idpinitiated.authParams.scope']}"
-											leftClass="col-sm-3" rightClass="col-sm-9">
-											<h:inputText styleClass="rounded form-control ScopeID"
-												id="ScopeID" style="width:100%" required="true"
-												value="#{passportIdpInitiatedAction.authzParam.scopes}">
-												<rich:validator event="blur" />
-											</h:inputText>
-										</ox:decorate>
+										<b:form horizontal="true">
+											<b:formGroup>
+												<b:inputText tags="true"
+													label="#{msg['passport.idpinitiated.authParams.responseType']}"
+													required="true" colMd="9" labelColMd="3"
+													value="#{passportIdpInitiatedAction.authzParam.responseType}"
+													placeholder="Select few scopes" typeahead="true"
+													typeahead-values="#{passportIdpInitiatedAction.responseTypes}"
+													tiny-screen="full-width" />
+											</b:formGroup>
+											<b:formGroup>
+												<b:selectMultiMenu id="ScopesID"
+													value="#{passportIdpInitiatedAction.authzParam.scopes}"
+													select2="true" colMd="9" required="true" labelColMd="3"
+													label="#{msg['passport.idpinitiated.authParams.scope']}">
+													<f:selectItem itemLabel="(Please select some scopes)"
+														itemValue="" />
+													<f:selectItems value="#{passportIdpInitiatedAction.scopes}"
+														var="s" itemValue="#{s}" itemLabel="#{s}" />
+												</b:selectMultiMenu>
+											</b:formGroup>
+										</b:form>
 									</div>
 									<!-- Form footer-->
 									<div class="row"
