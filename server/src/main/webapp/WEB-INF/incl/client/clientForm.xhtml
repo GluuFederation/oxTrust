@@ -141,12 +141,13 @@
 											<a4j:commandLink render="clientSecretId1" rendered="#{_new}"
 												styleClass="btn btn-primary generateClientSecretButton"
 												value="Generate Client Secret" style="margin-left: 10px;"
-												action="#{_clientAction.generatePassword()}" execute="@this"
+												action="#{_clientAction.generatePassword()}"
+												execute="@this"
 												oncomplete="return valuesDisplay(this);" />
 											<a4j:commandLink rendered="#{_new}"
 												style="margin-left: 10px;"
 												styleClass="btn btn-primary lockClientSecretField"
-												value="Lock Secret Field" execute="@this" />
+												value="Lock Secret Field" />
 											<a4j:commandButton rendered="#{not _new}"
 												style="margin-left:15px;"
 												onclick="#{rich:component('clientPassword:changePasswordModalPanel')}.show();"
@@ -1151,7 +1152,6 @@
 		$("ul.nav-tabs > li > a").on("shown.bs.tab", function(e) {
 		  var id = $(e.target).attr("href").substr(1);
 		  window.localStorage.setItem('oidctab', id);
-		  var storeValue = window.localStorage.getItem('oidctab');
 		});
      
 		// on load of the page: switch to the currently selected tab
