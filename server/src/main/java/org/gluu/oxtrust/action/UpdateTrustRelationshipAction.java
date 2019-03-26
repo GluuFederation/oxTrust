@@ -869,7 +869,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 									"Failed to remove federation trust relationship {}, there are still active federated Trust Relationships left.",
 									this.trustRelationship.getInum());
 							facesMessages.add(FacesMessage.SEVERITY_ERROR,
-									"'#{updateTrustRelationshipAction.trustRelationship.displayName}' is associated with active Trust Relationships and cannot be deleted. Please disable the TRs and try again.");
+									"'#{updateTrustRelationshipAction.trustRelationship.displayName}' has associated Trust Relationship(s) depending on it and cannot be deleted. Please disable the federation and try again.");
 							return result;
 						}
 					}
