@@ -665,6 +665,14 @@ public class UpdateTrustRelationshipAction implements Serializable {
 		}
 	}
 
+	private void updateShibboleth3ConfigurationForDelete(List<GluuSAMLTrustRelationship> trustRelationships) {
+		if (!shibboleth3ConfService.generateConfigurationFiles(trustRelationships)) {
+
+			log.error("Failed to update Shibboleth v3 configuration");
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update Shibboleth v3 configuration");
+		}
+	}
+
 	private boolean saveSpMetaDataFileSourceTypeFile() throws IOException {
 		log.trace("Saving metadata file source type: File");
 		String spMetadataFileName = trustRelationship.getSpMetaDataFN();
@@ -739,6 +747,8 @@ public class UpdateTrustRelationshipAction implements Serializable {
 							log.error(
 									"Failed to remove federation trust relationship {}, there are still active federated Trust Relationships left.",
 									this.trustRelationship.getInum());
+							facesMessages.add(FacesMessage.SEVERITY_ERROR,
+									"'#{updateTrustRelationshipAction.trustRelationship.displayName}' has associated Trust Relationship(s) depending on it and cannot be deleted. Please disable the federation and try again.");
 							return result;
 						}
 					}
@@ -758,9 +768,13 @@ public class UpdateTrustRelationshipAction implements Serializable {
 			} catch (BasePersistenceException ex) {
 				result = OxTrustConstants.RESULT_FAILURE;
 				log.error("Failed to remove trust relationship {}", this.trustRelationship.getInum(), ex);
-			}  finally {
+			} catch (Exception e) {
+				log.error(
+						"Failed to add trust relationship to remove queue. It will be removed during next application restart",
+						e);
+			} finally {
 				List<GluuSAMLTrustRelationship> trustRelationships = trustService.getAllActiveTrustRelationships();
-				updateShibboleth3Configuration(trustRelationships);
+				updateShibboleth3ConfigurationForDelete(trustRelationships);
 			}
 		}
 
@@ -1023,6 +1037,12 @@ public class UpdateTrustRelationshipAction implements Serializable {
 	public void setContainerFederation(SelectItem federation) {
 		this.trustRelationship.setContainerFederation((GluuSAMLTrustRelationship) federation.getValue());
 	}
+
+	// public SelectItem getContainerFederation() {
+	// return new SelectItem(trustRelationship.getContainerFederationTr(),
+	// trustRelationship.getContainerFederation() == null ? "Select Federation"
+	// : trustRelationship.getContainerFederation().getDisplayName());
+	// }
 
 	public SelectItem getContainerFederation() {
 		GluuSAMLTrustRelationship federation = getContainerFederationTr();
