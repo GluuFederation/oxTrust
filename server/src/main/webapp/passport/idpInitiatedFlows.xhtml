@@ -223,39 +223,35 @@
 														itemLabel="#{provider.displayName}" />
 												</b:selectOneMenu>
 											</b:formGroup>
+											<b:formGroup>
+												<b:inputText id="RedirectURI"
+												    colMd="9" labelColMd="3"
+													value="#{passportIdpInitiatedAction.authzParam.redirectUri}"
+													styleClass="rounded form-control RedirectURI"
+													label="#{msg['passport.idpinitiated.authParams.redirectUri']}" />
+											</b:formGroup>
 										</b:form>
-										<ox:decorate
-											label="#{msg['passport.idpinitiated.authParams.redirectUri']}"
-											leftClass="col-sm-3" rightClass="col-sm-9" id="RedirectURI">
-											<h:inputText styleClass="rounded form-control RedirectURI"
-												id="RedirectURI" style="width:100%" required="true"
-												value="#{passportIdpInitiatedAction.authzParam.redirectUri}">
-												<rich:validator event="blur" />
-											</h:inputText>
-										</ox:decorate>
 									</div>
 									<!-- Second column-->
 									<div class="col-sm-6 col-lg-6" style="padding: 0px;">
 										<b:form horizontal="true">
 											<b:formGroup>
-												<b:inputText tags="true"
+												<b:inputText tags="true" id="ResponseTypesID"
 													label="#{msg['passport.idpinitiated.authParams.responseType']}"
 													required="true" colMd="9" labelColMd="3"
-													value="#{passportIdpInitiatedAction.authzParam.responseType}"
-													placeholder="Select few scopes" typeahead="true"
+													value="#{passportIdpInitiatedAction.selectedTypes}"
+													placeholder="Select responses types" typeahead="true"
 													typeahead-values="#{passportIdpInitiatedAction.responseTypes}"
 													tiny-screen="full-width" />
 											</b:formGroup>
 											<b:formGroup>
-												<b:selectMultiMenu id="ScopesID"
+												<b:inputText tags="true" id="ScopesID"
+													label="#{msg['passport.idpinitiated.authParams.scope']}"
+													required="true" colMd="9" labelColMd="3"
 													value="#{passportIdpInitiatedAction.authzParam.scopes}"
-													select2="true" colMd="9" required="true" labelColMd="3"
-													label="#{msg['passport.idpinitiated.authParams.scope']}">
-													<f:selectItem itemLabel="(Please select some scopes)"
-														itemValue="" />
-													<f:selectItems value="#{passportIdpInitiatedAction.scopes}"
-														var="s" itemValue="#{s}" itemLabel="#{s}" />
-												</b:selectMultiMenu>
+													placeholder="Select scopes" typeahead="true"
+													typeahead-values="#{passportIdpInitiatedAction.scopes}"
+													tiny-screen="full-width" />
 											</b:formGroup>
 										</b:form>
 									</div>
