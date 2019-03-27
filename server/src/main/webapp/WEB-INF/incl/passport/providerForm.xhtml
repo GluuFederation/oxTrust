@@ -4,6 +4,7 @@
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:b="http://bootsfaces.net/ui"
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
@@ -23,7 +24,7 @@
 							<div class="col-sm-6 col-lg-6" style="padding: 0px;">
 								<ox:decorate
 									label="#{msg['passport.provider.form.displayName']}"
-									 leftClass="col-sm-3" rightClass="col-sm-9">
+									leftClass="col-sm-3" rightClass="col-sm-9">
 									<h:inputText styleClass="form-control DisplayName"
 										style="width:100%" required="true"
 										value="#{_providerAction.provider.displayName}"
@@ -54,9 +55,10 @@
 								<ox:decorate label="#{msg['passport.provider.form.type']}"
 									leftClass="col-sm-3" rightClass="col-sm-9">
 									<h:selectOneMenu styleClass="rounded form-control ProviderType"
-									    valueChangeListener="#{_providerAction.handleRequiredOptions}"
+										valueChangeListener="#{_providerAction.handleRequiredOptions}"
 										value="#{_providerAction.provider.type}" id="ProviderTypeId"
-										rendered="true" required="true" onchange="toggleType(); submit();">
+										rendered="true" required="true"
+										onchange="toggleType(); submit();">
 										<f:selectItem noSelectionOption="true" itemLabel="" />
 										<f:selectItems value="#{_providerAction.providerTypes}"
 											var="_type" itemLabel="#{_type}" />
@@ -65,8 +67,9 @@
 								<ox:decorate label="#{msg['passport.provider.form.mapping']}"
 									leftClass="col-sm-3" rightClass="col-sm-9">
 									<h:inputText styleClass="form-control MappingId"
-										style="width:100%" required="true" value="#{_providerAction.provider.mapping}"
-										id="MappingId" rendered="true">
+										style="width:100%" required="true"
+										value="#{_providerAction.provider.mapping}" id="MappingId"
+										rendered="true">
 										<rich:validator event="blur" />
 									</h:inputText>
 								</ox:decorate>
@@ -89,8 +92,7 @@
 							<div class="col-sm-4 col-lg-4" style="padding: 0px;">
 								<ox:decorate label="#{msg['passport.provider.form.enable']}"
 									leftClass="col-sm-5" rightClass="col-sm-2">
-									<h:selectBooleanCheckbox
-									    required="true" 
+									<h:selectBooleanCheckbox required="true"
 										value="#{_providerAction.provider.enabled}"
 										styleClass="form-control" />
 								</ox:decorate>
@@ -116,31 +118,18 @@
 								</ox:decorate>
 							</div>
 						</div>
-
-						<!-- Third row-->
-						<div class="row"
-							style="margin-left: 5px; margin-right: 5px; margin-top: 15px;">
-							<div class="col-sm-offset-1 col-sm-8 col-lg-8"
-								style="padding: 0px;">
-								<span
-									style="font-weight: bold; font-size: large; color: #00BE79; text-transform: uppercase;">
-									 #{msg['passport.provider.form.options']}</span>
-								<hr
-									style="height: 1px; background: green; border-color: green; border-width: 0px;"></hr>
-							</div>
-						</div>
-						<!-- Fourth row-->
+						<!-- 3nd row-->
 						<div class="row" style="margin-left: 5px; margin-right: 5px;">
-							<!-- First column-->
-							<div class="col-sm-1 col-lg-1" style="padding: 0px;"></div>
-							<!-- Second column-->
-							<div class="col-sm-10 col-lg-10" style="padding: 0px;">
-								<ox:simpleMapProperties
-									label="#{msg['manageAuthentication.passport.strategy.addProperty']}"
-									hideLabel="true" showRemoveDialogue="true"
-									properties="#{_providerAction.options}"
-									propertiesAction="#{_providerAction}" hideValue="true" />
-							</div>
+							<b:panel title="#{msg['passport.provider.form.options']}" look="primary">
+								<div class="col-sm-1 col-lg-1" style="padding: 0px;"></div>
+								<div class="col-sm-10 col-lg-10" style="padding: 0px;">
+									<ox:simpleMapProperties
+										label="#{msg['manageAuthentication.passport.strategy.addProperty']}"
+										hideLabel="true" showRemoveDialogue="true"
+										properties="#{_providerAction.options}"
+										propertiesAction="#{_providerAction}" hideValue="true" />
+								</div>
+							</b:panel>
 						</div>
 					</h:panelGroup>
 				</div>

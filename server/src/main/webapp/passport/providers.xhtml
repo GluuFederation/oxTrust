@@ -3,6 +3,7 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:b="http://bootsfaces.net/ui"
 	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
@@ -33,100 +34,52 @@
 		<section class="content">
 			<div class="row">
 				<div class="col-xs-12">
-					<div class="box box-primary" style="min-height: 400px;">
-						<div class="box-header"></div>
-						<!-- start providers list-->
-						<h:panelGroup id="providersTable">
-							<div class="row"
-								style="padding: 5px; margin-bottom: 5px; margin-left: 15px">
-								<h:link includeViewParams="false"
-									outcome="/passport/addProvider"
-									styleClass="btn btn-primary addProviderButtonClass"
-									value="#{msg['passport.addNewProvider']}" />
-							</div>
-							<div class="box-body">
-								<div class="table-responsive" style="overflow: auto">
-									<h:form id="providersForm">
-										<ui:fragment
-											rendered="#{passportProvidersAction.providers.size() eq 0}">
-											<h:outputText value="No result" />
-										</ui:fragment>
-
-										<h:dataTable id="providersTableId"
-											rendered="#{passportProvidersAction.providers.size() gt 0}"
-											rows="20" sortMode="single"
-											styleClass="table table-hover rt providersListClass"
-											value="#{passportProvidersAction.providerSelections}" var="clt">
-											<h:column sortBy="#{clt.provider.id}">
-												<f:facet name="header">
-													<div style="margin-left: 20px;">#{msg['passport.provider.form.id']}</div>
-												</f:facet>
-												<h:link includeViewParams="false"
-													outcome="/passport/editProvider" value="#{clt.provider.id}">
-													<f:param name="id" value="#{clt.provider.id}" />
-												</h:link>
-											</h:column>
-											<h:column sortBy="#{clt.provider.displayName}">
-												<f:facet name="header">
-                                                                    #{msg['passport.provider.form.displayName']}
-                                                                </f:facet>
-												<h:link includeViewParams="false"
-													outcome="/passport/editProvider" value="#{clt.provider.displayName}">
-													<f:param name="id" value="#{clt.provider.id}" />
-												</h:link>
-											</h:column>
-											<h:column>
-												<f:facet name="header">
-                                                                    #{msg['passport.provider.form.strategyId']}
-                                                                </f:facet>
-												<h:outputText class="col-xs-12"
-													value="#{clt.provider.passportStrategyId}" />
-											</h:column>
-											<h:column>
-												<f:facet name="header">
-                                                                    #{msg['passport.provider.form.type']}
-                                                                </f:facet>
-												<h:outputText class="col-xs-12" value="#{clt.provider.type}" />
-											</h:column>
-											<h:column>
-												<f:facet name="header">
-                                                                     #{msg['passport.deleteProvider']}
-                                                                </f:facet>
-												<h:selectBooleanCheckbox id="selectId"
-													onchange="displayButton();" value="#{clt.checked}">
-												</h:selectBooleanCheckbox>
-
-											</h:column>
-											<f:facet name="footer">
-												<rich:dataScroller align="left" fastControls="hide"
-													for="providersTableId" maxPages="10"
-													renderIfSinglePage="false"
-													rendered="#{passportProvidersAction.providers.size() gt 0}"
-													stepControls="auto" />
-											</f:facet>
-										</h:dataTable>
-										<a4j:commandButton ajaxSingle="true" id="deleteId"
-											eventsQueue="providerQueue"
-											rendered="#{passportProvidersAction.providers.size() gt 0}"
-											onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();"
-											styleClass="btn btn-primary DeleteBulkProviders"
-											style="float:left;margin-left :3px;"
-											value="#{msg['passport.deleteProvider']}" />
-									</h:form>
-								</div>
-								<ox:acceptRemovalDialog
-									deleteMethod="#{passportProvidersAction.deleteProviders}"
-									render="providersTableId" id="deleteConfirmation"
-									queue="providerQueue" subject="provider"
-									value="all selected providers" />
-							</div>
-						</h:panelGroup>
-						<script>
-						$(document).ready(function() {
-			       });
+					<b:panel title="Passport providers" look="primary">
+						<div class="row" style="padding: 5px; margin-bottom: 5px;">
+							<h:link includeViewParams="false" outcome="/passport/addProvider"
+								styleClass="btn btn-primary addProviderButtonClass"
+								value="#{msg['passport.addNewProvider']}" />
+						</div>
+						<div class="row" style="padding: 10px;">
+							<b:dataTable id="providersTableId"
+								value="#{passportProvidersAction.providerSelections}" var="c"
+								print="true" excel="true" csv="true" pdf="true" select="true">
+								<b:dataTableColumn label="#{msg['passport.provider.form.id']}">
+									<h:link includeViewParams="false"
+										outcome="/passport/editProvider" value="#{c.provider.id}">
+										<f:param name="id" value="#{c.provider.id}" />
+									</h:link>
+								</b:dataTableColumn>
+								<b:dataTableColumn value="#{c.provider.displayName}"
+									label="#{msg['passport.provider.form.displayName']}" />
+								<b:dataTableColumn value="#{c.provider.passportStrategyId}"
+									label="#{msg['passport.provider.form.strategyId']}" />
+								<b:dataTableColumn value="#{c.provider.type}" order="asc"
+									label="#{msg['passport.provider.form.type']}" />
+								<b:dataTableColumn label="#{msg['passport.deleteProvider']}">
+									<h:selectBooleanCheckbox id="selectId"
+										onchange="displayButton();" value="#{c.checked}">
+									</h:selectBooleanCheckbox>
+								</b:dataTableColumn>
+							</b:dataTable>
+						</div>
+						<div class="row" style="padding: 5px;">
+							<a4j:commandButton ajaxSingle="true" id="deleteId"
+								eventsQueue="providerQueue"
+								rendered="#{passportProvidersAction.providers.size() gt 0}"
+								onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();"
+								styleClass="btn btn-primary DeleteBulkProviders"
+								value="#{msg['passport.deleteProvider']}" />
+						</div>
+					</b:panel>
+					<ox:acceptRemovalDialog
+						deleteMethod="#{passportProvidersAction.deleteProviders}"
+						render="providersTableId" id="deleteConfirmation"
+						queue="providerQueue" subject="provider"
+						value="all selected providers" />
+					<script>
+						$(document).ready(function() { });
 						</script>
-						<!-- end providers list-->
-					</div>
 				</div>
 			</div>
 		</section>

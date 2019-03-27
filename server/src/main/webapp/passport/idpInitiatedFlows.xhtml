@@ -36,30 +36,15 @@
 		<section class="content">
 			<div class="row">
 				<div class="col-xs-12">
-					<div class="box box-primary" style="min-height: 400px;">
-						<div class="box-header"></div>
+					<div class="box box-primary">
 						<h:form id="IdpInitiatedForm">
 							<input type='hidden' name='cid' value='#{conversation.id}' />
-							<div class="row">
-								<div class="col-xs-12">
-									<!-- OIDC client section-->
-									<h:panelGroup columns="1" width="100%"
-										id="openIDConnectSection">
-										<div class="row"
-											style="margin-left: 5px; margin-right: 5px; margin-top: 10px;">
-											<div class="col-sm-3 col-lg-3" style="padding: 0px;">
-												<span
-													style="font-weight: bold; font-size: medium; color: #00BE79; text-transform: uppercase;">
-													#{msg['passport.idpinitiated.oidc.title']}</span>
-											</div>
-											<div class="col-sm-9 col-lg-9" style="padding: 0px;">
-												<hr
-													style="height: 1px; background: green; border-color: green; border-width: 0px;"></hr>
-											</div>
-										</div>
-
-										<!-- First row-->
-										<div class="row" style="margin-left: 5px; margin-right: 5px;">
+							<div class="row"
+								style="margin-left: 10px; margin-right: 10px; margin-top: 10px;">
+								<h:panelGroup columns="1" width="100%" id="openIDConnectSection">
+									<b:panel title="#{msg['passport.idpinitiated.oidc.title']}"
+										look="primary">
+										<div class="row">
 											<!-- First column-->
 											<div class="col-sm-6 col-lg-6" style="padding: 0px;">
 												<ox:decorate
@@ -103,182 +88,150 @@
 												</b:form>
 											</div>
 										</div>
-									</h:panelGroup>
-									<!-- AuthorizationParams section-->
-									<h:panelGroup columns="1" width="100%" id="AuthParamsSection">
-										<div class="row"
-											style="margin-left: 5px; margin-right: 5px; margin-top: 10px;">
-											<div class="col-sm-3 col-lg-3" style="padding: 0px;">
-												<span
-													style="font-weight: bold; font-size: medium; color: #00BE79; text-transform: uppercase;">
-													#{msg['passport.idpinitiated.authParams.title']}</span>
+									</b:panel>
+									<b:panel id="AuthParametersListID"
+										rendered="#{(passportIdpInitiatedAction.authzParams.size() ne 0) and !passportIdpInitiatedAction.showForm}"
+										title="#{msg['passport.idpinitiated.authParams.title']}"
+										look="primary">
+										<h:panelGroup columns="1" width="100%" id="AuthParamsSection">
+											<!-- AuthorizationParams List section-->
+											<div class="row" style="margin-left: 5px; margin-right: 5px;">
+												<a4j:commandButton styleClass="btn btn-primary addNewParam"
+													value="Add New AuthZParam"
+													action="#{passportIdpInitiatedAction.activateForm}"
+													render="IdpInitiatedForm,AuthZParamFormId,AuthParametersListID"
+													execute="@this" />
 											</div>
-											<div class="col-sm-9 col-lg-9" style="padding: 0px;">
-												<hr
-													style="height: 1px; background: green; border-color: green; border-width: 0px;"></hr>
-											</div>
-										</div>
-										<!-- AuthorizationParams List section-->
-										<div class="row" style="margin-left: 5px; margin-right: 5px;">
-											<h:outputText class="col-sm-offset-4 col-sm-4 col-xs-12"
-												rendered="#{passportIdpInitiatedAction.authzParams.size() eq 0}"
-												value="No Authenticate paramaters available yet." />
-											<a4j:commandButton styleClass="btn btn-primary addNewParam"
-												value="Add New AuthZParam"
-												action="#{passportIdpInitiatedAction.activateForm}"
-												render="AuthZParamFormId,IdpInitiatedForm" execute="@this" />
-										</div>
-										<!-- AuthorizationParams List not empty-->
-										<div class="row" style="margin-left: 5px; margin-right: 5px;">
-											<h:dataTable id="paramsTableId"
-												rendered="#{(passportIdpInitiatedAction.authzParams.size() gt 0) and !passportIdpInitiatedAction.showForm}"
-												rows="20" sortMode="single"
-												styleClass="table table-hover rt paramsTableId"
-												value="#{passportIdpInitiatedAction.authzParams}" var="clt">
-												<h:column sortBy="#{clt.provider}">
-													<f:facet name="header">
-                                                                    #{msg['passport.idpinitiated.authParams.provider']}
-                                                                </f:facet>
-													<h:outputText class="col-xs-12" value="#{clt.provider}" />
-												</h:column>
-												<h:column>
-													<f:facet name="header">
-                                                                    #{msg['passport.idpinitiated.authParams.responseType']}
-                                                                </f:facet>
-													<h:outputText class="col-xs-12" value="#{clt.responseType}" />
-												</h:column>
-												<h:column>
-													<f:facet name="header">
-                                                                    #{msg['passport.idpinitiated.authParams.scope']}
-                                                                </f:facet>
-													<h:outputText class="col-xs-12" value="#{clt.scopes}" />
-												</h:column>
-												<h:column>
-													<f:facet name="header">
-                                                                    #{msg['passport.idpinitiated.authParams.redirectUri']}
-                                                                </f:facet>
-													<h:outputText class="col-xs-12" value="#{clt.redirectUri}" />
-												</h:column>
-												<h:column>
-													<f:facet name="header">
-                                                                    Actions
-                                                                </f:facet>
+											<b:dataTable id="paramsTableId"
+												value="#{passportIdpInitiatedAction.authzParams}" var="c"
+												print="true" excel="true" csv="true" pdf="true"
+												select="true">
+												<b:dataTableColumn
+													label="#{msg['passport.idpinitiated.authParams.provider']}">
+													<h:link includeViewParams="false"
+														outcome="/passport/editProvider" value="#{c.provider}">
+														<f:param name="id" value="#{c.provider}" />
+													</h:link>
+												</b:dataTableColumn>
+												<b:dataTableColumn value="#{c.responseType}"
+													label="#{msg['passport.idpinitiated.authParams.responseType']}" />
+												<b:dataTableColumn value="#{c.scopes}"
+													label="#{msg['passport.idpinitiated.authParams.scope']}" />
+												<b:dataTableColumn value="#{c.redirectUri}" order="asc"
+													label="#{msg['passport.idpinitiated.authParams.redirectUri']}" />
+												<b:dataTableColumn label="Actions">
 													<a4j:commandButton
 														styleClass="btn btn-primary cancelAuthParamId"
 														value="Edit" style="margin-left: 5px;"
-														action="#{passportIdpInitiatedAction.editAuthParam(clt)}"
+														action="#{passportIdpInitiatedAction.editAuthParam(c)}"
 														render="IdpInitiatedForm,AuthZParamFormId" execute="@this" />
 													<a4j:commandButton
 														styleClass="btn btn-primary deleteParamId" value="Remove"
 														style="margin-left: 5px;"
-														action="#{passportIdpInitiatedAction.removeAuthParam(clt)}"
+														action="#{passportIdpInitiatedAction.removeAuthParam(c)}"
 														render="IdpInitiatedForm" execute="@this" />
-												</h:column>
-												<f:facet name="footer">
-													<rich:dataScroller align="left" fastControls="hide"
-														for="paramsTableId" maxPages="10"
-														renderIfSinglePage="false"
-														rendered="#{passportIdpInitiatedAction.authzParams.size() gt 0}"
-														stepControls="auto" />
-												</f:facet>
-											</h:dataTable>
-										</div>
-									</h:panelGroup>
-								</div>
+												</b:dataTableColumn>
+											</b:dataTable>
+										</h:panelGroup>
+									</b:panel>
+								</h:panelGroup>
 								<h:panelGroup rendered="#{!passportIdpInitiatedAction.showForm}">
-									<div class="row"
-										style="margin-left: 15px; margin-right: 20px; margin-top: 10px; margin-bottom: 20px; border: 1px solid green; border-radius: 5px">
-										<div id="updateButtons" style="margin-bottom: 10px;">
-											<h:commandButton action="#{passportIdpInitiatedAction.save}"
-												style="margin-left:5px;" styleClass="btn btn-primary"
-												value="save" />
-											<h:commandButton
-												action="#{passportIdpInitiatedAction.cancel}"
-												immediate="true" style="margin-left:5px;"
-												styleClass="btn btn-primary" value="#{msg['client.cancel']}" />
-										</div>
+									<div id="updateButtons"
+										style="margin-left: 15px; margin-bottom: 10px;">
+										<h:commandButton action="#{passportIdpInitiatedAction.save}"
+											style="margin-left:5px;" styleClass="btn btn-primary"
+											value="save" />
+										<h:commandButton action="#{passportIdpInitiatedAction.cancel}"
+											immediate="true" style="margin-left:5px;"
+											styleClass="btn btn-primary" value="#{msg['client.cancel']}" />
 									</div>
 								</h:panelGroup>
 							</div>
 						</h:form>
 						<h:form id="AuthZParamFormId">
-							<!-- Add new Param form-->
-							<h:panelGroup id="ParamFormID"
-								rendered="#{passportIdpInitiatedAction.showForm}">
-								<div class="row"
-									style="margin-left: 5px; margin-right: 5px; margin-top: 10px; margin-bottom: 20px; border: 1px solid green; border-radius: 5px">
-									<!-- First column-->
-									<div class="col-sm-6 col-lg-6" style="padding: 0px;">
-										<b:form horizontal="true">
-											<b:formGroup>
-												<b:selectOneMenu id="ProviderID"
-													value="#{passportIdpInitiatedAction.authzParam.provider}"
-													select2="true" colMd="9" required="true" labelColMd="3"
-													label="#{msg['passport.idpinitiated.authParams.provider']}">
-													<f:selectItem itemLabel="(Please select a provider"
-														itemValue="" />
-													<f:selectItems
-														value="#{passportIdpInitiatedAction.providers}"
-														var="provider" itemValue="#{provider.id}"
-														itemLabel="#{provider.displayName}" />
-												</b:selectOneMenu>
-											</b:formGroup>
-											<b:formGroup>
-												<b:inputText id="RedirectURI"
-												    colMd="9" labelColMd="3"
-													value="#{passportIdpInitiatedAction.authzParam.redirectUri}"
-													styleClass="rounded form-control RedirectURI"
-													label="#{msg['passport.idpinitiated.authParams.redirectUri']}" />
-											</b:formGroup>
-										</b:form>
-									</div>
-									<!-- Second column-->
-									<div class="col-sm-6 col-lg-6" style="padding: 0px;">
-										<b:form horizontal="true">
-											<b:formGroup>
-												<b:inputText tags="true" id="ResponseTypesID"
-													label="#{msg['passport.idpinitiated.authParams.responseType']}"
-													required="true" colMd="9" labelColMd="3"
-													value="#{passportIdpInitiatedAction.selectedTypes}"
-													placeholder="Select responses types" typeahead="true"
-													typeahead-values="#{passportIdpInitiatedAction.responseTypes}"
-													tiny-screen="full-width" />
-											</b:formGroup>
-											<b:formGroup>
-												<b:inputText tags="true" id="ScopesID"
-													label="#{msg['passport.idpinitiated.authParams.scope']}"
-													required="true" colMd="9" labelColMd="3"
-													value="#{passportIdpInitiatedAction.authzParam.scopes}"
-													placeholder="Select scopes" typeahead="true"
-													typeahead-values="#{passportIdpInitiatedAction.scopes}"
-													tiny-screen="full-width" />
-											</b:formGroup>
-										</b:form>
-									</div>
-									<!-- Form footer-->
-									<div class="row"
-										style="margin-left: 50px; margin-right: 5px; margin-bottom: 20px;">
-										<div id="updateButtons">
-											<a4j:commandButton
-												styleClass="btn btn-primary saveAuthParamId"
-												onclick="submit();" value="#{msg['client.add']}"
-												style="margin-left: 5px;"
-												action="#{passportIdpInitiatedAction.addAuthParam}"
-												render="AuthZParamFormId" execute="@this" />
-											<a4j:commandButton
-												styleClass="btn btn-primary cancelAuthParamId"
-												value="#{msg['client.cancel']}" style="margin-left: 5px;"
-												action="#{passportIdpInitiatedAction.cancelParamAdd}"
-												render="AuthZParamFormId,IdpInitiatedForm" execute="@this" />
+							<div class="row"
+								style="margin-left: 10px; margin-right: 10px; margin-top: 10px;">
+								<b:panel title="AuthZ Parameter Form"
+									rendered="#{passportIdpInitiatedAction.showForm}"
+									look="success">
+									<h:panelGroup id="ParamFormID"
+										rendered="#{passportIdpInitiatedAction.showForm}">
+										<div class="row">
+											<!-- First column-->
+											<div class="col-sm-6 col-lg-6" style="padding: 0px;">
+												<b:form horizontal="true">
+													<b:formGroup>
+														<b:selectOneMenu id="ProviderID"
+															value="#{passportIdpInitiatedAction.authzParam.provider}"
+															select2="true" colMd="9" required="true" labelColMd="3"
+															label="#{msg['passport.idpinitiated.authParams.provider']}">
+															<f:selectItem itemLabel="Please select a provider"
+																itemValue="" />
+															<f:selectItems
+																value="#{passportIdpInitiatedAction.providers}"
+																var="provider" itemValue="#{provider.id}"
+																itemLabel="#{provider.displayName}" />
+														</b:selectOneMenu>
+													</b:formGroup>
+													<b:formGroup>
+														<b:inputText id="RedirectURI" colMd="9" labelColMd="3"
+															value="#{passportIdpInitiatedAction.authzParam.redirectUri}"
+															styleClass="rounded form-control RedirectURI"
+															label="#{msg['passport.idpinitiated.authParams.redirectUri']}" />
+													</b:formGroup>
+												</b:form>
+											</div>
+											<!-- Second column-->
+											<div class="col-sm-6 col-lg-6" style="padding: 0px;">
+												<b:form horizontal="true" id="hForm">
+													<b:formGroup>
+														<b:inputText tags="true" id="ResponseTypesID"
+															label="#{msg['passport.idpinitiated.authParams.responseType']}"
+															required="true" colMd="9" labelColMd="3"
+															style-class="tags"
+															value="#{passportIdpInitiatedAction.authzParam.responseType}"
+															placeholder="Select responses types" typeahead="true"
+															typeahead-values="#{passportIdpInitiatedAction.responseTypes}" />
+													</b:formGroup>
+													<b:formGroup>
+														<b:inputText tags="true" id="ScopesID"
+															label="#{msg['passport.idpinitiated.authParams.scope']}"
+															required="true" colMd="9" labelColMd="3"
+															style-class="tags"
+															value="#{passportIdpInitiatedAction.authzParam.scopes}"
+															placeholder="Select scopes" typeahead="true"
+															typeahead-values="#{passportIdpInitiatedAction.scopes}" />
+													</b:formGroup>
+												</b:form>
+											</div>
 										</div>
-									</div>
-								</div>
-							</h:panelGroup>
+										<!-- Form footer-->
+										<div class="row"
+											style="margin-left: 50px; margin-right: 5px; margin-bottom: 20px;">
+											<div id="updateButtons">
+												<a4j:commandButton
+													styleClass="btn btn-primary saveAuthParamId"
+													onclick="submit();" value="#{msg['client.add']}"
+													style="margin-left: 5px;"
+													action="#{passportIdpInitiatedAction.addAuthParam}"
+													render="AuthZParamFormId" execute="@this" />
+												<a4j:commandButton
+													styleClass="btn btn-primary cancelAuthParamId"
+													value="#{msg['client.cancel']}" style="margin-left: 5px;"
+													action="#{passportIdpInitiatedAction.cancelParamAdd}"
+													render="AuthZParamFormId,IdpInitiatedForm" execute="@this" />
+											</div>
+										</div>
+									</h:panelGroup>
+								</b:panel>
+							</div>
 						</h:form>
 					</div>
 				</div>
 			</div>
+			<script>
+				$('.tags').tagsinput('refresh');
+			</script>
 		</section>
-
 	</ui:define>
 </ui:composition>

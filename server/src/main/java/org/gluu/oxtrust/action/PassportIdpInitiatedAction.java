@@ -66,7 +66,7 @@ public class PassportIdpInitiatedAction implements Serializable {
 	private AuthzParams authzParam = new AuthzParams();
 	private AuthzParams previousParam;
 
-	private String selectedTypes=null;
+	private String selectedTypes = null;
 
 	public String init() {
 		try {
@@ -134,13 +134,13 @@ public class PassportIdpInitiatedAction implements Serializable {
 	}
 
 	public void addAuthParam() {
-		log.info("**********"+this.selectedTypes);
+		log.info("********************************");
+		log.info("**********" + this.authzParam.getScopes());
+		log.info("**********" + this.selectedTypes);
 		if (this.isEdition) {
 			this.authzParams.remove(this.previousParam);
 			this.authzParams.add(this.authzParam);
 		} else {
-			log.info("********************************");
-			log.info("**********"+this.authzParam.getScopes());
 			this.authzParams.add(this.authzParam);
 		}
 		this.showForm = false;
