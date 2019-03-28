@@ -24,7 +24,7 @@ import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.util.OxTrustApiConstants;
 import org.slf4j.Logger;
 import org.xdi.model.GluuAttribute;
-import org.xdi.model.GluuStatus;
+import org.gluu.model.GluuStatus;
 
 import com.google.common.base.Preconditions;
 import com.wordnik.swagger.annotations.Api;
