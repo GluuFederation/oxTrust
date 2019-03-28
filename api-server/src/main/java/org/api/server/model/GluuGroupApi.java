@@ -8,8 +8,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.gluu.model.GluuStatus;
 import org.gluu.oxtrust.model.GluuGroup;
-import org.xdi.model.GluuStatus;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
