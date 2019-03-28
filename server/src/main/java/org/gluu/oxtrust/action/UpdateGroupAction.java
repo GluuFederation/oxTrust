@@ -25,6 +25,7 @@ import javax.validation.constraints.Size;
 
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
+import org.gluu.model.GluuStatus;
 import org.gluu.oxtrust.ldap.service.GroupService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.ldap.service.OxTrustAuditService;
@@ -39,7 +40,6 @@ import org.gluu.persist.model.base.GluuBoolean;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.DisplayNameEntry;
-import org.xdi.model.GluuStatus;
 import org.xdi.service.LookupService;
 import org.xdi.service.security.Secure;
 import org.xdi.util.StringHelper;

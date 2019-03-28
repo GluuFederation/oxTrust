@@ -13,9 +13,9 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.gluu.model.ApplicationType;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.model.ApplicationType;
 import org.xdi.service.CacheService;
 import org.xdi.service.cache.CacheProvider;
 import org.xdi.service.cache.NativePersistenceCacheProvider;

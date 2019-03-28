@@ -19,13 +19,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.AssertTrue;
 
 import org.gluu.jsf2.message.FacesMessages;
+import org.gluu.model.attribute.AttributeValidation;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.OxTrustAuditService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.security.Identity;
 import org.slf4j.Logger;
-import org.xdi.model.attribute.AttributeValidation;
 import org.xdi.service.security.Secure;
 import org.xdi.util.StringHelper;
 

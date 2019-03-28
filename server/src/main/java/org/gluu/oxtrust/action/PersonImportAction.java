@@ -31,6 +31,8 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
+import org.gluu.model.GluuStatus;
+import org.gluu.model.attribute.AttributeDataType;
 import org.gluu.oxtrust.ldap.load.conf.ImportPersonConfiguration;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.ExcelService;
@@ -51,9 +53,7 @@ import org.richfaces.model.UploadedFile;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.model.GluuAttribute;
-import org.xdi.model.GluuStatus;
 import org.xdi.model.GluuUserRole;
-import org.xdi.model.attribute.AttributeDataType;
 import org.xdi.service.security.Secure;
 import org.xdi.util.StringHelper;
 

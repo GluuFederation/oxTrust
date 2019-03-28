@@ -32,6 +32,7 @@ import javax.inject.Named;
 
 import org.apache.commons.beanutils.BeanUtilsBean2;
 import org.apache.commons.io.FilenameUtils;
+import org.gluu.model.GluuStatus;
 import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.ldap.cache.model.CacheCompoundKey;
 import org.gluu.oxtrust.ldap.cache.model.GluuInumMap;
@@ -62,7 +63,6 @@ import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.config.oxtrust.CacheRefreshAttributeMapping;
 import org.xdi.config.oxtrust.CacheRefreshConfiguration;
-import org.xdi.model.GluuStatus;
 import org.xdi.model.custom.script.model.bind.BindCredentials;
 import org.xdi.model.ldap.GluuLdapConfiguration;
 import org.xdi.service.ObjectSerializationService;

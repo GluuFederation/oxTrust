@@ -18,6 +18,7 @@ import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.gluu.model.GluuStatus;
 import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.PersistenceEntryManager;
@@ -26,7 +27,6 @@ import org.gluu.persist.model.base.GluuBoolean;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.config.oxtrust.LdapOxAuthConfiguration;
-import org.xdi.model.GluuStatus;
 import org.xdi.model.ProgrammingLanguage;
 import org.xdi.service.CacheService;
 import org.xdi.util.ArrayHelper;

@@ -5,9 +5,9 @@
  */
 package org.gluu.oxtrust.model.scim2.extensions;
 
+import org.gluu.model.attribute.AttributeDataType;
 import org.gluu.oxtrust.model.scim2.AttributeDefinition.Type;
 import org.gluu.oxtrust.model.scim2.util.DateUtil;
-import org.xdi.model.attribute.AttributeDataType;
 
 import java.util.regex.Pattern;
 

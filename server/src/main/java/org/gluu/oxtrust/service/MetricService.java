@@ -7,6 +7,10 @@
 package org.gluu.oxtrust.service;
 
 import org.gluu.oxtrust.ldap.service.ConfigurationService;
+import org.gluu.model.ApplicationType;
+import org.gluu.model.metric.MetricType;
+import org.gluu.model.metric.counter.CounterMetricEntry;
+import org.gluu.model.metric.ldap.MetricEntry;
 import org.gluu.oxtrust.ldap.service.ApplicationFactory;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.model.AuthenticationChartDto;
@@ -14,10 +18,6 @@ import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.PersistenceEntryManager;
 import org.slf4j.Logger;
 import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.model.ApplicationType;
-import org.xdi.model.metric.MetricType;
-import org.xdi.model.metric.counter.CounterMetricEntry;
-import org.xdi.model.metric.ldap.MetricEntry;
 import org.xdi.service.CacheService;
 import org.xdi.service.metric.inject.ReportMetric;
 
