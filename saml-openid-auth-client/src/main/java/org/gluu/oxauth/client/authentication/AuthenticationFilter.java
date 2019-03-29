@@ -38,10 +38,10 @@ import org.xdi.oxauth.model.common.ResponseType;
 import org.xdi.oxauth.model.crypto.OxAuthCryptoProvider;
 import org.xdi.oxauth.model.crypto.signature.SignatureAlgorithm;
 import org.xdi.oxauth.model.util.StringUtils;
-import org.xdi.util.ArrayHelper;
-import org.xdi.util.StringHelper;
-import org.xdi.util.security.StringEncrypter;
-import org.xdi.util.security.StringEncrypter.EncryptionException;
+import org.gluu.util.ArrayHelper;
+import org.gluu.util.StringHelper;
+import org.gluu.util.security.StringEncrypter;
+import org.gluu.util.security.StringEncrypter.EncryptionException;
 
 /**
  * Filter implementation to intercept all requests and attempt to authorize the

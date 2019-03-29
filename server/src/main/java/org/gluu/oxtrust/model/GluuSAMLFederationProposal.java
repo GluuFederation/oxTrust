@@ -7,9 +7,9 @@
 package org.gluu.oxtrust.model;
 
 import org.gluu.oxtrust.ldap.service.FederationService;
+import org.gluu.service.cdi.util.CdiUtil;
 import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
-import org.xdi.service.cdi.util.CdiUtil;
-import org.xdi.util.StringHelper;
+import org.gluu.util.StringHelper;
 
 public class GluuSAMLFederationProposal extends GluuSAMLTrustRelationship {
 

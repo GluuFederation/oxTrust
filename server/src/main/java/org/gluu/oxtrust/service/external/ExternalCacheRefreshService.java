@@ -11,14 +11,14 @@ import java.util.Map;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
 
+import org.gluu.model.SimpleCustomProperty;
+import org.gluu.model.custom.script.CustomScriptType;
+import org.gluu.model.custom.script.conf.CustomScriptConfiguration;
+import org.gluu.model.custom.script.model.bind.BindCredentials;
+import org.gluu.model.custom.script.type.user.CacheRefreshType;
 import org.gluu.oxtrust.model.GluuCustomPerson;
-import org.xdi.model.SimpleCustomProperty;
-import org.xdi.model.custom.script.CustomScriptType;
-import org.xdi.model.custom.script.conf.CustomScriptConfiguration;
-import org.xdi.model.custom.script.model.bind.BindCredentials;
-import org.xdi.model.custom.script.type.user.CacheRefreshType;
-import org.xdi.service.custom.script.ExternalScriptService;
-import org.xdi.util.StringHelper;
+import org.gluu.service.custom.script.ExternalScriptService;
+import org.gluu.util.StringHelper;
 
 /**
  * Provides factory methods needed to create external cache refresh extension

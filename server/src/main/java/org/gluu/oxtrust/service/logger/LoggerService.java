@@ -4,9 +4,9 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.oxtrust.ldap.service.ConfigurationService;
 import org.gluu.oxtrust.model.GluuConfiguration;
-import org.xdi.config.oxtrust.AppConfiguration;
 
 /**
  * Logger service
@@ -15,7 +15,7 @@ import org.xdi.config.oxtrust.AppConfiguration;
  */
 @ApplicationScoped
 @Named
-public class LoggerService extends org.xdi.service.logger.LoggerService {
+public class LoggerService extends org.gluu.service.logger.LoggerService {
 
     @Inject
     private AppConfiguration appConfiguration;

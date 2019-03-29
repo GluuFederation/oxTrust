@@ -13,13 +13,13 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.gluu.config.oxtrust.AppConfiguration;
+import org.gluu.util.StringHelper;
+import org.gluu.util.exception.ConfigurationException;
+import org.gluu.util.init.Initializable;
 import org.slf4j.Logger;
-import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.oxauth.client.OpenIdConfigurationClient;
 import org.xdi.oxauth.client.OpenIdConfigurationResponse;
-import org.xdi.util.StringHelper;
-import org.xdi.util.exception.ConfigurationException;
-import org.xdi.util.init.Initializable;
 
 /**
  * Provides OpenId configuration

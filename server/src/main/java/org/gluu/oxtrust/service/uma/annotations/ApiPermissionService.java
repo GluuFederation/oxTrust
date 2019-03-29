@@ -15,8 +15,8 @@ import org.gluu.model.user.UserRole;
 import org.gluu.oxtrust.ldap.service.ConfigurationService;
 import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.oxtrust.security.Identity;
+import org.gluu.util.StringHelper;
 import org.slf4j.Logger;
-import org.xdi.util.StringHelper;
 
 /**
  * Provides service to protect Rest service endpoints with UMA scope.

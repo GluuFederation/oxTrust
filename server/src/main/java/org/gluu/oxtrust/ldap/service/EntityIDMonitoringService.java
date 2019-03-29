@@ -21,19 +21,19 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.model.GluuStatus;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.model.GluuValidationStatus;
 import org.gluu.oxtrust.service.cdi.event.EntityIdMonitoringEvent;
 import org.gluu.oxtrust.util.ServiceUtil;
 import org.gluu.saml.metadata.SAMLMetadataParser;
+import org.gluu.service.cdi.async.Asynchronous;
+import org.gluu.service.cdi.event.Scheduled;
+import org.gluu.service.timer.event.TimerEvent;
+import org.gluu.service.timer.schedule.TimerSchedule;
+import org.gluu.util.StringHelper;
 import org.slf4j.Logger;
-import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.service.cdi.async.Asynchronous;
-import org.xdi.service.cdi.event.Scheduled;
-import org.xdi.service.timer.event.TimerEvent;
-import org.xdi.service.timer.schedule.TimerSchedule;
-import org.xdi.util.StringHelper;
 
 /**
  * @author otataryn

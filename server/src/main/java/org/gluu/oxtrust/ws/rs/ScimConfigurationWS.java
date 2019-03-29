@@ -26,8 +26,8 @@ import org.gluu.oxtrust.ws.rs.scim2.ResourceTypeWS;
 import org.gluu.oxtrust.ws.rs.scim2.SchemaWebService;
 import org.gluu.oxtrust.ws.rs.scim2.ServiceProviderConfigWS;
 import org.gluu.oxtrust.ws.rs.scim2.UserWebService;
+import org.gluu.service.JsonService;
 import org.slf4j.Logger;
-import org.xdi.service.JsonService;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;

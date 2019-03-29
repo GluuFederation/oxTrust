@@ -20,17 +20,17 @@ import javax.inject.Named;
 
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
+import org.gluu.model.GluuAttribute;
+import org.gluu.model.GluuImage;
+import org.gluu.model.GluuUserRole;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.ImageService;
 import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.util.OxTrustConstants;
+import org.gluu.service.security.Secure;
 import org.slf4j.Logger;
-import org.xdi.model.GluuAttribute;
-import org.xdi.model.GluuImage;
-import org.xdi.model.GluuUserRole;
-import org.xdi.service.security.Secure;
 
 /**
  * Action class for view white pages

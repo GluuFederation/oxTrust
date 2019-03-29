@@ -15,10 +15,10 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.event.DeleteNotifier;
 import org.slf4j.Logger;
-import org.xdi.config.oxtrust.AppConfiguration;
 
 @Stateless
 @Named

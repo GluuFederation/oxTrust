@@ -7,6 +7,7 @@
 package org.gluu.oxtrust.service;
 
 import org.gluu.oxtrust.ldap.service.ConfigurationService;
+import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.model.ApplicationType;
 import org.gluu.model.metric.MetricType;
 import org.gluu.model.metric.counter.CounterMetricEntry;
@@ -16,10 +17,9 @@ import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.model.AuthenticationChartDto;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.PersistenceEntryManager;
+import org.gluu.service.CacheService;
+import org.gluu.service.metric.inject.ReportMetric;
 import org.slf4j.Logger;
-import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.service.CacheService;
-import org.xdi.service.metric.inject.ReportMetric;
 
 import javax.ejb.Stateless;
 import javax.enterprise.inject.Instance;
@@ -36,7 +36,7 @@ import java.util.*;
  */
 @Stateless
 @Named(MetricService.METRIC_SERVICE_COMPONENT_NAME)
-public class MetricService extends org.xdi.service.metric.MetricService {
+public class MetricService extends org.gluu.service.metric.MetricService {
 
 	private static final int YEARLY = 365;
 
@@ -79,7 +79,7 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 	}
 
 	@Override
-	public org.xdi.service.metric.MetricService getMetricServiceInstance() {
+	public org.gluu.service.metric.MetricService getMetricServiceInstance() {
 		return instance.get();
 	}
 

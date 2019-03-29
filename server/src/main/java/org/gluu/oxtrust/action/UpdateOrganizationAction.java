@@ -19,8 +19,12 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.gluu.config.oxauth.WebKeysSettings;
+import org.gluu.config.oxtrust.LdapOxAuthConfiguration;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
+import org.gluu.model.GluuImage;
+import org.gluu.model.SmtpConfiguration;
 import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.ldap.service.ConfigurationService;
 import org.gluu.oxtrust.ldap.service.ImageService;
@@ -30,16 +34,12 @@ import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.exception.BasePersistenceException;
+import org.gluu.service.MailService;
+import org.gluu.service.security.Secure;
+import org.gluu.util.StringHelper;
 import org.richfaces.event.FileUploadEvent;
 import org.richfaces.model.UploadedFile;
 import org.slf4j.Logger;
-import org.xdi.config.oxauth.WebKeysSettings;
-import org.xdi.config.oxtrust.LdapOxAuthConfiguration;
-import org.xdi.model.GluuImage;
-import org.xdi.model.SmtpConfiguration;
-import org.xdi.service.MailService;
-import org.xdi.service.security.Secure;
-import org.xdi.util.StringHelper;
 
 /**
  * Action class for configuring application

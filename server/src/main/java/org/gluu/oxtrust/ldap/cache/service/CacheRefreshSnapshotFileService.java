@@ -31,9 +31,9 @@ import javax.inject.Named;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
+import org.gluu.config.oxtrust.CacheRefreshConfiguration;
+import org.gluu.util.ArrayHelper;
 import org.slf4j.Logger;
-import org.xdi.config.oxtrust.CacheRefreshConfiguration;
-import org.xdi.util.ArrayHelper;
 
 /**
  * Helper service to work with snapshots

@@ -13,17 +13,17 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.gluu.config.oxtrust.AppConfiguration;
+import org.gluu.model.AuthenticationScriptUsageType;
+import org.gluu.model.ProgrammingLanguage;
+import org.gluu.model.ScriptLocationType;
+import org.gluu.model.SmtpConfiguration;
+import org.gluu.model.custom.script.CustomScriptType;
 import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.persist.PersistenceEntryManager;
+import org.gluu.util.StringHelper;
+import org.gluu.util.security.StringEncrypter.EncryptionException;
 import org.slf4j.Logger;
-import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.model.AuthenticationScriptUsageType;
-import org.xdi.model.ProgrammingLanguage;
-import org.xdi.model.ScriptLocationType;
-import org.xdi.model.SmtpConfiguration;
-import org.xdi.model.custom.script.CustomScriptType;
-import org.xdi.util.StringHelper;
-import org.xdi.util.security.StringEncrypter.EncryptionException;
 
 /**
  * GluuConfiguration service

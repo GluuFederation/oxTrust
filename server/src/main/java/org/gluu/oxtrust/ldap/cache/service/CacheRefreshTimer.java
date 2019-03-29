@@ -32,7 +32,12 @@ import javax.inject.Named;
 
 import org.apache.commons.beanutils.BeanUtilsBean2;
 import org.apache.commons.io.FilenameUtils;
+import org.gluu.config.oxtrust.AppConfiguration;
+import org.gluu.config.oxtrust.CacheRefreshAttributeMapping;
+import org.gluu.config.oxtrust.CacheRefreshConfiguration;
 import org.gluu.model.GluuStatus;
+import org.gluu.model.custom.script.model.bind.BindCredentials;
+import org.gluu.model.ldap.GluuLdapConfiguration;
 import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.ldap.cache.model.CacheCompoundKey;
 import org.gluu.oxtrust.ldap.cache.model.GluuInumMap;
@@ -59,23 +64,18 @@ import org.gluu.persist.model.base.GluuBoolean;
 import org.gluu.persist.model.base.GluuDummyEntry;
 import org.gluu.persist.operation.PersistenceOperationService;
 import org.gluu.search.filter.Filter;
+import org.gluu.service.ObjectSerializationService;
+import org.gluu.service.SchemaService;
+import org.gluu.service.cdi.async.Asynchronous;
+import org.gluu.service.cdi.event.Scheduled;
+import org.gluu.service.timer.event.TimerEvent;
+import org.gluu.service.timer.schedule.TimerSchedule;
+import org.gluu.util.ArrayHelper;
+import org.gluu.util.OxConstants;
+import org.gluu.util.Pair;
+import org.gluu.util.StringHelper;
+import org.gluu.util.security.PropertiesDecrypter;
 import org.slf4j.Logger;
-import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.config.oxtrust.CacheRefreshAttributeMapping;
-import org.xdi.config.oxtrust.CacheRefreshConfiguration;
-import org.xdi.model.custom.script.model.bind.BindCredentials;
-import org.xdi.model.ldap.GluuLdapConfiguration;
-import org.xdi.service.ObjectSerializationService;
-import org.xdi.service.SchemaService;
-import org.xdi.service.cdi.async.Asynchronous;
-import org.xdi.service.cdi.event.Scheduled;
-import org.xdi.service.timer.event.TimerEvent;
-import org.xdi.service.timer.schedule.TimerSchedule;
-import org.xdi.util.ArrayHelper;
-import org.xdi.util.OxConstants;
-import org.xdi.util.Pair;
-import org.xdi.util.StringHelper;
-import org.xdi.util.security.PropertiesDecrypter;
 
 /**
  * Check periodically if source servers contains updates and trigger target

@@ -17,6 +17,7 @@ import javax.inject.Named;
 
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
+import org.gluu.model.SimpleCustomProperty;
 import org.gluu.oxtrust.ldap.service.ConfigurationService;
 import org.gluu.oxtrust.ldap.service.JsonConfigurationService;
 import org.gluu.oxtrust.model.GluuConfiguration;
@@ -24,12 +25,11 @@ import org.gluu.oxtrust.model.LogViewerConfig;
 import org.gluu.oxtrust.model.SimpleCustomPropertiesListModel;
 import org.gluu.oxtrust.service.logger.LoggerService;
 import org.gluu.oxtrust.util.OxTrustConstants;
+import org.gluu.service.JsonService;
+import org.gluu.service.security.Secure;
+import org.gluu.util.StringHelper;
 import org.slf4j.Logger;
-import org.xdi.model.SimpleCustomProperty;
 import org.xdi.oxauth.model.configuration.AppConfiguration;
-import org.xdi.service.JsonService;
-import org.xdi.service.security.Secure;
-import org.xdi.util.StringHelper;
 
 /**
  * Action class for configuring log viewer

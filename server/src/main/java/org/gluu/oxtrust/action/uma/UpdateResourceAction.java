@@ -21,6 +21,8 @@ import javax.inject.Named;
 
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
+import org.gluu.model.DisplayNameEntry;
+import org.gluu.model.SelectableEntity;
 import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.uma.ResourceSetService;
 import org.gluu.oxtrust.ldap.service.uma.ScopeDescriptionService;
@@ -28,16 +30,14 @@ import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.exception.BasePersistenceException;
+import org.gluu.service.LookupService;
+import org.gluu.service.security.Secure;
+import org.gluu.util.SelectableEntityHelper;
+import org.gluu.util.StringHelper;
+import org.gluu.util.Util;
 import org.slf4j.Logger;
-import org.xdi.model.DisplayNameEntry;
-import org.xdi.model.SelectableEntity;
 import org.xdi.oxauth.model.uma.persistence.UmaResource;
 import org.xdi.oxauth.model.uma.persistence.UmaScopeDescription;
-import org.xdi.service.LookupService;
-import org.xdi.service.security.Secure;
-import org.xdi.util.SelectableEntityHelper;
-import org.xdi.util.StringHelper;
-import org.xdi.util.Util;
 
 /**
  * Action class for view and update resource sets

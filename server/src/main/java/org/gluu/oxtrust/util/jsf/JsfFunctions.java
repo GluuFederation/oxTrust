@@ -13,14 +13,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.gluu.model.DisplayNameEntry;
 import org.gluu.oxtrust.model.User;
 import org.gluu.oxtrust.service.PermissionService;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.model.base.Entry;
-import org.xdi.model.DisplayNameEntry;
-import org.xdi.service.LookupService;
-import org.xdi.service.cdi.util.CdiUtil;
-import org.xdi.util.StringHelper;
+import org.gluu.service.LookupService;
+import org.gluu.service.cdi.util.CdiUtil;
+import org.gluu.util.StringHelper;
 
 //import org.gluu.site.model.Entry;
 

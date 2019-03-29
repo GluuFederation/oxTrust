@@ -25,9 +25,9 @@ import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.OxTrustAuditService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.security.Identity;
+import org.gluu.service.security.Secure;
+import org.gluu.util.StringHelper;
 import org.slf4j.Logger;
-import org.xdi.service.security.Secure;
-import org.xdi.util.StringHelper;
 
 /**
  * Action class for password validation

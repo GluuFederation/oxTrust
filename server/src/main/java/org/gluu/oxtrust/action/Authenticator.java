@@ -24,6 +24,7 @@ import javax.inject.Named;
 import javax.servlet.http.Cookie;
 
 import org.codehaus.jettison.json.JSONException;
+import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.FacesService;
 import org.gluu.model.GluuStatus;
@@ -39,9 +40,11 @@ import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.security.OauthData;
 import org.gluu.oxtrust.service.OpenIdService;
 import org.gluu.oxtrust.util.OxTrustConstants;
+import org.gluu.util.ArrayHelper;
+import org.gluu.util.StringHelper;
+import org.gluu.util.security.StringEncrypter.EncryptionException;
 import org.jboss.resteasy.client.ClientRequest;
 import org.slf4j.Logger;
-import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.oxauth.client.OpenIdConfigurationResponse;
 import org.xdi.oxauth.client.TokenClient;
 import org.xdi.oxauth.client.TokenResponse;
@@ -50,9 +53,6 @@ import org.xdi.oxauth.client.UserInfoResponse;
 import org.xdi.oxauth.model.exception.InvalidJwtException;
 import org.xdi.oxauth.model.jwt.Jwt;
 import org.xdi.oxauth.model.jwt.JwtClaimName;
-import org.xdi.util.ArrayHelper;
-import org.xdi.util.StringHelper;
-import org.xdi.util.security.StringEncrypter.EncryptionException;
 
 /**
  * Provides authentication using oAuth

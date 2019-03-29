@@ -14,13 +14,13 @@ import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.gluu.model.TrustContact;
 import org.gluu.oxtrust.ldap.service.TrustService;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.xdi.model.TrustContact;
-import org.xdi.service.XmlService;
-import org.xdi.service.security.Secure;
-import org.xdi.util.Util;
+import org.gluu.service.XmlService;
+import org.gluu.service.security.Secure;
+import org.gluu.util.Util;
 
 @ConversationScoped
 @Named("trustContactsAction")

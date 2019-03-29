@@ -30,12 +30,12 @@ import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.exception.BasePersistenceException;
 import org.slf4j.Logger;
-import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.model.DisplayNameEntry;
-import org.xdi.service.LookupService;
-import org.xdi.service.security.Secure;
-import org.xdi.util.StringHelper;
-import org.xdi.util.Util;
+import org.gluu.config.oxtrust.AppConfiguration;
+import org.gluu.model.DisplayNameEntry;
+import org.gluu.service.LookupService;
+import org.gluu.service.security.Secure;
+import org.gluu.util.StringHelper;
+import org.gluu.util.Util;
 
 import com.google.common.base.Strings;
 

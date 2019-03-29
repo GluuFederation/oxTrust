@@ -13,16 +13,16 @@ import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.gluu.config.oxtrust.AppConfiguration;
+import org.gluu.model.SmtpConfiguration;
 import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.config.ConfigurationFactory.PersistenceConfiguration;
 import org.apache.commons.lang.StringUtils;
 import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.persist.PersistenceEntryManagerFactory;
+import org.gluu.service.cache.CacheConfiguration;
+import org.gluu.service.cache.InMemoryConfiguration;
 import org.slf4j.Logger;
-import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.model.SmtpConfiguration;
-import org.xdi.service.cache.CacheConfiguration;
-import org.xdi.service.cache.InMemoryConfiguration;
 
 /**
  * Holds factory methods to create services
