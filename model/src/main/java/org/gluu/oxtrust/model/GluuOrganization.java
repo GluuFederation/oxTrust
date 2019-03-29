@@ -84,16 +84,7 @@ public class GluuOrganization extends Entry implements Serializable {
 
 	@LdapAttribute(name = "title")
 	private String title;
-	
-	@LdapAttribute(name = "oxLinktrackEnabled")
-	private Boolean linktrackEnabled;
 
-	@LdapAttribute(name = "oxLinktrackLogin")
-	private String linktrackLogin;
-
-	@LdapAttribute(name = "oxLinktrackPassword")
-	private String linktrackPassword;
-	
 	@LdapAttribute(name = "oxRegistrationConfiguration")
 	@LdapJsonObject
 	private RegistrationConfiguration oxRegistrationConfiguration;
@@ -105,164 +96,139 @@ public class GluuOrganization extends Entry implements Serializable {
 		return title;
 	}
 
-    public String getCountryName() {
-        return countryName;
-    }
+	public String getCountryName() {
+		return countryName;
+	}
 
-    public void setCountryName(String countryName) {
-        this.countryName = countryName;
-    }
+	public void setCountryName(String countryName) {
+		this.countryName = countryName;
+	}
 
-    public String[] getCustomMessages() {
-        return customMessages;
-    }
+	public String[] getCustomMessages() {
+		return customMessages;
+	}
 
-    public void setCustomMessages(String[] customMessages) {
-        this.customMessages = customMessages;
-    }
+	public void setCustomMessages(String[] customMessages) {
+		this.customMessages = customMessages;
+	}
 
-    public String getDescription() {
-        return description;
-    }
+	public String getDescription() {
+		return description;
+	}
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+	public void setDescription(String description) {
+		this.description = description;
+	}
 
-    public String getDisplayName() {
-        return displayName;
-    }
+	public String getDisplayName() {
+		return displayName;
+	}
 
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
-    }
+	public void setDisplayName(String displayName) {
+		this.displayName = displayName;
+	}
 
-    public String getFaviconImage() {
-        return faviconImage;
-    }
+	public String getFaviconImage() {
+		return faviconImage;
+	}
 
-    public void setFaviconImage(String faviconImage) {
-        this.faviconImage = faviconImage;
-    }
+	public void setFaviconImage(String faviconImage) {
+		this.faviconImage = faviconImage;
+	}
 
-    public Boolean getLinktrackEnabled() {
-        return linktrackEnabled;
-    }
+	public String getLogoImage() {
+		return logoImage;
+	}
 
-    public void setLinktrackEnabled(Boolean linktrackEnabled) {
-        this.linktrackEnabled = linktrackEnabled;
-    }
+	public void setLogoImage(String logoImage) {
+		this.logoImage = logoImage;
+	}
 
-    public String getLinktrackLogin() {
-        return linktrackLogin;
-    }
+	public String getManagerGroup() {
+		return managerGroup;
+	}
 
-    public void setLinktrackLogin(String linktrackLogin) {
-        this.linktrackLogin = linktrackLogin;
-    }
+	public void setManagerGroup(String managerGroup) {
+		this.managerGroup = managerGroup;
+	}
 
-    public String getLinktrackPassword() {
-        return linktrackPassword;
-    }
+	public String getMember() {
+		return member;
+	}
 
-    public void setLinktrackPassword(String linktrackPassword) {
-        this.linktrackPassword = linktrackPassword;
-    }
+	public void setMember(String member) {
+		this.member = member;
+	}
 
-    public String getLogoImage() {
-        return logoImage;
-    }
+	public String getOrganization() {
+		return organization;
+	}
 
-    public void setLogoImage(String logoImage) {
-        this.logoImage = logoImage;
-    }
+	public void setOrganization(String organization) {
+		this.organization = organization;
+	}
 
-    public String getManagerGroup() {
-        return managerGroup;
-    }
+	public String getOxInumConfig() {
+		return oxInumConfig;
+	}
 
-    public void setManagerGroup(String managerGroup) {
-        this.managerGroup = managerGroup;
-    }
+	public void setOxInumConfig(String oxInumConfig) {
+		this.oxInumConfig = oxInumConfig;
+	}
 
-    public String getMember() {
-        return member;
-    }
+	public RegistrationConfiguration getOxRegistrationConfiguration() {
+		return oxRegistrationConfiguration;
+	}
 
-    public void setMember(String member) {
-        this.member = member;
-    }
+	public void setOxRegistrationConfiguration(RegistrationConfiguration oxRegistrationConfiguration) {
+		this.oxRegistrationConfiguration = oxRegistrationConfiguration;
+	}
 
-    public String getOrganization() {
-        return organization;
-    }
+	public String getSeeAlso() {
+		return seeAlso;
+	}
 
-    public void setOrganization(String organization) {
-        this.organization = organization;
-    }
+	public void setSeeAlso(String seeAlso) {
+		this.seeAlso = seeAlso;
+	}
 
+	public String getShortName() {
+		return shortName;
+	}
 
-    public String getOxInumConfig() {
-        return oxInumConfig;
-    }
+	public void setShortName(String shortName) {
+		this.shortName = shortName;
+	}
 
-    public void setOxInumConfig(String oxInumConfig) {
-        this.oxInumConfig = oxInumConfig;
-    }
+	public GluuStatus getStatus() {
+		return status;
+	}
 
-    public RegistrationConfiguration getOxRegistrationConfiguration() {
-        return oxRegistrationConfiguration;
-    }
+	public void setStatus(GluuStatus status) {
+		this.status = status;
+	}
 
-    public void setOxRegistrationConfiguration(RegistrationConfiguration oxRegistrationConfiguration) {
-        this.oxRegistrationConfiguration = oxRegistrationConfiguration;
-    }
+	public String getTempFaviconImage() {
+		return tempFaviconImage;
+	}
 
-    public String getSeeAlso() {
-        return seeAlso;
-    }
+	public void setTempFaviconImage(String tempFaviconImage) {
+		this.tempFaviconImage = tempFaviconImage;
+	}
 
-    public void setSeeAlso(String seeAlso) {
-        this.seeAlso = seeAlso;
-    }
+	public String getThemeColor() {
+		return themeColor;
+	}
 
-    public String getShortName() {
-        return shortName;
-    }
+	public void setThemeColor(String themeColor) {
+		this.themeColor = themeColor;
+	}
 
-    public void setShortName(String shortName) {
-        this.shortName = shortName;
-    }
+	public String getTitle() {
+		return title;
+	}
 
-    public GluuStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(GluuStatus status) {
-        this.status = status;
-    }
-
-    public String getTempFaviconImage() {
-        return tempFaviconImage;
-    }
-
-    public void setTempFaviconImage(String tempFaviconImage) {
-        this.tempFaviconImage = tempFaviconImage;
-    }
-
-    public String getThemeColor() {
-        return themeColor;
-    }
-
-    public void setThemeColor(String themeColor) {
-        this.themeColor = themeColor;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
+	public void setTitle(String title) {
+		this.title = title;
+	}
 }

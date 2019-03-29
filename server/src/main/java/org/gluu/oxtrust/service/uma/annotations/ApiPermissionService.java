@@ -11,7 +11,6 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.model.user.UserRole;
 import org.gluu.oxtrust.ldap.service.ConfigurationService;
 import org.gluu.oxtrust.model.GluuConfiguration;
@@ -37,9 +36,6 @@ public class ApiPermissionService implements Serializable {
     private Identity identity;
 
     @Inject
-    private AppConfiguration appConfiguration;
-
-    @Inject
     private ConfigurationService configurationService;
     
         private String[][] managerActions = new String[][]{
@@ -61,7 +57,6 @@ public class ApiPermissionService implements Serializable {
             {"oxauth", "access"},
             {"uma", "access"},
             {"super-gluu", "access"},
-            {"linktrack", "access"},
     };
 
     public boolean hasPermission(Object target, String action) {

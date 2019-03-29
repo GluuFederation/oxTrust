@@ -65,7 +65,6 @@ public class PermissionService implements Serializable {
             {"oxauth", "access"},
             {"uma", "access"},
             {"super-gluu", "access"},
-            {"linktrack", "access"},
     };
 
     public boolean hasPermission(Object target, String action) {
