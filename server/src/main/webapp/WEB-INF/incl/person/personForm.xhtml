@@ -184,8 +184,8 @@
 				<div class="box-header"></div>
 				<!--                     <div style="display: inline-block; width: 100% !important;"> -->
 				<div class="container-fluid">
-					<h:form>
-						<h:panelGrid columns="3" width="100%"
+					<h:form id="PForm">
+						<h:panelGrid columns="3" width="100%" id="PanelGridMain"
 							columnClasses="attributeColumn, , formColumn" border="0"
 							cellpadding="0" cellspacing="0">
 
@@ -221,29 +221,29 @@
 							<richext:spacer width="10" />
 
 							<h:panelGrid columns="1" width="100%" border="0" cellpadding="0"
-								cellspacing="0">
+								cellspacing="0" id="PGS">
 								<h:panelGroup id="selectedCustomAttributesId"
 									class="selectedCustomAttributesId">
 									<script type="text/javascript">
-										addIndex();
+// 										addIndex();
 									</script>
-									<a4j:repeat value="#{_customAttributeAction.customAttributes}"
+									<a4j:repeat id="L" value="#{_customAttributeAction.customAttributes}"
 										var="_custAttr" rowKeyVar="_custAttrIdx">
-										<h:panelGroup rendered="#{_custAttr.metadata != null}">
+										<h:panelGroup rendered="#{_custAttr.metadata != null}" id="mF">
 											<ui:param name="_mandatory" value="#{_custAttr.mandatory}" />
 											<ui:param name="_mustEnter" value="#{_mandatory}" />
-											<a4j:repeat value="#{_custAttr.values}" var="_value"
+											<a4j:repeat id="IL" value="#{_custAttr.values}" var="_value"
 												rowKeyVar="_valueIdx">
 												<f:event type="postValidate"
 													listener="#{_customAttributeAction.validateAttributeValues}" />
 												<ui:param name="_aid"
 													value="#{_customAttributeAction.attributeIds[_custAttr.metadata]}" />
-												<ox:decorate
+												<ox:decorate id="D"
 													label="#{_custAttr.metadata.displayName eq 'Gender, male or female' ? 'Gender' : _custAttr.metadata.displayName } #{_valueIdx == 0 ? '' : _valueIdx}"
 													rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName ne 'Password')}"
 													leftClass="col-sm-3" rightClass="col-sm-9">
 
-													<div class="col-xs-10">
+													<div class="col-xs-10" id="attributeID">
 														<h:inputText
 															styleClass="form-control #{_custAttr.metadata.displayName}"
 															p:placeholder="#{msg['person.clickToEnter']} #{_custAttr.metadata.displayName} #{_valueIdx == 0 ? '' : _valueIdx}"
@@ -264,8 +264,8 @@
 															styleClass="form-control #{_custAttr.metadata.displayName}"
 															p:placeholder="#{msg['person.clickToEnter']} email"
 															style="width:100%" value="#{_custAttr.values[_valueIdx]}"
-															id="Email" required="#{_mustEnter}"
-															p:type="email"
+															id="Email" required="#{_mustEnter}" p:type="email"
+															prependId="false"
 															p:title="Please provide a valid email address"
 															rendered="#{(_custAttr.adminCanEdit or _mustEnter) and 
 			                                                            (_custAttr.metadata.dataType.value ne 'boolean') and 
@@ -449,7 +449,7 @@
 										rendered="#{updatePersonAction.deviceDataMap.size() gt 0}" />
 									<h:dataTable value="#{updatePersonAction.deviceDataMap}"
 										var="_value" styleClass="order-table fixed-size"
-										headerClass="tableHearder"
+										headerClass="tableHearder" id="devices"
 										rowClasses="order-table-odd-row,order-table-even-row"
 										rendered="#{updatePersonAction.deviceDataMap.size() gt 0}">
 										<h:column>
@@ -496,7 +496,7 @@
 									<h:dataTable style="border-raduis:5px; margin:10px;"
 										value="#{updatePersonAction.userPairWideIdentifiers}"
 										var="_value" styleClass="order-table fixed-size"
-										headerClass="tableHearder"
+										headerClass="tableHearder" id="PWI"
 										rowClasses="order-table-odd-row,order-table-even-row"
 										rendered="#{updatePersonAction.userPairWideIdentifiers.size() gt 0}">
 										<h:column>
