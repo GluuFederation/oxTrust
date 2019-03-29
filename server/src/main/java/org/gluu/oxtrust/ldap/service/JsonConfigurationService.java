@@ -95,9 +95,9 @@ public class JsonConfigurationService implements Serializable {
 		return ldapOxAuthConfiguration.getOxAuthConfigDynamic();
 	}
 
-	public org.xdi.oxauth.model.configuration.AppConfiguration getOxauthAppConfiguration() throws IOException {
+	public org.gluu.oxauth.model.configuration.AppConfiguration getOxauthAppConfiguration() throws IOException {
 		return jsonService.jsonToObject(getOxAuthDynamicConfigJson(),
-				org.xdi.oxauth.model.configuration.AppConfiguration.class);
+				org.gluu.oxauth.model.configuration.AppConfiguration.class);
 	}
 
 	public boolean saveOxTrustappConfiguration(AppConfiguration oxTrustappConfiguration) {
@@ -124,7 +124,7 @@ public class JsonConfigurationService implements Serializable {
 		return true;
 	}
 
-	public boolean saveOxAuthAppConfiguration(org.xdi.oxauth.model.configuration.AppConfiguration appConfiguration) {
+	public boolean saveOxAuthAppConfiguration(org.gluu.oxauth.model.configuration.AppConfiguration appConfiguration) {
 		try {
 			String appConfigurationJson = jsonService.objectToJson(appConfiguration);
 			return saveOxAuthDynamicConfigJson(appConfigurationJson);

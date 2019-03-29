@@ -286,11 +286,11 @@
 
 		<!-- oxAuth -->
 		<dependency>
-			<groupId>org.xdi</groupId>
+			<groupId>org.gluu</groupId>
 			<artifactId>oxauth-model</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.xdi</groupId>
+			<groupId>org.gluu</groupId>
 			<artifactId>oxauth-client</artifactId>
 		</dependency>
 

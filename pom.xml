@@ -170,17 +170,17 @@
 
 			<!-- oxAuth -->
 			<dependency>
-				<groupId>org.xdi</groupId>
+				<groupId>org.gluu</groupId>
 				<artifactId>oxauth-model</artifactId>
 				<version>${oxauth.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.xdi</groupId>
+				<groupId>org.gluu</groupId>
 				<artifactId>oxauth-client</artifactId>
 				<version>${oxauth.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.xdi</groupId>
+				<groupId>org.gluu</groupId>
 				<artifactId>uma-rs-resteasy</artifactId>
 				<version>3.1.4.Final</version>
 			</dependency>
