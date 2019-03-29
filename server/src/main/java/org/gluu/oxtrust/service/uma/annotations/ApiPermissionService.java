@@ -16,7 +16,6 @@ import org.gluu.oxtrust.ldap.service.ConfigurationService;
 import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.oxtrust.security.Identity;
 import org.slf4j.Logger;
-import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.util.StringHelper;
 
 /**
@@ -35,9 +34,6 @@ public class ApiPermissionService implements Serializable {
 
     @Inject
     private Identity identity;
-
-    @Inject
-    private AppConfiguration appConfiguration;
 
     @Inject
     private ConfigurationService configurationService;
@@ -61,7 +57,6 @@ public class ApiPermissionService implements Serializable {
             {"oxauth", "access"},
             {"uma", "access"},
             {"super-gluu", "access"},
-            {"linktrack", "access"},
     };
 
     public boolean hasPermission(Object target, String action) {
