@@ -15,16 +15,16 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.commons.io.FilenameUtils;
+import org.gluu.config.oxtrust.AppConfiguration;
+import org.gluu.model.GluuImage;
 import org.gluu.model.attribute.AttributeDataType;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
+import org.gluu.service.XmlService;
+import org.gluu.util.StringHelper;
+import org.gluu.util.repository.RepositoryUtility;
 import org.richfaces.model.UploadedFile;
 import org.slf4j.Logger;
-import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.model.GluuImage;
-import org.xdi.service.XmlService;
-import org.xdi.util.StringHelper;
-import org.xdi.util.repository.RepositoryUtility;
 
 /**
  * Service class to work with images in photo repository

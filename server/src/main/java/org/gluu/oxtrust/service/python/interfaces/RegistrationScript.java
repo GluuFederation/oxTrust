@@ -9,8 +9,8 @@ package org.gluu.oxtrust.service.python.interfaces;
 import java.util.List;
 import java.util.Map;
 
+import org.gluu.model.SimpleCustomProperty;
 import org.gluu.oxtrust.model.GluuCustomPerson;
-import org.xdi.model.SimpleCustomProperty;
 
 /**
  * Base interface for registration python script

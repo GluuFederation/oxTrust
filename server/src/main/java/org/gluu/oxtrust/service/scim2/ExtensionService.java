@@ -20,6 +20,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.gluu.model.GluuAttribute;
 import org.gluu.model.attribute.Multivalued;
 import org.gluu.model.scim.ScimCustomAtribute;
 import org.gluu.oxtrust.ldap.service.AttributeService;
@@ -28,7 +29,6 @@ import org.gluu.oxtrust.model.scim2.extensions.Extension;
 import org.gluu.oxtrust.model.scim2.extensions.ExtensionField;
 import org.gluu.oxtrust.model.scim2.user.UserResource;
 import org.slf4j.Logger;
-import org.xdi.model.GluuAttribute;
 
 /**
  * Created by jgomer on 2017-09-29.

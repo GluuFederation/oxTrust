@@ -16,8 +16,8 @@ import javax.inject.Named;
 import org.gluu.oxtrust.ldap.service.ConfigurationService;
 import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.oxtrust.util.OxTrustConstants;
+import org.gluu.service.security.Secure;
 import org.slf4j.Logger;
-import org.xdi.service.security.Secure;
 
 /**
  * Action class for health check display

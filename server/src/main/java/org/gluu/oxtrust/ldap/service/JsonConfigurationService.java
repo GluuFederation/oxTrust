@@ -16,18 +16,18 @@ import javax.inject.Named;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
+import org.gluu.config.oxtrust.AppConfiguration;
+import org.gluu.config.oxtrust.CacheRefreshConfiguration;
+import org.gluu.config.oxtrust.ImportPersonConfig;
+import org.gluu.config.oxtrust.LdapOxAuthConfiguration;
+import org.gluu.config.oxtrust.LdapOxTrustConfiguration;
 import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.exception.BasePersistenceException;
+import org.gluu.service.JsonService;
+import org.gluu.service.cache.CacheConfiguration;
 import org.slf4j.Logger;
-import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.config.oxtrust.CacheRefreshConfiguration;
-import org.xdi.config.oxtrust.ImportPersonConfig;
-import org.xdi.config.oxtrust.LdapOxAuthConfiguration;
-import org.xdi.config.oxtrust.LdapOxTrustConfiguration;
-import org.xdi.service.JsonService;
-import org.xdi.service.cache.CacheConfiguration;
 
 /**
  * Provides operations with JSON oxAuth/oxTrust configuration

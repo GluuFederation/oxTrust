@@ -16,15 +16,15 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.gluu.config.oxtrust.ImportPerson;
+import org.gluu.model.GluuAttribute;
+import org.gluu.model.GluuAttributeDataType;
 import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.persist.exception.EntryPersistenceException;
+import org.gluu.util.StringHelper;
+import org.gluu.util.properties.FileConfiguration;
 import org.slf4j.Logger;
-import org.xdi.config.oxtrust.ImportPerson;
-import org.xdi.model.GluuAttribute;
-import org.xdi.model.GluuAttributeDataType;
-import org.xdi.util.StringHelper;
-import org.xdi.util.properties.FileConfiguration;
 
 @ApplicationScoped
 @Named

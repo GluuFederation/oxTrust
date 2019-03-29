@@ -21,6 +21,9 @@ import javax.enterprise.inject.Any;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.gluu.config.oxtrust.AppConfiguration;
+import org.gluu.model.GluuAttribute;
+import org.gluu.model.GluuUserRole;
 import org.gluu.model.attribute.AttributeDataType;
 import org.gluu.model.attribute.AttributeUsageType;
 import org.gluu.model.attribute.Multivalued;
@@ -32,12 +35,9 @@ import org.gluu.oxtrust.service.cdi.event.EventTypeQualifier;
 import org.gluu.oxtrust.service.cdi.event.Events;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.search.filter.Filter;
-import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.model.GluuAttribute;
-import org.xdi.model.GluuUserRole;
-import org.xdi.util.INumGenerator;
-import org.xdi.util.OxConstants;
-import org.xdi.util.StringHelper;
+import org.gluu.util.INumGenerator;
+import org.gluu.util.OxConstants;
+import org.gluu.util.StringHelper;
 
 import com.unboundid.ldap.sdk.LDAPException;
 
@@ -48,7 +48,7 @@ import com.unboundid.ldap.sdk.LDAPException;
  */
 @Stateless
 @Named
-public class AttributeService extends org.xdi.service.AttributeService {
+public class AttributeService extends org.gluu.service.AttributeService {
 
 	/**
 	 * 

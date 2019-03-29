@@ -27,10 +27,10 @@ import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.search.filter.Filter;
+import org.gluu.util.ArrayHelper;
+import org.gluu.util.OxConstants;
+import org.gluu.util.StringHelper;
 import org.slf4j.Logger;
-import org.xdi.util.ArrayHelper;
-import org.xdi.util.OxConstants;
-import org.xdi.util.StringHelper;
 
 /**
  * Provides cache refresh related operations

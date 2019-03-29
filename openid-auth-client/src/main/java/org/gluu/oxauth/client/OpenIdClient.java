@@ -24,7 +24,7 @@ import org.gluu.oxauth.client.conf.LdapAppConfiguration;
 import org.gluu.oxauth.client.exception.CommunicationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xdi.context.WebContext;
+import org.gluu.context.WebContext;
 import org.xdi.oxauth.client.AuthorizationRequest;
 import org.xdi.oxauth.client.EndSessionRequest;
 import org.xdi.oxauth.client.OpenIdConfigurationClient;
@@ -46,11 +46,11 @@ import org.xdi.oxauth.model.jwt.Jwt;
 import org.xdi.oxauth.model.jwt.JwtClaimName;
 import org.xdi.oxauth.model.jwt.JwtType;
 import org.xdi.oxauth.model.register.ApplicationType;
-import org.xdi.util.StringHelper;
-import org.xdi.util.exception.ConfigurationException;
-import org.xdi.util.init.Initializable;
-import org.xdi.util.security.StringEncrypter;
-import org.xdi.util.security.StringEncrypter.EncryptionException;
+import org.gluu.util.StringHelper;
+import org.gluu.util.exception.ConfigurationException;
+import org.gluu.util.init.Initializable;
+import org.gluu.util.security.StringEncrypter;
+import org.gluu.util.security.StringEncrypter.EncryptionException;
 
 /**
  * This class is the oxAuth client to authenticate users and retrieve user

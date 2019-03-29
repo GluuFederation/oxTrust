@@ -12,8 +12,8 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.ServletContext;
 
-import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.util.StringHelper;
+import org.gluu.config.oxtrust.AppConfiguration;
+import org.gluu.util.StringHelper;
 
 /**
  * GluuConfiguration service

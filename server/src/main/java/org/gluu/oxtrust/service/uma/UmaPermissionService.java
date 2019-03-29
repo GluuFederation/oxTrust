@@ -23,11 +23,14 @@ import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicHeaderElementIterator;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
+import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.oxtrust.ldap.service.AppInitializer;
+import org.gluu.service.JsonService;
+import org.gluu.util.Pair;
+import org.gluu.util.StringHelper;
 import org.jboss.resteasy.client.ClientExecutor;
 import org.jboss.resteasy.client.core.executors.ApacheHttpClient4Executor;
 import org.slf4j.Logger;
-import org.xdi.config.oxtrust.AppConfiguration;
 import org.xdi.oxauth.client.uma.UmaClientFactory;
 import org.xdi.oxauth.client.uma.UmaRptIntrospectionService;
 import org.xdi.oxauth.model.uma.PermissionTicket;
@@ -36,9 +39,6 @@ import org.xdi.oxauth.model.uma.UmaMetadata;
 import org.xdi.oxauth.model.uma.UmaPermission;
 import org.xdi.oxauth.model.uma.UmaPermissionList;
 import org.xdi.oxauth.model.uma.wrapper.Token;
-import org.xdi.service.JsonService;
-import org.xdi.util.Pair;
-import org.xdi.util.StringHelper;
 
 /**
  * Provide methods to work with permissions and RPT tokens

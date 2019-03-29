@@ -21,9 +21,9 @@ import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.model.push.PushDevice;
 import org.gluu.oxtrust.service.push.PushDeviceService;
 import org.gluu.oxtrust.util.OxTrustConstants;
+import org.gluu.service.security.Secure;
+import org.gluu.util.Util;
 import org.slf4j.Logger;
-import org.xdi.service.security.Secure;
-import org.xdi.util.Util;
 
 /**
  * Action class for Push Device Inventory

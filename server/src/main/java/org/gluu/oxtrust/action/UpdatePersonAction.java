@@ -30,9 +30,12 @@ import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
+import org.gluu.model.GluuAttribute;
 import org.gluu.model.GluuStatus;
+import org.gluu.model.GluuUserRole;
 import org.gluu.model.attribute.AttributeValidation;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.ClientService;
@@ -60,14 +63,11 @@ import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.ServiceUtil;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.exception.BasePersistenceException;
+import org.gluu.service.security.Secure;
+import org.gluu.util.ArrayHelper;
+import org.gluu.util.StringHelper;
 import org.slf4j.Logger;
-import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.model.GluuAttribute;
-import org.xdi.model.GluuUserRole;
 import org.xdi.oxauth.model.fido.u2f.protocol.DeviceData;
-import org.xdi.service.security.Secure;
-import org.xdi.util.ArrayHelper;
-import org.xdi.util.StringHelper;
 
 /**
  * Action class for updating person's attributes

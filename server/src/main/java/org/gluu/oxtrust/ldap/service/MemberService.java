@@ -10,8 +10,8 @@ import javax.inject.Named;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.persist.exception.EntryPersistenceException;
+import org.gluu.util.StringHelper;
 import org.slf4j.Logger;
-import org.xdi.util.StringHelper;
 
 @Named
 public class MemberService implements Serializable {

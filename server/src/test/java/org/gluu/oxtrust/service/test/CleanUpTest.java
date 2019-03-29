@@ -20,8 +20,8 @@ import org.gluu.oxtrust.ldap.service.MemberService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.persist.exception.EntryPersistenceException;
+import org.gluu.util.StringHelper;
 import org.testng.annotations.Parameters;
-import org.xdi.util.StringHelper;
 
 /**
  * @author Yuriy Movchan

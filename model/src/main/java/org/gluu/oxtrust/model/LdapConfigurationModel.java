@@ -8,7 +8,7 @@ package org.gluu.oxtrust.model;
 
 import java.util.List;
 
-import org.xdi.model.ldap.GluuLdapConfiguration;
+import org.gluu.model.ldap.GluuLdapConfiguration;
 
 /**
  * Base operations with GluuLdapConfiguration. Need for JSF2 facelet because it

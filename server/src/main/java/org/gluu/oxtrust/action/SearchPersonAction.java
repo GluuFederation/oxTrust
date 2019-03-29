@@ -19,9 +19,9 @@ import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.util.OxTrustConstants;
+import org.gluu.service.security.Secure;
+import org.gluu.util.Util;
 import org.slf4j.Logger;
-import org.xdi.service.security.Secure;
-import org.xdi.util.Util;
 
 /**
  * Action class for search persons

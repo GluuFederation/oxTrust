@@ -22,30 +22,30 @@ import javax.faces.application.FacesMessage;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
+import org.gluu.model.AuthenticationScriptUsageType;
+import org.gluu.model.ProgrammingLanguage;
+import org.gluu.model.ScriptLocationType;
+import org.gluu.model.SimpleCustomProperty;
+import org.gluu.model.SimpleExtendedCustomProperty;
+import org.gluu.model.SimpleProperty;
+import org.gluu.model.custom.script.CustomScriptType;
+import org.gluu.model.custom.script.model.CustomScript;
+import org.gluu.model.custom.script.model.auth.AuthenticationCustomScript;
 import org.gluu.oxtrust.ldap.service.ConfigurationService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.model.SimpleCustomPropertiesListModel;
 import org.gluu.oxtrust.model.SimplePropertiesListModel;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.exception.BasePersistenceException;
+import org.gluu.service.custom.script.AbstractCustomScriptService;
+import org.gluu.service.security.Secure;
+import org.gluu.util.INumGenerator;
+import org.gluu.util.OxConstants;
+import org.gluu.util.StringHelper;
 import org.slf4j.Logger;
-import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.model.AuthenticationScriptUsageType;
-import org.xdi.model.ProgrammingLanguage;
-import org.xdi.model.ScriptLocationType;
-import org.xdi.model.SimpleCustomProperty;
-import org.xdi.model.SimpleExtendedCustomProperty;
-import org.xdi.model.SimpleProperty;
-import org.xdi.model.custom.script.CustomScriptType;
-import org.xdi.model.custom.script.model.CustomScript;
-import org.xdi.model.custom.script.model.auth.AuthenticationCustomScript;
-import org.xdi.service.custom.script.AbstractCustomScriptService;
-import org.xdi.service.security.Secure;
-import org.xdi.util.INumGenerator;
-import org.xdi.util.OxConstants;
-import org.xdi.util.StringHelper;
 
 /**
  * Add/Modify custom script configurations

@@ -8,7 +8,7 @@ package org.gluu.oxtrust.model;
 
 import java.util.List;
 
-import org.xdi.model.SimpleCustomProperty;
+import org.gluu.model.SimpleCustomProperty;
 
 /**
  * Base operations with custom properties list. Need for JSF2 facelet because it

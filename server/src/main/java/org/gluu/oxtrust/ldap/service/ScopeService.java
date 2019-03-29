@@ -20,10 +20,10 @@ import org.gluu.oxtrust.model.OxAuthScope;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.search.filter.Filter;
+import org.gluu.util.INumGenerator;
+import org.gluu.util.StringHelper;
 import org.slf4j.Logger;
 import org.xdi.oxauth.model.common.ScopeType;
-import org.xdi.util.INumGenerator;
-import org.xdi.util.StringHelper;
 
 /**
  * Provides operations with Scopes

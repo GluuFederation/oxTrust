@@ -14,10 +14,10 @@ import javax.inject.Named;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
+import org.gluu.model.SimpleProperty;
 import org.gluu.oxtrust.ldap.service.EncryptionService;
-import org.xdi.model.SimpleProperty;
-import org.xdi.util.StringHelper;
-import org.xdi.util.security.StringEncrypter.EncryptionException;
+import org.gluu.util.StringHelper;
+import org.gluu.util.security.StringEncrypter.EncryptionException;
 
 /**
  * Utility class with helpers methods to generate configuration files

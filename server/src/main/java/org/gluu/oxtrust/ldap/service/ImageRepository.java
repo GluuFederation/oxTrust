@@ -24,12 +24,12 @@ import javax.inject.Named;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
+import org.gluu.config.oxtrust.AppConfiguration;
+import org.gluu.model.GluuImage;
+import org.gluu.util.StringHelper;
+import org.gluu.util.image.ImageTransformationUtility;
+import org.gluu.util.repository.RepositoryUtility;
 import org.slf4j.Logger;
-import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.model.GluuImage;
-import org.xdi.util.StringHelper;
-import org.xdi.util.image.ImageTransformationUtility;
-import org.xdi.util.repository.RepositoryUtility;
 
 import com.google.common.net.MediaType;
 

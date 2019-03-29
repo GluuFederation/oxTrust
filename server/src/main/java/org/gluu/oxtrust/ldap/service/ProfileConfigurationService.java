@@ -34,11 +34,11 @@ import org.gluu.oxtrust.model.ProfileConfiguration;
 import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
-import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.service.XmlService;
-import org.xdi.util.StringHelper;
-import org.xdi.util.exception.InvalidConfigurationException;
-import org.xdi.util.io.FileUploadWrapper;
+import org.gluu.config.oxtrust.AppConfiguration;
+import org.gluu.service.XmlService;
+import org.gluu.util.StringHelper;
+import org.gluu.util.exception.InvalidConfigurationException;
+import org.gluu.util.io.FileUploadWrapper;
 import org.xml.sax.SAXException;
 
 /**

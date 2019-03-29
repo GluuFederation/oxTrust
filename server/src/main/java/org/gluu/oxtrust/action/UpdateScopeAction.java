@@ -23,6 +23,11 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
+import org.gluu.model.DisplayNameEntry;
+import org.gluu.model.GluuAttribute;
+import org.gluu.model.SelectableEntity;
+import org.gluu.model.custom.script.CustomScriptType;
+import org.gluu.model.custom.script.model.CustomScript;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.OxTrustAuditService;
 import org.gluu.oxtrust.ldap.service.ScopeService;
@@ -31,16 +36,11 @@ import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.service.custom.CustomScriptService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.exception.BasePersistenceException;
+import org.gluu.service.LookupService;
+import org.gluu.service.security.Secure;
+import org.gluu.util.StringHelper;
+import org.gluu.util.Util;
 import org.slf4j.Logger;
-import org.xdi.model.DisplayNameEntry;
-import org.xdi.model.GluuAttribute;
-import org.xdi.model.SelectableEntity;
-import org.xdi.model.custom.script.CustomScriptType;
-import org.xdi.model.custom.script.model.CustomScript;
-import org.xdi.service.LookupService;
-import org.xdi.service.security.Secure;
-import org.xdi.util.StringHelper;
-import org.xdi.util.Util;
 
 /**
  * Action class for viewing and updating scopes.

@@ -24,6 +24,8 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.ServletContext;
 
+import org.gluu.exception.OxIntializationException;
+import org.gluu.model.custom.script.CustomScriptType;
 import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.config.ConfigurationFactory.PersistenceConfiguration;
 import org.gluu.oxtrust.ldap.cache.service.CacheRefreshTimer;
@@ -36,10 +38,19 @@ import org.gluu.oxtrust.service.status.ldap.LdapStatusTimer;
 import org.gluu.oxtrust.util.BuildVersionService;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.ldap.impl.LdapEntryManager;
+import org.gluu.service.PythonService;
+import org.gluu.service.cdi.event.LdapConfigurationReload;
+import org.gluu.service.cdi.util.CdiUtil;
+import org.gluu.service.custom.lib.CustomLibrariesLoader;
+import org.gluu.service.custom.script.CustomScriptManager;
+import org.gluu.service.metric.inject.ReportMetric;
+import org.gluu.service.timer.QuartzSchedulerManager;
+import org.gluu.util.StringHelper;
+import org.gluu.util.properties.FileConfiguration;
+import org.gluu.util.security.StringEncrypter;
+import org.gluu.util.security.StringEncrypter.EncryptionException;
 import org.slf4j.Logger;
 import org.slf4j.bridge.SLF4JBridgeHandler;
-import org.xdi.exception.OxIntializationException;
-import org.xdi.model.custom.script.CustomScriptType;
 import org.xdi.oxauth.client.OpenIdConfigurationClient;
 import org.xdi.oxauth.client.OpenIdConfigurationResponse;
 import org.xdi.oxauth.client.OpenIdConnectDiscoveryClient;
@@ -48,17 +59,6 @@ import org.xdi.oxauth.client.uma.UmaClientFactory;
 import org.xdi.oxauth.client.uma.UmaMetadataService;
 import org.xdi.oxauth.model.uma.UmaMetadata;
 import org.xdi.oxauth.model.util.SecurityProviderUtility;
-import org.xdi.service.PythonService;
-import org.xdi.service.cdi.event.LdapConfigurationReload;
-import org.xdi.service.cdi.util.CdiUtil;
-import org.xdi.service.custom.lib.CustomLibrariesLoader;
-import org.xdi.service.custom.script.CustomScriptManager;
-import org.xdi.service.metric.inject.ReportMetric;
-import org.xdi.service.timer.QuartzSchedulerManager;
-import org.xdi.util.StringHelper;
-import org.xdi.util.properties.FileConfiguration;
-import org.xdi.util.security.StringEncrypter;
-import org.xdi.util.security.StringEncrypter.EncryptionException;
 
 /**
  * Perform startup time initialization

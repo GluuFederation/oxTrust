@@ -16,10 +16,10 @@ import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.ldap.impl.LdapEntryManagerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xdi.util.StringHelper;
-import org.xdi.util.exception.ConfigurationException;
-import org.xdi.util.properties.FileConfiguration;
-import org.xdi.util.security.PropertiesDecrypter;
+import org.gluu.util.StringHelper;
+import org.gluu.util.exception.ConfigurationException;
+import org.gluu.util.properties.FileConfiguration;
+import org.gluu.util.security.PropertiesDecrypter;
 
 /**
  * Base OpenId configuration

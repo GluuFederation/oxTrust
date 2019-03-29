@@ -18,8 +18,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.gluu.oxtrust.ldap.service.DownloadService;
 import org.gluu.oxtrust.security.Identity;
+import org.gluu.service.security.Secure;
 import org.slf4j.Logger;
-import org.xdi.service.security.Secure;
 
 @RequestScoped
 @Named
