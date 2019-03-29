@@ -11,7 +11,7 @@ import javax.servlet.FilterConfig;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.xdi.util.StringHelper;
+import org.gluu.util.StringHelper;
 
 /**
  * Abstracts out the ability to configure the filters from the initial properties provided
