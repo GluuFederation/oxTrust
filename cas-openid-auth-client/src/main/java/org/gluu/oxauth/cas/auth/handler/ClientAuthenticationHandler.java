@@ -24,9 +24,9 @@ import org.jasig.cas.authentication.handler.support.AbstractPreAndPostProcessing
 import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.xdi.context.J2EContext;
-import org.xdi.context.WebContext;
-import org.xdi.util.StringHelper;
+import org.gluu.context.J2EContext;
+import org.gluu.context.WebContext;
+import org.gluu.util.StringHelper;
 
 /**
  * This handler authenticates the client credentials
