@@ -162,7 +162,7 @@
 			<artifactId>swagger-annotations</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.gluu</groupId>
+			<groupId>org.xdi</groupId>
 			<artifactId>uma-rs-resteasy</artifactId>
 			<exclusions>
 				<exclusion>

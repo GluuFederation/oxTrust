@@ -180,7 +180,7 @@
 				<version>${oxauth.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.gluu</groupId>
+				<groupId>org.xdi</groupId>
 				<artifactId>uma-rs-resteasy</artifactId>
 				<version>3.1.4.Final</version>
 			</dependency>
