@@ -195,11 +195,11 @@
 			<AppenderRef ref="OX_CACHE_REFRESH_FILE" />
 		</logger>
 
-		<logger name="org.xdi.service.PythonService" level="${log4j.default.log.level}" additivity="false">
+		<logger name="org.gluu.service.PythonService" level="${log4j.default.log.level}" additivity="false">
 			<AppenderRef ref="OX_SCRIPT_LOG_FILE" />
 		</logger>
 
-		<logger name="org.xdi.service.custom.script" level="${log4j.default.log.level}" additivity="false">
+		<logger name="org.gluu.service.custom.script" level="${log4j.default.log.level}" additivity="false">
 			<AppenderRef ref="OX_SCRIPT_LOG_FILE" />
 		</logger>
 
