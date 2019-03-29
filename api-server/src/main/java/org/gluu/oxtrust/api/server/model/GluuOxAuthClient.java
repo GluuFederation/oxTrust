@@ -14,8 +14,8 @@ import org.gluu.oxtrust.model.OxAuthSubjectType;
 import org.gluu.oxtrust.model.SignatureAlgorithm;
 import org.gluu.persist.model.base.GluuBoolean;
 import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
-import org.xdi.oxauth.model.common.GrantType;
-import org.xdi.oxauth.model.common.ResponseType;
+import org.gluu.oxauth.model.common.GrantType;
+import org.gluu.oxauth.model.common.ResponseType;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class GluuOxAuthClient implements Serializable{

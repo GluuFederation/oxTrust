@@ -26,8 +26,8 @@ import org.gluu.oxtrust.ldap.service.uma.ScopeDescriptionService;
 import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.util.OxTrustApiConstants;
 import org.slf4j.Logger;
-import org.xdi.oxauth.model.uma.persistence.UmaResource;
-import org.xdi.oxauth.model.uma.persistence.UmaScopeDescription;
+import org.gluu.oxauth.model.uma.persistence.UmaResource;
+import org.gluu.oxauth.model.uma.persistence.UmaScopeDescription;
 
 import com.wordnik.swagger.annotations.ApiOperation;
 

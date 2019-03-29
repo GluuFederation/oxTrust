@@ -18,8 +18,8 @@ import org.gluu.util.StringHelper;
 import org.gluu.util.exception.ConfigurationException;
 import org.gluu.util.init.Initializable;
 import org.slf4j.Logger;
-import org.xdi.oxauth.client.OpenIdConfigurationClient;
-import org.xdi.oxauth.client.OpenIdConfigurationResponse;
+import org.gluu.oxauth.client.OpenIdConfigurationClient;
+import org.gluu.oxauth.client.OpenIdConfigurationResponse;
 
 /**
  * Provides OpenId configuration

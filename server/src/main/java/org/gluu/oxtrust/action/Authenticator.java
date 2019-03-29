@@ -48,11 +48,11 @@ import org.gluu.util.StringHelper;
 import org.gluu.util.security.StringEncrypter.EncryptionException;
 import org.jboss.resteasy.client.ClientRequest;
 import org.slf4j.Logger;
-import org.xdi.oxauth.client.OpenIdConfigurationResponse;
-import org.xdi.oxauth.client.TokenClient;
-import org.xdi.oxauth.client.TokenResponse;
-import org.xdi.oxauth.client.UserInfoClient;
-import org.xdi.oxauth.client.UserInfoResponse;
+import org.gluu.oxauth.client.OpenIdConfigurationResponse;
+import org.gluu.oxauth.client.TokenClient;
+import org.gluu.oxauth.client.TokenResponse;
+import org.gluu.oxauth.client.UserInfoClient;
+import org.gluu.oxauth.client.UserInfoResponse;
 
 /**
  * Provides authentication using oAuth

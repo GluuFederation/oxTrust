@@ -53,12 +53,12 @@ import org.gluu.util.security.StringEncrypter;
 import org.gluu.util.security.StringEncrypter.EncryptionException;
 import org.slf4j.Logger;
 import org.slf4j.bridge.SLF4JBridgeHandler;
-import org.xdi.oxauth.client.OpenIdConfigurationClient;
-import org.xdi.oxauth.client.OpenIdConfigurationResponse;
-import org.xdi.oxauth.client.OpenIdConnectDiscoveryClient;
-import org.xdi.oxauth.client.OpenIdConnectDiscoveryResponse;
-import org.xdi.oxauth.client.uma.UmaClientFactory;
-import org.xdi.oxauth.client.uma.UmaMetadataService;
+import org.gluu.oxauth.client.OpenIdConfigurationClient;
+import org.gluu.oxauth.client.OpenIdConfigurationResponse;
+import org.gluu.oxauth.client.OpenIdConnectDiscoveryClient;
+import org.gluu.oxauth.client.OpenIdConnectDiscoveryResponse;
+import org.gluu.oxauth.client.uma.UmaClientFactory;
+import org.gluu.oxauth.client.uma.UmaMetadataService;
 
 /**
  * Perform startup time initialization

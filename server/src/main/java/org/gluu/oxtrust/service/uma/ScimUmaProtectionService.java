@@ -23,8 +23,8 @@ import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.oxtrust.service.OpenIdService;
 import org.gluu.persist.model.base.GluuBoolean;
 import org.slf4j.Logger;
-import org.xdi.oxauth.client.ClientInfoClient;
-import org.xdi.oxauth.client.ClientInfoResponse;
+import org.gluu.oxauth.client.ClientInfoClient;
+import org.gluu.oxauth.client.ClientInfoResponse;
 
 /**
  * Provides service to protect SCIM UMA Rest service endpoints

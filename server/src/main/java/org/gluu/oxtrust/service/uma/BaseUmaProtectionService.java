@@ -23,7 +23,7 @@ import org.gluu.util.Pair;
 import org.gluu.util.StringHelper;
 import org.gluu.util.security.StringEncrypter.EncryptionException;
 import org.slf4j.Logger;
-import org.xdi.oxauth.client.uma.wrapper.UmaClient;
+import org.gluu.oxauth.client.uma.wrapper.UmaClient;
 
 /**
  * Provide base methods to simplify work with UMA Rest services

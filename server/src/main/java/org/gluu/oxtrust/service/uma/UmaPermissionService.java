@@ -37,8 +37,8 @@ import org.gluu.util.StringHelper;
 import org.jboss.resteasy.client.ClientExecutor;
 import org.jboss.resteasy.client.core.executors.ApacheHttpClient4Executor;
 import org.slf4j.Logger;
-import org.xdi.oxauth.client.uma.UmaClientFactory;
-import org.xdi.oxauth.client.uma.UmaRptIntrospectionService;
+import org.gluu.oxauth.client.uma.UmaClientFactory;
+import org.gluu.oxauth.client.uma.UmaRptIntrospectionService;
 
 /**
  * Provide methods to work with permissions and RPT tokens
@@ -66,7 +66,7 @@ public class UmaPermissionService implements Serializable {
 	@Inject
 	private AppInitializer appInitializer;
 
-	private org.xdi.oxauth.client.uma.UmaPermissionService permissionService;
+	private org.gluu.oxauth.client.uma.UmaPermissionService permissionService;
 	private UmaRptIntrospectionService rptStatusService;
 
 	private final Pair<Boolean, Response> authenticationFailure = new Pair<Boolean, Response>(false, null);

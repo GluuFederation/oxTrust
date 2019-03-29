@@ -19,8 +19,8 @@ import org.apache.commons.lang.StringUtils;
 import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.oxtrust.service.OpenIdService;
 import org.slf4j.Logger;
-import org.xdi.oxauth.client.ClientInfoClient;
-import org.xdi.oxauth.client.ClientInfoResponse;
+import org.gluu.oxauth.client.ClientInfoClient;
+import org.gluu.oxauth.client.ClientInfoResponse;
 
 /**
  * Provides service to protect APIs Rest service endpoints with UMA scope.
