@@ -74,7 +74,7 @@
 										<ox:decorate id="displayName"
 											label="#{msg['uma.displayName']}">
 											<div class="col-sm-12">
-												<rich:inplaceInput 
+												<h:inputText 
 													defaultLabel="Click to enter Display Name"
 													id="displayNameId" maxlength="60" required="true"
 													style="margin-left:-16px;" value="#{_resourceSet.name}" />
@@ -83,7 +83,7 @@
 
 										<ox:decorate label="#{msg['uma.iconURI']}">
 											<div class="col-sm-12">
-												<rich:inplaceInput  defaultLabel="Click to enter Icon Url"
+												<h:inputText  defaultLabel="Click to enter Icon Url"
 													id="iconUrlId" maxlength="60" required="true"
 													style="margin-left:-16px;" value="#{_resourceSet.iconUri}" />
 											</div>

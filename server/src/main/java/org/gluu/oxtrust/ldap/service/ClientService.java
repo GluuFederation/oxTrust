@@ -14,7 +14,6 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.oxtrust.model.AuthenticationMethod;
 import org.gluu.oxtrust.model.BlockEncryptionAlgorithm;
 import org.gluu.oxtrust.model.KeyEncryptionAlgorithm;
@@ -27,8 +26,8 @@ import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.model.base.GluuBoolean;
 import org.gluu.search.filter.Filter;
-import org.gluu.util.INumGenerator;
 import org.gluu.util.StringHelper;
+import org.python.jline.internal.Log;
 import org.slf4j.Logger;
 
 /**
@@ -56,9 +55,6 @@ public class ClientService implements Serializable {
 
 	@Inject
 	private OrganizationService organizationService;
-
-	@Inject
-	private AppConfiguration appConfiguration;
 
 	public boolean contains(String clientDn) {
 		return ldapEntryManager.contains(OxAuthClient.class, clientDn);
@@ -211,7 +207,13 @@ public class ClientService implements Serializable {
 	 */
 
 	public OxAuthClient getClientByDn(String Dn) {
-		return ldapEntryManager.find(OxAuthClient.class, Dn);
+		try {
+			return ldapEntryManager.find(OxAuthClient.class, Dn);
+		} catch (Exception e) {
+			Log.warn("", e);
+			return null;
+		}
+
 	}
 
 	/**
