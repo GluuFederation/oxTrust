@@ -21,15 +21,15 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.gluu.model.GluuImage;
 import org.gluu.oxtrust.ldap.service.ImageService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.model.GluuOrganization;
+import org.gluu.util.io.DownloadWrapper;
+import org.gluu.util.io.FileDownloader;
+import org.gluu.util.io.FileDownloader.ContentDisposition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xdi.model.GluuImage;
-import org.xdi.util.io.DownloadWrapper;
-import org.xdi.util.io.FileDownloader;
-import org.xdi.util.io.FileDownloader.ContentDisposition;
 
 @WebServlet(urlPatterns = "/servlet/favicon")
 public class FaviconImageServlet extends HttpServlet {

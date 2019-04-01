@@ -32,7 +32,7 @@ import org.gluu.oxtrust.model.cert.TrustStoreCertificate;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.X509CertificateShortInfo;
 import org.slf4j.Logger;
-import org.xdi.service.security.Secure;
+import org.gluu.service.security.Secure;
 
 /**
  * Action class for security certificate management.

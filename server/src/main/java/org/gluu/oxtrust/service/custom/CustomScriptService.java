@@ -11,7 +11,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.gluu.oxtrust.ldap.service.OrganizationService;
-import org.xdi.service.custom.script.AbstractCustomScriptService;
+import org.gluu.service.custom.script.AbstractCustomScriptService;
 
 /**
  * Operations with custom scripts

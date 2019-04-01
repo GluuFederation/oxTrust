@@ -22,9 +22,9 @@ import org.gluu.oxtrust.model.push.PushApplication;
 import org.gluu.oxtrust.service.push.PushApplicationConfigurationService;
 import org.gluu.oxtrust.service.push.PushApplicationService;
 import org.gluu.oxtrust.util.OxTrustConstants;
+import org.gluu.service.security.Secure;
+import org.gluu.util.Util;
 import org.slf4j.Logger;
-import org.xdi.service.security.Secure;
-import org.xdi.util.Util;
 
 /**
  * Action class for Push Application Inventory

@@ -13,8 +13,8 @@ import org.gluu.oxtrust.model.OxAuthSectorIdentifier;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.search.filter.Filter;
+import org.gluu.util.StringHelper;
 import org.slf4j.Logger;
-import org.xdi.util.StringHelper;
 
 /**
  * Provides operations with Sector Identifiers

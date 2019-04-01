@@ -10,9 +10,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.gluu.model.SimpleProperty;
 import org.gluu.oxtrust.ldap.cache.service.CacheRefreshUpdateMethod;
 import org.gluu.oxtrust.model.SimpleDoubleProperty;
-import org.xdi.model.SimpleProperty;
 
 /**
  * GluuCacheRefreshConfiguration

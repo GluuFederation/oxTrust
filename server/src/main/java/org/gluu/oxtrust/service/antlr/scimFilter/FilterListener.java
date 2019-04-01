@@ -40,8 +40,8 @@ import org.gluu.oxtrust.service.antlr.scimFilter.enums.ScimOperator;
 import org.gluu.oxtrust.service.antlr.scimFilter.util.FilterUtil;
 import org.gluu.oxtrust.service.scim2.ExtensionService;
 import org.gluu.search.filter.Filter;
-import org.xdi.service.cdi.util.CdiUtil;
-import org.xdi.util.Pair;
+import org.gluu.service.cdi.util.CdiUtil;
+import org.gluu.util.Pair;
 
 import java.util.ArrayDeque;
 import java.util.Deque;

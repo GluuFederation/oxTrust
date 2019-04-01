@@ -13,10 +13,10 @@ import javax.faces.event.ExceptionQueuedEventContext;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.gluu.oxtrust.security.Identity;
+import org.gluu.service.cdi.util.CdiUtil;
+import org.gluu.service.security.SecurityEvaluationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xdi.service.cdi.util.CdiUtil;
-import org.xdi.service.security.SecurityEvaluationException;
 
 /**
  * Created by eugeniuparvan on 5/23/17.

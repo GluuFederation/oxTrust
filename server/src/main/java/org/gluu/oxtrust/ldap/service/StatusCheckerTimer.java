@@ -31,7 +31,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.annotation.PostConstruct;
-import org.xdi.service.cdi.async.Asynchronous;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
@@ -45,6 +44,7 @@ import javax.net.ssl.X509TrustManager;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.io.IOUtils;
+import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.oxtrust.model.status.ConfigurationStatus;
@@ -52,14 +52,13 @@ import org.gluu.oxtrust.service.cdi.event.StatusCheckerTimerEvent;
 import org.gluu.oxtrust.util.NumberHelper;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.exception.BasePersistenceException;
+import org.gluu.service.cdi.async.Asynchronous;
+import org.gluu.service.cdi.event.Scheduled;
+import org.gluu.service.timer.event.TimerEvent;
+import org.gluu.service.timer.schedule.TimerSchedule;
+import org.gluu.util.StringHelper;
+import org.gluu.util.process.ProcessHelper;
 import org.slf4j.Logger;
-import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.service.cdi.async.Asynchronous;
-import org.xdi.service.cdi.event.Scheduled;
-import org.xdi.service.timer.event.TimerEvent;
-import org.xdi.service.timer.schedule.TimerSchedule;
-import org.xdi.util.StringHelper;
-import org.xdi.util.process.ProcessHelper;
 
 /**
  * Gather periodically site and server status

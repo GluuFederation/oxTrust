@@ -12,10 +12,10 @@ import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.service.PassportService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.slf4j.Logger;
-import org.xdi.config.oxtrust.LdapOxPassportConfiguration;
-import org.xdi.model.passport.PassportConfiguration;
-import org.xdi.model.passport.config.Configuration;
-import org.xdi.service.security.Secure;
+import org.gluu.config.oxtrust.LdapOxPassportConfiguration;
+import org.gluu.model.passport.PassportConfiguration;
+import org.gluu.model.passport.config.Configuration;
+import org.gluu.service.security.Secure;
 
 @Named("passportConfigurationAction")
 @ConversationScoped

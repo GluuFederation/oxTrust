@@ -19,8 +19,8 @@ import org.gluu.oxtrust.model.push.PushDevice;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.model.base.SimpleBranch;
 import org.gluu.search.filter.Filter;
+import org.gluu.util.StringHelper;
 import org.slf4j.Logger;
-import org.xdi.util.StringHelper;
 
 /**
  * Provides operations with oxPush devices

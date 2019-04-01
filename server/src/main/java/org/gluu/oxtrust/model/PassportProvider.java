@@ -2,7 +2,7 @@ package org.gluu.oxtrust.model;
 
 import java.io.Serializable;
 
-import org.xdi.model.passport.Provider;
+import org.gluu.model.passport.Provider;
 
 public class PassportProvider implements Serializable {
 

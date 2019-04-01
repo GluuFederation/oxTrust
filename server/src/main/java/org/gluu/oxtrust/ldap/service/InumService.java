@@ -15,6 +15,8 @@ import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 
+import org.gluu.config.oxtrust.AppConfiguration;
+import org.gluu.model.GluuAttribute;
 import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
@@ -22,10 +24,8 @@ import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.model.sql.InumSqlEntry;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.model.base.InumEntry;
+import org.gluu.util.INumGenerator;
 import org.slf4j.Logger;
-import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.model.GluuAttribute;
-import org.xdi.util.INumGenerator;
 
 /* 
 

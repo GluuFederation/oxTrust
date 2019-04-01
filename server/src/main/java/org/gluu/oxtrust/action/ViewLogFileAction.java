@@ -24,16 +24,16 @@ import org.apache.commons.io.filefilter.AndFileFilter;
 import org.apache.commons.io.filefilter.FileFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.gluu.jsf2.message.FacesMessages;
+import org.gluu.model.SimpleCustomProperty;
 import org.gluu.oxtrust.ldap.service.ConfigurationService;
 import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.oxtrust.model.LogViewerConfig;
 import org.gluu.oxtrust.util.OxTrustConstants;
+import org.gluu.service.JsonService;
+import org.gluu.service.security.Secure;
+import org.gluu.util.StringHelper;
+import org.gluu.util.io.ReverseLineReader;
 import org.slf4j.Logger;
-import org.xdi.model.SimpleCustomProperty;
-import org.xdi.service.JsonService;
-import org.xdi.service.security.Secure;
-import org.xdi.util.StringHelper;
-import org.xdi.util.io.ReverseLineReader;
 
 /**
  * Action class for configuring log viewer

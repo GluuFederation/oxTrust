@@ -22,29 +22,29 @@ import javax.inject.Named;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
+import org.gluu.config.oxtrust.AppConfiguration;
+import org.gluu.config.oxtrust.AttributeResolverConfiguration;
+import org.gluu.config.oxtrust.CacheRefreshConfiguration;
+import org.gluu.config.oxtrust.Configuration;
+import org.gluu.config.oxtrust.ImportPersonConfig;
+import org.gluu.config.oxtrust.LdapOxTrustConfiguration;
+import org.gluu.exception.ConfigurationException;
 import org.gluu.oxtrust.ldap.service.ApplicationFactory;
 import org.gluu.oxtrust.service.custom.LdapCentralConfigurationReload;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.PersistenceEntryManagerFactory;
 import org.gluu.persist.exception.BasePersistenceException;
+import org.gluu.service.JsonService;
+import org.gluu.service.cdi.async.Asynchronous;
+import org.gluu.service.cdi.event.ConfigurationEvent;
+import org.gluu.service.cdi.event.ConfigurationUpdate;
+import org.gluu.service.cdi.event.LdapConfigurationReload;
+import org.gluu.service.cdi.event.Scheduled;
+import org.gluu.service.timer.event.TimerEvent;
+import org.gluu.service.timer.schedule.TimerSchedule;
+import org.gluu.util.StringHelper;
+import org.gluu.util.properties.FileConfiguration;
 import org.slf4j.Logger;
-import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.config.oxtrust.AttributeResolverConfiguration;
-import org.xdi.config.oxtrust.CacheRefreshConfiguration;
-import org.xdi.config.oxtrust.Configuration;
-import org.xdi.config.oxtrust.ImportPersonConfig;
-import org.xdi.config.oxtrust.LdapOxTrustConfiguration;
-import org.xdi.exception.ConfigurationException;
-import org.xdi.service.JsonService;
-import org.xdi.service.cdi.async.Asynchronous;
-import org.xdi.service.cdi.event.ConfigurationEvent;
-import org.xdi.service.cdi.event.ConfigurationUpdate;
-import org.xdi.service.cdi.event.LdapConfigurationReload;
-import org.xdi.service.cdi.event.Scheduled;
-import org.xdi.service.timer.event.TimerEvent;
-import org.xdi.service.timer.schedule.TimerSchedule;
-import org.xdi.util.StringHelper;
-import org.xdi.util.properties.FileConfiguration;
 
 /**
  * @author Yuriy Movchan

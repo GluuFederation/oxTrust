@@ -22,6 +22,7 @@ import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.Version;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.module.SimpleModule;
+import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.oxtrust.model.exception.SCIMException;
 import org.gluu.oxtrust.model.scim2.BaseScimResource;
 import org.gluu.oxtrust.model.scim2.ErrorResponse;
@@ -42,7 +43,6 @@ import org.gluu.oxtrust.service.scim2.serialization.ScimResourceSerializer;
 import org.gluu.persist.model.SortOrder;
 import org.joda.time.format.ISODateTimeFormat;
 import org.slf4j.Logger;
-import org.xdi.config.oxtrust.AppConfiguration;
 
 /**
  * Base methods for SCIM web services

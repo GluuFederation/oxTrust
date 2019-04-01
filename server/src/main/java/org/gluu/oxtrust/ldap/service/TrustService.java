@@ -15,8 +15,12 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.commons.lang.StringUtils;
+import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.model.RenderParameters;
+import org.gluu.model.GluuAttribute;
+import org.gluu.model.GluuStatus;
+import org.gluu.model.TrustContact;
 import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuMetadataSourceType;
@@ -26,15 +30,11 @@ import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.model.base.InumEntry;
 import org.gluu.search.filter.Filter;
+import org.gluu.service.MailService;
+import org.gluu.service.XmlService;
+import org.gluu.util.INumGenerator;
+import org.gluu.util.StringHelper;
 import org.slf4j.Logger;
-import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.model.GluuAttribute;
-import org.xdi.model.GluuStatus;
-import org.xdi.model.TrustContact;
-import org.xdi.service.MailService;
-import org.xdi.service.XmlService;
-import org.xdi.util.INumGenerator;
-import org.xdi.util.StringHelper;
 
 /**
  * Provides operations with trust relationships

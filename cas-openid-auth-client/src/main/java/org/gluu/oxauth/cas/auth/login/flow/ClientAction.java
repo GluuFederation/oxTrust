@@ -21,8 +21,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-import org.xdi.context.J2EContext;
-import org.xdi.context.WebContext;
+import org.gluu.context.J2EContext;
+import org.gluu.context.WebContext;
 
 /**
  * This class represents an action to do oxAuth authentication in CAS

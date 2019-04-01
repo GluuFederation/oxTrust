@@ -12,13 +12,13 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.gluu.config.oxtrust.LdapOxPassportConfiguration;
 import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.exception.MappingException;
+import org.gluu.util.StringHelper;
+import org.gluu.util.properties.FileConfiguration;
 import org.slf4j.Logger;
-import org.xdi.config.oxtrust.LdapOxPassportConfiguration;
-import org.xdi.util.StringHelper;
-import org.xdi.util.properties.FileConfiguration;
 
 /**
  * Passport service

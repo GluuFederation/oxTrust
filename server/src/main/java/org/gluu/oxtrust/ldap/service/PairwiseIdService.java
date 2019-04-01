@@ -9,8 +9,8 @@ import javax.inject.Inject;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuUserPairwiseIdentifier;
 import org.gluu.persist.PersistenceEntryManager;
+import org.gluu.util.StringHelper;
 import org.slf4j.Logger;
-import org.xdi.util.StringHelper;
 
 public class PairwiseIdService implements IPairwiseIdService, Serializable {
 
