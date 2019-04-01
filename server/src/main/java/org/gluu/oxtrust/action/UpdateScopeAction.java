@@ -281,7 +281,7 @@ public class UpdateScopeAction implements Serializable {
 	}
 
 	private void updateClaims() {
-		if ((org.xdi.oxauth.model.common.ScopeType.DYNAMIC == this.scope.getScopeType()) || (this.claims == null)
+		if ((org.gluu.oxauth.model.common.ScopeType.DYNAMIC == this.scope.getScopeType()) || (this.claims == null)
 				|| (this.claims.size() == 0)) {
 			this.scope.setOxAuthClaims(null);
 			return;

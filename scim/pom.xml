@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.xdi</groupId>
+        <groupId>org.gluu</groupId>
         <artifactId>oxtrust</artifactId>
         <version>4.0.0-SNAPSHOT</version>
     </parent>
@@ -86,11 +86,11 @@
 
         <!-- oxcore -->
 		<dependency>
-			<groupId>org.xdi</groupId>
+			<groupId>org.gluu</groupId>
 			<artifactId>oxcore-ldap-annotations</artifactId>
 		</dependency>
         <dependency>
-            <groupId>org.xdi</groupId>
+            <groupId>org.gluu</groupId>
             <artifactId>oxcore-service</artifactId>
         </dependency>
 

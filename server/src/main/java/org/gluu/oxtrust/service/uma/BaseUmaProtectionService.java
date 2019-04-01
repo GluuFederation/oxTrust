@@ -14,6 +14,8 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 
 import org.gluu.config.oxtrust.AppConfiguration;
+import org.gluu.oxauth.model.uma.UmaMetadata;
+import org.gluu.oxauth.model.uma.wrapper.Token;
 import org.gluu.oxtrust.exception.UmaProtectionException;
 import org.gluu.oxtrust.ldap.service.EncryptionService;
 import org.gluu.oxtrust.service.filter.ProtectedApi;
@@ -21,9 +23,7 @@ import org.gluu.util.Pair;
 import org.gluu.util.StringHelper;
 import org.gluu.util.security.StringEncrypter.EncryptionException;
 import org.slf4j.Logger;
-import org.xdi.oxauth.client.uma.wrapper.UmaClient;
-import org.xdi.oxauth.model.uma.UmaMetadata;
-import org.xdi.oxauth.model.uma.wrapper.Token;
+import org.gluu.oxauth.client.uma.wrapper.UmaClient;
 
 /**
  * Provide base methods to simplify work with UMA Rest services

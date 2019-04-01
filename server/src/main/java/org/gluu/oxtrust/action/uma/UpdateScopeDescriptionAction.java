@@ -28,6 +28,8 @@ import org.gluu.model.GluuImage;
 import org.gluu.model.SelectableEntity;
 import org.gluu.model.custom.script.CustomScriptType;
 import org.gluu.model.custom.script.model.CustomScript;
+import org.gluu.oxauth.model.uma.persistence.UmaResource;
+import org.gluu.oxauth.model.uma.persistence.UmaScopeDescription;
 import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.ImageService;
 import org.gluu.oxtrust.ldap.service.uma.ResourceSetService;
@@ -44,8 +46,6 @@ import org.gluu.util.StringHelper;
 import org.richfaces.event.FileUploadEvent;
 import org.richfaces.model.UploadedFile;
 import org.slf4j.Logger;
-import org.xdi.oxauth.model.uma.persistence.UmaResource;
-import org.xdi.oxauth.model.uma.persistence.UmaScopeDescription;
 
 /**
  * Action class for view and update UMA resource

@@ -23,6 +23,8 @@ import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
 import org.gluu.model.DisplayNameEntry;
 import org.gluu.model.SelectableEntity;
+import org.gluu.oxauth.model.uma.persistence.UmaResource;
+import org.gluu.oxauth.model.uma.persistence.UmaScopeDescription;
 import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.uma.ResourceSetService;
 import org.gluu.oxtrust.ldap.service.uma.ScopeDescriptionService;
@@ -36,8 +38,6 @@ import org.gluu.util.SelectableEntityHelper;
 import org.gluu.util.StringHelper;
 import org.gluu.util.Util;
 import org.slf4j.Logger;
-import org.xdi.oxauth.model.uma.persistence.UmaResource;
-import org.xdi.oxauth.model.uma.persistence.UmaScopeDescription;
 
 /**
  * Action class for view and update resource sets

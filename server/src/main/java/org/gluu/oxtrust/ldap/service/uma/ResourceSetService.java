@@ -14,6 +14,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.gluu.oxauth.model.uma.persistence.UmaResource;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.PersistenceEntryManager;
@@ -22,7 +23,6 @@ import org.gluu.search.filter.Filter;
 import org.gluu.util.INumGenerator;
 import org.gluu.util.StringHelper;
 import org.slf4j.Logger;
-import org.xdi.oxauth.model.uma.persistence.UmaResource;
 
 /**
  * Provides operations with resources

@@ -19,9 +19,9 @@ import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.security.OauthData;
 import org.gluu.util.StringHelper;
 import org.slf4j.Logger;
-import org.xdi.oxauth.client.EndSessionClient;
-import org.xdi.oxauth.client.EndSessionRequest;
-import org.xdi.oxauth.client.EndSessionResponse;
+import org.gluu.oxauth.client.EndSessionClient;
+import org.gluu.oxauth.client.EndSessionRequest;
+import org.gluu.oxauth.client.EndSessionResponse;
 
 @SessionScoped
 @Named
