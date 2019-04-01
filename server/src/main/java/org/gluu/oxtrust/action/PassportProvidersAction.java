@@ -160,7 +160,16 @@ public class PassportProvidersAction implements Serializable {
 	public String save() {
 		try {
 			if (!update) {
-				this.provider.setId(UUID.randomUUID().toString());
+				if (this.provider.getId() == null) {
+					String computedId = this.provider.getDisplayName().toLowerCase().replaceAll("[^\\w-]", "");
+					computedId=computedId.concat(UUID.randomUUID().toString().substring(0, 4));
+					if (computedId != null) {
+						this.provider.setId(computedId);
+					} else {
+						facesMessages.add(FacesMessage.SEVERITY_INFO,
+								"Please change the displayName of provider named '#{passportProvidersAction.provider.displayName}'");
+					}
+				}
 				this.id = this.provider.getId();
 				this.provider.setOptions(options.stream().filter(e -> e.getKey() != null)
 						.collect(Collectors.toMap(OptionEntry::getKey, OptionEntry::getValue)));

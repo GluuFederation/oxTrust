@@ -21,7 +21,6 @@ import org.gluu.oxtrust.model.OxAuthScope;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.search.filter.Filter;
-import org.gluu.util.INumGenerator;
 import org.gluu.util.StringHelper;
 import org.slf4j.Logger;
 
@@ -95,7 +94,6 @@ public class ScopeService implements Serializable {
 		if (StringHelper.isEmpty(inum)) {
 			return String.format("ou=scopes,%s", orgDn);
 		}
-
 		return String.format("inum=%s,ou=scopes,%s", inum, orgDn);
 	}
 
@@ -153,7 +151,6 @@ public class ScopeService implements Serializable {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
 		return result;
 	}
 
@@ -167,10 +164,13 @@ public class ScopeService implements Serializable {
 		return UUID.randomUUID().toString();
 	}
 
-	public List<OxAuthScope> getAllScopesList(int size) throws Exception {
-		List<OxAuthScope> result = ldapEntryManager.findEntries(getDnForScope(null), OxAuthScope.class, null, 0);
-
-		return result;
+	public List<OxAuthScope> getAllScopesList(int size) {
+		try {
+			return ldapEntryManager.findEntries(getDnForScope(null), OxAuthScope.class, null, size);
+		} catch (Exception e) {
+			logger.error("", e);
+			return new ArrayList<>();
+		}
 	}
 
 	/**
@@ -180,9 +180,7 @@ public class ScopeService implements Serializable {
 	 */
 
 	public OxAuthScope getScopeByDn(String Dn) throws Exception {
-		OxAuthScope result = ldapEntryManager.find(OxAuthScope.class, Dn);
-
-		return result;
+		return ldapEntryManager.find(OxAuthScope.class, Dn);
 	}
 
 	/**
@@ -191,9 +189,8 @@ public class ScopeService implements Serializable {
 	 * @return Array of scope types
 	 */
 	public List<ScopeType> getScopeTypes() {
-		List<ScopeType> scopeTypes = new ArrayList<ScopeType>(
+		return  new ArrayList<ScopeType>(
 				Arrays.asList(org.gluu.oxauth.model.common.ScopeType.values()));
-		return scopeTypes;
 	}
 
 	/**
@@ -206,13 +203,10 @@ public class ScopeService implements Serializable {
 		OxAuthScope scope = new OxAuthScope();
 		scope.setBaseDn(getDnForScope(null));
 		scope.setDisplayName(DisplayName);
-
 		List<OxAuthScope> scopes = ldapEntryManager.findEntries(scope);
-
 		if ((scopes != null) && (scopes.size() > 0)) {
 			return scopes.get(0);
 		}
-
 		return null;
 	}
 }
