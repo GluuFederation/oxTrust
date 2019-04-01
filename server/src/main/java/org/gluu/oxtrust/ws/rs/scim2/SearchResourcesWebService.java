@@ -39,7 +39,7 @@ import org.gluu.oxtrust.model.scim2.util.ScimResourceUtil;
 import org.gluu.oxtrust.service.filter.ProtectedApi;
 import org.gluu.oxtrust.service.scim2.interceptor.RefAdjusted;
 import org.gluu.oxtrust.service.scim2.serialization.ListResponseJsonSerializer;
-import org.xdi.util.Pair;
+import org.gluu.util.Pair;
 
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;

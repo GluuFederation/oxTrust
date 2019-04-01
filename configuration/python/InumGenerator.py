@@ -1,7 +1,7 @@
 from org.gluu.oxtrust.model.python import InumGeneratorType
-from org.xdi.util import StringHelper
+from org.gluu.util import StringHelper
 from java.lang import String
-from org.xdi.util import INumGenerator
+from org.gluu.util import INumGenerator
 from org.gluu.oxtrust.util import Configuration
 
 import java

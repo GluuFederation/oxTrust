@@ -14,12 +14,12 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.gluu.config.oxtrust.LdapShibbolethCASProtocolConfiguration;
+import org.gluu.config.oxtrust.ShibbolethCASProtocolConfiguration;
 import org.gluu.persist.PersistenceEntryManager;
+import org.gluu.util.INumGenerator;
+import org.gluu.util.StringHelper;
 import org.slf4j.Logger;
-import org.xdi.config.oxtrust.LdapShibbolethCASProtocolConfiguration;
-import org.xdi.config.oxtrust.ShibbolethCASProtocolConfiguration;
-import org.xdi.util.INumGenerator;
-import org.xdi.util.StringHelper;
 
 /**
  * CAS LDAP configuration service.

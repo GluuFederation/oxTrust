@@ -12,8 +12,8 @@ import javax.faces.validator.ValidatorException;
 import javax.inject.Inject;
 
 import org.gluu.jsf2.message.FacesMessages;
+import org.gluu.model.attribute.AttributeValidation;
 import org.gluu.oxtrust.ldap.service.AttributeService;
-import org.xdi.model.attribute.AttributeValidation;
 @ApplicationScoped
 @FacesValidator("gluuPasswordValidator")
 public class PasswordValidator implements javax.faces.validator.Validator {

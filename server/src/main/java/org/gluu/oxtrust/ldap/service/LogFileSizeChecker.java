@@ -29,15 +29,15 @@ import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.model.FileData;
 import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.oxtrust.service.cdi.event.LogFileSizeChekerEvent;
+import org.gluu.service.XmlService;
+import org.gluu.service.cdi.async.Asynchronous;
+import org.gluu.service.cdi.event.Scheduled;
+import org.gluu.service.timer.event.TimerEvent;
+import org.gluu.service.timer.schedule.TimerSchedule;
+import org.gluu.util.StringHelper;
 import org.slf4j.Logger;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xdi.service.XmlService;
-import org.xdi.service.cdi.async.Asynchronous;
-import org.xdi.service.cdi.event.Scheduled;
-import org.xdi.service.timer.event.TimerEvent;
-import org.xdi.service.timer.schedule.TimerSchedule;
-import org.xdi.util.StringHelper;
 
 @ApplicationScoped
 @Named("logFileSizeChecker")

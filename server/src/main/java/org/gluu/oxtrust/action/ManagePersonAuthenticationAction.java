@@ -24,12 +24,19 @@ import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.gluu.jsf2.message.FacesMessages;
+import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.jsf2.service.ConversationService;
+import org.gluu.model.SimpleCustomProperty;
+import org.gluu.model.SimpleExtendedCustomProperty;
+import org.gluu.model.SimpleProperty;
+import org.gluu.model.custom.script.CustomScriptType;
+import org.gluu.model.custom.script.model.CustomScript;
+import org.gluu.model.ldap.GluuLdapConfiguration;
+import org.gluu.model.passport.PassportConfiguration;
 import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.ldap.service.ConfigurationService;
 import org.gluu.oxtrust.ldap.service.EncryptionService;
 import org.gluu.oxtrust.ldap.service.JsonConfigurationService;
-import org.gluu.oxtrust.ldap.service.PassportService;
 import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.oxtrust.model.LdapConfigurationModel;
 import org.gluu.oxtrust.model.OxIDPAuthConf;
@@ -39,22 +46,14 @@ import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.exception.BasePersistenceException;
 import org.gluu.persist.ldap.operation.impl.LdapConnectionProvider;
 import org.gluu.persist.model.base.GluuBoolean;
+import org.gluu.service.custom.script.AbstractCustomScriptService;
+import org.gluu.service.security.Secure;
+import org.gluu.util.OxConstants;
+import org.gluu.util.StringHelper;
+import org.gluu.util.properties.FileConfiguration;
+import org.gluu.util.security.PropertiesDecrypter;
+import org.gluu.util.security.StringEncrypter.EncryptionException;
 import org.slf4j.Logger;
-import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.model.SimpleCustomProperty;
-import org.xdi.model.SimpleExtendedCustomProperty;
-import org.xdi.model.SimpleProperty;
-import org.xdi.model.custom.script.CustomScriptType;
-import org.xdi.model.custom.script.model.CustomScript;
-import org.xdi.model.ldap.GluuLdapConfiguration;
-import org.xdi.model.passport.PassportConfiguration;
-import org.xdi.service.custom.script.AbstractCustomScriptService;
-import org.xdi.service.security.Secure;
-import org.xdi.util.OxConstants;
-import org.xdi.util.StringHelper;
-import org.xdi.util.properties.FileConfiguration;
-import org.xdi.util.security.PropertiesDecrypter;
-import org.xdi.util.security.StringEncrypter.EncryptionException;
 
 /**
  * Action class for configuring person authentication
@@ -117,7 +116,6 @@ public class ManagePersonAuthenticationAction
 	public void setAuthenticationRecaptchaEnabled(boolean authenticationRecaptchaEnabled) {
 		this.authenticationRecaptchaEnabled = authenticationRecaptchaEnabled;
 	}
-
 
 	@Inject
 	private JsonConfigurationService jsonConfigurationService;

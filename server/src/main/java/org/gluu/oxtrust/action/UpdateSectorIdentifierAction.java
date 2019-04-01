@@ -30,12 +30,12 @@ import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.exception.BasePersistenceException;
 import org.slf4j.Logger;
-import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.model.DisplayNameEntry;
-import org.xdi.service.LookupService;
-import org.xdi.service.security.Secure;
-import org.xdi.util.StringHelper;
-import org.xdi.util.Util;
+import org.gluu.config.oxtrust.AppConfiguration;
+import org.gluu.model.DisplayNameEntry;
+import org.gluu.service.LookupService;
+import org.gluu.service.security.Secure;
+import org.gluu.util.StringHelper;
+import org.gluu.util.Util;
 
 import com.google.common.base.Strings;
 
@@ -102,10 +102,8 @@ public class UpdateSectorIdentifierAction implements Serializable {
 		if (this.sectorIdentifier != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
-
 		this.update = false;
 		this.sectorIdentifier = new OxAuthSectorIdentifier();
-
 		try {
 			this.loginUris = getNonEmptyStringList(sectorIdentifier.getRedirectUris());
 			if (sectorIdentifier.getClientIds() != null && sectorIdentifier.getClientIds().size() > 0)
@@ -113,10 +111,8 @@ public class UpdateSectorIdentifierAction implements Serializable {
 			this.clientDisplayNameEntries = loadClientDisplayNameEntries();
 		} catch (BasePersistenceException ex) {
 			log.error("Failed to load login Uris", ex);
-
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new sector identifier");
 			conversationService.endConversation();
-
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 
@@ -155,6 +151,7 @@ public class UpdateSectorIdentifierAction implements Serializable {
 
 		try {
 			this.loginUris = getNonEmptyStringList(sectorIdentifier.getRedirectUris());
+			removeDeletedClients();
 			this.clientDisplayNameEntries = loadClientDisplayNameEntries();
 		} catch (Exception ex) {
 			log.error("Failed to load person display names", ex);
@@ -275,8 +272,20 @@ public class UpdateSectorIdentifierAction implements Serializable {
 		if (tmp != null) {
 			result.addAll(tmp);
 		}
-
 		return result;
+	}
+
+	private void removeDeletedClients() {
+		List<String> dns = this.sectorIdentifier.getClientIds();
+		if (dns != null && dns.size() > 0) {
+			for (String dn : dns) {
+				OxAuthClient client = clientService.getClientByDn(dn);
+				if (client == null) {
+					this.sectorIdentifier.getClientIds().remove(dn);
+				}
+			}
+		}
+
 	}
 
 	private List<String> getNonEmptyStringList(List<String> currentList) {

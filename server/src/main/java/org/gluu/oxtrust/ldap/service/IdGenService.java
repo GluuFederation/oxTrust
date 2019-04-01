@@ -13,8 +13,8 @@ import javax.inject.Named;
 
 import org.gluu.oxtrust.service.external.ExternalIdGeneratorService;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.xdi.util.INumGenerator;
-import org.xdi.util.StringHelper;
+import org.gluu.util.INumGenerator;
+import org.gluu.util.StringHelper;
 
 /**
  * @author Yuriy Movchan

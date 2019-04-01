@@ -14,10 +14,10 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.gluu.model.user.UserRole;
 import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.model.User;
 import org.slf4j.Logger;
-import org.xdi.model.user.UserRole;
 
 /**
  * Provides operations with groups

@@ -18,20 +18,20 @@ import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.gluu.config.oxtrust.AppConfiguration;
+import org.gluu.config.oxtrust.LdapOxAuthConfiguration;
+import org.gluu.model.GluuStatus;
+import org.gluu.model.ProgrammingLanguage;
 import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.exception.BasePersistenceException;
 import org.gluu.persist.model.base.GluuBoolean;
+import org.gluu.service.CacheService;
+import org.gluu.util.ArrayHelper;
+import org.gluu.util.OxConstants;
+import org.gluu.util.StringHelper;
 import org.slf4j.Logger;
-import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.config.oxtrust.LdapOxAuthConfiguration;
-import org.xdi.model.GluuStatus;
-import org.xdi.model.ProgrammingLanguage;
-import org.xdi.service.CacheService;
-import org.xdi.util.ArrayHelper;
-import org.xdi.util.OxConstants;
-import org.xdi.util.StringHelper;
 
 /**
  * Provides operations with organization
@@ -40,7 +40,7 @@ import org.xdi.util.StringHelper;
  */
 @Stateless
 @Named("organizationService")
-public class OrganizationService extends org.xdi.service.OrganizationService {
+public class OrganizationService extends org.gluu.service.OrganizationService {
 
 	private static final long serialVersionUID = -1959146007518514678L;
 

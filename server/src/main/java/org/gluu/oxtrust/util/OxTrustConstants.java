@@ -5,7 +5,7 @@
  */
 package org.gluu.oxtrust.util;
 
-import org.xdi.util.OxConstants;
+import org.gluu.util.OxConstants;
 
 /**
  * Constants loads the LDAP schema attribute names like uid, iname

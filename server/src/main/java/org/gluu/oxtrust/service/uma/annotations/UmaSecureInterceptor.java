@@ -17,13 +17,13 @@ import javax.interceptor.InvocationContext;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.Response;
 
+import org.gluu.service.el.ExpressionEvaluator;
+import org.gluu.service.security.InterceptSecure;
+import org.gluu.service.security.Secure;
+import org.gluu.service.security.SecureVariable;
+import org.gluu.service.security.SecurityEvaluationException;
+import org.gluu.service.security.SecurityExtension;
 import org.slf4j.Logger;
-import org.xdi.service.el.ExpressionEvaluator;
-import org.xdi.service.security.InterceptSecure;
-import org.xdi.service.security.Secure;
-import org.xdi.service.security.SecureVariable;
-import org.xdi.service.security.SecurityEvaluationException;
-import org.xdi.service.security.SecurityExtension;
 
 /**
  * Provides service to protect Rest service endpoints with UMA scope.

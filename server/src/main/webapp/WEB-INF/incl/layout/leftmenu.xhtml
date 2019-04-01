@@ -238,7 +238,7 @@
 									</h:commandLink></li>
 								<li id="subMenuLinkOpenID2"><h:commandLink
 										value="#{msg['leftmenu.clients']}" onclick="lock();"
-										ondbclick="lock();" oncomplete="unlock();"
+										ondbclick="clearOIDC();lock();" oncomplete="unlock();"
 										action="#{menuAction.endConversation('/client/clientInventory.xhtml')}"
 										rendered="#{permissionService.hasPermission('client', 'access')}">
 										<i class="fa fa-chevron-right"
@@ -357,6 +357,10 @@
 			$.blockUI({
 				message : $('div.gluuBusyIndicator')
 			});
+		}
+		
+		function clearOIDC() {
+			 window.localStorage.setItem('oidctab', "standardSettings");
 		}
 
 		function unlock() {

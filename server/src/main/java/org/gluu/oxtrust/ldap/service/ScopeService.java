@@ -16,14 +16,14 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.gluu.oxauth.model.common.ScopeType;
 import org.gluu.oxtrust.model.OxAuthScope;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.search.filter.Filter;
+import org.gluu.util.INumGenerator;
+import org.gluu.util.StringHelper;
 import org.slf4j.Logger;
-import org.xdi.oxauth.model.common.ScopeType;
-import org.xdi.util.INumGenerator;
-import org.xdi.util.StringHelper;
 
 /**
  * Provides operations with Scopes
@@ -192,7 +192,7 @@ public class ScopeService implements Serializable {
 	 */
 	public List<ScopeType> getScopeTypes() {
 		List<ScopeType> scopeTypes = new ArrayList<ScopeType>(
-				Arrays.asList(org.xdi.oxauth.model.common.ScopeType.values()));
+				Arrays.asList(org.gluu.oxauth.model.common.ScopeType.values()));
 		return scopeTypes;
 	}
 

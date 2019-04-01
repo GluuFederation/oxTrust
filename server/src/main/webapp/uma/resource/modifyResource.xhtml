@@ -9,7 +9,8 @@
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	template="/WEB-INF/incl/layout/newtemplate.xhtml">
 	<f:metadata>
-	    <f:viewAction action="#{permissionService.requestPermission('uma', 'access')}" />
+		<f:viewAction
+			action="#{permissionService.requestPermission('uma', 'access')}" />
 		<f:viewParam name="resource" value="#{updateResourceAction.oxId}" />
 		<f:viewAction action="#{conversationService.initConversation}" />
 		<f:viewAction action="#{updateResourceAction.modify}"
@@ -65,41 +66,40 @@
 
 								<h:form id="resourceid">
 									<h:panelGrid border="0" cellpadding="0" cellspacing="0"
-										columns="1" width="100%">
+										columns="1" width="100%" style="padding:20px;">
 										<ox:decorate id="resourceSet" label="#{msg['uma.resource']}"
+											leftClass="col-sm-4" rightClass="col-sm-8"
+											styleClass="form-control"
 											rendered="#{updateResourceAction.update}">
 											<h:outputText value="#{_resourceSet.id}" />
 										</ox:decorate>
 
-										<ox:decorate id="displayName"
-											label="#{msg['uma.displayName']}">
-											<div class="col-sm-12">
-												<rich:inplaceInput 
-													defaultLabel="Click to enter Display Name"
-													id="displayNameId" maxlength="60" required="true"
-													style="margin-left:-16px;" value="#{_resourceSet.name}" />
-											</div>
+										<ox:decorate id="displayName" leftClass="col-sm-4"
+											rightClass="col-sm-8" label="#{msg['uma.displayName']}">
+											<h:inputText styleClass="form-control"
+												defaultLabel="Click to enter Display Name"
+												id="displayNameId" maxlength="60" required="true"
+												value="#{_resourceSet.name}" />
 										</ox:decorate>
 
-										<ox:decorate label="#{msg['uma.iconURI']}">
-											<div class="col-sm-12">
-												<rich:inplaceInput  defaultLabel="Click to enter Icon Url"
-													id="iconUrlId" maxlength="60" required="true"
-													style="margin-left:-16px;" value="#{_resourceSet.iconUri}" />
-											</div>
+										<ox:decorate id="iconUrl" leftClass="col-sm-4"
+											rightClass="col-sm-8" label="#{msg['uma.iconURI']}">
+											<h:inputText defaultLabel="Click to enter Icon Url"
+												id="iconUrlId" maxlength="60" required="true"
+												styleClass="form-control" value="#{_resourceSet.iconUri}" />
 										</ox:decorate>
 
-										<ox:decorate id="selecctionid" label="Scope Selection">
-										<div class="col-sm-12">
-											<h:selectOneMenu immediate="true" styleClass="form-Control col-sm-10"
+										<ox:decorate id="selecction" leftClass="col-sm-4"
+											rightClass="col-sm-8" label="Scope Selection">
+											<h:selectOneMenu immediate="true"
+												styleClass="form-Control rounded"
 												value="#{updateResourceAction.scopeSelection}"
-												id="selectionid">
+												id="selectionId">
 												<f:selectItem itemValue="Scopes" />
 												<f:selectItem itemValue="ScopeExpression" />
 												<a4j:ajax event="change" render="selectiongroup addscope"
 													limitRender="true" execute="@this" />
 											</h:selectOneMenu>
-											</div>
 										</ox:decorate>
 
 										<h:panelGroup id="selectiongroup">

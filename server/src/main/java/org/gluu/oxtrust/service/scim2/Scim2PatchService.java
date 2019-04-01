@@ -36,8 +36,8 @@ import org.gluu.oxtrust.model.scim2.util.IntrospectUtil;
 import org.gluu.oxtrust.model.scim2.util.ScimResourceUtil;
 import org.gluu.oxtrust.service.antlr.scimFilter.ScimFilterParserService;
 import org.gluu.oxtrust.service.antlr.scimFilter.util.FilterUtil;
+import org.gluu.util.Pair;
 import org.slf4j.Logger;
-import org.xdi.util.Pair;
 
 /**
  * Created by jgomer on 2017-12-17.

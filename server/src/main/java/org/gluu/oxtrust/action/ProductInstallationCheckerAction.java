@@ -14,8 +14,8 @@ import javax.inject.Named;
 
 import org.gluu.oxtrust.ldap.service.Shibboleth3ConfService;
 import org.gluu.oxtrust.util.ProductInstallationChecker;
+import org.gluu.service.security.Secure;
 import org.slf4j.Logger;
-import org.xdi.service.security.Secure;
 
 /**
  * Action class for updating and adding the SAML IDP to Asimba.

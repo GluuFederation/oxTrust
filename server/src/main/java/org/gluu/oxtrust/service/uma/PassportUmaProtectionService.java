@@ -14,11 +14,11 @@ import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 
+import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.oxtrust.ldap.service.ConfigurationService;
 import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.persist.model.base.GluuBoolean;
 import org.slf4j.Logger;
-import org.xdi.config.oxtrust.AppConfiguration;
 
 /**
  * Provides service to protect Passport Passport Rest service endpoints

@@ -17,15 +17,15 @@ import javax.inject.Named;
 import javax.servlet.http.HttpServletResponse;
 
 import org.gluu.jsf2.io.ResponseHelper;
+import org.gluu.model.GluuImage;
+import org.gluu.oxauth.model.uma.persistence.UmaScopeDescription;
 import org.gluu.oxtrust.ldap.service.ImageService;
 import org.gluu.oxtrust.ldap.service.uma.ScopeDescriptionService;
 import org.gluu.persist.exception.BasePersistenceException;
+import org.gluu.service.security.Secure;
+import org.gluu.util.io.FileDownloader;
+import org.gluu.util.io.FileDownloader.ContentDisposition;
 import org.slf4j.Logger;
-import org.xdi.model.GluuImage;
-import org.xdi.oxauth.model.uma.persistence.UmaScopeDescription;
-import org.xdi.service.security.Secure;
-import org.xdi.util.io.FileDownloader;
-import org.xdi.util.io.FileDownloader.ContentDisposition;
 
 /**
  * Action class for download scope descriptions

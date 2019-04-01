@@ -10,7 +10,7 @@ import java.util.Map;
 
 import org.gluu.oxauth.client.auth.principal.OpenIdCredentials;
 import org.gluu.oxauth.client.auth.user.UserProfile;
-import org.xdi.context.WebContext;
+import org.gluu.context.WebContext;
 
 /**
  * This interface represents a client

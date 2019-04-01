@@ -6,9 +6,9 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.gluu.model.GluuIMAPData;
+import org.gluu.service.JsonService;
 import org.slf4j.Logger;
-import org.xdi.model.GluuIMAPData;
-import org.xdi.service.JsonService;
 
 
 /**

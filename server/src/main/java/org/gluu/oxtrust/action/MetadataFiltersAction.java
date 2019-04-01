@@ -21,10 +21,10 @@ import org.gluu.oxtrust.ldap.service.FilterService;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.model.MetadataFilter;
 import org.gluu.oxtrust.util.OxTrustConstants;
+import org.gluu.service.security.Secure;
+import org.gluu.util.StringHelper;
+import org.gluu.util.io.FileUploadWrapper;
 import org.slf4j.Logger;
-import org.xdi.service.security.Secure;
-import org.xdi.util.StringHelper;
-import org.xdi.util.io.FileUploadWrapper;
 
 @ConversationScoped
 @Named("metadataFiltersAction")

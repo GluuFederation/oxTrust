@@ -13,8 +13,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.annotate.JsonPropertyOrder;
-import org.xdi.model.SimpleCustomProperty;
-import org.xdi.model.SimpleExtendedCustomProperty;
+import org.gluu.model.SimpleCustomProperty;
+import org.gluu.model.SimpleExtendedCustomProperty;
 
 /**
  * Log viewer configuration model

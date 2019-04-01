@@ -11,13 +11,12 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.gluu.model.user.UserRole;
 import org.gluu.oxtrust.ldap.service.ConfigurationService;
 import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.oxtrust.security.Identity;
+import org.gluu.util.StringHelper;
 import org.slf4j.Logger;
-import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.model.user.UserRole;
-import org.xdi.util.StringHelper;
 
 /**
  * Provides service to protect Rest service endpoints with UMA scope.
@@ -35,9 +34,6 @@ public class ApiPermissionService implements Serializable {
 
     @Inject
     private Identity identity;
-
-    @Inject
-    private AppConfiguration appConfiguration;
 
     @Inject
     private ConfigurationService configurationService;
@@ -61,7 +57,6 @@ public class ApiPermissionService implements Serializable {
             {"oxauth", "access"},
             {"uma", "access"},
             {"super-gluu", "access"},
-            {"linktrack", "access"},
     };
 
     public boolean hasPermission(Object target, String action) {

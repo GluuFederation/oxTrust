@@ -9,7 +9,7 @@ package org.gluu.oxauth.client.authentication;
 import java.io.Serializable;
 import java.security.Principal;
 
-import org.xdi.util.AssertionHelper;
+import org.gluu.util.AssertionHelper;
 
 /**
  * Simple security principal implementation

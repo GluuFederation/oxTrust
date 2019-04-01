@@ -11,8 +11,13 @@ import javax.faces.application.FacesMessage;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.gluu.config.oxtrust.AppConfiguration;
+import org.gluu.config.oxtrust.AttributeResolverConfiguration;
+import org.gluu.config.oxtrust.LdapOxTrustConfiguration;
+import org.gluu.config.oxtrust.NameIdConfig;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
+import org.gluu.model.GluuAttribute;
 import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.Shibboleth3ConfService;
@@ -20,13 +25,8 @@ import org.gluu.oxtrust.ldap.service.TrustService;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.PersistenceEntryManager;
+import org.gluu.service.security.Secure;
 import org.slf4j.Logger;
-import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.config.oxtrust.AttributeResolverConfiguration;
-import org.xdi.config.oxtrust.LdapOxTrustConfiguration;
-import org.xdi.config.oxtrust.NameIdConfig;
-import org.xdi.model.GluuAttribute;
-import org.xdi.service.security.Secure;
 
 @ConversationScoped
 @Named("configureNameIdAction")

@@ -13,17 +13,17 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.gluu.config.oxtrust.AppConfiguration;
+import org.gluu.model.ApplicationType;
+import org.gluu.service.CacheService;
+import org.gluu.service.cache.CacheProvider;
+import org.gluu.service.cache.NativePersistenceCacheProvider;
+import org.gluu.service.cdi.async.Asynchronous;
+import org.gluu.service.cdi.event.CleanerEvent;
+import org.gluu.service.cdi.event.Scheduled;
+import org.gluu.service.timer.event.TimerEvent;
+import org.gluu.service.timer.schedule.TimerSchedule;
 import org.slf4j.Logger;
-import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.model.ApplicationType;
-import org.xdi.service.CacheService;
-import org.xdi.service.cache.CacheProvider;
-import org.xdi.service.cache.NativePersistenceCacheProvider;
-import org.xdi.service.cdi.async.Asynchronous;
-import org.xdi.service.cdi.event.CleanerEvent;
-import org.xdi.service.cdi.event.Scheduled;
-import org.xdi.service.timer.event.TimerEvent;
-import org.xdi.service.timer.schedule.TimerSchedule;
 
 /**
  * Cleaner service
