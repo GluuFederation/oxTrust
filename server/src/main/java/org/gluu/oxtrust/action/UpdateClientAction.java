@@ -192,9 +192,7 @@ public class UpdateClientAction implements Serializable {
 
 		this.update = false;
 		this.oxAttributesJson = getClientAttributesJson(this.client);
-		log.info("+++++++++++++ClientAttributesJson:" + this.oxAttributesJson);
 		this.client = new OxAuthClient();
-
 		try {
 			this.loginUris = getNonEmptyStringList(client.getOxAuthRedirectURIs());
 			this.logoutUris = getNonEmptyStringList(client.getOxAuthPostLogoutRedirectURIs());

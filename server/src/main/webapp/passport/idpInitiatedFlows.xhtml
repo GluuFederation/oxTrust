@@ -109,7 +109,7 @@
 												<b:dataTableColumn
 													label="#{msg['passport.idpinitiated.authParams.provider']}">
 													<h:link includeViewParams="false"
-														outcome="/passport/editProvider" value="#{c.provider}">
+														outcome="/passport/editProvider" value="#{passportIdpInitiatedAction.getProviderName(c.provider)}">
 														<f:param name="id" value="#{c.provider}" />
 													</h:link>
 												</b:dataTableColumn>
@@ -148,7 +148,7 @@
 								</h:panelGroup>
 							</div>
 						</h:form>
-						<h:form id="AuthZParamFormId">
+						<h:form id="AuthZParamFormId" prependId="false">
 							<div class="row"
 								style="margin-left: 10px; margin-right: 10px; margin-top: 10px;">
 								<b:panel title="AuthZ Parameter Form"
@@ -183,26 +183,77 @@
 											</div>
 											<!-- Second column-->
 											<div class="col-sm-6 col-lg-6" style="padding: 0px;">
-												<b:form horizontal="true" id="hForm">
-													<b:formGroup>
-														<b:inputText tags="true" id="ResponseTypesID"
-															label="#{msg['passport.idpinitiated.authParams.responseType']}"
-															required="true" colMd="9" labelColMd="3"
-															style-class="tags"
-															value="#{passportIdpInitiatedAction.authzParam.responseType}"
-															placeholder="Select responses types" typeahead="true"
-															typeahead-values="#{passportIdpInitiatedAction.responseTypes}" />
-													</b:formGroup>
-													<b:formGroup>
-														<b:inputText tags="true" id="ScopesID"
-															label="#{msg['passport.idpinitiated.authParams.scope']}"
-															required="true" colMd="9" labelColMd="3"
-															style-class="tags"
-															value="#{passportIdpInitiatedAction.authzParam.scopes}"
-															placeholder="Select scopes" typeahead="true"
-															typeahead-values="#{passportIdpInitiatedAction.scopes}" />
-													</b:formGroup>
-												</b:form>
+												<ox:decorate id="responseTypes"
+													label="#{msg['passport.idpinitiated.authParams.responseType']}">
+													<h:panelGroup id="selectedResponseTypesId">
+														<h:panelGroup>
+															<a4j:repeat
+																value="#{passportIdpInitiatedAction.responseTypes}"
+																rowKeyVar="_responseTypeIdx" var="_responseType"
+																iterationStatusVar="loop">
+																<div class="row-fluid">
+																	<div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
+																		<h:outputText value="#{_responseType}" />
+																		<h:outputText value="&#160;" />
+																		<div class="span6 pull-right">
+																			<a4j:commandLink
+																				styleClass="glyphicon glyphicon-remove"
+																				style="margin-top:-20px;"
+																				action="#{passportIdpInitiatedAction.removeResponseType(_responseType)}"
+																				execute="@this" render="selectedResponseTypesId"
+																				eventsQueue="providerQueue">
+																			</a4j:commandLink>
+																		</div>
+																	</div>
+																</div>
+																<br />
+															</a4j:repeat>
+															<richext:spacer height="16" />
+															<a4j:commandButton
+																styleClass="btn btn-primary AddResponseTypeButton"
+																style="margin-top:5px"
+																value="#{msg['clientForm.addResponseType']}"
+																oncomplete="#{rich:component('responseType:selectEntityModalPanel')}.show();"
+																execute="@this" eventsQueue="clientQueue" />
+														</h:panelGroup>
+													</h:panelGroup>
+												</ox:decorate>
+												<hr
+													style="height: 1px; background: green; border-color: green; border-width: 0px;"></hr>
+												<ox:decorate id="scopes"
+													label="#{msg['passport.idpinitiated.authParams.scope']}">
+													<h:panelGroup id="selectedScopesId">
+														<h:panelGroup>
+															<a4j:repeat value="#{passportIdpInitiatedAction.scopes}"
+																rowKeyVar="_scopeIdx" var="_scope"
+																iterationStatusVar="loop">
+																<div class="row-fluid">
+																	<div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
+																		<h:outputText value="#{_scope}" />
+																		<h:outputText value="&#160;" />
+																		<div class="span6 pull-right">
+																			<a4j:commandLink
+																				styleClass="glyphicon glyphicon-remove"
+																				style="margin-top:-20px;"
+																				action="#{passportIdpInitiatedAction.removeScope(_scope)}"
+																				execute="@this" render="selectedScopesId"
+																				eventsQueue="clientQueue">
+																			</a4j:commandLink>
+																		</div>
+																	</div>
+																</div>
+																<br />
+															</a4j:repeat>
+															<richext:spacer height="16" />
+															<a4j:commandButton
+																styleClass="btn btn-primary AddScopeButton"
+																style="margin-top:5px"
+																value="#{msg['clientForm.addScope']}"
+																oncomplete="#{rich:component('scope:selectEntityModalPanel')}.show();"
+																execute="@this" eventsQueue="providerQueue" />
+														</h:panelGroup>
+													</h:panelGroup>
+												</ox:decorate>
 											</div>
 										</div>
 										<!-- Form footer-->
@@ -229,9 +280,22 @@
 					</div>
 				</div>
 			</div>
-			<script>
-				$('.tags').tagsinput('refresh');
-			</script>
+			<ox:selectSelectableEntityDialog
+				acceptMethod="#{passportIdpInitiatedAction.acceptSelectResponseTypes}"
+				cancelMethod="#{passportIdpInitiatedAction.cancelSelectResponseTypes}"
+				displayNameProperty="entity" displaySearchForm="false"
+				id="responseType" label="#{msg['client.addResponseType']}"
+				nameProperty="entity" render="selectedResponseTypesId"
+				searchMethod="#{passportIdpInitiatedAction.searchAvailableResponseTypes}"
+				searchResult="#{passportIdpInitiatedAction.availableResponseTypes}" />
+			<ox:selectSelectableEntityDialog
+				acceptMethod="#{passportIdpInitiatedAction.acceptSelectScopes()}"
+				cancelMethod="#{passportIdpInitiatedAction.cancelSelectScopes()}"
+				displayNameProperty="entity" displaySearchForm="false" id="scope"
+				label="#{msg['client.scopes']}" nameProperty="entity"
+				render="selectedScopesId"
+				searchMethod="#{passportIdpInitiatedAction.searchAvailableScopes}"
+				searchResult="#{passportIdpInitiatedAction.availableScopes}" />
 		</section>
 	</ui:define>
 </ui:composition>
