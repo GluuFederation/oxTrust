@@ -90,18 +90,17 @@ public class UpdateResourceAction implements Serializable {
 	private String newResource;
 
 	private boolean update;
-	private String scopeSelection="Scopes";
-	
+	private String scopeSelection = "Scopes";
+
 	private List<OxAuthClient> clientList;
-	
+
 	public List<OxAuthClient> getClientList() {
 		return clientList;
 	}
-	
+
 	public void setClientList(List<OxAuthClient> clientList) {
 		this.clientList = clientList;
 	}
-	
 
 	public String getScopeSelection() {
 		return scopeSelection;
@@ -168,17 +167,18 @@ public class UpdateResourceAction implements Serializable {
 
 		this.scopes = getScopesDisplayNameEntries();
 		this.clients = getClientDisplayNameEntries();
-		
-		
+
 		this.clientList = new ArrayList<OxAuthClient>();
 		List<String> list = this.resource.getClients();
 		if (list != null) {
-				for (String clientDn : list) {
-					OxAuthClient oxAuthClient = clientService.getClientByDn(clientDn);
+			for (String clientDn : list) {
+				OxAuthClient oxAuthClient = clientService.getClientByDn(clientDn);
+				if (oxAuthClient != null) {
 					clientList.add(oxAuthClient);
 				}
+
+			}
 		}
-						
 
 		if (this.resource.getResources() == null) {
 			this.resources = new ArrayList<String>();
@@ -191,7 +191,8 @@ public class UpdateResourceAction implements Serializable {
 
 	public String cancel() {
 		if (update) {
-			facesMessages.add(FacesMessage.SEVERITY_INFO, "UMA resource '#{updateResourceAction.resource.name}' not updated");
+			facesMessages.add(FacesMessage.SEVERITY_INFO,
+					"UMA resource '#{updateResourceAction.resource.name}' not updated");
 		} else {
 			facesMessages.add(FacesMessage.SEVERITY_INFO, "New UMA resource not added");
 		}
@@ -213,17 +214,19 @@ public class UpdateResourceAction implements Serializable {
 				umaResourcesService.updateResource(this.resource);
 			} catch (BasePersistenceException ex) {
 				log.error("Failed to update resource set '{}'", this.resource.getInum(), ex);
-				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update UMA resource '#{updateResourceAction.resource.name}'");
+				facesMessages.add(FacesMessage.SEVERITY_ERROR,
+						"Failed to update UMA resource '#{updateResourceAction.resource.name}'");
 				return OxTrustConstants.RESULT_FAILURE;
 			}
 
 			log.debug("Resource were updated successfully");
-			facesMessages.add(FacesMessage.SEVERITY_INFO, "UMA resource '#{updateResourceAction.resource.name}' updated successfully");
+			facesMessages.add(FacesMessage.SEVERITY_INFO,
+					"UMA resource '#{updateResourceAction.resource.name}' updated successfully");
 
 			return OxTrustConstants.RESULT_SUCCESS;
 		} else {
 			// Prepare resource set
-		    String id = String.valueOf(System.currentTimeMillis());
+			String id = String.valueOf(System.currentTimeMillis());
 			String resourceSetDn = umaResourcesService.getDnForResource(id);
 			this.resource.setDn(resourceSetDn);
 			this.resource.setRev(String.valueOf(0));
@@ -238,14 +241,15 @@ public class UpdateResourceAction implements Serializable {
 
 				return OxTrustConstants.RESULT_FAILURE;
 			}
-			 
+
 			log.debug("Resource were add successfully");
-			facesMessages.add(FacesMessage.SEVERITY_INFO, "New UMA resource '#{updateResourceAction.resource.name}' added successfully");
+			facesMessages.add(FacesMessage.SEVERITY_INFO,
+					"New UMA resource '#{updateResourceAction.resource.name}' added successfully");
 			conversationService.endConversation();
 
 			this.update = true;
 			this.oxId = id;
-			
+
 			return OxTrustConstants.RESULT_UPDATE;
 		}
 	}
@@ -256,7 +260,8 @@ public class UpdateResourceAction implements Serializable {
 			try {
 				umaResourcesService.removeResource(this.resource);
 
-				facesMessages.add(FacesMessage.SEVERITY_INFO, "UMA resource '#{updateResourceAction.resource.name}' removed successfully");
+				facesMessages.add(FacesMessage.SEVERITY_INFO,
+						"UMA resource '#{updateResourceAction.resource.name}' removed successfully");
 				conversationService.endConversation();
 
 				return OxTrustConstants.RESULT_SUCCESS;
@@ -265,7 +270,8 @@ public class UpdateResourceAction implements Serializable {
 			}
 		}
 
-		facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to remove UMA resource '#{updateResourceAction.resource.name}'");
+		facesMessages.add(FacesMessage.SEVERITY_ERROR,
+				"Failed to remove UMA resource '#{updateResourceAction.resource.name}'");
 
 		return OxTrustConstants.RESULT_FAILURE;
 	}
@@ -285,7 +291,8 @@ public class UpdateResourceAction implements Serializable {
 			if (StringHelper.isEmpty(this.searchAvailableScopePattern)) {
 				resultScopeDescriptions = scopeDescriptionService.getAllScopeDescriptions(100);
 			} else {
-				resultScopeDescriptions = scopeDescriptionService.findScopeDescriptions(this.searchAvailableScopePattern, 100);
+				resultScopeDescriptions = scopeDescriptionService
+						.findScopeDescriptions(this.searchAvailableScopePattern, 100);
 			}
 
 			this.availableScopes = SelectableEntityHelper.convertToSelectableEntityModel(resultScopeDescriptions);
@@ -309,7 +316,7 @@ public class UpdateResourceAction implements Serializable {
 		Set<String> addedScopeInums = getAddedScopesInums();
 
 		for (SelectableEntity<UmaScopeDescription> availableScope : this.availableScopes) {
-            UmaScopeDescription scopeDescription = availableScope.getEntity();
+			UmaScopeDescription scopeDescription = availableScope.getEntity();
 			String scopeDescriptionInum = scopeDescription.getInum();
 
 			if (availableScope.isSelected() && !addedScopeInums.contains(scopeDescriptionInum)) {
@@ -376,8 +383,8 @@ public class UpdateResourceAction implements Serializable {
 
 	private List<DisplayNameEntry> getScopesDisplayNameEntries() {
 		List<DisplayNameEntry> result = new ArrayList<DisplayNameEntry>();
-		List<DisplayNameEntry> tmp = lookupService.getDisplayNameEntries(scopeDescriptionService.getDnForScopeDescription(null),
-				this.resource.getScopes());
+		List<DisplayNameEntry> tmp = lookupService.getDisplayNameEntries(
+				scopeDescriptionService.getDnForScopeDescription(null), this.resource.getScopes());
 		if (tmp != null) {
 			result.addAll(tmp);
 		}
@@ -391,8 +398,8 @@ public class UpdateResourceAction implements Serializable {
 		}
 
 		try {
-			this.availableClients = SelectableEntityHelper.convertToSelectableEntityModel(clientService.searchClients(
-					this.searchAvailableClientPattern, 100));
+			this.availableClients = SelectableEntityHelper.convertToSelectableEntityModel(
+					clientService.searchClients(this.searchAvailableClientPattern, 100));
 			this.oldSearchAvailableClientPattern = this.searchAvailableClientPattern;
 
 			selectAddedClients();
@@ -478,7 +485,8 @@ public class UpdateResourceAction implements Serializable {
 
 	private List<DisplayNameEntry> getClientDisplayNameEntries() {
 		List<DisplayNameEntry> result = new ArrayList<DisplayNameEntry>();
-		List<DisplayNameEntry> tmp = lookupService.getDisplayNameEntries(clientService.getDnForClient(null), this.resource.getClients());
+		List<DisplayNameEntry> tmp = lookupService.getDisplayNameEntries(clientService.getDnForClient(null),
+				this.resource.getClients());
 		if (tmp != null) {
 			result.addAll(tmp);
 		}
@@ -563,7 +571,7 @@ public class UpdateResourceAction implements Serializable {
 
 	public List<String> getResources() {
 		return resources;
-	}	
+	}
 
 	public String getOxId() {
 		return oxId;
