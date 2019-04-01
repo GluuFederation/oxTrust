@@ -18,13 +18,13 @@ import org.gluu.oxtrust.ldap.service.ScopeService;
 import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.slf4j.Logger;
-import org.xdi.config.oxtrust.LdapOxPassportConfiguration;
-import org.xdi.model.passport.PassportConfiguration;
-import org.xdi.model.passport.Provider;
-import org.xdi.model.passport.idpinitiated.AuthzParams;
-import org.xdi.model.passport.idpinitiated.IIConfiguration;
-import org.xdi.oxauth.model.common.ResponseType;
-import org.xdi.service.security.Secure;
+import org.gluu.config.oxtrust.LdapOxPassportConfiguration;
+import org.gluu.model.passport.PassportConfiguration;
+import org.gluu.model.passport.Provider;
+import org.gluu.model.passport.idpinitiated.AuthzParams;
+import org.gluu.model.passport.idpinitiated.IIConfiguration;
+import org.gluu.oxauth.model.common.ResponseType;
+import org.gluu.service.security.Secure;
 
 import com.google.common.collect.Lists;
 
