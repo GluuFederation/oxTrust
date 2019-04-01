@@ -4,27 +4,29 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.enterprise.context.ConversationScoped;
 import javax.faces.application.FacesMessage;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.gluu.config.oxtrust.LdapOxPassportConfiguration;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
-import org.gluu.oxtrust.ldap.service.ClientService;
-import org.gluu.oxtrust.ldap.service.PassportService;
-import org.gluu.oxtrust.ldap.service.ScopeService;
-import org.gluu.oxtrust.model.OxAuthClient;
-import org.gluu.oxtrust.util.OxTrustConstants;
-import org.slf4j.Logger;
-import org.gluu.config.oxtrust.LdapOxPassportConfiguration;
+import org.gluu.model.SelectableEntity;
 import org.gluu.model.passport.PassportConfiguration;
 import org.gluu.model.passport.Provider;
 import org.gluu.model.passport.idpinitiated.AuthzParams;
 import org.gluu.model.passport.idpinitiated.IIConfiguration;
 import org.gluu.oxauth.model.common.ResponseType;
+import org.gluu.oxtrust.ldap.service.ClientService;
+import org.gluu.oxtrust.ldap.service.PassportService;
+import org.gluu.oxtrust.ldap.service.ScopeService;
+import org.gluu.oxtrust.model.OxAuthClient;
+import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.service.security.Secure;
+import org.slf4j.Logger;
 
 import com.google.common.collect.Lists;
 
@@ -62,11 +64,11 @@ public class PassportIdpInitiatedAction implements Serializable {
 	private List<Provider> providers = new ArrayList<>();
 	private List<String> scopes = new ArrayList<>();
 	private List<String> responseTypes = new ArrayList<>();
+	private List<SelectableEntity<String>> availableScopes;
+	private List<SelectableEntity<String>> availableResponseTypes;
 
 	private AuthzParams authzParam = new AuthzParams();
 	private AuthzParams previousParam;
-
-	private String selectedTypes = null;
 
 	public String init() {
 		try {
@@ -77,10 +79,6 @@ public class PassportIdpInitiatedAction implements Serializable {
 			this.authzParams = this.iiConfiguration.getAuthorizationParams();
 			this.clients = clientService.getAllClients();
 			this.providers = this.passportConfiguration.getProviders();
-			this.scopes = scopeService.getAllScopesList(1000).stream().map(e -> e.getDisplayName())
-					.collect(Collectors.toList());
-			this.responseTypes = Lists.newArrayList(ResponseType.values()).stream().map(e -> e.getValue())
-					.collect(Collectors.toList());
 			log.debug("Load passport idp initiated configuration done");
 			return OxTrustConstants.RESULT_SUCCESS;
 		} catch (Exception e) {
@@ -134,9 +132,18 @@ public class PassportIdpInitiatedAction implements Serializable {
 	}
 
 	public void addAuthParam() {
-		log.info("********************************");
-		log.info("**********" + this.authzParam.getScopes());
-		log.info("**********" + this.selectedTypes);
+		StringBuilder scopesBuilder = new StringBuilder();
+		scopes.forEach(e -> {
+			scopesBuilder.append(e);
+			scopesBuilder.append(" ");
+		});
+		this.authzParam.setScopes(scopesBuilder.toString());
+		StringBuilder typesBuilder = new StringBuilder();
+		responseTypes.forEach(e -> {
+			typesBuilder.append(e);
+			typesBuilder.append(" ");
+		});
+		this.authzParam.setResponseType(typesBuilder.toString());
 		if (this.isEdition) {
 			this.authzParams.remove(this.previousParam);
 			this.authzParams.add(this.authzParam);
@@ -155,6 +162,8 @@ public class PassportIdpInitiatedAction implements Serializable {
 	}
 
 	public void editAuthParam(AuthzParams param) {
+		this.scopes = Stream.of(param.getScopes()).collect(Collectors.toList());
+		this.responseTypes = Stream.of(param.getResponseType()).collect(Collectors.toList());
 		this.previousParam = param;
 		this.authzParam = param;
 		this.isEdition = true;
@@ -162,6 +171,8 @@ public class PassportIdpInitiatedAction implements Serializable {
 	}
 
 	public void cancelParamAdd() {
+		this.scopes = new ArrayList<>();
+		this.responseTypes = new ArrayList<>();
 		this.authzParam = new AuthzParams();
 		this.showForm = false;
 		this.previousParam = null;
@@ -236,11 +247,105 @@ public class PassportIdpInitiatedAction implements Serializable {
 		this.responseTypes = responseTypes;
 	}
 
-	public String getSelectedTypes() {
-		return selectedTypes;
+	public void removeScope(String scope) {
+		this.scopes.remove(scope);
 	}
 
-	public void setSelectedTypes(String selectedTypes) {
-		this.selectedTypes = selectedTypes;
+	public void removeResponseType(String type) {
+		this.responseTypes.remove(type);
 	}
+
+	public void searchAvailableScopes() {
+		if (this.availableScopes != null) {
+			selectAddedScopes();
+			return;
+		}
+		this.availableScopes = scopeService.getAllScopesList(1000).stream().map(e -> e.getDisplayName())
+				.map(e -> new SelectableEntity<String>(e)).collect(Collectors.toList());
+		selectAddedScopes();
+	}
+
+	public void searchAvailableResponseTypes() {
+		if (this.availableResponseTypes != null) {
+			selectAddedResponseTypes();
+			return;
+		}
+		this.availableResponseTypes = Lists.newArrayList(ResponseType.values()).stream().map(e -> e.getValue())
+				.map(e -> new SelectableEntity<String>(e)).collect(Collectors.toList());
+		selectAddedResponseTypes();
+	}
+
+	public void selectAddedScopes() {
+		List<String> addedScopes = getScopes();
+		for (SelectableEntity<String> availableScope : this.availableScopes) {
+			availableScope.setSelected(addedScopes.contains(availableScope.getEntity()));
+		}
+	}
+
+	private void selectAddedResponseTypes() {
+		List<String> addedResponseTypes = getResponseTypes();
+		for (SelectableEntity<String> availableResponseType : this.availableResponseTypes) {
+			availableResponseType.setSelected(addedResponseTypes.contains(availableResponseType.getEntity()));
+		}
+	}
+
+	public void acceptSelectScopes() {
+		List<String> addedScopes = getScopes();
+		for (SelectableEntity<String> availableScope : this.availableScopes) {
+			String scope = availableScope.getEntity();
+			if (availableScope.isSelected() && !addedScopes.contains(scope)) {
+				this.scopes.add(scope);
+			}
+			if (!availableScope.isSelected() && addedScopes.contains(scope)) {
+				this.scopes.remove(scope);
+			}
+		}
+	}
+
+	public void acceptSelectResponseTypes() {
+		List<String> addedResponseTypes = getResponseTypes();
+
+		for (SelectableEntity<String> availableResponseType : this.availableResponseTypes) {
+			String responseType = availableResponseType.getEntity();
+			if (availableResponseType.isSelected() && !addedResponseTypes.contains(responseType)) {
+				this.responseTypes.add(responseType);
+			}
+
+			if (!availableResponseType.isSelected() && addedResponseTypes.contains(responseType)) {
+				this.responseTypes.remove(responseType);
+			}
+		}
+	}
+
+	public List<SelectableEntity<String>> getAvailableScopes() {
+		return availableScopes;
+	}
+
+	public String getProviderName(String providerId) {
+		for (Provider provider : this.providers) {
+			if (provider.getId().equalsIgnoreCase(providerId)) {
+				return provider.getDisplayName();
+			}
+		}
+		return providerId;
+	}
+
+	public void setAvailableScopes(List<SelectableEntity<String>> availableScopes) {
+		this.availableScopes = availableScopes;
+	}
+
+	public List<SelectableEntity<String>> getAvailableResponseTypes() {
+		return availableResponseTypes;
+	}
+
+	public void setAvailableResponseTypes(List<SelectableEntity<String>> availableResponseTypes) {
+		this.availableResponseTypes = availableResponseTypes;
+	}
+
+	public void cancelSelectScopes() {
+	}
+
+	public void cancelSelectResponseTypes() {
+	}
+
 }

@@ -44,18 +44,20 @@
 							<b:dataTable id="providersTableId"
 								value="#{passportProvidersAction.providerSelections}" var="c"
 								print="true" excel="true" csv="true" pdf="true" select="true">
-								<b:dataTableColumn label="#{msg['passport.provider.form.id']}">
+								<b:dataTableColumn
+									label="#{msg['passport.provider.form.displayName']}">
 									<h:link includeViewParams="false"
-										outcome="/passport/editProvider" value="#{c.provider.id}">
+										outcome="/passport/editProvider"
+										value="#{c.provider.displayName}">
 										<f:param name="id" value="#{c.provider.id}" />
 									</h:link>
 								</b:dataTableColumn>
-								<b:dataTableColumn value="#{c.provider.displayName}"
-									label="#{msg['passport.provider.form.displayName']}" />
 								<b:dataTableColumn value="#{c.provider.passportStrategyId}"
 									label="#{msg['passport.provider.form.strategyId']}" />
 								<b:dataTableColumn value="#{c.provider.type}" order="asc"
 									label="#{msg['passport.provider.form.type']}" />
+								<b:dataTableColumn value="#{c.provider.id}" order="asc"
+									label="#{msg['passport.provider.form.id']}" />
 								<b:dataTableColumn label="#{msg['passport.deleteProvider']}">
 									<h:selectBooleanCheckbox id="selectId"
 										onchange="displayButton();" value="#{c.checked}">
