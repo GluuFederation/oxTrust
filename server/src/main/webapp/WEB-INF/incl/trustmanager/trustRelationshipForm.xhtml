@@ -218,7 +218,7 @@
 							</ox:decorate>	
 					
 							<a4j:region>
-								<h:panelGroup id="urlId" rendered="#{((_trustRelationship.spMetaDataSourceType.value eq 'file') and (not empty _trustRelationship.url) or (_trustRelationship.spMetaDataSourceType.value eq 'generate'))}" label="URL">
+								<h:panelGroup id="urlId" rendered="#{((_trustRelationship.spMetaDataSourceType.value eq 'file') and (not empty _trustRelationship.url))}" label="URL">
 									<ox:decorate id="url"
                                                                                      required="true">
 										<h:inputText styleClass="form-control"
@@ -305,7 +305,7 @@
 							</a4j:region>
 
 							<h:panelGroup id="certUpdateWrapperGroupId"
-								rendered="#{((not empty _trustRelationship.spMetaDataFN) and (_trustRelationship.spMetaDataSourceType.value eq 'file')) or (_trustRelationship.spMetaDataSourceType.value eq 'generate')}">
+								rendered="#{((not empty _trustRelationship.spMetaDataFN) and (_trustRelationship.spMetaDataSourceType.value eq 'file'))}">
 								<ox:decorate
 									id="certUpdate" rendered="#{empty _trustRelationship.spMetaDataFN}"  label="
                                         #{_trustRelationship.spMetaDataSourceType.value eq 'file' ? 'Update public certificate' : 'Public certificate'}">
