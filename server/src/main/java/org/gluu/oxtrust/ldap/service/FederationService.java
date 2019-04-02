@@ -43,19 +43,7 @@ public class FederationService implements Serializable {
 	private AppConfiguration appConfiguration;
 
 	public void addFederationProposal(GluuSAMLFederationProposal federationProposal) {
-		String[] clusterMembers = appConfiguration.getClusteredInums();
-		String configurationInum = appConfiguration.getApplicationInum();
-		if (clusterMembers == null || clusterMembers.length == 0) {
-			clusterMembers = new String[] { configurationInum };
-		}
-
-		String dn = federationProposal.getDn();
-		for (String clusterMember : clusterMembers) {
-			String clusteredDN = StringHelper.replaceLast(dn, configurationInum, clusterMember);
-			federationProposal.setDn(clusteredDN);
-			ldapEntryManager.persist(federationProposal);
-		}
-		federationProposal.setDn(dn);
+		ldapEntryManager.persist(federationProposal);
 	}
 
 	/**
@@ -121,18 +109,7 @@ public class FederationService implements Serializable {
 	}
 
 	public void updateFederationProposal(GluuSAMLFederationProposal federationProposal) {
-		String[] clusterMembers = appConfiguration.getClusteredInums();
-		String configurationInum = appConfiguration.getApplicationInum();
-		if (clusterMembers == null || clusterMembers.length == 0) {
-			clusterMembers = new String[] { configurationInum };
-		}
-		String dn = federationProposal.getDn();
-		for (String clusterMember : clusterMembers) {
-			String clusteredDN = StringHelper.replaceLast(dn, configurationInum, clusterMember);
-			federationProposal.setDn(clusteredDN);
-			ldapEntryManager.merge(federationProposal);
-		}
-		federationProposal.setDn(dn);
+		ldapEntryManager.merge(federationProposal);
 	}
 
 	/**
@@ -160,19 +137,7 @@ public class FederationService implements Serializable {
 			shibboleth3ConfService.removeMetadataFile(federationProposal.getSpMetaDataFN());
 		}
 
-		String[] clusterMembers = appConfiguration.getClusteredInums();
-		String configurationInum = appConfiguration.getApplicationInum();
-		if (clusterMembers == null || clusterMembers.length == 0) {
-			clusterMembers = new String[] { configurationInum };
-		}
-
-		String dn = federationProposal.getDn();
-		for (String clusterMember : clusterMembers) {
-			String clusteredDN = StringHelper.replaceLast(dn, configurationInum, clusterMember);
-			federationProposal.setDn(clusteredDN);
-			ldapEntryManager.remove(federationProposal);
-		}
-		federationProposal.setDn(dn);
+		ldapEntryManager.remove(federationProposal);
 	}
 
 	/**

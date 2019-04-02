@@ -9,6 +9,7 @@ package org.gluu.oxtrust.ldap.service;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -82,85 +83,38 @@ public class TrustService implements Serializable {
 	public static final String GENERATED_SSL_ARTIFACTS_DIR = "ssl";
 
 	public void addTrustRelationship(GluuSAMLTrustRelationship trustRelationship) {
-		trustRelationship.setGluuContainerFederation(trustRelationship.getGluuContainerFederation());
-		String[] clusterMembers = appConfiguration.getClusteredInums();
-		String configurationInum = appConfiguration.getApplicationInum();
-		if (clusterMembers == null || clusterMembers.length == 0) {
-			log.debug("there is no cluster configuration. Assuming standalone configuration.");
-			clusterMembers = new String[] { configurationInum };
-		}
-
+		log.debug("Adding TR: {}", trustRelationship.getInum());
 		String dn = trustRelationship.getDn();
-		for (String clusterMember : clusterMembers) {
-			String clusteredDN = StringHelper.replaceLast(dn, configurationInum, clusterMember);
-			trustRelationship.setDn(clusteredDN);
-			GluuSAMLTrustRelationship tr = new GluuSAMLTrustRelationship();
-			tr.setDn(trustRelationship.getDn());
-			if (!containsTrustRelationship(tr)) {
-				log.debug("Adding TR" + clusteredDN);
-				OrganizationalUnit ou = new OrganizationalUnit();
-				ou.setDn(getDnForTrustRelationShip(null));
-				if (!ldapEntryManager.contains(ou)) {
-					ldapEntryManager.persist(ou);
-				}
-				ldapEntryManager.persist(trustRelationship);
-			} else {
-				ldapEntryManager.merge(trustRelationship);
-			}
+
+		if (!containsTrustRelationship(dn)) {
+			log.debug("Adding TR: {}", dn);
+			ldapEntryManager.persist(trustRelationship);
+		} else {
+			ldapEntryManager.merge(trustRelationship);
 		}
-		trustRelationship.setDn(dn);
 	}
 
 	public void updateTrustRelationship(GluuSAMLTrustRelationship trustRelationship) {
-		log.debug("Updating TR " + trustRelationship.getInum());
-		String[] clusterMembers = appConfiguration.getClusteredInums();
-		String configurationInum = appConfiguration.getApplicationInum();
-		if (clusterMembers == null || clusterMembers.length == 0) {
-			log.debug("there is no cluster configuration. Assuming standalone configuration.");
-			clusterMembers = new String[] { configurationInum };
-		}
+		log.debug("Updating TR: {}", trustRelationship.getInum());
 		String dn = trustRelationship.getDn();
-		for (String clusterMember : clusterMembers) {
-			String clusteredDN = StringHelper.replaceLast(dn, configurationInum, clusterMember);
-			trustRelationship.setDn(clusteredDN);
-			GluuSAMLTrustRelationship tr = new GluuSAMLTrustRelationship();
-			tr.setDn(trustRelationship.getDn());
-			if (containsTrustRelationship(tr)) {
-				log.trace("Updating TR" + clusteredDN);
-				ldapEntryManager.merge(trustRelationship);
-			} else {
-				OrganizationalUnit ou = new OrganizationalUnit();
-				ou.setDn(getDnForTrustRelationShip(null));
-				if (!ldapEntryManager.contains(ou)) {
-					ldapEntryManager.persist(ou);
-				}
-				ldapEntryManager.persist(trustRelationship);
-			}
+
+		if (containsTrustRelationship(dn)) {
+			log.trace("Updating TR: {}", dn);
+			ldapEntryManager.merge(trustRelationship);
+		} else {
+			log.trace("Adding TR: {}", dn);
+			ldapEntryManager.persist(trustRelationship);
 		}
-		trustRelationship.setDn(dn);
 	}
 
 	public void removeTrustRelationship(GluuSAMLTrustRelationship trustRelationship) {
-		log.info("Removing TR " + trustRelationship.getInum());
-		String[] clusterMembers = appConfiguration.getClusteredInums();
-		String configurationInum = appConfiguration.getApplicationInum();
-		if (clusterMembers == null || clusterMembers.length == 0) {
-			log.debug("there is no cluster configuration. Assuming standalone configuration.");
-			clusterMembers = new String[] { configurationInum };
-		}
+		log.info("Removing TR: {}", trustRelationship.getInum());
 		String dn = trustRelationship.getDn();
-		for (String clusterMember : clusterMembers) {
-			String clusteredDN = StringHelper.replaceLast(dn, configurationInum, clusterMember);
-			trustRelationship.setDn(clusteredDN);
-			GluuSAMLTrustRelationship tr = new GluuSAMLTrustRelationship();
-			tr.setDn(trustRelationship.getDn());
-			if (containsTrustRelationship(tr)) {
-				log.debug("Removing TR" + clusteredDN);
-				ldapEntryManager.remove(trustRelationship);
-			}
-		}
-		trustRelationship.setDn(dn);
 
+		if (containsTrustRelationship(dn)) {
+			log.debug("Removing TR: {}", dn);
+			ldapEntryManager.remove(trustRelationship);
+		}
 	}
 
 	public GluuSAMLTrustRelationship getRelationshipByInum(String inum) {
@@ -236,6 +190,13 @@ public class TrustService implements Serializable {
 		return ldapEntryManager.contains(trustRelationship);
 	}
 
+	public boolean containsTrustRelationship(String dn) {
+		GluuSAMLTrustRelationship tr = new GluuSAMLTrustRelationship();
+		tr.setDn(dn);
+
+		return containsTrustRelationship(tr);
+	}
+
 	/**
 	 * Generate new inum for trust relationship
 	 * 
@@ -260,8 +221,7 @@ public class TrustService implements Serializable {
 	 * @return New inum for trust relationship
 	 */
 	private String generateInumForNewTrustRelationshipImpl() {
-		return getConfigurationInum() + OxTrustConstants.inumDelimiter + "0006" + OxTrustConstants.inumDelimiter
-				+ INumGenerator.generate(2);
+		return UUID.randomUUID().toString();
 	}
 
 	/**
