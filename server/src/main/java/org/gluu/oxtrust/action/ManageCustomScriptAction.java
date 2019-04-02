@@ -102,9 +102,17 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 			List<CustomScript> customScripts = customScriptService.findCustomScripts(Arrays.asList(allowedCustomScriptTypes));
 			
 			for (CustomScript customScript : customScripts) {
+				// Automatic package update '.xdi' --> '.org'
+				// TODO: Remove in CE 5.0
+				String scriptCode = customScript.getScript();
+				if (scriptCode != null) {
+					scriptCode = scriptCode.replaceAll(".xdi", ".gluu");
+					customScript.setScript(scriptCode);
+				}
+
 				CustomScriptType customScriptType = customScript.getScriptType();
 				List<CustomScript> customScriptsByType = this.customScriptsByTypes.get(customScriptType);
-				
+
 				CustomScript typedCustomScript = customScript;
 				if (CustomScriptType.PERSON_AUTHENTICATION == customScriptType) {
 					typedCustomScript = new AuthenticationCustomScript(customScript);
