@@ -9,6 +9,7 @@ package org.gluu.oxtrust.ldap.service;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -260,8 +261,7 @@ public class TrustService implements Serializable {
 	 * @return New inum for trust relationship
 	 */
 	private String generateInumForNewTrustRelationshipImpl() {
-		return getConfigurationInum() + OxTrustConstants.inumDelimiter + "0006" + OxTrustConstants.inumDelimiter
-				+ INumGenerator.generate(2);
+		return UUID.randomUUID().toString();
 	}
 
 	/**
