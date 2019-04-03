@@ -162,12 +162,10 @@ public class CertificateManagementAction implements Serializable {
 							"OpenLDAP ENCRYPTION", idpEncryptionCert));
 				}
 			} catch (Exception e) {
-				log.error("OpenLDAP certificate load exception");
+				log.warn("OpenLDAP certificate load exception");
 			}
 
-		} catch (
-
-		Exception e) {
+		} catch (Exception e) {
 			log.error("Load internalCertificates configuration exception", e);
 		}
 	}
