@@ -41,7 +41,8 @@
 								value="#{msg['passport.addNewProvider']}" />
 						</div>
 						<div class="row" style="padding: 10px;">
-							<b:dataTable id="providersTableId"
+							<b:dataTable id="providersTableId" style="text-align:center;"
+								responsive="true"
 								value="#{passportProvidersAction.providerSelections}" var="c"
 								print="true" excel="true" csv="true" pdf="true" select="true">
 								<b:dataTableColumn

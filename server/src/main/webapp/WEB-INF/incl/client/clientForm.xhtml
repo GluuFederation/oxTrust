@@ -4,7 +4,7 @@
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
-	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:b="http://bootsfaces.net/ui" xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
 	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox">
@@ -105,14 +105,20 @@
 								id="standardSettings">
 								<h:panelGroup columns="1" width="100%">
 									<div class="row" style="margin-left: 5px; margin-right: 5px;">
-										<div class="col-sm-12 col-lg-12" style="padding: 0px;">
+										<div class="col-sm-6 col-lg-6" style="padding: 0px;">
 											<ox:decorate id="inum" rendered="true"
 												label="#{msg['clientForm.inum']}" leftClass="col-sm-3"
 												rightClass="col-sm-9">
-												<h:outputText
-													style="margin-left: -17%; background: #00BE79; color:white;"
-													styleClass="col-sm-12 col-lg-12 form-control rounded text-center clientGeneratedInum"
+												<h:outputText style="background: #ff6e40; color:white;"
+													styleClass="form-control rounded clientGeneratedInum"
 													value="#{_new ? 'The value will be generated after adding the new client.' : _client.inum}" />
+											</ox:decorate>
+										</div>
+										<div class="col-sm-6 col-lg-6" style="padding: 0px;">
+											<ox:decorate label="#{msg['clientForm.disabled']}"
+												leftClass="col-sm-3" rightClass="col-sm-9">
+												<h:selectBooleanCheckbox value="#{_client.disabled}"
+													styleClass="form-control" />
 											</ox:decorate>
 										</div>
 									</div>
@@ -141,8 +147,7 @@
 											<a4j:commandLink render="clientSecretId1" rendered="#{_new}"
 												styleClass="btn btn-primary generateClientSecretButton"
 												value="Generate Client Secret" style="margin-left: 10px;"
-												action="#{_clientAction.generatePassword()}"
-												execute="@this"
+												action="#{_clientAction.generatePassword()}" execute="@this"
 												oncomplete="return valuesDisplay(this);" />
 											<a4j:commandLink rendered="#{_new}"
 												style="margin-left: 10px;"
@@ -175,196 +180,102 @@
 													styleClass="col-sm-12 form-control rounded clientDescriptionTextArea"
 													cols="80" maxlength="250" id="descriptionId" />
 											</ox:decorate>
-											<ox:decorate label="#{msg['clientForm.disabled']}"
-												leftClass="col-sm-3" rightClass="col-sm-3">
-												<h:selectBooleanCheckbox value="#{_client.disabled}"
-													styleClass="form-control" />
-											</ox:decorate>
 											<h:panelGroup id="secretid">
-												<ox:decorate id="redirectLoginUrls"
-													label="#{msg['clientForm.redirectLoginURIs']}">
+												<b:panel title="#{msg['clientForm.redirectLoginURIs']}"
+													id="redirectLoginUrls" look="primary">
 													<h:panelGroup id="selectedLoginURIsId">
-														<h:panelGroup columns="1" width="100%" border="0"
-															cellpadding="0" cellspacing="0">
-															<a4j:repeat value="#{_clientAction.loginUris}"
-																rowKeyVar="_urisIdx" var="_uri"
-																iterationStatusVar="loop">
+														<a4j:repeat value="#{_clientAction.loginUris}"
+															rowKeyVar="_urisIdx" var="_uri" iterationStatusVar="loop">
+															<div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
+																<h:outputText value="#{empty _uri ? _uri : _uri}" />
+																<h:outputText value="&#160;" />
+																<div class="span6 pull-right">
+																	<a4j:commandLink
+																		styleClass="glyphicon glyphicon-remove"
+																		style="margin-top:-20px;"
+																		action="#{_clientAction.removeLoginURI(_uri)}"
+																		execute="@this" render="selectedLoginURIsId"
+																		eventsQueue="clientQueue">
+																	</a4j:commandLink>
+																</div>
+																<br />
+															</div>
+														</a4j:repeat>
+														<richext:spacer height="16" />
+														<a4j:commandButton
+															styleClass="btn btn-primary AddRedirectLoginUriButton"
+															style="margin-top: 5px;"
+															value="#{msg['clientForm.addLoginReiderctURI']}"
+															oncomplete="#{rich:component('loginRedirect:inputText')}.show();"
+															execute="@this" eventsQueue="clientQueue" />
+
+													</h:panelGroup>
+												</b:panel>
+												<b:panel title="#{msg['clientForm.scopes']}" id="scopes"
+													look="primary">
+													<h:panelGroup id="selectedScopesId">
+														<a4j:repeat value="#{_clientAction.scopes}"
+															rowKeyVar="_scopeIdx" var="_scope"
+															iterationStatusVar="loop">
+															<div class="row-fluid">
 																<div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
-																	<h:outputText value="#{empty _uri ? _uri : _uri}" />
+																	<h:outputText value="#{_scope.displayName}" />
 																	<h:outputText value="&#160;" />
 																	<div class="span6 pull-right">
 																		<a4j:commandLink
 																			styleClass="glyphicon glyphicon-remove"
 																			style="margin-top:-20px;"
-																			action="#{_clientAction.removeLoginURI(_uri)}"
-																			execute="@this" render="selectedLoginURIsId"
+																			action="#{_clientAction.removeScope(_scope.inum)}"
+																			execute="@this" render="selectedScopesId"
 																			eventsQueue="clientQueue">
-																			<!--  <h:graphicImage value="/img/remove.gif" /> -->
 																		</a4j:commandLink>
 																	</div>
-																	<br />
 																</div>
-															</a4j:repeat>
-															<richext:spacer height="16" />
-															<a4j:commandButton
-																styleClass="btn btn-primary AddRedirectLoginUriButton"
-																style="margin-top: 5px;"
-																value="#{msg['clientForm.addLoginReiderctURI']}"
-																oncomplete="#{rich:component('loginRedirect:inputText')}.show();"
-																execute="@this" eventsQueue="clientQueue" />
-
-														</h:panelGroup>
+															</div>
+															<br />
+														</a4j:repeat>
+														<richext:spacer height="16" />
+														<a4j:commandButton
+															styleClass="btn btn-primary AddScopeButton"
+															style="margin-top:5px"
+															value="#{msg['clientForm.addScope']}"
+															oncomplete="#{rich:component('scope:selectEntityModalPanel')}.show();"
+															execute="@this" eventsQueue="clientQueue" />
 													</h:panelGroup>
-												</ox:decorate>
-												<hr
-													style="height: 1px; background: green; border-color: green; border-width: 0px;"></hr>
-												<ox:decorate id="scopes" label="#{msg['clientForm.scopes']}">
-													<h:panelGroup id="selectedScopesId">
-														<h:panelGroup>
-															<a4j:repeat value="#{_clientAction.scopes}"
-																rowKeyVar="_scopeIdx" var="_scope"
-																iterationStatusVar="loop">
-																<div class="row-fluid">
-																	<div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
-																		<h:outputText value="#{_scope.displayName}" />
-																		<h:outputText value="&#160;" />
-																		<div class="span6 pull-right">
-																			<a4j:commandLink
-																				styleClass="glyphicon glyphicon-remove"
-																				style="margin-top:-20px;"
-																				action="#{_clientAction.removeScope(_scope.inum)}"
-																				execute="@this" render="selectedScopesId"
-																				eventsQueue="clientQueue">
-																			</a4j:commandLink>
-																		</div>
-																	</div>
-																</div>
-																<br />
-															</a4j:repeat>
-															<richext:spacer height="16" />
-															<a4j:commandButton
-																styleClass="btn btn-primary AddScopeButton"
-																style="margin-top:5px"
-																value="#{msg['clientForm.addScope']}"
-																oncomplete="#{rich:component('scope:selectEntityModalPanel')}.show();"
-																execute="@this" eventsQueue="clientQueue" />
-														</h:panelGroup>
-													</h:panelGroup>
-												</ox:decorate>
-												<hr
-													style="height: 1px; background: green; border-color: green; border-width: 0px;"></hr>
-												<ox:decorate id="responseTypes"
-													label="#{msg['clientForm.responseTypes']}">
+												</b:panel>
+												<b:panel title="#{msg['clientForm.responseTypes']}"
+													id="responseTypes" look="primary">
 													<h:panelGroup id="selectedResponseTypesId">
-														<h:panelGroup>
-															<a4j:repeat value="#{_clientAction.responseTypes}"
-																rowKeyVar="_responseTypeIdx" var="_responseType"
-																iterationStatusVar="loop">
-																<div class="row-fluid">
-																	<div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
-																		<h:outputText value="#{_responseType.value}" />
-																		<h:outputText value="&#160;" />
-																		<div class="span6 pull-right">
-																			<a4j:commandLink
-																				styleClass="glyphicon glyphicon-remove"
-																				style="margin-top:-20px;"
-																				action="#{_clientAction.removeResponseType(_responseType.value)}"
-																				execute="@this" render="selectedResponseTypesId"
-																				eventsQueue="clientQueue">
-																			</a4j:commandLink>
-																		</div>
+														<a4j:repeat value="#{_clientAction.responseTypes}"
+															rowKeyVar="_responseTypeIdx" var="_responseType"
+															iterationStatusVar="loop">
+															<div class="row-fluid">
+																<div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
+																	<h:outputText value="#{_responseType.value}" />
+																	<h:outputText value="&#160;" />
+																	<div class="span6 pull-right">
+																		<a4j:commandLink
+																			styleClass="glyphicon glyphicon-remove"
+																			style="margin-top:-20px;"
+																			action="#{_clientAction.removeResponseType(_responseType.value)}"
+																			execute="@this" render="selectedResponseTypesId"
+																			eventsQueue="clientQueue">
+																		</a4j:commandLink>
 																	</div>
 																</div>
-																<br />
-															</a4j:repeat>
-															<richext:spacer height="16" />
-															<a4j:commandButton
-																styleClass="btn btn-primary AddResponseTypeButton"
-																style="margin-top:5px"
-																value="#{msg['clientForm.addResponseType']}"
-																oncomplete="#{rich:component('responseType:selectEntityModalPanel')}.show();"
-																execute="@this" eventsQueue="clientQueue" />
-														</h:panelGroup>
+															</div>
+															<br />
+														</a4j:repeat>
+														<richext:spacer height="16" />
+														<a4j:commandButton
+															styleClass="btn btn-primary AddResponseTypeButton"
+															style="margin-top:5px"
+															value="#{msg['clientForm.addResponseType']}"
+															oncomplete="#{rich:component('responseType:selectEntityModalPanel')}.show();"
+															execute="@this" eventsQueue="clientQueue" />
 													</h:panelGroup>
-												</ox:decorate>
-												<hr
-													style="height: 1px; background: green; border-color: green; border-width: 0px;"></hr>
-												<ox:decorate id="grantTypes"
-													label="#{msg['clientForm.grantTypes']}">
-													<h:panelGroup id="selectedGrantTypesId">
-														<h:panelGroup>
-															<a4j:repeat value="#{_clientAction.grantTypes}"
-																rowKeyVar="_grantTypeIdx" var="_grantType"
-																iterationStatusVar="loop">
-																<div class="row-fluid">
-																	<div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
-																		<h:outputText value="#{_grantType.value}" />
-																		<h:outputText value="&#160;" />
-																		<div class="span6 pull-right">
-																			<a4j:commandLink
-																				styleClass="glyphicon glyphicon-remove"
-																				style="margin-top:-20px;"
-																				action="#{_clientAction.removeGrantType(_grantType.value)}"
-																				execute="@this" render="selectedGrantTypesId"
-																				eventsQueue="clientQueue">
-																			</a4j:commandLink>
-																		</div>
-																	</div>
-																</div>
-																<br />
-															</a4j:repeat>
-															<richext:spacer height="16" />
-															<a4j:commandButton
-																styleClass="btn btn-primary AddGrantTypeButton"
-																style="margin-top:5px"
-																value="#{msg['clientForm.addGrantType']}"
-																oncomplete="#{rich:component('grantType:selectEntityModalPanel')}.show();"
-																execute="@this" eventsQueue="clientQueue" />
-														</h:panelGroup>
-													</h:panelGroup>
-												</ox:decorate>
-												<hr
-													style="height: 1px; background: green; border-color: green; border-width: 0px;"></hr>
-												<ox:decorate id="redirectLogoutUrls"
-													label="#{msg['clientForm.redirectLogoutURIs']}">
-													<h:panelGroup id="selectedLogoutURIsId">
-														<h:panelGroup columns="1" width="100%" border="0"
-															cellpadding="0" cellspacing="0">
-															<a4j:repeat value="#{_clientAction.logoutUris}"
-																rowKeyVar="_urisIdx" var="_uri"
-																iterationStatusVar="loop">
-																<div class="row-fluid">
-																	<div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
-																		<h:outputText value="#{empty _uri ? _uri : _uri}" />
-																		<h:outputText value="&#160;" />
-																		<!-- <div class="row-fluid"> -->
-																		<div class="span6 pull-right">
-																			<a4j:commandLink
-																				styleClass="glyphicon glyphicon-remove"
-																				style="margin-top:-20px;"
-																				action="#{_clientAction.removeLogoutURI(_uri)}"
-																				execute="@this" render="selectedLogoutURIsId"
-																				eventsQueue="clientQueue">
-																			</a4j:commandLink>
-																		</div>
-																	</div>
-																</div>
-																<br />
-															</a4j:repeat>
-															<richext:spacer height="16" />
+												</b:panel>
 
-															<a4j:commandButton
-																styleClass="btn btn-primary AddRedirectLOgoutUriButton"
-																style="margin-top: 5px;"
-																value="#{msg['clientForm.postLogoutRedirectURI']}"
-																oncomplete="#{rich:component('logoutRedirect:inputText')}.show();"
-																execute="@this" eventsQueue="clientQueue" />
-
-														</h:panelGroup>
-													</h:panelGroup>
-												</ox:decorate>
-												<hr
-													style="height: 1px; background: green; border-color: green; border-width: 0px;"></hr>
 												<ox:decorate id="sectorIdentifiers"
 													label="#{msg['clientForm.sectorIdentifierURI']}">
 													<h:panelGroup id="selectedSectorId">
@@ -471,16 +382,78 @@
 											</ox:decorate>
 											<ox:decorate id="clientsecretexpiry" leftClass="col-sm-6"
 												rightClass="col-sm-6"
-												label="#{msg['clientForm.clientSecretExpires']}">
-												<rich:calendar value="#{_client.clientSecretExpiresAt}"
-													id="calendar" popup="false" datePattern="dd/MM/yyyy HH:mm"
-													showApplyButton="true" style="width:300px">
-												</rich:calendar>
-												<h:commandButton rendered="#{_new}"
-													styleClass="btn btn-primary"
-													value="clear current calendar value"
-													onclick="#{rich:component('calendar')}.setValue(''); return false;" />
+												label="#{msg['clientForm.expirationDate']}">
+												<b:dateTimePicker id="calendar" renderLabel="false"
+													mode="toggle-icon" value="#{_client.clientSecretExpiresAt}"
+													format="DD/MM/YYYY HH:mm" />
 											</ox:decorate>
+											<div class="row" style="padding-left: 25px;">
+												<b:panel title="#{msg['clientForm.grantTypes']}"
+													id="grantTypes" look="primary">
+													<h:panelGroup id="selectedGrantTypesId">
+														<a4j:repeat value="#{_clientAction.grantTypes}"
+															rowKeyVar="_grantTypeIdx" var="_grantType"
+															iterationStatusVar="loop">
+															<div class="row-fluid">
+																<div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
+																	<h:outputText value="#{_grantType.value}" />
+																	<h:outputText value="&#160;" />
+																	<div class="span6 pull-right">
+																		<a4j:commandLink
+																			styleClass="glyphicon glyphicon-remove"
+																			style="margin-top:-20px;"
+																			action="#{_clientAction.removeGrantType(_grantType.value)}"
+																			execute="@this" render="selectedGrantTypesId"
+																			eventsQueue="clientQueue">
+																		</a4j:commandLink>
+																	</div>
+																</div>
+															</div>
+															<br />
+														</a4j:repeat>
+														<richext:spacer height="16" />
+														<a4j:commandButton
+															styleClass="btn btn-primary AddGrantTypeButton"
+															style="margin-top:5px"
+															value="#{msg['clientForm.addGrantType']}"
+															oncomplete="#{rich:component('grantType:selectEntityModalPanel')}.show();"
+															execute="@this" eventsQueue="clientQueue" />
+													</h:panelGroup>
+												</b:panel>
+											</div>
+											<div class="row" style="padding-left: 25px;">
+												<b:panel title="#{msg['clientForm.redirectLogoutURIs']}"
+													id="redirectLogoutUrls" look="primary">
+													<h:panelGroup id="selectedLogoutURIsId">
+														<a4j:repeat value="#{_clientAction.logoutUris}"
+															rowKeyVar="_urisIdx" var="_uri" iterationStatusVar="loop">
+															<div class="row-fluid">
+																<div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
+																	<h:outputText value="#{empty _uri ? _uri : _uri}" />
+																	<h:outputText value="&#160;" />
+																	<div class="span6 pull-right">
+																		<a4j:commandLink
+																			styleClass="glyphicon glyphicon-remove"
+																			style="margin-top:-20px;"
+																			action="#{_clientAction.removeLogoutURI(_uri)}"
+																			execute="@this" render="selectedLogoutURIsId"
+																			eventsQueue="clientQueue">
+																		</a4j:commandLink>
+																	</div>
+																</div>
+															</div>
+															<br />
+														</a4j:repeat>
+														<richext:spacer height="16" />
+														<a4j:commandButton
+															styleClass="btn btn-primary AddRedirectLOgoutUriButton"
+															style="margin-top: 5px;"
+															value="#{msg['clientForm.postLogoutRedirectURI']}"
+															oncomplete="#{rich:component('logoutRedirect:inputText')}.show();"
+															execute="@this" eventsQueue="clientQueue" />
+													</h:panelGroup>
+												</b:panel>
+											</div>
 											<ox:decorate id="logoUri"
 												label="#{msg['clientForm.logoURI']}" leftClass="col-sm-3"
 												rightClass="col-sm-9">

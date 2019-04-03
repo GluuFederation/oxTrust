@@ -46,7 +46,7 @@
 						<div class="box-header" />
 						<div class="row">
 							<div class="col-xs-12">
-								<b:panel title="Passport providers" look="primary">
+								<b:panel title="Trust Relationships List" look="primary">
 									<h:link includeViewParams="false"
 										outcome="/trustmanager/addTrustRelationship"
 										propagation="none" style="width:200px;"
@@ -96,11 +96,11 @@
 															value="#{msg['trustmanager.noTrsutRelationshipsFound']}" />
 													</ui:fragment>
 													<div class="row" style="padding: 10px;">
-														<b:dataTable id="relationshipstable"
+														<b:dataTable id="relationshipstable" style="text-align:center;"
 															rendered="#{trustRelationshipInventoryAction.trustedSpList.size() gt 0}"
 															value="#{trustRelationshipInventoryAction.trustedSpList}"
 															var="tsps" print="true" excel="true" csv="true"
-															pdf="true" select="true">
+															pdf="true" select="true" responsive="true">
 															<b:dataTableColumn
 																label="#{msg['trustmanager.community']}">
 																<h:link includeViewParams="false"
