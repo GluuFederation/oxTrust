@@ -38,28 +38,29 @@
 				<div class="col-xs-12">
 					<b:panel title="Uma Scopes List" look="primary">
 						<h:form>
-							<ox:decorate id="searchPattern" label="#{msg['uma.searchKey']}"
-								style="height:60px;">
-								<h:inputText
-									alt="Search parameters for UMA resource set like Inum, Display Name"
-									id="searchPatternId" maxlength="30" placeholder="Search Key"
-									size="30" style="width:50%;float: left;"
-									styleClass="form-control searchBoxClass"
-									value="#{umaInventoryAction.searchPattern}" />
-								<a4j:commandButton action="#{umaInventoryAction.search}"
-									render="resourcesListId, scopesListId"
-									style="float: left;margin-left:5px;"
-									styleClass="btn btn-primary searchButtonClass"
-									value="#{msg['uma.search']}" />
-							</ox:decorate>
 							<div class="nav-tabs-custom" style="margin-bottom: 0px;">
 								<div class="tab-pane" id="scopeTab">
 									<h:panelGrid border="0" cellpadding="0" cellspacing="0"
 										columns="1" width="100%">
-										<h:link includeViewParams="false"
-											outcome="/uma/scope/modifyScopeDescription"
-											styleClass="btn btn-primary addScopeButtonClass"
-											value="#{msg['uma.addScopeDescription']}" />
+										<b:link style-class="addScopeButtonClass btn btn-primary"
+											icon="plus" outcome="/uma/scope/modifyScopeDescription"
+											value="#{msg['uma.addScopeDescription']}"
+											includeViewParams="false" />
+										<richext:spacer height="8" />
+										<ox:decorate id="searchPattern"
+											label="#{msg['uma.searchKey']}" style="height:60px;">
+											<h:inputText
+												alt="Search parameters for UMA resource set like Inum, Display Name"
+												id="searchPatternId" maxlength="30" placeholder="Search Key"
+												size="30" style="width:50%;float: left;"
+												styleClass="form-control searchBoxClass"
+												value="#{umaInventoryAction.searchPattern}" />
+											<a4j:commandButton action="#{umaInventoryAction.search}"
+												render="resourcesListId, scopesListId"
+												style="float: left;margin-left:5px;"
+												styleClass="btn btn-primary searchButtonClass"
+												value="#{msg['uma.search']}" />
+										</ox:decorate>
 										<richext:spacer height="8" />
 										<b:dataTable id="scopesListId" style="text-align:center;"
 											styleClass="umaScopeListClass" responsive="true"

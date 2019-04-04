@@ -41,28 +41,28 @@
 				<div class="col-xs-12">
 					<b:panel title="Uma Resources List" look="primary">
 						<h:form>
-							<ox:decorate id="searchPattern" label="#{msg['uma.searchKey']}"
-								style="height:60px;">
-								<h:inputText
-									alt="Search parameters for UMA resource set like Inum, Display Name"
-									id="searchPatternId" maxlength="30" placeholder="Search Key"
-									size="30" style="width:50%;float: left;"
-									styleClass="form-control searchBoxClass"
-									value="#{umaInventoryAction.searchPattern}" />
-								<a4j:commandButton action="#{umaInventoryAction.search}"
-									render="resourcesListId, scopesListId"
-									style="float: left;margin-left:5px;"
-									styleClass="btn btn-primary searchButtonClass"
-									value="#{msg['uma.search']}" />
-							</ox:decorate>
 							<div class="nav-tabs-custom" style="margin-bottom: 0px;">
 								<div class="tab-content">
 									<div class="tab-pane active" id="resourceTab">
-										<h:link includeViewParams="false"
+										<b:link style-class="btn btn-primary" icon="plus"
 											outcome="/uma/resource/modifyResource"
-											styleClass="btn btn-primary"
-											value="#{msg['uma.addResourceSet']}" />
+											value="#{msg['uma.addResourceSet']}"
+											includeViewParams="false" />
 										<richext:spacer height="8" />
+										<ox:decorate id="searchPattern"
+											label="#{msg['uma.searchKey']}" style="height:60px;">
+											<h:inputText
+												alt="Search parameters for UMA resource set like Inum, Display Name"
+												id="searchPatternId" maxlength="30" placeholder="Search Key"
+												size="30" style="width:50%;float: left;"
+												styleClass="form-control searchBoxClass"
+												value="#{umaInventoryAction.searchPattern}" />
+											<a4j:commandButton action="#{umaInventoryAction.search}"
+												render="resourcesListId, scopesListId"
+												style="float: left;margin-left:5px;"
+												styleClass="btn btn-primary searchButtonClass"
+												value="#{msg['uma.search']}" />
+										</ox:decorate>
 										<b:dataTable id="resourcesListId" style="text-align:center;"
 											responsive="true"
 											rendered="#{umaInventoryAction.resourcesList.size() gt 0}"
@@ -77,9 +77,9 @@
 											</b:dataTableColumn>
 											<b:dataTableColumn value="#{_row.id}"
 												label="#{msg['uma.id']}" />
-											<b:dataTableColumn label="#{msg['uma.scopes']}" />
-											<ox:displayNameEntryList
-												value="#{umaInventoryAction.getScopeDisplayNameEntries(_row.getScopes())}" />
+											<b:dataTableColumn label="#{msg['uma.scopes']}">
+												<ox:displayNameEntryList
+													value="#{umaInventoryAction.getScopeDisplayNameEntries(_row.getScopes())}" />
 											</b:dataTableColumn>
 											<b:dataTableColumn value="#{_row.iconUri}" order="asc"
 												label="#{msg['uma.iconURI']}" />

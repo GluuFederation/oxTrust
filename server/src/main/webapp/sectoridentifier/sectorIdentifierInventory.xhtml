@@ -41,11 +41,11 @@
 				<div class="col-xs-12">
 					<b:panel title="Sector Identifiers List" look="primary">
 						<div id="formArea">
-							<h:link includeViewParams="false"
-								outcome="/sectoridentifier/addSectorIdentifier"
+							<b:link style-class=" addSectorIdentifier btn btn-primary"
+								icon="plus" outcome="/sectoridentifier/addSectorIdentifier"
 								style="margin-left:5px !important;"
-								styleClass="addSectorIdentifier btn btn-primary"
-								value="#{msg['sectorIdentifier.addSectorIdentifiers']}" />
+								value="#{msg['sectorIdentifier.addSectorIdentifiers']}"
+								includeViewParams="false" />
 							<richext:spacer height="16" />
 							<h:form>
 								<ox:decorate hideLabel="true" id="searchPattern">

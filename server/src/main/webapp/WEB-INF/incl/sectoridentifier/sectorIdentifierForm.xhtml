@@ -4,7 +4,7 @@
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
-	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:a4j="http://richfaces.org/a4j" xmlns:b="http://bootsfaces.net/ui"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
 	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
@@ -45,19 +45,17 @@
 						<div style="display: inline-block; width: 75% !important;">
 							<h:panelGrid columns="1" width="100%" border="0" cellpadding="0"
 								cellspacing="0">
-
 								<ox:decorate id="inu" rendered="#{not _new}"
 									label="#{msg['sectorIdentifier.id']}">
 									<h:outputText
 										value="#{_sectorIdentifierAction.sectorIdentifier.id}" />
 								</ox:decorate>
-								
-								<ox:decorate id="description" class="description" rendered="true"
+								<ox:decorate id="description" class="description"
+									leftClass="col-sm-3" rightClass="col-sm-9" rendered="true"
 									label="Description">
 									<h:inputText
 										value="#{_sectorIdentifierAction.sectorIdentifier.description}" />
 								</ox:decorate>
-
 								<ox:decorate id="url" rendered="#{not _new}"
 									label="#{msg['sectorIdentifier.url']}">
 									<h:outputLink
@@ -69,43 +67,44 @@
 											value="#{_sectorIdentifierAction.sectorIdentifierUrl}" />
 									</h:outputLink>
 								</ox:decorate>
-
-								<ox:decorate id="redirectLoginUrls"
-									label="#{msg['sectorIdentifier.redirectLoginURIs']}">
-									<h:panelGroup id="selectedLoginURIsId">
-										<h:panelGroup columns="1" width="100%" border="0"
-											cellpadding="0" cellspacing="0">
-											<a4j:repeat value="#{_sectorIdentifierAction.loginUris}"
-												rowKeyVar="_urisIdx" var="_uri" iterationStatusVar="loop">
-												<div class="row-fluid">
-													<div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
-														<h:outputText value="#{empty _uri ? _uri : _uri}" />
-														<h:outputText value="&#160;" />
-
-
-														<div class="span6 pull-right">
-															<a4j:commandLink styleClass="glyphicon glyphicon-remove"
-																style="margin-top:-20px;"
-																action="#{_sectorIdentifierAction.removeLoginURI(_uri)}"
-																execute="@this" render="selectedLoginURIsId"
-																eventsQueue="clientQueue">
-															</a4j:commandLink>
-														</div>
-													</div>
-												</div>
-												<br />
-											</a4j:repeat>
-											<richext:spacer height="16" />
-										</h:panelGroup>
-									</h:panelGroup>
-								</ox:decorate>
-
-								<ox:decorate id="clients"
-									label="#{msg['sectorIdentifier.clients']}">
-									<h:panelGroup id="selectedClientsId">
-										<div class="col-sm-12 prop">
+								<div class="row" style="margin-left: 10px; margin-right: 10px;">
+									<b:panel id="redirectLoginUrls"
+										title="#{msg['sectorIdentifier.redirectLoginURIs']}"
+										look="primary">
+										<h:panelGroup id="selectedLoginURIsId">
 											<h:panelGroup columns="1" width="100%" border="0"
 												cellpadding="0" cellspacing="0">
+												<a4j:repeat value="#{_sectorIdentifierAction.loginUris}"
+													rowKeyVar="_urisIdx" var="_uri" iterationStatusVar="loop">
+													<div class="row-fluid">
+														<div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
+															<h:outputText value="#{empty _uri ? _uri : _uri}" />
+															<div class="span6 pull-right">
+																<a4j:commandLink styleClass="glyphicon glyphicon-remove"
+																	style="margin-top:-20px;"
+																	action="#{_sectorIdentifierAction.removeLoginURI(_uri)}"
+																	execute="@this" render="selectedLoginURIsId"
+																	eventsQueue="clientQueue">
+																</a4j:commandLink>
+															</div>
+														</div>
+													</div>
+													<br />
+												</a4j:repeat>
+												<richext:spacer height="16" />
+											</h:panelGroup>
+											<a4j:commandButton styleClass="btn btn-primary"
+												value="#{msg['sectorIdentifier.addLoginUri']}"
+												oncomplete="#{rich:component('loginRedirect:inputText')}.show();"
+												execute="@this" eventsQueue="sectorIdentifierQueue" />
+										</h:panelGroup>
+									</b:panel>
+								</div>
+								<div class="row" style="margin-left: 10px; margin-right: 10px;">
+									<b:panel id="clients"
+										title="#{msg['sectorIdentifier.clients']}" look="primary">
+										<h:panelGroup id="selectedClientsId">
+											<div class="col-sm-12 prop">
 												<a4j:repeat
 													value="#{_sectorIdentifierAction.clientDisplayNameEntries}"
 													rowKeyVar="_clientIdx" var="_client"
@@ -126,27 +125,15 @@
 													</div>
 													<br />
 												</a4j:repeat>
-											</h:panelGroup>
-										</div>
-									</h:panelGroup>
-								</ox:decorate>
-
-								<ox:decorate id="command">
-									<h:panelGroup>
-										<div class="btn-group" role="group" aria-label="..."
-											style="margin-left: 105px;">
-											<a4j:commandButton styleClass="btn btn-primary"
-												value="#{msg['sectorIdentifier.addLoginUri']}"
-												oncomplete="#{rich:component('loginRedirect:inputText')}.show();"
-												execute="@this" eventsQueue="sectorIdentifierQueue" />
-											<a4j:commandButton styleClass="btn btn-primary"
-												value="#{msg['sectorIdentifier.addClient']}"
-												action="#{_sectorIdentifierAction.selectAddedClients}"
-												oncomplete="#{rich:component('client:selectClientModalPanel')}.show();"
-												execute="@this" eventsQueue="sectorIdentifierQueue" />
-										</div>
-									</h:panelGroup>
-								</ox:decorate>
+											</div>
+										</h:panelGroup>
+										<a4j:commandButton styleClass="btn btn-primary"
+											value="#{msg['sectorIdentifier.addClient']}"
+											action="#{_sectorIdentifierAction.selectAddedClients}"
+											oncomplete="#{rich:component('client:selectClientModalPanel')}.show();"
+											execute="@this" eventsQueue="sectorIdentifierQueue" />
+									</b:panel>
+								</div>
 							</h:panelGrid>
 						</div>
 					</div>

@@ -41,13 +41,11 @@
 					<h:panelGroup id="oidcClientsTable">
 						<div class="row"
 							style="padding: 5px; margin-bottom: 5px; margin-left: 15px">
-							<h:link includeViewParams="false" outcome="/client/addClient"
-								styleClass="btn btn-primary addClientButtonClass"
-								onclick="clearOIDC();" value="#{msg['client.addClient']}" />
+							<b:link style-class="addClientButtonClass btn btn-primary"
+								icon="plus" outcome="/client/addClient" onclick="clearOIDC();"
+								value="#{msg['client.addClient']}" includeViewParams="false" />
 						</div>
-
 						<richext:spacer height="16" />
-
 						<h:form>
 							<ox:decorate hideLabel="true" id="searchPattern">
 								<div style="width: 100%; float: left; margin-left: 17px;">
@@ -64,7 +62,6 @@
 								</div>
 							</ox:decorate>
 						</h:form>
-
 						<div class="row">
 							<div class="box box-primary" style="width: 100%;">
 								<div class="box-header">
@@ -114,7 +111,6 @@
 						<ui:insert name="controlButttons" />
 					</div>
 				</b:panel>
-
 			</div>
 		</div>
 		<ox:acceptRemovalDialog
