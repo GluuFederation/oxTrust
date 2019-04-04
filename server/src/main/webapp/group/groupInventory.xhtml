@@ -1,105 +1,91 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://xmlns.jcp.org/jsf/core"
-                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
-                xmlns:rich="http://richfaces.org/rich" xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
-                xmlns:ui="http://xmlns.jcp.org/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
-    <f:metadata>
-        <f:viewAction action="#{permissionService.requestPermission('group', 'access')}" />
-        <f:viewParam name="searchPattern" value="#{searchGroupAction.searchPattern}" />
-        <f:viewAction action="#{conversationService.initConversation}" />
-        <f:viewAction action="#{searchGroupAction.start}" if="#{searchGroupAction.groupList == null}" onPostback="false"/>
-    </f:metadata>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
+	xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
+	xmlns:b="http://bootsfaces.net/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/WEB-INF/incl/layout/newtemplate.xhtml">
+	<f:metadata>
+		<f:viewAction
+			action="#{permissionService.requestPermission('group', 'access')}" />
+		<f:viewParam name="searchPattern"
+			value="#{searchGroupAction.searchPattern}" />
+		<f:viewAction action="#{conversationService.initConversation}" />
+		<f:viewAction action="#{searchGroupAction.start}"
+			if="#{searchGroupAction.groupList == null}" onPostback="false" />
+	</f:metadata>
 
-    <ui:define name="body">
-        <section class="content-header">
-            <h1 style="color: #333;">
-                #{msg['group.users']}
-                <small>
-                    <i class="fa fa-caret-right" style="color: #333 !important;"/> #{msg['group.manageGroups']}</small>
-            </h1>
-            <ol class="breadcrumb">
-                <li>
-                    <a href="#{request.contextPath}/home">
-                        <i class="fa fa-home"/>
-                    </a>
-                </li>
-                <li class="organization/configuration">
-                    <a href="#{request.contextPath}/group/inventory"> #{msg['group.manageGroups']}</a>
-                </li>
-            </ol>
-        </section>
-        <section class="content">
-            <div class="row">
-                <div class="col-xs-12">
-                    <div class="box box-primary">
-                        <div class="box-header">
-                        </div>
-
-
-                        <div style="display: inline-block; width: 100% !important;">
-                            <div id="formArea">
-                                <h:panelGrid border="0" cellpadding="0" cellspacing="0" columns="1" width="100%">
-
-                                    <h:link includeViewParams="false" outcome="/group/addGroup"
-                                            style="margin-left:20px !important;" styleClass="addGroup btn btn-primary"
-                                            value="#{msg['group.addGroup']}"/>
-
-                                    <richext:spacer height="16"/>
-
-                                    <h:form class="searchArea">
-                                        <ox:decorate hideLabel="true" id="searchPattern">
-                                            <h:inputText alt="search parameters for group like uid,iname,email"
-                                                         id="searchPatternId" maxlength="30" size="30"
-                                                         style="float: left;width: 50%;"
-                                                         styleClass="searchParameters form-control"
-                                                         value="#{searchGroupAction.searchPattern}"/>
-                                            <h:commandButton action="#{searchGroupAction.search}"
-                                                             class="btn btn-primary" style="float:left;"
-                                                             value="#{msg['group.search']}"/>
-                                        </ox:decorate>
-                                    </h:form>
-
-                                    <richext:spacer height="16"/>
-
-                                    <h:form id="groupsFormId">
-                                        <ui:fragment rendered="#{searchGroupAction.groupList.size() eq 0}">
-                                            <richext:spacer height="30"/>
-                                            <h:outputText value="#{msg['group.noSearchResultFound']}"/>
-                                        </ui:fragment>
-
-                                        <rich:dataTable id="groupsListId"
-                                                        rendered="#{searchGroupAction.groupList.size() gt 0}" rows="20"
-                                                        sortMode="single" styleClass="data sortable"
-                                                        value="#{searchGroupAction.groupList}" var="grp">
-                                            <rich:column sortBy="#{grp.displayName}">
-                                                <f:facet name="header">#{msg['group.displayName']}</f:facet>
-                                                <h:link includeViewParams="false" outcome="/group/updateGroup"
-                                                        value="#{grp.displayName}">
-                                                    <f:param name="inum" value="#{grp.inum}"/>
-                                                </h:link>
-                                            </rich:column>
-                                            <rich:column>
-                                                <f:facet name="header">#{msg['group.description']}</f:facet>
-                                                <h:outputText value="#{grp.description}"/>
-                                            </rich:column>
-                                            <rich:column sortBy="#{grp.status.value}">
-                                                <f:facet name="header">Status</f:facet>
-                                                <h:outputText value="#{grp.status.value}"/>
-                                            </rich:column>
-                                            <f:facet name="footer">
-                                                <rich:dataScroller align="left" for="groupsListId" maxPages="10"
-                                                                   renderIfSinglePage="false"
-                                                                   rendered="#{searchGroupAction.groupList.size() gt 0}"
-                                                                   stepControls="auto"/>
-                                            </f:facet>
-                                        </rich:dataTable>
-                                    </h:form>
-                                </h:panelGrid>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </ui:define>
+	<ui:define name="body">
+		<section class="content-header">
+			<h1 style="color: #333;">
+				#{msg['group.users']} <small> <i class="fa fa-caret-right"
+					style="color: #333 !important;" /> #{msg['group.manageGroups']}
+				</small>
+			</h1>
+			<ol class="breadcrumb">
+				<li><a href="#{request.contextPath}/home"> <i
+						class="fa fa-home" />
+				</a></li>
+				<li class="organization/configuration"><a
+					href="#{request.contextPath}/group/inventory">
+						#{msg['group.manageGroups']}</a></li>
+			</ol>
+		</section>
+		<section class="content">
+			<div class="row" style="margin-left: 10px; margin-right: 10px;">
+				<b:panel title="Groups List" look="primary">
+					<div id="formArea">
+						<b:link style-class="addGroup btn btn-primary"
+						    icon="plus"
+							outcome="/group/addGroup" value="#{msg['group.addGroup']}"
+							includeViewParams="false" style="margin-left:5px !important;" />
+						<richext:spacer height="16" />
+						<h:form class="searchArea">
+							<ox:decorate hideLabel="true" id="searchPattern">
+								<h:inputText
+									alt="search parameters for group like uid,iname,email"
+									id="searchPatternId" maxlength="30" size="30"
+									style="float: left;width: 50%;"
+									styleClass="searchParameters form-control"
+									value="#{searchGroupAction.searchPattern}" />
+								<h:commandButton action="#{searchGroupAction.search}"
+									class="btn btn-primary" style="float:left;"
+									value="#{msg['group.search']}" />
+							</ox:decorate>
+						</h:form>
+						<richext:spacer height="16" />
+						<h:form id="groupsFormId">
+							<ui:fragment
+								rendered="#{searchGroupAction.groupList.size() eq 0}">
+								<richext:spacer height="30" />
+								<h:outputText value="#{msg['group.noSearchResultFound']}" />
+							</ui:fragment>
+							<b:dataTable id="groupsListId" style="text-align:center;"
+								responsive="true"
+								rendered="#{searchGroupAction.groupList.size() gt 0}"
+								value="#{searchGroupAction.groupList}" var="grp" print="true"
+								excel="true" csv="true" pdf="true" select="true">
+								<b:dataTableColumn label="#{msg['group.displayName']}">
+									<h:link includeViewParams="false" outcome="/group/updateGroup"
+										value="#{grp.displayName}">
+										<f:param name="inum" value="#{grp.inum}" />
+									</h:link>
+								</b:dataTableColumn>
+								<b:dataTableColumn value="#{grp.description}"
+									label="#{msg['group.description']}" />
+								<b:dataTableColumn label="Size">
+									<b:label text="#{grp.getMembers().size()}" severity="primary" />
+								</b:dataTableColumn>
+								<b:dataTableColumn label="Status">
+									<b:label text="#{grp.status.value}" severity="info" />
+								</b:dataTableColumn>
+							</b:dataTable>
+						</h:form>
+					</div>
+				</b:panel>
+			</div>
+		</section>
+	</ui:define>
 </ui:composition>

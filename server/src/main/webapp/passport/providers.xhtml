@@ -36,9 +36,10 @@
 				<div class="col-xs-12">
 					<b:panel title="Passport providers" look="primary">
 						<div class="row" style="padding: 5px; margin-bottom: 5px;">
-							<h:link includeViewParams="false" outcome="/passport/addProvider"
-								styleClass="btn btn-primary addProviderButtonClass"
-								value="#{msg['passport.addNewProvider']}" />
+							<b:link style-class="addProviderButtonClass btn btn-primary"
+								icon="plus" outcome="/passport/addProvider"
+								value="#{msg['passport.addNewProvider']}"
+								includeViewParams="false" />
 						</div>
 						<div class="row" style="padding: 10px;">
 							<b:dataTable id="providersTableId" style="text-align:center;"

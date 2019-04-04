@@ -1,144 +1,108 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://xmlns.jcp.org/jsf/core"
-                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
-                xmlns:rich="http://richfaces.org/rich" xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
-                xmlns:ui="http://xmlns.jcp.org/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
-    <f:metadata>
-        <f:viewAction action="#{permissionService.requestPermission('scope', 'access')}" />
-    	<f:viewParam name="searchPattern" value="#{searchScopeAction.searchPattern}" />
-        <f:viewAction action="#{conversationService.initConversation}" />
-        <f:viewAction action="#{searchScopeAction.start}" if="#{searchScopeAction.scopeList == null}" onPostback="false"/>
-    </f:metadata>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:b="http://bootsfaces.net/ui"
+	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
+	xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/WEB-INF/incl/layout/newtemplate.xhtml">
+	<f:metadata>
+		<f:viewAction
+			action="#{permissionService.requestPermission('scope', 'access')}" />
+		<f:viewParam name="searchPattern"
+			value="#{searchScopeAction.searchPattern}" />
+		<f:viewAction action="#{conversationService.initConversation}" />
+		<f:viewAction action="#{searchScopeAction.start}"
+			if="#{searchScopeAction.scopeList == null}" onPostback="false" />
+	</f:metadata>
 
-    <ui:define name="body">
-        <section class="content-header">
-            <h1 style="color: #333;">
-                #{msg['scope.openIDConnect']}
-                <small>
-                    <i class="fa fa-caret-right" style="color: #333 !important;"/> #{msg['scope.scopes']}</small>
-            </h1>
-            <ol class="breadcrumb">
-                <li>
-                    <a href="#{request.contextPath}/home">
-                        <i class="fa fa-home"/>
-                    </a>
-                </li>
-                <li class="organization/configuration">
-                    <a href="#{request.contextPath}/scope/inventory"> #{msg['scope.scopes']}</a>
-                </li>
-            </ol>
-        </section>
-        <section class="content">
-            <div id="formArea">
-                <div class="row">
-                    <div class="col-xs-12">
-                        <div class="box box-primary">
-                            <div class="box-header"/>
-                            <div style="display: inline-block; width: 98% !important;">
-
-                                <h:panelGroup>
-                                    <div class="row" style="padding:5px;margin-bottom: 5px;margin-left:15px">
-                                        <h:link includeViewParams="false" outcome="/scope/addScope"
-                                                styleClass="btn btn-primary addScopeButtonClass" value="#{msg['scope.addScope']}"/>
-                                    </div>
-
-                                    <richext:spacer height="16"/>
-
-                                    <h:form>
-                                        <ox:decorate hideLabel="true" id="searchPattern">
-                                            <div style="width: 100%; float: left;margin-left:17px;">
-                                                <h:inputText alt="search parameters for scope like inum,displayName"
-                                                             id="searchPatternId" maxlength="30" size="30"
-                                                             style="width:50%; float:left;" styleClass="form-control searchBoxClass"
-                                                             value="#{searchScopeAction.searchPattern}"/>
-                                                <h:commandButton action="#{searchScopeAction.search}"
-                                                                 style="float:left;margin-left :3px;"
-                                                                 styleClass="btn btn-primary searchButtonClass" value="Search"/>
-                                            </div>
-                                        </ox:decorate>
-                                    </h:form>
-
-                                    <richext:spacer height="16"/>
-
-                                    <div class="row" style="width:100%;">
-
-                                        <!-- general form elements -->
-                                        <div class="box box-primary" style="width: 100%; margin-left: 22px;">
-                                            <div class="box-header">
-                                                <h3 class="box-title">#{msg['scope.searchResults']}</h3>
-                                            </div>
-                                            <!-- /.box-header -->
-                                            <!-- form start -->
-                                            <div class="box-body">
-                                                <div class="table-responsive" style="overflow: auto">
-
-                                                    <h:form id="scopesFormId">
-                                                        <ui:fragment
-                                                                rendered="#{searchScopeAction.scopeList.size() eq 0}">
-
-                                                            <h:outputText value="#{msg['scope.noSearchResultFound']}"/>
-                                                        </ui:fragment>
-
-                                                        <h:dataTable id="scopesListId"
-                                                                     rendered="#{searchScopeAction.scopeList.size() gt 0}"
-                                                                     rows="20" sortMode="single"
-                                                                     styleClass="table table-hover rt umaScopeListClass"
-                                                                     value="#{searchScopeAction.scopeList}" var="clt">
-                                                            <h:column sortBy="#{clt.displayName}">
-                                                                <f:facet name="header">
-                                                                    <div style="text-align: left;">#{msg['scope.displayName']}</div>
-                                                                </f:facet>
-                                                                <h:link includeViewParams="false"
-                                                                        outcome="/scope/updateScope"
-                                                                        value="#{clt.displayName}">
-                                                                    <f:param name="inum" value="#{clt.inum}"/>
-                                                                </h:link>
-                                                            </h:column>
-                                                            <h:column sortBy="#{clt.displayName}">
-                                                                <f:facet name="header">
-                                                                    <div style="text-align: center;">#{msg['scope.inum']}</div>
-                                                                </f:facet>
-                                                                <h:outputText class="col-xs-12"
-                                                                              style="text-align: center;"
-                                                                              value="#{clt.inum}"/>
-                                                            </h:column>
-                                                            <h:column>
-                                                                <f:facet name="header">
-                                                                    <div style="text-align: center;">#{msg['scope.description']}</div>
-                                                                </f:facet>
-                                                                <h:outputText class="col-xs-12"
-                                                                              value="#{clt.description}"/>
-                                                            </h:column>
-                                                            <h:column>
-                                                                <f:facet name="header">
-                                                                    <div style="text-align: left;">#{msg['scope.default']}</div>
-                                                                </f:facet>
-                                                                <h:outputText class="col-xs-12"
-                                                                              value="#{clt.defaultScope.displayName}"/>
-                                                            </h:column>
-                                                            <f:facet name="footer">
-                                                                <rich:dataScroller align="left" for="scopesListId"
-                                                                                   maxPages="10"
-                                                                                   renderIfSinglePage="false"
-                                                                                   rendered="#{searchScopeAction.scopeList.size() gt 0}"
-                                                                                   stepControls="auto"/>
-                                                            </f:facet>
-                                                        </h:dataTable>
-                                                    </h:form>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </h:panelGroup>
-                                <div class="box-footer">
-                                    <ui:insert name="controlButttons"/>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </ui:define>
+	<ui:define name="body">
+		<section class="content-header">
+			<h1 style="color: #333;">
+				#{msg['scope.openIDConnect']} <small> <i
+					class="fa fa-caret-right" style="color: #333 !important;" />
+					#{msg['scope.scopes']}
+				</small>
+			</h1>
+			<ol class="breadcrumb">
+				<li><a href="#{request.contextPath}/home"> <i
+						class="fa fa-home" />
+				</a></li>
+				<li class="organization/configuration"><a
+					href="#{request.contextPath}/scope/inventory">
+						#{msg['scope.scopes']}</a></li>
+			</ol>
+		</section>
+		<section class="content">
+			<div id="formArea">
+				<div class="row">
+					<div class="col-xs-12">
+						<b:panel title="OpenID Connect Scopes List" look="primary">
+							<h:panelGroup>
+								<div class="row"
+									style="padding: 5px; margin-bottom: 5px; margin-left: 15px">
+									<b:link style-class="addScopeButtonClass btn btn-primary"
+										icon="plus" outcome="/scope/addScope"
+										value="#{msg['scope.addScope']}" includeViewParams="false" />
+								</div>
+								<richext:spacer height="16" />
+								<h:form>
+									<ox:decorate hideLabel="true" id="searchPattern">
+										<div style="width: 100%; float: left; margin-left: 17px;">
+											<h:inputText
+												alt="search parameters for scope like inum,displayName"
+												id="searchPatternId" maxlength="30" size="30"
+												style="width:50%; float:left;"
+												styleClass="form-control searchBoxClass"
+												value="#{searchScopeAction.searchPattern}" />
+											<h:commandButton action="#{searchScopeAction.search}"
+												style="float:left;margin-left :3px;"
+												styleClass="btn btn-primary searchButtonClass"
+												value="Search" />
+										</div>
+									</ox:decorate>
+								</h:form>
+								<richext:spacer height="16" />
+								<div class="row" style="width: 100%;">
+									<div class="box box-primary"
+										style="width: 100%; margin-left: 22px;">
+										<div class="box-header">
+											<h3 class="box-title">#{msg['scope.searchResults']}</h3>
+										</div>
+										<div class="box-body">
+											<h:form id="scopesFormId">
+												<b:dataTable id="scopesListId"
+													rendered="#{searchScopeAction.scopeList.size() gt 0}"
+													style="text-align:center;" responsive="true"
+													value="#{searchScopeAction.scopeList}" var="clt"
+													print="true" excel="true" csv="true" pdf="true"
+													select="true">
+													<b:dataTableColumn label="#{msg['scope.displayName']}">
+														<h:link includeViewParams="false"
+															outcome="/scope/updateScope" value="#{clt.displayName}">
+															<f:param name="inum" value="#{clt.inum}" />
+														</h:link>
+													</b:dataTableColumn>
+													<b:dataTableColumn value="#{clt.inum}"
+														label="#{msg['scope.inum']}" />
+													<b:dataTableColumn value="#{clt.description}"
+														label="#{msg['scope.description']}" />
+													<b:dataTableColumn value="#{clt.defaultScope.displayName}"
+														label="#{msg['scope.default']}" />
+												</b:dataTable>
+											</h:form>
+										</div>
+									</div>
+								</div>
+							</h:panelGroup>
+							<div class="box-footer">
+								<ui:insert name="controlButttons" />
+							</div>
+						</b:panel>
+					</div>
+				</div>
+			</div>
+		</section>
+	</ui:define>
 </ui:composition>

@@ -57,7 +57,7 @@ public class GluuGroup extends Entry implements Serializable {
 	private String owner;
 
 	@LdapAttribute(name = "member")
-	private List<String> members;
+	private List<String> members=new ArrayList<>();
 
 	@LdapAttribute(name = "c")
 	private String countryName;
