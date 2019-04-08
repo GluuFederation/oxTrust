@@ -1,5 +1,5 @@
-from org.xdi.model.custom.script.type.user import CacheRefreshType
-from org.xdi.util import StringHelper, ArrayHelper
+from org.gluu.model.custom.script.type.user import CacheRefreshType
+from org.gluu.util import StringHelper, ArrayHelper
 from java.util import Arrays, ArrayList
 from org.gluu.oxtrust.model import GluuCustomPerson
 from org.gluu.oxtrust.model import GluuCustomAttribute

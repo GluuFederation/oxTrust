@@ -8,7 +8,6 @@ package org.gluu.oxtrust.ldap.service;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileFilter;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -38,41 +37,39 @@ import org.apache.commons.httpclient.protocol.Protocol;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.velocity.VelocityContext;
+import org.gluu.config.oxtrust.AppConfiguration;
+import org.gluu.config.oxtrust.AttributeResolverConfiguration;
+import org.gluu.config.oxtrust.LdapOxTrustConfiguration;
+import org.gluu.config.oxtrust.NameIdConfig;
+import org.gluu.config.oxtrust.ShibbolethCASProtocolConfiguration;
+import org.gluu.model.GluuAttribute;
+import org.gluu.model.GluuStatus;
+import org.gluu.model.GluuUserRole;
+import org.gluu.model.SchemaEntry;
 import org.gluu.oxtrust.config.ConfigurationFactory;
-import org.gluu.oxtrust.model.GluuAppliance;
+import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuMetadataSourceType;
 import org.gluu.oxtrust.model.GluuSAMLFederationProposal;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
-import org.gluu.oxtrust.model.ProfileConfiguration;
-import org.gluu.oxtrust.model.SubversionFile;
 import org.gluu.oxtrust.util.EasyCASSLProtocolSocketFactory;
 import org.gluu.saml.metadata.SAMLMetadataParser;
+import org.gluu.service.SchemaService;
+import org.gluu.service.XmlService;
 import org.opensaml.xml.schema.SchemaBuilder;
 import org.opensaml.xml.schema.SchemaBuilder.SchemaLanguage;
 import org.slf4j.Logger;
 import org.w3c.dom.Document;
-import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.config.oxtrust.AttributeResolverConfiguration;
-import org.xdi.config.oxtrust.LdapOxTrustConfiguration;
-import org.xdi.config.oxtrust.NameIdConfig;
-import org.xdi.config.oxtrust.ShibbolethCASProtocolConfiguration;
-import org.xdi.model.GluuAttribute;
-import org.xdi.model.GluuStatus;
-import org.xdi.model.GluuUserRole;
-import org.xdi.model.SchemaEntry;
-import org.xdi.service.SchemaService;
-import org.xdi.service.XmlService;
-import org.xdi.util.INumGenerator;
-import org.xdi.util.OxConstants;
-import org.xdi.util.StringHelper;
-import org.xdi.util.Util;
-import org.xdi.util.exception.InvalidConfigurationException;
-import org.xdi.util.io.FileUploadWrapper;
-import org.xdi.util.io.HTTPFileDownloader;
-import org.xdi.util.security.StringEncrypter.EncryptionException;
-import org.xdi.xml.GluuErrorHandler;
-import org.xdi.xml.XMLValidator;
+import org.gluu.util.INumGenerator;
+import org.gluu.util.OxConstants;
+import org.gluu.util.StringHelper;
+import org.gluu.util.Util;
+import org.gluu.util.exception.InvalidConfigurationException;
+import org.gluu.util.io.FileUploadWrapper;
+import org.gluu.util.io.HTTPFileDownloader;
+import org.gluu.util.security.StringEncrypter.EncryptionException;
+import org.gluu.xml.GluuErrorHandler;
+import org.gluu.xml.XMLValidator;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -88,20 +85,13 @@ import com.unboundid.ldap.sdk.schema.AttributeTypeDefinition;
 public class Shibboleth3ConfService implements Serializable {
 
 	private static final long serialVersionUID = 6752452480800274694L;
-    
-	private static final String SHIB3_IDP = "shibboleth-idp";
-	private static final String SHIB3_SP = "sp";
-
 	private static final String SHIB3_IDP_CONF_FOLDER = "conf";
 	public static final String SHIB3_IDP_METADATA_FOLDER = "metadata";
-        private static final String SHIB3_IDP_METADATA_CREDENTIALS_FOLDER = SHIB3_IDP_METADATA_FOLDER + File.separator + "credentials";
-
 	private static final String SHIB3_IDP_METADATA_PROVIDERS_FILE = "metadata-providers.xml";
 	private static final String SHIB3_IDP_ATTRIBUTE_FILTER_FILE = "attribute-filter.xml";
 	private static final String SHIB3_IDP_ATTRIBUTE_RESOLVER_FILE = "attribute-resolver.xml";
 	private static final String SHIB3_IDP_RELYING_PARTY_FILE = "relying-party.xml";
-	// private static final String SHIB3_IDP_PROFILE_HADLER = "handler.xml";
-        private static final String SHIB3_IDP_CAS_PROTOCOL_FILE = "cas-protocol.xml";
+	private static final String SHIB3_IDP_CAS_PROTOCOL_FILE = "cas-protocol.xml";
 	public static final String SHIB3_IDP_IDP_METADATA_FILE = "idp-metadata.xml";
 	public static final String SHIB3_IDP_SP_METADATA_FILE = "sp-metadata.xml";
 	public static final String SHIB3_SP_ATTRIBUTE_MAP_FILE = "attribute-map.xml";
@@ -111,14 +101,8 @@ public class Shibboleth3ConfService implements Serializable {
 	private static final String SHIB3_SAML_NAMEID_FILE = "saml-nameid.xml";
 
 	private static final String SHIB3_SP_METADATA_FILE_PATTERN = "%s-sp-metadata.xml";
-	// private static final String SHIB3_IDP_METADATA_FILE_PATTERN = "%s-idp-metadata.xml";
-
 	public static final String PUBLIC_CERTIFICATE_START_LINE = "-----BEGIN CERTIFICATE-----";
 	public static final String PUBLIC_CERTIFICATE_END_LINE = "-----END CERTIFICATE-----";
-	
-	// public static final String PRIVATE_KEY_START_LINE = "-----BEGIN RSA PRIVATE KEY-----";
-	// public static final String PRIVATE_KEY_END_LINE = "-----END RSA PRIVATE KEY-----";
-	
 	public static final String SHIB3_IDP_PROPERTIES_FILE = "idp.properties";
 	private static final String SHIB3_IDP_LOGIN_CONFIG_FILE = "login.config";
 
@@ -141,16 +125,16 @@ public class Shibboleth3ConfService implements Serializable {
 
 	@Inject
 	private FilterService filterService;
-	
+
 	@Inject
-	private ApplianceService applianceService;
+	private ConfigurationService configurationService;
 
 	@Inject
 	private ConfigurationFactory configurationFactory;
 
 	@Inject
 	private AppConfiguration appConfiguration;
-	
+
 	@Inject
 	private EncryptionService encryptionService;
 
@@ -162,8 +146,9 @@ public class Shibboleth3ConfService implements Serializable {
 
 	@Inject
 	private OrganizationService organizationService;
-	
-	@Inject @Named("casService")
+
+	@Inject
+	@Named("casService")
 	private CASService casService;
 
 	@Inject
@@ -183,8 +168,8 @@ public class Shibboleth3ConfService implements Serializable {
 			throw new InvalidConfigurationException("Failed to update configuration due to undefined IDP root folder");
 		}
 
-		String idpConfFolder      = getIdpConfDir();
-		String idpMetadataFolder  = getIdpMetadataDir();
+		String idpConfFolder = getIdpConfDir();
+		String idpMetadataFolder = getIdpMetadataDir();
 
 		// Prepare data for files
 		initAttributes(trustRelationships);
@@ -193,39 +178,45 @@ public class Shibboleth3ConfService implements Serializable {
 		HashMap<String, Object> casParams = initCASParamMap();
 		HashMap<String, Object> attrResolverParams = initAttributeResolverParamMap();
 
-		boolean result = (trustParams != null) && (attrParams != null) && (casParams != null) && (attrResolverParams != null);
+		boolean result = (trustParams != null) && (attrParams != null) && (casParams != null)
+				&& (attrResolverParams != null);
 		if (!result) {
-                        log.error(">>>>>>>>>> Shibboleth3ConfService.generateConfigurationFiles() - params preparation failed, break files generation");
+			log.error(
+					">>>>>>>>>> Shibboleth3ConfService.generateConfigurationFiles() - params preparation failed, break files generation");
 			return result;
 		}
-		
 
-		VelocityContext context = prepareVelocityContext(trustParams, attrParams, casParams, attrResolverParams, idpMetadataFolder);
+		VelocityContext context = prepareVelocityContext(trustParams, attrParams, casParams, attrResolverParams,
+				idpMetadataFolder);
 
 		// Generate metadata-providers.xml
 		String metadataProviders = templateService.generateConfFile(SHIB3_IDP_METADATA_PROVIDERS_FILE, context);
 		// Generate attribute-resolver.xml
 		String attributeResolver = templateService.generateConfFile(SHIB3_IDP_ATTRIBUTE_RESOLVER_FILE, context);
-		
+
 		// Generate attribute-filter.xml
 		String attributeFilter = templateService.generateConfFile(SHIB3_IDP_ATTRIBUTE_FILTER_FILE, context);
 		// Generate relying-party.xml
 		String relyingParty = templateService.generateConfFile(SHIB3_IDP_RELYING_PARTY_FILE, context);
-                // Generate cas-protocol.xml
+		// Generate cas-protocol.xml
 		String casProtocol = templateService.generateConfFile(SHIB3_IDP_CAS_PROTOCOL_FILE, context);
 		// Generate shibboleth2.xml
 		String shibConfig = templateService.generateConfFile(SHIB3_SP_SHIBBOLETH2_FILE, context);
 		// Generate saml-nameid.xml
 		String samlnamedConfig = templateService.generateConfFile(SHIB3_SAML_NAMEID_FILE, context);
 		// Generate handler.xml
-		// String profileHandler = templateService.generateConfFile(SHIB3_IDP_PROFILE_HADLER, context);
+		// String profileHandler =
+		// templateService.generateConfFile(SHIB3_IDP_PROFILE_HADLER, context);
 
 		// Generate attribute-map.xml
 		// String attributeMap =
 		// templateService.generateConfFile(SHIB2_SP_ATTRIBUTE_MAP, context);
 
-		// result = (metadataProviders != null) && (attributeFilter != null) && (attributeResolver != null) && (relyingParty != null) && (shibConfig != null)	&& (profileHandler != null);
-		result = (metadataProviders != null) && (attributeFilter != null) && (attributeResolver != null) && (relyingParty != null)  && (casProtocol != null) && (shibConfig != null);
+		// result = (metadataProviders != null) && (attributeFilter != null) &&
+		// (attributeResolver != null) && (relyingParty != null) && (shibConfig != null)
+		// && (profileHandler != null);
+		result = (metadataProviders != null) && (attributeFilter != null) && (attributeResolver != null)
+				&& (relyingParty != null) && (casProtocol != null) && (shibConfig != null);
 
 		// Write metadata-providers.xml
 		result &= templateService.writeConfFile(idpConfFolder + SHIB3_IDP_METADATA_PROVIDERS_FILE, metadataProviders);
@@ -241,9 +232,10 @@ public class Shibboleth3ConfService implements Serializable {
 		result &= templateService.writeConfFile(getSpShibboleth3FilePath(), shibConfig);
 		// Write saml-nameid.xml
 		result &= templateService.writeConfFile(idpConfFolder + SHIB3_SAML_NAMEID_FILE, samlnamedConfig);
-		
+
 		// Write handler.xml
-		// result &= templateService.writeConfFile(idpConfFolder + SHIB3_IDP_PROFILE_HADLER, profileHandler);
+		// result &= templateService.writeConfFile(idpConfFolder +
+		// SHIB3_IDP_PROFILE_HADLER, profileHandler);
 
 		// Write attribute-map.xml
 		// result &= templateService.writeConfFile(spConfFolder +
@@ -282,7 +274,8 @@ public class Shibboleth3ConfService implements Serializable {
 			}
 
 			// Resolve custom attributes by DNs
-			trustRelationship.setReleasedCustomAttributes(attributeService.getCustomAttributesByAttributeDNs(releasedAttributes, attributesByDNs));
+			trustRelationship.setReleasedCustomAttributes(
+					attributeService.getCustomAttributesByAttributeDNs(releasedAttributes, attributesByDNs));
 
 			// Set attribute meta-data
 			attributeService.setAttributeMetadata(trustRelationship.getReleasedCustomAttributes(), attributes);
@@ -322,7 +315,9 @@ public class Shibboleth3ConfService implements Serializable {
 		int id = 1;
 		for (GluuSAMLTrustRelationship trustRelationship : trustRelationships) {
 
-			boolean isPartOfFederation = !(trustRelationship.getSpMetaDataSourceType().equals(GluuMetadataSourceType.URI) || trustRelationship.getSpMetaDataSourceType().equals(GluuMetadataSourceType.FILE));
+			boolean isPartOfFederation = !(trustRelationship.getSpMetaDataSourceType()
+					.equals(GluuMetadataSourceType.URI)
+					|| trustRelationship.getSpMetaDataSourceType().equals(GluuMetadataSourceType.FILE));
 
 			if (!isPartOfFederation) {
 
@@ -335,7 +330,8 @@ public class Shibboleth3ConfService implements Serializable {
 				File metadataFile = new File(idpMetadataFolder + trustRelationship.getSpMetaDataFN());
 				List<String> entityIds = SAMLMetadataParser.getEntityIdFromMetadataFile(metadataFile);
 
-				// if for some reason metadata is corrupted or missing - mark trust relationship INACTIVE
+				// if for some reason metadata is corrupted or missing - mark trust relationship
+				// INACTIVE
 				// user will be able to fix this in UI
 				if (entityIds == null) {
 					trustRelationship.setStatus(GluuStatus.INACTIVE);
@@ -353,8 +349,8 @@ public class Shibboleth3ConfService implements Serializable {
 
 					trustEngine.put("id", "Trust" + StringHelper.removePunctuation(trustRelationship.getInum()));
 
-					trustEngine.put("certPath", getIdpMetadataDir() + "credentials" + File.separator
-							+ trustRelationship.getMetadataFilters().get("signatureValidation").getFilterCertFileName());
+					trustEngine.put("certPath", getIdpMetadataDir() + "credentials" + File.separator + trustRelationship
+							.getMetadataFilters().get("signatureValidation").getFilterCertFileName());
 
 					trustEngines.add(trustEngine);
 				}
@@ -378,7 +374,8 @@ public class Shibboleth3ConfService implements Serializable {
 							continue;
 						}
 
-						if (xmlDocument.getFirstChild().getAttributes().getNamedItem("xsi:type").getNodeValue().equals(FilterService.ENTITY_ROLE_WHITE_LIST_TYPE)) {
+						if (xmlDocument.getFirstChild().getAttributes().getNamedItem("xsi:type").getNodeValue()
+								.equals(FilterService.ENTITY_ROLE_WHITE_LIST_TYPE)) {
 							entityRoleWhiteList = filterXML;
 							continue;
 						}
@@ -394,7 +391,7 @@ public class Shibboleth3ConfService implements Serializable {
 				}
 
 			} else {
-		                initProfileConfiguration(trustRelationship);
+				initProfileConfiguration(trustRelationship);
 
 				String federationInum = trustRelationship.getGluuContainerFederation();
 
@@ -428,14 +425,16 @@ public class Shibboleth3ConfService implements Serializable {
 		return trustParams;
 	}
 
-    protected void initProfileConfiguration(GluuSAMLTrustRelationship trustRelationship) throws FactoryConfigurationError {
-        try {
-            filterService.parseFilters(trustRelationship);
-            profileConfigurationService.parseProfileConfigurations(trustRelationship);
-        } catch (Exception e) {
-            log.error("Failed to parse stored metadataFilter configuration for trustRelationship " + trustRelationship.getDn(), e);
-        }
-    }
+	protected void initProfileConfiguration(GluuSAMLTrustRelationship trustRelationship)
+			throws FactoryConfigurationError {
+		try {
+			filterService.parseFilters(trustRelationship);
+			profileConfigurationService.parseProfileConfigurations(trustRelationship);
+		} catch (Exception e) {
+			log.error("Failed to parse stored metadataFilter configuration for trustRelationship "
+					+ trustRelationship.getDn(), e);
+		}
+	}
 
 	private HashMap<String, Object> initAttributeParamMap(List<GluuSAMLTrustRelationship> trustRelationships) {
 
@@ -461,7 +460,8 @@ public class Shibboleth3ConfService implements Serializable {
 		}
 
 		SchemaEntry schemaEntry = shemaService.getSchema();
-		List<AttributeTypeDefinition> attributeTypes = shemaService.getAttributeTypeDefinitions(schemaEntry, attributeNames);
+		List<AttributeTypeDefinition> attributeTypes = shemaService.getAttributeTypeDefinitions(schemaEntry,
+				attributeNames);
 
 		Map<String, String> attributeSAML1Strings = new HashMap<String, String>();
 		Map<String, String> attributeSAML2Strings = new HashMap<String, String>();
@@ -470,7 +470,8 @@ public class Shibboleth3ConfService implements Serializable {
 
 			String attributeName = metadata.getName();
 
-			AttributeTypeDefinition attributeTypeDefinition = shemaService.getAttributeTypeDefinition(attributeTypes, attributeName);
+			AttributeTypeDefinition attributeTypeDefinition = shemaService.getAttributeTypeDefinition(attributeTypes,
+					attributeName);
 			if (attributeTypeDefinition == null) {
 				log.error("Failed to get OID for attribute name {}", attributeName);
 				return null;
@@ -482,7 +483,9 @@ public class Shibboleth3ConfService implements Serializable {
 			String saml1String = metadata.getSaml1Uri();
 			if (StringHelper.isEmpty(saml1String)) {
 
-				boolean standard = metadata.isCustom() || StringHelper.isEmpty(metadata.getUrn()) || (!StringHelper.isEmpty(metadata.getUrn()) && metadata.getUrn().startsWith("urn:gluu:dir:attribute-def:"));
+				boolean standard = metadata.isCustom() || StringHelper.isEmpty(metadata.getUrn())
+						|| (!StringHelper.isEmpty(metadata.getUrn())
+								&& metadata.getUrn().startsWith("urn:gluu:dir:attribute-def:"));
 				saml1String = String.format("urn:%s:dir:attribute-def:%s", standard ? "gluu" : "mace", attributeName);
 			}
 
@@ -502,52 +505,54 @@ public class Shibboleth3ConfService implements Serializable {
 
 		return attrParams;
 	}
-        
-    private HashMap<String, Object> initCASParamMap() {
+
+	private HashMap<String, Object> initCASParamMap() {
 		HashMap<String, Object> casParams = new HashMap<String, Object>();
-                try {
-                    ShibbolethCASProtocolConfiguration configuration = casService.loadCASConfiguration();
-                    if (configuration != null) {
-                        log.info("add ShibbolethCASProtocolConfiguration parameters");
-                        casParams.put("enabled", configuration.isEnabled());
-                        casParams.put("extended", configuration.isExtended());
-                        casParams.put("enableToProxyPatterns", configuration.isEnableToProxyPatterns());
-                        casParams.put("authorizedToProxyPattern", configuration.getAuthorizedToProxyPattern());
-                        casParams.put("unauthorizedToProxyPattern", configuration.getAuthorizedToProxyPattern());
-                    }
-                } catch (Exception e) {
-                    log.error("initCASParamMap() exception", e);
-                }
+		try {
+			ShibbolethCASProtocolConfiguration configuration = casService.loadCASConfiguration();
+			if (configuration != null) {
+				log.info("add ShibbolethCASProtocolConfiguration parameters");
+				casParams.put("enabled", configuration.isEnabled());
+				casParams.put("extended", configuration.isExtended());
+				casParams.put("enableToProxyPatterns", configuration.isEnableToProxyPatterns());
+				casParams.put("authorizedToProxyPattern", configuration.getAuthorizedToProxyPattern());
+				casParams.put("unauthorizedToProxyPattern", configuration.getAuthorizedToProxyPattern());
+			}
+		} catch (Exception e) {
+			log.error("initCASParamMap() exception", e);
+		}
 		return casParams;
-        }
-        
-    public HashMap<String, Object> initAttributeResolverParamMap() {
-    	HashMap<String, Object> attributeResolverParams = new HashMap<String, Object>();
+	}
 
-    	List<NameIdConfig> nameIdConfigs = new ArrayList<NameIdConfig>();
-        Map<String, GluuAttribute> nameIdAttributes = new HashMap<String, GluuAttribute>();
+	public HashMap<String, Object> initAttributeResolverParamMap() {
+		HashMap<String, Object> attributeResolverParams = new HashMap<String, Object>();
 
-    	final LdapOxTrustConfiguration conf = configurationFactory.loadConfigurationFromLdap();
+		List<NameIdConfig> nameIdConfigs = new ArrayList<NameIdConfig>();
+		Map<String, GluuAttribute> nameIdAttributes = new HashMap<String, GluuAttribute>();
+
+		final LdapOxTrustConfiguration conf = configurationFactory.loadConfigurationFromLdap();
 		AttributeResolverConfiguration attributeResolverConfiguration = conf.getAttributeResolverConfig();
 		if ((attributeResolverConfiguration != null) && (attributeResolverConfiguration.getNameIdConfigs() != null)) {
-		    for (NameIdConfig nameIdConfig : attributeResolverConfiguration.getNameIdConfigs()) {
-	            if (StringHelper.isNotEmpty(nameIdConfig.getSourceAttribute()) && nameIdConfig.isEnabled()) {
-	                String attributeName = nameIdConfig.getSourceAttribute();
-	                GluuAttribute attribute = attributeService.getAttributeByName(attributeName);
-	                
-                    nameIdConfigs.add(nameIdConfig);
-                    nameIdAttributes.put(attributeName, attribute);
-	            }
-		    }
+			for (NameIdConfig nameIdConfig : attributeResolverConfiguration.getNameIdConfigs()) {
+				if (StringHelper.isNotEmpty(nameIdConfig.getSourceAttribute()) && nameIdConfig.isEnabled()) {
+					String attributeName = nameIdConfig.getSourceAttribute();
+					GluuAttribute attribute = attributeService.getAttributeByName(attributeName);
+
+					nameIdConfigs.add(nameIdConfig);
+					nameIdAttributes.put(attributeName, attribute);
+				}
+			}
 		}
 
-        attributeResolverParams.put("configs", nameIdConfigs);
-        attributeResolverParams.put("attributes", nameIdAttributes);
+		attributeResolverParams.put("configs", nameIdConfigs);
+		attributeResolverParams.put("attributes", nameIdAttributes);
 
-        return attributeResolverParams;
-    }
+		return attributeResolverParams;
+	}
 
-	private VelocityContext prepareVelocityContext(HashMap<String, Object> trustParams, HashMap<String, Object> attrParams, HashMap<String, Object> casParams, HashMap<String, Object> attrResolverParams, String idpMetadataFolder) {
+	private VelocityContext prepareVelocityContext(HashMap<String, Object> trustParams,
+			HashMap<String, Object> attrParams, HashMap<String, Object> casParams,
+			HashMap<String, Object> attrResolverParams, String idpMetadataFolder) {
 
 		VelocityContext context = new VelocityContext();
 
@@ -558,8 +563,8 @@ public class Shibboleth3ConfService implements Serializable {
 		context.put("casParams", casParams);
 		context.put("resovlerParams", attrResolverParams);
 		context.put("medataFolder", idpMetadataFolder);
-		context.put("applianceInum", StringHelper.removePunctuation(applianceService.getApplianceInum()));
-		context.put("orgInum", StringHelper.removePunctuation(organizationService.getOrganizationInum()));
+		context.put("configurationInum", StringHelper.removePunctuation(configurationService.getConfigurationInum()));
+		context.put("orgInum", StringHelper.removePunctuation("gluu"));
 		context.put("orgSupportEmail", appConfiguration.getOrgSupportEmail());
 
 		String idpUrl = appConfiguration.getIdpUrl();
@@ -568,29 +573,29 @@ public class Shibboleth3ConfService implements Serializable {
 		String idpHost = idpUrl.replaceAll(":[0-9]*$", "");
 		context.put("idpHost", idpHost);
 
-		String spUrl = appConfiguration.getApplianceUrl();
+		String spUrl = appConfiguration.getApplicationUrl();
 		context.put("spUrl", spUrl);
 		String spHost = spUrl.replaceAll(":[0-9]*$", "").replaceAll("^.*?//", "");
 		context.put("spHost", spHost);
-		String gluuSPInum = applianceService.getAppliance().getGluuSPTR();
+		String gluuSPInum = configurationService.getConfiguration().getGluuSPTR();
 		String gluuSPEntityId = trustService.getRelationshipByInum(gluuSPInum).getEntityId();
 		context.put("gluuSPEntityId", gluuSPEntityId);
 		String regx = "\\s*(=>|,|\\s)\\s*";// white spaces or comma
 
-		String ldapUrls[] =  appConfiguration.getIdpLdapServer().split(regx);
+		String ldapUrls[] = appConfiguration.getIdpLdapServer().split(regx);
 		String ldapUrl = "";
 		if (ldapUrls != null) {
 
 			for (String ldapServer : ldapUrls) {
-				if(ldapUrl.length()>1)
-					ldapUrl = ldapUrl+" ";
+				if (ldapUrl.length() > 1)
+					ldapUrl = ldapUrl + " ";
 				ldapUrl = ldapUrl + appConfiguration.getIdpLdapProtocol() + "://" + ldapServer;
 			}
 
 		} else {
 			ldapUrl = appConfiguration.getIdpLdapProtocol() + "://" + appConfiguration.getIdpLdapServer();
 		}
-		
+
 		context.put("ldapUrl", ldapUrl);
 		context.put("bindDN", appConfiguration.getIdpBindDn());
 
@@ -615,149 +620,74 @@ public class Shibboleth3ConfService implements Serializable {
 	}
 
 	public String getIdpMetadataFilePath() {
-
 		String filePath = getIdpMetadataDir() + SHIB3_IDP_IDP_METADATA_FILE;
-
 		return filePath;
-
-		/*
-		if (appConfiguration.getShibboleth3IdpRootDir() == null) {
-			throw new InvalidConfigurationException("Failed to find IDP metadata file due to undefined IDP root folder");
-		}
-
-		String idpConfFolder = appConfiguration.getShibboleth3IdpRootDir() + File.separator + SHIB3_IDP_CONF_FOLDER + File.separator;
-
-		File relyingPartyFile = new File(idpConfFolder + SHIB3_IDP_RELYING_PARTY_FILE);
-		if (!relyingPartyFile.exists()) {
-			log.error("Failed to find IDP metadata file name because relaying party file '{}' doesn't exist", relyingPartyFile.getAbsolutePath());
-			return null;
-		}
-
-		InputStream is = null;
-		InputStreamReader isr = null;
-		Document xmlDocument = null;
-		try {
-			is = FileUtils.openInputStream(relyingPartyFile);
-			isr = new InputStreamReader(is, "UTF-8");
-			try {
-				xmlDocument = xmlService.getXmlDocument(new InputSource(isr));
-			} catch (Exception ex) {
-				log.error("Failed to parse relying party file '{}'", relyingPartyFile.getAbsolutePath(), ex);
-				ex.printStackTrace();
-			}
-		} catch (IOException ex) {
-			log.error("Failed to read relying party file '{}'", relyingPartyFile.getAbsolutePath(), ex);
-			ex.printStackTrace();
-		} finally {
-			IOUtils.closeQuietly(isr);
-			IOUtils.closeQuietly(is);
-		}
-
-		if (xmlDocument == null) {
-			return null;
-		}
-
-		XPathFactory factory = XPathFactory.newInstance();
-		XPath xPath = factory.newXPath();
-
-		String filePath = null;
-		try {
-			filePath = xPath.compile("/RelyingPartyGroup/MetadataProvider[@id='ShibbolethMetadata']/MetadataProvider[@id='IdPMD']/MetadataResource/@file").evaluate(xmlDocument);
-		} catch (XPathExpressionException ex) {
-			log.error("Failed to find IDP metadata file in relaying party file '{}'", relyingPartyFile.getAbsolutePath(), ex);
-			ex.printStackTrace();
-		}
-
-		if (filePath == null) {
-			log.error("Failed to find IDP metadata file in relaying party file '{}'", relyingPartyFile.getAbsolutePath());
-		}
-
-		return filePath;
-		*/
 	}
-        
-        public String getIdpConfDir() {
-                return appConfiguration.getShibboleth3IdpRootDir() + File.separator + SHIB3_IDP_CONF_FOLDER + File.separator;
-        }
-        
-        public String getIdpMetadataDir() {
-                return appConfiguration.getShibboleth3IdpRootDir() + File.separator + SHIB3_IDP_METADATA_FOLDER + File.separator;
-        }
-        
-        public String getIdpMetadataTempDir(){
-        	return appConfiguration.getShibboleth3IdpRootDir() + File.separator + Shibboleth3ConfService.SHIB3_IDP_TEMPMETADATA_FOLDER + File.separator;    	
-        }
-        
-        public String getIdpMetadataCredentialsDir() {
-                return appConfiguration.getShibboleth3IdpRootDir() + File.separator + SHIB3_IDP_METADATA_CREDENTIALS_FOLDER + File.separator;
-        }
+
+	public String getIdpConfDir() {
+		return appConfiguration.getShibboleth3IdpRootDir() + File.separator + SHIB3_IDP_CONF_FOLDER + File.separator;
+	}
+
+	public String getIdpMetadataDir() {
+		return appConfiguration.getShibboleth3IdpRootDir() + File.separator + SHIB3_IDP_METADATA_FOLDER
+				+ File.separator;
+	}
+
+	public String getIdpMetadataTempDir() {
+		return appConfiguration.getShibboleth3IdpRootDir() + File.separator
+				+ Shibboleth3ConfService.SHIB3_IDP_TEMPMETADATA_FOLDER + File.separator;
+	}
 
 	public String getSpMetadataFilePath(String spMetaDataFN) {
 
 		if (appConfiguration.getShibboleth3IdpRootDir() == null) {
-			throw new InvalidConfigurationException("Failed to return SP meta-data file due to undefined IDP root folder");
+			throw new InvalidConfigurationException(
+					"Failed to return SP meta-data file due to undefined IDP root folder");
 		}
 
 		String idpMetadataFolder = getIdpMetadataDir();
 		return idpMetadataFolder + spMetaDataFN;
 	}
 
-
 	public String getSpNewMetadataFileName(GluuSAMLTrustRelationship trustRel) {
-	    return getSpNewMetadataFileName(trustRel.getInum());
+		return getSpNewMetadataFileName(trustRel.getInum());
 	}
-	
-    public String getSpNewMetadataFileName(String inum) {
 
-        String relationshipInum = StringHelper.removePunctuation(inum);
-        return String.format(SHIB3_SP_METADATA_FILE_PATTERN, relationshipInum);
-    }
+	public String getSpNewMetadataFileName(String inum) {
 
-    public String saveSpMetadataFile(String spMetadataFileName, byte[] data) {
-    	ByteArrayInputStream bis = new ByteArrayInputStream(data);
-    	try {
-    		return saveSpMetadataFile(spMetadataFileName, bis);
-    	} finally {
-    		IOUtils.closeQuietly(bis);
-    	}
-    }
+		String relationshipInum = StringHelper.removePunctuation(inum);
+		return String.format(SHIB3_SP_METADATA_FILE_PATTERN, relationshipInum);
+	}
+
+	public String saveSpMetadataFile(String spMetadataFileName, byte[] data) {
+		try (ByteArrayInputStream bis = new ByteArrayInputStream(data)) {
+			return saveSpMetadataFile(spMetadataFileName, bis);
+		} catch (IOException e) {
+			throw new InvalidConfigurationException(e);
+		}
+	}
 
 	public String saveSpMetadataFile(String spMetadataFileName, InputStream input) {
-
 		if (appConfiguration.getShibboleth3IdpRootDir() == null) {
-
-			IOUtils.closeQuietly(input);
 			String errorMessage = "Failed to save SP meta-data file due to undefined IDP root folder";
 			log.error(errorMessage);
 			throw new InvalidConfigurationException(errorMessage);
 		}
-		
-		//String idpMetadataFolder = getIdpMetadataDir();
 		String idpMetadataTempFolder = getIdpMetadataTempDir();
 		String tempFileName = getTempMetadataFilename(idpMetadataTempFolder, spMetadataFileName);
-		
-		//temp file location for metadatavalidator thread process .
 		File spMetadataFile = new File(idpMetadataTempFolder + tempFileName);
-
-		FileOutputStream os = null;
-		try {
-			os = FileUtils.openOutputStream(spMetadataFile);
+		try (FileOutputStream os = FileUtils.openOutputStream(spMetadataFile);) {
 			IOUtils.copy(input, os);
 			os.flush();
 		} catch (IOException ex) {
 			log.error("Failed to write SP meta-data file '{}'", spMetadataFile, ex);
 			ex.printStackTrace();
 			return null;
-		} finally {
-			IOUtils.closeQuietly(os);
-			IOUtils.closeQuietly(input);
 		}
-
 		return tempFileName;
 	}
 
 	private String getTempMetadataFilename(String idpMetadataFolder, String fileName) {
-
 		synchronized (getClass()) {
 			File possibleTemp = new File(fileName);
 			do {
@@ -786,7 +716,7 @@ public class Shibboleth3ConfService implements Serializable {
 			byte[] spMetadataFileContentBytes = spMetadataFileContent.getBytes("UTF-8");
 			is = new ByteArrayInputStream(spMetadataFileContentBytes);
 		} catch (UnsupportedEncodingException ex) {
-                        log.error("saveSpMetadataFile exception", ex);
+			log.error("saveSpMetadataFile exception", ex);
 			ex.printStackTrace();
 			return null;
 		}
@@ -816,26 +746,28 @@ public class Shibboleth3ConfService implements Serializable {
 	public boolean generateSpMetadataFile(GluuSAMLTrustRelationship trustRelationship, String certificate) {
 
 		if (appConfiguration.getShibboleth3IdpRootDir() == null) {
-			throw new InvalidConfigurationException("Failed to generate SP meta-data file due to undefined IDP root folder");
+			throw new InvalidConfigurationException(
+					"Failed to generate SP meta-data file due to undefined IDP root folder");
 		}
 
 		String idpMetadataFolder = getIdpMetadataDir();
 
 		// Generate sp-metadata.xml meta-data file
-		String spMetadataFileContent = generateSpMetadataFileContent( trustRelationship,  certificate);
+		String spMetadataFileContent = generateSpMetadataFileContent(trustRelationship, certificate);
 		if (StringHelper.isEmpty(spMetadataFileContent)) {
 			return false;
 		}
 
 		if (StringHelper.isEmpty(trustRelationship.getUrl())) {
-		    log.error("Trust relationship URL is empty");
-            return false;
-        }
+			log.error("Trust relationship URL is empty");
+			return false;
+		}
 
-		return templateService.writeConfFile(idpMetadataFolder + trustRelationship.getSpMetaDataFN(), spMetadataFileContent);
+		return templateService.writeConfFile(idpMetadataFolder + trustRelationship.getSpMetaDataFN(),
+				spMetadataFileContent);
 	}
-	
-	public String generateSpMetadataFileContent(GluuSAMLTrustRelationship trustRelationship, String certificate){
+
+	public String generateSpMetadataFileContent(GluuSAMLTrustRelationship trustRelationship, String certificate) {
 
 		VelocityContext context = new VelocityContext();
 		context.put("certificate", certificate);
@@ -851,7 +783,8 @@ public class Shibboleth3ConfService implements Serializable {
 	public void removeSpMetadataFile(String spMetadataFileName) {
 
 		if (appConfiguration.getShibboleth3IdpRootDir() == null) {
-			throw new InvalidConfigurationException("Failed to remove SP meta-data file due to undefined IDP root folder");
+			throw new InvalidConfigurationException(
+					"Failed to remove SP meta-data file due to undefined IDP root folder");
 		}
 
 		String idpMetadataFolder = getIdpMetadataDir();
@@ -865,7 +798,8 @@ public class Shibboleth3ConfService implements Serializable {
 	public boolean isCorrectSpMetadataFile(String spMetadataFileName) {
 
 		if (appConfiguration.getShibboleth3IdpRootDir() == null) {
-			throw new InvalidConfigurationException("Failed to check SP meta-data file due to undefined IDP root folder");
+			throw new InvalidConfigurationException(
+					"Failed to check SP meta-data file due to undefined IDP root folder");
 		}
 
 		String idpMetadataFolder = getIdpMetadataDir();
@@ -899,12 +833,10 @@ public class Shibboleth3ConfService implements Serializable {
 		if (cert == null) {
 			return null;
 		}
-
-		ByteArrayInputStream bis = new ByteArrayInputStream(cert);
-		try {
+		try (ByteArrayInputStream bis = new ByteArrayInputStream(cert)) {
 			return getPublicCertificate(bis);
-		} finally {
-			IOUtils.closeQuietly(bis);
+		} catch (IOException e) {
+			return null;
 		}
 	}
 
@@ -942,67 +874,15 @@ public class Shibboleth3ConfService implements Serializable {
 		return sb.toString();
 	}
 
-	public List<SubversionFile> getConfigurationFilesForSubversion(List<GluuSAMLTrustRelationship> trustRelationships) {
-
-		if (appConfiguration.getShibboleth3IdpRootDir() == null) {
-			throw new InvalidConfigurationException("Failed to create SubversionFile file due to undefined IDP root folder");
-		}
-
-		String idpConfFolder = getIdpConfDir();
-		String idpMetadataFolder = getIdpMetadataDir();
-		String idpMetadataCredentialsFolder = appConfiguration.getShibboleth3IdpRootDir() + File.separator + SHIB3_IDP_METADATA_CREDENTIALS_FOLDER	+ File.separator;
-		String spConfFolder = appConfiguration.getShibboleth3SpConfDir() + File.separator;
-
-		List<SubversionFile> subversionFiles = new ArrayList<SubversionFile>();
-		subversionFiles.add(new SubversionFile(SHIB3_IDP, idpConfFolder + SHIB3_IDP_ATTRIBUTE_RESOLVER_FILE));
-		subversionFiles.add(new SubversionFile(SHIB3_IDP, idpConfFolder + SHIB3_IDP_ATTRIBUTE_FILTER_FILE));
-		subversionFiles.add(new SubversionFile(SHIB3_IDP, idpConfFolder + SHIB3_IDP_RELYING_PARTY_FILE));
-		subversionFiles.add(new SubversionFile(SHIB3_SP, spConfFolder + SHIB3_SP_ATTRIBUTE_MAP_FILE));
-		subversionFiles.add(new SubversionFile(SHIB3_SP, spConfFolder + SHIB3_SP_SHIBBOLETH2_FILE));
-
-		for (GluuSAMLTrustRelationship trustRelationship : trustRelationships) {
-			if (trustService.getTrustContainerFederation(trustRelationship)  == null) {
-				subversionFiles.add(new SubversionFile(SHIB3_IDP + File.separator + SHIB3_IDP_METADATA_FOLDER, idpMetadataFolder
-						+ trustRelationship.getSpMetaDataFN()));
-			}
-			if (trustRelationship.getMetadataFilters().containsKey("signatureValidation")) {
-				subversionFiles.add(new SubversionFile(SHIB3_IDP + File.separator + SHIB3_IDP_METADATA_CREDENTIALS_FOLDER,
-						idpMetadataCredentialsFolder + StringHelper.removePunctuation(trustRelationship.getInum())));
-			}
-		}
-
-		return subversionFiles;
-	}
-
-	public SubversionFile getConfigurationFileForSubversion(GluuSAMLTrustRelationship trustRelationship) {
-
-		if (trustRelationship.getSpMetaDataFN() == null) {
-			return null;
-		}
-
-		if (appConfiguration.getShibboleth3IdpRootDir() == null) {
-			throw new InvalidConfigurationException("Failed to create SubversionFile file due to undefined IDP root folder");
-		}
-
-		String idpMetadataFolder = getIdpMetadataDir();
-
-		return new SubversionFile(SHIB3_IDP + File.separator + SHIB3_IDP_METADATA_FOLDER, idpMetadataFolder	+ trustRelationship.getSpMetaDataFN());
-	}
-
 	public boolean isFederationMetadata(String spMetaDataFN) {
-
 		if (spMetaDataFN == null) {
 			return false;
 		}
-
 		File spMetaDataFile = new File(getSpMetadataFilePath(spMetaDataFN));
-		InputStream is = null;
-		InputStreamReader isr = null;
 		Document xmlDocument = null;
 
-		try {
-			is = FileUtils.openInputStream(spMetaDataFile);
-			isr = new InputStreamReader(is, "UTF-8");
+		try (InputStream is = FileUtils.openInputStream(spMetaDataFile);
+				InputStreamReader isr = new InputStreamReader(is, "UTF-8")) {
 			try {
 				xmlDocument = xmlService.getXmlDocument(new InputSource(isr));
 			} catch (Exception ex) {
@@ -1012,9 +892,6 @@ public class Shibboleth3ConfService implements Serializable {
 		} catch (IOException ex) {
 			log.error("Failed to read metadata file '{}'", spMetaDataFile.getAbsolutePath(), ex);
 			ex.printStackTrace();
-		} finally {
-			IOUtils.closeQuietly(isr);
-			IOUtils.closeQuietly(is);
 		}
 
 		if (xmlDocument == null) {
@@ -1028,7 +905,8 @@ public class Shibboleth3ConfService implements Serializable {
 		try {
 			federationTag = xPath.compile("count(//*[local-name() = 'EntitiesDescriptor'])").evaluate(xmlDocument);
 		} catch (XPathExpressionException ex) {
-			log.error("Failed to find IDP metadata file in relaying party file '{}'", spMetaDataFile.getAbsolutePath(), ex);
+			log.error("Failed to find IDP metadata file in relaying party file '{}'", spMetaDataFile.getAbsolutePath(),
+					ex);
 			ex.printStackTrace();
 		}
 
@@ -1045,14 +923,14 @@ public class Shibboleth3ConfService implements Serializable {
 
 		// Prepare data for files
 		VelocityContext context = new VelocityContext();
-		String regx = "\\s*(=>|,|\\s)\\s*";// white spaces or comma		
-		String ldapUrls[] =  appConfiguration.getIdpLdapServer().split(regx);
+		String regx = "\\s*(=>|,|\\s)\\s*";// white spaces or comma
+		String ldapUrls[] = appConfiguration.getIdpLdapServer().split(regx);
 		String ldapUrl = "";
 
-		if(ldapUrls != null) {
+		if (ldapUrls != null) {
 
 			for (String ldapServer : ldapUrls) {
-				if(ldapUrl.length()>1) {
+				if (ldapUrl.length() > 1) {
 					ldapUrl = ldapUrl + " ";
 				}
 				ldapUrl = ldapUrl + appConfiguration.getIdpLdapProtocol() + "://" + ldapServer;
@@ -1090,135 +968,11 @@ public class Shibboleth3ConfService implements Serializable {
 		return result;
 	}
 
-	public void removeUnusedMetadata() {
-
-		if (appConfiguration.getShibboleth3IdpRootDir() == null) {
-			throw new InvalidConfigurationException("Failed to update configuration due to undefined IDP root folder");
-		}
-
-		File metadataDir = new File(getIdpMetadataDir());
-
-		if (metadataDir.exists()) {
-
-			ArrayList<SubversionFile> obsoleteMetadata = new ArrayList<SubversionFile>();
-
-			for (File metadata : metadataDir.listFiles(new FileFilter() {
-                                @Override
-				public boolean accept(File pathname) {
-					return pathname.isFile();
-				}
-			})) {
-
-				if (metadata.getName().equals(SHIB3_IDP_IDP_METADATA_FILE) || trustRelationExists(metadata.getName())) {
-					continue;
-				}
-
-				obsoleteMetadata.add(new SubversionFile(SHIB3_IDP + File.separator + SHIB3_IDP_METADATA_FOLDER, metadata.getAbsolutePath()));
-			}
-
-			// SubversionService.instance().commitShibboleth3ConfigurationFiles(organizationService.getOrganization(), new ArrayList<SubversionFile>(), obsoleteMetadata, "Removed Metadata files that are no longer used");
-
-			for (SubversionFile file : obsoleteMetadata) {
-				new File(file.getLocalFile()).delete();
-			}
-		}
-	}
-
-	private boolean trustRelationExists(String metadataName) {
-
-		if (metadataName.equals(StringHelper.removePunctuation(appConfiguration.getOrgInum()) + "-idp-metadata.xml")) {
-			return true;
-		}
-
-		for (GluuSAMLTrustRelationship trust : trustService.getAllTrustRelationships()) {
-			if (metadataName.equals(trust.getSpMetaDataFN())) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	public void removeUnusedCredentials() {
-
-		if (appConfiguration.getShibboleth3IdpRootDir() == null) {
-			throw new InvalidConfigurationException("Failed to update configuration due to undefined IDP root folder");
-		}
-
-		File credentialsDir = new File(appConfiguration.getShibboleth3IdpRootDir() + File.separator + SHIB3_IDP_METADATA_CREDENTIALS_FOLDER);
-
-		if (credentialsDir.exists()) {
-
-			ArrayList<SubversionFile> obsoleteMetadata = new ArrayList<SubversionFile>();
-
-			for (File credential : credentialsDir.listFiles(new FileFilter() {
-                                @Override
-				public boolean accept(File pathname) {
-					return pathname.isFile();
-				}
-			})) {
-
-				if (filterExists(credential.getName()) || profileCofigurationExists(credential.getName())) {
-					continue;
-				}
-
-				obsoleteMetadata.add(new SubversionFile(SHIB3_IDP + File.separator + SHIB3_IDP_METADATA_CREDENTIALS_FOLDER, credential.getAbsolutePath()));
-			}
-
-			// SubversionService.instance().commitShibboleth3ConfigurationFiles(organizationService.getOrganization(), new ArrayList<SubversionFile>(), obsoleteMetadata, "Removed Credentials files that are no longer used");
-
-			for (SubversionFile file : obsoleteMetadata) {
-				new File(file.getLocalFile()).delete();
-			}
-		}
-	}
-
-	private boolean profileCofigurationExists(String credentialName) {
-
-		for (GluuSAMLTrustRelationship trust : trustService.getAllTrustRelationships()) {
-
-			if (credentialName.contains(StringHelper.removePunctuation(trust.getInum())) && !credentialName.equals(StringHelper.removePunctuation(trust.getInum()))) {
-
-				try {
-					profileConfigurationService.parseProfileConfigurations(trust);
-				} catch (Exception e) {
-                                        log.error("parseProfileConfigurations exception", e);
-					return false;
-				}
-
-				ProfileConfiguration profileConfiguration = trust.getProfileConfigurations().get(credentialName.replace(StringHelper.removePunctuation(trust.getInum()), ""));
-
-				if (profileConfiguration != null && credentialName.equals(profileConfiguration.getProfileConfigurationCertFileName())) {
-					return true;
-				}
-			}
-		}
-
-		return false;
-	}
-
-	private boolean filterExists(String credentialName) {
-
-		for (GluuSAMLTrustRelationship trust : trustService.getAllTrustRelationships()) {
-			if (credentialName.equals(StringHelper.removePunctuation(trust.getInum()))) {
-				try {
-					filterService.parseFilters(trust);
-				} catch (Exception e) {
-					log.error("parseFilters exception", e);
-					return false;
-				}
-				if (trust.getMetadataFilters().get("signatureValidation") != null) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-
 	public boolean isCorrectMetadataFile(String spMetaDataFN) {
 
 		if (appConfiguration.getShibboleth3FederationRootDir() == null) {
-			throw new InvalidConfigurationException("Failed to check meta-data file due to undefined federation root folder");
+			throw new InvalidConfigurationException(
+					"Failed to check meta-data file due to undefined federation root folder");
 		}
 
 		String metadataFolder = getIdpMetadataDir();
@@ -1230,7 +984,8 @@ public class Shibboleth3ConfService implements Serializable {
 	public void removeMetadataFile(String spMetaDataFN) {
 
 		if (appConfiguration.getShibboleth3FederationRootDir() == null) {
-			throw new InvalidConfigurationException("Failed to remove meta-data file due to undefined federation root folder");
+			throw new InvalidConfigurationException(
+					"Failed to remove meta-data file due to undefined federation root folder");
 		}
 
 		String metadataFolder = getIdpMetadataDir();
@@ -1244,7 +999,8 @@ public class Shibboleth3ConfService implements Serializable {
 	public String getMetadataFilePath(String metadataFileName) {
 
 		if (appConfiguration.getShibboleth3FederationRootDir() == null) {
-			throw new InvalidConfigurationException("Failed to return meta-data file due to undefined federation root folder");
+			throw new InvalidConfigurationException(
+					"Failed to return meta-data file due to undefined federation root folder");
 		}
 
 		String metadataFolderName = getIdpMetadataDir();
@@ -1256,7 +1012,8 @@ public class Shibboleth3ConfService implements Serializable {
 		return metadataFolderName + metadataFileName;
 	}
 
-	public String getNewMetadataFileName(GluuSAMLFederationProposal federationProposal, List<GluuSAMLFederationProposal> allFederationProposals) {
+	public String getNewMetadataFileName(GluuSAMLFederationProposal federationProposal,
+			List<GluuSAMLFederationProposal> allFederationProposals) {
 
 		String relationshipInum = StringHelper.removePunctuation(federationProposal.getInum());
 		return String.format(SHIB3_METADATA_FILE_PATTERN, relationshipInum);
@@ -1265,8 +1022,8 @@ public class Shibboleth3ConfService implements Serializable {
 	public boolean saveMetadataFile(String metadataFileName, InputStream stream) {
 
 		if (appConfiguration.getShibboleth3FederationRootDir() == null) {
-			IOUtils.closeQuietly(stream);
-			throw new InvalidConfigurationException("Failed to save meta-data file due to undefined federation root folder");
+			throw new InvalidConfigurationException(
+					"Failed to save meta-data file due to undefined federation root folder");
 		}
 
 		String idpMetadataFolderName = getIdpMetadataDir();
@@ -1275,10 +1032,7 @@ public class Shibboleth3ConfService implements Serializable {
 			idpMetadataFolder.mkdirs();
 		}
 		File spMetadataFile = new File(idpMetadataFolderName + metadataFileName);
-
-		FileOutputStream os = null;
-		try {
-			os = FileUtils.openOutputStream(spMetadataFile);
+		try (FileOutputStream os = FileUtils.openOutputStream(spMetadataFile)) {
 			IOUtils.copy(stream, os);
 			os.flush();
 		} catch (IOException ex) {
@@ -1286,7 +1040,6 @@ public class Shibboleth3ConfService implements Serializable {
 			ex.printStackTrace();
 			return false;
 		} finally {
-			IOUtils.closeQuietly(os);
 			IOUtils.closeQuietly(stream);
 		}
 
@@ -1298,7 +1051,8 @@ public class Shibboleth3ConfService implements Serializable {
 			return false;
 		}
 
-		String metadataFileContent = HTTPFileDownloader.getResource(spMetaDataURL, "application/xml, text/xml", null, null);
+		String metadataFileContent = HTTPFileDownloader.getResource(spMetaDataURL, "application/xml, text/xml", null,
+				null);
 
 		if (StringHelper.isEmpty(metadataFileContent)) {
 			return false;
@@ -1321,8 +1075,8 @@ public class Shibboleth3ConfService implements Serializable {
 	}
 
 	/**
-	 * Generate metadata files needed for appliance operations: gluuSP metadata
-	 * and idp metadata.
+	 * Generate metadata files needed for configuration operations: gluuSP metadata and
+	 * idp metadata.
 	 */
 	public boolean generateMetadataFiles(GluuSAMLTrustRelationship gluuSP) {
 
@@ -1347,7 +1101,8 @@ public class Shibboleth3ConfService implements Serializable {
 
 		try {
 
-			String idpSigningCertificate = FileUtils.readFileToString(new File(appConfiguration.getIdp3SigningCert())).replaceAll("-{5}.*?-{5}", "");
+			String idpSigningCertificate = FileUtils.readFileToString(new File(appConfiguration.getIdp3SigningCert()))
+					.replaceAll("-{5}.*?-{5}", "");
 			context.put("idpSigningCertificate", idpSigningCertificate);
 
 		} catch (IOException e) {
@@ -1358,7 +1113,8 @@ public class Shibboleth3ConfService implements Serializable {
 
 		try {
 
-			String idpEncryptionCertificate = FileUtils.readFileToString(new File(appConfiguration.getIdp3EncryptionCert())).replaceAll("-{5}.*?-{5}", "");
+			String idpEncryptionCertificate = FileUtils
+					.readFileToString(new File(appConfiguration.getIdp3EncryptionCert())).replaceAll("-{5}.*?-{5}", "");
 			context.put("idpEncryptionCertificate", idpEncryptionCertificate);
 
 		} catch (IOException e) {
@@ -1369,10 +1125,11 @@ public class Shibboleth3ConfService implements Serializable {
 
 		try {
 
-			String spCertificate = FileUtils.readFileToString(new File(appConfiguration.getGluuSpCert())).replaceAll("-{5}.*?-{5}", "");
+			String spCertificate = FileUtils.readFileToString(new File(appConfiguration.getGluuSpCert()))
+					.replaceAll("-{5}.*?-{5}", "");
 
 			if (gluuSP.getUrl() == null || "".equals(gluuSP.getUrl())) {
-				gluuSP.setUrl(appConfiguration.getApplianceUrl());
+				gluuSP.setUrl(appConfiguration.getApplicationUrl());
 			}
 
 			generateSpMetadataFile(gluuSP, spCertificate);
@@ -1387,7 +1144,8 @@ public class Shibboleth3ConfService implements Serializable {
 		String idpMetadata = templateService.generateConfFile(SHIB3_IDP_IDP_METADATA_FILE, context);
 
 		boolean result = (idpMetadata != null);
-		// String idpMetadataName = String.format(SHIB3_IDP_METADATA_FILE_PATTERN, StringHelper.removePunctuation(organizationService.getOrganizationInum()));
+		// String idpMetadataName = String.format(SHIB3_IDP_METADATA_FILE_PATTERN,
+		// StringHelper.removePunctuation(organizationService.getOrganizationInum()));
 
 		// Write idp-metadata.xml
 		result &= templateService.writeConfFile(idpMetadataFolder + SHIB3_IDP_IDP_METADATA_FILE, idpMetadata);
@@ -1402,34 +1160,37 @@ public class Shibboleth3ConfService implements Serializable {
 	 * @throws IOException
 	 * @throws SAXException
 	 * @throws ParserConfigurationException
-         * @return GluuErrorHandler
+	 * @return GluuErrorHandler
 	 */
-	public GluuErrorHandler validateMetadata(InputStream stream) throws ParserConfigurationException, SAXException, IOException {
-                Schema schema;
-                try {
-                    String idpTemplatesLocation = configurationFactory.getIDPTemplatesLocation();
-                    // String schemaDir = OxTrustConfiguration.DIR + "shibboleth3" + File.separator + "idp" + File.separator + "schema" + File.separator;
-                    String schemaDir = idpTemplatesLocation + "shibboleth3" + File.separator + "idp" + File.separator + "schema" + File.separator;
-                    schema = SchemaBuilder.buildSchema(SchemaLanguage.XML, schemaDir);
-                } catch (Exception e) {
-                    // Schema build error 
-                    final List<String> validationLog = new ArrayList<String>();
-                    validationLog.add(GluuErrorHandler.SCHEMA_CREATING_ERROR_MESSAGE);
-                    validationLog.add(e.getMessage());
-                    // return internal error
-                    return new GluuErrorHandler(false, true, validationLog);
-                }
+	public GluuErrorHandler validateMetadata(InputStream stream)
+			throws ParserConfigurationException, SAXException, IOException {
+		Schema schema;
+		try {
+			String idpTemplatesLocation = configurationFactory.getIDPTemplatesLocation();
+			// String schemaDir = OxTrustConfiguration.DIR + "shibboleth3" + File.separator
+			// + "idp" + File.separator + "schema" + File.separator;
+			String schemaDir = idpTemplatesLocation + "shibboleth3" + File.separator + "idp" + File.separator + "schema"
+					+ File.separator;
+			schema = SchemaBuilder.buildSchema(SchemaLanguage.XML, schemaDir);
+		} catch (Exception e) {
+			// Schema build error
+			final List<String> validationLog = new ArrayList<String>();
+			validationLog.add(GluuErrorHandler.SCHEMA_CREATING_ERROR_MESSAGE);
+			validationLog.add(e.getMessage());
+			// return internal error
+			return new GluuErrorHandler(false, true, validationLog);
+		}
 		return XMLValidator.validateMetadata(stream, schema);
 	}
 
-	public  boolean existsResourceUri(String URLName) {
+	public boolean existsResourceUri(String URLName) {
 
 		try {
 
 			HttpURLConnection.setFollowRedirects(false);
 			// note : you may also need
-			//        HttpURLConnection.setInstanceFollowRedirects(false)
-			HttpURLConnection con =	(HttpURLConnection) new URL(URLName).openConnection();
+			// HttpURLConnection.setInstanceFollowRedirects(false)
+			HttpURLConnection con = (HttpURLConnection) new URL(URLName).openConnection();
 			con.setRequestMethod("HEAD");
 			return (con.getResponseCode() == HttpURLConnection.HTTP_OK);
 
@@ -1455,22 +1216,23 @@ public class Shibboleth3ConfService implements Serializable {
 	 * @author �Oleksiy Tataryn�
 	 */
 	public void addGluuSP() {
-	    String gluuSPInum = trustService.generateInumForNewTrustRelationship();
-	    String metadataFN = getSpNewMetadataFileName(gluuSPInum);
-	    GluuSAMLTrustRelationship gluuSP = new GluuSAMLTrustRelationship();
+		String gluuSPInum = trustService.generateInumForNewTrustRelationship();
+		String metadataFN = getSpNewMetadataFileName(gluuSPInum);
+		GluuSAMLTrustRelationship gluuSP = new GluuSAMLTrustRelationship();
 		gluuSP.setInum(gluuSPInum);
-		gluuSP.setDisplayName("gluu SP on appliance");
+		gluuSP.setDisplayName("gluu SP on configuration");
 		gluuSP.setDescription("Trust Relationship for the SP");
 		gluuSP.setSpMetaDataSourceType(GluuMetadataSourceType.FILE);
 		gluuSP.setSpMetaDataFN(metadataFN);
-		//TODO: 
+		// TODO:
 		gluuSP.setEntityId(StringHelper.removePunctuation(gluuSP.getInum()));
-		gluuSP.setUrl(appConfiguration.getApplianceUrl());
+		gluuSP.setUrl(appConfiguration.getApplicationUrl());
 
 		String certificate = "";
 		boolean result = false;
 		try {
-			certificate = FileUtils.readFileToString(new File(appConfiguration.getGluuSpCert())).replaceAll("-{5}.*?-{5}", "");
+			certificate = FileUtils.readFileToString(new File(appConfiguration.getGluuSpCert()))
+					.replaceAll("-{5}.*?-{5}", "");
 			generateSpMetadataFile(gluuSP, certificate);
 			result = isCorrectSpMetadataFile(gluuSP.getSpMetaDataFN());
 
@@ -1497,15 +1259,16 @@ public class Shibboleth3ConfService implements Serializable {
 				}
 			}
 
-			customAttributes.addAll(attributeService.getCustomAttributesByAttributeDNs(customAttributeDNs, attributesByDNs));
+			customAttributes
+					.addAll(attributeService.getCustomAttributesByAttributeDNs(customAttributeDNs, attributesByDNs));
 			gluuSP.setReleasedCustomAttributes(customAttributes);
 			gluuSP.setReleasedAttributes(attributeNames);
 			trustService.updateReleasedAttributes(gluuSP);
 			trustService.addTrustRelationship(gluuSP);
 
-	        GluuAppliance appliance = applianceService.getAppliance();
-			appliance.setGluuSPTR(gluuSP.getInum());
-            applianceService.updateAppliance(appliance);
+			GluuConfiguration configuration = configurationService.getConfiguration();
+			configuration.setGluuSPTR(gluuSP.getInum());
+			configurationService.updateConfiguration(configuration);
 		}
 
 		if (result) {
@@ -1524,19 +1287,17 @@ public class Shibboleth3ConfService implements Serializable {
 	 * @return
 	 */
 	public boolean isFederation(GluuSAMLTrustRelationship trustRelationship) {
-	    //TODO: optimize this method. should not take so long
+		// TODO: optimize this method. should not take so long
 		return isFederationMetadata(trustRelationship.getSpMetaDataFN());
 	}
-        
-        /**
+
+	/**
 	 * @param trustRelationship
 	 * @param certificate
 	 */
-	public void saveCert(GluuSAMLTrustRelationship trustRelationship,
-			String certificate) {
-		String sslDirFN = appConfiguration.getShibboleth3IdpRootDir()
-				+ File.separator + TrustService.GENERATED_SSL_ARTIFACTS_DIR
-				+ File.separator;
+	public void saveCert(GluuSAMLTrustRelationship trustRelationship, String certificate) {
+		String sslDirFN = appConfiguration.getShibboleth3IdpRootDir() + File.separator
+				+ TrustService.GENERATED_SSL_ARTIFACTS_DIR + File.separator;
 		File sslDir = new File(sslDirFN);
 		if (!sslDir.exists()) {
 			log.debug("creating directory: " + sslDirFN);
@@ -1548,13 +1309,10 @@ public class Shibboleth3ConfService implements Serializable {
 		}
 		BufferedWriter writer = null;
 		try {
-			writer = new BufferedWriter(
-			            new FileWriter(
-			                       sslDirFN	
-			                       + getSpNewMetadataFileName(trustRelationship).replaceFirst("\\.xml$",".crt")));
-			writer.write(Shibboleth3ConfService.PUBLIC_CERTIFICATE_START_LINE + "\n" 
-						+ certificate
-						+ Shibboleth3ConfService.PUBLIC_CERTIFICATE_END_LINE);
+			writer = new BufferedWriter(new FileWriter(
+					sslDirFN + getSpNewMetadataFileName(trustRelationship).replaceFirst("\\.xml$", ".crt")));
+			writer.write(Shibboleth3ConfService.PUBLIC_CERTIFICATE_START_LINE + "\n" + certificate
+					+ Shibboleth3ConfService.PUBLIC_CERTIFICATE_END_LINE);
 		} catch (IOException e) {
 		} finally {
 			try {
@@ -1571,13 +1329,10 @@ public class Shibboleth3ConfService implements Serializable {
 	 * @param trustRelationship
 	 * @param key
 	 */
-	public void saveKey(GluuSAMLTrustRelationship trustRelationship,
-			String key) {
-		
-		
-		String sslDirFN = appConfiguration.getShibboleth3IdpRootDir()
-				+ File.separator + TrustService.GENERATED_SSL_ARTIFACTS_DIR
-				+ File.separator;
+	public void saveKey(GluuSAMLTrustRelationship trustRelationship, String key) {
+
+		String sslDirFN = appConfiguration.getShibboleth3IdpRootDir() + File.separator
+				+ TrustService.GENERATED_SSL_ARTIFACTS_DIR + File.separator;
 		File sslDir = new File(sslDirFN);
 		if (!sslDir.exists()) {
 			log.debug("creating directory: " + sslDirFN);
@@ -1587,23 +1342,25 @@ public class Shibboleth3ConfService implements Serializable {
 
 			}
 		}
-		if(key != null){
-		BufferedWriter writer = null;
-		try {
-			writer = new BufferedWriter(new FileWriter(sslDirFN + getSpNewMetadataFileName(trustRelationship).replaceFirst("\\.xml$",".key")));
-			writer.write(key);
-		} catch (IOException e) {
-		} finally {
+		if (key != null) {
+			BufferedWriter writer = null;
 			try {
-				if (writer != null) {
-					writer.close();
-				}
+				writer = new BufferedWriter(new FileWriter(
+						sslDirFN + getSpNewMetadataFileName(trustRelationship).replaceFirst("\\.xml$", ".key")));
+				writer.write(key);
 			} catch (IOException e) {
+			} finally {
+				try {
+					if (writer != null) {
+						writer.close();
+					}
+				} catch (IOException e) {
+				}
 			}
-		}
-		}else{
-			File keyFile = new File(sslDirFN + getSpNewMetadataFileName(trustRelationship).replaceFirst("\\.xml$",".key"));
-			if(keyFile.exists()){
+		} else {
+			File keyFile = new File(
+					sslDirFN + getSpNewMetadataFileName(trustRelationship).replaceFirst("\\.xml$", ".key"));
+			if (keyFile.exists()) {
 				keyFile.delete();
 			}
 		}

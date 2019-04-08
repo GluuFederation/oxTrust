@@ -5,9 +5,9 @@
  */
 package org.gluu.oxtrust.model.scim2.extensions;
 
+import org.gluu.model.attribute.AttributeDataType;
 import org.gluu.oxtrust.model.scim2.AttributeDefinition.Type;
 import org.gluu.oxtrust.model.scim2.util.DateUtil;
-import org.xdi.model.attribute.AttributeDataType;
 
 import java.util.regex.Pattern;
 
@@ -152,9 +152,9 @@ public class ExtensionField {
     }
 
     /**
-     * <p>Maps the org.xdi.model.GluuAttributeDataType associated to this ExtensionField (see {@link #getType() getType}) to
+     * <p>Maps the org.gluu.model.GluuAttributeDataType associated to this ExtensionField (see {@link #getType() getType}) to
      * a member of the enum {@link org.gluu.oxtrust.model.scim2.AttributeDefinition.Type AttributeDefinition.Type}.</p>
-     * <p>The mapping is straightforward. Special case is org.xdi.model.GluuAttributeDataType.NUMERIC mapped to
+     * <p>The mapping is straightforward. Special case is org.gluu.model.GluuAttributeDataType.NUMERIC mapped to
      * {@link org.gluu.oxtrust.model.scim2.AttributeDefinition.Type#DECIMAL Type.DECIMAL}.</p>
      * @return An enum value of AttributeDefinition.Type
      */

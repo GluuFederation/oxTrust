@@ -16,13 +16,13 @@ import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.FacesService;
 import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.util.OxTrustConstants;
+import org.gluu.service.security.Secure;
 import org.slf4j.Logger;
-import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.service.security.Secure;
 
 /**
  * Action class for SSO login

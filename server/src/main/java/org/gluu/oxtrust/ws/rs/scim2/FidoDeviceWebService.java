@@ -351,7 +351,7 @@ public class FidoDeviceWebService extends BaseScimWebService implements IFidoDev
     private PagedResult<BaseScimResource> searchDevices(String userId, String filter, String sortBy, SortOrder sortOrder, int startIndex,
                                                     int count, String url) throws Exception {
 
-        Filter ldapFilter=scimFilterParserService.createLdapFilter(filter, "oxId=*", FidoDeviceResource.class);
+        Filter ldapFilter=scimFilterParserService.createFilter(filter, Filter.createPresenceFilter("oxId"), FidoDeviceResource.class);
         log.info("Executing search for fido devices using: ldapfilter '{}', sortBy '{}', sortOrder '{}', startIndex '{}', count '{}'",
                 ldapFilter.toString(), sortBy, sortOrder.getValue(), startIndex, count);
 

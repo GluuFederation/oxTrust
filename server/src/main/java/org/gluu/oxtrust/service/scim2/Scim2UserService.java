@@ -21,6 +21,7 @@ import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.gluu.model.GluuStatus;
 import org.gluu.oxtrust.ldap.service.IGroupService;
 import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
@@ -53,7 +54,6 @@ import org.gluu.persist.model.base.GluuBoolean;
 import org.gluu.search.filter.Filter;
 import org.joda.time.format.ISODateTimeFormat;
 import org.slf4j.Logger;
-import org.xdi.model.GluuStatus;
 
 /**
  * This class holds the most important business logic of the SCIM service for
@@ -433,7 +433,6 @@ public class Scim2UserService implements Serializable {
 
 		person.setInum(inum);
 		person.setDn(dn);
-		person.setIname(personService.generateInameForNewPerson(person.getUid()));
 		writeCommonName(person);
 
 	}
@@ -552,7 +551,7 @@ public class Scim2UserService implements Serializable {
 	public PagedResult<BaseScimResource> searchUsers(String filter, String sortBy, SortOrder sortOrder, int startIndex,
 			int count, String url, int maxCount) throws Exception {
 
-		Filter ldapFilter = scimFilterParserService.createLdapFilter(filter, "inum=*", UserResource.class);
+		Filter ldapFilter = scimFilterParserService.createFilter(filter, Filter.createPresenceFilter("inum"), UserResource.class);
 		log.info(
 				"Executing search for users using: ldapfilter '{}', sortBy '{}', sortOrder '{}', startIndex '{}', count '{}'",
 				ldapFilter.toString(), sortBy, sortOrder.getValue(), startIndex, count);

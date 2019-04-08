@@ -32,17 +32,23 @@ import javax.inject.Named;
 
 import org.apache.commons.beanutils.BeanUtilsBean2;
 import org.apache.commons.io.FilenameUtils;
+import org.gluu.config.oxtrust.AppConfiguration;
+import org.gluu.config.oxtrust.CacheRefreshAttributeMapping;
+import org.gluu.config.oxtrust.CacheRefreshConfiguration;
+import org.gluu.model.GluuStatus;
+import org.gluu.model.custom.script.model.bind.BindCredentials;
+import org.gluu.model.ldap.GluuLdapConfiguration;
 import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.ldap.cache.model.CacheCompoundKey;
 import org.gluu.oxtrust.ldap.cache.model.GluuInumMap;
 import org.gluu.oxtrust.ldap.cache.model.GluuSimplePerson;
-import org.gluu.oxtrust.ldap.service.ApplianceService;
+import org.gluu.oxtrust.ldap.service.ConfigurationService;
 import org.gluu.oxtrust.ldap.service.ApplicationFactory;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.EncryptionService;
 import org.gluu.oxtrust.ldap.service.InumService;
 import org.gluu.oxtrust.ldap.service.PersonService;
-import org.gluu.oxtrust.model.GluuAppliance;
+import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.service.cdi.event.CacheRefreshEvent;
@@ -58,24 +64,18 @@ import org.gluu.persist.model.base.GluuBoolean;
 import org.gluu.persist.model.base.GluuDummyEntry;
 import org.gluu.persist.operation.PersistenceOperationService;
 import org.gluu.search.filter.Filter;
+import org.gluu.service.ObjectSerializationService;
+import org.gluu.service.SchemaService;
+import org.gluu.service.cdi.async.Asynchronous;
+import org.gluu.service.cdi.event.Scheduled;
+import org.gluu.service.timer.event.TimerEvent;
+import org.gluu.service.timer.schedule.TimerSchedule;
+import org.gluu.util.ArrayHelper;
+import org.gluu.util.OxConstants;
+import org.gluu.util.Pair;
+import org.gluu.util.StringHelper;
+import org.gluu.util.security.PropertiesDecrypter;
 import org.slf4j.Logger;
-import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.config.oxtrust.CacheRefreshAttributeMapping;
-import org.xdi.config.oxtrust.CacheRefreshConfiguration;
-import org.xdi.model.GluuStatus;
-import org.xdi.model.custom.script.model.bind.BindCredentials;
-import org.xdi.model.ldap.GluuLdapConfiguration;
-import org.xdi.service.ObjectSerializationService;
-import org.xdi.service.SchemaService;
-import org.xdi.service.cdi.async.Asynchronous;
-import org.xdi.service.cdi.event.Scheduled;
-import org.xdi.service.timer.event.TimerEvent;
-import org.xdi.service.timer.schedule.TimerSchedule;
-import org.xdi.util.ArrayHelper;
-import org.xdi.util.OxConstants;
-import org.xdi.util.Pair;
-import org.xdi.util.StringHelper;
-import org.xdi.util.security.PropertiesDecrypter;
 
 /**
  * Check periodically if source servers contains updates and trigger target
@@ -117,7 +117,7 @@ public class CacheRefreshTimer {
 	private PersistenceEntryManager ldapEntryManager;
 
 	@Inject
-	private ApplianceService applianceService;
+	private ConfigurationService configurationService;
 
 	@Inject
 	private CacheRefreshSnapshotFileService cacheRefreshSnapshotFileService;
@@ -189,14 +189,14 @@ public class CacheRefreshTimer {
 		CacheRefreshConfiguration cacheRefreshConfiguration = configurationFactory.getCacheRefreshConfiguration();
 
 		try {
-			GluuAppliance currentAppliance = applianceService.getAppliance();
-			if (!isStartCacheRefresh(cacheRefreshConfiguration, currentAppliance)) {
+			GluuConfiguration currentConfiguration = configurationService.getConfiguration();
+			if (!isStartCacheRefresh(cacheRefreshConfiguration, currentConfiguration)) {
 				log.debug("Starting conditions aren't reached");
 				return;
 			}
 
-			processImpl(cacheRefreshConfiguration, currentAppliance);
-			updateApplianceStatus(currentAppliance, System.currentTimeMillis());
+			processImpl(cacheRefreshConfiguration, currentConfiguration);
+			updateStatus(currentConfiguration, System.currentTimeMillis());
 
 			this.lastFinishedTime = System.currentTimeMillis();
 		} catch (Throwable ex) {
@@ -205,21 +205,21 @@ public class CacheRefreshTimer {
 	}
 
 	private boolean isStartCacheRefresh(CacheRefreshConfiguration cacheRefreshConfiguration,
-			GluuAppliance currentAppliance) {
-		if (!GluuBoolean.ENABLED.equals(currentAppliance.getVdsCacheRefreshEnabled())) {
+			GluuConfiguration currentConfiguration) {
+		if (!GluuBoolean.ENABLED.equals(currentConfiguration.getVdsCacheRefreshEnabled())) {
 			return false;
 		}
 
-		long poolingInterval = StringHelper.toInteger(currentAppliance.getVdsCacheRefreshPollingInterval()) * 60 * 1000;
+		long poolingInterval = StringHelper.toInteger(currentConfiguration.getVdsCacheRefreshPollingInterval()) * 60 * 1000;
 		if (poolingInterval < 0) {
 			return false;
 		}
 
-		String cacheRefreshServerIpAddress = currentAppliance.getCacheRefreshServerIpAddress();
-		if (StringHelper.isEmpty(cacheRefreshServerIpAddress)) {
-			log.debug("There is no master Cache Refresh server");
-			return false;
-		}
+		String cacheRefreshServerIpAddress = currentConfiguration.getCacheRefreshServerIpAddress();
+//		if (StringHelper.isEmpty(cacheRefreshServerIpAddress)) {
+//			log.debug("There is no master Cache Refresh server");
+//			return false;
+//		}
 
 		// Compare server IP address with cacheRefreshServerIp
 		boolean cacheRefreshServer = false;
@@ -241,9 +241,13 @@ public class CacheRefreshTimer {
 		} catch (SocketException ex) {
 			log.error("Failed to enumerate server IP addresses", ex);
 		}
-
-		if (!cacheRefreshServer) {
-			log.debug("This server isn't master Cache Refresh server");
+        
+        if (!cacheRefreshServer) {
+        	cacheRefreshServer = externalCacheRefreshService.executeExternalIsStartProcessMethods();
+        }
+        
+        if (!cacheRefreshServer) {
+        	log.debug("This server isn't master Cache Refresh server");
 			return false;
 		}
 
@@ -258,7 +262,7 @@ public class CacheRefreshTimer {
 		return timeDiffrence >= poolingInterval;
 	}
 
-	private void processImpl(CacheRefreshConfiguration cacheRefreshConfiguration, GluuAppliance currentAppliance) {
+	private void processImpl(CacheRefreshConfiguration cacheRefreshConfiguration, GluuConfiguration currentConfiguration) {
 		CacheRefreshUpdateMethod updateMethod = getUpdateMethod(cacheRefreshConfiguration);
 
 		// Prepare and check connections to LDAP servers
@@ -291,7 +295,7 @@ public class CacheRefreshTimer {
 					|| (isVdsUpdate && (targetServerConnection == null))) {
 				log.error("Skipping cache refresh due to invalid server configuration");
 			} else {
-				detectChangedEntries(cacheRefreshConfiguration, currentAppliance, sourceServerConnections,
+				detectChangedEntries(cacheRefreshConfiguration, currentConfiguration, sourceServerConnections,
 						inumDbServerConnection, targetServerConnection, updateMethod);
 			}
 		} finally {
@@ -320,7 +324,7 @@ public class CacheRefreshTimer {
 
 	@SuppressWarnings("unchecked")
 	private boolean detectChangedEntries(CacheRefreshConfiguration cacheRefreshConfiguration,
-			GluuAppliance currentAppliance, LdapServerConnection[] sourceServerConnections,
+			GluuConfiguration currentConfiguration, LdapServerConnection[] sourceServerConnections,
 			LdapServerConnection inumDbServerConnection, LdapServerConnection targetServerConnection,
 			CacheRefreshUpdateMethod updateMethod) {
 		boolean isVDSMode = CacheRefreshUpdateMethod.VDS.equals(updateMethod);
@@ -426,7 +430,7 @@ public class CacheRefreshTimer {
 				cacheRefreshConfiguration.getSnapshotMaxCount());
 
 		// Save changedInums as problem list to disk
-		currentAppliance.setVdsCacheRefreshProblemCount(String.valueOf(changedInums.size()));
+		currentConfiguration.setVdsCacheRefreshProblemCount(String.valueOf(changedInums.size()));
 		cacheRefreshSnapshotFileService.writeProblemList(cacheRefreshConfiguration, changedInums);
 
 		// Prepare list of persons for removal
@@ -464,7 +468,7 @@ public class CacheRefreshTimer {
 		// Strore all inum entries into local disk cache
 		objectSerializationService.saveObject(inumCachePath, currentInumMaps);
 
-		currentAppliance
+		currentConfiguration
 				.setVdsCacheRefreshLastUpdateCount(String.valueOf(updatedInums.size() + removedPersonInums.size()));
 
 		return true;
@@ -1173,15 +1177,15 @@ public class CacheRefreshTimer {
 		return result;
 	}
 
-	private void updateApplianceStatus(GluuAppliance currentAppliance, long lastRun) {
-		GluuAppliance appliance = applianceService.getAppliance();
+	private void updateStatus(GluuConfiguration currentConfiguration, long lastRun) {
+		GluuConfiguration configuration = configurationService.getConfiguration();
 
 		Date currentDateTime = new Date();
-		appliance.setVdsCacheRefreshLastUpdate(currentDateTime);
-		appliance.setVdsCacheRefreshLastUpdateCount(currentAppliance.getVdsCacheRefreshLastUpdateCount());
-		appliance.setVdsCacheRefreshProblemCount(currentAppliance.getVdsCacheRefreshProblemCount());
+		configuration.setVdsCacheRefreshLastUpdate(currentDateTime);
+		configuration.setVdsCacheRefreshLastUpdateCount(currentConfiguration.getVdsCacheRefreshLastUpdateCount());
+		configuration.setVdsCacheRefreshProblemCount(currentConfiguration.getVdsCacheRefreshProblemCount());
 
-		applianceService.updateAppliance(appliance);
+		configurationService.updateConfiguration(configuration);
 	}
 
 	private String getInumCachePath(CacheRefreshConfiguration cacheRefreshConfiguration) {

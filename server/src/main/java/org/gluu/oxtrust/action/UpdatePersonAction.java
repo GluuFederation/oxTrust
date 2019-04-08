@@ -30,8 +30,14 @@ import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
+import org.gluu.model.GluuAttribute;
+import org.gluu.model.GluuStatus;
+import org.gluu.model.GluuUserRole;
+import org.gluu.model.attribute.AttributeValidation;
+import org.gluu.oxauth.model.fido.u2f.protocol.DeviceData;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.FidoDeviceService;
@@ -58,16 +64,10 @@ import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.ServiceUtil;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.exception.BasePersistenceException;
+import org.gluu.service.security.Secure;
+import org.gluu.util.ArrayHelper;
+import org.gluu.util.StringHelper;
 import org.slf4j.Logger;
-import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.model.GluuAttribute;
-import org.xdi.model.GluuStatus;
-import org.xdi.model.GluuUserRole;
-import org.xdi.model.attribute.AttributeValidation;
-import org.xdi.oxauth.model.fido.u2f.protocol.DeviceData;
-import org.xdi.service.security.Secure;
-import org.xdi.util.ArrayHelper;
-import org.xdi.util.StringHelper;
 
 /**
  * Action class for updating person's attributes
@@ -370,7 +370,7 @@ public class UpdatePersonAction implements Serializable {
 
 	@SuppressWarnings("deprecation")
 	private void addFidoDevices() {
-		List<GluuCustomFidoDevice> fidoDevices = fidoDeviceService.searchFidoDevices(this.person.getInum(), null);
+		List<GluuCustomFidoDevice> fidoDevices = fidoDeviceService.searchFidoDevices(this.person.getInum());
 		if (fidoDevices != null) {
 			for (GluuCustomFidoDevice gluuCustomFidoDevice : fidoDevices) {
 				GluuDeviceDataBean gluuDeviceDataBean = new GluuDeviceDataBean();
@@ -524,13 +524,11 @@ public class UpdatePersonAction implements Serializable {
 		} else {
 
 			this.inum = personService.generateInumForNewPerson();
-			String iname = personService.generateInameForNewPerson(this.person.getUid());
 			String dn = personService.getDnForPerson(this.inum);
 
 			// Save person
 			this.person.setDn(dn);
 			this.person.setInum(this.inum);
-			this.person.setIname(iname);
 			this.person.setUserPassword(this.password);
 
 			List<GluuCustomAttribute> personAttributes = this.person.getCustomAttributes();
@@ -721,7 +719,7 @@ public class UpdatePersonAction implements Serializable {
 		if (!StringHelper.equalsIgnoreCase(password, confirmPassword)) {
 			((UIInput) comp).setValid(false);
 			FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR,
-					"Password and Confirm Password should be same!", "Password and Confirm Password should be same!");
+					"Password and Confirm Password should be the same!", "Password and Confirm Password should be the same!");
 			context.addMessage(comp.getClientId(context), message);
 		}
 		if (canValidate && (!pattern.matcher(password).matches() || !pattern.matcher(confirmPassword).matches())) {
@@ -782,8 +780,7 @@ public class UpdatePersonAction implements Serializable {
 	}
 
 	private void removeFidoDevice(GluuDeviceDataBean deleteDeviceData, String idOfDeviceToRemove) {
-		List<GluuCustomFidoDevice> gluuCustomFidoDevices = fidoDeviceService.searchFidoDevices(this.person.getInum(),
-				null);
+		List<GluuCustomFidoDevice> gluuCustomFidoDevices = fidoDeviceService.searchFidoDevices(this.person.getInum());
 		if (gluuCustomFidoDevices != null) {
 			for (GluuCustomFidoDevice gluuCustomFidoDevice : gluuCustomFidoDevices) {
 				if (gluuCustomFidoDevice.getId().equals(idOfDeviceToRemove)) {

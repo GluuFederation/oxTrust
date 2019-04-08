@@ -14,6 +14,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 import javax.enterprise.context.ConversationScoped;
@@ -21,30 +22,30 @@ import javax.faces.application.FacesMessage;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
-import org.gluu.oxtrust.ldap.service.ApplianceService;
+import org.gluu.model.AuthenticationScriptUsageType;
+import org.gluu.model.ProgrammingLanguage;
+import org.gluu.model.ScriptLocationType;
+import org.gluu.model.SimpleCustomProperty;
+import org.gluu.model.SimpleExtendedCustomProperty;
+import org.gluu.model.SimpleProperty;
+import org.gluu.model.custom.script.CustomScriptType;
+import org.gluu.model.custom.script.model.CustomScript;
+import org.gluu.model.custom.script.model.auth.AuthenticationCustomScript;
+import org.gluu.oxtrust.ldap.service.ConfigurationService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.model.SimpleCustomPropertiesListModel;
 import org.gluu.oxtrust.model.SimplePropertiesListModel;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.exception.BasePersistenceException;
+import org.gluu.service.custom.script.AbstractCustomScriptService;
+import org.gluu.service.security.Secure;
+import org.gluu.util.INumGenerator;
+import org.gluu.util.OxConstants;
+import org.gluu.util.StringHelper;
 import org.slf4j.Logger;
-import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.model.AuthenticationScriptUsageType;
-import org.xdi.model.ProgrammingLanguage;
-import org.xdi.model.ScriptLocationType;
-import org.xdi.model.SimpleCustomProperty;
-import org.xdi.model.SimpleExtendedCustomProperty;
-import org.xdi.model.SimpleProperty;
-import org.xdi.model.custom.script.CustomScriptType;
-import org.xdi.model.custom.script.model.CustomScript;
-import org.xdi.model.custom.script.model.auth.AuthenticationCustomScript;
-import org.xdi.service.custom.script.AbstractCustomScriptService;
-import org.xdi.service.security.Secure;
-import org.xdi.util.INumGenerator;
-import org.xdi.util.OxConstants;
-import org.xdi.util.StringHelper;
 
 /**
  * Add/Modify custom script configurations
@@ -73,7 +74,7 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 	private OrganizationService organizationService;
 
 	@Inject
-	private ApplianceService applianceService;
+	private ConfigurationService configurationService;
 
 	@Inject
 	private AbstractCustomScriptService customScriptService;
@@ -90,7 +91,7 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
 		
-		CustomScriptType[] allowedCustomScriptTypes = this.applianceService.getCustomScriptTypes();
+		CustomScriptType[] allowedCustomScriptTypes = this.configurationService.getCustomScriptTypes();
 
 		this.customScriptsByTypes = new HashMap<CustomScriptType, List<CustomScript>>();
 		for (CustomScriptType customScriptType : allowedCustomScriptTypes) {
@@ -101,9 +102,17 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 			List<CustomScript> customScripts = customScriptService.findCustomScripts(Arrays.asList(allowedCustomScriptTypes));
 			
 			for (CustomScript customScript : customScripts) {
+				// Automatic package update '.xdi' --> '.org'
+				// TODO: Remove in CE 5.0
+				String scriptCode = customScript.getScript();
+				if (scriptCode != null) {
+					scriptCode = scriptCode.replaceAll(".xdi", ".gluu");
+					customScript.setScript(scriptCode);
+				}
+
 				CustomScriptType customScriptType = customScript.getScriptType();
 				List<CustomScript> customScriptsByType = this.customScriptsByTypes.get(customScriptType);
-				
+
 				CustomScript typedCustomScript = customScript;
 				if (CustomScriptType.PERSON_AUTHENTICATION == customScriptType) {
 					typedCustomScript = new AuthenticationCustomScript(customScript);
@@ -135,7 +144,7 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 
 	public String save() {
 		try {
-			List<CustomScript> oldCustomScripts = customScriptService.findCustomScripts(Arrays.asList(this.applianceService.getCustomScriptTypes()), "dn", "inum");
+			List<CustomScript> oldCustomScripts = customScriptService.findCustomScripts(Arrays.asList(this.configurationService.getCustomScriptTypes()), "dn", "inum");
 
 			List<String> updatedInums = new ArrayList<String>();
 
@@ -161,8 +170,7 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 					String dn = customScript.getDn();
 					String customScriptId = customScript.getInum();
 					if (StringHelper.isEmpty(dn)) {
-						String basedInum = organizationService.getOrganizationInum();
-						customScriptId = basedInum + "!" + INumGenerator.generate(2);
+						customScriptId = UUID.randomUUID().toString();
 						dn = customScriptService.buildDn(customScriptId);
 	
 						customScript.setDn(dn);

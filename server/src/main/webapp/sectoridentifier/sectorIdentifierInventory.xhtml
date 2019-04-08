@@ -2,6 +2,7 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:b="http://bootsfaces.net/ui"
 	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
@@ -38,76 +39,50 @@
 		<section class="content">
 			<div class="row">
 				<div class="col-xs-12">
-					<div class="box box-primary">
-						<div class="box-header"></div>
-						<div style="display: inline-block; width: 100% !important;">
-							<div id="formArea">
-								<h:panelGrid border="0" cellpadding="0" cellspacing="0"
-									columns="1" width="100%">
-
-									<h:link includeViewParams="false"
-										outcome="/sectoridentifier/addSectorIdentifier"
-										style="margin-left:20px !important;"
-										styleClass="addSectorIdentifier btn btn-primary"
-										value="#{msg['sectorIdentifier.addSectorIdentifiers']}" />
-
-									<richext:spacer height="16" />
-
-									<h:form>
-										<ox:decorate hideLabel="true" id="searchPattern">
-											<h:inputText
-												alt="search parameters for sector identifier like id, redirect_uri"
-												id="searchPatternId" maxlength="30" size="30"
-												style="float: left;width: 50%;"
-												styleClass="searchParameters form-control"
-												value="#{searchSectorIdentifierAction.searchPattern}" />
-											<h:commandButton
-												action="#{searchSectorIdentifierAction.search}"
-												class="btn btn-primary" style="float:left;"
-												value="#{msg['sectorIdentifier.search']}" />
-										</ox:decorate>
-									</h:form>
-
-									<richext:spacer height="16" />
-
-									<h:form id="sectorIdentifiersFormId">
-										<ui:fragment
-											rendered="#{searchSectorIdentifierAction.sectorIdentifierList.size() eq 0}">
-											<richext:spacer height="30" />
-											<h:outputText
-												value="#{msg['sectorIdentifier.noSearchResultFound']}" />
-										</ui:fragment>
-
-										<rich:dataTable id="sectorIdentifierListId"
-											rendered="#{searchSectorIdentifierAction.sectorIdentifierList.size() gt 0}"
-											rows="20" sortMode="single" styleClass="data sortable"
-											value="#{searchSectorIdentifierAction.sectorIdentifierList}"
-											var="si">
-											<rich:column sortBy="#{si.id}">
-												<f:facet name="header">id</f:facet>
-												<h:link includeViewParams="false"
-													outcome="/sectoridentifier/updateSectorIdentifier"
-													value="#{si.id}">
-													<f:param name="id" value="#{si.id}" />
-												</h:link>
-											</rich:column>
-											<rich:column sortBy="#{si.description}">
-												<f:facet name="header">Description</f:facet>
-												<h:outputText value="#{si.description}">
-												</h:outputText>
-											</rich:column>
-											<f:facet name="footer">
-												<rich:dataScroller align="left" for="sectorIdentifierListId"
-													maxPages="10" renderIfSinglePage="false"
-													rendered="#{searchSectorIdentifierAction.sectorIdentifierList.size() gt 0}"
-													stepControls="auto" />
-											</f:facet>
-										</rich:dataTable>
-									</h:form>
-								</h:panelGrid>
-							</div>
+					<b:panel title="Sector Identifiers List" look="primary">
+						<div id="formArea">
+							<b:link style-class=" addSectorIdentifier btn btn-primary"
+								icon="plus" outcome="/sectoridentifier/addSectorIdentifier"
+								style="margin-left:5px !important;"
+								value="#{msg['sectorIdentifier.addSectorIdentifiers']}"
+								includeViewParams="false" />
+							<richext:spacer height="16" />
+							<h:form>
+								<ox:decorate hideLabel="true" id="searchPattern">
+									<h:inputText
+										alt="search parameters for sector identifier like id, redirect_uri"
+										id="searchPatternId" maxlength="30" size="30"
+										style="float: left;width: 50%;"
+										styleClass="searchParameters form-control"
+										value="#{searchSectorIdentifierAction.searchPattern}" />
+									<h:commandButton
+										action="#{searchSectorIdentifierAction.search}"
+										class="btn btn-primary" style="float:left;"
+										value="#{msg['sectorIdentifier.search']}" />
+								</ox:decorate>
+							</h:form>
+							<richext:spacer height="16" />
+							<h:form id="sectorIdentifiersFormId">
+								<b:dataTable id="sectorIdentifierListId"
+									style="text-align:center;"
+									rendered="#{searchSectorIdentifierAction.sectorIdentifierList.size() gt 0}"
+									responsive="true"
+									value="#{searchSectorIdentifierAction.sectorIdentifierList}"
+									var="si" print="true" excel="true" csv="true" pdf="true"
+									select="true">
+									<b:dataTableColumn label="ID">
+										<h:link includeViewParams="false"
+											outcome="/sectoridentifier/updateSectorIdentifier"
+											value="#{si.id}">
+											<f:param name="id" value="#{si.id}" />
+										</h:link>
+									</b:dataTableColumn>
+									<b:dataTableColumn value="#{si.description}"
+										label="Description" />
+								</b:dataTable>
+							</h:form>
 						</div>
-					</div>
+					</b:panel>
 				</div>
 			</div>
 		</section>

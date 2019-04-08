@@ -58,7 +58,6 @@ public class SSLService implements Serializable {
     private static final String PKI_PATH_ENCODING = "PkiPath";
     private static final String BEGIN_CERTIFICATE = "-----BEGIN CERTIFICATE-----";
     private static final String END_CERTIFICATE = "-----END CERTIFICATE-----";
-    private static final String BASE64_TESTER = "^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{4}|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)$";
 
     /**
      * Extracts X509 certificate from pem-encoded file.
@@ -68,13 +67,11 @@ public class SSLService implements Serializable {
      */
     public X509Certificate getPEMCertificate(String fileName) {
         X509Certificate cert = null;
-
         try {
             cert = getPEMCertificate(new FileInputStream(fileName));
         } catch (FileNotFoundException e) {
             log.error("Certificate file does not exist : " + fileName);
         }
-
         return cert;
     }
 
@@ -85,12 +82,11 @@ public class SSLService implements Serializable {
      * @return
      */
     public X509Certificate getPEMCertificate(byte[] cert) {
-    	ByteArrayInputStream bis = new ByteArrayInputStream(cert);
-    	try {
+    	try (ByteArrayInputStream bis = new ByteArrayInputStream(cert)) {
     		return getPEMCertificate(bis);
-        } finally {
-			IOUtils.closeQuietly(bis);
-		}
+        } catch (IOException e) {
+			return null;
+		} 
     }
 
     /**
@@ -116,17 +112,9 @@ public class SSLService implements Serializable {
      * @return
      */
     public static X509Certificate getPEMCertificateStatic(InputStream certStream) throws Exception {
-        Reader reader = null;
         PEMParser r = null;
-
-        try {
-            reader = new InputStreamReader(certStream);
-            r = new PEMParser(reader /*, new PasswordFinder() {
-                    public char[] getPassword() {
-                            return null;
-                    }
-            }*/);
-            
+        try (Reader reader = new InputStreamReader(certStream);){
+            r = new PEMParser(reader);
             Object certObject = r.readObject();
 
             if (certObject instanceof X509Certificate) {
@@ -136,12 +124,10 @@ public class SSLService implements Serializable {
                 return new JcaX509CertificateConverter().setProvider( SECURITY_PROVIDER_BOUNCY_CASTLE ).getCertificate( certificateHolder );
             }
             else {
-                // unknown certificate type
                 throw new IOException("unknown certificate type");
             }
         }  finally {
             IOUtils.closeQuietly(r);
-            IOUtils.closeQuietly(reader);
         }
     }
 

@@ -23,8 +23,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
+import org.gluu.model.DisplayNameEntry;
+import org.gluu.model.GluuStatus;
 import org.gluu.oxtrust.ldap.service.GroupService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.ldap.service.OxTrustAuditService;
@@ -36,14 +39,11 @@ import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.exception.BasePersistenceException;
 import org.gluu.persist.model.base.GluuBoolean;
+import org.gluu.service.LookupService;
+import org.gluu.service.security.Secure;
+import org.gluu.util.StringHelper;
+import org.gluu.util.Util;
 import org.slf4j.Logger;
-import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.model.DisplayNameEntry;
-import org.xdi.model.GluuStatus;
-import org.xdi.service.LookupService;
-import org.xdi.service.security.Secure;
-import org.xdi.util.StringHelper;
-import org.xdi.util.Util;
 
 /**
  * Action class for view and update group form.
@@ -408,7 +408,7 @@ public class UpdateGroupAction implements Serializable {
 			GluuCustomPerson person = personService.getPersonByDn(dn);
 			log.debug("Adding group {} to person {} memberOf", groupDn, person.getDisplayName());
 
-			if (appConfiguration.isUpdateApplianceStatus()) {
+			if (appConfiguration.isUpdateStatus()) {
 				GluuBoolean slaManager = isSLAManager(organizationGroups, person);
 				person.setSLAManager(slaManager);
 			}
@@ -424,7 +424,7 @@ public class UpdateGroupAction implements Serializable {
 			GluuCustomPerson person = personService.getPersonByDn(dn);
 			log.debug("Removing group {} from person {} memberOf", groupDn, person.getDisplayName());
 
-			if (appConfiguration.isUpdateApplianceStatus()) {
+			if (appConfiguration.isUpdateStatus()) {
 				GluuBoolean slaManager = isSLAManager(organizationGroups, person);
 				person.setSLAManager(slaManager);
 			}
@@ -436,7 +436,7 @@ public class UpdateGroupAction implements Serializable {
 			personService.updatePerson(person);
 		}
 
-		if (appConfiguration.isUpdateApplianceStatus()) {
+		if (appConfiguration.isUpdateStatus()) {
 			// Update existing members if needed
 			for (String dn : existingMembers) {
 				GluuCustomPerson person = personService.getPersonByDn(dn);

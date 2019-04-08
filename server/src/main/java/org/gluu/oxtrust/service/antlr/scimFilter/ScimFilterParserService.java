@@ -75,20 +75,20 @@ public class ScimFilterParserService {
 
     }
 
-    public Filter createLdapFilter(String filter, String defaultStr, Class<? extends BaseScimResource> clazz) throws SCIMException {
+    public Filter createFilter(String filter, Filter defaultFilter, Class<? extends BaseScimResource> clazz) throws SCIMException {
 
         try {
             Filter ldapFilter;
 
             if (StringUtils.isEmpty(filter))
-                ldapFilter=Filter.create(defaultStr);
+                ldapFilter=defaultFilter;
             else {
-                LdapFilterListener ldapFilterListener = new LdapFilterListener(clazz);
-                walkTree(FilterUtil.preprocess(filter, clazz), ldapFilterListener);
-                ldapFilter = ldapFilterListener.getFilter();
+                FilterListener filterListener = new FilterListener(clazz);
+                walkTree(FilterUtil.preprocess(filter, clazz), filterListener);
+                ldapFilter = filterListener.getFilter();
 
                 if (ldapFilter == null)
-                    throw new Exception("An error occurred when building LDAP filter: " + ldapFilterListener.getError());
+                    throw new Exception("An error occurred when building LDAP filter: " + filterListener.getError());
             }
 
             return ldapFilter;

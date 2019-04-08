@@ -17,16 +17,14 @@ import javax.inject.Named;
 
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.configuration.PropertiesConfigurationLayout;
-import org.gluu.jsf2.message.FacesMessages;
+import org.gluu.config.oxtrust.AppConfiguration;
+import org.gluu.config.oxtrust.ShibbolethCASProtocolConfiguration;
 import org.gluu.oxtrust.ldap.service.CASService;
 import org.gluu.oxtrust.ldap.service.Shibboleth3ConfService;
-import org.gluu.oxtrust.ldap.service.SvnSyncTimer;
 import org.gluu.oxtrust.ldap.service.TrustService;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
+import org.gluu.service.security.Secure;
 import org.slf4j.Logger;
-import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.config.oxtrust.ShibbolethCASProtocolConfiguration;
-import org.xdi.service.security.Secure;
 
 /**
  * Action class for updating CAS protocol Shibboleth IDP properties.
@@ -58,12 +56,6 @@ public class UpdateCASAction implements Serializable {
 
     @Inject
     private AppConfiguration appConfiguration;
-
-    @Inject
-    private SvnSyncTimer svnSyncTimer;
-    
-    @Inject
-    private FacesMessages facesMessages;
     
     @Inject
     private TrustService trustService;

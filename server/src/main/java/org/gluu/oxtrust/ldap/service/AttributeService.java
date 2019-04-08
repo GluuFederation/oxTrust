@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.ejb.Stateless;
 import javax.enterprise.event.Event;
@@ -20,23 +21,23 @@ import javax.enterprise.inject.Any;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.gluu.config.oxtrust.AppConfiguration;
+import org.gluu.model.GluuAttribute;
+import org.gluu.model.GluuUserRole;
+import org.gluu.model.attribute.AttributeDataType;
+import org.gluu.model.attribute.AttributeUsageType;
+import org.gluu.model.attribute.Multivalued;
+import org.gluu.model.scim.ScimCustomAtribute;
+import org.gluu.model.user.UserRole;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.service.cdi.event.EventType;
 import org.gluu.oxtrust.service.cdi.event.EventTypeQualifier;
 import org.gluu.oxtrust.service.cdi.event.Events;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.search.filter.Filter;
-import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.model.GluuAttribute;
-import org.xdi.model.GluuUserRole;
-import org.xdi.model.attribute.AttributeDataType;
-import org.xdi.model.attribute.AttributeUsageType;
-import org.xdi.model.attribute.Multivalued;
-import org.xdi.model.scim.ScimCustomAtribute;
-import org.xdi.model.user.UserRole;
-import org.xdi.util.INumGenerator;
-import org.xdi.util.OxConstants;
-import org.xdi.util.StringHelper;
+import org.gluu.util.INumGenerator;
+import org.gluu.util.OxConstants;
+import org.gluu.util.StringHelper;
 
 import com.unboundid.ldap.sdk.LDAPException;
 
@@ -47,7 +48,7 @@ import com.unboundid.ldap.sdk.LDAPException;
  */
 @Stateless
 @Named
-public class AttributeService extends org.xdi.service.AttributeService {
+public class AttributeService extends org.gluu.service.AttributeService {
 
 	/**
 	 * 
@@ -58,7 +59,7 @@ public class AttributeService extends org.xdi.service.AttributeService {
 	private AppConfiguration appConfiguration;
 
 	@Inject
-	private ApplianceService applianceService;
+	private ConfigurationService configurationService;
 
 	@Inject
 	private OrganizationService organizationService;
@@ -400,10 +401,6 @@ public class AttributeService extends org.xdi.service.AttributeService {
 	 * @return Array of attribute user roles
 	 */
 	public UserRole[] getViewTypes() {
-		if (applianceService.getAppliance().getWhitePagesEnabled() != null
-				&& applianceService.getAppliance().getWhitePagesEnabled().isBooleanValue()) {
-			return new UserRole[] { UserRole.ADMIN, UserRole.USER, UserRole.WHITEPAGES };
-		}
 		return new UserRole[] { UserRole.ADMIN, UserRole.USER };
 	}
 
@@ -463,8 +460,7 @@ public class AttributeService extends org.xdi.service.AttributeService {
 	 * @throws Exception
 	 */
 	private String generateInumForNewAttributeImpl() {
-		String orgInum = organizationService.getInumForOrganization();
-		return orgInum + OxTrustConstants.inumDelimiter + "0005" + OxTrustConstants.inumDelimiter + generateInum();
+		return UUID.randomUUID().toString();
 	}
 
 	private String generateInum() {

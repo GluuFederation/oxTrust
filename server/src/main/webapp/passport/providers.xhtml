@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:b="http://bootsfaces.net/ui"
+	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/WEB-INF/incl/layout/newtemplate.xhtml">
+	<f:metadata>
+		<f:viewAction
+			action="#{permissionService.requestPermission('uma', 'access')}" />
+		<f:viewAction action="#{conversationService.initConversation}" />
+		<f:viewAction action="#{passportProvidersAction.init}"
+			onPostback="false" />
+	</f:metadata>
+	<ui:define name="body">
+		<section class="content-header">
+			<h1 style="color: #333;">
+				#{msg['passport.title']} <small> <i
+					class="fa fa-caret-right" style="color: #333 !important;" />#{msg['passport.providers']}
+				</small>
+			</h1>
+			<ol class="breadcrumb">
+				<li><a href="#{request.contextPath}/home"> <i
+						class="fa fa-home" />
+				</a></li>
+				<li class="organization/configuration"><a
+					href="#{request.contextPath}/passport/idpInitiatedFlows">#{msg['passport.idpInitiated']}</a></li>
+			</ol>
+		</section>
+		<section class="content">
+			<div class="row">
+				<div class="col-xs-12">
+					<b:panel title="Passport providers" look="primary">
+						<div class="row" style="padding: 5px; margin-bottom: 5px;">
+							<b:link style-class="addProviderButtonClass btn btn-primary"
+								icon="plus" outcome="/passport/addProvider"
+								value="#{msg['passport.addNewProvider']}"
+								includeViewParams="false" />
+						</div>
+						<div class="row" style="padding: 10px;">
+							<b:dataTable id="providersTableId" style="text-align:center;"
+								responsive="true"
+								value="#{passportProvidersAction.providerSelections}" var="c"
+								print="true" excel="true" csv="true" pdf="true" select="true">
+								<b:dataTableColumn
+									label="#{msg['passport.provider.form.displayName']}">
+									<h:link includeViewParams="false"
+										outcome="/passport/editProvider"
+										value="#{c.provider.displayName}">
+										<f:param name="id" value="#{c.provider.id}" />
+									</h:link>
+								</b:dataTableColumn>
+								<b:dataTableColumn value="#{c.provider.passportStrategyId}"
+									label="#{msg['passport.provider.form.strategyId']}" />
+								<b:dataTableColumn value="#{c.provider.type}" order="asc"
+									label="#{msg['passport.provider.form.type']}" />
+								<b:dataTableColumn value="#{c.provider.id}" order="asc"
+									label="#{msg['passport.provider.form.id']}" />
+								<b:dataTableColumn label="#{msg['passport.deleteProvider']}">
+									<h:selectBooleanCheckbox id="selectId"
+										onchange="displayButton();" value="#{c.checked}">
+									</h:selectBooleanCheckbox>
+								</b:dataTableColumn>
+							</b:dataTable>
+						</div>
+						<div class="row" style="padding: 5px;">
+							<a4j:commandButton ajaxSingle="true" id="deleteId"
+								eventsQueue="providerQueue"
+								rendered="#{passportProvidersAction.providers.size() gt 0}"
+								onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();"
+								styleClass="btn btn-primary DeleteBulkProviders"
+								value="#{msg['passport.deleteProvider']}" />
+						</div>
+					</b:panel>
+					<ox:acceptRemovalDialog
+						deleteMethod="#{passportProvidersAction.deleteProviders}"
+						render="providersTableId" id="deleteConfirmation"
+						queue="providerQueue" subject="provider"
+						value="all selected providers" />
+					<script>
+						$(document).ready(function() { });
+						</script>
+				</div>
+			</div>
+		</section>
+		<h:outputScript> 
+	    	function displayButton() {  	
+		    	var selectedIds = $("input[id$=selectId]:checked");
+		    	deleteBtn = $("input[id$=deleteId]");
+		    	
+		    	if (selectedIds.length == 0) {
+		    		deleteBtn.attr("disabled", "disabled");
+		    	} else {
+		    		deleteBtn.removeAttr("disabled");
+		    	}
+		    	
+	    	} 
+	    	displayButton();
+   	</h:outputScript>
+	</ui:define>
+</ui:composition>

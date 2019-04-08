@@ -1,152 +1,131 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:a4j="http://richfaces.org/a4j"
-                xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:h="http://xmlns.jcp.org/jsf/html"
-                xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox" xmlns:rich="http://richfaces.org/rich"
-                xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
-                xmlns:ui="http://xmlns.jcp.org/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
-    <f:metadata>    
-        <f:viewAction action="#{permissionService.requestPermission('trust', 'access')}" />
-        <f:viewParam name="searchPattern" value="#{trustRelationshipInventoryAction.searchPattern}" />
-        <f:viewAction action="#{conversationService.initConversation}" />
-        <f:viewAction action="#{trustRelationshipInventoryAction.start}"
-                      if="#{trustRelationshipInventoryAction.trustedSpList == null}"
-                      onPostback="false"/>
-    </f:metadata>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
+	xmlns:b="http://bootsfaces.net/ui"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/WEB-INF/incl/layout/newtemplate.xhtml">
+	<f:metadata>
+		<f:viewAction
+			action="#{permissionService.requestPermission('trust', 'access')}" />
+		<f:viewParam name="searchPattern"
+			value="#{trustRelationshipInventoryAction.searchPattern}" />
+		<f:viewAction action="#{conversationService.initConversation}" />
+		<f:viewAction action="#{trustRelationshipInventoryAction.start}"
+			if="#{trustRelationshipInventoryAction.trustedSpList == null}"
+			onPostback="false" />
+	</f:metadata>
 
-    <ui:define name="body">
-        <section class="content-header">
-            <h1 style="color: #333;">
-                #{msg['trustmanager.saml']}
-                <small>
-                    <i class="fa fa-caret-right"
-                       style="color: #333 !important;"/> #{msg['trustmanager.trustRelationships']}</small>
-            </h1>
-            <ol class="breadcrumb">
-                <li>
-                    <a href="#{request.contextPath}/home">
-                        <i class="fa fa-home"/>
-                    </a>
-                </li>
-                <li class="organization/configuration">
-                    <a href="#{request.contextPath}/trustmanager/relationships">#{msg['trustmanager.trustRelationships']}</a>
-                </li>
-            </ol>
-        </section>
+	<ui:define name="body">
+		<section class="content-header">
+			<h1 style="color: #333;">
+				#{msg['trustmanager.saml']} <small> <i
+					class="fa fa-caret-right" style="color: #333 !important;" />
+					#{msg['trustmanager.trustRelationships']}
+				</small>
+			</h1>
+			<ol class="breadcrumb">
+				<li><a href="#{request.contextPath}/home"> <i
+						class="fa fa-home" />
+				</a></li>
+				<li class="organization/configuration"><a
+					href="#{request.contextPath}/trustmanager/relationships">#{msg['trustmanager.trustRelationships']}</a>
+				</li>
+			</ol>
+		</section>
 
-        <section class="content">
-            <!-- BODY TAB PANEL STARTS FROM HERE -->
-            <div class="row" id="formArea">
-                <div class="col-xs-12">
-                    <div class="box box-primary">
-                        <div class="box-header"/>
-                        <div style="display: inline-block; width: 75% !important;">
-
-                            <h:link includeViewParams="false" outcome="/trustmanager/addTrustRelationship"
-                                    propagation="none" style="width:200px;"
-                                    styleClass="btn btn-primary btn-block btn-flat"
-                                    value="#{msg['trustmanager.addRelationship']}"/>
-
-                            <richext:spacer height="50"/>
-                            <a4j:region>
-                                <h:form>
-                                    <a4j:poll action="#{trustRelationshipInventoryAction.search()}" enabled="true"
-                                              id="poll" interval="30000" render="poll, relationshipstable"/>
-                                </h:form>
-                            </a4j:region>
-
-
-                            <div class="row">
-                                <h:form>
-                                    <ox:decorate hideLabel="true" id="searchPattern">
-                                        <div style="width: 100%; float: left;margin-left:17px;">
-                                            <h:inputText alt="Search parameters for client like inum,iname,displayName"
-                                                         id="searchPatternId" maxlength="30" size="30"
-                                                         style="width:60%; float:left;" styleClass="form-control searchBox"
-                                                         value="#{trustRelationshipInventoryAction.searchPattern}"/>
-                                            <h:commandButton action="#{trustRelationshipInventoryAction.search}"
-                                                             style="float:left;margin-left :3px;"
-                                                             styleClass="btn btn-primary searchButton"
-                                                             value="#{msg['trustmanager.search']}"/>
-                                        </div>
-                                    </ox:decorate>
-                                </h:form>
-                            </div>
-                            <div class="row">
-
-                                <!-- general form elements -->
-                                <div class="box box-primary" style="width: 128%; margin-left: 22px;">
-                                    <div class="box-header">
-                                        <h3 class="box-title">#{msg['trustmanager.searchResults']}</h3>
-                                    </div>
-                                    <!-- /.box-header -->
-                                    <!-- form start -->
-                                    <div class="box-body">
-                                        <div class="table-responsive" style="overflow: auto">
-                                            <h:form id="trustRelationsshipList">
-                                                <ui:fragment
-                                                        rendered="#{trustRelationshipInventoryAction.trustedSpList.size() eq 0}">
-                                                    <richext:spacer height="30"/>
-                                                    <h:outputText
-                                                            value="#{msg['trustmanager.noTrsutRelationshipsFound']}"/>
-                                                </ui:fragment>
-
-                                                <rich:dataTable id="relationshipstable"
-                                                                rendered="#{trustRelationshipInventoryAction.trustedSpList.size() gt 0}"
-                                                                rows="20" sortMode="single" style="width:100%;"
-                                                                styleClass="data sortable"
-                                                                value="#{trustRelationshipInventoryAction.trustedSpList}"
-                                                                var="tsps">
-                                                    <rich:column sortBy="#{tsps.displayName}">
-                                                        <f:facet
-                                                                name="header">#{msg['trustmanager.community']}</f:facet>
-                                                        <h:link includeViewParams="false"
-                                                                outcome="/trustmanager/updateTrustRelationship"
-                                                                value="#{tsps.displayName}">
-                                                            <f:param name="inum" value="#{tsps.inum}"/>
-                                                        </h:link>
-                                                    </rich:column>
-                                                    <rich:column sortBy="#{tsps.description}">
-                                                        <f:facet
-                                                                name="header">#{msg['trustmanager.description']}</f:facet>
-                                                        <h:outputText value="#{tsps.description}"/>
-                                                    </rich:column>
-                                                    <rich:column>
-                                                        <f:facet
-                                                                name="header">#{msg['trustmanager.attributesPublished']}</f:facet>
-                                                        <ox:attributeList value="#{tsps.releasedCustomAttributes}"/>
-                                                    </rich:column>
-                                                    <rich:column sortBy="#{tsps.isFederation()}">
-                                                        <f:facet
-                                                                name="header">#{msg['trustmanager.relationshipType']}</f:facet>
-                                                        <h:outputText
-                                                                value="#{tsps.isFederation() ? 'federation' : (trustService.getTrustContainerFederation(tsps) ne null ? 'site federated with '.concat(trustService.getTrustContainerFederation(tsps).displayName) : 'site')}"/>
-                                                    </rich:column>
-                                                    <rich:column sortBy="#{tsps.validationStatus.value}">
-                                                        <f:facet
-                                                                name="header">#{msg['trustmanager.validationStatus']}</f:facet>
-                                                        <h:outputText
-                                                                value="#{metadataValidationTimer.isQueued(tsps.spMetaDataFN)? 'Validation Scheduled' : tsps.validationStatus.displayName}"/>
-                                                    </rich:column>
-                                                    <rich:column sortBy="#{tsps.status.value}">
-                                                        <f:facet name="header">#{msg['trustmanager.status']}</f:facet>
-                                                        <h:outputText value="#{tsps.status.displayName}"/>
-                                                    </rich:column>
-                                                    <f:facet name="footer">
-                                                        <rich:dataScroller align="left" for="relationshipstable"
-                                                                           maxPages="10" renderIfSinglePage="false"
-                                                                           rendered="#{trustRelationshipInventoryAction.trustedSpList.size() gt 0}"
-                                                                           stepControls="auto"/>
-                                                    </f:facet>
-                                                </rich:dataTable>
-                                            </h:form>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </ui:define>
+		<section class="content">
+			<!-- BODY TAB PANEL STARTS FROM HERE -->
+			<div class="row" id="formArea">
+				<div class="col-xs-12">
+					<div class="box box-primary">
+						<div class="box-header" />
+						<div class="row">
+							<div class="col-xs-12">
+								<b:panel title="Trust Relationships List" look="primary">
+									<b:link style-class="btn btn-primary" icon="plus"
+										outcome="/trustmanager/addTrustRelationship"
+										value="#{msg['trustmanager.addRelationship']}"
+										propagation="none" includeViewParams="false" />
+									<richext:spacer height="50" />
+									<a4j:region>
+										<h:form>
+											<a4j:poll
+												action="#{trustRelationshipInventoryAction.search()}"
+												enabled="true" id="poll" interval="30000"
+												render="poll, relationshipstable" />
+										</h:form>
+									</a4j:region>
+									<div class="row">
+										<h:form>
+											<ox:decorate hideLabel="true" id="searchPattern">
+												<div style="width: 100%; float: left; margin-left: 17px;">
+													<h:inputText
+														alt="Search parameters for client like inum,iname,displayName"
+														id="searchPatternId" maxlength="30" size="30"
+														style="width:60%; float:left;"
+														styleClass="form-control searchBox"
+														value="#{trustRelationshipInventoryAction.searchPattern}" />
+													<h:commandButton
+														action="#{trustRelationshipInventoryAction.search}"
+														style="float:left;margin-left :3px;"
+														styleClass="btn btn-primary searchButton"
+														value="#{msg['trustmanager.search']}" />
+												</div>
+											</ox:decorate>
+										</h:form>
+									</div>
+									<div class="row">
+										<div class="box box-primary"
+											style="width: 100%; padding: 10px;">
+											<div class="box-body">
+												<h:form id="trustRelationsshipList">
+													<div class="row" style="padding: 10px;">
+														<b:dataTable id="relationshipstable"
+															style="text-align:center;"
+															rendered="#{trustRelationshipInventoryAction.trustedSpList.size() gt 0}"
+															value="#{trustRelationshipInventoryAction.trustedSpList}"
+															var="tsps" print="true" excel="true" csv="true"
+															pdf="true" select="true" responsive="true">
+															<b:dataTableColumn
+																label="#{msg['trustmanager.community']}">
+																<h:link includeViewParams="false"
+																	outcome="/trustmanager/updateTrustRelationship"
+																	value="#{tsps.displayName}">
+																	<f:param name="inum" value="#{tsps.inum}" />
+																</h:link>
+															</b:dataTableColumn>
+															<b:dataTableColumn value="#{tsps.description}"
+																label="#{msg['trustmanager.description']}" />
+															<b:dataTableColumn
+																label="#{msg['trustmanager.attributesPublished']}">
+																<ox:attributeList
+																	value="#{tsps.releasedCustomAttributes}" />
+															</b:dataTableColumn>
+															<b:dataTableColumn
+																value="#{tsps.isFederation() ? 'federation' : (trustService.getTrustContainerFederation(tsps) ne null ? 'site federated with '.concat(trustService.getTrustContainerFederation(tsps).displayName) : 'site')}"
+																label="#{msg['trustmanager.relationshipType']}" />
+															<b:dataTableColumn
+																value="#{metadataValidationTimer.isQueued(tsps.spMetaDataFN)? 'Validation Scheduled' : tsps.validationStatus.displayName}"
+																label="#{msg['trustmanager.validationStatus']}" />
+															<b:dataTableColumn value="#{tsps.status.displayName}"
+																label="#{msg['trustmanager.status']}" />
+														</b:dataTable>
+													</div>
+												</h:form>
+											</div>
+										</div>
+									</div>
+								</b:panel>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+	</ui:define>
 </ui:composition>

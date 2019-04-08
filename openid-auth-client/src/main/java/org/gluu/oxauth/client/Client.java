@@ -10,7 +10,7 @@ import java.util.Map;
 
 import org.gluu.oxauth.client.auth.principal.OpenIdCredentials;
 import org.gluu.oxauth.client.auth.user.UserProfile;
-import org.xdi.context.WebContext;
+import org.gluu.context.WebContext;
 
 /**
  * This interface represents a client
@@ -23,7 +23,15 @@ public interface Client<U extends UserProfile> {
 
 	public String getRedirectionUrl(final WebContext context);
 
-	public String getRedirectionUrl(final WebContext context, Map<String, String> customStateParameters, final Map<String, String> customParameters);
+    /**
+     * Get url for oxAuth authentication
+     * 
+     * @param context
+     * @param customStateParameters
+     * @param customParameters
+     * @return url with authorization request
+     */
+	public String getRedirectionUrl(final WebContext context, Map<String, String> customStateParameters, final Map<String, String> customParameters, final boolean force);
 
     public String getLogoutRedirectionUrl(final WebContext context);
 

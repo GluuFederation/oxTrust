@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/WEB-INF/incl/layout/newtemplate.xhtml">
+	<f:metadata>
+		<f:viewAction
+			action="#{permissionService.requestPermission('uma', 'access')}" />
+		<f:viewParam name="id" value="#{passportProvidersAction.id}" />
+		<f:viewAction action="#{conversationService.initConversation}" />
+		<f:viewAction action="#{passportProvidersAction.update}"
+			onPostback="false" />
+	</f:metadata>
+
+
+	<ui:define name="body">
+		<section class="content-header">
+			<h1 style="color: #333;">
+				#{msg['passport.title']} <small> <i
+					class="fa fa-caret-right" style="color: #333 !important;" />#{msg['passport.providers']}
+				</small>
+			</h1>
+			<ol class="breadcrumb">
+				<li><a href="#{request.contextPath}/home"> <i
+						class="fa fa-home" />
+				</a></li>
+				<li class="organization/configuration"><a
+					href="#{request.contextPath}/passport/idpInitiatedFlows">#{msg['passport.idpInitiated']}</a></li>
+			</ol>
+		</section>
+		<section class="content">
+			<ui:decorate template="/WEB-INF/incl/passport/providerForm.xhtml">
+				<ui:param name="_provider"
+					value="#{passportProvidersAction.provider}" />
+				<ui:param name="_providerAction" value="#{passportProvidersAction}" />
+				<ui:param name="_new" value="true" />
+				<ui:define name="controlButttons">
+					<div id="updateButtons">
+						<h:commandButton action="#{passportProvidersAction.save}"
+							styleClass="btn btn-primary" value="#{msg['client.update']}" />
+						<h:commandButton action="#{passportProvidersAction.cancel}"
+							immediate="true" style="margin-left:3px;"
+							styleClass="btn btn-primary" value="#{msg['client.cancel']}" />
+					</div>
+				</ui:define>
+			</ui:decorate>
+			<script>
+				$(document).ready(function() {
+				});
+			</script>
+			<h:outputScript>
+         function toggleType() {
+            var type = $(".ProviderType").val();
+            if( type == "openidconnect"){
+               $(".PassportStrategyId").val("passport-openidconnect");
+               $(".MappingId").val("openidconnect-default");
+            }
+            if( type == "openidconnect-oxd"){
+             $(".PassportStrategyId").val("passport-oxd");
+             $(".MappingId").val("oxd-default");
+            }
+            if( type == "saml"){
+             $(".PassportStrategyId").val("passport-saml");
+             $(".MappingId").val("saml_ldap_profile");
+            }
+            if( type == "oauth"){
+             $(".PassportStrategyId").val("");
+             $(".MappingId").val("");
+            }
+         }
+    </h:outputScript>
+		</section>
+	</ui:define>
+</ui:composition>

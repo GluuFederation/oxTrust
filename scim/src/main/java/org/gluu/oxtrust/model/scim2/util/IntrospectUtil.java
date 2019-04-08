@@ -387,13 +387,15 @@ public class IntrospectUtil {
 
                 if (!prune && attrAnnot.type().equals(AttributeDefinition.Type.COMPLEX)) {
                     Class cls = attrAnnot.multiValueClass();  //Use <T> parameter of Collection if present
-                    if (cls.equals(NullType.class))
-                        cls=f.getType();
+                    if (cls.equals(NullType.class)) {
+                        cls = f.getType();
+                    }
+                    if (clazz.equals(cls)) {
+                        //Prevent infinite loop
+                        prune = true;
+                    }
 
-                    if (clazz.equals(cls))  //Prevent infinite loop
-                        prune=true;
-
-                    traverseClassForNames(cls.equals(NullType.class) ? f.getType() : cls, name, new ArrayList<Field>(), prune);
+                    traverseClassForNames(cls, name, new ArrayList<>(), prune);
                 }
             }
         }

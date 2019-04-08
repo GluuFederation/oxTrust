@@ -3,14 +3,12 @@
     "orgIname":"${config.organization.iname}",
     "orgSupportEmail":"${config.organization.supportEmail}",
 
-    "applianceInum":"${config.appliance.inum}",
-
     "baseDN":"o=gluu",
 
     "baseEndpoint":"${config.host.schema}://${config.host.idp_name}/identity/restv1",
 
     "idpUrl":"${config.host.schema}://${config.host.idp_name}",
-    "applianceUrl":"${config.host.schema}://${config.host.idp_name}",
+    "applicationUrl":"${config.host.schema}://${config.host.idp_name}",
 
     "keystorePath":"${base.root}/etc/certs/${config.organization.inum-fn}-java.jks",
     "keystorePassword":"${config.host.keystore_password}",
@@ -26,12 +24,8 @@
         "gluuPerson"
     ],
 
-    "svnConfigurationStoreRoot":"${svn.configuration.base_path}/${config.appliance.inum-fn}",
-    "svnConfigurationStorePassword":"${config.appliance.svn_base64_encoded_password}",
-    "persistSVN":false,
-
     "allowPersonModification":true,
-    "updateApplianceStatus":true,
+    "updateStatus":true,
 
     "clientAssociationAttribute":"inum",
 
@@ -75,12 +69,6 @@
     "idpSecurityKey":"${base.root}/etc/certs/${config.organization.inum-fn}-shib.key",
     "idpSecurityKeyPassword":"${config.host.keystore_password}",
     "gluuSpCert":"${base.root}/etc/certs/${config.organization.inum-fn}-shib.crt",
-
-    "idpBindDn":"inum=${config.appliance.inum},ou=appliances,o=gluu",
-    "idpBindPassword":"${config.host.idp.ldap_base64_encoded_password}",
-    "idpLdapProtocol":"ldaps",
-    "idpLdapServer":"localhost:1636",
-    "idpUserFields":"uid,mail",
 
     "ldifStore":"${base.root}/var/ox/oxtrust/removed",
 

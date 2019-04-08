@@ -15,15 +15,15 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.gluu.config.oxtrust.AppConfiguration;
+import org.gluu.model.GluuStatus;
 import org.gluu.oxtrust.model.GluuMetadataSourceType;
 import org.gluu.oxtrust.model.GluuSAMLFederationProposal;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.model.base.InumEntry;
-import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.model.GluuStatus;
-import org.xdi.util.INumGenerator;
-import org.xdi.util.StringHelper;
+import org.gluu.util.INumGenerator;
+import org.gluu.util.StringHelper;
 
 @Stateless
 @Named
@@ -34,7 +34,7 @@ public class FederationService implements Serializable {
 	@Inject
 	private PersistenceEntryManager ldapEntryManager;
 	@Inject
-	private ApplianceService applianceService;
+	private ConfigurationService configurationService;
 
 	@Inject
 	private Shibboleth3ConfService shibboleth3ConfService;
@@ -43,19 +43,7 @@ public class FederationService implements Serializable {
 	private AppConfiguration appConfiguration;
 
 	public void addFederationProposal(GluuSAMLFederationProposal federationProposal) {
-		String[] clusterMembers = appConfiguration.getClusteredInums();
-		String applianceInum = appConfiguration.getApplianceInum();
-		if (clusterMembers == null || clusterMembers.length == 0) {
-			clusterMembers = new String[] { applianceInum };
-		}
-
-		String dn = federationProposal.getDn();
-		for (String clusterMember : clusterMembers) {
-			String clusteredDN = StringHelper.replaceLast(dn, applianceInum, clusterMember);
-			federationProposal.setDn(clusteredDN);
-			ldapEntryManager.persist(federationProposal);
-		}
-		federationProposal.setDn(dn);
+		ldapEntryManager.persist(federationProposal);
 	}
 
 	/**
@@ -82,7 +70,7 @@ public class FederationService implements Serializable {
 	 * @return New inum for federation proposal
 	 */
 	private String generateInumForNewFederationProposalImpl() {
-		return getApplianceInum() + OxTrustConstants.inumDelimiter + "0006" + OxTrustConstants.inumDelimiter
+		return getApplicationInum() + OxTrustConstants.inumDelimiter + "0006" + OxTrustConstants.inumDelimiter
 				+ INumGenerator.generate(2);
 	}
 
@@ -100,8 +88,8 @@ public class FederationService implements Serializable {
 	 * 
 	 * @return Current organization inum
 	 */
-	private String getApplianceInum() {
-		return appConfiguration.getApplianceInum();
+	private String getApplicationInum() {
+		return appConfiguration.getApplicationInum();
 	}
 
 	/**
@@ -113,26 +101,15 @@ public class FederationService implements Serializable {
 	 *         proposal branch if inum is null
 	 */
 	public String getDnForFederationProposal(String inum) {
-		String applianceDn = applianceService.getDnForAppliance();
+		String configurationDn = configurationService.getDnForConfiguration();
 		if (StringHelper.isEmpty(inum)) {
-			return String.format("ou=federations,%s", applianceDn);
+			return String.format("ou=federations,%s", configurationDn);
 		}
-		return String.format("inum=%s,ou=federations,%s", inum, applianceDn);
+		return String.format("inum=%s,ou=federations,%s", inum, configurationDn);
 	}
 
 	public void updateFederationProposal(GluuSAMLFederationProposal federationProposal) {
-		String[] clusterMembers = appConfiguration.getClusteredInums();
-		String applianceInum = appConfiguration.getApplianceInum();
-		if (clusterMembers == null || clusterMembers.length == 0) {
-			clusterMembers = new String[] { applianceInum };
-		}
-		String dn = federationProposal.getDn();
-		for (String clusterMember : clusterMembers) {
-			String clusteredDN = StringHelper.replaceLast(dn, applianceInum, clusterMember);
-			federationProposal.setDn(clusteredDN);
-			ldapEntryManager.merge(federationProposal);
-		}
-		federationProposal.setDn(dn);
+		ldapEntryManager.merge(federationProposal);
 	}
 
 	/**
@@ -160,19 +137,7 @@ public class FederationService implements Serializable {
 			shibboleth3ConfService.removeMetadataFile(federationProposal.getSpMetaDataFN());
 		}
 
-		String[] clusterMembers = appConfiguration.getClusteredInums();
-		String applianceInum = appConfiguration.getApplianceInum();
-		if (clusterMembers == null || clusterMembers.length == 0) {
-			clusterMembers = new String[] { applianceInum };
-		}
-
-		String dn = federationProposal.getDn();
-		for (String clusterMember : clusterMembers) {
-			String clusteredDN = StringHelper.replaceLast(dn, applianceInum, clusterMember);
-			federationProposal.setDn(clusteredDN);
-			ldapEntryManager.remove(federationProposal);
-		}
-		federationProposal.setDn(dn);
+		ldapEntryManager.remove(federationProposal);
 	}
 
 	/**

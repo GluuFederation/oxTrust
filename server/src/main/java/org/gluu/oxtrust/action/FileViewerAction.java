@@ -15,9 +15,9 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.commons.io.FileUtils;
+import org.gluu.service.security.Secure;
+import org.gluu.util.StringHelper;
 import org.slf4j.Logger;
-import org.xdi.service.security.Secure;
-import org.xdi.util.StringHelper;
 
 @Named("fileViewerAction")
 @Stateless

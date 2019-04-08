@@ -13,12 +13,12 @@ import java.util.List;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.gluu.model.GluuStatus;
 import org.gluu.persist.model.base.Entry;
 import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
 import org.gluu.site.ldap.persistence.annotation.LdapAttributesList;
 import org.gluu.site.ldap.persistence.annotation.LdapEntry;
 import org.gluu.site.ldap.persistence.annotation.LdapObjectClass;
-import org.xdi.model.GluuStatus;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -57,7 +57,7 @@ public class GluuGroup extends Entry implements Serializable {
 	private String owner;
 
 	@LdapAttribute(name = "member")
-	private List<String> members;
+	private List<String> members=new ArrayList<>();
 
 	@LdapAttribute(name = "c")
 	private String countryName;

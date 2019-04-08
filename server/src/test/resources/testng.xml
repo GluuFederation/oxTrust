@@ -2,10 +2,10 @@
 
 <suite name="oxTrustServer" parallel="false">
 
-    <!-- Appliance Status Test (embedded) -->
-    <test name="Appliance Status Test (embedded)" enabled="true">
+    <!-- Configuration Status Test (embedded) -->
+    <test name="Configuration Status Test (embedded)" enabled="true">
         <classes>
-            <class name="org.gluu.oxtrust.service.test.ApplianceStatusTest"/>
+            <class name="org.gluu.oxtrust.service.test.ConfigurationStatusTest"/>
         </classes>
     </test>
 
@@ -29,13 +29,5 @@
             <class name="org.gluu.oxtrust.service.test.PostLogoutRedirectUriTest" />
         </classes>
     </test>
-
-    <!-- Rest API tests (embedded) -->
-    <test name="Check Attributes Rest API (embedded)" enabled="true">
-        <classes>
-            <class name="org.gluu.oxtrust.api.attributes.test.AttributeWebResourceTest" />
-        </classes>
-    </test>
-
 
 </suite>

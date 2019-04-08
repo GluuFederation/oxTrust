@@ -17,8 +17,8 @@ import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.FederationService;
 import org.gluu.oxtrust.model.GluuSAMLFederationProposal;
 import org.gluu.oxtrust.util.OxTrustConstants;
+import org.gluu.service.security.Secure;
 import org.slf4j.Logger;
-import org.xdi.service.security.Secure;
 
 @ConversationScoped
 @Named("federationInventoryAction")

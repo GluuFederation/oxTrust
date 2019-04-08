@@ -23,6 +23,13 @@ import javax.inject.Named;
 
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
+import org.gluu.model.DisplayNameEntry;
+import org.gluu.model.GluuImage;
+import org.gluu.model.SelectableEntity;
+import org.gluu.model.custom.script.CustomScriptType;
+import org.gluu.model.custom.script.model.CustomScript;
+import org.gluu.oxauth.model.uma.persistence.UmaResource;
+import org.gluu.oxauth.model.uma.persistence.UmaScopeDescription;
 import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.ImageService;
 import org.gluu.oxtrust.ldap.service.uma.ResourceSetService;
@@ -32,20 +39,13 @@ import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.service.custom.CustomScriptService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.exception.BasePersistenceException;
+import org.gluu.service.JsonService;
+import org.gluu.service.LookupService;
+import org.gluu.service.security.Secure;
+import org.gluu.util.StringHelper;
 import org.richfaces.event.FileUploadEvent;
 import org.richfaces.model.UploadedFile;
 import org.slf4j.Logger;
-import org.xdi.model.DisplayNameEntry;
-import org.xdi.model.GluuImage;
-import org.xdi.model.SelectableEntity;
-import org.xdi.model.custom.script.CustomScriptType;
-import org.xdi.model.custom.script.model.CustomScript;
-import org.xdi.oxauth.model.uma.persistence.UmaResource;
-import org.xdi.oxauth.model.uma.persistence.UmaScopeDescription;
-import org.xdi.service.JsonService;
-import org.xdi.service.LookupService;
-import org.xdi.service.security.Secure;
-import org.xdi.util.StringHelper;
 
 /**
  * Action class for view and update UMA resource

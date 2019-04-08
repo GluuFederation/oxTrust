@@ -4,7 +4,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.xdi</groupId>
+	<groupId>org.gluu</groupId>
 	<artifactId>oxtrust</artifactId>
 	<packaging>pom</packaging>
 	<version>4.0.0-SNAPSHOT</version>
@@ -17,7 +17,6 @@
 
 		<oxcore.version>4.0.0-SNAPSHOT</oxcore.version>
 		<oxauth.version>4.0.0-SNAPSHOT</oxauth.version>
-		<oxasimba.version>4.0.0-SNAPSHOT</oxasimba.version>
 
 		<jackson.version>2.9.8</jackson.version>
 		<jackson.databind.version>2.9.8</jackson.databind.version>
@@ -48,7 +47,6 @@
 		<swagger.version>1.5.3-M1</swagger.version>
 
 		<antlr4.version>4.7.1</antlr4.version>
-		<antlr4.visitor>true</antlr4.visitor>
 
 		<jetty.version>9.4.9.v20180320</jetty.version>
 
@@ -123,113 +121,124 @@
 
 			<!-- oxTrust -->
 			<dependency>
-				<groupId>org.xdi</groupId>
+				<groupId>org.gluu</groupId>
 				<artifactId>oxtrust-static</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.xdi</groupId>
+				<groupId>org.gluu</groupId>
 				<artifactId>oxtrust-server</artifactId>
 				<type>jar</type>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.xdi</groupId>
+				<groupId>org.gluu</groupId>
 				<artifactId>oxtrust-server</artifactId>
 				<type>war</type>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.xdi</groupId>
-				<artifactId>api-server</artifactId>
+				<groupId>org.gluu</groupId>
+				<artifactId>oxtrust-api-server</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.xdi</groupId>
+				<groupId>org.gluu</groupId>
 				<artifactId>oxtrust-configuration</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.xdi</groupId>
-				<artifactId>openid-auth-client</artifactId>
+				<groupId>org.gluu</groupId>
+				<artifactId>oxtrust-openid-auth-client</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.xdi</groupId>
+				<groupId>org.gluu</groupId>
 				<artifactId>oxtrust-scim</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.xdi</groupId>
+				<groupId>org.gluu</groupId>
 				<artifactId>oxtrust-model</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.xdi</groupId>
+				<groupId>org.gluu</groupId>
 				<artifactId>oxtrust-client</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 
 			<!-- oxAuth -->
 			<dependency>
-				<groupId>org.xdi</groupId>
+				<groupId>org.gluu</groupId>
 				<artifactId>oxauth-model</artifactId>
 				<version>${oxauth.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.xdi</groupId>
+				<groupId>org.gluu</groupId>
 				<artifactId>oxauth-client</artifactId>
 				<version>${oxauth.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.gluu</groupId>
+				<artifactId>uma-rs-resteasy</artifactId>
+				<version>4.0.0-SNAPSHOT</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.slf4j</groupId>
+						<artifactId>slf4j-log4j12</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 
 			<!-- Gluu -->
 			<dependency>
-				<groupId>org.xdi</groupId>
+				<groupId>org.gluu</groupId>
 				<artifactId>oxcore-util</artifactId>
 				<version>${oxcore.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.xdi</groupId>
+				<groupId>org.gluu</groupId>
 				<artifactId>oxcore-ldap-annotations</artifactId>
 				<version>${oxcore.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.xdi</groupId>
+				<groupId>org.gluu</groupId>
 				<artifactId>oxcore-persist-model</artifactId>
 				<version>${oxcore.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.xdi</groupId>
+				<groupId>org.gluu</groupId>
 				<artifactId>oxcore-ldap</artifactId>
 				<version>${oxcore.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.xdi</groupId>
+				<groupId>org.gluu</groupId>
 				<artifactId>oxcore-couchbase</artifactId>
 				<version>${oxcore.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.xdi</groupId>
+				<groupId>org.gluu</groupId>
 				<artifactId>oxcore-service</artifactId>
 				<version>${oxcore.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.xdi</groupId>
+				<groupId>org.gluu</groupId>
 				<artifactId>oxcore-server</artifactId>
 				<version>${oxcore.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.xdi</groupId>
+				<groupId>org.gluu</groupId>
 				<artifactId>oxcore-jsf-util</artifactId>
 				<version>${oxcore.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.xdi</groupId>
+				<groupId>org.gluu</groupId>
 				<artifactId>oxcore-saml</artifactId>
 				<version>${oxcore.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.xdi</groupId>
+				<groupId>org.gluu</groupId>
 				<artifactId>oxcore-model</artifactId>
 				<version>${oxcore.version}</version>
 			</dependency>
@@ -473,32 +482,6 @@
 				<artifactId>resteasy-jackson-provider</artifactId>
 				<version>${resteasy.version}</version>
 			</dependency>
-
-			<!-- Asimba -->
-			<dependency>
-				<groupId>org.asimba</groupId>
-				<artifactId>asimba-utility-ldap</artifactId>
-				<version>${oxasimba.version}</version>
-				<exclusions>
-					<exclusion>
-						<artifactId>slf4j-api</artifactId>
-						<groupId>org.slf4j</groupId>
-					</exclusion>
-					<exclusion>
-						<artifactId>commons-logging</artifactId>
-						<groupId>commons-logging</groupId>
-					</exclusion>
-					<exclusion>
-						<groupId>log4j</groupId>
-						<artifactId>log4j</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>org.xdi</groupId>
-						<artifactId>oxService</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
-
 			<!-- Jackson -->
 			<dependency>
 				<groupId>com.fasterxml.jackson.core</groupId>

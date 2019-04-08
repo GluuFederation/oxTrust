@@ -6,33 +6,27 @@
 
 package org.gluu.oxtrust.service;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
-import javax.ejb.Stateless;
-import javax.enterprise.inject.Instance;
-import javax.inject.Inject;
-import javax.inject.Named;
-
-import org.gluu.oxtrust.ldap.service.ApplianceService;
+import org.gluu.oxtrust.ldap.service.ConfigurationService;
+import org.gluu.config.oxtrust.AppConfiguration;
+import org.gluu.model.ApplicationType;
+import org.gluu.model.metric.MetricType;
+import org.gluu.model.metric.counter.CounterMetricEntry;
+import org.gluu.model.metric.ldap.MetricEntry;
 import org.gluu.oxtrust.ldap.service.ApplicationFactory;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.model.AuthenticationChartDto;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.PersistenceEntryManager;
+import org.gluu.service.CacheService;
+import org.gluu.service.metric.inject.ReportMetric;
 import org.slf4j.Logger;
-import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.model.ApplicationType;
-import org.xdi.model.metric.MetricType;
-import org.xdi.model.metric.counter.CounterMetricEntry;
-import org.xdi.model.metric.ldap.MetricEntry;
-import org.xdi.service.CacheService;
-import org.xdi.service.metric.inject.ReportMetric;
+
+import javax.ejb.Stateless;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * Store and retrieve metric
@@ -42,7 +36,7 @@ import org.xdi.service.metric.inject.ReportMetric;
  */
 @Stateless
 @Named(MetricService.METRIC_SERVICE_COMPONENT_NAME)
-public class MetricService extends org.xdi.service.metric.MetricService {
+public class MetricService extends org.gluu.service.metric.MetricService {
 
 	private static final int YEARLY = 365;
 
@@ -61,7 +55,7 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 	private CacheService cacheService;
 
 	@Inject
-	private ApplianceService applianceService;
+	private ConfigurationService configurationService;
 
 	@Inject
 	private OrganizationService organizationService;
@@ -75,23 +69,17 @@ public class MetricService extends org.xdi.service.metric.MetricService {
     private PersistenceEntryManager ldapEntryManager;
 
 	public void initTimer() {
-		initTimer(this.appConfiguration.getMetricReporterInterval());
+		initTimer(this.appConfiguration.getMetricReporterInterval(), this.appConfiguration.getMetricReporterKeepDataDays());
 	}
 
 	@Override
 	public String baseDn() {
-		String orgDn = organizationService.getDnForOrganization();
-		String baseDn = String.format("ou=metric,%s", orgDn);
+		String baseDn = String.format("ou=statistic,o=metric");
 		return baseDn;
 	}
 
 	@Override
-	public String applianceInum() {
-		return applianceService.getApplianceInum();
-	}
-
-	@Override
-	public org.xdi.service.metric.MetricService getMetricServiceInstance() {
+	public org.gluu.service.metric.MetricService getMetricServiceInstance() {
 		return instance.get();
 	}
 
@@ -162,8 +150,7 @@ public class MetricService extends org.xdi.service.metric.MetricService {
 
 		Date startDate = calendar.getTime();
 
-		Map<MetricType, List<? extends MetricEntry>> entries = findMetricEntry(applicationType,
-				appConfiguration.getApplianceInum(), metricTypes, startDate, endDate);
+		Map<MetricType, List<? extends MetricEntry>> entries = findMetricEntry(applicationType, metricTypes, startDate, endDate);
 
 		return entries;
 	}

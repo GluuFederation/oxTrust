@@ -24,16 +24,16 @@ import org.gluu.oxauth.client.authentication.AuthenticationFilter;
 import org.gluu.oxauth.client.session.AbstractOAuthFilter;
 import org.gluu.oxauth.client.session.OAuthData;
 import org.gluu.oxauth.client.util.Configuration;
-import org.xdi.oxauth.client.TokenClient;
-import org.xdi.oxauth.client.TokenResponse;
-import org.xdi.oxauth.client.UserInfoClient;
-import org.xdi.oxauth.client.UserInfoResponse;
-import org.xdi.oxauth.model.exception.InvalidJwtException;
-import org.xdi.oxauth.model.jwt.Jwt;
-import org.xdi.oxauth.model.jwt.JwtClaimName;
-import org.xdi.util.StringHelper;
-import org.xdi.util.security.StringEncrypter;
-import org.xdi.util.security.StringEncrypter.EncryptionException;
+import org.gluu.oxauth.client.TokenClient;
+import org.gluu.oxauth.client.TokenResponse;
+import org.gluu.oxauth.client.UserInfoClient;
+import org.gluu.oxauth.client.UserInfoResponse;
+import org.gluu.oxauth.model.exception.InvalidJwtException;
+import org.gluu.oxauth.model.jwt.Jwt;
+import org.gluu.oxauth.model.jwt.JwtClaimName;
+import org.gluu.util.StringHelper;
+import org.gluu.util.security.StringEncrypter;
+import org.gluu.util.security.StringEncrypter.EncryptionException;
 
 import net.shibboleth.idp.authn.ExternalAuthentication;
 

@@ -15,9 +15,9 @@ import javax.inject.Named;
 import org.gluu.oxtrust.model.AuthenticationChartDto;
 import org.gluu.oxtrust.service.MetricService;
 import org.gluu.oxtrust.service.PermissionService;
+import org.gluu.service.JsonService;
+import org.gluu.service.security.Secure;
 import org.slf4j.Logger;
-import org.xdi.service.JsonService;
-import org.xdi.service.security.Secure;
 
 /**
  * Action class for home page

@@ -16,6 +16,7 @@ import javax.inject.Named;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response.Status;
 
+import org.gluu.model.GluuStatus;
 import org.gluu.oxtrust.ldap.service.IGroupService;
 import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
@@ -35,7 +36,6 @@ import org.gluu.persist.model.SortOrder;
 import org.gluu.search.filter.Filter;
 import org.joda.time.format.ISODateTimeFormat;
 import org.slf4j.Logger;
-import org.xdi.model.GluuStatus;
 
 /**
  * @author Val Pecaoco Re-engineered by jgomer on 2017-10-18.
@@ -122,8 +122,6 @@ public class Scim2GroupService implements Serializable {
 
 		gluuGroup.setInum(inum);
 		gluuGroup.setDn(dn);
-		gluuGroup.setIname(groupService.generateInameForNewGroup(gluuGroup.getDisplayName().replaceAll(" ", "")));
-
 	}
 
 	public void transferAttributesToGroupResource(GluuGroup gluuGroup, GroupResource res, String groupsUrl,
@@ -283,7 +281,7 @@ public class Scim2GroupService implements Serializable {
 	public PagedResult<BaseScimResource> searchGroups(String filter, String sortBy, SortOrder sortOrder, int startIndex,
 			int count, String groupsUrl, String usersUrl, int maxCount) throws Exception {
 
-		Filter ldapFilter = scimFilterParserService.createLdapFilter(filter, "inum=*", GroupResource.class);
+		Filter ldapFilter = scimFilterParserService.createFilter(filter, Filter.createPresenceFilter("inum"), GroupResource.class);
 		log.info(
 				"Executing search for groups using: ldapfilter '{}', sortBy '{}', sortOrder '{}', startIndex '{}', count '{}'",
 				ldapFilter.toString(), sortBy, sortOrder.getValue(), startIndex, count);
@@ -295,11 +293,6 @@ public class Scim2GroupService implements Serializable {
 		for (GluuGroup group : list.getEntries()) {
 			GroupResource scimGroup = new GroupResource();
 			transferAttributesToGroupResource(group, scimGroup, groupsUrl, usersUrl);
-			// TODO: Delete this IF in the future - added for backwards compatibility with
-			// SCIM-Client <= 3.1.2.
-			if (scimGroup.getMembers() == null)
-				scimGroup.setMembers(new HashSet<Member>());
-
 			resources.add(scimGroup);
 		}
 		log.info("Found {} matching entries - returning {}", list.getTotalEntriesCount(), list.getEntries().size());

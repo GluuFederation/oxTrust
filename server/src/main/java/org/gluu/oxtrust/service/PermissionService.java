@@ -12,15 +12,15 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.gluu.oxtrust.ldap.service.ApplianceService;
-import org.gluu.oxtrust.model.GluuAppliance;
+import org.gluu.config.oxtrust.AppConfiguration;
+import org.gluu.model.user.UserRole;
+import org.gluu.oxtrust.ldap.service.ConfigurationService;
+import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.oxtrust.security.Identity;
+import org.gluu.service.el.ExpressionEvaluator;
+import org.gluu.service.security.SecurityEvaluationException;
+import org.gluu.util.StringHelper;
 import org.slf4j.Logger;
-import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.model.user.UserRole;
-import org.xdi.service.el.ExpressionEvaluator;
-import org.xdi.service.security.SecurityEvaluationException;
-import org.xdi.util.StringHelper;
 
 /**
  * @author Yuriy Movchan Date: 05/17/2017
@@ -41,7 +41,7 @@ public class PermissionService implements Serializable {
     private AppConfiguration appConfiguration;
 
     @Inject
-    private ApplianceService applianceService;
+    private ConfigurationService configurationService;
 
     @Inject
     private ExpressionEvaluator expressionEvaluator;
@@ -64,8 +64,8 @@ public class PermissionService implements Serializable {
             {"scope", "access"},
             {"oxauth", "access"},
             {"uma", "access"},
+            {"passport", "access"},
             {"super-gluu", "access"},
-            {"linktrack", "access"},
     };
 
     public boolean hasPermission(Object target, String action) {
@@ -76,21 +76,10 @@ public class PermissionService implements Serializable {
 
         if (identity.hasRole(UserRole.MANAGER.getValue()) || identity.hasRole(UserRole.USER.getValue())) {
             if (StringHelper.equalsIgnoreCase("profile_management", action)) {
-                GluuAppliance appliance = applianceService.getAppliance();
-                GluuAppliance targetAppliance = (GluuAppliance) target;
-                if (((appliance.getProfileManagment() != null) && appliance.getProfileManagment().isBooleanValue())
-                        && StringHelper.equals(applianceService.getAppliance().getInum(), targetAppliance.getInum())) {
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-
-            if (StringHelper.equalsIgnoreCase("whitePagesEnabled", action)) {
-                GluuAppliance appliance = applianceService.getAppliance();
-                GluuAppliance targetAppliance = (GluuAppliance) target;
-                if (((appliance.getWhitePagesEnabled() != null) && appliance.getWhitePagesEnabled().isBooleanValue())
-                        && StringHelper.equals(applianceService.getAppliance().getInum(), targetAppliance.getInum())) {
+                GluuConfiguration configuration = configurationService.getConfiguration();
+                GluuConfiguration targetConfiguration = (GluuConfiguration) target;
+                if (((configuration.getProfileManagment() != null) && configuration.getProfileManagment().isBooleanValue())
+                        && StringHelper.equals(configurationService.getConfiguration().getInum(), targetConfiguration.getInum())) {
                     return true;
                 } else {
                     return false;

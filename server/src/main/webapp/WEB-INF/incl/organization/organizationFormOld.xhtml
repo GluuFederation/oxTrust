@@ -27,7 +27,7 @@
             vertical-align: top;
         }
 
-        .applianceSheet {
+        .configurationSheet {
             border: 1px solid #999;
         }
     </h:outputStylesheet>
@@ -73,9 +73,9 @@
         addToBodyOnload(loadColorPicker);
     </h:outputScript>
 
-    <ox:changePasswordDialog id="appliancePassword" label="Change Appliance Password"
-                             password="#{appliancePasswordAction.newPassword}"
-                             setPasswordMethod="#{appliancePasswordAction.update}"/>
+    <ox:changePasswordDialog id="configurationPassword" label="Change ‘onfiguration Password"
+                             password="#{configurationPasswordAction.newPassword}"
+                             setPasswordMethod="#{configurationPasswordAction.update}"/>
 
     <h:form id="organizationForm">
         <div class="row">
@@ -99,7 +99,7 @@
                                     <ox:decorate id="passwordReset">
                                         <ui:define
                                                 name="label">#{msg['organizationForm.selfServicePasswordReset']}</ui:define>
-                                        <h:selectOneMenu value="#{_appliance.passwordResetAllowed}" id="passwordResetId"
+                                        <h:selectOneMenu value="#{_configuration.passwordResetAllowed}" id="passwordResetId"
                                                          styleClass="form-control">
                                             <f:selectItems value="#{organizationService.booleanSelectionTypes}"
                                                            var="_type" itemLabel="#{_type.displayName}"/>
@@ -108,7 +108,7 @@
                                     </ox:decorate>
 
                                     <ox:decorate id="vdsCacheRefreshState" label="#{msg['organizationForm.cacheRefresh']}">
-                                        <h:selectOneMenu value="#{_appliance.vdsCacheRefreshEnabled}"
+                                        <h:selectOneMenu value="#{_configuration.vdsCacheRefreshEnabled}"
                                                          id="vdsCacheRefreshStateId" styleClass="form-control">
                                             <f:selectItems value="#{organizationService.booleanSelectionTypes}"
                                                            var="_type" itemLabel="#{_type.displayName}"/>
@@ -117,7 +117,7 @@
                                     </ox:decorate>
 
                                     <ox:decorate id="scimEnabledState" label="#{msg['organizationForm.scimSupport']}">
-                                        <h:selectOneMenu value="#{_appliance.scimEnabled}" id="scimEnabledStateId"
+                                        <h:selectOneMenu value="#{_configuration.scimEnabled}" id="scimEnabledStateId"
                                                          styleClass="form-control">
                                             <f:selectItems value="#{organizationService.booleanSelectionTypes}"
                                                            var="_type" itemLabel="#{_type.displayName}"/>
@@ -127,19 +127,19 @@
 
                                     <ox:decorate id="dnsServer" label="#{msg['organizationForm.dnsServer']}">
                                         <h:inputText title="Multiple addresses can be specified using comma (,)"
-                                                     value="#{_appliance.applianceDnsServer}" size="100"
+                                                     value="#{_configuration.configurationDnsServer}" size="100"
                                                      styleClass="form-control"/>
                                     </ox:decorate>
 
                                     <ox:decorate id="maxLogSize" label="#{msg['organizationForm.maxLogSize']}">
-                                        <h:inputText value="#{_appliance.maxLogSize}" required="true" size="10"
+                                        <h:inputText value="#{_configuration.maxLogSize}" required="true" size="10"
                                                      styleClass="form-control"/>
                                     </ox:decorate>
 
                                     <ox:decorate id="profileManagment">
                                         <ui:define
                                                 name="label">#{msg['organizationForm.userCanEditProfile']}</ui:define>
-                                        <h:selectOneMenu value="#{_appliance.profileManagment}"
+                                        <h:selectOneMenu value="#{_configuration.profileManagment}"
                                                          id="profileManagmentStateId" styleClass="form-control">
                                             <f:selectItems value="#{organizationService.booleanSelectionTypes}"
                                                            var="_type" itemLabel="#{_type.displayName}"/>
@@ -156,41 +156,41 @@
                             <div style="display: inline-block;width: 75% !important;">
                                 <h:panelGroup>
                                     <ox:decorate label="#{msg['organizationForm.smtpHost']}">
-                                        <h:inputText styleClass="form-control" value="#{_appliance.smtpHost}"/>
+                                        <h:inputText styleClass="form-control" value="#{_configuration.smtpHost}"/>
                                     </ox:decorate>
 
                                     <ox:decorate label="#{msg['organizationForm.fromName']}">
-                                        <h:inputText styleClass="form-control" value="#{_appliance.smtpFromName}"/>
+                                        <h:inputText styleClass="form-control" value="#{_configuration.smtpFromName}"/>
                                     </ox:decorate>
 
                                     <ox:decorate label="#{msg['organizationForm.fromEmailAddress']}">
                                         <h:inputText styleClass="form-control"
-                                                     value="#{_appliance.smtpFromEmailAddress}"/>
+                                                     value="#{_configuration.smtpFromEmailAddress}"/>
                                     </ox:decorate>
 
                                     <ox:decorate>
                                         <ui:define
                                                 name="label">#{msg['organizationForm.requiresAuthentication']}</ui:define>
                                         <h:selectBooleanCheckbox styleClass="checkbox"
-                                                                 value="#{_appliance.requiresAuthentication}"/>
+                                                                 value="#{_configuration.requiresAuthentication}"/>
                                     </ox:decorate>
 
                                     <ox:decorate label="#{msg['organizationForm.smtpUserName']}">
-                                        <h:inputText styleClass="form-control" value="#{_appliance.smtpUserName}"/>
+                                        <h:inputText styleClass="form-control" value="#{_configuration.smtpUserName}"/>
                                     </ox:decorate>
 
                                     <ox:decorate label="#{msg['organizationForm.smtpPassword']}">
-                                        <h:inputSecret styleClass="form-control" value="#{_appliance.smtpPasswordStr}"
+                                        <h:inputSecret styleClass="form-control" value="#{_configuration.smtpPasswordStr}"
                                                        redisplay="true"/>
                                     </ox:decorate>
 
                                     <ox:decorate label="#{msg['organizationForm.requiresSSL']}">
                                         <h:selectBooleanCheckbox styleClass="checkbox"
-                                                                 value="#{_appliance.requiresSsl}"/>
+                                                                 value="#{_configuration.requiresSsl}"/>
                                     </ox:decorate>
 
                                     <ox:decorate label="#{msg['organizationForm.smtpPort']}">
-                                        <h:inputText styleClass="form-control" value="#{_appliance.smtpPort}"/>
+                                        <h:inputText styleClass="form-control" value="#{_configuration.smtpPort}"/>
                                     </ox:decorate>
                                     <h:commandButton styleClass="btn btn-primary"
                                                      value="#{msg['organizationForm.testConfiguration']}"
@@ -331,25 +331,25 @@
                                 <f:facet name="header">
                                     <h:outputText value="#{msg['organizationForm.standaloneServers']}"/>
                                 </f:facet>
-                                <rich:dropTarget acceptedTypes="appliance" dropValue="Standalone"
+                                <rich:dropTarget acceptedTypes="configuration" dropValue="Standalone"
                                                  dropListener="#{updateOrganizationAction.clusterUpdate}"
                                                  render="clustertable, src"/>
-                                <h:dataTable id="src" columns="1" value="#{updateOrganizationAction.appliances}"
-                                             var="appliance">
+                                <h:dataTable id="src" columns="1" value="#{updateOrganizationAction.configurations}"
+                                             var="configuration">
                                     <h:column>
-                                        <a4j:outputPanel layout="block" styleClass="rf-ind-drag applianceSheet">
-                                            <rich:dragSource type="appliance" dragValue="#{appliance}"/>
+                                        <a4j:outputPanel layout="block" styleClass="rf-ind-drag configurationSheet">
+                                            <rich:dragSource type="configuration" dragValue="#{configuration}"/>
                                             <h:outputText
-                                                    value="#{msg['organizationForm.displayName']}: #{appliance.displayName}"></h:outputText>
+                                                    value="#{msg['organizationForm.displayName']}: #{configuration.displayName}"></h:outputText>
                                             <br/>
                                             <h:outputText
-                                                    value="#{msg['organizationForm.iname']}: #{appliance.iname}"></h:outputText>
+                                                    value="#{msg['organizationForm.iname']}: #{configuration.iname}"></h:outputText>
                                             <br/>
                                             <h:outputText
-                                                    value="#{msg['organizationForm.inum']}: #{appliance.inum}"></h:outputText>
+                                                    value="#{msg['organizationForm.inum']}: #{configuration.inum}"></h:outputText>
                                             <br/>
                                             <h:outputText
-                                                    value="#{msg['organizationForm.description']}: #{appliance.description}"></h:outputText>
+                                                    value="#{msg['organizationForm.description']}: #{configuration.description}"></h:outputText>
                                         </a4j:outputPanel>
                                     </h:column>
                                 </h:dataTable>
@@ -358,27 +358,27 @@
                                 <f:facet name="header">
                                     <h:outputText value="#{msg['organizationForm.cluster']}"/>
                                 </f:facet>
-                                <rich:dropTarget acceptedTypes="appliance"
+                                <rich:dropTarget acceptedTypes="configuration"
                                                  dropValue="#{msg['organizationForm.cluster']}"
                                                  dropListener="#{updateOrganizationAction.clusterUpdate}"
                                                  render="clustertable, src"/>
                                 <h:dataTable id="clustertable" columns="1"
-                                             value="#{updateOrganizationAction.clusterPartners}" var="appliance">
+                                             value="#{updateOrganizationAction.clusterPartners}" var="configuration">
                                     <h:column>
-                                        <a4j:outputPanel layout="block" styleClass="rf-ind-drag applianceSheet">
-                                            <rich:dragSource type="appliance" dragValue="#{appliance}"
-                                                             rendered="#{not (appliance.inum eq updateOrganizationAction.appliance.inum)}"/>
+                                        <a4j:outputPanel layout="block" styleClass="rf-ind-drag configurationSheet">
+                                            <rich:dragSource type="configuration" dragValue="#{configuration}"
+                                                             rendered="#{not (configuration.inum eq updateOrganizationAction.configuration.inum)}"/>
                                             <h:outputText
-                                                    value="#{msg['organizationForm.displayNameEdit']}: #{appliance.displayName}"></h:outputText>
+                                                    value="#{msg['organizationForm.displayNameEdit']}: #{configuration.displayName}"></h:outputText>
                                             <br/>
                                             <h:outputText
-                                                    value="#{msg['organizationForm.iname']}: #{appliance.iname}"></h:outputText>
+                                                    value="#{msg['organizationForm.iname']}: #{configuration.iname}"></h:outputText>
                                             <br/>
                                             <h:outputText
-                                                    value="#{msg['organizationForm.inum']}: #{appliance.inum}"></h:outputText>
+                                                    value="#{msg['organizationForm.inum']}: #{configuration.inum}"></h:outputText>
                                             <br/>
                                             <h:outputText
-                                                    value="#{msg['organizationForm.description']}: #{appliance.description}"></h:outputText>
+                                                    value="#{msg['organizationForm.description']}: #{configuration.description}"></h:outputText>
                                         </a4j:outputPanel>
                                     </h:column>
                                 </h:dataTable>

@@ -32,34 +32,6 @@
 		<section class="content" style="background:white;"> <h:panelGrid
 			columns="1" border="0" cellpadding="0" cellspacing="0" width="80%">
 			<richext:spacer height="16" />
-
-			<h:form>
-				<div class="row">
-					<div class="col-md-6" id="searchPattern">
-						<h:inputText value="#{certificateManagementAction.searchPattern}"
-							size="30" maxlength="30" required="false" id="searchPatternId"
-							styleClass="searchParameters form-control"
-							style="width: 100%; float: left;"
-							alt="search parameters for certificate like email,CN,C,O" />
-						<h:outputText value=" " />
-					</div>
-					<div class="col-md-3">
-						<h:selectBooleanCheckbox
-							value="#{certificateManagementAction.searchObsoleteWarning}" />
-						<h:outputText style="margin-left:5px;"
-							value="#{msg['configuration.withObsoleteWarningOnly']}" />
-					</div>
-					<div class="col-md-3">
-						<h:commandButton value="#{msg['configuration.search']}"
-							style="float: left;"
-							action="#{certificateManagementAction.search}"
-							styleClass="btn btn-primary" />
-					</div>
-				</div>
-			</h:form>
-
-			<richext:spacer height="16" />
-
 			<h:form id="internalCertificatesFormId" style="width:100%;">
 				<h2 style="font-style: bold;">#{msg['configuration.internalGluuCertificates']}</h2>
 				<hr style="border: dotted 2px green;"></hr>
@@ -186,65 +158,6 @@
 				</h:dataTable>
 			</h:form>
 
-			<richext:spacer height="16" />
-
-			<h:form id="asimbaCertificatesFormId"
-				rendered="#{certificateManagementAction.asimbaCertificates.size() gt 0}">
-				<H3>Asimba Certificates</H3>
-
-				<ui:fragment
-					rendered="#{certificateManagementAction.asimbaCertificates.size() eq 0}">
-					<richext:spacer height="30" />
-					<h:outputText value="#{msg['configuration.noSearchResultFound']}" />
-				</ui:fragment>
-
-				<h:dataTable styleClass="table table-hover rt"
-					value="#{certificateManagementAction.asimbaCertificates}"
-					var="cert" id="asimbaCertificatesListId" width="100%"
-					rendered="#{certificateManagementAction.asimbaCertificates.size() gt 0}">
-
-					<h:column>
-						<f:facet name="header">
-							<div style="text-align: center;">
-								#{msg['configuration.alias']}</div>
-						</f:facet>
-						<h:outputText value="#{cert.alias}" class="col-xs-12" />
-					</h:column>
-
-					<h:column>
-						<f:facet name="header">
-							<div style="text-align: center;">
-								#{msg['configuration.issuer']}</div>
-						</f:facet>
-						<h:outputText value="#{cert.issuer}" class="col-xs-12" />
-					</h:column>
-
-					<h:column>
-						<f:facet name="header">
-							<div style="text-align: center;">
-								#{msg['configuration.algorithm']}</div>
-						</f:facet>
-						<h:outputText value="#{cert.algorithm}" class="col-xs-12" />
-					</h:column>
-
-					<h:column>
-						<f:facet name="header">
-							<div style="text-align: center;">
-								#{msg['configuration.notBefore']}</div>
-						</f:facet>
-						<h:outputText value="#{cert.notBeforeDatetime}" class="col-xs-12" />
-					</h:column>
-
-					<h:column>
-						<f:facet name="header">
-							<div style="text-align: center;">
-								#{msg['configuration.notAfter']}</div>
-						</f:facet>
-						<h:outputText style="#{cert.viewStyle}"
-							value="#{cert.notAfterDatetime}" class="col-xs-12" />
-					</h:column>
-				</h:dataTable>
-			</h:form>
 
 		</h:panelGrid> </section>
 	</ui:define>

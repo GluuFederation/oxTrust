@@ -14,11 +14,11 @@ import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 
-import org.gluu.oxtrust.ldap.service.ApplianceService;
-import org.gluu.oxtrust.model.GluuAppliance;
+import org.gluu.config.oxtrust.AppConfiguration;
+import org.gluu.oxtrust.ldap.service.ConfigurationService;
+import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.persist.model.base.GluuBoolean;
 import org.slf4j.Logger;
-import org.xdi.config.oxtrust.AppConfiguration;
 
 /**
  * Provides service to protect Passport Passport Rest service endpoints
@@ -38,7 +38,7 @@ public class PassportUmaProtectionService extends BaseUmaProtectionService imple
 	private AppConfiguration appConfiguration;
 
 	@Inject
-	private ApplianceService applianceService;
+	private ConfigurationService configurationService;
 
 	protected String getClientId() {
 		return appConfiguration.getPassportUmaClientId();
@@ -69,8 +69,8 @@ public class PassportUmaProtectionService extends BaseUmaProtectionService imple
 	}
 
 	private boolean isPassportEnabled() {
-		GluuAppliance appliance = applianceService.getAppliance();
-		GluuBoolean passportEnbaled = appliance.getPassportEnabled();
+		GluuConfiguration configuration = configurationService.getConfiguration();
+		GluuBoolean passportEnbaled = configuration.getPassportEnabled();
 		
 		return GluuBoolean.ENABLED.equals(passportEnbaled) || GluuBoolean.TRUE.equals(passportEnbaled);
 	}

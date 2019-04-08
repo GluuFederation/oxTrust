@@ -35,11 +35,11 @@ import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.model.MetadataFilter;
 import org.slf4j.Logger;
 import org.w3c.dom.Document;
-import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.service.XmlService;
-import org.xdi.util.StringHelper;
-import org.xdi.util.exception.InvalidConfigurationException;
-import org.xdi.util.io.FileUploadWrapper;
+import org.gluu.config.oxtrust.AppConfiguration;
+import org.gluu.service.XmlService;
+import org.gluu.util.StringHelper;
+import org.gluu.util.exception.InvalidConfigurationException;
+import org.gluu.util.io.FileUploadWrapper;
 import org.xml.sax.SAXException;
 
 /**
@@ -261,10 +261,7 @@ public class FilterService implements Serializable {
 		String idpMetadataFolder = appConfiguration.getShibboleth3IdpRootDir() + File.separator + SHIB3_IDP_METADATA_FOLDER + File.separator
 				+ "credentials" + File.separator;
 		File filterCertFile = new File(idpMetadataFolder + filterCertFileName);
-
-		FileOutputStream os = null;
-		try {
-			os = FileUtils.openOutputStream(filterCertFile);
+		try (FileOutputStream os = FileUtils.openOutputStream(filterCertFile)){
 			IOUtils.copy(input, os);
 			os.flush();
 		} catch (IOException ex) {
@@ -272,7 +269,6 @@ public class FilterService implements Serializable {
 			ex.printStackTrace();
 			return null;
 		} finally {
-			IOUtils.closeQuietly(os);
 			IOUtils.closeQuietly(input);
 		}
 

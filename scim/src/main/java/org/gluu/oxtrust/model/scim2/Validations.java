@@ -110,23 +110,15 @@ public enum Validations {EMAIL, PHONE, PHOTO, COUNTRY, LOCALE, TIMEZONE;
 
     }
 
-    private static boolean validateLocale(String val){
+    private static boolean validateLocale(String val) {
 
-        val=val.replaceAll("_", "-");
-        //TODO: Uncomment the following try/catch when supporting java 1.7 or higher and delete the rest
-        /*
-        try{
-            new Locale.Builder().setLanguageTag(str);
+        val = val.replaceAll("_", "-");
+        try {
+            new Locale.Builder().setLanguageTag(val);
             return true;
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             return false;
         }
-        */
-
-        //This is an approximate regex only (not very accurate), the official check is above
-        Pattern p=Pattern.compile("[a-z]{1,3}(-([A-Z]{2}|([A-z][a-z]{3})))?(-\\w{1,5})?");
-        return p.matcher(val).matches();
 
     }
 

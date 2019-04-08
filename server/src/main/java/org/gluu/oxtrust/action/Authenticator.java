@@ -24,35 +24,35 @@ import javax.inject.Named;
 import javax.servlet.http.Cookie;
 
 import org.codehaus.jettison.json.JSONException;
+import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.FacesService;
-import org.gluu.oxtrust.ldap.service.ApplianceService;
+import org.gluu.model.GluuStatus;
+import org.gluu.model.user.UserRole;
+import org.gluu.oxauth.model.exception.InvalidJwtException;
+import org.gluu.oxauth.model.jwt.Jwt;
+import org.gluu.oxauth.model.jwt.JwtClaimName;
+import org.gluu.oxtrust.ldap.service.ConfigurationService;
 import org.gluu.oxtrust.ldap.service.EncryptionService;
 import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.ldap.service.SecurityService;
-import org.gluu.oxtrust.model.GluuAppliance;
+import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.User;
 import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.security.OauthData;
 import org.gluu.oxtrust.service.OpenIdService;
 import org.gluu.oxtrust.util.OxTrustConstants;
+import org.gluu.util.ArrayHelper;
+import org.gluu.util.StringHelper;
+import org.gluu.util.security.StringEncrypter.EncryptionException;
 import org.jboss.resteasy.client.ClientRequest;
 import org.slf4j.Logger;
-import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.model.GluuStatus;
-import org.xdi.model.user.UserRole;
-import org.xdi.oxauth.client.OpenIdConfigurationResponse;
-import org.xdi.oxauth.client.TokenClient;
-import org.xdi.oxauth.client.TokenResponse;
-import org.xdi.oxauth.client.UserInfoClient;
-import org.xdi.oxauth.client.UserInfoResponse;
-import org.xdi.oxauth.model.exception.InvalidJwtException;
-import org.xdi.oxauth.model.jwt.Jwt;
-import org.xdi.oxauth.model.jwt.JwtClaimName;
-import org.xdi.util.ArrayHelper;
-import org.xdi.util.StringHelper;
-import org.xdi.util.security.StringEncrypter.EncryptionException;
+import org.gluu.oxauth.client.OpenIdConfigurationResponse;
+import org.gluu.oxauth.client.TokenClient;
+import org.gluu.oxauth.client.TokenResponse;
+import org.gluu.oxauth.client.UserInfoClient;
+import org.gluu.oxauth.client.UserInfoResponse;
 
 /**
  * Provides authentication using oAuth
@@ -84,7 +84,7 @@ public class Authenticator implements Serializable {
 	private SecurityService securityService;
 
 	@Inject
-	private ApplianceService applianceService;
+	private ConfigurationService configurationService;
 
 	@Inject
 	private OpenIdService openIdService;
@@ -208,8 +208,8 @@ public class Authenticator implements Serializable {
         identity.getSessionMap().put(OxTrustConstants.OXAUTH_NONCE, nonce);
         identity.getSessionMap().put(OxTrustConstants.OXAUTH_STATE, state);
 
-        GluuAppliance appliance = applianceService.getAppliance(new String[] { "oxTrustAuthenticationMode" });
-		String acrValues = appliance.getOxTrustAuthenticationMode();
+        GluuConfiguration configuration = configurationService.getConfiguration(new String[] { "oxTrustAuthenticationMode" });
+		String acrValues = configuration.getOxTrustAuthenticationMode();
 		if (StringHelper.isNotEmpty(acrValues)) {
 			clientRequest.queryParameter(OxTrustConstants.OXAUTH_ACR_VALUES, acrValues);
 
@@ -336,6 +336,11 @@ public class Authenticator implements Serializable {
 
 		String idToken = tokenResponse.getIdToken();
         log.debug(" idToken : " + idToken);
+        
+        if (idToken == null) {
+            log.error("Failed to get id_token");
+            return OxTrustConstants.RESULT_NO_PERMISSIONS;
+        }
 
 		log.info("Session validation successful. User is logged in");
 		UserInfoClient userInfoClient = new UserInfoClient(openIdConfiguration.getUserInfoEndpoint());

@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.xdi</groupId>
-    <artifactId>openid-auth-client</artifactId>
+    <groupId>org.gluu</groupId>
+    <artifactId>oxtrust-openid-auth-client</artifactId>
     <name>OpenId authentication module</name>
     <packaging>jar</packaging>
     <url>http://ox.gluu.org</url>
 
     <parent>
-        <groupId>org.xdi</groupId>
+        <groupId>org.gluu</groupId>
         <artifactId>oxtrust</artifactId>
     <version>4.0.0-SNAPSHOT</version>
     </parent>
@@ -41,23 +41,23 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.xdi</groupId>
+            <groupId>org.gluu</groupId>
             <artifactId>oxcore-util</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.xdi</groupId>
+            <groupId>org.gluu</groupId>
             <artifactId>oxcore-ldap</artifactId>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
-            <groupId>org.xdi</groupId>
+            <groupId>org.gluu</groupId>
             <artifactId>oxauth-model</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.xdi</groupId>
+            <groupId>org.gluu</groupId>
             <artifactId>oxauth-client</artifactId>
             <scope>provided</scope>
         </dependency>

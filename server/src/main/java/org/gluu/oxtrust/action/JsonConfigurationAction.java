@@ -15,20 +15,20 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.gluu.config.oxtrust.AppConfiguration;
+import org.gluu.config.oxtrust.ImportPersonConfig;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.service.EncryptionService;
 import org.gluu.oxtrust.ldap.service.JsonConfigurationService;
 import org.gluu.oxtrust.util.OxTrustConstants;
+import org.gluu.service.JsonService;
+import org.gluu.service.cache.CacheConfiguration;
+import org.gluu.service.cache.RedisConfiguration;
+import org.gluu.service.security.Secure;
+import org.gluu.util.StringHelper;
+import org.gluu.util.security.StringEncrypter.EncryptionException;
 import org.slf4j.Logger;
-import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.config.oxtrust.ImportPersonConfig;
-import org.xdi.service.JsonService;
-import org.xdi.service.cache.CacheConfiguration;
-import org.xdi.service.cache.RedisConfiguration;
-import org.xdi.service.security.Secure;
-import org.xdi.util.StringHelper;
-import org.xdi.util.security.StringEncrypter.EncryptionException;
 
 /**
  * Action class for json configuring This class loads the JSON configurations

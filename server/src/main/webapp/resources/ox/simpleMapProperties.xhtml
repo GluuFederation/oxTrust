@@ -1,0 +1,140 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:gluufn="http://www.gluu.org/jsf/functions"
+	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
+	xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+	xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+<cc:interface>
+	<cc:attribute name="label" default="" type="java.lang.String" />
+	<cc:attribute name="labelAdd" default="" type="java.lang.String" />
+	<cc:attribute name="leftClass" default="col-sm-1"
+		type="java.lang.String" />
+	<cc:attribute name="rightClass" default="col-sm-10"
+		type="java.lang.String" />
+	<cc:attribute name="hideLabel" default="false" type="java.lang.Boolean" />
+	<cc:attribute name="inputWidth" default="24" required="false"
+		type="java.lang.Integer" />
+	<cc:attribute name="maxItems" type="java.lang.Integer" />
+	<cc:attribute name="properties" required="true" type="java.util.List" />
+	<cc:attribute name="propertiesAction" required="true"
+		type="org.gluu.oxtrust.action.PassportProvidersAction" />
+	<cc:attribute name="requiredName" default="true"
+		type="java.lang.Boolean" />
+	<cc:attribute name="requiredValue" default="false"
+		type="java.lang.Boolean" />
+	<cc:attribute name="showRemoveDialogue" default="false"
+		type="java.lang.Boolean" />
+</cc:interface>
+
+
+<cc:implementation>
+	<h:outputScript rendered="true">
+		$(document).ready(function(){
+			$(".togglefield").each(function(index){ 
+			var typeValue = $(this).attr("type");
+			    if(typeValue === "password") {
+			    	$(this).siblings("img[id$='view']").css({"display": "block"});
+			    } else {
+			    	$(this).siblings("img[id$='hide']").css({"display": "none"});
+			    }
+			});
+		});
+		
+    	function viewValue(obj){
+			$(obj).css({"display":"none"});
+			$(obj).siblings("input.togglefield").attr("type","text");
+			$(obj).siblings("input[id$='hv']").val(false);
+			$(obj).siblings("img[id$='hide']").css({"display":"block"});
+		}
+				
+		function hideValue(obj){
+			$(obj).css({"display":"none"});
+			$(obj).siblings("input.togglefield").attr("type","password");
+			$(obj).siblings("input[id$='hv']").val(true);
+			$(obj).siblings("img[id$='view']").css({"display":"block"});
+		}
+
+	</h:outputScript>
+	<a4j:region>
+		<ox:decorate id="mapping" label="#{cc.attrs.label}"
+			hideLabel="#{cc.attrs.hideLabel}" leftClass="#{cc.attrs.leftClass}"
+			rightClass="#{cc.attrs.rightClass}">
+			<h:panelGroup id="customMap">
+				<a4j:region styleClass="col-sm-12 col-lg-12">
+					<a4j:repeat value="#{cc.attrs.properties}" var="_property">
+						<h:panelGrid id="mPG"
+							styleClass="propertiesList col-sm-12 col-lg-12" columns="1"
+							width="100%" border="0" cellpadding="0" cellspacing="0">
+							<h:panelGroup id="propertiesList">
+								<div id="mDiv">
+									<h:inputText id="key"
+										style="margin-right:5px;margin-bottom:10px;width:35%;float:left;"
+										styleClass="col-md-4 form-control propertyLabelTextBox"
+										value="#{_property.key}" size="#{cc.attrs.inputWidth}"
+										readonly="#{(_property.key) eq 'clientID' or (_property.key) eq 'clientSecret'}" />
+									<h:inputText id="value"
+										style="margin-right:2px;margin-bottom:10px;width:35%;float:left;"
+										styleClass="col-md-4 form-control propertyValueTextBox"
+										rendered="#{!_property.isSecret()}"
+										value="#{_property.value}" />
+									<h:inputSecret id="secret"
+										styleClass="col-md-5 form-control togglefield"
+										style="width:35%;float:left;" value="#{_property.value}"
+										size="#{cc.attrs.inputWidth}"
+										required="#{cc.attrs.requiredValue}" redisplay="true"
+										rendered="#{_property.isSecret()}" />
+									<h:graphicImage value="/img/error.gif" rendered="#{invalid}"
+										styleClass="errors" />
+									<h:graphicImage styleClass="col-md-1 col-lg-1"
+										value="/img/eye.png" id="view"
+										rendered="#{_property.isSecret()}"
+										onclick="return viewValue(this);" />
+									<h:graphicImage styleClass="col-md-1 col-lg-1"
+										value="/img/eye-hidden.png" rendered="#{_property.isSecret()}"
+										style="display: none;" id="hide"
+										onclick="return hideValue(this);" />
+									<a4j:commandLink
+										styleClass="glyphicon glyphicon-remove col-md-2 col-lg-2 removePropertyButton"
+										rendered="#{cc.attrs.showRemoveDialogue eq false}"
+										style="float:left;margin-right:10px;margin-top: 8px;"
+										action="#{cc.attrs.propertiesAction.removeEntry(cc.attrs.properties,_property)}"
+										render="customMap" execute="@this" />
+									<a4j:commandLink
+										styleClass="glyphicon glyphicon-remove col-md-2 col-lg-2 removePropertyButton"
+										rendered="#{(cc.attrs.showRemoveDialogue) eq true}"
+										style="float:left;margin-right:10px;margin-top: 8px;"
+										onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();"
+										execute="@region" />
+								</div>
+							</h:panelGroup>
+
+							<ox:acceptRemovalDialog
+								deleteMethod="#{cc.attrs.propertiesAction.removeEntry(cc.attrs.properties,_property)}"
+								id="deleteConfirmation" subject="#{cc.attrs.labelAdd}"
+								render="customMap" value="#{_property.key}" />
+						</h:panelGrid>
+
+					</a4j:repeat>
+
+
+					<a4j:commandLink
+						action="#{cc.attrs.propertiesAction.addEntry(cc.attrs.properties)}"
+						render="customMap" execute="@region"
+						rendered="#{empty maxItems or maxItems gt properties.size()}">
+						<h:outputText style="margin-top:-5px"
+							styleClass="btn btn-primary addNewPropertyButton"
+							value="#{cc.attrs.labelAdd eq null or  cc.attrs.labelAdd eq '' ? cc.attrs.label : cc.attrs.labelAdd}" />
+					</a4j:commandLink>
+				</a4j:region>
+			</h:panelGroup>
+		</ox:decorate>
+	</a4j:region>
+</cc:implementation>
+</html>

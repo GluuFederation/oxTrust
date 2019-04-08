@@ -4,9 +4,9 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.gluu.oxtrust.ldap.service.ApplianceService;
-import org.gluu.oxtrust.model.GluuAppliance;
-import org.xdi.config.oxtrust.AppConfiguration;
+import org.gluu.config.oxtrust.AppConfiguration;
+import org.gluu.oxtrust.ldap.service.ConfigurationService;
+import org.gluu.oxtrust.model.GluuConfiguration;
 
 /**
  * Logger service
@@ -15,13 +15,13 @@ import org.xdi.config.oxtrust.AppConfiguration;
  */
 @ApplicationScoped
 @Named
-public class LoggerService extends org.xdi.service.logger.LoggerService {
+public class LoggerService extends org.gluu.service.logger.LoggerService {
 
     @Inject
     private AppConfiguration appConfiguration;
 
     @Inject
-    private ApplianceService applianceService;
+    private ConfigurationService configurationService;
 
     @Override
     public boolean isDisableJdkLogger() {
@@ -35,8 +35,8 @@ public class LoggerService extends org.xdi.service.logger.LoggerService {
 
     @Override
     public String getExternalLoggerConfiguration() {
-        GluuAppliance appliance = applianceService.getAppliance();
-        return appliance.getOxLogConfigLocation();
+        GluuConfiguration configuration = configurationService.getConfiguration();
+        return configuration.getOxLogConfigLocation();
     }
 
 }

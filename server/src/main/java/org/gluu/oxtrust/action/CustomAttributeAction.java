@@ -34,17 +34,17 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.gluu.jsf2.message.FacesMessages;
+import org.gluu.model.GluuAttribute;
+import org.gluu.model.GluuImage;
+import org.gluu.model.attribute.AttributeDataType;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.ImageService;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.security.Identity;
+import org.gluu.util.StringHelper;
 import org.richfaces.event.FileUploadEvent;
 import org.richfaces.model.UploadedFile;
 import org.slf4j.Logger;
-import org.xdi.model.GluuAttribute;
-import org.xdi.model.GluuImage;
-import org.xdi.model.attribute.AttributeDataType;
-import org.xdi.util.StringHelper;
 
 /**
  * Action class for work with custom attributes

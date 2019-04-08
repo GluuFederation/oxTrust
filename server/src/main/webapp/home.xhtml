@@ -43,11 +43,11 @@
 								class="fa  fa-bar-chart-o" style="line-height: 2em !important;" />
 							</span>
 							<div class="info-box-content">
-								<ui:param name="_appliance"
-									value="#{applianceService.appliance}" />
+								<ui:param name="_configuration"
+									value="#{configurationService.configuration}" />
 								<span class="info-box-text">#{msg['home.freeMemory']}</span>
 								<h:outputText styleClass="info-box-number"
-									value="#{_appliance.freeMemory}%" />
+									value="#{_configuration.freeMemory}%" />
 								<span> </span>
 							</div>
 
@@ -64,7 +64,7 @@
 								<!--  <span
                                     class="info-box-number">20%</span> -->
 								<h:outputText styleClass="info-box-number"
-									value="#{_appliance.freeDiskSpace}%" />
+									value="#{_configuration.freeDiskSpace}%" />
 
 							</div>
 
@@ -83,7 +83,7 @@
                                     class="info-box-number" style="font-size: 14px;">1 day(s)
                                     10 Hours</span> -->
 								<h:outputText converter="uptimeConverter"
-									styleClass="info-box-number" value="#{_appliance.systemUptime}" />
+									styleClass="info-box-number" value="#{_configuration.systemUptime}" />
 							</div>
 
 						</div>
@@ -100,7 +100,7 @@
 								<!-- <span
                                     class="info-box-number">127.0.0.1</span> -->
 								<h:outputText styleClass="info-box-number"
-									value="#{_appliance.ipAddress}" />
+									value="#{_configuration.ipAddress}" />
 							</div>
 
 						</div>

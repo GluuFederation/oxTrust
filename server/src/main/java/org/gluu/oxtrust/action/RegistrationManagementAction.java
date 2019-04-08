@@ -16,8 +16,11 @@ import javax.faces.application.FacesMessage;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
+import org.gluu.model.GluuAttribute;
+import org.gluu.model.SimpleCustomProperty;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.JsonConfigurationService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
@@ -26,13 +29,10 @@ import org.gluu.oxtrust.model.RegistrationConfiguration;
 import org.gluu.oxtrust.model.SimpleCustomPropertiesListModel;
 import org.gluu.oxtrust.model.Tuple;
 import org.gluu.oxtrust.util.OxTrustConstants;
+import org.gluu.service.security.Secure;
+import org.gluu.util.StringHelper;
+import org.gluu.util.Util;
 import org.slf4j.Logger;
-import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.model.GluuAttribute;
-import org.xdi.model.SimpleCustomProperty;
-import org.xdi.service.security.Secure;
-import org.xdi.util.StringHelper;
-import org.xdi.util.Util;
 
 /**
  * Action class for displaying attributes

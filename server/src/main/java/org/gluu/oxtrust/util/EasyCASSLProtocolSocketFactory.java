@@ -14,11 +14,11 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 
 import org.apache.commons.httpclient.HttpClientError;
+import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.oxtrust.ldap.service.EncryptionService;
+import org.gluu.util.EasySSLProtocolSocketFactory;
+import org.gluu.util.EasyX509TrustManager;
 import org.slf4j.Logger;
-import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.util.EasySSLProtocolSocketFactory;
-import org.xdi.util.EasyX509TrustManager;
 
 public class EasyCASSLProtocolSocketFactory extends EasySSLProtocolSocketFactory {
 

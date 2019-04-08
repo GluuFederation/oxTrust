@@ -9,7 +9,7 @@ package org.gluu.oxtrust.ldap.cache.model;
 import java.io.Serializable;
 import java.util.Arrays;
 
-import org.xdi.util.ArrayHelper;
+import org.gluu.util.ArrayHelper;
 
 /**
  * Compound key with String[] array

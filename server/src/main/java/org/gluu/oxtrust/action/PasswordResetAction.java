@@ -21,14 +21,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.Size;
 
+import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
-import org.gluu.oxtrust.ldap.service.ApplianceService;
+import org.gluu.oxtrust.ldap.service.ConfigurationService;
 import org.gluu.oxtrust.ldap.service.JsonConfigurationService;
 import org.gluu.oxtrust.ldap.service.OxTrustAuditService;
 import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.ldap.service.RecaptchaService;
-import org.gluu.oxtrust.model.GluuAppliance;
+import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.PasswordResetRequest;
@@ -37,9 +38,8 @@ import org.gluu.oxtrust.service.PasswordResetService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.exception.EntryPersistenceException;
+import org.gluu.util.StringHelper;
 import org.slf4j.Logger;
-import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.util.StringHelper;
 
 /**
  * User: Dejan Maric
@@ -66,7 +66,7 @@ public class PasswordResetAction implements Serializable {
 	private RecaptchaService recaptchaService;
 
 	@Inject
-	private ApplianceService applianceService;
+	private ConfigurationService configurationService;
 
 	@Inject
 	private PersonService personService;
@@ -186,9 +186,9 @@ public class PasswordResetAction implements Serializable {
 		}
 
 		if (valid) {
-			GluuAppliance appliance = applianceService.getAppliance();
+			GluuConfiguration configuration = configurationService.getConfiguration();
 			this.request = ldapEntryManager.find(PasswordResetRequest.class,
-					"oxGuid=" + this.guid + ", ou=resetPasswordRequests," + appliance.getDn());
+					"oxGuid=" + this.guid + ", ou=resetPasswordRequests," + configuration.getDn());
 			Calendar requestCalendarExpiry = Calendar.getInstance();
 			Calendar currentCalendar = Calendar.getInstance();
 			if (request != null) {

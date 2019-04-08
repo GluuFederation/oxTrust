@@ -18,20 +18,20 @@ import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.gluu.config.oxtrust.AppConfiguration;
+import org.gluu.config.oxtrust.LdapOxAuthConfiguration;
+import org.gluu.model.GluuStatus;
+import org.gluu.model.ProgrammingLanguage;
 import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.exception.BasePersistenceException;
 import org.gluu.persist.model.base.GluuBoolean;
+import org.gluu.service.CacheService;
+import org.gluu.util.ArrayHelper;
+import org.gluu.util.OxConstants;
+import org.gluu.util.StringHelper;
 import org.slf4j.Logger;
-import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.config.oxtrust.LdapOxAuthConfiguration;
-import org.xdi.model.GluuStatus;
-import org.xdi.model.ProgrammingLanguage;
-import org.xdi.service.CacheService;
-import org.xdi.util.ArrayHelper;
-import org.xdi.util.OxConstants;
-import org.xdi.util.StringHelper;
 
 /**
  * Provides operations with organization
@@ -40,7 +40,7 @@ import org.xdi.util.StringHelper;
  */
 @Stateless
 @Named("organizationService")
-public class OrganizationService extends org.xdi.service.OrganizationService {
+public class OrganizationService extends org.gluu.service.OrganizationService {
 
 	private static final long serialVersionUID = -1959146007518514678L;
 
@@ -79,32 +79,22 @@ public class OrganizationService extends org.xdi.service.OrganizationService {
 	/**
 	 * Get organization
 	 * 
-	 * @return Organization entry
-	 */
-	public GluuOrganization getOrganization() {
-		return getOrganizationByInum(getInumForOrganization());
-	}
-
-	/**
-	 * Get organization by DN
-	 * 
-	 * @param inum
-	 *            inum
 	 * @return Organization
 	 */
-	public GluuOrganization getOrganizationByInum(String inum) {
-		String key = OxConstants.CACHE_ORGANIZATION_KEY + "_" + inum;
+	public GluuOrganization getOrganization() {
+		String key = OxConstants.CACHE_ORGANIZATION_KEY;
 		GluuOrganization organization = (GluuOrganization) cacheService.get(OxConstants.CACHE_APPLICATION_NAME, key);
 		if (organization == null) {
-			organization = ldapEntryManager.find(GluuOrganization.class, getDnForOrganization(inum));
+			String orgDn = getDnForOrganization();
+			organization = ldapEntryManager.find(GluuOrganization.class, orgDn);
 			cacheService.put(OxConstants.CACHE_APPLICATION_NAME, key, organization);
 		}
 
 		return organization;
 	}
 
-	public String getDnForOrganization(String inum) {
-		return getDnForOrganization(inum, appConfiguration.getBaseDN());
+	public String getDnForOrganization() {
+		return getDnForOrganization(appConfiguration.getBaseDN());
 	}
 
 	/**
@@ -117,7 +107,7 @@ public class OrganizationService extends org.xdi.service.OrganizationService {
 	public String getOrganizationCustomMessage(String customMessageId) {
 		GluuOrganization organization = getOrganization();
 
-		String key = OxTrustConstants.CACHE_ORGANIZATION_CUSTOM_MESSAGE_KEY + "_" + organization.getInum();
+		String key = OxTrustConstants.CACHE_ORGANIZATION_CUSTOM_MESSAGE_KEY;
 		@SuppressWarnings("unchecked")
 		Map<String, String> organizationCustomMessage = (Map<String, String>) cacheService.get(OxConstants.CACHE_APPLICATION_NAME, key);
 		if (organizationCustomMessage == null) {
@@ -166,44 +156,18 @@ public class OrganizationService extends org.xdi.service.OrganizationService {
 	 * 
 	 * @return DN string for organization
 	 */
-	public String getDnForOrganization() {
-		return getDnForOrganization(getOrganizationInum());
-	}
-
-
-
-	/**
-	 * Build DN string for organization
-	 * 
-	 * @return DN string for organization
-	 */
 	public String getBaseDn() {
 		return appConfiguration.getBaseDN();
 	}
-
-	/**
-	 * Get Inum for organization
-	 * 
-	 * @return Inum for organization
-	 */
-	public String getInumForOrganization() {
-		return appConfiguration.getOrgInum();
-	}
-
+	
 	public boolean isAllowPersonModification() {
 		return appConfiguration.isAllowPersonModification(); // todo &&
-																		// applianceService.getAppliance().getManageIdentityPermission()
+																		// configurationService.getConfiguration().getManageIdentityPermission()
 																		// !=
 																		// null
 																		// &&
-																		// applianceService.getAppliance().getProfileManagment().isBooleanValue();
+																		// configurationService.getConfiguration().getProfileManagment().isBooleanValue();
 	}
-
-	public String getOrganizationInum() {
-		return appConfiguration.getOrgInum();
-	}
-
-
 
 	public GluuBoolean[] getBooleanSelectionTypes() {
 		return new GluuBoolean[] { GluuBoolean.DISABLED, GluuBoolean.ENABLED };

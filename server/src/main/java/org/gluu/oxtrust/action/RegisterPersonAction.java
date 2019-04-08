@@ -27,8 +27,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
+import org.gluu.model.GluuAttribute;
+import org.gluu.model.GluuStatus;
+import org.gluu.model.GluuUserRole;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.ldap.service.OxTrustAuditService;
@@ -41,12 +45,8 @@ import org.gluu.oxtrust.model.RegistrationConfiguration;
 import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.service.external.ExternalUserRegistrationService;
 import org.gluu.oxtrust.util.OxTrustConstants;
+import org.gluu.util.StringHelper;
 import org.slf4j.Logger;
-import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.model.GluuAttribute;
-import org.xdi.model.GluuStatus;
-import org.xdi.model.GluuUserRole;
-import org.xdi.util.StringHelper;
 
 /**
  * @author Dejan Maric
@@ -239,11 +239,6 @@ public class RegisterPersonAction implements Serializable {
 			if (person.getInum() == null) {
 				String inum = personService.generateInumForNewPerson();
 				this.person.setInum(inum);
-			}
-
-			if (person.getIname() == null) {
-				String iname = personService.generateInameForNewPerson(this.person.getUid());
-				this.person.setIname(iname);
 			}
 
 			if (person.getDn() == null) {

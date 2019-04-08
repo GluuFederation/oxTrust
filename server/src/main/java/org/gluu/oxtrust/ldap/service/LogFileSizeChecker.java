@@ -27,17 +27,17 @@ import javax.xml.xpath.XPathFactory;
 import org.apache.commons.io.FileUtils;
 import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.model.FileData;
-import org.gluu.oxtrust.model.GluuAppliance;
+import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.oxtrust.service.cdi.event.LogFileSizeChekerEvent;
+import org.gluu.service.XmlService;
+import org.gluu.service.cdi.async.Asynchronous;
+import org.gluu.service.cdi.event.Scheduled;
+import org.gluu.service.timer.event.TimerEvent;
+import org.gluu.service.timer.schedule.TimerSchedule;
+import org.gluu.util.StringHelper;
 import org.slf4j.Logger;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xdi.service.XmlService;
-import org.xdi.service.cdi.async.Asynchronous;
-import org.xdi.service.cdi.event.Scheduled;
-import org.xdi.service.timer.event.TimerEvent;
-import org.xdi.service.timer.schedule.TimerSchedule;
-import org.xdi.util.StringHelper;
 
 @ApplicationScoped
 @Named("logFileSizeChecker")
@@ -52,7 +52,7 @@ public class LogFileSizeChecker {
 	private Event<TimerEvent> timerEvent;
 
 	@Inject
-	ApplianceService applianceService;
+	ConfigurationService configurationService;
 
 	@Inject
 	private XmlService xmlService;
@@ -91,16 +91,16 @@ public class LogFileSizeChecker {
 	 * Gather periodically site and server status
 	 */
 	private void processInt() {
-		GluuAppliance appliance;
-		appliance = applianceService.getAppliance();
-		String maxLogSize = appliance.getMaxLogSize();
+		GluuConfiguration configuration;
+		configuration = configurationService.getConfiguration();
+		String maxLogSize = configuration.getMaxLogSize();
 		log.debug("Max Log Size: " + maxLogSize);
 		long maxSize = 0;
 
 		try {
 			maxSize = Long.parseLong(maxLogSize); // MB
 		} catch (Exception ex) {
-			log.error("appliance maxLogSize value is invalid: " + maxLogSize);
+			log.error("configuration maxLogSize value is invalid: " + maxLogSize);
 			log.error("assuming 0");
 		}
 

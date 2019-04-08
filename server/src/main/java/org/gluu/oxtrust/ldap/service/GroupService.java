@@ -9,11 +9,13 @@ package org.gluu.oxtrust.ldap.service;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.GluuGroupVisibility;
@@ -24,11 +26,10 @@ import org.gluu.persist.exception.operation.DuplicateEntryException;
 import org.gluu.persist.model.SearchScope;
 import org.gluu.persist.model.base.SimpleBranch;
 import org.gluu.search.filter.Filter;
+import org.gluu.util.ArrayHelper;
+import org.gluu.util.INumGenerator;
+import org.gluu.util.StringHelper;
 import org.slf4j.Logger;
-import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.util.ArrayHelper;
-import org.xdi.util.INumGenerator;
-import org.xdi.util.StringHelper;
 
 /**
  * Provides operations with groups
@@ -123,7 +124,6 @@ public class GroupService implements Serializable, IGroupService {
 		boolean isMemberOrOwner = false;
 		try {
 			isMemberOrOwner = ldapEntryManager.findEntries(groupDN, GluuGroup.class, searchFilter, 1).size() > 0;
-
 		} catch (EntryPersistenceException ex) {
 			log.error("Failed to determine if person '{}' memeber or owner of group '{}'", personDN, groupDN, ex);
 		}
@@ -164,7 +164,14 @@ public class GroupService implements Serializable, IGroupService {
 	 */
 	@Override
 	public int countGroups() {
-        return ldapEntryManager.countEntries(getDnForGroup(null), SimpleBranch.class, null, SearchScope.BASE);
+		String dn = getDnForGroup(null);
+
+		Class<?> searchClass = GluuGroup.class;
+		if (ldapEntryManager.hasBranchesSupport(dn)) {
+			searchClass = SimpleBranch.class;
+		}
+
+		return ldapEntryManager.countEntries(dn, searchClass, null, SearchScope.BASE);
 	}
 
 	public boolean contains(String groupDn) {
@@ -197,14 +204,6 @@ public class GroupService implements Serializable, IGroupService {
         }
         return result;
     }
-
-	/* (non-Javadoc)
-	 * @see org.gluu.oxtrust.ldap.service.IGroupService#generateInameForNewGroup(java.lang.String)
-	 */
-	@Override
-	public String generateInameForNewGroup(String name) throws Exception {
-		return String.format("%s*group*%s", appConfiguration.getOrgIname(), name);
-	}
 
 	/* (non-Javadoc)
 	 * @see org.gluu.oxtrust.ldap.service.IGroupService#searchGroups(java.lang.String, int)
@@ -241,9 +240,7 @@ public class GroupService implements Serializable, IGroupService {
 	 * @return New inum for group
 	 */
 	private String generateInumForNewGroupImpl() throws Exception {
-		String orgInum = organizationService.getInumForOrganization();
-		return orgInum + OxTrustConstants.inumDelimiter + OxTrustConstants.INUM_GROUP_OBJECTTYPE + OxTrustConstants.inumDelimiter
-				+ INumGenerator.generate(2);
+		return UUID.randomUUID().toString();
 	}
 
 	/* (non-Javadoc)

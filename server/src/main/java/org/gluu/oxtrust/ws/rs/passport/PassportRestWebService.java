@@ -14,8 +14,8 @@ import javax.ws.rs.core.Response;
 import org.gluu.oxtrust.ldap.service.PassportService;
 import org.gluu.oxtrust.service.filter.ProtectedApi;
 import org.slf4j.Logger;
-import org.xdi.config.oxtrust.LdapOxPassportConfiguration;
-import org.xdi.service.JsonService;
+import org.gluu.config.oxtrust.LdapOxPassportConfiguration;
+import org.gluu.service.JsonService;
 
 import static javax.ws.rs.core.Response.Status;
 
@@ -49,8 +49,9 @@ public class PassportRestWebService {
 
         try {
             Object obj = Optional.ofNullable(passportService.loadConfigurationFromLdap())
-                    .map(LdapOxPassportConfiguration::getPassportConfigurations)
-                    .map(list -> list.isEmpty() ? (Object) null : list.get(0)).orElse(Collections.emptyMap());
+                    .map(LdapOxPassportConfiguration::getPassportConfiguration)
+                    .map(Object.class::cast)
+                    .orElse(Collections.emptyMap());
 
             jsonResponse = jsonService.objectToPerttyJson(obj);
             status = Status.OK;

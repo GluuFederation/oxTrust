@@ -32,16 +32,16 @@ import org.gluu.oxauth.client.session.AbstractOAuthFilter;
 import org.gluu.oxauth.client.session.OAuthData;
 import org.gluu.oxauth.client.util.Configuration;
 import org.opensaml.profile.context.ProfileRequestContext;
-import org.xdi.oxauth.client.AuthorizationRequest;
-import org.xdi.oxauth.client.model.JwtState;
-import org.xdi.oxauth.model.common.ResponseType;
-import org.xdi.oxauth.model.crypto.OxAuthCryptoProvider;
-import org.xdi.oxauth.model.crypto.signature.SignatureAlgorithm;
-import org.xdi.oxauth.model.util.StringUtils;
-import org.xdi.util.ArrayHelper;
-import org.xdi.util.StringHelper;
-import org.xdi.util.security.StringEncrypter;
-import org.xdi.util.security.StringEncrypter.EncryptionException;
+import org.gluu.oxauth.client.AuthorizationRequest;
+import org.gluu.oxauth.client.model.JwtState;
+import org.gluu.oxauth.model.common.ResponseType;
+import org.gluu.oxauth.model.crypto.OxAuthCryptoProvider;
+import org.gluu.oxauth.model.crypto.signature.SignatureAlgorithm;
+import org.gluu.oxauth.model.util.StringUtils;
+import org.gluu.util.ArrayHelper;
+import org.gluu.util.StringHelper;
+import org.gluu.util.security.StringEncrypter;
+import org.gluu.util.security.StringEncrypter.EncryptionException;
 
 /**
  * Filter implementation to intercept all requests and attempt to authorize the

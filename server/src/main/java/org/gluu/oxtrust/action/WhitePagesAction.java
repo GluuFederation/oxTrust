@@ -20,17 +20,17 @@ import javax.inject.Named;
 
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
+import org.gluu.model.GluuAttribute;
+import org.gluu.model.GluuImage;
+import org.gluu.model.GluuUserRole;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.ImageService;
 import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.util.OxTrustConstants;
+import org.gluu.service.security.Secure;
 import org.slf4j.Logger;
-import org.xdi.model.GluuAttribute;
-import org.xdi.model.GluuImage;
-import org.xdi.model.GluuUserRole;
-import org.xdi.service.security.Secure;
 
 /**
  * Action class for view white pages
@@ -76,7 +76,7 @@ public class WhitePagesAction implements Serializable {
 		this.tableAttributes = Arrays.asList("cn", "photo1", "mail", "phone");
 	}
 
-	@Secure("#{permissionService.hasPermission(applianceService.appliance, 'whitePagesEnabled')}")
+	@Secure("#{permissionService.hasPermission(configurationService.configuration, 'whitePagesEnabled')}")
 	public String start() {
 		if (persons != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -85,7 +85,7 @@ public class WhitePagesAction implements Serializable {
 		return search();
 	}
 
-	@Secure("#{permissionService.hasPermission(applianceService.appliance, 'whitePagesEnabled')}")
+	@Secure("#{permissionService.hasPermission(configurationService.configuration, 'whitePagesEnabled')}")
 	public String search() {
 		try {
 			GluuCustomPerson person = new GluuCustomPerson();

@@ -7,6 +7,7 @@
 package org.gluu.oxtrust.action;
 
 import java.io.Serializable;
+import java.util.regex.Pattern;
 
 import javax.enterprise.context.RequestScoped;
 import javax.faces.application.FacesMessage;
@@ -16,17 +17,17 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.AssertTrue;
-import javax.validation.constraints.Size;
 
 import org.gluu.jsf2.message.FacesMessages;
+import org.gluu.model.attribute.AttributeValidation;
+import org.gluu.oxtrust.ldap.service.AttributeService;
+import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.OxTrustAuditService;
-import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.security.Identity;
-import org.gluu.persist.exception.AuthenticationException;
+import org.gluu.service.security.Secure;
+import org.gluu.util.StringHelper;
 import org.slf4j.Logger;
-import org.xdi.service.security.Secure;
-import org.xdi.util.StringHelper;
 
 /**
  * Action class for password validation
@@ -38,13 +39,15 @@ import org.xdi.util.StringHelper;
 @Secure("#{permissionService.hasPermission('profile', 'access')}")
 public class PasswordValidationAction implements Cloneable, Serializable {
 
+	private static final String USER_PASSWORD = "userPassword";
+
 	private static final long serialVersionUID = 1952428504080910113L;
 
 	@Inject
 	private Logger log;
 
 	@Inject
-	private PersonService personService;
+	private IPersonService personService;
 
 	@Inject
 	private Identity identity;
@@ -53,21 +56,29 @@ public class PasswordValidationAction implements Cloneable, Serializable {
 	private OxTrustAuditService oxTrustAuditService;
 
 	@Inject
+	private AttributeService attributeService;
+
+	@Inject
 	private FacesMessages facesMessages;
 
 	private String oldPassword = "";
 
-	@Size(min = 3, max = 60, message = "Password length must be between {min} and {max} characters.")
 	private String password = "";
 
-	@Size(min = 3, max = 60, message = "Password length must be between {min} and {max} characters.")
 	private String confirm = "";
 
 	private UIComponent graphValidator;
 
-	@AssertTrue(message = "Different passwords entered!")
+	@AssertTrue(message = "Passwords are different or they don't match the requirements define by site administrator.")
 	public boolean isPasswordsEquals() {
-		return password.equals(confirm);
+		AttributeValidation validation = attributeService.getAttributeByName(USER_PASSWORD).getAttributeValidation();
+		if (validation != null && validation.getRegexp() != null && !validation.getRegexp().isEmpty()) {
+			Pattern pattern = Pattern.compile(validation.getRegexp());
+			return password.equals(confirm) && pattern.matcher(password).matches()
+					&& pattern.matcher(confirm).matches();
+		} else {
+			return password.equals(confirm);
+		}
 	}
 
 	public void reset() {
@@ -81,7 +92,7 @@ public class PasswordValidationAction implements Cloneable, Serializable {
 				if ((person != null) && StringHelper.isNotEmpty(person.getUid())) {
 					resultValidateOldPassword = personService.authenticate(person.getUid(), oldPassword);
 				}
-			} catch (AuthenticationException ex) {
+			} catch (Exception ex) {
 				log.debug("Failed to verify old person password", ex);
 			}
 

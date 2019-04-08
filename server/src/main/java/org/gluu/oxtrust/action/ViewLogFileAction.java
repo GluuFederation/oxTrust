@@ -24,16 +24,16 @@ import org.apache.commons.io.filefilter.AndFileFilter;
 import org.apache.commons.io.filefilter.FileFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.gluu.jsf2.message.FacesMessages;
-import org.gluu.oxtrust.ldap.service.ApplianceService;
-import org.gluu.oxtrust.model.GluuAppliance;
+import org.gluu.model.SimpleCustomProperty;
+import org.gluu.oxtrust.ldap.service.ConfigurationService;
+import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.oxtrust.model.LogViewerConfig;
 import org.gluu.oxtrust.util.OxTrustConstants;
+import org.gluu.service.JsonService;
+import org.gluu.service.security.Secure;
+import org.gluu.util.StringHelper;
+import org.gluu.util.io.ReverseLineReader;
 import org.slf4j.Logger;
-import org.xdi.model.SimpleCustomProperty;
-import org.xdi.service.JsonService;
-import org.xdi.service.security.Secure;
-import org.xdi.util.StringHelper;
-import org.xdi.util.io.ReverseLineReader;
 
 /**
  * Action class for configuring log viewer
@@ -51,7 +51,7 @@ public class ViewLogFileAction implements Serializable {
 	private Logger log;
 	
 	@Inject
-	private ApplianceService applianceService;
+	private ConfigurationService configurationService;
 
 	@Inject
 	private FacesMessages facesMessages;
@@ -59,7 +59,7 @@ public class ViewLogFileAction implements Serializable {
 	@Inject
 	private JsonService jsonService;
 
-	private GluuAppliance appliance;
+	private GluuConfiguration configuration;
 
 	private LogViewerConfig logViewerConfiguration;
 	private Map<Integer, String> logFiles;
@@ -77,7 +77,7 @@ public class ViewLogFileAction implements Serializable {
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
 
-		this.appliance = applianceService.getAppliance();
+		this.configuration = configurationService.getConfiguration();
 
 		initConfigurations();
 		
@@ -98,10 +98,10 @@ public class ViewLogFileAction implements Serializable {
 	private LogViewerConfig prepareLogViewerConfig() {
 		LogViewerConfig logViewerConfig = null;
 
-		String oxLogViewerConfig = appliance.getOxLogViewerConfig();
+		String oxLogViewerConfig = configuration.getOxLogViewerConfig();
 		if (StringHelper.isNotEmpty(oxLogViewerConfig)) {
 			try {
-				logViewerConfig = jsonService.jsonToObject(appliance.getOxLogViewerConfig(), LogViewerConfig.class);
+				logViewerConfig = jsonService.jsonToObject(configuration.getOxLogViewerConfig(), LogViewerConfig.class);
 			} catch (Exception ex) {
 				log.error("Failed to load log viewer configuration '{}'", oxLogViewerConfig, ex);
 			}

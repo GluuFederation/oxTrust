@@ -26,7 +26,7 @@
 
 #foreach( $trustRelationship in $trustParams.trusts )
 
-    #if($trustRelationship.spMetaDataSourceType.value == "file" || $trustRelationship.spMetaDataSourceType.value == "generate")
+    #if($trustRelationship.spMetaDataSourceType.value == "file")
 
     <MetadataProvider id="SiteSP$trustParams.trustIds.get($trustRelationship.inum)"
                       xsi:type="FilesystemMetadataProvider"
@@ -52,7 +52,7 @@
 
     #end
 
-    #if($trustRelationship.spMetaDataSourceType.value == 'file' || $trustRelationship.spMetaDataSourceType.value == "generate" || $trustRelationship.spMetaDataSourceType.value == 'uri')
+    #if($trustRelationship.spMetaDataSourceType.value == 'file' || $trustRelationship.spMetaDataSourceType.value == 'uri')
     </MetadataProvider>
     #end
 

@@ -23,17 +23,17 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.gluu.jsf2.io.ResponseHelper;
 import org.gluu.jsf2.message.FacesMessages;
+import org.gluu.model.GluuStatus;
 import org.gluu.oxtrust.ldap.service.FederationService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.ldap.service.Shibboleth3ConfService;
 import org.gluu.oxtrust.model.GluuMetadataSourceType;
 import org.gluu.oxtrust.model.GluuSAMLFederationProposal;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.xdi.model.GluuStatus;
-import org.xdi.service.security.Secure;
-import org.xdi.util.StringHelper;
-import org.xdi.util.io.ExcludeFilterInputStream;
-import org.xdi.util.io.FileUploadWrapper;
+import org.gluu.service.security.Secure;
+import org.gluu.util.StringHelper;
+import org.gluu.util.io.ExcludeFilterInputStream;
+import org.gluu.util.io.FileUploadWrapper;
 
 @ConversationScoped
 @Named("joinFederationAction")

@@ -9,9 +9,9 @@ package org.gluu.oxauth.client.util;
 import org.gluu.oxauth.client.OpenIdClient;
 import org.gluu.oxauth.client.conf.AppConfiguration;
 import org.gluu.oxauth.client.conf.LdapAppConfiguration;
-import org.xdi.oxauth.client.OpenIdConfigurationResponse;
-import org.xdi.oxauth.model.util.Util;
-import org.xdi.util.StringHelper;
+import org.gluu.oxauth.client.OpenIdConfigurationResponse;
+import org.gluu.oxauth.model.util.Util;
+import org.gluu.util.StringHelper;
 
 /**
  * oAuth properties and constants
@@ -21,7 +21,7 @@ import org.xdi.util.StringHelper;
  */
 public final class Configuration {
 
-    /**
+    /**T
      * Represents the constant for where the OAuth data will be located in memory
      */
 	public static final String SESSION_OAUTH_DATA = "_oauth_data_";

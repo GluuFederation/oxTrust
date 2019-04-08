@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -27,6 +28,7 @@ import org.apache.commons.io.IOUtils;
 import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
+import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.oxtrust.ldap.service.IGroupService;
 import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
@@ -36,7 +38,6 @@ import org.gluu.oxtrust.model.scim2.user.Email;
 import org.richfaces.model.UploadedFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xdi.config.oxtrust.AppConfiguration;
 
 /**
  * User: Dejan Maric
@@ -252,15 +253,6 @@ public class ServiceUtil implements Serializable {
 			}
 		}
 		return false;
-	}
-
-	public String getPersonParentInum() {
-		return appConfiguration.getOrgInum() + OxTrustConstants.inumDelimiter + OxTrustConstants.INUM_PERSON_OBJECTTYPE;
-	}
-
-	public String getPersonParentIname() {
-		return appConfiguration.getOrgIname() + OxTrustConstants.inameDelimiter
-				+ OxTrustConstants.INAME_PERSON_OBJECTTYPE;
 	}
 
 	/**

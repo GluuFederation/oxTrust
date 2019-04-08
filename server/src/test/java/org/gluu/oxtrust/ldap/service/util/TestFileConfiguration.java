@@ -13,7 +13,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.xdi.util.properties.FileConfiguration;
+import org.gluu.util.properties.FileConfiguration;
 
 public class TestFileConfiguration extends FileConfiguration {
 

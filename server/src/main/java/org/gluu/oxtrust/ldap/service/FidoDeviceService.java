@@ -101,7 +101,6 @@ public class FidoDeviceService implements IFidoDeviceService, Serializable {
 	
 	@Override
 	public 	List<GluuCustomFidoDevice> searchFidoDevices(String userInum, String ... returnAttributes) {
-		
 		if(containsBranch(userInum)){	
 			String baseDnForU2fDevices = getDnForFidoDevice(userInum,null);	
 			return ldapEntryManager.findEntries(baseDnForU2fDevices, GluuCustomFidoDevice.class, null, returnAttributes);

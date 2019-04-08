@@ -24,32 +24,33 @@ import org.gluu.oxauth.client.conf.LdapAppConfiguration;
 import org.gluu.oxauth.client.exception.CommunicationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xdi.context.WebContext;
-import org.xdi.oxauth.client.AuthorizationRequest;
-import org.xdi.oxauth.client.EndSessionRequest;
-import org.xdi.oxauth.client.OpenIdConfigurationClient;
-import org.xdi.oxauth.client.OpenIdConfigurationResponse;
-import org.xdi.oxauth.client.RegisterClient;
-import org.xdi.oxauth.client.RegisterRequest;
-import org.xdi.oxauth.client.RegisterResponse;
-import org.xdi.oxauth.client.TokenClient;
-import org.xdi.oxauth.client.TokenResponse;
-import org.xdi.oxauth.client.UserInfoClient;
-import org.xdi.oxauth.client.UserInfoResponse;
-import org.xdi.oxauth.model.authorize.AuthorizeRequestParam;
-import org.xdi.oxauth.model.common.AuthenticationMethod;
-import org.xdi.oxauth.model.common.ResponseType;
-import org.xdi.oxauth.model.crypto.signature.SignatureAlgorithm;
-import org.xdi.oxauth.model.exception.InvalidJwtException;
-import org.xdi.oxauth.model.jwt.Jwt;
-import org.xdi.oxauth.model.jwt.JwtClaimName;
-import org.xdi.oxauth.model.jwt.JwtType;
-import org.xdi.oxauth.model.register.ApplicationType;
-import org.xdi.util.StringHelper;
-import org.xdi.util.exception.ConfigurationException;
-import org.xdi.util.init.Initializable;
-import org.xdi.util.security.StringEncrypter;
-import org.xdi.util.security.StringEncrypter.EncryptionException;
+import org.gluu.context.WebContext;
+import org.gluu.oxauth.client.AuthorizationRequest;
+import org.gluu.oxauth.client.EndSessionRequest;
+import org.gluu.oxauth.client.OpenIdConfigurationClient;
+import org.gluu.oxauth.client.OpenIdConfigurationResponse;
+import org.gluu.oxauth.client.RegisterClient;
+import org.gluu.oxauth.client.RegisterRequest;
+import org.gluu.oxauth.client.RegisterResponse;
+import org.gluu.oxauth.client.TokenClient;
+import org.gluu.oxauth.client.TokenResponse;
+import org.gluu.oxauth.client.UserInfoClient;
+import org.gluu.oxauth.client.UserInfoResponse;
+import org.gluu.oxauth.model.authorize.AuthorizeRequestParam;
+import org.gluu.oxauth.model.common.AuthenticationMethod;
+import org.gluu.oxauth.model.common.Prompt;
+import org.gluu.oxauth.model.common.ResponseType;
+import org.gluu.oxauth.model.crypto.signature.SignatureAlgorithm;
+import org.gluu.oxauth.model.exception.InvalidJwtException;
+import org.gluu.oxauth.model.jwt.Jwt;
+import org.gluu.oxauth.model.jwt.JwtClaimName;
+import org.gluu.oxauth.model.jwt.JwtType;
+import org.gluu.oxauth.model.register.ApplicationType;
+import org.gluu.util.StringHelper;
+import org.gluu.util.exception.ConfigurationException;
+import org.gluu.util.init.Initializable;
+import org.gluu.util.security.StringEncrypter;
+import org.gluu.util.security.StringEncrypter.EncryptionException;
 
 /**
  * This class is the oxAuth client to authenticate users and retrieve user
@@ -191,11 +192,11 @@ public class OpenIdClient<C extends AppConfiguration, L extends LdapAppConfigura
 
     @Override
     public String getRedirectionUrl(final WebContext context) {
-        return getRedirectionUrl(context, null, null);
+        return getRedirectionUrl(context, null, null, false);
     }
 
     @Override
-    public String getRedirectionUrl(final WebContext context, Map<String, String> customStateParameters, final Map<String, String> customParameters) {
+    public String getRedirectionUrl(final WebContext context, Map<String, String> customStateParameters, final Map<String, String> customParameters, final boolean force) {
 		init();
 
 		String state = RandomStringUtils.randomAlphanumeric(10);
@@ -225,6 +226,10 @@ public class OpenIdClient<C extends AppConfiguration, L extends LdapAppConfigura
 
 		authorizationRequest.setState(state);
 		authorizationRequest.setNonce(nonce);
+		
+		if (force) {
+			authorizationRequest.setPrompts(Arrays.asList(Prompt.LOGIN));
+		}
 
 		context.setSessionAttribute(getName() + SESSION_STATE_PARAMETER, state);
         context.setSessionAttribute(getName() + SESSION_NONCE_PARAMETER, nonce);

@@ -5,7 +5,7 @@
  */
 package org.gluu.oxtrust.util;
 
-import org.xdi.util.OxConstants;
+import org.gluu.util.OxConstants;
 
 /**
  * Constants loads the LDAP schema attribute names like uid, iname
@@ -92,6 +92,8 @@ public final class OxTrustConstants extends OxConstants {
 
     public static final String FACTER_PARAM_VALUE_DIVIDER = " => ";
     public static final String FACTER_FREE_MEMORY_MB = "memoryfree_mb";
+    public static final String FACTER_FREE_MEMORY = "memoryfree";
+    public static final String FACTER_MEMORY_SIZE = "memorysize";
     public static final String FACTER_MEMORY_SIZE_MB = "memorysize_mb";
     public static final String FACTER_FREE_SWAP = "swapfree";
     public static final String FACTER_FREE_SWAP_TOTAL = "swapsize";
@@ -103,7 +105,7 @@ public final class OxTrustConstants extends OxConstants {
 
     public static final String HTTPD_TEST_PAGE_NAME = "/index.html";
 
-    public static final String HTTPD_TEST_PAGE_CONTENT = "<html>\n<head>\n<script type=\"text/javascript\">\n<!--\nfunction delayer(){\n    window.location = \"../identity/\"\n}\n//-->\n</script>\n</head>\n<body onLoad=\"setTimeout('delayer()', 5000)\">\n<h2>You are being redirected to appliance login page. Please click this <a href=\"../identity/\">link</a> if your browser does not support javascript.</h2>\n</body>\n</html>\n";
+    public static final String HTTPD_TEST_PAGE_CONTENT = "<html>\n<head>\n<script type=\"text/javascript\">\n<!--\nfunction delayer(){\n    window.location = \"../identity/\"\n}\n//-->\n</script>\n</head>\n<body onLoad=\"setTimeout('delayer()', 5000)\">\n<h2>You are being redirected to configuration login page. Please click this <a href=\"../identity/\">link</a> if your browser does not support javascript.</h2>\n</body>\n</html>\n";
 
     public static final String PROGRAM_LDAPSEARCH = "/usr/bin/ldapsearch";
 
@@ -117,7 +119,7 @@ public final class OxTrustConstants extends OxConstants {
     public static final char[] HEX_CHARACTERS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
 
 
-    public static String ouAppliances = "ou=appliances";
+    public static String ouConfigurations = "ou=configurations";
 
     public static final String INUM_TYPE_PEOPLE_SLUG = "people";
     public static final String INUM_TYPE_GROUP_SLUG = "group";

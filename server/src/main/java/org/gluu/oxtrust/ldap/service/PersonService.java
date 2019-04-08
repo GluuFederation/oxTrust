@@ -14,11 +14,13 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.User;
@@ -29,13 +31,12 @@ import org.gluu.persist.model.AttributeData;
 import org.gluu.persist.model.SearchScope;
 import org.gluu.persist.model.base.SimpleBranch;
 import org.gluu.search.filter.Filter;
+import org.gluu.util.ArrayHelper;
+import org.gluu.util.INumGenerator;
+import org.gluu.util.OxConstants;
+import org.gluu.util.StringHelper;
 import org.joda.time.format.ISODateTimeFormat;
 import org.slf4j.Logger;
-import org.xdi.config.oxtrust.AppConfiguration;
-import org.xdi.util.ArrayHelper;
-import org.xdi.util.INumGenerator;
-import org.xdi.util.OxConstants;
-import org.xdi.util.StringHelper;
 
 /**
  * Provides operations with persons
@@ -405,7 +406,14 @@ public class PersonService implements Serializable, IPersonService {
 	 */
 	@Override
 	public int countPersons() {
-		return ldapEntryManager.countEntries(getDnForPerson(null), SimpleBranch.class, null, SearchScope.BASE);
+		String dn = getDnForPerson(null);
+
+		Class<?> searchClass = GluuCustomPerson.class;
+		if (ldapEntryManager.hasBranchesSupport(dn)) {
+			searchClass = SimpleBranch.class;
+		}
+
+		return ldapEntryManager.countEntries(dn, searchClass, null, SearchScope.BASE);
 	}
 
 	/*
@@ -433,38 +441,7 @@ public class PersonService implements Serializable, IPersonService {
 	 * @throws Exception
 	 */
 	private String generateInumForNewPersonImpl() {
-		String orgInum = organizationService.getInumForOrganization();
-		return orgInum + OxTrustConstants.inumDelimiter + OxTrustConstants.INUM_PERSON_OBJECTTYPE
-				+ OxTrustConstants.inumDelimiter + generateInum();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.gluu.oxtrust.ldap.service.IPersonService#generateInameForNewPerson(java.
-	 * lang.String)
-	 */
-	@Override
-	public String generateInameForNewPerson(String uid) {
-		return String.format("%s*person*%s", appConfiguration.getOrgIname(), uid);
-	}
-
-	private String generateInum() {
-		String inum = "";
-		while (true) {
-			inum = INumGenerator.generate(4);
-			try {
-				BigInteger value = new BigInteger(inum.replace(".", ""), 16);
-				if (value.doubleValue() < 7.0) {
-					continue;
-				}
-			} catch (Exception ex) {
-				log.error("Error generating inum: ", ex);
-			}
-			break;
-		}
-		return inum;
+		return UUID.randomUUID().toString();
 	}
 
 	/*
