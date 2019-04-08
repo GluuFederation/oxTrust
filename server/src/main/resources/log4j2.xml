@@ -165,6 +165,14 @@
 			<AppenderRef ref="OX_PERSISTENCE_DURATION_FILE" />
 		</Logger>
 
+		<Logger name="org.gluu.persist.ldap.operation.watch" level="${log4j.default.log.level}" additivity="false">
+			<AppenderRef ref="OX_PERSISTENCE_DURATION_FILE" />
+		</Logger>
+
+		<Logger name="org.gluu.persist.couchbase.operation.watch" level="${log4j.default.log.level}" additivity="false">
+			<AppenderRef ref="OX_PERSISTENCE_DURATION_FILE" />
+		</Logger>
+
 		<logger name="com.unboundid.ldap.sdk.LDAPConnection" level="${log4j.default.log.level}" additivity="false">
 			<AppenderRef ref="OX_PERSISTENCE_FILE" />
 		</logger>

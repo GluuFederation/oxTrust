@@ -124,7 +124,6 @@ public class GroupService implements Serializable, IGroupService {
 		boolean isMemberOrOwner = false;
 		try {
 			isMemberOrOwner = ldapEntryManager.findEntries(groupDN, GluuGroup.class, searchFilter, 1).size() > 0;
-
 		} catch (EntryPersistenceException ex) {
 			log.error("Failed to determine if person '{}' memeber or owner of group '{}'", personDN, groupDN, ex);
 		}
@@ -165,7 +164,14 @@ public class GroupService implements Serializable, IGroupService {
 	 */
 	@Override
 	public int countGroups() {
-        return ldapEntryManager.countEntries(getDnForGroup(null), SimpleBranch.class, null, SearchScope.BASE);
+		String dn = getDnForGroup(null);
+
+		Class<?> searchClass = GluuGroup.class;
+		if (ldapEntryManager.hasBranchesSupport(dn)) {
+			searchClass = SimpleBranch.class;
+		}
+
+		return ldapEntryManager.countEntries(dn, searchClass, null, SearchScope.BASE);
 	}
 
 	public boolean contains(String groupDn) {
