@@ -7,6 +7,7 @@
 package org.gluu.oxtrust.action;
 
 import java.io.Serializable;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.enterprise.context.ConversationScoped;
@@ -48,12 +49,12 @@ public class SearchClientAction implements Serializable {
 
 	@NotNull
 	@Size(min = 0, max = 30, message = "Length of search string should be less than 30")
-	private String searchPattern="";
+	private String searchPattern = "";
 
 	private String oldSearchPattern;
 
 	private List<OxAuthClient> clientList;
-	
+
 	@Inject
 	private ClientService clientService;
 
@@ -69,27 +70,25 @@ public class SearchClientAction implements Serializable {
 		return searchImpl();
 	}
 
-    protected String searchImpl() {
-        try {
-			if(searchPattern == null || searchPattern.isEmpty()){
+	protected String searchImpl() {
+		try {
+			if (searchPattern == null || searchPattern.isEmpty()) {
 				this.clientList = clientService.getAllClients(100);
-			}else{
+			} else {
 				this.clientList = clientService.searchClients(this.searchPattern, 100);
 			}
-			
+			this.clientList.sort(Comparator.comparing(OxAuthClient::getDisplayName));
 			this.oldSearchPattern = this.searchPattern;
-			this.searchPattern="";
+			this.searchPattern = "";
 		} catch (Exception ex) {
 			log.error("Failed to find clients", ex);
-
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to find clients");
 			conversationService.endConversation();
-
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 
 		return OxTrustConstants.RESULT_SUCCESS;
-    }
+	}
 
 	public String getSearchPattern() {
 		return searchPattern;
@@ -103,13 +102,13 @@ public class SearchClientAction implements Serializable {
 		return clientList;
 	}
 
-    public String deleteClients() {
-        for (OxAuthClient client : clientList) {
-            if (client.isSelected()) {
-                clientService.removeClient(client);
-            }
-        }
+	public String deleteClients() {
+		for (OxAuthClient client : clientList) {
+			if (client.isSelected()) {
+				clientService.removeClient(client);
+			}
+		}
 
-        return searchImpl();
-    }
+		return searchImpl();
+	}
 }

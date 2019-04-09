@@ -258,6 +258,8 @@ public class UpdateClientAction implements Serializable {
 			log.debug("inum : " + inum);
 			this.client = clientService.getClientByInum(inum);
 			previousClientExpirationDate = this.client.getClientSecretExpiresAt();
+			this.client.setOxAuthClientSecret(encryptionService.decrypt(this.client.getEncodedClientSecret()));
+			log.info("CLIENT SECRET UPDATE:" + this.client.getOxAuthClientSecret());
 		} catch (BasePersistenceException ex) {
 			log.error("Failed to find client {}", inum, ex);
 		}
@@ -348,7 +350,6 @@ public class UpdateClientAction implements Serializable {
 					"This client has expired. Update the expiration date in order to save changes");
 			return OxTrustConstants.RESULT_FAILURE;
 		}
-
 		updateLoginURIs();
 		updateLogoutURIs();
 		updateClientLogoutURIs();
@@ -637,7 +638,6 @@ public class UpdateClientAction implements Serializable {
 		if (this.availableClaims == null) {
 			return;
 		}
-
 		Set<String> addedClaimInums = new HashSet<String>();
 		for (DisplayNameEntry claim : claims) {
 			addedClaimInums.add(claim.getInum());
@@ -754,12 +754,10 @@ public class UpdateClientAction implements Serializable {
 			this.client.setOxAuthRedirectURIs(null);
 			return;
 		}
-
 		List<String> tmpUris = new ArrayList<String>();
 		for (String uri : this.loginUris) {
 			tmpUris.add(StringHelper.trimAll(uri));
 		}
-
 		this.client.setOxAuthRedirectURIs(tmpUris);
 	}
 
@@ -768,14 +766,11 @@ public class UpdateClientAction implements Serializable {
 			this.client.setOxAuthPostLogoutRedirectURIs(null);
 			return;
 		}
-
 		List<String> tmpUris = new ArrayList<String>();
 		for (String uri : this.logoutUris) {
 			tmpUris.add(StringHelper.trimAll(uri));
 		}
-
 		this.client.setOxAuthPostLogoutRedirectURIs(tmpUris);
-
 	}
 
 	private void updateClientLogoutURIs() {
@@ -783,14 +778,11 @@ public class UpdateClientAction implements Serializable {
 			this.client.setLogoutUri(null);
 			return;
 		}
-
 		List<String> tmpUris = new ArrayList<String>();
 		for (String uri : this.clientlogoutUris) {
 			tmpUris.add(StringHelper.trimAll(uri));
 		}
-
 		this.client.setLogoutUri(tmpUris);
-
 	}
 
 	private void updateContacts() {
@@ -799,12 +791,10 @@ public class UpdateClientAction implements Serializable {
 			client.setContacts(null);
 			return;
 		}
-
 		List<String> tmpContacts = new ArrayList<String>();
 		for (String contact : contacts) {
 			tmpContacts.add(contact);
 		}
-
 		client.setContacts(tmpContacts);
 	}
 
@@ -813,12 +803,10 @@ public class UpdateClientAction implements Serializable {
 			client.setRequestUris(null);
 			return;
 		}
-
 		List<String> tmpRequestUris = new ArrayList<String>();
 		for (String requestUri : requestUris) {
 			tmpRequestUris.add(StringHelper.trimAll(requestUri));
 		}
-
 		client.setRequestUris(tmpRequestUris.toArray(new String[tmpRequestUris.size()]));
 	}
 
@@ -827,12 +815,10 @@ public class UpdateClientAction implements Serializable {
 			client.setAuthorizedOrigins(null);
 			return;
 		}
-
 		List<String> tmpAuthorizedOrigins = new ArrayList<String>();
 		for (String authorizedOrigin : authorizedOrigins) {
 			tmpAuthorizedOrigins.add(StringHelper.trimAll(authorizedOrigin));
 		}
-
 		client.setAuthorizedOrigins(tmpAuthorizedOrigins.toArray(new String[tmpAuthorizedOrigins.size()]));
 	}
 
@@ -841,12 +827,10 @@ public class UpdateClientAction implements Serializable {
 			client.setClaimRedirectURI(null);
 			return;
 		}
-
 		List<String> tmpClaimRedirectURI = new ArrayList<String>();
 		for (String claimRedirectURI : claimRedirectURIList) {
 			tmpClaimRedirectURI.add(StringHelper.trimAll(claimRedirectURI));
 		}
-
 		client.setClaimRedirectURI(tmpClaimRedirectURI.toArray(new String[tmpClaimRedirectURI.size()]));
 	}
 
@@ -855,12 +839,10 @@ public class UpdateClientAction implements Serializable {
 			this.client.setOxAuthClaims(null);
 			return;
 		}
-
 		List<String> tmpClaims = new ArrayList<String>();
 		for (DisplayNameEntry claim : this.claims) {
 			tmpClaims.add(claim.getDn());
 		}
-
 		this.client.setOxAuthClaims(tmpClaims);
 	}
 
@@ -919,12 +901,10 @@ public class UpdateClientAction implements Serializable {
 		if (this.availableClaims == null) {
 			return;
 		}
-
 		Set<String> addedClaimInums = new HashSet<String>();
 		for (DisplayNameEntry claim : this.claims) {
 			addedClaimInums.add(claim.getInum());
 		}
-
 		for (GluuAttribute aClaim : this.availableClaims) {
 			aClaim.setSelected(addedClaimInums.contains(aClaim.getInum()));
 		}
@@ -934,7 +914,6 @@ public class UpdateClientAction implements Serializable {
 		if (Util.equals(this.oldSearchAvailableClaimPattern, this.searchAvailableClaimPattern)) {
 			return;
 		}
-
 		try {
 			this.availableClaims = attributeService.searchAttributes(this.searchAvailableClaimPattern,
 					OxTrustConstants.searchClientsSizeLimit);
@@ -950,51 +929,41 @@ public class UpdateClientAction implements Serializable {
 		if ((client.getOxAuthClaims() == null) || (client.getOxAuthClaims().size() == 0)) {
 			return result;
 		}
-
 		List<DisplayNameEntry> tmp = lookupService.getDisplayNameEntries(attributeService.getDnForAttribute(null),
 				this.client.getOxAuthClaims());
 		if (tmp != null) {
 			result.addAll(tmp);
 		}
-
 		return result;
 	}
 
 	private List<ResponseType> getInitialResponseTypes() {
 		List<ResponseType> result = new ArrayList<ResponseType>();
-
 		ResponseType[] currentResponseTypes = this.client.getResponseTypes();
 		if ((currentResponseTypes == null) || (currentResponseTypes.length == 0)) {
 			return result;
 		}
-
 		result.addAll(Arrays.asList(currentResponseTypes));
-
 		return result;
 	}
 
 	private List<GrantType> getInitialGrantTypes() {
 		List<GrantType> result = new ArrayList<GrantType>();
-
 		GrantType[] currentGrantTypes = this.client.getGrantTypes();
 		if (currentGrantTypes == null || currentGrantTypes.length == 0) {
 			return result;
 		}
-
 		result.addAll(Arrays.asList(currentGrantTypes));
-
 		return result;
 	}
 
 	public void acceptSelectResponseTypes() {
 		List<ResponseType> addedResponseTypes = getResponseTypes();
-
 		for (SelectableEntity<ResponseType> availableResponseType : this.availableResponseTypes) {
 			ResponseType responseType = availableResponseType.getEntity();
 			if (availableResponseType.isSelected() && !addedResponseTypes.contains(responseType)) {
 				addResponseType(responseType.getValue());
 			}
-
 			if (!availableResponseType.isSelected() && addedResponseTypes.contains(responseType)) {
 				removeResponseType(responseType.getValue());
 			}
@@ -1100,7 +1069,6 @@ public class UpdateClientAction implements Serializable {
 			if (availableGrantType.isSelected() && !addedGrantTypes.contains(grantType)) {
 				addGrantType(grantType.toString());
 			}
-
 			if (!availableGrantType.isSelected() && addedGrantTypes.contains(grantType)) {
 				removeGrantType(grantType.toString());
 			}
@@ -1123,7 +1091,6 @@ public class UpdateClientAction implements Serializable {
 		if (StringHelper.isEmpty(value)) {
 			return;
 		}
-
 		ResponseType addResponseType = ResponseType.getByValue(value);
 		if (addResponseType != null) {
 			this.responseTypes.add(addResponseType);
@@ -1141,7 +1108,6 @@ public class UpdateClientAction implements Serializable {
 		if (StringHelper.isEmpty(value)) {
 			return;
 		}
-
 		GrantType addGrantType = GrantType.fromString(value);
 		if (addGrantType != null) {
 			this.grantTypes.add(addGrantType);
@@ -1152,7 +1118,6 @@ public class UpdateClientAction implements Serializable {
 		if (StringHelper.isEmpty(value)) {
 			return;
 		}
-
 		ResponseType removeResponseType = ResponseType.getByValue(value);
 		if (removeResponseType != null) {
 			this.responseTypes.remove(removeResponseType);
@@ -1170,7 +1135,6 @@ public class UpdateClientAction implements Serializable {
 		if (StringHelper.isEmpty(value)) {
 			return;
 		}
-
 		GrantType removeGrantType = GrantType.fromString(value);
 		if (removeGrantType != null) {
 			this.grantTypes.remove(removeGrantType);
@@ -1205,7 +1169,6 @@ public class UpdateClientAction implements Serializable {
 		for (CustomScript customScript : customScripts) {
 			tmpAvailableCustomScripts.add(new SelectableEntity<CustomScript>(customScript));
 		}
-
 		this.availableCustomScripts = tmpAvailableCustomScripts;
 		selectAddedCustomScripts();
 	}
@@ -1288,7 +1251,6 @@ public class UpdateClientAction implements Serializable {
 
 	private void selectAddedGrantTypes() {
 		List<GrantType> addedGrantTypes = getGrantTypes();
-
 		for (SelectableEntity<GrantType> availableGrantType : this.availableGrantTypes) {
 			availableGrantType.setSelected(addedGrantTypes.contains(availableGrantType.getEntity()));
 		}
@@ -1446,68 +1408,40 @@ public class UpdateClientAction implements Serializable {
 		this.availableSectors = availableSectors;
 	}
 
-	/**
-	 * @return the availableClientlogoutUri
-	 */
 	public String getAvailableClientlogoutUri() {
 		return availableClientlogoutUri;
 	}
 
-	/**
-	 * @param availableClientlogoutUri
-	 *            the availableClientlogoutUri to set
-	 */
 	public void setAvailableClientlogoutUri(String availableClientlogoutUri) {
 		this.availableClientlogoutUri = availableClientlogoutUri;
 	}
 
-	/**
-	 * @return the clientlogoutUris
-	 */
 	public List<String> getClientlogoutUris() {
 		return clientlogoutUris;
 	}
 
-	/**
-	 * @param clientlogoutUris
-	 *            the clientlogoutUris to set
-	 */
 	public void setClientlogoutUris(List<String> clientlogoutUris) {
 		this.clientlogoutUris = clientlogoutUris;
 	}
 
-	/**
-	 * All the Redirect Uris must match to return true.
-	 */
 	private boolean checkWhiteListRedirectUris(String redirectUri) {
 		try {
 			boolean valid = true;
 			List<String> whiteList = appConfiguration.getClientWhiteList();
 			URLPatternList urlPatternList = new URLPatternList(whiteList);
-
-			// for (String redirectUri : redirectUris) {
 			valid &= urlPatternList.isUrlListed(redirectUri);
-			// }
-
 			return valid;
 		} catch (Exception e) {
 			return false;
 		}
 	}
 
-	/**
-	 * None of the Redirect Uris must match to return true.
-	 */
 	private boolean checkBlackListRedirectUris(String redirectUri) {
 		try {
 			boolean valid = true;
 			List<String> blackList = appConfiguration.getClientBlackList();
 			URLPatternList urlPatternList = new URLPatternList(blackList);
-
-			// for (String redirectUri : redirectUris) {
 			valid &= !urlPatternList.isUrlListed(redirectUri);
-			// }
-
 			return valid;
 		} catch (Exception e) {
 			return false;
@@ -1522,14 +1456,11 @@ public class UpdateClientAction implements Serializable {
 				return false;
 			}
 		}
-
 		for (GrantType grantType : this.grantTypes) {
 			if (grantType.getValue().equalsIgnoreCase("implicit")) {
 				return false;
 			}
-
 		}
-
 		return true;
 	}
 
@@ -1664,7 +1595,6 @@ public class UpdateClientAction implements Serializable {
 	}
 
 	private String getClientAttributesJson(OxAuthClient client) {
-		log.info("+++++++++++++Calling getClientAttributesJson:" + client);
 		if (client != null) {
 			try {
 				return new ObjectMapper().writeValueAsString(this.client.getAttributes());
