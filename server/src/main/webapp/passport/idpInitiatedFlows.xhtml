@@ -109,7 +109,8 @@
 												<b:dataTableColumn
 													label="#{msg['passport.idpinitiated.authParams.provider']}">
 													<h:link includeViewParams="false"
-														outcome="/passport/editProvider" value="#{passportIdpInitiatedAction.getProviderName(c.provider)}">
+														outcome="/passport/editProvider"
+														value="#{passportIdpInitiatedAction.getProviderName(c.provider)}">
 														<f:param name="id" value="#{c.provider}" />
 													</h:link>
 												</b:dataTableColumn>

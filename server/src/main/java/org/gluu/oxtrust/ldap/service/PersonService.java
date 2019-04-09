@@ -406,7 +406,14 @@ public class PersonService implements Serializable, IPersonService {
 	 */
 	@Override
 	public int countPersons() {
-		return ldapEntryManager.countEntries(getDnForPerson(null), SimpleBranch.class, null, SearchScope.BASE);
+		String dn = getDnForPerson(null);
+
+		Class<?> searchClass = GluuCustomPerson.class;
+		if (ldapEntryManager.hasBranchesSupport(dn)) {
+			searchClass = SimpleBranch.class;
+		}
+
+		return ldapEntryManager.countEntries(dn, searchClass, null, SearchScope.BASE);
 	}
 
 	/*
