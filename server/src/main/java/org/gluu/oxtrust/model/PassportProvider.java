@@ -15,7 +15,7 @@ public class PassportProvider implements Serializable {
 		this.provider = provider;
 	}
 
-	private transient boolean checked;
+	private boolean checked = false;
 
 	private Provider provider;
 

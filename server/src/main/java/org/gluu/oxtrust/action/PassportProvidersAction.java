@@ -2,6 +2,7 @@ package org.gluu.oxtrust.action;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -13,19 +14,19 @@ import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.gluu.config.oxtrust.LdapOxPassportConfiguration;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
-import org.gluu.oxtrust.ldap.service.PassportService;
-import org.gluu.oxtrust.model.OptionEntry;
-import org.gluu.oxtrust.model.PassportProvider;
-import org.gluu.oxtrust.util.OxTrustConstants;
-import org.slf4j.Logger;
-import org.gluu.config.oxtrust.LdapOxPassportConfiguration;
 import org.gluu.model.passport.PassportConfiguration;
 import org.gluu.model.passport.Provider;
 import org.gluu.model.passport.config.Configuration;
 import org.gluu.model.passport.idpinitiated.IIConfiguration;
+import org.gluu.oxtrust.ldap.service.PassportService;
+import org.gluu.oxtrust.model.OptionEntry;
+import org.gluu.oxtrust.model.PassportProvider;
+import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.service.security.Secure;
+import org.slf4j.Logger;
 
 @Named("passportProvidersAction")
 @ConversationScoped
@@ -60,7 +61,7 @@ public class PassportProvidersAction implements Serializable {
 	private PassportConfiguration passportConfiguration;
 	private IIConfiguration idpInitiated;
 	private Configuration configuration;
-	private String[] providerTypes = { "openidconnect-oxd", "openidconnect", "saml", "oauth" };
+	private String[] providerTypes = { "saml", "openidconnect", "openidconnect-oxd", "oauth" };
 
 	public String init() {
 		try {
@@ -148,6 +149,7 @@ public class PassportProvidersAction implements Serializable {
 			}
 			this.options = this.provider.getOptions().entrySet().stream()
 					.map(e -> new OptionEntry(e.getKey(), e.getValue())).collect(Collectors.toList());
+			this.options.sort(Comparator.comparing(OptionEntry::getKey));
 			return OxTrustConstants.RESULT_SUCCESS;
 		} catch (Exception e) {
 			log.debug("", e);
@@ -162,7 +164,7 @@ public class PassportProvidersAction implements Serializable {
 			if (!update) {
 				if (this.provider.getId() == null) {
 					String computedId = this.provider.getDisplayName().toLowerCase().replaceAll("[^\\w-]", "");
-					computedId=computedId.concat(UUID.randomUUID().toString().substring(0, 4));
+					computedId = computedId.concat(UUID.randomUUID().toString().substring(0, 4));
 					if (computedId != null) {
 						this.provider.setId(computedId);
 					} else {
@@ -285,14 +287,12 @@ public class PassportProvidersAction implements Serializable {
 		options.add(new OptionEntry("", ""));
 	}
 
-	public void deleteProviders() {
-		for (PassportProvider passportProvider : providerSelections) {
-			if (passportProvider.isChecked()) {
-				this.providers.remove(passportProvider.getProvider());
-			}
-		}
+	public String deleteProvider(Provider provider) {
+		this.providers.remove(provider);
 		performSave();
 		init();
+		conversationService.endConversation();
+		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
 	public String getId() {

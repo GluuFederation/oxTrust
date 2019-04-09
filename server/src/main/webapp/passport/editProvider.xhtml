@@ -46,7 +46,17 @@
 						<h:commandButton action="#{passportProvidersAction.cancel}"
 							immediate="true" style="margin-left:3px;"
 							styleClass="btn btn-primary" value="#{msg['client.cancel']}" />
+						<a4j:commandButton ajaxSingle="true" id="deleteId"
+								eventsQueue="providerQueue"
+								onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();"
+								styleClass="btn btn-primary DeleteProviderButton"
+								value="#{msg['passport.deleteProvider']}" />
 					</div>
+					<ox:acceptRemovalDialog
+						deleteMethod="#{passportProvidersAction.deleteProvider(_provider)}"
+						render="providersTableId" id="deleteConfirmation"
+						queue="providerQueue" subject="provider"
+						value="#{_provider.displayName}" />
 				</ui:define>
 			</ui:decorate>
 			<script>

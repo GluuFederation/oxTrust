@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE html>
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:b="http://bootsfaces.net/ui"
-	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:b="http://bootsfaces.net/ui" xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
 	xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
@@ -44,6 +43,7 @@
 						<div class="row" style="padding: 10px;">
 							<b:dataTable id="providersTableId" style="text-align:center;"
 								responsive="true"
+								rendered="#{passportProvidersAction.providerSelections.size() gt 0}"
 								value="#{passportProvidersAction.providerSelections}" var="c"
 								print="true" excel="true" csv="true" pdf="true" select="true">
 								<b:dataTableColumn
@@ -67,39 +67,13 @@
 								</b:dataTableColumn>
 							</b:dataTable>
 						</div>
-						<div class="row" style="padding: 5px;">
-							<a4j:commandButton ajaxSingle="true" id="deleteId"
-								eventsQueue="providerQueue"
-								rendered="#{passportProvidersAction.providers.size() gt 0}"
-								onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();"
-								styleClass="btn btn-primary DeleteBulkProviders"
-								value="#{msg['passport.deleteProvider']}" />
-						</div>
 					</b:panel>
-					<ox:acceptRemovalDialog
-						deleteMethod="#{passportProvidersAction.deleteProviders}"
-						render="providersTableId" id="deleteConfirmation"
-						queue="providerQueue" subject="provider"
-						value="all selected providers" />
 					<script>
-						$(document).ready(function() { });
-						</script>
+						$(document).ready(function() {
+						});
+					</script>
 				</div>
 			</div>
 		</section>
-		<h:outputScript> 
-	    	function displayButton() {  	
-		    	var selectedIds = $("input[id$=selectId]:checked");
-		    	deleteBtn = $("input[id$=deleteId]");
-		    	
-		    	if (selectedIds.length == 0) {
-		    		deleteBtn.attr("disabled", "disabled");
-		    	} else {
-		    		deleteBtn.removeAttr("disabled");
-		    	}
-		    	
-	    	} 
-	    	displayButton();
-   	</h:outputScript>
 	</ui:define>
 </ui:composition>
