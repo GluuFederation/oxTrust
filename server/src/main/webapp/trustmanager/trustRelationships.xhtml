@@ -110,10 +110,19 @@
 																value="#{tsps.isFederation() ? 'federation' : (trustService.getTrustContainerFederation(tsps) ne null ? 'site federated with '.concat(trustService.getTrustContainerFederation(tsps).displayName) : 'site')}"
 																label="#{msg['trustmanager.relationshipType']}" />
 															<b:dataTableColumn
-																value="#{metadataValidationTimer.isQueued(tsps.spMetaDataFN)? 'Validation Scheduled' : tsps.validationStatus.displayName}"
-																label="#{msg['trustmanager.validationStatus']}" />
-															<b:dataTableColumn value="#{tsps.status.displayName}"
-																label="#{msg['trustmanager.status']}" />
+																label="#{msg['trustmanager.validationStatus']}">
+																<b:label
+																	text="#{metadataValidationTimer.isQueued(tsps.spMetaDataFN)? 'Validation Scheduled' : tsps.validationStatus.displayName}"
+																	severity="info" />
+															</b:dataTableColumn>
+															<b:dataTableColumn label="#{msg['trustmanager.status']}">
+																<b:label
+																	rendered="#{tsps.status.displayName eq 'Active'}"
+																	text="#{tsps.status.displayName}" severity="primary" />
+																<b:label
+																	rendered="#{tsps.status.displayName eq 'Inactive'}"
+																	text="#{tsps.status.displayName}" severity="danger" />
+															</b:dataTableColumn>
 														</b:dataTable>
 													</div>
 												</h:form>

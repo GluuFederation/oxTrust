@@ -121,8 +121,7 @@
 															<h:selectOneMenu
 																styleClass="rounded form-control PassportLogLevelID"
 																value="#{passportConfigurationAction.configuration.logging.level}"
-																id="PassportLogLevelID" rendered="true" required="true">
-																<f:selectItem noSelectionOption="true" itemLabel="" />
+																id="PassportLogLevelID" rendered="true">
 																<f:selectItems
 																	value="#{passportConfigurationAction.loggingLevels}"
 																	var="_level" itemLabel="#{_level}" />
@@ -135,8 +134,7 @@
 															leftClass="col-sm-7" rightClass="col-sm-1">
 															<h:selectBooleanCheckbox
 																value="#{passportConfigurationAction.configuration.logging.consoleLogOnly}"
-																styleClass="form-control ConsoleLogOnlyID"
-																required="true" />
+																styleClass="form-control ConsoleLogOnlyID"/>
 														</ox:decorate>
 													</div>
 												</div>

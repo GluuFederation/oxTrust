@@ -111,7 +111,7 @@
 												rightClass="col-sm-9">
 												<h:outputText style="background: #ff6e40; color:white;"
 													styleClass="form-control rounded clientGeneratedInum"
-													value="#{_new ? 'The value will be generated after adding the new client.' : _client.inum}" />
+													value="#{_new ? 'Will be generated after adding the new client.' : _client.inum}" />
 											</ox:decorate>
 										</div>
 										<div class="col-sm-6 col-lg-6" style="padding: 0px;">
@@ -132,7 +132,6 @@
 													value="#{_client.oxAuthClientSecret}" redisplay="true"
 													defaultLabel="click to enter Client Secret" maxlength="60"
 													id="clientSecretId1" />
-
 												<h:graphicImage value="/img/eye.png" id="viewPassword"
 													style="margin-top:-35px; margin-right: -55px; float:right;"
 													onmouseover="takeFocus(this);"
