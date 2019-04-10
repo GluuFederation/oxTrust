@@ -44,7 +44,6 @@ public class ClientWebResource extends BaseWebResource {
 	@Inject
 	private ScopeService scopeService;
 
-	@Inject
 	public ClientWebResource() {
 	}
 
