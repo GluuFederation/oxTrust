@@ -87,7 +87,7 @@
         <!-- oxcore -->
 		<dependency>
 			<groupId>org.gluu</groupId>
-			<artifactId>oxcore-ldap-annotations</artifactId>
+			<artifactId>oxcore-persistence-annotation</artifactId>
 		</dependency>
         <dependency>
             <groupId>org.gluu</groupId>
