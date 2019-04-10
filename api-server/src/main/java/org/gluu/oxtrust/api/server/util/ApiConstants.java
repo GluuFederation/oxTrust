@@ -1,13 +1,14 @@
 package org.gluu.oxtrust.api.server.util;
 
-public final class OxTrustApiConstants {
+public final class ApiConstants {
 
-	private OxTrustApiConstants() {
+	private ApiConstants() {
 	}
 
 	public static final String BASE_API_URL = "/api";
 	public static final String CLIENTS = "/clients";
 	public static final String GROUPS = "/groups";
+	public static final String SCRIPTS = "/scripts";
 	public static final String GROUP_MEMBERS = "/members";
 	public static final String PEOPLE = "/people";
 	public static final String SCOPES = "/scopes";
@@ -22,9 +23,11 @@ public final class OxTrustApiConstants {
 	public static final String UMA = "/uma";
 	public static final String RESOURCES = "/resources";
 	public static final String INUM_PARAM_PATH = "/{inum}";
+	public static final String TYPE_PARAM_PATH = "/{type}";
 	public static final String ID_PARAM_PATH = "/{id}";
 	public static final String MEMBER_INUM_PARAM_PATH = "/{minum}";
 	public static final String INUM = "inum";
+	public static final String TYPE = "type";
 	public static final String MEMBER_INUM = "minum";
 	public static final String SCOPE_INUM = "sinum";
 	public static final String SIZE = "size";

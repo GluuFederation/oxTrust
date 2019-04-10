@@ -8,6 +8,7 @@ public final class OxTrustApiConstants {
 	public static final String BASE_API_URL = "/api";
 	public static final String GROUP_MEMBERS = "/members";
 	public static final String CERTIFICATES = "/certificates";
+	public static final String SCRIPTS = "/scripts";
 	public static final String LDAP = "/ldap";
 	public static final String CAS = "/cas";
 	public static final String RECAPCTHA = "/recaptcha";
@@ -38,6 +39,7 @@ public final class OxTrustApiConstants {
 	public static final String ID_PARAM_PATH = "/{id}";
 	public static final String MEMBER_INUM_PARAM_PATH = "/{minum}";
 	public static final String INUM = "inum";
+	public static final String type = "type";
 	public static final String MEMBER_INUM = "minum";
 	public static final String SCOPE_INUM = "sinum";
 	public static final String SIZE = "size";
