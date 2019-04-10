@@ -7,7 +7,6 @@
 package org.gluu.oxtrust.action;
 
 import java.io.Serializable;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +26,6 @@ import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.model.RegistrationConfiguration;
 import org.gluu.oxtrust.model.SimpleCustomPropertiesListModel;
-import org.gluu.oxtrust.model.Tuple;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.service.security.Secure;
 import org.gluu.util.StringHelper;
@@ -95,14 +93,12 @@ public class RegistrationManagementAction implements SimpleCustomPropertiesListM
 		if (StringHelper.isNotEmpty(this.oldSearchPattern) && Util.equals(this.oldSearchPattern, this.searchPattern)) {
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
-
 		try {
 		    if (StringHelper.isEmpty(this.searchPattern)) {
 	            this.attributes = attributeService.getAllAttributes();
 		    } else {
 		        this.attributes = attributeService.searchAttributes(this.searchPattern, OxTrustConstants.searchPersonsSizeLimit);
 		    }
-
             for (GluuAttribute selectedAttribute : selectedAttributes) {
                 if (!attributes.contains(selectedAttribute)) {
                     attributes.add(selectedAttribute);
@@ -122,14 +118,11 @@ public class RegistrationManagementAction implements SimpleCustomPropertiesListM
 		customScriptTypes.add(OxTrustConstants.INIT_REGISTRATION_SCRIPT);
 		customScriptTypes.add(OxTrustConstants.PRE_REGISTRATION_SCRIPT);
 		customScriptTypes.add(OxTrustConstants.POST_REGISTRATION_SCRIPT);
-
 		this.oxTrustappConfiguration = jsonConfigurationService.getOxTrustappConfiguration();
-
 		GluuOrganization org = organizationService.getOrganization();
 		RegistrationConfiguration config = org.getOxRegistrationConfiguration();
 		if(config != null){
 			captchaDisabled = config.isCaptchaDisabled();
-			
 			List<String> attributeList = config.getAdditionalAttributes();
 			if(attributeList != null && ! attributeList.isEmpty()){
 				configureRegistrationForm = true;
@@ -140,49 +133,8 @@ public class RegistrationManagementAction implements SimpleCustomPropertiesListM
 				}
 			}
 		}
-		
 		search();
-
 		return OxTrustConstants.RESULT_SUCCESS;
-	}
-	
-	/**
-	 * @param linksExpirationFrequency
-	 * @return
-	 */
-	private Tuple<String, String> getPeriod(BigInteger linksExpirationFrequency) {
-		Tuple<String, String> result = new Tuple<String, String>();
-		BigInteger[] divideAndRemainder = linksExpirationFrequency.divideAndRemainder(BigInteger.valueOf(7*24*60));
-		BigInteger weeks = divideAndRemainder[0];
-		BigInteger reminder = divideAndRemainder[1];
-		if( ! weeks.equals(BigInteger.valueOf(0)) && reminder.equals(BigInteger.valueOf(0))){
-			result.setValue0(weeks.toString());
-			result.setValue1("3");
-			return result;
-		}
-		
-		divideAndRemainder = linksExpirationFrequency.divideAndRemainder(BigInteger.valueOf(24*60));
-		BigInteger days = divideAndRemainder[0];
-		reminder = divideAndRemainder[1];
-		if( ! days.equals(BigInteger.valueOf(0)) && reminder.equals(BigInteger.valueOf(0))){
-			result.setValue0(days.toString());
-			result.setValue1("2");
-			return result;
-		}
-		
-		divideAndRemainder = linksExpirationFrequency.divideAndRemainder(BigInteger.valueOf(60));
-		BigInteger hours = divideAndRemainder[0];
-		reminder = divideAndRemainder[1];
-		if( ! hours.equals(BigInteger.valueOf(0)) && reminder.equals(BigInteger.valueOf(0))){
-			result.setValue0(hours.toString());
-			result.setValue1("1");
-			return result;
-		}
-
-		BigInteger minutes = linksExpirationFrequency;
-		result.setValue0(minutes.toString());
-		result.setValue1("0");
-		return result;
 	}
 
 	public String save() {
@@ -191,9 +143,7 @@ public class RegistrationManagementAction implements SimpleCustomPropertiesListM
 		if (config == null) {
 			config = new RegistrationConfiguration();
 		}
-
 		config.setCaptchaDisabled(captchaDisabled);
-
 		List<String> attributeList = new ArrayList<String>();
 		if (configureRegistrationForm) {
 			for (GluuAttribute attribute : selectedAttributes) {
@@ -203,11 +153,8 @@ public class RegistrationManagementAction implements SimpleCustomPropertiesListM
 		config.setAdditionalAttributes(attributeList);
 		org.setOxRegistrationConfiguration(config);
 		organizationService.updateOrganization(org);
-
 		jsonConfigurationService.saveOxTrustappConfiguration(this.oxTrustappConfiguration);
-
 		facesMessages.add(FacesMessage.SEVERITY_INFO, "Registration configuration updated successfully");
-
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
@@ -233,7 +180,6 @@ public class RegistrationManagementAction implements SimpleCustomPropertiesListM
 	public String cancel() {
 		facesMessages.add(FacesMessage.SEVERITY_INFO, "Registration configuration not updated");
 		conversationService.endConversation();
-
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 	
@@ -242,7 +188,6 @@ public class RegistrationManagementAction implements SimpleCustomPropertiesListM
 		attributeData = "Uid:\t" +  attributeName;
 		attributeData += "<br/>Description:\t" +  attribute.getDescription();
 		attributeData += "<br/>Origin:\t" +  attribute.getOrigin();
-
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 

@@ -263,7 +263,7 @@ public class JoinFederationAction implements Serializable {
 			metadataFile = new File(shibboleth3ConfService.getMetadataFilePath(filename));
 
 			if (metadataFile.exists()) {
-				return FileUtils.readFileToString(metadataFile);
+				return FileUtils.readFileToString(metadataFile,"UTF-8");
 			}
 		}
 

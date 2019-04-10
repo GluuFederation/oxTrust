@@ -27,7 +27,6 @@ import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.jsf2.message.FacesMessages;
@@ -173,41 +172,32 @@ public class PersonImportAction implements Serializable {
 		oxTrustAuditService.audit(fileDataToImport.getPersons().size() + " USERS IMPORTED ", identity.getUser(),
 				(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 		facesMessages.add(FacesMessage.SEVERITY_INFO, "Users successfully imported");
-
 		removeFileToImport();
-
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
 	public String validateFileToImport() {
 		try {
 			removeFileDataToImport();
-
 			if (uploadedFile == null) {
 				return OxTrustConstants.RESULT_FAILURE;
 			}
-
 			Table table;
-			InputStream is = new ByteArrayInputStream(this.fileData);
-			try {
+			try(InputStream is = new ByteArrayInputStream(this.fileData);) {
 				table = excelService.read(is);
-			} finally {
-				IOUtils.closeQuietly(is);
-			}
-
+			} catch (Exception e) {
+				return null;
+			} 
 			this.fileDataToImport.setTable(table);
-
 			if (table != null) {
 				this.fileDataToImport.setFileName(FilenameUtils.getName(uploadedFile.getName()));
 				this.fileDataToImport.setImportAttributes(getAttributesForImport(table));
 				this.fileDataToImport.setReady(true);
 			}
-
 			if (this.fileDataToImport.isReady()) {
 				boolean valid = prepareAndValidateImportData(this.fileDataToImport.getTable(),
 						this.fileDataToImport.getImportAttributes());
 				this.fileDataToImport.setReady(valid);
-
 				if (!valid) {
 					removeFileDataToImport();
 				}

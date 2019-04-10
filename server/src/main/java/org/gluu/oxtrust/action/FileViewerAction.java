@@ -32,12 +32,11 @@ public class FileViewerAction implements Serializable {
 	public String getString(String fileName) {
 		if (StringHelper.isNotEmpty(fileName)) {
 			try {
-				return FileUtils.readFileToString(new File(fileName));
+				return FileUtils.readFileToString(new File(fileName),"UTF-8");
 			} catch (IOException ex) {
 				log.error("Failed to read file: '{}'", fileName, ex);
 			}
 		}
-
 		return "invalid file name: " + fileName;
 	}
 }

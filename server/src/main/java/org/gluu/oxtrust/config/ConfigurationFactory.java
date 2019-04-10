@@ -324,7 +324,7 @@ public class ConfigurationFactory {
 
 	private AppConfiguration loadAppConfFromFile() {
 		try {
-			String jsonConfig = FileUtils.readFileToString(new File(configFilePath));
+			String jsonConfig = FileUtils.readFileToString(new File(configFilePath),"UTF-8");
 			AppConfiguration appConfiguration = jsonService.jsonToObject(jsonConfig, AppConfiguration.class);
 
 			return appConfiguration;

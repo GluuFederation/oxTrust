@@ -22,7 +22,6 @@ import javax.faces.application.FacesMessage;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
 import org.gluu.model.AuthenticationScriptUsageType;
@@ -35,14 +34,12 @@ import org.gluu.model.custom.script.CustomScriptType;
 import org.gluu.model.custom.script.model.CustomScript;
 import org.gluu.model.custom.script.model.auth.AuthenticationCustomScript;
 import org.gluu.oxtrust.ldap.service.ConfigurationService;
-import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.model.SimpleCustomPropertiesListModel;
 import org.gluu.oxtrust.model.SimplePropertiesListModel;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.exception.BasePersistenceException;
 import org.gluu.service.custom.script.AbstractCustomScriptService;
 import org.gluu.service.security.Secure;
-import org.gluu.util.INumGenerator;
 import org.gluu.util.OxConstants;
 import org.gluu.util.StringHelper;
 import org.slf4j.Logger;
@@ -71,17 +68,11 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 	private ConversationService conversationService;
 
 	@Inject
-	private OrganizationService organizationService;
-
-	@Inject
 	private ConfigurationService configurationService;
 
 	@Inject
 	private AbstractCustomScriptService customScriptService;
 	
-	@Inject
-	private AppConfiguration appConfiguration;
-
 	private Map<CustomScriptType, List<CustomScript>> customScriptsByTypes;
 
 	private boolean initialized;
@@ -90,17 +81,13 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 		if (this.initialized) {
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
-		
 		CustomScriptType[] allowedCustomScriptTypes = this.configurationService.getCustomScriptTypes();
-
 		this.customScriptsByTypes = new HashMap<CustomScriptType, List<CustomScript>>();
 		for (CustomScriptType customScriptType : allowedCustomScriptTypes) {
 			this.customScriptsByTypes.put(customScriptType, new ArrayList<CustomScript>());
 		}
-
 		try {
 			List<CustomScript> customScripts = customScriptService.findCustomScripts(Arrays.asList(allowedCustomScriptTypes));
-			
 			for (CustomScript customScript : customScripts) {
 				// Automatic package update '.xdi' --> '.org'
 				// TODO: Remove in CE 5.0
@@ -109,82 +96,63 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 					scriptCode = scriptCode.replaceAll(".xdi", ".gluu");
 					customScript.setScript(scriptCode);
 				}
-
 				CustomScriptType customScriptType = customScript.getScriptType();
 				List<CustomScript> customScriptsByType = this.customScriptsByTypes.get(customScriptType);
-
 				CustomScript typedCustomScript = customScript;
 				if (CustomScriptType.PERSON_AUTHENTICATION == customScriptType) {
 					typedCustomScript = new AuthenticationCustomScript(customScript);
 				}
-
 				if (typedCustomScript.getConfigurationProperties() == null) {
 					typedCustomScript.setConfigurationProperties(new ArrayList<SimpleExtendedCustomProperty>());
 				}
-				
 				if (typedCustomScript.getModuleProperties() == null) {
 					typedCustomScript.setModuleProperties(new ArrayList<SimpleCustomProperty>());
 				}
-
 				customScriptsByType.add(typedCustomScript);
 			}
 		} catch (Exception ex) {
 			log.error("Failed to load custom scripts ", ex);
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to load custom scripts");
-
 			conversationService.endConversation();
-
 			return OxTrustConstants.RESULT_FAILURE;
 		}
-
 		this.initialized = true;
-
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
 	public String save() {
 		try {
 			List<CustomScript> oldCustomScripts = customScriptService.findCustomScripts(Arrays.asList(this.configurationService.getCustomScriptTypes()), "dn", "inum");
-
 			List<String> updatedInums = new ArrayList<String>();
-
 			for (Entry<CustomScriptType, List<CustomScript>> customScriptsByType : this.customScriptsByTypes.entrySet()) {
 				List<CustomScript> customScripts = customScriptsByType.getValue();
-
 				for (CustomScript customScript : customScripts) {
 					String configId = customScript.getName();
 					if (StringHelper.equalsIgnoreCase(configId, OxConstants.SCRIPT_TYPE_INTERNAL_RESERVED_NAME)) {
 						facesMessages.add(FacesMessage.SEVERITY_ERROR, "'%s' is reserved script name", configId);
 						return OxTrustConstants.RESULT_FAILURE;
 					}
-					
 					boolean nameValidation = NAME_PATTERN.matcher(customScript.getName()).matches();
                     if (!nameValidation) {
                         facesMessages.add(FacesMessage.SEVERITY_ERROR, "'%s' is invalid script name. Only alphabetic, numeric and underscore characters are allowed in Script Name", configId);
                         return OxTrustConstants.RESULT_FAILURE;
                     }
-
                     customScript.setRevision(customScript.getRevision() + 1);
-
 					boolean update = true;
 					String dn = customScript.getDn();
 					String customScriptId = customScript.getInum();
 					if (StringHelper.isEmpty(dn)) {
 						customScriptId = UUID.randomUUID().toString();
 						dn = customScriptService.buildDn(customScriptId);
-	
 						customScript.setDn(dn);
 						customScript.setInum(customScriptId);
 						update = false;
 					};
-
 					customScript.setDn(dn);
 					customScript.setInum(customScriptId);
-					
 					if (ScriptLocationType.LDAP == customScript.getLocationType()) {
 						customScript.removeModuleProperty(CustomScript.LOCATION_PATH_MODEL_PROPERTY);
 					}
-					
 					if ((customScript.getConfigurationProperties() != null) && (customScript.getConfigurationProperties().size() == 0)) {
 						customScript.setConfigurationProperties(null);
 					}
@@ -192,9 +160,7 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 					if ((customScript.getConfigurationProperties() != null) && (customScript.getModuleProperties().size() == 0)) {
 						customScript.setModuleProperties(null);
 					}
-					
 					updatedInums.add(customScriptId);
-	
 					if (update) {
 						customScriptService.update(customScript);
 					} else {
@@ -202,8 +168,6 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 					}
 				}
 			}
-			
-			// Remove removed scripts
 			for (CustomScript oldCustomScript : oldCustomScripts) {
 				if (!updatedInums.contains(oldCustomScript.getInum())) {
 					customScriptService.remove(oldCustomScript);
@@ -212,20 +176,15 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 		} catch (BasePersistenceException ex) {
 			log.error("Failed to update custom scripts", ex);
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update custom script configuration");
-
 			return OxTrustConstants.RESULT_FAILURE;
 		}
-
 		facesMessages.add(FacesMessage.SEVERITY_INFO, "Custom script configuration updated successfully");
-
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
 	public String cancel() throws Exception {
 		facesMessages.add(FacesMessage.SEVERITY_INFO, "Custom script configuration not updated");
-
 		conversationService.endConversation();
-
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
@@ -239,7 +198,6 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 
 	public void addCustomScript(CustomScriptType scriptType) {
 		List<CustomScript> customScriptsByType = this.customScriptsByTypes.get(scriptType);
-
 		CustomScript customScript;
 		if (CustomScriptType.PERSON_AUTHENTICATION == scriptType) {
 			AuthenticationCustomScript authenticationCustomScript = new AuthenticationCustomScript();
@@ -251,12 +209,10 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 			customScript = new CustomScript();
 			customScript.setModuleProperties(new ArrayList<SimpleCustomProperty>());
 		}
-
 		customScript.setLocationType(ScriptLocationType.LDAP);
 		customScript.setScriptType(scriptType);
 		customScript.setProgrammingLanguage(ProgrammingLanguage.PYTHON);
 		customScript.setConfigurationProperties(new ArrayList<SimpleExtendedCustomProperty>());
-
 		customScriptsByType.add(customScript);
 	}
 
@@ -303,7 +259,6 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 
 	public boolean hasCustomScriptError(CustomScript customScript) {
 	    String error = getCustomScriptError(customScript);
-        
         return error != null;
     }
 
@@ -311,12 +266,10 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 	    if ((customScript == null) || (customScript.getDn() == null)) {
 	        return null;
 	    }
-
 	    CustomScript currentScript = customScriptService.getCustomScriptByDn(customScript.getDn(), "oxScriptError");
 	    if ((currentScript != null) && (currentScript.getScriptError() != null)) {
 	        return currentScript.getScriptError().getStackTrace();
 	    }
-	    
         return null;
 	}
 

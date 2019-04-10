@@ -16,7 +16,6 @@ import org.gluu.config.oxtrust.AttributeResolverConfiguration;
 import org.gluu.config.oxtrust.LdapOxTrustConfiguration;
 import org.gluu.config.oxtrust.NameIdConfig;
 import org.gluu.jsf2.message.FacesMessages;
-import org.gluu.jsf2.service.ConversationService;
 import org.gluu.model.GluuAttribute;
 import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.ldap.service.AttributeService;
@@ -43,9 +42,6 @@ public class ConfigureNameIdAction implements Serializable {
 
 	@Inject
 	private FacesMessages facesMessages;
-	
-	@Inject
-	private ConversationService conversationService;
 	
 	@Inject
 	private AppConfiguration applicationConfiguration;
@@ -76,38 +72,30 @@ public class ConfigureNameIdAction implements Serializable {
 		if (initialized) {
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
-
 		this.attributes = attributeService.getAllAttributes();
-
 		final LdapOxTrustConfiguration conf = configurationFactory.loadConfigurationFromLdap("oxTrustConfAttributeResolver");
 		if (conf == null) {
 		    log.error("Failed to load oxTrust configuration");
             return OxTrustConstants.RESULT_FAILURE;
 		}
-		
 		this.nameIdConfigs = new ArrayList<NameIdConfig>();
-
 		AttributeResolverConfiguration attributeResolverConfiguration = conf.getAttributeResolverConfig();
 		if ((attributeResolverConfiguration != null) && (attributeResolverConfiguration.getNameIdConfigs() != null)) {
 		    for (NameIdConfig nameIdConfig : attributeResolverConfiguration.getNameIdConfigs()) {
 		        this.nameIdConfigs.add(nameIdConfig);
 		    }
 		}
-
 		this.initialized = true;
-
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
 	public String save() {
 		String outcome = saveImpl();
-		
 		if (OxTrustConstants.RESULT_SUCCESS.equals(outcome)) {
 			facesMessages.add(FacesMessage.SEVERITY_INFO, "NameId configuration updated successfully");
 		} else if (OxTrustConstants.RESULT_FAILURE.equals(outcome)) {
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update NameId configuration");
 		}
-		
 		return outcome;
 	}
 
@@ -123,7 +111,6 @@ public class ConfigureNameIdAction implements Serializable {
 			log.error("Failed to save Attribute Resolver configuration configuration", ex);
 			return OxTrustConstants.RESULT_FAILURE;
 		}
-		
  		boolean updateShib3Configuration = applicationConfiguration.isConfigGeneration(); 
 		if (updateShib3Configuration) {    
 			List<GluuSAMLTrustRelationship> trustRelationships = trustService.getAllActiveTrustRelationships();    
@@ -131,14 +118,11 @@ public class ConfigureNameIdAction implements Serializable {
 				log.error("Failed to update Shibboleth v3 configuration");
 				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update Shibboleth v3 configuration");			}
 		}
-
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 	
 	public String cancel() {
 		facesMessages.add(FacesMessage.SEVERITY_INFO, "Saml NameId configuration not updated");
-//		conversationService.endConversation();
-
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 

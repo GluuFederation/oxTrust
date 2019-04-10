@@ -17,7 +17,6 @@ import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.model.SmtpConfiguration;
 import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.config.ConfigurationFactory.PersistenceConfiguration;
-import org.apache.commons.lang.StringUtils;
 import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.persist.PersistenceEntryManagerFactory;
 import org.gluu.service.cache.CacheConfiguration;

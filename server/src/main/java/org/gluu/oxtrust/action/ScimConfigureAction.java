@@ -16,7 +16,6 @@ import org.gluu.oxtrust.ldap.service.ConfigurationService;
 import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.service.security.Secure;
-import org.slf4j.Logger;
 
 /**
  * Action class for configuring SCIM
@@ -29,10 +28,7 @@ import org.slf4j.Logger;
 public class ScimConfigureAction implements Serializable {
 
 	private static final long serialVersionUID = -1290460481895022469L;
-
-	@Inject
-	private Logger log;
-
+	
 	@Inject
 	private ConfigurationService configurationService;
 
@@ -42,14 +38,11 @@ public class ScimConfigureAction implements Serializable {
 		if (isInitialized) {
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
-
 		GluuConfiguration configuration = configurationService.getConfiguration();
 		if ((configuration.getScimEnabled() == null) || !configuration.getScimEnabled().isBooleanValue()) {
 			return OxTrustConstants.RESULT_DISABLED;
 		}
-
 		this.isInitialized = true;
-
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 

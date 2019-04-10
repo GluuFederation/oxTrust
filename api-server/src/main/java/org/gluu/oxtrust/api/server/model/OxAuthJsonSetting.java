@@ -1,4 +1,4 @@
-package org.gluu.oxtrust.api.server.api.impl;
+package org.gluu.oxtrust.api.server.model;
 
 import java.io.Serializable;
 

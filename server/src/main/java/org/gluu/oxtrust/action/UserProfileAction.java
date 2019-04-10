@@ -80,9 +80,6 @@ public class UserProfileAction implements Serializable {
 	private UserPasswordAction userPasswordAction;
 
 	@Inject
-	private WhitePagesAction whitePagesAction;
-
-	@Inject
 	private ImapDataService imapDataService;
 
 	@Inject

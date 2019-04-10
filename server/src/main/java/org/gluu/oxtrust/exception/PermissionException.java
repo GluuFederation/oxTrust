@@ -5,7 +5,12 @@ package org.gluu.oxtrust.exception;
  */
 public class PermissionException extends Exception {
 
-    public PermissionException(String message) {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -797978261991962078L;
+
+	public PermissionException(String message) {
         super(message);
     }
 

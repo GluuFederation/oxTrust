@@ -50,9 +50,7 @@ public class ConfigurationStatusAction implements Serializable {
 		if (lastUpdateDateTime != null) {
 			lastUpdate = lastUpdateDateTime.getTime();
 		}
-
 		long currentTime = System.currentTimeMillis();
-		
 		log.debug("lastUpdate: '{}', currentTime: '{}'", lastUpdate, currentTime);
 		long timeSinceLastUpdate = (currentTime - lastUpdate) / 1000;
 		if (timeSinceLastUpdate >= 0 && timeSinceLastUpdate < 100) {
@@ -61,7 +59,6 @@ public class ConfigurationStatusAction implements Serializable {
 			this.setHealth("FAIL");
 		}
 		log.debug("Set status '{}'", this.getHealth());
-
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 

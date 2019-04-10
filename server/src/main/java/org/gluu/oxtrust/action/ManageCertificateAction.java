@@ -49,7 +49,6 @@ import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.jsf2.io.ResponseHelper;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.oxtrust.ldap.service.ConfigurationService;
-import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.ldap.service.SSLService;
 import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.oxtrust.model.cert.TrustStoreCertificate;
@@ -82,9 +81,6 @@ public class ManageCertificateAction implements Serializable {
 
 	@Inject
 	private Logger log;
-
-	@Inject
-	private OrganizationService organizationService;
 
 	@Inject
 	private FacesMessages facesMessages;
@@ -120,44 +116,33 @@ public class ManageCertificateAction implements Serializable {
 		if (this.initialized) {
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
-
 		this.wereAnyChanges = false;
-
 		this.certsMmanagePossible = prepareTempWorkspace();
-
 		this.tomcatCertFN = orgInumFN + "-java.crt";
 		this.idpCertFN = orgInumFN + "-shib.crt";
-
 		try {
 			GluuConfiguration configuration = configurationService.getConfiguration();
-
 			if (configuration == null) {
 				return OxTrustConstants.RESULT_FAILURE;
 			}
-
 			trustStoreConfiguration = configuration.getTrustStoreConfiguration();
 			if (trustStoreConfiguration == null) {
 				trustStoreConfiguration = new TrustStoreConfiguration();
 			}
-
 			trustStoreCertificates = configuration.getTrustStoreCertificates();
 			if (trustStoreCertificates == null) {
 				trustStoreCertificates = new ArrayList<TrustStoreCertificate>();
 			}
 		} catch (Exception ex) {
 			log.error("Failed to load configuration configuration", ex);
-
 			return OxTrustConstants.RESULT_FAILURE;
 		}
-
 		this.initialized = true;
-
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
 	/**
-	 * Fills issuer and subject maps with data about currently selected
-	 * certificate
+	 * Fills issuer and subject maps with data about currently selected certificate
 	 */
 
 	public void getCert(String fileName) {
@@ -166,14 +151,12 @@ public class ManageCertificateAction implements Serializable {
 	}
 
 	/**
-	 * Fills issuer and subject maps with data about currently selected
-	 * certificate
+	 * Fills issuer and subject maps with data about currently selected certificate
 	 */
 
 	public void getCert(TrustStoreCertificate trustStoreCertificate) {
 		this.issuer = new HashMap<String, String>();
 		this.subject = new HashMap<String, String>();
-
 		if (trustStoreCertificate != null) {
 			X509Certificate cert = sslService
 					.getPEMCertificate(new ByteArrayInputStream(trustStoreCertificate.getCertificate().getBytes()));
@@ -214,7 +197,8 @@ public class ManageCertificateAction implements Serializable {
 
 			PKCS10CertificationRequest csr = null;
 			try {
-				csr = new PKCS10CertificationRequest("SHA1withRSA", principal, pair.getPublic(), null, pair.getPrivate());
+				csr = new PKCS10CertificationRequest("SHA1withRSA", principal, pair.getPublic(), null,
+						pair.getPrivate());
 			} catch (GeneralSecurityException e) {
 				log.error(e.getMessage(), e);
 				return OxTrustConstants.RESULT_FAILURE;
@@ -224,12 +208,13 @@ public class ManageCertificateAction implements Serializable {
 			StringBuilder response = new StringBuilder();
 
 			response.append(BEGIN_CERT_REQ + "\n");
-			response.append(WordUtils.wrap(new String(Base64.encode(csr.getEncoded(ASN1Encoding.DER))), 64, "\n", true) + "\n");
+			response.append(
+					WordUtils.wrap(new String(Base64.encode(csr.getEncoded(ASN1Encoding.DER))), 64, "\n", true) + "\n");
 			response.append(END_CERT_REQ + "\n");
 
 			FacesContext facesContext = FacesContext.getCurrentInstance();
-			result = ResponseHelper.downloadFile("csr.pem", OxTrustConstants.CONTENT_TYPE_TEXT_PLAIN, response.toString().getBytes(),
-					facesContext);
+			result = ResponseHelper.downloadFile("csr.pem", OxTrustConstants.CONTENT_TYPE_TEXT_PLAIN,
+					response.toString().getBytes(), facesContext);
 		}
 
 		return result ? OxTrustConstants.RESULT_SUCCESS : OxTrustConstants.RESULT_FAILURE;
@@ -238,15 +223,12 @@ public class ManageCertificateAction implements Serializable {
 	public boolean compare(String fileName) {
 		KeyPair pair = getKeyPair(fileName);
 		X509Certificate cert = sslService.getPEMCertificate(getTempCertDir() + fileName);
-
 		boolean noFilesPresent = (pair == null) && (cert == null);
-
 		boolean filesPresent = (pair != null) && (cert != null);
 		boolean filesValid = false;
 		if (filesPresent) {
 			filesValid = (pair.getPublic() != null) && (pair.getPublic().equals(cert.getPublicKey()));
 		}
-
 		boolean compareResult = (noFilesPresent || (filesPresent && filesValid));
 		log.debug(fileName + " compare result: " + compareResult);
 		return compareResult;
@@ -257,18 +239,15 @@ public class ManageCertificateAction implements Serializable {
 		JCERSAPrivateCrtKey privateKey = null;
 		PEMParser r = null;
 		FileReader fileReader = null;
-
 		File keyFile = new File(getTempCertDir() + fileName.replace("crt", "key"));
 		if (keyFile.isFile()) {
 			try {
 				fileReader = new FileReader(keyFile);
-				r = new PEMParser(
-						fileReader /*
-									 * , new PasswordFinder() { public char[]
-									 * getPassword() { // Since keys are stored
-									 * without a password this // function
-									 * should not be called. return null; } }
-									 */);
+				r = new PEMParser(fileReader /*
+												 * , new PasswordFinder() { public char[] getPassword() { // Since keys
+												 * are stored without a password this // function should not be called.
+												 * return null; } }
+												 */);
 
 				Object keys = r.readObject();
 				if (keys == null) {
@@ -298,7 +277,8 @@ public class ManageCertificateAction implements Serializable {
 
 					pair = new KeyPair(publicKey, privateKey);
 				} else {
-					log.error(keyFile.getAbsolutePath() + " Contains unsupported key type: " + keys.getClass().getName());
+					log.error(
+							keyFile.getAbsolutePath() + " Contains unsupported key type: " + keys.getClass().getName());
 					return null;
 				}
 
@@ -407,49 +387,39 @@ public class ManageCertificateAction implements Serializable {
 		if (!isCertsManagePossible()) {
 			return OxTrustConstants.RESULT_FAILURE;
 		}
-
 		boolean isUpdateTrustCertificates = updateTrustCertificates();
 		boolean isUpdatedCertificates = updateCertificates();
 		boolean result = isUpdateTrustCertificates && isUpdatedCertificates;
-
 		if (result) {
 			tirggerTrustStoreUpdate();
 		}
-
 		return result ? OxTrustConstants.RESULT_SUCCESS : OxTrustConstants.RESULT_FAILURE;
 	}
 
 	private boolean updateTrustCertificates() {
 		try {
-			// Reload entry to include latest changes
 			GluuConfiguration tmpConfiguration = configurationService.getConfiguration();
-
 			TrustStoreConfiguration currTrustStoreConfiguration = tmpConfiguration.getTrustStoreConfiguration();
 			List<TrustStoreCertificate> currTrustStoreCertificates = tmpConfiguration.getTrustStoreCertificates();
 			if (currTrustStoreCertificates == null) {
 				currTrustStoreCertificates = new ArrayList<TrustStoreCertificate>(0);
 			}
-
 			if (!trustStoreConfiguration.equals(currTrustStoreConfiguration)
 					|| !trustStoreCertificates.equals(currTrustStoreCertificates)) {
 				this.wereAnyChanges = true;
 			}
-
 			tmpConfiguration.setTrustStoreConfiguration(trustStoreConfiguration);
-
 			if (trustStoreCertificates.size() == 0) {
 				tmpConfiguration.setTrustStoreCertificates(null);
 			} else {
 				tmpConfiguration.setTrustStoreCertificates(trustStoreCertificates);
 			}
-
 			configurationService.updateConfiguration(tmpConfiguration);
 		} catch (BasePersistenceException ex) {
 			log.error("Failed to update configuration configuration", ex);
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update configuration");
 			return false;
 		}
-
 		return true;
 	}
 
@@ -462,10 +432,10 @@ public class ManageCertificateAction implements Serializable {
 	 */
 	private boolean updateCertificates() {
 		if (!compare(tomcatCertFN) || !compare(idpCertFN)) {
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Certificates and private keys should match. Certificate update aborted.");
+			facesMessages.add(FacesMessage.SEVERITY_ERROR,
+					"Certificates and private keys should match. Certificate update aborted.");
 			return false;
 		}
-
 		String tempDirFN = appConfiguration.getTempCertDir();
 		String dirFN = appConfiguration.getCertDir();
 		File certDir = new File(dirFN);
@@ -477,7 +447,8 @@ public class ManageCertificateAction implements Serializable {
 			File[] files = tempDir.listFiles();
 			for (File file : files) {
 				try {
-					if (file.isFile() && !FileUtils.contentEquals(file, new File(dirFN + File.separator + file.getName()))) {
+					if (file.isFile()
+							&& !FileUtils.contentEquals(file, new File(dirFN + File.separator + file.getName()))) {
 						FileHelper.copy(file, new File(dirFN + File.separator + file.getName()));
 						this.wereAnyChanges = true;
 					}
@@ -488,26 +459,21 @@ public class ManageCertificateAction implements Serializable {
 				}
 			}
 		}
-
 		return true;
 	}
 
 	private void tirggerTrustStoreUpdate() {
 		String certDirFileName = appConfiguration.getCertDir();
 		File certDir = new File(certDirFileName);
-
 		if (this.wereAnyChanges) {
 			File pkcs12 = new File(certDir, orgInumFN + "-java.pkcs12");
 			File pem = new File(certDir, orgInumFN + "-java.pem");
 			File jks = new File(certDir, orgInumFN + "-java.jks");
-
 			log.info("Deleting %s : %s", orgInumFN + "-java.pkcs12", pkcs12.delete());
 			log.info("Deleting %s : %s", orgInumFN + "-java.pem", pem.delete());
 			log.info("Deleting %s : %s", orgInumFN + "-java.jks", jks.delete());
-
 			facesMessages.add(FacesMessage.SEVERITY_WARN,
 					"Certificates were updated and configuration service will be restarted. Please log in again in 5 minutes.");
-
 			this.wereAnyChanges = false;
 		}
 	}
@@ -524,37 +490,24 @@ public class ManageCertificateAction implements Serializable {
 	}
 
 	private void updateCert(UploadedFile item) {
-		InputStream is = null;
-		OutputStream os = null;
-		try {
-			is = item.getInputStream();
-			os = new FileOutputStream(getTempCertDir() + this.uploadMarker);
+		try (InputStream is = item.getInputStream();
+				OutputStream os = new FileOutputStream(getTempCertDir() + this.uploadMarker)) {
 			BufferedOutputStream bos = new BufferedOutputStream(os);
-
 			IOUtils.copy(is, bos);
 			bos.flush();
 		} catch (IOException ex) {
 			log.error("Failed to upload certicicate", ex);
-		} finally {
-			IOUtils.closeQuietly(is);
-			IOUtils.closeQuietly(os);
 		}
 	}
 
 	private void updateTrsutStoreCert(UploadedFile item) {
-		InputStream is = null;
-		try {
-			is = item.getInputStream();
-			String certificate = IOUtils.toString(is);
+		try (InputStream is = item.getInputStream();) {
+			String certificate = IOUtils.toString(is, "UTF-8");
 			this.trustStoreCertificateUploadMarker.setCertificate(certificate);
-
 			this.trustStoreCertificateUploadMarker.setAddedAt(new Date());
 			this.trustStoreCertificateUploadMarker.setAddedBy(identity.getUser().getDn());
-
 		} catch (IOException ex) {
 			log.error("Failed to upload key", ex);
-		} finally {
-			IOUtils.closeQuietly(is);
 		}
 	}
 
@@ -563,20 +516,13 @@ public class ManageCertificateAction implements Serializable {
 	}
 
 	private void updateKey(UploadedFile item) {
-		InputStream is = null;
-		OutputStream os = null;
-		try {
-			is = item.getInputStream();
-			os = new FileOutputStream(getTempCertDir() + this.uploadMarker.replace("crt", "key"));
+		try (InputStream is = item.getInputStream();
+				OutputStream os = new FileOutputStream(getTempCertDir() + this.uploadMarker.replace("crt", "key"));) {
 			BufferedOutputStream bos = new BufferedOutputStream(os);
-
 			IOUtils.copy(is, bos);
 			bos.flush();
 		} catch (IOException ex) {
 			log.error("Failed to upload key", ex);
-		} finally {
-			IOUtils.closeQuietly(is);
-			IOUtils.closeQuietly(os);
 		}
 	}
 
@@ -584,14 +530,14 @@ public class ManageCertificateAction implements Serializable {
 		TrustStoreCertificate trustStoreCertificate = new TrustStoreCertificate();
 		trustStoreCertificate.setAddedAt(new Date());
 		trustStoreCertificate.setAddedBy(identity.getUser().getDn());
-
 		this.trustStoreCertificates.add(trustStoreCertificate);
 	}
 
 	public void removePublicCertificate(TrustStoreCertificate removeTrustStoreCertificate) {
 		for (Iterator<TrustStoreCertificate> iterator = this.trustStoreCertificates.iterator(); iterator.hasNext();) {
 			TrustStoreCertificate trustStoreCertificate = iterator.next();
-			if (System.identityHashCode(removeTrustStoreCertificate) == System.identityHashCode(trustStoreCertificate)) {
+			if (System.identityHashCode(removeTrustStoreCertificate) == System
+					.identityHashCode(trustStoreCertificate)) {
 				iterator.remove();
 				return;
 			}

@@ -26,7 +26,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.zip.Deflater;
 import java.util.zip.ZipOutputStream;
 
@@ -50,7 +49,7 @@ import org.bouncycastle.cert.X509v3CertificateBuilder;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.openssl.PEMWriter;
+import org.bouncycastle.openssl.jcajce.JcaPEMWriter;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.util.encoders.Base64;
 import org.gluu.config.oxtrust.AppConfiguration;
@@ -79,7 +78,6 @@ import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.exception.BasePersistenceException;
-import org.gluu.saml.metadata.SAMLMetadataParser;
 import org.gluu.service.SchemaService;
 import org.gluu.service.cdi.async.Asynchronous;
 import org.gluu.service.security.Secure;
@@ -462,38 +460,6 @@ public class UpdateTrustRelationshipAction implements Serializable {
 		trust.setReleasedCustomAttributes(customAttributes);
 	}
 
-	/**
-	 * Sets entityId according to metadatafile. Works for all TR which have own
-	 * metadata file.
-	 * 
-	 * @author �Oleksiy Tataryn�
-	 */
-	private void setEntityId() {
-		String idpMetadataFolder = appConfiguration.getShibboleth3IdpRootDir() + File.separator
-				+ Shibboleth3ConfService.SHIB3_IDP_METADATA_FOLDER + File.separator;
-		File metadataFile = new File(idpMetadataFolder + trustRelationship.getSpMetaDataFN());
-		List<String> entityIdList = SAMLMetadataParser.getEntityIdFromMetadataFile(metadataFile);
-		Set<String> entityIdSet = new TreeSet<String>();
-		if (entityIdList != null && !entityIdList.isEmpty()) {
-			Set<String> duplicatesSet = new TreeSet<String>();
-			for (String entityId : entityIdList) {
-				if (!entityIdSet.add(entityId)) {
-					duplicatesSet.add(entityId);
-				}
-			}
-		}
-		this.trustRelationship.setGluuEntityId(entityIdSet);
-	}
-
-	/**
-	 * If there is no certificate selected, or certificate is invalid - generates
-	 * one.
-	 * 
-	 * @author �Oleksiy Tataryn�
-	 * @return certificate for generated SP
-	 * @throws IOException
-	 * @throws CertificateEncodingException
-	 */
 	public String getCertForGeneratedSP() throws IOException {
 		X509Certificate cert = null;
 		if ((certWrapper != null) && (certWrapper.getInputStream() != null)) {
@@ -514,7 +480,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 				keyPairGen.initialize(2048);
 				KeyPair pair = keyPairGen.generateKeyPair();
 				StringWriter keyWriter = new StringWriter();
-				PEMWriter pemFormatWriter = new PEMWriter(keyWriter);
+				JcaPEMWriter pemFormatWriter = new JcaPEMWriter(keyWriter);
 				pemFormatWriter.writeObject(pair.getPrivate());
 				pemFormatWriter.close();
 				String url = trustRelationship.getUrl().replaceFirst(".*//", "");
@@ -630,9 +596,9 @@ public class UpdateTrustRelationshipAction implements Serializable {
 
 			String metadataFileName = this.trustRelationship.getSpMetaDataFN();
 			File metadataFile = new File(shibboleth3ConfService.getSpMetadataFilePath(metadataFileName));
-			String metadata = FileUtils.readFileToString(metadataFile);
+			String metadata = FileUtils.readFileToString(metadataFile, "UTF-8");
 			String updatedMetadata = metadata.replaceFirst(certRegEx, certificate);
-			FileUtils.writeStringToFile(metadataFile, updatedMetadata);
+			FileUtils.writeStringToFile(metadataFile, updatedMetadata, "UTF-8");
 			this.trustRelationship.setStatus(GluuStatus.ACTIVE);
 		} catch (Exception e) {
 			log.error("Failed to update certificate", e);
@@ -969,7 +935,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 		if (!StringUtils.isEmpty(filename)) {
 			metadataFile = new File(shibboleth3ConfService.getSpMetadataFilePath(filename));
 			if (metadataFile.exists()) {
-				return FileUtils.readFileToString(metadataFile);
+				return FileUtils.readFileToString(metadataFile, "UTF-8");
 			}
 		}
 		return null;

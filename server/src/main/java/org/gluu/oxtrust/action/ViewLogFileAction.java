@@ -23,7 +23,6 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.filefilter.AndFileFilter;
 import org.apache.commons.io.filefilter.FileFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
-import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.model.SimpleCustomProperty;
 import org.gluu.oxtrust.ldap.service.ConfigurationService;
 import org.gluu.oxtrust.model.GluuConfiguration;
@@ -52,9 +51,6 @@ public class ViewLogFileAction implements Serializable {
 	
 	@Inject
 	private ConfigurationService configurationService;
-
-	@Inject
-	private FacesMessages facesMessages;
 
 	@Inject
 	private JsonService jsonService;

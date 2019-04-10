@@ -17,9 +17,7 @@ import javax.faces.application.FacesMessage;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.apache.commons.io.IOUtils;
 import org.gluu.jsf2.message.FacesMessages;
-import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.LdifService;
 import org.gluu.oxtrust.util.OxTrustConstants;
@@ -46,18 +44,15 @@ public class AttributeImportAction implements Serializable {
 
 	@Inject
 	private Logger log;
-	
+
 	@Inject
 	private LdifService ldifService;
-	
+
 	@Inject
 	private AttributeService attributeService;
 
 	@Inject
 	private FacesMessages facesMessages;
-
-	@Inject
-	private ConversationService conversationService;
 
 	private UploadedFile uploadedFile;
 	private FileDataToImport fileDataToImport;
@@ -70,9 +65,7 @@ public class AttributeImportAction implements Serializable {
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
 		this.fileDataToImport = new FileDataToImport();
-
 		this.isInitialized = true;
-
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
@@ -81,21 +74,15 @@ public class AttributeImportAction implements Serializable {
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "File to import is invalid");
 			return OxTrustConstants.RESULT_FAILURE;
 		}
-
-		InputStream is = new ByteArrayInputStream(fileDataToImport.getData());
 		ResultCode result = null;
-		try {
+		try (InputStream is = new ByteArrayInputStream(fileDataToImport.getData());) {
 			result = ldifService.importLdifFileInLdap(is);
 		} catch (LDAPException ex) {
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to import LDIF file");
-		} finally {
-			IOUtils.closeQuietly(is);
 		}
-		
 		removeFileToImport();
-
 		if ((result != null) && result.equals(ResultCode.SUCCESS)) {
-			facesMessages.add(FacesMessage.SEVERITY_INFO,"Attributes added successfully");
+			facesMessages.add(FacesMessage.SEVERITY_INFO, "Attributes added successfully");
 			return OxTrustConstants.RESULT_SUCCESS;
 		} else {
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to import LDIF file");
@@ -106,21 +93,17 @@ public class AttributeImportAction implements Serializable {
 	public void validateFileToImport() {
 		removeFileDataToImport();
 		String dn = attributeService.getDnForAttribute(null);
-
 		if (uploadedFile == null) {
 			return;
 		}
-
-		InputStream is = new ByteArrayInputStream(this.fileData);
 		ResultCode result = null;
-		try {
+		try (InputStream is = new ByteArrayInputStream(this.fileData);) {
 			result = ldifService.validateLdifFile(is, dn);
 		} catch (LDAPException ex) {
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to parse LDIF file");
-		} finally {
-			IOUtils.closeQuietly(is);
+		} catch (IOException e) {
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to parse LDIF file");
 		}
-
 		if ((result != null) && result.equals(ResultCode.SUCCESS)) {
 			this.fileDataToImport.setReady(true);
 			this.fileDataToImport.setData(this.fileData);
@@ -156,7 +139,6 @@ public class AttributeImportAction implements Serializable {
 
 	public void uploadFile(FileUploadEvent event) {
 		removeFileToImport();
-
 		this.uploadedFile = event.getUploadedFile();
 		this.fileData = this.uploadedFile.getData();
 	}
@@ -168,12 +150,10 @@ public class AttributeImportAction implements Serializable {
 			} catch (IOException ex) {
 				log.error("Failed to remove temporary file", ex);
 			}
-
 			this.uploadedFile = null;
 		}
 		removeFileDataToImport();
 	}
-
 
 	public static class FileDataToImport implements Serializable {
 
@@ -189,7 +169,7 @@ public class AttributeImportAction implements Serializable {
 		public FileDataToImport(byte[] data) {
 			this.data = data;
 		}
-		
+
 		public String getFileName() {
 			return fileName;
 		}

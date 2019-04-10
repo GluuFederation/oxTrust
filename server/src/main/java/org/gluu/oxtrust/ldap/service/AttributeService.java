@@ -59,9 +59,6 @@ public class AttributeService extends org.gluu.service.AttributeService {
 	private AppConfiguration appConfiguration;
 
 	@Inject
-	private ConfigurationService configurationService;
-
-	@Inject
 	private OrganizationService organizationService;
 
 	@Inject
