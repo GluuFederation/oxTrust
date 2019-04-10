@@ -160,7 +160,7 @@ public abstract class BaseUmaProtectionService implements Serializable {
         }
 
         Pair<Boolean, Response> rptTokenValidationResult;
-        if (scopes.isEmpty()) {
+        if (!scopes.isEmpty()) {
         	rptTokenValidationResult = umaPermissionService.validateRptToken(patToken, authorization, getUmaResourceId(), scopes);
         } else {
         	rptTokenValidationResult = umaPermissionService.validateRptToken(patToken, authorization, getUmaResourceId(), getUmaScope());
