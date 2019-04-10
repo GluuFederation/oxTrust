@@ -20,7 +20,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.gluu.oxtrust.api.server.util.OxTrustApiConstants;
+import org.gluu.oxtrust.api.server.util.ApiConstants;
 import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.ScopeService;
 import org.gluu.oxtrust.model.OxAuthClient;
@@ -29,7 +29,7 @@ import org.slf4j.Logger;
 
 import com.wordnik.swagger.annotations.ApiOperation;
 
-@Path(OxTrustApiConstants.BASE_API_URL + OxTrustApiConstants.CLIENTS)
+@Path(ApiConstants.BASE_API_URL + ApiConstants.CLIENTS)
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @ApplicationScoped
@@ -61,9 +61,9 @@ public class ClientWebResource extends BaseWebResource {
 	}
 
 	@GET
-	@Path(OxTrustApiConstants.INUM_PARAM_PATH + OxTrustApiConstants.SCOPES)
+	@Path(ApiConstants.INUM_PARAM_PATH + ApiConstants.SCOPES)
 	@ApiOperation(value = "Get client scopes")
-	public Response getClientScope(@PathParam(OxTrustApiConstants.INUM) @NotNull String inum) {
+	public Response getClientScope(@PathParam(ApiConstants.INUM) @NotNull String inum) {
 		log(logger, "Get client scopes");
 		try {
 			Objects.requireNonNull(inum);
@@ -85,9 +85,9 @@ public class ClientWebResource extends BaseWebResource {
 	}
 
 	@GET
-	@Path(OxTrustApiConstants.INUM_PARAM_PATH)
+	@Path(ApiConstants.INUM_PARAM_PATH)
 	@ApiOperation(value = "Get a specific openidconnect client")
-	public Response getClientByInum(@PathParam(OxTrustApiConstants.INUM) @NotNull String inum) {
+	public Response getClientByInum(@PathParam(ApiConstants.INUM) @NotNull String inum) {
 		log(logger, "Get client " + inum);
 		try {
 			Objects.requireNonNull(inum);
@@ -104,10 +104,10 @@ public class ClientWebResource extends BaseWebResource {
 	}
 
 	@GET
-	@Path(OxTrustApiConstants.SEARCH)
+	@Path(ApiConstants.SEARCH)
 	@ApiOperation(value = "Search clients")
-	public Response searchGroups(@QueryParam(OxTrustApiConstants.SEARCH_PATTERN) @NotNull String pattern,
-			@DefaultValue("1") @QueryParam(OxTrustApiConstants.SIZE) int size) {
+	public Response searchGroups(@QueryParam(ApiConstants.SEARCH_PATTERN) @NotNull String pattern,
+			@DefaultValue("1") @QueryParam(ApiConstants.SIZE) int size) {
 		log(logger, "Search client with pattern= " + pattern + " and size " + size);
 		try {
 			List<OxAuthClient> clients = clientService.searchClients(pattern, size);
@@ -158,10 +158,10 @@ public class ClientWebResource extends BaseWebResource {
 	}
 
 	@POST
-	@Path(OxTrustApiConstants.INUM_PARAM_PATH + OxTrustApiConstants.SCOPES + OxTrustApiConstants.SCOPE_INUM_PARAM_PATH)
+	@Path(ApiConstants.INUM_PARAM_PATH + ApiConstants.SCOPES + ApiConstants.SCOPE_INUM_PARAM_PATH)
 	@ApiOperation(value = "Get client scopes")
-	public Response addScopeToClient(@PathParam(OxTrustApiConstants.INUM) @NotNull String inum,
-			@PathParam(OxTrustApiConstants.SCOPE_INUM) @NotNull String sinum) {
+	public Response addScopeToClient(@PathParam(ApiConstants.INUM) @NotNull String inum,
+			@PathParam(ApiConstants.SCOPE_INUM) @NotNull String sinum) {
 		log(logger, "add new scope to client");
 		try {
 			OxAuthClient client = clientService.getClientByInum(inum);
@@ -186,10 +186,10 @@ public class ClientWebResource extends BaseWebResource {
 	}
 
 	@DELETE
-	@Path(OxTrustApiConstants.INUM_PARAM_PATH + OxTrustApiConstants.SCOPES + OxTrustApiConstants.SCOPE_INUM_PARAM_PATH)
+	@Path(ApiConstants.INUM_PARAM_PATH + ApiConstants.SCOPES + ApiConstants.SCOPE_INUM_PARAM_PATH)
 	@ApiOperation(value = "Remove a client scope")
-	public Response removeScopeToClient(@PathParam(OxTrustApiConstants.INUM) @NotNull String inum,
-			@PathParam(OxTrustApiConstants.SCOPE_INUM) @NotNull String sinum) {
+	public Response removeScopeToClient(@PathParam(ApiConstants.INUM) @NotNull String inum,
+			@PathParam(ApiConstants.SCOPE_INUM) @NotNull String sinum) {
 		log(logger, "add new scope to client");
 		try {
 			OxAuthClient client = clientService.getClientByInum(inum);
@@ -212,9 +212,9 @@ public class ClientWebResource extends BaseWebResource {
 	}
 
 	@DELETE
-	@Path(OxTrustApiConstants.INUM_PARAM_PATH)
+	@Path(ApiConstants.INUM_PARAM_PATH)
 	@ApiOperation(value = "Delete an openidconnect client")
-	public Response deleteClient(@PathParam(OxTrustApiConstants.INUM) @NotNull String inum) {
+	public Response deleteClient(@PathParam(ApiConstants.INUM) @NotNull String inum) {
 		log(logger, "Delete client " + inum);
 		try {
 			Objects.requireNonNull(inum);
@@ -237,7 +237,7 @@ public class ClientWebResource extends BaseWebResource {
 	}
 
 	@DELETE
-	@Path(OxTrustApiConstants.INUM_PARAM_PATH + OxTrustApiConstants.SCOPES)
+	@Path(ApiConstants.INUM_PARAM_PATH + ApiConstants.SCOPES)
 	public Response deleteClientScopes() {
 		return Response.status(Response.Status.UNAUTHORIZED).build();
 	}

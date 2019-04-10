@@ -39,6 +39,7 @@ public final class OxTrustApiConstants {
 	public static final String ID_PARAM_PATH = "/{id}";
 	public static final String MEMBER_INUM_PARAM_PATH = "/{minum}";
 	public static final String INUM = "inum";
+	public static final String type = "type";
 	public static final String MEMBER_INUM = "minum";
 	public static final String SCOPE_INUM = "sinum";
 	public static final String SIZE = "size";
