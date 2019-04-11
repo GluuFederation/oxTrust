@@ -56,10 +56,6 @@ import org.gluu.oxtrust.util.EasyCASSLProtocolSocketFactory;
 import org.gluu.saml.metadata.SAMLMetadataParser;
 import org.gluu.service.SchemaService;
 import org.gluu.service.XmlService;
-import org.opensaml.xml.schema.SchemaBuilder;
-import org.opensaml.xml.schema.SchemaBuilder.SchemaLanguage;
-import org.slf4j.Logger;
-import org.w3c.dom.Document;
 import org.gluu.util.INumGenerator;
 import org.gluu.util.OxConstants;
 import org.gluu.util.StringHelper;
@@ -70,6 +66,10 @@ import org.gluu.util.io.HTTPFileDownloader;
 import org.gluu.util.security.StringEncrypter.EncryptionException;
 import org.gluu.xml.GluuErrorHandler;
 import org.gluu.xml.XMLValidator;
+import org.opensaml.xml.schema.SchemaBuilder;
+import org.opensaml.xml.schema.SchemaBuilder.SchemaLanguage;
+import org.slf4j.Logger;
+import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -143,9 +143,6 @@ public class Shibboleth3ConfService implements Serializable {
 
 	@Inject
 	private ProfileConfigurationService profileConfigurationService;
-
-	@Inject
-	private OrganizationService organizationService;
 
 	@Inject
 	@Named("casService")
@@ -563,7 +560,6 @@ public class Shibboleth3ConfService implements Serializable {
 		context.put("casParams", casParams);
 		context.put("resovlerParams", attrResolverParams);
 		context.put("medataFolder", idpMetadataFolder);
-		context.put("configurationInum", StringHelper.removePunctuation(configurationService.getConfigurationInum()));
 		context.put("orgInum", StringHelper.removePunctuation("gluu"));
 		context.put("orgSupportEmail", appConfiguration.getOrgSupportEmail());
 

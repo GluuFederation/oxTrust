@@ -13,7 +13,6 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.model.AuthenticationScriptUsageType;
 import org.gluu.model.ProgrammingLanguage;
 import org.gluu.model.ScriptLocationType;
@@ -44,9 +43,6 @@ public class ConfigurationService implements Serializable {
 
 	@Inject
 	private OrganizationService organizationService;
-
-	@Inject
-	private AppConfiguration appConfiguration;
 
 	@Inject
 	private EncryptionService encryptionService;
@@ -105,11 +101,9 @@ public class ConfigurationService implements Serializable {
 	public GluuConfiguration getConfiguration(String[] returnAttributes) {
 		GluuConfiguration result = null;
 		if (ldapEntryManager.contains(GluuConfiguration.class, getDnForConfiguration())) {
-			result = ldapEntryManager.find(GluuConfiguration.class, getDnForConfiguration(),
-					returnAttributes);
+			result = ldapEntryManager.find(GluuConfiguration.class, getDnForConfiguration(), returnAttributes);
 		} else {
 			result = new GluuConfiguration();
-			result.setInum(getConfigurationInum());
 			result.setDn(getDnForConfiguration());
 
 			ldapEntryManager.persist(result);
@@ -140,17 +134,13 @@ public class ConfigurationService implements Serializable {
 	/**
 	 * Build DN string for configuration
 	 * 
-	 * @return DN string for specified configuration or DN for configurations branch if inum
-	 *         is null
+	 * @return DN string for specified configuration or DN for configurations branch
+	 *         if inum is null
 	 * @throws Exception
 	 */
 	public String getDnForConfiguration() {
 		String baseDn = organizationService.getBaseDn();
 		return String.format("ou=configuration,%s", baseDn);
-	}
-
-	public String getConfigurationInum() {
-		return appConfiguration.getApplicationInum();
 	}
 
 	public AuthenticationScriptUsageType[] getScriptUsageTypes() {

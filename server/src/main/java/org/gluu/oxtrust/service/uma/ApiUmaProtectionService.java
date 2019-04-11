@@ -17,10 +17,10 @@ import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.lang.StringUtils;
 import org.gluu.config.oxtrust.AppConfiguration;
-import org.gluu.oxtrust.service.OpenIdService;
-import org.slf4j.Logger;
 import org.gluu.oxauth.client.ClientInfoClient;
 import org.gluu.oxauth.client.ClientInfoResponse;
+import org.gluu.oxtrust.service.OpenIdService;
+import org.slf4j.Logger;
 
 /**
  * Provides service to protect APIs Rest service endpoints with UMA scope.
@@ -70,7 +70,11 @@ public class ApiUmaProtectionService extends BaseUmaProtectionService implements
 
 	@Override
 	public String getUmaScope() {
-		return appConfiguration.getApiUmaScope();
+		StringBuffer buffer = new StringBuffer();
+		buffer.append(appConfiguration.getApiUmaScopes()[0]);
+		buffer.append(" ");
+		buffer.append(appConfiguration.getApiUmaScopes()[1]);
+		return buffer.toString();
 	}
 
 	@Override
@@ -85,7 +89,7 @@ public class ApiUmaProtectionService extends BaseUmaProtectionService implements
 		log.info("==== API Service call intercepted ====");
 		log.info("Authorization header {} found", StringUtils.isEmpty(authorization) ? "not" : "");
 		try {
-			log.info("SCIM TEST MODE:"+appConfiguration.isScimTestMode());
+			log.info("SCIM TEST MODE:" + appConfiguration.isScimTestMode());
 			if (appConfiguration.isScimTestMode()) {
 				log.info("API Test Mode is ACTIVE");
 				authorizationResponse = processTestModeAuthorization(authorization);

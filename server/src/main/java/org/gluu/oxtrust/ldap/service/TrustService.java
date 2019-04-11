@@ -26,14 +26,12 @@ import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuMetadataSourceType;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
-import org.gluu.oxtrust.model.OrganizationalUnit;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.model.base.InumEntry;
 import org.gluu.search.filter.Filter;
 import org.gluu.service.MailService;
 import org.gluu.service.XmlService;
-import org.gluu.util.INumGenerator;
 import org.gluu.util.StringHelper;
 import org.slf4j.Logger;
 
@@ -223,16 +221,6 @@ public class TrustService implements Serializable {
 	private String generateInumForNewTrustRelationshipImpl() {
 		return UUID.randomUUID().toString();
 	}
-
-	/**
-	 * Return current organization inum
-	 * 
-	 * @return Current organization inum
-	 */
-	private String getConfigurationInum() {
-		return appConfiguration.getApplicationInum();
-	}
-
 	/**
 	 * Get all metadata source types
 	 * 

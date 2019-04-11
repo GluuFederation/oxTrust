@@ -70,8 +70,7 @@ public class FederationService implements Serializable {
 	 * @return New inum for federation proposal
 	 */
 	private String generateInumForNewFederationProposalImpl() {
-		return getApplicationInum() + OxTrustConstants.inumDelimiter + "0006" + OxTrustConstants.inumDelimiter
-				+ INumGenerator.generate(2);
+		return OxTrustConstants.inumDelimiter + "0006" + OxTrustConstants.inumDelimiter + INumGenerator.generate(2);
 	}
 
 	/**
@@ -81,15 +80,6 @@ public class FederationService implements Serializable {
 	 */
 	public boolean containsFederationProposal(GluuSAMLFederationProposal federationProposal) {
 		return ldapEntryManager.contains(federationProposal);
-	}
-
-	/**
-	 * Return current organization inum
-	 * 
-	 * @return Current organization inum
-	 */
-	private String getApplicationInum() {
-		return appConfiguration.getApplicationInum();
 	}
 
 	/**
