@@ -21,6 +21,7 @@ import javax.ws.rs.core.Response;
 
 import org.gluu.oxtrust.api.server.util.Constants;
 import org.gluu.oxtrust.ldap.service.AttributeService;
+import org.gluu.oxtrust.service.filter.ProtectedApi;
 import org.gluu.oxtrust.util.OxTrustApiConstants;
 import org.slf4j.Logger;
 import org.gluu.model.GluuAttribute;
@@ -53,6 +54,7 @@ public class AttributeWebResource extends BaseWebResource {
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, response = GluuAttribute[].class, message = Constants.RESULT_SUCCESS),
 			@ApiResponse(code = 500, message = "Server error") })
+	@ProtectedApi(scopes = { "oxtrust-api-read" })
 	public Response getAllAttributes() {
 		try {
 			List<GluuAttribute> gluuAttributes = attributeService.getAllAttributes();
@@ -69,6 +71,7 @@ public class AttributeWebResource extends BaseWebResource {
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, response = GluuAttribute[].class, message = Constants.RESULT_SUCCESS),
 			@ApiResponse(code = 500, message = "Server error") })
+	@ProtectedApi(scopes = { "oxtrust-api-read" })
 	public Response getAllActivesAttributes() {
 		try {
 			List<GluuAttribute> gluuAttributes = attributeService.getAllAttributes().stream()
@@ -86,6 +89,7 @@ public class AttributeWebResource extends BaseWebResource {
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, response = GluuAttribute[].class, message = Constants.RESULT_SUCCESS),
 			@ApiResponse(code = 500, message = "Server error") })
+	@ProtectedApi(scopes = { "oxtrust-api-read" })
 	public Response getAllInActivesAttributes() {
 		try {
 			List<GluuAttribute> gluuAttributes = attributeService.getAllAttributes().stream()
@@ -103,6 +107,7 @@ public class AttributeWebResource extends BaseWebResource {
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, response = GluuAttribute.class, message = Constants.RESULT_SUCCESS),
 			@ApiResponse(code = 500, message = "Server error") })
+	@ProtectedApi(scopes = { "oxtrust-api-read" })
 	public Response getAttributeByInum(@PathParam(OxTrustApiConstants.INUM) @NotNull String inum) {
 		try {
 			Preconditions.checkNotNull(inum);
@@ -119,6 +124,7 @@ public class AttributeWebResource extends BaseWebResource {
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, response = GluuAttribute[].class, message = Constants.RESULT_SUCCESS),
 			@ApiResponse(code = 500, message = "Server error") })
+	@ProtectedApi(scopes = { "oxtrust-api-read" })
 	public Response searchAttributes(@QueryParam(OxTrustApiConstants.SEARCH_PATTERN) @NotNull String pattern,
 			@DefaultValue("1") @QueryParam(OxTrustApiConstants.SIZE) int size) {
 		try {
@@ -153,6 +159,7 @@ public class AttributeWebResource extends BaseWebResource {
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, response = GluuAttribute.class, message = Constants.RESULT_SUCCESS),
 			@ApiResponse(code = 404, message = "Not found"), @ApiResponse(code = 500, message = "Server error") })
+	@ProtectedApi(scopes = { "oxtrust-api-write" })
 	public Response updateAttribute(GluuAttribute gluuAttribute) {
 		try {
 			Preconditions.checkNotNull(gluuAttribute, "Attempt to update null attribute");
@@ -177,6 +184,7 @@ public class AttributeWebResource extends BaseWebResource {
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, response = GluuAttribute[].class, message = Constants.RESULT_SUCCESS),
 			@ApiResponse(code = 404, message = "Not found"), @ApiResponse(code = 500, message = "Server error") })
+	@ProtectedApi(scopes = { "oxtrust-api-write" })
 	public Response deleteAttribute(@PathParam(OxTrustApiConstants.INUM) @NotNull String inum) {
 		try {
 			Preconditions.checkNotNull(inum);

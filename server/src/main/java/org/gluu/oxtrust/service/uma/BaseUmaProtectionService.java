@@ -43,8 +43,8 @@ public abstract class BaseUmaProtectionService implements Serializable {
 	@Inject
 	private UmaMetadata umaMetadata;
 
-    @Inject
-    protected UmaPermissionService umaPermissionService;
+	@Inject
+	protected UmaPermissionService umaPermissionService;
 
 	@Inject
 	private AppConfiguration appConfiguration;
@@ -67,15 +67,14 @@ public abstract class BaseUmaProtectionService implements Serializable {
 
 			retrievePatToken();
 		} finally {
-		  lock.unlock();
+			lock.unlock();
 		}
-
 
 		return this.umaPat;
 	}
 
 	protected boolean isEnabledUmaAuthentication() {
-        return (umaMetadata != null) && isExistPatToken();
+		return (umaMetadata != null) && isExistPatToken();
 	}
 
 	public boolean isExistPatToken() {
@@ -87,6 +86,14 @@ public abstract class BaseUmaProtectionService implements Serializable {
 
 		return false;
 	}
+
+	public String getIssuer() {
+		if (umaMetadata == null) {
+			return "";
+		}
+		return umaMetadata.getIssuer();
+	}
+
 
 	private void retrievePatToken() throws UmaProtectionException {
 		this.umaPat = null;
@@ -107,10 +114,10 @@ public abstract class BaseUmaProtectionService implements Serializable {
 				log.error("Failed to decrypt UmaClientKeyStorePassword password", ex);
 			}
 		}
-		
 
 		try {
-			this.umaPat = UmaClient.requestPat(umaMetadata.getTokenEndpoint(), umaClientKeyStoreFile, umaClientKeyStorePassword, getClientId(), getClientKeyId());
+			this.umaPat = UmaClient.requestPat(umaMetadata.getTokenEndpoint(), umaClientKeyStoreFile,
+					umaClientKeyStorePassword, getClientId(), getClientKeyId());
 			if (this.umaPat == null) {
 				this.umaPatAccessTokenExpiration = 0l;
 			} else {
@@ -119,7 +126,7 @@ public abstract class BaseUmaProtectionService implements Serializable {
 		} catch (Exception ex) {
 			throw new UmaProtectionException("Failed to obtain valid UMA PAT token", ex);
 		}
-		
+
 		if ((this.umaPat == null) || (this.umaPat.getAccessToken() == null)) {
 			throw new UmaProtectionException("Failed to obtain valid UMA PAT token");
 		}
@@ -140,43 +147,43 @@ public abstract class BaseUmaProtectionService implements Serializable {
 		final long now = System.currentTimeMillis();
 
 		// Get new access token only if is the previous one is missing or expired
-        return !((validatePatToken == null) || (validatePatToken.getAccessToken() == null) ||
-                (validatePatTokenExpiration <= now));
-    }
+		return !((validatePatToken == null) || (validatePatToken.getAccessToken() == null)
+				|| (validatePatTokenExpiration <= now));
+	}
 
-    protected Response getErrorResponse(Response.Status status, String detail) {
-        return Response.status(status).entity(detail).build();
-    }
+	protected Response getErrorResponse(Response.Status status, String detail) {
+		return Response.status(status).entity(detail).build();
+	}
 
-    Response processUmaAuthorization(String authorization, ResourceInfo resourceInfo) throws Exception {
+	Response processUmaAuthorization(String authorization, ResourceInfo resourceInfo) throws Exception {
 		List<String> scopes = getRequestedScopes(resourceInfo);
 
-        Token patToken = null;
-        try {
-            patToken = getPatToken();
-        }
-        catch (UmaProtectionException ex) {
-            return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, "Failed to obtain PAT token");
-        }
+		Token patToken = null;
+		try {
+			patToken = getPatToken();
+		} catch (UmaProtectionException ex) {
+			return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, "Failed to obtain PAT token");
+		}
 
-        Pair<Boolean, Response> rptTokenValidationResult;
-        if (!scopes.isEmpty()) {
-        	rptTokenValidationResult = umaPermissionService.validateRptToken(patToken, authorization, getUmaResourceId(), scopes);
-        } else {
-        	rptTokenValidationResult = umaPermissionService.validateRptToken(patToken, authorization, getUmaResourceId(), getUmaScope());
-        }
+		Pair<Boolean, Response> rptTokenValidationResult;
+		if (!scopes.isEmpty()) {
+			rptTokenValidationResult = umaPermissionService.validateRptToken(patToken, authorization,
+					getUmaResourceId(), scopes);
+		} else {
+			rptTokenValidationResult = umaPermissionService.validateRptToken(patToken, authorization,
+					getUmaResourceId(), getUmaScope());
+		}
 
-        if (rptTokenValidationResult.getFirst()) {
-            if (rptTokenValidationResult.getSecond() != null) {
-                return rptTokenValidationResult.getSecond();
-            }
-        }
-        else {
-            return getErrorResponse(Response.Status.UNAUTHORIZED, "Invalid GAT/RPT token");
-        }
-        return null;
+		if (rptTokenValidationResult.getFirst()) {
+			if (rptTokenValidationResult.getSecond() != null) {
+				return rptTokenValidationResult.getSecond();
+			}
+		} else {
+			return getErrorResponse(Response.Status.UNAUTHORIZED, "Invalid GAT/RPT token");
+		}
+		return null;
 
-    }
+	}
 
 	public List<String> getRequestedScopes(ResourceInfo resourceInfo) {
 		Class<?> resourceClass = resourceInfo.getResourceClass();
@@ -196,13 +203,13 @@ public abstract class BaseUmaProtectionService implements Serializable {
 
 		return scopes;
 	}
-	
+
 	private List<String> getResourceScopes(String[] scopes) {
 		List<String> result = new ArrayList<String>();
 		if ((scopes == null) || (scopes.length == 0)) {
 			return result;
 		}
-		
+
 		String baseEndpoint = appConfiguration.getBaseEndpoint();
 		if (baseEndpoint.endsWith("/")) {
 			baseEndpoint = baseEndpoint.substring(0, baseEndpoint.length() - 1);
@@ -212,17 +219,20 @@ public abstract class BaseUmaProtectionService implements Serializable {
 			String umaIssuerScope = baseEndpoint + scope;
 			result.add(umaIssuerScope);
 		}
-		
+
 		return result;
 	}
 
 	protected abstract String getClientId();
+
 	protected abstract String getClientKeyStorePassword();
+
 	protected abstract String getClientKeyStoreFile();
 
 	protected abstract String getClientKeyId();
 
 	public abstract String getUmaResourceId();
+
 	public abstract String getUmaScope();
 
 	public abstract boolean isEnabled();

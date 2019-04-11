@@ -23,22 +23,22 @@ import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicHeaderElementIterator;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
+import org.gluu.oxtrust.ldap.service.AppInitializer;
+import org.jboss.resteasy.client.ClientExecutor;
+import org.jboss.resteasy.client.core.executors.ApacheHttpClient4Executor;
+import org.slf4j.Logger;
 import org.gluu.config.oxtrust.AppConfiguration;
+import org.gluu.oxauth.client.uma.UmaClientFactory;
+import org.gluu.oxauth.client.uma.UmaRptIntrospectionService;
 import org.gluu.oxauth.model.uma.PermissionTicket;
 import org.gluu.oxauth.model.uma.RptIntrospectionResponse;
 import org.gluu.oxauth.model.uma.UmaMetadata;
 import org.gluu.oxauth.model.uma.UmaPermission;
 import org.gluu.oxauth.model.uma.UmaPermissionList;
 import org.gluu.oxauth.model.uma.wrapper.Token;
-import org.gluu.oxtrust.ldap.service.AppInitializer;
 import org.gluu.service.JsonService;
 import org.gluu.util.Pair;
 import org.gluu.util.StringHelper;
-import org.jboss.resteasy.client.ClientExecutor;
-import org.jboss.resteasy.client.core.executors.ApacheHttpClient4Executor;
-import org.slf4j.Logger;
-import org.gluu.oxauth.client.uma.UmaClientFactory;
-import org.gluu.oxauth.client.uma.UmaRptIntrospectionService;
 
 /**
  * Provide methods to work with permissions and RPT tokens
@@ -172,11 +172,11 @@ public class UmaPermissionService implements Serializable {
 		return rptStatusResponse;
 	}
 
-	public String registerResourcePermission(Token patToken, String resourceId, List<String> scopeIds) {
+	public String registerResourcePermission(Token patToken, String resourceId, List<String> scopes) {
 
         UmaPermission permission = new UmaPermission();
         permission.setResourceId(resourceId);
-        permission.setScopes(scopeIds);
+        permission.setScopes(scopes);
 
         PermissionTicket ticket = permissionService.registerPermission(
                 "Bearer " + patToken.getAccessToken(), UmaPermissionList.instance(permission));
@@ -188,8 +188,8 @@ public class UmaPermissionService implements Serializable {
         return ticket.getTicket();
     }
 
-	private Response prepareRegisterPermissionsResponse(Token patToken, String resourceId, List<String> scopeIds) {
-		String ticket = registerResourcePermission(patToken, resourceId, scopeIds);
+	private Response prepareRegisterPermissionsResponse(Token patToken, String resourceId, List<String> scopes) {
+		String ticket = registerResourcePermission(patToken, resourceId, scopes);
 		if (StringHelper.isEmpty(ticket)) {
 			return null;
 		}

@@ -5,7 +5,7 @@ public final class ApiConstants {
 	private ApiConstants() {
 	}
 
-	public static final String BASE_API_URL = "/api";
+	public static final String BASE_API_URL = "/api/v1";
 	public static final String CLIENTS = "/clients";
 	public static final String GROUPS = "/groups";
 	public static final String SCRIPTS = "/scripts";

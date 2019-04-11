@@ -5,7 +5,7 @@ public final class OxTrustApiConstants {
 	private OxTrustApiConstants() {
 	}
 
-	public static final String BASE_API_URL = "/api";
+	public static final String BASE_API_URL = "/api/v1";
 	public static final String GROUP_MEMBERS = "/members";
 	public static final String CERTIFICATES = "/certificates";
 	public static final String SCRIPTS = "/scripts";

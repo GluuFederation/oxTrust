@@ -71,12 +71,10 @@ public class PassportUmaProtectionService extends BaseUmaProtectionService imple
 	private boolean isPassportEnabled() {
 		GluuConfiguration configuration = configurationService.getConfiguration();
 		GluuBoolean passportEnbaled = configuration.getPassportEnabled();
-		
 		return GluuBoolean.ENABLED.equals(passportEnbaled) || GluuBoolean.TRUE.equals(passportEnbaled);
 	}
 
     public Response processAuthorization(HttpHeaders headers, ResourceInfo resourceInfo){
-
         if (isEnabled()) {
             try {
                 return processUmaAuthorization(headers.getHeaderString("Authorization"), resourceInfo);
