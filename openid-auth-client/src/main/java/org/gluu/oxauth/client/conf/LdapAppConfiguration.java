@@ -6,26 +6,26 @@
 
 package org.gluu.oxauth.client.conf;
 
-import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
-import org.gluu.site.ldap.persistence.annotation.LdapDN;
-import org.gluu.site.ldap.persistence.annotation.LdapEntry;
-import org.gluu.site.ldap.persistence.annotation.LdapJsonObject;
-import org.gluu.site.ldap.persistence.annotation.LdapObjectClass;
+import org.gluu.persist.annotation.AttributeName;
+import org.gluu.persist.annotation.DN;
+import org.gluu.persist.annotation.DataEntry;
+import org.gluu.persist.annotation.JsonObject;
+import org.gluu.persist.annotation.ObjectClass;
 
-@LdapEntry
-@LdapObjectClass(values = {"top", "oxApplicationConfiguration"})
+@DataEntry
+@ObjectClass(values = {"top", "oxApplicationConfiguration"})
 public class LdapAppConfiguration {
 
 	private static final long serialVersionUID = 1847361642302974184L;
 
-	@LdapDN
+	@DN
     private String dn;
 
-    @LdapAttribute(name = "oxRevision")
+    @AttributeName(name = "oxRevision")
     private long revision;
 
-    @LdapJsonObject
-	@LdapAttribute(name = "oxConfApplication")
+    @JsonObject
+	@AttributeName(name = "oxConfApplication")
     private AppConfiguration application;
 
     public LdapAppConfiguration() {}

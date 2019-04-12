@@ -11,7 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.gluu.persist.model.base.Entry;
-import org.gluu.site.ldap.persistence.annotation.LdapCustomObjectClass;
+import org.gluu.persist.annotation.CustomObjectClass;
 import org.gluu.util.StringHelper;
 
 /**
@@ -23,7 +23,7 @@ public abstract class CustomEntry extends Entry implements Serializable, Cloneab
 
 	private static final long serialVersionUID = 5079582184398161111L;
 
-	@LdapCustomObjectClass
+	@CustomObjectClass
 	private String[] customObjectClasses;
 
 	public abstract List<GluuCustomAttribute> getCustomAttributes();

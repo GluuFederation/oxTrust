@@ -8,9 +8,9 @@ import javax.validation.constraints.Size;
 
 import org.apache.logging.log4j.core.util.UuidUtil;
 import org.gluu.persist.model.base.Entry;
-import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
-import org.gluu.site.ldap.persistence.annotation.LdapEntry;
-import org.gluu.site.ldap.persistence.annotation.LdapObjectClass;
+import org.gluu.persist.annotation.AttributeName;
+import org.gluu.persist.annotation.DataEntry;
+import org.gluu.persist.annotation.ObjectClass;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -21,8 +21,8 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
  * @author Javier Rojas Blum
  * @version January 15, 2016
  */
-@LdapEntry(sortBy = { "description" })
-@LdapObjectClass(values = { "top", "oxSectorIdentifier" })
+@DataEntry(sortBy = { "description" })
+@ObjectClass(values = { "top", "oxSectorIdentifier" })
 @JsonInclude(Include.NON_NULL)
 public class OxAuthSectorIdentifier extends Entry implements Serializable {
 
@@ -30,17 +30,17 @@ public class OxAuthSectorIdentifier extends Entry implements Serializable {
 
 	private transient boolean selected;
 
-	@LdapAttribute(name = "oxId", ignoreDuringUpdate = true)
+	@AttributeName(name = "oxId", ignoreDuringUpdate = true)
 	private String id;
 	@NotNull
     @Size(min = 0, max = 250, message = "Length of the Description should not exceed 250")
-	@LdapAttribute(name = "description")
+	@AttributeName(name = "description")
 	private String description;
 
-	@LdapAttribute(name = "oxAuthRedirectURI")
+	@AttributeName(name = "oxAuthRedirectURI")
 	private List<String> redirectUris;
 
-	@LdapAttribute(name = "oxAuthClientId")
+	@AttributeName(name = "oxAuthClientId")
 	private List<String> clientIds;
 
 	public boolean isSelected() {

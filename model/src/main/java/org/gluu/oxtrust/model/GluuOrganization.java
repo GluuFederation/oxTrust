@@ -13,10 +13,10 @@ import javax.validation.constraints.Size;
 
 import org.gluu.model.GluuStatus;
 import org.gluu.persist.model.base.Entry;
-import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
-import org.gluu.site.ldap.persistence.annotation.LdapEntry;
-import org.gluu.site.ldap.persistence.annotation.LdapJsonObject;
-import org.gluu.site.ldap.persistence.annotation.LdapObjectClass;
+import org.gluu.persist.annotation.AttributeName;
+import org.gluu.persist.annotation.DataEntry;
+import org.gluu.persist.annotation.JsonObject;
+import org.gluu.persist.annotation.ObjectClass;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -26,8 +26,8 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
  * 
  * @author Yuriy Movchan Date: 11.02.2010
  */
-@LdapEntry(sortBy = { "displayName" })
-@LdapObjectClass(values = { "top", "gluuOrganization" })
+@DataEntry(sortBy = { "displayName" })
+@ObjectClass(values = { "top", "gluuOrganization" })
 @JsonInclude(Include.NON_NULL)
 public class GluuOrganization extends Entry implements Serializable {
 
@@ -35,58 +35,58 @@ public class GluuOrganization extends Entry implements Serializable {
 
 	@NotNull
 	@Size(min = 0, max = 60, message = "Length of the Display Name should not exceed 60")
-	@LdapAttribute
+	@AttributeName
 	private String displayName;
 
 	@NotNull
 	@Size(min = 0, max = 60, message = "Length of the Description should not exceed 60")
-	@LdapAttribute
+	@AttributeName
 	private String description;
 
-	@LdapAttribute(name = "memberOf")
+	@AttributeName(name = "memberOf")
 	private String member;
 
-	@LdapAttribute(name = "c")
+	@AttributeName(name = "c")
 	private String countryName;
 
-	@LdapAttribute(name = "o")
+	@AttributeName(name = "o")
 	private String organization;
 
-	@LdapAttribute
+	@AttributeName
 	private String seeAlso;
 
-	@LdapAttribute(name = "gluuStatus")
+	@AttributeName(name = "gluuStatus")
 	private GluuStatus status;
 
-	@LdapAttribute(name = "gluuManagerGroup")
+	@AttributeName(name = "gluuManagerGroup")
 	private String managerGroup;
 
-	@LdapAttribute(name = "gluuLogoImage")
+	@AttributeName(name = "gluuLogoImage")
 	private String logoImage;
 
-	@LdapAttribute(name = "gluuThemeColor")
+	@AttributeName(name = "gluuThemeColor")
 	private String themeColor;
 
-	@LdapAttribute(name = "gluuOrgShortName")
+	@AttributeName(name = "gluuOrgShortName")
 	private String shortName;
 
-	@LdapAttribute(name = "gluuCustomMessage")
+	@AttributeName(name = "gluuCustomMessage")
 	private String[] customMessages;
 
-	@LdapAttribute(name = "gluuFaviconImage")
+	@AttributeName(name = "gluuFaviconImage")
 	private String faviconImage;
 
-	@LdapAttribute(name = "gluuTempFaviconImage")
+	@AttributeName(name = "gluuTempFaviconImage")
 	private String tempFaviconImage;
 
-	@LdapAttribute(name = "oxInumConfig")
+	@AttributeName(name = "oxInumConfig")
 	private String oxInumConfig;
 
-	@LdapAttribute(name = "title")
+	@AttributeName(name = "title")
 	private String title;
 
-	@LdapAttribute(name = "oxRegistrationConfiguration")
-	@LdapJsonObject
+	@AttributeName(name = "oxRegistrationConfiguration")
+	@JsonObject
 	private RegistrationConfiguration oxRegistrationConfiguration;
 
 	public String getOrganizationTitle() {

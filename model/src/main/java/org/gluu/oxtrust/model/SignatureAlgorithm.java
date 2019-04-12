@@ -9,7 +9,7 @@ package org.gluu.oxtrust.model;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.gluu.site.ldap.persistence.annotation.LdapEnum;
+import org.gluu.persist.annotation.AttributeEnum;
 
 /**
  * oxAuth IdToken Signed Response Algorithm
@@ -18,7 +18,7 @@ import org.gluu.site.ldap.persistence.annotation.LdapEnum;
  * @author Javier Rojas Blum
  * @version November 10, 2015
  */
-public enum SignatureAlgorithm implements LdapEnum {
+public enum SignatureAlgorithm implements AttributeEnum {
 
     NONE("none", "none"),
 	HS256("HS256", "HS256"), HS384("HS384", "HS384"), HS512("HS512", "HS512"),
@@ -53,7 +53,7 @@ public enum SignatureAlgorithm implements LdapEnum {
 		return mapByValues.get(value);
 	}
 
-	public Enum<? extends LdapEnum> resolveByValue(String value) {
+	public Enum<? extends AttributeEnum> resolveByValue(String value) {
 		return getByValue(value);
 	}
 

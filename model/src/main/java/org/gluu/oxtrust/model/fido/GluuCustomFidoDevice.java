@@ -6,69 +6,69 @@
 package org.gluu.oxtrust.model.fido;
 
 import org.gluu.persist.model.base.Entry;
-import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
-import org.gluu.site.ldap.persistence.annotation.LdapEntry;
-import org.gluu.site.ldap.persistence.annotation.LdapObjectClass;
+import org.gluu.persist.annotation.AttributeName;
+import org.gluu.persist.annotation.DataEntry;
+import org.gluu.persist.annotation.ObjectClass;
 
 /**
  * @author Val Pecaoco
  */
-@LdapEntry(sortBy = { "id" })
-@LdapObjectClass(values = { "top", "oxDeviceRegistration" })
+@DataEntry(sortBy = { "id" })
+@ObjectClass(values = { "top", "oxDeviceRegistration" })
 public class GluuCustomFidoDevice extends Entry {
 
-	@LdapAttribute(name = "oxId", ignoreDuringUpdate = true)
+	@AttributeName(name = "oxId", ignoreDuringUpdate = true)
 	private String id;
 
-	@LdapAttribute(name = "creationDate", ignoreDuringUpdate = true)
+	@AttributeName(name = "creationDate", ignoreDuringUpdate = true)
 	private String creationDate;
 
-	@LdapAttribute(name = "oxApplication", ignoreDuringUpdate = true)
+	@AttributeName(name = "oxApplication", ignoreDuringUpdate = true)
 	private String application;
 
-	@LdapAttribute(name = "oxCounter", ignoreDuringUpdate = true)
+	@AttributeName(name = "oxCounter", ignoreDuringUpdate = true)
 	private String counter;
 
-	@LdapAttribute(name = "oxDeviceData", ignoreDuringUpdate = true)
+	@AttributeName(name = "oxDeviceData", ignoreDuringUpdate = true)
 	private String deviceData;
 
-	@LdapAttribute(name = "oxDeviceHashCode", ignoreDuringUpdate = true)
+	@AttributeName(name = "oxDeviceHashCode", ignoreDuringUpdate = true)
 	private String deviceHashCode;
 
-	@LdapAttribute(name = "oxDeviceKeyHandle", ignoreDuringUpdate = true)
+	@AttributeName(name = "oxDeviceKeyHandle", ignoreDuringUpdate = true)
 	private String deviceKeyHandle;
 
-	@LdapAttribute(name = "oxDeviceRegistrationConf", ignoreDuringUpdate = true)
+	@AttributeName(name = "oxDeviceRegistrationConf", ignoreDuringUpdate = true)
 	private String deviceRegistrationConf;
 
-	@LdapAttribute(name = "oxLastAccessTime", ignoreDuringUpdate = true)
+	@AttributeName(name = "oxLastAccessTime", ignoreDuringUpdate = true)
 	private String lastAccessTime;
 
-	@LdapAttribute(name = "oxStatus")
+	@AttributeName(name = "oxStatus")
 	private String status;
 
-	@LdapAttribute(name = "displayName")
+	@AttributeName(name = "displayName")
 	private String displayName;
 
-	@LdapAttribute(name = "description")
+	@AttributeName(name = "description")
 	private String description;
 
-	@LdapAttribute(name = "oxNickName")
+	@AttributeName(name = "oxNickName")
 	private String nickname;
 
-	@LdapAttribute(name = "oxTrustMetaLastModified")
+	@AttributeName(name = "oxTrustMetaLastModified")
 	private String metaLastModified;
 
-	@LdapAttribute(name = "oxTrustMetaLocation")
+	@AttributeName(name = "oxTrustMetaLocation")
 	private String metaLocation;
 
-	@LdapAttribute(name = "oxTrustMetaVersion")
+	@AttributeName(name = "oxTrustMetaVersion")
 	private String metaVersion;
 
 	/*
 	 *
-	@LdapAttributesList(name = "name", value = "values", sortByName = true, attributesConfiguration =
-		{@LdapAttribute(name = "creationDate", ignoreDuringUpdate = true), @LdapAttribute(name = "oxId", ignoreDuringUpdate = true)}
+	@AttributesList(name = "name", value = "values", sortByName = true, attributesConfiguration =
+		{@AttributeName(name = "creationDate", ignoreDuringUpdate = true), @AttributeName(name = "oxId", ignoreDuringUpdate = true)}
 	)
 	private List<GluuCustomAttribute> customAttributes = new ArrayList<GluuCustomAttribute>();
 	*/

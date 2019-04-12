@@ -9,14 +9,14 @@ package org.gluu.oxtrust.ldap.cache.service;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.gluu.site.ldap.persistence.annotation.LdapEnum;
+import org.gluu.persist.annotation.AttributeEnum;
 
 /**
  * Cache refresh update methods
  * 
  * @author Yuriy Movchan Date: 06.27.2012
  */
-public enum CacheRefreshUpdateMethod implements LdapEnum {
+public enum CacheRefreshUpdateMethod implements AttributeEnum {
 
 	VDS("vds", "VDS"), COPY("copy", "Copy");
 
@@ -52,7 +52,7 @@ public enum CacheRefreshUpdateMethod implements LdapEnum {
 		return displayName;
 	}
 
-	public Enum<? extends LdapEnum> resolveByValue(String value) {
+	public Enum<? extends AttributeEnum> resolveByValue(String value) {
 		return getByValue(value);
 	}
 

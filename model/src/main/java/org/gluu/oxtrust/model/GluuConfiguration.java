@@ -19,10 +19,10 @@ import org.gluu.oxtrust.model.cert.TrustStoreConfiguration;
 import org.gluu.persist.model.base.GluuBoolean;
 import org.gluu.persist.model.base.InumEntry;
 import org.gluu.service.cache.CacheConfiguration;
-import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
-import org.gluu.site.ldap.persistence.annotation.LdapEntry;
-import org.gluu.site.ldap.persistence.annotation.LdapJsonObject;
-import org.gluu.site.ldap.persistence.annotation.LdapObjectClass;
+import org.gluu.persist.annotation.AttributeName;
+import org.gluu.persist.annotation.DataEntry;
+import org.gluu.persist.annotation.JsonObject;
+import org.gluu.persist.annotation.ObjectClass;
 
 /**
  * GluuConfiguration
@@ -30,145 +30,145 @@ import org.gluu.site.ldap.persistence.annotation.LdapObjectClass;
  * @author Reda Zerrad Date: 08.10.2012
  * @author Yuriy Movchan Date: 04/20/2014
  */
-@LdapEntry
-@LdapObjectClass(values = { "top", "organizationalUnit", "gluuConfiguration" })
+@DataEntry
+@ObjectClass(values = { "top", "organizationalUnit", "gluuConfiguration" })
 public class GluuConfiguration extends InumEntry implements Serializable {
 
 	private static final long serialVersionUID = -1817003894646725601L;
 
-	@LdapAttribute
+	@AttributeName
 	private String description;
 
-	@LdapAttribute
+	@AttributeName
 	private String displayName;
 
-	@LdapAttribute(name = "gluuFreeDiskSpace", updateOnly = true)
+	@AttributeName(name = "gluuFreeDiskSpace", updateOnly = true)
 	private String freeDiskSpace;
 
-	@LdapAttribute(name = "gluuFreeMemory", updateOnly = true)
+	@AttributeName(name = "gluuFreeMemory", updateOnly = true)
 	private String freeMemory;
 
-	@LdapAttribute(name = "gluuFreeSwap", updateOnly = true)
+	@AttributeName(name = "gluuFreeSwap", updateOnly = true)
 	private String freeSwap;
 
-	@LdapAttribute(name = "gluuGroupCount", updateOnly = true)
+	@AttributeName(name = "gluuGroupCount", updateOnly = true)
 	private String groupCount;
 
-	@LdapAttribute(name = "gluuPersonCount", updateOnly = true)
+	@AttributeName(name = "gluuPersonCount", updateOnly = true)
 	private String personCount;
 
-	@LdapAttribute(name = "gluuHostname", updateOnly = true)
+	@AttributeName(name = "gluuHostname", updateOnly = true)
 	private String hostname;
 
-	@LdapAttribute(name = "gluuIpAddress", updateOnly = true)
+	@AttributeName(name = "gluuIpAddress", updateOnly = true)
 	private String ipAddress;
 
-	@LdapAttribute(name = "gluuSystemUptime", updateOnly = true)
+	@AttributeName(name = "gluuSystemUptime", updateOnly = true)
 	private String systemUptime;
 
-	@LdapAttribute(name = "gluuLastUpdate", updateOnly = true)
+	@AttributeName(name = "gluuLastUpdate", updateOnly = true)
 	private Date lastUpdate;
 
-	@LdapAttribute(name = "gluuConfigurationPollingInterval")
+	@AttributeName(name = "gluuConfigurationPollingInterval")
 	private String pollingInterval;
 
-	@LdapAttribute(name = "gluuStatus", updateOnly = true)
+	@AttributeName(name = "gluuStatus", updateOnly = true)
 	private GluuStatus status;
 
-	@LdapAttribute(name = "userPassword", ignoreDuringRead = true)
+	@AttributeName(name = "userPassword", ignoreDuringRead = true)
 	private String userPassword;
 
-	@LdapAttribute(name = "gluuHTTPstatus", updateOnly = true)
+	@AttributeName(name = "gluuHTTPstatus", updateOnly = true)
 	private String gluuHttpStatus;
 
-	@LdapAttribute(name = "gluuDSstatus", updateOnly = true)
+	@AttributeName(name = "gluuDSstatus", updateOnly = true)
 	private String gluuDSStatus;
 
-	@LdapAttribute(name = "gluuVDSstatus", updateOnly = true)
+	@AttributeName(name = "gluuVDSstatus", updateOnly = true)
 	private String gluuVDSStatus;
 
-	@LdapAttribute(name = "gluuSPTR")
+	@AttributeName(name = "gluuSPTR")
 	private String gluuSPTR;
 
-	@LdapAttribute(name = "gluuSslExpiry", updateOnly = true)
+	@AttributeName(name = "gluuSslExpiry", updateOnly = true)
 	private String sslExpiry;
 
-	@LdapAttribute(name = "gluuOrgProfileMgt")
+	@AttributeName(name = "gluuOrgProfileMgt")
 	private GluuBoolean profileManagment;
 
-	@LdapAttribute(name = "gluuManageIdentityPermission")
+	@AttributeName(name = "gluuManageIdentityPermission")
 	private GluuBoolean manageIdentityPermission;
 
-	@LdapAttribute(name = "gluuVdsCacheRefreshEnabled")
+	@AttributeName(name = "gluuVdsCacheRefreshEnabled")
 	private GluuBoolean vdsCacheRefreshEnabled;
 
-	@LdapAttribute(name = "oxTrustCacheRefreshServerIpAddress")
+	@AttributeName(name = "oxTrustCacheRefreshServerIpAddress")
 	private String cacheRefreshServerIpAddress;
 
-	@LdapAttribute(name = "gluuVdsCacheRefreshPollingInterval")
+	@AttributeName(name = "gluuVdsCacheRefreshPollingInterval")
 	private String vdsCacheRefreshPollingInterval;
 
-	@LdapAttribute(name = "gluuVdsCacheRefreshLastUpdate")
+	@AttributeName(name = "gluuVdsCacheRefreshLastUpdate")
 	private Date vdsCacheRefreshLastUpdate;
 
-	@LdapAttribute(name = "gluuVdsCacheRefreshLastUpdateCount")
+	@AttributeName(name = "gluuVdsCacheRefreshLastUpdateCount")
 	private String vdsCacheRefreshLastUpdateCount;
 
-	@LdapAttribute(name = "gluuVdsCacheRefreshProblemCount")
+	@AttributeName(name = "gluuVdsCacheRefreshProblemCount")
 	private String vdsCacheRefreshProblemCount;
 
-	@LdapAttribute(name = "gluuScimEnabled")
+	@AttributeName(name = "gluuScimEnabled")
 	private GluuBoolean scimEnabled;
 
-	@LdapAttribute(name = "gluuPassportEnabled")
+	@AttributeName(name = "gluuPassportEnabled")
 	private GluuBoolean passportEnabled;
 
-	@LdapAttribute(name = "oxTrustEmail")
+	@AttributeName(name = "oxTrustEmail")
 	private String contactEmail;
 
-	@LdapAttribute(name = "oxSmtpConfiguration")
-	@LdapJsonObject
+	@AttributeName(name = "oxSmtpConfiguration")
+	@JsonObject
 	private SmtpConfiguration smtpConfiguration;
 
-	@LdapAttribute(name = "gluuConfigurationDnsServer")
+	@AttributeName(name = "gluuConfigurationDnsServer")
 	private String configurationDnsServer;
 
 	@Min(value = 200)
-	@LdapAttribute(name = "gluuMaxLogSize")
+	@AttributeName(name = "gluuMaxLogSize")
 	private String maxLogSize;
 
-	@LdapAttribute(name = "gluuLoadAvg", updateOnly = true)
+	@AttributeName(name = "gluuLoadAvg", updateOnly = true)
 	private String loadAvg;
 
-	@LdapAttribute(name = "oxIDPAuthentication")
-	@LdapJsonObject
+	@AttributeName(name = "oxIDPAuthentication")
+	@JsonObject
 	private List<OxIDPAuthConf> oxIDPAuthentication;
 
-	@LdapAttribute(name = "oxAuthenticationMode")
+	@AttributeName(name = "oxAuthenticationMode")
 	private String authenticationMode;
 
-	@LdapAttribute(name = "oxTrustAuthenticationMode")
+	@AttributeName(name = "oxTrustAuthenticationMode")
 	private String oxTrustAuthenticationMode;
 
-	@LdapAttribute(name = "oxLogViewerConfig")
+	@AttributeName(name = "oxLogViewerConfig")
 	private String oxLogViewerConfig;
 
-	@LdapAttribute(name = "oxLogConfigLocation")
+	@AttributeName(name = "oxLogConfigLocation")
 	private String oxLogConfigLocation;
 
-	@LdapAttribute(name = "passwordResetAllowed")
+	@AttributeName(name = "passwordResetAllowed")
 	private GluuBoolean passwordResetAllowed;
 
-	@LdapAttribute(name = "oxTrustStoreConf")
-	@LdapJsonObject
+	@AttributeName(name = "oxTrustStoreConf")
+	@JsonObject
 	private TrustStoreConfiguration trustStoreConfiguration;
 
-	@LdapAttribute(name = "oxTrustStoreCert")
-	@LdapJsonObject
+	@AttributeName(name = "oxTrustStoreCert")
+	@JsonObject
 	private List<TrustStoreCertificate> trustStoreCertificates;
 
-	@LdapAttribute(name = "oxCacheConfiguration")
-	@LdapJsonObject
+	@AttributeName(name = "oxCacheConfiguration")
+	@JsonObject
 	private CacheConfiguration cacheConfiguration;
 
 	public final SmtpConfiguration getSmtpConfiguration() {

@@ -1,15 +1,15 @@
 package org.gluu.oxauth.cas.auth.conf;
 
 import org.gluu.oxauth.client.conf.LdapAppConfiguration;
-import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
-import org.gluu.site.ldap.persistence.annotation.LdapJsonObject;
+import org.gluu.persist.annotation.AttributeName;
+import org.gluu.persist.annotation.JsonObject;
 
 public class CasLdapAppConfiguration extends LdapAppConfiguration {
 
 	private static final long serialVersionUID = -7301311833970330177L;
 
-	@LdapJsonObject
-	@LdapAttribute(name = "oxConfApplication")
+	@JsonObject
+	@AttributeName(name = "oxConfApplication")
     private CasAppConfiguration application;
 
         @Override

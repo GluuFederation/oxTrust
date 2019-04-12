@@ -3,7 +3,7 @@ package org.gluu.oxtrust.model;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.gluu.site.ldap.persistence.annotation.LdapEnum;
+import org.gluu.persist.annotation.AttributeEnum;
 
 /**
  * Metadata source type
@@ -11,7 +11,7 @@ import org.gluu.site.ldap.persistence.annotation.LdapEnum;
  * @author Shekhar Laad Date: 25.08.2016
  */
 
-public enum GluuEntityType implements LdapEnum {
+public enum GluuEntityType implements AttributeEnum {
 
 	SingleSP("Single SP", "Single SP"), FederationAggregate("Federation/Aggregate", "Federation/Aggregate");
 
@@ -44,7 +44,7 @@ public enum GluuEntityType implements LdapEnum {
 	}
 
         @Override
-	public Enum<? extends LdapEnum> resolveByValue(String value) {
+	public Enum<? extends AttributeEnum> resolveByValue(String value) {
 		return getByValue(value);
 	}
 

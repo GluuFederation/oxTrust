@@ -9,36 +9,36 @@ package org.gluu.oxtrust.model.push;
 import java.io.Serializable;
 
 import org.gluu.persist.model.base.Entry;
-import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
-import org.gluu.site.ldap.persistence.annotation.LdapEntry;
-import org.gluu.site.ldap.persistence.annotation.LdapJsonObject;
-import org.gluu.site.ldap.persistence.annotation.LdapObjectClass;
+import org.gluu.persist.annotation.AttributeName;
+import org.gluu.persist.annotation.DataEntry;
+import org.gluu.persist.annotation.JsonObject;
+import org.gluu.persist.annotation.ObjectClass;
 
 /**
  * Push device
  * 
  * @author Yuriy Movchan Date: 01/10/2014
  */
-@LdapEntry(sortBy = { "userId" })
-@LdapObjectClass(values = { "top", "oxPushDevice" })
+@DataEntry(sortBy = { "userId" })
+@ObjectClass(values = { "top", "oxPushDevice" })
 public class PushDevice extends Entry implements Serializable {
 
 	private static final long serialVersionUID = 1332826784937052508L;
 
-	@LdapAttribute(ignoreDuringUpdate = true, name = "oxId")
+	@AttributeName(ignoreDuringUpdate = true, name = "oxId")
 	private String id;
 
-	@LdapAttribute(name = "oxType")
+	@AttributeName(name = "oxType")
 	private String type;
 
-	@LdapAttribute(name = "oxPushApplication")
+	@AttributeName(name = "oxPushApplication")
 	private String application;
 
-	@LdapAttribute(name = "oxAuthUserId")
+	@AttributeName(name = "oxAuthUserId")
 	private String userId;
 
-	@LdapAttribute(name = "oxPushDeviceConf")
-	@LdapJsonObject
+	@AttributeName(name = "oxPushDeviceConf")
+	@JsonObject
 	private PushDeviceConfiguration deviceConfiguration;
 
 	public String getId() {

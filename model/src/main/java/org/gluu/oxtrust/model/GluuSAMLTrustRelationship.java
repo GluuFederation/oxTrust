@@ -21,59 +21,59 @@ import javax.validation.constraints.Size;
 
 import org.gluu.model.GluuStatus;
 import org.gluu.persist.model.base.InumEntry;
-import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
-import org.gluu.site.ldap.persistence.annotation.LdapEntry;
-import org.gluu.site.ldap.persistence.annotation.LdapObjectClass;
+import org.gluu.persist.annotation.AttributeName;
+import org.gluu.persist.annotation.DataEntry;
+import org.gluu.persist.annotation.ObjectClass;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
-@LdapEntry
-@LdapObjectClass(values = { "top", "gluuSAMLconfig" })
+@DataEntry
+@ObjectClass(values = { "top", "gluuSAMLconfig" })
 @JsonInclude(Include.NON_NULL)
 public class GluuSAMLTrustRelationship extends InumEntry implements Serializable {
 
 	private static final long serialVersionUID = 5907443836820485369L;
 
-	@LdapAttribute(ignoreDuringUpdate = true)
+	@AttributeName(ignoreDuringUpdate = true)
 	private String inum;
 
-	@LdapAttribute(ignoreDuringUpdate = true)
+	@AttributeName(ignoreDuringUpdate = true)
 	private String iname;
 
 	@NotNull
 	@Size(min = 0, max = 60, message = "Length of the Display Name should not exceed 60")
-	@LdapAttribute
+	@AttributeName
 	private String displayName;
 
 	@NotNull
 	@Size(min = 0, max = 4000, message = "Length of the Description should not exceed 4000")
-	@LdapAttribute
+	@AttributeName
 	private String description;
 
-	@LdapAttribute(name = "gluuStatus")
+	@AttributeName(name = "gluuStatus")
 	private GluuStatus status;
 
-	@LdapAttribute(name = "gluuValidationStatus")
+	@AttributeName(name = "gluuValidationStatus")
 	private GluuValidationStatus validationStatus;
 
-	@LdapAttribute(name = "gluuReleasedAttribute")
+	@AttributeName(name = "gluuReleasedAttribute")
 	private List<String> releasedAttributes;
 
 	@NotNull
-	@LdapAttribute(name = "gluuSAMLspMetaDataSourceType")
+	@AttributeName(name = "gluuSAMLspMetaDataSourceType")
 	private GluuMetadataSourceType spMetaDataSourceType;
 
-	@LdapAttribute(name = "gluuSAMLspMetaDataFN")
+	@AttributeName(name = "gluuSAMLspMetaDataFN")
 	private String spMetaDataFN;
 
-	@LdapAttribute(name = "gluuSAMLspMetaDataURL")
+	@AttributeName(name = "gluuSAMLspMetaDataURL")
 	private String spMetaDataURL;
 
-	@LdapAttribute(name = "o")
+	@AttributeName(name = "o")
 	private String owner;
 
-	@LdapAttribute(name = "gluuSAMLmaxRefreshDelay")
+	@AttributeName(name = "gluuSAMLmaxRefreshDelay")
 	private String maxRefreshDelay;
 
 	@Transient
@@ -83,47 +83,47 @@ public class GluuSAMLTrustRelationship extends InumEntry implements Serializable
 
 	private Map<String, ProfileConfiguration> profileConfigurations = new HashMap<String, ProfileConfiguration>();
 
-	@LdapAttribute(name = "gluuSAMLMetaDataFilter")
+	@AttributeName(name = "gluuSAMLMetaDataFilter")
 	private List<String> gluuSAMLMetaDataFilter;
 
-	@LdapAttribute(name = "gluuTrustContact")
+	@AttributeName(name = "gluuTrustContact")
 	private List<String> gluuTrustContact;
 
 	private List<DeconstructedTrustRelationship> deconstructedTrustRelationships = new ArrayList<DeconstructedTrustRelationship>();
 
-	@LdapAttribute(name = "gluuTrustDeconstruction")
+	@AttributeName(name = "gluuTrustDeconstruction")
 	private List<String> gluuTrustDeconstruction;
 
-	@LdapAttribute(name = "gluuContainerFederation")
+	@AttributeName(name = "gluuContainerFederation")
 	protected String gluuContainerFederation;
 
-	@LdapAttribute(name = "gluuIsFederation")
+	@AttributeName(name = "gluuIsFederation")
 	private String gluuIsFederation;
 
-	@LdapAttribute(name = "gluuEntityId")
+	@AttributeName(name = "gluuEntityId")
 	private List<String> gluuEntityId;
 
-	@LdapAttribute(name = "gluuProfileConfiguration")
+	@AttributeName(name = "gluuProfileConfiguration")
 	private List<String> gluuProfileConfiguration;
 
-	@LdapAttribute(name = "gluuSpecificRelyingPartyConfig")
+	@AttributeName(name = "gluuSpecificRelyingPartyConfig")
 	private String gluuSpecificRelyingPartyConfig;
 
 	@Pattern(regexp = "^(https?|http)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]", message = "Please enter a valid SP url, including protocol (http/https)")
-	@LdapAttribute(name = "url")
+	@AttributeName(name = "url")
 	private String url;
 
 	@Pattern(regexp = "^$|(^(https?|http)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|])", message = "Please enter a valid url, including protocol (http/https)")
-	@LdapAttribute(name = "oxAuthPostLogoutRedirectURI")
+	@AttributeName(name = "oxAuthPostLogoutRedirectURI")
 	private String spLogoutURL;
 
-	@LdapAttribute(name = "gluuValidationLog")
+	@AttributeName(name = "gluuValidationLog")
 	private List<String> validationLog;
 
-	@LdapAttribute(name = "researchAndScholarshipEnabled")
+	@AttributeName(name = "researchAndScholarshipEnabled")
 	private String researchBundleEnabled;
 
-	@LdapAttribute(name = "gluuEntityType")
+	@AttributeName(name = "gluuEntityType")
 	private GluuEntityType entityType;
 
 	public void setFederation(boolean isFederation) {

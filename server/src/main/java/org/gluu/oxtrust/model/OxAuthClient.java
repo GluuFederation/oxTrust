@@ -20,10 +20,10 @@ import org.gluu.oxauth.model.common.GrantType;
 import org.gluu.oxauth.model.common.ResponseType;
 import org.gluu.persist.model.base.Entry;
 import org.gluu.persist.model.base.GluuBoolean;
-import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
-import org.gluu.site.ldap.persistence.annotation.LdapEntry;
-import org.gluu.site.ldap.persistence.annotation.LdapJsonObject;
-import org.gluu.site.ldap.persistence.annotation.LdapObjectClass;
+import org.gluu.persist.annotation.AttributeName;
+import org.gluu.persist.annotation.DataEntry;
+import org.gluu.persist.annotation.JsonObject;
+import org.gluu.persist.annotation.ObjectClass;
 
 /**
  * oxAuthClient
@@ -33,202 +33,202 @@ import org.gluu.site.ldap.persistence.annotation.LdapObjectClass;
  * @author Javier Rojas Blum
  * @version December 4, 2018
  */
-@LdapEntry(sortBy = { "displayName" })
-@LdapObjectClass(values = { "top", "oxAuthClient" })
+@DataEntry(sortBy = { "displayName" })
+@ObjectClass(values = { "top", "oxAuthClient" })
 public class OxAuthClient extends Entry implements Serializable {
 
 	private static final long serialVersionUID = -2310140703735705346L;
 
 	private transient boolean selected;
 
-	@LdapAttribute(ignoreDuringUpdate = true)
+	@AttributeName(ignoreDuringUpdate = true)
 	private String inum;
 
-	@LdapAttribute(ignoreDuringUpdate = true)
+	@AttributeName(ignoreDuringUpdate = true)
 	private String iname;
 
 	@NotNull
 	@Size(min = 0, max = 60, message = "Length of the Display Name should not exceed 60")
-	@LdapAttribute
+	@AttributeName
 	private String displayName;
 
 	@NotNull
 	@Size(min = 0, max = 250, message = "Length of the Description should not exceed 250")
-	@LdapAttribute
+	@AttributeName
 	private String description;
 
 	@NotNull
-	@LdapAttribute(name = "oxAuthAppType")
+	@AttributeName(name = "oxAuthAppType")
 	private OxAuthApplicationType oxAuthAppType;
 
-	@LdapAttribute(name = "oxAuthContact")
+	@AttributeName(name = "oxAuthContact")
 	private List<String> contacts;
 
-	@LdapAttribute(name = "oxAuthRedirectURI")
+	@AttributeName(name = "oxAuthRedirectURI")
 	private List<String> oxAuthRedirectURIs;
 
-	@LdapAttribute(name = "oxAuthPostLogoutRedirectURI")
+	@AttributeName(name = "oxAuthPostLogoutRedirectURI")
 	private List<String> oxAuthPostLogoutRedirectURIs;
 
-	@LdapAttribute(name = "oxAuthScope")
+	@AttributeName(name = "oxAuthScope")
 	private List<String> oxAuthScopes;
 
-	@LdapAttribute(name = "oxAuthClaim")
+	@AttributeName(name = "oxAuthClaim")
 	private List<String> oxAuthClaims;
 
 	@NotNull
-	@LdapAttribute(name = "oxAuthClientSecret")
+	@AttributeName(name = "oxAuthClientSecret")
 	private String encodedClientSecret;
 
-	@LdapAttribute(ignoreDuringUpdate = true)
+	@AttributeName(ignoreDuringUpdate = true)
 	private String userPassword;
 
-	@LdapAttribute(name = "associatedPerson")
+	@AttributeName(name = "associatedPerson")
 	private List<String> associatedPersons;
 
-	@LdapAttribute(name = "oxAuthTrustedClient")
+	@AttributeName(name = "oxAuthTrustedClient")
 	private GluuBoolean oxAuthTrustedClient = GluuBoolean.FALSE;
 
-	@LdapAttribute(name = "oxAuthResponseType")
+	@AttributeName(name = "oxAuthResponseType")
 	private ResponseType[] responseTypes;
 
-	@LdapAttribute(name = "oxAuthGrantType")
+	@AttributeName(name = "oxAuthGrantType")
 	private GrantType[] grantTypes;
 
-	@LdapAttribute(name = "oxAuthLogoURI")
+	@AttributeName(name = "oxAuthLogoURI")
 	private String logoUri;
 
-	@LdapAttribute(name = "oxAuthClientURI")
+	@AttributeName(name = "oxAuthClientURI")
 	private String clientUri;
 
-	@LdapAttribute(name = "oxAuthPolicyURI")
+	@AttributeName(name = "oxAuthPolicyURI")
 	private String policyUri;
 
-	@LdapAttribute(name = "oxAuthTosURI")
+	@AttributeName(name = "oxAuthTosURI")
 	private String tosUri;
 
-	@LdapAttribute(name = "oxAuthJwksURI")
+	@AttributeName(name = "oxAuthJwksURI")
 	private String jwksUri;
 
-	@LdapAttribute(name = "oxAuthJwks")
+	@AttributeName(name = "oxAuthJwks")
 	private String jwks;
 
-	@LdapAttribute(name = "oxAuthSectorIdentifierURI")
+	@AttributeName(name = "oxAuthSectorIdentifierURI")
 	private String sectorIdentifierUri;
 
-	@LdapAttribute(name = "oxAuthSubjectType")
+	@AttributeName(name = "oxAuthSubjectType")
 	private OxAuthSubjectType subjectType;
 
-	@LdapAttribute(name = "oxIdTokenTokenBindingCnf")
+	@AttributeName(name = "oxIdTokenTokenBindingCnf")
 	private String idTokenTokenBindingCnf;
 
-	@LdapAttribute(name = "oxRptAsJwt")
+	@AttributeName(name = "oxRptAsJwt")
 	private GluuBoolean rptAsJwt = GluuBoolean.FALSE;
 
-	@LdapAttribute(name = "oxAccessTokenAsJwt")
+	@AttributeName(name = "oxAccessTokenAsJwt")
 	private GluuBoolean accessTokenAsJwt = GluuBoolean.FALSE;
 
-	@LdapAttribute(name = "oxAccessTokenSigningAlg")
+	@AttributeName(name = "oxAccessTokenSigningAlg")
 	private SignatureAlgorithm accessTokenSigningAlg;
 
-	@LdapAttribute(name = "oxAuthIdTokenSignedResponseAlg")
+	@AttributeName(name = "oxAuthIdTokenSignedResponseAlg")
 	private SignatureAlgorithm idTokenSignedResponseAlg;
 
-	@LdapAttribute(name = "oxAuthIdTokenEncryptedResponseAlg")
+	@AttributeName(name = "oxAuthIdTokenEncryptedResponseAlg")
 	private KeyEncryptionAlgorithm idTokenEncryptedResponseAlg;
 
-	@LdapAttribute(name = "oxAuthIdTokenEncryptedResponseEnc")
+	@AttributeName(name = "oxAuthIdTokenEncryptedResponseEnc")
 	private BlockEncryptionAlgorithm idTokenEncryptedResponseEnc;
 
-	@LdapAttribute(name = "oxAuthSignedResponseAlg")
+	@AttributeName(name = "oxAuthSignedResponseAlg")
 	private SignatureAlgorithm userInfoSignedResponseAlg;
 
-	@LdapAttribute(name = "oxAuthUserInfoEncryptedResponseAlg")
+	@AttributeName(name = "oxAuthUserInfoEncryptedResponseAlg")
 	private KeyEncryptionAlgorithm userInfoEncryptedResponseAlg;
 
-	@LdapAttribute(name = "oxAuthUserInfoEncryptedResponseEnc")
+	@AttributeName(name = "oxAuthUserInfoEncryptedResponseEnc")
 	private BlockEncryptionAlgorithm userInfoEncryptedResponseEnc;
 
-	@LdapAttribute(name = "oxAuthRequestObjectSigningAlg")
+	@AttributeName(name = "oxAuthRequestObjectSigningAlg")
 	private SignatureAlgorithm requestObjectSigningAlg;
 
-	@LdapAttribute(name = "oxAuthRequestObjectEncryptionAlg")
+	@AttributeName(name = "oxAuthRequestObjectEncryptionAlg")
 	private KeyEncryptionAlgorithm requestObjectEncryptionAlg;
 
-	@LdapAttribute(name = "oxAuthRequestObjectEncryptionEnc")
+	@AttributeName(name = "oxAuthRequestObjectEncryptionEnc")
 	private BlockEncryptionAlgorithm requestObjectEncryptionEnc;
 
-	@LdapAttribute(name = "oxAuthTokenEndpointAuthMethod")
+	@AttributeName(name = "oxAuthTokenEndpointAuthMethod")
 	private AuthenticationMethod tokenEndpointAuthMethod;
 
-	@LdapAttribute(name = "oxAuthTokenEndpointAuthSigningAlg")
+	@AttributeName(name = "oxAuthTokenEndpointAuthSigningAlg")
 	private SignatureAlgorithm tokenEndpointAuthSigningAlg;
 
-	@LdapAttribute(name = "oxAuthDefaultMaxAge")
+	@AttributeName(name = "oxAuthDefaultMaxAge")
 	private Integer defaultMaxAge;
 
-	@LdapAttribute(name = "oxAuthRequireAuthTime")
+	@AttributeName(name = "oxAuthRequireAuthTime")
 	private GluuBoolean requireAuthTime;
 
-	@LdapAttribute(name = "oxAuthPostLogoutRedirectURI")
+	@AttributeName(name = "oxAuthPostLogoutRedirectURI")
 	private String[] postLogoutRedirectUris;
 
-	@LdapAttribute(name = "oxClaimRedirectURI")
+	@AttributeName(name = "oxClaimRedirectURI")
 	private String[] claimRedirectURI;
 
-	@LdapAttribute(name = "oxAuthLogoutURI")
+	@AttributeName(name = "oxAuthLogoutURI")
 	private List<String> logoutUri;
 
-	@LdapAttribute(name = "oxAuthLogoutSessionRequired")
+	@AttributeName(name = "oxAuthLogoutSessionRequired")
 	private GluuBoolean logoutSessionRequired = GluuBoolean.FALSE;
 
-	@LdapAttribute(name = "oxPersistClientAuthorizations")
+	@AttributeName(name = "oxPersistClientAuthorizations")
 	private GluuBoolean oxAuthPersistClientAuthorizations = GluuBoolean.TRUE;
 
-	@LdapAttribute(name = "oxIncludeClaimsInIdToken")
+	@AttributeName(name = "oxIncludeClaimsInIdToken")
 	private GluuBoolean oxIncludeClaimsInIdToken = GluuBoolean.FALSE;
 
-	@LdapAttribute(name = "oxRefreshTokenLifetime")
+	@AttributeName(name = "oxRefreshTokenLifetime")
 	private Integer oxRefreshTokenLifetime;
 
-	@LdapAttribute(name = "oxAccessTokenLifetime")
+	@AttributeName(name = "oxAccessTokenLifetime")
 	private Integer accessTokenLifetime;
 
-	@LdapAttribute(name = "oxAuthDefaultAcrValues")
+	@AttributeName(name = "oxAuthDefaultAcrValues")
 	private String[] defaultAcrValues;
 
-	@LdapAttribute(name = "oxAuthInitiateLoginURI")
+	@AttributeName(name = "oxAuthInitiateLoginURI")
 	private String initiateLoginUri;
 
-	@LdapAttribute(name = "oxAuthClientSecretExpiresAt")
+	@AttributeName(name = "oxAuthClientSecretExpiresAt")
 	private Date clientSecretExpiresAt;
 
-	@LdapAttribute(name = "oxAuthRequestURI")
+	@AttributeName(name = "oxAuthRequestURI")
 	private String[] requestUris;
 
-	@LdapAttribute(name = "oxAuthAuthorizedOrigins")
+	@AttributeName(name = "oxAuthAuthorizedOrigins")
 	private String[] authorizedOrigins;
 
-	@LdapAttribute(name = "oxSoftwareId")
+	@AttributeName(name = "oxSoftwareId")
 	private String softwareId;
 
-	@LdapAttribute(name = "oxSoftwareVersion")
+	@AttributeName(name = "oxSoftwareVersion")
 	private String softwareVersion;
 
-	@LdapAttribute(name = "oxSoftwareStatement")
+	@AttributeName(name = "oxSoftwareStatement")
 	private String softwareStatement;
 
-	@LdapAttribute(name = "oxDisabled")
+	@AttributeName(name = "oxDisabled")
 	private boolean disabled;
 
-	@LdapAttribute(name = "oxdId")
+	@AttributeName(name = "oxdId")
 	private String oxdId;
 
 	@Transient
 	private String oxAuthClientSecret;
 
-	@LdapAttribute(name = "oxAttributes")
-	@LdapJsonObject
+	@AttributeName(name = "oxAttributes")
+	@JsonObject
 	private ClientAttributes attributes;
 
 	public boolean isSelected() {

@@ -3,12 +3,12 @@ package org.gluu.oxtrust.model;
 import java.io.Serializable;
 
 import org.gluu.persist.model.base.BaseEntry;
-import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
-import org.gluu.site.ldap.persistence.annotation.LdapEntry;
-import org.gluu.site.ldap.persistence.annotation.LdapObjectClass;
+import org.gluu.persist.annotation.AttributeName;
+import org.gluu.persist.annotation.DataEntry;
+import org.gluu.persist.annotation.ObjectClass;
 
-@LdapEntry(sortBy = { "oxId" })
-@LdapObjectClass(values = { "top", "pairwiseIdentifier" })
+@DataEntry(sortBy = { "oxId" })
+@ObjectClass(values = { "top", "pairwiseIdentifier" })
 public class GluuUserPairwiseIdentifier extends BaseEntry implements Serializable {
 
 	/**
@@ -16,11 +16,11 @@ public class GluuUserPairwiseIdentifier extends BaseEntry implements Serializabl
 	 */
 	private static final long serialVersionUID = -449401585533639948L;
 
-	@LdapAttribute(ignoreDuringUpdate = true)
+	@AttributeName(ignoreDuringUpdate = true)
 	private String oxId;
-	@LdapAttribute(name = "oxAuthClientId")
+	@AttributeName(name = "oxAuthClientId")
 	private String clientId;
-	@LdapAttribute(name = "oxSectorIdentifier")
+	@AttributeName(name = "oxSectorIdentifier")
 	private String sp;
 
 	public String getOxId() {
