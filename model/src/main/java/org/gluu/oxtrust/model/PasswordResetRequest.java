@@ -13,20 +13,20 @@ import java.io.Serializable;
 import java.util.Date;
 
 import org.gluu.persist.model.base.Entry;
-import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
-import org.gluu.site.ldap.persistence.annotation.LdapEntry;
-import org.gluu.site.ldap.persistence.annotation.LdapObjectClass;
+import org.gluu.persist.annotation.AttributeName;
+import org.gluu.persist.annotation.DataEntry;
+import org.gluu.persist.annotation.ObjectClass;
 
-@LdapEntry(sortBy = "creationDate")
-@LdapObjectClass(values = { "top", "gluuPasswordResetRequest" })
+@DataEntry(sortBy = "creationDate")
+@ObjectClass(values = { "top", "gluuPasswordResetRequest" })
 public class PasswordResetRequest extends Entry implements Serializable {
 
 	private static final long serialVersionUID = -3360077330096416826L;
-	@LdapAttribute
+	@AttributeName
 	private String oxGuid;
-	@LdapAttribute
+	@AttributeName
 	private String personInum;
-	@LdapAttribute
+	@AttributeName
 	private Date creationDate;
 
 	public String getOxGuid() {

@@ -11,43 +11,43 @@ import java.util.Arrays;
 
 import org.gluu.model.GluuStatus;
 import org.gluu.persist.model.base.Entry;
-import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
-import org.gluu.site.ldap.persistence.annotation.LdapEntry;
-import org.gluu.site.ldap.persistence.annotation.LdapObjectClass;
+import org.gluu.persist.annotation.AttributeName;
+import org.gluu.persist.annotation.DataEntry;
+import org.gluu.persist.annotation.ObjectClass;
 
 /**
  * GluuInumMap
  * 
  * @author Yuriy Movchan Date: 07.13.2011
  */
-@LdapEntry(sortBy = { "inum" })
-@LdapObjectClass(values = { "top", "gluuInumMap" })
+@DataEntry(sortBy = { "inum" })
+@ObjectClass(values = { "top", "gluuInumMap" })
 public class GluuInumMap extends Entry implements Serializable {
 
 	private static final long serialVersionUID = -2190480357430436503L;
 
-	@LdapAttribute(ignoreDuringUpdate = true)
+	@AttributeName(ignoreDuringUpdate = true)
 	private String inum;
 
-	@LdapAttribute
+	@AttributeName
 	private String primaryKeyAttrName;
 
-	@LdapAttribute(name = "primaryKeyValue")
+	@AttributeName(name = "primaryKeyValue")
 	private String[] primaryKeyValues;
 
-	@LdapAttribute
+	@AttributeName
 	private String secondaryKeyAttrName;
 
-	@LdapAttribute(name = "secondaryKeyValue")
+	@AttributeName(name = "secondaryKeyValue")
 	private String[] secondaryKeyValues;
 
-	@LdapAttribute
+	@AttributeName
 	private String tertiaryKeyAttrName;
 
-	@LdapAttribute(name = "tertiaryKeyValue")
+	@AttributeName(name = "tertiaryKeyValue")
 	private String[] tertiaryKeyValues;
 
-	@LdapAttribute(name = "gluuStatus")
+	@AttributeName(name = "gluuStatus")
 	private GluuStatus status;
 
 	public String getInum() {

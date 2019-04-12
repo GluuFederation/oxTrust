@@ -9,17 +9,17 @@ package org.gluu.oxtrust.model;
 import java.io.Serializable;
 
 import org.gluu.persist.model.base.Entry;
-import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
-import org.gluu.site.ldap.persistence.annotation.LdapEntry;
-import org.gluu.site.ldap.persistence.annotation.LdapObjectClass;
+import org.gluu.persist.annotation.AttributeName;
+import org.gluu.persist.annotation.DataEntry;
+import org.gluu.persist.annotation.ObjectClass;
 
-@LdapEntry
-@LdapObjectClass(values = { "top", "organizationalunit" })
+@DataEntry
+@ObjectClass(values = { "top", "organizationalunit" })
 public class OrganizationalUnit extends Entry implements Serializable {
 
 	private static final long serialVersionUID = -1585717575485030550L;
 
-	@LdapAttribute
+	@AttributeName
 	private String ou;
 
 	public String getOu() {

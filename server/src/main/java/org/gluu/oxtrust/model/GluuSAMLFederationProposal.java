@@ -8,17 +8,17 @@ package org.gluu.oxtrust.model;
 
 import org.gluu.oxtrust.ldap.service.FederationService;
 import org.gluu.service.cdi.util.CdiUtil;
-import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
+import org.gluu.persist.annotation.AttributeName;
 import org.gluu.util.StringHelper;
 
 public class GluuSAMLFederationProposal extends GluuSAMLTrustRelationship {
 
 	private static final long serialVersionUID = 917608495756044798L;
 
-	@LdapAttribute(name = "gluuRulesAccepted")
+	@AttributeName(name = "gluuRulesAccepted")
 	private String gluuRulesAccepted;
 
-	@LdapAttribute(name = "federationRules")
+	@AttributeName(name = "federationRules")
 	private String federationRules;
 
 	public void setRulesAccepted(boolean rulesAccepted) {

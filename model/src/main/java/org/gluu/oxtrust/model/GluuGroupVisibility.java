@@ -9,14 +9,14 @@ package org.gluu.oxtrust.model;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.gluu.site.ldap.persistence.annotation.LdapEnum;
+import org.gluu.persist.annotation.AttributeEnum;
 
 /**
  * Group Visibility
  * 
  * @author Yuriy Movchan Date: 11.02.2010
  */
-public enum GluuGroupVisibility implements LdapEnum {
+public enum GluuGroupVisibility implements AttributeEnum {
 
 	PUBLIC("public", "Public"), PRIVATE("private", "Private");
 
@@ -48,7 +48,7 @@ public enum GluuGroupVisibility implements LdapEnum {
 		return mapByValues.get(value);
 	}
 
-	public Enum<? extends LdapEnum> resolveByValue(String value) {
+	public Enum<? extends AttributeEnum> resolveByValue(String value) {
 		return getByValue(value);
 	}
 

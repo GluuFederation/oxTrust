@@ -3,13 +3,13 @@ package org.gluu.oxtrust.model;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.gluu.site.ldap.persistence.annotation.LdapEnum;
+import org.gluu.persist.annotation.AttributeEnum;
 
 /**
  * @author Javier Rojas Blum
  * @version November 9, 2015
  */
-public enum OxAuthSubjectType implements LdapEnum {
+public enum OxAuthSubjectType implements AttributeEnum {
 
     PAIRWISE("pairwise", "pairwise"),
     PUBLIC("public", "public");
@@ -42,7 +42,7 @@ public enum OxAuthSubjectType implements LdapEnum {
         return mapByValues.get(value);
     }
 
-    public Enum<? extends LdapEnum> resolveByValue(String value) {
+    public Enum<? extends AttributeEnum> resolveByValue(String value) {
         return getByValue(value);
     }
 

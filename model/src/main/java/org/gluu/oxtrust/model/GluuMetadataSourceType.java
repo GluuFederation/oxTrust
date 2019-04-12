@@ -9,14 +9,14 @@ package org.gluu.oxtrust.model;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.gluu.site.ldap.persistence.annotation.LdapEnum;
+import org.gluu.persist.annotation.AttributeEnum;
 
 /**
  * Metadata source type
  * 
  * @author Yuriy Movchan Date: 11.05.2010
  */
-public enum GluuMetadataSourceType implements LdapEnum {
+public enum GluuMetadataSourceType implements AttributeEnum {
 
 	NONE("none", "None"), FILE("file", "File"), URI("uri", "URI"), FEDERATION("federation", "Federation");
 
@@ -49,7 +49,7 @@ public enum GluuMetadataSourceType implements LdapEnum {
 	}
 
 	@Override
-	public Enum<? extends LdapEnum> resolveByValue(String value) {
+	public Enum<? extends AttributeEnum> resolveByValue(String value) {
 		return getByValue(value);
 	}
 

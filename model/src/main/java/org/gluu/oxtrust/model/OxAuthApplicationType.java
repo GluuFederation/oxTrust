@@ -9,14 +9,14 @@ package org.gluu.oxtrust.model;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.gluu.site.ldap.persistence.annotation.LdapEnum;
+import org.gluu.persist.annotation.AttributeEnum;
 
 /**
  * oxAuth Application type
  * 
  * @author Reda Zerrad Date: 06.11.2012
  */
-public enum OxAuthApplicationType implements LdapEnum {
+public enum OxAuthApplicationType implements AttributeEnum {
 
 	WEB("web", "Web"), NATIVE("native", "Native");
 
@@ -48,7 +48,7 @@ public enum OxAuthApplicationType implements LdapEnum {
 		return mapByValues.get(value);
 	}
 
-	public Enum<? extends LdapEnum> resolveByValue(String value) {
+	public Enum<? extends AttributeEnum> resolveByValue(String value) {
 		return getByValue(value);
 	}
 

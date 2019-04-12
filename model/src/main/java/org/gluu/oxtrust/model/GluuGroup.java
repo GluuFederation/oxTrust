@@ -15,10 +15,10 @@ import javax.validation.constraints.Size;
 
 import org.gluu.model.GluuStatus;
 import org.gluu.persist.model.base.Entry;
-import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
-import org.gluu.site.ldap.persistence.annotation.LdapAttributesList;
-import org.gluu.site.ldap.persistence.annotation.LdapEntry;
-import org.gluu.site.ldap.persistence.annotation.LdapObjectClass;
+import org.gluu.persist.annotation.AttributeName;
+import org.gluu.persist.annotation.AttributesList;
+import org.gluu.persist.annotation.DataEntry;
+import org.gluu.persist.annotation.ObjectClass;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -28,8 +28,8 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
  * 
  * @author Yuriy Movchan Date: 11.02.2010
  */
-@LdapEntry(sortBy = { "displayName" })
-@LdapObjectClass(values = { "top", "gluuGroup" })
+@DataEntry(sortBy = { "displayName" })
+@ObjectClass(values = { "top", "gluuGroup" })
 @JsonInclude(Include.NON_NULL)
 public class GluuGroup extends Entry implements Serializable {
 
@@ -37,45 +37,45 @@ public class GluuGroup extends Entry implements Serializable {
 
 	private transient boolean selected;
 
-	@LdapAttribute(ignoreDuringUpdate = true)
+	@AttributeName(ignoreDuringUpdate = true)
 	private String inum;
 
-	@LdapAttribute(ignoreDuringUpdate = true)
+	@AttributeName(ignoreDuringUpdate = true)
 	private String iname;
 
 	@NotNull
 	@Size(min = 0, max = 60, message = "Length of the Display Name should not exceed 60")
-	@LdapAttribute
+	@AttributeName
 	private String displayName;
 
 	@Size(min = 0, max = 4000, message = "Length of the Description should not exceed 4000")
-	@LdapAttribute
+	@AttributeName
 	private String description;
 
 	@NotNull
-	@LdapAttribute
+	@AttributeName
 	private String owner;
 
-	@LdapAttribute(name = "member")
+	@AttributeName(name = "member")
 	private List<String> members=new ArrayList<>();
 
-	@LdapAttribute(name = "c")
+	@AttributeName(name = "c")
 	private String countryName;
 
-	@LdapAttribute(name = "o")
+	@AttributeName(name = "o")
 	private String organization;
 
-	@LdapAttribute
+	@AttributeName
 	private String seeAlso;
 
-	@LdapAttribute(name = "gluuStatus")
+	@AttributeName(name = "gluuStatus")
 	private GluuStatus status;
 
-	@LdapAttribute(name = "gluuGroupVisibility")
+	@AttributeName(name = "gluuGroupVisibility")
 	private GluuGroupVisibility visibility;
 
-	@LdapAttributesList(name = "name", value = "values", sortByName = true, attributesConfiguration = {
-		@LdapAttribute(name = "inum", ignoreDuringUpdate = true)
+	@AttributesList(name = "name", value = "values", sortByName = true, attributesConfiguration = {
+		@AttributeName(name = "inum", ignoreDuringUpdate = true)
 	})
 	private List<GluuCustomAttribute> customAttributes = new ArrayList<GluuCustomAttribute>();
 

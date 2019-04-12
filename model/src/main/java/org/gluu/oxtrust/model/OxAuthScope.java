@@ -15,9 +15,9 @@ import javax.validation.constraints.Size;
 import org.gluu.oxauth.model.common.ScopeType;
 import org.gluu.persist.model.base.Entry;
 import org.gluu.persist.model.base.GluuBoolean;
-import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
-import org.gluu.site.ldap.persistence.annotation.LdapEntry;
-import org.gluu.site.ldap.persistence.annotation.LdapObjectClass;
+import org.gluu.persist.annotation.AttributeName;
+import org.gluu.persist.annotation.DataEntry;
+import org.gluu.persist.annotation.ObjectClass;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -28,8 +28,8 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
  * @author Reda Zerrad Date: 06/18/2012
  * @author Yuriy Movchan Date: 03/21/2014
  */
-@LdapEntry(sortBy = { "displayName" })
-@LdapObjectClass(values = { "top", "oxAuthCustomScope" })
+@DataEntry(sortBy = { "displayName" })
+@ObjectClass(values = { "top", "oxAuthCustomScope" })
 @JsonInclude(Include.NON_NULL)
 public class OxAuthScope extends Entry implements Serializable {
 
@@ -37,28 +37,28 @@ public class OxAuthScope extends Entry implements Serializable {
 
 	private transient boolean selected;
 
-	@LdapAttribute(ignoreDuringUpdate = true)
+	@AttributeName(ignoreDuringUpdate = true)
 	private String inum;
 
 	@NotNull
 	@Size(min = 0, max = 60, message = "Length of the Display Name should not exceed 60")
-	@LdapAttribute
+	@AttributeName
 	private String displayName;
 
 	@Size(min = 0, max = 4000, message = "Length of the Description should not exceed 4000")
-	@LdapAttribute
+	@AttributeName
 	private String description;
 
-    @LdapAttribute(name = "oxScopeType")
+    @AttributeName(name = "oxScopeType")
     private ScopeType scopeType;
 
-	@LdapAttribute(name = "oxAuthClaim")
+	@AttributeName(name = "oxAuthClaim")
 	private List<String> oxAuthClaims;
 
-	@LdapAttribute(name = "defaultScope")
+	@AttributeName(name = "defaultScope")
 	private GluuBoolean defaultScope;
 
-	@LdapAttribute(name = "oxScriptDn")
+	@AttributeName(name = "oxScriptDn")
     private List<String> dynamicScopeScripts;
 
 	public String getInum() {

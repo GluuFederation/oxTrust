@@ -11,42 +11,42 @@ import java.util.Date;
 import java.util.List;
 
 import org.gluu.persist.model.base.Entry;
-import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
-import org.gluu.site.ldap.persistence.annotation.LdapEntry;
-import org.gluu.site.ldap.persistence.annotation.LdapObjectClass;
+import org.gluu.persist.annotation.AttributeName;
+import org.gluu.persist.annotation.DataEntry;
+import org.gluu.persist.annotation.ObjectClass;
 
 /**
  * @author "Oleksiy Tataryn"
  *
  */
-@LdapEntry
-@LdapObjectClass(values = { "top", "oxLink" })
+@DataEntry
+@ObjectClass(values = { "top", "oxLink" })
 public class OxLink extends Entry implements Serializable {
 
 	private static final long serialVersionUID = -2129922260303558907L;
 
-	@LdapAttribute(name = "oxGuid")
+	@AttributeName(name = "oxGuid")
 	private String guid;
 
-	@LdapAttribute(name = "oxLinkExpirationDate")
+	@AttributeName(name = "oxLinkExpirationDate")
 	private Date linkExpirationDate;
 
-	@LdapAttribute(name = "oxLinkModerated")
+	@AttributeName(name = "oxLinkModerated")
 	private Boolean linkModerated;
 
-	@LdapAttribute(name = "oxLinkModerators")
+	@AttributeName(name = "oxLinkModerators")
 	private List<String> linkModerators;
 
-	@LdapAttribute(name = "oxLinkCreator")
+	@AttributeName(name = "oxLinkCreator")
 	private String linkCreator;
 
-	@LdapAttribute(name = "oxLinkPending")
+	@AttributeName(name = "oxLinkPending")
 	private List<String> linkPending;
 
-	@LdapAttribute(name = "oxLinkLinktrack")
+	@AttributeName(name = "oxLinkLinktrack")
 	private String linktrackLink;
 
-	@LdapAttribute(name = "description")
+	@AttributeName(name = "description")
 	private String description;
 
 	public String getGuid() {

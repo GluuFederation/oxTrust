@@ -9,12 +9,12 @@ package org.gluu.oxtrust.model;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.gluu.site.ldap.persistence.annotation.LdapEnum;
+import org.gluu.persist.annotation.AttributeEnum;
 
 /**
  * @author �Oleksiy Tataryn�
  */
-public enum GluuValidationStatus implements LdapEnum {
+public enum GluuValidationStatus implements AttributeEnum {
 
 	VALIDATION("validation", "Validation"), VALIDATION_FAILED("validation failed", "Validation Failed"), VALIDATION_SCHEDULED(
 			"validation_scheduled", "Validation Scheduled"), VALIDATION_SUCCESS("validation_success", "Validation Success");
@@ -46,7 +46,7 @@ public enum GluuValidationStatus implements LdapEnum {
 		return mapByValues.get(value);
 	}
 
-	public Enum<? extends LdapEnum> resolveByValue(String value) {
+	public Enum<? extends AttributeEnum> resolveByValue(String value) {
 		return getByValue(value);
 	}
 

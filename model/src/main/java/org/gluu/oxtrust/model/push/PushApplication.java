@@ -13,37 +13,37 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import org.gluu.persist.model.base.Entry;
-import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
-import org.gluu.site.ldap.persistence.annotation.LdapEntry;
-import org.gluu.site.ldap.persistence.annotation.LdapJsonObject;
-import org.gluu.site.ldap.persistence.annotation.LdapObjectClass;
+import org.gluu.persist.annotation.AttributeName;
+import org.gluu.persist.annotation.DataEntry;
+import org.gluu.persist.annotation.JsonObject;
+import org.gluu.persist.annotation.ObjectClass;
 
 /**
  * Push application
  * 
  * @author Yuriy Movchan Date: 01/10/2014
  */
-@LdapEntry(sortBy = { "displayName" })
-@LdapObjectClass(values = { "top", "oxPushApplication" })
+@DataEntry(sortBy = { "displayName" })
+@ObjectClass(values = { "top", "oxPushApplication" })
 public class PushApplication extends Entry implements Serializable {
 
 	private static final long serialVersionUID = 3308826784937052508L;
 
-	@LdapAttribute(ignoreDuringUpdate = true, name = "oxId")
+	@AttributeName(ignoreDuringUpdate = true, name = "oxId")
 	private String id;
 
 	@Pattern(regexp = "^[a-zA-Z0-9_]+$", message = "Name should contain only letters, digits and underscores")
 	@Size(min = 1, max = 30, message = "Length of the Name should be between 1 and 30")
-	@LdapAttribute(name = "oxName")
+	@AttributeName(name = "oxName")
 	private String name;
 
 	@NotNull
 	@Size(min = 0, max = 60, message = "Length of the Display Name should not exceed 60")
-	@LdapAttribute
+	@AttributeName
 	private String displayName;
 
-	@LdapAttribute(name = "oxPushApplicationConf")
-	@LdapJsonObject
+	@AttributeName(name = "oxPushApplicationConf")
+	@JsonObject
 	private PushApplicationConfiguration appConfiguration;
 
 	public String getId() {

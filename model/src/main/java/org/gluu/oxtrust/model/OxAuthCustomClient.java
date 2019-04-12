@@ -10,16 +10,16 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
-import org.gluu.site.ldap.persistence.annotation.LdapAttributesList;
-import org.gluu.site.ldap.persistence.annotation.LdapEntry;
-import org.gluu.site.ldap.persistence.annotation.LdapObjectClass;
+import org.gluu.persist.annotation.AttributeName;
+import org.gluu.persist.annotation.AttributesList;
+import org.gluu.persist.annotation.DataEntry;
+import org.gluu.persist.annotation.ObjectClass;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
-@LdapEntry(sortBy = { "displayName" })
-@LdapObjectClass(values = { "top", "oxAuthClient"})
+@DataEntry(sortBy = { "displayName" })
+@ObjectClass(values = { "top", "oxAuthClient"})
 @JsonInclude(Include.NON_NULL)
 public class OxAuthCustomClient extends CustomEntry implements Serializable {
 
@@ -28,9 +28,9 @@ public class OxAuthCustomClient extends CustomEntry implements Serializable {
      */
 	private static final long serialVersionUID = -3319774915823259905L;
 
-	@LdapAttributesList(name = "name", value = "values", sortByName = true, attributesConfiguration = {
-			@LdapAttribute(name = "iname", ignoreDuringUpdate = true), @LdapAttribute(name = "inum", ignoreDuringUpdate = true),
-			@LdapAttribute(name = "userPassword", ignoreDuringRead = true) })
+	@AttributesList(name = "name", value = "values", sortByName = true, attributesConfiguration = {
+			@AttributeName(name = "iname", ignoreDuringUpdate = true), @AttributeName(name = "inum", ignoreDuringUpdate = true),
+			@AttributeName(name = "userPassword", ignoreDuringRead = true) })
 	private List<GluuCustomAttribute> customAttributes = new ArrayList<GluuCustomAttribute>();
 
 	public List<GluuCustomAttribute> getCustomAttributes() {

@@ -10,25 +10,25 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
-import org.gluu.site.ldap.persistence.annotation.LdapAttributesList;
-import org.gluu.site.ldap.persistence.annotation.LdapEntry;
-import org.gluu.site.ldap.persistence.annotation.LdapObjectClass;
+import org.gluu.persist.annotation.AttributeName;
+import org.gluu.persist.annotation.AttributesList;
+import org.gluu.persist.annotation.DataEntry;
+import org.gluu.persist.annotation.ObjectClass;
 
 /**
  * User
  * 
  * @author Yuriy Movchan Date: 06/10/2013
  */
-@LdapEntry(sortBy = { "displayName" })
-@LdapObjectClass(values = { "top", "gluuPerson" })
+@DataEntry(sortBy = { "displayName" })
+@ObjectClass(values = { "top", "gluuPerson" })
 public class User extends CustomEntry implements Serializable, Cloneable {
 
 	private static final long serialVersionUID = -7779582184398161112L;
 
-	@LdapAttributesList(name = "name", value = "values", sortByName = true, attributesConfiguration = {
-			@LdapAttribute(name = "iname", ignoreDuringUpdate = true), @LdapAttribute(name = "inum", ignoreDuringUpdate = true),
-			@LdapAttribute(name = "uid", ignoreDuringUpdate = false), @LdapAttribute(name = "userPassword", ignoreDuringRead = true) })
+	@AttributesList(name = "name", value = "values", sortByName = true, attributesConfiguration = {
+			@AttributeName(name = "iname", ignoreDuringUpdate = true), @AttributeName(name = "inum", ignoreDuringUpdate = true),
+			@AttributeName(name = "uid", ignoreDuringUpdate = false), @AttributeName(name = "userPassword", ignoreDuringRead = true) })
 	protected List<GluuCustomAttribute> customAttributes = new ArrayList<GluuCustomAttribute>();
 
 	public List<GluuCustomAttribute> getCustomAttributes() {

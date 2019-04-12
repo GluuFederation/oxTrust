@@ -15,10 +15,10 @@ import java.util.List;
 
 import org.gluu.model.GluuStatus;
 import org.gluu.persist.model.base.GluuBoolean;
-import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
-import org.gluu.site.ldap.persistence.annotation.LdapEntry;
-import org.gluu.site.ldap.persistence.annotation.LdapJsonObject;
-import org.gluu.site.ldap.persistence.annotation.LdapObjectClass;
+import org.gluu.persist.annotation.AttributeName;
+import org.gluu.persist.annotation.DataEntry;
+import org.gluu.persist.annotation.JsonObject;
+import org.gluu.persist.annotation.ObjectClass;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -28,8 +28,8 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
  *
  * @author Yuriy Movchan Date: 10.21.2010
  */
-@LdapEntry(sortBy = { "displayName" })
-@LdapObjectClass(values = { "top", "gluuPerson"})
+@DataEntry(sortBy = { "displayName" })
+@ObjectClass(values = { "top", "gluuPerson"})
 @JsonInclude(Include.NON_NULL)
 public class GluuCustomPerson extends User 
                                     implements Serializable {
@@ -41,30 +41,30 @@ public class GluuCustomPerson extends User
     private String sourceServerName;
     private String sourceServerUserDn;
 
-    @LdapAttribute(name = "gluuWhitePagesListed")
+    @AttributeName(name = "gluuWhitePagesListed")
     private String gluuAllowPublication;
 
-    @LdapAttribute(name = "oxGuid")
+    @AttributeName(name = "oxGuid")
     private String guid;
 
-    @LdapAttribute(name = "gluuOptOuts")
+    @AttributeName(name = "gluuOptOuts")
     private List<String> gluuOptOuts;
 
-    @LdapAttribute(name = "associatedClient")
+    @AttributeName(name = "associatedClient")
     private List<String> associatedClient;
     
-    @LdapAttribute(name = "oxPPID")
+    @AttributeName(name = "oxPPID")
     private List<String> oxPPID;
 
-   // @LdapJsonObject
-    @LdapAttribute(name = "oxExternalUid")
+   // @JsonObject
+    @AttributeName(name = "oxExternalUid")
     private List<String> oxExternalUid;
     
-    @LdapJsonObject
-    @LdapAttribute(name = "oxOTPDevices")
+    @JsonObject
+    @AttributeName(name = "oxOTPDevices")
     private OTPDevice  oxOTPDevices;
     
-    @LdapAttribute(name = "oxMobileDevices")
+    @AttributeName(name = "oxMobileDevices")
     private String oxMobileDevices;
 
     public String getOxMobileDevices() {
@@ -83,10 +83,10 @@ public class GluuCustomPerson extends User
 		this.oxOTPDevices = oxOTPDevices;
 	}
 
-	@LdapAttribute(name = "oxCreationTimestamp")
+	@AttributeName(name = "oxCreationTimestamp")
     private Date creationDate;
 
-    @LdapAttribute
+    @AttributeName
     private Date updatedAt;
 
     public String getIname() {

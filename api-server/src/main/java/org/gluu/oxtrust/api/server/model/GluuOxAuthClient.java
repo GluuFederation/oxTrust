@@ -13,7 +13,7 @@ import org.gluu.oxtrust.model.OxAuthApplicationType;
 import org.gluu.oxtrust.model.OxAuthSubjectType;
 import org.gluu.oxtrust.model.SignatureAlgorithm;
 import org.gluu.persist.model.base.GluuBoolean;
-import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
+import org.gluu.persist.annotation.AttributeName;
 import org.gluu.oxauth.model.common.GrantType;
 import org.gluu.oxauth.model.common.ResponseType;
 
@@ -118,7 +118,7 @@ public class GluuOxAuthClient implements Serializable{
 
 	private Date clientSecretExpiresAt;
 
-	@LdapAttribute(name = "oxAuthRequestURI")
+	@AttributeName(name = "oxAuthRequestURI")
 	private String[] requestUris;
 
 	private boolean disabled;

@@ -9,12 +9,12 @@ package org.gluu.oxtrust.model;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.gluu.site.ldap.persistence.annotation.LdapEnum;
+import org.gluu.persist.annotation.AttributeEnum;
 
 /**
  * @author Yuriy Movchan Date: 07/07/2014
  */
-public enum AuthenticationMethod implements LdapEnum {
+public enum AuthenticationMethod implements AttributeEnum {
 
     /**
      * Clients in possession of a client password authenticate with the Authorization Server
@@ -77,7 +77,7 @@ public enum AuthenticationMethod implements LdapEnum {
 		return mapByValues.get(value);
 	}
 
-	public Enum<? extends LdapEnum> resolveByValue(String value) {
+	public Enum<? extends AttributeEnum> resolveByValue(String value) {
 		return getByValue(value);
 	}
 
