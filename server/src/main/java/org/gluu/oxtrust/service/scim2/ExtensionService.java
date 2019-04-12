@@ -21,7 +21,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.gluu.model.GluuAttribute;
-import org.gluu.model.attribute.Multivalued;
+import org.gluu.model.OxMultivalued;
 import org.gluu.model.scim.ScimCustomAtribute;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.model.scim2.BaseScimResource;
@@ -55,11 +55,11 @@ public class ExtensionService {
                 for (GluuAttribute attribute : attrService.getSCIMRelatedAttributes()) {
                     if (attribute.getOxSCIMCustomAttribute().equals(ScimCustomAtribute.TRUE)) {
                         //first non-null check is needed because certain entries do not have the multivalue attribute set
-                        boolean multi=attribute.getOxMultivaluedAttribute()!=null && attribute.getOxMultivaluedAttribute().equals(Multivalued.TRUE);
+                        boolean multi=attribute.getOxMultivaluedAttribute()!=null && attribute.getOxMultivaluedAttribute().equals(OxMultivalued.TRUE);
 
                         ExtensionField field=new ExtensionField();
                         field.setDescription(attribute.getDescription());
-//                        field.setType(attribute.getDataType()); //remenber to fix this when all 3.1.4 changes are present in master
+                        field.setType(attribute.getDataType());
                         field.setMultiValued(multi);
                         field.setName(attribute.getName());
 
