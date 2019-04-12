@@ -78,8 +78,8 @@ public enum FilterTemplate {
 
     }
 
-    public Filter get(String attribute, String subAttribute) {
-        return get(attribute, subAttribute, null);
+    public Filter get(String attribute, String value) {
+        return get(attribute, null, value);
     }
 
     public Filter get(String attribute) {

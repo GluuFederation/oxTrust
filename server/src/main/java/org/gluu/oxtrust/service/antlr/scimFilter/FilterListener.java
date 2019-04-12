@@ -170,7 +170,7 @@ public class FilterListener extends ScimFilterBaseListener {
                 filth = NULL_NOT_EQUALS.get(ldapAttribute);
                 filth = negateIf(filth, operator.equals(ScimOperator.EQUAL));
             } else {
-                filth = NULL_EQUALS_INNER.get(ldapAttribute, subAttribute);
+                filth = NULL_EQUALS_INNER.get(ldapAttribute, subAttribute, null);
                 filth = negateIf(filth, operator.equals(ScimOperator.NOT_EQUAL));
             }
         } else if (Type.STRING.equals(attrType) || Type.REFERENCE.equals(attrType)) {
