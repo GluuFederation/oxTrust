@@ -14,7 +14,7 @@ import org.gluu.oxtrust.api.server.util.Constants;
 import org.gluu.oxtrust.ldap.service.ConfigurationService;
 import org.gluu.oxtrust.ldap.service.EncryptionService;
 import org.gluu.oxtrust.model.GluuConfiguration;
-import org.gluu.oxtrust.util.OxTrustApiConstants;
+import org.gluu.oxtrust.api.server.util.ApiConstants;
 import org.slf4j.Logger;
 import org.gluu.model.SmtpConfiguration;
 import org.gluu.service.MailService;
@@ -25,11 +25,11 @@ import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
-@Path(OxTrustApiConstants.BASE_API_URL + OxTrustApiConstants.CONFIGURATION + OxTrustApiConstants.SMTP)
+@Path(ApiConstants.BASE_API_URL + ApiConstants.CONFIGURATION + ApiConstants.SMTP)
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-@Api(value = OxTrustApiConstants.BASE_API_URL + OxTrustApiConstants.CONFIGURATION
-		+ OxTrustApiConstants.SMTP, description = "Smtp server configuration web service")
+@Api(value = ApiConstants.BASE_API_URL + ApiConstants.CONFIGURATION
+		+ ApiConstants.SMTP, description = "Smtp server configuration web service")
 @ApplicationScoped
 public class SmtpConfigurationWebResource extends BaseWebResource {
 	@Inject
@@ -79,7 +79,7 @@ public class SmtpConfigurationWebResource extends BaseWebResource {
 	}
 
 	@GET
-	@Path(OxTrustApiConstants.TEST)
+	@Path(ApiConstants.TEST)
 	@ApiOperation(value = "Test smtp configuration")
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, response = SmtpConfiguration.class, message = Constants.RESULT_SUCCESS),

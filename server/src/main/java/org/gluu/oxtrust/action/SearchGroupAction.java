@@ -7,6 +7,7 @@
 package org.gluu.oxtrust.action;
 
 import java.io.Serializable;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.enterprise.context.ConversationScoped;
@@ -65,26 +66,22 @@ public class SearchGroupAction implements Serializable {
 		if ((this.searchPattern != null) && Util.equals(this.oldSearchPattern, this.searchPattern)) {
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
-
 		try {
 			if (searchPattern == null || searchPattern.isEmpty()) {
 				this.groupList = groupService.getAllGroups(OxTrustConstants.searchGroupSizeLimit);
 			} else {
 				this.groupList = groupService.searchGroups(this.searchPattern, OxTrustConstants.searchGroupSizeLimit);
 			}
-			
+			this.groupList.sort(Comparator.comparing(GluuGroup::getDisplayName));
 			log.debug("Found '{}' groups.", this.groupList.size());
 			this.oldSearchPattern = this.searchPattern;
-			this.searchPattern="";
+			this.searchPattern = "";
 		} catch (Exception ex) {
 			log.error("Failed to find groups", ex);
-
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to find groups");
 			conversationService.endConversation();
-
 			return OxTrustConstants.RESULT_FAILURE;
 		}
-
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 

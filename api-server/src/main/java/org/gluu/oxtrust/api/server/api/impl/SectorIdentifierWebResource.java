@@ -22,12 +22,12 @@ import javax.ws.rs.core.Response;
 
 import org.gluu.oxtrust.ldap.service.SectorIdentifierService;
 import org.gluu.oxtrust.model.OxAuthSectorIdentifier;
-import org.gluu.oxtrust.util.OxTrustApiConstants;
+import org.gluu.oxtrust.api.server.util.ApiConstants;
 import org.slf4j.Logger;
 
 import com.wordnik.swagger.annotations.ApiOperation;
 
-@Path(OxTrustApiConstants.BASE_API_URL + OxTrustApiConstants.SECTORS)
+@Path(ApiConstants.BASE_API_URL + ApiConstants.SECTORS)
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @ApplicationScoped
@@ -54,9 +54,9 @@ public class SectorIdentifierWebResource extends BaseWebResource {
 	}
 
 	@GET
-	@Path(OxTrustApiConstants.INUM_PARAM_PATH)
+	@Path(ApiConstants.INUM_PARAM_PATH)
 	@ApiOperation(value = "Get a sector identifier")
-	public Response getSectorIdentifierById(@PathParam(OxTrustApiConstants.INUM) @NotNull String id) {
+	public Response getSectorIdentifierById(@PathParam(ApiConstants.INUM) @NotNull String id) {
 		log("Get sector identifier having id: " + id);
 		try {
 			Objects.requireNonNull(id);
@@ -73,9 +73,9 @@ public class SectorIdentifierWebResource extends BaseWebResource {
 	}
 
 	@GET
-	@Path(OxTrustApiConstants.SEARCH)
+	@Path(ApiConstants.SEARCH)
 	@ApiOperation(value = "Search sectors identifiers")
-	public Response searchSectorIdentifier(@QueryParam(OxTrustApiConstants.SEARCH_PATTERN) String pattern,
+	public Response searchSectorIdentifier(@QueryParam(ApiConstants.SEARCH_PATTERN) String pattern,
 			@DefaultValue("10") @QueryParam(value = "size") int size) {
 		log("Search sector with pattern= " + pattern + "and size: " + size);
 		try {
@@ -132,9 +132,9 @@ public class SectorIdentifierWebResource extends BaseWebResource {
 	}
 
 	@DELETE
-	@Path(OxTrustApiConstants.INUM_PARAM_PATH)
+	@Path(ApiConstants.INUM_PARAM_PATH)
 	@ApiOperation(value = "Delete a sector identifier")
-	public Response deleteSectorIdentifier(@PathParam(OxTrustApiConstants.INUM) @NotNull String id) {
+	public Response deleteSectorIdentifier(@PathParam(ApiConstants.INUM) @NotNull String id) {
 		log("Delete sector identifier with id: " + id);
 		try {
 			OxAuthSectorIdentifier sectorIdentifier = sectorIdentifierService.getSectorIdentifierById(id);

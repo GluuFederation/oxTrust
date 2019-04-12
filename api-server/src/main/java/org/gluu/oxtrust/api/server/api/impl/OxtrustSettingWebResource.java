@@ -14,7 +14,7 @@ import org.gluu.oxtrust.api.server.model.OxtrustSetting;
 import org.gluu.oxtrust.api.server.util.Constants;
 import org.gluu.oxtrust.ldap.service.ConfigurationService;
 import org.gluu.oxtrust.model.GluuConfiguration;
-import org.gluu.oxtrust.util.OxTrustApiConstants;
+import org.gluu.oxtrust.api.server.util.ApiConstants;
 import org.gluu.persist.model.base.GluuBoolean;
 import org.slf4j.Logger;
 
@@ -24,11 +24,11 @@ import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
-@Path(OxTrustApiConstants.BASE_API_URL + OxTrustApiConstants.CONFIGURATION + OxTrustApiConstants.OXTRUST_SETTINGS)
+@Path(ApiConstants.BASE_API_URL + ApiConstants.CONFIGURATION + ApiConstants.OXTRUST_SETTINGS)
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-@Api(value = OxTrustApiConstants.BASE_API_URL + OxTrustApiConstants.CONFIGURATION
-		+ OxTrustApiConstants.OXTRUST_SETTINGS, description = "Oxtrust settings web service")
+@Api(value = ApiConstants.BASE_API_URL + ApiConstants.CONFIGURATION
+		+ ApiConstants.OXTRUST_SETTINGS, description = "Oxtrust settings web service")
 @ApplicationScoped
 public class OxtrustSettingWebResource extends BaseWebResource {
 	@Inject

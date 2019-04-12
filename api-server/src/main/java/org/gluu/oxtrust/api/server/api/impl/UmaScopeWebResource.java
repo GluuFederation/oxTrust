@@ -20,7 +20,8 @@ import javax.ws.rs.core.Response;
 
 import org.gluu.oxtrust.api.server.util.Constants;
 import org.gluu.oxtrust.ldap.service.uma.ScopeDescriptionService;
-import org.gluu.oxtrust.util.OxTrustApiConstants;
+import org.gluu.oxtrust.service.filter.ProtectedApi;
+import org.gluu.oxtrust.api.server.util.ApiConstants;
 import org.slf4j.Logger;
 import org.gluu.oxauth.model.uma.persistence.UmaScopeDescription;
 
@@ -28,7 +29,7 @@ import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
-@Path(OxTrustApiConstants.BASE_API_URL + OxTrustApiConstants.UMA + OxTrustApiConstants.SCOPES)
+@Path(ApiConstants.BASE_API_URL + ApiConstants.UMA + ApiConstants.SCOPES)
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @ApplicationScoped
@@ -45,6 +46,7 @@ public class UmaScopeWebResource extends BaseWebResource {
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, response = UmaScopeDescription[].class, message = Constants.RESULT_SUCCESS),
 			@ApiResponse(code = 500, message = "Server error") })
+	@ProtectedApi(scopes = { "oxtrust-api-read" })
 	public Response listUmaScopes() {
 		log(logger, "Get uma scopes");
 		try {
@@ -57,9 +59,10 @@ public class UmaScopeWebResource extends BaseWebResource {
 	}
 
 	@GET
-	@Path(OxTrustApiConstants.SEARCH)
+	@Path(ApiConstants.SEARCH)
 	@ApiOperation(value = "Search uma scopes")
-	public Response searchUmaScopes(@QueryParam(OxTrustApiConstants.SEARCH_PATTERN) @NotNull String pattern) {
+	@ProtectedApi(scopes = { "oxtrust-api-read" })
+	public Response searchUmaScopes(@QueryParam(ApiConstants.SEARCH_PATTERN) @NotNull String pattern) {
 		log(logger, "Search uma scope with pattern = " + pattern);
 		try {
 			List<UmaScopeDescription> scopes = scopeDescriptionService.findScopeDescriptions(pattern, 100);
@@ -71,9 +74,10 @@ public class UmaScopeWebResource extends BaseWebResource {
 	}
 
 	@GET
-	@Path(OxTrustApiConstants.INUM_PARAM_PATH)
+	@Path(ApiConstants.INUM_PARAM_PATH)
 	@ApiOperation(value = "Get a uma scope by inum")
-	public Response getUmaScopeByInum(@PathParam(OxTrustApiConstants.INUM) @NotNull String inum) {
+	@ProtectedApi(scopes = { "oxtrust-api-read" })
+	public Response getUmaScopeByInum(@PathParam(ApiConstants.INUM) @NotNull String inum) {
 		log(logger, "Get uma scope " + inum);
 		try {
 			Objects.requireNonNull(inum, "inum should not be null");
@@ -91,6 +95,7 @@ public class UmaScopeWebResource extends BaseWebResource {
 
 	@POST
 	@ApiOperation(value = "Add new uma scope")
+	@ProtectedApi(scopes = { "oxtrust-api-write" })
 	public Response createUmaScope(UmaScopeDescription umaScopeDescription) {
 		log(logger, "Add new uma scope");
 		try {
@@ -108,6 +113,7 @@ public class UmaScopeWebResource extends BaseWebResource {
 
 	@PUT
 	@ApiOperation(value = "Update uma scope")
+	@ProtectedApi(scopes = { "oxtrust-api-write" })
 	public Response updateUmaScope(UmaScopeDescription umaScopeDescription) {
 		String inum = umaScopeDescription.getInum();
 		log(logger, "Update uma scope " + inum);
@@ -129,9 +135,10 @@ public class UmaScopeWebResource extends BaseWebResource {
 	}
 
 	@DELETE
-	@Path(OxTrustApiConstants.INUM_PARAM_PATH)
+	@Path(ApiConstants.INUM_PARAM_PATH)
 	@ApiOperation(value = "Delete a uma scope")
-	public Response deleteUmaScope(@PathParam(OxTrustApiConstants.INUM) @NotNull String inum) {
+	@ProtectedApi(scopes = { "oxtrust-api-write" })
+	public Response deleteUmaScope(@PathParam(ApiConstants.INUM) @NotNull String inum) {
 		log(logger, "Delete a uma scope having inum " + inum);
 		try {
 			UmaScopeDescription existingScope = scopeDescriptionService.getUmaScopeByInum(inum);

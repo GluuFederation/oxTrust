@@ -23,12 +23,12 @@ import javax.ws.rs.core.Response;
 import org.gluu.oxtrust.api.server.model.GluuPersonApi;
 import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
-import org.gluu.oxtrust.util.OxTrustApiConstants;
+import org.gluu.oxtrust.api.server.util.ApiConstants;
 import org.slf4j.Logger;
 
 import com.wordnik.swagger.annotations.ApiOperation;
 
-@Path(OxTrustApiConstants.BASE_API_URL + OxTrustApiConstants.USERS)
+@Path(ApiConstants.BASE_API_URL + ApiConstants.USERS)
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @ApplicationScoped
@@ -57,9 +57,9 @@ public class PeopleWebResource extends BaseWebResource {
 	}
 
 	@GET
-	@Path(OxTrustApiConstants.SEARCH)
+	@Path(ApiConstants.SEARCH)
 	@ApiOperation(value = "Search person")
-	public Response searchGroups(@QueryParam(OxTrustApiConstants.SEARCH_PATTERN) @NotNull String pattern) {
+	public Response searchGroups(@QueryParam(ApiConstants.SEARCH_PATTERN) @NotNull String pattern) {
 		try {
 			log(logger, "Search person with pattern= " + pattern);
 			List<GluuCustomPerson> groups = personService.searchPersons(pattern);
@@ -71,9 +71,9 @@ public class PeopleWebResource extends BaseWebResource {
 	}
 
 	@GET
-	@Path(OxTrustApiConstants.INUM_PARAM_PATH)
+	@Path(ApiConstants.INUM_PARAM_PATH)
 	@ApiOperation(value = "Get a person by inum")
-	public Response getPersonByInum(@PathParam(OxTrustApiConstants.INUM) @NotNull String inum) {
+	public Response getPersonByInum(@PathParam(ApiConstants.INUM) @NotNull String inum) {
 		log(logger, "Get person " + inum);
 		try {
 			Objects.requireNonNull(inum, "inum should not be null");
@@ -133,9 +133,9 @@ public class PeopleWebResource extends BaseWebResource {
 	}
 
 	@DELETE
-	@Path(OxTrustApiConstants.INUM_PARAM_PATH)
+	@Path(ApiConstants.INUM_PARAM_PATH)
 	@ApiOperation(value = "Delete a person")
-	public Response deletePerson(@PathParam(OxTrustApiConstants.INUM) @NotNull String inum) {
+	public Response deletePerson(@PathParam(ApiConstants.INUM) @NotNull String inum) {
 		log(logger, "Delete person having inum " + inum);
 		try {
 			GluuCustomPerson existingPerson = personService.getPersonByInum(inum);

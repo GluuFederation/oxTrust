@@ -13,7 +13,7 @@ import org.gluu.oxtrust.api.server.model.AuthenticationMethod;
 import org.gluu.oxtrust.api.server.util.Constants;
 import org.gluu.oxtrust.ldap.service.ConfigurationService;
 import org.gluu.oxtrust.model.GluuConfiguration;
-import org.gluu.oxtrust.util.OxTrustApiConstants;
+import org.gluu.oxtrust.api.server.util.ApiConstants;
 import org.slf4j.Logger;
 
 import com.wordnik.swagger.annotations.Api;
@@ -21,10 +21,10 @@ import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
-@Path(OxTrustApiConstants.BASE_API_URL + OxTrustApiConstants.ACRS)
+@Path(ApiConstants.BASE_API_URL + ApiConstants.ACRS)
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-@Api(value = OxTrustApiConstants.BASE_API_URL + OxTrustApiConstants.ACRS, description = "Acrs webservice")
+@Api(value = ApiConstants.BASE_API_URL + ApiConstants.ACRS, description = "Acrs webservice")
 @ApplicationScoped
 public class AcrWebResource extends BaseWebResource {
 

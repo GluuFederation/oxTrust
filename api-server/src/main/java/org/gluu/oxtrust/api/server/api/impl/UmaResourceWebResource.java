@@ -24,14 +24,15 @@ import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.uma.ResourceSetService;
 import org.gluu.oxtrust.ldap.service.uma.ScopeDescriptionService;
 import org.gluu.oxtrust.model.OxAuthClient;
-import org.gluu.oxtrust.util.OxTrustApiConstants;
+import org.gluu.oxtrust.service.filter.ProtectedApi;
+import org.gluu.oxtrust.api.server.util.ApiConstants;
 import org.slf4j.Logger;
 import org.gluu.oxauth.model.uma.persistence.UmaResource;
 import org.gluu.oxauth.model.uma.persistence.UmaScopeDescription;
 
 import com.wordnik.swagger.annotations.ApiOperation;
 
-@Path(OxTrustApiConstants.BASE_API_URL + OxTrustApiConstants.UMA + OxTrustApiConstants.RESOURCES)
+@Path(ApiConstants.BASE_API_URL + ApiConstants.UMA + ApiConstants.RESOURCES)
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @ApplicationScoped
@@ -51,6 +52,7 @@ public class UmaResourceWebResource extends BaseWebResource {
 
 	@GET
 	@ApiOperation(value = "Get uma resources")
+	@ProtectedApi(scopes = { "oxtrust-api-read" })
 	public Response listUmaResources() {
 		try {
 			log(logger, "Get uma resources");
@@ -63,10 +65,11 @@ public class UmaResourceWebResource extends BaseWebResource {
 	}
 
 	@GET
-	@Path(OxTrustApiConstants.SEARCH)
+	@Path(ApiConstants.SEARCH)
 	@ApiOperation(value = "Search uma resources")
-	public Response searchUmaResources(@QueryParam(OxTrustApiConstants.SEARCH_PATTERN) @NotNull String pattern,
-			@QueryParam(OxTrustApiConstants.SIZE) @NotNull int size) {
+	@ProtectedApi(scopes = { "oxtrust-api-read" })
+	public Response searchUmaResources(@QueryParam(ApiConstants.SEARCH_PATTERN) @NotNull String pattern,
+			@QueryParam(ApiConstants.SIZE) @NotNull int size) {
 		try {
 			log(logger, "Search uma resources with pattern = " + pattern + " and size = " + size);
 			List<UmaResource> ressources = umaResourcesService.findResources(pattern, size);
@@ -78,9 +81,10 @@ public class UmaResourceWebResource extends BaseWebResource {
 	}
 
 	@GET
-	@Path(OxTrustApiConstants.ID_PARAM_PATH)
+	@Path(ApiConstants.ID_PARAM_PATH)
 	@ApiOperation(value = "Get a uma resource by id")
-	public Response getUmaResourceById(@PathParam(OxTrustApiConstants.ID) @NotNull String id) {
+	@ProtectedApi(scopes = { "oxtrust-api-read" })
+	public Response getUmaResourceById(@PathParam(ApiConstants.ID) @NotNull String id) {
 		try {
 			log(logger, "Get uma resource by id " + id);
 			Objects.requireNonNull(id, "id should not be null");
@@ -97,9 +101,10 @@ public class UmaResourceWebResource extends BaseWebResource {
 	}
 
 	@GET
-	@Path(OxTrustApiConstants.ID_PARAM_PATH + OxTrustApiConstants.CLIENTS)
+	@Path(ApiConstants.ID_PARAM_PATH + ApiConstants.CLIENTS)
 	@ApiOperation(value = "Get clients of uma resource")
-	public Response getUmaResourceClients(@PathParam(OxTrustApiConstants.ID) @NotNull String id) {
+	@ProtectedApi(scopes = { "oxtrust-api-read" })
+	public Response getUmaResourceClients(@PathParam(ApiConstants.ID) @NotNull String id) {
 		try {
 			log(logger, "Get clients of uma resource having id " + id);
 			Objects.requireNonNull(id, "id should not be null");
@@ -124,9 +129,10 @@ public class UmaResourceWebResource extends BaseWebResource {
 	}
 
 	@GET
-	@Path(OxTrustApiConstants.ID_PARAM_PATH + OxTrustApiConstants.SCOPES)
+	@Path(ApiConstants.ID_PARAM_PATH + ApiConstants.SCOPES)
 	@ApiOperation(value = "Get scopes of uma resource")
-	public Response getUmaResourceScopes(@PathParam(OxTrustApiConstants.ID) @NotNull String id) {
+	@ProtectedApi(scopes = { "oxtrust-api-read" })
+	public Response getUmaResourceScopes(@PathParam(ApiConstants.ID) @NotNull String id) {
 		try {
 			log(logger, "Get scopes of uma resource having id " + id);
 			Objects.requireNonNull(id, "id should not be null");
@@ -152,9 +158,10 @@ public class UmaResourceWebResource extends BaseWebResource {
 
 	@POST
 	@ApiOperation(value = "add client to uma resource")
-	@Path(OxTrustApiConstants.ID_PARAM_PATH + OxTrustApiConstants.CLIENTS + OxTrustApiConstants.INUM_PARAM_PATH)
-	public Response addClientToUmaResource(@PathParam(OxTrustApiConstants.ID) @NotNull String id,
-			@PathParam(OxTrustApiConstants.INUM) @NotNull String clientInum) {
+	@Path(ApiConstants.ID_PARAM_PATH + ApiConstants.CLIENTS + ApiConstants.INUM_PARAM_PATH)
+	@ProtectedApi(scopes = { "oxtrust-api-write" })
+	public Response addClientToUmaResource(@PathParam(ApiConstants.ID) @NotNull String id,
+			@PathParam(ApiConstants.INUM) @NotNull String clientInum) {
 		try {
 			log(logger, "Add client " + clientInum + " to uma resource " + id);
 			Objects.requireNonNull(id, "Uma id should not be null");
@@ -182,9 +189,10 @@ public class UmaResourceWebResource extends BaseWebResource {
 
 	@DELETE
 	@ApiOperation(value = "Remove client from uma resource")
-	@Path(OxTrustApiConstants.ID_PARAM_PATH + OxTrustApiConstants.CLIENTS + OxTrustApiConstants.INUM_PARAM_PATH)
-	public Response removeClientToUmaResource(@PathParam(OxTrustApiConstants.ID) @NotNull String id,
-			@PathParam(OxTrustApiConstants.INUM) @NotNull String clientInum) {
+	@Path(ApiConstants.ID_PARAM_PATH + ApiConstants.CLIENTS + ApiConstants.INUM_PARAM_PATH)
+	@ProtectedApi(scopes = { "oxtrust-api-write" })
+	public Response removeClientToUmaResource(@PathParam(ApiConstants.ID) @NotNull String id,
+			@PathParam(ApiConstants.INUM) @NotNull String clientInum) {
 		try {
 			log(logger, "Remove client " + clientInum + " from uma resource " + id);
 			Objects.requireNonNull(id, "Uma id should not be null");
@@ -212,9 +220,10 @@ public class UmaResourceWebResource extends BaseWebResource {
 
 	@POST
 	@ApiOperation(value = "add scope to uma resource")
-	@Path(OxTrustApiConstants.ID_PARAM_PATH + OxTrustApiConstants.SCOPES + OxTrustApiConstants.INUM_PARAM_PATH)
-	public Response addScopeToUmaResource(@PathParam(OxTrustApiConstants.ID) @NotNull String id,
-			@PathParam(OxTrustApiConstants.INUM) @NotNull String scopeInum) {
+	@Path(ApiConstants.ID_PARAM_PATH + ApiConstants.SCOPES + ApiConstants.INUM_PARAM_PATH)
+	@ProtectedApi(scopes = { "oxtrust-api-write" })
+	public Response addScopeToUmaResource(@PathParam(ApiConstants.ID) @NotNull String id,
+			@PathParam(ApiConstants.INUM) @NotNull String scopeInum) {
 		log(logger, "Add scope " + scopeInum + " to uma resource " + id);
 		try {
 			Objects.requireNonNull(id, "Uma id should not be null");
@@ -242,9 +251,10 @@ public class UmaResourceWebResource extends BaseWebResource {
 
 	@DELETE
 	@ApiOperation(value = "remove a scope from uma resource")
-	@Path(OxTrustApiConstants.ID_PARAM_PATH + OxTrustApiConstants.SCOPES + OxTrustApiConstants.INUM_PARAM_PATH)
-	public Response removeScopeToUmaResource(@PathParam(OxTrustApiConstants.ID) @NotNull String id,
-			@PathParam(OxTrustApiConstants.INUM) @NotNull String scopeInum) {
+	@Path(ApiConstants.ID_PARAM_PATH + ApiConstants.SCOPES + ApiConstants.INUM_PARAM_PATH)
+	@ProtectedApi(scopes = { "oxtrust-api-write" })
+	public Response removeScopeToUmaResource(@PathParam(ApiConstants.ID) @NotNull String id,
+			@PathParam(ApiConstants.INUM) @NotNull String scopeInum) {
 		try {
 			log(logger, "Remove scope " + scopeInum + " from uma resource " + id);
 			Objects.requireNonNull(id, "Uma id should not be null");
@@ -272,6 +282,7 @@ public class UmaResourceWebResource extends BaseWebResource {
 
 	@POST
 	@ApiOperation(value = "Add new uma resource")
+	@ProtectedApi(scopes = { "oxtrust-api-write" })
 	public Response createUmaResource(UmaResource umaResource) {
 		try {
 			log(logger, "Add new uma resource");
@@ -293,6 +304,7 @@ public class UmaResourceWebResource extends BaseWebResource {
 
 	@PUT
 	@ApiOperation(value = "Update uma resource")
+	@ProtectedApi(scopes = { "oxtrust-api-write" })
 	public Response updateUmaResource(UmaResource umaResource) {
 		try {
 			String id = umaResource.getId();
@@ -314,9 +326,10 @@ public class UmaResourceWebResource extends BaseWebResource {
 	}
 
 	@DELETE
-	@Path(OxTrustApiConstants.ID_PARAM_PATH)
+	@Path(ApiConstants.ID_PARAM_PATH)
 	@ApiOperation(value = "Delete a uma resource")
-	public Response deleteUmaResource(@PathParam(OxTrustApiConstants.ID) @NotNull String id) {
+	@ProtectedApi(scopes = { "oxtrust-api-write" })
+	public Response deleteUmaResource(@PathParam(ApiConstants.ID) @NotNull String id) {
 		try {
 			log(logger, "Delete uma resource with id = " + id);
 			List<UmaResource> resources = umaResourcesService.findResourcesById(id);

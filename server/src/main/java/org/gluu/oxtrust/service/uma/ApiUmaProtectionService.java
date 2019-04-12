@@ -89,8 +89,7 @@ public class ApiUmaProtectionService extends BaseUmaProtectionService implements
 		log.info("==== API Service call intercepted ====");
 		log.info("Authorization header {} found", StringUtils.isEmpty(authorization) ? "not" : "");
 		try {
-			log.info("SCIM TEST MODE:" + appConfiguration.isScimTestMode());
-			if (appConfiguration.isScimTestMode()) {
+			if (appConfiguration.isOxTrustApiTestMode()) {
 				log.info("API Test Mode is ACTIVE");
 				authorizationResponse = processTestModeAuthorization(authorization);
 			} else if (isEnabled()) {

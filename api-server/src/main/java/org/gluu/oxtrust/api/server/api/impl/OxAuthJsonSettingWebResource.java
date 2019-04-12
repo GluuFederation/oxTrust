@@ -13,7 +13,7 @@ import javax.ws.rs.core.Response;
 import org.gluu.oxtrust.api.server.model.OxAuthJsonConfiguration;
 import org.gluu.oxtrust.api.server.util.Constants;
 import org.gluu.oxtrust.ldap.service.JsonConfigurationService;
-import org.gluu.oxtrust.util.OxTrustApiConstants;
+import org.gluu.oxtrust.api.server.util.ApiConstants;
 import org.slf4j.Logger;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,11 +23,11 @@ import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
-@Path(OxTrustApiConstants.BASE_API_URL + OxTrustApiConstants.CONFIGURATION + OxTrustApiConstants.OXAUTH_JSONSETTINGS)
+@Path(ApiConstants.BASE_API_URL + ApiConstants.CONFIGURATION + ApiConstants.OXAUTH_JSONSETTINGS)
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-@Api(value = OxTrustApiConstants.BASE_API_URL + OxTrustApiConstants.CONFIGURATION
-		+ OxTrustApiConstants.OXAUTH_JSONSETTINGS, description = "OxAuth json settings web service")
+@Api(value = ApiConstants.BASE_API_URL + ApiConstants.CONFIGURATION
+		+ ApiConstants.OXAUTH_JSONSETTINGS, description = "OxAuth json settings web service")
 @ApplicationScoped
 public class OxAuthJsonSettingWebResource extends BaseWebResource {
 

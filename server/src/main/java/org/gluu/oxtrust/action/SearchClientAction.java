@@ -66,7 +66,6 @@ public class SearchClientAction implements Serializable {
 		if (Util.equals(this.oldSearchPattern, this.searchPattern)) {
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
-
 		return searchImpl();
 	}
 
@@ -86,7 +85,6 @@ public class SearchClientAction implements Serializable {
 			conversationService.endConversation();
 			return OxTrustConstants.RESULT_FAILURE;
 		}
-
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
@@ -108,7 +106,6 @@ public class SearchClientAction implements Serializable {
 				clientService.removeClient(client);
 			}
 		}
-
 		return searchImpl();
 	}
 }

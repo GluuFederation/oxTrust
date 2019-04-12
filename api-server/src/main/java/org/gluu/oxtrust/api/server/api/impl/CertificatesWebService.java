@@ -26,7 +26,7 @@ import org.gluu.oxtrust.ldap.service.SSLService;
 import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.oxtrust.model.cert.TrustStoreCertificate;
 import org.gluu.oxtrust.service.uma.annotations.UmaSecure;
-import org.gluu.oxtrust.util.OxTrustApiConstants;
+import org.gluu.oxtrust.api.server.util.ApiConstants;
 import org.gluu.oxtrust.util.X509CertificateShortInfo;
 import org.slf4j.Logger;
 
@@ -43,7 +43,7 @@ import com.wordnik.swagger.annotations.Authorization;
  * 
  * @author Dmitry Ognyannikov
  */
-@Path(OxTrustApiConstants.BASE_API_URL + OxTrustApiConstants.CERTIFICATES)
+@Path(ApiConstants.BASE_API_URL + ApiConstants.CERTIFICATES)
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @Api(value = "/api/certificates", description = "SAML UI API Endpoint", authorizations = {

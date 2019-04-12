@@ -28,12 +28,12 @@ import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
-import org.gluu.oxtrust.util.OxTrustApiConstants;
+import org.gluu.oxtrust.api.server.util.ApiConstants;
 import org.slf4j.Logger;
 
 import com.wordnik.swagger.annotations.ApiOperation;
 
-@Path(OxTrustApiConstants.BASE_API_URL + OxTrustApiConstants.GROUPS)
+@Path(ApiConstants.BASE_API_URL + ApiConstants.GROUPS)
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @ApplicationScoped
@@ -54,7 +54,7 @@ public class GroupWebResource extends BaseWebResource {
 
 	@GET
 	@ApiOperation(value = "Get groups ")
-	public Response listGroups(@DefaultValue("0") @QueryParam(OxTrustApiConstants.SIZE) int size) {
+	public Response listGroups(@DefaultValue("0") @QueryParam(ApiConstants.SIZE) int size) {
 		log("Get groups");
 		try {
 			if (size <= 0) {
@@ -69,9 +69,9 @@ public class GroupWebResource extends BaseWebResource {
 	}
 
 	@GET
-	@Path(OxTrustApiConstants.INUM_PARAM_PATH)
+	@Path(ApiConstants.INUM_PARAM_PATH)
 	@ApiOperation(value = "Get a group by inum")
-	public Response getGroupByInum(@PathParam(OxTrustApiConstants.INUM) @NotNull String inum) {
+	public Response getGroupByInum(@PathParam(ApiConstants.INUM) @NotNull String inum) {
 		log("Get group having group" + inum);
 		inum = inum.equalsIgnoreCase("") ? null : inum;
 		try {
@@ -89,10 +89,10 @@ public class GroupWebResource extends BaseWebResource {
 	}
 
 	@GET
-	@Path(OxTrustApiConstants.SEARCH)
+	@Path(ApiConstants.SEARCH)
 	@ApiOperation(value = "Search groups")
-	public Response searchGroups(@QueryParam(OxTrustApiConstants.SEARCH_PATTERN) @NotNull String pattern,
-			@DefaultValue("1") @QueryParam(OxTrustApiConstants.SIZE) int size) {
+	public Response searchGroups(@QueryParam(ApiConstants.SEARCH_PATTERN) @NotNull String pattern,
+			@DefaultValue("1") @QueryParam(ApiConstants.SIZE) int size) {
 		log("Search groups with pattern= " + pattern + " and size " + size);
 		try {
 			List<GluuGroup> groups = groupService.searchGroups(pattern, size);
@@ -104,9 +104,9 @@ public class GroupWebResource extends BaseWebResource {
 	}
 
 	@DELETE
-	@Path(OxTrustApiConstants.INUM_PARAM_PATH)
+	@Path(ApiConstants.INUM_PARAM_PATH)
 	@ApiOperation(value = "Delete a group")
-	public Response deleteGroup(@PathParam(OxTrustApiConstants.INUM) @NotNull String inum) {
+	public Response deleteGroup(@PathParam(ApiConstants.INUM) @NotNull String inum) {
 		log("Delete group having inum " + inum);
 		try {
 			Objects.requireNonNull(inum, "inum should not be null");
@@ -167,9 +167,9 @@ public class GroupWebResource extends BaseWebResource {
 	}
 
 	@GET
-	@Path(OxTrustApiConstants.INUM_PARAM_PATH + OxTrustApiConstants.GROUP_MEMBERS)
+	@Path(ApiConstants.INUM_PARAM_PATH + ApiConstants.GROUP_MEMBERS)
 	@ApiOperation(value = "Get a group members")
-	public Response getGroupMembers(@PathParam(OxTrustApiConstants.INUM) @NotNull String inum) {
+	public Response getGroupMembers(@PathParam(ApiConstants.INUM) @NotNull String inum) {
 		log("Get members of group " + inum);
 		inum = inum.equalsIgnoreCase("") ? null : inum;
 		try {
@@ -191,10 +191,9 @@ public class GroupWebResource extends BaseWebResource {
 
 	@POST
 	@ApiOperation(value = "Add group member")
-	@Path(OxTrustApiConstants.INUM_PARAM_PATH + OxTrustApiConstants.GROUP_MEMBERS
-			+ OxTrustApiConstants.MEMBER_INUM_PARAM_PATH)
-	public Response addGroupMember(@PathParam(OxTrustApiConstants.INUM) @NotNull String groupInum,
-			@PathParam(OxTrustApiConstants.MEMBER_INUM) @NotNull String memberInum) {
+	@Path(ApiConstants.INUM_PARAM_PATH + ApiConstants.GROUP_MEMBERS + ApiConstants.MEMBER_INUM_PARAM_PATH)
+	public Response addGroupMember(@PathParam(ApiConstants.INUM) @NotNull String groupInum,
+			@PathParam(ApiConstants.MEMBER_INUM) @NotNull String memberInum) {
 		log("Add member " + memberInum + " to group" + groupInum);
 		try {
 			Objects.requireNonNull(groupInum, "Group's inum should not be null");
@@ -221,10 +220,9 @@ public class GroupWebResource extends BaseWebResource {
 
 	@DELETE
 	@ApiOperation(value = "Remove a member from group")
-	@Path(OxTrustApiConstants.INUM_PARAM_PATH + OxTrustApiConstants.GROUP_MEMBERS
-			+ OxTrustApiConstants.MEMBER_INUM_PARAM_PATH)
-	public Response removeGroupMember(@PathParam(OxTrustApiConstants.INUM) @NotNull String groupInum,
-			@PathParam(OxTrustApiConstants.MEMBER_INUM) @NotNull String memberInum) {
+	@Path(ApiConstants.INUM_PARAM_PATH + ApiConstants.GROUP_MEMBERS + ApiConstants.MEMBER_INUM_PARAM_PATH)
+	public Response removeGroupMember(@PathParam(ApiConstants.INUM) @NotNull String groupInum,
+			@PathParam(ApiConstants.MEMBER_INUM) @NotNull String memberInum) {
 		log("Remove member " + memberInum + " from group" + groupInum);
 		try {
 			Objects.requireNonNull(groupInum, "Group's inum should not be null");
@@ -252,7 +250,7 @@ public class GroupWebResource extends BaseWebResource {
 	}
 
 	@DELETE
-	@Path(OxTrustApiConstants.INUM_PARAM_PATH + OxTrustApiConstants.GROUP_MEMBERS)
+	@Path(ApiConstants.INUM_PARAM_PATH + ApiConstants.GROUP_MEMBERS)
 	public Response deleteGroupMembers() {
 		return Response.status(Response.Status.UNAUTHORIZED).build();
 	}

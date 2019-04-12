@@ -22,7 +22,7 @@ import javax.ws.rs.core.Response;
 import org.gluu.oxtrust.api.server.util.Constants;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.service.filter.ProtectedApi;
-import org.gluu.oxtrust.util.OxTrustApiConstants;
+import org.gluu.oxtrust.api.server.util.ApiConstants;
 import org.slf4j.Logger;
 import org.gluu.model.GluuAttribute;
 import org.gluu.model.GluuStatus;
@@ -33,10 +33,10 @@ import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
-@Path(OxTrustApiConstants.BASE_API_URL + OxTrustApiConstants.ATTRIBUTES)
+@Path(ApiConstants.BASE_API_URL + ApiConstants.ATTRIBUTES)
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-@Api(value = OxTrustApiConstants.BASE_API_URL + OxTrustApiConstants.ATTRIBUTES, description = "Attributes webservice")
+@Api(value = ApiConstants.BASE_API_URL + ApiConstants.ATTRIBUTES, description = "Attributes webservice")
 @ApplicationScoped
 public class AttributeWebResource extends BaseWebResource {
 
@@ -66,7 +66,7 @@ public class AttributeWebResource extends BaseWebResource {
 	}
 
 	@GET
-	@Path(OxTrustApiConstants.ACTIVE)
+	@Path(ApiConstants.ACTIVE)
 	@ApiOperation(value = "Get all actives attributes")
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, response = GluuAttribute[].class, message = Constants.RESULT_SUCCESS),
@@ -84,7 +84,7 @@ public class AttributeWebResource extends BaseWebResource {
 	}
 
 	@GET
-	@Path(OxTrustApiConstants.INACTIVE)
+	@Path(ApiConstants.INACTIVE)
 	@ApiOperation(value = "Get all inactives attributes")
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, response = GluuAttribute[].class, message = Constants.RESULT_SUCCESS),
@@ -102,13 +102,13 @@ public class AttributeWebResource extends BaseWebResource {
 	}
 
 	@GET
-	@Path(OxTrustApiConstants.INUM_PARAM_PATH)
+	@Path(ApiConstants.INUM_PARAM_PATH)
 	@ApiOperation(value = "Get attribute by inum")
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, response = GluuAttribute.class, message = Constants.RESULT_SUCCESS),
 			@ApiResponse(code = 500, message = "Server error") })
 	@ProtectedApi(scopes = { "oxtrust-api-read" })
-	public Response getAttributeByInum(@PathParam(OxTrustApiConstants.INUM) @NotNull String inum) {
+	public Response getAttributeByInum(@PathParam(ApiConstants.INUM) @NotNull String inum) {
 		try {
 			Preconditions.checkNotNull(inum);
 			return Response.ok(attributeService.getAttributeByInum(inum)).build();
@@ -119,14 +119,14 @@ public class AttributeWebResource extends BaseWebResource {
 	}
 
 	@GET
-	@Path(OxTrustApiConstants.SEARCH)
+	@Path(ApiConstants.SEARCH)
 	@ApiOperation(value = "Search attributes")
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, response = GluuAttribute[].class, message = Constants.RESULT_SUCCESS),
 			@ApiResponse(code = 500, message = "Server error") })
 	@ProtectedApi(scopes = { "oxtrust-api-read" })
-	public Response searchAttributes(@QueryParam(OxTrustApiConstants.SEARCH_PATTERN) @NotNull String pattern,
-			@DefaultValue("1") @QueryParam(OxTrustApiConstants.SIZE) int size) {
+	public Response searchAttributes(@QueryParam(ApiConstants.SEARCH_PATTERN) @NotNull String pattern,
+			@DefaultValue("1") @QueryParam(ApiConstants.SIZE) int size) {
 		try {
 			List<GluuAttribute> attributes = attributeService.searchAttributes(pattern, size);
 			return Response.ok(attributes).build();
@@ -140,6 +140,7 @@ public class AttributeWebResource extends BaseWebResource {
 	@ApiOperation(value = "Add new attribute")
 	@ApiResponses(value = { @ApiResponse(code = 200, response = GluuAttribute.class, message = "Success"),
 			@ApiResponse(code = 500, message = "Server error") })
+	@ProtectedApi(scopes = { "oxtrust-api-write" })
 	public Response createAttribute(GluuAttribute gluuAttribute) {
 		try {
 			Preconditions.checkNotNull(gluuAttribute, "Attempt to create null attribute");
@@ -179,13 +180,13 @@ public class AttributeWebResource extends BaseWebResource {
 	}
 
 	@DELETE
-	@Path(OxTrustApiConstants.INUM_PARAM_PATH)
+	@Path(ApiConstants.INUM_PARAM_PATH)
 	@ApiOperation(value = "Delete an attribute")
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, response = GluuAttribute[].class, message = Constants.RESULT_SUCCESS),
 			@ApiResponse(code = 404, message = "Not found"), @ApiResponse(code = 500, message = "Server error") })
 	@ProtectedApi(scopes = { "oxtrust-api-write" })
-	public Response deleteAttribute(@PathParam(OxTrustApiConstants.INUM) @NotNull String inum) {
+	public Response deleteAttribute(@PathParam(ApiConstants.INUM) @NotNull String inum) {
 		try {
 			Preconditions.checkNotNull(inum);
 			GluuAttribute gluuAttribute = attributeService.getAttributeByInum(inum);
