@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.gluu.model.GluuAttribute;
-import org.gluu.model.GluuAttributeDataType;
+import org.gluu.model.attribute.AttributeDataType;
 import org.gluu.persist.model.base.GluuBoolean;
 
 /**
@@ -135,7 +135,7 @@ public class GluuCustomAttribute implements Serializable, Comparable<GluuCustomA
 
 	public String[] getValues() {
 		if (this.metadata != null) {
-			if ((GluuAttributeDataType.BOOLEAN == this.metadata.getDataType()) && this.usedBooleanValues) {
+			if ((AttributeDataType.BOOLEAN == this.metadata.getDataType()) && this.usedBooleanValues) {
 				this.values = toStringValuesFromBooleanValues(this.booleanValues);
 			}
 		}
@@ -248,7 +248,7 @@ public class GluuCustomAttribute implements Serializable, Comparable<GluuCustomA
 		this.metadata = metadata;
 		
 		if (this.metadata != null) {
-			if (GluuAttributeDataType.BOOLEAN == this.metadata.getDataType()) {
+			if (AttributeDataType.BOOLEAN == this.metadata.getDataType()) {
 				this.booleanValues = toBooleanValuesFromStringValues(this.values);
 			}
 		}
