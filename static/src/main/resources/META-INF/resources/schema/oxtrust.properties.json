@@ -372,6 +372,42 @@
             "type": "string",
             "minLength": 1
         },
+        "apiUmaClientId": {
+            "id": "apiClientId",
+            "type": "string",
+            "minLength": 1
+        },
+        "apiUmaClientKeyId": {
+            "id": "apiClientKeyId",
+            "type": "string",
+            "minLength": 1
+        },
+        "apiUmaResourceId": {
+            "id": "apiResourceId",
+            "type": "string",
+            "minLength": 1
+        },
+        "apiUmaScopes": {
+            "id": "apiUmaScopes",
+            "type": "array",
+            "minItems": 0,
+            "uniqueItems": false,
+            "additionalItems": true,
+            "items": {
+                "type": "string",
+                "minLength": 1
+            }
+        },
+        "apiUmaClientKeyStoreFile": {
+            "id": "apiClientKeyStoreFile",
+            "type": "string",
+            "minLength": 1
+        },
+        "apiUmaClientKeyStorePassword": {
+            "id": "apiClientKeyStorePassword",
+            "type": "string",
+            "minLength": 1
+        },
         "passportUmaClientId": {
             "id": "passportUmaClientId",
             "type": "string",
@@ -491,6 +527,10 @@
         },
         "scimTestMode": {
             "id": "scimTestMode",
+            "type": "boolean"
+        },
+        "oxTrustApiTestMode": {
+            "id": "oxTrustApiTestMode",
             "type": "boolean"
         },
         "shibbolethVersion": {
@@ -681,6 +721,12 @@
         "scimUmaScope",
         "scimUmaClientKeyStoreFile",
         "scimUmaClientKeyStorePassword",
+        "apiUmaClientId",
+        "apiUmaClientKeyId",
+        "apiUmaResourceId",
+        "apiUmaScopes",
+        "apiUmaClientKeyStoreFile",
+        "apiUmaClientKeyStorePassword",
         "passportUmaClientId",
         "passportUmaClientKeyId",
         "passportUmaResourceId",
@@ -700,6 +746,7 @@
         "rptConnectionPoolValidateAfterInactivity",
         "rptConnectionPoolCustomKeepAliveTimeout",
         "scimTestMode",
+        "oxTrustApiTestMode",
         "shibbolethVersion",
         "shibboleth3IdpRootDir",
         "shibboleth3SpConfDir",

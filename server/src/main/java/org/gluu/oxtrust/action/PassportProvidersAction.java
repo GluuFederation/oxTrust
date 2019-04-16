@@ -100,11 +100,12 @@ public class PassportProvidersAction implements Serializable {
 		if (!this.update && type != null) {
 			if (type.equalsIgnoreCase(providerTypes[0])) {
 				this.options = new ArrayList<>();
-				this.options.add(new OptionEntry("clientID", ""));
-				this.options.add(new OptionEntry("clientSecret", ""));
-				this.options.add(new OptionEntry("oxdID", ""));
-				this.options.add(new OptionEntry("issuer", "https://server.example.com"));
-				this.options.add(new OptionEntry("oxdServer", "https://oxd-server.acme.com:8443"));
+				this.options.add(new OptionEntry("entryPoint", "https://idp.example.com/idp/profile/SAML2/POST/SSO"));
+				this.options.add(
+						new OptionEntry("identifierFormat", "urn:oasis:names:tc:SAML:2.0:nameid-format:transient"));
+				this.options.add(new OptionEntry("authnRequestBinding", "HTTP-POST"));
+				this.options.add(new OptionEntry("issuer", ""));
+				this.options.add(new OptionEntry("cert", ""));
 			}
 			if (type.equalsIgnoreCase(providerTypes[1])) {
 				this.options = new ArrayList<>();
@@ -118,12 +119,11 @@ public class PassportProvidersAction implements Serializable {
 			}
 			if (type.equalsIgnoreCase(providerTypes[2])) {
 				this.options = new ArrayList<>();
-				this.options.add(new OptionEntry("entryPoint", "https://idp.example.com/idp/profile/SAML2/POST/SSO"));
-				this.options.add(
-						new OptionEntry("identifierFormat", "urn:oasis:names:tc:SAML:2.0:nameid-format:transient"));
-				this.options.add(new OptionEntry("authnRequestBinding", "HTTP-POST"));
-				this.options.add(new OptionEntry("issuer", ""));
-				this.options.add(new OptionEntry("cert", ""));
+				this.options.add(new OptionEntry("clientID", ""));
+				this.options.add(new OptionEntry("clientSecret", ""));
+				this.options.add(new OptionEntry("oxdID", ""));
+				this.options.add(new OptionEntry("issuer", "https://server.example.com"));
+				this.options.add(new OptionEntry("oxdServer", "https://oxd-server.acme.com:8443"));
 			}
 			if (type.equalsIgnoreCase(providerTypes[3])) {
 				this.options = new ArrayList<>();
@@ -161,6 +161,12 @@ public class PassportProvidersAction implements Serializable {
 
 	public String save() {
 		try {
+			if (this.provider.getLogoImg().isEmpty()) {
+				this.provider.setLogoImg(null);
+			}
+			if (this.provider.getPassportAuthnParams().isEmpty()) {
+				this.provider.setPassportAuthnParams(null);
+			}
 			if (!update) {
 				if (this.provider.getId() == null) {
 					String computedId = this.provider.getDisplayName().toLowerCase().replaceAll("[^\\w-]", "");

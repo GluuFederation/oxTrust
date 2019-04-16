@@ -4,16 +4,17 @@ import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.inject.Inject;
 import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 
-import org.gluu.config.oxtrust.AppConfiguration;
+import org.gluu.oxauth.client.uma.wrapper.UmaClient;
 import org.gluu.oxauth.model.uma.UmaMetadata;
 import org.gluu.oxauth.model.uma.wrapper.Token;
 import org.gluu.oxtrust.exception.UmaProtectionException;
@@ -23,7 +24,6 @@ import org.gluu.util.Pair;
 import org.gluu.util.StringHelper;
 import org.gluu.util.security.StringEncrypter.EncryptionException;
 import org.slf4j.Logger;
-import org.gluu.oxauth.client.uma.wrapper.UmaClient;
 
 /**
  * Provide base methods to simplify work with UMA Rest services
@@ -45,9 +45,6 @@ public abstract class BaseUmaProtectionService implements Serializable {
 
 	@Inject
 	protected UmaPermissionService umaPermissionService;
-
-	@Inject
-	private AppConfiguration appConfiguration;
 
 	private Token umaPat;
 	private long umaPatAccessTokenExpiration = 0l; // When the "accessToken" will expire;
@@ -93,7 +90,6 @@ public abstract class BaseUmaProtectionService implements Serializable {
 		}
 		return umaMetadata.getIssuer();
 	}
-
 
 	private void retrievePatToken() throws UmaProtectionException {
 		this.umaPat = null;
@@ -157,18 +153,22 @@ public abstract class BaseUmaProtectionService implements Serializable {
 
 	Response processUmaAuthorization(String authorization, ResourceInfo resourceInfo) throws Exception {
 		List<String> scopes = getRequestedScopes(resourceInfo);
-
+		log.info("++++++++++++++++Scopes: "+scopes.toString());
 		Token patToken = null;
 		try {
 			patToken = getPatToken();
+			log.info("++++++++++++++++Access token: "+patToken.getAccessToken());
+			log.info("++++++++++++++++Socpes: "+patToken.getScope());
 		} catch (UmaProtectionException ex) {
 			return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, "Failed to obtain PAT token");
 		}
 
 		Pair<Boolean, Response> rptTokenValidationResult;
 		if (!scopes.isEmpty()) {
+			log.info("++++++++++++++++++++++++++++++++++++++++Validating pat token");
 			rptTokenValidationResult = umaPermissionService.validateRptToken(patToken, authorization,
 					getUmaResourceId(), scopes);
+			log.info("+++++++++Done");
 		} else {
 			rptTokenValidationResult = umaPermissionService.validateRptToken(patToken, authorization,
 					getUmaResourceId(), getUmaScope());
@@ -188,39 +188,22 @@ public abstract class BaseUmaProtectionService implements Serializable {
 	public List<String> getRequestedScopes(ResourceInfo resourceInfo) {
 		Class<?> resourceClass = resourceInfo.getResourceClass();
 		ProtectedApi typeAnnotation = resourceClass.getAnnotation(ProtectedApi.class);
-		if (typeAnnotation == null) {
-			return Collections.emptyList();
-		}
-
 		List<String> scopes = new ArrayList<String>();
-		scopes.addAll(getResourceScopes(typeAnnotation.scopes()));
-
-		Method resourceMethod = resourceInfo.getResourceMethod();
-		ProtectedApi methodAnnotation = resourceMethod.getAnnotation(ProtectedApi.class);
-		if (methodAnnotation != null) {
-			scopes.addAll(getResourceScopes(methodAnnotation.scopes()));
+		if (typeAnnotation == null) {
+			addMethodScopes(resourceInfo, scopes);
+		} else {
+			scopes.addAll(Stream.of(typeAnnotation.scopes()).collect(Collectors.toList()));
+			addMethodScopes(resourceInfo, scopes);
 		}
-
 		return scopes;
 	}
 
-	private List<String> getResourceScopes(String[] scopes) {
-		List<String> result = new ArrayList<String>();
-		if ((scopes == null) || (scopes.length == 0)) {
-			return result;
+	private void addMethodScopes(ResourceInfo resourceInfo, List<String> scopes) {
+		Method resourceMethod = resourceInfo.getResourceMethod();
+		ProtectedApi methodAnnotation = resourceMethod.getAnnotation(ProtectedApi.class);
+		if (methodAnnotation != null) {
+			scopes.addAll(Stream.of(methodAnnotation.scopes()).collect(Collectors.toList()));
 		}
-
-		String baseEndpoint = appConfiguration.getBaseEndpoint();
-		if (baseEndpoint.endsWith("/")) {
-			baseEndpoint = baseEndpoint.substring(0, baseEndpoint.length() - 1);
-		}
-
-		for (String scope : scopes) {
-			String umaIssuerScope = baseEndpoint + scope;
-			result.add(umaIssuerScope);
-		}
-
-		return result;
 	}
 
 	protected abstract String getClientId();

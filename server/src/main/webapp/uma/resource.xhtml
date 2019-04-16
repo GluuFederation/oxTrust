@@ -78,8 +78,11 @@
 											<b:dataTableColumn value="#{_row.id}"
 												label="#{msg['uma.id']}" />
 											<b:dataTableColumn label="#{msg['uma.scopes']}">
-												<ox:displayNameEntryList
-													value="#{umaInventoryAction.getScopeDisplayNameEntries(_row.getScopes())}" />
+												<ui:repeat value="#{umaInventoryAction.getScopes(_row)}"
+													var="item">
+													<b:label text="#{item}" severity="info"
+														style="margin-right:2px;" />
+												</ui:repeat>
 											</b:dataTableColumn>
 											<b:dataTableColumn value="#{_row.iconUri}" order="asc"
 												label="#{msg['uma.iconURI']}" />
