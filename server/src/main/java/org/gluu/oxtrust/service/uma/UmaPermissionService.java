@@ -111,11 +111,13 @@ public class UmaPermissionService implements Serializable {
 		if (patToken == null) {
 	        return authenticationFailure;
 		} */
+	    log.trace("Validating RPT, resourceId: {}, scopeIds: {}, authorization: {}", resourceId, scopeIds, authorization);
 
 		if (StringHelper.isNotEmpty(authorization) && authorization.startsWith("Bearer ")) {
 			String rptToken = authorization.substring(7);
 	
 	        RptIntrospectionResponse rptStatusResponse = getStatusResponse(patToken, rptToken);
+            log.trace("RPT status response: {} ", rptStatusResponse);
 			if ((rptStatusResponse == null) || !rptStatusResponse.getActive()) {
 				log.error("Status response for RPT token: '{}' is invalid", rptToken);
 				//return authenticationFailure;
