@@ -26,6 +26,8 @@ import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.PersistenceEntryManager;
+import org.gluu.persist.exception.operation.SearchException;
+import org.gluu.persist.ldap.impl.LdapFilterConverter;
 import org.gluu.search.filter.Filter;
 import org.gluu.util.ArrayHelper;
 import org.gluu.util.OxConstants;
@@ -47,17 +49,20 @@ public class CacheRefreshService implements Serializable {
 	private Logger log;
 
 	@Inject
+	private LdapFilterConverter ldapFilterConverter;
+
+	@Inject
 	private InumService inumService;
 
-	public Filter createFilter(String customLdapFilter) {
+	public Filter createFilter(String customLdapFilter) throws SearchException {
 		if (StringHelper.isEmpty(customLdapFilter)) {
 			return null;
 		}
 
-		return Filter.create(customLdapFilter);
+		return ldapFilterConverter.convertRawLdapFilterToFilter(customLdapFilter);
 	}
 
-	public Filter createFilter(String[] keyAttributes, String[] keyObjectClasses, String keyAttributeStart, Filter customFilter) {
+	public Filter createFilter(String[] keyAttributes, String[] keyObjectClasses, String keyAttributeStart, Filter customFilter) throws SearchException {
 		if ((keyAttributes == null) || (keyObjectClasses == null)) {
 			return null;
 		}
@@ -67,7 +72,7 @@ public class CacheRefreshService implements Serializable {
 			String filterString = keyAttributes[i];
 
 			if (filterString.contains("=")) {
-				filters.add(Filter.create(filterString));
+				filters.add(ldapFilterConverter.convertRawLdapFilterToFilter(filterString));
 				// } else {
 				// filters.add(Filter.createPresenceFilter(filterString));
 			}
@@ -80,7 +85,7 @@ public class CacheRefreshService implements Serializable {
 				}
 
 				filterString = String.format("%s=%s*", filterString, keyAttributeStart);
-				filters.add(Filter.create(filterString));
+				filters.add(ldapFilterConverter.convertRawLdapFilterToFilter(filterString));
 			}
 		}
 

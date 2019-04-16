@@ -23,10 +23,6 @@ import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicHeaderElementIterator;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
-import org.gluu.oxtrust.ldap.service.AppInitializer;
-import org.jboss.resteasy.client.ClientExecutor;
-import org.jboss.resteasy.client.core.executors.ApacheHttpClient4Executor;
-import org.slf4j.Logger;
 import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.oxauth.client.uma.UmaClientFactory;
 import org.gluu.oxauth.client.uma.UmaRptIntrospectionService;
@@ -36,9 +32,12 @@ import org.gluu.oxauth.model.uma.UmaMetadata;
 import org.gluu.oxauth.model.uma.UmaPermission;
 import org.gluu.oxauth.model.uma.UmaPermissionList;
 import org.gluu.oxauth.model.uma.wrapper.Token;
-import org.gluu.service.JsonService;
+import org.gluu.oxtrust.ldap.service.AppInitializer;
 import org.gluu.util.Pair;
 import org.gluu.util.StringHelper;
+import org.jboss.resteasy.client.ClientExecutor;
+import org.jboss.resteasy.client.core.executors.ApacheHttpClient4Executor;
+import org.slf4j.Logger;
 
 /**
  * Provide methods to work with permissions and RPT tokens
@@ -59,10 +58,7 @@ public class UmaPermissionService implements Serializable {
 
 	@Inject
 	protected AppConfiguration appConfiguration;
-		
-	@Inject
-	private JsonService jsonService;
-	
+			
 	@Inject
 	private AppInitializer appInitializer;
 
@@ -111,12 +107,13 @@ public class UmaPermissionService implements Serializable {
 		if (patToken == null) {
 	        return authenticationFailure;
 		} */
+	    log.trace("Validating RPT, resourceId: {}, scopeIds: {}, authorization: {}", resourceId, scopeIds, authorization);
 
 		if (StringHelper.isNotEmpty(authorization) && authorization.startsWith("Bearer ")) {
 			String rptToken = authorization.substring(7);
 	
 	        RptIntrospectionResponse rptStatusResponse = getStatusResponse(patToken, rptToken);
-	        log.info("++++++++++++++++RptIntrospectionResponse"+rptStatusResponse );
+            log.trace("RPT status response: {} ", rptStatusResponse);
 			if ((rptStatusResponse == null) || !rptStatusResponse.getActive()) {
 				log.error("Status response for RPT token: '{}' is invalid", rptToken);
 				//return authenticationFailure;
@@ -159,6 +156,9 @@ public class UmaPermissionService implements Serializable {
 		// Determine RPT token to status
         RptIntrospectionResponse rptStatusResponse = null;
 		try {
+			log.info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+			log.info("++++++"+authorization);
+			log.info("++++++"+rptToken);
 			rptStatusResponse = this.rptStatusService.requestRptStatus(authorization, rptToken, "");
 		} catch (Exception ex) {
 			log.error("Failed to determine RPT status", ex);
@@ -174,18 +174,14 @@ public class UmaPermissionService implements Serializable {
 	}
 
 	public String registerResourcePermission(Token patToken, String resourceId, List<String> scopes) {
-
         UmaPermission permission = new UmaPermission();
         permission.setResourceId(resourceId);
         permission.setScopes(scopes);
-
         PermissionTicket ticket = permissionService.registerPermission(
                 "Bearer " + patToken.getAccessToken(), UmaPermissionList.instance(permission));
-        
         if (ticket == null) {
         	return null;
         }
-
         return ticket.getTicket();
     }
 
@@ -194,7 +190,6 @@ public class UmaPermissionService implements Serializable {
 		if (StringHelper.isEmpty(ticket)) {
 			return null;
 		}
-
     	log.debug("Construct response: HTTP 401 (Unauthorized), ticket: '{}'",  ticket);
         Response response = null;
 		try {

@@ -153,22 +153,17 @@ public abstract class BaseUmaProtectionService implements Serializable {
 
 	Response processUmaAuthorization(String authorization, ResourceInfo resourceInfo) throws Exception {
 		List<String> scopes = getRequestedScopes(resourceInfo);
-		log.info("++++++++++++++++Scopes: "+scopes.toString());
 		Token patToken = null;
 		try {
 			patToken = getPatToken();
-			log.info("++++++++++++++++Access token: "+patToken.getAccessToken());
-			log.info("++++++++++++++++Socpes: "+patToken.getScope());
 		} catch (UmaProtectionException ex) {
 			return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, "Failed to obtain PAT token");
 		}
 
 		Pair<Boolean, Response> rptTokenValidationResult;
 		if (!scopes.isEmpty()) {
-			log.info("++++++++++++++++++++++++++++++++++++++++Validating pat token");
 			rptTokenValidationResult = umaPermissionService.validateRptToken(patToken, authorization,
 					getUmaResourceId(), scopes);
-			log.info("+++++++++Done");
 		} else {
 			rptTokenValidationResult = umaPermissionService.validateRptToken(patToken, authorization,
 					getUmaResourceId(), getUmaScope());

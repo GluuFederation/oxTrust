@@ -18,7 +18,7 @@ import javax.inject.Named;
 
 import org.gluu.config.oxtrust.ImportPerson;
 import org.gluu.model.GluuAttribute;
-import org.gluu.model.GluuAttributeDataType;
+import org.gluu.model.attribute.AttributeDataType;
 import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.persist.exception.EntryPersistenceException;
@@ -103,7 +103,7 @@ public class ImportPersonConfiguration {
 		boolean required = importConfiguration.getBoolean(prefix + ATTRIBUTE_DATA_REQUIRED_SUFFIX, false);
 
 		if (StringHelper.isNotEmpty(attributeName) && StringHelper.isNotEmpty(displayName) && StringHelper.isNotEmpty(dataType)) {
-			GluuAttributeDataType attributeDataType = GluuAttributeDataType.getByValue(dataType);
+			AttributeDataType attributeDataType = AttributeDataType.getByValue(dataType);
 			if (attributeDataType != null) {
 				GluuAttribute attr = new GluuAttribute();
 				attr.setName(attributeName);
@@ -125,7 +125,7 @@ public class ImportPersonConfiguration {
 		boolean required = importPerson.getRequired();
 
 		if (StringHelper.isNotEmpty(attributeName) && StringHelper.isNotEmpty(displayName) && StringHelper.isNotEmpty(dataType)) {
-			GluuAttributeDataType attributeDataType = GluuAttributeDataType.getByValue(dataType);
+			AttributeDataType attributeDataType = AttributeDataType.getByValue(dataType);
 			if (attributeDataType != null) {
 				GluuAttribute attr = new GluuAttribute();
 				attr.setName(attributeName);

@@ -58,6 +58,7 @@ import org.gluu.oxtrust.util.PropertyUtil;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.exception.BasePersistenceException;
 import org.gluu.persist.exception.EntryPersistenceException;
+import org.gluu.persist.exception.operation.SearchException;
 import org.gluu.persist.ldap.impl.LdapEntryManager;
 import org.gluu.persist.model.SearchScope;
 import org.gluu.persist.model.base.GluuBoolean;
@@ -262,7 +263,7 @@ public class CacheRefreshTimer {
 		return timeDiffrence >= poolingInterval;
 	}
 
-	private void processImpl(CacheRefreshConfiguration cacheRefreshConfiguration, GluuConfiguration currentConfiguration) {
+	private void processImpl(CacheRefreshConfiguration cacheRefreshConfiguration, GluuConfiguration currentConfiguration) throws SearchException {
 		CacheRefreshUpdateMethod updateMethod = getUpdateMethod(cacheRefreshConfiguration);
 
 		// Prepare and check connections to LDAP servers
@@ -326,7 +327,7 @@ public class CacheRefreshTimer {
 	private boolean detectChangedEntries(CacheRefreshConfiguration cacheRefreshConfiguration,
 			GluuConfiguration currentConfiguration, LdapServerConnection[] sourceServerConnections,
 			LdapServerConnection inumDbServerConnection, LdapServerConnection targetServerConnection,
-			CacheRefreshUpdateMethod updateMethod) {
+			CacheRefreshUpdateMethod updateMethod) throws SearchException {
 		boolean isVDSMode = CacheRefreshUpdateMethod.VDS.equals(updateMethod);
 
 		// Load all entries from Source servers
@@ -841,7 +842,7 @@ public class CacheRefreshTimer {
 	}
 
 	private List<GluuSimplePerson> loadSourceServerEntriesWithoutLimits(
-			CacheRefreshConfiguration cacheRefreshConfiguration, LdapServerConnection[] sourceServerConnections) {
+			CacheRefreshConfiguration cacheRefreshConfiguration, LdapServerConnection[] sourceServerConnections) throws SearchException {
 		Filter customFilter = cacheRefreshService.createFilter(cacheRefreshConfiguration.getCustomLdapFilter());
 		String[] keyAttributes = getCompoundKeyAttributes(cacheRefreshConfiguration);
 		String[] keyAttributesWithoutValues = getCompoundKeyAttributesWithoutValues(cacheRefreshConfiguration);
@@ -887,7 +888,7 @@ public class CacheRefreshTimer {
 	}
 
 	private List<GluuSimplePerson> loadSourceServerEntries(CacheRefreshConfiguration cacheRefreshConfiguration,
-			LdapServerConnection[] sourceServerConnections) {
+			LdapServerConnection[] sourceServerConnections) throws SearchException {
 		Filter customFilter = cacheRefreshService.createFilter(cacheRefreshConfiguration.getCustomLdapFilter());
 		String[] keyAttributes = getCompoundKeyAttributes(cacheRefreshConfiguration);
 		String[] keyAttributesWithoutValues = getCompoundKeyAttributesWithoutValues(cacheRefreshConfiguration);
