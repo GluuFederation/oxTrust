@@ -116,6 +116,7 @@ public class UmaPermissionService implements Serializable {
 			String rptToken = authorization.substring(7);
 	
 	        RptIntrospectionResponse rptStatusResponse = getStatusResponse(patToken, rptToken);
+	        log.info("++++++++++++++++RptIntrospectionResponse"+rptStatusResponse );
 			if ((rptStatusResponse == null) || !rptStatusResponse.getActive()) {
 				log.error("Status response for RPT token: '{}' is invalid", rptToken);
 				//return authenticationFailure;
@@ -158,9 +159,6 @@ public class UmaPermissionService implements Serializable {
 		// Determine RPT token to status
         RptIntrospectionResponse rptStatusResponse = null;
 		try {
-			log.info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-			log.info("++++++"+authorization);
-			log.info("++++++"+rptToken);
 			rptStatusResponse = this.rptStatusService.requestRptStatus(authorization, rptToken, "");
 		} catch (Exception ex) {
 			log.error("Failed to determine RPT status", ex);
