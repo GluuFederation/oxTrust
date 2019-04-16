@@ -70,8 +70,8 @@ public class UmaInventoryAction implements Serializable {
 	@Inject
 	private LookupService lookupService;
 
-    @Inject
-   	private UmaMetadata umaMetadata;
+	@Inject
+	private UmaMetadata umaMetadata;
 
 	@NotNull
 	@Size(min = 0, max = 30, message = "Length of search string should be less than 30")
@@ -81,7 +81,7 @@ public class UmaInventoryAction implements Serializable {
 
 	private List<UmaResource> resourcesList;
 	private List<UmaScopeDescription> scopesList;
-	
+
 	private boolean initialized;
 
 	public String start() {
@@ -91,18 +91,13 @@ public class UmaInventoryAction implements Serializable {
 			log.error("Failed to initialize form", ex);
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to initialize UMA inventory");
 			conversationService.endConversation();
-
 			return OxTrustConstants.RESULT_FAILURE;
 		}
-		
 		this.initialized = true;
-
 		if (StringHelper.isEmpty(this.searchPattern)) {
 			searchPattern = "";
 		}
-
 		search();
-
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
@@ -110,36 +105,46 @@ public class UmaInventoryAction implements Serializable {
 		if (Util.equals(this.oldSearchPattern, this.searchPattern)) {
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
-
 		try {
-			if(searchPattern == null || searchPattern.isEmpty()){
+			if (searchPattern == null || searchPattern.isEmpty()) {
 				this.scopesList = scopeDescriptionService.getAllScopeDescriptions(100);
 				this.resourcesList = umaResourcesService.getAllResources(100);
-			}else{
+			} else {
 				this.scopesList = scopeDescriptionService.findScopeDescriptions(this.searchPattern, 100);
 				this.resourcesList = umaResourcesService.findResources(this.searchPattern, 100);
 			}
-			
 			this.oldSearchPattern = this.searchPattern;
 		} catch (Exception ex) {
 			log.error("Failed to find resource sets", ex);
-
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to filter UMA inventory by '#{umaInventoryAction.searchPattern}'");
+			facesMessages.add(FacesMessage.SEVERITY_ERROR,
+					"Failed to filter UMA inventory by '#{umaInventoryAction.searchPattern}'");
 			conversationService.endConversation();
-
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	public List<DisplayNameEntry> getScopeDisplayNameEntries(List<String> scopeDns) {
+	public List<DisplayNameEntry> getScopeDisplayNameEntries(UmaResource resource) {
+		List<String> scopeDns = resource.getScopes();
 		List<DisplayNameEntry> result = new ArrayList<DisplayNameEntry>();
-		List<DisplayNameEntry> tmp = lookupService.getDisplayNameEntries(scopeDescriptionService.getDnForScopeDescription(null), scopeDns);
+		List<DisplayNameEntry> tmp = lookupService
+				.getDisplayNameEntries(scopeDescriptionService.getDnForScopeDescription(null), scopeDns);
 		if (tmp != null) {
 			result.addAll(tmp);
 		}
+		return result;
+	}
 
+	public List<String> getScopes(UmaResource resource) {
+		List<String> result = new ArrayList<>();
+		List<String> scopeDns = resource.getScopes();
+		for (String dn : scopeDns) {
+			UmaScopeDescription res = scopeDescriptionService.getScopeByDn(dn);
+			if (res != null) {
+				result.add(res.getDisplayName());
+			}
+		}
 		return result;
 	}
 

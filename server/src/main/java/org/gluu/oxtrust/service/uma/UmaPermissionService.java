@@ -158,6 +158,9 @@ public class UmaPermissionService implements Serializable {
 		// Determine RPT token to status
         RptIntrospectionResponse rptStatusResponse = null;
 		try {
+			log.info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+			log.info("++++++"+authorization);
+			log.info("++++++"+rptToken);
 			rptStatusResponse = this.rptStatusService.requestRptStatus(authorization, rptToken, "");
 		} catch (Exception ex) {
 			log.error("Failed to determine RPT status", ex);

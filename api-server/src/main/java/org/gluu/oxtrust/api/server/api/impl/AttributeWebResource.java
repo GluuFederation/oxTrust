@@ -56,6 +56,7 @@ public class AttributeWebResource extends BaseWebResource {
 			@ApiResponse(code = 500, message = "Server error") })
 	@ProtectedApi(scopes = { "oxtrust-api-read" })
 	public Response getAllAttributes() {
+		log(logger, "Processing getAllAttributes()");
 		try {
 			List<GluuAttribute> gluuAttributes = attributeService.getAllAttributes();
 			return Response.ok(gluuAttributes).build();
@@ -73,6 +74,7 @@ public class AttributeWebResource extends BaseWebResource {
 			@ApiResponse(code = 500, message = "Server error") })
 	@ProtectedApi(scopes = { "oxtrust-api-read" })
 	public Response getAllActivesAttributes() {
+		log(logger, "Processing getAllActivesAttributes()");
 		try {
 			List<GluuAttribute> gluuAttributes = attributeService.getAllAttributes().stream()
 					.filter(e -> e.getStatus() == GluuStatus.ACTIVE).collect(Collectors.toList());
@@ -91,6 +93,7 @@ public class AttributeWebResource extends BaseWebResource {
 			@ApiResponse(code = 500, message = "Server error") })
 	@ProtectedApi(scopes = { "oxtrust-api-read" })
 	public Response getAllInActivesAttributes() {
+		log(logger, "Processing getAllInActivesAttributes()");
 		try {
 			List<GluuAttribute> gluuAttributes = attributeService.getAllAttributes().stream()
 					.filter(e -> e.getStatus() == GluuStatus.INACTIVE).collect(Collectors.toList());
@@ -109,6 +112,7 @@ public class AttributeWebResource extends BaseWebResource {
 			@ApiResponse(code = 500, message = "Server error") })
 	@ProtectedApi(scopes = { "oxtrust-api-read" })
 	public Response getAttributeByInum(@PathParam(ApiConstants.INUM) @NotNull String inum) {
+		log(logger, "Processing getAttributeByInum()");
 		try {
 			Preconditions.checkNotNull(inum);
 			return Response.ok(attributeService.getAttributeByInum(inum)).build();
@@ -127,6 +131,7 @@ public class AttributeWebResource extends BaseWebResource {
 	@ProtectedApi(scopes = { "oxtrust-api-read" })
 	public Response searchAttributes(@QueryParam(ApiConstants.SEARCH_PATTERN) @NotNull String pattern,
 			@DefaultValue("1") @QueryParam(ApiConstants.SIZE) int size) {
+		log(logger, "Processing searchAttributes()");
 		try {
 			List<GluuAttribute> attributes = attributeService.searchAttributes(pattern, size);
 			return Response.ok(attributes).build();
@@ -142,6 +147,7 @@ public class AttributeWebResource extends BaseWebResource {
 			@ApiResponse(code = 500, message = "Server error") })
 	@ProtectedApi(scopes = { "oxtrust-api-write" })
 	public Response createAttribute(GluuAttribute gluuAttribute) {
+		log(logger, "Processing createAttribute()");
 		try {
 			Preconditions.checkNotNull(gluuAttribute, "Attempt to create null attribute");
 			String inum = attributeService.generateInumForNewAttribute();
@@ -162,6 +168,7 @@ public class AttributeWebResource extends BaseWebResource {
 			@ApiResponse(code = 404, message = "Not found"), @ApiResponse(code = 500, message = "Server error") })
 	@ProtectedApi(scopes = { "oxtrust-api-write" })
 	public Response updateAttribute(GluuAttribute gluuAttribute) {
+		log(logger, "Processing updateAttribute()");
 		try {
 			Preconditions.checkNotNull(gluuAttribute, "Attempt to update null attribute");
 			String inum = gluuAttribute.getInum();
@@ -187,6 +194,7 @@ public class AttributeWebResource extends BaseWebResource {
 			@ApiResponse(code = 404, message = "Not found"), @ApiResponse(code = 500, message = "Server error") })
 	@ProtectedApi(scopes = { "oxtrust-api-write" })
 	public Response deleteAttribute(@PathParam(ApiConstants.INUM) @NotNull String inum) {
+		log(logger, "Processing deleteAttribute()");
 		try {
 			Preconditions.checkNotNull(inum);
 			GluuAttribute gluuAttribute = attributeService.getAttributeByInum(inum);
@@ -203,6 +211,7 @@ public class AttributeWebResource extends BaseWebResource {
 	}
 
 	@DELETE
+	@ProtectedApi(scopes = { "oxtrust-api-write" })
 	public Response deleteAttributes() {
 		return Response.status(Response.Status.UNAUTHORIZED).build();
 	}
