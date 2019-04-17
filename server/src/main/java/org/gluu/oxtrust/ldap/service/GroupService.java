@@ -196,7 +196,7 @@ public class GroupService implements Serializable, IGroupService {
 	}
 
 	public boolean contains(String groupDn) {
-		return ldapEntryManager.contains(GluuCustomPerson.class, groupDn);
+		return ldapEntryManager.contains(groupDn, GluuCustomPerson.class);
 	}
 
 	/*

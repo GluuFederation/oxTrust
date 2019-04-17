@@ -48,7 +48,7 @@ public class ConfigurationService implements Serializable {
 	private EncryptionService encryptionService;
 
 	public boolean contains(String configurationDn) {
-		return ldapEntryManager.contains(GluuConfiguration.class, configurationDn);
+		return ldapEntryManager.contains(configurationDn, GluuConfiguration.class);
 	}
 
 	/**
@@ -100,7 +100,7 @@ public class ConfigurationService implements Serializable {
 	 */
 	public GluuConfiguration getConfiguration(String[] returnAttributes) {
 		GluuConfiguration result = null;
-		if (ldapEntryManager.contains(GluuConfiguration.class, getDnForConfiguration())) {
+		if (ldapEntryManager.contains(getDnForConfiguration(), GluuConfiguration.class)) {
 			result = ldapEntryManager.find(GluuConfiguration.class, getDnForConfiguration(), returnAttributes);
 		} else {
 			result = new GluuConfiguration();

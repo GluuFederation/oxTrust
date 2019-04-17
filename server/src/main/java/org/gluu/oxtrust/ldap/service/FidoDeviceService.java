@@ -109,7 +109,7 @@ public class FidoDeviceService implements IFidoDeviceService, Serializable {
 	}
 	
 	private boolean containsBranch(final String userInum) {
-		return ldapEntryManager.contains(SimpleBranch.class, getDnForFidoDevice(userInum,null));
+		return ldapEntryManager.contains(getDnForFidoDevice(userInum,null), SimpleBranch.class);
 	}
 
 }

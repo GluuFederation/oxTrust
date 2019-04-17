@@ -51,7 +51,7 @@ public class ScopeDescriptionService implements Serializable {
 	}
 
 	public boolean containsBranch() {
-		return ldapEntryManager.contains(SimpleBranch.class, getDnForScopeDescription(null));
+		return ldapEntryManager.contains(getDnForScopeDescription(null), SimpleBranch.class);
 	}
 
 	/**
