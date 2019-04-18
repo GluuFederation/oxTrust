@@ -23,6 +23,7 @@ import javax.ws.rs.core.Response;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.ScopeService;
 import org.gluu.oxtrust.model.OxAuthScope;
+import org.gluu.oxtrust.service.filter.ProtectedApi;
 import org.gluu.oxtrust.api.server.util.ApiConstants;
 import org.slf4j.Logger;
 import org.gluu.model.GluuAttribute;
@@ -48,6 +49,7 @@ public class ScopeWebResource extends BaseWebResource {
 
 	@GET
 	@ApiOperation(value = "Get all scopes")
+	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response getAllScopes() {
 		log(logger, "List openid connect scopes ");
 		try {
@@ -61,6 +63,7 @@ public class ScopeWebResource extends BaseWebResource {
 	@GET
 	@Path(ApiConstants.INUM_PARAM_PATH)
 	@ApiOperation(value = "Get a specific openid connect scope")
+	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response getScopeByInum(@PathParam(ApiConstants.INUM) @NotNull String inum) {
 		log(logger, "Get openid connect scope by " + inum);
 		try {
@@ -79,6 +82,7 @@ public class ScopeWebResource extends BaseWebResource {
 	@GET
 	@Path(ApiConstants.SEARCH)
 	@ApiOperation(value = "Search openid connect scopes")
+	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response searchScope(@QueryParam(ApiConstants.SEARCH_PATTERN) String pattern,
 			@DefaultValue("10") @QueryParam("size") int size) {
 		log(logger, "Search openid connect scopes with pattern= " + pattern);
@@ -93,6 +97,7 @@ public class ScopeWebResource extends BaseWebResource {
 
 	@POST
 	@ApiOperation(value = "Add an openidconnect scope")
+	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response createScope(OxAuthScope scope) {
 		log(logger, "Create scope");
 		try {
@@ -110,6 +115,7 @@ public class ScopeWebResource extends BaseWebResource {
 
 	@PUT
 	@ApiOperation(value = "Update openidconect scope")
+	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response updateScope(OxAuthScope scope) {
 		String inum = scope.getInum();
 		log(logger, "Update scope " + inum);
@@ -133,6 +139,7 @@ public class ScopeWebResource extends BaseWebResource {
 	@GET
 	@Path(ApiConstants.INUM_PARAM_PATH + ApiConstants.CLAIMS)
 	@ApiOperation(value = "List all claims of a scope")
+	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response getScopeClaims(@PathParam(ApiConstants.INUM) @NotNull String inum) {
 		log(logger, "List all claims of scope ==> " + inum);
 		try {
@@ -158,6 +165,7 @@ public class ScopeWebResource extends BaseWebResource {
 	@DELETE
 	@Path(ApiConstants.INUM_PARAM_PATH)
 	@ApiOperation(value = "Delete an openidconnect scope")
+	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response deleteScope(@PathParam(ApiConstants.INUM) @NotNull String inum) {
 		log(logger, "Delete openidconnect scope " + inum);
 		try {
@@ -175,6 +183,7 @@ public class ScopeWebResource extends BaseWebResource {
 	}
 
 	@DELETE
+	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response deleteScopes() {
 		return Response.status(Response.Status.UNAUTHORIZED).build();
 	}

@@ -14,6 +14,7 @@ import org.gluu.oxtrust.api.server.model.OxtrustSetting;
 import org.gluu.oxtrust.api.server.util.Constants;
 import org.gluu.oxtrust.ldap.service.ConfigurationService;
 import org.gluu.oxtrust.model.GluuConfiguration;
+import org.gluu.oxtrust.service.filter.ProtectedApi;
 import org.gluu.oxtrust.api.server.util.ApiConstants;
 import org.gluu.persist.model.base.GluuBoolean;
 import org.slf4j.Logger;
@@ -42,6 +43,7 @@ public class OxtrustSettingWebResource extends BaseWebResource {
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, response = OxtrustSetting.class, message = Constants.RESULT_SUCCESS),
 			@ApiResponse(code = 500, message = "Server error") })
+	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response getOxtrustSettings() {
 		try {
 			log(logger, "Processing oxtrust settings retrieval request");
@@ -63,6 +65,7 @@ public class OxtrustSettingWebResource extends BaseWebResource {
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, response = OxtrustSetting.class, message = Constants.RESULT_SUCCESS),
 			@ApiResponse(code = 404, message = "Not found"), @ApiResponse(code = 500, message = "Server error") })
+	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response updateOxtrustSetting(OxtrustSetting oxtrustSetting) {
 		try {
 			log(logger, "Processing oxtrust settings update request");

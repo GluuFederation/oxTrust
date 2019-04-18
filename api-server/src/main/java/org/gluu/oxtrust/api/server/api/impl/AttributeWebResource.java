@@ -54,7 +54,7 @@ public class AttributeWebResource extends BaseWebResource {
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, response = GluuAttribute[].class, message = Constants.RESULT_SUCCESS),
 			@ApiResponse(code = 500, message = "Server error") })
-	@ProtectedApi(scopes = { "oxtrust-api-read" })
+	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response getAllAttributes() {
 		log(logger, "Processing getAllAttributes()");
 		try {
@@ -72,7 +72,7 @@ public class AttributeWebResource extends BaseWebResource {
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, response = GluuAttribute[].class, message = Constants.RESULT_SUCCESS),
 			@ApiResponse(code = 500, message = "Server error") })
-	@ProtectedApi(scopes = { "oxtrust-api-read" })
+	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response getAllActivesAttributes() {
 		log(logger, "Processing getAllActivesAttributes()");
 		try {
@@ -91,7 +91,7 @@ public class AttributeWebResource extends BaseWebResource {
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, response = GluuAttribute[].class, message = Constants.RESULT_SUCCESS),
 			@ApiResponse(code = 500, message = "Server error") })
-	@ProtectedApi(scopes = { "oxtrust-api-read" })
+	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response getAllInActivesAttributes() {
 		log(logger, "Processing getAllInActivesAttributes()");
 		try {
@@ -110,7 +110,7 @@ public class AttributeWebResource extends BaseWebResource {
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, response = GluuAttribute.class, message = Constants.RESULT_SUCCESS),
 			@ApiResponse(code = 500, message = "Server error") })
-	@ProtectedApi(scopes = { "oxtrust-api-read" })
+	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response getAttributeByInum(@PathParam(ApiConstants.INUM) @NotNull String inum) {
 		log(logger, "Processing getAttributeByInum()");
 		try {
@@ -128,7 +128,7 @@ public class AttributeWebResource extends BaseWebResource {
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, response = GluuAttribute[].class, message = Constants.RESULT_SUCCESS),
 			@ApiResponse(code = 500, message = "Server error") })
-	@ProtectedApi(scopes = { "oxtrust-api-read" })
+	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response searchAttributes(@QueryParam(ApiConstants.SEARCH_PATTERN) @NotNull String pattern,
 			@DefaultValue("1") @QueryParam(ApiConstants.SIZE) int size) {
 		log(logger, "Processing searchAttributes()");
@@ -145,7 +145,7 @@ public class AttributeWebResource extends BaseWebResource {
 	@ApiOperation(value = "Add new attribute")
 	@ApiResponses(value = { @ApiResponse(code = 200, response = GluuAttribute.class, message = "Success"),
 			@ApiResponse(code = 500, message = "Server error") })
-	@ProtectedApi(scopes = { "oxtrust-api-write" })
+	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response createAttribute(GluuAttribute gluuAttribute) {
 		log(logger, "Processing createAttribute()");
 		try {
@@ -166,7 +166,7 @@ public class AttributeWebResource extends BaseWebResource {
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, response = GluuAttribute.class, message = Constants.RESULT_SUCCESS),
 			@ApiResponse(code = 404, message = "Not found"), @ApiResponse(code = 500, message = "Server error") })
-	@ProtectedApi(scopes = { "oxtrust-api-write" })
+	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response updateAttribute(GluuAttribute gluuAttribute) {
 		log(logger, "Processing updateAttribute()");
 		try {
@@ -192,7 +192,7 @@ public class AttributeWebResource extends BaseWebResource {
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, response = GluuAttribute[].class, message = Constants.RESULT_SUCCESS),
 			@ApiResponse(code = 404, message = "Not found"), @ApiResponse(code = 500, message = "Server error") })
-	@ProtectedApi(scopes = { "oxtrust-api-write" })
+	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response deleteAttribute(@PathParam(ApiConstants.INUM) @NotNull String inum) {
 		log(logger, "Processing deleteAttribute()");
 		try {
@@ -211,7 +211,7 @@ public class AttributeWebResource extends BaseWebResource {
 	}
 
 	@DELETE
-	@ProtectedApi(scopes = { "oxtrust-api-write" })
+	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response deleteAttributes() {
 		return Response.status(Response.Status.UNAUTHORIZED).build();
 	}

@@ -23,6 +23,7 @@ import javax.ws.rs.core.Response;
 import org.gluu.oxtrust.api.server.model.GluuPersonApi;
 import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
+import org.gluu.oxtrust.service.filter.ProtectedApi;
 import org.gluu.oxtrust.api.server.util.ApiConstants;
 import org.slf4j.Logger;
 
@@ -45,6 +46,7 @@ public class PeopleWebResource extends BaseWebResource {
 
 	@GET
 	@ApiOperation(value = "Get people")
+	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response listPeople() {
 		try {
 			log(logger, "Get people");
@@ -59,6 +61,7 @@ public class PeopleWebResource extends BaseWebResource {
 	@GET
 	@Path(ApiConstants.SEARCH)
 	@ApiOperation(value = "Search person")
+	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response searchGroups(@QueryParam(ApiConstants.SEARCH_PATTERN) @NotNull String pattern) {
 		try {
 			log(logger, "Search person with pattern= " + pattern);
@@ -73,6 +76,7 @@ public class PeopleWebResource extends BaseWebResource {
 	@GET
 	@Path(ApiConstants.INUM_PARAM_PATH)
 	@ApiOperation(value = "Get a person by inum")
+	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response getPersonByInum(@PathParam(ApiConstants.INUM) @NotNull String inum) {
 		log(logger, "Get person " + inum);
 		try {
@@ -91,6 +95,7 @@ public class PeopleWebResource extends BaseWebResource {
 
 	@POST
 	@ApiOperation(value = "Add a person")
+	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response createPerson(GluuPersonApi person) {
 		log(logger, "Adding person " + person.getDisplayName());
 		try {
@@ -109,6 +114,7 @@ public class PeopleWebResource extends BaseWebResource {
 
 	@PUT
 	@ApiOperation(value = "Update a person")
+	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response updateGroup(GluuPersonApi person) {
 		String inum = person.getInum();
 		log(logger, "Update group " + inum);
@@ -135,6 +141,7 @@ public class PeopleWebResource extends BaseWebResource {
 	@DELETE
 	@Path(ApiConstants.INUM_PARAM_PATH)
 	@ApiOperation(value = "Delete a person")
+	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response deletePerson(@PathParam(ApiConstants.INUM) @NotNull String inum) {
 		log(logger, "Delete person having inum " + inum);
 		try {
@@ -152,6 +159,7 @@ public class PeopleWebResource extends BaseWebResource {
 	}
 
 	@DELETE
+	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response deletePeople() {
 		return Response.status(Response.Status.UNAUTHORIZED).build();
 	}

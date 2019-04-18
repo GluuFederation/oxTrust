@@ -28,6 +28,7 @@ import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
+import org.gluu.oxtrust.service.filter.ProtectedApi;
 import org.gluu.oxtrust.api.server.util.ApiConstants;
 import org.slf4j.Logger;
 
@@ -54,6 +55,7 @@ public class GroupWebResource extends BaseWebResource {
 
 	@GET
 	@ApiOperation(value = "Get groups ")
+	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response listGroups(@DefaultValue("0") @QueryParam(ApiConstants.SIZE) int size) {
 		log("Get groups");
 		try {
@@ -71,6 +73,7 @@ public class GroupWebResource extends BaseWebResource {
 	@GET
 	@Path(ApiConstants.INUM_PARAM_PATH)
 	@ApiOperation(value = "Get a group by inum")
+	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response getGroupByInum(@PathParam(ApiConstants.INUM) @NotNull String inum) {
 		log("Get group having group" + inum);
 		inum = inum.equalsIgnoreCase("") ? null : inum;
@@ -91,6 +94,7 @@ public class GroupWebResource extends BaseWebResource {
 	@GET
 	@Path(ApiConstants.SEARCH)
 	@ApiOperation(value = "Search groups")
+	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response searchGroups(@QueryParam(ApiConstants.SEARCH_PATTERN) @NotNull String pattern,
 			@DefaultValue("1") @QueryParam(ApiConstants.SIZE) int size) {
 		log("Search groups with pattern= " + pattern + " and size " + size);
@@ -106,6 +110,7 @@ public class GroupWebResource extends BaseWebResource {
 	@DELETE
 	@Path(ApiConstants.INUM_PARAM_PATH)
 	@ApiOperation(value = "Delete a group")
+	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response deleteGroup(@PathParam(ApiConstants.INUM) @NotNull String inum) {
 		log("Delete group having inum " + inum);
 		try {
@@ -125,6 +130,7 @@ public class GroupWebResource extends BaseWebResource {
 
 	@PUT
 	@ApiOperation(value = "Update a group")
+	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response updateGroup(GluuGroupApi group) {
 		String inum = group.getInum();
 		inum = inum.equalsIgnoreCase("") ? null : inum;
@@ -150,6 +156,7 @@ public class GroupWebResource extends BaseWebResource {
 
 	@POST
 	@ApiOperation(value = "Add a group")
+	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response createGroup(GluuGroupApi group) {
 		log("Adding group " + group.getDisplayName());
 		try {
@@ -169,6 +176,7 @@ public class GroupWebResource extends BaseWebResource {
 	@GET
 	@Path(ApiConstants.INUM_PARAM_PATH + ApiConstants.GROUP_MEMBERS)
 	@ApiOperation(value = "Get a group members")
+	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response getGroupMembers(@PathParam(ApiConstants.INUM) @NotNull String inum) {
 		log("Get members of group " + inum);
 		inum = inum.equalsIgnoreCase("") ? null : inum;
@@ -192,6 +200,7 @@ public class GroupWebResource extends BaseWebResource {
 	@POST
 	@ApiOperation(value = "Add group member")
 	@Path(ApiConstants.INUM_PARAM_PATH + ApiConstants.GROUP_MEMBERS + ApiConstants.MEMBER_INUM_PARAM_PATH)
+	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response addGroupMember(@PathParam(ApiConstants.INUM) @NotNull String groupInum,
 			@PathParam(ApiConstants.MEMBER_INUM) @NotNull String memberInum) {
 		log("Add member " + memberInum + " to group" + groupInum);
@@ -221,6 +230,7 @@ public class GroupWebResource extends BaseWebResource {
 	@DELETE
 	@ApiOperation(value = "Remove a member from group")
 	@Path(ApiConstants.INUM_PARAM_PATH + ApiConstants.GROUP_MEMBERS + ApiConstants.MEMBER_INUM_PARAM_PATH)
+	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response removeGroupMember(@PathParam(ApiConstants.INUM) @NotNull String groupInum,
 			@PathParam(ApiConstants.MEMBER_INUM) @NotNull String memberInum) {
 		log("Remove member " + memberInum + " from group" + groupInum);
@@ -245,12 +255,14 @@ public class GroupWebResource extends BaseWebResource {
 	}
 
 	@DELETE
+	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response deleteGroups() {
 		return Response.status(Response.Status.UNAUTHORIZED).build();
 	}
 
 	@DELETE
 	@Path(ApiConstants.INUM_PARAM_PATH + ApiConstants.GROUP_MEMBERS)
+	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response deleteGroupMembers() {
 		return Response.status(Response.Status.UNAUTHORIZED).build();
 	}

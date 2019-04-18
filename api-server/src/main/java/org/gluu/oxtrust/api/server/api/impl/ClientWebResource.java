@@ -25,6 +25,7 @@ import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.ScopeService;
 import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.model.OxAuthScope;
+import org.gluu.oxtrust.service.filter.ProtectedApi;
 import org.slf4j.Logger;
 
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -49,6 +50,7 @@ public class ClientWebResource extends BaseWebResource {
 
 	@GET
 	@ApiOperation(value = "Get openid connect clients")
+	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response listClients() {
 		log(logger, "Get all clients ");
 		try {
@@ -63,6 +65,7 @@ public class ClientWebResource extends BaseWebResource {
 	@GET
 	@Path(ApiConstants.INUM_PARAM_PATH + ApiConstants.SCOPES)
 	@ApiOperation(value = "Get client scopes")
+	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response getClientScope(@PathParam(ApiConstants.INUM) @NotNull String inum) {
 		log(logger, "Get client scopes");
 		try {
@@ -87,6 +90,7 @@ public class ClientWebResource extends BaseWebResource {
 	@GET
 	@Path(ApiConstants.INUM_PARAM_PATH)
 	@ApiOperation(value = "Get a specific openidconnect client")
+	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response getClientByInum(@PathParam(ApiConstants.INUM) @NotNull String inum) {
 		log(logger, "Get client " + inum);
 		try {
@@ -106,6 +110,7 @@ public class ClientWebResource extends BaseWebResource {
 	@GET
 	@Path(ApiConstants.SEARCH)
 	@ApiOperation(value = "Search clients")
+	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response searchGroups(@QueryParam(ApiConstants.SEARCH_PATTERN) @NotNull String pattern,
 			@DefaultValue("1") @QueryParam(ApiConstants.SIZE) int size) {
 		log(logger, "Search client with pattern= " + pattern + " and size " + size);
@@ -120,6 +125,7 @@ public class ClientWebResource extends BaseWebResource {
 
 	@POST
 	@ApiOperation(value = "Add an openidconnect client")
+	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response createClient(OxAuthClient client) {
 		log(logger, "Add new client ");
 		try {
@@ -137,6 +143,7 @@ public class ClientWebResource extends BaseWebResource {
 
 	@PUT
 	@ApiOperation(value = "Update openidconnect client")
+	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response updateClient(OxAuthClient client) {
 		try {
 			Objects.requireNonNull(client, "Attempt to update null client");
@@ -160,6 +167,7 @@ public class ClientWebResource extends BaseWebResource {
 	@POST
 	@Path(ApiConstants.INUM_PARAM_PATH + ApiConstants.SCOPES + ApiConstants.SCOPE_INUM_PARAM_PATH)
 	@ApiOperation(value = "Get client scopes")
+	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response addScopeToClient(@PathParam(ApiConstants.INUM) @NotNull String inum,
 			@PathParam(ApiConstants.SCOPE_INUM) @NotNull String sinum) {
 		log(logger, "add new scope to client");
@@ -188,6 +196,7 @@ public class ClientWebResource extends BaseWebResource {
 	@DELETE
 	@Path(ApiConstants.INUM_PARAM_PATH + ApiConstants.SCOPES + ApiConstants.SCOPE_INUM_PARAM_PATH)
 	@ApiOperation(value = "Remove a client scope")
+	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response removeScopeToClient(@PathParam(ApiConstants.INUM) @NotNull String inum,
 			@PathParam(ApiConstants.SCOPE_INUM) @NotNull String sinum) {
 		log(logger, "add new scope to client");
@@ -214,6 +223,7 @@ public class ClientWebResource extends BaseWebResource {
 	@DELETE
 	@Path(ApiConstants.INUM_PARAM_PATH)
 	@ApiOperation(value = "Delete an openidconnect client")
+	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response deleteClient(@PathParam(ApiConstants.INUM) @NotNull String inum) {
 		log(logger, "Delete client " + inum);
 		try {
@@ -232,12 +242,14 @@ public class ClientWebResource extends BaseWebResource {
 	}
 
 	@DELETE
+	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response deleteClients() {
 		return Response.status(Response.Status.UNAUTHORIZED).build();
 	}
 
 	@DELETE
 	@Path(ApiConstants.INUM_PARAM_PATH + ApiConstants.SCOPES)
+	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response deleteClientScopes() {
 		return Response.status(Response.Status.UNAUTHORIZED).build();
 	}

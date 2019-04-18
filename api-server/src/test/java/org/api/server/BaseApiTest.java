@@ -135,7 +135,7 @@ public abstract class BaseApiTest {
 			UmaTokenService tokenService = UmaClientFactory.instance().createTokenService(umaMetadata);
 			UmaTokenResponse rptResponse = tokenService.requestJwtAuthorizationRpt(
 					ClientAssertionType.JWT_BEARER.toString(), tokenRequest.getClientAssertion(),
-					GrantType.OXAUTH_UMA_TICKET.getValue(), ticket, null, null, null, null, null); // ClaimTokenFormatType.ID_TOKEN.getValue()
+					GrantType.OXAUTH_UMA_TICKET.getValue(), ticket, null, null, null, null, null); 
 			if (rptResponse == null) {
 				throw new IllegalArgumentException("UMA RPT token response is invalid");
 			}

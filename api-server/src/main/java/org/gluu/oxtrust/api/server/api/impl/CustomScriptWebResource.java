@@ -24,6 +24,7 @@ import org.gluu.model.custom.script.model.CustomScript;
 import org.gluu.oxtrust.api.server.util.ApiConstants;
 import org.gluu.oxtrust.ldap.service.ConfigurationService;
 import org.gluu.oxtrust.service.custom.CustomScriptService;
+import org.gluu.oxtrust.service.filter.ProtectedApi;
 import org.gluu.util.StringHelper;
 import org.slf4j.Logger;
 
@@ -52,6 +53,7 @@ public class CustomScriptWebResource extends BaseWebResource {
 
 	@GET
 	@ApiOperation(value = "Get all custom scripts")
+	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response listCustomScripts() {
 		log(logger, "Get all custom scripts");
 		try {
@@ -66,6 +68,7 @@ public class CustomScriptWebResource extends BaseWebResource {
 	@GET
 	@Path(ApiConstants.TYPE_PARAM_PATH)
 	@ApiOperation(value = "Get person authentications scripts")
+	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response listPersonAuthetnicationCustomScripts(@PathParam(ApiConstants.TYPE) @NotNull String type) {
 		log(logger, "Get person authentications scripts");
 		try {
@@ -86,6 +89,7 @@ public class CustomScriptWebResource extends BaseWebResource {
 
 	@POST
 	@ApiOperation(value = "Add new custom script")
+	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response createCustomScript(CustomScript customScript) {
 		log(logger, "Add new custom script ");
 		try {
@@ -106,6 +110,7 @@ public class CustomScriptWebResource extends BaseWebResource {
 
 	@PUT
 	@ApiOperation(value = "Update custom script")
+	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response updateCustomScript(CustomScript customScript) {
 		try {
 			Objects.requireNonNull(customScript, "Attempt to update null custom script");
@@ -128,6 +133,7 @@ public class CustomScriptWebResource extends BaseWebResource {
 	@DELETE
 	@Path(ApiConstants.INUM_PARAM_PATH)
 	@ApiOperation(value = "Delete an custom script")
+	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response deleteCustomScript(@PathParam(ApiConstants.INUM) @NotNull String inum) {
 		log(logger, "Delete custom script" + inum);
 		try {

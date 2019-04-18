@@ -13,6 +13,7 @@ import javax.ws.rs.core.Response;
 import org.gluu.oxtrust.api.server.model.OxAuthJsonConfiguration;
 import org.gluu.oxtrust.api.server.util.Constants;
 import org.gluu.oxtrust.ldap.service.JsonConfigurationService;
+import org.gluu.oxtrust.service.filter.ProtectedApi;
 import org.gluu.oxtrust.api.server.util.ApiConstants;
 import org.slf4j.Logger;
 
@@ -43,6 +44,7 @@ public class OxAuthJsonSettingWebResource extends BaseWebResource {
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, response = OxAuthJsonConfiguration.class, message = Constants.RESULT_SUCCESS),
 			@ApiResponse(code = 500, message = "Server error") })
+	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response getOxAuthJsonSettings() {
 		try {
 			log(logger, "Processing oxauth json settings retrieval request");
@@ -61,6 +63,7 @@ public class OxAuthJsonSettingWebResource extends BaseWebResource {
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, response = OxAuthJsonConfiguration.class, message = Constants.RESULT_SUCCESS),
 			@ApiResponse(code = 404, message = "Not found"), @ApiResponse(code = 500, message = "Server error") })
+	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response updateOxauthJsonSetting(OxAuthJsonConfiguration oxAuthJsonSetting) {
 		try {
 			log(logger, "Processing oxauth json settings update request");
