@@ -57,7 +57,7 @@ public class PasswordResetService implements Serializable {
 	}
 
 	public boolean containsBranch() {
-		return ldapEntryManager.contains(SimpleBranch.class, getDnForPasswordResetRequest(null));
+		return ldapEntryManager.contains(getDnForPasswordResetRequest(null), SimpleBranch.class);
 	}
 
 	public void prepareBranch() {

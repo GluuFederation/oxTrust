@@ -45,7 +45,7 @@ public class PassportService implements Serializable {
 			return false;
 		}
 
-		return ldapEntryManager.contains(LdapOxPassportConfiguration.class, configurationDn);
+		return ldapEntryManager.contains(configurationDn, LdapOxPassportConfiguration.class);
 	}
 
 	public LdapOxPassportConfiguration loadConfigurationFromLdap() {

@@ -52,7 +52,7 @@ public class ResourceSetService implements Serializable {
 	}
 
 	public boolean containsBranch() {
-		return ldapEntryManager.contains(SimpleBranch.class, getDnForResource(null));
+		return ldapEntryManager.contains(getDnForResource(null), SimpleBranch.class);
 	}
 
 	/**

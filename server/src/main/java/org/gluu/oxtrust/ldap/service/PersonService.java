@@ -347,7 +347,7 @@ public class PersonService implements Serializable, IPersonService {
 	 */
 	@Override
 	public boolean contains(String dn) {
-		return ldapEntryManager.contains(GluuCustomPerson.class, dn);
+		return ldapEntryManager.contains(dn, GluuCustomPerson.class);
 	}
 
 	/*

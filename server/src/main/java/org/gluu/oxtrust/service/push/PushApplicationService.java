@@ -51,7 +51,7 @@ public class PushApplicationService implements Serializable {
 	}
 
 	public boolean containsBranch() {
-		return ldapEntryManager.contains(SimpleBranch.class, getDnForPushApplication(null));
+		return ldapEntryManager.contains(getDnForPushApplication(null), SimpleBranch.class);
 	}
 
 	/**

@@ -57,7 +57,7 @@ public class ClientService implements Serializable {
 	private OrganizationService organizationService;
 
 	public boolean contains(String clientDn) {
-		return ldapEntryManager.contains(OxAuthClient.class, clientDn);
+		return ldapEntryManager.contains(clientDn, OxAuthClient.class);
 	}
 
 	/**

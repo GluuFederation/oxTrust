@@ -237,11 +237,13 @@ public class UpdateClientAction implements Serializable {
 			return existingScopes;
 		}
 		for (String dn : client.getOxAuthScopes()) {
-			String dnString = dn.split(",")[0];
-			String inum = dnString.split("=")[1];
 			try {
-				existingScopes.add(scopeService.getScopeByInum(inum));
+				OxAuthScope scope=scopeService.getScopeByDn(dn);
+				if(scope!=null) {
+					existingScopes.add(scope);
+				}
 			} catch (Exception e) {
+				log.error("", e);
 			}
 		}
 		return existingScopes;
@@ -857,6 +859,8 @@ public class UpdateClientAction implements Serializable {
 
 	private void updateScopes() {
 		List<OxAuthScope> currentResponseTypes = this.scopes;
+		log.info("My Scope Size:" + this.scopes.size());
+		log.info("My Scope Size:" + this.scopes.toString());
 		if (currentResponseTypes == null || currentResponseTypes.size() == 0) {
 			this.client.setOxAuthScopes(null);
 			return;

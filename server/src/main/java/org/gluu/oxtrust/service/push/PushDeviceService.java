@@ -50,7 +50,7 @@ public class PushDeviceService implements Serializable {
 	}
 
 	public boolean containsBranch() {
-		return ldapEntryManager.contains(SimpleBranch.class, getDnForPushDevice(null));
+		return ldapEntryManager.contains(getDnForPushDevice(null), SimpleBranch.class);
 	}
 
 	/**
