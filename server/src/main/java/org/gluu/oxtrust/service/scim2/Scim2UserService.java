@@ -12,6 +12,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -330,7 +333,20 @@ public class Scim2UserService implements Serializable {
 		res.setPassword(person.getUserPassword());
 
 		res.setEmails(getAttributeListValue(person, Email.class, "oxTrustEmail"));
-		res.setPhoneNumbers(getAttributeListValue(person, PhoneNumber.class, "oxTrustPhoneValue"));
+        if (res.getEmails() == null) {
+            //There can be cases where oxTrustEmail is not synced with mail attribute....
+            List<Email> emails = Stream.of(Optional.ofNullable(person.getAttributeArray("mail"))
+                    .orElse(new String[0]))
+                    .map(m -> {
+                        Email email = new Email();
+                        email.setValue(m);
+                        email.setPrimary(false);
+                        return email;
+                    }).collect(Collectors.toList());
+            res.setEmails(emails.size() == 0 ? null : emails);
+        }
+
+        res.setPhoneNumbers(getAttributeListValue(person, PhoneNumber.class, "oxTrustPhoneValue"));
 		res.setIms(getAttributeListValue(person, InstantMessagingAddress.class, "oxTrustImsValue"));
 		res.setPhotos(getAttributeListValue(person, Photo.class, "oxTrustPhotos"));
 		res.setAddresses(getAttributeListValue(person, Address.class, "oxTrustAddresses"));
