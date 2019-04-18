@@ -12,6 +12,7 @@ import javax.ws.rs.core.Response;
 import org.gluu.oxtrust.api.server.util.Constants;
 import org.gluu.oxtrust.ldap.service.ConfigurationService;
 import org.gluu.oxtrust.model.GluuConfiguration;
+import org.gluu.oxtrust.service.filter.ProtectedApi;
 import org.gluu.oxtrust.api.server.util.ApiConstants;
 import org.slf4j.Logger;
 
@@ -39,6 +40,7 @@ public class ConfigurationWebResource extends BaseWebResource {
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, response = GluuConfiguration.class, message = Constants.RESULT_SUCCESS),
 			@ApiResponse(code = 500, message = "Server error") })
+	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response getConfiguration() {
 		try {
 			return Response.ok(configurationService.getConfiguration()).build();

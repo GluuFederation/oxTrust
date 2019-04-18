@@ -14,6 +14,7 @@ import org.gluu.oxtrust.api.server.util.Constants;
 import org.gluu.oxtrust.ldap.service.ConfigurationService;
 import org.gluu.oxtrust.ldap.service.EncryptionService;
 import org.gluu.oxtrust.model.GluuConfiguration;
+import org.gluu.oxtrust.service.filter.ProtectedApi;
 import org.gluu.oxtrust.api.server.util.ApiConstants;
 import org.slf4j.Logger;
 import org.gluu.model.SmtpConfiguration;
@@ -49,6 +50,7 @@ public class SmtpConfigurationWebResource extends BaseWebResource {
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, response = SmtpConfiguration.class, message = Constants.RESULT_SUCCESS),
 			@ApiResponse(code = 500, message = "Server error") })
+	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response getSmtpServerConfiguration() {
 		try {
 			SmtpConfiguration smtpConfiguration = configurationService.getConfiguration().getSmtpConfiguration();
@@ -64,6 +66,7 @@ public class SmtpConfigurationWebResource extends BaseWebResource {
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, response = SmtpConfiguration.class, message = Constants.RESULT_SUCCESS),
 			@ApiResponse(code = 404, message = "Not found"), @ApiResponse(code = 500, message = "Server error") })
+	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response updateSmtpConfiguration(SmtpConfiguration smtpConfiguration) {
 		try {
 			Preconditions.checkNotNull(smtpConfiguration, "Attempt to update null smtpConfiguration");
@@ -84,6 +87,7 @@ public class SmtpConfigurationWebResource extends BaseWebResource {
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, response = SmtpConfiguration.class, message = Constants.RESULT_SUCCESS),
 			@ApiResponse(code = 500, message = "Server error") })
+	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response testSmtpConfiguration() {
 		try {
 			SmtpConfiguration smtpConfiguration = configurationService.getConfiguration().getSmtpConfiguration();

@@ -46,7 +46,7 @@ public class UmaScopeWebResource extends BaseWebResource {
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, response = UmaScopeDescription[].class, message = Constants.RESULT_SUCCESS),
 			@ApiResponse(code = 500, message = "Server error") })
-	@ProtectedApi(scopes = { "oxtrust-api-read" })
+	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response listUmaScopes() {
 		log(logger, "Get uma scopes");
 		try {
@@ -61,7 +61,7 @@ public class UmaScopeWebResource extends BaseWebResource {
 	@GET
 	@Path(ApiConstants.SEARCH)
 	@ApiOperation(value = "Search uma scopes")
-	@ProtectedApi(scopes = { "oxtrust-api-read" })
+	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response searchUmaScopes(@QueryParam(ApiConstants.SEARCH_PATTERN) @NotNull String pattern) {
 		log(logger, "Search uma scope with pattern = " + pattern);
 		try {
@@ -76,7 +76,7 @@ public class UmaScopeWebResource extends BaseWebResource {
 	@GET
 	@Path(ApiConstants.INUM_PARAM_PATH)
 	@ApiOperation(value = "Get a uma scope by inum")
-	@ProtectedApi(scopes = { "oxtrust-api-read" })
+	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response getUmaScopeByInum(@PathParam(ApiConstants.INUM) @NotNull String inum) {
 		log(logger, "Get uma scope " + inum);
 		try {
@@ -95,7 +95,7 @@ public class UmaScopeWebResource extends BaseWebResource {
 
 	@POST
 	@ApiOperation(value = "Add new uma scope")
-	@ProtectedApi(scopes = { "oxtrust-api-write" })
+	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response createUmaScope(UmaScopeDescription umaScopeDescription) {
 		log(logger, "Add new uma scope");
 		try {
@@ -113,7 +113,7 @@ public class UmaScopeWebResource extends BaseWebResource {
 
 	@PUT
 	@ApiOperation(value = "Update uma scope")
-	@ProtectedApi(scopes = { "oxtrust-api-write" })
+	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response updateUmaScope(UmaScopeDescription umaScopeDescription) {
 		String inum = umaScopeDescription.getInum();
 		log(logger, "Update uma scope " + inum);
@@ -137,7 +137,7 @@ public class UmaScopeWebResource extends BaseWebResource {
 	@DELETE
 	@Path(ApiConstants.INUM_PARAM_PATH)
 	@ApiOperation(value = "Delete a uma scope")
-	@ProtectedApi(scopes = { "oxtrust-api-write" })
+	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response deleteUmaScope(@PathParam(ApiConstants.INUM) @NotNull String inum) {
 		log(logger, "Delete a uma scope having inum " + inum);
 		try {

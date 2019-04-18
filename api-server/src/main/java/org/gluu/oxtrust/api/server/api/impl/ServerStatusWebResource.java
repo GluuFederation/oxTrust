@@ -12,6 +12,7 @@ import javax.ws.rs.core.Response;
 import org.gluu.oxtrust.api.GluuServerStatus;
 import org.gluu.oxtrust.ldap.service.ConfigurationService;
 import org.gluu.oxtrust.model.GluuConfiguration;
+import org.gluu.oxtrust.service.filter.ProtectedApi;
 import org.gluu.oxtrust.api.server.util.ApiConstants;
 import org.slf4j.Logger;
 
@@ -30,6 +31,7 @@ public class ServerStatusWebResource extends BaseWebResource {
 
 	@GET
 	@ApiOperation(value = "Get server status ")
+	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response getServerStatus() {
 		log("Get server status");
 		try {

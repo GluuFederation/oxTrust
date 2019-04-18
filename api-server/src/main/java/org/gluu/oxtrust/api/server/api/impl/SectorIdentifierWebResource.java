@@ -22,6 +22,7 @@ import javax.ws.rs.core.Response;
 
 import org.gluu.oxtrust.ldap.service.SectorIdentifierService;
 import org.gluu.oxtrust.model.OxAuthSectorIdentifier;
+import org.gluu.oxtrust.service.filter.ProtectedApi;
 import org.gluu.oxtrust.api.server.util.ApiConstants;
 import org.slf4j.Logger;
 
@@ -43,6 +44,7 @@ public class SectorIdentifierWebResource extends BaseWebResource {
 
 	@GET
 	@ApiOperation(value = "Get all sectors identifiers")
+	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response getAllSectorIdentifiers() {
 		log("Get all sectors identifiers ");
 		try {
@@ -56,6 +58,7 @@ public class SectorIdentifierWebResource extends BaseWebResource {
 	@GET
 	@Path(ApiConstants.INUM_PARAM_PATH)
 	@ApiOperation(value = "Get a sector identifier")
+	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response getSectorIdentifierById(@PathParam(ApiConstants.INUM) @NotNull String id) {
 		log("Get sector identifier having id: " + id);
 		try {
@@ -75,6 +78,7 @@ public class SectorIdentifierWebResource extends BaseWebResource {
 	@GET
 	@Path(ApiConstants.SEARCH)
 	@ApiOperation(value = "Search sectors identifiers")
+	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response searchSectorIdentifier(@QueryParam(ApiConstants.SEARCH_PATTERN) String pattern,
 			@DefaultValue("10") @QueryParam(value = "size") int size) {
 		log("Search sector with pattern= " + pattern + "and size: " + size);
@@ -90,6 +94,7 @@ public class SectorIdentifierWebResource extends BaseWebResource {
 
 	@POST
 	@ApiOperation(value = "Add a sector identifier")
+	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response createSectorIdentifier(OxAuthSectorIdentifier identifier) {
 		log("Create a sector identifier");
 		try {
@@ -109,6 +114,7 @@ public class SectorIdentifierWebResource extends BaseWebResource {
 
 	@PUT
 	@ApiOperation(value = "Update sector identifier")
+	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response updateSectorIdentifier(OxAuthSectorIdentifier identifier) {
 		Objects.requireNonNull(identifier);
 		String id = identifier.getId();
@@ -134,6 +140,7 @@ public class SectorIdentifierWebResource extends BaseWebResource {
 	@DELETE
 	@Path(ApiConstants.INUM_PARAM_PATH)
 	@ApiOperation(value = "Delete a sector identifier")
+	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response deleteSectorIdentifier(@PathParam(ApiConstants.INUM) @NotNull String id) {
 		log("Delete sector identifier with id: " + id);
 		try {
