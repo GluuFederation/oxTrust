@@ -452,15 +452,15 @@ public class PersonImportAction implements Serializable {
 				boolean flag = false;
 				for (AttributeData AttributeData : entriesAttributes.get(key)) {
 					if (AttributeData.getName().equalsIgnoreCase("uid")) {
-						if (person.getUid().equalsIgnoreCase(AttributeData.getValue())) {
+						if (person.getUid().equalsIgnoreCase(String.valueOf(AttributeData.getValue()))) {
 							for (AttributeData AttributeData1 : entriesAttributes.get(key)) {
 								if (AttributeData1.getName().equalsIgnoreCase("userPassword")) {
-									person.setUserPassword(AttributeData1.getValue());
+									person.setUserPassword(String.valueOf(AttributeData1.getValue()));
 									flag = true;
 									break;
 								} else if (AttributeData1.getName().equalsIgnoreCase("gluuStatus")) {
 
-									person.setStatus(GluuStatus.getByValue(AttributeData1.getValue()));
+									person.setStatus(GluuStatus.getByValue(String.valueOf(AttributeData1.getValue())));
 									flag = true;
 									break;
 								}
