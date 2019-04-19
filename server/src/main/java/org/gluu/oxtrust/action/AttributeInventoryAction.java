@@ -91,16 +91,12 @@ public class AttributeInventoryAction implements Serializable {
 				this.setActiveAttributeList(attributeService.getAllActivePersonAttributes(GluuUserRole.ADMIN));
 			} catch (Exception ex) {
 				log.error("Failed to load attributes", ex);
-
 				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to load attributes");
 				conversationService.endConversation();
-
 				return OxTrustConstants.RESULT_FAILURE;
 			}
 		}
-
 		this.initialized = true;
-
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
@@ -197,9 +193,7 @@ public class AttributeInventoryAction implements Serializable {
 
 	public void submit() {
 		FacesContext facesContext = FacesContext.getCurrentInstance();
-
 		List<String> checkedItems = new ArrayList<String>();
-
 		for (GluuAttribute item : activeAttributeList) {
 			if (checked.get(item.getInum())) {
 				checkedItems.add(item.getInum());

@@ -24,9 +24,9 @@ import javax.inject.Named;
 import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.model.GluuAttribute;
 import org.gluu.model.GluuUserRole;
+import org.gluu.model.OxMultivalued;
 import org.gluu.model.attribute.AttributeDataType;
 import org.gluu.model.attribute.AttributeUsageType;
-import org.gluu.model.attribute.Multivalued;
 import org.gluu.model.scim.ScimCustomAtribute;
 import org.gluu.model.user.UserRole;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
@@ -35,7 +35,6 @@ import org.gluu.oxtrust.service.cdi.event.EventTypeQualifier;
 import org.gluu.oxtrust.service.cdi.event.Events;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.search.filter.Filter;
-import org.gluu.util.INumGenerator;
 import org.gluu.util.OxConstants;
 import org.gluu.util.StringHelper;
 
@@ -108,6 +107,39 @@ public class AttributeService extends org.gluu.service.AttributeService {
 			for (String objectClassType : objectClassTypes) {
 				if (attribute.getOrigin().equals(objectClassType)
 						&& ((attribute.allowViewBy(gluuUserRole) || attribute.allowEditBy(gluuUserRole)))) {
+					attributeList.add(attribute);
+					break;
+				}
+			}
+		}
+		return attributeList;
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<GluuAttribute> getAllActiveAttributes(GluuUserRole gluuUserRole) {
+		String key = OxTrustConstants.CACHE_ATTRIBUTE_PERSON_KEY_LIST + "_" + gluuUserRole.getValue();
+		List<GluuAttribute> attributeList = (List<GluuAttribute>) cacheService.get(OxConstants.CACHE_ATTRIBUTE_NAME,
+				key);
+		if (attributeList == null) {
+			attributeList = getAllPersonAtributes(gluuUserRole, getAllAttributes());
+			cacheService.put(OxConstants.CACHE_ATTRIBUTE_NAME, key, attributeList);
+		}
+		return attributeList;
+	}
+
+	private List<GluuAttribute> getAllPersonAtributes(GluuUserRole gluuUserRole, Collection<GluuAttribute> attributes) {
+		List<GluuAttribute> attributeList = new ArrayList<GluuAttribute>();
+		String[] objectClassTypes = appConfiguration.getPersonObjectClassTypes();
+		log.debug("objectClassTypes={}", Arrays.toString(objectClassTypes));
+		for (GluuAttribute attribute : attributes) {
+			if (StringHelper.equalsIgnoreCase(attribute.getOrigin(), appConfiguration.getPersonCustomObjectClass())
+					&& (GluuUserRole.ADMIN == gluuUserRole)) {
+				attribute.setCustom(true);
+				attributeList.add(attribute);
+				continue;
+			}
+			for (String objectClassType : objectClassTypes) {
+				if (attribute.getOrigin().equals(objectClassType)) {
 					attributeList.add(attribute);
 					break;
 				}
@@ -379,8 +411,8 @@ public class AttributeService extends org.gluu.service.AttributeService {
 	 * 
 	 * @return Array of data types
 	 */
-	public Multivalued[] getOxMultivalued() {
-		return Multivalued.values();
+	public OxMultivalued[] getOxMultivalued() {
+		return OxMultivalued.values();
 	}
 
 	/**
@@ -458,25 +490,6 @@ public class AttributeService extends org.gluu.service.AttributeService {
 	 */
 	private String generateInumForNewAttributeImpl() {
 		return UUID.randomUUID().toString();
-	}
-
-	private String generateInum() {
-		String inum = "";
-		int value;
-		while (true) {
-			inum = INumGenerator.generate(1);
-			try {
-				value = Integer.parseInt(inum, 16);
-				if (value < 7) {
-					continue;
-				}
-			} catch (Exception ex) {
-				log.error("Error generating inum: ", ex);
-
-			}
-			break;
-		}
-		return inum;
 	}
 
 	/**
@@ -627,8 +640,7 @@ public class AttributeService extends org.gluu.service.AttributeService {
 				continue;
 			}
 			for (String objectClassType : objectClassTypes) {
-				if (attribute.getOrigin().equals(objectClassType)
-						&& ((attribute.allowViewBy(gluuUserRole) || attribute.allowEditBy(gluuUserRole)))) {
+				if (attribute.getOrigin().equals(objectClassType)) {
 					attribute.setCustom(customOrigin.equals(attribute.getOrigin()));
 					returnAttributeList.add(attribute);
 					break;
