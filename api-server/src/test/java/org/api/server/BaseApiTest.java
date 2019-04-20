@@ -30,6 +30,7 @@ import org.gluu.oxauth.model.crypto.OxAuthCryptoProvider;
 import org.gluu.oxauth.model.token.ClientAssertionType;
 import org.gluu.oxauth.model.uma.UmaMetadata;
 import org.gluu.oxauth.model.uma.UmaTokenResponse;
+import org.gluu.oxauth.model.util.SecurityProviderUtility;
 import org.gluu.util.StringHelper;
 import org.junit.Assert;
 
@@ -42,6 +43,10 @@ public abstract class BaseApiTest {
 	private String umaAatClientKeyId = "";
 	private String umaAatClientJksPath = "/home/gasmyr/Desktop/api.jks";
 	private String umaAatClientJksPassword = "secret";
+
+	static {
+        SecurityProviderUtility.installBCProvider();
+    }
 
 	private void init() {
 		if (client == null) {
