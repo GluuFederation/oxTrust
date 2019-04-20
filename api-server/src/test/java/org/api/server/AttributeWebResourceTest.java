@@ -13,7 +13,7 @@ public class AttributeWebResourceTest extends BaseApiTest {
 	public void getAllAttributesTest() {
 		HttpUriRequest request = new HttpGet("https://gluu.gasmyr.com/identity/restv1/api/v1/attributes");
 		HttpResponse response = handle(request);
-		Assert.assertEquals(response.getStatusLine().getStatusCode(), HttpStatus.SC_OK);
+		Assert.assertEquals(HttpStatus.SC_OK,response.getStatusLine().getStatusCode());
 	}
 
 }
