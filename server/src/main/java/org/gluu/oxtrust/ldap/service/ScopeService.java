@@ -151,6 +151,9 @@ public class ScopeService implements Serializable {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
+		
+		System.out.println(ldapEntryManager.getHashCode(result.get(0)));
 		return result;
 	}
 

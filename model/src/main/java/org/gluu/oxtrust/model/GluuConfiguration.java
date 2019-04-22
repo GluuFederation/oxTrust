@@ -133,9 +133,8 @@ public class GluuConfiguration extends InumEntry implements Serializable {
 	@AttributeName(name = "gluuConfigurationDnsServer")
 	private String configurationDnsServer;
 
-	@Min(value = 200)
 	@AttributeName(name = "gluuMaxLogSize")
-	private String maxLogSize;
+	private int maxLogSize;
 
 	@AttributeName(name = "gluuLoadAvg", updateOnly = true)
 	private String loadAvg;
@@ -331,11 +330,11 @@ public class GluuConfiguration extends InumEntry implements Serializable {
 		this.manageIdentityPermission = manageIdentityPermission;
 	}
 
-	public String getMaxLogSize() {
+	public int getMaxLogSize() {
 		return maxLogSize;
 	}
 
-	public void setMaxLogSize(String maxLogSize) {
+	public void setMaxLogSize(int maxLogSize) {
 		this.maxLogSize = maxLogSize;
 	}
 
