@@ -104,7 +104,7 @@ public class ConfigurationFactory {
 
 	private static final String GLUU_FILE_PATH = DIR + "gluu.properties";
 	public static final String LDAP_PROPERTIES_FILE = DIR + "oxtrust-ldap.properties";
-	public static final String LDAP_DEFAULT_PROPERTIES_FILE = DIR + "ox-ldap.properties";
+	public static final String LDAP_DEFAULT_PROPERTIES_FILE = DIR + "gluu-ldap.properties";
 	public static final String LDAP_CENTRAL_PROPERTIES_FILE = DIR + "oxtrust-central-ldap.properties";
 
 	public static final String APPLICATION_CONFIGURATION = "oxtrust-config.json";
