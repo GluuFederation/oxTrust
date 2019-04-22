@@ -118,9 +118,11 @@ public class CustomScriptWebResource extends BaseWebResource {
 				String dn = customScriptService.buildDn(inum);
 				customScript.setDn(dn);
 				customScript.setInum(inum);
+				customScriptService.add(customScript);
+				return Response.ok(customScriptService.getScriptByInum(inum)).build();
 			}
-			customScriptService.add(customScript);
-			return Response.ok().build();
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+
 		} catch (Exception e) {
 			log(logger, e);
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();

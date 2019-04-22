@@ -12,11 +12,11 @@ import org.apache.http.ParseException;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.util.EntityUtils;
-import org.gluu.model.GluuAttribute;
 import org.gluu.model.ProgrammingLanguage;
 import org.gluu.model.ScriptLocationType;
 import org.gluu.model.custom.script.CustomScriptType;
@@ -102,12 +102,53 @@ public class CustomScriptWebResourceTest extends BaseApiTest {
 			request.setEntity(entity);
 			String CONTENT_TYPE = "Content-Type";
 			request.setHeader(CONTENT_TYPE, MediaType.APPLICATION_JSON);
+
 			HttpResponse response = handle(request);
+
 			Assert.assertEquals(HttpStatus.SC_OK, response.getStatusLine().getStatusCode());
 			HttpEntity result = response.getEntity();
-			GluuAttribute gluuAttribute = mapper.readValue(EntityUtils.toString(result), GluuAttribute.class);
-			Assert.assertEquals(gluuAttribute.getName(), name);
-			Assert.assertEquals(gluuAttribute.getDisplayName(), name);
+			CustomScript myScript = mapper.readValue(EntityUtils.toString(result), CustomScript.class);
+			Assert.assertEquals(myScript.getName(), name);
+			Assert.assertEquals(myScript.getDescription(), name);
+		} catch (ParseException | IOException e) {
+			e.printStackTrace();
+			Assert.assertTrue(false);
+		}
+	}
+	
+	
+	@Test
+	public void updateScriptTest() {
+		String name = "AnotherMyScript";
+		CustomScript script = getCustomScript(name);
+		HttpPost request = new HttpPost(
+				BASE_URL + ApiConstants.BASE_API_URL + ApiConstants.CONFIGURATION + ApiConstants.SCRIPTS);
+		try {
+			String json = mapper.writeValueAsString(script);
+			HttpEntity entity = new ByteArrayEntity(json.toString().getBytes("UTF-8"),
+					ContentType.APPLICATION_FORM_URLENCODED);
+			request.setEntity(entity);
+			String CONTENT_TYPE = "Content-Type";
+			request.setHeader(CONTENT_TYPE, MediaType.APPLICATION_JSON);
+
+			HttpResponse response = handle(request);
+
+			Assert.assertEquals(HttpStatus.SC_OK, response.getStatusLine().getStatusCode());
+			HttpEntity result = response.getEntity();
+			CustomScript myScript = mapper.readValue(EntityUtils.toString(result), CustomScript.class);
+			Assert.assertEquals(myScript.getName(), name);
+			
+			
+			myScript.setDescription(myScript.getDescription() + " Updated");
+			HttpPut second = new HttpPut(
+					BASE_URL + ApiConstants.BASE_API_URL + ApiConstants.CONFIGURATION + ApiConstants.SCRIPTS);
+			json = mapper.writeValueAsString(myScript);
+			entity = new ByteArrayEntity(json.toString().getBytes("UTF-8"),
+					ContentType.APPLICATION_FORM_URLENCODED);
+			second.setEntity(entity);
+			second.setHeader(CONTENT_TYPE, MediaType.APPLICATION_JSON);
+			response =handle(second);
+			Assert.assertEquals(HttpStatus.SC_OK, response.getStatusLine().getStatusCode());
 		} catch (ParseException | IOException e) {
 			e.printStackTrace();
 			Assert.assertTrue(false);
