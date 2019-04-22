@@ -34,6 +34,9 @@ import org.gluu.oxauth.model.util.SecurityProviderUtility;
 import org.gluu.util.StringHelper;
 import org.junit.Assert;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 public abstract class BaseApiTest {
 	protected String rpt = "";
 	private String ticket;
@@ -43,6 +46,9 @@ public abstract class BaseApiTest {
 	private String umaAatClientKeyId = "";
 	private String umaAatClientJksPath = "/home/gasmyr/Desktop/api-rp.jks";
 	private String umaAatClientJksPassword = "secret";
+	protected static final String BASE_URL = "https://gluu.gasmyr.com/identity/restv1";
+	protected ObjectMapper mapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,
+			false);
 
 	static {
 		SecurityProviderUtility.installBCProvider();

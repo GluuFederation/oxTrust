@@ -66,11 +66,11 @@ public class CustomScriptWebResource extends BaseWebResource {
 	}
 
 	@GET
-	@Path(ApiConstants.TYPE_PARAM_PATH)
+	@Path(ApiConstants.TYPE_PATH + ApiConstants.TYPE_PARAM_PATH)
 	@ApiOperation(value = "Get person authentications scripts")
 	@ProtectedApi(scopes = { READ_ACCESS })
-	public Response listPersonAuthetnicationCustomScripts(@PathParam(ApiConstants.TYPE) @NotNull String type) {
-		log(logger, "Get person authentications scripts");
+	public Response listCustomScriptsByType(@PathParam(ApiConstants.TYPE) @NotNull String type) {
+		log(logger, "Get custom scripts of type: " + type);
 		try {
 			List<String> allowedCustomScriptTypes = Stream.of(this.configurationService.getCustomScriptTypes())
 					.map(e -> e.getValue()).collect(Collectors.toList());
@@ -78,6 +78,25 @@ public class CustomScriptWebResource extends BaseWebResource {
 				List<CustomScript> customScripts = customScriptService.findAllCustomScripts(null).stream()
 						.filter(e -> e.getScriptType().getValue().equalsIgnoreCase(type)).collect(Collectors.toList());
 				return Response.ok(customScripts).build();
+			} else {
+				return Response.status(Response.Status.NOT_FOUND).build();
+			}
+		} catch (Exception e) {
+			log(logger, e);
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+
+	@GET
+	@Path(ApiConstants.INUM_PARAM_PATH)
+	@ApiOperation(value = "Get scripts by inum")
+	@ProtectedApi(scopes = { READ_ACCESS })
+	public Response getCustomScriptsByInum(@PathParam(ApiConstants.INUM) @NotNull String inum) {
+		log(logger, "Get scripts by inum");
+		try {
+			CustomScript script = customScriptService.getScriptByInum(inum);
+			if (script != null) {
+				return Response.ok(script).build();
 			} else {
 				return Response.status(Response.Status.NOT_FOUND).build();
 			}
