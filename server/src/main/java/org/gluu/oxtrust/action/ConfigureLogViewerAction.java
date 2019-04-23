@@ -115,7 +115,7 @@ public class ConfigureLogViewerAction implements SimpleCustomPropertiesListModel
 	private void updateConfiguration() {
 		GluuConfiguration updateConfiguration = configurationService.getConfiguration();
 		try {
-			updateConfiguration.setOxLogViewerConfig(jsonService.objectToJson(logViewerConfiguration));
+			updateConfiguration.setOxLogViewerConfig(logViewerConfiguration);
 			updateConfiguration.setOxLogConfigLocation(oxTrustLogConfigLocation);
 
 			configurationService.updateConfiguration(updateConfiguration);
@@ -150,16 +150,7 @@ public class ConfigureLogViewerAction implements SimpleCustomPropertiesListModel
 	}
 
 	private LogViewerConfig prepareLogViewerConfig() {
-		LogViewerConfig logViewerConfig = null;
-
-		String oxLogViewerConfig = configuration.getOxLogViewerConfig();
-		if (StringHelper.isNotEmpty(oxLogViewerConfig)) {
-			try {
-				logViewerConfig = jsonService.jsonToObject(configuration.getOxLogViewerConfig(), LogViewerConfig.class);
-			} catch (Exception ex) {
-				log.error("Failed to load log viewer configuration '{}'", oxLogViewerConfig, ex);
-			}
-		}
+		LogViewerConfig logViewerConfig = configuration.getOxLogViewerConfig();
 
 		if (logViewerConfig == null) {
 			logViewerConfig = new LogViewerConfig();
