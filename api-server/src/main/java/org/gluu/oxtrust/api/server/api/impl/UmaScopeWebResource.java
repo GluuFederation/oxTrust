@@ -18,12 +18,12 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.gluu.oxauth.model.uma.persistence.UmaScopeDescription;
+import org.gluu.oxtrust.api.server.util.ApiConstants;
 import org.gluu.oxtrust.api.server.util.Constants;
 import org.gluu.oxtrust.ldap.service.uma.ScopeDescriptionService;
 import org.gluu.oxtrust.service.filter.ProtectedApi;
-import org.gluu.oxtrust.api.server.util.ApiConstants;
 import org.slf4j.Logger;
-import org.gluu.oxauth.model.uma.persistence.UmaScopeDescription;
 
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiResponse;
@@ -154,4 +154,9 @@ public class UmaScopeWebResource extends BaseWebResource {
 		}
 	}
 
+	@DELETE
+	@ProtectedApi(scopes = { WRITE_ACCESS })
+	public Response deleteAllUmaScopes() {
+		return Response.status(Response.Status.UNAUTHORIZED).build();
+	}
 }

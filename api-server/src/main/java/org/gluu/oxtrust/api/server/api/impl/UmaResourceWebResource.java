@@ -56,8 +56,7 @@ public class UmaResourceWebResource extends BaseWebResource {
 	public Response listUmaResources() {
 		try {
 			log(logger, "Get uma resources");
-			List<UmaResource> umaResources = umaResourcesService.getAllResources(100);
-			return Response.ok(umaResources).build();
+			return Response.ok(umaResourcesService.getAllResources(1000)).build();
 		} catch (Exception e) {
 			log(logger, e);
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
