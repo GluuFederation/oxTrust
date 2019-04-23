@@ -133,7 +133,7 @@ public class MetricService extends org.gluu.service.metric.MetricService {
 
 		authenticationChartDto.setYearlyRequest(yearlyRequest);
 
-		cacheService.put(OxTrustConstants.CACHE_METRICS_NAME, key, authenticationChartDto);
+		cacheService.put(key, authenticationChartDto);
 
 		return authenticationChartDto;
 	}
