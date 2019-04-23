@@ -148,7 +148,7 @@ public class ScopeWebResource extends BaseWebResource {
 			List<String> claimsDn = new ArrayList<String>();
 			List<GluuAttribute> attributes = new ArrayList<GluuAttribute>();
 			if (oxAuthScope != null) {
-				claimsDn = oxAuthScope.getOxAuthClaims();
+				claimsDn.addAll(oxAuthScope.getOxAuthClaims());
 				for (String claimDn : claimsDn) {
 					attributes.add(attributeService.getAttributeByDn(claimDn));
 				}

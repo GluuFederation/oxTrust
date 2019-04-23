@@ -15,6 +15,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.codehaus.jackson.annotate.JsonPropertyOrder;
+import org.gluu.model.ldap.GluuLdapConfiguration;
 
 /**
  * oxIDPAuthConf
@@ -35,7 +36,7 @@ public class OxIDPAuthConf {
 	private boolean enabled;
 	private int version;
 	private List<CustomAttribute> fields;
-	private String config;
+	private GluuLdapConfiguration config;
 
 	public OxIDPAuthConf() {
 		this.fields = new ArrayList<CustomAttribute>();
@@ -97,11 +98,11 @@ public class OxIDPAuthConf {
 		this.fields = fields;
 	}
 
-	public String getConfig() {
+	public GluuLdapConfiguration getConfig() {
 		return config;
 	}
 
-	public void setConfig(String config) {
+	public void setConfig(GluuLdapConfiguration config) {
 		this.config = config;
 	}
 

@@ -10,6 +10,7 @@ public final class ApiConstants {
 	public static final String GROUPS = "/groups";
 	public static final String CERTIFICATES = "/certificates";
 	public static final String SCRIPTS = "/scripts";
+	public static final String TYPE_PATH = "/type";
 	public static final String GROUP_MEMBERS = "/members";
 	public static final String PEOPLE = "/people";
 	public static final String SCOPES = "/scopes";
