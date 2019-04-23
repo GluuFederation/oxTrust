@@ -74,10 +74,14 @@ public class ClientWebResource extends BaseWebResource {
 			if (client != null) {
 				List<String> scopesDn = client.getOxAuthScopes();
 				List<OxAuthScope> scopes = new ArrayList<OxAuthScope>();
-				for (String scopeDn : scopesDn) {
-					scopes.add(scopeService.getScopeByDn(scopeDn));
+				if (scopesDn != null) {
+					for (String scopeDn : scopesDn) {
+						scopes.add(scopeService.getScopeByDn(scopeDn));
+					}
+					return Response.ok(scopes).build();
+				} else {
+					return Response.ok(scopes).build();
 				}
-				return Response.ok(scopes).build();
 			} else {
 				return Response.status(Response.Status.NOT_FOUND).build();
 			}
@@ -199,7 +203,7 @@ public class ClientWebResource extends BaseWebResource {
 	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response removeScopeToClient(@PathParam(ApiConstants.INUM) @NotNull String inum,
 			@PathParam(ApiConstants.SCOPE_INUM) @NotNull String sinum) {
-		log(logger, "add new scope to client");
+		log(logger, "remove scope to client");
 		try {
 			OxAuthClient client = clientService.getClientByInum(inum);
 			OxAuthScope scope = scopeService.getScopeByInum(sinum);
@@ -250,7 +254,7 @@ public class ClientWebResource extends BaseWebResource {
 	@DELETE
 	@Path(ApiConstants.INUM_PARAM_PATH + ApiConstants.SCOPES)
 	@ProtectedApi(scopes = { WRITE_ACCESS })
-	public Response deleteClientScopes() {
+	public Response deleteClientScopes(@PathParam(ApiConstants.INUM) @NotNull String inum) {
 		return Response.status(Response.Status.UNAUTHORIZED).build();
 	}
 }

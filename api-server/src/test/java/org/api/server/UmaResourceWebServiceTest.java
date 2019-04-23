@@ -19,6 +19,7 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.util.EntityUtils;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.gluu.oxauth.model.uma.UmaResource;
 import org.gluu.oxauth.model.uma.UmaScopeDescription;
 import org.gluu.oxtrust.api.server.util.ApiConstants;
@@ -92,7 +93,7 @@ public class UmaResourceWebServiceTest extends BaseApiTest {
 		HttpEntity entity = response.getEntity();
 		try {
 			String content = EntityUtils.toString(entity);
-			OxAuthClient[] clients = mapper.readValue(content, OxAuthClient[].class);
+			OxAuthClient[] clients = new ObjectMapper().readValue(content, OxAuthClient[].class);
 			Assert.assertNotNull(clients);
 			Assert.assertEquals(clients.length, 1);
 		} catch (ParseException | IOException e) {

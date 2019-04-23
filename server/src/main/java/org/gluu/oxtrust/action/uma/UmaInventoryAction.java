@@ -139,10 +139,12 @@ public class UmaInventoryAction implements Serializable {
 	public List<String> getScopes(UmaResource resource) {
 		List<String> result = new ArrayList<>();
 		List<String> scopeDns = resource.getScopes();
-		for (String dn : scopeDns) {
-			UmaScopeDescription res = scopeDescriptionService.getScopeByDn(dn);
-			if (res != null) {
-				result.add(res.getDisplayName());
+		if (scopeDns != null) {
+			for (String dn : scopeDns) {
+				UmaScopeDescription res = scopeDescriptionService.getScopeByDn(dn);
+				if (res != null) {
+					result.add(res.getDisplayName());
+				}
 			}
 		}
 		return result;

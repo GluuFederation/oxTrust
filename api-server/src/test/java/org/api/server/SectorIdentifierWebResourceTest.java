@@ -137,7 +137,7 @@ public class SectorIdentifierWebResourceTest extends BaseApiTest {
 
 	@Test
 	public void getSectorIdentifierByInumTest() {
-		String inum = "40040404";
+		String inum = "40040404fyyy";
 		HttpUriRequest request = new HttpGet(BASE_URL + ApiConstants.BASE_API_URL + ApiConstants.SECTORS + "/" + inum);
 		HttpResponse response = handle(request);
 		Assert.assertEquals(HttpStatus.SC_NOT_FOUND, response.getStatusLine().getStatusCode());

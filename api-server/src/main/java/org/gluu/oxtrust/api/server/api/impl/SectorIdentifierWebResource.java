@@ -56,10 +56,10 @@ public class SectorIdentifierWebResource extends BaseWebResource {
 	}
 
 	@GET
-	@Path(ApiConstants.INUM_PARAM_PATH)
+	@Path(ApiConstants.ID_PARAM_PATH)
 	@ApiOperation(value = "Get a sector identifier")
 	@ProtectedApi(scopes = { READ_ACCESS })
-	public Response getSectorIdentifierById(@PathParam(ApiConstants.INUM) @NotNull String id) {
+	public Response getSectorIdentifierById(@PathParam(ApiConstants.ID) @NotNull String id) {
 		log("Get sector identifier having id: " + id);
 		try {
 			Objects.requireNonNull(id);
@@ -67,7 +67,7 @@ public class SectorIdentifierWebResource extends BaseWebResource {
 			if (sectorIdentifier != null) {
 				return Response.ok(sectorIdentifier).build();
 			} else {
-				return Response.ok(Response.Status.NOT_FOUND).build();
+				return Response.status(Response.Status.NOT_FOUND).build();
 			}
 		} catch (Exception e) {
 			log(logger, e);
@@ -145,8 +145,13 @@ public class SectorIdentifierWebResource extends BaseWebResource {
 		log("Delete sector identifier with id: " + id);
 		try {
 			OxAuthSectorIdentifier sectorIdentifier = sectorIdentifierService.getSectorIdentifierById(id);
-			sectorIdentifierService.removeSectorIdentifier(sectorIdentifier);
-			return Response.ok().build();
+			if (sectorIdentifier != null) {
+				sectorIdentifierService.removeSectorIdentifier(sectorIdentifier);
+				return Response.ok().build();
+			} else {
+				return Response.status(Response.Status.NOT_FOUND).build();
+			}
+
 		} catch (Exception e) {
 			log(logger, e);
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
