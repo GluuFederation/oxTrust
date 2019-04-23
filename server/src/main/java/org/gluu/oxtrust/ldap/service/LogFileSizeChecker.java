@@ -93,20 +93,11 @@ public class LogFileSizeChecker {
 	private void processInt() {
 		GluuConfiguration configuration;
 		configuration = configurationService.getConfiguration();
-		String maxLogSize = configuration.getMaxLogSize();
-		log.debug("Max Log Size: " + maxLogSize);
-		long maxSize = 0;
-
-		try {
-			maxSize = Long.parseLong(maxLogSize); // MB
-		} catch (Exception ex) {
-			log.error("configuration maxLogSize value is invalid: " + maxLogSize);
-			log.error("assuming 0");
-		}
+		long maxSize = configuration.getMaxLogSize();;
+		log.debug("Max Log Size: " + maxSize);
 
 		if (maxSize > 0) {
-
-			log.debug("Max Log Size: " + maxLogSize);
+			log.debug("Max Log Size: " + maxSize);
 
 			long maxSizeInByte = maxSize * 1024 * 1024;
 			long currentSize = 0;

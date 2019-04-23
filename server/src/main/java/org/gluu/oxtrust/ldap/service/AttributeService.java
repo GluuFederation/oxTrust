@@ -385,7 +385,7 @@ public class AttributeService extends org.gluu.service.AttributeService {
 	@SuppressWarnings("deprecation")
 	public void clearAttributesCache(@Observes @EventType(Events.EVENT_CLEAR_ATTRIBUTES) Events event) {
 		log.debug("Removing attributes from cache");
-		cacheService.removeAll(OxConstants.CACHE_ATTRIBUTE_NAME);
+		cacheService.clear();
 	}
 
 	/**

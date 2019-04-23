@@ -49,7 +49,7 @@ public abstract class Configuration<C extends AppConfiguration, L extends LdapAp
     public static final String BASE_DIR;
     public static final String DIR = BASE_DIR + File.separator + "conf" + File.separator;
 
-    public static final String LDAP_DEFAULT_PROPERTIES_FILE = DIR + "ox-ldap.properties";
+    public static final String LDAP_DEFAULT_PROPERTIES_FILE = DIR + "gluu-ldap.properties";
 
 	private static final String SALT_FILE_NAME = "salt";
 
@@ -223,7 +223,7 @@ public abstract class Configuration<C extends AppConfiguration, L extends LdapAp
 	}
 
 	protected String getDefaultLdapConfigurationFileName() {
-		return "ox-ldap.properties";
+		return "gluu-ldap.properties";
 	}
 
 	public C getAppConfiguration() {
