@@ -24,10 +24,8 @@ import javax.inject.Named;
 import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.model.GluuAttribute;
 import org.gluu.model.GluuUserRole;
-import org.gluu.model.OxMultivalued;
 import org.gluu.model.attribute.AttributeDataType;
 import org.gluu.model.attribute.AttributeUsageType;
-import org.gluu.model.scim.ScimCustomAtribute;
 import org.gluu.model.user.UserRole;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.service.cdi.event.EventType;
@@ -325,7 +323,7 @@ public class AttributeService extends org.gluu.service.AttributeService {
 		for (GluuAttribute attribute : attributes) {
 			boolean isEmpty = attribute.getOxSCIMCustomAttribute() == null;
 			if (!isEmpty) {
-				if (attribute.getOxSCIMCustomAttribute().getValue().equalsIgnoreCase("true")) {
+				if ((attribute.getOxSCIMCustomAttribute() != null) && attribute.getOxSCIMCustomAttribute()) {
 					result.add(attribute);
 				}
 			}
@@ -395,24 +393,6 @@ public class AttributeService extends org.gluu.service.AttributeService {
 	 */
 	public AttributeDataType[] getDataTypes() {
 		return AttributeDataType.values();
-	}
-
-	/**
-	 * Get all available Scim Custom Atributes
-	 * 
-	 * @return Array of data types
-	 */
-	public ScimCustomAtribute[] getScimCustomAttribute() {
-		return ScimCustomAtribute.values();
-	}
-
-	/**
-	 * Get all available oxMultivalued attributes
-	 * 
-	 * @return Array of data types
-	 */
-	public OxMultivalued[] getOxMultivalued() {
-		return OxMultivalued.values();
 	}
 
 	/**
