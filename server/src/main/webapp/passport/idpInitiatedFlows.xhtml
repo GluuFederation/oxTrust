@@ -90,21 +90,21 @@
 										</div>
 									</b:panel>
 									<b:panel id="AuthParametersListID"
-										rendered="#{(passportIdpInitiatedAction.authzParams.size() ne 0) and !passportIdpInitiatedAction.showForm}"
+										rendered="#{!passportIdpInitiatedAction.showForm}"
 										title="#{msg['passport.idpinitiated.authParams.title']}"
 										look="primary">
 										<h:panelGroup columns="1" width="100%" id="AuthParamsSection">
 											<!-- AuthorizationParams List section-->
 											<div class="row" style="margin-left: 5px; margin-right: 5px;">
 												<a4j:commandButton styleClass="btn btn-primary addNewParam"
-													value="Add New AuthZParam"
+													value="Add"
 													action="#{passportIdpInitiatedAction.activateForm}"
 													render="IdpInitiatedForm,AuthZParamFormId,AuthParametersListID"
 													execute="@this" />
 											</div>
 											<b:dataTable id="paramsTableId"
 												value="#{passportIdpInitiatedAction.authzParams}" var="c"
-												print="true" excel="true" csv="true" pdf="true"
+												rendered="#{(passportIdpInitiatedAction.authzParams.size() gt 0)}"
 												select="true">
 												<b:dataTableColumn
 													label="#{msg['passport.idpinitiated.authParams.provider']}">
@@ -114,10 +114,6 @@
 														<f:param name="id" value="#{c.provider}" />
 													</h:link>
 												</b:dataTableColumn>
-												<b:dataTableColumn value="#{c.responseType}"
-													label="#{msg['passport.idpinitiated.authParams.responseType']}" />
-												<b:dataTableColumn value="#{c.scopes}"
-													label="#{msg['passport.idpinitiated.authParams.scope']}" />
 												<b:dataTableColumn value="#{c.redirectUri}" order="asc"
 													label="#{msg['passport.idpinitiated.authParams.redirectUri']}" />
 												<b:dataTableColumn label="Actions">
@@ -152,7 +148,7 @@
 						<h:form id="AuthZParamFormId" prependId="false">
 							<div class="row"
 								style="margin-left: 10px; margin-right: 10px; margin-top: 10px;">
-								<b:panel title="AuthZ Parameter Form"
+								<b:panel title="Authorization request params"
 									rendered="#{passportIdpInitiatedAction.showForm}"
 									look="success">
 									<h:panelGroup id="ParamFormID"
@@ -177,7 +173,7 @@
 													<b:formGroup>
 														<b:inputText id="RedirectURI" colMd="9" labelColMd="3"
 															value="#{passportIdpInitiatedAction.authzParam.redirectUri}"
-															styleClass="rounded form-control RedirectURI"
+															styleClass="rounded form-control RedirectURI" required="true"
 															label="#{msg['passport.idpinitiated.authParams.redirectUri']}" />
 													</b:formGroup>
 												</b:form>

@@ -2,7 +2,9 @@ package org.gluu.oxtrust.action;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -78,7 +80,10 @@ public class PassportIdpInitiatedAction implements Serializable {
 			this.iiConfiguration = this.passportConfiguration.getIdpInitiated();
 			this.authzParams = this.iiConfiguration.getAuthorizationParams();
 			this.clients = clientService.getAllClients();
-			this.providers = this.passportConfiguration.getProviders();
+			this.scopes.add("openid");
+			this.responseTypes.add("code");
+			this.providers = this.passportConfiguration.getProviders().stream()
+					.filter(e -> e.getType().equalsIgnoreCase("saml")).collect(Collectors.toList());
 			log.debug("Load passport idp initiated configuration done");
 			return OxTrustConstants.RESULT_SUCCESS;
 		} catch (Exception e) {
@@ -90,10 +95,11 @@ public class PassportIdpInitiatedAction implements Serializable {
 	public String save() {
 		try {
 			this.iiConfiguration.setAuthorizationParams(authzParams);
+			updateClientRedirects();
 			this.passportConfiguration.setIdpInitiated(iiConfiguration);
 			this.ldapOxPassportConfiguration.setPassportConfiguration(this.passportConfiguration);
 			passportService.updateLdapOxPassportConfiguration(ldapOxPassportConfiguration);
-			facesMessages.add(FacesMessage.SEVERITY_INFO, "changes saved successfully!");
+			facesMessages.add(FacesMessage.SEVERITY_INFO, "Changes saved successfully!");
 			return OxTrustConstants.RESULT_SUCCESS;
 		} catch (Exception e) {
 			log.debug("", e);
@@ -101,6 +107,27 @@ public class PassportIdpInitiatedAction implements Serializable {
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 
+	}
+
+	private void updateClientRedirects() {
+		List<String> total = new ArrayList<>();
+		List<String> urls = new ArrayList<>();
+		for (AuthzParams param : this.iiConfiguration.getAuthorizationParams()) {
+			if (param.getRedirectUri() != null) {
+				urls.add(param.getRedirectUri().trim());
+			}
+		}
+		OxAuthClient client = clientService.getClientByInum(this.iiConfiguration.getOpenidclient().getClientId());
+		List<String> existingUrls = client.getOxAuthRedirectURIs();
+		if (existingUrls != null) {
+			total.addAll(existingUrls);
+			total.addAll(urls);
+			Set<String> set = new HashSet<String>(total);
+			client.setOxAuthRedirectURIs(new ArrayList<String>(set));
+		} else {
+			client.setOxAuthRedirectURIs(existingUrls);
+		}
+		clientService.updateClient(client);
 	}
 
 	public String cancel() {
@@ -137,13 +164,13 @@ public class PassportIdpInitiatedAction implements Serializable {
 			scopesBuilder.append(e);
 			scopesBuilder.append(" ");
 		});
-		this.authzParam.setScopes(scopesBuilder.toString());
+		this.authzParam.setScopes(scopesBuilder.toString().trim());
 		StringBuilder typesBuilder = new StringBuilder();
 		responseTypes.forEach(e -> {
 			typesBuilder.append(e);
 			typesBuilder.append(" ");
 		});
-		this.authzParam.setResponseType(typesBuilder.toString());
+		this.authzParam.setResponseType(typesBuilder.toString().trim());
 		if (this.isEdition) {
 			this.authzParams.remove(this.previousParam);
 			this.authzParams.add(this.authzParam);

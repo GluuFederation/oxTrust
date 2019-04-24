@@ -18,6 +18,10 @@ public final class ApiConstants {
 	public static final String SECTORS = "/sectoridentifiers";
 	public static final String USERS = "/users";
 	public static final String ACRS = "/acrs";
+	public static final String PASSPORT = "/passport";
+	public static final String CONFIG = "/config";
+	public static final String PROVIDERS = "/providers";
+	public static final String IDP_INITIATED = "/idpinitiaded";
 	public static final String ATTRIBUTES = "/attributes";
 	public static final String LDAP = "/ldap";
 	public static final String CAS = "/cas";
