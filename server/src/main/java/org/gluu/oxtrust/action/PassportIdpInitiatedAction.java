@@ -139,7 +139,6 @@ public class PassportIdpInitiatedAction implements Serializable {
 			log.debug("", e);
 			return OxTrustConstants.RESULT_FAILURE;
 		}
-
 	}
 
 	public List<AuthzParams> getAuthzParams() {

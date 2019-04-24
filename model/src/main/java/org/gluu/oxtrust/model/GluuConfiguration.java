@@ -10,19 +10,17 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-import javax.validation.constraints.Min;
-
 import org.gluu.model.GluuStatus;
 import org.gluu.model.SmtpConfiguration;
 import org.gluu.oxtrust.model.cert.TrustStoreCertificate;
 import org.gluu.oxtrust.model.cert.TrustStoreConfiguration;
-import org.gluu.persist.model.base.GluuBoolean;
-import org.gluu.persist.model.base.InumEntry;
-import org.gluu.service.cache.CacheConfiguration;
 import org.gluu.persist.annotation.AttributeName;
 import org.gluu.persist.annotation.DataEntry;
 import org.gluu.persist.annotation.JsonObject;
 import org.gluu.persist.annotation.ObjectClass;
+import org.gluu.persist.model.base.GluuBoolean;
+import org.gluu.persist.model.base.InumEntry;
+import org.gluu.service.cache.CacheConfiguration;
 
 /**
  * GluuConfiguration
