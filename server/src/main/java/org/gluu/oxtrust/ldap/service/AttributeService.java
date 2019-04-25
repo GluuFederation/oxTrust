@@ -197,7 +197,8 @@ public class AttributeService extends org.gluu.service.AttributeService {
 	 */
 	@SuppressWarnings("unchecked")
 	public List<String> getAllAttributeOrigins() {
-		List<String> attributeOriginList = (List<String>) cacheService.get(OxTrustConstants.CACHE_ATTRIBUTE_ORIGIN_KEY_LIST);
+		List<String> attributeOriginList = (List<String>) cacheService
+				.get(OxTrustConstants.CACHE_ATTRIBUTE_ORIGIN_KEY_LIST);
 		if (attributeOriginList == null) {
 			attributeOriginList = getAllAttributeOrigins(getAllAttributes());
 			cacheService.put(OxTrustConstants.CACHE_ATTRIBUTE_ORIGIN_KEY_LIST, attributeOriginList);
@@ -262,7 +263,8 @@ public class AttributeService extends org.gluu.service.AttributeService {
 	 */
 	@SuppressWarnings("unchecked")
 	public List<GluuAttribute> getCustomAttributes() {
-		List<GluuAttribute> attributeList = (List<GluuAttribute>) cacheService.get(OxTrustConstants.CACHE_ATTRIBUTE_CUSTOM_KEY_LIST);
+		List<GluuAttribute> attributeList = (List<GluuAttribute>) cacheService
+				.get(OxTrustConstants.CACHE_ATTRIBUTE_CUSTOM_KEY_LIST);
 		if (attributeList == null) {
 			attributeList = new ArrayList<GluuAttribute>();
 			for (GluuAttribute attribute : getAllAttributes()) {
@@ -335,12 +337,6 @@ public class AttributeService extends org.gluu.service.AttributeService {
 		event.select(new EventTypeQualifier(Events.EVENT_CLEAR_ATTRIBUTES)).fire(Events.EVENT_CLEAR_ATTRIBUTES);
 	}
 
-	/**
-	 * Remove attribute with specified Inum
-	 * 
-	 * @param inum
-	 *            Inum
-	 */
 	public void removeAttribute(String inum) {
 		GluuAttribute attribute = new GluuAttribute();
 		attribute.setDn(getDnForAttribute(inum));
@@ -373,62 +369,31 @@ public class AttributeService extends org.gluu.service.AttributeService {
 	/**
 	 * Clear attributes cache after receiving event that attributes were changed
 	 */
-	@SuppressWarnings("deprecation")
 	public void clearAttributesCache(@Observes @EventType(Events.EVENT_CLEAR_ATTRIBUTES) Events event) {
 		log.debug("Removing attributes from cache");
 		cacheService.clear();
 	}
 
-	/**
-	 * Get all available data types
-	 * 
-	 * @return Array of data types
-	 */
 	public AttributeDataType[] getDataTypes() {
 		return AttributeDataType.values();
 	}
 
-	/**
-	 * Get all available attribute user roles
-	 * 
-	 * @return Array of attribute user roles
-	 */
 	public UserRole[] getAttributeUserRoles() {
 		return new UserRole[] { UserRole.ADMIN, UserRole.USER };
 	}
 
-	/**
-	 * Get all available attribute view types
-	 * 
-	 * @return Array of attribute user roles
-	 */
 	public UserRole[] getViewTypes() {
 		return new UserRole[] { UserRole.ADMIN, UserRole.USER };
 	}
 
-	/**
-	 * Get all usage types
-	 * 
-	 * @return Array of Usage types
-	 */
 	public AttributeUsageType[] getAttributeUsageTypes() {
 		return new AttributeUsageType[] { AttributeUsageType.OPENID };
 	}
 
-	/**
-	 * Check if LDAP server contains attribute with specified attributes
-	 * 
-	 * @return True if attribute with specified attributes exist
-	 */
 	public boolean containsAttribute(GluuAttribute attribute) {
 		return ldapEntryManager.contains(attribute);
 	}
 
-	/**
-	 * Generate new inum for attribute
-	 * 
-	 * @return New inum for attribute
-	 */
 	public String generateInumForNewAttribute() {
 		GluuAttribute attribute = null;
 		String newInum = null;
@@ -442,11 +407,6 @@ public class AttributeService extends org.gluu.service.AttributeService {
 		return newInum;
 	}
 
-	/**
-	 * Convert inum to string without delimiters
-	 * 
-	 * @return Inum string without delimiters
-	 */
 	public String toInumWithoutDelimiters(String inum) {
 		return inum.replace(".", "").replace(OxTrustConstants.inumDelimiter, "").replace("@", "");
 	}
@@ -455,24 +415,10 @@ public class AttributeService extends org.gluu.service.AttributeService {
 		return Long.toString(System.currentTimeMillis());
 	}
 
-	/**
-	 * Generate new inum for attribute
-	 * 
-	 * @return New inum for attribute
-	 * @throws Exception
-	 */
 	private String generateInumForNewAttributeImpl() {
 		return UUID.randomUUID().toString();
 	}
 
-	/**
-	 * Build DN string for attribute
-	 * 
-	 * @param inum
-	 *            Inum
-	 * @return DN string for specified attribute or DN for attributes branch if inum
-	 *         is null
-	 */
 	public String getDnForAttribute(String inum) {
 		String organizationDn = organizationService.getDnForOrganization();
 		if (StringHelper.isEmpty(inum)) {
@@ -581,8 +527,8 @@ public class AttributeService extends org.gluu.service.AttributeService {
 	 * @param admin
 	 * @return
 	 */
+	@SuppressWarnings({ "deprecation" })
 	public List<GluuAttribute> getAllActivePersonAttributes(GluuUserRole admin) {
-		@SuppressWarnings("unchecked")
 		List<GluuAttribute> activeAttributeList = (List<GluuAttribute>) cacheService
 				.get(OxConstants.CACHE_ACTIVE_ATTRIBUTE_NAME, OxConstants.CACHE_ACTIVE_ATTRIBUTE_KEY_LIST);
 		if (activeAttributeList == null) {

@@ -2,13 +2,11 @@ package org.gluu.oxtrust.ldap.service;
 
 import static org.gluu.oxtrust.util.CollectionsUtil.trimToEmpty;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 
-import org.codehaus.jackson.map.ObjectMapper;
 import org.gluu.model.ldap.GluuLdapConfiguration;
 import org.gluu.oxtrust.model.OxIDPAuthConf;
 import org.gluu.oxtrust.util.LdapConfigurationException;
@@ -16,8 +14,6 @@ import org.gluu.oxtrust.util.LdapConfigurationLookup;
 import org.gluu.oxtrust.util.LdapConfigurationNamePredicate;
 import org.gluu.oxtrust.util.LdapConfigurationNotFoundException;
 import org.gluu.util.security.StringEncrypter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Function;
 import com.google.common.collect.FluentIterable;
@@ -25,7 +21,6 @@ import com.google.common.collect.Iterables;
 
 public class LdapConfigurationService {
 
-	private static final Logger LOG = LoggerFactory.getLogger(LdapConfigurationService.class);
 	private static final String AUTH = "auth";
 
 	@Inject
@@ -33,8 +28,6 @@ public class LdapConfigurationService {
 
 	@Inject
 	private EncryptionService encryptionService;
-
-	private ObjectMapper objectMapper = new ObjectMapper();
 
 	public List<GluuLdapConfiguration> findLdapConfigurations() {
 		return FluentIterable.from(iDPAuthConfs()).transform(extractLdapConfiguration()).toList();
@@ -44,12 +37,7 @@ public class LdapConfigurationService {
 		return new Function<OxIDPAuthConf, GluuLdapConfiguration>() {
 			@Override
 			public GluuLdapConfiguration apply(OxIDPAuthConf oxIDPAuthConf) {
-				try {
-					return objectMapper.readValue(oxIDPAuthConf.getConfig(), GluuLdapConfiguration.class);
-				} catch (IOException e) {
-					LOG.error("Error while reading the GluuLdapConfiguration", e);
-					throw new LdapConfigurationException(e);
-				}
+				return oxIDPAuthConf.getConfig();
 			}
 		};
 	}
@@ -128,7 +116,7 @@ public class LdapConfigurationService {
 			ldapConfigIdpAuthConf.setVersion(ldapConfigIdpAuthConf.getVersion() + 1);
 			ldapConfigIdpAuthConf.setName(ldapConfig.getConfigId());
 			ldapConfigIdpAuthConf.setEnabled(ldapConfig.isEnabled());
-			ldapConfigIdpAuthConf.setConfig(toJson(ldapConfig));
+			ldapConfigIdpAuthConf.setConfig(ldapConfig);
 
 			idpConf.add(ldapConfigIdpAuthConf);
 		}
@@ -139,15 +127,6 @@ public class LdapConfigurationService {
 		try {
 			return encryptionService.encrypt(data);
 		} catch (StringEncrypter.EncryptionException e) {
-			throw new LdapConfigurationException(e);
-		}
-	}
-
-	private String toJson(GluuLdapConfiguration ldapConfiguration) {
-		try {
-			return objectMapper.writeValueAsString(ldapConfiguration);
-		} catch (IOException e) {
-			LOG.error("Error while serializing the GluuLdapConfiguration", e);
 			throw new LdapConfigurationException(e);
 		}
 	}
