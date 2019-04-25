@@ -94,11 +94,9 @@ public class GroupWebResourceTest extends BaseApiTest {
 		HttpPost request = new HttpPost(BASE_URL + ApiConstants.BASE_API_URL + ApiConstants.GROUPS);
 
 		try {
-			String json = mapper.writeValueAsString(group);
-			HttpEntity entity = new ByteArrayEntity(json.toString().getBytes("UTF-8"),
+			HttpEntity entity = new ByteArrayEntity(mapper.writeValueAsString(group).toString().getBytes("UTF-8"),
 					ContentType.APPLICATION_FORM_URLENCODED);
 			request.setEntity(entity);
-			String CONTENT_TYPE = "Content-Type";
 			request.setHeader(CONTENT_TYPE, MediaType.APPLICATION_JSON);
 
 			HttpResponse response = handle(request);
@@ -120,24 +118,21 @@ public class GroupWebResourceTest extends BaseApiTest {
 		GluuGroupApi group = getGroup(name);
 		HttpPost request = new HttpPost(BASE_URL + ApiConstants.BASE_API_URL + ApiConstants.GROUPS);
 		try {
-			String json = mapper.writeValueAsString(group);
-			HttpEntity entity = new ByteArrayEntity(json.toString().getBytes("UTF-8"),
+			HttpEntity entity = new ByteArrayEntity(mapper.writeValueAsString(group).toString().getBytes("UTF-8"),
 					ContentType.APPLICATION_FORM_URLENCODED);
 			request.setEntity(entity);
-			String CONTENT_TYPE = "Content-Type";
 			request.setHeader(CONTENT_TYPE, MediaType.APPLICATION_JSON);
 
 			HttpResponse response = handle(request);
 
 			Assert.assertEquals(HttpStatus.SC_OK, response.getStatusLine().getStatusCode());
-			HttpEntity result = response.getEntity();
-			GluuGroupApi myGroup = mapper.readValue(EntityUtils.toString(result), GluuGroupApi.class);
+			GluuGroupApi myGroup = mapper.readValue(EntityUtils.toString(response.getEntity()), GluuGroupApi.class);
 			Assert.assertEquals(myGroup.getDisplayName(), name);
 
 			myGroup.setDescription(myGroup.getDescription() + " Updated");
 			HttpPut second = new HttpPut(BASE_URL + ApiConstants.BASE_API_URL + ApiConstants.GROUPS);
-			json = mapper.writeValueAsString(myGroup);
-			entity = new ByteArrayEntity(json.toString().getBytes("UTF-8"), ContentType.APPLICATION_FORM_URLENCODED);
+			entity = new ByteArrayEntity(mapper.writeValueAsString(myGroup).toString().getBytes("UTF-8"),
+					ContentType.APPLICATION_FORM_URLENCODED);
 			second.setEntity(entity);
 			second.setHeader(CONTENT_TYPE, MediaType.APPLICATION_JSON);
 

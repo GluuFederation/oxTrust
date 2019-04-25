@@ -18,7 +18,7 @@ import org.gluu.oxtrust.api.server.util.ApiConstants;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class AcrWebResourceTest extends BaseApiTest {
+public class AuthenticationMethodWebResourceTest extends BaseApiTest {
 
 	@Test
 	public void getCurrentAuthenticationTest() {

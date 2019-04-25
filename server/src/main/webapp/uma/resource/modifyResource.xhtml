@@ -64,11 +64,11 @@
 								<ui:param name="_resourceSet"
 									value="#{updateResourceAction.resource}" />
 								<h:form id="resourceid">
-									<h:panelGrid border="0" cellpadding="0" cellspacing="0"
-										columns="1" width="100%" style="padding:20px;">
+<!-- 									<h:panelGrid border="0" cellpadding="0" cellspacing="0" -->
+<!-- 										columns="1" width="100%" style="padding:20px;"> -->
 										<ox:decorate id="resourceSet" label="#{msg['uma.resource']}"
 											leftClass="col-sm-4" rightClass="col-sm-8"
-											styleClass="form-control"
+											styleClass="resourceSet"
 											rendered="#{updateResourceAction.update}">
 											<h:outputText value="#{_resourceSet.id}" />
 										</ox:decorate>
@@ -97,6 +97,7 @@
 													limitRender="true" execute="@this" />
 											</h:selectOneMenu>
 										</ox:decorate>
+										<div style="margin: 10px;">
 										<h:panelGroup id="selectiongroup">
 											<b:panel title="#{msg['uma.scope']}" look="primary"
 												id="scopesid"
@@ -180,13 +181,14 @@
 												</ui:decorate>
 											</h:panelGroup>
 										</h:panelGroup>
+										</div>
 										<ox:decorate id="creatDate" label="#{msg['uma.creationTime']}"
 											rendered="#{updateResourceAction.update and _resourceSet.creationDate != null}">
 											<div class="col-sm-9">
 												<h:outputText value="#{_resourceSet.creationDate}" />
 											</div>
 										</ox:decorate>
-									</h:panelGrid>
+<!-- 									</h:panelGrid> -->
 									<h:panelGroup>
 										<div class="box-footer" style="margin-top: 10px !important;">
 											<h:panelGroup id="updateButtons" layout="block"

@@ -46,6 +46,7 @@ public abstract class BaseApiTest {
 	private String umaAatClientKeyId = "";
 	private String umaAatClientJksPath = "/home/gasmyr/Desktop/api-rp.jks";
 	private String umaAatClientJksPassword = "secret";
+	protected String CONTENT_TYPE = "Content-Type";
 	protected static final String BASE_URL = "https://gluu.gasmyr.com/identity/restv1";
 	protected ObjectMapper mapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,
 			false);

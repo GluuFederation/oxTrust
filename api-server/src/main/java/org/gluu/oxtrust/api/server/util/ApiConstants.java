@@ -18,6 +18,10 @@ public final class ApiConstants {
 	public static final String SECTORS = "/sectoridentifiers";
 	public static final String USERS = "/users";
 	public static final String ACRS = "/acrs";
+	public static final String PASSPORT = "/passport";
+	public static final String CONFIG = "/config";
+	public static final String PROVIDERS = "/providers";
+	public static final String IDP_INITIATED = "/idpinitiaded";
 	public static final String ATTRIBUTES = "/attributes";
 	public static final String LDAP = "/ldap";
 	public static final String CAS = "/cas";
@@ -37,11 +41,13 @@ public final class ApiConstants {
 	public static final String UMA = "/uma";
 	public static final String RESOURCES = "/resources";
 	public static final String INUM_PARAM_PATH = "/{inum}";
+	public static final String NAME_PARAM_PATH = "/{name}";
 	public static final String TYPE_PARAM_PATH = "/{type}";
 	public static final String ID_PARAM_PATH = "/{id}";
 	public static final String MEMBER_INUM_PARAM_PATH = "/{minum}";
 	public static final String INUM = "inum";
 	public static final String TYPE = "type";
+	public static final String NAME = "name";
 	public static final String MEMBER_INUM = "minum";
 	public static final String SCOPE_INUM = "sinum";
 	public static final String SIZE = "size";

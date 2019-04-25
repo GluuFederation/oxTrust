@@ -29,7 +29,7 @@ import com.wordnik.swagger.annotations.ApiResponses;
 @Produces(MediaType.APPLICATION_JSON)
 @Api(value = ApiConstants.BASE_API_URL + ApiConstants.ACRS, description = "Acrs webservice")
 @ApplicationScoped
-public class AcrWebResource extends BaseWebResource {
+public class AuthenticationMethodWebResource extends BaseWebResource {
 
 	@Inject
 	private Logger logger;
@@ -37,7 +37,7 @@ public class AcrWebResource extends BaseWebResource {
 	@Inject
 	private ConfigurationService configurationService;
 
-	public AcrWebResource() {
+	public AuthenticationMethodWebResource() {
 	}
 
 	@GET

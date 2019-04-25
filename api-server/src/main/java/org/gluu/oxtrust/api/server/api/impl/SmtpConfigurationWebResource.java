@@ -54,7 +54,11 @@ public class SmtpConfigurationWebResource extends BaseWebResource {
 	public Response getSmtpServerConfiguration() {
 		try {
 			SmtpConfiguration smtpConfiguration = configurationService.getConfiguration().getSmtpConfiguration();
-			return Response.ok(smtpConfiguration).build();
+			if (smtpConfiguration != null) {
+				return Response.ok(smtpConfiguration).build();
+			} else {
+				return Response.ok(Response.Status.NOT_FOUND).build();
+			}
 		} catch (Exception e) {
 			log(logger, e);
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
@@ -74,7 +78,7 @@ public class SmtpConfigurationWebResource extends BaseWebResource {
 			GluuConfiguration configurationUpdate = configurationService.getConfiguration();
 			configurationUpdate.setSmtpConfiguration(smtpConfiguration);
 			configurationService.updateConfiguration(configurationUpdate);
-			return Response.ok(Constants.RESULT_SUCCESS).build();
+			return Response.ok(configurationService.getConfiguration().getSmtpConfiguration()).build();
 		} catch (Exception e) {
 			log(logger, e);
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
@@ -97,7 +101,7 @@ public class SmtpConfigurationWebResource extends BaseWebResource {
 					smtpConfiguration.getFromName(), smtpConfiguration.getFromEmailAddress(), null,
 					"SMTP Configuration verification", "Mail to test smtp configuration",
 					"Mail to test smtp configuration");
-			return Response.ok(result ? Constants.RESULT_SUCCESS : Constants.RESULT_FAILURE).build();
+			return Response.ok(result ? true : false).build();
 		} catch (Exception e) {
 			log(logger, e);
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();

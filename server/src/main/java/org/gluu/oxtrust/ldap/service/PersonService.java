@@ -7,7 +7,6 @@
 package org.gluu.oxtrust.ldap.service;
 
 import java.io.Serializable;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -32,7 +31,6 @@ import org.gluu.persist.model.SearchScope;
 import org.gluu.persist.model.base.SimpleBranch;
 import org.gluu.search.filter.Filter;
 import org.gluu.util.ArrayHelper;
-import org.gluu.util.INumGenerator;
 import org.gluu.util.OxConstants;
 import org.gluu.util.StringHelper;
 import org.joda.time.format.ISODateTimeFormat;

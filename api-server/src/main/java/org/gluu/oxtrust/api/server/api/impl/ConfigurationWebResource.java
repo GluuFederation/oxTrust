@@ -42,6 +42,7 @@ public class ConfigurationWebResource extends BaseWebResource {
 			@ApiResponse(code = 500, message = "Server error") })
 	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response getConfiguration() {
+		log(logger, "Processing get gluu configuration");
 		try {
 			return Response.ok(configurationService.getConfiguration()).build();
 		} catch (Exception e) {
