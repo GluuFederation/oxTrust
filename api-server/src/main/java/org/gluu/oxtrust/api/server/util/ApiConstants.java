@@ -41,11 +41,13 @@ public final class ApiConstants {
 	public static final String UMA = "/uma";
 	public static final String RESOURCES = "/resources";
 	public static final String INUM_PARAM_PATH = "/{inum}";
+	public static final String NAME_PARAM_PATH = "/{name}";
 	public static final String TYPE_PARAM_PATH = "/{type}";
 	public static final String ID_PARAM_PATH = "/{id}";
 	public static final String MEMBER_INUM_PARAM_PATH = "/{minum}";
 	public static final String INUM = "inum";
 	public static final String TYPE = "type";
+	public static final String NAME = "name";
 	public static final String MEMBER_INUM = "minum";
 	public static final String SCOPE_INUM = "sinum";
 	public static final String SIZE = "size";

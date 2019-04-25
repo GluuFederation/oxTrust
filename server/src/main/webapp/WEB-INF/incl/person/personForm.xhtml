@@ -4,7 +4,7 @@
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
-	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:a4j="http://richfaces.org/a4j" xmlns:b="http://bootsfaces.net/ui"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
 	xmlns:gluufn="http://www.gluu.org/jsf/functions"
@@ -225,9 +225,10 @@
 								<h:panelGroup id="selectedCustomAttributesId"
 									class="selectedCustomAttributesId">
 									<script type="text/javascript">
-// 										addIndex();
+										// 										addIndex();
 									</script>
-									<a4j:repeat id="L" value="#{_customAttributeAction.customAttributes}"
+									<a4j:repeat id="L"
+										value="#{_customAttributeAction.customAttributes}"
 										var="_custAttr" rowKeyVar="_custAttrIdx">
 										<h:panelGroup rendered="#{_custAttr.metadata != null}" id="mF">
 											<ui:param name="_mandatory" value="#{_custAttr.mandatory}" />
@@ -255,7 +256,8 @@
 			                                                            (_custAttr.metadata.displayName ne 'Password') and 
 			                                                            (_custAttr.metadata.displayName ne 'Gender, male or female') and
 			                                                            (_custAttr.metadata.dataType.value ne 'certificate') and 
-			                                                            (_custAttr.metadata.displayName ne 'Email')}">
+			                                                            (_custAttr.metadata.displayName ne 'Email') and
+			                                                            (_custAttr.metadata.displayName ne 'Birthdate')}">
 															<rich:validator event="blur" />
 															<f:validator validatorId="attributeValidator" />
 														</h:inputText>
@@ -272,10 +274,18 @@
 			                                                            (_custAttr.metadata.displayName ne 'Password') and 
 			                                                            (_custAttr.metadata.displayName ne 'Gender, male or female') and
 			                                                            (_custAttr.metadata.dataType.value ne 'certificate') and
+			                                                            (_custAttr.metadata.displayName ne 'Birthdate') and
 			                                                            (_custAttr.metadata.displayName eq 'Email')}">
 															<rich:validator event="blur" />
 															<f:validator validatorId="attributeValidator" />
 														</h:inputText>
+
+														<b:dateTimePicker id="calendar" renderLabel="false"
+															mode="toggle-icon"
+															rendered="#{(_custAttr.adminCanEdit or _mustEnter) and 
+			                                                            (_custAttr.metadata.displayName eq 'Birthdate')}"
+															value="#{_custAttr.values[_valueIdx]}"
+															format="DD/MM/YYYY HH:mm" />
 
 														<h:selectOneMenu
 															styleClass="rounded form-control #{_custAttr.metadata.displayName}"

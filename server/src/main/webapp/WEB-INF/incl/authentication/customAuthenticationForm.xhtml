@@ -143,9 +143,6 @@
 						<div class="tab-pane" id="ox-passport">
 							<ui:param name="_ldapoxPassport"
 								value="#{_action.ldapOxPassportConfiguration}" />
-							<ui:param name="_ldapPassport"
-								value="#{_action.ldapPassportConfigurations}" />
-
 							<ox:decorate id="PassportEnabledState"
 								label="#{msg['manageAuthentication.passportSupport']}">
 								<h:selectOneMenu value="#{_action.passportEnable}"
