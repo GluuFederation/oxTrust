@@ -21,8 +21,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.gluu.model.GluuAttribute;
-import org.gluu.model.OxMultivalued;
-import org.gluu.model.scim.ScimCustomAtribute;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.model.scim2.BaseScimResource;
 import org.gluu.oxtrust.model.scim2.extensions.Extension;
@@ -53,9 +51,9 @@ public class ExtensionService {
                 Map<String, ExtensionField> fields=new HashMap<String, ExtensionField>();
 
                 for (GluuAttribute attribute : attrService.getSCIMRelatedAttributes()) {
-                    if (attribute.getOxSCIMCustomAttribute().equals(ScimCustomAtribute.TRUE)) {
+                    if ((attribute.getOxSCIMCustomAttribute() != null) && attribute.getOxSCIMCustomAttribute()) {
                         //first non-null check is needed because certain entries do not have the multivalue attribute set
-                        boolean multi=attribute.getOxMultivaluedAttribute()!=null && attribute.getOxMultivaluedAttribute().equals(OxMultivalued.TRUE);
+                        boolean multi=attribute.getOxMultivaluedAttribute()!=null && attribute.getOxMultivaluedAttribute();
 
                         ExtensionField field=new ExtensionField();
                         field.setDescription(attribute.getDescription());

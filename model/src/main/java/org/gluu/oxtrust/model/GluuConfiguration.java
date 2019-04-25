@@ -147,8 +147,9 @@ public class GluuConfiguration extends InumEntry implements Serializable {
 	@AttributeName(name = "oxTrustAuthenticationMode")
 	private String oxTrustAuthenticationMode;
 
+	@JsonObject
 	@AttributeName(name = "oxLogViewerConfig")
-	private String oxLogViewerConfig;
+	private LogViewerConfig oxLogViewerConfig;
 
 	@AttributeName(name = "oxLogConfigLocation")
 	private String oxLogConfigLocation;
@@ -344,11 +345,11 @@ public class GluuConfiguration extends InumEntry implements Serializable {
 		this.oxIDPAuthentication = oxIDPAuthentication;
 	}
 
-	public String getOxLogViewerConfig() {
+	public LogViewerConfig getOxLogViewerConfig() {
 		return oxLogViewerConfig;
 	}
 
-	public void setOxLogViewerConfig(String oxLogViewerConfig) {
+	public void setOxLogViewerConfig(LogViewerConfig oxLogViewerConfig) {
 		this.oxLogViewerConfig = oxLogViewerConfig;
 	}
 

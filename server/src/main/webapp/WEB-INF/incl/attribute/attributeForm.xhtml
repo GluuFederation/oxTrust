@@ -125,17 +125,13 @@
 
 							<ox:decorate id="multivalued"
 								label="#{msg['attribute.multivalued']}">
-								<h:selectOneMenu styleClass="form-control multivaluedField"
+								<h:selectBooleanCheckbox
 									value="#{_attribute.oxMultivaluedAttribute}"
-									label="#{msg['attribute.multivalued']}" required="true"
-									id="multivaluedId" rendered="#{_attributeAction.canEdit()}">
-									<f:selectItem noSelectionOption="true"
-										itemLabel="#{_attribute.oxMultivaluedAttribute.value}" />
-									<f:selectItems value="#{attributeService.oxMultivalued}"
-										var="_custom" itemLabel="#{_custom.value}" />
-								</h:selectOneMenu>
-								<h:outputText value="#{_attribute.oxMultivaluedAttribute.value}"
-									rendered="#{not _attributeAction.canEdit()}" />
+									id="multivaluedId"
+									styleClass="form-control multivaluedField"
+									disabled="#{not _attributeAction.canEdit()}">
+									<a4j:ajax event="click" render="validation" />
+								</h:selectBooleanCheckbox>
 							</ox:decorate>
 
 							<ox:decorate
@@ -150,18 +146,13 @@
 
 							<ox:decorate id="scimattr"
 								label="#{msg['attribute.scimAttribute']}">
-								<h:selectOneMenu styleClass="form-control scimAttributeField"
-									value="#{_attribute.oxSCIMCustomAttribute}" id="scimAttrId"
-									rendered="#{_attributeAction.canEdit()}">
-									<f:selectItem noSelectionOption="true"
-										itemLabel="#{_attribute.oxSCIMCustomAttribute}" />
-									<f:selectItems value="#{attributeService.scimCustomAttribute}"
-										var="_custom" itemLabel="#{_custom.displayName}" />
-									<f:converter
-										converterId="org.gluu.jsf2.converter.EnumConverter" />
-								</h:selectOneMenu>
-								<h:outputText value="#{_attribute.oxSCIMCustomAttribute.value}"
-									rendered="#{not _attributeAction.canEdit()}" />
+								<h:selectBooleanCheckbox
+									value="#{_attribute.oxSCIMCustomAttribute}"
+									id="scimAttrId"
+									styleClass="form-control scimAttributeField"
+									disabled="#{not _attributeAction.canEdit()}">
+									<a4j:ajax event="click" render="validation" />
+								</h:selectBooleanCheckbox>
 							</ox:decorate>
 
 							<ox:decorate id="description"

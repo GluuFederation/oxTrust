@@ -154,7 +154,7 @@ public class ManagePersonAuthenticationAction
 			this.sourceConfigs = new ArrayList<GluuLdapConfiguration>();
 			if (list != null) {
 				for (OxIDPAuthConf oxIDPAuthConf : list) {
-					GluuLdapConfiguration oxldapConfig = mapLdapConfig(oxIDPAuthConf.getConfig());
+					GluuLdapConfiguration oxldapConfig = oxIDPAuthConf.getConfig();
 					this.sourceConfigs.add(oxldapConfig);
 				}
 			}
@@ -269,7 +269,7 @@ public class ManagePersonAuthenticationAction
 				ldapConfigIdpAuthConf.setVersion(ldapConfigIdpAuthConf.getVersion() + 1);
 				ldapConfigIdpAuthConf.setName(ldapConfig.getConfigId());
 				ldapConfigIdpAuthConf.setEnabled(ldapConfig.isEnabled());
-				ldapConfigIdpAuthConf.setConfig(objectToJson(ldapConfig));
+				ldapConfigIdpAuthConf.setConfig(ldapConfig);
 
 				idpConf.add(ldapConfigIdpAuthConf);
 			}

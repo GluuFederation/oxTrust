@@ -13,11 +13,10 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.gluu.oxauth.model.common.ScopeType;
-import org.gluu.persist.model.base.Entry;
-import org.gluu.persist.model.base.GluuBoolean;
 import org.gluu.persist.annotation.AttributeName;
 import org.gluu.persist.annotation.DataEntry;
 import org.gluu.persist.annotation.ObjectClass;
+import org.gluu.persist.model.base.Entry;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -56,7 +55,7 @@ public class OxAuthScope extends Entry implements Serializable {
 	private List<String> oxAuthClaims;
 
 	@AttributeName(name = "defaultScope")
-	private GluuBoolean defaultScope;
+	private Boolean defaultScope;
 
 	@AttributeName(name = "oxScriptDn")
     private List<String> dynamicScopeScripts;
@@ -109,11 +108,11 @@ public class OxAuthScope extends Entry implements Serializable {
 		this.selected = selected;
 	}
 
-	public GluuBoolean getDefaultScope() {
+	public Boolean getDefaultScope() {
 		return this.defaultScope;
 	}
 
-	public void setDefaultScope(GluuBoolean defaultScope) {
+	public void setDefaultScope(Boolean defaultScope) {
 		this.defaultScope = defaultScope;
 	}
 

@@ -17,7 +17,6 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.util.EntityUtils;
 import org.gluu.model.GluuAttribute;
 import org.gluu.model.GluuStatus;
-import org.gluu.model.OxMultivalued;
 import org.gluu.model.attribute.AttributeDataType;
 import org.gluu.oxtrust.api.server.util.ApiConstants;
 import org.junit.Assert;
@@ -157,7 +156,7 @@ public class AttributeWebResourceTest extends BaseApiTest {
 		attribute.setDescription("custom attribute");
 		attribute.setDataType(AttributeDataType.STRING);
 		attribute.setStatus(GluuStatus.ACTIVE);
-		attribute.setOxMultivaluedAttribute(OxMultivalued.FALSE);
+		attribute.setOxMultivaluedAttribute(Boolean.FALSE);
 		return attribute;
 	}
 

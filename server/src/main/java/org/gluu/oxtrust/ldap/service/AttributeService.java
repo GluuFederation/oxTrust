@@ -24,10 +24,8 @@ import javax.inject.Named;
 import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.model.GluuAttribute;
 import org.gluu.model.GluuUserRole;
-import org.gluu.model.OxMultivalued;
 import org.gluu.model.attribute.AttributeDataType;
 import org.gluu.model.attribute.AttributeUsageType;
-import org.gluu.model.scim.ScimCustomAtribute;
 import org.gluu.model.user.UserRole;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.service.cdi.event.EventType;
@@ -76,11 +74,10 @@ public class AttributeService extends org.gluu.service.AttributeService {
 	@SuppressWarnings("unchecked")
 	public List<GluuAttribute> getAllPersonAttributes(GluuUserRole gluuUserRole) {
 		String key = OxTrustConstants.CACHE_ATTRIBUTE_PERSON_KEY_LIST + "_" + gluuUserRole.getValue();
-		List<GluuAttribute> attributeList = (List<GluuAttribute>) cacheService.get(OxConstants.CACHE_ATTRIBUTE_NAME,
-				key);
+		List<GluuAttribute> attributeList = (List<GluuAttribute>) cacheService.get(key);
 		if (attributeList == null) {
 			attributeList = getAllPersonAtributesImpl(gluuUserRole, getAllAttributes());
-			cacheService.put(OxConstants.CACHE_ATTRIBUTE_NAME, key, attributeList);
+			cacheService.put(key, attributeList);
 		}
 		return attributeList;
 	}
@@ -118,11 +115,10 @@ public class AttributeService extends org.gluu.service.AttributeService {
 	@SuppressWarnings("unchecked")
 	public List<GluuAttribute> getAllActiveAttributes(GluuUserRole gluuUserRole) {
 		String key = OxTrustConstants.CACHE_ATTRIBUTE_PERSON_KEY_LIST + "_" + gluuUserRole.getValue();
-		List<GluuAttribute> attributeList = (List<GluuAttribute>) cacheService.get(OxConstants.CACHE_ATTRIBUTE_NAME,
-				key);
+		List<GluuAttribute> attributeList = (List<GluuAttribute>) cacheService.get(key);
 		if (attributeList == null) {
 			attributeList = getAllPersonAtributes(gluuUserRole, getAllAttributes());
-			cacheService.put(OxConstants.CACHE_ATTRIBUTE_NAME, key, attributeList);
+			cacheService.put(key, attributeList);
 		}
 		return attributeList;
 	}
@@ -156,11 +152,10 @@ public class AttributeService extends org.gluu.service.AttributeService {
 	@SuppressWarnings("unchecked")
 	public List<GluuAttribute> getAllContactAttributes(GluuUserRole gluuUserRole) {
 		String key = OxTrustConstants.CACHE_ATTRIBUTE_CONTACT_KEY_LIST + "_" + gluuUserRole.getValue();
-		List<GluuAttribute> attributeList = (List<GluuAttribute>) cacheService.get(OxConstants.CACHE_ATTRIBUTE_NAME,
-				key);
+		List<GluuAttribute> attributeList = (List<GluuAttribute>) cacheService.get(key);
 		if (attributeList == null) {
 			attributeList = getAllContactAtributesImpl(gluuUserRole, getAllAttributes());
-			cacheService.put(OxConstants.CACHE_ATTRIBUTE_NAME, key, attributeList);
+			cacheService.put(key, attributeList);
 		}
 		return attributeList;
 	}
@@ -202,12 +197,10 @@ public class AttributeService extends org.gluu.service.AttributeService {
 	 */
 	@SuppressWarnings("unchecked")
 	public List<String> getAllAttributeOrigins() {
-		List<String> attributeOriginList = (List<String>) cacheService.get(OxConstants.CACHE_ATTRIBUTE_NAME,
-				OxTrustConstants.CACHE_ATTRIBUTE_ORIGIN_KEY_LIST);
+		List<String> attributeOriginList = (List<String>) cacheService.get(OxTrustConstants.CACHE_ATTRIBUTE_ORIGIN_KEY_LIST);
 		if (attributeOriginList == null) {
 			attributeOriginList = getAllAttributeOrigins(getAllAttributes());
-			cacheService.put(OxConstants.CACHE_ATTRIBUTE_NAME, OxTrustConstants.CACHE_ATTRIBUTE_ORIGIN_KEY_LIST,
-					attributeOriginList);
+			cacheService.put(OxTrustConstants.CACHE_ATTRIBUTE_ORIGIN_KEY_LIST, attributeOriginList);
 		}
 		return attributeOriginList;
 	}
@@ -269,8 +262,7 @@ public class AttributeService extends org.gluu.service.AttributeService {
 	 */
 	@SuppressWarnings("unchecked")
 	public List<GluuAttribute> getCustomAttributes() {
-		List<GluuAttribute> attributeList = (List<GluuAttribute>) cacheService.get(OxConstants.CACHE_ATTRIBUTE_NAME,
-				OxTrustConstants.CACHE_ATTRIBUTE_CUSTOM_KEY_LIST);
+		List<GluuAttribute> attributeList = (List<GluuAttribute>) cacheService.get(OxTrustConstants.CACHE_ATTRIBUTE_CUSTOM_KEY_LIST);
 		if (attributeList == null) {
 			attributeList = new ArrayList<GluuAttribute>();
 			for (GluuAttribute attribute : getAllAttributes()) {
@@ -278,8 +270,7 @@ public class AttributeService extends org.gluu.service.AttributeService {
 					attributeList.add(attribute);
 				}
 			}
-			cacheService.put(OxConstants.CACHE_ATTRIBUTE_NAME, OxTrustConstants.CACHE_ATTRIBUTE_CUSTOM_KEY_LIST,
-					attributeList);
+			cacheService.put(OxTrustConstants.CACHE_ATTRIBUTE_CUSTOM_KEY_LIST, attributeList);
 		}
 		return attributeList;
 	}
@@ -325,7 +316,7 @@ public class AttributeService extends org.gluu.service.AttributeService {
 		for (GluuAttribute attribute : attributes) {
 			boolean isEmpty = attribute.getOxSCIMCustomAttribute() == null;
 			if (!isEmpty) {
-				if (attribute.getOxSCIMCustomAttribute().getValue().equalsIgnoreCase("true")) {
+				if ((attribute.getOxSCIMCustomAttribute() != null) && attribute.getOxSCIMCustomAttribute()) {
 					result.add(attribute);
 				}
 			}
@@ -395,24 +386,6 @@ public class AttributeService extends org.gluu.service.AttributeService {
 	 */
 	public AttributeDataType[] getDataTypes() {
 		return AttributeDataType.values();
-	}
-
-	/**
-	 * Get all available Scim Custom Atributes
-	 * 
-	 * @return Array of data types
-	 */
-	public ScimCustomAtribute[] getScimCustomAttribute() {
-		return ScimCustomAtribute.values();
-	}
-
-	/**
-	 * Get all available oxMultivalued attributes
-	 * 
-	 * @return Array of data types
-	 */
-	public OxMultivalued[] getOxMultivalued() {
-		return OxMultivalued.values();
 	}
 
 	/**
@@ -614,8 +587,7 @@ public class AttributeService extends org.gluu.service.AttributeService {
 				.get(OxConstants.CACHE_ACTIVE_ATTRIBUTE_NAME, OxConstants.CACHE_ACTIVE_ATTRIBUTE_KEY_LIST);
 		if (activeAttributeList == null) {
 			activeAttributeList = getAllActiveAtributesImpl(admin);
-			cacheService.put(OxConstants.CACHE_ACTIVE_ATTRIBUTE_NAME, OxConstants.CACHE_ATTRIBUTE_KEY_LIST,
-					activeAttributeList);
+			cacheService.put(OxConstants.CACHE_ATTRIBUTE_KEY_LIST, activeAttributeList);
 		}
 		return activeAttributeList;
 	}

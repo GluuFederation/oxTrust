@@ -21,7 +21,6 @@ import org.gluu.model.GluuAttribute;
 import org.gluu.oxauth.model.common.ScopeType;
 import org.gluu.oxtrust.api.server.util.ApiConstants;
 import org.gluu.oxtrust.model.OxAuthScope;
-import org.gluu.persist.model.base.GluuBoolean;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -183,7 +182,7 @@ public class ScopeWebResourceTest extends BaseApiTest {
 		scope.setOxAuthClaims(new ArrayList<>());
 		scope.setScopeType(ScopeType.OPENID);
 		scope.setDynamicScopeScripts(new ArrayList<>());
-		scope.setDefaultScope(GluuBoolean.FALSE);
+		scope.setDefaultScope(Boolean.FALSE);
 		return scope;
 	}
 
