@@ -154,7 +154,7 @@
 								style="border: solid 1px green; margin-left: 10%; margin-right: 10%"></hr>
 
 							<h:panelGroup id="strategyId"
-								rendered="#{_action.passportEnable.getValue()  eq 'enabled'}">
+								rendered="#{_action.passportEnable}">
 								<a4j:region>
 									<a4j:repeat value="#{_ldapPassport}" var="_passportConfig">
 										<h:panelGroup layout="block"
