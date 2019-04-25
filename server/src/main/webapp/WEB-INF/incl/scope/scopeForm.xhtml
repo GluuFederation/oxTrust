@@ -61,14 +61,10 @@
 									</div>
 									<div class="col-sm-6 col-lg-6">
 										<ox:decorate label="#{msg['scope.defaultScope']}">
-											<h:selectOneMenu
+											<h:selectBooleanCheckbox
+												value="#{_scope.defaultScope}"
 												styleClass="col-sm-9 rounded form-control registrationType"
-												value="#{_scope.defaultScope}">
-												<f:selectItems
-													value="#{organizationService.javaBooleanSelectionTypes}"
-													var="_type" itemLabel="#{_type.displayName}" />
-
-											</h:selectOneMenu>
+											</h:selectBooleanCheckbox>
 										</ox:decorate>
 									</div>
 								</div>
