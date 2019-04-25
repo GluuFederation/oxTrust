@@ -227,7 +227,7 @@ public class ConfigureCacheRefreshAction
 
 	private void updateConfiguration() {
 		GluuConfiguration updateConfiguration = configurationService.getConfiguration();
-		updateConfiguration.setVdsCacheRefreshEnabled(this.configuration.getVdsCacheRefreshEnabled());
+		updateConfiguration.setVdsCacheRefreshEnabled(this.configuration.isVdsCacheRefreshEnabled());
 		updateConfiguration.setVdsCacheRefreshPollingInterval(this.configuration.getVdsCacheRefreshPollingInterval());
 		updateConfiguration.setCacheRefreshServerIpAddress(this.configuration.getCacheRefreshServerIpAddress());
 		configurationService.updateConfiguration(updateConfiguration);

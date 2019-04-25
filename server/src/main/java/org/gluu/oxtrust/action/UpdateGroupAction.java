@@ -38,7 +38,6 @@ import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.exception.BasePersistenceException;
-import org.gluu.persist.model.base.GluuBoolean;
 import org.gluu.service.LookupService;
 import org.gluu.service.security.Secure;
 import org.gluu.util.StringHelper;
@@ -409,7 +408,7 @@ public class UpdateGroupAction implements Serializable {
 			log.debug("Adding group {} to person {} memberOf", groupDn, person.getDisplayName());
 
 			if (appConfiguration.isUpdateStatus()) {
-				GluuBoolean slaManager = isSLAManager(organizationGroups, person);
+				Boolean slaManager = isSLAManager(organizationGroups, person);
 				person.setSLAManager(slaManager);
 			}
 
@@ -425,7 +424,7 @@ public class UpdateGroupAction implements Serializable {
 			log.debug("Removing group {} from person {} memberOf", groupDn, person.getDisplayName());
 
 			if (appConfiguration.isUpdateStatus()) {
-				GluuBoolean slaManager = isSLAManager(organizationGroups, person);
+				Boolean slaManager = isSLAManager(organizationGroups, person);
 				person.setSLAManager(slaManager);
 			}
 
@@ -442,7 +441,7 @@ public class UpdateGroupAction implements Serializable {
 				GluuCustomPerson person = personService.getPersonByDn(dn);
 				log.debug("Updating group {} to person {} memberOf", groupDn, person.getDisplayName());
 
-				GluuBoolean slaManager = isSLAManager(organizationGroups, person);
+				Boolean slaManager = isSLAManager(organizationGroups, person);
 				if (slaManager.equals(person.getSLAManager())) {
 					continue;
 				}
@@ -453,8 +452,8 @@ public class UpdateGroupAction implements Serializable {
 		}
 	}
 
-	private GluuBoolean isSLAManager(String[] organizationGroups, GluuCustomPerson person) throws Exception {
-		return GluuBoolean.getByValue(String.valueOf(groupService.isMemberOrOwner(organizationGroups, person.getDn())));
+	private Boolean isSLAManager(String[] organizationGroups, GluuCustomPerson person) throws Exception {
+		return groupService.isMemberOrOwner(organizationGroups, person.getDn());
 	}
 
 	private String[] convertToDNsArray(List<DisplayNameEntry> members) {

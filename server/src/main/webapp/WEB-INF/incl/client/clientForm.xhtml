@@ -315,29 +315,23 @@
 											<ox:decorate id="oxAuthTrustedClientBox"
 												label="#{msg['clientForm.preAuthorization']}"
 												leftClass="col-sm-6" rightClass="col-sm-6">
-												<h:selectOneMenu id="trustedClientId"
+
+												<h:selectBooleanCheckbox
+													value="#{_client.oxAuthTrustedClient}"
+													id="trustedClientId"
 													styleClass="col-sm-9 form-control rounded oxAuthTrustedClientSelectBox"
-													value="#{_client.oxAuthTrustedClient}" required="true"
-													onchange="togglePersistAuthorization()">
-													<f:selectItems value="#{clientService.oxAuthTrustedClient}"
-														var="_type" itemLabel="#{_type.displayName}" />
-													<f:converter
-														converterId="org.gluu.jsf2.converter.EnumConverter" />
-												</h:selectOneMenu>
+													onchange="togglePersistAuthorization()"
+													required="true" />
 											</ox:decorate>
 											<ox:decorate id="persistClientAuthorizations"
 												label="#{msg['clientForm.persistClientAuthorization']}"
 												leftClass="col-sm-6" rightClass="col-sm-6">
-												<h:selectOneMenu id="persisteClientAuthorizationsId"
-													styleClass="col-sm-9 form-control rounded persistClientAuthorizationSelectBox"
+
+												<h:selectBooleanCheckbox
 													value="#{_client.oxAuthPersistClientAuthorizations}"
-													onchange="togglePersistAuthorization()">
-													<f:selectItems
-														value="#{organizationService.javaBooleanSelectionTypes}"
-														var="_type" itemLabel="#{_type.displayName}" />
-													<f:converter
-														converterId="org.gluu.jsf2.converter.EnumConverter" />
-												</h:selectOneMenu>
+													id="persisteClientAuthorizationsId"
+													styleClass="col-sm-9 form-control rounded persistClientAuthorizationSelectBox"
+													onchange="togglePersistAuthorization()" />
 											</ox:decorate>
 											<ox:decorate id="applicatonType"
 												label="#{msg['clientForm.applicationType']}"
@@ -483,69 +477,51 @@
 											<ox:decorate id="accessTokenAsJwt"
 												label="#{msg['clientForm.accessTokenAsJwt']}"
 												leftClass="col-sm-6" rightClass="col-sm-6">
-												<h:selectOneMenu id="accessTokenAsJwtId"
+												<h:selectBooleanCheckbox
+													value="#{_client.accessTokenAsJwt}"
+													id="accessTokenAsJwtId"
 													styleClass="col-sm-9 form-control rounded"
-													value="#{_client.accessTokenAsJwt}" required="false">
-													<f:selectItems
-														value="#{organizationService.javaBooleanSelectionTypes}"
-														var="_type" itemLabel="#{_type.displayName}" />
-													<f:converter
-														converterId="org.gluu.jsf2.converter.EnumConverter" />
-												</h:selectOneMenu>
+													required="false" />
 											</ox:decorate>
 											<ox:decorate id="rptAsJwt"
 												label="#{msg['clientForm.rptAsJwt']}" leftClass="col-sm-6"
 												rightClass="col-sm-6">
-												<h:selectOneMenu id="rptAsJwtId"
+												<h:selectBooleanCheckbox
+													value="#{_client.rptAsJwt}"
+													id="rptAsJwtId"
 													styleClass="col-sm-9 form-control rounded"
-													value="#{_client.rptAsJwt}" required="false">
-													<f:selectItems
-														value="#{organizationService.javaBooleanSelectionTypes}"
-														var="_type" itemLabel="#{_type.displayName}" />
-													<f:converter
-														converterId="org.gluu.jsf2.converter.EnumConverter" />
-												</h:selectOneMenu>
+													required="false" />
 											</ox:decorate>
 											<ox:decorate id="logoutSessionRequired"
 												label="#{msg['clientForm.logoutSessionRequired']}"
 												leftClass="col-sm-6" rightClass="col-sm-6">
-												<h:selectOneMenu styleClass="col-sm-9 form-control rounded"
-													value="#{_client.logoutSessionRequired}" required="true">
-													<f:selectItems
-														value="#{organizationService.javaBooleanSelectionTypes}"
-														var="_type" itemLabel="#{_type.displayName}" />
-													<f:converter
-														converterId="org.gluu.jsf2.converter.EnumConverter" />
-												</h:selectOneMenu>
+												<h:selectBooleanCheckbox
+													value="#{_client.logoutSessionRequired}"
+													id="logoutSessionRequiredId"
+													styleClass="col-sm-9 form-control rounded"
+													required="true" />
 											</ox:decorate>
 										</div>
 										<div class="col-sm-6 col-lg-6" style="padding: 0px;">
 											<ox:decorate id="requireAuthTime"
 												label="#{msg['clientForm.requireAuthTime']}"
 												leftClass="col-sm-6" rightClass="col-sm-6">
-												<h:selectOneMenu styleClass="col-sm-9 form-control rounded"
-													value="#{_client.requireAuthTime}" required="false">
-													<f:selectItems
-														value="#{organizationService.javaBooleanSelectionTypes}"
-														var="_type" itemLabel="#{_type.displayName}" />
-													<f:converter
-														converterId="org.gluu.jsf2.converter.EnumConverter" />
-												</h:selectOneMenu>
+												<h:selectBooleanCheckbox
+													value="#{_client.requireAuthTime}"
+													id="requireAuthTimeId"
+													styleClass="col-sm-9 form-control rounded"
+													required="false" />
 											</ox:decorate>
 											<a4j:outputPanel>
 												<ox:decorate id="includeClaimsInIdToken"
 													label="#{msg['clientForm.includeClaimsInIdToken']}"
 													leftClass="col-sm-6" rightClass="col-sm-6">
-													<h:selectOneMenu styleClass="col-sm-9 form-control rounded"
+													<h:selectBooleanCheckbox
 														value="#{_client.oxIncludeClaimsInIdToken}"
-														required="true"
-														disabled="#{!jsonConfigurationService.getOxauthAppConfiguration().legacyIdTokenClaims}">
-														<f:selectItems
-															value="#{organizationService.javaBooleanSelectionTypes}"
-															var="_type" itemLabel="#{_type.displayName}" />
-														<f:converter
-															converterId="org.gluu.jsf2.converter.EnumConverter" />
-													</h:selectOneMenu>
+														id="includeClaimsInIdTokenId"
+														styleClass="col-sm-9 form-control rounded"
+														disabled="#{!jsonConfigurationService.getOxauthAppConfiguration().legacyIdTokenClaims}"
+														required="true" />
 												</ox:decorate>
 												<rich:tooltip
 													rendered="#{!jsonConfigurationService.getOxauthAppConfiguration().legacyIdTokenClaims}">

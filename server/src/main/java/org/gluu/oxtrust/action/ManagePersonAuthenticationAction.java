@@ -106,7 +106,7 @@ public class ManagePersonAuthenticationAction
 
 	private boolean initialized;
 
-	private GluuBoolean passportEnable = GluuBoolean.DISABLED;
+	private Boolean passportEnable = Boolean.FALSE;
 	private boolean authenticationRecaptchaEnabled = false;
 
 	public boolean isAuthenticationRecaptchaEnabled() {
@@ -145,7 +145,7 @@ public class ManagePersonAuthenticationAction
 			if (configuration == null) {
 				return OxTrustConstants.RESULT_FAILURE;
 			}
-			passportEnable = configuration.getPassportEnabled();
+			passportEnable = configuration.isPassportEnabled();
 			log.info("passport enabled value  : '{}'", passportEnable);
 			this.customScripts = customScriptService.findCustomScripts(
 					Arrays.asList(CustomScriptType.PERSON_AUTHENTICATION), "displayName", "oxLevel", "gluuStatus");
@@ -438,11 +438,11 @@ public class ManagePersonAuthenticationAction
 
 	}
 
-	public GluuBoolean getPassportEnable() {
+	public Boolean getPassportEnable() {
 		return passportEnable;
 	}
 
-	public void setPassportEnable(GluuBoolean passportEnable) {
+	public void setPassportEnable(Boolean passportEnable) {
 		this.passportEnable = passportEnable;
 	}
 

@@ -10,19 +10,16 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-import javax.validation.constraints.Min;
-
 import org.gluu.model.GluuStatus;
 import org.gluu.model.SmtpConfiguration;
 import org.gluu.oxtrust.model.cert.TrustStoreCertificate;
 import org.gluu.oxtrust.model.cert.TrustStoreConfiguration;
-import org.gluu.persist.model.base.GluuBoolean;
-import org.gluu.persist.model.base.InumEntry;
-import org.gluu.service.cache.CacheConfiguration;
 import org.gluu.persist.annotation.AttributeName;
 import org.gluu.persist.annotation.DataEntry;
 import org.gluu.persist.annotation.JsonObject;
 import org.gluu.persist.annotation.ObjectClass;
+import org.gluu.persist.model.base.InumEntry;
+import org.gluu.service.cache.CacheConfiguration;
 
 /**
  * GluuConfiguration
@@ -94,13 +91,13 @@ public class GluuConfiguration extends InumEntry implements Serializable {
 	private String sslExpiry;
 
 	@AttributeName(name = "gluuOrgProfileMgt")
-	private GluuBoolean profileManagment;
+	private boolean profileManagment;
 
 	@AttributeName(name = "gluuManageIdentityPermission")
-	private GluuBoolean manageIdentityPermission;
+	private boolean manageIdentityPermission;
 
 	@AttributeName(name = "gluuVdsCacheRefreshEnabled")
-	private GluuBoolean vdsCacheRefreshEnabled;
+	private boolean vdsCacheRefreshEnabled;
 
 	@AttributeName(name = "oxTrustCacheRefreshServerIpAddress")
 	private String cacheRefreshServerIpAddress;
@@ -118,10 +115,10 @@ public class GluuConfiguration extends InumEntry implements Serializable {
 	private String vdsCacheRefreshProblemCount;
 
 	@AttributeName(name = "gluuScimEnabled")
-	private GluuBoolean scimEnabled;
+	private boolean scimEnabled;
 
 	@AttributeName(name = "gluuPassportEnabled")
-	private GluuBoolean passportEnabled;
+	private boolean passportEnabled;
 
 	@AttributeName(name = "oxTrustEmail")
 	private String contactEmail;
@@ -157,7 +154,7 @@ public class GluuConfiguration extends InumEntry implements Serializable {
 	private String oxLogConfigLocation;
 
 	@AttributeName(name = "passwordResetAllowed")
-	private GluuBoolean passwordResetAllowed;
+	private boolean passwordResetAllowed;
 
 	@AttributeName(name = "oxTrustStoreConf")
 	@JsonObject
@@ -323,11 +320,11 @@ public class GluuConfiguration extends InumEntry implements Serializable {
 		this.loadAvg = loadAvg;
 	}
 
-	public GluuBoolean getManageIdentityPermission() {
+	public boolean isManageIdentityPermission() {
 		return manageIdentityPermission;
 	}
 
-	public void setManageIdentityPermission(GluuBoolean manageIdentityPermission) {
+	public void setManageIdentityPermission(boolean manageIdentityPermission) {
 		this.manageIdentityPermission = manageIdentityPermission;
 	}
 
@@ -363,11 +360,11 @@ public class GluuConfiguration extends InumEntry implements Serializable {
 		this.oxLogConfigLocation = oxLogConfigLocation;
 	}
 
-	public GluuBoolean getPasswordResetAllowed() {
+	public boolean isPasswordResetAllowed() {
 		return passwordResetAllowed;
 	}
 
-	public void setPasswordResetAllowed(GluuBoolean passwordResetAllowed) {
+	public void setPasswordResetAllowed(boolean passwordResetAllowed) {
 		this.passwordResetAllowed = passwordResetAllowed;
 	}
 
@@ -395,19 +392,19 @@ public class GluuConfiguration extends InumEntry implements Serializable {
 		this.contactEmail = contactEmail;
 	}
 
-	public GluuBoolean getProfileManagment() {
+	public boolean isProfileManagment() {
 		return profileManagment;
 	}
 
-	public void setProfileManagment(GluuBoolean profileManagment) {
+	public void setProfileManagment(boolean profileManagment) {
 		this.profileManagment = profileManagment;
 	}
 
-	public GluuBoolean getScimEnabled() {
+	public boolean isScimEnabled() {
 		return scimEnabled;
 	}
 
-	public void setScimEnabled(GluuBoolean scimEnabled) {
+	public void setScimEnabled(boolean scimEnabled) {
 		this.scimEnabled = scimEnabled;
 	}
 
@@ -459,11 +456,11 @@ public class GluuConfiguration extends InumEntry implements Serializable {
 		this.userPassword = userPassword;
 	}
 
-	public GluuBoolean getVdsCacheRefreshEnabled() {
+	public boolean isVdsCacheRefreshEnabled() {
 		return vdsCacheRefreshEnabled;
 	}
 
-	public void setVdsCacheRefreshEnabled(GluuBoolean vdsCacheRefreshEnabled) {
+	public void setVdsCacheRefreshEnabled(boolean vdsCacheRefreshEnabled) {
 		this.vdsCacheRefreshEnabled = vdsCacheRefreshEnabled;
 	}
 
@@ -499,11 +496,11 @@ public class GluuConfiguration extends InumEntry implements Serializable {
 		this.vdsCacheRefreshProblemCount = vdsCacheRefreshProblemCount;
 	}
 
-	public GluuBoolean getPassportEnabled() {
+	public boolean isPassportEnabled() {
 		return passportEnabled;
 	}
 
-	public void setPassportEnabled(GluuBoolean passportEnabled) {
+	public void setPassportEnabled(boolean passportEnabled) {
 		this.passportEnabled = passportEnabled;
 	}
 

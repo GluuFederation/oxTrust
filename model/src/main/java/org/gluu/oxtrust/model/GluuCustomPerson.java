@@ -14,7 +14,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.gluu.model.GluuStatus;
-import org.gluu.persist.model.base.GluuBoolean;
 import org.gluu.persist.annotation.AttributeName;
 import org.gluu.persist.annotation.DataEntry;
 import org.gluu.persist.annotation.JsonObject;
@@ -161,12 +160,12 @@ public class GluuCustomPerson extends User
         this.selected = selected;
     }
 
-    public GluuBoolean getSLAManager() {
-        return GluuBoolean.getByValue(getAttribute("gluuSLAManager"));
+    public Boolean getSLAManager() {
+        return Boolean.valueOf(getAttribute("gluuSLAManager"));
     }
 
-    public void setSLAManager(GluuBoolean value) {
-        setAttribute("gluuSLAManager", value.getValue());
+    public void setSLAManager(Boolean value) {
+        setAttribute("gluuSLAManager", value.toString());
     }
 
     public List<String> getMemberOf() {

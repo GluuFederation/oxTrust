@@ -69,7 +69,7 @@ public class ApiPermissionService implements Serializable {
             if (StringHelper.equalsIgnoreCase("profile_management", action)) {
                 GluuConfiguration configuration = configurationService.getConfiguration();
                 GluuConfiguration targetConfiguration = (GluuConfiguration) target;
-                if (((configuration.getProfileManagment() != null) && configuration.getProfileManagment().isBooleanValue())
+                if (configuration.isProfileManagment()
                         && StringHelper.equals(configurationService.getConfiguration().getInum(), targetConfiguration.getInum())) {
                     return true;
                 } else {

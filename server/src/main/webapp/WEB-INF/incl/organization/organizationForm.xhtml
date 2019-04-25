@@ -102,24 +102,15 @@
 
 								<ox:decorate
 									id="passwordReset" label="#{msg['organizationForm.selfServicePasswordReset']}">
-									<h:selectOneMenu value="#{_configuration.passwordResetAllowed}" styleClass="rounded form-control passwordResetSelectBox"
-										id="passwordResetId">
-										<f:selectItems
-											value="#{organizationService.booleanSelectionTypes}"
-											var="_type" itemLabel="#{_type.displayName}" />
-										<f:converter converterId="org.gluu.jsf2.converter.EnumConverter"/>
-									</h:selectOneMenu>
+									<h:selectBooleanCheckbox value="#{_configuration.passwordResetAllowed}"
+										styleClass="rounded form-control passwordResetSelectBox" id="passwordResetId" />
 								</ox:decorate>
 
 								<ox:decorate
 									id="scimEnabledState" label="#{msg['organizationForm.scimSupport']}">
-									<h:selectOneMenu value="#{_configuration.scimEnabled}" styleClass="rounded form-control scimEnableStateSelectBox"
-										id="scimEnabledStateId">
-										<f:selectItems
-											value="#{organizationService.booleanSelectionTypes}"
-											var="_type" itemLabel="#{_type.displayName}" />
-										<f:converter converterId="org.gluu.jsf2.converter.EnumConverter"/>
-									</h:selectOneMenu>
+									<h:selectBooleanCheckbox value="#{_configuration.scimEnabled}"
+										styleClass="rounded form-control scimEnableStateSelectBox"
+										id="scimEnabledStateId" />
 								</ox:decorate>
 
 								<ox:decorate
@@ -148,13 +139,8 @@
 
 								<ox:decorate
 									id="profileManagment" label="#{msg['organizationForm.userCanEditProfile']}">
-									<h:selectOneMenu value="#{_configuration.profileManagment}" styleClass="rounded form-control profileManagmentSelectBox"
-										id="profileManagmentStateId">
-										<f:selectItems
-											value="#{organizationService.booleanSelectionTypes}"
-											var="_type" itemLabel="#{_type.displayName}" />
-										<f:converter converterId="org.gluu.jsf2.converter.EnumConverter"/>
-									</h:selectOneMenu>
+									<h:selectBooleanCheckbox value="#{_configuration.profileManagment}"
+										styleClass="rounded form-control profileManagmentSelectBox" id="profileManagmentStateId" />
 								</ox:decorate>
 
 								<ox:decorate label="#{msg['organizationForm.contactEmail']}">

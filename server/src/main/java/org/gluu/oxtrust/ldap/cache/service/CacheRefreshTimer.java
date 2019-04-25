@@ -207,7 +207,7 @@ public class CacheRefreshTimer {
 
 	private boolean isStartCacheRefresh(CacheRefreshConfiguration cacheRefreshConfiguration,
 			GluuConfiguration currentConfiguration) {
-		if (!GluuBoolean.ENABLED.equals(currentConfiguration.getVdsCacheRefreshEnabled())) {
+		if (!currentConfiguration.isVdsCacheRefreshEnabled()) {
 			return false;
 		}
 

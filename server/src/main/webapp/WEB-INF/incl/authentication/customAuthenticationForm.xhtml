@@ -148,15 +148,10 @@
 
 							<ox:decorate id="PassportEnabledState"
 								label="#{msg['manageAuthentication.passportSupport']}">
-								<h:selectOneMenu value="#{_action.passportEnable}"
+
+								<h:selectBooleanCheckbox value="#{_action.passportEnable}"
 									styleClass="rounded form-control passportEnableSelectBox"
-									id="scimEnabledStateId">
-									<f:selectItems
-										value="#{organizationService.booleanSelectionTypes}"
-										var="_type" itemLabel="#{_type.displayName}" />
-									<f:converter
-										converterId="org.gluu.jsf2.converter.EnumConverter" />
-								</h:selectOneMenu>
+									id="scimEnabledStateId" />
 							</ox:decorate>
 							<hr
 								style="border: solid 1px green; margin-left: 10%; margin-right: 10%"></hr>
