@@ -39,7 +39,7 @@ public class ScimConfigureAction implements Serializable {
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
 		GluuConfiguration configuration = configurationService.getConfiguration();
-		if ((configuration.getScimEnabled() == null) || !configuration.getScimEnabled().isBooleanValue()) {
+		if (configuration.isScimEnabled()) {
 			return OxTrustConstants.RESULT_DISABLED;
 		}
 		this.isInitialized = true;

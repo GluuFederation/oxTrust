@@ -6,16 +6,15 @@ import java.util.List;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.gluu.oxauth.model.common.GrantType;
+import org.gluu.oxauth.model.common.ResponseType;
 import org.gluu.oxtrust.model.AuthenticationMethod;
 import org.gluu.oxtrust.model.BlockEncryptionAlgorithm;
 import org.gluu.oxtrust.model.KeyEncryptionAlgorithm;
 import org.gluu.oxtrust.model.OxAuthApplicationType;
 import org.gluu.oxtrust.model.OxAuthSubjectType;
 import org.gluu.oxtrust.model.SignatureAlgorithm;
-import org.gluu.persist.model.base.GluuBoolean;
 import org.gluu.persist.annotation.AttributeName;
-import org.gluu.oxauth.model.common.GrantType;
-import org.gluu.oxauth.model.common.ResponseType;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class GluuOxAuthClient implements Serializable{
@@ -50,7 +49,7 @@ public class GluuOxAuthClient implements Serializable{
 
 	private List<String> associatedPersons;
 
-	private GluuBoolean oxAuthTrustedClient = GluuBoolean.FALSE;
+	private Boolean oxAuthTrustedClient = Boolean.FALSE;
 
 	private ResponseType[] responseTypes;
 
@@ -96,7 +95,7 @@ public class GluuOxAuthClient implements Serializable{
 
 	private Integer defaultMaxAge;
 
-	private GluuBoolean requireAuthTime;
+	private Boolean requireAuthTime;
 
 	private String[] postLogoutRedirectUris;
 
@@ -104,11 +103,11 @@ public class GluuOxAuthClient implements Serializable{
 
 	private List<String> logoutUri;
 
-	private GluuBoolean logoutSessionRequired = GluuBoolean.FALSE;
+	private Boolean logoutSessionRequired = Boolean.FALSE;
 
-	private GluuBoolean oxAuthPersistClientAuthorizations = GluuBoolean.TRUE;
+	private Boolean oxAuthPersistClientAuthorizations = Boolean.TRUE;
 
-	private GluuBoolean oxIncludeClaimsInIdToken = GluuBoolean.FALSE;
+	private Boolean oxIncludeClaimsInIdToken = Boolean.FALSE;
 
 	private Integer oxRefreshTokenLifetime;
 
@@ -231,11 +230,11 @@ public class GluuOxAuthClient implements Serializable{
 		this.associatedPersons = associatedPersons;
 	}
 
-	public GluuBoolean getOxAuthTrustedClient() {
+	public Boolean getOxAuthTrustedClient() {
 		return oxAuthTrustedClient;
 	}
 
-	public void setOxAuthTrustedClient(GluuBoolean oxAuthTrustedClient) {
+	public void setOxAuthTrustedClient(Boolean oxAuthTrustedClient) {
 		this.oxAuthTrustedClient = oxAuthTrustedClient;
 	}
 
@@ -407,11 +406,11 @@ public class GluuOxAuthClient implements Serializable{
 		this.defaultMaxAge = defaultMaxAge;
 	}
 
-	public GluuBoolean getRequireAuthTime() {
+	public Boolean getRequireAuthTime() {
 		return requireAuthTime;
 	}
 
-	public void setRequireAuthTime(GluuBoolean requireAuthTime) {
+	public void setRequireAuthTime(Boolean requireAuthTime) {
 		this.requireAuthTime = requireAuthTime;
 	}
 
@@ -439,27 +438,27 @@ public class GluuOxAuthClient implements Serializable{
 		this.logoutUri = logoutUri;
 	}
 
-	public GluuBoolean getLogoutSessionRequired() {
+	public Boolean getLogoutSessionRequired() {
 		return logoutSessionRequired;
 	}
 
-	public void setLogoutSessionRequired(GluuBoolean logoutSessionRequired) {
+	public void setLogoutSessionRequired(Boolean logoutSessionRequired) {
 		this.logoutSessionRequired = logoutSessionRequired;
 	}
 
-	public GluuBoolean getOxAuthPersistClientAuthorizations() {
+	public Boolean getOxAuthPersistClientAuthorizations() {
 		return oxAuthPersistClientAuthorizations;
 	}
 
-	public void setOxAuthPersistClientAuthorizations(GluuBoolean oxAuthPersistClientAuthorizations) {
+	public void setOxAuthPersistClientAuthorizations(Boolean oxAuthPersistClientAuthorizations) {
 		this.oxAuthPersistClientAuthorizations = oxAuthPersistClientAuthorizations;
 	}
 
-	public GluuBoolean getOxIncludeClaimsInIdToken() {
+	public Boolean getOxIncludeClaimsInIdToken() {
 		return oxIncludeClaimsInIdToken;
 	}
 
-	public void setOxIncludeClaimsInIdToken(GluuBoolean oxIncludeClaimsInIdToken) {
+	public void setOxIncludeClaimsInIdToken(Boolean oxIncludeClaimsInIdToken) {
 		this.oxIncludeClaimsInIdToken = oxIncludeClaimsInIdToken;
 	}
 

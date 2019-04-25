@@ -55,7 +55,7 @@ public class OxAuthScope extends Entry implements Serializable {
 	private List<String> oxAuthClaims;
 
 	@AttributeName(name = "defaultScope")
-	private Boolean defaultScope;
+	private boolean defaultScope;
 
 	@AttributeName(name = "oxScriptDn")
     private List<String> dynamicScopeScripts;
@@ -108,11 +108,11 @@ public class OxAuthScope extends Entry implements Serializable {
 		this.selected = selected;
 	}
 
-	public Boolean getDefaultScope() {
+	public boolean isDefaultScope() {
 		return this.defaultScope;
 	}
 
-	public void setDefaultScope(Boolean defaultScope) {
+	public void setDefaultScope(boolean defaultScope) {
 		this.defaultScope = defaultScope;
 	}
 

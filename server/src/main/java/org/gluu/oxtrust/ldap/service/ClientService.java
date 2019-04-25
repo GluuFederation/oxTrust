@@ -308,15 +308,6 @@ public class ClientService implements Serializable {
 	}
 
 	/**
-	 * GetOxAuthTrustedClient
-	 *
-	 * @return Array of OxAuthTrustedClient
-	 */
-	public GluuBoolean[] getOxAuthTrustedClient() {
-		return new GluuBoolean[] { GluuBoolean.TRUE, GluuBoolean.FALSE };
-	}
-
-	/**
 	 * Get all available Subject types
 	 *
 	 * @return Array of Subject types

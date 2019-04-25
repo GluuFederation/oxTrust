@@ -17,14 +17,13 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
 import org.gluu.config.oxtrust.AppConfiguration;
+import org.gluu.oxauth.client.ClientInfoClient;
+import org.gluu.oxauth.client.ClientInfoResponse;
 import org.gluu.oxtrust.ldap.service.ConfigurationService;
 import org.gluu.oxtrust.ldap.service.JsonConfigurationService;
 import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.oxtrust.service.OpenIdService;
-import org.gluu.persist.model.base.GluuBoolean;
 import org.slf4j.Logger;
-import org.gluu.oxauth.client.ClientInfoClient;
-import org.gluu.oxauth.client.ClientInfoResponse;
 
 /**
  * Provides service to protect SCIM UMA Rest service endpoints
@@ -83,9 +82,8 @@ public class ScimUmaProtectionService extends BaseUmaProtectionService implement
 
 	private boolean isScimEnabled() {
 		GluuConfiguration configuration = configurationService.getConfiguration();
-		GluuBoolean scimEnabled = configuration.getScimEnabled();
 		
-		return GluuBoolean.ENABLED.equals(scimEnabled) || GluuBoolean.TRUE.equals(scimEnabled);
+		return configuration.isScimEnabled();
 	}
 
     /**

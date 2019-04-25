@@ -163,8 +163,7 @@ public class PasswordReminderAction implements Serializable {
 	public boolean enabled() {
 		GluuConfiguration configuration = configurationService.getConfiguration();
 		SmtpConfiguration smtpConfiguration = configuration.getSmtpConfiguration();
-		boolean valid = smtpConfigurationIsValid(smtpConfiguration) && configuration.getPasswordResetAllowed() != null
-				&& configuration.getPasswordResetAllowed().isBooleanValue();
+		boolean valid = smtpConfigurationIsValid(smtpConfiguration) && configuration.isPasswordResetAllowed();
 		if (valid) {
 			passwordResetIsEnable = true;
 			if (recaptchaService.isEnabled() && getAuthenticationRecaptchaEnabled()) {

@@ -31,7 +31,7 @@ import org.gluu.persist.model.base.GluuBoolean;
  */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlSeeAlso({GluuAttribute.class, GluuBoolean.class})
+@XmlSeeAlso({GluuAttribute.class})
 public class GluuCustomAttribute implements Serializable, Comparable<GluuCustomAttribute> {
 
 	private static final long serialVersionUID = 1468440094325406153L;

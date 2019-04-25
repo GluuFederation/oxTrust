@@ -159,10 +159,8 @@
 
 										<ox:decorate
 											label="#{msg['organization.keepExternalPersons']}">
-
-											<h:selectBooleanCheckbox
-												styleClass="rounded keepInternalPersonCheckBox"
-												value="#{_configureCacheRefreshAction.cacheRefreshConfig.keepExternalPerson}" />
+											<h:selectBooleanCheckbox value="#{_configureCacheRefreshAction.cacheRefreshConfig.keepExternalPerson}"
+												styleClass="rounded keepInternalPersonCheckBox" id="profileManagmentStateId" />
 										</ox:decorate>
 
 										<ox:decorate label="#{msg['organization.loadSourceData']}">
@@ -179,16 +177,9 @@
 
 										<ox:decorate id="vdsCacheRefreshState"
 											label="#{msg['organization.cacheRefresh']}">
-											<h:selectOneMenu
-												value="#{_configureCacheRefreshAction.configuration.vdsCacheRefreshEnabled}"
+											<h:selectBooleanCheckbox value="#{_configureCacheRefreshAction.configuration.vdsCacheRefreshEnabled}"
 												styleClass="rounded form-control enableCacheRefreshSelectBox"
-												id="vdsCacheRefreshStateId">
-												<f:selectItems
-													value="#{organizationService.booleanSelectionTypes}"
-													var="_type" itemLabel="#{_type.displayName}" />
-												<f:converter
-													converterId="org.gluu.jsf2.converter.EnumConverter" />
-											</h:selectOneMenu>
+												id="vdsCacheRefreshStateId" />
 										</ox:decorate>
 
 									</h:panelGroup>
