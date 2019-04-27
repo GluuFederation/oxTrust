@@ -38,6 +38,7 @@ public class ProductInstallationCheckerAction implements Serializable {
 	private boolean showSAMLMenu = true;
 	private boolean showSAMLSubmenu = true;
 	private boolean showIDP_CAS = true;
+	private boolean showPassportMenu = true;
 
 	public ProductInstallationCheckerAction() {
 	}
@@ -49,51 +50,39 @@ public class ProductInstallationCheckerAction implements Serializable {
 				|| (shibboleth3ConfService.isIdpInstalled() && ProductInstallationChecker.isShibbolethIDP3Installed());
 		showSAMLSubmenu = !ProductInstallationChecker.isGluuCE() || shibboleth3ConfService.isIdpInstalled();
 		showIDP_CAS = !ProductInstallationChecker.isGluuCE() || ProductInstallationChecker.isShibbolethIDP3Installed();
+		showPassportMenu = !ProductInstallationChecker.isGluuCE() || ProductInstallationChecker.isPassportInstalled();
 	}
 
-	/**
-	 * @return the showSAMLMenu
-	 */
 	public boolean isShowSAMLMenu() {
 		return showSAMLMenu;
 	}
 
-	/**
-	 * @param showSAMLMenu
-	 *            the showSAMLMenu to set
-	 */
 	public void setShowSAMLMenu(boolean showSAMLMenu) {
 		this.showSAMLMenu = showSAMLMenu;
 	}
 
-	/**
-	 * @return the showSAMLSubmenu
-	 */
 	public boolean isShowSAMLSubmenu() {
 		return showSAMLSubmenu;
 	}
 
-	/**
-	 * @param showSAMLSubmenu
-	 *            the showSAMLSubmenu to set
-	 */
 	public void setShowSAMLSubmenu(boolean showSAMLSubmenu) {
 		this.showSAMLSubmenu = showSAMLSubmenu;
 	}
 
-	/**
-	 * @return the showIDP_CAS
-	 */
 	public boolean isShowIDP_CAS() {
 		return showIDP_CAS;
 	}
 
-	/**
-	 * @param showIDP_CAS
-	 *            the showIDP_CAS to set
-	 */
 	public void setShowIDP_CAS(boolean showIDP_CAS) {
 		this.showIDP_CAS = showIDP_CAS;
+	}
+
+	public boolean isShowPassportMenu() {
+		return showPassportMenu;
+	}
+
+	public void setShowPassportMenu(boolean showPassportMenu) {
+		this.showPassportMenu = showPassportMenu;
 	}
 
 }
