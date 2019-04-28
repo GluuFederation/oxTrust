@@ -51,8 +51,8 @@ public class CasProtocolWebResource extends BaseWebResource {
 	@ApiOperation("Get the existing configuration")
 	@ApiResponses(value = { @ApiResponse(code = 200, response = CasProtocolDTO.class, message = "Success") })
 	@ProtectedApi(scopes = { READ_ACCESS })
-	public Response read() {
-		log(logger, "Get the existing configuration");
+	public Response getCasConfig() {
+		log(logger, "Get the existing cas configuration");
 		try {
 			CASProtocolConfiguration casProtocolConfiguration = casProtocolConfigurationProvider.get();
 			CasProtocolDTO casProtocolDto = casProtocolDtoAssembly.toDto(casProtocolConfiguration);
@@ -74,7 +74,7 @@ public class CasProtocolWebResource extends BaseWebResource {
 			CASProtocolConfiguration casProtocolConfiguration = casProtocolDtoAssembly.fromDto(casProtocol);
 			casProtocolConfiguration.save(casService);
 			shibbolethService.update(casProtocolConfiguration);
-			return read();
+			return getCasConfig();
 		} catch (Exception e) {
 			log(logger, e);
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
