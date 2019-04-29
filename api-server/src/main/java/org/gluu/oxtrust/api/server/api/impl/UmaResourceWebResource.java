@@ -25,10 +25,10 @@ import org.gluu.oxtrust.ldap.service.uma.ResourceSetService;
 import org.gluu.oxtrust.ldap.service.uma.ScopeDescriptionService;
 import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.service.filter.ProtectedApi;
+import org.oxauth.persistence.model.Scope;
 import org.gluu.oxtrust.api.server.util.ApiConstants;
 import org.slf4j.Logger;
 import org.gluu.oxauth.model.uma.persistence.UmaResource;
-import org.gluu.oxauth.model.uma.persistence.UmaScopeDescription;
 
 import com.wordnik.swagger.annotations.ApiOperation;
 
@@ -139,7 +139,7 @@ public class UmaResourceWebResource extends BaseWebResource {
 			if (resources != null && !resources.isEmpty()) {
 				UmaResource resource = resources.get(0);
 				List<String> scopesDn = resource.getScopes();
-				List<UmaScopeDescription> scopes = new ArrayList<UmaScopeDescription>();
+				List<Scope> scopes = new ArrayList<Scope>();
 				if (scopesDn != null) {
 					for (String scopeDn : scopesDn) {
 						scopes.add(scopeDescriptionService.getScopeDescriptionByDn(scopeDn));
@@ -228,7 +228,7 @@ public class UmaResourceWebResource extends BaseWebResource {
 			Objects.requireNonNull(id, "Uma id should not be null");
 			Objects.requireNonNull(scopeInum, "scope inum should not be null");
 			List<UmaResource> resources = umaResourcesService.findResourcesById(id);
-			UmaScopeDescription umaScope = scopeDescriptionService.getUmaScopeByInum(scopeInum);
+			Scope umaScope = scopeDescriptionService.getUmaScopeByInum(scopeInum);
 			if (resources != null && !resources.isEmpty() && umaScope != null) {
 				UmaResource umaResource = resources.get(0);
 				List<String> scopesDn = new ArrayList<String>();
@@ -259,7 +259,7 @@ public class UmaResourceWebResource extends BaseWebResource {
 			Objects.requireNonNull(id, "Uma id should not be null");
 			Objects.requireNonNull(scopeInum, "scope inum should not be null");
 			List<UmaResource> resources = umaResourcesService.findResourcesById(id);
-			UmaScopeDescription umaScope = scopeDescriptionService.getUmaScopeByInum(scopeInum);
+			Scope umaScope = scopeDescriptionService.getUmaScopeByInum(scopeInum);
 			if (resources != null && !resources.isEmpty() && umaScope != null) {
 				UmaResource umaResource = resources.get(0);
 				List<String> scopesDn = new ArrayList<String>();

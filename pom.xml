@@ -176,6 +176,12 @@
 			</dependency>
 			<dependency>
 				<groupId>org.gluu</groupId>
+				<artifactId>oxauth-persistence-model</artifactId>
+				<version>${oxauth.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.gluu</groupId>
 				<artifactId>oxauth-client</artifactId>
 				<version>${oxauth.version}</version>
 			</dependency>
@@ -545,11 +551,11 @@
 				<artifactId>jackson-module-jaxb-annotations</artifactId>
 				<version>${jackson_fasterxml.version}</version>
 			</dependency>
-<!-- 			<dependency> -->
-<!-- 				<groupId>com.fasterxml.jackson.jaxrs</groupId> -->
-<!-- 				<artifactId>jackson-jaxrs-json-provider</artifactId> -->
-<!-- 				<version>${jackson_fasterxml.version}</version> -->
-<!-- 			</dependency> -->
+			<!-- <dependency> -->
+			<!-- <groupId>com.fasterxml.jackson.jaxrs</groupId> -->
+			<!-- <artifactId>jackson-jaxrs-json-provider</artifactId> -->
+			<!-- <version>${jackson_fasterxml.version}</version> -->
+			<!-- </dependency> -->
 
 			<!-- Jettison -->
 			<dependency>

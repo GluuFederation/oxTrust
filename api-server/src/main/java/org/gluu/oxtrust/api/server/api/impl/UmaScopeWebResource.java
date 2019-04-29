@@ -18,11 +18,11 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.gluu.oxauth.model.uma.persistence.UmaScopeDescription;
 import org.gluu.oxtrust.api.server.util.ApiConstants;
 import org.gluu.oxtrust.api.server.util.Constants;
 import org.gluu.oxtrust.ldap.service.uma.ScopeDescriptionService;
 import org.gluu.oxtrust.service.filter.ProtectedApi;
+import org.oxauth.persistence.model.Scope;
 import org.slf4j.Logger;
 
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -43,14 +43,13 @@ public class UmaScopeWebResource extends BaseWebResource {
 
 	@GET
 	@ApiOperation(value = "Get uma scopes")
-	@ApiResponses(value = {
-			@ApiResponse(code = 200, response = UmaScopeDescription[].class, message = Constants.RESULT_SUCCESS),
+	@ApiResponses(value = { @ApiResponse(code = 200, response = Scope[].class, message = Constants.RESULT_SUCCESS),
 			@ApiResponse(code = 500, message = "Server error") })
 	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response listUmaScopes() {
 		log(logger, "Get uma scopes");
 		try {
-			List<UmaScopeDescription> umaScopeDescriptions = scopeDescriptionService.getAllScopeDescriptions(100);
+			List<Scope> umaScopeDescriptions = scopeDescriptionService.getAllScopeDescriptions(100);
 			return Response.ok(umaScopeDescriptions).build();
 		} catch (Exception e) {
 			log(logger, e);
@@ -65,7 +64,7 @@ public class UmaScopeWebResource extends BaseWebResource {
 	public Response searchUmaScopes(@QueryParam(ApiConstants.SEARCH_PATTERN) @NotNull String pattern) {
 		log(logger, "Search uma scope with pattern = " + pattern);
 		try {
-			List<UmaScopeDescription> scopes = scopeDescriptionService.findScopeDescriptions(pattern, 100);
+			List<Scope> scopes = scopeDescriptionService.findScopeDescriptions(pattern, 100);
 			return Response.ok(scopes).build();
 		} catch (Exception e) {
 			log(logger, e);
@@ -81,7 +80,7 @@ public class UmaScopeWebResource extends BaseWebResource {
 		log(logger, "Get uma scope " + inum);
 		try {
 			Objects.requireNonNull(inum, "inum should not be null");
-			UmaScopeDescription scope = scopeDescriptionService.getUmaScopeByInum(inum);
+			Scope scope = scopeDescriptionService.getUmaScopeByInum(inum);
 			if (scope != null) {
 				return Response.ok(scope).build();
 			} else {
@@ -96,7 +95,7 @@ public class UmaScopeWebResource extends BaseWebResource {
 	@POST
 	@ApiOperation(value = "Add new uma scope")
 	@ProtectedApi(scopes = { WRITE_ACCESS })
-	public Response createUmaScope(UmaScopeDescription umaScopeDescription) {
+	public Response createUmaScope(Scope umaScopeDescription) {
 		log(logger, "Add new uma scope");
 		try {
 			Objects.requireNonNull(umaScopeDescription, "Attempt to create null uma scope");
@@ -114,13 +113,13 @@ public class UmaScopeWebResource extends BaseWebResource {
 	@PUT
 	@ApiOperation(value = "Update uma scope")
 	@ProtectedApi(scopes = { WRITE_ACCESS })
-	public Response updateUmaScope(UmaScopeDescription umaScopeDescription) {
+	public Response updateUmaScope(Scope umaScopeDescription) {
 		String inum = umaScopeDescription.getInum();
 		log(logger, "Update uma scope " + inum);
 		try {
 			Objects.requireNonNull(inum, "inum should not be null");
 			Objects.requireNonNull(umaScopeDescription, "Attempt to update null uma scope");
-			UmaScopeDescription existingScope = scopeDescriptionService.getUmaScopeByInum(inum);
+			Scope existingScope = scopeDescriptionService.getUmaScopeByInum(inum);
 			if (existingScope != null) {
 				umaScopeDescription.setDn(scopeDescriptionService.getDnForScopeDescription(inum));
 				scopeDescriptionService.updateScopeDescription(umaScopeDescription);
@@ -141,7 +140,7 @@ public class UmaScopeWebResource extends BaseWebResource {
 	public Response deleteUmaScope(@PathParam(ApiConstants.INUM) @NotNull String inum) {
 		log(logger, "Delete a uma scope having inum " + inum);
 		try {
-			UmaScopeDescription existingScope = scopeDescriptionService.getUmaScopeByInum(inum);
+			Scope existingScope = scopeDescriptionService.getUmaScopeByInum(inum);
 			if (existingScope != null) {
 				scopeDescriptionService.removeScopeDescription(existingScope);
 				return Response.ok().build();

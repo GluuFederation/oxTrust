@@ -17,11 +17,11 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.gluu.oxauth.model.common.ScopeType;
-import org.gluu.oxtrust.model.OxAuthScope;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.search.filter.Filter;
 import org.gluu.util.StringHelper;
+import org.oxauth.persistence.model.Scope;
 import org.slf4j.Logger;
 
 /**
@@ -49,7 +49,7 @@ public class ScopeService implements Serializable {
 	 * @param scope
 	 *            scope
 	 */
-	public void addScope(OxAuthScope scope) throws Exception {
+	public void addScope(Scope scope) throws Exception {
 		ldapEntryManager.persist(scope);
 	}
 
@@ -59,7 +59,7 @@ public class ScopeService implements Serializable {
 	 * @param scope
 	 *            scope
 	 */
-	public void removeScope(OxAuthScope scope) throws Exception {
+	public void removeScope(Scope scope) throws Exception {
 
 		ldapEntryManager.remove(scope);
 	}
@@ -71,10 +71,10 @@ public class ScopeService implements Serializable {
 	 *            scope Inum
 	 * @return scope
 	 */
-	public OxAuthScope getScopeByInum(String inum) throws Exception {
-		OxAuthScope result = null;
+	public Scope getScopeByInum(String inum) throws Exception {
+		Scope result = null;
 		try {
-			result = ldapEntryManager.find(OxAuthScope.class, getDnForScope(inum));
+			result = ldapEntryManager.find(Scope.class, getDnForScope(inum));
 		} catch (Exception e) {
 			logger.debug("", e);
 		}
@@ -103,7 +103,7 @@ public class ScopeService implements Serializable {
 	 * @param scope
 	 *            scope
 	 */
-	public void updateScope(OxAuthScope scope) throws Exception {
+	public void updateScope(Scope scope) throws Exception {
 		ldapEntryManager.merge(scope);
 	}
 
@@ -113,7 +113,7 @@ public class ScopeService implements Serializable {
 	 * @return New inum for scope
 	 */
 	public String generateInumForNewScope() throws Exception {
-		OxAuthScope scope = new OxAuthScope();
+		Scope scope = new Scope();
 		String newInum = null;
 		do {
 			newInum = generateInumForNewScopeImpl();
@@ -134,7 +134,7 @@ public class ScopeService implements Serializable {
 	 * @return List of scopes
 	 * @throws Exception
 	 */
-	public List<OxAuthScope> searchScopes(String pattern, int sizeLimit) {
+	public List<Scope> searchScopes(String pattern, int sizeLimit) {
 		Filter searchFilter = null;
 		if (StringHelper.isNotEmpty(pattern)) {
 			String[] targetArray = new String[] { pattern };
@@ -145,14 +145,13 @@ public class ScopeService implements Serializable {
 			Filter inameFilter = Filter.createSubstringFilter(OxTrustConstants.iname, null, targetArray, null);
 			searchFilter = Filter.createORFilter(displayNameFilter, descriptionFilter, inameFilter);
 		}
-		List<OxAuthScope> result = new ArrayList<>();
+		List<Scope> result = new ArrayList<>();
 		try {
-			result = ldapEntryManager.findEntries(getDnForScope(null), OxAuthScope.class, searchFilter, sizeLimit);
+			result = ldapEntryManager.findEntries(getDnForScope(null), Scope.class, searchFilter, sizeLimit);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-		
+
 		System.out.println(ldapEntryManager.getHashCode(result.get(0)));
 		return result;
 	}
@@ -167,9 +166,9 @@ public class ScopeService implements Serializable {
 		return UUID.randomUUID().toString();
 	}
 
-	public List<OxAuthScope> getAllScopesList(int size) {
+	public List<Scope> getAllScopesList(int size) {
 		try {
-			return ldapEntryManager.findEntries(getDnForScope(null), OxAuthScope.class, null, size);
+			return ldapEntryManager.findEntries(getDnForScope(null), Scope.class, null, size);
 		} catch (Exception e) {
 			logger.error("", e);
 			return new ArrayList<>();
@@ -182,8 +181,8 @@ public class ScopeService implements Serializable {
 	 * @return oxAuthScope
 	 */
 
-	public OxAuthScope getScopeByDn(String Dn) throws Exception {
-		return ldapEntryManager.find(OxAuthScope.class, Dn);
+	public Scope getScopeByDn(String Dn) throws Exception {
+		return ldapEntryManager.find(Scope.class, Dn);
 	}
 
 	/**
@@ -192,8 +191,7 @@ public class ScopeService implements Serializable {
 	 * @return Array of scope types
 	 */
 	public List<ScopeType> getScopeTypes() {
-		return  new ArrayList<ScopeType>(
-				Arrays.asList(org.gluu.oxauth.model.common.ScopeType.values()));
+		return new ArrayList<ScopeType>(Arrays.asList(org.gluu.oxauth.model.common.ScopeType.values()));
 	}
 
 	/**
@@ -202,11 +200,11 @@ public class ScopeService implements Serializable {
 	 * @param DisplayName
 	 * @return scope
 	 */
-	public OxAuthScope getScopeByDisplayName(String DisplayName) throws Exception {
-		OxAuthScope scope = new OxAuthScope();
+	public Scope getScopeByDisplayName(String DisplayName) throws Exception {
+		Scope scope = new Scope();
 		scope.setBaseDn(getDnForScope(null));
 		scope.setDisplayName(DisplayName);
-		List<OxAuthScope> scopes = ldapEntryManager.findEntries(scope);
+		List<Scope> scopes = ldapEntryManager.findEntries(scope);
 		if ((scopes != null) && (scopes.size() > 0)) {
 			return scopes.get(0);
 		}

@@ -22,6 +22,7 @@ import org.gluu.oxauth.model.uma.UmaScopeDescription;
 import org.gluu.oxtrust.api.server.util.ApiConstants;
 import org.junit.Assert;
 import org.junit.Test;
+import org.oxauth.persistence.model.Scope;
 
 public class UmaScopeWebResourceTest extends BaseApiTest {
 
@@ -82,7 +83,7 @@ public class UmaScopeWebResourceTest extends BaseApiTest {
 	@Test
 	public void createUmaScopeTest() {
 		String name = "ApiUmaScope";
-		org.gluu.oxauth.model.uma.persistence.UmaScopeDescription scope = getUmaScope(name);
+		Scope scope = getUmaScope(name);
 		HttpPost request = new HttpPost(BASE_URL + ApiConstants.BASE_API_URL + ApiConstants.UMA + ApiConstants.SCOPES);
 
 		try {
@@ -97,8 +98,8 @@ public class UmaScopeWebResourceTest extends BaseApiTest {
 
 			Assert.assertEquals(HttpStatus.SC_OK, response.getStatusLine().getStatusCode());
 			HttpEntity result = response.getEntity();
-			org.gluu.oxauth.model.uma.persistence.UmaScopeDescription myScope = mapper.readValue(
-					EntityUtils.toString(result), org.gluu.oxauth.model.uma.persistence.UmaScopeDescription.class);
+			Scope myScope = mapper.readValue(
+					EntityUtils.toString(result), Scope.class);
 			Assert.assertNotNull(myScope);
 			Assert.assertEquals(myScope.getDisplayName(), name);
 		} catch (ParseException | IOException e) {
@@ -110,7 +111,7 @@ public class UmaScopeWebResourceTest extends BaseApiTest {
 	@Test
 	public void updateUmaScopeTest() {
 		String name = "ApiUmaScopeUpdate";
-		org.gluu.oxauth.model.uma.persistence.UmaScopeDescription scope = getUmaScope(name);
+		Scope scope = getUmaScope(name);
 		HttpPost request = new HttpPost(BASE_URL + ApiConstants.BASE_API_URL + ApiConstants.UMA + ApiConstants.SCOPES);
 		try {
 			String json = mapper.writeValueAsString(scope);
@@ -124,7 +125,7 @@ public class UmaScopeWebResourceTest extends BaseApiTest {
 
 			Assert.assertEquals(HttpStatus.SC_OK, response.getStatusLine().getStatusCode());
 			HttpEntity result = response.getEntity();
-			org.gluu.oxauth.model.uma.persistence.UmaScopeDescription myScope = mapper.readValue(EntityUtils.toString(result), org.gluu.oxauth.model.uma.persistence.UmaScopeDescription.class);
+			Scope myScope = mapper.readValue(EntityUtils.toString(result), Scope.class);
 			Assert.assertEquals(myScope.getDisplayName(), name);
 
 			myScope.setDisplayName(myScope.getDisplayName() + " Updated");
@@ -160,13 +161,13 @@ public class UmaScopeWebResourceTest extends BaseApiTest {
 		Assert.assertEquals(HttpStatus.SC_UNAUTHORIZED, response.getStatusLine().getStatusCode());
 	}
 
-	private org.gluu.oxauth.model.uma.persistence.UmaScopeDescription getUmaScope(String name) {
-		org.gluu.oxauth.model.uma.persistence.UmaScopeDescription scope = new org.gluu.oxauth.model.uma.persistence.UmaScopeDescription();
+	private Scope getUmaScope(String name) {
+		Scope scope = new Scope();
 		scope.setDescription(name + " description");
 		scope.setDisplayName(name);
 		scope.setIconUrl("https://api.gluu.org/icon/jl25");
 		scope.setId(UUID.randomUUID().toString());
-		scope.setAuthorizationPolicies(new ArrayList<>());
+		scope.setUmaAuthorizationPolicies(new ArrayList<>());
 		return scope;
 	}
 

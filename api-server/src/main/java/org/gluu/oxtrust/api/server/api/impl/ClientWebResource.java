@@ -24,8 +24,8 @@ import org.gluu.oxtrust.api.server.util.ApiConstants;
 import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.ScopeService;
 import org.gluu.oxtrust.model.OxAuthClient;
-import org.gluu.oxtrust.model.OxAuthScope;
 import org.gluu.oxtrust.service.filter.ProtectedApi;
+import org.oxauth.persistence.model.Scope;
 import org.slf4j.Logger;
 
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -73,7 +73,7 @@ public class ClientWebResource extends BaseWebResource {
 			OxAuthClient client = clientService.getClientByInum(inum);
 			if (client != null) {
 				List<String> scopesDn = client.getOxAuthScopes();
-				List<OxAuthScope> scopes = new ArrayList<OxAuthScope>();
+				List<Scope> scopes = new ArrayList<Scope>();
 				if (scopesDn != null) {
 					for (String scopeDn : scopesDn) {
 						scopes.add(scopeService.getScopeByDn(scopeDn));
@@ -177,7 +177,7 @@ public class ClientWebResource extends BaseWebResource {
 		log(logger, "add new scope to client");
 		try {
 			OxAuthClient client = clientService.getClientByInum(inum);
-			OxAuthScope scope = scopeService.getScopeByInum(sinum);
+			Scope scope = scopeService.getScopeByInum(sinum);
 			Objects.requireNonNull(client);
 			Objects.requireNonNull(scope);
 			if (client != null && scope != null) {
@@ -206,7 +206,7 @@ public class ClientWebResource extends BaseWebResource {
 		log(logger, "remove scope to client");
 		try {
 			OxAuthClient client = clientService.getClientByInum(inum);
-			OxAuthScope scope = scopeService.getScopeByInum(sinum);
+			Scope scope = scopeService.getScopeByInum(sinum);
 			Objects.requireNonNull(client);
 			Objects.requireNonNull(scope);
 			if (client != null && scope != null) {

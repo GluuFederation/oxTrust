@@ -20,10 +20,10 @@ import javax.validation.constraints.Size;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.service.ScopeService;
-import org.gluu.oxtrust.model.OxAuthScope;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.service.security.Secure;
 import org.gluu.util.Util;
+import org.oxauth.persistence.model.Scope;
 import org.slf4j.Logger;
 
 /**
@@ -56,7 +56,7 @@ public class SearchScopeAction implements Serializable {
 
 	private String oldSearchPattern;
 
-	private List<OxAuthScope> scopeList;
+	private List<Scope> scopeList;
 
 	public String start() {
 		return search();
@@ -68,7 +68,7 @@ public class SearchScopeAction implements Serializable {
 		}
 		try {
 			this.scopeList = scopeService.searchScopes(this.searchPattern, 100);
-			this.scopeList.sort(Comparator.comparing(OxAuthScope::getDisplayName));
+			this.scopeList.sort(Comparator.comparing(Scope::getDisplayName));
 			this.oldSearchPattern = this.searchPattern;
 			this.searchPattern="";
 		} catch (Exception ex) {
@@ -88,7 +88,7 @@ public class SearchScopeAction implements Serializable {
 		this.searchPattern = searchPattern;
 	}
 
-	public List<OxAuthScope> getScopeList() {
+	public List<Scope> getScopeList() {
 		return scopeList;
 	}
 

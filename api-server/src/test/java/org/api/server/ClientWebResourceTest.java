@@ -22,9 +22,9 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.gluu.oxtrust.api.server.util.ApiConstants;
 import org.gluu.oxtrust.model.OxAuthApplicationType;
 import org.gluu.oxtrust.model.OxAuthClient;
-import org.gluu.oxtrust.model.OxAuthScope;
 import org.junit.Assert;
 import org.junit.Test;
+import org.oxauth.persistence.model.Scope;
 
 public class ClientWebResourceTest extends BaseApiTest {
 	private ObjectMapper mapper = new ObjectMapper();
@@ -143,7 +143,7 @@ public class ClientWebResourceTest extends BaseApiTest {
 		Assert.assertEquals(HttpStatus.SC_OK, response.getStatusLine().getStatusCode());
 		HttpEntity entity = response.getEntity();
 		try {
-			OxAuthScope[] scopes = mapper.readValue(EntityUtils.toString(entity), OxAuthScope[].class);
+			Scope[] scopes = mapper.readValue(EntityUtils.toString(entity), Scope[].class);
 			Assert.assertNotNull(scopes);
 			Assert.assertTrue(scopes.length >= 0);
 		} catch (ParseException | IOException e) {

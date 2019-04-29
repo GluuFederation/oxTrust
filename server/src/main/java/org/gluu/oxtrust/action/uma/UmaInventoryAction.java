@@ -22,7 +22,6 @@ import org.gluu.jsf2.service.ConversationService;
 import org.gluu.model.DisplayNameEntry;
 import org.gluu.oxauth.model.uma.UmaMetadata;
 import org.gluu.oxauth.model.uma.persistence.UmaResource;
-import org.gluu.oxauth.model.uma.persistence.UmaScopeDescription;
 import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.ImageService;
 import org.gluu.oxtrust.ldap.service.uma.ResourceSetService;
@@ -32,6 +31,7 @@ import org.gluu.service.LookupService;
 import org.gluu.service.security.Secure;
 import org.gluu.util.StringHelper;
 import org.gluu.util.Util;
+import org.oxauth.persistence.model.Scope;
 import org.slf4j.Logger;
 
 /**
@@ -80,7 +80,7 @@ public class UmaInventoryAction implements Serializable {
 	private String oldSearchPattern;
 
 	private List<UmaResource> resourcesList;
-	private List<UmaScopeDescription> scopesList;
+	private List<Scope> scopesList;
 
 	private boolean initialized;
 
@@ -141,7 +141,7 @@ public class UmaInventoryAction implements Serializable {
 		List<String> scopeDns = resource.getScopes();
 		if (scopeDns != null) {
 			for (String dn : scopeDns) {
-				UmaScopeDescription res = scopeDescriptionService.getScopeByDn(dn);
+				Scope res = scopeDescriptionService.getScopeByDn(dn);
 				if (res != null) {
 					result.add(res.getDisplayName());
 				}
@@ -168,7 +168,7 @@ public class UmaInventoryAction implements Serializable {
 		return resourcesList;
 	}
 
-	public List<UmaScopeDescription> getScopesList() {
+	public List<Scope> getScopesList() {
 		return scopesList;
 	}
 
