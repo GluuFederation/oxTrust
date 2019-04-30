@@ -4,8 +4,7 @@
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
-	xmlns:b="http://bootsfaces.net/ui"
-	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:b="http://bootsfaces.net/ui" xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
 	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
@@ -35,7 +34,8 @@
 
 								<ox:decorate id="displayName"
 									label="#{msg['scope.displayName']}">
-									<rich:inplaceInput value="#{_scope.displayName}"
+									<h:inputText value="#{_scope.displayName}"
+										styleClass="form-control displayNameId"
 										defaultLabel="Click to enter Display Name" maxlength="60"
 										inputWidth="704" required="true" id="displayNameId" />
 								</ox:decorate>
@@ -49,7 +49,8 @@
 								<div class="row">
 									<div class="col-sm-6 col-lg-6">
 										<ox:decorate label="#{msg['scope.scopeType']}">
-											<h:selectOneMenu styleClass="col-sm-9 rounded form-control scopeType"
+											<h:selectOneMenu
+												styleClass="col-sm-9 rounded form-control scopeType"
 												value="#{_scope.scopeType}">
 												<f:selectItems value="#{scopeService.scopeTypes}"
 													var="_type" itemLabel="#{_type.displayName}" />
@@ -62,16 +63,17 @@
 									</div>
 									<div class="col-sm-6 col-lg-6">
 										<ox:decorate label="#{msg['scope.defaultScope']}">
-											<h:selectBooleanCheckbox
-												value="#{_scope.isDefaultScope()}"
-												styleClass="col-sm-9 rounded form-control registrationType" />
+											<h:selectBooleanCheckbox value="#{_scope.defaultScope}"
+												styleClass="col-sm-9 rounded form-control registrationType">
+											</h:selectBooleanCheckbox>
 										</ox:decorate>
 									</div>
 								</div>
 								<h:panelGroup id="selectedClaims">
 									<a4j:region
 										rendered="#{(not empty _scope.scopeType) and ((_scope.scopeType.value eq 'openid') or (_scope.scopeType.value eq 'dynamic'))}">
-										 <b:panel id="claims" title="#{msg['scope.claims']}" look="primary">
+										<b:panel id="claims" title="#{msg['scope.claims']}"
+											look="primary">
 											<h:panelGroup id="selectedClaimsId">
 												<h:panelGroup>
 													<a4j:repeat value="#{_scopeAction.claims}"
@@ -110,7 +112,8 @@
 								<h:panelGroup id="dynamicScripts">
 									<a4j:region
 										rendered="#{(not empty _scope.scopeType) and (_scope.scopeType.value eq 'dynamic')}">
-										 <b:panel title="#{msg['scope.dynamicScopeScripts']}" look="primary">
+										<b:panel title="#{msg['scope.dynamicScopeScripts']}"
+											look="primary">
 											<h:panelGroup id="selectedDynamicScriptId">
 												<h:panelGrid columns="1" width="100%" border="0"
 													cellpadding="0" cellspacing="0">
@@ -135,15 +138,13 @@
 													<richext:spacer height="16" />
 												</h:panelGrid>
 											</h:panelGroup>
-										</b:panel>
-										<ox:decorate id="command">
 											<h:panelGroup>
 												<a4j:commandButton
 													value="#{msg['scope.addDynamicScopeScript']}"
 													oncomplete="#{rich:component('dynamicScript:selectEntityModalPanel')}.show();"
 													execute="@this" styleClass="btn btn-primary" />
 											</h:panelGroup>
-										</ox:decorate>
+										</b:panel>
 									</a4j:region>
 								</h:panelGroup>
 							</h:panelGroup>

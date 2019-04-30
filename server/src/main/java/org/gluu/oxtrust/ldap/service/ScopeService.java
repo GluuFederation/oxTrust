@@ -205,7 +205,6 @@ public class ScopeService implements Serializable {
 	 */
 	public Scope getScopeByDisplayName(String DisplayName) throws Exception {
 		Scope scope = new Scope();
-		scope.setBaseDn(getDnForScope(null));
 		scope.setDisplayName(DisplayName);
 		List<Scope> scopes = ldapEntryManager.findEntries(scope);
 		if ((scopes != null) && (scopes.size() > 0)) {

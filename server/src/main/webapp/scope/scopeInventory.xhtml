@@ -78,14 +78,15 @@
 													value="#{searchScopeAction.scopeList}" var="clt"
 													print="true" excel="true" csv="true" pdf="true"
 													select="true">
-													<b:dataTableColumn label="#{msg['scope.displayName']}">
+													<b:dataTableColumn label="#{msg['scope.inum']}">
 														<h:link includeViewParams="false"
-															outcome="/scope/updateScope" value="#{clt.id}">
+															outcome="/scope/updateScope" value="#{clt.inum}">
 															<f:param name="inum" value="#{clt.inum}" />
 														</h:link>
 													</b:dataTableColumn>
-													<b:dataTableColumn value="#{clt.inum}"
-														label="#{msg['scope.inum']}" />
+													<b:dataTableColumn label="#{msg['scope.displayName']}"
+														value="#{clt.id eq null ? clt.displayName : clt.id}">
+													</b:dataTableColumn>
 													<b:dataTableColumn value="#{clt.description}"
 														label="#{msg['scope.description']}" />
 													<b:dataTableColumn value="#{clt.isDefaultScope()}"

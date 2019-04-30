@@ -28,6 +28,7 @@ import org.gluu.model.GluuImage;
 import org.gluu.model.SelectableEntity;
 import org.gluu.model.custom.script.CustomScriptType;
 import org.gluu.model.custom.script.model.CustomScript;
+import org.gluu.oxauth.model.common.ScopeType;
 import org.gluu.oxauth.model.uma.persistence.UmaResource;
 import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.ImageService;
@@ -38,7 +39,6 @@ import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.service.custom.CustomScriptService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.exception.BasePersistenceException;
-import org.gluu.service.JsonService;
 import org.gluu.service.LookupService;
 import org.gluu.service.security.Secure;
 import org.gluu.util.StringHelper;
@@ -80,9 +80,6 @@ public class UpdateUmaScopeAction implements Serializable {
 	private ImageService imageService;
 
 	@Inject
-	private JsonService jsonService;
-
-	@Inject
 	private LookupService lookupService;
 
 	@Inject
@@ -96,7 +93,7 @@ public class UpdateUmaScopeAction implements Serializable {
 
 	private String scopeInum;
 
-	private Scope scopeDescription;
+	private Scope umaScope;
 
 	private GluuImage curIconImage;
 
@@ -116,7 +113,7 @@ public class UpdateUmaScopeAction implements Serializable {
 	}
 
 	public String modify() {
-		if (this.scopeDescription != null) {
+		if (this.umaScope != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
 
@@ -145,11 +142,11 @@ public class UpdateUmaScopeAction implements Serializable {
 	}
 
 	private String add() {
-		if (this.scopeDescription != null) {
+		if (this.umaScope != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
 
-		this.scopeDescription = new Scope();
+		this.umaScope = new Scope();
 
 		this.authorizationPolicies = getInitialAuthorizationPolicies();
 
@@ -157,14 +154,14 @@ public class UpdateUmaScopeAction implements Serializable {
 	}
 
 	private String update() {
-		if (this.scopeDescription != null) {
+		if (this.umaScope != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
 
 		log.debug("Loading UMA resource '{}'", this.scopeInum);
 		try {
 			String scopeDn = scopeDescriptionService.getDnForScope(this.scopeInum);
-			this.scopeDescription = scopeDescriptionService.getUmaScopeByDn(scopeDn);
+			this.umaScope = scopeDescriptionService.getUmaScopeByDn(scopeDn);
 			this.authorizationPolicies = getInitialAuthorizationPolicies();
 
 			List<UmaResource> umaResourceList = resourceSetService.findResourcesByScope(scopeDn);
@@ -188,13 +185,10 @@ public class UpdateUmaScopeAction implements Serializable {
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 
-		if (this.scopeDescription == null) {
+		if (this.umaScope == null) {
 			log.error("Scope description is null");
 			return OxTrustConstants.RESULT_FAILURE;
 		}
-
-		initIconImage();
-
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
@@ -212,17 +206,15 @@ public class UpdateUmaScopeAction implements Serializable {
 	}
 
 	public String save() throws Exception {
-		this.scopeDescription.setDisplayName(this.scopeDescription.getDisplayName().trim());
-		if (!isValidScope()) {
-			return OxTrustConstants.RESULT_FAILURE;
-		}
+		this.umaScope.setDisplayName(this.umaScope.getDisplayName().trim());
+		this.umaScope.setScopeType(ScopeType.UMA);
 		updateAuthorizationPolicies();
 		if (this.update) {
 			// Update scope description
 			try {
-				scopeDescriptionService.updateUmaScope(this.scopeDescription);
+				scopeDescriptionService.updateUmaScope(this.umaScope);
 			} catch (BasePersistenceException ex) {
-				log.error("Failed to update scope description '{}'", this.scopeDescription.getId(), ex);
+				log.error("Failed to update scope description '{}'", this.umaScope.getId(), ex);
 				facesMessages.add(FacesMessage.SEVERITY_ERROR,
 						"Failed to update UMA resource '#{updateScopeDescriptionAction.scopeDescription.displayName}'");
 				return OxTrustConstants.RESULT_FAILURE;
@@ -236,20 +228,20 @@ public class UpdateUmaScopeAction implements Serializable {
 			// Check if scope description with this name already exist
 			Scope exampleScopeDescription = new Scope();
 			exampleScopeDescription.setDn(scopeDescriptionService.getDnForScope(null));
-			exampleScopeDescription.setId(scopeDescription.getId());
+			exampleScopeDescription.setId(umaScope.getId());
 
 			String inum = scopeDescriptionService.generateInumForNewScope();
 			String scopeDescriptionDn = scopeDescriptionService.getDnForScope(inum);
 
-			this.scopeDescription.setInum(inum);
-			this.scopeDescription.setDn(scopeDescriptionDn);
-			this.scopeDescription.setId(scopeDescription.getId());
+			this.umaScope.setInum(inum);
+			this.umaScope.setDn(scopeDescriptionDn);
+			this.umaScope.setId(umaScope.getId());
 
 			// Save scope description
 			try {
-				scopeDescriptionService.addUmaScope(this.scopeDescription);
+				scopeDescriptionService.addUmaScope(this.umaScope);
 			} catch (BasePersistenceException ex) {
-				log.error("Failed to add new UMA resource '{}'", this.scopeDescription.getId(), ex);
+				log.error("Failed to add new UMA resource '{}'", this.umaScope.getId(), ex);
 				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new UMA resource");
 
 				return OxTrustConstants.RESULT_FAILURE;
@@ -271,7 +263,7 @@ public class UpdateUmaScopeAction implements Serializable {
 		if (update) {
 			// Remove scope description
 			try {
-				scopeDescriptionService.removeUmaScope(this.scopeDescription);
+				scopeDescriptionService.removeUmaScope(this.umaScope);
 
 				facesMessages.add(FacesMessage.SEVERITY_INFO,
 						"UMA resource '#{updateScopeDescriptionAction.scopeDescription.displayName}' removed successfully");
@@ -279,7 +271,7 @@ public class UpdateUmaScopeAction implements Serializable {
 
 				return OxTrustConstants.RESULT_SUCCESS;
 			} catch (BasePersistenceException ex) {
-				log.error("Failed to remove scope description {}", this.scopeDescription.getId(), ex);
+				log.error("Failed to remove scope description {}", this.umaScope.getId(), ex);
 			}
 		}
 
@@ -291,7 +283,6 @@ public class UpdateUmaScopeAction implements Serializable {
 
 	public void removeIconImage() {
 		this.curIconImage = null;
-		this.scopeDescription.setFaviconImageAsXml(null);
 	}
 
 	@PreDestroy
@@ -318,20 +309,8 @@ public class UpdateUmaScopeAction implements Serializable {
 		GluuImage newIcon = imageService.constructImageWithThumbnail(identity.getUser(), uploadedFile, 16, 16);
 		this.curIconImage = newIcon;
 		try {
-			this.scopeDescription.setFaviconImageAsXml(jsonService.objectToJson(this.curIconImage));
 		} catch (Exception ex) {
 			log.error("Failed to store icon image: '{}'", newIcon, ex);
-		}
-	}
-
-	private void initIconImage() {
-		String faviconImageAsXml = this.scopeDescription.getFaviconImageAsXml();
-		if (StringHelper.isNotEmpty(faviconImageAsXml)) {
-			try {
-				this.curIconImage = jsonService.jsonToObject(faviconImageAsXml, GluuImage.class);
-			} catch (Exception ex) {
-				log.error("Faield to deserialize image: '{}'", faviconImageAsXml, ex);
-			}
 		}
 	}
 
@@ -357,13 +336,13 @@ public class UpdateUmaScopeAction implements Serializable {
 
 	private List<CustomScript> getInitialAuthorizationPolicies() {
 		List<CustomScript> result = new ArrayList<CustomScript>();
-		if ((this.scopeDescription.getUmaAuthorizationPolicies() == null)
-				|| (this.scopeDescription.getUmaAuthorizationPolicies().size() == 0)) {
+		if ((this.umaScope.getUmaAuthorizationPolicies() == null)
+				|| (this.umaScope.getUmaAuthorizationPolicies().size() == 0)) {
 			return result;
 		}
 
 		List<DisplayNameEntry> displayNameEntries = lookupService.getDisplayNameEntries(customScriptService.baseDn(),
-				this.scopeDescription.getUmaAuthorizationPolicies());
+				this.umaScope.getUmaAuthorizationPolicies());
 		if (displayNameEntries != null) {
 			for (DisplayNameEntry displayNameEntry : displayNameEntries) {
 				result.add(new CustomScript(displayNameEntry.getDn(), displayNameEntry.getInum(),
@@ -376,7 +355,7 @@ public class UpdateUmaScopeAction implements Serializable {
 
 	private void updateAuthorizationPolicies() {
 		if (this.authorizationPolicies == null || this.authorizationPolicies.size() == 0) {
-			this.scopeDescription.setUmaAuthorizationPolicies(null);
+			this.umaScope.setUmaAuthorizationPolicies(null);
 			return;
 		}
 
@@ -385,7 +364,7 @@ public class UpdateUmaScopeAction implements Serializable {
 			tmpAuthorizationPolicies.add(authorizationPolicy.getDn());
 		}
 
-		this.scopeDescription.setUmaAuthorizationPolicies(tmpAuthorizationPolicies);
+		this.umaScope.setUmaAuthorizationPolicies(tmpAuthorizationPolicies);
 	}
 
 	public void acceptSelectAuthorizationPolicies() {
@@ -489,8 +468,12 @@ public class UpdateUmaScopeAction implements Serializable {
 		this.scopeInum = scopeInum;
 	}
 
-	public Scope getScopeDescription() {
-		return scopeDescription;
+	public Scope getUmaScope() {
+		return umaScope;
+	}
+
+	public void setUmaScope(Scope umaScope) {
+		this.umaScope = umaScope;
 	}
 
 	public List<SelectableEntity<CustomScript>> getAvailableAuthorizationPolicies() {
@@ -500,35 +483,4 @@ public class UpdateUmaScopeAction implements Serializable {
 	public List<CustomScript> getAuthorizationPolicies() {
 		return authorizationPolicies;
 	}
-
-	private boolean isValidScope() throws Exception {
-		List<Scope> allScopes = scopeDescriptionService.getAllUmaScopes(1000);
-		boolean result = true;
-		int count = 0;
-		if (this.scopeDescription.getInum() != null) {
-			for (Scope aScope : allScopes) {
-				if (aScope.getDisplayName().equalsIgnoreCase(this.scopeDescription.getDisplayName())) {
-					count++;
-				}
-			}
-			if (count != 1 && count != 0) {
-				facesMessages.add(FacesMessage.SEVERITY_ERROR,
-						"A UMA scope named '" + this.scopeDescription.getDisplayName() + "' already exists");
-				result = false;
-			}
-		} else {
-			for (Scope aScope : allScopes) {
-				if (aScope.getDisplayName().equalsIgnoreCase(this.scopeDescription.getDisplayName())) {
-					count++;
-				}
-			}
-			if (count != 0) {
-				facesMessages.add(FacesMessage.SEVERITY_ERROR,
-						"A UMA scope named '" + this.scopeDescription.getDisplayName() + "' already exists");
-				result = false;
-			}
-		}
-		return result;
-	}
-
 }

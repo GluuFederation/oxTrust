@@ -7,7 +7,6 @@
 package org.gluu.oxtrust.action;
 
 import java.io.Serializable;
-import java.util.Comparator;
 import java.util.List;
 
 import javax.enterprise.context.ConversationScoped;
@@ -68,7 +67,6 @@ public class SearchScopeAction implements Serializable {
 		}
 		try {
 			this.scopeList = scopeService.searchScopes(this.searchPattern, 1000);
-			this.scopeList.sort(Comparator.comparing(Scope::getId));
 			this.oldSearchPattern = this.searchPattern;
 			this.searchPattern = "";
 		} catch (Exception ex) {

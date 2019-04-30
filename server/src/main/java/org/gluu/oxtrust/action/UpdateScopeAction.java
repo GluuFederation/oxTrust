@@ -191,8 +191,8 @@ public class UpdateScopeAction implements Serializable {
 	public String save() throws Exception {
 		try {
 			this.scope.setDisplayName(this.scope.getDisplayName().trim());
-			if (!isValidScope(this.scope)) {
-				return OxTrustConstants.RESULT_FAILURE;
+			if (this.scope.getId() == null) {
+				this.scope.setId(this.scope.getDisplayName());
 			}
 			updateDynamicScripts();
 			updateClaims();
@@ -248,36 +248,6 @@ public class UpdateScopeAction implements Serializable {
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 
-	}
-
-	private boolean isValidScope(Scope scope) throws Exception {
-		List<Scope> allScopes = scopeService.getAllScopesList(100);
-		boolean result = true;
-		int count = 0;
-		if (this.scope.getInum() != null) {
-			for (Scope aScope : allScopes) {
-				if (aScope.getDisplayName().equalsIgnoreCase(scope.getDisplayName())) {
-					count++;
-				}
-			}
-			if (count != 1 && count != 0) {
-				facesMessages.add(FacesMessage.SEVERITY_ERROR,
-						"A scope named '#{updateScopeAction.scope.displayName}' already exists");
-				result = false;
-			}
-		} else {
-			for (Scope aScope : allScopes) {
-				if (aScope.getDisplayName().equalsIgnoreCase(scope.getDisplayName())) {
-					count++;
-				}
-			}
-			if (count != 0) {
-				facesMessages.add(FacesMessage.SEVERITY_ERROR,
-						"A scope named '#{updateScopeAction.scope.displayName}' already exists");
-				result = false;
-			}
-		}
-		return result;
 	}
 
 	private void updateClaims() {

@@ -25,7 +25,6 @@ public class DateTimeConverter implements Converter {
 	@Override
 	public Object getAsObject(FacesContext ctx, UIComponent uiComponent, String value) {
 		try {
-			log.info("getAsObject+++++++++++++++++++++++++++++++++++++++++++++++:"+value);
 			Date date = new SimpleDateFormat("dd.MM.yyyy HH:mm").parse(value);
 			return manager.encodeTime(date);
 		} catch (ParseException e) {
@@ -36,7 +35,6 @@ public class DateTimeConverter implements Converter {
 
 	@Override
 	public String getAsString(FacesContext facesContext, UIComponent uiComponent, Object value) {
-		log.info("getAsString+++++++++++++++++++++++++++++++++++++++++++++++:"+value);
 		Date result = manager.decodeTime((String) value);
 		return new SimpleDateFormat("dd.MM.yyyy HH:mm").format(result);
 	}
