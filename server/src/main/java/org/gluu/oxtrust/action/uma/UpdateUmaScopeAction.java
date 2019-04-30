@@ -39,7 +39,6 @@ import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.service.custom.CustomScriptService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.exception.BasePersistenceException;
-import org.gluu.service.JsonService;
 import org.gluu.service.LookupService;
 import org.gluu.service.security.Secure;
 import org.gluu.util.StringHelper;
@@ -79,9 +78,6 @@ public class UpdateUmaScopeAction implements Serializable {
 
 	@Inject
 	private ImageService imageService;
-
-	@Inject
-	private JsonService jsonService;
 
 	@Inject
 	private LookupService lookupService;
@@ -193,9 +189,6 @@ public class UpdateUmaScopeAction implements Serializable {
 			log.error("Scope description is null");
 			return OxTrustConstants.RESULT_FAILURE;
 		}
-
-		initIconImage();
-
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
@@ -290,7 +283,6 @@ public class UpdateUmaScopeAction implements Serializable {
 
 	public void removeIconImage() {
 		this.curIconImage = null;
-		this.umaScope.setFaviconImageAsXml(null);
 	}
 
 	@PreDestroy
@@ -317,20 +309,8 @@ public class UpdateUmaScopeAction implements Serializable {
 		GluuImage newIcon = imageService.constructImageWithThumbnail(identity.getUser(), uploadedFile, 16, 16);
 		this.curIconImage = newIcon;
 		try {
-			this.umaScope.setFaviconImageAsXml(jsonService.objectToJson(this.curIconImage));
 		} catch (Exception ex) {
 			log.error("Failed to store icon image: '{}'", newIcon, ex);
-		}
-	}
-
-	private void initIconImage() {
-		String faviconImageAsXml = this.umaScope.getFaviconImageAsXml();
-		if (StringHelper.isNotEmpty(faviconImageAsXml)) {
-			try {
-				this.curIconImage = jsonService.jsonToObject(faviconImageAsXml, GluuImage.class);
-			} catch (Exception ex) {
-				log.error("Faield to deserialize image: '{}'", faviconImageAsXml, ex);
-			}
 		}
 	}
 
@@ -487,8 +467,6 @@ public class UpdateUmaScopeAction implements Serializable {
 	public void setScopeInum(String scopeInum) {
 		this.scopeInum = scopeInum;
 	}
-
-	
 
 	public Scope getUmaScope() {
 		return umaScope;

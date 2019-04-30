@@ -7,24 +7,14 @@
 package org.gluu.oxtrust.action.uma;
 
 import java.io.Serializable;
-import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
-import javax.faces.context.ExternalContext;
-import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.servlet.http.HttpServletResponse;
 
-import org.gluu.jsf2.io.ResponseHelper;
-import org.gluu.model.GluuImage;
 import org.gluu.oxtrust.ldap.service.ImageService;
 import org.gluu.oxtrust.ldap.service.uma.UmaScopeService;
-import org.gluu.persist.exception.BasePersistenceException;
 import org.gluu.service.security.Secure;
-import org.gluu.util.io.FileDownloader;
-import org.gluu.util.io.FileDownloader.ContentDisposition;
-import org.oxauth.persistence.model.Scope;
 import org.slf4j.Logger;
 
 /**
@@ -40,9 +30,6 @@ public class UmaScopeDownloadAction implements Serializable {
 	private static final long serialVersionUID = 6486111971437252913L;
 
 	@Inject
-	private Logger log;
-
-	@Inject
 	protected UmaScopeService scopeDescriptionService;
 
 	@Inject
@@ -51,58 +38,7 @@ public class UmaScopeDownloadAction implements Serializable {
 	private String scopeId;
 	private boolean download;
 
-	public void downloadIcon() {
-		byte resultFile[] = null;
-
-		Scope scopeDescription = getScopeDescription();
-
-		if (scopeDescription != null) {
-			GluuImage gluuImage = imageService.getGluuImageFromXML(scopeDescription.getFaviconImageAsXml());
-			try {
-				resultFile = imageService.getThumImageData(gluuImage);
-			} catch (Exception ex) {
-				log.error("Failed to generate image response", ex);
-			}
-		}
-
-		FacesContext facesContext = FacesContext.getCurrentInstance();
-		ExternalContext externalContext = facesContext.getExternalContext();
-
-		if (resultFile == null) {
-			HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
-			FileDownloader.sendError(response, "Failed to prepare icon");
-		} else {
-			ContentDisposition contentDisposition = download ? ContentDisposition.ATTACHEMENT : ContentDisposition.NONE;
-			ResponseHelper.downloadFile(scopeDescription.getId() + ".jpg", "image/jpeg", resultFile, contentDisposition, facesContext);
-		}
-	}
-
-	private Scope getScopeDescription() {
-		try {
-			scopeDescriptionService.prepareScopeDescriptionBranch();
-		} catch (Exception ex) {
-			log.error("Failed to initialize download action", ex);
-			return null;
-		}
-
-		log.debug("Loading UMA scope description '{}'", this.scopeId);
-		Scope scopeDescription;
-		try {
-			List<Scope> scopeDescriptions = scopeDescriptionService.findUmaScopeById(this.scopeId);
-			if (scopeDescriptions.size() != 1) {
-				log.error("Failed to find scope description '{}'. Found: '{}'", this.scopeId, scopeDescriptions.size());
-				return null;
-			}
-
-			scopeDescription = scopeDescriptions.get(0);
-		} catch (BasePersistenceException ex) {
-			log.error("Failed to find scope description '{}'", this.scopeId, ex);
-			return null;
-		}
-
-		return scopeDescription;
-	}
-
+	
 	public String getScopeId() {
 		return scopeId;
 	}

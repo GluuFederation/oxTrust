@@ -859,15 +859,13 @@ public class UpdateClientAction implements Serializable {
 
 	private void updateScopes() {
 		List<Scope> currentResponseTypes = this.scopes;
-		log.info("My Scope Size:" + this.scopes.size());
-		log.info("My Scope Size:" + this.scopes.toString());
 		if (currentResponseTypes == null || currentResponseTypes.size() == 0) {
 			this.client.setOxAuthScopes(null);
 			return;
 		}
 		List<String> scopes = new ArrayList<String>();
 		for (Scope scope : this.scopes) {
-			scopes.add(scope.getBaseDn());
+			scopes.add(scope.getDn());
 		}
 		this.client.setOxAuthScopes(scopes);
 	}
