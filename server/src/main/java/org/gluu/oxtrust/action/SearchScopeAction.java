@@ -52,7 +52,7 @@ public class SearchScopeAction implements Serializable {
 
 	@NotNull
 	@Size(min = 0, max = 30, message = "Length of search string should be less than 30")
-	private String searchPattern=" ";
+	private String searchPattern = " ";
 
 	private String oldSearchPattern;
 
@@ -67,10 +67,10 @@ public class SearchScopeAction implements Serializable {
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
 		try {
-			this.scopeList = scopeService.searchScopes(this.searchPattern, 100);
-			this.scopeList.sort(Comparator.comparing(Scope::getDisplayName));
+			this.scopeList = scopeService.searchScopes(this.searchPattern, 1000);
+			this.scopeList.sort(Comparator.comparing(Scope::getId));
 			this.oldSearchPattern = this.searchPattern;
-			this.searchPattern="";
+			this.searchPattern = "";
 		} catch (Exception ex) {
 			log.error("Failed to find scopes", ex);
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to find scopes");

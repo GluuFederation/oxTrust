@@ -26,7 +26,7 @@ import org.gluu.model.SelectableEntity;
 import org.gluu.oxauth.model.uma.persistence.UmaResource;
 import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.uma.ResourceSetService;
-import org.gluu.oxtrust.ldap.service.uma.ScopeDescriptionService;
+import org.gluu.oxtrust.ldap.service.uma.UmaScopeService;
 import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.util.OxTrustConstants;
@@ -67,7 +67,7 @@ public class UpdateResourceAction implements Serializable {
 	private ResourceSetService umaResourcesService;
 
 	@Inject
-	private ScopeDescriptionService scopeDescriptionService;
+	private UmaScopeService scopeDescriptionService;
 
 	@Inject
 	private ClientService clientService;
@@ -289,10 +289,10 @@ public class UpdateResourceAction implements Serializable {
 		try {
 			List<Scope> resultScopeDescriptions;
 			if (StringHelper.isEmpty(this.searchAvailableScopePattern)) {
-				resultScopeDescriptions = scopeDescriptionService.getAllScopeDescriptions(100);
+				resultScopeDescriptions = scopeDescriptionService.getAllUmaScopes(100);
 			} else {
 				resultScopeDescriptions = scopeDescriptionService
-						.findScopeDescriptions(this.searchAvailableScopePattern, 100);
+						.findUmaScopes(this.searchAvailableScopePattern, 100);
 			}
 
 			this.availableScopes = SelectableEntityHelper.convertToSelectableEntityModel(resultScopeDescriptions);
@@ -356,7 +356,7 @@ public class UpdateResourceAction implements Serializable {
 			return;
 		}
 
-		String removeScopeDn = scopeDescriptionService.getDnForScopeDescription(inum);
+		String removeScopeDn = scopeDescriptionService.getDnForScope(inum);
 
 		for (Iterator<DisplayNameEntry> iterator = this.scopes.iterator(); iterator.hasNext();) {
 			DisplayNameEntry oneScope = iterator.next();
@@ -384,7 +384,7 @@ public class UpdateResourceAction implements Serializable {
 	private List<DisplayNameEntry> getScopesDisplayNameEntries() {
 		List<DisplayNameEntry> result = new ArrayList<DisplayNameEntry>();
 		List<DisplayNameEntry> tmp = lookupService.getDisplayNameEntries(
-				scopeDescriptionService.getDnForScopeDescription(null), this.resource.getScopes());
+				scopeDescriptionService.getDnForScope(null), this.resource.getScopes());
 		if (tmp != null) {
 			result.addAll(tmp);
 		}

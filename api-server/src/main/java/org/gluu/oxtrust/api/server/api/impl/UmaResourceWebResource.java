@@ -22,7 +22,7 @@ import javax.ws.rs.core.Response;
 
 import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.uma.ResourceSetService;
-import org.gluu.oxtrust.ldap.service.uma.ScopeDescriptionService;
+import org.gluu.oxtrust.ldap.service.uma.UmaScopeService;
 import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.service.filter.ProtectedApi;
 import org.oxauth.persistence.model.Scope;
@@ -45,7 +45,7 @@ public class UmaResourceWebResource extends BaseWebResource {
 	private ResourceSetService umaResourcesService;
 
 	@Inject
-	private ScopeDescriptionService scopeDescriptionService;
+	private UmaScopeService scopeDescriptionService;
 
 	@Inject
 	private ClientService clientService;
@@ -142,7 +142,7 @@ public class UmaResourceWebResource extends BaseWebResource {
 				List<Scope> scopes = new ArrayList<Scope>();
 				if (scopesDn != null) {
 					for (String scopeDn : scopesDn) {
-						scopes.add(scopeDescriptionService.getScopeDescriptionByDn(scopeDn));
+						scopes.add(scopeDescriptionService.getUmaScopeByDn(scopeDn));
 					}
 				}
 				return Response.ok(scopes).build();
@@ -235,7 +235,7 @@ public class UmaResourceWebResource extends BaseWebResource {
 				if (umaResource.getScopes() != null) {
 					scopesDn.addAll(umaResource.getScopes());
 				}
-				scopesDn.add(scopeDescriptionService.getDnForScopeDescription(scopeInum));
+				scopesDn.add(scopeDescriptionService.getDnForScope(scopeInum));
 				umaResource.setScopes(scopesDn);
 				umaResourcesService.updateResource(umaResource);
 				return Response.ok(umaResourcesService.findResourcesById(id).get(0)).build();
@@ -266,7 +266,7 @@ public class UmaResourceWebResource extends BaseWebResource {
 				if (umaResource.getScopes() != null) {
 					scopesDn.addAll(umaResource.getScopes());
 				}
-				scopesDn.remove(scopeDescriptionService.getDnForScopeDescription(scopeInum));
+				scopesDn.remove(scopeDescriptionService.getDnForScope(scopeInum));
 				umaResource.setScopes(scopesDn);
 				umaResourcesService.updateResource(umaResource);
 				return Response.ok(umaResourcesService.findResourcesById(id).get(0)).build();

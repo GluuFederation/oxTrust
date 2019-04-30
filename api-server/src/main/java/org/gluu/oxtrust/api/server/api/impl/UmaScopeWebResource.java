@@ -20,7 +20,7 @@ import javax.ws.rs.core.Response;
 
 import org.gluu.oxtrust.api.server.util.ApiConstants;
 import org.gluu.oxtrust.api.server.util.Constants;
-import org.gluu.oxtrust.ldap.service.uma.ScopeDescriptionService;
+import org.gluu.oxtrust.ldap.service.uma.UmaScopeService;
 import org.gluu.oxtrust.service.filter.ProtectedApi;
 import org.oxauth.persistence.model.Scope;
 import org.slf4j.Logger;
@@ -39,7 +39,7 @@ public class UmaScopeWebResource extends BaseWebResource {
 	private Logger logger;
 
 	@Inject
-	private ScopeDescriptionService scopeDescriptionService;
+	private UmaScopeService scopeDescriptionService;
 
 	@GET
 	@ApiOperation(value = "Get uma scopes")
@@ -49,7 +49,7 @@ public class UmaScopeWebResource extends BaseWebResource {
 	public Response listUmaScopes() {
 		log(logger, "Get uma scopes");
 		try {
-			List<Scope> umaScopeDescriptions = scopeDescriptionService.getAllScopeDescriptions(100);
+			List<Scope> umaScopeDescriptions = scopeDescriptionService.getAllUmaScopes(100);
 			return Response.ok(umaScopeDescriptions).build();
 		} catch (Exception e) {
 			log(logger, e);
@@ -64,7 +64,7 @@ public class UmaScopeWebResource extends BaseWebResource {
 	public Response searchUmaScopes(@QueryParam(ApiConstants.SEARCH_PATTERN) @NotNull String pattern) {
 		log(logger, "Search uma scope with pattern = " + pattern);
 		try {
-			List<Scope> scopes = scopeDescriptionService.findScopeDescriptions(pattern, 100);
+			List<Scope> scopes = scopeDescriptionService.findUmaScopes(pattern, 100);
 			return Response.ok(scopes).build();
 		} catch (Exception e) {
 			log(logger, e);
@@ -99,10 +99,10 @@ public class UmaScopeWebResource extends BaseWebResource {
 		log(logger, "Add new uma scope");
 		try {
 			Objects.requireNonNull(umaScopeDescription, "Attempt to create null uma scope");
-			String inum = scopeDescriptionService.generateInumForNewScopeDescription();
-			umaScopeDescription.setDn(scopeDescriptionService.getDnForScopeDescription(inum));
+			String inum = scopeDescriptionService.generateInumForNewScope();
+			umaScopeDescription.setDn(scopeDescriptionService.getDnForScope(inum));
 			umaScopeDescription.setInum(inum);
-			scopeDescriptionService.addScopeDescription(umaScopeDescription);
+			scopeDescriptionService.addUmaScope(umaScopeDescription);
 			return Response.ok(scopeDescriptionService.getUmaScopeByInum(inum)).build();
 		} catch (Exception e) {
 			log(logger, e);
@@ -121,8 +121,8 @@ public class UmaScopeWebResource extends BaseWebResource {
 			Objects.requireNonNull(umaScopeDescription, "Attempt to update null uma scope");
 			Scope existingScope = scopeDescriptionService.getUmaScopeByInum(inum);
 			if (existingScope != null) {
-				umaScopeDescription.setDn(scopeDescriptionService.getDnForScopeDescription(inum));
-				scopeDescriptionService.updateScopeDescription(umaScopeDescription);
+				umaScopeDescription.setDn(scopeDescriptionService.getDnForScope(inum));
+				scopeDescriptionService.updateUmaScope(umaScopeDescription);
 				return Response.ok(scopeDescriptionService.getUmaScopeByInum(inum)).build();
 			} else {
 				return Response.status(Response.Status.NOT_FOUND).build();
@@ -142,7 +142,7 @@ public class UmaScopeWebResource extends BaseWebResource {
 		try {
 			Scope existingScope = scopeDescriptionService.getUmaScopeByInum(inum);
 			if (existingScope != null) {
-				scopeDescriptionService.removeScopeDescription(existingScope);
+				scopeDescriptionService.removeUmaScope(existingScope);
 				return Response.ok().build();
 			} else {
 				return Response.status(Response.Status.NOT_FOUND).build();

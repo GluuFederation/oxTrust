@@ -244,9 +244,9 @@
 												rendered="#{(_custAttr.adminCanEdit or _mustEnter) and 
 			                                                            (_custAttr.metadata.displayName eq 'Birthdate')}"
 												value="#{_custAttr.values[_valueIdx]}"
-												format="DD.MM.YYYY HH:mm">
+												format="DD.MM.YYYY">
 												<f:converter
-													converterId="org.gluu.jsf2.converter.DateTimeConverter" />
+													converterId="org.gluu.jsf2.converter.DateConverter" />
 											</b:dateTimePicker>
 											<h:selectOneMenu
 												styleClass="rounded form-control #{_custAttr.metadata.displayName}"

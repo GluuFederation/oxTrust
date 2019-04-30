@@ -32,7 +32,7 @@ import org.gluu.oxauth.model.uma.persistence.UmaResource;
 import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.ImageService;
 import org.gluu.oxtrust.ldap.service.uma.ResourceSetService;
-import org.gluu.oxtrust.ldap.service.uma.ScopeDescriptionService;
+import org.gluu.oxtrust.ldap.service.uma.UmaScopeService;
 import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.service.custom.CustomScriptService;
@@ -55,7 +55,7 @@ import org.slf4j.Logger;
 @ConversationScoped
 @Named
 @Secure("#{permissionService.hasPermission('uma', 'access')}")
-public class UpdateScopeDescriptionAction implements Serializable {
+public class UpdateUmaScopeAction implements Serializable {
 
 	private static final long serialVersionUID = 6180729281938167478L;
 
@@ -74,7 +74,7 @@ public class UpdateScopeDescriptionAction implements Serializable {
 	private Identity identity;
 
 	@Inject
-	protected ScopeDescriptionService scopeDescriptionService;
+	protected UmaScopeService scopeDescriptionService;
 
 	@Inject
 	private ImageService imageService;
@@ -163,8 +163,8 @@ public class UpdateScopeDescriptionAction implements Serializable {
 
 		log.debug("Loading UMA resource '{}'", this.scopeInum);
 		try {
-			String scopeDn = scopeDescriptionService.getDnForScopeDescription(this.scopeInum);
-			this.scopeDescription = scopeDescriptionService.getScopeDescriptionByDn(scopeDn);
+			String scopeDn = scopeDescriptionService.getDnForScope(this.scopeInum);
+			this.scopeDescription = scopeDescriptionService.getUmaScopeByDn(scopeDn);
 			this.authorizationPolicies = getInitialAuthorizationPolicies();
 
 			List<UmaResource> umaResourceList = resourceSetService.findResourcesByScope(scopeDn);
@@ -220,7 +220,7 @@ public class UpdateScopeDescriptionAction implements Serializable {
 		if (this.update) {
 			// Update scope description
 			try {
-				scopeDescriptionService.updateScopeDescription(this.scopeDescription);
+				scopeDescriptionService.updateUmaScope(this.scopeDescription);
 			} catch (BasePersistenceException ex) {
 				log.error("Failed to update scope description '{}'", this.scopeDescription.getId(), ex);
 				facesMessages.add(FacesMessage.SEVERITY_ERROR,
@@ -235,11 +235,11 @@ public class UpdateScopeDescriptionAction implements Serializable {
 		} else {
 			// Check if scope description with this name already exist
 			Scope exampleScopeDescription = new Scope();
-			exampleScopeDescription.setDn(scopeDescriptionService.getDnForScopeDescription(null));
+			exampleScopeDescription.setDn(scopeDescriptionService.getDnForScope(null));
 			exampleScopeDescription.setId(scopeDescription.getId());
 
-			String inum = scopeDescriptionService.generateInumForNewScopeDescription();
-			String scopeDescriptionDn = scopeDescriptionService.getDnForScopeDescription(inum);
+			String inum = scopeDescriptionService.generateInumForNewScope();
+			String scopeDescriptionDn = scopeDescriptionService.getDnForScope(inum);
 
 			this.scopeDescription.setInum(inum);
 			this.scopeDescription.setDn(scopeDescriptionDn);
@@ -247,7 +247,7 @@ public class UpdateScopeDescriptionAction implements Serializable {
 
 			// Save scope description
 			try {
-				scopeDescriptionService.addScopeDescription(this.scopeDescription);
+				scopeDescriptionService.addUmaScope(this.scopeDescription);
 			} catch (BasePersistenceException ex) {
 				log.error("Failed to add new UMA resource '{}'", this.scopeDescription.getId(), ex);
 				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new UMA resource");
@@ -271,7 +271,7 @@ public class UpdateScopeDescriptionAction implements Serializable {
 		if (update) {
 			// Remove scope description
 			try {
-				scopeDescriptionService.removeScopeDescription(this.scopeDescription);
+				scopeDescriptionService.removeUmaScope(this.scopeDescription);
 
 				facesMessages.add(FacesMessage.SEVERITY_INFO,
 						"UMA resource '#{updateScopeDescriptionAction.scopeDescription.displayName}' removed successfully");
@@ -502,7 +502,7 @@ public class UpdateScopeDescriptionAction implements Serializable {
 	}
 
 	private boolean isValidScope() throws Exception {
-		List<Scope> allScopes = scopeDescriptionService.getAllScopeDescriptions(1000);
+		List<Scope> allScopes = scopeDescriptionService.getAllUmaScopes(1000);
 		boolean result = true;
 		int count = 0;
 		if (this.scopeDescription.getInum() != null) {

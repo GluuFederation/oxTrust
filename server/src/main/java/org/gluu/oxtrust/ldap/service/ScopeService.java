@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -148,11 +149,10 @@ public class ScopeService implements Serializable {
 		List<Scope> result = new ArrayList<>();
 		try {
 			result = ldapEntryManager.findEntries(getDnForScope(null), Scope.class, searchFilter, sizeLimit);
+			return filter(result);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
-		System.out.println(ldapEntryManager.getHashCode(result.get(0)));
 		return result;
 	}
 
@@ -168,7 +168,8 @@ public class ScopeService implements Serializable {
 
 	public List<Scope> getAllScopesList(int size) {
 		try {
-			return ldapEntryManager.findEntries(getDnForScope(null), Scope.class, null, size);
+			List<Scope> scopes = ldapEntryManager.findEntries(getDnForScope(null), Scope.class, null, size);
+			return filter(scopes);
 		} catch (Exception e) {
 			logger.error("", e);
 			return new ArrayList<>();
@@ -191,7 +192,9 @@ public class ScopeService implements Serializable {
 	 * @return Array of scope types
 	 */
 	public List<ScopeType> getScopeTypes() {
-		return new ArrayList<ScopeType>(Arrays.asList(org.gluu.oxauth.model.common.ScopeType.values()));
+		List<ScopeType> scopeTypes = new ArrayList<ScopeType>(Arrays.asList(org.gluu.oxauth.model.common.ScopeType.values()));
+		scopeTypes.remove(ScopeType.UMA);
+		return scopeTypes;
 	}
 
 	/**
@@ -209,5 +212,13 @@ public class ScopeService implements Serializable {
 			return scopes.get(0);
 		}
 		return null;
+	}
+
+	private List<Scope> filter(List<Scope> scopes) {
+		if (scopes != null) {
+			return scopes.stream().filter(Scope::isNotUmaType).collect(Collectors.toList());
+		} else {
+			return new ArrayList<>();
+		}
 	}
 }

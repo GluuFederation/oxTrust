@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.gluu.jsf2.io.ResponseHelper;
 import org.gluu.model.GluuImage;
 import org.gluu.oxtrust.ldap.service.ImageService;
-import org.gluu.oxtrust.ldap.service.uma.ScopeDescriptionService;
+import org.gluu.oxtrust.ldap.service.uma.UmaScopeService;
 import org.gluu.persist.exception.BasePersistenceException;
 import org.gluu.service.security.Secure;
 import org.gluu.util.io.FileDownloader;
@@ -35,7 +35,7 @@ import org.slf4j.Logger;
 @RequestScoped
 @Named
 @Secure("#{permissionService.hasPermission('uma', 'access')}")
-public class ScopeDescriptionDownloadAction implements Serializable {
+public class UmaScopeDownloadAction implements Serializable {
 
 	private static final long serialVersionUID = 6486111971437252913L;
 
@@ -43,7 +43,7 @@ public class ScopeDescriptionDownloadAction implements Serializable {
 	private Logger log;
 
 	@Inject
-	protected ScopeDescriptionService scopeDescriptionService;
+	protected UmaScopeService scopeDescriptionService;
 
 	@Inject
 	protected ImageService imageService;
@@ -88,7 +88,7 @@ public class ScopeDescriptionDownloadAction implements Serializable {
 		log.debug("Loading UMA scope description '{}'", this.scopeId);
 		Scope scopeDescription;
 		try {
-			List<Scope> scopeDescriptions = scopeDescriptionService.findScopeDescriptionsById(this.scopeId);
+			List<Scope> scopeDescriptions = scopeDescriptionService.findUmaScopeById(this.scopeId);
 			if (scopeDescriptions.size() != 1) {
 				log.error("Failed to find scope description '{}'. Found: '{}'", this.scopeId, scopeDescriptions.size());
 				return null;
