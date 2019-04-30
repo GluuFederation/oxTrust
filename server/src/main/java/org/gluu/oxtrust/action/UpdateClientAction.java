@@ -55,7 +55,6 @@ import org.gluu.oxtrust.ldap.service.SectorIdentifierService;
 import org.gluu.oxtrust.model.ClientAttributes;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.OxAuthClient;
-import org.gluu.oxtrust.model.OxAuthScope;
 import org.gluu.oxtrust.model.OxAuthSectorIdentifier;
 import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.util.OxTrustConstants;
@@ -66,6 +65,7 @@ import org.gluu.service.security.Secure;
 import org.gluu.util.StringHelper;
 import org.gluu.util.Util;
 import org.gluu.util.security.StringEncrypter.EncryptionException;
+import org.oxauth.persistence.model.Scope;
 import org.slf4j.Logger;
 
 import net.steppschuh.markdowngenerator.list.UnorderedList;
@@ -139,7 +139,7 @@ public class UpdateClientAction implements Serializable {
 	private List<String> clientlogoutUris;
 	private List<String> claimRedirectURIList;
 
-	private List<OxAuthScope> scopes;
+	private List<Scope> scopes;
 	private List<DisplayNameEntry> claims;
 	private List<ResponseType> responseTypes;
 	private List<CustomScript> customScripts;
@@ -182,7 +182,7 @@ public class UpdateClientAction implements Serializable {
 	private List<SelectableEntity<ResponseType>> availableResponseTypes;
 	private List<SelectableEntity<CustomScript>> availableCustomScripts;
 	private List<SelectableEntity<GrantType>> availableGrantTypes;
-	private List<SelectableEntity<OxAuthScope>> availableScopes;
+	private List<SelectableEntity<Scope>> availableScopes;
 	private List<SelectableEntity<OxAuthSectorIdentifier>> availableSectors;
 
 	public String add() throws Exception {
@@ -231,14 +231,14 @@ public class UpdateClientAction implements Serializable {
 		return this.customScripts;
 	}
 
-	private List<OxAuthScope> getInitialEntries() {
-		List<OxAuthScope> existingScopes = new ArrayList<OxAuthScope>();
+	private List<Scope> getInitialEntries() {
+		List<Scope> existingScopes = new ArrayList<Scope>();
 		if ((client.getOxAuthScopes() == null) || (client.getOxAuthScopes().size() == 0)) {
 			return existingScopes;
 		}
 		for (String dn : client.getOxAuthScopes()) {
 			try {
-				OxAuthScope scope=scopeService.getScopeByDn(dn);
+				Scope scope=scopeService.getScopeByDn(dn);
 				if(scope!=null) {
 					existingScopes.add(scope);
 				}
@@ -535,7 +535,7 @@ public class UpdateClientAction implements Serializable {
 		if (StringHelper.isEmpty(inum)) {
 			return;
 		}
-		for (OxAuthScope scope : this.scopes) {
+		for (Scope scope : this.scopes) {
 			if (scope.getInum().equalsIgnoreCase(inum)) {
 				this.scopes.remove(scope);
 				break;
@@ -858,7 +858,7 @@ public class UpdateClientAction implements Serializable {
 	}
 
 	private void updateScopes() {
-		List<OxAuthScope> currentResponseTypes = this.scopes;
+		List<Scope> currentResponseTypes = this.scopes;
 		log.info("My Scope Size:" + this.scopes.size());
 		log.info("My Scope Size:" + this.scopes.toString());
 		if (currentResponseTypes == null || currentResponseTypes.size() == 0) {
@@ -866,7 +866,7 @@ public class UpdateClientAction implements Serializable {
 			return;
 		}
 		List<String> scopes = new ArrayList<String>();
-		for (OxAuthScope scope : this.scopes) {
+		for (Scope scope : this.scopes) {
 			scopes.add(scope.getBaseDn());
 		}
 		this.client.setOxAuthScopes(scopes);
@@ -1005,9 +1005,9 @@ public class UpdateClientAction implements Serializable {
 	}
 
 	public void acceptSelectScopes() {
-		List<OxAuthScope> addedScopes = getScopes();
-		for (SelectableEntity<OxAuthScope> availableScope : this.availableScopes) {
-			OxAuthScope scope = availableScope.getEntity();
+		List<Scope> addedScopes = getScopes();
+		for (SelectableEntity<Scope> availableScope : this.availableScopes) {
+			Scope scope = availableScope.getEntity();
 			if (availableScope.isSelected() && !contain(addedScopes, scope)) {
 				addScope(scope.getInum());
 			}
@@ -1017,9 +1017,9 @@ public class UpdateClientAction implements Serializable {
 		}
 	}
 
-	private boolean contain(List<OxAuthScope> scopes, OxAuthScope element) {
+	private boolean contain(List<Scope> scopes, Scope element) {
 		boolean found = false;
-		for (OxAuthScope scope : scopes) {
+		for (Scope scope : scopes) {
 			if (scope.getInum().equalsIgnoreCase(element.getInum())) {
 				found = true;
 				break;
@@ -1032,7 +1032,7 @@ public class UpdateClientAction implements Serializable {
 		if (StringHelper.isEmpty(inum)) {
 			return;
 		}
-		OxAuthScope addScope = new OxAuthScope();
+		Scope addScope = new Scope();
 		try {
 			addScope = scopeService.getScopeByInum(inum);
 		} catch (Exception e) {
@@ -1182,15 +1182,15 @@ public class UpdateClientAction implements Serializable {
 			selectAddedScopes();
 			return;
 		}
-		List<SelectableEntity<OxAuthScope>> tmpAvailableScopes = new ArrayList<SelectableEntity<OxAuthScope>>();
-		List<OxAuthScope> scopes = new ArrayList<OxAuthScope>();
+		List<SelectableEntity<Scope>> tmpAvailableScopes = new ArrayList<SelectableEntity<Scope>>();
+		List<Scope> scopes = new ArrayList<Scope>();
 		try {
 			scopes = scopeService.getAllScopesList(100);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		for (OxAuthScope scope : scopes) {
-			tmpAvailableScopes.add(new SelectableEntity<OxAuthScope>(scope));
+		for (Scope scope : scopes) {
+			tmpAvailableScopes.add(new SelectableEntity<Scope>(scope));
 		}
 		this.availableScopes = tmpAvailableScopes;
 		selectAddedScopes();
@@ -1240,8 +1240,8 @@ public class UpdateClientAction implements Serializable {
 	}
 
 	public void selectAddedScopes() {
-		List<OxAuthScope> addedScopes = getScopes();
-		for (SelectableEntity<OxAuthScope> availableScope : this.availableScopes) {
+		List<Scope> addedScopes = getScopes();
+		for (SelectableEntity<Scope> availableScope : this.availableScopes) {
 			availableScope.setSelected(addedScopes.contains(availableScope.getEntity()));
 		}
 	}
@@ -1320,7 +1320,7 @@ public class UpdateClientAction implements Serializable {
 		this.availableRequestUri = availableRequestUri;
 	}
 
-	public List<SelectableEntity<OxAuthScope>> getAvailableScopes() {
+	public List<SelectableEntity<Scope>> getAvailableScopes() {
 		return this.availableScopes;
 	}
 
@@ -1356,7 +1356,7 @@ public class UpdateClientAction implements Serializable {
 		return logoutUris;
 	}
 
-	public List<OxAuthScope> getScopes() {
+	public List<Scope> getScopes() {
 		return this.scopes;
 	}
 
@@ -1560,7 +1560,7 @@ public class UpdateClientAction implements Serializable {
 			}
 			if (client.getOxAuthScopes() != null && !client.getOxAuthScopes().isEmpty()) {
 				List<String> scopes = new ArrayList<String>();
-				for (OxAuthScope scope : this.scopes) {
+				for (Scope scope : this.scopes) {
 					scopes.add(scope.getDisplayName());
 				}
 				items.add("**Scopes:** " + scopes.toString());

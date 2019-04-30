@@ -22,16 +22,16 @@ import org.gluu.jsf2.service.ConversationService;
 import org.gluu.model.DisplayNameEntry;
 import org.gluu.oxauth.model.uma.UmaMetadata;
 import org.gluu.oxauth.model.uma.persistence.UmaResource;
-import org.gluu.oxauth.model.uma.persistence.UmaScopeDescription;
 import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.ImageService;
 import org.gluu.oxtrust.ldap.service.uma.ResourceSetService;
-import org.gluu.oxtrust.ldap.service.uma.ScopeDescriptionService;
+import org.gluu.oxtrust.ldap.service.uma.UmaScopeService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.service.LookupService;
 import org.gluu.service.security.Secure;
 import org.gluu.util.StringHelper;
 import org.gluu.util.Util;
+import org.oxauth.persistence.model.Scope;
 import org.slf4j.Logger;
 
 /**
@@ -62,7 +62,7 @@ public class UmaInventoryAction implements Serializable {
 	private ClientService clientService;
 
 	@Inject
-	private ScopeDescriptionService scopeDescriptionService;
+	private UmaScopeService umaScopeService;
 
 	@Inject
 	protected ImageService imageService;
@@ -80,7 +80,7 @@ public class UmaInventoryAction implements Serializable {
 	private String oldSearchPattern;
 
 	private List<UmaResource> resourcesList;
-	private List<UmaScopeDescription> scopesList;
+	private List<Scope> scopesList;
 
 	private boolean initialized;
 
@@ -107,11 +107,11 @@ public class UmaInventoryAction implements Serializable {
 		}
 		try {
 			if (searchPattern == null || searchPattern.isEmpty()) {
-				this.scopesList = scopeDescriptionService.getAllScopeDescriptions(100);
-				this.resourcesList = umaResourcesService.getAllResources(100);
+				this.scopesList = umaScopeService.getAllUmaScopes(1000);
+				this.resourcesList = umaResourcesService.getAllResources(1000);
 			} else {
-				this.scopesList = scopeDescriptionService.findScopeDescriptions(this.searchPattern, 100);
-				this.resourcesList = umaResourcesService.findResources(this.searchPattern, 100);
+				this.scopesList = umaScopeService.findUmaScopes(this.searchPattern, 1000);
+				this.resourcesList = umaResourcesService.findResources(this.searchPattern, 1000);
 			}
 			this.oldSearchPattern = this.searchPattern;
 		} catch (Exception ex) {
@@ -129,7 +129,7 @@ public class UmaInventoryAction implements Serializable {
 		List<String> scopeDns = resource.getScopes();
 		List<DisplayNameEntry> result = new ArrayList<DisplayNameEntry>();
 		List<DisplayNameEntry> tmp = lookupService
-				.getDisplayNameEntries(scopeDescriptionService.getDnForScopeDescription(null), scopeDns);
+				.getDisplayNameEntries(umaScopeService.getDnForScope(null), scopeDns);
 		if (tmp != null) {
 			result.addAll(tmp);
 		}
@@ -141,7 +141,7 @@ public class UmaInventoryAction implements Serializable {
 		List<String> scopeDns = resource.getScopes();
 		if (scopeDns != null) {
 			for (String dn : scopeDns) {
-				UmaScopeDescription res = scopeDescriptionService.getScopeByDn(dn);
+				Scope res = umaScopeService.getScopeByDn(dn);
 				if (res != null) {
 					result.add(res.getDisplayName());
 				}
@@ -168,7 +168,7 @@ public class UmaInventoryAction implements Serializable {
 		return resourcesList;
 	}
 
-	public List<UmaScopeDescription> getScopesList() {
+	public List<Scope> getScopesList() {
 		return scopesList;
 	}
 

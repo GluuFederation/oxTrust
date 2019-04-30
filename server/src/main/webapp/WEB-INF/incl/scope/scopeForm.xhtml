@@ -4,6 +4,7 @@
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:b="http://bootsfaces.net/ui"
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
@@ -62,7 +63,7 @@
 									<div class="col-sm-6 col-lg-6">
 										<ox:decorate label="#{msg['scope.defaultScope']}">
 											<h:selectBooleanCheckbox
-												value="#{_scope.defaultScope}"
+												value="#{_scope.isDefaultScope()}"
 												styleClass="col-sm-9 rounded form-control registrationType" />
 										</ox:decorate>
 									</div>
@@ -70,7 +71,7 @@
 								<h:panelGroup id="selectedClaims">
 									<a4j:region
 										rendered="#{(not empty _scope.scopeType) and ((_scope.scopeType.value eq 'openid') or (_scope.scopeType.value eq 'dynamic'))}">
-										<ox:decorate id="claims" label="#{msg['scope.claims']}">
+										 <b:panel id="claims" title="#{msg['scope.claims']}" look="primary">
 											<h:panelGroup id="selectedClaimsId">
 												<h:panelGroup>
 													<a4j:repeat value="#{_scopeAction.claims}"
@@ -90,7 +91,6 @@
 																		action="#{_scopeAction.removeClaim(_claim.inum)}"
 																		execute="@this" render="selectedClaimsId"
 																		eventsQueue="scopeQueue">
-																		<!--   <h:graphicImage value="/img/remove.gif" />-->
 																	</a4j:commandLink>
 																</div>
 															</div>
@@ -104,13 +104,13 @@
 														execute="@this" eventsQueue="scopeQueue" />
 												</h:panelGroup>
 											</h:panelGroup>
-										</ox:decorate>
+										</b:panel>
 									</a4j:region>
 								</h:panelGroup>
 								<h:panelGroup id="dynamicScripts">
 									<a4j:region
 										rendered="#{(not empty _scope.scopeType) and (_scope.scopeType.value eq 'dynamic')}">
-										<ox:decorate label="#{msg['scope.dynamicScopeScripts']}">
+										 <b:panel title="#{msg['scope.dynamicScopeScripts']}" look="primary">
 											<h:panelGroup id="selectedDynamicScriptId">
 												<h:panelGrid columns="1" width="100%" border="0"
 													cellpadding="0" cellspacing="0">
@@ -135,7 +135,7 @@
 													<richext:spacer height="16" />
 												</h:panelGrid>
 											</h:panelGroup>
-										</ox:decorate>
+										</b:panel>
 										<ox:decorate id="command">
 											<h:panelGroup>
 												<a4j:commandButton

@@ -18,13 +18,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.gluu.jsf2.io.ResponseHelper;
 import org.gluu.model.GluuImage;
-import org.gluu.oxauth.model.uma.persistence.UmaScopeDescription;
 import org.gluu.oxtrust.ldap.service.ImageService;
-import org.gluu.oxtrust.ldap.service.uma.ScopeDescriptionService;
+import org.gluu.oxtrust.ldap.service.uma.UmaScopeService;
 import org.gluu.persist.exception.BasePersistenceException;
 import org.gluu.service.security.Secure;
 import org.gluu.util.io.FileDownloader;
 import org.gluu.util.io.FileDownloader.ContentDisposition;
+import org.oxauth.persistence.model.Scope;
 import org.slf4j.Logger;
 
 /**
@@ -35,7 +35,7 @@ import org.slf4j.Logger;
 @RequestScoped
 @Named
 @Secure("#{permissionService.hasPermission('uma', 'access')}")
-public class ScopeDescriptionDownloadAction implements Serializable {
+public class UmaScopeDownloadAction implements Serializable {
 
 	private static final long serialVersionUID = 6486111971437252913L;
 
@@ -43,7 +43,7 @@ public class ScopeDescriptionDownloadAction implements Serializable {
 	private Logger log;
 
 	@Inject
-	protected ScopeDescriptionService scopeDescriptionService;
+	protected UmaScopeService scopeDescriptionService;
 
 	@Inject
 	protected ImageService imageService;
@@ -54,7 +54,7 @@ public class ScopeDescriptionDownloadAction implements Serializable {
 	public void downloadIcon() {
 		byte resultFile[] = null;
 
-        UmaScopeDescription scopeDescription = getScopeDescription();
+		Scope scopeDescription = getScopeDescription();
 
 		if (scopeDescription != null) {
 			GluuImage gluuImage = imageService.getGluuImageFromXML(scopeDescription.getFaviconImageAsXml());
@@ -77,7 +77,7 @@ public class ScopeDescriptionDownloadAction implements Serializable {
 		}
 	}
 
-	private UmaScopeDescription getScopeDescription() {
+	private Scope getScopeDescription() {
 		try {
 			scopeDescriptionService.prepareScopeDescriptionBranch();
 		} catch (Exception ex) {
@@ -86,9 +86,9 @@ public class ScopeDescriptionDownloadAction implements Serializable {
 		}
 
 		log.debug("Loading UMA scope description '{}'", this.scopeId);
-        UmaScopeDescription scopeDescription;
+		Scope scopeDescription;
 		try {
-			List<UmaScopeDescription> scopeDescriptions = scopeDescriptionService.findScopeDescriptionsById(this.scopeId);
+			List<Scope> scopeDescriptions = scopeDescriptionService.findUmaScopeById(this.scopeId);
 			if (scopeDescriptions.size() != 1) {
 				log.error("Failed to find scope description '{}'. Found: '{}'", this.scopeId, scopeDescriptions.size());
 				return null;

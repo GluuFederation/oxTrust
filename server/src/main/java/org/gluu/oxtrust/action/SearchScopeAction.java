@@ -20,10 +20,10 @@ import javax.validation.constraints.Size;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.ldap.service.ScopeService;
-import org.gluu.oxtrust.model.OxAuthScope;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.service.security.Secure;
 import org.gluu.util.Util;
+import org.oxauth.persistence.model.Scope;
 import org.slf4j.Logger;
 
 /**
@@ -52,11 +52,11 @@ public class SearchScopeAction implements Serializable {
 
 	@NotNull
 	@Size(min = 0, max = 30, message = "Length of search string should be less than 30")
-	private String searchPattern=" ";
+	private String searchPattern = " ";
 
 	private String oldSearchPattern;
 
-	private List<OxAuthScope> scopeList;
+	private List<Scope> scopeList;
 
 	public String start() {
 		return search();
@@ -67,10 +67,10 @@ public class SearchScopeAction implements Serializable {
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
 		try {
-			this.scopeList = scopeService.searchScopes(this.searchPattern, 100);
-			this.scopeList.sort(Comparator.comparing(OxAuthScope::getDisplayName));
+			this.scopeList = scopeService.searchScopes(this.searchPattern, 1000);
+			this.scopeList.sort(Comparator.comparing(Scope::getId));
 			this.oldSearchPattern = this.searchPattern;
-			this.searchPattern="";
+			this.searchPattern = "";
 		} catch (Exception ex) {
 			log.error("Failed to find scopes", ex);
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to find scopes");
@@ -88,7 +88,7 @@ public class SearchScopeAction implements Serializable {
 		this.searchPattern = searchPattern;
 	}
 
-	public List<OxAuthScope> getScopeList() {
+	public List<Scope> getScopeList() {
 		return scopeList;
 	}
 

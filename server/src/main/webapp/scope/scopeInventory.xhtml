@@ -80,7 +80,7 @@
 													select="true">
 													<b:dataTableColumn label="#{msg['scope.displayName']}">
 														<h:link includeViewParams="false"
-															outcome="/scope/updateScope" value="#{clt.displayName}">
+															outcome="/scope/updateScope" value="#{clt.id}">
 															<f:param name="inum" value="#{clt.inum}" />
 														</h:link>
 													</b:dataTableColumn>
@@ -88,7 +88,7 @@
 														label="#{msg['scope.inum']}" />
 													<b:dataTableColumn value="#{clt.description}"
 														label="#{msg['scope.description']}" />
-													<b:dataTableColumn value="#{clt.defaultScope}"
+													<b:dataTableColumn value="#{clt.isDefaultScope()}"
 														label="#{msg['scope.default']}" />
 												</b:dataTable>
 											</h:form>

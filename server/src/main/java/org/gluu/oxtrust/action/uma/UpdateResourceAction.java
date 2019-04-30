@@ -24,10 +24,9 @@ import org.gluu.jsf2.service.ConversationService;
 import org.gluu.model.DisplayNameEntry;
 import org.gluu.model.SelectableEntity;
 import org.gluu.oxauth.model.uma.persistence.UmaResource;
-import org.gluu.oxauth.model.uma.persistence.UmaScopeDescription;
 import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.uma.ResourceSetService;
-import org.gluu.oxtrust.ldap.service.uma.ScopeDescriptionService;
+import org.gluu.oxtrust.ldap.service.uma.UmaScopeService;
 import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.util.OxTrustConstants;
@@ -37,6 +36,7 @@ import org.gluu.service.security.Secure;
 import org.gluu.util.SelectableEntityHelper;
 import org.gluu.util.StringHelper;
 import org.gluu.util.Util;
+import org.oxauth.persistence.model.Scope;
 import org.slf4j.Logger;
 
 /**
@@ -67,7 +67,7 @@ public class UpdateResourceAction implements Serializable {
 	private ResourceSetService umaResourcesService;
 
 	@Inject
-	private ScopeDescriptionService scopeDescriptionService;
+	private UmaScopeService scopeDescriptionService;
 
 	@Inject
 	private ClientService clientService;
@@ -81,7 +81,7 @@ public class UpdateResourceAction implements Serializable {
 	private List<DisplayNameEntry> clients;
 	private List<String> resources;
 
-	private List<SelectableEntity<UmaScopeDescription>> availableScopes;
+	private List<SelectableEntity<Scope>> availableScopes;
 	private String searchAvailableScopePattern, oldSearchAvailableScopePattern;
 
 	private List<SelectableEntity<OxAuthClient>> availableClients;
@@ -287,12 +287,12 @@ public class UpdateResourceAction implements Serializable {
 		}
 
 		try {
-			List<UmaScopeDescription> resultScopeDescriptions;
+			List<Scope> resultScopeDescriptions;
 			if (StringHelper.isEmpty(this.searchAvailableScopePattern)) {
-				resultScopeDescriptions = scopeDescriptionService.getAllScopeDescriptions(100);
+				resultScopeDescriptions = scopeDescriptionService.getAllUmaScopes(100);
 			} else {
 				resultScopeDescriptions = scopeDescriptionService
-						.findScopeDescriptions(this.searchAvailableScopePattern, 100);
+						.findUmaScopes(this.searchAvailableScopePattern, 100);
 			}
 
 			this.availableScopes = SelectableEntityHelper.convertToSelectableEntityModel(resultScopeDescriptions);
@@ -307,7 +307,7 @@ public class UpdateResourceAction implements Serializable {
 	public void selectAddedScopes() {
 		Set<String> addedScopeInums = getAddedScopesInums();
 
-		for (SelectableEntity<UmaScopeDescription> availableScope : this.availableScopes) {
+		for (SelectableEntity<Scope> availableScope : this.availableScopes) {
 			availableScope.setSelected(addedScopeInums.contains(availableScope.getEntity().getInum()));
 		}
 	}
@@ -315,8 +315,8 @@ public class UpdateResourceAction implements Serializable {
 	public void acceptSelectScopes() {
 		Set<String> addedScopeInums = getAddedScopesInums();
 
-		for (SelectableEntity<UmaScopeDescription> availableScope : this.availableScopes) {
-			UmaScopeDescription scopeDescription = availableScope.getEntity();
+		for (SelectableEntity<Scope> availableScope : this.availableScopes) {
+			Scope scopeDescription = availableScope.getEntity();
 			String scopeDescriptionInum = scopeDescription.getInum();
 
 			if (availableScope.isSelected() && !addedScopeInums.contains(scopeDescriptionInum)) {
@@ -346,7 +346,7 @@ public class UpdateResourceAction implements Serializable {
 	public void cancelSelectScopes() {
 	}
 
-	public void addScope(UmaScopeDescription scope) {
+	public void addScope(Scope scope) {
 		DisplayNameEntry oneScope = new DisplayNameEntry(scope.getDn(), scope.getId(), scope.getDisplayName());
 		this.scopes.add(oneScope);
 	}
@@ -356,7 +356,7 @@ public class UpdateResourceAction implements Serializable {
 			return;
 		}
 
-		String removeScopeDn = scopeDescriptionService.getDnForScopeDescription(inum);
+		String removeScopeDn = scopeDescriptionService.getDnForScope(inum);
 
 		for (Iterator<DisplayNameEntry> iterator = this.scopes.iterator(); iterator.hasNext();) {
 			DisplayNameEntry oneScope = iterator.next();
@@ -384,7 +384,7 @@ public class UpdateResourceAction implements Serializable {
 	private List<DisplayNameEntry> getScopesDisplayNameEntries() {
 		List<DisplayNameEntry> result = new ArrayList<DisplayNameEntry>();
 		List<DisplayNameEntry> tmp = lookupService.getDisplayNameEntries(
-				scopeDescriptionService.getDnForScopeDescription(null), this.resource.getScopes());
+				scopeDescriptionService.getDnForScope(null), this.resource.getScopes());
 		if (tmp != null) {
 			result.addAll(tmp);
 		}
@@ -533,7 +533,7 @@ public class UpdateResourceAction implements Serializable {
 		return scopes;
 	}
 
-	public List<SelectableEntity<UmaScopeDescription>> getAvailableScopes() {
+	public List<SelectableEntity<Scope>> getAvailableScopes() {
 		return availableScopes;
 	}
 

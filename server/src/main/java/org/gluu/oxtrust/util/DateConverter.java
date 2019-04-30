@@ -13,9 +13,8 @@ import javax.inject.Inject;
 import org.gluu.persist.PersistenceEntryManager;
 import org.slf4j.Logger;
 
-@FacesConverter("org.gluu.jsf2.converter.DateTimeConverter")
-public class DateTimeConverter implements Converter {
-
+@FacesConverter("org.gluu.jsf2.converter.DateConverter")
+public class DateConverter implements Converter {
 	@Inject
 	PersistenceEntryManager manager;
 
@@ -25,8 +24,7 @@ public class DateTimeConverter implements Converter {
 	@Override
 	public Object getAsObject(FacesContext ctx, UIComponent uiComponent, String value) {
 		try {
-			log.info("getAsObject+++++++++++++++++++++++++++++++++++++++++++++++:"+value);
-			Date date = new SimpleDateFormat("dd.MM.yyyy HH:mm").parse(value);
+			Date date = new SimpleDateFormat("dd.MM.yyyy").parse(value);
 			return manager.encodeTime(date);
 		} catch (ParseException e) {
 			log.info("", e);
@@ -36,8 +34,8 @@ public class DateTimeConverter implements Converter {
 
 	@Override
 	public String getAsString(FacesContext facesContext, UIComponent uiComponent, Object value) {
-		log.info("getAsString+++++++++++++++++++++++++++++++++++++++++++++++:"+value);
 		Date result = manager.decodeTime((String) value);
-		return new SimpleDateFormat("dd.MM.yyyy HH:mm").format(result);
+		return new SimpleDateFormat("dd.MM.yyyy").format(result);
 	}
+
 }

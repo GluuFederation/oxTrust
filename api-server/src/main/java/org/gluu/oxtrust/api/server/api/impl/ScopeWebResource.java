@@ -22,8 +22,8 @@ import javax.ws.rs.core.Response;
 
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.ScopeService;
-import org.gluu.oxtrust.model.OxAuthScope;
 import org.gluu.oxtrust.service.filter.ProtectedApi;
+import org.oxauth.persistence.model.Scope;
 import org.gluu.oxtrust.api.server.util.ApiConstants;
 import org.slf4j.Logger;
 import org.gluu.model.GluuAttribute;
@@ -67,7 +67,7 @@ public class ScopeWebResource extends BaseWebResource {
 	public Response getScopeByInum(@PathParam(ApiConstants.INUM) @NotNull String inum) {
 		log(logger, "Get openid connect scope by " + inum);
 		try {
-			OxAuthScope scope = scopeService.getScopeByInum(inum);
+			Scope scope = scopeService.getScopeByInum(inum);
 			if (scope != null) {
 				return Response.ok(scope).build();
 			} else {
@@ -87,7 +87,7 @@ public class ScopeWebResource extends BaseWebResource {
 			@DefaultValue("10") @QueryParam("size") int size) {
 		log(logger, "Search openid connect scopes with pattern= " + pattern);
 		try {
-			List<OxAuthScope> scopes = scopeService.searchScopes(pattern, size);
+			List<Scope> scopes = scopeService.searchScopes(pattern, size);
 			return Response.ok(scopes).build();
 		} catch (Exception e) {
 			log(logger, e);
@@ -98,7 +98,7 @@ public class ScopeWebResource extends BaseWebResource {
 	@POST
 	@ApiOperation(value = "Add an openidconnect scope")
 	@ProtectedApi(scopes = { WRITE_ACCESS })
-	public Response createScope(OxAuthScope scope) {
+	public Response createScope(Scope scope) {
 		log(logger, "Create scope");
 		try {
 			Objects.requireNonNull(scope, "Attempt to create null scope");
@@ -116,13 +116,13 @@ public class ScopeWebResource extends BaseWebResource {
 	@PUT
 	@ApiOperation(value = "Update openidconect scope")
 	@ProtectedApi(scopes = { WRITE_ACCESS })
-	public Response updateScope(OxAuthScope scope) {
+	public Response updateScope(Scope scope) {
 		String inum = scope.getInum();
 		log(logger, "Update scope " + inum);
 		try {
 			Objects.requireNonNull(scope, "Attempt to update scope null value");
 			Objects.requireNonNull(inum);
-			OxAuthScope existingScope = scopeService.getScopeByInum(inum);
+			Scope existingScope = scopeService.getScopeByInum(inum);
 			if (existingScope != null) {
 				scope.setInum(existingScope.getInum());
 				scopeService.updateScope(scope);
@@ -144,7 +144,7 @@ public class ScopeWebResource extends BaseWebResource {
 		log(logger, "List all claims of scope ==> " + inum);
 		try {
 			Objects.requireNonNull(inum, "inum should not be null");
-			OxAuthScope oxAuthScope = scopeService.getScopeByInum(inum);
+			Scope oxAuthScope = scopeService.getScopeByInum(inum);
 			List<String> claimsDn = new ArrayList<String>();
 			List<GluuAttribute> attributes = new ArrayList<GluuAttribute>();
 			if (oxAuthScope != null) {
@@ -169,7 +169,7 @@ public class ScopeWebResource extends BaseWebResource {
 	public Response deleteScope(@PathParam(ApiConstants.INUM) @NotNull String inum) {
 		log(logger, "Delete openidconnect scope " + inum);
 		try {
-			OxAuthScope scope = scopeService.getScopeByInum(inum);
+			Scope scope = scopeService.getScopeByInum(inum);
 			if (scope != null) {
 				scopeService.removeScope(scope);
 				return Response.ok().build();

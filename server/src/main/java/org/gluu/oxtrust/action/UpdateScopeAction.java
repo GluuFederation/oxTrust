@@ -31,7 +31,6 @@ import org.gluu.model.custom.script.model.CustomScript;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.OxTrustAuditService;
 import org.gluu.oxtrust.ldap.service.ScopeService;
-import org.gluu.oxtrust.model.OxAuthScope;
 import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.service.custom.CustomScriptService;
 import org.gluu.oxtrust.util.OxTrustConstants;
@@ -40,6 +39,7 @@ import org.gluu.service.LookupService;
 import org.gluu.service.security.Secure;
 import org.gluu.util.StringHelper;
 import org.gluu.util.Util;
+import org.oxauth.persistence.model.Scope;
 import org.slf4j.Logger;
 
 /**
@@ -70,7 +70,7 @@ public class UpdateScopeAction implements Serializable {
 
 	private boolean update;
 
-	private OxAuthScope scope;
+	private Scope scope;
 
 	private List<DisplayNameEntry> claims;
 
@@ -107,7 +107,7 @@ public class UpdateScopeAction implements Serializable {
 		}
 
 		this.update = false;
-		this.scope = new OxAuthScope();
+		this.scope = new Scope();
 
 		try {
 			if (this.scope.getOxAuthClaims() != null && this.scope.getOxAuthClaims().size() > 0) {
@@ -250,12 +250,12 @@ public class UpdateScopeAction implements Serializable {
 
 	}
 
-	private boolean isValidScope(OxAuthScope scope) throws Exception {
-		List<OxAuthScope> allScopes = scopeService.getAllScopesList(100);
+	private boolean isValidScope(Scope scope) throws Exception {
+		List<Scope> allScopes = scopeService.getAllScopesList(100);
 		boolean result = true;
 		int count = 0;
 		if (this.scope.getInum() != null) {
-			for (OxAuthScope aScope : allScopes) {
+			for (Scope aScope : allScopes) {
 				if (aScope.getDisplayName().equalsIgnoreCase(scope.getDisplayName())) {
 					count++;
 				}
@@ -266,7 +266,7 @@ public class UpdateScopeAction implements Serializable {
 				result = false;
 			}
 		} else {
-			for (OxAuthScope aScope : allScopes) {
+			for (Scope aScope : allScopes) {
 				if (aScope.getDisplayName().equalsIgnoreCase(scope.getDisplayName())) {
 					count++;
 				}
@@ -454,11 +454,11 @@ public class UpdateScopeAction implements Serializable {
 		this.inum = inum;
 	}
 
-	public OxAuthScope getScope() {
+	public Scope getScope() {
 		return this.scope;
 	}
 
-	public void setScope(OxAuthScope scope) {
+	public void setScope(Scope scope) {
 		this.scope = scope;
 	}
 

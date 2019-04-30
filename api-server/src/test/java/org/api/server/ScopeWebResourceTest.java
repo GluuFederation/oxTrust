@@ -20,9 +20,9 @@ import org.apache.http.util.EntityUtils;
 import org.gluu.model.GluuAttribute;
 import org.gluu.oxauth.model.common.ScopeType;
 import org.gluu.oxtrust.api.server.util.ApiConstants;
-import org.gluu.oxtrust.model.OxAuthScope;
 import org.junit.Assert;
 import org.junit.Test;
+import org.oxauth.persistence.model.Scope;
 
 public class ScopeWebResourceTest extends BaseApiTest {
 
@@ -34,7 +34,7 @@ public class ScopeWebResourceTest extends BaseApiTest {
 		HttpEntity entity = response.getEntity();
 		try {
 			String content = EntityUtils.toString(entity);
-			OxAuthScope[] users = mapper.readValue(content, OxAuthScope[].class);
+			Scope[] users = mapper.readValue(content, Scope[].class);
 			Assert.assertTrue(users.length >= 1);
 		} catch (ParseException | IOException e) {
 			e.printStackTrace();
@@ -51,7 +51,7 @@ public class ScopeWebResourceTest extends BaseApiTest {
 		HttpEntity entity = response.getEntity();
 		try {
 			String content = EntityUtils.toString(entity);
-			OxAuthScope scope = mapper.readValue(content, OxAuthScope.class);
+			Scope scope = mapper.readValue(content, Scope.class);
 			Assert.assertNotNull(scope);
 		} catch (ParseException | IOException e) {
 			e.printStackTrace();
@@ -88,7 +88,7 @@ public class ScopeWebResourceTest extends BaseApiTest {
 		HttpEntity entity = response.getEntity();
 		try {
 			String content = EntityUtils.toString(entity);
-			OxAuthScope[] scopes = mapper.readValue(content, OxAuthScope[].class);
+			Scope[] scopes = mapper.readValue(content, Scope[].class);
 			Assert.assertTrue(scopes.length >= 1);
 		} catch (ParseException | IOException e) {
 			e.printStackTrace();
@@ -99,7 +99,7 @@ public class ScopeWebResourceTest extends BaseApiTest {
 	@Test
 	public void createScopeTest() {
 		String name = "ApiScope";
-		OxAuthScope scope = getScope(name);
+		Scope scope = getScope(name);
 		HttpPost request = new HttpPost(BASE_URL + ApiConstants.BASE_API_URL + ApiConstants.SCOPES);
 
 		try {
@@ -114,7 +114,7 @@ public class ScopeWebResourceTest extends BaseApiTest {
 
 			Assert.assertEquals(HttpStatus.SC_OK, response.getStatusLine().getStatusCode());
 			HttpEntity result = response.getEntity();
-			OxAuthScope myScope = mapper.readValue(EntityUtils.toString(result), OxAuthScope.class);
+			Scope myScope = mapper.readValue(EntityUtils.toString(result), Scope.class);
 			Assert.assertEquals(myScope.getDisplayName(), name);
 			Assert.assertEquals(myScope.getScopeType(), ScopeType.OPENID);
 		} catch (ParseException | IOException e) {
@@ -126,7 +126,7 @@ public class ScopeWebResourceTest extends BaseApiTest {
 	@Test
 	public void updateScopeTest() {
 		String name = "ApiScopeUpdate";
-		OxAuthScope scope = getScope(name);
+		Scope scope = getScope(name);
 		HttpPost request = new HttpPost(BASE_URL + ApiConstants.BASE_API_URL + ApiConstants.SCOPES);
 		try {
 			String json = mapper.writeValueAsString(scope);
@@ -140,7 +140,7 @@ public class ScopeWebResourceTest extends BaseApiTest {
 
 			Assert.assertEquals(HttpStatus.SC_OK, response.getStatusLine().getStatusCode());
 			HttpEntity result = response.getEntity();
-			OxAuthScope myScope = mapper.readValue(EntityUtils.toString(result), OxAuthScope.class);
+			Scope myScope = mapper.readValue(EntityUtils.toString(result), Scope.class);
 			Assert.assertEquals(myScope.getDisplayName(), name);
 
 			myScope.setDisplayName(myScope.getDisplayName() + " Updated");
@@ -175,8 +175,8 @@ public class ScopeWebResourceTest extends BaseApiTest {
 		Assert.assertEquals(HttpStatus.SC_UNAUTHORIZED, response.getStatusLine().getStatusCode());
 	}
 
-	private OxAuthScope getScope(String name) {
-		OxAuthScope scope = new OxAuthScope();
+	private Scope getScope(String name) {
+		Scope scope = new Scope();
 		scope.setDescription(name + " description");
 		scope.setDisplayName(name);
 		scope.setOxAuthClaims(new ArrayList<>());
