@@ -34,6 +34,12 @@
 				</view-param>
 			</redirect>
 		</navigation-case>
+		<navigation-case>
+			<from-action>#{passportProvidersAction.save}</from-action>
+			<from-outcome>confirm</from-outcome>
+			<to-view-id>/passport/providers.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
 	</navigation-rule>
 
 </faces-config>

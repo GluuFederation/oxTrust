@@ -209,7 +209,7 @@ public class PassportProvidersAction implements Serializable {
 				facesMessages.add(FacesMessage.SEVERITY_INFO,
 						"Provider '#{passportProvidersAction.provider.displayName}' updated successfully");
 				conversationService.endConversation();
-				return OxTrustConstants.RESULT_SUCCESS;
+				return OxTrustConstants.RESULT_CONFIRM;
 			}
 		} catch (Exception e) {
 			log.debug("", e);
@@ -297,6 +297,7 @@ public class PassportProvidersAction implements Serializable {
 		this.providers.remove(provider);
 		performSave();
 		init();
+		facesMessages.add(FacesMessage.SEVERITY_INFO, "Provider successfully deleted");
 		conversationService.endConversation();
 		return OxTrustConstants.RESULT_SUCCESS;
 	}

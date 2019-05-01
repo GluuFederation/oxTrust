@@ -215,7 +215,7 @@ public class ScopeService implements Serializable {
 
 	private List<Scope> filter(List<Scope> scopes) {
 		if (scopes != null) {
-			return scopes.stream().filter(a -> !a.isUmaType()).collect(Collectors.toList());
+			return scopes.stream().filter(e -> !e.isUmaType()).collect(Collectors.toList());
 		} else {
 			return new ArrayList<>();
 		}

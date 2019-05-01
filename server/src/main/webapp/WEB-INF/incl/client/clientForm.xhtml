@@ -219,7 +219,7 @@
 															iterationStatusVar="loop">
 															<div class="row-fluid">
 																<div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
-																	<h:outputText value="#{#{_scope.id eq null ? _scope.displayName : _scope.id}}" />
+																	<h:outputText value="#{_scope.id eq null ? _scope.displayName : _scope.id}" />
 																	<h:outputText value="&#160;" />
 																	<div class="span6 pull-right">
 																		<a4j:commandLink
