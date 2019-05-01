@@ -192,7 +192,8 @@ public class ScopeService implements Serializable {
 	 * @return Array of scope types
 	 */
 	public List<ScopeType> getScopeTypes() {
-		List<ScopeType> scopeTypes = new ArrayList<ScopeType>(Arrays.asList(org.gluu.oxauth.model.common.ScopeType.values()));
+		List<ScopeType> scopeTypes = new ArrayList<ScopeType>(
+				Arrays.asList(org.gluu.oxauth.model.common.ScopeType.values()));
 		scopeTypes.remove(ScopeType.UMA);
 		return scopeTypes;
 	}
@@ -215,7 +216,7 @@ public class ScopeService implements Serializable {
 
 	private List<Scope> filter(List<Scope> scopes) {
 		if (scopes != null) {
-			return scopes.stream().filter(Scope::isNotUmaType).collect(Collectors.toList());
+			return scopes.stream().filter(e -> !e.isUmaType()).collect(Collectors.toList());
 		} else {
 			return new ArrayList<>();
 		}
