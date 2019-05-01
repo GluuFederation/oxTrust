@@ -115,13 +115,9 @@
 
 								<ox:decorate
 									id="passportEnabledState" label="#{msg['organizationForm.passportSupport']}">
-									<h:selectOneMenu value="#{_configuration.passportEnabled}" styleClass="rounded form-control passportEnableStateSelectBox"
-										id="passportEnabledStateId">
-										<f:selectItems
-											value="#{organizationService.booleanSelectionTypes}"
-											var="_type" itemLabel="#{_type.displayName}" />
-										<f:converter converterId="org.gluu.jsf2.converter.EnumConverter"/>
-									</h:selectOneMenu>
+									<h:selectBooleanCheckbox value="#{_configuration.passportEnabled}"
+										styleClass="rounded form-control passportEnableStateSelectBox"
+										id="passportEnabledStateId" />
 								</ox:decorate>
 
 								<ox:decorate
