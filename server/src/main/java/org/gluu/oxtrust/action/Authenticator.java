@@ -113,6 +113,10 @@ public class Authenticator implements Serializable {
 		String userName = null;
 		try {
 			userName = identity.getOauthData().getUserUid();
+			if (StringHelper.isEmpty(userName)) {
+				log.error("User is not authenticated");
+				return false;
+			}
 			identity.getCredentials().setUsername(userName);
 			log.info("Authenticating user '{}'", userName);
 
