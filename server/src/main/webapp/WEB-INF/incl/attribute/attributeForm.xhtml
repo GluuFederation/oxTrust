@@ -63,16 +63,16 @@
 									rendered="#{not _attributeAction.canEdit()}" />
 							</ox:decorate>
 
-							<ox:decorate id="editType" label="#{msg['attribute.editType']}">
+							<ox:decorate id="editType"
+								rendered="#{_attributeAction.canEdit()}"
+								label="#{msg['attribute.editType']}">
 								<h:selectManyListbox styleClass="form-control editTypeField"
 									value="#{_attribute.editType}" id="editTypeId"
 									rendered="#{_attributeAction.canEdit()}">
-									<f:selectItems value="#{attributeService.attributeUserRoles}"
-										var="_type" itemLabel="#{_type.displayName}" />
-									<f:converter
-										converterId="org.gluu.jsf2.converter.EnumConverter" />
+									<f:selectItems value="#{attributeService.attributeEditTypes}"
+										var="_type" itemLabel="#{_type.displayName}"
+										itemValue="#{_type}" />
 								</h:selectManyListbox>
-
 								<ui:fragment rendered="#{not _attributeAction.canEdit()}">
 									<a4j:repeat value="#{_attribute.editType}" var="_type"
 										rowKeyVar="_idx">
@@ -83,16 +83,16 @@
 								</ui:fragment>
 							</ox:decorate>
 
-							<ox:decorate id="viewType" label="#{msg['attribute.viewType']}">
+							<ox:decorate id="viewType"
+								rendered="#{_attributeAction.canEdit()}"
+								label="#{msg['attribute.viewType']}">
 								<h:selectManyListbox styleClass="form-control viewTypeField"
 									value="#{_attribute.viewType}" id="viewTypeId"
 									rendered="#{_attributeAction.canEdit()}">
-									<f:selectItems value="#{attributeService.viewTypes}"
-										var="_type" itemLabel="#{_type.displayName}" />
-									<f:converter
-										converterId="org.gluu.jsf2.converter.EnumConverter" />
+									<f:selectItems value="#{attributeService.attributeEditTypes}"
+										var="_type" itemLabel="#{_type.displayName}"
+										itemValue="#{_type}" />
 								</h:selectManyListbox>
-
 								<ui:fragment rendered="#{not _attributeAction.canEdit()}">
 									<a4j:repeat value="#{_attribute.viewType}" var="_type"
 										rowKeyVar="_idx">
@@ -106,11 +106,10 @@
 							<ox:decorate id="usageType" label="#{msg['attribute.usageType']}">
 								<h:selectManyListbox styleClass="form-control usageTypeField"
 									value="#{_attribute.usageType}" required="false"
-									id="usageTypeId" rendered="#{_attributeAction.canEdit()}"
-									converter="omnifaces.GenericEnumConverter">
+									id="usageTypeId" rendered="#{_attributeAction.canEdit()}">
 									<f:selectItem noSelectionOption="true" itemLabel="Not defined" />
 									<f:selectItems value="#{attributeService.attributeUsageTypes}"
-										var="_type" itemLabel="#{_type.displayName}" />
+										var="_type" itemLabel="#{_type.displayName}" itemValue="#{_type}" />
 								</h:selectManyListbox>
 
 								<ui:fragment rendered="#{not _attributeAction.canEdit()}">
@@ -126,8 +125,7 @@
 							<ox:decorate id="multivalued"
 								label="#{msg['attribute.multivalued']}">
 								<h:selectBooleanCheckbox
-									value="#{_attribute.oxMultivaluedAttribute}"
-									id="multivaluedId"
+									value="#{_attribute.oxMultivaluedAttribute}" id="multivaluedId"
 									styleClass="form-control multivaluedField"
 									disabled="#{not _attributeAction.canEdit()}">
 									<a4j:ajax event="click" render="validation" />
@@ -147,8 +145,7 @@
 							<ox:decorate id="scimattr"
 								label="#{msg['attribute.scimAttribute']}">
 								<h:selectBooleanCheckbox
-									value="#{_attribute.oxSCIMCustomAttribute}"
-									id="scimAttrId"
+									value="#{_attribute.oxSCIMCustomAttribute}" id="scimAttrId"
 									styleClass="form-control scimAttributeField"
 									disabled="#{not _attributeAction.canEdit()}">
 									<a4j:ajax event="click" render="validation" />

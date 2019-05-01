@@ -23,9 +23,9 @@ import javax.inject.Named;
 
 import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.model.GluuAttribute;
+import org.gluu.model.GluuAttributeUsageType;
 import org.gluu.model.GluuUserRole;
 import org.gluu.model.attribute.AttributeDataType;
-import org.gluu.model.attribute.AttributeUsageType;
 import org.gluu.model.user.UserRole;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.service.cdi.event.EventType;
@@ -46,6 +46,8 @@ import com.unboundid.ldap.sdk.LDAPException;
 @Stateless
 @Named
 public class AttributeService extends org.gluu.service.AttributeService {
+
+	private GluuUserRole[] attributeEditTypes = new GluuUserRole[] { GluuUserRole.ADMIN, GluuUserRole.USER };
 
 	/**
 	 * 
@@ -386,8 +388,8 @@ public class AttributeService extends org.gluu.service.AttributeService {
 		return new UserRole[] { UserRole.ADMIN, UserRole.USER };
 	}
 
-	public AttributeUsageType[] getAttributeUsageTypes() {
-		return new AttributeUsageType[] { AttributeUsageType.OPENID };
+	public GluuAttributeUsageType[] getAttributeUsageTypes() {
+		return new GluuAttributeUsageType[] { GluuAttributeUsageType.OPENID };
 	}
 
 	public boolean containsAttribute(GluuAttribute attribute) {
@@ -527,7 +529,7 @@ public class AttributeService extends org.gluu.service.AttributeService {
 	 * @param admin
 	 * @return
 	 */
-	@SuppressWarnings({ "deprecation" })
+	@SuppressWarnings({ "deprecation", "unchecked" })
 	public List<GluuAttribute> getAllActivePersonAttributes(GluuUserRole admin) {
 		List<GluuAttribute> activeAttributeList = (List<GluuAttribute>) cacheService
 				.get(OxConstants.CACHE_ACTIVE_ATTRIBUTE_NAME, OxConstants.CACHE_ACTIVE_ATTRIBUTE_KEY_LIST);
@@ -615,6 +617,14 @@ public class AttributeService extends org.gluu.service.AttributeService {
 
 	public GluuAttribute getAttributeByDn(String Dn) throws Exception {
 		return ldapEntryManager.find(GluuAttribute.class, Dn);
+	}
+
+	public GluuUserRole[] getAttributeEditTypes() {
+		return attributeEditTypes;
+	}
+
+	public void setAttributeEditTypes(GluuUserRole[] attributeEditTypes) {
+		this.attributeEditTypes = attributeEditTypes;
 	}
 
 }
