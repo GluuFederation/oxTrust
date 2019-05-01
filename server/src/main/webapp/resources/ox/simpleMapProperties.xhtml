@@ -80,22 +80,22 @@
 									<h:inputText id="value"
 										style="margin-right:2px;margin-bottom:10px;width:35%;float:left;"
 										styleClass="col-md-4 form-control propertyValueTextBox"
-										rendered="true"
+										rendered="#{(_property.key ne 'ClientSecret')}"
 										value="#{_property.value}" />
+									<h:inputSecret id="secret"
+										styleClass="col-md-5 form-control togglefield"
+										style="width:35%;float:left;" value="#{_property.value2}"
+										size="#{cc.attrs.inputWidth}"
+										required="#{cc.attrs.requiredValue}" redisplay="true"
+										rendered="#{(_property.isSecret()) and (_property.key eq 'ClientSecret')}" />
 									<h:graphicImage value="/img/error.gif" rendered="#{invalid}"
 										styleClass="errors" />
 									<a4j:commandLink
 										styleClass="glyphicon glyphicon-remove col-md-2 col-lg-2 removePropertyButton"
-										rendered="#{cc.attrs.showRemoveDialogue eq false}"
-										style="float:left;margin-right:10px;margin-top: 8px;"
+										rendered="true"
 										action="#{cc.attrs.propertiesAction.removeEntry(cc.attrs.properties,_property)}"
-										render="customMap" execute="@this" />
-									<a4j:commandLink
-										styleClass="glyphicon glyphicon-remove col-md-2 col-lg-2 removePropertyButton"
-										rendered="#{(cc.attrs.showRemoveDialogue) eq true}"
 										style="float:left;margin-right:10px;margin-top: 8px;"
-										onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();"
-										execute="@region" />
+										render="customMap" execute="@region" />
 								</div>
 							</h:panelGroup>
 
