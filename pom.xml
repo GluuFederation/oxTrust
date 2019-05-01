@@ -791,7 +791,7 @@
 	<build>
 		<pluginManagement>
 			<plugins>
-				<!-- Ensures we are compiling at 1.6 level -->
+				<!-- Ensures we are compiling at 1.8 level -->
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
