@@ -42,6 +42,7 @@ public class ApplianceStatusTest extends BaseTest {
 
     public void loginUuser(String userUid) {
         identity.getOauthData().setUserUid(userUid);
+        identity.getOauthData().setIdToken("dummy_id_token");
         
         boolean loggedIn = authenticator.authenticate();
         assertTrue(loggedIn, "User is not logged in");
