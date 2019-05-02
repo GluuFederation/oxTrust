@@ -36,7 +36,6 @@
 						<li class="active"><a href="#manage-ldap" data-toggle="tab">#{msg['manageAuthentication.manageLDAPAuthentication']}</a></li>
 						<li><a href="#authentication-recaptcha" data-toggle="tab">#{msg['manageAuthentication.manageAuthenticationRecaptcha']}</a></li>
 						<li><a href="#authentication-method" data-toggle="tab">#{msg['manageAuthentication.defaultAuthentication']}</a></li>
-						<li><a href="#ox-passport" data-toggle="tab">#{msg['manageAuthentication.passportAuthenticationMethod']}</a></li>
 						<li><a href="#cas" data-toggle="tab">#{msg['manageAuthentication.casProtocol']}</a></li>
 					</ul>
 					<div class="tab-content">
@@ -312,18 +311,5 @@
             	}
             	$("#ox-passport :input").attr("readonly", true);
        });
-		 
-		 $(document).on("click",".editStrategy", function () {
-			 var state = $(this).parent().find(":input").first().attr("readonly");
-			 if(state){
-				 $(this).parent().find(":input").attr("readonly", false);
-				 $(".editStrategy").text("Lock");
-			 }else{
-				 $(this).parent().find(":input").attr("readonly", true);
-				 $(".editStrategy").text("Unlock");
-			 }
-			  
-			});
-		 
     </script>
 </ui:composition>

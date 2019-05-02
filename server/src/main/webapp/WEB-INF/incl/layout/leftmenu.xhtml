@@ -425,7 +425,9 @@
 							}
 
 							if (window.location.href
-									.indexOf("attribute/inventory") != -1) {
+									.indexOf("attribute/inventory") != -1
+									|| window.location.href.indexOf("attribute/add") != -1
+									|| window.location.href.indexOf("attribute/update") != -1) {
 								$('#subMenuConfiguration').css('display',
 										'block');
 								$('#menuConfiguration').addClass('active');
@@ -460,7 +462,7 @@
 							}
 
 							if (window.location.href
-									.indexOf("status/configuration") != -1) {
+									.indexOf("status/applicationStatus") != -1) {
 								$('#subMenuConfiguration').css('display',
 										'block');
 								$('#menuConfiguration').addClass('active');
@@ -520,8 +522,8 @@
 							}
 							if (window.location.href
 									.indexOf("passport/providers") != -1
-									|| window.location.href
-											.indexOf("passport/providers") != -1) {
+									|| window.location.href.indexOf("passport/addProvider") != -1
+									|| window.location.href.indexOf("passport/editProvider") != -1		) {
 								$('#subMenuPassport').css('display', 'block');
 								$('#menuPassport').addClass('active');
 								$('#menuPassportProviders').addClass('active');

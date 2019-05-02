@@ -109,23 +109,6 @@
 																	</ox:decorate>
 																</div>
 																<div class="form-group">
-																	<ox:decorate label="#{msg['customScript.samlAcr']}"
-																		forId="#{msg['customScript.samlAcr']}"
-																		tooltip="#{msg['customScript.samlAcr']}"
-																		leftClass="col-sm-3" rightClass="col-sm-8">
-																		<h:selectOneMenu
-																				value="#{_customScript.samlAcr}"
-																				styleClass="form-control">
-																				<f:selectItems
-																					value="#{configurationService.programmingLanguages}"
-																					var="_type" itemLabel="#{_type.displayName}" />
-																			</h:selectOneMenu>
-																	</ox:decorate>
-																</div>
-																
-
-																<div class="form-group">
-
 																	<ox:decorate label="#{msg['customScript.description']}"
 																		required="true" styleClass="break-word"
 																		forId="#{msg['customScript.description']}"
@@ -148,7 +131,6 @@
 																			forId="#{msg['customScript.description']}"
 																			tooltip="#{msg['customScript.description']}"
 																			oneColumn="true">
-
 																			<h:selectOneMenu
 																				value="#{_customScript.programmingLanguage}"
 																				required="true" disabled="true"

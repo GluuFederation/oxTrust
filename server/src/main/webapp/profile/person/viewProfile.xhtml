@@ -4,6 +4,7 @@
 	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:b="http://bootsfaces.net/ui"
 	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
@@ -11,7 +12,8 @@
 	xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
 	template="/WEB-INF/incl/layout/newtemplate.xhtml">
 	<f:metadata>
-	    <f:viewAction action="#{permissionService.requestPermission('profile', 'access')}" />
+		<f:viewAction
+			action="#{permissionService.requestPermission('profile', 'access')}" />
 		<f:viewAction action="#{conversationService.initConversation}" />
 		<f:viewAction action="#{userProfileAction.show}" onPostback="false" />
 	</f:metadata>
@@ -35,8 +37,7 @@
 			<ox:changePasswordDialog id="configurationPassword"
 				label="#{msg['profile.change�onfigurationPassword']}"
 				password="#{userProfileAction.person.getUserPassword()}"
-				person="#{userProfileAction.person}"
-				verifyOldPassword="true"
+				person="#{userProfileAction.person}" verifyOldPassword="true"
 				setPasswordMethod="#{userPasswordAction.update}" />
 			<section class="content-header">
 				<h1 style="color: #333;">
@@ -107,15 +108,15 @@
 															rendered="#{_custAttr.userCanAccess  and (_custAttr.metadata.dataType.value ne 'photo') and (_custAttr.metadata.displayName ne 'Inum') and (_custAttr.metadata.name ne 'gluuIMAPData')}"
 															template="/WEB-INF/incl/layout/#{_custAttr.userCanEdit  ? 'edit' : 'view'}.xhtml">
 															<div class="col-sm-11" tabindex="0">
-																<h:inputText
-																    tabindex="1"
+																<h:inputText tabindex="1"
 																	defaultLabel="click to enter #{_custAttr.metadata.displayName}"
 																	id="custId" inputWidth="300" maxlength="60"
 																	styleClass="form-control"
 																	rendered="#{_custAttr.userCanEdit and _custAttr.metadata.displayName ne 'Gender, male or female' and permissionService.hasPermission(configurationService.configuration, 'profile_management')}"
 																	value="#{_custAttr.value}" />
-																<h:selectOneMenu value="#{_custAttr.value}" styleClass="rounded form-control" tabindex="1"
-																  rendered="#{_custAttr.userCanEdit and _custAttr.metadata.displayName eq 'Gender, male or female' and permissionService.hasPermission(configurationService.configuration, 'profile_management')}">
+																<h:selectOneMenu value="#{_custAttr.value}"
+																	styleClass="rounded form-control" tabindex="1"
+																	rendered="#{_custAttr.userCanEdit and _custAttr.metadata.displayName eq 'Gender, male or female' and permissionService.hasPermission(configurationService.configuration, 'profile_management')}">
 																	<f:selectItem itemValue="female" itemLabel="female" />
 																	<f:selectItem itemValue="male" itemLabel="male" />
 																</h:selectOneMenu>
@@ -210,8 +211,7 @@
 																rendered="#{_custAttr.userCanAccess  and (_custAttr.metadata.name eq 'gluuIMAPData')}"
 																template="/WEB-INF/incl/layout/#{_custAttr.userCanEdit  ? 'edit' : 'view'}.xhtml">
 																<div class="col-sm-11" tabindex="0">
-																	<h:inputText
-																	    tabindex="1"
+																	<h:inputText tabindex="1"
 																		defaultLabel="click to enter Imap Host" id="custId"
 																		immediate="true" inputWidth="300" maxlength="60"
 																		styleClass="form-control"
@@ -228,12 +228,10 @@
 																rendered="#{_custAttr.userCanAccess  and (_custAttr.metadata.name eq 'gluuIMAPData')}"
 																template="/WEB-INF/incl/layout/#{_custAttr.userCanEdit  ? 'edit' : 'view'}.xhtml">
 																<div class="col-sm-11" tabindex="0">
-																	<h:inputText
-																	    tabindex="1"
+																	<h:inputText tabindex="1"
 																		defaultLabel="click to enter imap username"
 																		id="custId" immediate="true" inputWidth="300"
-																		maxlength="60"
-																		styleClass="form-control"
+																		maxlength="60" styleClass="form-control"
 																		rendered="#{_custAttr.userCanEdit and permissionService.hasPermission(configurationService.configuration, 'profile_management')}"
 																		value="#{userProfileAction.imapData.imapusername}" />
 																	<h:outputText
@@ -247,8 +245,7 @@
 																rendered="#{_custAttr.userCanAccess  and (_custAttr.metadata.name eq 'gluuIMAPData')}"
 																template="/WEB-INF/incl/layout/#{_custAttr.userCanEdit  ? 'edit' : 'view'}.xhtml">
 																<div class="col-sm-11" tabindex="0">
-																	<h:inputText
-																	    tabindex="1"
+																	<h:inputText tabindex="1"
 																		defaultLabel="click to enter imap port" id="custId"
 																		immediate="true" inputWidth="300" maxlength="60"
 																		styleClass="form-control"
@@ -267,12 +264,10 @@
 																rendered="#{_custAttr.userCanAccess  and (_custAttr.metadata.name eq 'gluuIMAPData')}"
 																template="/WEB-INF/incl/layout/#{_custAttr.userCanEdit  ? 'edit' : 'view'}.xhtml">
 																<div class="col-sm-11" tabindex="0">
-																	<h:inputText
-																	    tabindex="1"
+																	<h:inputText tabindex="1"
 																		defaultLabel="click to enter Imap Password encryptedString"
 																		id="custId" immediate="true" inputWidth="300"
-																		maxlength="60"
-																		styleClass="form-control"
+																		maxlength="60" styleClass="form-control"
 																		rendered="#{_custAttr.userCanEdit and permissionService.hasPermission(configurationService.configuration, 'profile_management')}"
 																		value="#{userProfileAction.imapData.imapPassword.encryptedString}" />
 																	<h:outputText
@@ -286,12 +281,10 @@
 																rendered="#{_custAttr.userCanAccess  and (_custAttr.metadata.name eq 'gluuIMAPData')}"
 																template="/WEB-INF/incl/layout/#{_custAttr.userCanEdit  ? 'edit' : 'view'}.xhtml">
 																<div class="col-sm-11" tabindex="0">
-																	<h:inputText
-																	    tabindex="1"
+																	<h:inputText tabindex="1"
 																		defaultLabel="click to enter Imap Password encryptedString"
 																		id="custId" immediate="true" inputWidth="300"
-																		maxlength="60"
-																		styleClass="form-control"
+																		maxlength="60" styleClass="form-control"
 																		rendered="#{_custAttr.userCanEdit and permissionService.hasPermission(configurationService.configuration, 'profile_management')}"
 																		value="#{userProfileAction.imapData.imapPassword.cipher}" />
 																	<h:outputText
@@ -305,12 +298,10 @@
 																rendered="#{_custAttr.userCanAccess  and (_custAttr.metadata.name eq 'gluuIMAPData')}"
 																template="/WEB-INF/incl/layout/#{_custAttr.userCanEdit  ? 'edit' : 'view'}.xhtml">
 																<div class="col-sm-11" tabindex="0">
-																	<h:inputText
-																	    tabindex="1"
+																	<h:inputText tabindex="1"
 																		defaultLabel="click to enter Imap Password mode"
 																		id="custId" immediate="true" inputWidth="300"
-																		maxlength="60"
-																		styleClass="form-control"
+																		maxlength="60" styleClass="form-control"
 																		rendered="#{_custAttr.userCanEdit and permissionService.hasPermission(configurationService.configuration, 'profile_management')}"
 																		value="#{userProfileAction.imapData.imapPassword.mode}" />
 																	<h:outputText
@@ -331,12 +322,13 @@
 										<richext:spacer width="10" />
 
 									</div>
+
+
 									<div class="col-xs-4">
-										<h:panelGroup id="attributeTabPanelGroupId" layout="block"
+										<b:panel id="attributeTabPanelGroupId"
+											title="#{msg['profile.customAttributes']}"
 											rendered="#{permissionService.hasPermission(configurationService.configuration, 'profile_management')}"
-											style="{vertical-align:bottom;};border: 1px solid rgb(204, 204, 204);padding: 0px 0px 7px;padding-bottom: 7px;margin-bottom: 10px;">
-											<div
-												style="background: #1E282C; padding: 15px; color: white; font-weight: bold;">#{msg['profile.customAttributes']}</div>
+											look="primary">
 											<div style="height: 400px; overflow-y: auto;">
 												<ul class="sidebar-menu">
 													<a4j:repeat value="#{customAttributeAction.attributes}"
@@ -357,7 +349,7 @@
 													</a4j:repeat>
 												</ul>
 											</div>
-										</h:panelGroup>
+										</b:panel>
 									</div>
 
 								</div>
