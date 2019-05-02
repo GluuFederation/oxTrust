@@ -23,8 +23,8 @@ import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.config.oxtrust.AppConfiguration;
+import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
 import org.gluu.model.SimpleCustomProperty;
 import org.gluu.model.SimpleExtendedCustomProperty;
@@ -45,7 +45,6 @@ import org.gluu.oxtrust.model.SimplePropertiesListModel;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.exception.BasePersistenceException;
 import org.gluu.persist.ldap.operation.impl.LdapConnectionProvider;
-import org.gluu.persist.model.base.GluuBoolean;
 import org.gluu.service.custom.script.AbstractCustomScriptService;
 import org.gluu.service.security.Secure;
 import org.gluu.util.OxConstants;
@@ -304,7 +303,6 @@ public class ManagePersonAuthenticationAction
 				if ((ldapConfig != null) && StringHelper.isNotEmpty(ldapConfig.getConfigId())) {
 					this.customAuthenticationConfigNames.add(ldapConfig.getConfigId());
 					internalServerName = false;
-					break;
 				}
 			}
 
