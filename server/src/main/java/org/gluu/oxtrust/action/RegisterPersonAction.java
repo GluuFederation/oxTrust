@@ -57,6 +57,10 @@ import org.slf4j.Logger;
 public class RegisterPersonAction implements Serializable {
 
 	private static final long serialVersionUID = 6002737004324917338L;
+	
+	public static final Pattern VALID_EMAIL_ADDRESS_REGEX = 
+		    Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
+
 
 	@Inject
 	private Logger log;
@@ -471,11 +475,7 @@ public class RegisterPersonAction implements Serializable {
 			message.setSeverity(FacesMessage.SEVERITY_ERROR);
 			throw new ValidatorException(message);
 		}
-
-		Pattern pattern = Pattern.compile(
-				"^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@" + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
-		Matcher matcher = pattern.matcher(email);
-
+		Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(email);
 		if (!(matcher.matches())) {
 			FacesMessage message = new FacesMessage("Please Enter Valid Email Address.");
 			message.setSeverity(FacesMessage.SEVERITY_ERROR);
