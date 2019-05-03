@@ -12,6 +12,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.gluu.oxtrust.ldap.service.ConfigurationService;
 import org.gluu.oxtrust.ldap.service.Shibboleth3ConfService;
 import org.gluu.oxtrust.util.ProductInstallationChecker;
 import org.gluu.service.security.Secure;
@@ -35,10 +36,13 @@ public class ProductInstallationCheckerAction implements Serializable {
 	@Inject
 	private Shibboleth3ConfService shibboleth3ConfService;
 
+	@Inject
+	private ConfigurationService configurationService;
+
 	private boolean showSAMLMenu = true;
 	private boolean showSAMLSubmenu = true;
 	private boolean showIDP_CAS = true;
-	private boolean showPassportMenu = true;
+	private boolean showPassportMenu = false;
 
 	public ProductInstallationCheckerAction() {
 	}
@@ -50,7 +54,8 @@ public class ProductInstallationCheckerAction implements Serializable {
 				|| (shibboleth3ConfService.isIdpInstalled() && ProductInstallationChecker.isShibbolethIDP3Installed());
 		showSAMLSubmenu = !ProductInstallationChecker.isGluuCE() || shibboleth3ConfService.isIdpInstalled();
 		showIDP_CAS = !ProductInstallationChecker.isGluuCE() || ProductInstallationChecker.isShibbolethIDP3Installed();
-		showPassportMenu = !ProductInstallationChecker.isGluuCE() || ProductInstallationChecker.isPassportInstalled();
+		showPassportMenu = ProductInstallationChecker.isPassportInstalled()
+				&& configurationService.getConfiguration().isPassportEnabled();
 	}
 
 	public boolean isShowSAMLMenu() {
