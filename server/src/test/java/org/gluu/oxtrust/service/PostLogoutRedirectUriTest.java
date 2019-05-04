@@ -4,14 +4,13 @@
  * Copyright (c) 2014, Gluu
  */
 
-package org.gluu.oxtrust.service.test;
+package org.gluu.oxtrust.service;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
 import org.gluu.oxtrust.action.test.AbstractAuthenticationTest;
-
 import org.testng.annotations.Test;
 
 

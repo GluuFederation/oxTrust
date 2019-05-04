@@ -4,14 +4,14 @@
  * Copyright (c) 2014, Gluu
  */
 
-package org.gluu.oxtrust.service.test;
+package org.gluu.oxtrust.service;
 
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
 import javax.inject.Inject;import static org.gluu.oxtrust.ldap.service.AppInitializer.LDAP_ENTRY_MANAGER_NAME;
 
-import org.gluu.oxtrust.action.test.BaseTest;
+import org.gluu.oxtrust.action.BaseTest;
 import org.gluu.oxtrust.ldap.service.IGroupService;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
