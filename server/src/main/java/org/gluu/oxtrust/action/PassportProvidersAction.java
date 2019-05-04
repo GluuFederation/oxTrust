@@ -297,7 +297,7 @@ public class PassportProvidersAction implements Serializable {
 		this.providers.remove(provider);
 		performSave();
 		init();
-		facesMessages.add(FacesMessage.SEVERITY_INFO, "Provider successfully deleted");
+		facesMessages.add(FacesMessage.SEVERITY_INFO, "Provider "+provider.getDisplayName()+ " successfully deleted");
 		conversationService.endConversation();
 		return OxTrustConstants.RESULT_SUCCESS;
 	}

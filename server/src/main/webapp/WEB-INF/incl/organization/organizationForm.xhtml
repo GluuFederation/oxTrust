@@ -4,7 +4,7 @@
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
-	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:a4j="http://richfaces.org/a4j" xmlns:b="http://bootsfaces.net/ui"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
 	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
@@ -100,47 +100,56 @@
 						<div class="tab-pane active" id="sys-config">
 							<h:panelGroup layout="block" style="width:80%;">
 
-								<ox:decorate
-									id="passwordReset" label="#{msg['organizationForm.selfServicePasswordReset']}">
-									<h:selectBooleanCheckbox value="#{_configuration.passwordResetAllowed}"
-										styleClass="rounded form-control passwordResetSelectBox" id="passwordResetId" />
+								<ox:decorate id="passwordReset"
+									label="#{msg['organizationForm.selfServicePasswordReset']}">
+									<h:selectBooleanCheckbox
+										value="#{_configuration.passwordResetAllowed}"
+										styleClass="rounded form-control passwordResetSelectBox"
+										id="passwordResetId" />
 								</ox:decorate>
 
-								<ox:decorate
-									id="scimEnabledState" label="#{msg['organizationForm.scimSupport']}">
+								<ox:decorate id="scimEnabledState"
+									label="#{msg['organizationForm.scimSupport']}">
 									<h:selectBooleanCheckbox value="#{_configuration.scimEnabled}"
 										styleClass="rounded form-control scimEnableStateSelectBox"
 										id="scimEnabledStateId" />
 								</ox:decorate>
 
-								<ox:decorate
-									id="passportEnabledState" label="#{msg['organizationForm.passportSupport']}">
-									<h:selectBooleanCheckbox value="#{_configuration.passportEnabled}"
+								<ox:decorate id="passportEnabledState"
+									label="#{msg['organizationForm.passportSupport']}">
+									<h:selectBooleanCheckbox
+										value="#{_configuration.passportEnabled}"
 										styleClass="rounded form-control passportEnableStateSelectBox"
 										id="passportEnabledStateId" />
 								</ox:decorate>
 
-								<ox:decorate
-									id="dnsServer" label="#{msg['organizationForm.dnsServer']}">
+								<ox:decorate id="dnsServer"
+									label="#{msg['organizationForm.dnsServer']}">
 									<h:inputText styleClass="rounded form-control dnsServerTextBox"
 										title="Multiple addresses can be specified using comma (,)"
 										value="#{_configuration.configurationDnsServer}" size="100" />
 								</ox:decorate>
 
-								<ox:decorate
-									id="maxLogSize" label="#{msg['organizationForm.maxLogSize']}">
-									<h:inputText value="#{_configuration.maxLogSize}" required="true" styleClass="rounded form-control maxLogSizeTextBox"
-										size="10" />
+								<ox:decorate id="maxLogSize"
+									label="#{msg['organizationForm.maxLogSize']}">
+									<h:inputText value="#{_configuration.maxLogSize}"
+										required="true"
+										styleClass="rounded form-control maxLogSizeTextBox" size="10" />
 								</ox:decorate>
 
-								<ox:decorate
-									id="profileManagment" label="#{msg['organizationForm.userCanEditProfile']}">
-									<h:selectBooleanCheckbox value="#{_configuration.profileManagment}"
-										styleClass="rounded form-control profileManagmentSelectBox" id="profileManagmentStateId" />
+								<ox:decorate id="profileManagment"
+									label="#{msg['organizationForm.userCanEditProfile']}">
+									<h:selectBooleanCheckbox
+										value="#{_configuration.profileManagment}"
+										styleClass="rounded form-control profileManagmentSelectBox"
+										id="profileManagmentStateId" />
 								</ox:decorate>
 
 								<ox:decorate label="#{msg['organizationForm.contactEmail']}">
-									<h:inputText p:oninvalid="this.setCustomValidity('Please provide a valid email address.')" p:type="email" value="#{_configuration.contactEmail}" styleClass="rounded form-control contactEmailTextBox"/>
+									<h:inputText
+										p:oninvalid="this.setCustomValidity('Please provide a valid email address.')"
+										p:type="email" value="#{_configuration.contactEmail}"
+										styleClass="rounded form-control contactEmailTextBox" />
 								</ox:decorate>
 
 							</h:panelGroup>
@@ -149,135 +158,152 @@
 							<h:panelGroup layout="block" style="width:80%;">
 
 								<ox:decorate label="#{msg['organizationForm.smtpHost']}">
-									<h:inputText value="#{_smtp.host}" styleClass="form-control smtpHostTextBox"/>
+									<h:inputText value="#{_smtp.host}"
+										styleClass="form-control smtpHostTextBox" />
 								</ox:decorate>
 
 								<ox:decorate label="#{msg['organizationForm.fromName']}">
-									<h:inputText value="#{_smtp.fromName}" styleClass="form-control fromNameTextBox"/>
+									<h:inputText value="#{_smtp.fromName}"
+										styleClass="form-control fromNameTextBox" />
 								</ox:decorate>
 
 								<ox:decorate label="#{msg['organizationForm.fromEmailAddress']}">
-									<h:inputText value="#{_smtp.fromEmailAddress}" styleClass="form-control fromEmailAddressTextBox"/>
+									<h:inputText value="#{_smtp.fromEmailAddress}"
+										styleClass="form-control fromEmailAddressTextBox" />
 								</ox:decorate>
 
-								<ox:decorate id="requiresAuthenticationCheckBox" label="#{msg['organizationForm.requiresAuthentication']}">
-									<h:selectBooleanCheckbox styleClass="requiresAuthenticationCheckBox form-control"
+								<ox:decorate id="requiresAuthenticationCheckBox"
+									label="#{msg['organizationForm.requiresAuthentication']}">
+									<h:selectBooleanCheckbox
+										styleClass="requiresAuthenticationCheckBox form-control"
 										value="#{_smtp.requiresAuthentication}" />
 								</ox:decorate>
 
 								<ox:decorate label="#{msg['organizationForm.smtpUserName']}">
-									<h:inputText value="#{_smtp.userName}" styleClass="form-control smtpUserNameTextBox"/>
+									<h:inputText value="#{_smtp.userName}"
+										styleClass="form-control smtpUserNameTextBox" />
 								</ox:decorate>
 
 								<ox:decorate label="#{msg['organizationForm.smtpPassword']}">
-									<h:inputSecret value="#{_smtp.passwordDecrypted}" styleClass="form-control smtpPasswordTextBox"
-										redisplay="true" />
+									<h:inputSecret value="#{_smtp.passwordDecrypted}"
+										styleClass="form-control smtpPasswordTextBox" redisplay="true" />
 								</ox:decorate>
 
 								<ox:decorate label="#{msg['organizationForm.requiresSSL']}">
-									<h:selectBooleanCheckbox value="#{_smtp.requiresSsl}" styleClass="form-control requiresSSLCheckBox"/>
+									<h:selectBooleanCheckbox value="#{_smtp.requiresSsl}"
+										styleClass="form-control requiresSSLCheckBox" />
 								</ox:decorate>
-								
+
 								<ox:decorate label="#{msg['organizationForm.trustserver']}">
-									<h:selectBooleanCheckbox value="#{_smtp.serverTrust}" styleClass="form-control trustserverCheckBox"/>
+									<h:selectBooleanCheckbox value="#{_smtp.serverTrust}"
+										styleClass="form-control trustserverCheckBox" />
 								</ox:decorate>
 
 								<ox:decorate label="#{msg['organizationForm.smtpPort']}">
-									<h:inputText value="#{_smtp.port}" styleClass="form-control smtpPortTextBox"/>
+									<h:inputText value="#{_smtp.port}"
+										styleClass="form-control smtpPortTextBox" />
 								</ox:decorate>
-								<h:commandButton value="#{msg['organizationForm.testConfiguration']}" styleClass="btn btn-success verifyButton"
-									action="#{updateOrganizationAction.verifySmtpConfiguration}"/>
+								<h:commandButton
+									value="#{msg['organizationForm.testConfiguration']}"
+									styleClass="btn btn-success verifyButton"
+									action="#{updateOrganizationAction.verifySmtpConfiguration}" />
 
 							</h:panelGroup>
 						</div>
 
 						<div class="tab-pane" id="ox-trust">
-							<h:panelGroup layout="block" style="overflow-y:auto;overflow-x:hidden;">
+							<h:panelGroup layout="block"
+								style="overflow-y:auto;overflow-x:hidden;">
 
-								<ox:decorate
-									id="displayName" label="#{msg['organizationForm.organizationName']}">
-									<h:inputText value="#{_organization.displayName}" size="100" styleClass="form-control" style="width:80%;"/>
+								<ox:decorate id="displayName"
+									label="#{msg['organizationForm.organizationName']}">
+									<h:inputText value="#{_organization.displayName}" size="100"
+										styleClass="form-control" style="width:80%;" />
 								</ox:decorate>
 
-								
+
 								<ui:param name="_managerGroup"
 									value="#{gluufn:getDisplayNameEntry(_organization.managerGroup)}" />
-								<ox:decorate
-									id="managerGroup" label="#{msg['organizationForm.managerGroup']}">
+								<ox:decorate id="managerGroup"
+									label="#{msg['organizationForm.managerGroup']}">
 									<h:link includeViewParams="false" outcome="/group/updateGroup"
 										value="#{_managerGroup.displayName}">
 										<f:param name="inum" value="#{_managerGroup.inum}" />
 									</h:link>
 								</ox:decorate>
 
-								<ox:decorate label="#{msg['organizationForm.organizationLogo']}">
-									<h:panelGroup id="custLogoImagePanelId" columns="1" width="100%"
-										border="0" cellpadding="0" cellspacing="0">
-										<rich:fileUpload id="custUploadId"
-											fileUploadListener="#{_organizationAction.setCustLogoImage}"
-											acceptedTypes="jpg, jpeg, gif, png, bmp"
-											ontyperejected="alert('Only JPG, GIF, PNG and BMP files are accepted');"
-											maxFilesQuantity="1" immediateUpload="true" listHeight="60px"
-											styleClass="uploadFile uploadLogo" style="width:80% !important;"
-											rendered="#{not _organizationAction.custLogoImageExist}">
-											<a4j:ajax event="uploadcomplete" execute="@none"
-												render="custLogoImagePanelId" />
-										</rich:fileUpload>
+								<div class="row">
+									<div class="col-sm-5 col-lg-5" style="margin: 10px;">
+										<b:panel id="custLogoImagePanelId" title="#{msg['organizationForm.organizationLogo']}"
+											look="primary" collapsible="false">
+											<rich:fileUpload id="custUploadId"
+												fileUploadListener="#{_organizationAction.setCustLogoImage}"
+												acceptedTypes="jpg, jpeg, gif, png, bmp"
+												ontyperejected="alert('Only JPG, GIF, PNG and BMP files are accepted');"
+												maxFilesQuantity="1" immediateUpload="true"
+												listHeight="60px" styleClass="uploadFile uploadLogo"
+												style="width:80% !important;"
+												rendered="#{not _organizationAction.custLogoImageExist}">
+												<a4j:ajax event="uploadcomplete" execute="@none"
+													render="custLogoImagePanelId" />
+											</rich:fileUpload>
 
-										<h:panelGrid columns="1" width="100%" cellspacing="0"
-											cellpadding="0" border="0" columnClasses="alignCenter"
-											rendered="#{_organization.logoImage ne null}">
-											<h:panelGroup layout="block">
-												<img
-													src="#{request.contextPath}/servlet/logo?preview=true" />
-											</h:panelGroup>
-											<richext:spacer height="8" />
-											<a4j:commandLink value="Remove" styleClass="removeLogo"
-												action="#{_organizationAction.removeLogoImage()}"
-												render="custLogoImagePanelId"
-												eventsQueue="organizationQueue" />
-										</h:panelGrid>
-									</h:panelGroup>
-								</ox:decorate>
+											<h:panelGrid columns="1" width="100%" cellspacing="0"
+												cellpadding="0" border="0" columnClasses="alignCenter"
+												rendered="#{_organization.logoImage ne null}">
+												<h:panelGroup layout="block">
+													<img src="#{request.contextPath}/servlet/logo?preview=true" />
+												</h:panelGroup>
+												<richext:spacer height="8" />
+												<a4j:commandLink value="Remove" styleClass="removeLogo btn-primary"
+													action="#{_organizationAction.removeLogoImage()}"
+													render="custLogoImagePanelId"
+													eventsQueue="organizationQueue" />
+											</h:panelGrid>
+										</b:panel>
+									</div>
+									<div class="col-sm-5 col-lg-5"
+										style="padding: 0px; margin: 10px;">
+										<b:panel id="custFaviconImagePanelId"
+											title="Organization Favicon" look="primary"
+											collapsible="false">
+											<rich:fileUpload id="custFaviconUploadId"
+												fileUploadListener="#{_organizationAction.setFaviconImage}"
+												acceptedTypes="ico, jpeg, jpg, png"
+												ontyperejected="alert('Only ICO, JPEG, JPG and PNG files are accepted');"
+												maxFilesQuantity="1" immediateUpload="true"
+												listHeight="60px" styleClass="uploadFile uploadFavicon"
+												style="width:80% !important;"
+												rendered="#{not _organizationAction.faviconImageExist}">
+												<a4j:ajax event="uploadcomplete" execute="@none"
+													render="custFaviconImagePanelId" />
+											</rich:fileUpload>
 
-								<ox:decorate label="Organization Favicon">
-									<h:panelGrid id="custFaviconImagePanelId" columns="1"
-										width="100%" border="0" cellpadding="0" cellspacing="0">
-										<rich:fileUpload id="custFaviconUploadId"
-											fileUploadListener="#{_organizationAction.setFaviconImage}"
-											acceptedTypes="ico, jpeg, jpg"
-											ontyperejected="alert('Only ICO, JPEG and JPG files are accepted');"
-											maxFilesQuantity="1" immediateUpload="true" listHeight="60px"
-											styleClass="uploadFile uploadFavicon" style="width:80% !important;"
-											rendered="#{not _organizationAction.faviconImageExist}">
-											<a4j:ajax event="uploadcomplete" execute="@none"
-												render="custFaviconImagePanelId" />
-										</rich:fileUpload>
-
-										<h:panelGrid columns="1" width="100%" cellspacing="0"
-											cellpadding="0" border="0" columnClasses="alignCenter"
-											rendered="#{_organization.faviconImage ne null}">
-											<h:panelGroup layout="block">
-												<img
-													src="#{request.contextPath}/servlet/favicon?preview=true" />
-											</h:panelGroup>
-											<richext:spacer height="8" />
-											<a4j:commandLink value="Remove" styleClass="removeFavicon"
-												action="#{_organizationAction.removeFaviconImage()}"
-												render="custFaviconImagePanelId" ajaxSingle="true"
-												limitRender="true" eventsQueue="organizationQueue" />
-										</h:panelGrid>
-									</h:panelGrid>
-								</ox:decorate>
-
+											<h:panelGrid columns="1" width="100%" cellspacing="0"
+												cellpadding="0" border="0" columnClasses="alignCenter"
+												rendered="#{_organization.faviconImage ne null}">
+												<h:panelGroup layout="block">
+													<img
+														src="#{request.contextPath}/servlet/favicon?preview=true" />
+												</h:panelGroup>
+												<richext:spacer height="8" />
+												<a4j:commandLink value="Remove" styleClass="removeFavicon btn-primary"
+													action="#{_organizationAction.removeFaviconImage()}"
+													render="custFaviconImagePanelId" ajaxSingle="true"
+													limitRender="true" eventsQueue="organizationQueue" />
+											</h:panelGrid>
+										</b:panel>
+									</div>
+								</div>
 							</h:panelGroup>
 						</div>
-						
+
 						<div class="tab-pane" id="ox-auth">
 							<h:panelGroup layout="block" style="width:80%;">
 
 								<ox:decorate label="#{msg['organizationForm.serverip']}">
-									<h:inputText value="#{_webKeySettings.serverIP}" styleClass="form-control serverIpTextBox"/>
+									<h:inputText value="#{_webKeySettings.serverIP}"
+										styleClass="form-control serverIpTextBox" />
 								</ox:decorate>
 
 							</h:panelGroup>
@@ -291,26 +317,32 @@
 		<ui:insert name="controlButttons" />
 	</h:form>
 	<script>
-	    $('#organizationFormtab a').click(function(e) {
-		  e.preventDefault();
-		  $(this).tab('show');
+		$('#organizationFormtab a').click(function(e) {
+			e.preventDefault();
+			$(this).tab('show');
 		});
 
 		// store the currently selected tab in the local storage
-		$("ul.nav-tabs > li > a").on("shown.bs.tab", function(e) {
-		  var id = $(e.target).attr("href").substr(1);
-		  window.localStorage.setItem('organizationFormtab', id);
-		  var storeValue = window.localStorage.getItem('organizationFormtab');
-		});
-     
+		$("ul.nav-tabs > li > a").on(
+				"shown.bs.tab",
+				function(e) {
+					var id = $(e.target).attr("href").substr(1);
+					window.localStorage.setItem('organizationFormtab', id);
+					var storeValue = window.localStorage
+							.getItem('organizationFormtab');
+				});
+
 		// on load of the page: switch to the currently selected tab
-		 $(document).ready(function() {
-			    var value =  window.localStorage.getItem('organizationFormtab');
-            	if (value) {
-            		var activeTab = "#";
-            		activeTab = activeTab.concat(value);  
-            		$('#organizationFormtab a[href="' + activeTab + '"]').tab('show');
-            	}
-       });
-    </script>
+		$(document).ready(
+				function() {
+					var value = window.localStorage
+							.getItem('organizationFormtab');
+					if (value) {
+						var activeTab = "#";
+						activeTab = activeTab.concat(value);
+						$('#organizationFormtab a[href="' + activeTab + '"]')
+								.tab('show');
+					}
+				});
+	</script>
 </ui:composition>

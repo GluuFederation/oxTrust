@@ -49,6 +49,7 @@ public class PassportIdpInitiatedAction implements Serializable {
 	private FacesMessages facesMessages;
 	private boolean showForm = false;
 	private boolean isEdition = false;
+	private final String SAMPLE_URI = "https://<hostname>/oxauth/auth/passport/sample-redirector.htm";
 	@Inject
 	private ConversationService conversationService;
 
@@ -82,6 +83,7 @@ public class PassportIdpInitiatedAction implements Serializable {
 			this.clients = clientService.getAllClients();
 			this.scopes.add("openid");
 			this.responseTypes.add("code");
+			this.authzParam.setRedirectUri(SAMPLE_URI);
 			this.providers = this.passportConfiguration.getProviders().stream()
 					.filter(e -> e.getType().equalsIgnoreCase("saml")).collect(Collectors.toList());
 			log.debug("Load passport idp initiated configuration done");
@@ -106,7 +108,6 @@ public class PassportIdpInitiatedAction implements Serializable {
 			conversationService.endConversation();
 			return OxTrustConstants.RESULT_FAILURE;
 		}
-
 	}
 
 	private void updateClientRedirects() {
@@ -330,7 +331,6 @@ public class PassportIdpInitiatedAction implements Serializable {
 
 	public void acceptSelectResponseTypes() {
 		List<String> addedResponseTypes = getResponseTypes();
-
 		for (SelectableEntity<String> availableResponseType : this.availableResponseTypes) {
 			String responseType = availableResponseType.getEntity();
 			if (availableResponseType.isSelected() && !addedResponseTypes.contains(responseType)) {

@@ -62,8 +62,8 @@
 	</h:outputScript>
 	<a4j:region>
 		<ox:decorate id="mapping" label="#{cc.attrs.label}"
-			hideLabel="#{cc.attrs.hideLabel}" leftClass="#{cc.attrs.leftClass}"
-			rightClass="#{cc.attrs.rightClass}">
+			hideLabel="#{cc.attrs.hideLabel}" leftClass="col-sm-1"
+			rightClass="col-sm-11">
 			<h:panelGroup id="customMap">
 				<a4j:region styleClass="col-sm-12 col-lg-12">
 					<a4j:repeat value="#{cc.attrs.properties}" var="_property">
@@ -78,20 +78,27 @@
 										value="#{_property.key}" size="#{cc.attrs.inputWidth}"
 										readonly="#{(_property.key) eq 'clientID' or (_property.key) eq 'clientSecret'}" />
 									<h:inputText id="value"
-										style="margin-right:2px;margin-bottom:10px;width:35%;float:left;"
-										styleClass="col-md-4 form-control propertyValueTextBox"
-										rendered="#{(_property.key ne 'ClientSecret')}"
-										value="#{_property.value}" />
+										style="margin-right:2px;margin-bottom:10px;width:45%;float:left;"
+										styleClass="col-md-7 form-control propertyValueTextBox"
+										rendered="#{!_property.isSecret()}" value="#{_property.value}" />
 									<h:inputSecret id="secret"
-										styleClass="col-md-5 form-control togglefield"
-										style="width:35%;float:left;" value="#{_property.value2}"
+										styleClass="col-md-7 form-control togglefield"
+										style="width:45%;float:left;" value="#{_property.value}"
 										size="#{cc.attrs.inputWidth}"
 										required="#{cc.attrs.requiredValue}" redisplay="true"
-										rendered="#{(_property.isSecret()) and (_property.key eq 'ClientSecret')}" />
+										rendered="#{_property.isSecret()}" />
 									<h:graphicImage value="/img/error.gif" rendered="#{invalid}"
 										styleClass="errors" />
+									<h:graphicImage styleClass="col-md-1 col-lg-1"
+										value="/img/eye.png" id="view"
+										onclick="return viewValue(this);"
+										rendered="#{_property.isSecret()}" />
+									<h:graphicImage styleClass="col-md-1 col-lg-1"
+										value="/img/eye-hidden.png" style="display: none;" id="hide"
+										onclick="return hideValue(this);"
+										rendered="#{_property.isSecret()}" />
 									<a4j:commandLink
-										styleClass="glyphicon glyphicon-remove col-md-2 col-lg-2 removePropertyButton"
+										styleClass="glyphicon glyphicon-remove col-md-1 col-lg-1 removePropertyButton"
 										rendered="true"
 										action="#{cc.attrs.propertiesAction.removeEntry(cc.attrs.properties,_property)}"
 										style="float:left;margin-right:10px;margin-top: 8px;"
