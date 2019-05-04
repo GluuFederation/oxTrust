@@ -16,6 +16,8 @@ import org.codehaus.jackson.annotate.JsonPropertyOrder;
 import org.gluu.model.SimpleCustomProperty;
 import org.gluu.model.SimpleExtendedCustomProperty;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 /**
  * Log viewer configuration model
  * 
@@ -24,6 +26,7 @@ import org.gluu.model.SimpleExtendedCustomProperty;
 
 @XmlRootElement
 @JsonPropertyOrder({ "logs" })
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class LogViewerConfig {
 
 	@JsonProperty("log_template")

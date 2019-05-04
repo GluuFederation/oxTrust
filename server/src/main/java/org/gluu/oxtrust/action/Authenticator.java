@@ -109,7 +109,7 @@ public class Authenticator implements Serializable {
 		return result;
 	}
 
-	public boolean authenticate() {
+	protected String authenticate() {
 		String userName = null;
 		try {
 			userName = identity.getOauthData().getUserUid();
@@ -117,7 +117,7 @@ public class Authenticator implements Serializable {
 			
 			if (StringHelper.isEmpty(userName) || StringHelper.isEmpty(idToken)) {
 				log.error("User is not authenticated");
-				return false;
+				return OxTrustConstants.RESULT_NO_PERMISSIONS;
 			}
 
 			identity.getCredentials().setUsername(userName);
@@ -126,23 +126,24 @@ public class Authenticator implements Serializable {
 			User user = findUserByUserName(userName);
 			if (user == null) {
 				log.error("Person '{}' not found in LDAP", userName);
-				return false;
+				return OxTrustConstants.RESULT_NO_PERMISSIONS;
 			} else if (GluuStatus.EXPIRED.getValue().equals(user.getAttribute("gluuStatus"))
 					|| GluuStatus.REGISTER.getValue().equals(user.getAttribute("gluuStatus"))) {
 				HashMap<String, Object> params = new HashMap<String, Object>();
 				params.put("inum", user.getInum());
 				facesService.redirect("/register.xhtml", params);
-				return false;
+				return OxTrustConstants.RESULT_REGISTER;
 			}
 
 			postLogin(user);
 			log.info("User '{}' authenticated successfully", userName);
+
+			return OxTrustConstants.RESULT_SUCCESS;
 		} catch (Exception ex) {
 			log.error("Failed to authenticate user '{}'", userName, ex);
-			return false;
 		}
 
-		return true;
+		return OxTrustConstants.RESULT_NO_PERMISSIONS;
 	}
 
 	/**
@@ -404,7 +405,10 @@ public class Authenticator implements Serializable {
 		oauthData.setSessionState(sessionState);
 		identity.setWorkingParameter(OxTrustConstants.OXAUTH_SSO_SESSION_STATE, Boolean.FALSE);
 		log.info("user uid:" + oauthData.getUserUid());
-		return OxTrustConstants.RESULT_SUCCESS;
+		
+		String result = authenticate();
+
+		return result;
 	}
 
 	private String getOxAuthHost(String oxAuthAuthorizeUrl) {

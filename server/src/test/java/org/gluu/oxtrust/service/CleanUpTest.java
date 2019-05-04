@@ -4,7 +4,7 @@
  * Copyright (c) 2014, Gluu
  */
 
-package org.gluu.oxtrust.service.test;
+package org.gluu.oxtrust.service;
 
 import static org.testng.Assert.assertNotNull;
 
@@ -13,7 +13,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.gluu.oxtrust.action.test.BaseTest;
+import org.gluu.oxtrust.action.BaseTest;
 import org.gluu.oxtrust.ldap.service.IGroupService;
 import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.MemberService;
