@@ -83,7 +83,6 @@ public class PassportIdpInitiatedAction implements Serializable {
 			this.clients = clientService.getAllClients();
 			this.scopes.add("openid");
 			this.responseTypes.add("code");
-			this.authzParam.setRedirectUri(SAMPLE_URI);
 			this.providers = this.passportConfiguration.getProviders().stream()
 					.filter(e -> e.getType().equalsIgnoreCase("saml")).collect(Collectors.toList());
 			log.debug("Load passport idp initiated configuration done");
@@ -164,23 +163,37 @@ public class PassportIdpInitiatedAction implements Serializable {
 			scopesBuilder.append(e);
 			scopesBuilder.append(" ");
 		});
-		this.authzParam.setScopes(scopesBuilder.toString().trim());
 		StringBuilder typesBuilder = new StringBuilder();
 		responseTypes.forEach(e -> {
 			typesBuilder.append(e);
 			typesBuilder.append(" ");
 		});
-		this.authzParam.setResponseType(typesBuilder.toString().trim());
-		if (this.isEdition) {
-			this.authzParams.remove(this.previousParam);
-			this.authzParams.add(this.authzParam);
+		if (isValid()) {
+			this.authzParam.setScopes(scopesBuilder.toString().trim());
+			this.authzParam.setResponseType(typesBuilder.toString().trim());
+			if (this.isEdition) {
+				this.authzParams.remove(this.previousParam);
+				this.authzParams.add(this.authzParam);
+			} else {
+				this.authzParams.add(this.authzParam);
+			}
+			this.showForm = false;
+			this.isEdition = false;
+			this.authzParam = new AuthzParams();
+			this.previousParam = null;
 		} else {
-			this.authzParams.add(this.authzParam);
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "All fields are required.");
 		}
-		this.showForm = false;
-		this.isEdition = false;
-		this.authzParam = new AuthzParams();
-		this.previousParam = null;
+	}
+
+	private boolean isValid() {
+		if (this.scopes.isEmpty() || this.responseTypes.isEmpty()) {
+			return false;
+		}
+		if (this.authzParam.getProvider() == null || this.authzParam.getRedirectUri() == null) {
+			return false;
+		}
+		return true;
 	}
 
 	public void removeAuthParam(AuthzParams param) {
@@ -215,6 +228,7 @@ public class PassportIdpInitiatedAction implements Serializable {
 
 	public void activateForm() {
 		this.authzParam = new AuthzParams();
+		this.authzParam.setRedirectUri(SAMPLE_URI);
 		this.showForm = true;
 	}
 
