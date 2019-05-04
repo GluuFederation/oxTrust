@@ -4,7 +4,7 @@
  * Copyright (c) 2014, Gluu
  */
 
-package org.gluu.oxtrust.action.test;
+package org.gluu.oxtrust.action;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
@@ -62,6 +62,8 @@ public abstract class AbstractAuthenticationTest extends ConfigurableTest {
 	 */
 	protected void checkLoginUser(final String user, final String password) {
 		identity.getOauthData().setUserUid(user);
+		identity.getOauthData().setIdToken("dummy_id_token");
+
 		authenticator.authenticate();
 		
 		assertTrue(identity.isLoggedIn());

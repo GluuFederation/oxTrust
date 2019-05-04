@@ -16,6 +16,8 @@ import org.codehaus.jackson.annotate.JsonPropertyOrder;
 import org.xdi.model.SimpleCustomProperty;
 import org.xdi.model.SimpleExtendedCustomProperty;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 /**
  * Log viewer configuration model
  * 
@@ -24,6 +26,7 @@ import org.xdi.model.SimpleExtendedCustomProperty;
 
 @XmlRootElement
 @JsonPropertyOrder({ "logs" })
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class LogViewerConfig {
 
 	@JsonProperty("log_template")
