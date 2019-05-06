@@ -6,12 +6,11 @@
 
 package org.gluu.oxtrust.model.scim;
 
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.annotate.JsonPropertyOrder;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
-import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.wordnik.swagger.annotations.ApiModel;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
 /**
@@ -21,9 +20,10 @@ import com.wordnik.swagger.annotations.ApiModelProperty;
  */
 // try to ignore jettison as it's recommended here:
 // http://docs.jboss.org/resteasy/docs/2.3.4.Final/userguide/html/json.html
-@JsonPropertyOrder({ "version", "authorization_supported", "user_endpoint", "group_endpoint", "bulk_endpoint", "service_provider_endpoint",
-		"resource_types_endpoint" })
-@JsonSerialize(include = Inclusion.NON_NULL)
+@JsonPropertyOrder({ "version", "authorization_supported", "user_endpoint", "group_endpoint", "bulk_endpoint",
+		"service_provider_endpoint", "resource_types_endpoint" })
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonSerialize
 @ApiModel(value = "SCIM Configuration")
 public class ScimConfiguration {
 
@@ -43,9 +43,9 @@ public class ScimConfiguration {
 	@ApiModelProperty(value = "The endpoint URI at which it's possible Retrieve, Add, Delete, Modify Groups.", required = true)
 	private String groupEndpoint;
 
-    @JsonProperty(value = "fido_devices_endpoint")
-    @ApiModelProperty(value = "The endpoint URI at which it's possible Retrieve, Delete, Modify Groups.", required = true)
-    private String fidoDevicesEndpoint;
+	@JsonProperty(value = "fido_devices_endpoint")
+	@ApiModelProperty(value = "The endpoint URI at which it's possible Retrieve, Delete, Modify Groups.", required = true)
+	private String fidoDevicesEndpoint;
 
 	@JsonProperty(value = "bulk_endpoint")
 	@ApiModelProperty(value = "The endpoint URI at which it's possible Bulk updates to one or more resources.", required = true)
@@ -59,9 +59,9 @@ public class ScimConfiguration {
 	@ApiModelProperty(value = "The endpoint URI at which it's possible to retrieve supported Resource Types.", required = true)
 	private String resourceTypesEndpoint;
 
-    @JsonProperty(value = "schemas_endpoint")
-    @ApiModelProperty(value = "The endpoint URI at which it's possible to retrieve information about resource schemas supported.", required = true)
-    private String schemasEndpoint;
+	@JsonProperty(value = "schemas_endpoint")
+	@ApiModelProperty(value = "The endpoint URI at which it's possible to retrieve information about resource schemas supported.", required = true)
+	private String schemasEndpoint;
 
 	public String getVersion() {
 		return version;
@@ -95,15 +95,15 @@ public class ScimConfiguration {
 		this.groupEndpoint = groupEndpoint;
 	}
 
-    public String getFidoDevicesEndpoint() {
-        return fidoDevicesEndpoint;
-    }
+	public String getFidoDevicesEndpoint() {
+		return fidoDevicesEndpoint;
+	}
 
-    public void setFidoDevicesEndpoint(String fidoDevicesEndpoint) {
-        this.fidoDevicesEndpoint = fidoDevicesEndpoint;
-    }
+	public void setFidoDevicesEndpoint(String fidoDevicesEndpoint) {
+		this.fidoDevicesEndpoint = fidoDevicesEndpoint;
+	}
 
-    public String getBulkEndpoint() {
+	public String getBulkEndpoint() {
 		return bulkEndpoint;
 	}
 
@@ -127,11 +127,11 @@ public class ScimConfiguration {
 		this.resourceTypesEndpoint = resourceTypesEndpoint;
 	}
 
-    public String getSchemasEndpoint() {
-        return schemasEndpoint;
-    }
+	public String getSchemasEndpoint() {
+		return schemasEndpoint;
+	}
 
-    public void setSchemasEndpoint(String schemasEndpoint) {
-        this.schemasEndpoint = schemasEndpoint;
-    }
+	public void setSchemasEndpoint(String schemasEndpoint) {
+		this.schemasEndpoint = schemasEndpoint;
+	}
 }

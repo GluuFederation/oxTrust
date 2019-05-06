@@ -11,7 +11,8 @@ package org.gluu.oxtrust.model;
 
 import java.util.List;
 
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 
 /**
  * @author "Oleksiy Tataryn"

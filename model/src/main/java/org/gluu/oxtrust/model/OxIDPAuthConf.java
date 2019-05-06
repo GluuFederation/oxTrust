@@ -14,8 +14,9 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.codehaus.jackson.annotate.JsonPropertyOrder;
 import org.gluu.model.ldap.GluuLdapConfiguration;
+
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 /**
  * oxIDPAuthConf
