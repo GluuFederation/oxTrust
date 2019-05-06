@@ -5,12 +5,13 @@
  */
 package org.gluu.oxtrust.model.scim2.user;
 
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-import org.codehaus.jackson.annotate.JsonProperty;
 import org.gluu.oxtrust.model.scim2.AttributeDefinition;
 import org.gluu.oxtrust.model.scim2.annotations.Attribute;
 import org.gluu.oxtrust.model.scim2.Validations;
 import org.gluu.oxtrust.model.scim2.annotations.Validator;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Represents a user's phone number. See section 4.1.2 of RFC 7643.

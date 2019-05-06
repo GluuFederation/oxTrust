@@ -6,16 +6,21 @@
 package org.gluu.oxtrust.model.scim2;
 
 import org.apache.logging.log4j.LogManager;
-import org.codehaus.jackson.annotate.JsonAnyGetter;
-import org.codehaus.jackson.annotate.JsonAnySetter;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.type.TypeReference;
+//import org.codehaus.jackson.annotate.JsonAnyGetter;
+//import org.codehaus.jackson.annotate.JsonAnySetter;
+//import org.codehaus.jackson.map.ObjectMapper;
+//import org.codehaus.jackson.type.TypeReference;
 import org.gluu.oxtrust.model.scim2.annotations.*;
 import org.gluu.oxtrust.model.scim2.fido.FidoDeviceResource;
 import org.gluu.oxtrust.model.scim2.group.GroupResource;
 import org.gluu.oxtrust.model.scim2.user.UserResource;
 import org.gluu.oxtrust.model.scim2.util.IntrospectUtil;
 import org.gluu.oxtrust.model.scim2.util.ScimResourceUtil;
+
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.*;
 

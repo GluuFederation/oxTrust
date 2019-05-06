@@ -5,9 +5,10 @@
  */
 package org.gluu.oxtrust.model.scim2.user;
 
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.gluu.oxtrust.model.scim2.AttributeDefinition;
 import org.gluu.oxtrust.model.scim2.annotations.Attribute;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  * Represents a role for a user. See section 4.1.2 of RFC 7643.

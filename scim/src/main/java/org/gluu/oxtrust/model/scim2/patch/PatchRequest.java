@@ -5,10 +5,11 @@
  */
 package org.gluu.oxtrust.model.scim2.patch;
 
-import org.codehaus.jackson.annotate.JsonProperty;
 
 import java.util.Collections;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import static org.gluu.oxtrust.model.scim2.Constants.PATCH_REQUEST_SCHEMA_ID;
 

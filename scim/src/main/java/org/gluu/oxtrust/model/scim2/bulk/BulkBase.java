@@ -5,9 +5,10 @@
  */
 package org.gluu.oxtrust.model.scim2.bulk;
 
-import org.codehaus.jackson.annotate.JsonProperty;
 
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * A class that abstracts the common properties of a {@link BulkRequest BulkRequest} or {@link BulkResponse BulkResponse}.
