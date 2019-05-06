@@ -4,7 +4,7 @@
  * Copyright (c) 2014, Gluu
  */
 
-package org.gluu.oxtrust.service.test;
+package org.gluu.oxtrust.action;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
@@ -15,7 +15,6 @@ import javax.inject.Inject;
 
 import org.gluu.oxtrust.action.ConfigurationStatusAction;
 import org.gluu.oxtrust.action.Authenticator;
-import org.gluu.oxtrust.action.test.BaseTest;
 import org.gluu.oxtrust.ldap.service.ConfigurationService;
 import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.oxtrust.security.Identity;
@@ -42,9 +41,11 @@ public class ConfigurationStatusTest extends BaseTest {
 
     public void loginUuser(String userUid) {
         identity.getOauthData().setUserUid(userUid);
+        identity.getOauthData().setIdToken("dummy_id_token");
         
-        boolean loggedIn = authenticator.authenticate();
-        assertTrue(loggedIn, "User is not logged in");
+        String loggedIn = authenticator.authenticate();
+        assertEquals(loggedIn, OxTrustConstants.RESULT_SUCCESS, "User is not logged in");
+        assertTrue(identity.isLoggedIn(), "User is not logged in");
     }
 
 	@Test

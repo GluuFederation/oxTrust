@@ -4,7 +4,7 @@
  * Copyright (c) 2014, Gluu
  */
 
-package org.gluu.oxtrust.action.test;
+package org.gluu.oxtrust.action;
 
 import java.util.List;
 import java.util.Map.Entry;
