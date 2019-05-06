@@ -2,7 +2,8 @@ package org.gluu.oxtrust.model;
 
 import java.io.Serializable;
 
-import org.codehaus.jackson.annotate.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 
 public class ClientAttributes implements Serializable {
 

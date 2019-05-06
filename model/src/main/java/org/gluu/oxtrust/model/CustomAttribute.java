@@ -13,7 +13,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlType;
 
-import org.codehaus.jackson.annotate.JsonPropertyOrder;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
 
 /**
  * SCIM Custom Attributes

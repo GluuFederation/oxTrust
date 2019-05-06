@@ -9,7 +9,8 @@ package org.gluu.oxauth.client.conf;
 import java.io.Serializable;
 import java.util.List;
 
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 
 /**
  * Base application configuration

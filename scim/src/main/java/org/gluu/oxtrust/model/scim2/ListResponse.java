@@ -5,10 +5,12 @@
  */
 package org.gluu.oxtrust.model.scim2;
 
-import org.codehaus.jackson.annotate.JsonProperty;
+//import org.codehaus.jackson.annotate.JsonProperty;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import static org.gluu.oxtrust.model.scim2.Constants.LIST_RESPONSE_SCHEMA_ID;
 

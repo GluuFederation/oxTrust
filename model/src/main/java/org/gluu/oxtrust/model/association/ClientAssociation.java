@@ -16,7 +16,8 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.codehaus.jackson.annotate.JsonPropertyOrder;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
 
 /**
  * Client Association Entity

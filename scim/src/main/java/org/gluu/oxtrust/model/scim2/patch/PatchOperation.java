@@ -5,8 +5,8 @@
  */
 package org.gluu.oxtrust.model.scim2.patch;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
-import org.codehaus.jackson.annotate.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Represents a patch operation as per section 4 of RFC 6902. See also {@link PatchRequest PatchRequest}.

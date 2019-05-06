@@ -5,10 +5,11 @@
  */
 package org.gluu.oxtrust.model.scim2.user;
 
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-import org.codehaus.jackson.annotate.JsonProperty;
 import org.gluu.oxtrust.model.scim2.AttributeDefinition;
 import org.gluu.oxtrust.model.scim2.annotations.Attribute;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Represents an Instant messaging address for a user. See section 4.1.2 of RFC 7643.

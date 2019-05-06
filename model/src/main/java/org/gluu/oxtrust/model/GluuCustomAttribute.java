@@ -19,10 +19,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
 import org.gluu.model.GluuAttribute;
 import org.gluu.model.attribute.AttributeDataType;
 import org.gluu.persist.model.base.GluuBoolean;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * Attribute

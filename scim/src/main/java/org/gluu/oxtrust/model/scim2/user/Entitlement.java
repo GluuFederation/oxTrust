@@ -5,9 +5,10 @@
  */
 package org.gluu.oxtrust.model.scim2.user;
 
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.gluu.oxtrust.model.scim2.AttributeDefinition;
 import org.gluu.oxtrust.model.scim2.annotations.Attribute;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  * Represents a user's entitlement. An entitlement may be an additional right to a thing, object, or service. See
