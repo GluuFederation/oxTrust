@@ -27,7 +27,6 @@ import javax.servlet.http.HttpSession;
 import net.shibboleth.idp.authn.ExternalAuthentication;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 
-import org.codehaus.jettison.json.JSONObject;
 import org.gluu.oxauth.client.session.AbstractOAuthFilter;
 import org.gluu.oxauth.client.session.OAuthData;
 import org.gluu.oxauth.client.util.Configuration;
@@ -42,6 +41,7 @@ import org.gluu.util.ArrayHelper;
 import org.gluu.util.StringHelper;
 import org.gluu.util.security.StringEncrypter;
 import org.gluu.util.security.StringEncrypter.EncryptionException;
+import org.json.JSONObject;
 
 /**
  * Filter implementation to intercept all requests and attempt to authorize the
