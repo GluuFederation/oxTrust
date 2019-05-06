@@ -168,10 +168,9 @@
 												label="#{msg['clientForm.clientName']}" leftClass="col-sm-3"
 												rightClass="col-sm-9">
 												<h:inputText value="#{_client.displayName}"
-													styleClass="clientNameTextBox" style="width:100%;"
+													styleClass="form-control clientNameTextBox"
 													requiredMessage="Please Enter the Client Name"
-													defaultLabel="click to enter the Client Name"
-													maxlength="60" required="true" id="displayNameId" />
+													required="true" id="displayNameId" />
 											</ox:decorate>
 											<ox:decorate id="description"
 												label="#{msg['clientForm.clientDescription']}"
@@ -219,7 +218,8 @@
 															iterationStatusVar="loop">
 															<div class="row-fluid">
 																<div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
-																	<h:outputText value="#{_scope.id eq null ? _scope.displayName : _scope.id}" />
+																	<h:outputText
+																		value="#{_scope.id eq null ? _scope.displayName : _scope.id}" />
 																	<h:outputText value="&#160;" />
 																	<div class="span6 pull-right">
 																		<a4j:commandLink
@@ -450,18 +450,16 @@
 											<ox:decorate id="logoUri"
 												label="#{msg['clientForm.logoURI']}" leftClass="col-sm-3"
 												rightClass="col-sm-9">
-												<h:inputText value="#{_client.logoUri}" style="width:100%;"
-													defaultLabel="click to enter a logo for the Client application"
-													maxlength="60" inputWidth="695" required="false"
+												<h:inputText value="#{_client.logoUri}" 
+													styleClass="form-control logoUriId logoUriId" required="false"
 													id="logoUriId" />
 											</ox:decorate>
 											<ox:decorate id="policyUri"
 												label="#{msg['clientForm.policyUri']}" leftClass="col-sm-3"
 												rightClass="col-sm-9">
 												<h:inputText value="#{_client.policyUri}"
-													style="width:100%;"
-													defaultLabel="click to enter the Policy URI" maxlength="60"
-													inputWidth="695" required="false" id="policyUriId" />
+													styleClass="form-control logoUriId policyUriId" required="false"
+													id="policyUriId" />
 											</ox:decorate>
 										</div>
 
@@ -774,86 +772,72 @@
 													label="#{msg['clientForm.clientUri']}" leftClass="col-sm-3"
 													rightClass="col-sm-9">
 													<h:inputText value="#{_client.clientUri}"
-														style="width:100%;"
-														defaultLabel="click to enter the home page of the Client"
-														maxlength="60" inputWidth="695" required="false"
+														styleClass="form-control clientUriId" required="false"
 														id="clientUriId" />
 												</ox:decorate>
 												<ox:decorate id="tosUri"
 													label="#{msg['clientForm.termsOfServiceURI']}"
 													leftClass="col-sm-3" rightClass="col-sm-9">
-													<h:inputText value="#{_client.tosUri}" style="width:100%;"
-														defaultLabel="click to enter the TOS URI" maxlength="60"
-														inputWidth="695" required="false" id="tosUriId" />
+													<h:inputText value="#{_client.tosUri}"
+														styleClass="form-control tosUriId" required="false"
+														id="tosUriId" />
 												</ox:decorate>
 												<ox:decorate id="idTokenTokenBindingCnf"
 													leftClass="col-sm-3" rightClass="col-sm-9"
 													label="#{msg['clientForm.idTokenTokenBindingCnf']}">
 													<h:inputText value="#{_client.idTokenTokenBindingCnf}"
-														style="width:100%;"
-														defaultLabel="click to enter the ID Token Confirmation Method for Token Binding"
-														maxlength="60" inputWidth="695" required="false"
+														required="false"
+														styleClass="form-control idTokenTokenBindingCnfId"
 														id="idTokenTokenBindingCnfId" />
 												</ox:decorate>
 												<ox:decorate id="initiateLoginUri"
 													label="#{msg['clientForm.initiateLoginURI']}"
 													leftClass="col-sm-3" rightClass="col-sm-9">
 													<h:inputText value="#{_client.initiateLoginUri}"
-														style="width:100%;"
-														defaultLabel="Enter an URI using the https scheme use to initiate a login by the RP"
-														maxlength="60" inputWidth="695" required="false"
+														required="false"
+														styleClass="form-control initiateLoginUriId"
 														id="initiateLoginUriId" />
 												</ox:decorate>
 												<ox:decorate id="oxRefreshTokenLifetime"
 													leftClass="col-sm-3" rightClass="col-sm-9"
 													label="#{msg['clientForm.oxRefreshTokenLifetime']}">
 													<h:inputText value="#{_client.oxRefreshTokenLifetime}"
-														style="width:100%;"
-														defaultLabel="#{msg['clientForm.oxRefreshTokenLifetimeLabel']}"
-														maxlength="60" inputWidth="695" required="false"
+														required="false"
+														styleClass="form-control oxRefreshTokenLifetimeId"
 														id="oxRefreshTokenLifetimeId" />
 												</ox:decorate>
 												<ox:decorate id="oxdId" leftClass="col-sm-3"
 													rightClass="col-sm-9" label="#{msg['clientForm.oxdId']}">
 													<h:inputText value="#{_client.oxdId}" style="width:100%;"
-														defaultLabel="Enter a oxd Id for the Client application"
-														maxlength="60" inputWidth="64" required="false"
+														required="false" styleClass="form-control oxdIdId"
 														id="oxdIdId" />
 												</ox:decorate>
 												<ox:decorate id="defaultMaxAge" leftClass="col-sm-3"
 													rightClass="col-sm-9"
 													label="#{msg['clientForm.defaultMaximumAuthenticationAge']}">
 													<h:inputText value="#{_client.defaultMaxAge}"
-														style="width:100%;"
-														defaultLabel="Maximum Authentication Age (value in seconds)"
-														maxlength="60" inputWidth="695" required="false"
+														required="false" styleClass="form-control defaultMaxAgeId"
 														id="defaultMaxAgeId" />
 												</ox:decorate>
 												<ox:decorate id="accessTokenLifetime" leftClass="col-sm-3"
 													rightClass="col-sm-9"
 													label="#{msg['clientForm.accessTokenLifetime']}">
 													<h:inputText value="#{_client.accessTokenLifetime}"
-														style="width:100%;"
-														defaultLabel="Client-specific access token expiration (value in seconds). Leave it to empty or zero to use the system default value."
-														maxlength="60" inputWidth="695" required="false"
+														required="false"
+														styleClass="form-control accessTokenLifetime"
 														id="accessTokenLifetime" />
 												</ox:decorate>
 												<ox:decorate id="softwareId" leftClass="col-sm-3"
 													rightClass="col-sm-9"
 													label="#{msg['clientForm.softwareId']}">
-													<h:inputText value="#{_client.softwareId}"
-														style="width:100%;"
-														defaultLabel="Unique identifier string (UUID) assigned by the client developer or software publisher to identify the client software."
-														maxlength="60" inputWidth="695" required="false"
-														id="softwareId" />
+													<h:inputText value="#{_client.softwareId}" required="false"
+														styleClass="form-control softwareId" id="softwareId" />
 												</ox:decorate>
 												<ox:decorate id="softwareVersion" leftClass="col-sm-3"
 													rightClass="col-sm-9"
 													label="#{msg['clientForm.softwareVersion']}">
 													<h:inputText value="#{_client.softwareVersion}"
-														style="width:100%;"
-														defaultLabel="Version identifier for the client software."
-														maxlength="60" inputWidth="695" required="false"
+														required="false" styleClass="form-control softwareVersion"
 														id="softwareVersion" />
 												</ox:decorate>
 												<ox:decorate id="softwareStatement"
@@ -1034,9 +1018,8 @@
 											<ox:decorate id="jwksUri"
 												label="#{msg['clientForm.jwksURI']}" leftClass="col-sm-3"
 												rightClass="col-sm-9">
-												<h:inputText value="#{_client.jwksUri}" style="width:100%;"
-													defaultLabel="click to enter the URL for the Client's JSON Web Key Set"
-													maxlength="60" inputWidth="695" required="false"
+												<h:inputText value="#{_client.jwksUri}"
+												    required="false" styleClass="form-control jwksUriId"
 													id="jwksUriId" />
 											</ox:decorate>
 											<ox:decorate id="jwks" label="#{msg['clientForm.jwks']}"
