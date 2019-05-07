@@ -261,7 +261,7 @@ public class UpdateClientAction implements Serializable {
 			this.client = clientService.getClientByInum(inum);
 			previousClientExpirationDate = this.client.getClientSecretExpiresAt();
 			this.client.setOxAuthClientSecret(encryptionService.decrypt(this.client.getEncodedClientSecret()));
-			log.info("CLIENT SECRET UPDATE:" + this.client.getOxAuthClientSecret());
+			log.trace("CLIENT SECRET UPDATE:" + this.client.getOxAuthClientSecret());
 		} catch (BasePersistenceException ex) {
 			log.error("Failed to find client {}", inum, ex);
 		}

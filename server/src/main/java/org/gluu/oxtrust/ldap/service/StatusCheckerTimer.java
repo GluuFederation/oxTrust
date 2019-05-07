@@ -314,7 +314,7 @@ public class StatusCheckerTimer {
 		try {
 			hostname = Files.readAllLines(Paths.get("/install/community-edition-setup/output/hostname")).get(0);
 		} catch (IOException e) {
-			log.warn("+++++++++++++++++++++++++++++++++", "Error reading hostname from file");
+			log.trace("+++++++++++++++++++++++++++++++++: '{}'", "Error reading hostname from file");
 		}
 		if (hostname.equalsIgnoreCase("localhost")) {
 			hostname = getFacterResult(outputLines, OxTrustConstants.FACTER_HOST_NAME);
