@@ -5,28 +5,28 @@
     <!-- Configuration Status Test (embedded) -->
     <test name="Configuration Status Test (embedded)" enabled="true">
         <classes>
-            <class name="org.gluu.oxtrust.service.test.ConfigurationStatusTest"/>
+            <class name="org.gluu.oxtrust.service.ConfigurationStatusTest"/>
         </classes>
     </test>
 
     <!-- Group Service Test (embedded) -->
     <test name="Group Service Test (embedded)" enabled="true">
         <classes>
-            <class name="org.gluu.oxtrust.service.test.GroupServiceTest" />
+            <class name="org.gluu.oxtrust.service.GroupServiceTest" />
         </classes>
     </test>
 
     <!-- Person Service Test (embedded) -->
     <test name="Person Service Test (embedded)" enabled="true">
         <classes>
-            <class name="org.gluu.oxtrust.service.test.PersonServiceTest" />
+            <class name="org.gluu.oxtrust.service.PersonServiceTest" />
         </classes>
     </test>
 
     <!-- Post Logout Redirect Service Test (embedded) -->
     <test name="Post Logout Redirect Service Test (embedded)" enabled="true">
         <classes>
-            <class name="org.gluu.oxtrust.service.test.PostLogoutRedirectUriTest" />
+            <class name="org.gluu.oxtrust.service.PostLogoutRedirectUriTest" />
         </classes>
     </test>
 
