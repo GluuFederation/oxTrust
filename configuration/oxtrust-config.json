@@ -103,8 +103,8 @@
     "oxAuthClientPassword":"${config.host.oxauth_client_password}",
     "oxAuthClientScope":"openid+profile+address+email+user_name",
 
-    "loginRedirectUrl":"${config.host.schema}://${config.host.idp_name}${config.oxtrust.web_context}/authentication/authcode",
-    "logoutRedirectUrl":"${config.host.schema}://${config.host.idp_name}${config.oxtrust.web_context}/authentication/finishlogout",
+    "loginRedirectUrl":"${config.host.schema}://${config.host.idp_name}${config.oxtrust.web_context}/authcode",
+    "logoutRedirectUrl":"${config.host.schema}://${config.host.idp_name}${config.oxtrust.web_context}/finishlogout",
 
     "umaIssuer":"${config.uma.issuer}",
     "scimUmaClientId":"${config.uma.client_id}",

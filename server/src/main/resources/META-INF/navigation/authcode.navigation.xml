@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <faces-config xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.2" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
 
-  <rewrite pattern="/authentication/getauthcode" xmlns="http://xmlns.gluu.org/jsf/pages"/>
-
   <navigation-rule>
-    <from-view-id>/getAuthorizationCode.xhtml</from-view-id>
+    <from-view-id>/authcode.xhtml</from-view-id>
 
     <navigation-case>
       <from-action>#{authenticator.oAuthGetAccessToken}</from-action>

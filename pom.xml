@@ -269,18 +269,6 @@
 				<version>6.2</version>
 			</dependency>
 
-			<!-- Prettyfaces -->
-			<dependency>
-				<groupId>org.ocpsoft.rewrite</groupId>
-				<artifactId>rewrite-servlet</artifactId>
-				<version>3.4.2.Final</version>
-			</dependency>
-			<dependency>
-				<groupId>org.ocpsoft.rewrite</groupId>
-				<artifactId>rewrite-config-prettyfaces</artifactId>
-				<version>3.4.2.Final</version>
-			</dependency>
-
 			<!-- Commons libs -->
 			<dependency>
 				<groupId>commons-codec</groupId>
