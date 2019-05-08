@@ -47,16 +47,16 @@ public class GlobalExceptionHandler extends ExceptionHandlerWrapper {
             final ExternalContext externalContext = fc.getExternalContext();
             try {
 				if (isSecurityException(t)) {
-					performRedirect(externalContext, "/login");
+					performRedirect(externalContext, "/login.htm");
 				} else if (isConversationException(t)) {
 					log.trace(t.getMessage(), t);
-					performRedirect(externalContext, "/conversation_error");
+					performRedirect(externalContext, "/conversation_error.htm");
 				} if (isViewExpiredException(t)) {
                     storeRequestURI();
-                    performRedirect(externalContext, "/login");
+                    performRedirect(externalContext, "/login.htm");
 				} else {
 					log.trace(t.getMessage(), t);
-					performRedirect(externalContext, "/error");
+					performRedirect(externalContext, "/error.htm");
 				}
                 fc.renderResponse();
             } finally {

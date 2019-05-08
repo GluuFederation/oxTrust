@@ -10,7 +10,7 @@
 
     <rich:toolbarGroup>
         <h:graphicImage value="/img/white_icosahedron.gif" width="22" height="22" />
-        <h:link includeViewParams="false" outcome="/home" value="Home" style="color: white; text-decoration: none;" />
+        <h:link includeViewParams="false" outcome="/home.htm" value="Home" style="color: white; text-decoration: none;" />
         <a4j:status id="globalAjaxStatus">
             <f:facet name="start">
                 <h:graphicImage value="/img/ajax_active.gif" width="22" height="22" />
@@ -20,8 +20,8 @@
 
     <rich:toolbarGroup location="right">
         <h:outputText id="menuWelcomeId" value="signed in as: #{credentials.username}" rendered="#{identity.loggedIn}" />
-        <h:link includeViewParams="false" outcome="/login" value="Login" style="color: white; text-decoration: none;" rendered="#{not identity.loggedIn and not isLogin}" />
-        <h:link includeViewParams="false" outcome="/register" value="#{msg['layout.register']}" style="color: white; text-decoration: none;" rendered="#{not identity.loggedIn}" />
+        <h:link includeViewParams="false" outcome="/login.htm" value="Login" style="color: white; text-decoration: none;" rendered="#{not identity.loggedIn and not isLogin}" />
+        <h:link includeViewParams="false" outcome="/register.htm" value="#{msg['layout.register']}" style="color: white; text-decoration: none;" rendered="#{not identity.loggedIn}" />
 
         <rich:dropDownMenu mode="server" label="#{msg['layout.configuration']}" rendered="#{permissionService.hasPermission('configuration', 'access') or permissionService.hasPermission('scim', 'access') or permissionService.hasPermission('attribute', 'access') or permissionService.hasPermission('configuration', 'access')}">
             <rich:menuItem label="#{msg['layout.organizationConfiguration']}" action="#{menuAction.endConversation('/organization/updateOrganization.xhtml')}" rendered="#{permissionService.hasPermission('configuration', 'access')}" />
@@ -74,6 +74,6 @@
             <rich:menuItem label="#{msg['layout.whitePages']}" action="#{menuAction.endConversation('/whitePage/viewWhitePages.xhtml')}" rendered="#{permissionService.hasPermission(applianceService.appliance, 'whitePagesEnabled')}" />
         </rich:dropDownMenu>
 
-        <h:link includeViewParams="false" outcome="/logout" value="#{msg['layout.logout']}" style="color: white; text-decoration: none;" rendered="#{identity.loggedIn}" />
+        <h:link includeViewParams="false" outcome="/logout.htm" value="#{msg['layout.logout']}" style="color: white; text-decoration: none;" rendered="#{identity.loggedIn}" />
     </rich:toolbarGroup>
 </rich:toolbar>
