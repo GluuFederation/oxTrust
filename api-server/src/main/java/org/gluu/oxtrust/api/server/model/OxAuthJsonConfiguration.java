@@ -42,7 +42,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 		"sessionIdUnusedLifetime", "sessionIdUnauthenticatedUnusedLifetime", "sessionIdEnabled",
 		"sessionIdPersistOnPromptNone", "sessionIdLifetime", "configurationUpdateInterval", "cssLocation", "jsLocation",
 		"imgLocation", "metricReporterInterval", "metricReporterKeepDataDays", "pairwiseIdType",
-		"pairwiseCalculationKey", "pairwiseCalculationSalt", "webKeysStorage", "dnName", "keyStoreFile",
+		"pairwiseCalculationKey", "pairwiseCalculationSalt", "shareSubjectIdBetweenClientsWithSameSectorId",
+		"webKeysStorage", "dnName", "keyStoreFile",
 		"keyStoreSecret", "endSessionWithAccessToken", "clientWhiteList", "clientBlackList", "legacyIdTokenClaims",
 		"customHeadersWithAuthorizationResponse", "frontChannelLogoutSessionSupported", "updateUserLastLogonTime",
 		"updateClientAccessTime", "enableClientGrantTypeUpdate", "corsConfigurationFilters",
@@ -265,6 +266,8 @@ public class OxAuthJsonConfiguration {
 	private String pairwiseCalculationKey;
 	@JsonProperty("pairwiseCalculationSalt")
 	private String pairwiseCalculationSalt;
+	@JsonProperty("shareSubjectIdBetweenClientsWithSameSectorId")
+	private Boolean shareSubjectIdBetweenClientsWithSameSectorId;
 	@JsonProperty("webKeysStorage")
 	private String webKeysStorage;
 	@JsonProperty("dnName")
@@ -1385,6 +1388,16 @@ public class OxAuthJsonConfiguration {
 	@JsonProperty("pairwiseCalculationSalt")
 	public void setPairwiseCalculationSalt(String pairwiseCalculationSalt) {
 		this.pairwiseCalculationSalt = pairwiseCalculationSalt;
+	}
+
+	@JsonProperty("shareSubjectIdBetweenClientsWithSameSectorId")
+	public Boolean getShareSubjectIdBetweenClientsWithSameSectorId() {
+		return shareSubjectIdBetweenClientsWithSameSectorId;
+	}
+
+	@JsonProperty("shareSubjectIdBetweenClientsWithSameSectorId")
+	public void setShareSubjectIdBetweenClientsWithSameSectorId(Boolean shareSubjectIdBetweenClientsWithSameSectorId) {
+		this.shareSubjectIdBetweenClientsWithSameSectorId = shareSubjectIdBetweenClientsWithSameSectorId;
 	}
 
 	@JsonProperty("webKeysStorage")
