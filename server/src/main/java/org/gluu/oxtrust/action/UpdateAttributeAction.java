@@ -210,14 +210,10 @@ public class UpdateAttributeAction implements Serializable {
 	}
 
 	public String getScimValue(String key) {
-		log.info("++++++++++++++++++++++++++++++++++++++:"+key);
-		log.info("+++++++"+ldapScim.keySet().toString());
 		return ldapScim.get(key);
 	}
 
 	public boolean isScimAttribute(String key) {
-		log.info("++++++++++++++++++++++++++++++++++++++:"+key);
-		log.info("+++++++"+ldapScim.keySet().toString());
 		return ldapScim.get(key) != null ? true : false;
 	}
 
