@@ -1020,6 +1020,11 @@
             "type": "string",
             "minLength": 1
         },
+        "shareSubjectIdBetweenClientsWithSameSectorId": {
+            "id": "shareSubjectIdBetweenClientsWithSameSectorId",
+            "description": "Share Subject ID between clients with same Sector ID.",
+            "type": "boolean"
+        },
         "webKeysStorage": {
             "id": "webKeysStorage",
             "description": "Web Key Storage Type.",
@@ -1493,6 +1498,7 @@
         "pairwiseIdType",
         "pairwiseCalculationKey",
         "pairwiseCalculationSalt",
+        "shareSubjectIdBetweenClientsWithSameSectorId",
         "webKeysStorage",
         "dnName",
         "keyStoreFile",
