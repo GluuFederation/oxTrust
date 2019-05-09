@@ -109,7 +109,8 @@
 									id="usageTypeId" rendered="#{_attributeAction.canEdit()}">
 									<f:selectItem noSelectionOption="true" itemLabel="Not defined" />
 									<f:selectItems value="#{attributeService.attributeUsageTypes}"
-										var="_type" itemLabel="#{_type.displayName}" itemValue="#{_type}" />
+										var="_type" itemLabel="#{_type.displayName}"
+										itemValue="#{_type}" />
 								</h:selectManyListbox>
 
 								<ui:fragment rendered="#{not _attributeAction.canEdit()}">
@@ -141,16 +142,25 @@
 								<h:outputText value="#{_attribute.oxAuthClaimName}"
 									rendered="#{not _attributeAction.canEdit()}" />
 							</ox:decorate>
-
-							<ox:decorate id="scimattr"
+							<ox:decorate id="scimAttribute"
+							    rendered="#{_attributeAction.isScimAttribute(_attribute.name)}"
 								label="#{msg['attribute.scimAttribute']}">
+								<h:outputText value="#{_attributeAction.getScimValue(_attribute.name)}"
+									id="scimAttributeId"
+									styleClass="form-control scimAttributeField">
+								</h:outputText>
+							</ox:decorate>
+							<ox:decorate id="scimExtendedAttribute"
+							    rendered="#{not _attributeAction.isScimAttribute(_attribute.name)}"
+								label="SCIM extended attribute">
 								<h:selectBooleanCheckbox
-									value="#{_attribute.oxSCIMCustomAttribute}" id="scimAttrId"
-									styleClass="form-control scimAttributeField"
+									value="#{_attribute.oxSCIMCustomAttribute}" id="scimExtendedAttributeId"
+									styleClass="form-control scimExtendedAttributeField"
 									disabled="#{not _attributeAction.canEdit()}">
 									<a4j:ajax event="click" render="validation" />
 								</h:selectBooleanCheckbox>
 							</ox:decorate>
+
 
 							<ox:decorate id="description"
 								label="#{msg['attribute.description']}">
