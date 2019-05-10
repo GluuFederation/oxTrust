@@ -2,6 +2,7 @@ package org.gluu.oxtrust.util;
 
 import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.persist.ldap.operation.impl.LdapConnectionProvider;
+import org.gluu.persist.service.PersistanceFactoryService;
 import org.gluu.util.properties.FileConfiguration;
 import org.gluu.util.security.PropertiesDecrypter;
 
@@ -35,7 +36,7 @@ public class ConnectionStatus {
 	private FileConfiguration loadFileConfiguration() {
 		FileConfiguration configuration = new FileConfiguration(ConfigurationFactory.LDAP_PROPERTIES_FILE);
 		if (!configuration.isLoaded()) {
-			configuration = new FileConfiguration(ConfigurationFactory.LDAP_DEFAULT_PROPERTIES_FILE);
+			configuration = new FileConfiguration(PersistanceFactoryService.LDAP_DEFAULT_PROPERTIES_FILE);
 		}
 		return configuration;
 	}
