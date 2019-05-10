@@ -16,9 +16,10 @@ import javax.inject.Named;
 import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.model.SmtpConfiguration;
 import org.gluu.oxtrust.config.ConfigurationFactory;
-import org.gluu.oxtrust.config.ConfigurationFactory.PersistenceConfiguration;
 import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.persist.PersistenceEntryManagerFactory;
+import org.gluu.persist.model.PersistenceConfiguration;
+import org.gluu.persist.service.PersistanceFactoryService;
 import org.gluu.service.cache.CacheConfiguration;
 import org.gluu.service.cache.InMemoryConfiguration;
 import org.slf4j.Logger;
@@ -43,6 +44,9 @@ public class ApplicationFactory {
 
     @Inject
     private Instance<PersistenceEntryManagerFactory> persistenceEntryManagerFactoryInstance;
+
+	@Inject
+	private PersistanceFactoryService persistanceFactoryService;
 
     @Inject
     private AppConfiguration appConfiguration;
@@ -91,10 +95,8 @@ public class ApplicationFactory {
 
     public PersistenceEntryManagerFactory getPersistenceEntryManagerFactory() {
         PersistenceConfiguration persistenceConfiguration = configurationFactory.getPersistenceConfiguration();
-        PersistenceEntryManagerFactory persistenceEntryManagerFactory = persistenceEntryManagerFactoryInstance
-                .select(persistenceConfiguration.getEntryManagerFactoryType()).get();
 
-        return persistenceEntryManagerFactory;
+        return persistanceFactoryService.getPersistenceEntryManagerFactory(persistenceConfiguration);
     }
 
 }

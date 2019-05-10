@@ -53,6 +53,7 @@ import org.gluu.oxtrust.model.SimplePropertiesListModel;
 import org.gluu.oxtrust.service.external.ExternalCacheRefreshService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.ldap.operation.impl.LdapConnectionProvider;
+import org.gluu.persist.service.PersistanceFactoryService;
 import org.gluu.service.security.Secure;
 import org.gluu.util.StringHelper;
 import org.gluu.util.properties.FileConfiguration;
@@ -706,7 +707,7 @@ public class ConfigureCacheRefreshAction
 		try {
 			FileConfiguration configuration = new FileConfiguration(ConfigurationFactory.LDAP_PROPERTIES_FILE);
 			if (!configuration.isLoaded()) {
-				configuration = new FileConfiguration(ConfigurationFactory.LDAP_DEFAULT_PROPERTIES_FILE);
+				configuration = new FileConfiguration(PersistanceFactoryService.LDAP_DEFAULT_PROPERTIES_FILE);
 			}
 			Properties properties = configuration.getProperties();
 			properties.setProperty("bindDN", ldapConfig.getBindDN());
