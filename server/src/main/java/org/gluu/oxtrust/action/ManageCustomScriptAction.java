@@ -6,6 +6,7 @@
 
 package org.gluu.oxtrust.action;
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,6 +22,8 @@ import javax.enterprise.context.ConversationScoped;
 import javax.faces.application.FacesMessage;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
@@ -43,6 +46,10 @@ import org.gluu.service.security.Secure;
 import org.gluu.util.OxConstants;
 import org.gluu.util.StringHelper;
 import org.slf4j.Logger;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * Add/Modify custom script configurations
@@ -52,7 +59,8 @@ import org.slf4j.Logger;
 @Named("manageCustomScriptAction")
 @ConversationScoped
 @Secure("#{permissionService.hasPermission('configuration', 'access')}")
-public class ManageCustomScriptAction implements SimplePropertiesListModel, SimpleCustomPropertiesListModel, Serializable {
+public class ManageCustomScriptAction
+		implements SimplePropertiesListModel, SimpleCustomPropertiesListModel, Serializable {
 
 	private static final long serialVersionUID = -3823022039248381963L;
 
@@ -72,11 +80,13 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 
 	@Inject
 	private AbstractCustomScriptService customScriptService;
-	
+
 	private Map<CustomScriptType, List<CustomScript>> customScriptsByTypes;
 
 	private boolean initialized;
-	
+
+	private static List<String> allAcrs = new ArrayList<>();
+
 	public String modify() {
 		if (this.initialized) {
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -87,7 +97,8 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 			this.customScriptsByTypes.put(customScriptType, new ArrayList<CustomScript>());
 		}
 		try {
-			List<CustomScript> customScripts = customScriptService.findCustomScripts(Arrays.asList(allowedCustomScriptTypes));
+			List<CustomScript> customScripts = customScriptService
+					.findCustomScripts(Arrays.asList(allowedCustomScriptTypes));
 			for (CustomScript customScript : customScripts) {
 				// Automatic package update '.xdi' --> '.org'
 				// TODO: Remove in CE 5.0
@@ -122,9 +133,11 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 
 	public String save() {
 		try {
-			List<CustomScript> oldCustomScripts = customScriptService.findCustomScripts(Arrays.asList(this.configurationService.getCustomScriptTypes()), "dn", "inum");
+			List<CustomScript> oldCustomScripts = customScriptService
+					.findCustomScripts(Arrays.asList(this.configurationService.getCustomScriptTypes()), "dn", "inum");
 			List<String> updatedInums = new ArrayList<String>();
-			for (Entry<CustomScriptType, List<CustomScript>> customScriptsByType : this.customScriptsByTypes.entrySet()) {
+			for (Entry<CustomScriptType, List<CustomScript>> customScriptsByType : this.customScriptsByTypes
+					.entrySet()) {
 				List<CustomScript> customScripts = customScriptsByType.getValue();
 				for (CustomScript customScript : customScripts) {
 					String configId = customScript.getName();
@@ -133,11 +146,13 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 						return OxTrustConstants.RESULT_FAILURE;
 					}
 					boolean nameValidation = NAME_PATTERN.matcher(customScript.getName()).matches();
-                    if (!nameValidation) {
-                        facesMessages.add(FacesMessage.SEVERITY_ERROR, "'%s' is invalid script name. Only alphabetic, numeric and underscore characters are allowed in Script Name", configId);
-                        return OxTrustConstants.RESULT_FAILURE;
-                    }
-                    customScript.setRevision(customScript.getRevision() + 1);
+					if (!nameValidation) {
+						facesMessages.add(FacesMessage.SEVERITY_ERROR,
+								"'%s' is invalid script name. Only alphabetic, numeric and underscore characters are allowed in Script Name",
+								configId);
+						return OxTrustConstants.RESULT_FAILURE;
+					}
+					customScript.setRevision(customScript.getRevision() + 1);
 					boolean update = true;
 					String dn = customScript.getDn();
 					String customScriptId = customScript.getInum();
@@ -147,17 +162,20 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 						customScript.setDn(dn);
 						customScript.setInum(customScriptId);
 						update = false;
-					};
+					}
+					;
 					customScript.setDn(dn);
 					customScript.setInum(customScriptId);
 					if (ScriptLocationType.LDAP == customScript.getLocationType()) {
 						customScript.removeModuleProperty(CustomScript.LOCATION_PATH_MODEL_PROPERTY);
 					}
-					if ((customScript.getConfigurationProperties() != null) && (customScript.getConfigurationProperties().size() == 0)) {
+					if ((customScript.getConfigurationProperties() != null)
+							&& (customScript.getConfigurationProperties().size() == 0)) {
 						customScript.setConfigurationProperties(null);
 					}
-					
-					if ((customScript.getConfigurationProperties() != null) && (customScript.getModuleProperties().size() == 0)) {
+
+					if ((customScript.getConfigurationProperties() != null)
+							&& (customScript.getModuleProperties().size() == 0)) {
 						customScript.setModuleProperties(null);
 					}
 					updatedInums.add(customScriptId);
@@ -251,30 +269,93 @@ public class ManageCustomScriptAction implements SimplePropertiesListModel, Simp
 	}
 
 	@Override
-	public void removeItemFromSimpleCustomProperties(List<SimpleCustomProperty> simpleCustomProperties, SimpleCustomProperty simpleCustomProperty) {
+	public void removeItemFromSimpleCustomProperties(List<SimpleCustomProperty> simpleCustomProperties,
+			SimpleCustomProperty simpleCustomProperty) {
 		if (simpleCustomProperties != null) {
 			simpleCustomProperties.remove(simpleCustomProperty);
 		}
 	}
 
 	public boolean hasCustomScriptError(CustomScript customScript) {
-	    String error = getCustomScriptError(customScript);
-        return error != null;
-    }
+		String error = getCustomScriptError(customScript);
+		return error != null;
+	}
 
 	public String getCustomScriptError(CustomScript customScript) {
-	    if ((customScript == null) || (customScript.getDn() == null)) {
-	        return null;
-	    }
-	    CustomScript currentScript = customScriptService.getCustomScriptByDn(customScript.getDn(), "oxScriptError");
-	    if ((currentScript != null) && (currentScript.getScriptError() != null)) {
-	        return currentScript.getScriptError().getStackTrace();
-	    }
-        return null;
+		if ((customScript == null) || (customScript.getDn() == null)) {
+			return null;
+		}
+		CustomScript currentScript = customScriptService.getCustomScriptByDn(customScript.getDn(), "oxScriptError");
+		if ((currentScript != null) && (currentScript.getScriptError() != null)) {
+			return currentScript.getScriptError().getStackTrace();
+		}
+		return null;
 	}
 
 	public boolean isInitialized() {
 		return initialized;
+	}
+
+	public List<String> getAvailableAcrs(String scriptName) {
+		cleanAcrs(scriptName);
+		return allAcrs;
+	}
+
+	public void initAcrs() {
+		try {
+			File file = new File("/opt/shibboleth-idp/conf/authn/general-authn.xml");
+			DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+			Document document = documentBuilder.parse(file);
+			document.getDocumentElement().normalize();
+			NodeList nodes = document.getElementsByTagName("util:list");
+			NodeList childNodes = nodes.item(0).getChildNodes();
+			Element element = null;
+			for (int index = 0; index < childNodes.getLength(); index++) {
+				Node node = childNodes.item(index);
+				if (node.getNodeType() == Node.ELEMENT_NODE) {
+					Element e = (Element) node;
+					String id = e.getAttribute("id");
+					if (id.equalsIgnoreCase("authn/oxAuth")) {
+						element = e;
+						break;
+					}
+				}
+			}
+			if (element != null) {
+				NodeList items = element.getElementsByTagName("bean");
+				for (int i = 0; i < items.getLength(); i++) {
+					Element node = (Element) items.item(i);
+					allAcrs.add(node.getAttribute("c:classRef"));
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public String getDisplayName(String value) {
+		String[] values = value.split(":");
+		return values[values.length - 1];
+	}
+
+	public boolean isPersonScript(CustomScript script) {
+		return script.getScriptType().getValue().equalsIgnoreCase(CustomScriptType.PERSON_AUTHENTICATION.getValue());
+	}
+
+	private void cleanAcrs(String name) {
+		List<CustomScript> scripts = customScriptsByTypes.get(CustomScriptType.PERSON_AUTHENTICATION);
+		for (CustomScript customScript : scripts) {
+			if (name != customScript.getName()) {
+				List<String> existing = customScript.getAliases();
+				if (existing != null && existing.size() > 0) {
+					for (String value : existing) {
+						allAcrs.remove(value);
+					}
+				}
+			}
+
+		}
 	}
 
 }
