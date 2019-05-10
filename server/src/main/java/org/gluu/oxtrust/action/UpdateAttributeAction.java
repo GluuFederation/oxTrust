@@ -7,7 +7,12 @@
 package org.gluu.oxtrust.action;
 
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
@@ -29,6 +34,12 @@ import org.gluu.model.attribute.AttributeValidation;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.OxTrustAuditService;
 import org.gluu.oxtrust.ldap.service.TrustService;
+import org.gluu.oxtrust.model.scim2.BaseScimResource;
+import org.gluu.oxtrust.model.scim2.fido.FidoDeviceResource;
+import org.gluu.oxtrust.model.scim2.group.GroupResource;
+import org.gluu.oxtrust.model.scim2.user.UserResource;
+import org.gluu.oxtrust.model.scim2.util.IntrospectUtil;
+import org.gluu.oxtrust.model.scim2.util.ScimResourceUtil;
 import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.exception.BasePersistenceException;
@@ -84,8 +95,31 @@ public class UpdateAttributeAction implements Serializable {
 
 	private boolean validationToggle;
 	private boolean tooltipToggle;
+	private static final Map<String, String> ldapScim = new HashMap<>();
 
 	private boolean canEdit;
+
+	static {
+		Map<Class<? extends BaseScimResource>, Map<String, String>> refs = new HashMap<>(IntrospectUtil.storeRefs);
+		List<Class<? extends Object>> resourceTypes = Arrays.asList(UserResource.class, FidoDeviceResource.class,
+				GroupResource.class);
+		Predicate<Class<? extends BaseScimResource>> p = resourceTypes::contains;
+		refs.keySet().removeIf(p.negate());
+
+		for (Class<? extends BaseScimResource> resourceType : refs.keySet()) {
+			Map<String, String> scimLdap = refs.get(resourceType);
+			String resourceName = ScimResourceUtil.getType(resourceType);
+
+			for (String scimAttr : scimLdap.keySet()) {
+				String ldapAttr = scimLdap.get(scimAttr);
+				String val = ldapScim.getOrDefault(ldapAttr, String.format("%s (", scimAttr));
+				val += String.format("%s/", resourceName);
+				ldapScim.put(ldapAttr, val);
+			}
+		}
+		ldapScim.keySet()
+				.forEach(ldapAttr -> ldapScim.compute(ldapAttr, (k, v) -> v.substring(0, v.length() - 1).concat(")")));
+	}
 
 	public String add() {
 		if (this.attribute != null) {
@@ -173,6 +207,14 @@ public class UpdateAttributeAction implements Serializable {
 
 	private boolean isAllowEdit() {
 		return this.attribute.isAdminCanEdit();
+	}
+
+	public String getScimValue(String key) {
+		return ldapScim.get(key);
+	}
+
+	public boolean isScimAttribute(String key) {
+		return ldapScim.get(key) != null ? true : false;
 	}
 
 	public String cancel() {

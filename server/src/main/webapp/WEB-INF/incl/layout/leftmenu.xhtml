@@ -380,16 +380,25 @@
 
 							//Menu Highlights - Configuration
 							if (window.location.href
-									.indexOf("organization/configuration") != -1) {
+									.indexOf("organization/updateOrganization") != -1) {
 								$('#subMenuConfiguration').css('display',
 										'block');
 								$('#menuConfiguration').addClass('active');
 								$('#subMenuLinkConfiguration1').addClass(
 										'active');
 							}
+							if (window.location.href
+									.indexOf("organization/manageRegistration") != -1) {
+								$('#subMenuConfiguration').css('display',
+										'block');
+								$('#menuConfiguration').addClass('active');
+								$('#subMenuLinkConfiguration5').addClass(
+										'active');
+							}
+
 
 							if (window.location.href
-									.indexOf("configuration/update") != -1) {
+									.indexOf("configuration/updateConfiguration") != -1) {
 								$('#subMenuConfiguration').css('display',
 										'block');
 								$('#menuConfiguration').addClass('active');
@@ -398,7 +407,7 @@
 							}
 
 							if (window.location.href
-									.indexOf("authentication/configuration") != -1) {
+									.indexOf("authentication/manageCustomAuthentication") != -1) {
 								$('#subMenuConfiguration').css('display',
 										'block');
 								$('#menuConfiguration').addClass('active');
@@ -407,7 +416,7 @@
 							}
 
 							if (window.location.href
-									.indexOf("script/configuration") != -1) {
+									.indexOf("script/manageCustomScript") != -1) {
 								$('#subMenuConfiguration').css('display',
 										'block');
 								$('#menuConfiguration').addClass('active');
@@ -416,7 +425,7 @@
 							}
 
 							if (window.location.href
-									.indexOf("configuration/registration") != -1) {
+									.indexOf("organization/manageRegistration") != -1) {
 								$('#subMenuConfiguration').css('display',
 										'block');
 								$('#menuConfiguration').addClass('active');
@@ -425,9 +434,9 @@
 							}
 
 							if (window.location.href
-									.indexOf("attribute/inventory") != -1
-									|| window.location.href.indexOf("attribute/add") != -1
-									|| window.location.href.indexOf("attribute/update") != -1) {
+									.indexOf("attribute/attributeInventory") != -1
+									|| window.location.href.indexOf("attribute/addAttribute") != -1
+									|| window.location.href.indexOf("attribute/updateAttribute") != -1) {
 								$('#subMenuConfiguration').css('display',
 										'block');
 								$('#menuConfiguration').addClass('active');
@@ -436,7 +445,7 @@
 							}
 
 							if (window.location.href
-									.indexOf("organization/cacherefresh") != -1) {
+									.indexOf("organization/cacheRefresh") != -1) {
 								$('#subMenuConfiguration').css('display',
 										'block');
 								$('#menuConfiguration').addClass('active');
@@ -471,7 +480,7 @@
 							}
 
 							if (window.location.href
-									.indexOf("attribute/import") != -1) {
+									.indexOf("attribute/attributeImport") != -1) {
 								$('#subMenuConfiguration').css('display',
 										'block');
 								$('#menuConfiguration').addClass('active');
@@ -491,15 +500,15 @@
 
 							//Menu Highlights - SAML
 							if (window.location.href
-									.indexOf("trustmanager/relationships") != -1
+									.indexOf("trustmanager/trustRelationships") != -1
 									|| window.location.href
-											.indexOf("trustmanager/update") != -1) {
+											.indexOf("trustmanager/updateTrustRelationship") != -1) {
 								$('#subMenuSAML').css('display', 'block');
 								$('#menuSAML').addClass('active');
 								$('#subMenuLinkSAML1').addClass('active');
 							}
 							if (window.location.href
-									.indexOf("trustmanager/add") != -1) {
+									.indexOf("trustmanager/addTrustRelationship") != -1) {
 								$('#subMenuSAML').css('display', 'block');
 								$('#menuSAML').addClass('active');
 								$('#subMenuLinkSAML2').addClass('active');
