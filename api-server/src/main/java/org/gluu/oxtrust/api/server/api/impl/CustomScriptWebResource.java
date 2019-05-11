@@ -30,6 +30,8 @@ import org.slf4j.Logger;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiResponse;
+import com.wordnik.swagger.annotations.ApiResponses;
 
 @Path(ApiConstants.BASE_API_URL + ApiConstants.CONFIGURATION + ApiConstants.SCRIPTS)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -53,6 +55,8 @@ public class CustomScriptWebResource extends BaseWebResource {
 
 	@GET
 	@ApiOperation(value = "Get all custom scripts")
+	@ApiResponses(value = { @ApiResponse(code = 200, response = CustomScript[].class, message = "Success"),
+			@ApiResponse(code = 500, message = "Server error") })
 	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response listCustomScripts() {
 		log(logger, "Get all custom scripts");
@@ -68,6 +72,8 @@ public class CustomScriptWebResource extends BaseWebResource {
 	@GET
 	@Path(ApiConstants.TYPE_PATH + ApiConstants.TYPE_PARAM_PATH)
 	@ApiOperation(value = "Get person authentications scripts")
+	@ApiResponses(value = { @ApiResponse(code = 200, response = CustomScript[].class, message = "Success"),
+			@ApiResponse(code = 500, message = "Server error") })
 	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response listCustomScriptsByType(@PathParam(ApiConstants.TYPE) @NotNull String type) {
 		log(logger, "Get custom scripts of type: " + type);
@@ -90,6 +96,8 @@ public class CustomScriptWebResource extends BaseWebResource {
 	@GET
 	@Path(ApiConstants.INUM_PARAM_PATH)
 	@ApiOperation(value = "Get scripts by inum")
+	@ApiResponses(value = { @ApiResponse(code = 200, response = CustomScript.class, message = "Success"),
+			@ApiResponse(code = 500, message = "Server error") })
 	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response getCustomScriptsByInum(@PathParam(ApiConstants.INUM) @NotNull String inum) {
 		log(logger, "Get scripts by inum");
@@ -108,6 +116,8 @@ public class CustomScriptWebResource extends BaseWebResource {
 
 	@POST
 	@ApiOperation(value = "Add new custom script")
+	@ApiResponses(value = { @ApiResponse(code = 200, response = CustomScript.class, message = "Success"),
+			@ApiResponse(code = 500, message = "Server error") })
 	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response createCustomScript(CustomScript customScript) {
 		log(logger, "Add new custom script ");
@@ -131,6 +141,8 @@ public class CustomScriptWebResource extends BaseWebResource {
 
 	@PUT
 	@ApiOperation(value = "Update custom script")
+	@ApiResponses(value = { @ApiResponse(code = 200, response = CustomScript.class, message = "Success"),
+			@ApiResponse(code = 500, message = "Server error") })
 	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response updateCustomScript(CustomScript customScript) {
 		try {
@@ -154,6 +166,8 @@ public class CustomScriptWebResource extends BaseWebResource {
 	@DELETE
 	@Path(ApiConstants.INUM_PARAM_PATH)
 	@ApiOperation(value = "Delete an custom script")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Success"),
+			@ApiResponse(code = 500, message = "Server error") })
 	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response deleteCustomScript(@PathParam(ApiConstants.INUM) @NotNull String inum) {
 		log(logger, "Delete custom script" + inum);

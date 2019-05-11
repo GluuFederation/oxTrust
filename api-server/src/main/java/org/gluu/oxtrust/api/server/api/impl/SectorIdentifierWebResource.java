@@ -20,13 +20,15 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.gluu.oxtrust.api.server.util.ApiConstants;
 import org.gluu.oxtrust.ldap.service.SectorIdentifierService;
 import org.gluu.oxtrust.model.OxAuthSectorIdentifier;
 import org.gluu.oxtrust.service.filter.ProtectedApi;
-import org.gluu.oxtrust.api.server.util.ApiConstants;
 import org.slf4j.Logger;
 
 import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiResponse;
+import com.wordnik.swagger.annotations.ApiResponses;
 
 @Path(ApiConstants.BASE_API_URL + ApiConstants.SECTORS)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -44,6 +46,8 @@ public class SectorIdentifierWebResource extends BaseWebResource {
 
 	@GET
 	@ApiOperation(value = "Get all sectors identifiers")
+	@ApiResponses(value = { @ApiResponse(code = 200, response = OxAuthSectorIdentifier[].class, message = "Success"),
+			@ApiResponse(code = 500, message = "Server error") })
 	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response getAllSectorIdentifiers() {
 		log("Get all sectors identifiers ");
@@ -58,6 +62,8 @@ public class SectorIdentifierWebResource extends BaseWebResource {
 	@GET
 	@Path(ApiConstants.ID_PARAM_PATH)
 	@ApiOperation(value = "Get a sector identifier")
+	@ApiResponses(value = { @ApiResponse(code = 200, response = OxAuthSectorIdentifier.class, message = "Success"),
+			@ApiResponse(code = 500, message = "Server error") })
 	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response getSectorIdentifierById(@PathParam(ApiConstants.ID) @NotNull String id) {
 		log("Get sector identifier having id: " + id);
@@ -78,6 +84,8 @@ public class SectorIdentifierWebResource extends BaseWebResource {
 	@GET
 	@Path(ApiConstants.SEARCH)
 	@ApiOperation(value = "Search sectors identifiers")
+	@ApiResponses(value = { @ApiResponse(code = 200, response = OxAuthSectorIdentifier[].class, message = "Success"),
+			@ApiResponse(code = 500, message = "Server error") })
 	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response searchSectorIdentifier(@QueryParam(ApiConstants.SEARCH_PATTERN) String pattern,
 			@DefaultValue("10") @QueryParam(value = "size") int size) {
@@ -94,6 +102,8 @@ public class SectorIdentifierWebResource extends BaseWebResource {
 
 	@POST
 	@ApiOperation(value = "Add a sector identifier")
+	@ApiResponses(value = { @ApiResponse(code = 200, response = OxAuthSectorIdentifier.class, message = "Success"),
+			@ApiResponse(code = 500, message = "Server error") })
 	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response createSectorIdentifier(OxAuthSectorIdentifier identifier) {
 		log("Create a sector identifier");
@@ -114,6 +124,8 @@ public class SectorIdentifierWebResource extends BaseWebResource {
 
 	@PUT
 	@ApiOperation(value = "Update sector identifier")
+	@ApiResponses(value = { @ApiResponse(code = 200, response = OxAuthSectorIdentifier.class, message = "Success"),
+			@ApiResponse(code = 500, message = "Server error") })
 	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response updateSectorIdentifier(OxAuthSectorIdentifier identifier) {
 		Objects.requireNonNull(identifier);
@@ -140,6 +152,8 @@ public class SectorIdentifierWebResource extends BaseWebResource {
 	@DELETE
 	@Path(ApiConstants.INUM_PARAM_PATH)
 	@ApiOperation(value = "Delete a sector identifier")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Success"),
+			@ApiResponse(code = 500, message = "Server error") })
 	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response deleteSectorIdentifier(@PathParam(ApiConstants.INUM) @NotNull String id) {
 		log("Delete sector identifier with id: " + id);

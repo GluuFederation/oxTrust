@@ -56,7 +56,7 @@ public class CertificatesWebResource extends BaseWebResource {
 
 	@GET
 	@ApiOperation(value = "List certificates", notes = "List Gluu Server's certificates. You can get only description of certificates, not keys.", response = Certificates.class)
-	@ApiResponses(value = { @ApiResponse(code = 200, response = Certificates.class, message = "Success"),
+	@ApiResponses(value = { @ApiResponse(code = 200, response = Certificates[].class, message = "Success"),
 			@ApiResponse(code = 500, message = "Server error") })
 	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response listCertificates() {
