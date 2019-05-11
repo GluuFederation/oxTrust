@@ -28,11 +28,15 @@ import org.gluu.oxtrust.service.filter.ProtectedApi;
 import org.oxauth.persistence.model.Scope;
 import org.slf4j.Logger;
 
+import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiResponse;
+import com.wordnik.swagger.annotations.ApiResponses;
 
 @Path(ApiConstants.BASE_API_URL + ApiConstants.CLIENTS)
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
+@Api(value = ApiConstants.BASE_API_URL + ApiConstants.CLIENTS, description = "OIDC Clients web service")
 @ApplicationScoped
 public class ClientWebResource extends BaseWebResource {
 
@@ -50,6 +54,8 @@ public class ClientWebResource extends BaseWebResource {
 
 	@GET
 	@ApiOperation(value = "Get openid connect clients")
+	@ApiResponses(value = { @ApiResponse(code = 200, response = OxAuthClient[].class, message = "Success"),
+			@ApiResponse(code = 500, message = "Server error") })
 	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response listClients() {
 		log(logger, "Get all clients ");
@@ -64,7 +70,9 @@ public class ClientWebResource extends BaseWebResource {
 
 	@GET
 	@Path(ApiConstants.INUM_PARAM_PATH + ApiConstants.SCOPES)
-	@ApiOperation(value = "Get client scopes")
+	@ApiOperation(value = "Get OIDC scopes assign to OIDC client")
+	@ApiResponses(value = { @ApiResponse(code = 200, response = Scope[].class, message = "Success"),
+			@ApiResponse(code = 500, message = "Server error"), @ApiResponse(code = 404, message = "Not Found") })
 	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response getClientScope(@PathParam(ApiConstants.INUM) @NotNull String inum) {
 		log(logger, "Get client scopes");
@@ -93,7 +101,9 @@ public class ClientWebResource extends BaseWebResource {
 
 	@GET
 	@Path(ApiConstants.INUM_PARAM_PATH)
-	@ApiOperation(value = "Get a specific openidconnect client")
+	@ApiOperation(value = "Get a specific OIDC client")
+	@ApiResponses(value = { @ApiResponse(code = 200, response = OxAuthClient.class, message = "Success"),
+			@ApiResponse(code = 500, message = "Server error") })
 	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response getClientByInum(@PathParam(ApiConstants.INUM) @NotNull String inum) {
 		log(logger, "Get client " + inum);
@@ -113,7 +123,9 @@ public class ClientWebResource extends BaseWebResource {
 
 	@GET
 	@Path(ApiConstants.SEARCH)
-	@ApiOperation(value = "Search clients")
+	@ApiOperation(value = "Search OIDC clients")
+	@ApiResponses(value = { @ApiResponse(code = 200, response = OxAuthClient[].class, message = "Success"),
+			@ApiResponse(code = 500, message = "Server error") })
 	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response searchGroups(@QueryParam(ApiConstants.SEARCH_PATTERN) @NotNull String pattern,
 			@DefaultValue("1") @QueryParam(ApiConstants.SIZE) int size) {
@@ -129,6 +141,8 @@ public class ClientWebResource extends BaseWebResource {
 
 	@POST
 	@ApiOperation(value = "Add an openidconnect client")
+	@ApiResponses(value = { @ApiResponse(code = 200, response = OxAuthClient.class, message = "Success"),
+			@ApiResponse(code = 500, message = "Server error") })
 	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response createClient(OxAuthClient client) {
 		log(logger, "Add new client ");
@@ -147,6 +161,8 @@ public class ClientWebResource extends BaseWebResource {
 
 	@PUT
 	@ApiOperation(value = "Update openidconnect client")
+	@ApiResponses(value = { @ApiResponse(code = 200, response = OxAuthClient.class, message = "Success"),
+			@ApiResponse(code = 500, message = "Server error") })
 	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response updateClient(OxAuthClient client) {
 		try {
@@ -170,7 +186,9 @@ public class ClientWebResource extends BaseWebResource {
 
 	@POST
 	@Path(ApiConstants.INUM_PARAM_PATH + ApiConstants.SCOPES + ApiConstants.SCOPE_INUM_PARAM_PATH)
-	@ApiOperation(value = "Get client scopes")
+	@ApiOperation(value = "Add scopes to OIDC client")
+	@ApiResponses(value = { @ApiResponse(code = 200, response = Scope[].class, message = "Success"),
+			@ApiResponse(code = 500, message = "Server error") })
 	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response addScopeToClient(@PathParam(ApiConstants.INUM) @NotNull String inum,
 			@PathParam(ApiConstants.SCOPE_INUM) @NotNull String sinum) {
@@ -199,7 +217,9 @@ public class ClientWebResource extends BaseWebResource {
 
 	@DELETE
 	@Path(ApiConstants.INUM_PARAM_PATH + ApiConstants.SCOPES + ApiConstants.SCOPE_INUM_PARAM_PATH)
-	@ApiOperation(value = "Remove a client scope")
+	@ApiOperation(value = "Remove an existing scope from client")
+	@ApiResponses(value = { @ApiResponse(code = 200, response = Scope[].class, message = "Success"),
+			@ApiResponse(code = 500, message = "Server error") })
 	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response removeScopeToClient(@PathParam(ApiConstants.INUM) @NotNull String inum,
 			@PathParam(ApiConstants.SCOPE_INUM) @NotNull String sinum) {
@@ -227,6 +247,8 @@ public class ClientWebResource extends BaseWebResource {
 	@DELETE
 	@Path(ApiConstants.INUM_PARAM_PATH)
 	@ApiOperation(value = "Delete an openidconnect client")
+	@ApiResponses(value = { @ApiResponse(code = 200, response = OxAuthClient[].class, message = "Success"),
+			@ApiResponse(code = 500, message = "Server error") })
 	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response deleteClient(@PathParam(ApiConstants.INUM) @NotNull String inum) {
 		log(logger, "Delete client " + inum);

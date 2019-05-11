@@ -10,13 +10,15 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.gluu.oxtrust.api.GluuServerStatus;
+import org.gluu.oxtrust.api.server.util.ApiConstants;
 import org.gluu.oxtrust.ldap.service.ConfigurationService;
 import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.oxtrust.service.filter.ProtectedApi;
-import org.gluu.oxtrust.api.server.util.ApiConstants;
 import org.slf4j.Logger;
 
 import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiResponse;
+import com.wordnik.swagger.annotations.ApiResponses;
 
 @Path(ApiConstants.BASE_API_URL + ApiConstants.CONFIGURATION + ApiConstants.STATUS)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -31,6 +33,8 @@ public class ServerStatusWebResource extends BaseWebResource {
 
 	@GET
 	@ApiOperation(value = "Get server status ")
+	@ApiResponses(value = { @ApiResponse(code = 200, response = GluuServerStatus.class, message = "Success"),
+			@ApiResponse(code = 500, message = "Server error") })
 	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response getServerStatus() {
 		log("Get server status");

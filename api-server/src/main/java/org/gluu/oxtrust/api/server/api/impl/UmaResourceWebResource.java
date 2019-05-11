@@ -20,17 +20,19 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.gluu.oxauth.model.uma.persistence.UmaResource;
+import org.gluu.oxtrust.api.server.util.ApiConstants;
 import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.uma.ResourceSetService;
 import org.gluu.oxtrust.ldap.service.uma.UmaScopeService;
 import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.service.filter.ProtectedApi;
 import org.oxauth.persistence.model.Scope;
-import org.gluu.oxtrust.api.server.util.ApiConstants;
 import org.slf4j.Logger;
-import org.gluu.oxauth.model.uma.persistence.UmaResource;
 
 import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiResponse;
+import com.wordnik.swagger.annotations.ApiResponses;
 
 @Path(ApiConstants.BASE_API_URL + ApiConstants.UMA + ApiConstants.RESOURCES)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -52,6 +54,8 @@ public class UmaResourceWebResource extends BaseWebResource {
 
 	@GET
 	@ApiOperation(value = "Get uma resources")
+	@ApiResponses(value = { @ApiResponse(code = 200, response = UmaResource[].class, message = "Success"),
+			@ApiResponse(code = 500, message = "Server error") })
 	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response listUmaResources() {
 		try {
@@ -66,6 +70,8 @@ public class UmaResourceWebResource extends BaseWebResource {
 	@GET
 	@Path(ApiConstants.SEARCH)
 	@ApiOperation(value = "Search uma resources")
+	@ApiResponses(value = { @ApiResponse(code = 200, response = UmaResource[].class, message = "Success"),
+			@ApiResponse(code = 500, message = "Server error") })
 	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response searchUmaResources(@QueryParam(ApiConstants.SEARCH_PATTERN) @NotNull String pattern,
 			@QueryParam(ApiConstants.SIZE) @NotNull int size) {
@@ -82,6 +88,8 @@ public class UmaResourceWebResource extends BaseWebResource {
 	@GET
 	@Path(ApiConstants.ID_PARAM_PATH)
 	@ApiOperation(value = "Get a uma resource by id")
+	@ApiResponses(value = { @ApiResponse(code = 200, response = UmaResource.class, message = "Success"),
+			@ApiResponse(code = 500, message = "Server error") })
 	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response getUmaResourceById(@PathParam(ApiConstants.ID) @NotNull String id) {
 		try {
@@ -157,6 +165,8 @@ public class UmaResourceWebResource extends BaseWebResource {
 
 	@POST
 	@ApiOperation(value = "add client to uma resource")
+	@ApiResponses(value = { @ApiResponse(code = 200, response = UmaResource.class, message = "Success"),
+			@ApiResponse(code = 500, message = "Server error") })
 	@Path(ApiConstants.ID_PARAM_PATH + ApiConstants.CLIENTS + ApiConstants.INUM_PARAM_PATH)
 	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response addClientToUmaResource(@PathParam(ApiConstants.ID) @NotNull String id,
@@ -188,6 +198,8 @@ public class UmaResourceWebResource extends BaseWebResource {
 
 	@DELETE
 	@ApiOperation(value = "Remove client from uma resource")
+	@ApiResponses(value = { @ApiResponse(code = 200, response = UmaResource.class, message = "Success"),
+			@ApiResponse(code = 500, message = "Server error") })
 	@Path(ApiConstants.ID_PARAM_PATH + ApiConstants.CLIENTS + ApiConstants.INUM_PARAM_PATH)
 	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response removeClientToUmaResource(@PathParam(ApiConstants.ID) @NotNull String id,
@@ -219,6 +231,8 @@ public class UmaResourceWebResource extends BaseWebResource {
 
 	@POST
 	@ApiOperation(value = "add scope to uma resource")
+	@ApiResponses(value = { @ApiResponse(code = 200, response = UmaResource.class, message = "Success"),
+			@ApiResponse(code = 500, message = "Server error") })
 	@Path(ApiConstants.ID_PARAM_PATH + ApiConstants.SCOPES + ApiConstants.INUM_PARAM_PATH)
 	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response addScopeToUmaResource(@PathParam(ApiConstants.ID) @NotNull String id,
@@ -250,6 +264,8 @@ public class UmaResourceWebResource extends BaseWebResource {
 
 	@DELETE
 	@ApiOperation(value = "remove a scope from uma resource")
+	@ApiResponses(value = { @ApiResponse(code = 200, response = UmaResource.class, message = "Success"),
+			@ApiResponse(code = 500, message = "Server error") })
 	@Path(ApiConstants.ID_PARAM_PATH + ApiConstants.SCOPES + ApiConstants.INUM_PARAM_PATH)
 	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response removeScopeToUmaResource(@PathParam(ApiConstants.ID) @NotNull String id,
@@ -281,6 +297,8 @@ public class UmaResourceWebResource extends BaseWebResource {
 
 	@POST
 	@ApiOperation(value = "Add new uma resource")
+	@ApiResponses(value = { @ApiResponse(code = 200, response = UmaResource.class, message = "Success"),
+			@ApiResponse(code = 500, message = "Server error") })
 	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response createUmaResource(UmaResource umaResource) {
 		try {
@@ -303,6 +321,8 @@ public class UmaResourceWebResource extends BaseWebResource {
 
 	@PUT
 	@ApiOperation(value = "Update uma resource")
+	@ApiResponses(value = { @ApiResponse(code = 200, response = UmaResource.class, message = "Success"),
+			@ApiResponse(code = 500, message = "Server error") })
 	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response updateUmaResource(UmaResource umaResource) {
 		try {
@@ -327,6 +347,8 @@ public class UmaResourceWebResource extends BaseWebResource {
 	@DELETE
 	@Path(ApiConstants.ID_PARAM_PATH)
 	@ApiOperation(value = "Delete a uma resource")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Success"),
+			@ApiResponse(code = 500, message = "Server error") })
 	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response deleteUmaResource(@PathParam(ApiConstants.ID) @NotNull String id) {
 		try {
