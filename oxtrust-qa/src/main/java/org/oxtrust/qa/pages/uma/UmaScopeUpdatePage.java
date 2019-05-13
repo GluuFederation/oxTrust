@@ -53,7 +53,7 @@ public class UmaScopeUpdatePage extends AbstractPage {
 		fluentWait(ONE_SEC);
 		WebElement dialog = webDriver.findElement(By.id("deleteConfirmation:acceptRemovalModalPanel_content"));
 		dialog.findElements(By.tagName("input")).get(0).click();
-		fluentWait(ONE_SEC);
+		fluentWait(3);
 	}
 
 	private void initTableItems() {

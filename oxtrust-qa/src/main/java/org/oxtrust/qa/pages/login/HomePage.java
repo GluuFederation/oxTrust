@@ -1,6 +1,5 @@
 package org.oxtrust.qa.pages.login;
 
-
 import java.util.List;
 
 import org.junit.Assert;
@@ -39,6 +38,7 @@ public class HomePage extends AbstractPage {
 
 		WebElement subMenu = waitElementByID("subMenuLinkSAML2");
 		subMenu.click();
+		fluentWait(3);
 	}
 
 	public void goNameIdConfigurePage() {
@@ -47,11 +47,13 @@ public class HomePage extends AbstractPage {
 
 		WebElement subMenu = waitElementByID("subMenuLinkSAML3");
 		subMenu.click();
+		fluentWait(3);
 	}
 
 	public void goToProfileMenu() {
 		WebElement profileMenu = webDriver.findElement(By.xpath("//*[@id='menuPersonal']"));
 		profileMenu.click();
+		fluentWait(3);
 	}
 
 	public void goToProfileViewMenu() {
@@ -59,7 +61,7 @@ public class HomePage extends AbstractPage {
 		userMenu.click();
 		WebElement subMenu = waitElementByID("subMenuLinkPersonal1");
 		subMenu.click();
-		fluentWait(ONE_SEC);
+		fluentWait(3);
 	}
 
 	public void goToUmaMenu() {
@@ -67,13 +69,16 @@ public class HomePage extends AbstractPage {
 		umaMenu.click();
 		WebElement subMenu = waitElementByID("subMenuLinkUMA1");
 		subMenu.click();
+		fluentWait(3);
 	}
 
 	public void goToUmaScopeManagePage() {
+		fluentWait(3);
 		WebElement userMenu = waitElement("//*[@id='menuUMA']");
 		userMenu.click();
 		WebElement subMenu = waitElementByID("subMenuLinkUMA1");
 		subMenu.click();
+		fluentWait(3);
 	}
 
 	public void goToUmaResourceManagePage() {
@@ -81,6 +86,7 @@ public class HomePage extends AbstractPage {
 		umaMenu.click();
 		WebElement subMenu = waitElementByID("subMenuLinkUMA2");
 		subMenu.click();
+		fluentWait(3);
 	}
 
 	public void goToOpenIDMenu() {
@@ -90,8 +96,10 @@ public class HomePage extends AbstractPage {
 
 	public void goToGroupAddPage() {
 		goToGroupsManagePage();
+		fluentWait(3);
 		WebElement addButton = webDriver.findElement(By.className("addGroup"));
 		addButton.click();
+		fluentWait(3);
 	}
 
 	public void goToGroupsManagePage() {
@@ -99,6 +107,7 @@ public class HomePage extends AbstractPage {
 		groupMenu.click();
 		WebElement subMenu = waitElement("//*[@id='subMenuLinkUsers1']");
 		subMenu.click();
+		fluentWait(3);
 	}
 
 	public void goToUsersManagePage() {
@@ -106,6 +115,7 @@ public class HomePage extends AbstractPage {
 		userMenu.click();
 		WebElement subMenu = waitElement("//*[@id='subMenuLinkUsers2']");
 		subMenu.click();
+		fluentWait(3);
 	}
 
 	public void goToUsersAddPage() {
@@ -113,6 +123,7 @@ public class HomePage extends AbstractPage {
 		userMenu.click();
 		WebElement subMenu = waitElement("//*[@id='subMenuLinkUsers3']");
 		subMenu.click();
+		fluentWait(3);
 	}
 
 	public void goToUsersImportPage() {
@@ -120,14 +131,15 @@ public class HomePage extends AbstractPage {
 		userMenu.click();
 		WebElement subMenu = waitElement("//*[@id='subMenuLinkUsers4']");
 		subMenu.click();
+		fluentWait(3);
 	}
 
 	public void goToOpenIDScopePage() {
 		WebElement openIdMenu = webDriver.findElement(By.xpath("//*[@id='menuOpenID']"));
 		openIdMenu.click();
-
 		WebElement subMenu = waitElement("//*[@id='subMenuLinkOpenID1']");
 		subMenu.click();
+		fluentWait(3);
 	}
 
 	public void goToOpenIDClientsListPage() {
@@ -135,18 +147,24 @@ public class HomePage extends AbstractPage {
 		openIdMenu.click();
 		WebElement subMenu = waitElement("//*[@id='subMenuLinkOpenID2']");
 		subMenu.click();
+		fluentWait(3);
 	}
 
 	public void goToSectorListPage() {
+		fluentWait(1);
+		goToUsersMenu();
 		WebElement openIdMenu = webDriver.findElement(By.xpath("//*[@id='menuOpenID']"));
 		openIdMenu.click();
+		fluentWait(2);
 		WebElement subMenu = waitElement("//*[@id='subMenuLinkOpenID3']");
 		subMenu.click();
+		fluentWait(3);
 	}
 
 	public void goToConfigurationMenuPage() {
 		WebElement openIdMenu = webDriver.findElement(By.xpath("//*[@id='menuConfiguration']"));
 		openIdMenu.click();
+		fluentWait(3);
 	}
 
 	public void goToOrganisationConfigurationMenuPage() {
@@ -154,6 +172,7 @@ public class HomePage extends AbstractPage {
 		openIdMenu.click();
 		WebElement subMenu = waitElement("//*[@id='subMenuLinkConfiguration1']");
 		subMenu.click();
+		fluentWait(3);
 	}
 
 	public void goToJsonConfigurationMenuPage() {
@@ -161,6 +180,7 @@ public class HomePage extends AbstractPage {
 		openIdMenu.click();
 		WebElement subMenu = waitElement("//*[@id='subMenuLinkConfiguration2']");
 		subMenu.click();
+		fluentWait(3);
 	}
 
 	public void goToManageAutheticationMenuPage() {
@@ -168,6 +188,7 @@ public class HomePage extends AbstractPage {
 		openIdMenu.click();
 		WebElement subMenu = waitElement("//*[@id='subMenuLinkConfiguration3']");
 		subMenu.click();
+		fluentWait(3);
 	}
 
 	public void goToManageCustomScriptsMenuPage() {
@@ -175,6 +196,7 @@ public class HomePage extends AbstractPage {
 		openIdMenu.click();
 		WebElement subMenu = waitElement("//*[@id='subMenuLinkConfiguration4']");
 		subMenu.click();
+		fluentWait(3);
 	}
 
 	public void goToManageRegistrationMenuPage() {
@@ -182,6 +204,7 @@ public class HomePage extends AbstractPage {
 		openIdMenu.click();
 		WebElement subMenu = waitElement("//*[@id='subMenuLinkConfiguration5']");
 		subMenu.click();
+		fluentWait(3);
 	}
 
 	public void goToAttributesMenuPage() {
@@ -189,6 +212,7 @@ public class HomePage extends AbstractPage {
 		openIdMenu.click();
 		WebElement subMenu = waitElement("//*[@id='subMenuLinkConfiguration6']");
 		subMenu.click();
+		fluentWait(3);
 	}
 
 	public void goToImportExportAttributesMenuPage() {
@@ -196,6 +220,7 @@ public class HomePage extends AbstractPage {
 		openIdMenu.click();
 		WebElement subMenu = waitElement("//*[@id='subMenuLinkConfiguration12']");
 		subMenu.click();
+		fluentWait(3);
 	}
 
 	public void goToCacheRefreshMenuPage() {
@@ -210,6 +235,7 @@ public class HomePage extends AbstractPage {
 		openIdMenu.click();
 		WebElement subMenu = waitElement("//*[@id='subMenuLinkConfiguration9']");
 		subMenu.click();
+		fluentWait(3);
 	}
 
 	public void goToLogFileViewMenuPage() {
@@ -217,6 +243,7 @@ public class HomePage extends AbstractPage {
 		openIdMenu.click();
 		WebElement subMenu = waitElement("//*[@id='subMenuLinkConfiguration10']");
 		subMenu.click();
+		fluentWait(3);
 	}
 
 	public void goToServerStatusMenuPage() {
@@ -224,6 +251,7 @@ public class HomePage extends AbstractPage {
 		openIdMenu.click();
 		WebElement subMenu = waitElement("//*[@id='subMenuLinkConfiguration11']");
 		subMenu.click();
+		fluentWait(3);
 	}
 
 	public void goTocertificatesMenuPage() {
@@ -231,6 +259,7 @@ public class HomePage extends AbstractPage {
 		openIdMenu.click();
 		WebElement subMenu = waitElement("//*[@id='subMenuLinkCertificates1']");
 		subMenu.click();
+		fluentWait(3);
 	}
 
 	public void checkDashboard(String value) {

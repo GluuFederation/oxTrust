@@ -12,6 +12,5 @@ Scenario: List OpenID connect scopes
 	And  	I should see an openid scope named 'permission'
 	And 	I should see an openid scope named 'phone'
 	And 	I should see an openid scope named 'profile'
-	And 	I should see an openid scope named 'uma_protection'
 	And 	I should see an openid scope named 'user_name'
 	And 	I sign out

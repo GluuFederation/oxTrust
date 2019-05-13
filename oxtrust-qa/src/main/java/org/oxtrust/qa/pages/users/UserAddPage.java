@@ -53,7 +53,7 @@ public class UserAddPage extends AbstractPage {
 	}
 
 	public void fillStatus(String status) {
-		WebElement element = webDriver.findElement(By.className("User"));
+		WebElement element = webDriver.findElement(By.className("Status"));
 		Select select = new Select(element);
 		select.selectByVisibleText(status);
 	}

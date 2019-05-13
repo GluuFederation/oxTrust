@@ -9,11 +9,7 @@ import org.oxtrust.qa.pages.AbstractPage;
 public class SectorAddPage extends AbstractPage {
 
 	public void addLoginRedirect(String url) {
-		WebElement table = webDriver.findElements(By.tagName("table")).get(0);
-		WebElement body = table.findElement(By.tagName("tbody"));
-		List<WebElement> trs = body.findElements(By.tagName("tr"));
-		WebElement last = trs.get(trs.size() - 1);
-		last.findElements(By.tagName("input")).get(0).click();
+		webDriver.findElements(By.className("AddLoginUrl")).get(0).click();
 
 		WebElement pane = waitElementByID("loginRedirect:inputText_container");
 		WebElement main = pane.findElement(By.id("loginRedirect:inputText_content"));
@@ -30,11 +26,8 @@ public class SectorAddPage extends AbstractPage {
 	}
 
 	public void addClient(String client) {
-		WebElement table = webDriver.findElements(By.tagName("table")).get(0);
-		WebElement body = table.findElement(By.tagName("tbody"));
-		List<WebElement> trs = body.findElements(By.tagName("tr"));
-		WebElement last = trs.get(trs.size() - 1);
-		last.findElements(By.tagName("input")).get(1).click();
+		fluentWait(1);
+		webDriver.findElements(By.className("AddClient")).get(0).click();
 
 		WebElement pane = waitElementByID("client:selectClientModalPanel_content");
 		WebElement searchBox = pane.findElement(By.className("searchParameters"));
@@ -58,7 +51,7 @@ public class SectorAddPage extends AbstractPage {
 				break;
 			}
 		}
-
+		fluentWait(1);
 	}
 
 	public void save() {

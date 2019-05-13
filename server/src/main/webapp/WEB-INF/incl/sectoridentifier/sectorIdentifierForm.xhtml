@@ -54,7 +54,7 @@
 									leftClass="col-sm-4" rightClass="col-sm-8" rendered="true"
 									label="Description">
 									<h:inputText
-									    styleClass="form-control" id="DescriptionTestField"
+									    styleClass="form-control DescriptionTestField" id="DescriptionTestField"
 										value="#{_sectorIdentifierAction.sectorIdentifier.description}" />
 								</ox:decorate>
 								<ox:decorate id="url" rendered="#{not _new}"
@@ -81,7 +81,7 @@
 														<div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
 															<h:outputText value="#{empty _uri ? _uri : _uri}" />
 															<div class="span6 pull-right">
-																<a4j:commandLink styleClass="glyphicon glyphicon-remove"
+																<a4j:commandLink styleClass="glyphicon glyphicon-remove RemoveLoginUrl"
 																	style="margin-top:-20px;"
 																	action="#{_sectorIdentifierAction.removeLoginURI(_uri)}"
 																	execute="@this" render="selectedLoginURIsId"
@@ -94,7 +94,7 @@
 												</a4j:repeat>
 												<richext:spacer height="16" />
 											</h:panelGroup>
-											<a4j:commandButton styleClass="btn btn-primary"
+											<a4j:commandButton styleClass="btn btn-primary AddLoginUrl"
 												value="#{msg['sectorIdentifier.addLoginUri']}"
 												oncomplete="#{rich:component('loginRedirect:inputText')}.show();"
 												execute="@this" eventsQueue="sectorIdentifierQueue" />
@@ -117,7 +117,7 @@
 															<h:outputText value="#{_client.displayName}" />
 															<h:outputText value="&nbsp;" />
 															<div class="span6 pull-right">
-																<a4j:commandLink styleClass="glyphicon glyphicon-remove"
+																<a4j:commandLink styleClass="glyphicon glyphicon-remove RemoveClient"
 																	action="#{_sectorIdentifierAction.removeClient(_client.inum)}"
 																	render="selectedClientsId" execute="@this">
 																</a4j:commandLink>
@@ -128,7 +128,7 @@
 												</a4j:repeat>
 											</div>
 										</h:panelGroup>
-										<a4j:commandButton styleClass="btn btn-primary"
+										<a4j:commandButton styleClass="btn btn-primary AddClient"
 											value="#{msg['sectorIdentifier.addClient']}"
 											action="#{_sectorIdentifierAction.selectAddedClients}"
 											oncomplete="#{rich:component('client:selectClientModalPanel')}.show();"

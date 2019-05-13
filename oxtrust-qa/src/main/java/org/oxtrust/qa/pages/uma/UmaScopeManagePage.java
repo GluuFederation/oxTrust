@@ -9,8 +9,10 @@ import org.oxtrust.qa.pages.AbstractPage;
 
 public class UmaScopeManagePage extends AbstractPage {
 
+	private static final String RESOURCE_SCOPE_LIST_CLASS = "umaScopeListClass";
+
 	public void assertUmaScopeExist(String scopeName) {
-		Assert.assertTrue(assertUmaScopeExistInList(scopeName));
+		Assert.assertTrue(assertElementExistInList(RESOURCE_SCOPE_LIST_CLASS, scopeName));
 		fluentWait(ONE_SEC);
 	}
 
@@ -30,26 +32,6 @@ public class UmaScopeManagePage extends AbstractPage {
 		fluentWait(ONE_SEC);
 	}
 
-	private boolean assertUmaScopeExistInList(String umaScope) {
-		try {
-			webDriver.findElement(By.className("umaScopeListClass"));
-			WebElement body = webDriver.findElement(By.className("umaScopeListClass")).findElements(By.tagName("tbody"))
-					.get(0);
-			List<WebElement> listItems = body.findElements(By.tagName("tr"));
-			boolean found = false;
-			for (WebElement element : listItems) {
-				if (element.getText().contains(umaScope)) {
-					found = true;
-					break;
-				}
-			}
-			return found;
-		} catch (Exception e) {
-			return false;
-		}
-
-	}
-
 	public void editScope(String scope) {
 		webDriver.findElement(By.className("umaScopeListClass"));
 		WebElement body = webDriver.findElement(By.className("umaScopeListClass")).findElements(By.tagName("tbody"))
@@ -66,7 +48,7 @@ public class UmaScopeManagePage extends AbstractPage {
 	}
 
 	public void assertUmaScopeNotExist(String scopeName) {
-		Assert.assertFalse(assertUmaScopeExistInList(scopeName));
+		Assert.assertFalse(assertElementExistInList(RESOURCE_SCOPE_LIST_CLASS, scopeName));
 	}
 
 }

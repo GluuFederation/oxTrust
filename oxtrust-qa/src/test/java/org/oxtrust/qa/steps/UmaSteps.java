@@ -80,9 +80,9 @@ public class UmaSteps extends BaseSteps {
 		umaScopeAddPage.setDisplayName(dn);
 	}
 
-	@And("^I set uma scope logo to the default$")
-	public void setUmaLogo() {
-		umaScopeAddPage.setLogo();
+	@And("^I set uma scope logo to '(.+)'$")
+	public void setUmaLogo(String url) {
+		umaScopeAddPage.setLogo(url);
 	}
 
 	@And("^I set uma scope policy to '(.+)'$")

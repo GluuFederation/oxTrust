@@ -9,6 +9,8 @@ import org.oxtrust.qa.pages.AbstractPage;
 
 public class OpenIdConnectClientManagePage extends AbstractPage {
 
+	private static final String CLIENTS_FORM_IDCLIENTS_LIST_ID_TABLE = "clientsFormIdclientsListIdTable";
+
 	public void searchFor(String scope) {
 		WebElement searchBox = webDriver.findElement(By.className("searchBoxClass"));
 		searchBox.clear();
@@ -22,32 +24,11 @@ public class OpenIdConnectClientManagePage extends AbstractPage {
 	}
 
 	public void assertClientExist(String clientName) {
-		Assert.assertTrue(assertClientExistInList(clientName));
-	}
-
-	private boolean assertClientExistInList(String clientName) {
-		try {
-			webDriver.findElement(By.className("umaClientListClass"));
-			WebElement body = webDriver.findElement(By.className("umaClientListClass"))
-					.findElements(By.tagName("tbody")).get(0);
-			List<WebElement> listItems = body.findElements(By.tagName("tr"));
-			boolean found = false;
-			for (WebElement element : listItems) {
-				if (element.getText().contains(clientName)) {
-					found = true;
-					break;
-				}
-			}
-			return found;
-		} catch (Exception e) {
-			return false;
-		}
-
+		Assert.assertTrue(assertElementExistInList(CLIENTS_FORM_IDCLIENTS_LIST_ID_TABLE, clientName));
 	}
 
 	public void editClient(String scope) {
-		webDriver.findElement(By.className("umaClientListClass"));
-		WebElement body = webDriver.findElement(By.className("umaClientListClass")).findElements(By.tagName("tbody"))
+		WebElement body = webDriver.findElement(By.className(CLIENTS_FORM_IDCLIENTS_LIST_ID_TABLE)).findElements(By.tagName("tbody"))
 				.get(0);
 		List<WebElement> listItems = body.findElements(By.tagName("tr"));
 		for (WebElement element : listItems) {
@@ -59,6 +40,7 @@ public class OpenIdConnectClientManagePage extends AbstractPage {
 	}
 
 	public void goToClientAddPage() {
+		fluentWait(1);
 		webDriver.findElement(By.className("addClientButtonClass")).click();
 	}
 
@@ -78,7 +60,7 @@ public class OpenIdConnectClientManagePage extends AbstractPage {
 	}
 
 	public void assertClientDontExist(String client) {
-		Assert.assertFalse(assertClientExistInList(client));
+		Assert.assertFalse(assertElementExistInList(CLIENTS_FORM_IDCLIENTS_LIST_ID_TABLE, client));
 	}
 
 }
