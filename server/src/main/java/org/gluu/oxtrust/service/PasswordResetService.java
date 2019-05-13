@@ -163,12 +163,11 @@ public class PasswordResetService implements Serializable {
 		return result.get(result.size() - 1);
 	}
 
-	public List<PasswordResetRequest> getExpiredPasswordResetRequests(
-			BatchOperation<PasswordResetRequest> batchOperation, Date expirationDate, String[] returnAttributes,
+	public List<PasswordResetRequest> getExpiredPasswordResetRequests(BatchOperation<PasswordResetRequest> batchOperation, Date expirationDate, String[] returnAttributes,
 			int sizeLimit, int chunkSize) {
 		final String baseDn = getDnForPasswordResetRequest(null);
 		Filter expirationFilter = Filter.createLessOrEqualFilter("creationDate",
-				ldapEntryManager.encodeTime(expirationDate));
+				ldapEntryManager.encodeTime(baseDn, expirationDate));
 
 		List<PasswordResetRequest> passwordResetRequests = ldapEntryManager.findEntries(baseDn,
 				PasswordResetRequest.class, expirationFilter, SearchScope.SUB, returnAttributes, batchOperation, 0,
