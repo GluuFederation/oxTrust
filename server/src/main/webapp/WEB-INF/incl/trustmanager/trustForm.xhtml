@@ -118,19 +118,20 @@
 								<div style="width: 100%;">
 									<ox:decorate id="displayName"
 										label="#{msg['trustmanager.displayName']}">
-										<h:inputText styleClass="form-control"
+										<h:inputText styleClass="form-control DisplayName"
 											value="#{_trustRelationship.displayName}" size="40"
 											maxlength="60" required="true" id="displayNameId" />
 									</ox:decorate>
 									<ox:decorate id="description"
 										label="#{msg['trustmanager.description']}">
 										<h:inputTextarea value="#{_trustRelationship.description}"
+										    styleClass="form-control Description"
 											rows="3" size="40" maxlength="4000" required="true"
 											id="descriptionId" />
 									</ox:decorate>
 									<ox:decorate id="entityType"
 										label="#{msg['trustmanager.entityType']}">
-										<h:selectOneMenu styleClass="rounded form-control"
+										<h:selectOneMenu styleClass="rounded form-control EntityType"
 											value="#{_trustRelationship.entityType}" required="true"
 											id="entityTypeId" converter="omnifaces.GenericEnumConverter">
 											<f:selectItem noSelectionOption="true" itemLabel="" />
@@ -146,7 +147,7 @@
 										<a4j:region>
 											<ox:decorate id="spMetaDataSourceType"
 												label="#{msg['trustmanager.metadataLocation']}">
-												<h:selectOneMenu styleClass=" rounded form-control"
+												<h:selectOneMenu styleClass=" rounded form-control MetaDataType"
 													value="#{_trustRelationship.spMetaDataSourceType}"
 													onchange="changeEvent(this)" required="true"
 													id="spMetaDataSourceTypeId"
@@ -167,7 +168,7 @@
 													rendered="#{((_trustRelationship.spMetaDataSourceType.value eq 'file') and (not empty _trustRelationship.url))}"
 													label="URL">
 													<ox:decorate id="url" required="true">
-														<h:inputText styleClass="form-control"
+														<h:inputText styleClass="form-control UriID"
 															value="#{_trustRelationship.url}" rows="3" size="40"
 															maxlength="4000" id="urlInputId" />
 													</ox:decorate>
@@ -178,7 +179,7 @@
 														rendered="#{_trustRelationship.spMetaDataSourceType.value eq 'federation'}">
 														<ox:decorate id="spMetaDataSourceTypeFederation"
 															label="#{msg['trustmanager.federationName']}">
-															<h:selectOneMenu styleClass="rounded form-control"
+															<h:selectOneMenu styleClass="rounded form-control FederationWizard"
 																value="#{_trustRelationship.containerFederation}"
 																id="spMetaDataSourceTypeFederationId"
 																converter="federationConverter" required="true">
@@ -213,6 +214,7 @@
 																value="#{empty _trustRelationship.entityId ? 
                                                                          'Click to select entity Id' 
                                                                        : '        Click to change entity Id'}"
+                                                                       
 																action="#{_trustRelationshipAction.isActive()}"
 																oncomplete="#{rich:component('entityIdSelector')}.show();">
 															</a4j:commandLink>
@@ -231,7 +233,7 @@
 												<ox:decorate id="fileWrapper"
 													label="
 											#{msg['trustmanager.spMetadataFile']}">
-													<h:inputFile id="fileWrapperId"
+													<h:inputFile id="fileWrapperId" styleClass="MetadataFile"
 														required="#{_trustRelationship.spMetaDataSourceType.value eq 'file'}"
 														value="#{_trustRelationshipAction.fileWrapper}"
 														rendered="#{empty _trustRelationship.spMetaDataFN}" />
@@ -300,7 +302,7 @@
 													</h:panelGrid>
 
 													<h:panelGroup id="RelyingPartyConfig">
-														<a4j:commandLink id="TRConfig"
+														<a4j:commandLink id="TRConfig" styleClass="RelyingPartyConfigLink"
 															value="#{msg['trustmanager.configureRelyingParty']}"
 															rendered="#{_trustRelationship.specificRelyingPartyConfig}"
 															onclick="#{rich:component('TRConfigPanel')}.show();"
@@ -449,7 +451,7 @@
 
 							<b:tab
 								title="#{_customAttributeAction.originDisplayNames[_list.get(0).key]}">
-								<div style="height: 450px; overflow-y: auto;">
+								<div style="height: 450px; overflow-y: auto;" class="SelectableCustomAttibutes">
 									<ul class="sidebar-menu">
 										<a4j:repeat value="#{_list.get(0).value}" var="attr">
 											<li class="treeview"

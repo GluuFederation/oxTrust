@@ -47,6 +47,7 @@ public class UserManagePage extends AbstractPage {
 	}
 
 	public void startUserUpdate() {
+		fluentWait(3);
 		foundUser.findElements(By.tagName("td")).get(0).click();
 	}
 
