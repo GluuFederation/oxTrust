@@ -36,7 +36,7 @@ public class ConfigurationWebResource extends BaseWebResource {
 	}
 
 	@GET
-	@ApiOperation(value = "Get configuration")
+	@ApiOperation(value = "Retrieve gluu configuration")
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, response = GluuConfiguration.class, message = Constants.RESULT_SUCCESS),
 			@ApiResponse(code = 500, message = "Server error") })

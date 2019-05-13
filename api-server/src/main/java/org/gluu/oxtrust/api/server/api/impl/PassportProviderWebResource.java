@@ -29,6 +29,8 @@ import org.slf4j.Logger;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiResponse;
+import com.wordnik.swagger.annotations.ApiResponses;
 
 @Path(ApiConstants.BASE_API_URL + ApiConstants.PASSPORT + ApiConstants.PROVIDERS)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -47,6 +49,8 @@ public class PassportProviderWebResource extends BaseWebResource {
 
 	@GET
 	@ApiOperation(value = "List passport providers")
+	@ApiResponses(value = { @ApiResponse(code = 200, response = Provider[].class, message = "Success"),
+			@ApiResponse(code = 500, message = "Server error") })
 	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response listProviders() {
 		log(logger, "List passport providers");
@@ -65,6 +69,8 @@ public class PassportProviderWebResource extends BaseWebResource {
 	@GET
 	@Path(ApiConstants.ID_PARAM_PATH)
 	@ApiOperation(value = "Get passport provider by id")
+	@ApiResponses(value = { @ApiResponse(code = 200, response = Provider.class, message = "Success"),
+			@ApiResponse(code = 500, message = "Server error") })
 	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response getProviderById(@PathParam(ApiConstants.ID) @NotNull String id) {
 		log(logger, "Get group having group" + id);
@@ -89,6 +95,8 @@ public class PassportProviderWebResource extends BaseWebResource {
 
 	@POST
 	@ApiOperation(value = "Add passport provider")
+	@ApiResponses(value = { @ApiResponse(code = 200, response = Provider.class, message = "Success"),
+			@ApiResponse(code = 500, message = "Server error") })
 	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response createPassportProvider(Provider provider) {
 		log(logger, "Add passport provider " + provider.getDisplayName());
@@ -116,6 +124,8 @@ public class PassportProviderWebResource extends BaseWebResource {
 
 	@PUT
 	@ApiOperation(value = "Update passport provider")
+	@ApiResponses(value = { @ApiResponse(code = 200, response = Provider.class, message = "Success"),
+			@ApiResponse(code = 500, message = "Server error") })
 	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response updatePassportProvider(Provider provider) {
 		String id = provider.getId();
@@ -158,6 +168,8 @@ public class PassportProviderWebResource extends BaseWebResource {
 	@DELETE
 	@Path(ApiConstants.ID_PARAM_PATH)
 	@ApiOperation(value = "Delete a passport provider")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Success"),
+			@ApiResponse(code = 500, message = "Server error") })
 	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response deleteProvider(@PathParam(ApiConstants.ID) @NotNull String id) {
 		log(logger, "Delete passport provider having id " + id);

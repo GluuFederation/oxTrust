@@ -21,13 +21,15 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.gluu.oxtrust.api.server.model.GluuPersonApi;
+import org.gluu.oxtrust.api.server.util.ApiConstants;
 import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.service.filter.ProtectedApi;
-import org.gluu.oxtrust.api.server.util.ApiConstants;
 import org.slf4j.Logger;
 
 import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiResponse;
+import com.wordnik.swagger.annotations.ApiResponses;
 
 @Path(ApiConstants.BASE_API_URL + ApiConstants.USERS)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -46,6 +48,8 @@ public class PeopleWebResource extends BaseWebResource {
 
 	@GET
 	@ApiOperation(value = "Get people")
+	@ApiResponses(value = { @ApiResponse(code = 200, response = GluuPersonApi[].class, message = "Success"),
+			@ApiResponse(code = 500, message = "Server error") })
 	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response listPeople() {
 		try {
@@ -61,6 +65,8 @@ public class PeopleWebResource extends BaseWebResource {
 	@GET
 	@Path(ApiConstants.SEARCH)
 	@ApiOperation(value = "Search person")
+	@ApiResponses(value = { @ApiResponse(code = 200, response = GluuPersonApi[].class, message = "Success"),
+			@ApiResponse(code = 500, message = "Server error") })
 	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response searchGroups(@QueryParam(ApiConstants.SEARCH_PATTERN) @NotNull String pattern) {
 		try {
@@ -76,6 +82,8 @@ public class PeopleWebResource extends BaseWebResource {
 	@GET
 	@Path(ApiConstants.INUM_PARAM_PATH)
 	@ApiOperation(value = "Get a person by inum")
+	@ApiResponses(value = { @ApiResponse(code = 200, response = GluuPersonApi.class, message = "Success"),
+			@ApiResponse(code = 500, message = "Server error") })
 	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response getPersonByInum(@PathParam(ApiConstants.INUM) @NotNull String inum) {
 		log(logger, "Get person " + inum);
@@ -95,6 +103,8 @@ public class PeopleWebResource extends BaseWebResource {
 
 	@POST
 	@ApiOperation(value = "Add a person")
+	@ApiResponses(value = { @ApiResponse(code = 200, response = GluuPersonApi.class, message = "Success"),
+			@ApiResponse(code = 500, message = "Server error") })
 	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response createPerson(GluuPersonApi person) {
 		log(logger, "Adding person " + person.getDisplayName());
@@ -114,6 +124,8 @@ public class PeopleWebResource extends BaseWebResource {
 
 	@PUT
 	@ApiOperation(value = "Update a person")
+	@ApiResponses(value = { @ApiResponse(code = 200, response = GluuPersonApi.class, message = "Success"),
+			@ApiResponse(code = 500, message = "Server error") })
 	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response updateGroup(GluuPersonApi person) {
 		String inum = person.getInum();
@@ -141,6 +153,8 @@ public class PeopleWebResource extends BaseWebResource {
 	@DELETE
 	@Path(ApiConstants.INUM_PARAM_PATH)
 	@ApiOperation(value = "Delete a person")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Success"),
+			@ApiResponse(code = 500, message = "Server error") })
 	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response deletePerson(@PathParam(ApiConstants.INUM) @NotNull String inum) {
 		log(logger, "Delete person having inum " + inum);

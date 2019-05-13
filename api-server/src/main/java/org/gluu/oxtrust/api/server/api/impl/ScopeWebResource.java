@@ -20,15 +20,17 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.gluu.model.GluuAttribute;
+import org.gluu.oxtrust.api.server.util.ApiConstants;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.ScopeService;
 import org.gluu.oxtrust.service.filter.ProtectedApi;
 import org.oxauth.persistence.model.Scope;
-import org.gluu.oxtrust.api.server.util.ApiConstants;
 import org.slf4j.Logger;
-import org.gluu.model.GluuAttribute;
 
 import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiResponse;
+import com.wordnik.swagger.annotations.ApiResponses;
 
 @Path(ApiConstants.BASE_API_URL + ApiConstants.SCOPES)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -49,6 +51,8 @@ public class ScopeWebResource extends BaseWebResource {
 
 	@GET
 	@ApiOperation(value = "Get all scopes")
+	@ApiResponses(value = { @ApiResponse(code = 200, response = Scope[].class, message = "Success"),
+			@ApiResponse(code = 500, message = "Server error") })
 	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response getAllScopes() {
 		log(logger, "List openid connect scopes ");
@@ -63,6 +67,8 @@ public class ScopeWebResource extends BaseWebResource {
 	@GET
 	@Path(ApiConstants.INUM_PARAM_PATH)
 	@ApiOperation(value = "Get a specific openid connect scope")
+	@ApiResponses(value = { @ApiResponse(code = 200, response = Scope.class, message = "Success"),
+			@ApiResponse(code = 500, message = "Server error") })
 	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response getScopeByInum(@PathParam(ApiConstants.INUM) @NotNull String inum) {
 		log(logger, "Get openid connect scope by " + inum);
@@ -82,6 +88,8 @@ public class ScopeWebResource extends BaseWebResource {
 	@GET
 	@Path(ApiConstants.SEARCH)
 	@ApiOperation(value = "Search openid connect scopes")
+	@ApiResponses(value = { @ApiResponse(code = 200, response = Scope[].class, message = "Success"),
+			@ApiResponse(code = 500, message = "Server error") })
 	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response searchScope(@QueryParam(ApiConstants.SEARCH_PATTERN) String pattern,
 			@DefaultValue("10") @QueryParam("size") int size) {
@@ -97,6 +105,8 @@ public class ScopeWebResource extends BaseWebResource {
 
 	@POST
 	@ApiOperation(value = "Add an openidconnect scope")
+	@ApiResponses(value = { @ApiResponse(code = 200, response = Scope.class, message = "Success"),
+			@ApiResponse(code = 500, message = "Server error") })
 	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response createScope(Scope scope) {
 		log(logger, "Create scope");
@@ -115,6 +125,8 @@ public class ScopeWebResource extends BaseWebResource {
 
 	@PUT
 	@ApiOperation(value = "Update openidconect scope")
+	@ApiResponses(value = { @ApiResponse(code = 200, response = Scope.class, message = "Success"),
+			@ApiResponse(code = 500, message = "Server error") })
 	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response updateScope(Scope scope) {
 		String inum = scope.getInum();
@@ -139,6 +151,8 @@ public class ScopeWebResource extends BaseWebResource {
 	@GET
 	@Path(ApiConstants.INUM_PARAM_PATH + ApiConstants.CLAIMS)
 	@ApiOperation(value = "List all claims of a scope")
+	@ApiResponses(value = { @ApiResponse(code = 200, response = GluuAttribute[].class, message = "Success"),
+			@ApiResponse(code = 500, message = "Server error") })
 	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response getScopeClaims(@PathParam(ApiConstants.INUM) @NotNull String inum) {
 		log(logger, "List all claims of scope ==> " + inum);
@@ -165,6 +179,8 @@ public class ScopeWebResource extends BaseWebResource {
 	@DELETE
 	@Path(ApiConstants.INUM_PARAM_PATH)
 	@ApiOperation(value = "Delete an openidconnect scope")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Success"),
+			@ApiResponse(code = 500, message = "Server error") })
 	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response deleteScope(@PathParam(ApiConstants.INUM) @NotNull String inum) {
 		log(logger, "Delete openidconnect scope " + inum);

@@ -21,7 +21,6 @@ import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.model.base.SimpleBranch;
 import org.gluu.search.filter.Filter;
 import org.gluu.util.StringHelper;
-import org.slf4j.Logger;
 
 /**
  * Provides operations with resources
@@ -35,12 +34,9 @@ public class ResourceSetService implements Serializable {
 	private static final long serialVersionUID = -1537567020929600777L;
 
 	@Inject
-	private PersistenceEntryManager ldapEntryManager;	
+	private PersistenceEntryManager ldapEntryManager;
 	@Inject
 	private OrganizationService organizationService;
-
-	@Inject
-	private Logger log;
 
 	public void addBranch() {
 		SimpleBranch branch = new SimpleBranch();
@@ -66,7 +62,8 @@ public class ResourceSetService implements Serializable {
 	/**
 	 * Add new resource entry
 	 * 
-	 * @param resource Resource
+	 * @param resource
+	 *            Resource
 	 */
 	public void addResource(UmaResource resource) {
 		ldapEntryManager.persist(resource);
@@ -75,7 +72,8 @@ public class ResourceSetService implements Serializable {
 	/**
 	 * Update resource entry
 	 * 
-	 * @param resource Resource
+	 * @param resource
+	 *            Resource
 	 */
 	public void updateResource(UmaResource resource) {
 		ldapEntryManager.merge(resource);
@@ -84,7 +82,8 @@ public class ResourceSetService implements Serializable {
 	/**
 	 * Remove resource entry
 	 * 
-	 * @param resource Resource
+	 * @param resource
+	 *            Resource
 	 */
 	public void removeResource(UmaResource resource) {
 		ldapEntryManager.remove(resource);
@@ -98,10 +97,10 @@ public class ResourceSetService implements Serializable {
 	public boolean containsResource(UmaResource resource) {
 		return ldapEntryManager.contains(resource);
 	}
-	
-  public List<UmaResource> getAllResources(int sizeLimit) {
+
+	public List<UmaResource> getAllResources(int sizeLimit) {
 		return ldapEntryManager.findEntries(getDnForResource(null), UmaResource.class, null, sizeLimit);
-    }
+	}
 
 	/**
 	 * Get all resources
@@ -115,8 +114,10 @@ public class ResourceSetService implements Serializable {
 	/**
 	 * Search resources by pattern
 	 * 
-	 * @param pattern Pattern
-	 * @param sizeLimit Maximum count of results
+	 * @param pattern
+	 *            Pattern
+	 * @param sizeLimit
+	 *            Maximum count of results
 	 * @return List of resources
 	 */
 	public List<UmaResource> findResources(String pattern, int sizeLimit) {
@@ -125,7 +126,8 @@ public class ResourceSetService implements Serializable {
 		Filter displayNameFilter = Filter.createSubstringFilter(OxTrustConstants.displayName, null, targetArray, null);
 		Filter searchFilter = Filter.createORFilter(oxIdFilter, displayNameFilter);
 
-		List<UmaResource> result = ldapEntryManager.findEntries(getDnForResource(null), UmaResource.class, searchFilter, sizeLimit);
+		List<UmaResource> result = ldapEntryManager.findEntries(getDnForResource(null), UmaResource.class, searchFilter,
+				sizeLimit);
 
 		return result;
 	}
@@ -133,7 +135,8 @@ public class ResourceSetService implements Serializable {
 	/**
 	 * Get resources by example
 	 * 
-	 * @param resource Resource
+	 * @param resource
+	 *            Resource
 	 * @return List of Resources which conform example
 	 */
 	public List<UmaResource> findResourceSets(UmaResource resource) {
@@ -143,17 +146,20 @@ public class ResourceSetService implements Serializable {
 	/**
 	 * Get resources by Id
 	 * 
-	 * @param id Id
+	 * @param id
+	 *            Id
 	 * @return List of Resources which specified id
 	 */
 	public List<UmaResource> findResourcesById(String id) {
-		return ldapEntryManager.findEntries(getDnForResource(null), UmaResource.class, Filter.createEqualityFilter("oxId", id));
+		return ldapEntryManager.findEntries(getDnForResource(null), UmaResource.class,
+				Filter.createEqualityFilter("oxId", id));
 	}
 
 	/**
 	 * Get resource set by DN
 	 * 
-	 * @param dn Resource set DN
+	 * @param dn
+	 *            Resource set DN
 	 * @return Resource set
 	 */
 	public UmaResource getResourceByDn(String dn) {
@@ -197,15 +203,17 @@ public class ResourceSetService implements Serializable {
 
 		return String.format("oxId=%s,ou=resources,ou=uma,%s", oxId, orgDn);
 	}
-	
+
 	/**
 	 * Get resources by scope
 	 * 
-	 * @param id Id
+	 * @param id
+	 *            Id
 	 * @return List of Resources which specified scope
 	 */
 	public List<UmaResource> findResourcesByScope(String scopeId) {
-		return ldapEntryManager.findEntries(getDnForResource(null), UmaResource.class, Filter.createEqualityFilter("oxAuthUmaScope", scopeId));
+		return ldapEntryManager.findEntries(getDnForResource(null), UmaResource.class,
+				Filter.createEqualityFilter("oxAuthUmaScope", scopeId));
 	}
 
 }

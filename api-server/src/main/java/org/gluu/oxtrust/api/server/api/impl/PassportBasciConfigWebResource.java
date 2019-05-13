@@ -22,6 +22,8 @@ import org.slf4j.Logger;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiResponse;
+import com.wordnik.swagger.annotations.ApiResponses;
 
 @Path(ApiConstants.BASE_API_URL + ApiConstants.PASSPORT + ApiConstants.CONFIG)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -43,6 +45,8 @@ public class PassportBasciConfigWebResource extends BaseWebResource {
 	@GET
 	@ApiOperation(value = "Get passport basic configuration")
 	@ProtectedApi(scopes = { READ_ACCESS })
+	@ApiResponses(value = { @ApiResponse(code = 200, response = PassportConfiguration[].class, message = "Success"),
+			@ApiResponse(code = 500, message = "Server error") })
 	public Response getPassportBasicConfig() {
 		log(logger, "Get passport basic configuration");
 		try {
@@ -57,6 +61,8 @@ public class PassportBasciConfigWebResource extends BaseWebResource {
 
 	@PUT
 	@ApiOperation(value = "Update passport basic configuration")
+	@ApiResponses(value = { @ApiResponse(code = 200, response = PassportConfiguration[].class, message = "Success"),
+			@ApiResponse(code = 500, message = "Server error") })
 	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response updatePassportBasicConfig(Configuration configuration) {
 		log(logger, "Update passport basic configuration");

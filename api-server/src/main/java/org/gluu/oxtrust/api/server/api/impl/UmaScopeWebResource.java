@@ -60,6 +60,8 @@ public class UmaScopeWebResource extends BaseWebResource {
 	@GET
 	@Path(ApiConstants.SEARCH)
 	@ApiOperation(value = "Search uma scopes")
+	@ApiResponses(value = { @ApiResponse(code = 200, response = Scope[].class, message = Constants.RESULT_SUCCESS),
+			@ApiResponse(code = 500, message = "Server error") })
 	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response searchUmaScopes(@QueryParam(ApiConstants.SEARCH_PATTERN) @NotNull String pattern) {
 		log(logger, "Search uma scope with pattern = " + pattern);
@@ -75,6 +77,8 @@ public class UmaScopeWebResource extends BaseWebResource {
 	@GET
 	@Path(ApiConstants.INUM_PARAM_PATH)
 	@ApiOperation(value = "Get a uma scope by inum")
+	@ApiResponses(value = { @ApiResponse(code = 200, response = Scope.class, message = Constants.RESULT_SUCCESS),
+			@ApiResponse(code = 500, message = "Server error") })
 	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response getUmaScopeByInum(@PathParam(ApiConstants.INUM) @NotNull String inum) {
 		log(logger, "Get uma scope " + inum);
@@ -94,6 +98,8 @@ public class UmaScopeWebResource extends BaseWebResource {
 
 	@POST
 	@ApiOperation(value = "Add new uma scope")
+	@ApiResponses(value = { @ApiResponse(code = 200, response = Scope.class, message = Constants.RESULT_SUCCESS),
+			@ApiResponse(code = 500, message = "Server error") })
 	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response createUmaScope(Scope umaScopeDescription) {
 		log(logger, "Add new uma scope");
@@ -112,6 +118,8 @@ public class UmaScopeWebResource extends BaseWebResource {
 
 	@PUT
 	@ApiOperation(value = "Update uma scope")
+	@ApiResponses(value = { @ApiResponse(code = 200, response = Scope.class, message = Constants.RESULT_SUCCESS),
+			@ApiResponse(code = 500, message = "Server error") })
 	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response updateUmaScope(Scope umaScopeDescription) {
 		String inum = umaScopeDescription.getInum();
@@ -136,6 +144,8 @@ public class UmaScopeWebResource extends BaseWebResource {
 	@DELETE
 	@Path(ApiConstants.INUM_PARAM_PATH)
 	@ApiOperation(value = "Delete a uma scope")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = Constants.RESULT_SUCCESS),
+			@ApiResponse(code = 500, message = "Server error") })
 	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response deleteUmaScope(@PathParam(ApiConstants.INUM) @NotNull String inum) {
 		log(logger, "Delete a uma scope having inum " + inum);
