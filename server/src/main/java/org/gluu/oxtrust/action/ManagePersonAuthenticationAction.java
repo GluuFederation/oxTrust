@@ -44,6 +44,7 @@ import org.gluu.oxtrust.model.SimpleCustomPropertiesListModel;
 import org.gluu.oxtrust.model.SimplePropertiesListModel;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.exception.BasePersistenceException;
+import org.gluu.persist.ldap.impl.LdapEntryManagerFactory;
 import org.gluu.persist.ldap.operation.impl.LdapConnectionProvider;
 import org.gluu.persist.service.PersistanceFactoryService;
 import org.gluu.service.custom.script.AbstractCustomScriptService;
@@ -319,7 +320,7 @@ public class ManagePersonAuthenticationAction
 		try {
 			FileConfiguration configuration = new FileConfiguration(ConfigurationFactory.LDAP_PROPERTIES_FILE);
 			if (!configuration.isLoaded()) {
-				configuration = new FileConfiguration(PersistanceFactoryService.LDAP_DEFAULT_PROPERTIES_FILE);
+				configuration = new FileConfiguration(LdapEntryManagerFactory.LDAP_DEFAULT_PROPERTIES_FILE);
 			}
 			Properties properties = configuration.getProperties();
 			properties.setProperty("bindDN", ldapConfig.getBindDN());
