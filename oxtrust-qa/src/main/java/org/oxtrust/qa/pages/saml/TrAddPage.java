@@ -89,13 +89,12 @@ public class TrAddPage extends AbstractPage {
 	public void save() {
 		WebElement footer = webDriver.findElement(By.id("updateButtons"));
 		footer.findElements(By.tagName("input")).get(0).click();
-		fluentWait(LITTLE);
+		fluentWait(LARGEXX);
 	}
 
 	public void releaseAttributes(String attributes) {
 		List<String> attribs = Arrays.asList(attributes.split("\\s+"));
-		WebElement panel = webDriver.findElement(By.id("trustForm:attributeTabPanelId"));
-		WebElement one = panel.findElement(By.className("SelectableCustomAttibutes"));
+		WebElement one = webDriver.findElement(By.className("SelectableCustomAttibutes"));
 		WebElement sidePanel = one.findElement(By.className("sidebar-menu"));
 		for (String attri : attribs) {
 			List<WebElement> lis = sidePanel.findElements(By.tagName("li"));

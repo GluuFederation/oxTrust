@@ -25,11 +25,13 @@ public class HomePage extends AbstractPage {
 	}
 
 	public void goSamlTrListPage() {
+		fluentWait(1);
 		WebElement samlMenu = webDriver.findElement(By.xpath("//*[@id='menuSAML']"));
 		samlMenu.click();
-
+		fluentWait(1);
 		WebElement subMenu = waitElementByID("subMenuLinkSAML1");
 		subMenu.click();
+		fluentWait(3);
 	}
 
 	public void goSamlTrAddPage() {

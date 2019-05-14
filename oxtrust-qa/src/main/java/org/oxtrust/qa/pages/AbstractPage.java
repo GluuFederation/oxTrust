@@ -31,6 +31,7 @@ public class AbstractPage {
 	public int MEDIUM = 6 + ADJUST;
 	public int HIGH = 10 + ADJUST;
 	public int LARGE = 12 + ADJUST;
+	public int LARGEXX = 30 + ADJUST;
 	public int MINUTE = 60 + ADJUST;
 	public int TWO_MINUTE = 120 + ADJUST;
 	private String QAFakeClassName = "QaFakeClassName";

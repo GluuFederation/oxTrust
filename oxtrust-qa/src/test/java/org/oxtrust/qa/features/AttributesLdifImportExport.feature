@@ -9,7 +9,7 @@ Scenario: Attributes LDIF Export
 	Then 	I should see a file named 'attributes.ldif' in downloads folder
 	And 	I sign out 
 	
-@gluuQA	
+@gluuQA
 Scenario: Attributes LDIF import 
 	When 	I sign in as administrator 
 	And 	I go to Attributes import page

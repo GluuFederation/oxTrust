@@ -1,5 +1,5 @@
 Feature: Update  a Trust reletionship 
-@gluuQA
+@gluuQAPending1
 Scenario: Update a Trust reletionship 
 	When 	I sign in as administrator 
 	Then 	I should see gluu home page 

@@ -169,6 +169,7 @@ public class ClientAddPage extends AbstractPage {
 		Assert.assertNotNull(main);
 		WebElement button = main.findElement(By.className("savePasswordButton"));
 		button.click();
+		button.click();
 		fluentWait(ONE_SEC);
 	}
 

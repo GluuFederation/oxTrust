@@ -12,7 +12,6 @@ Scenario: Delete uma scope
 	Then 	I should see a uma scope named 'QAUmaScopeToBeDeletedDN'
 	And 	I start the edit of the scope named 'QAUmaScopeToBeDeletedDN'
 	And 	I delete the current scope
-	When 	I go to uma scope list page
 	And 	I search for scopes with pattern 'QAUmaScopeToBeDeletedDN'
 	Then 	I should not see a uma scope named 'QAUmaScopeToBeDeletedDN'
 	And 	I sign out	

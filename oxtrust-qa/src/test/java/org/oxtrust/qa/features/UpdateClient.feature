@@ -1,5 +1,5 @@
 Feature: Update OpenID connect clients
-@gluuQA
+@gluuQAPending
 Scenario: Update OpenID connect clients
 	When 	I sign in as administrator 
 	Then 	I should see gluu home page 
@@ -10,8 +10,8 @@ Scenario: Update OpenID connect clients
 	And 	I set the client description to 'QaClientToBeUpdatedDescription'
 	And 	I set the client secret to 'secret'
 	And 	I set application type to 'Web'
-	And 	I set preauthorization to 'False'
-	And 	I set persist authorization to 'True'
+	#And 	I set preauthorization to 'False'
+	#And 	I set persist authorization to 'True'
 	And 	I set subject type to 'public'
 	And 	I set authentication method to 'client_secret_basic'
 	And 	I add the scope named 'openid'
