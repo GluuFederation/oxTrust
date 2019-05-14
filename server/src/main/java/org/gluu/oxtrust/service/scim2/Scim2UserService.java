@@ -23,7 +23,6 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.lang.StringUtils;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.gluu.model.GluuStatus;
 import org.gluu.oxtrust.ldap.service.IGroupService;
 import org.gluu.oxtrust.ldap.service.IPersonService;
@@ -57,6 +56,8 @@ import org.gluu.persist.model.base.GluuBoolean;
 import org.gluu.search.filter.Filter;
 import org.joda.time.format.ISODateTimeFormat;
 import org.slf4j.Logger;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * This class holds the most important business logic of the SCIM service for
@@ -132,9 +133,6 @@ public class Scim2UserService implements Serializable {
 		List<T> items = new ArrayList<T>();
 		try {
 			ObjectMapper mapper = ServiceUtil.getObjectMapper();
-			// This is already disabled in ServiceUtil
-			// mapper.disable(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES);
-
 			String[] attributeArray = source.getAttributeArray(attrName);
 			if (attributeArray != null) {
 				for (String attribute : attributeArray) {

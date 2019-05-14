@@ -11,23 +11,20 @@ import org.oxtrust.qa.pages.AbstractPage;
 public class TrAddPage extends AbstractPage {
 
 	public void setDisplayName(String dn) {
-		WebElement element = webDriver.findElement(By.id("trustForm:displayName:outputInputPanel"));
-		element = element.findElement(By.tagName("input"));
+		WebElement element = webDriver.findElement(By.className("DisplayName"));
 		element.clear();
 		element.sendKeys(dn);
 	}
 
 	public void setDescription(String des) {
-		WebElement element = webDriver.findElement(By.id("trustForm:description:outputInputPanel"));
-		element = element.findElement(By.tagName("textarea"));
+		WebElement element = webDriver.findElement(By.className("Description"));
 		element.clear();
 		element.sendKeys(des);
 
 	}
 
 	public void setEntityType(String type) {
-		WebElement element = webDriver.findElement(By.id("trustForm:entityType:outputInputPanel"));
-		element = element.findElement(By.tagName("select"));
+		WebElement element = webDriver.findElement(By.className("EntityType"));
 		Select select = new Select(element);
 		select.selectByVisibleText(type);
 	}
@@ -45,27 +42,24 @@ public class TrAddPage extends AbstractPage {
 			fluentWait(LARGE);
 		}
 		fluentWait(ONE_SEC);
-		WebElement element = waitElementByID("trustForm:spMetaDataSourceType:outputInputPanel");
-		WebElement box = element.findElement(By.tagName("select"));
-		Select select = new Select(box);
+		WebElement element = webDriver.findElement(By.className("MetaDataType"));
+		Select select = new Select(element);
 		select.selectByVisibleText(mtype);
 	}
 
 	public void setMetadata() {
 		fluentWait(ONE_SEC);
-		WebElement element = webDriver.findElement(By.id("trustForm:fileWrapper:outputInputPanel"));
-		WebElement fileUploader = element.findElement(By.cssSelector("input[type='file']"));
-		fileUploader.sendKeys(getResourceFile("qa_meta.xml").getAbsolutePath());
+		WebElement element = webDriver.findElement(By.className("MetadataFile"));
+		element.sendKeys(getResourceFile("qa_meta.xml").getAbsolutePath());
 		fluentWait(ONE_SEC);
 	}
 
 	public void configureRp(String profile) {
 		fluentWait(ONE_SEC);
-		WebElement element = webDriver.findElement(By.id("trustForm:configureSpecific:outputInputPanel"));
-		element = element.findElement(By.tagName("input"));
+		WebElement element = webDriver.findElement(By.className("checkbox1"));
 		element.click();
 		fluentWait(ONE_SEC);
-		WebElement link = waitElementByID("trustForm:configureSpecific:RelyingPartyConfig");
+		WebElement link = waitElementByClass("RelyingPartyConfigLink");
 		link.click();
 
 		pickprofileAndSave(profile);
@@ -95,13 +89,13 @@ public class TrAddPage extends AbstractPage {
 	public void save() {
 		WebElement footer = webDriver.findElement(By.id("updateButtons"));
 		footer.findElements(By.tagName("input")).get(0).click();
-		fluentWait(LITTLE);
+		fluentWait(LARGEXX);
 	}
 
 	public void releaseAttributes(String attributes) {
 		List<String> attribs = Arrays.asList(attributes.split("\\s+"));
-		WebElement panel = webDriver.findElement(By.id("trustForm:attributeTabPanelId"));
-		WebElement sidePanel = panel.findElement(By.className("sidebar-menu"));
+		WebElement one = webDriver.findElement(By.className("SelectableCustomAttibutes"));
+		WebElement sidePanel = one.findElement(By.className("sidebar-menu"));
 		for (String attri : attribs) {
 			List<WebElement> lis = sidePanel.findElements(By.tagName("li"));
 			for (WebElement li : lis) {

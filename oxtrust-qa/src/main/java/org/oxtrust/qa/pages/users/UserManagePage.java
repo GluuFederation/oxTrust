@@ -24,7 +24,7 @@ public class UserManagePage extends AbstractPage {
 
 	public boolean userExistList(String username) {
 		try {
-			tableBody = webDriver.findElement(By.id("personsFormId:personsListId")).findElements(By.tagName("tbody"))
+			tableBody = webDriver.findElement(By.className("personsFormIdpersonsListIdTable")).findElements(By.tagName("tbody"))
 					.get(0);
 		} catch (Exception e) {
 			System.out.println("############## FAILED STATE");
@@ -47,6 +47,7 @@ public class UserManagePage extends AbstractPage {
 	}
 
 	public void startUserUpdate() {
+		fluentWait(3);
 		foundUser.findElements(By.tagName("td")).get(0).click();
 	}
 

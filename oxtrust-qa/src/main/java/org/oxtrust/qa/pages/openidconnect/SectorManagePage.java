@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.junit.Assert;
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 import org.oxtrust.qa.pages.AbstractPage;
 
@@ -23,26 +24,24 @@ public class SectorManagePage extends AbstractPage {
 	}
 
 	public boolean isEmpty() {
-		WebElement form = webDriver.findElement(By.id("sectorIdentifiersFormId"));
 		boolean isEmpty = false;
 		try {
-			WebElement table = form.findElement(By.tagName("table"));
-			Assert.assertNotNull(table);
-			WebElement body = table.findElement(By.tagName("tbody"));
+			WebElement body = webDriver.findElement(By.className("sectorIdentifiersFormIdsectorIdentifierListIdTable"))
+					.findElements(By.tagName("tbody")).get(0);
+
 			Assert.assertNotNull(body);
 			List<WebElement> trs = body.findElements(By.tagName("tr"));
 			Assert.assertNotNull(trs);
 			Assert.assertNotNull(trs.get(0));
-		} catch (Exception e) {
+		} catch (NoSuchElementException e) {
 			isEmpty = true;
 		}
 		return isEmpty;
 	}
 
 	public void deleteFirstSector() {
-		WebElement form = webDriver.findElement(By.id("sectorIdentifiersFormId"));
-		WebElement table = form.findElement(By.id("sectorIdentifiersFormId:sectorIdentifierListId"));
-		WebElement body = table.findElement(By.id("sectorIdentifiersFormId:sectorIdentifierListId:tb"));
+		WebElement body = webDriver.findElement(By.className("sectorIdentifiersFormIdsectorIdentifierListIdTable"))
+				.findElements(By.tagName("tbody")).get(0);
 		WebElement tr = body.findElements(By.tagName("tr")).get(0);
 		tr.findElement(By.tagName("a")).click();
 		fluentWait(ADJUST);

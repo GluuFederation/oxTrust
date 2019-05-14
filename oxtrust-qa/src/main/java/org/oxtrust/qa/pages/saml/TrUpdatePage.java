@@ -18,6 +18,10 @@ public class TrUpdatePage extends TrAddPage {
 		WebElement footer = webDriver.findElement(By.id("updateButtons"));
 		List<WebElement> buttons = footer.findElements(By.tagName("input"));
 		Actions actions = new Actions(webDriver);
+		actions.moveToElement(buttons.get(1)).click().perform();
+		fluentWait(SMALL);
+		footer = webDriver.findElement(By.id("updateButtons"));
+		buttons = footer.findElements(By.tagName("input"));
 		actions.moveToElement(buttons.get(2)).click().perform();
 		fluentWait(ONE_SEC);
 		WebElement dialog = waitElementByID("deleteConfirmation:acceptRemovalModalPanel_content");

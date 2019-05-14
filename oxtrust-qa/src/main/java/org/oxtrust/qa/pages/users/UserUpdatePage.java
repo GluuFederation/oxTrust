@@ -84,7 +84,6 @@ public class UserUpdatePage extends AbstractPage {
 	}
 
 	public void changePassword(String pwd) {
-
 		WebElement footer = webDriver.findElement(By.className("updateButtons"));
 		List<WebElement> buttons = footer.findElements(By.tagName("input"));
 		Actions actions = new Actions(webDriver);

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
+import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
@@ -30,6 +31,7 @@ public class AbstractPage {
 	public int MEDIUM = 6 + ADJUST;
 	public int HIGH = 10 + ADJUST;
 	public int LARGE = 12 + ADJUST;
+	public int LARGEXX = 30 + ADJUST;
 	public int MINUTE = 60 + ADJUST;
 	public int TWO_MINUTE = 120 + ADJUST;
 	private String QAFakeClassName = "QaFakeClassName";
@@ -187,6 +189,50 @@ public class AbstractPage {
 	public List<WebElement> waitElementsByTag(String tagName) {
 		WebDriverWait wait = new WebDriverWait(webDriver, 20);
 		return (List<WebElement>) wait.until(ExpectedConditions.visibilityOfElementLocated(By.tagName(tagName)));
+	}
+
+	protected boolean assertElementExistInList(String tableClassName, String clientName) {
+		try {
+			WebElement body = webDriver.findElement(By.className(tableClassName)).findElements(By.tagName("tbody"))
+					.get(0);
+			List<WebElement> listItems = body.findElements(By.tagName("tr"));
+			boolean found = false;
+			for (WebElement element : listItems) {
+				if (element.getText().contains(clientName)) {
+					found = true;
+					break;
+				}
+			}
+			return found;
+		} catch (Exception e) {
+			return false;
+		}
+
+	}
+
+	protected boolean assertListIsEmpty(String tableClassName) {
+		try {
+			WebElement list = webDriver.findElement(By.className(tableClassName));
+			Assert.assertNull(list);
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	protected boolean assertElementExistInList(String tableClassName, String resName, String umaScope) {
+		WebElement resourcesList = webDriver.findElement(By.className(tableClassName));
+		Assert.assertNotNull(resourcesList);
+		WebElement body = webDriver.findElement(By.className(tableClassName)).findElements(By.tagName("tbody")).get(0);
+		List<WebElement> listItems = body.findElements(By.tagName("tr"));
+		boolean found = false;
+		for (WebElement element : listItems) {
+			if (element.getText().contains(resName) && element.getText().contains(umaScope)) {
+				found = true;
+				break;
+			}
+		}
+		return found;
 	}
 
 	protected File getResourceFile(String resName) {

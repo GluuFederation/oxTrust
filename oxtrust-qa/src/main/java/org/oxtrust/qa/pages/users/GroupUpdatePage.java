@@ -9,9 +9,7 @@ public class GroupUpdatePage extends AbstractPage {
 	WebElement footer;
 
 	public void fillDisplayName(String displayName) {
-		WebElement element = webDriver.findElement(By.className("displayNameField"));
-		element.click();
-		WebElement input = element.findElements(By.tagName("input")).get(1);
+		WebElement input = webDriver.findElement(By.className("displayNameField"));
 		input.clear();
 		input.sendKeys(displayName);
 	}

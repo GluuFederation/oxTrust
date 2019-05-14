@@ -233,6 +233,7 @@ public class CustomScriptManagePage extends AbstractPage {
 			}
 		}
 		Assert.assertFalse(found);
+		fluentWait(LITTLE);
 	}
 
 }

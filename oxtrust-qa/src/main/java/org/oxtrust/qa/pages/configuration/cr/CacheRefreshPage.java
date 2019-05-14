@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.Select;
 import org.oxtrust.qa.pages.AbstractPage;
 
 public class CacheRefreshPage extends AbstractPage {
@@ -36,8 +35,10 @@ public class CacheRefreshPage extends AbstractPage {
 	}
 
 	public void enableCacheRefresh() {
-		Select select = new Select(webDriver.findElement(By.className("enableCacheRefreshSelectBox")));
-		select.selectByVisibleText("Enabled");
+		WebElement main = webDriver.findElement(By.id("vdsCacheRefreshState"));
+		main.click();
+		WebElement element = main.findElement(By.className("enableCacheRefreshSelectBox"));
+		element.click();
 	}
 
 	public void save() {
@@ -150,6 +151,7 @@ public class CacheRefreshPage extends AbstractPage {
 		WebElement input2 = main.findElement(By.id("bindPasswordDialogId:changePasswordForm:conf"));
 		input2.clear();
 		input2.sendKeys(password);
+		fluentWait(ONE_SEC);
 		webDriver.findElement(By.className("saveBindDNButton")).click();
 		fluentWait(ONE_SEC);
 	}

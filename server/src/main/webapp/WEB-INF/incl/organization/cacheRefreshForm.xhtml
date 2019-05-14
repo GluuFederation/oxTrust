@@ -115,9 +115,8 @@
 										<h:panelGroup id="copyTogglePanelGroup">
 											<h:panelGroup id="properties" columns="1" width="100%"
 												border="0" cellpadding="0" cellspacing="0">
-												<ox:simpleCustomPropertiesList
-												    id="scpl"
-												    leftClass="col-sm-4" rightClass="col-sm-8"
+												<ox:simpleCustomPropertiesList id="scpl"
+													leftClass="col-sm-4" rightClass="col-sm-8"
 													rendered="#{_configureCacheRefreshAction.updateMethod.value eq 'copy'}"
 													label="#{msg['organization.sourceAttributeToDesitnation']}"
 													properties="#{_configureCacheRefreshAction.attributeMapping}"
@@ -159,8 +158,10 @@
 
 										<ox:decorate
 											label="#{msg['organization.keepExternalPersons']}">
-											<h:selectBooleanCheckbox value="#{_configureCacheRefreshAction.cacheRefreshConfig.keepExternalPerson}"
-												styleClass="rounded keepInternalPersonCheckBox" id="profileManagmentStateId" />
+											<h:selectBooleanCheckbox
+												value="#{_configureCacheRefreshAction.cacheRefreshConfig.keepExternalPerson}"
+												styleClass="rounded keepInternalPersonCheckBox"
+												id="profileManagmentStateId" />
 										</ox:decorate>
 
 										<ox:decorate label="#{msg['organization.loadSourceData']}">
@@ -177,16 +178,15 @@
 
 										<ox:decorate id="vdsCacheRefreshState"
 											label="#{msg['organization.cacheRefresh']}">
-											<h:selectBooleanCheckbox value="#{_configureCacheRefreshAction.configuration.vdsCacheRefreshEnabled}"
-												styleClass="rounded form-control enableCacheRefreshSelectBox"
+											<h:selectBooleanCheckbox
+												value="#{_configureCacheRefreshAction.configuration.vdsCacheRefreshEnabled}"
+												styleClass="enableCacheRefreshSelectBox"
 												id="vdsCacheRefreshStateId" />
 										</ox:decorate>
-
 									</h:panelGroup>
 
 									<h:panelGroup id="vdsTogglePanelGroup">
-										<ox:ldapConfig
-										    id="vdstpg"
+										<ox:ldapConfig id="vdstpg"
 											ldapConfig="#{_configureCacheRefreshAction.targetConfig}"
 											ldapConfigAction="#{configureCacheRefreshAction}"
 											propertiesAction="#{_configureCacheRefreshAction}"
@@ -200,26 +200,24 @@
 							</div>
 
 							<div class="tab-pane" id="key-attributes">
-								<div id="kadiv" style="display: inline-block; width: 90% !important;">
+								<div id="kadiv"
+									style="display: inline-block; width: 90% !important;">
 									<h:panelGroup id="kp">
-										<ox:simplePropertiesList
-										    id="ka1"
+										<ox:simplePropertiesList id="ka1"
 											label="#{msg['organization.keyAttribute']}"
 											labelAdd="key attribute" maxItems="3"
 											properties="#{_configureCacheRefreshAction.keyAttributes}"
 											propertiesAction="#{_configureCacheRefreshAction}"
 											required="true" tableId="KeyAttributeList" />
 
-										<ox:simplePropertiesList
-										    id="ka2"
+										<ox:simplePropertiesList id="ka2"
 											label="#{msg['organization.objectClass']}"
 											labelAdd="object class"
 											properties="#{_configureCacheRefreshAction.keyObjectClasses}"
 											propertiesAction="#{_configureCacheRefreshAction}"
 											required="true" tableId="ObjectClassList" />
 
-										<ox:simplePropertiesList
-										    id="ka3"
+										<ox:simplePropertiesList id="ka3"
 											label="#{msg['organization.sourceAttribute']}"
 											labelAdd="source attribute"
 											properties="#{_configureCacheRefreshAction.sourceAttributes}"
@@ -249,14 +247,12 @@
 											var="_ldapConfig" columns="1" style="width: 100%;" border="0"
 											columnClasses="noBorder">
 											<div style="display: inline-block; width: 75% !important;">
-												<ox:ldapConfig ldapConfig="#{_ldapConfig}"
-												    id="scId"
+												<ox:ldapConfig ldapConfig="#{_ldapConfig}" id="scId"
 													ldapConfigList="#{_configureCacheRefreshAction.sourceConfigs}"
 													ldapConfigAction="#{_configureCacheRefreshAction}"
 													propertiesAction="#{_configureCacheRefreshAction}"
 													displayEnable="false" renderAfterRomoval="sourceConfigsId"
-													showTestButton="true"
-													displayAnonymousBind="false"
+													showTestButton="true" displayAnonymousBind="false"
 													changePasswordDialogId="bindPasswordDialogId:changePasswordModalPanel" />
 											</div>
 										</rich:dataGrid>
@@ -289,8 +285,7 @@
 
 										<h:panelGroup id="inumServerId">
 
-											<ox:ldapConfig
-											    id="isId"
+											<ox:ldapConfig id="isId"
 												ldapConfig="#{_configureCacheRefreshAction.inumConfig}"
 												ldapConfigAction="#{configureCacheRefreshAction}"
 												propertiesAction="#{_configureCacheRefreshAction}"
@@ -336,26 +331,32 @@
 	<h:outputScript>
     calcTime();
     </h:outputScript>
-    <script>
-	    $('#cacheRefreshFormtab a').click(function(e) {
-		  e.preventDefault();
-		  $(this).tab('show');
+	<script>
+		$('#cacheRefreshFormtab a').click(function(e) {
+			e.preventDefault();
+			$(this).tab('show');
 		});
 
-		$("ul.nav-tabs > li > a").on("shown.bs.tab", function(e) {
-		  var id = $(e.target).attr("href").substr(1);
-		  window.localStorage.setItem('cacheRefreshFormtab', id);
-		  var storeValue = window.localStorage.getItem('cacheRefreshFormtab');
-		});
-     
-		$(document).ready(function() {
-			    var value =  window.localStorage.getItem('cacheRefreshFormtab');
-            	if (value) {
-            		var activeTab = "#";
-            		activeTab = activeTab.concat(value);  
-            		$('#cacheRefreshFormtab a[href="' + activeTab + '"]').tab('show');
-            	}
-       });
-    </script>
+		$("ul.nav-tabs > li > a").on(
+				"shown.bs.tab",
+				function(e) {
+					var id = $(e.target).attr("href").substr(1);
+					window.localStorage.setItem('cacheRefreshFormtab', id);
+					var storeValue = window.localStorage
+							.getItem('cacheRefreshFormtab');
+				});
+
+		$(document).ready(
+				function() {
+					var value = window.localStorage
+							.getItem('cacheRefreshFormtab');
+					if (value) {
+						var activeTab = "#";
+						activeTab = activeTab.concat(value);
+						$('#cacheRefreshFormtab a[href="' + activeTab + '"]')
+								.tab('show');
+					}
+				});
+	</script>
 
 </ui:composition>

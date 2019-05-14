@@ -191,9 +191,7 @@ public class UpdateScopeAction implements Serializable {
 	public String save() throws Exception {
 		try {
 			this.scope.setDisplayName(this.scope.getDisplayName().trim());
-			if (this.scope.getId() == null) {
-				this.scope.setId(this.scope.getDisplayName());
-			}
+			this.scope.setId(this.scope.getDisplayName());
 			updateDynamicScripts();
 			updateClaims();
 			if (update) {

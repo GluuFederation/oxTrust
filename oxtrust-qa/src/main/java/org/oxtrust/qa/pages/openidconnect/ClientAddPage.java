@@ -44,16 +44,25 @@ public class ClientAddPage extends AbstractPage {
 
 	public void setPreAutho(String value) {
 		WebElement main = webDriver.findElement(By.className(BOX_HEADER));
-		WebElement selectBox = main.findElement(By.className("persistClientAuthorizationSelectBox"));
-		Select select = new Select(selectBox);
-		select.selectByVisibleText(value);
+		WebElement checkBox = main.findElement(By.className("oxAuthTrustedClientSelectBox"));
+		if (value.equalsIgnoreCase("true")) {
+			checkBox.click();
+		} else {
+			checkBox.click();
+			checkBox.click();
+		}
+
 	}
 
 	public void setPersistAutho(String value) {
 		WebElement main = webDriver.findElement(By.className(BOX_HEADER));
-		WebElement selectBox = main.findElement(By.className("oxAuthTrustedClientSelectBox"));
-		Select select = new Select(selectBox);
-		select.selectByVisibleText(value);
+		WebElement checkBox = main.findElement(By.className("persistClientAuthorizationSelectBox"));
+		if (value.equalsIgnoreCase("true")) {
+			checkBox.click();
+		} else {
+			checkBox.click();
+			checkBox.click();
+		}
 	}
 
 	public void setSubjectType(String value) {
@@ -159,6 +168,7 @@ public class ClientAddPage extends AbstractPage {
 		WebElement main = webDriver.findElement(By.id("clientPassword:changePasswordModalPanel_content"));
 		Assert.assertNotNull(main);
 		WebElement button = main.findElement(By.className("savePasswordButton"));
+		button.click();
 		button.click();
 		fluentWait(ONE_SEC);
 	}

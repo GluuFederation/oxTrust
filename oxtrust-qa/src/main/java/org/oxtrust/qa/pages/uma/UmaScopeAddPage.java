@@ -1,6 +1,5 @@
 package org.oxtrust.qa.pages.uma;
 
-import java.io.File;
 import java.util.List;
 import java.util.UUID;
 
@@ -10,32 +9,18 @@ import org.openqa.selenium.WebElement;
 import org.oxtrust.qa.pages.AbstractPage;
 
 public class UmaScopeAddPage extends AbstractPage {
-	private List<WebElement> items;
 
 	public void save() {
 		WebElement buttonBar = webDriver.findElement(By.className("box-footer"));
 		buttonBar.click();
 		buttonBar.findElements(By.tagName("input")).get(0).click();
-		fluentWait(ONE_SEC);
-	}
-
-	private void initTableItems() {
-		WebElement tableBody = webDriver.findElement(By.tagName("tbody"));
-		items = tableBody.findElements(By.tagName("tr"));
+		fluentWait(2);
 	}
 
 	public void setScopeId(String id) {
-		initTableItems();
-		WebElement area = items.get(0).findElement(By.className("oxId"));
-		area.findElement(By.tagName("span")).click();
-		List<WebElement> inputs = items.get(0).findElements(By.cssSelector("input"));
-		for (WebElement input : inputs) {
-			if (input.getAttribute("type").equals("text")) {
-				input.clear();
-				input.sendKeys(id);
-				break;
-			}
-		}
+		WebElement input = webDriver.findElement(By.className("oxId"));
+		input.clear();
+		input.sendKeys(id);
 	}
 
 	public void setRandomScopeId() {
@@ -44,27 +29,17 @@ public class UmaScopeAddPage extends AbstractPage {
 	}
 
 	public void setDisplayName(String dn) {
-		initTableItems();
-		WebElement area = items.get(1).findElement(By.className("displayNameId"));
-		area.findElement(By.tagName("span")).click();
-		List<WebElement> inputs = items.get(1).findElements(By.cssSelector("input"));
-		for (WebElement input : inputs) {
-			if (input.getAttribute("type").equals("text")) {
-				input.clear();
-				input.sendKeys(dn);
-				input.sendKeys(Keys.TAB);
-				break;
-			}
-		}
+		WebElement input = webDriver.findElement(By.className("displayNameId"));
+		input.clear();
+		input.sendKeys(dn);
+		input.sendKeys(Keys.TAB);
 	}
 
-	public void setLogo() {
-		initTableItems();
-		WebElement upLoarder = items.get(2).findElement(By.className("uploadFile"));
-		WebElement addButton = upLoarder.findElement(By.cssSelector("input[type='file']"));
-		File file = getResourceFile("qa_1.png");
-		addButton.sendKeys(file.getAbsolutePath());
-		fluentWait(SMALL);
+	public void setLogo(String url) {
+		WebElement input = webDriver.findElement(By.className("IconUrlId"));
+		input.clear();
+		input.sendKeys(url);
+		input.sendKeys(Keys.TAB);
 	}
 
 	public void setPolicy(String policy) {

@@ -1,5 +1,5 @@
 Feature: OxTrust setting config 
-@gluuQA
+@gluuQAPending1
 Scenario: OxTrust setting config 
 	When 	I sign in as administrator 
 	When 	I go to oxtrust setting configuration page
