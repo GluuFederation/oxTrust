@@ -49,6 +49,7 @@ public abstract class Configuration<C extends AppConfiguration, L extends LdapAp
     public static final String BASE_DIR;
     public static final String DIR = BASE_DIR + File.separator + "conf" + File.separator;
 
+	private static final String BASE_PROPERTIES_FILE = DIR + "gluu.properties";
     public static final String LDAP_DEFAULT_PROPERTIES_FILE = DIR + "gluu-ldap.properties";
 
 	private static final String SALT_FILE_NAME = "salt";
@@ -56,6 +57,7 @@ public abstract class Configuration<C extends AppConfiguration, L extends LdapAp
 	private String confDir;
 	private String saltFilePath;
 
+	private FileConfiguration baseConfiguration;
 	private FileConfiguration ldapConfiguration;
 	private C appConfiguration;
 
@@ -78,6 +80,7 @@ public abstract class Configuration<C extends AppConfiguration, L extends LdapAp
 	}
 
 	private void create() {
+		this.baseConfiguration = loadBaseConfiguration();
 		this.ldapConfiguration = loadLdapConfiguration();
 
 		this.confDir = confDir();
@@ -101,6 +104,12 @@ public abstract class Configuration<C extends AppConfiguration, L extends LdapAp
 		}
 	}
 
+	private FileConfiguration loadBaseConfiguration() {
+		FileConfiguration fileConfiguration = createFileConfiguration(BASE_PROPERTIES_FILE, true);
+		
+		return fileConfiguration;
+	}
+
 	private FileConfiguration loadLdapConfiguration() {
 		String ldapConfigurationFileName = getLdapConfigurationFileName();
 		FileConfiguration fileConfiguration = loadLdapConfiguration(ldapConfigurationFileName, false);
@@ -110,6 +119,21 @@ public abstract class Configuration<C extends AppConfiguration, L extends LdapAp
 		}
 		
 		return fileConfiguration;
+	}
+
+	private FileConfiguration createFileConfiguration(String fileName, boolean isMandatory) {
+		try {
+			FileConfiguration fileConfiguration = new FileConfiguration(fileName);
+
+			return fileConfiguration;
+		} catch (Exception ex) {
+			if (isMandatory) {
+				logger.error("Failed to load configuration from {}", fileName, ex);
+				throw new ConfigurationException("Failed to load configuration from " + fileName, ex);
+			}
+		}
+
+		return null;
 	}
 
 	public FileConfiguration loadLdapConfiguration(String ldapConfigurationFileName, boolean mandatory) {
@@ -182,7 +206,7 @@ public abstract class Configuration<C extends AppConfiguration, L extends LdapAp
 
 	private L loadConfigurationFromLdap(String... returnAttributes) {
 		try {
-			final String dn = getLdapConfiguration().getString(getApplicationConfigurationPropertyName());
+			final String dn = baseConfiguration.getString(getApplicationConfigurationPropertyName());
 
 			final L ldapConf = this.ldapEntryManager.find(getAppConfigurationType(), dn, returnAttributes);
 			return ldapConf;

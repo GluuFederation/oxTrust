@@ -63,7 +63,7 @@ public class PassportService implements Serializable {
 	}
 
 	private String getConfigurationDn() {
-		FileConfiguration fc = configurationFactory.getPersistenceConfiguration().getConfiguration();
+		FileConfiguration fc = configurationFactory.getBaseConfiguration();
 		String configurationDn = fc.getString("oxpassport_ConfigurationEntryDN");
 		return configurationDn;
 	}

@@ -181,7 +181,7 @@ public class AppInitializer {
 		templateService.initTemplateEngine();
 
 		// Initialize python interpreter
-		pythonService.initPythonInterpreter(configurationFactory.getPersistenceConfiguration().getConfiguration()
+		pythonService.initPythonInterpreter(configurationFactory.getBaseConfiguration()
 				.getString("pythonModulesDir", null));
 
 		// Initialize Shibboleth
