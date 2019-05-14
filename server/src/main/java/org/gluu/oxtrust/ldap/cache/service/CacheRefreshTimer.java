@@ -744,7 +744,7 @@ public class CacheRefreshTimer {
 			PersistenceEntryManager targetPersistenceEntryManager, List<GluuSimplePerson> removedPersons,
 			HashMap<String, GluuInumMap> inumInumMap) {
 
-		String runDate = ldapEntryManager.encodeTime(new Date(this.lastFinishedTime));
+		Date runDate = new Date(this.lastFinishedTime);
 
 		PersistenceEntryManager inumDbPersistenceEntryManager = inumDbServerConnection.getPersistenceEntryManager();
 		List<String> result1 = new ArrayList<String>();
@@ -758,7 +758,8 @@ public class CacheRefreshTimer {
 			if (currentInumMap == null) {
 				log.warn("Can't find inum entry of person with DN: {}", removedPerson.getDn());
 			} else {
-				GluuInumMap removedInumMap = getMarkInumMapEntryAsRemoved(currentInumMap, runDate);
+				GluuInumMap removedInumMap = getMarkInumMapEntryAsRemoved(currentInumMap,
+						ldapEntryManager.encodeTime(removedPerson.getDn(), runDate));
 				try {
 					inumDbPersistenceEntryManager.merge(removedInumMap);
 					result2.add(removedInumMap.getInum());
