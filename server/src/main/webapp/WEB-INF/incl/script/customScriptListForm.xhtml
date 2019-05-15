@@ -107,17 +107,20 @@
 																		</h:inputText>
 																	</ox:decorate>
 																</div>
-																<ox:decorate label="SAML ACRS" leftClass="col-sm-3"
-																	rendered="#{_action.isPersonScript(_customScript)}"
-																	rightClass="col-sm-8">
-																	<h:selectManyListbox styleClass="samlAcrs"
-																		value="#{_customScript.aliases}" id="SamlACRSId">
-																		<f:selectItems value="#{_action.getAvailableAcrs(_customScript.name)}"
-																			var="_acr"
-																			itemLabel="#{_action.getDisplayName(_acr)}"
-																			itemValue="#{_acr}" />
-																	</h:selectManyListbox>
-																</ox:decorate>
+																<div class="form-group">
+																	<ox:decorate label="SAML ACRS" leftClass="col-sm-3"
+																		rendered="#{_action.isPersonScript(_customScript)}"
+																		rightClass="col-sm-8">
+																		<h:selectManyListbox styleClass="samlAcrs"
+																			value="#{_customScript.aliases}" id="SamlACRSId">
+																			<f:selectItems
+																				value="#{_action.getAvailableAcrs(_customScript.name)}"
+																				var="_acr"
+																				itemLabel="#{_action.getDisplayName(_acr)}"
+																				itemValue="#{_acr}" />
+																		</h:selectManyListbox>
+																	</ox:decorate>
+																</div>
 																<div class="form-group">
 																	<ox:decorate label="#{msg['customScript.description']}"
 																		required="true" styleClass="break-word"
@@ -128,7 +131,6 @@
 																			size="90"
 																			styleClass="form-control descriptionTextBox"
 																			style="width: 90%;">
-
 																		</h:inputText>
 																	</ox:decorate>
 																</div>

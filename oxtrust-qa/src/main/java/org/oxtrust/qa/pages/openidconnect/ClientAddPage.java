@@ -43,25 +43,19 @@ public class ClientAddPage extends AbstractPage {
 	}
 
 	public void setPreAutho(String value) {
-		WebElement main = webDriver.findElement(By.className(BOX_HEADER));
-		WebElement checkBox = main.findElement(By.className("oxAuthTrustedClientSelectBox"));
 		if (value.equalsIgnoreCase("true")) {
-			checkBox.click();
+			enableCheckBox("oxAuthTrustedClientSelectBox");
 		} else {
-			checkBox.click();
-			checkBox.click();
+			disableCheckBox("oxAuthTrustedClientSelectBox");
 		}
 
 	}
 
 	public void setPersistAutho(String value) {
-		WebElement main = webDriver.findElement(By.className(BOX_HEADER));
-		WebElement checkBox = main.findElement(By.className("persistClientAuthorizationSelectBox"));
 		if (value.equalsIgnoreCase("true")) {
-			checkBox.click();
+			enableCheckBox("persistClientAuthorizationSelectBox");
 		} else {
-			checkBox.click();
-			checkBox.click();
+			disableCheckBox("persistClientAuthorizationSelectBox");
 		}
 	}
 

@@ -44,7 +44,7 @@ public class OxTrustConfigurationPage extends AbstractPage {
 	}
 
 	public void assertApplicationUrlIsPresent() {
-		WebElement element = webDriver.findElement(By.name("root[configurationUrl]"));
+		WebElement element = webDriver.findElement(By.name("root[applicationUrl]"));
 		Assert.assertNotNull(element);
 	}
 

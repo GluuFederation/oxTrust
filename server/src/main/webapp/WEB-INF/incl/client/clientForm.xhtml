@@ -315,20 +315,18 @@
 											<ox:decorate id="oxAuthTrustedClientBox"
 												label="#{msg['clientForm.preAuthorization']}"
 												leftClass="col-sm-6" rightClass="col-sm-6">
-
 												<h:selectBooleanCheckbox
 													value="#{_client.oxAuthTrustedClient}" id="trustedClientId"
-													styleClass="col-sm-9 form-control rounded oxAuthTrustedClientSelectBox"
+													styleClass="oxAuthTrustedClientSelectBox"
 													onchange="togglePersistAuthorization()" required="true" />
 											</ox:decorate>
 											<ox:decorate id="persistClientAuthorizations"
 												label="#{msg['clientForm.persistClientAuthorization']}"
 												leftClass="col-sm-6" rightClass="col-sm-6">
-
 												<h:selectBooleanCheckbox
 													value="#{_client.oxAuthPersistClientAuthorizations}"
 													id="persisteClientAuthorizationsId"
-													styleClass="col-sm-9 form-control rounded persistClientAuthorizationSelectBox"
+													styleClass="persistClientAuthorizationSelectBox"
 													onchange="togglePersistAuthorization()" />
 											</ox:decorate>
 											<ox:decorate id="applicatonType"
@@ -450,16 +448,16 @@
 											<ox:decorate id="logoUri"
 												label="#{msg['clientForm.logoURI']}" leftClass="col-sm-3"
 												rightClass="col-sm-9">
-												<h:inputText value="#{_client.logoUri}" 
-													styleClass="form-control logoUriId logoUriId" required="false"
-													id="logoUriId" />
+												<h:inputText value="#{_client.logoUri}"
+													styleClass="form-control logoUriId logoUriId"
+													required="false" id="logoUriId" />
 											</ox:decorate>
 											<ox:decorate id="policyUri"
 												label="#{msg['clientForm.policyUri']}" leftClass="col-sm-3"
 												rightClass="col-sm-9">
 												<h:inputText value="#{_client.policyUri}"
-													styleClass="form-control logoUriId policyUriId" required="false"
-													id="policyUriId" />
+													styleClass="form-control logoUriId policyUriId"
+													required="false" id="policyUriId" />
 											</ox:decorate>
 										</div>
 
@@ -1018,9 +1016,8 @@
 											<ox:decorate id="jwksUri"
 												label="#{msg['clientForm.jwksURI']}" leftClass="col-sm-3"
 												rightClass="col-sm-9">
-												<h:inputText value="#{_client.jwksUri}"
-												    required="false" styleClass="form-control jwksUriId"
-													id="jwksUriId" />
+												<h:inputText value="#{_client.jwksUri}" required="false"
+													styleClass="form-control jwksUriId" id="jwksUriId" />
 											</ox:decorate>
 											<ox:decorate id="jwks" label="#{msg['clientForm.jwks']}"
 												leftClass="col-sm-3" rightClass="col-sm-9">
@@ -1109,22 +1106,11 @@
     </script>
 	<h:outputScript>
         function togglePersistAuthorization() {
-            var trustedClientIdSelect = $("select[id='clientForm:oxAuthTrustedClientBox:trustedClientId']");
-            var persisteClientAuthorizationsIdSelect = $("select[id='clientForm:persistClientAuthorizations:persisteClientAuthorizationsId']");
-            if (trustedClientIdSelect.val() == "TRUE") {
-                 $(".persistClientAuthorizationSelectBox option:contains(True)").attr('selected', 'selected');
-                 persisteClientAuthorizationsIdSelect.val("TRUE");
-                 $(".persistClientAuthorizationSelectBox").prop('disabled', 'disabled');
-            }else{
-                $(".persistClientAuthorizationSelectBox").prop('disabled', false);
-            }  
-            if(trustedClientIdSelect.val() == "FALSE"){
-               $(".persistClientAuthorizationSelectBox").prop('disabled', false);
-            }
+           
          }
+         
         function reload(){
             setTimeout(function(){ window.location.reload(); }, 2000);
         }
-
     </h:outputScript>
 </ui:composition>

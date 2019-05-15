@@ -1,6 +1,6 @@
 Feature: Setup Cache Refresh
 
-@gluuQAPending1
+@gluuQA
 Scenario: Setup cache refresh
 	When 	I sign in as administrator
 	And 	I go to cache refresh page
@@ -9,7 +9,7 @@ Scenario: Setup cache refresh
 	And 	I add a source attribute named 'uid' to destination attribute named 'uid'
 	And 	I add a source attribute named 'ldapName' to destination attribute named 'Username'
 	And 	I set polling interval to '2' minutes
-	#And 	I enable cache refresh
+	And 	I enable cache refresh
 	And 	I select the tab named 'Customer Backend Key/Attributes'
 	And 	I delete all key attributes
 	And 	I add a key attribute named 'KeyAtrribOne'

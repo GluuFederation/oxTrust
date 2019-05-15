@@ -1,5 +1,5 @@
 Feature: Change user password 
-@gluuQAPending1
+@gluuQA
 Scenario: Change user password 
 	When 	I sign in as administrator 
 	When 	I go to user add page 
@@ -42,7 +42,7 @@ Scenario: Change user password from profile page
 	And 	With status 'Active' 
 	And 	I save the user
 	When 	I go to system organization configuration page
-    And     I set the User to Edit Own Profile to 'Enabled'
+    And     I set the User to Edit Own Profile to 'true'
     And     I click on the Update button
 	And 	I sign out
 	Then 	I should be able to login as 'UserProfilePassword' with password 'UserProfilePassword'
