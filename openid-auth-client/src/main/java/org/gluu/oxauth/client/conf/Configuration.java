@@ -220,7 +220,7 @@ public abstract class Configuration<C extends AppConfiguration, L extends LdapAp
 
 	private PersistenceEntryManager createLdapEntryManager() {
 		Properties connectionProperties = (Properties) this.ldapConfiguration.getProperties();
-		connectionProperties = PropertiesHelper.appendPrefix(connectionProperties), "ldap";
+		connectionProperties = PropertiesHelper.appendPrefix(connectionProperties, "ldap");
 		Properties decryptedConnectionProperties = PropertiesDecrypter.decryptProperties(connectionProperties, this.cryptoConfigurationSalt);
 		
 		LdapEntryManagerFactory ldapEntryManagerFactory = new LdapEntryManagerFactory();
