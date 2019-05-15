@@ -16,6 +16,7 @@ import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.ldap.impl.LdapEntryManagerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.gluu.util.PropertiesHelper;
 import org.gluu.util.StringHelper;
 import org.gluu.util.exception.ConfigurationException;
 import org.gluu.util.properties.FileConfiguration;
@@ -219,6 +220,7 @@ public abstract class Configuration<C extends AppConfiguration, L extends LdapAp
 
 	private PersistenceEntryManager createLdapEntryManager() {
 		Properties connectionProperties = (Properties) this.ldapConfiguration.getProperties();
+		connectionProperties = PropertiesHelper.appendPrefix(connectionProperties), "ldap";
 		Properties decryptedConnectionProperties = PropertiesDecrypter.decryptProperties(connectionProperties, this.cryptoConfigurationSalt);
 		
 		LdapEntryManagerFactory ldapEntryManagerFactory = new LdapEntryManagerFactory();
