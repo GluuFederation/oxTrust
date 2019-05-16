@@ -95,8 +95,6 @@
 					<skipTests>false</skipTests>  <!-- set it to false when test sources appear -->
 					<includes>
 						<include>org.oxtrust.qa.*</include>
-						<include>org.oxtrust.qa.pages.*</include>
-						<include>org.oxtrust.qa.pages</include>
 					</includes>
 				</configuration>
 			</plugin>
