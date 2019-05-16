@@ -193,7 +193,7 @@ public abstract class Configuration<C extends AppConfiguration, L extends LdapAp
 	}
 
 	private boolean createFromLdap() {
-		LOG.info("Loading configuration from Ldap...");
+		LOG.info("Loading configuration from '{}' DB...", baseConfiguration.getString("persistence.type"));
 		try {
 			final L ldapConf = loadConfigurationFromLdap();
 			if (ldapConf != null) {
