@@ -25,7 +25,6 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>info.cukes</groupId>
@@ -94,9 +93,7 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
 					<skipTests>false</skipTests>  <!-- set it to false when test sources appear -->
-<!-- 					<useSystemClassLoader>false</useSystemClassLoader> -->
 					<includes>
-					
 						<include>org.oxtrust.qa.*</include>
 						<include>org.oxtrust.qa.pages.*</include>
 						<include>org.oxtrust.qa.pages</include>
