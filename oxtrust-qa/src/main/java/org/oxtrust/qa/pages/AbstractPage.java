@@ -38,7 +38,12 @@ public class AbstractPage {
 	private By locator = By.className(QAFakeClassName);
 
 	public AbstractPage() {
-		PageFactory.initElements(webDriver, this);
+		try {
+			PageFactory.initElements(webDriver, this);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 	}
 
 	public void navigate(final String value) {
