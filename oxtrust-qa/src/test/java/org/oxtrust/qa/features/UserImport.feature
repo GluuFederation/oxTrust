@@ -1,5 +1,5 @@
 Feature: Import users
-@gluuQAPending1
+@gluuQA
 Scenario:   Import users to gluu server
 	When 	I sign in as administrator 
 	Then 	I should see gluu home page 

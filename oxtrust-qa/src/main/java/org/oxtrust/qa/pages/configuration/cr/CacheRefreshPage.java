@@ -35,10 +35,7 @@ public class CacheRefreshPage extends AbstractPage {
 	}
 
 	public void enableCacheRefresh() {
-		WebElement main = webDriver.findElement(By.id("vdsCacheRefreshState"));
-		main.click();
-		WebElement element = main.findElement(By.className("enableCacheRefreshSelectBox"));
-		element.click();
+		enableCheckBox("enableCacheRefreshSelectBox");
 	}
 
 	public void save() {
@@ -152,6 +149,7 @@ public class CacheRefreshPage extends AbstractPage {
 		input2.clear();
 		input2.sendKeys(password);
 		fluentWait(ONE_SEC);
+		webDriver.findElement(By.className("saveBindDNButton")).click();
 		webDriver.findElement(By.className("saveBindDNButton")).click();
 		fluentWait(ONE_SEC);
 	}

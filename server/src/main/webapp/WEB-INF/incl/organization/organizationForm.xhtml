@@ -93,7 +93,6 @@
 						<li class="active"><a href="#sys-config" data-toggle="tab">#{msg['organizationForm.systemConfiguration']}</a></li>
 						<li><a href="#smtp-server" data-toggle="tab">#{msg['organizationForm.smtpServerConfiguration']}</a></li>
 						<li><a href="#ox-trust" data-toggle="tab">#{msg['organizationForm.oxTrustSettings']}</a></li>
-						<li><a href="#ox-auth" data-toggle="tab">#{msg['organizationForm.oxAuthSettings']}</a></li>
 					</ul>
 					<div class="tab-content">
 						<!-- System Configuration -->
@@ -121,13 +120,6 @@
 										value="#{_configuration.passportEnabled}"
 										styleClass="rounded form-control passportEnableStateSelectBox"
 										id="passportEnabledStateId" />
-								</ox:decorate>
-
-								<ox:decorate id="dnsServer"
-									label="#{msg['organizationForm.dnsServer']}">
-									<h:inputText styleClass="rounded form-control dnsServerTextBox"
-										title="Multiple addresses can be specified using comma (,)"
-										value="#{_configuration.configurationDnsServer}" size="100" />
 								</ox:decorate>
 
 								<ox:decorate id="maxLogSize"
@@ -295,17 +287,6 @@
 										</b:panel>
 									</div>
 								</div>
-							</h:panelGroup>
-						</div>
-
-						<div class="tab-pane" id="ox-auth">
-							<h:panelGroup layout="block" style="width:80%;">
-
-								<ox:decorate label="#{msg['organizationForm.serverip']}">
-									<h:inputText value="#{_webKeySettings.serverIP}"
-										styleClass="form-control serverIpTextBox" />
-								</ox:decorate>
-
 							</h:panelGroup>
 						</div>
 					</div>

@@ -10,7 +10,7 @@ Scenario: Password reset
 	And 	With display name 'QaUserDNForMail' 
 	And 	With email 'thomas@gluu.org' 
 	And 	With password 'QaUser' 
-	And 	With status 'Inactive' 
+	And 	With status 'Active' 
 	And 	I save the user
 	When 	I go to smtp configuration page
 	And 	I set 'smtp.gmail.com' as smtp host
@@ -24,7 +24,7 @@ Scenario: Password reset
 	And 	I test the configuration
 	And 	I save the configuration
 	When 	I go to system organization configuration page
-    And     I set the Self-Service Password Reset to 'Enabled'
+    And     I set the Self-Service Password Reset to 'true'
     And     I click on the Update button
     And 	I sign out
     And 	I click on password reset link

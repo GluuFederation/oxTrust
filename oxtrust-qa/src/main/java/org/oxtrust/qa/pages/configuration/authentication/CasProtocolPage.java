@@ -9,33 +9,19 @@ import org.oxtrust.qa.pages.AbstractPage;
 public class CasProtocolPage extends AbstractPage {
 
 	public void assertStatusIsEnabled() {
-		WebElement checkBox = webDriver.findElement(By.className("enableCasProtocolSelectBox"));
-		WebElement parent = checkBox.findElement(By.xpath(".."));
-		Assert.assertTrue(parent.getAttribute("class").contains("checked"));
+		assertIsEnable("enableCasProtocolSelectBox");
 	}
 
 	public void enableStatus() {
-		WebElement checkBox = webDriver.findElement(By.className("enableCasProtocolSelectBox"));
-		WebElement parent = checkBox.findElement(By.xpath(".."));
-		if (!parent.getAttribute("class").contains("checked")) {
-			checkBox.click();
-		}
-		Assert.assertTrue(parent.getAttribute("class").contains("checked"));
+		enableCheckBox("enableCasProtocolSelectBox");
 	}
 
 	public void disableStatus() {
-		WebElement checkBox = webDriver.findElement(By.className("enableCasProtocolSelectBox"));
-		WebElement parent = checkBox.findElement(By.xpath(".."));
-		if (parent.getAttribute("class").contains("checked")) {
-			checkBox.click();
-		}
-		Assert.assertFalse(parent.getAttribute("class").contains("checked"));
+		disableCheckBox("enableCasProtocolSelectBox");
 	}
 
 	public void assertStatusIsDisabled() {
-		WebElement checkBox = webDriver.findElement(By.className("enableCasProtocolSelectBox"));
-		WebElement parent = checkBox.findElement(By.xpath(".."));
-		Assert.assertFalse(parent.getAttribute("class").contains("checked"));
+		assertIsDisable("enableCasProtocolSelectBox");
 	}
 
 	public void assertServiceTypeIs(String type) {

@@ -1,11 +1,10 @@
 package org.oxtrust.qa.pages.configuration.organization;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.Select;
 import org.oxtrust.qa.pages.AbstractPage;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Created by Nat on 2018-07-16.
@@ -14,18 +13,27 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class SystemConfigurationPage extends AbstractPage {
 
 	public void setSelfServicePasswordReset(String resetState) {
-		Select passwordReset = new Select(webDriver.findElement(By.className("passwordResetSelectBox")));
-		passwordReset.selectByVisibleText(resetState);
+		if (resetState.equalsIgnoreCase("true")) {
+			enableCheckBox("passwordResetSelectBox");
+		} else {
+			disableCheckBox("passwordResetSelectBox");
+		}
 	}
 
 	public void setSCIMSupport(String scimState) {
-		Select scimSupport = new Select(webDriver.findElement(By.className("scimEnableStateSelectBox")));
-		scimSupport.selectByVisibleText(scimState);
+		if (scimState.equalsIgnoreCase("true")) {
+			enableCheckBox("scimEnableStateSelectBox");
+		} else {
+			disableCheckBox("scimEnableStateSelectBox");
+		}
 	}
 
 	public void setPassportSupport(String passportState) {
-		Select passportSupport = new Select(webDriver.findElement(By.className("passportEnableStateSelectBox")));
-		passportSupport.selectByVisibleText(passportState);
+		if (passportState.equalsIgnoreCase("true")) {
+			enableCheckBox("passportEnableStateSelectBox");
+		} else {
+			disableCheckBox("passportEnableStateSelectBox");
+		}
 	}
 
 	public void setDNSServer(String dnsServerValue) {
@@ -42,8 +50,11 @@ public class SystemConfigurationPage extends AbstractPage {
 	}
 
 	public void setUserCanEditOwnProfile(String editOwnProfile) {
-		Select userProfile = new Select(webDriver.findElement(By.className("profileManagmentSelectBox")));
-		userProfile.selectByVisibleText(editOwnProfile);
+		if (editOwnProfile.equalsIgnoreCase("true")) {
+			enableCheckBox("profileManagmentSelectBox");
+		} else {
+			disableCheckBox("profileManagmentSelectBox");
+		}
 
 	}
 
@@ -65,26 +76,35 @@ public class SystemConfigurationPage extends AbstractPage {
 	}
 
 	public void assertPasswordResetStatus(String enabled) {
-		Select passwordFieldStatus = new Select(
-				webDriver.findElement(By.id("organizationForm:passwordReset:passwordResetId")));
-		WebElement passwordReset = passwordFieldStatus.getFirstSelectedOption();
-		assertThat(passwordReset.getText()).isEqualTo(enabled);
+		if (enabled.equalsIgnoreCase("true")) {
+			assertIsEnable("passwordResetSelectBox");
+		} else {
+			assertIsDisable("passwordResetSelectBox");
+		}
 	}
 
 	public void assertSCIMSupportStatus(String disabled) {
-		Select scimSupportFieldStatus = new Select(
-				webDriver.findElement(By.id("organizationForm:scimEnabledState:scimEnabledStateId")));
-		WebElement scimSupport = scimSupportFieldStatus.getFirstSelectedOption();
-		assertThat(scimSupport.getText()).isEqualTo(disabled);
-
+		if (disabled.equalsIgnoreCase("true")) {
+			assertIsEnable("scimEnableStateSelectBox");
+		} else {
+			assertIsDisable("scimEnableStateSelectBox");
+		}
 	}
 
 	public void assertPassportSupportStatus(String disabled) {
-		Select passportSupportNameStatus = new Select(
-				webDriver.findElement(By.id("organizationForm:passportEnabledState:passportEnabledStateId")));
-		WebElement passportSupport = passportSupportNameStatus.getFirstSelectedOption();
-		assertThat(passportSupport.getText()).isEqualTo(disabled);
+		if (disabled.equalsIgnoreCase("true")) {
+			assertIsEnable("passportEnableStateSelectBox");
+		} else {
+			assertIsDisable("passportEnableStateSelectBox");
+		}
+	}
 
+	public void assertUserCanEditOwnProfileValue(String editProfileValue) {
+		if (editProfileValue.equalsIgnoreCase("true")) {
+			assertIsEnable("profileManagmentSelectBox");
+		} else {
+			assertIsDisable("profileManagmentSelectBox");
+		}
 	}
 
 	public void assertDNSServerValue(String dnsServerValue) {
@@ -110,14 +130,6 @@ public class SystemConfigurationPage extends AbstractPage {
 
 	}
 
-	public void assertUserCanEditOwnProfileValue(String editProfileValue) {
-		Select userCanEditOwnProfileStatus = new Select(
-				webDriver.findElement(By.id("organizationForm:profileManagment:profileManagmentStateId")));
-		WebElement editOwnProfile = userCanEditOwnProfileStatus.getFirstSelectedOption();
-		assertThat(editOwnProfile.getText()).isEqualTo(editProfileValue);
-
-	}
-
 	public void assertContactEmailValue(String contactEmailValue) {
 		WebElement contactEmailSet = webDriver.findElement(By.className("contactEmailTextBox"));
 		assertThat(contactEmailSet.getAttribute("value")).isEqualTo(contactEmailValue);
@@ -125,7 +137,7 @@ public class SystemConfigurationPage extends AbstractPage {
 	}
 
 	public void assertNotContactEmailValue(String notContactEmailValue) {
-		WebElement notContactEmailSet =webDriver.findElement(By.className("contactEmailTextBox"));
+		WebElement notContactEmailSet = webDriver.findElement(By.className("contactEmailTextBox"));
 		assertThat(notContactEmailSet.getAttribute("value")).isNotEqualTo(notContactEmailValue);
 
 	}

@@ -3,7 +3,6 @@ package org.oxtrust.qa.pages.openidconnect;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.Select;
 import org.oxtrust.qa.pages.AbstractPage;
 
@@ -39,10 +38,7 @@ public class OpenIdConnectScopeAddPage extends AbstractPage {
 	}
 
 	public void setRegistrationType(String rType) {
-		WebElement main = webDriver.findElement(By.className("box-header"));
-		WebElement checkbox = main.findElements(By.className("registrationType")).get(0);
-		Actions actions = new Actions(webDriver);
-		actions.moveToElement(checkbox).click().perform();
+		enableCheckBox("registrationType");
 	}
 
 }

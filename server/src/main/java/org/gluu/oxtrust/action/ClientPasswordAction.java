@@ -65,9 +65,8 @@ public class ClientPasswordAction implements Serializable {
 			log.error("Failed to encrypt password", e);
 		}
 		clientService.updateClient(client);
-		// Update client password in action class
 		updateClientAction.getClient().setEncodedClientSecret(client.getEncodedClientSecret());
-
+		updateClientAction.getClient().setOxAuthClientSecret(newPassword);
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 

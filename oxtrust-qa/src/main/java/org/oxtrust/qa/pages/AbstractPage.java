@@ -235,8 +235,44 @@ public class AbstractPage {
 		return found;
 	}
 
+	protected void enableCheckBox(String checkBoxClassName) {
+		WebElement checkBox = webDriver.findElement(By.className(checkBoxClassName));
+		WebElement parent = checkBox.findElement(By.xpath(".."));
+		if (!parent.getAttribute("class").contains("checked")) {
+			parent.click();
+		}
+		Assert.assertTrue(parent.getAttribute("class").contains("checked"));
+	}
+
+	protected void disableCheckBox(String checkBoxClassName) {
+		WebElement checkBox = webDriver.findElement(By.className(checkBoxClassName));
+		WebElement parent = checkBox.findElement(By.xpath(".."));
+		if (parent.getAttribute("class").contains("checked")) {
+			parent.click();
+		}
+		Assert.assertFalse(parent.getAttribute("class").contains("checked"));
+	}
+
+	protected void assertIsEnable(String checkBoxClassName) {
+		WebElement checkBox = webDriver.findElement(By.className(checkBoxClassName));
+		WebElement parent = checkBox.findElement(By.xpath(".."));
+		Assert.assertTrue(parent.getAttribute("class").contains("checked"));
+	}
+
+	protected void assertIsDisable(String checkBoxClassName) {
+		WebElement checkBox = webDriver.findElement(By.className(checkBoxClassName));
+		WebElement parent = checkBox.findElement(By.xpath(".."));
+		Assert.assertFalse(parent.getAttribute("class").contains("checked"));
+	}
+
 	protected File getResourceFile(String resName) {
-		ClassLoader classLoader = getClass().getClassLoader();
-		return new File(classLoader.getResource(resName).getFile());
+		try {
+			File targetFile = new File("src/main/resources/" + resName);
+			return targetFile;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+
 	}
 }
