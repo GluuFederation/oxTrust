@@ -81,7 +81,7 @@ public class ApplicationDriver {
 
 	public static void startService() {
 		if (service == null) {
-			File file = new File("/usr/local/bin/chromedriver");
+			File file = new File("/usr/bin/chromedriver");
 			service = new ChromeDriverService.Builder().usingDriverExecutable(file).usingAnyFreePort().build();
 		}
 		try {
