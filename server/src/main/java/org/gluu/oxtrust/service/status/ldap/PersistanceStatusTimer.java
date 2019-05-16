@@ -33,7 +33,7 @@ import org.slf4j.Logger;
  */
 @ApplicationScoped
 @Named
-public class LdapStatusTimer {
+public class PersistanceStatusTimer {
 
     private final static int DEFAULT_INTERVAL = 60; // 1 minute
 
@@ -55,7 +55,7 @@ public class LdapStatusTimer {
     private AtomicBoolean isActive;
 
     public void initTimer() {
-        log.info("Initializing Ldap Status Timer");
+        log.info("Initializing Persistance Layer Status Timer");
         this.isActive = new AtomicBoolean(false);
 
 		timerEvent.fire(new TimerEvent(new TimerSchedule(DEFAULT_INTERVAL, DEFAULT_INTERVAL), new LdapStatusEvent(),

@@ -35,7 +35,7 @@ import org.gluu.oxtrust.service.MetricService;
 import org.gluu.oxtrust.service.cdi.event.CentralLdap;
 import org.gluu.oxtrust.service.custom.LdapCentralConfigurationReload;
 import org.gluu.oxtrust.service.logger.LoggerService;
-import org.gluu.oxtrust.service.status.ldap.LdapStatusTimer;
+import org.gluu.oxtrust.service.status.ldap.PersistanceStatusTimer;
 import org.gluu.oxtrust.util.BuildVersionService;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.ldap.impl.LdapEntryManager;
@@ -126,7 +126,7 @@ public class AppInitializer {
 	private CustomScriptManager customScriptManager;
 
 	@Inject
-	private LdapStatusTimer ldapStatusTimer;
+	private PersistanceStatusTimer ldapStatusTimer;
 
 	@Inject
 	private ShibbolethInitializer shibbolethInitializer;
