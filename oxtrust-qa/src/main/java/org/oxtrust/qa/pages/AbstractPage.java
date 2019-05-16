@@ -57,6 +57,7 @@ public class AbstractPage {
 	}
 
 	public void goToLoginPage() {
+		Assert.assertTrue(true);
 		if (webDriver != null) {
 			System.out.println("**********************1");
 			webDriver.get(settings.getUrl());
