@@ -17,8 +17,8 @@ public class SignInSteps extends BaseSteps {
 	@When("^I sign in as administrator$")
 	public void signInAsAdmin() {
 		signInPage.goToLoginPage();
-		//signInPage.fillFormAsAdmin();
-		//signInPage.submit();
+		signInPage.fillFormAsAdmin();
+		signInPage.submit();
 	}
 
 	@Then("^I should be able to login as '(.+)' with password '(.+)'$")

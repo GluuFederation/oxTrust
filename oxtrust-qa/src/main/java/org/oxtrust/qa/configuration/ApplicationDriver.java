@@ -31,9 +31,9 @@ public class ApplicationDriver {
 		if (driver == null) {
 			readConfiguration();
 			initDriverOptions();
-			options.setHeadless(true);
+			// options.setHeadless(true);
 			if (settings.getOs().equalsIgnoreCase(LINUX) && settings.getBrowser().startsWith(CHROME)) {
-				System.setProperty("webdriver.chrome.driver", "usr/local/bin/chromedriver");
+				System.setProperty("webdriver.chrome.driver", "/usr/bin/chromedriver");
 				startService();
 				driver = new RemoteWebDriver(service.getUrl(), options);
 				return driver;
