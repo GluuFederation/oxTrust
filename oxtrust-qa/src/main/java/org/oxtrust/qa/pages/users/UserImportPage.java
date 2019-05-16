@@ -10,7 +10,7 @@ public class UserImportPage extends AbstractPage {
 	public void importUsers() {
 		WebElement upLoader = webDriver.findElement(By.className("uploadFile"));
 		WebElement addButton = upLoader.findElement(By.cssSelector("input[type='file']"));
-		addButton.sendKeys(getResourceFile("ImportUsers.xls").getAbsolutePath());
+		addButton.sendKeys(getResourceFile("import_users.xls").getAbsolutePath());
 		fluentWait(ONE_SEC);
 		validate();
 		performImport();

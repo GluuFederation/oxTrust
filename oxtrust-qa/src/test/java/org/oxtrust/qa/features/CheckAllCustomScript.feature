@@ -1,5 +1,5 @@
 Feature: Check all custom scripts
-@gluuQAPending1
+@gluuQA
 Scenario: Check all custom scripts
 	When 	I sign in as administrator 
 	Then 	I should see gluu home page 

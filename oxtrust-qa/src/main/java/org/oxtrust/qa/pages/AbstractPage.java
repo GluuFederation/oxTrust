@@ -243,6 +243,7 @@ public class AbstractPage {
 		}
 		Assert.assertTrue(parent.getAttribute("class").contains("checked"));
 	}
+
 	protected void disableCheckBox(String checkBoxClassName) {
 		WebElement checkBox = webDriver.findElement(By.className(checkBoxClassName));
 		WebElement parent = checkBox.findElement(By.xpath(".."));
@@ -264,10 +265,14 @@ public class AbstractPage {
 		Assert.assertFalse(parent.getAttribute("class").contains("checked"));
 	}
 
-	
-
 	protected File getResourceFile(String resName) {
-		ClassLoader classLoader = getClass().getClassLoader();
-		return new File(classLoader.getResource(resName).getFile());
+		try {
+			File targetFile = new File("src/main/resources/" + resName);
+			return targetFile;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+
 	}
 }
