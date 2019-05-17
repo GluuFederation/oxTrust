@@ -32,7 +32,7 @@ public class ApplicationDriver {
 			if (driver == null) {
 				readConfiguration();
 				initDriverOptions();
-				// options.setHeadless(true);
+				options.setHeadless(true);
 				if (settings.getOs().equalsIgnoreCase(LINUX) && settings.getBrowser().startsWith(CHROME)) {
 					System.setProperty("webdriver.chrome.driver", "/usr/bin/chromedriver");
 					startService();
@@ -46,6 +46,9 @@ public class ApplicationDriver {
 			return driver;
 		} catch (Exception e) {
 			e.printStackTrace();
+			System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+			System.out.println("----------WEB DRIVER INSTANCE IS NULL");
+			System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
 			return null;
 		}
 
