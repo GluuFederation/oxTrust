@@ -28,21 +28,27 @@ public class ApplicationDriver {
 	private static ChromeOptions options;
 
 	public static WebDriver getInstance() {
-		if (driver == null) {
-			readConfiguration();
-			initDriverOptions();
-			// options.setHeadless(true);
-			if (settings.getOs().equalsIgnoreCase(LINUX) && settings.getBrowser().startsWith(CHROME)) {
-				System.setProperty("webdriver.chrome.driver", "/usr/bin/chromedriver");
-				startService();
-				driver = new RemoteWebDriver(service.getUrl(), options);
-				return driver;
+		try {
+			if (driver == null) {
+				readConfiguration();
+				initDriverOptions();
+				// options.setHeadless(true);
+				if (settings.getOs().equalsIgnoreCase(LINUX) && settings.getBrowser().startsWith(CHROME)) {
+					System.setProperty("webdriver.chrome.driver", "/usr/bin/chromedriver");
+					startService();
+					driver = new RemoteWebDriver(service.getUrl(), options);
+					return driver;
 
-			} else {
-				throw new IllegalArgumentException("OS or Browser not supported yet");
+				} else {
+					throw new IllegalArgumentException("OS or Browser not supported yet");
+				}
 			}
+			return driver;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
 		}
-		return driver;
+
 	}
 
 	public static Settings getSettings() {
