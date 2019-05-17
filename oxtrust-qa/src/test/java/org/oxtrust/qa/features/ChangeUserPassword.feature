@@ -29,7 +29,7 @@ Scenario: Change user password
 	Then 	I should not see a user named 'QaUserPasswordChanged'
 	And 	I sign out 
 	
-@gluuQA
+@gluuQAPending1
 Scenario: Change user password from profile page
     When 	I sign in as administrator 
 	And 	I go to user add page 
@@ -42,7 +42,7 @@ Scenario: Change user password from profile page
 	And 	With status 'Active' 
 	And 	I save the user
 	When 	I go to system organization configuration page
-    And     I set the User to Edit Own Profile to 'Enabled'
+    And     I set the User to Edit Own Profile to 'true'
     And     I click on the Update button
 	And 	I sign out
 	Then 	I should be able to login as 'UserProfilePassword' with password 'UserProfilePassword'

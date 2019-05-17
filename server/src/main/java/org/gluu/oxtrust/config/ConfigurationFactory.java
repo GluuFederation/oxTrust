@@ -38,6 +38,7 @@ import org.gluu.persist.model.PersistenceConfiguration;
 import org.gluu.persist.service.PersistanceFactoryService;
 import org.gluu.service.JsonService;
 import org.gluu.service.cdi.async.Asynchronous;
+import org.gluu.service.cdi.event.BaseConfigurationReload;
 import org.gluu.service.cdi.event.ConfigurationEvent;
 import org.gluu.service.cdi.event.ConfigurationUpdate;
 import org.gluu.service.cdi.event.LdapConfigurationReload;
@@ -83,6 +84,7 @@ public class ConfigurationFactory {
 
 	public final static String PERSISTENCE_CONFIGUARION_RELOAD_EVENT_TYPE = "persistenceConfigurationReloadEvent";
 	public final static String PERSISTENCE_CENTRAL_CONFIGUARION_RELOAD_EVENT_TYPE = "persistenceCentralConfigurationReloadEvent";
+	public final static String BASE_CONFIGUARION_RELOAD_EVENT_TYPE = "baseConfigurationReloadEvent";
 
 	private final static int DEFAULT_INTERVAL = 30; // 30 seconds
 
@@ -104,6 +106,7 @@ public class ConfigurationFactory {
 	public static final String BASE_DIR;
 	public static final String DIR = BASE_DIR + File.separator + "conf" + File.separator;
 
+	private static final String BASE_PROPERTIES_FILE = DIR + "gluu.properties";
 	public static final String LDAP_PROPERTIES_FILE = DIR + "oxtrust-ldap.properties";
 	public static final String LDAP_CENTRAL_PROPERTIES_FILE = DIR + "oxtrust-central-ldap.properties";
 
@@ -116,6 +119,8 @@ public class ConfigurationFactory {
 
 	private boolean loaded = false;
 
+	private FileConfiguration baseConfiguration;
+
 	private PersistenceConfiguration persistenceConfiguration;
 
 	private FileConfiguration ldapCentralConfiguration;
@@ -127,6 +132,7 @@ public class ConfigurationFactory {
 
 	private AtomicBoolean isActive;
 
+	private long baseConfigurationFileLastModifiedTime = -1;
 	private long ldapCentralFileLastModifiedTime = -1;
 
 	private long loadedRevision = -1;
@@ -137,6 +143,8 @@ public class ConfigurationFactory {
 		this.isActive = new AtomicBoolean(true);
 		try {
 			log.info("Creating oxTrustConfiguration");
+			loadBaseConfiguration();
+
 			this.persistenceConfiguration = persistanceFactoryService.loadPersistenceConfiguration(LDAP_PROPERTIES_FILE);
 			loadLdapCentralConfiguration();
 			this.confDir = confDir();
@@ -202,6 +210,17 @@ public class ConfigurationFactory {
             }
         }
 
+        // Reload Base configuration if needed
+		File baseConfiguration = new File(BASE_PROPERTIES_FILE);
+		if (baseConfiguration.exists()) {
+			final long lastModified = baseConfiguration.lastModified();
+			if (lastModified > baseConfigurationFileLastModifiedTime) {
+				// Reload configuration only if it was modified
+				loadBaseConfiguration();
+				event.select(BaseConfigurationReload.Literal.INSTANCE).fire(BASE_CONFIGUARION_RELOAD_EVENT_TYPE);
+			}
+		}
+
 		// Reload LDAP central configuration if needed
 		File ldapCentralFile = new File(LDAP_CENTRAL_PROPERTIES_FILE);
 		if (ldapCentralFile.exists()) {
@@ -236,7 +255,7 @@ public class ConfigurationFactory {
 	}
 
 	public String confDir() {
-		final String confDir = this.persistenceConfiguration.getConfiguration().getString("confDir", null);
+		final String confDir = this.baseConfiguration.getString("confDir", null);
 		if (StringUtils.isNotBlank(confDir)) {
 			return confDir;
 		}
@@ -244,6 +263,11 @@ public class ConfigurationFactory {
 		return DIR;
 	}
 
+	public FileConfiguration getBaseConfiguration() {
+		return baseConfiguration;
+	}
+
+	@Produces
     @ApplicationScoped
     public PersistenceConfiguration getPersistenceConfiguration() {
         return persistenceConfiguration;
@@ -282,7 +306,7 @@ public class ConfigurationFactory {
 	}
 
 	public String getConfigurationDn() {
-        return this.persistenceConfiguration.getConfiguration().getString("oxtrust_ConfigurationEntryDN");
+        return this.baseConfiguration.getString("oxtrust_ConfigurationEntryDN");
     }
 
     private boolean createFromFile() {
@@ -315,6 +339,13 @@ public class ConfigurationFactory {
 		}
 
 		return null;
+	}
+
+	private void loadBaseConfiguration() {
+		this.baseConfiguration = createFileConfiguration(BASE_PROPERTIES_FILE, true);
+
+		File baseConfiguration = new File(BASE_PROPERTIES_FILE);
+		this.baseConfigurationFileLastModifiedTime = baseConfiguration.lastModified();
 	}
 
 	private void loadLdapCentralConfiguration() {
@@ -357,7 +388,7 @@ public class ConfigurationFactory {
 	}
 
 	private boolean createFromLdap(boolean recoverFromFiles) {
-		log.info("Loading configuration from LDAP...");
+		log.info("Loading configuration from '{}' DB...", baseConfiguration.getString("persistence.type"));
 		try {
 			final LdapOxTrustConfiguration conf = loadConfigurationFromLdap();
 			if (conf != null) {

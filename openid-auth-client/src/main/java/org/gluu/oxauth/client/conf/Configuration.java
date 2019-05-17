@@ -16,10 +16,13 @@ import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.ldap.impl.LdapEntryManagerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.gluu.util.PropertiesHelper;
 import org.gluu.util.StringHelper;
 import org.gluu.util.exception.ConfigurationException;
 import org.gluu.util.properties.FileConfiguration;
 import org.gluu.util.security.PropertiesDecrypter;
+import org.gluu.util.security.StringEncrypter;
+import org.gluu.util.security.StringEncrypter.EncryptionException;
 
 /**
  * Base OpenId configuration
@@ -29,7 +32,7 @@ import org.gluu.util.security.PropertiesDecrypter;
  */
 public abstract class Configuration<C extends AppConfiguration, L extends LdapAppConfiguration> {
 
-	private final Logger logger = LoggerFactory.getLogger(Configuration.class);
+	private final Logger LOG = LoggerFactory.getLogger(Configuration.class);
 
     static {
         if (System.getProperty("gluu.base") != null) {
@@ -49,6 +52,7 @@ public abstract class Configuration<C extends AppConfiguration, L extends LdapAp
     public static final String BASE_DIR;
     public static final String DIR = BASE_DIR + File.separator + "conf" + File.separator;
 
+	private static final String BASE_PROPERTIES_FILE = DIR + "gluu.properties";
     public static final String LDAP_DEFAULT_PROPERTIES_FILE = DIR + "gluu-ldap.properties";
 
 	private static final String SALT_FILE_NAME = "salt";
@@ -56,6 +60,7 @@ public abstract class Configuration<C extends AppConfiguration, L extends LdapAp
 	private String confDir;
 	private String saltFilePath;
 
+	private FileConfiguration baseConfiguration;
 	private FileConfiguration ldapConfiguration;
 	private C appConfiguration;
 
@@ -78,6 +83,7 @@ public abstract class Configuration<C extends AppConfiguration, L extends LdapAp
 	}
 
 	private void create() {
+		this.baseConfiguration = loadBaseConfiguration();
 		this.ldapConfiguration = loadLdapConfiguration();
 
 		this.confDir = confDir();
@@ -88,10 +94,10 @@ public abstract class Configuration<C extends AppConfiguration, L extends LdapAp
 		this.ldapEntryManager = createLdapEntryManager();
 
 		if (!createFromLdap()) {
-			logger.error("Failed to load configuration from Ldap. Please fix it!!!.");
+			LOG.error("Failed to load configuration from Ldap. Please fix it!!!.");
 			throw new ConfigurationException("Failed to load configuration from Ldap.");
 		} else {
-			logger.info("Configuration loaded successfully.");
+			LOG.info("Configuration loaded successfully.");
 		}
 	}
 
@@ -99,6 +105,12 @@ public abstract class Configuration<C extends AppConfiguration, L extends LdapAp
 		if (this.ldapEntryManager != null) {
 			destroyLdapEntryManager(this.ldapEntryManager);
 		}
+	}
+
+	private FileConfiguration loadBaseConfiguration() {
+		FileConfiguration fileConfiguration = createFileConfiguration(BASE_PROPERTIES_FILE, true);
+		
+		return fileConfiguration;
 	}
 
 	private FileConfiguration loadLdapConfiguration() {
@@ -110,6 +122,21 @@ public abstract class Configuration<C extends AppConfiguration, L extends LdapAp
 		}
 		
 		return fileConfiguration;
+	}
+
+	private FileConfiguration createFileConfiguration(String fileName, boolean isMandatory) {
+		try {
+			FileConfiguration fileConfiguration = new FileConfiguration(fileName);
+
+			return fileConfiguration;
+		} catch (Exception ex) {
+			if (isMandatory) {
+				LOG.error("Failed to load configuration from {}", fileName, ex);
+				throw new ConfigurationException("Failed to load configuration from " + fileName, ex);
+			}
+		}
+
+		return null;
 	}
 
 	public FileConfiguration loadLdapConfiguration(String ldapConfigurationFileName, boolean mandatory) {
@@ -134,7 +161,7 @@ public abstract class Configuration<C extends AppConfiguration, L extends LdapAp
 				return ldapConfiguration;
 			}
 		} catch (Exception ex) {
-			logger.error(ex.getMessage(), ex);
+			LOG.error(ex.getMessage(), ex);
 			throw new ConfigurationException("Failed to load Ldap configuration from " + ldapConfigurationFileName, ex);
 		}
 
@@ -151,7 +178,7 @@ public abstract class Configuration<C extends AppConfiguration, L extends LdapAp
 
 			return cryptoConfiguration.getString("encodeSalt");
 		} catch (Exception ex) {
-			logger.error("Failed to load configuration from {}", saltFilePath, ex);
+			LOG.error("Failed to load configuration from {}", saltFilePath, ex);
 			throw new ConfigurationException("Failed to load configuration from " + saltFilePath, ex);
 		}
 	}
@@ -166,7 +193,7 @@ public abstract class Configuration<C extends AppConfiguration, L extends LdapAp
 	}
 
 	private boolean createFromLdap() {
-		logger.info("Loading configuration from Ldap...");
+		LOG.info("Loading configuration from '{}' DB...", baseConfiguration.getString("persistence.type"));
 		try {
 			final L ldapConf = loadConfigurationFromLdap();
 			if (ldapConf != null) {
@@ -174,7 +201,7 @@ public abstract class Configuration<C extends AppConfiguration, L extends LdapAp
 				return true;
 			}
 		} catch (Exception ex) {
-			logger.error(ex.getMessage(), ex);
+			LOG.error(ex.getMessage(), ex);
 		}
 
 		return false;
@@ -182,12 +209,12 @@ public abstract class Configuration<C extends AppConfiguration, L extends LdapAp
 
 	private L loadConfigurationFromLdap(String... returnAttributes) {
 		try {
-			final String dn = getLdapConfiguration().getString(getApplicationConfigurationPropertyName());
+			final String dn = baseConfiguration.getString(getApplicationConfigurationPropertyName());
 
 			final L ldapConf = this.ldapEntryManager.find(getAppConfigurationType(), dn, returnAttributes);
 			return ldapConf;
 		} catch (BasePersistenceException ex) {
-			logger.error(ex.getMessage());
+			LOG.error(ex.getMessage());
 		}
 
 		return null;
@@ -195,12 +222,19 @@ public abstract class Configuration<C extends AppConfiguration, L extends LdapAp
 
 	private PersistenceEntryManager createLdapEntryManager() {
 		Properties connectionProperties = (Properties) this.ldapConfiguration.getProperties();
-		Properties decryptedConnectionProperties = PropertiesDecrypter.decryptProperties(connectionProperties, this.cryptoConfigurationSalt);
+		connectionProperties = PropertiesHelper.appendPrefix(connectionProperties, "ldap");
+		Properties decryptedConnectionProperties;
+		try {
+			decryptedConnectionProperties = PropertiesDecrypter.decryptAllProperties(StringEncrypter.defaultInstance(), connectionProperties, this.cryptoConfigurationSalt);
+        } catch (EncryptionException ex) {
+        	throw new ConfigurationException("Failed to decript configuration properties", ex);
+        }
+
 		
 		LdapEntryManagerFactory ldapEntryManagerFactory = new LdapEntryManagerFactory();
 		PersistenceEntryManager ldapEntryManager = ldapEntryManagerFactory.createEntryManager(decryptedConnectionProperties);
 
-		logger.debug("Created LdapEntryManager: {}", ldapEntryManager);
+		LOG.debug("Created LdapEntryManager: {}", ldapEntryManager);
 
 		return ldapEntryManager;
 	}
@@ -208,9 +242,9 @@ public abstract class Configuration<C extends AppConfiguration, L extends LdapAp
 	private void destroyLdapEntryManager(final PersistenceEntryManager ldapEntryManager) {
 		boolean result = ldapEntryManager.destroy();
 		if (result) {
-			logger.debug("Destoyed LdapEntryManager: {}", ldapEntryManager);
+			LOG.debug("Destoyed LdapEntryManager: {}", ldapEntryManager);
 		} else {
-			logger.error("Failed to destoy LdapEntryManager: {}", ldapEntryManager);
+			LOG.error("Failed to destoy LdapEntryManager: {}", ldapEntryManager);
 		}
 	}
 

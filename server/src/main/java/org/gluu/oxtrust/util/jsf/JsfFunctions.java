@@ -156,12 +156,12 @@ public class JsfFunctions {
 		return str.substring(0, maxLength) + "...";
 	}
 	
-	public static String convertLdapTimeToDisplay(String timeStamp) {
+	public static String convertLdapTimeToDisplay(String dn, String timeStamp) {
 		if ((timeStamp == null) || (timeStamp.length() == 0)) {
 			return timeStamp;
 		}
 		
-		return CdiUtil.bean(PersistenceEntryManager.class).decodeTime(timeStamp).toGMTString();
+		return CdiUtil.bean(PersistenceEntryManager.class).decodeTime(dn, timeStamp).toGMTString();
 		
 	}
     

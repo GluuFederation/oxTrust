@@ -370,6 +370,8 @@ public class UpdatePersonAction implements Serializable {
 
 	@SuppressWarnings("deprecation")
 	private void addFidoDevices() {
+		String baseDnForU2fDevices = fidoDeviceService.getDnForFidoDevice(this.person.getInum(),null);	
+
 		List<GluuCustomFidoDevice> fidoDevices = fidoDeviceService.searchFidoDevices(this.person.getInum());
 		if (fidoDevices != null) {
 			for (GluuCustomFidoDevice gluuCustomFidoDevice : fidoDevices) {
@@ -377,7 +379,7 @@ public class UpdatePersonAction implements Serializable {
 				String creationDate = gluuCustomFidoDevice.getCreationDate();
 				if (creationDate != null) {
 					gluuDeviceDataBean
-							.setCreationDate(ldapEntryManager.decodeTime(creationDate).toGMTString());
+							.setCreationDate(ldapEntryManager.decodeTime(baseDnForU2fDevices, creationDate).toGMTString());
 				} else {
 					gluuDeviceDataBean.setCreationDate(DASH);
 				}

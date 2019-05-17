@@ -19,16 +19,11 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.commons.io.IOUtils;
-import org.codehaus.jackson.map.DeserializationConfig;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.SerializationConfig;
-import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.oxtrust.ldap.service.IGroupService;
 import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
@@ -38,6 +33,9 @@ import org.gluu.oxtrust.model.scim2.user.Email;
 import org.richfaces.model.UploadedFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * User: Dejan Maric
@@ -55,16 +53,13 @@ public class ServiceUtil implements Serializable {
 	@Inject
 	private IGroupService groupService;
 
-	@Inject
-	private AppConfiguration appConfiguration;
-
 	private static final SecureRandom random = new SecureRandom();
 
 	private static final ObjectMapper mapper = new ObjectMapper();
 
 	static {
-		mapper.disable(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS);
-		mapper.disable(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES);
+		mapper.disable(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES);
+		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 	}
 
 	/**
@@ -462,21 +457,14 @@ public class ServiceUtil implements Serializable {
 	 *             If an I/O problem occurs
 	 */
 	public static byte[] readFully(InputStream is) throws IOException {
-		ByteArrayOutputStream baos = null;
-
-		try {
-			baos = new ByteArrayOutputStream();
-
+		try (ByteArrayOutputStream baos = new ByteArrayOutputStream()){
 			byte[] buffer = new byte[2048];
 			int read = 0;
-
 			while ((read = is.read(buffer)) != -1) {
 				baos.write(buffer, 0, read);
 			}
-
 			return baos.toByteArray();
 		} finally {
-			IOUtils.closeQuietly(baos);
 			IOUtils.closeQuietly(is);
 		}
 	}

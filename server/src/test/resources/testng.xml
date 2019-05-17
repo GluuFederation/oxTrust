@@ -5,7 +5,7 @@
     <!-- Configuration Status Test (embedded) -->
     <test name="Configuration Status Test (embedded)" enabled="true">
         <classes>
-            <class name="org.gluu.oxtrust.service.ConfigurationStatusTest"/>
+            <class name="org.gluu.oxtrust.action.ConfigurationStatusTest"/>
         </classes>
     </test>
 

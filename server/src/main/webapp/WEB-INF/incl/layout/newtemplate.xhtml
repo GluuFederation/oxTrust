@@ -39,6 +39,14 @@
 	height: 33px;
 	background-color: #{gluufn:getColor(themeColor, "00ff00")
 }
+
+.rf-tab-hdr-tabline-top {
+	overflow-x: auto !important;
+}
+
+#customScriptForm:scriptTypeTabPanelIdheader {
+	overflow-x: auto !important;
+}
 </style>
 		</ui:fragment>
 
@@ -72,9 +80,6 @@
 		<link
 			href="#{oxTrustConfigurationService.cssLocation}/../theme/plugins/morris/morris.css"
 			rel="stylesheet" type="text/css" />
-		<!-- 		<link -->
-		<!-- 			href="#{oxTrustConfigurationService.cssLocation}/../theme/plugins/datepicker/datepicker3.css" -->
-		<!-- 			rel="stylesheet" type="text/css" /> -->
 		<link
 			href="#{oxTrustConfigurationService.cssLocation}/../theme/dist/css/custom.css"
 			rel="stylesheet" type="text/css" />
@@ -188,12 +193,9 @@
 				<div class="content-wrapper">
 					<b:growl id="growlMsg" globalOnly="true" placementFrom="top"
 						show-detail="true" show-summary="false" allowDismiss="true"
-						delay="5000" escape="true" />
+						delay="3000" escape="true" />
 					<a:status startText="Loading..."
 						startStyle="background-color: #006699; color: white; font-weight: bold; position: fixed; left: 0px; top: 0px; padding: 5px 5px 5px 5px;" />
-					<h:messages style="display: none;" id="messages" globalOnly="true"
-						styleClass="message" errorClass="errormsg" infoClass="infomsg"
-						warnClass="warnmsg" rendered="#{showGlobalMessages != 'false'}" />
 					<ui:insert name="body" />
 				</div>
 			</div>
