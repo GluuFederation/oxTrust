@@ -4,14 +4,12 @@
 	xmlns="http://maven.apache.org/POM/4.0.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>org.gluu</groupId>
-		<artifactId>oxtrust</artifactId>
-		<version>4.0.0-SNAPSHOT</version>
-	</parent>
-	<artifactId>oxtrust-qa</artifactId>
 	<name>oxtrust-qa</name>
 	<url>http://maven.apache.org</url>
+	<groupId>org.gluu</groupId>
+	<artifactId>oxtrust-qa</artifactId>
+	<version>4.0.0-SNAPSHOT</version>
+	<packaging>jar</packaging>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<skip.surefire.tests>false</skip.surefire.tests>
@@ -25,6 +23,7 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
+			<version>4.12</version>
 		</dependency>
 		<dependency>
 			<groupId>info.cukes</groupId>
@@ -61,11 +60,11 @@
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
+			<version>2.6</version>
 		</dependency>
 	</dependencies>
 	<build>
 		<finalName>oxtrust-qa</finalName>
-
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
@@ -91,16 +90,12 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<configuration>
-					<skipTests>false</skipTests>  <!-- set it to false when test sources appear -->
-					<includes>
-						<include>org.oxtrust.qa.*</include>
-					</includes>
-				</configuration>
+				<version>3.0.0-M3</version>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.8.1</version>
 				<configuration>
 					<source>1.8</source>
 					<target>1.8</target>
