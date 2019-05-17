@@ -464,16 +464,7 @@ public class Shibboleth3ConfService implements Serializable {
 		Map<String, String> attributeSAML2Strings = new HashMap<String, String>();
 
 		for (GluuAttribute metadata : attributes) {
-
 			String attributeName = metadata.getName();
-
-			AttributeTypeDefinition attributeTypeDefinition = shemaService.getAttributeTypeDefinition(attributeTypes,
-					attributeName);
-			if (attributeTypeDefinition == null) {
-				log.error("Failed to get OID for attribute name {}", attributeName);
-				return null;
-			}
-
 			//
 			// urn::dir:attribute-def:$attribute.name
 			// urn:oid:$attrParams.attributeOids.get($attribute.name)
@@ -490,6 +481,13 @@ public class Shibboleth3ConfService implements Serializable {
 			String saml2String = metadata.getSaml2Uri();
 
 			if (StringHelper.isEmpty(saml2String)) {
+				AttributeTypeDefinition attributeTypeDefinition = shemaService.getAttributeTypeDefinition(attributeTypes,
+						attributeName);
+				if (attributeTypeDefinition == null) {
+					log.error("Failed to get OID for attribute name {}", attributeName);
+					return null;
+				}
+
 				saml2String = String.format("urn:oid:%s", attributeTypeDefinition.getOID());
 			}
 
