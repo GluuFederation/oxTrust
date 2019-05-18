@@ -116,8 +116,9 @@ public class Scim2UserService implements Serializable {
 				ObjectMapper mapper = ServiceUtil.getObjectMapper();
 				List<String> itemList = new ArrayList<String>();
 
-				for (Object item : items)
-					itemList.add(mapper.writeValueAsString(item));
+				for (Object item : items) {
+                    itemList.add(mapper.writeValueAsString(item));
+                }
 
 				array = itemList.toArray(new String[0]);
 			}
@@ -193,7 +194,7 @@ public class Scim2UserService implements Serializable {
 
 		person.setAttribute("oxTrustEmail", getComplexMultivaluedAsArray(res.getEmails()));
 		try {
-			person = serviceUtil.syncEmailForward(person, true);
+			person = serviceUtil.syncEmailForward(person);
 		} catch (Exception e) {
 			log.error("Problem syncing emails forward", e);
 		}
@@ -212,7 +213,6 @@ public class Scim2UserService implements Serializable {
 
 		// Pairwise identifiers must not be supplied here... (they are mutability =
 		// readOnly)
-
 		transferExtendedAttributesToPerson(res, person);
 
 	}
@@ -293,8 +293,9 @@ public class Scim2UserService implements Serializable {
 		}
 
 		meta.setLocation(person.getAttribute("oxTrustMetaLocation"));
-		if (meta.getLocation() == null)
-			meta.setLocation(url + "/" + person.getInum());
+		if (meta.getLocation() == null) {
+            meta.setLocation(url + "/" + person.getInum());
+        }
 
 		res.setMeta(meta);
 
@@ -309,10 +310,11 @@ public class Scim2UserService implements Serializable {
 		name.setHonorificSuffix(person.getAttribute("oxTrusthonorificSuffix"));
 
 		String formatted = person.getAttribute("oxTrustNameFormatted");
-		if (formatted == null) // recomputes the formatted name if absent in LDAP
-			name.computeFormattedName();
-		else
-			name.setFormatted(formatted);
+		if (formatted == null) { // recomputes the formatted name if absent in LDAP
+            name.computeFormattedName();
+        } else {
+            name.setFormatted(formatted);
+        }
 
 		res.setName(name);
 		res.setDisplayName(person.getDisplayName());
@@ -372,8 +374,9 @@ public class Scim2UserService implements Serializable {
 					log.error(e.getMessage(), e);
 				}
 			}
-			if (groupList.size() > 0)
-				res.setGroups(groupList);
+			if (groupList.size() > 0) {
+                res.setGroups(groupList);
+            }
 		}
 
 		res.setEntitlements(getAttributeListValue(person, Entitlement.class, "oxTrustEntitlements"));
@@ -412,8 +415,7 @@ public class Scim2UserService implements Serializable {
 
 				if (values != null) {
 
-					log.debug(
-							"transferExtendedAttributesToResource. Copying to resource the value(s) for attribute '{}'",
+					log.debug("transferExtendedAttributesToResource. Copying to resource the value(s) for attribute '{}'",
 							attr);
 					ExtensionField field = fields.get(attr);
 					List<Object> convertedValues = extService.convertValues(field, values);
@@ -428,15 +430,17 @@ public class Scim2UserService implements Serializable {
 				resource.addCustomAttributes(extension.getUrn(), map);
 			}
 		}
-		for (String urn : resource.getCustomAttributes().keySet())
-			resource.getSchemas().add(urn);
+		for (String urn : resource.getCustomAttributes().keySet()) {
+            resource.getSchemas().add(urn);
+        }
 
 	}
 
 	private void writeCommonName(GluuCustomPerson person) {
 
-		if (StringUtils.isNotEmpty(person.getGivenName()) && StringUtils.isNotEmpty(person.getSurname()))
-			person.setCommonName(person.getGivenName() + " " + person.getSurname());
+		if (StringUtils.isNotEmpty(person.getGivenName()) && StringUtils.isNotEmpty(person.getSurname())) {
+            person.setCommonName(person.getGivenName() + " " + person.getSurname());
+        }
 
 	}
 
@@ -566,8 +570,7 @@ public class Scim2UserService implements Serializable {
 			int count, String url, int maxCount) throws Exception {
 
 		Filter ldapFilter = scimFilterParserService.createFilter(filter, Filter.createPresenceFilter("inum"), UserResource.class);
-		log.info(
-				"Executing search for users using: ldapfilter '{}', sortBy '{}', sortOrder '{}', startIndex '{}', count '{}'",
+		log.info("Executing search for users using: ldapfilter '{}', sortBy '{}', sortOrder '{}', startIndex '{}', count '{}'",
 				ldapFilter.toString(), sortBy, sortOrder.getValue(), startIndex, count);
 
 		PagedResult<GluuCustomPerson> list = ldapEntryManager.findPagedEntries(personService.getDnForPerson(null),

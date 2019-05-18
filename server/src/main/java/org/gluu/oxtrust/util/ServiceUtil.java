@@ -333,7 +333,7 @@ public class ServiceUtil implements Serializable {
 	 * @return
 	 * @throws Exception
 	 */
-	public static GluuCustomPerson syncEmailForward(GluuCustomPerson gluuCustomPerson, boolean isScim2)
+	public static GluuCustomPerson syncEmailForward(GluuCustomPerson gluuCustomPerson)
 			throws Exception {
 
 		logger.info(" IN Utils.syncEmailForward()...");
@@ -345,15 +345,9 @@ public class ServiceUtil implements Serializable {
 			String[] oxTrustEmails = oxTrustEmail.getValues(); // JSON array in element 0
 			String[] newMails = new String[oxTrustEmails.length];
 
-			ObjectMapper mapper = getObjectMapper();
-
-			if (isScim2) {
-
-				for (int i = 0; i < oxTrustEmails.length; i++) {
-					newMails[i] = mapper.readValue(oxTrustEmails[i], Email.class).getValue();
-				}
-
-			}
+            for (int i = 0; i < oxTrustEmails.length; i++) {
+                newMails[i] = mapper.readValue(oxTrustEmails[i], Email.class).getValue();
+            }
 			gluuCustomPerson.setAttribute("mail", newMails);
 		} else {
 			gluuCustomPerson.setAttribute("mail", new String[0]);
@@ -392,8 +386,6 @@ public class ServiceUtil implements Serializable {
 		if (mail == null) {
 			gluuCustomPerson.setAttribute("oxTrustEmail", new String[0]);
 		} else {
-			ObjectMapper mapper = getObjectMapper();
-
 			Set<String> mailSet = new HashSet<String>();
 			if (mail.getValues() != null)
 				mailSet.addAll(Arrays.asList(mail.getValues()));
@@ -403,11 +395,14 @@ public class ServiceUtil implements Serializable {
 			List<Email> oxTrustEmails = new ArrayList<Email>();
 
 			if (oxTrustEmail != null && oxTrustEmail.getValues() != null) {
-				for (String oxTrustEmailJson : oxTrustEmail.getValues())
-					oxTrustEmails.add(mapper.readValue(oxTrustEmailJson, Email.class));
 
-				for (Email email : oxTrustEmails)
-					oxTrustEmailSet.add(email.getValue());
+			    for (String oxTrustEmailJson : oxTrustEmail.getValues()) {
+                    oxTrustEmails.add(mapper.readValue(oxTrustEmailJson, Email.class));
+                }
+
+				for (Email email : oxTrustEmails) {
+                    oxTrustEmailSet.add(email.getValue());
+                }
 			}
 			mailSetCopy.removeAll(oxTrustEmailSet); // Keep those in "mail" and not in oxTrustEmail
 			oxTrustEmailSet.removeAll(mailSet); // Keep those in oxTrustEmail and not in "mail"
@@ -415,16 +410,19 @@ public class ServiceUtil implements Serializable {
 			List<Integer> delIndexes = new ArrayList<Integer>();
 			// Build a list of indexes that should be removed in oxTrustEmails
 			for (int i = 0; i < oxTrustEmails.size(); i++) {
-				if (oxTrustEmailSet.contains(oxTrustEmails.get(i).getValue()))
-					delIndexes.add(0, i);
+				if (oxTrustEmailSet.contains(oxTrustEmails.get(i).getValue())) {
+                    delIndexes.add(0, i);
+                }
 			}
 			// Delete unmatched oxTrustEmail entries from highest index to lowest
-			for (Integer idx : delIndexes)
-				oxTrustEmails.remove(idx.intValue()); // must not pass an Integer directly
+			for (Integer idx : delIndexes) {
+                oxTrustEmails.remove(idx.intValue()); // must not pass an Integer directly
+            }
 
 			List<String> newValues = new ArrayList<String>();
-			for (Email email : oxTrustEmails)
-				newValues.add(mapper.writeValueAsString(email));
+			for (Email email : oxTrustEmails) {
+                newValues.add(mapper.writeValueAsString(email));
+            }
 
 			for (String mailStr : mailSetCopy) {
 				Email email = new Email();

@@ -21,10 +21,10 @@ import javax.inject.Named;
 import javax.lang.model.type.NullType;
 import javax.management.InvalidAttributeValueException;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.apache.commons.lang.StringUtils;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.type.TypeReference;
 import org.gluu.oxtrust.model.exception.SCIMException;
 import org.gluu.oxtrust.model.scim2.AttributeDefinition;
 import org.gluu.oxtrust.model.scim2.BaseScimResource;
@@ -57,10 +57,10 @@ public class Scim2PatchService {
 
     public BaseScimResource applyPatchOperation(BaseScimResource resource, PatchOperation operation) throws Exception {
 
-        BaseScimResource result=null;
-        Map<String, Object> genericMap=null;
-        PatchOperationType opType=operation.getType();
-        Class<? extends BaseScimResource> clazz=resource.getClass();
+        BaseScimResource result = null;
+        Map<String, Object> genericMap = null;
+        PatchOperationType opType = operation.getType();
+        Class<? extends BaseScimResource> clazz = resource.getClass();
         String path = operation.getPath();
 
         log.debug("applyPatchOperation of type {}", opType);
@@ -71,14 +71,14 @@ public class Scim2PatchService {
 
             if (pair.getFirst()) {
                 String valSelFilter = pair.getSecond();
-                if (valSelFilter == null)
+                if (valSelFilter == null) {
                     throw new SCIMException("Unexpected syntax in value selection filter");
-                else {
-                    int i=path.indexOf("[");
-                    String attribute=path.substring(0, i);
+                } else {
+                    int i = path.indexOf("[");
+                    String attribute = path.substring(0, i);
 
-                    i=path.lastIndexOf("].");
-                    String subAttribute= i==-1 ? "" : path.substring(i+2);
+                    i = path.lastIndexOf("].");
+                    String subAttribute = i == -1 ? "" : path.substring(i + 2);
                     //Abort earlier
                     return applyPatchOperationWithValueFilter(resource, operation, valSelFilter, attribute, subAttribute);
                 }
@@ -87,37 +87,40 @@ public class Scim2PatchService {
 
         if (!opType.equals(PatchOperationType.REMOVE)) {
             Object value = operation.getValue();
-            List<String> extensionUrns=extService.getUrnsOfExtensions(clazz);
+            List<String> extensionUrns = extService.getUrnsOfExtensions(clazz);
 
-            if (value instanceof Map)
+            if (value instanceof Map) {
                 genericMap = IntrospectUtil.strObjMap(value);
-            else{
+            } else {
                 //It's an atomic value or an array
-                if (StringUtils.isEmpty(path))
+                if (StringUtils.isEmpty(path)) {
                     throw new SCIMException("Value(s) supplied for resource not parseable");
+                }
 
                 //Create a simple map and trim the last part of path
                 String subPaths[] = ScimResourceUtil.splitPath(path, extensionUrns);
                 genericMap = Collections.singletonMap(subPaths[subPaths.length - 1], value);
 
-                if (subPaths.length == 1)
+                if (subPaths.length == 1) {
                     path = "";
-                else
+                } else {
                     path = path.substring(0, path.lastIndexOf("."));
+                }
             }
 
-            if (StringUtils.isNotEmpty(path)){
+            if (StringUtils.isNotEmpty(path)) {
                 //Visit backwards creating a composite map
                 String subPaths[] = ScimResourceUtil.splitPath(path, extensionUrns);
                 for (int i = subPaths.length - 1; i >= 0; i--) {
 
                     //Create a string consisting of all subpaths until the i-th
-                    StringBuilder sb=new StringBuilder();
-                    for (int j=0;j<=i;j++)
+                    StringBuilder sb = new StringBuilder();
+                    for (int j = 0; j <= i; j++) {
                         sb.append(subPaths[j]).append(".");
+                    }
 
-                    Attribute annot = IntrospectUtil.getFieldAnnotation(sb.substring(0, sb.length()-1), clazz, Attribute.class);
-                    boolean multivalued=!(annot==null || annot.multiValueClass().equals(NullType.class));
+                    Attribute annot = IntrospectUtil.getFieldAnnotation(sb.substring(0, sb.length() - 1), clazz, Attribute.class);
+                    boolean multivalued = !(annot == null || annot.multiValueClass().equals(NullType.class));
 
                     Map<String, Object> genericBiggerMap = new HashMap<String, Object>();
                     genericBiggerMap.put(subPaths[i], multivalued ? Collections.singletonList(genericMap) : genericMap);
@@ -130,18 +133,18 @@ public class Scim2PatchService {
 
         //Try parse genericMap as an instance of the resource
         ObjectMapper mapper = new ObjectMapper();
-        BaseScimResource alter=opType.equals(PatchOperationType.REMOVE) ? resource : mapper.convertValue(genericMap, clazz);
-        List<Extension> extensions=extService.getResourceExtensions(clazz);
+        BaseScimResource alter = opType.equals(PatchOperationType.REMOVE) ? resource : mapper.convertValue(genericMap, clazz);
+        List<Extension> extensions = extService.getResourceExtensions(clazz);
 
-        switch (operation.getType()){
+        switch (operation.getType()) {
             case REPLACE:
-                result=ScimResourceUtil.transferToResourceReplace(alter, resource, extensions);
+                result = ScimResourceUtil.transferToResourceReplace(alter, resource, extensions);
                 break;
             case ADD:
-                result=ScimResourceUtil.transferToResourceAdd(alter, resource, extensions);
+                result = ScimResourceUtil.transferToResourceAdd(alter, resource, extensions);
                 break;
             case REMOVE:
-                result=ScimResourceUtil.deleteFromResource(alter, operation.getPath(), extensions);
+                result = ScimResourceUtil.deleteFromResource(alter, operation.getPath(), extensions);
                 break;
         }
         return result;
@@ -152,43 +155,45 @@ public class Scim2PatchService {
                                                                 String valSelFilter, String attribute, String subAttribute)
             throws SCIMException, InvalidAttributeValueException {
 
-        String path=operation.getPath();
-        ObjectMapper mapper=new ObjectMapper();
-        Class<? extends BaseScimResource> cls=resource.getClass();
-        Map<String, Object> resourceAsMap=mapper.convertValue(resource, new TypeReference<Map<String, Object>>(){});
+        String path = operation.getPath();
+        ObjectMapper mapper = new ObjectMapper();
+        Class<? extends BaseScimResource> cls = resource.getClass();
+        Map<String, Object> resourceAsMap = mapper.convertValue(resource, new TypeReference<Map<String, Object>>() { });
         List<Map<String, Object>> list;
 
-        Attribute attrAnnot=IntrospectUtil.getFieldAnnotation(attribute, cls, Attribute.class);
-        if (attrAnnot!=null){
-            if (!attrAnnot.multiValueClass().equals(NullType.class) && attrAnnot.type().equals(AttributeDefinition.Type.COMPLEX)){
-                Object colObject=resourceAsMap.get(attribute);
-                list = colObject==null ? null : new ArrayList<Map<String, Object>>((Collection<Map<String, Object>>) colObject);
-            }
-            else
+        Attribute attrAnnot = IntrospectUtil.getFieldAnnotation(attribute, cls, Attribute.class);
+        if (attrAnnot != null) {
+            if (!attrAnnot.multiValueClass().equals(NullType.class) && attrAnnot.type().equals(AttributeDefinition.Type.COMPLEX)) {
+                Object colObject = resourceAsMap.get(attribute);
+                list = colObject == null ? null : new ArrayList<Map<String, Object>>((Collection<Map<String, Object>>) colObject);
+            } else {
                 throw new SCIMException(String.format("Attribute '%s' expected to be complex multi-valued", attribute));
-        }
-        else
+            }
+        } else {
             throw new SCIMException(String.format("Attribute '%s' not recognized or expected to be complex multi-valued", attribute));
+        }
 
-        if (list==null)
+        if (list == null) {
             log.info("applyPatchOperationWithValueFilter. List of values for {} is empty. Operation has no effect", attribute);
-        else{
+        } else {
             try {
                 valSelFilter = FilterUtil.preprocess(valSelFilter, cls);
                 ParseTree parseTree = filterService.getParseTree(valSelFilter);
 
-                List<Integer> matchingIndexes=new ArrayList<Integer>();
-                for (int i=0;i<list.size();i++){
-                    if (filterService.complexAttributeMatch(parseTree, list.get(i), attribute, cls))
+                List<Integer> matchingIndexes = new ArrayList<Integer>();
+                for (int i = 0; i < list.size(); i++) {
+                    if (filterService.complexAttributeMatch(parseTree, list.get(i), attribute, cls)) {
                         matchingIndexes.add(0, i);  //Important: add so that resulting list is reverse-ordered
+                    }
                 }
 
-                if (subAttribute.length()>0 && matchingIndexes.size()>0 && operation.getType().equals(PatchOperationType.REMOVE)){
+                if (subAttribute.length() > 0 && matchingIndexes.size() > 0 && operation.getType().equals(PatchOperationType.REMOVE)) {
                     //per spec (section 3.5.2.2 RFC 7644) subAttribute must not be required or read-only
-                    Attribute subAttrAnnot=IntrospectUtil.getFieldAnnotation(attribute + "." + subAttribute, cls, Attribute.class);
+                    Attribute subAttrAnnot = IntrospectUtil.getFieldAnnotation(attribute + "." + subAttribute, cls, Attribute.class);
 
-                    if (subAttrAnnot != null && (subAttrAnnot.mutability().equals(READ_ONLY) || subAttrAnnot.isRequired()))
+                    if (subAttrAnnot != null && (subAttrAnnot.mutability().equals(READ_ONLY) || subAttrAnnot.isRequired())) {
                         throw new InvalidAttributeValueException("Cannot remove read-only or required attribute " + attribute + "." + subAttribute);
+                    }
                 }
                 /*
                 Here we differ from spec (see section 3.5.2.3/4 of RFC7644. If no record match is made, we are supposed to
@@ -196,25 +201,24 @@ public class Scim2PatchService {
                 */
                 log.info("There are {} entries matching the filter '{}'", matchingIndexes.size(), path);
 
-                for (Integer index : matchingIndexes){
+                for (Integer index : matchingIndexes) {
                     if (operation.getType().equals(PatchOperationType.REMOVE)) {
-                        if (subAttribute.length()==0)   //Remove the whole item
+                        if (subAttribute.length() == 0) {   //Remove the whole item
                             list.remove(index.intValue());      //If intValue is not used, the remove(Object) method is called!
-                        else    //remove subattribute only
+                        } else {    //remove subattribute only
                             list.get(index).remove(subAttribute);
-                    }
-                    else
+                        }
+                    } else {
                         applyPartialUpdate(attribute, subAttribute, list, index, operation.getValue(), cls);
+                    }
                 }
 
                 log.trace("New {} list is:\n{}", attribute, mapper.writeValueAsString(list));
-                resourceAsMap.put(attribute, list.size()==0 ? null : list);
-                resource=mapper.convertValue(resourceAsMap, cls);
-            }
-            catch (InvalidAttributeValueException ei){
+                resourceAsMap.put(attribute, list.size() == 0 ? null : list);
+                resource = mapper.convertValue(resourceAsMap, cls);
+            } catch (InvalidAttributeValueException ei) {
                 throw ei;
-            }
-            catch (Exception e){
+            } catch (Exception e) {
                 log.info("Error processing Patch operation with value selection path '{}'", path);
                 log.error(e.getMessage(), e);
                 throw new SCIMException(e.getMessage(), e);
@@ -230,18 +234,18 @@ public class Scim2PatchService {
      * @param path
      * @return
      */
-    private Pair<Boolean, String> validateBracketedPath(String path){
+    private Pair<Boolean, String> validateBracketedPath(String path) {
 
         boolean isFilterExpression;
-        String selFilter=null;
+        String selFilter = null;
 
         int lBracketIndex = path.indexOf("[");
         //Check if characters preceding bracket look like attribute name
-        isFilterExpression=(lBracketIndex>0) && path.substring(0, lBracketIndex).matches("[a-zA-Z]\\w*");
+        isFilterExpression = (lBracketIndex > 0) && path.substring(0, lBracketIndex).matches("[a-zA-Z]\\w*");
 
-        if (isFilterExpression){
+        if (isFilterExpression) {
             int rBracketIndex = path.lastIndexOf("]");
-            int lenm1=path.length()-1;
+            int lenm1 = path.length() - 1;
             /*
             It will be valid if character ] is the last of string, or if it is followed by a dot and at least one
             letter (thus specifying a subattribute name). Examples:
@@ -249,28 +253,28 @@ public class Scim2PatchService {
              - addresses[value co "any[...]thing"]
              - ims[value eq "hi"].primary
              */
-            if ((rBracketIndex>lBracketIndex) && (rBracketIndex==lenm1 ||
-                    (lenm1-rBracketIndex>1 && path.charAt(rBracketIndex+1)=='.' && Character.isLetter(path.charAt(rBracketIndex+2)))))
-                selFilter=path.substring(lBracketIndex+1, rBracketIndex);
-
+            if ((rBracketIndex > lBracketIndex) && (rBracketIndex == lenm1 ||
+                    (lenm1 - rBracketIndex > 1 && path.charAt(rBracketIndex + 1) == '.' && Character.isLetter(path.charAt(rBracketIndex + 2))))) {
+                selFilter = path.substring(lBracketIndex + 1, rBracketIndex);
+            }
         }
         return new Pair<Boolean, String>(isFilterExpression, selFilter);
 
     }
 
     private void applyPartialUpdate(String attribute, String subAttribute, List<Map<String, Object>> list, int index, Object value,
-                                    Class <? extends BaseScimResource> cls) throws InvalidAttributeValueException {
+                                    Class<? extends BaseScimResource> cls) throws InvalidAttributeValueException {
 
-        if (subAttribute.length()==0) {
+        if (subAttribute.length() == 0) {
             //Updates the whole item in the list after passing mutability check, see section 3.5.2 RFC 7644:
             //"Each operation against an attribute MUST be compatible with the attribute's mutability and schema ... "
-            Map<String, Object> map=IntrospectUtil.strObjMap(value);
+            Map<String, Object> map = IntrospectUtil.strObjMap(value);
 
-            for (String subAttr : map.keySet())
+            for (String subAttr : map.keySet()) {
                 assertMutability(attribute, list.get(index).get(subAttr), map.get(subAttr), cls);
+            }
             list.set(index, map);
-        }
-        else{
+        } else {
             //Updates a subattribute only
             assertMutability(attribute + "." + subAttribute, list.get(index).get(subAttribute), value, cls);
             list.get(index).put(subAttribute, value);
@@ -278,12 +282,13 @@ public class Scim2PatchService {
 
     }
 
-    private void assertMutability(String path, Object currentVal, Object value, Class <? extends BaseScimResource> cls) throws InvalidAttributeValueException {
+    private void assertMutability(String path, Object currentVal, Object value, Class<? extends BaseScimResource> cls) throws InvalidAttributeValueException {
 
-        Attribute attrAnnot=IntrospectUtil.getFieldAnnotation(path, cls, Attribute.class);
-        if (attrAnnot !=null) {
-            if (attrAnnot.mutability().equals(IMMUTABLE) && currentVal!=null && !value.equals(currentVal))
-                throw new InvalidAttributeValueException( "Invalid value passed for immutable attribute " + path);
+        Attribute attrAnnot = IntrospectUtil.getFieldAnnotation(path, cls, Attribute.class);
+        if (attrAnnot != null) {
+            if (attrAnnot.mutability().equals(IMMUTABLE) && currentVal != null && !value.equals(currentVal)) {
+                throw new InvalidAttributeValueException("Invalid value passed for immutable attribute " + path);
+            }
         }
 
     }

@@ -26,10 +26,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.Version;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.module.SimpleModule;
+import com.fasterxml.jackson.core.Version;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.gluu.oxtrust.model.scim2.ListResponse;
 import org.gluu.oxtrust.model.scim2.SearchRequest;
 import org.gluu.oxtrust.model.scim2.fido.FidoDeviceResource;
@@ -156,7 +156,7 @@ public class SearchResourcesWebService extends BaseScimWebService {
 
             //Accumulate till we have searchRequest.getCount() results or exhaust data
 
-            Iterator<JsonNode> iterator = tree.get("Resources").getElements();
+            Iterator<JsonNode> iterator = tree.get("Resources").elements();
             while (iterator.hasNext() && totalInPage < searchRequest.getCount()){
                 if (skip==0) {
                     totalInPage++;
@@ -180,7 +180,7 @@ public class SearchResourcesWebService extends BaseScimWebService {
                 }
 
                 if (resultsAvailable) {
-                    for (iterator = tree.get("Resources").getElements();
+                    for (iterator = tree.get("Resources").elements();
                          iterator.hasNext() && totalInPage < searchRequest.getCount();
                          totalInPage++)
                         resources.add(iterator.next());
