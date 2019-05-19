@@ -22,7 +22,7 @@ idp.nameid.saml1.default = urn:mace:shibboleth:1.0:nameIdentifier
 # For computed IDs, set a source attribute and a secret salt:
 #if( $resovlerParams.size() > 0 )
     #foreach( $nameIdConfig in $resovlerParams.configs )
-        #if( $nameIdConfig.nameIdType == "urn:oasis:names:tc:SAML:2.0:nameid-format::persistent" )
+        #if( $nameIdConfig.nameIdType == "urn:oasis:names:tc:SAML:2.0:nameid-format:persistent" )
 idp.persistentId.sourceAttribute = $nameIdConfig.sourceAttribute
         #end
     #end
