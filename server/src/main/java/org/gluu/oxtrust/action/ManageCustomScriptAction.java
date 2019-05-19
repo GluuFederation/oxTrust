@@ -335,8 +335,7 @@ public class ManageCustomScriptAction
 	}
 
 	public String getDisplayName(String value) {
-		String[] values = value.split(":");
-		return values[values.length - 1];
+		return value;
 	}
 
 	public boolean isPersonScript(CustomScript script) {

@@ -32,12 +32,15 @@
     <util:list id="shibboleth.SAML2NameIDGenerators">
     
         <ref bean="shibboleth.SAML2TransientGenerator" />
-		
+
 #if( $resovlerParams.size() > 0 )
     #foreach( $nameIdConfig in $resovlerParams.configs )
-    <bean parent="shibboleth.SAML2AttributeSourcedGenerator" 
-        p:format="urn:oasis:names:tc:SAML:2.0:nameid-format:email"
-        p:attributeSourceIds="#{ {'$nameIdConfig.name'} }"/>
+        #if( $nameIdConfig.nameIdType == "urn:oasis:names:tc:SAML:2.0:nameid-format:persistent" )
+        <ref bean="shibboleth.SAML2PersistentGenerator" />
+        #else
+        <bean parent="shibboleth.SAML2AttributeSourcedGenerator" p:omitQualifiers="true"
+            p:format="$nameIdConfig.nameIdType" p:attributeSourceIds="#{ {'$nameIdConfig.sourceAttribute'} }"/>
+        #end
     #end
 #end
         

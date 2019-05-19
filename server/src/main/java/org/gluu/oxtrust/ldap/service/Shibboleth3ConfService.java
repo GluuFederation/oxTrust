@@ -99,7 +99,8 @@ public class Shibboleth3ConfService implements Serializable {
 	private static final String SHIB3_SP_READ_ME = "/WEB-INF/resources/doc/README_SP.pdf";
 	private static final String SHIB3_SP_READ_ME_WINDOWS = "/WEB-INF/resources/doc/README_SP_windows.pdf";
 	private static final String SHIB3_SAML_NAMEID_FILE = "saml-nameid.xml";
-
+	private static final String SHIB3_SAML_NAMEID_PROPS_FILE = "saml-nameid.properties";
+	
 	private static final String SHIB3_SP_METADATA_FILE_PATTERN = "%s-sp-metadata.xml";
 	public static final String PUBLIC_CERTIFICATE_START_LINE = "-----BEGIN CERTIFICATE-----";
 	public static final String PUBLIC_CERTIFICATE_END_LINE = "-----END CERTIFICATE-----";
@@ -201,6 +202,8 @@ public class Shibboleth3ConfService implements Serializable {
 		String shibConfig = templateService.generateConfFile(SHIB3_SP_SHIBBOLETH2_FILE, context);
 		// Generate saml-nameid.xml
 		String samlnamedConfig = templateService.generateConfFile(SHIB3_SAML_NAMEID_FILE, context);
+		// Generate saml-nameid.properties
+		String samlnamedPropsConfig = templateService.generateConfFile(SHIB3_SAML_NAMEID_PROPS_FILE, context);
 		// Generate handler.xml
 		// String profileHandler =
 		// templateService.generateConfFile(SHIB3_IDP_PROFILE_HADLER, context);
@@ -229,7 +232,9 @@ public class Shibboleth3ConfService implements Serializable {
 		result &= templateService.writeConfFile(getSpShibboleth3FilePath(), shibConfig);
 		// Write saml-nameid.xml
 		result &= templateService.writeConfFile(idpConfFolder + SHIB3_SAML_NAMEID_FILE, samlnamedConfig);
-
+		// Write saml-nameid.properties
+		result &= templateService.writeConfFile(idpConfFolder + SHIB3_SAML_NAMEID_PROPS_FILE, samlnamedPropsConfig);
+		
 		// Write handler.xml
 		// result &= templateService.writeConfFile(idpConfFolder +
 		// SHIB3_IDP_PROFILE_HADLER, profileHandler);
