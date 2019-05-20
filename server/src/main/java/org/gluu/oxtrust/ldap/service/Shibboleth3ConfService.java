@@ -53,6 +53,11 @@ import org.gluu.oxtrust.model.GluuMetadataSourceType;
 import org.gluu.oxtrust.model.GluuSAMLFederationProposal;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.util.EasyCASSLProtocolSocketFactory;
+import org.gluu.persist.PersistenceEntryManager;
+import org.gluu.persist.PersistenceEntryManagerFactory;
+import org.gluu.persist.ldap.impl.LdapEntryManager;
+import org.gluu.persist.model.PersistenceConfiguration;
+import org.gluu.persist.service.PersistanceFactoryService;
 import org.gluu.saml.metadata.SAMLMetadataParser;
 import org.gluu.service.SchemaService;
 import org.gluu.service.XmlService;
@@ -153,6 +158,12 @@ public class Shibboleth3ConfService implements Serializable {
 
 	@Inject
 	private TrustService trustService;
+
+	@Inject
+	private PersistenceConfiguration persistenceConfiguration;
+	
+	@Inject
+	private PersistanceFactoryService persistanceFactoryService;
 
 	/*
 	 * Generate relying-party.xml, attribute-filter.xml, attribute-resolver.xml
@@ -497,6 +508,9 @@ public class Shibboleth3ConfService implements Serializable {
 		attrParams.put("attributes", attributes);
 		attrParams.put("attributeSAML1Strings", attributeSAML1Strings);
 		attrParams.put("attributeSAML2Strings", attributeSAML2Strings);
+		
+		PersistenceEntryManagerFactory persistenceEntryManagerFactory = persistanceFactoryService.getPersistenceEntryManagerFactory(persistenceConfiguration);
+		attrParams.put("persistenceType", persistenceEntryManagerFactory.getPersistenceType());
 
 		return attrParams;
 	}
