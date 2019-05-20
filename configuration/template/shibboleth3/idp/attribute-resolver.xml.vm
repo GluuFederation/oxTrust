@@ -79,6 +79,6 @@
         </dc:StartTLSTrustCredential>
 
     </resolver:DataConnector>
-#endif
+#end
 
 </resolver:AttributeResolver>
