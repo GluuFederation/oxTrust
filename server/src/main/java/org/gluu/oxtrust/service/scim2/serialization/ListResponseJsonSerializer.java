@@ -8,13 +8,11 @@ package org.gluu.oxtrust.service.scim2.serialization;
 import java.io.IOException;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.codehaus.jackson.JsonGenerator;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.JsonSerializer;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.SerializerProvider;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializerProvider;
 import org.gluu.oxtrust.model.scim2.BaseScimResource;
 import org.gluu.oxtrust.model.scim2.ListResponse;
 
@@ -23,7 +21,6 @@ import org.gluu.oxtrust.model.scim2.ListResponse;
  */
 public class ListResponseJsonSerializer extends JsonSerializer<ListResponse> {
 
-    private Logger log = LogManager.getLogger(getClass());
     private ScimResourceSerializer resourceSerializer;
     private ObjectMapper mapper = new ObjectMapper();
 
@@ -34,19 +31,19 @@ public class ListResponseJsonSerializer extends JsonSerializer<ListResponse> {
     private List<JsonNode> jsonResources;
 
     //why not to inject the resource serializer instead of passing it as parameter? weld simply does not like it!
-    public ListResponseJsonSerializer(ScimResourceSerializer serializer){
-        resourceSerializer=serializer;
+    public ListResponseJsonSerializer(ScimResourceSerializer serializer) {
+        resourceSerializer = serializer;
     }
 
-    public ListResponseJsonSerializer(ScimResourceSerializer serializer, String attributes, String excludeAttributes, boolean skipResults){
-        resourceSerializer=serializer;
-        this.attributes=attributes;
-        this.excludeAttributes=excludeAttributes;
-        this.skipResults=skipResults;
+    public ListResponseJsonSerializer(ScimResourceSerializer serializer, String attributes, String excludeAttributes, boolean skipResults) {
+        resourceSerializer = serializer;
+        this.attributes = attributes;
+        this.excludeAttributes = excludeAttributes;
+        this.skipResults = skipResults;
     }
 
-    public void setJsonResources(List<JsonNode> resources){
-        this.jsonResources=resources;
+    public void setJsonResources(List<JsonNode> resources) {
+        this.jsonResources = resources;
     }
 
     @Override
@@ -63,33 +60,32 @@ public class ListResponseJsonSerializer extends JsonSerializer<ListResponse> {
             jGen.writeNumberField("totalResults", listResponse.getTotalResults());
 
             if (!skipResults) {
-                if (listResponse.getItemsPerPage()>0) {
+                if (listResponse.getItemsPerPage() > 0) {
                     //these two bits are "REQUIRED when partial results are returned due to pagination." (section 3.4.2 RFC 7644)
                     jGen.writeNumberField("startIndex", listResponse.getStartIndex());
                     jGen.writeNumberField("itemsPerPage", listResponse.getItemsPerPage());
                 }
 
                 //Section 3.4.2 RFC 7644: Resources [...] REQUIRED if "totalResults" is non-zero
-                if (listResponse.getTotalResults()>0) {
+                if (listResponse.getTotalResults() > 0) {
                     jGen.writeArrayFieldStart("Resources");
 
-                    if (listResponse.getResources().size()>0)
+                    if (listResponse.getResources().size() > 0) {
                         for (BaseScimResource resource : listResponse.getResources()) {
                             JsonNode jsonResource = mapper.readTree(resourceSerializer.serialize(resource, attributes, excludeAttributes));
                             jGen.writeTree(jsonResource);
                         }
-                    else
-                    if (jsonResources != null)
-                        for (JsonNode node : jsonResources)
+                    } else if (jsonResources != null) {
+                        for (JsonNode node : jsonResources) {
                             jGen.writeTree(node);
-
+                        }
+                    }
                     jGen.writeEndArray();
                 }
             }
 
             jGen.writeEndObject();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new IOException(e);
         }
 
