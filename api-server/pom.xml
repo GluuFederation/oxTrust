@@ -148,76 +148,76 @@
 		<dependency>
 			<groupId>javax</groupId>
 			<artifactId>javaee-api</artifactId>
-			<version>7.0</version>
+			<version>8.0</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>servlet-api</artifactId>
-			<version>${servlet-api-version}</version>
-			<scope>provided</scope>
-		</dependency>
+		<!-- <dependency> -->
+		<!-- <groupId>javax.servlet</groupId> -->
+		<!-- <artifactId>servlet-api</artifactId> -->
+		<!-- <version>${servlet-api-version}</version> -->
+		<!-- <scope>provided</scope> -->
+		<!-- </dependency> -->
 
-		<dependency>
-			<groupId>org.jboss.resteasy</groupId>
-			<artifactId>resteasy-jaxrs</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.resteasy</groupId>
-			<artifactId>jaxrs-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.resteasy</groupId>
-			<artifactId>resteasy-validator-provider-11</artifactId>
-			<version>${resteasy-version}</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.resteasy</groupId>
-			<artifactId>resteasy-multipart-provider</artifactId>
-			<version>${resteasy-version}</version>
-			<scope>provided</scope>
-		</dependency>
+		<!-- <dependency> -->
+		<!-- <groupId>org.jboss.resteasy</groupId> -->
+		<!-- <artifactId>resteasy-jaxrs</artifactId> -->
+		<!-- <scope>provided</scope> -->
+		<!-- </dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>org.jboss.resteasy</groupId> -->
+		<!-- <artifactId>jaxrs-api</artifactId> -->
+		<!-- </dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>org.jboss.resteasy</groupId> -->
+		<!-- <artifactId>resteasy-validator-provider-11</artifactId> -->
+		<!-- <version>${resteasy-version}</version> -->
+		<!-- <scope>provided</scope> -->
+		<!-- </dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>org.jboss.resteasy</groupId> -->
+		<!-- <artifactId>resteasy-multipart-provider</artifactId> -->
+		<!-- <version>${resteasy-version}</version> -->
+		<!-- <scope>provided</scope> -->
+		<!-- </dependency> -->
 
-		<dependency>
-			<groupId>org.jboss.resteasy</groupId>
-			<artifactId>resteasy-jackson2-provider</artifactId>
-			<version>${resteasy-version}</version>
-			<scope>provided</scope>
-		</dependency>
+		<!-- <dependency> -->
+		<!-- <groupId>org.jboss.resteasy</groupId> -->
+		<!-- <artifactId>resteasy-jackson2-provider</artifactId> -->
+		<!-- <version>${resteasy-version}</version> -->
+		<!-- <scope>provided</scope> -->
+		<!-- </dependency> -->
 
-		<dependency>
-			<groupId>javax.annotation</groupId>
-			<artifactId>javax.annotation-api</artifactId>
-			<version>1.2</version>
-			<scope>provided</scope>
-		</dependency>
+		<!-- <dependency> -->
+		<!-- <groupId>javax.annotation</groupId> -->
+		<!-- <artifactId>javax.annotation-api</artifactId> -->
+		<!-- <version>1.2</version> -->
+		<!-- <scope>provided</scope> -->
+		<!-- </dependency> -->
 
-		<dependency>
-			<groupId>com.fasterxml.jackson.datatype</groupId>
-			<artifactId>jackson-datatype-joda</artifactId>
-			<version>2.4.1</version>
-		</dependency>
-		<dependency>
-			<groupId>joda-time</groupId>
-			<artifactId>joda-time</artifactId>
-		</dependency>
+		<!-- <dependency> -->
+		<!-- <groupId>com.fasterxml.jackson.datatype</groupId> -->
+		<!-- <artifactId>jackson-datatype-joda</artifactId> -->
+		<!-- <version>2.4.1</version> -->
+		<!-- </dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>joda-time</groupId> -->
+		<!-- <artifactId>joda-time</artifactId> -->
+		<!-- </dependency> -->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<!-- Bean Validation API support -->
-		<dependency>
-			<groupId>javax.validation</groupId>
-			<artifactId>validation-api</artifactId>
-			<scope>provided</scope>
-		</dependency>
+		<!-- <dependency> -->
+		<!-- <groupId>javax.validation</groupId> -->
+		<!-- <artifactId>validation-api</artifactId> -->
+		<!-- <scope>provided</scope> -->
+		<!-- </dependency> -->
 		<dependency>
 			<groupId>org.gluu</groupId>
 			<artifactId>oxtrust-model</artifactId>
@@ -230,19 +230,14 @@
 			<groupId>com.wordnik</groupId>
 			<artifactId>swagger-annotations</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>org.gluu</groupId>
-			<artifactId>uma-rs-resteasy</artifactId>
-		</dependency>
+<!-- 		<dependency> -->
+<!-- 			<groupId>org.gluu</groupId> -->
+<!-- 			<artifactId>uma-rs-resteasy</artifactId> -->
+<!-- 		</dependency> -->
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>
 			<!-- <version>4.5.2</version> -->
-		</dependency>
-		<dependency>
-			<groupId>io.swagger.core.v3</groupId>
-			<artifactId>swagger-jaxrs2</artifactId>
-			<version>2.0.8</version>
 		</dependency>
 		<dependency>
 			<groupId>io.swagger.core.v3</groupId>
@@ -262,7 +257,6 @@
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
-			<version>3.1.0</version>
 		</dependency>
 	</dependencies>
 </project>
