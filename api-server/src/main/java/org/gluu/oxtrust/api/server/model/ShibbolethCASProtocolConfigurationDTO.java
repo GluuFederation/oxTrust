@@ -1,10 +1,11 @@
 package org.gluu.oxtrust.api.server.model;
 
-import org.codehaus.jackson.map.annotate.JsonDeserialize;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.gluu.oxtrust.api.server.util.SessionStorageType;
 import org.gluu.oxtrust.api.server.util.SessionStorageTypeDeserializer;
 import org.gluu.oxtrust.api.server.util.SessionStorageTypeSerializer;
+
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;

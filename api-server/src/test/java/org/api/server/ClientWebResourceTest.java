@@ -18,13 +18,14 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.util.EntityUtils;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.gluu.oxtrust.api.server.util.ApiConstants;
 import org.gluu.oxtrust.model.OxAuthApplicationType;
 import org.gluu.oxtrust.model.OxAuthClient;
 import org.junit.Assert;
 import org.junit.Test;
 import org.oxauth.persistence.model.Scope;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class ClientWebResourceTest extends BaseApiTest {
 	private ObjectMapper mapper = new ObjectMapper();

@@ -1,18 +1,17 @@
 package org.gluu.oxtrust.api.server.util;
 
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.JsonParser;
-import org.codehaus.jackson.JsonProcessingException;
-import org.codehaus.jackson.map.DeserializationContext;
-import org.codehaus.jackson.map.JsonDeserializer;
-
 import java.io.IOException;
+
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.JsonNode;
 
 public class SessionStorageTypeDeserializer extends JsonDeserializer<SessionStorageType> {
 
 	@Override
 	public SessionStorageType deserialize(JsonParser jsonParser, DeserializationContext deserializationContext)
-			throws IOException, JsonProcessingException {
+			throws IOException {
 		JsonNode node = jsonParser.getCodec().readTree(jsonParser);
 		return SessionStorageType.from(node.asText());
 	}

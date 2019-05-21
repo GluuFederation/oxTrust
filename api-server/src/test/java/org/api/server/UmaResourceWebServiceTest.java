@@ -19,13 +19,14 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.util.EntityUtils;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.gluu.oxauth.model.uma.UmaResource;
 import org.gluu.oxauth.model.uma.UmaScopeDescription;
 import org.gluu.oxtrust.api.server.util.ApiConstants;
 import org.gluu.oxtrust.model.OxAuthClient;
 import org.junit.Assert;
 import org.junit.Test;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class UmaResourceWebServiceTest extends BaseApiTest {
 
