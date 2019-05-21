@@ -47,6 +47,7 @@ import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.model.Device;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
+import org.gluu.oxtrust.model.GluuFido2Device;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.GluuUserPairwiseIdentifier;
 import org.gluu.oxtrust.model.MobileDevice;
@@ -55,7 +56,6 @@ import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.model.Phone;
 import org.gluu.oxtrust.model.fido.GluuCustomFidoDevice;
 import org.gluu.oxtrust.model.fido.GluuDeviceDataBean;
-import org.gluu.oxtrust.model.fido2.Fido2AuthenticationEntry;
 import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.service.external.ExternalUpdateUserService;
 import org.gluu.oxtrust.util.OxTrustConstants;
@@ -374,19 +374,21 @@ public class UpdatePersonAction implements Serializable {
 
 	private void addFido2Devices() {
 		try {
-			List<Fido2AuthenticationEntry> fido2Devices = fido2DeviceService.searchFido2Devices(this.person.getInum());
+			log.info("++++++++++++++++++++++++++++Searching");
+			List<GluuFido2Device> fido2Devices = fido2DeviceService.findAllFido2Device(this.person);
 			if (fido2Devices != null) {
-				for (Fido2AuthenticationEntry entry : fido2Devices) {
+				log.info("++++++++++++++++++++++++++++SiZe:" + fido2Devices.size());
+				for (GluuFido2Device entry : fido2Devices) {
 					GluuDeviceDataBean gluuDeviceDataBean = new GluuDeviceDataBean();
 					gluuDeviceDataBean.setId(entry.getId());
 					gluuDeviceDataBean.setCreationDate(entry.getCreationDate().toString());
 					gluuDeviceDataBean.setModality("FIDO2");
-					gluuDeviceDataBean.setNickName(entry.getAuthenticationData().getUsername());
+					gluuDeviceDataBean.setNickName("NickName");
 					deviceDataMap.add(gluuDeviceDataBean);
 				}
 			}
 		} catch (Exception e) {
-			log.error("", e);
+			log.error("------------------------------------", e);
 		}
 
 	}
@@ -779,6 +781,7 @@ public class UpdatePersonAction implements Serializable {
 		try {
 			String idOfDeviceToRemove = deleteDeviceData.getId();
 			removeFidoDevice(deleteDeviceData, idOfDeviceToRemove);
+			removeFido2Device(this.person, deleteDeviceData);
 			removeOxExternalUid(deleteDeviceData, idOfDeviceToRemove);
 			removeOTPDevices(deleteDeviceData, idOfDeviceToRemove);
 			removeMobileDevice(deleteDeviceData, idOfDeviceToRemove);
@@ -818,8 +821,16 @@ public class UpdatePersonAction implements Serializable {
 		}
 	}
 
-	private void removeMobileDevice(GluuDeviceDataBean deleteDeviceData, String idOfDeviceToRemove)
-			throws IOException {
+	private void removeFido2Device(GluuCustomPerson person, GluuDeviceDataBean device) {
+		try {
+			fido2DeviceService.removeFido2(person, device.getId());
+			this.deviceDataMap.remove(device);
+		} catch (Exception e) {
+			log.warn("Error Deleting fido2 devices", e);
+		}
+	}
+
+	private void removeMobileDevice(GluuDeviceDataBean deleteDeviceData, String idOfDeviceToRemove) throws IOException {
 		String oxMobileDevices = this.person.getOxMobileDevices();
 		if (oxMobileDevices != null && !oxMobileDevices.trim().equals("")) {
 			ObjectMapper mapper = new ObjectMapper();

@@ -1,5 +1,6 @@
 package org.gluu.oxtrust.model.fido2;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import org.gluu.persist.model.base.BaseEntry;
@@ -15,9 +16,14 @@ import org.gluu.persist.annotation.ObjectClass;
  */
 @DataEntry(sortBy = "creationDate")
 @ObjectClass(values = { "top", "oxFido2Entry" })
-public class Fido2Entry extends BaseEntry {
+public class Fido2Entry extends BaseEntry implements Serializable {
 
-    @AttributeName(ignoreDuringUpdate = true, name = "oxId")
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 7351459527571263266L;
+
+	@AttributeName(ignoreDuringUpdate = true, name = "oxId")
     private String id;
 
     @AttributeName(name = "oxCodeChallenge")
