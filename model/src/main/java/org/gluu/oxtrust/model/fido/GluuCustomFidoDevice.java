@@ -17,6 +17,11 @@ import org.gluu.persist.annotation.ObjectClass;
 @ObjectClass(values = { "top", "oxDeviceRegistration" })
 public class GluuCustomFidoDevice extends Entry {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4463359164739925541L;
+
 	@AttributeName(name = "oxId", ignoreDuringUpdate = true)
 	private String id;
 
