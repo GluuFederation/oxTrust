@@ -13,9 +13,6 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.config.oxtrust.CacheRefreshConfiguration;
 import org.gluu.config.oxtrust.ImportPersonConfig;
@@ -88,7 +85,7 @@ public class JsonConfigurationService implements Serializable {
 		return ldapOxTrustConfiguration;
 	}
 
-	public String getOxAuthDynamicConfigJson() throws JsonGenerationException, JsonMappingException, IOException {
+	public String getOxAuthDynamicConfigJson() throws IOException {
 		String configurationDn = configurationFactory.getConfigurationDn();
 
 		LdapOxAuthConfiguration ldapOxAuthConfiguration = loadOxAuthConfig(configurationDn);
@@ -135,7 +132,7 @@ public class JsonConfigurationService implements Serializable {
 	}
 
 	public boolean saveOxAuthDynamicConfigJson(String oxAuthDynamicConfigJson)
-			throws JsonParseException, JsonMappingException, IOException {
+			throws IOException {
 		String configurationDn = configurationFactory.getConfigurationDn();
 
 		LdapOxAuthConfiguration ldapOxAuthConfiguration = loadOxAuthConfig(configurationDn);

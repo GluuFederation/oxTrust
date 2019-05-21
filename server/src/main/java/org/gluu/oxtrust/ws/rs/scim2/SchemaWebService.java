@@ -28,7 +28,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
-import org.codehaus.jackson.annotate.JsonProperty;
 import org.gluu.oxtrust.model.scim2.AttributeDefinition;
 import org.gluu.oxtrust.model.scim2.BaseScimResource;
 import org.gluu.oxtrust.model.scim2.ListResponse;
@@ -45,6 +44,7 @@ import org.gluu.oxtrust.model.scim2.util.IntrospectUtil;
 import org.gluu.oxtrust.model.scim2.util.ScimResourceUtil;
 import org.gluu.oxtrust.service.scim2.interceptor.RejectFilterParam;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wordnik.swagger.annotations.Api;
 
 /**

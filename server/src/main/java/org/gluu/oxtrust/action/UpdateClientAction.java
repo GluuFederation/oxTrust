@@ -32,7 +32,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.gluu.config.oxtrust.AppConfiguration;
@@ -67,6 +66,8 @@ import org.gluu.util.Util;
 import org.gluu.util.security.StringEncrypter.EncryptionException;
 import org.oxauth.persistence.model.Scope;
 import org.slf4j.Logger;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import net.steppschuh.markdowngenerator.list.UnorderedList;
 import net.steppschuh.markdowngenerator.text.heading.Heading;

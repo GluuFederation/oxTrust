@@ -19,10 +19,6 @@ import javax.faces.application.FacesMessage;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
@@ -55,6 +51,8 @@ import org.gluu.util.properties.FileConfiguration;
 import org.gluu.util.security.PropertiesDecrypter;
 import org.gluu.util.security.StringEncrypter.EncryptionException;
 import org.slf4j.Logger;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Action class for configuring person authentication
@@ -173,7 +171,7 @@ public class ManagePersonAuthenticationAction
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	public String save() throws JsonParseException, JsonMappingException, IOException {
+	public String save() throws IOException {
 		try {
 			// Reload entry to include latest changes
 			GluuConfiguration configuration = configurationService.getConfiguration();
@@ -232,7 +230,7 @@ public class ManagePersonAuthenticationAction
 	}
 
 	private GluuLdapConfiguration mapLdapConfig(String config)
-			throws JsonParseException, JsonMappingException, IOException {
+			throws IOException {
 		return (GluuLdapConfiguration) jsonToObject(config, GluuLdapConfiguration.class);
 	}
 
@@ -245,13 +243,13 @@ public class ManagePersonAuthenticationAction
 	}
 
 	private Object jsonToObject(String json, Class<?> clazz)
-			throws JsonParseException, JsonMappingException, IOException {
+			throws IOException {
 		ObjectMapper mapper = new ObjectMapper();
 		Object clazzObject = mapper.readValue(json, clazz);
 		return clazzObject;
 	}
 
-	private String objectToJson(Object obj) throws JsonGenerationException, JsonMappingException, IOException {
+	private String objectToJson(Object obj) throws IOException {
 		ObjectMapper mapper = new ObjectMapper();
 		return mapper.writeValueAsString(obj);
 	}

@@ -505,10 +505,6 @@
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.resteasy</groupId>
-			<artifactId>jaxrs-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.resteasy</groupId>
 			<artifactId>resteasy-jaxrs</artifactId>
 		</dependency>
 		<dependency>
@@ -893,12 +889,6 @@
 					<groupId>org.jboss.resteasy</groupId>
 					<artifactId>resteasy-client</artifactId>
 					<version>3.0.21.Final</version>
-					<scope>test</scope>
-				</dependency>
-				<dependency>
-					<groupId>org.jboss.resteasy</groupId>
-					<artifactId>jaxrs-api</artifactId>
-					<version>3.0.12.Final</version>
 					<scope>test</scope>
 				</dependency>
 				<dependency>

@@ -83,11 +83,6 @@
             <artifactId>resteasy-client</artifactId>
             <version>${resteasy.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.jboss.resteasy</groupId>
-            <artifactId>jaxrs-api</artifactId>
-            <version>${jaxr.version}</version>
-        </dependency>
 
         <!-- Test -->
         <dependency>

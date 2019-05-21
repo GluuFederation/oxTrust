@@ -26,10 +26,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
@@ -68,6 +64,8 @@ import org.gluu.service.security.Secure;
 import org.gluu.util.ArrayHelper;
 import org.gluu.util.StringHelper;
 import org.slf4j.Logger;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Action class for updating person's attributes
@@ -308,7 +306,7 @@ public class UpdatePersonAction implements Serializable {
 	}
 
 	@SuppressWarnings("deprecation")
-	private void addMobileDevices() throws IOException, JsonParseException, JsonMappingException {
+	private void addMobileDevices() throws IOException {
 		String oxMobileDevices = this.person.getOxMobileDevices();
 		if (oxMobileDevices != null && !oxMobileDevices.trim().equals("")) {
 			ObjectMapper mapper = new ObjectMapper();
@@ -795,7 +793,7 @@ public class UpdatePersonAction implements Serializable {
 	}
 
 	private void removeMobileDevice(GluuDeviceDataBean deleteDeviceData, String idOfDeviceToRemove)
-			throws IOException, JsonParseException, JsonMappingException, JsonGenerationException {
+			throws IOException {
 		String oxMobileDevices = this.person.getOxMobileDevices();
 		if (oxMobileDevices != null && !oxMobileDevices.trim().equals("")) {
 			ObjectMapper mapper = new ObjectMapper();
@@ -878,10 +876,6 @@ public class UpdatePersonAction implements Serializable {
 		DeviceData obj = null;
 		try {
 			obj = mapper.readValue(data, DeviceData.class);
-		} catch (JsonParseException e) {
-			log.error("Failed to convert device string to object JsonParseException", e);
-		} catch (JsonMappingException e) {
-			log.error("Failed to convert device string to object JsonMappingException", e);
 		} catch (IOException e) {
 			log.error("Failed to convert device string to object IOException", e);
 		}
