@@ -52,6 +52,7 @@ public class ShibbolethInitializer {
 			}
 			boolean servicesNeedRestarting = false;
 			gluuSP = trustService.getRelationshipByInum(configurationService.getConfiguration().getGluuSPTR());
+			log.info("########## gluuSP = " + gluuSP);
 			List<GluuSAMLTrustRelationship> trustRelationships = trustService.getAllActiveTrustRelationships();
 			String shibbolethVersion = appConfiguration.getShibbolethVersion();
 			log.info("########## shibbolethVersion = " + shibbolethVersion);
