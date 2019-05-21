@@ -101,7 +101,7 @@ public class ConfigurationService implements Serializable {
 	public GluuConfiguration getConfiguration(String[] returnAttributes) {
 		GluuConfiguration result = null;
 		if (ldapEntryManager.contains(getDnForConfiguration(), GluuConfiguration.class)) {
-			result = ldapEntryManager.find(GluuConfiguration.class, getDnForConfiguration(), returnAttributes);
+			result = ldapEntryManager.find(getDnForConfiguration(), GluuConfiguration.class, returnAttributes);
 		} else {
 			result = new GluuConfiguration();
 			result.setDn(getDnForConfiguration());

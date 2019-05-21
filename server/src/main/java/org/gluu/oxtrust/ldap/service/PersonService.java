@@ -317,7 +317,7 @@ public class PersonService implements Serializable, IPersonService {
 	 */
 	@Override
 	public GluuCustomPerson findPersonByDn(String dn, String... returnAttributes) {
-		return ldapEntryManager.find(GluuCustomPerson.class, dn, returnAttributes);
+		return ldapEntryManager.find(dn, GluuCustomPerson.class, returnAttributes);
 	}
 
 	/*
