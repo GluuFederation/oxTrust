@@ -513,9 +513,6 @@ public class Shibboleth3ConfService implements Serializable {
 		attrParams.put("attributes", attributes);
 		attrParams.put("attributeSAML1Strings", attributeSAML1Strings);
 		attrParams.put("attributeSAML2Strings", attributeSAML2Strings);
-		
-		PersistenceEntryManagerFactory persistenceEntryManagerFactory = persistanceFactoryService.getPersistenceEntryManagerFactory(persistenceConfiguration);
-		attrParams.put("persistenceType", persistenceEntryManagerFactory.getPersistenceType());
 
 		return attrParams;
 	}
@@ -560,6 +557,9 @@ public class Shibboleth3ConfService implements Serializable {
 
 		attributeResolverParams.put("configs", nameIdConfigs);
 		attributeResolverParams.put("attributes", nameIdAttributes);
+
+		PersistenceEntryManagerFactory persistenceEntryManagerFactory = persistanceFactoryService.getPersistenceEntryManagerFactory(persistenceConfiguration);
+		attributeResolverParams.put("persistenceType", persistenceEntryManagerFactory.getPersistenceType());
 
 		return attributeResolverParams;
 	}
