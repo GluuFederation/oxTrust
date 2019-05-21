@@ -21,13 +21,13 @@
 #if($attribute.name.equals('eppnForNIH'))
 
     <resolver:AttributeDefinition id="eduPersonPrincipalName" xsi:type="ad:Scoped" scope="%{idp.scope}" sourceAttributeID="uid">
-        <resolver:Dependency ref="siteLDAP" />
+        <resolver:Dependency ref="siteDataConnector" />
         <resolver:AttributeEncoder xsi:type="enc:SAML2ScopedString" name="urn:oid:1.3.6.1.4.1.5923.1.1.1.6" friendlyName="eduPersonPrincipalName" encodeType="false" />
     </resolver:AttributeDefinition>
 
 #else
     <resolver:AttributeDefinition xsi:type="ad:Simple" id="$attribute.name" sourceAttributeID="$attribute.name">
-        <resolver:Dependency ref="siteLDAP" />
+        <resolver:Dependency ref="siteDataConnector" />
         <resolver:AttributeEncoder xsi:type="enc:SAML2String" name="$attrParams.attributeSAML2Strings.get($attribute.name)" friendlyName="$attribute.name" encodeType="false" />
     </resolver:AttributeDefinition>
 #end
@@ -37,8 +37,19 @@
     <!-- ========================================== -->
     <!--      Data Connectors                       -->
     <!-- ========================================== -->
+#if( $resovlerParams.persistenceType.equals('couchbase') )
+    <resolver:DataConnector id="siteDataConnector" xsi:type="dc:RelationalDatabase">
+        <dc:BeanManagedConnection>siteDataSource</dc:BeanManagedConnection>
 
-    <resolver:DataConnector id="siteLDAP" xsi:type="dc:LDAPDirectory"
+         <dc:QueryTemplate>
+
+             <![CDATA[
+                %{idp.attribute.resolver.N1QL.searchFilter}
+            ]]>
+        </dc:QueryTemplate>
+    </resolver:DataConnector>
+#else
+    <resolver:DataConnector id="siteDataConnector" xsi:type="dc:LDAPDirectory"
                             ldapURL="%{idp.attribute.resolver.LDAP.ldapURL}"
                             baseDN="%{idp.attribute.resolver.LDAP.baseDN}"
                             principal="%{idp.attribute.resolver.LDAP.bindDN}"
@@ -58,5 +69,6 @@
         </dc:StartTLSTrustCredential>
 
     </resolver:DataConnector>
+#end
 
 </resolver:AttributeResolver>
