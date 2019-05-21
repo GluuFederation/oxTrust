@@ -33,16 +33,6 @@
 #end
 #end
 #end
-#if( $resovlerParams.size() > 0 )
-    #foreach( $nameIdConfig in $resovlerParams.configs )
-    #set( $attribute = $resovlerParams.attributes.get($nameIdConfig.sourceAttribute) )
-
-    <resolver:AttributeDefinition xsi:type="ad:Simple" id="$nameIdConfig.name" sourceAttributeID="$attribute.name">
-        <resolver:Dependency ref="siteDataConnector" />
-        <resolver:AttributeEncoder xsi:type="enc:SAML2StringNameID" nameFormat="urn:oasis:names:tc:SAML:2.0:nameid-format:$nameIdConfig.nameIdType" />
-    </resolver:AttributeDefinition>
-    #end
-#end
 
     <!-- ========================================== -->
     <!--      Data Connectors                       -->

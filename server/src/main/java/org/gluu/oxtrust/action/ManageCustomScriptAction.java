@@ -11,10 +11,12 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
@@ -85,7 +87,7 @@ public class ManageCustomScriptAction
 
 	private boolean initialized;
 
-	private static List<String> allAcrs = new ArrayList<>();
+	private static Set<String> allAcrs = new HashSet<>();
 
 	public String modify() {
 		if (this.initialized) {
@@ -297,12 +299,12 @@ public class ManageCustomScriptAction
 	}
 
 	public List<String> getAvailableAcrs(String scriptName) {
-		cleanAcrs(scriptName);
-		return allAcrs;
+		return new ArrayList<>(cleanAcrs(scriptName));
 	}
 
 	public void initAcrs() {
 		try {
+			allAcrs.clear();
 			File file = new File("/opt/shibboleth-idp/conf/authn/general-authn.xml");
 			DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
@@ -335,27 +337,30 @@ public class ManageCustomScriptAction
 	}
 
 	public String getDisplayName(String value) {
-		String[] values = value.split(":");
-		return values[values.length - 1];
+		return value;
 	}
 
 	public boolean isPersonScript(CustomScript script) {
 		return script.getScriptType().getValue().equalsIgnoreCase(CustomScriptType.PERSON_AUTHENTICATION.getValue());
 	}
 
-	private void cleanAcrs(String name) {
+	private Set<String> cleanAcrs(String name) {
+		Set<String> result = new HashSet<>();
+		result.addAll(allAcrs);
+		
 		List<CustomScript> scripts = customScriptsByTypes.get(CustomScriptType.PERSON_AUTHENTICATION);
 		for (CustomScript customScript : scripts) {
-			if (name != customScript.getName()) {
+			if (null == customScript.getAliases())
+				customScript.setAliases(new ArrayList<>());
+			if (!customScript.getName().equals(name)) {
 				List<String> existing = customScript.getAliases();
 				if (existing != null && existing.size() > 0) {
 					for (String value : existing) {
-						allAcrs.remove(value);
+						result.remove(value);
 					}
 				}
 			}
-
 		}
+		return result;
 	}
-
 }
