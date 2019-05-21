@@ -164,7 +164,10 @@ public class Shibboleth3ConfService implements Serializable {
 	private PersistenceConfiguration persistenceConfiguration;
 	
 	@Inject
-	private PersistanceFactoryService persistanceFactoryService;
+	private PersistenceEntryManager persistenceEntryManager;
+	
+	@Inject
+	private PersonService personService;
 
 	/*
 	 * Generate relying-party.xml, attribute-filter.xml, attribute-resolver.xml
@@ -558,8 +561,8 @@ public class Shibboleth3ConfService implements Serializable {
 		attributeResolverParams.put("configs", nameIdConfigs);
 		attributeResolverParams.put("attributes", nameIdAttributes);
 
-		PersistenceEntryManagerFactory persistenceEntryManagerFactory = persistanceFactoryService.getPersistenceEntryManagerFactory(persistenceConfiguration);
-		attributeResolverParams.put("persistenceType", persistenceEntryManagerFactory.getPersistenceType());
+		String baseUserDn = personService.getDnForPerson(null);
+		attributeResolverParams.put("persistenceType", persistenceEntryManager.getPersistenceType(baseUserDn));
 
 		return attributeResolverParams;
 	}
