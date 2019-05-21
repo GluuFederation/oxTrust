@@ -211,7 +211,7 @@ public abstract class Configuration<C extends AppConfiguration, L extends LdapAp
 		try {
 			final String dn = baseConfiguration.getString(getApplicationConfigurationPropertyName());
 
-			final L ldapConf = this.ldapEntryManager.find(getAppConfigurationType(), dn, returnAttributes);
+			final L ldapConf = this.ldapEntryManager.find(dn, getAppConfigurationType(), returnAttributes);
 			return ldapConf;
 		} catch (BasePersistenceException ex) {
 			LOG.error(ex.getMessage());

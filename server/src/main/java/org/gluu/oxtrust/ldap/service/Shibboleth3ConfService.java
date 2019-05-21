@@ -54,10 +54,7 @@ import org.gluu.oxtrust.model.GluuSAMLFederationProposal;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.util.EasyCASSLProtocolSocketFactory;
 import org.gluu.persist.PersistenceEntryManager;
-import org.gluu.persist.PersistenceEntryManagerFactory;
-import org.gluu.persist.ldap.impl.LdapEntryManager;
 import org.gluu.persist.model.PersistenceConfiguration;
-import org.gluu.persist.service.PersistanceFactoryService;
 import org.gluu.saml.metadata.SAMLMetadataParser;
 import org.gluu.service.SchemaService;
 import org.gluu.service.XmlService;
@@ -159,12 +156,12 @@ public class Shibboleth3ConfService implements Serializable {
 
 	@Inject
 	private TrustService trustService;
-
-	@Inject
-	private PersistenceConfiguration persistenceConfiguration;
 	
 	@Inject
-	private PersistanceFactoryService persistanceFactoryService;
+	private PersistenceEntryManager persistenceEntryManager;
+	
+	@Inject
+	private PersonService personService;
 
 	/*
 	 * Generate relying-party.xml, attribute-filter.xml, attribute-resolver.xml
@@ -558,8 +555,8 @@ public class Shibboleth3ConfService implements Serializable {
 		attributeResolverParams.put("configs", nameIdConfigs);
 		attributeResolverParams.put("attributes", nameIdAttributes);
 
-		PersistenceEntryManagerFactory persistenceEntryManagerFactory = persistanceFactoryService.getPersistenceEntryManagerFactory(persistenceConfiguration);
-		attributeResolverParams.put("persistenceType", persistenceEntryManagerFactory.getPersistenceType());
+		String baseUserDn = personService.getDnForPerson(null);
+		attributeResolverParams.put("persistenceType", persistenceEntryManager.getPersistenceType(baseUserDn));
 
 		return attributeResolverParams;
 	}

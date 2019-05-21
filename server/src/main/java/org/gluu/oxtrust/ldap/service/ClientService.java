@@ -88,7 +88,7 @@ public class ClientService implements Serializable {
 	public OxAuthClient getClientByInum(String inum, String... ldapReturnAttributes) {
 		OxAuthClient result = null;
 		try {
-			result = ldapEntryManager.find(OxAuthClient.class, getDnForClient(inum), ldapReturnAttributes);
+			result = ldapEntryManager.find(getDnForClient(inum), OxAuthClient.class, ldapReturnAttributes);
 			String encodedClientSecret = result.getEncodedClientSecret();
 			if (StringHelper.isNotEmpty(encodedClientSecret)) {
 				String clientSecret = encryptionService.decrypt(encodedClientSecret);

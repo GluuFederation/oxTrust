@@ -431,7 +431,7 @@ public class ConfigurationFactory {
 		final PersistenceEntryManager ldapEntryManager = persistenceEntryManagerInstance.get();
 		final String configurationDn = getConfigurationDn();
 		try {
-			final LdapOxTrustConfiguration conf = ldapEntryManager.find(LdapOxTrustConfiguration.class, configurationDn,
+			final LdapOxTrustConfiguration conf = ldapEntryManager.find(configurationDn, LdapOxTrustConfiguration.class,
 					returnAttributes);
 
 			return conf;

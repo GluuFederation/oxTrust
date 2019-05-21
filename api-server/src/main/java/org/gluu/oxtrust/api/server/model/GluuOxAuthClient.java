@@ -4,8 +4,6 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.gluu.oxauth.model.common.GrantType;
 import org.gluu.oxauth.model.common.ResponseType;
 import org.gluu.oxtrust.model.AuthenticationMethod;
@@ -15,6 +13,9 @@ import org.gluu.oxtrust.model.OxAuthApplicationType;
 import org.gluu.oxtrust.model.OxAuthSubjectType;
 import org.gluu.oxtrust.model.SignatureAlgorithm;
 import org.gluu.persist.annotation.AttributeName;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class GluuOxAuthClient implements Serializable{
@@ -30,6 +31,7 @@ public class GluuOxAuthClient implements Serializable{
 	private String displayName;
 
 	private String description;
+
 	@JsonIgnore
 	private String dn;
 
