@@ -16,6 +16,7 @@ import org.gluu.persist.PersistenceEntryManagerFactory;
 import org.gluu.persist.exception.BasePersistenceException;
 import org.gluu.persist.model.PersistenceConfiguration;
 import org.gluu.persist.service.PersistanceFactoryService;
+import org.gluu.persist.service.StandalonePersistanceFactoryService;
 import org.gluu.util.StringHelper;
 import org.gluu.util.exception.ConfigurationException;
 import org.gluu.util.properties.FileConfiguration;
@@ -86,7 +87,7 @@ public abstract class Configuration<C extends AppConfiguration, L extends LdapAp
 	}
 
 	private void create() {
-		this.persistanceFactoryService = new PersistanceFactoryService();
+		this.persistanceFactoryService = new StandalonePersistanceFactoryService();
 
         this.persistenceConfiguration = persistanceFactoryService.loadPersistenceConfiguration(getLdapConfigurationFileName());
         this.baseConfiguration = loadBaseConfiguration();
