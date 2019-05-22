@@ -6,11 +6,8 @@
 package org.gluu.oxtrust.model.scim2;
 
 import org.apache.logging.log4j.LogManager;
-//import org.codehaus.jackson.annotate.JsonAnyGetter;
-//import org.codehaus.jackson.annotate.JsonAnySetter;
-//import org.codehaus.jackson.map.ObjectMapper;
-//import org.codehaus.jackson.type.TypeReference;
 import org.gluu.oxtrust.model.scim2.annotations.*;
+import org.gluu.oxtrust.model.scim2.fido.Fido2DeviceResource;
 import org.gluu.oxtrust.model.scim2.fido.FidoDeviceResource;
 import org.gluu.oxtrust.model.scim2.group.GroupResource;
 import org.gluu.oxtrust.model.scim2.user.UserResource;
@@ -54,8 +51,8 @@ public class BaseScimResource {
             mutability = AttributeDefinition.Mutability.READ_ONLY,
             returned = AttributeDefinition.Returned.ALWAYS,
             uniqueness = AttributeDefinition.Uniqueness.SERVER)
-    @StoreReference(resourceType = {UserResource.class, FidoDeviceResource.class, GroupResource.class},
-            refs = {"inum", "oxId", "inum"})
+    @StoreReference(resourceType = {UserResource.class, FidoDeviceResource.class, GroupResource.class, Fido2DeviceResource.class},
+            refs = {"inum", "oxId", "inum", "oxId"})
     private String id;
 
     @Attribute(description = "A String that is an identifier for the resource as defined by the provisioning client",
@@ -68,7 +65,7 @@ public class BaseScimResource {
             type = AttributeDefinition.Type.COMPLEX)
     private Meta meta;
 
-    private Map<String, Object> extendedAttrs=new HashMap<String, Object>();   //must never be null
+    private Map<String, Object> extendedAttrs=new HashMap<>();   //must never be null
 
     /**
      * Replaces the custom attributes belonging to the resource extension identified by the <code>uri</code> passed as

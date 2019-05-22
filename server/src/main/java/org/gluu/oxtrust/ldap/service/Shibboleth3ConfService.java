@@ -588,7 +588,11 @@ public class Shibboleth3ConfService implements Serializable {
 		String spHost = spUrl.replaceAll(":[0-9]*$", "").replaceAll("^.*?//", "");
 		context.put("spHost", spHost);
 		String gluuSPInum = configurationService.getConfiguration().getGluuSPTR();
-		String gluuSPEntityId = trustService.getRelationshipByInum(gluuSPInum).getEntityId();
+		GluuSAMLTrustRelationship gluuSP = trustService.getRelationshipByInum(gluuSPInum);
+		if (gluuSP == null) {
+			gluuSP = new GluuSAMLTrustRelationship();
+		}
+		String gluuSPEntityId = gluuSP.getEntityId();
 		context.put("gluuSPEntityId", gluuSPEntityId);
 		String regx = "\\s*(=>|,|\\s)\\s*";// white spaces or comma
 

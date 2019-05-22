@@ -6,6 +6,7 @@
 package org.gluu.oxtrust.model.scim2;
 
 import org.gluu.oxtrust.model.scim2.annotations.*;
+import org.gluu.oxtrust.model.scim2.fido.Fido2DeviceResource;
 import org.gluu.oxtrust.model.scim2.fido.FidoDeviceResource;
 import org.gluu.oxtrust.model.scim2.user.UserResource;
 
@@ -28,8 +29,8 @@ public class Meta {
     @Attribute(description = "Date and time the resource was created",
             mutability = AttributeDefinition.Mutability.READ_ONLY,
             type = AttributeDefinition.Type.DATETIME)
-    @StoreReference(resourceType = {UserResource.class, FidoDeviceResource.class},
-            refs = {"oxCreationTimestamp", "creationDate"})
+    @StoreReference(resourceType = {UserResource.class, FidoDeviceResource.class, Fido2DeviceResource.class},
+            refs = {"oxCreationTimestamp", "creationDate", "creationDate"})
     //For effects of filters we don't use "oxTrustMetaCreated" but "oxCreationTimestamp" which has generalizedTime data type)
     private String created;
 
