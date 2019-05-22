@@ -38,7 +38,7 @@ public interface IFido2DeviceWebService {
     @GET
     @Produces({MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT, MediaType.APPLICATION_JSON + UTF8_CHARSET_FRAGMENT})
     @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
-    Response getDeviceById(@PathParam("id") String id,
+    Response getF2DeviceById(@PathParam("id") String id,
                            @QueryParam("userId") String userId,
                            @QueryParam(QUERY_PARAM_ATTRIBUTES) String attrsList,
                            @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList);
@@ -65,7 +65,7 @@ public interface IFido2DeviceWebService {
     @Consumes({MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
     @Produces({MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT, MediaType.APPLICATION_JSON + UTF8_CHARSET_FRAGMENT})
     @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
-    Response updateDevice(
+    Response updateF2Device(
             Fido2DeviceResource fidoDeviceResource,
             @PathParam("id") String id,
             @QueryParam(QUERY_PARAM_ATTRIBUTES) String attrsList,
@@ -81,7 +81,7 @@ public interface IFido2DeviceWebService {
     @DELETE
     @Produces({MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT, MediaType.APPLICATION_JSON + UTF8_CHARSET_FRAGMENT})
     @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
-    Response deleteDevice(@PathParam("id") String id);
+    Response deleteF2Device(@PathParam("id") String id);
 
     /**
      * Sends a search query for Fido 2 devices using GET (see section 3.4.2 of RFC 7644).
@@ -107,7 +107,7 @@ public interface IFido2DeviceWebService {
     @GET
     @Produces({MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT, MediaType.APPLICATION_JSON + UTF8_CHARSET_FRAGMENT})
     @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
-    Response searchDevices(
+    Response searchF2Devices(
             @QueryParam("userId") String userId,
             @QueryParam(QUERY_PARAM_FILTER) String filter,
             @QueryParam(QUERY_PARAM_START_INDEX) Integer startIndex,
@@ -121,7 +121,7 @@ public interface IFido2DeviceWebService {
      * Sends a search query for Fido 2 devices using POST (see section 3.4.3 of RFC 7644).
      * @param searchRequest An object containing the parameters for the query to execute. These are the same parameters
      *                      passed in the URL for searches, for example in
-     *                      {@link #searchDevices(String, String, Integer, Integer, String, String, String, String) searchDevices}
+     *                      {@link #searchF2Devices(String, String, Integer, Integer, String, String, String, String) searchDevices}
      * @return An object abstracting the response obtained from the server to this request.
      * A succesful response for this request should contain a status code of 200 and a {@link org.gluu.oxtrust.model.scim2.ListResponse
      * ListResponse} in the entity body (holding a collection of SCIM resources)
@@ -131,7 +131,7 @@ public interface IFido2DeviceWebService {
     @Consumes({MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
     @Produces({MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT, MediaType.APPLICATION_JSON + UTF8_CHARSET_FRAGMENT})
     @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
-    Response searchDevicesPost(SearchRequest searchRequest, @QueryParam("userId") String userId);
+    Response searchF2DevicesPost(SearchRequest searchRequest, @QueryParam("userId") String userId);
 
     /**
      * Service method that allows to modify a Fido 2 device resource via PATCH (see section 3.5.2 of RFC 7644).
@@ -151,7 +151,7 @@ public interface IFido2DeviceWebService {
     @Consumes({MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
     @Produces({MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT, MediaType.APPLICATION_JSON + UTF8_CHARSET_FRAGMENT})
     @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
-    Response patchDevice(
+    Response patchF2Device(
             PatchRequest request,
             @PathParam("id") String id,
             @QueryParam(QUERY_PARAM_ATTRIBUTES) String attrsList,
