@@ -12,6 +12,7 @@ import org.gluu.oxtrust.model.scim2.AttributeDefinition;
 import org.gluu.oxtrust.model.scim2.annotations.StoreReference;
 import org.gluu.oxtrust.model.scim2.annotations.Validator;
 import org.gluu.oxtrust.model.scim2.extensions.Extension;
+import org.gluu.oxtrust.model.scim2.fido.Fido2DeviceResource;
 import org.gluu.oxtrust.model.scim2.fido.FidoDeviceResource;
 import org.gluu.oxtrust.model.scim2.provider.resourcetypes.ResourceType;
 import org.gluu.oxtrust.model.scim2.provider.config.ServiceProviderConfig;
@@ -141,7 +142,7 @@ public class IntrospectUtil {
      */
     public static List<Object> getAttributeValues(BaseScimResource bean, final List<Method> getters){
 
-        final List<Object> results=new ArrayList<Object>();
+        final List<Object> results=new ArrayList<>();
 
         class traversalClass{
 
@@ -229,7 +230,7 @@ public class IntrospectUtil {
      */
     public static List<String> getPathsInExtension(Extension extension){
 
-        List<String> list=new ArrayList<String>();
+        List<String> list=new ArrayList<>();
         for (String attr : extension.getFields().keySet())
             list.add(extension.getUrn() + "." + attr);
         return list;
@@ -307,17 +308,17 @@ public class IntrospectUtil {
     public static Map<Class <? extends BaseScimResource>, Map<String, String>> storeRefs;
 
     private static Map<Class<? extends BaseScimResource>, Map<String, List<Method>>> newEmptyMap(){
-        return new HashMap<Class<? extends BaseScimResource>, Map<String, List<Method>>>();
+        return new HashMap<>();
     }
 
     private static void resetAttrNames(){
-        requiredAttrsNames=new ArrayList<String>();
-        defaultAttrsNames=new ArrayList<String>();
-        validableAttrsNames=new ArrayList<String>();
-        canonicalizedAttrsNames=new ArrayList<String>();
-        alwaysAttrsNames=new ArrayList<String>();
-        neverAttrsNames=new ArrayList<String>();
-        requestAttrsNames=new ArrayList<String>();
+        requiredAttrsNames=new ArrayList<>();
+        defaultAttrsNames=new ArrayList<>();
+        validableAttrsNames=new ArrayList<>();
+        canonicalizedAttrsNames=new ArrayList<>();
+        alwaysAttrsNames=new ArrayList<>();
+        neverAttrsNames=new ArrayList<>();
+        requestAttrsNames=new ArrayList<>();
     }
 
     private static void resetMaps(){
@@ -329,8 +330,8 @@ public class IntrospectUtil {
         validableCoreAttrs=newEmptyMap();
         canonicalCoreAttrs=newEmptyMap();
 
-        allAttrs=new HashMap<Class<? extends BaseScimResource>, SortedSet<String>>();
-        storeRefs=new HashMap<Class<? extends BaseScimResource>, Map<String,String>>();
+        allAttrs=new HashMap<>();
+        storeRefs=new HashMap<>();
     }
 
     private static void freezeMaps(){
@@ -348,7 +349,7 @@ public class IntrospectUtil {
 
     private static void traverseClassForNames(Class clazz, String prefix, List<Field> extraFields, boolean prune) throws Exception{
 
-        List<Field> fields=new ArrayList<Field>();
+        List<Field> fields=new ArrayList<>();
         fields.addAll(Arrays.asList(clazz.getDeclaredFields()));
         fields.addAll(extraFields);
 
@@ -403,10 +404,10 @@ public class IntrospectUtil {
 
     private static Map<String, List<Method>> computeGettersMap(List<String> attrNames, Class baseClass) throws Exception{
 
-        Map<String, List<Method>> map=new HashMap<String, List<Method>>();
+        Map<String, List<Method>> map=new HashMap<>();
 
         for (String attrName : attrNames) {
-            List<Method> list =new ArrayList<Method>();
+            List<Method> list =new ArrayList<>();
             Class clazz=baseClass;
 
             for (String prop : attrName.split("\\.")) {
@@ -434,7 +435,7 @@ public class IntrospectUtil {
             resetMaps();
 
             List<Class<? extends BaseScimResource>> resourceClasses=Arrays.asList(UserResource.class, GroupResource.class,
-                    FidoDeviceResource.class, ServiceProviderConfig.class, ResourceType.class, SchemaResource.class);
+                    FidoDeviceResource.class, Fido2DeviceResource.class, ServiceProviderConfig.class, ResourceType.class, SchemaResource.class);
 
             //Perform initializations needed for all resource types
             for (Class<? extends BaseScimResource> aClass : resourceClasses){
@@ -449,7 +450,7 @@ public class IntrospectUtil {
                 validableCoreAttrs.put(aClass, computeGettersMap(validableAttrsNames, aClass));
                 canonicalCoreAttrs.put(aClass, computeGettersMap(canonicalizedAttrsNames, aClass));
 
-                allAttrs.put(aClass, new TreeSet<String>());
+                allAttrs.put(aClass, new TreeSet<>());
                 allAttrs.get(aClass).addAll(alwaysAttrsNames);
                 allAttrs.get(aClass).addAll(defaultAttrsNames);
                 allAttrs.get(aClass).addAll(neverAttrsNames);
@@ -458,7 +459,7 @@ public class IntrospectUtil {
 
             for (Class<? extends BaseScimResource> cls : resourceClasses) {
                 //This is a map from attributes to storage references (e.g. LDAP attributes)
-                Map<String, String> map = new HashMap<String, String>();
+                Map<String, String> map = new HashMap<>();
 
                 for (String attrib : allAttrs.get(cls)) {
                     Field field = findFieldFromPath(cls, attrib);
