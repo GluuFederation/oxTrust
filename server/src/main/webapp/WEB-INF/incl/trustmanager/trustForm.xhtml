@@ -269,16 +269,6 @@ pre {
 														onclick="#{rich:component('spMetadataPanel')}.show();"
 														rendered="#{not empty _trustRelationship.spMetaDataFN}"
 														execute="@this" />
-
-													<b:panel id="fileWrapperFileNameId"
-														title="#{_trustRelationship.spMetaDataFN}"
-														rendered="#{not empty _trustRelationship.spMetaDataFN}"
-														look="success">
-														<div class="row">
-															<h:outputText value="#{_trustRelationship.spMetaDataFN}" />
-														</div>
-													</b:panel>
-
 													<a4j:commandLink style="margin-left:305px;"
 														styleClass="glyphicon glyphicon-remove"
 														action="#{_trustRelationship.setSpMetaDataFN('')}"

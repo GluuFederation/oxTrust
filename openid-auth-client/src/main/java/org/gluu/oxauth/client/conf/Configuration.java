@@ -11,18 +11,20 @@ import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.lang.StringUtils;
-import org.gluu.persist.exception.BasePersistenceException;
 import org.gluu.persist.PersistenceEntryManager;
-import org.gluu.persist.ldap.impl.LdapEntryManagerFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.gluu.util.PropertiesHelper;
+import org.gluu.persist.PersistenceEntryManagerFactory;
+import org.gluu.persist.exception.BasePersistenceException;
+import org.gluu.persist.model.PersistenceConfiguration;
+import org.gluu.persist.service.PersistanceFactoryService;
+import org.gluu.persist.service.StandalonePersistanceFactoryService;
 import org.gluu.util.StringHelper;
 import org.gluu.util.exception.ConfigurationException;
 import org.gluu.util.properties.FileConfiguration;
 import org.gluu.util.security.PropertiesDecrypter;
 import org.gluu.util.security.StringEncrypter;
 import org.gluu.util.security.StringEncrypter.EncryptionException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Base OpenId configuration
@@ -61,8 +63,10 @@ public abstract class Configuration<C extends AppConfiguration, L extends LdapAp
 	private String saltFilePath;
 
 	private FileConfiguration baseConfiguration;
-	private FileConfiguration ldapConfiguration;
 	private C appConfiguration;
+
+	private PersistanceFactoryService persistanceFactoryService;
+	private PersistenceConfiguration persistenceConfiguration;
 
 	private String cryptoConfigurationSalt;
 
@@ -83,15 +87,17 @@ public abstract class Configuration<C extends AppConfiguration, L extends LdapAp
 	}
 
 	private void create() {
-		this.baseConfiguration = loadBaseConfiguration();
-		this.ldapConfiguration = loadLdapConfiguration();
+		this.persistanceFactoryService = new StandalonePersistanceFactoryService();
+
+        this.persistenceConfiguration = persistanceFactoryService.loadPersistenceConfiguration(getLdapConfigurationFileName());
+        this.baseConfiguration = loadBaseConfiguration();
 
 		this.confDir = confDir();
 		this.saltFilePath = confDir + SALT_FILE_NAME;
 
 		this.cryptoConfigurationSalt = loadCryptoConfigurationSalt();
 
-		this.ldapEntryManager = createLdapEntryManager();
+		this.ldapEntryManager = createPersistenceEntryManager();
 
 		if (!createFromLdap()) {
 			LOG.error("Failed to load configuration from Ldap. Please fix it!!!.");
@@ -109,17 +115,6 @@ public abstract class Configuration<C extends AppConfiguration, L extends LdapAp
 
 	private FileConfiguration loadBaseConfiguration() {
 		FileConfiguration fileConfiguration = createFileConfiguration(BASE_PROPERTIES_FILE, true);
-		
-		return fileConfiguration;
-	}
-
-	private FileConfiguration loadLdapConfiguration() {
-		String ldapConfigurationFileName = getLdapConfigurationFileName();
-		FileConfiguration fileConfiguration = loadLdapConfiguration(ldapConfigurationFileName, false);
-		if (fileConfiguration == null) {
-			ldapConfigurationFileName = getDefaultLdapConfigurationFileName();
-			fileConfiguration = loadLdapConfiguration(ldapConfigurationFileName, true);
-		}
 		
 		return fileConfiguration;
 	}
@@ -220,9 +215,10 @@ public abstract class Configuration<C extends AppConfiguration, L extends LdapAp
 		return null;
 	}
 
-	private PersistenceEntryManager createLdapEntryManager() {
-		Properties connectionProperties = (Properties) this.ldapConfiguration.getProperties();
-		connectionProperties = PropertiesHelper.appendPrefix(connectionProperties, "ldap");
+	protected Properties preparePersistanceProperties() {
+		FileConfiguration persistenceConfig = persistenceConfiguration.getConfiguration();
+		Properties connectionProperties = (Properties) persistenceConfig.getProperties();
+
 		Properties decryptedConnectionProperties;
 		try {
 			decryptedConnectionProperties = PropertiesDecrypter.decryptAllProperties(StringEncrypter.defaultInstance(), connectionProperties, this.cryptoConfigurationSalt);
@@ -230,13 +226,19 @@ public abstract class Configuration<C extends AppConfiguration, L extends LdapAp
         	throw new ConfigurationException("Failed to decript configuration properties", ex);
         }
 
-		
-		LdapEntryManagerFactory ldapEntryManagerFactory = new LdapEntryManagerFactory();
-		PersistenceEntryManager ldapEntryManager = ldapEntryManagerFactory.createEntryManager(decryptedConnectionProperties);
+		return decryptedConnectionProperties;
+	}
 
-		LOG.debug("Created LdapEntryManager: {}", ldapEntryManager);
+	public PersistenceEntryManager createPersistenceEntryManager() {
+		Properties connectionProperties = preparePersistanceProperties();
 
-		return ldapEntryManager;
+		PersistenceEntryManagerFactory persistenceEntryManagerFactory = persistanceFactoryService.getPersistenceEntryManagerFactory(persistenceConfiguration);
+		PersistenceEntryManager persistenceEntryManager = persistenceEntryManagerFactory.createEntryManager(connectionProperties);
+		LOG.info("Created PersistenceEntryManager: {} with operation service: {}",
+				new Object[] {persistenceEntryManager,
+						persistenceEntryManager.getOperationService() });
+
+		return persistenceEntryManager;
 	}
 
 	private void destroyLdapEntryManager(final PersistenceEntryManager ldapEntryManager) {
@@ -249,7 +251,7 @@ public abstract class Configuration<C extends AppConfiguration, L extends LdapAp
 	}
 
 	public FileConfiguration getLdapConfiguration() {
-		return ldapConfiguration;
+		return this.persistenceConfiguration.getConfiguration();
 	}
 
 	public String getCryptoConfigurationSalt() {

@@ -45,11 +45,11 @@
             <artifactId>oxcore-util</artifactId>
             <scope>provided</scope>
         </dependency>
-		<dependency>
-			<groupId>org.gluu</groupId>
-			<artifactId>oxcore-persistence-ldap</artifactId>
-			<scope>provided</scope>
-		</dependency>
+        <dependency>
+            <groupId>org.gluu</groupId>
+            <artifactId>oxcore-persistence-cdi</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
         <dependency>
             <groupId>org.gluu</groupId>

@@ -42,9 +42,6 @@ public class ApplicationFactory {
     @Inject
     private ConfigurationService configurationService;
 
-    @Inject
-    private Instance<PersistenceEntryManagerFactory> persistenceEntryManagerFactoryInstance;
-
 	@Inject
 	private PersistanceFactoryService persistanceFactoryService;
 
