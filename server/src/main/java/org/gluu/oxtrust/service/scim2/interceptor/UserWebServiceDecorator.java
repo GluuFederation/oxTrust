@@ -49,19 +49,6 @@ public class UserWebServiceDecorator extends BaseScimWebService implements IUser
     @Inject
     private IPersonService personService;
 
-    private Response validateExistenceOfUser(String id){
-
-        Response response=null;
-        GluuCustomPerson person = StringUtils.isEmpty(id) ? null : personService.getPersonByInum(id);
-
-        if (person==null) {
-            log.info("Person with inum {} not found", id);
-            response = getErrorResponse(Response.Status.NOT_FOUND, "Resource " + id + " not found");
-        }
-        return response;
-
-    }
-
     private void checkUidExistence(String uid) throws DuplicateEntryException{
         if (personService.getPersonByUid(uid) != null)
             throw new DuplicateEntryException("Duplicate UID value: " + uid);
