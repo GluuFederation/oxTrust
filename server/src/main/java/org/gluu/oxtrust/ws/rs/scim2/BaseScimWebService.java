@@ -23,6 +23,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.apache.commons.lang.StringUtils;
 import org.gluu.config.oxtrust.AppConfiguration;
+import org.gluu.oxtrust.ldap.service.IPersonService;
+import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.exception.SCIMException;
 import org.gluu.oxtrust.model.scim2.BaseScimResource;
 import org.gluu.oxtrust.model.scim2.ErrorResponse;
@@ -64,6 +66,9 @@ public class BaseScimWebService {
     @Inject
     ExtensionService extService;
 
+    @Inject
+    IPersonService personService;
+
     public static final String SEARCH_SUFFIX = ".search";
 
     String endpointUrl;
@@ -88,6 +93,26 @@ public class BaseScimWebService {
         errorResponse.setDetail(detail);
 
         return Response.status(statusCode).entity(errorResponse).build();
+    }
+
+    public Response validateExistenceOfUser(String id) {
+
+        Response response = null;
+        if (StringUtils.isNotEmpty(id)) {
+            GluuCustomPerson person = personService.getPersonByInum(id);
+
+            if (person == null) {
+                response = getErrorResponse(Response.Status.NOT_FOUND, "User with id " + id + " not found");
+            }
+        }
+        return response;
+
+    }
+
+    String getUserInumFromDN(String deviceDn){
+        String baseDn=personService.getDnForPerson(null).replaceAll("\\s*","");
+        deviceDn=deviceDn.replaceAll("\\s*","").replaceAll("," + baseDn, "");
+        return deviceDn.substring(deviceDn.indexOf("inum=")+5);
     }
 
     int getMaxCount(){

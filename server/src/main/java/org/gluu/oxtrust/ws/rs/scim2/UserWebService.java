@@ -36,7 +36,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.exception.SCIMException;
 import org.gluu.oxtrust.model.scim2.BaseScimResource;
@@ -73,9 +72,6 @@ import com.wordnik.swagger.annotations.Authorization;
 @Api(value = "/v2/Users", description = "SCIM 2.0 User Endpoint (https://tools.ietf.org/html/rfc7644#section-3.2)",
         authorizations = {@Authorization(value = "Authorization", type = "uma")})
 public class UserWebService extends BaseScimWebService implements IUserWebService {
-
-    @Inject
-    private IPersonService personService;
 
     @Inject
     private Scim2UserService scim2UserService;

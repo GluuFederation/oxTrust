@@ -58,13 +58,26 @@ public class Fido2DeviceService implements Serializable {
 			List<GluuFido2Device> results = ldapEntryManager.findEntries(baseDn, GluuFido2Device.class,
 					Filter.createPresenceFilter("id"));
 			if (results == null) {
-				return new ArrayList<GluuFido2Device>();
+				return new ArrayList<>();
 			}
 			return results;
 		} catch (Exception e) {
 			log.error("Error getting Fido2 devices", e);
-			return new ArrayList<GluuFido2Device>();
+			return new ArrayList<>();
 		}
 	}
+
+	//TODO: #1526
+    public GluuFido2Device getFido2DeviceById(String userId, String id) {
+	    return null;
+    }
+
+    public void updateFido2Device(GluuFido2Device fido2Device) {
+
+    }
+
+    public void removeFido2Device(GluuFido2Device gluuCustomFidoDevice) {
+
+    }
 
 }

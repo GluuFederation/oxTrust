@@ -11,7 +11,7 @@
 
     <artifactId>oxtrust-scim</artifactId>
     <name>oxtrust-scim</name>
-    <description>SCIM 2.0  data types http://tools.ietf.org/html/draft-ietf-scim-core-schema-02</description>
+    <description>SCIM 2.0 data types http://tools.ietf.org/html/draft-ietf-scim-core-schema-02</description>
     <url>https://github.com/GluuFederation/oxTrust/scim</url>
     <licenses>
         <license>
@@ -23,8 +23,6 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.version>1.7</java.version>
-        <resteasy.version>3.0.21.Final</resteasy.version>
     </properties>
 
     <dependencies>
@@ -77,11 +75,9 @@
             <artifactId>oxcore-model</artifactId>
         </dependency>
 
-        <!-- rest in peace -->
         <dependency>
             <groupId>org.jboss.resteasy</groupId>
             <artifactId>resteasy-client</artifactId>
-            <version>${resteasy.version}</version>
         </dependency>
 
         <!-- Test -->

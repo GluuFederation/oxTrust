@@ -37,15 +37,13 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.gluu.oxtrust.ldap.service.IFidoDeviceService;
+import com.unboundid.util.StaticUtils;
+import com.wordnik.swagger.annotations.ApiOperation;
+import org.gluu.oxtrust.ldap.service.Fido2DeviceService;
 import org.gluu.oxtrust.model.exception.SCIMException;
-import org.gluu.oxtrust.model.fido.GluuCustomFidoDevice;
-import org.gluu.oxtrust.model.scim2.BaseScimResource;
-import org.gluu.oxtrust.model.scim2.ErrorScimType;
-import org.gluu.oxtrust.model.scim2.ListResponse;
-import org.gluu.oxtrust.model.scim2.Meta;
-import org.gluu.oxtrust.model.scim2.SearchRequest;
-import org.gluu.oxtrust.model.scim2.fido.FidoDeviceResource;
+import org.gluu.oxtrust.model.GluuFido2Device;
+import org.gluu.oxtrust.model.scim2.*;
+import org.gluu.oxtrust.model.scim2.fido.Fido2DeviceResource;
 import org.gluu.oxtrust.model.scim2.patch.PatchRequest;
 import org.gluu.oxtrust.model.scim2.util.DateUtil;
 import org.gluu.oxtrust.model.scim2.util.ScimResourceUtil;
@@ -58,38 +56,35 @@ import org.gluu.persist.model.SortOrder;
 import org.gluu.search.filter.Filter;
 import org.joda.time.format.ISODateTimeFormat;
 
-import com.wordnik.swagger.annotations.ApiOperation;
-
 /**
- * Implementation of /FidoDevices endpoint. Methods here are intercepted and/or decorated.
- * Class org.gluu.oxtrust.service.scim2.interceptor.FidoDeviceWebServiceDecorator is used to apply pre-validations on data.
+ * Implementation of /Fido2Devices endpoint. Methods here are intercepted and/or decorated.
+ * Class org.gluu.oxtrust.service.scim2.interceptor.Fido2DeviceWebServiceDecorator is used to apply pre-validations on data.
  * Filter org.gluu.oxtrust.ws.rs.scim2.AuthorizationProcessingFilter secures invocations
  *
- * @author Val Pecaoco
- * Updated by jgomer on 2017-10-09.
+ * @author jgomer
  */
-@Named("scim2FidoDeviceEndpoint")
-@Path("/scim/v2/FidoDevices")
-public class FidoDeviceWebService extends BaseScimWebService implements IFidoDeviceWebService {
+@Named("scim2Fido2DeviceEndpoint")
+@Path("/scim/v2/Fido2Devices")
+public class Fido2DeviceWebService extends BaseScimWebService implements IFido2DeviceWebService {
 
     @Inject
-	private IFidoDeviceService fidoDeviceService;
+    private Fido2DeviceService fidoDeviceService;
 
     @Inject
     private ScimFilterParserService scimFilterParserService;
 
     @Inject
-    private PersistenceEntryManager ldapEntryManager;
+    private PersistenceEntryManager entryManager;
 
     @POST
     @Consumes({MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
     @Produces({MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT, MediaType.APPLICATION_JSON + UTF8_CHARSET_FRAGMENT})
     @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
     @ProtectedApi
-    @ApiOperation(value = "Create device", response = FidoDeviceResource.class)
+    @ApiOperation(value = "Create device", response = Fido2DeviceResource.class)
     public Response createDevice() {
         log.debug("Executing web service method. createDevice");
-        return getErrorResponse(Response.Status.NOT_IMPLEMENTED, "Not implemented; device registration only happens via the FIDO API.");
+        return getErrorResponse(Response.Status.NOT_IMPLEMENTED, "Not implemented; device registration only happens via the FIDO 2.0 API.");
     }
 
     @Path("{id}")
@@ -98,22 +93,22 @@ public class FidoDeviceWebService extends BaseScimWebService implements IFidoDev
     @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
     @ProtectedApi
     @RefAdjusted
-    @ApiOperation(value = "Find device by id", notes = "Returns a device by id as path param", response = FidoDeviceResource.class)
+    @ApiOperation(value = "Find device by id", notes = "Returns a device by id as path param", response = Fido2DeviceResource.class)
     public Response getDeviceById(@PathParam("id") String id,
-                           @QueryParam("userId") String userId,
-                           @QueryParam(QUERY_PARAM_ATTRIBUTES) String attrsList,
-                           @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList){
+                                  @QueryParam("userId") String userId,
+                                  @QueryParam(QUERY_PARAM_ATTRIBUTES) String attrsList,
+                                  @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList){
 
         Response response;
         try{
             log.debug("Executing web service method. getDeviceById");
-            FidoDeviceResource fidoResource=new FidoDeviceResource();
+            Fido2DeviceResource fidoResource=new Fido2DeviceResource();
 
-            GluuCustomFidoDevice device=fidoDeviceService.getGluuCustomFidoDeviceById(userId, id);
+            GluuFido2Device device=fidoDeviceService.getFido2DeviceById(userId, id);
             if (device==null)
                 throw new SCIMException("Resource " + id + " not found");
 
-            transferAttributesToFidoResource(device, fidoResource, endpointUrl, userId);
+            transferAttributesToFido2Resource(device, fidoResource, endpointUrl, userId);
 
             String json=resourceSerializer.serialize(fidoResource, attrsList, excludedAttrsList);
             response=Response.ok(new URI(fidoResource.getMeta().getLocation())).entity(json).build();
@@ -137,9 +132,9 @@ public class FidoDeviceWebService extends BaseScimWebService implements IFidoDev
     @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
     @ProtectedApi
     @RefAdjusted
-    @ApiOperation(value = "Update device", response = FidoDeviceResource.class)
+    @ApiOperation(value = "Update device", response = Fido2DeviceResource.class)
     public Response updateDevice(
-            FidoDeviceResource fidoDeviceResource,
+            Fido2DeviceResource fidoDeviceResource,
             @PathParam("id") String id,
             @QueryParam(QUERY_PARAM_ATTRIBUTES) String attrsList,
             @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList){
@@ -149,20 +144,20 @@ public class FidoDeviceWebService extends BaseScimWebService implements IFidoDev
             log.debug("Executing web service method. updateDevice");
 
             String userId=fidoDeviceResource.getUserId();
-            GluuCustomFidoDevice device = fidoDeviceService.getGluuCustomFidoDeviceById(userId, id);
+            GluuFido2Device device = fidoDeviceService.getFido2DeviceById(userId, id);
             if (device == null)
                 throw new SCIMException("Resource " + id + " not found");
 
-            FidoDeviceResource updatedResource=new FidoDeviceResource();
-            transferAttributesToFidoResource(device, updatedResource, endpointUrl, userId);
+            Fido2DeviceResource updatedResource=new Fido2DeviceResource();
+            transferAttributesToFido2Resource(device, updatedResource, endpointUrl, userId);
 
             long now = System.currentTimeMillis();
             updatedResource.getMeta().setLastModified(ISODateTimeFormat.dateTime().withZoneUTC().print(now));
 
-            updatedResource=(FidoDeviceResource) ScimResourceUtil.transferToResourceReplace(fidoDeviceResource, updatedResource, extService.getResourceExtensions(updatedResource.getClass()));
+            updatedResource=(Fido2DeviceResource) ScimResourceUtil.transferToResourceReplace(fidoDeviceResource, updatedResource, extService.getResourceExtensions(updatedResource.getClass()));
             transferAttributesToDevice(updatedResource, device);
 
-            fidoDeviceService.updateGluuCustomFidoDevice(device);
+            fidoDeviceService.updateFido2Device(device);
 
             String json=resourceSerializer.serialize(updatedResource, attrsList, excludedAttrsList);
             response=Response.ok(new URI(updatedResource.getMeta().getLocation())).entity(json).build();
@@ -196,9 +191,9 @@ public class FidoDeviceWebService extends BaseScimWebService implements IFidoDev
             log.debug("Executing web service method. deleteDevice");
 
             //No need to check id being non-null. fidoDeviceService will give null if null is provided
-            GluuCustomFidoDevice device = fidoDeviceService.getGluuCustomFidoDeviceById(null, id);
+            GluuFido2Device device = fidoDeviceService.getFido2DeviceById(null, id);
             if (device != null) {
-                fidoDeviceService.removeGluuCustomFidoDevice(device);
+                fidoDeviceService.removeFido2Device(device);
                 response = Response.noContent().build();
             }
             else
@@ -231,7 +226,7 @@ public class FidoDeviceWebService extends BaseScimWebService implements IFidoDev
         Response response;
         try {
             log.debug("Executing web service method. searchDevices");
-            sortBy=translateSortByAttribute(FidoDeviceResource.class, sortBy);
+            sortBy=translateSortByAttribute(Fido2DeviceResource.class, sortBy);
             PagedResult<BaseScimResource> resources = searchDevices(userId, filter, sortBy, SortOrder.getByValue(sortOrder), startIndex, count, endpointUrl);
 
             String json = getListResponseSerialized(resources.getTotalEntriesCount(), startIndex, resources.getEntries(), attrsList, excludedAttrsList, count==0);
@@ -275,13 +270,14 @@ public class FidoDeviceWebService extends BaseScimWebService implements IFidoDev
 
     }
 
-    private void transferAttributesToFidoResource(GluuCustomFidoDevice fidoDevice, FidoDeviceResource res, String url, String userId) {
+    private void transferAttributesToFido2Resource(GluuFido2Device fidoDevice, Fido2DeviceResource res, String url, String userId) {
 
         res.setId(fidoDevice.getId());
-
+        //TODO: #1526
+/*
         Meta meta=new Meta();
         meta.setResourceType(ScimResourceUtil.getType(res.getClass()));
-        meta.setCreated(DateUtil.generalizedToISOStringDate(fidoDevice.getCreationDate()));
+        meta.setCreated(StaticUtils.encodeGeneralizedTime(fidoDevice.getCreationDate()));
         meta.setLastModified(fidoDevice.getMetaLastModified());
         meta.setLocation(fidoDevice.getMetaLocation());
         if (meta.getLocation()==null)
@@ -292,20 +288,11 @@ public class FidoDeviceWebService extends BaseScimWebService implements IFidoDev
         //Set values in order of appearance in FidoDeviceResource class
         res.setUserId(userId);
         res.setCreationDate(meta.getCreated());
-        res.setApplication(fidoDevice.getApplication());
         res.setCounter(fidoDevice.getCounter());
 
-        res.setDeviceData(fidoDevice.getDeviceData());
-        res.setDeviceHashCode(fidoDevice.getDeviceHashCode());
-        res.setDeviceKeyHandle(fidoDevice.getDeviceKeyHandle());
-        res.setDeviceRegistrationConf(fidoDevice.getDeviceRegistrationConf());
-
-        res.setLastAccessTime(DateUtil.generalizedToISOStringDate(fidoDevice.getLastAccessTime()));
         res.setStatus(fidoDevice.getStatus());
         res.setDisplayName(fidoDevice.getDisplayName());
-        res.setDescription(fidoDevice.getDescription());
-        res.setNickname(fidoDevice.getNickname());
-
+*/
     }
 
     /**
@@ -313,53 +300,46 @@ public class FidoDeviceWebService extends BaseScimWebService implements IFidoDev
      * @param res
      * @param device
      */
-    private void transferAttributesToDevice(FidoDeviceResource res, GluuCustomFidoDevice device){
+    private void transferAttributesToDevice(Fido2DeviceResource res, GluuFido2Device device){
 
         //Set values trying to follow the order found in GluuCustomFidoDevice class
         device.setId(res.getId());
+        //TODO: #1526
+        /*
         device.setCreationDate(DateUtil.ISOToGeneralizedStringDate(res.getMeta().getCreated()));
-        device.setApplication(res.getApplication());
         device.setCounter(res.getCounter());
 
-        device.setDeviceData(res.getDeviceData());
-        device.setDeviceHashCode(res.getDeviceHashCode());
-        device.setDeviceKeyHandle(res.getDeviceKeyHandle());
-        device.setDeviceRegistrationConf(res.getDeviceRegistrationConf());
-
-        device.setLastAccessTime(DateUtil.ISOToGeneralizedStringDate(res.getLastAccessTime()));
         device.setStatus(res.getStatus());
         device.setDisplayName(res.getDisplayName());
-        device.setDescription(res.getDescription());
-        device.setNickname(res.getNickname());
 
         device.setMetaLastModified(res.getMeta().getLastModified());
         device.setMetaLocation(res.getMeta().getLocation());
         device.setMetaVersion(res.getMeta().getVersion());
-
+*/
     }
 
     private PagedResult<BaseScimResource> searchDevices(String userId, String filter, String sortBy, SortOrder sortOrder, int startIndex,
-                                                    int count, String url) throws Exception {
+                                                        int count, String url) throws Exception {
 
-        Filter ldapFilter=scimFilterParserService.createFilter(filter, Filter.createPresenceFilter("oxId"), FidoDeviceResource.class);
+        Filter ldapFilter=scimFilterParserService.createFilter(filter, Filter.createPresenceFilter("oxId"), Fido2DeviceResource.class);
         log.info("Executing search for fido devices using: ldapfilter '{}', sortBy '{}', sortOrder '{}', startIndex '{}', count '{}'",
                 ldapFilter.toString(), sortBy, sortOrder.getValue(), startIndex, count);
 
-        PagedResult<GluuCustomFidoDevice> list;
+        PagedResult<GluuFido2Device> list;
         try {
-            list = ldapEntryManager.findPagedEntries(fidoDeviceService.getDnForFidoDevice(userId, null),
-                    GluuCustomFidoDevice.class, ldapFilter, null, sortBy, sortOrder, startIndex, count, getMaxCount());
+            list = entryManager.findPagedEntries(fidoDeviceService.getDnForFido2Device(null, userId),
+                    GluuFido2Device.class, ldapFilter, null, sortBy, sortOrder, startIndex, count, getMaxCount());
         } catch (Exception e) {
             log.info("Returning an empty listViewReponse");
             log.error(e.getMessage(), e);
-            list = new PagedResult<GluuCustomFidoDevice>();
-            list.setEntries(new ArrayList<GluuCustomFidoDevice>());
+            list = new PagedResult<>();
+            list.setEntries(new ArrayList<>());
         }
-        List<BaseScimResource> resources=new ArrayList<BaseScimResource>();
+        List<BaseScimResource> resources=new ArrayList<>();
 
-        for (GluuCustomFidoDevice device : list.getEntries()){
-            FidoDeviceResource scimDev=new FidoDeviceResource();
-            transferAttributesToFidoResource(device, scimDev, url, getUserInumFromDN(device.getDn()));
+        for (GluuFido2Device device : list.getEntries()){
+            Fido2DeviceResource scimDev=new Fido2DeviceResource();
+            transferAttributesToFido2Resource(device, scimDev, url, getUserInumFromDN(device.getDn()));
             resources.add(scimDev);
         }
         log.info ("Found {} matching entries - returning {}", list.getTotalEntriesCount(), list.getEntries().size());
@@ -367,7 +347,7 @@ public class FidoDeviceWebService extends BaseScimWebService implements IFidoDev
         PagedResult<BaseScimResource> result = new PagedResult<BaseScimResource>();
         result.setEntries(resources);
         result.setTotalEntriesCount(list.getTotalEntriesCount());
-        
+
         return result;
 
     }
@@ -379,7 +359,7 @@ public class FidoDeviceWebService extends BaseScimWebService implements IFidoDev
     @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
     @ProtectedApi
     @RefAdjusted
-    @ApiOperation(value = "PATCH operation", notes = "https://tools.ietf.org/html/rfc7644#section-3.5.2", response = FidoDeviceResource.class)
+    @ApiOperation(value = "PATCH operation", notes = "https://tools.ietf.org/html/rfc7644#section-3.5.2", response = Fido2DeviceResource.class)
     public Response patchDevice(
             PatchRequest request,
             @PathParam("id") String id,
@@ -392,8 +372,7 @@ public class FidoDeviceWebService extends BaseScimWebService implements IFidoDev
 
     @PostConstruct
     public void setup(){
-        //Do not use getClass() here... a typical weld issue...
-        endpointUrl=appConfiguration.getBaseEndpoint() + FidoDeviceWebService.class.getAnnotation(Path.class).value();
+        endpointUrl=appConfiguration.getBaseEndpoint() + Fido2DeviceWebService.class.getAnnotation(Path.class).value();
     }
 
 }
