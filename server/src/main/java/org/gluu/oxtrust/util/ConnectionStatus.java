@@ -1,16 +1,17 @@
 package org.gluu.oxtrust.util;
 
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+
+import java.util.List;
+import java.util.Properties;
+
+import javax.inject.Inject;
+
 import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.persist.ldap.impl.LdapEntryManagerFactory;
 import org.gluu.persist.ldap.operation.impl.LdapConnectionProvider;
-import org.gluu.persist.service.PersistanceFactoryService;
 import org.gluu.util.properties.FileConfiguration;
 import org.gluu.util.security.PropertiesDecrypter;
-
-import javax.inject.Inject;
-import java.util.List;
-import java.util.Properties;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 public class ConnectionStatus {
 	@Inject
