@@ -1,25 +1,10 @@
 package org.gluu.oxtrust.api.server.api.impl;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.gluu.model.custom.script.model.CustomScript;
 import org.gluu.oxtrust.api.server.util.ApiConstants;
 import org.gluu.oxtrust.ldap.service.ConfigurationService;
@@ -28,16 +13,21 @@ import org.gluu.oxtrust.service.filter.ProtectedApi;
 import org.gluu.util.StringHelper;
 import org.slf4j.Logger;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Path(ApiConstants.BASE_API_URL + ApiConstants.CONFIGURATION + ApiConstants.SCRIPTS)
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-@Api(value = ApiConstants.BASE_API_URL + ApiConstants.CONFIGURATION
-		+ ApiConstants.SCRIPTS, description = "Custom script web service")
 @ApplicationScoped
 public class CustomScriptWebResource extends BaseWebResource {
 
@@ -54,9 +44,10 @@ public class CustomScriptWebResource extends BaseWebResource {
 	}
 
 	@GET
-	@ApiOperation(value = "Get all custom scripts")
-	@ApiResponses(value = { @ApiResponse(code = 200, response = CustomScript[].class, message = "Success"),
-			@ApiResponse(code = 500, message = "Server error") })
+	@Operation(description = "Get all custom scripts")
+	@ApiResponses(value = {
+            @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = CustomScript[].class)), description = "Success"),
+            @ApiResponse(responseCode = "500", description = "Server error")})
 	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response listCustomScripts() {
 		log(logger, "Get all custom scripts");
@@ -71,9 +62,10 @@ public class CustomScriptWebResource extends BaseWebResource {
 
 	@GET
 	@Path(ApiConstants.TYPE_PATH + ApiConstants.TYPE_PARAM_PATH)
-	@ApiOperation(value = "Get person authentications scripts")
-	@ApiResponses(value = { @ApiResponse(code = 200, response = CustomScript[].class, message = "Success"),
-			@ApiResponse(code = 500, message = "Server error") })
+	@Operation(description = "Get person authentications scripts")
+	@ApiResponses(value = {
+            @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = CustomScript[].class)), description = "Success"),
+            @ApiResponse(responseCode = "500", description = "Server error")})
 	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response listCustomScriptsByType(@PathParam(ApiConstants.TYPE) @NotNull String type) {
 		log(logger, "Get custom scripts of type: " + type);
@@ -95,9 +87,10 @@ public class CustomScriptWebResource extends BaseWebResource {
 
 	@GET
 	@Path(ApiConstants.INUM_PARAM_PATH)
-	@ApiOperation(value = "Get scripts by inum")
-	@ApiResponses(value = { @ApiResponse(code = 200, response = CustomScript.class, message = "Success"),
-			@ApiResponse(code = 500, message = "Server error") })
+	@Operation(description = "Get scripts by inum")
+	@ApiResponses(value = {
+            @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = CustomScript.class)), description = "Success"),
+            @ApiResponse(responseCode = "500", description = "Server error")})
 	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response getCustomScriptsByInum(@PathParam(ApiConstants.INUM) @NotNull String inum) {
 		log(logger, "Get scripts by inum");
@@ -115,9 +108,10 @@ public class CustomScriptWebResource extends BaseWebResource {
 	}
 
 	@POST
-	@ApiOperation(value = "Add new custom script")
-	@ApiResponses(value = { @ApiResponse(code = 200, response = CustomScript.class, message = "Success"),
-			@ApiResponse(code = 500, message = "Server error") })
+	@Operation(description = "Add new custom script")
+	@ApiResponses(value = {
+            @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = CustomScript.class)), description = "Success"),
+            @ApiResponse(responseCode = "500", description = "Server error")})
 	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response createCustomScript(CustomScript customScript) {
 		log(logger, "Add new custom script ");
@@ -140,9 +134,10 @@ public class CustomScriptWebResource extends BaseWebResource {
 	}
 
 	@PUT
-	@ApiOperation(value = "Update custom script")
-	@ApiResponses(value = { @ApiResponse(code = 200, response = CustomScript.class, message = "Success"),
-			@ApiResponse(code = 500, message = "Server error") })
+	@Operation(description = "Update custom script")
+	@ApiResponses(value = {
+            @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = CustomScript.class)), description = "Success"),
+            @ApiResponse(responseCode = "500", description = "Server error")})
 	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response updateCustomScript(CustomScript customScript) {
 		try {
@@ -165,9 +160,9 @@ public class CustomScriptWebResource extends BaseWebResource {
 
 	@DELETE
 	@Path(ApiConstants.INUM_PARAM_PATH)
-	@ApiOperation(value = "Delete an custom script")
-	@ApiResponses(value = { @ApiResponse(code = 200, message = "Success"),
-			@ApiResponse(code = 500, message = "Server error") })
+	@Operation(description = "Delete an custom script")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Success"),
+			@ApiResponse(responseCode = "500", description = "Server error") })
 	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response deleteCustomScript(@PathParam(ApiConstants.INUM) @NotNull String inum) {
 		log(logger, "Delete custom script" + inum);

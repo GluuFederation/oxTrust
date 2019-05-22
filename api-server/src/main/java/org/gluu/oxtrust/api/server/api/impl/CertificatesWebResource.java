@@ -1,20 +1,11 @@
 
 package org.gluu.oxtrust.api.server.api.impl;
 
-import java.io.FileInputStream;
-import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.gluu.oxtrust.api.Certificates;
 import org.gluu.oxtrust.api.server.util.ApiConstants;
 import org.gluu.oxtrust.ldap.service.ConfigurationService;
@@ -25,16 +16,22 @@ import org.gluu.oxtrust.service.filter.ProtectedApi;
 import org.gluu.oxtrust.util.X509CertificateShortInfo;
 import org.slf4j.Logger;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.io.FileInputStream;
+import java.security.cert.X509Certificate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Path(ApiConstants.BASE_API_URL + ApiConstants.CERTIFICATES)
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-@Api(value = ApiConstants.BASE_API_URL + ApiConstants.CONFIGURATION
-		+ ApiConstants.OXTRUST_SETTINGS, description = "Certificates web service")
 @ApplicationScoped
 public class CertificatesWebResource extends BaseWebResource {
 
@@ -55,9 +52,10 @@ public class CertificatesWebResource extends BaseWebResource {
 	private List<X509CertificateShortInfo> internalCertificates;
 
 	@GET
-	@ApiOperation(value = "List certificates", notes = "List Gluu Server's certificates. You can get only description of certificates, not keys.", response = Certificates.class)
-	@ApiResponses(value = { @ApiResponse(code = 200, response = Certificates[].class, message = "Success"),
-			@ApiResponse(code = 500, message = "Server error") })
+	@Operation(summary = "List certificates", description = "List Gluu Server's certificates. You can get only description of certificates, not keys.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = Certificates[].class)), description = "Success"),
+			@ApiResponse(responseCode = "500", description = "Server error") })
 	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response listCertificates() {
 		log(logger, "Processing certificates retrieval request");

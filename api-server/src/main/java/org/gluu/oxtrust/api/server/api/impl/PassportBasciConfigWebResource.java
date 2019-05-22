@@ -1,17 +1,10 @@
 package org.gluu.oxtrust.api.server.api.impl;
 
-import java.util.Objects;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.gluu.config.oxtrust.LdapOxPassportConfiguration;
 import org.gluu.model.passport.PassportConfiguration;
 import org.gluu.model.passport.config.Configuration;
@@ -20,16 +13,16 @@ import org.gluu.oxtrust.ldap.service.PassportService;
 import org.gluu.oxtrust.service.filter.ProtectedApi;
 import org.slf4j.Logger;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.util.Objects;
 
 @Path(ApiConstants.BASE_API_URL + ApiConstants.PASSPORT + ApiConstants.CONFIG)
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-@Api(value = ApiConstants.BASE_API_URL + ApiConstants.PASSPORT
-		+ ApiConstants.PROVIDERS, description = "Passport basic configuration webservice")
 @ApplicationScoped
 public class PassportBasciConfigWebResource extends BaseWebResource {
 
@@ -43,10 +36,11 @@ public class PassportBasciConfigWebResource extends BaseWebResource {
 	private PassportConfiguration passportConfiguration;
 
 	@GET
-	@ApiOperation(value = "Get passport basic configuration")
+	@Operation(description = "Get passport basic configuration")
 	@ProtectedApi(scopes = { READ_ACCESS })
-	@ApiResponses(value = { @ApiResponse(code = 200, response = PassportConfiguration[].class, message = "Success"),
-			@ApiResponse(code = 500, message = "Server error") })
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = PassportConfiguration[].class)), description = "Success"),
+            @ApiResponse(responseCode = "500", description = "Server error")})
 	public Response getPassportBasicConfig() {
 		log(logger, "Get passport basic configuration");
 		try {
@@ -60,9 +54,10 @@ public class PassportBasciConfigWebResource extends BaseWebResource {
 	}
 
 	@PUT
-	@ApiOperation(value = "Update passport basic configuration")
-	@ApiResponses(value = { @ApiResponse(code = 200, response = PassportConfiguration[].class, message = "Success"),
-			@ApiResponse(code = 500, message = "Server error") })
+	@Operation(description = "Update passport basic configuration")
+	@ApiResponses(value = {
+            @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = PassportConfiguration[].class)), description = "Success"),
+			@ApiResponse(responseCode = "500", description = "Server error") })
 	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response updatePassportBasicConfig(Configuration configuration) {
 		log(logger, "Update passport basic configuration");

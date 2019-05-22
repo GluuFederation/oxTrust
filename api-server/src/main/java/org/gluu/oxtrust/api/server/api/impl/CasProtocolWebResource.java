@@ -1,10 +1,10 @@
 package org.gluu.oxtrust.api.server.api.impl;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
-
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.gluu.oxtrust.api.server.model.CasProtocolDTO;
 import org.gluu.oxtrust.api.server.util.ApiConstants;
 import org.gluu.oxtrust.api.server.util.CASProtocolConfigurationProvider;
@@ -18,19 +18,13 @@ import org.slf4j.Logger;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.validation.Valid;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 @Path(ApiConstants.BASE_API_URL + ApiConstants.CONFIGURATION + ApiConstants.CAS)
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-@Api(value = ApiConstants.BASE_API_URL + ApiConstants.CONFIGURATION
-		+ ApiConstants.CAS, description = "Cas protocal web service")
 @ApplicationScoped
 public class CasProtocolWebResource extends BaseWebResource {
 
@@ -48,8 +42,8 @@ public class CasProtocolWebResource extends BaseWebResource {
 	private ShibbolethService shibbolethService;
 
 	@GET
-	@ApiOperation("Get the existing configuration")
-	@ApiResponses(value = { @ApiResponse(code = 200, response = CasProtocolDTO.class, message = "Success") })
+	@Operation(description = "Get the existing configuration")
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = CasProtocolDTO.class)), description = "Success")})
 	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response getCasConfig() {
 		log(logger, "Get the existing cas configuration");
@@ -65,8 +59,8 @@ public class CasProtocolWebResource extends BaseWebResource {
 	}
 
 	@PUT
-	@ApiOperation("Update the configuration")
-	@ApiResponses(value = { @ApiResponse(code = 200, response = CasProtocolDTO.class, message = "Success") })
+	@Operation(description = "Update the configuration")
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = CasProtocolDTO.class)), description = "Success")})
 	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response update(@Valid CasProtocolDTO casProtocol) {
 		log(logger, "Update the configuration");

@@ -1,25 +1,10 @@
 package org.gluu.oxtrust.api.server.api.impl;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.gluu.oxtrust.api.server.model.GluuPersonApi;
 import org.gluu.oxtrust.api.server.util.ApiConstants;
 import org.gluu.oxtrust.ldap.service.PersonService;
@@ -27,9 +12,16 @@ import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.service.filter.ProtectedApi;
 import org.slf4j.Logger;
 
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 
 @Path(ApiConstants.BASE_API_URL + ApiConstants.USERS)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -47,9 +39,10 @@ public class PeopleWebResource extends BaseWebResource {
 	}
 
 	@GET
-	@ApiOperation(value = "Get people")
-	@ApiResponses(value = { @ApiResponse(code = 200, response = GluuPersonApi[].class, message = "Success"),
-			@ApiResponse(code = 500, message = "Server error") })
+	@Operation(description = "Get people")
+	@ApiResponses(value = {
+            @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = GluuPersonApi[].class)), description = "Success"),
+			@ApiResponse(responseCode = "500", description = "Server error") })
 	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response listPeople() {
 		try {
@@ -64,9 +57,10 @@ public class PeopleWebResource extends BaseWebResource {
 
 	@GET
 	@Path(ApiConstants.SEARCH)
-	@ApiOperation(value = "Search person")
-	@ApiResponses(value = { @ApiResponse(code = 200, response = GluuPersonApi[].class, message = "Success"),
-			@ApiResponse(code = 500, message = "Server error") })
+	@Operation(description = "Search person")
+	@ApiResponses(value = {
+            @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = GluuPersonApi[].class)), description = "Success"),
+			@ApiResponse(responseCode = "500", description = "Server error") })
 	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response searchGroups(@QueryParam(ApiConstants.SEARCH_PATTERN) @NotNull String pattern) {
 		try {
@@ -81,9 +75,10 @@ public class PeopleWebResource extends BaseWebResource {
 
 	@GET
 	@Path(ApiConstants.INUM_PARAM_PATH)
-	@ApiOperation(value = "Get a person by inum")
-	@ApiResponses(value = { @ApiResponse(code = 200, response = GluuPersonApi.class, message = "Success"),
-			@ApiResponse(code = 500, message = "Server error") })
+	@Operation(description = "Get a person by inum")
+	@ApiResponses(value = {
+            @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = GluuPersonApi.class)), description = "Success"),
+			@ApiResponse(responseCode = "500", description = "Server error") })
 	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response getPersonByInum(@PathParam(ApiConstants.INUM) @NotNull String inum) {
 		log(logger, "Get person " + inum);
@@ -102,9 +97,10 @@ public class PeopleWebResource extends BaseWebResource {
 	}
 
 	@POST
-	@ApiOperation(value = "Add a person")
-	@ApiResponses(value = { @ApiResponse(code = 200, response = GluuPersonApi.class, message = "Success"),
-			@ApiResponse(code = 500, message = "Server error") })
+	@Operation(description = "Add a person")
+	@ApiResponses(value = {
+            @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = GluuPersonApi.class)), description = "Success"),
+			@ApiResponse(responseCode = "500", description = "Server error") })
 	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response createPerson(GluuPersonApi person) {
 		log(logger, "Adding person " + person.getDisplayName());
@@ -123,9 +119,10 @@ public class PeopleWebResource extends BaseWebResource {
 	}
 
 	@PUT
-	@ApiOperation(value = "Update a person")
-	@ApiResponses(value = { @ApiResponse(code = 200, response = GluuPersonApi.class, message = "Success"),
-			@ApiResponse(code = 500, message = "Server error") })
+	@Operation(description = "Update a person")
+	@ApiResponses(value = {
+            @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = GluuPersonApi.class)), description = "Success"),
+			@ApiResponse(responseCode = "500", description = "Server error") })
 	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response updateGroup(GluuPersonApi person) {
 		String inum = person.getInum();
@@ -152,9 +149,9 @@ public class PeopleWebResource extends BaseWebResource {
 
 	@DELETE
 	@Path(ApiConstants.INUM_PARAM_PATH)
-	@ApiOperation(value = "Delete a person")
-	@ApiResponses(value = { @ApiResponse(code = 200, message = "Success"),
-			@ApiResponse(code = 500, message = "Server error") })
+	@Operation(description = "Delete a person")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Success"),
+			@ApiResponse(responseCode = "500", description = "Server error") })
 	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response deletePerson(@PathParam(ApiConstants.INUM) @NotNull String inum) {
 		log(logger, "Delete person having inum " + inum);

@@ -1,36 +1,30 @@
 package org.gluu.oxtrust.api.server.api.impl;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
+import com.google.common.base.Preconditions;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.gluu.model.SmtpConfiguration;
+import org.gluu.oxtrust.api.server.util.ApiConstants;
 import org.gluu.oxtrust.api.server.util.Constants;
 import org.gluu.oxtrust.ldap.service.ConfigurationService;
 import org.gluu.oxtrust.ldap.service.EncryptionService;
 import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.oxtrust.service.filter.ProtectedApi;
-import org.gluu.oxtrust.api.server.util.ApiConstants;
-import org.slf4j.Logger;
-import org.gluu.model.SmtpConfiguration;
 import org.gluu.service.MailService;
+import org.slf4j.Logger;
 
-import com.google.common.base.Preconditions;
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 @Path(ApiConstants.BASE_API_URL + ApiConstants.CONFIGURATION + ApiConstants.SMTP)
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-@Api(value = ApiConstants.BASE_API_URL + ApiConstants.CONFIGURATION
-		+ ApiConstants.SMTP, description = "Smtp server configuration web service")
 @ApplicationScoped
 public class SmtpConfigurationWebResource extends BaseWebResource {
 	@Inject
@@ -46,10 +40,10 @@ public class SmtpConfigurationWebResource extends BaseWebResource {
 	private EncryptionService encryptionService;
 
 	@GET
-	@ApiOperation(value = "Get smtp configuration")
+	@Operation(description = "Get smtp configuration")
 	@ApiResponses(value = {
-			@ApiResponse(code = 200, response = SmtpConfiguration.class, message = Constants.RESULT_SUCCESS),
-			@ApiResponse(code = 500, message = "Server error") })
+            @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = SmtpConfiguration.class)), description = Constants.RESULT_SUCCESS),
+			@ApiResponse(responseCode = "500", description = "Server error") })
 	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response getSmtpServerConfiguration() {
 		try {
@@ -66,10 +60,10 @@ public class SmtpConfigurationWebResource extends BaseWebResource {
 	}
 
 	@PUT
-	@ApiOperation(value = "Update smtp configuration")
+	@Operation(description = "Update smtp configuration")
 	@ApiResponses(value = {
-			@ApiResponse(code = 200, response = SmtpConfiguration.class, message = Constants.RESULT_SUCCESS),
-			@ApiResponse(code = 404, message = "Not found"), @ApiResponse(code = 500, message = "Server error") })
+            @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = SmtpConfiguration.class)), description = Constants.RESULT_SUCCESS),
+			@ApiResponse(responseCode = "404", description = "Not found"), @ApiResponse(responseCode = "500", description = "Server error") })
 	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response updateSmtpConfiguration(SmtpConfiguration smtpConfiguration) {
 		try {
@@ -87,10 +81,10 @@ public class SmtpConfigurationWebResource extends BaseWebResource {
 
 	@GET
 	@Path(ApiConstants.TEST)
-	@ApiOperation(value = "Test smtp configuration")
+	@Operation(description = "Test smtp configuration")
 	@ApiResponses(value = {
-			@ApiResponse(code = 200, response = SmtpConfiguration.class, message = Constants.RESULT_SUCCESS),
-			@ApiResponse(code = 500, message = "Server error") })
+            @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = SmtpConfiguration.class)), description = Constants.RESULT_SUCCESS),
+			@ApiResponse(responseCode = "500", description = "Server error") })
 	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response testSmtpConfiguration() {
 		try {

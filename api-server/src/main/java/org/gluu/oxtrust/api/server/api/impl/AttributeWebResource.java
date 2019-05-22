@@ -1,42 +1,31 @@
 package org.gluu.oxtrust.api.server.api.impl;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import com.google.common.base.Preconditions;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.gluu.model.GluuAttribute;
+import org.gluu.model.GluuStatus;
+import org.gluu.oxtrust.api.server.util.ApiConstants;
+import org.gluu.oxtrust.api.server.util.Constants;
+import org.gluu.oxtrust.ldap.service.AttributeService;
+import org.gluu.oxtrust.service.filter.ProtectedApi;
+import org.slf4j.Logger;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
-import org.gluu.oxtrust.api.server.util.Constants;
-import org.gluu.oxtrust.ldap.service.AttributeService;
-import org.gluu.oxtrust.service.filter.ProtectedApi;
-import org.gluu.oxtrust.api.server.util.ApiConstants;
-import org.slf4j.Logger;
-import org.gluu.model.GluuAttribute;
-import org.gluu.model.GluuStatus;
-
-import com.google.common.base.Preconditions;
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Path(ApiConstants.BASE_API_URL + ApiConstants.ATTRIBUTES)
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-@Api(value = ApiConstants.BASE_API_URL + ApiConstants.ATTRIBUTES, description = "Attributes webservice")
 @ApplicationScoped
 public class AttributeWebResource extends BaseWebResource {
 
@@ -50,10 +39,12 @@ public class AttributeWebResource extends BaseWebResource {
 	}
 
 	@GET
-	@ApiOperation(value = "Get all attributes")
+	@Operation(description = "Get all attributes")
 	@ApiResponses(value = {
-			@ApiResponse(code = 200, response = GluuAttribute[].class, message = Constants.RESULT_SUCCESS),
-			@ApiResponse(code = 500, message = "Server error") })
+			@ApiResponse(responseCode = "200", content = @Content(
+                    schema = @Schema(implementation = GluuAttribute[].class)
+            ), description = "Success"),
+			@ApiResponse(responseCode = "500", description = "Server error") })
 	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response getAllAttributes() {
 		log(logger, "Processing getAllAttributes()");
@@ -68,10 +59,12 @@ public class AttributeWebResource extends BaseWebResource {
 
 	@GET
 	@Path(ApiConstants.ACTIVE)
-	@ApiOperation(value = "Get all actives attributes")
+	@Operation(description = "Get all actives attributes")
 	@ApiResponses(value = {
-			@ApiResponse(code = 200, response = GluuAttribute[].class, message = Constants.RESULT_SUCCESS),
-			@ApiResponse(code = 500, message = "Server error") })
+			@ApiResponse(responseCode = "200", content = @Content(
+                    schema = @Schema(implementation = GluuAttribute[].class)
+            ), description = Constants.RESULT_SUCCESS),
+			@ApiResponse(responseCode = "500", description = "Server error") })
 	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response getAllActivesAttributes() {
 		log(logger, "Processing getAllActivesAttributes()");
@@ -87,10 +80,12 @@ public class AttributeWebResource extends BaseWebResource {
 
 	@GET
 	@Path(ApiConstants.INACTIVE)
-	@ApiOperation(value = "Get all inactives attributes")
+	@Operation(description = "Get all inactives attributes")
 	@ApiResponses(value = {
-			@ApiResponse(code = 200, response = GluuAttribute[].class, message = Constants.RESULT_SUCCESS),
-			@ApiResponse(code = 500, message = "Server error") })
+			@ApiResponse(responseCode = "200", content = @Content(
+                    schema = @Schema(implementation = GluuAttribute[].class)
+            ), description = Constants.RESULT_SUCCESS),
+			@ApiResponse(responseCode = "500", description = "Server error") })
 	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response getAllInActivesAttributes() {
 		log(logger, "Processing getAllInActivesAttributes()");
@@ -106,10 +101,12 @@ public class AttributeWebResource extends BaseWebResource {
 
 	@GET
 	@Path(ApiConstants.INUM_PARAM_PATH)
-	@ApiOperation(value = "Get attribute by inum")
+	@Operation(description = "Get attribute by inum")
 	@ApiResponses(value = {
-			@ApiResponse(code = 200, response = GluuAttribute.class, message = Constants.RESULT_SUCCESS),
-			@ApiResponse(code = 500, message = "Server error") })
+			@ApiResponse(responseCode = "200", content = @Content(
+                    schema = @Schema(implementation = GluuAttribute.class)
+            ), description = Constants.RESULT_SUCCESS),
+			@ApiResponse(responseCode = "500", description = "Server error") })
 	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response getAttributeByInum(@PathParam(ApiConstants.INUM) @NotNull String inum) {
 		log(logger, "Processing getAttributeByInum()");
@@ -124,10 +121,12 @@ public class AttributeWebResource extends BaseWebResource {
 
 	@GET
 	@Path(ApiConstants.SEARCH)
-	@ApiOperation(value = "Search attributes")
+	@Operation(description = "Search attributes")
 	@ApiResponses(value = {
-			@ApiResponse(code = 200, response = GluuAttribute[].class, message = Constants.RESULT_SUCCESS),
-			@ApiResponse(code = 500, message = "Server error") })
+			@ApiResponse(responseCode = "200", content = @Content(
+                    schema = @Schema(implementation = GluuAttribute.class)
+            ), description = Constants.RESULT_SUCCESS),
+			@ApiResponse(responseCode = "500", description = "Server error") })
 	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response searchAttributes(@QueryParam(ApiConstants.SEARCH_PATTERN) @NotNull String pattern,
 			@DefaultValue("1") @QueryParam(ApiConstants.SIZE) int size) {
@@ -142,9 +141,12 @@ public class AttributeWebResource extends BaseWebResource {
 	}
 
 	@POST
-	@ApiOperation(value = "Add new attribute")
-	@ApiResponses(value = { @ApiResponse(code = 200, response = GluuAttribute.class, message = "Success"),
-			@ApiResponse(code = 500, message = "Server error") })
+	@Operation(description = "Add new attribute")
+	@ApiResponses(value = {
+	        @ApiResponse(responseCode = "200", content = @Content(
+                    schema = @Schema(implementation = GluuAttribute.class)
+            ), description = "Success"),
+			@ApiResponse(responseCode = "500", description = "Server error") })
 	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response createAttribute(GluuAttribute gluuAttribute) {
 		log(logger, "Processing createAttribute()");
@@ -162,10 +164,13 @@ public class AttributeWebResource extends BaseWebResource {
 	}
 
 	@PUT
-	@ApiOperation(value = "Update new attribute")
+	@Operation(description = "Update new attribute")
 	@ApiResponses(value = {
-			@ApiResponse(code = 200, response = GluuAttribute.class, message = Constants.RESULT_SUCCESS),
-			@ApiResponse(code = 404, message = "Not found"), @ApiResponse(code = 500, message = "Server error") })
+			@ApiResponse(responseCode = "200", content = @Content(
+                    schema = @Schema(implementation = GluuAttribute.class)
+            ), description = Constants.RESULT_SUCCESS),
+			@ApiResponse(responseCode = "404", description = "Not found"),
+            @ApiResponse(responseCode = "500", description = "Server error") })
 	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response updateAttribute(GluuAttribute gluuAttribute) {
 		log(logger, "Processing updateAttribute()");
@@ -188,10 +193,11 @@ public class AttributeWebResource extends BaseWebResource {
 
 	@DELETE
 	@Path(ApiConstants.INUM_PARAM_PATH)
-	@ApiOperation(value = "Delete an attribute")
+	@Operation(description = "Delete an attribute")
 	@ApiResponses(value = {
-			@ApiResponse(code = 200, response = GluuAttribute[].class, message = Constants.RESULT_SUCCESS),
-			@ApiResponse(code = 404, message = "Not found"), @ApiResponse(code = 500, message = "Server error") })
+			@ApiResponse(responseCode = "200", description = Constants.RESULT_SUCCESS),
+			@ApiResponse(responseCode = "404", description = "Not found"),
+            @ApiResponse(responseCode = "500", description = "Server error") })
 	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response deleteAttribute(@PathParam(ApiConstants.INUM) @NotNull String inum) {
 		log(logger, "Processing deleteAttribute()");

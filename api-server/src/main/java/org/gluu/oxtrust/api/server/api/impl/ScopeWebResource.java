@@ -1,25 +1,10 @@
 package org.gluu.oxtrust.api.server.api.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.gluu.model.GluuAttribute;
 import org.gluu.oxtrust.api.server.util.ApiConstants;
 import org.gluu.oxtrust.ldap.service.AttributeService;
@@ -28,9 +13,15 @@ import org.gluu.oxtrust.service.filter.ProtectedApi;
 import org.oxauth.persistence.model.Scope;
 import org.slf4j.Logger;
 
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 @Path(ApiConstants.BASE_API_URL + ApiConstants.SCOPES)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -50,9 +41,10 @@ public class ScopeWebResource extends BaseWebResource {
 	}
 
 	@GET
-	@ApiOperation(value = "Get all scopes")
-	@ApiResponses(value = { @ApiResponse(code = 200, response = Scope[].class, message = "Success"),
-			@ApiResponse(code = 500, message = "Server error") })
+	@Operation(description = "Get all scopes")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = Scope[].class)), description = "Success"),
+            @ApiResponse(responseCode = "500", description = "Server error")})
 	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response getAllScopes() {
 		log(logger, "List openid connect scopes ");
@@ -66,9 +58,10 @@ public class ScopeWebResource extends BaseWebResource {
 
 	@GET
 	@Path(ApiConstants.INUM_PARAM_PATH)
-	@ApiOperation(value = "Get a specific openid connect scope")
-	@ApiResponses(value = { @ApiResponse(code = 200, response = Scope.class, message = "Success"),
-			@ApiResponse(code = 500, message = "Server error") })
+	@Operation(description = "Get a specific openid connect scope")
+	@ApiResponses(value = {
+            @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = Scope.class)), description = "Success"),
+			@ApiResponse(responseCode = "500", description = "Server error") })
 	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response getScopeByInum(@PathParam(ApiConstants.INUM) @NotNull String inum) {
 		log(logger, "Get openid connect scope by " + inum);
@@ -87,9 +80,10 @@ public class ScopeWebResource extends BaseWebResource {
 
 	@GET
 	@Path(ApiConstants.SEARCH)
-	@ApiOperation(value = "Search openid connect scopes")
-	@ApiResponses(value = { @ApiResponse(code = 200, response = Scope[].class, message = "Success"),
-			@ApiResponse(code = 500, message = "Server error") })
+	@Operation(description = "Search openid connect scopes")
+	@ApiResponses(value = {
+            @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = Scope[].class)), description = "Success"),
+			@ApiResponse(responseCode = "500", description = "Server error") })
 	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response searchScope(@QueryParam(ApiConstants.SEARCH_PATTERN) String pattern,
 			@DefaultValue("10") @QueryParam("size") int size) {
@@ -104,9 +98,10 @@ public class ScopeWebResource extends BaseWebResource {
 	}
 
 	@POST
-	@ApiOperation(value = "Add an openidconnect scope")
-	@ApiResponses(value = { @ApiResponse(code = 200, response = Scope.class, message = "Success"),
-			@ApiResponse(code = 500, message = "Server error") })
+	@Operation(description = "Add an openidconnect scope")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = Scope.class)), description = "Success"),
+			@ApiResponse(responseCode = "500", description = "Server error") })
 	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response createScope(Scope scope) {
 		log(logger, "Create scope");
@@ -124,9 +119,10 @@ public class ScopeWebResource extends BaseWebResource {
 	}
 
 	@PUT
-	@ApiOperation(value = "Update openidconect scope")
-	@ApiResponses(value = { @ApiResponse(code = 200, response = Scope.class, message = "Success"),
-			@ApiResponse(code = 500, message = "Server error") })
+	@Operation(description = "Update openidconect scope")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = Scope.class)), description = "Success"),
+			@ApiResponse(responseCode = "500", description = "Server error") })
 	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response updateScope(Scope scope) {
 		String inum = scope.getInum();
@@ -150,9 +146,10 @@ public class ScopeWebResource extends BaseWebResource {
 
 	@GET
 	@Path(ApiConstants.INUM_PARAM_PATH + ApiConstants.CLAIMS)
-	@ApiOperation(value = "List all claims of a scope")
-	@ApiResponses(value = { @ApiResponse(code = 200, response = GluuAttribute[].class, message = "Success"),
-			@ApiResponse(code = 500, message = "Server error") })
+	@Operation(description = "List all claims of a scope")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = GluuAttribute[].class)), description = "Success"),
+			@ApiResponse(responseCode = "500", description = "Server error") })
 	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response getScopeClaims(@PathParam(ApiConstants.INUM) @NotNull String inum) {
 		log(logger, "List all claims of scope ==> " + inum);
@@ -178,9 +175,10 @@ public class ScopeWebResource extends BaseWebResource {
 
 	@DELETE
 	@Path(ApiConstants.INUM_PARAM_PATH)
-	@ApiOperation(value = "Delete an openidconnect scope")
-	@ApiResponses(value = { @ApiResponse(code = 200, message = "Success"),
-			@ApiResponse(code = 500, message = "Server error") })
+	@Operation(description = "Delete an openidconnect scope")
+	@ApiResponses(value = {
+	        @ApiResponse(responseCode = "200", description = "Success"),
+			@ApiResponse(responseCode = "500", description = "Server error") })
 	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response deleteScope(@PathParam(ApiConstants.INUM) @NotNull String inum) {
 		log(logger, "Delete openidconnect scope " + inum);

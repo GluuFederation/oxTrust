@@ -1,24 +1,10 @@
 package org.gluu.oxtrust.api.server.api.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.gluu.config.oxtrust.LdapOxPassportConfiguration;
 import org.gluu.model.passport.PassportConfiguration;
 import org.gluu.model.passport.Provider;
@@ -27,16 +13,20 @@ import org.gluu.oxtrust.ldap.service.PassportService;
 import org.gluu.oxtrust.service.filter.ProtectedApi;
 import org.slf4j.Logger;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 
 @Path(ApiConstants.BASE_API_URL + ApiConstants.PASSPORT + ApiConstants.PROVIDERS)
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-@Api(value = ApiConstants.BASE_API_URL + ApiConstants.PASSPORT
-		+ ApiConstants.PROVIDERS, description = "Passport provider webservice")
 @ApplicationScoped
 public class PassportProviderWebResource extends BaseWebResource {
 
@@ -48,9 +38,10 @@ public class PassportProviderWebResource extends BaseWebResource {
 	private PassportService passportService;
 
 	@GET
-	@ApiOperation(value = "List passport providers")
-	@ApiResponses(value = { @ApiResponse(code = 200, response = Provider[].class, message = "Success"),
-			@ApiResponse(code = 500, message = "Server error") })
+	@Operation(description = "List passport providers")
+	@ApiResponses(value = {
+            @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = Provider[].class)), description = "Success"),
+			@ApiResponse(responseCode = "500", description = "Server error") })
 	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response listProviders() {
 		log(logger, "List passport providers");
@@ -68,9 +59,10 @@ public class PassportProviderWebResource extends BaseWebResource {
 
 	@GET
 	@Path(ApiConstants.ID_PARAM_PATH)
-	@ApiOperation(value = "Get passport provider by id")
-	@ApiResponses(value = { @ApiResponse(code = 200, response = Provider.class, message = "Success"),
-			@ApiResponse(code = 500, message = "Server error") })
+	@Operation(description = "Get passport provider by id")
+	@ApiResponses(value = {
+            @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = Provider.class)), description = "Success"),
+			@ApiResponse(responseCode = "500", description = "Server error") })
 	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response getProviderById(@PathParam(ApiConstants.ID) @NotNull String id) {
 		log(logger, "Get group having group" + id);
@@ -94,9 +86,10 @@ public class PassportProviderWebResource extends BaseWebResource {
 	}
 
 	@POST
-	@ApiOperation(value = "Add passport provider")
-	@ApiResponses(value = { @ApiResponse(code = 200, response = Provider.class, message = "Success"),
-			@ApiResponse(code = 500, message = "Server error") })
+	@Operation(description = "Add passport provider")
+	@ApiResponses(value = {
+            @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = Provider.class)), description = "Success"),
+			@ApiResponse(responseCode = "500", description = "Server error") })
 	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response createPassportProvider(Provider provider) {
 		log(logger, "Add passport provider " + provider.getDisplayName());
@@ -123,9 +116,10 @@ public class PassportProviderWebResource extends BaseWebResource {
 	}
 
 	@PUT
-	@ApiOperation(value = "Update passport provider")
-	@ApiResponses(value = { @ApiResponse(code = 200, response = Provider.class, message = "Success"),
-			@ApiResponse(code = 500, message = "Server error") })
+	@Operation(description = "Update passport provider")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = Provider.class)), description = "Success"),
+			@ApiResponse(responseCode = "500", description = "Server error") })
 	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response updatePassportProvider(Provider provider) {
 		String id = provider.getId();
@@ -167,9 +161,10 @@ public class PassportProviderWebResource extends BaseWebResource {
 
 	@DELETE
 	@Path(ApiConstants.ID_PARAM_PATH)
-	@ApiOperation(value = "Delete a passport provider")
-	@ApiResponses(value = { @ApiResponse(code = 200, message = "Success"),
-			@ApiResponse(code = 500, message = "Server error") })
+	@Operation(description = "Delete a passport provider")
+	@ApiResponses(value = {
+	        @ApiResponse(responseCode = "200", description = "Success"),
+			@ApiResponse(responseCode = "500", description = "Server error") })
 	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response deleteProvider(@PathParam(ApiConstants.ID) @NotNull String id) {
 		log(logger, "Delete passport provider having id " + id);

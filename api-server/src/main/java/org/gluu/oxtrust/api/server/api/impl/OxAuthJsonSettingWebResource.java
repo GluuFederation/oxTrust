@@ -1,34 +1,28 @@
 package org.gluu.oxtrust.api.server.api.impl;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Preconditions;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.gluu.oxtrust.api.server.model.OxAuthJsonConfiguration;
+import org.gluu.oxtrust.api.server.util.ApiConstants;
 import org.gluu.oxtrust.api.server.util.Constants;
 import org.gluu.oxtrust.ldap.service.JsonConfigurationService;
 import org.gluu.oxtrust.service.filter.ProtectedApi;
-import org.gluu.oxtrust.api.server.util.ApiConstants;
 import org.slf4j.Logger;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Preconditions;
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 @Path(ApiConstants.BASE_API_URL + ApiConstants.CONFIGURATION + ApiConstants.OXAUTH_JSONSETTINGS)
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-@Api(value = ApiConstants.BASE_API_URL + ApiConstants.CONFIGURATION
-		+ ApiConstants.OXAUTH_JSONSETTINGS, description = "OxAuth json settings web service")
 @ApplicationScoped
 public class OxAuthJsonSettingWebResource extends BaseWebResource {
 
@@ -40,10 +34,12 @@ public class OxAuthJsonSettingWebResource extends BaseWebResource {
 	private String oxAuthDynamicConfigJson;
 
 	@GET
-	@ApiOperation(value = "Get json oxauth settings")
-	@ApiResponses(value = {
-			@ApiResponse(code = 200, response = OxAuthJsonConfiguration.class, message = Constants.RESULT_SUCCESS),
-			@ApiResponse(code = 500, message = "Server error") })
+	@Operation(summary = "Get json oxauth settings",
+            responses = {
+                    @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = OxAuthJsonConfiguration.class))),
+                    @ApiResponse(responseCode = "500", description = "Server error")
+            }
+    )
 	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response getOxAuthJsonSettings() {
 		try {
@@ -59,10 +55,13 @@ public class OxAuthJsonSettingWebResource extends BaseWebResource {
 	}
 
 	@PUT
-	@ApiOperation(value = "Update json oxauth settings")
+	@Operation(summary = "Update json oxauth settings")
 	@ApiResponses(value = {
-			@ApiResponse(code = 200, response = OxAuthJsonConfiguration.class, message = Constants.RESULT_SUCCESS),
-			@ApiResponse(code = 404, message = "Not found"), @ApiResponse(code = 500, message = "Server error") })
+			@ApiResponse(responseCode = "200", content = @Content(
+                    schema = @Schema(implementation = OxAuthJsonConfiguration.class)
+            ), description = Constants.RESULT_SUCCESS),
+			@ApiResponse(responseCode = "404", description = "Not found"),
+            @ApiResponse(responseCode = "500", description = "Server error") })
 	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response updateOxauthJsonSetting(OxAuthJsonConfiguration oxAuthJsonSetting) {
 		try {

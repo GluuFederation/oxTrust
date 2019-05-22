@@ -1,15 +1,11 @@
 package org.gluu.oxtrust.api.server.api.impl;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
+import com.google.common.base.Preconditions;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.gluu.oxtrust.api.server.model.AuthenticationMethod;
 import org.gluu.oxtrust.api.server.util.ApiConstants;
 import org.gluu.oxtrust.api.server.util.Constants;
@@ -18,16 +14,15 @@ import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.oxtrust.service.filter.ProtectedApi;
 import org.slf4j.Logger;
 
-import com.google.common.base.Preconditions;
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 @Path(ApiConstants.BASE_API_URL + ApiConstants.ACRS)
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-@Api(value = ApiConstants.BASE_API_URL + ApiConstants.ACRS, description = "Acrs webservice")
 @ApplicationScoped
 public class AuthenticationMethodWebResource extends BaseWebResource {
 
@@ -40,11 +35,13 @@ public class AuthenticationMethodWebResource extends BaseWebResource {
 	public AuthenticationMethodWebResource() {
 	}
 
-	@GET
-	@ApiOperation(value = "Get current authentication methods")
-	@ApiResponses(value = {
-			@ApiResponse(code = 200, response = AuthenticationMethod.class, message = Constants.RESULT_SUCCESS),
-			@ApiResponse(code = 500, message = "Server error") })
+    @GET
+    @Operation(description = "Get current authentication methods")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", content = @Content(
+                    schema = @Schema(implementation = AuthenticationMethod.class)
+            ), description = Constants.RESULT_SUCCESS),
+            @ApiResponse(responseCode = "500", description = "Server error")})
 	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response getCurrentAuthentication() {
 		log(logger, "Processing getCurrentAuthentication()");
@@ -61,10 +58,10 @@ public class AuthenticationMethodWebResource extends BaseWebResource {
 	}
 
 	@PUT
-	@ApiOperation(value = "Update authentication methods")
-	@ApiResponses(value = {
-			@ApiResponse(code = 200, response = AuthenticationMethod.class, message = Constants.RESULT_SUCCESS),
-			@ApiResponse(code = 500, message = "Server error") })
+	@Operation(description = "Update authentication methods")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = AuthenticationMethod.class)), description = Constants.RESULT_SUCCESS),
+            @ApiResponse(responseCode = "500", description = "Server error")})
 	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response updateAuthenticationMethod(AuthenticationMethod method) {
 		log(logger, "Processing updateAuthenticationMethod()");

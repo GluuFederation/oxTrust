@@ -47,61 +47,27 @@
 
         <plugins>
             <plugin>
-                <groupId>com.github.kongchen</groupId>
+                <groupId>io.swagger.core.v3</groupId>
                 <artifactId>swagger-maven-plugin</artifactId>
-                <version>3.1.0</version>
+                <version>2.0.8</version>
                 <configuration>
-                    <apiSources>
-                        <apiSource>
-                            <springmvc>false</springmvc>
-                            <locations>
-                                org.gluu.oxtrust.api.server.api.impl
-                            </locations>
-                            <schemes>
-                                https
-                            </schemes>
-                            <host>gluu.org</host>
-                            <basePath>/identity/swagger</basePath>
-                            <info>
-                                <title>OxTrust API</title>
-                                <version>v1</version>
-                                <description>
-                                    OxTrust API exposing oxtrust features
-                                </description>
-                                <termsOfService>
-                                    Gluu.org
-                                </termsOfService>
-                                <contact>
-                                    <email>support@gluu.org</email>
-                                    <name>Gluu Inc</name>
-                                    <url>gluu.org</url>
-                                </contact>
-                                <license>
-                                    <url>Gluu Licence</url>
-                                    <name>Apache 2.0</name>
-                                </license>
-                            </info>
-                            <!-- <templatePath>${basedir}/src/test/resources/strapdown.html.hbs</templatePath> -->
-                            <outputPath>${project.build.directory}/generated/document.html</outputPath>
-                            <swaggerDirectory>${project.build.directory}/generated/swagger-ui</swaggerDirectory>
-                        </apiSource>
-                    </apiSources>
+                    <outputFileName>openapi</outputFileName>
+                    <outputPath>${project.build.directory}/generated</outputPath>
+                    <!--<outputFormat>JSONANDYAML</outputFormat>-->
+                    <outputFormat>YAML</outputFormat>
+                    <resourcePackages>
+                        <package>org.gluu.oxtrust.api.server.api.impl</package>
+                    </resourcePackages>
+                    <prettyPrint>TRUE</prettyPrint>
                 </configuration>
                 <executions>
                     <execution>
                         <phase>compile</phase>
                         <goals>
-                            <goal>generate</goal>
+                            <goal>resolve</goal>
                         </goals>
                     </execution>
                 </executions>
-                <dependencies>
-                    <dependency>
-                        <groupId>io.swagger</groupId>
-                        <artifactId>swagger-hibernate-validations</artifactId>
-                        <version>1.5.6</version>
-                    </dependency>
-                </dependencies>
             </plugin>
         </plugins>
 
@@ -153,20 +119,10 @@
                 </exclusion>
             </exclusions>
 		</dependency>
-		<dependency>
-			<groupId>com.wordnik</groupId>
-			<artifactId>swagger-annotations</artifactId>
-		</dependency>
         <dependency>
-            <groupId>com.wordnik</groupId>
-            <artifactId>swagger-core</artifactId>
-            <version>${swagger.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>javax.ws.rs</groupId>
-                    <artifactId>jsr311-api</artifactId>
-                </exclusion>
-            </exclusions>
+            <groupId>io.swagger.core.v3</groupId>
+            <artifactId>swagger-jaxrs2</artifactId>
+            <version>2.0.8</version>
         </dependency>
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
