@@ -10,7 +10,7 @@ import org.gluu.persist.model.base.BaseEntry;
 
 @SuppressWarnings("serial")
 @DataEntry
-@ObjectClass(values = { "top", "oxFido2AuthenticationEntry" })
+@ObjectClass(values = { "top", "oxFido2RegistrationEntry" })
 public class GluuFido2Device extends BaseEntry implements Serializable {
 
 	@AttributeName(ignoreDuringUpdate = true, name = "oxId")

@@ -374,10 +374,8 @@ public class UpdatePersonAction implements Serializable {
 
 	private void addFido2Devices() {
 		try {
-			log.info("++++++++++++++++++++++++++++Searching");
 			List<GluuFido2Device> fido2Devices = fido2DeviceService.findAllFido2Device(this.person);
 			if (fido2Devices != null) {
-				log.info("++++++++++++++++++++++++++++SiZe:" + fido2Devices.size());
 				for (GluuFido2Device entry : fido2Devices) {
 					GluuDeviceDataBean gluuDeviceDataBean = new GluuDeviceDataBean();
 					gluuDeviceDataBean.setId(entry.getId());
@@ -388,7 +386,7 @@ public class UpdatePersonAction implements Serializable {
 				}
 			}
 		} catch (Exception e) {
-			log.error("------------------------------------", e);
+			log.error("", e);
 		}
 
 	}
@@ -791,7 +789,7 @@ public class UpdatePersonAction implements Serializable {
 	}
 
 	private void removeOxExternalUid(GluuDeviceDataBean deleteDeviceData, String idOfDeviceToRemove) {
-		List<String> oxExternalUids = new ArrayList<String>(this.person.getOxExternalUid());
+		List<String> oxExternalUids = this.person.getOxExternalUid();
 		if (oxExternalUids != null) {
 			for (String oxExternalUid : oxExternalUids) {
 				if (idOfDeviceToRemove.equals(oxExternalUid.split(COLON)[1])) {

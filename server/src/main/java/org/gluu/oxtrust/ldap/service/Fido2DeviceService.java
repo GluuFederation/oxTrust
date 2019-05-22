@@ -8,7 +8,6 @@ import javax.inject.Inject;
 
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuFido2Device;
-import org.gluu.search.filter.Filter;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.util.StringHelper;
 import org.slf4j.Logger;
@@ -55,8 +54,7 @@ public class Fido2DeviceService implements Serializable {
 	public List<GluuFido2Device> findAllFido2Device(GluuCustomPerson person) {
 		try {
 			String baseDn = getDnForFido2Device(null, person.getInum());
-			List<GluuFido2Device> results = ldapEntryManager.findEntries(baseDn, GluuFido2Device.class,
-					Filter.createPresenceFilter("id"));
+			List<GluuFido2Device> results = ldapEntryManager.findEntries(baseDn, GluuFido2Device.class, null);
 			if (results == null) {
 				return new ArrayList<GluuFido2Device>();
 			}
