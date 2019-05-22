@@ -49,7 +49,7 @@ public class UserWebServiceDecorator extends BaseScimWebService implements IUser
     @Inject
     private IPersonService personService;
 
-    private Response validateExistenceOfUser(String id){
+    public Response validateExistenceOfUser(String id){
 
         Response response=null;
         GluuCustomPerson person = StringUtils.isEmpty(id) ? null : personService.getPersonByInum(id);
