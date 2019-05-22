@@ -3,7 +3,7 @@ package org.gluu.oxtrust.model.fido2;
 import java.io.Serializable;
 import java.util.Date;
 
-public abstract class Fido2Data implements Serializable {
+public class Fido2Data implements Serializable {
 
     private static final long serialVersionUID = -3073224222148129435L;
 
@@ -11,6 +11,12 @@ public abstract class Fido2Data implements Serializable {
     private Date updatedDate;
     private String createdBy;
     private String updatedBy;
+
+    private String username;
+    private String domain;
+    private String userId;
+
+    private int counter;
 
     public Date getCreatedDate() {
         return createdDate;
@@ -44,63 +50,36 @@ public abstract class Fido2Data implements Serializable {
         this.updatedBy = updatedBy;
     }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((createdBy == null) ? 0 : createdBy.hashCode());
-        result = prime * result + ((createdDate == null) ? 0 : createdDate.hashCode());
-        result = prime * result + ((updatedBy == null) ? 0 : updatedBy.hashCode());
-        result = prime * result + ((updatedDate == null) ? 0 : updatedDate.hashCode());
-        return result;
+    public String getUsername() {
+        return username;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        Fido2Data other = (Fido2Data) obj;
-        if (createdBy == null) {
-            if (other.createdBy != null) {
-                return false;
-            }
-        } else if (!createdBy.equals(other.createdBy)) {
-            return false;
-        }
-        if (createdDate == null) {
-            if (other.createdDate != null) {
-                return false;
-            }
-        } else if (!createdDate.equals(other.createdDate)) {
-            return false;
-        }
-        if (updatedBy == null) {
-            if (other.updatedBy != null) {
-                return false;
-            }
-        } else if (!updatedBy.equals(other.updatedBy)) {
-            return false;
-        }
-        if (updatedDate == null) {
-            if (other.updatedDate != null) {
-                return false;
-            }
-        } else if (!updatedDate.equals(other.updatedDate)) {
-            return false;
-        }
-        return true;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
-    @Override
-    public String toString() {
-        return "Fido2Entity [createdDate=" + createdDate + ", updatedDate=" + updatedDate + ", createdBy=" + createdBy + ", updatedBy=" + updatedBy
-                + "]";
+    public String getDomain() {
+        return domain;
     }
+
+    public void setDomain(String domain) {
+        this.domain = domain;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public int getCounter() {
+        return counter;
+    }
+
+    public void setCounter(int counter) {
+        this.counter = counter;
+    }
+
 }

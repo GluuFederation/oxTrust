@@ -51,7 +51,7 @@ public class Fido2DeviceService implements Serializable {
 		return "";
 	}
 
-	public List<GluuFido2Device> findAllFido2Device(GluuCustomPerson person) {
+	public List<GluuFido2Device> findAllFido2Devices(GluuCustomPerson person) {
 		try {
 			String baseDn = getDnForFido2Device(null, person.getInum());
 			List<GluuFido2Device> results = ldapEntryManager.findEntries(baseDn, GluuFido2Device.class, null);
@@ -65,17 +65,26 @@ public class Fido2DeviceService implements Serializable {
 		}
 	}
 
-	//TODO: #1526
     public GluuFido2Device getFido2DeviceById(String userId, String id) {
-	    return null;
+
+        GluuFido2Device f2d = new GluuFido2Device();
+        try {
+            f2d.setBaseDn(getDnForFido2Device(id, userId));
+
+            return ldapEntryManager.find(f2d.getClass(), f2d);
+        } catch (Exception e) {
+            log.error("Failed to find Fido 2 device with id " + id, e);
+            return null;
+        }
+
     }
 
     public void updateFido2Device(GluuFido2Device fido2Device) {
-
+	    ldapEntryManager.merge(fido2Device);
     }
 
-    public void removeFido2Device(GluuFido2Device gluuCustomFidoDevice) {
-
+    public void removeFido2Device(GluuFido2Device fido2Device) {
+	    ldapEntryManager.removeRecursively(fido2Device.getDn());
     }
 
 }

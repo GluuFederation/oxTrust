@@ -15,7 +15,7 @@ import org.gluu.persist.annotation.ObjectClass;
  * @version 11/02/2018
  */
 @DataEntry(sortBy = "creationDate")
-@ObjectClass(values = { "top", "oxFido2Entry" })
+@ObjectClass(values = { "top" })
 public class Fido2Entry extends BaseEntry implements Serializable {
 
     /**
@@ -26,16 +26,16 @@ public class Fido2Entry extends BaseEntry implements Serializable {
 	@AttributeName(ignoreDuringUpdate = true, name = "oxId")
     private String id;
 
-    @AttributeName(name = "oxCodeChallenge")
-    private String challange;
+    @AttributeName(ignoreDuringUpdate = true, name = "oxCodeChallenge")
+    private String challenge;
 
-    @AttributeName(name = "oxCodeChallengeHash")
-    private String challangeHash;
+    @AttributeName(ignoreDuringUpdate = true, name = "oxCodeChallengeHash")
+    private String challengeHash;
 
-    @AttributeName(name = "creationDate")
+    @AttributeName(ignoreDuringUpdate = true, name = "creationDate")
     private Date creationDate;
 
-    @AttributeName(name = "oxSessionStateId")
+    @AttributeName(ignoreDuringUpdate = true, name = "oxSessionStateId")
     private String sessionId;
 
     @AttributeName(name = "personInum")
@@ -48,13 +48,13 @@ public class Fido2Entry extends BaseEntry implements Serializable {
         super(dn);
     }
 
-    public Fido2Entry(String dn, String id, Date creationDate, String sessionId, String userInum, String challange) {
+    public Fido2Entry(String dn, String id, Date creationDate, String sessionId, String userInum, String challenge) {
         super(dn);
         this.id = id;
         this.creationDate = creationDate;
         this.sessionId = sessionId;
         this.userInum = userInum;
-        this.challange = challange;
+        this.challenge = challenge;
     }
 
     public String getId() {
@@ -65,20 +65,20 @@ public class Fido2Entry extends BaseEntry implements Serializable {
         this.id = id;
     }
 
-    public String getChallange() {
-        return challange;
+    public String getChallenge() {
+        return challenge;
     }
 
-    public void setChallange(String challange) {
-        this.challange = challange;
+    public void setChallenge(String challenge) {
+        this.challenge = challenge;
     }
 
-    public String getChallangeHash() {
-        return challangeHash;
+    public String getChallengeHash() {
+        return challengeHash;
     }
 
-    public void setChallangeHash(String challangeHash) {
-        this.challangeHash = challangeHash;
+    public void setChallengeHash(String challengeHash) {
+        this.challengeHash = challengeHash;
     }
 
     public Date getCreationDate() {
@@ -104,4 +104,5 @@ public class Fido2Entry extends BaseEntry implements Serializable {
     public void setUserInum(String userInum) {
         this.userInum = userInum;
     }
+
 }

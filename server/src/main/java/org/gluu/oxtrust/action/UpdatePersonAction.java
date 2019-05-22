@@ -374,19 +374,19 @@ public class UpdatePersonAction implements Serializable {
 
 	private void addFido2Devices() {
 		try {
-			List<GluuFido2Device> fido2Devices = fido2DeviceService.findAllFido2Device(this.person);
+			List<GluuFido2Device> fido2Devices = fido2DeviceService.findAllFido2Devices(this.person);
 			if (fido2Devices != null) {
 				for (GluuFido2Device entry : fido2Devices) {
 					GluuDeviceDataBean gluuDeviceDataBean = new GluuDeviceDataBean();
 					gluuDeviceDataBean.setId(entry.getId());
 					gluuDeviceDataBean.setCreationDate(entry.getCreationDate().toString());
 					gluuDeviceDataBean.setModality("FIDO2");
-					gluuDeviceDataBean.setNickName("NickName");
+					gluuDeviceDataBean.setNickName(entry.getDisplayName());
 					deviceDataMap.add(gluuDeviceDataBean);
 				}
 			}
 		} catch (Exception e) {
-			log.error("", e);
+			log.error(e.getMessage(), e);
 		}
 
 	}

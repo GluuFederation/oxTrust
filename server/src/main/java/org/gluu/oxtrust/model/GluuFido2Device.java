@@ -3,97 +3,59 @@ package org.gluu.oxtrust.model;
 import java.io.Serializable;
 import java.util.Date;
 
+import org.gluu.oxtrust.model.fido2.Fido2Data;
+import org.gluu.oxtrust.model.fido2.Fido2Entry;
 import org.gluu.persist.annotation.AttributeName;
 import org.gluu.persist.annotation.DataEntry;
+import org.gluu.persist.annotation.JsonObject;
 import org.gluu.persist.annotation.ObjectClass;
-import org.gluu.persist.model.base.BaseEntry;
 
 @SuppressWarnings("serial")
 @DataEntry
 @ObjectClass(values = { "top", "oxFido2RegistrationEntry" })
-public class GluuFido2Device extends BaseEntry implements Serializable {
+public class GluuFido2Device extends Fido2Entry implements Serializable {
 
-	@AttributeName(ignoreDuringUpdate = true, name = "oxId")
-	private String id;
+    @JsonObject
+    @AttributeName(name = "oxRegistrationData")
+    private Fido2Data registrationData;
 
-	@AttributeName(name = "oxCodeChallenge")
-	private String challange;
+    @AttributeName(name = "oxStatus")
+    private String registrationStatus;
 
-	@AttributeName(name = "oxCodeChallengeHash")
-	private String challangeHash;
+    @AttributeName(name = "displayName")
+    private String displayName;
 
-	@AttributeName(name = "creationDate")
-	private Date creationDate;
+    public GluuFido2Device() {
+    }
 
-	@AttributeName(name = "oxSessionStateId")
-	private String sessionId;
+    public GluuFido2Device(String dn, String id, Date creationDate, String sessionId, String userInum,
+                           Fido2Data registrationData, String challenge) {
+        super(dn, id, creationDate, sessionId, userInum, challenge);
+        this.registrationData = registrationData;
+    }
 
-	@AttributeName(name = "personInum")
-	private String userInum;
+    public Fido2Data getRegistrationData() {
+        return registrationData;
+    }
 
-	public GluuFido2Device() {
-	}
+    public void setRegistrationData(Fido2Data registrationData) {
+        this.registrationData = registrationData;
+    }
 
-	public GluuFido2Device(String dn) {
-		super(dn);
-	}
+    public String getRegistrationStatus() {
+        return registrationStatus;
+    }
 
-	public GluuFido2Device(String dn, String id, Date creationDate, String sessionId, String userInum,
-			String challange) {
-		super(dn);
-		this.id = id;
-		this.creationDate = creationDate;
-		this.sessionId = sessionId;
-		this.userInum = userInum;
-		this.challange = challange;
-	}
+    public void setRegistrationStatus(String registrationStatus) {
+        this.registrationStatus = registrationStatus;
+    }
 
-	public String getId() {
-		return id;
-	}
+    public String getDisplayName() {
+        return displayName;
+    }
 
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	public String getChallange() {
-		return challange;
-	}
-
-	public void setChallange(String challange) {
-		this.challange = challange;
-	}
-
-	public String getChallangeHash() {
-		return challangeHash;
-	}
-
-	public void setChallangeHash(String challangeHash) {
-		this.challangeHash = challangeHash;
-	}
-
-	public Date getCreationDate() {
-		return creationDate;
-	}
-
-	public void setCreationDate(Date creationDate) {
-		this.creationDate = creationDate;
-	}
-
-	public String getSessionId() {
-		return sessionId;
-	}
-
-	public void setSessionId(String sessionId) {
-		this.sessionId = sessionId;
-	}
-
-	public String getUserInum() {
-		return userInum;
-	}
-
-	public void setUserInum(String userInum) {
-		this.userInum = userInum;
-	}
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
 
 }

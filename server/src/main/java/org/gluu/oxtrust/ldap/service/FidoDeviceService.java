@@ -68,8 +68,6 @@ public class FidoDeviceService implements IFidoDeviceService, Serializable {
 		        Filter filter=Filter.createEqualityFilter("oxId", id);
 		        gluuCustomFidoDevice = ldapEntryManager.findEntries(dn, GluuCustomFidoDevice.class, filter).get(0);
             }
-			//Filter filter = Filter.create("oxId=" + id);
-			//gluuCustomFidoDevice = searchFidoDevice(filter, userId, id);
 		}
 		catch (Exception e) {
 			log.error("Failed to find device by id " + id, e);

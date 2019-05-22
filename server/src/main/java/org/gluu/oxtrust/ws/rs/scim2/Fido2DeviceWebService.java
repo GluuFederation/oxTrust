@@ -45,7 +45,6 @@ import org.gluu.oxtrust.model.GluuFido2Device;
 import org.gluu.oxtrust.model.scim2.*;
 import org.gluu.oxtrust.model.scim2.fido.Fido2DeviceResource;
 import org.gluu.oxtrust.model.scim2.patch.PatchRequest;
-import org.gluu.oxtrust.model.scim2.util.DateUtil;
 import org.gluu.oxtrust.model.scim2.util.ScimResourceUtil;
 import org.gluu.oxtrust.service.antlr.scimFilter.ScimFilterParserService;
 import org.gluu.oxtrust.service.filter.ProtectedApi;
@@ -54,6 +53,7 @@ import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.model.PagedResult;
 import org.gluu.persist.model.SortOrder;
 import org.gluu.search.filter.Filter;
+import org.joda.time.DateTime;
 import org.joda.time.format.ISODateTimeFormat;
 
 /**
@@ -273,49 +273,32 @@ public class Fido2DeviceWebService extends BaseScimWebService implements IFido2D
     private void transferAttributesToFido2Resource(GluuFido2Device fidoDevice, Fido2DeviceResource res, String url, String userId) {
 
         res.setId(fidoDevice.getId());
-        //TODO: #1526
-/*
+
         Meta meta=new Meta();
         meta.setResourceType(ScimResourceUtil.getType(res.getClass()));
         meta.setCreated(StaticUtils.encodeGeneralizedTime(fidoDevice.getCreationDate()));
-        meta.setLastModified(fidoDevice.getMetaLastModified());
-        meta.setLocation(fidoDevice.getMetaLocation());
-        if (meta.getLocation()==null)
-            meta.setLocation(url + "/" + fidoDevice.getId());
+        meta.setLastModified(StaticUtils.encodeGeneralizedTime(fidoDevice.getRegistrationData().getUpdatedDate()));
+        meta.setLocation(url + "/" + fidoDevice.getId());
 
         res.setMeta(meta);
-
-        //Set values in order of appearance in FidoDeviceResource class
         res.setUserId(userId);
         res.setCreationDate(meta.getCreated());
-        res.setCounter(fidoDevice.getCounter());
+        res.setCounter(fidoDevice.getRegistrationData().getCounter());
 
-        res.setStatus(fidoDevice.getStatus());
+        res.setStatus(fidoDevice.getRegistrationStatus());
         res.setDisplayName(fidoDevice.getDisplayName());
-*/
+
     }
 
-    /**
-     * In practice, transference of values will not necessarily modify all original values in LDAP...
-     * @param res
-     * @param device
-     */
     private void transferAttributesToDevice(Fido2DeviceResource res, GluuFido2Device device){
 
-        //Set values trying to follow the order found in GluuCustomFidoDevice class
         device.setId(res.getId());
-        //TODO: #1526
-        /*
-        device.setCreationDate(DateUtil.ISOToGeneralizedStringDate(res.getMeta().getCreated()));
-        device.setCounter(res.getCounter());
 
-        device.setStatus(res.getStatus());
+        device.getRegistrationData().setCounter(res.getCounter());
+        device.setRegistrationStatus(res.getStatus());
         device.setDisplayName(res.getDisplayName());
+        device.getRegistrationData().setUpdatedDate(new DateTime(res.getMeta().getLastModified()).toDate());
 
-        device.setMetaLastModified(res.getMeta().getLastModified());
-        device.setMetaLocation(res.getMeta().getLocation());
-        device.setMetaVersion(res.getMeta().getVersion());
-*/
     }
 
     private PagedResult<BaseScimResource> searchDevices(String userId, String filter, String sortBy, SortOrder sortOrder, int startIndex,

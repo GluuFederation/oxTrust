@@ -102,6 +102,7 @@ public class BaseScimWebService {
             GluuCustomPerson person = personService.getPersonByInum(id);
 
             if (person == null) {
+                log.info("Person with inum {} not found", id);
                 response = getErrorResponse(Response.Status.NOT_FOUND, "User with id " + id + " not found");
             }
         }
