@@ -106,7 +106,33 @@
 	<ui:include
 		src="/WEB-INF/incl/trustmanager/federationDeconstruction.xhtml" />
 	<ui:include src="/WEB-INF/incl/trustmanager/entityIdSelector.xhtml" />
-	<b:panel title="Trust Relationship Form" look="primary" collapsible="false">
+	<b:panel title="Trust Relationship Form" look="primary"
+		collapsible="false">
+		<h:head>
+			<style type="text/css">
+#spMetadataPanel_container {
+	z-index: 999 !important;
+}
+
+#spMetadataPanel_content_scroller {
+	width: 700px !important;
+	height: 500px !important;
+}
+
+#spMetadataPanel_content {
+	width: 700px !important;
+	height: 500px !important;
+}
+
+pre {
+	height: 450px !important;
+}
+
+.col-sm-10 {
+	width: 70%;
+}
+</style>
+		</h:head>
 		<h:form enctype="multipart/form-data" id="trustForm">
 			<div class="row"
 				style="margin-left: 2px; margin-right: 2px; background: white;">
@@ -125,9 +151,8 @@
 									<ox:decorate id="description"
 										label="#{msg['trustmanager.description']}">
 										<h:inputTextarea value="#{_trustRelationship.description}"
-										    styleClass="form-control Description"
-											rows="3" size="40" maxlength="4000" required="true"
-											id="descriptionId" />
+											styleClass="form-control Description" rows="3" size="40"
+											maxlength="4000" required="true" id="descriptionId" />
 									</ox:decorate>
 									<ox:decorate id="entityType"
 										label="#{msg['trustmanager.entityType']}">
@@ -147,7 +172,8 @@
 										<a4j:region>
 											<ox:decorate id="spMetaDataSourceType"
 												label="#{msg['trustmanager.metadataLocation']}">
-												<h:selectOneMenu styleClass=" rounded form-control MetaDataType"
+												<h:selectOneMenu
+													styleClass=" rounded form-control MetaDataType"
 													value="#{_trustRelationship.spMetaDataSourceType}"
 													onchange="changeEvent(this)" required="true"
 													id="spMetaDataSourceTypeId"
@@ -179,7 +205,8 @@
 														rendered="#{_trustRelationship.spMetaDataSourceType.value eq 'federation'}">
 														<ox:decorate id="spMetaDataSourceTypeFederation"
 															label="#{msg['trustmanager.federationName']}">
-															<h:selectOneMenu styleClass="rounded form-control FederationWizard"
+															<h:selectOneMenu
+																styleClass="rounded form-control FederationWizard"
 																value="#{_trustRelationship.containerFederation}"
 																id="spMetaDataSourceTypeFederationId"
 																converter="federationConverter" required="true">
@@ -214,7 +241,6 @@
 																value="#{empty _trustRelationship.entityId ? 
                                                                          'Click to select entity Id' 
                                                                        : '        Click to change entity Id'}"
-                                                                       
 																action="#{_trustRelationshipAction.isActive()}"
 																oncomplete="#{rich:component('entityIdSelector')}.show();">
 															</a4j:commandLink>
@@ -243,7 +269,6 @@
 														onclick="#{rich:component('spMetadataPanel')}.show();"
 														rendered="#{not empty _trustRelationship.spMetaDataFN}"
 														execute="@this" />
-
 													<a4j:commandLink style="margin-left:305px;"
 														styleClass="glyphicon glyphicon-remove"
 														action="#{_trustRelationship.setSpMetaDataFN('')}"
@@ -302,7 +327,8 @@
 													</h:panelGrid>
 
 													<h:panelGroup id="RelyingPartyConfig">
-														<a4j:commandLink id="TRConfig" styleClass="RelyingPartyConfigLink"
+														<a4j:commandLink id="TRConfig"
+															styleClass="RelyingPartyConfigLink"
 															value="#{msg['trustmanager.configureRelyingParty']}"
 															rendered="#{_trustRelationship.specificRelyingPartyConfig}"
 															onclick="#{rich:component('TRConfigPanel')}.show();"
@@ -451,7 +477,8 @@
 
 							<b:tab
 								title="#{_customAttributeAction.originDisplayNames[_list.get(0).key]}">
-								<div style="height: 450px; overflow-y: auto;" class="SelectableCustomAttibutes">
+								<div style="height: 450px; overflow-y: auto;"
+									class="SelectableCustomAttibutes">
 									<ul class="sidebar-menu">
 										<a4j:repeat value="#{_list.get(0).value}" var="attr">
 											<li class="treeview"
