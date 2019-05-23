@@ -24,6 +24,38 @@ public class HomePage extends AbstractPage {
 		samlMenu.click();
 	}
 
+	public void goToPassportMenu() {
+		WebElement passportMenu = webDriver.findElement(By.xpath("//*[@id='menuPassport']"));
+		passportMenu.click();
+	}
+
+	public void goToPassportProviderListPage() {
+		WebElement passportMenu = webDriver.findElement(By.xpath("//*[@id='menuPassport']"));
+		passportMenu.click();
+
+		WebElement subMenu = waitElementByID("menuPassportProviders");
+		subMenu.click();
+		fluentWait(3);
+	}
+
+	public void goToPassportConfigPage() {
+		WebElement passportMenu = webDriver.findElement(By.xpath("//*[@id='menuPassport']"));
+		passportMenu.click();
+
+		WebElement subMenu = waitElementByID("menuPassportBasicConfig");
+		subMenu.click();
+		fluentWait(3);
+	}
+
+	public void goToPassportIdpPage() {
+		WebElement passportMenu = webDriver.findElement(By.xpath("//*[@id='menuPassport']"));
+		passportMenu.click();
+
+		WebElement subMenu = waitElementByID("menuPassportIdpInitiated");
+		subMenu.click();
+		fluentWait(3);
+	}
+
 	public void goSamlTrListPage() {
 		fluentWait(1);
 		WebElement samlMenu = webDriver.findElement(By.xpath("//*[@id='menuSAML']"));

@@ -15,6 +15,7 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
+import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.oxtrust.qa.configuration.ApplicationDriver;
@@ -280,5 +281,29 @@ public class AbstractPage {
 			return null;
 		}
 
+	}
+
+	public void selectBoxByClass(String className, String text) {
+		Select select = new Select(webDriver.findElement(By.className(className)));
+		select.selectByVisibleText(text);
+	}
+
+	public void fillTextFillByClass(String inputClass, String text) {
+		WebElement input = webDriver.findElement(By.className(inputClass));
+		input.clear();
+		input.sendKeys(text);
+	}
+	
+	
+	public void fillTextFillByClass(String inputClass, String text,int index) {
+		WebElement input = webDriver.findElements(By.className(inputClass)).get(index);
+		input.clear();
+		input.sendKeys(text);
+	}
+
+	public void clickOnButtonByClass(String buttonClass) {
+		WebElement button = webDriver.findElement(By.className(buttonClass));
+		button.click();
+		fluentWait(2);
 	}
 }

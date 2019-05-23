@@ -7,7 +7,7 @@ import cucumber.api.junit.Cucumber;
 
 @RunWith(Cucumber.class)
 @CucumberOptions(features = { "src/test/java/org/oxtrust/qa/features" }, plugin = { "pretty",
-		"json:target/cucumber/json/cucumber.json" },glue="", monochrome = true, tags = { "@gluuSE" })
+		"json:target/cucumber/json/cucumber.json" },glue="", monochrome = true, tags = { "@gluuQA" })
 public class AllFeatureReadyForQaTest {
 
 }
