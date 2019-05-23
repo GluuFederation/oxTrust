@@ -56,15 +56,15 @@ public abstract class Fido2DeviceWebServiceDecorator extends BaseScimWebService 
 
     }
 
-    public Response getDeviceById(String id, String userId, String attrsList, String excludedAttrsList) {
+    public Response getF2DeviceById(String id, String userId, String attrsList, String excludedAttrsList) {
         Response response = validateExistenceOfDevice(userId, id);
         if (response == null)
-            response = service.getDeviceById(id, userId, attrsList, excludedAttrsList);
+            response = service.getF2DeviceById(id, userId, attrsList, excludedAttrsList);
         return response;
 
     }
 
-    public Response updateDevice(Fido2DeviceResource fidoDevice, String id, String attrsList, String excludedAttrsList) {
+    public Response updateF2Device(Fido2DeviceResource fidoDevice, String id, String attrsList, String excludedAttrsList) {
 
         Response response;
         try {
@@ -78,7 +78,7 @@ public abstract class Fido2DeviceWebServiceDecorator extends BaseScimWebService 
 
             if (response == null) {
                 executeValidation(fidoDevice, true);
-                response = service.updateDevice(fidoDevice, id, attrsList, excludedAttrsList);
+                response = service.updateF2Device(fidoDevice, id, attrsList, excludedAttrsList);
             }
         } catch (SCIMException e) {
             log.error("Validation check at updateDevice returned: {}", e.getMessage());
@@ -88,16 +88,16 @@ public abstract class Fido2DeviceWebServiceDecorator extends BaseScimWebService 
 
     }
 
-    public Response deleteDevice(String id) {
+    public Response deleteF2Device(String id) {
 
         Response response = validateExistenceOfDevice(null, id);
         if (response == null)
-            response = service.deleteDevice(id);
+            response = service.deleteF2Device(id);
         return response;
 
     }
 
-    public Response searchDevices(String userId, String filter, Integer startIndex, Integer count, String sortBy,
+    public Response searchF2Devices(String userId, String filter, Integer startIndex, Integer count, String sortBy,
                                   String sortOrder, String attrsList, String excludedAttrsList) {
 
         SearchRequest searchReq = new SearchRequest();
@@ -107,7 +107,7 @@ public abstract class Fido2DeviceWebServiceDecorator extends BaseScimWebService 
         if (response == null) {
             response = validateExistenceOfUser(userId);
             if (response == null) {
-                response = service.searchDevices(userId, searchReq.getFilter(), searchReq.getStartIndex(), searchReq.getCount(),
+                response = service.searchF2Devices(userId, searchReq.getFilter(), searchReq.getStartIndex(), searchReq.getCount(),
                         searchReq.getSortBy(), searchReq.getSortOrder(), searchReq.getAttributesStr(), searchReq.getExcludedAttributesStr());
             }
         }
@@ -115,7 +115,7 @@ public abstract class Fido2DeviceWebServiceDecorator extends BaseScimWebService 
 
     }
 
-    public Response searchDevicesPost(SearchRequest searchRequest, String userId) {
+    public Response searchF2DevicesPost(SearchRequest searchRequest, String userId) {
 
         SearchRequest searchReq = new SearchRequest();
         Response response = prepareSearchRequest(searchRequest.getSchemas(), searchRequest.getFilter(), searchRequest.getSortBy(),
@@ -125,7 +125,7 @@ public abstract class Fido2DeviceWebServiceDecorator extends BaseScimWebService 
         if (response == null) {
             response = validateExistenceOfUser(userId);
             if (response == null) {
-                response = service.searchDevicesPost(searchReq, userId);
+                response = service.searchF2DevicesPost(searchReq, userId);
             }
         }
         return response;

@@ -94,14 +94,14 @@ public class Fido2DeviceWebService extends BaseScimWebService implements IFido2D
     @ProtectedApi
     @RefAdjusted
     @ApiOperation(value = "Find device by id", notes = "Returns a device by id as path param", response = Fido2DeviceResource.class)
-    public Response getDeviceById(@PathParam("id") String id,
+    public Response getF2DeviceById(@PathParam("id") String id,
                                   @QueryParam("userId") String userId,
                                   @QueryParam(QUERY_PARAM_ATTRIBUTES) String attrsList,
                                   @QueryParam(QUERY_PARAM_EXCLUDED_ATTRS) String excludedAttrsList){
 
         Response response;
         try{
-            log.debug("Executing web service method. getDeviceById");
+            log.debug("Executing web service method. getF2DeviceById");
             Fido2DeviceResource fidoResource=new Fido2DeviceResource();
 
             GluuFido2Device device=fidoDeviceService.getFido2DeviceById(userId, id);
@@ -118,7 +118,7 @@ public class Fido2DeviceWebService extends BaseScimWebService implements IFido2D
             response=getErrorResponse(Response.Status.NOT_FOUND, ErrorScimType.INVALID_VALUE, e.getMessage());
         }
         catch (Exception e){
-            log.error("Failure at getDeviceById method", e);
+            log.error("Failure at getF2DeviceById method", e);
             response=getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, "Unexpected error: " + e.getMessage());
         }
         return response;
@@ -133,7 +133,7 @@ public class Fido2DeviceWebService extends BaseScimWebService implements IFido2D
     @ProtectedApi
     @RefAdjusted
     @ApiOperation(value = "Update device", response = Fido2DeviceResource.class)
-    public Response updateDevice(
+    public Response updateF2Device(
             Fido2DeviceResource fidoDeviceResource,
             @PathParam("id") String id,
             @QueryParam(QUERY_PARAM_ATTRIBUTES) String attrsList,
@@ -184,7 +184,7 @@ public class Fido2DeviceWebService extends BaseScimWebService implements IFido2D
     @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)
     @ProtectedApi
     @ApiOperation(value = "Delete device")
-    public Response deleteDevice(@PathParam("id") String id){
+    public Response deleteF2Device(@PathParam("id") String id){
 
         Response response;
         try {
@@ -213,7 +213,7 @@ public class Fido2DeviceWebService extends BaseScimWebService implements IFido2D
     @ProtectedApi
     @RefAdjusted
     @ApiOperation(value = "Search devices", notes = "Returns a list of devices", response = ListResponse.class)
-    public Response searchDevices(
+    public Response searchF2Devices(
             @QueryParam("userId") String userId,
             @QueryParam(QUERY_PARAM_FILTER) String filter,
             @QueryParam(QUERY_PARAM_START_INDEX) Integer startIndex,
@@ -252,12 +252,12 @@ public class Fido2DeviceWebService extends BaseScimWebService implements IFido2D
     @ProtectedApi
     @RefAdjusted
     @ApiOperation(value = "Search devices POST /.search", notes = "Returns a list of fido devices", response = ListResponse.class)
-    public Response searchDevicesPost(SearchRequest searchRequest, @QueryParam("userId") String userId) {
+    public Response searchF2DevicesPost(SearchRequest searchRequest, @QueryParam("userId") String userId) {
 
         log.debug("Executing web service method. searchDevicesPost");
 
         URI uri=null;
-        Response response = searchDevices(userId, searchRequest.getFilter(), searchRequest.getStartIndex(), searchRequest.getCount(),
+        Response response = searchF2Devices(userId, searchRequest.getFilter(), searchRequest.getStartIndex(), searchRequest.getCount(),
                 searchRequest.getSortBy(), searchRequest.getSortOrder(), searchRequest.getAttributesStr(), searchRequest.getExcludedAttributesStr());
 
         try {
@@ -343,7 +343,7 @@ public class Fido2DeviceWebService extends BaseScimWebService implements IFido2D
     @ProtectedApi
     @RefAdjusted
     @ApiOperation(value = "PATCH operation", notes = "https://tools.ietf.org/html/rfc7644#section-3.5.2", response = Fido2DeviceResource.class)
-    public Response patchDevice(
+    public Response patchF2Device(
             PatchRequest request,
             @PathParam("id") String id,
             @QueryParam(QUERY_PARAM_ATTRIBUTES) String attrsList,
