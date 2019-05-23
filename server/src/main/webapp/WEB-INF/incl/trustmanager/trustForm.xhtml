@@ -12,75 +12,7 @@
 	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
 	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
 	<h:outputStylesheet>
-        .attributeColumn {
-            width: 350px;
-            text-align: left;
-            vertical-align: top;
-        }
-
-        .formColumn {
-            text-align: left;
-            vertical-align: top;
-        }
-        
-        .contactLabels{
-            text-align: left;
-            width: 30%;
-            
-        }
-        
-        .breakFedeation{
-            color: red;
-        }
-
-        .entityList{
-            width:250px;
-            height:150px;
-            overflow:visible;
-            padding:0px;
-            left: 0px;
-        }
-
-        .half {
-            vertical-align: top;
-            width: 220px;
-            overflow: auto;
-        }
-            
-        .inpanelBody{
-            height: 220px;
-            width: 220px;
-        }
-        
-        #spMetadataPanel_container
-        {
-        	z-index:999 !important;
-        }
-        
-        #spMetadataPanel_content_scroller
-        {
-        	width:700px !important;
-        	height:500px !important;
-        }
-        
-        #spMetadataPanel_content
-        {
-        	width:700px !important;
-        	height:500px !important;
-        }
-        
-        pre
-        {
-        	height: 450px !important;
-        }
-        
-        .col-sm-10 {
-    		width: 70%;
-		}
-        
-        
-    </h:outputStylesheet>
-
+	</h:outputStylesheet>
 	<h:outputScript>		
         function changeAttributeVisibility(attrId, show) {
         	var attr = document.getElementById(attrId);
@@ -110,6 +42,45 @@
 		collapsible="false">
 		<h:head>
 			<style type="text/css">
+.attributeColumn {
+	width: 350px;
+	text-align: left;
+	vertical-align: top;
+}
+
+.formColumn {
+	text-align: left;
+	vertical-align: top;
+}
+
+.contactLabels {
+	text-align: left;
+	width: 30%;
+}
+
+.breakFedeation {
+	color: red;
+}
+
+.entityList {
+	width: 250px;
+	height: 150px;
+	overflow: visible;
+	padding: 0px;
+	left: 0px;
+}
+
+.half {
+	vertical-align: top;
+	width: 220px;
+	overflow: auto;
+}
+
+.inpanelBody {
+	height: 220px;
+	width: 220px;
+}
+
 #spMetadataPanel_container {
 	z-index: 999 !important;
 }
@@ -130,6 +101,15 @@ pre {
 
 .col-sm-10 {
 	width: 70%;
+}
+
+input[button]{
+    border: 2px solid #2e6da4 !important;
+    border-radius: 5px !important;
+}
+input[submit]{
+    border: 2px solid #2e6da4 !important;
+    border-radius: 5px !important;
 }
 </style>
 		</h:head>

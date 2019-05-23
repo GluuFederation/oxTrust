@@ -88,94 +88,108 @@
 			rel="stylesheet" type="text/css" />
 		<ui:insert name="head" />
 		<h:outputStylesheet>
-           input[type=text], input[type=email], input[type=password],input[autocomplete=off], input[type=url]{
-           padding:5px; 
-           border: 1px solid #ccc;
-           border-radius: 5px !important;
-           }
+		</h:outputStylesheet>
+		<style type="text/css">
+input[type=text], input[type=email], input[type=password], input[autocomplete=off],
+	input[type=url] {
+	padding: 5px;
+	border: 1px solid #ccc;
+	border-radius: 5px !important;
+}
 
-           input[type=text]:focus, input[type=email]:focus, input[type=password]:focus, input[autocomplete=off]:focus, input[type=url]{
-             border-radius: 5px !important;
-             border: 2px solid #2e6da4 !important;
-           }
-           
-           input[type=checkbox]{
-             border-radius: 5O% !important;
-             border: 2px solid #ccc !important;
-           }
-           
-           input[type=checkbox]:focus{
-            border-radius: 5O% !important;
-            border:none;
-           }
-           
-           input[autocomplete=off]{
-             border: 1px solid #ccc !important;
-             border-radius: 5px !important;
-           }
-           input[autocomplete=off]:focus{
-             border: 2px solid #2e6da4 !important;
-             border-radius: 5px !important;
-           }
-           .rounded{
-             border: 1px solid #ccc !important;
-             border-radius: 5px !important;
-           }
-          .rounded:focus{
-             border: 2px solid #2e6da4 !important;
-             border-radius: 5px !important;
-           }
-           
-           textarea{
-             padding:5px;
-             border-radius: 5px !important;
-           }
-           
-           textarea:focus{
-             border-radius: 5px !important;
-             border: 2px solid #2e6da4 !important;
-           }
+input[type=text]:focus, input[type=email]:focus, input[type=password]:focus,
+	input[autocomplete=off]:focus, input[type=url] {
+	border-radius: 5px !important;
+	border: 2px solid #2e6da4 !important;
+}
 
-           input[type=submit] {
-            padding:5px 15px; 
-            cursor:pointer;
-            border-radius: 5px !important;
-          }
-          .btn-primary, .btn-success , .btn-danger{
-            border:0 none;
-            cursor:pointer;
-            border-radius: 5px !important;
-          } 
-          .icheckbox_square-blue{
-            border-radius: 50% !important;
-            border: 1px solid #ccc !important
-          }
-          .icheckbox_square-blue:focus{
-            border-radius: 50% !important;
-            border: none;
-          }
-          
-          select{
-           border-radius: 5px !important;
-          }
-          
-         .roundedSelectBox{
-             border: 2px solid #ccc;
-             border-radius: 5px !important;
-          }
-          .rf-ii-fld-cntr:focus{
-           outline: none !important;
-          }
-          .alert-info{
-            background-color: #3f51b5 !important;
-          }
-          .alert-error{
-            background-color: #b71c1c !important;
-          }
-          .alert-warn{
-            background-color: #ef6c00 !important;
-          }  
-     </h:outputStylesheet>
+input[type=checkbox] {
+	border-radius: 5O% !important;
+	border: 2px solid #ccc !important;
+}
+
+input[type=checkbox]:focus {
+	border-radius: 5O% !important;
+	border: none;
+}
+
+input[autocomplete=off] {
+	border: 1px solid #ccc !important;
+	border-radius: 5px !important;
+}
+
+input[autocomplete=off]:focus {
+	border: 2px solid #2e6da4 !important;
+	border-radius: 5px !important;
+}
+
+.rounded {
+	border: 1px solid #ccc !important;
+	border-radius: 5px !important;
+}
+
+.rounded:focus {
+	border: 2px solid #2e6da4 !important;
+	border-radius: 5px !important;
+}
+
+textarea {
+	padding: 5px;
+	border-radius: 5px !important;
+}
+
+textarea:focus {
+	border-radius: 5px !important;
+	border: 2px solid #2e6da4 !important;
+}
+
+input[type=submit] {
+	padding: 5px 15px;
+	cursor: pointer;
+	border-radius: 5px !important;
+}
+
+.btn-primary, .btn-success, .btn-danger {
+	border: 0 none;
+	cursor: pointer;
+	border-radius: 5px !important;
+}
+
+.icheckbox_square-blue {
+	border-radius: 50% !important;
+	border: 1px solid #ccc !important
+}
+
+.icheckbox_square-blue:focus {
+	border-radius: 50% !important;
+	border: none;
+}
+
+select {
+	border-radius: 5px !important;
+}
+
+.roundedSelectBox {
+	border: 2px solid #ccc;
+	border-radius: 5px !important;
+}
+
+.rf-ii-fld-cntr:focus {
+	outline: none !important;
+}
+
+.alert-info {
+	background-color: #3f51b5 !important;
+}
+
+.alert-error {
+	background-color: #b71c1c !important;
+}
+
+.alert-warn {
+	background-color: #ef6c00 !important;
+}
+</style>
 	</h:head>
 	<h:body styleClass="skin-green">
 		<div class="wrapper">
