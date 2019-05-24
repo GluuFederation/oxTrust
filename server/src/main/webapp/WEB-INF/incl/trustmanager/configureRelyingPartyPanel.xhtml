@@ -10,6 +10,14 @@
 	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
 	<h:head>
 		<style type="text/css">
+#TRConfigPanel_shadow {
+	width: 60% !important;
+}
+
+.rf-pp-cntr {
+	width: 65% !important;
+}
+
 .rf-pick-btn {
 	width: 100%;
 	white-space: nowrap;
@@ -27,54 +35,64 @@
 	text-align: left;
 }
 
-#TRConfigPanel_shadow {
-	width: 60% !important;
+.rf-pick {
+	border-radius: 5px;
+	margin: 15px;
+}
+
+.rf-pick-src-cptn, .rf-pick-tgt-cptn {
+	color: white;
+	background-color: #2e6da4;
+}
+
+.rf-pick-lst {
+	background-color: white;
 }
 
 .rf-pick-sel {
-	width: 100%;
-	background-color: #337AB7;
-	border-width: 1px;
-	border-style: dotted;
-	border-color: #000000;
+    width: 100%;
+    background-color: #337AB7;
+    border-width: 1px;
+    border-style: dotted;
+    border-color: #000000;
+}
+
+.rf-pick-src, .rf-pick-tgt {
+	margin: 5px;
+	height: 120px;
+	border-radius: 5px;
+	border: 2px solid #337AB7;
 }
 
 button[disabled], input[type="reset"][disabled], input[type="submit"][disabled],
-	input[type="button"][disabled] {
-	color: #337AB7;
-	border-color: #cccccc;
-	background-color: #cccccc;
-	background-image:
-		url(org.richfaces.images/buttonDisabledBackgroundImage.png);
-	background-position: top left;
+    input[type="button"][disabled] {
+    color: #337AB7;
+    border-color: #cccccc;
+    background-color: #cccccc;
+    background-image:
+        url(org.richfaces.images/buttonDisabledBackgroundImage.png);
+    background-position: top left;
 }
-
 button:hover, input[type="reset"]:hover, input[type="submit"]:hover,
-	input[type="button"]:hover {
-	background-position: bottom left !important;;
-	background-repeat: repeat-x !important;
-	background-image: none;
+    input[type="button"]:hover {
+    background-position: bottom left !important;;
+    background-repeat: repeat-x !important;
+    background-image: none;
 }
-
 button, input[type="reset"], input[type="submit"], input[type="button"]
-	{
-	border-width: 1px;
-	border-color: #C0C0C0;
-	font-size: 11px;
-	font-family: Arial, Verdana, sans-serif;
-	color: #FFFFFF;
-	background-repeat: repeat-x;
-	background-position: top left;
-	background-color: #337AB7;
-	background-image: none;
-}
-
-.rf-pp-cntr {
-	width: 95% !important;
+    {
+    border-width: 1px;
+    border-color: #C0C0C0;
+    font-size: 11px;
+    font-family: Arial, Verdana, sans-serif;
+    color: #FFFFFF;
+    background-repeat: repeat-x;
+    background-position: top left;
+    background-color: #337AB7;
+    background-image: none;
 }
 </style>
 	</h:head>
-
 	<rich:popupPanel id="TRConfigPanel"
 		onmaskclick="#{rich:component('TRConfigPanel')}.hide()"
 		keepVisualState="true" autosized="true" zindex="2000" top="60">
@@ -82,71 +100,74 @@ button, input[type="reset"], input[type="submit"], input[type="button"]
 			<h:outputText
 				value="#{msg['trustmanager.relyingPartyConfiguration']}" />
 		</f:facet>
-
 		<f:facet name="controls">
 			<h:graphicImage value="/img/close.gif" styleClass="hidelink"
 				style="cursor:pointer"
 				onclick="#{rich:component('TRConfigPanel')}.hide(); return false;" />
 		</f:facet>
-
 		<h:form>
-			<h:panelGrid columns="1" id="RelyingPartyMenu" width="500"
-				style="margin: 0 auto; ">
-				<rich:pickList id="profileConfigurationSelection"
+			<div class="row" id="RelyingPartyMenu"
+				style="margin: 10px; margin-bottom: 0px;">
+				<rich:pickList id="profileConfigurationSelection" var="profile"
 					value="#{relyingPartyAction.profileConfigurations}"
 					listsHeight="150" listWidth="330"
 					sourceCaption="#{msg['trustmanager.availableProfileConfigurations']}"
 					targetCaption="#{msg['trustmanager.selectedProfileConfigurations']}">
-
 					<f:selectItems
 						value="#{relyingPartyAction.availableProfileConfigurations}"
 						var="item" itemValue="#{item}" itemLabel="#{item}" />
 					<f:converter converterId="profileConfigurationConverter" />
-
 					<a4j:ajax event="change" render="ProfileConfigurationConfigMenu" />
-				</rich:pickList>
+					<rich:column>
+						<f:facet name="header">Name</f:facet>
+						#{profile}
+					</rich:column>
 
-				<h:panelGroup id="ProfileConfigurationConfigMenu">
-					<h:panelGroup style="overflow:auto; height: 300px; width: 100%;"
-						layout="block"
-						rendered="#{relyingPartyAction.profileConfigurations.size() > 0}">
+				</rich:pickList>
+				<h:panelGroup id="ProfileConfigurationConfigMenu"
+					style="heihgt: 50%; width: 100%;" layout="block"
+					rendered="#{relyingPartyAction.profileConfigurations.size() > 0}">
+					<b:accordion expanded-panels="panel1,panel3">
+						<b:panel id="panel1" title="SAML 2 SSO Profile" look="primary">
 							<ui:decorate
 								template="/WEB-INF/incl/trustmanager/profileConfiguration/saml2sso.xhtml">
 								<ui:param name="_relyingPartyAction"
 									value="#{relyingPartyAction}" />
 							</ui:decorate>
-						<b:panel title="" look="success" collapsible="false">
+						</b:panel>
+						<b:panel id="panel2" title="SAML 2 Logout Profile" look="primary">
 							<ui:decorate
 								template="/WEB-INF/incl/trustmanager/profileConfiguration/saml2logout.xhtml">
 								<ui:param name="_relyingPartyAction"
 									value="#{relyingPartyAction}" />
 							</ui:decorate>
 						</b:panel>
-						<b:panel title="" look="success" collapsible="false">
+						<b:panel id="panel3" title="SAML 2 Artifact Resolution "
+							look="primary">
 							<ui:decorate
 								template="/WEB-INF/incl/trustmanager/profileConfiguration/saml2ar.xhtml">
 								<ui:param name="_relyingPartyAction"
 									value="#{relyingPartyAction}" />
 							</ui:decorate>
 						</b:panel>
-						<b:panel title="" look="success" collapsible="false">
+						<b:panel id="panel4" title="SAML 2 Attribute Query" look="primary">
 							<ui:decorate
 								template="/WEB-INF/incl/trustmanager/profileConfiguration/saml2aq.xhtml">
 								<ui:param name="_relyingPartyAction"
 									value="#{relyingPartyAction}" />
 							</ui:decorate>
 						</b:panel>
-
-					</h:panelGroup>
+					</b:accordion>
 				</h:panelGroup>
-			</h:panelGrid>
-
-			<div id="relyingPartyUpdate">
+			</div>
+			<div class="row" id="relyingPartyUpdate"
+				style="margin: 10px; margin-top: 0px;">
 				<a4j:commandButton value="#{msg['trustmanager.save']}"
-					action="#{relyingPartyAction.saveFilters}"
+					action="#{relyingPartyAction.saveFilters}" class="btn-primary"
 					oncomplete="#{rich:component('TRConfigPanel')}.hide()"
 					render="RelyingPartyMenu" />
 				<a4j:commandButton value="#{msg['trustmanager.back']}"
+					class="btn-primary"
 					onclick="#{rich:component('TRConfigPanel')}.hide()"
 					immediate="true" />
 			</div>

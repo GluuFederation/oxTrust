@@ -1,81 +1,111 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-    xmlns:f="http://xmlns.jcp.org/jsf/core"
-    xmlns:h="http://xmlns.jcp.org/jsf/html"
-    xmlns:a4j="http://richfaces.org/a4j"
-    xmlns:rich="http://richfaces.org/rich"
-    xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext">
-
-    <h:panelGrid columns="2" id="saml2sso" columnClasses="half,half" width="100%"
-        rendered="#{_relyingPartyAction.isProfileConfigurationSelected('SAML2SSO')}">
-
-        <ui:param name="_profileConfigurationSelected" value="#{_relyingPartyAction.getProfileConfiguration('SAML2SSO')}" />
-
-        <rich:panel id="SAML2SSODescription" bodyClass="inpanelBody">
-            <f:facet name="header">
-                <h:outputText value="#{msg['trustmanager.saml2SSOProfileHelp']}" />
-            </f:facet>
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j" xmlns:b="http://bootsfaces.net/ui"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext">
+	<h:panelGrid columns="2" id="saml2sso" columnClasses="half,half"
+		width="100%"
+		rendered="#{_relyingPartyAction.isProfileConfigurationSelected('SAML2SSO')}">
+		<ui:param name="_profileConfigurationSelected"
+			value="#{_relyingPartyAction.getProfileConfiguration('SAML2SSO')}" />
+		<rich:panel id="SAML2SSODescription" bodyClass="inpanelBody">
+			<f:facet name="header">
+				<h:outputText value="#{msg['trustmanager.saml2SSOProfileHelp']}" />
+			</f:facet>
             #{msg['trustmanager.thisProfileConfiguration']}
         </rich:panel>
-        <rich:panel id="SAML2SSOMenu" bodyClass="inpanelBody">
-            <f:facet name="header">
-                <h:outputText value="#{msg['trustmanager.saml2SSOProfileConfiguration']}" />
-            </f:facet>
-            <h:panelGrid columns="2">
-                <h:outputText value="#{msg['trustmanager.includeAttributeStatement']}" />
-                <h:selectBooleanCheckbox value="#{_profileConfigurationSelected.includeAttributeStatement}" />
-            </h:panelGrid>
-            <h:panelGrid columns="2">
-                <h:outputText value="#{msg['trustmanager.assertionLifetime']} " />
-                <rich:inputNumberSpinner value="#{_profileConfigurationSelected.assertionLifetime}" step="300000" maxValue="2147483647" />
-                <h:outputText value="#{msg['trustmanager.signResponses']} " />
-                <h:selectOneMenu value="#{_profileConfigurationSelected.signResponses}">
-                    <f:selectItem itemLabel="#{msg['trustmanager.never']}" itemValue="never" />
-                    <f:selectItem itemLabel="#{msg['trustmanager.conditional']}" itemValue="conditional" />
-                    <f:selectItem itemLabel="#{msg['trustmanager.always']}" itemValue="always" />
-                </h:selectOneMenu>
-                <h:outputText value="#{msg['trustmanager.signAssertions']} " />
-                <h:selectOneMenu value="#{_profileConfigurationSelected.signAssertions}">
-                    <f:selectItem itemLabel="#{msg['trustmanager.never']}" itemValue="never" />
-                    <f:selectItem itemLabel="#{msg['trustmanager.conditional']}" itemValue="conditional" />
-                    <f:selectItem itemLabel="#{msg['trustmanager.always']}" itemValue="always" />
-                </h:selectOneMenu>
-                <h:outputText value="#{msg['trustmanager.signRequests']}" />
-                <h:selectOneMenu value="#{_profileConfigurationSelected.signRequests}">
-                    <f:selectItem itemLabel="#{msg['trustmanager.never']}" itemValue="never" />
-                    <f:selectItem itemLabel="#{msg['trustmanager.conditional']}" itemValue="conditional" />
-                    <f:selectItem itemLabel="#{msg['trustmanager.always']}" itemValue="always" />
-                </h:selectOneMenu>
-                <h:outputText value="#{msg['trustmanager.encryptAssertions']} " />
-                <h:selectOneMenu value="#{_profileConfigurationSelected.encryptAssertions}">
-                    <f:selectItem itemLabel="#{msg['trustmanager.never']}" itemValue="never" />
-                    <f:selectItem itemLabel="#{msg['trustmanager.conditional']}" itemValue="conditional" />
-                    <f:selectItem itemLabel="#{msg['trustmanager.always']}" itemValue="always" />
-                </h:selectOneMenu>
-                <h:outputText value="#{msg['trustmanager.encryptNameIds']} " />
-                <h:selectOneMenu value="#{_profileConfigurationSelected.encryptNameIds}">
-                    <f:selectItem itemLabel="#{msg['trustmanager.never']}" itemValue="never" />
-                    <f:selectItem itemLabel="#{msg['trustmanager.conditional']}" itemValue="conditional" />
-                    <f:selectItem itemLabel="#{msg['trustmanager.always']}" itemValue="always" />
-                </h:selectOneMenu>
-            </h:panelGrid>
-            <rich:fileUpload id="SAML2SSOWrapperId" fileName="#{_relyingPartyAction.fileWrappers.get('SAML2SSO').fileName}" data="#{_relyingPartyAction.fileWrappers.get('SAML2SSO').stream}"
-                fileSize="#{_relyingPartyAction.fileWrappers.get('SAML2SSO').fileSize}" contentType="#{_relyingPartyAction.fileWrappers.get('SAML2SSO').contentType}" maxlength="100"
-                rendered="#{empty _profileConfigurationSelected.profileConfigurationCertFileName}" immediate="true" style="width: 180px;">
-<!--                <a4j:ajax event="complete" action="#{_relyingPartyAction.showFile()}"/> -->
-            </rich:fileUpload>
-
-            <h:panelGrid>
-                <h:outputText value="#{_profileConfigurationSelected.profileConfigurationCertFileName}"
-                    rendered="#{not empty _profileConfigurationSelected.profileConfigurationCertFileName}" />
-                <a4j:commandLink action="#{_profileConfigurationSelected.setProfileConfigurationCertFileName('')}" limitRender="true" render="SAML2SSOMenu"
-                    rendered="#{not empty _profileConfigurationSelected.profileConfigurationCertFileName}" execute="@this">
-                    <h:graphicImage value="/img/remove.gif" />
-                </a4j:commandLink>
-            </h:panelGrid>
-
-        </rich:panel>
-    </h:panelGrid>
+		<rich:panel id="SAML2SSOMenu" bodyClass="inpanelBody">
+			<f:facet name="header">
+				<h:outputText
+					value="#{msg['trustmanager.saml2SSOProfileConfiguration']}" />
+			</f:facet>
+			<h:panelGrid columns="2">
+				<h:outputText
+					value="#{msg['trustmanager.includeAttributeStatement']}" />
+				<h:selectBooleanCheckbox
+					value="#{_profileConfigurationSelected.includeAttributeStatement}" />
+			</h:panelGrid>
+			<h:panelGrid columns="2">
+				<h:outputText value="#{msg['trustmanager.assertionLifetime']} " />
+				<rich:inputNumberSpinner
+					value="#{_profileConfigurationSelected.assertionLifetime}"
+					step="300000" maxValue="2147483647" />
+				<h:outputText value="#{msg['trustmanager.signResponses']} " />
+				<h:selectOneMenu
+					value="#{_profileConfigurationSelected.signResponses}">
+					<f:selectItem itemLabel="#{msg['trustmanager.never']}"
+						itemValue="never" />
+					<f:selectItem itemLabel="#{msg['trustmanager.conditional']}"
+						itemValue="conditional" />
+					<f:selectItem itemLabel="#{msg['trustmanager.always']}"
+						itemValue="always" />
+				</h:selectOneMenu>
+				<h:outputText value="#{msg['trustmanager.signAssertions']} " />
+				<h:selectOneMenu
+					value="#{_profileConfigurationSelected.signAssertions}">
+					<f:selectItem itemLabel="#{msg['trustmanager.never']}"
+						itemValue="never" />
+					<f:selectItem itemLabel="#{msg['trustmanager.conditional']}"
+						itemValue="conditional" />
+					<f:selectItem itemLabel="#{msg['trustmanager.always']}"
+						itemValue="always" />
+				</h:selectOneMenu>
+				<h:outputText value="#{msg['trustmanager.signRequests']}" />
+				<h:selectOneMenu
+					value="#{_profileConfigurationSelected.signRequests}">
+					<f:selectItem itemLabel="#{msg['trustmanager.never']}"
+						itemValue="never" />
+					<f:selectItem itemLabel="#{msg['trustmanager.conditional']}"
+						itemValue="conditional" />
+					<f:selectItem itemLabel="#{msg['trustmanager.always']}"
+						itemValue="always" />
+				</h:selectOneMenu>
+				<h:outputText value="#{msg['trustmanager.encryptAssertions']} " />
+				<h:selectOneMenu
+					value="#{_profileConfigurationSelected.encryptAssertions}">
+					<f:selectItem itemLabel="#{msg['trustmanager.never']}"
+						itemValue="never" />
+					<f:selectItem itemLabel="#{msg['trustmanager.conditional']}"
+						itemValue="conditional" />
+					<f:selectItem itemLabel="#{msg['trustmanager.always']}"
+						itemValue="always" />
+				</h:selectOneMenu>
+				<h:outputText value="#{msg['trustmanager.encryptNameIds']} " />
+				<h:selectOneMenu
+					value="#{_profileConfigurationSelected.encryptNameIds}">
+					<f:selectItem itemLabel="#{msg['trustmanager.never']}"
+						itemValue="never" />
+					<f:selectItem itemLabel="#{msg['trustmanager.conditional']}"
+						itemValue="conditional" />
+					<f:selectItem itemLabel="#{msg['trustmanager.always']}"
+						itemValue="always" />
+				</h:selectOneMenu>
+			</h:panelGrid>
+			<rich:fileUpload id="SAML2SSOWrapperId"
+				fileName="#{_relyingPartyAction.fileWrappers.get('SAML2SSO').fileName}"
+				data="#{_relyingPartyAction.fileWrappers.get('SAML2SSO').stream}"
+				fileSize="#{_relyingPartyAction.fileWrappers.get('SAML2SSO').fileSize}"
+				contentType="#{_relyingPartyAction.fileWrappers.get('SAML2SSO').contentType}"
+				maxlength="100"
+				rendered="#{empty _profileConfigurationSelected.profileConfigurationCertFileName}"
+				immediate="true" style="width: 180px;">
+			</rich:fileUpload>
+			<h:panelGrid>
+				<h:outputText
+					value="#{_profileConfigurationSelected.profileConfigurationCertFileName}"
+					rendered="#{not empty _profileConfigurationSelected.profileConfigurationCertFileName}" />
+				<a4j:commandLink
+					action="#{_profileConfigurationSelected.setProfileConfigurationCertFileName('')}"
+					limitRender="true" render="SAML2SSOMenu"
+					rendered="#{not empty _profileConfigurationSelected.profileConfigurationCertFileName}"
+					execute="@this">
+					<h:graphicImage value="/img/remove.gif" />
+				</a4j:commandLink>
+			</h:panelGrid>
+		</rich:panel>
+	</h:panelGrid>
 </ui:composition>
