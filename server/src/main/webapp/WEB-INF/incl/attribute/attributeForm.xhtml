@@ -49,7 +49,7 @@
 							</ox:decorate>
 
 							<ox:decorate id="dataType" label="#{msg['attribute.type']}">
-								<h:selectOneMenu styleClass="form-control chooseTypeField"
+								<h:selectOneMenu styleClass="form-control rounded chooseTypeField"
 									value="#{_attribute.dataType}" label="#{msg['attribute.type']}"
 									required="true" id="dataTypeId"
 									rendered="#{_attributeAction.canEdit()}">
@@ -165,7 +165,7 @@
 							<ox:decorate id="description"
 								label="#{msg['attribute.description']}">
 								<h:inputTextarea
-									styleClass="form-control setAttributeDescriptionField"
+									styleClass="form-control rounded setAttributeDescriptionField"
 									value="#{_attribute.description}"
 									label="#{msg['attribute.description']}" rows="3" size="40"
 									maxlength="4000" required="true" id="descriptionId"
@@ -248,7 +248,7 @@
 							</ox:decorate>
 
 							<ox:decorate id="status" label="#{msg['attribute.status']}">
-								<h:selectOneMenu styleClass="form-control statusValue"
+								<h:selectOneMenu styleClass="form-control rounded statusValue"
 									value="#{_attribute.status}" label="#{msg['attribute.status']}"
 									required="true" id="statusId"
 									rendered="#{_attributeAction.canEdit()}">

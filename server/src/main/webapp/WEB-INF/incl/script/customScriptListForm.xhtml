@@ -10,35 +10,37 @@
 	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
 	xmlns:gluufn="http://www.gluu.org/jsf/functions">
 	<h:outputStylesheet>
-        .addConfig {
-            
-            white-space: nowrap;
-            margin-top:5px !important;
-        }
+	addConfig {
+    white-space: nowrap;
+    margin-top: 5px !important;
+}
 
-        .removeConfig {
-            text-align: left;
-            vertical-align: top;
-            margin-top:5px !important;
-        }
-        
-        .rf-tab-hdr-tabline-vis.rf-tab-hdr-tabline-top {
-		    height: 9% !important;
-		    background: none !important;
-		    background-color: transparent !important;
-		    border: none !important;
-		    overflow-x: auto  !important;		    
-		}
-		.rf-tab-hdr-tabline-top{
-		  overflow-x: auto  !important;
-		}
-		#customScriptForm:scriptTypeTabPanelIdheader{
-		 overflow-x: auto  !important;
-		}
+.removeConfig {
+    text-align: left;
+    vertical-align: top;
+    margin-top: 5px !important;
+}
 
-    </h:outputStylesheet>
+.rf-tab-hdr-tabline-vis.rf-tab-hdr-tabline-top {
+    height: 9% !important;
+    background: none !important;
+    background-color: transparent !important;
+    border: none !important;
+    overflow-x: auto !important;
+}
+
+.rf-tab-hdr-tabline-top {
+    overflow-x: auto !important;
+}
+	</h:outputStylesheet>
 	<h:head>
 		<style type="text/css">
+.
+
+#customScriptForm:scriptTypeTabPanelIdheader {
+	overflow-x: auto !important;
+}
+
 .rf-tab-hdr-tabline-top {
 	overflow-x: auto !important;
 }
@@ -125,8 +127,10 @@
 															<ox:decorate label="SAML ACRS" leftClass="col-sm-3"
 																rendered="#{_action.isPersonScript(_customScript)}"
 																rightClass="col-sm-8">
-																<h:selectManyListbox styleClass="samlAcrs" value="#{_customScript.aliases}" id="SamlACRSId">
-																	<f:selectItems value="#{_action.getAvailableAcrs(_customScript.name)}" />
+																<h:selectManyListbox styleClass="samlAcrs"
+																	value="#{_customScript.aliases}" id="SamlACRSId">
+																	<f:selectItems
+																		value="#{_action.getAvailableAcrs(_customScript.name)}" />
 																</h:selectManyListbox>
 															</ox:decorate>
 														</div>
