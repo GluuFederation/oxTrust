@@ -559,7 +559,7 @@
 
 						<ox:decorate id="clientsecretexpiry"
 							rendered="#{cc.attrs._client.clientSecretExpiresAt != null || !cc.attrs._clientAction.update}"
-							label="#{msg['clientForm.clientSecretExpires']}">
+							label="#{msg['clientForm.expirationDate']}">
 							<h:outputText value="#{cc.attrs._client.clientSecretExpiresAt}" />
 						</ox:decorate>
 
