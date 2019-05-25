@@ -1,4 +1,3 @@
-
 package org.gluu.oxtrust.action;
 
 import java.io.Serializable;
@@ -10,7 +9,18 @@ import javax.enterprise.context.ConversationScoped;
 import javax.faces.application.FacesMessage;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLContext;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.ssl.SSLContextBuilder;
+import org.apache.http.util.EntityUtils;
 import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.config.oxtrust.AttributeResolverConfiguration;
 import org.gluu.config.oxtrust.LdapOxTrustConfiguration;
@@ -116,7 +126,24 @@ public class ConfigureNameIdAction implements Serializable {
 			List<GluuSAMLTrustRelationship> trustRelationships = trustService.getAllActiveTrustRelationships();    
 			if (!shibboleth3ConfService.generateConfigurationFiles(trustRelationships)) {
 				log.error("Failed to update Shibboleth v3 configuration");
-				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update Shibboleth v3 configuration");			}
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update Shibboleth v3 configuration");			
+			}
+			else {
+				try {
+					SSLContext sslContext = SSLContextBuilder.create().loadTrustMaterial(new TrustSelfSignedStrategy()).build();
+					HostnameVerifier allowAllHosts = new NoopHostnameVerifier();
+					SSLConnectionSocketFactory connectionFactory = new SSLConnectionSocketFactory(sslContext, allowAllHosts);
+					HttpClient client = HttpClients.custom().setSSLSocketFactory(connectionFactory).build();
+					HttpGet request = new HttpGet("https://localhost/idp/profile/admin/reload-service?id=shibboleth.NameIdentifierGenerationService");
+					request.addHeader("User-Agent",  "Mozilla/5.0");
+					HttpResponse response = client.execute(request);
+					log.info(EntityUtils.toString(response.getEntity(), "UTF-8"));
+				}
+				catch (Exception e) {
+					e.printStackTrace();
+					log.error("error refreshing nameid setting (kindly restart services manually)", e);
+				}
+			}
 		}
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
