@@ -223,7 +223,7 @@ public class UpdateUmaScopeAction implements Serializable {
 			facesMessages.add(FacesMessage.SEVERITY_INFO,
 					"UMA resource '#{updateScopeDescriptionAction.scopeDescription.displayName}' updated successfully");
 
-			return OxTrustConstants.RESULT_SUCCESS;
+			return OxTrustConstants.RESULT_UPDATE;
 		} else {
 			// Check if scope description with this name already exist
 			Scope exampleScopeDescription = new Scope();
@@ -254,8 +254,7 @@ public class UpdateUmaScopeAction implements Serializable {
 
 			this.update = true;
 			this.scopeInum = inum;
-
-			return OxTrustConstants.RESULT_UPDATE;
+			return OxTrustConstants.RESULT_SUCCESS;
 		}
 	}
 

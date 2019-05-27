@@ -1,41 +1,47 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<faces-config xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.2" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
+<faces-config xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.2"
+	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
 
-  <navigation-rule>
-    <from-view-id>/uma/scope/modifyScopeDescription.xhtml</from-view-id>
+	<navigation-rule>
+		<from-view-id>/uma/scope/modifyScopeDescription.xhtml</from-view-id>
 
-    <navigation-case>
-      <from-action>#{updateScopeDescriptionAction.modify}</from-action>
-      <from-outcome>failure</from-outcome>
-      <to-view-id>/uma/scope.xhtml</to-view-id>
-      <redirect/>
-    </navigation-case>
+		<navigation-case>
+			<from-action>#{updateScopeDescriptionAction.modify}</from-action>
+			<from-outcome>failure</from-outcome>
+			<to-view-id>/uma/scope.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
 
-    <navigation-case>
-      <from-action>#{updateScopeDescriptionAction.cancel}</from-action>
-      <from-outcome>success</from-outcome>
-      <to-view-id>/uma/scope.xhtml</to-view-id>
-      <redirect/>
-    </navigation-case>
+		<navigation-case>
+			<from-action>#{updateScopeDescriptionAction.cancel}</from-action>
+			<from-outcome>success</from-outcome>
+			<to-view-id>/uma/scope.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
 
-    <navigation-case>
-      <from-action>#{cc.attrs.deleteMethod}</from-action>
-      <from-outcome>success</from-outcome>
-      <to-view-id>/uma/scope.xhtml</to-view-id>
-      <redirect/>
-    </navigation-case>
-
-    <navigation-case>
-      <from-action>#{updateScopeDescriptionAction.save}</from-action>
-      <from-outcome>update</from-outcome>
-      <to-view-id>/uma/scope/modifyScopeDescription.xhtml</to-view-id>
-      <redirect>
-		<view-param>
-			<name>scope</name>
-			<value>#{updateScopeDescriptionAction.scopeInum}</value>
-		</view-param>
-      </redirect>
-    </navigation-case>
-  </navigation-rule>
-
+		<navigation-case>
+			<from-action>#{cc.attrs.deleteMethod}</from-action>
+			<from-outcome>success</from-outcome>
+			<to-view-id>/uma/scope.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-action>#{updateScopeDescriptionAction.save}</from-action>
+			<from-outcome>success</from-outcome>
+			<to-view-id>/uma/scope.xhtml</to-view-id>
+			<redirect />
+		</navigation-case>
+		<navigation-case>
+			<from-action>#{updateScopeDescriptionAction.save}</from-action>
+			<from-outcome>update</from-outcome>
+			<to-view-id>/uma/scope/modifyScopeDescription.xhtml</to-view-id>
+			<redirect>
+				<view-param>
+					<name>scope</name>
+					<value>#{updateScopeDescriptionAction.scopeInum}</value>
+				</view-param>
+			</redirect>
+		</navigation-case>
+	</navigation-rule>
 </faces-config>

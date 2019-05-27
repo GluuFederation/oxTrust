@@ -95,6 +95,8 @@ public class UpdatePersonAction implements Serializable {
 
 	private static final String MAIL = "mail";
 
+	private String defaultBirthDate = "13.06.2000";
+
 	private static final long serialVersionUID = -3242167044333943689L;
 
 	@Inject
@@ -1001,6 +1003,14 @@ public class UpdatePersonAction implements Serializable {
 		} else {
 			return "";
 		}
+	}
+
+	public String getDefaultBirthDate() {
+		return defaultBirthDate;
+	}
+
+	public void setDefaultBirthDate(String defaultBirthDate) {
+		this.defaultBirthDate = defaultBirthDate;
 	}
 
 }

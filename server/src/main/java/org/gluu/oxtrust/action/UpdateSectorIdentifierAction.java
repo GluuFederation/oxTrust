@@ -155,7 +155,6 @@ public class UpdateSectorIdentifierAction implements Serializable {
 			this.clientDisplayNameEntries = loadClientDisplayNameEntries();
 		} catch (Exception ex) {
 			log.error("Failed to load person display names", ex);
-
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 
@@ -277,14 +276,16 @@ public class UpdateSectorIdentifierAction implements Serializable {
 
 	private void removeDeletedClients() {
 		List<String> dns = this.sectorIdentifier.getClientIds();
+		List<String> result = new ArrayList<>(dns);
 		if (dns != null && dns.size() > 0) {
 			for (String dn : dns) {
 				OxAuthClient client = clientService.getClientByDn(dn);
 				if (client == null) {
-					this.sectorIdentifier.getClientIds().remove(dn);
+					result.remove(dn);
 				}
 			}
 		}
+		this.sectorIdentifier.setClientIds(result);
 
 	}
 

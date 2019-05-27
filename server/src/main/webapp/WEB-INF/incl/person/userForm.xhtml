@@ -243,7 +243,7 @@
 												mode="toggle-icon"
 												rendered="#{(_custAttr.adminCanEdit or _mustEnter) and 
 			                                                            (_custAttr.metadata.displayName eq 'Birthdate')}"
-												value="#{_custAttr.values[_valueIdx]}" format="DD.MM.YYYY">
+												value="#{_custAttr.values[_valueIdx] ne ' ' ? _custAttr.values[_valueIdx] : updatePersonAction.defaultBirthDate }" format="DD.MM.YYYY">
 												<f:converter
 													converterId="org.gluu.jsf2.converter.UserDateConverter" />
 											</b:dateTimePicker>

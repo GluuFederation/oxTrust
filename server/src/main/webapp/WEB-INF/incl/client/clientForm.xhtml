@@ -521,8 +521,8 @@
 									</div>
 									<div class="row" style="margin-left: 5px; margin-right: 5px;">
 										<div class="col-sm-6 col-lg-6" style="padding: 0px;">
-											<ox:decorate id="claimRedirectUrls"
-												label="#{msg['clientForm.claimRedirectURI']}">
+											<b:panel title="#{msg['clientForm.claimRedirectURI']}"
+												id="claimRedirectUrls" look="primary">
 												<h:panelGroup id="selectedClaimRedirectURIIsId">
 													<h:panelGroup columns="1" width="100%" border="0"
 														cellpadding="0" cellspacing="0">
@@ -556,7 +556,7 @@
 															execute="@this" eventsQueue="clientQueue" />
 													</h:panelGroup>
 												</h:panelGroup>
-											</ox:decorate>
+											</b:panel>
 											<ox:decorate id="claims" label="#{msg['clientForm.claims']}"
 												rendered="#{_clientAction.claims.size() > 0 }"
 												render="#{_clientAction.claims.size() > 0}">
@@ -585,9 +585,8 @@
 													</h:panelGroup>
 												</h:panelGroup>
 											</ox:decorate>
-
-											<ox:decorate id="requestUris"
-												label="#{msg['clientForm.requestURI']}">
+											<b:panel title="#{msg['clientForm.requestURI']}"
+												id="requestUris" look="primary">
 												<h:panelGroup id="selectedRequestUrisId">
 													<h:panelGroup columns="1" width="100%" border="0"
 														cellpadding="0" cellspacing="0">
@@ -620,9 +619,9 @@
 															execute="@this" eventsQueue="clientQueue" />
 													</h:panelGroup>
 												</h:panelGroup>
-											</ox:decorate>
-											<ox:decorate id="authorizedOrigins"
-												label="#{msg['clientForm.authorizedOrigin']}">
+											</b:panel>
+											<b:panel title="#{msg['clientForm.authorizedOrigin']}"
+												id="authorizedOrigins" look="primary">
 												<h:panelGroup id="selectedAuthorizedOriginsId">
 													<h:panelGroup columns="1" width="100%" border="0"
 														cellpadding="0" cellspacing="0">
@@ -655,12 +654,11 @@
 															execute="@this" eventsQueue="clientQueue" />
 													</h:panelGroup>
 												</h:panelGroup>
-											</ox:decorate>
-
+											</b:panel>
 										</div>
-										<div class="col-sm-6 col-lg-6" style="padding: 0px;">
-											<ox:decorate id="contacts"
-												label="#{msg['clientForm.contacts']}">
+										<div class="col-sm-6 col-lg-6" style="padding: 0px; padding-left: 5px;">
+											<b:panel title="#{msg['clientForm.contacts']}" id="contacts"
+												look="primary">
 												<h:panelGroup id="selectedContactsId">
 													<h:panelGroup columns="1" width="100%" border="0"
 														cellpadding="0" cellspacing="0">
@@ -694,9 +692,9 @@
 															execute="@this" eventsQueue="clientQueue" />
 													</h:panelGroup>
 												</h:panelGroup>
-											</ox:decorate>
-											<ox:decorate id="clientLogoutUrls"
-												label="#{msg['clientForm.frontChannelLogoutURI']}">
+											</b:panel>
+											<b:panel title="#{msg['clientForm.frontChannelLogoutURI']}"
+												id="clientLogoutUrls" look="primary">
 												<h:panelGroup id="selectedClientUrisId">
 													<h:panelGroup columns="1" width="100%" border="0"
 														cellpadding="0" cellspacing="0">
@@ -729,9 +727,10 @@
 															execute="@this" eventsQueue="clientQueue" />
 													</h:panelGroup>
 												</h:panelGroup>
-											</ox:decorate>
-											<ox:decorate id="defaultAcrButton"
-												label="#{msg['clientForm.defaultRequestedAuthenticationContextClass']}">
+											</b:panel>
+											<b:panel
+												title="#{msg['clientForm.defaultRequestedAuthenticationContextClass']}"
+												id="defaultAcrButton" look="primary">
 												<h:panelGroup id="selectedCustomScriptAcrsId">
 													<h:panelGroup>
 														<a4j:repeat value="#{_clientAction.customScripts}"
@@ -762,7 +761,7 @@
 															execute="@this" eventsQueue="clientQueue" />
 													</h:panelGroup>
 												</h:panelGroup>
-											</ox:decorate>
+											</b:panel>
 										</div>
 										<div class="row" style="margin-left: 5px; margin-right: 5px;">
 											<div class="col-sm-12 col-lg-12" style="padding: 0px;">
