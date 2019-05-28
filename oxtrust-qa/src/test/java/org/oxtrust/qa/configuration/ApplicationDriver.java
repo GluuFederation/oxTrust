@@ -22,6 +22,7 @@ public class ApplicationDriver {
 	private static final String GLUU_USERPWD = "GLUU_USERPWD";
 	private static final String QA_BROWSER = "QA_BROWSER";
 	private static final String QA_OS = "QA_OS";
+	private static final String QA_MODE = "HEADLESS";
 	private static WebDriver driver;
 	private static ChromeDriverService service;
 	private static Settings settings;
@@ -32,7 +33,7 @@ public class ApplicationDriver {
 			if (driver == null) {
 				readConfiguration();
 				initDriverOptions();
-				options.setHeadless(true);
+				options.setHeadless(settings.isHeadless());
 				if (settings.getOs().equalsIgnoreCase(LINUX) && settings.getBrowser().startsWith(CHROME)) {
 					System.setProperty("webdriver.chrome.driver", "/usr/bin/chromedriver");
 					startService();
@@ -107,7 +108,8 @@ public class ApplicationDriver {
 			input = new FileInputStream(getResourceFile("config.properties").getAbsolutePath());
 			prop.load(input);
 			settings = new Settings(prop.getProperty(GLUU_SERVER_URL), prop.getProperty(GLUU_USERNAME),
-					prop.getProperty(GLUU_USERPWD), prop.getProperty(QA_BROWSER), prop.getProperty(QA_OS));
+					prop.getProperty(GLUU_USERPWD), prop.getProperty(QA_BROWSER), prop.getProperty(QA_OS),
+					Boolean.valueOf(prop.getProperty(QA_MODE)));
 			AbstractPage.settings = settings;
 			System.out.println("*********************************************************************");
 			System.out.println(settings.toString());

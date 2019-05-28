@@ -347,16 +347,17 @@ public class ManageCustomScriptAction
 	private Set<String> cleanAcrs(String name) {
 		Set<String> result = new HashSet<>();
 		result.addAll(allAcrs);
-		
 		List<CustomScript> scripts = customScriptsByTypes.get(CustomScriptType.PERSON_AUTHENTICATION);
 		for (CustomScript customScript : scripts) {
 			if (null == customScript.getAliases())
 				customScript.setAliases(new ArrayList<>());
-			if (!customScript.getName().equals(name)) {
-				List<String> existing = customScript.getAliases();
-				if (existing != null && existing.size() > 0) {
-					for (String value : existing) {
-						result.remove(value);
+			if (customScript.getName() != null) {
+				if (!customScript.getName().equals(name)) {
+					List<String> existing = customScript.getAliases();
+					if (existing != null && existing.size() > 0) {
+						for (String value : existing) {
+							result.remove(value);
+						}
 					}
 				}
 			}

@@ -1,6 +1,5 @@
 package org.oxtrust.qa.configuration;
 
-
 public class Settings {
 
 	private String url;
@@ -8,14 +7,16 @@ public class Settings {
 	private String password;
 	private String browser;
 	private String os;
+	private boolean isHeadless = false;
 
-	public Settings(String url, String userName, String password, String browser, String os) {
+	public Settings(String url, String userName, String password, String browser, String os, boolean headless) {
 		super();
 		this.url = url;
 		this.userName = userName;
 		this.password = password;
 		this.browser = browser;
 		this.os = os;
+		this.setHeadless(headless);
 	}
 
 	public String getUrl() {
@@ -46,5 +47,13 @@ public class Settings {
 	public String toString() {
 		return "QA running on " + os + " operating system using " + browser + " browser tagerting Gluu server with URL "
 				+ url + "\n Will login as user: " + userName + " with password: " + password;
+	}
+
+	public boolean isHeadless() {
+		return isHeadless;
+	}
+
+	public void setHeadless(boolean isHeadless) {
+		this.isHeadless = isHeadless;
 	}
 }
