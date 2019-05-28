@@ -63,48 +63,43 @@
 							</ox:decorate>
 						</h:form>
 						<div class="row">
-							<div class="box box-primary" style="width: 100%;">
-								<div class="box-header">
-									<h3 class="box-title">#{msg['client.searchResults']}</h3>
-								</div>
-								<div class="box-body">
-									<div class="table-responsive" style="overflow: auto">
-										<h:form id="clientsFormId">
-											<ui:fragment
-												rendered="#{searchClientAction.clientList.size() eq 0}">
+							<div class="box-body">
+								<div class="table-responsive" style="overflow: auto">
+									<h:form id="clientsFormId">
+										<ui:fragment
+											rendered="#{searchClientAction.clientList.size() eq 0}">
 
-												<h:outputText value="#{msg['client.noSearchResultFound']}" />
-											</ui:fragment>
-											<b:dataTable id="clientsListId" style="text-align:center;"
-												rendered="#{searchClientAction.clientList.size() gt 0}"
-												value="#{searchClientAction.clientList}" var="clt"
-												print="true" excel="true" csv="true" pdf="true"
-												select="true" responsive="true">
-												<b:dataTableColumn label="#{msg['client.displayName']}"
-													order="desc">
-													<h:link includeViewParams="false"
-														outcome="/client/updateClient" onclick="clearOIDC();"
-														value="#{clt.displayName}">
-														<f:param name="inum" value="#{clt.inum}" />
-													</h:link>
-												</b:dataTableColumn>
-												<b:dataTableColumn value="#{clt.inum}"
-													label="#{msg['client.inum']}" />
-												<b:dataTableColumn label="#{msg['client.applicationType']}">
-													<b:label text="#{clt.oxAuthAppType}" severity="primary" />
-												</b:dataTableColumn>
-												<b:dataTableColumn label="#{msg['passport.deleteProvider']}">
-													<h:selectBooleanCheckbox id="selectId"
-														onchange="displayButton();" value="#{clt.selected}" />
-												</b:dataTableColumn>
-											</b:dataTable>
-											<a4j:commandButton ajaxSingle="true" id="deleteId"
-												eventsQueue="clientQueue"
-												onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();"
-												styleClass="btn btn-primary DeleteBulkClients"
-												style="float:left;margin-left :3px;" value="Delete" />
-										</h:form>
-									</div>
+											<h:outputText value="#{msg['client.noSearchResultFound']}" />
+										</ui:fragment>
+										<b:dataTable id="clientsListId" style="text-align:center;"
+											rendered="#{searchClientAction.clientList.size() gt 0}"
+											value="#{searchClientAction.clientList}" var="clt"
+											print="true" excel="true" csv="true" pdf="true" select="true"
+											responsive="true">
+											<b:dataTableColumn label="#{msg['client.displayName']}"
+												order="desc">
+												<h:link includeViewParams="false"
+													outcome="/client/updateClient" onclick="clearOIDC();"
+													value="#{clt.displayName}">
+													<f:param name="inum" value="#{clt.inum}" />
+												</h:link>
+											</b:dataTableColumn>
+											<b:dataTableColumn value="#{clt.inum}"
+												label="#{msg['client.inum']}" />
+											<b:dataTableColumn label="#{msg['client.applicationType']}">
+												<b:label text="#{clt.oxAuthAppType}" severity="primary" />
+											</b:dataTableColumn>
+											<b:dataTableColumn label="#{msg['passport.deleteProvider']}">
+												<h:selectBooleanCheckbox id="selectId"
+													onchange="displayButton();" value="#{clt.selected}" />
+											</b:dataTableColumn>
+										</b:dataTable>
+										<a4j:commandButton ajaxSingle="true" id="deleteId"
+											eventsQueue="clientQueue"
+											onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();"
+											styleClass="btn btn-primary DeleteBulkClients"
+											style="float:left;margin-left :3px;" value="Delete" />
+									</h:form>
 								</div>
 							</div>
 						</div>

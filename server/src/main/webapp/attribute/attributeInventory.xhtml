@@ -3,11 +3,13 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:b="http://bootsfaces.net/ui"
 	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	template="/WEB-INF/incl/layout/newtemplate.xhtml">
 	<f:metadata>
-	    <f:viewAction action="#{permissionService.requestPermission('attribute', 'access')}" />
+		<f:viewAction
+			action="#{permissionService.requestPermission('attribute', 'access')}" />
 		<f:viewAction action="#{conversationService.initConversation}" />
 		<f:viewAction action="#{attributeInventoryAction.start}"
 			if="#{attributeInventoryAction.attributeList == null}"
@@ -96,8 +98,7 @@
 														<div id="update" runat="server" visible="false">
 															<!-- general form elements -->
 															<div class="box box-primary" style="width: 132%;">
-																<div class="box-header">
-																</div>
+																<div class="box-header"></div>
 																<!-- /.box-header -->
 																<h:form>
 																	<div class="row">
@@ -178,8 +179,12 @@
 																					<div style="text-align: center;">
 																						#{msg['attribute.status']}</div>
 																				</f:facet>
-																				<h:outputText class="col-xs-1"
-																					value="#{attr.status}" />
+																				<b:label 
+																					rendered="#{attr.status eq 'ACTIVE'}"
+																					text="#{attr.status}" severity="primary" />
+																				<b:label 
+																					rendered="#{attr.status eq 'INACTIVE'}"
+																					text="#{attr.status}" severity="danger" />
 																			</h:column>
 																		</h:dataTable>
 																	</div>

@@ -63,41 +63,34 @@
 										</div>
 									</ox:decorate>
 								</h:form>
-								<richext:spacer height="16" />
 								<div class="row" style="width: 100%;">
-									<div class="box box-primary"
-										style="width: 100%; margin-left: 22px;">
-										<div class="box-header">
-											<h3 class="box-title">#{msg['scope.searchResults']}</h3>
-										</div>
-										<div class="box-body">
-											<h:form id="scopesFormId">
-												<b:dataTable id="scopesListId"
-													rendered="#{searchScopeAction.scopeList.size() gt 0}"
-													style="text-align:center;" responsive="true"
-													value="#{searchScopeAction.scopeList}" var="clt"
-													print="true" excel="true" csv="true" pdf="true"
-													select="true">
-													<b:dataTableColumn label="#{msg['scope.inum']}">
-														<h:link includeViewParams="false"
-															outcome="/scope/updateScope" value="#{clt.inum}">
-															<f:param name="inum" value="#{clt.inum}" />
-														</h:link>
-													</b:dataTableColumn>
-													<b:dataTableColumn label="#{msg['scope.displayName']}"
-														value="#{clt.id eq null ? clt.displayName : clt.id}">
-													</b:dataTableColumn>
-													<b:dataTableColumn value="#{clt.description}"
-														label="#{msg['scope.description']}" />
-													<b:dataTableColumn label="#{msg['scope.default']}">
-														<b:label rendered="#{clt.isDefaultScope() eq 'true'}"
-															text="#{clt.isDefaultScope()}" severity="primary" />
-														<b:label rendered="#{clt.isDefaultScope() eq 'false'}"
-															text="#{clt.isDefaultScope()}" severity="info" />
-													</b:dataTableColumn>
-												</b:dataTable>
-											</h:form>
-										</div>
+									<div class="box-body">
+										<h:form id="scopesFormId">
+											<b:dataTable id="scopesListId"
+												rendered="#{searchScopeAction.scopeList.size() gt 0}"
+												style="text-align:center;" responsive="true"
+												value="#{searchScopeAction.scopeList}" var="clt"
+												print="true" excel="true" csv="true" pdf="true"
+												select="true">
+												<b:dataTableColumn label="#{msg['scope.inum']}">
+													<h:link includeViewParams="false"
+														outcome="/scope/updateScope" value="#{clt.inum}">
+														<f:param name="inum" value="#{clt.inum}" />
+													</h:link>
+												</b:dataTableColumn>
+												<b:dataTableColumn label="#{msg['scope.displayName']}"
+													value="#{clt.id eq null ? clt.displayName : clt.id}">
+												</b:dataTableColumn>
+												<b:dataTableColumn value="#{clt.description}"
+													label="#{msg['scope.description']}" />
+												<b:dataTableColumn label="#{msg['scope.default']}">
+													<b:label rendered="#{clt.isDefaultScope() eq 'true'}"
+														text="#{clt.isDefaultScope()}" severity="primary" />
+													<b:label rendered="#{clt.isDefaultScope() eq 'false'}"
+														text="#{clt.isDefaultScope()}" severity="info" />
+												</b:dataTableColumn>
+											</b:dataTable>
+										</h:form>
 									</div>
 								</div>
 							</h:panelGroup>

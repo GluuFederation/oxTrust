@@ -8,11 +8,7 @@
 	<h:form id="leftMenuForm">
 		<h:panelGroup layout="block" id="leftMenuPanel">
 			<aside class="main-sidebar">
-				<!-- sidebar: style can be found in sidebar.less -->
 				<section class="sidebar">
-					<!-- /.search form -->
-					<!-- sidebar menu: : style can be found in sidebar.less -->
-
 					<ul class="sidebar-menu">
 						<ul class="logoSubMenu" style="display: none;">
 							<li class="treeview" id="menu2"><a
@@ -513,7 +509,7 @@
 								$('#menuSAML').addClass('active');
 								$('#subMenuLinkSAML2').addClass('active');
 							}
-							if (window.location.href.indexOf("saml/nameid") != -1) {
+							if (window.location.href.indexOf("saml/configureNameId") != -1) {
 								$('#subMenuSAML').css('display', 'block');
 								$('#menuSAML').addClass('active');
 								$('#subMenuLinkSAML3').addClass('active');
@@ -596,21 +592,6 @@
 							}
 
 							//Menu Highlights - UMA
-
-							/*if (window.location.href.indexOf("uma/inventory?scopes") != -1 || window.location.href.indexOf("uma/scope/add") != -1) {
-								$('#subMenuUMA').css('display', 'block');
-								$('#subMenuLinkUMA1').addClass('active');
-								//$('#subMenuLinkUMA1').addClass('active');
-							}
-							
-							
-							if (window.location.href.indexOf("inventory?resources")!= -1 || window.location.href.indexOf("uma/resource/add") != -1 || window.location.href.indexOf("uma/resource/modify") != -1) {
-								$('#subMenuUMA').css('display', 'block');
-								$('#subMenuLinkUMA2').addClass('active');
-								//$('#subMenuLinkUMA2').addClass('active');
-							}*/
-
-							//Menu Highlights - UMA
 							if (window.location.href.indexOf("uma/scope") != -1
 									|| window.location.href
 											.indexOf("uma/scope/add") != -1) {
@@ -655,16 +636,10 @@
 								$('#subMenuLinkUsers3').addClass('active');
 							}
 
-							if (window.location.href.indexOf("person/import") != -1) {
+							if (window.location.href.indexOf("person/personImport") != -1) {
 								$('#subMenuUsers').css('display', 'block');
 								$('#menuUsers').addClass('active');
 								$('#subMenuLinkUsers4').addClass('active');
-							}
-
-							if (window.location.href.indexOf("person/import") != -1) {
-								//                         $('#subMenuUsers').css('display', 'block');
-								//                         $('#menuUsers').addClass('active');
-								//                         $('#subMenuLinkUsers4').addClass('active');
 							}
 
 							//Menu Highlights - Personal
