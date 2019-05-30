@@ -3,6 +3,7 @@ package org.oxtrust.qa.steps;
 import org.oxtrust.qa.pages.login.HomePage;
 import org.oxtrust.qa.pages.passport.PassportPage;
 
+import cucumber.api.java.After;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 
@@ -35,6 +36,11 @@ public class PassportIdpSteps extends BaseSteps {
 	@Then("^I save the idp config$")
 	public void save() {
 		passportPage.save();
+	}
+	
+	@After
+	public void clear() {
+		homePage.clear();
 	}
 
 }

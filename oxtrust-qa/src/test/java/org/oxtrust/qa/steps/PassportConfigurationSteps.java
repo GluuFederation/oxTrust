@@ -3,6 +3,7 @@ package org.oxtrust.qa.steps;
 import org.oxtrust.qa.pages.login.HomePage;
 import org.oxtrust.qa.pages.passport.PassportPage;
 
+import cucumber.api.java.After;
 import cucumber.api.java.en.And;
 
 public class PassportConfigurationSteps extends BaseSteps {
@@ -25,6 +26,11 @@ public class PassportConfigurationSteps extends BaseSteps {
 	@And("^I update the config$")
 	public void setUpdate() {
 		passportPage.saveConfig();
+	}
+	
+	@After
+	public void clear() {
+		homePage.clear();
 	}
 
 }
