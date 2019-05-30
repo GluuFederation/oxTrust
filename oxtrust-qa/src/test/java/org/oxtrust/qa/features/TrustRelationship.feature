@@ -1,6 +1,6 @@
-Feature: Add trust reletionship 
+Feature: Trust relationship 
 @gluuQA
-Scenario: Add trust reletionship
+Scenario: Add trust relationship
 	When 	I sign in as administrator 
 	Then 	I should see gluu home page 
 	When 	I go to tr add page
@@ -15,11 +15,18 @@ Scenario: Add trust reletionship
 	When 	I go to tr list page
 	And 	I search for tr named 'QaTRAddDN'
 	Then 	I should see a tr with display name 'QaTRAddDN' in the list
-	When 	I delete the tr named 'QaTRAddDN' 
-	And 	I go to tr list page 
-	And 	I search for tr named 'QaTRAddDN' 
-	Then 	I should not see a tr with display name 'QaTRAddDN' in the list 
-	And 	I sign out
+	When    I start the edition of tr named 'QaTRAddDN' 
+    And     I edit the display name to 'QaTRUpdatedDN' 
+    And     I edit the description to 'QaTRUpdatedDescription'
+    And     I update the current tr
+    And     I go to tr list page
+    And     I search for tr named 'QaTRUpdatedDN'
+    Then    I should see a tr with display name 'QaTRUpdatedDN' in the list
+	When    I delete the tr named 'QaTRUpdatedDN' 
+    And     I go to tr list page 
+    And     I search for tr named 'QaTRUpdatedDN' 
+    Then    I should not see a tr with display name 'QaTRUpdatedDN' in the list 
+    And     I sign out
 	
 @gluuQAPending1
 Scenario: Add federation trust reletionship

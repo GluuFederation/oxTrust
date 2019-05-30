@@ -5,7 +5,6 @@ Scenario: List uma scopes
 	Then 	I should see gluu home page 
 	When 	I go to uma scope list page
 	Then 	I should see a uma scope named 'SCIM Access'
-	And 	I should see a uma scope named 'Passport Access'
 	And 	I should see a uma scope named 'API Read Access'
 	And 	I should see a uma scope named 'API Write Access'
 	And 	I should see a uma scope named 'UMA Protection'

@@ -60,7 +60,7 @@ public class Fido2DeviceService implements Serializable {
 			}
 			return results;
 		} catch (Exception e) {
-			log.error("Error getting Fido2 devices", e);
+			log.debug("Error getting Fido2 devices", e);
 			return new ArrayList<>();
 		}
 	}

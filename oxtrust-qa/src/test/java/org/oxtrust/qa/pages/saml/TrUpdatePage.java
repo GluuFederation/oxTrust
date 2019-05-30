@@ -11,7 +11,7 @@ public class TrUpdatePage extends TrAddPage {
 	public void update() {
 		WebElement footer = webDriver.findElement(By.id("updateButtons"));
 		footer.findElements(By.tagName("input")).get(0).click();
-		fluentWait(ONE_SEC);
+		fluentWait(SMALL);
 	}
 
 	public void delete() {
