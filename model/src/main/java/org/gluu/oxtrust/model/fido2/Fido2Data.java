@@ -1,8 +1,11 @@
 package org.gluu.oxtrust.model.fido2;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.io.Serializable;
 import java.util.Date;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Fido2Data implements Serializable {
 
     private static final long serialVersionUID = -3073224222148129435L;
