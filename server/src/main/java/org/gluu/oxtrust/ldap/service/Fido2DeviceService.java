@@ -48,7 +48,7 @@ public class Fido2DeviceService implements Serializable {
 		if (!StringHelper.isEmpty(oxid) && !StringHelper.isEmpty(personInum)) {
 			return String.format("oxId=%s,ou=fido2_register,inum=%s,ou=people,%s", oxid, personInum, orgDn);
 		}
-		return "";
+		return String.format("ou=people,%s", orgDn);
 	}
 
 	public List<GluuFido2Device> findAllFido2Devices(GluuCustomPerson person) {
