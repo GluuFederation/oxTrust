@@ -6,9 +6,11 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang.StringUtils;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuFido2Device;
 import org.gluu.persist.PersistenceEntryManager;
+import org.gluu.search.filter.Filter;
 import org.gluu.util.StringHelper;
 import org.slf4j.Logger;
 
@@ -67,15 +69,19 @@ public class Fido2DeviceService implements Serializable {
 
     public GluuFido2Device getFido2DeviceById(String userId, String id) {
 
-        GluuFido2Device f2d = new GluuFido2Device();
+        GluuFido2Device f2d = null;
         try {
-            f2d.setBaseDn(getDnForFido2Device(id, userId));
-
-            return ldapEntryManager.find(f2d.getClass(), f2d);
+            String dn = getDnForFido2Device(id, userId);
+            if (StringUtils.isNotEmpty(userId)) {
+                f2d = ldapEntryManager.find(GluuFido2Device.class, dn);
+            } else {
+                Filter filter = Filter.createEqualityFilter("oxId", id);
+                f2d = ldapEntryManager.findEntries(dn, GluuFido2Device.class, filter).get(0);
+            }
         } catch (Exception e) {
             log.error("Failed to find Fido 2 device with id " + id, e);
-            return null;
         }
+        return f2d;
 
     }
 
