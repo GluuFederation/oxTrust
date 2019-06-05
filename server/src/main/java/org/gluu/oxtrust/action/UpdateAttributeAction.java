@@ -35,6 +35,7 @@ import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.OxTrustAuditService;
 import org.gluu.oxtrust.ldap.service.TrustService;
 import org.gluu.oxtrust.model.scim2.BaseScimResource;
+import org.gluu.oxtrust.model.scim2.fido.Fido2DeviceResource;
 import org.gluu.oxtrust.model.scim2.fido.FidoDeviceResource;
 import org.gluu.oxtrust.model.scim2.group.GroupResource;
 import org.gluu.oxtrust.model.scim2.user.UserResource;
@@ -101,8 +102,8 @@ public class UpdateAttributeAction implements Serializable {
 
 	static {
 		Map<Class<? extends BaseScimResource>, Map<String, String>> refs = new HashMap<>(IntrospectUtil.storeRefs);
-		List<Class<? extends Object>> resourceTypes = Arrays.asList(UserResource.class, FidoDeviceResource.class,
-				GroupResource.class);
+		List<Class<? extends BaseScimResource>> resourceTypes = Arrays.asList(UserResource.class, FidoDeviceResource.class,
+				GroupResource.class, Fido2DeviceResource.class);
 		Predicate<Class<? extends BaseScimResource>> p = resourceTypes::contains;
 		refs.keySet().removeIf(p.negate());
 
