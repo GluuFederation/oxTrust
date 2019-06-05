@@ -5,7 +5,6 @@
 
 	<navigation-rule>
 		<from-view-id>/uma/scope/updateUmaScope.xhtml</from-view-id>
-
 		<navigation-case>
 			<from-action>#{updateUmaScopeAction.update}</from-action>
 			<from-outcome>failure</from-outcome>
@@ -13,13 +12,13 @@
 			<redirect />
 		</navigation-case>
 		<navigation-case>
-			<from-action>#{updateUmaScopeAction.delete}</from-action>
+			<from-action>#{updateUmaScopeAction.cancel}</from-action>
 			<from-outcome>success</from-outcome>
 			<to-view-id>/uma/scope.xhtml</to-view-id>
 			<redirect />
 		</navigation-case>
 		<navigation-case>
-			<from-action>#{updateUmaScopeAction.cancel}</from-action>
+			<from-action>#{cc.attrs.deleteMethod}</from-action>
 			<from-outcome>success</from-outcome>
 			<to-view-id>/uma/scope.xhtml</to-view-id>
 			<redirect />

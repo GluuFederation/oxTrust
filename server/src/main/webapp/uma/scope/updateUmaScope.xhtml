@@ -36,7 +36,8 @@
 				</a></li>
 			</ol>
 		</section>
-		<h:form>
+		<h:form id="umaScopeForm">
+		    <input type='hidden' name='cid' value='#{conversation.id}' />
 			<section class="content">
 				<h:panelGroup id="formArea" layout="block">
 					<h:outputStylesheet>
@@ -120,7 +121,7 @@
 										<h:commandButton action="#{updateUmaScopeAction.save}"
 											styleClass="btn btn-primary updateScopeButtonId"
 											value="#{updateUmaScopeAction.update ? 'Update' : 'Add Scope'}" />
-										<a4j:commandButton ajaxSingle="true"
+										<a4j:commandButton ajaxSingle="true" eventsQueue="clientQueue"
 											onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();"
 											rendered="#{updateUmaScopeAction.update}"
 											style="margin-left:3px;"
@@ -146,7 +147,7 @@
 				searchMethod="#{updateUmaScopeAction.searchAvailableAuthorizationPolicies}"
 				searchResult="#{updateUmaScopeAction.availableAuthorizationPolicies}" />
 			<ox:acceptRemovalDialog deleteMethod="#{updateUmaScopeAction.delete}"
-				id="deleteConfirmation" subject="scope" render="formArea"
+				id="deleteConfirmation" subject="scope" render="umaScopeForm"
 				value="#{updateUmaScopeAction.umaScope.id}" />
 		</h:form>
 	</ui:define>

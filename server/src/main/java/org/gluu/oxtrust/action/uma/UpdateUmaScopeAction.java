@@ -112,13 +112,20 @@ public class UpdateUmaScopeAction implements Serializable {
 	}
 
 	public String add() {
-		if (this.umaScope != null) {
+		try{
+			if (this.umaScope != null) {
+				return OxTrustConstants.RESULT_SUCCESS;
+			}
+			this.umaScope = new Scope();
+			this.update = false;
+			this.authorizationPolicies = getInitialAuthorizationPolicies();
 			return OxTrustConstants.RESULT_SUCCESS;
+		}catch (Exception e) {
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to load scope add from");
+			conversationService.endConversation();
+			return OxTrustConstants.RESULT_FAILURE;
 		}
-		this.umaScope = new Scope();
-		this.update = false;
-		this.authorizationPolicies = getInitialAuthorizationPolicies();
-		return OxTrustConstants.RESULT_SUCCESS;
+		
 	}
 
 	public String update() {
@@ -148,10 +155,12 @@ public class UpdateUmaScopeAction implements Serializable {
 			}
 		} catch (BasePersistenceException ex) {
 			log.error("Failed to find scope description '{}'", this.scopeInum, ex);
+			conversationService.endConversation();
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 		if (this.umaScope == null) {
 			log.error("Scope description is null");
+			conversationService.endConversation();
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 		return OxTrustConstants.RESULT_SUCCESS;
