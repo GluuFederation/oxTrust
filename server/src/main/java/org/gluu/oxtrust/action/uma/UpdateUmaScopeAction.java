@@ -15,7 +15,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import javax.annotation.PreDestroy;
 import javax.enterprise.context.ConversationScoped;
 import javax.faces.application.FacesMessage;
 import javax.inject.Inject;
@@ -52,8 +51,8 @@ import org.slf4j.Logger;
  * 
  * @author Yuriy Movchan Date: 11/21/2012
  */
+@Named("updateUmaScopeAction")
 @ConversationScoped
-@Named
 @Secure("#{permissionService.hasPermission('uma', 'access')}")
 public class UpdateUmaScopeAction implements Serializable {
 
@@ -112,58 +111,25 @@ public class UpdateUmaScopeAction implements Serializable {
 		this.clientList = clientList;
 	}
 
-	public String modify() {
+	public String add() {
 		if (this.umaScope != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
-
-		this.update = StringHelper.isNotEmpty(this.scopeInum);
-
-		try {
-			scopeDescriptionService.prepareScopeDescriptionBranch();
-		} catch (BasePersistenceException ex) {
-			log.error("Failed to initialize form", ex);
-
-			if (update) {
-				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to find UMA resource");
-			} else {
-				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add UMA resource");
-			}
-			conversationService.endConversation();
-
-			return OxTrustConstants.RESULT_FAILURE;
-		}
-
-		if (update) {
-			return update();
-		} else {
-			return add();
-		}
-	}
-
-	private String add() {
-		if (this.umaScope != null) {
-			return OxTrustConstants.RESULT_SUCCESS;
-		}
-
 		this.umaScope = new Scope();
-
+		this.update = false;
 		this.authorizationPolicies = getInitialAuthorizationPolicies();
-
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	private String update() {
+	public String update() {
+		this.update = true;
 		if (this.umaScope != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
-
-		log.debug("Loading UMA resource '{}'", this.scopeInum);
 		try {
 			String scopeDn = scopeDescriptionService.getDnForScope(this.scopeInum);
 			this.umaScope = scopeDescriptionService.getUmaScopeByDn(scopeDn);
 			this.authorizationPolicies = getInitialAuthorizationPolicies();
-
 			List<UmaResource> umaResourceList = resourceSetService.findResourcesByScope(scopeDn);
 			if (umaResourceList != null) {
 				for (UmaResource umaResource : umaResourceList) {
@@ -184,7 +150,6 @@ public class UpdateUmaScopeAction implements Serializable {
 			log.error("Failed to find scope description '{}'", this.scopeInum, ex);
 			return OxTrustConstants.RESULT_FAILURE;
 		}
-
 		if (this.umaScope == null) {
 			log.error("Scope description is null");
 			return OxTrustConstants.RESULT_FAILURE;
@@ -259,34 +224,22 @@ public class UpdateUmaScopeAction implements Serializable {
 	}
 
 	public String delete() {
-		if (update) {
-			// Remove scope description
-			try {
-				scopeDescriptionService.removeUmaScope(this.umaScope);
-
-				facesMessages.add(FacesMessage.SEVERITY_INFO,
-						"UMA resource '#{updateScopeDescriptionAction.scopeDescription.displayName}' removed successfully");
-				conversationService.endConversation();
-
-				return OxTrustConstants.RESULT_SUCCESS;
-			} catch (BasePersistenceException ex) {
-				log.error("Failed to remove scope description {}", this.umaScope.getId(), ex);
-			}
+		try {
+			scopeDescriptionService.removeUmaScope(this.umaScope);
+			facesMessages.add(FacesMessage.SEVERITY_INFO,
+					"UMA resource '#{updateScopeDescriptionAction.scopeDescription.displayName}' removed successfully");
+			conversationService.endConversation();
+			return OxTrustConstants.RESULT_SUCCESS;
+		} catch (BasePersistenceException ex) {
+			log.error("Failed to remove scope description {}", this.umaScope.getId(), ex);
+			facesMessages.add(FacesMessage.SEVERITY_ERROR,
+					"Failed to remove UMA resource '#{updateScopeDescriptionAction.scopeDescription.displayName}'");
+			return OxTrustConstants.RESULT_FAILURE;
 		}
-
-		facesMessages.add(FacesMessage.SEVERITY_ERROR,
-				"Failed to remove UMA resource '#{updateScopeDescriptionAction.scopeDescription.displayName}'");
-
-		return OxTrustConstants.RESULT_FAILURE;
 	}
 
 	public void removeIconImage() {
 		this.curIconImage = null;
-	}
-
-	@PreDestroy
-	public void destroy() throws Exception {
-		cancel();
 	}
 
 	public void setIconImage(FileUploadEvent event) {
