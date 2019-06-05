@@ -35,7 +35,7 @@ import org.slf4j.Logger;
  * @author Yuriy Movchan Date: 12/20/2012
  */
 @RequestScoped
-@Named
+@Named("passwordValidationAction")
 @Secure("#{permissionService.hasPermission('profile', 'access')}")
 public class PasswordValidationAction implements Cloneable, Serializable {
 
@@ -68,6 +68,10 @@ public class PasswordValidationAction implements Cloneable, Serializable {
 	private String confirm = "";
 
 	private UIComponent graphValidator;
+	
+	private boolean checkOldPassword=false;
+	
+	private GluuCustomPerson person;
 
 	@AssertTrue(message = "Passwords are different or they don't match the requirements define by site administrator.")
 	public boolean isPasswordsEquals() {
@@ -165,6 +169,25 @@ public class PasswordValidationAction implements Cloneable, Serializable {
 
 	public String getConfirm() {
 		return confirm;
+	}
+		
+	public boolean isCheckOldPassword() {
+		return checkOldPassword;
+	}
+
+	public void setCheckOldPassword(boolean checkOldPassword) {
+		this.checkOldPassword = checkOldPassword;
+	}
+
+	public void setPerson(GluuCustomPerson person) {
+		this.person = person;
+	}
+
+	/**
+	 * @return the person
+	 */
+	public GluuCustomPerson getPerson() {
+		return person;
 	}
 
 	@Override
