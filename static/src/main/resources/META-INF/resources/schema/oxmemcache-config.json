@@ -111,7 +111,6 @@
 					"description": "server details separated by comma, e.g. 'server1:8080,server2:8081'",
 					"title": "servers",
 					"type": "string",
-					"format": "url",
 					"minLength": 3
 				},
 				"password": {
