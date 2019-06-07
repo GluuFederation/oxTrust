@@ -1,36 +1,46 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://xmlns.jcp.org/jsf/core"
-                xmlns:h="http://xmlns.jcp.org/jsf/html"
-                xmlns:ui="http://xmlns.jcp.org/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
-    <f:metadata>
-        <f:viewAction action="#{permissionService.requestPermission('person', 'access')}" />
-        <f:viewParam name="inum" value="#{updatePersonAction.inum}" />
-        <f:viewAction action="#{conversationService.initConversation}" />
-        <f:viewAction action="#{updatePersonAction.add}"
-                      if="#{ updatePersonAction.person == null}"
-                      onPostback="false"/>
-    </f:metadata>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:b="http://bootsfaces.net/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/WEB-INF/incl/layout/newtemplate.xhtml">
+	<f:metadata>
+		<f:viewAction
+			action="#{permissionService.requestPermission('person', 'access')}" />
+		<f:viewParam name="inum" value="#{updatePersonAction.inum}" />
+		<f:viewAction action="#{conversationService.initConversation}" />
+		<f:viewAction action="#{updatePersonAction.add}"
+			if="#{ updatePersonAction.person == null}" onPostback="false" />
+	</f:metadata>
 
-    <ui:define name="body">
-        <h:panelGroup id="formArea" layout="block">
-            <ui:decorate template="/WEB-INF/incl/person/userForm.xhtml">
-                <ui:param name="_person" value="#{updatePersonAction.person}"/>
-                <ui:param name="_customAttributeAction" value="#{customAttributeAction}"/>
-                <ui:param name="_new" value="true"/>
+	<ui:define name="body">
+		<h:panelGroup id="formArea" layout="block">
+			<b:dateTimePicker id="calendar" renderLabel="false"
+				mode="toggle-icon" rendered="false" format="DD.MM.YYYY">
+			</b:dateTimePicker>
+			<ui:decorate template="/WEB-INF/incl/person/userForm.xhtml">
+				<ui:param name="_person" value="#{updatePersonAction.person}" />
+				<ui:param name="_customAttributeAction"
+					value="#{customAttributeAction}" />
+				<ui:param name="_new" value="true" />
 
-                <ui:define name="controlButtons">
-                    <div class="box-footer">
-                        <h:panelGroup id="updateButtons" layout="block" style="margin-bottom:6px;">
-                            <h:commandButton action="#{updatePersonAction.save}"
-                                             rendered="#{organizationService.allowPersonModification}"
-                                             styleClass="btn btn-primary saveButton" value="#{msg['person.add']}"/>
-                            <h:commandButton action="#{updatePersonAction.cancel}" immediate="true"
-                                             style="margin-left:3px;" styleClass="btn btn-primary"
-                                             value="#{msg['person.cancel']}"/>
-                        </h:panelGroup>
-                    </div>
-                </ui:define>
-            </ui:decorate>
-        </h:panelGroup>
-    </ui:define>
+				<ui:define name="controlButtons">
+					<div class="box-footer">
+						<h:panelGroup id="updateButtons" layout="block"
+							style="margin-bottom:6px;">
+							<b:commandButton action="#{updatePersonAction.save}"
+								value="#{msg['person.add']}"
+								styleClass="btn btn-primary saveButton" ajax="true"
+								update="@none" look="primary" icon="save" />
+							<b:commandButton action="#{updatePersonAction.cancel}"
+								value="#{msg['person.cancel']}" styleClass="btn btn-primary"
+								ajax="true" update="@none" look="primary" icon="trash"
+								immediate="true" style="margin-left:3px;" />
+						</h:panelGroup>
+					</div>
+				</ui:define>
+			</ui:decorate>
+		</h:panelGroup>
+	</ui:define>
 </ui:composition>

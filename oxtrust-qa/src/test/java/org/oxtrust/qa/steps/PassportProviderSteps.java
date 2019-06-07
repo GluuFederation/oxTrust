@@ -3,6 +3,7 @@ package org.oxtrust.qa.steps;
 import org.oxtrust.qa.pages.login.HomePage;
 import org.oxtrust.qa.pages.passport.PassportPage;
 
+import cucumber.api.java.After;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
@@ -66,6 +67,11 @@ public class PassportProviderSteps extends BaseSteps {
 	@And("^I start the process to edit the provider named '(.+)'$")
 	public void editCurrentClient(String provider) {
 		passportPage.editProvider(provider);
+	}
+	
+	@After
+	public void clear() {
+		homePage.clear();
 	}
 
 }

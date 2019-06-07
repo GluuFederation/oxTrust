@@ -5,6 +5,6 @@ Scenario: List uma resources
 	Then 	I should see gluu home page 
 	When 	I go to uma resources list page
 	Then 	I should see a uma resource named 'SCIM Resource' with scopes 'SCIM Access'
-	And 	I should see a uma resource named 'Passport Resource' with scopes 'Passport Access'
 	And 	I should see a uma resource named 'oxTrust api Resource' with scopes 'API Read Access'
+	And     I should see a uma resource named 'Passport Resource' with scopes 'Passport Access'
 	Then 	I sign out

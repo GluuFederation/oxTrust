@@ -24,17 +24,17 @@ public class OpenIdConnectScopeManagePage extends AbstractPage {
 	}
 
 	public void assertScopeExist(String scopeName) {
-		Assert.assertTrue(assertElementExistInList(SCOPES_FORM_IDSCOPES_LIST_ID_TABLE,scopeName));
+		Assert.assertTrue(assertElementExistInList(SCOPES_FORM_IDSCOPES_LIST_ID_TABLE, scopeName));
 	}
 
 	public void editScope(String scope) {
 		webDriver.findElement(By.className(SCOPES_FORM_IDSCOPES_LIST_ID_TABLE));
-		WebElement body = webDriver.findElement(By.className(SCOPES_FORM_IDSCOPES_LIST_ID_TABLE)).findElements(By.tagName("tbody"))
-				.get(0);
+		WebElement body = webDriver.findElement(By.className(SCOPES_FORM_IDSCOPES_LIST_ID_TABLE))
+				.findElements(By.tagName("tbody")).get(0);
 		List<WebElement> listItems = body.findElements(By.tagName("tr"));
 		for (WebElement element : listItems) {
 			if (element.getText().contains(scope)) {
-				element.findElements(By.tagName("td")).get(0).click();
+				element.findElements(By.tagName("td")).get(0).findElement(By.tagName("a")).click();
 				break;
 			}
 		}
@@ -46,7 +46,7 @@ public class OpenIdConnectScopeManagePage extends AbstractPage {
 	}
 
 	public void assertScopeDontExist(String scope) {
-		Assert.assertFalse(assertElementExistInList(SCOPES_FORM_IDSCOPES_LIST_ID_TABLE,scope));
+		Assert.assertFalse(assertElementExistInList(SCOPES_FORM_IDSCOPES_LIST_ID_TABLE, scope));
 	}
 
 }

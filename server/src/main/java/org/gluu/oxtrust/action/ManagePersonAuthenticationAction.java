@@ -146,7 +146,7 @@ public class ManagePersonAuthenticationAction
 			passportEnable = configuration.isPassportEnabled();
 			log.info("passport enabled value  : '{}'", passportEnable);
 			this.customScripts = customScriptService.findCustomScripts(
-					Arrays.asList(CustomScriptType.PERSON_AUTHENTICATION), "displayName", "oxLevel", "gluuStatus");
+					Arrays.asList(CustomScriptType.PERSON_AUTHENTICATION), "displayName", "oxLevel", "oxEnabled");
 
 			List<OxIDPAuthConf> list = getIDPAuthConfOrNull(configuration);
 			this.sourceConfigs = new ArrayList<GluuLdapConfiguration>();
@@ -291,7 +291,6 @@ public class ManagePersonAuthenticationAction
 					if (StringHelper.isEmpty(name)) {
 						continue;
 					}
-
 					this.customAuthenticationConfigNames.add(customScript.getName());
 				}
 			}

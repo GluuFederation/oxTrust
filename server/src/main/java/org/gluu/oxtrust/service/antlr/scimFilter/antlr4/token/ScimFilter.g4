@@ -34,6 +34,9 @@ filter : 'not'? '(' filter ')'	#negatedFilter
 fragment DIGIT : [0-9] ;
 fragment LOWERCASE : [a-z] ;
 fragment UPPERCASE : [A-Z] ;
+fragment HEXDIG : [a-fA-F0-9] ;
+fragment NOQUOTEORBKSLSH : [\u0020-\u0021\u0023-\u005B\u005D-\uFFFF] ;
+fragment BKSLSH: '\u005C' ;
 		
 WHITESPACE : [\t ]+ -> skip ;
 
@@ -53,4 +56,6 @@ ATTRNAME : URI? ALPHA NAMECHAR* ;
 
 SUBATTR : '.' ATTRNAME ;
 
-STRING : '"' .*? '"' ;
+CHAR : NOQUOTEORBKSLSH | (BKSLSH 'u' HEXDIG HEXDIG HEXDIG HEXDIG) | (BKSLSH [\u0022\u005C\u002F\u0062\u0066\u006E\u0072\u0074]) ;
+
+STRING : '"' CHAR* '"' ;

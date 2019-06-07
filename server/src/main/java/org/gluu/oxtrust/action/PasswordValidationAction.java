@@ -35,7 +35,7 @@ import org.slf4j.Logger;
  * @author Yuriy Movchan Date: 12/20/2012
  */
 @RequestScoped
-@Named
+@Named("passwordValidationAction")
 @Secure("#{permissionService.hasPermission('profile', 'access')}")
 public class PasswordValidationAction implements Cloneable, Serializable {
 
@@ -68,6 +68,10 @@ public class PasswordValidationAction implements Cloneable, Serializable {
 	private String confirm = "";
 
 	private UIComponent graphValidator;
+	
+	private boolean checkOldPassword=false;
+	
+	private GluuCustomPerson person;
 
 	@AssertTrue(message = "Passwords are different or they don't match the requirements define by site administrator.")
 	public boolean isPasswordsEquals() {
@@ -98,12 +102,10 @@ public class PasswordValidationAction implements Cloneable, Serializable {
 
 			if (!resultValidateOldPassword) {
 				if (graphValidator == null) {
-					facesMessages.add(FacesMessage.SEVERITY_ERROR, "Old password isn't valid!",
-							"Old password isn't valid!");
+					facesMessages.add(FacesMessage.SEVERITY_ERROR, "Old password isn't valid!");
 
 				} else {
-					facesMessages.add(FacesMessage.SEVERITY_ERROR, "Old password isn't valid!",
-							"Old password isn't valid!");
+					facesMessages.add(FacesMessage.SEVERITY_ERROR, "Old password isn't valid!");
 				}
 			} else {
 				person.setUserPassword(this.password);
@@ -112,7 +114,7 @@ public class PasswordValidationAction implements Cloneable, Serializable {
 						"USER " + person.getInum() + " **" + person.getDisplayName() + "** PASSWORD UPDATED",
 						identity.getUser(),
 						(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
-				facesMessages.add(FacesMessage.SEVERITY_INFO, "Successfully changed!", "Successfully changed!");
+				facesMessages.add(FacesMessage.SEVERITY_INFO, "Successfully changed!");
 			}
 		} else {
 			if (this.password.equals(this.confirm)) {
@@ -122,22 +124,19 @@ public class PasswordValidationAction implements Cloneable, Serializable {
 						"USER " + person.getInum() + " **" + person.getDisplayName() + "** PASSWORD UPDATED",
 						identity.getUser(),
 						(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
-				facesMessages.add(FacesMessage.SEVERITY_INFO, "Successfully changed!", "Successfully changed!");
+				facesMessages.add(FacesMessage.SEVERITY_INFO, "Successfully changed!");
 			} else {
-				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Password and confirm password value don't match",
-						"Password and confirm password value don't match");
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Password and confirm password value don't match");
 			}
 		}
 	}
 
 	public void notifyBindPasswordChange() {
-		facesMessages.add(FacesMessage.SEVERITY_INFO, "Bind password successfully changed!",
-				"Bind password successfully changed!");
+		facesMessages.add(FacesMessage.SEVERITY_INFO, "Bind password successfully changed!");
 	}
 
 	public void notifyClientPasswordChange() {
-		facesMessages.add(FacesMessage.SEVERITY_INFO, "Client secret successfully changed!",
-				"Client secret successfully changed!");
+		facesMessages.add(FacesMessage.SEVERITY_INFO, "Client secret successfully changed!");
 	}
 
 	public UIComponent getGraphValidator() {
@@ -170,6 +169,25 @@ public class PasswordValidationAction implements Cloneable, Serializable {
 
 	public String getConfirm() {
 		return confirm;
+	}
+		
+	public boolean isCheckOldPassword() {
+		return checkOldPassword;
+	}
+
+	public void setCheckOldPassword(boolean checkOldPassword) {
+		this.checkOldPassword = checkOldPassword;
+	}
+
+	public void setPerson(GluuCustomPerson person) {
+		this.person = person;
+	}
+
+	/**
+	 * @return the person
+	 */
+	public GluuCustomPerson getPerson() {
+		return person;
 	}
 
 	@Override

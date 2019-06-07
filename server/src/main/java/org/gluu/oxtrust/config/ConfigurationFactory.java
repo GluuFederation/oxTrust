@@ -7,8 +7,6 @@
 package org.gluu.oxtrust.config;
 
 import java.io.File;
-import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.annotation.PostConstruct;
@@ -32,7 +30,6 @@ import org.gluu.exception.ConfigurationException;
 import org.gluu.oxtrust.ldap.service.ApplicationFactory;
 import org.gluu.oxtrust.service.custom.LdapCentralConfigurationReload;
 import org.gluu.persist.PersistenceEntryManager;
-import org.gluu.persist.PersistenceEntryManagerFactory;
 import org.gluu.persist.exception.BasePersistenceException;
 import org.gluu.persist.model.PersistenceConfiguration;
 import org.gluu.persist.service.PersistanceFactoryService;
@@ -108,7 +105,6 @@ public class ConfigurationFactory {
 
 	private static final String BASE_PROPERTIES_FILE = DIR + "gluu.properties";
 	public static final String LDAP_PROPERTIES_FILE = DIR + "oxtrust-ldap.properties";
-	public static final String LDAP_CENTRAL_PROPERTIES_FILE = DIR + "oxtrust-central-ldap.properties";
 
 	public static final String APPLICATION_CONFIGURATION = "oxtrust-config.json";
 	public static final String CACHE_PROPERTIES_FILE = "oxTrustCacheRefresh.properties";
@@ -145,10 +141,9 @@ public class ConfigurationFactory {
 			log.info("Creating oxTrustConfiguration");
 			loadBaseConfiguration();
 
-			this.persistenceConfiguration = persistanceFactoryService.loadPersistenceConfiguration(LDAP_PROPERTIES_FILE);
-			loadLdapCentralConfiguration();
+			this.persistenceConfiguration = persistanceFactoryService
+					.loadPersistenceConfiguration(LDAP_PROPERTIES_FILE);
 			this.confDir = confDir();
-
 			this.configFilePath = confDir + APPLICATION_CONFIGURATION;
 			this.cacheRefreshFilePath = confDir + CACHE_PROPERTIES_FILE;
 			this.logRotationFilePath = confDir + LOG_ROTATION_CONFIGURATION;
@@ -199,18 +194,22 @@ public class ConfigurationFactory {
 	}
 
 	private void reloadConfiguration() {
-        // Reload LDAP configuration if needed
-        PersistenceConfiguration newPersistenceConfiguration = persistanceFactoryService.loadPersistenceConfiguration(LDAP_PROPERTIES_FILE);
+		// Reload LDAP configuration if needed
+		PersistenceConfiguration newPersistenceConfiguration = persistanceFactoryService
+				.loadPersistenceConfiguration(LDAP_PROPERTIES_FILE);
 
-        if (newPersistenceConfiguration != null) {
-            if (!StringHelper.equalsIgnoreCase(this.persistenceConfiguration.getFileName(), newPersistenceConfiguration.getFileName()) || (newPersistenceConfiguration.getLastModifiedTime() > this.persistenceConfiguration.getLastModifiedTime())) {
-                // Reload configuration only if it was modified
-                this.persistenceConfiguration = newPersistenceConfiguration;
-                event.select(LdapConfigurationReload.Literal.INSTANCE).fire(PERSISTENCE_CONFIGUARION_RELOAD_EVENT_TYPE);
-            }
-        }
+		if (newPersistenceConfiguration != null) {
+			if (!StringHelper.equalsIgnoreCase(this.persistenceConfiguration.getFileName(),
+					newPersistenceConfiguration.getFileName())
+					|| (newPersistenceConfiguration.getLastModifiedTime() > this.persistenceConfiguration
+							.getLastModifiedTime())) {
+				// Reload configuration only if it was modified
+				this.persistenceConfiguration = newPersistenceConfiguration;
+				event.select(LdapConfigurationReload.Literal.INSTANCE).fire(PERSISTENCE_CONFIGUARION_RELOAD_EVENT_TYPE);
+			}
+		}
 
-        // Reload Base configuration if needed
+		// Reload Base configuration if needed
 		File baseConfiguration = new File(BASE_PROPERTIES_FILE);
 		if (baseConfiguration.exists()) {
 			final long lastModified = baseConfiguration.lastModified();
@@ -221,17 +220,7 @@ public class ConfigurationFactory {
 			}
 		}
 
-		// Reload LDAP central configuration if needed
-		File ldapCentralFile = new File(LDAP_CENTRAL_PROPERTIES_FILE);
-		if (ldapCentralFile.exists()) {
-			final long lastModified = ldapCentralFile.lastModified();
-			if (lastModified > ldapCentralFileLastModifiedTime) {
-				// Reload configuration only if it was modified
-				loadLdapCentralConfiguration();
-				event.select(LdapCentralConfigurationReload.Literal.INSTANCE)
-						.fire(PERSISTENCE_CENTRAL_CONFIGUARION_RELOAD_EVENT_TYPE);
-			}
-		} else if (this.ldapCentralConfiguration != null) {
+		if (this.ldapCentralConfiguration != null) {
 			// Allow to remove not mandatory configuration file
 			this.ldapCentralConfiguration = null;
 			event.select(LdapCentralConfigurationReload.Literal.INSTANCE)
@@ -268,10 +257,10 @@ public class ConfigurationFactory {
 	}
 
 	@Produces
-    @ApplicationScoped
-    public PersistenceConfiguration getPersistenceConfiguration() {
-        return persistenceConfiguration;
-    }
+	@ApplicationScoped
+	public PersistenceConfiguration getPersistenceConfiguration() {
+		return persistenceConfiguration;
+	}
 
 	public FileConfiguration getLdapCentralConfiguration() {
 		return ldapCentralConfiguration;
@@ -306,10 +295,10 @@ public class ConfigurationFactory {
 	}
 
 	public String getConfigurationDn() {
-        return this.baseConfiguration.getString("oxtrust_ConfigurationEntryDN");
-    }
+		return this.baseConfiguration.getString("oxtrust_ConfigurationEntryDN");
+	}
 
-    private boolean createFromFile() {
+	private boolean createFromFile() {
 		boolean result = reloadAppConfFromFile();
 
 		return result;
@@ -330,7 +319,7 @@ public class ConfigurationFactory {
 
 	private AppConfiguration loadAppConfFromFile() {
 		try {
-			String jsonConfig = FileUtils.readFileToString(new File(configFilePath),"UTF-8");
+			String jsonConfig = FileUtils.readFileToString(new File(configFilePath), "UTF-8");
 			AppConfiguration appConfiguration = jsonService.jsonToObject(jsonConfig, AppConfiguration.class);
 
 			return appConfiguration;
@@ -346,15 +335,6 @@ public class ConfigurationFactory {
 
 		File baseConfiguration = new File(BASE_PROPERTIES_FILE);
 		this.baseConfigurationFileLastModifiedTime = baseConfiguration.lastModified();
-	}
-
-	private void loadLdapCentralConfiguration() {
-		this.ldapCentralConfiguration = createFileConfiguration(LDAP_CENTRAL_PROPERTIES_FILE, false);
-
-		File ldapCentralFile = new File(LDAP_CENTRAL_PROPERTIES_FILE);
-		if (ldapCentralFile.exists()) {
-			this.ldapCentralFileLastModifiedTime = ldapCentralFile.lastModified();
-		}
 	}
 
 	public void loadCryptoConfigurationSalt() {

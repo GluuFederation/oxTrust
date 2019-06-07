@@ -32,16 +32,16 @@ public class HomePage extends AbstractPage {
 	public void goToPassportProviderListPage() {
 		WebElement passportMenu = webDriver.findElement(By.xpath("//*[@id='menuPassport']"));
 		passportMenu.click();
-
 		WebElement subMenu = waitElementByID("menuPassportProviders");
 		subMenu.click();
 		fluentWait(3);
 	}
 
 	public void goToPassportConfigPage() {
+		fluentWait(5);
 		WebElement passportMenu = webDriver.findElement(By.xpath("//*[@id='menuPassport']"));
 		passportMenu.click();
-
+		fluentWait(5);
 		WebElement subMenu = waitElementByID("menuPassportBasicConfig");
 		subMenu.click();
 		fluentWait(3);
