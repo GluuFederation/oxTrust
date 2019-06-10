@@ -15,7 +15,6 @@ import javax.inject.Named;
 import org.gluu.oxtrust.ldap.service.ImageService;
 import org.gluu.oxtrust.ldap.service.uma.UmaScopeService;
 import org.gluu.service.security.Secure;
-import org.slf4j.Logger;
 
 /**
  * Action class for download scope descriptions

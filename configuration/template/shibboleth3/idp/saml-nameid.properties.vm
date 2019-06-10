@@ -18,15 +18,19 @@ idp.nameid.saml1.default = urn:mace:shibboleth:1.0:nameIdentifier
 
 # Persistent IDs can be computed on the fly with a hash, or managed in a database
 
-
 # For computed IDs, set a source attribute and a secret salt:
+#set($sourceAttributeList="")
+#set($separator="")
 #if( $resovlerParams.size() > 0 )
-    #foreach( $nameIdConfig in $resovlerParams.configs )
-        #if( $nameIdConfig.nameIdType == "urn:oasis:names:tc:SAML:2.0:nameid-format:persistent" )
-idp.persistentId.sourceAttribute = $nameIdConfig.sourceAttribute
-        #end
-    #end
+	#foreach( $nameIdConfig in $resovlerParams.configs )
+		#if( $nameIdConfig.nameIdType == 'urn:oasis:names:tc:SAML:2.0:nameid-format:persistent')
+			#set($sourceAttributeList = $sourceAttributeList + $separator + $nameIdConfig.sourceAttribute)
+			#set($separator = ", ")
+	    #end
+	#end
 #end
+
+#if ($sourceAttributeList=="") #[[#]]##end idp.persistentId.sourceAttribute = $sourceAttributeList
 
 #idp.persistentId.useUnfilteredAttributes = true
 # Do *NOT* share the salt with other people, it's like divulging your private key.

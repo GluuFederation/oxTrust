@@ -32,9 +32,11 @@ import org.gluu.model.GluuUserRole;
 import org.gluu.model.SchemaEntry;
 import org.gluu.model.attribute.AttributeValidation;
 import org.gluu.oxtrust.ldap.service.AttributeService;
+import org.gluu.oxtrust.ldap.service.DataSourceTypeService;
 import org.gluu.oxtrust.ldap.service.OxTrustAuditService;
 import org.gluu.oxtrust.ldap.service.TrustService;
 import org.gluu.oxtrust.model.scim2.BaseScimResource;
+import org.gluu.oxtrust.model.scim2.fido.Fido2DeviceResource;
 import org.gluu.oxtrust.model.scim2.fido.FidoDeviceResource;
 import org.gluu.oxtrust.model.scim2.group.GroupResource;
 import org.gluu.oxtrust.model.scim2.user.UserResource;
@@ -71,6 +73,9 @@ public class UpdateAttributeAction implements Serializable {
 	private TrustService trustService;
 
 	@Inject
+	private DataSourceTypeService dataSourceTypeService;
+
+	@Inject
 	private SchemaService schemaService;
 
 	@Inject
@@ -101,8 +106,8 @@ public class UpdateAttributeAction implements Serializable {
 
 	static {
 		Map<Class<? extends BaseScimResource>, Map<String, String>> refs = new HashMap<>(IntrospectUtil.storeRefs);
-		List<Class<? extends Object>> resourceTypes = Arrays.asList(UserResource.class, FidoDeviceResource.class,
-				GroupResource.class);
+		List<Class<? extends BaseScimResource>> resourceTypes = Arrays.asList(UserResource.class,
+				FidoDeviceResource.class, GroupResource.class, Fido2DeviceResource.class);
 		Predicate<Class<? extends BaseScimResource>> p = resourceTypes::contains;
 		refs.keySet().removeIf(p.negate());
 
@@ -325,15 +330,16 @@ public class UpdateAttributeAction implements Serializable {
 			attribute.setSaml2Uri("urn:oid:" + attributeName);
 		}
 
-		String attributeOrigin = determineOrigin(attributeName);
-		if (StringHelper.isEmpty(attributeOrigin)) {
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to determine object class by attribute name");
-			return false;
+		if (dataSourceTypeService.isLDAP()) {
+			String attributeOrigin = determineOrigin(attributeName);
+			if (StringHelper.isEmpty(attributeOrigin)) {
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to determine object class by attribute name");
+				return false;
+			}
+			this.attribute.setOrigin(attributeOrigin);
+		} else {
+			this.attribute.setOrigin("gluuPerson");
 		}
-
-		this.attribute.setOrigin(attributeOrigin);
-
-		// Save attribute metadata
 		this.attribute.setDn(dn);
 		this.attribute.setInum(inum);
 		this.attribute.setDisplayName(this.attribute.getDisplayName().trim());
@@ -356,22 +362,25 @@ public class UpdateAttributeAction implements Serializable {
 	}
 
 	private boolean validateAttributeDefinition(String attributeName) {
-		boolean containsAttribute = schemaService.containsAttributeTypeInSchema(attributeName);
-		if (!containsAttribute) {
-			facesMessages.add(FacesMessage.SEVERITY_ERROR,
-					"The attribute type '#{updateAttributeAction.attribute.name}' not defined in LDAP schema");
-			return false;
+		if (dataSourceTypeService.isLDAP()) {
+			boolean containsAttribute = schemaService.containsAttributeTypeInSchema(attributeName);
+			if (!containsAttribute) {
+				facesMessages.add(FacesMessage.SEVERITY_ERROR,
+						"The attribute type '#{updateAttributeAction.attribute.name}' not defined in LDAP schema");
+				return false;
+			}
+			boolean containsAttributeInGluuObjectClasses = containsAttributeInGluuObjectClasses(attributeName);
+			if (!containsAttributeInGluuObjectClasses) {
+				facesMessages.add(FacesMessage.SEVERITY_ERROR,
+						"Attribute type '#{updateAttributeAction.attribute.name}' definition not belong to list of allowed object classes");
+				return false;
+			}
+
+			return true;
+		} else {
+			return true;
 		}
 
-		// Check if attribute defined in gluuPerson or in custom object class
-		boolean containsAttributeInGluuObjectClasses = containsAttributeInGluuObjectClasses(attributeName);
-		if (!containsAttributeInGluuObjectClasses) {
-			facesMessages.add(FacesMessage.SEVERITY_ERROR,
-					"Attribute type '#{updateAttributeAction.attribute.name}' definition not belong to list of allowed object classes");
-			return false;
-		}
-
-		return true;
 	}
 
 	private String determineOrigin(String attributeName) {

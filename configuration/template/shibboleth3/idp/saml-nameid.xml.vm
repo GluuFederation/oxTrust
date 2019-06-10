@@ -27,21 +27,35 @@
     are shown below.
     
     -->
+#set($grouped1 = {} )
+#set($grouped2 = {} )
+#if( $resovlerParams.size() > 0 )
+	#foreach( $nameIdConfig in $resovlerParams.configs )
+	    #set ($valid = true)
+		#if ($nameIdConfig.nameIdType.contains("SAML:1.1"))
+			#set($grouped = $grouped1)
+		#else
+			#set($grouped = $grouped2)
+		#end
+		#if ($grouped[$nameIdConfig.nameIdType])
+			#set($grouped[$nameIdConfig.nameIdType] = $grouped[$nameIdConfig.nameIdType] + ", '" + $nameIdConfig.sourceAttribute + "'")
+		#else
+			#set($grouped[$nameIdConfig.nameIdType] =  "'" + $nameIdConfig.sourceAttribute + "'")
+		#end
+	#end
+#end    
     
     <!-- SAML 2 NameID Generation -->
     <util:list id="shibboleth.SAML2NameIDGenerators">
     
         <ref bean="shibboleth.SAML2TransientGenerator" />
 
-#if( $resovlerParams.size() > 0 )
-    #foreach( $nameIdConfig in $resovlerParams.configs )
-        #if( $nameIdConfig.nameIdType == "urn:oasis:names:tc:SAML:2.0:nameid-format:persistent" )
-        <ref bean="shibboleth.SAML2PersistentGenerator" />
-        #else
-        <bean parent="shibboleth.SAML2AttributeSourcedGenerator" p:omitQualifiers="true"
-            p:format="$nameIdConfig.nameIdType" p:attributeSourceIds="#{ {'$nameIdConfig.sourceAttribute'} }"/>
-        #end
-    #end
+#foreach($nameIdType in $grouped2.keySet())
+	#if ($nameIdType == "urn:oasis:names:tc:SAML:2.0:nameid-format:persistent")
+		<bean parent="shibboleth.SAML2PersistentGenerator" p:attributeSourceIds="#{ {$grouped2[$nameIdType]} }"/>
+	#else
+		<bean parent="shibboleth.SAML2AttributeSourcedGenerator" p:omitQualifiers="true" p:format="$nameIdType" p:attributeSourceIds="#{ {$grouped2[$nameIdType]} }"/>
+	#end	
 #end
         
         <!-- Uncommenting this bean requires configuration in saml-nameid.properties. -->
@@ -61,6 +75,10 @@
     <util:list id="shibboleth.SAML1NameIdentifierGenerators">
 
         <ref bean="shibboleth.SAML1TransientGenerator" />
+
+#foreach($nameIdType in $grouped1.keySet())
+	<bean parent="shibboleth.SAML1AttributeSourcedGenerator" p:omitQualifiers="true" p:format="$nameIdType" p:attributeSourceIds="#{ {$grouped1[$nameIdType]} }"/>
+#end
 
         <!--
         <bean parent="shibboleth.SAML1AttributeSourcedGenerator"

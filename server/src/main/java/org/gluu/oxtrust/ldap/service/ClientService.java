@@ -24,7 +24,6 @@ import org.gluu.oxtrust.model.OxAuthSubjectType;
 import org.gluu.oxtrust.model.SignatureAlgorithm;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.PersistenceEntryManager;
-import org.gluu.persist.model.base.GluuBoolean;
 import org.gluu.search.filter.Filter;
 import org.gluu.util.StringHelper;
 import org.python.jline.internal.Log;

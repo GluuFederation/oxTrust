@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:b="http://bootsfaces.net/ui" xmlns:o="http://omnifaces.org/ui"
+	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/WEB-INF/incl/layout/newtemplate.xhtml">
+	<f:metadata>
+		<f:viewAction
+			action="#{permissionService.requestPermission('uma', 'access')}" />
+		<f:viewAction action="#{conversationService.initConversation}" />
+		<f:viewAction action="#{updateUmaScopeAction.add}"
+			onPostback="false" />
+	</f:metadata>
+	<ui:define name="body">
+		<section class="content-header">
+			<h1 style="color: #333;">
+				#{msg['uma.uma']} <small> <i class="fa fa-caret-right"
+					style="color: #333 !important;" /> #{msg['uma.scopes']}
+				</small> <small> <i class="fa fa-caret-right"
+					style="color: #333 !important;" /> #{msg['uma.updateScope']}
+				</small>
+			</h1>
+			<ol class="breadcrumb">
+				<li><a href="#{request.contextPath}/home.htm"> <i
+						class="fa fa-home" />
+				</a></li>
+				<li class="organization/configuration"><a
+					href="#{request.contextPath}/uma/scope.htm">#{msg['uma.scopes']}
+				</a></li>
+			</ol>
+		</section>
+		<h:form>
+			<section class="content">
+				<h:panelGroup id="formArea" layout="block">
+					<h:outputStylesheet>
+                        .uploadFile {
+                            width: 300px;
+                        }
+                    </h:outputStylesheet>
+					<div class="row">
+						<div class="col-xs-12">
+							<div class="box box-primary">
+								<div class="box-header"></div>
+								<div style="width: 90%!imprtant;">
+									<ui:param name="_scope"
+										value="#{updateUmaScopeAction.umaScope}" />
+									<ox:decorate id="oxid" label="#{msg['uma.id']}">
+										<h:inputText styleClass=" form-control oxId"
+											leftClass="col-sm-4" rightClass="col-sm-8" id="oxId"
+											required="true" style="width:100% !important"
+											value="#{_scope.id}" />
+									</ox:decorate>
+									<ox:decorate id="displayName" label="#{msg['uma.displayName']}">
+										<h:inputText styleClass="form-control displayNameId"
+											leftClass="col-sm-4" rightClass="col-sm-8" id="displayNameId"
+											value="#{_scope.displayName}" />
+									</ox:decorate>
+									<ox:decorate id="IconUrl" label="IconUrl">
+										<h:inputText styleClass="form-control IconUrlId" p:type="url"
+											p:placeholder="Enter a valid icon url" leftClass="col-sm-4"
+											rightClass="col-sm-8" id="IconUrlId"
+											value="#{_scope.iconUrl}" />
+									</ox:decorate>
+									<div class="row" style="margin-left: 10px; margin-right: 10px;">
+										<b:panel id="responseTypes"
+											title="#{msg['uma.authorizationPolicy']}" look="primary">
+											<h:panelGroup id="selectedAuthorizationPolicyId">
+												<a4j:repeat rowKeyVar="_authorizationPolicyIdx"
+													value="#{updateUmaScopeAction.authorizationPolicies}"
+													var="_authorizationPolicy">
+													<div class="col-sm-12">
+														<div class="col-sm-6">
+															<h:outputText style="margin-left:-29px;"
+																value="#{_authorizationPolicy.name}" />
+															<h:outputText value=" " />
+														</div>
+														<div class="col-sm-6">
+															<a4j:commandLink
+																action="#{updateUmaScopeAction.removeAuthorizationPolicy(_authorizationPolicy)}"
+																execute="@this" render="selectedAuthorizationPolicyId"
+																styleClass="glyphicon glyphicon-remove removeAuthorization">
+															</a4j:commandLink>
+														</div>
+													</div>
+												</a4j:repeat>
+												<richext:spacer height="16" />
+											</h:panelGroup>
+											<h:panelGroup>
+												<a4j:commandButton execute="@this"
+													oncomplete="#{rich:component('authorizationPolicy:selectEntityModalPanel')}.show();"
+													styleClass="btn btn-primary AddAuthorizationButtonClass"
+													value="#{msg['uma.addAuthorizationPolicy']}" />
+											</h:panelGroup>
+										</b:panel>
+									</div>
+									<div class="row" style="margin-left: 10px; margin-right: 10px;">
+										<b:panel id="clients"
+											rendered="#{updateUmaScopeAction.clientList != null}"
+											title="clients" look="primary">
+											<a4j:repeat rowKeyVar="_clientIdx"
+												value="#{updateUmaScopeAction.clientList}" var="_cilent">
+												<h:link includeViewParams="false"
+													outcome="/client/updateClient"
+													value="#{_cilent.displayName}">
+													<f:param name="inum" value="#{_cilent.inum}" />
+												</h:link>
+											</a4j:repeat>
+										</b:panel>
+									</div>
+								</div>
+								<div class="box-footer">
+									<h:panelGroup id="updateButtons" layout="block">
+										<h:commandButton action="#{updateUmaScopeAction.save}"
+											styleClass="btn btn-primary updateScopeButtonId"
+											value="#{updateUmaScopeAction.update ? 'Update' : 'Add Scope'}" />
+										<a4j:commandButton ajaxSingle="true"
+											onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();"
+											rendered="#{updateUmaScopeAction.update}"
+											style="margin-left:3px;"
+											styleClass="btn btn-primary deleteScopeButtonId"
+											value="Delete" />
+										<h:commandButton action="#{updateUmaScopeAction.cancel}"
+											immediate="true" style="margin-left:3px;"
+											styleClass="btn btn-primary" value="#{msg['uma.cancel']}" />
+									</h:panelGroup>
+								</div>
+							</div>
+						</div>
+					</div>
+				</h:panelGroup>
+			</section>
+		</h:form>
+
+		<ox:selectSelectableEntityDialog
+			acceptMethod="#{updateUmaScopeAction.acceptSelectAuthorizationPolicies}"
+			cancelMethod="#{updateUmaScopeAction.cancelSelectAuthorizationPolicies}"
+			displayNameProperty="entity.description" displaySearchForm="false"
+			id="authorizationPolicy" label="#{msg['uma.addAuthorizationPolicy']}"
+			nameProperty="entity.name" render="selectedAuthorizationPolicyId"
+			searchMethod="#{updateUmaScopeAction.searchAvailableAuthorizationPolicies}"
+			searchResult="#{updateUmaScopeAction.availableAuthorizationPolicies}" />
+		<ox:acceptRemovalDialog deleteMethod="#{updateUmaScopeAction.delete}"
+			id="deleteConfirmation" subject="scope"
+			value="#{updateUmaScopeAction.umaScope.id}" />
+	</ui:define>
+</ui:composition>

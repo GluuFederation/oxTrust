@@ -43,7 +43,7 @@
 									<h:panelGrid border="0" cellpadding="0" cellspacing="0"
 										columns="1" width="100%">
 										<b:link style-class="addScopeButtonClass btn btn-primary"
-											icon="plus" outcome="/uma/scope/modifyScopeDescription"
+											icon="plus" outcome="/uma/scope/addUmaScope"
 											value="#{msg['uma.addScopeDescription']}"
 											includeViewParams="false" />
 										<richext:spacer height="8" />
@@ -69,9 +69,9 @@
 											print="true" excel="true" csv="true" pdf="true" select="true">
 											<b:dataTableColumn label="#{msg['uma.name']}">
 												<h:link includeViewParams="false"
-													outcome="/uma/scope/modifyScopeDescription"
+													outcome="/uma/scope/updateUmaScope"
 													value="#{_row.displayName}">
-													<f:param name="scope" value="#{_row.inum}" />
+													<f:param name="inum" value="#{_row.inum}" />
 												</h:link>
 											</b:dataTableColumn>
 											<b:dataTableColumn value="#{_row.id}"

@@ -440,7 +440,6 @@ public class UpdateClientAction implements Serializable {
 
 	public String delete() throws Exception {
 		if (update) {
-			// Remove client
 			try {
 				clientService.removeClient(this.client);
 				oxTrustAuditService.audit(
@@ -450,16 +449,13 @@ public class UpdateClientAction implements Serializable {
 				facesMessages.add(FacesMessage.SEVERITY_INFO,
 						"Client '#{updateClientAction.client.displayName}' removed successfully");
 				conversationService.endConversation();
-
 				return OxTrustConstants.RESULT_SUCCESS;
 			} catch (BasePersistenceException ex) {
 				log.error("Failed to remove client {}", this.inum, ex);
 			}
 		}
-
 		facesMessages.add(FacesMessage.SEVERITY_ERROR,
 				"Failed to remove client '#{updateClientAction.client.displayName}'");
-
 		return OxTrustConstants.RESULT_FAILURE;
 	}
 

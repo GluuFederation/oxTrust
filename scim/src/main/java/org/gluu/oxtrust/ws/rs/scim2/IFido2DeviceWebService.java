@@ -77,7 +77,7 @@ public interface IFido2DeviceWebService {
      * @return An object abstracting the response obtained from the server to this request.
      * A succesful response for this operation should contain a status code of 204 (no content)
      */
-    @Path("/scim/v2/FidoDevices/{id}")
+    @Path("/scim/v2/Fido2Devices/{id}")
     @DELETE
     @Produces({MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT, MediaType.APPLICATION_JSON + UTF8_CHARSET_FRAGMENT})
     @HeaderParam("Accept") @DefaultValue(MEDIA_TYPE_SCIM_JSON)

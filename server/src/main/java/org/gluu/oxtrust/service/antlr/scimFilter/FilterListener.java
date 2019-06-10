@@ -25,6 +25,7 @@ import static org.gluu.oxtrust.service.antlr.scimFilter.enums.FilterTemplate.STR
 import static org.gluu.oxtrust.service.antlr.scimFilter.enums.FilterTemplate.STRING_STARTSWITH_INNER;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.gluu.oxtrust.model.scim2.AttributeDefinition.Type;
@@ -175,7 +176,7 @@ public class FilterListener extends ScimFilterBaseListener {
             }
         } else if (Type.STRING.equals(attrType) || Type.REFERENCE.equals(attrType)) {
             compValue = compValue.substring(1, compValue.length() - 1);     //Drop double quotes
-            filth = getSubFilterString(subAttribute, ldapAttribute, compValue, operator);
+            filth = getSubFilterString(subAttribute, ldapAttribute, StringEscapeUtils.unescapeJson(compValue), operator);
 
         } else if (Type.INTEGER.equals(attrType) || Type.DECIMAL.equals(attrType)) {
             filth = getSubFilterNumeric(subAttribute, ldapAttribute, compValue, operator, attrType);
