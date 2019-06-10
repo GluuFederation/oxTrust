@@ -83,4 +83,8 @@ public class ProductInstallationCheckerAction implements Serializable {
 	public void setShowIDP_CAS(boolean showIDP_CAS) {
 		this.showIDP_CAS = showIDP_CAS;
 	}
+
+	public boolean canShowGluuRadiusMenu() {
+		return ProductInstallationChecker.isGluuRadiusInstalled();
+	}
 }
