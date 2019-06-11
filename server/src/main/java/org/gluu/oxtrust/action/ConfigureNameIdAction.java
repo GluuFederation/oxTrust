@@ -2,8 +2,10 @@ package org.gluu.oxtrust.action;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.enterprise.context.ConversationScoped;
 import javax.faces.application.FacesMessage;
@@ -37,13 +39,16 @@ import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.service.security.Secure;
 import org.slf4j.Logger;
 
+import com.google.common.collect.MapDifference;
+import com.google.common.collect.Maps;
+
 @ConversationScoped
 @Named("configureNameIdAction")
 @Secure("#{permissionService.hasPermission('trust', 'access')}")
 public class ConfigureNameIdAction implements Serializable {
 
 	private static final long serialVersionUID = -9125609238796284572L;
-	
+
 	@Inject
 	private Logger log;
 
@@ -52,51 +57,70 @@ public class ConfigureNameIdAction implements Serializable {
 
 	@Inject
 	private FacesMessages facesMessages;
-	
+
 	@Inject
 	private AppConfiguration applicationConfiguration;
 
-    @Inject
-    private PersistenceEntryManager ldapEntryManager;
-	
+	@Inject
+	private PersistenceEntryManager ldapEntryManager;
+
 	@Inject
 	private TrustService trustService;
-	
+
 	@Inject
 	private Shibboleth3ConfService shibboleth3ConfService;
 
 	@Inject
 	private ConfigurationFactory configurationFactory;
-	
-    private ArrayList<NameIdConfig> nameIdConfigs;
+
+	private ArrayList<NameIdConfig> nameIdConfigs;
 	private List<GluuAttribute> attributes;
 
-	private boolean initialized;
-
+	private Map<String, String> availableNamedIds = new HashMap<>();
+	private Map<String, String> usedNamedIds = new HashMap<>();
 
 	public List<GluuAttribute> getAttributes() {
 		return attributes;
 	}
 
 	public String init() {
-		if (initialized) {
-			return OxTrustConstants.RESULT_SUCCESS;
-		}
+		loadNameIds();
 		this.attributes = attributeService.getAllAttributes();
-		final LdapOxTrustConfiguration conf = configurationFactory.loadConfigurationFromLdap("oxTrustConfAttributeResolver");
+		final LdapOxTrustConfiguration conf = configurationFactory
+				.loadConfigurationFromLdap("oxTrustConfAttributeResolver");
 		if (conf == null) {
-		    log.error("Failed to load oxTrust configuration");
-            return OxTrustConstants.RESULT_FAILURE;
+			log.error("Failed to load oxTrust configuration");
+			return OxTrustConstants.RESULT_FAILURE;
 		}
 		this.nameIdConfigs = new ArrayList<NameIdConfig>();
 		AttributeResolverConfiguration attributeResolverConfiguration = conf.getAttributeResolverConfig();
 		if ((attributeResolverConfiguration != null) && (attributeResolverConfiguration.getNameIdConfigs() != null)) {
-		    for (NameIdConfig nameIdConfig : attributeResolverConfiguration.getNameIdConfigs()) {
-		        this.nameIdConfigs.add(nameIdConfig);
-		    }
+			this.usedNamedIds.clear();
+			for (NameIdConfig nameIdConfig : attributeResolverConfiguration.getNameIdConfigs()) {
+				this.nameIdConfigs.add(nameIdConfig);
+				this.usedNamedIds.put(nameIdConfig.getNameIdType(), nameIdConfig.getNameIdType());
+			}
 		}
-		this.initialized = true;
 		return OxTrustConstants.RESULT_SUCCESS;
+	}
+
+	private void loadNameIds() {
+		availableNamedIds.put("urn:oasis:names:tc:SAML:2.0:nameid-format:persistent",
+				"urn:oasis:names:tc:SAML:2.0:nameid-format:persistent");
+		availableNamedIds.put("urn:oasis:names:tc:SAML:2.0:nameid-format:transient",
+				"urn:oasis:names:tc:SAML:2.0:nameid-format:transient");
+		availableNamedIds.put("urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress",
+				"urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress");
+		availableNamedIds.put("urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified",
+				"urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified");
+		availableNamedIds.put("urn:oasis:names:tc:SAML:1.1:nameid-format:X509SubjectName",
+				"urn:oasis:names:tc:SAML:1.1:nameid-format:X509SubjectName");
+		availableNamedIds.put("urn:oasis:names:tc:SAML:1.1:nameid-format:WindowsDomainQualifiedName",
+				"urn:oasis:names:tc:SAML:1.1:nameid-format:WindowsDomainQualifiedName");
+		availableNamedIds.put("urn:oasis:names:tc:SAML:2.0:nameid-format:kerberos",
+				"urn:oasis:names:tc:SAML:2.0:nameid-format:kerberos");
+		availableNamedIds.put("urn:oasis:names:tc:SAML:2.0:nameid-format:entity",
+				"urn:oasis:names:tc:SAML:2.0:nameid-format:entity");
 	}
 
 	public String save() {
@@ -121,55 +145,79 @@ public class ConfigureNameIdAction implements Serializable {
 			log.error("Failed to save Attribute Resolver configuration configuration", ex);
 			return OxTrustConstants.RESULT_FAILURE;
 		}
- 		boolean updateShib3Configuration = applicationConfiguration.isConfigGeneration(); 
-		if (updateShib3Configuration) {    
-			List<GluuSAMLTrustRelationship> trustRelationships = trustService.getAllActiveTrustRelationships();    
+		boolean updateShib3Configuration = applicationConfiguration.isConfigGeneration();
+		if (updateShib3Configuration) {
+			List<GluuSAMLTrustRelationship> trustRelationships = trustService.getAllActiveTrustRelationships();
 			if (!shibboleth3ConfService.generateConfigurationFiles(trustRelationships)) {
 				log.error("Failed to update Shibboleth v3 configuration");
-				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update Shibboleth v3 configuration");			
-			}
-			else {
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update Shibboleth v3 configuration");
+			} else {
 				try {
-					SSLContext sslContext = SSLContextBuilder.create().loadTrustMaterial(new TrustSelfSignedStrategy()).build();
+					SSLContext sslContext = SSLContextBuilder.create().loadTrustMaterial(new TrustSelfSignedStrategy())
+							.build();
 					HostnameVerifier allowAllHosts = new NoopHostnameVerifier();
-					SSLConnectionSocketFactory connectionFactory = new SSLConnectionSocketFactory(sslContext, allowAllHosts);
+					SSLConnectionSocketFactory connectionFactory = new SSLConnectionSocketFactory(sslContext,
+							allowAllHosts);
 					HttpClient client = HttpClients.custom().setSSLSocketFactory(connectionFactory).build();
-					HttpGet request = new HttpGet("https://localhost/idp/profile/admin/reload-service?id=shibboleth.NameIdentifierGenerationService");
-					request.addHeader("User-Agent",  "Mozilla/5.0");
+					HttpGet request = new HttpGet(
+							"https://localhost/idp/profile/admin/reload-service?id=shibboleth.NameIdentifierGenerationService");
+					request.addHeader("User-Agent", "Mozilla/5.0");
 					HttpResponse response = client.execute(request);
 					log.info(EntityUtils.toString(response.getEntity(), "UTF-8"));
-				}
-				catch (Exception e) {
+				} catch (Exception e) {
 					e.printStackTrace();
 					log.error("error refreshing nameid setting (kindly restart services manually)", e);
 				}
 			}
 		}
+
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
-	
+
 	public String cancel() {
 		facesMessages.add(FacesMessage.SEVERITY_INFO, "Saml NameId configuration not updated");
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-    public ArrayList<NameIdConfig> getNameIdConfigs() {
-        return nameIdConfigs;
-    }
-    
-    public void addNameIdConfig() {
-        NameIdConfig nameIdConfig = new NameIdConfig();
-        this.nameIdConfigs.add(nameIdConfig);
-    }
-    
-    public void removeNameIdConfig(NameIdConfig removenameIdConfig) {
-        for (Iterator<NameIdConfig> iterator = this.nameIdConfigs.iterator(); iterator.hasNext();) {
-            NameIdConfig nameIdConfig = iterator.next();
-            if (System.identityHashCode(removenameIdConfig) == System.identityHashCode(nameIdConfig)) {
-                iterator.remove();
-                return;
-            }
-        }
-    }
+	public ArrayList<NameIdConfig> getNameIdConfigs() {
+		return nameIdConfigs;
+	}
+
+	public void addNameIdConfig() {
+		NameIdConfig nameIdConfig = new NameIdConfig();
+		this.nameIdConfigs.add(nameIdConfig);
+	}
+
+	public void removeNameIdConfig(NameIdConfig removenameIdConfig) {
+		for (Iterator<NameIdConfig> iterator = this.nameIdConfigs.iterator(); iterator.hasNext();) {
+			NameIdConfig nameIdConfig = iterator.next();
+			if (System.identityHashCode(removenameIdConfig) == System.identityHashCode(nameIdConfig)) {
+				iterator.remove();
+				return;
+			}
+		}
+	}
+
+	public Map<String, String> getAvailableNamedIds(NameIdConfig config) {
+		MapDifference<String, String> diff = Maps.difference(availableNamedIds, usedNamedIds);
+		Map<String, String> value = diff.entriesOnlyOnLeft();
+		Map<String, String> result = Maps.newHashMap(value);
+		if (config.getNameIdType() != null) {
+			result.put(config.getNameIdType(), config.getNameIdType());
+		}
+		return result;
+	}
+
+	public void setAvailableNamedIds(Map<String, String> availableNamedIds) {
+		this.availableNamedIds = availableNamedIds;
+	}
+
+	public Map<String, String> getUsedNamedIds() {
+		return usedNamedIds;
+	}
+
+	public void setUsedNamedIds(Map<String, String> usedNamedIds) {
+		this.usedNamedIds = usedNamedIds;
+	}
 
 }
