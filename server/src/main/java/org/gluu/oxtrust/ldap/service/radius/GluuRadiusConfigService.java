@@ -1,5 +1,7 @@
 package org.gluu.oxtrust.ldap.service.radius;
 
+import java.io.Serializable;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
@@ -12,9 +14,14 @@ import org.gluu.util.properties.FileConfiguration;
 import org.slf4j.Logger;
 
 @Stateless
-public class GluuRadiusConfigService {
+public class GluuRadiusConfigService implements Serializable {
     
-    private static final String configurationEntryDN = "oxradius_ConfigurationEntryDN";
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 3720989420960664644L;
+
+	private static final String configurationEntryDN = "oxradius_ConfigurationEntryDN";
 
     @Inject
     private PersistenceEntryManager persistenceEntryManager;

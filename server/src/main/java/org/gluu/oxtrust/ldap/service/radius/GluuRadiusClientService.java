@@ -1,5 +1,6 @@
 package org.gluu.oxtrust.ldap.service.radius;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.UUID;
 
@@ -10,9 +11,14 @@ import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.radius.model.RadiusClient;
 import org.slf4j.Logger;
 
-public class GluuRadiusClientService {
+public class GluuRadiusClientService  implements Serializable{
 
-    @Inject
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 8095893988896942051L;
+
+	@Inject
     private PersistenceEntryManager persistenceEntryManager;
 
     @Inject
