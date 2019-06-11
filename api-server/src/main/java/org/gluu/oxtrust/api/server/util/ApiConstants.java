@@ -40,6 +40,8 @@ public final class ApiConstants {
 	public static final String SMTP = "/smtp";
 	public static final String UMA = "/uma";
 	public static final String RESOURCES = "/resources";
+	public static final String RADIUS_SETTINGS = "/radius/settings";
+	public static final String RADIUS_CLIENTS = "/radius/clients";
 	public static final String INUM_PARAM_PATH = "/{inum}";
 	public static final String NAME_PARAM_PATH = "/{name}";
 	public static final String TYPE_PARAM_PATH = "/{type}";

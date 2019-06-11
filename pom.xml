@@ -262,6 +262,11 @@
 				<artifactId>oxcore-model</artifactId>
 				<version>${oxcore.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>org.gluu</groupId>
+				<artifactId>oxcore-radius</artifactId>
+				<version>${oxcore.version}</version>
+			</dependency>
 
 			<!-- Weld -->
 			<dependency>
