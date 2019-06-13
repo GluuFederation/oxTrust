@@ -76,9 +76,6 @@ public class GluuOrganization extends Entry implements Serializable {
 	@AttributeName(name = "gluuFaviconImage")
 	private String faviconImage;
 
-	@AttributeName(name = "gluuTempFaviconImage")
-	private String tempFaviconImage;
-
 	@AttributeName(name = "oxInumConfig")
 	private String oxInumConfig;
 
@@ -206,14 +203,6 @@ public class GluuOrganization extends Entry implements Serializable {
 
 	public void setStatus(GluuStatus status) {
 		this.status = status;
-	}
-
-	public String getTempFaviconImage() {
-		return tempFaviconImage;
-	}
-
-	public void setTempFaviconImage(String tempFaviconImage) {
-		this.tempFaviconImage = tempFaviconImage;
 	}
 
 	public String getThemeColor() {

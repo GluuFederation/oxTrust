@@ -7,10 +7,10 @@
 package org.gluu.oxtrust.servlet;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Date;
 
 import javax.inject.Inject;
 import javax.servlet.annotation.WebServlet;
@@ -18,15 +18,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.gluu.model.GluuImage;
-import org.gluu.oxtrust.ldap.service.ImageService;
+import org.apache.commons.lang.StringUtils;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.model.GluuOrganization;
-import org.gluu.util.io.DownloadWrapper;
-import org.gluu.util.io.FileDownloader;
-import org.gluu.util.io.FileDownloader.ContentDisposition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,6 +29,7 @@ import org.slf4j.LoggerFactory;
  * Servlet to upload organization logo
  * 
  * @author Yuriy Movchan Date: 11.16.2010
+ * @author Mougang Gasmyr Date: 13.06.2019
  */
 @WebServlet(urlPatterns = "/servlet/logo")
 public class LogoImageServlet extends HttpServlet {
@@ -41,81 +37,43 @@ public class LogoImageServlet extends HttpServlet {
 	private static final long serialVersionUID = 5445488800130871634L;
 
 	private static final Logger log = LoggerFactory.getLogger(LogoImageServlet.class);
-	
+
 	@Inject
 	private OrganizationService organizationService;
-	
-	@Inject
-	private ImageService imageService;
 
 	@Override
-	protected void doGet(HttpServletRequest httpServletRequest, HttpServletResponse response) {
-		log.debug("Starting organization logo upload");
-		try {
-			GluuOrganization organization = organizationService.getOrganization();
-			GluuImage image = imageService.getGluuImageFromXML(organization.getLogoImage());
-			if (image != null) {
-				image.setLogo(true);
-			}
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) {
+		response.setContentType("image/jpg");
+		GluuOrganization organization = organizationService.getOrganization();
+		boolean hasSucceed = readCustomLogo(response, organization);
+		if (!hasSucceed) {
+			readDefaultLogo(response);
+		}
+	}
 
-			OutputStream os = null;
-			InputStream is = null;
-			try {
-				DownloadWrapper downloadWrapper = null;
+	private boolean readDefaultLogo(HttpServletResponse response) {
+		String defaultLogoFileName = "/WEB-INF/static/images/default_logo.png";
+		try (InputStream in = getServletContext().getResourceAsStream(defaultLogoFileName);
+				OutputStream out = response.getOutputStream()) {
+			IOUtils.copy(in, out);
+			return true;
+		} catch (IOException e) {
+			log.debug("Error loading default logo: " + e.getMessage());
+			return false;
+		}
+	}
 
-				// Send customized organization logo
-				if (image != null) {
-					File file = imageService.getSourceFile(image);
-					try {
-						is = FileUtils.openInputStream(file);
-						downloadWrapper = new DownloadWrapper(is, image.getSourceName(), image.getSourceContentType(),
-								image.getCreationDate(), (int) file.length());
-					} catch (IOException ex) {
-						log.error("Organization logo image doesn't exist", ex);
-						FileDownloader.sendError(response);
-						return;
-					}
-				} else {
-					// If customized logo doesn't exist then send default
-					// organization logo
-					String defaultLogoFileName = "/WEB-INF/static/images/default_logo.png";
-					is = getServletContext().getResourceAsStream(defaultLogoFileName);
-					if (is == null) {
-						log.error("Default organization logo image doesn't exist");
-						FileDownloader.sendError(response);
-						return;
-					}
-
-					// Calculate default logo size
-					long contentLength;
-					try {
-						contentLength = is.skip(Long.MAX_VALUE);
-					} catch (IOException ex) {
-						log.error("Failed to calculate default organization logo image size", ex);
-						FileDownloader.sendError(response);
-						return;
-					} finally {
-						IOUtils.closeQuietly(is);
-					}
-
-					is = getServletContext().getResourceAsStream(defaultLogoFileName);
-					downloadWrapper = new DownloadWrapper(is, "default_logo.png", "image/png", new Date(), (int) contentLength);
-				}
-
-				try {
-					int logoSize = FileDownloader.writeOutput(downloadWrapper, ContentDisposition.INLINE, response);
-					response.getOutputStream().flush();
-					log.debug("Successfully send organization logo with size", logoSize);
-				} catch (IOException ex) {
-					log.error("Failed to send organization logo", ex);
-					FileDownloader.sendError(response);
-				}
-			} finally {
-				IOUtils.closeQuietly(is);
-				IOUtils.closeQuietly(os);
-			}
-		} catch (Exception ex) {
-			log.error("Failed to send organization logo", ex);
+	private boolean readCustomLogo(HttpServletResponse response, GluuOrganization organization) {
+		if (organization.getLogoImage() == null || StringUtils.isEmpty(organization.getLogoImage())) {
+			return false;
+		}
+		File logoPath = new File(organization.getLogoImage());
+		try (InputStream in = new FileInputStream(logoPath); OutputStream out = response.getOutputStream()) {
+			IOUtils.copy(in, out);
+			return true;
+		} catch (IOException e) {
+			log.debug("Error loading custom logo: " + e.getMessage());
+			return false;
 		}
 	}
 }

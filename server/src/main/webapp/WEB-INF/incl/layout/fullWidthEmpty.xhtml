@@ -21,12 +21,8 @@
 				top.location.href = location.href;
 		</script>
 
-		<link rel="shortcut icon"
-			href="#{request.contextPath}/servlet/favicon?v=#{faviconImageServlet.faviconTimestamp}" />
 		<link rel="icon"
-			href="#{request.contextPath}/servlet/favicon?v=#{faviconImageServlet.faviconTimestamp}" />
-
-		<!-- Stylesheets -->
+			href="#{request.contextPath}/servlet/favicon" />
 		<link
 			href="#{oxTrustConfigurationService.cssLocation}/../theme/bootstrap/css/bootstrap.min.css"
 			rel="stylesheet" type="text/css" />
@@ -139,8 +135,7 @@
 	</h:head>
 	<h:body styleClass="login-page" style="background:white !important;">
 		<div class="login-logo">
-			<img
-				src="#{oxTrustConfigurationService.cssLocation}/../theme/dist/img/logo1.png" />
+			<img style="width: 15%; height: 20%;" src="#{request.contextPath}/servlet/logo"/>
 		</div>
 		<div class="bs-docs-section"
 			style="border-top: 2px solid #1ab26b !important; margin-bottom: 5px !important; margin-top: 1px !important; padding-top: 1px !important;"></div>
