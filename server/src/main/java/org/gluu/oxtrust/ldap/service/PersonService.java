@@ -616,7 +616,7 @@ public class PersonService implements Serializable, IPersonService {
 		User user = new User();
 		user.setBaseDn(getDnForPerson(null));
 		user.setUid(uid);
-		List<User> users = ldapEntryManager.findEntries(user);// getLdapEntryManagerInstance().findEntries(person);
+		List<User> users = ldapEntryManager.findEntries(user, 1);// getLdapEntryManagerInstance().findEntries(person);
 		if ((users != null) && (users.size() > 0)) {
 			return users.get(0);
 		}
