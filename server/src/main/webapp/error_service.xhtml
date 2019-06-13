@@ -18,33 +18,8 @@
 	margin-bottom: 0px;
 }
 </style>
-
-		<ui:fragment>
-			<script type="text/javascript">
-				function load() {
-					var url = window.location.origin
-							+ "/oxauth/ext/resources/img/logo.png";
-					var element = document.getElementById("logoObject");
-					element.data = url;
-				}
-				window.onload = load;
-			</script>
-		</ui:fragment>
 	</ui:define>
-
 	<ui:define name="body">
-		<div class="login-logo">
-			<object id="logoObject" data="" height="150" width="150"
-				type="image/png">
-				<img
-					src="#{oxTrustConfigurationService.cssLocation}/../theme/dist/img/logo1.png" />
-			</object>
-		</div>
-		<div class="bs-docs-section"
-			style="border-top: 2px solid #1ab26b !important; margin-bottom: 5px !important; margin-top: 1px !important; padding-top: 1px !important;"></div>
-		<!-- /.login-logo -->
-
-
 		<div class="lockscreen-wrapper" style="text-align: center;">
 			<div class="lockscreen-logo"
 				style="margin-bottom: 0px !important; margin-top: 10%;">

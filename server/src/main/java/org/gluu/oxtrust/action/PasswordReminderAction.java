@@ -138,7 +138,7 @@ public class PasswordReminderAction implements Serializable {
 				rendererParameters.setParameter("organizationName",
 						organizationService.getOrganization().getDisplayName());
 				rendererParameters.setParameter("resetLink", appConfiguration.getApplicationUrl()
-						+ httpServletRequest.getContextPath() + "/resetPassword/" + request.getOxGuid());
+						+ httpServletRequest.getContextPath() + "/resetPassword.htm?guid=" + request.getOxGuid());
 
 				String subj = facesMessages.evalResourceAsString("#{msg['mail.reset.found.message.subject']}");
 				String messagePlain = facesMessages
