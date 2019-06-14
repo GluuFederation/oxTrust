@@ -1556,7 +1556,7 @@ public class UpdateClientAction implements Serializable {
 			if (client.getOxAuthScopes() != null && !client.getOxAuthScopes().isEmpty()) {
 				List<String> scopes = new ArrayList<String>();
 				for (Scope scope : this.scopes) {
-					scopes.add(scope.getDisplayName());
+					scopes.add(scope.getId());
 				}
 				items.add("**Scopes:** " + scopes.toString());
 			}
