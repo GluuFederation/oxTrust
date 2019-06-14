@@ -1,9 +1,3 @@
-/*
- * oxTrust is available under the MIT License (2008). See http://opensource.org/licenses/MIT for full text.
- *
- * Copyright (c) 2014, Gluu
- */
-
 package org.gluu.oxtrust.servlet;
 
 import java.io.File;
@@ -25,20 +19,14 @@ import org.gluu.oxtrust.model.GluuOrganization;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Servlet to upload organization logo
- * 
- * @author Yuriy Movchan Date: 11.16.2010
- * @author Mougang Gasmyr Date: 13.06.2019
- */
-@WebServlet(urlPatterns = "/servlet/logo")
-public class LogoImageServlet extends HttpServlet {
+@WebServlet(urlPatterns = "/servlet/oxauth/logo")
+public class OxAuthLogoServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 5445488800130871634L;
 
 	private static final Logger log = LoggerFactory.getLogger(LogoImageServlet.class);
 
-	public static final String BASE_OXTRUST_LOGO_PATH = "/opt/gluu/jetty/identity/custom/static/logo/";
+	public static final String BASE_OXAUTH_LOGO_PATH = "/opt/gluu/jetty/oxauth/custom/static/logo/";
 
 	@Inject
 	private OrganizationService organizationService;
@@ -69,11 +57,11 @@ public class LogoImageServlet extends HttpServlet {
 		if (organization.getOxTrustLogoPath() == null || StringUtils.isEmpty(organization.getOxTrustLogoPath())) {
 			return false;
 		}
-		File directory = new File(BASE_OXTRUST_LOGO_PATH);
+		File directory = new File(BASE_OXAUTH_LOGO_PATH);
 		if (!directory.exists()) {
 			directory.mkdir();
 		}
-		File logoPath = new File(BASE_OXTRUST_LOGO_PATH + organization.getOxTrustLogoPath());
+		File logoPath = new File(BASE_OXAUTH_LOGO_PATH + organization.getOxTrustLogoPath());
 		if (!logoPath.exists()) {
 			return false;
 		}
