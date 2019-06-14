@@ -27,7 +27,6 @@
 								target="_blank"> <span>#{msg['leftmenu.supportForum']}</span>
 							</a></li>
 						</ul>
-						<li class="header" style="text-align: center;"><h4>#{msg['leftmenu.gluuIdentityConfiguration']}</h4></li>
 						<ui:fragment
 							rendered="#{permissionService.hasPermission('configuration', 'access') or permissionService.hasPermission('scim', 'access') or permissionService.hasPermission('attribute', 'access')}">
 							<li class="treeview" id="menuConfiguration"><a href="#">

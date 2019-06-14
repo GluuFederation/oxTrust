@@ -21,12 +21,8 @@
 				top.location.href = location.href;
 		</script>
 
-		<link rel="shortcut icon"
-			href="#{request.contextPath}/servlet/favicon?v=#{faviconImageServlet.faviconTimestamp}" />
 		<link rel="icon"
-			href="#{request.contextPath}/servlet/favicon?v=#{faviconImageServlet.faviconTimestamp}" />
-
-		<!-- Stylesheets -->
+			href="#{request.contextPath}/servlet/favicon" />
 		<link
 			href="#{oxTrustConfigurationService.cssLocation}/../theme/bootstrap/css/bootstrap.min.css"
 			rel="stylesheet" type="text/css" />
@@ -60,14 +56,15 @@
 	height: 33px;
 	background-color: #{gluufn:getColor(themeColor, "00ff00")
 }
-background-image
-
- 
-
-:none
-
-
-;
+ .footer {
+    position: fixed;
+    margin-top: 4%;
+    bottom: 0;
+    width: 100%;
+    color: white;
+    height: 55px;
+    background-color: #00BE79;
+    height: 55px;
 }
 </style>
 		</ui:fragment>
@@ -137,6 +134,11 @@ background-image
      </h:outputStylesheet>
 	</h:head>
 	<h:body styleClass="login-page" style="background:white !important;">
+		<div class="login-logo">
+			<img style="width: 15%; height: 20%;" src="#{request.contextPath}/servlet/logo"/>
+		</div>
+		<div class="bs-docs-section"
+			style="border-top: 2px solid #1ab26b !important; margin-bottom: 5px !important; margin-top: 1px !important; padding-top: 1px !important;"></div>
 		<div class="wrapper">
 			<ui:insert name="body" />
 		</div>

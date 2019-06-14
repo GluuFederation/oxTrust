@@ -24,11 +24,8 @@
 			if (window != window.top)
 				top.location.href = location.href;
 		</script>
-		<link rel="shortcut icon"
-			href="#{request.contextPath}/servlet/favicon?v=#{faviconImageServlet.faviconTimestamp}" />
-		<link rel="icon"
-			href="#{request.contextPath}/servlet/favicon?v=#{faviconImageServlet.faviconTimestamp}" />
-
+		<link rel="icon" type="image/x-icon"
+			href="#{request.contextPath}/servlet/favicon" />
 		<script type="text/javascript"
 			src="#{oxTrustConfigurationService.jsLocation}/gluuCommon.js"></script>
 		<ui:param name="themeColor"
@@ -87,8 +84,6 @@
 			href="#{oxTrustConfigurationService.cssLocation}/../theme/dist/css/rf-override.css"
 			rel="stylesheet" type="text/css" />
 		<ui:insert name="head" />
-		<h:outputStylesheet>
-		</h:outputStylesheet>
 		<style type="text/css">
 input[type=text], input[type=email], input[type=password], input[autocomplete=off],
 	input[type=url] {
@@ -250,9 +245,6 @@ select {
 		<script
 			src='#{oxTrustConfigurationService.cssLocation}/../theme/dist/js/clipboard.min.js'
 			type="text/javascript"></script>
-
-		<rich:notifyMessages stayTime="5000" nonblocking="true" />
-
 		<div class="footer"></div>
 	</h:body>
 </f:view>
