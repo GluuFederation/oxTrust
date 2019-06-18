@@ -6,19 +6,19 @@
 
 package org.gluu.oxtrust.util;
 
-import java.io.Serializable;
+import org.slf4j.Logger;
+import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-
-import org.slf4j.Logger;
-import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import java.io.InputStream;
+import java.io.Serializable;
 /**
  * Constants with current build info
  * 
@@ -72,10 +72,10 @@ public class BuildVersionService implements Serializable {
 	
 	@PostConstruct
 	public void initalize() {
-		try {
+		try (InputStream is = getClass().getResourceAsStream("/META-INF/beans.xml")) {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder dBuilder = factory.newDocumentBuilder();
-			Document doc = dBuilder.parse((getClass().getResourceAsStream("/META-INF/beans.xml")));
+            Document doc = dBuilder.parse(is);
 			doc.getDocumentElement().normalize();
 			log.info("Root element :" + doc.getDocumentElement().getNodeName());
 			NodeList nList = doc.getElementsByTagName("bean");
