@@ -27,7 +27,7 @@ public class OxAuthFaviconServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 5445488800130871634L;
 
-	private static final Logger log = LoggerFactory.getLogger(FaviconImageServlet.class);
+	private static final Logger log = LoggerFactory.getLogger(OxAuthFaviconServlet.class);
 	public static final String BASE_OXAUTH_FAVICON_PATH = "/opt/gluu/jetty/oxauth/custom/static/favicon/";
 
 	@Override
@@ -54,7 +54,7 @@ public class OxAuthFaviconServlet extends HttpServlet {
 	}
 
 	private boolean readCustomFavicon(HttpServletResponse response, GluuOrganization organization) {
-		if (organization.getOxTrustFaviconPath() == null || StringUtils.isEmpty(organization.getOxTrustFaviconPath())) {
+		if (organization.getOxAuthFaviconPath() == null || StringUtils.isEmpty(organization.getOxAuthFaviconPath())) {
 			return false;
 		}
 
@@ -62,7 +62,7 @@ public class OxAuthFaviconServlet extends HttpServlet {
 		if (!directory.exists()) {
 			directory.mkdir();
 		}
-		File faviconPath = new File(BASE_OXAUTH_FAVICON_PATH + organization.getOxTrustFaviconPath());
+		File faviconPath = new File(BASE_OXAUTH_FAVICON_PATH + organization.getOxAuthFaviconPath());
 		if (!faviconPath.exists()) {
 			return false;
 		}

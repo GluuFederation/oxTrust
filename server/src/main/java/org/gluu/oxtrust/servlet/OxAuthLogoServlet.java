@@ -24,7 +24,7 @@ public class OxAuthLogoServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 5445488800130871634L;
 
-	private static final Logger log = LoggerFactory.getLogger(LogoImageServlet.class);
+	private static final Logger log = LoggerFactory.getLogger(OxAuthLogoServlet.class);
 
 	public static final String BASE_OXAUTH_LOGO_PATH = "/opt/gluu/jetty/oxauth/custom/static/logo/";
 
@@ -54,14 +54,14 @@ public class OxAuthLogoServlet extends HttpServlet {
 	}
 
 	private boolean readCustomLogo(HttpServletResponse response, GluuOrganization organization) {
-		if (organization.getOxTrustLogoPath() == null || StringUtils.isEmpty(organization.getOxTrustLogoPath())) {
+		if (organization.getOxAuthLogoPath() == null || StringUtils.isEmpty(organization.getOxAuthLogoPath())) {
 			return false;
 		}
 		File directory = new File(BASE_OXAUTH_LOGO_PATH);
 		if (!directory.exists()) {
 			directory.mkdir();
 		}
-		File logoPath = new File(BASE_OXAUTH_LOGO_PATH + organization.getOxTrustLogoPath());
+		File logoPath = new File(BASE_OXAUTH_LOGO_PATH + organization.getOxAuthLogoPath());
 		if (!logoPath.exists()) {
 			return false;
 		}

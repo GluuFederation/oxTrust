@@ -46,11 +46,11 @@ public class LogoImageServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) {
 		response.setContentType("image/jpg");
-//		GluuOrganization organization = organizationService.getOrganization();
-//		boolean hasSucceed = readCustomLogo(response, organization);
-//		if (!hasSucceed) {
-//			readDefaultLogo(response);
-//		}
+		GluuOrganization organization = organizationService.getOrganization();
+		boolean hasSucceed = readCustomLogo(response, organization);
+		if (!hasSucceed) {
+			readDefaultLogo(response);
+		}
 	}
 
 	private boolean readDefaultLogo(HttpServletResponse response) {

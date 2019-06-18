@@ -28,7 +28,7 @@ public class IdpFaviconServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 5445488800130871634L;
 
-	private static final Logger log = LoggerFactory.getLogger(FaviconImageServlet.class);
+	private static final Logger log = LoggerFactory.getLogger(IdpFaviconServlet.class);
 	public static final String BASE_IDP_FAVICON_PATH = "/opt/gluu/jetty/idp/custom/static/favicon/";
 
 	@Override
@@ -55,7 +55,7 @@ public class IdpFaviconServlet extends HttpServlet {
 	}
 
 	private boolean readCustomFavicon(HttpServletResponse response, GluuOrganization organization) {
-		if (organization.getOxTrustFaviconPath() == null || StringUtils.isEmpty(organization.getOxTrustFaviconPath())) {
+		if (organization.getIdpFaviconPath() == null || StringUtils.isEmpty(organization.getIdpFaviconPath())) {
 			return false;
 		}
 
@@ -63,7 +63,7 @@ public class IdpFaviconServlet extends HttpServlet {
 		if (!directory.exists()) {
 			directory.mkdir();
 		}
-		File faviconPath = new File(BASE_IDP_FAVICON_PATH + organization.getOxTrustFaviconPath());
+		File faviconPath = new File(BASE_IDP_FAVICON_PATH + organization.getIdpFaviconPath());
 		if (!faviconPath.exists()) {
 			return false;
 		}

@@ -24,7 +24,7 @@ public class IdpLogoServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 5445488800130871634L;
 
-	private static final Logger log = LoggerFactory.getLogger(LogoImageServlet.class);
+	private static final Logger log = LoggerFactory.getLogger(IdpLogoServlet.class);
 
 	public static final String BASE_IDP_LOGO_PATH = "/opt/gluu/jetty/idp/custom/static/logo/";
 
@@ -54,14 +54,14 @@ public class IdpLogoServlet extends HttpServlet {
 	}
 
 	private boolean readCustomLogo(HttpServletResponse response, GluuOrganization organization) {
-		if (organization.getOxTrustLogoPath() == null || StringUtils.isEmpty(organization.getOxTrustLogoPath())) {
+		if (organization.getIdpLogoPath() == null || StringUtils.isEmpty(organization.getIdpLogoPath())) {
 			return false;
 		}
 		File directory = new File(BASE_IDP_LOGO_PATH);
 		if (!directory.exists()) {
 			directory.mkdir();
 		}
-		File logoPath = new File(BASE_IDP_LOGO_PATH + organization.getOxTrustLogoPath());
+		File logoPath = new File(BASE_IDP_LOGO_PATH + organization.getIdpLogoPath());
 		if (!logoPath.exists()) {
 			return false;
 		}

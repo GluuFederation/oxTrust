@@ -41,11 +41,11 @@ public class FaviconImageServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest httpServletRequest, HttpServletResponse response)
 			throws ServletException, IOException {
 		response.setContentType("image/x-icon");
-		// GluuOrganization organization = organizationService.getOrganization();
-		// boolean hasSucceed = readCustomFavicon(response, organization);
-		// if (!hasSucceed) {
-		// readDefaultFavicon(response);
-		// }
+		GluuOrganization organization = organizationService.getOrganization();
+		boolean hasSucceed = readCustomFavicon(response, organization);
+		if (!hasSucceed) {
+			readDefaultFavicon(response);
+		}
 	}
 
 	private boolean readDefaultFavicon(HttpServletResponse response) {
