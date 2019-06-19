@@ -301,7 +301,7 @@ public class PassportIdpInitiatedAction implements Serializable {
 			selectAddedScopes();
 			return;
 		}
-		this.availableScopes = scopeService.getAllScopesList(1000).stream().map(e -> e.getDisplayName())
+		this.availableScopes = scopeService.getAllScopesList(1000).stream().map(e -> e.getId())
 				.map(e -> new SelectableEntity<String>(e)).collect(Collectors.toList());
 		selectAddedScopes();
 	}
