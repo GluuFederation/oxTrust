@@ -23,6 +23,7 @@ import org.gluu.model.passport.idpinitiated.AuthzParams;
 import org.gluu.model.passport.idpinitiated.IIConfiguration;
 import org.gluu.oxauth.model.common.ResponseType;
 import org.gluu.oxtrust.ldap.service.ClientService;
+import org.gluu.oxtrust.ldap.service.ConfigurationService;
 import org.gluu.oxtrust.ldap.service.PassportService;
 import org.gluu.oxtrust.ldap.service.ScopeService;
 import org.gluu.oxtrust.model.OxAuthClient;
@@ -32,8 +33,8 @@ import org.slf4j.Logger;
 
 import com.google.common.collect.Lists;
 
-@Named("passportIdpInitiatedAction")
 @ConversationScoped
+@Named("passportIdpInitiatedAction")
 @Secure("#{permissionService.hasPermission('passport', 'access')}")
 public class PassportIdpInitiatedAction implements Serializable {
 
@@ -46,10 +47,12 @@ public class PassportIdpInitiatedAction implements Serializable {
 	private PassportService passportService;
 
 	@Inject
+	private ConfigurationService configurationService;
+
+	@Inject
 	private FacesMessages facesMessages;
 	private boolean showForm = false;
 	private boolean isEdition = false;
-	private final String SAMPLE_URI = "https://<hostname>/oxauth/auth/passport/sample-redirector.htm";
 	@Inject
 	private ConversationService conversationService;
 
@@ -228,7 +231,7 @@ public class PassportIdpInitiatedAction implements Serializable {
 
 	public void activateForm() {
 		this.authzParam = new AuthzParams();
-		this.authzParam.setRedirectUri(SAMPLE_URI);
+		this.authzParam.setRedirectUri(getSamlUrl());
 		this.showForm = true;
 	}
 
@@ -386,6 +389,11 @@ public class PassportIdpInitiatedAction implements Serializable {
 	}
 
 	public void cancelSelectResponseTypes() {
+	}
+
+	private String getSamlUrl() {
+		return String.format("https://%s/oxauth/auth/passport/sample-redirector.htm",
+				configurationService.getConfiguration().getHostname());
 	}
 
 }
