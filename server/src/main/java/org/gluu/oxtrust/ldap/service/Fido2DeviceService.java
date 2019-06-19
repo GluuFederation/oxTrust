@@ -15,6 +15,7 @@ import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.search.filter.Filter;
 import org.gluu.util.StringHelper;
 import org.slf4j.Logger;
+
 @Stateless
 @Named
 public class Fido2DeviceService implements Serializable {
@@ -70,30 +71,48 @@ public class Fido2DeviceService implements Serializable {
 		}
 	}
 
-    public GluuFido2Device getFido2DeviceById(String userId, String id) {
+	public GluuFido2Device getFido2DeviceById(String userId, String id) {
 
-        GluuFido2Device f2d = null;
-        try {
-            String dn = getDnForFido2Device(id, userId);
-            if (StringUtils.isNotEmpty(userId)) {
-                f2d = ldapEntryManager.find(GluuFido2Device.class, dn);
-            } else {
-                Filter filter = Filter.createEqualityFilter("oxId", id);
-                f2d = ldapEntryManager.findEntries(dn, GluuFido2Device.class, filter).get(0);
+		GluuFido2Device f2d = null;
+		try {
+			String dn = getDnForFido2Device(id, userId);
+			if (StringUtils.isNotEmpty(userId)) {
+				f2d = ldapEntryManager.find(GluuFido2Device.class, dn);
+			} else {
+				Filter filter = Filter.createEqualityFilter("oxId", id);
+				f2d = ldapEntryManager.findEntries(dn, GluuFido2Device.class, filter).get(0);
+			}
+		} catch (Exception e) {
+			log.error("Failed to find Fido 2 device with id " + id, e);
+		}
+		return f2d;
+
+	}
+
+	public void updateFido2Device(GluuFido2Device fido2Device) {
+		ldapEntryManager.merge(fido2Device);
+	}
+
+	public void removeFido2Device(GluuFido2Device fido2Device) {
+		ldapEntryManager.removeRecursively(fido2Device.getDn());
+	}
+
+	public GluuFido2Device getGluuCustomFidoDeviceById( String id,String userId) {
+		GluuFido2Device gluuCustomFidoDevice = null;
+		try {
+		    String dn=getDnForFido2Device(id,userId);
+		    if (StringUtils.isNotEmpty(userId))
+                gluuCustomFidoDevice = ldapEntryManager.find(GluuFido2Device.class, dn);
+		    else{
+		        Filter filter=Filter.createEqualityFilter("oxId", id);
+		        gluuCustomFidoDevice = ldapEntryManager.findEntries(dn, GluuFido2Device.class, filter).get(0);
             }
-        } catch (Exception e) {
-            log.error("Failed to find Fido 2 device with id " + id, e);
-        }
-        return f2d;
+		}
+		catch (Exception e) {
+			log.error("Failed to find device by id " + id, e);
+		}
 
-    }
-
-    public void updateFido2Device(GluuFido2Device fido2Device) {
-	    ldapEntryManager.merge(fido2Device);
-    }
-
-    public void removeFido2Device(GluuFido2Device fido2Device) {
-	    ldapEntryManager.removeRecursively(fido2Device.getDn());
-    }
+		return gluuCustomFidoDevice;
+	}
 
 }

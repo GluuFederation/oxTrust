@@ -81,7 +81,6 @@ public class PassportConfigurationAction implements Serializable {
 			log.debug("", e);
 			return OxTrustConstants.RESULT_FAILURE;
 		}
-
 	}
 
 	public Configuration getConfiguration() {
