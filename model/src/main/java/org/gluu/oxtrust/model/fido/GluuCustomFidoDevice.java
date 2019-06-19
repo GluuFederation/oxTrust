@@ -70,14 +70,6 @@ public class GluuCustomFidoDevice extends Entry {
 	@AttributeName(name = "oxTrustMetaVersion")
 	private String metaVersion;
 
-	/*
-	 *
-	@AttributesList(name = "name", value = "values", sortByName = true, attributesConfiguration =
-		{@AttributeName(name = "creationDate", ignoreDuringUpdate = true), @AttributeName(name = "oxId", ignoreDuringUpdate = true)}
-	)
-	private List<GluuCustomAttribute> customAttributes = new ArrayList<GluuCustomAttribute>();
-	*/
-
 	public String getId() {
 		return id;
 	}

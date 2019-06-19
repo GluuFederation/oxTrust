@@ -47,6 +47,13 @@
             <ox:acceptRemovalDialog deleteMethod="#{updatePersonAction.delete}" id="deleteConfirmation"
                                     queue="personQueue" subject="person"
                                     value="#{updatePersonAction.person.displayName}"/>
+            <ox:acceptRemovalDialog deleteMethod="#{updatePersonAction.removeDevice()}" id="deleteDevice"
+                                    queue="deviceQueue" subject="device" render="PForm"
+                                    value="this"/>  
+            <ox:acceptRemovalDialog deleteMethod="#{updatePersonAction.removePairWiseIdentifier()}" id="deletePairWise"
+                                    queue="personQueue" subject="device"
+                                    render="PForm"
+                                    value="this"/>                                                
         </h:panelGroup>
     </ui:define>
 
