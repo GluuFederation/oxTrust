@@ -36,7 +36,7 @@ import java.util.*;
  */
 @Stateless
 @Named("organizationService")
-public class OrganizationService extends org.gluu.service.OrganizationService {
+public class OrganizationService  extends org.gluu.service.OrganizationService{
 
 	private static final long serialVersionUID = -1959146007518514678L;
 
