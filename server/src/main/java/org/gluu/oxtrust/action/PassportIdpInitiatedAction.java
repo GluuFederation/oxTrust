@@ -26,6 +26,7 @@ import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.ConfigurationService;
 import org.gluu.oxtrust.ldap.service.PassportService;
 import org.gluu.oxtrust.ldap.service.ScopeService;
+import org.gluu.oxtrust.model.OptionEntry;
 import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.service.security.Secure;
@@ -70,8 +71,10 @@ public class PassportIdpInitiatedAction implements Serializable {
 	private List<Provider> providers = new ArrayList<>();
 	private List<String> scopes = new ArrayList<>();
 	private List<String> responseTypes = new ArrayList<>();
+	private List<OptionEntry> options = new ArrayList<>();
 	private List<SelectableEntity<String>> availableScopes;
 	private List<SelectableEntity<String>> availableResponseTypes;
+	
 
 	private AuthzParams authzParam = new AuthzParams();
 	private AuthzParams previousParam;
@@ -98,6 +101,8 @@ public class PassportIdpInitiatedAction implements Serializable {
 
 	public String save() {
 		try {
+			log.info("-------------------------------------------");
+			log.info("Params size:"+authzParams.size());
 			this.iiConfiguration.setAuthorizationParams(authzParams);
 			updateClientRedirects();
 			this.passportConfiguration.setIdpInitiated(iiConfiguration);
@@ -174,6 +179,8 @@ public class PassportIdpInitiatedAction implements Serializable {
 		if (isValid()) {
 			this.authzParam.setScopes(scopesBuilder.toString().trim());
 			this.authzParam.setResponseType(typesBuilder.toString().trim());
+			this.authzParam.setExtraParams(options.stream().filter(e -> e.getKey() != null)
+					.collect(Collectors.toMap(OptionEntry::getKey, OptionEntry::getValue)));
 			if (this.isEdition) {
 				this.authzParams.remove(this.previousParam);
 				this.authzParams.add(this.authzParam);
@@ -184,6 +191,7 @@ public class PassportIdpInitiatedAction implements Serializable {
 			this.isEdition = false;
 			this.authzParam = new AuthzParams();
 			this.previousParam = null;
+			this.options.clear();
 		} else {
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "All fields are required.");
 		}
@@ -205,6 +213,8 @@ public class PassportIdpInitiatedAction implements Serializable {
 	}
 
 	public void editAuthParam(AuthzParams param) {
+		this.options = param.getExtraParams().entrySet().stream()
+				.map(e -> new OptionEntry(e.getKey(), e.getValue())).collect(Collectors.toList());
 		this.scopes = Stream.of(param.getScopes()).collect(Collectors.toList());
 		this.responseTypes = Stream.of(param.getResponseType()).collect(Collectors.toList());
 		this.previousParam = param;
@@ -219,6 +229,7 @@ public class PassportIdpInitiatedAction implements Serializable {
 		this.authzParam = new AuthzParams();
 		this.showForm = false;
 		this.previousParam = null;
+		this.options.clear();
 	}
 
 	public boolean isShowForm() {
@@ -395,5 +406,26 @@ public class PassportIdpInitiatedAction implements Serializable {
 		return String.format("https://%s/oxauth/auth/passport/sample-redirector.htm",
 				configurationService.getConfiguration().getHostname());
 	}
+
+	public List<OptionEntry> getOptions() {
+		return options;
+	}
+
+	public void setOptions(List<OptionEntry> options) {
+		this.options = options;
+	}
+	
+	public void addEntry(List<OptionEntry> options) {
+		options.add(new OptionEntry("", ""));
+	}
+	
+	public void removeEntry(List<OptionEntry> options, OptionEntry entry) {
+		options.remove(entry);
+	}
+	
+	public String getMapValue(String key) {
+		return this.authzParam.getExtraParams().get(key);
+	}
+
 
 }
