@@ -1,50 +1,73 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-    xmlns:f="http://xmlns.jcp.org/jsf/core"
-    xmlns:h="http://xmlns.jcp.org/jsf/html"
-    xmlns:a4j="http://richfaces.org/a4j"
-    xmlns:rich="http://richfaces.org/rich"
-    xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
-    xmlns:cc="http://xmlns.jcp.org/jsf/composite">
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
+	xmlns:cc="http://xmlns.jcp.org/jsf/composite">
 
 <cc:interface>
-    <cc:attribute name="subject" required="true" type="java.lang.String" />
-    <cc:attribute name="value" required="true" type="java.lang.String" />
-    <cc:attribute name="deleteMethod" required="true" method-signature="void action()" />
-    <cc:attribute name="cancelMethod" required="false" method-signature="void action()" />
-    <cc:attribute name="render" required="false" type="java.lang.String" />
+	<cc:attribute name="subject" required="true" type="java.lang.String" />
+	<cc:attribute name="message" required="false" type="java.lang.String" />
+	<cc:attribute name="value" required="true" type="java.lang.String" />
+	<cc:attribute name="deleteMethod" required="true"
+		method-signature="void action()" />
+	<cc:attribute name="cancelMethod" required="false"
+		method-signature="void action()" />
+	<cc:attribute name="render" required="false" type="java.lang.String" />
 </cc:interface>
 
 <cc:implementation>
-    <rich:popupPanel id="acceptRemovalModalPanel" onmaskclick="#{rich:component('acceptRemovalModalPanel')}.hide()" zindex="2000" moveable="true" autosized="true">
-        <f:facet name="header">
-            <h:outputText value="Accept #{cc.attrs.subject} removal" />
-        </f:facet>
-        <f:facet name="controls">
-            <h:graphicImage value="/img/close.gif" styleClass="hidelink" style="cursor:pointer" onclick="#{rich:component('acceptRemovalModalPanel')}.hide(); return false;" />
-        </f:facet>
+	<rich:popupPanel id="acceptRemovalModalPanel"
+		onmaskclick="#{rich:component('acceptRemovalModalPanel')}.hide()"
+		zindex="2000" moveable="true" autosized="true">
+		<f:facet name="header">
+			<h:outputText value="Accept #{cc.attrs.subject} removal" />
+		</f:facet>
+		<f:facet name="controls">
+			<h:graphicImage value="/img/close.gif" styleClass="hidelink"
+				style="cursor:pointer"
+				onclick="#{rich:component('acceptRemovalModalPanel')}.hide(); return false;" />
+		</f:facet>
 
-        <h:panelGrid styleClass="dialogBoxPanelFor#{cc.attrs.value}" columns="1" border="0" cellpadding="0" cellspacing="0" width="100%" columnClasses="alignLeft">
-            <h:panelGroup>
-                <h:outputText value="Warning:&#160;" styleClass="bolded" />
-                <h:outputText
-                    value="Removing #{cc.attrs.subject} '#{cc.attrs.value}' will cause any data stored 
+		<h:panelGrid styleClass="dialogBoxPanelFor#{cc.attrs.value}"
+			columns="1" border="0" cellpadding="0" cellspacing="0" width="100%"
+			columnClasses="alignLeft">
+			<h:panelGroup>
+				<h:outputText value="Warning:&#160;" styleClass="bolded" />
+				<h:outputText rendered="#{cc.attrs.message eq null}"
+					value="Removing #{cc.attrs.subject} '#{cc.attrs.value}' will cause any data stored 
                    in the #{cc.attrs.subject} to be permanently lost. Are you sure you want to continue?" />
-            </h:panelGroup>
+				<h:outputText rendered="#{cc.attrs.message ne null}"
+					value="#{cc.attrs.message}" />
+			</h:panelGroup>
 
-            <richext:spacer height="8" />
+			<richext:spacer height="8" />
 
-            <h:panelGroup>
-                <a4j:commandButton styleClass="btn btn-primary confirmDialogButton" value="Ok" onbegin="#{rich:component('acceptRemovalModalPanel')}.hide();" action="#{cc.attrs.deleteMethod}" render="#{cc.attrs.render}" execute="@this" />
+			<h:panelGroup>
+				<a4j:commandButton styleClass="btn btn-primary confirmDialogButton"
+					value="Ok"
+					onbegin="#{rich:component('acceptRemovalModalPanel')}.hide();"
+					action="#{cc.attrs.deleteMethod}" render="#{cc.attrs.render}"
+					execute="@this" />
                 &nbsp;
-                <a4j:commandButton styleClass="btn btn-primary cancelDialogButton" value="Cancel" oncomplete="#{rich:component('acceptRemovalModalPanel')}.hide(); return false;" rendered="#{cc.attrs.cancelMethod == null}" execute="@this"/>&nbsp;
-                <a4j:commandButton styleClass="btn btn-primary cancelDialogButton" value="Cancel" oncomplete="#{rich:component('acceptRemovalModalPanel')}.hide(); return false;" rendered="#{cc.attrs.cancelMethod != null}" execute="@this"
-                    action="#{cc.attrs.cancelMethod}"/>&nbsp;
-                <a4j:status startText="Request in progress please wait......" stopText="" startStyle="color:red" />
-            </h:panelGroup>
-        </h:panelGrid>
-    </rich:popupPanel>
+                <a4j:commandButton
+					styleClass="btn btn-primary cancelDialogButton" value="Cancel"
+					oncomplete="#{rich:component('acceptRemovalModalPanel')}.hide(); return false;"
+					rendered="#{cc.attrs.cancelMethod == null}" execute="@this" />&nbsp;
+                <a4j:commandButton
+					styleClass="btn btn-primary cancelDialogButton" value="Cancel"
+					oncomplete="#{rich:component('acceptRemovalModalPanel')}.hide(); return false;"
+					rendered="#{cc.attrs.cancelMethod != null}" execute="@this"
+					action="#{cc.attrs.cancelMethod}" />&nbsp;
+                <a4j:status
+					startText="Request in progress please wait......" stopText=""
+					startStyle="color:red" />
+			</h:panelGroup>
+		</h:panelGrid>
+	</rich:popupPanel>
 </cc:implementation>
 
 </html>
