@@ -44,7 +44,7 @@
 								style="margin-left: 10px; margin-right: 10px; margin-top: 10px;">
 								<h:panelGroup columns="1" width="100%" id="openIDConnectSection">
 									<b:panel title="#{msg['passport.idpinitiated.oidc.title']}"
-										look="primary">
+										look="primary" iconAwesome="fa-building">
 										<div class="row">
 											<!-- First column-->
 											<div class="col-sm-6 col-lg-6" style="padding: 0px;">
@@ -93,7 +93,7 @@
 									<b:panel id="AuthParametersListID"
 										rendered="#{!passportIdpInitiatedAction.showForm}"
 										title="#{msg['passport.idpinitiated.authParams.title']}"
-										look="primary">
+										look="primary" iconAwesome="fa-building">
 										<h:panelGroup columns="1" width="100%" id="AuthParamsSection">
 											<!-- AuthorizationParams List section-->
 											<div class="row" style="margin-left: 5px; margin-right: 5px;">
@@ -118,14 +118,14 @@
 												<b:dataTableColumn value="#{c.redirectUri}" order="asc"
 													label="#{msg['passport.idpinitiated.authParams.redirectUri']}" />
 												<b:dataTableColumn label="Actions">
-													<a4j:commandButton
+													<b:commandButton
 														styleClass="btn btn-primary cancelAuthParamId"
-														value="Edit" style="margin-left: 5px;"
+														value="" style="margin-left: 5px;" iconAwesome="edit"
 														action="#{passportIdpInitiatedAction.editAuthParam(c)}"
 														render="IdpInitiatedForm,AuthZParamFormId" execute="@this" />
-													<a4j:commandButton
-														styleClass="btn btn-primary deleteParamId" value="Remove"
-														style="margin-left: 5px;"
+													<b:commandButton
+														styleClass="btn btn-danger deleteParamId" value=""
+														style="margin-left: 5px;" iconAwesome="minus"
 														action="#{passportIdpInitiatedAction.removeAuthParam(c)}"
 														render="IdpInitiatedForm" execute="@this" />
 												</b:dataTableColumn>
@@ -138,7 +138,7 @@
 										style="margin-left: 15px; margin-bottom: 10px;">
 										<h:commandButton action="#{passportIdpInitiatedAction.save}"
 											style="margin-left:5px;" styleClass="btn btn-primary"
-											value="save" />
+											value="Update" />
 										<h:commandButton action="#{passportIdpInitiatedAction.cancel}"
 											immediate="true" style="margin-left:5px;"
 											styleClass="btn btn-primary" value="#{msg['client.cancel']}" />
@@ -175,7 +175,8 @@
 														<b:inputText id="RedirectURI" colMd="9" labelColMd="3"
 															value="#{passportIdpInitiatedAction.authzParam.redirectUri}"
 															p:type="url" p:placeholder="Enter a valid url"
-															styleClass="rounded form-control RedirectURI" required="true"
+															styleClass="rounded form-control RedirectURI"
+															required="true"
 															label="#{msg['passport.idpinitiated.authParams.redirectUri']}" />
 													</b:formGroup>
 												</b:form>
@@ -255,13 +256,25 @@
 												</ox:decorate>
 											</div>
 										</div>
+
+										<div class="row" style="margin-left: 5px; margin-right: 5px;">
+											<b:panel title="Additional params" look="success">
+												<div class="col-sm-12 col-lg-12" style="padding: 0px;">
+													<ox:simpleMapProperties label="Add" hideLabel="true"
+														showRemoveDialogue="true"
+														properties="#{passportIdpInitiatedAction.options}"
+														propertiesAction="#{passportIdpInitiatedAction}"
+														hideValue="true" />
+												</div>
+											</b:panel>
+										</div>
 										<!-- Form footer-->
 										<div class="row"
 											style="margin-left: 50px; margin-right: 5px; margin-bottom: 20px;">
 											<div id="updateButtons">
 												<a4j:commandButton
 													styleClass="btn btn-primary saveAuthParamId"
-													onclick="submit();" value="#{msg['client.add']}"
+													onclick="submit();" value="Save"
 													style="margin-left: 5px;"
 													action="#{passportIdpInitiatedAction.addAuthParam}"
 													render="AuthZParamFormId" execute="@this" />

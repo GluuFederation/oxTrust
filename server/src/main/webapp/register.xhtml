@@ -24,8 +24,12 @@
 .login-logo, .register-logo {
 	margin-bottom: 0px;
 }
-iframe{
-margin-left: 86%;
+
+iframe {
+	margin-left: 86%;
+}
+.rf-p-b{
+padding-top: 0px !important;
 }
 </style>
 
@@ -33,58 +37,33 @@ margin-left: 86%;
 			<script async="async" defer="defer"
 				src="https://www.google.com/recaptcha/api.js" />
 		</ui:fragment>
-		<ui:fragment>
-			<script type="text/javascript">
-				function load() {
-					var url = window.location.origin
-							+ "/oxauth/ext/resources/img/logo.png";
-					var element = document.getElementById("logoObject");
-					element.data = url;
-				}
-				window.onload = load;
-			</script>
-		</ui:fragment>
 	</ui:define>
 
 	<ui:define name="body">
-
-		<div class="login-logo">
-			<object id="logoObject" data="" height="150" width="150"
-				type="image/png">
-				<img
-					src="#{oxTrustConfigurationService.cssLocation}/../theme/dist/img/logo1.png" />
-			</object>
-		</div>
-		<div class="bs-docs-section"
-			style="border-top: 2px solid #1ab26b !important; margin-bottom: 5px !important; margin-top: 1px !important; padding-top: 1px !important;"></div>
-		<!-- /.login-logo -->
 		<div id="formArea">
-
 			<div id="addPerson">
 				<!-- Registration Form -->
 				<h:form id="personRegistrationForm">
 					<rich:panel>
-						<div class="login-box">
+						<div class="login-box" style="margin-top:0px !important;">
 							<div class="row" style="margin-bottom: 1px;">
 								<div class="col-md-12">
 									<div id="register" style="color: #1ab26b;">
 										<h1 class="text-center">#{msg['register.signUp']}</h1>
 										<p class="text-center">
 											#{msg['register.toCreateAnAccount']}
-											<h:link styleClass="text-center" includeViewParams="false" outcome="/login.htm"
-												style="color:blue;font-weight:bold;"
+											<h:link styleClass="text-center" includeViewParams="false"
+												outcome="/login.htm" style="color:blue;font-weight:bold;"
 												value="#{msg['register.alreadyHaveAnAccount']}" />
 										</p>
 									</div>
 								</div>
 							</div>
-
 							<rich:messages layout="list" showDetail="false"
 								showSummary="true">
 							</rich:messages>
-
 							<div class="login-box-body text-center"
-								style="border-radius: 10px; background: #1ab26b;color: black;">
+								style="border-radius: 10px; background: #1ab26b; color: black;">
 								<div class="formColumn row">
 									<div class="col-md-12">
 										<ui:param name="_mandatoryAttributes"
@@ -94,7 +73,6 @@ margin-left: 86%;
 											<a4j:repeat rowKeyVar="_custAttrIdx"
 												value="#{registerPersonAction.person.customAttributes}"
 												var="_custAttr">
-
 												<!-- Attributes found on person -->
 												<a4j:outputPanel>
 													<ui:param name="_mandatory" value="#{_custAttr.mandatory}" />
@@ -118,10 +96,7 @@ margin-left: 86%;
 																	value="#{((empty _custAttr) or (empty _custAttr.metadata) or (empty _custAttr.metadata.attributeValidation) or (empty _custAttr.metadata.attributeValidation.regexp)) ? '.*' : _custAttr.metadata.attributeValidation.regexp}" />
 
 															</f:validator>
-
-
 															<rich:validator event="keyup" />
-
 														</h:inputText>
 														<h:selectOneMenu value="#{_custAttr.value}"
 															styleClass="form-control"
@@ -148,7 +123,6 @@ margin-left: 86%;
 													<ox:decorate id="_custAttrIdx2"
 														label="#{(empty _custAttr.metadata) ? _custAttr.name : _custAttr.metadata.displayName }"
 														rendered="#{not registerPersonAction.hiddenAttributes.contains(_custAttr.name) and _custAttr.name.equals('exampleSpecialAttribute')}">
-
 														<h:selectOneMenu id="custId" required="#{_mandatory}"
 															tabindex="#{_custAttrIdx + 1}" value="#{_custAttr.value}">
 															<f:selectItem id="item1" itemLabel="News" itemValue="1" />
@@ -159,7 +133,6 @@ margin-left: 86%;
 															<f:validateBean />
 														</h:selectOneMenu>
 														<h:outputText value=" " />
-
 													</ox:decorate>
 													<!-- Attribute Tooltip -->
 													<rich:tooltip
@@ -168,7 +141,6 @@ margin-left: 86%;
 												</a4j:outputPanel>
 												<!-- End Attributes found on person -->
 											</a4j:repeat>
-
 											<!-- Passwords -->
 											<ox:decorate id="passwordField"
 												label="#{msg['register.password']}"
@@ -195,8 +167,6 @@ margin-left: 86%;
 												<h:outputText value=" " />
 											</ox:decorate>
 											<!-- End Passwords -->
-
-
 											<ox:decorate id="email" label="#{msg['register.email']} "
 												style="margin-left: -15px;"
 												template="/WEB-INF/incl/layout/edit.xhtml">
@@ -219,7 +189,7 @@ margin-left: 86%;
 										<!-- Captcha -->
 										<ui:fragment
 											rendered="#{not registerPersonAction.captchaDisabled}">
-											<s class="g-recaptcha text-center" style="magirn-left:20%;"
+											<s class="g-recaptcha text-center" style="magirn-left: 20%;"
 												data-sitekey="#{recaptchaService.recaptchaSiteKey}" />
 										</ui:fragment>
 										<div class="row">
@@ -237,45 +207,12 @@ margin-left: 86%;
 										</div>
 									</div>
 								</div>
-
 							</div>
-							<!-- /.login-box-body -->
 						</div>
-						
-
 					</rich:panel>
-
-					<!-- Command Buttons -->
-
 				</h:form>
 			</div>
 
-		</div>
-		<div class="footer-copyright text-center py-3"
-			style="background: #1ab26b; position: fixed; left: 0; bottom: 0; width: 100%; text-align: center;">
-			<div class="footer">
-				<div class="row">
-					<div class="col-md-12">
-						<div class="padding_spc"
-							style="padding-bottom: 5px; padding-top: 5px;">
-							<p>
-								<h:outputText value="Gluu, Inc" />
-								| <a target="_blank"
-									href="https://github.com/GluuFederation/oxTrust/blob/master/LICENSE"><h:outputText
-										value="Use subject to MIT LICENSE" escape="false" /></a>
-								<h:panelGroup rendered='#{!empty client.policyUri}'>
-					| <a target="_blank" href="#{client.policyUri}"><h:outputText
-											value="#{msgs['common.privacyPolicy']}" escape="false" /></a>
-								</h:panelGroup>
-								<h:panelGroup rendered='#{!empty client.tosUri}'>
-					| <a target="_blank" href="#{client.tosUri}"><h:outputText
-											value="#{msgs['common.termsOfService']}" escape="false" /></a>
-								</h:panelGroup>
-							</p>
-						</div>
-					</div>
-				</div>
-			</div>
 		</div>
 	</ui:define>
 </ui:composition>

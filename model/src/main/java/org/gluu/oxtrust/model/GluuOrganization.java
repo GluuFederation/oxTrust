@@ -61,8 +61,23 @@ public class GluuOrganization extends Entry implements Serializable {
 	@AttributeName(name = "gluuManagerGroup")
 	private String managerGroup;
 
-	@AttributeName(name = "gluuLogoImage")
-	private String logoImage;
+	@AttributeName(name = "oxTrustLogoPath")
+	private String oxTrustLogoPath;
+
+	@AttributeName(name = "oxTrustFaviconPath")
+	private String oxTrustFaviconPath;
+
+	@AttributeName(name = "oxAuthLogoPath")
+	private String oxAuthLogoPath;
+
+	@AttributeName(name = "oxAuthFaviconPath")
+	private String oxAuthFaviconPath;
+	
+	@AttributeName(name = "idpLogoPath")
+	private String idpLogoPath;
+
+	@AttributeName(name = "idpFaviconPath")
+	private String idpFaviconPath;
 
 	@AttributeName(name = "gluuThemeColor")
 	private String themeColor;
@@ -72,12 +87,6 @@ public class GluuOrganization extends Entry implements Serializable {
 
 	@AttributeName(name = "gluuCustomMessage")
 	private String[] customMessages;
-
-	@AttributeName(name = "gluuFaviconImage")
-	private String faviconImage;
-
-	@AttributeName(name = "gluuTempFaviconImage")
-	private String tempFaviconImage;
 
 	@AttributeName(name = "oxInumConfig")
 	private String oxInumConfig;
@@ -126,22 +135,6 @@ public class GluuOrganization extends Entry implements Serializable {
 
 	public void setDisplayName(String displayName) {
 		this.displayName = displayName;
-	}
-
-	public String getFaviconImage() {
-		return faviconImage;
-	}
-
-	public void setFaviconImage(String faviconImage) {
-		this.faviconImage = faviconImage;
-	}
-
-	public String getLogoImage() {
-		return logoImage;
-	}
-
-	public void setLogoImage(String logoImage) {
-		this.logoImage = logoImage;
 	}
 
 	public String getManagerGroup() {
@@ -208,14 +201,6 @@ public class GluuOrganization extends Entry implements Serializable {
 		this.status = status;
 	}
 
-	public String getTempFaviconImage() {
-		return tempFaviconImage;
-	}
-
-	public void setTempFaviconImage(String tempFaviconImage) {
-		this.tempFaviconImage = tempFaviconImage;
-	}
-
 	public String getThemeColor() {
 		return themeColor;
 	}
@@ -230,5 +215,53 @@ public class GluuOrganization extends Entry implements Serializable {
 
 	public void setTitle(String title) {
 		this.title = title;
+	}
+
+	public String getOxTrustLogoPath() {
+		return oxTrustLogoPath;
+	}
+
+	public void setOxTrustLogoPath(String oxTrustLogoPath) {
+		this.oxTrustLogoPath = oxTrustLogoPath;
+	}
+
+	public String getOxTrustFaviconPath() {
+		return oxTrustFaviconPath;
+	}
+
+	public void setOxTrustFaviconPath(String oxTrustFaviconPath) {
+		this.oxTrustFaviconPath = oxTrustFaviconPath;
+	}
+
+	public String getOxAuthLogoPath() {
+		return oxAuthLogoPath;
+	}
+
+	public void setOxAuthLogoPath(String oxAuthLogoPath) {
+		this.oxAuthLogoPath = oxAuthLogoPath;
+	}
+
+	public String getOxAuthFaviconPath() {
+		return oxAuthFaviconPath;
+	}
+
+	public void setOxAuthFaviconPath(String oxAuthFaviconPath) {
+		this.oxAuthFaviconPath = oxAuthFaviconPath;
+	}
+
+	public String getIdpLogoPath() {
+		return idpLogoPath;
+	}
+
+	public void setIdpLogoPath(String idpLogoPath) {
+		this.idpLogoPath = idpLogoPath;
+	}
+
+	public String getIdpFaviconPath() {
+		return idpFaviconPath;
+	}
+
+	public void setIdpFaviconPath(String idpFaviconPath) {
+		this.idpFaviconPath = idpFaviconPath;
 	}
 }

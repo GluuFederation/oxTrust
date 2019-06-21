@@ -41,8 +41,10 @@
 		<section class="content">
 			<!-- BODY TAB PANEL STARTS FROM HERE -->
 			<div class="row" id="formArea">
-				<div class="col-xs-12 col-md-12" style="margin-left: 10px;margin-right: 10px;">
-					<b:panel title="Trust Relationships List" look="primary">
+				<div class="col-xs-12 col-md-12"
+					style="margin-left: 10px; margin-right: 10px;">
+					<b:panel title="Trust Relationships List" look="primary"
+						iconAwesome="fa-list">
 						<b:link style-class="btn btn-primary" icon="plus"
 							outcome="/trustmanager/addTrustRelationship"
 							value="#{msg['trustmanager.addRelationship']}" propagation="none"
@@ -75,49 +77,46 @@
 							</h:form>
 						</div>
 						<div class="row">
-							<div class="box box-primary" style="width: 100%; padding: 10px;">
-								<div class="box-body">
-									<h:form id="trustRelationsshipList">
-										<div class="row" style="padding: 10px;">
-											<b:dataTable id="relationshipstable"
-												style="text-align:center;"
-												rendered="#{trustRelationshipInventoryAction.trustedSpList.size() gt 0}"
-												value="#{trustRelationshipInventoryAction.trustedSpList}"
-												var="tsps" print="true" excel="true" csv="true" pdf="true"
-												select="true" responsive="true">
-												<b:dataTableColumn label="#{msg['trustmanager.community']}">
-													<h:link includeViewParams="false"
-														outcome="/trustmanager/updateTrustRelationship"
-														value="#{tsps.displayName}">
-														<f:param name="inum" value="#{tsps.inum}" />
-													</h:link>
-												</b:dataTableColumn>
-												<b:dataTableColumn value="#{tsps.description}"
-													label="#{msg['trustmanager.description']}" />
-												<b:dataTableColumn
-													label="#{msg['trustmanager.attributesPublished']}">
-													<ox:attributeList value="#{tsps.releasedCustomAttributes}" />
-												</b:dataTableColumn>
-												<b:dataTableColumn
-													value="#{tsps.isFederation() ? 'federation' : (trustService.getTrustContainerFederation(tsps) ne null ? 'site federated with '.concat(trustService.getTrustContainerFederation(tsps).displayName) : 'site')}"
-													label="#{msg['trustmanager.relationshipType']}" />
-												<b:dataTableColumn
-													label="#{msg['trustmanager.validationStatus']}">
-													<b:label
-														text="#{metadataValidationTimer.isQueued(tsps.spMetaDataFN)? 'Validation Scheduled' : tsps.validationStatus.displayName}"
-														severity="info" />
-												</b:dataTableColumn>
-												<b:dataTableColumn label="#{msg['trustmanager.status']}">
-													<b:label rendered="#{tsps.status.displayName eq 'Active'}"
-														text="#{tsps.status.displayName}" severity="primary" />
-													<b:label
-														rendered="#{tsps.status.displayName eq 'Inactive'}"
-														text="#{tsps.status.displayName}" severity="danger" />
-												</b:dataTableColumn>
-											</b:dataTable>
-										</div>
-									</h:form>
-								</div>
+							<div class="box-body">
+								<h:form id="trustRelationsshipList">
+									<div class="row" style="padding: 10px;">
+										<b:dataTable id="relationshipstable"
+											style="text-align:center;"
+											rendered="#{trustRelationshipInventoryAction.trustedSpList.size() gt 0}"
+											value="#{trustRelationshipInventoryAction.trustedSpList}"
+											var="tsps" print="true" excel="true" csv="true" pdf="true"
+											select="true" responsive="true">
+											<b:dataTableColumn label="#{msg['trustmanager.community']}">
+												<h:link includeViewParams="false"
+													outcome="/trustmanager/updateTrustRelationship"
+													value="#{tsps.displayName}">
+													<f:param name="inum" value="#{tsps.inum}" />
+												</h:link>
+											</b:dataTableColumn>
+											<b:dataTableColumn value="#{tsps.description}"
+												label="#{msg['trustmanager.description']}" />
+											<b:dataTableColumn
+												label="#{msg['trustmanager.attributesPublished']}">
+												<ox:attributeList value="#{tsps.releasedCustomAttributes}" />
+											</b:dataTableColumn>
+											<b:dataTableColumn
+												value="#{tsps.isFederation() ? 'federation' : (trustService.getTrustContainerFederation(tsps) ne null ? 'site federated with '.concat(trustService.getTrustContainerFederation(tsps).displayName) : 'site')}"
+												label="#{msg['trustmanager.relationshipType']}" />
+											<b:dataTableColumn
+												label="#{msg['trustmanager.validationStatus']}">
+												<b:label
+													text="#{metadataValidationTimer.isQueued(tsps.spMetaDataFN)? 'Validation Scheduled' : tsps.validationStatus.displayName}"
+													severity="info" />
+											</b:dataTableColumn>
+											<b:dataTableColumn label="#{msg['trustmanager.status']}">
+												<b:label rendered="#{tsps.status.displayName eq 'Active'}"
+													text="#{tsps.status.displayName}" severity="primary" />
+												<b:label rendered="#{tsps.status.displayName eq 'Inactive'}"
+													text="#{tsps.status.displayName}" severity="danger" />
+											</b:dataTableColumn>
+										</b:dataTable>
+									</div>
+								</h:form>
 							</div>
 						</div>
 					</b:panel>

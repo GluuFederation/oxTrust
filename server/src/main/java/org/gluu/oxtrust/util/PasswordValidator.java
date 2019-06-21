@@ -14,6 +14,7 @@ import javax.inject.Inject;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.model.attribute.AttributeValidation;
 import org.gluu.oxtrust.ldap.service.AttributeService;
+
 @ApplicationScoped
 @FacesValidator("gluuPasswordValidator")
 public class PasswordValidator implements javax.faces.validator.Validator {
@@ -21,14 +22,14 @@ public class PasswordValidator implements javax.faces.validator.Validator {
 	private static final String USER_PASSWORD = "userPassword";
 	private Pattern pattern;
 	private Matcher matcher;
-	private boolean hasValidation=false;
+	private boolean hasValidation = false;
 	@Inject
 	private AttributeService attributeService;
 	@Inject
 	private FacesMessages facesMessages;
 
 	public PasswordValidator() {
-		
+
 	}
 
 	@Override
@@ -38,9 +39,13 @@ public class PasswordValidator implements javax.faces.validator.Validator {
 			pattern = Pattern.compile(validation.getRegexp());
 			hasValidation = true;
 		}
-		matcher = pattern.matcher(value.toString());
+		if (hasValidation) {
+			matcher = pattern.matcher(value.toString());
+		}
 		if (hasValidation && !matcher.matches()) {
-			FacesMessage msg = new FacesMessage(facesMessages.evalResourceAsString("#{msg['password.validation.invalid']}"), facesMessages.evalResourceAsString("#{msg['password.validation.invalid']}"));
+			FacesMessage msg = new FacesMessage(
+					facesMessages.evalResourceAsString("#{msg['password.validation.invalid']}"),
+					facesMessages.evalResourceAsString("#{msg['password.validation.invalid']}"));
 			msg.setSeverity(FacesMessage.SEVERITY_ERROR);
 			throw new ValidatorException(msg);
 

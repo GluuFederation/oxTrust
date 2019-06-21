@@ -26,6 +26,7 @@ import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 
 /**
@@ -35,7 +36,7 @@ import java.util.*;
  */
 @Stateless
 @Named("organizationService")
-public class OrganizationService extends org.gluu.service.OrganizationService {
+public class OrganizationService  extends org.gluu.service.OrganizationService{
 
 	private static final long serialVersionUID = -1959146007518514678L;
 
@@ -189,8 +190,8 @@ public class OrganizationService extends org.gluu.service.OrganizationService {
 		String version  = getClass().getPackage().getImplementationVersion();
     	if (version==null) {
     	    Properties prop = new Properties();
-    	    try {
-    	        prop.load(FacesContext.getCurrentInstance().getExternalContext().getResourceAsStream("/META-INF/MANIFEST.MF"));
+    	    try (InputStream is = FacesContext.getCurrentInstance().getExternalContext().getResourceAsStream("/META-INF/MANIFEST.MF")) {
+    	        prop.load(is);
     	        version = prop.getProperty("Implementation-Version");
     	    } catch (IOException e) {
     	        log.error(e.toString());

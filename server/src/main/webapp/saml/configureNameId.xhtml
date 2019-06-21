@@ -78,18 +78,14 @@
 																	styleClass="form-control nameTextBox" />
 															</ox:decorate>
 
-															<ox:decorate id="nameIdType" label="#{msg['nameId.nameIdType']}">
+															<ox:decorate id="nameIdType"
+																label="#{msg['nameId.nameIdType']}">
 																<h:selectOneMenu value="#{_nameIdConfig.nameIdType}"
 																	styleClass="rounded form-control nameIdTypeSelectBox">
 																	<f:selectItem itemLabel="" itemValue="null" />
-																	<f:selectItem itemLabel="urn:oasis:names:tc:SAML:2.0:nameid-format:persistent" itemValue="urn:oasis:names:tc:SAML:2.0:nameid-format:persistent" />
-																	<f:selectItem itemLabel="urn:oasis:names:tc:SAML:2.0:nameid-format:transient" itemValue="urn:oasis:names:tc:SAML:2.0:nameid-format:transient" />
-																	<f:selectItem itemLabel="urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress" itemValue="urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress" />
-																	<f:selectItem itemLabel="urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified" itemValue="urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified" />
-																	<f:selectItem itemLabel="urn:oasis:names:tc:SAML:1.1:nameid-format:X509SubjectName" itemValue="urn:oasis:names:tc:SAML:1.1:nameid-format:X509SubjectName" />
-																	<f:selectItem itemLabel="urn:oasis:names:tc:SAML:1.1:nameid-format:WindowsDomainQualifiedName" itemValue="urn:oasis:names:tc:SAML:1.1:nameid-format:WindowsDomainQualifiedName" />
-																	<f:selectItem itemLabel="urn:oasis:names:tc:SAML:2.0:nameid-format:kerberos" itemValue="urn:oasis:names:tc:SAML:2.0:nameid-format:kerberos" />
-																	<f:selectItem itemLabel="urn:oasis:names:tc:SAML:2.0:nameid-format:entity" itemValue="urn:oasis:names:tc:SAML:2.0:nameid-format:entity" />
+																	<f:selectItems
+																		value="#{configureNameIdAction.getAvailableNamedIds(_nameIdConfig)}" var="entry"
+																		itemValue="#{entry.key}" itemLabel="#{entry.value}" />
 																</h:selectOneMenu>
 															</ox:decorate>
 														</div>

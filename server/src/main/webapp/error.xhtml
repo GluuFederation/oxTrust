@@ -19,31 +19,8 @@
 	margin-bottom: 0px;
 }
 </style>
-		<ui:fragment>
-			<script type="text/javascript">
-				function load() {
-					var url = window.location.origin
-							+ "/oxauth/ext/resources/img/logo.png";
-					var element = document.getElementById("logoObject");
-					element.data = url;
-				}
-				window.onload = load;
-			</script>
-		</ui:fragment>
 	</ui:define>
-
-
 	<ui:define name="body">
-		<div class="login-logo">
-			<object id="logoObject" data="" height="150" width="150"
-				type="image/png">
-				<img
-					src="#{oxTrustConfigurationService.cssLocation}/../theme/dist/img/logo1.png" />
-			</object>
-		</div>
-		<div class="bs-docs-section"
-			style="border-top: 2px solid #1ab26b !important; margin-bottom: 5px !important; margin-top: 1px !important; padding-top: 1px !important;"></div>
-		<!-- /.login-logo -->
 		<div class="lockscreen-wrapper" style="text-align: center;">
 			<div class="lockscreen-logo"
 				style="margin-bottom: 0px !important; margin-top: 10%;">
@@ -61,32 +38,6 @@
 			<a class="btn btn-block btn-primary btn-lg"
 				href="#{request.contextPath}/home.htm" style="width: 60%;">#{msg['error.return']}</a>
 
-		</div>
-		<div class="footer-copyright text-center py-3"
-			style="background: #1ab26b; position: fixed; left: 0; bottom: 0; width: 100%; text-align: center;">
-			<div class="footer">
-				<div class="row">
-					<div class="col-md-12">
-						<div class="padding_spc"
-							style="padding-bottom: 5px; padding-top: 5px;">
-							<p>
-								<h:outputText value="Gluu, Inc" />
-								| <a target="_blank"
-									href="https://github.com/GluuFederation/oxTrust/blob/master/LICENSE"><h:outputText
-										value="Use subject to MIT LICENSE" escape="false" /></a>
-								<h:panelGroup rendered='#{!empty client.policyUri}'>
-					| <a target="_blank" href="#{client.policyUri}"><h:outputText
-											value="#{msgs['common.privacyPolicy']}" escape="false" /></a>
-								</h:panelGroup>
-								<h:panelGroup rendered='#{!empty client.tosUri}'>
-					| <a target="_blank" href="#{client.tosUri}"><h:outputText
-											value="#{msgs['common.termsOfService']}" escape="false" /></a>
-								</h:panelGroup>
-							</p>
-						</div>
-					</div>
-				</div>
-			</div>
 		</div>
 	</ui:define>
 </ui:composition>

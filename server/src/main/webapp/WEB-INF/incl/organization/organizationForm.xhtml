@@ -92,7 +92,7 @@
 					<ul class="nav nav-tabs" id="organizationFormtab">
 						<li class="active"><a href="#sys-config" data-toggle="tab">#{msg['organizationForm.systemConfiguration']}</a></li>
 						<li><a href="#smtp-server" data-toggle="tab">#{msg['organizationForm.smtpServerConfiguration']}</a></li>
-						<li><a href="#ox-trust" data-toggle="tab">#{msg['organizationForm.oxTrustSettings']}</a></li>
+						<li><a href="#ox-trust" data-toggle="tab">Organization Settings</a></li>
 					</ul>
 					<div class="tab-content">
 						<!-- System Configuration -->
@@ -147,7 +147,7 @@
 							</h:panelGroup>
 						</div>
 						<div class="tab-pane" id="smtp-server">
-							<h:panelGroup layout="block" style="width:80%;">
+							<h:panelGroup layout="block" style="width:100%;">
 
 								<ox:decorate label="#{msg['organizationForm.smtpHost']}">
 									<h:inputText value="#{_smtp.host}"
@@ -204,16 +204,12 @@
 						</div>
 
 						<div class="tab-pane" id="ox-trust">
-							<h:panelGroup layout="block"
-								style="overflow-y:auto;overflow-x:hidden;">
-
+							<h:panelGroup layout="block" style="width:80%; padding:10px;">
 								<ox:decorate id="displayName"
 									label="#{msg['organizationForm.organizationName']}">
 									<h:inputText value="#{_organization.displayName}" size="100"
-										styleClass="form-control" style="width:80%;" />
+										styleClass="form-control" style="width:100%;" />
 								</ox:decorate>
-
-
 								<ui:param name="_managerGroup"
 									value="#{gluufn:getDisplayNameEntry(_organization.managerGroup)}" />
 								<ox:decorate id="managerGroup"
@@ -223,70 +219,164 @@
 										<f:param name="inum" value="#{_managerGroup.inum}" />
 									</h:link>
 								</ox:decorate>
-
 								<div class="row">
-									<div class="col-sm-5 col-lg-5" style="margin: 10px;">
-										<b:panel id="custLogoImagePanelId" title="#{msg['organizationForm.organizationLogo']}"
-											look="primary" collapsible="false">
-											<rich:fileUpload id="custUploadId"
-												fileUploadListener="#{_organizationAction.setCustLogoImage}"
-												acceptedTypes="jpg, jpeg, gif, png, bmp"
-												ontyperejected="alert('Only JPG, GIF, PNG and BMP files are accepted');"
-												maxFilesQuantity="1" immediateUpload="true"
-												listHeight="60px" styleClass="uploadFile uploadLogo"
-												style="width:80% !important;"
-												rendered="#{not _organizationAction.custLogoImageExist}">
-												<a4j:ajax event="uploadcomplete" execute="@none"
-													render="custLogoImagePanelId" />
-											</rich:fileUpload>
-
-											<h:panelGrid columns="1" width="100%" cellspacing="0"
-												cellpadding="0" border="0" columnClasses="alignCenter"
-												rendered="#{_organization.logoImage ne null}">
-												<h:panelGroup layout="block">
-													<img src="#{request.contextPath}/servlet/logo?preview=true" />
-												</h:panelGroup>
-												<richext:spacer height="8" />
-												<a4j:commandLink value="Remove" styleClass="removeLogo btn-primary"
-													action="#{_organizationAction.removeLogoImage()}"
-													render="custLogoImagePanelId"
-													eventsQueue="organizationQueue" />
-											</h:panelGrid>
+								<b:panel title="oxTrust Logo/Favicon"
+                                        look="primary" icon-inverse="false">
+									<div class="col-sm-5 col-lg-5" style="margin:2px;">
+										<b:panel id="oxTrustLogoPanelId" title="Current oxTrust Logo"
+											look="success" collapsible="true" collapsed="true">
+											<div class="row">
+												<div class="col-sm-6 col-lg-6"
+													style="padding: 0px; margin: 5px;">
+													<img height="20%" width="50%"
+														src="#{request.contextPath}/servlet/logo?preview=true" />
+												</div>
+												<div class="col-sm-4 col-lg-4"
+													style="padding: 0px; margin: 2px;">
+													<rich:fileUpload id="oxTrustLogo"
+														fileUploadListener="#{_organizationAction.setOxTrustLogoImage}"
+														acceptedTypes="jpg, jpeg, gif, png, bmp"
+														ontyperejected="alert('Only JPG, GIF, PNG and BMP files are accepted');"
+														maxFilesQuantity="1" immediateUpload="true"
+														listHeight="60px" styleClass="oxTrustLogo"
+														style="width:100% !important;" rendered="true">
+													</rich:fileUpload>
+												</div>
+											</div>
 										</b:panel>
 									</div>
 									<div class="col-sm-5 col-lg-5"
-										style="padding: 0px; margin: 10px;">
-										<b:panel id="custFaviconImagePanelId"
-											title="Organization Favicon" look="primary"
-											collapsible="false">
-											<rich:fileUpload id="custFaviconUploadId"
-												fileUploadListener="#{_organizationAction.setFaviconImage}"
-												acceptedTypes="ico, jpeg, jpg, png"
-												ontyperejected="alert('Only ICO, JPEG, JPG and PNG files are accepted');"
-												maxFilesQuantity="1" immediateUpload="true"
-												listHeight="60px" styleClass="uploadFile uploadFavicon"
-												style="width:80% !important;"
-												rendered="#{not _organizationAction.faviconImageExist}">
-												<a4j:ajax event="uploadcomplete" execute="@none"
-													render="custFaviconImagePanelId" />
-											</rich:fileUpload>
-
-											<h:panelGrid columns="1" width="100%" cellspacing="0"
-												cellpadding="0" border="0" columnClasses="alignCenter"
-												rendered="#{_organization.faviconImage ne null}">
-												<h:panelGroup layout="block">
-													<img
+										style="padding: 0px; margin: 2px;">
+										<b:panel id="oxTrustFaviconPanelId"
+											title="Current oxTrust Favicon" look="success"
+											collapsible="true" collapsed="true">
+											<div class="row">
+												<div class="col-sm-6 col-lg-6"
+													style="padding: 0px; margin: 5px;">
+													<img height="20%" width="30%"
 														src="#{request.contextPath}/servlet/favicon?preview=true" />
-												</h:panelGroup>
-												<richext:spacer height="8" />
-												<a4j:commandLink value="Remove" styleClass="removeFavicon btn-primary"
-													action="#{_organizationAction.removeFaviconImage()}"
-													render="custFaviconImagePanelId" ajaxSingle="true"
-													limitRender="true" eventsQueue="organizationQueue" />
-											</h:panelGrid>
+												</div>
+												<div class="col-sm-4 col-lg-4"
+													style="padding: 0px; margin: 2px;">
+													<rich:fileUpload id="oxTrustFavicon"
+														fileUploadListener="#{_organizationAction.setOxTrustFaviconImage}"
+														acceptedTypes="ico, jpeg, jpg, png"
+														ontyperejected="alert('Only ICO, JPEG, JPG and PNG files are accepted');"
+														maxFilesQuantity="1" immediateUpload="true"
+														listHeight="60px" styleClass="oxTrustFavicon"
+														style="width:100% !important;" rendered="true">
+													</rich:fileUpload>
+												</div>
+											</div>
 										</b:panel>
 									</div>
+									</b:panel>
 								</div>
+								<div class="row">
+									<b:panel title="oxAuth Logo/Favicon"
+										look="primary">
+										<div class="col-sm-5 col-lg-5" style="margin: 2px;">
+											<b:panel id="oxAuthLogoPanelId" title="Current oxAuth Logo"
+												look="success" collapsible="true" collapsed="true">
+												<div class="row">
+													<div class="col-sm-6 col-lg-6"
+														style="padding: 0px; margin: 5px;">
+														<img height="20%" width="50%"
+															src="#{request.contextPath}/servlet/oxauth/logo?preview=true" />
+													</div>
+													<div class="col-sm-4 col-lg-4"
+														style="padding: 0px; margin: 2px;">
+														<rich:fileUpload id="oxAuthLogo"
+															fileUploadListener="#{_organizationAction.setOxAuthLogoImage}"
+															acceptedTypes="jpg, jpeg, gif, png, bmp"
+															ontyperejected="alert('Only JPG, GIF, PNG and BMP files are accepted');"
+															maxFilesQuantity="1" immediateUpload="true"
+															listHeight="60px" styleClass="oxAuthLogo"
+															style="width:100% !important;" rendered="true">
+														</rich:fileUpload>
+													</div>
+												</div>
+											</b:panel>
+										</div>
+										<div class="col-sm-5 col-lg-5"
+											style="padding: 0px; margin: 2px;">
+											<b:panel id="oxAuthFaviconPanelId"
+												title="Current oxAuth Favicon" look="success"
+												collapsible="true" collapsed="true">
+												<div class="row">
+													<div class="col-sm-6 col-lg-6"
+														style="padding: 0px; margin: 2px;">
+														<img height="20%" width="30%"
+															src="#{request.contextPath}/servlet/oxauth/favicon?preview=true" />
+													</div>
+													<div class="col-sm-4 col-lg-4"
+														style="padding: 0px; margin: 10px;">
+														<rich:fileUpload id="oxAuthFavicon"
+															fileUploadListener="#{_organizationAction.setOxAuthFaviconImage}"
+															acceptedTypes="ico, jpeg, jpg, png"
+															ontyperejected="alert('Only ICO, JPEG, JPG and PNG files are accepted');"
+															maxFilesQuantity="1" immediateUpload="true"
+															listHeight="60px" styleClass="oxAuthFavicon"
+															style="width:100% !important;" rendered="true">
+														</rich:fileUpload>
+													</div>
+												</div>
+											</b:panel>
+										</div>
+									</b:panel>
+								</div>
+								<div class="row">
+									<b:panel title="IDP Logo/Favicon" look="primary">
+										<div class="col-sm-5 col-lg-5" style="margin: 2px;">
+											<b:panel id="idpLogoPanelId" title="Current IDP Logo"
+												look="success" collapsible="true" collapsed="true">
+												<div class="row">
+													<div class="col-sm-6 col-lg-6"
+														style="padding: 0px; margin: 5px;">
+														<img height="20%" width="50%"
+															src="#{request.contextPath}/servlet/idp/logo?preview=true" />
+													</div>
+													<div class="col-sm-4 col-lg-4"
+														style="padding: 0px; margin: 10px;">
+														<rich:fileUpload id="idpLogo"
+															fileUploadListener="#{_organizationAction.setIdpLogoImage}"
+															acceptedTypes="jpg, jpeg, gif, png, bmp"
+															ontyperejected="alert('Only JPG, GIF, PNG and BMP files are accepted');"
+															maxFilesQuantity="1" immediateUpload="true"
+															listHeight="60px" styleClass="idpLogo"
+															style="width:100% !important;" rendered="true">
+														</rich:fileUpload>
+													</div>
+												</div>
+											</b:panel>
+										</div>
+										<div class="col-sm-5 col-lg-5"
+											style="padding: 0px; margin: 2px;">
+											<b:panel id="idpFaviconPanelId" title="Current IDP Favicon"
+												look="success" collapsible="true" collapsed="true">
+												<div class="row">
+													<div class="col-sm-6 col-lg-6"
+														style="padding: 0px; margin: 5px;">
+														<img height="20%" width="30%"
+															src="#{request.contextPath}/servlet/idp/favicon?preview=true" />
+													</div>
+													<div class="col-sm-4 col-lg-4"
+														style="padding: 0px; margin: 2px;">
+														<rich:fileUpload id="idpFavicon"
+															fileUploadListener="#{_organizationAction.setIdpFaviconImage}"
+															acceptedTypes="ico, jpeg, jpg, png"
+															ontyperejected="alert('Only ICO, JPEG, JPG and PNG files are accepted');"
+															maxFilesQuantity="1" immediateUpload="true"
+															listHeight="60px" styleClass="idpFavicon"
+															style="width:100% !important;" rendered="true">
+														</rich:fileUpload>
+													</div>
+												</div>
+											</b:panel>
+										</div>
+									</b:panel>
+								</div>
+
 							</h:panelGroup>
 						</div>
 					</div>

@@ -29,6 +29,7 @@ import org.gluu.persist.exception.operation.DuplicateEntryException;
 import org.gluu.persist.model.AttributeData;
 import org.gluu.persist.model.SearchScope;
 import org.gluu.persist.model.base.SimpleBranch;
+import org.gluu.persist.model.base.SimpleUser;
 import org.gluu.search.filter.Filter;
 import org.gluu.util.ArrayHelper;
 import org.gluu.util.OxConstants;
@@ -613,13 +614,16 @@ public class PersonService implements Serializable, IPersonService {
 	 */
 	@Override
 	public User getUserByUid(String uid) {
-		User user = new User();
-		user.setBaseDn(getDnForPerson(null));
-		user.setUid(uid);
-		List<User> users = ldapEntryManager.findEntries(user);// getLdapEntryManagerInstance().findEntries(person);
+		// Find user by uid
+		SimpleUser simpleUser = new SimpleUser();
+		simpleUser.setDn(getDnForPerson(null));
+		simpleUser.setUserId(uid);
+		List<SimpleUser> users = ldapEntryManager.findEntries(simpleUser, 1);// getLdapEntryManagerInstance().findEntries(person);
 		if ((users != null) && (users.size() > 0)) {
-			return users.get(0);
+			// Find result entry by primary key
+			return ldapEntryManager.find(User.class, users.get(0).getDn());
 		}
+
 		return null;
 	}
 

@@ -1,9 +1,3 @@
-/*
- * oxTrust is available under the MIT License (2008). See http://opensource.org/licenses/MIT for full text.
- *
- * Copyright (c) 2014, Gluu
- */
-
 package org.gluu.oxtrust.servlet;
 
 import java.io.File;
@@ -26,16 +20,16 @@ import org.gluu.oxtrust.model.GluuOrganization;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@WebServlet(urlPatterns = "/servlet/favicon")
-public class FaviconImageServlet extends HttpServlet {
+@WebServlet(urlPatterns = "/servlet/idp/favicon")
+public class IdpFaviconServlet extends HttpServlet {
 
 	@Inject
 	private OrganizationService organizationService;
 
 	private static final long serialVersionUID = 5445488800130871634L;
 
-	private static final Logger log = LoggerFactory.getLogger(FaviconImageServlet.class);
-	public static final String BASE_OXTRUST_FAVICON_PATH = "/opt/gluu/jetty/identity/custom/static/favicon/";
+	private static final Logger log = LoggerFactory.getLogger(IdpFaviconServlet.class);
+	public static final String BASE_IDP_FAVICON_PATH = "/opt/gluu/jetty/idp/custom/static/favicon/";
 
 	@Override
 	protected void doGet(HttpServletRequest httpServletRequest, HttpServletResponse response)
@@ -61,15 +55,15 @@ public class FaviconImageServlet extends HttpServlet {
 	}
 
 	private boolean readCustomFavicon(HttpServletResponse response, GluuOrganization organization) {
-		if (organization.getOxTrustFaviconPath() == null || StringUtils.isEmpty(organization.getOxTrustFaviconPath())) {
+		if (organization.getIdpFaviconPath() == null || StringUtils.isEmpty(organization.getIdpFaviconPath())) {
 			return false;
 		}
 
-		File directory = new File(BASE_OXTRUST_FAVICON_PATH);
+		File directory = new File(BASE_IDP_FAVICON_PATH);
 		if (!directory.exists()) {
 			directory.mkdir();
 		}
-		File faviconPath = new File(BASE_OXTRUST_FAVICON_PATH + organization.getOxTrustFaviconPath());
+		File faviconPath = new File(BASE_IDP_FAVICON_PATH + organization.getIdpFaviconPath());
 		if (!faviconPath.exists()) {
 			return false;
 		}

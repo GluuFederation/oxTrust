@@ -100,8 +100,6 @@ public class PasswordResetAction implements Serializable {
 			sendExpirationError();
 			return OxTrustConstants.RESULT_FAILURE;
 		}
-
-		// Load requested entry
 		PasswordResetRequest passwordResetRequest;
 		try {
 			passwordResetRequest = passwordResetService.findPasswordResetRequest(guid);
@@ -110,42 +108,32 @@ public class PasswordResetAction implements Serializable {
 			sendExpirationError();
 			return OxTrustConstants.RESULT_FAILURE;
 		}
-
 		if (passwordResetRequest == null) {
 			sendExpirationError();
 			return OxTrustConstants.RESULT_FAILURE;
 		}
-
-		// Load latest entry by person inum
 		PasswordResetRequest personPasswordResetRequest = passwordResetService
 				.findActualPasswordResetRequest(passwordResetRequest.getPersonInum());
 		if (personPasswordResetRequest == null) {
 			sendExpirationError();
 			return OxTrustConstants.RESULT_FAILURE;
 		}
-
-		// Check if requested entry is actual one
 		if (!StringHelper.equalsIgnoreCase(guid, personPasswordResetRequest.getOxGuid())) {
 			sendExpirationError();
 			return OxTrustConstants.RESULT_FAILURE;
 		}
-
 		this.request = personPasswordResetRequest;
-
 		Calendar requestCalendarExpiry = new GregorianCalendar(TimeZone.getTimeZone("UTC"));
 		Calendar currentCalendar = new GregorianCalendar(TimeZone.getTimeZone("UTC"));
-
 		if (request != null) {
 			requestCalendarExpiry.setTime(request.getCreationDate());
 		}
 		currentCalendar.add(Calendar.SECOND, -appConfiguration.getPasswordResetRequestExpirationTime());
 		GluuCustomPerson person = personService.getPersonByInum(request.getPersonInum());
-
 		GluuCustomAttribute question = null;
 		if (person != null) {
 			question = person.getGluuCustomAttribute("secretQuestion");
 		}
-
 		if ((request != null) && requestCalendarExpiry.after(currentCalendar)) {
 			if (question != null) {
 				securityQuestion = question.getValue();
@@ -155,9 +143,13 @@ public class PasswordResetAction implements Serializable {
 			facesMessages.add(FacesMessage.SEVERITY_ERROR,
 					"Your link is not valid or your user is not allowed to perform a password reset. If you want to initiate a reset password procedure please fill this form.");
 			conversationService.endConversation();
-
 			return OxTrustConstants.RESULT_FAILURE;
 		}
+	}
+
+	public String getValue() {
+		FacesContext fc = FacesContext.getCurrentInstance();
+		return fc.getExternalContext().getRequestParameterMap().get("guid");
 	}
 
 	protected void sendExpirationError() {
@@ -227,9 +219,9 @@ public class PasswordResetAction implements Serializable {
 					return OxTrustConstants.RESULT_SUCCESS;
 				}
 			}
-		}else {
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, facesMessages
-					.evalResourceAsString("#{msg['person.passwordreset.catch.checkInputAndCaptcha']}"));
+		} else {
+			facesMessages.add(FacesMessage.SEVERITY_ERROR,
+					facesMessages.evalResourceAsString("#{msg['person.passwordreset.catch.checkInputAndCaptcha']}"));
 		}
 
 		return OxTrustConstants.RESULT_FAILURE;

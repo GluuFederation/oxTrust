@@ -162,6 +162,18 @@ public class UpdatePersonAction implements Serializable {
 
 	private String confirmPassword;
 
+	private GluuDeviceDataBean deviceToBeRemove;
+
+	private GluuUserPairwiseIdentifier pwiToBeRemove;
+
+	public GluuUserPairwiseIdentifier getPwiToBeRemove() {
+		return pwiToBeRemove;
+	}
+
+	public void setPwiToBeRemove(GluuUserPairwiseIdentifier pwiToBeRemove) {
+		this.pwiToBeRemove = pwiToBeRemove;
+	}
+
 	private List<GluuDeviceDataBean> deviceDataMap = new ArrayList<GluuDeviceDataBean>();
 
 	private List<GluuUserPairwiseIdentifier> userPairWideIdentifiers = new ArrayList<GluuUserPairwiseIdentifier>();
@@ -381,7 +393,8 @@ public class UpdatePersonAction implements Serializable {
 					gluuDeviceDataBean.setId(entry.getId());
 					gluuDeviceDataBean.setCreationDate(entry.getCreationDate().toString());
 					gluuDeviceDataBean.setModality("FIDO2");
-					gluuDeviceDataBean.setNickName(entry.getDisplayName());
+					gluuDeviceDataBean.setNickName(entry.getDisplayName() != null ? entry.getDisplayName()
+							: entry.getRegistrationData().getUsername());
 					deviceDataMap.add(gluuDeviceDataBean);
 				}
 			}
@@ -775,14 +788,14 @@ public class UpdatePersonAction implements Serializable {
 		}
 	}
 
-	public void removeDevice(GluuDeviceDataBean deleteDeviceData) {
+	public void removeDevice() {
 		try {
-			String idOfDeviceToRemove = deleteDeviceData.getId();
-			removeFidoDevice(deleteDeviceData, idOfDeviceToRemove);
-			removeFido2Device(this.person, deleteDeviceData);
-			removeOxExternalUid(deleteDeviceData, idOfDeviceToRemove);
-			removeOTPDevices(deleteDeviceData, idOfDeviceToRemove);
-			removeMobileDevice(deleteDeviceData, idOfDeviceToRemove);
+			String idOfDeviceToRemove = deviceToBeRemove.getId();
+			removeFidoDevice(deviceToBeRemove, idOfDeviceToRemove);
+			removeFido2Device(this.person, deviceToBeRemove);
+			removeOxExternalUid(deviceToBeRemove, idOfDeviceToRemove);
+			removeOTPDevices(deviceToBeRemove, idOfDeviceToRemove);
+			removeMobileDevice(deviceToBeRemove, idOfDeviceToRemove);
 		} catch (Exception e) {
 			log.error("Failed to remove device ", e);
 		}
@@ -803,7 +816,6 @@ public class UpdatePersonAction implements Serializable {
 			}
 			return;
 		}
-
 	}
 
 	private void removeFidoDevice(GluuDeviceDataBean deleteDeviceData, String idOfDeviceToRemove) {
@@ -1001,5 +1013,13 @@ public class UpdatePersonAction implements Serializable {
 		} else {
 			return "";
 		}
+	}
+
+	public GluuDeviceDataBean getDeviceToBeRemove() {
+		return deviceToBeRemove;
+	}
+
+	public void setDeviceToBeRemove(GluuDeviceDataBean deviceToBeRemove) {
+		this.deviceToBeRemove = deviceToBeRemove;
 	}
 }

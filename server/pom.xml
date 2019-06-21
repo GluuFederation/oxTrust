@@ -175,7 +175,23 @@
 					</suiteXmlFiles>
 				</configuration>
 			</plugin>
-
+			<plugin>
+				<groupId>pl.project13.maven</groupId>
+				<artifactId>git-commit-id-plugin</artifactId>
+				<version>2.1.12</version>
+				<executions>
+					<execution>
+						<id>get-the-git-infos</id>
+						<goals>
+							<goal>revision</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<generateGitPropertiesFile>true</generateGitPropertiesFile>
+					<failOnNoGitDirectory>false</failOnNoGitDirectory>
+				</configuration>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
@@ -187,6 +203,7 @@
 						</manifest>
 						<manifestEntries>
 							<Implementation-Build>${buildNumber}</Implementation-Build>
+							<Build-Branch>${git.branch}</Build-Branch>
 						</manifestEntries>
 					</archive>
 
@@ -294,11 +311,11 @@
 			<groupId>org.gluu</groupId>
 			<artifactId>oxauth-persistence-model</artifactId>
 			<exclusions>
-				<exclusion>  
+				<exclusion>
 					<groupId>org.gluu</groupId>
 					<artifactId>oxauth-model</artifactId>
 				</exclusion>
-				<exclusion>  
+				<exclusion>
 					<groupId>org.gluu</groupId>
 					<artifactId>oxauth-common</artifactId>
 				</exclusion>
@@ -517,17 +534,17 @@
 
 		<!-- Jackson -->
 		<dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-annotations</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-        </dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-annotations</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+		</dependency>
 		<!-- Other -->
 		<dependency>
 			<groupId>org.codehaus.jettison</groupId>
@@ -824,6 +841,7 @@
 								</manifest>
 								<manifestEntries>
 									<Implementation-Build>${buildNumber}</Implementation-Build>
+									<Build-Branch>${git.branch}</Build-Branch>
 								</manifestEntries>
 							</archive>
 

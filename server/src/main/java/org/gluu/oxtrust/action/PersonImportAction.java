@@ -49,7 +49,6 @@ import org.gluu.oxtrust.service.external.ExternalUpdateUserService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.exception.EntryPersistenceException;
 import org.gluu.persist.model.AttributeData;
-import org.gluu.persist.model.base.GluuBoolean;
 import org.gluu.service.security.Secure;
 import org.gluu.util.StringHelper;
 import org.richfaces.event.FileUploadEvent;

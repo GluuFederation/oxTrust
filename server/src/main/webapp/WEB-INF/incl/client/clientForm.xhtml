@@ -70,10 +70,11 @@
     </h:outputScript>
 
 	<h:form id="clientForm">
-		<input type='hidden' name='cid' value='#{conversation.id}' />
-		<div class="row">
-			<div class="col-xs-12 col-sm-12 col-lg-12" style="margin-top: 5px;">
-				<div class="box box-primary" id="mainContent">
+		<b:panel title="Client Form" look="primary" collapsible="false"
+			iconAwesome="fa-building">
+			<input type='hidden' name='cid' value='#{conversation.id}' />
+			<div class="row">
+				<div class="col-xs-12 col-sm-12 col-lg-12" style="margin-top: 5px;">
 					<div class="box-header">
 						<a4j:commandButton
 							styleClass="btn btn-primary showOIDCSummaryButton"
@@ -656,7 +657,8 @@
 												</h:panelGroup>
 											</b:panel>
 										</div>
-										<div class="col-sm-6 col-lg-6" style="padding: 0px; padding-left: 5px;">
+										<div class="col-sm-6 col-lg-6"
+											style="padding: 0px; padding-left: 5px;">
 											<b:panel title="#{msg['clientForm.contacts']}" id="contacts"
 												look="primary">
 												<h:panelGroup id="selectedContactsId">
@@ -1047,19 +1049,14 @@
 									</ui:decorate>
 								</h:panelGroup>
 							</div>
-
-
-
 						</div>
 					</div>
 				</div>
 			</div>
-		</div>
-		<!-- Footer -->
-		<div class="box-footer">
-			<ui:insert name="controlButttons" />
-		</div>
-
+			<div class="box-footer">
+				<ui:insert name="controlButttons" />
+			</div>
+		</b:panel>
 	</h:form>
 
 	<script>

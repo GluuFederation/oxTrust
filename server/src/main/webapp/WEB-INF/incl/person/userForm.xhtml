@@ -125,6 +125,9 @@
     </h:outputStylesheet>
 
 	<h:outputScript>
+	    function reload (){
+	     window.location.reload();
+	    }
         function changeAttributeVisibility(attrId, show) {
         	var attr = document.getElementById(attrId);
 
@@ -177,7 +180,7 @@
 	</ol>
 	</section>
 	<section class="content"> <h:form id="PForm">
-		<b:panel title="Person Add Form" look="primary">
+		<b:panel title="Person Add Form" look="primary" iconAwesome="fa-user-plus" collapsible="false">
 			<div class="row"
 				style="margin-left: 5px; margin-right: 5px; background: white;">
 				<div class="col-sm-7 col-lg-7" style="padding: 0px;">
@@ -417,8 +420,7 @@
 							contentStyle="border: 1px solid #337ab7; padding:10px; border-radius:5px;">
 							<ui:param name="_list"
 								value="#{gluufn:toList(_customAttributeAction.attributeByOrigin)}" />
-							<b:tab
-							    rendered="#{_list.size() > 0}"
+							<b:tab rendered="#{_list.size() > 0}"
 								title="#{_customAttributeAction.originDisplayNames[_list.get(0).key]}">
 								<div class="row" style="margin-left: 5px;">
 									<a4j:repeat var="attr" value="#{_list.get(0).value}">
@@ -439,8 +441,7 @@
 									</a4j:repeat>
 								</div>
 							</b:tab>
-							<b:tab
-							    rendered="#{_list.size() > 1}"
+							<b:tab rendered="#{_list.size() > 1}"
 								title="#{_customAttributeAction.originDisplayNames[_list.get(1).key]}">
 								<div class="row" style="margin-left: 5px;">
 									<a4j:repeat var="attr" value="#{_list.get(1).value}">
@@ -461,8 +462,7 @@
 									</a4j:repeat>
 								</div>
 							</b:tab>
-							<b:tab
-							    rendered="#{_list.size() > 2}"
+							<b:tab rendered="#{_list.size() > 2}"
 								title="#{_customAttributeAction.originDisplayNames[_list.get(2).key]}">
 								<div class="row" style="margin-left: 5px;">
 									<a4j:repeat var="attr" value="#{_list.get(2).value}">
@@ -489,85 +489,74 @@
 			</div>
 			<div class="row"
 				style="margin-left: 5px; margin-right: 5px; background: white;">
-				<ox:decorate label="#{msg['person.authenticationmethods']}"
-					rendered="#{updatePersonAction.deviceDataMap.size() gt 0}" />
-				<h:dataTable value="#{updatePersonAction.deviceDataMap}"
-					var="_value" styleClass="order-table fixed-size"
-					headerClass="tableHearder" id="devices"
-					rowClasses="order-table-odd-row,order-table-even-row"
+				<b:panel title="#{msg['person.authenticationmethods']}"
+					look="success"
 					rendered="#{updatePersonAction.deviceDataMap.size() gt 0}">
-					<h:column>
-						<f:facet name="header">Id</f:facet>
-						<h:panelGroup id="U2fPanelid">
-							<a4j:commandLink id="u2fConfig"
-								action="#{updatePersonAction.fetchFidoRecord(_value.id)}"
-								value="#{_value.id}"
-								rendered="#{(not _value.id.contains(':')) and (_value.modality ne 'OTP Device') and ( _value.modality ne 'Mobile Device') and ( _value.modality ne 'Passport')}"
-								render=":U2fPanel"
-								oncomplete="#{rich:component('U2fPanel')}.show();"
-								execute="@this" />
-						</h:panelGroup>
-						<h:panelGroup id="NoU2fPanelid"
-							rendered="#{(_value.modality eq 'OTP Device') or ( _value.modality eq 'Mobile Device')}">
+					<b:dataTable id="AuthMethod" style="text-align:center;"
+						rendered="#{updatePersonAction.deviceDataMap.size() gt 0}"
+						value="#{updatePersonAction.deviceDataMap}" var="_value"
+						select="true" responsive="true" searching="false">
+						<b:dataTableColumn label="ID">
+							<h:panelGroup id="U2fPanelid">
+								<a4j:commandLink id="u2fConfig"
+									action="#{updatePersonAction.fetchFidoRecord(_value.id)}"
+									value="#{_value.id}"
+									rendered="#{(not _value.id.contains(':')) and (_value.modality ne 'OTP Device') and ( _value.modality ne 'FIDO2') and ( _value.modality ne 'Mobile Device') and ( _value.modality ne 'Passport')}"
+									render=":U2fPanel"
+									oncomplete="#{rich:component('U2fPanel')}.show();"
+									execute="@this" />
+							</h:panelGroup>
+							<h:panelGroup id="NoU2fPanelid"
+								rendered="#{(_value.modality eq 'OTP Device') or ( _value.modality eq 'Mobile Device')}">
                                              #{_value.id}                                           
-                                            </h:panelGroup>
-						<h:panelGroup id="PassportPanelid"
-							rendered="#{(_value.modality eq 'Passport')}">
+                            </h:panelGroup>
+                            <h:panelGroup id="FIDO2DeviceID"
+                                rendered="#{(_value.modality eq 'FIDO2')}">
+                                             #{_value.id}                                           
+                            </h:panelGroup>
+							<h:panelGroup id="PassportPanelid"
+								rendered="#{(_value.modality eq 'Passport')}">
                                              #{_value.id.length() gt 10 ? _value.id.substring(0,7).concat('...') : _value.id}                                           
-                                            </h:panelGroup>
-					</h:column>
-					<h:column>
-						<f:facet name="header">Nickname</f:facet>
-                                            #{_value.nickName}
-                                        </h:column>
-					<h:column>
-						<f:facet name="header">Modality</f:facet>
-                                            #{_value.modality}
-                                        </h:column>
-					<h:column>
-						<f:facet name="header">Date Added</f:facet>
-                                            #{_value.creationDate}
-                                        </h:column>
-					<h:column>
-						<f:facet name="header">Remove</f:facet>
-						<a4j:commandLink
-							action="#{updatePersonAction.removeDevice(_value)}"
-							render="selectedCustomAttributesId"
-							styleClass="glyphicon glyphicon-remove">
-						</a4j:commandLink>
-					</h:column>
-				</h:dataTable>
-				<h:dataTable style="border-raduis:5px; margin:10px;"
-					value="#{updatePersonAction.userPairWideIdentifiers}" var="_value"
-					styleClass="order-table fixed-size" headerClass="tableHearder"
-					id="PWI" rowClasses="order-table-odd-row,order-table-even-row"
-					rendered="#{updatePersonAction.userPairWideIdentifiers.size() gt 0}">
-					<h:column>
-						<f:facet name="header">Pairwise ID</f:facet>
-						<h:panelGroup id="pairWideId" rendered="true">
-                                             #{_value.oxId}                                         
-                                            </h:panelGroup>
-					</h:column>
-					<h:column>
-						<f:facet name="header">Client</f:facet>
-						<h:panelGroup id="pairWideClientId" rendered="true">
-                                             #{updatePersonAction.getClientName(_value.clientId)}                                           
-                                            </h:panelGroup>
-					</h:column>
-					<h:column>
-						<f:facet name="header">Hostname</f:facet>
-						<h:panelGroup id="pairWideSp" rendered="true">
-                                             #{_value.sp}                                           
-                                            </h:panelGroup>
-					</h:column>
-					<h:column>
-						<f:facet name="header">Actions</f:facet>
-						<a4j:commandLink value="Remove"
-							action="#{updatePersonAction.removePairWiseIdentifier(_value)}"
-							styleClass="btn-primary">
-						</a4j:commandLink>
-					</h:column>
-				</h:dataTable>
+                            </h:panelGroup>
+						</b:dataTableColumn>
+						<b:dataTableColumn value="#{_value.nickName}" label="Nickname" />
+						<b:dataTableColumn value="#{_value.modality}" label="Modality" />
+						<b:dataTableColumn value="#{_value.creationDate}"
+							label="Date Added" />
+						<b:dataTableColumn label="Remove">
+							<a4j:commandLink
+								render="PForm"
+								action="#{updatePersonAction.setDeviceToBeRemove(_value)}"
+								onclick="#{rich:component('deleteDevice:acceptRemovalModalPanel')}.show();"
+							    execute="@this" eventsQueue="personQueue"
+								styleClass="glyphicon glyphicon-remove">
+							</a4j:commandLink>
+						</b:dataTableColumn>
+					</b:dataTable>
+				</b:panel>
+				<b:panel title="PairWideIdentifiers"
+					rendered="#{updatePersonAction.userPairWideIdentifiers.size() gt 0}"
+					look="success">
+					<b:dataTable id="PWI" style="text-align:center;"
+						rendered="#{updatePersonAction.userPairWideIdentifiers.size() gt 0}"
+						value="#{updatePersonAction.userPairWideIdentifiers}" var="_value"
+						select="true" responsive="true" searching="false">
+						<b:dataTableColumn value="#{_value.oxId}" label="Pairwise ID" />
+						<b:dataTableColumn
+							value="#{updatePersonAction.getClientName(_value.clientId)}"
+							label="Client" />
+						<b:dataTableColumn value="#{_value.sp}" label="Hostname" />
+						<b:dataTableColumn label="Actions">
+							<a4j:commandLink value="Remove" 
+							    render="PForm"
+							    onclick="#{rich:component('deletePairWise:acceptRemovalModalPanel')}.show();"
+								action="#{updatePersonAction.setPwiToBeRemove(_value)}"
+								execute="@this" eventsQueue="personQueue"
+								styleClass="btn-primary">
+							</a4j:commandLink>
+						</b:dataTableColumn>
+					</b:dataTable>
+				</b:panel>
 			</div>
 			<ui:insert name="controlButtons" />
 		</b:panel>
