@@ -66,6 +66,7 @@ public class PermissionService implements Serializable {
             {"uma", "access"},
             {"passport", "access"},
             {"super-gluu", "access"},
+            {"radius","access"}
     };
 
     public boolean hasPermission(Object target, String action) {
