@@ -319,6 +319,37 @@
 
 							</ul></li>
 					</ui:fragment>
+					<!-- Begin Gluu Radius Section -->
+					<ui:fragment
+						rendered="#{permissionService.hasPermission('radius','access') and productInstallationCheckerAction.isShowGluuRadiusMenu()}">
+						<li class="treeview" id="menuRadius">
+							<a href="#">
+								<i class="fa fa-rss"></i><span>#{msg['radius.title']}</span>
+								<i class="fa fa-angle-left pull-right"></i>
+							</a>
+							<ul class="treeview-menu" id="subMenuRadius">
+								<li id="menuRadiusConfig">
+									<h:commandLink
+										value="#{msg['radius.config.title']}"
+										onclick="lock();" ondbclick="lock();" oncomplete="unlock();"
+										action="#{menuAction.endConversation('/radius/radiusServerConfiguration.xhtml')}"
+										rendered="#{permissionService.hasPermission('radius','access') and productInstallationCheckerAction.isShowGluuRadiusMenu()}">
+										<i class="fa fa-chevron-right" style="float: left; margin-top: 2px;"></i>
+									</h:commandLink>
+								</li>
+								<li id="menuRadiusClients">
+									<h:commandLink
+										value="#{msg['radius.clients.title']}"
+										onclick="lock();" ondbclick="lock();" oncomplete="unlock();"
+										action="#{menuAction.endConversation('/radius/radiusClientInventory.xhtml')}"
+										rendered="#{permissionService.hasPermission('radius','access') and productInstallationCheckerAction.isShowGluuRadiusMenu()}">
+										<i class="fa fa-chevron-right" style="float: left; margin-top: 2px;"></i>
+									</h:commandLink>
+								</li>
+							</ul>
+						</li>
+					</ui:fragment>
+					<!-- End of Gluu Radius Section -->
 					<ui:fragment
 						rendered="#{permissionService.hasPermission('profile', 'access') or permissionService.hasPermission(configurationService.configuration, 'whitePagesEnabled')}">
 						<li class="treeview" id="menuPersonal"><a href="#"> <i
