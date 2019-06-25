@@ -11,8 +11,6 @@
 	xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
 	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
 	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
-	<h:outputStylesheet>
-	</h:outputStylesheet>
 	<h:outputScript>		
         function changeAttributeVisibility(attrId, show) {
         	var attr = document.getElementById(attrId);
@@ -103,13 +101,14 @@ pre {
 	width: 70%;
 }
 
-input[button]{
-    border: 2px solid #2e6da4 !important;
-    border-radius: 5px !important;
+input[button] {
+	border: 2px solid #2e6da4 !important;
+	border-radius: 5px !important;
 }
-input[submit]{
-    border: 2px solid #2e6da4 !important;
-    border-radius: 5px !important;
+
+input[submit] {
+	border: 2px solid #2e6da4 !important;
+	border-radius: 5px !important;
 }
 </style>
 		</h:head>
@@ -117,7 +116,8 @@ input[submit]{
 			<div class="row"
 				style="margin-left: 2px; margin-right: 2px; background: white;">
 				<div class="col-sm-8 col-lg-8" style="padding: 0px;">
-					<b:panel title="" look="success" collapsible="false" iconAwesome="fa-building">
+					<b:panel title="" look="success" collapsible="false"
+						iconAwesome="fa-building">
 						<b:tabView id="Form" pills="true"
 							contentStyle="border: 1px solid #337ab7; padding:10px; border-radius:5px;">
 							<b:tab title="#{msg['trustmanager.trustAgreement']}">
@@ -147,7 +147,6 @@ input[submit]{
 												execute="@this" />
 										</h:selectOneMenu>
 									</ox:decorate>
-
 									<h:panelGroup id="metadataType">
 										<a4j:region>
 											<ox:decorate id="spMetaDataSourceType"
@@ -168,7 +167,6 @@ input[submit]{
 														limitRender="true" execute="@this" />
 												</h:selectOneMenu>
 											</ox:decorate>
-
 											<a4j:region>
 												<h:panelGroup id="urlId"
 													rendered="#{((_trustRelationship.spMetaDataSourceType.value eq 'file') and (not empty _trustRelationship.url))}"
@@ -179,7 +177,6 @@ input[submit]{
 															maxlength="4000" id="urlInputId" />
 													</ox:decorate>
 												</h:panelGroup>
-
 												<h:panelGroup id="FederationWizard">
 													<h:panelGroup
 														rendered="#{_trustRelationship.spMetaDataSourceType.value eq 'federation'}">
@@ -207,14 +204,12 @@ input[submit]{
 
 													</h:panelGroup>
 												</h:panelGroup>
-
 												<h:panelGroup id="FederationWizardEntitySelection">
 													<h:panelGroup
 														rendered="#{(_trustRelationshipAction.getTrustContainerFederation(_trustRelationship) ne null) and (_trustRelationship.spMetaDataSourceType.value eq 'federation')}">
 														<ox:decorate
 															id="spMetaDataSourceTypeFederationEntitySelection"
 															label="#{msg['trustmanager.entityID']}">
-
 															<h:outputText value="#{_trustRelationship.entityId}"
 																rendered="#{!empty _trustRelationship.entityId}" />
 															<a4j:commandLink
@@ -230,12 +225,10 @@ input[submit]{
 											</a4j:region>
 										</a4j:region>
 									</h:panelGroup>
-
 									<h:panelGroup id="MetadataOperations">
 										<a4j:region>
 											<h:panelGroup id="fileWrapperGroupId"
 												rendered="#{_trustRelationship.spMetaDataSourceType.value eq 'file'}">
-												<!-- TODO: ox:decorate rendered -->
 												<ox:decorate id="fileWrapper"
 													label="
 											#{msg['trustmanager.spMetadataFile']}">
@@ -259,7 +252,6 @@ input[submit]{
 												</ox:decorate>
 											</h:panelGroup>
 										</a4j:region>
-
 										<h:panelGroup id="certUpdateWrapperGroupId"
 											rendered="#{((not empty _trustRelationship.spMetaDataFN) and (_trustRelationship.spMetaDataSourceType.value eq 'file'))}">
 											<ox:decorate id="certUpdate"
@@ -273,7 +265,6 @@ input[submit]{
 											</ox:decorate>
 										</h:panelGroup>
 									</h:panelGroup>
-
 									<h:panelGroup id="spMetaDataUrlGroupId">
 										<ox:decorate id="spMetaDataUrlId"
 											rendered="#{_trustRelationship.spMetaDataSourceType.value eq 'uri'}"
@@ -283,7 +274,6 @@ input[submit]{
 												required="true" id="spMetaDataURLId" />
 										</ox:decorate>
 									</h:panelGroup>
-
 									<h:panelGroup id="spSingleGroup">
 										<h:panelGroup id="spSingleGroupId"
 											rendered="#{_trustRelationship.entityType.displayName eq 'Single SP'}">
@@ -305,7 +295,6 @@ input[submit]{
 																execute="@this" limitRender="true" />
 														</h:selectBooleanCheckbox>
 													</h:panelGrid>
-
 													<h:panelGroup id="RelyingPartyConfig">
 														<a4j:commandLink id="TRConfig"
 															styleClass="RelyingPartyConfigLink"
@@ -324,9 +313,7 @@ input[submit]{
 													<h:panelGrid columns="2">
 														<h:selectBooleanCheckbox
 															value="#{_trustRelationship.researchBundle}">
-
 														</h:selectBooleanCheckbox>
-
 													</h:panelGrid>
 												</ox:decorate>
 											</h:panelGroup>
@@ -340,7 +327,6 @@ input[submit]{
 																listener="#{_trustRelationshipAction.setSelectedTR(_trustRelationship.inum)}"
 																limitRender="true" render="a8.8ttributeTabPanelGroupId"
 																queueId="trustQueue" execute="@this" />
-
 															<a4j:repeat var="_attr"
 																value="#{_trustRelationship.releasedCustomAttributes}">
 																<ui:param name="_metadata" value="#{_attr.metadata}" />
@@ -355,8 +341,6 @@ input[submit]{
 																		<h:outputText value="#{_metadata.displayName}"
 																			styleClass="attributeTooltip"
 																			title="#{msg['trustmanager.samlURIForThisAttribute']} | #{_trustRelationshipAction.getSAML1URI(_metadata)} | #{_trustRelationshipAction.getSAML2URI(_metadata)}" />
-
-
 																	</div>
 																	<div class="col-sm-1">
 																		<a4j:commandLink
@@ -374,29 +358,29 @@ input[submit]{
 														<ui:repeat
 															value="#{_trustRelationshipAction.federatedSites}"
 															var="_trust">
-															<rich:accordionItem header="#{_trust.displayName}">
-																<a4j:ajax event="enter"
-																	listener="#{_trustRelationshipAction.setSelectedTR(_trust.inum)}"
-																	limitRender="true" render="attributeTabPanelGroupId"
-																	queueId="trustQueue" execute="@this" />
-																<a4j:repeat var="_attr"
-																	value="#{_trust.releasedCustomAttributes}">
-																	<ui:param name="_metadata" value="#{_attr.metadata}" />
-																	<ui:param name="_aid"
-																		value="#{_customAttributeAction.attributeIds[_metadata]}" />
-																	<h:outputText value="#{_metadata.displayName}"
-																		styleClass="attributeTooltip"
-																		title="#{msg['trustmanager.samlURIForThisAttribute']} | #{_trustRelationshipAction.getSAML1URI(_metadata)} | #{_trustRelationshipAction.getSAML2URI(_metadata)}" />
-																	<richext:spacer width="8" />
-																	<a4j:commandLink
-																		action="#{_customAttributeAction.removeCustomAttribute(_metadata.inum)}"
-																		render="newTrustId"
-																		onbeforedomupdate="changeAttributeVisibility('#{_aid}');"
-																		execute="@this">
-																		<h:graphicImage value="/img/remove.gif" />
-																	</a4j:commandLink>
-																	<br />
-																</a4j:repeat>
+															<rich:accordionItem header="#{_trust.displayName}" rendered="#{_trust.isFederation()}">
+																																<a4j:ajax event="enter"
+																																	listener="#{_trustRelationshipAction.setSelectedTR(_trust.inum)}"
+																																	limitRender="true" render="attributeTabPanelGroupId"
+																																	queueId="trustQueue" execute="@this" />
+																																<a4j:repeat var="_attr"
+																																	value="#{_trust.releasedCustomAttributes}">
+																																	<ui:param name="_metadata" value="#{_attr.metadata}" />
+																																	<ui:param name="_aid"
+																																		value="#{_customAttributeAction.attributeIds[_metadata]}" />
+																																	<h:outputText value="#{_metadata.displayName}"
+																																		styleClass="attributeTooltip"
+																																		title="#{msg['trustmanager.samlURIForThisAttribute']} | #{_trustRelationshipAction.getSAML1URI(_metadata)} | #{_trustRelationshipAction.getSAML2URI(_metadata)}" />
+																																	<richext:spacer width="8" />
+																																	<a4j:commandLink
+																																		action="#{_customAttributeAction.removeCustomAttribute(_metadata.inum)}"
+																																		render="newTrustId"
+																																		onbeforedomupdate="changeAttributeVisibility('#{_aid}');"
+																																		execute="@this">
+																																		<h:graphicImage value="/img/remove.gif" />
+																																	</a4j:commandLink>
+																																	<br />
+																																</a4j:repeat>
 															</rich:accordionItem>
 														</ui:repeat>
 													</rich:accordion>
@@ -423,9 +407,6 @@ input[submit]{
 											</rich:column>
 										</rich:dataTable>
 									</h:panelGrid>
-
-									<!-- Validation Log End -->
-
 								</div>
 							</b:tab>
 							<b:tab title="#{msg['trustmanager.associatedContacts']}">

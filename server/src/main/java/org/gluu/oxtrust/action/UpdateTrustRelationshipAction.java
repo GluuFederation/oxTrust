@@ -720,17 +720,17 @@ public class UpdateTrustRelationshipAction implements Serializable {
 		String result = OxTrustConstants.RESULT_FAILURE;
 		if (update) {
 			try {
+				if (GluuStatus.ACTIVE.equals(this.trustRelationship.getStatus())) {
+					log.error(
+							"Failed to remove federation trust relationship {}, there are still active federated Trust Relationships left.",
+							this.trustRelationship.getInum());
+					facesMessages.add(FacesMessage.SEVERITY_WARN,
+							"'#{updateTrustRelationshipAction.trustRelationship.displayName}' has associated Trust Relationship(s) depending on it and cannot be deleted. Please disable the federation and try again.");
+					return result;
+				}
 				synchronized (svnSyncTimer) {
 					for (GluuSAMLTrustRelationship trust : trustService
 							.getDeconstructedTrustRelationships(this.trustRelationship)) {
-						if (GluuStatus.ACTIVE.equals(trust.getStatus())) {
-							log.error(
-									"Failed to remove federation trust relationship {}, there are still active federated Trust Relationships left.",
-									this.trustRelationship.getInum());
-							facesMessages.add(FacesMessage.SEVERITY_ERROR,
-									"'#{updateTrustRelationshipAction.trustRelationship.displayName}' has associated Trust Relationship(s) depending on it and cannot be deleted. Please disable the federation and try again.");
-							return result;
-						}
 					}
 					for (GluuSAMLTrustRelationship trust : trustService
 							.getDeconstructedTrustRelationships(this.trustRelationship)) {

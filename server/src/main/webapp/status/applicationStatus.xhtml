@@ -2,11 +2,13 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:b="http://bootsfaces.net/ui"
 	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	template="/WEB-INF/incl/layout/newtemplate.xhtml">
 	<f:metadata>
-	    <f:viewAction action="#{permissionService.requestPermission('configuration', 'access')}" />
+		<f:viewAction
+			action="#{permissionService.requestPermission('configuration', 'access')}" />
 		<f:viewAction
 			action="#{permissionService.hasPermission('configuration', 'access')}" />
 		<f:viewAction action="#{conversationService.initConversation}" />
@@ -46,17 +48,18 @@
 											columns="1" id="statusTable1" width="100%">
 											<ox:decorate label="#{msg['configurationStatus.hostName']}"
 												leftClass="col-sm-6" rightClass="col-sm-6">
-												<h:outputText styleClass="hostnameValueBox"
-													value="#{_configuration.hostname}" />
+												<b:label styleClass="hostnameValueBox"
+													text="#{_configuration.hostname}" severity="primary" />
 											</ox:decorate>
 
 											<ox:decorate label="#{msg['configurationStatus.ipAddress']}"
 												leftClass="col-sm-6" rightClass="col-sm-6">
-												<h:outputText styleClass="ipAddressValueBox"
-													value="#{_configuration.ipAddress}" />
+												<b:label styleClass="ipAddressValueBox"
+													text="#{_configuration.ipAddress}" severity="success" />
 											</ox:decorate>
 
-											<ox:decorate label="#{msg['configurationStatus.systemUptime']}"
+											<ox:decorate
+												label="#{msg['configurationStatus.systemUptime']}"
 												leftClass="col-sm-6" rightClass="col-sm-6">
 												<h:outputText styleClass="systemUptimeValueBox"
 													converter="uptimeConverter"
@@ -70,7 +73,8 @@
 													<f:convertDateTime pattern="MMM. d yyyy hh:mm a" />
 												</h:outputText>
 											</ox:decorate>
-											<ox:decorate label="#{msg['configurationStatus.freeDiskSpace']}"
+											<ox:decorate
+												label="#{msg['configurationStatus.freeDiskSpace']}"
 												leftClass="col-sm-6" rightClass="col-sm-6">
 												<h:outputText styleClass="freeDiskSpaceValueBox"
 													value="#{_configuration.freeDiskSpace}" />
@@ -88,7 +92,8 @@
 													value="60 seconds" />
 											</ox:decorate>
 
-											<ox:decorate label="#{msg['configurationStatus.personCount']}"
+											<ox:decorate
+												label="#{msg['configurationStatus.personCount']}"
 												leftClass="col-sm-6" rightClass="col-sm-6">
 												<h:outputText styleClass="personCountValueBox"
 													value="#{_configuration.personCount}" />
