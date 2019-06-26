@@ -731,9 +731,6 @@ public class UpdateTrustRelationshipAction implements Serializable {
 				synchronized (svnSyncTimer) {
 					for (GluuSAMLTrustRelationship trust : trustService
 							.getDeconstructedTrustRelationships(this.trustRelationship)) {
-					}
-					for (GluuSAMLTrustRelationship trust : trustService
-							.getDeconstructedTrustRelationships(this.trustRelationship)) {
 						trustService.removeTrustRelationship(trust);
 					}
 					shibboleth3ConfService.removeSpMetadataFile(this.trustRelationship.getSpMetaDataFN());

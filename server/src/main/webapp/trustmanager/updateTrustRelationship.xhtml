@@ -25,7 +25,6 @@
 				</small>
 			</h1>
 			<ol class="breadcrumb">
-
 				<li><a href="#{request.contextPath}/trustmanager/trustRelationships.htm">
 						<i class="fa fa-home" /> #{msg['trustmanager.trustRelationships']}
 				</a></li>
@@ -34,7 +33,6 @@
 				</li>
 			</ol>
 		</section>
-
 		<section class="content">
 			<div id="formArea">
 				<ui:decorate template="/WEB-INF/incl/trustmanager/trustForm.xhtml">
@@ -47,7 +45,6 @@
 					<ui:param name="_trustRelationshipAction"
 						value="#{updateTrustRelationshipAction}" />
 					<ui:param name="_new" value="false" />
-
 					<ui:define name="controlButttons">
 						<div class="box-footer">
 							<div style="width: 100%; height: 30px;">
@@ -72,27 +69,23 @@
 							</div>
 						</div>
 					</ui:define>
-
 					<ui:define name="configurationLink">
 						<h:link immediate="true" includeViewParams="false"
 							outcome="/trustmanager/trustRelationshipConfigurationFile"
 							rendered="#{(not _trustRelationship.isFederation()) and (trustService.getTrustContainerFederation(_trustRelationship) eq null) and (_trustRelationship.spMetaDataSourceType eq 'FILE')}"
 							target="_blank" value="Download Shibboleth3 configuration files">
-
 							<f:param name="inum"
 								value="#{updateTrustRelationshipAction.inum}" />
 						</h:link>
 					</ui:define>
-
 				</ui:decorate>
 				<ox:acceptRemovalDialog
 					deleteMethod="#{updateTrustRelationshipAction.delete}"
 					id="deleteConfirmation" queue="trustQueue"
 					subject="Trust Relationship"
+					render="trustForm"
 					value="#{updateTrustRelationshipAction.trustRelationship.displayName}" />
-
 			</div>
-
 			<ox:createSPMetadataDialog
 				generateMethod="#{updateTrustRelationshipAction.generateSp()}"
 				id="createSPMetadata"
@@ -100,7 +93,6 @@
 				logoutUri="#{updateTrustRelationshipAction.trustRelationship.spLogoutURL}"
 				metadataUri="#{updateTrustRelationshipAction.trustRelationship.spMetaDataURL}"
 				uri="#{updateTrustRelationshipAction.trustRelationship.url}" />
-
 		</section>
 	</ui:define>
 </ui:composition>
