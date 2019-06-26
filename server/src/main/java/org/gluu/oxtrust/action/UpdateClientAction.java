@@ -24,7 +24,6 @@ import org.gluu.model.custom.script.CustomScriptType;
 import org.gluu.model.custom.script.model.CustomScript;
 import org.gluu.oxauth.model.common.GrantType;
 import org.gluu.oxauth.model.common.ResponseType;
-import org.gluu.oxauth.model.ref.ClientAttributes;
 import org.gluu.oxauth.model.util.URLPatternList;
 import org.gluu.oxtrust.ldap.service.*;
 import org.gluu.oxtrust.model.GluuGroup;
@@ -39,6 +38,7 @@ import org.gluu.service.security.Secure;
 import org.gluu.util.StringHelper;
 import org.gluu.util.Util;
 import org.gluu.util.security.StringEncrypter.EncryptionException;
+import org.oxauth.persistence.model.ClientAttributes;
 import org.oxauth.persistence.model.Scope;
 import org.slf4j.Logger;
 

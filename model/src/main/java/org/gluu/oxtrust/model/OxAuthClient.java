@@ -10,12 +10,12 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import org.gluu.oxauth.model.common.GrantType;
 import org.gluu.oxauth.model.common.ResponseType;
-import org.gluu.oxauth.model.ref.ClientAttributes;
 import org.gluu.persist.annotation.AttributeName;
 import org.gluu.persist.annotation.DataEntry;
 import org.gluu.persist.annotation.JsonObject;
 import org.gluu.persist.annotation.ObjectClass;
 import org.gluu.persist.model.base.Entry;
+import org.oxauth.persistence.model.ClientAttributes;
 
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;

@@ -55,7 +55,7 @@
 		</dependency>
         <dependency>
             <groupId>org.gluu</groupId>
-            <artifactId>oxauth-common</artifactId>
+            <artifactId>oxauth-persistence-model</artifactId>
         </dependency>
 		<!-- Jackson -->
 		<dependency>
