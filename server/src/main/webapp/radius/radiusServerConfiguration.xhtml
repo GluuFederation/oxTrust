@@ -26,6 +26,9 @@
 			<h:panelGroup id="formArea" layout="block">
 				<ui:decorate template="/WEB-INF/incl/radius/serverConfigForm.xhtml">
 					<ui:param name="_config" value="#{updateGluuRadiusConfigAction.serverConfiguration}"/>
+					<ui:param name="_customscripts" value="#{updateGluuRadiusConfigAction.roPasswordScripts}"/>
+					<ui:param name="_scopes" value="#{updateGluuRadiusConfigAction.scopes}"/>
+					<ui:param name="_clients" value="#{updateGluuRadiusConfigAction.openidClients}"/>
 					<ui:param name="_action" value="#{updateGluuRadiusConfigAction}"/>
 					<ui:define name="control-buttons">
 						<div>

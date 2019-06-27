@@ -9,6 +9,7 @@ import javax.inject.Inject;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.radius.model.RadiusClient;
+import org.gluu.search.filter.Filter;
 import org.slf4j.Logger;
 
 public class GluuRadiusClientService  implements Serializable{
@@ -16,7 +17,10 @@ public class GluuRadiusClientService  implements Serializable{
     /**
 	 * 
 	 */
-	private static final long serialVersionUID = 8095893988896942051L;
+    private static final long serialVersionUID = 8095893988896942051L;
+    
+    private static final String CLIENT_NAME_ATTR = "oxRadiusClientName";
+	private static final String CLIENT_IP_ADDRESS_ATTR = "oxRadiusClientIpAddress";
 
 	@Inject
     private PersistenceEntryManager persistenceEntryManager;
@@ -31,6 +35,22 @@ public class GluuRadiusClientService  implements Serializable{
 
         String clientsBaseDn = getRadiusClientsBaseDn();
         return persistenceEntryManager.findEntries(clientsBaseDn,RadiusClient.class,null);
+    }
+
+    public List<RadiusClient> getAllClients(Integer sizeLimit) {
+
+        String clientsBaseDn = getRadiusClientsBaseDn();
+        return persistenceEntryManager.findEntries(clientsBaseDn,RadiusClient.class,null,sizeLimit);
+    }
+
+    public List<RadiusClient> searchClients(String pattern, Integer sizeLimit) {
+
+        String [] targetArray = new String[] {pattern};
+        String clientsBaseDn = getRadiusClientsBaseDn();
+        Filter nameFilter = Filter.createSubstringFilter(CLIENT_NAME_ATTR,null,targetArray,null);
+        Filter ipFilter = Filter.createSubstringFilter(CLIENT_IP_ADDRESS_ATTR,null,targetArray,null);
+        Filter searchFilter=  Filter.createORFilter(nameFilter,ipFilter);
+        return persistenceEntryManager.findEntries(clientsBaseDn,RadiusClient.class,searchFilter,sizeLimit);
     }
 
     public RadiusClient getRadiusClientByInum(String inum) {
