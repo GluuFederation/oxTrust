@@ -3,6 +3,114 @@
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
 	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:b="http://bootsfaces.net/ui" xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	template="/WEB-INF/incl/layout/newtemplate.xhtml">
+	<f:metadata>
+		<f:viewAction action="#{permissionService.requestPermission('radius','access')}"/>
+		<f:viewAction action="#{conversationService.initConversation}"/>
+		<f:viewParam name="searchPattern" value="#{searchRadiusClientAction.searchPattern}"/>
+		<f:viewAction action="#{searchRadiusClientAction.start}" if="#{searchRadiusClientAction.results == null}"/>
+	</f:metadata>
+
+	<ui:define name="body">
+		<section class="content-header">
+			<h1 style="color: #333;">
+			  #{msg['radius.title']}
+			  <small><i class="fa fa-caret-right" style="color: #333 !important;"/>#{msg['radius.clients.title']}</small>
+			</h1>
+			<ol class="breadcrumb">
+			  <li><a href="#{request.contextPath}/home.htm"><i class="fa fa-home"/></a></li>
+			  <li class="organization/configuration"><a href="#">#{msg['radius.clients.title']}</a></li>
+			</ol>
+		</section>
+		<div class="formArea" style="margin-top: 10px">
+			<div class="col-xs-12 col-md-12">
+				<b:panel title="#{msg['radius.clients.panel.title']}" look="primary" iconAwesome="fa-list">
+					<h:panelGroup id="radius-clients-table">
+						<div class="row" style="padding: 5px; margin-bottom: 5px; margin-left: 15px;">
+							<b:link 
+								style-class="btn btn-primary" icon="plus"
+								outcome="/radius/addRadiusClient" value="#{msg['radius.client.add.title']}"/>
+							
+						</div>
+						<richext:spacer height="16"/>
+						<h:form>
+							<ox:decorate hideLabel="true" id="search-pattern">
+								<div style="width: 100%; float: left; margin-left: 17px;">
+									<h:inputText
+										maxlength="30" size="30"
+										style="width: 60%; float: left;"
+										styleClass="form-control"
+										value="#{searchRadiusClientAction.searchPattern}"/>
+									<h:commandButton action="#{searchRadiusClientAction.search}"
+										style="float: left;margin-left: 3px;"
+										styleClass="btn btn-primary"
+										value="#{msg['radius.clients.search.label']}"/>
+									
+								</div>
+							</ox:decorate>
+						</h:form>
+						<div class="row">
+							<div class="box-body">
+								<div class="table-responsive" style="overflow:auto;">
+									<h:form id="radius-clients-form">
+										<ui:fragment rendered="#{searchRadiusClientAction.results.size() eq 0}">
+											<h:outputText value="#{msg['radius.clients.search.noresults']}"/>
+										</ui:fragment>
+										<b:dataTable style="text-align:center;"
+											rendered="#{searchRadiusClientAction.results.size() gt 0}"
+											value="#{searchRadiusClientAction.results}" var="rclient"
+											print="true" excel="true" csv="true" pdf="true" select="true">
+											<b:dataTableColumn label="#{msg['radius.client.name']}" order="desc">
+												<h:link includeViewParams="false" 
+													outcome="/radius/updateRadiusClient"
+													value="#{rclient.entity.name}">
+													<f:param name="inum" value="#{rclient.entity.inum}"/>
+												</h:link>
+											</b:dataTableColumn>
+											<b:dataTableColumn label="#{msg['radius.client.inum']}" 
+												value="#{rclient.entity.inum}"/>
+											<b:dataTableColumn label="#{msg['radius.client.ipaddress']}"
+												value="#{rclient.entity.ipAddress}"/>
+											<b:dataTableColumn label="#{msg['radius.clients.table.delete']}" orderable="false">
+												<h:selectBooleanCheckbox value="#{rclient.selected}" 
+													id="select-radius-client" onclick="displayDeleteButton();"/>
+											</b:dataTableColumn>
+										</b:dataTable>
+										<a4j:commandButton ajaxSingle="true" eventsQueue="radiusClientQueue"
+											id="delete-radius-clients"
+											onclick="#{rich:component('removeConfirmation:acceptRemovalModalPanel')}.show();"
+											styleClass="btn btn-primary"
+											style="float: left; margin-left: 3px;"
+											value="#{msg['radius.clients.table.delete']}"
+											rendered="#{searchRadiusClientAction.results.size() gt 0}"/>
+									</h:form>
+								</div>
+							</div>
+						</div>
+					</h:panelGroup>
+				</b:panel>
+			</div>
+		</div>
+		<ox:acceptRemovalDialog
+			id="removeConfirmation"
+			deleteMethod="#{searchRadiusClientAction.deleteRadiusClients}"
+			render="radius-clients-table" queue="radiusClientQueue"
+			subject="Radius Clients" value="all selected radius clients"/>
+		<h:outputScript>
+			function displayDeleteButton() {
+				var delete_selections = $("input[id$=select-radius-client]:checked");
+				var delete_button = $("input[id$=delete-radius-clients]");
+				if(delete_selections.length == 0) {
+					delete_button.attr("disabled","disabled");
+				}else {
+					delete_button.removeAttr("disabled");
+				}
+			}
+			displayDeleteButton();
+		</h:outputScript>
+	</ui:define>
 </ui:composition>

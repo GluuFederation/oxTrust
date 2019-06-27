@@ -1,2 +1,51 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<span>Update Radius Client</span>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    template="/WEB-INF/incl/layout/newtemplate.xhtml">
+    <f:metadata>
+		<f:viewAction action="#{permissionService.requestPermission('radius','access')}"/>
+        <f:viewAction action="#{conversationService.initConversation}"/>
+        <f:viewParam name="inum" value="#{updateRadiusClientAction.inum}"/>
+		<f:viewAction action="#{updateRadiusClientAction.start}"/>
+	</f:metadata>
+	<ui:define name="body">
+		<section class="content-header">
+			<h1 style="color: #333;">
+				#{msg['radius.title']}
+				<small><i class="fa fa-caret-right" style="color: #333 !important;"/>#{msg['radius.client.update.title']}</small>
+			</h1>
+			<ol class="breadcrumb">
+				<li><a href="#{request.contextPath}/home.htm"><i class="fa fa-home"/></a></li>
+				<li class="organization/configuration"><a href="#">#{msg['radius.client.update.title']}</a></li>
+			</ol>
+		</section>
+		<section class="content">
+			<div id="formArea">
+				<ui:decorate template="/WEB-INF/incl/radius/radiusClientForm.xhtml">
+					<ui:param name="_client" value="#{updateRadiusClientAction.client}"/>
+					<ui:param name="_new" value="false"/>
+					<ui:param name="_paneltitle" value="#{msg['radius.client.update.title']}"/>
+					<ui:define name="control-buttons">
+						<div>
+							<h:commandButton action="#{updateRadiusClientAction.save}"
+								styleClass="btn btn-primary" value="#{msg['radius.client.update.button']}"/>
+							<h:commandButton action="#{updateRadiusClientAction.cancel}"
+								style="margin-left: 3px;" immediate="true"
+								styleClass="btn btn-primary" value="#{msg['radius.client.cancel.button']}"/>
+						</div>
+					</ui:define>
+				</ui:decorate>
+			</div>
+			<!-- note: this is a dummy entry , and is not necessary 
+			     there seems to be a need to add this to have a proper layout -->
+			<ox:inputTextDialog
+					acceptMethod="#{updateRadiusClientAction.start}"
+					cancelMethod="#{updateRadiusClientAction.start}"
+					text="#{null}"/>
+		</section>
+	</ui:define>
+	
+</ui:composition>
