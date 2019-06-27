@@ -18,121 +18,109 @@
 </style>
 
     <h:form id="radius-config-form">
-        <input class="hidden" name="cid" value="#{conversation.id}"/>
-        <div class="row">
-            <div class="col-xs-12 col-sm-12 col-lg-12" style="margin-top: 5px;">
-                <div class="box box-primary">
+        <b:panel title="#{msg['radius.config.title']}" icon-awesome="fa-wrench" look="primary" collapsible="false">
+            <input type="hidden" name="cid" value="#{conversation.id}"/>
+            <div class="row">
+                <div class="col-xs-12 col-sm-12 col-lg-12" style="margin-top: 5px;">
                     <div class="nav-tabs-custom" style="margin-bottom: 0px; overflow: auto;">
                         <ul class="nav nav-tabs">
                             <li class="active">
-                                <a href="#basic-settings" data-toggle="tab">#{msg['radius.config.form.tab.basic']}</a>
+                                <a href="#basic-settings" data-toggle="tab">#{msg['radius.config.tab.basic']}</a>
                             </li>
                             <li>
-                                <a href="#openid-settings" data-toggle="tab">#{msg['radius.config.form.tab.openid']}</a>
+                                <a href="#openid-settings" data-toggle="tab">#{msg['radius.config.tab.openid']}</a>
                             </li>
                         </ul>
                         <div class="tab-content">
+                            <!-- basic settings tab-->
                             <div class="tab-pane active box box-primary" id="basic-settings">
-                               <div class="row">
+
+                                <div class="row" style="margin-left: 5px; margin-right: 5px;">
                                     <div class="col-sm-4 col-lg-4" style="padding: 0px;">
                                         <ox:decorate id="auth-listen-port"
                                             label="#{msg['radius.config.authlistenport.label']}"
                                             leftClass="col-sm-8" rightClass="col-sm-4">
                                             <h:inputText value="#{_config.authPort}"
-                                                styleClass="form-control"
-                                                required="true"
+                                                styleClass="form-control" required="true"
                                                 requiredMessage="#{msg['radius.config.authlistenport.required']}">
-                                                <f:validateLongRange mininum="1" maximum="65535"/>
+                                                <f:validateLongRange minimum="1" maximum="65535"/>
                                             </h:inputText>
                                         </ox:decorate>
                                         <ox:decorate id="acct-listen-port"
                                             label="#{msg['radius.config.acctlistenport.label']}"
                                             leftClass="col-sm-8" rightClass="col-sm-4">
-                                            <h:inputText value="#{_config.acctPort}"
-                                                styleClass="form-control"
-                                                required="true"
-                                                requiredMessage="#{msg['radius.config.acctlistenport.required']}">
-                                                <f:validateLongRange minimum="1" maximum="65535"/>
+                                            <h:inputText value="#{_config.acctPort}" styleClass="form-control"
+                                                required="true" requiredMessage="#{msg['radius.config.acctlistenport.required']}">
                                             </h:inputText>
                                         </ox:decorate>
                                         <ox:decorate id="auth-timeout"
                                             label="#{msg['radius.config.authtimeout.label']}"
                                             leftClass="col-sm-8" rightClass="col-sm-4">
                                             <h:inputText value="#{_config.authenticationTimeout}"
-                                                styleClass="form-control"
-                                                required="true"
+                                                styleClass="form-control" required="true"
                                                 requiredMessage="#{msg['radius.config.authtimeout.required']}">
                                                 <f:validateLongRange mininum="1" maximum="2147483647"/>
                                             </h:inputText>
                                         </ox:decorate>
                                     </div>
                                 </div>
+
                             </div>
+                            <!-- end of basic settings tab -->
+
+                            <!-- openid settings tab-->
                             <div class="tab-pane box box-primary" id="openid-settings">
-                                <div class="row">
+                                
+                                <div class="row" style="margin-left: 5px; margin-right: 5px;">
                                     <div class="col-sm-6 col-lg-6" style="padding: 0px;">
-                                        <h:panelGroup>
-                                            <ox:decorate id="acr-value"
-                                                label="#{msg['radius.config.acrvalue.label']}">
-                                                <h:selectOneMenu value="#{_config.acrValue}"
-                                                    styleClass="rounded form-control">
-                                                    <f:selectItems
-                                                        value="#{_action.roPasswordScripts}"
-                                                        var="_name"
-                                                        itemLabel="#{_name}"/>
-                                                </h:selectOneMenu>
-                                            </ox:decorate>
-
-                                            <ox:decorate id="openid-client"
-                                                label="#{msg['radius.config.openidclient.label']}">
-                                                <h:selectOneMenu value="#{_config.openidUsername}"
-                                                    styleClass="rounded form-control">
-                                                    <f:selectItems
-                                                        value="#{_action.openidClients}"
-                                                        var="_openidclient"
-                                                        itemValue="#{_openidclient.inum}"
-                                                        itemLabel="#{_openidclient.displayName}"/>
-                                                </h:selectOneMenu>
-                                            </ox:decorate>
-
-                                            <b:panel title="#{msg['radius.config.scopes.label']}" look="primary">
-                                                <h:panelGroup id="openid-scopes">
-                                                    <a4j:repeat value="#{_action.scopes}"
-                                                        rowKeyVar="_scopesIdx" var="_scope" iterationStatusVar="loop">
-                                                        <div class="#{(loop.index % 2 == 0)?'odd':'even'}">
-                                                            <h:outputText 
-                                                                value="#{_scope.id eq null ? _scope.displayName : _scope.id}&#160;"/>
-                                                            <div class="span4 pull-right">
-                                                                <a4j:commandLink
-                                                                    styleClass="glyphicon glyphicon-remove"
-                                                                    action="#{_action.removeScope(_scope.dn)}"
-                                                                    execute="@this" render="openid-scopes"
-                                                                    eventsQueue="scopesQueue">
-                                                                </a4j:commandLink>
-                                                            </div>
-                                                            <br/>
+                                        <ox:decorate id="acr-value"
+                                            label="#{msg['radius.config.acrvalue.label']}">
+                                            <h:selectOneMenu value="#{_config.acrValue}"
+                                                styleClass="form-control rounded">
+                                                <f:selectItems value="#{_customscripts}" var="_name" itemLabel="#{_name}"/>
+                                            </h:selectOneMenu>
+                                        </ox:decorate>
+                                        <ox:decorate id="openid-client"
+                                            label="#{msg['radius.config.openidclient.label']}">
+                                            <h:selectOneMenu value="#{_config.openidUsername}"
+                                                styleClass="rounded form-control">
+                                                <f:selectItems value="#{_clients}" var="_client"
+                                                    itemValue="#{_client.inum}" itemLabel="#{_client.displayName}"/>
+                                            </h:selectOneMenu>
+                                        </ox:decorate>
+                                        <b:panel title="#{msg['radius.config.scopes.label']}" look="primary">
+                                            <h:panelGroup id="openid-scopes">
+                                                <a4j:repeat value="#{_scopes}" rowKeyVar="_scopesIdx" var="_scope"
+                                                    iterationStatusVar="loop">
+                                                    <div class="#{(loop.index % 2 == 0)?'odd':'even'}">
+                                                        <h:outputText 
+                                                            value="#{_scope.id eq null ? _scope.displayName : _scope.id}&#160;"/>
+                                                        <div class="span4 pull-right">
+                                                            <a4j:commandLink styleClass="glyphicon glyphicon-remove"
+                                                                action="#{_action.removeScope(_scope.dn)}"
+                                                                execute="@this" render="openid-scopes" eventQueue="scopeQueue"/>
                                                         </div>
-                                                    </a4j:repeat>
-                                                    <richext:spacer height="16"/>
-                                                    <a4j:commandButton
-                                                        styleClass="btn btn-primary"
-                                                        style="margin-top: 5px;"
-                                                        value="#{msg['radius.config.scopes.add.label']}"
-                                                        oncomplete="#{rich:component('scopedialog:selectEntityModalPanel')}.show();"
-                                                        execute="@this" eventsQueue="scopesQueue"/>
-                                                </h:panelGroup>
-                                            </b:panel>
-                                        </h:panelGroup>
+                                                        <br/>
+                                                    </div>
+                                                </a4j:repeat>
+                                                <richext:spacer height="16"/>
+                                                <a4j:commandButton styleClass="btn btn-primary" style="margin-top: 5px;"
+                                                    value="#{msg['radius.config.scopes.add.label']}" execute="@this"
+                                                    oncomplete="#{rich:component('scopedialog:selectEntityModalPanel')}.show();"
+                                                    eventsQueue="scopeQueue"/>
+                                            </h:panelGroup>
+                                        </b:panel>
                                     </div>
                                 </div>
                             </div>
+                            <!-- end of openid settings tab -->
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="box-footer">
-            <ui:insert name="control-buttons"/>
-        </div>
+            <div class="box-footer">
+                <ui:insert name="control-buttons"/>
+            </div>
+        </b:panel>
     </h:form>
 </ui:composition>

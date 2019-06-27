@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<faces-config xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.2" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
+
+  <navigation-rule>
+    <from-view-id>/radius/addRadiusClient.xhtml</from-view-id>
+
+    <navigation-case>
+      <from-action>#{addRadiusClientAction.save}</from-action>
+      <from-outcome>failure</from-outcome>
+      <to-view-id>/radius/addRadiusClient.xhtml</to-view-id>
+      <redirect/>
+    </navigation-case>
+
+    <navigation-case>
+        <from-action>#{addRadiusClientAction.save}</from-action>
+        <from-outcome>success</from-outcome>
+        <to-view-id>/radius/updateRadiusClient.xhtml</to-view-id>
+        <redirect>
+            <view-param>
+                <name>inum</name>
+                <value>#{addRadiusClientAction.client.inum}</value>
+            </view-param>
+        </redirect>
+    </navigation-case>
+
+    <navigation-case>
+      <from-action>#{addRadiusClientAction.cancel}</from-action>
+      <from-outcome>success</from-outcome>
+      <to-view-id>/radius/radiusClientInventory.xhtml</to-view-id>
+      <redirect/>
+    </navigation-case>
+
+  </navigation-rule>
+
+</faces-config>
