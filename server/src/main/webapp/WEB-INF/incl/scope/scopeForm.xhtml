@@ -18,143 +18,126 @@
 	background-color: #eee;
 }
 </style>
-
 	<h:form id="scopeForm">
-		<div class="row">
-			<div class="col-xs-12">
-				<div class="box box-primary">
-					<div class="box-header">
-						<div class="container-fluid">
-							<h:panelGroup>
-
-								<ox:decorate id="inum" rendered="#{not _new}"
-									label="#{msg['scope.inum']}">
-									<h:outputText styleClass="form-control" value="#{_scope.inum}" />
-								</ox:decorate>
-
-								<ox:decorate id="displayName"
-									label="#{msg['scope.displayName']}">
-									<h:inputText value="#{_scope.displayName}"
-										styleClass="form-control displayNameId"
-										defaultLabel="Click to enter Display Name" maxlength="60"
-										inputWidth="704" required="true" id="displayNameId" />
-								</ox:decorate>
-
-								<ox:decorate id="description"
-									label="#{msg['scope.description']}">
-									<h:inputTextarea styleClass="form-control"
-										value="#{_scope.description}" rows="3" cols="80"
-										maxlength="4000" id="descriptionId" />
-								</ox:decorate>
-								<div class="row">
-									<div class="col-sm-6 col-lg-6">
-										<ox:decorate label="#{msg['scope.scopeType']}">
-											<h:selectOneMenu
-												styleClass="col-sm-9 rounded form-control scopeType"
-												value="#{_scope.scopeType}">
-												<f:selectItems value="#{scopeService.scopeTypes}"
-													var="_type" itemLabel="#{_type.displayName}" />
-												<f:converter
-													converterId="org.gluu.jsf2.converter.EnumConverter" />
-												<a4j:ajax event="change"
-													render="dynamicScripts, selectedClaims" execute="@this" />
-											</h:selectOneMenu>
-										</ox:decorate>
-									</div>
-									<div class="col-sm-6 col-lg-6">
-										<ox:decorate label="#{msg['scope.defaultScope']}">
-											<h:selectBooleanCheckbox value="#{_scope.defaultScope}"
-												styleClass="col-sm-9 rounded form-control registrationType">
-											</h:selectBooleanCheckbox>
-										</ox:decorate>
-									</div>
-								</div>
-								<h:panelGroup id="selectedClaims">
-									<a4j:region
-										rendered="#{(not empty _scope.scopeType) and ((_scope.scopeType.value eq 'openid') or (_scope.scopeType.value eq 'dynamic'))}">
-										<b:panel id="claims" title="#{msg['scope.claims']}"
-											look="primary" iconAwesome="fa-list">
-											<h:panelGroup id="selectedClaimsId">
-												<h:panelGroup>
-													<a4j:repeat value="#{_scopeAction.claims}"
-														rowKeyVar="_claimIdx" var="_claim"
-														iterationStatusVar="loop">
-														<div class="row-fluid">
-															<div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
-																<h:outputText
-																	value="#{empty _claim.displayName ? _claim.displayName : _claim.displayName}" />
-																<h:outputText value="&#160;" />
-
-																<div class="span6 pull-right">
-
-																	<a4j:commandLink
-																		styleClass="glyphicon glyphicon-remove"
-																		style="margin-top:-20px;"
-																		action="#{_scopeAction.removeClaim(_claim.inum)}"
-																		execute="@this" render="selectedClaimsId"
-																		eventsQueue="scopeQueue">
-																	</a4j:commandLink>
-																</div>
-															</div>
-														</div>
-														<br />
-													</a4j:repeat>
-
-													<a4j:commandButton styleClass="btn btn-primary"
-														value="Add Claim"
-														oncomplete="#{rich:component('claim:selectAttributeModalPanel')}.show();"
-														execute="@this" eventsQueue="scopeQueue" />
-												</h:panelGroup>
-											</h:panelGroup>
-										</b:panel>
-									</a4j:region>
-								</h:panelGroup>
-								<h:panelGroup id="dynamicScripts">
-									<a4j:region
-										rendered="#{(not empty _scope.scopeType) and (_scope.scopeType.value eq 'dynamic')}">
-										<b:panel title="#{msg['scope.dynamicScopeScripts']}"
-											look="primary" iconAwesome="fa-list">
-											<h:panelGroup id="selectedDynamicScriptId">
-												<h:panelGrid columns="1" width="100%" border="0"
-													cellpadding="0" cellspacing="0">
-													<a4j:repeat value="#{updateScopeAction.dynamicScripts}"
-														rowKeyVar="_dynamicScriptIdx" var="_dynamicScript">
-														<div class="col-sm-12">
-															<div class="col-sm-6">
-																<h:outputText value="#{_dynamicScript.name}"
-																	style="margin-left:-29px;" />
-																<h:outputText value="&#160;" />
-															</div>
-															<div class="col-sm-6">
-																<a4j:commandLink
-																	styleClass="glyphicon glyphicon-remove "
-																	action="#{updateScopeAction.removeDynamicScript(_dynamicScript)}"
-																	execute="@this" render="selectedDynamicScriptId">
-																	<!--  <h:graphicImage value="/img/remove.gif" /> -->
-																</a4j:commandLink>
-															</div>
-														</div>
-													</a4j:repeat>
-													<richext:spacer height="16" />
-												</h:panelGrid>
-											</h:panelGroup>
-											<h:panelGroup>
-												<a4j:commandButton
-													value="#{msg['scope.addDynamicScopeScript']}"
-													oncomplete="#{rich:component('dynamicScript:selectEntityModalPanel')}.show();"
-													execute="@this" styleClass="btn btn-primary" />
-											</h:panelGroup>
-										</b:panel>
-									</a4j:region>
-								</h:panelGroup>
-							</h:panelGroup>
+		<div class="row" style="margin: 5px;">
+			<b:panel title="OpenID Connect Scope Form" look="primary" iconAwesome="fa-list" collapsible="false">
+				<h:panelGroup>
+					<ox:decorate id="inum" rendered="#{not _new}"
+						label="#{msg['scope.inum']}">
+						<h:outputText styleClass="form-control" value="#{_scope.inum}" />
+					</ox:decorate>
+					<ox:decorate id="displayName" label="#{msg['scope.displayName']}">
+						<h:inputText value="#{_scope.displayName}"
+							styleClass="form-control displayNameId"
+							defaultLabel="Click to enter Display Name" maxlength="60"
+							inputWidth="704" required="true" id="displayNameId" />
+					</ox:decorate>
+					<ox:decorate id="description" label="#{msg['scope.description']}">
+						<h:inputTextarea styleClass="form-control"
+							value="#{_scope.description}" rows="3" cols="80" maxlength="4000"
+							id="descriptionId" />
+					</ox:decorate>
+					<div class="row">
+						<div class="col-sm-6 col-lg-6">
+							<ox:decorate label="#{msg['scope.scopeType']}">
+								<h:selectOneMenu
+									styleClass="col-sm-9 rounded form-control scopeType"
+									value="#{_scope.scopeType}">
+									<f:selectItems value="#{scopeService.scopeTypes}" var="_type"
+										itemLabel="#{_type.displayName}" />
+									<f:converter
+										converterId="org.gluu.jsf2.converter.EnumConverter" />
+									<a4j:ajax event="change"
+										render="dynamicScripts, selectedClaims" execute="@this" />
+								</h:selectOneMenu>
+							</ox:decorate>
+						</div>
+						<div class="col-sm-6 col-lg-6">
+							<ox:decorate label="#{msg['scope.defaultScope']}">
+								<h:selectBooleanCheckbox value="#{_scope.defaultScope}"
+									styleClass="col-sm-9 rounded form-control registrationType">
+								</h:selectBooleanCheckbox>
+							</ox:decorate>
 						</div>
 					</div>
-					<div class="box-footer">
-						<ui:insert name="controlButttons" />
-					</div>
+					<h:panelGroup id="selectedClaims">
+						<a4j:region
+							rendered="#{(not empty _scope.scopeType) and ((_scope.scopeType.value eq 'openid') or (_scope.scopeType.value eq 'dynamic'))}">
+							<b:panel id="claims" title="#{msg['scope.claims']}"
+								look="primary" iconAwesome="fa-list">
+								<h:panelGroup id="selectedClaimsId">
+									<h:panelGroup>
+										<a4j:repeat value="#{_scopeAction.claims}"
+											rowKeyVar="_claimIdx" var="_claim" iterationStatusVar="loop">
+											<div class="row-fluid">
+												<div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
+													<h:outputText
+														value="#{empty _claim.displayName ? _claim.displayName : _claim.displayName}" />
+													<h:outputText value="&#160;" />
+
+													<div class="span6 pull-right">
+
+														<a4j:commandLink styleClass="glyphicon glyphicon-remove"
+															style="margin-top:-20px;"
+															action="#{_scopeAction.removeClaim(_claim.inum)}"
+															execute="@this" render="selectedClaimsId"
+															eventsQueue="scopeQueue">
+														</a4j:commandLink>
+													</div>
+												</div>
+											</div>
+											<br />
+										</a4j:repeat>
+										<a4j:commandButton styleClass="btn btn-primary"
+											value="Add Claim"
+											oncomplete="#{rich:component('claim:selectAttributeModalPanel')}.show();"
+											execute="@this" eventsQueue="scopeQueue" />
+									</h:panelGroup>
+								</h:panelGroup>
+							</b:panel>
+						</a4j:region>
+					</h:panelGroup>
+					<h:panelGroup id="dynamicScripts">
+						<a4j:region
+							rendered="#{(not empty _scope.scopeType) and (_scope.scopeType.value eq 'dynamic')}">
+							<b:panel title="#{msg['scope.dynamicScopeScripts']}"
+								look="primary" iconAwesome="fa-list">
+								<h:panelGroup id="selectedDynamicScriptId">
+									<h:panelGrid columns="1" width="100%" border="0"
+										cellpadding="0" cellspacing="0">
+										<a4j:repeat value="#{updateScopeAction.dynamicScripts}"
+											rowKeyVar="_dynamicScriptIdx" var="_dynamicScript">
+											<div class="col-sm-12">
+												<div class="col-sm-6">
+													<h:outputText value="#{_dynamicScript.name}"
+														style="margin-left:-29px;" />
+													<h:outputText value="&#160;" />
+												</div>
+												<div class="col-sm-6">
+													<a4j:commandLink styleClass="glyphicon glyphicon-remove "
+														action="#{updateScopeAction.removeDynamicScript(_dynamicScript)}"
+														execute="@this" render="selectedDynamicScriptId">
+													</a4j:commandLink>
+												</div>
+											</div>
+										</a4j:repeat>
+										<richext:spacer height="16" />
+									</h:panelGrid>
+								</h:panelGroup>
+								<h:panelGroup>
+									<a4j:commandButton
+										value="#{msg['scope.addDynamicScopeScript']}"
+										oncomplete="#{rich:component('dynamicScript:selectEntityModalPanel')}.show();"
+										execute="@this" styleClass="btn btn-primary" />
+								</h:panelGroup>
+							</b:panel>
+						</a4j:region>
+					</h:panelGroup>
+				</h:panelGroup>
+				<div class="box-footer">
+					<ui:insert name="controlButttons" />
 				</div>
-			</div>
+			</b:panel>
 		</div>
 	</h:form>
 	<ox:selectSelectableEntityDialog id="dynamicScript"

@@ -55,7 +55,7 @@ public class GluuSAMLTrustRelationship extends InumEntry implements Serializable
 	private GluuStatus status;
 
 	@AttributeName(name = "gluuValidationStatus")
-	private GluuValidationStatus validationStatus;
+	private GluuValidationStatus validationStatus = GluuValidationStatus.VALIDATION_SCHEDULED;
 
 	@AttributeName(name = "gluuReleasedAttribute")
 	private List<String> releasedAttributes;

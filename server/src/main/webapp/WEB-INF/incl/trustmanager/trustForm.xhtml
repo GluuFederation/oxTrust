@@ -307,7 +307,6 @@ input[submit] {
 											</ox:decorate>
 											<h:panelGroup
 												rendered="#{oxTrustConfiguration.applicationConfiguration.oxIncommonFlag  eq 'true'}">
-												<!-- TODO: ox:decorate rendered -->
 												<ox:decorate id="enableInCommon"
 													label="#{msg['trustmanager.enableInCommon']}">
 													<h:panelGrid columns="2">
@@ -317,76 +316,73 @@ input[submit] {
 													</h:panelGrid>
 												</ox:decorate>
 											</h:panelGroup>
-											<b:panel id="attributes"
-												title="#{msg['trustmanager.released']}" look="info">
-												<h:panelGroup id="selectedCustomAttributesId">
-													<rich:accordion id="ReleasedAttributePanelBar" width="400">
-														<rich:accordionItem id="newTrustId"
-															header="#{_trustRelationshipAction.trustRelationship.displayName == null ? 'New Trust Relationship' : _trustRelationshipAction.trustRelationship.displayName}">
-															<a4j:ajax event="enter"
-																listener="#{_trustRelationshipAction.setSelectedTR(_trustRelationship.inum)}"
-																limitRender="true" render="a8.8ttributeTabPanelGroupId"
-																queueId="trustQueue" execute="@this" />
-															<a4j:repeat var="_attr"
-																value="#{_trustRelationship.releasedCustomAttributes}">
-																<ui:param name="_metadata" value="#{_attr.metadata}" />
-																<ui:param name="_aid"
-																	value="#{_customAttributeAction.attributeIds[_metadata]}" />
-																<div class="col-sm-12">
-																	<div class="col-sm-1">
-																		<h:outputText styleClass="glyphicon glyphicon-pushpin"
-																			style="margin-top:4px;color:#FF9409"></h:outputText>
-																	</div>
-																	<div class="col-sm-10">
-																		<h:outputText value="#{_metadata.displayName}"
-																			styleClass="attributeTooltip"
-																			title="#{msg['trustmanager.samlURIForThisAttribute']} | #{_trustRelationshipAction.getSAML1URI(_metadata)} | #{_trustRelationshipAction.getSAML2URI(_metadata)}" />
-																	</div>
-																	<div class="col-sm-1">
-																		<a4j:commandLink
-																			styleClass="glyphicon glyphicon-remove"
-																			action="#{_customAttributeAction.removeCustomAttribute(_metadata.inum)}"
-																			render="newTrustId"
-																			onbeforedomupdate="changeAttributeVisibility('#{_aid}', true);"
-																			execute="@this">
-																		</a4j:commandLink>
-																	</div>
+											<h:panelGroup id="selectedCustomAttributesId">
+												<rich:accordion id="ReleasedAttributePanelBar" width="400">
+													<rich:accordionItem id="newTrustId"
+														header="#{_trustRelationshipAction.trustRelationship.displayName == null ? 'New Trust Relationship' : _trustRelationshipAction.trustRelationship.displayName}">
+														<a4j:ajax event="enter"
+															listener="#{_trustRelationshipAction.setSelectedTR(_trustRelationship.inum)}"
+															limitRender="true" render="a8.8ttributeTabPanelGroupId"
+															queueId="trustQueue" execute="@this" />
+														<a4j:repeat var="_attr"
+															value="#{_trustRelationship.releasedCustomAttributes}">
+															<ui:param name="_metadata" value="#{_attr.metadata}" />
+															<ui:param name="_aid"
+																value="#{_customAttributeAction.attributeIds[_metadata]}" />
+															<div class="col-sm-12">
+																<div class="col-sm-1">
+																	<h:outputText styleClass="glyphicon glyphicon-pushpin"
+																		style="margin-top:4px;color:#FF9409"></h:outputText>
 																</div>
-																<br />
-															</a4j:repeat>
-														</rich:accordionItem>
-														<ui:repeat
-															value="#{_trustRelationshipAction.federatedSites}"
-															var="_trust">
-															<rich:accordionItem header="#{_trust.displayName}"
-																rendered="#{_trust.isFederation()}">
-																<a4j:ajax event="enter"
-																	listener="#{_trustRelationshipAction.setSelectedTR(_trust.inum)}"
-																	limitRender="true" render="attributeTabPanelGroupId"
-																	queueId="trustQueue" execute="@this" />
-																<a4j:repeat var="_attr"
-																	value="#{_trust.releasedCustomAttributes}">
-																	<ui:param name="_metadata" value="#{_attr.metadata}" />
-																	<ui:param name="_aid"
-																		value="#{_customAttributeAction.attributeIds[_metadata]}" />
+																<div class="col-sm-10">
 																	<h:outputText value="#{_metadata.displayName}"
 																		styleClass="attributeTooltip"
 																		title="#{msg['trustmanager.samlURIForThisAttribute']} | #{_trustRelationshipAction.getSAML1URI(_metadata)} | #{_trustRelationshipAction.getSAML2URI(_metadata)}" />
-																	<richext:spacer width="8" />
+																</div>
+																<div class="col-sm-1">
 																	<a4j:commandLink
+																		styleClass="glyphicon glyphicon-remove"
 																		action="#{_customAttributeAction.removeCustomAttribute(_metadata.inum)}"
 																		render="newTrustId"
-																		onbeforedomupdate="changeAttributeVisibility('#{_aid}');"
+																		onbeforedomupdate="changeAttributeVisibility('#{_aid}', true);"
 																		execute="@this">
-																		<h:graphicImage value="/img/remove.gif" />
 																	</a4j:commandLink>
-																	<br />
-																</a4j:repeat>
-															</rich:accordionItem>
-														</ui:repeat>
-													</rich:accordion>
-												</h:panelGroup>
-											</b:panel>
+																</div>
+															</div>
+															<br />
+														</a4j:repeat>
+													</rich:accordionItem>
+													<ui:repeat
+														value="#{_trustRelationshipAction.federatedSites}"
+														var="_trust">
+														<rich:accordionItem header="#{_trust.displayName}"
+															rendered="#{_trust.isFederation()}">
+															<a4j:ajax event="enter"
+																listener="#{_trustRelationshipAction.setSelectedTR(_trust.inum)}"
+																limitRender="true" render="attributeTabPanelGroupId"
+																queueId="trustQueue" execute="@this" />
+															<a4j:repeat var="_attr"
+																value="#{_trust.releasedCustomAttributes}">
+																<ui:param name="_metadata" value="#{_attr.metadata}" />
+																<ui:param name="_aid"
+																	value="#{_customAttributeAction.attributeIds[_metadata]}" />
+																<h:outputText value="#{_metadata.displayName}"
+																	styleClass="attributeTooltip"
+																	title="#{msg['trustmanager.samlURIForThisAttribute']} | #{_trustRelationshipAction.getSAML1URI(_metadata)} | #{_trustRelationshipAction.getSAML2URI(_metadata)}" />
+																<richext:spacer width="8" />
+																<a4j:commandLink
+																	action="#{_customAttributeAction.removeCustomAttribute(_metadata.inum)}"
+																	render="newTrustId"
+																	onbeforedomupdate="changeAttributeVisibility('#{_aid}');"
+																	execute="@this">
+																	<h:graphicImage value="/img/remove.gif" />
+																</a4j:commandLink>
+																<br />
+															</a4j:repeat>
+														</rich:accordionItem>
+													</ui:repeat>
+												</rich:accordion>
+											</h:panelGroup>
 										</h:panelGroup>
 									</h:panelGroup>
 									<a4j:commandLink style="margin-left: 165px;"
