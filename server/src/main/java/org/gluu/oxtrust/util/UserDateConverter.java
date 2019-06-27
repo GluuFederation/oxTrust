@@ -28,7 +28,7 @@ public class UserDateConverter implements Converter {
 	private Logger log;
 
 	private String baseDn;
-	
+
 	@PostConstruct
 	public void create() {
 		this.baseDn = personService.getDnForPerson(null);
@@ -47,8 +47,12 @@ public class UserDateConverter implements Converter {
 
 	@Override
 	public String getAsString(FacesContext facesContext, UIComponent uiComponent, Object value) {
-		Date result = manager.decodeTime(baseDn, (String) value);
-		return new SimpleDateFormat("dd.MM.yyyy").format(result);
+		try {
+			Date result = manager.decodeTime(baseDn, (String) value);
+			return new SimpleDateFormat("dd.MM.yyyy").format(result);
+		} catch (Exception e) {
+			return new SimpleDateFormat("dd.MM.yyyy").format(new Date());
+		}
 	}
 
 }

@@ -39,7 +39,7 @@
 		<section class="content">
 			<div class="row">
 				<div class="col-xs-12">
-					<b:panel title="Uma Resources List" look="primary" iconAwesome="fa-list">
+					<b:panel title="Uma Resources List" look="primary" iconAwesome="fa-list" collapsible="false">
 						<h:form>
 							<div class="nav-tabs-custom" style="margin-bottom: 0px;">
 								<div class="tab-content">
@@ -57,11 +57,11 @@
 												size="30" style="width:50%;float: left;"
 												styleClass="form-control searchBoxClass"
 												value="#{umaInventoryAction.searchPattern}" />
-											<a4j:commandButton action="#{umaInventoryAction.search}"
+											<b:commandButton action="#{umaInventoryAction.search}"
 												render="resourcesListId, scopesListId"
 												style="float: left;margin-left:5px;"
 												styleClass="btn btn-primary searchButtonClass"
-												value="#{msg['uma.search']}" />
+												value="#{msg['uma.search']}" iconAwesome="fa-search"/>
 										</ox:decorate>
 										<b:dataTable id="resourcesListId" style="text-align:center;"
 											responsive="true"

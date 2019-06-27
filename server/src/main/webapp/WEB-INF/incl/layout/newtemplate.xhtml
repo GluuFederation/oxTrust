@@ -176,7 +176,7 @@ input[type=submit] {
 }
 
 select {
-    border: 2px solid #ccc;
+	border: 2px solid #ccc;
 	border-radius: 5px !important;
 }
 
@@ -200,6 +200,10 @@ select {
 .alert-warn {
 	background-color: #ef6c00 !important;
 }
+
+.panel-heading a.panel-title-link:after {
+	color: white !important;
+}
 </style>
 	</h:head>
 	<h:body styleClass="skin-green">
@@ -209,16 +213,15 @@ select {
 					<ui:param name="projectName" value="oxTrust" />
 				</ui:include>
 			</h:panelGroup>
-
 			<ui:include src="leftmenu.xhtml">
 				<ui:param name="projectName" value="oxTrust" />
 			</ui:include>
-
 			<div class="#{not isLogin?'body':'loginBody'}">
 				<div class="content-wrapper">
 					<b:growl id="growlMsg" globalOnly="true" placementFrom="top"
 						show-detail="true" show-summary="false" allowDismiss="true"
-						delay="3000" escape="true" />
+						severity="info,warn,error,fatal" delay="3000" escape="false"
+						auto-update="true" />
 					<a:status startText="Loading..."
 						startStyle="background-color: #006699; color: white; font-weight: bold; position: fixed; left: 0px; top: 0px; padding: 5px 5px 5px 5px;" />
 					<ui:insert name="body" />
@@ -248,5 +251,4 @@ select {
 		<div class="footer"></div>
 	</h:body>
 </f:view>
-
 </html>

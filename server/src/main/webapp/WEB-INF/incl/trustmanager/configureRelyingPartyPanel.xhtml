@@ -21,10 +21,6 @@
 .rf-pick-btn {
 	width: 100%;
 	white-space: nowrap;
-	background-image:
-		url(../org.richfaces.images/autocompleteButtonGradient.png);
-	background-repeat: repeat-x;
-	background-position: top left;
 	background-color: #337AB7;
 	border-left-width: 1px;
 	border-left-style: solid;
@@ -32,6 +28,8 @@
 	display: inline-block;
 	vertical-align: top;
 	cursor: pointer;
+	color: white;
+	background-image: none;
 	text-align: left;
 }
 
@@ -69,15 +67,12 @@ button[disabled], input[type="reset"][disabled], input[type="submit"][disabled],
     color: #337AB7;
     border-color: #cccccc;
     background-color: #cccccc;
-    background-image:
-        url(org.richfaces.images/buttonDisabledBackgroundImage.png);
-    background-position: top left;
+    background-image: none;
 }
 button:hover, input[type="reset"]:hover, input[type="submit"]:hover,
     input[type="button"]:hover {
-    background-position: bottom left !important;;
-    background-repeat: repeat-x !important;
-    background-image: none;
+     background-color: #337AB7;
+     color: white;
 }
 button, input[type="reset"], input[type="submit"], input[type="button"]
     {
@@ -85,11 +80,9 @@ button, input[type="reset"], input[type="submit"], input[type="button"]
     border-color: #C0C0C0;
     font-size: 11px;
     font-family: Arial, Verdana, sans-serif;
-    color: #FFFFFF;
-    background-repeat: repeat-x;
-    background-position: top left;
-    background-color: #337AB7;
     background-image: none;
+    color: #FFFFFF;
+    background-color: #337AB7;
 }
 </style>
 	</h:head>
@@ -122,20 +115,20 @@ button, input[type="reset"], input[type="submit"], input[type="button"]
 						<f:facet name="header">Name</f:facet>
 						#{profile}
 					</rich:column>
-
 				</rich:pickList>
 				<h:panelGroup id="ProfileConfigurationConfigMenu"
-					style="heihgt: 50%; width: 100%;" layout="block"
-					rendered="#{relyingPartyAction.profileConfigurations.size() > 0}">
+					style="heihgt: 50%; width: 100%;" layout="block">
 					<b:accordion expanded-panels="panel1,panel3">
-						<b:panel id="panel1" title="SAML 2 SSO Profile" look="primary">
+						<b:panel id="panel1" title="SAML 2 SSO Profile" look="info"
+						  rendered="#{relyingPartyAction.isProfileConfigurationSelected('SAML2SSO')}">
 							<ui:decorate
 								template="/WEB-INF/incl/trustmanager/profileConfiguration/saml2sso.xhtml">
 								<ui:param name="_relyingPartyAction"
 									value="#{relyingPartyAction}" />
 							</ui:decorate>
 						</b:panel>
-						<b:panel id="panel2" title="SAML 2 Logout Profile" look="primary">
+						<b:panel id="panel2" title="SAML 2 Logout Profile" look="info"
+						   rendered="#{relyingPartyAction.isProfileConfigurationSelected('SAML2Logout')}">
 							<ui:decorate
 								template="/WEB-INF/incl/trustmanager/profileConfiguration/saml2logout.xhtml">
 								<ui:param name="_relyingPartyAction"
@@ -143,14 +136,15 @@ button, input[type="reset"], input[type="submit"], input[type="button"]
 							</ui:decorate>
 						</b:panel>
 						<b:panel id="panel3" title="SAML 2 Artifact Resolution "
-							look="primary">
+							look="info" rendered="#{relyingPartyAction.isProfileConfigurationSelected('SAML2ArtifactResolution')}">
 							<ui:decorate
 								template="/WEB-INF/incl/trustmanager/profileConfiguration/saml2ar.xhtml">
 								<ui:param name="_relyingPartyAction"
 									value="#{relyingPartyAction}" />
 							</ui:decorate>
 						</b:panel>
-						<b:panel id="panel4" title="SAML 2 Attribute Query" look="primary">
+						<b:panel id="panel4" title="SAML 2 Attribute Query" look="info"
+						   rendered="#{relyingPartyAction.isProfileConfigurationSelected('SAML2AttributeQuery')}">
 							<ui:decorate
 								template="/WEB-INF/incl/trustmanager/profileConfiguration/saml2aq.xhtml">
 								<ui:param name="_relyingPartyAction"

@@ -38,7 +38,8 @@
 			<div id="formArea">
 				<div class="row">
 					<div class="col-xs-12">
-						<b:panel title="OpenID Connect Scopes List" look="primary" iconAwesome="fa-list">
+						<b:panel title="OpenID Connect Scopes List" look="primary" 
+						iconAwesome="fa-list" collapsible="false">
 							<h:panelGroup>
 								<div class="row"
 									style="padding: 5px; margin-bottom: 5px; margin-left: 15px">
@@ -56,10 +57,10 @@
 												style="width:50%; float:left;"
 												styleClass="form-control searchBoxClass"
 												value="#{searchScopeAction.searchPattern}" />
-											<h:commandButton action="#{searchScopeAction.search}"
+											<b:commandButton action="#{searchScopeAction.search}"
 												style="float:left;margin-left :3px;"
 												styleClass="btn btn-primary searchButtonClass"
-												value="Search" />
+												value="Search" iconAwesome="fa-search" />
 										</div>
 									</ox:decorate>
 								</h:form>
