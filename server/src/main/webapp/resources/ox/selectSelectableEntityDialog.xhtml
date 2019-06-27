@@ -1,85 +1,127 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-      xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:a4j="http://richfaces.org/a4j"
-      xmlns:rich="http://richfaces.org/rich"
-      xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
-      xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
-      xmlns:cc="http://xmlns.jcp.org/jsf/composite">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
+	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
+	xmlns:cc="http://xmlns.jcp.org/jsf/composite">
 
-        <cc:interface>
-            <cc:attribute name="label" default="Add" required="false" type="java.lang.String" />
-            <cc:attribute name="displaySearchForm" default="true" type="java.lang.Boolean" />
-            <cc:attribute name="searchPattern" required="false" type="java.lang.String" />
-            <cc:attribute name="searchMethod" required="true" method-signature="void action()" />
-            <cc:attribute name="acceptMethod" required="true" method-signature="void action()" />
-            <cc:attribute name="cancelMethod" required="true" method-signature="void action()" />
-            <cc:attribute name="searchResult" required="true" type="java.util.List" />
-            <cc:attribute name="render" required="false" type="java.lang.String" />
-            <cc:attribute name="nameProperty" required="true" type="java.lang.String" />
-            <cc:attribute name="displayNameProperty" required="true" type="java.lang.String" />
-            <cc:attribute name="id" />
-        </cc:interface>
+<cc:interface>
+	<cc:attribute name="label" default="Add" required="false"
+		type="java.lang.String" />
+	<cc:attribute name="displaySearchForm" default="true"
+		type="java.lang.Boolean" />
+	<cc:attribute name="searchPattern" required="false"
+		type="java.lang.String" />
+	<cc:attribute name="searchMethod" required="true"
+		method-signature="void action()" />
+	<cc:attribute name="acceptMethod" required="true"
+		method-signature="void action()" />
+	<cc:attribute name="cancelMethod" required="true"
+		method-signature="void action()" />
+	<cc:attribute name="searchResult" required="true" type="java.util.List" />
+	<cc:attribute name="render" required="false" type="java.lang.String" />
+	<cc:attribute name="nameProperty" required="true"
+		type="java.lang.String" />
+	<cc:attribute name="displayNameProperty" required="true"
+		type="java.lang.String" />
+	<cc:attribute name="id" />
+</cc:interface>
 
-        <cc:implementation>
-            <rich:popupPanel left="300" top="100" id="selectEntityModalPanel" onmaskclick="#{rich:component('selectEntityModalPanel')}.hide()" zindex="2000" moveable="true" autosized="true" width="725" height="460" onbeforeshow="if (#{not cc.attrs.displaySearchForm}) {executeSearch#{cc.attrs.id}();}">
-                <f:facet name="header">
-                    <h:outputText value="#{cc.attrs.label}" />
-                </f:facet>
-                <f:facet name="controls">
-                    <h:graphicImage value="/img/close.gif" styleClass="hidelink" style="cursor:pointer" onclick="#{rich:component('selectEntityModalPanel')}.hide(); return false;" />
-                </f:facet>
+<cc:implementation>
+	<rich:popupPanel left="300" top="100" id="selectEntityModalPanel"
+		onmaskclick="#{rich:component('selectEntityModalPanel')}.hide()"
+		zindex="2000" moveable="true" autosized="true" width="725"
+		height="460"
+		onbeforeshow="if (#{not cc.attrs.displaySearchForm}) {executeSearch#{cc.attrs.id}();}">
+		<f:facet name="header">
+			<h:outputText value="#{cc.attrs.label}" />
+		</f:facet>
+		<f:facet name="controls">
+			<h:graphicImage value="/img/close.gif" styleClass="hidelink"
+				style="cursor:pointer"
+				onclick="#{rich:component('selectEntityModalPanel')}.hide(); return false;" />
+		</f:facet>
 
-                <h:form>
-                    <h:panelGrid id="selectEntityPanelId" columns="1" border="0" cellpadding="0" cellspacing="0" width="100%" columnClasses="alignLeft">
-                        <ox:decorate id="searchPattern" rendered="#{cc.attrs.displaySearchForm}" hideLabel="true">
-                             <div class="row" style="float:left;margin-left:3px;">
-                            <h:inputText value="#{cc.attrs.searchPattern}" size="30" maxlength="30" id="searchScopePatternId" styleClass="searchParameters form-control"
-                                alt="Search parameters like Name, Display Name" /></div>
-                                 <div class="row" style="float:left; margin-left: 20px;">
-                            <a4j:commandButton value="Search" styleClass="btn btn-primary" style="margin-left:7px;" action="#{cc.attrs.searchMethod}" render="selectEntityPanelId" /></div>
-                        </ox:decorate>
+		<h:form>
+			<h:panelGrid id="selectEntityPanelId" columns="1" border="0"
+				cellpadding="0" cellspacing="0" width="100%"
+				columnClasses="alignLeft">
+				<ox:decorate id="searchPattern"
+					rendered="#{cc.attrs.displaySearchForm}" hideLabel="true">
+					<div class="row" style="float: left; margin-left: 3px;">
+						<h:inputText value="#{cc.attrs.searchPattern}" size="30"
+							maxlength="30" id="searchScopePatternId"
+							styleClass="searchParameters form-control"
+							alt="Search parameters like Name, Display Name" />
+					</div>
+					<div class="row" style="float: left; margin-left: 20px;">
+						<a4j:commandButton value="Search" styleClass="btn btn-primary"
+							style="margin-left:7px;" action="#{cc.attrs.searchMethod}"
+							render="selectEntityPanelId" />
+					</div>
+				</ox:decorate>
 
-                        <ui:fragment rendered="#{not cc.attrs.displaySearchForm}">
-                            <a4j:jsFunction name="executeSearch#{cc.attrs.id}" action="#{cc.attrs.searchMethod}" render="selectEntityPanelId" />
-                        </ui:fragment>
+				<ui:fragment rendered="#{not cc.attrs.displaySearchForm}">
+					<a4j:jsFunction name="executeSearch#{cc.attrs.id}"
+						action="#{cc.attrs.searchMethod}" render="selectEntityPanelId" />
+				</ui:fragment>
 
-                        <h:panelGroup id="searchNoResultId" rendered="#{cc.attrs.searchResult.size() eq 0}">
-                            <h:outputText value="No Search Result Found" />
-                        </h:panelGroup>
+				<h:panelGroup id="searchNoResultId"
+					rendered="#{cc.attrs.searchResult.size() eq 0}">
+					<h:outputText value="No Search Result Found" />
+				</h:panelGroup>
 
-                        <h:panelGroup style="overflow-y:auto; width:715px;#{cc.attrs.searchResult.size() gt 5 ? ' height:350px;' : ''}" layout="block" rendered="#{cc.attrs.searchResult.size() gt 0}">
-                            <rich:dataTable  sortMode="single" id="selectableListId" value="#{cc.attrs.searchResult}" styleClass="data sortable" var="prs" style="width:100%">
-                                <rich:column width="35">
-                                    <f:facet name="header">X</f:facet>
-                                    <h:selectBooleanCheckbox value="#{prs.selected}" />
-                                </rich:column>
-                                <rich:column width="100" sortBy="#{propertyService.getPropertyValue(prs, cc.attrs.nameProperty)}">
-                                    <f:facet name="header">Name</f:facet>
-                                    <h:outputText value="#{propertyService.getPropertyValue(prs, cc.attrs.nameProperty)}" />
-                                </rich:column>
-                                <rich:column sortBy="#{propertyService.getPropertyValue(prs, cc.attrs.displayNameProperty)}">
-                                    <f:facet name="header">Display Name</f:facet>
-                                    <h:outputText value="#{propertyService.getPropertyValue(prs, cc.attrs.displayNameProperty)}" />
-                                </rich:column>
-                            </rich:dataTable>
-                        </h:panelGroup>
+				<h:panelGroup
+					style="overflow-y:auto; width:715px;#{cc.attrs.searchResult.size() gt 5 ? ' height:350px;' : ''}"
+					layout="block" rendered="#{cc.attrs.searchResult.size() gt 0}">
+					<rich:dataTable sortMode="single" id="selectableListId"
+						value="#{cc.attrs.searchResult}" styleClass="data sortable"
+						var="prs" style="width:100%">
+						<rich:column width="35">
+							<f:facet name="header">X</f:facet>
+							<h:selectBooleanCheckbox value="#{prs.selected}" />
+						</rich:column>
+						<rich:column width="100"
+							sortBy="#{propertyService.getPropertyValue(prs, cc.attrs.nameProperty)}">
+							<f:facet name="header">Name</f:facet>
+							<h:outputText
+								value="#{propertyService.getPropertyValue(prs, cc.attrs.nameProperty)}" />
+						</rich:column>
+						<rich:column
+							sortBy="#{propertyService.getPropertyValue(prs, cc.attrs.displayNameProperty)}">
+							<f:facet name="header">Display Name</f:facet>
+							<h:outputText
+								value="#{propertyService.getPropertyValue(prs, cc.attrs.displayNameProperty)}" />
+						</rich:column>
+					</rich:dataTable>
+				</h:panelGroup>
 
-                        <richext:spacer height="16" />
-<div class="box-footer" >
-                        <h:panelGroup>
-                            <a4j:commandButton styleClass="btn btn-primary" action="#{cc.attrs.acceptMethod}" value="Ok" oncomplete="#{rich:component('selectEntityModalPanel')}.hide();"
-                                render="selectableListId #{cc.attrs.render}" />
+				<richext:spacer height="16" />
+				<div class="box-footer">
+					<h:panelGroup>
+						<a4j:commandButton styleClass="btn btn-primary"
+							action="#{cc.attrs.acceptMethod}" value="Ok"
+							oncomplete="#{rich:component('selectEntityModalPanel')}.hide();"
+							render="selectableListId #{cc.attrs.render}" />
                             &nbsp;
-                            <a4j:commandButton styleClass="btn btn-primary" action="#{cc.attrs.cancelMethod}" value="Cancel" oncomplete="#{rich:component('selectEntityModalPanel')}.hide(); return false;"
-                                render="selectableListId" />
+                            <a4j:commandButton
+							styleClass="btn btn-primary" action="#{cc.attrs.cancelMethod}"
+							value="Cancel"
+							oncomplete="#{rich:component('selectEntityModalPanel')}.hide(); return false;"
+							render="selectableListId" />
                             &nbsp;
-                            <a4j:status startText="Request in progress please wait......" stopText="" startStyle="color:red" />
-                        </h:panelGroup>
-                        </div>
-                    </h:panelGrid>
-                </h:form>
-            </rich:popupPanel>
-        </cc:implementation>
+                            <a4j:status
+							startText="Request in progress please wait......" stopText=""
+							startStyle="color:red" />
+					</h:panelGroup>
+				</div>
+			</h:panelGrid>
+		</h:form>
+	</rich:popupPanel>
+</cc:implementation>
 
 </html>
