@@ -35,7 +35,7 @@ import java.util.List;
  * @version December 4, 2018
  */
 @DataEntry(sortBy = { "displayName" })
-@ObjectClass(values = { "top", "oxAuthClient" })
+@ObjectClass(value = "oxAuthClient")
 @JsonInclude(Include.NON_NULL)
 public class OxAuthClient extends Entry implements Serializable {
 

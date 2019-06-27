@@ -29,7 +29,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 @DataEntry
-@ObjectClass(values = { "top", "gluuSAMLconfig" })
+@ObjectClass(value = "gluuSAMLconfig")
 @JsonInclude(Include.NON_NULL)
 public class GluuSAMLTrustRelationship extends InumEntry implements Serializable {
 

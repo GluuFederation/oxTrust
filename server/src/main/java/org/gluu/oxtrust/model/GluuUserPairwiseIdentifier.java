@@ -8,7 +8,7 @@ import org.gluu.persist.annotation.DataEntry;
 import org.gluu.persist.annotation.ObjectClass;
 
 @DataEntry(sortBy = { "oxId" })
-@ObjectClass(values = { "top", "pairwiseIdentifier" })
+@ObjectClass(value = "pairwiseIdentifier")
 public class GluuUserPairwiseIdentifier extends BaseEntry implements Serializable {
 
 	/**

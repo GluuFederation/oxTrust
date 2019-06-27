@@ -28,7 +28,7 @@ import org.gluu.service.cache.CacheConfiguration;
  * @author Yuriy Movchan Date: 04/20/2014
  */
 @DataEntry
-@ObjectClass(values = { "top", "organizationalUnit", "gluuConfiguration" })
+@ObjectClass(value = "gluuConfiguration")
 public class GluuConfiguration extends InumEntry implements Serializable {
 
 	private static final long serialVersionUID = -1817003894646725601L;

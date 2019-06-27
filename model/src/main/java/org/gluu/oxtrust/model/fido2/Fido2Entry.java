@@ -15,7 +15,7 @@ import org.gluu.persist.annotation.ObjectClass;
  * @version 11/02/2018
  */
 @DataEntry(sortBy = "creationDate")
-@ObjectClass(values = { "top" })
+@ObjectClass
 public class Fido2Entry extends BaseEntry implements Serializable {
 
     /**

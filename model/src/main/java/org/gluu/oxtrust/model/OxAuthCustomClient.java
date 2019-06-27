@@ -19,7 +19,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 @DataEntry(sortBy = { "displayName" })
-@ObjectClass(values = { "top", "oxAuthClient"})
+@ObjectClass(value = "oxAuthClient")
 @JsonInclude(Include.NON_NULL)
 public class OxAuthCustomClient extends CustomEntry implements Serializable {
 

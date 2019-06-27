@@ -12,7 +12,7 @@ import org.gluu.persist.annotation.ObjectClass;
 
 @SuppressWarnings("serial")
 @DataEntry
-@ObjectClass(values = { "top", "oxFido2RegistrationEntry" })
+@ObjectClass(value = "oxFido2RegistrationEntry")
 public class GluuFido2Device extends Fido2Entry implements Serializable {
 
     @JsonObject

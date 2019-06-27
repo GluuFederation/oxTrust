@@ -14,7 +14,7 @@ import org.gluu.persist.annotation.ObjectClass;
  * @author Val Pecaoco
  */
 @DataEntry(sortBy = { "id" })
-@ObjectClass(values = { "top", "oxDeviceRegistration" })
+@ObjectClass(value = "oxDeviceRegistration")
 public class GluuCustomFidoDevice extends Entry {
 
 	/**

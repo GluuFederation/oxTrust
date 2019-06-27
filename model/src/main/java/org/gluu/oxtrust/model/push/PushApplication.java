@@ -24,7 +24,7 @@ import org.gluu.persist.annotation.ObjectClass;
  * @author Yuriy Movchan Date: 01/10/2014
  */
 @DataEntry(sortBy = { "displayName" })
-@ObjectClass(values = { "top", "oxPushApplication" })
+@ObjectClass(value = "oxPushApplication")
 public class PushApplication extends Entry implements Serializable {
 
 	private static final long serialVersionUID = 3308826784937052508L;
