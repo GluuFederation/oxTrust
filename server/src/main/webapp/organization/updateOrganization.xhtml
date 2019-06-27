@@ -8,11 +8,8 @@
         <f:viewAction action="#{conversationService.initConversation}" />
         <f:viewAction action="#{updateOrganizationAction.modify}" onPostback="false" />
     </f:metadata>
-
     <ui:define name="head">
-
     </ui:define>
-
     <ui:define name="body">
         <section class="content-header">
             <h1 style="color: #333;">
@@ -32,7 +29,7 @@
                 </li>
             </ol>
         </section>
-        <section class="content"> <!-- Small boxes (Stat box) -->
+        <section class="content">
             <h:panelGroup id="formArea" layout="block">
                 <ui:decorate template="/WEB-INF/incl/organization/organizationForm.xhtml">
                     <ui:param name="_organization" value="#{updateOrganizationAction.organization}"/>
@@ -41,7 +38,6 @@
                     <ui:param name="_organizationAction" value="#{updateOrganizationAction}"/>
                     <ui:param name="_certificateAction" value="#{manageCertificateAction}"/>                    
                     <ui:param name="_webKeySettings" value="#{_organizationAction.webKeysSettings}"/>
-
                     <ui:define name="controlButttons">
                         <div class="box-footer" style="margin-top:-16px !important;">
                             <h:panelGroup id="updateButtons" layout="block">
@@ -59,5 +55,4 @@
             </h:panelGroup>
         </section>
     </ui:define>
-
 </ui:composition>

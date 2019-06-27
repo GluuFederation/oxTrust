@@ -48,10 +48,7 @@
 		src="#{oxTrustConfigurationService.jsLocation}/jquery.cluetip.js" />
 	<link type="text/css" rel="stylesheet"
 		href="#{oxTrustConfigurationService.cssLocation}/colorpicker.css" />
-
-
 	<h:outputScript>
-	
 	function loadColorPicker(){
         $('#colorSelector').ColorPicker({
             color: '#{gluufn:getColor(_organization.themeColor, "00ff00")}',
@@ -65,7 +62,6 @@
             }
         });
     }
-    
     function addToBodyOnload(oFunction) {
 	    var existingOnload = window.onload;
 	    if (typeof window.onload != 'function'){
@@ -73,18 +69,14 @@
 	    }else{
 	    	window.onload = function () { oFunction(); existingOnload(); }
 	    } 
-	    
 	}
-
 	addToBodyOnload(loadColorPicker);
-	
     $(document).keypress( function(event){
           if (event.which == '13') {
           event.preventDefault();
          }
      });   
     </h:outputScript>
-
 	<h:form id="organizationForm">
 		<div class="row">
 			<div class="col-xs-12">
@@ -92,13 +84,12 @@
 					<ul class="nav nav-tabs" id="organizationFormtab">
 						<li class="active"><a href="#sys-config" data-toggle="tab">#{msg['organizationForm.systemConfiguration']}</a></li>
 						<li><a href="#smtp-server" data-toggle="tab">#{msg['organizationForm.smtpServerConfiguration']}</a></li>
-						<li><a href="#ox-trust" data-toggle="tab">Organization Settings</a></li>
+						<li><a href="#ox-trust" data-toggle="tab">Organization
+								Settings</a></li>
 					</ul>
 					<div class="tab-content">
-						<!-- System Configuration -->
 						<div class="tab-pane active" id="sys-config">
-							<h:panelGroup layout="block" style="width:80%;">
-
+							<h:panelGroup layout="block" style="width:100%;">
 								<ox:decorate id="passwordReset"
 									label="#{msg['organizationForm.selfServicePasswordReset']}">
 									<h:selectBooleanCheckbox
@@ -106,14 +97,12 @@
 										styleClass="rounded form-control passwordResetSelectBox"
 										id="passwordResetId" />
 								</ox:decorate>
-
 								<ox:decorate id="scimEnabledState"
 									label="#{msg['organizationForm.scimSupport']}">
 									<h:selectBooleanCheckbox value="#{_configuration.scimEnabled}"
 										styleClass="rounded form-control scimEnableStateSelectBox"
 										id="scimEnabledStateId" />
 								</ox:decorate>
-
 								<ox:decorate id="passportEnabledState"
 									label="#{msg['organizationForm.passportSupport']}">
 									<h:selectBooleanCheckbox
@@ -121,14 +110,12 @@
 										styleClass="rounded form-control passportEnableStateSelectBox"
 										id="passportEnabledStateId" />
 								</ox:decorate>
-
 								<ox:decorate id="maxLogSize"
 									label="#{msg['organizationForm.maxLogSize']}">
 									<h:inputText value="#{_configuration.maxLogSize}"
 										required="true"
 										styleClass="rounded form-control maxLogSizeTextBox" size="10" />
 								</ox:decorate>
-
 								<ox:decorate id="profileManagment"
 									label="#{msg['organizationForm.userCanEditProfile']}">
 									<h:selectBooleanCheckbox
@@ -136,51 +123,42 @@
 										styleClass="rounded form-control profileManagmentSelectBox"
 										id="profileManagmentStateId" />
 								</ox:decorate>
-
 								<ox:decorate label="#{msg['organizationForm.contactEmail']}">
 									<h:inputText
 										p:oninvalid="this.setCustomValidity('Please provide a valid email address.')"
 										p:type="email" value="#{_configuration.contactEmail}"
 										styleClass="rounded form-control contactEmailTextBox" />
 								</ox:decorate>
-
 							</h:panelGroup>
 						</div>
 						<div class="tab-pane" id="smtp-server">
 							<h:panelGroup layout="block" style="width:100%;">
-
 								<ox:decorate label="#{msg['organizationForm.smtpHost']}">
 									<h:inputText value="#{_smtp.host}"
 										styleClass="form-control smtpHostTextBox" />
 								</ox:decorate>
-
 								<ox:decorate label="#{msg['organizationForm.fromName']}">
 									<h:inputText value="#{_smtp.fromName}"
 										styleClass="form-control fromNameTextBox" />
 								</ox:decorate>
-
 								<ox:decorate label="#{msg['organizationForm.fromEmailAddress']}">
 									<h:inputText value="#{_smtp.fromEmailAddress}"
 										styleClass="form-control fromEmailAddressTextBox" />
 								</ox:decorate>
-
 								<ox:decorate id="requiresAuthenticationCheckBox"
 									label="#{msg['organizationForm.requiresAuthentication']}">
 									<h:selectBooleanCheckbox
 										styleClass="requiresAuthenticationCheckBox form-control"
 										value="#{_smtp.requiresAuthentication}" />
 								</ox:decorate>
-
 								<ox:decorate label="#{msg['organizationForm.smtpUserName']}">
 									<h:inputText value="#{_smtp.userName}"
 										styleClass="form-control smtpUserNameTextBox" />
 								</ox:decorate>
-
 								<ox:decorate label="#{msg['organizationForm.smtpPassword']}">
 									<h:inputSecret value="#{_smtp.passwordDecrypted}"
 										styleClass="form-control smtpPasswordTextBox" redisplay="true" />
 								</ox:decorate>
-
 								<ox:decorate label="#{msg['organizationForm.requiresSSL']}">
 									<h:selectBooleanCheckbox value="#{_smtp.requiresSsl}"
 										styleClass="form-control requiresSSLCheckBox" />
@@ -199,12 +177,10 @@
 									value="#{msg['organizationForm.testConfiguration']}"
 									styleClass="btn btn-success verifyButton"
 									action="#{updateOrganizationAction.verifySmtpConfiguration}" />
-
 							</h:panelGroup>
 						</div>
-
 						<div class="tab-pane" id="ox-trust">
-							<h:panelGroup layout="block" style="width:80%; padding:10px;">
+							<h:panelGroup style="width:100%;">
 								<ox:decorate id="displayName"
 									label="#{msg['organizationForm.organizationName']}">
 									<h:inputText value="#{_organization.displayName}" size="100"
@@ -219,63 +195,62 @@
 										<f:param name="inum" value="#{_managerGroup.inum}" />
 									</h:link>
 								</ox:decorate>
-								<div class="row">
-								<b:panel title="oxTrust Logo/Favicon"
-                                        look="primary" icon-inverse="false">
-									<div class="col-sm-5 col-lg-5" style="margin:2px;">
-										<b:panel id="oxTrustLogoPanelId" title="Current oxTrust Logo"
-											look="success" collapsible="true" collapsed="true">
-											<div class="row">
-												<div class="col-sm-6 col-lg-6"
-													style="padding: 0px; margin: 5px;">
-													<img height="20%" width="50%"
-														src="#{request.contextPath}/servlet/logo?preview=true" />
+								<b:panel title="oxTrust Logo/Favicon" look="primary"
+									iconAwesome="fa-sliders">
+									<div class="row">
+										<div class="col-sm-6 col-lg-6">
+											<b:panel id="oxTrustLogoPanelId" title="Current oxTrust Logo"
+												look="success" collapsible="true" collapsed="true">
+												<div class="row">
+													<div class="col-sm-6 col-lg-6"
+														style="padding: 0px; margin: 5px;">
+														<img height="20%" width="50%"
+															src="#{request.contextPath}/servlet/logo?preview=true" />
+													</div>
+													<div class="col-sm-4 col-lg-4"
+														style="padding: 0px; margin: 2px;">
+														<rich:fileUpload id="oxTrustLogo"
+															fileUploadListener="#{_organizationAction.setOxTrustLogoImage}"
+															acceptedTypes="jpg, jpeg, gif, png, bmp"
+															ontyperejected="alert('Only JPG, GIF, PNG and BMP files are accepted');"
+															maxFilesQuantity="1" immediateUpload="true"
+															listHeight="60px" styleClass="oxTrustLogo"
+															style="width:100% !important;" rendered="true">
+														</rich:fileUpload>
+													</div>
 												</div>
-												<div class="col-sm-4 col-lg-4"
-													style="padding: 0px; margin: 2px;">
-													<rich:fileUpload id="oxTrustLogo"
-														fileUploadListener="#{_organizationAction.setOxTrustLogoImage}"
-														acceptedTypes="jpg, jpeg, gif, png, bmp"
-														ontyperejected="alert('Only JPG, GIF, PNG and BMP files are accepted');"
-														maxFilesQuantity="1" immediateUpload="true"
-														listHeight="60px" styleClass="oxTrustLogo"
-														style="width:100% !important;" rendered="true">
-													</rich:fileUpload>
+											</b:panel>
+										</div>
+										<div class="col-sm-6 col-lg-6">
+											<b:panel id="oxTrustFaviconPanelId"
+												title="Current oxTrust Favicon" look="success"
+												collapsible="true" collapsed="true">
+												<div class="row">
+													<div class="col-sm-6 col-lg-6"
+														style="padding: 0px; margin: 5px;">
+														<img height="20%" width="30%"
+															src="#{request.contextPath}/servlet/favicon?preview=true" />
+													</div>
+													<div class="col-sm-4 col-lg-4"
+														style="padding: 0px; margin: 2px;">
+														<rich:fileUpload id="oxTrustFavicon"
+															fileUploadListener="#{_organizationAction.setOxTrustFaviconImage}"
+															acceptedTypes="ico, jpeg, jpg, png"
+															ontyperejected="alert('Only ICO, JPEG, JPG and PNG files are accepted');"
+															maxFilesQuantity="1" immediateUpload="true"
+															listHeight="60px" styleClass="oxTrustFavicon"
+															style="width:100% !important;" rendered="true">
+														</rich:fileUpload>
+													</div>
 												</div>
-											</div>
-										</b:panel>
+											</b:panel>
+										</div>
 									</div>
-									<div class="col-sm-5 col-lg-5"
-										style="padding: 0px; margin: 2px;">
-										<b:panel id="oxTrustFaviconPanelId"
-											title="Current oxTrust Favicon" look="success"
-											collapsible="true" collapsed="true">
-											<div class="row">
-												<div class="col-sm-6 col-lg-6"
-													style="padding: 0px; margin: 5px;">
-													<img height="20%" width="30%"
-														src="#{request.contextPath}/servlet/favicon?preview=true" />
-												</div>
-												<div class="col-sm-4 col-lg-4"
-													style="padding: 0px; margin: 2px;">
-													<rich:fileUpload id="oxTrustFavicon"
-														fileUploadListener="#{_organizationAction.setOxTrustFaviconImage}"
-														acceptedTypes="ico, jpeg, jpg, png"
-														ontyperejected="alert('Only ICO, JPEG, JPG and PNG files are accepted');"
-														maxFilesQuantity="1" immediateUpload="true"
-														listHeight="60px" styleClass="oxTrustFavicon"
-														style="width:100% !important;" rendered="true">
-													</rich:fileUpload>
-												</div>
-											</div>
-										</b:panel>
-									</div>
-									</b:panel>
-								</div>
-								<div class="row">
-									<b:panel title="oxAuth Logo/Favicon"
-										look="primary">
-										<div class="col-sm-5 col-lg-5" style="margin: 2px;">
+								</b:panel>
+								<b:panel title="oxAuth Logo/Favicon" look="primary"
+									iconAwesome="fa-sliders">
+									<div class="row">
+										<div class="col-sm-6 col-lg-6">
 											<b:panel id="oxAuthLogoPanelId" title="Current oxAuth Logo"
 												look="success" collapsible="true" collapsed="true">
 												<div class="row">
@@ -298,8 +273,7 @@
 												</div>
 											</b:panel>
 										</div>
-										<div class="col-sm-5 col-lg-5"
-											style="padding: 0px; margin: 2px;">
+										<div class="col-sm-6 col-lg-6">
 											<b:panel id="oxAuthFaviconPanelId"
 												title="Current oxAuth Favicon" look="success"
 												collapsible="true" collapsed="true">
@@ -323,11 +297,12 @@
 												</div>
 											</b:panel>
 										</div>
-									</b:panel>
-								</div>
-								<div class="row">
-									<b:panel title="IDP Logo/Favicon" look="primary">
-										<div class="col-sm-5 col-lg-5" style="margin: 2px;">
+									</div>
+								</b:panel>
+								<b:panel title="IDP Logo/Favicon" look="primary"
+									iconAwesome="fa-sliders">
+									<div class="row">
+										<div class="col-sm-6 col-lg-6">
 											<b:panel id="idpLogoPanelId" title="Current IDP Logo"
 												look="success" collapsible="true" collapsed="true">
 												<div class="row">
@@ -350,8 +325,7 @@
 												</div>
 											</b:panel>
 										</div>
-										<div class="col-sm-5 col-lg-5"
-											style="padding: 0px; margin: 2px;">
+										<div class="col-sm-6 col-lg-6">
 											<b:panel id="idpFaviconPanelId" title="Current IDP Favicon"
 												look="success" collapsible="true" collapsed="true">
 												<div class="row">
@@ -374,16 +348,14 @@
 												</div>
 											</b:panel>
 										</div>
-									</b:panel>
-								</div>
-
+									</div>
+								</b:panel>
 							</h:panelGroup>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-
 		<richext:spacer height="16" />
 		<ui:insert name="controlButttons" />
 	</h:form>
