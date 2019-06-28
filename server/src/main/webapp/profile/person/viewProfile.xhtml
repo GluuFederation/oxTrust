@@ -17,13 +17,11 @@
 		<f:viewAction action="#{conversationService.initConversation}" />
 		<f:viewAction action="#{userProfileAction.show}" onPostback="false" />
 	</f:metadata>
-
 	<ui:define name="body">
-		<div id="viewProfile">
-			<script
-				src="#{oxTrustConfigurationService.jsLocation}/attributesSlide.js"
-				type="text/javascript" />
-			<h:outputScript>
+		<script
+			src="#{oxTrustConfigurationService.jsLocation}/attributesSlide.js"
+			type="text/javascript" />
+		<h:outputScript>
 		        function changeAttributeVisibility(attrId, show) {
 		        	var attr = document.getElementById(attrId);
 		
@@ -34,330 +32,289 @@
 		            }
 		        }
             </h:outputScript>
-			<ox:changePasswordDialog id="configurationPassword"
-				label="#{msg['profile.change�onfigurationPassword']}"
-				password="#{userProfileAction.person.getUserPassword()}"
-				person="#{userProfileAction.person}" verifyOldPassword="true"
-				setPasswordMethod="#{userPasswordAction.update}" />
-			<section class="content-header">
-				<h1 style="color: #333;">
-					Personal <small> <i class="fa fa-caret-right"
-						style="color: #333 !important;" /> #{msg['profile.profile']}
-					</small>
-				</h1>
-				<ol class="breadcrumb">
-					<li><a href="#{request.contextPath}/home.htm"> <i
-							class="fa fa-home" />
-					</a></li>
-					<li class="organization/configuration">#{msg['profile.profile']}</li>
-				</ol>
-			</section>
-			<section class="content">
-				<ui:include
-					src="/WEB-INF/incl/profile/person/configureListingOptions.xhtml" />
+		<section class="content-header">
+			<h1 style="color: #333;">
+				Personal <small> <i class="fa fa-caret-right"
+					style="color: #333 !important;" /> #{msg['profile.profile']}
+				</small>
+			</h1>
+			<ol class="breadcrumb">
+				<li><a href="#{request.contextPath}/home.htm"> <i
+						class="fa fa-home" />
+				</a></li>
+				<li class="organization/configuration">#{msg['profile.profile']}</li>
+			</ol>
+		</section>
+		<section class="content">
+			<ui:include
+				src="/WEB-INF/incl/profile/person/configureListingOptions.xhtml" />
+			<h:form id="personForm">
+				<div class="row">
+					<h:panelGroup layout="block"
+						styleClass="#{userProfileAction.isEditable() ? 'col-xs-8 col-md-8' : 'col-xs-12 col-md-12'}">
+						<b:panel title="User Profile" look="primary"
+							iconAwesome="fa-building" collapsible="false">
+							<ui:param name="_customAttributes"
+								value="#{userProfileAction.person.customAttributes}" />
+							<ui:param name="_new" value="false" />
+							<h:panelGroup border="0" cellpadding="0" cellspacing="0"
+								width="100%">
+								<h:panelGroup border="0" cellpadding="0" cellspacing="0"
+									columns="1" onclick="slideUpAndDown({duration:0.5})"
+									styleClass="formColumn" width="100%">
+									<h:panelGroup columns="5">
+										<h:outputFormat
+											style="margin-left: 2.3%;  font-size: 13pt;  font-weight: 700;  margin-bottom: 15px;  display: block;"
+											styleClass="headertext" value="#{msg['profile.myProfile']}">
+											<f:param
+												value="#{organizationService.organization.displayName}" />
+										</h:outputFormat>
+										<br />
+										<br />
+										<richext:spacer width="40" />
+										<h:panelGroup id="configureListing">
+											<a4j:commandButton execute="@this" limitRender="true"
+												oncomplete="#{rich:component('configureListingOptions')}.show();"
+												rendered="#{(userProfileAction.person.allowPublication)}"
+												styleClass="btn btn-success"
+												value="#{msg['profile.configureListing']}" />
+										</h:panelGroup>
+									</h:panelGroup>
+									<ui:param name="_mandatoryAttributes"
+										value="#{userProfileAction.mandatoryAttributes}" />
+									<h:panelGroup id="selectedCustomAttributesId">
+										<a4j:repeat rowKeyVar="_custAttrIdx"
+											value="#{_customAttributes}" var="_custAttr">
+											<ui:param name="_aid"
+												value="#{customAttributeAction.attributeIds[_custAttr]}" />
+											<ui:param name="_mandatory"
+												value="#{_mandatoryAttributes.contains(_custAttr)}" />
+											<ox:decorate
+												label="#{_custAttr.metadata.displayName eq 'Gender, male or female' ? 'Gender' : _custAttr.metadata.displayName }  "
+												rendered="#{_custAttr.userCanAccess  and (_custAttr.metadata.dataType.value ne 'photo') and (_custAttr.metadata.displayName ne 'Inum') and (_custAttr.metadata.name ne 'gluuIMAPData')}"
+												template="/WEB-INF/incl/layout/#{_custAttr.userCanEdit  ? 'edit' : 'view'}.xhtml">
+												<div class="col-sm-11" tabindex="0">
+													<h:inputText tabindex="1"
+														defaultLabel="click to enter #{_custAttr.metadata.displayName}"
+														id="custId" inputWidth="300" maxlength="60"
+														styleClass="form-control"
+														rendered="#{_custAttr.userCanEdit and _custAttr.metadata.displayName ne 'Gender, male or female' and permissionService.hasPermission(configurationService.configuration, 'profile_management')}"
+														value="#{_custAttr.value}" />
+													<h:selectOneMenu value="#{_custAttr.value}"
+														styleClass="rounded form-control" tabindex="1"
+														rendered="#{_custAttr.userCanEdit and _custAttr.metadata.displayName eq 'Gender, male or female' and permissionService.hasPermission(configurationService.configuration, 'profile_management')}">
+														<f:selectItem itemValue="female" itemLabel="female" />
+														<f:selectItem itemValue="male" itemLabel="male" />
+													</h:selectOneMenu>
+													<h:outputText
+														rendered="#{not (_custAttr.userCanEdit and permissionService.hasPermission(configurationService.configuration, 'profile_management'))}"
+														value="#{_custAttr.value}" />
+													<h:outputText value=" " />
+												</div>
+												<a4j:commandLink
+													action="#{customAttributeAction.removeCustomAttribute(_custAttr.metadata.inum)}"
+													limitRender="true"
+													onbeforedomupdate="changeAttributeVisibility('#{_aid}', true);"
+													render="selectedCustomAttributesId"
+													rendered="#{_custAttr.userCanEdit and (not _mandatory) and permissionService.hasPermission(configurationService.configuration, 'profile_management')}"
+													styleClass="glyphicon glyphicon-remove" execute="@this">
+												</a4j:commandLink>
+											</ox:decorate>
+											<ox:decorate label="#{_custAttr.metadata.displayName}"
+												rendered="#{_custAttr.userCanAccess and (_custAttr.metadata.dataType.value eq 'photo')}"
+												template="/WEB-INF/incl/layout/view.xhtml">
+												<h:panelGroup border="0" cellpadding="0" cellspacing="0"
+													columnClasses="alignLeftTop, alignLeftTop" columns="2"
+													width="100%">
+													<h:panelGroup border="0" cellpadding="0" cellspacing="0"
+														columns="1" id="custImagePanelId" width="100%">
+														<rich:fileUpload acceptedTypes="jpg, jpeg, gif, png, bmp"
+															fileUploadListener="#{customAttributeAction.uploadImage}"
+															id="custUploadId" immediateUpload="true"
+															listHeight="60px" maxFilesQuantity="1"
+															ontyperejected="alert('Only JPG, GIF, PNG and BMP files are accepted');"
+															rendered="#{_custAttr.userCanEdit and (_custAttr.value eq null)}"
+															styleClass="uploadFile">
+															<a4j:ajax event="uploadcomplete" execute="@this"
+																listener="#{customAttributeAction.addPhoto(_custAttr.metadata.inum)}"
+																render="custImagePanelId" />
+														</rich:fileUpload>
+														<h:panelGroup border="0" cellpadding="0" cellspacing="0"
+															columnClasses="alignCenter" columns="1"
+															rendered="#{_custAttr.value ne null}" width="100%">
+															<h:panelGroup layout="block">
+																<h:graphicImage
+																	fileName="#{customAttributeAction.getPhotoSourceName(_custAttr.metadata.inum)}"
+																	value="#{customAttributeAction.getPhotoThumbData(_custAttr.metadata.inum)}" />
+															</h:panelGroup>
 
-				<h:form id="personForm">
-					<div class="row">
-						<div class="col-xs-12">
-							<div class="box box-primary">
-								<div class="box-header" />
-								<div style="width: 100%; overflow: auto; display: block">
-									<div class="col-xs-8">
-										<ui:param name="_customAttributes"
-											value="#{userProfileAction.person.customAttributes}" />
-										<ui:param name="_new" value="false" />
-										<h:panelGroup border="0" cellpadding="0" cellspacing="0"
-											width="100%">
+															<richext:spacer height="8" />
 
-											<h:panelGroup border="0" cellpadding="0" cellspacing="0"
-												columns="1" onclick="slideUpAndDown({duration:0.5})"
-												styleClass="formColumn" width="100%">
-												<h:panelGroup columns="5">
-													<h:outputFormat
-														style="margin-left: 2.3%;  font-size: 13pt;  font-weight: 700;  margin-bottom: 15px;  display: block;"
-														styleClass="headertext"
-														value="#{msg['profile.myProfile']}">
-														<f:param
-															value="#{organizationService.organization.displayName}" />
-													</h:outputFormat>
-													<br />
-													<br />
-													<richext:spacer width="40" />
-													<h:panelGroup id="configureListing">
-														<a4j:commandButton execute="@this" limitRender="true"
-															oncomplete="#{rich:component('configureListingOptions')}.show();"
-															rendered="#{(userProfileAction.person.allowPublication)}"
-															styleClass="btn btn-success"
-															value="#{msg['profile.configureListing']}" />
+															<a4j:commandLink
+																action="#{customAttributeAction.removePhoto(_custAttr.metadata.inum)}"
+																ajaxSingle="true" execute="@this" limitRender="true"
+																onbeforedomupdate="changeAttributeVisibility('#{_aid}', true);"
+																render="custImagePanelId"
+																rendered="#{_custAttr.userCanEdit}"
+																value="#{msg['profile.remove']}" />
+														</h:panelGroup>
+													</h:panelGroup>
+													<h:panelGroup>
+														<h:outputText value="   " />
+														<a4j:commandLink
+															action="#{customAttributeAction.removeCustomAttribute(_custAttr.metadata.inum)}"
+															limitRender="true"
+															onbeforedomupdate="changeAttributeVisibility('#{_aid}', true);"
+															render="selectedCustomAttributesId"
+															rendered="#{_custAttr.userCanEdit}" execute="@this">
+															<h:graphicImage value="/img/remove.gif" />
+														</a4j:commandLink>
 													</h:panelGroup>
 												</h:panelGroup>
-
-												<ui:param name="_mandatoryAttributes"
-													value="#{userProfileAction.mandatoryAttributes}" />
-
-												<h:panelGroup id="selectedCustomAttributesId">
-													<a4j:repeat rowKeyVar="_custAttrIdx"
-														value="#{_customAttributes}" var="_custAttr">
-														<ui:param name="_aid"
-															value="#{customAttributeAction.attributeIds[_custAttr]}" />
-														<ui:param name="_mandatory"
-															value="#{_mandatoryAttributes.contains(_custAttr)}" />
-
-														<ox:decorate
-															label="#{_custAttr.metadata.displayName eq 'Gender, male or female' ? 'Gender' : _custAttr.metadata.displayName }  "
-															rendered="#{_custAttr.userCanAccess  and (_custAttr.metadata.dataType.value ne 'photo') and (_custAttr.metadata.displayName ne 'Inum') and (_custAttr.metadata.name ne 'gluuIMAPData')}"
-															template="/WEB-INF/incl/layout/#{_custAttr.userCanEdit  ? 'edit' : 'view'}.xhtml">
-															<div class="col-sm-11" tabindex="0">
-																<h:inputText tabindex="1"
-																	defaultLabel="click to enter #{_custAttr.metadata.displayName}"
-																	id="custId" inputWidth="300" maxlength="60"
-																	styleClass="form-control"
-																	rendered="#{_custAttr.userCanEdit and _custAttr.metadata.displayName ne 'Gender, male or female' and permissionService.hasPermission(configurationService.configuration, 'profile_management')}"
-																	value="#{_custAttr.value}" />
-																<h:selectOneMenu value="#{_custAttr.value}"
-																	styleClass="rounded form-control" tabindex="1"
-																	rendered="#{_custAttr.userCanEdit and _custAttr.metadata.displayName eq 'Gender, male or female' and permissionService.hasPermission(configurationService.configuration, 'profile_management')}">
-																	<f:selectItem itemValue="female" itemLabel="female" />
-																	<f:selectItem itemValue="male" itemLabel="male" />
-																</h:selectOneMenu>
-																<h:outputText
-																	rendered="#{not (_custAttr.userCanEdit and permissionService.hasPermission(configurationService.configuration, 'profile_management'))}"
-																	value="#{_custAttr.value}" />
-																<h:outputText value=" " />
-															</div>
-															<a4j:commandLink
-																action="#{customAttributeAction.removeCustomAttribute(_custAttr.metadata.inum)}"
-																limitRender="true"
-																onbeforedomupdate="changeAttributeVisibility('#{_aid}', true);"
-																render="selectedCustomAttributesId"
-																rendered="#{_custAttr.userCanEdit and (not _mandatory) and permissionService.hasPermission(configurationService.configuration, 'profile_management')}"
-																styleClass="glyphicon glyphicon-remove" execute="@this">
-															</a4j:commandLink>
-
-														</ox:decorate>
-
-														<ox:decorate label="#{_custAttr.metadata.displayName}"
-															rendered="#{_custAttr.userCanAccess and (_custAttr.metadata.dataType.value eq 'photo')}"
-															template="/WEB-INF/incl/layout/view.xhtml">
-															<h:panelGroup border="0" cellpadding="0" cellspacing="0"
-																columnClasses="alignLeftTop, alignLeftTop" columns="2"
-																width="100%">
-																<h:panelGroup border="0" cellpadding="0" cellspacing="0"
-																	columns="1" id="custImagePanelId" width="100%">
-																	<rich:fileUpload
-																		acceptedTypes="jpg, jpeg, gif, png, bmp"
-																		fileUploadListener="#{customAttributeAction.uploadImage}"
-																		id="custUploadId" immediateUpload="true"
-																		listHeight="60px" maxFilesQuantity="1"
-																		ontyperejected="alert('Only JPG, GIF, PNG and BMP files are accepted');"
-																		rendered="#{_custAttr.userCanEdit and (_custAttr.value eq null)}"
-																		styleClass="uploadFile">
-																		<a4j:ajax event="uploadcomplete" execute="@this"
-																			listener="#{customAttributeAction.addPhoto(_custAttr.metadata.inum)}"
-																			render="custImagePanelId" />
-																	</rich:fileUpload>
-																	<h:panelGroup border="0" cellpadding="0"
-																		cellspacing="0" columnClasses="alignCenter"
-																		columns="1" rendered="#{_custAttr.value ne null}"
-																		width="100%">
-																		<h:panelGroup layout="block">
-																			<h:graphicImage
-																				fileName="#{customAttributeAction.getPhotoSourceName(_custAttr.metadata.inum)}"
-																				value="#{customAttributeAction.getPhotoThumbData(_custAttr.metadata.inum)}" />
-																		</h:panelGroup>
-
-																		<richext:spacer height="8" />
-
-																		<a4j:commandLink
-																			action="#{customAttributeAction.removePhoto(_custAttr.metadata.inum)}"
-																			ajaxSingle="true" execute="@this" limitRender="true"
-																			onbeforedomupdate="changeAttributeVisibility('#{_aid}', true);"
-																			render="custImagePanelId"
-																			rendered="#{_custAttr.userCanEdit}"
-																			value="#{msg['profile.remove']}" />
-																	</h:panelGroup>
-																</h:panelGroup>
-																<h:panelGroup>
-																	<h:outputText value="   " />
-																	<a4j:commandLink
-																		action="#{customAttributeAction.removeCustomAttribute(_custAttr.metadata.inum)}"
-																		limitRender="true"
-																		onbeforedomupdate="changeAttributeVisibility('#{_aid}', true);"
-																		render="selectedCustomAttributesId"
-																		rendered="#{_custAttr.userCanEdit}" execute="@this">
-																		<h:graphicImage value="/img/remove.gif" />
-																	</a4j:commandLink>
-																</h:panelGroup>
-															</h:panelGroup>
-														</ox:decorate>
-
-														<!-- imap data -->
-
-														<h:panelGroup border="0" cellpadding="0" cellspacing="0"
-															columnClasses="alignLeftTop, alignLeftTop" columns="2"
-															rendered="#{_custAttr.userCanAccess  and (_custAttr.metadata.name eq 'gluuIMAPData')}"
-															width="100%">
-															<h:outputText value="#{msg['profile.imapDataDetails']}" />
-															<a4j:commandLink
-																action="#{userProfileAction.removeImapData(_custAttr.metadata.inum)}"
-																limitRender="true"
-																onbeforedomupdate="changeAttributeVisibility('#{_aid}', true);"
-																render="selectedCustomAttributesId"
-																rendered="#{_custAttr.userCanEdit and (not _mandatory) and permissionService.hasPermission(configurationService.configuration, 'profile_management')}"
-																styleClass="glyphicon glyphicon-remove" execute="@this">
-															</a4j:commandLink>
-
-															<ox:decorate label="#{msg['profile.imapHost']}"
-																rendered="#{_custAttr.userCanAccess  and (_custAttr.metadata.name eq 'gluuIMAPData')}"
-																template="/WEB-INF/incl/layout/#{_custAttr.userCanEdit  ? 'edit' : 'view'}.xhtml">
-																<div class="col-sm-11" tabindex="0">
-																	<h:inputText tabindex="1"
-																		defaultLabel="click to enter Imap Host" id="custId"
-																		immediate="true" inputWidth="300" maxlength="60"
-																		styleClass="form-control"
-																		rendered="#{_custAttr.userCanEdit and permissionService.hasPermission(configurationService.configuration, 'profile_management')}"
-																		value="#{userProfileAction.imapData.imaphost}" />
-																	<h:outputText
-																		rendered="#{not (_custAttr.userCanEdit and permissionService.hasPermission(configurationService.configuration, 'profile_management'))}"
-																		value="#{_custAttr.value}" />
-																	<h:outputText value=" " />
-																</div>
-															</ox:decorate>
-
-															<ox:decorate label="#{msg['profile.imapUsername']}"
-																rendered="#{_custAttr.userCanAccess  and (_custAttr.metadata.name eq 'gluuIMAPData')}"
-																template="/WEB-INF/incl/layout/#{_custAttr.userCanEdit  ? 'edit' : 'view'}.xhtml">
-																<div class="col-sm-11" tabindex="0">
-																	<h:inputText tabindex="1"
-																		defaultLabel="click to enter imap username"
-																		id="custId" immediate="true" inputWidth="300"
-																		maxlength="60" styleClass="form-control"
-																		rendered="#{_custAttr.userCanEdit and permissionService.hasPermission(configurationService.configuration, 'profile_management')}"
-																		value="#{userProfileAction.imapData.imapusername}" />
-																	<h:outputText
-																		rendered="#{not (_custAttr.userCanEdit and permissionService.hasPermission(configurationService.configuration, 'profile_management'))}"
-																		value="#{_custAttr.value}" />
-																	<h:outputText value=" " />
-																</div>
-															</ox:decorate>
-
-															<ox:decorate label="#{msg['profile.imapPort']}"
-																rendered="#{_custAttr.userCanAccess  and (_custAttr.metadata.name eq 'gluuIMAPData')}"
-																template="/WEB-INF/incl/layout/#{_custAttr.userCanEdit  ? 'edit' : 'view'}.xhtml">
-																<div class="col-sm-11" tabindex="0">
-																	<h:inputText tabindex="1"
-																		defaultLabel="click to enter imap port" id="custId"
-																		immediate="true" inputWidth="300" maxlength="60"
-																		styleClass="form-control"
-																		rendered="#{_custAttr.userCanEdit and permissionService.hasPermission(configurationService.configuration, 'profile_management')}"
-																		value="#{userProfileAction.imapData.imapport}" />
-																	<h:outputText
-																		rendered="#{not (_custAttr.userCanEdit and permissionService.hasPermission(configurationService.configuration, 'profile_management'))}"
-																		value="#{_custAttr.value}" />
-																	<h:outputText value=" " />
-																</div>
-															</ox:decorate>
-
-
-															<ox:decorate
-																label="#{msg['profile.imapPasswordEncrypted']}"
-																rendered="#{_custAttr.userCanAccess  and (_custAttr.metadata.name eq 'gluuIMAPData')}"
-																template="/WEB-INF/incl/layout/#{_custAttr.userCanEdit  ? 'edit' : 'view'}.xhtml">
-																<div class="col-sm-11" tabindex="0">
-																	<h:inputText tabindex="1"
-																		defaultLabel="click to enter Imap Password encryptedString"
-																		id="custId" immediate="true" inputWidth="300"
-																		maxlength="60" styleClass="form-control"
-																		rendered="#{_custAttr.userCanEdit and permissionService.hasPermission(configurationService.configuration, 'profile_management')}"
-																		value="#{userProfileAction.imapData.imapPassword.encryptedString}" />
-																	<h:outputText
-																		rendered="#{not (_custAttr.userCanEdit and permissionService.hasPermission(configurationService.configuration, 'profile_management'))}"
-																		value="#{_custAttr.value}" />
-																	<h:outputText value=" " />
-																</div>
-															</ox:decorate>
-
-															<ox:decorate label="#{msg['profile.imapPasswordCipher']}"
-																rendered="#{_custAttr.userCanAccess  and (_custAttr.metadata.name eq 'gluuIMAPData')}"
-																template="/WEB-INF/incl/layout/#{_custAttr.userCanEdit  ? 'edit' : 'view'}.xhtml">
-																<div class="col-sm-11" tabindex="0">
-																	<h:inputText tabindex="1"
-																		defaultLabel="click to enter Imap Password encryptedString"
-																		id="custId" immediate="true" inputWidth="300"
-																		maxlength="60" styleClass="form-control"
-																		rendered="#{_custAttr.userCanEdit and permissionService.hasPermission(configurationService.configuration, 'profile_management')}"
-																		value="#{userProfileAction.imapData.imapPassword.cipher}" />
-																	<h:outputText
-																		rendered="#{not (_custAttr.userCanEdit and permissionService.hasPermission(configurationService.configuration, 'profile_management'))}"
-																		value="#{_custAttr.value}" />
-																	<h:outputText value=" " />
-																</div>
-															</ox:decorate>
-
-															<ox:decorate label="#{msg['profile.imapPasswordMode']}"
-																rendered="#{_custAttr.userCanAccess  and (_custAttr.metadata.name eq 'gluuIMAPData')}"
-																template="/WEB-INF/incl/layout/#{_custAttr.userCanEdit  ? 'edit' : 'view'}.xhtml">
-																<div class="col-sm-11" tabindex="0">
-																	<h:inputText tabindex="1"
-																		defaultLabel="click to enter Imap Password mode"
-																		id="custId" immediate="true" inputWidth="300"
-																		maxlength="60" styleClass="form-control"
-																		rendered="#{_custAttr.userCanEdit and permissionService.hasPermission(configurationService.configuration, 'profile_management')}"
-																		value="#{userProfileAction.imapData.imapPassword.mode}" />
-																	<h:outputText
-																		rendered="#{not (_custAttr.userCanEdit and permissionService.hasPermission(configurationService.configuration, 'profile_management'))}"
-																		value="#{_custAttr.value}" />
-																	<h:outputText value=" " />
-																</div>
-															</ox:decorate>
-														</h:panelGroup>
-													</a4j:repeat>
-												</h:panelGroup>
+											</ox:decorate>
+											<h:panelGroup border="0" cellpadding="0" cellspacing="0"
+												columnClasses="alignLeftTop, alignLeftTop" columns="2"
+												rendered="#{_custAttr.userCanAccess  and (_custAttr.metadata.name eq 'gluuIMAPData')}"
+												width="100%">
+												<h:outputText value="#{msg['profile.imapDataDetails']}" />
+												<a4j:commandLink
+													action="#{userProfileAction.removeImapData(_custAttr.metadata.inum)}"
+													limitRender="true"
+													onbeforedomupdate="changeAttributeVisibility('#{_aid}', true);"
+													render="selectedCustomAttributesId"
+													rendered="#{_custAttr.userCanEdit and (not _mandatory) and permissionService.hasPermission(configurationService.configuration, 'profile_management')}"
+													styleClass="glyphicon glyphicon-remove" execute="@this">
+												</a4j:commandLink>
+												<ox:decorate label="#{msg['profile.imapHost']}"
+													rendered="#{_custAttr.userCanAccess  and (_custAttr.metadata.name eq 'gluuIMAPData')}"
+													template="/WEB-INF/incl/layout/#{_custAttr.userCanEdit  ? 'edit' : 'view'}.xhtml">
+													<div class="col-sm-11" tabindex="0">
+														<h:inputText tabindex="1"
+															defaultLabel="click to enter Imap Host" id="custId"
+															immediate="true" inputWidth="300" maxlength="60"
+															styleClass="form-control"
+															rendered="#{_custAttr.userCanEdit and permissionService.hasPermission(configurationService.configuration, 'profile_management')}"
+															value="#{userProfileAction.imapData.imaphost}" />
+														<h:outputText
+															rendered="#{not (_custAttr.userCanEdit and permissionService.hasPermission(configurationService.configuration, 'profile_management'))}"
+															value="#{_custAttr.value}" />
+														<h:outputText value=" " />
+													</div>
+												</ox:decorate>
+												<ox:decorate label="#{msg['profile.imapUsername']}"
+													rendered="#{_custAttr.userCanAccess  and (_custAttr.metadata.name eq 'gluuIMAPData')}"
+													template="/WEB-INF/incl/layout/#{_custAttr.userCanEdit  ? 'edit' : 'view'}.xhtml">
+													<div class="col-sm-11" tabindex="0">
+														<h:inputText tabindex="1"
+															defaultLabel="click to enter imap username" id="custId"
+															immediate="true" inputWidth="300" maxlength="60"
+															styleClass="form-control"
+															rendered="#{_custAttr.userCanEdit and permissionService.hasPermission(configurationService.configuration, 'profile_management')}"
+															value="#{userProfileAction.imapData.imapusername}" />
+														<h:outputText
+															rendered="#{not (_custAttr.userCanEdit and permissionService.hasPermission(configurationService.configuration, 'profile_management'))}"
+															value="#{_custAttr.value}" />
+														<h:outputText value=" " />
+													</div>
+												</ox:decorate>
+												<ox:decorate label="#{msg['profile.imapPort']}"
+													rendered="#{_custAttr.userCanAccess  and (_custAttr.metadata.name eq 'gluuIMAPData')}"
+													template="/WEB-INF/incl/layout/#{_custAttr.userCanEdit  ? 'edit' : 'view'}.xhtml">
+													<div class="col-sm-11" tabindex="0">
+														<h:inputText tabindex="1"
+															defaultLabel="click to enter imap port" id="custId"
+															immediate="true" inputWidth="300" maxlength="60"
+															styleClass="form-control"
+															rendered="#{_custAttr.userCanEdit and permissionService.hasPermission(configurationService.configuration, 'profile_management')}"
+															value="#{userProfileAction.imapData.imapport}" />
+														<h:outputText
+															rendered="#{not (_custAttr.userCanEdit and permissionService.hasPermission(configurationService.configuration, 'profile_management'))}"
+															value="#{_custAttr.value}" />
+														<h:outputText value=" " />
+													</div>
+												</ox:decorate>
+												<ox:decorate label="#{msg['profile.imapPasswordEncrypted']}"
+													rendered="#{_custAttr.userCanAccess  and (_custAttr.metadata.name eq 'gluuIMAPData')}"
+													template="/WEB-INF/incl/layout/#{_custAttr.userCanEdit  ? 'edit' : 'view'}.xhtml">
+													<div class="col-sm-11" tabindex="0">
+														<h:inputText tabindex="1"
+															defaultLabel="click to enter Imap Password encryptedString"
+															id="custId" immediate="true" inputWidth="300"
+															maxlength="60" styleClass="form-control"
+															rendered="#{_custAttr.userCanEdit and permissionService.hasPermission(configurationService.configuration, 'profile_management')}"
+															value="#{userProfileAction.imapData.imapPassword.encryptedString}" />
+														<h:outputText
+															rendered="#{not (_custAttr.userCanEdit and permissionService.hasPermission(configurationService.configuration, 'profile_management'))}"
+															value="#{_custAttr.value}" />
+														<h:outputText value=" " />
+													</div>
+												</ox:decorate>
+												<ox:decorate label="#{msg['profile.imapPasswordCipher']}"
+													rendered="#{_custAttr.userCanAccess  and (_custAttr.metadata.name eq 'gluuIMAPData')}"
+													template="/WEB-INF/incl/layout/#{_custAttr.userCanEdit  ? 'edit' : 'view'}.xhtml">
+													<div class="col-sm-11" tabindex="0">
+														<h:inputText tabindex="1"
+															defaultLabel="click to enter Imap Password encryptedString"
+															id="custId" immediate="true" inputWidth="300"
+															maxlength="60" styleClass="form-control"
+															rendered="#{_custAttr.userCanEdit and permissionService.hasPermission(configurationService.configuration, 'profile_management')}"
+															value="#{userProfileAction.imapData.imapPassword.cipher}" />
+														<h:outputText
+															rendered="#{not (_custAttr.userCanEdit and permissionService.hasPermission(configurationService.configuration, 'profile_management'))}"
+															value="#{_custAttr.value}" />
+														<h:outputText value=" " />
+													</div>
+												</ox:decorate>
+												<ox:decorate label="#{msg['profile.imapPasswordMode']}"
+													rendered="#{_custAttr.userCanAccess  and (_custAttr.metadata.name eq 'gluuIMAPData')}"
+													template="/WEB-INF/incl/layout/#{_custAttr.userCanEdit  ? 'edit' : 'view'}.xhtml">
+													<div class="col-sm-11" tabindex="0">
+														<h:inputText tabindex="1"
+															defaultLabel="click to enter Imap Password mode"
+															id="custId" immediate="true" inputWidth="300"
+															maxlength="60" styleClass="form-control"
+															rendered="#{_custAttr.userCanEdit and permissionService.hasPermission(configurationService.configuration, 'profile_management')}"
+															value="#{userProfileAction.imapData.imapPassword.mode}" />
+														<h:outputText
+															rendered="#{not (_custAttr.userCanEdit and permissionService.hasPermission(configurationService.configuration, 'profile_management'))}"
+															value="#{_custAttr.value}" />
+														<h:outputText value=" " />
+													</div>
+												</ox:decorate>
 											</h:panelGroup>
-
-											<richext:spacer height="16" />
-
-										</h:panelGroup>
-
-										<richext:spacer width="10" />
-
-									</div>
-
-
-									<div class="col-xs-4">
-										<b:panel id="attributeTabPanelGroupId"
-											title="#{msg['profile.customAttributes']}"
-											rendered="#{permissionService.hasPermission(configurationService.configuration, 'profile_management')}"
-											look="primary">
-											<div style="height: 400px; overflow-y: auto;">
-												<ul class="sidebar-menu">
-													<a4j:repeat value="#{customAttributeAction.attributes}"
-														var="attr">
-														<ui:param name="_aid"
-															value="#{customAttributeAction.attributeIds[attr]}" />
-														<li class="treeview"
-															p:id="#{customAttributeAction.attributeIds[attr]}">
-															<a4j:commandLink
-																action="#{customAttributeAction.addCustomAttribute(attr.inum)}"
-																p:aid="#{_aid}"
-																oncomplete="changeAttributeVisibility('${component.clientId}', false);"
-																render="selectedCustomAttributesId"
-																style="#{customAttributeAction.containsCustomAttribute(attr) ? 'display: none;' : ''}"
-																value="#{attr.displayName}" execute="@this">
-															</a4j:commandLink>
-														</li>
-													</a4j:repeat>
-												</ul>
-											</div>
-										</b:panel>
-									</div>
-
-								</div>
-								<br />
-
+										</a4j:repeat>
+									</h:panelGroup>
+								</h:panelGroup>
+								<richext:spacer height="16" />
+							</h:panelGroup>
+						</b:panel>
+					</h:panelGroup>
+					<h:panelGroup styleClass="col-xs-4 col-md-4" layout="block"
+						rendered="#{userProfileAction.isEditable()}">
+						<b:panel id="attributeTabPanelGroupId"
+							title="#{msg['profile.customAttributes']}" iconAwesome="fa-crop"
+							rendered="#{permissionService.hasPermission(configurationService.configuration, 'profile_management')}"
+							look="primary">
+							<div style="height: 400px; overflow-y: auto;">
+								<ul class="sidebar-menu">
+									<a4j:repeat value="#{customAttributeAction.attributes}"
+										var="attr">
+										<ui:param name="_aid"
+											value="#{customAttributeAction.attributeIds[attr]}" />
+										<li class="treeview"
+											p:id="#{customAttributeAction.attributeIds[attr]}"><a4j:commandLink
+												action="#{customAttributeAction.addCustomAttribute(attr.inum)}"
+												p:aid="#{_aid}"
+												oncomplete="changeAttributeVisibility('${component.clientId}', false);"
+												render="selectedCustomAttributesId"
+												style="#{customAttributeAction.containsCustomAttribute(attr) ? 'display: none;' : ''}"
+												value="#{attr.displayName}" execute="@this">
+											</a4j:commandLink></li>
+									</a4j:repeat>
+								</ul>
 							</div>
-						</div>
-					</div>
+						</b:panel>
+					</h:panelGroup>
 					<div class="box-footer">
 						<a4j:commandButton
 							onclick="#{rich:component('personPassword:changePasswordModalPanel')}.show();"
@@ -372,15 +329,20 @@
 							rendered="#{permissionService.hasPermission(configurationService.configuration, 'profile_management')}"
 							styleClass="btn btn-success" value="Cancel" />
 					</div>
-				</h:form>
-			</section>
-			<ox:changePasswordDialog id="personPassword"
-				label="#{msg['profile.changePassword']}"
-				password="#{userPasswordAction.newPassword}"
-				person="#{userProfileAction.person}"
-				setPasswordMethod="#{userPasswordAction.update}"
-				validatorBinding="#{passwordValidationAction.graphValidator}"
-				verifyOldPassword="true" />
-		</div>
+				</div>
+			</h:form>
+		</section>
+		<ox:changePasswordDialog id="personPassword"
+			label="#{msg['profile.changePassword']}"
+			password="#{userPasswordAction.newPassword}"
+			person="#{userProfileAction.person}"
+			setPasswordMethod="#{userPasswordAction.update}"
+			validatorBinding="#{passwordValidationAction.graphValidator}"
+			verifyOldPassword="true" />
+		<ox:changePasswordDialog id="configurationPassword"
+			label="#{msg['profile.change�onfigurationPassword']}"
+			password="#{userProfileAction.person.getUserPassword()}"
+			person="#{userProfileAction.person}" verifyOldPassword="true"
+			setPasswordMethod="#{userPasswordAction.update}" />
 	</ui:define>
 </ui:composition>

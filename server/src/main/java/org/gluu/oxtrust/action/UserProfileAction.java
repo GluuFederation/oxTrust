@@ -28,6 +28,7 @@ import org.gluu.model.GluuImage;
 import org.gluu.model.GluuUserRole;
 import org.gluu.model.ImapPassword;
 import org.gluu.oxtrust.ldap.service.AttributeService;
+import org.gluu.oxtrust.ldap.service.ConfigurationService;
 import org.gluu.oxtrust.ldap.service.ImageService;
 import org.gluu.oxtrust.ldap.service.ImapDataService;
 import org.gluu.oxtrust.ldap.service.OxTrustAuditService;
@@ -86,6 +87,9 @@ public class UserProfileAction implements Serializable {
 	private AppConfiguration appConfiguration;
 
 	@Inject
+	private ConfigurationService configurationService;
+
+	@Inject
 	private Identity identity;
 
 	@Inject
@@ -95,6 +99,8 @@ public class UserProfileAction implements Serializable {
 	private ExternalUpdateUserService externalUpdateUserService;
 
 	private GluuCustomPerson person;
+
+	private boolean isEditable;
 
 	private List<String> optOuts;
 
@@ -134,7 +140,6 @@ public class UserProfileAction implements Serializable {
 
 			return OxTrustConstants.RESULT_FAILURE;
 		}
-
 		initAttributes();
 		addOpts();
 		addPhotoAttribute();
@@ -166,9 +171,7 @@ public class UserProfileAction implements Serializable {
 			}
 
 			GluuCustomPerson person = this.person;
-			// TODO: Reffactor
 			person.setGluuOptOuts(optOuts.size() == 0 ? null : optOuts);
-
 			boolean runScript = externalUpdateUserService.isEnabled();
 			if (runScript) {
 				externalUpdateUserService.executeExternalUpdateUserMethods(this.person);
@@ -301,7 +304,15 @@ public class UserProfileAction implements Serializable {
 				&& gluuCustomPersons.get(0).getInum().equalsIgnoreCase(this.person.getInum())) {
 			emailIsUniq = true;
 		}
-
 		return emailIsUniq;
+	}
+
+	public boolean isEditable() {
+		this.isEditable = configurationService.getConfiguration().isProfileManagment();
+		return isEditable;
+	}
+
+	public void setEditable(boolean isEditable) {
+		this.isEditable = isEditable;
 	}
 }
