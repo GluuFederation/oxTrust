@@ -21,7 +21,7 @@ import org.gluu.persist.annotation.ObjectClass;
  * @author Yuriy Movchan Date: 07.13.2011
  */
 @DataEntry(sortBy = { "inum" })
-@ObjectClass(values = { "top", "gluuInumMap" })
+@ObjectClass(value = "gluuInumMap")
 public class GluuInumMap extends Entry implements Serializable {
 
 	private static final long serialVersionUID = -2190480357430436503L;

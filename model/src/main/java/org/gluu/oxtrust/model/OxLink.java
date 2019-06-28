@@ -20,7 +20,7 @@ import org.gluu.persist.annotation.ObjectClass;
  *
  */
 @DataEntry
-@ObjectClass(values = { "top", "oxLink" })
+@ObjectClass(value = "oxLink")
 public class OxLink extends Entry implements Serializable {
 
 	private static final long serialVersionUID = -2129922260303558907L;

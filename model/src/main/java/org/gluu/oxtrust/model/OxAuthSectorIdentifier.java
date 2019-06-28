@@ -22,7 +22,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
  * @version January 15, 2016
  */
 @DataEntry(sortBy = { "description" })
-@ObjectClass(values = { "top", "oxSectorIdentifier" })
+@ObjectClass(value = "oxSectorIdentifier")
 @JsonInclude(Include.NON_NULL)
 public class OxAuthSectorIdentifier extends Entry implements Serializable {
 

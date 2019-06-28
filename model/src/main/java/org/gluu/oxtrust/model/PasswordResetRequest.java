@@ -18,7 +18,7 @@ import org.gluu.persist.annotation.DataEntry;
 import org.gluu.persist.annotation.ObjectClass;
 
 @DataEntry(sortBy = "creationDate")
-@ObjectClass(values = { "top", "gluuPasswordResetRequest" })
+@ObjectClass(value = "gluuPasswordResetRequest")
 public class PasswordResetRequest extends Entry implements Serializable {
 
 	private static final long serialVersionUID = -3360077330096416826L;

@@ -13,7 +13,7 @@ import org.gluu.persist.annotation.JsonObject;
 import org.gluu.persist.annotation.ObjectClass;
 
 @DataEntry
-@ObjectClass(values = {"top", "oxApplicationConfiguration"})
+@ObjectClass(value = "oxApplicationConfiguration")
 public class LdapAppConfiguration {
 
 	private static final long serialVersionUID = 1847361642302974184L;

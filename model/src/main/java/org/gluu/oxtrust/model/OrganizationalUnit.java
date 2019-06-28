@@ -14,7 +14,7 @@ import org.gluu.persist.annotation.DataEntry;
 import org.gluu.persist.annotation.ObjectClass;
 
 @DataEntry
-@ObjectClass(values = { "top", "organizationalunit" })
+@ObjectClass(value = "organizationalunit")
 public class OrganizationalUnit extends Entry implements Serializable {
 
 	private static final long serialVersionUID = -1585717575485030550L;
