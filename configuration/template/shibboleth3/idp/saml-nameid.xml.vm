@@ -27,16 +27,10 @@
     are shown below.
     
     -->
-#set($grouped1 = {} )
-#set($grouped2 = {} )
+#set($grouped= {} )
 #if( $resovlerParams.size() > 0 )
 	#foreach( $nameIdConfig in $resovlerParams.configs )
 	    #set ($valid = true)
-		#if ($nameIdConfig.nameIdType.contains("SAML:1.1"))
-			#set($grouped = $grouped1)
-		#else
-			#set($grouped = $grouped2)
-		#end
 		#if ($grouped[$nameIdConfig.nameIdType])
 			#set($grouped[$nameIdConfig.nameIdType] = $grouped[$nameIdConfig.nameIdType] + ", '" + $nameIdConfig.sourceAttribute + "'")
 		#else
@@ -50,11 +44,11 @@
     
         <ref bean="shibboleth.SAML2TransientGenerator" />
 
-#foreach($nameIdType in $grouped2.keySet())
+#foreach($nameIdType in $grouped.keySet())
 	#if ($nameIdType == "urn:oasis:names:tc:SAML:2.0:nameid-format:persistent")
-		<bean parent="shibboleth.SAML2PersistentGenerator" p:attributeSourceIds="#{ {$grouped2[$nameIdType]} }"/>
+		<bean parent="shibboleth.SAML2PersistentGenerator" p:attributeSourceIds="#{ {$grouped[$nameIdType]} }"/>
 	#else
-		<bean parent="shibboleth.SAML2AttributeSourcedGenerator" p:omitQualifiers="true" p:format="$nameIdType" p:attributeSourceIds="#{ {$grouped2[$nameIdType]} }"/>
+		<bean parent="shibboleth.SAML2AttributeSourcedGenerator" p:omitQualifiers="true" p:format="$nameIdType" p:attributeSourceIds="#{ {$grouped[$nameIdType]} }"/>
 	#end	
 #end
         
@@ -75,10 +69,6 @@
     <util:list id="shibboleth.SAML1NameIdentifierGenerators">
 
         <ref bean="shibboleth.SAML1TransientGenerator" />
-
-#foreach($nameIdType in $grouped1.keySet())
-	<bean parent="shibboleth.SAML1AttributeSourcedGenerator" p:omitQualifiers="true" p:format="$nameIdType" p:attributeSourceIds="#{ {$grouped1[$nameIdType]} }"/>
-#end
 
         <!--
         <bean parent="shibboleth.SAML1AttributeSourcedGenerator"

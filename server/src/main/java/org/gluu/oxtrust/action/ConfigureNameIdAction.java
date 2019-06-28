@@ -111,8 +111,6 @@ public class ConfigureNameIdAction implements Serializable {
 				"urn:oasis:names:tc:SAML:2.0:nameid-format:transient");
 		availableNamedIds.put("urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress",
 				"urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress");
-		availableNamedIds.put("urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified",
-				"urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified");
 		availableNamedIds.put("urn:oasis:names:tc:SAML:1.1:nameid-format:X509SubjectName",
 				"urn:oasis:names:tc:SAML:1.1:nameid-format:X509SubjectName");
 		availableNamedIds.put("urn:oasis:names:tc:SAML:1.1:nameid-format:WindowsDomainQualifiedName",
