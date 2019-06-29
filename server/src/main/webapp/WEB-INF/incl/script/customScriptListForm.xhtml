@@ -35,8 +35,6 @@
 	</h:outputStylesheet>
 	<h:head>
 		<style type="text/css">
-.
-
 #customScriptForm:scriptTypeTabPanelIdheader {
 	overflow-x: auto !important;
 }
@@ -50,274 +48,244 @@
 }
 </style>
 	</h:head>
-
 	<h:form id="customScriptForm">
-		<div class="row">
-			<div class="col-xs-12">
-				<b:panel title="Custom Scripts" look="primary" id="customScriptForm">
-					<rich:tabPanel switchType="ajax" id="scriptTypeTabPanelId"
-						style="overflow-x:auto !important;">
-						<a4j:repeat value="#{configurationService.customScriptTypes}"
-							var="_scriptType">
-							<ui:param name="_customScripts"
-								value="#{_action.customScriptsByTypes[_scriptType]}" />
-							<rich:tab styleClass="#{_scriptType.displayName}"
-								header="#{_scriptType.displayName}"
-								style="overflow-x:auto !important;">
-								<div class="card #{_scriptType.displayName}"
-									id="#{_scriptType.displayName}">
-									<a4j:region>
-										<rich:dataGrid id="customScriptTypeId"
-											styleClass="allScriptFor#{_scriptType.displayName}"
-											columns="1" value="#{_customScripts}" var="_customScript"
-											style="width: 100%;">
-											<h:panelGroup layout="block"
-												styleClass="#{(_customScript.enabled) ?  'card-header active' : 'card-header'}"
-												style="#{(_customScript.enabled and _action.hasCustomScriptError(_customScript)) ?  'background: red' : ''}"
-												id="headingOne">
-												<h5 class="mb-0">
-													<a class="accordion-toggle in" data-toggle="collapse"
-														href="#collapseOne#{gluufn:hashCode(_customScript.name)}"
-														aria-expanded="true" aria-controls="collapseOne">
-														#{(_customScript.name == null) ?
-														msg['customScript.newscript'] : _customScript.name } </a>
-												</h5>
-											</h:panelGroup>
-											<ui:param name="_customScriptId"
-												value="#{_action.getId(_customScript)}" />
-											<div id="collapseOne#{gluufn:hashCode(_customScript.name)}"
-												class="#{_customScript.dn != null ? 'collapse' : 'collapse in'}"
-												role="tabpanel" aria-labelledby="headingOne"
-												data-parent="#accordion"
-												expanded="#{_customScript.dn == null}">
-												<h:panelGroup layout="block" class="card-body">
-													<a4j:commandLink value="Delete Script" immediate="true"
-														onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();"
-														execute="@region"
-														styleClass="btn btn-danger deleteScriptButton" />
-													<h:panelGroup id="scriptErrorViewId">
-														<ox:viewFileDialog id="viewScriptError" label="Error"
-															text="#{_action.getCustomScriptError(_customScript)}"
-															textHeight="370" textWidth="680" />
-													</h:panelGroup>
-													<h:panelGroup layout="block" id="scriptErrorId">
-														<a4j:commandLink value="Show Error"
-															rendered="#{_action.hasCustomScriptError(_customScript)}"
-															render="scriptErrorViewId" immediate="true"
-															oncomplete="#{rich:component('viewScriptError:viewFile')}.show();"
-															execute="@this" styleClass="btn btn-danger"
-															style="top: 55px; z-index:1;" />
-													</h:panelGroup>
-													<h:panelGroup layout="block" class="form-script">
-														<div class="form-group">
-															<ox:decorate label="#{msg['customScript.name']}"
-																forId="#{msg['customScript.name']}"
-																tooltip="#{msg['customScript.name']}"
-																leftClass="col-sm-3" rightClass="col-sm-8">
-																<h:inputText value="#{_customScript.name}" size="90"
-																	required="#{empty param['rq']}"
-																	validatorMessage="#{msg['customScript.name.error']}"
-																	styleClass="form-control scriptNameTextBox"
-																	style="width: 90%;">
-																	<f:validateRegex pattern="^[a-zA-Z0-9_\\-\\:\\/\\.]+$" />
-																</h:inputText>
-															</ox:decorate>
-														</div>
-														<div class="form-group">
-															<ox:decorate label="SAML ACRS" leftClass="col-sm-3"
-																rendered="#{_action.isPersonScript(_customScript)}"
-																rightClass="col-sm-8">
-																<h:selectManyListbox styleClass="samlAcrs"
-																	value="#{_customScript.aliases}" id="SamlACRSId">
-																	<f:selectItems
-																		value="#{_action.getAvailableAcrs(_customScript.name)}" />
-																</h:selectManyListbox>
-															</ox:decorate>
-														</div>
-														<div class="form-group">
-															<ox:decorate label="#{msg['customScript.description']}"
+		<div class="row" style="margin: 1px;">
+			<b:panel title="Custom Scripts" look="primary" id="customScriptForm" collapsible="false">
+				<rich:tabPanel switchType="ajax" id="scriptTypeTabPanelId"
+					style="overflow-x:auto !important;">
+					<a4j:repeat value="#{configurationService.customScriptTypes}"
+						var="_scriptType">
+						<ui:param name="_customScripts"
+							value="#{_action.customScriptsByTypes[_scriptType]}" />
+						<rich:tab styleClass="#{_scriptType.displayName}"
+							header="#{_scriptType.displayName}"
+							style="overflow-x:auto !important;">
+							<div class="card #{_scriptType.displayName}"
+								id="#{_scriptType.displayName}">
+								<a4j:region>
+									<rich:dataGrid id="customScriptTypeId"
+										styleClass="allScriptFor#{_scriptType.displayName}"
+										columns="1" value="#{_customScripts}" var="_customScript"
+										style="width: 100%;">
+										<h:panelGroup layout="block"
+											styleClass="#{(_customScript.enabled) ?  'card-header active' : 'card-header'}"
+											style="#{(_customScript.enabled and _action.hasCustomScriptError(_customScript)) ?  'background: red' : ''}"
+											id="headingOne">
+											<h5 class="mb-0">
+												<a class="accordion-toggle in" data-toggle="collapse"
+													href="#collapseOne#{gluufn:hashCode(_customScript.name)}"
+													aria-expanded="true" aria-controls="collapseOne">
+													#{(_customScript.name == null) ?
+													msg['customScript.newscript'] : _customScript.name } </a>
+											</h5>
+										</h:panelGroup>
+										<ui:param name="_customScriptId"
+											value="#{_action.getId(_customScript)}" />
+										<div id="collapseOne#{gluufn:hashCode(_customScript.name)}"
+											class="#{_customScript.dn != null ? 'collapse' : 'collapse in'}"
+											role="tabpanel" aria-labelledby="headingOne"
+											data-parent="#accordion"
+											expanded="#{_customScript.dn == null}">
+											<h:panelGroup layout="block" class="card-body">
+												<a4j:commandLink value="Delete Script" immediate="true"
+													onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();"
+													execute="@region"
+													styleClass="btn btn-danger deleteScriptButton" />
+												<h:panelGroup id="scriptErrorViewId">
+													<ox:viewFileDialog id="viewScriptError" label="Error"
+														text="#{_action.getCustomScriptError(_customScript)}"
+														textHeight="370" textWidth="680" />
+												</h:panelGroup>
+												<h:panelGroup layout="block" id="scriptErrorId">
+													<a4j:commandLink value="Show Error"
+														rendered="#{_action.hasCustomScriptError(_customScript)}"
+														render="scriptErrorViewId" immediate="true"
+														oncomplete="#{rich:component('viewScriptError:viewFile')}.show();"
+														execute="@this" styleClass="btn btn-danger"
+														style="top: 55px; z-index:1;" />
+												</h:panelGroup>
+												<h:panelGroup layout="block" class="form-script">
+													<div class="form-group">
+														<ox:decorate label="#{msg['customScript.name']}"
+															forId="#{msg['customScript.name']}"
+															tooltip="#{msg['customScript.name']}"
+															leftClass="col-sm-3" rightClass="col-sm-8">
+															<h:inputText value="#{_customScript.name}" size="90"
+																required="#{empty param['rq']}"
+																validatorMessage="#{msg['customScript.name.error']}"
+																styleClass="form-control scriptNameTextBox"
+																style="width: 90%;">
+																<f:validateRegex pattern="^[a-zA-Z0-9_\\-\\:\\/\\.]+$" />
+															</h:inputText>
+														</ox:decorate>
+													</div>
+													<div class="form-group">
+														<ox:decorate label="SAML ACRS" leftClass="col-sm-3"
+															rendered="#{_action.isPersonScript(_customScript)}"
+															rightClass="col-sm-8">
+															<h:selectManyListbox styleClass="samlAcrs"
+																value="#{_customScript.aliases}" id="SamlACRSId">
+																<f:selectItems
+																	value="#{_action.getAvailableAcrs(_customScript.name)}" />
+															</h:selectManyListbox>
+														</ox:decorate>
+													</div>
+													<div class="form-group">
+														<ox:decorate label="#{msg['customScript.description']}"
+															required="true" styleClass="break-word"
+															forId="#{msg['customScript.description']}"
+															tooltip="#{msg['customScript.description']}"
+															leftClass="col-sm-3" rightClass="col-sm-8">
+															<h:inputText value="#{_customScript.description}"
+																size="90" styleClass="form-control descriptionTextBox"
+																style="width: 90%;">
+															</h:inputText>
+														</ox:decorate>
+													</div>
+													<div class="form-group">
+														<div class="left">
+															<ox:decorate
+																label="#{msg['customScript.programmingLanguage']}"
 																required="true" styleClass="break-word"
 																forId="#{msg['customScript.description']}"
 																tooltip="#{msg['customScript.description']}"
-																leftClass="col-sm-3" rightClass="col-sm-8">
-																<h:inputText value="#{_customScript.description}"
-																	size="90" styleClass="form-control descriptionTextBox"
-																	style="width: 90%;">
-																</h:inputText>
+																oneColumn="true">
+																<h:selectOneMenu
+																	value="#{_customScript.programmingLanguage}"
+																	required="true" disabled="true"
+																	styleClass="form-control">
+																	<f:selectItems
+																		value="#{configurationService.programmingLanguages}"
+																		var="_type" itemLabel="#{_type.displayName}" />
+																</h:selectOneMenu>
 															</ox:decorate>
 														</div>
-
-														<div class="form-group">
-															<div class="left">
-																<ox:decorate
-																	label="#{msg['customScript.programmingLanguage']}"
-																	required="true" styleClass="break-word"
-																	forId="#{msg['customScript.description']}"
-																	tooltip="#{msg['customScript.description']}"
-																	oneColumn="true">
-																	<h:selectOneMenu
-																		value="#{_customScript.programmingLanguage}"
-																		required="true" disabled="true"
-																		styleClass="form-control">
-																		<f:selectItems
-																			value="#{configurationService.programmingLanguages}"
-																			var="_type" itemLabel="#{_type.displayName}" />
-																	</h:selectOneMenu>
-																</ox:decorate>
-															</div>
-
-															<div class="right">
-																<ox:decorate
-																	label="#{(_scriptType.value != 'uma_claims_gathering')   ? msg['customScript.level']  : msg['customScript.priority']}"
-																	required="true" styleClass="break-word"
-																	forId="#{msg['customScript.description']}"
-																	tooltip="#{msg['customScript.description']}"
-																	oneColumn="true">
-
-																	<rich:inputNumberSpinner value="#{_customScript.level}"
-																		styleClass="inputNumberSpinnerBox" inputSize="4"
-																		minValue="0" maxValue="100" />
-																</ox:decorate>
-															</div>
-
+														<div class="right">
+															<ox:decorate
+																label="#{(_scriptType.value != 'uma_claims_gathering')   ? msg['customScript.level']  : msg['customScript.priority']}"
+																required="true" styleClass="break-word"
+																forId="#{msg['customScript.description']}"
+																tooltip="#{msg['customScript.description']}"
+																oneColumn="true">
+																<rich:inputNumberSpinner value="#{_customScript.level}"
+																	styleClass="inputNumberSpinnerBox" inputSize="4"
+																	minValue="0" maxValue="100" />
+															</ox:decorate>
 														</div>
-
-														<div class="form-group">
-															<div class="left">
-																<ox:decorate label="#{msg['customScript.locationType']}"
-																	styleClass="break-word"
-																	forId="#{msg['customScript.locationType']}"
-																	tooltip="#{msg['customScript.locationType']}"
-																	oneColumn="true">
-
-																	<h:selectOneMenu value="#{_customScript.locationType}"
-																		required="false"
-																		styleClass="form-control locationTypeSelectBox">
-																		<f:selectItems
-																			value="#{configurationService.locationTypes}"
-																			var="_type" itemLabel="#{_type.displayName}" />
-																		<a4j:ajax event="change"
-																			render="scriptAreaId, scriptPathId"
-																			limitRender="true" execute="@this">
-																		</a4j:ajax>
-																	</h:selectOneMenu>
-																</ox:decorate>
-															</div>
-
-
-															<!-- Person Authentication specific parameters -->
-															<h:panelGroup layout="block" styleClass="right"
-																rendered="#{_scriptType.value eq 'person_authentication'}">
-																<ox:decorate label="#{_customScript.usageType}"
-																	required="true" forId="#{_customScript.usageType}"
-																	tooltip="#{_customScript.usageType}" oneColumn="true">
-
-																	<h:selectOneMenu value="#{_customScript.usageType}"
-																		required="true"
-																		styleClass="form-control usageTypeSelectBox">
-																		<f:selectItems
-																			value="#{configurationService.scriptUsageTypes}"
-																			var="_usageType"
-																			itemLabel="#{_usageType.displayName}" />
-																	</h:selectOneMenu>
-																</ox:decorate>
-															</h:panelGroup>
+													</div>
+													<div class="form-group">
+														<div class="left">
+															<ox:decorate label="#{msg['customScript.locationType']}"
+																styleClass="break-word"
+																forId="#{msg['customScript.locationType']}"
+																tooltip="#{msg['customScript.locationType']}"
+																oneColumn="true">
+																<h:selectOneMenu value="#{_customScript.locationType}"
+																	required="false"
+																	styleClass="form-control locationTypeSelectBox">
+																	<f:selectItems
+																		value="#{configurationService.locationTypes}"
+																		var="_type" itemLabel="#{_type.displayName}" />
+																	<a4j:ajax event="change"
+																		render="scriptAreaId, scriptPathId" limitRender="true"
+																		execute="@this">
+																	</a4j:ajax>
+																</h:selectOneMenu>
+															</ox:decorate>
 														</div>
-
-														<div class="form-group">
-															<div class="left">
-																<ox:decorate
-																	label="#{msg['customScript.customProperty']}"
-																	styleClass="break-word"
-																	forId="#{msg['customScript.customProperty']}"
-																	tooltip="#{msg['customScript.customProperty']}"
-																	leftClass="col-sm-8" rightClass="col-sm-3">
-
-																</ox:decorate>
-															</div>
-															<div class="right"></div>
-														</div>
-
-														<ox:simpleCustomPropertiesList
-															label="#{msg['manageAuthentication.passport.strategy.addProperty']}"
-															hideLabel="true" showRemoveDialogue="true"
-															properties="#{_customScript.configurationProperties}"
-															propertiesAction="#{_action}" hideValue="true" />
-
-														<h:panelGroup id="scriptAreaId">
-															<h:panelGroup layout="block" styleClass="form-group"
-																rendered="#{_customScript.locationType.value ne 'file'}">
-
-																<ox:decorate label="#{msg['customScript.script']}"
-																	forId="#{msg['customScript.script']}"
-																	tooltip="#{msg['customScript.script']}"
-																	rendered="#{_customScript.locationType.value ne 'file'}">
-																	<h:inputTextarea value="#{_customScript.script}"
-																		styleClass="scriptTextArea" cols="110" rows="10" />
-																</ox:decorate>
-															</h:panelGroup>
+														<h:panelGroup layout="block" styleClass="right"
+															rendered="#{_scriptType.value eq 'person_authentication'}">
+															<ox:decorate label="#{_customScript.usageType}"
+																required="true" forId="#{_customScript.usageType}"
+																tooltip="#{_customScript.usageType}" oneColumn="true">
+																<h:selectOneMenu value="#{_customScript.usageType}"
+																	required="true"
+																	styleClass="form-control usageTypeSelectBox">
+																	<f:selectItems
+																		value="#{configurationService.scriptUsageTypes}"
+																		var="_usageType" itemLabel="#{_usageType.displayName}" />
+																</h:selectOneMenu>
+															</ox:decorate>
 														</h:panelGroup>
-
-														<h:panelGroup id="scriptPathId">
-															<h:panelGroup layout="block" styleClass="form-group"
-																rendered="#{_customScript.locationType.value eq 'file'}">
-
-																<ox:decorate label="#{msg['customScript.scriptPath']}"
-																	forId="#{msg['customScript.scriptPath']}"
-																	tooltip="#{msg['customScript.scriptPath']}"
-																	rendered="#{_customScript.locationType.value eq 'file'}">
-																	<h:inputText value="#{_customScript.locationPath}"
-																		size="90" styleClass="form-control scriptPathTextBox" />
-																</ox:decorate>
-															</h:panelGroup>
-														</h:panelGroup>
-
+													</div>
+													<div class="form-group">
+														<div class="left">
+															<ox:decorate
+																label="#{msg['customScript.customProperty']}"
+																styleClass="break-word"
+																forId="#{msg['customScript.customProperty']}"
+																tooltip="#{msg['customScript.customProperty']}"
+																leftClass="col-sm-8" rightClass="col-sm-3">
+															</ox:decorate>
+														</div>
+														<div class="right"></div>
+													</div>
+													<ox:simpleCustomPropertiesList
+														label="#{msg['manageAuthentication.passport.strategy.addProperty']}"
+														hideLabel="true" showRemoveDialogue="true"
+														properties="#{_customScript.configurationProperties}"
+														propertiesAction="#{_action}" hideValue="true" />
+													<h:panelGroup id="scriptAreaId">
 														<h:panelGroup layout="block" styleClass="form-group"
-															id="scriptEnableid">
-
-															<ox:decorate label="#{msg['customScript.enabled']}"
-																forId="#{msg['customScript.enabled']}"
-																tooltip="#{msg['customScript.enabled']}">
-																<h:selectBooleanCheckbox
-																	value="#{_customScript.enabled}"
-																	styleClass="customScriptStatusCheckBox" />
+															rendered="#{_customScript.locationType.value ne 'file'}">
+															<ox:decorate label="#{msg['customScript.script']}"
+																forId="#{msg['customScript.script']}"
+																tooltip="#{msg['customScript.script']}"
+																rendered="#{_customScript.locationType.value ne 'file'}">
+																<h:inputTextarea value="#{_customScript.script}"
+																	styleClass="scriptTextArea" cols="110" rows="10" />
 															</ox:decorate>
 														</h:panelGroup>
-														<hr></hr>
-														<!-- </h:panelGrid> -->
-
-
-
-														<ox:acceptRemovalDialog id="deleteConfirmation"
-															subject="Script" value="#{_customScript.name}"
-															deleteMethod="#{manageCustomScriptAction.removeCustomScript(_customScript)}"
-															render="customScriptTypeId" />
-
 													</h:panelGroup>
+													<h:panelGroup id="scriptPathId">
+														<h:panelGroup layout="block" styleClass="form-group"
+															rendered="#{_customScript.locationType.value eq 'file'}">
+															<ox:decorate label="#{msg['customScript.scriptPath']}"
+																forId="#{msg['customScript.scriptPath']}"
+																tooltip="#{msg['customScript.scriptPath']}"
+																rendered="#{_customScript.locationType.value eq 'file'}">
+																<h:inputText value="#{_customScript.locationPath}"
+																	size="90" styleClass="form-control scriptPathTextBox" />
+															</ox:decorate>
+														</h:panelGroup>
+													</h:panelGroup>
+													<h:panelGroup layout="block" styleClass="form-group"
+														id="scriptEnableid">
+														<ox:decorate label="#{msg['customScript.enabled']}"
+															forId="#{msg['customScript.enabled']}"
+															tooltip="#{msg['customScript.enabled']}">
+															<h:selectBooleanCheckbox value="#{_customScript.enabled}"
+																styleClass="customScriptStatusCheckBox" />
+														</ox:decorate>
+													</h:panelGroup>
+													<hr></hr>
+													<ox:acceptRemovalDialog id="deleteConfirmation"
+														subject="Script" value="#{_customScript.name}"
+														deleteMethod="#{manageCustomScriptAction.removeCustomScript(_customScript)}"
+														render="customScriptTypeId" />
 												</h:panelGroup>
-											</div>
-
-										</rich:dataGrid>
-
-										<h:panelGroup layout="block" styleClass="addConfig">
-											<a4j:commandLink styleClass="btn btn-primary addConfigButton"
-												style="font-size:13px !important;"
-												value="#{msg['customScript.addCustomScriptConfiguration']}"
-												action="#{_action.addCustomScript(_scriptType)}"
-												render="customScriptTypeId" execute="@region">
-												<f:param name="rq" value="1" />
-											</a4j:commandLink>
-										</h:panelGroup>
-
-									</a4j:region>
-								</div>
-							</rich:tab>
-						</a4j:repeat>
-					</rich:tabPanel>
-				</b:panel>
-			</div>
+											</h:panelGroup>
+										</div>
+									</rich:dataGrid>
+									<h:panelGroup layout="block" styleClass="addConfig">
+										<a4j:commandLink styleClass="btn btn-primary addConfigButton"
+											style="font-size:13px !important;"
+											value="#{msg['customScript.addCustomScriptConfiguration']}"
+											action="#{_action.addCustomScript(_scriptType)}"
+											render="customScriptTypeId" execute="@region">
+											<f:param name="rq" value="1" />
+										</a4j:commandLink>
+									</h:panelGroup>
+								</a4j:region>
+							</div>
+						</rich:tab>
+					</a4j:repeat>
+				</rich:tabPanel>
+				<div class="box-footer">
+					<ui:insert name="controlButttons" />
+				</div>
+			</b:panel>
 		</div>
-		<ui:insert name="controlButttons" />
 	</h:form>
 	<script>
 		$(document).ready(function(){
@@ -333,6 +301,4 @@
 			$(this).siblings('.accordion-toggle').removeClass('active');
 		  });
 </script>
-
-
 </ui:composition>

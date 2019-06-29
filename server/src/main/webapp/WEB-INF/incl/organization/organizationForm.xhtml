@@ -78,8 +78,9 @@
      });   
     </h:outputScript>
 	<h:form id="organizationForm">
-		<div class="row">
-			<div class="col-xs-12">
+		<div class="row" style="margin: 1px;">
+			<b:panel title="Organization" look="primary"
+				iconAwesome="fa-university" collapsible="false">
 				<div class="nav-tabs-custom" style="margin-bottom: 0px;">
 					<ul class="nav nav-tabs" id="organizationFormtab">
 						<li class="active"><a href="#sys-config" data-toggle="tab">#{msg['organizationForm.systemConfiguration']}</a></li>
@@ -354,10 +355,9 @@
 						</div>
 					</div>
 				</div>
-			</div>
+				<ui:insert name="controlButttons" />
+			</b:panel>
 		</div>
-		<richext:spacer height="16" />
-		<ui:insert name="controlButttons" />
 	</h:form>
 	<script>
 		$('#organizationFormtab a').click(function(e) {

@@ -8,10 +8,8 @@
 		<f:viewAction action="#{manageCustomScriptAction.initAcrs}" onPostback="false" />
 		<f:viewAction action="#{manageCustomScriptAction.modify}" onPostback="false" />
     </f:metadata>
-
     <ui:define name="head">
     </ui:define>
-
     <ui:define name="body">
         <section class="content-header">
             <h1 style="color: #333;">
@@ -33,7 +31,6 @@
             <div id="formArea">
                 <ui:decorate template="/WEB-INF/incl/script/customScriptListForm.xhtml">
                     <ui:param name="_action" value="#{manageCustomScriptAction}"/>
-
                     <ui:define name="controlButttons">
                         <div id="updateButtons" style="margin-top:10px;">
                             <h:commandButton action="#{manageCustomScriptAction.save}" styleClass="btn btn-success"
@@ -46,8 +43,5 @@
                 </ui:decorate>
             </div>
         </section>
-
-
     </ui:define>
-
 </ui:composition>
