@@ -132,15 +132,17 @@ public class UpdateScopeAction implements Serializable {
 
 	public String update() throws Exception {
 		if (this.scope != null) {
+			if (this.scope.getDisplayName() == null) {
+				this.scope.setDisplayName(this.scope.getId());
+			}
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
-
 		this.update = true;
-		log.debug("this.update : " + this.update);
 		try {
-
-			log.debug("inum : " + this.inum);
 			this.scope = scopeService.getScopeByInum(this.inum);
+			if (this.scope.getDisplayName() == null) {
+				this.scope.setDisplayName(this.scope.getId());
+			}
 		} catch (BasePersistenceException ex) {
 			log.error("Failed to find scope {}", inum, ex);
 
@@ -149,9 +151,7 @@ public class UpdateScopeAction implements Serializable {
 		if (this.scope == null) {
 			log.error("Failed to load scope {}", inum);
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to find scope");
-
 			conversationService.endConversation();
-
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 
@@ -166,12 +166,9 @@ public class UpdateScopeAction implements Serializable {
 		} catch (BasePersistenceException ex) {
 			log.error("Failed to load claims", ex);
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to load scope");
-
 			conversationService.endConversation();
-
 			return OxTrustConstants.RESULT_FAILURE;
 		}
-
 		log.debug("returning Success");
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
@@ -182,9 +179,7 @@ public class UpdateScopeAction implements Serializable {
 		} else {
 			facesMessages.add(FacesMessage.SEVERITY_INFO, "New scope not added");
 		}
-
 		conversationService.endConversation();
-
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
@@ -195,7 +190,6 @@ public class UpdateScopeAction implements Serializable {
 			updateDynamicScripts();
 			updateClaims();
 			if (update) {
-				// Update scope
 				try {
 					scopeService.updateScope(this.scope);
 					oxTrustAuditService.audit(
@@ -209,14 +203,11 @@ public class UpdateScopeAction implements Serializable {
 							"Failed to update scope '#{updateScopeAction.scope.displayName}'");
 					return OxTrustConstants.RESULT_FAILURE;
 				}
-
 				facesMessages.add(FacesMessage.SEVERITY_INFO,
 						"Scope '#{updateScopeAction.scope.displayName}' updated successfully");
 			} else {
 				this.inum = scopeService.generateInumForNewScope();
 				String dn = scopeService.getDnForScope(this.inum);
-
-				// Save scope
 				this.scope.setDn(dn);
 				this.scope.setInum(this.inum);
 				try {
@@ -227,16 +218,12 @@ public class UpdateScopeAction implements Serializable {
 							(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 				} catch (Exception ex) {
 					log.error("Failed to add new scope {}", this.scope.getInum(), ex);
-
 					facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new scope");
 					return OxTrustConstants.RESULT_FAILURE;
 				}
-
 				facesMessages.add(FacesMessage.SEVERITY_INFO,
 						"New scope '#{updateScopeAction.scope.displayName}' added successfully");
-
 				conversationService.endConversation();
-
 				this.update = true;
 			}
 			log.debug(" returning success updating or saving scope");
@@ -254,20 +241,16 @@ public class UpdateScopeAction implements Serializable {
 			this.scope.setOxAuthClaims(null);
 			return;
 		}
-
 		List<String> resultClaims = new ArrayList<String>();
 		this.scope.setOxAuthClaims(resultClaims);
-
 		for (DisplayNameEntry claim : this.claims) {
 			resultClaims.add(claim.getDn());
 		}
-
 		this.scope.setOxAuthClaims(resultClaims);
 	}
 
 	public String delete() throws Exception {
 		if (update) {
-			// Remove scope
 			try {
 				scopeService.removeScope(this.scope);
 				oxTrustAuditService.audit(
@@ -276,16 +259,13 @@ public class UpdateScopeAction implements Serializable {
 						(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 				facesMessages.add(FacesMessage.SEVERITY_INFO,
 						"Scope '#{updateScopeAction.scope.displayName}' removed successfully");
-
 				conversationService.endConversation();
-
 				return OxTrustConstants.RESULT_SUCCESS;
 			} catch (BasePersistenceException ex) {
 				log.error("Failed to remove scope {}", this.scope.getInum(), ex);
 
 			}
 		}
-
 		return OxTrustConstants.RESULT_FAILURE;
 	}
 
@@ -298,9 +278,7 @@ public class UpdateScopeAction implements Serializable {
 		if (StringHelper.isEmpty(inum)) {
 			return;
 		}
-
 		String removeClaimInum = attributeService.getDnForAttribute(inum);
-
 		for (Iterator<DisplayNameEntry> iterator = this.claims.iterator(); iterator.hasNext();) {
 			DisplayNameEntry oneClaim = iterator.next();
 			if (removeClaimInum.equals(oneClaim.getDn())) {

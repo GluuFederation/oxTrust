@@ -34,7 +34,6 @@
                     <ui:param name="_scope" value="#{updateScopeAction.scope}"/>
                     <ui:param name="_scopeAction" value="#{updateScopeAction}"/>
                     <ui:param name="_new" value="false"/>
-
                     <ui:define name="controlButttons">
                         <div id="updateButtons">
                             <h:commandButton action="#{updateScopeAction.save}" styleClass="btn btn-primary"
@@ -49,14 +48,12 @@
                         </div>
                     </ui:define>
                 </ui:decorate>
-
                 <ox:selectAttributeDialog acceptMethod="#{updateScopeAction.acceptSelectClaims}"
                                           cancelMethod="#{updateScopeAction.cancelSelectClaims}" id="claim"
                                           label="#{msg['scope.addClaim']}" queue="scopeQueue" render="selectedClaimsId"
                                           searchMethod="#{updateScopeAction.searchAvailableClaims}"
                                           searchPattern="#{updateScopeAction.searchAvailableClaimPattern}"
                                           searchResult="#{updateScopeAction.availableClaims}"/>
-
                 <ox:acceptRemovalDialog deleteMethod="#{updateScopeAction.delete}" id="deleteConfirmation"
                                         queue="scopeQueue" subject="scope"
                                         value="#{updateScopeAction.scope.displayName}"/>
