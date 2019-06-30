@@ -11,6 +11,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Date;
 
 import javax.inject.Inject;
 import javax.servlet.annotation.WebServlet;
@@ -46,6 +47,7 @@ public class LogoImageServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) {
 		response.setContentType("image/jpg");
+		response.setDateHeader("Expires", new Date().getTime()+1000L*1800);
 		GluuOrganization organization = organizationService.getOrganization();
 		boolean hasSucceed = readCustomLogo(response, organization);
 		if (!hasSucceed) {
