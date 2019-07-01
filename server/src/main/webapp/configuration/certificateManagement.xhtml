@@ -4,6 +4,7 @@
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:b="http://bootsfaces.net/ui"
 	xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
 	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
 	template="/WEB-INF/incl/layout/newtemplate.xhtml">
@@ -28,65 +29,40 @@
 					class="fa fa-home"></i> #{msg['configuration.certificates']}</a></li>
 		</ol>
 		</section>
-		<section class="content" style="background:white;"> <h:form
-			id="internalCertificatesFormId" style="width:100%;">
-			<h2 style="font-style: bold;">#{msg['configuration.internalGluuCertificates']}</h2>
-			<ui:fragment
-				rendered="#{certificateManagementAction.internalCertificates.size() eq 0}">
-				<richext:spacer height="30" />
-				<h:outputText value="#{msg['configuration.noSearchResultFound']}" />
-			</ui:fragment>
-			<div style="overflow-x: scroll; width: 100%;">
-				<h:dataTable styleClass="table table-hover rt"
-					value="#{certificateManagementAction.internalCertificates}"
-					var="cert" id="asimbaCertificatesListId"
-					rendered="#{certificateManagementAction.internalCertificates.size() gt 0}">
-					<h:column>
-						<f:facet name="header">
-							<div style="text-align: center;">
-								#{msg['configuration.alias']}</div>
-						</f:facet>
-						<h:outputText value="#{cert.alias}" class="col-xs-12" />
-					</h:column>
-					<h:column>
-						<f:facet name="header">
-							<div style="text-align: center;">
-								#{msg['configuration.issuer']}</div>
-						</f:facet>
-						<h:outputText value="#{cert.issuer}" class="col-xs-12" />
-					</h:column>
-					<h:column>
-						<f:facet name="header">
-							<div style="text-align: center;">
-								#{msg['configuration.algorithm']}</div>
-						</f:facet>
-						<h:outputText value="#{cert.algorithm}" class="col-xs-12" />
-					</h:column>
-					<h:column>
-						<f:facet name="header">
-							<div style="text-align: center;">
-								#{msg['configuration.notBefore']}</div>
-						</f:facet>
-						<h:outputText value="#{cert.notBeforeDatetime}" class="col-xs-12" />
-					</h:column>
-					<h:column>
-						<f:facet name="header">
-							<div style="text-align: center;">
-								#{msg['configuration.notAfter']}</div>
-						</f:facet>
-						<h:outputText style="#{cert.viewStyle}"
-							value="#{cert.notAfterDatetime}" class="col-xs-12" />
-					</h:column>
-					<h:column>
-						<f:facet name="header">
-							<div style="text-align: center;">Actions</div>
-						</f:facet>
-						<h:commandButton id="downloadButtonId" value="Download"
-							action="#{certificateManagementAction.download(cert)}"
-							class="col-xs-12" styleClass="btn btn-primary" />
-					</h:column>
-				</h:dataTable>
-			</div>
-		</h:form> </section>
+		<section class="content">
+		<div class="row" style="margin: 1px;">
+			<h:form id="internalCertificatesFormId" style="width:100%;">
+				<b:panel title="#{msg['configuration.internalGluuCertificates']}"
+					look="primary" iconAwesome="fa-sun-o" collapsible="false">
+					<b:dataTable width="100%"
+						value="#{certificateManagementAction.internalCertificates}"
+						var="cert" id="asimbaCertificatesListId"
+						rendered="#{certificateManagementAction.internalCertificates.size() gt 0}"
+						style="text-align:center;" responsive="true" select="true">
+						<b:dataTableColumn label="#{msg['configuration.alias']}"
+							value="#{cert.alias}">
+						</b:dataTableColumn>
+						<b:dataTableColumn label="#{msg['configuration.algorithm']}"
+							value="#{cert.algorithm}">
+						</b:dataTableColumn>
+						<b:dataTableColumn label="#{msg['configuration.notBefore']}"
+							value="#{cert.notBeforeDatetime}">
+						</b:dataTableColumn>
+						<b:dataTableColumn label="#{msg['configuration.notAfter']}"
+							value="#{cert.notAfterDatetime}">
+						</b:dataTableColumn>
+						<b:dataTableColumn label="Actions">
+							<h:commandButton id="downloadButtonId" value="Download"
+								action="#{certificateManagementAction.download(cert)}"
+								class="col-xs-12" styleClass="btn btn-primary" />
+						</b:dataTableColumn>
+						<b:dataTableColumn label="#{msg['configuration.issuer']}"
+							value="#{cert.issuer}">
+						</b:dataTableColumn>
+					</b:dataTable>
+				</b:panel>
+			</h:form>
+		</div>
+		</section>
 	</ui:define>
 </ui:composition>

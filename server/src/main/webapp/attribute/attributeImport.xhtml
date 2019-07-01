@@ -1,46 +1,50 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://xmlns.jcp.org/jsf/core"
-                xmlns:h="http://xmlns.jcp.org/jsf/html"
-                xmlns:ui="http://xmlns.jcp.org/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
-    <f:metadata>
-        <f:viewAction action="#{permissionService.requestPermission('attribute', 'access')}" />
-        <f:viewAction action="#{conversationService.initConversation}" />
-        <f:viewAction action="#{attributeImportAction.init}" onPostback="false"/>
-    </f:metadata>
-
-    <ui:define name="body">
-        <section class="content-header">
-            <h1 style="color: #333;">
-                #{msg['attribute.importExports']}
-                <small>
-                    <i class="fa fa-caret-right" style="color: #333 !important;"/> #{msg['attribute.import']}
-                </small>
-            </h1>
-            <ol class="breadcrumb">
-                <li>
-                    <a href="#{request.contextPath}/home.htm">
-                        <i class="fa fa-home"/>
-                    </a>
-                </li>
-                <li class="organization/configuration">
-                    <a href="#{request.contextPath}/attribute/attributeInventory.htm">#{msg['attribute.attributes']}</a>
-                </li>
-            </ol>
-        </section>
-        <section class="content"> <!-- Small boxes (Stat box) -->
-
-            <div id="formArea">
-                <h:link includeViewParams="false" outcome="/attribute/attributeExport" style="padding:6px;"
-                        styleClass="label label-success exportAttributeButton" value="Export Attribute LDIF"/>
-                <div class="row" style="padding-top:20px">
-                    <ui:decorate template="/WEB-INF/incl/attribute/attributeImportForm.xhtml">
-                        <ui:param name="_importAction" value="#{attributeImportAction}"/>
-
-
-                    </ui:decorate>
-                </div>
-            </div>
-        </section>
-    </ui:define>
-
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:b="http://bootsfaces.net/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/WEB-INF/incl/layout/newtemplate.xhtml">
+	<f:metadata>
+		<f:viewAction
+			action="#{permissionService.requestPermission('attribute', 'access')}" />
+		<f:viewAction action="#{conversationService.initConversation}" />
+		<f:viewAction action="#{attributeImportAction.init}"
+			onPostback="false" />
+	</f:metadata>
+	<ui:define name="body">
+		<section class="content-header">
+			<h1 style="color: #333;">
+				#{msg['attribute.importExports']} <small> <i
+					class="fa fa-caret-right" style="color: #333 !important;" />
+					#{msg['attribute.import']}
+				</small>
+			</h1>
+			<ol class="breadcrumb">
+				<li><a href="#{request.contextPath}/home.htm"> <i
+						class="fa fa-home" />
+				</a></li>
+				<li class="organization/configuration"><a
+					href="#{request.contextPath}/attribute/attributeInventory.htm">#{msg['attribute.attributes']}</a>
+				</li>
+			</ol>
+		</section>
+		<section class="content">
+			<div id="formArea">
+				<b:panel title="" look="primary"
+					iconAwesome="fa-file-archive-o" collapsible="false">
+					<h:link includeViewParams="false"
+						outcome="/attribute/attributeExport" style="padding:6px;"
+						styleClass="label label-success exportAttributeButton"
+						value="Export Attribute LDIF" />
+					<div class="row" style="padding-top: 20px">
+						<ui:decorate
+							template="/WEB-INF/incl/attribute/attributeImportForm.xhtml">
+							<ui:param name="_importAction" value="#{attributeImportAction}" />
+						</ui:decorate>
+					</div>
+				</b:panel>
+			</div>
+		</section>
+	</ui:define>
 </ui:composition>

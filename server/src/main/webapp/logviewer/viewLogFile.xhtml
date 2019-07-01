@@ -3,6 +3,7 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:b="http://bootsfaces.net/ui"
 	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
@@ -40,110 +41,116 @@
 		</section>
 		<section class="content">
 			<div id="formArea">
-				<h:form id="logViewForm">
-					<f:validateBean>
-						<input name="cid" type="hidden" value="#{conversation.id}" />
-						<div class="row">
-							<div class="col-xs-12">
-								<div class="nav-tabs-custom" style="margin-bottom: 0px;">
-									<ul class="nav nav-tabs" id="logViewFormtab">
-										<li class="active"><a data-toggle="tab"
-											href="#logged-files">#{msg['logViewer.allowedLogFiles']}</a>
-										</li>
-										<li><a data-toggle="tab" href="#config">#{msg['logViewer.configuration']}</a>
-										</li>
-										<li><a data-toggle="tab" href="#tail">#{msg['logViewer.tailOfLogFile']}</a>
-										</li>
-									</ul>
-									<div class="tab-content">
-										<div class="tab-pane active" id="logged-files">
-											<div style="display: inline-block; width: 100% !important;">
-												<rich:panel bodyClass="noPadding" header="Allowed log files"
-													width="100%">
-													<h:panelGroup border="0" cellpadding="0" cellspacing="0"
-														columns="1" width="100%">
-														<a4j:repeat
-															value="#{viewLogFileAction.logFiles.entrySet().toArray()}"
-															var="_logFile">
-															<div>
-																<a4j:commandLink
-																	action="#{viewLogFileAction.setActiveLogFileIndex(_logFile.key)}"
-																	execute="@form" limitRender="true"
-																	onclick="$('.nav-tabs a[href=\'#tail\']').tab('show');"
-																	render="viewLogPanelId" value="#{_logFile.value}" />
-															</div>
-															<br />
-														</a4j:repeat>
+				<b:panel title="#{msg['logViewer.viewLogFile']}" look="primary"
+					iconAwesome="fa-file-archive-o" collapsible="false">
+					<h:form id="logViewForm">
+						<f:validateBean>
+							<input name="cid" type="hidden" value="#{conversation.id}" />
+							<div class="row">
+								<div class="col-xs-12">
+									<div class="nav-tabs-custom" style="margin-bottom: 0px;">
+										<ul class="nav nav-tabs" id="logViewFormtab">
+											<li class="active"><a data-toggle="tab"
+												href="#logged-files">#{msg['logViewer.allowedLogFiles']}</a>
+											</li>
+											<li><a data-toggle="tab" href="#config">#{msg['logViewer.configuration']}</a>
+											</li>
+											<li><a data-toggle="tab" href="#tail">#{msg['logViewer.tailOfLogFile']}</a>
+											</li>
+										</ul>
+										<div class="tab-content">
+											<div class="tab-pane active" id="logged-files">
+												<div style="display: inline-block; width: 100% !important;">
+													<rich:panel bodyClass="noPadding"
+														header="Allowed log files" width="100%">
+														<h:panelGroup border="0" cellpadding="0" cellspacing="0"
+															columns="1" width="100%">
+															<a4j:repeat
+																value="#{viewLogFileAction.logFiles.entrySet().toArray()}"
+																var="_logFile">
+																<div>
+																	<a4j:commandLink
+																		action="#{viewLogFileAction.setActiveLogFileIndex(_logFile.key)}"
+																		execute="@form" limitRender="true"
+																		onclick="$('.nav-tabs a[href=\'#tail\']').tab('show');"
+																		render="viewLogPanelId" value="#{_logFile.value}" />
+																</div>
+																<br />
+															</a4j:repeat>
+														</h:panelGroup>
+													</rich:panel>
+												</div>
+											</div>
+											<div class="tab-pane" id="config">
+												<div style="display: inline-block; width: 100% !important;">
+													<h:panelGroup>
+														<ox:decorate
+															label="#{msg['logViewer.displayLastLinesCount']}">
+															<h:inputText required="true" styleClass="form-control"
+																value="#{viewLogFileAction.displayLastLinesCount}" />
+														</ox:decorate>
 													</h:panelGroup>
-												</rich:panel>
+												</div>
 											</div>
-										</div>
-										<div class="tab-pane" id="config">
-											<div style="display: inline-block; width: 100% !important;">
-												<h:panelGroup>
-													<ox:decorate
-														label="#{msg['logViewer.displayLastLinesCount']}">
-														<h:inputText required="true" styleClass="form-control"
-															value="#{viewLogFileAction.displayLastLinesCount}" />
-													</ox:decorate>
-												</h:panelGroup>
-											</div>
-										</div>
-										<div class="tab-pane" id="tail">
-											<div style="display: inline-block; width: 100% !important;">
-												<h:panelGroup id="viewLogPanelId" layout="block">
-													<h1>#{viewLogFileAction.getCurrentLogFileName()}</h1>
-													<pre>
-                            <h:outputText
-															value="#{viewLogFileAction.getTailOfLogFile()}" />
-                        </pre>
-													<h1>#{viewLogFileAction.getCurrentLogFileName()}</h1>
-												</h:panelGroup>
+											<div class="tab-pane" id="tail">
+												<div style="display: inline-block; width: 100% !important;">
+													<h:panelGroup id="viewLogPanelId" layout="block">
+														<h1>#{viewLogFileAction.getCurrentLogFileName()}</h1>
+														<pre>
+                                                     <h:outputText
+																value="#{viewLogFileAction.getTailOfLogFile()}" />
+                                                     </pre>
+														<h1>#{viewLogFileAction.getCurrentLogFileName()}</h1>
+													</h:panelGroup>
+												</div>
 											</div>
 										</div>
 									</div>
-								</div>
-								<script>
-									$('#logViewFormtab a').click(function(e) {
-										e.preventDefault();
-										$(this).tab('show');
-									});
-									$("ul.nav-tabs > li > a")
-											.on(
-													"shown.bs.tab",
-													function(e) {
-														var id = $(e.target)
-																.attr("href")
-																.substr(1);
-														window.localStorage
-																.setItem(
-																		'logViewFormtab',
-																		id);
-														var storeValue = window.localStorage
-																.getItem('logViewFormtab');
-													});
+									<script>
+										$('#logViewFormtab a').click(
+												function(e) {
+													e.preventDefault();
+													$(this).tab('show');
+												});
+										$("ul.nav-tabs > li > a")
+												.on(
+														"shown.bs.tab",
+														function(e) {
+															var id = $(e.target)
+																	.attr(
+																			"href")
+																	.substr(1);
+															window.localStorage
+																	.setItem(
+																			'logViewFormtab',
+																			id);
+															var storeValue = window.localStorage
+																	.getItem('logViewFormtab');
+														});
 
-									$(document)
-											.ready(
-													function() {
-														var value = window.localStorage
-																.getItem('logViewFormtab');
-														if (value) {
-															var activeTab = "#";
-															activeTab = activeTab
-																	.concat(value);
-															$(
-																	'#logViewFormtab a[href="'
-																			+ activeTab
-																			+ '"]')
-																	.tab('show');
-														}
-													});
-								</script>
+										$(document)
+												.ready(
+														function() {
+															var value = window.localStorage
+																	.getItem('logViewFormtab');
+															if (value) {
+																var activeTab = "#";
+																activeTab = activeTab
+																		.concat(value);
+																$(
+																		'#logViewFormtab a[href="'
+																				+ activeTab
+																				+ '"]')
+																		.tab(
+																				'show');
+															}
+														});
+									</script>
+								</div>
 							</div>
-						</div>
-					</f:validateBean>
-				</h:form>
+						</f:validateBean>
+					</h:form>
+				</b:panel>
 			</div>
 		</section>
 	</ui:define>

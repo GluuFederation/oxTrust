@@ -35,52 +35,50 @@
 			<div id="formArea">
 				<h:form id="logViewerForm">
 					<f:validateBean>
-						<div class="row" style="margin:10px;">
-							<b:panel title="LogViewer Configuration" look="primary"
-								collapsible="false" iconAwesome="fa-ge">
-								<div style="display: inline-block; width: 100% !important;">
-									<h:panelGroup>
-										<div class="row"
-											style="padding: 5px; margin-bottom: 5px; margin-left: 0px">
-											<ox:decorate forId="oxTrustLogConfigLocation"
-												label="oxTrust External log4j location">
-												<h:inputText id="oxTrustLogConfigLocation"
-													class="form-control oxTrustLogConfigLocation"
-													style="margin-right:5px;margin-bottom:10px;width:100%;float:left;"
-													value="#{configureLogViewerAction.oxTrustLogConfigLocation}"></h:inputText>
-											</ox:decorate>
-										</div>
-										<div class="row"
-											style="padding: 5px; margin-bottom: 5px; margin-left: 0px">
-											<ox:decorate forId="oxTrustLogConfigLocation"
-												label="oxAuth External log4j location">
-												<h:inputText id="oxAuthLogConfigLocation"
-													class="form-control oxAuthLogConfigLocation"
-													style="margin-right:5px;margin-bottom:10px;width:100%;float:left;"
-													value="#{configureLogViewerAction.oxAuthLogConfigLocation}"></h:inputText>
-											</ox:decorate>
-										</div>
-										<ox:simpleCustomPropertiesList
-											label="#{msg['logViewer.allowedLogTemplates']}"
-											labelAdd="#{msg['logViewer.logTemplate']}"
-											leftClass="col-sm-2" rightClass="col-sm-10"
-											properties="#{configureLogViewerAction.logViewerConfiguration.logTemplates}"
-											propertiesAction="#{configureLogViewerAction}" />
-									</h:panelGroup>
-								</div>
-								<div class="box-footer">
-									<div id="updateButtons">
-										<h:commandButton action="#{configureLogViewerAction.update}"
-											styleClass="btn btn-primary addLogButtonClass"
-											value="#{msg['logViewer.update']}" />
-										<h:commandButton action="#{configureLogViewerAction.cancel}"
-											immediate="true" style="margin-left:5px"
-											styleClass="btn btn-primary"
-											value="#{msg['logViewer.cancel']}" />
+						<b:panel title="LogViewer Configuration" look="primary"
+							collapsible="false" iconAwesome="fa-ge">
+							<div style="display: inline-block; width: 100% !important;">
+								<h:panelGroup>
+									<div class="row"
+										style="padding: 5px; margin-bottom: 5px; margin-left: 0px">
+										<ox:decorate forId="oxTrustLogConfigLocation"
+											label="oxTrust External log4j location">
+											<h:inputText id="oxTrustLogConfigLocation"
+												class="form-control oxTrustLogConfigLocation"
+												style="margin-right:5px;margin-bottom:10px;width:100%;float:left;"
+												value="#{configureLogViewerAction.oxTrustLogConfigLocation}"></h:inputText>
+										</ox:decorate>
 									</div>
+									<div class="row"
+										style="padding: 5px; margin-bottom: 5px; margin-left: 0px">
+										<ox:decorate forId="oxTrustLogConfigLocation"
+											label="oxAuth External log4j location">
+											<h:inputText id="oxAuthLogConfigLocation"
+												class="form-control oxAuthLogConfigLocation"
+												style="margin-right:5px;margin-bottom:10px;width:100%;float:left;"
+												value="#{configureLogViewerAction.oxAuthLogConfigLocation}"></h:inputText>
+										</ox:decorate>
+									</div>
+									<ox:simpleCustomPropertiesList
+										label="#{msg['logViewer.allowedLogTemplates']}"
+										labelAdd="#{msg['logViewer.logTemplate']}"
+										leftClass="col-sm-2" rightClass="col-sm-10"
+										properties="#{configureLogViewerAction.logViewerConfiguration.logTemplates}"
+										propertiesAction="#{configureLogViewerAction}" />
+								</h:panelGroup>
+							</div>
+							<div class="box-footer">
+								<div id="updateButtons">
+									<h:commandButton action="#{configureLogViewerAction.update}"
+										styleClass="btn btn-primary addLogButtonClass"
+										value="#{msg['logViewer.update']}" />
+									<h:commandButton action="#{configureLogViewerAction.cancel}"
+										immediate="true" style="margin-left:5px"
+										styleClass="btn btn-primary"
+										value="#{msg['logViewer.cancel']}" />
 								</div>
-							</b:panel>
-						</div>
+							</div>
+						</b:panel>
 					</f:validateBean>
 				</h:form>
 			</div>

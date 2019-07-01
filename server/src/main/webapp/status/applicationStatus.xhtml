@@ -35,94 +35,78 @@
 		</section>
 		<section class="content">
 			<h:panelGroup id="formArea" layout="block">
-				<div class="row">
-					<div class="col-xs-12">
-						<div class="box box-primary">
-							<div class="box-header"></div>
-							<div style="display: inline-block; width: 95% !important;">
-								<ui:param name="_configuration"
-									value="#{configurationService.configuration}" />
-								<div class="row" style="margin-left: 5px; margin-right: 5px;">
-									<div class="col-sm-6 col-lg-6" style="padding: 0px;">
-										<h:panelGrid border="0" cellpadding="0" cellspacing="0"
-											columns="1" id="statusTable1" width="100%">
-											<ox:decorate label="#{msg['configurationStatus.hostName']}"
-												leftClass="col-sm-6" rightClass="col-sm-6">
-												<b:label styleClass="hostnameValueBox"
-													text="#{_configuration.hostname}" severity="primary" />
-											</ox:decorate>
-
-											<ox:decorate label="#{msg['configurationStatus.ipAddress']}"
-												leftClass="col-sm-6" rightClass="col-sm-6">
-												<b:label styleClass="ipAddressValueBox"
-													text="#{_configuration.ipAddress}" severity="success" />
-											</ox:decorate>
-
-											<ox:decorate
-												label="#{msg['configurationStatus.systemUptime']}"
-												leftClass="col-sm-6" rightClass="col-sm-6">
-												<h:outputText styleClass="systemUptimeValueBox"
-													converter="uptimeConverter"
-													value="#{_configuration.systemUptime}" />
-											</ox:decorate>
-
-											<ox:decorate label="#{msg['configurationStatus.lastUpdate']}"
-												leftClass="col-sm-6" rightClass="col-sm-6">
-												<h:outputText styleClass="lastUpdateValueBox"
-													value="#{_configuration.lastUpdate}">
-													<f:convertDateTime pattern="MMM. d yyyy hh:mm a" />
-												</h:outputText>
-											</ox:decorate>
-											<ox:decorate
-												label="#{msg['configurationStatus.freeDiskSpace']}"
-												leftClass="col-sm-6" rightClass="col-sm-6">
-												<h:outputText styleClass="freeDiskSpaceValueBox"
-													value="#{_configuration.freeDiskSpace}" />
-												<h:outputText value="%" />
-											</ox:decorate>
-										</h:panelGrid>
-									</div>
-									<div class="col-sm-6 col-lg-6" style="padding: 0px;">
-										<h:panelGrid border="0" cellpadding="0" cellspacing="0"
-											columns="1" id="statusTable2" width="100%">
-											<ox:decorate
-												label="#{msg['configurationStatus.pollingInterval']}"
-												leftClass="col-sm-6" rightClass="col-sm-6">
-												<h:outputText styleClass="pollingIntervalValueBox"
-													value="60 seconds" />
-											</ox:decorate>
-
-											<ox:decorate
-												label="#{msg['configurationStatus.personCount']}"
-												leftClass="col-sm-6" rightClass="col-sm-6">
-												<h:outputText styleClass="personCountValueBox"
-													value="#{_configuration.personCount}" />
-											</ox:decorate>
-
-											<ox:decorate label="#{msg['configurationStatus.groupCount']}"
-												leftClass="col-sm-6" rightClass="col-sm-6">
-												<h:outputText styleClass="groupCountValueBox"
-													value="#{_configuration.groupCount}" />
-											</ox:decorate>
-
-											<ox:decorate label="#{msg['configurationStatus.freeMemory']}"
-												leftClass="col-sm-6" rightClass="col-sm-6">
-												<h:outputText styleClass="freeMemoryValueBox"
-													value="#{_configuration.freeMemory}" />
-												<h:outputText value="%" />
-											</ox:decorate>
-										</h:panelGrid>
-									</div>
-								</div>
-								<div class="box-footer">
-									<ui:insert name="controlButttons" />
-								</div>
+				<b:panel title="#{msg['configurationStatus.serverStatus']}"
+					look="primary" iconAwesome="fa-gear" collapsible="false">
+					<div style="display: inline-block; width: 95% !important;">
+						<ui:param name="_configuration"
+							value="#{configurationService.configuration}" />
+						<div class="row" style="margin-left: 5px; margin-right: 5px;">
+							<div class="col-sm-6 col-lg-6" style="padding: 0px;">
+								<h:panelGrid border="0" cellpadding="0" cellspacing="0"
+									columns="1" id="statusTable1" width="100%">
+									<ox:decorate label="#{msg['configurationStatus.hostName']}"
+										leftClass="col-sm-6" rightClass="col-sm-6">
+										<b:label styleClass="hostnameValueBox"
+											text="#{_configuration.hostname}" severity="primary" />
+									</ox:decorate>
+									<ox:decorate label="#{msg['configurationStatus.ipAddress']}"
+										leftClass="col-sm-6" rightClass="col-sm-6">
+										<b:label styleClass="ipAddressValueBox"
+											text="#{_configuration.ipAddress}" severity="success" />
+									</ox:decorate>
+									<ox:decorate label="#{msg['configurationStatus.systemUptime']}"
+										leftClass="col-sm-6" rightClass="col-sm-6">
+										<h:outputText styleClass="systemUptimeValueBox"
+											converter="uptimeConverter"
+											value="#{_configuration.systemUptime}" />
+									</ox:decorate>
+									<ox:decorate label="#{msg['configurationStatus.lastUpdate']}"
+										leftClass="col-sm-6" rightClass="col-sm-6">
+										<h:outputText styleClass="lastUpdateValueBox"
+											value="#{_configuration.lastUpdate}">
+											<f:convertDateTime pattern="MMM. d yyyy hh:mm a" />
+										</h:outputText>
+									</ox:decorate>
+									<ox:decorate
+										label="#{msg['configurationStatus.freeDiskSpace']}"
+										leftClass="col-sm-6" rightClass="col-sm-6">
+										<h:outputText styleClass="freeDiskSpaceValueBox"
+											value="#{_configuration.freeDiskSpace}" />
+										<h:outputText value="%" />
+									</ox:decorate>
+								</h:panelGrid>
+							</div>
+							<div class="col-sm-6 col-lg-6" style="padding: 0px;">
+								<h:panelGrid border="0" cellpadding="0" cellspacing="0"
+									columns="1" id="statusTable2" width="100%">
+									<ox:decorate
+										label="#{msg['configurationStatus.pollingInterval']}"
+										leftClass="col-sm-6" rightClass="col-sm-6">
+										<h:outputText styleClass="pollingIntervalValueBox"
+											value="60 seconds" />
+									</ox:decorate>
+									<ox:decorate label="#{msg['configurationStatus.personCount']}"
+										leftClass="col-sm-6" rightClass="col-sm-6">
+										<h:outputText styleClass="personCountValueBox"
+											value="#{_configuration.personCount}" />
+									</ox:decorate>
+									<ox:decorate label="#{msg['configurationStatus.groupCount']}"
+										leftClass="col-sm-6" rightClass="col-sm-6">
+										<h:outputText styleClass="groupCountValueBox"
+											value="#{_configuration.groupCount}" />
+									</ox:decorate>
+									<ox:decorate label="#{msg['configurationStatus.freeMemory']}"
+										leftClass="col-sm-6" rightClass="col-sm-6">
+										<h:outputText styleClass="freeMemoryValueBox"
+											value="#{_configuration.freeMemory}" />
+										<h:outputText value="%" />
+									</ox:decorate>
+								</h:panelGrid>
 							</div>
 						</div>
 					</div>
-				</div>
+				</b:panel>
 			</h:panelGroup>
 		</section>
 	</ui:define>
-
 </ui:composition>

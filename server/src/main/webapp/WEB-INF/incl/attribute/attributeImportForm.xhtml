@@ -1,71 +1,78 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-    xmlns:f="http://xmlns.jcp.org/jsf/core"
-    xmlns:h="http://xmlns.jcp.org/jsf/html"
-    xmlns:a4j="http://richfaces.org/a4j"
-    xmlns:rich="http://richfaces.org/rich"
-    xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
-    xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
-    xmlns:gluufn="http://www.gluu.org/jsf/functions">
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
+	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
+	xmlns:gluufn="http://www.gluu.org/jsf/functions">
 
-    <h:form id="attributeImportForm">
-    
-    <input type='hidden' name='cid' value='#{conversation.id}' />
-
-        <div class="row">
-            <div class="col-xs-12">
-            <div class="box box-primary">
-              <div style="display: inline-block;width: 75% !important;">
-              
-        <h:panelGroup columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
-            <ox:decorate label="File to import">
-                <h:panelGroup id="fileImportPanelId" columns="1" width="100%" border="0" cellpadding="0" cellspacing="0">
-                
-                    <rich:fileUpload  id="fileUploadId" fileUploadListener="#{_importAction.uploadFile}" acceptedTypes="ldif"
-                                ontyperejected="alert('Only LDIF files are accepted');" maxFilesQuantity="1" immediateUpload="true" listHeight="60px"
-                                styleClass="uploadFile" rendered="#{_importAction.uploadedFile == null}">
-                                <a4j:ajax event="uploadcomplete" execute="@none" render="fileImportPanelId, controlButttonId"/>
-                    </rich:fileUpload>
-
-                    <h:panelGroup layout="block" rendered="#{_importAction.uploadedFile ne null}">
-                        <h:outputText value="#{_importAction.uploadedFile.name}" />
-                        <richext:spacer width="8" />
-                        <a4j:commandLink value="Remove" action="#{_importAction.removeFileToImport}" render="fileImportPanelId, controlButttonId" ajaxSingle="true" limitRender="true"
-                            eventsQueue="attributeImportQueue" />
-                    </h:panelGroup>
-                </h:panelGroup>
-            </ox:decorate>
-
-            <richext:spacer height="16"/>       
-
-            <h:panelGroup id="controlButttonId">
-                <ui:insert name="controlButttons" />
-
-                <a4j:status id="submitStatus">
-                    <f:facet name="start">
-                        <h:panelGroup>
-                            <h:graphicImage value="/img/ajax_active.gif" />
-                            <h:outputText value="&#160;&#160;&#160;" />
-                            <h:outputText value="Request in progress, please wait..." style="color:red" />
-                        </h:panelGroup>
-                    </f:facet>
-                </a4j:status>
-            </h:panelGroup>
-        </h:panelGroup></div> <div class="box-footer">
-					
-							<ui:insert name="controlButttons" />
-							<div id="updateButtons">
-                        
-                     	<h:commandButton value="Validate" styleClass="btn btn-primary validateButton" action="#{_importAction.validateFileToImport()}" rendered="#{not _importAction.fileDataToImport.ready}" />
-                        <h:commandButton value="Import" styleClass="btn btn-primary importButton" action="#{_importAction.importAttributes()}" rendered="#{_importAction.fileDataToImport.ready}" />
-                        <h:commandButton value="Cancel" styleClass="btn btn-primary cancelButton" action="#{_importAction.cancel}" immediate="true" style="margin-left:5px;" />
-                   </div></div>
-        
-						
-					</div>
-					</div></div>
-    </h:form>
-
+	<h:form id="attributeImportForm">
+		<input type='hidden' name='cid' value='#{conversation.id}' />
+		<div class="row">
+			<div style="display: inline-block; width: 73% !important;">
+				<h:panelGroup columns="1" width="100%" border="0" cellpadding="0"
+					cellspacing="0">
+					<ox:decorate label="File to import">
+						<h:panelGroup id="fileImportPanelId" columns="1" width="100%"
+							border="0" cellpadding="0" cellspacing="0">
+							<rich:fileUpload id="fileUploadId"
+								fileUploadListener="#{_importAction.uploadFile}"
+								acceptedTypes="ldif"
+								ontyperejected="alert('Only LDIF files are accepted');"
+								maxFilesQuantity="1" immediateUpload="true" listHeight="60px"
+								styleClass="uploadFile"
+								rendered="#{_importAction.uploadedFile == null}">
+								<a4j:ajax event="uploadcomplete" execute="@none"
+									render="fileImportPanelId, controlButttonId" />
+							</rich:fileUpload>
+							<h:panelGroup layout="block"
+								rendered="#{_importAction.uploadedFile ne null}">
+								<h:outputText value="#{_importAction.uploadedFile.name}" />
+								<richext:spacer width="8" />
+								<a4j:commandLink value="Remove"
+									action="#{_importAction.removeFileToImport}"
+									render="fileImportPanelId, controlButttonId" ajaxSingle="true"
+									limitRender="true" eventsQueue="attributeImportQueue" />
+							</h:panelGroup>
+						</h:panelGroup>
+					</ox:decorate>
+					<richext:spacer height="16" />
+					<h:panelGroup id="controlButttonId">
+						<ui:insert name="controlButttons" />
+						<a4j:status id="submitStatus">
+							<f:facet name="start">
+								<h:panelGroup>
+									<h:graphicImage value="/img/ajax_active.gif" />
+									<h:outputText value="&#160;&#160;&#160;" />
+									<h:outputText value="Request in progress, please wait..."
+										style="color:red" />
+								</h:panelGroup>
+							</f:facet>
+						</a4j:status>
+					</h:panelGroup>
+				</h:panelGroup>
+			</div>
+			<div class="box-footer" style="margin-left:10%;margin-right:10%;">
+				<ui:insert name="controlButttons" />
+				<div id="updateButtons">
+					<h:commandButton value="Validate"
+						styleClass="btn btn-primary validateButton"
+						action="#{_importAction.validateFileToImport()}"
+						rendered="#{not _importAction.fileDataToImport.ready}" />
+					<h:commandButton value="Import"
+						styleClass="btn btn-primary importButton"
+						action="#{_importAction.importAttributes()}"
+						rendered="#{_importAction.fileDataToImport.ready}" />
+					<h:commandButton value="Cancel"
+						styleClass="btn btn-primary cancelButton"
+						action="#{_importAction.cancel}" immediate="true"
+						style="margin-left:5px;" />
+				</div>
+			</div>
+		</div>
+	</h:form>
 </ui:composition>
