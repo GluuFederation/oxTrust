@@ -32,7 +32,6 @@
         }
       </h:outputStylesheet>
 		<section class="content-header">
-
 			<h1 style="color: #333;">
 				#{msg['attribute.configuration']} <small> <i
 					class="fa fa-caret-right" style="color: #333 !important;" />
@@ -49,160 +48,86 @@
 			</ol>
 		</section>
 		<section class="content">
-			<div id="formArea">
-				<h:panelGroup border="0" cellpadding="0" cellspacing="0" columns="1"
-					width="100%">
-					<h:form id="attributesFormId">
-						<h:link id="register" includeViewParams="false"
-							outcome="/attribute/addAttribute" style="padding:6px;"
-							styleClass="label label-success"
-							value="#{msg['attribute.registerAttribute']}" />
-
-
-						<ui:fragment rendered="#{attributeInventoryAction.showInactive}">
-							<a4j:commandLink
-								action="#{attributeInventoryAction.toggleShowInactive}"
-								render="attributesFormId" style="margin-left:5px;padding:6px;"
+			<b:panel title="Attributes" look="primary" iconAwesome="fa-building"
+				collapsible="false">
+				<div id="formArea">
+					<h:panelGroup border="0" cellpadding="0" cellspacing="0"
+						columns="1" width="100%">
+						<h:form id="attributesFormId">
+							<h:link id="register" includeViewParams="false"
+								outcome="/attribute/addAttribute" style="padding:6px;"
 								styleClass="label label-success"
-								value="#{msg['attribute.showOnlyActiveAttributes']}" />
-						</ui:fragment>
-
-						<ui:fragment
-							rendered="#{not attributeInventoryAction.showInactive}">
-							<a4j:commandLink
-								action="#{attributeInventoryAction.toggleShowInactive}"
-								render="attributesFormId" style="margin-left:5px;padding:6px;"
-								styleClass="label label-success showAllAttributesButton"
-								value="#{msg['attribute.showAllAttributes']}" />
-						</ui:fragment>
-
-
-						<div class="row" style="padding-top: 20px">
-							<div class="col-xs-12">
-								<div class="nav-tabs-custom" style="margin-bottom: 0px;">
-									<ul class="nav nav-tabs">
-
-										<li class="active"><a data-toggle="tab"
-											href="#attribuiteInventory">#{msg['attribute.attributeInventory']}</a>
-										</li>
-									</ul>
-									<div class="tab-content">
-										<!-- System Configuration -->
-										<div class="tab-pane active" id="attributeInventory">
-
-											<div style="display: inline-block; width: 75% !important;">
-												<h:panelGroup>
-
-
-													<div class="row">
-														<div id="update" runat="server" visible="false">
-															<!-- general form elements -->
-															<div class="box box-primary" style="width: 132%;">
-																<div class="box-header"></div>
-																<!-- /.box-header -->
-																<h:form>
-																	<div class="row">
-																		<div class="col-md-6 col-md-offset-2"
-																			id="searchPattern">
-																			<h:inputText
-																				alt="search parameters for group like uid,iname,email"
-																				id="searchPatternId" maxlength="30" size="30"
-																				style="float: left;width: 100%;"
-																				styleClass="searchParameters searchAttributeTextArea form-control"
-																				value="#{attributeInventoryAction.searchPattern}" />
-																		</div>
-																		<div class="col-md-4" id="searchPattern">
-																			<h:commandButton
-																				action="#{attributeInventoryAction.search}"
-																				class="btn btn-primary searchAttributeButton"
-																				style="float:left;" value="#{msg['group.search']}" />
-																		</div>
-																	</div>
-																</h:form>
-																<!-- form start -->
-																<div class="box-body">
-																	<div class="table-responsive" style="overflow: auto">
-																		<ui:fragment
-																			rendered="#{attributeInventoryAction.attributeList.size() eq 0}">
-																			<h:outputText
-																				value="#{msg['attribute.noAttributesFound']}" />
-																		</ui:fragment>
-																		<h:dataTable id="attributesListId"
-																			rendered="#{attributeInventoryAction.attributeList.size() gt 0}"
-																			sortMode="single" styleClass="table table-hover rt"
-																			headerClass="tableHeader"
-																			value="#{attributeInventoryAction.attributeList}"
-																			var="attr" width="100%">
-
-																			<h:column class="col-xs-12"
-																				sortBy="#{attr.displayName}">
-																				<f:facet name="header">
-																					<div style="text-align: center;">
-																						#{msg['attribute.displayName']}</div>
-																				</f:facet>
-																				<h:link includeViewParams="false"
-																					outcome="/attribute/updateAttribute"
-																					value="#{attr.displayName}">
-																					<f:param name="inum" value="#{attr.inum}" />
-																				</h:link>
-																			</h:column>
-
-																			<h:column sortBy="#{attr.name}">
-																				<f:facet name="header">
-																					<div style="text-align: center;">
-																						#{msg['attribute.name']}</div>
-																				</f:facet>
-																				<h:outputText class="col-xs-12" value="#{attr.name}" />
-																			</h:column>
-
-																			<h:column class="col-xs-12" sortBy="#{attr.origin}">
-																				<f:facet name="header">
-																					<div style="text-align: center;">
-																						#{msg['attribute.origin']}</div>
-																				</f:facet>
-
-																				<h:outputText class="col-xs-12"
-																					value="#{attr.origin}" />
-																			</h:column>
-
-																			<h:column>
-																				<f:facet name="header">
-																					<div style="text-align: center;">
-																						#{msg['attribute.description']}</div>
-																				</f:facet>
-																				<h:outputText class="col-xs-12"
-																					value="#{attr.description}" />
-																			</h:column>
-
-																			<h:column>
-																				<f:facet name="header">
-																					<div style="text-align: center;">
-																						#{msg['attribute.status']}</div>
-																				</f:facet>
-																				<b:label 
-																					rendered="#{attr.status eq 'ACTIVE'}"
-																					text="#{attr.status}" severity="primary" />
-																				<b:label 
-																					rendered="#{attr.status eq 'INACTIVE'}"
-																					text="#{attr.status}" severity="danger" />
-																			</h:column>
-																		</h:dataTable>
-																	</div>
-																</div>
-															</div>
-														</div>
-													</div>
-												</h:panelGroup>
+								value="#{msg['attribute.registerAttribute']}" />
+							<ui:fragment rendered="#{attributeInventoryAction.showInactive}">
+								<a4j:commandLink
+									action="#{attributeInventoryAction.toggleShowInactive}"
+									render="attributesFormId" style="margin-left:5px;padding:6px;"
+									styleClass="label label-success"
+									value="#{msg['attribute.showOnlyActiveAttributes']}" />
+							</ui:fragment>
+							<ui:fragment
+								rendered="#{not attributeInventoryAction.showInactive}">
+								<a4j:commandLink
+									action="#{attributeInventoryAction.toggleShowInactive}"
+									render="attributesFormId" style="margin-left:5px;padding:6px;"
+									styleClass="label label-success showAllAttributesButton"
+									value="#{msg['attribute.showAllAttributes']}" />
+							</ui:fragment>
+							<div style="padding-top: 20px">
+								<h:panelGroup id="attributeInventory">
+									<div class="row">
+										<h:form>
+											<div class="row" style="width: 100%;">
+												<div class="col-md-6 col-md-offset-2" id="searchPattern">
+													<h:inputText
+														alt="search parameters for group like uid,iname,email"
+														id="searchPatternId" maxlength="30" size="30"
+														style="float: left;width: 100%;"
+														styleClass="searchParameters searchAttributeTextArea form-control"
+														value="#{attributeInventoryAction.searchPattern}" />
+												</div>
+												<div class="col-md-4" id="searchPattern">
+													<b:commandButton iconAwesome="fa-search"
+														action="#{attributeInventoryAction.search}"
+														class="btn btn-primary searchAttributeButton"
+														style="float:left;" value="#{msg['group.search']}" />
+												</div>
 											</div>
-										</div>
+										</h:form>
 									</div>
-								</div>
+									<div class="row" style="padding:5px">
+										<b:dataTable id="attributesListId"
+											rendered="#{attributeInventoryAction.attributeList.size() gt 0}"
+											sortMode="single"
+											value="#{attributeInventoryAction.attributeList}" var="attr"
+											print="true" excel="true" csv="true" pdf="true" select="true">
+											<b:dataTableColumn label="#{msg['attribute.displayName']}">
+												<h:link includeViewParams="false"
+													outcome="/attribute/updateAttribute"
+													value="#{attr.displayName}">
+													<f:param name="inum" value="#{attr.inum}" />
+												</h:link>
+											</b:dataTableColumn>
+											<b:dataTableColumn value="#{attr.name}"
+												label="#{msg['attribute.name']}" />
+											<b:dataTableColumn value="#{attr.origin}"
+												label="#{msg['attribute.origin']}" />
+											<b:dataTableColumn value="#{attr.description}"
+												label="#{msg['attribute.description']}" />
+											<b:dataTableColumn label="#{msg['attribute.status']}">
+												<b:label rendered="#{attr.status eq 'ACTIVE'}"
+													text="#{attr.status}" severity="primary" />
+												<b:label rendered="#{attr.status eq 'INACTIVE'}"
+													text="#{attr.status}" severity="danger" />
+											</b:dataTableColumn>
+										</b:dataTable>
+									</div>
+								</h:panelGroup>
 							</div>
-						</div>
-					</h:form>
-
-				</h:panelGroup>
-			</div>
+						</h:form>
+					</h:panelGroup>
+				</div>
+			</b:panel>
 		</section>
 	</ui:define>
 </ui:composition>

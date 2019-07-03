@@ -35,7 +35,6 @@
                     <ui:param name="_attribute" value="#{updateAttributeAction.attribute}"/>
                     <ui:param name="_attributeAction" value="#{updateAttributeAction}"/>
                     <ui:param name="_new" value="false"/>
-
                     <ui:define name="controlButttons">
                         <div id="updateButtons">
                             <h:commandButton action="#{updateAttributeAction.save}"
@@ -51,7 +50,6 @@
                         </div>
                     </ui:define>
                 </ui:decorate>
-
                 <ox:acceptRemovalDialog deleteMethod="#{updateAttributeAction.delete}" id="deleteConfirmation"
                                         subject="attribute" value="#{updateAttributeAction.attribute.displayName}"/>
             </div>
