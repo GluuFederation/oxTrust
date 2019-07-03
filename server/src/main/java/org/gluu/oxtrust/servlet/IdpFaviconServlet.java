@@ -60,12 +60,11 @@ public class IdpFaviconServlet extends HttpServlet {
 		if (organization.getIdpFaviconPath() == null || StringUtils.isEmpty(organization.getIdpFaviconPath())) {
 			return false;
 		}
-
 		File directory = new File(BASE_IDP_FAVICON_PATH);
 		if (!directory.exists()) {
 			directory.mkdir();
 		}
-		File faviconPath = new File(BASE_IDP_FAVICON_PATH + organization.getIdpFaviconPath());
+		File faviconPath = new File(organization.getIdpFaviconPath());
 		if (!faviconPath.exists()) {
 			return false;
 		}

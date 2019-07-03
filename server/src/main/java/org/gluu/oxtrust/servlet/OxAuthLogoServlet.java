@@ -35,7 +35,7 @@ public class OxAuthLogoServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) {
 		response.setContentType("image/jpg");
-		response.setDateHeader("Expires", new Date().getTime()+1000L*1800);
+		response.setDateHeader("Expires", new Date().getTime() + 1000L * 1800);
 		GluuOrganization organization = organizationService.getOrganization();
 		boolean hasSucceed = readCustomLogo(response, organization);
 		if (!hasSucceed) {
@@ -63,7 +63,7 @@ public class OxAuthLogoServlet extends HttpServlet {
 		if (!directory.exists()) {
 			directory.mkdir();
 		}
-		File logoPath = new File(BASE_OXAUTH_LOGO_PATH + organization.getOxAuthLogoPath());
+		File logoPath = new File(organization.getOxAuthLogoPath());
 		if (!logoPath.exists()) {
 			return false;
 		}

@@ -63,7 +63,7 @@ public class IdpLogoServlet extends HttpServlet {
 		if (!directory.exists()) {
 			directory.mkdir();
 		}
-		File logoPath = new File(BASE_IDP_LOGO_PATH + organization.getIdpLogoPath());
+		File logoPath = new File(organization.getIdpLogoPath());
 		if (!logoPath.exists()) {
 			return false;
 		}

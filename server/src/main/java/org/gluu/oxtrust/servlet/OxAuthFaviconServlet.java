@@ -20,6 +20,7 @@ import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.model.GluuOrganization;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 @WebServlet(urlPatterns = "/servlet/oxauth/favicon")
 public class OxAuthFaviconServlet extends HttpServlet {
 
@@ -35,7 +36,7 @@ public class OxAuthFaviconServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest httpServletRequest, HttpServletResponse response)
 			throws ServletException, IOException {
 		response.setContentType("image/x-icon");
-		response.setDateHeader("Expires", new Date().getTime()+1000L*1800);
+		response.setDateHeader("Expires", new Date().getTime() + 1000L * 1800);
 		GluuOrganization organization = organizationService.getOrganization();
 		boolean hasSucceed = readCustomFavicon(response, organization);
 		if (!hasSucceed) {
@@ -64,7 +65,7 @@ public class OxAuthFaviconServlet extends HttpServlet {
 		if (!directory.exists()) {
 			directory.mkdir();
 		}
-		File faviconPath = new File(BASE_OXAUTH_FAVICON_PATH + organization.getOxAuthFaviconPath());
+		File faviconPath = new File(organization.getOxAuthFaviconPath());
 		if (!faviconPath.exists()) {
 			return false;
 		}

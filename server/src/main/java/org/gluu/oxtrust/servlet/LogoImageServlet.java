@@ -75,7 +75,7 @@ public class LogoImageServlet extends HttpServlet {
 		if (!directory.exists()) {
 			directory.mkdir();
 		}
-		File logoPath = new File(BASE_OXTRUST_LOGO_PATH + organization.getOxTrustLogoPath());
+		File logoPath = new File(organization.getOxTrustLogoPath());
 		if (!logoPath.exists()) {
 			return false;
 		}

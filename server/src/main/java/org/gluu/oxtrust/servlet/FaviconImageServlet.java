@@ -71,7 +71,7 @@ public class FaviconImageServlet extends HttpServlet {
 		if (!directory.exists()) {
 			directory.mkdir();
 		}
-		File faviconPath = new File(BASE_OXTRUST_FAVICON_PATH + organization.getOxTrustFaviconPath());
+		File faviconPath = new File(organization.getOxTrustFaviconPath());
 		if (!faviconPath.exists()) {
 			return false;
 		}
