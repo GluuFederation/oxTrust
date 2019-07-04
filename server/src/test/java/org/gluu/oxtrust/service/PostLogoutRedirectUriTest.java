@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-import org.gluu.oxtrust.action.test.AbstractAuthenticationTest;
+import org.gluu.oxtrust.action.AbstractAuthenticationTest;
 import org.testng.annotations.Test;
 
 
