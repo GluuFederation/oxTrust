@@ -29,7 +29,7 @@ Scenario: Change user password
 	Then 	I should not see a user named 'QaUserPasswordChanged'
 	And 	I sign out 
 	
-@gluuQAPending1
+@gluuQA
 Scenario: Change user password from profile page
     When 	I sign in as administrator 
 	And 	I go to user add page 

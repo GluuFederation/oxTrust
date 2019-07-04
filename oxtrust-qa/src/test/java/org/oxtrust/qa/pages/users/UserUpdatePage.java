@@ -97,7 +97,6 @@ public class UserUpdatePage extends AbstractPage {
 		}
 		List<WebElement> spans = form.findElements(By.xpath("following-sibling::span"));
 		spans.get(0).findElements(By.tagName("input")).get(0).click();
-		spans.get(0).findElements(By.tagName("input")).get(0).click();
 		fluentWait(SMALL);
 	}
 

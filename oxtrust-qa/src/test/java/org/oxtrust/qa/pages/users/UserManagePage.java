@@ -8,24 +8,17 @@ import org.openqa.selenium.WebElement;
 import org.oxtrust.qa.pages.AbstractPage;
 
 public class UserManagePage extends AbstractPage {
-	private List<WebElement> inputs;
 	private WebElement tableBody;
 	private WebElement foundUser;
 
 	public void searchUser(String pattern) {
-		WebElement searchBox = webDriver.findElement(By.className("searchArea"));
-		WebElement searchSpanBox = searchBox.findElement(By.tagName("span"));
-		inputs = searchSpanBox.findElements(By.tagName("input"));
-		Assert.assertTrue(inputs.size() == 2);
-		inputs.get(0).sendKeys(pattern);
-		inputs.get(1).click();
-
+		search(pattern);
 	}
 
 	public boolean userExistList(String username) {
 		try {
-			tableBody = webDriver.findElement(By.className("personsFormIdpersonsListIdTable")).findElements(By.tagName("tbody"))
-					.get(0);
+			tableBody = webDriver.findElement(By.className("personsFormIdpersonsListIdTable"))
+					.findElements(By.tagName("tbody")).get(0);
 		} catch (Exception e) {
 			System.out.println("############## FAILED STATE");
 			return false;

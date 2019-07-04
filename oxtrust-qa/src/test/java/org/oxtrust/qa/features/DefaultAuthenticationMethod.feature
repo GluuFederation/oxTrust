@@ -1,5 +1,5 @@
 Feature: Default authentication method 
-@gluuQA 
+@gluuQA
 Scenario: Check default authentication method 
 	When 	I sign in as administrator 
 	Then 	I should see gluu home page 

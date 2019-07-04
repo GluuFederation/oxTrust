@@ -9,6 +9,7 @@ import org.oxtrust.qa.pages.AbstractPage;
 public class OpenIdConnectScopeAddPage extends AbstractPage {
 
 	public void save() {
+		fluentWait(SMALL);
 		WebElement buttonBar = webDriver.findElement(By.className("box-footer"));
 		buttonBar.click();
 		buttonBar.findElements(By.tagName("input")).get(0).click();
@@ -16,23 +17,20 @@ public class OpenIdConnectScopeAddPage extends AbstractPage {
 	}
 
 	public void setDisplayName(String dn) {
-		WebElement main = webDriver.findElement(By.className("box-header"));
-		WebElement input = main.findElement(By.className("displayNameId"));
+		WebElement input = webDriver.findElement(By.className("displayNameId"));
 		input.clear();
 		input.sendKeys(dn);
 		input.sendKeys(Keys.TAB);
 	}
 
 	public void setDescription(String des) {
-		WebElement main = webDriver.findElement(By.className("box-header"));
-		WebElement description = main.findElement(By.tagName("textarea"));
+		WebElement description = webDriver.findElement(By.tagName("textarea"));
 		description.clear();
 		description.sendKeys(des);
 	}
 
 	public void setType(String type) {
-		WebElement main = webDriver.findElement(By.className("box-header"));
-		WebElement selectBox = main.findElements(By.tagName("select")).get(0);
+		WebElement selectBox = webDriver.findElement(By.className("scopeType"));
 		Select select = new Select(selectBox);
 		select.selectByVisibleText(type);
 	}

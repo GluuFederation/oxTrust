@@ -47,6 +47,14 @@ public class AbstractPage {
 
 	}
 
+	public void search(String pattern) {
+		WebElement searchBox = webDriver.findElement(By.className("searchTextBox"));
+		searchBox.sendKeys(pattern);
+		WebElement button = webDriver.findElement(By.className("searchButton"));
+		button.click();
+		fluentWait(ONE_SEC);
+	}
+
 	public void navigate(final String value) {
 		webDriver.get(value);
 	}
@@ -293,9 +301,8 @@ public class AbstractPage {
 		input.clear();
 		input.sendKeys(text);
 	}
-	
-	
-	public void fillTextFillByClass(String inputClass, String text,int index) {
+
+	public void fillTextFillByClass(String inputClass, String text, int index) {
 		WebElement input = webDriver.findElements(By.className(inputClass)).get(index);
 		input.clear();
 		input.sendKeys(text);

@@ -10,7 +10,6 @@ public class SectorAddPage extends AbstractPage {
 
 	public void addLoginRedirect(String url) {
 		webDriver.findElements(By.className("AddLoginUrl")).get(0).click();
-
 		WebElement pane = waitElementByID("loginRedirect:inputText_container");
 		WebElement main = pane.findElement(By.id("loginRedirect:inputText_content"));
 		List<WebElement> inputs = main.findElements(By.cssSelector("input"));
@@ -20,7 +19,6 @@ public class SectorAddPage extends AbstractPage {
 				input.sendKeys(url);
 			}
 		}
-
 		WebElement footer = main.findElement(By.className("box-footer"));
 		footer.findElements(By.tagName("input")).get(0).click();
 	}
@@ -28,12 +26,10 @@ public class SectorAddPage extends AbstractPage {
 	public void addClient(String client) {
 		fluentWait(1);
 		webDriver.findElements(By.className("AddClient")).get(0).click();
-
 		WebElement pane = waitElementByID("client:selectClientModalPanel_content");
 		WebElement searchBox = pane.findElement(By.className("searchParameters"));
 		searchBox.clear();
 		searchBox.sendKeys(client);
-
 		WebElement searchButton = searchBox.findElements(By.xpath("following-sibling::input")).get(0);
 		searchButton.click();
 		fluentWait(ONE_SEC);

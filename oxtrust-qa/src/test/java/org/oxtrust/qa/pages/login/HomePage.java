@@ -78,7 +78,7 @@ public class HomePage extends AbstractPage {
 	public void goNameIdConfigurePage() {
 		WebElement samlMenu = webDriver.findElement(By.xpath("//*[@id='menuSAML']"));
 		samlMenu.click();
-
+		fluentWait(1);
 		WebElement subMenu = waitElementByID("subMenuLinkSAML3");
 		subMenu.click();
 		fluentWait(3);
@@ -147,6 +147,7 @@ public class HomePage extends AbstractPage {
 	public void goToUsersManagePage() {
 		WebElement userMenu = webDriver.findElement(By.xpath("//*[@id='menuUsers']"));
 		userMenu.click();
+		fluentWait(1);
 		WebElement subMenu = waitElement("//*[@id='subMenuLinkUsers2']");
 		subMenu.click();
 		fluentWait(3);
@@ -169,8 +170,10 @@ public class HomePage extends AbstractPage {
 	}
 
 	public void goToOpenIDScopePage() {
+		fluentWait(1);
 		WebElement openIdMenu = webDriver.findElement(By.xpath("//*[@id='menuOpenID']"));
 		openIdMenu.click();
+		fluentWait(2);
 		WebElement subMenu = waitElement("//*[@id='subMenuLinkOpenID1']");
 		subMenu.click();
 		fluentWait(3);
@@ -179,6 +182,7 @@ public class HomePage extends AbstractPage {
 	public void goToOpenIDClientsListPage() {
 		WebElement openIdMenu = webDriver.findElement(By.xpath("//*[@id='menuOpenID']"));
 		openIdMenu.click();
+		fluentWait(1);
 		WebElement subMenu = waitElement("//*[@id='subMenuLinkOpenID2']");
 		subMenu.click();
 		fluentWait(3);
@@ -220,6 +224,7 @@ public class HomePage extends AbstractPage {
 	public void goToManageAutheticationMenuPage() {
 		WebElement openIdMenu = webDriver.findElement(By.xpath("//*[@id='menuConfiguration']"));
 		openIdMenu.click();
+		fluentWait(3);
 		WebElement subMenu = waitElement("//*[@id='subMenuLinkConfiguration3']");
 		subMenu.click();
 		fluentWait(3);

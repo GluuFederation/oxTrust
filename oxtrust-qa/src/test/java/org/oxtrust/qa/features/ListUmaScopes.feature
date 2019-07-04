@@ -7,5 +7,4 @@ Scenario: List uma scopes
 	Then 	I should see a uma scope named 'SCIM Access'
 	And 	I should see a uma scope named 'API Read Access'
 	And 	I should see a uma scope named 'API Write Access'
-	And 	I should see a uma scope named 'UMA Protection'
 	Then 	I sign out

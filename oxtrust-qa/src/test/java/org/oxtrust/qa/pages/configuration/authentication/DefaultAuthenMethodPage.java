@@ -31,6 +31,7 @@ public class DefaultAuthenMethodPage extends AbstractPage {
 	public void save() {
 		WebElement footer = webDriver.findElement(By.id("updateButtons"));
 		footer.findElements(By.tagName("input")).get(0).click();
+		fluentWait(SMALL);
 	}
 
 }
