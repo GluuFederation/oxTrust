@@ -21,8 +21,7 @@
 				top.location.href = location.href;
 		</script>
 
-		<link rel="icon"
-			href="#{request.contextPath}/servlet/favicon" />
+		<link rel="icon" href="#{request.contextPath}/servlet/favicon" />
 		<link
 			href="#{oxTrustConfigurationService.cssLocation}/../theme/bootstrap/css/bootstrap.min.css"
 			rel="stylesheet" type="text/css" />
@@ -44,10 +43,7 @@
 		<link
 			href="#{oxTrustConfigurationService.cssLocation}/../theme/dist/css/custom.css"
 			rel="stylesheet" type="text/css" />
-
-
 		<ui:insert name="head" />
-
 		<ui:param name="themeColor"
 			value="#{organizationService.organization.themeColor}" />
 		<ui:fragment rendered="#{not empty themeColor}">
@@ -56,93 +52,99 @@
 	height: 33px;
 	background-color: #{gluufn:getColor(themeColor, "00ff00")
 }
- .footer {
-    position: fixed;
-    margin-top: 4%;
-    bottom: 0;
-    width: 100%;
-    color: white;
-    height: 55px;
-    background-color: #00BE79;
-    height: 55px;
-}
 </style>
 		</ui:fragment>
-		<h:outputStylesheet>
-           input[type=text], input[type=email], input[type=password],input[autocomplete=off], input[type=url]{
-           padding:5px; 
-           border: 2px solid #ccc;
-           margin-left:2px !important;
-           border-radius: 5px !important;
-           }
+		<style>
+input[type=text], input[type=email], input[type=password], input[autocomplete=off],
+	input[type=url] {
+	padding: 5px;
+	border: 2px solid #ccc;
+	margin-left: 2px !important;
+	border-radius: 5px !important;
+}
 
-           input[type=text]:focus, input[type=email]:focus, input[type=password]:focus, input[autocomplete=off]:focus, input[type=url]{
-             border-radius: 5px !important;
-             border: 1px solid #ccc;
-           }
-           
-           input[type=checkbox]{
-             border-radius: 5O% !important;
-             border: 2px solid #ccc !important;
-           }
-           
-           input[type=checkbox]:focus{
-            border-radius: 5O% !important;
-            border:none;
-           }
-           
-           textarea:focus{
-             border-radius: 5px !important;
-             margin-left:2px !important;
-             border: 2px solid #ccc;
-           }
-           
-           textarea{
-             padding:5px; 
-             margin-left:2px !important;
-             border-radius: 5px !important;
-           }
+input[type=text]:focus, input[type=email]:focus, input[type=password]:focus,
+	input[autocomplete=off]:focus, input[type=url] {
+	border-radius: 5px !important;
+	border: 1px solid #ccc;
+}
 
-            input[type=submit] {
-            padding:5px 15px; 
-            cursor:pointer;
-            border-radius: 5px !important;
-          }
-          .btn-primary, .btn-success , .btn-danger{
-            border:0 none;
-            cursor:pointer;
-            border-radius: 5px !important;
-          } 
-          .icheckbox_square-blue{
-            border-radius: 50% !important;
-            border: 1px solid #ccc !important
-          }
-          .icheckbox_square-blue:focus{
-            border-radius: 50% !important;
-            border: none;
-          }
-          
-          select{
-           border-radius: 5px !important;
-          }
-          
-         .roundedSelectBox{
-             border: 2px solid #ccc;
-             border-radius: 5px !important;
-          }
-             
-     </h:outputStylesheet>
+input[type=checkbox] {
+	border-radius: 5O% !important;
+	border: 2px solid #ccc !important;
+}
+
+input[type=checkbox]:focus {
+	border-radius: 5O% !important;
+	border: none;
+}
+
+textarea:focus {
+	border-radius: 5px !important;
+	margin-left: 2px !important;
+	border: 2px solid #ccc;
+}
+
+textarea {
+	padding: 5px;
+	margin-left: 2px !important;
+	border-radius: 5px !important;
+}
+
+input[type=submit] {
+	padding: 5px 15px;
+	cursor: pointer;
+	border-radius: 5px !important;
+}
+
+.btn-primary, .btn-success, .btn-danger {
+	border: 0 none;
+	cursor: pointer;
+	border-radius: 5px !important;
+}
+
+.icheckbox_square-blue {
+	border-radius: 50% !important;
+	border: 1px solid #ccc !important
+}
+
+.icheckbox_square-blue:focus {
+	border-radius: 50% !important;
+	border: none;
+}
+
+select {
+	border-radius: 5px !important;
+}
+
+.roundedSelectBox {
+	border: 2px solid #ccc;
+	border-radius: 5px !important;
+}
+
+.footer {
+	position: fixed;
+	margin-top: 4%;
+	bottom: 0;
+	width: 100%;
+	color: white;
+	height: 55px;
+	background-color: #00BE79;
+	height: 55px;
+}
+a{
+color: white;
+}
+</style>
 	</h:head>
 	<h:body styleClass="login-page" style="background:white !important;">
-		<div class="login-logo">
-			<img style="width: 15%; height: 20%;" src="#{request.contextPath}/servlet/logo"/>
-		</div>
+		<img style="width: 15%; height: 20%;"
+			src="#{request.contextPath}/servlet/logo" />
 		<div class="bs-docs-section"
 			style="border-top: 2px solid #1ab26b !important; margin-bottom: 5px !important; margin-top: 1px !important; padding-top: 1px !important;"></div>
 		<div class="wrapper">
 			<ui:insert name="body" />
 		</div>
-
 		<!-- Scripts -->
 		<script
 			src="#{oxTrustConfigurationService.cssLocation}/../theme/bootstrap/js/bootstrap.min.js"
@@ -155,31 +157,19 @@
 			type="text/javascript"></script>
 
 	</h:body>
-	<div class="footer-copyright text-center py-3"
-		style="background: #1ab26b; position: fixed; left: 0; bottom: 0; width: 100%; text-align: center;">
-		<div class="footer">
-			<div class="row">
-				<div class="col-md-12">
-					<div class="padding_spc"
-						style="padding-bottom: 5px; padding-top: 5px;">
-						<p>
-							<h:outputText value="Gluu, Inc" />
-							| <a target="_blank"
-								href="https://github.com/GluuFederation/oxTrust/blob/master/LICENSE"><h:outputText
-									value="Use subject to MIT LICENSE" escape="false" /></a>
-							<h:panelGroup rendered='#{!empty client.policyUri}'>
-                    | <a target="_blank" href="#{client.policyUri}"><h:outputText
-										value="#{msgs['common.privacyPolicy']}" escape="false" /></a>
-							</h:panelGroup>
-							<h:panelGroup rendered='#{!empty client.tosUri}'>
-                    | <a target="_blank" href="#{client.tosUri}"><h:outputText
-										value="#{msgs['common.termsOfService']}" escape="false" /></a>
-							</h:panelGroup>
-						</p>
-					</div>
-				</div>
-			</div>
-		</div>
+	<footer class="footer">
+	<div class="container">
+		<p
+			style="margin-right: 30%; margin-left: 30%; padding: 20px; color: white;">
+			&copy; <a target="_blank"
+				href="https://github.com/GluuFederation/oxAuth/blob/master/LICENSE"><h:outputText
+					value="#{msg['common.gluuInc']}" escape="false" /></a> | <a
+				target="_blank" href="#{client.policyUri}"><h:outputText
+					value="#{msg['common.privacyPolicy']}" escape="false" /></a> | <a
+				target="_blank" href="#{client.tosUri}"><h:outputText
+					value="#{msg['common.termsOfService']}" escape="false" /></a>
+		</p>
 	</div>
+	</footer>
 </f:view>
 </html>
