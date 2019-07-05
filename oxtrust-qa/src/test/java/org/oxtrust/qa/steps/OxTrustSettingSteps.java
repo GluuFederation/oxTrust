@@ -15,9 +15,9 @@ public class OxTrustSettingSteps extends BaseSteps {
 	private OxTrustSettingPage oxTrustSettingPage = new OxTrustSettingPage();
 
 	@When("^I go to oxtrust setting configuration page$")
-	public void goToSmtpPage() {
+	public void goToOrganizationSettingPage() {
 		homePage.goToOrganisationConfigurationMenuPage();
-		oxTrustSettingPage.selectTab("OxTrust Settings");
+		oxTrustSettingPage.selectTab("Organization Settings");
 	}
 
 	@Then("^I should that the org name is not empty$")

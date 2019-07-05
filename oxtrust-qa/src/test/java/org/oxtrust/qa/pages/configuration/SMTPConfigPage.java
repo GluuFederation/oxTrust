@@ -82,7 +82,8 @@ public class SMTPConfigPage extends AbstractPage {
 
 	public void update() {
 		WebElement footer = webDriver.findElement(By.id("organizationForm:updateButtons"));
+		fluentWait(3);
 		footer.findElements(By.tagName("input")).get(0).click();
-		fluentWait(SMALL);
+		fluentWait(5);
 	}
 }

@@ -185,14 +185,14 @@
 								<ox:decorate id="displayName"
 									label="#{msg['organizationForm.organizationName']}">
 									<h:inputText value="#{_organization.displayName}" size="100"
-										styleClass="form-control" style="width:100%;" />
+										styleClass="form-control orgNameTextBox" style="width:100%;" />
 								</ox:decorate>
 								<ui:param name="_managerGroup"
 									value="#{gluufn:getDisplayNameEntry(_organization.managerGroup)}" />
 								<ox:decorate id="managerGroup"
 									label="#{msg['organizationForm.managerGroup']}">
 									<h:link includeViewParams="false" outcome="/group/updateGroup"
-										value="#{_managerGroup.displayName}">
+										value="#{_managerGroup.displayName}" styleClass="GroupLinkBox">
 										<f:param name="inum" value="#{_managerGroup.inum}" />
 									</h:link>
 								</ox:decorate>

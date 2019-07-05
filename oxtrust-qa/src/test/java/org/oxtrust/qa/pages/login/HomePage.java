@@ -208,6 +208,7 @@ public class HomePage extends AbstractPage {
 	public void goToOrganisationConfigurationMenuPage() {
 		WebElement openIdMenu = webDriver.findElement(By.xpath("//*[@id='menuConfiguration']"));
 		openIdMenu.click();
+		fluentWait(3);
 		WebElement subMenu = waitElement("//*[@id='subMenuLinkConfiguration1']");
 		subMenu.click();
 		fluentWait(3);

@@ -1,4 +1,4 @@
-Feature: OxTrust setting config 
+Feature: Organisation setting config 
 @gluuQA
 Scenario: OxTrust setting config 
 	When 	I sign in as administrator 
