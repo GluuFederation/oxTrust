@@ -163,7 +163,8 @@ public class PasswordReminderAction implements Serializable {
 	public boolean enabled() {
 		GluuConfiguration configuration = configurationService.getConfiguration();
 		SmtpConfiguration smtpConfiguration = configuration.getSmtpConfiguration();
-		boolean valid = smtpConfigurationIsValid(smtpConfiguration) && configuration.isPasswordResetAllowed();
+		boolean valid = smtpConfiguration != null && smtpConfiguration.isValid()
+				&& configuration.isPasswordResetAllowed();
 		if (valid) {
 			passwordResetIsEnable = true;
 			if (recaptchaService.isEnabled() && getAuthenticationRecaptchaEnabled()) {
@@ -179,14 +180,6 @@ public class PasswordReminderAction implements Serializable {
 					facesMessages.evalResourceAsString("#{msg['person.passwordreset.notActivate']}"));
 		}
 		return valid;
-	}
-
-	// this method shouldn't be implemented in this Class but in SmtpConfiguration
-	// Class
-	private boolean smtpConfigurationIsValid(SmtpConfiguration smtpConfiguration) {
-		return smtpConfiguration != null && smtpConfiguration.getHost() != null && smtpConfiguration.getPort() != 0
-				&& ((!smtpConfiguration.isRequiresAuthentication())
-						|| (smtpConfiguration.getUserName() != null && smtpConfiguration.getPassword() != null));
 	}
 
 	public String getEmail() {
