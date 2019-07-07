@@ -34,6 +34,7 @@ import org.gluu.model.GluuAttribute;
 import org.gluu.model.GluuStatus;
 import org.gluu.model.GluuUserRole;
 import org.gluu.oxtrust.ldap.service.AttributeService;
+import org.gluu.oxtrust.ldap.service.ConfigurationService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.ldap.service.OxTrustAuditService;
 import org.gluu.oxtrust.ldap.service.PersonService;
@@ -56,11 +57,12 @@ import org.slf4j.Logger;
 @Named("registerPersonAction")
 public class RegisterPersonAction implements Serializable {
 
-	private static final long serialVersionUID = 6002737004324917338L;
-	
-	public static final Pattern VALID_EMAIL_ADDRESS_REGEX = 
-		    Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
+	private static final String HOST_NAME = "hostName";
 
+	private static final long serialVersionUID = 6002737004324917338L;
+
+	public static final Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$",
+			Pattern.CASE_INSENSITIVE);
 
 	@Inject
 	private Logger log;
@@ -70,6 +72,9 @@ public class RegisterPersonAction implements Serializable {
 
 	@Inject
 	private OrganizationService organizationService;
+
+	@Inject
+	private ConfigurationService configurationService;
 
 	@Inject
 	private CustomAttributeAction customAttributeAction;
@@ -224,32 +229,24 @@ public class RegisterPersonAction implements Serializable {
 
 	public String registerImpl() throws CloneNotSupportedException {
 		boolean registrationFormValid = StringHelper.equals(password, repeatPassword);
-
 		if (!captchaDisabled) {
 			String gRecaptchaRresponse = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap()
 					.get("g-recaptcha-response");
 			boolean reCaptchaResponse = recaptchaService.verifyRecaptchaResponse(gRecaptchaRresponse);
 			registrationFormValid &= reCaptchaResponse;
 		}
-
 		if (registrationFormValid) {
 			GluuCustomPerson archivedPerson = (GluuCustomPerson) person.clone();
-
 			String customObjectClass = attributeService.getCustomOrigin();
-
 			this.person.setCustomObjectClasses(new String[] { customObjectClass });
-
-			// Save person
 			if (person.getInum() == null) {
 				String inum = personService.generateInumForNewPerson();
 				this.person.setInum(inum);
 			}
-
 			if (person.getDn() == null) {
 				String dn = personService.getDnForPerson(this.person.getInum());
 				this.person.setDn(dn);
 			}
-
 			List<GluuCustomAttribute> personAttributes = this.person.getCustomAttributes();
 			if (!personAttributes.contains(new GluuCustomAttribute("cn", ""))) {
 				List<GluuCustomAttribute> changedAttributes = new ArrayList<GluuCustomAttribute>();
@@ -260,15 +257,11 @@ public class RegisterPersonAction implements Serializable {
 			} else {
 				this.person.setCommonName(this.person.getCommonName());
 			}
-			// save password
 			this.person.setUserPassword(password);
 			this.person.setCreationDate(new Date());
 			this.person.setMail(email);
-
 			try {
-				// Set default message
 				this.postRegistrationInformation = "You have successfully registered with oxTrust. Login to begin your session.";
-
 				boolean result = false;
 				result = externalUserRegistrationService.executeExternalPreRegistrationMethods(this.person,
 						requestParameters);
@@ -286,7 +279,6 @@ public class RegisterPersonAction implements Serializable {
 										.getExternalContext().getRequest());
 					} catch (Exception e) {
 					}
-
 				} else {
 					personService.addPerson(this.person);
 					try {
@@ -297,10 +289,10 @@ public class RegisterPersonAction implements Serializable {
 					} catch (Exception e) {
 					}
 				}
-
+				requestParameters.put(HOST_NAME,
+						new String[] { configurationService.getConfiguration().getHostname() });
 				result = externalUserRegistrationService.executeExternalPostRegistrationMethods(this.person,
 						requestParameters);
-
 				if (!result) {
 					this.person = archivedPerson;
 					return OxTrustConstants.RESULT_FAILURE;
@@ -317,7 +309,6 @@ public class RegisterPersonAction implements Serializable {
 			}
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
-
 		return OxTrustConstants.RESULT_CAPTCHA_VALIDATION_FAILED;
 	}
 
@@ -337,21 +328,15 @@ public class RegisterPersonAction implements Serializable {
 	public String cancel() {
 		facesMessages.add(FacesMessage.SEVERITY_INFO, "You didn't register.");
 		conversationService.endConversation();
-
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
 	private void initAttributes() {
 		List<GluuAttribute> allPersonAttributes = attributeService.getAllActivePersonAttributes(GluuUserRole.ADMIN);
-
 		List<String> allAttributOrigins = attributeService.getAllAttributeOrigins(allPersonAttributes);
-
 		GluuOrganization organization = organizationService.getOrganization();
-
 		List<GluuCustomAttribute> customAttributes = this.person.getCustomAttributes();
-
 		boolean isNewPerson = (customAttributes == null) || customAttributes.isEmpty();
-
 		if (isNewPerson) {
 			customAttributes = new ArrayList<GluuCustomAttribute>();
 			this.person.setCustomAttributes(customAttributes);
@@ -361,14 +346,11 @@ public class RegisterPersonAction implements Serializable {
 		String[] personOCDisplayNames = appConfiguration.getPersonObjectClassDisplayNames();
 		customAttributeAction.initCustomAttributes(allPersonAttributes, customAttributes, allAttributOrigins, personOCs,
 				personOCDisplayNames);
-
 		List<GluuCustomAttribute> mandatoryAttributes = new ArrayList<GluuCustomAttribute>();
-
 		RegistrationConfiguration config = organization.getOxRegistrationConfiguration();
 		boolean registrationCustomized = config != null;
 		boolean registrationAttributesCustomized = registrationCustomized && config.getAdditionalAttributes() != null
 				&& !config.getAdditionalAttributes().isEmpty();
-
 		if (registrationAttributesCustomized) {
 			for (String attributeInum : config.getAdditionalAttributes()) {
 				GluuAttribute attribute = attributeService.getAttributeByInum(attributeInum);
@@ -382,7 +364,6 @@ public class RegisterPersonAction implements Serializable {
 			}
 		}
 		mandatoryAttributes.addAll(personService.getMandatoryAtributes());
-
 		if (isNewPerson) {
 			customAttributeAction.addCustomAttributes(mandatoryAttributes);
 		}
@@ -410,11 +391,6 @@ public class RegisterPersonAction implements Serializable {
 		return "registerPersonAction";
 	}
 
-	/**
-	 * Returns person's attributes
-	 *
-	 * @return list of person's attributes
-	 */
 	public List<GluuCustomAttribute> getCustomAttributes() {
 		return this.person.getCustomAttributes();
 	}
@@ -469,7 +445,6 @@ public class RegisterPersonAction implements Serializable {
 
 	public void validateEmail(FacesContext context, UIComponent component, Object value) throws ValidatorException {
 		String email = (String) value;
-
 		if ((email == null) || (email.trim().equals(""))) {
 			FacesMessage message = new FacesMessage("Please Enter Your Email Address.");
 			message.setSeverity(FacesMessage.SEVERITY_ERROR);
@@ -480,9 +455,7 @@ public class RegisterPersonAction implements Serializable {
 			FacesMessage message = new FacesMessage("Please Enter Valid Email Address.");
 			message.setSeverity(FacesMessage.SEVERITY_ERROR);
 			throw new ValidatorException(message);
-
 		}
-
 		GluuCustomPerson gluuCustomPerson = personService.getPersonByEmail(email);
 		if (gluuCustomPerson != null && appConfiguration.getEnforceEmailUniqueness()) {
 			FacesMessage message = new FacesMessage("Email Address Already Registered.");

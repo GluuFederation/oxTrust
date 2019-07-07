@@ -24,14 +24,14 @@ import javax.validation.constraints.Size;
 import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
-import org.gluu.oxtrust.ldap.service.ConfigurationService;
 import org.gluu.oxtrust.ldap.service.JsonConfigurationService;
+import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.ldap.service.OxTrustAuditService;
 import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.ldap.service.RecaptchaService;
-import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
+import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.model.PasswordResetRequest;
 import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.service.PasswordResetService;
@@ -66,7 +66,7 @@ public class PasswordResetAction implements Serializable {
 	private RecaptchaService recaptchaService;
 
 	@Inject
-	private ConfigurationService configurationService;
+	private OrganizationService organizationService;
 
 	@Inject
 	private PersonService personService;
@@ -95,14 +95,17 @@ public class PasswordResetAction implements Serializable {
 	@Size(min = 3, max = 60, message = "Password length must be between {min} and {max} characters.")
 	private String confirm;
 
+	private String code;
+
 	public String start() throws ParseException {
 		if (StringHelper.isEmpty(guid)) {
 			sendExpirationError();
 			return OxTrustConstants.RESULT_FAILURE;
 		}
+		setCode(guid);
 		PasswordResetRequest passwordResetRequest;
 		try {
-			passwordResetRequest = passwordResetService.findPasswordResetRequest(guid);
+			passwordResetRequest = passwordResetService.findPasswordResetRequest(getGuid());
 		} catch (EntryPersistenceException ex) {
 			log.error("Failed to find password reset request by '{}'", guid, ex);
 			sendExpirationError();
@@ -147,11 +150,6 @@ public class PasswordResetAction implements Serializable {
 		}
 	}
 
-	public String getValue() {
-		FacesContext fc = FacesContext.getCurrentInstance();
-		return fc.getExternalContext().getRequestParameterMap().get("guid");
-	}
-
 	protected void sendExpirationError() {
 		facesMessages.add(FacesMessage.SEVERITY_ERROR,
 				"The reset link is no longer valid.\n\n " + "Re-enter your e-mail to generate a new link.");
@@ -178,9 +176,13 @@ public class PasswordResetAction implements Serializable {
 		}
 
 		if (valid) {
-			GluuConfiguration configuration = configurationService.getConfiguration();
-			this.request = ldapEntryManager.find(PasswordResetRequest.class,
-					"oxGuid=" + this.guid + ", ou=resetPasswordRequests," + configuration.getDn());
+			GluuOrganization organization = organizationService.getOrganization();
+			try {
+				this.request = ldapEntryManager.find(PasswordResetRequest.class,
+						"oxGuid=" + getCode() + ",ou=resetPasswordRequests," + organization.getDn());
+			} catch (Exception e) {
+				log.info("", e);
+			}
 			Calendar requestCalendarExpiry = Calendar.getInstance();
 			Calendar currentCalendar = Calendar.getInstance();
 			if (request != null) {
@@ -194,8 +196,7 @@ public class PasswordResetAction implements Serializable {
 				question = person.getGluuCustomAttribute("secretQuestion");
 				answer = person.getGluuCustomAttribute("secretAnswer");
 			}
-			if (request != null
-					&& requestCalendarExpiry.after(currentCalendar) /* && question != null && answer != null */) {
+			if (request != null && requestCalendarExpiry.after(currentCalendar)) {
 				PasswordResetRequest removeRequest = new PasswordResetRequest();
 				removeRequest.setBaseDn(request.getBaseDn());
 				ldapEntryManager.remove(removeRequest);
@@ -245,7 +246,7 @@ public class PasswordResetAction implements Serializable {
 	}
 
 	public String getGuid() {
-		return guid;
+		return this.guid;
 	}
 
 	public void setGuid(String guid) {
@@ -286,6 +287,14 @@ public class PasswordResetAction implements Serializable {
 
 	public boolean getAuthenticationRecaptchaEnabled() {
 		return jsonConfigurationService.getOxTrustappConfiguration().isAuthenticationRecaptchaEnabled();
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
 	}
 
 }

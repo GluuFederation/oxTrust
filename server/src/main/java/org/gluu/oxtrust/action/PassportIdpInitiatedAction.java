@@ -101,8 +101,6 @@ public class PassportIdpInitiatedAction implements Serializable {
 
 	public String save() {
 		try {
-			log.info("-------------------------------------------");
-			log.info("Params size:"+authzParams.size());
 			this.iiConfiguration.setAuthorizationParams(authzParams);
 			updateClientRedirects();
 			this.passportConfiguration.setIdpInitiated(iiConfiguration);

@@ -66,13 +66,12 @@ public class Fido2DeviceService implements Serializable {
 			}
 			return results;
 		} catch (Exception e) {
-			log.debug("Error getting Fido2 devices", e);
+			log.trace("Error getting Fido2 devices", e.getMessage());
 			return new ArrayList<>();
 		}
 	}
 
 	public GluuFido2Device getFido2DeviceById(String userId, String id) {
-
 		GluuFido2Device f2d = null;
 		try {
 			String dn = getDnForFido2Device(id, userId);
