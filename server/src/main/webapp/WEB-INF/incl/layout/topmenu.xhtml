@@ -1,94 +1,97 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-                xmlns:f="http://xmlns.jcp.org/jsf/core"
-                xmlns:h="http://xmlns.jcp.org/jsf/html"
-                xmlns:gluufn="http://www.gluu.org/jsf/functions">
-
-    <h:form>
-        <header class="main-header">
-            <a href="#{request.contextPath}/home.htm" class="logo" style="background: white !important;">
-            	<img style="width: 50%; height: 60%;" src="#{request.contextPath}/servlet/logo"/>
-            </a>
-            <nav class="navbar navbar-static-top" role="navigation">
-                <a href="#" class="sidebar-toggle" data-toggle="offcanvas"
-                   role="button"> <span class="sr-only">#{msg['topmenu.toggleNavigation']}</span>
-                </a>
-                Language :
-                <h:selectOneMenu value="#{language.localeCode}" onchange="submit()"
-                                 valueChangeListener="#{language.countryLocaleCodeChanged}">
-                    <f:selectItems value="#{language.countriesInMap}"/>
-                </h:selectOneMenu>
-                <div class="navbar-custom-menu" style="margin-right:0px;">
-                    <ul class="nav navbar-nav" style="margin-right:0px;">
-                        <!-- User Account: style can be found in dropdown.less -->
-                        <li class="dropdown user user-menu"><a href="#" class="dropdown-toggle" data-toggle="dropdown"
-                                                               style="padding: 0px;  margin: 4px;">
-                            <div class="glyphicon glyphicon-user"
-                                 style="float: left;font-size: 34px;color: #00BE79;background: none repeat scroll 0% 0% #222D32;padding: 6px;"></div>
-                        </a>
-                            <ul class="dropdown-menu"
-                                style="background-color: transparent;  margin-top: 1px;  border: none;">
-                                <!-- User image -->
-                                <li class="user-header" style="background-color: #222D32 !important;">
-                                    <div class="glyphicon glyphicon-user"
-                                         style="width: 50px;height: 50px;float: left;font-size: 70px;color: #00BE79;"></div>
-                                    <p style="font-size: 14px;  color: whitesmoke;">
-                                        #{gluufn:getPersonDisplayName(identity.user)}
-                                    </p>
-                                    <p style="font-size: 12px;  color: whitesmoke;">
-                                        <br/>
-                                        <h:outputFormat value="#{msg['topmenu.organization']}">
-                                            <f:param value="#{organizationService.organization.displayName}"/>
-                                        </h:outputFormat>
-                                        <br/>
-                                    </p>
-                                </li>
-                                <!-- Menu Footer-->
-                                <li class="user-footer" style="background-color: #181D20 !important;">
-                                    <div class="pull-left" style="margin-right:1px;">
-                                        <a href="#{request.contextPath}/profile/person/viewProfile.htm"
-                                           class="btn bg-green btn-flat">#{msg['topmenu.profile']}</a>
-                                    </div>
-                                    <div class="pull-left" style="width:72px;">
-                                        <h:link includeViewParams="false" outcome="/logout.htm" value="#{msg['topmenu.logout']}"
-                                                styleClass="btn bg-green btn-flat"
-                                                rendered="#{identity.loggedIn}"/>
-                                    </div>
-                                    <div style="float:right;display:none;">
-                                        <div onclick="switch_style('default');return false;" class="pull-left"
-                                             style="margin-right:2px;cursor:pointer; width:13px; height:13px; background-color:#00BE79;"></div>
-                                        <div onclick="switch_style('purple');return false;" class="pull-left"
-                                             style="margin-right:2px;cursor:pointer; width:13px; height:13px; background-color:purple;"></div>
-                                        <div onclick="switch_style('red');return false;" class="pull-left"
-                                             style="margin-right:2px;cursor:pointer; width:13px; height:13px; background-color:red;"></div>
-                                    </div>
-
-                                </li>
-                            </ul>
-                        </li>
-                    </ul>
-                </div>
-
-            </nav>
-
-        </header>
-    </h:form>
-
-    <script type="text/javascript">
-        //<![CDATA[
-        function switch_style(css_title) {
-            var i, link_tag;
-            for (i = 0, link_tag = document.getElementsByTagName('link'); i < link_tag.length; i++) {
-                if ((link_tag[i].rel.indexOf('stylesheet') != -1) &&
-                        link_tag[i].title) {
-                    link_tag[i].disabled = true;
-                    if (link_tag[i].title == css_title) {
-                        link_tag[i].disabled = false;
-                    }
-                }
-            }
-        }
-        //]]>
-    </script>
-
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:b="http://bootsfaces.net/ui"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:gluufn="http://www.gluu.org/jsf/functions"
+	xmlns:rich="http://richfaces.org/rich">
+	<h:form>
+		<header class="main-header">
+			<!-- Logo -->
+			<a href="#{request.contextPath}/home.htm" class="logo"
+				style="background: #222D32 !important;"> <img
+				src="#{request.contextPath}/servlet/logo"
+				style="max-height: 45px; padding-bottom: 2px;" />
+			</a>
+			<!-- Header Navbar: style can be found in header.less -->
+			<nav class="navbar navbar-static-top">
+				<!-- Sidebar toggle button-->
+				<a href="#" class="sidebar-toggle" data-toggle="offcanvas"
+					role="button"> <span class="sr-only">Toggle navigation</span>
+				</a>
+				<!-- Navbar Right Menu -->
+				<div class="navbar-custom-menu">
+					<ul class="nav navbar-nav">
+						<!-- Tasks: style can be found in dropdown.less -->
+						<li class="dropdown tasks-menu"><a href="#"
+							class="dropdown-toggle" data-toggle="dropdown"> <i
+								class="fa flag"></i> <span class="label"> <h:selectOneMenu
+										value="#{language.localeCode}" onchange="submit()"
+										valueChangeListener="#{language.countryLocaleCodeChanged}">
+										<f:selectItems value="#{language.countriesInMap}" />
+									</h:selectOneMenu>
+							</span>
+						</a></li>
+						<!-- User Account: style can be found in dropdown.less -->
+						<li class="dropdown user user-menu"><a href="#"
+							class="dropdown-toggle" data-toggle="dropdown"><span
+								class="hidden-xs"><i class="fa fa-user"></i> <h:outputText
+										style="font-size: 18px; color: whitesmoke;"
+										value="    #{gluufn:getPersonDisplayName(identity.user)}" /></span>
+						</a>
+							<ul class="dropdown-menu">
+								<!-- User image -->
+								<li class="user-header"
+									style="background: #222D32 !important; height: 140px;">
+									<p style="font-size: 18px; color: whitesmoke;">
+										<h:outputText value="User: " />
+										<b:label severity="success"
+											text="#{gluufn:getPersonDisplayName(identity.user)}" />
+									</p>
+									<p style="font-size: 18px; color: whitesmoke;">
+										<br />
+										<h:outputText value="#{msg['topmenu.organization']} " />
+										<b:label
+											text="#{organizationService.organization.displayName}"
+											severity="success" />
+										<br />
+									</p>
+								</li>
+								<li class="user-footer">
+									<div class="pull-left">
+										<b:commandLink includeViewParams="false"
+											href="#{request.contextPath}/profile/person/viewProfile.htm"
+											value="#{msg['topmenu.profile']}" iconAwesome="fa-user"
+											styleClass="btn bg-green btn-flat profileButton"
+											rendered="#{identity.loggedIn}" />
+									</div>
+									<div class="pull-right">
+										<b:commandLink includeViewParams="false" outcome="/logout.htm"
+											value="#{msg['topmenu.logout']}" iconAwesome="fa-sign-out"
+											styleClass="btn bg-green btn-flat logoutButton"
+											rendered="#{identity.loggedIn}" />
+									</div>
+								</li>
+							</ul></li>
+					</ul>
+				</div>
+			</nav>
+		</header>
+	</h:form>
+	<script type="text/javascript">
+		//<![CDATA[
+		function switch_style(css_title) {
+			var i, link_tag;
+			for (i = 0, link_tag = document.getElementsByTagName('link'); i < link_tag.length; i++) {
+				if ((link_tag[i].rel.indexOf('stylesheet') != -1)
+						&& link_tag[i].title) {
+					link_tag[i].disabled = true;
+					if (link_tag[i].title == css_title) {
+						link_tag[i].disabled = false;
+					}
+				}
+			}
+		}
+		//]]>
+	</script>
 </ui:composition>
