@@ -8,13 +8,8 @@
 	<h:form>
 		<header class="main-header">
 			<a href="#{request.contextPath}/home.htm" class="logo"
-				style="background: #222D32 !important;"> 
-				<span style="display: none;" class="logo-mini">
-				<img
-					src="#{request.contextPath}/servlet/favicon"
-					style="max-height: 45px; padding-bottom: 2px;" />
-				</span>
-				<span class="logo-large"> <img
+				style="background: #222D32 !important;"> <span
+				class="logo-large"> <img
 					src="#{request.contextPath}/servlet/logo"
 					style="max-height: 45px; padding-bottom: 2px;" />
 			</span>
@@ -97,17 +92,6 @@
 						link_tag[i].disabled = false;
 					}
 				}
-			}
-		}
-		function handleMenuClose() {
-			var largeLogo =$(".logo-large").width();
-			if($(".logo-large").is(":visible")){
-				$(".logo-large").hide();
-				$(".logo-mini" ).show();
-			}else{
-				
-				$(".logo-large").show();
-				$(".logo-mini" ).hide();
 			}
 		}
 		//]]>
