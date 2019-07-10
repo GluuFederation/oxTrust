@@ -198,6 +198,22 @@
                 }
             }
         },
+        "responseModesSupported": {
+            "id": "responseModesSupported",
+            "description": "A list of the OAuth 2.0 Response Mode values that this OP supports.",
+            "type": "array",
+            "format": "select",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+                "type": "string",
+                "enum": [
+                    "query",
+                    "fragment",
+                    "form_post"
+                ]
+            }
+        },
         "grantTypesSupported": {
             "id": "grantTypesSupported",
             "description": "A list of the OAuth 2.0 Grant Type values that this OP supports.",
@@ -1432,6 +1448,7 @@
         "oxElevenJwksEndpoint",
         "openidSubAttribute",
         "responseTypesSupported",
+        "responseModesSupported",
         "grantTypesSupported",
         "dynamicGrantTypeDefault",
         "subjectTypesSupported",
