@@ -17,9 +17,7 @@
 		<f:viewAction action="#{passportConfigurationAction.init}"
 			onPostback="false" />
 	</f:metadata>
-
 	<ui:define name="body">
-
 		<section class="content-header">
 			<h1 style="color: #333;">
 				#{msg['passport.title']} <small> <i
@@ -38,7 +36,7 @@
 		<section class="content">
 			<div class="row">
 				<div class="col-xs-12">
-					<div class="box box-primary" style="min-height: 400px;">
+					<div class="box box-primary">
 						<div class="box-header"></div>
 						<h:form id="providerForm">
 							<input type='hidden' name='cid' value='#{conversation.id}' />
@@ -216,6 +214,5 @@
 				</div>
 			</div>
 		</section>
-
 	</ui:define>
 </ui:composition>

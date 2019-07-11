@@ -19,6 +19,17 @@
 					<h:panelGroup columns="1" width="100%" id="mainContentID">
 						<!-- First row-->
 						<div class="row" style="margin-left: 5px; margin-right: 5px;">
+							<ox:decorate label="#{msg['passport.provider.form.id']}"
+								leftClass="col-sm-3" rightClass="col-sm-9">
+								<h:inputText styleClass="form-control providerID"
+									style="width:100%" required="true"
+									value="#{_providerAction.provider.id}" id="providerID"
+									disabled="#{_providerAction.isUpdate()}">
+									<rich:validator event="blur" />
+								</h:inputText>
+							</ox:decorate>
+						</div>
+						<div class="row" style="margin-left: 5px; margin-right: 5px;">
 							<!-- First column-->
 							<div class="col-sm-6 col-lg-6" style="padding: 0px;">
 								<ox:decorate
@@ -117,6 +128,16 @@
 										styleClass="form-control" />
 								</ox:decorate>
 							</div>
+						</div>
+						<div class="row" style="margin-left: 5px; margin-right: 5px;">
+							<ox:decorate label="#{msg['passport.provider.form.callbackUrl']}"
+								leftClass="col-sm-3" rightClass="col-sm-9" rendered="#{_providerAction.isUpdate()}">
+								<h:outputText styleClass="form-control callBackUrlID"
+									style="width:100%" required="true"
+									value="#{_providerAction.provider.callbackUrl}"
+									id="callBackUrlID">
+								</h:outputText>
+							</ox:decorate>
 						</div>
 						<!-- 3nd row-->
 						<div class="row" style="margin-left: 5px; margin-right: 5px;">
