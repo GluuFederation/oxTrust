@@ -190,6 +190,7 @@ public class PassportIdpInitiatedAction implements Serializable {
 			this.authzParam = new AuthzParams();
 			this.previousParam = null;
 			this.options.clear();
+			save();
 		} else {
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "All fields are required.");
 		}
