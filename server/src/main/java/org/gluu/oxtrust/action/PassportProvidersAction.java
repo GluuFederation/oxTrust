@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.ConversationScoped;
@@ -21,6 +21,7 @@ import org.gluu.model.passport.PassportConfiguration;
 import org.gluu.model.passport.Provider;
 import org.gluu.model.passport.config.Configuration;
 import org.gluu.model.passport.idpinitiated.IIConfiguration;
+import org.gluu.oxtrust.ldap.service.ConfigurationService;
 import org.gluu.oxtrust.ldap.service.PassportService;
 import org.gluu.oxtrust.model.OptionEntry;
 import org.gluu.oxtrust.model.PassportProvider;
@@ -47,7 +48,19 @@ public class PassportProvidersAction implements Serializable {
 	@Inject
 	private FacesMessages facesMessages;
 
+	@Inject
+	private ConfigurationService configurationService;
+
 	private boolean update = false;
+
+	public boolean isUpdate() {
+		return update;
+	}
+
+	public void setUpdate(boolean update) {
+		this.update = update;
+	}
+
 	private String id;
 
 	@Inject
@@ -168,16 +181,17 @@ public class PassportProvidersAction implements Serializable {
 				this.provider.setPassportAuthnParams(null);
 			}
 			if (!update) {
-				if (this.provider.getId() == null) {
-					String computedId = this.provider.getDisplayName().toLowerCase().replaceAll("[^\\w-]", "");
-					computedId = computedId.concat(UUID.randomUUID().toString().substring(0, 4));
-					if (computedId != null) {
-						this.provider.setId(computedId);
-					} else {
-						facesMessages.add(FacesMessage.SEVERITY_INFO,
-								"Please change the displayName of provider named '#{passportProvidersAction.provider.displayName}'");
-					}
+				if (providerIdIsInUse()) {
+					facesMessages.add(FacesMessage.SEVERITY_ERROR,
+							"This provider id is already in use. Please provide a new one.");
+					return OxTrustConstants.RESULT_FAILURE;
 				}
+				if (providerIdContainsBadCharacters()) {
+					facesMessages.add(FacesMessage.SEVERITY_ERROR,
+							"This provider id contains unauthorized characters.");
+					return OxTrustConstants.RESULT_FAILURE;
+				}
+				setCallbackUrl();
 				this.id = this.provider.getId();
 				this.provider.setOptions(options.stream().filter(e -> e.getKey() != null)
 						.collect(Collectors.toMap(OptionEntry::getKey, OptionEntry::getValue)));
@@ -217,6 +231,31 @@ public class PassportProvidersAction implements Serializable {
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 
+	}
+
+	private void setCallbackUrl() {
+		if (this.provider.getType().equalsIgnoreCase("saml")) {
+			this.provider.setCallbackUrl(String.format("https://%s/passport/auth/saml/%s/callback",
+					configurationService.getConfiguration().getHostname(), this.provider.getId()));
+		} else {
+			this.provider.setCallbackUrl(String.format("https://%s/passport/auth/%s/callback",
+					configurationService.getConfiguration().getHostname(), this.provider.getId()));
+		}
+	}
+
+	private boolean providerIdIsInUse() {
+		boolean result = false;
+		for (Provider provider : this.providers) {
+			if (provider.getId().equalsIgnoreCase(this.provider.getId())) {
+				result = true;
+				break;
+			}
+		}
+		return result;
+	}
+
+	private boolean providerIdContainsBadCharacters() {
+		return !Pattern.compile("^[a-zA-Z0-9_\\\\-\\\\:\\\\/\\\\.]+$").matcher(this.provider.getId()).matches();
 	}
 
 	private void performSave() {
@@ -297,7 +336,8 @@ public class PassportProvidersAction implements Serializable {
 		this.providers.remove(provider);
 		performSave();
 		init();
-		facesMessages.add(FacesMessage.SEVERITY_INFO, "Provider "+provider.getDisplayName()+ " successfully deleted");
+		facesMessages.add(FacesMessage.SEVERITY_INFO,
+				"Provider " + provider.getDisplayName() + " successfully deleted");
 		conversationService.endConversation();
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
