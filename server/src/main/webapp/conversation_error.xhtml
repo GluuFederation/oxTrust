@@ -11,13 +11,6 @@
 	<ui:param name="showGlobalMessages" value="false"/>
 	<ui:define name="head">
 		<style>
-.login-box, .register-box {
-	width: 800px !important;
-}
-
-.login-logo, .register-logo {
-	margin-bottom: 0px;
-}
 </style>
 	</ui:define>
 	<ui:define name="body">
@@ -34,7 +27,7 @@
 				<br /> <span style="font-size: 14px;">#{msg['error.returnToTheApplication']}</span>
 			</div>
 			<a class="btn btn-block btn-primary btn-lg"
-				href="#{request.contextPath}/home.htm" style="width: 60%;">#{msg['error.return']}</a>
+				href="#{request.contextPath}/home.htm" style="width: 50%;">#{msg['error.return']}</a>
 		</div>
 	</ui:define>
 </ui:composition>
