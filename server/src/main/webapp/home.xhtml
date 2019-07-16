@@ -9,15 +9,12 @@
 		<f:viewAction action="#{conversationService.endConversation}" />
 		<f:viewAction action="#{homeAction.init}" onPostback="false" />
 	</f:metadata>
-
 	<ui:define name="body">
 		<section class="content-header">
-			<ui:param name="welcomeTitle"
-				value="#{organizationService.getOrganizationCustomMessage('welcomeTitle')}" />
-
+			<ui:param name="welcomeTitle" value="#{organizationService.getOrganizationCustomMessage('welcomeTitle')}" />
 			<ui:fragment
 				rendered="#{not empty welcomeTitle and not permissionService.hasPermission('configuration', 'access')}">
-				<h:panelGroup layout="block">
+				<h:panelGroup layout="block" style="margin-left:10%;text-align: center;">
 					<h:outputText escape="false" value="#{welcomeTitle}" />
 					<h:outputText escape="false"
 						value="#{organizationService.getVersion()}" />
@@ -30,9 +27,7 @@
 					</h:outputFormat>
 				</h1>
 			</ui:fragment>
-
 		</section>
-
 		<section class="content">
 			<ui:fragment
 				rendered="#{permissionService.hasPermission('configuration', 'access')}">
@@ -50,9 +45,7 @@
 									value="#{_configuration.freeMemory}%" />
 								<span> </span>
 							</div>
-
 						</div>
-
 					</div>
 					<div class="col-md-3 col-sm-6 col-xs-12">
 						<div class="info-box">
@@ -61,17 +54,11 @@
 							</span>
 							<div class="info-box-content">
 								<span class="info-box-text">#{msg['home.freeDiskSpace']}</span>
-								<!--  <span
-                                    class="info-box-number">20%</span> -->
 								<h:outputText styleClass="info-box-number"
 									value="#{_configuration.freeDiskSpace}%" />
-
 							</div>
-
 						</div>
-
 					</div>
-
 					<div class="col-md-3 col-sm-6 col-xs-12">
 						<div class="info-box">
 							<span class="info-box-icon bg-yellow"> <i
@@ -79,17 +66,11 @@
 							</span>
 							<div class="info-box-content">
 								<span class="info-box-text">#{msg['home.systemUptime']}</span>
-								<!--  <span
-                                    class="info-box-number" style="font-size: 14px;">1 day(s)
-                                    10 Hours</span> -->
 								<h:outputText converter="uptimeConverter"
 									styleClass="info-box-number" value="#{_configuration.systemUptime}" />
 							</div>
-
 						</div>
-
 					</div>
-
 					<div class="col-md-3 col-sm-6 col-xs-12">
 						<div class="info-box">
 							<span class="info-box-icon bg-yellow"> <i
@@ -97,22 +78,16 @@
 							</span>
 							<div class="info-box-content">
 								<span class="info-box-text">#{msg['home.ipAddress']}</span>
-								<!-- <span
-                                    class="info-box-number">127.0.0.1</span> -->
 								<h:outputText styleClass="info-box-number"
 									value="#{_configuration.ipAddress}" />
 							</div>
-
 						</div>
-
 					</div>
-
 				</div>
 				<div style="display: none;">
 					<h:inputTextarea id="authenticationChartJson"
 						value="#{homeAction.authenticationChartJson}" />
 				</div>
-
 				<div class="row">
 					<div class="col-md-12">
 						<div class="box">
@@ -141,7 +116,6 @@
 									</button>
 								</div>
 							</div>
-
 							<div class="box-body text-center">
 								<div class="row">
 									<div>
@@ -156,11 +130,8 @@
 											<canvas height="185" id="authenticationRequestsChart"
 												style="width: 703px; height: 185px;" width="703" />
 										</div>
-
 									</div>
-
 								</div>
-
 							</div>
 							<!-- ./box-body -->
 							<div class="box-footer">
@@ -177,44 +148,33 @@
 											<span class="description-text">#{msg['home.totalWeeklyRequests']}</span>
 										</div>
 									</div>
-
 									<div class="col-sm-3 col-xs-6">
 										<div class="description-block border-right">
 											<h5 class="description-header">#{homeAction.authenticationChartDto.totalSuccess}</h5>
 											<span class="description-text">#{msg['home.totalSuccessfulLogin']}</span>
 										</div>
 									</div>
-
 									<div class="col-sm-3 col-xs-6">
 										<div class="description-block border-right">
 											<h5 class="description-header">#{homeAction.authenticationChartDto.totalFailure}</h5>
 											<span class="description-text">#{msg['home.totalFailedLogin']}</span>
 										</div>
 									</div>
-
 								</div>
-
 							</div>
-
 						</div>
-
 					</div>
-
 				</div>
 			</ui:fragment>
-
 		</section>
-
 		<!-- Scripts -->
 		<script
 			src="#{oxTrustConfigurationService.cssLocation}/../theme/dist/js/jquery-ui-1.12.1.min.js"
 			type="text/javascript" />
-
 		<!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
 		<script>
 			$.widget.bridge('uibutton', $.ui.button);
 		</script>
-
 		<script
 			src="#{oxTrustConfigurationService.cssLocation}/../theme/dist/js/raphael-min.js" />
 		<script
@@ -237,6 +197,5 @@
 			type="text/javascript" />
 		<script src="#{request.contextPath}/resources/js/dashboard.js"
 			type="text/javascript" />
-
 	</ui:define>
 </ui:composition>

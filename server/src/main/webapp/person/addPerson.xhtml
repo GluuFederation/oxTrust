@@ -13,7 +13,6 @@
 		<f:viewAction action="#{updatePersonAction.add}"
 			if="#{ updatePersonAction.person == null}" onPostback="false" />
 	</f:metadata>
-
 	<ui:define name="body">
 		<h:panelGroup id="formArea" layout="block">
 			<b:dateTimePicker id="calendar" renderLabel="false"
@@ -24,7 +23,6 @@
 				<ui:param name="_customAttributeAction"
 					value="#{customAttributeAction}" />
 				<ui:param name="_new" value="true" />
-
 				<ui:define name="controlButtons">
 					<div class="box-footer">
 						<h:panelGroup id="updateButtons" layout="block"

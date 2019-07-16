@@ -393,8 +393,7 @@ public class UpdatePersonAction implements Serializable {
 					gluuDeviceDataBean.setId(entry.getId());
 					gluuDeviceDataBean.setCreationDate(entry.getCreationDate().toString());
 					gluuDeviceDataBean.setModality("FIDO2");
-					gluuDeviceDataBean.setNickName(entry.getDisplayName() != null ? entry.getDisplayName()
-							: entry.getRegistrationData().getUsername());
+					gluuDeviceDataBean.setNickName(entry.getDisplayName() != null ? entry.getDisplayName() : DASH);
 					deviceDataMap.add(gluuDeviceDataBean);
 				}
 			}

@@ -8,7 +8,6 @@
         <f:viewAction action="#{conversationService.initConversation}" />
         <f:viewAction action="#{updateScopeAction.add}" onPostback="false" />
     </f:metadata>
-
     <ui:define name="body">
         <section class="content-header">
             <h1 style="color: #333;">
@@ -30,11 +29,9 @@
         <section class="content">
             <h:panelGroup id="formArea" layout="block">
                 <ui:decorate template="/WEB-INF/incl/scope/scopeForm.xhtml">
-
                     <ui:param name="_scope" value="#{updateScopeAction.scope}"/>
                     <ui:param name="_scopeAction" value="#{updateScopeAction}"/>
                     <ui:param name="_new" value="true"/>
-
                     <ui:define name="controlButttons">
                         <div id="updateButtons">
                             <h:commandButton action="#{updateScopeAction.save}" styleClass="btn btn-primary"
@@ -45,7 +42,6 @@
                         </div>
                     </ui:define>
                 </ui:decorate>
-
                 <ox:selectAttributeDialog acceptMethod="#{updateScopeAction.acceptSelectClaims}"
                                           cancelMethod="#{updateScopeAction.cancelSelectClaims}" id="claim"
                                           label="#{msg['scope.addClaim']}" queue="scopeQueue" render="selectedClaimsId"
@@ -54,7 +50,5 @@
                                           searchResult="#{updateScopeAction.availableClaims}"/>
             </h:panelGroup>
         </section>
-
-
     </ui:define>
 </ui:composition>

@@ -4,7 +4,6 @@
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
 	xmlns:gluufn="http://www.gluu.org/jsf/functions"
 	xmlns:rich="http://richfaces.org/rich">
-
 	<h:form id="leftMenuForm">
 		<h:panelGroup layout="block" id="leftMenuPanel">
 			<aside class="main-sidebar">
@@ -185,13 +184,13 @@
 						rendered="#{permissionService.hasPermission('passport', 'access') and productInstallationCheckerAction.canShowPassPassport()}">
 
 						<li class="treeview" id="menuPassport"><a href="#"> <i
-								class="fa fa-id-card-o"></i> <span>#{msg['passport.title']}</span> <i
-								class="fa fa-angle-left pull-right"></i>
+								class="fa fa-id-card-o"></i> <span>#{msg['passport.title']}</span>
+								<i class="fa fa-angle-left pull-right"></i>
 						</a>
 							<ul class="treeview-menu" id="subMenuPassport">
 								<li id="menuPassportBasicConfig"><h:commandLink
-										value="#{msg['passport.basic.configuration']}" onclick="lock();"
-										ondbclick="lock();" oncomplete="unlock();"
+										value="#{msg['passport.basic.configuration']}"
+										onclick="lock();" ondbclick="lock();" oncomplete="unlock();"
 										action="#{menuAction.endConversation('/passport/basic_config.xhtml')}"
 										rendered="#{permissionService.hasPermission('passport', 'access') and productInstallationCheckerAction.canShowPassPassport()}">
 										<i class="fa fa-chevron-right"
@@ -321,32 +320,28 @@
 					<!-- Begin Gluu Radius Section -->
 					<ui:fragment
 						rendered="#{permissionService.hasPermission('radius','access') and productInstallationCheckerAction.isShowGluuRadiusMenu()}">
-						<li class="treeview" id="menuRadius">
-							<a href="#">
-								<i class="fa fa-rss"></i><span>#{msg['radius.title']}</span>
-								<i class="fa fa-angle-left pull-right"></i>
-							</a>
+						<li class="treeview" id="menuRadius"><a href="#"> <i
+								class="fa fa-rss"></i><span>#{msg['radius.title']}</span> <i
+								class="fa fa-angle-left pull-right"></i>
+						</a>
 							<ul class="treeview-menu" id="subMenuRadius">
-								<li id="menuRadiusConfig">
-									<h:commandLink
-										value="#{msg['radius.config.title']}"
-										onclick="lock();" ondbclick="lock();" oncomplete="unlock();"
+								<li id="menuRadiusConfig"><h:commandLink
+										value="#{msg['radius.config.title']}" onclick="lock();"
+										ondbclick="lock();" oncomplete="unlock();"
 										action="#{menuAction.endConversation('/radius/radiusServerConfiguration.xhtml')}"
 										rendered="#{permissionService.hasPermission('radius','access') and productInstallationCheckerAction.isShowGluuRadiusMenu()}">
-										<i class="fa fa-chevron-right" style="float: left; margin-top: 2px;"></i>
-									</h:commandLink>
-								</li>
-								<li id="menuRadiusClients">
-									<h:commandLink
-										value="#{msg['radius.clients.title']}"
-										onclick="lock();" ondbclick="lock();" oncomplete="unlock();"
+										<i class="fa fa-chevron-right"
+											style="float: left; margin-top: 2px;"></i>
+									</h:commandLink></li>
+								<li id="menuRadiusClients"><h:commandLink
+										value="#{msg['radius.clients.title']}" onclick="lock();"
+										ondbclick="lock();" oncomplete="unlock();"
 										action="#{menuAction.endConversation('/radius/radiusClientInventory.xhtml')}"
 										rendered="#{permissionService.hasPermission('radius','access') and productInstallationCheckerAction.isShowGluuRadiusMenu()}">
-										<i class="fa fa-chevron-right" style="float: left; margin-top: 2px;"></i>
-									</h:commandLink>
-								</li>
-							</ul>
-						</li>
+										<i class="fa fa-chevron-right"
+											style="float: left; margin-top: 2px;"></i>
+									</h:commandLink></li>
+							</ul></li>
 					</ui:fragment>
 					<!-- End of Gluu Radius Section -->
 					<ui:fragment
@@ -384,9 +379,9 @@
 				message : $('div.gluuBusyIndicator')
 			});
 		}
-		
+
 		function clearOIDC() {
-			 window.localStorage.setItem('oidctab', "standardSettings");
+			window.localStorage.setItem('oidctab', "standardSettings");
 		}
 
 		function unlock() {
@@ -421,7 +416,6 @@
 								$('#subMenuLinkConfiguration5').addClass(
 										'active');
 							}
-
 
 							if (window.location.href
 									.indexOf("configuration/updateConfiguration") != -1) {
@@ -461,8 +455,10 @@
 
 							if (window.location.href
 									.indexOf("attribute/attributeInventory") != -1
-									|| window.location.href.indexOf("attribute/addAttribute") != -1
-									|| window.location.href.indexOf("attribute/updateAttribute") != -1) {
+									|| window.location.href
+											.indexOf("attribute/addAttribute") != -1
+									|| window.location.href
+											.indexOf("attribute/updateAttribute") != -1) {
 								$('#subMenuConfiguration').css('display',
 										'block');
 								$('#menuConfiguration').addClass('active');
@@ -539,7 +535,8 @@
 								$('#menuSAML').addClass('active');
 								$('#subMenuLinkSAML2').addClass('active');
 							}
-							if (window.location.href.indexOf("saml/configureNameId") != -1) {
+							if (window.location.href
+									.indexOf("saml/configureNameId") != -1) {
 								$('#subMenuSAML').css('display', 'block');
 								$('#menuSAML').addClass('active');
 								$('#subMenuLinkSAML3').addClass('active');
@@ -557,8 +554,10 @@
 							}
 							if (window.location.href
 									.indexOf("passport/providers") != -1
-									|| window.location.href.indexOf("passport/addProvider") != -1
-									|| window.location.href.indexOf("passport/editProvider") != -1		) {
+									|| window.location.href
+											.indexOf("passport/addProvider") != -1
+									|| window.location.href
+											.indexOf("passport/editProvider") != -1) {
 								$('#subMenuPassport').css('display', 'block');
 								$('#menuPassport').addClass('active');
 								$('#menuPassportProviders').addClass('active');
@@ -588,10 +587,9 @@
 							if (window.location.href
 									.indexOf("client/clientInventory") != -1
 									|| window.location.href
-									.indexOf("client/addClient") != -1
+											.indexOf("client/addClient") != -1
 									|| window.location.href
-									.indexOf("client/updateClient") != -1
-									) {
+											.indexOf("client/updateClient") != -1) {
 								$('#subMenuOpenID').css('display', 'block');
 								$('#menuOpenID').addClass('active');
 								$('#subMenuLinkOpenID2').addClass('active');
@@ -671,7 +669,8 @@
 								$('#subMenuLinkUsers3').addClass('active');
 							}
 
-							if (window.location.href.indexOf("person/personImport") != -1) {
+							if (window.location.href
+									.indexOf("person/personImport") != -1) {
 								$('#subMenuUsers').css('display', 'block');
 								$('#menuUsers').addClass('active');
 								$('#subMenuLinkUsers4').addClass('active');

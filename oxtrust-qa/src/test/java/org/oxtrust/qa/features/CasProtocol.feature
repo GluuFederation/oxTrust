@@ -1,5 +1,5 @@
 Feature: Cas protocol 
-@gluuQA 
+@gluuQA
 Scenario: Check Cas protocol
 	When 	I sign in as administrator 
 	Then 	I should see gluu home page 

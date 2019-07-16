@@ -17,9 +17,7 @@
 		<f:viewAction action="#{passportConfigurationAction.init}"
 			onPostback="false" />
 	</f:metadata>
-
 	<ui:define name="body">
-
 		<section class="content-header">
 			<h1 style="color: #333;">
 				#{msg['passport.title']} <small> <i
@@ -38,10 +36,8 @@
 		<section class="content">
 			<div class="row">
 				<div class="col-xs-12">
-					<div class="box box-primary" style="min-height: 400px;">
+					<div class="box box-primary">
 						<div class="box-header"></div>
-
-
 						<h:form id="providerForm">
 							<input type='hidden' name='cid' value='#{conversation.id}' />
 							<div class="row">
@@ -65,11 +61,10 @@
 												<ox:decorate id="serverPortID"
 													label="#{msg['passport.basicconfig.form.serverPort']}"
 													leftClass="col-sm-3" rightClass="col-sm-9">
-													<rich:inputNumberSpinner
+													<b:touchSpin id="serverPortID" col-md="9" required="true"
+														styleClass="rounded serverPortID" disabled="true"
 														value="#{passportConfigurationAction.configuration.serverWebPort}"
-														styleClass="rounded serverPortID" inputSize="4"
-														style="width:50%;" required="true" minValue="0"
-														maxValue="10000" id="serverPortID" />
+														min="10" max="10000" step="1" />
 												</ox:decorate>
 												<ox:decorate
 													label="#{msg['passport.basicconfig.form.postProfileEndpoint']}"
@@ -111,7 +106,7 @@
 											style="margin-right: 20px; margin-left: 20px;">
 											<b:panel
 												title="#{msg['passport.basic.config.logging.title']}"
-												look="primary" iconAwesome="fa-gear">
+												look="primary" iconAwesome="fa-gear" collapsible="false">
 												<div class="row"
 													style="margin-left: 50px; margin-right: 5px;">
 													<div class="col-sm-6 col-lg-6" style="padding: 0px;">
@@ -134,14 +129,14 @@
 															leftClass="col-sm-7" rightClass="col-sm-1">
 															<h:selectBooleanCheckbox
 																value="#{passportConfigurationAction.configuration.logging.consoleLogOnly}"
-																styleClass="form-control ConsoleLogOnlyID"/>
+																styleClass="form-control ConsoleLogOnlyID" />
 														</ox:decorate>
 													</div>
 												</div>
 
 												<b:panel
 													title="#{msg['passport.basic.config.logging.mq.title']}"
-													look="primary" iconAwesome="fa-slack">
+													look="primary" iconAwesome="fa-slack" collapsible="false">
 													<div class="row"
 														style="margin-left: 90px; margin-right: 5px;">
 														<div class="col-sm-6 col-lg-6" style="padding: 0px;">
@@ -215,12 +210,9 @@
 								</div>
 							</div>
 						</h:form>
-
-
 					</div>
 				</div>
 			</div>
 		</section>
-
 	</ui:define>
 </ui:composition>

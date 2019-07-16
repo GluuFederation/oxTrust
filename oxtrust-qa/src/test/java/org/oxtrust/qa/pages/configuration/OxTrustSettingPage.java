@@ -17,8 +17,8 @@ public class OxTrustSettingPage extends AbstractPage {
 	}
 
 	public void checkOrgNameIsNotEmpty() {
-		WebElement orgNameTextField = webDriver.findElement(By.id("organizationForm:displayName:outputInputPanel"));
-		String orgName = orgNameTextField.findElement(By.tagName("input")).getAttribute("value");
+		WebElement orgNameTextZone = webDriver.findElement(By.className("orgNameTextBox"));
+		String orgName = orgNameTextZone.getAttribute("value");
 		Assert.assertFalse(orgName.isEmpty());
 	}
 
@@ -26,7 +26,6 @@ public class OxTrustSettingPage extends AbstractPage {
 		try {
 			pickOrgLogo();
 		} catch (NoSuchElementException e) {
-			removeOrgLogo();
 			pickOrgLogo();
 		}
 
@@ -36,7 +35,6 @@ public class OxTrustSettingPage extends AbstractPage {
 		try {
 			pickOrgFavicon();
 		} catch (NoSuchElementException e) {
-			removeOrgFavicon();
 			pickOrgFavicon();
 		}
 	}
@@ -54,24 +52,23 @@ public class OxTrustSettingPage extends AbstractPage {
 	}
 
 	private void pickOrgLogo() {
-		WebElement upLoarder = webDriver.findElement(By.className("uploadLogo"));
+		WebElement upLoarder = webDriver.findElement(By.id("organizationForm:oxTrustLogo"));
 		WebElement addButton = upLoarder.findElement(By.cssSelector("input[type='file']"));
 		addButton.sendKeys(getResourceFile("qa_logo.png").getAbsolutePath());
 		fluentWait(SMALL);
 	}
 
 	private void pickOrgFavicon() {
-		WebElement upLoarder = webDriver.findElement(By.className("uploadFavicon"));
+		WebElement upLoarder = webDriver.findElement(By.id("organizationForm:oxTrustFavicon"));
 		WebElement addButton = upLoarder.findElement(By.cssSelector("input[type='file']"));
 		addButton.sendKeys(getResourceFile("qa_favicon.jpeg").getAbsolutePath());
 		fluentWait(SMALL);
 	}
 
 	public void setOrgName(String orgName) {
-		WebElement orgNameTextZone = webDriver.findElement(By.id("organizationForm:displayName:outputInputPanel"));
-		WebElement orgNameTextInput = orgNameTextZone.findElement(By.tagName("input"));
-		orgNameTextInput.clear();
-		orgNameTextInput.sendKeys(orgName);
+		WebElement orgNameTextZone = webDriver.findElement(By.className("orgNameTextBox"));
+		orgNameTextZone.clear();
+		orgNameTextZone.sendKeys(orgName);
 	}
 
 	public void save() {
@@ -82,9 +79,8 @@ public class OxTrustSettingPage extends AbstractPage {
 	}
 
 	public void checkOrgName(String orgName) {
-		WebElement orgNameTextZone = webDriver.findElement(By.id("organizationForm:displayName:outputInputPanel"));
-		WebElement orgNameTextInput = orgNameTextZone.findElement(By.tagName("input"));
-		Assert.assertTrue(orgNameTextInput.getAttribute("value").equalsIgnoreCase(orgName));
+		WebElement orgNameTextZone = webDriver.findElement(By.className("orgNameTextBox"));
+		Assert.assertTrue(orgNameTextZone.getAttribute("value").equalsIgnoreCase(orgName));
 	}
 
 	public void setLogLevel(String level) {

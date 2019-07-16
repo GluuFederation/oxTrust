@@ -5,6 +5,7 @@
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
 	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
 	xmlns:rich="http://richfaces.org/rich"
+	xmlns:b="http://bootsfaces.net/ui"
 	xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	template="/WEB-INF/incl/layout/fullWidthEmpty.xhtml">
@@ -28,61 +29,55 @@
 iframe {
 	margin-left: 86%;
 }
-.rf-p-b{
-padding-top: 0px !important;
+
+.rf-p-b {
+	padding-top: 0px !important;
 }
 </style>
-
 		<ui:fragment rendered="#{not registerPersonAction.captchaDisabled}">
 			<script async="async" defer="defer"
 				src="https://www.google.com/recaptcha/api.js" />
 		</ui:fragment>
 	</ui:define>
-
 	<ui:define name="body">
 		<div id="formArea">
 			<div id="addPerson">
 				<!-- Registration Form -->
 				<h:form id="personRegistrationForm">
 					<rich:panel>
-						<div class="login-box" style="margin-top:0px !important;">
-							<div class="row" style="margin-bottom: 1px;">
-								<div class="col-md-12">
-									<div id="register" style="color: #1ab26b;">
-										<h1 class="text-center">#{msg['register.signUp']}</h1>
-										<p class="text-center">
-											#{msg['register.toCreateAnAccount']}
-											<h:link styleClass="text-center" includeViewParams="false"
-												outcome="/login.htm" style="color:blue;font-weight:bold;"
-												value="#{msg['register.alreadyHaveAnAccount']}" />
-										</p>
-									</div>
-								</div>
-							</div>
+						<div class="login-box" style="margin-top: 0px !important;">
 							<rich:messages layout="list" showDetail="false"
 								showSummary="true">
 							</rich:messages>
-							<div class="login-box-body text-center"
-								style="border-radius: 10px; background: #1ab26b; color: black;">
-								<div class="formColumn row">
+							<b:panel title="User Registration Form" look="primary"
+								iconAwesome="fa-user-plus" collapsible="false"
+								style="background: white; color: black;">
+								<div class="row" style="margin-bottom: 1px;">
+									<div class="col-md-12">
+										<div id="register" style="color: #1ab26b;">
+											<p class="text-center">
+												#{msg['register.toCreateAnAccount']}
+												<h:link styleClass="text-center" includeViewParams="false"
+													outcome="/login.htm" style="color:blue;font-weight:bold;"
+													value="#{msg['register.alreadyHaveAnAccount']}" />
+											</p>
+										</div>
+									</div>
+								</div>
+								<div class="formColumn row" style="text-center">
 									<div class="col-md-12">
 										<ui:param name="_mandatoryAttributes"
 											value="#{registerPersonAction.mandatoryAttributes}" />
-
 										<div id="registrationFormHolder">
 											<a4j:repeat rowKeyVar="_custAttrIdx"
 												value="#{registerPersonAction.person.customAttributes}"
 												var="_custAttr">
-												<!-- Attributes found on person -->
 												<a4j:outputPanel>
 													<ui:param name="_mandatory" value="#{_custAttr.mandatory}" />
-													<!-- Ordinary Attribute -->
 													<ox:decorate id="_custAttrIdx"
 														label="#{(empty _custAttr.metadata) ? _custAttr.name : _custAttr.metadata.displayName }"
 														rendered="#{not registerPersonAction.hiddenAttributes.contains(_custAttr.name) and not _custAttr.name.equals('exampleSpecialAttribute')  and (_custAttr.metadata.displayName ne 'Email')}"
 														style="margin-left: -15px;">
-
-														<!-- String Attribute -->
 														<h:inputText class="form-control"
 															id="custId_#{_custAttr.metadata.displayName}"
 															label="#{(empty _custAttr.metadata) ? _custAttr.name : _custAttr.metadata.displayName }"
@@ -90,11 +85,9 @@ padding-top: 0px !important;
 															rendered="#{not _custAttr.readonly and (_custAttr.metadata.dataType ne 'DATE') and (_custAttr.metadata.displayName ne 'Gender, male or female') }"
 															required="#{_mandatory}" size="40"
 															tabindex="#{_custAttrIdx + 1}" value="#{_custAttr.value}">
-
 															<f:validator validatorId="extendedRegexValidator">
 																<f:attribute name="pattern"
 																	value="#{((empty _custAttr) or (empty _custAttr.metadata) or (empty _custAttr.metadata.attributeValidation) or (empty _custAttr.metadata.attributeValidation.regexp)) ? '.*' : _custAttr.metadata.attributeValidation.regexp}" />
-
 															</f:validator>
 															<rich:validator event="keyup" />
 														</h:inputText>
@@ -105,11 +98,9 @@ padding-top: 0px !important;
 															<f:selectItem itemValue="male" itemLabel="male" />
 														</h:selectOneMenu>
 														<h:message for="custId_#{_custAttr.metadata.displayName}" />
-														<!-- Read-only Attribute -->
 														<h:outputText id="custIdText"
 															rendered="#{_custAttr.readonly}" size="40"
 															value="#{_custAttr.value}">
-
 														</h:outputText>
 														<h:outputText value=" " />
 														<!-- Date Attribute -->
@@ -134,14 +125,11 @@ padding-top: 0px !important;
 														</h:selectOneMenu>
 														<h:outputText value=" " />
 													</ox:decorate>
-													<!-- Attribute Tooltip -->
 													<rich:tooltip
 														rendered="#{((not empty _custAttr) and (not empty _custAttr.metadata) and ( not empty _custAttr.metadata.gluuTooltip))}"
 														value="#{_custAttr.metadata.gluuTooltip}" />
 												</a4j:outputPanel>
-												<!-- End Attributes found on person -->
 											</a4j:repeat>
-											<!-- Passwords -->
 											<ox:decorate id="passwordField"
 												label="#{msg['register.password']}"
 												style="margin-left: -15px;"
@@ -166,7 +154,6 @@ padding-top: 0px !important;
 												</h:inputSecret>
 												<h:outputText value=" " />
 											</ox:decorate>
-											<!-- End Passwords -->
 											<ox:decorate id="email" label="#{msg['register.email']} "
 												style="margin-left: -15px;"
 												template="/WEB-INF/incl/layout/edit.xhtml">
@@ -177,7 +164,6 @@ padding-top: 0px !important;
 													size="40" tabindex="7"
 													validator="#{registerPersonAction.validateEmail}"
 													value="#{registerPersonAction.email}">
-
 													<f:ajax event="keyup" execute="@this"
 														render="emailValidationMessage" />
 												</h:inputText>
@@ -186,7 +172,6 @@ padding-top: 0px !important;
 												<h:outputText value=" " />
 											</ox:decorate>
 										</div>
-										<!-- Captcha -->
 										<ui:fragment
 											rendered="#{not registerPersonAction.captchaDisabled}">
 											<s class="g-recaptcha text-center" style="magirn-left: 20%;"
@@ -207,12 +192,11 @@ padding-top: 0px !important;
 										</div>
 									</div>
 								</div>
-							</div>
+							</b:panel>
 						</div>
 					</rich:panel>
 				</h:form>
 			</div>
-
 		</div>
 	</ui:define>
 </ui:composition>

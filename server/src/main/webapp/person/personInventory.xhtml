@@ -36,7 +36,8 @@
 		<section class="content">
 			<div class="row">
 				<div class="col-xs-12">
-					<b:panel title="Users List" look="primary" iconAwesome="fa-list">
+					<b:panel title="Users List" look="primary" 
+					iconAwesome="fa-list" collapsible="false">
 						<div id="formArea">
 							<div style="margin-left: 5px;">
 								<b:link style-class="addPerson btn btn-primary" icon="plus"
@@ -53,10 +54,10 @@
 											alt="search parameters for person like uid,iname,email"
 											id="searchPatternId" maxlength="30" required="true" size="30"
 											style="width: 50%; float: left;" label="searchPattern"
-											styleClass="searchParameters form-control"
+											styleClass="searchParameters form-control searchTextBox"
 											value="#{searchPersonAction.searchPattern}" />
 										<b:commandButton action="#{searchPersonAction.search}"
-											style="float: left;" styleClass="btn btn-primary"
+											style="float: left;" styleClass="btn btn-primary searchButton"
 											value="Search" iconAwesome="fa-search"/>
 									</ox:decorate>
 								</h:form>

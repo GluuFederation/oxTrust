@@ -8,17 +8,13 @@ import org.openqa.selenium.WebElement;
 import org.oxtrust.qa.pages.AbstractPage;
 
 public class GroupManagePage extends AbstractPage {
-	private List<WebElement> inputs;
 	private WebElement tableBody;
 	private WebElement foundGroup;
 
 	public void searchGroup(String pattern) {
-		WebElement searchBox = webDriver.findElement(By.className("searchArea"));
-		WebElement searchSpanBox = searchBox.findElement(By.tagName("span"));
-		inputs = searchSpanBox.findElements(By.tagName("input"));
-		Assert.assertTrue(inputs.size() == 2);
-		inputs.get(0).sendKeys(pattern);
-		inputs.get(1).click();
+		WebElement searchBox = webDriver.findElement(By.className("searchTextBox"));
+		searchBox.sendKeys(pattern);
+		webDriver.findElement(By.className("searchButton"));
 		fluentWait(ONE_SEC);
 	}
 

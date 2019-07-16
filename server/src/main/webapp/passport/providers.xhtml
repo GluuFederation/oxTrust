@@ -33,7 +33,7 @@
 		<section class="content">
 			<div class="row">
 				<div class="col-xs-12">
-					<b:panel title="Passport providers" look="primary" iconAwesome="fa-list">
+					<b:panel title="Passport providers" look="primary" iconAwesome="fa-list" collapsible="false">
 						<div class="row" style="padding: 5px; margin-bottom: 5px;">
 							<b:link style-class="addProviderButtonClass btn btn-primary"
 								icon="plus" outcome="/passport/addProvider"
@@ -47,19 +47,19 @@
 								value="#{passportProvidersAction.providerSelections}" var="c"
 								print="true" excel="true" csv="true" pdf="true" select="true">
 								<b:dataTableColumn
-									label="#{msg['passport.provider.form.displayName']}">
+									label="#{msg['passport.provider.form.id']}">
 									<b:link includeViewParams="false"
 										outcome="/passport/editProvider"
-										value="#{c.provider.displayName}">
+										value="#{c.provider.id}">
 										<f:param name="id" value="#{c.provider.id}" />
 									</b:link>
 								</b:dataTableColumn>
+								<b:dataTableColumn value="#{c.provider.displayName}"
+									label="#{msg['passport.provider.form.displayName']}" />
 								<b:dataTableColumn value="#{c.provider.passportStrategyId}"
 									label="#{msg['passport.provider.form.strategyId']}" />
 								<b:dataTableColumn value="#{c.provider.type}"
 									label="#{msg['passport.provider.form.type']}" />
-								<b:dataTableColumn value="#{c.provider.id}"
-									label="#{msg['passport.provider.form.id']}" />
 								<b:dataTableColumn label="Status">
 									<b:label text="Enabled" rendered="#{c.provider.enabled}"
 										severity="success" />

@@ -3,7 +3,6 @@ package org.oxtrust.qa.pages.profile;
 import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
 import org.oxtrust.qa.pages.AbstractPage;
 
 public class ProfilePage extends AbstractPage {
@@ -28,8 +27,6 @@ public class ProfilePage extends AbstractPage {
 		Assert.assertNotNull(main);
 		fluentWait(ONE_SEC);
 		WebElement button = main.findElement(By.className("savePasswordButton"));
-		Actions actions = new Actions(webDriver);
-		actions.moveToElement(button).click().perform();
 		button.click();
 		fluentWait(ONE_SEC);
 		webDriver.findElement(By.className("updateProfileButton")).click();

@@ -58,18 +58,11 @@
 			href="#{oxTrustConfigurationService.cssLocation}/../theme/bootstrap/css/ionicons.min.css"
 			rel="stylesheet" type="text/css" />
 		<link
-			href="#{oxTrustConfigurationService.cssLocation}/../theme/dist/css/AdminLTE.min.css"
+			href="#{oxTrustConfigurationService.cssLocation}/../theme/dist/css/gas-AdminLTE.min.css"
 			rel="stylesheet" type="text/css" />
 		<link
-			href="#{oxTrustConfigurationService.cssLocation}/../theme/dist/css/skins/_all-skins.min.css"
-			rel="stylesheet" title="default" type="text/css" />
-		<link
-			href="#{oxTrustConfigurationService.cssLocation}/../theme/dist/css/skins/_all-skins-purple.min.css"
-			rel="alternate stylesheet" title="purple" type="text/css" />
-
-		<link
-			href="#{oxTrustConfigurationService.cssLocation}/../theme/dist/css/skins/_all-skins-red.min.css"
-			rel="alternate stylesheet" title="red" type="text/css" />
+			href="#{oxTrustConfigurationService.cssLocation}/../theme/dist/css/skins/gas-skin-green.min.css"
+			rel="stylesheet" type="text/css" />
 
 		<link
 			href="#{oxTrustConfigurationService.cssLocation}/../theme/plugins/iCheck/square/blue.css"
@@ -204,6 +197,20 @@ select {
 .panel-heading a.panel-title-link:after {
 	color: white !important;
 }
+
+.main-header {
+	position: relative;
+	max-height: 100px;
+	z-index: 1030;
+	height: 50px;
+}
+
+.main-header>.navbar {
+	margin-bottom: 0;
+	min-height: 50px;
+	height: 50px;
+	border-radius: 0;
+}
 </style>
 	</h:head>
 	<h:body styleClass="skin-green">
@@ -248,6 +255,9 @@ select {
 		<script
 			src='#{oxTrustConfigurationService.cssLocation}/../theme/dist/js/clipboard.min.js'
 			type="text/javascript"></script>
+		<script
+			src='#{oxTrustConfigurationService.cssLocation}/../theme/dist/js/clipboard.min.js'
+			type="text/javascript"></script>	
 		<div class="footer"></div>
 	</h:body>
 </f:view>

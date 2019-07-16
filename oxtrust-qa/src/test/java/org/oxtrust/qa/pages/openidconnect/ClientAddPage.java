@@ -141,6 +141,7 @@ public class ClientAddPage extends AbstractPage {
 		fluentWait(ONE_SEC);
 		WebElement footer = waitElementByID("updateButtons");
 		footer.findElements(By.tagName("input")).get(0).click();
+		fluentWait(SMALL);
 	}
 
 	public void selectTab(String tabName) {

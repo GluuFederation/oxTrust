@@ -1,7 +1,5 @@
 package org.oxtrust.qa.pages.users;
 
-import java.util.List;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
@@ -59,10 +57,11 @@ public class UserAddPage extends AbstractPage {
 	}
 
 	public void save() {
-		WebElement footer = webDriver.findElement(By.className("box-footer"));
-		footer = footer.findElement(By.tagName("div"));
-		List<WebElement> buttons = footer.findElements(By.tagName("input"));
-		buttons.get(0).click();
+		scrollDown();
+		scrollDown();
+		WebElement footer = webDriver.findElement(By.className("saveButton"));
+		footer.click();
+		fluentWait(SMALL);
 	}
 
 }
