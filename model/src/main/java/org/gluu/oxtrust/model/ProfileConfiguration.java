@@ -22,6 +22,7 @@ public class ProfileConfiguration implements Serializable {
 	private String encryptNameIds;
 	private String encryptAssertions;
 	private String profileConfigurationCertFileName;
+	private String samlAcr;
 
 	public String getName() {
 		return name;
@@ -107,6 +108,14 @@ public class ProfileConfiguration implements Serializable {
 	@Override
 	public String toString() {
 		return String.format("ProfileConfiguration [name=%s, includeAttributeStatement=%s, signResponses=%s, signAssertions=%s, signRequests=%s, assertionLifetime=%s, assertionProxyCount=%s, encryptNameIds=%s, encryptAssertions=%s, profileConfigurationCertFileName=%s]", getName(), isIncludeAttributeStatement(), getSignResponses(), getSignAssertions(), getSignRequests(), getAssertionLifetime(), getAssertionProxyCount(), getEncryptNameIds(), getEncryptAssertions(), getProfileConfigurationCertFileName());
+	}
+
+	public String getSamlAcr() {
+		return samlAcr;
+	}
+
+	public void setSamlAcr(String samlAcr) {
+		this.samlAcr = samlAcr;
 	}
 
 }

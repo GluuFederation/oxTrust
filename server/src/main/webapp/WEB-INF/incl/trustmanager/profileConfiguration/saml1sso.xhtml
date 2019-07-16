@@ -54,7 +54,6 @@
             <s:fileUpload id="ShibbolethSSOWrapperId" fileName="#{_relyingPartyAction.fileWrappers.get('ShibbolethSSO').fileName}" data="#{_relyingPartyAction.fileWrappers.get('ShibbolethSSO').stream}"
                 fileSize="#{_relyingPartyAction.fileWrappers.get('ShibbolethSSO').fileSize}" contentType="#{_relyingPartyAction.fileWrappers.get('ShibbolethSSO').contentType}" maxlength="100"
                 rendered="#{empty _profileConfigurationSelected.profileConfigurationCertFileName}" immediate="true" style="width: 180px;">
-<!--                <a4j:ajax event="complete" action="#{_relyingPartyAction.showFile()}"/> -->
             </s:fileUpload>
 
             <h:panelGrid>

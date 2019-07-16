@@ -3,6 +3,7 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
 	xmlns:a4j="http://richfaces.org/a4j" xmlns:b="http://bootsfaces.net/ui"
 	xmlns:rich="http://richfaces.org/rich"
@@ -84,6 +85,11 @@
 					<f:selectItem itemLabel="#{msg['trustmanager.always']}"
 						itemValue="always" />
 				</h:selectOneMenu>
+				<h:outputText value="defaultAuthenticationMethod : " />
+				<h:selectManyListbox styleClass="samlAcrs"
+					value="#{_profileConfigurationSelected.samlAcr}" id="SamlACRSId">
+					<f:selectItems value="#{_relyingPartyAction.getAcrs()}" />
+				</h:selectManyListbox>
 			</h:panelGrid>
 			<rich:fileUpload id="SAML2SSOWrapperId"
 				fileName="#{_relyingPartyAction.fileWrappers.get('SAML2SSO').fileName}"

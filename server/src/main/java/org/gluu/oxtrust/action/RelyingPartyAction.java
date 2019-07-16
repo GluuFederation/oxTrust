@@ -6,6 +6,7 @@
 
 package org.gluu.oxtrust.action;
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,6 +18,8 @@ import java.util.Set;
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.gluu.oxtrust.ldap.service.ProfileConfigurationService;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
@@ -26,6 +29,10 @@ import org.gluu.service.security.Secure;
 import org.gluu.util.StringHelper;
 import org.gluu.util.io.FileUploadWrapper;
 import org.slf4j.Logger;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 @ConversationScoped
 @Named("relyingPartyAction")
@@ -55,6 +62,7 @@ public class RelyingPartyAction implements Serializable{
 	private UpdateTrustRelationshipAction updateTrustRelationshipAction;
 
 	private Map<String, FileUploadWrapper> fileWrappers = new HashMap<String, FileUploadWrapper>();
+	private Set<String> allAcrs = new HashSet<>();
 	
 	public String initProfileConfigurations() {
 			if(profileConfigurations!=null){
@@ -173,6 +181,40 @@ public class RelyingPartyAction implements Serializable{
 		}
 
 		return OxTrustConstants.RESULT_SUCCESS;
+	}
+	
+	public void getAcrs() {
+		try {
+			allAcrs.clear();
+			File file = new File("/opt/shibboleth-idp/conf/authn/general-authn.xml");
+			DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+			Document document = documentBuilder.parse(file);
+			document.getDocumentElement().normalize();
+			NodeList nodes = document.getElementsByTagName("util:list");
+			NodeList childNodes = nodes.item(0).getChildNodes();
+			Element element = null;
+			for (int index = 0; index < childNodes.getLength(); index++) {
+				Node node = childNodes.item(index);
+				if (node.getNodeType() == Node.ELEMENT_NODE) {
+					Element e = (Element) node;
+					String id = e.getAttribute("id");
+					if (id.equalsIgnoreCase("authn/oxAuth")) {
+						element = e;
+						break;
+					}
+				}
+			}
+			if (element != null) {
+				NodeList items = element.getElementsByTagName("bean");
+				for (int i = 0; i < items.getLength(); i++) {
+					Element node = (Element) items.item(i);
+					allAcrs.add(node.getAttribute("c:classRef"));
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public ProfileConfiguration getProfileConfigurationSelected() {
