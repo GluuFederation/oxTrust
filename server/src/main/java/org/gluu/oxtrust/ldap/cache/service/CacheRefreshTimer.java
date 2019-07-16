@@ -60,6 +60,7 @@ import org.gluu.persist.exception.BasePersistenceException;
 import org.gluu.persist.exception.EntryPersistenceException;
 import org.gluu.persist.exception.operation.SearchException;
 import org.gluu.persist.ldap.impl.LdapEntryManager;
+import org.gluu.persist.ldap.impl.LdapEntryManagerFactory;
 import org.gluu.persist.model.SearchScope;
 import org.gluu.persist.model.base.GluuBoolean;
 import org.gluu.persist.model.base.GluuDummyEntry;
@@ -1136,7 +1137,7 @@ public class CacheRefreshTimer {
 			ldapDecryptedProperties.setProperty(PropertiesDecrypter.BIND_PASSWORD, bindCredentials.getBindPassword());
 		}
 
-		PersistenceEntryManager customPersistenceEntryManager = applicationFactory.getPersistenceEntryManagerFactory()
+		PersistenceEntryManager customPersistenceEntryManager = applicationFactory.getPersistenceEntryManagerFactory(LdapEntryManagerFactory.class)
 				.createEntryManager(ldapDecryptedProperties);
 		log.info("Created Cache Refresh PersistenceEntryManager: {}", customPersistenceEntryManager);
 

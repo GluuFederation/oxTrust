@@ -706,10 +706,12 @@ public class ConfigureCacheRefreshAction
 	public String testLdapConnection(GluuLdapConfiguration ldapConfig) {
 		try {
 			FileConfiguration configuration = new FileConfiguration(ConfigurationFactory.LDAP_PROPERTIES_FILE);
-			if (!configuration.isLoaded()) {
-				configuration = new FileConfiguration(LdapEntryManagerFactory.LDAP_DEFAULT_PROPERTIES_FILE);
+			Properties properties;
+			if (configuration.isLoaded()) {
+				properties = configuration.getProperties();
+			} else {
+				properties = new Properties();
 			}
-			Properties properties = configuration.getProperties();
 			properties.setProperty("bindDN", ldapConfig.getBindDN());
 			properties.setProperty("bindPassword", ldapConfig.getBindPassword());
 			properties.setProperty("servers", buildServersString(ldapConfig.getServers()));
