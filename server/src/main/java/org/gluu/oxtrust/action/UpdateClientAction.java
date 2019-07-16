@@ -409,7 +409,7 @@ public class UpdateClientAction implements Serializable {
 		try {
 			clientAttributes = new ObjectMapper().readValue(this.oxAttributesJson, ClientAttributes.class);
 		} catch (Exception e) {
-			log.info("erorr parsing json:" + e);
+			log.info("error parsing json:" + e);
 		}
 		this.client.setAttributes(clientAttributes);
 	}

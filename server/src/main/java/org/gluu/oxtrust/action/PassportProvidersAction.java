@@ -79,9 +79,7 @@ public class PassportProvidersAction implements Serializable {
 	public String init() {
 		try {
 			log.debug("Load passport configuration");
-			this.ldapOxPassportConfiguration = passportService.loadConfigurationFromLdap();
-			this.passportConfiguration = this.ldapOxPassportConfiguration.getPassportConfiguration();
-			this.providers = this.passportConfiguration.getProviders();
+			loadProviders();
 			this.providerSelections = this.providers.stream().map(PassportProvider::new).collect(Collectors.toList());
 			log.debug("Load passport configuration done");
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -92,8 +90,15 @@ public class PassportProvidersAction implements Serializable {
 
 	}
 
+	private void loadProviders() {
+		this.ldapOxPassportConfiguration = passportService.loadConfigurationFromLdap();
+		this.passportConfiguration = this.ldapOxPassportConfiguration.getPassportConfiguration();
+		this.providers = this.passportConfiguration.getProviders();
+	}
+
 	public String add() {
 		try {
+			loadProviders();
 			this.update = false;
 			this.provider = new Provider();
 			this.provider.setOptions(new HashMap<>());
@@ -150,9 +155,7 @@ public class PassportProvidersAction implements Serializable {
 	public String update() {
 		try {
 			this.update = true;
-			this.ldapOxPassportConfiguration = passportService.loadConfigurationFromLdap();
-			this.passportConfiguration = this.ldapOxPassportConfiguration.getPassportConfiguration();
-			this.providers = this.passportConfiguration.getProviders();
+			loadProviders();
 			for (Provider pro : providers) {
 				if (pro.getId().equalsIgnoreCase(id)) {
 					this.provider = pro;
@@ -180,31 +183,26 @@ public class PassportProvidersAction implements Serializable {
 			if (this.provider.getPassportAuthnParams().isEmpty()) {
 				this.provider.setPassportAuthnParams(null);
 			}
+			if (providerIdContainsBadCharacters()) {
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, "This provider id contains unauthorized characters.");
+				return OxTrustConstants.RESULT_FAILURE;
+			}
 			if (!update) {
 				if (providerIdIsInUse()) {
 					facesMessages.add(FacesMessage.SEVERITY_ERROR,
 							"This provider id is already in use. Please provide a new one.");
 					return OxTrustConstants.RESULT_FAILURE;
 				}
-				if (providerIdContainsBadCharacters()) {
-					facesMessages.add(FacesMessage.SEVERITY_ERROR,
-							"This provider id contains unauthorized characters.");
-					return OxTrustConstants.RESULT_FAILURE;
-				}
 				setCallbackUrl();
 				this.id = this.provider.getId();
 				this.provider.setOptions(options.stream().filter(e -> e.getKey() != null)
 						.collect(Collectors.toMap(OptionEntry::getKey, OptionEntry::getValue)));
-				this.ldapOxPassportConfiguration = passportService.loadConfigurationFromLdap();
-				this.passportConfiguration = this.ldapOxPassportConfiguration.getPassportConfiguration();
-				this.providers = this.passportConfiguration.getProviders();
+				loadProviders();
 				this.providers.add(provider);
 			} else {
 				this.provider.setOptions(options.stream().filter(e -> e.getKey() != null)
 						.collect(Collectors.toMap(OptionEntry::getKey, OptionEntry::getValue)));
-				this.ldapOxPassportConfiguration = passportService.loadConfigurationFromLdap();
-				this.passportConfiguration = this.ldapOxPassportConfiguration.getPassportConfiguration();
-				this.providers = this.passportConfiguration.getProviders();
+				loadProviders();
 				for (Provider pro : this.providers) {
 					if (pro.getId().equalsIgnoreCase(this.provider.getId())) {
 						this.providers.remove(pro);
@@ -244,6 +242,7 @@ public class PassportProvidersAction implements Serializable {
 	}
 
 	private boolean providerIdIsInUse() {
+		loadProviders();
 		boolean result = false;
 		for (Provider provider : this.providers) {
 			if (provider.getId().equalsIgnoreCase(this.provider.getId())) {

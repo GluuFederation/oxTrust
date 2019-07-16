@@ -44,18 +44,16 @@
 					<ui:param name="_client" value="#{updateClientAction.client}" />
 					<ui:param name="_clientAction" value="#{updateClientAction}" />
 					<ui:param name="_new" value="true" />
-
 					<ui:define name="controlButttons">
 						<div id="updateButtons">
 							<h:commandButton action="#{updateClientAction.save}"
-								styleClass="btn btn-primary" value="#{msg['client.add']}" />
+								styleClass="btn btn-primary saveButtonClass" value="#{msg['client.add']}" />
 							<h:commandButton action="#{updateClientAction.cancel}"
 								immediate="true" style="margin-left:3px;"
 								styleClass="btn btn-primary" value="#{msg['client.cancel']}" />
 						</div>
 					</ui:define>
 				</ui:decorate>
-
 				<ox:inputTextDialog
 					acceptMethod="#{updateClientAction.acceptSelectLoginUri}"
 					cancelMethod="#{updateClientAction.cancelSelectLoginUri}"
@@ -64,7 +62,6 @@
 					label="Select Login Redirect URI" maxLength="256"
 					queue="clientQueue" render="selectedLoginURIsId"
 					text="#{updateClientAction.availableLoginUri}" textId="loginTextId" />
-
 				<ox:inputTextDialog
 					acceptMethod="#{updateClientAction.acceptSelectLogoutUri}"
 					cancelMethod="#{updateClientAction.cancelSelectLogoutUri}"
