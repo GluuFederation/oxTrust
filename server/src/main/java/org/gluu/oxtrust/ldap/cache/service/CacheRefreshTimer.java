@@ -56,6 +56,7 @@ import org.gluu.oxtrust.service.external.ExternalCacheRefreshService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.PropertyUtil;
 import org.gluu.persist.PersistenceEntryManager;
+import org.gluu.persist.PersistenceEntryManagerFactory;
 import org.gluu.persist.exception.BasePersistenceException;
 import org.gluu.persist.exception.EntryPersistenceException;
 import org.gluu.persist.exception.operation.SearchException;
@@ -1124,8 +1125,10 @@ public class CacheRefreshTimer {
 		if (useLocalConnection) {
 			return new LdapServerConnection(ldapConfig, ldapEntryManager, getBaseDNs(ldapConfiguration));
 		}
+		PersistenceEntryManagerFactory entryManagerFactory = applicationFactory.getPersistenceEntryManagerFactory(LdapEntryManagerFactory.class);
+		String persistenceType = entryManagerFactory.getPersistenceType();
 
-		Properties ldapProperties = toLdapProperties(ldapConfiguration);
+		Properties ldapProperties = toLdapProperties(entryManagerFactory, ldapConfiguration);
 		Properties ldapDecryptedProperties = encryptionService.decryptProperties(ldapProperties);
 
 		// Try to get updated password via script
@@ -1133,12 +1136,11 @@ public class CacheRefreshTimer {
 				.executeExternalGetBindCredentialsMethods(ldapConfig);
 		if (bindCredentials != null) {
 			log.error("Using updated password which got from getBindCredentials method");
-			ldapDecryptedProperties.setProperty("bindDN", bindCredentials.getBindDn());
-			ldapDecryptedProperties.setProperty(PropertiesDecrypter.BIND_PASSWORD, bindCredentials.getBindPassword());
+			ldapDecryptedProperties.setProperty(persistenceType + ".bindDN", bindCredentials.getBindDn());
+			ldapDecryptedProperties.setProperty(persistenceType + "." + PropertiesDecrypter.BIND_PASSWORD, bindCredentials.getBindPassword());
 		}
 
-		PersistenceEntryManager customPersistenceEntryManager = applicationFactory.getPersistenceEntryManagerFactory(LdapEntryManagerFactory.class)
-				.createEntryManager(ldapDecryptedProperties);
+		PersistenceEntryManager customPersistenceEntryManager = entryManagerFactory.createEntryManager(ldapDecryptedProperties);
 		log.info("Created Cache Refresh PersistenceEntryManager: {}", customPersistenceEntryManager);
 
 		if (!customPersistenceEntryManager.getOperationService().isConnected()) {
@@ -1262,19 +1264,20 @@ public class CacheRefreshTimer {
 		return result;
 	}
 
-	private Properties toLdapProperties(GluuLdapConfiguration ldapConfiguration) {
+	private Properties toLdapProperties(PersistenceEntryManagerFactory ldapEntryManagerFactory, GluuLdapConfiguration ldapConfiguration) {
+		String persistenceType = ldapEntryManagerFactory.getPersistenceType();
 		Properties ldapProperties = new Properties();
-		ldapProperties.put("servers",
+		ldapProperties.put(persistenceType + ".servers",
 				PropertyUtil.simplePropertiesToCommaSeparatedList(ldapConfiguration.getServers()));
-		ldapProperties.put("maxconnections", Integer.toString(ldapConfiguration.getMaxConnections()));
-		ldapProperties.put("useSSL", Boolean.toString(ldapConfiguration.isUseSSL()));
-		ldapProperties.put("bindDN", ldapConfiguration.getBindDN());
-		ldapProperties.put("bindPassword", ldapConfiguration.getBindPassword());
+		ldapProperties.put(persistenceType + ".maxconnections", Integer.toString(ldapConfiguration.getMaxConnections()));
+		ldapProperties.put(persistenceType + ".useSSL", Boolean.toString(ldapConfiguration.isUseSSL()));
+		ldapProperties.put(persistenceType + ".bindDN", ldapConfiguration.getBindDN());
+		ldapProperties.put(persistenceType + ".bindPassword", ldapConfiguration.getBindPassword());
 
 		// Copy binary attributes list from main LDAP connection
 		PersistenceOperationService persistenceOperationService = ldapEntryManager.getOperationService();
 		if (persistenceOperationService instanceof LdapEntryManager) {
-			ldapProperties.put("binaryAttributes",
+			ldapProperties.put(persistenceType + ".binaryAttributes",
 					PropertyUtil.stringsToCommaSeparatedList(((LdapEntryManager) ldapEntryManager).getOperationService()
 							.getConnectionProvider().getBinaryAttributes()));
 		}
