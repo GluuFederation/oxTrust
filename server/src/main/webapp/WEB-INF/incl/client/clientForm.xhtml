@@ -71,7 +71,7 @@
 
 	<h:form id="clientForm">
 		<b:panel title="Client Form" look="primary" collapsible="false"
-			iconAwesome="fa-building">
+			iconAwesome="fa-building" style="margin:10px;">
 			<input type='hidden' name='cid' value='#{conversation.id}' />
 			<div class="row">
 				<div class="col-xs-12 col-sm-12 col-lg-12" style="margin-top: 5px;">
@@ -1041,12 +1041,13 @@
 										<ui:param name="parentId" value="oxAuthClientAttributes" />
 										<ui:param name="json"
 											value="#{_clientAction.oxAttributesJson}" />
-
 										<ui:param name="jsonSchema"
 											value="#{request.contextPath}/schema/oxAttributes.properties.json" />
 										<ui:param name="saveBtnId" value="updateButtons" />
 										<ui:param name="saveBtnLabel" value="Save attributes" />
 									</ui:decorate>
+									<h:outputText prependId="false" id="#{id}_hidden" style="width:100%;"
+										value="#{_clientAction.oxAttributesJson}" class="hiddenField" />
 								</h:panelGroup>
 							</div>
 						</div>

@@ -9,6 +9,18 @@
            {
             "type":"string",
             "id":"tlsClientAuthSubjectDn"
-           }
+           },
+       "runIntrospectionScriptBeforeAccessTokenAsJwtCreationAndIncludeClaims":
+           {
+            "id": "runIntrospectionScriptBeforeAccessTokenAsJwtCreationAndIncludeClaims",
+            "description": "Run Introspection Script Before Access Token As Jwt Creation And Include Claims.",
+            "type": "boolean"
+           },  
+       "keepClientAuthorizationAfterExpiration":
+           {
+            "id": "keepClientAuthorizationAfterExpiration",
+            "description": "Keep Client Authorization After Expiration.",
+            "type": "boolean"
+           }          
     }
 }
