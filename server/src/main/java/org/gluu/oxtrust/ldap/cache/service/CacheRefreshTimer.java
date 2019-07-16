@@ -309,10 +309,13 @@ public class CacheRefreshTimer {
 			} catch (Exception e) {
 				// Nothing can be done
 			}
-			try {
-				closeLdapServerConnection(inumDbServerConnection);
-			} catch (Exception e) {
-				// Nothing can be done
+			
+			if (!cacheRefreshConfiguration.isDefaultInumServer()) {
+				try {
+					closeLdapServerConnection(inumDbServerConnection);
+				} catch (Exception e) {
+					// Nothing can be done
+				}
 			}
 			try {
 				if (isVdsUpdate) {
