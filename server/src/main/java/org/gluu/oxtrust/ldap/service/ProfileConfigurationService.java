@@ -133,6 +133,9 @@ public class ProfileConfigurationService implements Serializable {
 			profileConfiguration.setSignRequests("conditional");
 			profileConfiguration.setEncryptAssertions("conditional");
 			profileConfiguration.setEncryptNameIds("never");
+			profileConfiguration.setDefaultAuthenticationMethod("none");
+			profileConfiguration.setDefaultNameIDFormat("none");
+
 		}
 
 		if (SAML2_LOGOUT.equals(profileConfigurationName)) {
@@ -260,6 +263,10 @@ public class ProfileConfigurationService implements Serializable {
 							.getNamedItem("encryptAssertions").getNodeValue());
 					profileConfiguration.setEncryptNameIds(
 							xmlDocument.getFirstChild().getAttributes().getNamedItem("encryptNameIds").getNodeValue());
+					// profileConfiguration.setDefaultAuthenticationMethod(xmlDocument.getFirstChild().getAttributes()
+					// .getNamedItem("defaultAuthenticationMethod").getNodeValue());
+					// profileConfiguration.setDefaultNameIDFormat(xmlDocument.getFirstChild().getAttributes()
+					// .getNamedItem("defaultNameIDFormat").getNodeValue());
 					Node attribute = xmlDocument.getFirstChild().getAttributes().getNamedItem("signingCredentialRef");
 					if (attribute != null) {
 						profileConfiguration.setProfileConfigurationCertFileName(attribute.getNodeValue());
@@ -430,6 +437,10 @@ public class ProfileConfigurationService implements Serializable {
 			context.put(SAML2_SSO + "SignRequests", profileConfiguration.getSignRequests());
 			context.put(SAML2_SSO + "EncryptNameIds", profileConfiguration.getEncryptNameIds());
 			context.put(SAML2_SSO + "EncryptAssertions", profileConfiguration.getEncryptAssertions());
+			// context.put(SAML2_SSO + "defaultAuthenticationMethod",
+			// profileConfiguration.getDefaultAuthenticationMethod());
+			// context.put(SAML2_SSO + "defaultNameIDFormat",
+			// profileConfiguration.getDefaultNameIDFormat());
 			saveCertificate(trustRelationship, fileWrappers, SAML2_SSO);
 			String certName = trustRelationship.getProfileConfigurations().get(SAML2_SSO)
 					.getProfileConfigurationCertFileName();

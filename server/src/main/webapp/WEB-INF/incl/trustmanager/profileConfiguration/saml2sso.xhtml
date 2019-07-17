@@ -88,13 +88,13 @@
 				<h:outputText value="defaultAuthenticationMethod : " />
 				<h:selectOneMenu styleClass="defaultAuthenticationMethod"
 					value="#{_profileConfigurationSelected.defaultAuthenticationMethod}" id="defaultAuthenticationMethodId">
-					<f:selectItem itemLabel="" itemValue="null" />
+					<f:selectItem itemLabel="none" itemValue="none" />
 					<f:selectItems value="#{_relyingPartyAction.getAllAcrs()}" />
 				</h:selectOneMenu>
 				<h:outputText value="defaultNameIDFormat : " />
 				<h:selectOneMenu styleClass="defaultNameIDFormat"
 					value="#{_profileConfigurationSelected.defaultNameIDFormat}" id="defaultNameIDFormatId">
-					<f:selectItem itemLabel="" itemValue="null" />
+					<f:selectItem itemLabel="none" itemValue="none" />
 					<f:selectItems value="#{_relyingPartyAction.getAllNamedIds()}" />
 				</h:selectOneMenu>
 			</h:panelGrid>
