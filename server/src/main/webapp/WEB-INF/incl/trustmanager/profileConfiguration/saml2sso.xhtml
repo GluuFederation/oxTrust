@@ -86,10 +86,17 @@
 						itemValue="always" />
 				</h:selectOneMenu>
 				<h:outputText value="defaultAuthenticationMethod : " />
-				<h:selectManyListbox styleClass="samlAcrs"
-					value="#{_profileConfigurationSelected.samlAcr}" id="SamlACRSId">
-					<f:selectItems value="#{_relyingPartyAction.getAcrs()}" />
-				</h:selectManyListbox>
+				<h:selectOneMenu styleClass="defaultAuthenticationMethod"
+					value="#{_profileConfigurationSelected.defaultAuthenticationMethod}" id="defaultAuthenticationMethodId">
+					<f:selectItem itemLabel="" itemValue="null" />
+					<f:selectItems value="#{_relyingPartyAction.getAllAcrs()}" />
+				</h:selectOneMenu>
+				<h:outputText value="defaultNameIDFormat : " />
+				<h:selectOneMenu styleClass="defaultNameIDFormat"
+					value="#{_profileConfigurationSelected.defaultNameIDFormat}" id="defaultNameIDFormatId">
+					<f:selectItem itemLabel="" itemValue="null" />
+					<f:selectItems value="#{_relyingPartyAction.getAllNamedIds()}" />
+				</h:selectOneMenu>
 			</h:panelGrid>
 			<rich:fileUpload id="SAML2SSOWrapperId"
 				fileName="#{_relyingPartyAction.fileWrappers.get('SAML2SSO').fileName}"
