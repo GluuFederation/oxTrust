@@ -640,27 +640,6 @@ public class UpdateTrustRelationshipAction implements Serializable {
 		}
 	}
 
-	private boolean generateSpMetaDataFile(String certificate) {
-		boolean result = generateSpMetaDataFileImpl(certificate);
-		if (result) {
-			this.trustRelationship.setSpMetaDataSourceType(GluuMetadataSourceType.FILE);
-			facesMessages.add(FacesMessage.SEVERITY_WARN, "SP meta-data file generated.");
-		} else {
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to generate SP meta-data file");
-			markAsInactive();
-		}
-		return result;
-	}
-
-	private boolean generateSpMetaDataFileImpl(String certificate) {
-		String spMetadataFileName = trustRelationship.getSpMetaDataFN();
-		if (StringHelper.isEmpty(spMetadataFileName)) {
-			spMetadataFileName = shibboleth3ConfService.getSpNewMetadataFileName(this.trustRelationship);
-			trustRelationship.setSpMetaDataFN(spMetadataFileName);
-		}
-		return shibboleth3ConfService.generateSpMetadataFile(trustRelationship, certificate);
-	}
-
 	private boolean saveSpMetaDataFileSourceTypeFile() throws IOException {
 		String spMetadataFileName = trustRelationship.getSpMetaDataFN();
 		boolean emptySpMetadataFileName = StringHelper.isEmpty(spMetadataFileName);

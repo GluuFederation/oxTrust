@@ -1092,7 +1092,7 @@ public class Shibboleth3ConfService implements Serializable {
 	 * Generate metadata files needed for configuration operations: gluuSP metadata and
 	 * idp metadata.
 	 */
-	public boolean generateMetadataFiles(GluuSAMLTrustRelationship gluuSP) {
+	public boolean generateMetadataFiles() {
 
 		log.info(">>>>>>>>>> IN Shibboleth3ConfService.generateMetadataFiles()...");
 
@@ -1133,23 +1133,6 @@ public class Shibboleth3ConfService implements Serializable {
 
 		} catch (IOException e) {
 			log.error("Unable to get IDP 3 encryption certificate from " + appConfiguration.getIdp3EncryptionCert(), e);
-			e.printStackTrace();
-			return false;
-		}
-
-		try {
-
-			String spCertificate = FileUtils.readFileToString(new File(appConfiguration.getGluuSpCert()))
-					.replaceAll("-{5}.*?-{5}", "");
-
-			if (gluuSP.getUrl() == null || "".equals(gluuSP.getUrl())) {
-				gluuSP.setUrl(appConfiguration.getApplicationUrl());
-			}
-
-			generateSpMetadataFile(gluuSP, spCertificate);
-
-		} catch (IOException e) {
-			log.error("Unable to get SP certificate from " + appConfiguration.getGluuSpCert(), e);
 			e.printStackTrace();
 			return false;
 		}
