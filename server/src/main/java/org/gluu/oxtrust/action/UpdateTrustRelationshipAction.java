@@ -605,22 +605,6 @@ public class UpdateTrustRelationshipAction implements Serializable {
 		}
 	}
 
-	private void markAsInactive() {
-		if (update) {
-			try {
-				GluuSAMLTrustRelationship tmpTrustRelationship = trustService
-						.getRelationshipByInum(this.trustRelationship.getInum());
-				tmpTrustRelationship.setStatus(GluuStatus.INACTIVE);
-				saveTR(update);
-			} catch (BasePersistenceException ex) {
-				log.error("Failed to update trust relationship {}", inum, ex);
-			}
-		} else {
-			this.trustRelationship.setSpMetaDataFN(null);
-			this.trustRelationship.setInum(null);
-		}
-	}
-
 	private void updateShibboleth3Configuration(List<GluuSAMLTrustRelationship> trustRelationships) {
 		if (!shibboleth3ConfService.generateConfigurationFiles(trustRelationships)) {
 			log.error("Failed to update Shibboleth v3 configuration");

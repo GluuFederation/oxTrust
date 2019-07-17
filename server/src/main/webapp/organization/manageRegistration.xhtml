@@ -16,6 +16,69 @@
 			onPostback="false" />
 	</f:metadata>
 	<ui:define name="body">
+		<h:outputStylesheet>
+            *.rf-pick-lst-dcrtn {
+                border-width: 0px !important;
+
+            }
+            .tooltip {
+                margin: 8px;
+                padding: 8px;
+                border: 1px solid blue;
+                background: white;
+                position: absolute;
+                z-index: 2;
+            }
+	       .rf-pick-btn {
+                width: 100%;
+                white-space: nowrap;
+                background-repeat: repeat-x;
+                background-position: top left;
+                background-color: #337AB7;
+                border-left-width: 1px;
+                border-left-style: solid;
+                border-left-color: #337AB7;
+                display: inline-block;
+                vertical-align: top;
+                cursor: pointer;
+                text-align: left;
+            }
+
+            .rf-pick-sel {
+                width: 100%;
+                background-color: #337AB7;
+                border-width: 1px;
+                border-style: dotted;
+                border-color: #000000;
+            }
+            button[disabled], input[type="reset"][disabled], input[type="submit"][disabled], input[type="button"][disabled] {
+                color: #337AB7;
+                border-color: #cccccc;
+                background-color: #cccccc;
+                background-position: top left;
+            }
+
+            button:hover, input[type="reset"]:hover, input[type="submit"]:hover, input[type="button"]:hover {
+                background-position: bottom left !important;;
+                background-repeat: repeat-x !important;
+                background-image: none;
+            }
+             button, input[type="reset"], input[type="submit"], input[type="button"] {
+                border-width: 1px;
+                border-color: #C0C0C0;
+                font-size: 11px;
+                font-family: Arial, Verdana, sans-serif;
+                color: #FFFFFF;
+                background-repeat: repeat-x;
+                background-position: top left;
+                background-color: #337AB7;
+                background-image: none;
+            }
+
+            .rf-pp-cntr {
+                width: 95% !important;
+            }
+        </h:outputStylesheet>
 		<h:outputScript>
             function addTooltip() {
             jQuery(document).ready(function(){
@@ -129,7 +192,7 @@
 																value="#{registrationManagementAction.attributes}"
 																var="attribute" />
 															<f:converter
-																converterId="org.gluu.jsf2.converter.AttributeNameConverter" />
+																converterId="org.gluu.jsf2.converter.AttributeNameConverter2" />
 														</rich:pickList>
 													</ox:decorate>
 												</h:panelGroup>
