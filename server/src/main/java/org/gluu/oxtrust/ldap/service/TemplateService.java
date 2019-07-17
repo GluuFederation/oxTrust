@@ -21,7 +21,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
-import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.slf4j.Logger;
 
@@ -41,10 +40,6 @@ public class TemplateService implements Serializable {
 
 	@Inject
 	private ConfigurationFactory configurationFactory;
-
-	@Inject
-	private AppConfiguration appConfiguration;
-
 	/*
 	 * Generate relying-party.xml using relying-party.xml.vm template
 	 */
