@@ -127,9 +127,18 @@
                         #end
                         #if($profileConfig.signingCredentialRef)
                           p:signingCredentialRef="$profileConfig.signingCredentialRef"
+                        #end 
+                        #if($profileConfig.defaultNameIDFormat != '')
+                          p:nameIDFormatPrecedence="$profileConfig.defaultNameIDFormat"
+                        #end >
+                        #if ($profileConfig.defaultAuthenticationMethod != '')
+                        <property name="defaultAuthenticationMethods">
+                            <list>
+                                <bean parent="shibboleth.SAML2AuthnContextClassRef" c:classRef="$profileConfig.defaultAuthenticationMethod" />
+                            </list>
+                        </property>
                         #end
-
-                    />
+                    </bean>
                     #elseif($mapEntry.key == "SAML2Logout")
 
                     <bean parent="SAML2.Logout"
