@@ -263,15 +263,19 @@ public class ProfileConfigurationService implements Serializable {
 							.getNamedItem("encryptAssertions").getNodeValue());
 					profileConfiguration.setEncryptNameIds(
 							xmlDocument.getFirstChild().getAttributes().getNamedItem("encryptNameIds").getNodeValue());
-					// profileConfiguration.setDefaultAuthenticationMethod(xmlDocument.getFirstChild().getAttributes()
-					// .getNamedItem("defaultAuthenticationMethod").getNodeValue());
-					// profileConfiguration.setDefaultNameIDFormat(xmlDocument.getFirstChild().getAttributes()
-					// .getNamedItem("defaultNameIDFormat").getNodeValue());
-					Node attribute = xmlDocument.getFirstChild().getAttributes().getNamedItem("signingCredentialRef");
-					if (attribute != null) {
-						profileConfiguration.setProfileConfigurationCertFileName(attribute.getNodeValue());
-					}
 
+					Node attribute = xmlDocument.getFirstChild().getAttributes().getNamedItem("defaultAuthenticationMethod");
+					if (attribute != null) 
+						profileConfiguration.setDefaultAuthenticationMethod(attribute.getNodeValue());
+					
+					Node attribute2 = xmlDocument.getFirstChild().getAttributes().getNamedItem("defaultNameIDFormat");
+					if (attribute2 != null) 
+						profileConfiguration.setDefaultNameIDFormat(attribute2.getNodeValue());
+					
+					Node attribute3 = xmlDocument.getFirstChild().getAttributes().getNamedItem("signingCredentialRef");
+					if (attribute3 != null) 
+						profileConfiguration.setProfileConfigurationCertFileName(attribute3.getNodeValue());
+					
 					trustRelationship.getProfileConfigurations().put(SAML2_SSO, profileConfiguration);
 					continue;
 				}
@@ -437,10 +441,8 @@ public class ProfileConfigurationService implements Serializable {
 			context.put(SAML2_SSO + "SignRequests", profileConfiguration.getSignRequests());
 			context.put(SAML2_SSO + "EncryptNameIds", profileConfiguration.getEncryptNameIds());
 			context.put(SAML2_SSO + "EncryptAssertions", profileConfiguration.getEncryptAssertions());
-			// context.put(SAML2_SSO + "defaultAuthenticationMethod",
-			// profileConfiguration.getDefaultAuthenticationMethod());
-			// context.put(SAML2_SSO + "defaultNameIDFormat",
-			// profileConfiguration.getDefaultNameIDFormat());
+			context.put(SAML2_SSO + "DefaultAuthenticationMethod", profileConfiguration.getDefaultAuthenticationMethod());
+			context.put(SAML2_SSO + "DefaultNameIDFormat", profileConfiguration.getDefaultNameIDFormat());
 			saveCertificate(trustRelationship, fileWrappers, SAML2_SSO);
 			String certName = trustRelationship.getProfileConfigurations().get(SAML2_SSO)
 					.getProfileConfigurationCertFileName();

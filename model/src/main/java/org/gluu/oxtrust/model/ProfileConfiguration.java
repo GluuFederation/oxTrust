@@ -124,7 +124,7 @@ public class ProfileConfiguration implements Serializable {
 
 	@Override
 	public String toString() {
-		return String.format("ProfileConfiguration [name=%s, includeAttributeStatement=%s, signResponses=%s, signAssertions=%s, signRequests=%s, assertionLifetime=%s, assertionProxyCount=%s, encryptNameIds=%s, encryptAssertions=%s, profileConfigurationCertFileName=%s]", getName(), isIncludeAttributeStatement(), getSignResponses(), getSignAssertions(), getSignRequests(), getAssertionLifetime(), getAssertionProxyCount(), getEncryptNameIds(), getEncryptAssertions(), getProfileConfigurationCertFileName());
+		return String.format("ProfileConfiguration [name=%s, includeAttributeStatement=%s, signResponses=%s, signAssertions=%s, signRequests=%s, assertionLifetime=%s, assertionProxyCount=%s, encryptNameIds=%s, encryptAssertions=%s, defaultAuthenticationMethod=%s, defaultNameIDFormat=%s, profileConfigurationCertFileName=%s]", getName(), isIncludeAttributeStatement(), getSignResponses(), getSignAssertions(), getSignRequests(), getAssertionLifetime(), getAssertionProxyCount(), getEncryptNameIds(), getEncryptAssertions(), getDefaultAuthenticationMethod(), getDefaultNameIDFormat(), getProfileConfigurationCertFileName());
 	}
 
 	
