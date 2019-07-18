@@ -22,6 +22,8 @@ public class ProfileConfiguration implements Serializable {
 	private String encryptNameIds;
 	private String encryptAssertions;
 	private String profileConfigurationCertFileName;
+	private String defaultAuthenticationMethod;
+	private String defaultNameIDFormat;
 
 	public String getName() {
 		return name;
@@ -104,9 +106,27 @@ public class ProfileConfiguration implements Serializable {
 		this.profileConfigurationCertFileName = profileConfigurationCertFileName;
 	}
 
+	public String getDefaultAuthenticationMethod() {
+		return defaultAuthenticationMethod;
+	}
+
+	public void setDefaultAuthenticationMethod(String defaultAuthenticationMethod) {
+		this.defaultAuthenticationMethod = defaultAuthenticationMethod;
+	}
+
+	public String getDefaultNameIDFormat() {
+		return defaultNameIDFormat;
+	}
+
+	public void setDefaultNameIDFormat(String defaultNameIDFormat) {
+		this.defaultNameIDFormat = defaultNameIDFormat;
+	}
+
 	@Override
 	public String toString() {
-		return String.format("ProfileConfiguration [name=%s, includeAttributeStatement=%s, signResponses=%s, signAssertions=%s, signRequests=%s, assertionLifetime=%s, assertionProxyCount=%s, encryptNameIds=%s, encryptAssertions=%s, profileConfigurationCertFileName=%s]", getName(), isIncludeAttributeStatement(), getSignResponses(), getSignAssertions(), getSignRequests(), getAssertionLifetime(), getAssertionProxyCount(), getEncryptNameIds(), getEncryptAssertions(), getProfileConfigurationCertFileName());
+		return String.format("ProfileConfiguration [name=%s, includeAttributeStatement=%s, signResponses=%s, signAssertions=%s, signRequests=%s, assertionLifetime=%s, assertionProxyCount=%s, encryptNameIds=%s, encryptAssertions=%s, defaultAuthenticationMethod=%s, defaultNameIDFormat=%s, profileConfigurationCertFileName=%s]", getName(), isIncludeAttributeStatement(), getSignResponses(), getSignAssertions(), getSignRequests(), getAssertionLifetime(), getAssertionProxyCount(), getEncryptNameIds(), getEncryptAssertions(), getDefaultAuthenticationMethod(), getDefaultNameIDFormat(), getProfileConfigurationCertFileName());
 	}
+
+	
 
 }

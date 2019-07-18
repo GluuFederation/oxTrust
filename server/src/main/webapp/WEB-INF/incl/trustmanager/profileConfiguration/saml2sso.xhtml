@@ -3,6 +3,7 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
 	xmlns:a4j="http://richfaces.org/a4j" xmlns:b="http://bootsfaces.net/ui"
 	xmlns:rich="http://richfaces.org/rich"
@@ -83,6 +84,18 @@
 						itemValue="conditional" />
 					<f:selectItem itemLabel="#{msg['trustmanager.always']}"
 						itemValue="always" />
+				</h:selectOneMenu>
+				<h:outputText value="defaultAuthenticationMethod : " />
+				<h:selectOneMenu styleClass="defaultAuthenticationMethod"
+					value="#{_profileConfigurationSelected.defaultAuthenticationMethod}" id="defaultAuthenticationMethodId">
+					<f:selectItem itemLabel="none" itemValue="none" />
+					<f:selectItems value="#{_relyingPartyAction.getAllAcrs()}" />
+				</h:selectOneMenu>
+				<h:outputText value="defaultNameIDFormat : " />
+				<h:selectOneMenu styleClass="defaultNameIDFormat"
+					value="#{_profileConfigurationSelected.defaultNameIDFormat}" id="defaultNameIDFormatId">
+					<f:selectItem itemLabel="none" itemValue="none" />
+					<f:selectItems value="#{_relyingPartyAction.getAllNamedIds()}" />
 				</h:selectOneMenu>
 			</h:panelGrid>
 			<rich:fileUpload id="SAML2SSOWrapperId"
