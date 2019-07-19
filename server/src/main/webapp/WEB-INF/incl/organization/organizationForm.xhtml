@@ -204,9 +204,8 @@
 												look="success" collapsible="true" collapsed="true">
 												<div class="row">
 													<div class="col-sm-6 col-lg-6"
-														style="padding: 0px; margin: 5px;">
-														<img height="20%" width="50%"
-															src="#{request.contextPath}/servlet/logo?preview=true" />
+														style="padding: 0px; margin: 5px; max-height: 70px;">
+														<img src="#{request.contextPath}/servlet/logo?scale=large" height="70" width="150" />
 													</div>
 													<div class="col-sm-4 col-lg-4"
 														style="padding: 0px; margin: 2px;">
@@ -228,9 +227,8 @@
 												collapsible="true" collapsed="true">
 												<div class="row">
 													<div class="col-sm-6 col-lg-6"
-														style="padding: 0px; margin: 5px;">
-														<img height="20%" width="30%"
-															src="#{request.contextPath}/servlet/favicon?preview=true" />
+														style="padding: 0px; margin: 5px; max-height: 70px;">
+														<img src="#{request.contextPath}/servlet/favicon?preview=true" />
 													</div>
 													<div class="col-sm-4 col-lg-4"
 														style="padding: 0px; margin: 2px;">
@@ -256,9 +254,8 @@
 												look="success" collapsible="true" collapsed="true">
 												<div class="row">
 													<div class="col-sm-6 col-lg-6"
-														style="padding: 0px; margin: 5px;">
-														<img height="20%" width="50%"
-															src="#{request.contextPath}/servlet/oxauth/logo?preview=true" />
+														style="padding: 0px; margin: 5px; max-height: 70px;">
+														<img src="#{request.contextPath}/servlet/oxauth/logo?scale=large" height="70" width="150" />
 													</div>
 													<div class="col-sm-4 col-lg-4"
 														style="padding: 0px; margin: 2px;">
@@ -279,13 +276,11 @@
 												title="Current oxAuth Favicon" look="success"
 												collapsible="true" collapsed="true">
 												<div class="row">
-													<div class="col-sm-6 col-lg-6"
-														style="padding: 0px; margin: 2px;">
-														<img height="20%" width="30%"
-															src="#{request.contextPath}/servlet/oxauth/favicon?preview=true" />
+													<div class="col-sm-6 col-lg-6" style="padding: 0px; margin: 2px; max-height: 70px;">
+														<img src="#{request.contextPath}/servlet/oxauth/favicon" />
 													</div>
 													<div class="col-sm-4 col-lg-4"
-														style="padding: 0px; margin: 10px;">
+														style="padding: 0px; margin: 10px; max-height: 70px;">
 														<rich:fileUpload id="oxAuthFavicon"
 															fileUploadListener="#{_organizationAction.setOxAuthFaviconImage}"
 															acceptedTypes="ico, jpeg, jpg, png"
@@ -308,9 +303,9 @@
 												look="success" collapsible="true" collapsed="true">
 												<div class="row">
 													<div class="col-sm-6 col-lg-6"
-														style="padding: 0px; margin: 5px;">
-														<img height="20%" width="50%"
-															src="#{request.contextPath}/servlet/idp/logo?preview=true" />
+														style="padding: 0px; margin: 5px; max-height: 70px;">
+														<img
+															src="#{request.contextPath}/servlet/idp/logo" />
 													</div>
 													<div class="col-sm-4 col-lg-4"
 														style="padding: 0px; margin: 10px;">
@@ -331,8 +326,8 @@
 												look="success" collapsible="true" collapsed="true">
 												<div class="row">
 													<div class="col-sm-6 col-lg-6"
-														style="padding: 0px; margin: 5px;">
-														<img height="20%" width="30%"
+														style="padding: 0px; margin: 5px; max-height: 70px;">
+														<img
 															src="#{request.contextPath}/servlet/idp/favicon?preview=true" />
 													</div>
 													<div class="col-sm-4 col-lg-4"
