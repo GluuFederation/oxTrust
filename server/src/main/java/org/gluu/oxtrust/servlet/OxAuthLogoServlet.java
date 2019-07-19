@@ -36,15 +36,19 @@ public class OxAuthLogoServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) {
 		response.setContentType("image/jpg");
 		response.setDateHeader("Expires", new Date().getTime() + 1000L * 1800);
+		String scale = request.getParameter("scale");
 		GluuOrganization organization = organizationService.getOrganization();
 		boolean hasSucceed = readCustomLogo(response, organization);
 		if (!hasSucceed) {
-			readDefaultLogo(response);
+			readDefaultLogo(response, scale);
 		}
 	}
 
-	private boolean readDefaultLogo(HttpServletResponse response) {
+	private boolean readDefaultLogo(HttpServletResponse response, String scale) {
 		String defaultLogoFileName = "/WEB-INF/static/images/default_logo.png";
+		if (scale != null) {
+			defaultLogoFileName = "/WEB-INF/static/images/default_logo_lg.png";
+		}
 		try (InputStream in = getServletContext().getResourceAsStream(defaultLogoFileName);
 				OutputStream out = response.getOutputStream()) {
 			IOUtils.copy(in, out);
