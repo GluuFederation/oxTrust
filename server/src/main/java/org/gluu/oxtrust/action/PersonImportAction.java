@@ -473,6 +473,9 @@ public class PersonImportAction implements Serializable {
 				if (flag)
 					break;
 			}
+			if(person.getStatus()==null) {
+				person.setStatus(GluuStatus.INACTIVE);
+			}
 
 		}
 
