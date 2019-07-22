@@ -80,6 +80,7 @@ public class RelyingPartyAction implements Serializable {
 		allNamedIds.add("urn:oasis:names:tc:SAML:1.1:nameid-format:WindowsDomainQualifiedName");
 		allNamedIds.add("urn:oasis:names:tc:SAML:2.0:nameid-format:kerberos");
 		allNamedIds.add("urn:oasis:names:tc:SAML:2.0:nameid-format:entity");
+		allNamedIds.add("urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified");
 	}
 
 	public List<String> getAllNamedIds() {

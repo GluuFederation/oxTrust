@@ -119,6 +119,8 @@ public class ConfigureNameIdAction implements Serializable {
 				"urn:oasis:names:tc:SAML:2.0:nameid-format:kerberos");
 		availableNamedIds.put("urn:oasis:names:tc:SAML:2.0:nameid-format:entity",
 				"urn:oasis:names:tc:SAML:2.0:nameid-format:entity");
+		availableNamedIds.put("urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified",
+				"urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified");
 	}
 
 	public String save() {
