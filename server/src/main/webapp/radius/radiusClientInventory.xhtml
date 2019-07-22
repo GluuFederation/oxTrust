@@ -45,10 +45,9 @@
 										style="width: 60%; float: left;"
 										styleClass="form-control"
 										value="#{searchRadiusClientAction.searchPattern}"/>
-									<h:commandButton action="#{searchRadiusClientAction.search}"
-										style="float: left;margin-left: 3px;"
-										styleClass="btn btn-primary"
-										value="#{msg['radius.clients.search.label']}"/>
+									<b:commandButton action="#{searchRadiusClientAction.search}"
+											style="float: left; margin-left: 3px;" styleClass="btn btn-primary searchButton"
+											value="#{msg['radius.clients.search.label']}" iconAwesome="fa-search"/>	
 									
 								</div>
 							</ox:decorate>
