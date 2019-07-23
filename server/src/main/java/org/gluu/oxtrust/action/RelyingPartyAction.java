@@ -17,6 +17,7 @@ import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ConversationScoped;
+import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.xml.parsers.DocumentBuilder;
@@ -39,6 +40,8 @@ import org.w3c.dom.NodeList;
 @Named("relyingPartyAction")
 @Secure("#{permissionService.hasPermission('trust', 'access')}")
 public class RelyingPartyAction implements Serializable {
+
+	private static final String NAMEID_FORMAT_UNSPECIFIED = "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified";
 
 	private static final long serialVersionUID = -5304171897858890801L;
 
@@ -64,7 +67,8 @@ public class RelyingPartyAction implements Serializable {
 
 	private Map<String, FileUploadWrapper> fileWrappers = new HashMap<String, FileUploadWrapper>();
 	private Set<String> allAcrs = new HashSet<>();
-	private Set<String> allNamedIds = new HashSet<>();
+	private List<String> allNamedIds = new ArrayList<>();
+	private boolean unspecifiedSupported = false;
 
 	@PostConstruct
 	public void init() {
@@ -80,14 +84,13 @@ public class RelyingPartyAction implements Serializable {
 		allNamedIds.add("urn:oasis:names:tc:SAML:1.1:nameid-format:WindowsDomainQualifiedName");
 		allNamedIds.add("urn:oasis:names:tc:SAML:2.0:nameid-format:kerberos");
 		allNamedIds.add("urn:oasis:names:tc:SAML:2.0:nameid-format:entity");
-		allNamedIds.add("urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified");
 	}
 
 	public List<String> getAllNamedIds() {
-		return new ArrayList<String>(allNamedIds);
+		return allNamedIds;
 	}
 
-	public void setAllNamedIds(Set<String> allNamedIds) {
+	public void setAllNamedIds(List<String> allNamedIds) {
 		this.allNamedIds = allNamedIds;
 	}
 
@@ -355,7 +358,7 @@ public class RelyingPartyAction implements Serializable {
 	public void setAssertionProxyCount(int assertionProxyCount) {
 		getProfileConfigurationSelected().setAssertionProxyCount(assertionProxyCount);
 	}
-	
+
 	public String getDefaultAuthenticationMethod() {
 		return getProfileConfigurationSelected().getDefaultAuthenticationMethod();
 	}
@@ -363,15 +366,27 @@ public class RelyingPartyAction implements Serializable {
 	public void setDefaultAuthenticationMethod(String method) {
 		getProfileConfigurationSelected().setDefaultAuthenticationMethod(method);
 	}
-	
-	public String getDefaultNameIDFormat() {
-		return getProfileConfigurationSelected().getDefaultNameIDFormat();
+
+	public List<String> getDefaultNameIDFormat() {
+		List<String> values = getProfileConfigurationSelected().getNameIDFormats();
+		if (values.contains(NAMEID_FORMAT_UNSPECIFIED)) {
+			this.unspecifiedSupported = true;
+		}
+		return values;
 	}
 
-	public void setDefaultNameIDFormat(String method) {
-		getProfileConfigurationSelected().setDefaultNameIDFormat(method);
+	public void setDefaultNameIDFormat(List<String> method) {
+		getProfileConfigurationSelected().setNameIDFormats(method);
 	}
 
+	public void handleAcrCheckBox(ValueChangeEvent event) {
+		String value = event.getNewValue().toString();
+		if (value.equalsIgnoreCase("true")) {
+			allNamedIds.add(NAMEID_FORMAT_UNSPECIFIED);
+		} else {
+			allNamedIds.remove(NAMEID_FORMAT_UNSPECIFIED);
+		}
+	}
 
 	public void showFile() {
 
@@ -379,5 +394,13 @@ public class RelyingPartyAction implements Serializable {
 
 	public Map<String, FileUploadWrapper> getFileWrappers() {
 		return fileWrappers;
+	}
+
+	public boolean isUnspecifiedSupported() {
+		return unspecifiedSupported;
+	}
+
+	public void setUnspecifiedSupported(boolean unspecifiedSupported) {
+		this.unspecifiedSupported = unspecifiedSupported;
 	}
 }
