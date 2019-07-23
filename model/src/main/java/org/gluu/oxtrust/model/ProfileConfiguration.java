@@ -7,11 +7,16 @@
 package org.gluu.oxtrust.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class ProfileConfiguration implements Serializable {
 
+	private static final String DELIMITER = ",";
+
 	private static final long serialVersionUID = 7083971450893323016L;
-        
+
 	private String name;
 	private boolean includeAttributeStatement;
 	private String signResponses;
@@ -24,6 +29,7 @@ public class ProfileConfiguration implements Serializable {
 	private String profileConfigurationCertFileName;
 	private String defaultAuthenticationMethod;
 	private String defaultNameIDFormat;
+	private List<String> nameIDFormats = new ArrayList<>();
 
 	public String getName() {
 		return name;
@@ -101,8 +107,7 @@ public class ProfileConfiguration implements Serializable {
 		return profileConfigurationCertFileName;
 	}
 
-	public void setProfileConfigurationCertFileName(
-			String profileConfigurationCertFileName) {
+	public void setProfileConfigurationCertFileName(String profileConfigurationCertFileName) {
 		this.profileConfigurationCertFileName = profileConfigurationCertFileName;
 	}
 
@@ -124,9 +129,20 @@ public class ProfileConfiguration implements Serializable {
 
 	@Override
 	public String toString() {
-		return String.format("ProfileConfiguration [name=%s, includeAttributeStatement=%s, signResponses=%s, signAssertions=%s, signRequests=%s, assertionLifetime=%s, assertionProxyCount=%s, encryptNameIds=%s, encryptAssertions=%s, defaultAuthenticationMethod=%s, defaultNameIDFormat=%s, profileConfigurationCertFileName=%s]", getName(), isIncludeAttributeStatement(), getSignResponses(), getSignAssertions(), getSignRequests(), getAssertionLifetime(), getAssertionProxyCount(), getEncryptNameIds(), getEncryptAssertions(), getDefaultAuthenticationMethod(), getDefaultNameIDFormat(), getProfileConfigurationCertFileName());
+		return String.format(
+				"ProfileConfiguration [name=%s, includeAttributeStatement=%s, signResponses=%s, signAssertions=%s, signRequests=%s, assertionLifetime=%s, assertionProxyCount=%s, encryptNameIds=%s, encryptAssertions=%s, defaultAuthenticationMethod=%s, defaultNameIDFormat=%s, profileConfigurationCertFileName=%s]",
+				getName(), isIncludeAttributeStatement(), getSignResponses(), getSignAssertions(), getSignRequests(),
+				getAssertionLifetime(), getAssertionProxyCount(), getEncryptNameIds(), getEncryptAssertions(),
+				getDefaultAuthenticationMethod(), getDefaultNameIDFormat(), getProfileConfigurationCertFileName());
 	}
 
-	
+	public List<String> getNameIDFormats() {
+		this.nameIDFormats = Arrays.asList(defaultNameIDFormat.split(DELIMITER));
+		return nameIDFormats;
+	}
 
+	public void setNameIDFormats(List<String> nameIDFormats) {
+		this.nameIDFormats = nameIDFormats;
+		setDefaultNameIDFormat(String.join(DELIMITER, nameIDFormats));
+	}
 }
