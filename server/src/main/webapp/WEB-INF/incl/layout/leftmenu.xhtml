@@ -662,6 +662,15 @@
 								$('#menuUsers').addClass('active');
 								$('#subMenuLinkUsers2').addClass('active');
 							}
+							
+							if (window.location.href
+									.indexOf("radius/radiusServerConfiguration") != -1
+									|| window.location.href
+											.indexOf("radius/radiusClientInventory") != -1) {
+								$('#subMenuRadius').css('display', 'block');
+								$('#menuRadiusConfig').addClass('active');
+								$('#menuRadiusClients').addClass('active');
+							}
 
 							if (window.location.href.indexOf("person/add") != -1) {
 								$('#subMenuUsers').css('display', 'block');
