@@ -153,13 +153,13 @@ public class AbstractPage {
 
 	public void signOut() {
 		fluentWait(2);
-		WebElement element = webDriver.findElement(By.className("user-menu"));
+		WebElement main = webDriver.findElement(By.className("user-menu"));
 		Actions actions = new Actions(webDriver);
-		actions.moveToElement(element).click().perform();
+		actions.moveToElement(main).click().perform();
 
 		WebElement footer = waitElementByClass("user-footer");
-		List<WebElement> elements = footer.findElements(By.className("pull-left"));
-		elements.get(1).click();
+		WebElement element = footer.findElement(By.className("logoutButton"));
+		element.click();
 		finishLogout();
 	}
 
@@ -168,7 +168,7 @@ public class AbstractPage {
 	}
 
 	private void finishLogout() {
-		WebElement finishButton = webDriver.findElement(By.className("btn-lg"));
+		WebElement finishButton = webDriver.findElement(By.className("btn-primary"));
 		finishButton.click();
 	}
 
