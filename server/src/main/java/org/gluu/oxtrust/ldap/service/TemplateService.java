@@ -11,6 +11,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.io.StringWriter;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.Properties;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -18,7 +20,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 import org.gluu.oxtrust.config.ConfigurationFactory;
@@ -40,6 +41,7 @@ public class TemplateService implements Serializable {
 
 	@Inject
 	private ConfigurationFactory configurationFactory;
+
 	/*
 	 * Generate relying-party.xml using relying-party.xml.vm template
 	 */
@@ -72,37 +74,48 @@ public class TemplateService implements Serializable {
 	 */
 	private Properties getTemplateEngineConfiguration() {
 		Properties properties = new Properties();
-		InputStream is = TemplateService.class.getClassLoader().getResourceAsStream("velocity.properties");
-		try {
+		try (InputStream is = TemplateService.class.getClassLoader().getResourceAsStream("velocity.properties");) {
 			properties.load(is);
 			String loaderType = properties.getProperty("resource.loader").trim();
-			// Set right folder for file loader
-			if (loaderType.indexOf("file") == 0) {
-				String idpTemplatesLocation = configurationFactory.getIDPTemplatesLocation();
-				String folder1 = idpTemplatesLocation + "shibboleth3"
-						+ File.separator + "idp";
-				String folder2 = idpTemplatesLocation + "shibboleth3"
-						+ File.separator + "sp";
-				String folder3 = idpTemplatesLocation + "ldif";
-				String folder4 = idpTemplatesLocation + "shibboleth3"
-						+ File.separator + "idp" + File.separator + "MetadataFilter";
-				String folder5 = idpTemplatesLocation + "shibboleth3"
-						+ File.separator + "idp" + File.separator + "ProfileConfiguration";
-				String folder6 = idpTemplatesLocation + "template"
-						+ File.separator + "conf";
-				String folder7 = idpTemplatesLocation + "template"
-						+ File.separator + "shibboleth3";
-				properties.setProperty("file.resource.loader.path", folder1 + ", " + folder2 + ", " + folder3 + ", " + folder4 + ", "
-						+ folder5 + ", " + folder6  + ", " + folder7);
-				log.info("file.resource.loader.path = " + folder1 + ", " + folder2 + ", " + folder3 + ", " + folder4 + ", "
-						+ folder5 + ", " + folder6 + ", " + folder7);
+			if (loaderType.contains("jar")) {
+				properties = loadFromJar(properties);
+			}
+			if (loaderType.contains("file")) {
+				properties = loadFromFileSystem(properties);
 			}
 		} catch (IOException ex) {
 			log.error("Failed to load velocity.properties", ex);
-		} finally {
-			IOUtils.closeQuietly(is);
 		}
+		return properties;
+	}
 
+	private Properties loadFromJar(Properties properties) {
+		for (URL url : ((URLClassLoader) (Thread.currentThread().getContextClassLoader())).getURLs()) {
+			if (url.getPath().contains("oxtrust-configuration")) {
+				String oxtrustConfigurationJar = "jar:file:" + url.getPath();
+				properties.setProperty("jar.resource.loader.path", oxtrustConfigurationJar + ",");
+				break;
+			}
+		}
+		log.debug("jar path =" + properties.getProperty("jar.resource.loader.path"));
+		return properties;
+	}
+
+	private Properties loadFromFileSystem(Properties properties) {
+		String idpTemplatesLocation = configurationFactory.getIDPTemplatesLocation();
+		String folder1 = idpTemplatesLocation + "shibboleth3" + File.separator + "idp";
+		String folder2 = idpTemplatesLocation + "shibboleth3" + File.separator + "sp";
+		String folder3 = idpTemplatesLocation + "ldif";
+		String folder4 = idpTemplatesLocation + "shibboleth3" + File.separator + "idp" + File.separator
+				+ "MetadataFilter";
+		String folder5 = idpTemplatesLocation + "shibboleth3" + File.separator + "idp" + File.separator
+				+ "ProfileConfiguration";
+		String folder6 = idpTemplatesLocation + "template" + File.separator + "conf";
+		String folder7 = idpTemplatesLocation + "template" + File.separator + "shibboleth3";
+		properties.setProperty("file.resource.loader.path", folder1 + ", " + folder2 + ", " + folder3 + ", " + folder4
+				+ ", " + folder5 + ", " + folder6 + ", " + folder7);
+		log.debug("file.resource.loader.path = " + folder1 + ", " + folder2 + ", " + folder3 + ", " + folder4 + ", "
+				+ folder5 + ", " + folder6 + ", " + folder7);
 		return properties;
 	}
 
