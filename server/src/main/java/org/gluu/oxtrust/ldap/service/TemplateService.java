@@ -18,9 +18,11 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -33,6 +35,7 @@ import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 import org.gluu.oxtrust.config.ConfigurationFactory;
+import org.jboss.weld.environment.util.Collections;
 import org.slf4j.Logger;
 
 /**
@@ -148,6 +151,20 @@ public class TemplateService implements Serializable {
 	}
 
 	public List<String> getTemplateNames(String baseFolder) {
+		String classpathIdpTemplatesLocation = "META-INF";
+		List<String> classpathTemplateNames = getClasspathTemplateNames(classpathIdpTemplatesLocation + "/" + baseFolder);
+
+		String fileIdpTemplatesLocation = configurationFactory.getIDPTemplatesLocation();
+		List<String> filesystemTemplateNames = getFilesystemTemplateNames(fileIdpTemplatesLocation + "/" + baseFolder);
+		
+		Set<String> merged = new HashSet<String>();
+		merged.addAll(classpathTemplateNames);
+		merged.addAll(filesystemTemplateNames);
+		
+		return new ArrayList<String>(merged);
+	}
+
+	public List<String> getClasspathTemplateNames(String baseFolder) {
 		List<String> names = new ArrayList<String>();
 
 		URL url = TemplateService.class.getClassLoader().getResource(baseFolder);
@@ -181,6 +198,27 @@ public class TemplateService implements Serializable {
 		}
 
 		return names;
+	}
+	
+	public List<String> getFilesystemTemplateNames(String baseFolder) {
+		List<String> names = new ArrayList<String>();
+
+		File baseFolderFile = new File(baseFolder);
+
+		File[] foudFiles = null;
+
+		if (baseFolderFile.exists() && baseFolderFile.isDirectory()) {
+			foudFiles = baseFolderFile.listFiles();
+		} else {
+			return names;
+		}
+
+		for (File foundFile : foudFiles) {
+			names.add(foundFile.getName());
+		}
+		
+		return names;
+
 	}
 
 	/*

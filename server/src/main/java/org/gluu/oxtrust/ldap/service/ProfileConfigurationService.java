@@ -75,7 +75,7 @@ public class ProfileConfigurationService implements Serializable {
 	private AppConfiguration appConfiguration;
 
 	public List<ProfileConfiguration> getAvailableProfileConfigurations() {
-		List<String> templateNames = templateService.getTemplateNames("META-INF/shibboleth3" + File.separator + "idp" + File.separator + "ProfileConfiguration");
+		List<String> templateNames = templateService.getTemplateNames("shibboleth3" + File.separator + "idp" + File.separator + "ProfileConfiguration");
 
 		List<ProfileConfiguration> profileConfigurations = new ArrayList<ProfileConfiguration>();
 		for (String templateName : templateNames) {
