@@ -30,31 +30,8 @@
 				</includes>
 			</resource>
 			<resource>
-				<directory>template/shibboleth3/idp</directory>
-				<includes>
-					<include>**/*.vm</include>
-					<include>**/*.xsd</include>
-					<include>**/*.dtd</include>
-				</includes>
-			</resource>
-			<resource>
-				<directory>template/shibboleth3/idp/MetadataFilter</directory>
-				<includes>
-					<include>**/*.vm</include>
-					<include>**/*.xsd</include>
-					<include>**/*.dtd</include>
-				</includes>
-			</resource>
-			<resource>
-				<directory>template/shibboleth3/idp/ProfileConfiguration</directory>
-				<includes>
-					<include>**/*.vm</include>
-					<include>**/*.xsd</include>
-					<include>**/*.dtd</include>
-				</includes>
-			</resource>
-			<resource>
-				<directory>template/shibboleth3/sp</directory>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
 				<includes>
 					<include>**/*.vm</include>
 					<include>**/*.xsd</include>

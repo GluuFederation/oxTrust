@@ -13,6 +13,7 @@ import java.io.Serializable;
 import java.io.StringWriter;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Arrays;
 import java.util.Properties;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -80,6 +81,9 @@ public class TemplateService implements Serializable {
 			if (loaderType.contains("jar")) {
 				properties = loadFromJar(properties);
 			}
+			if (loaderType.contains("class_path")) {
+				properties = loadFromPathClasspath(properties);
+			}
 			if (loaderType.contains("file")) {
 				properties = loadFromFileSystem(properties);
 			}
@@ -103,6 +107,22 @@ public class TemplateService implements Serializable {
 
 	private Properties loadFromFileSystem(Properties properties) {
 		String idpTemplatesLocation = configurationFactory.getIDPTemplatesLocation();
+		String pathes = getTemplatePathes(idpTemplatesLocation);
+
+		properties.setProperty("file.resource.loader.path", pathes);
+		log.debug("file.resource.loader.path = " + pathes);
+		return properties;
+	}
+
+	private Properties loadFromPathClasspath(Properties properties) {
+		String pathes = getTemplatePathes("META-INF/");
+
+		properties.setProperty("class_path.resource.loader.path", pathes);
+		log.debug("class_path.resource.loader.path = " + pathes);
+		return properties;
+	}
+
+	private String getTemplatePathes(String idpTemplatesLocation) {
 		String folder1 = idpTemplatesLocation + "shibboleth3" + File.separator + "idp";
 		String folder2 = idpTemplatesLocation + "shibboleth3" + File.separator + "sp";
 		String folder3 = idpTemplatesLocation + "ldif";
@@ -112,11 +132,10 @@ public class TemplateService implements Serializable {
 				+ "ProfileConfiguration";
 		String folder6 = idpTemplatesLocation + "template" + File.separator + "conf";
 		String folder7 = idpTemplatesLocation + "template" + File.separator + "shibboleth3";
-		properties.setProperty("file.resource.loader.path", folder1 + ", " + folder2 + ", " + folder3 + ", " + folder4
-				+ ", " + folder5 + ", " + folder6 + ", " + folder7);
-		log.debug("file.resource.loader.path = " + folder1 + ", " + folder2 + ", " + folder3 + ", " + folder4 + ", "
-				+ folder5 + ", " + folder6 + ", " + folder7);
-		return properties;
+		
+		String pathes = folder1 + ", " + folder2 + ", " + folder3 + ", " + folder4
+				+ ", " + folder5 + ", " + folder6 + ", " + folder7;
+		return pathes;
 	}
 
 	/*
