@@ -120,6 +120,9 @@ public class ProfileConfiguration implements Serializable {
 	}
 
 	public String getDefaultNameIDFormat() {
+		if(defaultNameIDFormat.contains(DELIMITER)) {
+			setNameIDFormats(Arrays.asList(defaultNameIDFormat.split(DELIMITER)));
+		}
 		return defaultNameIDFormat;
 	}
 
@@ -137,7 +140,9 @@ public class ProfileConfiguration implements Serializable {
 	}
 
 	public List<String> getNameIDFormats() {
-		this.nameIDFormats = Arrays.asList(defaultNameIDFormat.split(DELIMITER));
+		if (this.defaultNameIDFormat != null) {
+			this.nameIDFormats = Arrays.asList(defaultNameIDFormat.split(DELIMITER));
+		}
 		return nameIDFormats;
 	}
 

@@ -11,8 +11,9 @@
 	xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext">
 	<div class="row"
 		style="padding-left: 5px; padding-right: 5px; max-height: 300px; overflow-x: scroll;">
-		<h4>#{msg['trustmanager.saml2SSOProfileHelp']}</h4>
-		<h:outputText value="#{msg['trustmanager.thisProfileConfiguration']}" />
+		<h3 style="text-align:center;">#{msg['trustmanager.saml2SSOProfileHelp']}</h3>
+		<h:outputText style="text-align:center;" value="#{msg['trustmanager.thisProfileConfiguration']}" />
+		<br></br>
 		<div class="row" style="margin-bottom: 2px;">
 			<div class="col-sm-3 col-md-3 col-lg-3">
 				<b:form inline="true">
@@ -26,7 +27,7 @@
 				<h:outputText style="font-weight:bold;"
 					value="#{msg['trustmanager.assertionLifetime']} " />
 				<rich:inputNumberSpinner value="#{_ssoProfile.assertionLifetime}"
-					step="300000" maxValue="2147483647" />
+					step="300000" maxValue="2147483647"/>
 			</div>
 			<div class="col-sm-3 col-md-3 col-lg-3">
 				<h:outputText style="font-weight:bold;"
@@ -111,7 +112,7 @@
 			</div>
 		</div>
 		<div class="row" style="margin-bottom: 5px;">
-			<h5 style="font-weight: bold; margin-left: 20px">NameIDFormatPrecedence</h5>
+			<h6 style="font-weight: bold; margin-left: 20px">NameIDFormatPrecedence:</h6>
 			<h:selectBooleanCheckbox id="UnspecifiedSupportedId" immediate="true"
 				value="#{_relyingPartyAction.unspecifiedSupported}"
 				valueChangeListener="#{_relyingPartyAction.handleAcrCheckBox}"
@@ -121,6 +122,8 @@
 			</h:selectBooleanCheckbox>
 			Support Unspecified NamedIdFormat
 			<rich:pickList id="samlAcrsPickList" orderable="true"
+			    sourceCaption="Available NamedId Formats" listWidth="330"
+				targetCaption="Selected NamedId Formats(in order of preference)"
 				value="#{_ssoProfile.nameIDFormats}" style="width:100%;">
 				<f:selectItems
 					itemLabel="#{NameIdFormat.substring(19,NameIdFormat.length())}"

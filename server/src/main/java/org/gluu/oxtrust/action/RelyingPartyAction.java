@@ -367,16 +367,13 @@ public class RelyingPartyAction implements Serializable {
 		getProfileConfigurationSelected().setDefaultAuthenticationMethod(method);
 	}
 
-	public List<String> getDefaultNameIDFormat() {
-		List<String> values = getProfileConfigurationSelected().getNameIDFormats();
-		if (values.contains(NAMEID_FORMAT_UNSPECIFIED)) {
-			this.unspecifiedSupported = true;
-		}
-		return values;
+	public String getDefaultNameIDFormat() {
+		return getProfileConfigurationSelected().getDefaultNameIDFormat();
+		
 	}
 
-	public void setDefaultNameIDFormat(List<String> method) {
-		getProfileConfigurationSelected().setNameIDFormats(method);
+	public void setDefaultNameIDFormat(String method) {
+		getProfileConfigurationSelected().setDefaultNameIDFormat(method);
 	}
 
 	public void handleAcrCheckBox(ValueChangeEvent event) {
