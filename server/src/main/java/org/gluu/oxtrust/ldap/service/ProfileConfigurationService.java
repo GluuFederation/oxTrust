@@ -75,25 +75,13 @@ public class ProfileConfigurationService implements Serializable {
 	private AppConfiguration appConfiguration;
 
 	public List<ProfileConfiguration> getAvailableProfileConfigurations() {
-		String idpTemplatesLocation = configurationFactory.getIDPTemplatesLocation();
-		// File profileConfigurationFolder = new File(configurationFactory.DIR +
-		// "shibboleth3" + File.separator + "idp" + File.separator +
-		// "ProfileConfiguration");
-		File profileConfigurationFolder = new File(idpTemplatesLocation + "shibboleth3" + File.separator + "idp"
-				+ File.separator + "ProfileConfiguration");
+		List<String> templateNames = templateService.getTemplateNames("META-INF/shibboleth3" + File.separator + "idp" + File.separator + "ProfileConfiguration");
 
-		File[] profileConfigurationTemplates = null;
 		List<ProfileConfiguration> profileConfigurations = new ArrayList<ProfileConfiguration>();
-
-		if (profileConfigurationFolder.exists() && profileConfigurationFolder.isDirectory()) {
-			profileConfigurationTemplates = profileConfigurationFolder.listFiles(new FilenameFilter() {
-				public boolean accept(File dir, String name) {
-					return name.endsWith("ProfileConfiguration.xml.vm");
-				}
-			});
-			for (File profileConfigurationTemplate : profileConfigurationTemplates) {
+		for (String templateName : templateNames) {
+			if (templateName.endsWith("ProfileConfiguration.xml.vm")) {
 				profileConfigurations.add(createProfileConfiguration(
-						profileConfigurationTemplate.getName().split("ProfileConfiguration")[0]));
+						templateName.split("ProfileConfiguration")[0]));
 			}
 		}
 

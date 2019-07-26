@@ -11,16 +11,25 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.io.StringWriter;
+import java.net.JarURLConnection;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Properties;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 import org.gluu.oxtrust.config.ConfigurationFactory;
@@ -136,6 +145,42 @@ public class TemplateService implements Serializable {
 		String pathes = folder1 + ", " + folder2 + ", " + folder3 + ", " + folder4
 				+ ", " + folder5 + ", " + folder6 + ", " + folder7;
 		return pathes;
+	}
+
+	public List<String> getTemplateNames(String baseFolder) {
+		List<String> names = new ArrayList<String>();
+
+		URL url = TemplateService.class.getClassLoader().getResource(baseFolder);
+
+		if (url == null) {
+			return names;
+		}
+
+		JarURLConnection urlCon;
+		try {
+			urlCon = (JarURLConnection) (url.openConnection());
+		} catch (IOException ex) {
+			log.error("Failed to read jar content: %s", url, ex);
+			
+			return names;
+		}
+
+		try (JarFile jar = urlCon.getJarFile();) {
+			Enumeration<JarEntry> entries = jar.entries();
+			while (entries.hasMoreElements()) {
+				String entry = entries.nextElement().getName();
+				if (entry.startsWith(baseFolder)) {
+					if (!entry.substring(baseFolder.length()).equals("/")) {
+						File file = new File(entry);
+						names.add(file.getName());
+					}
+				}
+			}
+		} catch (IOException ex) {
+			log.error("Failed to read jar content: %s", url, ex);
+		}
+
+		return names;
 	}
 
 	/*
