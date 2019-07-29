@@ -11,23 +11,21 @@
 	xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext">
 	<div class="row"
 		style="padding-left: 5px; padding-right: 5px; max-height: 300px; overflow-x: scroll;">
-		<h3 style="text-align:center;">#{msg['trustmanager.saml2SSOProfileHelp']}</h3>
-		<h:outputText style="text-align:center;" value="#{msg['trustmanager.thisProfileConfiguration']}" />
+		<h4 style="text-align: center;">#{msg['trustmanager.saml2SSOProfileHelp']}</h4>
+		<h6 style="text-align: center;">#{msg['trustmanager.thisProfileConfiguration']}</h6>
 		<br></br>
 		<div class="row" style="margin-bottom: 2px;">
 			<div class="col-sm-3 col-md-3 col-lg-3">
-				<b:form inline="true">
-					<h:outputText style="font-weight:bold;"
-						value="#{msg['trustmanager.includeAttributeStatement']}" />
-					<h:selectBooleanCheckbox
-						value="#{_ssoProfile.includeAttributeStatement}" />
-				</b:form>
+				<h:outputText style="font-weight:bold;"
+					value="#{msg['trustmanager.includeAttributeStatement']}" />
+				<h:selectBooleanCheckbox
+					value="#{_ssoProfile.includeAttributeStatement}" />
 			</div>
 			<div class="col-sm-3 col-md-3 col-lg-3">
 				<h:outputText style="font-weight:bold;"
 					value="#{msg['trustmanager.assertionLifetime']} " />
 				<rich:inputNumberSpinner value="#{_ssoProfile.assertionLifetime}"
-					step="300000" maxValue="2147483647"/>
+					step="300000" maxValue="2147483647" />
 			</div>
 			<div class="col-sm-3 col-md-3 col-lg-3">
 				<h:outputText style="font-weight:bold;"
@@ -56,49 +54,43 @@
 		</div>
 		<div class="row">
 			<div class="col-sm-4 col-md-4 col-lg-4">
-				<b:form inline="true">
-					<h:outputText style="font-weight:bold;"
-						value="#{msg['trustmanager.signAssertions']} " />
-					<h:selectOneMenu value="#{_ssoProfile.signAssertions}">
-						<f:selectItem itemLabel="#{msg['trustmanager.never']}"
-							itemValue="never" />
-						<f:selectItem itemLabel="#{msg['trustmanager.conditional']}"
-							itemValue="conditional" />
-						<f:selectItem itemLabel="#{msg['trustmanager.always']}"
-							itemValue="always" />
-					</h:selectOneMenu>
-				</b:form>
+				<h:outputText style="font-weight:bold;"
+					value="#{msg['trustmanager.signAssertions']} " />
+				<h:selectOneMenu value="#{_ssoProfile.signAssertions}">
+					<f:selectItem itemLabel="#{msg['trustmanager.never']}"
+						itemValue="never" />
+					<f:selectItem itemLabel="#{msg['trustmanager.conditional']}"
+						itemValue="conditional" />
+					<f:selectItem itemLabel="#{msg['trustmanager.always']}"
+						itemValue="always" />
+				</h:selectOneMenu>
 			</div>
 			<div class="col-sm-4 col-md-4 col-lg-4">
-				<b:form inline="true">
-					<h:outputText style="font-weight:bold;"
-						value="#{msg['trustmanager.signRequests']}" />
-					<h:selectOneMenu value="#{_ssoProfile.signRequests}">
-						<f:selectItem itemLabel="#{msg['trustmanager.never']}"
-							itemValue="never" />
-						<f:selectItem itemLabel="#{msg['trustmanager.conditional']}"
-							itemValue="conditional" />
-						<f:selectItem itemLabel="#{msg['trustmanager.always']}"
-							itemValue="always" />
-					</h:selectOneMenu>
-				</b:form>
+				<h:outputText style="font-weight:bold;"
+					value="#{msg['trustmanager.signRequests']}" />
+				<h:selectOneMenu value="#{_ssoProfile.signRequests}">
+					<f:selectItem itemLabel="#{msg['trustmanager.never']}"
+						itemValue="never" />
+					<f:selectItem itemLabel="#{msg['trustmanager.conditional']}"
+						itemValue="conditional" />
+					<f:selectItem itemLabel="#{msg['trustmanager.always']}"
+						itemValue="always" />
+				</h:selectOneMenu>
 			</div>
 			<div class="col-sm-4 col-md-4 col-lg-4">
-				<b:form inline="true">
-					<h:outputText style="font-weight:bold;"
-						value="#{msg['trustmanager.encryptAssertions']} " />
-					<h:selectOneMenu value="#{_ssoProfile.encryptAssertions}">
-						<f:selectItem itemLabel="#{msg['trustmanager.never']}"
-							itemValue="never" />
-						<f:selectItem itemLabel="#{msg['trustmanager.conditional']}"
-							itemValue="conditional" />
-						<f:selectItem itemLabel="#{msg['trustmanager.always']}"
-							itemValue="always" />
-					</h:selectOneMenu>
-				</b:form>
+				<h:outputText style="font-weight:bold;"
+					value="#{msg['trustmanager.encryptAssertions']} " />
+				<h:selectOneMenu value="#{_ssoProfile.encryptAssertions}">
+					<f:selectItem itemLabel="#{msg['trustmanager.never']}"
+						itemValue="never" />
+					<f:selectItem itemLabel="#{msg['trustmanager.conditional']}"
+						itemValue="conditional" />
+					<f:selectItem itemLabel="#{msg['trustmanager.always']}"
+						itemValue="always" />
+				</h:selectOneMenu>
 			</div>
 		</div>
-		<div class="row" style="margin-top: 2px;">
+		<div class="row" style="margin-top: 4px;">
 			<div class="col-sm-3 col-md-3 col-lg-3">
 				<h6 style="font-weight: bold; margin-left: 2px">defaultAuthenticationMethods:</h6>
 			</div>
@@ -107,24 +99,33 @@
 					value="#{_ssoProfile.defaultAuthenticationMethod}"
 					id="defaultAuthenticationMethodId">
 					<f:selectItem itemLabel="none" itemValue="none" />
-					<f:selectItems value="#{_relyingPartyAction.getAllAcrs()}" />
+					<f:selectItems itemLabel="#{item.substring(19,item.length())}"
+						itemValue="#{item}" var="item"
+						value="#{_relyingPartyAction.getAllAcrs()}" />
 				</h:selectOneMenu>
 			</div>
 		</div>
-		<div class="row" style="margin-bottom: 5px;">
-			<h6 style="font-weight: bold; margin-left: 20px">NameIDFormatPrecedence:</h6>
-			<h:selectBooleanCheckbox id="UnspecifiedSupportedId" immediate="true"
-				value="#{_relyingPartyAction.unspecifiedSupported}"
-				valueChangeListener="#{_relyingPartyAction.handleAcrCheckBox}"
-				style="margin-left: 30px">
-				<a4j:ajax event="click" render="samlAcrsPickList" execute="@this"
-					limitRender="true" />
-			</h:selectBooleanCheckbox>
-			Support Unspecified NamedIdFormat
+		<div class="row" style="margin-bottom: 1px;">
+			<div class="col-sm-3 col-md-3 col-lg-3">
+				<h6 style="font-weight: bold;">NameIDFormatPrecedence:</h6>
+			</div>
+			<div class="col-sm-8 col-md-8 col-lg-8">
+				<h:selectBooleanCheckbox id="UnspecifiedSupportedId"
+					immediate="true"
+					value="#{_relyingPartyAction.unspecifiedSupported}"
+					valueChangeListener="#{_relyingPartyAction.handleAcrCheckBox}"
+					style="margin-left: 30px">
+					<a4j:ajax event="click" render="samlAcrsPickList" execute="@this"
+						limitRender="true" />
+				</h:selectBooleanCheckbox>
+				Support Unspecified NamedIdFormat?
+			</div>
+		</div>
+		<div class="row" style="margin-bottom: 1px;">
 			<rich:pickList id="samlAcrsPickList" orderable="true"
-			    sourceCaption="Available NamedId Formats" listWidth="330"
+				sourceCaption="Available NamedId Formats" listWidth="330"
 				targetCaption="Selected NamedId Formats(in order of preference)"
-				value="#{_ssoProfile.nameIDFormats}" style="width:100%;">
+				value="#{_ssoProfile.nameIDFormats}">
 				<f:selectItems
 					itemLabel="#{NameIdFormat.substring(19,NameIdFormat.length())}"
 					itemValue="#{NameIdFormat}"

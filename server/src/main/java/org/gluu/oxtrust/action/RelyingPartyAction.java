@@ -216,7 +216,6 @@ public class RelyingPartyAction implements Serializable {
 		updateProfileConfigurations();
 		profileConfigurationService.saveProfileConfigurations(trustRelationship, fileWrappers);
 		profileConfigurations = null;
-
 		String resultInitProfileConfigurations = initProfileConfigurations();
 		if (!StringHelper.equalsIgnoreCase(OxTrustConstants.RESULT_SUCCESS, resultInitProfileConfigurations)) {
 			return OxTrustConstants.RESULT_FAILURE;

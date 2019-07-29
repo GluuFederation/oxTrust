@@ -302,8 +302,6 @@ public class UpdateTrustRelationshipAction implements Serializable {
 					update = true;
 			}
 			boolean updateShib3Configuration = appConfiguration.isConfigGeneration();
-			oxTrustAuditService.audit("updateShib3Configuration:" + updateShib3Configuration);
-			oxTrustAuditService.audit("SpMetaDataSourceType:" + trustRelationship.getSpMetaDataSourceType());
 			switch (trustRelationship.getSpMetaDataSourceType()) {
 			case FILE:
 				try {

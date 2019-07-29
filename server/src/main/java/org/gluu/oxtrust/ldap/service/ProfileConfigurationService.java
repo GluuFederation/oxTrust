@@ -10,7 +10,6 @@ import static org.gluu.oxtrust.ldap.service.Shibboleth3ConfService.SHIB3_IDP_MET
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
@@ -28,17 +27,16 @@ import javax.xml.xpath.XPathExpressionException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.velocity.VelocityContext;
-import org.gluu.oxtrust.config.ConfigurationFactory;
+import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.model.ProfileConfiguration;
-import org.slf4j.Logger;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.service.XmlService;
 import org.gluu.util.StringHelper;
 import org.gluu.util.exception.InvalidConfigurationException;
 import org.gluu.util.io.FileUploadWrapper;
+import org.slf4j.Logger;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 /**
@@ -67,9 +65,6 @@ public class ProfileConfigurationService implements Serializable {
 
 	@Inject
 	private XmlService xmlService;
-
-	@Inject
-	private ConfigurationFactory configurationFactory;
 
 	@Inject
 	private AppConfiguration appConfiguration;
