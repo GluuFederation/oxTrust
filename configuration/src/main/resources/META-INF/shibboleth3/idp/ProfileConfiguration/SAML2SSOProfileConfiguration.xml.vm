@@ -11,5 +11,5 @@
 	encryptAssertions="$SAML2SSOEncryptAssertions"
 	encryptNameIds="$SAML2SSOEncryptNameIds"
 	defaultAuthenticationMethod="$SAML2SSODefaultAuthenticationMethod"
-	defaultNameIDFormat="$SAML2SSODefaultNameIDFormat"
+	nameIDFormatPrecedence="$SAML2SSONameIDFormatPrecedence"
 />
