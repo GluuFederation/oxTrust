@@ -107,29 +107,29 @@
 		</div>
 		<div class="row" style="margin-bottom: 1px;">
 			<div class="col-sm-3 col-md-3 col-lg-3">
-				<h6 style="font-weight: bold;">NameIDFormatPrecedence:</h6>
+				<h6 style="font-weight: bold;">nameIDFormatPrecedence:</h6>
 			</div>
 			<div class="col-sm-8 col-md-8 col-lg-8">
-				<h:selectBooleanCheckbox id="UnspecifiedSupportedId"
+				<h:selectBooleanCheckbox id="unspecifiedNameIDFormatSupportedCheckBox"
 					immediate="true"
-					value="#{_relyingPartyAction.unspecifiedSupported}"
-					valueChangeListener="#{_relyingPartyAction.handleAcrCheckBox}"
+					value="#{_relyingPartyAction.unspecifiedNameIDFormatSupported}"
+					valueChangeListener="#{_relyingPartyAction.handleUnspecifiedNameIDFormatSupportedCheckBox}"
 					style="margin-left: 30px">
-					<a4j:ajax event="click" render="samlAcrsPickList" execute="@this"
+					<a4j:ajax event="click" render="samlNameIdFormatPickList" execute="@this"
 						limitRender="true" />
 				</h:selectBooleanCheckbox>
 				Support Unspecified NamedIdFormat?
 			</div>
 		</div>
 		<div class="row" style="margin-bottom: 1px;">
-			<rich:pickList id="samlAcrsPickList" orderable="true"
+			<rich:pickList id="samlNameIdFormatPickList" orderable="true"
 				sourceCaption="Available NamedId Formats" listWidth="330"
 				targetCaption="Selected NamedId Formats(in order of preference)"
-				value="#{_ssoProfile.nameIDFormats}">
+				value="#{_ssoProfile.nameIDFormatPrecedenceList}">
 				<f:selectItems
-					itemLabel="#{NameIdFormat.substring(19,NameIdFormat.length())}"
-					itemValue="#{NameIdFormat}"
-					value="#{_relyingPartyAction.getAllNamedIds()}" var="NameIdFormat" />
+					itemLabel="#{nameIdFormat.substring(19,nameIdFormat.length())}"
+					itemValue="#{nameIdFormat}"
+					value="#{_relyingPartyAction.getSupportedNameIdFormats()}" var="nameIdFormat" />
 			</rich:pickList>
 		</div>
 		<b:panelGrid id="saml2sso" colSpans="3,9"

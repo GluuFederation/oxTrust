@@ -117,7 +117,7 @@ public class ProfileConfigurationService implements Serializable {
 			profileConfiguration.setEncryptAssertions("conditional");
 			profileConfiguration.setEncryptNameIds("never");
 			profileConfiguration.setDefaultAuthenticationMethod("none");
-			profileConfiguration.setDefaultNameIDFormat("none");
+			profileConfiguration.setNameIDFormatPrecedence("none");
 
 		}
 
@@ -251,9 +251,9 @@ public class ProfileConfigurationService implements Serializable {
 					if (attribute != null) 
 						profileConfiguration.setDefaultAuthenticationMethod(attribute.getNodeValue());
 					
-					Node attribute2 = xmlDocument.getFirstChild().getAttributes().getNamedItem("defaultNameIDFormat");
+					Node attribute2 = xmlDocument.getFirstChild().getAttributes().getNamedItem("nameIDFormatPrecedence");
 					if (attribute2 != null) 
-						profileConfiguration.setDefaultNameIDFormat(attribute2.getNodeValue());
+						profileConfiguration.setNameIDFormatPrecedence(attribute2.getNodeValue());
 					
 					Node attribute3 = xmlDocument.getFirstChild().getAttributes().getNamedItem("signingCredentialRef");
 					if (attribute3 != null) 
@@ -425,7 +425,7 @@ public class ProfileConfigurationService implements Serializable {
 			context.put(SAML2_SSO + "EncryptNameIds", profileConfiguration.getEncryptNameIds());
 			context.put(SAML2_SSO + "EncryptAssertions", profileConfiguration.getEncryptAssertions());
 			context.put(SAML2_SSO + "DefaultAuthenticationMethod", profileConfiguration.getDefaultAuthenticationMethod());
-			context.put(SAML2_SSO + "DefaultNameIDFormat", profileConfiguration.getDefaultNameIDFormat());
+			context.put(SAML2_SSO + "NameIDFormatPrecedence", profileConfiguration.getNameIDFormatPrecedence());
 			saveCertificate(trustRelationship, fileWrappers, SAML2_SSO);
 			String certName = trustRelationship.getProfileConfigurations().get(SAML2_SSO)
 					.getProfileConfigurationCertFileName();
