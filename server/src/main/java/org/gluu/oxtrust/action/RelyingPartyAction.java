@@ -67,31 +67,31 @@ public class RelyingPartyAction implements Serializable {
 
 	private Map<String, FileUploadWrapper> fileWrappers = new HashMap<String, FileUploadWrapper>();
 	private Set<String> allAcrs = new HashSet<>();
-	private List<String> allNamedIds = new ArrayList<>();
-	private boolean unspecifiedSupported = false;
+	private List<String> supportedNamedIdFormats = new ArrayList<>();
+	private boolean unspecifiedNameIDFormatSupported = false;
 
 	@PostConstruct
 	public void init() {
 		initAcrs();
-		initNameIds();
+		initSupportedNameIdFormats();
 	}
 
-	private void initNameIds() {
-		allNamedIds.add("urn:oasis:names:tc:SAML:2.0:nameid-format:persistent");
-		allNamedIds.add("urn:oasis:names:tc:SAML:2.0:nameid-format:transient");
-		allNamedIds.add("urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress");
-		allNamedIds.add("urn:oasis:names:tc:SAML:1.1:nameid-format:X509SubjectName");
-		allNamedIds.add("urn:oasis:names:tc:SAML:1.1:nameid-format:WindowsDomainQualifiedName");
-		allNamedIds.add("urn:oasis:names:tc:SAML:2.0:nameid-format:kerberos");
-		allNamedIds.add("urn:oasis:names:tc:SAML:2.0:nameid-format:entity");
+	private void initSupportedNameIdFormats() {
+		supportedNamedIdFormats.add("urn:oasis:names:tc:SAML:2.0:nameid-format:persistent");
+		supportedNamedIdFormats.add("urn:oasis:names:tc:SAML:2.0:nameid-format:transient");
+		supportedNamedIdFormats.add("urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress");
+		supportedNamedIdFormats.add("urn:oasis:names:tc:SAML:1.1:nameid-format:X509SubjectName");
+		supportedNamedIdFormats.add("urn:oasis:names:tc:SAML:1.1:nameid-format:WindowsDomainQualifiedName");
+		supportedNamedIdFormats.add("urn:oasis:names:tc:SAML:2.0:nameid-format:kerberos");
+		supportedNamedIdFormats.add("urn:oasis:names:tc:SAML:2.0:nameid-format:entity");
 	}
 
-	public List<String> getAllNamedIds() {
-		return allNamedIds;
+	public List<String> getSupportedNameIdFormats() {
+		return supportedNamedIdFormats;
 	}
 
-	public void setAllNamedIds(List<String> allNamedIds) {
-		this.allNamedIds = allNamedIds;
+	public void setSupportedNameIdFormats(List<String> supportedNamedIdFormats) {
+		this.supportedNamedIdFormats = supportedNamedIdFormats;
 	}
 
 	public List<String> getAllAcrs() {
@@ -366,21 +366,21 @@ public class RelyingPartyAction implements Serializable {
 		getProfileConfigurationSelected().setDefaultAuthenticationMethod(method);
 	}
 
-	public String getDefaultNameIDFormat() {
-		return getProfileConfigurationSelected().getDefaultNameIDFormat();
+	public String getNameIDFormatPrecedence() {
+		return getProfileConfigurationSelected().getNameIDFormatPrecedence();
 		
 	}
 
-	public void setDefaultNameIDFormat(String method) {
-		getProfileConfigurationSelected().setDefaultNameIDFormat(method);
+	public void setNameIDFormatPrecedence(String nameIDFormatPrecedence) {
+		getProfileConfigurationSelected().setNameIDFormatPrecedence(nameIDFormatPrecedence);
 	}
 
-	public void handleAcrCheckBox(ValueChangeEvent event) {
+	public void handleUnspecifiedNameIDFormatSupportedCheckBox(ValueChangeEvent event) {
 		String value = event.getNewValue().toString();
 		if (value.equalsIgnoreCase("true")) {
-			allNamedIds.add(NAMEID_FORMAT_UNSPECIFIED);
+			supportedNamedIdFormats.add(NAMEID_FORMAT_UNSPECIFIED);
 		} else {
-			allNamedIds.remove(NAMEID_FORMAT_UNSPECIFIED);
+			supportedNamedIdFormats.remove(NAMEID_FORMAT_UNSPECIFIED);
 		}
 	}
 
@@ -392,11 +392,15 @@ public class RelyingPartyAction implements Serializable {
 		return fileWrappers;
 	}
 
-	public boolean isUnspecifiedSupported() {
-		return unspecifiedSupported;
+	public boolean isUnspecifiedNameIDFormatSupported() {
+		return unspecifiedNameIDFormatSupported;
+	}
+	
+	public boolean getUnspecifiedNameIDFormatSupported() {
+		return unspecifiedNameIDFormatSupported;
 	}
 
-	public void setUnspecifiedSupported(boolean unspecifiedSupported) {
-		this.unspecifiedSupported = unspecifiedSupported;
+	public void setUnspecifiedNameIDFormatSupported(boolean unspecifiedNameIDFormatSupported) {
+		this.unspecifiedNameIDFormatSupported = unspecifiedNameIDFormatSupported;
 	}
 }
