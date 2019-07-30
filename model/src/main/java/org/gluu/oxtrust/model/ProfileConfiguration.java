@@ -28,8 +28,8 @@ public class ProfileConfiguration implements Serializable {
 	private String encryptAssertions;
 	private String profileConfigurationCertFileName;
 	private String defaultAuthenticationMethod;
-	private String defaultNameIDFormat;
-	private List<String> nameIDFormats = new ArrayList<>();
+	private String nameIDFormatPrecedence;
+	private List<String> nameIDFormatPrecedenceList = new ArrayList<>();
 
 	public String getName() {
 		return name;
@@ -119,35 +119,44 @@ public class ProfileConfiguration implements Serializable {
 		this.defaultAuthenticationMethod = defaultAuthenticationMethod;
 	}
 
-	public String getDefaultNameIDFormat() {
-		if(defaultNameIDFormat.contains(DELIMITER)) {
-			setNameIDFormats(Arrays.asList(defaultNameIDFormat.split(DELIMITER)));
-		}
-		return defaultNameIDFormat;
+	public String getNameIDFormatPrecedence () {
+		return nameIDFormatPrecedence ;
 	}
 
-	public void setDefaultNameIDFormat(String defaultNameIDFormat) {
-		this.defaultNameIDFormat = defaultNameIDFormat;
+	public void setNameIDFormatPrecedence (String nameIDFormatPrecedence) {
+		this.nameIDFormatPrecedence  = nameIDFormatPrecedence ;
 	}
 
 	@Override
 	public String toString() {
 		return String.format(
-				"ProfileConfiguration [name=%s, includeAttributeStatement=%s, signResponses=%s, signAssertions=%s, signRequests=%s, assertionLifetime=%s, assertionProxyCount=%s, encryptNameIds=%s, encryptAssertions=%s, defaultAuthenticationMethod=%s, defaultNameIDFormat=%s, profileConfigurationCertFileName=%s]",
+				"ProfileConfiguration [name=%s, includeAttributeStatement=%s, signResponses=%s, signAssertions=%s, signRequests=%s, assertionLifetime=%s, assertionProxyCount=%s, encryptNameIds=%s, encryptAssertions=%s, defaultAuthenticationMethod=%s, nameIDFormatPrecedence=[%s], profileConfigurationCertFileName=%s]",
 				getName(), isIncludeAttributeStatement(), getSignResponses(), getSignAssertions(), getSignRequests(),
 				getAssertionLifetime(), getAssertionProxyCount(), getEncryptNameIds(), getEncryptAssertions(),
-				getDefaultAuthenticationMethod(), getDefaultNameIDFormat(), getProfileConfigurationCertFileName());
+				getDefaultAuthenticationMethod(), getNameIDFormatPrecedence(), getProfileConfigurationCertFileName());
+	}
+	
+	public void setNameIDFormatPrecedenceList(List<String> nameIDFormatPrecedenceList) {
+		this.nameIDFormatPrecedenceList = nameIDFormatPrecedenceList;
+		setNameIDFormatPrecedence(String.join(DELIMITER, nameIDFormatPrecedenceList));
+	}
+	
+	public List<String> getNameIDFormatPrecedenceList() {
+		if (this.nameIDFormatPrecedence != null) 
+			this.nameIDFormatPrecedenceList = Arrays.asList(nameIDFormatPrecedence.split(DELIMITER));
+		return nameIDFormatPrecedenceList;
 	}
 
-	public List<String> getNameIDFormats() {
-		if (this.defaultNameIDFormat != null) {
-			this.nameIDFormats = Arrays.asList(defaultNameIDFormat.split(DELIMITER));
-		}
-		return nameIDFormats;
-	}
 
-	public void setNameIDFormats(List<String> nameIDFormats) {
-		this.nameIDFormats = nameIDFormats;
-		setDefaultNameIDFormat(String.join(DELIMITER, nameIDFormats));
-	}
+//	public List<String> getNameIDFormats() {
+//		if (this.defaultNameIDFormat != null) {
+//			this.nameIDFormats = Arrays.asList(defaultNameIDFormat.split(DELIMITER));
+//		}
+//		return nameIDFormats;
+//	}
+//
+//	public void setNameIDFormats(List<String> nameIDFormats) {
+//		this.nameIDFormats = nameIDFormats;
+//		setDefaultNameIDFormat(String.join(DELIMITER, nameIDFormats));
+//	}
 }
