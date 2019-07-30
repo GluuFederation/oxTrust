@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:b="http://bootsfaces.net/ui" xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
+	template="/WEB-INF/incl/layout/newtemplate.xhtml">
+	<f:metadata>
+		<f:viewAction
+			action="#{permissionService.requestPermission('trust', 'access')}" />
+		<f:viewAction action="#{conversationService.initConversation}" />
+		<f:viewAction action="#{configureNameIdAction.init}"
+			onPostback="false" />
+	</f:metadata>
+	<ui:define name="head">
+	</ui:define>
+	<ui:define name="body">
+		<section class="content">
+
+			<b:panel id="main" title="SAML ACRS List" look="primary"
+				iconAwesome="fa-list" collapsible="false">
+				<b:form id="samList" rendered="#{!samlAcrAction.edit}">
+					<b:commandButton iconAwesome="plus" value="Add new Entry"
+						look="success" ajax="true" update=":main"
+						action="#{samlAcrAction.edit()}"
+						style="margin-bottom:5px !important;" />
+					<b:dataTable id="samlAcrListId" style="text-align:center;"
+						rendered="#{samlAcrAction.acrs.size() gt 0}"
+						value="#{samlAcrAction.acrs}" var="acr" csv="true" pdf="true"
+						select="true" responsive="true">
+						<b:dataTableColumn label="Class Reference">
+							<h:inputText value="#{acr.classRef}" style="width:100%;" />
+						</b:dataTableColumn>
+						<b:dataTableColumn label="Actions">
+							<b:commandButton iconAwesome="trash" value="Remove" look="danger"
+								ajax="true" update=":samList" immediate="true" 
+								action="#{samlAcrAction.removeEntry(acr)}" />
+						</b:dataTableColumn>
+					</b:dataTable>
+					<div id="updateButtons" style="margin: 10px; margin-top: 20px;">
+						<b:commandButton id="SaveButton"
+							styleClass="btn btn-primary SaveButton" value="Save"
+							look="primary" ajax="true" update=":main"
+							action="#{samlAcrAction.save}" />
+					</div>
+				</b:form>
+				<b:panel id="valueForm" title="Entry Form" look="success"
+					iconAwesome="fa-building" collapsible="false"
+					rendered="#{samlAcrAction.edit}">
+					<b:form id="editForm">
+						<div class="row">
+							<div class="col-sm-6 col-md-6 col-lg-6">
+								<h:outputText value="Parent:" style="font-weight:bold;" />
+								<h:outputText value="#{samlAcrAction.samlAcr.parent}" />
+							</div>
+							<div class="col-sm-6 col-md-6 col-lg-6">
+								<h:outputText style="font-weight:bold;" value="Class Ref:" />
+								<h:inputText require="true"
+									value="#{samlAcrAction.samlAcr.classRef}" style="width:100%;" />
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-4 col-md-4 col-lg-4"></div>
+							<div class="col-sm-6 col-md-6 col-lg-6">
+								<b:commandButton iconAwesome="plus" value="Add to list"
+									look="success" ajax="true" update=":main"
+									action="#{samlAcrAction.addEntry()}" />
+							</div>
+						</div>
+					</b:form>
+				</b:panel>
+			</b:panel>
+		</section>
+	</ui:define>
+</ui:composition>

@@ -1164,12 +1164,13 @@ public class Shibboleth3ConfService implements Serializable {
 	public GluuErrorHandler validateMetadata(InputStream stream)
 			throws ParserConfigurationException, SAXException, IOException {
 		Schema schema;
+		List<InputStream> collect = null;
 		try {
 			String schemaDir = "META-INF" + File.separator + "shibboleth3" + File.separator + "idp" + File.separator
 					+ "schema" + File.separator;
 			schemaValidationFileNames = templateService.getClasspathTemplateNames(schemaDir);
 			schemaValidationFileNames.remove("schema");
-			List<InputStream> collect = schemaValidationFileNames.stream()
+			collect = schemaValidationFileNames.stream()
 					.map(e -> ClassUtils.getResourceAsStream(getClass(), schemaDir + e)).collect(Collectors.toList());
 			schema = SchemaBuilder.buildSchema(SchemaLanguage.XML, collect.toArray(new InputStream[0]));
 		} catch (Exception e) {
@@ -1178,6 +1179,16 @@ public class Shibboleth3ConfService implements Serializable {
 			validationLog.add(GluuErrorHandler.SCHEMA_CREATING_ERROR_MESSAGE);
 			validationLog.add(e.getMessage());
 			return new GluuErrorHandler(false, true, validationLog);
+		} finally {
+			if (collect != null) {
+				collect.stream().forEach(e -> {
+					try {
+						e.close();
+					} catch (IOException e1) {
+						log.error("error closing stream;", e1);
+					}
+				});
+			}
 		}
 		return XMLValidator.validateMetadata(stream, schema);
 	}
