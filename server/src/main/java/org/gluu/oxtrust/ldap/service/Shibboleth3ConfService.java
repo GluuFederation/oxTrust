@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -37,6 +38,7 @@ import org.apache.commons.httpclient.protocol.Protocol;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.velocity.VelocityContext;
+import org.apache.velocity.util.ClassUtils;
 import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.config.oxtrust.AttributeResolverConfiguration;
 import org.gluu.config.oxtrust.LdapOxTrustConfiguration;
@@ -54,7 +56,6 @@ import org.gluu.oxtrust.model.GluuSAMLFederationProposal;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.util.EasyCASSLProtocolSocketFactory;
 import org.gluu.persist.PersistenceEntryManager;
-import org.gluu.persist.model.PersistenceConfiguration;
 import org.gluu.saml.metadata.SAMLMetadataParser;
 import org.gluu.service.SchemaService;
 import org.gluu.service.XmlService;
@@ -86,6 +87,7 @@ import com.unboundid.ldap.sdk.schema.AttributeTypeDefinition;
 @Named("shibboleth3ConfService")
 public class Shibboleth3ConfService implements Serializable {
 
+	private List<String> schemaValidationFileNames = new ArrayList<>();
 	private static final long serialVersionUID = 6752452480800274694L;
 	private static final String SHIB3_IDP_CONF_FOLDER = "conf";
 	public static final String SHIB3_IDP_METADATA_FOLDER = "metadata";
@@ -102,7 +104,7 @@ public class Shibboleth3ConfService implements Serializable {
 	private static final String SHIB3_SP_READ_ME_WINDOWS = "/WEB-INF/resources/doc/README_SP_windows.pdf";
 	private static final String SHIB3_SAML_NAMEID_FILE = "saml-nameid.xml";
 	private static final String SHIB3_SAML_NAMEID_PROPS_FILE = "saml-nameid.properties";
-	
+
 	private static final String SHIB3_SP_METADATA_FILE_PATTERN = "%s-sp-metadata.xml";
 	public static final String PUBLIC_CERTIFICATE_START_LINE = "-----BEGIN CERTIFICATE-----";
 	public static final String PUBLIC_CERTIFICATE_END_LINE = "-----END CERTIFICATE-----";
@@ -156,10 +158,10 @@ public class Shibboleth3ConfService implements Serializable {
 
 	@Inject
 	private TrustService trustService;
-	
+
 	@Inject
 	private PersistenceEntryManager persistenceEntryManager;
-	
+
 	@Inject
 	private PersonService personService;
 
@@ -242,7 +244,7 @@ public class Shibboleth3ConfService implements Serializable {
 		result &= templateService.writeConfFile(idpConfFolder + SHIB3_SAML_NAMEID_FILE, samlnamedConfig);
 		// Write saml-nameid.properties
 		result &= templateService.writeConfFile(idpConfFolder + SHIB3_SAML_NAMEID_PROPS_FILE, samlnamedPropsConfig);
-		
+
 		// Write handler.xml
 		// result &= templateService.writeConfFile(idpConfFolder +
 		// SHIB3_IDP_PROFILE_HADLER, profileHandler);
@@ -494,8 +496,8 @@ public class Shibboleth3ConfService implements Serializable {
 			String saml2String = metadata.getSaml2Uri();
 
 			if (StringHelper.isEmpty(saml2String)) {
-				AttributeTypeDefinition attributeTypeDefinition = shemaService.getAttributeTypeDefinition(attributeTypes,
-						attributeName);
+				AttributeTypeDefinition attributeTypeDefinition = shemaService
+						.getAttributeTypeDefinition(attributeTypes, attributeName);
 				if (attributeTypeDefinition == null) {
 					log.error("Failed to get OID for attribute name {}", attributeName);
 					return null;
@@ -1089,8 +1091,8 @@ public class Shibboleth3ConfService implements Serializable {
 	}
 
 	/**
-	 * Generate metadata files needed for configuration operations: gluuSP metadata and
-	 * idp metadata.
+	 * Generate metadata files needed for configuration operations: gluuSP metadata
+	 * and idp metadata.
 	 */
 	public boolean generateMetadataFiles() {
 
@@ -1163,18 +1165,18 @@ public class Shibboleth3ConfService implements Serializable {
 			throws ParserConfigurationException, SAXException, IOException {
 		Schema schema;
 		try {
-			String idpTemplatesLocation = configurationFactory.getIDPTemplatesLocation();
-			// String schemaDir = OxTrustConfiguration.DIR + "shibboleth3" + File.separator
-			// + "idp" + File.separator + "schema" + File.separator;
-			String schemaDir = idpTemplatesLocation + "shibboleth3" + File.separator + "idp" + File.separator + "schema"
-					+ File.separator;
-			schema = SchemaBuilder.buildSchema(SchemaLanguage.XML, schemaDir);
+			String schemaDir = "META-INF" + File.separator + "shibboleth3" + File.separator + "idp" + File.separator
+					+ "schema" + File.separator;
+			schemaValidationFileNames = templateService.getClasspathTemplateNames(schemaDir);
+			schemaValidationFileNames.remove("schema");
+			List<InputStream> collect = schemaValidationFileNames.stream()
+					.map(e -> ClassUtils.getResourceAsStream(getClass(), schemaDir + e)).collect(Collectors.toList());
+			schema = SchemaBuilder.buildSchema(SchemaLanguage.XML, (InputStream[]) collect.toArray());
 		} catch (Exception e) {
-			// Schema build error
+			log.info("", e);
 			final List<String> validationLog = new ArrayList<String>();
 			validationLog.add(GluuErrorHandler.SCHEMA_CREATING_ERROR_MESSAGE);
 			validationLog.add(e.getMessage());
-			// return internal error
 			return new GluuErrorHandler(false, true, validationLog);
 		}
 		return XMLValidator.validateMetadata(stream, schema);
