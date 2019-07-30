@@ -18,12 +18,11 @@
 	</ui:define>
 	<ui:define name="body">
 		<section class="content">
-
 			<b:panel id="main" title="SAML ACRS List" look="primary"
 				iconAwesome="fa-list" collapsible="false">
-				<b:form id="samList" rendered="#{!samlAcrAction.edit}">
+				<h:form id="samList" rendered="#{!samlAcrAction.edit}">
 					<b:commandButton iconAwesome="plus" value="Add new Entry"
-						look="success" ajax="true" update=":main"
+						look="success" 
 						action="#{samlAcrAction.edit()}"
 						style="margin-bottom:5px !important;" />
 					<b:dataTable id="samlAcrListId" style="text-align:center;"
@@ -45,11 +44,11 @@
 							look="primary" ajax="true" update=":main"
 							action="#{samlAcrAction.save}" />
 					</div>
-				</b:form>
+				</h:form>
 				<b:panel id="valueForm" title="Entry Form" look="success"
 					iconAwesome="fa-building" collapsible="false"
 					rendered="#{samlAcrAction.edit}">
-					<b:form id="editForm">
+					<h:form id="editForm">
 						<div class="row">
 							<div class="col-sm-6 col-md-6 col-lg-6">
 								<h:outputText value="Parent:" style="font-weight:bold;" />
@@ -65,11 +64,11 @@
 							<div class="col-sm-4 col-md-4 col-lg-4"></div>
 							<div class="col-sm-6 col-md-6 col-lg-6">
 								<b:commandButton iconAwesome="plus" value="Add to list"
-									look="success" ajax="true" update=":main"
+									look="success"
 									action="#{samlAcrAction.addEntry()}" />
 							</div>
 						</div>
-					</b:form>
+					</h:form>
 				</b:panel>
 			</b:panel>
 		</section>
