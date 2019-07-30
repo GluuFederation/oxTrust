@@ -1171,7 +1171,7 @@ public class Shibboleth3ConfService implements Serializable {
 			schemaValidationFileNames.remove("schema");
 			List<InputStream> collect = schemaValidationFileNames.stream()
 					.map(e -> ClassUtils.getResourceAsStream(getClass(), schemaDir + e)).collect(Collectors.toList());
-			schema = SchemaBuilder.buildSchema(SchemaLanguage.XML, (InputStream[]) collect.toArray());
+			schema = SchemaBuilder.buildSchema(SchemaLanguage.XML, collect.toArray(new InputStream[0]));
 		} catch (Exception e) {
 			log.info("", e);
 			final List<String> validationLog = new ArrayList<String>();
