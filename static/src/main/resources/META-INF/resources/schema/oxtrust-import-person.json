@@ -2,10 +2,12 @@
     "$schema":"http://json-schema.org/draft-04/schema#",
     "id":"/",
     "title":"Import person configuration",
+    "description": "Use this section to configure custom user attributes for import. Each item represents an attribute and its name in the database.",
     "type":"object",
     "properties":{
         "mappings":{
             "id":"mappings",
+            "description": "List of attributes mappings for users import.",
             "type":"array",
             "minItems":0,
             "uniqueItems":false,
@@ -14,14 +16,17 @@
                 "type":"object",
                 "additionalProperties":false,
                 "properties":{
-                    "ldapName":{
-                        "id":"ldapName",
-                        "type":"string",
-                        "minLength":1
-                    },
                     "displayName":{
                         "id":"displayName",
-                        "type":"string"                    },
+                        "type":"string",
+                        "description": "The name of the custom attribute as defined in the Excel sheet."                   
+                     },
+                     "ldapName":{
+                        "id":"ldapName",
+                        "type":"string",
+                        "description": "The attribute name in ldap.",
+                        "minLength":1
+                    },
                     "dataType":{
                         "id":"dataType",
                         "type":"string",

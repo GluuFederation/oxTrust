@@ -514,13 +514,13 @@
 						<b:dataTableColumn value="#{_value.modality}" label="Modality" />
 						<b:dataTableColumn value="#{_value.creationDate}"
 							label="Date Added" />
-						<b:dataTableColumn label="Remove">
+						<b:dataTableColumn label="Actions">
 							<a4j:commandLink
 								render="PForm"
 								action="#{updatePersonAction.setDeviceToBeRemove(_value)}"
 								onclick="#{rich:component('deleteDevice:acceptRemovalModalPanel')}.show();"
 							    execute="@this" eventsQueue="personQueue"
-								styleClass="glyphicon glyphicon-remove">
+								styleClass="btn-primary">
 							</a4j:commandLink>
 						</b:dataTableColumn>
 					</b:dataTable>
