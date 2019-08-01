@@ -2,7 +2,18 @@ package org.gluu.oxtrust.model;
 
 import java.io.Serializable;
 
-public class SamlAcr implements Serializable {
+import org.gluu.persist.annotation.AttributeName;
+import org.gluu.persist.annotation.DataEntry;
+import org.gluu.persist.annotation.ObjectClass;
+import org.gluu.persist.model.base.Entry;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
+@DataEntry
+@ObjectClass(value = "samlAcr")
+@JsonInclude(Include.NON_NULL)
+public class SamlAcr extends Entry implements Serializable {
 
 	/**
 	 * 
@@ -17,9 +28,10 @@ public class SamlAcr implements Serializable {
 		this.parent = parent;
 		this.classRef = classRef;
 	}
-
+	@AttributeName
 	private String parent;
 
+	@AttributeName
 	private String classRef;
 
 	public String getClassRef() {

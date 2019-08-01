@@ -57,6 +57,14 @@
 											<i class="fa fa-chevron-right"
 												style="float: left; margin-top: 2px;"></i>
 										</h:commandLink></li>
+									<li id="subMenuLinkConfiguration33"><h:commandLink
+											value="Manage SAML Acrs" onclick="lock();"
+											ondbclick="lock();" oncomplete="unlock();"
+											action="#{menuAction.endConversation('/saml/samlAcrs.xhtml')}"
+											rendered="#{permissionService.hasPermission('trust', 'access')}">
+											<i class="fa fa-chevron-right"
+												style="float: left; margin-top: 2px;"></i>
+										</h:commandLink></li>	
 									<li id="subMenuLinkConfiguration4"><h:commandLink
 											value="#{msg['leftmenu.manageCustomScripts']}"
 											onclick="lock();" ondbclick="lock();" oncomplete="unlock();"
@@ -175,16 +183,6 @@
 											<i class="fa fa-chevron-right"
 												style="float: left; margin-top: 2px;"></i>
 										</h:commandLink></li>
-										
-										<li id="subMenuLinkSAML4"><h:commandLink
-											value="Saml Acrs" onclick="lock();"
-											ondbclick="lock();" oncomplete="unlock();"
-											action="#{menuAction.endConversation('/saml/samlAcrs.xhtml')}"
-											rendered="#{permissionService.hasPermission('trust', 'access')}">
-											<i class="fa fa-chevron-right"
-												style="float: left; margin-top: 2px;"></i>
-										</h:commandLink></li>
-										
 										
 										</li>
 					</ul>
@@ -428,6 +426,12 @@
 								$('#subMenuLinkConfiguration5').addClass(
 										'active');
 							}
+							if (window.location.href
+									.indexOf("organization/saml/samlAcrs") != -1) {
+								$('#subMenuConfiguration').css('display', 'block');
+								$('#menuConfiguration').addClass('active');
+								$('#subMenuLinkConfiguration33').addClass('active');
+							}
 
 							if (window.location.href
 									.indexOf("configuration/updateConfiguration") != -1) {
@@ -552,12 +556,6 @@
 								$('#subMenuSAML').css('display', 'block');
 								$('#menuSAML').addClass('active');
 								$('#subMenuLinkSAML3').addClass('active');
-							}
-							if (window.location.href
-									.indexOf("saml/samlAcrs") != -1) {
-								$('#subMenuSAML').css('display', 'block');
-								$('#menuSAML').addClass('active');
-								$('#subMenuLinkSAML4').addClass('active');
 							}
 
 							//Menu Highlights - Passport
