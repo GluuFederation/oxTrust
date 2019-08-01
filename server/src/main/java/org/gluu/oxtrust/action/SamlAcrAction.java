@@ -57,7 +57,7 @@ public class SamlAcrAction implements Serializable {
 	public void init() {
 
 		try {
-			inputFile = new File("/opt/shibboleth-idp/conf/authn/gluuacrlist.xml");
+			inputFile = new File("/opt/shibboleth-idp/conf/authn/oxauth-supported-principals.xml");
 			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
 			Document doc = docBuilder.parse(inputFile);
