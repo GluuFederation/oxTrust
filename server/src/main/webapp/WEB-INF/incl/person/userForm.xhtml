@@ -210,7 +210,7 @@
 												styleClass="form-control #{_custAttr.metadata.displayName}"
 												p:placeholder="#{msg['person.clickToEnter']} #{_custAttr.metadata.displayName} #{_valueIdx == 0 ? '' : _valueIdx}"
 												style="width:100%" value="#{_custAttr.values[_valueIdx]}"
-												id="custId_text_#{_custAttrIdx}" required="#{_mustEnter}"
+												id="custId_text_#{_custAttrIdx}" require="#{_mustEnter}"
 												requiredMessage="#{msg['person.pleaseEnter']} #{_custAttr.metadata.displayName} #{_valueIdx == 0 ? '' : _valueIdx}. "
 												rendered="#{(_custAttr.adminCanEdit or _mustEnter) and 
 			                                                            (_custAttr.metadata.dataType.value ne 'boolean') and 

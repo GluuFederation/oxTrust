@@ -17,6 +17,9 @@
             <base-name>org.gluu.oxtrust.i18n.CustomResourceBundle</base-name>
             <var>msg</var>
         </resource-bundle>
+        <message-bundle>
+           OxtrustCustomValidationMessage
+        </message-bundle>
     </application>
 
     <factory>
