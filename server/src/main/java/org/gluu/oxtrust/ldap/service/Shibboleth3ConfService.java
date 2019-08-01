@@ -570,6 +570,7 @@ public class Shibboleth3ConfService implements Serializable {
 		VelocityContext context = new VelocityContext();
 
 		context.put("StringHelper", StringHelper.class);
+		context.put("salt", configurationFactory.getCryptoConfigurationSalt());
 
 		context.put("trustParams", trustParams);
 		context.put("attrParams", attrParams);

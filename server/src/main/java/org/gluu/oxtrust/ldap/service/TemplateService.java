@@ -47,8 +47,6 @@ import org.slf4j.Logger;
 @Named("templateService")
 public class TemplateService implements Serializable {
 
-	private static final String SALT = "salt";
-
 	private static final long serialVersionUID = 4898430090669045605L;
 
 	@Inject
@@ -63,10 +61,6 @@ public class TemplateService implements Serializable {
 	public String generateConfFile(String template, VelocityContext context) {
 		StringWriter sw = new StringWriter();
 		try {
-			if (template.startsWith("saml-nameid.properties")) {
-				String value = configurationFactory.getCryptoConfigurationSalt();
-				context.put(SALT, value);
-			}
 			Velocity.mergeTemplate(template + ".vm", "UTF-8", context, sw);
 		} catch (Exception ex) {
 			log.error("Failed to load velocity template '{}'", template, ex);
@@ -150,24 +144,23 @@ public class TemplateService implements Serializable {
 				+ "ProfileConfiguration";
 		String folder6 = idpTemplatesLocation + "template" + File.separator + "conf";
 		String folder7 = idpTemplatesLocation + "template" + File.separator + "shibboleth3";
-
-		String pathes = folder1 + ", " + folder2 + ", " + folder3 + ", " + folder4 + ", " + folder5 + ", " + folder6
-				+ ", " + folder7;
+		
+		String pathes = folder1 + ", " + folder2 + ", " + folder3 + ", " + folder4
+				+ ", " + folder5 + ", " + folder6 + ", " + folder7;
 		return pathes;
 	}
 
 	public List<String> getTemplateNames(String baseFolder) {
 		String classpathIdpTemplatesLocation = "META-INF";
-		List<String> classpathTemplateNames = getClasspathTemplateNames(
-				classpathIdpTemplatesLocation + "/" + baseFolder);
+		List<String> classpathTemplateNames = getClasspathTemplateNames(classpathIdpTemplatesLocation + "/" + baseFolder);
 
 		String fileIdpTemplatesLocation = configurationFactory.getIDPTemplatesLocation();
 		List<String> filesystemTemplateNames = getFilesystemTemplateNames(fileIdpTemplatesLocation + "/" + baseFolder);
-
+		
 		Set<String> merged = new HashSet<String>();
 		merged.addAll(classpathTemplateNames);
 		merged.addAll(filesystemTemplateNames);
-
+		
 		return new ArrayList<String>(merged);
 	}
 
@@ -185,7 +178,7 @@ public class TemplateService implements Serializable {
 			urlCon = (JarURLConnection) (url.openConnection());
 		} catch (IOException ex) {
 			log.error("Failed to read jar content: %s", url, ex);
-
+			
 			return names;
 		}
 
@@ -206,7 +199,7 @@ public class TemplateService implements Serializable {
 
 		return names;
 	}
-
+	
 	public List<String> getFilesystemTemplateNames(String baseFolder) {
 		List<String> names = new ArrayList<String>();
 
@@ -223,7 +216,7 @@ public class TemplateService implements Serializable {
 		for (File foundFile : foudFiles) {
 			names.add(foundFile.getName());
 		}
-
+		
 		return names;
 
 	}
