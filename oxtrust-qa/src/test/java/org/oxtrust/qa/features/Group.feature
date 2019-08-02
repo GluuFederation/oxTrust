@@ -1,6 +1,6 @@
 Feature: Groups featute
 @gluuQA
-Scenario: Add/Delete new group 
+Scenario: Add and Delete new group 
 	When 	I sign in as administrator 
 	Then 	I should see gluu home page 
 	When 	I go to group add page 

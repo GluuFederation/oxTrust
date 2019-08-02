@@ -5,12 +5,18 @@ import org.oxtrust.qa.pages.login.HomePage;
 
 import cucumber.api.Scenario;
 import cucumber.api.java.After;
+import cucumber.api.java.Before;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Then;
 
 public class ServerStatusSteps extends BaseSteps {
 	private HomePage homePage=new HomePage();
 	private ServerStatusPage serverStatusPage=new ServerStatusPage();
+	
+	@Before
+	public void setup(Scenario scenario) {
+		startRecorder(scenario);
+	}
 
 	@And("^I go to server status page$")
 	public void goToServerStatusPage() {
@@ -70,6 +76,7 @@ public class ServerStatusSteps extends BaseSteps {
 	@After
 	public void clear(Scenario scenario) {
 		homePage.takeScreenShot(scenario);
+		stopRecorder();
 		homePage.clear();
 	}
 

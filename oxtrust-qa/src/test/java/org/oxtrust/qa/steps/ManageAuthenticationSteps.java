@@ -8,6 +8,7 @@ import org.oxtrust.qa.pages.login.HomePage;
 
 import cucumber.api.Scenario;
 import cucumber.api.java.After;
+import cucumber.api.java.Before;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
@@ -20,6 +21,10 @@ public class ManageAuthenticationSteps extends BaseSteps {
 	private CasProtocolPage casProtocolPage = new CasProtocolPage();
 	private LDAPAuthenticationPage ldapAuthenticationPage = new LDAPAuthenticationPage();
 
+	@Before
+	public void setup(Scenario scenario) {
+		startRecorder(scenario);
+	}
 	@When("^I go to strategy page$")
 	public void goToAuthenticationManagePage() {
 		homePage.goToManageAutheticationMenuPage();
@@ -161,6 +166,7 @@ public class ManageAuthenticationSteps extends BaseSteps {
 	@After
 	public void clear(Scenario scenario) {
 		homePage.takeScreenShot(scenario);
+		stopRecorder();
 		homePage.clear();
 	}
 

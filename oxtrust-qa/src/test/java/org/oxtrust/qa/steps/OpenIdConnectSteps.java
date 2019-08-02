@@ -11,6 +11,7 @@ import org.oxtrust.qa.pages.openidconnect.SectorManagePage;
 
 import cucumber.api.Scenario;
 import cucumber.api.java.After;
+import cucumber.api.java.Before;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
@@ -24,6 +25,11 @@ public class OpenIdConnectSteps extends BaseSteps {
 	private ClientAddPage clientAddPage = new ClientAddPage();
 	private SectorAddPage sectorAddPage = new SectorAddPage();
 	private SectorManagePage sectorManagePage = new SectorManagePage();
+	
+	@Before
+	public void setup(Scenario scenario) {
+		startRecorder(scenario);
+	}
 
 	@When("^I go to openid connect scopes list page$")
 	public void goToOpenIdScopesListPage() {
@@ -273,6 +279,7 @@ public class OpenIdConnectSteps extends BaseSteps {
 	@After
 	public void clear(Scenario scenario) {
 		homePage.takeScreenShot(scenario);
+		stopRecorder();
 		homePage.clear();
 	}
 

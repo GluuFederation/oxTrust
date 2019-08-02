@@ -7,6 +7,7 @@ import org.oxtrust.qa.pages.users.GroupUpdatePage;
 
 import cucumber.api.Scenario;
 import cucumber.api.java.After;
+import cucumber.api.java.Before;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
@@ -17,6 +18,11 @@ public class GroupSteps extends BaseSteps {
 	private HomePage homePage = new HomePage();
 	private GroupAddPage groupAddPage = new GroupAddPage();
 	private GroupUpdatePage groupUpdatePage = new GroupUpdatePage();
+
+	@Before
+	public void setup(Scenario scenario) {
+		startRecorder(scenario);
+	}
 
 	@When("^I go to groups manage page$")
 	public void gotoGroupManagePage() {
@@ -106,6 +112,7 @@ public class GroupSteps extends BaseSteps {
 	@After
 	public void clear(Scenario scenario) {
 		homePage.takeScreenShot(scenario);
+		stopRecorder();
 		homePage.clear();
 	}
 }

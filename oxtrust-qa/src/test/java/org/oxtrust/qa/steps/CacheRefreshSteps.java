@@ -5,12 +5,18 @@ import org.oxtrust.qa.pages.login.HomePage;
 
 import cucumber.api.Scenario;
 import cucumber.api.java.After;
+import cucumber.api.java.Before;
 import cucumber.api.java.en.And;
 
 public class CacheRefreshSteps extends BaseSteps {
 
 	private HomePage homePage = new HomePage();
 	private CacheRefreshPage cacheRefreshPage = new CacheRefreshPage();
+
+	@Before
+	public void setup(Scenario scenario) {
+		startRecorder(scenario);
+	}
 
 	@And("^I go to cache refresh page$")
 	public void goToCacheRefreshPage() {
@@ -91,6 +97,7 @@ public class CacheRefreshSteps extends BaseSteps {
 	@After
 	public void clear(Scenario scenario) {
 		homePage.takeScreenShot(scenario);
+		stopRecorder();
 		homePage.clear();
 	}
 }
