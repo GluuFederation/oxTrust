@@ -4,6 +4,7 @@ import org.oxtrust.qa.pages.configuration.attributesImExport.AttributesExportPag
 import org.oxtrust.qa.pages.configuration.attributesImExport.AttributesImportPage;
 import org.oxtrust.qa.pages.login.HomePage;
 
+import cucumber.api.Scenario;
 import cucumber.api.java.After;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Then;
@@ -51,7 +52,8 @@ public class AttributesImportExportSteps extends BaseSteps {
 	}
 
 	@After
-	public void clear() {
+	public void clear(Scenario scenario) {
+		new HomePage().takeScreenShot(scenario);
 		new HomePage().clear();
 	}
 

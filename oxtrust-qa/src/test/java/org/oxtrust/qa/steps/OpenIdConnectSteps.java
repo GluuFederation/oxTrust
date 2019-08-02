@@ -9,6 +9,7 @@ import org.oxtrust.qa.pages.openidconnect.OpenIdConnectScopeUpdatePage;
 import org.oxtrust.qa.pages.openidconnect.SectorAddPage;
 import org.oxtrust.qa.pages.openidconnect.SectorManagePage;
 
+import cucumber.api.Scenario;
 import cucumber.api.java.After;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Then;
@@ -270,8 +271,9 @@ public class OpenIdConnectSteps extends BaseSteps {
 	}
 	
 	@After
-	public void clear() {
-		new HomePage().clear();
+	public void clear(Scenario scenario) {
+		homePage.takeScreenShot(scenario);
+		homePage.clear();
 	}
 
 }

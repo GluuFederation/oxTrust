@@ -5,6 +5,7 @@ import org.oxtrust.qa.pages.users.GroupAddPage;
 import org.oxtrust.qa.pages.users.GroupManagePage;
 import org.oxtrust.qa.pages.users.GroupUpdatePage;
 
+import cucumber.api.Scenario;
 import cucumber.api.java.After;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Then;
@@ -103,7 +104,8 @@ public class GroupSteps extends BaseSteps {
 	}
 
 	@After
-	public void clear() {
-		new HomePage().clear();
+	public void clear(Scenario scenario) {
+		homePage.takeScreenShot(scenario);
+		homePage.clear();
 	}
 }

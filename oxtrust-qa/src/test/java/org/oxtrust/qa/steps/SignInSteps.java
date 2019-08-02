@@ -1,9 +1,9 @@
 package org.oxtrust.qa.steps;
 
-import org.oxtrust.qa.pages.login.HomePage;
 import org.oxtrust.qa.pages.login.PasswordResetPage;
 import org.oxtrust.qa.pages.login.SignInPage;
 
+import cucumber.api.Scenario;
 import cucumber.api.java.After;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Then;
@@ -60,10 +60,7 @@ public class SignInSteps extends BaseSteps {
 		passwordResetPage.sendMail();
 	}
 
-	@After
-	public void clear() {
-		new HomePage().clear();
-	}
+	
 
 	@Then("^I set '(.+)' as email$")
 	public void setEmail(String email) {
@@ -86,6 +83,12 @@ public class SignInSteps extends BaseSteps {
 			signInPage.signOut();
 		}
 
+	}
+	
+	@After
+	public void clear(Scenario scenario) {
+		signInPage.takeScreenShot(scenario);
+		signInPage.clear();
 	}
 
 	

@@ -3,6 +3,7 @@ package org.oxtrust.qa.steps;
 import org.oxtrust.qa.pages.login.HomePage;
 import org.oxtrust.qa.pages.profile.ProfilePage;
 
+import cucumber.api.Scenario;
 import cucumber.api.java.After;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.When;
@@ -24,8 +25,9 @@ public class ProfileSteps extends BaseSteps {
 	}
 
 	@After
-	public void clear() {
-		new HomePage().clear();
+	public void clear(Scenario scenario) {
+		homePage.takeScreenShot(scenario);
+		homePage.clear();
 	}
 
 }

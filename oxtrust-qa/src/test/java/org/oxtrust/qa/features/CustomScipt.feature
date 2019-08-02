@@ -1,6 +1,6 @@
-Feature: Add custom script 
+Feature: custom script 
 @gluuQA
-Scenario: Add custom script 
+Scenario: Add/Delete custom script 
 	When 	I sign in as administrator 
 	Then 	I should see gluu home page 
 	When 	I go to Manage Custom Script 

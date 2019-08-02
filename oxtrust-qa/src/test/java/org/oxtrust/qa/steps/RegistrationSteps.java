@@ -3,6 +3,7 @@ package org.oxtrust.qa.steps;
 import org.oxtrust.qa.pages.configuration.RegistrationManagePage;
 import org.oxtrust.qa.pages.login.HomePage;
 
+import cucumber.api.Scenario;
 import cucumber.api.java.After;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Then;
@@ -49,8 +50,9 @@ public class RegistrationSteps extends BaseSteps {
 	}
 
 	@After
-	public void clear() {
-		new HomePage().clear();
+	public void clear(Scenario scenario) {
+		homePage.takeScreenShot(scenario);
+		homePage.clear();
 	}
 
 }

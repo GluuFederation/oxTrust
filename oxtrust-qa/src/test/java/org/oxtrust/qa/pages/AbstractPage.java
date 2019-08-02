@@ -9,6 +9,8 @@ import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
@@ -20,6 +22,8 @@ import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.oxtrust.qa.configuration.ApplicationDriver;
 import org.oxtrust.qa.configuration.Settings;
+
+import cucumber.api.Scenario;
 
 public class AbstractPage {
 
@@ -313,4 +317,12 @@ public class AbstractPage {
 		button.click();
 		fluentWait(2);
 	}
+
+	public void takeScreenShot(Scenario scenario) {
+		if (scenario.isFailed()) {
+			final byte[] screenshot = ((TakesScreenshot) webDriver).getScreenshotAs(OutputType.BYTES);
+			scenario.embed(screenshot, "image/png");
+		}
+	}
+
 }

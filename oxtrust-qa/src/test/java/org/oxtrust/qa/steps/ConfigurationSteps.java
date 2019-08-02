@@ -4,6 +4,7 @@ import org.oxtrust.qa.pages.configuration.organization.SystemConfigurationPage;
 import org.oxtrust.qa.pages.login.HomePage;
 import org.oxtrust.qa.pages.login.SignInPage;
 
+import cucumber.api.Scenario;
 import cucumber.api.java.After;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Then;
@@ -127,7 +128,8 @@ public class ConfigurationSteps extends BaseSteps {
 	}
 
 	@After
-	public void clear() {
-		new HomePage().clear();
+	public void clear(Scenario scenario) {
+		homePage.takeScreenShot(scenario);
+		homePage.clear();
 	}
 }

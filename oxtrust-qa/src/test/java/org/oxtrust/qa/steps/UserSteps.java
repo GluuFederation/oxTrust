@@ -6,6 +6,7 @@ import org.oxtrust.qa.pages.users.UserImportPage;
 import org.oxtrust.qa.pages.users.UserManagePage;
 import org.oxtrust.qa.pages.users.UserUpdatePage;
 
+import cucumber.api.Scenario;
 import cucumber.api.java.After;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Then;
@@ -135,9 +136,9 @@ public class UserSteps extends BaseSteps {
 	}
 
 	@After
-	public void clear() {
-		System.out.println("#########clear browser cookies##########");
-		new HomePage().clear();
+	public void clear(Scenario scenario) {
+		homePage.takeScreenShot(scenario);
+		homePage.clear();
 	}
 
 }

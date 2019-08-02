@@ -4,6 +4,8 @@ import org.oxtrust.qa.pages.configuration.OrganizationConfigurationPage;
 import org.oxtrust.qa.pages.configuration.SMTPConfigPage;
 import org.oxtrust.qa.pages.login.HomePage;
 
+import cucumber.api.Scenario;
+import cucumber.api.java.After;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.When;
 
@@ -71,6 +73,12 @@ public class SMTPConfigurationSteps extends BaseSteps {
 	@And("^I save the configuration$")
 	public void saveSmtpServer() {
 		smtpConfigPage.update();
+	}
+	
+	@After
+	public void clear(Scenario scenario) {
+		homePage.takeScreenShot(scenario);
+		homePage.clear();
 	}
 
 }
