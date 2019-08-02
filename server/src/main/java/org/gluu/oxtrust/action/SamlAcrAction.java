@@ -13,7 +13,6 @@ import javax.inject.Named;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.oxtrust.ldap.service.SamlAcrService;
 import org.gluu.oxtrust.ldap.service.Shibboleth3ConfService;
-import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.model.SamlAcr;
 import org.gluu.service.security.Secure;
 import org.slf4j.Logger;
@@ -35,9 +34,9 @@ public class SamlAcrAction implements Serializable {
 
 	@Inject
 	private SamlAcrService samlAcrService;
-	
-    @Inject
-    private Shibboleth3ConfService shibboleth3ConfService;
+
+	@Inject
+	private Shibboleth3ConfService shibboleth3ConfService;
 
 	private SamlAcr samlAcr;
 
@@ -58,6 +57,7 @@ public class SamlAcrAction implements Serializable {
 
 		try {
 			acrs = samlAcrService.getAll();
+			log.info("List of current acr:" + acrs.size());
 		} catch (Exception e) {
 			log.error("Error loading saml acrs", e);
 		}
@@ -67,7 +67,7 @@ public class SamlAcrAction implements Serializable {
 		for (SamlAcr samlAcr : acrs) {
 			samlAcrService.update(samlAcr);
 		}
-		
+
 		shibboleth3ConfService.generateConfigurationFiles(acrs.stream().toArray(SamlAcr[]::new));
 		facesMessages.add(FacesMessage.SEVERITY_INFO, "Save succesfully!");
 	}
@@ -77,18 +77,34 @@ public class SamlAcrAction implements Serializable {
 		this.samlAcr = new SamlAcr();
 	}
 
+	public void editEntry(SamlAcr samlAcr) {
+		this.edit = true;
+		this.samlAcr = samlAcr;
+	}
+
 	public void removeEntry(SamlAcr acr) {
+		samlAcrService.remove(this.samlAcr);
 		acrs.remove(acr);
 		facesMessages.add(FacesMessage.SEVERITY_INFO, acr.getClassRef() + " removed!");
 	}
 
 	public void addEntry() {
-		if (this.samlAcr.getParent() != null && this.samlAcr.getClassRef() != null) {
+		if (this.samlAcr.getInum() != null) {
+			samlAcrService.update(this.samlAcr);
+			facesMessages.add(FacesMessage.SEVERITY_INFO, this.samlAcr.getClassRef() + " updated!");
+			this.samlAcr=null;
+			this.edit = false;
+		}
+		else if (this.samlAcr.getParent() != null && this.samlAcr.getClassRef() != null && this.samlAcr.getInum() == null) {
+			String inum = samlAcrService.generateInumForSamlAcr();
+			String dn = samlAcrService.getDn(inum);
+			this.samlAcr.setDn(dn);
+			this.samlAcr.setInum(inum);
+			samlAcrService.add(this.samlAcr);
 			acrs.add(this.samlAcr);
 			this.edit = false;
 			facesMessages.add(FacesMessage.SEVERITY_INFO, this.samlAcr.getClassRef() + " added!");
 		} else {
-			this.edit = false;
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "All fields are required!");
 		}
 	}

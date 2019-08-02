@@ -22,17 +22,26 @@ public class SamlAcr extends Entry implements Serializable {
 
 	public SamlAcr() {
 	}
+	
+	@AttributeName
+	private String parent;
+
+	@AttributeName
+	private String classRef;
+
+	@AttributeName
+	private String inum;
 
 	public SamlAcr(String parent, String classRef) {
 		super();
 		this.parent = parent;
 		this.classRef = classRef;
 	}
-	@AttributeName
-	private String parent;
 
-	@AttributeName
-	private String classRef;
+
+	public String getInum() {
+		return inum;
+	}
 
 	public String getClassRef() {
 		return classRef;
@@ -48,6 +57,10 @@ public class SamlAcr extends Entry implements Serializable {
 
 	public void setParent(String parent) {
 		this.parent = parent;
+	}
+
+	public void setInum(String inum) {
+		this.inum=inum;
 	}
 
 }
