@@ -91,6 +91,7 @@ public class Shibboleth3ConfService implements Serializable {
 	private List<String> schemaValidationFileNames = new ArrayList<>();
 	private static final long serialVersionUID = 6752452480800274694L;
 	private static final String SHIB3_IDP_CONF_FOLDER = "conf";
+	private static final String SHIB3_IDP_AUNTHN_FOLDER = "authn";
 	public static final String SHIB3_IDP_METADATA_FOLDER = "metadata";
 	private static final String SHIB3_IDP_METADATA_PROVIDERS_FILE = "metadata-providers.xml";
 	private static final String SHIB3_IDP_ATTRIBUTE_FILTER_FILE = "attribute-filter.xml";
@@ -175,7 +176,7 @@ public class Shibboleth3ConfService implements Serializable {
 			throw new InvalidConfigurationException("Failed to update configuration due to undefined IDP root folder");
 		}
 
-		String idpConfFolder = getIdpConfDir();
+		String idpConfAuthnFolder = getIdpConfAuthnDir();
 		List<String> acrs2 = new ArrayList<String>();
 		for (SamlAcr acr: acrs)
 			acrs2.add(acr.getClassRef());
@@ -185,7 +186,7 @@ public class Shibboleth3ConfService implements Serializable {
 
 		// Generate metadata-providers.xml
 		String oxAuthSupportedPrincipals = templateService.generateConfFile(GLUU_SAML_OXAUTH_SUPPORTED_PRINCIPALS_FILE, context);		
-		boolean result = templateService.writeConfFile(idpConfFolder + GLUU_SAML_OXAUTH_SUPPORTED_PRINCIPALS_FILE, oxAuthSupportedPrincipals);
+		boolean result = templateService.writeConfFile(idpConfAuthnFolder + GLUU_SAML_OXAUTH_SUPPORTED_PRINCIPALS_FILE, oxAuthSupportedPrincipals);
 		
 		log.info(">>>>>>>>>> LEAVING generateConfigurationFiles(SamlAcr[] acrs)...");
 		return result;
@@ -667,6 +668,10 @@ public class Shibboleth3ConfService implements Serializable {
 		return filePath;
 	}
 
+	public String getIdpConfAuthnDir() {
+		return appConfiguration.getShibboleth3IdpRootDir() + File.separator + SHIB3_IDP_CONF_FOLDER + File.separator + SHIB3_IDP_AUNTHN_FOLDER;
+	}
+	
 	public String getIdpConfDir() {
 		return appConfiguration.getShibboleth3IdpRootDir() + File.separator + SHIB3_IDP_CONF_FOLDER + File.separator;
 	}
