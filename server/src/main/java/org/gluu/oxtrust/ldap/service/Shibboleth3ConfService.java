@@ -54,6 +54,7 @@ import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuMetadataSourceType;
 import org.gluu.oxtrust.model.GluuSAMLFederationProposal;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
+import org.gluu.oxtrust.model.SamlAcr;
 import org.gluu.oxtrust.util.EasyCASSLProtocolSocketFactory;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.saml.metadata.SAMLMetadataParser;
@@ -118,6 +119,9 @@ public class Shibboleth3ConfService implements Serializable {
 	public static final String SHIB3_IDP_SP_KEY_FILE = "spkey.key";
 
 	public static final String SHIB3_IDP_SP_CERT_FILE = "spcert.crt";
+	
+	public static final String GLUU_SAML_OXAUTH_SUPPORTED_PRINCIPALS_FILE = "oxauth-supported-principals.xml";
+	
 
 	@Inject
 	private AttributeService attributeService;
@@ -164,6 +168,28 @@ public class Shibboleth3ConfService implements Serializable {
 
 	@Inject
 	private PersonService personService;
+	
+	public boolean generateConfigurationFiles(SamlAcr[] acrs) {
+		log.info(">>>>>>>>>> IN generateConfigurationFiles(SamlAcr[] acrs)...");
+		if (appConfiguration.getShibboleth3IdpRootDir() == null) {
+			throw new InvalidConfigurationException("Failed to update configuration due to undefined IDP root folder");
+		}
+
+		String idpConfFolder = getIdpConfDir();
+		List<String> acrs2 = new ArrayList<String>();
+		for (SamlAcr acr: acrs)
+			acrs2.add(acr.getClassRef());
+		
+		VelocityContext context = new VelocityContext();
+		context.put("acrs", acrs2);
+
+		// Generate metadata-providers.xml
+		String oxAuthSupportedPrincipals = templateService.generateConfFile(GLUU_SAML_OXAUTH_SUPPORTED_PRINCIPALS_FILE, context);		
+		boolean result = templateService.writeConfFile(idpConfFolder + GLUU_SAML_OXAUTH_SUPPORTED_PRINCIPALS_FILE, oxAuthSupportedPrincipals);
+		
+		log.info(">>>>>>>>>> LEAVING generateConfigurationFiles(SamlAcr[] acrs)...");
+		return result;
+	 }
 
 	/*
 	 * Generate relying-party.xml, attribute-filter.xml, attribute-resolver.xml

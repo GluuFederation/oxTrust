@@ -12,6 +12,8 @@ import javax.inject.Named;
 
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.oxtrust.ldap.service.SamlAcrService;
+import org.gluu.oxtrust.ldap.service.Shibboleth3ConfService;
+import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.model.SamlAcr;
 import org.gluu.service.security.Secure;
 import org.slf4j.Logger;
@@ -33,6 +35,9 @@ public class SamlAcrAction implements Serializable {
 
 	@Inject
 	private SamlAcrService samlAcrService;
+	
+    @Inject
+    private Shibboleth3ConfService shibboleth3ConfService;
 
 	private SamlAcr samlAcr;
 
@@ -62,6 +67,8 @@ public class SamlAcrAction implements Serializable {
 		for (SamlAcr samlAcr : acrs) {
 			samlAcrService.update(samlAcr);
 		}
+		
+		shibboleth3ConfService.generateConfigurationFiles(acrs.stream().toArray(SamlAcr[]::new));
 		facesMessages.add(FacesMessage.SEVERITY_INFO, "Save succesfully!");
 	}
 
