@@ -3,7 +3,9 @@ package org.oxtrust.qa.steps;
 import org.oxtrust.qa.pages.configuration.LogViewerConfigPage;
 import org.oxtrust.qa.pages.login.HomePage;
 
+import cucumber.api.Scenario;
 import cucumber.api.java.After;
+import cucumber.api.java.Before;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Then;
 
@@ -12,6 +14,10 @@ public class LogViewerSteps extends BaseSteps {
 	private HomePage homePage = new HomePage();
 	private LogViewerConfigPage logViewerConfigPage = new LogViewerConfigPage();
 
+	@Before
+	public void setup(Scenario scenario) {
+		startRecorder(scenario);
+	}
 	@And("^I go to log viewer configuration status page$")
 	public void goToLogViewerConfiguration() {
 		homePage.goToLogViewerCongifigurationMenuPage();
@@ -48,8 +54,9 @@ public class LogViewerSteps extends BaseSteps {
 	}
 
 	@After
-	public void clear() {
-		new HomePage().clear();
+	public void clear(Scenario scenario) {
+		homePage.takeScreenShot(scenario);
+		stopRecorder();
+		homePage.clear();
 	}
-
 }

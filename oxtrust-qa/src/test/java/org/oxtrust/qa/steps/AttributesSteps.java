@@ -3,7 +3,9 @@ package org.oxtrust.qa.steps;
 import org.oxtrust.qa.pages.configuration.AttributesPage;
 import org.oxtrust.qa.pages.login.HomePage;
 
+import cucumber.api.Scenario;
 import cucumber.api.java.After;
+import cucumber.api.java.Before;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
@@ -11,6 +13,11 @@ import cucumber.api.java.en.When;
 public class AttributesSteps extends BaseSteps {
 	private HomePage homePage = new HomePage();
 	private AttributesPage attributesPage = new AttributesPage();
+	
+	@Before
+	public void setup(Scenario scenario) {
+		startRecorder(scenario);
+	}
 
 	@When("^I go to Attributes page$")
 	public void goToAttributesPage() {
@@ -165,7 +172,9 @@ public class AttributesSteps extends BaseSteps {
 	}
 	
 	@After
-	public void clear() {
-		new HomePage().clear();
+	public void clear(Scenario scenario) {
+		homePage.takeScreenShot(scenario);
+		stopRecorder();
+		homePage.clear();
 	}
 }

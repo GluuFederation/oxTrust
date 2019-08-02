@@ -7,7 +7,9 @@ import org.oxtrust.qa.pages.saml.TrAddPage;
 import org.oxtrust.qa.pages.saml.TrManagePage;
 import org.oxtrust.qa.pages.saml.TrUpdatePage;
 
+import cucumber.api.Scenario;
 import cucumber.api.java.After;
+import cucumber.api.java.Before;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
@@ -24,6 +26,11 @@ public class SamlSteps extends BaseSteps {
 	private NameIdConfigurationPage namdIdConfigurationPage = new NameIdConfigurationPage();
 
 	private NameIdAddPage nameIdAddPage = new NameIdAddPage();
+	
+	@Before
+	public void setup(Scenario scenario) {
+		startRecorder(scenario);
+	}
 
 	@When("^I go to tr add page$")
 	public void goToTrAddPage() {
@@ -173,8 +180,10 @@ public class SamlSteps extends BaseSteps {
 	}
 
 	@After
-	public void clear() {
-		new HomePage().clear();
+	public void clear(Scenario scenario) {
+		homePage.takeScreenShot(scenario);
+		stopRecorder();
+		homePage.clear();
 	}
 
 }

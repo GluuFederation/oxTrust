@@ -4,7 +4,9 @@ package org.oxtrust.qa.steps;
 import org.oxtrust.qa.pages.configuration.CustomScriptManagePage;
 import org.oxtrust.qa.pages.login.HomePage;
 
+import cucumber.api.Scenario;
 import cucumber.api.java.After;
+import cucumber.api.java.Before;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.When;
 
@@ -12,6 +14,11 @@ public class CustomScriptSteps extends BaseSteps {
 
 	HomePage homePage=new HomePage();
 	CustomScriptManagePage customScriptManagePage=new CustomScriptManagePage();
+	
+	@Before
+	public void setup(Scenario scenario) {
+		startRecorder(scenario);
+	}
 
 	@When("^I go to Manage Custom Script$")
 	public void goToCustomManageScriptPage() {
@@ -93,7 +100,9 @@ public class CustomScriptSteps extends BaseSteps {
 		customScriptManagePage.enable();
 	}
 	@After
-	public void clear() {
-		new HomePage().clear();
+	public void clear(Scenario scenario) {
+		homePage.takeScreenShot(scenario);
+		stopRecorder();
+		homePage.clear();
 	}
 }
