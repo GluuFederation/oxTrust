@@ -20,60 +20,32 @@
 		<section class="content">
 			<b:panel id="main" title="SAML ACRS List" look="primary"
 				iconAwesome="fa-list" collapsible="false">
-				<h:form id="samList" rendered="#{!samlAcrAction.edit}">
-					<b:commandButton iconAwesome="plus" value="Add new Entry"
-						look="success" action="#{samlAcrAction.edit()}"
-						style="margin-bottom:5px !important;" />
+				<h:form id="samList">
+					<b:link style-class="AddNewSamlAcr btn btn-primary"
+						style="margin-bottom:5px !important;" icon="plus"
+						outcome="/saml/samlAcr" value="#{msg['scope.addScope']}"
+						includeViewParams="false" />
 					<b:dataTable id="samlAcrListId" style="text-align:center;"
 						rendered="#{samlAcrAction.acrs.size() gt 0}"
 						value="#{samlAcrAction.acrs}" var="acr" csv="true" pdf="true"
 						select="true" responsive="true">
 						<b:dataTableColumn label="Inum">
-							<h:outputText value="#{acr.inum.substring(0,6)}" style="width:100%;" />
+							<h:link includeViewParams="false" outcome="/saml/samlAcr"
+								value="#{acr.inum.substring(0,9)}">
+								<f:param name="inum" value="#{acr.inum}" />
+							</h:link>
 						</b:dataTableColumn>
 						<b:dataTableColumn label="Class Reference">
 							<h:outputText value="#{acr.classRef}" style="width:100%;" />
 						</b:dataTableColumn>
 						<b:dataTableColumn label="Actions">
-							<b:commandButton iconAwesome="edit" value="Edit" look="primary"
-								ajax="true" update=":samList" immediate="true"
-								action="#{samlAcrAction.editEntry(acr)}" style="margin-right:5px;" />
 							<b:commandButton iconAwesome="trash" value="Remove" look="danger"
 								ajax="true" update=":samList" immediate="true"
+								style="margin-left:5px !important"
 								action="#{samlAcrAction.removeEntry(acr)}" />
 						</b:dataTableColumn>
 					</b:dataTable>
-					<div id="updateButtons" style="margin: 10px; margin-top: 20px;">
-						<b:commandButton id="SaveButton"
-							styleClass="btn btn-primary SaveButton" value="Save"
-							look="primary" ajax="true" update=":main"
-							action="#{samlAcrAction.save}" />
-					</div>
 				</h:form>
-				<b:panel id="valueForm" title="Entry Form" look="success"
-					iconAwesome="fa-building" collapsible="false"
-					rendered="#{samlAcrAction.edit}">
-					<h:form id="editForm">
-						<div class="row">
-							<div class="col-sm-6 col-md-6 col-lg-6">
-								<h:outputText value="Parent:" style="font-weight:bold;" />
-								<h:outputText value="#{samlAcrAction.samlAcr.parent}" />
-							</div>
-							<div class="col-sm-6 col-md-6 col-lg-6">
-								<h:outputText style="font-weight:bold;" value="Class Ref:" />
-								<h:inputText require="true"
-									value="#{samlAcrAction.samlAcr.classRef}" style="width:100%;" />
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-sm-4 col-md-4 col-lg-4"></div>
-							<div class="col-sm-6 col-md-6 col-lg-6">
-								<b:commandButton iconAwesome="plus" value="Add to list"
-									look="success" action="#{samlAcrAction.addEntry()}" />
-							</div>
-						</div>
-					</h:form>
-				</b:panel>
 			</b:panel>
 		</section>
 	</ui:define>

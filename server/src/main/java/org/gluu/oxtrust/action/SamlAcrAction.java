@@ -12,8 +12,8 @@ import javax.inject.Named;
 
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.oxtrust.ldap.service.SamlAcrService;
-import org.gluu.oxtrust.ldap.service.Shibboleth3ConfService;
 import org.gluu.oxtrust.model.SamlAcr;
+import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.service.security.Secure;
 import org.slf4j.Logger;
 
@@ -35,14 +35,22 @@ public class SamlAcrAction implements Serializable {
 	@Inject
 	private SamlAcrService samlAcrService;
 
-	@Inject
-	private Shibboleth3ConfService shibboleth3ConfService;
+	private boolean update = false;
 
-	private SamlAcr samlAcr;
-
-	private boolean edit;
+	private String inum;
 
 	private List<SamlAcr> acrs = new ArrayList<>();
+	private List<String> parents = new ArrayList<>();
+
+	private SamlAcr samlAcr = new SamlAcr();
+
+	public SamlAcr getSamlAcr() {
+		return samlAcr;
+	}
+
+	public void setSamlAcr(SamlAcr samlAcr) {
+		this.samlAcr = samlAcr;
+	}
 
 	public List<SamlAcr> getAcrs() {
 		return acrs;
@@ -53,33 +61,14 @@ public class SamlAcrAction implements Serializable {
 	}
 
 	@PostConstruct
-	public void init() {
-
+	public String init() {
 		try {
 			acrs = samlAcrService.getAll();
-			log.info("List of current acr:" + acrs.size());
+			return OxTrustConstants.RESULT_SUCCESS;
 		} catch (Exception e) {
 			log.error("Error loading saml acrs", e);
+			return OxTrustConstants.RESULT_FAILURE;
 		}
-	}
-
-	public void save() {
-		for (SamlAcr samlAcr : acrs) {
-			samlAcrService.update(samlAcr);
-		}
-
-		shibboleth3ConfService.generateConfigurationFiles(acrs.stream().toArray(SamlAcr[]::new));
-		facesMessages.add(FacesMessage.SEVERITY_INFO, "Save succesfully!");
-	}
-
-	public void edit() {
-		this.edit = true;
-		this.samlAcr = new SamlAcr();
-	}
-
-	public void editEntry(SamlAcr samlAcr) {
-		this.edit = true;
-		this.samlAcr = samlAcr;
 	}
 
 	public void removeEntry(SamlAcr acr) {
@@ -88,43 +77,60 @@ public class SamlAcrAction implements Serializable {
 		facesMessages.add(FacesMessage.SEVERITY_INFO, acr.getClassRef() + " removed!");
 	}
 
-	public void addEntry() {
+	public void update() {
+		log.info("+++++++++++++++++++++");
+		if (this.inum != null) {
+			log.info("===========================Updating");
+			this.samlAcr = samlAcrService.getByInum(this.inum);
+			this.update=true;
+		}else {
+			this.update=false;
+		}
+	}
+
+	public String save() {
 		if (this.samlAcr.getInum() != null) {
 			samlAcrService.update(this.samlAcr);
 			facesMessages.add(FacesMessage.SEVERITY_INFO, this.samlAcr.getClassRef() + " updated!");
-			this.samlAcr=null;
-			this.edit = false;
-		}
-		else if (this.samlAcr.getParent() != null && this.samlAcr.getClassRef() != null && this.samlAcr.getInum() == null) {
+			this.samlAcr = null;
+			return OxTrustConstants.RESULT_SUCCESS;
+		} else if (this.samlAcr.getParent() != null && this.samlAcr.getClassRef() != null
+				&& this.samlAcr.getInum() == null) {
 			String inum = samlAcrService.generateInumForSamlAcr();
 			String dn = samlAcrService.getDn(inum);
 			this.samlAcr.setDn(dn);
 			this.samlAcr.setInum(inum);
 			samlAcrService.add(this.samlAcr);
-			acrs.add(this.samlAcr);
-			this.edit = false;
 			facesMessages.add(FacesMessage.SEVERITY_INFO, this.samlAcr.getClassRef() + " added!");
+			return OxTrustConstants.RESULT_SUCCESS;
 		} else {
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "All fields are required!");
+			return OxTrustConstants.RESULT_FAILURE;
 		}
 	}
 
-	public boolean isEdit() {
-		return edit;
+	public List<String> getParents() {
+		parents.add("shibboleth.SAML2AuthnContextClassRef");
+		return parents;
 	}
 
-	public void setEdit(boolean edit) {
-		this.edit = edit;
+	public void setParents(List<String> parents) {
+		this.parents = parents;
 	}
 
-	public SamlAcr getSamlAcr() {
-		if (this.samlAcr.getParent() == null) {
-			this.samlAcr.setParent("shibboleth.SAML2AuthnContextClassRef");
-		}
-		return samlAcr;
+	public boolean isUpdate() {
+		return update;
 	}
 
-	public void setSamlAcr(SamlAcr samlAcr) {
-		this.samlAcr = samlAcr;
+	public void setUpdate(boolean update) {
+		this.update = update;
+	}
+
+	public String getInum() {
+		return inum;
+	}
+
+	public void setInum(String inum) {
+		this.inum = inum;
 	}
 }

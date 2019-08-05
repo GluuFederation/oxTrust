@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:b="http://bootsfaces.net/ui" xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
+	template="/WEB-INF/incl/layout/newtemplate.xhtml">
+	<f:metadata>
+		<f:viewAction
+			action="#{permissionService.requestPermission('trust', 'access')}" />
+		<f:viewParam name="id" value="#{samlAcrAction.inum}" />
+		<f:viewAction action="#{conversationService.initConversation}" />
+		<f:viewAction action="#{samlAcrAction.update}" onPostback="false" />
+	</f:metadata>
+	<ui:define name="head">
+	</ui:define>
+	<ui:define name="body">
+		<section class="content">
+			<b:panel id="main" title="SAML ACR" look="primary"
+				iconAwesome="fa-list" collapsible="false">
+				<h:form id="editForm">
+					<div class="row">
+						<div class="col-sm-6 col-md-6 col-lg-6">
+							<ox:decorate label="Parent" leftClass="col-sm-3"
+								rightClass="col-sm-9">
+								<h:selectOneMenu value="#{samlAcrAction.samlAcr.parent}">
+									<f:selectItems value="#{samlAcrAction.parents}" />
+								</h:selectOneMenu>
+							</ox:decorate>
+						</div>
+						<div class="col-sm-6 col-md-6 col-lg-6">
+							<ox:decorate label="Class Ref" leftClass="col-sm-3"
+								rightClass="col-sm-9">
+								<h:inputText require="true"
+									value="#{samlAcrAction.samlAcr.classRef}" style="width:100%;" />
+							</ox:decorate>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-2 col-md-2 col-lg-2"></div>
+						<div class="col-sm-6 col-md-6 col-lg-6">
+							<div id="updateButtons" style="margin: 10px; margin-top: 20px;">
+								<b:commandButton id="SaveButton"
+									styleClass="btn btn-primary SaveButton" value="Save"
+									look="primary" ajax="true" update=":main"
+									action="#{samlAcrAction.save}" />
+							</div>
+						</div>
+					</div>
+				</h:form>
+			</b:panel>
+		</section>
+	</ui:define>
+</ui:composition>
