@@ -84,6 +84,7 @@ public class ClientAddPage extends AbstractPage {
 	}
 
 	private void searchForResponseType(String id, String value) {
+		fluentWait(2);
 		WebElement pane = waitElementByID(id);
 		WebElement firstTable = pane.findElements(By.tagName("table")).get(0);
 		WebElement table = firstTable.findElements(By.tagName("table")).get(0);

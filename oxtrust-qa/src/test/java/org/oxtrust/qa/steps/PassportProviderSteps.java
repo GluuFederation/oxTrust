@@ -15,7 +15,7 @@ public class PassportProviderSteps extends BaseSteps {
 	private HomePage homePage = new HomePage();
 
 	private PassportPage passportPage = new PassportPage();
-	
+
 	@Before
 	public void setup(Scenario scenario) {
 		startRecorder(scenario);
@@ -29,6 +29,11 @@ public class PassportProviderSteps extends BaseSteps {
 	@When("^I start the process to add new provider$")
 	public void goToProviderAddPage() {
 		passportPage.clickAddButton();
+	}
+
+	@When("^I set id '(.+)'$")
+	public void setProviderId(String value) {
+		passportPage.fillTextFillByClass("providerID", value);
 	}
 
 	@When("^I set display name '(.+)'$")
@@ -75,7 +80,7 @@ public class PassportProviderSteps extends BaseSteps {
 	public void editCurrentClient(String provider) {
 		passportPage.editProvider(provider);
 	}
-	
+
 	@After
 	public void clear(Scenario scenario) {
 		homePage.takeScreenShot(scenario);

@@ -3,12 +3,11 @@ package org.oxtrust.qa.steps;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
-import atu.testrecorder.ATUTestRecorder;
 import cucumber.api.Scenario;
 
 public abstract class BaseSteps {
 	public final DateFormat dateFormat = new SimpleDateFormat("yy-MM-dd_HH-mm-ss");
-	private ATUTestRecorder recorder;
+	// private ATUTestRecorder recorder;
 
 	public void startRecorder(Scenario scenario) {
 		// try {
