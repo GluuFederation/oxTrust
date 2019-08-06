@@ -29,26 +29,21 @@
 						value="#{samlAcrAction.acrs}" var="acr" csv="true" pdf="true"
 						select="true" responsive="true">
 						<b:dataTableColumn label="Inum">
-							<h:outputText value="#{acr.inum.substring(0,6)}" style="width:100%;" />
+							<h:outputText value="#{acr.inum.substring(0,6)}"
+								style="width:100%;" />
 						</b:dataTableColumn>
 						<b:dataTableColumn label="Class Reference">
 							<h:outputText value="#{acr.classRef}" style="width:100%;" />
 						</b:dataTableColumn>
 						<b:dataTableColumn label="Actions">
 							<b:commandButton iconAwesome="edit" value="Edit" look="primary"
-								ajax="true" update=":samList" immediate="true"
-								action="#{samlAcrAction.editEntry(acr)}" style="margin-right:5px;" />
+								action="#{samlAcrAction.editEntry(acr)}"
+								style="margin-right:5px;" />
 							<b:commandButton iconAwesome="trash" value="Remove" look="danger"
 								ajax="true" update=":samList" immediate="true"
 								action="#{samlAcrAction.removeEntry(acr)}" />
 						</b:dataTableColumn>
 					</b:dataTable>
-					<div id="updateButtons" style="margin: 10px; margin-top: 20px;">
-						<b:commandButton id="SaveButton"
-							styleClass="btn btn-primary SaveButton" value="Save"
-							look="primary" ajax="true" update=":main"
-							action="#{samlAcrAction.save}" />
-					</div>
 				</h:form>
 				<b:panel id="valueForm" title="Entry Form" look="success"
 					iconAwesome="fa-building" collapsible="false"
@@ -56,13 +51,19 @@
 					<h:form id="editForm">
 						<div class="row">
 							<div class="col-sm-6 col-md-6 col-lg-6">
-								<h:outputText value="Parent:" style="font-weight:bold;" />
-								<h:outputText value="#{samlAcrAction.samlAcr.parent}" />
+								<ox:decorate label="Parent" leftClass="col-sm-3"
+									rightClass="col-sm-9">
+									<h:selectOneMenu value="#{samlAcrAction.samlAcr.parent}">
+										<f:selectItems value="#{samlAcrAction.parents}" />
+									</h:selectOneMenu>
+								</ox:decorate>
 							</div>
 							<div class="col-sm-6 col-md-6 col-lg-6">
-								<h:outputText style="font-weight:bold;" value="Class Ref:" />
-								<h:inputText require="true"
-									value="#{samlAcrAction.samlAcr.classRef}" style="width:100%;" />
+								<ox:decorate label="Class Ref" leftClass="col-sm-3"
+									rightClass="col-sm-9">
+									<h:inputText require="true"
+										value="#{samlAcrAction.samlAcr.classRef}" style="width:100%;" />
+								</ox:decorate>
 							</div>
 						</div>
 						<div class="row">

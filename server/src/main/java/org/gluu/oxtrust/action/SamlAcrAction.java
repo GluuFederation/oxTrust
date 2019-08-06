@@ -12,7 +12,6 @@ import javax.inject.Named;
 
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.oxtrust.ldap.service.SamlAcrService;
-import org.gluu.oxtrust.ldap.service.Shibboleth3ConfService;
 import org.gluu.oxtrust.model.SamlAcr;
 import org.gluu.service.security.Secure;
 import org.slf4j.Logger;
@@ -35,14 +34,13 @@ public class SamlAcrAction implements Serializable {
 	@Inject
 	private SamlAcrService samlAcrService;
 
-	@Inject
-	private Shibboleth3ConfService shibboleth3ConfService;
-
 	private SamlAcr samlAcr;
 
 	private boolean edit;
 
 	private List<SamlAcr> acrs = new ArrayList<>();
+
+	private List<String> parents = new ArrayList<>();
 
 	public List<SamlAcr> getAcrs() {
 		return acrs;
@@ -54,22 +52,11 @@ public class SamlAcrAction implements Serializable {
 
 	@PostConstruct
 	public void init() {
-
 		try {
 			acrs = samlAcrService.getAll();
-			log.info("List of current acr:" + acrs.size());
 		} catch (Exception e) {
 			log.error("Error loading saml acrs", e);
 		}
-	}
-
-	public void save() {
-		for (SamlAcr samlAcr : acrs) {
-			samlAcrService.update(samlAcr);
-		}
-
-		shibboleth3ConfService.generateConfigurationFiles(acrs.stream().toArray(SamlAcr[]::new));
-		facesMessages.add(FacesMessage.SEVERITY_INFO, "Save succesfully!");
 	}
 
 	public void edit() {
@@ -83,25 +70,30 @@ public class SamlAcrAction implements Serializable {
 	}
 
 	public void removeEntry(SamlAcr acr) {
-		samlAcrService.remove(this.samlAcr);
-		acrs.remove(acr);
-		facesMessages.add(FacesMessage.SEVERITY_INFO, acr.getClassRef() + " removed!");
+		try {
+			samlAcrService.remove(acr);
+			this.acrs.remove(acr);
+			facesMessages.add(FacesMessage.SEVERITY_INFO, acr.getClassRef() + " removed!");
+		} catch (Exception e) {
+			log.info("", e);
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, " Error removing " + acr.getClassRef());
+		}
+
 	}
 
 	public void addEntry() {
 		if (this.samlAcr.getInum() != null) {
 			samlAcrService.update(this.samlAcr);
 			facesMessages.add(FacesMessage.SEVERITY_INFO, this.samlAcr.getClassRef() + " updated!");
-			this.samlAcr=null;
+			this.samlAcr = null;
 			this.edit = false;
-		}
-		else if (this.samlAcr.getParent() != null && this.samlAcr.getClassRef() != null && this.samlAcr.getInum() == null) {
+		} else if (this.samlAcr.getParent() != null && this.samlAcr.getClassRef() != null
+				&& this.samlAcr.getInum() == null) {
 			String inum = samlAcrService.generateInumForSamlAcr();
 			String dn = samlAcrService.getDn(inum);
 			this.samlAcr.setDn(dn);
 			this.samlAcr.setInum(inum);
 			samlAcrService.add(this.samlAcr);
-			acrs.add(this.samlAcr);
 			this.edit = false;
 			facesMessages.add(FacesMessage.SEVERITY_INFO, this.samlAcr.getClassRef() + " added!");
 		} else {
@@ -118,13 +110,19 @@ public class SamlAcrAction implements Serializable {
 	}
 
 	public SamlAcr getSamlAcr() {
-		if (this.samlAcr.getParent() == null) {
-			this.samlAcr.setParent("shibboleth.SAML2AuthnContextClassRef");
-		}
 		return samlAcr;
 	}
 
 	public void setSamlAcr(SamlAcr samlAcr) {
 		this.samlAcr = samlAcr;
+	}
+
+	public List<String> getParents() {
+		this.parents.add("shibboleth.SAML2AuthnContextClassRef");
+		return parents;
+	}
+
+	public void setParents(List<String> parents) {
+		this.parents = parents;
 	}
 }

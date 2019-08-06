@@ -6,7 +6,6 @@ import java.util.UUID;
 
 import javax.inject.Inject;
 
-import org.apache.commons.lang.StringUtils;
 import org.gluu.oxtrust.model.SamlAcr;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.util.StringHelper;
@@ -48,16 +47,7 @@ public class SamlAcrService implements Serializable {
 	}
 
 	public void update(SamlAcr samlAcr) {
-		if (contains(samlAcr))
-			ldapEntryManager.merge(samlAcr);
-		else {
-			if (StringUtils.isBlank(samlAcr.getDn())){
-				String inum = generateInumForSamlAcr();
-				samlAcr.setDn(getDn(inum));
-			}
-		
-			add(samlAcr);
-		}
+		ldapEntryManager.merge(samlAcr);
 	}
 
 	public void add(SamlAcr samlAcr) {
@@ -65,7 +55,10 @@ public class SamlAcrService implements Serializable {
 	}
 
 	public void remove(SamlAcr samlAcr) {
-		ldapEntryManager.removeRecursively(samlAcr.getDn());
+		if(samlAcr.getDn()==null) {
+			samlAcr.setDn(getDn(samlAcr.getInum()));
+		}
+		ldapEntryManager.remove(samlAcr);
 	}
 
 	public List<SamlAcr> getAll() {
