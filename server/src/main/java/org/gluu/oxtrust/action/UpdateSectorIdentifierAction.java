@@ -134,18 +134,15 @@ public class UpdateSectorIdentifierAction implements Serializable {
 		if (this.sectorIdentifier != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
-
 		this.update = true;
-		log.info("this.update : " + this.update);
 		try {
-			log.info("id : " + id);
 			this.sectorIdentifier = sectorIdentifierService.getSectorIdentifierById(id);
 		} catch (BasePersistenceException ex) {
 			log.error("Failed to find sector identifier {}", id, ex);
+			return OxTrustConstants.RESULT_FAILURE;
 		}
 
 		if (this.sectorIdentifier == null) {
-			log.info("Sector identifier is null ");
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 
@@ -276,17 +273,18 @@ public class UpdateSectorIdentifierAction implements Serializable {
 
 	private void removeDeletedClients() {
 		List<String> dns = this.sectorIdentifier.getClientIds();
-		List<String> result = new ArrayList<>(dns);
-		if (dns != null && dns.size() > 0) {
-			for (String dn : dns) {
-				OxAuthClient client = clientService.getClientByDn(dn);
-				if (client == null) {
-					result.remove(dn);
+		if(dns!=null) {
+			List<String> result = new ArrayList<>(dns);
+			if (dns != null && dns.size() > 0) {
+				for (String dn : dns) {
+					OxAuthClient client = clientService.getClientByDn(dn);
+					if (client == null) {
+						result.remove(dn);
+					}
 				}
 			}
+			this.sectorIdentifier.setClientIds(result);
 		}
-		this.sectorIdentifier.setClientIds(result);
-
 	}
 
 	private List<String> getNonEmptyStringList(List<String> currentList) {
