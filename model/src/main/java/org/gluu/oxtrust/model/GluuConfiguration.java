@@ -123,6 +123,12 @@ public class GluuConfiguration extends InumEntry implements Serializable {
 	@AttributeName(name = "gluuPassportEnabled")
 	private boolean passportEnabled;
 
+	@AttributeName(name = "gluuRadiusEnabled")
+	private boolean radiusEnabled;
+
+	@AttributeName(name="gluuSamlEnabled")
+	private boolean samlEnabled;
+
 	@AttributeName(name = "oxTrustEmail")
 	private String contactEmail;
 
@@ -507,6 +513,22 @@ public class GluuConfiguration extends InumEntry implements Serializable {
 		this.passportEnabled = passportEnabled;
 	}
 
+	public boolean isRadiusEnabled() {
+		return radiusEnabled;
+	}
+
+	public void setRadiusEnabled(boolean radiusEnabled) {
+		this.radiusEnabled = radiusEnabled;
+	}
+
+	public boolean isSamlEnabled() {
+		return this.samlEnabled;
+	}
+
+	public void setSamlEnabled(boolean samlEnabled) {
+		this.samlEnabled = samlEnabled;
+	}
+
 	public CacheConfiguration getCacheConfiguration() {
 		return cacheConfiguration;
 	}
@@ -527,7 +549,8 @@ public class GluuConfiguration extends InumEntry implements Serializable {
 				+ cacheRefreshServerIpAddress + ", vdsCacheRefreshPollingInterval=" + vdsCacheRefreshPollingInterval
 				+ ", vdsCacheRefreshLastUpdate=" + vdsCacheRefreshLastUpdate + ", vdsCacheRefreshLastUpdateCount="
 				+ vdsCacheRefreshLastUpdateCount + ", vdsCacheRefreshProblemCount=" + vdsCacheRefreshProblemCount + ", scimEnabled="
-				+ scimEnabled + ", passportEnabled=" + passportEnabled + ", contactEmail=" + contactEmail + ", smtpConfiguration="
+				+ scimEnabled + ", passportEnabled=" + passportEnabled + ", radiusEnabled=" 
+				+ radiusEnabled + ", samlEnabled="+ samlEnabled + ", contactEmail=" + contactEmail + ", smtpConfiguration="
 				+ smtpConfiguration + ", configurationDnsServer=" + configurationDnsServer + ", maxLogSize=" + maxLogSize + ", loadAvg="
 				+ loadAvg + ", oxIDPAuthentication=" + oxIDPAuthentication + ", authenticationMode=" + authenticationMode
 				+ ", oxTrustAuthenticationMode=" + oxTrustAuthenticationMode + ", oxLogViewerConfig=" + oxLogViewerConfig
