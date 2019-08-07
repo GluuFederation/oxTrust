@@ -112,7 +112,7 @@ public class UpdateUmaScopeAction implements Serializable {
 	}
 
 	public String add() {
-		try{
+		try {
 			if (this.umaScope != null) {
 				return OxTrustConstants.RESULT_SUCCESS;
 			}
@@ -120,12 +120,12 @@ public class UpdateUmaScopeAction implements Serializable {
 			this.update = false;
 			this.authorizationPolicies = getInitialAuthorizationPolicies();
 			return OxTrustConstants.RESULT_SUCCESS;
-		}catch (Exception e) {
+		} catch (Exception e) {
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to load scope add from");
 			conversationService.endConversation();
 			return OxTrustConstants.RESULT_FAILURE;
 		}
-		
+
 	}
 
 	public String update() {
@@ -173,9 +173,7 @@ public class UpdateUmaScopeAction implements Serializable {
 		} else {
 			facesMessages.add(FacesMessage.SEVERITY_INFO, "New UMA resource not added");
 		}
-
 		conversationService.endConversation();
-
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
@@ -184,7 +182,10 @@ public class UpdateUmaScopeAction implements Serializable {
 		this.umaScope.setScopeType(ScopeType.UMA);
 		updateAuthorizationPolicies();
 		if (this.update) {
-			// Update scope description
+			if (scopeWithSameNameExistInUpdate()) {
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, "A scope with same name already exist");
+				return OxTrustConstants.RESULT_FAILURE;
+			}
 			try {
 				scopeDescriptionService.updateUmaScope(this.umaScope);
 			} catch (BasePersistenceException ex) {
@@ -196,40 +197,46 @@ public class UpdateUmaScopeAction implements Serializable {
 			log.debug("Scope description were updated successfully");
 			facesMessages.add(FacesMessage.SEVERITY_INFO,
 					"UMA resource '#{updateScopeDescriptionAction.scopeDescription.displayName}' updated successfully");
-
 			return OxTrustConstants.RESULT_UPDATE;
 		} else {
-			// Check if scope description with this name already exist
+			if (scopeWithSameNameExist()) {
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, "A scope with same name already exist");
+				return OxTrustConstants.RESULT_FAILURE;
+			}
 			Scope exampleScopeDescription = new Scope();
 			exampleScopeDescription.setDn(scopeDescriptionService.getDnForScope(null));
 			exampleScopeDescription.setId(umaScope.getId());
-
 			String inum = scopeDescriptionService.generateInumForNewScope();
 			String scopeDescriptionDn = scopeDescriptionService.getDnForScope(inum);
-
 			this.umaScope.setInum(inum);
 			this.umaScope.setDn(scopeDescriptionDn);
 			this.umaScope.setId(umaScope.getId());
-
-			// Save scope description
 			try {
 				scopeDescriptionService.addUmaScope(this.umaScope);
 			} catch (BasePersistenceException ex) {
 				log.error("Failed to add new UMA resource '{}'", this.umaScope.getId(), ex);
 				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new UMA resource");
-
 				return OxTrustConstants.RESULT_FAILURE;
 			}
-
 			log.debug("Scope description were add successfully");
 			facesMessages.add(FacesMessage.SEVERITY_INFO,
 					"New UMA resource '#{updateScopeDescriptionAction.scopeDescription.displayName}' added successfully");
 			conversationService.endConversation();
-
 			this.update = true;
 			this.scopeInum = inum;
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
+	}
+
+	private boolean scopeWithSameNameExist() {
+		return scopeDescriptionService.getAllUmaScopes(1000).stream()
+				.anyMatch(e -> e.getDisplayName().equalsIgnoreCase(this.umaScope.getDisplayName()));
+	}
+
+	private boolean scopeWithSameNameExistInUpdate() {
+		return scopeDescriptionService.getAllUmaScopes(1000).stream()
+				.filter(e -> !e.getInum().equalsIgnoreCase(this.umaScope.getInum()))
+				.anyMatch(e -> e.getDisplayName().equalsIgnoreCase(this.umaScope.getDisplayName()));
 	}
 
 	public String delete() {
