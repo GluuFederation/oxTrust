@@ -38,6 +38,7 @@ import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.exception.BasePersistenceException;
+import org.gluu.persist.exception.operation.DuplicateEntryException;
 import org.gluu.service.LookupService;
 import org.gluu.service.security.Secure;
 import org.gluu.util.StringHelper;
@@ -180,14 +181,11 @@ public class UpdateGroupAction implements Serializable {
 			oldMembers = getMemberDisplayNameEntiries();
 		} catch (BasePersistenceException ex) {
 			log.error("Failed to load person display names", ex);
-
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update group");
 			return OxTrustConstants.RESULT_FAILURE;
 		}
-
 		updateMembers();
 		if (update) {
-			// Update group
 			try {
 				groupService.updateGroup(this.group);
 				oxTrustAuditService.audit("GROUP " + this.group.getInum() + " **"+this.group.getDisplayName()+ "** UPDATED",
@@ -197,16 +195,16 @@ public class UpdateGroupAction implements Serializable {
 			} catch (BasePersistenceException ex) {
 				log.error("Failed to update group {}", this.inum, ex);
 				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update group '#{updateGroupAction.group.displayName}'");
-
 				return OxTrustConstants.RESULT_FAILURE;
 			}
-
+			catch (DuplicateEntryException ex) {
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, "A group with the same name already exist.");
+				return OxTrustConstants.RESULT_FAILURE;
+			}
 			facesMessages.add(FacesMessage.SEVERITY_INFO, "Group '#{updateGroupAction.group.displayName}' updated successfully");
 		} else {
 			this.inum = groupService.generateInumForNewGroup();
 			String dn = groupService.getDnForGroup(this.inum);
-
-			// Save group
 			this.group.setDn(dn);
 			this.group.setInum(this.inum);
 			try {
@@ -218,13 +216,14 @@ public class UpdateGroupAction implements Serializable {
 			} catch (BasePersistenceException ex) {
 				log.error("Failed to add new group {}", this.group.getInum(), ex);
 				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new group");
-
 				return OxTrustConstants.RESULT_FAILURE;
 			}
-
+			catch (DuplicateEntryException ex) {
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, "A group with the same name already exist.");
+				return OxTrustConstants.RESULT_FAILURE;
+			}
 			facesMessages.add(FacesMessage.SEVERITY_INFO, "New group '#{updateGroupAction.group.displayName}' added successfully");
 			conversationService.endConversation();
-
 			this.update = true;
 		}
 		log.debug(" returning success updating or saving group");
@@ -233,7 +232,6 @@ public class UpdateGroupAction implements Serializable {
 
 	public String delete() throws Exception {
 		if (update) {
-			// Remove group
 			try {
 				groupService.removeGroup(this.group);
 				oxTrustAuditService.audit("GROUP " + this.group.getInum() + " **"+this.group.getDisplayName()+ "** REMOVED",
@@ -241,15 +239,12 @@ public class UpdateGroupAction implements Serializable {
 						(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 				facesMessages.add(FacesMessage.SEVERITY_INFO, "Group '#{updateGroupAction.group.displayName}' removed successfully");
 				conversationService.endConversation();
-
 				return OxTrustConstants.RESULT_SUCCESS;
 			} catch (BasePersistenceException ex) {
 				log.error("Failed to remove group {}", this.group.getInum(), ex);
 			}
 		}
-
 		facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to remove group '#{updateGroupAction.group.displayName}'");
-
 		return OxTrustConstants.RESULT_FAILURE;
 	}
 
