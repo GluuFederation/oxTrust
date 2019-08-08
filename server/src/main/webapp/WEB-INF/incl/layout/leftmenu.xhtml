@@ -57,6 +57,14 @@
 											<i class="fa fa-chevron-right"
 												style="float: left; margin-top: 2px;"></i>
 										</h:commandLink></li>
+									<li id="subMenuLinkConfiguration33"><h:commandLink
+											value="Manage SAML Acrs" onclick="lock();"
+											ondbclick="lock();" oncomplete="unlock();"
+											action="#{menuAction.endConversation('/saml/samlAcrs.xhtml')}"
+											rendered="#{permissionService.hasPermission('trust', 'access')}">
+											<i class="fa fa-chevron-right"
+												style="float: left; margin-top: 2px;"></i>
+										</h:commandLink></li>	
 									<li id="subMenuLinkConfiguration4"><h:commandLink
 											value="#{msg['leftmenu.manageCustomScripts']}"
 											onclick="lock();" ondbclick="lock();" oncomplete="unlock();"
@@ -174,7 +182,9 @@
 											rendered="#{permissionService.hasPermission('trust', 'access')}">
 											<i class="fa fa-chevron-right"
 												style="float: left; margin-top: 2px;"></i>
-										</h:commandLink></li></li>
+										</h:commandLink></li>
+										
+										</li>
 					</ul>
 					</li>
 					</ui:fragment>
@@ -415,6 +425,12 @@
 								$('#menuConfiguration').addClass('active');
 								$('#subMenuLinkConfiguration5').addClass(
 										'active');
+							}
+							if (window.location.href
+									.indexOf("saml/samlAcrs") != -1) {
+								$('#subMenuConfiguration').css('display', 'block');
+								$('#menuConfiguration').addClass('active');
+								$('#subMenuLinkConfiguration33').addClass('active');
 							}
 
 							if (window.location.href
@@ -661,6 +677,15 @@
 								$('#subMenuUsers').css('display', 'block');
 								$('#menuUsers').addClass('active');
 								$('#subMenuLinkUsers2').addClass('active');
+							}
+							
+							if (window.location.href
+									.indexOf("radius/radiusServerConfiguration") != -1
+									|| window.location.href
+											.indexOf("radius/radiusClientInventory") != -1) {
+								$('#subMenuRadius').css('display', 'block');
+								$('#menuRadiusConfig').addClass('active');
+								$('#menuRadiusClients').addClass('active');
 							}
 
 							if (window.location.href.indexOf("person/add") != -1) {

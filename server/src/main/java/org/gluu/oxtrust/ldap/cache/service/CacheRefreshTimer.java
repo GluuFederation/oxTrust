@@ -36,6 +36,7 @@ import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.config.oxtrust.CacheRefreshAttributeMapping;
 import org.gluu.config.oxtrust.CacheRefreshConfiguration;
 import org.gluu.model.GluuStatus;
+import org.gluu.model.SchemaEntry;
 import org.gluu.model.custom.script.model.bind.BindCredentials;
 import org.gluu.model.ldap.GluuLdapConfiguration;
 import org.gluu.oxtrust.config.ConfigurationFactory;
@@ -56,10 +57,12 @@ import org.gluu.oxtrust.service.external.ExternalCacheRefreshService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.PropertyUtil;
 import org.gluu.persist.PersistenceEntryManager;
+import org.gluu.persist.PersistenceEntryManagerFactory;
 import org.gluu.persist.exception.BasePersistenceException;
 import org.gluu.persist.exception.EntryPersistenceException;
 import org.gluu.persist.exception.operation.SearchException;
 import org.gluu.persist.ldap.impl.LdapEntryManager;
+import org.gluu.persist.ldap.impl.LdapEntryManagerFactory;
 import org.gluu.persist.model.SearchScope;
 import org.gluu.persist.model.base.GluuBoolean;
 import org.gluu.persist.model.base.GluuDummyEntry;
@@ -306,10 +309,13 @@ public class CacheRefreshTimer {
 			} catch (Exception e) {
 				// Nothing can be done
 			}
-			try {
-				closeLdapServerConnection(inumDbServerConnection);
-			} catch (Exception e) {
-				// Nothing can be done
+			
+			if (!cacheRefreshConfiguration.isDefaultInumServer()) {
+				try {
+					closeLdapServerConnection(inumDbServerConnection);
+				} catch (Exception e) {
+					// Nothing can be done
+				}
 			}
 			try {
 				if (isVdsUpdate) {
@@ -657,7 +663,13 @@ public class CacheRefreshTimer {
 	}
 
 	private boolean validateTargetServerSchema(List<String> targetObjectClasses, List<String> targetAttributes) {
-		Set<String> objectClassesAttributesSet = schemaService.getObjectClassesAttributes(schemaService.getSchema(),
+		SchemaEntry schemaEntry = schemaService.getSchema();
+		if (schemaEntry == null) {
+			// Destination server not requires schema validation
+			return true;
+		}
+
+		Set<String> objectClassesAttributesSet = schemaService.getObjectClassesAttributes(schemaEntry,
 				targetObjectClasses.toArray(new String[0]));
 
 		Set<String> targetAttributesSet = new LinkedHashSet<String>();
@@ -1123,21 +1135,22 @@ public class CacheRefreshTimer {
 		if (useLocalConnection) {
 			return new LdapServerConnection(ldapConfig, ldapEntryManager, getBaseDNs(ldapConfiguration));
 		}
+		PersistenceEntryManagerFactory entryManagerFactory = applicationFactory.getPersistenceEntryManagerFactory(LdapEntryManagerFactory.class);
+		String persistenceType = entryManagerFactory.getPersistenceType();
 
-		Properties ldapProperties = toLdapProperties(ldapConfiguration);
-		Properties ldapDecryptedProperties = encryptionService.decryptProperties(ldapProperties);
+		Properties ldapProperties = toLdapProperties(entryManagerFactory, ldapConfiguration);
+		Properties ldapDecryptedProperties = encryptionService.decryptAllProperties(ldapProperties);
 
 		// Try to get updated password via script
 		BindCredentials bindCredentials = externalCacheRefreshService
 				.executeExternalGetBindCredentialsMethods(ldapConfig);
 		if (bindCredentials != null) {
 			log.error("Using updated password which got from getBindCredentials method");
-			ldapDecryptedProperties.setProperty("bindDN", bindCredentials.getBindDn());
-			ldapDecryptedProperties.setProperty(PropertiesDecrypter.BIND_PASSWORD, bindCredentials.getBindPassword());
+			ldapDecryptedProperties.setProperty(persistenceType + ".bindDN", bindCredentials.getBindDn());
+			ldapDecryptedProperties.setProperty(persistenceType + "." + PropertiesDecrypter.BIND_PASSWORD, bindCredentials.getBindPassword());
 		}
 
-		PersistenceEntryManager customPersistenceEntryManager = applicationFactory.getPersistenceEntryManagerFactory()
-				.createEntryManager(ldapDecryptedProperties);
+		PersistenceEntryManager customPersistenceEntryManager = entryManagerFactory.createEntryManager(ldapDecryptedProperties);
 		log.info("Created Cache Refresh PersistenceEntryManager: {}", customPersistenceEntryManager);
 
 		if (!customPersistenceEntryManager.getOperationService().isConnected()) {
@@ -1261,19 +1274,20 @@ public class CacheRefreshTimer {
 		return result;
 	}
 
-	private Properties toLdapProperties(GluuLdapConfiguration ldapConfiguration) {
+	private Properties toLdapProperties(PersistenceEntryManagerFactory ldapEntryManagerFactory, GluuLdapConfiguration ldapConfiguration) {
+		String persistenceType = ldapEntryManagerFactory.getPersistenceType();
 		Properties ldapProperties = new Properties();
-		ldapProperties.put("servers",
+		ldapProperties.put(persistenceType + ".servers",
 				PropertyUtil.simplePropertiesToCommaSeparatedList(ldapConfiguration.getServers()));
-		ldapProperties.put("maxconnections", Integer.toString(ldapConfiguration.getMaxConnections()));
-		ldapProperties.put("useSSL", Boolean.toString(ldapConfiguration.isUseSSL()));
-		ldapProperties.put("bindDN", ldapConfiguration.getBindDN());
-		ldapProperties.put("bindPassword", ldapConfiguration.getBindPassword());
+		ldapProperties.put(persistenceType + ".maxconnections", Integer.toString(ldapConfiguration.getMaxConnections()));
+		ldapProperties.put(persistenceType + ".useSSL", Boolean.toString(ldapConfiguration.isUseSSL()));
+		ldapProperties.put(persistenceType + ".bindDN", ldapConfiguration.getBindDN());
+		ldapProperties.put(persistenceType + ".bindPassword", ldapConfiguration.getBindPassword());
 
 		// Copy binary attributes list from main LDAP connection
 		PersistenceOperationService persistenceOperationService = ldapEntryManager.getOperationService();
 		if (persistenceOperationService instanceof LdapEntryManager) {
-			ldapProperties.put("binaryAttributes",
+			ldapProperties.put(persistenceType + ".binaryAttributes",
 					PropertyUtil.stringsToCommaSeparatedList(((LdapEntryManager) ldapEntryManager).getOperationService()
 							.getConnectionProvider().getBinaryAttributes()));
 		}

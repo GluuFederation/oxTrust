@@ -73,7 +73,7 @@ public final class OxTrustConstants extends OxConstants {
     public static final String CACHE_ATTRIBUTE_CUSTOM_KEY_LIST = "customAttributeList";
     public static final String CACHE_ATTRIBUTE_ORIGIN_KEY_LIST = "attributeOriginList";
     public static final String CACHE_ORGANIZATION_CUSTOM_MESSAGE_KEY = "organizationCustomMessage";
-    public static final String CACHE_REFRESH_DEFAULT_BASE_DN = "o=site";
+    public static final String CACHE_REFRESH_DEFAULT_BASE_DN = "ou=cache-refresh,o=site";
 
     public static final String EVENT_CLEAR_ATTRIBUTES = "eventClearAttributes";
     public static final String EVENT_CLEAR_ORGANIZATION = "eventClearOrganization";

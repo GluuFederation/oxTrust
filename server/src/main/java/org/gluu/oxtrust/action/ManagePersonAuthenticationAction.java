@@ -314,11 +314,7 @@ public class ManagePersonAuthenticationAction
 
 	public String testLdapConnection(GluuLdapConfiguration ldapConfig) {
 		try {
-			FileConfiguration configuration = new FileConfiguration(ConfigurationFactory.LDAP_PROPERTIES_FILE);
-			if (!configuration.isLoaded()) {
-				configuration = new FileConfiguration(LdapEntryManagerFactory.LDAP_DEFAULT_PROPERTIES_FILE);
-			}
-			Properties properties = configuration.getProperties();
+			Properties properties = new Properties();
 			properties.setProperty("bindDN", ldapConfig.getBindDN());
 			properties.setProperty("bindPassword", ldapConfig.getBindPassword());
 			properties.setProperty("servers", buildServersString(ldapConfig.getServers()));

@@ -15,7 +15,7 @@
 }
 
 .rf-pp-cntr {
-	width: 65% !important;
+	width: 70% !important;
 }
 
 .rf-pick-btn {
@@ -48,11 +48,11 @@
 }
 
 .rf-pick-sel {
-    width: 100%;
-    background-color: #337AB7;
-    border-width: 1px;
-    border-style: dotted;
-    border-color: #000000;
+	width: 100%;
+	background-color: #337AB7;
+	border-width: 1px;
+	border-style: dotted;
+	border-color: #000000;
 }
 
 .rf-pick-src, .rf-pick-tgt {
@@ -63,32 +63,34 @@
 }
 
 button[disabled], input[type="reset"][disabled], input[type="submit"][disabled],
-    input[type="button"][disabled] {
-    color: #337AB7;
-    border-color: #cccccc;
-    background-color: #cccccc;
-    background-image: none;
+	input[type="button"][disabled] {
+	color: #337AB7;
+	border-color: #cccccc;
+	background-color: #cccccc;
+	background-image: none;
 }
+
 button:hover, input[type="reset"]:hover, input[type="submit"]:hover,
-    input[type="button"]:hover {
-     background-color: #337AB7;
-     color: white;
+	input[type="button"]:hover {
+	background-color: #337AB7;
+	color: white;
 }
+
 button, input[type="reset"], input[type="submit"], input[type="button"]
-    {
-    border-width: 1px;
-    border-color: #C0C0C0;
-    font-size: 11px;
-    font-family: Arial, Verdana, sans-serif;
-    background-image: none;
-    color: #FFFFFF;
-    background-color: #337AB7;
+	{
+	border-width: 1px;
+	border-color: #C0C0C0;
+	font-size: 11px;
+	font-family: Arial, Verdana, sans-serif;
+	background-image: none;
+	color: #FFFFFF;
+	background-color: #337AB7;
 }
 </style>
 	</h:head>
 	<rich:popupPanel id="TRConfigPanel"
 		onmaskclick="#{rich:component('TRConfigPanel')}.hide()"
-		keepVisualState="true" autosized="true" zindex="2000" top="60">
+		keepVisualState="true" autosized="true" zindex="2000" top="30">
 		<f:facet name="header">
 			<h:outputText
 				value="#{msg['trustmanager.relyingPartyConfiguration']}" />
@@ -120,15 +122,17 @@ button, input[type="reset"], input[type="submit"], input[type="button"]
 					style="heihgt: 50%; width: 100%;" layout="block">
 					<b:accordion expanded-panels="panel1,panel3">
 						<b:panel id="panel1" title="SAML 2 SSO Profile" look="info"
-						  rendered="#{relyingPartyAction.isProfileConfigurationSelected('SAML2SSO')}">
+							rendered="#{relyingPartyAction.isProfileConfigurationSelected('SAML2SSO')}">
 							<ui:decorate
 								template="/WEB-INF/incl/trustmanager/profileConfiguration/saml2sso.xhtml">
 								<ui:param name="_relyingPartyAction"
 									value="#{relyingPartyAction}" />
+								<ui:param name="_ssoProfile"
+									value="#{relyingPartyAction.getProfileConfiguration('SAML2SSO')}" />
 							</ui:decorate>
 						</b:panel>
 						<b:panel id="panel2" title="SAML 2 Logout Profile" look="info"
-						   rendered="#{relyingPartyAction.isProfileConfigurationSelected('SAML2Logout')}">
+							rendered="#{relyingPartyAction.isProfileConfigurationSelected('SAML2Logout')}">
 							<ui:decorate
 								template="/WEB-INF/incl/trustmanager/profileConfiguration/saml2logout.xhtml">
 								<ui:param name="_relyingPartyAction"
@@ -136,7 +140,8 @@ button, input[type="reset"], input[type="submit"], input[type="button"]
 							</ui:decorate>
 						</b:panel>
 						<b:panel id="panel3" title="SAML 2 Artifact Resolution "
-							look="info" rendered="#{relyingPartyAction.isProfileConfigurationSelected('SAML2ArtifactResolution')}">
+							look="info"
+							rendered="#{relyingPartyAction.isProfileConfigurationSelected('SAML2ArtifactResolution')}">
 							<ui:decorate
 								template="/WEB-INF/incl/trustmanager/profileConfiguration/saml2ar.xhtml">
 								<ui:param name="_relyingPartyAction"
@@ -144,7 +149,7 @@ button, input[type="reset"], input[type="submit"], input[type="button"]
 							</ui:decorate>
 						</b:panel>
 						<b:panel id="panel4" title="SAML 2 Attribute Query" look="info"
-						   rendered="#{relyingPartyAction.isProfileConfigurationSelected('SAML2AttributeQuery')}">
+							rendered="#{relyingPartyAction.isProfileConfigurationSelected('SAML2AttributeQuery')}">
 							<ui:decorate
 								template="/WEB-INF/incl/trustmanager/profileConfiguration/saml2aq.xhtml">
 								<ui:param name="_relyingPartyAction"

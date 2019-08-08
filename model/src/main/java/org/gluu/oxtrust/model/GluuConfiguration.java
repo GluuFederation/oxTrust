@@ -21,6 +21,8 @@ import org.gluu.persist.annotation.ObjectClass;
 import org.gluu.persist.model.base.InumEntry;
 import org.gluu.service.cache.CacheConfiguration;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 /**
  * GluuConfiguration
  * 
@@ -29,6 +31,7 @@ import org.gluu.service.cache.CacheConfiguration;
  */
 @DataEntry
 @ObjectClass(value = "gluuConfiguration")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class GluuConfiguration extends InumEntry implements Serializable {
 
 	private static final long serialVersionUID = -1817003894646725601L;

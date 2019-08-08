@@ -28,9 +28,6 @@ public class ShibbolethInitializer {
 	private AppConfiguration appConfiguration;
 	
 	@Inject
-	private ConfigurationService configurationService;
-	
-	@Inject
 	private TrustService trustService;
 	
 	@Inject
@@ -40,25 +37,10 @@ public class ShibbolethInitializer {
 		boolean createConfig = appConfiguration.isConfigGeneration();
 		log.info("IDP config generation is set to " + createConfig);
 		if (createConfig) {
-			GluuSAMLTrustRelationship gluuSP;
-			try {
-				String gluuSPInum = configurationService.getConfiguration().getGluuSPTR();
-				gluuSP = new GluuSAMLTrustRelationship();
-				gluuSP.setDn(trustService.getDnForTrustRelationShip(gluuSPInum));
-
-			} catch (EntryPersistenceException ex) {
-				log.error("Failed to determine SP inum", ex);
-				return false;
-			}
-			boolean servicesNeedRestarting = false;
-			gluuSP = trustService.getRelationshipByInum(configurationService.getConfiguration().getGluuSPTR());
-			if (gluuSP == null) {
-				gluuSP = new GluuSAMLTrustRelationship();
-			}
 			List<GluuSAMLTrustRelationship> trustRelationships = trustService.getAllActiveTrustRelationships();
 			String shibbolethVersion = appConfiguration.getShibbolethVersion();
 			log.info("########## shibbolethVersion = " + shibbolethVersion);
-			shibboleth3ConfService.generateMetadataFiles(gluuSP);
+			shibboleth3ConfService.generateMetadataFiles();
 			shibboleth3ConfService.generateConfigurationFiles(trustRelationships);
 		}
 

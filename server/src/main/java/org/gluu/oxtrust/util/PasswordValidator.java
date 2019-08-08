@@ -8,6 +8,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.validator.FacesValidator;
+import javax.faces.validator.Validator;
 import javax.faces.validator.ValidatorException;
 import javax.inject.Inject;
 
@@ -17,7 +18,7 @@ import org.gluu.oxtrust.ldap.service.AttributeService;
 
 @ApplicationScoped
 @FacesValidator("gluuPasswordValidator")
-public class PasswordValidator implements javax.faces.validator.Validator {
+public class PasswordValidator implements Validator {
 
 	private static final String USER_PASSWORD = "userPassword";
 	private Pattern pattern;

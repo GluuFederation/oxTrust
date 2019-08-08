@@ -96,4 +96,8 @@ public class ApplicationFactory {
         return persistanceFactoryService.getPersistenceEntryManagerFactory(persistenceConfiguration);
     }
 
+    public PersistenceEntryManagerFactory getPersistenceEntryManagerFactory(Class<? extends PersistenceEntryManagerFactory> persistenceEntryManagerFactoryClass) {
+        return persistanceFactoryService.getPersistenceEntryManagerFactory(persistenceEntryManagerFactoryClass);
+    }
+
 }

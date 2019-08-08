@@ -9,6 +9,8 @@ import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
@@ -20,6 +22,8 @@ import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.oxtrust.qa.configuration.ApplicationDriver;
 import org.oxtrust.qa.configuration.Settings;
+
+import cucumber.api.Scenario;
 
 public class AbstractPage {
 
@@ -153,13 +157,13 @@ public class AbstractPage {
 
 	public void signOut() {
 		fluentWait(2);
-		WebElement element = webDriver.findElement(By.className("user-menu"));
+		WebElement main = webDriver.findElement(By.className("user-menu"));
 		Actions actions = new Actions(webDriver);
-		actions.moveToElement(element).click().perform();
+		actions.moveToElement(main).click().perform();
 
 		WebElement footer = waitElementByClass("user-footer");
-		List<WebElement> elements = footer.findElements(By.className("pull-left"));
-		elements.get(1).click();
+		WebElement element = footer.findElement(By.className("logoutButton"));
+		element.click();
 		finishLogout();
 	}
 
@@ -168,7 +172,7 @@ public class AbstractPage {
 	}
 
 	private void finishLogout() {
-		WebElement finishButton = webDriver.findElement(By.className("btn-lg"));
+		WebElement finishButton = webDriver.findElement(By.className("btn-primary"));
 		finishButton.click();
 	}
 
@@ -313,4 +317,12 @@ public class AbstractPage {
 		button.click();
 		fluentWait(2);
 	}
+
+	public void takeScreenShot(Scenario scenario) {
+		if (scenario.isFailed()) {
+			final byte[] screenshot = ((TakesScreenshot) webDriver).getScreenshotAs(OutputType.BYTES);
+			scenario.embed(screenshot, "image/png");
+		}
+	}
+
 }

@@ -302,8 +302,6 @@ public class UpdateTrustRelationshipAction implements Serializable {
 					update = true;
 			}
 			boolean updateShib3Configuration = appConfiguration.isConfigGeneration();
-			oxTrustAuditService.audit("updateShib3Configuration:" + updateShib3Configuration);
-			oxTrustAuditService.audit("SpMetaDataSourceType:" + trustRelationship.getSpMetaDataSourceType());
 			switch (trustRelationship.getSpMetaDataSourceType()) {
 			case FILE:
 				try {
@@ -605,22 +603,6 @@ public class UpdateTrustRelationshipAction implements Serializable {
 		}
 	}
 
-	private void markAsInactive() {
-		if (update) {
-			try {
-				GluuSAMLTrustRelationship tmpTrustRelationship = trustService
-						.getRelationshipByInum(this.trustRelationship.getInum());
-				tmpTrustRelationship.setStatus(GluuStatus.INACTIVE);
-				saveTR(update);
-			} catch (BasePersistenceException ex) {
-				log.error("Failed to update trust relationship {}", inum, ex);
-			}
-		} else {
-			this.trustRelationship.setSpMetaDataFN(null);
-			this.trustRelationship.setInum(null);
-		}
-	}
-
 	private void updateShibboleth3Configuration(List<GluuSAMLTrustRelationship> trustRelationships) {
 		if (!shibboleth3ConfService.generateConfigurationFiles(trustRelationships)) {
 			log.error("Failed to update Shibboleth v3 configuration");
@@ -638,27 +620,6 @@ public class UpdateTrustRelationshipAction implements Serializable {
 			log.error("Failed to update Shibboleth v3 configuration");
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update Shibboleth v3 configuration");
 		}
-	}
-
-	private boolean generateSpMetaDataFile(String certificate) {
-		boolean result = generateSpMetaDataFileImpl(certificate);
-		if (result) {
-			this.trustRelationship.setSpMetaDataSourceType(GluuMetadataSourceType.FILE);
-			facesMessages.add(FacesMessage.SEVERITY_WARN, "SP meta-data file generated.");
-		} else {
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to generate SP meta-data file");
-			markAsInactive();
-		}
-		return result;
-	}
-
-	private boolean generateSpMetaDataFileImpl(String certificate) {
-		String spMetadataFileName = trustRelationship.getSpMetaDataFN();
-		if (StringHelper.isEmpty(spMetadataFileName)) {
-			spMetadataFileName = shibboleth3ConfService.getSpNewMetadataFileName(this.trustRelationship);
-			trustRelationship.setSpMetaDataFN(spMetadataFileName);
-		}
-		return shibboleth3ConfService.generateSpMetadataFile(trustRelationship, certificate);
 	}
 
 	private boolean saveSpMetaDataFileSourceTypeFile() throws IOException {

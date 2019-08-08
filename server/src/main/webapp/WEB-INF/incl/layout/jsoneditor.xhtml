@@ -4,7 +4,7 @@
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
 	xmlns:f="http://xmlns.jcp.org/jsf/core">
 
-	<h:inputHidden prependId="false" id="#{id}_hidden" value="#{json}" />
+	<h:inputHidden prependId="false" id="#{id}_hidden" value="#{json}" class="hiddenField" />
 	<div id="#{id}"></div>
 
 	<h:panelGroup  rendered="#{saveBtnLabelHide ne 'hide'}">
@@ -37,15 +37,16 @@
 		        disable_properties: true,
 		        disable_edit_json: true
     		  });
-		  
 
 		  document.getElementById('save_#{id}').onclick = function () {
-		  		var hiddenField = document.getElementById("#{id}_hidden");  //#{parentId}:
+		  		var hiddenField = document.getElementById("#{id}_hidden");
+		  		if(hiddenField == null){
+		  		   hiddenField = document.getElementsByClassName('hiddenField')[0];
+		  		}
 		  		var action = document.getElementById("#{saveBtnId}");
-		  		var editedJson = editor_#{id}.getValue();			  	
+		  		var editedJson = editor_#{id}.getValue();	
 		  		hiddenField.value=JSON.stringify(editedJson);
 		  		action.click();
-
 			  	return false;
 		  };
 	    </h:outputScript>

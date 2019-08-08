@@ -12,6 +12,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.ConversationScoped;
@@ -206,10 +207,12 @@ public class UpdateResourceAction implements Serializable {
 		updateScopes();
 		updateClients();
 		updateResources();
-
 		if (this.update) {
+			if (resourceWithSameNameExistInUpdate()) {
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, "A resource with same name already exist");
+				return OxTrustConstants.RESULT_FAILURE;
+			}
 			resource.setRev(String.valueOf(StringHelper.toInteger(resource.getRev(), 0) + 1));
-			// Update resource set
 			try {
 				umaResourcesService.updateResource(this.resource);
 			} catch (BasePersistenceException ex) {
@@ -218,30 +221,27 @@ public class UpdateResourceAction implements Serializable {
 						"Failed to update UMA resource '#{updateResourceAction.resource.name}'");
 				return OxTrustConstants.RESULT_FAILURE;
 			}
-
 			log.debug("Resource were updated successfully");
 			facesMessages.add(FacesMessage.SEVERITY_INFO,
 					"UMA resource '#{updateResourceAction.resource.name}' updated successfully");
-
 			return OxTrustConstants.RESULT_SUCCESS;
 		} else {
-			// Prepare resource set
+			if (resourceWithSameNameExist()) {
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, "A resource with same name already exist");
+				return OxTrustConstants.RESULT_FAILURE;
+			}
 			String id = String.valueOf(System.currentTimeMillis());
 			String resourceSetDn = umaResourcesService.getDnForResource(id);
 			this.resource.setDn(resourceSetDn);
 			this.resource.setRev(String.valueOf(0));
 			this.resource.setCreator(identity.getUser().getDn());
-
-			// Save resource set
 			try {
 				umaResourcesService.addResource(this.resource);
 			} catch (BasePersistenceException ex) {
 				log.error("Failed to add new resource set '{}'", this.resource.getInum(), ex);
 				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new UMA resource");
-
 				return OxTrustConstants.RESULT_FAILURE;
 			}
-
 			log.debug("Resource were add successfully");
 			facesMessages.add(FacesMessage.SEVERITY_INFO,
 					"New UMA resource '#{updateResourceAction.resource.name}' added successfully");
@@ -254,25 +254,31 @@ public class UpdateResourceAction implements Serializable {
 		}
 	}
 
+	private boolean resourceWithSameNameExist() {
+		return umaResourcesService.getAllResources(1000).stream()
+				.anyMatch(e -> e.getName().equalsIgnoreCase(this.resource.getName()));
+	}
+
+	private boolean resourceWithSameNameExistInUpdate() {
+		List<UmaResource> values=umaResourcesService.getAllResources(1000).stream()
+		.filter(e -> !e.getId().equalsIgnoreCase(this.resource.getId())).collect(Collectors.toList());
+		return !values.stream().noneMatch(e -> !e.getId().equalsIgnoreCase(this.resource.getId()));
+	}
+
 	public String delete() {
 		if (update) {
-			// Remove resource set
 			try {
 				umaResourcesService.removeResource(this.resource);
-
 				facesMessages.add(FacesMessage.SEVERITY_INFO,
 						"UMA resource '#{updateResourceAction.resource.name}' removed successfully");
 				conversationService.endConversation();
-
 				return OxTrustConstants.RESULT_SUCCESS;
 			} catch (BasePersistenceException ex) {
 				log.error("Failed to remove resource set {}", this.resource.getInum(), ex);
 			}
 		}
-
 		facesMessages.add(FacesMessage.SEVERITY_ERROR,
 				"Failed to remove UMA resource '#{updateResourceAction.resource.name}'");
-
 		return OxTrustConstants.RESULT_FAILURE;
 	}
 
@@ -291,8 +297,7 @@ public class UpdateResourceAction implements Serializable {
 			if (StringHelper.isEmpty(this.searchAvailableScopePattern)) {
 				resultScopeDescriptions = scopeDescriptionService.getAllUmaScopes(100);
 			} else {
-				resultScopeDescriptions = scopeDescriptionService
-						.findUmaScopes(this.searchAvailableScopePattern, 100);
+				resultScopeDescriptions = scopeDescriptionService.findUmaScopes(this.searchAvailableScopePattern, 100);
 			}
 
 			this.availableScopes = SelectableEntityHelper.convertToSelectableEntityModel(resultScopeDescriptions);
@@ -383,8 +388,8 @@ public class UpdateResourceAction implements Serializable {
 
 	private List<DisplayNameEntry> getScopesDisplayNameEntries() {
 		List<DisplayNameEntry> result = new ArrayList<DisplayNameEntry>();
-		List<DisplayNameEntry> tmp = lookupService.getDisplayNameEntries(
-				scopeDescriptionService.getDnForScope(null), this.resource.getScopes());
+		List<DisplayNameEntry> tmp = lookupService.getDisplayNameEntries(scopeDescriptionService.getDnForScope(null),
+				this.resource.getScopes());
 		if (tmp != null) {
 			result.addAll(tmp);
 		}

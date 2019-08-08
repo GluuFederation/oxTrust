@@ -4,7 +4,9 @@ import org.oxtrust.qa.pages.configuration.organization.SystemConfigurationPage;
 import org.oxtrust.qa.pages.login.HomePage;
 import org.oxtrust.qa.pages.login.SignInPage;
 
+import cucumber.api.Scenario;
 import cucumber.api.java.After;
+import cucumber.api.java.Before;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
@@ -19,6 +21,11 @@ public class ConfigurationSteps extends BaseSteps {
 	private SignInPage signInPage = new SignInPage();
 
 	private SystemConfigurationPage systemConfigurationPage = new SystemConfigurationPage();
+	
+	@Before
+	public void setup(Scenario scenario) {
+		startRecorder(scenario);
+	}
 
 	@When("^I go to system organization configuration page$")
 	public void gotoSystemOrganizationConfigurationPage() {
@@ -127,7 +134,9 @@ public class ConfigurationSteps extends BaseSteps {
 	}
 
 	@After
-	public void clear() {
-		new HomePage().clear();
+	public void clear(Scenario scenario) {
+		homePage.takeScreenShot(scenario);
+		stopRecorder();
+		homePage.clear();
 	}
 }

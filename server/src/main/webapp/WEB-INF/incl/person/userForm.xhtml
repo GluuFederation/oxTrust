@@ -180,7 +180,8 @@
 	</ol>
 	</section>
 	<section class="content"> <h:form id="PForm">
-		<b:panel title="Person Add Form" look="primary" iconAwesome="fa-user-plus" collapsible="false">
+		<b:panel title="Person Add Form" look="primary"
+			iconAwesome="fa-user-plus" collapsible="false">
 			<div class="row"
 				style="margin-left: 5px; margin-right: 5px; background: white;">
 				<div class="col-sm-7 col-lg-7" style="padding: 0px;">
@@ -210,7 +211,7 @@
 												styleClass="form-control #{_custAttr.metadata.displayName}"
 												p:placeholder="#{msg['person.clickToEnter']} #{_custAttr.metadata.displayName} #{_valueIdx == 0 ? '' : _valueIdx}"
 												style="width:100%" value="#{_custAttr.values[_valueIdx]}"
-												id="custId_text_#{_custAttrIdx}" required="#{_mustEnter}"
+												id="custId_text_#{_custAttrIdx}" require="#{_mustEnter}"
 												requiredMessage="#{msg['person.pleaseEnter']} #{_custAttr.metadata.displayName} #{_valueIdx == 0 ? '' : _valueIdx}. "
 												rendered="#{(_custAttr.adminCanEdit or _mustEnter) and 
 			                                                            (_custAttr.metadata.dataType.value ne 'boolean') and 
@@ -406,7 +407,7 @@
 				</div>
 				<div class="col-sm-5 col-lg-5" style="padding: 0px;">
 					<b:panel title="Custom Attributes" look="primary"
-						id="tabPanelGroupId">
+						id="tabPanelGroupId" collapsible="false">
 						<b:tabView id="attributeTabPanelId" pills="true"
 							contentStyle="border: 1px solid #337ab7; padding:10px; border-radius:5px;">
 							<ui:param name="_list"
@@ -415,20 +416,22 @@
 								title="#{_customAttributeAction.originDisplayNames[_list.get(0).key]}">
 								<div class="row" style="margin-left: 5px;">
 									<a4j:repeat var="attr" value="#{_list.get(0).value}">
-										<div>
-											<ui:param name="_aid"
-												value="#{_customAttributeAction.attributeIds[attr]}" />
-											<a4j:commandLink p:aid="#{_aid}" value="#{attr.displayName}"
-												action="#{_customAttributeAction.addCustomAttribute(attr.inum)}"
-												render="selectedCustomAttributesId"
-												oncomplete="changeAttributeVisibility('${component.clientId}', false);"
-												style="#{_customAttributeAction.containsCustomAttribute(attr) ? 'display: none;' : ''}"
-												execute="@this">
-												<f:event
-													listener="#{_customAttributeAction.renderAttribute}"
-													type="preRenderComponent" />
-											</a4j:commandLink>
-										</div>
+										<ui:fragment rendered="#{attr.status.value eq 'active'}">
+											<div>
+												<ui:param name="_aid"
+													value="#{_customAttributeAction.attributeIds[attr]}" />
+												<a4j:commandLink p:aid="#{_aid}" value="#{attr.displayName}"
+													action="#{_customAttributeAction.addCustomAttribute(attr.inum)}"
+													render="selectedCustomAttributesId"
+													oncomplete="changeAttributeVisibility('${component.clientId}', false);"
+													style="#{_customAttributeAction.containsCustomAttribute(attr) ? 'display: none;' : ''}"
+													execute="@this">
+													<f:event
+														listener="#{_customAttributeAction.renderAttribute}"
+														type="preRenderComponent" />
+												</a4j:commandLink>
+											</div>
+										</ui:fragment>
 									</a4j:repeat>
 								</div>
 							</b:tab>
@@ -436,20 +439,22 @@
 								title="#{_customAttributeAction.originDisplayNames[_list.get(1).key]}">
 								<div class="row" style="margin-left: 5px;">
 									<a4j:repeat var="attr" value="#{_list.get(1).value}">
-										<div>
-											<ui:param name="_aid"
-												value="#{_customAttributeAction.attributeIds[attr]}" />
-											<a4j:commandLink p:aid="#{_aid}" value="#{attr.displayName}"
-												action="#{_customAttributeAction.addCustomAttribute(attr.inum)}"
-												render="selectedCustomAttributesId"
-												oncomplete="changeAttributeVisibility('${component.clientId}', false);"
-												style="#{_customAttributeAction.containsCustomAttribute(attr) ? 'display: none;' : ''}"
-												execute="@this">
-												<f:event
-													listener="#{_customAttributeAction.renderAttribute}"
-													type="preRenderComponent" />
-											</a4j:commandLink>
-										</div>
+										<ui:fragment rendered="#{attr.status.value eq 'active'}">
+											<div>
+												<ui:param name="_aid"
+													value="#{_customAttributeAction.attributeIds[attr]}" />
+												<a4j:commandLink p:aid="#{_aid}" value="#{attr.displayName}"
+													action="#{_customAttributeAction.addCustomAttribute(attr.inum)}"
+													render="selectedCustomAttributesId"
+													oncomplete="changeAttributeVisibility('${component.clientId}', false);"
+													style="#{_customAttributeAction.containsCustomAttribute(attr) ? 'display: none;' : ''}"
+													execute="@this">
+													<f:event
+														listener="#{_customAttributeAction.renderAttribute}"
+														type="preRenderComponent" />
+												</a4j:commandLink>
+											</div>
+										</ui:fragment>
 									</a4j:repeat>
 								</div>
 							</b:tab>
@@ -457,20 +462,22 @@
 								title="#{_customAttributeAction.originDisplayNames[_list.get(2).key]}">
 								<div class="row" style="margin-left: 5px;">
 									<a4j:repeat var="attr" value="#{_list.get(2).value}">
-										<div>
-											<ui:param name="_aid"
-												value="#{_customAttributeAction.attributeIds[attr]}" />
-											<a4j:commandLink p:aid="#{_aid}" value="#{attr.displayName}"
-												action="#{_customAttributeAction.addCustomAttribute(attr.inum)}"
-												render="selectedCustomAttributesId"
-												oncomplete="changeAttributeVisibility('${component.clientId}', false);"
-												style="#{_customAttributeAction.containsCustomAttribute(attr) ? 'display: none;' : ''}"
-												execute="@this">
-												<f:event
-													listener="#{_customAttributeAction.renderAttribute}"
-													type="preRenderComponent" />
-											</a4j:commandLink>
-										</div>
+										<ui:fragment rendered="#{attr.status.value eq 'active'}">
+											<div>
+												<ui:param name="_aid"
+													value="#{_customAttributeAction.attributeIds[attr]}" />
+												<a4j:commandLink p:aid="#{_aid}" value="#{attr.displayName}"
+													action="#{_customAttributeAction.addCustomAttribute(attr.inum)}"
+													render="selectedCustomAttributesId"
+													oncomplete="changeAttributeVisibility('${component.clientId}', false);"
+													style="#{_customAttributeAction.containsCustomAttribute(attr) ? 'display: none;' : ''}"
+													execute="@this">
+													<f:event
+														listener="#{_customAttributeAction.renderAttribute}"
+														type="preRenderComponent" />
+												</a4j:commandLink>
+											</div>
+										</ui:fragment>
 									</a4j:repeat>
 								</div>
 							</b:tab>
@@ -501,8 +508,8 @@
 								rendered="#{(_value.modality eq 'OTP Device') or ( _value.modality eq 'Mobile Device')}">
                                              #{_value.id}                                           
                             </h:panelGroup>
-                            <h:panelGroup id="FIDO2DeviceID"
-                                rendered="#{(_value.modality eq 'FIDO2')}">
+							<h:panelGroup id="FIDO2DeviceID"
+								rendered="#{(_value.modality eq 'FIDO2')}">
                                              #{_value.id}                                           
                             </h:panelGroup>
 							<h:panelGroup id="PassportPanelid"
@@ -515,11 +522,10 @@
 						<b:dataTableColumn value="#{_value.creationDate}"
 							label="Date Added" />
 						<b:dataTableColumn label="Remove">
-							<a4j:commandLink
-								render="PForm"
+							<a4j:commandLink render="PForm"
 								action="#{updatePersonAction.setDeviceToBeRemove(_value)}"
 								onclick="#{rich:component('deleteDevice:acceptRemovalModalPanel')}.show();"
-							    execute="@this" eventsQueue="personQueue"
+								execute="@this" eventsQueue="personQueue"
 								styleClass="glyphicon glyphicon-remove">
 							</a4j:commandLink>
 						</b:dataTableColumn>
@@ -538,9 +544,8 @@
 							label="Client" />
 						<b:dataTableColumn value="#{_value.sp}" label="Hostname" />
 						<b:dataTableColumn label="Actions">
-							<a4j:commandLink value="Remove" 
-							    render="PForm"
-							    onclick="#{rich:component('deletePairWise:acceptRemovalModalPanel')}.show();"
+							<a4j:commandLink value="Remove" render="PForm"
+								onclick="#{rich:component('deletePairWise:acceptRemovalModalPanel')}.show();"
 								action="#{updatePersonAction.setPwiToBeRemove(_value)}"
 								execute="@this" eventsQueue="personQueue"
 								styleClass="btn-primary">

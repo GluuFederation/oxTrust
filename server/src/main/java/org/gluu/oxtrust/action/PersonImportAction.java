@@ -182,11 +182,11 @@ public class PersonImportAction implements Serializable {
 				return OxTrustConstants.RESULT_FAILURE;
 			}
 			Table table;
-			try(InputStream is = new ByteArrayInputStream(this.fileData);) {
+			try (InputStream is = new ByteArrayInputStream(this.fileData);) {
 				table = excelService.read(is);
 			} catch (Exception e) {
 				return null;
-			} 
+			}
 			this.fileDataToImport.setTable(table);
 			if (table != null) {
 				this.fileDataToImport.setFileName(FilenameUtils.getName(uploadedFile.getName()));
@@ -407,7 +407,6 @@ public class PersonImportAction implements Serializable {
 				if (importAttribute.getCol() == -1) {
 					continue;
 				}
-
 				GluuAttribute attribute = importAttribute.getAttribute();
 				String cellValue = table.getCellValue(importAttribute.getCol(), i);
 				if (StringHelper.isEmpty(cellValue)) {
@@ -426,14 +425,13 @@ public class PersonImportAction implements Serializable {
 					validTable = false;
 					continue;
 				}
-				AttributeData attributeData = null;
 				if (ldapValue.contains(SEPARATOR)) {
-					attributeData = new AttributeData(attribute.getName(), ldapValue.split(SEPARATOR));
+					AttributeData attributeData = new AttributeData(attribute.getName(), ldapValue.split(SEPARATOR));
+					attributeDataList.add(attributeData);
 				} else {
-					attributeData = new AttributeData(attribute.getName(), ldapValue);
+					AttributeData attributeData = new AttributeData(attribute.getName(), ldapValue);
+					attributeDataList.add(attributeData);
 				}
-
-				attributeDataList.add(attributeData);
 			}
 			entriesAttributes.put(Integer.toString(i), attributeDataList);
 		}
@@ -445,7 +443,6 @@ public class PersonImportAction implements Serializable {
 		// Convert to GluuCustomPerson and set right DN
 		List<GluuCustomPerson> persons = personService.createEntities(entriesAttributes);
 		log.info("Found {} persons in input Excel file", persons.size());
-
 		for (GluuCustomPerson person : persons) {
 			for (String key : entriesAttributes.keySet()) {
 				boolean flag = false;
@@ -458,7 +455,6 @@ public class PersonImportAction implements Serializable {
 									flag = true;
 									break;
 								} else if (AttributeData1.getName().equalsIgnoreCase("gluuStatus")) {
-
 									person.setStatus(GluuStatus.getByValue(String.valueOf(AttributeData1.getValue())));
 									flag = true;
 									break;
@@ -473,6 +469,9 @@ public class PersonImportAction implements Serializable {
 				if (flag)
 					break;
 			}
+			if (person.getStatus() == null) {
+				person.setStatus(GluuStatus.INACTIVE);
+			}
 
 		}
 
@@ -480,7 +479,8 @@ public class PersonImportAction implements Serializable {
 	}
 
 	private String getTypedValue(GluuAttribute attribute, String value) {
-		if (AttributeDataType.STRING.equals(attribute.getDataType())) {
+		if (AttributeDataType.STRING.equals(attribute.getDataType())
+				|| attribute.getName().equalsIgnoreCase("gluuStatus")) {
 			return value;
 		} else if (AttributeDataType.BOOLEAN.equals(attribute.getDataType())) {
 			Boolean gluuBoolean = Boolean.valueOf(value);
@@ -523,7 +523,6 @@ public class PersonImportAction implements Serializable {
 			if (StringHelper.isEmpty(cellValue)) {
 				continue;
 			}
-
 			String attributeName = cellValue.toLowerCase();
 			GluuAttribute attribute = attributesDisplayNameMap.get(attributeName);
 			if (attribute != null) {
@@ -532,14 +531,12 @@ public class PersonImportAction implements Serializable {
 				importAttributes.add(importAttribute);
 			}
 		}
-
 		for (GluuAttribute attribute : this.attributes) {
 			if (!addedAttributes.contains(attribute.getName())) {
 				ImportAttribute importAttribute = new ImportAttribute(-1, attribute);
 				importAttributes.add(importAttribute);
 			}
 		}
-
 		return importAttributes;
 	}
 
@@ -575,20 +572,15 @@ public class PersonImportAction implements Serializable {
 		if (!organizationService.isAllowPersonModification()) {
 			return OxTrustConstants.RESULT_FAILURE;
 		}
-
 		personService.addCustomObjectClass(this.person);
-
 		if (personService.getPersonByUid(this.person.getUid()) != null) {
 			return OxTrustConstants.RESULT_DUPLICATE;
 		}
-
 		this.inum = personService.generateInumForNewPerson();
 		String dn = personService.getDnForPerson(this.inum);
-
 		// Save person
 		this.person.setDn(dn);
 		this.person.setInum(this.inum);
-
 		List<GluuCustomAttribute> personAttributes = this.person.getCustomAttributes();
 		if (!personAttributes.contains(new GluuCustomAttribute("cn", ""))) {
 			List<GluuCustomAttribute> changedAttributes = new ArrayList<GluuCustomAttribute>();

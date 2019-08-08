@@ -10,7 +10,6 @@ import static org.gluu.oxtrust.ldap.service.Shibboleth3ConfService.SHIB3_IDP_MET
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
@@ -28,17 +27,16 @@ import javax.xml.xpath.XPathExpressionException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.velocity.VelocityContext;
-import org.gluu.oxtrust.config.ConfigurationFactory;
+import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.model.ProfileConfiguration;
-import org.slf4j.Logger;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.service.XmlService;
 import org.gluu.util.StringHelper;
 import org.gluu.util.exception.InvalidConfigurationException;
 import org.gluu.util.io.FileUploadWrapper;
+import org.slf4j.Logger;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 /**
@@ -69,31 +67,16 @@ public class ProfileConfigurationService implements Serializable {
 	private XmlService xmlService;
 
 	@Inject
-	private ConfigurationFactory configurationFactory;
-
-	@Inject
 	private AppConfiguration appConfiguration;
 
 	public List<ProfileConfiguration> getAvailableProfileConfigurations() {
-		String idpTemplatesLocation = configurationFactory.getIDPTemplatesLocation();
-		// File profileConfigurationFolder = new File(configurationFactory.DIR +
-		// "shibboleth3" + File.separator + "idp" + File.separator +
-		// "ProfileConfiguration");
-		File profileConfigurationFolder = new File(idpTemplatesLocation + "shibboleth3" + File.separator + "idp"
-				+ File.separator + "ProfileConfiguration");
+		List<String> templateNames = templateService.getTemplateNames("shibboleth3" + File.separator + "idp" + File.separator + "ProfileConfiguration");
 
-		File[] profileConfigurationTemplates = null;
 		List<ProfileConfiguration> profileConfigurations = new ArrayList<ProfileConfiguration>();
-
-		if (profileConfigurationFolder.exists() && profileConfigurationFolder.isDirectory()) {
-			profileConfigurationTemplates = profileConfigurationFolder.listFiles(new FilenameFilter() {
-				public boolean accept(File dir, String name) {
-					return name.endsWith("ProfileConfiguration.xml.vm");
-				}
-			});
-			for (File profileConfigurationTemplate : profileConfigurationTemplates) {
+		for (String templateName : templateNames) {
+			if (templateName.endsWith("ProfileConfiguration.xml.vm")) {
 				profileConfigurations.add(createProfileConfiguration(
-						profileConfigurationTemplate.getName().split("ProfileConfiguration")[0]));
+						templateName.split("ProfileConfiguration")[0]));
 			}
 		}
 
@@ -133,6 +116,9 @@ public class ProfileConfigurationService implements Serializable {
 			profileConfiguration.setSignRequests("conditional");
 			profileConfiguration.setEncryptAssertions("conditional");
 			profileConfiguration.setEncryptNameIds("never");
+			profileConfiguration.setDefaultAuthenticationMethod("none");
+			profileConfiguration.setNameIDFormatPrecedence("none");
+
 		}
 
 		if (SAML2_LOGOUT.equals(profileConfigurationName)) {
@@ -260,11 +246,19 @@ public class ProfileConfigurationService implements Serializable {
 							.getNamedItem("encryptAssertions").getNodeValue());
 					profileConfiguration.setEncryptNameIds(
 							xmlDocument.getFirstChild().getAttributes().getNamedItem("encryptNameIds").getNodeValue());
-					Node attribute = xmlDocument.getFirstChild().getAttributes().getNamedItem("signingCredentialRef");
-					if (attribute != null) {
-						profileConfiguration.setProfileConfigurationCertFileName(attribute.getNodeValue());
-					}
 
+					Node attribute = xmlDocument.getFirstChild().getAttributes().getNamedItem("defaultAuthenticationMethod");
+					if (attribute != null) 
+						profileConfiguration.setDefaultAuthenticationMethod(attribute.getNodeValue());
+					
+					Node attribute2 = xmlDocument.getFirstChild().getAttributes().getNamedItem("nameIDFormatPrecedence");
+					if (attribute2 != null) 
+						profileConfiguration.setNameIDFormatPrecedence(attribute2.getNodeValue());
+					
+					Node attribute3 = xmlDocument.getFirstChild().getAttributes().getNamedItem("signingCredentialRef");
+					if (attribute3 != null) 
+						profileConfiguration.setProfileConfigurationCertFileName(attribute3.getNodeValue());
+					
 					trustRelationship.getProfileConfigurations().put(SAML2_SSO, profileConfiguration);
 					continue;
 				}
@@ -430,6 +424,8 @@ public class ProfileConfigurationService implements Serializable {
 			context.put(SAML2_SSO + "SignRequests", profileConfiguration.getSignRequests());
 			context.put(SAML2_SSO + "EncryptNameIds", profileConfiguration.getEncryptNameIds());
 			context.put(SAML2_SSO + "EncryptAssertions", profileConfiguration.getEncryptAssertions());
+			context.put(SAML2_SSO + "DefaultAuthenticationMethod", profileConfiguration.getDefaultAuthenticationMethod());
+			context.put(SAML2_SSO + "NameIDFormatPrecedence", profileConfiguration.getNameIDFormatPrecedence());
 			saveCertificate(trustRelationship, fileWrappers, SAML2_SSO);
 			String certName = trustRelationship.getProfileConfigurations().get(SAML2_SSO)
 					.getProfileConfigurationCertFileName();

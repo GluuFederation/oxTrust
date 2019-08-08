@@ -10,4 +10,6 @@
 	signRequests="$SAML2SSOSignRequests"
 	encryptAssertions="$SAML2SSOEncryptAssertions"
 	encryptNameIds="$SAML2SSOEncryptNameIds"
+	defaultAuthenticationMethod="$SAML2SSODefaultAuthenticationMethod"
+	nameIDFormatPrecedence="$SAML2SSONameIDFormatPrecedence"
 />

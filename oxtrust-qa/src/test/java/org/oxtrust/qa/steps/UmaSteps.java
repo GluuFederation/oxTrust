@@ -6,7 +6,9 @@ import org.oxtrust.qa.pages.uma.UmaScopeAddPage;
 import org.oxtrust.qa.pages.uma.UmaScopeManagePage;
 import org.oxtrust.qa.pages.uma.UmaScopeUpdatePage;
 
+import cucumber.api.Scenario;
 import cucumber.api.java.After;
+import cucumber.api.java.Before;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
@@ -18,6 +20,11 @@ public class UmaSteps extends BaseSteps {
 	UmaResourceManagePage umaResourceManagePage = new UmaResourceManagePage();
 	UmaScopeAddPage umaScopeAddPage = new UmaScopeAddPage();
 	UmaScopeUpdatePage umaScopeUpdatePage = new UmaScopeUpdatePage();
+	
+	@Before
+	public void setup(Scenario scenario) {
+		startRecorder(scenario);
+	}
 
 	@When("^I go to uma scope list page$")
 	public void goToScopeManagePage() {
@@ -113,8 +120,10 @@ public class UmaSteps extends BaseSteps {
 	}
 
 	@After
-	public void clear() {
-		new HomePage().clear();
+	public void clear(Scenario scenario) {
+		homePage.takeScreenShot(scenario);
+		stopRecorder();
+		homePage.clear();
 	}
 
 }

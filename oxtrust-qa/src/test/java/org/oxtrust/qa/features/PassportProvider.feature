@@ -8,6 +8,7 @@ Scenario: Passport provider
     And     I click on the Update button
     When    I go to passport providers list 
     And     I start the process to add new provider 
+    And     I set id 'LinkedInID'
     And     I set display name 'LinkedIn' 
     And     I set type 'openidconnect' 
     And     I set client id to 'MyClientID' 

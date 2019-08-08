@@ -3,7 +3,9 @@ package org.oxtrust.qa.steps;
 import org.oxtrust.qa.pages.login.HomePage;
 import org.oxtrust.qa.pages.passport.PassportPage;
 
+import cucumber.api.Scenario;
 import cucumber.api.java.After;
+import cucumber.api.java.Before;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
@@ -14,6 +16,11 @@ public class PassportProviderSteps extends BaseSteps {
 
 	private PassportPage passportPage = new PassportPage();
 
+	@Before
+	public void setup(Scenario scenario) {
+		startRecorder(scenario);
+	}
+
 	@When("^I go to passport providers list$")
 	public void goToProvidersPage() {
 		homePage.goToPassportProviderListPage();
@@ -22,6 +29,11 @@ public class PassportProviderSteps extends BaseSteps {
 	@When("^I start the process to add new provider$")
 	public void goToProviderAddPage() {
 		passportPage.clickAddButton();
+	}
+
+	@When("^I set id '(.+)'$")
+	public void setProviderId(String value) {
+		passportPage.fillTextFillByClass("providerID", value);
 	}
 
 	@When("^I set display name '(.+)'$")
@@ -68,9 +80,11 @@ public class PassportProviderSteps extends BaseSteps {
 	public void editCurrentClient(String provider) {
 		passportPage.editProvider(provider);
 	}
-	
+
 	@After
-	public void clear() {
+	public void clear(Scenario scenario) {
+		homePage.takeScreenShot(scenario);
+		stopRecorder();
 		homePage.clear();
 	}
 

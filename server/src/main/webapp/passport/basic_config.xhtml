@@ -58,49 +58,59 @@
 														<rich:validator event="blur" />
 													</h:inputText>
 												</ox:decorate>
-												<ox:decorate id="serverPortID"
-													label="#{msg['passport.basicconfig.form.serverPort']}"
-													leftClass="col-sm-3" rightClass="col-sm-9">
-													<b:touchSpin id="serverPortID" col-md="9" required="true"
-														styleClass="rounded serverPortID" disabled="true"
-														value="#{passportConfigurationAction.configuration.serverWebPort}"
-														min="10" max="10000" step="1" />
-												</ox:decorate>
-												<ox:decorate
-													label="#{msg['passport.basicconfig.form.postProfileEndpoint']}"
-													leftClass="col-sm-3" rightClass="col-sm-9"
-													id="PostProfileEndpointID">
-													<h:inputText
-														styleClass="form-control PostProfileEndpointID"
-														style="width:100%" required="true"
-														value="#{passportConfigurationAction.configuration.postProfileEndpoint}"
-														id="PostProfileEndpointID">
-														<rich:validator event="blur" />
-													</h:inputText>
-												</ox:decorate>
 											</div>
 											<!-- Second column-->
 											<div class="col-sm-6 col-lg-6" style="padding: 0px;">
-												<ox:decorate
-													label="#{msg['passport.basicconfig.form.spTLSCert']}"
-													leftClass="col-sm-3" rightClass="col-sm-9">
-													<h:inputText styleClass="rounded form-control SpTLSCertID"
-														id="SpTLSCertID" style="width:100%" required="true"
-														value="#{passportConfigurationAction.configuration.spTLSCert}">
-														<rich:validator event="blur" />
-													</h:inputText>
-												</ox:decorate>
-												<ox:decorate
-													label="#{msg['passport.basicconfig.form.spTLSKey']}"
-													leftClass="col-sm-3" rightClass="col-sm-9">
-													<h:inputText
-														styleClass="rounded form-control SpTLSCertKeyID"
-														id="SpTLSCertKeyID" style="width:100%" required="true"
-														value="#{passportConfigurationAction.configuration.spTLSKey}">
-														<rich:validator event="blur" />
-													</h:inputText>
-												</ox:decorate>
+												<div class="row">
+													<div class="col-sm-6 col-lg-6" style="margin-top: 3px;">
+														<h:outputText
+															style=" margin-left:25px; color:black; font-size:1em;font-weight:bold;"
+															value="#{msg['passport.basicconfig.form.serverPort']}:" />
+													</div>
+													<div class="col-sm-6 col-lg-6" style="margin-top: -15px;">
+														<b:touchSpin id="serverPortID" col-md="9" required="true"
+															styleClass="rounded serverPortID" disabled="true"
+															value="#{passportConfigurationAction.configuration.serverWebPort}"
+															min="10" max="10000" step="1" />
+													</div>
+												</div>
 											</div>
+										</div>
+										<div class="row" style="margin-left: 5px; margin-right: 5px;">
+											<ox:decorate
+												label="#{msg['passport.basicconfig.form.postProfileEndpoint']}"
+												leftClass="col-sm-3" rightClass="col-sm-9"
+												id="PostProfileEndpointID">
+												<h:inputText styleClass="form-control PostProfileEndpointID"
+													style="width:100%" required="true"
+													value="#{passportConfigurationAction.configuration.postProfileEndpoint}"
+													id="PostProfileEndpointID">
+													<rich:validator event="blur" />
+												</h:inputText>
+											</ox:decorate>
+										</div>
+										<div class="row" style="margin-left: 5px; margin-right: 5px;">
+											<ox:decorate
+												label="#{msg['passport.basicconfig.form.spTLSCert']}"
+												leftClass="col-sm-3" rightClass="col-sm-9">
+												<h:inputText styleClass="rounded form-control SpTLSCertID"
+													id="SpTLSCertID" style="width:100%" required="true"
+													value="#{passportConfigurationAction.configuration.spTLSCert}">
+													<rich:validator event="blur" />
+												</h:inputText>
+											</ox:decorate>
+										</div>
+										<div class="row" style="margin-left: 5px; margin-right: 5px;">
+											<ox:decorate
+												label="#{msg['passport.basicconfig.form.spTLSKey']}"
+												leftClass="col-sm-3" rightClass="col-sm-9">
+												<h:inputText
+													styleClass="rounded form-control text-centered SpTLSCertKeyID"
+													id="SpTLSCertKeyID" style="width:100%" required="true"
+													value="#{passportConfigurationAction.configuration.spTLSKey}">
+													<rich:validator event="blur" />
+												</h:inputText>
+											</ox:decorate>
 										</div>
 										<div class="row"
 											style="margin-right: 20px; margin-left: 20px;">

@@ -3,7 +3,9 @@ package org.oxtrust.qa.steps;
 import org.oxtrust.qa.pages.login.HomePage;
 import org.oxtrust.qa.pages.passport.PassportPage;
 
+import cucumber.api.Scenario;
 import cucumber.api.java.After;
+import cucumber.api.java.Before;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 
@@ -12,6 +14,11 @@ public class PassportIdpSteps extends BaseSteps {
 	private HomePage homePage = new HomePage();
 
 	private PassportPage passportPage = new PassportPage();
+	
+	@Before
+	public void setup(Scenario scenario) {
+		startRecorder(scenario);
+	}
 
 	@When("^I go to passport idp page$")
 	public void goToProvidersPage() {
@@ -39,7 +46,9 @@ public class PassportIdpSteps extends BaseSteps {
 	}
 	
 	@After
-	public void clear() {
+	public void clear(Scenario scenario) {
+		homePage.takeScreenShot(scenario);
+		stopRecorder();
 		homePage.clear();
 	}
 
