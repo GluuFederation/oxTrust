@@ -19,7 +19,9 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.ConversationScoped;
 import javax.faces.application.FacesMessage;
 import javax.inject.Inject;
@@ -39,6 +41,7 @@ import org.gluu.model.custom.script.CustomScriptType;
 import org.gluu.model.custom.script.model.CustomScript;
 import org.gluu.model.custom.script.model.auth.AuthenticationCustomScript;
 import org.gluu.oxtrust.ldap.service.ConfigurationService;
+import org.gluu.oxtrust.model.GluuTreeModel;
 import org.gluu.oxtrust.model.SimpleCustomPropertiesListModel;
 import org.gluu.oxtrust.model.SimplePropertiesListModel;
 import org.gluu.oxtrust.util.OxTrustConstants;
@@ -53,6 +56,13 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import com.google.common.base.Optional;
+
+import net.bootsfaces.component.tree.event.TreeNodeCheckedEvent;
+import net.bootsfaces.component.tree.event.TreeNodeEventListener;
+import net.bootsfaces.component.tree.event.TreeNodeExpandedEvent;
+import net.bootsfaces.component.tree.event.TreeNodeSelectionEvent;
+
 /**
  * Add/Modify custom script configurations
  * 
@@ -62,7 +72,7 @@ import org.w3c.dom.NodeList;
 @ConversationScoped
 @Secure("#{permissionService.hasPermission('configuration', 'access')}")
 public class ManageCustomScriptAction
-		implements SimplePropertiesListModel, SimpleCustomPropertiesListModel, Serializable {
+		implements SimplePropertiesListModel, SimpleCustomPropertiesListModel, Serializable, TreeNodeEventListener {
 
 	private static final long serialVersionUID = -3823022039248381963L;
 
@@ -88,6 +98,54 @@ public class ManageCustomScriptAction
 	private boolean initialized;
 
 	private static Set<String> allAcrs = new HashSet<>();
+
+	private GluuTreeModel tree;
+
+	private boolean edition = true;
+	private boolean showAddButton = false;
+	private CustomScript selectedScript;
+
+	private CustomScriptType selectedScriptType = CustomScriptType.PERSON_AUTHENTICATION;
+
+	@PostConstruct
+	private void init() {
+		tree = (GluuTreeModel) new GluuTreeModel().withText("root").withSelectable(false).withExpanded(false);
+		CustomScriptType[] allowedCustomScriptTypes = this.configurationService.getCustomScriptTypes();
+		Stream.of(allowedCustomScriptTypes).forEach(e -> {
+			GluuTreeModel node = (GluuTreeModel) new GluuTreeModel().withText(e.getDisplayName()).withExpanded(false);
+			node.setParent(true);
+			node.setCustomScriptType(CustomScriptType.getByValue(e.getValue()));
+			List<CustomScript> customScripts = customScriptService.findCustomScripts(Arrays.asList(e));
+			customScripts.forEach(k -> {
+				GluuTreeModel scriptNode = (GluuTreeModel) new GluuTreeModel().withText(k.getName())
+						.withIcon("fa fa-info").withExpanded(false);
+				scriptNode.setInum(k.getInum());
+				scriptNode.setDn(k.getDn());
+				node.withSubnode(scriptNode);
+			});
+			tree.withSubnode(node);
+		});
+		setSelectedScript(
+				customScriptService.findCustomScripts(Arrays.asList(CustomScriptType.PERSON_AUTHENTICATION)).get(0));
+	}
+
+	public void initAddForm() {
+		this.showAddButton = false;
+		this.edition = false;
+		if (CustomScriptType.PERSON_AUTHENTICATION == selectedScriptType) {
+			AuthenticationCustomScript authenticationCustomScript = new AuthenticationCustomScript();
+			authenticationCustomScript.setModuleProperties(new ArrayList<SimpleCustomProperty>());
+			authenticationCustomScript.setUsageType(AuthenticationScriptUsageType.INTERACTIVE);
+			this.selectedScript = authenticationCustomScript;
+		} else {
+			this.selectedScript = new CustomScript();
+			this.selectedScript.setModuleProperties(new ArrayList<SimpleCustomProperty>());
+		}
+		this.selectedScript.setLocationType(ScriptLocationType.LDAP);
+		this.selectedScript.setScriptType(selectedScriptType);
+		this.selectedScript.setProgrammingLanguage(ProgrammingLanguage.PYTHON);
+		this.selectedScript.setConfigurationProperties(new ArrayList<SimpleExtendedCustomProperty>());
+	}
 
 	public String modify() {
 		if (this.initialized) {
@@ -133,6 +191,58 @@ public class ManageCustomScriptAction
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
+	public String saveScript() {
+		CustomScript customScript = selectedScript;
+		try {
+			if (StringHelper.equalsIgnoreCase(customScript.getName(), OxConstants.SCRIPT_TYPE_INTERNAL_RESERVED_NAME)) {
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, "'%s' is reserved script name", customScript.getName());
+				return OxTrustConstants.RESULT_FAILURE;
+			}
+			boolean nameValidation = NAME_PATTERN.matcher(customScript.getName()).matches();
+			if (!nameValidation) {
+				facesMessages.add(FacesMessage.SEVERITY_ERROR,
+						"'%s' is invalid script name. Only alphabetic, numeric and underscore characters are allowed in Script Name",
+						customScript.getName());
+				return OxTrustConstants.RESULT_FAILURE;
+			}
+			customScript.setRevision(customScript.getRevision() + 1);
+			String dn = customScript.getDn();
+			String customScriptId = customScript.getInum();
+			if (StringHelper.isEmpty(dn)) {
+				customScriptId = UUID.randomUUID().toString();
+				dn = customScriptService.buildDn(customScriptId);
+				customScript.setDn(dn);
+				customScript.setInum(customScriptId);
+				this.edition = false;
+			}
+			customScript.setDn(dn);
+			customScript.setInum(customScriptId);
+			if (ScriptLocationType.LDAP == customScript.getLocationType()) {
+				customScript.removeModuleProperty(CustomScript.LOCATION_PATH_MODEL_PROPERTY);
+			}
+			if ((customScript.getConfigurationProperties() != null)
+					&& (customScript.getConfigurationProperties().size() == 0)) {
+				customScript.setConfigurationProperties(null);
+			}
+			if ((customScript.getConfigurationProperties() != null)
+					&& (customScript.getModuleProperties().size() == 0)) {
+				customScript.setModuleProperties(null);
+			}
+			if (this.isEdition()) {
+				customScriptService.update(customScript);
+				facesMessages.add(FacesMessage.SEVERITY_INFO, customScript.getName() + " updated successfully");
+			} else {
+				customScriptService.add(customScript);
+				this.edition = true;
+				facesMessages.add(FacesMessage.SEVERITY_INFO, customScript.getName() + " added successfully");
+			}
+			return OxTrustConstants.RESULT_SUCCESS;
+		} catch (Exception e) {
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Error when processing " + customScript.getName());
+			return OxTrustConstants.RESULT_FAILURE;
+		}
+	}
+
 	public String save() {
 		try {
 			List<CustomScript> oldCustomScripts = customScriptService
@@ -165,7 +275,6 @@ public class ManageCustomScriptAction
 						customScript.setInum(customScriptId);
 						update = false;
 					}
-					;
 					customScript.setDn(dn);
 					customScript.setInum(customScriptId);
 					if (ScriptLocationType.LDAP == customScript.getLocationType()) {
@@ -341,7 +450,11 @@ public class ManageCustomScriptAction
 	}
 
 	public boolean isPersonScript(CustomScript script) {
-		return script.getScriptType().getValue().equalsIgnoreCase(CustomScriptType.PERSON_AUTHENTICATION.getValue());
+		if (script.getScriptType() != null) {
+			return script.getScriptType().getValue()
+					.equalsIgnoreCase(CustomScriptType.PERSON_AUTHENTICATION.getValue());
+		}
+		return false;
 	}
 
 	private Set<String> cleanAcrs(String name) {
@@ -363,5 +476,73 @@ public class ManageCustomScriptAction
 			}
 		}
 		return result;
+	}
+
+	public GluuTreeModel getTree() {
+		return tree;
+	}
+
+	public void setTree(GluuTreeModel tree) {
+		this.tree = tree;
+	}
+
+	@Override
+	public void processValueSelected(TreeNodeSelectionEvent event) {
+		if (event.isSelected()) {
+			GluuTreeModel node = (GluuTreeModel) event.getNode();
+			if (node.getDn() != null && node.getInum() != null && !node.isParent()) {
+				Optional<CustomScript> customScript = customScriptService.getCustomScriptByINum(node.getDn(),
+						node.getInum(), null);
+				if (customScript.isPresent()) {
+					selectedScript = customScript.get();
+				}
+			}
+			if (node.isParent()) {
+				this.selectedScriptType = node.getCustomScriptType();
+				setShowAddButton(true);
+				facesMessages.add(FacesMessage.SEVERITY_INFO, "Current type:" + node.getCustomScriptType().getValue());
+			}
+		}
+	}
+
+	@Override
+	public void processValueChecked(TreeNodeCheckedEvent event) {
+	}
+
+	@Override
+	public void processValueExpanded(TreeNodeExpandedEvent event) {
+
+	}
+
+	public CustomScript getSelectedScript() {
+		return selectedScript;
+	}
+
+	public void setSelectedScript(CustomScript selectedScript) {
+		this.selectedScript = selectedScript;
+	}
+
+	public boolean isEdition() {
+		return edition;
+	}
+
+	public void setEdition(boolean edition) {
+		this.edition = edition;
+	}
+
+	public CustomScriptType getSelectedScriptType() {
+		return selectedScriptType;
+	}
+
+	public void setSelectedScriptType(CustomScriptType selectedScriptType) {
+		this.selectedScriptType = selectedScriptType;
+	}
+
+	public boolean isShowAddButton() {
+		return showAddButton;
+	}
+
+	public void setShowAddButton(boolean showAddButton) {
+		this.showAddButton = showAddButton;
 	}
 }

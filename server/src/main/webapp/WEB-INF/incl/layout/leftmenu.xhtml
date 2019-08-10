@@ -73,6 +73,14 @@
 											<i class="fa fa-chevron-right"
 												style="float: left; margin-top: 2px;"></i>
 										</h:commandLink></li>
+									<li id="subMenuLinkConfiguration4.1"><h:commandLink
+											value="New manage custom scripts"
+											onclick="lock();" ondbclick="lock();" oncomplete="unlock();"
+											action="#{menuAction.endConversation('/script/manageCustomScript1.xhtml')}"
+											rendered="#{permissionService.hasPermission('configuration', 'access')}">
+											<i class="fa fa-chevron-right"
+												style="float: left; margin-top: 2px;"></i>
+										</h:commandLink></li>	
 									<li id="subMenuLinkConfiguration5"><h:commandLink
 											value="#{msg['leftmenu.manageRegistration']}"
 											onclick="lock();" ondbclick="lock();" oncomplete="unlock();"
