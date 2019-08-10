@@ -13,8 +13,6 @@
 		<f:viewAction action="#{conversationService.initConversation}" />
 		<f:viewAction action="#{manageCustomScriptAction.initAcrs}"
 			onPostback="false" />
-		<f:viewAction action="#{manageCustomScriptAction.modify}"
-			onPostback="false" />
 	</f:metadata>
 	<ui:define name="head">
 	</ui:define>
@@ -46,6 +44,7 @@
 								style="margin-bottom:5px !important;" />
 							<b:tree render-root="false" id="customScriptTreeViewId"
 								collapse-icon="fa fa-angle-down" selected-color="#337ab7"
+								auto-update="true"
 								nodeSelectionListener="#{manageCustomScriptAction}"
 								expand-icon="fa fa-angle-right" update="@form"
 								value="#{manageCustomScriptAction.getTree()}" showBorder="true"
@@ -53,7 +52,7 @@
 						</div>
 						<div class="col-sm-9 col-md-9 col-lg-9">
 							<h:form id="customScriptForm" prependId="false">
-								<b:panel id="customScriptDetailPanelId" title="Script details"
+								<b:panel id="customScriptDetailPanelId" title="#{manageCustomScriptAction.selectedScript.name}"
 									look="primary" iconAwesome="fa-detail" collapsible="false">
 									<h:panelGroup layout="block">
 										<ui:param name="_customScript"
@@ -243,8 +242,8 @@
 											<hr></hr>
 											<ox:acceptRemovalDialog id="deleteConfirmation"
 												subject="Script" value="#{_customScript.name}"
-												deleteMethod="#{manageCustomScriptAction.removeCustomScript(_customScript)}"
-												render="customScriptTypeId" />
+												deleteMethod="#{manageCustomScriptAction.removeCustomScript}"
+												render="main" />
 										</h:panelGroup>
 									</h:panelGroup>
 								</b:panel>

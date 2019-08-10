@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -125,8 +124,10 @@ public class ManageCustomScriptAction
 			});
 			tree.withSubnode(node);
 		});
-		setSelectedScript(
-				customScriptService.findCustomScripts(Arrays.asList(CustomScriptType.PERSON_AUTHENTICATION)).get(0));
+		this.selectedScript = customScriptService
+				.findCustomScripts(Arrays.asList(CustomScriptType.PERSON_AUTHENTICATION)).get(0);
+		tree.expandParentOfNode(selectedScript);
+
 	}
 
 	public void initAddForm() {
@@ -231,10 +232,13 @@ public class ManageCustomScriptAction
 			if (this.isEdition()) {
 				customScriptService.update(customScript);
 				facesMessages.add(FacesMessage.SEVERITY_INFO, customScript.getName() + " updated successfully");
+				init();
 			} else {
 				customScriptService.add(customScript);
+				this.selectedScript=customScriptService.getCustomScriptByINum(customScript.getDn(), customScript.getInum(), null).get();
 				this.edition = true;
 				facesMessages.add(FacesMessage.SEVERITY_INFO, customScript.getName() + " added successfully");
+				tree.expandParentOfNode(selectedScript);
 			}
 			return OxTrustConstants.RESULT_SUCCESS;
 		} catch (Exception e) {
@@ -345,16 +349,11 @@ public class ManageCustomScriptAction
 		customScriptsByType.add(customScript);
 	}
 
-	public void removeCustomScript(CustomScript removeCustomScript) {
-		for (Entry<CustomScriptType, List<CustomScript>> customScriptsByType : this.customScriptsByTypes.entrySet()) {
-			List<CustomScript> customScripts = customScriptsByType.getValue();
-			for (Iterator<CustomScript> iterator = customScripts.iterator(); iterator.hasNext();) {
-				CustomScript customScript = iterator.next();
-				if (System.identityHashCode(removeCustomScript) == System.identityHashCode(customScript)) {
-					iterator.remove();
-					return;
-				}
-			}
+	public void removeCustomScript() {
+		if (this.selectedScript != null && this.selectedScript.getInum() != null) {
+			customScriptService.remove(this.selectedScript);
+			init();
+			facesMessages.add(FacesMessage.SEVERITY_INFO, this.selectedScript.getName() + " removed successfully");
 		}
 	}
 
@@ -460,7 +459,8 @@ public class ManageCustomScriptAction
 	private Set<String> cleanAcrs(String name) {
 		Set<String> result = new HashSet<>();
 		result.addAll(allAcrs);
-		List<CustomScript> scripts = customScriptsByTypes.get(CustomScriptType.PERSON_AUTHENTICATION);
+		List<CustomScript> scripts = customScriptService
+				.findCustomScripts(Arrays.asList(CustomScriptType.PERSON_AUTHENTICATION));
 		for (CustomScript customScript : scripts) {
 			if (null == customScript.getAliases())
 				customScript.setAliases(new ArrayList<>());
@@ -488,8 +488,9 @@ public class ManageCustomScriptAction
 
 	@Override
 	public void processValueSelected(TreeNodeSelectionEvent event) {
+		GluuTreeModel node = (GluuTreeModel) event.getNode();
 		if (event.isSelected()) {
-			GluuTreeModel node = (GluuTreeModel) event.getNode();
+			node.setColor("#FFFFFF");
 			if (node.getDn() != null && node.getInum() != null && !node.isParent()) {
 				Optional<CustomScript> customScript = customScriptService.getCustomScriptByINum(node.getDn(),
 						node.getInum(), null);
@@ -500,7 +501,6 @@ public class ManageCustomScriptAction
 			if (node.isParent()) {
 				this.selectedScriptType = node.getCustomScriptType();
 				setShowAddButton(true);
-				facesMessages.add(FacesMessage.SEVERITY_INFO, "Current type:" + node.getCustomScriptType().getValue());
 			}
 		}
 	}
