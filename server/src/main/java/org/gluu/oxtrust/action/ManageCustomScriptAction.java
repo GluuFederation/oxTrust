@@ -20,7 +20,6 @@ import java.util.UUID;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.ConversationScoped;
 import javax.faces.application.FacesMessage;
 import javax.inject.Inject;
@@ -103,11 +102,12 @@ public class ManageCustomScriptAction
 	private boolean edition = true;
 	private boolean showAddButton = false;
 	private CustomScript selectedScript;
+	private String dn;
+	private String inum;
 
 	private CustomScriptType selectedScriptType = CustomScriptType.PERSON_AUTHENTICATION;
 
-	@PostConstruct
-	private void init() {
+	public void init(boolean isInitial) {
 		tree = (GluuTreeModel) new GluuTreeModel().withText("root").withSelectable(false).withExpanded(false);
 		CustomScriptType[] allowedCustomScriptTypes = this.configurationService.getCustomScriptTypes();
 		Stream.of(allowedCustomScriptTypes).forEach(e -> {
@@ -124,10 +124,13 @@ public class ManageCustomScriptAction
 			});
 			tree.withSubnode(node);
 		});
-		this.selectedScript = customScriptService
-				.findCustomScripts(Arrays.asList(CustomScriptType.PERSON_AUTHENTICATION)).get(0);
+		if (isInitial) {
+			this.selectedScript = customScriptService
+					.findCustomScripts(Arrays.asList(CustomScriptType.PERSON_AUTHENTICATION)).get(0);
+		} else {
+			this.selectedScript = customScriptService.getCustomScriptByINum(dn, inum, null).get();
+		}
 		tree.expandParentOfNode(selectedScript);
-
 	}
 
 	public void initAddForm() {
@@ -207,17 +210,17 @@ public class ManageCustomScriptAction
 				return OxTrustConstants.RESULT_FAILURE;
 			}
 			customScript.setRevision(customScript.getRevision() + 1);
-			String dn = customScript.getDn();
-			String customScriptId = customScript.getInum();
+			this.dn = customScript.getDn();
+			this.inum = customScript.getInum();
 			if (StringHelper.isEmpty(dn)) {
-				customScriptId = UUID.randomUUID().toString();
-				dn = customScriptService.buildDn(customScriptId);
-				customScript.setDn(dn);
-				customScript.setInum(customScriptId);
+				this.inum = UUID.randomUUID().toString();
+				this.dn = customScriptService.buildDn(this.inum);
+				customScript.setDn(this.dn);
+				customScript.setInum(this.inum);
 				this.edition = false;
 			}
-			customScript.setDn(dn);
-			customScript.setInum(customScriptId);
+			customScript.setDn(this.dn);
+			customScript.setInum(this.inum);
 			if (ScriptLocationType.LDAP == customScript.getLocationType()) {
 				customScript.removeModuleProperty(CustomScript.LOCATION_PATH_MODEL_PROPERTY);
 			}
@@ -232,13 +235,14 @@ public class ManageCustomScriptAction
 			if (this.isEdition()) {
 				customScriptService.update(customScript);
 				facesMessages.add(FacesMessage.SEVERITY_INFO, customScript.getName() + " updated successfully");
-				init();
+				init(false);
 			} else {
 				customScriptService.add(customScript);
-				this.selectedScript=customScriptService.getCustomScriptByINum(customScript.getDn(), customScript.getInum(), null).get();
+				this.selectedScript = customScriptService
+						.getCustomScriptByINum(customScript.getDn(), customScript.getInum(), null).get();
 				this.edition = true;
 				facesMessages.add(FacesMessage.SEVERITY_INFO, customScript.getName() + " added successfully");
-				tree.expandParentOfNode(selectedScript);
+				init(false);
 			}
 			return OxTrustConstants.RESULT_SUCCESS;
 		} catch (Exception e) {
@@ -352,7 +356,7 @@ public class ManageCustomScriptAction
 	public void removeCustomScript() {
 		if (this.selectedScript != null && this.selectedScript.getInum() != null) {
 			customScriptService.remove(this.selectedScript);
-			init();
+			init(true);
 			facesMessages.add(FacesMessage.SEVERITY_INFO, this.selectedScript.getName() + " removed successfully");
 		}
 	}
@@ -490,7 +494,6 @@ public class ManageCustomScriptAction
 	public void processValueSelected(TreeNodeSelectionEvent event) {
 		GluuTreeModel node = (GluuTreeModel) event.getNode();
 		if (event.isSelected()) {
-			node.setColor("#FFFFFF");
 			if (node.getDn() != null && node.getInum() != null && !node.isParent()) {
 				Optional<CustomScript> customScript = customScriptService.getCustomScriptByINum(node.getDn(),
 						node.getInum(), null);
