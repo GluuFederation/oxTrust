@@ -186,6 +186,8 @@ public class UpdateOrganizationAction implements Serializable {
 		GluuConfiguration configurationUpdate = configurationService.getConfiguration();
 		configurationUpdate.setPasswordResetAllowed(configuration.isPasswordResetAllowed());
 		configurationUpdate.setPassportEnabled(configuration.isPassportEnabled());
+		configurationUpdate.setRadiusEnabled(configuration.isRadiusEnabled());
+		configurationUpdate.setSamlEnabled(configuration.isSamlEnabled());
 		configurationUpdate.setScimEnabled(configuration.isScimEnabled());
 		configurationUpdate.setProfileManagment(configuration.isProfileManagment());
 		configurationUpdate.setSmtpConfiguration(smtpConfiguration);
