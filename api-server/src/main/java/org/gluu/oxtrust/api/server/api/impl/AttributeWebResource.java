@@ -66,7 +66,7 @@ public class AttributeWebResource extends BaseWebResource {
             ), description = Constants.RESULT_SUCCESS),
 			@ApiResponse(responseCode = "500", description = "Server error") })
 	@ProtectedApi(scopes = { READ_ACCESS })
-	public Response getAllActivesAttributes() {
+	public Response getAllActiveAttributes() {
 		log(logger, "Processing getAllActivesAttributes()");
 		try {
 			List<GluuAttribute> gluuAttributes = attributeService.getAllAttributes().stream()
@@ -87,7 +87,7 @@ public class AttributeWebResource extends BaseWebResource {
             ), description = Constants.RESULT_SUCCESS),
 			@ApiResponse(responseCode = "500", description = "Server error") })
 	@ProtectedApi(scopes = { READ_ACCESS })
-	public Response getAllInActivesAttributes() {
+	public Response getAllInactiveAttributes() {
 		log(logger, "Processing getAllInActivesAttributes()");
 		try {
 			List<GluuAttribute> gluuAttributes = attributeService.getAllAttributes().stream()
