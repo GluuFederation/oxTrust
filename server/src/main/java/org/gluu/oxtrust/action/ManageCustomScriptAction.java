@@ -10,11 +10,9 @@ import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Pattern;
@@ -43,12 +41,10 @@ import org.gluu.oxtrust.model.GluuTreeModel;
 import org.gluu.oxtrust.model.SimpleCustomPropertiesListModel;
 import org.gluu.oxtrust.model.SimplePropertiesListModel;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.persist.exception.BasePersistenceException;
 import org.gluu.service.custom.script.AbstractCustomScriptService;
 import org.gluu.service.security.Secure;
 import org.gluu.util.OxConstants;
 import org.gluu.util.StringHelper;
-import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -75,9 +71,6 @@ public class ManageCustomScriptAction
 	private static final long serialVersionUID = -3823022039248381963L;
 
 	private static final Pattern NAME_PATTERN = Pattern.compile("^[a-zA-Z0-9_\\-\\:\\/\\.]+$");
-
-	@Inject
-	private Logger log;
 
 	@Inject
 	private FacesMessages facesMessages;
@@ -151,50 +144,6 @@ public class ManageCustomScriptAction
 		this.selectedScript.setConfigurationProperties(new ArrayList<SimpleExtendedCustomProperty>());
 	}
 
-	public String modify() {
-		if (this.initialized) {
-			return OxTrustConstants.RESULT_SUCCESS;
-		}
-		CustomScriptType[] allowedCustomScriptTypes = this.configurationService.getCustomScriptTypes();
-		this.customScriptsByTypes = new HashMap<CustomScriptType, List<CustomScript>>();
-		for (CustomScriptType customScriptType : allowedCustomScriptTypes) {
-			this.customScriptsByTypes.put(customScriptType, new ArrayList<CustomScript>());
-		}
-		try {
-			List<CustomScript> customScripts = customScriptService
-					.findCustomScripts(Arrays.asList(allowedCustomScriptTypes));
-			for (CustomScript customScript : customScripts) {
-				// Automatic package update '.xdi' --> '.org'
-				// TODO: Remove in CE 5.0
-				String scriptCode = customScript.getScript();
-				if (scriptCode != null) {
-					scriptCode = scriptCode.replaceAll(".xdi", ".gluu");
-					customScript.setScript(scriptCode);
-				}
-				CustomScriptType customScriptType = customScript.getScriptType();
-				List<CustomScript> customScriptsByType = this.customScriptsByTypes.get(customScriptType);
-				CustomScript typedCustomScript = customScript;
-				if (CustomScriptType.PERSON_AUTHENTICATION == customScriptType) {
-					typedCustomScript = new AuthenticationCustomScript(customScript);
-				}
-				if (typedCustomScript.getConfigurationProperties() == null) {
-					typedCustomScript.setConfigurationProperties(new ArrayList<SimpleExtendedCustomProperty>());
-				}
-				if (typedCustomScript.getModuleProperties() == null) {
-					typedCustomScript.setModuleProperties(new ArrayList<SimpleCustomProperty>());
-				}
-				customScriptsByType.add(typedCustomScript);
-			}
-		} catch (Exception ex) {
-			log.error("Failed to load custom scripts ", ex);
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to load custom scripts");
-			conversationService.endConversation();
-			return OxTrustConstants.RESULT_FAILURE;
-		}
-		this.initialized = true;
-		return OxTrustConstants.RESULT_SUCCESS;
-	}
-
 	public String saveScript() {
 		CustomScript customScript = selectedScript;
 		try {
@@ -249,74 +198,6 @@ public class ManageCustomScriptAction
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Error when processing " + customScript.getName());
 			return OxTrustConstants.RESULT_FAILURE;
 		}
-	}
-
-	public String save() {
-		try {
-			List<CustomScript> oldCustomScripts = customScriptService
-					.findCustomScripts(Arrays.asList(this.configurationService.getCustomScriptTypes()), "dn", "inum");
-			List<String> updatedInums = new ArrayList<String>();
-			for (Entry<CustomScriptType, List<CustomScript>> customScriptsByType : this.customScriptsByTypes
-					.entrySet()) {
-				List<CustomScript> customScripts = customScriptsByType.getValue();
-				for (CustomScript customScript : customScripts) {
-					String configId = customScript.getName();
-					if (StringHelper.equalsIgnoreCase(configId, OxConstants.SCRIPT_TYPE_INTERNAL_RESERVED_NAME)) {
-						facesMessages.add(FacesMessage.SEVERITY_ERROR, "'%s' is reserved script name", configId);
-						return OxTrustConstants.RESULT_FAILURE;
-					}
-					boolean nameValidation = NAME_PATTERN.matcher(customScript.getName()).matches();
-					if (!nameValidation) {
-						facesMessages.add(FacesMessage.SEVERITY_ERROR,
-								"'%s' is invalid script name. Only alphabetic, numeric and underscore characters are allowed in Script Name",
-								configId);
-						return OxTrustConstants.RESULT_FAILURE;
-					}
-					customScript.setRevision(customScript.getRevision() + 1);
-					boolean update = true;
-					String dn = customScript.getDn();
-					String customScriptId = customScript.getInum();
-					if (StringHelper.isEmpty(dn)) {
-						customScriptId = UUID.randomUUID().toString();
-						dn = customScriptService.buildDn(customScriptId);
-						customScript.setDn(dn);
-						customScript.setInum(customScriptId);
-						update = false;
-					}
-					customScript.setDn(dn);
-					customScript.setInum(customScriptId);
-					if (ScriptLocationType.LDAP == customScript.getLocationType()) {
-						customScript.removeModuleProperty(CustomScript.LOCATION_PATH_MODEL_PROPERTY);
-					}
-					if ((customScript.getConfigurationProperties() != null)
-							&& (customScript.getConfigurationProperties().size() == 0)) {
-						customScript.setConfigurationProperties(null);
-					}
-
-					if ((customScript.getConfigurationProperties() != null)
-							&& (customScript.getModuleProperties().size() == 0)) {
-						customScript.setModuleProperties(null);
-					}
-					updatedInums.add(customScriptId);
-					if (update) {
-						customScriptService.update(customScript);
-					} else {
-						customScriptService.add(customScript);
-					}
-				}
-			}
-			for (CustomScript oldCustomScript : oldCustomScripts) {
-				if (!updatedInums.contains(oldCustomScript.getInum())) {
-					customScriptService.remove(oldCustomScript);
-				}
-			}
-		} catch (BasePersistenceException ex) {
-			log.error("Failed to update custom scripts", ex);
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update custom script configuration");
-			return OxTrustConstants.RESULT_FAILURE;
-		}
-		facesMessages.add(FacesMessage.SEVERITY_INFO, "Custom script configuration updated successfully");
-		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
 	public String cancel() throws Exception {
