@@ -73,7 +73,6 @@ public class SearchPersonAction implements Serializable {
 		}
 		try {
 			this.personList = personService.searchPersons(this.searchPattern);
-			this.personList.sort(Comparator.comparing(GluuCustomPerson::getDisplayName));
 			this.oldSearchPattern = this.searchPattern;
 			this.searchPattern = "";
 			firstLaunch = false;
