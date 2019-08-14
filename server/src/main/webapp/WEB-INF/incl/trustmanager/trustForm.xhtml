@@ -410,8 +410,7 @@ input[submit] {
 								<ui:decorate
 									template="/WEB-INF/incl/trustmanager/associatedContactsForm.xhtml" />
 							</b:tab>
-							<b:tab disabled="true"
-								rendered="#{_trustRelationship.isFederation()}">
+							<b:tab title="" content-disabled="true" rendered="#{_trustRelationship.isFederation()}">
 								<h:panelGroup>
 									<a4j:commandLink id="breakFederation"
 										value="Federated Websites"
