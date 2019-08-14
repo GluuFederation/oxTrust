@@ -64,7 +64,7 @@
 											rendered="#{permissionService.hasPermission('trust', 'access')}">
 											<i class="fa fa-chevron-right"
 												style="float: left; margin-top: 2px;"></i>
-										</h:commandLink></li>	
+										</h:commandLink></li>
 									<li id="subMenuLinkConfiguration4"><h:commandLink
 											value="#{msg['leftmenu.manageCustomScripts']}"
 											onclick="lock();" ondbclick="lock();" oncomplete="unlock();"
@@ -146,15 +146,13 @@
 								</ul></li>
 						</ui:fragment>
 						<ui:fragment
-							rendered="true">
+							rendered="#{permissionService.hasPermission('trust', 'access') and productInstallationCheckerAction.showSAMLMenu}">
 							<li class="treeview" id="menuSAML"><a href="#"> <i
 									class="fa fa-pencil-square-o"></i> <span>#{msg['leftmenu.saml']}</span>
 									<i class="fa fa-angle-left pull-right"></i>
 							</a>
-
-
 								<ul class="treeview-menu" id="subMenuSAML">
-									<li id="menuSAMLShibboleth"><h:panelGroup rendered="true">
+									<li id="menuSAMLShibboleth"><h:panelGroup rendered="false">
 											<a href="#"> <i class="fa fa-pencil-square-o"></i> <span>#{msg['leftmenu.outbound']}</span>
 												<i class="fa fa-angle-left pull-right"></i></a>
 										</h:panelGroup> <!--Shibboleth-->
@@ -162,7 +160,7 @@
 											value="#{msg['leftmenu.trustRelationships']}"
 											onclick="lock();" ondbclick="lock();" oncomplete="unlock();"
 											action="#{menuAction.endConversation('/trustmanager/trustRelationships.xhtml')}"
-											rendered="true">
+											rendered="#{permissionService.hasPermission('trust', 'access') and productInstallationCheckerAction.showSAMLSubmenu}">
 											<i class="fa fa-chevron-right"
 												style="float: left; margin-top: 2px;"></i>
 										</h:commandLink></li>
@@ -170,7 +168,7 @@
 											value="#{msg['leftmenu.addRelationships']}" onclick="lock();"
 											ondbclick="lock();" oncomplete="unlock();"
 											action="#{menuAction.endConversation('/trustmanager/addTrustRelationship.xhtml')}"
-											rendered="true">
+											rendered="#{permissionService.hasPermission('trust', 'access') and productInstallationCheckerAction.showSAMLSubmenu}">
 											<i class="fa fa-chevron-right"
 												style="float: left; margin-top: 2px;"></i>
 										</h:commandLink></li>
@@ -182,12 +180,11 @@
 											rendered="#{permissionService.hasPermission('trust', 'access')}">
 											<i class="fa fa-chevron-right"
 												style="float: left; margin-top: 2px;"></i>
-										</h:commandLink></li>
-										
-										</li>
+										</h:commandLink></li></li>
 					</ul>
 					</li>
 					</ui:fragment>
+
 
 					<!-- Start Passport Section -->
 					<ui:fragment
@@ -426,11 +423,12 @@
 								$('#subMenuLinkConfiguration5').addClass(
 										'active');
 							}
-							if (window.location.href
-									.indexOf("saml/samlAcrs") != -1) {
-								$('#subMenuConfiguration').css('display', 'block');
+							if (window.location.href.indexOf("saml/samlAcrs") != -1) {
+								$('#subMenuConfiguration').css('display',
+										'block');
 								$('#menuConfiguration').addClass('active');
-								$('#subMenuLinkConfiguration33').addClass('active');
+								$('#subMenuLinkConfiguration33').addClass(
+										'active');
 							}
 
 							if (window.location.href
@@ -678,7 +676,7 @@
 								$('#menuUsers').addClass('active');
 								$('#subMenuLinkUsers2').addClass('active');
 							}
-							
+
 							if (window.location.href
 									.indexOf("radius/radiusServerConfiguration") != -1
 									|| window.location.href
