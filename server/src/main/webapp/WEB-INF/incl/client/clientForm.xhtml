@@ -186,7 +186,7 @@
 													<h:panelGroup id="selectedLoginURIsId">
 														<a4j:repeat value="#{_clientAction.loginUris}"
 															rowKeyVar="_urisIdx" var="_uri" iterationStatusVar="loop">
-															<div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
+															<div class="#{(loop.index % 2 == 0) ?'odd':'even'}" style="overflow-x:scroll;">
 																<h:outputText value="#{empty _uri ? _uri : _uri}" />
 																<h:outputText value="&#160;" />
 																<div class="span6 pull-right">
@@ -387,7 +387,7 @@
 															rowKeyVar="_grantTypeIdx" var="_grantType"
 															iterationStatusVar="loop">
 															<div class="row-fluid">
-																<div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
+																<div class="#{(loop.index % 2 == 0) ?'odd':'even'}" style="overflow-x:scroll;">
 																	<h:outputText value="#{_grantType.value}" />
 																	<h:outputText value="&#160;" />
 																	<div class="span6 pull-right">
@@ -420,7 +420,7 @@
 														<a4j:repeat value="#{_clientAction.logoutUris}"
 															rowKeyVar="_urisIdx" var="_uri" iterationStatusVar="loop">
 															<div class="row-fluid">
-																<div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
+																<div class="#{(loop.index % 2 == 0) ?'odd':'even'}" style="overflow-x:scroll;">
 																	<h:outputText value="#{empty _uri ? _uri : _uri}" />
 																	<h:outputText value="&#160;" />
 																	<div class="span6 pull-right">
@@ -530,7 +530,7 @@
 														<a4j:repeat value="#{_clientAction.claimRedirectURIList}"
 															rowKeyVar="_urisIdx" var="_uri" iterationStatusVar="loop">
 															<div class="row-fluid">
-																<div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
+																<div class="#{(loop.index % 2 == 0) ?'odd':'even'}" style="overflow-x:scroll;">
 																	<h:outputText value="#{empty _uri ? _uri : _uri}" />
 																	<h:outputText value="&#160;" />
 
@@ -567,7 +567,7 @@
 															rowKeyVar="_claimIdx" var="_claim"
 															iterationStatusVar="loop">
 															<div class="row-fluid">
-																<div class="#{(loop.index % 2 == 0) ? 'odd' : 'even'}">
+																<div class="#{(loop.index % 2 == 0) ? 'odd' : 'even'}" style="overflow-x:scroll;">
 																	<h:outputText value="#{_claim.displayName}" />
 																	<h:outputText value="&#160;" />
 																	<div class="span6 pull-right">
@@ -595,7 +595,7 @@
 															rowKeyVar="_requestUrisIdx" var="_requestUri"
 															iterationStatusVar="loop">
 															<div class="row-fluid">
-																<div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
+																<div class="#{(loop.index % 2 == 0) ?'odd':'even'}" style="overflow-x:scroll;">
 																	<h:outputText value="#{_requestUri}" />
 																	<h:outputText value="&#160;" />
 																	<div class="span6 pull-right">
@@ -630,7 +630,7 @@
 															rowKeyVar="_authorizedOriginsIdx" var="_authorizedOrigin"
 															iterationStatusVar="loop">
 															<div class="row-fluid">
-																<div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
+																<div class="#{(loop.index % 2 == 0) ?'odd':'even'}" style="overflow-x:scroll;">
 																	<h:outputText value="#{_authorizedOrigin}" />
 																	<h:outputText value="&#160;" />
 																	<div class="span6 pull-right">
@@ -703,7 +703,7 @@
 														<a4j:repeat value="#{_clientAction.clientlogoutUris}"
 															rowKeyVar="_urisIdx" var="_uri" iterationStatusVar="loop">
 															<div class="row-fluid">
-																<div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
+																<div class="#{(loop.index % 2 == 0) ?'odd':'even'}" style="overflow-x:scroll;">
 																	<h:outputText value="#{empty _uri ? _uri : _uri}" />
 																	<h:outputText value="&#160;" />
 																	<div class="span6 pull-right">
@@ -738,7 +738,7 @@
 														<a4j:repeat value="#{_clientAction.customScripts}"
 															rowKeyVar="_acrIdx" var="_acr" iterationStatusVar="loop">
 															<div class="row-fluid">
-																<div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
+																<div class="#{(loop.index % 2 == 0) ?'odd':'even'}" style="overflow-x:scroll;">
 																	<h:outputText value="#{_acr.name}" />
 																	<h:outputText value="&#160;" />
 																	<div class="span6 pull-right">

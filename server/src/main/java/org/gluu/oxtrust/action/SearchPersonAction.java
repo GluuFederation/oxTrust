@@ -7,7 +7,6 @@
 package org.gluu.oxtrust.action;
 
 import java.io.Serializable;
-import java.util.Comparator;
 import java.util.List;
 
 import javax.enterprise.context.ConversationScoped;
