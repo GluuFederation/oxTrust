@@ -15,6 +15,7 @@ import org.gluu.model.SmtpConfiguration;
 import org.gluu.oxtrust.model.cert.TrustStoreCertificate;
 import org.gluu.oxtrust.model.cert.TrustStoreConfiguration;
 import org.gluu.persist.annotation.AttributeName;
+import org.gluu.persist.annotation.CustomObjectClass;
 import org.gluu.persist.annotation.DataEntry;
 import org.gluu.persist.annotation.JsonObject;
 import org.gluu.persist.annotation.ObjectClass;
@@ -176,6 +177,9 @@ public class GluuConfiguration extends InumEntry implements Serializable {
 	@AttributeName(name = "oxCacheConfiguration")
 	@JsonObject
 	private CacheConfiguration cacheConfiguration;
+
+	@CustomObjectClass
+	private String[] customObjectClasses;
 
 	public final SmtpConfiguration getSmtpConfiguration() {
 		return smtpConfiguration;
@@ -535,6 +539,14 @@ public class GluuConfiguration extends InumEntry implements Serializable {
 
 	public void setCacheConfiguration(CacheConfiguration cacheConfiguration) {
 		this.cacheConfiguration = cacheConfiguration;
+	}
+
+	public String[] getCustomObjectClasses() {
+		return customObjectClasses;
+	}
+
+	public void setCustomObjectClasses(String[] customObjectClasses) {
+		this.customObjectClasses = customObjectClasses;
 	}
 
 	@Override
