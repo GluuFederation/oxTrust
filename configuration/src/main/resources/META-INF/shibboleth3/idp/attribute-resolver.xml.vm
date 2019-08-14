@@ -34,6 +34,13 @@
 #end
 #end
 
+#foreach( $attribute in $resovlerParams.attributes )
+    <resolver:AttributeDefinition xsi:type="ad:Simple" id="$attribute.name" sourceAttributeID="$attribute.name">
+        <resolver:Dependency ref="siteDataConnector" />
+        <resolver:AttributeEncoder xsi:type="enc:SAML2String" name="$resovlerParams.attributeSAML2Strings.get($attribute.name)" friendlyName="$attribute.name" encodeType="false" />
+    </resolver:AttributeDefinition>
+#end
+
     <!-- ========================================== -->
     <!--      Data Connectors                       -->
     <!-- ========================================== -->

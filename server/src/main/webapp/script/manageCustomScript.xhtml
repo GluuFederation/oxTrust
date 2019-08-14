@@ -1,50 +1,258 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://xmlns.jcp.org/jsf/core"
-                xmlns:h="http://xmlns.jcp.org/jsf/html"
-                xmlns:a4j="http://richfaces.org/a4j"
-                xmlns:ui="http://xmlns.jcp.org/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:b="http://bootsfaces.net/ui"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/WEB-INF/incl/layout/newtemplate.xhtml">
 
-    <f:metadata>
-        <f:viewAction action="#{conversationService.initConversation}" />
-		<f:viewAction action="#{manageCustomScriptAction.initAcrs}" onPostback="false" />
-		<f:viewAction action="#{manageCustomScriptAction.modify}" onPostback="false" />
-    </f:metadata>
-    <ui:define name="head">
-    </ui:define>
-    <ui:define name="body">
-        <section class="content-header">
-            <h1 style="color: #333;">
-                #{msg['customScript.configuration']}
-                <small>
-                    <i class="fa fa-caret-right"
-                       style="color: #333 !important;"/>#{msg['customScript.manageCustomScripts']}</small>
-            </h1>
-            <ol class="breadcrumb">
-                <li>
-                    <a href="#{request.contextPath}/home.htm">
-                        <i class="fa fa-home"/>
-                    </a>
-                </li>
-                <li class="organization/configuration">#{msg['customScript.manageCustomScripts']}</li>
-            </ol>
-        </section>
-        <section class="content">
-            <div id="formArea">
-                <ui:decorate template="/WEB-INF/incl/script/customScriptListForm.xhtml">
-                    <ui:param name="_action" value="#{manageCustomScriptAction}"/>
-                    <ui:define name="controlButttons">
-                        <div id="updateButtons" style="margin-top:10px;">
-                            <a4j:commandButton action="#{manageCustomScriptAction.save}" styleClass="btn btn-success"
-                                             oncomplete="document.location.reload(true);"
-                                             value="#{msg['customScript.update']}"/>
-                            <h:commandButton action="#{manageCustomScriptAction.cancel}" immediate="true"
-                                             onclick="document.location.reload();"
-                                             style="margin-left:5px !important;" styleClass="btn btn-success"
-                                             value="#{msg['customScript.cancel']}"/>
-                        </div>
-                    </ui:define>
-                </ui:decorate>
-            </div>
-        </section>
-    </ui:define>
+	<f:metadata>
+		<f:viewAction action="#{conversationService.initConversation}" />
+		<f:viewAction action="#{manageCustomScriptAction.initAcrs}"
+			onPostback="false" />
+		<f:viewAction action="#{manageCustomScriptAction.init(true)}"
+			onPostback="false" />
+	</f:metadata>
+	<ui:define name="head">
+	</ui:define>
+	<ui:define name="body">
+		<section class="content-header">
+			<h1 style="color: #333;">
+				#{msg['customScript.configuration']} <small> <i
+					class="fa fa-caret-right" style="color: #333 !important;" />#{msg['customScript.manageCustomScripts']}
+				</small>
+			</h1>
+			<ol class="breadcrumb">
+				<li><a href="#{request.contextPath}/home.htm"> <i
+						class="fa fa-home" />
+				</a></li>
+				<li class="organization/configuration">#{msg['customScript.manageCustomScripts']}</li>
+			</ol>
+		</section>
+		<h:outputStylesheet>
+		.list-group-item{
+		background-color: #05ffb0;
+		}
+
+		</h:outputStylesheet>
+		<section class="content">
+			<b:panel id="main" title="Gluu Custom Scripts" look="primary"
+				iconAwesome="fa-tree" collapsible="false">
+				<b:form prependId="false">
+					<div class="row">
+						<div class="col-sm-3 col-md-3 col-lg-3">
+							<b:commandButton
+								action="#{manageCustomScriptAction.initAddForm()}"
+								rendered="#{manageCustomScriptAction.showAddButton}"
+								styleClass="btn btn-primary" value="Add New Custom Script"
+								ajax="true" update="@form" icon="plus"
+								style="margin-bottom:5px !important;" />
+							<b:tree render-root="false" id="customScriptTreeViewId"
+								collapse-icon="fa fa-angle-down" selected-color="#ffffff"
+								auto-update="true"
+								nodeSelectionListener="#{manageCustomScriptAction}"
+								expand-icon="fa fa-angle-right" update="@form"
+								value="#{manageCustomScriptAction.getTree()}" showBorder="true"
+								style="width:100%;overflow-x:scroll" />
+						</div>
+						<div class="col-sm-9 col-md-9 col-lg-9">
+							<h:form id="customScriptForm" prependId="false">
+								<b:panel id="customScriptDetailPanelId"
+									title="#{manageCustomScriptAction.selectedScript.name}"
+									look="primary" iconAwesome="fa-detail" collapsible="false">
+									<h:panelGroup layout="block">
+										<ui:param name="_customScript"
+											value="#{manageCustomScriptAction.selectedScript}" />
+										<div class="row">
+											<div class="col-sm-6 col-md-6 col-lg-6"></div>
+											<div class="col-sm-2 col-md-2 col-lg-2">
+												<h:panelGroup layout="block" id="scriptErrorId">
+													<a4j:commandLink value="Show Error"
+														rendered="#{manageCustomScriptAction.hasCustomScriptError(_customScript)}"
+														render="scriptErrorViewId" immediate="true"
+														oncomplete="#{rich:component('viewScriptError:viewFile')}.show();"
+														execute="@this" styleClass="btn btn-warning"
+														style="color:white;" />
+												</h:panelGroup>
+											</div>
+											<div class="col-sm-2 col-md-2 col-lg-2">
+												<h:commandButton
+													action="#{manageCustomScriptAction.saveScript()}"
+													styleClass="btn btn-primary" value="Save" />
+											</div>
+											<div class="col-sm-2 col-md-2 col-lg-2">
+												<a4j:commandLink value="Delete Script" immediate="true"
+													onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();"
+													execute="@region" style="color:white;margin-right:30px;"
+													styleClass="btn btn-danger deleteScriptButton" />
+											</div>
+										</div>
+										<h:panelGroup id="scriptErrorViewId">
+											<ox:viewFileDialog id="viewScriptError" label="Error"
+												text="#{manageCustomScriptAction.getCustomScriptError(_customScript)}"
+												textHeight="370" textWidth="680" />
+										</h:panelGroup>
+										<h:panelGroup layout="block" class="form-script"
+											style="margin-left:-10px;margin-right:2px;">
+											<ox:decorate label="#{msg['customScript.name']}"
+												forId="#{msg['customScript.name']}"
+												tooltip="#{msg['customScript.name']}" leftClass="col-sm-3"
+												rightClass="col-sm-8">
+												<h:inputText value="#{_customScript.name}" size="90"
+													required="#{empty param['rq']}"
+													validatorMessage="#{msg['customScript.name.error']}"
+													styleClass="form-control scriptNameTextBox"
+													style="width:100%;">
+													<f:validateRegex pattern="^[a-zA-Z0-9_\\-\\:\\/\\.]+$" />
+												</h:inputText>
+											</ox:decorate>
+											<ox:decorate label="SAML ACRS" leftClass="col-sm-3"
+												rendered="#{manageCustomScriptAction.isPersonScript(_customScript)}"
+												rightClass="col-sm-8">
+												<h:selectManyListbox styleClass="samlAcrs"
+													value="#{_customScript.aliases}" id="SamlACRSId">
+													<f:selectItems
+														value="#{manageCustomScriptAction.getAvailableAcrs(_customScript.name)}" />
+												</h:selectManyListbox>
+											</ox:decorate>
+											<ox:decorate label="#{msg['customScript.description']}"
+												required="true" styleClass="break-word"
+												forId="#{msg['customScript.description']}"
+												tooltip="#{msg['customScript.description']}"
+												leftClass="col-sm-3" rightClass="col-sm-8">
+												<h:inputText value="#{_customScript.description}" size="90"
+													styleClass="form-control descriptionTextBox"
+													style="width: 95%;">
+												</h:inputText>
+											</ox:decorate>
+											<div class="row">
+												<div class="col-sm-6 col-md-6 col-lg-6">
+													<ox:decorate
+														label="#{(_scriptType.value != 'uma_claims_gathering')   ? msg['customScript.level']  : msg['customScript.priority']}"
+														required="true" styleClass="break-word"
+														forId="#{msg['customScript.description']}"
+														tooltip="#{msg['customScript.description']}"
+														oneColumn="true">
+														<rich:inputNumberSpinner value="#{_customScript.level}"
+															styleClass="inputNumberSpinnerBox" inputSize="4"
+															minValue="0" maxValue="100" />
+													</ox:decorate>
+												</div>
+												<div class="col-sm-6 col-md-6 col-lg-6">
+													<ox:decorate label="#{msg['customScript.locationType']}"
+														styleClass="break-word"
+														forId="#{msg['customScript.locationType']}"
+														tooltip="#{msg['customScript.locationType']}"
+														oneColumn="true">
+														<h:selectOneMenu value="#{_customScript.locationType}"
+															required="false"
+															styleClass="form-control locationTypeSelectBox">
+															<f:selectItems
+																value="#{configurationService.locationTypes}"
+																var="_type" itemLabel="#{_type.displayName}" />
+															<a4j:ajax event="change"
+																render="scriptAreaId, scriptPathId" limitRender="true"
+																execute="@this">
+															</a4j:ajax>
+														</h:selectOneMenu>
+													</ox:decorate>
+												</div>
+											</div>
+											<div class="row" style="margin-left: -10px;">
+												<div class="col-sm-7 col-md-7 col-lg-7">
+													<ox:decorate
+														label="#{msg['customScript.programmingLanguage']}"
+														required="true" styleClass="break-word"
+														forId="#{msg['customScript.description']}"
+														tooltip="#{msg['customScript.description']}"
+														oneColumn="true">
+														<h:selectOneMenu
+															value="#{_customScript.programmingLanguage}"
+															required="true" disabled="true" styleClass="form-control">
+															<f:selectItems
+																value="#{configurationService.programmingLanguages}"
+																var="_type" itemLabel="#{_type.displayName}" />
+														</h:selectOneMenu>
+													</ox:decorate>
+												</div>
+												<div class="col-sm-5 col-md-5 col-lg-5">
+													<ox:decorate label="#{msg['customScript.enabled']}"
+														forId="#{msg['customScript.enabled']}"
+														tooltip="#{msg['customScript.enabled']}">
+														<h:selectBooleanCheckbox value="#{_customScript.enabled}"
+															styleClass="customScriptStatusCheckBox" />
+													</ox:decorate>
+												</div>
+											</div>
+											<h:panelGroup layout="block" styleClass="right"
+												rendered="#{_scriptType.value eq 'person_authentication'}">
+												<ox:decorate label="#{_customScript.usageType}"
+													required="true" forId="#{_customScript.usageType}"
+													tooltip="#{_customScript.usageType}" oneColumn="true">
+													<h:selectOneMenu value="#{_customScript.usageType}"
+														required="true"
+														styleClass="form-control usageTypeSelectBox">
+														<f:selectItems
+															value="#{configurationService.scriptUsageTypes}"
+															var="_usageType" itemLabel="#{_usageType.displayName}" />
+													</h:selectOneMenu>
+												</ox:decorate>
+											</h:panelGroup>
+											<div class="left">
+												<ox:decorate label="#{msg['customScript.customProperty']}"
+													styleClass="break-word"
+													forId="#{msg['customScript.customProperty']}"
+													tooltip="#{msg['customScript.customProperty']}"
+													leftClass="col-sm-8" rightClass="col-sm-3">
+												</ox:decorate>
+											</div>
+											<div class="right"></div>
+											<ox:simpleCustomPropertiesList
+												label="#{msg['manageAuthentication.passport.strategy.addProperty']}"
+												hideLabel="true" showRemoveDialogue="true"
+												properties="#{_customScript.configurationProperties}"
+												propertiesAction="#{manageCustomScriptAction}"
+												hideValue="true" />
+											<h:panelGroup id="scriptAreaId">
+												<h:panelGroup layout="block" styleClass="form-group"
+													rendered="#{_customScript.locationType.value ne 'file'}">
+													<ox:decorate label="#{msg['customScript.script']}"
+														forId="#{msg['customScript.script']}"
+														tooltip="#{msg['customScript.script']}"
+														rendered="#{_customScript.locationType.value ne 'file'}">
+														<h:inputTextarea value="#{_customScript.script}"
+															styleClass="scriptTextArea" cols="110" rows="10" />
+													</ox:decorate>
+												</h:panelGroup>
+											</h:panelGroup>
+											<h:panelGroup id="scriptPathId">
+												<h:panelGroup layout="block" styleClass="form-group"
+													rendered="#{_customScript.locationType.value eq 'file'}">
+													<ox:decorate label="#{msg['customScript.scriptPath']}"
+														forId="#{msg['customScript.scriptPath']}"
+														tooltip="#{msg['customScript.scriptPath']}"
+														rendered="#{_customScript.locationType.value eq 'file'}">
+														<h:inputText value="#{_customScript.locationPath}"
+															size="90" styleClass="form-control scriptPathTextBox" />
+													</ox:decorate>
+												</h:panelGroup>
+											</h:panelGroup>
+											<hr></hr>
+											<ox:acceptRemovalDialog id="deleteConfirmation"
+												subject="Script" value="#{_customScript.name}"
+												deleteMethod="#{manageCustomScriptAction.removeCustomScript}"
+												render="main" />
+										</h:panelGroup>
+									</h:panelGroup>
+								</b:panel>
+							</h:form>
+						</div>
+					</div>
+				</b:form>
+			</b:panel>
+		</section>
+	</ui:define>
 </ui:composition>

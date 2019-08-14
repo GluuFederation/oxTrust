@@ -20,8 +20,10 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
@@ -480,23 +482,24 @@ public class Shibboleth3ConfService implements Serializable {
 		HashMap<String, Object> attrParams = new HashMap<String, Object>();
 
 		// Collect attributes
-		List<GluuAttribute> attributes = new ArrayList<GluuAttribute>();
-		List<String> attributeNames = new ArrayList<String>();
+		Set<GluuAttribute> attributes = new HashSet<GluuAttribute>();
+		
+		trustRelationships.stream().forEach(tr -> {
+			tr.getReleasedCustomAttributes().stream().forEach(ca -> {
+				attributes.add(ca.getMetadata());
+			});
+		});
 
-		for (GluuSAMLTrustRelationship trustRelationship : trustRelationships) {
+		return createAttributeMap(attributes);
+	}
 
-			for (GluuCustomAttribute customAttribute : trustRelationship.getReleasedCustomAttributes()) {
+	private HashMap<String, Object> createAttributeMap(Set<GluuAttribute> attributes) {
 
-				GluuAttribute metadata = customAttribute.getMetadata();
+		HashMap<String, Object> resolver = new HashMap<String, Object>();
+		List<String> attributeNames = new ArrayList<>();
 
-				if (!attributes.contains(metadata)) {
-
-					attributes.add(metadata);
-					String attributeName = metadata.getName();
-					attributeNames.add(attributeName);
-				}
-			}
-		}
+		for (GluuAttribute attribute : attributes)
+			attributeNames.add(attribute.getName());
 
 		SchemaEntry schemaEntry = shemaService.getSchema();
 		List<AttributeTypeDefinition> attributeTypes = shemaService.getAttributeTypeDefinitions(schemaEntry,
@@ -507,12 +510,10 @@ public class Shibboleth3ConfService implements Serializable {
 
 		for (GluuAttribute metadata : attributes) {
 			String attributeName = metadata.getName();
-			//
 			// urn::dir:attribute-def:$attribute.name
 			// urn:oid:$attrParams.attributeOids.get($attribute.name)
 			String saml1String = metadata.getSaml1Uri();
 			if (StringHelper.isEmpty(saml1String)) {
-
 				boolean standard = metadata.isCustom() || StringHelper.isEmpty(metadata.getUrn())
 						|| (!StringHelper.isEmpty(metadata.getUrn())
 								&& metadata.getUrn().startsWith("urn:gluu:dir:attribute-def:"));
@@ -536,11 +537,11 @@ public class Shibboleth3ConfService implements Serializable {
 			attributeSAML2Strings.put(attributeName, saml2String);
 		}
 
-		attrParams.put("attributes", attributes);
-		attrParams.put("attributeSAML1Strings", attributeSAML1Strings);
-		attrParams.put("attributeSAML2Strings", attributeSAML2Strings);
+		resolver.put("attributes", attributes);
+		resolver.put("attributeSAML1Strings", attributeSAML1Strings);
+		resolver.put("attributeSAML2Strings", attributeSAML2Strings);
 
-		return attrParams;
+		return resolver;
 	}
 
 	private HashMap<String, Object> initCASParamMap() {
@@ -562,10 +563,8 @@ public class Shibboleth3ConfService implements Serializable {
 	}
 
 	public HashMap<String, Object> initAttributeResolverParamMap() {
-		HashMap<String, Object> attributeResolverParams = new HashMap<String, Object>();
-
 		List<NameIdConfig> nameIdConfigs = new ArrayList<NameIdConfig>();
-		Map<String, GluuAttribute> nameIdAttributes = new HashMap<String, GluuAttribute>();
+		Set<GluuAttribute> nameIdAttributes = new HashSet<GluuAttribute>();
 
 		final LdapOxTrustConfiguration conf = configurationFactory.loadConfigurationFromLdap();
 		AttributeResolverConfiguration attributeResolverConfiguration = conf.getAttributeResolverConfig();
@@ -576,17 +575,17 @@ public class Shibboleth3ConfService implements Serializable {
 					GluuAttribute attribute = attributeService.getAttributeByName(attributeName);
 
 					nameIdConfigs.add(nameIdConfig);
-					nameIdAttributes.put(attributeName, attribute);
+					nameIdAttributes.add(attribute);
 				}
 			}
 		}
 
+		HashMap<String, Object> attributeResolverParams = createAttributeMap(nameIdAttributes);
 		attributeResolverParams.put("configs", nameIdConfigs);
 		attributeResolverParams.put("attributes", nameIdAttributes);
 
 		String baseUserDn = personService.getDnForPerson(null);
 		attributeResolverParams.put("persistenceType", persistenceEntryManager.getPersistenceType(baseUserDn));
-
 		return attributeResolverParams;
 	}
 
@@ -669,7 +668,7 @@ public class Shibboleth3ConfService implements Serializable {
 	}
 
 	public String getIdpConfAuthnDir() {
-		return appConfiguration.getShibboleth3IdpRootDir() + File.separator + SHIB3_IDP_CONF_FOLDER + File.separator + SHIB3_IDP_AUNTHN_FOLDER;
+		return appConfiguration.getShibboleth3IdpRootDir() + File.separator + SHIB3_IDP_CONF_FOLDER + File.separator + SHIB3_IDP_AUNTHN_FOLDER + File.separator;
 	}
 	
 	public String getIdpConfDir() {

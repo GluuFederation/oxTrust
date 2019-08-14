@@ -1,60 +1,82 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-    xmlns:f="http://xmlns.jcp.org/jsf/core"
-    xmlns:h="http://xmlns.jcp.org/jsf/html"
-    xmlns:a4j="http://richfaces.org/a4j"
-    xmlns:rich="http://richfaces.org/rich"
-    xmlns:gluufn="http://www.gluu.org/jsf/functions"
-    xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
-    xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
-    xmlns:cc="http://xmlns.jcp.org/jsf/composite">
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:gluufn="http://www.gluu.org/jsf/functions"
+	xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
+	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
+	xmlns:cc="http://xmlns.jcp.org/jsf/composite">
 
 <cc:interface>
-    <cc:attribute name="text" required="true" type="java.lang.String" />
-    <cc:attribute name="textId" required="false" default="textId" type="java.lang.String" />
-    <cc:attribute name="inputLabel" default="Text" required="false" type="java.lang.String" />
-    <cc:attribute name="label" default="Input Text" required="false" type="java.lang.String" />
-    <cc:attribute name="maxLength" default="128" required="false" type="java.lang.Integer" />
-    <cc:attribute name="inputWidth" default="128" required="false" type="java.lang.Integer" />
-    <cc:attribute name="dialogWidth" default="350" required="false" type="java.lang.Integer" />
-    <cc:attribute name="acceptMethod" required="true" method-signature="void action()" />
-    <cc:attribute name="cancelMethod" required="true" method-signature="void action()" />
-    <cc:attribute name="render" required="false" type="java.lang.String" />
-    <cc:attribute name="queue" default="ox" required="false" type="java.lang.String" />
+	<cc:attribute name="text" required="true" type="java.lang.String" />
+	<cc:attribute name="textId" required="false" default="textId"
+		type="java.lang.String" />
+	<cc:attribute name="inputLabel" default="Text" required="false"
+		type="java.lang.String" />
+	<cc:attribute name="label" default="Input Text" required="false"
+		type="java.lang.String" />
+	<cc:attribute name="maxLength" default="128" required="false"
+		type="java.lang.Integer" />
+	<cc:attribute name="inputWidth" default="128" required="false"
+		type="java.lang.Integer" />
+	<cc:attribute name="dialogWidth" default="350" required="false"
+		type="java.lang.Integer" />
+	<cc:attribute name="acceptMethod" required="true"
+		method-signature="void action()" />
+	<cc:attribute name="cancelMethod" required="true"
+		method-signature="void action()" />
+	<cc:attribute name="render" required="false" type="java.lang.String" />
+	<cc:attribute name="queue" default="ox" required="false"
+		type="java.lang.String" />
 </cc:interface>
 
 <cc:implementation>
-    <rich:popupPanel id="inputText" onmaskclick="#{rich:component('inputText')}.hide()" zindex="2000" moveable="true" autosized="true" width="#{cc.attrs.dialogWidth}" height="180">
-        <f:facet name="header">
-            <h:outputText value="#{cc.attrs.label}" />
-        </f:facet>
-        <f:facet name="controls">
-            <h:graphicImage value="/img/close.gif" styleClass="hidelink" style="cursor:pointer" onclick="#{rich:component('inputText')}.hide(); return false;" />
-        </f:facet>
-
-        <h:form>
-            <h:panelGroup>
-                <ox:decorate id="text" label="#{cc.attrs.inputLabel}">
-                    <div class="row" style="float:left;margin-left:3px;">
-                    <h:inputText value="#{cc.attrs.text}" size="40" maxlength="#{cc.attrs.maxLength}" styleClass="searchParameters form-control" id="#{cc.attrs.textId}" /></div>
-                </ox:decorate>
-
-                <richext:spacer height="16" />
-<div class="box-footer">
-					
-							<h:panelGroup>
-                    <a4j:commandButton style = "margin-top: 15px;" styleClass="btn btn-primary" action="#{cc.attrs.acceptMethod}" value="Ok" oncomplete="#{rich:component('inputText')}.hide();" render="#{cc.attrs.textId} #{cc.attrs.render}"
-                        eventsQueue="#{cc.attrs.queue}" />&nbsp;
-                    <a4j:commandButton style = "margin-top: 15px;" styleClass="btn btn-primary" action="#{cc.attrs.cancelMethod}" value="Cancel" oncomplete="#{rich:component('inputText')}.hide(); return false;" render="#{cc.attrs.textId}" execute="@this" eventsQueue="#{cc.attrs.queue}" />&nbsp;
-                    <a4j:status  startText="Request in progress please wait......" stopText="" startStyle="color:red" />
-                </h:panelGroup>
-						
+	<rich:popupPanel id="inputText"
+		onmaskclick="#{rich:component('inputText')}.hide()" zindex="2000"
+		moveable="true" autosized="true" width="#{cc.attrs.dialogWidth}"
+		height="180">
+		<f:facet name="header">
+			<h:outputText value="#{cc.attrs.label}" />
+		</f:facet>
+		<f:facet name="controls">
+			<h:graphicImage value="/img/close.gif" styleClass="hidelink"
+				style="cursor:pointer"
+				onclick="#{rich:component('inputText')}.hide(); return false;" />
+		</f:facet>
+		<h:form>
+			<h:panelGroup>
+				<ox:decorate id="text" label="#{cc.attrs.inputLabel}">
+					<div class="row" style="float: left; margin-left: 3px;">
+						<h:inputText value="#{cc.attrs.text}" size="40"
+							styleClass="searchParameters form-control"
+							id="#{cc.attrs.textId}" />
 					</div>
-                
-            </h:panelGroup>
-        </h:form>
-    </rich:popupPanel>
+				</ox:decorate>
+				<richext:spacer height="16" />
+				<div class="box-footer">
+					<h:panelGroup>
+						<a4j:commandButton style="margin-top: 15px;"
+							styleClass="btn btn-primary" action="#{cc.attrs.acceptMethod}"
+							value="Ok" oncomplete="#{rich:component('inputText')}.hide();"
+							render="#{cc.attrs.textId} #{cc.attrs.render}"
+							eventsQueue="#{cc.attrs.queue}" />&nbsp;
+                    <a4j:commandButton style="margin-top: 15px;"
+							styleClass="btn btn-primary" action="#{cc.attrs.cancelMethod}"
+							value="Cancel"
+							oncomplete="#{rich:component('inputText')}.hide(); return false;"
+							render="#{cc.attrs.textId}" execute="@this"
+							eventsQueue="#{cc.attrs.queue}" />&nbsp;
+                    <a4j:status
+							startText="Request in progress please wait......" stopText=""
+							startStyle="color:red" />
+					</h:panelGroup>
+				</div>
+			</h:panelGroup>
+		</h:form>
+	</rich:popupPanel>
 </cc:implementation>
 
 </html>

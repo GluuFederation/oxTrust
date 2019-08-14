@@ -111,6 +111,16 @@
 										styleClass="rounded form-control passportEnableStateSelectBox"
 										id="passportEnabledStateId" />
 								</ox:decorate>
+								<ox:decorate id="samlEnabledState"
+									label="#{msg['organizationForm.samlSupport']}">
+									<h:selectBooleanCheckbox value="#{_configuration.samlEnabled}"
+										styleClass="rounded form-control" id="samlEnabledStateId"/>
+								</ox:decorate>
+								<ox:decorate id="radiusEnabledState"
+									label="#{msg['organizationForm.radiusSupport']}">
+									<h:selectBooleanCheckbox value="#{_configuration.radiusEnabled}"
+										styleClass="rounded form-control" id="radiusEnabledStateId"/>
+								</ox:decorate>
 								<ox:decorate id="maxLogSize"
 									label="#{msg['organizationForm.maxLogSize']}">
 									<h:inputText value="#{_configuration.maxLogSize}"
