@@ -8,7 +8,6 @@ import javax.inject.Named;
 
 import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
-import org.gluu.persist.exception.EntryPersistenceException;
 import org.slf4j.Logger;
 
 /**
@@ -31,6 +30,9 @@ public class ShibbolethInitializer {
 	private TrustService trustService;
 	
 	@Inject
+	private SamlAcrService samlAcrService;
+	
+	@Inject
 	private Shibboleth3ConfService shibboleth3ConfService;
 	
 	public boolean createShibbolethConfiguration() {
@@ -42,6 +44,7 @@ public class ShibbolethInitializer {
 			log.info("########## shibbolethVersion = " + shibbolethVersion);
 			shibboleth3ConfService.generateMetadataFiles();
 			shibboleth3ConfService.generateConfigurationFiles(trustRelationships);
+			shibboleth3ConfService.generateConfigurationFiles(samlAcrService.getAll());
 		}
 
 		return true;

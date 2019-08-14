@@ -61,8 +61,8 @@ public class SamlAcrService implements Serializable {
 		ldapEntryManager.remove(samlAcr);
 	}
 
-	public List<SamlAcr> getAll() {
-		return ldapEntryManager.findEntries(getDn(null), SamlAcr.class, null);
+	public SamlAcr[] getAll() {
+		return ldapEntryManager.findEntries(getDn(null), SamlAcr.class, null).stream().toArray(size -> new SamlAcr[size]);
 	}
 
 	public boolean contains(SamlAcr samlAcr) {

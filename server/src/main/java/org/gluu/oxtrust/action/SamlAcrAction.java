@@ -2,6 +2,7 @@ package org.gluu.oxtrust.action;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -12,6 +13,7 @@ import javax.inject.Named;
 
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.oxtrust.ldap.service.SamlAcrService;
+import org.gluu.oxtrust.ldap.service.Shibboleth3ConfService;
 import org.gluu.oxtrust.model.SamlAcr;
 import org.gluu.service.security.Secure;
 import org.slf4j.Logger;
@@ -33,6 +35,9 @@ public class SamlAcrAction implements Serializable {
 
 	@Inject
 	private SamlAcrService samlAcrService;
+	
+	@Inject
+	private Shibboleth3ConfService shibboleth3ConfService;
 
 	private SamlAcr samlAcr;
 
@@ -45,7 +50,7 @@ public class SamlAcrAction implements Serializable {
 	public List<SamlAcr> getAcrs() {
 		return acrs;
 	}
-
+	
 	public void setAcrs(List<SamlAcr> acrs) {
 		this.acrs = acrs;
 	}
@@ -53,7 +58,7 @@ public class SamlAcrAction implements Serializable {
 	@PostConstruct
 	public void init() {
 		try {
-			acrs = samlAcrService.getAll();
+			acrs.addAll(Arrays.asList(samlAcrService.getAll()));
 		} catch (Exception e) {
 			log.error("Error loading saml acrs", e);
 		}
@@ -73,6 +78,7 @@ public class SamlAcrAction implements Serializable {
 		try {
 			samlAcrService.remove(acr);
 			this.acrs.remove(acr);
+			shibboleth3ConfService.generateConfigurationFiles(samlAcrService.getAll());
 			facesMessages.add(FacesMessage.SEVERITY_INFO, acr.getClassRef() + " removed!");
 		} catch (Exception e) {
 			log.info("", e);
@@ -84,6 +90,7 @@ public class SamlAcrAction implements Serializable {
 	public void addEntry() {
 		if (this.samlAcr.getInum() != null) {
 			samlAcrService.update(this.samlAcr);
+			shibboleth3ConfService.generateConfigurationFiles(samlAcrService.getAll());
 			facesMessages.add(FacesMessage.SEVERITY_INFO, this.samlAcr.getClassRef() + " updated!");
 			this.samlAcr = null;
 			this.edit = false;
@@ -100,6 +107,7 @@ public class SamlAcrAction implements Serializable {
 		} else {
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "All fields are required!");
 		}
+		shibboleth3ConfService.generateConfigurationFiles(samlAcrService.getAll());
 	}
 
 	public boolean isEdit() {

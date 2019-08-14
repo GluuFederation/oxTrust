@@ -668,7 +668,7 @@ public class Shibboleth3ConfService implements Serializable {
 	}
 
 	public String getIdpConfAuthnDir() {
-		return appConfiguration.getShibboleth3IdpRootDir() + File.separator + SHIB3_IDP_CONF_FOLDER + File.separator + SHIB3_IDP_AUNTHN_FOLDER;
+		return appConfiguration.getShibboleth3IdpRootDir() + File.separator + SHIB3_IDP_CONF_FOLDER + File.separator + SHIB3_IDP_AUNTHN_FOLDER + File.separator;
 	}
 	
 	public String getIdpConfDir() {
