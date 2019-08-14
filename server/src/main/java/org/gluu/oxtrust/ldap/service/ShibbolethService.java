@@ -23,6 +23,9 @@ public class ShibbolethService {
 	@Inject
 	private TrustService trustService;
 
+	@Inject
+	private SamlAcrService samlAcrService;
+		
 	public void update(CASProtocolConfiguration casProtocolConfiguration) {
 		try {
 			if (casProtocolConfiguration.isShibbolethEnabled()) {
@@ -73,6 +76,7 @@ public class ShibbolethService {
 	private void updateShibboleth3Configuration() {
 		List<GluuSAMLTrustRelationship> trustRelationships = trustService.getAllActiveTrustRelationships();
 		shibboleth3ConfService.generateConfigurationFiles(trustRelationships);
+		shibboleth3ConfService.generateConfigurationFiles(samlAcrService.getAll());
 	}
 
 }
