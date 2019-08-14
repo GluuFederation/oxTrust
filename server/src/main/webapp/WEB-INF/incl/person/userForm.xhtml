@@ -219,6 +219,7 @@
 			                                                            (_custAttr.metadata.displayName ne 'Gender, male or female') and
 			                                                            (_custAttr.metadata.dataType.value ne 'certificate') and 
 			                                                            (_custAttr.metadata.displayName ne 'Email') and
+			                                                            (_custAttr.metadata.displayName ne 'User Status') and 
 			                                                            (_custAttr.metadata.displayName ne 'Birthdate')}">
 												<rich:validator event="blur" />
 												<f:validator validatorId="attributeValidator" />
@@ -252,7 +253,7 @@
 												styleClass="rounded form-control #{_custAttr.metadata.displayName}"
 												value="#{updatePersonAction.gluuStatus}"
 												required="#{_mustEnter}" id="statusId"
-												rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.dataType.value eq 'boolean') and (_custAttr.metadata.displayName eq 'User Status') }">
+												rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'User Status') }">
 												<f:selectItems
 													value="#{updatePersonAction.activeInactiveStatuses}"
 													var="_type" itemLabel="#{_type.displayName}" />
