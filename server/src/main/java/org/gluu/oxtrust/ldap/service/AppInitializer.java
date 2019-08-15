@@ -170,8 +170,6 @@ public class AppInitializer {
 		log.debug("Initializing application services");
 		showBuildInfo();
 
-		customLibrariesLoader.init();
-
 		configurationFactory.create();
 
 		PersistenceEntryManager localLdapEntryManager = persistenceEntryManagerInstance.get();
