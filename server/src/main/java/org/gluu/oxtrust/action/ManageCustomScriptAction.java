@@ -45,6 +45,7 @@ import org.gluu.service.custom.script.AbstractCustomScriptService;
 import org.gluu.service.security.Secure;
 import org.gluu.util.OxConstants;
 import org.gluu.util.StringHelper;
+import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -76,6 +77,9 @@ public class ManageCustomScriptAction
 	private FacesMessages facesMessages;
 
 	@Inject
+	private Logger log;
+
+	@Inject
 	private ConversationService conversationService;
 
 	@Inject
@@ -101,29 +105,35 @@ public class ManageCustomScriptAction
 	private CustomScriptType selectedScriptType = CustomScriptType.PERSON_AUTHENTICATION;
 
 	public void init(boolean isInitial) {
-		tree = (GluuTreeModel) new GluuTreeModel().withText("root").withSelectable(false).withExpanded(false);
-		CustomScriptType[] allowedCustomScriptTypes = this.configurationService.getCustomScriptTypes();
-		Stream.of(allowedCustomScriptTypes).forEach(e -> {
-			GluuTreeModel node = (GluuTreeModel) new GluuTreeModel().withText(e.getDisplayName()).withExpanded(false);
-			node.setParent(true);
-			node.setCustomScriptType(CustomScriptType.getByValue(e.getValue()));
-			List<CustomScript> customScripts = customScriptService.findCustomScripts(Arrays.asList(e));
-			customScripts.forEach(k -> {
-				GluuTreeModel scriptNode = (GluuTreeModel) new GluuTreeModel().withText(k.getName())
-						.withIcon("fa fa-info").withExpanded(false);
-				scriptNode.setInum(k.getInum());
-				scriptNode.setDn(k.getDn());
-				node.withSubnode(scriptNode);
+		try {
+			tree = (GluuTreeModel) new GluuTreeModel().withText("root").withSelectable(false).withExpanded(false);
+			CustomScriptType[] allowedCustomScriptTypes = this.configurationService.getCustomScriptTypes();
+			Stream.of(allowedCustomScriptTypes).forEach(e -> {
+				GluuTreeModel node = (GluuTreeModel) new GluuTreeModel().withText(e.getDisplayName())
+						.withExpanded(false);
+				node.setParent(true);
+				node.setCustomScriptType(CustomScriptType.getByValue(e.getValue()));
+				List<CustomScript> customScripts = customScriptService.findCustomScripts(Arrays.asList(e));
+				customScripts.forEach(k -> {
+					GluuTreeModel scriptNode = (GluuTreeModel) new GluuTreeModel().withText(k.getName())
+							.withIcon("fa fa-info").withExpanded(false);
+					scriptNode.setInum(k.getInum());
+					scriptNode.setDn(k.getDn());
+					node.withSubnode(scriptNode);
+				});
+				tree.withSubnode(node);
 			});
-			tree.withSubnode(node);
-		});
-		if (isInitial) {
-			this.selectedScript = customScriptService
-					.findCustomScripts(Arrays.asList(CustomScriptType.PERSON_AUTHENTICATION)).get(0);
-		} else {
-			this.selectedScript = customScriptService.getCustomScriptByINum(dn, inum, null).get();
+			if (isInitial) {
+				this.selectedScript = customScriptService
+						.findCustomScripts(Arrays.asList(CustomScriptType.PERSON_AUTHENTICATION)).get(0);
+			} else {
+				this.selectedScript = customScriptService.getCustomScriptByINum(dn, inum, null).get();
+			}
+			tree.expandParentOfNode(selectedScript);
+		} catch (Exception e) {
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Error  building custom script tree structure");
+			log.error("", e);
 		}
-		tree.expandParentOfNode(selectedScript);
 	}
 
 	public void initAddForm() {
@@ -237,8 +247,8 @@ public class ManageCustomScriptAction
 	public void removeCustomScript() {
 		if (this.selectedScript != null && this.selectedScript.getInum() != null) {
 			customScriptService.remove(this.selectedScript);
-			init(true);
 			facesMessages.add(FacesMessage.SEVERITY_INFO, this.selectedScript.getName() + " removed successfully");
+			init(true);
 		}
 	}
 
@@ -379,7 +389,8 @@ public class ManageCustomScriptAction
 				Optional<CustomScript> customScript = customScriptService.getCustomScriptByINum(node.getDn(),
 						node.getInum(), null);
 				if (customScript.isPresent()) {
-					selectedScript = customScript.get();
+					this.selectedScript = customScript.get();
+					this.selectedScriptType = node.getCustomScriptType();
 				}
 			}
 			if (node.isParent()) {
