@@ -124,13 +124,24 @@ public class ManageCustomScriptAction
 			if (isInitial) {
 				this.selectedScript = customScriptService
 						.findCustomScripts(Arrays.asList(CustomScriptType.PERSON_AUTHENTICATION)).get(0);
+				fillEmptyListProperty();
 			} else {
 				this.selectedScript = customScriptService.getCustomScriptByINum(dn, inum, null).get();
+				fillEmptyListProperty();
 			}
 			tree.expandParentOfNode(selectedScript);
 		} catch (Exception e) {
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Error  building custom script tree structure");
 			log.error("", e);
+		}
+	}
+
+	private void fillEmptyListProperty() {
+		if (this.selectedScript.getConfigurationProperties() == null) {
+			this.selectedScript.setConfigurationProperties(new ArrayList<SimpleExtendedCustomProperty>());
+		}
+		if (this.selectedScript.getModuleProperties() == null) {
+			this.selectedScript.setModuleProperties(new ArrayList<SimpleCustomProperty>());
 		}
 	}
 
@@ -267,6 +278,7 @@ public class ManageCustomScriptAction
 	@Override
 	public void addItemToSimpleCustomProperties(List<SimpleCustomProperty> simpleCustomProperties) {
 		if (simpleCustomProperties != null) {
+			log.info("======================================SIZE: " + selectedScript.getConfigurationProperties().size());
 			simpleCustomProperties.add(new SimpleExtendedCustomProperty("", ""));
 		}
 	}
@@ -364,12 +376,16 @@ public class ManageCustomScriptAction
 				if (customScript.isPresent()) {
 					this.selectedScript = customScript.get();
 					this.selectedScriptType = node.getCustomScriptType();
+					fillEmptyListProperty();
 				}
 			}
 			if (node.isParent()) {
 				this.selectedScriptType = node.getCustomScriptType();
 				setShowAddButton(true);
+				node.setExpanded(true);
 			}
+		} else {
+			setShowAddButton(false);
 		}
 	}
 
