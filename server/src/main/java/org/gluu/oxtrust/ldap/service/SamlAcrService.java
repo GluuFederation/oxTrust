@@ -1,7 +1,6 @@
 package org.gluu.oxtrust.ldap.service;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.UUID;
 
 import javax.inject.Inject;

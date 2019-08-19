@@ -6,7 +6,6 @@
 
 package org.gluu.oxtrust.action;
 
-import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,14 +15,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.enterprise.context.ConversationScoped;
 import javax.faces.application.FacesMessage;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
@@ -37,6 +35,7 @@ import org.gluu.model.custom.script.CustomScriptType;
 import org.gluu.model.custom.script.model.CustomScript;
 import org.gluu.model.custom.script.model.auth.AuthenticationCustomScript;
 import org.gluu.oxtrust.ldap.service.ConfigurationService;
+import org.gluu.oxtrust.ldap.service.SamlAcrService;
 import org.gluu.oxtrust.model.GluuTreeModel;
 import org.gluu.oxtrust.model.SimpleCustomPropertiesListModel;
 import org.gluu.oxtrust.model.SimplePropertiesListModel;
@@ -46,10 +45,6 @@ import org.gluu.service.security.Secure;
 import org.gluu.util.OxConstants;
 import org.gluu.util.StringHelper;
 import org.slf4j.Logger;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import com.google.common.base.Optional;
 
@@ -86,13 +81,16 @@ public class ManageCustomScriptAction
 	private ConfigurationService configurationService;
 
 	@Inject
+	private SamlAcrService samlAcrService;
+
+	@Inject
 	private AbstractCustomScriptService customScriptService;
 
 	private Map<CustomScriptType, List<CustomScript>> customScriptsByTypes;
 
 	private boolean initialized;
 
-	private static Set<String> allAcrs = new HashSet<>();
+	private static List<String> allAcrs = new ArrayList<>();
 
 	private GluuTreeModel tree;
 
@@ -308,32 +306,7 @@ public class ManageCustomScriptAction
 	public void initAcrs() {
 		try {
 			allAcrs.clear();
-			File file = new File("/opt/shibboleth-idp/conf/authn/general-authn.xml");
-			DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
-			Document document = documentBuilder.parse(file);
-			document.getDocumentElement().normalize();
-			NodeList nodes = document.getElementsByTagName("util:list");
-			NodeList childNodes = nodes.item(0).getChildNodes();
-			Element element = null;
-			for (int index = 0; index < childNodes.getLength(); index++) {
-				Node node = childNodes.item(index);
-				if (node.getNodeType() == Node.ELEMENT_NODE) {
-					Element e = (Element) node;
-					String id = e.getAttribute("id");
-					if (id.equalsIgnoreCase("authn/oxAuth")) {
-						element = e;
-						break;
-					}
-				}
-			}
-			if (element != null) {
-				NodeList items = element.getElementsByTagName("bean");
-				for (int i = 0; i < items.getLength(); i++) {
-					Element node = (Element) items.item(i);
-					allAcrs.add(node.getAttribute("c:classRef"));
-				}
-			}
+			allAcrs = Stream.of(samlAcrService.getAll()).map(e -> e.getClassRef()).collect(Collectors.toList());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
