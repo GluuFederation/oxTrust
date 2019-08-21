@@ -278,7 +278,6 @@ public class ManageCustomScriptAction
 	@Override
 	public void addItemToSimpleCustomProperties(List<SimpleCustomProperty> simpleCustomProperties) {
 		if (simpleCustomProperties != null) {
-			log.info("======================================SIZE: " + selectedScript.getConfigurationProperties().size());
 			simpleCustomProperties.add(new SimpleExtendedCustomProperty("", ""));
 		}
 	}
@@ -320,7 +319,7 @@ public class ManageCustomScriptAction
 			allAcrs.clear();
 			allAcrs = Stream.of(samlAcrService.getAll()).map(e -> e.getClassRef()).collect(Collectors.toList());
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.info("", e);
 		}
 	}
 

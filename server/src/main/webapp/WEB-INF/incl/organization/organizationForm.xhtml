@@ -121,12 +121,6 @@
 									<h:selectBooleanCheckbox value="#{_configuration.radiusEnabled}"
 										styleClass="rounded form-control" id="radiusEnabledStateId"/>
 								</ox:decorate>
-								<ox:decorate id="maxLogSize"
-									label="#{msg['organizationForm.maxLogSize']}">
-									<h:inputText value="#{_configuration.maxLogSize}"
-										required="true"
-										styleClass="rounded form-control maxLogSizeTextBox" size="10" />
-								</ox:decorate>
 								<ox:decorate id="profileManagment"
 									label="#{msg['organizationForm.userCanEditProfile']}">
 									<h:selectBooleanCheckbox
@@ -139,6 +133,12 @@
 										p:oninvalid="this.setCustomValidity('Please provide a valid email address.')"
 										p:type="email" value="#{_configuration.contactEmail}"
 										styleClass="rounded form-control contactEmailTextBox" />
+								</ox:decorate>
+								<ox:decorate id="maxLogSize"
+									label="#{msg['organizationForm.maxLogSize']}">
+									<h:inputText value="#{_configuration.maxLogSize}"
+										required="true"
+										styleClass="rounded form-control maxLogSizeTextBox" size="10" />
 								</ox:decorate>
 							</h:panelGroup>
 						</div>

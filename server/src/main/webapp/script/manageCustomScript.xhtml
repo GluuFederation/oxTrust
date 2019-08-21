@@ -3,6 +3,7 @@
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:b="http://bootsfaces.net/ui"
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
 	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j"
@@ -85,14 +86,13 @@
 												styleClass="btn btn-danger deleteScriptButton" />
 										</div>
 									</div>
-									<h:panelGroup layout="block" class="form-script"
-										style="margin-left:-10px;margin-right:2px;">
+									<h:panelGroup layout="block">
 										<ox:decorate label="#{msg['customScript.name']}"
 											forId="#{msg['customScript.name']}"
 											tooltip="#{msg['customScript.name']}" leftClass="col-sm-3"
 											rightClass="col-sm-8">
 											<h:inputText value="#{_customScript.name}" size="90"
-												required="#{empty param['rq']}"
+												required="#{empty param['rq']}" p:autofocus="true"
 												validatorMessage="#{msg['customScript.name.error']}"
 												styleClass="form-control scriptNameTextBox"
 												style="width:100%;">
@@ -124,11 +124,10 @@
 													label="#{(_scriptType.value != 'uma_claims_gathering')   ? msg['customScript.level']  : msg['customScript.priority']}"
 													required="true" styleClass="break-word"
 													forId="#{msg['customScript.description']}"
-													tooltip="#{msg['customScript.description']}"
-													oneColumn="true">
-													<rich:inputNumberSpinner value="#{_customScript.level}"
-														styleClass="inputNumberSpinnerBox" inputSize="4"
-														minValue="0" maxValue="100" />
+													tooltip="#{msg['customScript.description']}">
+													<b:touchSpin id="serverPortID" col-md="9" required="true"
+														styleClass="rounded inputNumberSpinnerBox"
+														value="#{_customScript.level}" min="0" max="100" step="1" />
 												</ox:decorate>
 											</div>
 											<div class="col-sm-6 col-md-6 col-lg-6">
@@ -191,29 +190,29 @@
 												</h:selectOneMenu>
 											</ox:decorate>
 										</h:panelGroup>
-										<div class="form-group">
-											<b:panel title="Custom Properties" look="success"
-												iconAwesome="fa-cogs">
-												<ox:simpleCustomPropertiesList
-													label="#{msg['manageAuthentication.passport.strategy.addProperty']}"
-													hideLabel="true" showRemoveDialogue="true"
-													properties="#{_customScript.configurationProperties}"
-													propertiesAction="#{manageCustomScriptAction}"
-													hideValue="true" />
-											</b:panel>
-										</div>
-										<h:panelGroup id="scriptAreaId">
+										<b:panel title="Custom Properties" look="success"
+											iconAwesome="fa-cogs">
+											<ox:simpleCustomPropertiesList
+												label="#{msg['manageAuthentication.passport.strategy.addProperty']}"
+												hideLabel="true" showRemoveDialogue="true"
+												properties="#{_customScript.configurationProperties}"
+												propertiesAction="#{manageCustomScriptAction}"
+												hideValue="true" />
+										</b:panel>
+										<b:panel id="scriptAreaId" title="Script content"
+											look="success" iconAwesome="fa-cogs">
 											<h:panelGroup layout="block" styleClass="form-group"
 												rendered="#{_customScript.locationType.value ne 'file'}">
 												<ox:decorate label="#{msg['customScript.script']}"
-													forId="#{msg['customScript.script']}"
+													forId="#{msg['customScript.script']}" leftClass="col-sm-0"
+													rightClass="col-sm-12" hideLabel="true"
 													tooltip="#{msg['customScript.script']}"
 													rendered="#{_customScript.locationType.value ne 'file'}">
 													<h:inputTextarea value="#{_customScript.script}"
 														styleClass="scriptTextArea" cols="110" rows="10" />
 												</ox:decorate>
 											</h:panelGroup>
-										</h:panelGroup>
+										</b:panel>
 										<h:panelGroup id="scriptPathId">
 											<h:panelGroup layout="block" styleClass="form-group"
 												rendered="#{_customScript.locationType.value eq 'file'}">

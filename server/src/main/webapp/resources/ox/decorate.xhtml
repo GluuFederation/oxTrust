@@ -27,7 +27,7 @@
 		<h:panelGroup layout="block" id="#{not empty cc.attrs.inputId ? cc.attrs.inputId : 'output'}Region" class="row"
 			style="padding:5px;margin-bottom: 5px;margin-left:0px" rendered="#{cc.attrs.rendered}">
 			<h:panelGroup id="#{not empty cc.attrs.inputId ? cc.attrs.inputId : 'output'}LabelPanel" styleClass="#{cc.attrs.leftClass !=null ? cc.attrs.leftClass : 'col-sm-4 col-lg-4'}"
-				rendered="#{not cc.attrs.hideLabel}">
+				rendered="#{not cc.attrs.hideLabel}" style="margin-top:5px;">
 
 				<span class="name #{cc.attrs.invalid ? 'errors' : 'new-label'}">
 					<h:outputLabel title="#{cc.attrs.title}"   id="label" styleClass="#{cc.attrs.required ? 'break-word' : cc.attrs.styleClass}" value="#{gluufn:trim(cc.attrs.label)}:" rendered="#{not cc.attrs.labelAsText}" for="#{cc.attrs.forId}">
