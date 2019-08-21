@@ -104,7 +104,7 @@ public class ConfigurationFactory {
 	public static final String DIR = BASE_DIR + File.separator + "conf" + File.separator;
 
 	private static final String BASE_PROPERTIES_FILE = DIR + "gluu.properties";
-	public static final String LDAP_PROPERTIES_FILE = DIR + "oxtrust-ldap.properties";
+	public static final String LDAP_PROPERTIES_FILE = DIR + "oxtrust.properties";
 
 	public static final String APPLICATION_CONFIGURATION = "oxtrust-config.json";
 	public static final String CACHE_PROPERTIES_FILE = "oxTrustCacheRefresh.properties";
