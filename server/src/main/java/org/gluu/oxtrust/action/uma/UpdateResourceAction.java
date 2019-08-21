@@ -209,7 +209,7 @@ public class UpdateResourceAction implements Serializable {
 		updateResources();
 		if (this.update) {
 			if (resourceWithSameNameExistInUpdate()) {
-				facesMessages.add(FacesMessage.SEVERITY_ERROR, "A resource with same name already exist");
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, "A resource with same name already exist 1.");
 				return OxTrustConstants.RESULT_FAILURE;
 			}
 			resource.setRev(String.valueOf(StringHelper.toInteger(resource.getRev(), 0) + 1));
@@ -227,7 +227,7 @@ public class UpdateResourceAction implements Serializable {
 			return OxTrustConstants.RESULT_SUCCESS;
 		} else {
 			if (resourceWithSameNameExist()) {
-				facesMessages.add(FacesMessage.SEVERITY_ERROR, "A resource with same name already exist");
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, "A resource with same name already exist 2.");
 				return OxTrustConstants.RESULT_FAILURE;
 			}
 			String id = String.valueOf(System.currentTimeMillis());
@@ -261,7 +261,7 @@ public class UpdateResourceAction implements Serializable {
 
 	private boolean resourceWithSameNameExistInUpdate() {
 		List<UmaResource> values=umaResourcesService.getAllResources(1000).stream()
-		.filter(e -> !e.getId().equalsIgnoreCase(this.resource.getId())).collect(Collectors.toList());
+		.filter(e -> e.getId().equalsIgnoreCase(this.resource.getId())).collect(Collectors.toList());
 		return !values.stream().noneMatch(e -> !e.getId().equalsIgnoreCase(this.resource.getId()));
 	}
 

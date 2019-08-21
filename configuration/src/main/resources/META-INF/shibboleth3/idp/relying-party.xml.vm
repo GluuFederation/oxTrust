@@ -128,10 +128,10 @@
                         #if($profileConfig.signingCredentialRef)
                           p:signingCredentialRef="$profileConfig.signingCredentialRef"
                         #end 
-                        #if($profileConfig.defaultNameIDFormat != '')
-                          p:nameIDFormatPrecedence="$profileConfig.defaultNameIDFormat"
+                        #if($profileConfig.nameIDFormatPrecedence != '')
+                          p:nameIDFormatPrecedence="$profileConfig.nameIDFormatPrecedence"
                         #end >
-                        #if ($profileConfig.defaultAuthenticationMethod != '')
+                        #if ($profileConfig.defaultAuthenticationMethod != 'none')
                         <property name="defaultAuthenticationMethods">
                             <list>
                                 <bean parent="shibboleth.SAML2AuthnContextClassRef" c:classRef="$profileConfig.defaultAuthenticationMethod" />

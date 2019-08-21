@@ -17,7 +17,6 @@
 		<f:viewAction action="#{searchClientAction.start}"
 			if="#{searchClientAction.clientList == null}" onPostback="false" />
 	</f:metadata>
-
 	<ui:define name="body">
 		<section class="content-header">
 			<h1 style="color: #333;">
@@ -35,86 +34,88 @@
 						#{msg['client.clients']}</a></li>
 			</ol>
 		</section>
-		<div id="formArea" style="margin-top: 10px;">
-			<div class="col-xs-12 col-md-12">
-				<b:panel title="OpenID Connect Clients List" look="primary" iconAwesome="fa-list">
-					<h:panelGroup id="oidcClientsTable">
-						<div class="row"
-							style="padding: 5px; margin-bottom: 5px; margin-left: 15px">
-							<b:link style-class="addClientButtonClass btn btn-primary"
-								icon="plus" outcome="/client/addClient" onclick="clearOIDC();"
-								value="#{msg['client.addClient']}" includeViewParams="false" />
-						</div>
-						<richext:spacer height="16" />
-						<h:form>
-							<ox:decorate hideLabel="true" id="searchPattern">
-								<div style="width: 100%; float: left; margin-left: 17px;">
-									<h:inputText
-										alt="Search parameters for client like inum,iname,displayName"
-										id="searchPatternId" maxlength="30" size="30"
-										style="width:60%; float:left;"
-										styleClass="form-control searchBoxClass"
-										value="#{searchClientAction.searchPattern}" />
-									<b:commandButton action="#{searchClientAction.search}"
-										style="float:left;margin-left :3px;"
-										styleClass="btn btn-primary searchButtonClass"
-										value="#{msg['client.search']}" iconAwesome="fa-search" />
-								</div>
-							</ox:decorate>
-						</h:form>
-						<div class="row">
-							<div class="box-body">
-								<div class="table-responsive" style="overflow: auto">
-									<h:form id="clientsFormId">
-										<ui:fragment
-											rendered="#{searchClientAction.clientList.size() eq 0}">
+		<section class="content">
+			<div id="formArea" style="margin-top: 10px;">
+				<div class="col-xs-12 col-md-12">
+					<b:panel title="OpenID Connect Clients List" look="primary"
+						iconAwesome="fa-list">
+						<h:panelGroup id="oidcClientsTable">
+							<div class="row"
+								style="padding: 5px; margin-bottom: 5px; margin-left: 15px">
+								<b:link style-class="addClientButtonClass btn btn-primary"
+									icon="plus" outcome="/client/addClient" onclick="clearOIDC();"
+									value="#{msg['client.addClient']}" includeViewParams="false" />
+							</div>
+							<richext:spacer height="16" />
+							<h:form>
+								<ox:decorate hideLabel="true" id="searchPattern">
+									<div style="width: 100%; float: left; margin-left: 17px;">
+										<h:inputText
+											alt="Search parameters for client like inum,iname,displayName"
+											id="searchPatternId" maxlength="30" size="30"
+											style="width:60%; float:left;"
+											styleClass="form-control searchBoxClass"
+											value="#{searchClientAction.searchPattern}" />
+										<b:commandButton action="#{searchClientAction.search}"
+											style="float:left;margin-left :3px;"
+											styleClass="btn btn-primary searchButtonClass"
+											value="#{msg['client.search']}" iconAwesome="fa-search" />
+									</div>
+								</ox:decorate>
+							</h:form>
+							<div class="row">
+								<div class="box-body">
+									<div class="table-responsive" style="overflow: auto">
+										<h:form id="clientsFormId">
+											<ui:fragment
+												rendered="#{searchClientAction.clientList.size() eq 0}">
 
-											<h:outputText value="#{msg['client.noSearchResultFound']}" />
-										</ui:fragment>
-										<b:dataTable id="clientsListId" style="text-align:center;"
-											rendered="#{searchClientAction.clientList.size() gt 0}"
-											value="#{searchClientAction.clientList}" var="clt"
-											print="true" excel="true" csv="true" pdf="true" select="true"
-											responsive="true">
-											<b:dataTableColumn label="#{msg['client.displayName']}"
-												order="desc">
-												<h:link includeViewParams="false"
-													outcome="/client/updateClient" onclick="clearOIDC();"
-													value="#{clt.displayName}">
-													<f:param name="inum" value="#{clt.inum}" />
-												</h:link>
-											</b:dataTableColumn>
-											<b:dataTableColumn value="#{clt.inum}"
-												label="#{msg['client.inum']}" />
-											<b:dataTableColumn label="#{msg['client.applicationType']}">
-												<b:label text="#{clt.oxAuthAppType}" severity="primary" />
-											</b:dataTableColumn>
-											<b:dataTableColumn label="#{msg['passport.deleteProvider']}">
-												<h:selectBooleanCheckbox id="selectId"
-													onchange="displayButton();" value="#{clt.selected}" />
-											</b:dataTableColumn>
-										</b:dataTable>
-										<a4j:commandButton ajaxSingle="true" id="deleteId"
-											eventsQueue="clientQueue"
-											onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();"
-											styleClass="btn btn-primary DeleteBulkClients"
-											style="float:left;margin-left :3px;" value="Delete" />
-									</h:form>
+												<h:outputText value="#{msg['client.noSearchResultFound']}" />
+											</ui:fragment>
+											<b:dataTable id="clientsListId" style="text-align:center;"
+												rendered="#{searchClientAction.clientList.size() gt 0}"
+												value="#{searchClientAction.clientList}" var="clt"
+												print="true" excel="true" csv="true" pdf="true"
+												select="true" responsive="true">
+												<b:dataTableColumn label="#{msg['client.displayName']}"
+													order="desc">
+													<h:link includeViewParams="false"
+														outcome="/client/updateClient" onclick="clearOIDC();"
+														value="#{clt.displayName}">
+														<f:param name="inum" value="#{clt.inum}" />
+													</h:link>
+												</b:dataTableColumn>
+												<b:dataTableColumn value="#{clt.inum}"
+													label="#{msg['client.inum']}" />
+												<b:dataTableColumn label="#{msg['client.applicationType']}">
+													<b:label text="#{clt.oxAuthAppType}" severity="primary" />
+												</b:dataTableColumn>
+												<b:dataTableColumn label="#{msg['passport.deleteProvider']}">
+													<h:selectBooleanCheckbox id="selectId"
+														onchange="displayButton();" value="#{clt.selected}" />
+												</b:dataTableColumn>
+											</b:dataTable>
+											<a4j:commandButton ajaxSingle="true" id="deleteId"
+												eventsQueue="clientQueue"
+												onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();"
+												styleClass="btn btn-primary DeleteBulkClients"
+												style="float:left;margin-left :3px;" value="Delete" />
+										</h:form>
+									</div>
 								</div>
 							</div>
+						</h:panelGroup>
+						<div class="box-footer">
+							<ui:insert name="controlButttons" />
 						</div>
-					</h:panelGroup>
-					<div class="box-footer">
-						<ui:insert name="controlButttons" />
-					</div>
-				</b:panel>
+					</b:panel>
+				</div>
 			</div>
-		</div>
-		<ox:acceptRemovalDialog
-			deleteMethod="#{searchClientAction.deleteClients}"
-			render="oidcClientsTable" id="deleteConfirmation" queue="clientQueue"
-			subject="client" value="all selected clients" />
-		<h:outputScript> 
+			<ox:acceptRemovalDialog
+				deleteMethod="#{searchClientAction.deleteClients}"
+				render="oidcClientsTable" id="deleteConfirmation"
+				queue="clientQueue" subject="client" value="all selected clients" />
+			<h:outputScript> 
 	    	function displayButton() {  	
 		    	var selectedIds = $("input[id$=selectId]:checked");
 		    	deleteBtn = $("input[id$=deleteId]");
@@ -127,6 +128,7 @@
 		    	
 	    	} 
 	    	displayButton();
-   	</h:outputScript>
+   	      </h:outputScript>
+		</section>
 	</ui:define>
 </ui:composition>

@@ -6,7 +6,6 @@
 
 package org.gluu.oxtrust.action;
 
-import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,14 +15,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.enterprise.context.ConversationScoped;
 import javax.faces.application.FacesMessage;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
@@ -37,6 +35,7 @@ import org.gluu.model.custom.script.CustomScriptType;
 import org.gluu.model.custom.script.model.CustomScript;
 import org.gluu.model.custom.script.model.auth.AuthenticationCustomScript;
 import org.gluu.oxtrust.ldap.service.ConfigurationService;
+import org.gluu.oxtrust.ldap.service.SamlAcrService;
 import org.gluu.oxtrust.model.GluuTreeModel;
 import org.gluu.oxtrust.model.SimpleCustomPropertiesListModel;
 import org.gluu.oxtrust.model.SimplePropertiesListModel;
@@ -45,10 +44,7 @@ import org.gluu.service.custom.script.AbstractCustomScriptService;
 import org.gluu.service.security.Secure;
 import org.gluu.util.OxConstants;
 import org.gluu.util.StringHelper;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import org.slf4j.Logger;
 
 import com.google.common.base.Optional;
 
@@ -76,10 +72,16 @@ public class ManageCustomScriptAction
 	private FacesMessages facesMessages;
 
 	@Inject
+	private Logger log;
+
+	@Inject
 	private ConversationService conversationService;
 
 	@Inject
 	private ConfigurationService configurationService;
+
+	@Inject
+	private SamlAcrService samlAcrService;
 
 	@Inject
 	private AbstractCustomScriptService customScriptService;
@@ -88,7 +90,7 @@ public class ManageCustomScriptAction
 
 	private boolean initialized;
 
-	private static Set<String> allAcrs = new HashSet<>();
+	private static List<String> allAcrs = new ArrayList<>();
 
 	private GluuTreeModel tree;
 
@@ -101,29 +103,46 @@ public class ManageCustomScriptAction
 	private CustomScriptType selectedScriptType = CustomScriptType.PERSON_AUTHENTICATION;
 
 	public void init(boolean isInitial) {
-		tree = (GluuTreeModel) new GluuTreeModel().withText("root").withSelectable(false).withExpanded(false);
-		CustomScriptType[] allowedCustomScriptTypes = this.configurationService.getCustomScriptTypes();
-		Stream.of(allowedCustomScriptTypes).forEach(e -> {
-			GluuTreeModel node = (GluuTreeModel) new GluuTreeModel().withText(e.getDisplayName()).withExpanded(false);
-			node.setParent(true);
-			node.setCustomScriptType(CustomScriptType.getByValue(e.getValue()));
-			List<CustomScript> customScripts = customScriptService.findCustomScripts(Arrays.asList(e));
-			customScripts.forEach(k -> {
-				GluuTreeModel scriptNode = (GluuTreeModel) new GluuTreeModel().withText(k.getName())
-						.withIcon("fa fa-info").withExpanded(false);
-				scriptNode.setInum(k.getInum());
-				scriptNode.setDn(k.getDn());
-				node.withSubnode(scriptNode);
+		try {
+			tree = (GluuTreeModel) new GluuTreeModel().withText("root").withSelectable(false).withExpanded(false);
+			CustomScriptType[] allowedCustomScriptTypes = this.configurationService.getCustomScriptTypes();
+			Stream.of(allowedCustomScriptTypes).forEach(e -> {
+				GluuTreeModel node = (GluuTreeModel) new GluuTreeModel().withText(e.getDisplayName())
+						.withExpanded(false);
+				node.setParent(true);
+				node.setCustomScriptType(CustomScriptType.getByValue(e.getValue()));
+				List<CustomScript> customScripts = customScriptService.findCustomScripts(Arrays.asList(e));
+				customScripts.forEach(k -> {
+					GluuTreeModel scriptNode = (GluuTreeModel) new GluuTreeModel().withText(k.getName())
+							.withIcon("fa fa-info").withExpanded(false);
+					scriptNode.setInum(k.getInum());
+					scriptNode.setDn(k.getDn());
+					node.withSubnode(scriptNode);
+				});
+				tree.withSubnode(node);
 			});
-			tree.withSubnode(node);
-		});
-		if (isInitial) {
-			this.selectedScript = customScriptService
-					.findCustomScripts(Arrays.asList(CustomScriptType.PERSON_AUTHENTICATION)).get(0);
-		} else {
-			this.selectedScript = customScriptService.getCustomScriptByINum(dn, inum, null).get();
+			if (isInitial) {
+				this.selectedScript = customScriptService
+						.findCustomScripts(Arrays.asList(CustomScriptType.PERSON_AUTHENTICATION)).get(0);
+				fillEmptyListProperty();
+			} else {
+				this.selectedScript = customScriptService.getCustomScriptByINum(dn, inum, null).get();
+				fillEmptyListProperty();
+			}
+			tree.expandParentOfNode(selectedScript);
+		} catch (Exception e) {
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Error  building custom script tree structure");
+			log.error("", e);
 		}
-		tree.expandParentOfNode(selectedScript);
+	}
+
+	private void fillEmptyListProperty() {
+		if (this.selectedScript.getConfigurationProperties() == null) {
+			this.selectedScript.setConfigurationProperties(new ArrayList<SimpleExtendedCustomProperty>());
+		}
+		if (this.selectedScript.getModuleProperties() == null) {
+			this.selectedScript.setModuleProperties(new ArrayList<SimpleCustomProperty>());
+		}
 	}
 
 	public void initAddForm() {
@@ -237,8 +256,8 @@ public class ManageCustomScriptAction
 	public void removeCustomScript() {
 		if (this.selectedScript != null && this.selectedScript.getInum() != null) {
 			customScriptService.remove(this.selectedScript);
-			init(true);
 			facesMessages.add(FacesMessage.SEVERITY_INFO, this.selectedScript.getName() + " removed successfully");
+			init(true);
 		}
 	}
 
@@ -298,34 +317,9 @@ public class ManageCustomScriptAction
 	public void initAcrs() {
 		try {
 			allAcrs.clear();
-			File file = new File("/opt/shibboleth-idp/conf/authn/general-authn.xml");
-			DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
-			Document document = documentBuilder.parse(file);
-			document.getDocumentElement().normalize();
-			NodeList nodes = document.getElementsByTagName("util:list");
-			NodeList childNodes = nodes.item(0).getChildNodes();
-			Element element = null;
-			for (int index = 0; index < childNodes.getLength(); index++) {
-				Node node = childNodes.item(index);
-				if (node.getNodeType() == Node.ELEMENT_NODE) {
-					Element e = (Element) node;
-					String id = e.getAttribute("id");
-					if (id.equalsIgnoreCase("authn/oxAuth")) {
-						element = e;
-						break;
-					}
-				}
-			}
-			if (element != null) {
-				NodeList items = element.getElementsByTagName("bean");
-				for (int i = 0; i < items.getLength(); i++) {
-					Element node = (Element) items.item(i);
-					allAcrs.add(node.getAttribute("c:classRef"));
-				}
-			}
+			allAcrs = Stream.of(samlAcrService.getAll()).map(e -> e.getClassRef()).collect(Collectors.toList());
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.info("", e);
 		}
 	}
 
@@ -379,13 +373,18 @@ public class ManageCustomScriptAction
 				Optional<CustomScript> customScript = customScriptService.getCustomScriptByINum(node.getDn(),
 						node.getInum(), null);
 				if (customScript.isPresent()) {
-					selectedScript = customScript.get();
+					this.selectedScript = customScript.get();
+					this.selectedScriptType = node.getCustomScriptType();
+					fillEmptyListProperty();
 				}
 			}
 			if (node.isParent()) {
 				this.selectedScriptType = node.getCustomScriptType();
 				setShowAddButton(true);
+				node.setExpanded(true);
 			}
+		} else {
+			setShowAddButton(false);
 		}
 	}
 
