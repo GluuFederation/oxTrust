@@ -27,7 +27,7 @@ public class CustomScriptSteps extends BaseSteps {
 
 	@When("^I select the '(.+)' tab$")
 	public void goToCustomScriptAddPage(String tabText) {
-		customScriptManagePage.pickTab(tabText);
+		customScriptManagePage.pickCategory(tabText);
 	}
 
 	@When("^I click the add custom script button$")

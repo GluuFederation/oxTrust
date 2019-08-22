@@ -154,9 +154,9 @@ public class SamlSteps extends BaseSteps {
 		namdIdConfigurationPage.startAddingNewConfiguration();
 	}
 
-	@And("^I add a namedid with source attrib '(.+)' with name '(.+)' with type '(.+)' and enable '(.+)'$")
-	public void addNewNamedId(String source, String name, String type, String enable) {
-		nameIdAddPage.addNamedId(source, name, type, enable);
+	@And("^I add a namedid with source attrib '(.+)' with type '(.+)' and enable '(.+)'$")
+	public void addNewNamedId(String source,String type, String enable) {
+		nameIdAddPage.addNamedId(source,type, enable);
 	}
 
 	@And("^I save the namedid configuration$")

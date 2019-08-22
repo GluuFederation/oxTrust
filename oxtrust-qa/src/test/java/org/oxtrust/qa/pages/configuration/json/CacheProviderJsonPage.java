@@ -8,11 +8,13 @@ import org.oxtrust.qa.pages.AbstractPage;
 
 public class CacheProviderJsonPage extends AbstractPage {
 
-	public void checkProviderType(String type) {
+	public void checkProviderType(String type1, String type2) {
 		WebElement element = webDriver.findElement(By.name("root[cacheProviderType]"));
 		Assert.assertNotNull(element);
 		Select select = new Select(element);
-		Assert.assertTrue(select.getFirstSelectedOption().getText().equalsIgnoreCase(type));
+		boolean condition = select.getFirstSelectedOption().getText().equalsIgnoreCase(type1)
+				|| select.getFirstSelectedOption().getText().equalsIgnoreCase(type2);
+		Assert.assertTrue(condition);
 
 	}
 
@@ -35,15 +37,14 @@ public class CacheProviderJsonPage extends AbstractPage {
 	}
 
 	public void verifyRedisConfig(String type, String servers, String expiration) {
-		WebElement element = webDriver
-				.findElement(By.name("root[redisConfiguration][redisProviderType]"));
+		WebElement element = webDriver.findElement(By.name("root[redisConfiguration][redisProviderType]"));
 		Assert.assertNotNull(element);
 		Select select = new Select(element);
 		Assert.assertTrue(select.getFirstSelectedOption().getText().equalsIgnoreCase(type));
-		
+
 		WebElement elementServers = webDriver.findElement(By.name("root[redisConfiguration][servers]"));
 		Assert.assertNotNull(elementServers);
-		
+
 		WebElement elementExp = webDriver.findElement(By.name("root[redisConfiguration][defaultPutExpiration]"));
 		Assert.assertNotNull(elementExp);
 	}

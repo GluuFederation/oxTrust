@@ -19,11 +19,7 @@ public class ViewLogFilePage  extends AbstractPage {
 	}
 	
 	private void getListItems() {
-		WebElement form = webDriver.findElement(By.name("logViewForm"));
-		listBody = form.findElement(By.className("rf-p-b"));
-		listItems = listBody.findElements(By.tagName("div"));
-
-		
+		listItems = webDriver.findElements(By.className("filesContentBox"));		
 	}
 
 	private boolean assertLogFilesExistInList(String oxTrustLogs, String oxAuthLogs) {

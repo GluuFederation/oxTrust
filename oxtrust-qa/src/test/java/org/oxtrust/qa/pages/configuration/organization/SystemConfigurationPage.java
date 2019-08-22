@@ -20,6 +20,22 @@ public class SystemConfigurationPage extends AbstractPage {
 		}
 	}
 
+	public void setSaml(String resetState) {
+		if (resetState.equalsIgnoreCase("true")) {
+			enableCheckBox("samlSelectBox");
+		} else {
+			disableCheckBox("samlSelectBox");
+		}
+	}
+
+	public void setRaduis(String resetState) {
+		if (resetState.equalsIgnoreCase("true")) {
+			enableCheckBox("raduisSelectBox");
+		} else {
+			disableCheckBox("raduisSelectBox");
+		}
+	}
+
 	public void setSCIMSupport(String scimState) {
 		if (scimState.equalsIgnoreCase("true")) {
 			enableCheckBox("scimEnableStateSelectBox");

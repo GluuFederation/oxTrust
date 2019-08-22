@@ -2,7 +2,10 @@ Feature: Trust relationship
 @gluuQA
 Scenario: Add trust relationship
 	When 	I sign in as administrator 
-	Then 	I should see gluu home page 
+	Then 	I should see gluu home page
+	When 	I go to system organization configuration page
+	And     I set the SAML support to 'true'
+	And     I click on the Update button
 	When 	I go to tr add page
 	Then 	I set 'QaTRAddDN' as display name
 	And 	I set 'QaTRAddDesc' as description
@@ -32,6 +35,9 @@ Scenario: Add trust relationship
 Scenario: Add federation trust reletionship
 	When 	I sign in as administrator 
 	Then 	I should see gluu home page 
+	When 	I go to system organization configuration page
+	And     I set the SAML support to 'true'
+	And     I click on the Update button
 	When 	I go to tr add page
 	Then 	I set 'QaFederation' as display name
 	And 	I set 'QaFederationDesc' as description

@@ -1,6 +1,5 @@
 package org.oxtrust.qa.pages.configuration;
 
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -18,50 +17,23 @@ import org.oxtrust.qa.pages.AbstractPage;
 
 public class CustomScriptManagePage extends AbstractPage {
 	private String currentTabText = null;
-	private int currentSize = 0;
-	private WebElement newCriptElement;
 
 	public void hitAddButton() {
-		scrollDown();
-		currentSize = computeTheNumberOfScriptForCurrentTab();
-		scrollDown();
-		WebElement addButton = fluentWaitFor(By.className("addConfigButton"));
+		WebElement addButton = fluentWaitFor(By.className("AddCustomScriptButton"));
 		addButton.click();
-		fluentWaitForTableCompute(currentSize);
+		fluentWait(2);
 	}
 
-	public void pickTab(String tabText) {
-		currentTabText = tabText;
-		WebElement tabSection = webDriver.findElement(By.id("customScriptForm:scriptTypeTabPanelIdheader"));
-		WebElement tabsSection = tabSection.findElement(By.className("rf-tab-hdr-tabs"));
-		List<WebElement> tabs = tabsSection.findElements(By.tagName("td"));
-		for (WebElement tab : tabs) {
-			if (tab.getText().contains(tabText)) {
-				tab.findElement(By.tagName("span")).click();
-				fluentWait(SMALL);
+	public void pickCategory(String tabText) {
+		WebElement tree = webDriver.findElement(By.className("list-group"));
+		List<WebElement> items = tree.findElements(By.className("list-group-item"));
+		for (WebElement e : items) {
+			if (e.getText().equalsIgnoreCase(tabText)) {
+				e.click();
 				break;
 			}
 		}
-	}
-
-	private int computeTheNumberOfScriptForCurrentTab() {
-		String className = "allScriptFor".concat(currentTabText.split("\\s+")[0]);
-		WebElement table = waitElementByClass(className);
-		WebElement firstElement = table.findElements(By.tagName("tr")).get(0);
-		List<WebElement> scripts = new ArrayList<>();
-		scripts.add(firstElement);
-		scripts.addAll(firstElement.findElements(By.xpath("following-sibling::tr")));
-		return scripts.size();
-	}
-
-	private void computeLastScriptScriptForCurrentTab() {
-		String className = "allScriptFor".concat(currentTabText.split("\\s+")[0]);
-		WebElement table = waitElementByClass(className);
-		WebElement firstElement = table.findElements(By.tagName("tr")).get(0);
-		List<WebElement> scripts = new ArrayList<>();
-		scripts.add(firstElement);
-		scripts.addAll(firstElement.findElements(By.xpath("following-sibling::tr")));
-		newCriptElement = scripts.get(scripts.size() - 1);
+		fluentWait(2);
 	}
 
 	public void fluentWaitForTableCompute(int finalSize) {
@@ -81,59 +53,50 @@ public class CustomScriptManagePage extends AbstractPage {
 	}
 
 	public void setName(String name) {
-		computeLastScriptScriptForCurrentTab();
-		WebElement textBox = newCriptElement.findElement(By.className("scriptNameTextBox"));
+		WebElement textBox = webDriver.findElement(By.className("scriptNameTextBox"));
 		textBox.clear();
 		textBox.sendKeys(name);
 	}
 
 	public void setDescription(String description) {
-		computeLastScriptScriptForCurrentTab();
-		WebElement textBox = newCriptElement.findElement(By.className("descriptionTextBox"));
+		WebElement textBox = webDriver.findElement(By.className("descriptionTextBox"));
 		textBox.clear();
 		textBox.sendKeys(description);
 	}
 
 	public void setLevel(String level) {
-		computeLastScriptScriptForCurrentTab();
-		WebElement element = newCriptElement.findElement(By.className("inputNumberSpinnerBox"));
-		WebElement input = element.findElement(By.tagName("input"));
+		WebElement input = webDriver.findElement(By.className("inputNumberSpinnerBox"));
 		input.clear();
 		input.sendKeys(level);
 	}
 
 	public void setContent(String text) {
 		scrollDown();
-		computeLastScriptScriptForCurrentTab();
-		WebElement element = newCriptElement.findElement(By.className("scriptTextArea"));
+		WebElement element = webDriver.findElement(By.className("scriptTextArea"));
 		element.clear();
 		element.sendKeys(text);
 	}
 
 	public void setProgrammingLanguage(String lang) {
-		computeLastScriptScriptForCurrentTab();
-		Select select = new Select(newCriptElement.findElement(By.className("programmingLanguageSelectBox")));
+		Select select = new Select(webDriver.findElement(By.className("programmingLanguageSelectBox")));
 		select.selectByVisibleText(lang);
 	}
 
 	public void setUsageType(String type) {
-		computeLastScriptScriptForCurrentTab();
-		Select select = new Select(newCriptElement.findElement(By.className("usageTypeSelectBox")));
+		Select select = new Select(webDriver.findElement(By.className("usageTypeSelectBox")));
 		select.selectByVisibleText(type);
 	}
 
 	public void setLocationType(String type) {
-		computeLastScriptScriptForCurrentTab();
-		Select select = new Select(newCriptElement.findElement(By.className("locationTypeSelectBox")));
+		Select select = new Select(webDriver.findElement(By.className("locationTypeSelectBox")));
 		select.selectByVisibleText(type);
 	}
 
 	public void addNewproperty(String label, String value) {
-		computeLastScriptScriptForCurrentTab();
-		WebElement element = newCriptElement.findElement(By.className("addNewPropertyButton"));
+		WebElement element = webDriver.findElement(By.className("addNewPropertyButton"));
 		element.click();
 		fluentWait(SMALL);
-		WebElement table = newCriptElement.findElement(By.className("propertiesList"));
+		WebElement table = webDriver.findElement(By.className("propertiesList"));
 		List<WebElement> rows = table.findElements(By.tagName("tr"));
 		WebElement firstRow = rows.get(0);
 		WebElement labelBox = firstRow.findElement(By.className("propertyLabelTextBox"));
@@ -145,41 +108,29 @@ public class CustomScriptManagePage extends AbstractPage {
 	}
 
 	public void save() {
-		scrollDown();
-		WebElement element = fluentWaitFor(By.id("updateButtons"));
-		element.findElements(By.tagName("input")).get(0).click();
+		scrollUp();
+		scrollUp();
+		webDriver.findElement(By.className("saveScriptButton")).click();
 	}
 
 	public void enable() {
-		computeLastScriptScriptForCurrentTab();
-		WebElement chekBox = newCriptElement.findElement(By.className("customScriptStatusCheckBox"));
+		WebElement chekBox = webDriver.findElement(By.className("customScriptStatusCheckBox"));
 		chekBox.click();
 	}
 
 	public void deleteScript(String scriptName, String tabName) {
-		currentTabText = tabName;
-		String className = "allScriptFor".concat(currentTabText.split("\\s+")[0]);
-		WebElement table = waitElementByClass(className);
-		WebElement firstElement = table.findElements(By.tagName("tr")).get(0);
-		List<WebElement> scripts = new ArrayList<>();
-		scripts.add(firstElement);
-		scripts.addAll(firstElement.findElements(By.xpath("following-sibling::tr")));
-		WebElement rightSection = null;
-		for (WebElement scriptSection : scripts) {
-			if (scriptSection.findElement(By.tagName("a")).getText().contains(scriptName)) {
-				rightSection = scriptSection;
+		WebElement tree = webDriver.findElement(By.className("list-group"));
+		List<WebElement> items = tree.findElements(By.className("list-group-item"));
+		for (WebElement e : items) {
+			if (e.getText().equalsIgnoreCase(scriptName)) {
+				webDriver.findElement(By.className("deleteScriptButton")).click();
 				break;
 			}
 		}
-		WebElement header = rightSection.findElement(By.tagName("a"));
-		header.click();
-		WebElement deleteButton = rightSection.findElement(By.className("deleteScriptButton"));
-		deleteButton.click();
-		fluentWait(MEDIUM);
-		WebElement dialog = fluentWaitFor(By.className("dialogBoxPanelFor".concat(scriptName)));
-		WebElement okButton = dialog.findElement(By.className("confirmDialogButton"));
-		okButton.click();
-		fluentWait(MEDIUM);
+		fluentWait(2);
+		WebElement dialog = webDriver.findElement(By.id("deleteConfirmation:acceptRemovalModalPanel_content"));
+		dialog.findElements(By.tagName("input")).get(0).click();
+		fluentWait(2);
 		save();
 	}
 
@@ -187,8 +138,6 @@ public class CustomScriptManagePage extends AbstractPage {
 		WebElement me = null;
 		WebElement element = webDriver.findElement(By.className("allScriptForPerson"));
 		List<WebElement> scripts = element.findElement(By.tagName("tbody")).findElements(By.tagName("tr"));
-		System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++");
-		System.out.println("SIZE: " + scripts.size());
 		for (WebElement script : scripts) {
 			if (script.getText().contains(scriptName)) {
 				me = script;
@@ -200,16 +149,11 @@ public class CustomScriptManagePage extends AbstractPage {
 	}
 
 	public void assertScriptExist(String scriptName, String tabName) {
-		currentTabText = tabName;
-		String className = "allScriptFor".concat(currentTabText.split("\\s+")[0]);
-		WebElement table = waitElementByClass(className);
-		WebElement firstElement = table.findElements(By.tagName("tr")).get(0);
-		List<WebElement> scripts = new ArrayList<>();
-		scripts.add(firstElement);
-		scripts.addAll(firstElement.findElements(By.xpath("following-sibling::tr")));
 		boolean found = false;
-		for (WebElement scriptSection : scripts) {
-			if (scriptSection.findElement(By.tagName("a")).getText().contains(scriptName)) {
+		WebElement tree = webDriver.findElement(By.className("list-group"));
+		List<WebElement> items = tree.findElements(By.className("list-group-item"));
+		for (WebElement e : items) {
+			if (e.getText().equalsIgnoreCase(scriptName)) {
 				found = true;
 				break;
 			}
@@ -218,16 +162,11 @@ public class CustomScriptManagePage extends AbstractPage {
 	}
 
 	public void assertScriptDontExist(String scriptName, String tabName) {
-		currentTabText = tabName;
-		String className = "allScriptFor".concat(currentTabText.split("\\s+")[0]);
-		WebElement table = waitElementByClass(className);
-		WebElement firstElement = table.findElements(By.tagName("tr")).get(0);
-		List<WebElement> scripts = new ArrayList<>();
-		scripts.add(firstElement);
-		scripts.addAll(firstElement.findElements(By.xpath("following-sibling::tr")));
 		boolean found = false;
-		for (WebElement scriptSection : scripts) {
-			if (scriptSection.findElement(By.tagName("a")).getText().contains(scriptName)) {
+		WebElement tree = webDriver.findElement(By.className("list-group"));
+		List<WebElement> items = tree.findElements(By.className("list-group-item"));
+		for (WebElement e : items) {
+			if (e.getText().equalsIgnoreCase(scriptName)) {
 				found = true;
 				break;
 			}
