@@ -48,7 +48,7 @@
 							<b:commandButton
 								action="#{manageCustomScriptAction.initAddForm()}"
 								rendered="#{manageCustomScriptAction.showAddButton}"
-								styleClass="btn btn-primary" value="Add New Custom Script"
+								styleClass="btn btn-primary AddCustomScriptButton" value="Add New Custom Script"
 								ajax="true" update="@form" icon="plus"
 								style="margin-bottom:5px !important;" />
 							<b:tree render-root="false" id="customScriptTreeViewId"
@@ -71,13 +71,13 @@
 											<a4j:commandLink value="Show Error" immediate="true"
 												rendered="#{manageCustomScriptAction.hasCustomScriptError(_customScript)}"
 												onclick="#{rich:component('viewScriptError:viewFile')}.show();"
-												execute="@region" styleClass="btn btn-warning"
+												execute="@region" styleClass="btn btn-warning showErrorButton"
 												style="color:white;" />
 										</div>
 										<div class="col-sm-2 col-md-2 col-lg-2">
 											<h:commandButton
 												action="#{manageCustomScriptAction.saveScript()}"
-												styleClass="btn btn-primary" value="Save" />
+												styleClass="btn btn-primary saveScriptButton" value="Save" />
 										</div>
 										<div class="col-sm-2 col-md-2 col-lg-2">
 											<a4j:commandLink value="Delete Script" immediate="true"

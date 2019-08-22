@@ -148,9 +148,9 @@ public class JsonConfigurationSteps extends BaseSteps {
 		homePage.selectTab("Cache Provider Configuration");
 	}
 
-	@Then("^I should see the cache provider type set to '(.+)'$")
-	public void checkCacheProviderType(String type) {
-		cacheProviderJsonPage.checkProviderType(type);
+	@Then("^I should see the cache provider type set to '(.+)' or '(.+)'$")
+	public void checkCacheProviderType(String type1,String type2) {
+		cacheProviderJsonPage.checkProviderType(type1,type2);
 	}
 
 	@And("^I should see a memcache config with type '(.+)' with servers '(.+)' with maxOQL '(.+)' with buffer '(.+)' with put expiration '(.+)'")

@@ -41,7 +41,7 @@
 		</section>
 		<section class="content">
 			<div id="formArea">
-				<b:panel title="#{msg['logViewer.viewLogFile']}" look="primary"
+				<b:panel id="panelId" title="#{msg['logViewer.viewLogFile']}" look="primary"
 					iconAwesome="fa-file-archive-o" collapsible="false">
 					<h:form id="logViewForm">
 						<f:validateBean>
@@ -61,14 +61,14 @@
 										<div class="tab-content">
 											<div class="tab-pane active" id="logged-files">
 												<div style="display: inline-block; width: 100% !important;">
-													<rich:panel bodyClass="noPadding"
+													<rich:panel bodyClass="noPadding" id="MainBlock"
 														header="Allowed log files" width="100%">
 														<h:panelGroup border="0" cellpadding="0" cellspacing="0"
-															columns="1" width="100%">
+															columns="1" width="100%" id="PanelGroupId">
 															<a4j:repeat
 																value="#{viewLogFileAction.logFiles.entrySet().toArray()}"
 																var="_logFile">
-																<div>
+																<div class="filesContentBox">
 																	<a4j:commandLink
 																		action="#{viewLogFileAction.setActiveLogFileIndex(_logFile.key)}"
 																		execute="@form" limitRender="true"

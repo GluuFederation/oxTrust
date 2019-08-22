@@ -8,7 +8,7 @@ Scenario: CheckPersonAuthentication custom script
 	And 	I should see a custom script named 'super_gluu' in 'Person Authentication' tab
 	And 	I should see a custom script named 'duo' in 'Person Authentication' tab
 	And 	I should see a custom script named 'cert' in 'Person Authentication' tab
-	And 	I should see a custom script named 'saml' in 'Person Authentication' tab
+	And 	I should see a custom script named 'passport_social' in 'Person Authentication' tab
 	And 	I should see a custom script named 'passport_saml' in 'Person Authentication' tab
 	And 	I should see a custom script named 'otp' in 'Person Authentication' tab
 	And 	I should see a custom script named 'passport_social' in 'Person Authentication' tab

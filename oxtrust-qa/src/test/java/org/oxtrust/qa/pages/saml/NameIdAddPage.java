@@ -8,18 +8,13 @@ import org.oxtrust.qa.pages.AbstractPage;
 
 public class NameIdAddPage extends AbstractPage {
 
-	public void addNamedId(String source, String name, String type, String enable) {
+	public void addNamedId(String source, String type, String enable) {
 
 		WebElement section = webDriver.findElement(By.className("NewNamedID"));
 
 		WebElement element = section.findElement(By.className("sourceAttributeSelectBox"));
 		Select select = new Select(element);
 		select.selectByVisibleText(source);
-
-		WebElement element1 = section.findElement(By.className("nameTextBox"));
-		element1.clear();
-		element1.sendKeys(name);
-
 		WebElement element2 = section.findElement(By.className("nameIdTypeSelectBox"));
 		Select select1 = new Select(element2);
 		select1.selectByVisibleText(type);
@@ -41,17 +36,18 @@ public class NameIdAddPage extends AbstractPage {
 	}
 
 	public void assertNamedExist(String name) {
-		WebElement section = webDriver.findElement(By.className(name));
-		Assert.assertNotNull(section);
+		Select select = new Select(webDriver.findElement(By.className("sourceAttributeSelectBox")));
+		Assert.assertTrue(select.getFirstSelectedOption().getText().equalsIgnoreCase(name));
 	}
 
 	public void assertNamedDontExist(String name) {
 		try {
-			WebElement section = webDriver.findElement(By.className(name));
-			Assert.assertNull(section);
+			Select select = new Select(webDriver.findElement(By.className("sourceAttributeSelectBox")));
+			Assert.assertFalse(select.getFirstSelectedOption().getText().equalsIgnoreCase(name));
 		} catch (Exception e) {
 			Assert.assertTrue(true);
 		}
+
 	}
 
 }

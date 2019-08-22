@@ -37,7 +37,17 @@ public class ConfigurationSteps extends BaseSteps {
 	public void setSelfServicePasswordReset(String state) {
 		systemConfigurationPage.setSelfServicePasswordReset(state);
 	}
-
+	
+	@And("^I set the SAML support to '(.+)'$")
+	public void setSaml(String state) {
+		systemConfigurationPage.setSaml(state);
+	}
+	
+	@And("^I set the RADUIS support to '(.+)'$")
+	public void setRaduis(String state) {
+		systemConfigurationPage.setRaduis(state);
+	}
+	
 	@And("^I set the SCIM Support to '(.+)'$")
 	public void setSCIMSupport(String scimState) {
 		systemConfigurationPage.setSCIMSupport(scimState);

@@ -16,8 +16,7 @@ public class NameIdConfigurationPage extends AbstractPage {
 
 	public void delete(String name) {
 		scrollDown();
-		WebElement section = webDriver.findElement(By.className(name));
-		WebElement deleteButton = section.findElement(By.tagName("a"));
+		WebElement deleteButton = webDriver.findElement(By.className("deleteNameIDButton"));
 		JavascriptExecutor executor = (JavascriptExecutor) webDriver;
 		executor.executeScript("arguments[0].click()", deleteButton);
 		fluentWait(LITTLE);
