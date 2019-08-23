@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:a4j="http://richfaces.org/a4j"
                 xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:b="http://bootsfaces.net/ui"
                 xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox" xmlns:rich="http://richfaces.org/rich"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
     <f:metadata>
@@ -36,8 +37,10 @@
                     <ui:param name="_new" value="false"/>
                     <ui:define name="controlButttons">
                         <div id="updateButtons">
-                            <h:commandButton action="#{updateScopeAction.save}" styleClass="btn btn-primary"
-                                             value="#{msg['scope.update']}"/>
+                            <b:commandButton action="#{updateScopeAction.save}" 
+                                             styleClass="btn btn-primary"
+                                             value="#{msg['scope.update']}"
+                                             ajax="true" update="@form"/>
                             <a4j:commandButton ajaxSingle="true" eventsQueue="scopeQueue"
                                                onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();"
                                                rendered="#{not _new}" style="margin-left:3px;"
