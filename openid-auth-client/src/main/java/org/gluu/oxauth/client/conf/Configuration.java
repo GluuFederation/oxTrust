@@ -55,7 +55,7 @@ public abstract class Configuration<C extends AppConfiguration, L extends LdapAp
     public static final String DIR = BASE_DIR + File.separator + "conf" + File.separator;
 
 	private static final String BASE_PROPERTIES_FILE = DIR + "gluu.properties";
-    public static final String LDAP_DEFAULT_PROPERTIES_FILE = DIR + "gluu-ldap.properties";
+    public static final String DEFAULT_PROPERTIES_FILE = DIR + "openid.properties";
 
 	private static final String SALT_FILE_NAME = "salt";
 
@@ -89,7 +89,7 @@ public abstract class Configuration<C extends AppConfiguration, L extends LdapAp
 	private void create() {
 		this.persistanceFactoryService = new StandalonePersistanceFactoryService();
 
-        this.persistenceConfiguration = persistanceFactoryService.loadPersistenceConfiguration(getLdapConfigurationFileName());
+        this.persistenceConfiguration = persistanceFactoryService.loadPersistenceConfiguration(getDefultConfigurationFileName());
         this.baseConfiguration = loadBaseConfiguration();
 
 		this.confDir = confDir();
@@ -266,7 +266,7 @@ public abstract class Configuration<C extends AppConfiguration, L extends LdapAp
 		return appConfiguration;
 	}
 
-	protected abstract String getLdapConfigurationFileName();
+	protected abstract String getDefultConfigurationFileName();
 
 	protected abstract Class<L> getAppConfigurationType();
 
