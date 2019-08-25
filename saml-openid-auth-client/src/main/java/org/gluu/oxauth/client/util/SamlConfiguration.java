@@ -32,8 +32,8 @@ public final class SamlConfiguration extends Configuration<AppConfiguration, Lda
 	}
 
 	@Override
-	protected String getLdapConfigurationFileName() {
-		return "oxidp-ldap.properties";
+	protected String getDefultConfigurationFileName() {
+		return "oxidp.properties";
 	}
 
 	@Override
