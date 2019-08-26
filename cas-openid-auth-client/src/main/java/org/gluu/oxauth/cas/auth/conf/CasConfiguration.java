@@ -29,8 +29,8 @@ public final class CasConfiguration extends Configuration<CasAppConfiguration, C
 	}
 
 	@Override
-	protected String getLdapConfigurationFileName() {
-		return "oxcas-ldap.properties";
+	protected String getDefultConfigurationFileName() {
+		return "oxcas.properties";
 	}
 
 	@Override
