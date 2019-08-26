@@ -32,7 +32,7 @@ public final class SamlConfiguration extends Configuration<AppConfiguration, Lda
 	}
 
 	@Override
-	protected String getDefultConfigurationFileName() {
+	protected String getDefaultConfigurationFileName() {
 		return "oxidp.properties";
 	}
 

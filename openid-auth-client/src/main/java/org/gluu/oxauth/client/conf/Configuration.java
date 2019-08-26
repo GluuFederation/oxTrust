@@ -89,7 +89,7 @@ public abstract class Configuration<C extends AppConfiguration, L extends LdapAp
 	private void create() {
 		this.persistanceFactoryService = new StandalonePersistanceFactoryService();
 
-        this.persistenceConfiguration = persistanceFactoryService.loadPersistenceConfiguration(getDefultConfigurationFileName());
+        this.persistenceConfiguration = persistanceFactoryService.loadPersistenceConfiguration(getDefaultConfigurationFileName());
         this.baseConfiguration = loadBaseConfiguration();
 
 		this.confDir = confDir();
@@ -266,7 +266,7 @@ public abstract class Configuration<C extends AppConfiguration, L extends LdapAp
 		return appConfiguration;
 	}
 
-	protected abstract String getDefultConfigurationFileName();
+	protected abstract String getDefaultConfigurationFileName();
 
 	protected abstract Class<L> getAppConfigurationType();
 

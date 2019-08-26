@@ -29,7 +29,7 @@ public final class CasConfiguration extends Configuration<CasAppConfiguration, C
 	}
 
 	@Override
-	protected String getDefultConfigurationFileName() {
+	protected String getDefaultConfigurationFileName() {
 		return "oxcas.properties";
 	}
 
