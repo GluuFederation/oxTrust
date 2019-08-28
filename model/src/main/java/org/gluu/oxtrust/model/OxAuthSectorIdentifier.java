@@ -1,6 +1,7 @@
 package org.gluu.oxtrust.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.constraints.NotNull;
@@ -33,15 +34,15 @@ public class OxAuthSectorIdentifier extends Entry implements Serializable {
 	@AttributeName(name = "oxId", ignoreDuringUpdate = true)
 	private String id;
 	@NotNull
-    @Size(min = 0, max = 250, message = "Length of the Description should not exceed 250")
+	@Size(min = 0, max = 250, message = "Length of the Description should not exceed 250")
 	@AttributeName(name = "description")
 	private String description;
 
 	@AttributeName(name = "oxAuthRedirectURI")
-	private List<String> redirectUris;
+	private List<String> redirectUris = new ArrayList<>();
 
 	@AttributeName(name = "oxAuthClientId")
-	private List<String> clientIds;
+	private List<String> clientIds = new ArrayList<>();
 
 	public boolean isSelected() {
 		return selected;
@@ -69,6 +70,11 @@ public class OxAuthSectorIdentifier extends Entry implements Serializable {
 
 	public List<String> getClientIds() {
 		return clientIds;
+	}
+
+	public void addNewClient(String clientInum) {
+		this.clientIds.remove(clientInum);
+		this.clientIds.add(clientInum);
 	}
 
 	public void setClientIds(List<String> clientIds) {

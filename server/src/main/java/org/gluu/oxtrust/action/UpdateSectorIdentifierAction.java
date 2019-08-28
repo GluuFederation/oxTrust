@@ -141,11 +141,9 @@ public class UpdateSectorIdentifierAction implements Serializable {
 			log.error("Failed to find sector identifier {}", id, ex);
 			return OxTrustConstants.RESULT_FAILURE;
 		}
-
 		if (this.sectorIdentifier == null) {
 			return OxTrustConstants.RESULT_FAILURE;
 		}
-
 		try {
 			this.loginUris = getNonEmptyStringList(sectorIdentifier.getRedirectUris());
 			removeDeletedClients();
@@ -154,9 +152,7 @@ public class UpdateSectorIdentifierAction implements Serializable {
 			log.error("Failed to load person display names", ex);
 			return OxTrustConstants.RESULT_FAILURE;
 		}
-
 		log.info("returning Success");
-
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
