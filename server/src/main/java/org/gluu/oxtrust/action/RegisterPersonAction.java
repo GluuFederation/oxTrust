@@ -7,6 +7,7 @@
 
 package org.gluu.oxtrust.action;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -19,6 +20,7 @@ import java.util.regex.Pattern;
 import javax.enterprise.context.ConversationScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.validator.ValidatorException;
 import javax.inject.Inject;
@@ -33,6 +35,8 @@ import org.gluu.jsf2.service.ConversationService;
 import org.gluu.model.GluuAttribute;
 import org.gluu.model.GluuStatus;
 import org.gluu.model.GluuUserRole;
+import org.gluu.model.SimpleCustomProperty;
+import org.gluu.model.custom.script.conf.CustomScriptConfiguration;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.ConfigurationService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
@@ -228,8 +232,20 @@ public class RegisterPersonAction implements Serializable {
 		} else if (OxTrustConstants.RESULT_CAPTCHA_VALIDATION_FAILED.equals(outcome)) {
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Captcha validation failed. Please try again.");
 		}
-
+		redirectIfNeeded();
 		return outcome;
+	}
+
+	private void redirectIfNeeded() {
+		ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
+		try {
+			CustomScriptConfiguration value=externalUserRegistrationService.getDefaultExternalCustomScript();
+			SimpleCustomProperty uriEntry=value.getConfigurationAttributes().get("post_registration_redirect_uri");
+			if(uriEntry!=null) {
+				externalContext.redirect(uriEntry.getValue2());
+			}
+		} catch (IOException e) {
+		}
 	}
 
 	public String registerImpl() throws CloneNotSupportedException {
