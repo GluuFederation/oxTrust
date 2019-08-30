@@ -210,8 +210,13 @@ public class RegisterPersonAction implements Serializable {
 	}
 
 	public String register() throws CloneNotSupportedException {
+		GluuCustomPerson gluuCustomPerson = personService.getPersonByEmail(email);
+		if (gluuCustomPerson != null && appConfiguration.getEnforceEmailUniqueness()) {
+			facesMessages.add(FacesMessage.SEVERITY_ERROR,
+					"Registration failed. Please try again, or contact the system administrator.");
+			return OxTrustConstants.RESULT_FAILURE;
+		}
 		String outcome = registerImpl();
-
 		if (OxTrustConstants.RESULT_SUCCESS.equals(outcome)) {
 			setPostRegistrationInformation("You successfully registered. Enjoy!");
 		} else if (OxTrustConstants.RESULT_DISABLED.equals(outcome)) {
@@ -219,7 +224,7 @@ public class RegisterPersonAction implements Serializable {
 					"You successfully registered. Please contact site administration to enable your account.");
 		} else if (OxTrustConstants.RESULT_FAILURE.equals(outcome)) {
 			facesMessages.add(FacesMessage.SEVERITY_ERROR,
-					"Failed to register new user. Please make sure you are not registering a duplicate account or try another username.");
+					"Registration failed. Please try again, or contact the system administrator.");
 		} else if (OxTrustConstants.RESULT_CAPTCHA_VALIDATION_FAILED.equals(outcome)) {
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Captcha validation failed. Please try again.");
 		}
@@ -453,12 +458,6 @@ public class RegisterPersonAction implements Serializable {
 		Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(email);
 		if (!(matcher.matches())) {
 			FacesMessage message = new FacesMessage("Please Enter Valid Email Address.");
-			message.setSeverity(FacesMessage.SEVERITY_ERROR);
-			throw new ValidatorException(message);
-		}
-		GluuCustomPerson gluuCustomPerson = personService.getPersonByEmail(email);
-		if (gluuCustomPerson != null && appConfiguration.getEnforceEmailUniqueness()) {
-			FacesMessage message = new FacesMessage("Email Address Already Registered.");
 			message.setSeverity(FacesMessage.SEVERITY_ERROR);
 			throw new ValidatorException(message);
 		}
