@@ -4,6 +4,7 @@
 <f:view xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:b="http://bootsfaces.net/ui" xmlns:a="http://richfaces.org/a4j"
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
 	xmlns:gluufn="http://www.gluu.org/jsf/functions"
 	contenttype="text/html" locale="#{language.localeCode}">
@@ -140,16 +141,24 @@ a {
 	</h:head>
 	<h:body styleClass="login-page" style="background:white !important;">
 		<a href="#{request.contextPath}/home.htm" class="logo"
-			style="margin-left: 2% !important;"> 
-			<span class="logo-large" style="height: 70px;">
-				<img src="#{request.contextPath}/servlet/logo?scale=large"
-				style="height:70px; max-height:70px; padding-bottom: 2px;" />
-		    </span>
+			style="margin-left: 2% !important;"> <span class="logo-large"
+			style="height: 70px;"> <img
+				src="#{request.contextPath}/servlet/logo?scale=large"
+				style="height: 70px; max-height: 70px; padding-bottom: 2px;" />
+		</span>
 		</a>
 		<div class="bs-docs-section"
 			style="border-top: 2px solid #1ab26b !important; margin-bottom: 5px !important; margin-top: 1px !important; padding-top: 1px !important;"></div>
 		<div class="wrapper">
-			<ui:insert name="body" />
+			<div>
+				<b:growl id="growlMsg" globalOnly="true" placementFrom="top"
+					show-detail="true" show-summary="false" allowDismiss="true"
+					severity="info,warn,error,fatal" delay="3000" escape="false"
+					auto-update="true" />
+				<a:status startText="Loading..."
+					startStyle="background-color: #006699; color: white; font-weight: bold; position: fixed; left: 0px; top: 0px; padding: 5px 5px 5px 5px;" />
+				<ui:insert name="body" />
+			</div>
 		</div>
 		<!-- Scripts -->
 		<script

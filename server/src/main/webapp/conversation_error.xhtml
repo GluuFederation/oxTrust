@@ -2,6 +2,7 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:b="http://bootsfaces.net/ui"
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
 	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
 	xmlns:rich="http://richfaces.org/rich"
@@ -23,7 +24,8 @@
 			<div class="lockscreen-name"
 				style="text-align: center; font-size: 1.2em !important;">
 				#{msg['error.conversation.wrong']} <br />
-				<h:messages id="errorMessage" styleClass="message" />
+				<b:messages redisplay="true" recursive="true"
+							globalOnly="true" severity="info,warn,error,fatal" />
 				<br /> <span style="font-size: 14px;">#{msg['error.returnToTheApplication']}</span>
 			</div>
 			<a class="btn btn-block btn-primary btn-lg"
