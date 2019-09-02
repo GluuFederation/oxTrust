@@ -195,11 +195,8 @@ public class RegisterPersonAction implements Serializable {
 		if (this.person != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
-
 		requestParameters.putAll(FacesContext.getCurrentInstance().getExternalContext().getRequestParameterValuesMap());
-
 		return OxTrustConstants.RESULT_SUCCESS;
-
 	}
 
 	private void initRecaptcha() {
