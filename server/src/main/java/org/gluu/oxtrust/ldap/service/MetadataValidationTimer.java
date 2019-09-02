@@ -186,8 +186,6 @@ public class MetadataValidationTimer {
 		}
 
 		synchronized (this) {
-			log.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-			log.info("++++++++++++++++++++++++++++++++++++++++++++++++++MetadataDn:"+metadataFN);
 			if (StringHelper.isNotEmpty(metadataFN)) {
 				File metadata = new File(shib3IdpTempmetadataFolder + metadataFN);
 				File target = new File(shib3IdpMetadataFolder + metadataFN.replaceAll(".{4}\\..{4}$", ""));
