@@ -66,7 +66,7 @@ public class RelyingPartyAction implements Serializable {
 
 	private Map<String, FileUploadWrapper> fileWrappers = new HashMap<String, FileUploadWrapper>();
 	private List<String> allAcrs = new ArrayList<>();
-	private List<String> supportedNamedIdFormats = new ArrayList<>();
+	private List<String> supportedNameIdFormats = new ArrayList<>();
 	private boolean unspecifiedNameIDFormatSupported = false;
 
 	@PostConstruct
@@ -76,21 +76,21 @@ public class RelyingPartyAction implements Serializable {
 	}
 
 	private void initSupportedNameIdFormats() {
-		supportedNamedIdFormats.add("urn:oasis:names:tc:SAML:2.0:nameid-format:persistent");
-		supportedNamedIdFormats.add("urn:oasis:names:tc:SAML:2.0:nameid-format:transient");
-		supportedNamedIdFormats.add("urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress");
-		supportedNamedIdFormats.add("urn:oasis:names:tc:SAML:1.1:nameid-format:X509SubjectName");
-		supportedNamedIdFormats.add("urn:oasis:names:tc:SAML:1.1:nameid-format:WindowsDomainQualifiedName");
-		supportedNamedIdFormats.add("urn:oasis:names:tc:SAML:2.0:nameid-format:kerberos");
-		supportedNamedIdFormats.add("urn:oasis:names:tc:SAML:2.0:nameid-format:entity");
+		supportedNameIdFormats.add("urn:oasis:names:tc:SAML:2.0:nameid-format:persistent");
+		supportedNameIdFormats.add("urn:oasis:names:tc:SAML:2.0:nameid-format:transient");
+		supportedNameIdFormats.add("urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress");
+		supportedNameIdFormats.add("urn:oasis:names:tc:SAML:1.1:nameid-format:X509SubjectName");
+		supportedNameIdFormats.add("urn:oasis:names:tc:SAML:1.1:nameid-format:WindowsDomainQualifiedName");
+		supportedNameIdFormats.add("urn:oasis:names:tc:SAML:2.0:nameid-format:kerberos");
+		supportedNameIdFormats.add("urn:oasis:names:tc:SAML:2.0:nameid-format:entity");
 	}
 
 	public List<String> getSupportedNameIdFormats() {
-		return supportedNamedIdFormats;
+		return supportedNameIdFormats;
 	}
 
-	public void setSupportedNameIdFormats(List<String> supportedNamedIdFormats) {
-		this.supportedNamedIdFormats = supportedNamedIdFormats;
+	public void setSupportedNameIdFormats(List<String> supportedNameIdFormats) {
+		this.supportedNameIdFormats = supportedNameIdFormats;
 	}
 
 	public List<String> getAllAcrs() {
@@ -352,9 +352,9 @@ public class RelyingPartyAction implements Serializable {
 	public void handleUnspecifiedNameIDFormatSupportedCheckBox(ValueChangeEvent event) {
 		String value = event.getNewValue().toString();
 		if (value.equalsIgnoreCase("true")) {
-			supportedNamedIdFormats.add(NAMEID_FORMAT_UNSPECIFIED);
+			supportedNameIdFormats.add(NAMEID_FORMAT_UNSPECIFIED);
 		} else {
-			supportedNamedIdFormats.remove(NAMEID_FORMAT_UNSPECIFIED);
+			supportedNameIdFormats.remove(NAMEID_FORMAT_UNSPECIFIED);
 		}
 	}
 
