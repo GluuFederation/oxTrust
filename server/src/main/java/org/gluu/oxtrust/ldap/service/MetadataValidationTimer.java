@@ -142,7 +142,7 @@ public class MetadataValidationTimer {
 
 	public String getValidationStatus(String gluuSAMLspMetaDataFN, GluuValidationStatus status) {
 		if (status == null) {
-			return "-";
+			return GluuValidationStatus.VALIDATION.getDisplayName();
 		}
 		synchronized (metadataUpdates) {
 			boolean result = false;
@@ -153,7 +153,7 @@ public class MetadataValidationTimer {
 				}
 			}
 			if (result) {
-				return "Validation Scheduled";
+				return GluuValidationStatus.VALIDATION_SCHEDULED.getDisplayName();
 			} else {
 				return status.getDisplayName();
 			}
