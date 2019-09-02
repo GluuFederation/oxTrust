@@ -121,7 +121,7 @@ public class OxAuthClient extends Entry implements Serializable {
 	@AttributeName(name = "oxAuthSubjectType")
 	private OxAuthSubjectType subjectType;
 
-	@AttributeName(name = "oxIdTokenTokenBindingCnf")
+	@AttributeName(name = "tknBndCnf")
 	private String idTokenTokenBindingCnf;
 
 	@AttributeName(name = "oxRptAsJwt")

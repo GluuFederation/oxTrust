@@ -38,6 +38,18 @@ iframe {
 	overflow-y: visible !important;
 	overflow-x: visible !important;
 }
+
+.panel-primary>.panel-heading {
+	background-color: #00BE79 !important;
+}
+
+.panel-primary>.panel-heading {
+	background-color: #00BE79 !important;
+}
+
+.panel-primary {
+	border-color: #00BE79 !important;
+}
 </style>
 		<ui:fragment rendered="#{not registerPersonAction.captchaDisabled}">
 			<script async="async" defer="defer"
@@ -50,8 +62,8 @@ iframe {
 				<!-- Registration Form -->
 				<h:form id="personRegistrationForm">
 					<div class="login-box" style="margin-top: 0px !important;">
-						<rich:messages layout="list" showDetail="false" showSummary="true">
-						</rich:messages>
+						<b:messages redisplay="true" recursive="true"
+							globalOnly="true" severity="info,warn,error,fatal" />
 						<b:panel title="User Registration" look="primary"
 							iconAwesome="fa-user-plus" collapsible="false"
 							style="background: white; color: black;">

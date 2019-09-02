@@ -105,8 +105,17 @@
 											<b:dataTableColumn
 												label="#{msg['trustmanager.validationStatus']}">
 												<b:label
-													text="#{metadataValidationTimer.isQueued(tsps.spMetaDataFN)? 'Validation Scheduled' : tsps.validationStatus.displayName}"
-													severity="info" />
+													text="#{metadataValidationTimer.getValidationStatus(tsps.spMetaDataFN,tsps.validationStatus)}"
+													rendered="#{metadataValidationTimer.getValidationStatus(tsps.spMetaDataFN,tsps.validationStatus) eq 'Validation Scheduled'}"
+													severity="warning" />
+												<b:label
+													text="#{metadataValidationTimer.getValidationStatus(tsps.spMetaDataFN,tsps.validationStatus)}"
+													rendered="#{metadataValidationTimer.getValidationStatus(tsps.spMetaDataFN,tsps.validationStatus) eq 'Validation Failed'}"
+													severity="danger" />	
+												<b:label
+													text="#{metadataValidationTimer.getValidationStatus(tsps.spMetaDataFN,tsps.validationStatus)}"
+													rendered="#{metadataValidationTimer.getValidationStatus(tsps.spMetaDataFN,tsps.validationStatus) eq 'Validation Success'}"
+													severity="success" />	
 											</b:dataTableColumn>
 											<b:dataTableColumn label="#{msg['trustmanager.status']}">
 												<b:label rendered="#{tsps.status.displayName eq 'Active'}"

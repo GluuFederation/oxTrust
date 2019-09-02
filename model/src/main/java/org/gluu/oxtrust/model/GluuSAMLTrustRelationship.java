@@ -219,7 +219,7 @@ public class GluuSAMLTrustRelationship extends InumEntry implements Serializable
 	}
 
 	public String getGluuContainerFederation() {
-		return gluuContainerFederation;
+		return this.gluuContainerFederation;
 	}
 
 	public void setGluuContainerFederation(String gluuContainerFederation) {
@@ -425,7 +425,7 @@ public class GluuSAMLTrustRelationship extends InumEntry implements Serializable
 	public GluuEntityType getEntityType() {
 		return entityType;
 	}
-
+	
 	public void setEntityType(GluuEntityType entityType) {
 		this.entityType = entityType;
 	}

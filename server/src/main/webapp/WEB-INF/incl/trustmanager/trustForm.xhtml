@@ -184,14 +184,14 @@ input[submit] {
 															label="#{msg['trustmanager.federationName']}">
 															<h:selectOneMenu
 																styleClass="rounded form-control FederationWizard"
-																value="#{_trustRelationship.containerFederation}"
+																value="#{_trustRelationship.gluuContainerFederation}"
 																id="spMetaDataSourceTypeFederationId"
-																converter="federationConverter" required="true">
+																required="true">
 																<f:selectItem noSelectionOption="true"
 																	itemLabel="Select Federation" />
 																<f:selectItems
 																	value="#{_trustRelationshipAction.getAllOtherFederations(_trustRelationship.inum)}"
-																	var="_type" itemLabel="#{_type.displayName}" />
+																	var="_type" itemLabel="#{_type.displayName}" itemValue="#{_type.dn}" />
 																<a4j:ajax event="change"
 																	render="FederationWizardEntitySelection, EntityIds"
 																	limitRender="true" />
@@ -206,7 +206,7 @@ input[submit] {
 												</h:panelGroup>
 												<h:panelGroup id="FederationWizardEntitySelection">
 													<h:panelGroup
-														rendered="#{(_trustRelationshipAction.getTrustContainerFederation(_trustRelationship) ne null) and (_trustRelationship.spMetaDataSourceType.value eq 'federation')}">
+														rendered="#{(_trustRelationshipAction.getTrustContainerFederation() ne null) and (_trustRelationship.spMetaDataSourceType.value eq 'federation')}">
 														<ox:decorate
 															id="spMetaDataSourceTypeFederationEntitySelection"
 															label="#{msg['trustmanager.entityID']}">
