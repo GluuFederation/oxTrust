@@ -55,13 +55,13 @@ public class MetadataValidationTimer {
 
 	@Inject
 	private Event<TimerEvent> timerEvent;
-	
+
 	@Inject
 	private AppConfiguration appConfiguration;
-	
+
 	@Inject
 	private TrustService trustService;
-	
+
 	@Inject
 	private Shibboleth3ConfService shibboleth3ConfService;
 
@@ -90,7 +90,8 @@ public class MetadataValidationTimer {
 	}
 
 	@Asynchronous
-	public void processMetadataValidationTimerEvent(@Observes @Scheduled MetadataValidationEvent metadataValidationEvent) {
+	public void processMetadataValidationTimerEvent(
+			@Observes @Scheduled MetadataValidationEvent metadataValidationEvent) {
 		if (this.isActive.get()) {
 			return;
 		}
@@ -110,11 +111,13 @@ public class MetadataValidationTimer {
 
 	private void procesMetadataValidation() {
 		log.debug("Starting metadata validation");
-		boolean result = validateMetadata(appConfiguration.getShibboleth3IdpRootDir() + File.separator
-				+ Shibboleth3ConfService.SHIB3_IDP_TEMPMETADATA_FOLDER + File.separator, appConfiguration
-				.getShibboleth3IdpRootDir() + File.separator + Shibboleth3ConfService.SHIB3_IDP_METADATA_FOLDER + File.separator);
+		boolean result = validateMetadata(
+				appConfiguration.getShibboleth3IdpRootDir() + File.separator
+						+ Shibboleth3ConfService.SHIB3_IDP_TEMPMETADATA_FOLDER + File.separator,
+				appConfiguration.getShibboleth3IdpRootDir() + File.separator
+						+ Shibboleth3ConfService.SHIB3_IDP_METADATA_FOLDER + File.separator);
 		log.debug("Metadata validation finished with result: '{}'", result);
-		
+
 		if (result) {
 			regenerateConfigurationFiles();
 		}
@@ -137,17 +140,34 @@ public class MetadataValidationTimer {
 		}
 	}
 
+	public String getValidationStatus(String gluuSAMLspMetaDataFN, GluuValidationStatus status) {
+		if (status == null) {
+			return "-";
+		}
+		synchronized (metadataUpdates) {
+			boolean result = false;
+			for (String filename : metadataUpdates) {
+				if (filename.contains(gluuSAMLspMetaDataFN)) {
+					result = true;
+					break;
+				}
+			}
+			if (result) {
+				return "Validation Scheduled";
+			} else {
+				return status.getDisplayName();
+			}
+		}
+	}
+
 	private void regenerateConfigurationFiles() {
 		boolean createConfig = appConfiguration.isConfigGeneration();
-		log.info("IDP config generation is set to " + createConfig);
-		
 		if (createConfig) {
 			List<GluuSAMLTrustRelationship> trustRelationships = trustService.getAllActiveTrustRelationships();
 			shibboleth3ConfService.generateConfigurationFiles(trustRelationships);
 
 			log.info("IDP config generation files finished. TR count: '{}'", trustRelationships.size());
 		}
-
 	}
 
 	/**
@@ -187,7 +207,7 @@ public class MetadataValidationTimer {
 					tr.setStatus(GluuStatus.INACTIVE);
 					validationLog = new ArrayList<String>();
 					validationLog.add(e.getMessage());
-					log.warn("Validation of " + tr.getInum() + " failed: " + e.getMessage() );
+					log.warn("Validation of " + tr.getInum() + " failed: " + e.getMessage());
 					tr.setValidationLog(validationLog);
 					trustService.updateTrustRelationship(tr);
 
@@ -207,12 +227,11 @@ public class MetadataValidationTimer {
 					String idpMetadataFolder = appConfiguration.getShibboleth3IdpRootDir() + File.separator
 							+ Shibboleth3ConfService.SHIB3_IDP_METADATA_FOLDER + File.separator;
 					File metadataFile = new File(idpMetadataFolder + tr.getSpMetaDataFN());
-					
-					
+
 					List<String> entityIdList = SAMLMetadataParser.getEntityIdFromMetadataFile(metadataFile);
 					Set<String> entityIdSet = new TreeSet<String>();
-					Set<String> duplicatesSet = new TreeSet<String>(); 
-					if(entityIdList != null && ! entityIdList.isEmpty()){
+					Set<String> duplicatesSet = new TreeSet<String>();
+					if (entityIdList != null && !entityIdList.isEmpty()) {
 
 						for (String entityId : entityIdList) {
 							if (!entityIdSet.add(entityId)) {
@@ -221,15 +240,15 @@ public class MetadataValidationTimer {
 						}
 					}
 
-					
-					if(! duplicatesSet.isEmpty()){
+					if (!duplicatesSet.isEmpty()) {
 						validationLog = tr.getValidationLog();
-						if(validationLog != null){
+						if (validationLog != null) {
 							validationLog = new LinkedList<String>(validationLog);
-						}else{
+						} else {
 							validationLog = new LinkedList<String>();
 						}
-						validationLog.add("This metadata contains multiple instances of entityId: " + Arrays.toString(duplicatesSet.toArray()));
+						validationLog.add("This metadata contains multiple instances of entityId: "
+								+ Arrays.toString(duplicatesSet.toArray()));
 					}
 					tr.setValidationLog(validationLog);
 					tr.setGluuEntityId(entityIdSet);
@@ -237,22 +256,23 @@ public class MetadataValidationTimer {
 
 					trustService.updateTrustRelationship(tr);
 					result = true;
-				} else if(appConfiguration.isIgnoreValidation() || errorHandler.isInternalError()){
+				} else if (appConfiguration.isIgnoreValidation() || errorHandler.isInternalError()) {
 					tr.setValidationLog(new ArrayList<String>(new HashSet<String>(errorHandler.getLog())));
 					tr.setValidationStatus(GluuValidationStatus.VALIDATION_FAILED);
-					if( (( ! target.exists() ) ||  target.delete()) && ( ! metadata.renameTo(target) )){
+					if (((!target.exists()) || target.delete()) && (!metadata.renameTo(target))) {
 						log.error("Failed to move metadata file to location:" + target.getAbsolutePath());
 						tr.setStatus(GluuStatus.INACTIVE);
-					}else{
+					} else {
 						tr.setSpMetaDataFN(target.getName());
 					}
 					boolean federation = shibboleth3ConfService.isFederation(tr);
 					tr.setFederation(federation);
-					String idpMetadataFolder = appConfiguration.getShibboleth3IdpRootDir() + File.separator + Shibboleth3ConfService.SHIB3_IDP_METADATA_FOLDER + File.separator;
+					String idpMetadataFolder = appConfiguration.getShibboleth3IdpRootDir() + File.separator
+							+ Shibboleth3ConfService.SHIB3_IDP_METADATA_FOLDER + File.separator;
 					File metadataFile = new File(idpMetadataFolder + tr.getSpMetaDataFN());
-					
+
 					List<String> entityIdList = SAMLMetadataParser.getEntityIdFromMetadataFile(metadataFile);
-					Set<String> duplicatesSet = new TreeSet<String>(); 
+					Set<String> duplicatesSet = new TreeSet<String>();
 					Set<String> entityIdSet = new TreeSet<String>();
 
 					for (String entityId : entityIdList) {
@@ -260,25 +280,27 @@ public class MetadataValidationTimer {
 							duplicatesSet.add(entityId);
 						}
 					}
-					
+
 					tr.setGluuEntityId(entityIdSet);
-					tr.setStatus(GluuStatus.ACTIVE);	
+					tr.setStatus(GluuStatus.ACTIVE);
 					validationLog = tr.getValidationLog();
-					if(! duplicatesSet.isEmpty()){
-						validationLog.add("This metadata contains multiple instances of entityId: " + Arrays.toString(duplicatesSet.toArray()));
+					if (!duplicatesSet.isEmpty()) {
+						validationLog.add("This metadata contains multiple instances of entityId: "
+								+ Arrays.toString(duplicatesSet.toArray()));
 					}
-					
-                                        if (errorHandler.isInternalError()) {
-                                            validationLog = tr.getValidationLog();
-                                            
-                                            validationLog.add("Warning: cannot validate metadata. Check internet connetion ans www.w3.org availability.");
-                                            
-                                            // update log with warning
-                                            for (String warningLogMessage : errorHandler.getLog()) 
-                                                validationLog.add("Warning: " + warningLogMessage);
-                                        }
-                                        
-                                        trustService.updateTrustRelationship(tr);
+
+					if (errorHandler.isInternalError()) {
+						validationLog = tr.getValidationLog();
+
+						validationLog.add(
+								"Warning: cannot validate metadata. Check internet connetion ans www.w3.org availability.");
+
+						// update log with warning
+						for (String warningLogMessage : errorHandler.getLog())
+							validationLog.add("Warning: " + warningLogMessage);
+					}
+
+					trustService.updateTrustRelationship(tr);
 					result = true;
 				} else {
 					tr.setValidationLog(new ArrayList<String>(new HashSet<String>(errorHandler.getLog())));
