@@ -420,6 +420,8 @@ public class ManageCustomScriptAction
 		} else {
 			if (node.isParent()) {
 				node.setExpanded(false);
+			}else {
+				tree.closeParentOfNode(node);
 			}
 			setShowAddButton(false);
 		}

@@ -84,5 +84,24 @@ public class GluuTreeModel extends DefaultNodeImpl {
 		}
 		return false;
 	}
+	
+	private boolean hasThisChildNode(GluuTreeModel node) {
+		if (this.hasChild()) {
+			return this.getChilds().stream()
+					.anyMatch(e -> ((GluuTreeModel) e).getInum().equalsIgnoreCase(node.getInum()));
+		}
+		return false;
+	}
+
+	public void closeParentOfNode(GluuTreeModel node) {
+		if (this.hasChild()) {
+			this.getChilds().forEach(e -> {
+				if(((GluuTreeModel) e).hasThisChildNode(node)) {
+					e.setExpanded(false);
+					return;
+				}
+			});
+		}
+	}
 
 }
