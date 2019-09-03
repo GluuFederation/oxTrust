@@ -29,7 +29,7 @@
 						value="#{samlAcrAction.acrs}" var="acr" csv="true" pdf="true"
 						select="true" responsive="true">
 						<b:dataTableColumn label="Inum">
-							<h:outputText value="#{acr.inum.substring(0,6)}"
+							<h:outputText value="#{acr.inum}"
 								style="width:100%;" />
 						</b:dataTableColumn>
 						<b:dataTableColumn label="Class Reference">

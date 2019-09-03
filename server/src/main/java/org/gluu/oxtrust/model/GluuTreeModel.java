@@ -58,6 +58,7 @@ public class GluuTreeModel extends DefaultNodeImpl {
 				GluuTreeModel node = (GluuTreeModel) e;
 				if (node.hasChildScript(selectedScript)) {
                     node.setExpanded(true);
+                    node.setSelected(true);
                     node.selectNodeFor(selectedScript);
                     return;
 				}

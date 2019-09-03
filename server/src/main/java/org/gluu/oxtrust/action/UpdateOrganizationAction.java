@@ -14,6 +14,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.ConversationScoped;
@@ -209,8 +210,6 @@ public class UpdateOrganizationAction implements Serializable {
 	}
 
 	public String verifySmtpConfiguration() {
-		log.info("HostName: " + smtpConfiguration.getHost() + " Port: " + smtpConfiguration.getPort() + " RequireSSL: "
-				+ smtpConfiguration.isRequiresSsl() + " RequireSSL: " + smtpConfiguration.isRequiresAuthentication());
 		log.debug("UserName: " + smtpConfiguration.getUserName() + " Password: "
 				+ smtpConfiguration.getPasswordDecrypted());
 		boolean result = mailService.sendMail(smtpConfiguration, smtpConfiguration.getFromEmailAddress(),
@@ -304,9 +303,11 @@ public class UpdateOrganizationAction implements Serializable {
 	private void saveLogo(UploadedFile uploadedFile) {
 		String fileName = saveFile(uploadedFile, LogoImageServlet.BASE_OXTRUST_LOGO_PATH);
 		if (fileName != null) {
-			organization.setOxTrustLogoPath(LogoImageServlet.BASE_OXTRUST_LOGO_PATH + fileName);
+			this.organization.setOxTrustLogoPath(LogoImageServlet.BASE_OXTRUST_LOGO_PATH + fileName);
+			this.organizationService.updateOrganization(this.organization);
 			facesMessages.add(FacesMessage.SEVERITY_INFO, "oxTrust logo loaded successfully");
-			facesMessages.add(FacesMessage.SEVERITY_WARN, THE_CHANGE_MAY_TAKE_UP_TO_30MIN_TO_BE_EFFECTIVE_DUE_TO_CACHING);
+			facesMessages.add(FacesMessage.SEVERITY_WARN,
+					THE_CHANGE_MAY_TAKE_UP_TO_30MIN_TO_BE_EFFECTIVE_DUE_TO_CACHING);
 		} else {
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Error loading oxTrust logo");
 		}
@@ -315,9 +316,11 @@ public class UpdateOrganizationAction implements Serializable {
 	private void saveFavIcon(UploadedFile uploadedFile) {
 		String fileName = saveFile(uploadedFile, FaviconImageServlet.BASE_OXTRUST_FAVICON_PATH);
 		if (fileName != null) {
-			organization.setOxTrustFaviconPath(FaviconImageServlet.BASE_OXTRUST_FAVICON_PATH + fileName);
+			this.organization.setOxTrustFaviconPath(FaviconImageServlet.BASE_OXTRUST_FAVICON_PATH + fileName);
+			this.organizationService.updateOrganization(this.organization);
 			facesMessages.add(FacesMessage.SEVERITY_INFO, "oxTrust favicon loaded successfully");
-			facesMessages.add(FacesMessage.SEVERITY_WARN, THE_CHANGE_MAY_TAKE_UP_TO_30MIN_TO_BE_EFFECTIVE_DUE_TO_CACHING);
+			facesMessages.add(FacesMessage.SEVERITY_WARN,
+					THE_CHANGE_MAY_TAKE_UP_TO_30MIN_TO_BE_EFFECTIVE_DUE_TO_CACHING);
 		} else {
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Error loading oxTrust favicon");
 		}
@@ -326,9 +329,11 @@ public class UpdateOrganizationAction implements Serializable {
 	private void saveOxAuthLogo(UploadedFile uploadedFile) {
 		String fileName = saveFile(uploadedFile, OxAuthLogoServlet.BASE_OXAUTH_LOGO_PATH);
 		if (fileName != null) {
-			organization.setOxAuthLogoPath(OxAuthLogoServlet.BASE_OXAUTH_LOGO_PATH + fileName);
+			this.organization.setOxAuthLogoPath(OxAuthLogoServlet.BASE_OXAUTH_LOGO_PATH + fileName);
+			this.organizationService.updateOrganization(this.organization);
 			facesMessages.add(FacesMessage.SEVERITY_INFO, "oxAuth logo loaded successfully");
-			facesMessages.add(FacesMessage.SEVERITY_WARN, THE_CHANGE_MAY_TAKE_UP_TO_30MIN_TO_BE_EFFECTIVE_DUE_TO_CACHING);
+			facesMessages.add(FacesMessage.SEVERITY_WARN,
+					THE_CHANGE_MAY_TAKE_UP_TO_30MIN_TO_BE_EFFECTIVE_DUE_TO_CACHING);
 		} else {
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Error loading oxAuth logo");
 		}
@@ -337,9 +342,11 @@ public class UpdateOrganizationAction implements Serializable {
 	private void saveOxAuthFavIcon(UploadedFile uploadedFile) {
 		String fileName = saveFile(uploadedFile, OxAuthFaviconServlet.BASE_OXAUTH_FAVICON_PATH);
 		if (fileName != null) {
-			organization.setOxAuthFaviconPath(OxAuthFaviconServlet.BASE_OXAUTH_FAVICON_PATH + fileName);
+			this.organization.setOxAuthFaviconPath(OxAuthFaviconServlet.BASE_OXAUTH_FAVICON_PATH + fileName);
+			this.organizationService.updateOrganization(this.organization);
 			facesMessages.add(FacesMessage.SEVERITY_INFO, "oxAuth favicon loaded successfully");
-			facesMessages.add(FacesMessage.SEVERITY_WARN, THE_CHANGE_MAY_TAKE_UP_TO_30MIN_TO_BE_EFFECTIVE_DUE_TO_CACHING);
+			facesMessages.add(FacesMessage.SEVERITY_WARN,
+					THE_CHANGE_MAY_TAKE_UP_TO_30MIN_TO_BE_EFFECTIVE_DUE_TO_CACHING);
 		} else {
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Error loading oxAuth favicon");
 		}
@@ -348,9 +355,11 @@ public class UpdateOrganizationAction implements Serializable {
 	private void saveIdpLogo(UploadedFile uploadedFile) {
 		String fileName = saveFile(uploadedFile, IdpLogoServlet.BASE_IDP_LOGO_PATH);
 		if (fileName != null) {
-			organization.setIdpLogoPath(IdpLogoServlet.BASE_IDP_LOGO_PATH + fileName);
+			this.organization.setIdpLogoPath(IdpLogoServlet.BASE_IDP_LOGO_PATH + fileName);
+			this.organizationService.updateOrganization(this.organization);
 			facesMessages.add(FacesMessage.SEVERITY_INFO, "IDP logo loaded successfully");
-			facesMessages.add(FacesMessage.SEVERITY_WARN, THE_CHANGE_MAY_TAKE_UP_TO_30MIN_TO_BE_EFFECTIVE_DUE_TO_CACHING);
+			facesMessages.add(FacesMessage.SEVERITY_WARN,
+					THE_CHANGE_MAY_TAKE_UP_TO_30MIN_TO_BE_EFFECTIVE_DUE_TO_CACHING);
 		} else {
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Error loading IDP logo");
 		}
@@ -359,9 +368,11 @@ public class UpdateOrganizationAction implements Serializable {
 	private void saveIdpFavIcon(UploadedFile uploadedFile) {
 		String fileName = saveFile(uploadedFile, IdpFaviconServlet.BASE_IDP_FAVICON_PATH);
 		if (fileName != null) {
-			organization.setIdpFaviconPath(IdpFaviconServlet.BASE_IDP_FAVICON_PATH + fileName);
+			this.organization.setIdpFaviconPath(IdpFaviconServlet.BASE_IDP_FAVICON_PATH + fileName);
+			this.organizationService.updateOrganization(this.organization);
 			facesMessages.add(FacesMessage.SEVERITY_INFO, "IDP favicon loaded successfully");
-			facesMessages.add(FacesMessage.SEVERITY_WARN, THE_CHANGE_MAY_TAKE_UP_TO_30MIN_TO_BE_EFFECTIVE_DUE_TO_CACHING);
+			facesMessages.add(FacesMessage.SEVERITY_WARN,
+					THE_CHANGE_MAY_TAKE_UP_TO_30MIN_TO_BE_EFFECTIVE_DUE_TO_CACHING);
 		} else {
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Error loading IDP favicon");
 		}
@@ -453,6 +464,10 @@ public class UpdateOrganizationAction implements Serializable {
 
 	public SmtpConfiguration getSmtpConfiguration() {
 		return smtpConfiguration;
+	}
+
+	public String getRandonRnd() {
+		return "&rnd="+UUID.randomUUID().toString().substring(0, 8);
 	}
 
 }
