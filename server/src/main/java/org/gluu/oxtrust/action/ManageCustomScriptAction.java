@@ -99,7 +99,6 @@ public class ManageCustomScriptAction
 	private CustomScript selectedScript;
 	private String dn;
 	private String inum;
-
 	private CustomScriptType selectedScriptType = CustomScriptType.PERSON_AUTHENTICATION;
 
 	public void init(boolean isInitial) {
@@ -124,11 +123,10 @@ public class ManageCustomScriptAction
 			if (isInitial) {
 				this.selectedScript = customScriptService
 						.findCustomScripts(Arrays.asList(CustomScriptType.PERSON_AUTHENTICATION)).get(0);
-				fillEmptyListProperty();
 			} else {
 				this.selectedScript = customScriptService.getCustomScriptByINum(dn, inum, null).get();
-				fillEmptyListProperty();
 			}
+			fillEmptyListProperty();
 			tree.expandParentOfNode(selectedScript);
 		} catch (Exception e) {
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Error  building custom script tree structure");
@@ -365,38 +363,6 @@ public class ManageCustomScriptAction
 		this.tree = tree;
 	}
 
-	@Override
-	public void processValueSelected(TreeNodeSelectionEvent event) {
-		GluuTreeModel node = (GluuTreeModel) event.getNode();
-		if (event.isSelected()) {
-			if (node.getDn() != null && node.getInum() != null && !node.isParent()) {
-				Optional<CustomScript> customScript = customScriptService.getCustomScriptByINum(node.getDn(),
-						node.getInum(), null);
-				if (customScript.isPresent()) {
-					this.selectedScript = customScript.get();
-					this.selectedScriptType = node.getCustomScriptType();
-					fillEmptyListProperty();
-				}
-			}
-			if (node.isParent()) {
-				this.selectedScriptType = node.getCustomScriptType();
-				setShowAddButton(true);
-				node.setExpanded(true);
-			}
-		} else {
-			setShowAddButton(false);
-		}
-	}
-
-	@Override
-	public void processValueChecked(TreeNodeCheckedEvent event) {
-	}
-
-	@Override
-	public void processValueExpanded(TreeNodeExpandedEvent event) {
-
-	}
-
 	public CustomScript getSelectedScript() {
 		return selectedScript;
 	}
@@ -427,5 +393,43 @@ public class ManageCustomScriptAction
 
 	public void setShowAddButton(boolean showAddButton) {
 		this.showAddButton = showAddButton;
+	}
+
+	@Override
+	public void processValueSelected(TreeNodeSelectionEvent event) {
+		GluuTreeModel node = (GluuTreeModel) event.getNode();
+		if (event.isSelected()) {
+			if (node.getDn() != null && node.getInum() != null && !node.isParent()) {
+				Optional<CustomScript> customScript = customScriptService.getCustomScriptByINum(node.getDn(),
+						node.getInum(), null);
+				if (customScript.isPresent()) {
+					this.selectedScript = customScript.get();
+					this.selectedScriptType = node.getCustomScriptType();
+					fillEmptyListProperty();
+				}
+				tree.expandParentOfNode(this.selectedScript);
+			} else if (node.isParent()) {
+				if (node.isExpanded()) {
+					node.setExpanded(false);
+				} else {
+					node.setExpanded(true);
+				}
+				this.selectedScriptType = node.getCustomScriptType();
+				setShowAddButton(true);
+			}
+		} else {
+			if (node.isParent()) {
+				node.setExpanded(false);
+			}
+			setShowAddButton(false);
+		}
+	}
+
+	@Override
+	public void processValueExpanded(TreeNodeExpandedEvent event) {
+	}
+
+	@Override
+	public void processValueChecked(TreeNodeCheckedEvent event) {
 	}
 }
