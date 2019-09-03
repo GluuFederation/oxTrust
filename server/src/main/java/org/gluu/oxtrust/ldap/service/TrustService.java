@@ -136,15 +136,6 @@ public class TrustService implements Serializable {
 		return null;
 	}
 
-	// private String getRightDn(String dn) {
-	// String newDn1 = dn.split("\\[")[1];
-	// String newDn2 = newDn1.substring(3);
-	// String[] newDn3 = newDn2.split("\\,");
-	// String valueToBeRemoved = newDn3[newDn3.length - 1];
-	// dn = newDn2.replace(",".concat(valueToBeRemoved), "");
-	// return dn;
-	// }
-
 	/**
 	 * This is a LDAP operation as LDAP and IDP will always be in sync. We can just
 	 * call LDAP to fetch all Trust Relationships.

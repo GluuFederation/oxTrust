@@ -1078,9 +1078,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 	public boolean generateSp() throws IOException {
 		FacesContext facesContext = FacesContext.getCurrentInstance();
 		try {
-			log.info(" generate sp ------------");
 			this.trustRelationship.setInum(trustService.generateInumForNewTrustRelationship());
-
 			String cert = getCertForGeneratedSP();
 			String spMetadataFileName = this.trustRelationship.getSpMetaDataFN();
 			if (StringHelper.isEmpty(spMetadataFileName)) {
@@ -1108,7 +1106,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 		return trustService.getAllOtherFederations(inum);
 	}
 
-	public GluuSAMLTrustRelationship getTrustContainerFederation(String inum) {
+	public GluuSAMLTrustRelationship getTrustContainerFederation() {
 		return trustService.getTrustContainerFederation(this.trustRelationship.getGluuContainerFederation());
 	}
 
