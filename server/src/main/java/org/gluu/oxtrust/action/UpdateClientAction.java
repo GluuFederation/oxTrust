@@ -846,8 +846,8 @@ public class UpdateClientAction implements Serializable {
 					.getSectorIdentifierById(this.sectorIdentifiers.get(0).getId());
 			if (sectorIdentifier != null) {
 				sectorIdentifier.addNewClient(this.getInum());
+				sectorIdentifierService.updateSectorIdentifier(sectorIdentifier);
 			}
-			sectorIdentifierService.updateSectorIdentifier(sectorIdentifier);
 		}
 	}
 

@@ -233,6 +233,7 @@ public class UpdateResourceAction implements Serializable {
 			String id = String.valueOf(System.currentTimeMillis());
 			String resourceSetDn = umaResourcesService.getDnForResource(id);
 			this.resource.setDn(resourceSetDn);
+			this.resource.setId(id);
 			this.resource.setRev(String.valueOf(0));
 			this.resource.setCreator(identity.getUser().getDn());
 			try {
@@ -242,14 +243,11 @@ public class UpdateResourceAction implements Serializable {
 				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new UMA resource");
 				return OxTrustConstants.RESULT_FAILURE;
 			}
-			log.debug("Resource were add successfully");
 			facesMessages.add(FacesMessage.SEVERITY_INFO,
 					"New UMA resource '#{updateResourceAction.resource.name}' added successfully");
 			conversationService.endConversation();
-
 			this.update = true;
 			this.oxId = id;
-
 			return OxTrustConstants.RESULT_UPDATE;
 		}
 	}
@@ -260,8 +258,8 @@ public class UpdateResourceAction implements Serializable {
 	}
 
 	private boolean resourceWithSameNameExistInUpdate() {
-		List<UmaResource> values=umaResourcesService.getAllResources(1000).stream()
-		.filter(e -> e.getId().equalsIgnoreCase(this.resource.getId())).collect(Collectors.toList());
+		List<UmaResource> values = umaResourcesService.getAllResources(1000).stream()
+				.filter(e -> e.getId().equalsIgnoreCase(this.resource.getId())).collect(Collectors.toList());
 		return !values.stream().noneMatch(e -> !e.getId().equalsIgnoreCase(this.resource.getId()));
 	}
 
@@ -319,29 +317,21 @@ public class UpdateResourceAction implements Serializable {
 
 	public void acceptSelectScopes() {
 		Set<String> addedScopeInums = getAddedScopesInums();
-
 		for (SelectableEntity<Scope> availableScope : this.availableScopes) {
 			Scope scopeDescription = availableScope.getEntity();
 			String scopeDescriptionInum = scopeDescription.getInum();
-
 			if (availableScope.isSelected() && !addedScopeInums.contains(scopeDescriptionInum)) {
+				removeScope(scopeDescriptionInum);
 				addScope(scopeDescription);
 			}
-
-			if (!availableScope.isSelected() && addedScopeInums.contains(scopeDescriptionInum)) {
-				removeScope(scopeDescriptionInum);
-			}
 		}
-
 	}
 
 	private Set<String> getAddedScopesInums() {
 		Set<String> addedScopeInums = new HashSet<String>();
-
 		if (this.availableScopes == null) {
 			return addedScopeInums;
 		}
-
 		for (DisplayNameEntry scope : this.scopes) {
 			addedScopeInums.add(scope.getInum());
 		}
@@ -415,7 +405,6 @@ public class UpdateResourceAction implements Serializable {
 
 	public void selectAddedClients() {
 		Set<String> addedClientInums = getAddedClientsInums();
-
 		for (SelectableEntity<OxAuthClient> availableClient : this.availableClients) {
 			availableClient.setSelected(addedClientInums.contains(availableClient.getEntity().getInum()));
 		}
@@ -423,31 +412,24 @@ public class UpdateResourceAction implements Serializable {
 
 	public void acceptSelectClients() {
 		Set<String> addedClientInums = getAddedClientsInums();
-
 		for (SelectableEntity<OxAuthClient> availableClient : this.availableClients) {
 			OxAuthClient oxAuthClient = availableClient.getEntity();
 			String oxAuthClientInum = oxAuthClient.getInum();
 			if (availableClient.isSelected() && !addedClientInums.contains(oxAuthClientInum)) {
-				addClient(oxAuthClient);
-			}
-
-			if (!availableClient.isSelected() && addedClientInums.contains(oxAuthClientInum)) {
 				removeClient(oxAuthClientInum);
+				addClient(oxAuthClient);
 			}
 		}
 	}
 
 	private Set<String> getAddedClientsInums() {
 		Set<String> addedClientInums = new HashSet<String>();
-
 		if (this.availableClients == null) {
 			return addedClientInums;
 		}
-
 		for (DisplayNameEntry clietn : this.clients) {
 			addedClientInums.add(clietn.getInum());
 		}
-
 		return addedClientInums;
 	}
 

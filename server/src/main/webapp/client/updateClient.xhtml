@@ -3,6 +3,7 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:b="http://bootsfaces.net/ui"
 	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
@@ -14,7 +15,7 @@
 		<f:viewAction action="#{conversationService.initConversation}" />
 		<f:viewAction action="#{updateClientAction.update}" onPostback="false" />
 	</f:metadata>
-    <ui:define name="head">
+	<ui:define name="head">
 		<script
 			src="#{oxTrustConfigurationService.jsLocation}/jsoneditor.min.js"
 			type="text/javascript" />
@@ -59,10 +60,11 @@
 
 				<ui:define name="controlButttons">
 					<div id="updateButtons">
-						<h:commandButton action="#{updateClientAction.save}"
-							styleClass="btn btn-primary saveButtonClass" value="#{msg['client.update']}" />
-						<h:commandButton action="#{updateClientAction.cancel}"
-							immediate="true" style="margin-left:3px;"
+						<b:commandButton action="#{updateClientAction.save}" ajax="true"
+							update="@form" styleClass="btn btn-primary saveButtonClass"
+							value="#{msg['client.update']}" />
+						<b:commandButton action="#{updateClientAction.cancel}" ajax="true"
+							update="@form" immediate="true" style="margin-left:3px;"
 							styleClass="btn btn-primary" value="#{msg['client.cancel']}" />
 					</div>
 				</ui:define>
@@ -104,8 +106,8 @@
 				acceptMethod="#{updateClientAction.acceptSelectScopes()}"
 				cancelMethod="#{updateClientAction.cancelSelectScopes()}"
 				displayNameProperty="entity.description" displaySearchForm="false"
-				id="scope" label="#{msg['client.scopes']}"
-				nameProperty="entity.id" render="selectedScopesId"
+				id="scope" label="#{msg['client.scopes']}" nameProperty="entity.id"
+				render="selectedScopesId"
 				searchMethod="#{updateClientAction.searchAvailableScopes}"
 				searchResult="#{updateClientAction.availableScopes}" />
 
@@ -122,11 +124,11 @@
 				acceptMethod="#{updateClientAction.acceptSelectSectors}"
 				cancelMethod="#{updateClientAction.cancelSelectSectors}"
 				displayNameProperty="entity.description" displaySearchForm="false"
-				id="sector" label="Pick one sector from the list" nameProperty="entity.id"
-				render="selectedSectorId"
+				id="sector" label="Pick one sector from the list"
+				nameProperty="entity.id" render="selectedSectorId"
 				searchMethod="#{updateClientAction.searchAvailableSectors}"
 				searchResult="#{updateClientAction.availableSectors}" />
-				
+
 			<ox:selectSelectableEntityDialog
 				acceptMethod="#{updateClientAction.acceptSelectCustomScripts}"
 				cancelMethod="#{updateClientAction.cancelSelectCustomScripts}"
