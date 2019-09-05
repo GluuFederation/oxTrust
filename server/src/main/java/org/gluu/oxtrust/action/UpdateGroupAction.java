@@ -106,7 +106,6 @@ public class UpdateGroupAction implements Serializable {
 		if (this.group != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
-
 		this.update = false;
 		this.group = new GluuGroup();
 		this.group.setOwner(identity.getUser().getDn());
@@ -116,13 +115,10 @@ public class UpdateGroupAction implements Serializable {
 			this.members = getMemberDisplayNameEntiries();
 		} catch (BasePersistenceException ex) {
 			log.error("Failed to prepare lists", ex);
-
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new group");
 			conversationService.endConversation();
-
 			return OxTrustConstants.RESULT_FAILURE;
 		}
-
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
@@ -130,11 +126,8 @@ public class UpdateGroupAction implements Serializable {
 		if (this.group != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
-
 		this.update = true;
-		log.debug("this.update : " + this.update);
 		try {
-			log.debug("inum : " + inum);
 			this.group = groupService.getGroupByInum(inum);
 		} catch (BasePersistenceException ex) {
 			log.error("Failed to find group {}", inum, ex);
@@ -142,18 +135,14 @@ public class UpdateGroupAction implements Serializable {
 
 		if (this.group == null) {
 			log.error("Failed to load group {}", inum);
-
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to find group");
 			conversationService.endConversation();
-
 			return OxTrustConstants.RESULT_FAILURE;
 		}
-
 		try {
 			this.members = getMemberDisplayNameEntiries();
 		} catch (BasePersistenceException ex) {
 			log.error("Failed to prepare lists", ex);
-
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to load group");
 			conversationService.endConversation();
 
@@ -169,9 +158,7 @@ public class UpdateGroupAction implements Serializable {
 		} else {
 			facesMessages.add(FacesMessage.SEVERITY_INFO, "New group not added");
 		}
-
 		conversationService.endConversation();
-
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
@@ -204,8 +191,7 @@ public class UpdateGroupAction implements Serializable {
 			facesMessages.add(FacesMessage.SEVERITY_INFO, "Group '#{updateGroupAction.group.displayName}' updated successfully");
 		} else {
 			this.inum = groupService.generateInumForNewGroup();
-			String dn = groupService.getDnForGroup(this.inum);
-			this.group.setDn(dn);
+			this.group.setDn(groupService.getDnForGroup(this.inum));
 			this.group.setInum(this.inum);
 			try {
 				groupService.addGroup(this.group);
@@ -254,7 +240,6 @@ public class UpdateGroupAction implements Serializable {
 		if (tmp != null) {
 			result.addAll(tmp);
 		}
-
 		return result;
 	}
 
@@ -267,9 +252,7 @@ public class UpdateGroupAction implements Serializable {
 		if (StringHelper.isEmpty(inum)) {
 			return;
 		}
-
 		String removeMemberInum = personService.getDnForPerson(inum);
-
 		for (Iterator<DisplayNameEntry> iterator = this.members.iterator(); iterator.hasNext();) {
 			DisplayNameEntry member = iterator.next();
 			if (removeMemberInum.equals(member.getDn())) {
@@ -295,7 +278,6 @@ public class UpdateGroupAction implements Serializable {
 		if (Util.equals(this.oldSearchAvailableMemberPattern, this.searchAvailableMemberPattern)) {
 			return;
 		}
-
 		try {
 			this.availableMembers = personService.searchPersons(this.searchAvailableMemberPattern, OxTrustConstants.searchGroupSizeLimit);
 			this.oldSearchAvailableMemberPattern = this.searchAvailableMemberPattern;
@@ -345,34 +327,26 @@ public class UpdateGroupAction implements Serializable {
 			this.group.setMembers(null);
 			return;
 		}
-
 		List<String> tmpMembers = new ArrayList<String>();
 		for (DisplayNameEntry member : this.members) {
 			tmpMembers.add(member.getDn());
 		}
-
 		this.group.setMembers(tmpMembers);
 	}
 
 	private void updatePersons(List<DisplayNameEntry> oldMembers, List<DisplayNameEntry> newMembers) throws Exception {
 		log.debug("Old members: {}", oldMembers);
 		log.debug("New members: {}", newMembers);
-
 		String groupDn = this.group.getDn();
-
 		GluuOrganization organization = organizationService.getOrganization();
 		String organizationGroups[] = { organization.getManagerGroup() };
-
 		// Convert members to array of DNs
 		String[] oldMemberDns = convertToDNsArray(oldMembers);
 		String[] newMemberDns = convertToDNsArray(newMembers);
-
 		Arrays.sort(oldMemberDns);
 		Arrays.sort(newMemberDns);
-
 		boolean[] retainOldMembers = new boolean[oldMemberDns.length];
 		Arrays.fill(retainOldMembers, false);
-
 		List<String> addedMembers = new ArrayList<String>();
 		List<String> removedMembers = new ArrayList<String>();
 		List<String> existingMembers = new ArrayList<String>();
@@ -417,16 +391,13 @@ public class UpdateGroupAction implements Serializable {
 		for (String dn : removedMembers) {
 			GluuCustomPerson person = personService.getPersonByDn(dn);
 			log.debug("Removing group {} from person {} memberOf", groupDn, person.getDisplayName());
-
 			if (appConfiguration.isUpdateStatus()) {
 				Boolean slaManager = isSLAManager(organizationGroups, person);
 				person.setSLAManager(slaManager);
 			}
-
 			List<String> personMemberOf = new ArrayList<String>(person.getMemberOf());
 			personMemberOf.remove(groupDn);
 			person.setMemberOf(personMemberOf);
-
 			personService.updatePerson(person);
 		}
 
