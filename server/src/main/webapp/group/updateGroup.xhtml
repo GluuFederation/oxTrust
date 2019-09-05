@@ -3,6 +3,7 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:b="http://bootsfaces.net/ui"
 	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
@@ -24,16 +25,15 @@
 
 				<ui:define name="controlButttons">
 					<div id="updateButtons">
-						<h:commandButton action="#{updateGroupAction.save}"
-							styleClass="btn btn-primary" value="#{msg['group.update']}">
-							<f:ajax oncomplete="window.location.reload();" />
-						</h:commandButton>
+						<b:commandButton action="#{updateGroupAction.save}"
+						     ajax="true" update="@form"
+							styleClass="btn btn-primary" value="#{msg['group.update']}"/>
 						<a4j:commandButton ajaxSingle="true" eventsQueue="groupQueue"
 							onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();"
 							rendered="#{not _new}" style="margin-left:3px;"
 							styleClass="btn btn-primary" value="#{msg['group.delete']}" />
-						<h:commandButton action="#{updateGroupAction.cancel}"
-							immediate="true" style="margin-left:3px;"
+						<b:commandButton action="#{updateGroupAction.cancel}"
+							style="margin-left:3px;" ajax="true" update="@form"
 							styleClass="btn btn-primary" value="#{msg['group.cancel']}" />
 					</div>
 				</ui:define>
