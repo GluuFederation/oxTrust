@@ -2,16 +2,18 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:b="http://bootsfaces.net/ui"
 	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	template="/WEB-INF/incl/layout/newtemplate.xhtml">
 	<f:metadata>
-	        <f:viewAction action="#{permissionService.requestPermission('client', 'access')}" />
+		<f:viewAction
+			action="#{permissionService.requestPermission('client', 'access')}" />
 		<f:viewParam name="inum" value="#{updateClientAction.inum}" />
 		<f:viewAction action="#{conversationService.initConversation}" />
 		<f:viewAction action="#{updateClientAction.add}" onPostback="false" />
 	</f:metadata>
-    <ui:define name="head">
+	<ui:define name="head">
 		<script
 			src="#{oxTrustConfigurationService.jsLocation}/jsoneditor.min.js"
 			type="text/javascript" />
@@ -46,11 +48,13 @@
 					<ui:param name="_new" value="true" />
 					<ui:define name="controlButttons">
 						<div id="updateButtons">
-							<h:commandButton action="#{updateClientAction.save}"
-								styleClass="btn btn-primary saveButtonClass" value="#{msg['client.add']}" />
-							<h:commandButton action="#{updateClientAction.cancel}"
-								immediate="true" style="margin-left:3px;"
-								styleClass="btn btn-primary" value="#{msg['client.cancel']}" />
+							<b:commandButton action="#{updateClientAction.save}" ajax="true"
+								update="@form" styleClass="btn btn-primary saveButtonClass"
+								value="#{msg['client.add']}" />
+							<b:commandButton action="#{updateClientAction.cancel}"
+								ajax="true" update="@form" immediate="true"
+								style="margin-left:3px;" styleClass="btn btn-primary"
+								value="#{msg['client.cancel']}" />
 						</div>
 					</ui:define>
 				</ui:decorate>
@@ -76,8 +80,8 @@
 					acceptMethod="#{updateClientAction.acceptSelectScopes()}"
 					cancelMethod="#{updateClientAction.cancelSelectScopes()}"
 					displayNameProperty="entity.description" displaySearchForm="false"
-					id="scope" label="#{msg['client.scopes']}"
-					nameProperty="entity.id" render="selectedScopesId"
+					id="scope" label="#{msg['client.scopes']}" nameProperty="entity.id"
+					render="selectedScopesId"
 					searchMethod="#{updateClientAction.searchAvailableScopes}"
 					searchResult="#{updateClientAction.availableScopes}" />
 
@@ -90,7 +94,7 @@
 					searchMethod="#{updateClientAction.searchAvailableResponseTypes}"
 					searchResult="#{updateClientAction.availableResponseTypes}" />
 
-                 <ox:selectSelectableEntityDialog
+				<ox:selectSelectableEntityDialog
 					acceptMethod="#{updateClientAction.acceptSelectSectors}"
 					cancelMethod="#{updateClientAction.cancelSelectSectors}"
 					displayNameProperty="entity.description" displaySearchForm="false"
@@ -98,7 +102,7 @@
 					nameProperty="entity.id" render="selectedSectorId"
 					searchMethod="#{updateClientAction.searchAvailableSectors}"
 					searchResult="#{updateClientAction.availableSectors}" />
-					
+
 				<ox:selectSelectableEntityDialog
 					acceptMethod="#{updateClientAction.acceptSelectCustomScripts}"
 					cancelMethod="#{updateClientAction.cancelSelectCustomScripts}"

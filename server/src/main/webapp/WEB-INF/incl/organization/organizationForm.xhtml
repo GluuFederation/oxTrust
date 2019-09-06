@@ -215,7 +215,7 @@
 												<div class="row">
 													<div class="col-sm-6 col-lg-6"
 														style="padding: 0px; margin: 5px; max-height: 70px;">
-														<img src="#{request.contextPath}/servlet/logo?scale=large" height="70" width="150" />
+														<img src="#{request.contextPath}/servlet/logo?scale=large#{_organizationAction.getRandonRnd()}" height="70" width="150" />
 													</div>
 													<div class="col-sm-4 col-lg-4"
 														style="padding: 0px; margin: 2px;">
@@ -238,7 +238,8 @@
 												<div class="row">
 													<div class="col-sm-6 col-lg-6"
 														style="padding: 0px; margin: 5px; max-height: 70px;">
-														<img src="#{request.contextPath}/servlet/favicon?preview=true" />
+														<img src="#{request.contextPath}/servlet/favicon?preview=true#{_organizationAction.getRandonRnd()}"
+														height="50" width="50" />
 													</div>
 													<div class="col-sm-4 col-lg-4"
 														style="padding: 0px; margin: 2px;">
@@ -265,7 +266,7 @@
 												<div class="row">
 													<div class="col-sm-6 col-lg-6"
 														style="padding: 0px; margin: 5px; max-height: 70px;">
-														<img src="#{request.contextPath}/servlet/oxauth/logo?scale=large" height="70" width="150" />
+														<img src="#{request.contextPath}/servlet/oxauth/logo?scale=large#{_organizationAction.getRandonRnd()}" height="70" width="150" />
 													</div>
 													<div class="col-sm-4 col-lg-4"
 														style="padding: 0px; margin: 2px;">
@@ -287,7 +288,8 @@
 												collapsible="true" collapsed="true">
 												<div class="row">
 													<div class="col-sm-6 col-lg-6" style="padding: 0px; margin: 2px; max-height: 70px;">
-														<img src="#{request.contextPath}/servlet/oxauth/favicon" />
+														<img src="#{request.contextPath}/servlet/oxauth/favicon?value#{_organizationAction.getRandonRnd()}" 
+														height="50" width="50"/>
 													</div>
 													<div class="col-sm-4 col-lg-4"
 														style="padding: 0px; margin: 10px; max-height: 70px;">
@@ -314,8 +316,7 @@
 												<div class="row">
 													<div class="col-sm-6 col-lg-6"
 														style="padding: 0px; margin: 5px; max-height: 70px;">
-														<img
-															src="#{request.contextPath}/servlet/idp/logo" />
+														<img src="#{request.contextPath}/servlet/idp/logo" />
 													</div>
 													<div class="col-sm-4 col-lg-4"
 														style="padding: 0px; margin: 10px;">
@@ -337,7 +338,7 @@
 												<div class="row">
 													<div class="col-sm-6 col-lg-6"
 														style="padding: 0px; margin: 5px; max-height: 70px;">
-														<img
+														<img height="50" width="50"
 															src="#{request.contextPath}/servlet/idp/favicon?preview=true" />
 													</div>
 													<div class="col-sm-4 col-lg-4"

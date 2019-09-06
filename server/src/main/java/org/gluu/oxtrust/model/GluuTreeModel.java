@@ -58,6 +58,7 @@ public class GluuTreeModel extends DefaultNodeImpl {
 				GluuTreeModel node = (GluuTreeModel) e;
 				if (node.hasChildScript(selectedScript)) {
                     node.setExpanded(true);
+                    node.setSelected(true);
                     node.selectNodeFor(selectedScript);
                     return;
 				}
@@ -83,6 +84,25 @@ public class GluuTreeModel extends DefaultNodeImpl {
 					.anyMatch(e -> ((GluuTreeModel) e).getInum().equalsIgnoreCase(selectedScript.getInum()));
 		}
 		return false;
+	}
+	
+	private boolean hasThisChildNode(GluuTreeModel node) {
+		if (this.hasChild()) {
+			return this.getChilds().stream()
+					.anyMatch(e -> ((GluuTreeModel) e).getInum().equalsIgnoreCase(node.getInum()));
+		}
+		return false;
+	}
+
+	public void closeParentOfNode(GluuTreeModel node) {
+		if (this.hasChild()) {
+			this.getChilds().forEach(e -> {
+				if(((GluuTreeModel) e).hasThisChildNode(node)) {
+					e.setExpanded(false);
+					return;
+				}
+			});
+		}
 	}
 
 }

@@ -25,15 +25,15 @@
 				<div class="navbar-custom-menu">
 					<ul class="nav navbar-nav">
 						<!-- Tasks: style can be found in dropdown.less -->
-						<li class="dropdown tasks-menu"><a href="#"
-							class="dropdown-toggle" data-toggle="dropdown"> <i
-								class="fa flag"></i> <span class="label"> <h:selectOneMenu
+						<li class="dropdown tasks-menu"><i
+								class="fa flag"></i> <span class="label"> 
+								<h:selectOneMenu style="margin-top:15px !important;"
 										value="#{language.localeCode}" onchange="submit()"
 										valueChangeListener="#{language.countryLocaleCodeChanged}">
 										<f:selectItems value="#{language.countriesInMap}" />
 									</h:selectOneMenu>
 							</span>
-						</a></li>
+							</li>
 						<!-- User Account: style can be found in dropdown.less -->
 						<li class="dropdown user user-menu"><a href="#"
 							class="dropdown-toggle" data-toggle="dropdown"><span

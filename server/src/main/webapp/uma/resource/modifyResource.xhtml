@@ -186,16 +186,18 @@
 										<div class="box-footer" style="margin-top: 10px !important;">
 											<h:panelGroup id="updateButtons" layout="block"
 												style="margin-top:10px;margin-bottom: 10px;">
-												<h:commandButton action="#{updateResourceAction.save}"
+												<b:commandButton action="#{updateResourceAction.save}"
 													style="margin-left:3px;" styleClass="btn btn-primary"
+													 ajax="true" update="@form"
 													value="#{updateResourceAction.update ? 'Update' : 'Add'}" />
 												<a4j:commandButton ajaxSingle="true"
 													onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();"
 													rendered="#{updateResourceAction.update}"
 													style="margin-left:3px;" styleClass="btn btn-primary"
 													value="Delete" />
-												<h:commandButton action="#{updateResourceAction.cancel}"
+												<b:commandButton action="#{updateResourceAction.cancel}"
 													immediate="true" style="margin-left:3px;"
+													 ajax="true" update="@form"
 													styleClass="btn btn-primary" value="Cancel" />
 											</h:panelGroup>
 										</div>
@@ -235,14 +237,10 @@
 								deleteMethod="#{updateResourceAction.delete}"
 								id="deleteConfirmation" subject="resource set"
 								value="#{updateResourceAction.resource.id}" />
-
-
 						</div>
 					</div>
 				</div>
 			</div>
-
 		</section>
 	</ui:define>
-
 </ui:composition>

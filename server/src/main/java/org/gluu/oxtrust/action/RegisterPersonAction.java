@@ -61,6 +61,8 @@ import org.slf4j.Logger;
 @Named("registerPersonAction")
 public class RegisterPersonAction implements Serializable {
 
+	private static final String POST_REGISTRATION_REDIRECT_URI = "post_registration_redirect_uri";
+
 	private static final String HOST_NAME = "hostName";
 
 	private static final long serialVersionUID = 6002737004324917338L;
@@ -139,6 +141,8 @@ public class RegisterPersonAction implements Serializable {
 
 	private String postRegistrationInformation;
 
+	private String postRegistrationRedirectUri;
+
 	/**
 	 * Initializes attributes for registering new person
 	 *
@@ -195,11 +199,8 @@ public class RegisterPersonAction implements Serializable {
 		if (this.person != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
-
 		requestParameters.putAll(FacesContext.getCurrentInstance().getExternalContext().getRequestParameterValuesMap());
-
 		return OxTrustConstants.RESULT_SUCCESS;
-
 	}
 
 	private void initRecaptcha() {
@@ -237,15 +238,26 @@ public class RegisterPersonAction implements Serializable {
 	}
 
 	private void redirectIfNeeded() {
-		ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
-		try {
-			CustomScriptConfiguration value=externalUserRegistrationService.getDefaultExternalCustomScript();
-			SimpleCustomProperty uriEntry=value.getConfigurationAttributes().get("post_registration_redirect_uri");
-			if(uriEntry!=null) {
-				externalContext.redirect(uriEntry.getValue2());
+		if (postRegistrationRedirectUri != null) {
+			try {
+				ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
+				externalContext.redirect(postRegistrationRedirectUri);
+			} catch (IOException e) {
 			}
-		} catch (IOException e) {
 		}
+	}
+
+	private String getRegistrationRedirectUri() {
+		try {
+			CustomScriptConfiguration value = externalUserRegistrationService.getDefaultExternalCustomScript();
+			SimpleCustomProperty uriEntry = value.getConfigurationAttributes().get(POST_REGISTRATION_REDIRECT_URI);
+			if (uriEntry != null) {
+				log.info("Redirect uri is :" + uriEntry.getValue2());
+				return uriEntry.getValue2();
+			}
+		} catch (Exception e) {
+		}
+		return null;
 	}
 
 	public String registerImpl() throws CloneNotSupportedException {
@@ -286,6 +298,7 @@ public class RegisterPersonAction implements Serializable {
 				boolean result = false;
 				result = externalUserRegistrationService.executeExternalPreRegistrationMethods(this.person,
 						requestParameters);
+				postRegistrationRedirectUri=getRegistrationRedirectUri();
 				if (!result) {
 					this.person = archivedPerson;
 					return OxTrustConstants.RESULT_FAILURE;

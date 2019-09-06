@@ -8,10 +8,10 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.apache.logging.log4j.core.util.UuidUtil;
-import org.gluu.persist.model.base.Entry;
 import org.gluu.persist.annotation.AttributeName;
 import org.gluu.persist.annotation.DataEntry;
 import org.gluu.persist.annotation.ObjectClass;
+import org.gluu.persist.model.base.Entry;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -73,8 +73,12 @@ public class OxAuthSectorIdentifier extends Entry implements Serializable {
 	}
 
 	public void addNewClient(String clientInum) {
-		this.clientIds.remove(clientInum);
-		this.clientIds.add(clientInum);
+
+		List<String> clients = new ArrayList<>();
+		clients.addAll(this.clientIds);
+		clients.remove(clientInum);
+		clients.add(clientInum);
+		this.clientIds = clients;
 	}
 
 	public void setClientIds(List<String> clientIds) {

@@ -1,58 +1,69 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://xmlns.jcp.org/jsf/core"
-                xmlns:h="http://xmlns.jcp.org/jsf/html"
-                xmlns:ui="http://xmlns.jcp.org/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:b="http://bootsfaces.net/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/WEB-INF/incl/layout/newtemplate.xhtml">
 
-    <f:metadata>
-        <f:viewAction action="#{permissionService.requestPermission('configuration', 'access')}" />
-        <f:viewAction action="#{conversationService.initConversation}" />
-        <f:viewAction action="#{updateOrganizationAction.modify}" onPostback="false" />
-    </f:metadata>
-    <ui:define name="head">
-    </ui:define>
-    <ui:define name="body">
-        <section class="content-header">
-            <h1 style="color: #333;">
-                #{msg['updateorganization.configuration']}
-                <small>
-                    <i class="fa fa-caret-right"
-                       style="color: #333 !important;"/> #{msg['updateorganization.organizationConfiguration']}</small>
-            </h1>
-            <ol class="breadcrumb">
-                <li>
-                    <a href="#{request.contextPath}/home.htm">
-                        <i class="fa fa-home"/>
-                    </a>
-                </li>
-                <li class="organization/configuration">
-                    <a href="#{request.contextPath}/organization/updateOrganization.htm">#{msg['updateorganization.organizationConfiguration']}</a>
-                </li>
-            </ol>
-        </section>
-        <section class="content">
-            <h:panelGroup id="formArea" layout="block">
-                <ui:decorate template="/WEB-INF/incl/organization/organizationForm.xhtml">
-                    <ui:param name="_organization" value="#{updateOrganizationAction.organization}"/>
-                    <ui:param name="_configuration" value="#{updateOrganizationAction.configuration}"/>
-                    <ui:param name="_smtp" value="#{updateOrganizationAction.smtpConfiguration}"/>
-                    <ui:param name="_organizationAction" value="#{updateOrganizationAction}"/>
-                    <ui:param name="_certificateAction" value="#{manageCertificateAction}"/>                    
-                    <ui:param name="_webKeySettings" value="#{_organizationAction.webKeysSettings}"/>
-                    <ui:define name="controlButttons">
-                        <div class="box-footer" style="margin-top:-16px !important;">
-                            <h:panelGroup id="updateButtons" layout="block">
-                                <h:commandButton action="#{updateOrganizationAction.save}" style="margin-left:5px"
-                                                 styleClass="btn btn-primary"
-                                                 value="#{msg['updateorganization.update']}"/>
-                                <h:commandButton action="#{updateOrganizationAction.cancel}" immediate="true"
-                                                 style="margin-left:5px" styleClass="btn btn-primary"
-                                                 onclick="lock();" ondbclick="lock();" oncomplete="unlock();"
-                                                 value="#{msg['updateorganization.cancel']}"/>
-                            </h:panelGroup>
-                        </div>
-                    </ui:define>
-                </ui:decorate>
-            </h:panelGroup>
-        </section>
-    </ui:define>
+	<f:metadata>
+		<f:viewAction
+			action="#{permissionService.requestPermission('configuration', 'access')}" />
+		<f:viewAction action="#{conversationService.initConversation}" />
+		<f:viewAction action="#{updateOrganizationAction.modify}"
+			onPostback="false" />
+	</f:metadata>
+	<ui:define name="head">
+	</ui:define>
+	<ui:define name="body">
+		<section class="content-header">
+			<h1 style="color: #333;">
+				#{msg['updateorganization.configuration']} <small> <i
+					class="fa fa-caret-right" style="color: #333 !important;" />
+					#{msg['updateorganization.organizationConfiguration']}
+				</small>
+			</h1>
+			<ol class="breadcrumb">
+				<li><a href="#{request.contextPath}/home.htm"> <i
+						class="fa fa-home" />
+				</a></li>
+				<li class="organization/configuration"><a
+					href="#{request.contextPath}/organization/updateOrganization.htm">#{msg['updateorganization.organizationConfiguration']}</a>
+				</li>
+			</ol>
+		</section>
+		<section class="content">
+			<h:panelGroup id="formArea" layout="block">
+				<ui:decorate
+					template="/WEB-INF/incl/organization/organizationForm.xhtml">
+					<ui:param name="_organization"
+						value="#{updateOrganizationAction.organization}" />
+					<ui:param name="_configuration"
+						value="#{updateOrganizationAction.configuration}" />
+					<ui:param name="_smtp"
+						value="#{updateOrganizationAction.smtpConfiguration}" />
+					<ui:param name="_organizationAction"
+						value="#{updateOrganizationAction}" />
+					<ui:param name="_certificateAction"
+						value="#{manageCertificateAction}" />
+					<ui:param name="_webKeySettings"
+						value="#{_organizationAction.webKeysSettings}" />
+					<ui:define name="controlButttons">
+						<div class="box-footer" style="margin-top: -16px !important;">
+							<h:panelGroup id="updateButtons" layout="block">
+								<h:commandButton action="#{updateOrganizationAction.save}"
+									style="margin-left:5px" styleClass="btn btn-primary"
+									value="#{msg['updateorganization.update']}" />
+								<b:commandButton action="#{updateOrganizationAction.cancel}"
+									style="margin-left:5px" styleClass="btn btn-primary"
+									ajax="true" update="@form" onclick="lock();"
+									ondbclick="lock();" oncomplete="unlock();"
+									value="#{msg['updateorganization.cancel']}" />
+							</h:panelGroup>
+						</div>
+					</ui:define>
+				</ui:decorate>
+			</h:panelGroup>
+		</section>
+	</ui:define>
 </ui:composition>
