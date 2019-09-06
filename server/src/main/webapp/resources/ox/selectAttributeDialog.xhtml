@@ -3,9 +3,9 @@
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:b="http://bootsfaces.net/ui"
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:rich="http://richfaces.org/rich"
-	xmlns:gluufn="http://www.gluu.org/jsf/functions"
 	xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
 	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
 	xmlns:cc="http://xmlns.jcp.org/jsf/composite">
@@ -95,14 +95,13 @@
 						<div class="row" style="margin-left: -4px !important">
 							<a4j:commandButton styleClass="btn btn-primary"
 								action="#{cc.attrs.acceptMethod}" value="Ok"
-								oncomplete="#{rich:component('selectAttributeModalPanel')}.hide(); resetForm();"
-								render="attributeListId #{cc.attrs.render}"
+								oncomplete="#{rich:component('selectAttributeModalPanel')}.hide();"
 								eventsQueue="#{cc.attrs.queue}" style="min-width:70px;" />
 							&nbsp;
 							<a4j:commandButton styleClass="btn btn-primary"
 								action="#{cc.attrs.cancelMethod}" value="Cancel"
-								oncomplete="#{rich:component('selectAttributeModalPanel')}.hide(); resetForm();return false;"
-								render="attributeListId" eventsQueue="#{cc.attrs.queue}" />
+								oncomplete="#{rich:component('selectAttributeModalPanel')}.hide();return false;"
+								eventsQueue="#{cc.attrs.queue}" />
 							&nbsp;
 							<a4j:status startText="Request in progress please wait......"
 								stopText="" startStyle="color:red" />

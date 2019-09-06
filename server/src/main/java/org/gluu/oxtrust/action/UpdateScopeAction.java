@@ -105,28 +105,21 @@ public class UpdateScopeAction implements Serializable {
 		if (this.scope != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
-
 		this.update = false;
 		this.scope = new Scope();
-
 		try {
 			if (this.scope.getOxAuthClaims() != null && this.scope.getOxAuthClaims().size() > 0) {
 				this.claims = getClaimDisplayNameEntiries();
 			} else {
 				this.claims = new ArrayList<DisplayNameEntry>();
 			}
-
 		} catch (BasePersistenceException ex) {
 			log.error("Failed to load scopes", ex);
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new scope");
-
 			conversationService.endConversation();
-
 			return OxTrustConstants.RESULT_FAILURE;
 		}
-
 		this.dynamicScripts = getInitialDynamicScripts();
-
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
@@ -145,16 +138,13 @@ public class UpdateScopeAction implements Serializable {
 			}
 		} catch (BasePersistenceException ex) {
 			log.error("Failed to find scope {}", inum, ex);
-
 		}
-
 		if (this.scope == null) {
 			log.error("Failed to load scope {}", inum);
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to find scope");
 			conversationService.endConversation();
 			return OxTrustConstants.RESULT_FAILURE;
 		}
-
 		try {
 			if (this.scope.getOxAuthClaims() != null && this.scope.getOxAuthClaims().size() > 0) {
 				this.claims = getClaimDisplayNameEntiries();

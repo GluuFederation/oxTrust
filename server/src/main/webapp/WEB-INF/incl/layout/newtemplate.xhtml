@@ -233,6 +233,11 @@ select {
 						startStyle="background-color: #006699; color: white; font-weight: bold; position: fixed; left: 0px; top: 0px; padding: 5px 5px 5px 5px;" />
 					<ui:insert name="body" />
 				</div>
+				<div class="gluuBusyIndicator"
+					style="display: none; cursor: default; border-radius: 10px;">
+					<img style="width: 30%; height: 20%;"
+						src="#{oxTrustConfigurationService.cssLocation}/../theme/dist/img/indicator.gif" />
+				</div>
 			</div>
 		</div>
 
