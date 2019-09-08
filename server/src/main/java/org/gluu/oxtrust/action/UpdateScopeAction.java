@@ -74,7 +74,7 @@ public class UpdateScopeAction implements Serializable {
 
 	private List<DisplayNameEntry> claims;
 
-	private String searchAvailableClaimPattern;
+	private String searchAvailableClaimPattern="";
 
 	private String oldSearchAvailableClaimPattern;
 

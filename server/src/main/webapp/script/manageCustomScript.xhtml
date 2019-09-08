@@ -37,7 +37,6 @@
 		.list-group-item{
 		background-color: #05ffb0;
 		}
-
 		</h:outputStylesheet>
 		<section class="content">
 			<b:panel id="main" title="Gluu Custom Scripts" look="primary"
@@ -190,8 +189,8 @@
 												</h:selectOneMenu>
 											</ox:decorate>
 										</h:panelGroup>
-										<b:panel title="Custom Properties" look="primary" iconAwesome="fa-cogs" 
-										        style="margin-left:20px !important;">
+										<b:panel title="Custom Properties" look="primary"
+											iconAwesome="fa-cogs" style="margin-left:20px !important;">
 											<ox:simpleCustomPropertiesList
 												label="#{msg['manageAuthentication.passport.strategy.addProperty']}"
 												hideLabel="true" showRemoveDialogue="true"
@@ -210,7 +209,7 @@
 										</b:panel>
 										<h:panelGroup id="scriptPathId">
 											<h:panelGroup layout="block" styleClass="form-group"
-				                                 rendered="#{_customScript.locationType.value eq 'file'}">
+												rendered="#{_customScript.locationType.value eq 'file'}">
 												<ox:decorate label="#{msg['customScript.scriptPath']}"
 													forId="#{msg['customScript.scriptPath']}"
 													tooltip="#{msg['customScript.scriptPath']}"
