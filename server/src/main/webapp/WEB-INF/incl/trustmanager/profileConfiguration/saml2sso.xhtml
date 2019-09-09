@@ -14,10 +14,10 @@
 		<h4 style="text-align: center;">#{msg['trustmanager.saml2SSOProfileHelp']}</h4>
 		<h6 style="text-align: center;">#{msg['trustmanager.thisProfileConfiguration']}</h6>
 		<br></br>
-		<div class="col-sm-12 col-md-6 col-lg-6">
+		<div class="col-sm-12 col-md-12 col-lg-12">
 			<b:form horizontal="true">
 				<b:formGroup>
-					<b:selectOneMenu label-small-screen="4" small-screen="8"
+					<b:selectOneMenu label-small-screen="6" small-screen="6"
 						label="#{msg['trustmanager.signAssertions']}"
 						value="#{_ssoProfile.signAssertions}">
 						<f:selectItem itemLabel="#{msg['trustmanager.never']}"
@@ -29,7 +29,7 @@
 					</b:selectOneMenu>
 				</b:formGroup>
 				<b:formGroup>
-					<b:selectOneMenu label-small-screen="4" small-screen="8"
+					<b:selectOneMenu label-small-screen="6" small-screen="6"
 						label="#{msg['trustmanager.signRequests']}"
 						value="#{_ssoProfile.signRequests}">
 						<f:selectItem itemLabel="#{msg['trustmanager.never']}"
@@ -41,16 +41,7 @@
 					</b:selectOneMenu>
 				</b:formGroup>
 				<b:formGroup>
-					<b:selectBooleanCheckbox label-small-screen="8" small-screen="4"
-						value="#{_ssoProfile.includeAttributeStatement}"
-						label="#{msg['trustmanager.includeAttributeStatement']}" />
-				</b:formGroup>
-			</b:form>
-		</div>
-		<div class="col-sm-12 col-md-6 col-lg-6">
-			<b:form horizontal="true">
-				<b:formGroup>
-					<b:selectOneMenu label-small-screen="5" small-screen="7"
+					<b:selectOneMenu label-small-screen="6" small-screen="6"
 						label="#{msg['trustmanager.encryptAssertions']}"
 						value="#{_ssoProfile.encryptAssertions}">
 						<f:selectItem itemLabel="#{msg['trustmanager.never']}"
@@ -62,7 +53,7 @@
 					</b:selectOneMenu>
 				</b:formGroup>
 				<b:formGroup>
-					<b:selectOneMenu label-small-screen="5" small-screen="7"
+					<b:selectOneMenu label-small-screen="6" small-screen="6"
 						label="Default Authn Methods:"
 						value="#{_ssoProfile.defaultAuthenticationMethod}">
 						<f:selectItem itemLabel="none" itemValue="none" />
@@ -71,17 +62,32 @@
 					</b:selectOneMenu>
 				</b:formGroup>
 				<b:formGroup>
-					<h:outputText
-						style="color:black;font-weight: bold;font-size: 14px; margin-right:10px; margin-left:10px;"
-						value="Support Unspecified NameIdFormat?" />
-					<h:selectBooleanCheckbox
-						id="unspecifiedNameIDFormatSupportedCheckBox" immediate="true"
-						value="#{_relyingPartyAction.unspecifiedNameIDFormatSupported}"
-						valueChangeListener="#{_relyingPartyAction.handleUnspecifiedNameIDFormatSupportedCheckBox}"
-						style="margin-left: 30px">
-						<a4j:ajax event="click" render="samlNameIdFormatPickList"
-							execute="@this" limitRender="true" />
-					</h:selectBooleanCheckbox>
+					<div class="col-sm-6 col-md-6 col-lg-6">
+						<h:outputText
+							style="color:black;font-weight: bold;font-size: 14px;margin-left:10px;"
+							value="Support Unspecified NameIdFormat?" />
+					</div>
+					<div class="col-sm-6 col-md-6 col-lg-6">
+						<h:selectBooleanCheckbox
+							id="unspecifiedNameIDFormatSupportedCheckBox" immediate="true"
+							value="#{_relyingPartyAction.unspecifiedNameIDFormatSupported}"
+							valueChangeListener="#{_relyingPartyAction.handleUnspecifiedNameIDFormatSupportedCheckBox}"
+							style="margin-left:10px;float:right;">
+							<a4j:ajax event="click" render="samlNameIdFormatPickList"
+								execute="@this" limitRender="true" />
+						</h:selectBooleanCheckbox>
+					</div>
+				</b:formGroup>
+				<b:formGroup>
+					<div class="col-sm-6 col-md-6 col-lg-6">
+						<h:outputText
+							style="color:black;font-weight: bold;font-size: 14px;margin-left:10px;"
+							value="#{msg['trustmanager.includeAttributeStatement']}" />
+					</div>
+					<div class="col-sm-6 col-md-6 col-lg-6">
+						<h:selectBooleanCheckbox style="float:right;"
+							value="#{_ssoProfile.includeAttributeStatement}" />
+					</div>
 				</b:formGroup>
 			</b:form>
 		</div>
