@@ -60,8 +60,8 @@
 						<f:selectItem itemLabel="#{msg['trustmanager.always']}"
 							itemValue="always" />
 					</b:selectOneMenu>
-<!-- 				</b:formGroup> -->
-<!-- 				<b:formGroup> -->
+				</b:formGroup>
+				<b:formGroup>
 					<b:selectOneMenu label-small-screen="5" small-screen="7"
 						label="Default Authn Methods:"
 						value="#{_ssoProfile.defaultAuthenticationMethod}">
@@ -71,7 +71,9 @@
 					</b:selectOneMenu>
 				</b:formGroup>
 				<b:formGroup>
-				    <h:outputText style="color:black;font-weight: bold;font-size: 14px; margin-right:10px; margin-left:10px;" value = "Support Unspecified NameIdFormat?" />
+					<h:outputText
+						style="color:black;font-weight: bold;font-size: 14px; margin-right:10px; margin-left:10px;"
+						value="Support Unspecified NameIdFormat?" />
 					<h:selectBooleanCheckbox
 						id="unspecifiedNameIDFormatSupportedCheckBox" immediate="true"
 						value="#{_relyingPartyAction.unspecifiedNameIDFormatSupported}"
