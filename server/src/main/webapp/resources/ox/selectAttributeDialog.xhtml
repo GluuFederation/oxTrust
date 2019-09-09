@@ -39,8 +39,8 @@
 				style="cursor:pointer"
 				onclick="#{rich:component('selectAttributeModalPanel')}.hide(); return false;" />
 		</f:facet>
-		<h:form id="myForm">
-			<h:panelGroup id="attributePanelId" columns="1" border="0"
+		<b:form id="myForm" appendId="false">
+			<h:panelGroup id="attributePanelId" styleClass="attributePanelId" columns="1" border="0"
 				cellpadding="0" cellspacing="0" width="100%"
 				columnClasses="alignLeft"
 				style="float:left !important;width:100% !important;">
@@ -65,7 +65,7 @@
 					style="overflow-y:auto; width:715px;#{cc.attrs.searchResult.size() gt 5 ? ' height:310px;' : ''}"
 					layout="block" rendered="#{cc.attrs.searchResult.size() gt 0}">
 					<rich:dataTable sortMode="single" id="attributeListId"
-						value="#{cc.attrs.searchResult}" styleClass="data sortable"
+						value="#{cc.attrs.searchResult}" styleClass="data sortable attributeListId"
 						var="prs">
 						<rich:column>
 							<f:facet name="header">X</f:facet>
@@ -93,13 +93,15 @@
 				<div class="box-footer">
 					<h:panelGroup>
 						<div class="row" style="margin-left: -4px !important">
-							<a4j:commandButton styleClass="btn btn-primary"
+							<b:commandButton styleClass="btn btn-primary"
 								action="#{cc.attrs.acceptMethod}" value="Ok"
 								oncomplete="#{rich:component('selectAttributeModalPanel')}.hide();"
-								eventsQueue="#{cc.attrs.queue}" style="min-width:70px;" />
+								ajax="true" update="#{cc.attrs.render} @(.attributePanelId) @(.attributeListId)"
+								style="min-width:70px;" />
 							&nbsp;
 							<a4j:commandButton styleClass="btn btn-primary"
 								action="#{cc.attrs.cancelMethod}" value="Cancel"
+								render="attributeListId attributePanelId myForm #{cc.attrs.render}"
 								oncomplete="#{rich:component('selectAttributeModalPanel')}.hide();return false;"
 								eventsQueue="#{cc.attrs.queue}" />
 							&nbsp;
@@ -109,7 +111,7 @@
 					</h:panelGroup>
 				</div>
 			</h:panelGroup>
-		</h:form>
+		</b:form>
 	</rich:popupPanel>
 </cc:implementation>
 </html>

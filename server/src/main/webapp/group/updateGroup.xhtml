@@ -25,9 +25,11 @@
 
 				<ui:define name="controlButttons">
 					<div id="updateButtons">
-						<b:commandButton action="#{updateGroupAction.save}"
-						     ajax="true" update="@form"
-							styleClass="btn btn-primary" value="#{msg['group.update']}"/>
+						<b:commandButton action="#{updateGroupAction.save}" ajax="true"
+							update="@form" styleClass="btn btn-primary"
+							value="#{msg['group.update']}">
+							<f:param name="blockui.disabled" value="true" />
+						</b:commandButton>
 						<a4j:commandButton ajaxSingle="true" eventsQueue="groupQueue"
 							onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();"
 							rendered="#{not _new}" style="margin-left:3px;"

@@ -65,7 +65,7 @@
 							rendered="#{(not empty _scope.scopeType) and ((_scope.scopeType.value eq 'openid') or (_scope.scopeType.value eq 'dynamic'))}">
 							<b:panel id="claims" title="#{msg['scope.claims']}"
 								look="primary" iconAwesome="fa-list">
-								<h:panelGroup id="selectedClaimsId">
+								<h:panelGroup id="selectedClaimsId" styleClass="selectedClaimsId">
 									<h:panelGroup>
 										<a4j:repeat value="#{_scopeAction.claims}"
 											rowKeyVar="_claimIdx" var="_claim" iterationStatusVar="loop">
