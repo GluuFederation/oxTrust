@@ -53,7 +53,7 @@
 					<div class="row"
 						style="float: left; margin-left: 20px; margin-top: -5px;">
 						<a4j:commandButton value="Search" style="margin-top:5px;"
-							styleClass="btn btn-primary" action="#{cc.attrs.searchMethod}"
+							styleClass="btn btn-primary searchButtonClass" action="#{cc.attrs.searchMethod}"
 							render="attributePanelId" eventsQueue="#{cc.attrs.queue}" />
 					</div>
 				</ox:decorate>
@@ -61,7 +61,7 @@
 					rendered="#{cc.attrs.searchResult.size() eq 0}">
 					<h:outputText value="No Search Result Found" />
 				</h:panelGroup>
-				<h:panelGroup
+				<h:panelGroup id="attributeSecondPanelId"
 					style="overflow-y:auto; width:715px;#{cc.attrs.searchResult.size() gt 5 ? ' height:310px;' : ''}"
 					layout="block" rendered="#{cc.attrs.searchResult.size() gt 0}">
 					<rich:dataTable sortMode="single" id="attributeListId"
@@ -96,12 +96,12 @@
 							<a4j:commandButton styleClass="btn btn-primary"
 								action="#{cc.attrs.acceptMethod}" value="Ok"
 								oncomplete="#{rich:component('selectAttributeModalPanel')}.hide();"
-								render="attributeListId #{cc.attrs.render}"
+								render="myForm attributeSecondPanelId attributeListId #{cc.attrs.render}"
 								style="min-width:70px;" />
 							&nbsp;
 							<a4j:commandButton styleClass="btn btn-primary"
 								action="#{cc.attrs.cancelMethod}" value="Cancel"
-								render="attributeListId #{cc.attrs.render}"
+								render="myForm attributeSecondPanelId attributeListId #{cc.attrs.render}"
 								oncomplete="#{rich:component('selectAttributeModalPanel')}.hide();return false;"
 								eventsQueue="#{cc.attrs.queue}" />
 							&nbsp;

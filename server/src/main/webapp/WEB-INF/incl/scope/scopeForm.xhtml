@@ -20,7 +20,8 @@
 </style>
 	<h:form id="scopeForm">
 		<div class="row" style="margin: 5px;">
-			<b:panel title="OpenID Connect Scope Form" look="primary" iconAwesome="fa-list" collapsible="false">
+			<b:panel title="OpenID Connect Scope Form" look="primary"
+				iconAwesome="fa-list" collapsible="false">
 				<h:panelGroup>
 					<ox:decorate id="inum" rendered="#{not _new}"
 						label="#{msg['scope.inum']}">
@@ -65,7 +66,8 @@
 							rendered="#{(not empty _scope.scopeType) and ((_scope.scopeType.value eq 'openid') or (_scope.scopeType.value eq 'dynamic'))}">
 							<b:panel id="claims" title="#{msg['scope.claims']}"
 								look="primary" iconAwesome="fa-list">
-								<h:panelGroup id="selectedClaimsId" styleClass="selectedClaimsId">
+								<h:panelGroup id="selectedClaimsId"
+									styleClass="selectedClaimsId">
 									<h:panelGroup>
 										<a4j:repeat value="#{_scopeAction.claims}"
 											rowKeyVar="_claimIdx" var="_claim" iterationStatusVar="loop">
@@ -88,7 +90,9 @@
 										</a4j:repeat>
 										<a4j:commandButton styleClass="btn btn-primary"
 											value="Add Claim"
-											oncomplete="#{rich:component('claim:selectAttributeModalPanel')}.show();"
+											update="claim"
+											action="#{_scopeAction.clearAvailableClaims()}"
+											oncomplete="#{rich:component('claim:selectAttributeModalPanel')}.show(); refresh();"
 											execute="@this" eventsQueue="scopeQueue" />
 									</h:panelGroup>
 								</h:panelGroup>
@@ -137,7 +141,20 @@
 				</div>
 			</b:panel>
 		</div>
+		<h:outputScript>
+        function refresh(){
+            setTimeout(function(){ $( ".searchButtonClass").click(); }, 1000);
+        }
+    </h:outputScript>
 	</h:form>
+	<ox:selectAttributeDialog
+		acceptMethod="#{updateScopeAction.acceptSelectClaims}"
+		cancelMethod="#{updateScopeAction.cancelSelectClaims}" id="claim"
+		label="#{msg['scope.addClaim']}" queue="scopeQueue"
+		render="selectedClaimsId"
+		searchMethod="#{updateScopeAction.searchAvailableClaims}"
+		searchPattern="#{updateScopeAction.searchAvailableClaimPattern}"
+		searchResult="#{updateScopeAction.availableClaims}" />
 	<ox:selectSelectableEntityDialog id="dynamicScript"
 		searchMethod="#{updateScopeAction.searchAvailableDynamicScripts}"
 		searchResult="#{updateScopeAction.availableDynamicScripts}"

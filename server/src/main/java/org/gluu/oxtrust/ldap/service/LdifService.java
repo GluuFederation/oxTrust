@@ -39,6 +39,8 @@ import com.unboundid.ldif.LDIFReader;
 @Named("ldifService")
 public class LdifService implements Serializable {
 
+	private static final String LINE_SEPARATOR = "line.separator";
+
 	private static final long serialVersionUID = 6690460114767359078L;
 
 	@Inject
@@ -54,9 +56,7 @@ public class LdifService implements Serializable {
 		if (!(persistenceOperationService instanceof LdapOperationService)) {
 			throw new NotImplementedException("Current Persistence mechanism not allows to import data from LDIF!");
 		}
-
 		LdapOperationService ldapOperationService = (LdapOperationService) persistenceOperationService;
-
 		LDAPConnection connection = ldapOperationService.getConnection();
 		try {
 			LdifDataUtility ldifDataUtility = LdifDataUtility.instance();
@@ -69,9 +69,7 @@ public class LdifService implements Serializable {
 		} finally {
 			ldapOperationService.releaseConnection(connection);
 		}
-
 		return result;
-
 	}
 
 	public ResultCode validateLdifFile(InputStream is, String dn) throws LDAPException {
@@ -84,9 +82,7 @@ public class LdifService implements Serializable {
 		} catch (Exception ex) {
 			log.error("Failed to validate ldif file: ", ex);
 		}
-
 		return result;
-
 	}
 
 	public void exportLDIFFile(List<String> checkedItems, OutputStream output) throws LDAPException {
@@ -98,10 +94,10 @@ public class LdifService implements Serializable {
 					if (exportEntry != null && exportEntry.length >= 0) {
 						Stream.of(exportEntry).forEach(v -> {
 							builder.append(v);
-							builder.append(System.getProperty("line.separator"));
+							builder.append(System.getProperty(LINE_SEPARATOR));
 						});
 					}
-					builder.append(System.getProperty("line.separator"));
+					builder.append(System.getProperty(LINE_SEPARATOR));
 				});
 			}
 			output.write(builder.toString().getBytes());

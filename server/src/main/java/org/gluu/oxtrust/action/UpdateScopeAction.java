@@ -74,7 +74,7 @@ public class UpdateScopeAction implements Serializable {
 
 	private List<DisplayNameEntry> claims;
 
-	private String searchAvailableClaimPattern="";
+	private String searchAvailableClaimPattern;
 
 	private String oldSearchAvailableClaimPattern;
 
@@ -262,7 +262,7 @@ public class UpdateScopeAction implements Serializable {
 	public void addClaim(GluuAttribute claim) {
 		DisplayNameEntry oneClaim = new DisplayNameEntry(claim.getDn(), claim.getInum(), claim.getDisplayName());
 		this.claims.add(oneClaim);
-		this.searchAvailableClaimPattern="";
+		this.searchAvailableClaimPattern = "";
 	}
 
 	public void removeClaim(String inum) throws Exception {
@@ -304,6 +304,10 @@ public class UpdateScopeAction implements Serializable {
 		} catch (Exception ex) {
 			log.error("Failed to find attributes", ex);
 		}
+	}
+
+	public void clearAvailableClaims() {
+		this.availableClaims=new ArrayList<>();
 	}
 
 	public void removeDuplicates() {
