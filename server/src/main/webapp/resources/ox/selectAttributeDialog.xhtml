@@ -93,15 +93,15 @@
 				<div class="box-footer">
 					<h:panelGroup>
 						<div class="row" style="margin-left: -4px !important">
-							<b:commandButton styleClass="btn btn-primary"
+							<a4j:commandButton styleClass="btn btn-primary"
 								action="#{cc.attrs.acceptMethod}" value="Ok"
 								oncomplete="#{rich:component('selectAttributeModalPanel')}.hide();"
-								ajax="true" update="#{cc.attrs.render} @(.attributePanelId) @(.attributeListId)"
+								render="attributeListId #{cc.attrs.render}"
 								style="min-width:70px;" />
 							&nbsp;
 							<a4j:commandButton styleClass="btn btn-primary"
 								action="#{cc.attrs.cancelMethod}" value="Cancel"
-								render="attributeListId attributePanelId myForm #{cc.attrs.render}"
+								render="attributeListId #{cc.attrs.render}"
 								oncomplete="#{rich:component('selectAttributeModalPanel')}.hide();return false;"
 								eventsQueue="#{cc.attrs.queue}" />
 							&nbsp;

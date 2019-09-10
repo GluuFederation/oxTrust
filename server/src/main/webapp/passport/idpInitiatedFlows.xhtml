@@ -42,6 +42,7 @@
 								style="margin-left: 10px; margin-right: 10px; margin-top: 10px;">
 								<h:panelGroup columns="1" width="100%" id="openIDConnectSection">
 									<b:panel title="#{msg['passport.idpinitiated.oidc.title']}"
+									   rendered="#{!passportIdpInitiatedAction.showForm}"
 										look="primary" iconAwesome="fa-building" collapsible="false">
 										<div class="row">
 											<!-- First column-->
@@ -147,9 +148,9 @@
 						<h:form id="AuthZParamFormId" prependId="false">
 							<div class="row"
 								style="margin-left: 10px; margin-right: 10px; margin-top: 10px;">
-								<b:panel title="Authorization request params"
+								<b:panel title="OpenID Connect Authorization request param"
 									rendered="#{passportIdpInitiatedAction.showForm}"
-									look="success">
+									look="primary">
 									<h:panelGroup id="ParamFormID"
 										rendered="#{passportIdpInitiatedAction.showForm}">
 										<div class="row">
@@ -256,7 +257,7 @@
 										</div>
 
 										<div class="row" style="margin-left: 5px; margin-right: 5px;">
-											<b:panel title="Additional params" look="success">
+											<b:panel title="Additional params" look="primary">
 												<div class="col-sm-12 col-lg-12" style="padding: 0px;">
 													<ox:simpleMapProperties label="Add" hideLabel="true"
 														showRemoveDialogue="true"

@@ -195,8 +195,8 @@ public class AttributeInventoryAction implements Serializable {
 		FacesContext facesContext = FacesContext.getCurrentInstance();
 		List<String> checkedItems = new ArrayList<String>();
 		for (GluuAttribute item : activeAttributeList) {
-			if (checked.get(item.getInum())) {
-				checkedItems.add(item.getInum());
+			if (checked.get(item.getDn())) {
+				checkedItems.add(item.getDn());
 			}
 		}
 		log.info("the selections are : {}", checkedItems.size());
