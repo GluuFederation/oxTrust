@@ -208,23 +208,14 @@ public class GroupService implements Serializable, IGroupService {
 	public String generateInumForNewGroup() throws Exception {
 		GluuGroup group = new GluuGroup();
 		String newInum = null;
+		String newDn = null;
 		do {
 			newInum = generateInumForNewGroupImpl();
-			String newDn = getDnForGroup(newInum);
+			newDn = getDnForGroup(newInum);
 			group.setDn(newDn);
-		} while (containsGroup(group));
+		} while (ldapEntryManager.contains(newDn, GluuCustomPerson.class));
 
 		return newInum;
-	}
-
-	private boolean containsGroup(GluuGroup group) {
-		boolean result = false;
-		try {
-			result = ldapEntryManager.contains(group);
-		} catch (Exception e) {
-			log.debug(e.getMessage(), e);
-		}
-		return result;
 	}
 
 	/*

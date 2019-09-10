@@ -116,12 +116,12 @@ public class ScopeService implements Serializable {
 	public String generateInumForNewScope() throws Exception {
 		Scope scope = new Scope();
 		String newInum = null;
+		String newDn=null;
 		do {
 			newInum = generateInumForNewScopeImpl();
-			String newDn = getDnForScope(newInum);
+			newDn = getDnForScope(newInum);
 			scope.setDn(newDn);
-		} while (ldapEntryManager.contains(scope));
-
+		} while (ldapEntryManager.contains(newDn, Scope.class));
 		return newInum;
 	}
 

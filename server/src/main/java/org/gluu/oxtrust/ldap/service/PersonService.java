@@ -424,12 +424,13 @@ public class PersonService implements Serializable, IPersonService {
 	public String generateInumForNewPerson() {
 		GluuCustomPerson person = null;
 		String newInum = null;
+		String newDn=null;
 		do {
 			newInum = generateInumForNewPersonImpl();
-			String newDn = getDnForPerson(newInum);
+			newDn = getDnForPerson(newInum);
 			person = new GluuCustomPerson();
 			person.setDn(newDn);
-		} while (containsPerson(person));
+		} while (ldapEntryManager.contains(newDn,GluuCustomPerson.class));
 		return newInum;
 	}
 
@@ -618,7 +619,7 @@ public class PersonService implements Serializable, IPersonService {
 		SimpleUser simpleUser = new SimpleUser();
 		simpleUser.setDn(getDnForPerson(null));
 		simpleUser.setUserId(uid);
-		simpleUser.setCustomObjectClasses(new String[] { "gluuPerson" } );
+		simpleUser.setCustomObjectClasses(new String[] { "gluuPerson" });
 		List<SimpleUser> users = ldapEntryManager.findEntries(simpleUser, 1);// getLdapEntryManagerInstance().findEntries(person);
 		if ((users != null) && (users.size() > 0)) {
 			// Find result entry by primary key

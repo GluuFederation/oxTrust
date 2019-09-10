@@ -49,6 +49,15 @@
 					</ui:define>
 				</ui:decorate>
 			</h:panelGroup>
+			<ox:selectAttributeDialog
+				acceptMethod="#{updateScopeAction.acceptSelectClaims}"
+				cancelMethod="#{updateScopeAction.cancelSelectClaims}" id="claim"
+				label="#{msg['scope.addClaim']}" queue="scopeQueue"
+				render="selectedClaimsId"
+				searchMethod="#{updateScopeAction.searchAvailableClaims}"
+				searchPattern="#{updateScopeAction.searchAvailableClaimPattern}"
+				searchResult="#{updateScopeAction.availableClaims}" />
 		</section>
+
 	</ui:define>
 </ui:composition>

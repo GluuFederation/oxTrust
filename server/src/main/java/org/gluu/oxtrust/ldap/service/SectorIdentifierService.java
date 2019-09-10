@@ -90,7 +90,7 @@ public class SectorIdentifierService implements Serializable {
 	 */
 	public OxAuthSectorIdentifier getSectorIdentifierById(String oxId) {
 		try {
-			return  ldapEntryManager.find(OxAuthSectorIdentifier.class, getDnForSectorIdentifier(oxId));
+			return ldapEntryManager.find(OxAuthSectorIdentifier.class, getDnForSectorIdentifier(oxId));
 		} catch (Exception e) {
 			log.warn("Failed to find sector identifier by oxId " + oxId, e);
 			return null;
@@ -106,12 +106,12 @@ public class SectorIdentifierService implements Serializable {
 	public String generateIdForNewSectorIdentifier() {
 		OxAuthSectorIdentifier sectorIdentifier = new OxAuthSectorIdentifier();
 		String newId = null;
+		String newDn = null;
 		do {
 			newId = generateIdForNewSectorIdentifierImpl();
-			String newDn = getDnForSectorIdentifier(newId);
+			newDn = getDnForSectorIdentifier(newId);
 			sectorIdentifier.setDn(newDn);
-		} while (ldapEntryManager.contains(sectorIdentifier));
-
+		} while (ldapEntryManager.contains(newDn, OxAuthSectorIdentifier.class));
 		return newId;
 	}
 

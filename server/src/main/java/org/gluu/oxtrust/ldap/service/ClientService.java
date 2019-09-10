@@ -158,7 +158,6 @@ public class ClientService implements Serializable {
 			newInum = generateInumForNewClientImpl();
 			newDn = getDnForClient(newInum);
 		} while (ldapEntryManager.contains(newDn, OxAuthClient.class));
-
 		return newInum;
 	}
 
