@@ -12,6 +12,7 @@ import org.apache.commons.lang.StringUtils;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuFido2Device;
 import org.gluu.persist.PersistenceEntryManager;
+import org.gluu.persist.model.base.SimpleBranch;
 import org.gluu.search.filter.Filter;
 import org.gluu.util.StringHelper;
 import org.slf4j.Logger;
@@ -58,17 +59,11 @@ public class Fido2DeviceService implements Serializable {
 	}
 
 	public List<GluuFido2Device> findAllFido2Devices(GluuCustomPerson person) {
-		try {
-			String baseDn = getDnForFido2Device(null, person.getInum());
-			List<GluuFido2Device> results = ldapEntryManager.findEntries(baseDn, GluuFido2Device.class, null);
-			if (results == null) {
-				return new ArrayList<>();
-			}
-			return results;
-		} catch (Exception e) {
-			log.trace("Error getting Fido2 devices", e.getMessage());
-			return new ArrayList<>();
+		if (containsBranch(person.getInum())) {
+			String baseDnForU2fDevices = getDnForFido2Device(null, person.getInum());
+			return ldapEntryManager.findEntries(baseDnForU2fDevices, GluuFido2Device.class, null);
 		}
+		return new ArrayList<>();
 	}
 
 	public GluuFido2Device getFido2DeviceById(String userId, String id) {
@@ -96,22 +91,25 @@ public class Fido2DeviceService implements Serializable {
 		ldapEntryManager.removeRecursively(fido2Device.getDn());
 	}
 
-	public GluuFido2Device getGluuCustomFidoDeviceById( String id,String userId) {
+	public GluuFido2Device getGluuCustomFidoDeviceById(String id, String userId) {
 		GluuFido2Device gluuCustomFidoDevice = null;
 		try {
-		    String dn=getDnForFido2Device(id,userId);
-		    if (StringUtils.isNotEmpty(userId))
-                gluuCustomFidoDevice = ldapEntryManager.find(GluuFido2Device.class, dn);
-		    else{
-		        Filter filter=Filter.createEqualityFilter("oxId", id);
-		        gluuCustomFidoDevice = ldapEntryManager.findEntries(dn, GluuFido2Device.class, filter).get(0);
-            }
-		}
-		catch (Exception e) {
+			String dn = getDnForFido2Device(id, userId);
+			if (StringUtils.isNotEmpty(userId))
+				gluuCustomFidoDevice = ldapEntryManager.find(GluuFido2Device.class, dn);
+			else {
+				Filter filter = Filter.createEqualityFilter("oxId", id);
+				gluuCustomFidoDevice = ldapEntryManager.findEntries(dn, GluuFido2Device.class, filter).get(0);
+			}
+		} catch (Exception e) {
 			log.error("Failed to find device by id " + id, e);
 		}
 
 		return gluuCustomFidoDevice;
+	}
+
+	private boolean containsBranch(final String userInum) {
+		return ldapEntryManager.contains(getDnForFido2Device(null, userInum), SimpleBranch.class);
 	}
 
 }
