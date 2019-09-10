@@ -574,7 +574,7 @@ public class Scim2UserService implements Serializable {
 				ldapFilter.toString(), sortBy, sortOrder.getValue(), startIndex, count);
 
 		PagedResult<GluuCustomPerson> list = ldapEntryManager.findPagedEntries(personService.getDnForPerson(null),
-				GluuCustomPerson.class, ldapFilter, null, sortBy, sortOrder, startIndex, count, maxCount);
+				GluuCustomPerson.class, ldapFilter, null, sortBy, sortOrder, startIndex - 1, count, maxCount);
 		List<BaseScimResource> resources = new ArrayList<BaseScimResource>();
 
 		for (GluuCustomPerson person : list.getEntries()) {
@@ -584,7 +584,7 @@ public class Scim2UserService implements Serializable {
 		}
 		log.info("Found {} matching entries - returning {}", list.getTotalEntriesCount(), list.getEntries().size());
 
-		PagedResult<BaseScimResource> result = new PagedResult<BaseScimResource>();
+		PagedResult<BaseScimResource> result = new PagedResult<>();
 		result.setEntries(resources);
 		result.setTotalEntriesCount(list.getTotalEntriesCount());
 
