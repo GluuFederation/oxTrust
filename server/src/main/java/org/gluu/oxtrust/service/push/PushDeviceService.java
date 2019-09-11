@@ -104,8 +104,8 @@ public class PushDeviceService implements Serializable {
 	 * 
 	 * @return True if oxPush Device with specified attributes exist
 	 */
-	public boolean containsPushDevice(PushDevice pushDevice) {
-		return ldapEntryManager.contains(pushDevice);
+	public boolean containsPushDevice(String dn) {
+		return ldapEntryManager.contains(dn, PushDevice.class);
 	}
 
 	/**
@@ -152,13 +152,12 @@ public class PushDeviceService implements Serializable {
 	 * @return New inum for oxPush Device
 	 */
 	public String generateInumForNewPushDevice() {
-		PushDevice pushDevice = new PushDevice();
+		String newDn = null;
 		String newInum = null;
 		do {
 			newInum = generateInumForNewPushDeviceImpl();
-			String newDn = getDnForPushDevice(newInum);
-			pushDevice.setDn(newDn);
-		} while (ldapEntryManager.contains(pushDevice));
+			newDn = getDnForPushDevice(newInum);
+		} while (containsPushDevice(newDn));
 
 		return newInum;
 	}

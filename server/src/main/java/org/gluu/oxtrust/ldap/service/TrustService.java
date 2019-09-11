@@ -174,14 +174,8 @@ public class TrustService implements Serializable {
 	 * 
 	 * @return True if trust relationship with specified attributes exist
 	 */
-	public boolean containsTrustRelationship(GluuSAMLTrustRelationship trustRelationship) {
-		return ldapEntryManager.contains(trustRelationship);
-	}
-
 	public boolean containsTrustRelationship(String dn) {
-		GluuSAMLTrustRelationship tr = new GluuSAMLTrustRelationship();
-		tr.setDn(dn);
-		return containsTrustRelationship(tr);
+		return ldapEntryManager.contains(dn, GluuSAMLTrustRelationship.class);
 	}
 
 	public boolean trustExist(String dn) {
@@ -200,14 +194,12 @@ public class TrustService implements Serializable {
 	 * @return New inum for trust relationship
 	 */
 	public String generateInumForNewTrustRelationship() {
-		InumEntry entry = new InumEntry();
-		String newDn = appConfiguration.getBaseDN();
-		entry.setDn(newDn);
-		String newInum;
+		String newDn = null;
+		String newInum = null;
 		do {
 			newInum = generateInumForNewTrustRelationshipImpl();
-			entry.setInum(newInum);
-		} while (ldapEntryManager.contains(entry));
+			newDn = getDnForTrustRelationShip(newInum);
+		} while (containsTrustRelationship(newDn));
 
 		return newInum;
 	}

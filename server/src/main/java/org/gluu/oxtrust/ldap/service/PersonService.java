@@ -329,7 +329,7 @@ public class PersonService implements Serializable, IPersonService {
 	public boolean containsPerson(GluuCustomPerson person) {
 		boolean result = false;
 		try {
-			result = ldapEntryManager.contains(person);
+			result = ldapEntryManager.contains(GluuCustomPerson.class);
 		} catch (Exception e) {
 			log.debug(e.getMessage(), e);
 		}

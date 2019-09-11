@@ -108,22 +108,17 @@ public class CacheRefreshService implements Serializable {
 		ldapEntryManager.persist(inumMap);
 	}
 
-	public boolean containsInumMap(PersistenceEntryManager ldapEntryManager, GluuInumMap inumMap) {
-		return ldapEntryManager.contains(inumMap);
+	public boolean containsInumMap(PersistenceEntryManager ldapEntryManager, String dn) {
+		return ldapEntryManager.contains(dn, GluuInumMap.class);
 	}
 
 	public String generateInumForNewInumMap(String inumbBaseDn, PersistenceEntryManager ldapEntryManager) {
-		String newInum = generateInumForNewInumMapImpl();
-		String newDn = getDnForInum(inumbBaseDn, newInum);
-
-		GluuInumMap inumMap = new GluuInumMap();
-		inumMap.setDn(newDn);
-
-		while (containsInumMap(ldapEntryManager, inumMap)) {
+		String newInum;
+		String newDn;
+		do {
 			newInum = generateInumForNewInumMapImpl();
 			newDn = getDnForInum(inumbBaseDn, newInum);
-			inumMap.setDn(newDn);
-		}
+		} while (containsInumMap(ldapEntryManager, newDn));
 
 		return newInum;
 	}

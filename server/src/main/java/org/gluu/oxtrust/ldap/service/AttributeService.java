@@ -396,15 +396,17 @@ public class AttributeService extends org.gluu.service.AttributeService {
 		return ldapEntryManager.contains(attribute);
 	}
 
+	public boolean containsAttribute(String dn) {
+		return ldapEntryManager.contains(dn, GluuAttribute.class);
+	}
+
 	public String generateInumForNewAttribute() {
-		GluuAttribute attribute = null;
 		String newInum = null;
+		String newDn = null;
 		do {
 			newInum = generateInumForNewAttributeImpl();
-			String newDn = getDnForAttribute(newInum);
-			attribute = new GluuAttribute();
-			attribute.setDn(newDn);
-		} while (containsAttribute(attribute));
+			newDn = getDnForAttribute(newInum);
+		} while (containsAttribute(newDn));
 
 		return newInum;
 	}

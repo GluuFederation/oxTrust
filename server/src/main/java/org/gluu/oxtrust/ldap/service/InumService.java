@@ -70,7 +70,7 @@ public class InumService implements Serializable {
 
 	private static final String SEPARATOR = "!";
 
-	private static final int MAX = 100;
+	private static final int MAX = 10;
 
 	@Inject
 	private Logger log;
@@ -112,51 +112,43 @@ public class InumService implements Serializable {
 
 		
 	public boolean containsAttribute(String inum) {
-		GluuAttribute attribute = new GluuAttribute();
-		attribute.setBaseDn("inum=" + inum + ",ou=attributes,o=gluu");
-		return ldapEntryManager.contains(attribute);
+		String dn = "inum=" + inum + ",ou=attributes,o=gluu";
+		return ldapEntryManager.contains(dn, GluuAttribute.class);
 	}
 
 	public boolean containsPerson(String inum) {
 		boolean contains = true;
-		GluuCustomPerson person = new GluuCustomPerson();
-		person.setBaseDn(String.format("inum=%s,ou=people,o=gluu", inum));
-		contains = ldapEntryManager.contains(person);
+		String dn = String.format("inum=%s,ou=people,o=gluu", inum);
+		contains = ldapEntryManager.contains(dn, GluuCustomPerson.class);
 		if (contains)
 			return true;
-		person.setBaseDn(String.format("inum=%s,ou=people,o=gluu", inum));
-		contains = ldapEntryManager.contains(person);
+		contains = ldapEntryManager.contains(dn, GluuCustomPerson.class);
 		return contains;
 	}
 
 	public boolean containsGroup(String inum) {
 		boolean contains = true;
-		GluuGroup group = new GluuGroup();
-		group.setBaseDn(String.format("inum=%s,ou=groups,o=gluu", inum));
-		contains = ldapEntryManager.contains(group);
+		String dn = String.format("inum=%s,ou=groups,o=gluu", inum);
+		contains = ldapEntryManager.contains(dn, GluuGroup.class);
 		if (contains)
 			return true;
-		group.setBaseDn(String.format("inum=%s,ou=groups,o=gluu", inum));
-		contains = ldapEntryManager.contains(group);
+		contains = ldapEntryManager.contains(dn, GluuGroup.class);
 		return contains;
 	}
 
 	public boolean containsConfiguration(String inum) {
-		GluuConfiguration configuration = new GluuConfiguration();
-		configuration.setBaseDn(String.format("inum=%s,ou=configurations,o=gluu", inum));
-		return ldapEntryManager.contains(configuration);
+		String dn = String.format("inum=%s,ou=configurations,o=gluu", inum);
+		return ldapEntryManager.contains(dn, GluuConfiguration.class);
 	}
 
 	public boolean containsTrustRelationship(String inum) {
-		GluuSAMLTrustRelationship tRelation = new GluuSAMLTrustRelationship();
-		tRelation.setBaseDn(String.format("inum=%s,ou=trustRelationships,inum=%s,o=gluu", inum));
-		return ldapEntryManager.contains(tRelation);
+		String dn = String.format("inum=%s,ou=trustRelationships,inum=%s,o=gluu", inum);
+		return ldapEntryManager.contains(dn, GluuSAMLTrustRelationship.class);
 	}
 
 	public boolean containsOrganization(String inum) {
-		InumEntry organization = new InumEntry();
-		organization.setBaseDn(String.format("o=%s,o=gluu", inum));
-		return ldapEntryManager.contains(organization);
+		String dn = String.format("o=%s,o=gluu", inum);
+		return ldapEntryManager.contains(dn, InumEntry.class);
 	}
 
 	public String getDnForInum(String baseDn, String inum) {

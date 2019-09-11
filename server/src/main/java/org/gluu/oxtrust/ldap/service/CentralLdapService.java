@@ -55,8 +55,8 @@ public class CentralLdapService {
 	 * 
 	 * @return True if configuration with specified attributes exist
 	 */
-	public boolean containsConfiguration(GluuConfiguration configuration) {
-		return centralLdapEntryManager.contains(configuration);
+	public boolean containsConfiguration(String dn) {
+		return centralLdapEntryManager.contains(dn, GluuConfiguration.class);
 	}
 
 	public boolean isUseCentralServer() {
