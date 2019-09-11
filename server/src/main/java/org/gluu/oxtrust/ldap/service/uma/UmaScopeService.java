@@ -88,8 +88,8 @@ public class UmaScopeService implements Serializable {
 	 * 
 	 * @return True if scope description with specified attributes exist
 	 */
-	public boolean containsUmaScope(Scope scope) {
-		return ldapEntryManager.contains(scope);
+	public boolean containsUmaScope(String dn) {
+		return ldapEntryManager.contains(dn, Scope.class);
 	}
 
 	/**
@@ -162,13 +162,12 @@ public class UmaScopeService implements Serializable {
 	 * @return New inum for scope description
 	 */
 	public String generateInumForNewScope() {
-		Scope scopeDescription = new Scope();
+		String newDn = null;
 		String newInum = null;
 		do {
 			newInum = generateInumForNewScopeImpl();
-			String newDn = getDnForScope(newInum);
-			scopeDescription.setDn(newDn);
-		} while (ldapEntryManager.contains(scopeDescription));
+			newDn = getDnForScope(newInum);
+		} while (containsUmaScope(newDn));
 
 		return newInum;
 	}

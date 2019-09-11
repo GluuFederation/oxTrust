@@ -76,8 +76,8 @@ public class ConfigurationService implements Serializable {
 	 * 
 	 * @return True if configuration with specified attributes exist
 	 */
-	public boolean containsConfiguration(GluuConfiguration configuration) {
-		return ldapEntryManager.contains(configuration);
+	public boolean containsConfiguration(String dn) {
+		return ldapEntryManager.contains(dn, GluuConfiguration.class);
 	}
 
 	/**

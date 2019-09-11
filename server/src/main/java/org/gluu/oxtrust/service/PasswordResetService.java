@@ -116,8 +116,8 @@ public class PasswordResetService implements Serializable {
 	 * 
 	 * @return True if password reset request with specified attributes exist
 	 */
-	public boolean containsPasswordResetRequest(PasswordResetRequest passwordResetRequest) {
-		return ldapEntryManager.contains(passwordResetRequest);
+	public boolean containsPasswordResetRequest(String dn) {
+		return ldapEntryManager.contains(dn, PasswordResetRequest.class);
 	}
 
 	/**
@@ -206,13 +206,12 @@ public class PasswordResetService implements Serializable {
 	 * @return new guid for password reset request
 	 */
 	public String generateGuidForNewPasswordResetRequest() {
-		PasswordResetRequest passwordResetRequest = new PasswordResetRequest();
+		String newDn = null;
 		String newGuid = null;
 		do {
 			newGuid = generateGuidForNewPasswordResetRequestImpl();
-			String newDn = getDnForPasswordResetRequest(newGuid);
-			passwordResetRequest.setDn(newDn);
-		} while (ldapEntryManager.contains(passwordResetRequest));
+			newDn = getDnForPasswordResetRequest(newGuid);
+		} while (containsPasswordResetRequest(newDn));
 
 		return newGuid;
 	}

@@ -171,9 +171,7 @@ public class StatusCheckerTimer {
 
 		if (centralLdapService.isUseCentralServer()) {
 			try {
-				GluuConfiguration tmpConfiguration = new GluuConfiguration();
-				tmpConfiguration.setDn(configuration.getDn());
-				boolean existConfiguration = centralLdapService.containsConfiguration(tmpConfiguration);
+				boolean existConfiguration = centralLdapService.containsConfiguration(configuration.getDn());
 
 				if (existConfiguration) {
 					centralLdapService.updateConfiguration(configuration);

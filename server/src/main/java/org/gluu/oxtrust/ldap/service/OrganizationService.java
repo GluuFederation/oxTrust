@@ -68,8 +68,8 @@ public class OrganizationService  extends org.gluu.service.OrganizationService{
 	 * 
 	 * @return True if organization with specified attributes exist
 	 */
-	public boolean containsOrganization(GluuOrganization organization) {
-		return ldapEntryManager.contains(organization);
+	public boolean containsOrganization(String dn) {
+		return ldapEntryManager.contains(dn, GluuOrganization.class);
 	}
 
 	/**

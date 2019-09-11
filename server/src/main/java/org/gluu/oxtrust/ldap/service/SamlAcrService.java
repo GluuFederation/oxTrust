@@ -65,10 +65,10 @@ public class SamlAcrService implements Serializable {
 				.toArray(size -> new SamlAcr[size]);
 	}
 
-	public boolean contains(SamlAcr samlAcr) {
+	public boolean contains(String dn) {
 		boolean result = false;
 		try {
-			result = ldapEntryManager.contains(samlAcr);
+			result = ldapEntryManager.contains(dn, SamlAcr.class);
 		} catch (Exception e) {
 			log.debug(e.getMessage(), e);
 		}
