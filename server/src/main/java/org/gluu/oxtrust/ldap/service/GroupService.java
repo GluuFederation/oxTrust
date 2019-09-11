@@ -230,8 +230,7 @@ public class GroupService implements Serializable, IGroupService {
 		String[] targetArray = new String[] { pattern };
 		Filter displayNameFilter = Filter.createSubstringFilter(OxTrustConstants.displayName, null, targetArray, null);
 		Filter descriptionFilter = Filter.createSubstringFilter(OxTrustConstants.description, null, targetArray, null);
-		Filter inameFilter = Filter.createSubstringFilter(OxTrustConstants.iname, null, targetArray, null);
-		Filter searchFilter = Filter.createORFilter(displayNameFilter, descriptionFilter, inameFilter);
+		Filter searchFilter = Filter.createORFilter(displayNameFilter, descriptionFilter);
 
 		List<GluuGroup> result = ldapEntryManager.findEntries(getDnForGroup(null), GluuGroup.class, searchFilter,
 				sizeLimit);
@@ -275,27 +274,6 @@ public class GroupService implements Serializable, IGroupService {
 		GluuGroup result = ldapEntryManager.find(GluuGroup.class, Dn);
 
 		return result;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.gluu.oxtrust.ldap.service.IGroupService#getGroupByIname(java.lang.String)
-	 */
-	@Override
-	public GluuGroup getGroupByIname(String iname) throws Exception {
-		GluuGroup group = new GluuGroup();
-		group.setBaseDn(getDnForGroup(null));
-		group.setIname(iname);
-
-		List<GluuGroup> groups = ldapEntryManager.findEntries(group);
-
-		if ((groups != null) && (groups.size() > 0)) {
-			return groups.get(0);
-		}
-
-		return null;
 	}
 
 	/*

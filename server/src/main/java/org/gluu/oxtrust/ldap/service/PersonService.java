@@ -160,8 +160,7 @@ public class PersonService implements Serializable, IPersonService {
 		Filter uidFilter = Filter.createSubstringFilter(OxConstants.UID, null, targetArray, null);
 		Filter mailFilter = Filter.createSubstringFilter(OxTrustConstants.mail, null, targetArray, null);
 		Filter nameFilter = Filter.createSubstringFilter(OxTrustConstants.displayName, null, targetArray, null);
-		Filter inameFilter = Filter.createSubstringFilter(OxTrustConstants.iname, null, targetArray, null);
-		Filter searchFilter = Filter.createORFilter(uidFilter, mailFilter, nameFilter, inameFilter);
+		Filter searchFilter = Filter.createORFilter(uidFilter, mailFilter, nameFilter);
 
 		List<GluuCustomPerson> result = ldapEntryManager.findEntries(getDnForPerson(null), GluuCustomPerson.class,
 				searchFilter, sizeLimit);
@@ -181,10 +180,9 @@ public class PersonService implements Serializable, IPersonService {
 		Filter uidFilter = Filter.createSubstringFilter(OxConstants.UID, null, targetArray, null);
 		Filter mailFilter = Filter.createSubstringFilter(OxTrustConstants.mail, null, targetArray, null);
 		Filter nameFilter = Filter.createSubstringFilter(OxTrustConstants.displayName, null, targetArray, null);
-		Filter inameFilter = Filter.createSubstringFilter(OxTrustConstants.iname, null, targetArray, null);
 		Filter ppidFilter = Filter.createSubstringFilter(OxTrustConstants.ppid, null, targetArray, null);
 		Filter inumFilter = Filter.createSubstringFilter(OxTrustConstants.inum, null, targetArray, null);
-		Filter searchFilter = Filter.createORFilter(uidFilter, mailFilter, nameFilter, inameFilter, ppidFilter,
+		Filter searchFilter = Filter.createORFilter(uidFilter, mailFilter, nameFilter, ppidFilter,
 				inumFilter);
 
 		List<GluuCustomPerson> result = ldapEntryManager.findEntries(getDnForPerson(null), GluuCustomPerson.class,
@@ -220,9 +218,8 @@ public class PersonService implements Serializable, IPersonService {
 		Filter uidFilter = Filter.createSubstringFilter(OxConstants.UID, null, targetArray, null);
 		Filter mailFilter = Filter.createSubstringFilter(OxTrustConstants.mail, null, targetArray, null);
 		Filter nameFilter = Filter.createSubstringFilter(OxTrustConstants.displayName, null, targetArray, null);
-		Filter inameFilter = Filter.createSubstringFilter(OxTrustConstants.iname, null, targetArray, null);
 
-		Filter orFilter = Filter.createORFilter(uidFilter, mailFilter, nameFilter, inameFilter);
+		Filter orFilter = Filter.createORFilter(uidFilter, mailFilter, nameFilter);
 
 		Filter searchFilter = orFilter;
 
