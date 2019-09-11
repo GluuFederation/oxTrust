@@ -271,22 +271,6 @@ public class GroupService implements Serializable, IGroupService {
 		return  ldapEntryManager.find(GluuGroup.class, Dn);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.gluu.oxtrust.ldap.service.IGroupService#getGroupByIname(java.lang.String)
-	 */
-	@Override
-	public GluuGroup getGroupByIname(String iname) throws Exception {
-		GluuGroup group = new GluuGroup();
-		group.setBaseDn(getDnForGroup(null));
-		List<GluuGroup> groups = ldapEntryManager.findEntries(group);
-		if ((groups != null) && (groups.size() > 0)) {
-			return groups.get(0);
-		}
-		return null;
-	}
 
 	/*
 	 * (non-Javadoc)
