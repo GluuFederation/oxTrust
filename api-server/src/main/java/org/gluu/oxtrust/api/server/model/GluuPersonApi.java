@@ -19,7 +19,6 @@ public class GluuPersonApi implements Serializable {
 	 */
 	private static final long serialVersionUID = -4216836182127315394L;
 	private String inum;
-	private String iname;
 	private String surName;
 	private String givenName;
 	private String email;
@@ -34,7 +33,6 @@ public class GluuPersonApi implements Serializable {
 
 	public GluuPersonApi(GluuCustomPerson person) {
 		this.inum = person.getInum();
-		this.iname = person.getIname();
 		this.displayName = person.getDisplayName();
 		this.creationDate = person.getCreationDate();
 		this.givenName = person.getGivenName();
@@ -51,14 +49,6 @@ public class GluuPersonApi implements Serializable {
 
 	public void setInum(String inum) {
 		this.inum = inum;
-	}
-
-	public String getIname() {
-		return iname;
-	}
-
-	public void setIname(String iname) {
-		this.iname = iname;
 	}
 
 	public String getDisplayName() {
@@ -127,10 +117,9 @@ public class GluuPersonApi implements Serializable {
 
 	@Override
 	public String toString() {
-		return "GluuPersonApi [inum=" + inum + ", iname=" + iname + ", surName=" + surName + ", givenName=" + givenName
-				+ ", email=" + email + ", password=" + password + ", userName=" + userName + ", displayName="
-				+ displayName + ", creationDate=" + creationDate + ", status=" + status + "]";
+		return "GluuPersonApi [inum=" + inum + ", surName=" + surName + ", givenName=" + givenName + ", email=" + email
+				+ ", password=" + password + ", userName=" + userName + ", displayName=" + displayName
+				+ ", creationDate=" + creationDate + ", status=" + status + "]";
 	}
-	
-	
+
 }

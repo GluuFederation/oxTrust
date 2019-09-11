@@ -24,12 +24,12 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 public class OxAuthCustomClient extends CustomEntry implements Serializable {
 
 	/**
-     *
-     */
+	 *
+	 */
 	private static final long serialVersionUID = -3319774915823259905L;
 
 	@AttributesList(name = "name", value = "values", sortByName = true, attributesConfiguration = {
-			@AttributeName(name = "iname", ignoreDuringUpdate = true), @AttributeName(name = "inum", ignoreDuringUpdate = true),
+			@AttributeName(name = "inum", ignoreDuringUpdate = true),
 			@AttributeName(name = "userPassword", ignoreDuringRead = true) })
 	private List<GluuCustomAttribute> customAttributes = new ArrayList<GluuCustomAttribute>();
 
@@ -47,14 +47,6 @@ public class OxAuthCustomClient extends CustomEntry implements Serializable {
 
 	public void setInum(String value) {
 		setAttribute("inum", value);
-	}
-
-	public String getIname() {
-		return getAttribute("iname");
-	}
-
-	public void setIname(String value) {
-		setAttribute("iname", value);
 	}
 
 	public String getDisplayName() {

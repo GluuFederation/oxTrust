@@ -230,13 +230,9 @@ public class GroupService implements Serializable, IGroupService {
 		String[] targetArray = new String[] { pattern };
 		Filter displayNameFilter = Filter.createSubstringFilter(OxTrustConstants.displayName, null, targetArray, null);
 		Filter descriptionFilter = Filter.createSubstringFilter(OxTrustConstants.description, null, targetArray, null);
-		Filter inameFilter = Filter.createSubstringFilter(OxTrustConstants.iname, null, targetArray, null);
-		Filter searchFilter = Filter.createORFilter(displayNameFilter, descriptionFilter, inameFilter);
-
-		List<GluuGroup> result = ldapEntryManager.findEntries(getDnForGroup(null), GluuGroup.class, searchFilter,
+		Filter searchFilter = Filter.createORFilter(displayNameFilter, descriptionFilter);
+		return  ldapEntryManager.findEntries(getDnForGroup(null), GluuGroup.class, searchFilter,
 				sizeLimit);
-
-		return result;
 	}
 
 	@Override
@@ -272,9 +268,7 @@ public class GroupService implements Serializable, IGroupService {
 
 	@Override
 	public GluuGroup getGroupByDn(String Dn) {
-		GluuGroup result = ldapEntryManager.find(GluuGroup.class, Dn);
-
-		return result;
+		return  ldapEntryManager.find(GluuGroup.class, Dn);
 	}
 
 	/*
@@ -287,14 +281,10 @@ public class GroupService implements Serializable, IGroupService {
 	public GluuGroup getGroupByIname(String iname) throws Exception {
 		GluuGroup group = new GluuGroup();
 		group.setBaseDn(getDnForGroup(null));
-		group.setIname(iname);
-
 		List<GluuGroup> groups = ldapEntryManager.findEntries(group);
-
 		if ((groups != null) && (groups.size() > 0)) {
 			return groups.get(0);
 		}
-
 		return null;
 	}
 
@@ -310,13 +300,10 @@ public class GroupService implements Serializable, IGroupService {
 		GluuGroup group = new GluuGroup();
 		group.setBaseDn(getDnForGroup(null));
 		group.setDisplayName(DisplayName);
-
 		List<GluuGroup> groups = ldapEntryManager.findEntries(group);
-
 		if ((groups != null) && (groups.size() > 0)) {
 			return groups.get(0);
 		}
-
 		return null;
 	}
 

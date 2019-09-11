@@ -585,9 +585,7 @@ public class AttributeService extends org.gluu.service.AttributeService {
 		Filter displayNameFilter = Filter.createSubstringFilter(OxTrustConstants.displayName, null, targetArray, null);
 		Filter descriptionFilter = Filter.createSubstringFilter(OxTrustConstants.description, null, targetArray, null);
 		Filter nameFilter = Filter.createSubstringFilter(OxTrustConstants.attributeName, null, targetArray, null);
-		Filter inameFilter = Filter.createSubstringFilter(OxTrustConstants.iname, null, targetArray, null);
-		Filter searchFilter = Filter.createORFilter(displayNameFilter, descriptionFilter, inameFilter, nameFilter);
-
+		Filter searchFilter = Filter.createORFilter(displayNameFilter, descriptionFilter,nameFilter);
 		List<GluuAttribute> result = ldapEntryManager.findEntries(getDnForAttribute(null), GluuAttribute.class,
 				searchFilter, sizeLimit);
 		String customOrigin = getCustomOrigin();
@@ -604,12 +602,11 @@ public class AttributeService extends org.gluu.service.AttributeService {
 		List<Filter> originFilters = new ArrayList<Filter>();
 		Filter displayNameFilter = Filter.createSubstringFilter(OxTrustConstants.displayName, null, targetArray, null);
 		Filter descriptionFilter = Filter.createSubstringFilter(OxTrustConstants.description, null, targetArray, null);
-		Filter inameFilter = Filter.createSubstringFilter(OxTrustConstants.iname, null, targetArray, null);
 		for (String objectClassType : objectClassTypes) {
 			Filter originFilter = Filter.createEqualityFilter(OxTrustConstants.origin, objectClassType);
 			originFilters.add(originFilter);
 		}
-		Filter searchFilter = Filter.createORFilter(displayNameFilter, descriptionFilter, inameFilter);
+		Filter searchFilter = Filter.createORFilter(displayNameFilter, descriptionFilter);
 		Filter originFilter = Filter.createORFilter(originFilters.toArray(new Filter[0]));
 		Filter filter = Filter.createANDFilter(searchFilter, originFilter);
 		return ldapEntryManager.findEntries(getDnForAttribute(null), GluuAttribute.class, filter, sizeLimit);

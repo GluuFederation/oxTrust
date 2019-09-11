@@ -3,6 +3,7 @@ package org.gluu.oxtrust.ldap.service;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -59,9 +60,14 @@ public class Fido2DeviceService implements Serializable {
 	}
 
 	public List<GluuFido2Device> findAllFido2Devices(GluuCustomPerson person) {
+		List<GluuFido2Device> result = new ArrayList<>();
 		if (containsBranch(person.getInum())) {
 			String baseDnForU2fDevices = getDnForFido2Device(null, person.getInum());
-			return ldapEntryManager.findEntries(baseDnForU2fDevices, GluuFido2Device.class, null);
+			result = ldapEntryManager.findEntries(baseDnForU2fDevices, GluuFido2Device.class, null);
+			if (result != null) {
+				result.stream().filter(e -> e.getDn().contains(person.getInum())).collect(Collectors.toList());
+			}
+			return result;
 		}
 		return new ArrayList<>();
 	}

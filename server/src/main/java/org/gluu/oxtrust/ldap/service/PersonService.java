@@ -123,10 +123,8 @@ public class PersonService implements Serializable, IPersonService {
 	 */
 	@Override
 	public void updatePerson(GluuCustomPerson person) {
-
 		Date updateDate = new Date();
 		person.setUpdatedAt(updateDate);
-		// Update oxTrustMetaLastModified if it has been previously set
 		if (person.getAttribute("oxTrustMetaLastModified") != null) {
 			person.setAttribute("oxTrustMetaLastModified",
 					ISODateTimeFormat.dateTime().withZoneUTC().print(updateDate.getTime()));
@@ -143,7 +141,6 @@ public class PersonService implements Serializable, IPersonService {
 	 */
 	@Override
 	public void removePerson(GluuCustomPerson person) {
-		// Remove person
 		ldapEntryManager.removeRecursively(person.getDn());
 	}
 
@@ -156,17 +153,8 @@ public class PersonService implements Serializable, IPersonService {
 	 */
 	@Override
 	public List<GluuCustomPerson> searchPersons(String pattern, int sizeLimit) {
-		String[] targetArray = new String[] { pattern };
-		Filter uidFilter = Filter.createSubstringFilter(OxConstants.UID, null, targetArray, null);
-		Filter mailFilter = Filter.createSubstringFilter(OxTrustConstants.mail, null, targetArray, null);
-		Filter nameFilter = Filter.createSubstringFilter(OxTrustConstants.displayName, null, targetArray, null);
-		Filter inameFilter = Filter.createSubstringFilter(OxTrustConstants.iname, null, targetArray, null);
-		Filter searchFilter = Filter.createORFilter(uidFilter, mailFilter, nameFilter, inameFilter);
-
-		List<GluuCustomPerson> result = ldapEntryManager.findEntries(getDnForPerson(null), GluuCustomPerson.class,
-				searchFilter, sizeLimit);
-
-		return result;
+		Filter searchFilter = buildFilter(pattern);
+		return ldapEntryManager.findEntries(getDnForPerson(null), GluuCustomPerson.class, searchFilter, sizeLimit);
 	}
 
 	/*
@@ -177,20 +165,21 @@ public class PersonService implements Serializable, IPersonService {
 	 */
 	@Override
 	public List<GluuCustomPerson> searchPersons(String pattern) {
+		Filter searchFilter = buildFilter(pattern);
+		return ldapEntryManager.findEntries(getDnForPerson(null), GluuCustomPerson.class, searchFilter);
+	}
+
+	private Filter buildFilter(String pattern) {
 		String[] targetArray = new String[] { pattern };
 		Filter uidFilter = Filter.createSubstringFilter(OxConstants.UID, null, targetArray, null);
 		Filter mailFilter = Filter.createSubstringFilter(OxTrustConstants.mail, null, targetArray, null);
 		Filter nameFilter = Filter.createSubstringFilter(OxTrustConstants.displayName, null, targetArray, null);
-		Filter inameFilter = Filter.createSubstringFilter(OxTrustConstants.iname, null, targetArray, null);
 		Filter ppidFilter = Filter.createSubstringFilter(OxTrustConstants.ppid, null, targetArray, null);
 		Filter inumFilter = Filter.createSubstringFilter(OxTrustConstants.inum, null, targetArray, null);
-		Filter searchFilter = Filter.createORFilter(uidFilter, mailFilter, nameFilter, inameFilter, ppidFilter,
-				inumFilter);
-
-		List<GluuCustomPerson> result = ldapEntryManager.findEntries(getDnForPerson(null), GluuCustomPerson.class,
-				searchFilter);
-
-		return result;
+		Filter snFilter = Filter.createSubstringFilter(OxTrustConstants.sn, null, targetArray, null);
+		Filter searchFilter = Filter.createORFilter(uidFilter, mailFilter, nameFilter, ppidFilter, inumFilter,
+				snFilter);
+		return searchFilter;
 	}
 
 	/*
@@ -216,16 +205,8 @@ public class PersonService implements Serializable, IPersonService {
 	@Override
 	public List<GluuCustomPerson> searchPersons(String pattern, int sizeLimit, List<GluuCustomPerson> excludedPersons)
 			throws Exception {
-		String[] targetArray = new String[] { pattern };
-		Filter uidFilter = Filter.createSubstringFilter(OxConstants.UID, null, targetArray, null);
-		Filter mailFilter = Filter.createSubstringFilter(OxTrustConstants.mail, null, targetArray, null);
-		Filter nameFilter = Filter.createSubstringFilter(OxTrustConstants.displayName, null, targetArray, null);
-		Filter inameFilter = Filter.createSubstringFilter(OxTrustConstants.iname, null, targetArray, null);
-
-		Filter orFilter = Filter.createORFilter(uidFilter, mailFilter, nameFilter, inameFilter);
-
+		Filter orFilter = buildFilter(pattern);
 		Filter searchFilter = orFilter;
-
 		if (excludedPersons != null && excludedPersons.size() > 0) {
 			List<Filter> excludeFilters = new ArrayList<Filter>();
 			for (GluuCustomPerson excludedPerson : excludedPersons) {
@@ -241,12 +222,7 @@ public class PersonService implements Serializable, IPersonService {
 			Filter notFilter = Filter.createNOTFilter(orExcludeFilter);
 			searchFilter = Filter.createANDFilter(orFilter, notFilter);
 		}
-
-		List<GluuCustomPerson> result = ldapEntryManager.findEntries(getDnForPerson(null), GluuCustomPerson.class,
-				searchFilter, sizeLimit);
-
-		return result;
-
+		return ldapEntryManager.findEntries(getDnForPerson(null), GluuCustomPerson.class, searchFilter, sizeLimit);
 	}
 
 	/*
@@ -258,10 +234,7 @@ public class PersonService implements Serializable, IPersonService {
 	 */
 	@Override
 	public List<GluuCustomPerson> findAllPersons(String[] returnAttributes) {
-		List<GluuCustomPerson> result = ldapEntryManager.findEntries(getDnForPerson(null), GluuCustomPerson.class, null,
-				returnAttributes);
-
-		return result;
+		return ldapEntryManager.findEntries(getDnForPerson(null), GluuCustomPerson.class, null, returnAttributes);
 	}
 
 	/*
@@ -277,13 +250,8 @@ public class PersonService implements Serializable, IPersonService {
 		for (String uid : uids) {
 			uidFilters.add(Filter.createEqualityFilter(OxConstants.UID, uid));
 		}
-
 		Filter filter = Filter.createORFilter(uidFilters);
-
-		List<GluuCustomPerson> result = ldapEntryManager.findEntries(getDnForPerson(null), GluuCustomPerson.class,
-				filter, returnAttributes);
-
-		return result;
+		return ldapEntryManager.findEntries(getDnForPerson(null), GluuCustomPerson.class, filter, returnAttributes);
 	}
 
 	/*
@@ -300,13 +268,8 @@ public class PersonService implements Serializable, IPersonService {
 		for (String mailid : mailids) {
 			mailidFilters.add(Filter.createEqualityFilter(OxTrustConstants.mail, mailid));
 		}
-
 		Filter filter = Filter.createORFilter(mailidFilters);
-
-		List<GluuCustomPerson> result = ldapEntryManager.findEntries(getDnForPerson(null), GluuCustomPerson.class,
-				filter, returnAttributes);
-
-		return result;
+		return ldapEntryManager.findEntries(getDnForPerson(null), GluuCustomPerson.class, filter, returnAttributes);
 	}
 
 	/*
@@ -424,13 +387,13 @@ public class PersonService implements Serializable, IPersonService {
 	public String generateInumForNewPerson() {
 		GluuCustomPerson person = null;
 		String newInum = null;
-		String newDn=null;
+		String newDn = null;
 		do {
 			newInum = generateInumForNewPersonImpl();
 			newDn = getDnForPerson(newInum);
 			person = new GluuCustomPerson();
 			person.setDn(newDn);
-		} while (ldapEntryManager.contains(newDn,GluuCustomPerson.class));
+		} while (ldapEntryManager.contains(newDn, GluuCustomPerson.class));
 		return newInum;
 	}
 
@@ -615,17 +578,14 @@ public class PersonService implements Serializable, IPersonService {
 	 */
 	@Override
 	public User getUserByUid(String uid) {
-		// Find user by uid
 		SimpleUser simpleUser = new SimpleUser();
 		simpleUser.setDn(getDnForPerson(null));
 		simpleUser.setUserId(uid);
 		simpleUser.setCustomObjectClasses(new String[] { "gluuPerson" });
 		List<SimpleUser> users = ldapEntryManager.findEntries(simpleUser, 1);// getLdapEntryManagerInstance().findEntries(person);
 		if ((users != null) && (users.size() > 0)) {
-			// Find result entry by primary key
 			return ldapEntryManager.find(User.class, users.get(0).getDn());
 		}
-
 		return null;
 	}
 

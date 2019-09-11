@@ -288,7 +288,6 @@ public class GroupWebResource extends BaseWebResource {
 
 	private GluuGroup copyAttributes(GluuGroupApi group) {
 		GluuGroup gluuGroup = new GluuGroup();
-		gluuGroup.setIname(group.getIname());
 		gluuGroup.setDescription(group.getDescription());
 		gluuGroup.setDisplayName(group.getDisplayName());
 		gluuGroup.setOwner(group.getOwner());
@@ -299,7 +298,6 @@ public class GroupWebResource extends BaseWebResource {
 	}
 
 	private GluuGroup updateValues(GluuGroup gluuGroup, GluuGroupApi group) {
-		gluuGroup.setIname(group.getIname());
 		gluuGroup.setDescription(group.getDescription());
 		gluuGroup.setDisplayName(group.getDisplayName());
 		gluuGroup.setOwner(group.getOwner());

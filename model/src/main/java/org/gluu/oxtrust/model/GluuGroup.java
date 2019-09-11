@@ -40,9 +40,6 @@ public class GluuGroup extends Entry implements Serializable {
 	@AttributeName(ignoreDuringUpdate = true)
 	private String inum;
 
-	@AttributeName(ignoreDuringUpdate = true)
-	private String iname;
-
 	@NotNull
 	@Size(min = 0, max = 60, message = "Length of the Display Name should not exceed 60")
 	@AttributeName
@@ -57,7 +54,7 @@ public class GluuGroup extends Entry implements Serializable {
 	private String owner;
 
 	@AttributeName(name = "member")
-	private List<String> members=new ArrayList<>();
+	private List<String> members = new ArrayList<>();
 
 	@AttributeName(name = "c")
 	private String countryName;
@@ -75,8 +72,7 @@ public class GluuGroup extends Entry implements Serializable {
 	private GluuGroupVisibility visibility;
 
 	@AttributesList(name = "name", value = "values", sortByName = true, attributesConfiguration = {
-		@AttributeName(name = "inum", ignoreDuringUpdate = true)
-	})
+			@AttributeName(name = "inum", ignoreDuringUpdate = true) })
 	private List<GluuCustomAttribute> customAttributes = new ArrayList<GluuCustomAttribute>();
 
 	public String getInum() {
@@ -85,14 +81,6 @@ public class GluuGroup extends Entry implements Serializable {
 
 	public void setInum(String inum) {
 		this.inum = inum;
-	}
-
-	public String getIname() {
-		return iname;
-	}
-
-	public void setIname(String iname) {
-		this.iname = iname;
 	}
 
 	public String getDisplayName() {
@@ -177,10 +165,10 @@ public class GluuGroup extends Entry implements Serializable {
 
 	@Override
 	public String toString() {
-		return String
-				.format("GluuGroup [countryName=%s, description=%s, displayName=%s, iname=%s, inum=%s, members=%s, organization=%s, owner=%s, seeAlso=%s, status=%s, visibility=%s, toString()=%s]",
-						countryName, description, displayName, iname, inum, members, organization, owner, seeAlso, status, visibility,
-						super.toString());
+		return String.format(
+				"GluuGroup [countryName=%s, description=%s, displayName=%s,  inum=%s, members=%s, organization=%s, owner=%s, seeAlso=%s, status=%s, visibility=%s, toString()=%s]",
+				countryName, description, displayName, inum, members, organization, owner, seeAlso, status, visibility,
+				super.toString());
 	}
 
 	public List<GluuCustomAttribute> getCustomAttributes() {

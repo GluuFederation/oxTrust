@@ -143,8 +143,7 @@ public class ScopeService implements Serializable {
 					null);
 			Filter descriptionFilter = Filter.createSubstringFilter(OxTrustConstants.description, null, targetArray,
 					null);
-			Filter inameFilter = Filter.createSubstringFilter(OxTrustConstants.iname, null, targetArray, null);
-			searchFilter = Filter.createORFilter(displayNameFilter, descriptionFilter, inameFilter);
+			searchFilter = Filter.createORFilter(displayNameFilter, descriptionFilter);
 		}
 		List<Scope> result = new ArrayList<>();
 		try {

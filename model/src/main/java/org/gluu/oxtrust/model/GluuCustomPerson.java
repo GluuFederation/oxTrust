@@ -88,14 +88,6 @@ public class GluuCustomPerson extends User
     @AttributeName
     private Date updatedAt;
 
-    public String getIname() {
-        return getAttribute("iname");
-    }
-
-    public void setIname(String value) {
-        setAttribute("iname", value);
-    }
-
     public String getMail() {
         return getAttribute("mail");
     }
