@@ -144,7 +144,7 @@ public class FilterService implements Serializable {
 			if (extensionSchemas != null && !extensionSchemas.isEmpty()) {
 				context.put("extensionSchemas", extensionSchemas);
 			} else {
-				log.warn("validation filter on " + trustRelationship.getIname() + "is invalid. Removing it.");
+				log.warn("validation filter on " + trustRelationship.getDisplayName() + "is invalid. Removing it.");
 				trustRelationship.getMetadataFilters().remove("validation");
 			}
 		}
@@ -160,7 +160,7 @@ public class FilterService implements Serializable {
 						.getRemoveRolelessEntityDescriptors();
 				context.put("removeRolelessEntityDescriptors", removeRolelessEntityDescriptors);
 			} else {
-				log.warn("entityRoleWhiteList filter on " + trustRelationship.getIname() + "is invalid. Removing it.");
+				log.warn("entityRoleWhiteList filter on " + trustRelationship.getDisplayName() + "is invalid. Removing it.");
 				trustRelationship.getMetadataFilters().remove("entityRoleWhiteList");
 			}
 
@@ -184,7 +184,7 @@ public class FilterService implements Serializable {
 				context.put("trustEngine", "shibboleth.FedTrustEngine");
 				context.put("requireSignedMetadata", requireSignedMetadata);
 			} else {
-				log.warn("signatureValidation filter on " + trustRelationship.getIname() + " is invalid. Removing it.");
+				log.warn("signatureValidation filter on " + trustRelationship.getDisplayName() + " is invalid. Removing it.");
 				trustRelationship.getMetadataFilters().remove("signatureValidation");
 			}
 		}

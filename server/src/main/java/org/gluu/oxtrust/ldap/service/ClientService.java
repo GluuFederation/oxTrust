@@ -183,9 +183,8 @@ public class ClientService implements Serializable {
 		String[] targetArray = new String[] { pattern };
 		Filter displayNameFilter = Filter.createSubstringFilter(OxTrustConstants.displayName, null, targetArray, null);
 		Filter descriptionFilter = Filter.createSubstringFilter(OxTrustConstants.description, null, targetArray, null);
-		Filter inameFilter = Filter.createSubstringFilter(OxTrustConstants.iname, null, targetArray, null);
 		Filter inumFilter = Filter.createSubstringFilter(OxTrustConstants.inum, null, targetArray, null);
-		Filter searchFilter = Filter.createORFilter(displayNameFilter, descriptionFilter, inameFilter, inumFilter);
+		Filter searchFilter = Filter.createORFilter(displayNameFilter, descriptionFilter, inumFilter);
 		return ldapEntryManager.findEntries(getDnForClient(null), OxAuthClient.class, searchFilter, sizeLimit);
 	}
 
@@ -228,23 +227,6 @@ public class ClientService implements Serializable {
 	 *
 	 * @return oxAuthClient
 	 */
-
-	/**
-	 * Get Client by iname
-	 *
-	 * @param iname
-	 * @return Client
-	 */
-	public OxAuthClient getClientByIname(String iname) {
-		OxAuthClient client = new OxAuthClient();
-		client.setBaseDn(getDnForClient(null));
-		client.setIname(iname);
-		List<OxAuthClient> clients = ldapEntryManager.findEntries(client);
-		if ((clients != null) && (clients.size() > 0)) {
-			return clients.get(0);
-		}
-		return null;
-	}
 
 	/**
 	 * Get client by DisplayName

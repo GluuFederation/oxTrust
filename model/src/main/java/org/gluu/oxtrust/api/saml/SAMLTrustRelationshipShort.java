@@ -23,10 +23,13 @@ import org.gluu.oxtrust.model.GluuValidationStatus;
 @XmlAccessorType(XmlAccessType.FIELD)
 @ApiModel(value = "Shorted version of GluuSAMLTrustRelationship class")
 public class SAMLTrustRelationshipShort implements Serializable {
-    private String inum;
-    
-    private String iname;
-    
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 5054283469609847637L;
+
+	private String inum;
+        
     private String displayName;
     
     private String description;
@@ -39,7 +42,6 @@ public class SAMLTrustRelationshipShort implements Serializable {
     
     public SAMLTrustRelationshipShort(GluuSAMLTrustRelationship trustRelationship) {
         inum = trustRelationship.getInum();
-        iname = trustRelationship.getIname();
         displayName = trustRelationship.getDisplayName();
         description = trustRelationship.getDescription();
         validationStatus = trustRelationship.getValidationStatus();
@@ -58,20 +60,6 @@ public class SAMLTrustRelationshipShort implements Serializable {
      */
     public void setInum(String inum) {
         this.inum = inum;
-    }
-
-    /**
-     * @return the iname
-     */
-    public String getIname() {
-        return iname;
-    }
-
-    /**
-     * @param iname the iname to set
-     */
-    public void setIname(String iname) {
-        this.iname = iname;
     }
 
     /**

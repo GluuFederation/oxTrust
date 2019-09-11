@@ -401,10 +401,8 @@ public class RegisterPersonAction implements Serializable {
 		if (isNewPerson) {
 			customAttributeAction.addCustomAttributes(mandatoryAttributes);
 		}
-
 		hiddenAttributes = new ArrayList<String>();
 		hiddenAttributes.add("inum");
-		hiddenAttributes.add("iname");
 		hiddenAttributes.add("userPassword");
 		hiddenAttributes.add("gluuStatus");
 		hiddenAttributes.add("oxExternalUid");

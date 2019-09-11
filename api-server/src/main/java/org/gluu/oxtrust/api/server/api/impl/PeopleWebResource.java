@@ -186,7 +186,6 @@ public class PeopleWebResource extends BaseWebResource {
 	private GluuCustomPerson copyAttributes(GluuPersonApi person) {
 		GluuCustomPerson gluuCustomPerson = new GluuCustomPerson();
 		gluuCustomPerson.setUid(person.getUserName());
-		gluuCustomPerson.setIname(person.getIname());
 		gluuCustomPerson.setInum(person.getInum());
 		gluuCustomPerson.setGivenName(person.getGivenName());
 		gluuCustomPerson.setMail(person.getEmail());
@@ -200,7 +199,6 @@ public class PeopleWebResource extends BaseWebResource {
 	}
 
 	private GluuCustomPerson updateValues(GluuCustomPerson gluuCustomPerson, GluuPersonApi person) {
-		gluuCustomPerson.setIname(person.getIname());
 		gluuCustomPerson.setUid(person.getUserName());
 		gluuCustomPerson.setDisplayName(person.getDisplayName());
 		gluuCustomPerson.setCreationDate(person.getCreationDate());

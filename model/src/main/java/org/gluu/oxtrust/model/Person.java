@@ -15,10 +15,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class Person {
 
 	private String inum;
-	private String iname;
 	private String firstName; // givenName
 	private String lastName; // sn
-	// private String commonName;
 	private String displayName;
 	private String commonName;
 	private String userId;
@@ -42,15 +40,7 @@ public class Person {
 	public void setInum(String inum) {
 		this.inum = inum;
 	}
-
-	public String getIname() {
-		return iname;
-	}
-
-	public void setIname(String iname) {
-		this.iname = iname;
-	}
-
+	
 	public String getFirstName() {
 		return firstName;
 	}
@@ -182,8 +172,8 @@ public class Person {
 	@Override
 	public String toString() {
 		return String
-				.format("Person [inum=%s, iname=%s, firstName=%s, lastName=%s, displayName=%s, commonName=%s, userId=%s, password=%s, email=%s, telephoneNumber=%s, faxNumber=%s, employeeNumber=%s, address=%s, city=%s, state=%s, postalCode=%s, mobileNumber=%s, personAttrList=%s]",
-						inum, iname, firstName, lastName, displayName,
+				.format("Person [inum=%s,firstName=%s, lastName=%s, displayName=%s, commonName=%s, userId=%s, password=%s, email=%s, telephoneNumber=%s, faxNumber=%s, employeeNumber=%s, address=%s, city=%s, state=%s, postalCode=%s, mobileNumber=%s, personAttrList=%s]",
+						inum,firstName, lastName, displayName,
 						commonName, userId, password, email, telephoneNumber,
 						faxNumber, employeeNumber, address, city, state,
 						postalCode, mobileNumber, personAttrList);

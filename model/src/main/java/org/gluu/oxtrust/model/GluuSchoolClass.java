@@ -15,8 +15,6 @@ public class GluuSchoolClass {
 
 	private String inum;
 
-	private String iname;
-
 	private String displayName;
 
 	private boolean selected;
@@ -36,15 +34,7 @@ public class GluuSchoolClass {
 	public void setInum(String inum) {
 		this.inum = inum;
 	}
-
-	public String getIname() {
-		return iname;
-	}
-
-	public void setIname(String iname) {
-		this.iname = iname;
-	}
-
+	
 	public String getDisplayName() {
 		return displayName;
 	}

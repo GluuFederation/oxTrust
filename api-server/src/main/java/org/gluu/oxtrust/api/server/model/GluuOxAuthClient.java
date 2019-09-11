@@ -26,8 +26,6 @@ public class GluuOxAuthClient implements Serializable{
 
 	private String inum;
 
-	private String iname;
-
 	private String displayName;
 
 	private String description;
@@ -143,15 +141,6 @@ public class GluuOxAuthClient implements Serializable{
 	public void setInum(String inum) {
 		this.inum = inum;
 	}
-
-	public String getIname() {
-		return iname;
-	}
-
-	public void setIname(String iname) {
-		this.iname = iname;
-	}
-
 	public String getDisplayName() {
 		return displayName;
 	}
