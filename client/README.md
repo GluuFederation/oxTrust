@@ -21,7 +21,7 @@ Library usage:
 Integration test application usage:
 
 1. Edit client/conf/configuration.properties with your oxTrust server parameters.
-2. Run java -cp target/oxtrust-client-4.0.0-SNAPSHOT.jar org.gluu.oxtrust.api.test.TestMain
+2. Run java -cp target/oxtrust-client-4.0.rc1.jar org.gluu.oxtrust.api.test.TestMain
 
 Embedding to automatic tests:
 
