@@ -96,11 +96,11 @@ public class LdifService implements Serializable {
 					String[] exportEntry = ldapEntryManager.exportEntry(e);
 					if (exportEntry != null && exportEntry.length >= 0) {
 						Stream.of(exportEntry).forEach(v -> {
-							if (v.contains(OPEN) && v.contains(CLOSE)) {
+							if (v.split(":")[1].trim().startsWith(OPEN) && v.split(":")[1].trim().endsWith(CLOSE)) {
 								String key = v.split(":")[0];
 								String values = v.split(":")[1];
-								values = values.replace(OPEN, "");
-								values = values.replace(CLOSE, "");
+								values = values.replaceFirst(OPEN, "");
+								values = replaceLast(values, CLOSE, "");
 								List<String> list = Pattern.compile(", ").splitAsStream(values.trim())
 										.collect(Collectors.toList());
 								for (String value : list) {
@@ -119,6 +119,15 @@ public class LdifService implements Serializable {
 		} catch (IOException e) {
 			log.error("Error while exporting entries: ", e);
 		}
+	}
+	
+	String replaceLast(String mainString, String substring, String replacement)
+	{
+	  int index = mainString.lastIndexOf(substring);
+	  if (index == -1)
+	    return mainString;
+	  return mainString.substring(0, index) + replacement
+	          + mainString.substring(index+substring.length()).trim();
 	}
 
 }
