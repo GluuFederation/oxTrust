@@ -13,8 +13,8 @@ import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuFido2Device;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.PersistenceEntryManager;
+import org.gluu.persist.exception.EntryPersistenceException;
 import org.gluu.search.filter.Filter;
-import org.gluu.util.OxConstants;
 import org.gluu.util.StringHelper;
 import org.slf4j.Logger;
 
@@ -60,14 +60,14 @@ public class Fido2DeviceService implements Serializable {
 	}
 
 	public List<GluuFido2Device> findAllFido2Devices(GluuCustomPerson person) {
-		List<GluuFido2Device> result = new ArrayList<>();
-		String baseDnForU2fDevices = getDnForFido2Device(null, person.getInum());
-		Filter inumFilter = Filter.createEqualityFilter(OxTrustConstants.PERSON_INUM, person.getInum());
-		result = ldapEntryManager.findEntries(baseDnForU2fDevices, GluuFido2Device.class, inumFilter);
-		if (result != null) {
-			return result;
+		try {
+			String baseDnForU2fDevices = getDnForFido2Device(null, person.getInum());
+			Filter inumFilter = Filter.createEqualityFilter(OxTrustConstants.PERSON_INUM, person.getInum());
+			return ldapEntryManager.findEntries(baseDnForU2fDevices, GluuFido2Device.class, inumFilter);
+		} catch (EntryPersistenceException e) {
+			log.warn("No fido2 devices enrolled for " + person.getDisplayName());
+			return new ArrayList<>();
 		}
-		return result;
 	}
 
 	public GluuFido2Device getFido2DeviceById(String userId, String id) {
