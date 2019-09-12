@@ -11,6 +11,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.List;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.ejb.Stateless;
@@ -39,6 +41,8 @@ import com.unboundid.ldif.LDIFReader;
 @Named("ldifService")
 public class LdifService implements Serializable {
 
+	private static final String CLOSE = "]";
+	private static final String OPEN = "[";
 	private static final String LINE_SEPARATOR = "line.separator";
 
 	private static final long serialVersionUID = 6690460114767359078L;
@@ -50,7 +54,6 @@ public class LdifService implements Serializable {
 	private PersistenceEntryManager ldapEntryManager;
 
 	public ResultCode importLdifFileInLdap(InputStream is) throws LDAPException {
-		
 		ResultCode result = ResultCode.UNAVAILABLE;
 		PersistenceOperationService persistenceOperationService = ldapEntryManager.getOperationService();
 		if (!(persistenceOperationService instanceof LdapOperationService)) {
@@ -93,7 +96,19 @@ public class LdifService implements Serializable {
 					String[] exportEntry = ldapEntryManager.exportEntry(e);
 					if (exportEntry != null && exportEntry.length >= 0) {
 						Stream.of(exportEntry).forEach(v -> {
-							builder.append(v);
+							if (v.contains(OPEN) && v.contains(CLOSE)) {
+								String key = v.split(":")[0];
+								String values = v.split(":")[1];
+								values = values.replace(OPEN, "");
+								values = values.replace(CLOSE, "");
+								List<String> list = Pattern.compile(", ").splitAsStream(values.trim())
+										.collect(Collectors.toList());
+								for (String value : list) {
+									builder.append(key + ": " + value);
+								}
+							} else {
+								builder.append(v);
+							}
 							builder.append(System.getProperty(LINE_SEPARATOR));
 						});
 					}

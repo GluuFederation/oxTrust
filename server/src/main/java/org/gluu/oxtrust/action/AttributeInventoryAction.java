@@ -199,7 +199,6 @@ public class AttributeInventoryAction implements Serializable {
 				checkedItems.add(item.getDn());
 			}
 		}
-		log.info("the selections are : {}", checkedItems.size());
 		HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
 		response.setContentType("text/plain");
 		response.addHeader("Content-disposition", "attachment; filename=\"attributes.ldif\"");
