@@ -95,37 +95,37 @@
 									label="#{msg['organizationForm.selfServicePasswordReset']}">
 									<h:selectBooleanCheckbox
 										value="#{_configuration.passwordResetAllowed}"
-										styleClass="rounded form-control passwordResetSelectBox"
+										styleClass="rounded passwordResetSelectBox"
 										id="passwordResetId" />
 								</ox:decorate>
 								<ox:decorate id="scimEnabledState"
 									label="#{msg['organizationForm.scimSupport']}">
 									<h:selectBooleanCheckbox value="#{_configuration.scimEnabled}"
-										styleClass="rounded form-control scimEnableStateSelectBox"
+										styleClass="rounded scimEnableStateSelectBox"
 										id="scimEnabledStateId" />
 								</ox:decorate>
 								<ox:decorate id="passportEnabledState"
 									label="#{msg['organizationForm.passportSupport']}">
 									<h:selectBooleanCheckbox
 										value="#{_configuration.passportEnabled}"
-										styleClass="rounded form-control passportEnableStateSelectBox"
+										styleClass="rounded passportEnableStateSelectBox"
 										id="passportEnabledStateId" />
 								</ox:decorate>
 								<ox:decorate id="samlEnabledState"
 									label="#{msg['organizationForm.samlSupport']}">
 									<h:selectBooleanCheckbox value="#{_configuration.samlEnabled}"
-										styleClass="rounded form-control samlSelectBox" id="samlEnabledStateId"/>
+										styleClass="rounded samlSelectBox" id="samlEnabledStateId"/>
 								</ox:decorate>
 								<ox:decorate id="radiusEnabledState"
 									label="#{msg['organizationForm.radiusSupport']}">
 									<h:selectBooleanCheckbox value="#{_configuration.radiusEnabled}"
-										styleClass="rounded form-control raduisSelectBox" id="radiusEnabledStateId"/>
+										styleClass="rounded raduisSelectBox" id="radiusEnabledStateId"/>
 								</ox:decorate>
 								<ox:decorate id="profileManagment"
 									label="#{msg['organizationForm.userCanEditProfile']}">
 									<h:selectBooleanCheckbox
 										value="#{_configuration.profileManagment}"
-										styleClass="rounded form-control profileManagmentSelectBox"
+										styleClass="rounded profileManagmentSelectBox"
 										id="profileManagmentStateId" />
 								</ox:decorate>
 								<ox:decorate label="#{msg['organizationForm.contactEmail']}">
@@ -159,7 +159,7 @@
 								<ox:decorate id="requiresAuthenticationCheckBox"
 									label="#{msg['organizationForm.requiresAuthentication']}">
 									<h:selectBooleanCheckbox
-										styleClass="requiresAuthenticationCheckBox form-control"
+										styleClass="requiresAuthenticationCheckBox"
 										value="#{_smtp.requiresAuthentication}" />
 								</ox:decorate>
 								<ox:decorate label="#{msg['organizationForm.smtpUserName']}">
@@ -172,12 +172,12 @@
 								</ox:decorate>
 								<ox:decorate label="#{msg['organizationForm.requiresSSL']}">
 									<h:selectBooleanCheckbox value="#{_smtp.requiresSsl}"
-										styleClass="form-control requiresSSLCheckBox" />
+										styleClass="requiresSSLCheckBox" />
 								</ox:decorate>
 
 								<ox:decorate label="#{msg['organizationForm.trustserver']}">
 									<h:selectBooleanCheckbox value="#{_smtp.serverTrust}"
-										styleClass="form-control trustserverCheckBox" />
+										styleClass="trustserverCheckBox" />
 								</ox:decorate>
 
 								<ox:decorate label="#{msg['organizationForm.smtpPort']}">
