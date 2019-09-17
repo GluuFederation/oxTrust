@@ -119,7 +119,7 @@
 											<ox:decorate label="#{msg['clientForm.disabled']}"
 												leftClass="col-sm-3" rightClass="col-sm-9">
 												<h:selectBooleanCheckbox value="#{_client.disabled}"
-													styleClass="form-control" />
+													styleClass="disbaleClientClass rounded" />
 											</ox:decorate>
 										</div>
 									</div>
@@ -318,7 +318,7 @@
 												leftClass="col-sm-6" rightClass="col-sm-6">
 												<h:selectBooleanCheckbox
 													value="#{_client.oxAuthTrustedClient}" id="trustedClientId"
-													styleClass="oxAuthTrustedClientSelectBox"
+													styleClass="oxAuthTrustedClientSelectBox rounded"
 													onchange="togglePersistAuthorization()" required="true" />
 											</ox:decorate>
 											<ox:decorate id="persistClientAuthorizations"
@@ -327,7 +327,7 @@
 												<h:selectBooleanCheckbox
 													value="#{_client.oxAuthPersistClientAuthorizations}"
 													id="persisteClientAuthorizationsId"
-													styleClass="persistClientAuthorizationSelectBox"
+													styleClass="persistClientAuthorizationSelectBox rounded"
 													onchange="togglePersistAuthorization()" />
 											</ox:decorate>
 											<ox:decorate id="applicatonType"
@@ -475,13 +475,13 @@
 												leftClass="col-sm-6" rightClass="col-sm-6">
 												<h:selectBooleanCheckbox value="#{_client.accessTokenAsJwt}"
 													id="accessTokenAsJwtId"
-													styleClass="col-sm-9 form-control rounded" required="false" />
+													styleClass="col-sm-9 rounded" required="false" />
 											</ox:decorate>
 											<ox:decorate id="rptAsJwt"
 												label="#{msg['clientForm.rptAsJwt']}" leftClass="col-sm-6"
 												rightClass="col-sm-6">
 												<h:selectBooleanCheckbox value="#{_client.rptAsJwt}"
-													id="rptAsJwtId" styleClass="col-sm-9 form-control rounded"
+													id="rptAsJwtId" styleClass="col-sm-9 rounded"
 													required="false" />
 											</ox:decorate>
 											<ox:decorate id="logoutSessionRequired"
@@ -490,7 +490,7 @@
 												<h:selectBooleanCheckbox
 													value="#{_client.logoutSessionRequired}"
 													id="logoutSessionRequiredId"
-													styleClass="col-sm-9 form-control rounded" required="true" />
+													styleClass="col-sm-9 rounded" required="true" />
 											</ox:decorate>
 										</div>
 										<div class="col-sm-6 col-lg-6" style="padding: 0px;">
@@ -499,7 +499,7 @@
 												leftClass="col-sm-6" rightClass="col-sm-6">
 												<h:selectBooleanCheckbox value="#{_client.requireAuthTime}"
 													id="requireAuthTimeId"
-													styleClass="col-sm-9 form-control rounded" required="false" />
+													styleClass="col-sm-9 rounded" required="false" />
 											</ox:decorate>
 											<a4j:outputPanel>
 												<ox:decorate id="includeClaimsInIdToken"
@@ -508,7 +508,7 @@
 													<h:selectBooleanCheckbox
 														value="#{_client.oxIncludeClaimsInIdToken}"
 														id="includeClaimsInIdTokenId"
-														styleClass="col-sm-9 form-control rounded"
+														styleClass="col-sm-9 rounded"
 														disabled="#{!jsonConfigurationService.getOxauthAppConfiguration().legacyIdTokenClaims}"
 														required="true" />
 												</ox:decorate>

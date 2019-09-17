@@ -387,7 +387,7 @@ public class UpdatePersonAction implements Serializable {
 	private void addFido2Devices() {
 		try {
 			List<GluuFido2Device> fido2Devices = fido2DeviceService.findAllFido2Devices(this.person);
-			if (fido2Devices != null) {
+			if (fido2Devices != null && fido2Devices.size() > 0) {
 				for (GluuFido2Device entry : fido2Devices) {
 					GluuDeviceDataBean gluuDeviceDataBean = new GluuDeviceDataBean();
 					gluuDeviceDataBean.setId(entry.getId());
@@ -398,9 +398,8 @@ public class UpdatePersonAction implements Serializable {
 				}
 			}
 		} catch (Exception e) {
-			log.error(e.getMessage(), e);
+			log.warn("No fido2 devices enrolled for " + this.person.getDisplayName());
 		}
-
 	}
 
 	@SuppressWarnings("deprecation")

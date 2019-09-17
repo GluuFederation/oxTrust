@@ -34,6 +34,7 @@
 							update="@form"
 							rendered="#{organizationService.allowPersonModification}"
 							styleClass="btn btn-primary savePersonButon"
+							style="margin-right:5px;"
 							value="#{msg['person.update']}" />
 						<a4j:commandButton eventsQueue="personQueue"
 							onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();"
@@ -69,5 +70,4 @@
 				render="PForm" value="this" />
 		</h:panelGroup>
 	</ui:define>
-
 </ui:composition>

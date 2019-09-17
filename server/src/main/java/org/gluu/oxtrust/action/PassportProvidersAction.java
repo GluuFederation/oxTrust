@@ -34,6 +34,12 @@ import org.slf4j.Logger;
 @Secure("#{permissionService.hasPermission('passport', 'access')}")
 public class PassportProvidersAction implements Serializable {
 
+	private static final String ISSUER = "issuer";
+
+	private static final String CLIENT_SECRET = "clientSecret";
+
+	private static final String CLIENT_ID = "clientID";
+
 	/**
 	 * 
 	 */
@@ -122,14 +128,14 @@ public class PassportProvidersAction implements Serializable {
 				this.options.add(
 						new OptionEntry("identifierFormat", "urn:oasis:names:tc:SAML:2.0:nameid-format:transient"));
 				this.options.add(new OptionEntry("authnRequestBinding", "HTTP-POST"));
-				this.options.add(new OptionEntry("issuer", ""));
+				this.options.add(new OptionEntry(ISSUER, ""));
 				this.options.add(new OptionEntry("cert", ""));
 			}
 			if (type.equalsIgnoreCase(providerTypes[1])) {
 				this.options = new ArrayList<>();
-				this.options.add(new OptionEntry("clientID", ""));
-				this.options.add(new OptionEntry("clientSecret", ""));
-				this.options.add(new OptionEntry("issuer", "https://server.example.com"));
+				this.options.add(new OptionEntry(CLIENT_ID, ""));
+				this.options.add(new OptionEntry(CLIENT_SECRET, ""));
+				this.options.add(new OptionEntry(ISSUER, "https://server.example.com"));
 				this.options.add(new OptionEntry("authorizationURL", "https://server.example.com/authorize"));
 				this.options.add(new OptionEntry("tokenURL", "https://server.example.com/token"));
 				this.options.add(new OptionEntry("userInfoURL", "https://server.example.com/userinfo"));
@@ -137,16 +143,16 @@ public class PassportProvidersAction implements Serializable {
 			}
 			if (type.equalsIgnoreCase(providerTypes[2])) {
 				this.options = new ArrayList<>();
-				this.options.add(new OptionEntry("clientID", ""));
-				this.options.add(new OptionEntry("clientSecret", ""));
+				this.options.add(new OptionEntry(CLIENT_ID, ""));
+				this.options.add(new OptionEntry(CLIENT_SECRET, ""));
 				this.options.add(new OptionEntry("oxdID", ""));
-				this.options.add(new OptionEntry("issuer", "https://server.example.com"));
+				this.options.add(new OptionEntry(ISSUER, "https://server.example.com"));
 				this.options.add(new OptionEntry("oxdServer", "https://oxd-server.acme.com:8443"));
 			}
 			if (type.equalsIgnoreCase(providerTypes[3])) {
 				this.options = new ArrayList<>();
-				this.options.add(new OptionEntry("clientID", ""));
-				this.options.add(new OptionEntry("clientSecret", ""));
+				this.options.add(new OptionEntry(CLIENT_ID, ""));
+				this.options.add(new OptionEntry(CLIENT_SECRET, ""));
 			}
 		}
 
@@ -185,6 +191,7 @@ public class PassportProvidersAction implements Serializable {
 			}
 			if (providerIdContainsBadCharacters()) {
 				facesMessages.add(FacesMessage.SEVERITY_ERROR, "This provider id contains unauthorized characters.");
+				log.info("=========================================================================");
 				return OxTrustConstants.RESULT_FAILURE;
 			}
 			if (!update) {
@@ -254,7 +261,7 @@ public class PassportProvidersAction implements Serializable {
 	}
 
 	private boolean providerIdContainsBadCharacters() {
-		return !Pattern.compile("^[a-zA-Z0-9_\\\\-\\\\:\\\\/\\\\.]+$").matcher(this.provider.getId()).matches();
+		return !Pattern.compile("^[-a-zA-Z0-9_\\\\-\\\\:\\\\/\\\\.]+$").matcher(this.provider.getId()).matches();
 	}
 
 	private void performSave() {

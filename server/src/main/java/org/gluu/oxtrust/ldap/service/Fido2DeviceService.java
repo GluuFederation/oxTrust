@@ -3,7 +3,6 @@ package org.gluu.oxtrust.ldap.service;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -12,8 +11,9 @@ import javax.inject.Named;
 import org.apache.commons.lang.StringUtils;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuFido2Device;
+import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.PersistenceEntryManager;
-import org.gluu.persist.model.base.SimpleBranch;
+import org.gluu.persist.exception.EntryPersistenceException;
 import org.gluu.search.filter.Filter;
 import org.gluu.util.StringHelper;
 import org.slf4j.Logger;
@@ -60,16 +60,14 @@ public class Fido2DeviceService implements Serializable {
 	}
 
 	public List<GluuFido2Device> findAllFido2Devices(GluuCustomPerson person) {
-		List<GluuFido2Device> result = new ArrayList<>();
-		if (containsBranch(person.getInum())) {
+		try {
 			String baseDnForU2fDevices = getDnForFido2Device(null, person.getInum());
-			result = ldapEntryManager.findEntries(baseDnForU2fDevices, GluuFido2Device.class, null);
-			if (result != null) {
-				result.stream().filter(e -> e.getDn().contains(person.getInum())).collect(Collectors.toList());
-			}
-			return result;
+			Filter inumFilter = Filter.createEqualityFilter(OxTrustConstants.PERSON_INUM, person.getInum());
+			return ldapEntryManager.findEntries(baseDnForU2fDevices, GluuFido2Device.class, inumFilter);
+		} catch (EntryPersistenceException e) {
+			log.warn("No fido2 devices enrolled for " + person.getDisplayName());
+			return new ArrayList<>();
 		}
-		return new ArrayList<>();
 	}
 
 	public GluuFido2Device getFido2DeviceById(String userId, String id) {
@@ -113,9 +111,4 @@ public class Fido2DeviceService implements Serializable {
 
 		return gluuCustomFidoDevice;
 	}
-
-	private boolean containsBranch(final String userInum) {
-		return ldapEntryManager.contains(getDnForFido2Device(null, userInum), SimpleBranch.class);
-	}
-
 }

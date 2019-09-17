@@ -10,7 +10,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.ejb.Stateless;
@@ -21,13 +25,16 @@ import org.apache.commons.lang.NotImplementedException;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.ldap.impl.LdifDataUtility;
 import org.gluu.persist.ldap.operation.LdapOperationService;
-import org.gluu.persist.operation.PersistenceOperationService;
 import org.slf4j.Logger;
 
+import com.unboundid.ldap.sdk.Attribute;
+import com.unboundid.ldap.sdk.Entry;
 import com.unboundid.ldap.sdk.LDAPConnection;
 import com.unboundid.ldap.sdk.LDAPException;
 import com.unboundid.ldap.sdk.ResultCode;
 import com.unboundid.ldif.LDIFReader;
+import org.gluu.persist.model.AttributeData;
+import org.gluu.persist.operation.PersistenceOperationService;
 
 /**
  * Provides operations with LDIF files
@@ -39,6 +46,8 @@ import com.unboundid.ldif.LDIFReader;
 @Named("ldifService")
 public class LdifService implements Serializable {
 
+	private static final String CLOSE = "]";
+	private static final String OPEN = "[";
 	private static final String LINE_SEPARATOR = "line.separator";
 
 	private static final long serialVersionUID = 6690460114767359078L;
@@ -47,29 +56,35 @@ public class LdifService implements Serializable {
 	private Logger log;
 
 	@Inject
-	private PersistenceEntryManager ldapEntryManager;
+	private DataSourceTypeService dataSourceTypeService;
+
+	@Inject
+	private PersistenceEntryManager persistenceManager;
 
 	public ResultCode importLdifFileInLdap(InputStream is) throws LDAPException {
-		
-		ResultCode result = ResultCode.UNAVAILABLE;
-		PersistenceOperationService persistenceOperationService = ldapEntryManager.getOperationService();
-		if (!(persistenceOperationService instanceof LdapOperationService)) {
-			throw new NotImplementedException("Current Persistence mechanism not allows to import data from LDIF!");
+		if (dataSourceTypeService.isLDAP()) {
+			ResultCode result = ResultCode.UNAVAILABLE;
+			PersistenceOperationService persistenceOperationService = persistenceManager.getOperationService();
+			if (!(persistenceOperationService instanceof LdapOperationService)) {
+				throw new NotImplementedException("Current Persistence mechanism not allows to import data from LDIF!");
+			}
+			LdapOperationService ldapOperationService = (LdapOperationService) persistenceOperationService;
+			LDAPConnection connection = ldapOperationService.getConnection();
+			try {
+				LdifDataUtility ldifDataUtility = LdifDataUtility.instance();
+				LDIFReader importLdifReader = new LDIFReader(is);
+				result = ldifDataUtility.importLdifFile(connection, importLdifReader);
+				importLdifReader.close();
+			} catch (Exception ex) {
+				log.error("Failed to import ldif file: ", ex);
+			} finally {
+				ldapOperationService.releaseConnection(connection);
+			}
+			return result;
+		} else {
+			performImport(is);
+			return ResultCode.SUCCESS;
 		}
-		LdapOperationService ldapOperationService = (LdapOperationService) persistenceOperationService;
-		LDAPConnection connection = ldapOperationService.getConnection();
-		try {
-			LdifDataUtility ldifDataUtility = LdifDataUtility.instance();
-			LDIFReader importLdifReader = new LDIFReader(is);
-
-			result = ldifDataUtility.importLdifFile(connection, importLdifReader);
-			importLdifReader.close();
-		} catch (Exception ex) {
-			log.error("Failed to import ldif file: ", ex);
-		} finally {
-			ldapOperationService.releaseConnection(connection);
-		}
-		return result;
 	}
 
 	public ResultCode validateLdifFile(InputStream is, String dn) throws LDAPException {
@@ -85,15 +100,53 @@ public class LdifService implements Serializable {
 		return result;
 	}
 
+	@SuppressWarnings("resource")
+	public void performImport(InputStream inputStream) {
+		final ArrayList<Entry> entryList = new ArrayList<Entry>();
+		final LDIFReader reader = new LDIFReader(inputStream);
+		while (true) {
+			try {
+				final Entry entry = reader.readEntry();
+				if (entry == null) {
+					break;
+				} else {
+					entryList.add(entry);
+				}
+			} catch (final Exception e) {
+				log.error("", e);
+			}
+		}
+		entryList.stream().forEach(e -> {
+			Collection<Attribute> values = e.getAttributes();
+			ArrayList<AttributeData> datas = new ArrayList<>();
+			values.stream().forEach(data -> {
+				datas.add(new AttributeData(data.getName(), data.getValues(), data.getValues().length > 0));
+			});
+			persistenceManager.importEntry(e.getDN(),datas);
+		});
+	}
+
 	public void exportLDIFFile(List<String> checkedItems, OutputStream output) throws LDAPException {
 		try {
 			StringBuilder builder = new StringBuilder();
 			if (checkedItems != null && checkedItems.size() > 0) {
 				checkedItems.stream().forEach(e -> {
-					String[] exportEntry = ldapEntryManager.exportEntry(e);
+					String[] exportEntry = persistenceManager.exportEntry(e);
 					if (exportEntry != null && exportEntry.length >= 0) {
 						Stream.of(exportEntry).forEach(v -> {
-							builder.append(v);
+							if (v.split(":")[1].trim().startsWith(OPEN) && v.split(":")[1].trim().endsWith(CLOSE)) {
+								String key = v.split(":")[0];
+								String values = v.split(":")[1];
+								values = values.replaceFirst(OPEN, "");
+								values = replaceLast(values, CLOSE, "");
+								List<String> list = Pattern.compile(", ").splitAsStream(values.trim())
+										.collect(Collectors.toList());
+								for (String value : list) {
+									builder.append(key + ": " + value);
+								}
+							} else {
+								builder.append(v);
+							}
 							builder.append(System.getProperty(LINE_SEPARATOR));
 						});
 					}
@@ -104,6 +157,13 @@ public class LdifService implements Serializable {
 		} catch (IOException e) {
 			log.error("Error while exporting entries: ", e);
 		}
+	}
+
+	private String replaceLast(String mainString, String substring, String replacement) {
+		int index = mainString.lastIndexOf(substring);
+		if (index == -1)
+			return mainString;
+		return mainString.substring(0, index) + replacement + mainString.substring(index + substring.length()).trim();
 	}
 
 }
