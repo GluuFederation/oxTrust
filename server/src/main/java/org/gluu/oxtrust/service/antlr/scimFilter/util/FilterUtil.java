@@ -203,7 +203,7 @@ public class FilterUtil {
                 path = path.substring(0, i);
             }
         }
-        return new Pair<String, Boolean>(ldapAttribute, inner);
+        return new Pair<>(ldapAttribute, inner);
 
     }
 
