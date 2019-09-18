@@ -128,6 +128,7 @@ public class ManageCustomScriptAction
 			}
 			fillEmptyListProperty();
 			tree.expandParentOfNode(selectedScript);
+			setShowAddButton(true);
 		} catch (Exception e) {
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Error  building custom script tree structure");
 			log.error("", e);
@@ -159,6 +160,8 @@ public class ManageCustomScriptAction
 		this.selectedScript.setScriptType(selectedScriptType);
 		this.selectedScript.setProgrammingLanguage(ProgrammingLanguage.PYTHON);
 		this.selectedScript.setConfigurationProperties(new ArrayList<SimpleExtendedCustomProperty>());
+		facesMessages.add(FacesMessage.SEVERITY_WARN, "This custom script will be added to '%s' category",
+				selectedScriptType.getDisplayName());
 	}
 
 	public String saveScript() {
@@ -420,7 +423,7 @@ public class ManageCustomScriptAction
 		} else {
 			if (node.isParent()) {
 				node.setExpanded(false);
-			}else {
+			} else {
 				tree.closeParentOfNode(node);
 			}
 			setShowAddButton(false);
