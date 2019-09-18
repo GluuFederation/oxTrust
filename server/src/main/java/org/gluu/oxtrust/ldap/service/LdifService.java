@@ -46,6 +46,7 @@ import org.gluu.persist.operation.PersistenceOperationService;
 @Named("ldifService")
 public class LdifService implements Serializable {
 
+	private static final String SEPERATOR = ":";
 	private static final String CLOSE = "]";
 	private static final String OPEN = "[";
 	private static final String LINE_SEPARATOR = "line.separator";
@@ -117,12 +118,20 @@ public class LdifService implements Serializable {
 			}
 		}
 		entryList.stream().forEach(e -> {
-			Collection<Attribute> values = e.getAttributes();
+			Collection<Attribute> attributes = e.getAttributes();
+			List<Attribute> values = new ArrayList<>();
+			values.addAll(attributes);
 			ArrayList<AttributeData> datas = new ArrayList<>();
-			values.stream().forEach(data -> {
-				datas.add(new AttributeData(data.getName(), data.getValues(), data.getValues().length > 0));
+			values.stream().forEach(value -> {
+				datas.add(new AttributeData(value.getName(), value.getValues(),
+						(value.getValues().length > 1) ? true : false));
 			});
-			persistenceManager.importEntry(e.getDN(),datas);
+			try {
+				persistenceManager.importEntry(e.getDN(), datas);
+			} catch (Exception ex) {
+				log.info("=========", ex);
+			}
+
 		});
 	}
 
@@ -134,9 +143,10 @@ public class LdifService implements Serializable {
 					String[] exportEntry = persistenceManager.exportEntry(e);
 					if (exportEntry != null && exportEntry.length >= 0) {
 						Stream.of(exportEntry).forEach(v -> {
-							if (v.split(":")[1].trim().startsWith(OPEN) && v.split(":")[1].trim().endsWith(CLOSE)) {
-								String key = v.split(":")[0];
-								String values = v.split(":")[1];
+							if (v.split(SEPERATOR)[1].trim().startsWith(OPEN)
+									&& v.split(SEPERATOR)[1].trim().endsWith(CLOSE)) {
+								String key = v.split(SEPERATOR)[0];
+								String values = v.split(SEPERATOR)[1];
 								values = values.replaceFirst(OPEN, "");
 								values = replaceLast(values, CLOSE, "");
 								List<String> list = Pattern.compile(", ").splitAsStream(values.trim())
