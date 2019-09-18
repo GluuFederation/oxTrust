@@ -14,9 +14,7 @@ import java.util.UUID;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
-
 import org.apache.commons.lang.StringUtils;
-import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.model.RenderParameters;
 import org.gluu.model.GluuAttribute;
@@ -28,7 +26,6 @@ import org.gluu.oxtrust.model.GluuMetadataSourceType;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.PersistenceEntryManager;
-import org.gluu.persist.model.base.InumEntry;
 import org.gluu.search.filter.Filter;
 import org.gluu.service.MailService;
 import org.gluu.service.XmlService;
@@ -68,9 +65,6 @@ public class TrustService implements Serializable {
 
 	@Inject
 	private XmlService xmlService;
-
-	@Inject
-	private AppConfiguration appConfiguration;
 
 	@Inject
 	private MailService mailService;
@@ -385,7 +379,6 @@ public class TrustService implements Serializable {
 						} else {
 							trustRelationship.setReleasedAttributes(updatedAttrs);
 						}
-
 						updateTrustRelationship(trustRelationship);
 						break;
 					}
