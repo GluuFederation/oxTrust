@@ -48,12 +48,6 @@
 				<h:form prependId="false">
 					<div class="row">
 						<div class="col-sm-3 col-md-3 col-lg-3">
-							<b:commandButton
-								action="#{manageCustomScriptAction.initAddForm()}"
-								rendered="#{manageCustomScriptAction.showAddButton}"
-								look="warning" styleClass="AddCustomScriptButton"
-								value="Add New Custom Script" ajax="true" update="@form"
-								icon="plus" style="margin-bottom:5px !important;" />
 							<b:tree render-root="false" id="customScriptTreeViewId"
 								collapse-icon="fa fa-angle-down" selected-color="#ffffff"
 								nodeSelectionListener="#{manageCustomScriptAction}"
@@ -62,6 +56,30 @@
 								style="width:100%;overflow-x:scroll" />
 						</div>
 						<div class="col-sm-9 col-md-9 col-lg-9">
+							<b:row>
+								<b:column medium-screen="8">
+									<b:breadcrumbs>
+										<f:facet name="root">
+											<b:iconAwesome value="fa-desktop" /> Custom scripts
+                                    </f:facet>
+										<b:navLink
+											value="#{manageCustomScriptAction.selectedScriptType.getDisplayName() eq null ? manageCustomScriptAction.selectedScript.getScriptType().getDisplayName() : manageCustomScriptAction.selectedScriptType.getDisplayName()}"
+											outcome="#" />
+										<b:navLink
+											value="#{manageCustomScriptAction.selectedScript.getName()}"
+											outcome="#" icon-awesome="pencil-square-o" />
+									</b:breadcrumbs>
+								</b:column>
+								<b:column medium-screen="4">
+									<b:commandButton
+										action="#{manageCustomScriptAction.initAddForm()}"
+										rendered="#{manageCustomScriptAction.showAddButton}"
+										look="warning" styleClass="AddCustomScriptButton"
+										value="Add New Custom Script" ajax="true" update="@form"
+										icon="plus"
+										style="margin-bottom:5px !important; float: right;" />
+								</b:column>
+							</b:row>
 							<b:panel id="customScriptDetailPanelId"
 								title="#{manageCustomScriptAction.selectedScript.name}"
 								look="primary" icon="pencil" collapsible="false">
@@ -80,10 +98,10 @@
 												style="color:white;" />
 										</div>
 										<div class="col-sm-3 col-md-3 col-lg-3">
-										   <h:commandButton
-												onclick="window.location.reload(true);"
+											<h:commandButton onclick="window.location.reload(true);"
 												style="margin-right:5px;"
-												styleClass="btn btn-primary cancelScriptButton" value="Cancel" />
+												styleClass="btn btn-primary cancelScriptButton"
+												value="Cancel" />
 											<h:commandButton
 												action="#{manageCustomScriptAction.saveScript()}"
 												styleClass="btn btn-primary saveScriptButton" value="Save" />
