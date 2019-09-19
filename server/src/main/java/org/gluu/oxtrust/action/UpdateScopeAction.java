@@ -73,32 +73,22 @@ public class UpdateScopeAction implements Serializable {
 
 	private Scope scope;
 
-	private List<DisplayNameEntry> claims;
-
+	private List<DisplayNameEntry> claims = new ArrayList<>();
 	private String searchAvailableClaimPattern;
-
 	private String oldSearchAvailableClaimPattern;
-
-	private List<GluuAttribute> availableClaims;
-
+	private List<GluuAttribute> availableClaims = new ArrayList<>();
 	@Inject
 	private ScopeService scopeService;
-
 	@Inject
 	private LookupService lookupService;
-
 	@Inject
 	private AttributeService attributeService;
-
 	@Inject
 	private CustomScriptService customScriptService;
-
 	@Inject
 	private Identity identity;
-
 	@Inject
 	private OxTrustAuditService oxTrustAuditService;
-
 	private List<CustomScript> dynamicScripts;
 	private List<SelectableEntity<CustomScript>> availableDynamicScripts = new ArrayList<>();
 
@@ -126,7 +116,7 @@ public class UpdateScopeAction implements Serializable {
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	public void fillAvailableDynScript() {
+	private void fillAvailableDynScript() {
 		List<CustomScript> availableScripts = customScriptService
 				.findCustomScripts(Arrays.asList(CustomScriptType.DYNAMIC_SCOPE));
 		List<SelectableEntity<CustomScript>> tmpAvailableDynamicScripts = new ArrayList<SelectableEntity<CustomScript>>();
@@ -203,7 +193,6 @@ public class UpdateScopeAction implements Serializable {
 							(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 				} catch (BasePersistenceException ex) {
 					log.error("Failed to update scope {}", this.inum, ex);
-
 					facesMessages.add(FacesMessage.SEVERITY_ERROR,
 							"Failed to update scope '#{updateScopeAction.scope.displayName}'");
 					return OxTrustConstants.RESULT_FAILURE;
