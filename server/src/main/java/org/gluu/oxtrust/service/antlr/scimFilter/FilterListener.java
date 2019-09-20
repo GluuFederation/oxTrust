@@ -19,7 +19,6 @@ import org.gluu.oxtrust.service.antlr.scimFilter.enums.CompValueType;
 import org.gluu.oxtrust.service.antlr.scimFilter.enums.ScimOperator;
 import org.gluu.oxtrust.service.antlr.scimFilter.util.FilterUtil;
 import org.gluu.oxtrust.service.scim2.ExtensionService;
-import org.gluu.persist.service.PersistanceFactoryService;
 import org.gluu.search.filter.Filter;
 import org.gluu.service.cdi.util.CdiUtil;
 import org.gluu.util.Pair;
@@ -39,16 +38,12 @@ public class FilterListener extends ScimFilterBaseListener {
     private String error;
     private SubFilterGenerator subFilterGenerator;
     private ExtensionService extService;
-    private PersistanceFactoryService persistenceFactoryService;
 
-    public FilterListener(Class<? extends BaseScimResource> resourceClass) {
+    public FilterListener(Class<? extends BaseScimResource> resourceClass, boolean ldapBackend) {
         filter = new ArrayDeque<>();
         extService = CdiUtil.bean(ExtensionService.class);
         this.resourceClass = resourceClass;
 
-        persistenceFactoryService = CdiUtil.bean(PersistanceFactoryService.class);
-        boolean ldapBackend = persistenceFactoryService.getPersistenceEntryManagerFactory(
-                persistenceFactoryService.loadPersistenceConfiguration()).getPersistenceType().equals("ldap");
         subFilterGenerator =  new SubFilterGenerator(ldapBackend);
     }
 
