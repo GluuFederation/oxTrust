@@ -104,7 +104,7 @@ public class EntityIDMonitoringService {
 			log.trace("meatadataAvailable:" + meatadataAvailable);
 			boolean correctType = trustService.getTrustContainerFederation(tr) == null;
 			log.trace("correctType:" + correctType);
-			boolean isValidated = GluuValidationStatus.VALIDATION_SUCCESS.equals(tr.getValidationStatus());
+			boolean isValidated = GluuValidationStatus.SUCCESS.equals(tr.getValidationStatus());
 			log.trace("isValidated:" + isValidated);
 			if (meatadataAvailable && correctType && isValidated) {
 				String idpMetadataFolder = appConfiguration.getShibboleth3IdpRootDir() + File.separator

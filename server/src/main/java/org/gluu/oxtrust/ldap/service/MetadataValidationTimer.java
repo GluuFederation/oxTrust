@@ -140,9 +140,12 @@ public class MetadataValidationTimer {
 		}
 	}
 
-	public String getValidationStatus(String gluuSAMLspMetaDataFN, GluuValidationStatus status) {
-		if (status == null) {
-			return GluuValidationStatus.VALIDATION.getDisplayName();
+	public String getValidationStatus(String gluuSAMLspMetaDataFN, GluuSAMLTrustRelationship trust) {
+		if (trust.getValidationStatus() == null && trust.getGluuContainerFederation() != null) {
+			return GluuValidationStatus.SUCCESS.getDisplayName();
+		}
+		if (trust.getValidationStatus() == null) {
+			return GluuValidationStatus.PENDING.getDisplayName();
 		}
 		synchronized (metadataUpdates) {
 			boolean result = false;
@@ -153,9 +156,9 @@ public class MetadataValidationTimer {
 				}
 			}
 			if (result) {
-				return GluuValidationStatus.VALIDATION_SCHEDULED.getDisplayName();
+				return GluuValidationStatus.SCHEDULED.getDisplayName();
 			} else {
-				return status.getDisplayName();
+				return trust.getValidationStatus().getDisplayName();
 			}
 		}
 	}
@@ -195,7 +198,7 @@ public class MetadataValidationTimer {
 					metadataUpdates.add(metadataFN);
 					return false;
 				}
-				tr.setValidationStatus(GluuValidationStatus.VALIDATION);
+				tr.setValidationStatus(GluuValidationStatus.PENDING);
 				trustService.updateTrustRelationship(tr);
 
 				GluuErrorHandler errorHandler = null;
@@ -203,7 +206,7 @@ public class MetadataValidationTimer {
 				try {
 					errorHandler = shibboleth3ConfService.validateMetadata(new FileInputStream(metadata));
 				} catch (Exception e) {
-					tr.setValidationStatus(GluuValidationStatus.VALIDATION_FAILED);
+					tr.setValidationStatus(GluuValidationStatus.FAILED);
 					tr.setStatus(GluuStatus.INACTIVE);
 					validationLog = new ArrayList<String>();
 					validationLog.add(e.getMessage());
@@ -215,7 +218,7 @@ public class MetadataValidationTimer {
 				}
 				if (errorHandler.isValid()) {
 					tr.setValidationLog(errorHandler.getLog());
-					tr.setValidationStatus(GluuValidationStatus.VALIDATION_SUCCESS);
+					tr.setValidationStatus(GluuValidationStatus.SUCCESS);
 					if (((!target.exists()) || target.delete()) && (!metadata.renameTo(target))) {
 						log.error("Failed to move metadata file to location:" + target.getAbsolutePath());
 						tr.setStatus(GluuStatus.INACTIVE);
@@ -258,7 +261,7 @@ public class MetadataValidationTimer {
 					result = true;
 				} else if (appConfiguration.isIgnoreValidation() || errorHandler.isInternalError()) {
 					tr.setValidationLog(new ArrayList<String>(new HashSet<String>(errorHandler.getLog())));
-					tr.setValidationStatus(GluuValidationStatus.VALIDATION_FAILED);
+					tr.setValidationStatus(GluuValidationStatus.FAILED);
 					if (((!target.exists()) || target.delete()) && (!metadata.renameTo(target))) {
 						log.error("Failed to move metadata file to location:" + target.getAbsolutePath());
 						tr.setStatus(GluuStatus.INACTIVE);
@@ -304,7 +307,7 @@ public class MetadataValidationTimer {
 					result = true;
 				} else {
 					tr.setValidationLog(new ArrayList<String>(new HashSet<String>(errorHandler.getLog())));
-					tr.setValidationStatus(GluuValidationStatus.VALIDATION_FAILED);
+					tr.setValidationStatus(GluuValidationStatus.FAILED);
 					tr.setStatus(GluuStatus.INACTIVE);
 					trustService.updateTrustRelationship(tr);
 				}
