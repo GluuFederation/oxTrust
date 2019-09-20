@@ -36,7 +36,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.exception.SCIMException;
 import org.gluu.oxtrust.model.scim2.BaseScimResource;
 import org.gluu.oxtrust.model.scim2.ErrorScimType;
@@ -47,6 +46,7 @@ import org.gluu.oxtrust.model.scim2.patch.PatchRequest;
 import org.gluu.oxtrust.model.scim2.user.UserResource;
 import org.gluu.oxtrust.model.scim2.util.ScimResourceUtil;
 import org.gluu.oxtrust.service.filter.ProtectedApi;
+import org.gluu.oxtrust.model.scim.ScimCustomPerson;
 import org.gluu.oxtrust.service.scim2.Scim2PatchService;
 import org.gluu.oxtrust.service.scim2.Scim2UserService;
 import org.gluu.oxtrust.service.scim2.interceptor.RefAdjusted;
@@ -126,7 +126,7 @@ public class UserWebService extends BaseScimWebService implements IUserWebServic
         try {
             log.debug("Executing web service method. getUserById");
             UserResource user=new UserResource();
-            GluuCustomPerson person=personService.getPersonByInum(id);  //person is not null (check associated decorator method)
+            ScimCustomPerson person=userPersistenceHelper.getPersonByInum(id);  //person is not null (check associated decorator method)
             scim2UserService.transferAttributesToUserResource(person, user, endpointUrl);
 
             String json=resourceSerializer.serialize(user, attrsList, excludedAttrsList);
@@ -190,7 +190,7 @@ public class UserWebService extends BaseScimWebService implements IUserWebServic
         Response response;
         try {
             log.debug("Executing web service method. deleteUser");
-            GluuCustomPerson person=personService.getPersonByInum(id);  //person cannot be null (check associated decorator method)
+            ScimCustomPerson person=userPersistenceHelper.getPersonByInum(id);  //person cannot be null (check associated decorator method)
             scim2UserService.deleteUser(person);
             response=Response.noContent().build();
         }
@@ -284,7 +284,7 @@ public class UserWebService extends BaseScimWebService implements IUserWebServic
         try{
             log.debug("Executing web service method. patchUser");
             UserResource user=new UserResource();
-            GluuCustomPerson person=personService.getPersonByInum(id);  //person is not null (check associated decorator method)
+            ScimCustomPerson person=userPersistenceHelper.getPersonByInum(id);  //person is not null (check associated decorator method)
 
             //Fill user instance with all info from person
             scim2UserService.transferAttributesToUserResource(person, user, endpointUrl);
@@ -296,7 +296,7 @@ public class UserWebService extends BaseScimWebService implements IUserWebServic
                     //If this block weren't here, the implementation will throw error because read-only attribute cannot be altered
                     //Note the path is intentionally mistyped, see class member in UserResource
                     person.setOxPPID(null);
-                    user.setPairwiseIdentitifers(null);
+                    user.setPairwiseIdentifiers(null);
                     scim2UserService.removePPIDsBranch(person.getDn());
                 }
                 else

@@ -348,14 +348,14 @@ public class FidoDeviceWebService extends BaseScimWebService implements IFidoDev
         PagedResult<GluuCustomFidoDevice> list;
         try {
             list = ldapEntryManager.findPagedEntries(fidoDeviceService.getDnForFidoDevice(userId, null),
-                    GluuCustomFidoDevice.class, ldapFilter, null, sortBy, sortOrder, startIndex, count, getMaxCount());
+                    GluuCustomFidoDevice.class, ldapFilter, null, sortBy, sortOrder, startIndex - 1, count, getMaxCount());
         } catch (Exception e) {
             log.info("Returning an empty listViewReponse");
             log.error(e.getMessage(), e);
-            list = new PagedResult<GluuCustomFidoDevice>();
-            list.setEntries(new ArrayList<GluuCustomFidoDevice>());
+            list = new PagedResult<>();
+            list.setEntries(new ArrayList<>());
         }
-        List<BaseScimResource> resources=new ArrayList<BaseScimResource>();
+        List<BaseScimResource> resources=new ArrayList<>();
 
         for (GluuCustomFidoDevice device : list.getEntries()){
             FidoDeviceResource scimDev=new FidoDeviceResource();
@@ -364,7 +364,7 @@ public class FidoDeviceWebService extends BaseScimWebService implements IFidoDev
         }
         log.info ("Found {} matching entries - returning {}", list.getTotalEntriesCount(), list.getEntries().size());
 
-        PagedResult<BaseScimResource> result = new PagedResult<BaseScimResource>();
+        PagedResult<BaseScimResource> result = new PagedResult<>();
         result.setEntries(resources);
         result.setTotalEntriesCount(list.getTotalEntriesCount());
         

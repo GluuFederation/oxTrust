@@ -7,6 +7,7 @@ package org.gluu.oxtrust.service.antlr.scimFilter;
 
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -21,6 +22,7 @@ import org.gluu.oxtrust.service.antlr.scimFilter.antlr4.ScimFilterBaseListener;
 import org.gluu.oxtrust.service.antlr.scimFilter.antlr4.ScimFilterLexer;
 import org.gluu.oxtrust.service.antlr.scimFilter.antlr4.ScimFilterParser;
 import org.gluu.oxtrust.service.antlr.scimFilter.util.FilterUtil;
+import org.gluu.persist.service.PersistanceFactoryService;
 import org.gluu.search.filter.Filter;
 import org.slf4j.Logger;
 
@@ -33,6 +35,15 @@ public class ScimFilterParserService {
 
     @Inject
     private Logger log;
+
+    @Inject
+    private PersistanceFactoryService persistenceFactoryService;
+
+    private boolean ldapBackend;
+
+    public boolean isLdapBackend() {
+        return ldapBackend;
+    }
 
     private ParseTree getParseTree(String filter, ScimFilterErrorListener errorListener){
 
@@ -83,7 +94,7 @@ public class ScimFilterParserService {
             if (StringUtils.isEmpty(filter))
                 ldapFilter=defaultFilter;
             else {
-                FilterListener filterListener = new FilterListener(clazz);
+                FilterListener filterListener = new FilterListener(clazz, ldapBackend);
                 walkTree(FilterUtil.preprocess(filter, clazz), filterListener);
                 ldapFilter = filterListener.getFilter();
 
@@ -103,6 +114,12 @@ public class ScimFilterParserService {
 
         MatchFilterVisitor matchVisitor=new MatchFilterVisitor(item, parent, clazz);
         return matchVisitor.visit(parseTree);
+    }
+
+    @PostConstruct
+    private void init() {
+        ldapBackend = persistenceFactoryService.getPersistenceEntryManagerFactory(
+                persistenceFactoryService.loadPersistenceConfiguration()).getPersistenceType().equals("ldap");
     }
 
 }

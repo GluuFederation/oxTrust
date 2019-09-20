@@ -75,7 +75,7 @@ public class ServiceUtil implements Serializable {
 			GluuCustomPerson gluuPerson = personService.getPersonByDn(onePerson);
 			List<String> memberOflist = gluuPerson.getMemberOf();
 
-			List<String> tempMemberOf = new ArrayList<String>();
+			List<String> tempMemberOf = new ArrayList<>();
 			for (String aMemberOf : memberOflist) {
 				tempMemberOf.add(aMemberOf);
 			}
@@ -87,7 +87,7 @@ public class ServiceUtil implements Serializable {
 				}
 			}
 
-			List<String> cleanMemberOf = new ArrayList<String>();
+			List<String> cleanMemberOf = new ArrayList<>();
 
 			for (String aMemberOf : tempMemberOf) {
 				cleanMemberOf.add(aMemberOf);
@@ -114,51 +114,6 @@ public class ServiceUtil implements Serializable {
 			sb.deleteCharAt(sb.length() - 1);
 		}
 		return sb.toString();
-	}
-
-	/**
-	 * Delete a person from a group
-	 *
-	 * @return void
-	 * @throws Exception
-	 */
-	public void deleteUserFromGroup(GluuCustomPerson person, String dn) throws Exception {
-		List<String> groups = person.getMemberOf();
-		for (String oneGroup : groups) {
-
-			GluuGroup aGroup = groupService.getGroupByDn(oneGroup);
-			List<String> groupMembers = aGroup.getMembers();
-
-			List<String> tempGroupMembers = new ArrayList<String>();
-			if (groupMembers != null && !groupMembers.isEmpty()) {
-				for (String aMember : groupMembers) {
-					tempGroupMembers.add(aMember);
-				}
-			}
-
-			for (String oneMember : tempGroupMembers) {
-
-				if (oneMember.equalsIgnoreCase(dn)) {
-
-					tempGroupMembers.remove(oneMember);
-
-					break;
-				}
-			}
-
-			List<String> cleanGroupMembers = new ArrayList<String>();
-			for (String aMember : tempGroupMembers) {
-				cleanGroupMembers.add(aMember);
-			}
-
-			aGroup.setMembers(cleanGroupMembers);
-
-			if (aGroup.getMembers() != null && aGroup.getMembers().isEmpty()) {
-				aGroup.setMembers(null); // Reset to no members
-			}
-
-			groupService.updateGroup(aGroup);
-		}
 	}
 
 	/**
@@ -323,39 +278,6 @@ public class ServiceUtil implements Serializable {
 		byte[] fileContent = copyUploadedFile(uploadedFile);
 
 		return saveRandomFile(fileContent, baseDir, extension);
-	}
-
-	/**
-	 * One-way sync from "oxTrustEmail" to "mail". Ultimately this is persisted so
-	 * "mail" will be updated by values from "oxTrustEmail".
-	 *
-	 * @param gluuCustomPerson
-	 * @return
-	 * @throws Exception
-	 */
-	public static GluuCustomPerson syncEmailForward(GluuCustomPerson gluuCustomPerson)
-			throws Exception {
-
-		logger.info(" IN Utils.syncEmailForward()...");
-
-		GluuCustomAttribute oxTrustEmail = gluuCustomPerson.getGluuCustomAttribute("oxTrustEmail");
-
-		if (oxTrustEmail != null && oxTrustEmail.getValues() != null && oxTrustEmail.getValues().length > 0) {
-
-			String[] oxTrustEmails = oxTrustEmail.getValues(); // JSON array in element 0
-			String[] newMails = new String[oxTrustEmails.length];
-
-            for (int i = 0; i < oxTrustEmails.length; i++) {
-                newMails[i] = mapper.readValue(oxTrustEmails[i], Email.class).getValue();
-            }
-			gluuCustomPerson.setAttribute("mail", newMails);
-		} else {
-			gluuCustomPerson.setAttribute("mail", new String[0]);
-		}
-
-		logger.info(" LEAVING Utils.syncEmailForward()...");
-
-		return gluuCustomPerson;
 	}
 
 	/**

@@ -153,9 +153,8 @@ public class UserResource extends BaseScimResource {
             mutability = AttributeDefinition.Mutability.READ_ONLY,
             returned = AttributeDefinition.Returned.REQUEST,
             multiValueClass = String.class)
-    //TODO: this attribute name is mistyped, fixing it will introduce incompatibilities for users of <=3.1.2
     @StoreReference(ref = "oxPPID")
-    private List<String> pairwiseIdentitifers;
+    private List<String> pairwiseIdentifiers;
 
     public String getUserName() {
         return userName;
@@ -325,12 +324,12 @@ public class UserResource extends BaseScimResource {
         this.groups = groups;
     }
 
-    public List<String> getPairwiseIdentitifers() {
-        return pairwiseIdentitifers;
+    public List<String> getPairwiseIdentifiers() {
+        return pairwiseIdentifiers;
     }
 
-    public void setPairwiseIdentitifers(List<String> pairwiseIdentitifers) {
-        this.pairwiseIdentitifers = pairwiseIdentitifers;
+    public void setPairwiseIdentifiers(List<String> pairwiseIdentifiers) {
+        this.pairwiseIdentifiers = pairwiseIdentifiers;
     }
 
 }

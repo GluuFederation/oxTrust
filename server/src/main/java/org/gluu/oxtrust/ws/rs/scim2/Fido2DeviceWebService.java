@@ -311,7 +311,7 @@ public class Fido2DeviceWebService extends BaseScimWebService implements IFido2D
         PagedResult<GluuFido2Device> list;
         try {
             list = entryManager.findPagedEntries(fidoDeviceService.getDnForFido2Device(null, userId),
-                    GluuFido2Device.class, ldapFilter, null, sortBy, sortOrder, startIndex, count, getMaxCount());
+                    GluuFido2Device.class, ldapFilter, null, sortBy, sortOrder, startIndex - 1, count, getMaxCount());
         } catch (Exception e) {
             log.info("Returning an empty listViewReponse");
             log.error(e.getMessage(), e);
@@ -327,7 +327,7 @@ public class Fido2DeviceWebService extends BaseScimWebService implements IFido2D
         }
         log.info ("Found {} matching entries - returning {}", list.getTotalEntriesCount(), list.getEntries().size());
 
-        PagedResult<BaseScimResource> result = new PagedResult<BaseScimResource>();
+        PagedResult<BaseScimResource> result = new PagedResult<>();
         result.setEntries(resources);
         result.setTotalEntriesCount(list.getTotalEntriesCount());
 

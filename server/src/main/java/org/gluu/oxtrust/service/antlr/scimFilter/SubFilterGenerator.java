@@ -16,8 +16,6 @@ import org.gluu.oxtrust.service.antlr.scimFilter.util.FilterUtil;
 import org.gluu.search.filter.Filter;
 import org.gluu.util.Pair;
 
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 public class SubFilterGenerator {
@@ -30,6 +28,7 @@ public class SubFilterGenerator {
     public SubFilterGenerator(boolean ldapBackend) {
         this.ldapBackend = ldapBackend;
     }
+
     /**
      * Computes a filter based on an atomic (non-divisible) SCIM expression described by the set of parameters passed.
      * If the filter cannot be built, null is returned.
@@ -183,17 +182,17 @@ public class SubFilterGenerator {
 
         Filter subfilter = null;
         Object objValue;
-        log.trace("getSubFilterNumeric");
+        log.trace("getSubFilterNumeric {}", ldapBackend);
 
-        if (attrType.equals(Type.DECIMAL)) {
-            if (ldapBackend) {
-                error = FilterUtil.getOperatorInconsistencyError(operator.getValue(), attrType.toString(), subAttribute);
-                return null;
-            }
-            objValue = new Double(value);
+        //Use an integer if value depicts an integer, or even if it is not but we are on LDAP
+        Double doubleValue = Double.valueOf(value);
+        Integer integerPart = doubleValue.intValue();
+        if (ldapBackend || (doubleValue.equals(integerPart * 1.0))) {
+            objValue = integerPart;
         } else {
-            objValue = new Integer(value);
+            objValue = doubleValue;
         }
+
         switch (operator) {
             case EQUAL:
             case NOT_EQUAL:
@@ -203,7 +202,7 @@ public class SubFilterGenerator {
                 } else {
                     //attribute=*"subAttribute":value*
                     //attribute LIKE "%\"subAttribute\":value%"
-                    String sub = String.format("\"%s\":%s", attribute, value);
+                    String sub = String.format("\"%s\":%s", attribute, objValue.toString());
                     subfilter = Filter.createSubstringFilter(attribute, null, new String[]{ sub }, null);
                 }
 
@@ -242,7 +241,7 @@ public class SubFilterGenerator {
                 }
                 break;
             default:
-                error = FilterUtil.getOperatorInconsistencyError(operator.getValue(), attrType.toString(), subAttribute);
+                error = FilterUtil.getOperatorInconsistencyError(operator.getValue(), attrType.toString(), attribute);
         }
         return subfilter;
 
@@ -256,9 +255,7 @@ public class SubFilterGenerator {
         if (operator.equals(ScimOperator.EQUAL) || operator.equals(ScimOperator.NOT_EQUAL)) {
             if (subAttribute == null) {
                 //attribute=value
-                //In LDAP should be TRUE or FALSE (uppercase) to work: boolean syntax 1.3.6.1.4.1.1466.115.121.1.7 with booleanMatch equality
-                Object objValue = ldapBackend ? value.toUpperCase() : Boolean.parseBoolean(value);
-                subfilter = Filter.createEqualityFilter(attribute, objValue);
+                subfilter = Filter.createEqualityFilter(attribute, Boolean.valueOf(value));
             } else {
                 //attribute=*"subAttribute":value*
                 //attribute LIKE "%\"subAttribute\":value%"
@@ -278,7 +275,7 @@ public class SubFilterGenerator {
 
         Filter subfilter = null;
         log.trace("getSubFilterDateTime");
-        String stringDate = ldapBackend ? DateUtil.ISOToGeneralizedStringDate(value) : gluuCouchbaseISODate(value);
+        String stringDate = ldapBackend ? DateUtil.ISOToGeneralizedStringDate(value) : DateUtil.gluuCouchbaseISODate(value);
 
         if (stringDate == null) {
             error = String.format("Value passed for date comparison '%s' is not in ISO format", value);
@@ -345,18 +342,6 @@ public class SubFilterGenerator {
 
     private Filter negateIf(Filter f, boolean negate) {
         return negate ? Filter.createNOTFilter(f) : f;
-    }
-
-    private String gluuCouchbaseISODate(String value) {
-
-        try {
-            String gluuISODate = ZonedDateTime.parse(value).format(DateTimeFormatter.ISO_INSTANT);
-            return gluuISODate.substring(0, gluuISODate.length() - 1);  // + "+000"
-            //What? ask yurem... https://github.com/GluuFederation/community-edition-setup/commit/10fa3963e850a6f4e80a88a2cb325e626eb60a0e
-        } catch (Exception e) {
-            return null;
-        }
-
     }
 
 }

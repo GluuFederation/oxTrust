@@ -282,12 +282,11 @@ public class Scim2GroupService implements Serializable {
 			int count, String groupsUrl, String usersUrl, int maxCount) throws Exception {
 
 		Filter ldapFilter = scimFilterParserService.createFilter(filter, Filter.createPresenceFilter("inum"), GroupResource.class);
-		log.info(
-				"Executing search for groups using: ldapfilter '{}', sortBy '{}', sortOrder '{}', startIndex '{}', count '{}'",
+		log.info("Executing search for groups using: ldapfilter '{}', sortBy '{}', sortOrder '{}', startIndex '{}', count '{}'",
 				ldapFilter.toString(), sortBy, sortOrder.getValue(), startIndex, count);
 
 		PagedResult<GluuGroup> list = ldapEntryManager.findPagedEntries(groupService.getDnForGroup(null),
-				GluuGroup.class, ldapFilter, null, sortBy, sortOrder, startIndex, count, maxCount);
+				GluuGroup.class, ldapFilter, null, sortBy, sortOrder, startIndex - 1, count, maxCount);
 		List<BaseScimResource> resources = new ArrayList<BaseScimResource>();
 
 		for (GluuGroup group : list.getEntries()) {

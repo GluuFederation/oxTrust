@@ -7,15 +7,15 @@ package org.gluu.oxtrust.service.scim2;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.management.InvalidAttributeValueException;
@@ -26,8 +26,8 @@ import org.apache.commons.lang.StringUtils;
 import org.gluu.model.GluuStatus;
 import org.gluu.oxtrust.ldap.service.IGroupService;
 import org.gluu.oxtrust.ldap.service.IPersonService;
-import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
+import org.gluu.oxtrust.model.scim.ScimCustomPerson;
 import org.gluu.oxtrust.model.scim2.BaseScimResource;
 import org.gluu.oxtrust.model.scim2.Meta;
 import org.gluu.oxtrust.model.scim2.extensions.Extension;
@@ -62,11 +62,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 /**
  * This class holds the most important business logic of the SCIM service for
  * the resource type "User". It's devoted to taking objects of class
- * UserResource, feeding instances of GluuCustomPerson, and do persistence to
+ * UserResource, feeding instances of ScimCustomPerson, and do persistence to
  * LDAP. The converse is also done: querying LDAP, and transforming
- * GluuCustomPerson into UserResource
+ * ScimCustomPerson into UserResource
  *
- * @author Val Pecaoco Re-engineered by jgomer on 2017-09-15.
+ * @author jgomer
  */
 @Named
 public class Scim2UserService implements Serializable {
@@ -81,6 +81,9 @@ public class Scim2UserService implements Serializable {
 
 	@Inject
 	private IPersonService personService;
+
+	@Inject
+    private UserPersistenceHelper userPersistenceHelper;
 
 	@Inject
 	private IGroupService groupService;
@@ -103,18 +106,20 @@ public class Scim2UserService implements Serializable {
 	@Inject
 	private PersistenceEntryManager ldapEntryManager;
 
-	private String[] arrOf(String value) {
+	private boolean ldapBackend;
+
+    private String[] arrOf(String value) {
 		return (value == null || value.length() == 0) ? new String[0] : new String[] { value };
 	}
 
 	private String[] getComplexMultivaluedAsArray(List items) {
 
-		String array[] = new String[0];
+		String array[] = {};
 
 		try {
 			if (items != null && items.size() > 0) {
 				ObjectMapper mapper = ServiceUtil.getObjectMapper();
-				List<String> itemList = new ArrayList<String>();
+				List<String> itemList = new ArrayList<>();
 
 				for (Object item : items) {
                     itemList.add(mapper.writeValueAsString(item));
@@ -129,18 +134,16 @@ public class Scim2UserService implements Serializable {
 
 	}
 
-	private <T> List<T> getAttributeListValue(GluuCustomPerson source, Class<T> clazz, String attrName) {
+	private <T> List<T> getAttributeListValue(ScimCustomPerson source, Class<T> clazz, String attrName) {
 
-		List<T> items = new ArrayList<T>();
+		List<T> items = new ArrayList<>();
 		try {
 			ObjectMapper mapper = ServiceUtil.getObjectMapper();
-			String[] attributeArray = source.getAttributeArray(attrName);
-			if (attributeArray != null) {
-				for (String attribute : attributeArray) {
-					T item = mapper.readValue(attribute, clazz);
-					items.add(item);
-				}
-			}
+
+            for (String attribute : source.getAttributeList(attrName)) {
+                T item = mapper.readValue(attribute, clazz);
+                items.add(item);
+            }
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 		}
@@ -148,12 +151,10 @@ public class Scim2UserService implements Serializable {
 
 	}
 
-	private void transferAttributesToPerson(UserResource res, GluuCustomPerson person) {
+	private void transferAttributesToPerson(UserResource res, ScimCustomPerson person) {
 
 		log.debug("transferAttributesToPerson");
-
-		// NOTE: calling person.setAttribute("ATTR", null) does not change the attribute
-		// in LDAP
+		// NOTE: calling person.setAttribute("ATTR", null) is not changing the attribute in LDAP :(
 
 		// Set values trying to follow the order found in BaseScimResource class
 		person.setAttribute("oxTrustExternalId", arrOf(res.getExternalId()));
@@ -184,17 +185,17 @@ public class Scim2UserService implements Serializable {
 		person.setAttribute("locale", arrOf(res.getLocale()));
 		person.setAttribute("zoneinfo", arrOf(res.getTimezone()));
 
-		// Why are both gluuStatus and oxTrustActive used for active? it's for active
-		// being used in filter queries?
-		Boolean active = res.getActive() != null && res.getActive();
-		person.setAttribute("oxTrustActive", arrOf(active.toString()));
+		// Why both gluuStatus and oxTrustActive used for active? it's for active being used in filter queries?
+		// Also it seems gluuStatus can have several values, see org.gluu.model.GluuStatus
+		Boolean active = Optional.ofNullable(res.getActive()).orElse(false);
+		person.setTypedAttribute("oxTrustActive", active);
 		person.setAttribute("gluuStatus",
 				arrOf(active ? GluuStatus.ACTIVE.getValue() : GluuStatus.INACTIVE.getValue()));
 		person.setUserPassword(res.getPassword());
 
 		person.setAttribute("oxTrustEmail", getComplexMultivaluedAsArray(res.getEmails()));
 		try {
-			person = serviceUtil.syncEmailForward(person);
+			person = userPersistenceHelper.syncEmailForward(person);
 		} catch (Exception e) {
 			log.error("Problem syncing emails forward", e);
 		}
@@ -211,24 +212,23 @@ public class Scim2UserService implements Serializable {
 		person.setAttribute("oxTrustRole", getComplexMultivaluedAsArray(res.getRoles()));
 		person.setAttribute("oxTrustx509Certificate", getComplexMultivaluedAsArray(res.getX509Certificates()));
 
-		// Pairwise identifiers must not be supplied here... (they are mutability =
-		// readOnly)
+		// Pairwise identifiers must not be supplied here... (they are mutability = readOnly)
 		transferExtendedAttributesToPerson(res, person);
 
 	}
 
 	/**
 	 * Takes all extended attributes found in the SCIM resource and copies them to a
-	 * GluuCustomPerson This method is called after validations take place (see
+	 * ScimCustomPerson This method is called after validations take place (see
 	 * associated decorator for User Service), so all inputs are OK and can go
 	 * straight to LDAP with no runtime surprises
 	 * 
 	 * @param resource
 	 *            A SCIM resource used as origin of data
 	 * @param person
-	 *            a GluuCustomPerson used as destination
+	 *            a ScimCustomPerson used as destination
 	 */
-	private void transferExtendedAttributesToPerson(BaseScimResource resource, GluuCustomPerson person) {
+	private void transferExtendedAttributesToPerson(BaseScimResource resource, ScimCustomPerson person) {
 
 		try {
 			// Gets all the extended attributes for this resource
@@ -250,14 +250,15 @@ public class Scim2UserService implements Serializable {
 							log.debug("transferExtendedAttributesToPerson. Flushing attribute {}", attribute);
 							person.setAttribute(attribute, new String[0]);
 						} else {
-							// Get properly formatted string representations for the value(s) associated to
-							// the attribute
-							List<String> values = extService
-									.getStringAttributeValues(extension.getFields().get(attribute), value);
-							values.removeAll(Collections.singleton(""));
-							log.debug("transferExtendedAttributesToPerson. Setting attribute '{}' with values {}",
-									attribute, values.toString());
-							person.setAttribute(attribute, values.toArray(new String[0]));
+
+						    ExtensionField field = extension.getFields().get(attribute);
+                            if (field.isMultiValued()) {
+                                person.setTypedAttribute(attribute, extService.getAttributeValues(field, (Collection) value, ldapBackend));
+                            } else {
+                                person.setTypedAttribute(attribute, extService.getAttributeValue(field, value, ldapBackend));
+                            }
+                            log.debug("transferExtendedAttributesToPerson. Setting attribute '{}' with values {}",
+                                    attribute, person.getTypedAttribute(attribute).getDisplayValue());
 						}
 					}
 				}
@@ -268,7 +269,7 @@ public class Scim2UserService implements Serializable {
 
 	}
 
-	public void transferAttributesToUserResource(GluuCustomPerson person, UserResource res, String url) {
+	public void transferAttributesToUserResource(ScimCustomPerson person, UserResource res, String url) {
 
 		log.debug("transferAttributesToUserResource");
 
@@ -280,9 +281,8 @@ public class Scim2UserService implements Serializable {
 
 		meta.setCreated(person.getAttribute("oxTrustMetaCreated"));
 		if (meta.getCreated() == null) {
-			Date tmpDate = person.getCreationDate();
-			meta.setCreated(
-					tmpDate == null ? null : ISODateTimeFormat.dateTime().withZoneUTC().print(tmpDate.getTime()));
+			Date date = person.getCreationDate();
+			meta.setCreated(date == null ? null : ISODateTimeFormat.dateTime().withZoneUTC().print(date.getTime()));
 		}
 
 		meta.setLastModified(person.getAttribute("oxTrustMetaLastModified"));
@@ -335,8 +335,7 @@ public class Scim2UserService implements Serializable {
 		res.setEmails(getAttributeListValue(person, Email.class, "oxTrustEmail"));
         if (res.getEmails() == null) {
             //There can be cases where oxTrustEmail is not synced with mail attribute....
-            List<Email> emails = Stream.of(Optional.ofNullable(person.getAttributeArray("mail"))
-                    .orElse(new String[0]))
+            List<Email> emails = person.getAttributeList("mail").stream()
                     .map(m -> {
                         Email email = new Email();
                         email.setValue(m);
@@ -383,13 +382,13 @@ public class Scim2UserService implements Serializable {
 		res.setRoles(getAttributeListValue(person, Role.class, "oxTrustRole"));
 		res.setX509Certificates(getAttributeListValue(person, X509Certificate.class, "oxTrustx509Certificate"));
 
-		res.setPairwiseIdentitifers(person.getOxPPID());
+		res.setPairwiseIdentifiers(person.getOxPPID());
 
 		transferExtendedAttributesToResource(person, res);
 
 	}
 
-	private void transferExtendedAttributesToResource(GluuCustomPerson person, BaseScimResource resource) {
+	private void transferExtendedAttributesToResource(ScimCustomPerson person, BaseScimResource resource) {
 
 		log.debug("transferExtendedAttributesToResource of type {}", ScimResourceUtil.getType(resource.getClass()));
 
@@ -403,7 +402,7 @@ public class Scim2UserService implements Serializable {
 			Map<String, ExtensionField> fields = extension.getFields();
 			// Create empty map to store the values of the extended attributes found for
 			// current extension in object person
-			Map<String, Object> map = new HashMap<String, Object>();
+			Map<String, Object> map = new HashMap<>();
 
 			log.debug("transferExtendedAttributesToResource. Revising attributes of extension '{}'",
 					extension.getUrn());
@@ -418,7 +417,7 @@ public class Scim2UserService implements Serializable {
 					log.debug("transferExtendedAttributesToResource. Copying to resource the value(s) for attribute '{}'",
 							attr);
 					ExtensionField field = fields.get(attr);
-					List<Object> convertedValues = extService.convertValues(field, values);
+					List<Object> convertedValues = extService.convertValues(field, values, ldapBackend);
 
 					if (convertedValues.size() > 0) {
 						map.put(attr, field.isMultiValued() ? convertedValues : convertedValues.get(0));
@@ -436,7 +435,7 @@ public class Scim2UserService implements Serializable {
 
 	}
 
-	private void writeCommonName(GluuCustomPerson person) {
+	private void writeCommonName(ScimCustomPerson person) {
 
 		if (StringUtils.isNotEmpty(person.getGivenName()) && StringUtils.isNotEmpty(person.getSurname())) {
             person.setCommonName(person.getGivenName() + " " + person.getSurname());
@@ -444,7 +443,7 @@ public class Scim2UserService implements Serializable {
 
 	}
 
-	private void assignComputedAttributesToPerson(GluuCustomPerson person) {
+	private void assignComputedAttributesToPerson(ScimCustomPerson person) {
 
 		String inum = personService.generateInumForNewPerson();
 		String dn = personService.getDnForPerson(inum);
@@ -470,7 +469,7 @@ public class Scim2UserService implements Serializable {
 		// There is no need to check attributes mutability in this case as there are no
 		// original attributes
 		// (the resource does not exist yet)
-		GluuCustomPerson gluuPerson = new GluuCustomPerson();
+		ScimCustomPerson gluuPerson = new ScimCustomPerson();
 		transferAttributesToPerson(user, gluuPerson);
 		assignComputedAttributesToPerson(gluuPerson);
 
@@ -478,7 +477,7 @@ public class Scim2UserService implements Serializable {
 		gluuPerson.setAttribute("oxTrustMetaLocation", location);
 
 		log.info("Persisting user {}", userName);
-		personService.addCustomObjectClass(gluuPerson);
+		userPersistenceHelper.addCustomObjectClass(gluuPerson);
 
 		if (externalScimService.isEnabled()) {
 			boolean result = externalScimService.executeScimCreateUserMethods(gluuPerson);
@@ -487,12 +486,12 @@ public class Scim2UserService implements Serializable {
 						Status.PRECONDITION_FAILED);
 			}
 
-			personService.addPerson(gluuPerson);
+			userPersistenceHelper.addPerson(gluuPerson);
 			// Copy back to user the info from gluuPerson
 			transferAttributesToUserResource(gluuPerson, user, url);
 			externalScimService.executeScimPostCreateUserMethods(gluuPerson);
 		} else {
-			personService.addPerson(gluuPerson);
+            userPersistenceHelper.addPerson(gluuPerson);
 			user.getMeta().setLocation(location);
 			// We are ignoring the id value received (user.getId())
 			user.setId(gluuPerson.getInum());
@@ -502,7 +501,7 @@ public class Scim2UserService implements Serializable {
 
 	public UserResource updateUser(String id, UserResource user, String url) throws InvalidAttributeValueException {
 
-		GluuCustomPerson gluuPerson = personService.getPersonByInum(id); // This is never null (see decorator involved)
+		ScimCustomPerson gluuPerson = userPersistenceHelper.getPersonByInum(id); // This is never null (see decorator involved)
 		UserResource tmpUser = new UserResource();
 
 		transferAttributesToUserResource(gluuPerson, tmpUser, url);
@@ -518,12 +517,12 @@ public class Scim2UserService implements Serializable {
 
 	}
 
-	public void replacePersonInfo(GluuCustomPerson gluuPerson, UserResource user, String url) {
+	public void replacePersonInfo(ScimCustomPerson gluuPerson, UserResource user, String url) {
 		transferAttributesToPerson(user, gluuPerson);
 		writeCommonName(gluuPerson);
 
 		log.debug("replacePersonInfo. Updating person info in LDAP");
-		personService.addCustomObjectClass(gluuPerson);
+		userPersistenceHelper.addCustomObjectClass(gluuPerson);
 
 		if (externalScimService.isEnabled()) {
 			boolean result = externalScimService.executeScimUpdateUserMethods(gluuPerson);
@@ -532,22 +531,22 @@ public class Scim2UserService implements Serializable {
 						Status.PRECONDITION_FAILED);
 			}
 
-			personService.updatePerson(gluuPerson);
+			userPersistenceHelper.updatePerson(gluuPerson);
 			// Copy back to user the info from gluuPerson
 			transferAttributesToUserResource(gluuPerson, user, url);
 			externalScimService.executeScimPostUpdateUserMethods(gluuPerson);
 		} else {
-			personService.updatePerson(gluuPerson);
+            userPersistenceHelper.updatePerson(gluuPerson);
 		}
 
 	}
 
-	public void deleteUser(GluuCustomPerson gluuPerson) throws Exception {
+	public void deleteUser(ScimCustomPerson gluuPerson) throws Exception {
 
 		String dn = gluuPerson.getDn();
 		if (gluuPerson.getMemberOf() != null && gluuPerson.getMemberOf().size() > 0) {
 			log.info("Removing user {} from groups", gluuPerson.getUid());
-			serviceUtil.deleteUserFromGroup(gluuPerson, dn);
+			userPersistenceHelper.deleteUserFromGroup(gluuPerson, dn);
 		}
 		log.info("Removing user entry {}", dn);
 
@@ -559,7 +558,7 @@ public class Scim2UserService implements Serializable {
 			}
 		}
 
-		personService.removePerson(gluuPerson);
+		userPersistenceHelper.removePerson(gluuPerson);
 
 		if (externalScimService.isEnabled())
 			externalScimService.executeScimPostDeleteUserMethods(gluuPerson);
@@ -573,11 +572,11 @@ public class Scim2UserService implements Serializable {
 		log.info("Executing search for users using: ldapfilter '{}', sortBy '{}', sortOrder '{}', startIndex '{}', count '{}'",
 				ldapFilter.toString(), sortBy, sortOrder.getValue(), startIndex, count);
 
-		PagedResult<GluuCustomPerson> list = ldapEntryManager.findPagedEntries(personService.getDnForPerson(null),
-				GluuCustomPerson.class, ldapFilter, null, sortBy, sortOrder, startIndex - 1, count, maxCount);
+		PagedResult<ScimCustomPerson> list = ldapEntryManager.findPagedEntries(personService.getDnForPerson(null),
+				ScimCustomPerson.class, ldapFilter, null, sortBy, sortOrder, startIndex - 1, count, maxCount);
 		List<BaseScimResource> resources = new ArrayList<BaseScimResource>();
 
-		for (GluuCustomPerson person : list.getEntries()) {
+		for (ScimCustomPerson person : list.getEntries()) {
 			UserResource scimUsr = new UserResource();
 			transferAttributesToUserResource(person, scimUsr, url);
 			resources.add(scimUsr);
@@ -600,5 +599,10 @@ public class Scim2UserService implements Serializable {
 			log.error(e.getMessage(), e);
 		}
 	}
+
+	@PostConstruct
+    private void init() {
+        ldapBackend = scimFilterParserService.isLdapBackend();
+    }
 
 }
