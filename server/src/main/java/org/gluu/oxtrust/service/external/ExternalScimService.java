@@ -14,8 +14,8 @@ import org.gluu.model.SimpleCustomProperty;
 import org.gluu.model.custom.script.CustomScriptType;
 import org.gluu.model.custom.script.conf.CustomScriptConfiguration;
 import org.gluu.model.custom.script.type.scim.ScimType;
-import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
+import org.gluu.oxtrust.model.scim.ScimCustomPerson;
 import org.gluu.service.custom.script.ExternalScriptService;
 
 /**
@@ -30,7 +30,7 @@ public class ExternalScimService extends ExternalScriptService {
         super(CustomScriptType.SCIM);
     }
 
-    public boolean executeScimCreateUserMethod(GluuCustomPerson user, CustomScriptConfiguration customScriptConfiguration) {
+    public boolean executeScimCreateUserMethod(ScimCustomPerson user, CustomScriptConfiguration customScriptConfiguration) {
 
         try {
             log.debug("Executing python 'SCIM Create User' method");
@@ -49,7 +49,7 @@ public class ExternalScimService extends ExternalScriptService {
 
     }
 
-    public boolean executeScimPostCreateUserMethod(GluuCustomPerson user, CustomScriptConfiguration customScriptConfiguration) {
+    public boolean executeScimPostCreateUserMethod(ScimCustomPerson user, CustomScriptConfiguration customScriptConfiguration) {
 
         try {
             if (executeExternalGetApiVersion(customScriptConfiguration) < 2)
@@ -71,7 +71,7 @@ public class ExternalScimService extends ExternalScriptService {
 
     }
 
-    public boolean executeScimUpdateUserMethod(GluuCustomPerson user, CustomScriptConfiguration customScriptConfiguration) {
+    public boolean executeScimUpdateUserMethod(ScimCustomPerson user, CustomScriptConfiguration customScriptConfiguration) {
 
         try {
             log.debug("Executing python 'SCIM Update User' method");
@@ -90,7 +90,7 @@ public class ExternalScimService extends ExternalScriptService {
 
     }
 
-    public boolean executeScimPostUpdateUserMethod(GluuCustomPerson user, CustomScriptConfiguration customScriptConfiguration) {
+    public boolean executeScimPostUpdateUserMethod(ScimCustomPerson user, CustomScriptConfiguration customScriptConfiguration) {
 
         try {
             if (executeExternalGetApiVersion(customScriptConfiguration) < 2)
@@ -112,7 +112,7 @@ public class ExternalScimService extends ExternalScriptService {
 
     }
 
-    public boolean executeScimDeleteUserMethod(GluuCustomPerson user, CustomScriptConfiguration customScriptConfiguration) {
+    public boolean executeScimDeleteUserMethod(ScimCustomPerson user, CustomScriptConfiguration customScriptConfiguration) {
 
         try {
             log.debug("Executing python 'SCIM Delete User' method");
@@ -131,7 +131,7 @@ public class ExternalScimService extends ExternalScriptService {
 
     }
 
-    public boolean executeScimPostDeleteUserMethod(GluuCustomPerson user, CustomScriptConfiguration customScriptConfiguration) {
+    public boolean executeScimPostDeleteUserMethod(ScimCustomPerson user, CustomScriptConfiguration customScriptConfiguration) {
 
         try {
             if (executeExternalGetApiVersion(customScriptConfiguration) < 2)
@@ -276,7 +276,7 @@ public class ExternalScimService extends ExternalScriptService {
 
     }
 
-    public boolean executeScimCreateUserMethods(GluuCustomPerson user) {
+    public boolean executeScimCreateUserMethods(ScimCustomPerson user) {
 
         for (CustomScriptConfiguration customScriptConfiguration : this.customScriptConfigurations) {
             if (!executeScimCreateUserMethod(user, customScriptConfiguration)) {
@@ -287,7 +287,7 @@ public class ExternalScimService extends ExternalScriptService {
 
     }
 
-    public boolean executeScimPostCreateUserMethods(GluuCustomPerson user) {
+    public boolean executeScimPostCreateUserMethods(ScimCustomPerson user) {
 
         for (CustomScriptConfiguration customScriptConfiguration : this.customScriptConfigurations) {
             if (!executeScimPostCreateUserMethod(user, customScriptConfiguration)) {
@@ -298,7 +298,7 @@ public class ExternalScimService extends ExternalScriptService {
 
     }
 
-    public boolean executeScimUpdateUserMethods(GluuCustomPerson user) {
+    public boolean executeScimUpdateUserMethods(ScimCustomPerson user) {
 
         for (CustomScriptConfiguration customScriptConfiguration : this.customScriptConfigurations) {
             if (!executeScimUpdateUserMethod(user, customScriptConfiguration)) {
@@ -309,7 +309,7 @@ public class ExternalScimService extends ExternalScriptService {
 
     }
 
-    public boolean executeScimPostUpdateUserMethods(GluuCustomPerson user) {
+    public boolean executeScimPostUpdateUserMethods(ScimCustomPerson user) {
 
         for (CustomScriptConfiguration customScriptConfiguration : this.customScriptConfigurations) {
             if (!executeScimPostUpdateUserMethod(user, customScriptConfiguration)) {
@@ -320,7 +320,7 @@ public class ExternalScimService extends ExternalScriptService {
 
     }
 
-    public boolean executeScimDeleteUserMethods(GluuCustomPerson user) {
+    public boolean executeScimDeleteUserMethods(ScimCustomPerson user) {
 
         for (CustomScriptConfiguration customScriptConfiguration : this.customScriptConfigurations) {
             if (!executeScimDeleteUserMethod(user, customScriptConfiguration)) {
@@ -331,7 +331,7 @@ public class ExternalScimService extends ExternalScriptService {
 
     }
 
-    public boolean executeScimPostDeleteUserMethods(GluuCustomPerson user) {
+    public boolean executeScimPostDeleteUserMethods(ScimCustomPerson user) {
 
         for (CustomScriptConfiguration customScriptConfiguration : this.customScriptConfigurations) {
             if (!executeScimPostDeleteUserMethod(user, customScriptConfiguration)) {

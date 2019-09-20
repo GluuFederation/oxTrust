@@ -9,9 +9,9 @@ import static org.gluu.oxtrust.model.scim2.Constants.USER_EXT_SCHEMA_DESCRIPTION
 import static org.gluu.oxtrust.model.scim2.Constants.USER_EXT_SCHEMA_ID;
 import static org.gluu.oxtrust.model.scim2.Constants.USER_EXT_SCHEMA_NAME;
 
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,11 +21,13 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.gluu.model.GluuAttribute;
+import org.gluu.model.attribute.AttributeDataType;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.model.scim2.BaseScimResource;
 import org.gluu.oxtrust.model.scim2.extensions.Extension;
 import org.gluu.oxtrust.model.scim2.extensions.ExtensionField;
 import org.gluu.oxtrust.model.scim2.user.UserResource;
+import org.gluu.oxtrust.model.scim2.util.DateUtil;
 import org.slf4j.Logger;
 
 /**
@@ -92,32 +94,37 @@ public class ExtensionService {
 
 	}
 
-	/**
-	 * Builds up a list of strings with the values associated to the field passed.
-	 * The strings are created according to the type asociated to the field: for
-	 * STRING the value is left as is; for DATE the value is converted to a String
-	 * following the generalized date format; for NUMERIC the value is converted to
-	 * a String
-	 * 
-	 * @param field
-	 *            An ExtensionField instance
-	 * @param valuesHolder
-	 *            A non-null value object (may be a collection)
-	 * @return List with values represented as Strings
-	 */
-	public List<String> getStringAttributeValues(ExtensionField field, Object valuesHolder) {
+    /**
+     * Transforms the value passed in case it is of type DATE. Depending on the param <code>ldapBackend</code>, the
+     * value will be a generalized time string, otherwise an ISO-like date with no offset or time zone
+     * @param field The extension field associated to the value passed
+     * @param val The value of the field
+     * @param ldapBackend Whether the backend DB is LDAP or not
+     * @return Value transformed (kept as is if unrelated to DATEs)
+     */
+	public Object getAttributeValue(ExtensionField field, Object val, boolean ldapBackend) {
 
-		Collection collection = field.isMultiValued() ? (Collection) valuesHolder
-				: Collections.singletonList(valuesHolder);
-		List<String> values = new ArrayList<String>();
+        AttributeDataType type = field.getType();
+	    Object value = val;
+        if (type.equals(AttributeDataType.DATE)) {
+            //If the date object is passed directly to the persistence layer, it fails for both backend types
+            value = ldapBackend ? DateUtil.ISOToGeneralizedStringDate(val.toString())
+                    : DateUtil.gluuCouchbaseISODate(val.toString());
+        }
+        return value;
 
-		for (Object elem : collection) {
-			// Despite valuesHolder is not null, it can be a collection with null
-			// elements...
-			if (elem != null)
-				values.add(ExtensionField.stringValueOf(field, elem));
-		}
-		return values;
+    }
+
+	public List<Object> getAttributeValues(ExtensionField field, Collection valuesHolder, boolean ldapBackend) {
+
+        List<Object> values = new ArrayList<>();
+        for (Object elem : valuesHolder) {
+            // Despite valuesHolder is not null, it can be a collection with null elements...
+            if (elem != null) {
+                values.add(getAttributeValue(field, elem, ldapBackend));
+            }
+        }
+        return values;
 
 	}
 
@@ -135,15 +142,26 @@ public class ExtensionService {
 	 *            passed. These values are coming from LDAP
 	 * @return List of opaque values
 	 */
-	public List<Object> convertValues(ExtensionField field, String strValues[]) {
+	public List<Object> convertValues(ExtensionField field, String strValues[], boolean ldapBackend) {
 
 		List<Object> values = new ArrayList<Object>();
 
 		for (String val : strValues) {
 			// In practice, there should not be nulls in strValues
 			if (val != null) {
-				Object value = ExtensionField.valueFromString(field, val);
+			    Object value;
 
+			    //See org.gluu.oxtrust.model.scim2.util.DateUtil.gluuCouchbaseISODate()
+                if (!ldapBackend && field.getType().equals(AttributeDataType.DATE)) {
+                    try {
+                        DateTimeFormatter.ISO_DATE_TIME.parse(val);
+                        value = val;
+                    } catch (Exception e) {
+                        value = null;
+                    }
+                } else {
+                    value = ExtensionField.valueFromString(field, val);
+                }
 				// won't happen either (value being null) because calls to this method occurs
 				// after lots of validations have taken place
 				if (value != null) {
