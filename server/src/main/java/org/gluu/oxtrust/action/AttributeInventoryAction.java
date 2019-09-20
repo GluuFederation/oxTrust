@@ -202,11 +202,9 @@ public class AttributeInventoryAction implements Serializable {
 		HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
 		response.setContentType("text/plain");
 		response.addHeader("Content-disposition", "attachment; filename=\"attributes.ldif\"");
-		try {
-			ServletOutputStream os = response.getOutputStream();
+		try (ServletOutputStream os = response.getOutputStream()) {
 			ldifService.exportLDIFFile(checkedItems, os);
 			os.flush();
-			os.close();
 			facesContext.responseComplete();
 		} catch (Exception e) {
 			log.error("\nFailure : " + e.toString() + "\n");

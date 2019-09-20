@@ -140,24 +140,13 @@ public class LdifService implements Serializable {
 			StringBuilder builder = new StringBuilder();
 			if (checkedItems != null && checkedItems.size() > 0) {
 				checkedItems.stream().forEach(e -> {
-					String[] exportEntry = persistenceManager.exportEntry(e);
-					if (exportEntry != null && exportEntry.length >= 0) {
-						Stream.of(exportEntry).forEach(v -> {
-							if (v.split(SEPERATOR)[1].trim().startsWith(OPEN)
-									&& v.split(SEPERATOR)[1].trim().endsWith(CLOSE)) {
-								String key = v.split(SEPERATOR)[0];
-								String values = v.split(SEPERATOR)[1];
-								values = values.replaceFirst(OPEN, "");
-								values = replaceLast(values, CLOSE, "");
-								List<String> list = Pattern.compile(", ").splitAsStream(values.trim())
-										.collect(Collectors.toList());
-								for (String value : list) {
-									builder.append(key + ": " + value);
-								}
-							} else {
-								builder.append(v);
+					List<AttributeData> exportEntry = persistenceManager.exportEntry(e);
+					if (exportEntry != null && exportEntry.size() >= 0) {
+						exportEntry.forEach(v -> {
+							String key = v.getName();
+							for (Object value : v.getValues()) {
+								builder.append(key + ": " + value + System.getProperty(LINE_SEPARATOR));
 							}
-							builder.append(System.getProperty(LINE_SEPARATOR));
 						});
 					}
 					builder.append(System.getProperty(LINE_SEPARATOR));
@@ -167,13 +156,6 @@ public class LdifService implements Serializable {
 		} catch (IOException e) {
 			log.error("Error while exporting entries: ", e);
 		}
-	}
-
-	private String replaceLast(String mainString, String substring, String replacement) {
-		int index = mainString.lastIndexOf(substring);
-		if (index == -1)
-			return mainString;
-		return mainString.substring(0, index) + replacement + mainString.substring(index + substring.length()).trim();
 	}
 
 }

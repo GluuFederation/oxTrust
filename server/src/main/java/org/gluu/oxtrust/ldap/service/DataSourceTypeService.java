@@ -13,9 +13,6 @@ import org.gluu.persist.ldap.impl.LdapEntryManagerFactory;
 @Named
 public class DataSourceTypeService implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -1941135478226842653L;
 
 	@Inject

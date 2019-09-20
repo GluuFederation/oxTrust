@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.Calendar;
+import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -18,6 +19,7 @@ import javax.inject.Named;
 import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.event.DeleteNotifier;
+import org.gluu.persist.model.AttributeData;
 import org.slf4j.Logger;
 
 @Stateless
@@ -28,7 +30,8 @@ public class LdifArchiver implements DeleteNotifier {
 	private Logger log;
 
 	@Inject
-	private PersistenceEntryManager ldapEntryManager;	
+	private PersistenceEntryManager persistenceManager;	
+
 	@Inject
 	private AppConfiguration appConfiguration;
 
@@ -54,18 +57,23 @@ public class LdifArchiver implements DeleteNotifier {
 				dnForRemoval = dn.substring(dnForRemovalLenght - 200, dnForRemovalLenght);
 			}
 			File file = new File(storeDir + File.separator + dnForRemoval + Calendar.getInstance().getTimeInMillis());
-			PrintWriter writer = null;
-			try {
-				writer = new PrintWriter(file);
-			} catch (FileNotFoundException e) {
 
+			try (PrintWriter writer = new PrintWriter(file);) {
+				List<AttributeData> exportEntry = persistenceManager.exportEntry(dn);
+				if (exportEntry != null && exportEntry.size() >= 0) {
+					exportEntry.forEach(v -> {
+						String key = v.getName();
+						for (Object value : v.getValues()) {
+							writer.println(key + ": " + value);
+						}
+					});
+				}
+
+				writer.println();
+				writer.flush();
+			} catch (FileNotFoundException e) {
 				log.error("Failed to write into log file", e);
 			}
-			String[] ldif = ldapEntryManager.exportEntry(dn);
-			for (String ldifValue : ldif) {
-				writer.println(ldifValue);
-			}
-			writer.flush();
 		}
 
 	}
