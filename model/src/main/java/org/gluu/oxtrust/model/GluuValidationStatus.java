@@ -16,7 +16,7 @@ import org.gluu.persist.annotation.AttributeEnum;
  */
 public enum GluuValidationStatus implements AttributeEnum {
 
-	VALIDATION("validation", "Validation"), VALIDATION_FAILED("validation failed", "Validation Failed"), VALIDATION_SCHEDULED(
+	VALIDATION("validating", "Validation"), VALIDATION_FAILED("validation failed", "Validation Failed"), VALIDATION_SCHEDULED(
 			"validation_scheduled", "Validation Scheduled"), VALIDATION_SUCCESS("validation_success", "Validation Success");
 
 	private String value;

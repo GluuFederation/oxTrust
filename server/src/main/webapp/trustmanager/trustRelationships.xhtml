@@ -110,6 +110,10 @@
 													severity="warning" />
 												<b:label
 													text="#{metadataValidationTimer.getValidationStatus(tsps.spMetaDataFN,tsps.validationStatus)}"
+													rendered="#{metadataValidationTimer.getValidationStatus(tsps.spMetaDataFN,tsps.validationStatus) eq 'Validation'}"
+													severity="info" />	
+												<b:label
+													text="#{metadataValidationTimer.getValidationStatus(tsps.spMetaDataFN,tsps.validationStatus)}"
 													rendered="#{metadataValidationTimer.getValidationStatus(tsps.spMetaDataFN,tsps.validationStatus) eq 'Validation Failed'}"
 													severity="danger" />	
 												<b:label

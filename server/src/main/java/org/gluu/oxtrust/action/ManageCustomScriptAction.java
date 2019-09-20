@@ -429,6 +429,10 @@ public class ManageCustomScriptAction
 			setShowAddButton(false);
 		}
 	}
+	
+	public void resetAcrs(CustomScript script) {
+		script.setAliases(new ArrayList<>());
+	}
 
 	@Override
 	public void processValueExpanded(TreeNodeExpandedEvent event) {
