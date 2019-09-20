@@ -100,7 +100,7 @@
 												<ox:attributeList value="#{tsps.releasedCustomAttributes}" />
 											</b:dataTableColumn>
 											<b:dataTableColumn
-												value="#{tsps.isFederation() ? 'federation' : (trustService.getTrustContainerFederation(tsps) ne null ? 'site federated with '.concat(trustService.getTrustContainerFederation(tsps).displayName) : 'site')}"
+												value="#{trustRelationshipInventoryAction.getRelationshipType(tsps)}"
 												label="#{msg['trustmanager.relationshipType']}" />
 											<b:dataTableColumn
 												label="#{msg['trustmanager.validationStatus']}">

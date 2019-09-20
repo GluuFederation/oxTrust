@@ -136,7 +136,7 @@
 										</ox:decorate>
 										<ox:decorate label="SAML ACRS" leftClass="col-sm-3"
 											rendered="#{manageCustomScriptAction.isPersonScript(_customScript)}"
-											rightClass="col-sm-8">
+											rightClass="col-sm-9">
 											<h:selectManyListbox styleClass="samlAcrs"
 												value="#{_customScript.aliases}" id="SamlACRSId">
 												<f:selectItems
@@ -145,12 +145,9 @@
 											<b:commandButton
 												action="#{manageCustomScriptAction.resetAcrs(_customScript)}"
 												look="success" styleClass="clearAcrlButton"
-												style="float:right;" iconAwesome="fa-refresh"
-												value="clear" ajax="true" update="@parent"/>
+												style="float:right;" iconAwesome="fa-refresh" value=""
+												ajax="true" update="@parent" />
 										</ox:decorate>
-										<br></br>
-										<br></br>
-										<br></br>
 										<div class="row">
 											<div class="col-sm-7 col-md-7 col-lg-7">
 												<ox:decorate
