@@ -51,8 +51,8 @@ public class BaseScimResource {
             mutability = AttributeDefinition.Mutability.READ_ONLY,
             returned = AttributeDefinition.Returned.ALWAYS,
             uniqueness = AttributeDefinition.Uniqueness.SERVER)
-    @StoreReference(resourceType = {UserResource.class, FidoDeviceResource.class, GroupResource.class, Fido2DeviceResource.class},
-            refs = {"inum", "oxId", "inum", "oxId"})
+    @StoreReference(resourceType = {UserResource.class, GroupResource.class, FidoDeviceResource.class, Fido2DeviceResource.class},
+            refs = {"inum", "inum", "oxId", "oxId"})
     private String id;
 
     @Attribute(description = "A String that is an identifier for the resource as defined by the provisioning client",
@@ -79,8 +79,6 @@ public class BaseScimResource {
      */
     @JsonAnySetter
     public void addCustomAttributes(String uri, Map<String, Object> map) {
-        //This is a workaround to support incoming malformed custom attributes sent by SCIM-Client version 3.1.2 and earlier
-        map = reshapeMalformedCustAttrs(map);
         extendedAttrs.put(uri, map);
         schemas.add(uri);
     }
@@ -161,59 +159,6 @@ public class BaseScimResource {
 
     public void setSchemas(Set<String> schemas) {
         this.schemas = schemas;
-    }
-
-    private Map<String, Object> reshapeMalformedCustAttrs(Map<String, Object> map){
-
-        /*
-         To understand the transformation check classes Extension, Extension.Field, and ExtensionFieldType in package
-         org.gluu.oxtrust.model.scim2 of version 3.1.2 or earlier
-         */
-        org.apache.logging.log4j.Logger log = LogManager.getLogger(getClass());
-        try {
-
-            Set<String> keys = map.keySet();
-            if (keys.contains("fields") && keys.size() == 1) {
-
-                ObjectMapper mapper = new ObjectMapper();
-                map = IntrospectUtil.strObjMap(map.get("fields"));
-                log.debug("Custom attributes map received was\n {}", map);
-
-                for (String custAttrName : map.keySet()) {
-
-                    Map<String, Object> subMap = IntrospectUtil.strObjMap(map.get(custAttrName));
-                    boolean multivalued=(Boolean) subMap.get("multiValued");
-                    String type=IntrospectUtil.strObjMap(subMap.get("type")).get("name").toString();
-
-                    if (type.equals("STRING") || type.equals("DATE_TIME")){
-                        if (multivalued){
-                            List<String> values=mapper.readValue(subMap.get("value").toString(), new TypeReference<List<String>>(){});
-                            map.put(custAttrName, values);
-                        }
-                        else{
-                            map.put(custAttrName, subMap.get("value"));
-                        }
-                    }
-                    else
-                    if (type.equals("DECIMAL")){
-                        if (multivalued){
-                            List<Integer> values=mapper.readValue(subMap.get("value").toString(), new TypeReference<List<Integer>>(){});
-                            map.put(custAttrName, values);
-                        }
-                        else{
-                            map.put(custAttrName, new Integer(subMap.get("value").toString()));
-                        }
-                    }
-                }
-                log.debug("Custom attributes map after conversion is\n {}", map);
-            }
-        }
-        catch (Exception e){
-            log.error(e.getMessage(), e);
-            map=null;
-        }
-        return map;
-
     }
 
 }
