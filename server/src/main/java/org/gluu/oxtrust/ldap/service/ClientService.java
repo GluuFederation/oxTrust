@@ -46,6 +46,7 @@ public class ClientService implements Serializable {
 	@Inject
 	private PersistenceEntryManager ldapEntryManager;
 
+
 	@Inject
 	private Logger logger;
 
