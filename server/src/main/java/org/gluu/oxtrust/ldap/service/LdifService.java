@@ -139,6 +139,7 @@ public class LdifService implements Serializable {
 				checkedItems.stream().forEach(e -> {
 					List<AttributeData> exportEntry = persistenceManager.exportEntry(e);
 					if (exportEntry != null && exportEntry.size() >= 0) {
+						builder.append("dn: " + e + System.getProperty(LINE_SEPARATOR));
 						exportEntry.forEach(v -> {
 							String key = v.getName();
 							for (Object value : v.getValues()) {
