@@ -66,9 +66,6 @@ public class LdifService implements Serializable {
 		if (dataSourceTypeService.isLDAP()) {
 			ResultCode result = ResultCode.UNAVAILABLE;
 			PersistenceOperationService persistenceOperationService = persistenceManager.getOperationService();
-			if (!(persistenceOperationService instanceof LdapOperationService)) {
-				throw new NotImplementedException("Current Persistence mechanism not allows to import data from LDIF!");
-			}
 			LdapOperationService ldapOperationService = (LdapOperationService) persistenceOperationService;
 			LDAPConnection connection = ldapOperationService.getConnection();
 			try {
@@ -142,6 +139,7 @@ public class LdifService implements Serializable {
 				checkedItems.stream().forEach(e -> {
 					List<AttributeData> exportEntry = persistenceManager.exportEntry(e);
 					if (exportEntry != null && exportEntry.size() >= 0) {
+						builder.append("dn: " + e + System.getProperty(LINE_SEPARATOR));
 						exportEntry.forEach(v -> {
 							String key = v.getName();
 							for (Object value : v.getValues()) {

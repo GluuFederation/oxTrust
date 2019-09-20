@@ -61,6 +61,7 @@ public class LdifArchiver implements DeleteNotifier {
 			try (PrintWriter writer = new PrintWriter(file);) {
 				List<AttributeData> exportEntry = persistenceManager.exportEntry(dn);
 				if (exportEntry != null && exportEntry.size() >= 0) {
+					writer.println("dn: " + dn);
 					exportEntry.forEach(v -> {
 						String key = v.getName();
 						for (Object value : v.getValues()) {
