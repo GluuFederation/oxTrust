@@ -202,7 +202,7 @@ public class SubFilterGenerator {
                 } else {
                     //attribute=*"subAttribute":value*
                     //attribute LIKE "%\"subAttribute\":value%"
-                    String sub = String.format("\"%s\":%s", attribute, objValue.toString());
+                    String sub = String.format("\"%s\":%s", subAttribute, value);
                     subfilter = Filter.createSubstringFilter(attribute, null, new String[]{ sub }, null);
                 }
 
@@ -292,7 +292,7 @@ public class SubFilterGenerator {
                 } else {
                     //attribute=*"subAttribute":stringDate*
                     //attribute LIKE "%\"subAttribute\":\"stringDate\"%"
-                    String sub = String.format("\"%s\":%s", attribute, stringDate);
+                    String sub = String.format("\"%s\":%s", subAttribute, stringDate);
                     subfilter = Filter.createSubstringFilter(attribute, null, new String[]{ sub }, null);
                 }
 
