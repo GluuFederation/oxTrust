@@ -682,12 +682,6 @@ public class UpdateTrustRelationshipAction implements Serializable {
 		if (update) {
 			try {
 				if (GluuStatus.ACTIVE.equals(this.trustRelationship.getStatus())
-						&& !this.trustRelationship.isFederation()) {
-					facesMessages.add(FacesMessage.SEVERITY_WARN,
-							"'#{updateTrustRelationshipAction.trustRelationship.displayName}' is currenlty active. Deactivate it and try again.");
-					return result;
-				}
-				if (GluuStatus.ACTIVE.equals(this.trustRelationship.getStatus())
 						&& this.trustRelationship.isFederation()) {
 					facesMessages.add(FacesMessage.SEVERITY_WARN,
 							"'#{updateTrustRelationshipAction.trustRelationship.displayName}' has associated Trust Relationship(s) depending on it and cannot be deleted. Please disable the federation and try again.");
@@ -696,6 +690,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 				synchronized (svnSyncTimer) {
 					for (GluuSAMLTrustRelationship trust : trustService
 							.getDeconstructedTrustRelationships(this.trustRelationship)) {
+						log.info("Deleting child:"+trust.getDisplayName());
 						trustService.removeTrustRelationship(trust);
 					}
 					shibboleth3ConfService.removeSpMetadataFile(this.trustRelationship.getSpMetaDataFN());

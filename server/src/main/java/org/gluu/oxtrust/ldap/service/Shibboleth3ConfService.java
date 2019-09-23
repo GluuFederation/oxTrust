@@ -122,9 +122,8 @@ public class Shibboleth3ConfService implements Serializable {
 	public static final String SHIB3_IDP_SP_KEY_FILE = "spkey.key";
 
 	public static final String SHIB3_IDP_SP_CERT_FILE = "spcert.crt";
-	
+
 	public static final String GLUU_SAML_OXAUTH_SUPPORTED_PRINCIPALS_FILE = "oxauth-supported-principals.xml";
-	
 
 	@Inject
 	private AttributeService attributeService;
@@ -171,7 +170,7 @@ public class Shibboleth3ConfService implements Serializable {
 
 	@Inject
 	private PersonService personService;
-	
+
 	public boolean generateConfigurationFiles(SamlAcr[] acrs) {
 		log.info(">>>>>>>>>> IN generateConfigurationFiles(SamlAcr[] acrs)...");
 		if (appConfiguration.getShibboleth3IdpRootDir() == null) {
@@ -180,19 +179,21 @@ public class Shibboleth3ConfService implements Serializable {
 
 		String idpConfAuthnFolder = getIdpConfAuthnDir();
 		List<String> acrs2 = new ArrayList<String>();
-		for (SamlAcr acr: acrs)
+		for (SamlAcr acr : acrs)
 			acrs2.add(acr.getClassRef());
-		
+
 		VelocityContext context = new VelocityContext();
 		context.put("acrs", acrs2);
 
 		// Generate metadata-providers.xml
-		String oxAuthSupportedPrincipals = templateService.generateConfFile(GLUU_SAML_OXAUTH_SUPPORTED_PRINCIPALS_FILE, context);		
-		boolean result = templateService.writeConfFile(idpConfAuthnFolder + GLUU_SAML_OXAUTH_SUPPORTED_PRINCIPALS_FILE, oxAuthSupportedPrincipals);
-		
+		String oxAuthSupportedPrincipals = templateService.generateConfFile(GLUU_SAML_OXAUTH_SUPPORTED_PRINCIPALS_FILE,
+				context);
+		boolean result = templateService.writeConfFile(idpConfAuthnFolder + GLUU_SAML_OXAUTH_SUPPORTED_PRINCIPALS_FILE,
+				oxAuthSupportedPrincipals);
+
 		log.info(">>>>>>>>>> LEAVING generateConfigurationFiles(SamlAcr[] acrs)...");
 		return result;
-	 }
+	}
 
 	/*
 	 * Generate relying-party.xml, attribute-filter.xml, attribute-resolver.xml
@@ -483,7 +484,7 @@ public class Shibboleth3ConfService implements Serializable {
 
 		// Collect attributes
 		Set<GluuAttribute> attributes = new HashSet<GluuAttribute>();
-		
+
 		trustRelationships.stream().forEach(tr -> {
 			tr.getReleasedCustomAttributes().stream().forEach(ca -> {
 				attributes.add(ca.getMetadata());
@@ -668,9 +669,10 @@ public class Shibboleth3ConfService implements Serializable {
 	}
 
 	public String getIdpConfAuthnDir() {
-		return appConfiguration.getShibboleth3IdpRootDir() + File.separator + SHIB3_IDP_CONF_FOLDER + File.separator + SHIB3_IDP_AUNTHN_FOLDER + File.separator;
+		return appConfiguration.getShibboleth3IdpRootDir() + File.separator + SHIB3_IDP_CONF_FOLDER + File.separator
+				+ SHIB3_IDP_AUNTHN_FOLDER + File.separator;
 	}
-	
+
 	public String getIdpConfDir() {
 		return appConfiguration.getShibboleth3IdpRootDir() + File.separator + SHIB3_IDP_CONF_FOLDER + File.separator;
 	}
@@ -843,29 +845,21 @@ public class Shibboleth3ConfService implements Serializable {
 	}
 
 	public boolean isCorrectSpMetadataFile(String spMetadataFileName) {
-
 		if (appConfiguration.getShibboleth3IdpRootDir() == null) {
 			throw new InvalidConfigurationException(
 					"Failed to check SP meta-data file due to undefined IDP root folder");
 		}
-
-		String idpMetadataFolder = getIdpMetadataDir();
-		File metadataFile = new File(idpMetadataFolder + spMetadataFileName);
+		File metadataFile = new File(getIdpMetadataDir() + spMetadataFileName);
 		List<String> entityId = SAMLMetadataParser.getSpEntityIdFromMetadataFile(metadataFile);
-
 		return (entityId != null) && !entityId.isEmpty();
 	}
 
 	public String getSpAttributeMapFilePath() {
-
-		String spConfFolder = appConfiguration.getShibboleth3SpConfDir() + File.separator;
-		return spConfFolder + SHIB3_SP_ATTRIBUTE_MAP_FILE;
+		return appConfiguration.getShibboleth3SpConfDir() + File.separator + SHIB3_SP_ATTRIBUTE_MAP_FILE;
 	}
 
 	public String getSpShibboleth3FilePath() {
-
-		String spConfFolder = appConfiguration.getShibboleth3SpConfDir() + File.separator;
-		return spConfFolder + SHIB3_SP_SHIBBOLETH2_FILE;
+		return appConfiguration.getShibboleth3SpConfDir() + File.separator + SHIB3_SP_SHIBBOLETH2_FILE;
 	}
 
 	public String getSpReadMeResourceName() {
