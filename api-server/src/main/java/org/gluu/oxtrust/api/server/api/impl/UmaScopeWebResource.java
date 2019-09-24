@@ -34,7 +34,7 @@ public class UmaScopeWebResource extends BaseWebResource {
 	private UmaScopeService scopeDescriptionService;
 
 	@GET
-	@Operation(description = "Get uma scopes")
+	@Operation(summary="Get UMA scopes",description = "Get uma scopes")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = Scope[].class)), description = Constants.RESULT_SUCCESS),
 			@ApiResponse(responseCode = "500", description = "Server error") })
@@ -52,7 +52,7 @@ public class UmaScopeWebResource extends BaseWebResource {
 
 	@GET
 	@Path(ApiConstants.SEARCH)
-	@Operation(description = "Search uma scopes")
+	@Operation(summary="Search UMA scopes",description = "Search uma scopes")
 	@ApiResponses(value = {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = Scope[].class)), description = Constants.RESULT_SUCCESS),
 			@ApiResponse(responseCode = "500", description = "Server error") })
@@ -70,7 +70,7 @@ public class UmaScopeWebResource extends BaseWebResource {
 
 	@GET
 	@Path(ApiConstants.INUM_PARAM_PATH)
-	@Operation(description = "Get a uma scope by inum")
+	@Operation(summary="Get UMA scope by inum",description = "Get a uma scope by inum")
 	@ApiResponses(value = {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = Scope.class)), description = Constants.RESULT_SUCCESS),
 			@ApiResponse(responseCode = "500", description = "Server error") })
@@ -92,7 +92,7 @@ public class UmaScopeWebResource extends BaseWebResource {
 	}
 
 	@POST
-	@Operation(description = "Add new uma scope")
+	@Operation(summary="Add new UMA scope",description = "Add new uma scope")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = Scope.class)), description = Constants.RESULT_SUCCESS),
 			@ApiResponse(responseCode = "500", description = "Server error") })
@@ -113,7 +113,7 @@ public class UmaScopeWebResource extends BaseWebResource {
 	}
 
 	@PUT
-	@Operation(description = "Update uma scope")
+	@Operation(summary="Update UMA scope",description = "Update uma scope")
 	@ApiResponses(value = {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = Scope.class)), description = Constants.RESULT_SUCCESS),
 			@ApiResponse(responseCode = "500", description = "Server error") })
@@ -140,7 +140,7 @@ public class UmaScopeWebResource extends BaseWebResource {
 
 	@DELETE
 	@Path(ApiConstants.INUM_PARAM_PATH)
-	@Operation(description = "Delete a uma scope")
+	@Operation(summary="Delete UMA scope",description = "Delete a uma scope")
 	@ApiResponses(value = {
 	        @ApiResponse(responseCode = "200", description = Constants.RESULT_SUCCESS),
 			@ApiResponse(responseCode = "500", description = "Server error") })
@@ -161,9 +161,13 @@ public class UmaScopeWebResource extends BaseWebResource {
 		}
 	}
 
+	/**
+	 * It is unclear what this method does. So we comment it until we find out 
+	 * what it is supposed to do.
 	@DELETE
 	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response deleteAllUmaScopes() {
 		return Response.status(Response.Status.UNAUTHORIZED).build();
 	}
+	*/
 }

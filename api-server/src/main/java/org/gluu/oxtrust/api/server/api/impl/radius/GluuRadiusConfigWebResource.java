@@ -53,7 +53,7 @@ public class GluuRadiusConfigWebResource extends BaseWebResource {
     private ClientService clientService;
     
     @GET
-    @Operation(description = "Get Radius Server Configuration")
+    @Operation(summary = "Get Radius Server Configuration",description = "Get Radius Server Configuration")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = ServerConfiguration.class)),description="Success"),
         @ApiResponse(responseCode = "403", description="Gluu Radius is not installed"),
@@ -78,7 +78,7 @@ public class GluuRadiusConfigWebResource extends BaseWebResource {
     }
 
     @PUT
-    @Operation(description = "Update Radius Server Configuration")
+    @Operation(summary= "Get Radius Server Configuration", description = "Update Radius Server Configuration")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = ServerConfiguration.class)),description="Success"),
         @ApiResponse(responseCode = "403", description = "Gluu Radius is not installed"),

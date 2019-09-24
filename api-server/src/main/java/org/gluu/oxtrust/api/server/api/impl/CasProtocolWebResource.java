@@ -42,7 +42,7 @@ public class CasProtocolWebResource extends BaseWebResource {
 	private ShibbolethService shibbolethService;
 
 	@GET
-	@Operation(description = "Get the existing configuration")
+	@Operation(summary="Get existing configuration",description = "Get the existing configuration")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = CasProtocolDTO.class)), description = "Success")})
 	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response getCasConfig() {
@@ -59,7 +59,7 @@ public class CasProtocolWebResource extends BaseWebResource {
 	}
 
 	@PUT
-	@Operation(description = "Update the configuration")
+	@Operation(summary="Update the configuration",description = "Update the configuration")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = CasProtocolDTO.class)), description = "Success")})
 	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response update(@Valid CasProtocolDTO casProtocol) {
