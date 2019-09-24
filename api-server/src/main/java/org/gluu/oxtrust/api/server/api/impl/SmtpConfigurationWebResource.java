@@ -40,7 +40,7 @@ public class SmtpConfigurationWebResource extends BaseWebResource {
 	private EncryptionService encryptionService;
 
 	@GET
-	@Operation(description = "Get smtp configuration")
+	@Operation(summary="Get smtp configuration" ,description = "Get smtp configuration")
 	@ApiResponses(value = {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = SmtpConfiguration.class)), description = Constants.RESULT_SUCCESS),
 			@ApiResponse(responseCode = "500", description = "Server error") })
@@ -60,7 +60,7 @@ public class SmtpConfigurationWebResource extends BaseWebResource {
 	}
 
 	@PUT
-	@Operation(description = "Update smtp configuration")
+	@Operation(summary="Update smtp configuration", description = "Update smtp configuration")
 	@ApiResponses(value = {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = SmtpConfiguration.class)), description = Constants.RESULT_SUCCESS),
 			@ApiResponse(responseCode = "404", description = "Not found"), @ApiResponse(responseCode = "500", description = "Server error") })
@@ -81,7 +81,7 @@ public class SmtpConfigurationWebResource extends BaseWebResource {
 
 	@GET
 	@Path(ApiConstants.TEST)
-	@Operation(description = "Test smtp configuration")
+	@Operation(summary="Test smtp configuration", description = "Test smtp configuration")
 	@ApiResponses(value = {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = SmtpConfiguration.class)), description = Constants.RESULT_SUCCESS),
 			@ApiResponse(responseCode = "500", description = "Server error") })

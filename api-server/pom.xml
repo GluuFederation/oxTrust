@@ -54,7 +54,7 @@
                     <outputFileName>openapi</outputFileName>
                     <outputPath>${project.build.directory}/generated</outputPath>
                     <!--<outputFormat>JSONANDYAML</outputFormat>-->
-                    <outputFormat>YAML</outputFormat>
+                    <outputFormat>JSONANDYAML</outputFormat>
                     <resourcePackages>
                         <package>org.gluu.oxtrust.api.server.api.impl</package>
                     </resourcePackages>
@@ -68,7 +68,27 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
+			</plugin>
+			<!-- maven assembly plugin -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>3.1.1</version>
+				<executions>
+					<execution>
+						<id>package-openapi-spec</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<descriptors>
+								<descriptor>src/assembly/openapi-spec.xml</descriptor>
+							</descriptors>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
         </plugins>
 
 		<pluginManagement>

@@ -34,7 +34,7 @@ public class OxTrustJsonSettingWebResource extends BaseWebResource {
 	private AppConfiguration oxTrustappConfiguration;
 
 	@GET
-	@Operation(description = "Get json oxtrust settings")
+	@Operation(summary="Get json oxtrust settings",description = "Get json oxtrust settings")
 	@ApiResponses(value = {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = OxTrustJsonSetting.class)), description = Constants.RESULT_SUCCESS),
 			@ApiResponse(responseCode = "500", description = "Server error") })
@@ -61,7 +61,7 @@ public class OxTrustJsonSettingWebResource extends BaseWebResource {
 	}
 
 	@PUT
-	@Operation(description = "Update json oxtrust settings")
+	@Operation(summary="Update json oxtrust settings",description = "Update json oxtrust settings")
 	@ApiResponses(value = {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = OxTrustJsonSetting.class)), description = Constants.RESULT_SUCCESS),
 			@ApiResponse(responseCode = "404", description = "Not found"), @ApiResponse(responseCode = "500", description = "Server error") })

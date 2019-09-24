@@ -42,7 +42,7 @@ public class ClientWebResource extends BaseWebResource {
 	}
 
 	@GET
-	@Operation(description = "Get openid connect clients")
+	@Operation(summary= "Get openid connect clients", description = "Get openid connect clients")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = OxAuthClient[].class)), description = "Success"),
             @ApiResponse(responseCode = "500", description = "Server error")})
@@ -60,7 +60,7 @@ public class ClientWebResource extends BaseWebResource {
 
 	@GET
 	@Path(ApiConstants.INUM_PARAM_PATH + ApiConstants.SCOPES)
-	@Operation(description = "Get OIDC scopes assign to OIDC client")
+	@Operation(summary = "Get assigned OIDC client scopes", description = "Get OIDC scopes assign to OIDC client")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = Scope[].class)), description = "Success"),
             @ApiResponse(responseCode = "500", description = "Server error"),
@@ -93,7 +93,7 @@ public class ClientWebResource extends BaseWebResource {
 
 	@GET
 	@Path(ApiConstants.INUM_PARAM_PATH)
-	@Operation(description = "Get a specific OIDC client")
+	@Operation(summary = "Get OIDC client", description = "Get a specific OIDC client")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = OxAuthClient.class)), description = "Success"),
             @ApiResponse(responseCode = "500", description = "Server error")})
@@ -116,12 +116,12 @@ public class ClientWebResource extends BaseWebResource {
 
 	@GET
 	@Path(ApiConstants.SEARCH)
-	@Operation(description = "Search OIDC clients")
+	@Operation(summary = "Search OIDC clients", description = "Search OIDC clients")
 	@ApiResponses(value = {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = OxAuthClient[].class)), description = "Success"),
             @ApiResponse(responseCode = "500", description = "Server error")})
 	@ProtectedApi(scopes = { READ_ACCESS })
-	public Response searchGroups(@QueryParam(ApiConstants.SEARCH_PATTERN) @NotNull String pattern,
+	public Response searchClients(@QueryParam(ApiConstants.SEARCH_PATTERN) @NotNull String pattern,
 			@DefaultValue("1") @QueryParam(ApiConstants.SIZE) int size) {
 		log(logger, "Search client with pattern= " + pattern + " and size " + size);
 		try {
@@ -134,7 +134,7 @@ public class ClientWebResource extends BaseWebResource {
 	}
 
 	@POST
-	@Operation(description = "Add an openidconnect client")
+	@Operation(summary = "Add OIDC client",description = "Add an openidconnect client")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = OxAuthClient.class)), description = "Success"),
             @ApiResponse(responseCode = "500", description = "Server error")})
@@ -155,7 +155,7 @@ public class ClientWebResource extends BaseWebResource {
 	}
 
 	@PUT
-	@Operation(description = "Update openidconnect client")
+	@Operation(summary = "Update OIDC client", description = "Update openidconnect client")
 	@ApiResponses(value = {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = OxAuthClient.class)), description = "Success"),
             @ApiResponse(responseCode = "500", description = "Server error")})
@@ -182,7 +182,7 @@ public class ClientWebResource extends BaseWebResource {
 
 	@POST
 	@Path(ApiConstants.INUM_PARAM_PATH + ApiConstants.SCOPES + ApiConstants.SCOPE_INUM_PARAM_PATH)
-	@Operation(description = "Add scopes to OIDC client")
+	@Operation(summary = "Add OIDC client scopes", description = "Add scopes to OIDC client")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = Scope[].class)), description = "Success"),
             @ApiResponse(responseCode = "500", description = "Server error")})
@@ -214,7 +214,7 @@ public class ClientWebResource extends BaseWebResource {
 
 	@DELETE
 	@Path(ApiConstants.INUM_PARAM_PATH + ApiConstants.SCOPES + ApiConstants.SCOPE_INUM_PARAM_PATH)
-	@Operation(description = "Remove an existing scope from client")
+	@Operation(summary="Remove OIDC client scope",description = "Remove an existing scope from client")
 	@ApiResponses(value = {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = Scope[].class)), description = "Success"),
             @ApiResponse(responseCode = "500", description = "Server error")})
@@ -244,7 +244,7 @@ public class ClientWebResource extends BaseWebResource {
 
 	@DELETE
 	@Path(ApiConstants.INUM_PARAM_PATH)
-	@Operation(description = "Delete an openidconnect client")
+	@Operation(summary = "Delete OIDC client ",description = "Delete an openidconnect client")
 	@ApiResponses(value = {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = OxAuthClient[].class)), description = "Success"),
             @ApiResponse(responseCode = "500", description = "Server error")})
