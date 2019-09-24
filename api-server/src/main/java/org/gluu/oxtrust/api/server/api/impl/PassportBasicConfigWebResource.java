@@ -24,7 +24,7 @@ import java.util.Objects;
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @ApplicationScoped
-public class PassportBasciConfigWebResource extends BaseWebResource {
+public class PassportBasicConfigWebResource extends BaseWebResource {
 
 	@Inject
 	private Logger logger;
@@ -36,7 +36,7 @@ public class PassportBasciConfigWebResource extends BaseWebResource {
 	private PassportConfiguration passportConfiguration;
 
 	@GET
-	@Operation(description = "Get passport basic configuration")
+	@Operation(summary="Get passport basic configuration",description = "Get passport basic configuration")
 	@ProtectedApi(scopes = { READ_ACCESS })
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = PassportConfiguration[].class)), description = "Success"),
@@ -54,7 +54,7 @@ public class PassportBasciConfigWebResource extends BaseWebResource {
 	}
 
 	@PUT
-	@Operation(description = "Update passport basic configuration")
+	@Operation(summary="Update passport basic configuration",description = "Update passport basic configuration")
 	@ApiResponses(value = {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = PassportConfiguration[].class)), description = "Success"),
 			@ApiResponse(responseCode = "500", description = "Server error") })

@@ -32,7 +32,7 @@ public class OxtrustSettingWebResource extends BaseWebResource {
 	private ConfigurationService configurationService;
 
 	@GET
-	@Operation(description = "Get oxtrust settings")
+	@Operation(summary="Get oxtrust settings",description = "Get oxtrust settings")
 	@ApiResponses(value = {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = OxtrustSetting.class)), description = Constants.RESULT_SUCCESS),
 			@ApiResponse(responseCode = "500", description = "Server error") })
@@ -54,7 +54,7 @@ public class OxtrustSettingWebResource extends BaseWebResource {
 	}
 
 	@PUT
-	@Operation(description = "Update oxtrust settings")
+	@Operation(summary="Update oxtrust settings",description = "Update oxtrust settings")
 	@ApiResponses(value = {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = OxtrustSetting.class)), description = Constants.RESULT_SUCCESS),
 			@ApiResponse(responseCode = "404", description = "Not found"), @ApiResponse(responseCode = "500", description = "Server error") })

@@ -38,7 +38,7 @@ public class PassportProviderWebResource extends BaseWebResource {
 	private PassportService passportService;
 
 	@GET
-	@Operation(description = "List passport providers")
+	@Operation(summary="List passport providers",description = "List passport providers")
 	@ApiResponses(value = {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = Provider[].class)), description = "Success"),
 			@ApiResponse(responseCode = "500", description = "Server error") })
@@ -56,10 +56,10 @@ public class PassportProviderWebResource extends BaseWebResource {
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 		}
 	}
-
+	
 	@GET
 	@Path(ApiConstants.ID_PARAM_PATH)
-	@Operation(description = "Get passport provider by id")
+	@Operation(summary="Get passport provider by id",description = "Get passport provider by id")
 	@ApiResponses(value = {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = Provider.class)), description = "Success"),
 			@ApiResponse(responseCode = "500", description = "Server error") })
@@ -86,7 +86,7 @@ public class PassportProviderWebResource extends BaseWebResource {
 	}
 
 	@POST
-	@Operation(description = "Add passport provider")
+	@Operation(summary="Add passport provider",description = "Add passport provider")
 	@ApiResponses(value = {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = Provider.class)), description = "Success"),
 			@ApiResponse(responseCode = "500", description = "Server error") })
@@ -116,7 +116,7 @@ public class PassportProviderWebResource extends BaseWebResource {
 	}
 
 	@PUT
-	@Operation(description = "Update passport provider")
+	@Operation(summary="Update passport provider",description = "Update passport provider")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = Provider.class)), description = "Success"),
 			@ApiResponse(responseCode = "500", description = "Server error") })
@@ -161,7 +161,7 @@ public class PassportProviderWebResource extends BaseWebResource {
 
 	@DELETE
 	@Path(ApiConstants.ID_PARAM_PATH)
-	@Operation(description = "Delete a passport provider")
+	@Operation(summary="Delete passport provider",description = "Delete a passport provider")
 	@ApiResponses(value = {
 	        @ApiResponse(responseCode = "200", description = "Success"),
 			@ApiResponse(responseCode = "500", description = "Server error") })

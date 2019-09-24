@@ -34,9 +34,9 @@ public class OxAuthJsonSettingWebResource extends BaseWebResource {
 	private String oxAuthDynamicConfigJson;
 
 	@GET
-	@Operation(summary = "Get json oxauth settings",
+	@Operation(summary = "Get json oxauth settings", description = "Gets oxAuth configuration in JSON format",
             responses = {
-                    @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = OxAuthJsonConfiguration.class))),
+                    @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = OxAuthJsonConfiguration.class)), description=Constants.RESULT_SUCCESS),
                     @ApiResponse(responseCode = "500", description = "Server error")
             }
     )
@@ -55,7 +55,7 @@ public class OxAuthJsonSettingWebResource extends BaseWebResource {
 	}
 
 	@PUT
-	@Operation(summary = "Update json oxauth settings")
+	@Operation(summary = "Update json oxauth settings", description="Updates the oxAuth JSON configuration")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", content = @Content(
                     schema = @Schema(implementation = OxAuthJsonConfiguration.class)

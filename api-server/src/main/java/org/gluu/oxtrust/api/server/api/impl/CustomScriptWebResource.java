@@ -44,7 +44,7 @@ public class CustomScriptWebResource extends BaseWebResource {
 	}
 
 	@GET
-	@Operation(description = "Get all custom scripts")
+	@Operation(summary = "Get all custom scripts", description = "Get all custom scripts")
 	@ApiResponses(value = {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = CustomScript[].class)), description = "Success"),
             @ApiResponse(responseCode = "500", description = "Server error")})
@@ -62,7 +62,7 @@ public class CustomScriptWebResource extends BaseWebResource {
 
 	@GET
 	@Path(ApiConstants.TYPE_PATH + ApiConstants.TYPE_PARAM_PATH)
-	@Operation(description = "Get person authentications scripts")
+	@Operation(summary = "Get person auth scripts", description = "Get person authentications scripts")
 	@ApiResponses(value = {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = CustomScript[].class)), description = "Success"),
             @ApiResponse(responseCode = "500", description = "Server error")})
@@ -87,7 +87,7 @@ public class CustomScriptWebResource extends BaseWebResource {
 
 	@GET
 	@Path(ApiConstants.INUM_PARAM_PATH)
-	@Operation(description = "Get scripts by inum")
+	@Operation(summary="Get scripts by inum",description = "Get scripts by inum")
 	@ApiResponses(value = {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = CustomScript.class)), description = "Success"),
             @ApiResponse(responseCode = "500", description = "Server error")})
@@ -108,7 +108,7 @@ public class CustomScriptWebResource extends BaseWebResource {
 	}
 
 	@POST
-	@Operation(description = "Add new custom script")
+	@Operation(summary = "Add new custom script", description = "Add new custom script")
 	@ApiResponses(value = {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = CustomScript.class)), description = "Success"),
             @ApiResponse(responseCode = "500", description = "Server error")})
@@ -134,7 +134,7 @@ public class CustomScriptWebResource extends BaseWebResource {
 	}
 
 	@PUT
-	@Operation(description = "Update custom script")
+	@Operation(summary = "Update custom script", description = "Update custom script")
 	@ApiResponses(value = {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = CustomScript.class)), description = "Success"),
             @ApiResponse(responseCode = "500", description = "Server error")})
@@ -160,7 +160,7 @@ public class CustomScriptWebResource extends BaseWebResource {
 
 	@DELETE
 	@Path(ApiConstants.INUM_PARAM_PATH)
-	@Operation(description = "Delete an custom script")
+	@Operation(summary = "Delete custom script", description = "Delete an custom script")
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Success"),
 			@ApiResponse(responseCode = "500", description = "Server error") })
 	@ProtectedApi(scopes = { WRITE_ACCESS })
