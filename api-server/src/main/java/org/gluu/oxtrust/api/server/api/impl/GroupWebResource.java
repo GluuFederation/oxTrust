@@ -273,14 +273,14 @@ public class GroupWebResource extends BaseWebResource {
 		}
 	}
 
-	/**
-	 * What this operation does is unclear. We will comment it out and re-evaluate
-	@DELETE
-	@ProtectedApi(scopes = { WRITE_ACCESS })
-	public Response deleteGroups() {
-		return Response.status(Response.Status.UNAUTHORIZED).build();
-	}
-	*/
+	
+	//What this operation does is unclear. We will comment it out and re-evaluate
+	//@DELETE
+	//@ProtectedApi(scopes = { WRITE_ACCESS })
+	//public Response deleteGroups() {
+	//	return Response.status(Response.Status.UNAUTHORIZED).build();
+	//}
+	
 
 	@DELETE
 	@Operation(summary="Delete group member",description="Delete group member")
