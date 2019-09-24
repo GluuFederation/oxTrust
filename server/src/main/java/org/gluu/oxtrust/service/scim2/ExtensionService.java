@@ -56,8 +56,8 @@ public class ExtensionService {
 					if ((attribute.getOxSCIMCustomAttribute() != null) && attribute.getOxSCIMCustomAttribute()) {
 						// first non-null check is needed because certain entries do not have the
 						// multivalue attribute set
-						boolean multi = attribute.getOxMultivaluedAttribute() != null
-								&& attribute.getOxMultivaluedAttribute();
+						boolean multi = attribute.getOxMultiValuedAttribute() != null
+								&& attribute.getOxMultiValuedAttribute();
 
 						ExtensionField field = new ExtensionField();
 						field.setDescription(attribute.getDescription());

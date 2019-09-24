@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
@@ -32,7 +33,6 @@ import org.gluu.service.cdi.async.Asynchronous;
 import org.gluu.service.cdi.event.Scheduled;
 import org.gluu.service.timer.event.TimerEvent;
 import org.gluu.service.timer.schedule.TimerSchedule;
-import org.gluu.util.StringHelper;
 import org.slf4j.Logger;
 
 /**
@@ -98,76 +98,80 @@ public class EntityIDMonitoringService {
 	public void process() {
 		log.trace("Starting entityId monitoring process.");
 		log.trace("EVENT_METADATA_ENTITY_ID_UPDATE Starting");
-		for (GluuSAMLTrustRelationship tr : trustService.getAllTrustRelationships()) {
-			log.trace("Evaluating TR " + tr.getDn());
-			boolean meatadataAvailable = tr.getSpMetaDataFN() != null && StringHelper.isNotEmpty(tr.getSpMetaDataFN());
-			log.trace("meatadataAvailable:" + meatadataAvailable);
-			boolean correctType = trustService.getTrustContainerFederation(tr) == null;
-			log.trace("correctType:" + correctType);
-			boolean isValidated = GluuValidationStatus.SUCCESS.equals(tr.getValidationStatus());
-			log.trace("isValidated:" + isValidated);
-			if (meatadataAvailable && correctType && isValidated) {
-				String idpMetadataFolder = appConfiguration.getShibboleth3IdpRootDir() + File.separator
-						+ Shibboleth3ConfService.SHIB3_IDP_METADATA_FOLDER + File.separator;
-				File metadataFile = new File(idpMetadataFolder + tr.getSpMetaDataFN());
-				List<String> entityIds = SAMLMetadataParser.getEntityIdFromMetadataFile(metadataFile);
-
-				log.trace("entityIds from metadata: " + serviceUtil.iterableToString(entityIds));
-				Set<String> entityIdSet = new TreeSet<String>();
-
-				if (entityIds != null && !entityIds.isEmpty()) {
-					Set<String> duplicatesSet = new TreeSet<String>();
-					for (String entityId : entityIds) {
-						if (!entityIdSet.add(entityId)) {
-							duplicatesSet.add(entityId);
-						}
-					}
-				}
-
-				log.trace("unique entityIds: " + serviceUtil.iterableToString(entityIdSet));
-				Collection<String> disjunction = CollectionUtils.disjunction(entityIdSet, tr.getGluuEntityId());
-				log.trace("entityIds disjunction: " + serviceUtil.iterableToString(disjunction));
-
+		for (GluuSAMLTrustRelationship tr : trustService.getAllTrustRelationships().stream()
+				.filter(e -> e.isFederation()).collect(Collectors.toList())) {
+			log.trace("###############################CURRENT TR " + tr.getInum());
+			log.trace("CURRENT TR " + tr.getInum());
+			String idpMetadataFolder = appConfiguration.getShibboleth3IdpRootDir() + File.separator
+					+ Shibboleth3ConfService.SHIB3_IDP_METADATA_FOLDER + File.separator;
+			File metadataFile = new File(idpMetadataFolder + tr.getSpMetaDataFN());
+			List<String> entityIds = SAMLMetadataParser.getEntityIdFromMetadataFile(metadataFile);
+			if (entityIds != null && !entityIds.isEmpty()) {
+				log.trace("EntityIds from metadata: " + serviceUtil.iterableToString(entityIds));
+				Set<String> fromFileEntityIds = new TreeSet<String>(
+						entityIds.stream().distinct().collect(Collectors.toList()));
+				log.trace("Unique entityIds: " + serviceUtil.iterableToString(fromFileEntityIds));
+				Collection<String> disjunction = CollectionUtils.disjunction(fromFileEntityIds, tr.getGluuEntityId());
+				log.trace("EntityIds disjunction: " + serviceUtil.iterableToString(disjunction));
 				if (!disjunction.isEmpty()) {
-					log.trace("entityIds disjunction is not empty. Somthing has changed. Processing further.");
-					tr.setGluuEntityId(entityIdSet);
-					if (tr.isFederation()) {
-						List<GluuSAMLTrustRelationship> parts = trustService.getDeconstructedTrustRelationships(tr);
-						for (GluuSAMLTrustRelationship part : parts) {
-							log.trace("Processing TR part: " + part.getDn());
-							boolean isActive = part.getStatus() != null && GluuStatus.ACTIVE.equals(part.getStatus());
-							log.trace("isActive:" + isActive);
-							boolean entityIdPresent = entityIdSet != null && entityIdSet.contains(part.getEntityId());
-							log.trace("entityIdPresent:" + entityIdPresent);
-							boolean previouslyDisabled = part.getValidationLog() != null && part.getValidationLog()
-									.contains(ENTITY_ID_VANISHED_MESSAGE + " : " + part.getEntityId());
-							log.trace("previouslyDisabled:" + previouslyDisabled);
-							if (isActive && !entityIdPresent) {
-								log.trace("no entityId found for part : " + part.getDn());
-								part.setStatus(GluuStatus.INACTIVE);
-								List<String> log = new ArrayList<String>();
-								log.add(ENTITY_ID_VANISHED_MESSAGE + " : " + part.getEntityId());
-								part.setValidationLog(log);
-								trustService.updateTrustRelationship(part);
+					log.trace("EntityIds disjunction is not empty. Somthing has changed. Processing further.");
+					tr.setGluuEntityId(fromFileEntityIds);
+					List<GluuSAMLTrustRelationship> federatedTrs = trustService.getDeconstructedTrustRelationships(tr);
+					for (GluuSAMLTrustRelationship federatedTr : federatedTrs) {
+						log.trace("Processing TR part: " + federatedTr.getDn());
+						boolean isActive = federatedTr.getStatus() != null
+								&& GluuStatus.ACTIVE.equals(federatedTr.getStatus());
+						log.trace("isActive:" + isActive);
+						boolean entityIdPresent = fromFileEntityIds != null
+								&& fromFileEntityIds.contains(federatedTr.getEntityId());
+						log.trace("entityIdPresent:" + entityIdPresent);
+						boolean previouslyDisabled = federatedTr.getValidationLog() != null
+								&& federatedTr.getValidationLog()
+										.contains(ENTITY_ID_VANISHED_MESSAGE + " : " + federatedTr.getEntityId());
+						log.trace("previouslyDisabled:" + previouslyDisabled);
+						if (isActive && !entityIdPresent) {
+							log.trace("no entityId found for part : " + federatedTr.getDn());
+							federatedTr.setStatus(GluuStatus.INACTIVE);
+							List<String> log = new ArrayList<String>();
+							log.add(ENTITY_ID_VANISHED_MESSAGE + " : " + federatedTr.getEntityId());
+							federatedTr.setValidationLog(log);
+						} else if (entityIdPresent && previouslyDisabled) {
+							log.trace("entityId found for part : " + federatedTr.getDn());
+							federatedTr.setStatus(GluuStatus.ACTIVE);
+							federatedTr.setValidationStatus(GluuValidationStatus.SUCCESS);
+							List<String> log = federatedTr.getValidationLog();
+							List<String> updatedLog = new ArrayList<String>(log);
+							updatedLog.remove(ENTITY_ID_VANISHED_MESSAGE + " : " + federatedTr.getEntityId());
+							if (updatedLog.isEmpty()) {
+								updatedLog = null;
 							}
-							if (entityIdPresent && previouslyDisabled) {
-								log.trace("entityId found for part : " + part.getDn());
-								part.setStatus(GluuStatus.ACTIVE);
-								List<String> log = part.getValidationLog();
-								List<String> updatedLog = new ArrayList<String>(log);
-								updatedLog.remove(ENTITY_ID_VANISHED_MESSAGE + " : " + part.getEntityId());
-								if (updatedLog.isEmpty()) {
-									updatedLog = null;
-								}
-								part.setValidationLog(updatedLog);
-								trustService.updateTrustRelationship(part);
+							federatedTr.setValidationLog(updatedLog);
+						} else {
+							if (federatedTr.getValidationStatus().equals(GluuValidationStatus.FAILED)) {
+								federatedTr.setStatus(GluuStatus.ACTIVE);
+								federatedTr.setValidationStatus(GluuValidationStatus.SUCCESS);
 							}
 						}
+						trustService.updateTrustRelationship(federatedTr);
 					}
-
+					tr.setStatus(GluuStatus.ACTIVE);
+					tr.setValidationStatus(GluuValidationStatus.SUCCESS);
 					trustService.updateTrustRelationship(tr);
 				}
+			} else {
+				tr.setStatus(GluuStatus.INACTIVE);
+				tr.setValidationStatus(GluuValidationStatus.FAILED);
+				List<GluuSAMLTrustRelationship> federatedTrs = trustService.getDeconstructedTrustRelationships(tr);
+				if (federatedTrs != null && !federatedTrs.isEmpty()) {
+					federatedTrs.stream().forEach(e -> {
+						e.setValidationStatus(GluuValidationStatus.FAILED);
+						e.setStatus(GluuStatus.INACTIVE);
+						trustService.updateTrustRelationship(e);
+					});
+				}
+				trustService.updateTrustRelationship(tr);
 			}
+
 		}
 	}
 

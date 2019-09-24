@@ -41,7 +41,7 @@ public class ScopeWebResource extends BaseWebResource {
 	}
 
 	@GET
-	@Operation(description = "Get all scopes")
+	@Operation(summary="Get all scopes",description = "Get all scopes")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = Scope[].class)), description = "Success"),
             @ApiResponse(responseCode = "500", description = "Server error")})
@@ -58,7 +58,7 @@ public class ScopeWebResource extends BaseWebResource {
 
 	@GET
 	@Path(ApiConstants.INUM_PARAM_PATH)
-	@Operation(description = "Get a specific openid connect scope")
+	@Operation(summary="Get openid scope",description = "Get a specific openid connect scope")
 	@ApiResponses(value = {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = Scope.class)), description = "Success"),
 			@ApiResponse(responseCode = "500", description = "Server error") })
@@ -80,7 +80,7 @@ public class ScopeWebResource extends BaseWebResource {
 
 	@GET
 	@Path(ApiConstants.SEARCH)
-	@Operation(description = "Search openid connect scopes")
+	@Operation(summary="Search openid connect scopes" ,description = "Search openid connect scopes")
 	@ApiResponses(value = {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = Scope[].class)), description = "Success"),
 			@ApiResponse(responseCode = "500", description = "Server error") })
@@ -98,7 +98,7 @@ public class ScopeWebResource extends BaseWebResource {
 	}
 
 	@POST
-	@Operation(description = "Add an openidconnect scope")
+	@Operation(summary="Add openid connect scope",description = "Add an openidconnect scope")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = Scope.class)), description = "Success"),
 			@ApiResponse(responseCode = "500", description = "Server error") })
@@ -119,7 +119,7 @@ public class ScopeWebResource extends BaseWebResource {
 	}
 
 	@PUT
-	@Operation(description = "Update openidconect scope")
+	@Operation(summary="Update openid connect scope",description = "Update openidconect scope")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = Scope.class)), description = "Success"),
 			@ApiResponse(responseCode = "500", description = "Server error") })
@@ -146,7 +146,7 @@ public class ScopeWebResource extends BaseWebResource {
 
 	@GET
 	@Path(ApiConstants.INUM_PARAM_PATH + ApiConstants.CLAIMS)
-	@Operation(description = "List all claims of a scope")
+	@Operation(summary="Get scope claims" ,description = "List all claims of a scope")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = GluuAttribute[].class)), description = "Success"),
 			@ApiResponse(responseCode = "500", description = "Server error") })
@@ -175,7 +175,7 @@ public class ScopeWebResource extends BaseWebResource {
 
 	@DELETE
 	@Path(ApiConstants.INUM_PARAM_PATH)
-	@Operation(description = "Delete an openidconnect scope")
+	@Operation(summary="Delete openid connect scope" ,description = "Delete an openidconnect scope")
 	@ApiResponses(value = {
 	        @ApiResponse(responseCode = "200", description = "Success"),
 			@ApiResponse(responseCode = "500", description = "Server error") })
@@ -196,9 +196,13 @@ public class ScopeWebResource extends BaseWebResource {
 		}
 	}
 
+	/**
+	 * We do not know exactly what this function is supposed to achieve 
+	 * so we comment it out for now 
 	@DELETE
 	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response deleteScopes() {
 		return Response.status(Response.Status.UNAUTHORIZED).build();
 	}
+	*/
 }

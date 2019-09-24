@@ -36,7 +36,7 @@ public class SectorIdentifierWebResource extends BaseWebResource {
 	}
 
 	@GET
-	@Operation(description = "Get all sectors identifiers")
+	@Operation(summary="Get all sector identifiers",description = "Get all sectors identifiers")
 	@ApiResponses(value = {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = OxAuthSectorIdentifier[].class)), description = "Success"),
 			@ApiResponse(responseCode = "500", description = "Server error") })
@@ -52,8 +52,8 @@ public class SectorIdentifierWebResource extends BaseWebResource {
 	}
 
 	@GET
-	@Path(ApiConstants.ID_PARAM_PATH)
-	@Operation(description = "Get a sector identifier")
+	@Path(ApiConstants.SECTOR + ApiConstants.ID_PARAM_PATH)
+	@Operation(summary="Get sector identifier", description = "Get a sector identifier")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = OxAuthSectorIdentifier.class)), description = "Success"),
 			@ApiResponse(responseCode = "500", description = "Server error") })
@@ -76,7 +76,7 @@ public class SectorIdentifierWebResource extends BaseWebResource {
 
 	@GET
 	@Path(ApiConstants.SEARCH)
-	@Operation(description = "Search sectors identifiers")
+	@Operation(summary="Search sector identifiers",description = "Search sectors identifiers")
 	@ApiResponses(value = {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = OxAuthSectorIdentifier[].class)), description = "Success"),
 			@ApiResponse(responseCode = "500", description = "Server error") })
@@ -95,7 +95,7 @@ public class SectorIdentifierWebResource extends BaseWebResource {
 	}
 
 	@POST
-	@Operation(description = "Add a sector identifier")
+	@Operation(summary="Add sector identifier" ,description = "Add a sector identifier")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = OxAuthSectorIdentifier.class)), description = "Success"),
 			@ApiResponse(responseCode = "500", description = "Server error") })
@@ -118,7 +118,7 @@ public class SectorIdentifierWebResource extends BaseWebResource {
 	}
 
 	@PUT
-	@Operation(description = "Update sector identifier")
+	@Operation(summary="Update sector identifier",description = "Update sector identifier")
 	@ApiResponses(value = {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = OxAuthSectorIdentifier.class)), description = "Success"),
 			@ApiResponse(responseCode = "500", description = "Server error") })
@@ -147,7 +147,7 @@ public class SectorIdentifierWebResource extends BaseWebResource {
 
 	@DELETE
 	@Path(ApiConstants.INUM_PARAM_PATH)
-	@Operation(description = "Delete a sector identifier")
+	@Operation(summary="Delete sector identifier",description = "Delete a sector identifier")
 	@ApiResponses(value = {
 	        @ApiResponse(responseCode = "200", description = "Success"),
 			@ApiResponse(responseCode = "500", description = "Server error") })

@@ -40,9 +40,11 @@ public class SubFilterGenerator {
      * @param attrType The attribute definition type of the attribute
      * @param type See compvalue in ScimFilter.g4 grammar file
      * @param operator The operator
+     * @param multiValued Whether the attribute referenced in parameter is multivalued or not
      * @return The filter built after processing this atomic expression (accompanied with an error string if any)
      */
-    public Pair<Filter, String> build(String subAttribute, String attribute, String compValue, Type attrType, CompValueType type, ScimOperator operator) {
+    public Pair<Filter, String> build(String subAttribute, String attribute, String compValue, Type attrType,
+                                      CompValueType type, ScimOperator operator, boolean multiValued) {
 
         Filter filth = null;
         error = null;
@@ -62,18 +64,18 @@ public class SubFilterGenerator {
             }
         } else if (Type.STRING.equals(attrType) || Type.REFERENCE.equals(attrType)) {
             compValue = compValue.substring(1, compValue.length() - 1);     //Drop double quotes
-            filth = getSubFilterString(subAttribute, attribute, StringEscapeUtils.unescapeJson(compValue), operator);
+            filth = getSubFilterString(subAttribute, attribute, StringEscapeUtils.unescapeJson(compValue), operator, multiValued);
 
         } else if (Type.INTEGER.equals(attrType) || Type.DECIMAL.equals(attrType)) {
-            filth = getSubFilterNumeric(subAttribute, attribute, compValue, operator, attrType);
+            filth = getSubFilterNumeric(subAttribute, attribute, compValue, operator, attrType, multiValued);
 
         } else if (Type.BOOLEAN.equals(attrType)) {
-            filth = getSubFilterBoolean(subAttribute, attribute, compValue, operator);
+            filth = getSubFilterBoolean(subAttribute, attribute, compValue, operator, multiValued);
 
         } else if (Type.DATETIME.equals(attrType)) {
             compValue = compValue.substring(1, compValue.length() - 1);
             //Dates dol not have characters to escape...
-            filth = getSubFilterDateTime(subAttribute, attribute, compValue, operator);
+            filth = getSubFilterDateTime(subAttribute, attribute, compValue, operator, multiValued);
 
         }
         log.trace("getSubFilter. {}", Optional.ofNullable(filth).map(Filter::toString).orElse(null));
@@ -81,7 +83,7 @@ public class SubFilterGenerator {
 
     }
 
-    private Filter getSubFilterString(String subAttribute, String attribute, String value, ScimOperator operator) {
+    private Filter getSubFilterString(String subAttribute, String attribute, String value, ScimOperator operator, boolean multivalued) {
 
         Filter subfilter = null;
         log.trace("getSubFilterString");
@@ -92,7 +94,7 @@ public class SubFilterGenerator {
                 if (subAttribute == null) {
                     //attribute=value
                     //attribute="value"
-                    subfilter = Filter.createEqualityFilter(attribute, value);
+                    subfilter = Filter.createEqualityFilter(attribute, value).multiValued(multivalued);
                 } else {
                     //attribute=*"subattribute":"value"*
                     //attribute LIKE "%\"subAttribute\":\"value\"%"
@@ -178,7 +180,7 @@ public class SubFilterGenerator {
 
     }
 
-    private Filter getSubFilterNumeric(String subAttribute, String attribute, String value, ScimOperator operator, Type attrType) {
+    private Filter getSubFilterNumeric(String subAttribute, String attribute, String value, ScimOperator operator, Type attrType, boolean multivalued) {
 
         Filter subfilter = null;
         Object objValue;
@@ -198,11 +200,11 @@ public class SubFilterGenerator {
             case NOT_EQUAL:
                 if (subAttribute == null) {
                     //attribute=value
-                    subfilter = Filter.createEqualityFilter(attribute, objValue);
+                    subfilter = Filter.createEqualityFilter(attribute, objValue).multiValued(multivalued);
                 } else {
                     //attribute=*"subAttribute":value*
                     //attribute LIKE "%\"subAttribute\":value%"
-                    String sub = String.format("\"%s\":%s", attribute, objValue.toString());
+                    String sub = String.format("\"%s\":%s", subAttribute, value);
                     subfilter = Filter.createSubstringFilter(attribute, null, new String[]{ sub }, null);
                 }
 
@@ -247,7 +249,7 @@ public class SubFilterGenerator {
 
     }
 
-    private Filter getSubFilterBoolean(String subAttribute, String attribute, String value, ScimOperator operator) {
+    private Filter getSubFilterBoolean(String subAttribute, String attribute, String value, ScimOperator operator, boolean multivalued) {
 
         Filter subfilter = null;
         log.trace("getSubFilterBoolean");
@@ -255,7 +257,7 @@ public class SubFilterGenerator {
         if (operator.equals(ScimOperator.EQUAL) || operator.equals(ScimOperator.NOT_EQUAL)) {
             if (subAttribute == null) {
                 //attribute=value
-                subfilter = Filter.createEqualityFilter(attribute, Boolean.valueOf(value));
+                subfilter = Filter.createEqualityFilter(attribute, Boolean.valueOf(value)).multiValued(multivalued);
             } else {
                 //attribute=*"subAttribute":value*
                 //attribute LIKE "%\"subAttribute\":value%"
@@ -271,7 +273,7 @@ public class SubFilterGenerator {
 
     }
 
-    private Filter getSubFilterDateTime(String subAttribute, String attribute, String value, ScimOperator operator) {
+    private Filter getSubFilterDateTime(String subAttribute, String attribute, String value, ScimOperator operator, boolean multivalued) {
 
         Filter subfilter = null;
         log.trace("getSubFilterDateTime");
@@ -288,11 +290,11 @@ public class SubFilterGenerator {
                 if (subAttribute == null) {
                     //attribute=stringDate
                     //attribute="stringDate"
-                    subfilter = Filter.createEqualityFilter(attribute, stringDate);
+                    subfilter = Filter.createEqualityFilter(attribute, stringDate).multiValued(multivalued);
                 } else {
                     //attribute=*"subAttribute":stringDate*
                     //attribute LIKE "%\"subAttribute\":\"stringDate\"%"
-                    String sub = String.format("\"%s\":%s", attribute, stringDate);
+                    String sub = String.format("\"%s\":%s", subAttribute, stringDate);
                     subfilter = Filter.createSubstringFilter(attribute, null, new String[]{ sub }, null);
                 }
 

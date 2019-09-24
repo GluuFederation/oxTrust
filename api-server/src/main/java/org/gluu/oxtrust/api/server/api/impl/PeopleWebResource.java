@@ -39,7 +39,7 @@ public class PeopleWebResource extends BaseWebResource {
 	}
 
 	@GET
-	@Operation(description = "Get people")
+	@Operation(summary="Get people",description = "Get people")
 	@ApiResponses(value = {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = GluuPersonApi[].class)), description = "Success"),
 			@ApiResponse(responseCode = "500", description = "Server error") })
@@ -57,12 +57,12 @@ public class PeopleWebResource extends BaseWebResource {
 
 	@GET
 	@Path(ApiConstants.SEARCH)
-	@Operation(description = "Search person")
+	@Operation(summary="Search person",description = "Search person")
 	@ApiResponses(value = {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = GluuPersonApi[].class)), description = "Success"),
 			@ApiResponse(responseCode = "500", description = "Server error") })
 	@ProtectedApi(scopes = { READ_ACCESS })
-	public Response searchGroups(@QueryParam(ApiConstants.SEARCH_PATTERN) @NotNull String pattern) {
+	public Response searchPeople(@QueryParam(ApiConstants.SEARCH_PATTERN) @NotNull String pattern) {
 		try {
 			log(logger, "Search person with pattern= " + pattern);
 			List<GluuCustomPerson> groups = personService.searchPersons(pattern);
@@ -75,7 +75,7 @@ public class PeopleWebResource extends BaseWebResource {
 
 	@GET
 	@Path(ApiConstants.INUM_PARAM_PATH)
-	@Operation(description = "Get a person by inum")
+	@Operation(summary="Get person by inum",description = "Get a person by inum")
 	@ApiResponses(value = {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = GluuPersonApi.class)), description = "Success"),
 			@ApiResponse(responseCode = "500", description = "Server error") })
@@ -97,7 +97,7 @@ public class PeopleWebResource extends BaseWebResource {
 	}
 
 	@POST
-	@Operation(description = "Add a person")
+	@Operation(summary="Add person", description = "Add a person")
 	@ApiResponses(value = {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = GluuPersonApi.class)), description = "Success"),
 			@ApiResponse(responseCode = "500", description = "Server error") })
@@ -119,12 +119,12 @@ public class PeopleWebResource extends BaseWebResource {
 	}
 
 	@PUT
-	@Operation(description = "Update a person")
+	@Operation(summary="Update person", description = "Update a person")
 	@ApiResponses(value = {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = GluuPersonApi.class)), description = "Success"),
 			@ApiResponse(responseCode = "500", description = "Server error") })
 	@ProtectedApi(scopes = { WRITE_ACCESS })
-	public Response updateGroup(GluuPersonApi person) {
+	public Response updatePerson(GluuPersonApi person) {
 		String inum = person.getInum();
 		log(logger, "Update group " + inum);
 		try {
@@ -149,7 +149,7 @@ public class PeopleWebResource extends BaseWebResource {
 
 	@DELETE
 	@Path(ApiConstants.INUM_PARAM_PATH)
-	@Operation(description = "Delete a person")
+	@Operation(summary="Delete person",description = "Delete a person")
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Success"),
 			@ApiResponse(responseCode = "500", description = "Server error") })
 	@ProtectedApi(scopes = { WRITE_ACCESS })
@@ -169,11 +169,15 @@ public class PeopleWebResource extends BaseWebResource {
 		}
 	}
 
+	/**
+	 * It is unclear what this API call does. We will comment it for now 
+	 * and re-evaluate. 
 	@DELETE
 	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response deletePeople() {
 		return Response.status(Response.Status.UNAUTHORIZED).build();
 	}
+	*/
 
 	private List<GluuPersonApi> convert(List<GluuCustomPerson> persons) {
 		List<GluuPersonApi> result = new ArrayList<GluuPersonApi>();

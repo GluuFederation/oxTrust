@@ -36,7 +36,7 @@ public class AuthenticationMethodWebResource extends BaseWebResource {
 	}
 
     @GET
-    @Operation(description = "Get current authentication methods")
+    @Operation(summary="Get current authentication methods", description = "Get current authentication methods")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", content = @Content(
                     schema = @Schema(implementation = AuthenticationMethod.class)
@@ -58,7 +58,7 @@ public class AuthenticationMethodWebResource extends BaseWebResource {
 	}
 
 	@PUT
-	@Operation(description = "Update authentication methods")
+	@Operation(summary = "Update authentication methods", description = "Update authentication methods")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = AuthenticationMethod.class)), description = Constants.RESULT_SUCCESS),
             @ApiResponse(responseCode = "500", description = "Server error")})
