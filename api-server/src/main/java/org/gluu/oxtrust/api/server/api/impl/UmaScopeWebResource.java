@@ -161,13 +161,12 @@ public class UmaScopeWebResource extends BaseWebResource {
 		}
 	}
 
-	/**
-	 * It is unclear what this method does. So we comment it until we find out 
-	 * what it is supposed to do.
-	@DELETE
-	@ProtectedApi(scopes = { WRITE_ACCESS })
-	public Response deleteAllUmaScopes() {
-		return Response.status(Response.Status.UNAUTHORIZED).build();
-	}
-	*/
+	//
+	//It is unclear what this method does. So we comment it until we find out 
+	// what it is supposed to do.
+	//@DELETE
+	//@ProtectedApi(scopes = { WRITE_ACCESS })
+	//public Response deleteAllUmaScopes() {
+	//	return Response.status(Response.Status.UNAUTHORIZED).build();
+	//}
 }
