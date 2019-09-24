@@ -185,13 +185,13 @@ input[submit] {
 															<h:selectOneMenu
 																styleClass="rounded form-control FederationWizard"
 																value="#{_trustRelationship.gluuContainerFederation}"
-																id="spMetaDataSourceTypeFederationId"
-																required="true">
+																id="spMetaDataSourceTypeFederationId" required="true">
 																<f:selectItem noSelectionOption="true"
 																	itemLabel="Select Federation" />
 																<f:selectItems
 																	value="#{_trustRelationshipAction.getAllOtherFederations(_trustRelationship.inum)}"
-																	var="_type" itemLabel="#{_type.displayName}" itemValue="#{_type.dn}" />
+																	var="_type" itemLabel="#{_type.displayName}"
+																	itemValue="#{_type.dn}" />
 																<a4j:ajax event="change"
 																	render="FederationWizardEntitySelection, EntityIds"
 																	limitRender="true" />
@@ -275,8 +275,7 @@ input[submit] {
 										</ox:decorate>
 									</h:panelGroup>
 									<h:panelGroup id="spSingleGroup">
-										<h:panelGroup id="spSingleGroupId"
-											rendered="#{_trustRelationship.entityType.displayName eq 'Single SP'}">
+										<h:panelGroup id="spSingleGroupId">
 											<h:panelGroup id="LogoutUrlGroupId">
 												<ox:decorate id="LogoutUrlId"
 													label="#{msg['trustmanager.spLogoutURL']}">
@@ -410,7 +409,8 @@ input[submit] {
 								<ui:decorate
 									template="/WEB-INF/incl/trustmanager/associatedContactsForm.xhtml" />
 							</b:tab>
-							<b:tab title="" content-disabled="true" rendered="#{_trustRelationship.isFederation()}">
+							<b:tab title="" content-disabled="true"
+								rendered="#{_trustRelationship.isFederation()}">
 								<h:panelGroup>
 									<a4j:commandLink id="breakFederation"
 										value="Federated Websites"
@@ -426,7 +426,8 @@ input[submit] {
 					</b:panel>
 				</div>
 				<div class="col-sm-4 col-lg-4" style="padding: 0px;">
-					<b:panel title="Release additional attributes" look="success" collapsible="false">
+					<b:panel title="Release additional attributes" look="success"
+						collapsible="false">
 						<b:tabView id="attributeTabPanelId" pills="true"
 							contentStyle="border: 1px solid #337ab7; padding:10px; border-radius:5px;">
 							<ui:param name="_list"

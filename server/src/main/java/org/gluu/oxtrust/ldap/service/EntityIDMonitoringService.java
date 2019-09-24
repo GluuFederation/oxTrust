@@ -111,6 +111,7 @@ public class EntityIDMonitoringService {
 				Set<String> fromFileEntityIds = new TreeSet<String>(
 						entityIds.stream().distinct().collect(Collectors.toList()));
 				log.trace("Unique entityIds: " + serviceUtil.iterableToString(fromFileEntityIds));
+				log.trace("Value of:" + fromFileEntityIds);
 				Collection<String> disjunction = CollectionUtils.disjunction(fromFileEntityIds, tr.getGluuEntityId());
 				log.trace("EntityIds disjunction: " + serviceUtil.iterableToString(disjunction));
 				if (!disjunction.isEmpty()) {
