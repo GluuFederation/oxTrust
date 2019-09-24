@@ -28,6 +28,7 @@ import org.gluu.model.GluuAttribute;
 import org.gluu.model.SelectableEntity;
 import org.gluu.model.custom.script.CustomScriptType;
 import org.gluu.model.custom.script.model.CustomScript;
+import org.gluu.oxauth.model.common.ScopeType;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.OxTrustAuditService;
 import org.gluu.oxtrust.ldap.service.ScopeService;
@@ -72,62 +73,59 @@ public class UpdateScopeAction implements Serializable {
 
 	private Scope scope;
 
-	private List<DisplayNameEntry> claims;
-
+	private List<DisplayNameEntry> claims = new ArrayList<>();
 	private String searchAvailableClaimPattern;
-
 	private String oldSearchAvailableClaimPattern;
-
-	private List<GluuAttribute> availableClaims;
-
+	private List<GluuAttribute> availableClaims = new ArrayList<>();
 	@Inject
 	private ScopeService scopeService;
-
 	@Inject
 	private LookupService lookupService;
-
 	@Inject
 	private AttributeService attributeService;
-
 	@Inject
 	private CustomScriptService customScriptService;
-
 	@Inject
 	private Identity identity;
-
 	@Inject
 	private OxTrustAuditService oxTrustAuditService;
-
 	private List<CustomScript> dynamicScripts;
-	private List<SelectableEntity<CustomScript>> availableDynamicScripts;
+	private List<SelectableEntity<CustomScript>> availableDynamicScripts = new ArrayList<>();
 
 	public String add() throws Exception {
 		if (this.scope != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
-
 		this.update = false;
 		this.scope = new Scope();
-
+		this.scope.setScopeType(ScopeType.OPENID);
 		try {
 			if (this.scope.getOxAuthClaims() != null && this.scope.getOxAuthClaims().size() > 0) {
 				this.claims = getClaimDisplayNameEntiries();
 			} else {
 				this.claims = new ArrayList<DisplayNameEntry>();
 			}
-
 		} catch (BasePersistenceException ex) {
 			log.error("Failed to load scopes", ex);
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new scope");
-
 			conversationService.endConversation();
-
 			return OxTrustConstants.RESULT_FAILURE;
 		}
-
 		this.dynamicScripts = getInitialDynamicScripts();
-
+		fillAvailableDynScript();
 		return OxTrustConstants.RESULT_SUCCESS;
+	}
+
+	private void fillAvailableDynScript() {
+		List<CustomScript> availableScripts = customScriptService
+				.findCustomScripts(Arrays.asList(CustomScriptType.DYNAMIC_SCOPE));
+		List<SelectableEntity<CustomScript>> tmpAvailableDynamicScripts = new ArrayList<SelectableEntity<CustomScript>>();
+		for (CustomScript dynamicScript : availableScripts) {
+			if (dynamicScript.isEnabled()) {
+				tmpAvailableDynamicScripts.add(new SelectableEntity<CustomScript>(dynamicScript));
+			}
+		}
+		availableDynamicScripts.addAll(tmpAvailableDynamicScripts);
 	}
 
 	public String update() throws Exception {
@@ -145,16 +143,13 @@ public class UpdateScopeAction implements Serializable {
 			}
 		} catch (BasePersistenceException ex) {
 			log.error("Failed to find scope {}", inum, ex);
-
 		}
-
 		if (this.scope == null) {
 			log.error("Failed to load scope {}", inum);
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to find scope");
 			conversationService.endConversation();
 			return OxTrustConstants.RESULT_FAILURE;
 		}
-
 		try {
 			if (this.scope.getOxAuthClaims() != null && this.scope.getOxAuthClaims().size() > 0) {
 				this.claims = getClaimDisplayNameEntiries();
@@ -169,7 +164,7 @@ public class UpdateScopeAction implements Serializable {
 			conversationService.endConversation();
 			return OxTrustConstants.RESULT_FAILURE;
 		}
-		log.debug("returning Success");
+		fillAvailableDynScript();
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
@@ -198,7 +193,6 @@ public class UpdateScopeAction implements Serializable {
 							(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 				} catch (BasePersistenceException ex) {
 					log.error("Failed to update scope {}", this.inum, ex);
-
 					facesMessages.add(FacesMessage.SEVERITY_ERROR,
 							"Failed to update scope '#{updateScopeAction.scope.displayName}'");
 					return OxTrustConstants.RESULT_FAILURE;
@@ -272,6 +266,7 @@ public class UpdateScopeAction implements Serializable {
 	public void addClaim(GluuAttribute claim) {
 		DisplayNameEntry oneClaim = new DisplayNameEntry(claim.getDn(), claim.getInum(), claim.getDisplayName());
 		this.claims.add(oneClaim);
+		this.searchAvailableClaimPattern = "";
 	}
 
 	public void removeClaim(String inum) throws Exception {
@@ -304,17 +299,19 @@ public class UpdateScopeAction implements Serializable {
 		if (Util.equals(this.oldSearchAvailableClaimPattern, this.searchAvailableClaimPattern)) {
 			return;
 		}
-
 		try {
 			this.availableClaims = attributeService.searchAttributes(this.searchAvailableClaimPattern,
 					OxTrustConstants.searchSizeLimit);
-			//
 			removeDuplicates();
 			this.oldSearchAvailableClaimPattern = this.searchAvailableClaimPattern;
 			selectAddedClaims();
 		} catch (Exception ex) {
 			log.error("Failed to find attributes", ex);
 		}
+	}
+
+	public void clearAvailableClaims() {
+		this.availableClaims = new ArrayList<>();
 	}
 
 	public void removeDuplicates() {
@@ -329,53 +326,42 @@ public class UpdateScopeAction implements Serializable {
 				}
 			}
 		}
-
 		for (GluuAttribute availableClaim : this.availableClaims) {
 			if (availableClaim != null) {
 				tempAvailableClaims.add(availableClaim);
 			}
 		}
-
 		this.availableClaims = tempAvailableClaims;
-
 	}
 
 	public void selectAddedClaims() {
 		if (this.availableClaims == null) {
 			return;
 		}
-
 		Set<String> addedClaimInums = new HashSet<String>();
-
 		for (DisplayNameEntry claim : claims) {
 			addedClaimInums.add(claim.getInum());
 		}
-
 		for (GluuAttribute attribute : this.availableClaims) {
 			if (attribute.isSelected() && !addedClaimInums.contains(attribute.getInum())) {
 				addClaim(attribute);
 			}
 		}
-
 	}
 
 	public void acceptSelectClaims() {
 		if (this.availableClaims == null) {
 			return;
 		}
-
 		Set<String> addedClaimsInums = new HashSet<String>();
-
 		for (DisplayNameEntry claim : claims) {
 			addedClaimsInums.add(claim.getInum());
 		}
-
 		for (GluuAttribute attribute : this.availableClaims) {
 			if (attribute.isSelected() && !addedClaimsInums.contains(attribute.getInum())) {
 				addClaim(attribute);
 			}
 		}
-
 	}
 
 	public void cancelSelectClaims() {
@@ -388,7 +374,6 @@ public class UpdateScopeAction implements Serializable {
 		if (tmp != null) {
 			result.addAll(tmp);
 		}
-
 		return result;
 	}
 
@@ -421,7 +406,6 @@ public class UpdateScopeAction implements Serializable {
 		if ((this.scope.getDynamicScopeScripts() == null) || (this.scope.getDynamicScopeScripts().size() == 0)) {
 			return result;
 		}
-
 		List<DisplayNameEntry> displayNameEntries = lookupService.getDisplayNameEntries(customScriptService.baseDn(),
 				this.scope.getDynamicScopeScripts());
 		if (displayNameEntries != null) {
@@ -430,7 +414,6 @@ public class UpdateScopeAction implements Serializable {
 						displayNameEntry.getDisplayName()));
 			}
 		}
-
 		return result;
 	}
 
@@ -439,12 +422,10 @@ public class UpdateScopeAction implements Serializable {
 			this.scope.setDynamicScopeScripts(null);
 			return;
 		}
-
 		List<String> resultDynamicScripts = new ArrayList<String>();
 		for (CustomScript dynamicScript : this.dynamicScripts) {
 			resultDynamicScripts.add(dynamicScript.getDn());
 		}
-
 		this.scope.setDynamicScopeScripts(resultDynamicScripts);
 	}
 
@@ -474,7 +455,6 @@ public class UpdateScopeAction implements Serializable {
 		if (addDynamicScript == null) {
 			return;
 		}
-
 		this.dynamicScripts.add(addDynamicScript);
 	}
 
@@ -482,10 +462,8 @@ public class UpdateScopeAction implements Serializable {
 		if (removeDynamicScript == null) {
 			return;
 		}
-
 		for (Iterator<CustomScript> it = this.dynamicScripts.iterator(); it.hasNext();) {
 			CustomScript dynamicScript = (CustomScript) it.next();
-
 			if (StringHelper.equalsIgnoreCase(removeDynamicScript.getInum(), dynamicScript.getInum())) {
 				it.remove();
 				break;
@@ -498,18 +476,15 @@ public class UpdateScopeAction implements Serializable {
 			selectAddedDynamicScripts();
 			return;
 		}
-
 		try {
 			List<CustomScript> availableScripts = customScriptService
 					.findCustomScripts(Arrays.asList(CustomScriptType.DYNAMIC_SCOPE), CUSTOM_SCRIPT_RETURN_ATTRIBUTES);
-
 			List<SelectableEntity<CustomScript>> tmpAvailableDynamicScripts = new ArrayList<SelectableEntity<CustomScript>>();
 			for (CustomScript dynamicScript : availableScripts) {
 				if (dynamicScript.isEnabled()) {
 					tmpAvailableDynamicScripts.add(new SelectableEntity<CustomScript>(dynamicScript));
 				}
 			}
-
 			this.availableDynamicScripts = tmpAvailableDynamicScripts;
 			selectAddedDynamicScripts();
 		} catch (BasePersistenceException ex) {
@@ -520,7 +495,6 @@ public class UpdateScopeAction implements Serializable {
 
 	private void selectAddedDynamicScripts() {
 		Set<String> addedDynamicScriptInums = getAddedDynamicScriptInums();
-
 		for (SelectableEntity<CustomScript> availableDynamicScript : this.availableDynamicScripts) {
 			availableDynamicScript
 					.setSelected(addedDynamicScriptInums.contains(availableDynamicScript.getEntity().getInum()));
@@ -529,11 +503,9 @@ public class UpdateScopeAction implements Serializable {
 
 	private Set<String> getAddedDynamicScriptInums() {
 		Set<String> addedDynamicScriptInums = new HashSet<String>();
-
 		for (CustomScript dynamicScript : this.dynamicScripts) {
 			addedDynamicScriptInums.add(dynamicScript.getInum());
 		}
-
 		return addedDynamicScriptInums;
 	}
 

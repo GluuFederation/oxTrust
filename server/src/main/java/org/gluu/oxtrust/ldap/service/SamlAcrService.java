@@ -54,20 +54,21 @@ public class SamlAcrService implements Serializable {
 	}
 
 	public void remove(SamlAcr samlAcr) {
-		if(samlAcr.getDn()==null) {
+		if (samlAcr.getDn() == null) {
 			samlAcr.setDn(getDn(samlAcr.getInum()));
 		}
 		ldapEntryManager.remove(samlAcr);
 	}
 
 	public SamlAcr[] getAll() {
-		return ldapEntryManager.findEntries(getDn(null), SamlAcr.class, null).stream().toArray(size -> new SamlAcr[size]);
+		return ldapEntryManager.findEntries(getDn(null), SamlAcr.class, null).stream()
+				.toArray(size -> new SamlAcr[size]);
 	}
 
-	public boolean contains(SamlAcr samlAcr) {
+	public boolean contains(String dn) {
 		boolean result = false;
 		try {
-			result = ldapEntryManager.contains(samlAcr);
+			result = ldapEntryManager.contains(dn, SamlAcr.class);
 		} catch (Exception e) {
 			log.debug(e.getMessage(), e);
 		}
@@ -77,12 +78,13 @@ public class SamlAcrService implements Serializable {
 	public String generateInumForSamlAcr() {
 		SamlAcr samlAcr = null;
 		String newInum = null;
+		String newDn = null;
 		do {
 			newInum = generateInumImpl();
-			String newDn = getDn(newInum);
+			newDn = getDn(newInum);
 			samlAcr = new SamlAcr();
 			samlAcr.setDn(newDn);
-		} while (contains(samlAcr));
+		} while (ldapEntryManager.contains(newDn, SamlAcr.class));
 		return newInum;
 	}
 

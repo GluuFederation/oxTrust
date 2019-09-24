@@ -14,9 +14,7 @@ import java.util.UUID;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
-
 import org.apache.commons.lang.StringUtils;
-import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.model.RenderParameters;
 import org.gluu.model.GluuAttribute;
@@ -28,7 +26,6 @@ import org.gluu.oxtrust.model.GluuMetadataSourceType;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.PersistenceEntryManager;
-import org.gluu.persist.model.base.InumEntry;
 import org.gluu.search.filter.Filter;
 import org.gluu.service.MailService;
 import org.gluu.service.XmlService;
@@ -68,9 +65,6 @@ public class TrustService implements Serializable {
 
 	@Inject
 	private XmlService xmlService;
-
-	@Inject
-	private AppConfiguration appConfiguration;
 
 	@Inject
 	private MailService mailService;
@@ -174,14 +168,8 @@ public class TrustService implements Serializable {
 	 * 
 	 * @return True if trust relationship with specified attributes exist
 	 */
-	public boolean containsTrustRelationship(GluuSAMLTrustRelationship trustRelationship) {
-		return ldapEntryManager.contains(trustRelationship);
-	}
-
 	public boolean containsTrustRelationship(String dn) {
-		GluuSAMLTrustRelationship tr = new GluuSAMLTrustRelationship();
-		tr.setDn(dn);
-		return containsTrustRelationship(tr);
+		return ldapEntryManager.contains(dn, GluuSAMLTrustRelationship.class);
 	}
 
 	public boolean trustExist(String dn) {
@@ -200,14 +188,12 @@ public class TrustService implements Serializable {
 	 * @return New inum for trust relationship
 	 */
 	public String generateInumForNewTrustRelationship() {
-		InumEntry entry = new InumEntry();
-		String newDn = appConfiguration.getBaseDN();
-		entry.setDn(newDn);
-		String newInum;
+		String newDn = null;
+		String newInum = null;
 		do {
 			newInum = generateInumForNewTrustRelationshipImpl();
-			entry.setInum(newInum);
-		} while (ldapEntryManager.contains(entry));
+			newDn = getDnForTrustRelationShip(newInum);
+		} while (containsTrustRelationship(newDn));
 
 		return newInum;
 	}
@@ -243,13 +229,11 @@ public class TrustService implements Serializable {
 		if (StringHelper.isEmpty(inum)) {
 			return String.format("ou=trustRelationships,%s", organizationDN);
 		}
-
 		return String.format("inum=%s,ou=trustRelationships,%s", inum, organizationDN);
 	}
 
 	public void updateReleasedAttributes(GluuSAMLTrustRelationship trustRelationship) {
 		List<String> releasedAttributes = new ArrayList<String>();
-
 		String mailMsgPlain = "";
 		String mailMsgHtml = "";
 		for (GluuCustomAttribute customAttribute : trustRelationship.getReleasedCustomAttributes()) {
@@ -279,17 +263,10 @@ public class TrustService implements Serializable {
 					log.warn("Failed to send the 'Attributes released' notification email: unconfigured SMTP server");
 				else {
 					String subj = facesMessages.evalResourceAsString("#{msg['mail.trust.released.subject']}");
-
 					rendererParameters.setParameter("trustRelationshipName", trustRelationship.getDisplayName());
 					rendererParameters.setParameter("trustRelationshipInum", trustRelationship.getInum());
-
 					String preMsgPlain = facesMessages.evalResourceAsString("#{msg['mail.trust.released.name.plain']}");
 					String preMsgHtml = facesMessages.evalResourceAsString("#{msg['mail.trust.released.name.html']}");
-
-					// rendererParameters.setParameter("mail_body", preMsgHtml + mailMsgHtml);
-					// String mailHtml =
-					// renderService.renderView("/WEB-INF/mail/trust_relationship.xhtml");
-
 					boolean result = mailService.sendMail(configuration.getContactEmail(), null, subj,
 							preMsgPlain + mailMsgPlain, preMsgHtml + mailMsgHtml);
 
@@ -330,30 +307,6 @@ public class TrustService implements Serializable {
 		}
 	}
 
-	// public List<DeconstructedTrustRelationship>
-	// getDeconstruction(GluuSAMLTrustRelationship trustRelationship) {
-	// List<String> gluuTrustDeconstruction =
-	// trustRelationship.getGluuTrustDeconstruction();
-	// List<DeconstructedTrustRelationship> deconstruction = new
-	// ArrayList<DeconstructedTrustRelationship>();
-	// if(gluuTrustDeconstruction != null){
-	// for (String deconstructedTR : gluuTrustDeconstruction){
-	// deconstruction.add(xmlService.getDeconstructedTrustRelationshipFromXML(deconstructedTR));
-	// }
-	// }
-	// return deconstruction;
-	// }
-	//
-	// public void saveDeconstruction(GluuSAMLTrustRelationship
-	// trustRelationship,
-	// List<DeconstructedTrustRelationship> deconstruction) {
-	// List<String> gluuTrustDeconstruction = new ArrayList<String>();
-	// for (DeconstructedTrustRelationship deconstructedTR : deconstruction){
-	// gluuTrustDeconstruction.add(xmlService.getXMLFromDeconstructedTrustRelationship(deconstructedTR));
-	// }
-	// trustRelationship.setGluuTrustDeconstruction(gluuTrustDeconstruction);
-	// }
-
 	public List<GluuSAMLTrustRelationship> getDeconstructedTrustRelationships(
 			GluuSAMLTrustRelationship trustRelationship) {
 		List<GluuSAMLTrustRelationship> result = new ArrayList<GluuSAMLTrustRelationship>();
@@ -388,14 +341,11 @@ public class TrustService implements Serializable {
 		String[] targetArray = new String[] { pattern };
 		Filter displayNameFilter = Filter.createSubstringFilter(OxTrustConstants.displayName, null, targetArray, null);
 		Filter descriptionFilter = Filter.createSubstringFilter(OxTrustConstants.description, null, targetArray, null);
-		Filter inameFilter = Filter.createSubstringFilter(OxTrustConstants.iname, null, targetArray, null);
 		Filter inumFilter = Filter.createSubstringFilter(OxTrustConstants.inum, null, targetArray, null);
-		Filter searchFilter = Filter.createORFilter(displayNameFilter, descriptionFilter, inameFilter, inumFilter);
+		Filter searchFilter = Filter.createORFilter(displayNameFilter, descriptionFilter, inumFilter);
+		return ldapEntryManager.findEntries(getDnForTrustRelationShip(null), GluuSAMLTrustRelationship.class,
+				searchFilter, sizeLimit);
 
-		List<GluuSAMLTrustRelationship> result = ldapEntryManager.findEntries(getDnForTrustRelationShip(null),
-				GluuSAMLTrustRelationship.class, searchFilter, sizeLimit);
-
-		return result;
 	}
 
 	public List<GluuSAMLTrustRelationship> getAllSAMLTrustRelationships(int sizeLimit) {
@@ -410,8 +360,6 @@ public class TrustService implements Serializable {
 	 *            Attribute
 	 */
 	public boolean removeAttribute(GluuAttribute attribute) {
-		log.info("Attribute removal started");
-
 		log.trace("Removing attribute from trustRelationships");
 		List<GluuSAMLTrustRelationship> trustRelationships = getAllTrustRelationships();
 		log.trace(String.format("Iterating '%d' trustRelationships", trustRelationships.size()));
@@ -431,16 +379,13 @@ public class TrustService implements Serializable {
 						} else {
 							trustRelationship.setReleasedAttributes(updatedAttrs);
 						}
-
 						updateTrustRelationship(trustRelationship);
 						break;
 					}
 				}
 			}
 		}
-
 		attributeService.removeAttribute(attribute);
-
 		return true;
 	}
 

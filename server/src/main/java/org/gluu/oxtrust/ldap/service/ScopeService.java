@@ -116,12 +116,12 @@ public class ScopeService implements Serializable {
 	public String generateInumForNewScope() throws Exception {
 		Scope scope = new Scope();
 		String newInum = null;
+		String newDn=null;
 		do {
 			newInum = generateInumForNewScopeImpl();
-			String newDn = getDnForScope(newInum);
+			newDn = getDnForScope(newInum);
 			scope.setDn(newDn);
-		} while (ldapEntryManager.contains(scope));
-
+		} while (ldapEntryManager.contains(newDn, Scope.class));
 		return newInum;
 	}
 
@@ -143,8 +143,7 @@ public class ScopeService implements Serializable {
 					null);
 			Filter descriptionFilter = Filter.createSubstringFilter(OxTrustConstants.description, null, targetArray,
 					null);
-			Filter inameFilter = Filter.createSubstringFilter(OxTrustConstants.iname, null, targetArray, null);
-			searchFilter = Filter.createORFilter(displayNameFilter, descriptionFilter, inameFilter);
+			searchFilter = Filter.createORFilter(displayNameFilter, descriptionFilter);
 		}
 		List<Scope> result = new ArrayList<>();
 		try {

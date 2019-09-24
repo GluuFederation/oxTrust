@@ -34,7 +34,6 @@ public class GluuGroupApi implements Serializable {
 
 	public GluuGroupApi(GluuGroup gluuGroup) {
 		this.inum = gluuGroup.getInum();
-		this.iname = gluuGroup.getIname();
 		this.displayName = gluuGroup.getDisplayName();
 		this.description = gluuGroup.getDescription();
 		this.owner = gluuGroup.getOwner();

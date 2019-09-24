@@ -41,7 +41,7 @@ import org.slf4j.Logger;
 public class TrustRelationshipInventoryAction implements Serializable {
 
 	private static final long serialVersionUID = 8388485274418394665L;
-	
+
 	@Inject
 	private FacesMessages facesMessages;
 
@@ -83,20 +83,18 @@ public class TrustRelationshipInventoryAction implements Serializable {
 
 	public String search() {
 		try {
-			if(searchPattern == null || searchPattern.isEmpty()){
+			if (searchPattern == null || searchPattern.isEmpty()) {
 				this.trustedSpList = trustService.getAllSAMLTrustRelationships(100);
-			}else{
-				this.trustedSpList = trustService.searchSAMLTrustRelationships(searchPattern,100);
+			} else {
+				this.trustedSpList = trustService.searchSAMLTrustRelationships(searchPattern, 100);
 			}
 			this.oldSearchPattern = this.searchPattern;
 
 			setCustomAttributes(this.trustedSpList);
 		} catch (Exception ex) {
 			log.error("Failed to find trust relationships", ex);
-
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to find trust relationships");
 			conversationService.endConversation();
-
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 
@@ -106,10 +104,20 @@ public class TrustRelationshipInventoryAction implements Serializable {
 	private void setCustomAttributes(List<GluuSAMLTrustRelationship> trustRelationships) {
 		List<GluuAttribute> attributes = attributeService.getAllPersonAttributes(GluuUserRole.ADMIN);
 		HashMap<String, GluuAttribute> attributesByDNs = attributeService.getAttributeMapByDNs(attributes);
-
 		for (GluuSAMLTrustRelationship trustRelationship : trustRelationships) {
-			trustRelationship.setReleasedCustomAttributes(attributeService.getCustomAttributesByAttributeDNs(
-					trustRelationship.getReleasedAttributes(), attributesByDNs));
+			trustRelationship.setReleasedCustomAttributes(attributeService
+					.getCustomAttributesByAttributeDNs(trustRelationship.getReleasedAttributes(), attributesByDNs));
+		}
+	}
+
+	public String getRelationshipType(GluuSAMLTrustRelationship trustRelationship) {
+		if (trustRelationship.isFederation()) {
+			return "FEDERATION";
+		} else if (trustRelationship.getGluuContainerFederation() == null) {
+			return "SERVICE_PROVIDER";
+		} else {
+			return "SP FEDERATED WITH "
+					+ trustService.getRelationshipByDn(trustRelationship.getGluuContainerFederation()).getDisplayName();
 		}
 	}
 

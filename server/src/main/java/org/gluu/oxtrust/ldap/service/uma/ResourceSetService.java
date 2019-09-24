@@ -94,8 +94,8 @@ public class ResourceSetService implements Serializable {
 	 * 
 	 * @return True if resource with specified attributes exist
 	 */
-	public boolean containsResource(UmaResource resource) {
-		return ldapEntryManager.contains(resource);
+	public boolean containsResource(String dn) {
+		return ldapEntryManager.contains(dn, UmaResource.class);
 	}
 
 	public List<UmaResource> getAllResources(int sizeLimit) {
@@ -172,13 +172,12 @@ public class ResourceSetService implements Serializable {
 	 * @return New inum for resource set
 	 */
 	public String generateInumForNewResource() {
-		UmaResource resource = new UmaResource();
+		String newDn = null;
 		String newInum = null;
 		do {
 			newInum = generateInumForNewResourceImpl();
-			String newDn = getDnForResource(newInum);
-			resource.setDn(newDn);
-		} while (ldapEntryManager.contains(resource));
+			newDn = getDnForResource(newInum);
+		} while (containsResource(newDn));
 
 		return newInum;
 	}

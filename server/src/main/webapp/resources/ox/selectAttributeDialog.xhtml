@@ -1,88 +1,117 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-    xmlns:f="http://xmlns.jcp.org/jsf/core"
-    xmlns:h="http://xmlns.jcp.org/jsf/html" 
-    xmlns:a4j="http://richfaces.org/a4j" 
-    xmlns:rich="http://richfaces.org/rich"
-    xmlns:gluufn="http://www.gluu.org/jsf/functions"
-    xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
-    xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
-    xmlns:cc="http://xmlns.jcp.org/jsf/composite">
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:b="http://bootsfaces.net/ui"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
+	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
+	xmlns:cc="http://xmlns.jcp.org/jsf/composite">
 
 <cc:interface>
-    <cc:attribute name="label" default="Add Attribute" required="false" type="java.lang.String" />
-    <cc:attribute name="searchPattern" required="true" type="java.lang.String" />
-    <cc:attribute name="searchMethod" required="true" method-signature="void action()" />
-    <cc:attribute name="acceptMethod" required="true" method-signature="void action()" />
-    <cc:attribute name="cancelMethod" required="true" method-signature="void action()" />
-    <cc:attribute name="searchResult" required="true" type="java.util.List" />
-    <cc:attribute name="render" required="false" type="java.lang.String" />
-    <cc:attribute name="queue" default="ox" required="false" type="java.lang.String" />
+	<cc:attribute name="label" default="Add Attribute" required="false"
+		type="java.lang.String" />
+	<cc:attribute name="searchPattern" required="true"
+		type="java.lang.String" />
+	<cc:attribute name="searchMethod" required="true"
+		method-signature="void action()" />
+	<cc:attribute name="acceptMethod" required="true"
+		method-signature="void action()" />
+	<cc:attribute name="cancelMethod" required="true"
+		method-signature="void action()" />
+	<cc:attribute name="searchResult" required="true" type="java.util.List" />
+	<cc:attribute name="render" required="false" type="java.lang.String" />
+	<cc:attribute name="queue" default="ox" required="false"
+		type="java.lang.String" />
 </cc:interface>
-
 <cc:implementation>
-    <rich:popupPanel id="selectAttributeModalPanel" onmaskclick="#{rich:component('selectAttributeModalPanel')}.hide()" zindex="2000" moveable="true" autosized="true" width="725" height="460">
-        <f:facet name="header">
-            <h:outputText value="#{cc.attrs.label}" />
-        </f:facet>
-        <f:facet name="controls">
-            <h:graphicImage value="/img/close.gif" styleClass="hidelink" style="cursor:pointer" onclick="#{rich:component('selectAttributeModalPanel')}.hide(); return false;" />
-        </f:facet>
-
-        <h:form>
-            <h:panelGroup id="attributePanelId" columns="1" border="0" cellpadding="0" cellspacing="0" width="100%" columnClasses="alignLeft" style="float:left !important;width:100% !important;">
-                <ox:decorate id="searchPattern" hideLabel="true">
-                    <div class="row" style="float:left;margin-left:3px;">
-                    <h:inputText value="#{cc.attrs.searchPattern}" size="30" maxlength="30" styleClass="searchParameters form-control" alt="Search parameters like Uid, Name, Display Name, E-mail" /></div>
-                   <div class="row" style="float:left; margin-left: 20px;  margin-top: -5px;">
-                    <a4j:commandButton value="Search" style = "margin-top:5px;" styleClass="btn btn-primary" action="#{cc.attrs.searchMethod}" render="attributePanelId" eventsQueue="#{cc.attrs.queue}" /></div>
-                </ox:decorate>
-
-                <h:panelGroup id="attributeNoResultId" rendered="#{cc.attrs.searchResult.size() eq 0}">
-                    <h:outputText value="No Search Result Found" />
-                </h:panelGroup>
-
-                <h:panelGroup style="overflow-y:auto; width:715px;#{cc.attrs.searchResult.size() gt 5 ? ' height:310px;' : ''}" layout="block" rendered="#{cc.attrs.searchResult.size() gt 0}">
-                    <rich:dataTable sortMode="single" id="attributeListId" value="#{cc.attrs.searchResult}" styleClass="data sortable" var="prs">
-                        <rich:column>
-                            <f:facet name="header">X</f:facet>
-                            <h:selectBooleanCheckbox value="#{prs.selected}" />
-                        </rich:column>
-                        <rich:column sortBy="#{prs.displayName}">
-                            <f:facet name="header">Display Name</f:facet>
-                            <h:outputText value="#{prs.displayName}" />
-                        </rich:column>
-                        <rich:column sortBy="#{prs.name}">
-                            <f:facet name="header">Atribute Name</f:facet>
-                            <h:outputText value="#{prs.name}" />
-                        </rich:column>
-                        <rich:column sortBy="#{prs.inum}">
-                            <f:facet name="header">iNum</f:facet>
-                            <h:outputText value="#{prs.inum}" />
-                        </rich:column>
-                        <rich:column sortBy="#{prs.origin}">
-                            <f:facet name="header">Origin</f:facet>
-                            <h:outputText value="#{prs.origin}" />
-                        </rich:column>
-                    </rich:dataTable>
-                </h:panelGroup>
-
-                <richext:spacer height="16" />
-<div class="box-footer" >
-                <h:panelGroup>
-                <div class="row" style="margin-left:-4px !important">
-                    <a4j:commandButton styleClass="btn btn-primary" action="#{cc.attrs.acceptMethod}" value="Ok" oncomplete="#{rich:component('selectAttributeModalPanel')}.hide();" render="attributeListId #{cc.attrs.render}"
-                        eventsQueue="#{cc.attrs.queue}" style="min-width:70px;" />&nbsp;
-                        <a4j:commandButton styleClass="btn btn-primary" action="#{cc.attrs.cancelMethod}" value="Cancel" oncomplete="#{rich:component('selectAttributeModalPanel')}.hide(); return false;" render="attributeListId"
-                        eventsQueue="#{cc.attrs.queue}" />&nbsp;
-                        <a4j:status startText="Request in progress please wait......" stopText="" startStyle="color:red" />
-                        </div>
-                </h:panelGroup>
-                </div>
-            </h:panelGroup>
-        </h:form>
-    </rich:popupPanel>
+	<rich:popupPanel id="selectAttributeModalPanel"
+		onmaskclick="#{rich:component('selectAttributeModalPanel')}.hide()"
+		zindex="2000" moveable="true" autosized="true" width="725"
+		height="460">
+		<f:facet name="header">
+			<h:outputText value="#{cc.attrs.label}" />
+		</f:facet>
+		<f:facet name="controls">
+			<h:graphicImage value="/img/close.gif" styleClass="hidelink"
+				style="cursor:pointer"
+				onclick="#{rich:component('selectAttributeModalPanel')}.hide(); return false;" />
+		</f:facet>
+		<b:form id="myForm" appendId="false">
+			<h:panelGroup id="attributePanelId" styleClass="attributePanelId" columns="1" border="0"
+				cellpadding="0" cellspacing="0" width="100%"
+				columnClasses="alignLeft"
+				style="float:left !important;width:100% !important;">
+				<ox:decorate id="searchPattern" hideLabel="true">
+					<div class="row" style="float: left; margin-left: 3px;">
+						<h:inputText value="#{cc.attrs.searchPattern}" size="30"
+							maxlength="30" styleClass="searchParameters form-control"
+							alt="Search parameters like Uid, Name, Display Name, E-mail" />
+					</div>
+					<div class="row"
+						style="float: left; margin-left: 20px; margin-top: -5px;">
+						<a4j:commandButton value="Search" style="margin-top:5px;"
+							styleClass="btn btn-primary searchButtonClass" action="#{cc.attrs.searchMethod}"
+							render="attributePanelId" eventsQueue="#{cc.attrs.queue}" />
+					</div>
+				</ox:decorate>
+				<h:panelGroup id="attributeNoResultId"
+					rendered="#{cc.attrs.searchResult.size() eq 0}">
+					<h:outputText value="No Search Result Found" />
+				</h:panelGroup>
+				<h:panelGroup id="attributeSecondPanelId"
+					style="overflow-y:auto; width:715px;#{cc.attrs.searchResult.size() gt 5 ? ' height:310px;' : ''}"
+					layout="block" rendered="#{cc.attrs.searchResult.size() gt 0}">
+					<rich:dataTable sortMode="single" id="attributeListId"
+						value="#{cc.attrs.searchResult}" styleClass="data sortable attributeListId"
+						var="prs">
+						<rich:column>
+							<f:facet name="header">X</f:facet>
+							<h:selectBooleanCheckbox value="#{prs.selected}" />
+						</rich:column>
+						<rich:column sortBy="#{prs.displayName}">
+							<f:facet name="header">Display Name</f:facet>
+							<h:outputText value="#{prs.displayName}" />
+						</rich:column>
+						<rich:column sortBy="#{prs.name}">
+							<f:facet name="header">Atribute Name</f:facet>
+							<h:outputText value="#{prs.name}" />
+						</rich:column>
+						<rich:column sortBy="#{prs.inum}">
+							<f:facet name="header">iNum</f:facet>
+							<h:outputText value="#{prs.inum}" />
+						</rich:column>
+						<rich:column sortBy="#{prs.origin}">
+							<f:facet name="header">Origin</f:facet>
+							<h:outputText value="#{prs.origin}" />
+						</rich:column>
+					</rich:dataTable>
+				</h:panelGroup>
+				<richext:spacer height="16" />
+				<div class="box-footer">
+					<h:panelGroup>
+						<div class="row" style="margin-left: -4px !important">
+							<a4j:commandButton styleClass="btn btn-primary"
+								action="#{cc.attrs.acceptMethod}" value="Ok"
+								oncomplete="#{rich:component('selectAttributeModalPanel')}.hide();"
+								render="myForm attributeSecondPanelId attributeListId #{cc.attrs.render}"
+								style="min-width:70px;" />
+							&nbsp;
+							<a4j:commandButton styleClass="btn btn-primary"
+								action="#{cc.attrs.cancelMethod}" value="Cancel"
+								render="myForm attributeSecondPanelId attributeListId #{cc.attrs.render}"
+								oncomplete="#{rich:component('selectAttributeModalPanel')}.hide();return false;"
+								eventsQueue="#{cc.attrs.queue}" />
+							&nbsp;
+							<a4j:status startText="Request in progress please wait......"
+								stopText="" startStyle="color:red" />
+						</div>
+					</h:panelGroup>
+				</div>
+			</h:panelGroup>
+		</b:form>
+	</rich:popupPanel>
 </cc:implementation>
-
 </html>

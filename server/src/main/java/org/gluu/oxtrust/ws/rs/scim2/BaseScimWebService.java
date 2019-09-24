@@ -40,6 +40,7 @@ import org.gluu.oxtrust.model.scim2.util.ResourceValidator;
 import org.gluu.oxtrust.model.scim2.util.ScimResourceUtil;
 import org.gluu.oxtrust.service.antlr.scimFilter.util.FilterUtil;
 import org.gluu.oxtrust.service.scim2.ExtensionService;
+import org.gluu.oxtrust.service.scim2.UserPersistenceHelper;
 import org.gluu.oxtrust.service.scim2.serialization.ListResponseJsonSerializer;
 import org.gluu.oxtrust.service.scim2.serialization.ScimResourceSerializer;
 import org.gluu.persist.model.SortOrder;
@@ -68,6 +69,9 @@ public class BaseScimWebService {
 
     @Inject
     IPersonService personService;
+
+    @Inject
+    UserPersistenceHelper userPersistenceHelper;
 
     public static final String SEARCH_SUFFIX = ".search";
 
@@ -201,6 +205,7 @@ public class BaseScimWebService {
                 count=0;
 
             if (count <= getMaxCount()) {
+                //SCIM searches are 1 indexed
                 startIndex = (startIndex == null || startIndex < 1) ? 1 : startIndex;
 
                 if (StringUtils.isEmpty(sortOrder) || !sortOrder.equals(SortOrder.DESCENDING.getValue()))

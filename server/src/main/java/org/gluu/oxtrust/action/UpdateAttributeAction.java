@@ -132,17 +132,12 @@ public class UpdateAttributeAction implements Serializable {
 		}
 
 		this.update = false;
-
 		this.showAttributeDeleteConfirmation = false;
-
 		this.attribute = new GluuAttribute();
 		attribute.setAttributeValidation(new AttributeValidation());
-
 		this.attribute.setStatus(GluuStatus.ACTIVE);
 		this.attribute.setEditType(new GluuUserRole[] { GluuUserRole.ADMIN });
-
 		this.canEdit = true;
-
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
@@ -150,18 +145,13 @@ public class UpdateAttributeAction implements Serializable {
 		if (this.attribute != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
-
 		this.update = true;
-
 		this.showAttributeDeleteConfirmation = false;
-
 		if (!loadAttribute(this.inum)) {
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to find attribute");
 			conversationService.endConversation();
-
 			return OxTrustConstants.RESULT_FAILURE;
 		}
-
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
@@ -171,15 +161,11 @@ public class UpdateAttributeAction implements Serializable {
 		} catch (BasePersistenceException ex) {
 			log.error("Failed to find attribute {}", inum, ex);
 		}
-
 		if (this.attribute == null) {
 			return false;
 		}
-
 		initAttribute();
-
 		this.canEdit = isAllowEdit();
-
 		return true;
 	}
 
@@ -426,9 +412,8 @@ public class UpdateAttributeAction implements Serializable {
 	}
 
 	public String deleteAndAcceptUpdate() {
-		if (update && showAttributeDeleteConfirmation && this.attribute.isCustom()) {
+		if (update && showAttributeDeleteConfirmation) {
 			showAttributeDeleteConfirmation = false;
-
 			if (trustService.removeAttribute(this.attribute)) {
 				oxTrustAuditService.audit(
 						"ATTRIBUTE " + this.attribute.getInum() + " **" + this.attribute.getDisplayName()
@@ -438,15 +423,12 @@ public class UpdateAttributeAction implements Serializable {
 				facesMessages.add(FacesMessage.SEVERITY_INFO,
 						"Attribute '#{updateAttributeAction.attribute.displayName}' removed successfully");
 				conversationService.endConversation();
-
 				return OxTrustConstants.RESULT_SUCCESS;
 			} else {
 				log.error("Failed to remove attribute {}", this.attribute.getInum());
 			}
 		}
-
 		showAttributeDeleteConfirmation = false;
-
 		facesMessages.add(FacesMessage.SEVERITY_ERROR,
 				"Failed to remove attribute '#{updateAttributeAction.attribute.displayName}'");
 

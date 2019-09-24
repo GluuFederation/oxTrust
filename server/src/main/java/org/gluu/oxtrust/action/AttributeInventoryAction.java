@@ -195,19 +195,16 @@ public class AttributeInventoryAction implements Serializable {
 		FacesContext facesContext = FacesContext.getCurrentInstance();
 		List<String> checkedItems = new ArrayList<String>();
 		for (GluuAttribute item : activeAttributeList) {
-			if (checked.get(item.getInum())) {
-				checkedItems.add(item.getInum());
+			if (checked.get(item.getDn())) {
+				checkedItems.add(item.getDn());
 			}
 		}
-		log.info("the selections are : {}", checkedItems.size());
 		HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
 		response.setContentType("text/plain");
 		response.addHeader("Content-disposition", "attachment; filename=\"attributes.ldif\"");
-		try {
-			ServletOutputStream os = response.getOutputStream();
+		try (ServletOutputStream os = response.getOutputStream()) {
 			ldifService.exportLDIFFile(checkedItems, os);
 			os.flush();
-			os.close();
 			facesContext.responseComplete();
 		} catch (Exception e) {
 			log.error("\nFailure : " + e.toString() + "\n");

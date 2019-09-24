@@ -52,14 +52,12 @@ public class FederationService implements Serializable {
 	 * @return New inum for federation proposal
 	 */
 	public String generateInumForNewFederationProposal() {
-		InumEntry entry = new InumEntry();
-		String newDn = appConfiguration.getBaseDN();
-		entry.setDn(newDn);
+		String newDn;
 		String newInum;
 		do {
 			newInum = generateInumForNewFederationProposalImpl();
-			entry.setInum(newInum);
-		} while (ldapEntryManager.contains(entry));
+			newDn = getDnForFederationProposal(newInum);
+		} while (containsFederationProposal(newDn));
 
 		return newInum;
 	}
@@ -78,8 +76,8 @@ public class FederationService implements Serializable {
 	 * 
 	 * @return True if federation proposal with specified attributes exist
 	 */
-	public boolean containsFederationProposal(GluuSAMLFederationProposal federationProposal) {
-		return ldapEntryManager.contains(federationProposal);
+	public boolean containsFederationProposal(String dn) {
+		return ldapEntryManager.contains(dn, GluuSAMLFederationProposal.class);
 	}
 
 	/**

@@ -42,10 +42,6 @@ public class OxAuthClient extends Entry implements Serializable {
 
 	@AttributeName(ignoreDuringUpdate = true)
 	private String inum;
-
-	@AttributeName(ignoreDuringUpdate = true)
-	private String iname;
-
 	@NotNull
 	@Size(min = 0, max = 60, message = "Length of the Display Name should not exceed 60")
 	@AttributeName
@@ -252,14 +248,6 @@ public class OxAuthClient extends Entry implements Serializable {
 
 	public void setInum(String inum) {
 		this.inum = inum;
-	}
-
-	public String getIname() {
-		return iname;
-	}
-
-	public void setIname(String iname) {
-		this.iname = iname;
 	}
 
 	public String getDisplayName() {

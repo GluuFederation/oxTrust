@@ -16,24 +16,7 @@
 		<f:viewAction action="#{searchScopeAction.start}"
 			if="#{searchScopeAction.scopeList == null}" onPostback="false" />
 	</f:metadata>
-
 	<ui:define name="body">
-		<section class="content-header">
-			<h1 style="color: #333;">
-				#{msg['scope.openIDConnect']} <small> <i
-					class="fa fa-caret-right" style="color: #333 !important;" />
-					#{msg['scope.scopes']}
-				</small>
-			</h1>
-			<ol class="breadcrumb">
-				<li><a href="#{request.contextPath}/home.htm"> <i
-						class="fa fa-home" />
-				</a></li>
-				<li class="organization/configuration"><a
-					href="#{request.contextPath}/scope/scopeInventory.htm">
-						#{msg['scope.scopes']}</a></li>
-			</ol>
-		</section>
 		<section class="content">
 			<div id="formArea">
 				<div class="row">

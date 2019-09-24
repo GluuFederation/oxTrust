@@ -111,14 +111,6 @@ public interface IGroupService {
 	public abstract GluuGroup getGroupByDn(String Dn);
 
 	/**
-	 * Get Group by iname
-	 * 
-	 * @param iname
-	 * @return Group
-	 */
-	public abstract GluuGroup getGroupByIname(String iname) throws Exception;
-
-	/**
 	 * Get group by DisplayName
 	 * 
 	 * @param DisplayName

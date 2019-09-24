@@ -233,6 +233,11 @@ select {
 						startStyle="background-color: #006699; color: white; font-weight: bold; position: fixed; left: 0px; top: 0px; padding: 5px 5px 5px 5px;" />
 					<ui:insert name="body" />
 				</div>
+				<div class="gluuBusyIndicator"
+					style="display: none; cursor: default; border-radius: 10px;">
+					<img style="width: 30%; height: 20%;"
+						src="#{request.contextPath}/servlet/indicator" />
+				</div>
 			</div>
 		</div>
 
@@ -255,6 +260,11 @@ select {
 		<script
 			src='#{oxTrustConfigurationService.cssLocation}/../theme/dist/js/clipboard.min.js'
 			type="text/javascript"></script>
+		<script>	
+		$.blockUI.defaults.message = $('div.gluuBusyIndicator')
+		$.blockUI.defaults.fadeIn = 0
+		$.blockUI.defaults.fadeOut = 0
+		</script>
 		<div class="footer"></div>
 	</h:body>
 </f:view>

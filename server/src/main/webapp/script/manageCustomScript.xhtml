@@ -37,7 +37,10 @@
 		.list-group-item{
 		background-color: #05ffb0;
 		}
-
+	    .button:hover{
+		 background-image: none !important;
+		 background-color: #f39c12 !important;
+		}
 		</h:outputStylesheet>
 		<section class="content">
 			<b:panel id="main" title="Gluu Custom Scripts" look="primary"
@@ -45,12 +48,6 @@
 				<h:form prependId="false">
 					<div class="row">
 						<div class="col-sm-3 col-md-3 col-lg-3">
-							<b:commandButton
-								action="#{manageCustomScriptAction.initAddForm()}"
-								rendered="#{manageCustomScriptAction.showAddButton}"
-								styleClass="btn btn-primary AddCustomScriptButton"
-								value="Add New Custom Script" ajax="true" update="@form"
-								icon="plus" style="margin-bottom:5px !important;" />
 							<b:tree render-root="false" id="customScriptTreeViewId"
 								collapse-icon="fa fa-angle-down" selected-color="#ffffff"
 								nodeSelectionListener="#{manageCustomScriptAction}"
@@ -59,14 +56,39 @@
 								style="width:100%;overflow-x:scroll" />
 						</div>
 						<div class="col-sm-9 col-md-9 col-lg-9">
+							<b:row>
+								<b:column medium-screen="8">
+									<b:breadcrumbs>
+										<f:facet name="root">
+											<b:iconAwesome value="fa-desktop" /> Custom scripts
+                                    </f:facet>
+										<b:navLink
+											value="#{manageCustomScriptAction.selectedScriptType.getDisplayName() eq null ? manageCustomScriptAction.selectedScript.getScriptType().getDisplayName() : manageCustomScriptAction.selectedScriptType.getDisplayName()}"
+											outcome="#" />
+										<b:navLink
+											value="#{manageCustomScriptAction.selectedScript.getName()}"
+											outcome="#" icon-awesome="pencil-square-o" />
+									</b:breadcrumbs>
+								</b:column>
+								<b:column medium-screen="4">
+									<b:commandButton
+										action="#{manageCustomScriptAction.initAddForm()}"
+										rendered="#{manageCustomScriptAction.showAddButton}"
+										look="warning" styleClass="AddCustomScriptButton"
+										value="Add New Custom Script" ajax="true" update="@form"
+										icon="plus"
+										style="margin-bottom:5px !important; float: right;" />
+								</b:column>
+							</b:row>
 							<b:panel id="customScriptDetailPanelId"
 								title="#{manageCustomScriptAction.selectedScript.name}"
 								look="primary" icon="pencil" collapsible="false">
+								<b:messages />
 								<h:panelGroup layout="block">
 									<ui:param name="_customScript"
 										value="#{manageCustomScriptAction.selectedScript}" />
 									<div class="row">
-										<div class="col-sm-6 col-md-6 col-lg-6"></div>
+										<div class="col-sm-5 col-md-5 col-lg-5"></div>
 										<div class="col-sm-2 col-md-2 col-lg-2">
 											<a4j:commandLink value="Show Error" immediate="true"
 												rendered="#{manageCustomScriptAction.hasCustomScriptError(_customScript)}"
@@ -75,7 +97,11 @@
 												styleClass="btn btn-warning showErrorButton"
 												style="color:white;" />
 										</div>
-										<div class="col-sm-2 col-md-2 col-lg-2">
+										<div class="col-sm-3 col-md-3 col-lg-3">
+											<h:commandButton onclick="window.location.reload(true);"
+												style="margin-right:5px;"
+												styleClass="btn btn-primary cancelScriptButton"
+												value="Cancel" />
 											<h:commandButton
 												action="#{manageCustomScriptAction.saveScript()}"
 												styleClass="btn btn-primary saveScriptButton" value="Save" />
@@ -116,10 +142,12 @@
 												<f:selectItems
 													value="#{manageCustomScriptAction.getAvailableAcrs(_customScript.name)}" />
 											</h:selectManyListbox>
+											<b:commandButton
+												action="#{manageCustomScriptAction.resetAcrs(_customScript)}"
+												look="success" styleClass="clearAcrlButton"
+												style="float:right;" iconAwesome="fa-refresh" value=""
+												ajax="true" update="@parent" />
 										</ox:decorate>
-										<br></br>
-										<br></br>
-										<br></br>
 										<div class="row">
 											<div class="col-sm-7 col-md-7 col-lg-7">
 												<ox:decorate
@@ -190,8 +218,8 @@
 												</h:selectOneMenu>
 											</ox:decorate>
 										</h:panelGroup>
-										<b:panel title="Custom Properties" look="primary" iconAwesome="fa-cogs" 
-										        style="margin-left:20px !important;">
+										<b:panel title="Custom Properties" look="primary"
+											iconAwesome="fa-cogs" style="margin-left:20px !important;">
 											<ox:simpleCustomPropertiesList
 												label="#{msg['manageAuthentication.passport.strategy.addProperty']}"
 												hideLabel="true" showRemoveDialogue="true"
@@ -210,7 +238,7 @@
 										</b:panel>
 										<h:panelGroup id="scriptPathId">
 											<h:panelGroup layout="block" styleClass="form-group"
-				                                 rendered="#{_customScript.locationType.value eq 'file'}">
+												rendered="#{_customScript.locationType.value eq 'file'}">
 												<ox:decorate label="#{msg['customScript.scriptPath']}"
 													forId="#{msg['customScript.scriptPath']}"
 													tooltip="#{msg['customScript.scriptPath']}"

@@ -105,12 +105,10 @@ public class ExtensionField {
             case NUMERIC:
                 try{
                     value = new Integer(val);
-                }
-                catch (Exception e){
-                    try{
+                } catch (Exception e) {
+                    try {
                         value = new Double(val);
-                    }
-                    catch (Exception e2) {
+                    } catch (Exception e2) {
                         value = null;
                     }
                 }
@@ -144,7 +142,7 @@ public class ExtensionField {
                 value=DateUtil.ISOToGeneralizedStringDate(val.toString());
                 break;
             case BOOLEAN:
-                value=val.toString().toUpperCase(); //LDAP accepts TRUE or FALSE only
+                value=val.toString();
                 break;
         }
         return value;

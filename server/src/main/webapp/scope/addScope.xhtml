@@ -1,54 +1,62 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://xmlns.jcp.org/jsf/core"
-                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
-                xmlns:ui="http://xmlns.jcp.org/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
-    <f:metadata>
-        <f:viewAction action="#{permissionService.requestPermission('scope', 'access')}" />
-    	<f:viewParam name="inum" value="#{updateScopeAction.inum}" />
-        <f:viewAction action="#{conversationService.initConversation}" />
-        <f:viewAction action="#{updateScopeAction.add}" onPostback="false" />
-    </f:metadata>
-    <ui:define name="body">
-        <section class="content-header">
-            <h1 style="color: #333;">
-                #{msg['scope.openIDConnect']}
-                <small>
-                    <i class="fa fa-caret-right" style="color: #333 !important;"/> #{msg['scope.addScope']}</small>
-            </h1>
-            <ol class="breadcrumb">
-                <li>
-                    <a href="#{request.contextPath}/home.htm">
-                        <i class="fa fa-home"/>
-                    </a>
-                </li>
-                <li class="organization/configuration">
-                    <a href="#{request.contextPath}/scope/scopeInventory.htm"> #{msg['scope.scopes']}</a>
-                </li>
-            </ol>
-        </section>
-        <section class="content">
-            <h:panelGroup id="formArea" layout="block">
-                <ui:decorate template="/WEB-INF/incl/scope/scopeForm.xhtml">
-                    <ui:param name="_scope" value="#{updateScopeAction.scope}"/>
-                    <ui:param name="_scopeAction" value="#{updateScopeAction}"/>
-                    <ui:param name="_new" value="true"/>
-                    <ui:define name="controlButttons">
-                        <div id="updateButtons">
-                            <h:commandButton action="#{updateScopeAction.save}" styleClass="btn btn-primary"
-                                             value="#{msg['scope.add']}"/>
-                            <h:commandButton action="#{updateScopeAction.cancel}" immediate="true"
-                                             style="margin-left:3px;" styleClass="btn btn-primary"
-                                             value="#{msg['scope.cancel']}"/>
-                        </div>
-                    </ui:define>
-                </ui:decorate>
-                <ox:selectAttributeDialog acceptMethod="#{updateScopeAction.acceptSelectClaims}"
-                                          cancelMethod="#{updateScopeAction.cancelSelectClaims}" id="claim"
-                                          label="#{msg['scope.addClaim']}" queue="scopeQueue" render="selectedClaimsId"
-                                          searchMethod="#{updateScopeAction.searchAvailableClaims}"
-                                          searchPattern="#{updateScopeAction.searchAvailableClaimPattern}"
-                                          searchResult="#{updateScopeAction.availableClaims}"/>
-            </h:panelGroup>
-        </section>
-    </ui:define>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:b="http://bootsfaces.net/ui"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/WEB-INF/incl/layout/newtemplate.xhtml">
+	<f:metadata>
+		<f:viewAction
+			action="#{permissionService.requestPermission('scope', 'access')}" />
+		<f:viewParam name="inum" value="#{updateScopeAction.inum}" />
+		<f:viewAction action="#{conversationService.initConversation}" />
+		<f:viewAction action="#{updateScopeAction.add}" onPostback="false" />
+	</f:metadata>
+	<ui:define name="body">
+		<section class="content-header">
+			<h1 style="color: #333;">
+				#{msg['scope.openIDConnect']} <small> <i
+					class="fa fa-caret-right" style="color: #333 !important;" />
+					#{msg['scope.addScope']}
+				</small>
+			</h1>
+			<ol class="breadcrumb">
+				<li><a href="#{request.contextPath}/home.htm"> <i
+						class="fa fa-home" />
+				</a></li>
+				<li class="organization/configuration"><a
+					href="#{request.contextPath}/scope/scopeInventory.htm">
+						#{msg['scope.scopes']}</a></li>
+			</ol>
+		</section>
+		<section class="content">
+			<h:panelGroup id="formArea" layout="block">
+				<ui:decorate template="/WEB-INF/incl/scope/scopeForm.xhtml">
+					<ui:param name="_scope" value="#{updateScopeAction.scope}" />
+					<ui:param name="_scopeAction" value="#{updateScopeAction}" />
+					<ui:param name="_new" value="true" />
+					<ui:define name="controlButttons">
+						<div id="updateButtons">
+							<b:commandButton action="#{updateScopeAction.save}"
+								styleClass="btn btn-primary" ajax="true" update="@form"
+								value="#{msg['scope.add']}" />
+							<b:commandButton action="#{updateScopeAction.cancel}"
+								immediate="true" ajax="true" update="@form"
+								style="margin-left:3px;" styleClass="btn btn-primary"
+								value="#{msg['scope.cancel']}" />
+						</div>
+					</ui:define>
+				</ui:decorate>
+			</h:panelGroup>
+			<ox:selectAttributeDialog
+				acceptMethod="#{updateScopeAction.acceptSelectClaims}"
+				cancelMethod="#{updateScopeAction.cancelSelectClaims}" id="claim"
+				label="#{msg['scope.addClaim']}" queue="scopeQueue"
+				render="selectedClaimsId"
+				searchMethod="#{updateScopeAction.searchAvailableClaims}"
+				searchPattern="#{updateScopeAction.searchAvailableClaimPattern}"
+				searchResult="#{updateScopeAction.availableClaims}" />
+		</section>
+	</ui:define>
 </ui:composition>

@@ -208,23 +208,14 @@ public class GroupService implements Serializable, IGroupService {
 	public String generateInumForNewGroup() throws Exception {
 		GluuGroup group = new GluuGroup();
 		String newInum = null;
+		String newDn = null;
 		do {
 			newInum = generateInumForNewGroupImpl();
-			String newDn = getDnForGroup(newInum);
+			newDn = getDnForGroup(newInum);
 			group.setDn(newDn);
-		} while (containsGroup(group));
+		} while (ldapEntryManager.contains(newDn, GluuCustomPerson.class));
 
 		return newInum;
-	}
-
-	private boolean containsGroup(GluuGroup group) {
-		boolean result = false;
-		try {
-			result = ldapEntryManager.contains(group);
-		} catch (Exception e) {
-			log.debug(e.getMessage(), e);
-		}
-		return result;
 	}
 
 	/*
@@ -239,13 +230,9 @@ public class GroupService implements Serializable, IGroupService {
 		String[] targetArray = new String[] { pattern };
 		Filter displayNameFilter = Filter.createSubstringFilter(OxTrustConstants.displayName, null, targetArray, null);
 		Filter descriptionFilter = Filter.createSubstringFilter(OxTrustConstants.description, null, targetArray, null);
-		Filter inameFilter = Filter.createSubstringFilter(OxTrustConstants.iname, null, targetArray, null);
-		Filter searchFilter = Filter.createORFilter(displayNameFilter, descriptionFilter, inameFilter);
-
-		List<GluuGroup> result = ldapEntryManager.findEntries(getDnForGroup(null), GluuGroup.class, searchFilter,
+		Filter searchFilter = Filter.createORFilter(displayNameFilter, descriptionFilter);
+		return  ldapEntryManager.findEntries(getDnForGroup(null), GluuGroup.class, searchFilter,
 				sizeLimit);
-
-		return result;
 	}
 
 	@Override
@@ -281,31 +268,9 @@ public class GroupService implements Serializable, IGroupService {
 
 	@Override
 	public GluuGroup getGroupByDn(String Dn) {
-		GluuGroup result = ldapEntryManager.find(GluuGroup.class, Dn);
-
-		return result;
+		return  ldapEntryManager.find(GluuGroup.class, Dn);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.gluu.oxtrust.ldap.service.IGroupService#getGroupByIname(java.lang.String)
-	 */
-	@Override
-	public GluuGroup getGroupByIname(String iname) throws Exception {
-		GluuGroup group = new GluuGroup();
-		group.setBaseDn(getDnForGroup(null));
-		group.setIname(iname);
-
-		List<GluuGroup> groups = ldapEntryManager.findEntries(group);
-
-		if ((groups != null) && (groups.size() > 0)) {
-			return groups.get(0);
-		}
-
-		return null;
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -319,13 +284,10 @@ public class GroupService implements Serializable, IGroupService {
 		GluuGroup group = new GluuGroup();
 		group.setBaseDn(getDnForGroup(null));
 		group.setDisplayName(DisplayName);
-
 		List<GluuGroup> groups = ldapEntryManager.findEntries(group);
-
 		if ((groups != null) && (groups.size() > 0)) {
 			return groups.get(0);
 		}
-
 		return null;
 	}
 

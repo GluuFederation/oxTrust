@@ -105,8 +105,8 @@ public class PushApplicationService implements Serializable {
 	 * 
 	 * @return True if oxPush Application with specified attributes exist
 	 */
-	public boolean containsPushApplication(PushApplication pushApplication) {
-		return ldapEntryManager.contains(pushApplication);
+	public boolean containsPushApplication(String dn) {
+		return ldapEntryManager.contains(dn, PushApplication.class);
 	}
 
 	/**
@@ -153,13 +153,12 @@ public class PushApplicationService implements Serializable {
 	 * @return New inum for oxPush Application
 	 */
 	public String generateInumForNewPushApplication() {
-		PushApplication pushApplication = new PushApplication();
+		String newDn = null;
 		String newInum = null;
 		do {
 			newInum = generateInumForNewPushApplicationImpl();
-			String newDn = getDnForPushApplication(newInum);
-			pushApplication.setDn(newDn);
-		} while (ldapEntryManager.contains(pushApplication));
+			newDn = getDnForPushApplication(newInum);
+		} while (containsPushApplication(newDn));
 
 		return newInum;
 	}

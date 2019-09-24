@@ -1,62 +1,73 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:a4j="http://richfaces.org/a4j"
-                xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:h="http://xmlns.jcp.org/jsf/html"
-                xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox" xmlns:rich="http://richfaces.org/rich"
-                xmlns:ui="http://xmlns.jcp.org/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
-    <f:metadata>
-        <f:viewAction action="#{permissionService.requestPermission('person', 'access')}" />
-        <f:viewParam name="inum" value="#{updatePersonAction.inum}" />
-        <f:viewAction action="#{conversationService.initConversation}" />
-        <f:viewAction action="#{updatePersonAction.update}"
-                      if="#{ updatePersonAction.person == null }"
-                      onPostback="false"/>
-    </f:metadata>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:a4j="http://richfaces.org/a4j" xmlns:b="http://bootsfaces.net/ui"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/WEB-INF/incl/layout/newtemplate.xhtml">
+	<f:metadata>
+		<f:viewAction
+			action="#{permissionService.requestPermission('person', 'access')}" />
+		<f:viewParam name="inum" value="#{updatePersonAction.inum}" />
+		<f:viewAction action="#{conversationService.initConversation}" />
+		<f:viewAction action="#{updatePersonAction.update}"
+			if="#{ updatePersonAction.person == null }" onPostback="false" />
+	</f:metadata>
 
-    <ui:define name="body">
-        <h:panelGroup id="formArea" layout="block">
-            <ui:decorate template="/WEB-INF/incl/person/userForm.xhtml">
-                <ui:param name="_person" value="#{updatePersonAction.person}"/>
-                <ui:param name="_customAttributeAction" value="#{customAttributeAction}"/>
-                <ui:param name="_new" value="false"/>
+	<ui:define name="body">
+		<h:panelGroup id="formArea" layout="block">
+			<ui:decorate template="/WEB-INF/incl/person/userForm.xhtml">
+				<ui:param name="_person" value="#{updatePersonAction.person}" />
+				<ui:param name="_customAttributeAction"
+					value="#{customAttributeAction}" />
+				<ui:param name="_new" value="false" />
+				<ui:define name="controlButtons">
+					<h:panelGroup id="updateButtons" class="updateButtons"
+						layout="block">
+						<a4j:commandButton
+							onclick="#{rich:component('personPassword:changePasswordModalPanel')}.show();"
+							styleClass="btn btn-primary changePasswordButton"
+							value="#{msg['person.changePassword']}" />
+						<b:commandButton action="#{updatePersonAction.save}" ajax="true"
+							update="@form"
+							rendered="#{organizationService.allowPersonModification}"
+							styleClass="btn btn-primary savePersonButon"
+							style="margin-right:5px;"
+							value="#{msg['person.update']}" />
+						<a4j:commandButton eventsQueue="personQueue"
+							onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();"
+							rendered="#{not _new and organizationService.allowPersonModification}"
+							styleClass="btn btn-primary deletePersonButton"
+							value="#{msg['person.delete']}" />
+						<b:commandButton action="#{updatePersonAction.cancel}"
+							styleClass="btn btn-primary" ajax="true" update="@form"
+							value="#{organizationService.allowPersonModification ? 'Cancel' : 'Back' }" />
+					</h:panelGroup>
+				</ui:define>
+			</ui:decorate>
 
-                <ui:define name="controlButtons">
-                    <h:panelGroup id="updateButtons" class ="updateButtons" layout="block">
-                        <a4j:commandButton
-                                onclick="#{rich:component('personPassword:changePasswordModalPanel')}.show();"
-                                styleClass="btn btn-primary changePasswordButton" value="#{msg['person.changePassword']}"/>
-                        <h:commandButton action="#{updatePersonAction.save}"
-                                         rendered="#{organizationService.allowPersonModification}"
-                                         styleClass="btn btn-primary savePersonButon" value="#{msg['person.update']}"/>
-                        <a4j:commandButton eventsQueue="personQueue"
-                                           onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();"
-                                           rendered="#{not _new and organizationService.allowPersonModification}"
-                                           styleClass="btn btn-primary deletePersonButton" value="#{msg['person.delete']}"/>
-                        <h:commandButton action="#{updatePersonAction.cancel}" immediate="true"
-                                         styleClass="btn btn-primary"
-                                         value="#{organizationService.allowPersonModification ? 'Cancel' : 'Back' }"/>
-                    </h:panelGroup>
-                </ui:define>
-            </ui:decorate>
+			<ox:changePasswordDialog id="personPassword"
+				label="#{msg['person.changePersonPassword']}"
+				password="#{userPasswordAction.newPassword}"
+				person="#{updatePersonAction.person}" verifyOldPassword="false"
+				setPasswordMethod="#{userPasswordAction.update}" />
 
-            <ox:changePasswordDialog id="personPassword" label="#{msg['person.changePersonPassword']}"
-                                     password="#{userPasswordAction.newPassword}"
-                                     person="#{updatePersonAction.person}"
-                                     verifyOldPassword="false"
-                                     setPasswordMethod="#{userPasswordAction.update}"/>
-
-            <ox:acceptRemovalDialog deleteMethod="#{updatePersonAction.delete}" id="deleteConfirmation"
-                                    queue="personQueue" subject="person"
-                                    value="#{updatePersonAction.person.displayName}"/>
-            <ox:acceptRemovalDialog deleteMethod="#{updatePersonAction.removeDevice()}" id="deleteDevice"
-                                    queue="deviceQueue" subject="device" render="PForm"
-                                     message="Removing this authentication mechanism could cause lockout or authentication errors for the end-user."
-                                    value="this"/>  
-            <ox:acceptRemovalDialog deleteMethod="#{updatePersonAction.removePairWiseIdentifier()}" id="deletePairWise"
-                                    queue="personQueue" subject="device"
-                                    message="Removing this authentication mechanism could cause lockout or authentication errors for the end-user."
-                                    render="PForm"
-                                    value="this"/>                                                
-        </h:panelGroup>
-    </ui:define>
-
+			<ox:acceptRemovalDialog deleteMethod="#{updatePersonAction.delete}"
+				id="deleteConfirmation" queue="personQueue" subject="person"
+				value="#{updatePersonAction.person.displayName}" />
+			<ox:acceptRemovalDialog
+				deleteMethod="#{updatePersonAction.removeDevice()}"
+				id="deleteDevice" queue="deviceQueue" subject="device"
+				render="PForm"
+				message="Removing this authentication mechanism could cause lockout or authentication errors for the end-user."
+				value="this" />
+			<ox:acceptRemovalDialog
+				deleteMethod="#{updatePersonAction.removePairWiseIdentifier()}"
+				id="deletePairWise" queue="personQueue" subject="device"
+				message="Removing this authentication mechanism could cause lockout or authentication errors for the end-user."
+				render="PForm" value="this" />
+		</h:panelGroup>
+	</ui:define>
 </ui:composition>

@@ -352,8 +352,10 @@ public class RelyingPartyAction implements Serializable {
 	public void handleUnspecifiedNameIDFormatSupportedCheckBox(ValueChangeEvent event) {
 		String value = event.getNewValue().toString();
 		if (value.equalsIgnoreCase("true")) {
+			this.unspecifiedNameIDFormatSupported = true;
 			supportedNameIdFormats.add(NAMEID_FORMAT_UNSPECIFIED);
 		} else {
+			this.unspecifiedNameIDFormatSupported = false;
 			supportedNameIdFormats.remove(NAMEID_FORMAT_UNSPECIFIED);
 		}
 	}

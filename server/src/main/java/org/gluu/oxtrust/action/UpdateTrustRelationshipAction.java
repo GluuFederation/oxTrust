@@ -681,10 +681,8 @@ public class UpdateTrustRelationshipAction implements Serializable {
 		String result = OxTrustConstants.RESULT_FAILURE;
 		if (update) {
 			try {
-				if (GluuStatus.ACTIVE.equals(this.trustRelationship.getStatus())) {
-					log.error(
-							"Failed to remove federation trust relationship {}, there are still active federated Trust Relationships left.",
-							this.trustRelationship.getInum());
+				if (GluuStatus.ACTIVE.equals(this.trustRelationship.getStatus())
+						&& this.trustRelationship.isFederation()) {
 					facesMessages.add(FacesMessage.SEVERITY_WARN,
 							"'#{updateTrustRelationshipAction.trustRelationship.displayName}' has associated Trust Relationship(s) depending on it and cannot be deleted. Please disable the federation and try again.");
 					return result;
@@ -692,6 +690,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 				synchronized (svnSyncTimer) {
 					for (GluuSAMLTrustRelationship trust : trustService
 							.getDeconstructedTrustRelationships(this.trustRelationship)) {
+						log.info("Deleting child:"+trust.getDisplayName());
 						trustService.removeTrustRelationship(trust);
 					}
 					shibboleth3ConfService.removeSpMetadataFile(this.trustRelationship.getSpMetaDataFN());
