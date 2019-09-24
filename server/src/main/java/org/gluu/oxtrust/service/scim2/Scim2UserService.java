@@ -108,10 +108,6 @@ public class Scim2UserService implements Serializable {
 
 	private boolean ldapBackend;
 
-    private String[] arrOf(String value) {
-		return (value == null || value.length() == 0) ? new String[0] : new String[] { value };
-	}
-
 	private String[] getComplexMultivaluedAsArray(List items) {
 
 		String array[] = {};
@@ -157,7 +153,7 @@ public class Scim2UserService implements Serializable {
 		// NOTE: calling person.setAttribute("ATTR", null) is not changing the attribute in LDAP :(
 
 		// Set values trying to follow the order found in BaseScimResource class
-		person.setAttribute("oxTrustExternalId", arrOf(res.getExternalId()));
+		person.setAttribute("oxTrustExternalId", res.getExternalId());
 		person.setAttribute("oxTrustMetaCreated", res.getMeta().getCreated());
 		person.setAttribute("oxTrustMetaLastModified", res.getMeta().getLastModified());
 		// When creating user, location will be set again when having an inum
@@ -167,30 +163,30 @@ public class Scim2UserService implements Serializable {
 		person.setUid(res.getUserName());
 
 		if (res.getName() != null) {
-			person.setAttribute("givenName", arrOf(res.getName().getGivenName()));
-			person.setAttribute("sn", arrOf(res.getName().getFamilyName()));
-			person.setAttribute("middleName", arrOf(res.getName().getMiddleName()));
-			person.setAttribute("oxTrusthonorificPrefix", arrOf(res.getName().getHonorificPrefix()));
-			person.setAttribute("oxTrusthonorificSuffix", arrOf(res.getName().getHonorificSuffix()));
-			person.setAttribute("oxTrustNameFormatted", arrOf(res.getName().computeFormattedName()));
+			person.setAttribute("givenName", res.getName().getGivenName());
+			person.setAttribute("sn", res.getName().getFamilyName());
+			person.setAttribute("middleName", res.getName().getMiddleName());
+			person.setAttribute("oxTrusthonorificPrefix", res.getName().getHonorificPrefix());
+			person.setAttribute("oxTrusthonorificSuffix", res.getName().getHonorificSuffix());
+			person.setAttribute("oxTrustNameFormatted", res.getName().computeFormattedName());
 		}
-		person.setAttribute("displayName", arrOf(res.getDisplayName()));
+		person.setAttribute("displayName", res.getDisplayName());
 
-		person.setAttribute("nickname", arrOf(res.getNickName()));
-		person.setAttribute("oxTrustProfileURL", arrOf(res.getProfileUrl()));
-		person.setAttribute("oxTrustTitle", arrOf(res.getTitle()));
-		person.setAttribute("oxTrustUserType", arrOf(res.getUserType()));
+		person.setAttribute("nickname", res.getNickName());
+		person.setAttribute("oxTrustProfileURL", res.getProfileUrl());
+		person.setAttribute("oxTrustTitle", res.getTitle());
+		person.setAttribute("oxTrustUserType", res.getUserType());
 
-		person.setAttribute("preferredLanguage", arrOf(res.getPreferredLanguage()));
-		person.setAttribute("locale", arrOf(res.getLocale()));
-		person.setAttribute("zoneinfo", arrOf(res.getTimezone()));
+		person.setAttribute("preferredLanguage", res.getPreferredLanguage());
+		person.setAttribute("locale", res.getLocale());
+		person.setAttribute("zoneinfo", res.getTimezone());
 
 		// Why both gluuStatus and oxTrustActive used for active? it's for active being used in filter queries?
 		// Also it seems gluuStatus can have several values, see org.gluu.model.GluuStatus
 		Boolean active = Optional.ofNullable(res.getActive()).orElse(false);
-		person.setTypedAttribute("oxTrustActive", active);
+		person.setCustomAttribute("oxTrustActive", active);
 		person.setAttribute("gluuStatus",
-				arrOf(active ? GluuStatus.ACTIVE.getValue() : GluuStatus.INACTIVE.getValue()));
+				active ? GluuStatus.ACTIVE.getValue() : GluuStatus.INACTIVE.getValue());
 		person.setUserPassword(res.getPassword());
 
 		person.setAttribute("oxTrustEmail", getComplexMultivaluedAsArray(res.getEmails()));
@@ -248,14 +244,14 @@ public class Scim2UserService implements Serializable {
 						if (value == null) {
 							// Attribute was unassigned in this resource: drop it from destination too
 							log.debug("transferExtendedAttributesToPerson. Flushing attribute {}", attribute);
-							person.setAttribute(attribute, new String[0]);
+							person.setAttribute(attribute, (String) null);
 						} else {
 
 						    ExtensionField field = extension.getFields().get(attribute);
                             if (field.isMultiValued()) {
-                                person.setTypedAttribute(attribute, extService.getAttributeValues(field, (Collection) value, ldapBackend));
+                                person.setCustomAttribute(attribute, extService.getAttributeValues(field, (Collection) value, ldapBackend));
                             } else {
-                                person.setTypedAttribute(attribute, extService.getAttributeValue(field, value, ldapBackend));
+                                person.setCustomAttribute(attribute, extService.getAttributeValue(field, value, ldapBackend));
                             }
                             log.debug("transferExtendedAttributesToPerson. Setting attribute '{}' with values {}",
                                     attribute, person.getTypedAttribute(attribute).getDisplayValue());
@@ -287,9 +283,8 @@ public class Scim2UserService implements Serializable {
 
 		meta.setLastModified(person.getAttribute("oxTrustMetaLastModified"));
 		if (meta.getLastModified() == null) {
-			Date tmpDate = person.getUpdatedAt();
-			meta.setLastModified(
-					tmpDate == null ? null : ISODateTimeFormat.dateTime().withZoneUTC().print(tmpDate.getTime()));
+			Date date = person.getUpdatedAt();
+			meta.setLastModified(date == null ? null : ISODateTimeFormat.dateTime().withZoneUTC().print(date.getTime()));
 		}
 
 		meta.setLocation(person.getAttribute("oxTrustMetaLocation"));
