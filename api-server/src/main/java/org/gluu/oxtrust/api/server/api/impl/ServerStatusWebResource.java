@@ -33,7 +33,7 @@ public class ServerStatusWebResource extends BaseWebResource {
 	private ConfigurationService configurationService;
 
 	@GET
-	@Operation(description = "Get server status ")
+	@Operation(summary="Get server status",description = "Get server status")
 	@ApiResponses(value = {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = GluuServerStatus.class)), description = "Success"),
 			@ApiResponse(responseCode = "500", description = "Server error") })

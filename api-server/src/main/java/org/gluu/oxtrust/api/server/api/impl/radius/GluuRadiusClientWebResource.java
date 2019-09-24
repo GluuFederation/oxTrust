@@ -43,7 +43,7 @@ public class GluuRadiusClientWebResource extends BaseWebResource {
     private EncryptionService encryptionService;
 
     @GET
-    @Operation(description = "Get all radius clients")
+    @Operation(summary = "Get all radius clients", description = "Get all radius clients")
     @ApiResponses({
         @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = RadiusClient[].class)), description = "Success"),
         @ApiResponse(responseCode = "403", description="Gluu Radius is not installed"),
@@ -66,7 +66,7 @@ public class GluuRadiusClientWebResource extends BaseWebResource {
 
     @GET
     @Path(ApiConstants.INUM_PARAM_PATH)
-    @Operation(description = "Get radius client by inum")
+    @Operation(summary = "Get radius client by inum", description = "Get radius client by inum")
     @ApiResponses({
         @ApiResponse(responseCode = "200", content= @Content(schema = @Schema(implementation = RadiusClient.class)), description = "Success"),
         @ApiResponse(responseCode = "403", description="Gluu Radius is not installed"),
@@ -91,7 +91,7 @@ public class GluuRadiusClientWebResource extends BaseWebResource {
     }
 
     @POST
-    @Operation(description= "Add new radius client")
+    @Operation(summary = "Add new radius client", description= "Add new radius client")
     @ApiResponses({
         @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = RadiusClient.class)), description = "Success"),
         @ApiResponse(responseCode = "400", description = "Malformed request. Missing parameter"),
@@ -129,7 +129,7 @@ public class GluuRadiusClientWebResource extends BaseWebResource {
     }
 
     @PUT
-    @Operation(description = "Update existing radius client")
+    @Operation(summary = "Update existing radius client", description = "Update existing radius client")
     @ApiResponses({
         @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = RadiusClient.class)), description = "Success"),
         @ApiResponse(responseCode = "400", description = "Malformed Request. Missing parameter"),
@@ -173,6 +173,7 @@ public class GluuRadiusClientWebResource extends BaseWebResource {
 
 
     @DELETE
+    @Operation(summary = "Delete radius client", description = "Deletes a radius client")
     @Path(ApiConstants.INUM_PARAM_PATH)
     @ApiResponses({
         @ApiResponse(responseCode="204", description="Success"),

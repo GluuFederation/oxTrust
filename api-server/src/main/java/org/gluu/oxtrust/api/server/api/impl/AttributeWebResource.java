@@ -39,7 +39,7 @@ public class AttributeWebResource extends BaseWebResource {
 	}
 
 	@GET
-	@Operation(description = "Get all attributes")
+	@Operation(summary = "Get all attributes", description = "Gets all the gluu attributes")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", content = @Content(
                     schema = @Schema(implementation = GluuAttribute[].class)
@@ -59,7 +59,7 @@ public class AttributeWebResource extends BaseWebResource {
 
 	@GET
 	@Path(ApiConstants.ACTIVE)
-	@Operation(description = "Get all actives attributes")
+	@Operation(summary = "Get all active attributes", description = "Gets all the active gluu attributes")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", content = @Content(
                     schema = @Schema(implementation = GluuAttribute[].class)
@@ -80,7 +80,7 @@ public class AttributeWebResource extends BaseWebResource {
 
 	@GET
 	@Path(ApiConstants.INACTIVE)
-	@Operation(description = "Get all inactives attributes")
+	@Operation(summary = "Get all inactive attributes", description = "Gets all inative attributes")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", content = @Content(
                     schema = @Schema(implementation = GluuAttribute[].class)
@@ -100,8 +100,8 @@ public class AttributeWebResource extends BaseWebResource {
 	}
 
 	@GET
-	@Path(ApiConstants.INUM_PARAM_PATH)
-	@Operation(description = "Get attribute by inum")
+	@Path(ApiConstants.ATTRIBUTE + ApiConstants.INUM_PARAM_PATH)
+	@Operation(summary = "Get attribute by inum", description = "Get an attribute by inum")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", content = @Content(
                     schema = @Schema(implementation = GluuAttribute.class)
@@ -121,7 +121,7 @@ public class AttributeWebResource extends BaseWebResource {
 
 	@GET
 	@Path(ApiConstants.SEARCH)
-	@Operation(description = "Search attributes")
+	@Operation(summary = "Search attributes", description = "Perform an attribute search")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", content = @Content(
                     schema = @Schema(implementation = GluuAttribute.class)
@@ -141,7 +141,7 @@ public class AttributeWebResource extends BaseWebResource {
 	}
 
 	@POST
-	@Operation(description = "Add new attribute")
+	@Operation(summary = "Add new attribute", description = "Adds a new Gluu attribute")
 	@ApiResponses(value = {
 	        @ApiResponse(responseCode = "200", content = @Content(
                     schema = @Schema(implementation = GluuAttribute.class)
@@ -164,7 +164,7 @@ public class AttributeWebResource extends BaseWebResource {
 	}
 
 	@PUT
-	@Operation(description = "Update new attribute")
+	@Operation(summary="Update new attribute", description = "Updates a gluu attribute")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", content = @Content(
                     schema = @Schema(implementation = GluuAttribute.class)
@@ -193,7 +193,7 @@ public class AttributeWebResource extends BaseWebResource {
 
 	@DELETE
 	@Path(ApiConstants.INUM_PARAM_PATH)
-	@Operation(description = "Delete an attribute")
+	@Operation(summary = "Delete gluu attribute", description = "Deletes a gluu attribute")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = Constants.RESULT_SUCCESS),
 			@ApiResponse(responseCode = "404", description = "Not found"),

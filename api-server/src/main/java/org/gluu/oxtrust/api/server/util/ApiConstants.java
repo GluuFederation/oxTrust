@@ -16,6 +16,7 @@ public final class ApiConstants {
 	public static final String SCOPES = "/scopes";
 	public static final String CLAIMS = "/claims";
 	public static final String SECTORS = "/sectoridentifiers";
+	public static final String SECTOR = "/sector";
 	public static final String USERS = "/users";
 	public static final String ACRS = "/acrs";
 	public static final String PASSPORT = "/passport";
@@ -23,6 +24,7 @@ public final class ApiConstants {
 	public static final String PROVIDERS = "/providers";
 	public static final String IDP_INITIATED = "/idpinitiaded";
 	public static final String ATTRIBUTES = "/attributes";
+	public static final String ATTRIBUTE = "/attribute";
 	public static final String LDAP = "/ldap";
 	public static final String CAS = "/cas";
 	public static final String RECAPCTHA = "/recaptcha";
