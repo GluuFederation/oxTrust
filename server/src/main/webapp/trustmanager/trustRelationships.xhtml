@@ -71,7 +71,7 @@
 											action="#{trustRelationshipInventoryAction.search}"
 											style="float:left;margin-left :3px;"
 											styleClass="btn btn-primary searchButton"
-											value="#{msg['trustmanager.search']}" iconAwesome="fa-search"/>
+											value="#{msg['trustmanager.search']}" iconAwesome="fa-search" />
 									</div>
 								</ox:decorate>
 							</h:form>
@@ -105,21 +105,21 @@
 											<b:dataTableColumn
 												label="#{msg['trustmanager.validationStatus']}">
 												<b:label
-													text="#{metadataValidationTimer.getValidationStatus(tsps.spMetaDataFN,tsps.validationStatus)}"
-													rendered="#{metadataValidationTimer.getValidationStatus(tsps.spMetaDataFN,tsps.validationStatus) eq 'Validation Scheduled'}"
+													text="#{metadataValidationTimer.getValidationStatus(tsps.spMetaDataFN,tsps)}"
+													rendered="#{metadataValidationTimer.getValidationStatus(tsps.spMetaDataFN,tsps) eq 'Scheduled'}"
 													severity="warning" />
 												<b:label
-													text="#{metadataValidationTimer.getValidationStatus(tsps.spMetaDataFN,tsps.validationStatus)}"
-													rendered="#{metadataValidationTimer.getValidationStatus(tsps.spMetaDataFN,tsps.validationStatus) eq 'Validation'}"
-													severity="info" />	
+													text="#{metadataValidationTimer.getValidationStatus(tsps.spMetaDataFN,tsps)}"
+													rendered="#{metadataValidationTimer.getValidationStatus(tsps.spMetaDataFN,tsps) eq 'In Progress'}"
+													severity="info" />
 												<b:label
-													text="#{metadataValidationTimer.getValidationStatus(tsps.spMetaDataFN,tsps.validationStatus)}"
-													rendered="#{metadataValidationTimer.getValidationStatus(tsps.spMetaDataFN,tsps.validationStatus) eq 'Validation Failed'}"
-													severity="danger" />	
+													text="#{metadataValidationTimer.getValidationStatus(tsps.spMetaDataFN,tsps)}"
+													rendered="#{metadataValidationTimer.getValidationStatus(tsps.spMetaDataFN,tsps) eq 'Failed'}"
+													severity="danger" />
 												<b:label
-													text="#{metadataValidationTimer.getValidationStatus(tsps.spMetaDataFN,tsps.validationStatus)}"
-													rendered="#{metadataValidationTimer.getValidationStatus(tsps.spMetaDataFN,tsps.validationStatus) eq 'Validation Success'}"
-													severity="success" />	
+													text="#{metadataValidationTimer.getValidationStatus(tsps.spMetaDataFN,tsps)}"
+													rendered="#{metadataValidationTimer.getValidationStatus(tsps.spMetaDataFN,tsps) eq 'Success'}"
+													severity="success" />
 											</b:dataTableColumn>
 											<b:dataTableColumn label="#{msg['trustmanager.status']}">
 												<b:label rendered="#{tsps.status.displayName eq 'Active'}"

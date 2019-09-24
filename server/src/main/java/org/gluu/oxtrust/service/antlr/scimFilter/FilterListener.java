@@ -23,6 +23,7 @@ import org.gluu.search.filter.Filter;
 import org.gluu.service.cdi.util.CdiUtil;
 import org.gluu.util.Pair;
 
+import javax.lang.model.type.NullType;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Optional;
@@ -61,6 +62,7 @@ public class FilterListener extends ScimFilterBaseListener {
             Attribute attrAnnot = IntrospectUtil.getFieldAnnotation(path, resourceClass, Attribute.class);
             String ldapAttribute = null;
             boolean isNested = false;
+            boolean multiValued = false;
 
             if (attrAnnot == null) {
                 ExtensionField field = extService.getFieldOfExtendedAttribute(resourceClass, path);
@@ -69,10 +71,12 @@ public class FilterListener extends ScimFilterBaseListener {
                     error = String.format("Attribute path '%s' is not recognized in %s", path, resourceClass.getSimpleName());
                 } else {
                     attrType = field.getAttributeDefinitionType();
+                    multiValued = field.isMultiValued();
                     ldapAttribute = path.substring(path.lastIndexOf(":") + 1);
                 }
             } else {
                 attrType = attrAnnot.type();
+                multiValued = attrAnnot.multiValueClass().equals(NullType.class);
                 Pair<String, Boolean> pair = FilterUtil.getLdapAttributeOfResourceAttribute(path, resourceClass);
                 ldapAttribute = pair.getFirst();
                 isNested = pair.getSecond();
@@ -99,7 +103,8 @@ public class FilterListener extends ScimFilterBaseListener {
 
                 error = FilterUtil.checkFilterConsistency(path, attrType, type, operator);
                 if (error == null) {
-                    Pair<Filter, String> subf = subFilterGenerator.build(subattr, ldapAttribute, isPrRule ? null : compValueCtx.getText(), attrType, type, operator);
+                    Pair<Filter, String> subf = subFilterGenerator
+                            .build(subattr, ldapAttribute, isPrRule ? null : compValueCtx.getText(), attrType, type, operator, multiValued);
                     Filter subFilth = subf.getFirst();
                     error = subf.getSecond();
 
