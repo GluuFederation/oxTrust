@@ -17,7 +17,6 @@ import org.gluu.persist.exception.BasePersistenceException;
 import org.gluu.persist.model.base.GluuBoolean;
 import org.gluu.service.CacheService;
 import org.gluu.util.ArrayHelper;
-import org.gluu.util.OxConstants;
 import org.gluu.util.StringHelper;
 import org.slf4j.Logger;
 
@@ -78,11 +77,10 @@ public class OrganizationService  extends org.gluu.service.OrganizationService{
 	 * @return Organization
 	 */
 	public GluuOrganization getOrganization() {
-		String key = OxConstants.CACHE_ORGANIZATION_KEY;
-		GluuOrganization organization = (GluuOrganization) cacheService.get(key);
-		if (organization == null) {
-			String orgDn = getDnForOrganization();
-			organization = ldapEntryManager.find(GluuOrganization.class, orgDn);
+        String key = getDnForOrganization();
+        GluuOrganization organization = (GluuOrganization) cacheService.get(key);
+        if (organization == null) {
+			organization = ldapEntryManager.find(GluuOrganization.class, key);
 			cacheService.put(key, organization);
 		}
 
