@@ -172,8 +172,8 @@ public class PeopleWebResource extends BaseWebResource {
 	//
 	//It is unclear what this API call does. We will comment it for now 
 	//and re-evaluate. 
-	@DELETE
-	@ProtectedApi(scopes = { WRITE_ACCESS })
+	//@DELETE
+	//@ProtectedApi(scopes = { WRITE_ACCESS })
 	//public Response deletePeople() {
 	//	return Response.status(Response.Status.UNAUTHORIZED).build();
 	//}
