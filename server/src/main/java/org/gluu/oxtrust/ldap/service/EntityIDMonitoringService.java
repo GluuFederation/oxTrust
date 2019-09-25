@@ -101,12 +101,12 @@ public class EntityIDMonitoringService {
 		log.trace("EVENT_METADATA_ENTITY_ID_UPDATE Starting");
 		for (GluuSAMLTrustRelationship tr : trustService.getAllTrustRelationships().stream()
 				.filter(e -> e.isFederation()).collect(Collectors.toList())) {
-			log.trace("###############################CURRENT TR " + tr.getInum());
+			log.trace("==========================CURRENT TR " + tr.getInum());
 			String idpMetadataFolder = appConfiguration.getShibboleth3IdpRootDir() + File.separator
 					+ Shibboleth3ConfService.SHIB3_IDP_METADATA_FOLDER + File.separator;
 			File metadataFile = new File(idpMetadataFolder + tr.getSpMetaDataFN());
 			List<String> entityIds = SAMLMetadataParser.getEntityIdFromMetadataFile(metadataFile);
-			Set<String> fromFileEntityIds = new HashSet(entityIds);
+			Set<String> fromFileEntityIds = new HashSet<String>(entityIds);
 			if (fromFileEntityIds != null && !fromFileEntityIds.isEmpty()) {
 				log.trace("EntityIds from metadata: " + serviceUtil.iterableToString(entityIds));
 				log.trace("Unique entityIds: " + serviceUtil.iterableToString(fromFileEntityIds));
