@@ -11,6 +11,7 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 
 /**
@@ -116,7 +117,13 @@ public class DateUtil {
             //What? ask yurem...
             //https://github.com/GluuFederation/oxCore/commit/ed24e0d4387076b0089a86246c6ac82fcac14c4a
         } catch (Exception e) {
-            return null;
+            try {
+                LocalDateTime.parse(value);
+                //already in required format
+                return value;
+            } catch (Exception e1) {
+                return null;
+            }
         }
 
     }

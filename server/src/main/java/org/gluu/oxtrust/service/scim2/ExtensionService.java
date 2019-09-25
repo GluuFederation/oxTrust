@@ -12,9 +12,11 @@ import static org.gluu.oxtrust.model.scim2.Constants.USER_EXT_SCHEMA_NAME;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -37,62 +39,59 @@ import org.slf4j.Logger;
 @Named
 public class ExtensionService {
 
-	@Inject
-	private Logger log;
+    @Inject
+    private Logger log;
 
-	@Inject
-	private AttributeService attrService;
+    @Inject
+    private AttributeService attrService;
 
-	public List<Extension> getResourceExtensions(Class<? extends BaseScimResource> cls) {
+    public List<Extension> getResourceExtensions(Class<? extends BaseScimResource> cls) {
 
-		List<Extension> list = new ArrayList<Extension>();
-		try {
-			// Currently support one extension only for User Resource
-			if (cls.equals(UserResource.class)) {
+        List<Extension> list = new ArrayList<Extension>();
+        try {
+            // Currently support one extension only for User Resource
+            if (cls.equals(UserResource.class)) {
 
-				Map<String, ExtensionField> fields = new HashMap<String, ExtensionField>();
+                Map<String, ExtensionField> fields = new HashMap<>();
 
-				for (GluuAttribute attribute : attrService.getSCIMRelatedAttributes()) {
-					if ((attribute.getOxSCIMCustomAttribute() != null) && attribute.getOxSCIMCustomAttribute()) {
-						// first non-null check is needed because certain entries do not have the
-						// multivalue attribute set
-						boolean multi = attribute.getOxMultiValuedAttribute() != null
-								&& attribute.getOxMultiValuedAttribute();
+                for (GluuAttribute attribute : attrService.getSCIMRelatedAttributes()) {
+                    if (Optional.ofNullable(attribute.getOxSCIMCustomAttribute()).orElse(false)) {
+                        // first non-null check is needed because certain entries do not have the multivalue attribute set
 
-						ExtensionField field = new ExtensionField();
-						field.setDescription(attribute.getDescription());
-						field.setType(attribute.getDataType());
-						field.setMultiValued(multi);
-						field.setName(attribute.getName());
+                        ExtensionField field = new ExtensionField();
+                        field.setDescription(attribute.getDescription());
+                        field.setType(attribute.getDataType());
+                        field.setMultiValued(Optional.ofNullable(attribute.getOxMultiValuedAttribute()).orElse(false));
+                        field.setName(attribute.getName());
 
-						fields.put(attribute.getName(), field);
-					}
-				}
+                        fields.put(attribute.getName(), field);
+                    }
+                }
 
-				Extension ext = new Extension(USER_EXT_SCHEMA_ID);
-				ext.setFields(fields);
-				ext.setName(USER_EXT_SCHEMA_NAME);
-				ext.setDescription(USER_EXT_SCHEMA_DESCRIPTION);
+                Extension ext = new Extension(USER_EXT_SCHEMA_ID);
+                ext.setFields(fields);
+                ext.setName(USER_EXT_SCHEMA_NAME);
+                ext.setDescription(USER_EXT_SCHEMA_DESCRIPTION);
 
-				list.add(ext);
-			}
-		} catch (Exception e) {
-			log.error("An error ocurred when building extension for {}", cls.getName());
-			log.error(e.getMessage(), e);
-		}
-		return list;
+                list.add(ext);
+            }
+        } catch (Exception e) {
+            log.error("An error ocurred when building extension for {}", cls.getName());
+            log.error(e.getMessage(), e);
+        }
+        return list;
 
-	}
+    }
 
-	public List<String> getUrnsOfExtensions(Class<? extends BaseScimResource> cls) {
+    public List<String> getUrnsOfExtensions(Class<? extends BaseScimResource> cls) {
 
-		List<String> list = new ArrayList<String>();
-		for (Extension ext : getResourceExtensions(cls))
-			list.add(ext.getUrn());
+        List<String> list = new ArrayList<String>();
+        for (Extension ext : getResourceExtensions(cls))
+            list.add(ext.getUrn());
 
-		return list;
+        return list;
 
-	}
+    }
 
     /**
      * Transforms the value passed in case it is of type DATE. Depending on the param <code>ldapBackend</code>, the
@@ -102,10 +101,10 @@ public class ExtensionService {
      * @param ldapBackend Whether the backend DB is LDAP or not
      * @return Value transformed (kept as is if unrelated to DATEs)
      */
-	public Object getAttributeValue(ExtensionField field, Object val, boolean ldapBackend) {
+    public Object getAttributeValue(ExtensionField field, Object val, boolean ldapBackend) {
 
         AttributeDataType type = field.getType();
-	    Object value = val;
+        Object value = val;
         if (type.equals(AttributeDataType.DATE)) {
             //If the date object is passed directly to the persistence layer, it fails for both backend types
             value = ldapBackend ? DateUtil.ISOToGeneralizedStringDate(val.toString())
@@ -115,7 +114,7 @@ public class ExtensionService {
 
     }
 
-	public List<Object> getAttributeValues(ExtensionField field, Collection valuesHolder, boolean ldapBackend) {
+    public List<Object> getAttributeValues(ExtensionField field, Collection valuesHolder, boolean ldapBackend) {
 
         List<Object> values = new ArrayList<>();
         for (Object elem : valuesHolder) {
@@ -124,34 +123,35 @@ public class ExtensionService {
                 values.add(getAttributeValue(field, elem, ldapBackend));
             }
         }
+        values.remove(Collections.singletonList(null));
         return values;
 
-	}
+    }
 
-	/**
-	 * Builds a list of objects based on the supplied String values passed and the
-	 * extension field passed. The strings are converted according to the type
-	 * asociated to the field: for STRING the value is left as is; for DATE the
-	 * value is converted to a String following the ISO date format; for NUMERIC an
-	 * Integer/Double is created from the value supplied.
-	 * 
-	 * @param field
-	 *            An ExtensionField
-	 * @param strValues
-	 *            A non-empty String array with the values associated to the field
-	 *            passed. These values are coming from LDAP
-	 * @return List of opaque values
-	 */
-	public List<Object> convertValues(ExtensionField field, String strValues[], boolean ldapBackend) {
+    /**
+     * Builds a list of objects based on the supplied String values passed and the
+     * extension field passed. The strings are converted according to the type
+     * asociated to the field: for STRING the value is left as is; for DATE the
+     * value is converted to a String following the ISO date format; for NUMERIC an
+     * Integer/Double is created from the value supplied.
+     *
+     * @param field
+     *            An ExtensionField
+     * @param strValues
+     *            A non-empty String array with the values associated to the field
+     *            passed. These values are coming from LDAP
+     * @return List of opaque values
+     */
+    public List<Object> convertValues(ExtensionField field, String strValues[], boolean ldapBackend) {
 
-		List<Object> values = new ArrayList<Object>();
+        List<Object> values = new ArrayList<>();
 
-		for (String val : strValues) {
-			// In practice, there should not be nulls in strValues
-			if (val != null) {
-			    Object value;
+        for (String val : strValues) {
+            // In practice, there should not be nulls in strValues
+            if (val != null) {
+                Object value;
 
-			    //See org.gluu.oxtrust.model.scim2.util.DateUtil.gluuCouchbaseISODate()
+                //See org.gluu.oxtrust.model.scim2.util.DateUtil.gluuCouchbaseISODate()
                 if (!ldapBackend && field.getType().equals(AttributeDataType.DATE)) {
                     try {
                         DateTimeFormatter.ISO_DATE_TIME.parse(val);
@@ -162,63 +162,63 @@ public class ExtensionService {
                 } else {
                     value = ExtensionField.valueFromString(field, val);
                 }
-				// won't happen either (value being null) because calls to this method occurs
-				// after lots of validations have taken place
-				if (value != null) {
-					values.add(value);
-					log.debug("convertValues. Added value '{}'", value.toString());
-				}
-			}
-		}
-		return values;
+                // won't happen either (value being null) because calls to this method occurs
+                // after lots of validations have taken place
+                if (value != null) {
+                    values.add(value);
+                    log.debug("convertValues. Added value '{}'", value.toString());
+                }
+            }
+        }
+        return values;
 
-	}
+    }
 
-	public Extension extensionOfAttribute(Class<? extends BaseScimResource> cls, String attribute) {
+    public Extension extensionOfAttribute(Class<? extends BaseScimResource> cls, String attribute) {
 
-		List<Extension> extensions = getResourceExtensions(cls);
-		Extension belong = null;
+        List<Extension> extensions = getResourceExtensions(cls);
+        Extension belong = null;
 
-		try {
-			for (Extension ext : extensions) {
-				if (attribute.startsWith(ext.getUrn() + ":")) {
-					attribute = attribute.substring(ext.getUrn().length() + 1);
+        try {
+            for (Extension ext : extensions) {
+                if (attribute.startsWith(ext.getUrn() + ":")) {
+                    attribute = attribute.substring(ext.getUrn().length() + 1);
 
-					for (String fieldName : ext.getFields().keySet())
-						if (attribute.equals(fieldName)) {
-							belong = ext;
-							break;
-						}
-				}
-			}
-		} catch (Exception e) {
-			log.error(e.getMessage(), e);
-		}
-		return belong;
+                    for (String fieldName : ext.getFields().keySet())
+                        if (attribute.equals(fieldName)) {
+                            belong = ext;
+                            break;
+                        }
+                }
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+        return belong;
 
-	}
+    }
 
-	public ExtensionField getFieldOfExtendedAttribute(Class<? extends BaseScimResource> cls, String attribute) {
+    public ExtensionField getFieldOfExtendedAttribute(Class<? extends BaseScimResource> cls, String attribute) {
 
-		List<Extension> extensions = getResourceExtensions(cls);
-		ExtensionField field = null;
+        List<Extension> extensions = getResourceExtensions(cls);
+        ExtensionField field = null;
 
-		try {
-			for (Extension ext : extensions) {
-				if (attribute.startsWith(ext.getUrn() + ":")) {
-					attribute = attribute.substring(ext.getUrn().length() + 1);
+        try {
+            for (Extension ext : extensions) {
+                if (attribute.startsWith(ext.getUrn() + ":")) {
+                    attribute = attribute.substring(ext.getUrn().length() + 1);
 
-					for (ExtensionField f : ext.getFields().values())
-						if (attribute.equals(f.getName())) {
-							field = f;
-							break;
-						}
-				}
-			}
-		} catch (Exception e) {
-			log.error(e.getMessage(), e);
-		}
-		return field;
-	}
+                    for (ExtensionField f : ext.getFields().values())
+                        if (attribute.equals(f.getName())) {
+                            field = f;
+                            break;
+                        }
+                }
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+        return field;
+    }
 
 }

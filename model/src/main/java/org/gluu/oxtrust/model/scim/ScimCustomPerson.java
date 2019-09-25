@@ -10,13 +10,14 @@ import org.gluu.persist.annotation.*;
 import org.gluu.persist.model.base.Entry;
 
 import java.io.Serializable;
+import java.time.Instant;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @DataEntry
 @ObjectClass("gluuPerson")
@@ -36,7 +37,7 @@ public class ScimCustomPerson extends Entry implements Serializable {
     @AttributeName(name = "oxPPID")
     private List<String> oxPPID;
 
-    @AttributesList(name = "name", value = "values", sortByName = true, attributesConfiguration = {
+    @AttributesList(name = "name", value = "values", multiValued = "multiValued", sortByName = true, attributesConfiguration = {
             @AttributeName(name = "inum", ignoreDuringUpdate = true),
             @AttributeName(name = "uid"),
             @AttributeName(name = "userPassword", ignoreDuringRead = true) })
@@ -91,9 +92,22 @@ public class ScimCustomPerson extends Entry implements Serializable {
     }
 
     public List<String> getAttributeList(String attributeName) {
-        return Optional.ofNullable(getTypedAttribute(attributeName))
-                .map(CustomObjectAttribute::getValues).orElse(Collections.emptyList())
-                .stream().map(Object::toString).collect(Collectors.toList());
+
+        List<Object> list = Optional.ofNullable(getTypedAttribute(attributeName))
+                .map(CustomObjectAttribute::getValues).orElse(Collections.emptyList());
+        List<String> result = new ArrayList<>();
+
+        for (Object obj : list) {
+            //Ugly ugly hack
+            if (obj.getClass().equals(Date.class)) {
+                long millis = Date.class.cast(obj).getTime();
+                result.add(DateTimeFormatter.ISO_INSTANT.format(Instant.ofEpochMilli(millis)));
+            } else {
+                result.add(obj.toString());
+            }
+        }
+        return result;
+
     }
 
     public String getAttribute(String attributeName) {
@@ -156,24 +170,24 @@ public class ScimCustomPerson extends Entry implements Serializable {
     }
 
     public void setAttribute(String attributeName, String[] attributeValue) {
-        CustomObjectAttribute attribute = new CustomObjectAttribute(attributeName, Arrays.asList(attributeValue));
-        typedCustomAttributes.remove(attribute);
-        typedCustomAttributes.add(attribute);
+        setCustomAttribute(attributeName, Arrays.asList(attributeValue));
     }
 
     public void setAttribute(String attributeName, String attributeValue) {
+        if (attributeValue == null || attributeValue.length() == 0) {
+            setCustomAttribute(attributeName, Collections.emptyList());
+        } else {
+            setCustomAttribute(attributeName, attributeValue);
+        }
+    }
+
+    public void setCustomAttribute(String attributeName, Object attributeValue) {
         CustomObjectAttribute attribute = new CustomObjectAttribute(attributeName, attributeValue);
         typedCustomAttributes.remove(attribute);
         typedCustomAttributes.add(attribute);
     }
 
-    public void setTypedAttribute(String attributeName, Object attributeValue) {
-        CustomObjectAttribute attribute = new CustomObjectAttribute(attributeName, attributeValue);
-        typedCustomAttributes.remove(attribute);
-        typedCustomAttributes.add(attribute);
-    }
-
-    public void setTypedAttribute(String attributeName, List<Object> attributeValue) {
+    public void setCustomAttribute(String attributeName, List<Object> attributeValue) {
         CustomObjectAttribute attribute = new CustomObjectAttribute(attributeName, attributeValue);
         typedCustomAttributes.remove(attribute);
         typedCustomAttributes.add(attribute);

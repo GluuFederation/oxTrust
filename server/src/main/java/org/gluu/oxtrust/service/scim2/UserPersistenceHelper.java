@@ -111,7 +111,7 @@ public class UserPersistenceHelper {
 
         log.info("syncing email ...");
         List<String> oxTrustEmails = customPerson.getAttributeList("oxTrustEmail");
-log.debug("oxtrustEmals {}", oxTrustEmails);
+
         if (!oxTrustEmails.isEmpty()) {
             ObjectMapper mapper = ServiceUtil.getObjectMapper();
             String[] newMails = new String[oxTrustEmails.size()];
