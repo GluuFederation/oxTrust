@@ -122,11 +122,12 @@ public class BaseScimResource {
     /**
      * Constructs a basic SCIM resource with all its attributes unassigned
      */
-    public BaseScimResource(){
-        schemas=new HashSet<String>();
-        String defSchema= ScimResourceUtil.getDefaultSchemaUrn(getClass());
-        if (defSchema!=null)
+    public BaseScimResource() {
+        schemas = new HashSet<>();
+        String defSchema = ScimResourceUtil.getDefaultSchemaUrn(getClass());
+        if (defSchema != null) {
             schemas.add(defSchema);
+        }
     }
 
     public String getId() {

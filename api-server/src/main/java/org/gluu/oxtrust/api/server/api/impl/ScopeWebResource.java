@@ -196,13 +196,12 @@ public class ScopeWebResource extends BaseWebResource {
 		}
 	}
 
-	/**
-	 * We do not know exactly what this function is supposed to achieve 
-	 * so we comment it out for now 
-	@DELETE
-	@ProtectedApi(scopes = { WRITE_ACCESS })
-	public Response deleteScopes() {
-		return Response.status(Response.Status.UNAUTHORIZED).build();
-	}
-	*/
+	//
+	//We do not know exactly what this function is supposed to achieve 
+	//so we comment it out for now 
+	//@DELETE
+	//@ProtectedApi(scopes = { WRITE_ACCESS })
+	//public Response deleteScopes() {
+	//	return Response.status(Response.Status.UNAUTHORIZED).build();
+	//}
 }

@@ -1,58 +1,73 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:a4j="http://richfaces.org/a4j"
-                xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:h="http://xmlns.jcp.org/jsf/html"
-                xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox" xmlns:rich="http://richfaces.org/rich"
-                xmlns:ui="http://xmlns.jcp.org/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
-    <f:metadata>
-        <f:viewAction action="#{permissionService.requestPermission('attribute', 'access')}" />
-    	<f:viewParam name="inum" value="#{updateAttributeAction.inum}" />
-        <f:viewAction action="#{conversationService.initConversation}" />
-        <f:viewAction action="#{updateAttributeAction.update}" onPostback="false"/>
-    </f:metadata>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/WEB-INF/incl/layout/newtemplate.xhtml">
+	<f:metadata>
+		<f:viewAction
+			action="#{permissionService.requestPermission('attribute', 'access')}" />
+		<f:viewParam name="inum" value="#{updateAttributeAction.inum}" />
+		<f:viewAction action="#{conversationService.initConversation}" />
+		<f:viewAction action="#{updateAttributeAction.update}"
+			onPostback="false" />
+	</f:metadata>
 
-    <ui:define name="body">
-        <section class="content-header">
-            <h1 style="color: #333;">
-                #{msg['attribute.attributes']}
-                <small>
-                    <i class="fa fa-caret-right" style="color: #333 !important;"/> #{msg['attribute.editAttribute']}
-                </small>
-            </h1>
-            <ol class="breadcrumb">
-                <li>
-                    <a href="#{request.contextPath}/home.htm">
-                        <i class="fa fa-home"/>
-                    </a>
-                </li>
-                <li class="organization/configuration">
-                    <a href="#{request.contextPath}/attribute/attributeInventory.htm">#{msg['attribute.attributes']}</a>
-                </li>
-            </ol>
-        </section>
-        <section class="content">
-            <div id="formArea">
-                <ui:decorate template="/WEB-INF/incl/attribute/attributeForm.xhtml">
-                    <ui:param name="_attribute" value="#{updateAttributeAction.attribute}"/>
-                    <ui:param name="_attributeAction" value="#{updateAttributeAction}"/>
-                    <ui:param name="_new" value="false"/>
-                    <ui:define name="controlButttons">
-                        <div id="updateButtons">
-                            <h:commandButton action="#{updateAttributeAction.save}"
-                                             rendered="#{updateAttributeAction.canEdit()}" styleClass="btn btn-primary updateButton"
-                                             value="#{msg['attribute.update']}"/>
-                            <a4j:commandButton ajaxSingle="true"
-                                               onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();"
-                                               rendered="#{updateAttributeAction.canEdit()}"
-                                               styleClass="btn btn-primary deleteButton" value="#{msg['attribute.delete']}"/>
-                            <h:commandButton action="#{updateAttributeAction.cancel}" immediate="true"
-                                             style="margin-left:5px" styleClass="btn btn-primary cancelButton"
-                                             value="#{msg['attribute.cancel']}"/>
-                        </div>
-                    </ui:define>
-                </ui:decorate>
-                <ox:acceptRemovalDialog deleteMethod="#{updateAttributeAction.delete}" id="deleteConfirmation"
-                                        subject="attribute" value="#{updateAttributeAction.attribute.displayName}"/>
-            </div>
-        </section>
-    </ui:define>
+	<ui:define name="body">
+		<section class="content-header">
+			<h1 style="color: #333;">
+				#{msg['attribute.attributes']} <small> <i
+					class="fa fa-caret-right" style="color: #333 !important;" />
+					#{msg['attribute.editAttribute']}
+				</small>
+			</h1>
+			<ol class="breadcrumb">
+				<li><a href="#{request.contextPath}/home.htm"> <i
+						class="fa fa-home" />
+				</a></li>
+				<li class="organization/configuration"><a
+					href="#{request.contextPath}/attribute/attributeInventory.htm">#{msg['attribute.attributes']}</a>
+				</li>
+			</ol>
+		</section>
+		<section class="content">
+			<div id="formArea">
+				<h:link id="register" includeViewParams="false"
+					outcome="/attribute/addAttribute"
+					style="margin-top: -5px;float:right;"
+					styleClass="label label-success"
+					value="#{msg['attribute.registerAttribute']}" />
+				<ui:decorate template="/WEB-INF/incl/attribute/attributeForm.xhtml">
+					<ui:param name="_attribute"
+						value="#{updateAttributeAction.attribute}" />
+					<ui:param name="_attributeAction" value="#{updateAttributeAction}" />
+					<ui:param name="_new" value="false" />
+					<ui:define name="controlButttons">
+						<div id="updateButtons">
+							<h:commandButton action="#{updateAttributeAction.save}"
+								rendered="#{updateAttributeAction.canEdit()}"
+								styleClass="btn btn-primary updateButton"
+								value="#{msg['attribute.update']}" />
+							<a4j:commandButton ajaxSingle="true"
+								onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();"
+								rendered="#{updateAttributeAction.canEdit()}"
+								styleClass="btn btn-primary deleteButton"
+								value="#{msg['attribute.delete']}" />
+							<h:commandButton action="#{updateAttributeAction.cancel}"
+								immediate="true" style="margin-left:5px"
+								styleClass="btn btn-primary cancelButton"
+								value="#{msg['attribute.cancel']}" />
+						</div>
+					</ui:define>
+				</ui:decorate>
+				<ox:acceptRemovalDialog
+					deleteMethod="#{updateAttributeAction.delete}"
+					id="deleteConfirmation" subject="attribute"
+					value="#{updateAttributeAction.attribute.displayName}" />
+			</div>
+		</section>
+	</ui:define>
 </ui:composition>

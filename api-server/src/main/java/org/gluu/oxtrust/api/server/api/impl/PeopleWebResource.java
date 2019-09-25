@@ -169,15 +169,15 @@ public class PeopleWebResource extends BaseWebResource {
 		}
 	}
 
-	/**
-	 * It is unclear what this API call does. We will comment it for now 
-	 * and re-evaluate. 
-	@DELETE
-	@ProtectedApi(scopes = { WRITE_ACCESS })
-	public Response deletePeople() {
-		return Response.status(Response.Status.UNAUTHORIZED).build();
-	}
-	*/
+	//
+	//It is unclear what this API call does. We will comment it for now 
+	//and re-evaluate. 
+	//@DELETE
+	//@ProtectedApi(scopes = { WRITE_ACCESS })
+	//public Response deletePeople() {
+	//	return Response.status(Response.Status.UNAUTHORIZED).build();
+	//}
+	
 
 	private List<GluuPersonApi> convert(List<GluuCustomPerson> persons) {
 		List<GluuPersonApi> result = new ArrayList<GluuPersonApi>();
