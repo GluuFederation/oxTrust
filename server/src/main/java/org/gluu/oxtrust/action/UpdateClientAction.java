@@ -176,7 +176,6 @@ public class UpdateClientAction implements Serializable {
 		if (this.client != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
-
 		this.update = false;
 		this.oxAttributesJson = getClientAttributesJson(this.client);
 		this.client = new OxAuthClient();

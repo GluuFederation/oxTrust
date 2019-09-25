@@ -1086,7 +1086,7 @@
             		 $(".clientSecretTextBox").attr("readonly", true);
             	}
             	hideClientSecret();
-            	togglePersistAuthorization();
+            	lock();
        });
 		
 		 $(document).on("click",".lockClientSecretField", function () {
@@ -1102,8 +1102,15 @@
 			});
     </script>
 	<h:outputScript>
-        function togglePersistAuthorization() {
-           
+        function lock() {
+            var state = $(".clientSecretTextBox").attr("readonly");
+			 if(state){
+				 $(".clientSecretTextBox").attr("readonly", false);
+				 $(".lockClientSecretField").text("Lock Secret Field");
+			 }else{
+				 $(".clientSecretTextBox").attr("readonly", true);
+				 $(".lockClientSecretField").text("Unlock Secret Field");
+			 }
          }
          
         function reload(){

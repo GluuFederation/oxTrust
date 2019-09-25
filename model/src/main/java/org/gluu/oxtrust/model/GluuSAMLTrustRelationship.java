@@ -20,10 +20,10 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import org.gluu.model.GluuStatus;
-import org.gluu.persist.model.base.InumEntry;
 import org.gluu.persist.annotation.AttributeName;
 import org.gluu.persist.annotation.DataEntry;
 import org.gluu.persist.annotation.ObjectClass;
+import org.gluu.persist.model.base.InumEntry;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -168,10 +168,10 @@ public class GluuSAMLTrustRelationship extends InumEntry implements Serializable
 	 * @return
 	 */
 	public String getEntityId() {
-		if ((gluuEntityId != null) && (gluuEntityId.size() == 1)) {
-			return gluuEntityId.get(0);
+		if (this.gluuEntityId != null && !this.gluuEntityId.isEmpty()) {
+			return this.gluuEntityId.get(0);
 		}
-		return null;
+		return "";
 	}
 
 	public void setEntityId(String entityId) {
@@ -414,7 +414,7 @@ public class GluuSAMLTrustRelationship extends InumEntry implements Serializable
 	public GluuEntityType getEntityType() {
 		return entityType;
 	}
-	
+
 	public void setEntityType(GluuEntityType entityType) {
 		this.entityType = entityType;
 	}
