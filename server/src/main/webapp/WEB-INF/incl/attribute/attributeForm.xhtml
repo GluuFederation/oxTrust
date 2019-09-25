@@ -142,6 +142,8 @@
 							disabled="#{not _attributeAction.canEdit()}">
 							<a4j:ajax event="click" render="validation" />
 						</h:selectBooleanCheckbox>
+						<h:outputText style="margin-left:5px;"
+							value="Determine whether this attribute is available via SCIM call or not." />
 					</ox:decorate>
 					<ox:decorate id="description"
 						label="#{msg['attribute.description']}">

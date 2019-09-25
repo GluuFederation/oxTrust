@@ -9,6 +9,7 @@ package org.gluu.oxtrust.ldap.service;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -101,17 +102,14 @@ public class EntityIDMonitoringService {
 		for (GluuSAMLTrustRelationship tr : trustService.getAllTrustRelationships().stream()
 				.filter(e -> e.isFederation()).collect(Collectors.toList())) {
 			log.trace("###############################CURRENT TR " + tr.getInum());
-			log.trace("CURRENT TR " + tr.getInum());
 			String idpMetadataFolder = appConfiguration.getShibboleth3IdpRootDir() + File.separator
 					+ Shibboleth3ConfService.SHIB3_IDP_METADATA_FOLDER + File.separator;
 			File metadataFile = new File(idpMetadataFolder + tr.getSpMetaDataFN());
 			List<String> entityIds = SAMLMetadataParser.getEntityIdFromMetadataFile(metadataFile);
-			if (entityIds != null && !entityIds.isEmpty()) {
+			Set<String> fromFileEntityIds = new HashSet(entityIds);
+			if (fromFileEntityIds != null && !fromFileEntityIds.isEmpty()) {
 				log.trace("EntityIds from metadata: " + serviceUtil.iterableToString(entityIds));
-				Set<String> fromFileEntityIds = new TreeSet<String>(
-						entityIds.stream().distinct().collect(Collectors.toList()));
 				log.trace("Unique entityIds: " + serviceUtil.iterableToString(fromFileEntityIds));
-				log.trace("Value of:" + fromFileEntityIds);
 				Collection<String> disjunction = CollectionUtils.disjunction(fromFileEntityIds, tr.getGluuEntityId());
 				log.trace("EntityIds disjunction: " + serviceUtil.iterableToString(disjunction));
 				if (!disjunction.isEmpty()) {
