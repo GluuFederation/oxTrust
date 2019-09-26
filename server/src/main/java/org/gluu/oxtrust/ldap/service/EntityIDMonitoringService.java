@@ -8,6 +8,7 @@ package org.gluu.oxtrust.ldap.service;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -44,6 +45,7 @@ import org.slf4j.Logger;
 public class EntityIDMonitoringService {
 
 	private static final String ENTITY_ID_VANISHED_MESSAGE = "Invalidated because parent federation does not contain this entityId any more.";
+	private static final String FEDERATION_FILE_INVALID_MESSAGE = "The metadata of this federation is invalid, hence all TRs based on this federation are invalidated.";
 
 	private static final int DEFAULT_INTERVAL = 2 * 60; // 2 minutes
 
@@ -159,8 +161,13 @@ public class EntityIDMonitoringService {
 					if (tr.getStatus().equals(GluuStatus.INACTIVE)) {
 						tr.setStatus(GluuStatus.ACTIVE);
 						tr.setValidationStatus(GluuValidationStatus.SUCCESS);
+						List<String> validationLog = new ArrayList<>(tr.getValidationLog());
+						if (validationLog != null && !validationLog.isEmpty()) {
+							validationLog.remove(FEDERATION_FILE_INVALID_MESSAGE);
+							tr.setValidationLog(validationLog);
+						}
 						List<GluuSAMLTrustRelationship> federatedTrs = trustService
-								.getDeconstructedTrustRelationships(tr);
+								.getChildTrusts(tr);
 						if (federatedTrs != null && !federatedTrs.isEmpty()) {
 							for (GluuSAMLTrustRelationship child : federatedTrs) {
 								child.setValidationStatus(GluuValidationStatus.SUCCESS);
@@ -174,6 +181,13 @@ public class EntityIDMonitoringService {
 			} else {
 				tr.setStatus(GluuStatus.INACTIVE);
 				tr.setValidationStatus(GluuValidationStatus.FAILED);
+				List<String> validationLog = new ArrayList<>(tr.getValidationLog());
+				if (validationLog != null && !validationLog.contains(FEDERATION_FILE_INVALID_MESSAGE)) {
+					validationLog.add(FEDERATION_FILE_INVALID_MESSAGE);
+					tr.setValidationLog(validationLog);
+				} else {
+					tr.setValidationLog(Arrays.asList(FEDERATION_FILE_INVALID_MESSAGE));
+				}
 				List<GluuSAMLTrustRelationship> federatedTrs = trustService.getChildTrusts(tr);
 				if (federatedTrs != null && !federatedTrs.isEmpty()) {
 					for (GluuSAMLTrustRelationship child : federatedTrs) {
