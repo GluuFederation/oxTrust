@@ -210,12 +210,11 @@ input[submit] {
 														<ox:decorate
 															id="spMetaDataSourceTypeFederationEntitySelection"
 															label="#{msg['trustmanager.entityID']}">
-															<h:outputText value="#{_trustRelationship.entityId}"
-																rendered="#{!empty _trustRelationship.entityId}" />
+															<b:label severity="primary"
+																text="#{_trustRelationshipAction.getEntityId()}"
+																rendered="#{!empty _trustRelationshipAction.getEntityId()}" />
 															<a4j:commandLink
-																value="#{empty _trustRelationship.entityId ? 
-                                                                         'Click to select entity Id' 
-                                                                       : '        Click to change entity Id'}"
+																value="#{empty _trustRelationshipAction.getEntityId() ? 'Click to select entity Id' : '   Click to change entity Id'}"
 																action="#{_trustRelationshipAction.isActive()}"
 																oncomplete="#{rich:component('entityIdSelector')}.show();">
 															</a4j:commandLink>

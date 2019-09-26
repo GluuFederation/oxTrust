@@ -107,6 +107,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 	static final Class<?>[] NO_PARAM_SIGNATURE = new Class[0];
 
 	private String inum;
+	private String entityId;
 	private boolean update;
 
 	private GluuSAMLTrustRelationship trustRelationship;
@@ -227,6 +228,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 		this.update = true;
 		try {
 			this.trustRelationship = trustService.getRelationshipByInum(inum);
+			this.setEntityId(this.trustRelationship.getEntityId());
 		} catch (BasePersistenceException ex) {
 			log.error("Failed to find trust relationship {}", inum, ex);
 		}
@@ -245,6 +247,10 @@ public class UpdateTrustRelationshipAction implements Serializable {
 		}
 
 		return OxTrustConstants.RESULT_SUCCESS;
+	}
+
+	private void setEntityId(String entityId2) {
+		this.entityId = entityId2;
 	}
 
 	public String cancel() {
@@ -690,7 +696,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 				synchronized (svnSyncTimer) {
 					for (GluuSAMLTrustRelationship trust : trustService
 							.getDeconstructedTrustRelationships(this.trustRelationship)) {
-						log.info("Deleting child:"+trust.getDisplayName());
+						log.info("Deleting child:" + trust.getDisplayName());
 						trustService.removeTrustRelationship(trust);
 					}
 					shibboleth3ConfService.removeSpMetadataFile(this.trustRelationship.getSpMetaDataFN());
@@ -1109,4 +1115,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 		return trustService.getTrustContainerFederation(this.trustRelationship.getGluuContainerFederation());
 	}
 
+	public String getEntityId() {
+		return this.entityId;
+	}
 }

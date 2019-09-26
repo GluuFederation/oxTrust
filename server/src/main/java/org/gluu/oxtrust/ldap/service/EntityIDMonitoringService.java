@@ -12,7 +12,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
@@ -101,7 +100,7 @@ public class EntityIDMonitoringService {
 		log.trace("EVENT_METADATA_ENTITY_ID_UPDATE Starting");
 		for (GluuSAMLTrustRelationship tr : trustService.getAllTrustRelationships().stream()
 				.filter(e -> e.isFederation()).collect(Collectors.toList())) {
-			log.trace("==========================CURRENT TR " + tr.getInum());
+			log.info("==========================CURRENT TR " + tr.getInum());
 			String idpMetadataFolder = appConfiguration.getShibboleth3IdpRootDir() + File.separator
 					+ Shibboleth3ConfService.SHIB3_IDP_METADATA_FOLDER + File.separator;
 			File metadataFile = new File(idpMetadataFolder + tr.getSpMetaDataFN());
@@ -115,7 +114,7 @@ public class EntityIDMonitoringService {
 				if (!disjunction.isEmpty()) {
 					log.trace("EntityIds disjunction is not empty. Somthing has changed. Processing further.");
 					tr.setGluuEntityId(fromFileEntityIds);
-					List<GluuSAMLTrustRelationship> federatedTrs = trustService.getDeconstructedTrustRelationships(tr);
+					List<GluuSAMLTrustRelationship> federatedTrs = trustService.getChildTrusts(tr);
 					for (GluuSAMLTrustRelationship federatedTr : federatedTrs) {
 						log.trace("Processing TR part: " + federatedTr.getDn());
 						boolean isActive = federatedTr.getStatus() != null
@@ -156,17 +155,32 @@ public class EntityIDMonitoringService {
 					tr.setStatus(GluuStatus.ACTIVE);
 					tr.setValidationStatus(GluuValidationStatus.SUCCESS);
 					trustService.updateTrustRelationship(tr);
+				} else {
+					if (tr.getStatus().equals(GluuStatus.INACTIVE)) {
+						tr.setStatus(GluuStatus.ACTIVE);
+						tr.setValidationStatus(GluuValidationStatus.SUCCESS);
+						List<GluuSAMLTrustRelationship> federatedTrs = trustService
+								.getDeconstructedTrustRelationships(tr);
+						if (federatedTrs != null && !federatedTrs.isEmpty()) {
+							for (GluuSAMLTrustRelationship child : federatedTrs) {
+								child.setValidationStatus(GluuValidationStatus.SUCCESS);
+								child.setStatus(GluuStatus.ACTIVE);
+								trustService.updateTrustRelationship(child);
+							}
+						}
+						trustService.updateTrustRelationship(tr);
+					}
 				}
 			} else {
 				tr.setStatus(GluuStatus.INACTIVE);
 				tr.setValidationStatus(GluuValidationStatus.FAILED);
-				List<GluuSAMLTrustRelationship> federatedTrs = trustService.getDeconstructedTrustRelationships(tr);
+				List<GluuSAMLTrustRelationship> federatedTrs = trustService.getChildTrusts(tr);
 				if (federatedTrs != null && !federatedTrs.isEmpty()) {
-					federatedTrs.stream().forEach(e -> {
-						e.setValidationStatus(GluuValidationStatus.FAILED);
-						e.setStatus(GluuStatus.INACTIVE);
-						trustService.updateTrustRelationship(e);
-					});
+					for (GluuSAMLTrustRelationship child : federatedTrs) {
+						child.setValidationStatus(GluuValidationStatus.FAILED);
+						child.setStatus(GluuStatus.INACTIVE);
+						trustService.updateTrustRelationship(child);
+					}
 				}
 				trustService.updateTrustRelationship(tr);
 			}
