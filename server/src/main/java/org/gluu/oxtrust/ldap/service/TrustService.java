@@ -10,6 +10,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -316,6 +317,17 @@ public class TrustService implements Serializable {
 			}
 		}
 		return result;
+	}
+
+	public List<GluuSAMLTrustRelationship> getChildTrusts(GluuSAMLTrustRelationship trustRelationship) {
+		List<GluuSAMLTrustRelationship> all = getAllTrustRelationships();
+		if (all != null && !all.isEmpty()) {
+			return all.stream().filter(e -> !e.isFederation())
+					.filter(e -> e.getGluuContainerFederation().equalsIgnoreCase(trustRelationship.getDn()))
+					.collect(Collectors.toList());
+		} else {
+			return new ArrayList<GluuSAMLTrustRelationship>();
+		}
 	}
 
 	public GluuSAMLTrustRelationship getTrustByUnpunctuatedInum(String unpunctuated) {
