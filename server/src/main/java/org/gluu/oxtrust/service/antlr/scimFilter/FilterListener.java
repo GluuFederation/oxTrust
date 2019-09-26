@@ -62,7 +62,8 @@ public class FilterListener extends ScimFilterBaseListener {
             Attribute attrAnnot = IntrospectUtil.getFieldAnnotation(path, resourceClass, Attribute.class);
             String ldapAttribute = null;
             boolean isNested = false;
-            //Assuming single valued gives better chances of successful results in practice
+            //Assuming single valued gives better chances of successful results in couchbase.
+            //LDAP usually behaves as expected
             boolean multiValued = false;
 
             if (attrAnnot == null) {

@@ -37,7 +37,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import com.unboundid.util.StaticUtils;
 import com.wordnik.swagger.annotations.ApiOperation;
 import org.gluu.oxtrust.ldap.service.Fido2DeviceService;
 import org.gluu.oxtrust.model.exception.SCIMException;
@@ -45,6 +44,7 @@ import org.gluu.oxtrust.model.GluuFido2Device;
 import org.gluu.oxtrust.model.scim2.*;
 import org.gluu.oxtrust.model.scim2.fido.Fido2DeviceResource;
 import org.gluu.oxtrust.model.scim2.patch.PatchRequest;
+import org.gluu.oxtrust.model.scim2.util.DateUtil;
 import org.gluu.oxtrust.model.scim2.util.ScimResourceUtil;
 import org.gluu.oxtrust.service.antlr.scimFilter.ScimFilterParserService;
 import org.gluu.oxtrust.service.filter.ProtectedApi;
@@ -154,7 +154,8 @@ public class Fido2DeviceWebService extends BaseScimWebService implements IFido2D
             long now = System.currentTimeMillis();
             updatedResource.getMeta().setLastModified(ISODateTimeFormat.dateTime().withZoneUTC().print(now));
 
-            updatedResource=(Fido2DeviceResource) ScimResourceUtil.transferToResourceReplace(fidoDeviceResource, updatedResource, extService.getResourceExtensions(updatedResource.getClass()));
+            updatedResource= (Fido2DeviceResource) ScimResourceUtil.transferToResourceReplace(fidoDeviceResource,
+                    updatedResource, extService.getResourceExtensions(updatedResource.getClass()));
             transferAttributesToDevice(updatedResource, device);
 
             fidoDeviceService.updateFido2Device(device);
@@ -276,8 +277,8 @@ public class Fido2DeviceWebService extends BaseScimWebService implements IFido2D
 
         Meta meta=new Meta();
         meta.setResourceType(ScimResourceUtil.getType(res.getClass()));
-        meta.setCreated(StaticUtils.encodeGeneralizedTime(fidoDevice.getCreationDate()));
-        meta.setLastModified(StaticUtils.encodeGeneralizedTime(fidoDevice.getRegistrationData().getUpdatedDate()));
+        meta.setCreated(DateUtil.millisToISOString(fidoDevice.getCreationDate().getTime()));
+        meta.setLastModified(DateUtil.millisToISOString(fidoDevice.getRegistrationData().getUpdatedDate().getTime()));
         meta.setLocation(url + "/" + fidoDevice.getId());
 
         res.setMeta(meta);
