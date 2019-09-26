@@ -87,8 +87,8 @@ public class Scim2GroupService implements Serializable {
 		// Add the members, and complement the $refs and users' display names in res
 		Set<Member> members = res.getMembers();
 		if (members != null && members.size() > 0) {
-			List<String> listMembers = new ArrayList<String>();
-			List<Member> invalidMembers = new ArrayList<Member>();
+			List<String> listMembers = new ArrayList<>();
+			List<Member> invalidMembers = new ArrayList<>();
 
 			for (Member member : members) {
 				String inum = member.getValue(); // it's not null as it is required in GroupResource
@@ -111,7 +111,7 @@ public class Scim2GroupService implements Serializable {
 			members = members.size() == 0 ? null : members;
 			res.setMembers(members);
 		} else {
-			group.setMembers(new ArrayList<String>());
+			group.setMembers(new ArrayList<>());
 		}
 	}
 
@@ -143,7 +143,7 @@ public class Scim2GroupService implements Serializable {
 		// Transfer members from GluuGroup to GroupResource
 		List<String> memberDNs = gluuGroup.getMembers();
 		if (memberDNs != null) {
-			Set<Member> members = new HashSet<Member>();
+			Set<Member> members = new HashSet<>();
 
 			for (String dn : memberDNs) {
 				GluuCustomPerson person = null;

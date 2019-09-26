@@ -128,6 +128,7 @@ public class ExtensionField {
      * @param field An instance of ExtensionField
      * @param val A value
      * @return String formated properly
+     * @deprecated
      */
     public static String stringValueOf(ExtensionField field, Object val){
 

@@ -81,6 +81,8 @@ public class FidoDeviceWebService extends BaseScimWebService implements IFidoDev
     @Inject
     private PersistenceEntryManager ldapEntryManager;
 
+    private boolean ldapBackend;
+
     @POST
     @Consumes({MEDIA_TYPE_SCIM_JSON, MediaType.APPLICATION_JSON})
     @Produces({MEDIA_TYPE_SCIM_JSON + UTF8_CHARSET_FRAGMENT, MediaType.APPLICATION_JSON + UTF8_CHARSET_FRAGMENT})
@@ -281,7 +283,9 @@ public class FidoDeviceWebService extends BaseScimWebService implements IFidoDev
 
         Meta meta=new Meta();
         meta.setResourceType(ScimResourceUtil.getType(res.getClass()));
-        meta.setCreated(DateUtil.generalizedToISOStringDate(fidoDevice.getCreationDate()));
+
+        String strDate = fidoDevice.getCreationDate();
+        meta.setCreated(ldapBackend ? DateUtil.generalizedToISOStringDate(strDate) : (strDate + "Z"));
         meta.setLastModified(fidoDevice.getMetaLastModified());
         meta.setLocation(fidoDevice.getMetaLocation());
         if (meta.getLocation()==null)
@@ -300,7 +304,10 @@ public class FidoDeviceWebService extends BaseScimWebService implements IFidoDev
         res.setDeviceKeyHandle(fidoDevice.getDeviceKeyHandle());
         res.setDeviceRegistrationConf(fidoDevice.getDeviceRegistrationConf());
 
-        res.setLastAccessTime(DateUtil.generalizedToISOStringDate(fidoDevice.getLastAccessTime()));
+        strDate = fidoDevice.getLastAccessTime();
+        if (strDate != null) {
+            res.setLastAccessTime(ldapBackend ? DateUtil.generalizedToISOStringDate(strDate) : (strDate + "Z"));
+        }
         res.setStatus(fidoDevice.getStatus());
         res.setDisplayName(fidoDevice.getDisplayName());
         res.setDescription(fidoDevice.getDescription());
@@ -317,7 +324,8 @@ public class FidoDeviceWebService extends BaseScimWebService implements IFidoDev
 
         //Set values trying to follow the order found in GluuCustomFidoDevice class
         device.setId(res.getId());
-        device.setCreationDate(DateUtil.ISOToGeneralizedStringDate(res.getMeta().getCreated()));
+        String strDate = res.getMeta().getCreated();
+        device.setCreationDate(ldapBackend ? DateUtil.ISOToGeneralizedStringDate(strDate) : DateUtil.gluuCouchbaseISODate(strDate));
         device.setApplication(res.getApplication());
         device.setCounter(res.getCounter());
 
@@ -326,7 +334,8 @@ public class FidoDeviceWebService extends BaseScimWebService implements IFidoDev
         device.setDeviceKeyHandle(res.getDeviceKeyHandle());
         device.setDeviceRegistrationConf(res.getDeviceRegistrationConf());
 
-        device.setLastAccessTime(DateUtil.ISOToGeneralizedStringDate(res.getLastAccessTime()));
+        strDate = res.getLastAccessTime();
+        device.setLastAccessTime(ldapBackend ? DateUtil.ISOToGeneralizedStringDate(strDate) : DateUtil.gluuCouchbaseISODate(strDate));
         device.setStatus(res.getStatus());
         device.setDisplayName(res.getDisplayName());
         device.setDescription(res.getDescription());
@@ -394,6 +403,7 @@ public class FidoDeviceWebService extends BaseScimWebService implements IFidoDev
     public void setup(){
         //Do not use getClass() here... a typical weld issue...
         endpointUrl=appConfiguration.getBaseEndpoint() + FidoDeviceWebService.class.getAnnotation(Path.class).value();
+        ldapBackend = scimFilterParserService.isLdapBackend();
     }
 
 }
