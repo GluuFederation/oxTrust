@@ -322,6 +322,9 @@ input[submit] {
 															listener="#{_trustRelationshipAction.setSelectedTR(_trustRelationship.inum)}"
 															limitRender="true" render="a8.8ttributeTabPanelGroupId"
 															queueId="trustQueue" execute="@this" />
+														<b:label severity="warning"
+															text="No attributes release for this Trust relationship."
+															rendered="#{_trustRelationship.releasedCustomAttributes.size() eq 0}" />
 														<a4j:repeat var="_attr"
 															value="#{_trustRelationship.releasedCustomAttributes}">
 															<ui:param name="_metadata" value="#{_attr.metadata}" />
@@ -351,14 +354,17 @@ input[submit] {
 														</a4j:repeat>
 													</rich:accordionItem>
 													<ui:repeat
-														value="#{_trustRelationshipAction.federatedSites}"
+														value="#{_trustRelationshipAction.getFederatees(_trustRelationship)}"
 														var="_trust">
-														<rich:accordionItem header="#{_trust.displayName}"
-															rendered="#{_trust.isFederation()}">
+														<rich:accordionItem header="FEDERATED ==> #{_trust.displayName}"
+															rendered="#{_trustRelationship.isFederation()}">
 															<a4j:ajax event="enter"
 																listener="#{_trustRelationshipAction.setSelectedTR(_trust.inum)}"
 																limitRender="true" render="attributeTabPanelGroupId"
 																queueId="trustQueue" execute="@this" />
+															<b:label severity="warning"
+																text="No attributes release for this Trust relationship."
+																rendered="#{_trustRelationship.releasedCustomAttributes.size() eq 0}" />
 															<a4j:repeat var="_attr"
 																value="#{_trust.releasedCustomAttributes}">
 																<ui:param name="_metadata" value="#{_attr.metadata}" />

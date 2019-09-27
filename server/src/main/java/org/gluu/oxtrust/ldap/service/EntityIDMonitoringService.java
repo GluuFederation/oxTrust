@@ -161,13 +161,12 @@ public class EntityIDMonitoringService {
 					if (tr.getStatus().equals(GluuStatus.INACTIVE)) {
 						tr.setStatus(GluuStatus.ACTIVE);
 						tr.setValidationStatus(GluuValidationStatus.SUCCESS);
-						List<String> validationLog = new ArrayList<>(tr.getValidationLog());
-						if (validationLog != null && !validationLog.isEmpty()) {
+						if (tr.getValidationLog() != null && !tr.getValidationLog().isEmpty()) {
+							List<String> validationLog = new ArrayList<>(tr.getValidationLog());
 							validationLog.remove(FEDERATION_FILE_INVALID_MESSAGE);
 							tr.setValidationLog(validationLog);
 						}
-						List<GluuSAMLTrustRelationship> federatedTrs = trustService
-								.getChildTrusts(tr);
+						List<GluuSAMLTrustRelationship> federatedTrs = trustService.getChildTrusts(tr);
 						if (federatedTrs != null && !federatedTrs.isEmpty()) {
 							for (GluuSAMLTrustRelationship child : federatedTrs) {
 								child.setValidationStatus(GluuValidationStatus.SUCCESS);
@@ -181,8 +180,8 @@ public class EntityIDMonitoringService {
 			} else {
 				tr.setStatus(GluuStatus.INACTIVE);
 				tr.setValidationStatus(GluuValidationStatus.FAILED);
-				List<String> validationLog = new ArrayList<>(tr.getValidationLog());
-				if (validationLog != null && !validationLog.contains(FEDERATION_FILE_INVALID_MESSAGE)) {
+				if (tr.getValidationLog() != null && !tr.getValidationLog().contains(FEDERATION_FILE_INVALID_MESSAGE)) {
+					List<String> validationLog = new ArrayList<>(tr.getValidationLog());
 					validationLog.add(FEDERATION_FILE_INVALID_MESSAGE);
 					tr.setValidationLog(validationLog);
 				} else {

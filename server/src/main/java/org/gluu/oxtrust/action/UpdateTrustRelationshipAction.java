@@ -171,7 +171,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 
 	private String selectedTR;
 
-	private List<GluuSAMLTrustRelationship> federatedSites;
+	private List<GluuSAMLTrustRelationship> federatedSites = new ArrayList<>();
 
 	private List<String> availableEntities;
 	private List<String> filteredEntities;
@@ -1073,7 +1073,10 @@ public class UpdateTrustRelationshipAction implements Serializable {
 	}
 
 	public List<GluuSAMLTrustRelationship> getFederatedSites() {
-		return federatedSites;
+		log.info("=============================size" + federatedSites.size());
+		log.info("=============================size" + federatedSites.get(0).toString());
+		Set<GluuSAMLTrustRelationship> set = new HashSet<>(federatedSites);
+		return new ArrayList<>(set);
 	}
 
 	public GluuEntityType[] getEntityTypeList() {
@@ -1117,5 +1120,10 @@ public class UpdateTrustRelationshipAction implements Serializable {
 
 	public String getEntityId() {
 		return this.entityId;
+	}
+
+	public List<GluuSAMLTrustRelationship> getFederatees(GluuSAMLTrustRelationship trust) {
+		List<GluuSAMLTrustRelationship> childTrusts = trustService.getChildTrusts(trust);
+		return childTrusts != null ? childTrusts : new ArrayList<>();
 	}
 }
