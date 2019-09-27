@@ -94,7 +94,8 @@ public class SubFilterGenerator {
                 if (subAttribute == null) {
                     //attribute=value
                     //attribute="value"
-                    subfilter = Filter.createEqualityFilter(attribute, value).multiValued(multivalued);
+                    subfilter = Filter.createEqualityFilter(Filter.createLowercaseFilter(attribute), ldapBackend ? value : value.toLowerCase())
+                            .multiValued(multivalued);
                 } else {
                     //attribute=*"subattribute":"value"*
                     //attribute LIKE "%\"subAttribute\":\"value\"%"
