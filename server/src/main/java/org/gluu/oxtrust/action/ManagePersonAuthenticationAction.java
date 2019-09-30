@@ -40,18 +40,14 @@ import org.gluu.oxtrust.model.SimpleCustomPropertiesListModel;
 import org.gluu.oxtrust.model.SimplePropertiesListModel;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.exception.BasePersistenceException;
-import org.gluu.persist.ldap.impl.LdapEntryManagerFactory;
 import org.gluu.persist.ldap.operation.impl.LdapConnectionProvider;
 import org.gluu.service.custom.script.AbstractCustomScriptService;
 import org.gluu.service.security.Secure;
 import org.gluu.util.OxConstants;
 import org.gluu.util.StringHelper;
-import org.gluu.util.properties.FileConfiguration;
 import org.gluu.util.security.PropertiesDecrypter;
 import org.gluu.util.security.StringEncrypter.EncryptionException;
 import org.slf4j.Logger;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Action class for configuring person authentication
@@ -63,6 +59,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Secure("#{permissionService.hasPermission('configuration', 'access')}")
 public class ManagePersonAuthenticationAction
 		implements SimplePropertiesListModel, SimpleCustomPropertiesListModel, LdapConfigurationModel, Serializable {
+	private static final String SIMPLE_PASSWORD_AUTH = "simple_password_auth";
+
 	private static final long serialVersionUID = -4470460481895022468L;
 
 	@Inject
@@ -136,18 +134,14 @@ public class ManagePersonAuthenticationAction
 		if (this.initialized) {
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
-
 		try {
 			GluuConfiguration configuration = configurationService.getConfiguration();
-
 			if (configuration == null) {
 				return OxTrustConstants.RESULT_FAILURE;
 			}
-			passportEnable = configuration.isPassportEnabled();
-			log.info("passport enabled value  : '{}'", passportEnable);
+			this.passportEnable = configuration.isPassportEnabled();
 			this.customScripts = customScriptService.findCustomScripts(
 					Arrays.asList(CustomScriptType.PERSON_AUTHENTICATION), "displayName", "oxLevel", "oxEnabled");
-
 			List<OxIDPAuthConf> list = getIDPAuthConfOrNull(configuration);
 			this.sourceConfigs = new ArrayList<GluuLdapConfiguration>();
 			if (list != null) {
@@ -161,7 +155,6 @@ public class ManagePersonAuthenticationAction
 			this.oxTrustAuthenticationMode = configuration.getOxTrustAuthenticationMode();
 		} catch (Exception ex) {
 			log.error("Failed to load configuration configuration", ex);
-
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 
@@ -207,12 +200,9 @@ public class ManagePersonAuthenticationAction
 		}
 
 		reset();
-
 		facesMessages.add(FacesMessage.SEVERITY_INFO,
 				facesMessages.evalResourceAsString("#{msg['configuration.manageAuthentication.updateSucceed']}"));
-
 		conversationService.endConversation();
-
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
@@ -228,29 +218,11 @@ public class ManagePersonAuthenticationAction
 		this.customAuthenticationConfigNames = null;
 	}
 
-	private GluuLdapConfiguration mapLdapConfig(String config)
-			throws IOException {
-		return (GluuLdapConfiguration) jsonToObject(config, GluuLdapConfiguration.class);
-	}
-
 	public String cancel() {
 		facesMessages.add(FacesMessage.SEVERITY_INFO,
 				facesMessages.evalResourceAsString("#{msg['configuration.manageAuthentication.updateFailed']}"));
 		conversationService.endConversation();
-
 		return OxTrustConstants.RESULT_SUCCESS;
-	}
-
-	private Object jsonToObject(String json, Class<?> clazz)
-			throws IOException {
-		ObjectMapper mapper = new ObjectMapper();
-		Object clazzObject = mapper.readValue(json, clazz);
-		return clazzObject;
-	}
-
-	private String objectToJson(Object obj) throws IOException {
-		ObjectMapper mapper = new ObjectMapper();
-		return mapper.writeValueAsString(obj);
 	}
 
 	public boolean updateAuthConf(GluuConfiguration configuration) {
@@ -260,7 +232,6 @@ public class ManagePersonAuthenticationAction
 				if (ldapConfig.isUseAnonymousBind()) {
 					ldapConfig.setBindDN(null);
 				}
-
 				OxIDPAuthConf ldapConfigIdpAuthConf = new OxIDPAuthConf();
 				ldapConfig.updateStringsLists();
 				ldapConfigIdpAuthConf.setType("auth");
@@ -268,14 +239,11 @@ public class ManagePersonAuthenticationAction
 				ldapConfigIdpAuthConf.setName(ldapConfig.getConfigId());
 				ldapConfigIdpAuthConf.setEnabled(ldapConfig.isEnabled());
 				ldapConfigIdpAuthConf.setConfig(ldapConfig);
-
 				idpConf.add(ldapConfigIdpAuthConf);
 			}
-
 			configuration.setOxIDPAuthentication(idpConf);
 		} catch (Exception ex) {
 			log.error("An Error occured ", ex);
-
 			return false;
 		}
 
@@ -294,11 +262,10 @@ public class ManagePersonAuthenticationAction
 					this.customAuthenticationConfigNames.add(customScript.getName());
 				}
 			}
-
 			boolean internalServerName = true;
-
 			for (GluuLdapConfiguration ldapConfig : this.sourceConfigs) {
-				if ((ldapConfig != null) && StringHelper.isNotEmpty(ldapConfig.getConfigId())) {
+				if ((ldapConfig != null) && StringHelper.isNotEmpty(ldapConfig.getConfigId())
+						&& ldapConfig.isEnabled()) {
 					this.customAuthenticationConfigNames.add(ldapConfig.getConfigId());
 					internalServerName = false;
 				}
@@ -307,8 +274,11 @@ public class ManagePersonAuthenticationAction
 			if (internalServerName) {
 				this.customAuthenticationConfigNames.add(OxConstants.SCRIPT_TYPE_INTERNAL_RESERVED_NAME);
 			}
+			if (shouldEnableSimplePasswordAuth()
+					&& !this.customAuthenticationConfigNames.contains(SIMPLE_PASSWORD_AUTH)) {
+				this.customAuthenticationConfigNames.add(SIMPLE_PASSWORD_AUTH);
+			}
 		}
-
 		return this.customAuthenticationConfigNames;
 	}
 
@@ -538,10 +508,10 @@ public class ManagePersonAuthenticationAction
 
 	private void setAuthenticationRecaptcha() {
 		this.oxTrustappConfiguration = jsonConfigurationService.getOxTrustappConfiguration();
-		oxTrustappConfiguration.setRecaptchaSecretKey(this.recaptchaSecretKey);
-		oxTrustappConfiguration.setRecaptchaSiteKey(this.recaptchaSiteKey);
-		oxTrustappConfiguration.setAuthenticationRecaptchaEnabled(!authenticationRecaptchaEnabled);
-		jsonConfigurationService.saveOxTrustappConfiguration(this.oxTrustappConfiguration);
+		this.oxTrustappConfiguration.setRecaptchaSecretKey(this.recaptchaSecretKey);
+		this.oxTrustappConfiguration.setRecaptchaSiteKey(this.recaptchaSiteKey);
+		this.oxTrustappConfiguration.setAuthenticationRecaptchaEnabled(!authenticationRecaptchaEnabled);
+		this.jsonConfigurationService.saveOxTrustappConfiguration(this.oxTrustappConfiguration);
 
 	}
 
@@ -550,6 +520,11 @@ public class ManagePersonAuthenticationAction
 		this.recaptchaSecretKey = oxTrustappConfiguration.getRecaptchaSecretKey();
 		this.recaptchaSiteKey = oxTrustappConfiguration.getRecaptchaSiteKey();
 		this.authenticationRecaptchaEnabled = !oxTrustappConfiguration.isAuthenticationRecaptchaEnabled();
+
+	}
+
+	private boolean shouldEnableSimplePasswordAuth() {
+		return !this.sourceConfigs.stream().anyMatch(e -> e.isEnabled());
 
 	}
 

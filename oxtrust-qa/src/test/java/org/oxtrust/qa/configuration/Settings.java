@@ -46,7 +46,7 @@ public class Settings {
 	@Override
 	public String toString() {
 		return "QA running on " + os + " operating system using " + browser + " browser tagerting Gluu server with URL "
-				+ url + "\n Will login as user: " + userName + " with password: " + password;
+				+ url + "\n Will login as user: " + userName + " with password: *********";
 	}
 
 	public boolean isHeadless() {
