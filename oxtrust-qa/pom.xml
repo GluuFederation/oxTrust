@@ -13,30 +13,8 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<skip.surefire.tests>true</skip.surefire.tests>
+		<skip.qa.test>false</skip.qa.test>
 	</properties>
-	<profiles>
-		<profile>
-			<id>withTest</id>
-			<activation>
-				<property>
-					<name>withTest</name>
-					<value>true</value>
-				</property>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-surefire-plugin</artifactId>
-						<version>2.4.2</version>
-						<configuration>
-							<skipTests>false</skipTests>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
 	<dependencies>
 		<dependency>
 			<groupId>org.seleniumhq.selenium</groupId>
@@ -112,6 +90,9 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<skipTests>${skip.qa.test}</skipTests>
+				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -134,4 +115,18 @@
 			</plugin>
 		</plugins>
 	</build>
+
+	<profiles>
+		<profile>
+			<id>disable-qa-test</id>
+			<activation>
+				<property>
+					<name>skip.qa.test</name>
+				</property>
+			</activation>
+			<properties>
+				<skip.qa.test>true</skip.qa.test>
+			</properties>
+		</profile>
+	</profiles>
 </project>

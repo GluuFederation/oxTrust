@@ -156,7 +156,7 @@ public class AttributeWebResourceTest extends BaseApiTest {
 		attribute.setDescription("custom attribute");
 		attribute.setDataType(AttributeDataType.STRING);
 		attribute.setStatus(GluuStatus.ACTIVE);
-		attribute.setOxMultivaluedAttribute(Boolean.FALSE);
+		attribute.setOxMultiValuedAttribute(Boolean.FALSE);
 		return attribute;
 	}
 
