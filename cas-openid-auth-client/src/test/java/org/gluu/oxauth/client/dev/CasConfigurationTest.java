@@ -13,7 +13,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 public class CasConfigurationTest extends Configuration<CasAppConfiguration, CasLdapAppConfiguration> {
 
 	@Override
-	protected String getLdapConfigurationFileName() {
+	protected String getDefaultConfigurationFileName() {
 		return "oxcas-ldap.properties";
 	}
 
