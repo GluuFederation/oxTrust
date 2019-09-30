@@ -93,6 +93,7 @@ public class ManagePersonAuthenticationAction
 	private GluuLdapConfiguration activeLdapConfig;
 
 	private String authenticationMode = "auth_ldap_server";
+	
 	private String oxTrustAuthenticationMode;
 
 	private String recaptchaSiteKey;

@@ -186,7 +186,8 @@
 													<h:panelGroup id="selectedLoginURIsId">
 														<a4j:repeat value="#{_clientAction.loginUris}"
 															rowKeyVar="_urisIdx" var="_uri" iterationStatusVar="loop">
-															<div class="#{(loop.index % 2 == 0) ?'odd':'even'}" style="overflow-x:scroll;">
+															<div class="#{(loop.index % 2 == 0) ?'odd':'even'}"
+																style="overflow-x: scroll;">
 																<h:outputText value="#{empty _uri ? _uri : _uri}" />
 																<h:outputText value="&#160;" />
 																<div class="span6 pull-right">
@@ -387,7 +388,8 @@
 															rowKeyVar="_grantTypeIdx" var="_grantType"
 															iterationStatusVar="loop">
 															<div class="row-fluid">
-																<div class="#{(loop.index % 2 == 0) ?'odd':'even'}" style="overflow-x:scroll;">
+																<div class="#{(loop.index % 2 == 0) ?'odd':'even'}"
+																	style="overflow-x: scroll;">
 																	<h:outputText value="#{_grantType.value}" />
 																	<h:outputText value="&#160;" />
 																	<div class="span6 pull-right">
@@ -420,7 +422,8 @@
 														<a4j:repeat value="#{_clientAction.logoutUris}"
 															rowKeyVar="_urisIdx" var="_uri" iterationStatusVar="loop">
 															<div class="row-fluid">
-																<div class="#{(loop.index % 2 == 0) ?'odd':'even'}" style="overflow-x:scroll;">
+																<div class="#{(loop.index % 2 == 0) ?'odd':'even'}"
+																	style="overflow-x: scroll;">
 																	<h:outputText value="#{empty _uri ? _uri : _uri}" />
 																	<h:outputText value="&#160;" />
 																	<div class="span6 pull-right">
@@ -474,8 +477,8 @@
 												label="#{msg['clientForm.accessTokenAsJwt']}"
 												leftClass="col-sm-6" rightClass="col-sm-6">
 												<h:selectBooleanCheckbox value="#{_client.accessTokenAsJwt}"
-													id="accessTokenAsJwtId"
-													styleClass="col-sm-9 rounded" required="false" />
+													id="accessTokenAsJwtId" styleClass="col-sm-9 rounded"
+													required="false" />
 											</ox:decorate>
 											<ox:decorate id="rptAsJwt"
 												label="#{msg['clientForm.rptAsJwt']}" leftClass="col-sm-6"
@@ -489,8 +492,8 @@
 												leftClass="col-sm-6" rightClass="col-sm-6">
 												<h:selectBooleanCheckbox
 													value="#{_client.logoutSessionRequired}"
-													id="logoutSessionRequiredId"
-													styleClass="col-sm-9 rounded" required="true" />
+													id="logoutSessionRequiredId" styleClass="col-sm-9 rounded"
+													required="true" />
 											</ox:decorate>
 										</div>
 										<div class="col-sm-6 col-lg-6" style="padding: 0px;">
@@ -498,8 +501,8 @@
 												label="#{msg['clientForm.requireAuthTime']}"
 												leftClass="col-sm-6" rightClass="col-sm-6">
 												<h:selectBooleanCheckbox value="#{_client.requireAuthTime}"
-													id="requireAuthTimeId"
-													styleClass="col-sm-9 rounded" required="false" />
+													id="requireAuthTimeId" styleClass="col-sm-9 rounded"
+													required="false" />
 											</ox:decorate>
 											<a4j:outputPanel>
 												<ox:decorate id="includeClaimsInIdToken"
@@ -530,7 +533,8 @@
 														<a4j:repeat value="#{_clientAction.claimRedirectURIList}"
 															rowKeyVar="_urisIdx" var="_uri" iterationStatusVar="loop">
 															<div class="row-fluid">
-																<div class="#{(loop.index % 2 == 0) ?'odd':'even'}" style="overflow-x:scroll;">
+																<div class="#{(loop.index % 2 == 0) ?'odd':'even'}"
+																	style="overflow-x: scroll;">
 																	<h:outputText value="#{empty _uri ? _uri : _uri}" />
 																	<h:outputText value="&#160;" />
 
@@ -567,7 +571,8 @@
 															rowKeyVar="_claimIdx" var="_claim"
 															iterationStatusVar="loop">
 															<div class="row-fluid">
-																<div class="#{(loop.index % 2 == 0) ? 'odd' : 'even'}" style="overflow-x:scroll;">
+																<div class="#{(loop.index % 2 == 0) ? 'odd' : 'even'}"
+																	style="overflow-x: scroll;">
 																	<h:outputText value="#{_claim.displayName}" />
 																	<h:outputText value="&#160;" />
 																	<div class="span6 pull-right">
@@ -595,7 +600,8 @@
 															rowKeyVar="_requestUrisIdx" var="_requestUri"
 															iterationStatusVar="loop">
 															<div class="row-fluid">
-																<div class="#{(loop.index % 2 == 0) ?'odd':'even'}" style="overflow-x:scroll;">
+																<div class="#{(loop.index % 2 == 0) ?'odd':'even'}"
+																	style="overflow-x: scroll;">
 																	<h:outputText value="#{_requestUri}" />
 																	<h:outputText value="&#160;" />
 																	<div class="span6 pull-right">
@@ -630,7 +636,8 @@
 															rowKeyVar="_authorizedOriginsIdx" var="_authorizedOrigin"
 															iterationStatusVar="loop">
 															<div class="row-fluid">
-																<div class="#{(loop.index % 2 == 0) ?'odd':'even'}" style="overflow-x:scroll;">
+																<div class="#{(loop.index % 2 == 0) ?'odd':'even'}"
+																	style="overflow-x: scroll;">
 																	<h:outputText value="#{_authorizedOrigin}" />
 																	<h:outputText value="&#160;" />
 																	<div class="span6 pull-right">
@@ -703,7 +710,8 @@
 														<a4j:repeat value="#{_clientAction.clientlogoutUris}"
 															rowKeyVar="_urisIdx" var="_uri" iterationStatusVar="loop">
 															<div class="row-fluid">
-																<div class="#{(loop.index % 2 == 0) ?'odd':'even'}" style="overflow-x:scroll;">
+																<div class="#{(loop.index % 2 == 0) ?'odd':'even'}"
+																	style="overflow-x: scroll;">
 																	<h:outputText value="#{empty _uri ? _uri : _uri}" />
 																	<h:outputText value="&#160;" />
 																	<div class="span6 pull-right">
@@ -738,7 +746,8 @@
 														<a4j:repeat value="#{_clientAction.customScripts}"
 															rowKeyVar="_acrIdx" var="_acr" iterationStatusVar="loop">
 															<div class="row-fluid">
-																<div class="#{(loop.index % 2 == 0) ?'odd':'even'}" style="overflow-x:scroll;">
+																<div class="#{(loop.index % 2 == 0) ?'odd':'even'}"
+																	style="overflow-x: scroll;">
 																	<h:outputText value="#{_acr.name}" />
 																	<h:outputText value="&#160;" />
 																	<div class="span6 pull-right">
@@ -1046,8 +1055,9 @@
 										<ui:param name="saveBtnId" value="updateButtons" />
 										<ui:param name="saveBtnLabel" value="Save attributes" />
 									</ui:decorate>
-									<h:inputHidden prependId="false" id="#{id}_hidden" style="width:100%;"
-										value="#{_clientAction.oxAttributesJson}" class="hiddenField" />
+									<h:inputHidden prependId="false" id="#{id}_hidden"
+										style="width:100%;" value="#{_clientAction.oxAttributesJson}"
+										class="hiddenField" />
 								</h:panelGroup>
 							</div>
 						</div>
@@ -1098,19 +1108,16 @@
 				 $(".clientSecretTextBox").attr("readonly", true);
 				 $(".lockClientSecretField").text("Unlock Secret Field");
 			 }
-			  
 			});
     </script>
 	<h:outputScript>
-        function lock() {
-            var state = $(".clientSecretTextBox").attr("readonly");
-			 if(state){
-				 $(".clientSecretTextBox").attr("readonly", false);
-				 $(".lockClientSecretField").text("Lock Secret Field");
-			 }else{
-				 $(".clientSecretTextBox").attr("readonly", true);
-				 $(".lockClientSecretField").text("Unlock Secret Field");
-			 }
+        function lock(){
+            var value = $(".clientGeneratedInum").text()
+            if(value.startsWith("Will")){
+             $(".clientSecretTextBox").attr("readonly", false);
+            }else{
+             $(".clientSecretTextBox").attr("readonly", true);
+             }
          }
          
         function reload(){
