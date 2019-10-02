@@ -1123,7 +1123,12 @@ public class UpdateTrustRelationshipAction implements Serializable {
 	}
 
 	public List<GluuSAMLTrustRelationship> getFederatees(GluuSAMLTrustRelationship trust) {
-		List<GluuSAMLTrustRelationship> childTrusts = trustService.getChildTrusts(trust);
-		return childTrusts != null ? childTrusts : new ArrayList<>();
+		try {
+			List<GluuSAMLTrustRelationship> childTrusts = trustService.getChildTrusts(trust);
+			return childTrusts != null ? childTrusts : new ArrayList<>();
+		} catch (Exception e) {
+			return new ArrayList<>();
+		}
+
 	}
 }
