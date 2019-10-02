@@ -1073,8 +1073,6 @@ public class UpdateTrustRelationshipAction implements Serializable {
 	}
 
 	public List<GluuSAMLTrustRelationship> getFederatedSites() {
-		log.info("=============================size" + federatedSites.size());
-		log.info("=============================size" + federatedSites.get(0).toString());
 		Set<GluuSAMLTrustRelationship> set = new HashSet<>(federatedSites);
 		return new ArrayList<>(set);
 	}
