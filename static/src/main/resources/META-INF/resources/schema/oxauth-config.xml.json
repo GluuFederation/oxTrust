@@ -1308,6 +1308,35 @@
             "description": "Boolean value specifying whether to enable JDK Loggers.",
             "type": "boolean"
         },
+        "jmsUserName": {
+            "id": "jmsUserName",
+            "description": "JMS UserName.",
+            "type": "string",
+            "minLength": 1
+        },
+        "jmsPassword": {
+            "id": "jmsPassword",
+            "description": "JMS Password.",
+            "type": "string",
+            "minLength": 1
+        },
+        "jmsBrokerURISet": {
+            "id": "jmsBrokerURISet",
+            "description": "JMS Broker URI Set.",
+            "type": "array",
+            "format": "select"
+        },
+        "oxElevenTestModeToken": {
+            "id": "oxElevenTestModeToken",
+            "description": "oxEleven Test Mode Token.",
+            "type": "string",
+            "minLength": 1
+        },
+        "enabledOAuthAuditLogging": {
+            "id": "enabledOAuthAuditLogging",
+            "description": "enabled OAuth Audit Logging.",
+            "type": "boolean"
+        },
         "authenticationProtectionConfiguration": {
             "id": "authenticationProtectionConfiguration",
             "description": "Authentication Brute Force Protection Configuration.",
@@ -1545,6 +1574,11 @@
         "disableU2fEndpoint",
         "authenticationProtectionConfiguration",
         "fido2Configuration",
-        "errorHandlingMethod"
+        "errorHandlingMethod",
+        "oxElevenTestModeToken",
+        "enabledOAuthAuditLogging",
+        "jmsBrokerURISet",
+        "jmsUserName",
+        "jmsPassword"
     ]
 }
