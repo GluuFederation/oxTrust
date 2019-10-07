@@ -672,13 +672,17 @@
 							}
 
 							if (window.location.href
-									.indexOf("radius/radiusServerConfiguration") != -1
-									|| window.location.href
-											.indexOf("radius/radiusClientInventory") != -1) {
+									.indexOf("radius/radiusServerConfiguration") != -1) {
 								$('#subMenuRadius').css('display', 'block');
 								$('#menuRadiusConfig').addClass('active');
+							}
+							
+							if (window.location.href
+									.indexOf("radius/radiusClientInventory") != -1) {
+								$('#subMenuRadius').css('display', 'block');
 								$('#menuRadiusClients').addClass('active');
 							}
+
 
 							if (window.location.href.indexOf("person/add") != -1) {
 								$('#subMenuUsers').css('display', 'block');
