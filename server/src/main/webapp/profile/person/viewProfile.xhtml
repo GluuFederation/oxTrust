@@ -339,10 +339,5 @@
 			setPasswordMethod="#{userPasswordAction.update}"
 			validatorBinding="#{passwordValidationAction.graphValidator}"
 			verifyOldPassword="true" />
-		<ox:changePasswordDialog id="configurationPassword"
-			label="#{msg['profile.change�onfigurationPassword']}"
-			password="#{userProfileAction.person.getUserPassword()}"
-			person="#{userProfileAction.person}" verifyOldPassword="true"
-			setPasswordMethod="#{userPasswordAction.update}" />
 	</ui:define>
 </ui:composition>
