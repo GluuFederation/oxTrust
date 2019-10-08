@@ -40,6 +40,8 @@ public class PassportProvidersAction implements Serializable {
 
 	private static final String CLIENT_ID = "clientID";
 
+	private static final String DEFAULT_ISSUER = "urn:test:example";
+
 	/**
 	 * 
 	 */
@@ -128,7 +130,7 @@ public class PassportProvidersAction implements Serializable {
 				this.options.add(
 						new OptionEntry("identifierFormat", "urn:oasis:names:tc:SAML:2.0:nameid-format:transient"));
 				this.options.add(new OptionEntry("authnRequestBinding", "HTTP-POST"));
-				this.options.add(new OptionEntry(ISSUER, ""));
+				this.options.add(new OptionEntry(ISSUER,DEFAULT_ISSUER));
 				this.options.add(new OptionEntry("cert", ""));
 			}
 			if (type.equalsIgnoreCase(providerTypes[1])) {
