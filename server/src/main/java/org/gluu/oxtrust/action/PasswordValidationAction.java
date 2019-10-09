@@ -68,9 +68,9 @@ public class PasswordValidationAction implements Cloneable, Serializable {
 	private String confirm = "";
 
 	private UIComponent graphValidator;
-	
-	private boolean checkOldPassword=false;
-	
+
+	private boolean checkOldPassword = false;
+
 	private GluuCustomPerson person;
 
 	@AssertTrue(message = "Passwords are different or they don't match the requirements define by site administrator.")
@@ -94,19 +94,14 @@ public class PasswordValidationAction implements Cloneable, Serializable {
 			boolean resultValidateOldPassword = false;
 			try {
 				if ((person != null) && StringHelper.isNotEmpty(person.getUid())) {
-					resultValidateOldPassword = personService.authenticate(person.getUid(), oldPassword);
+					resultValidateOldPassword = personService.authenticate(person.getDn(), oldPassword);
 				}
 			} catch (Exception ex) {
 				log.debug("Failed to verify old person password", ex);
 			}
 
 			if (!resultValidateOldPassword) {
-				if (graphValidator == null) {
-					facesMessages.add(FacesMessage.SEVERITY_ERROR, "Old password isn't valid!");
-
-				} else {
-					facesMessages.add(FacesMessage.SEVERITY_ERROR, "Old password isn't valid!");
-				}
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Old password isn't valid!");
 			} else {
 				person.setUserPassword(this.password);
 				personService.updatePerson(person);
@@ -170,7 +165,7 @@ public class PasswordValidationAction implements Cloneable, Serializable {
 	public String getConfirm() {
 		return confirm;
 	}
-		
+
 	public boolean isCheckOldPassword() {
 		return checkOldPassword;
 	}
