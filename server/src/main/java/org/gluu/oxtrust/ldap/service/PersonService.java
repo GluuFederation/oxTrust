@@ -19,7 +19,6 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.User;
@@ -56,9 +55,6 @@ public class PersonService implements Serializable, IPersonService {
 
 	@Inject
 	private AttributeService attributeService;
-
-	@Inject
-	private AppConfiguration appConfiguration;
 
 	@Inject
 	private OrganizationService organizationService;
@@ -432,7 +428,7 @@ public class PersonService implements Serializable, IPersonService {
 	 */
 	@Override
 	public boolean authenticate(String userName, String password) {
-		return ldapEntryManager.authenticate(appConfiguration.getBaseDN(), userName, password);
+		return ldapEntryManager.authenticate(userName, password);
 	}
 
 	/*
