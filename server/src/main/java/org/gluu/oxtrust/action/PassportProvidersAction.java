@@ -10,6 +10,8 @@ import java.util.stream.Collectors;
 
 import javax.enterprise.context.ConversationScoped;
 import javax.faces.application.FacesMessage;
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -130,7 +132,7 @@ public class PassportProvidersAction implements Serializable {
 				this.options.add(
 						new OptionEntry("identifierFormat", "urn:oasis:names:tc:SAML:2.0:nameid-format:transient"));
 				this.options.add(new OptionEntry("authnRequestBinding", "HTTP-POST"));
-				this.options.add(new OptionEntry(ISSUER,DEFAULT_ISSUER));
+				this.options.add(new OptionEntry(ISSUER, DEFAULT_ISSUER));
 				this.options.add(new OptionEntry("cert", ""));
 			}
 			if (type.equalsIgnoreCase(providerTypes[1])) {
@@ -193,7 +195,6 @@ public class PassportProvidersAction implements Serializable {
 			}
 			if (providerIdContainsBadCharacters()) {
 				facesMessages.add(FacesMessage.SEVERITY_ERROR, "This provider id contains unauthorized characters.");
-				log.info("=========================================================================");
 				return OxTrustConstants.RESULT_FAILURE;
 			}
 			if (!update) {
@@ -241,12 +242,17 @@ public class PassportProvidersAction implements Serializable {
 	}
 
 	private void setCallbackUrl() {
+		String hostname = configurationService.getConfiguration().getHostname();
+		if (hostname == null) {
+			ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
+			hostname = context.getRequestServerName();
+		}
 		if (this.provider.getType().equalsIgnoreCase("saml")) {
-			this.provider.setCallbackUrl(String.format("https://%s/passport/auth/saml/%s/callback",
-					configurationService.getConfiguration().getHostname(), this.provider.getId()));
+			this.provider.setCallbackUrl(
+					String.format("https://%s/passport/auth/saml/%s/callback", hostname, this.provider.getId()));
 		} else {
-			this.provider.setCallbackUrl(String.format("https://%s/passport/auth/%s/callback",
-					configurationService.getConfiguration().getHostname(), this.provider.getId()));
+			this.provider.setCallbackUrl(
+					String.format("https://%s/passport/auth/%s/callback", hostname, this.provider.getId()));
 		}
 	}
 
