@@ -47,7 +47,7 @@
 									<ox:decorate label="#{msg['configurationStatus.hostName']}"
 										leftClass="col-sm-6" rightClass="col-sm-6">
 										<b:label styleClass="hostnameValueBox"
-											text="#{_configuration.hostname}" severity="primary" />
+											text="#{configurationStatusAction.getHostName(_configuration.hostname)}" severity="primary" />
 									</ox:decorate>
 									<ox:decorate label="#{msg['configurationStatus.ipAddress']}"
 										leftClass="col-sm-6" rightClass="col-sm-6">

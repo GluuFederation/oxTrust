@@ -10,6 +10,8 @@ import java.io.Serializable;
 import java.util.Date;
 
 import javax.enterprise.context.RequestScoped;
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -32,14 +34,14 @@ public class ConfigurationStatusAction implements Serializable {
 	private static final long serialVersionUID = -7470520478553992898L;
 
 	@Inject
-    private Logger log;
+	private Logger log;
 
 	@Inject
 	private ConfigurationService configurationService;
 
 	private String health;
-	
-	public String init(){
+
+	public String init() {
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
@@ -68,6 +70,14 @@ public class ConfigurationStatusAction implements Serializable {
 
 	public void setHealth(String health) {
 		this.health = health;
+	}
+
+	public String getHostName(String hostName) {
+		if (hostName == null) {
+			ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
+			hostName = context.getRequestServerName();
+		}
+		return hostName;
 	}
 
 }
