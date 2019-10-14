@@ -1008,6 +1008,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 	public void setSelectedEntities(String[] entities) {
 		if (entities != null && entities.length > 0) {
 			this.trustRelationship.setEntityId(entities[0]);
+			this.entityId = entities[0];
 		}
 	}
 
