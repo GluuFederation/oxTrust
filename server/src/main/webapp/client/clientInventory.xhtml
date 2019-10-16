@@ -56,7 +56,7 @@
 
 													<h:outputText value="#{msg['client.noSearchResultFound']}" />
 												</ui:fragment>
-												<b:dataTable id="clientsListId" style="text-align:center;"
+												<b:dataTable id="clientsListId" style="text-align:center;width:100%;"
 													rendered="#{searchClientAction.clientList.size() gt 0}"
 													value="#{searchClientAction.clientList}" var="clt"
 													print="true" excel="true" csv="true" pdf="true"

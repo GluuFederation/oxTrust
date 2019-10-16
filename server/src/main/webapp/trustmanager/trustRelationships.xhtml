@@ -81,29 +81,41 @@
 								<h:form id="trustRelationsshipList">
 									<div class="row" style="padding: 10px;">
 										<b:dataTable id="relationshipstable"
-											style="text-align:center;"
+											style="text-align:center; width:100%;"
 											rendered="#{trustRelationshipInventoryAction.trustedSpList.size() gt 0}"
 											value="#{trustRelationshipInventoryAction.trustedSpList}"
 											var="tsps" print="true" excel="true" csv="true" pdf="true"
 											select="true" responsive="true">
-											<b:dataTableColumn label="#{msg['trustmanager.community']}">
+											<b:dataTableColumn label="#{msg['trustmanager.community']}"
+												order="asc">
 												<h:link includeViewParams="false"
 													outcome="/trustmanager/updateTrustRelationship"
 													value="#{tsps.displayName}">
 													<f:param name="inum" value="#{tsps.inum}" />
 												</h:link>
 											</b:dataTableColumn>
-											<b:dataTableColumn value="#{tsps.description}"
-												label="#{msg['trustmanager.description']}" />
 											<b:dataTableColumn
 												label="#{msg['trustmanager.attributesPublished']}">
 												<ox:attributeList value="#{tsps.releasedCustomAttributes}" />
 											</b:dataTableColumn>
-											<b:dataTableColumn
-												value="#{trustRelationshipInventoryAction.getRelationshipType(tsps)}"
-												label="#{msg['trustmanager.relationshipType']}" />
-											<b:dataTableColumn
-												label="#{msg['trustmanager.validationStatus']}">
+											<b:dataTableColumn>
+											<f:facet name="header">
+												<ul
+													style="margin-bottom: 0; list-style-type: none; padding-left: 0">
+													<li>Relation</li>
+													<li>Type</li>
+												</ul>
+											</f:facet>
+											#{trustRelationshipInventoryAction.getRelationshipType(tsps)}
+											</b:dataTableColumn>
+											<b:dataTableColumn width="5%">
+												<f:facet name="header">
+													<ul
+														style="margin-bottom: 0; list-style-type: none; padding-left: 0">
+														<li>Validation</li>
+														<li>Status</li>
+													</ul>
+												</f:facet>
 												<b:label
 													text="#{metadataValidationTimer.getValidationStatus(tsps.spMetaDataFN,tsps)}"
 													rendered="#{metadataValidationTimer.getValidationStatus(tsps.spMetaDataFN,tsps) eq 'Scheduled'}"
@@ -121,12 +133,14 @@
 													rendered="#{metadataValidationTimer.getValidationStatus(tsps.spMetaDataFN,tsps) eq 'Success'}"
 													severity="success" />
 											</b:dataTableColumn>
-											<b:dataTableColumn label="#{msg['trustmanager.status']}">
+											<b:dataTableColumn label="#{msg['trustmanager.status']}" width="5%">
 												<b:label rendered="#{tsps.status.displayName eq 'Active'}"
 													text="#{tsps.status.displayName}" severity="primary" />
 												<b:label rendered="#{tsps.status.displayName eq 'Inactive'}"
 													text="#{tsps.status.displayName}" severity="danger" />
 											</b:dataTableColumn>
+											<b:dataTableColumn value="#{tsps.description}"
+												label="#{msg['trustmanager.description']}" />
 										</b:dataTable>
 									</div>
 								</h:form>
