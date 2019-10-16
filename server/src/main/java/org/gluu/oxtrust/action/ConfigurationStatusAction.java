@@ -15,6 +15,7 @@ import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.lang3.StringUtils;
 import org.gluu.oxtrust.ldap.service.ConfigurationService;
 import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.oxtrust.util.OxTrustConstants;
@@ -73,7 +74,7 @@ public class ConfigurationStatusAction implements Serializable {
 	}
 
 	public String getHostName(String hostName) {
-		if (hostName == null) {
+		if (hostName == null || StringUtils.isEmpty(hostName)) {
 			ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
 			hostName = context.getRequestServerName();
 		}
