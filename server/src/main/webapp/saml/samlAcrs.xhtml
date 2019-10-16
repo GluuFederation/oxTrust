@@ -24,7 +24,7 @@
 					<b:commandButton iconAwesome="plus" value="Add new Entry"
 						look="success" action="#{samlAcrAction.edit()}"
 						style="margin-bottom:5px !important;" />
-					<b:dataTable id="samlAcrListId" style="text-align:center;"
+					<b:dataTable id="samlAcrListId" style="text-align:center;width:100%;"
 						rendered="#{samlAcrAction.acrs.size() gt 0}"
 						value="#{samlAcrAction.acrs}" var="acr" csv="true" pdf="true"
 						select="true" responsive="true">

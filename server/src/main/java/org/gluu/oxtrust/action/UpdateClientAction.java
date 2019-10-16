@@ -1547,7 +1547,7 @@ public class UpdateClientAction implements Serializable {
 				items.add("**Contacts:** " + this.contacts.toString());
 			}
 			if (client.getDefaultAcrValues() != null && client.getDefaultAcrValues().length > 0) {
-				items.add("**DefaultAcrValues:** " + client.getDefaultAcrValues().toString());
+				items.add("**DefaultAcrValues:** " + Arrays.asList(client.getDefaultAcrValues()).toString());
 			}
 			sb.append(new UnorderedList<Object>(items)).append("\n");
 			markDown = sb.toString();

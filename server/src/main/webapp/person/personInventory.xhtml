@@ -68,7 +68,7 @@
 										<richext:spacer height="30" />
 										<h:outputText value="#{msg['person.noSearchResultFound']}" />
 									</ui:fragment>
-									<b:dataTable id="personsListId" style="text-align:center;"
+									<b:dataTable id="personsListId" style="text-align:center;width:100%;"
 										responsive="true"
 										rendered="#{searchPersonAction.personList.size() gt 0}"
 										value="#{searchPersonAction.personList}" var="prs"

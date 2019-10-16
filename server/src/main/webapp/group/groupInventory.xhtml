@@ -62,7 +62,7 @@
 								<richext:spacer height="30" />
 								<h:outputText value="#{msg['group.noSearchResultFound']}" />
 							</ui:fragment>
-							<b:dataTable id="groupsListId" style="text-align:center;"
+							<b:dataTable id="groupsListId" style="text-align:center; width:100%;"
 								responsive="true"
 								rendered="#{searchGroupAction.groupList.size() gt 0}"
 								value="#{searchGroupAction.groupList}" var="grp" print="true"

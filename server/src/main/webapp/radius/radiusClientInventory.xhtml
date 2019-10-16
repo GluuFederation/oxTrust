@@ -59,7 +59,7 @@
 										<ui:fragment rendered="#{searchRadiusClientAction.results.size() eq 0}">
 											<h:outputText value="#{msg['radius.clients.search.noresults']}"/>
 										</ui:fragment>
-										<b:dataTable style="text-align:center;"
+										<b:dataTable style="text-align:center;width:100%;"
 											rendered="#{searchRadiusClientAction.results.size() gt 0}"
 											value="#{searchRadiusClientAction.results}" var="rclient"
 											print="true" excel="true" csv="true" pdf="true" select="true">

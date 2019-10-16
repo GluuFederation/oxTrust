@@ -34,11 +34,11 @@
 			<h:form id="internalCertificatesFormId" style="width:100%;">
 				<b:panel title="#{msg['configuration.internalGluuCertificates']}"
 					look="primary" iconAwesome="fa-sun-o" collapsible="false">
-					<b:dataTable width="100%"
+					<b:dataTable
 						value="#{certificateManagementAction.internalCertificates}"
 						var="cert" id="asimbaCertificatesListId"
 						rendered="#{certificateManagementAction.internalCertificates.size() gt 0}"
-						style="text-align:center;" responsive="true" select="true">
+						style="text-align:center; width:100%;" responsive="true" select="true">
 						<b:dataTableColumn label="#{msg['configuration.alias']}"
 							value="#{cert.alias}">
 						</b:dataTableColumn>
