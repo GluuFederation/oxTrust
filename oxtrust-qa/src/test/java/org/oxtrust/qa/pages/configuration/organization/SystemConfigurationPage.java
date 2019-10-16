@@ -83,7 +83,7 @@ public class SystemConfigurationPage extends AbstractPage {
 
 	public void clickCancelButton() {
 		WebElement cancelButton = webDriver.findElement(By.id("organizationForm:updateButtons"));
-		cancelButton.findElements(By.tagName("input")).get(1).click();
+		cancelButton.findElements(By.tagName("button")).get(0).click();
 	}
 
 	public void clickUpdateButton() {
