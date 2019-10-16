@@ -141,7 +141,7 @@ public class ClientAddPage extends AbstractPage {
 		scrollDown();
 		fluentWait(ONE_SEC);
 		WebElement footer = waitElementByID("updateButtons");
-		footer.findElements(By.tagName("input")).get(0).click();
+		footer.findElements(By.tagName("button")).get(0).click();
 		fluentWait(SMALL);
 	}
 

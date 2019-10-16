@@ -28,12 +28,12 @@ public class GroupUpdatePage extends AbstractPage {
 
 	public void save() {
 		footer = webDriver.findElement(By.id("updateButtons"));
-		footer.findElements(By.tagName("input")).get(0).click();
+		footer.findElements(By.tagName("button")).get(0).click();
 	}
 
 	public void delete() {
 		footer = webDriver.findElement(By.id("updateButtons"));
-		footer.findElements(By.tagName("input")).get(1).click();
+		footer.findElements(By.tagName("input")).get(0).click();
 
 		WebElement dialog = webDriver.findElement(By.id("deleteConfirmation:acceptRemovalModalPanel_content"));
 		dialog.findElements(By.tagName("input")).get(0).click();

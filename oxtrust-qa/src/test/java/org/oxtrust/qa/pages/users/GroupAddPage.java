@@ -30,7 +30,7 @@ public class GroupAddPage extends AbstractPage {
 
 	public void save() {
 		WebElement footer = webDriver.findElement(By.id("updateButtons"));
-		footer.findElements(By.tagName("input")).get(0).click();
+		footer.findElements(By.tagName("button")).get(0).click();
 		fluentWait(ONE_SEC);
 	}
 

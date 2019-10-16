@@ -12,7 +12,7 @@ public class OpenIdConnectScopeAddPage extends AbstractPage {
 		fluentWait(SMALL);
 		WebElement buttonBar = webDriver.findElement(By.className("box-footer"));
 		buttonBar.click();
-		buttonBar.findElements(By.tagName("input")).get(0).click();
+		buttonBar.findElements(By.tagName("button")).get(0).click();
 		fluentWait(SMALL);
 	}
 
