@@ -428,12 +428,13 @@ public class TrustService implements Serializable {
 		if (trustRelationship == null) {
 			return null;
 		}
-		
+
 		if (trustRelationship.getGluuContainerFederation() == null) {
 			return null;
 		}
 
-		GluuSAMLTrustRelationship relationshipByDn = getRelationshipByDn(trustRelationship.getGluuContainerFederation());
+		GluuSAMLTrustRelationship relationshipByDn = getRelationshipByDn(
+				trustRelationship.getGluuContainerFederation());
 		return relationshipByDn;
 	}
 
@@ -461,6 +462,20 @@ public class TrustService implements Serializable {
 	public List<GluuSAMLTrustRelationship> getAllSAMLTrustRelationships(int sizeLimit) {
 		return ldapEntryManager.findEntries(getDnForTrustRelationShip(null), GluuSAMLTrustRelationship.class, null, 0,
 				sizeLimit);
+	}
+
+	public List<GluuSAMLTrustRelationship> getChildTrusts(GluuSAMLTrustRelationship trustRelationship) {
+		List<GluuSAMLTrustRelationship> all = getAllTrustRelationships();
+		ArrayList<GluuSAMLTrustRelationship> children = new ArrayList<GluuSAMLTrustRelationship>();
+		if (all != null && !all.isEmpty()) {
+			for (GluuSAMLTrustRelationship item : all) {
+				if (!item.isFederation()
+						&& item.getGluuContainerFederation().equalsIgnoreCase(trustRelationship.getDn())) {
+					children.add(item);
+				}
+			}
+		}
+		return children;
 	}
 
 	/**

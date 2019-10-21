@@ -14,7 +14,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.inject.Inject;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -24,7 +23,6 @@ import org.gluu.oxtrust.ldap.service.TrustService;
 import org.gluu.site.ldap.persistence.annotation.LdapAttribute;
 import org.gluu.site.ldap.persistence.annotation.LdapEntry;
 import org.gluu.site.ldap.persistence.annotation.LdapObjectClass;
-import org.slf4j.Logger;
 import org.xdi.ldap.model.GluuStatus;
 import org.xdi.ldap.model.InumEntry;
 import org.xdi.service.cdi.util.CdiUtil;
@@ -125,10 +123,6 @@ public class GluuSAMLTrustRelationship extends InumEntry implements Serializable
 	
 	@LdapAttribute(name = "gluuEntityType")
 	private GluuEntityType entityType;
-	
-	@Inject
-	private Logger log;
-
 	
 
 	public void setFederation(boolean isFederation) {
