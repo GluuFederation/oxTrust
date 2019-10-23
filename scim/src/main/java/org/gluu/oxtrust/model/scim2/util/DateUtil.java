@@ -5,14 +5,15 @@
  */
 package org.gluu.oxtrust.model.scim2.util;
 
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.ISODateTimeFormat;
+import com.unboundid.util.StaticUtils;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAccessor;
+import java.util.TimeZone;
 
 /**
  * Contains helper methods to convert between dates in ISO format and LDAP generalized time syntax.
@@ -32,11 +33,6 @@ import java.time.ZonedDateTime;
  */
 public class DateUtil {
 
-    /**
-     * Format used by LDAP generalized time syntax (see RFC 4517 section 3.3.13)
-     */
-    public static final String GENERALIZED_TIME_FORMAT = "YYYYMMddHHmmss.SSSZ";
-
     private DateUtil() {
     }
 
@@ -51,21 +47,26 @@ public class DateUtil {
      */
     public static String ISOToGeneralizedStringDate(String strDate) {
 
-        String utcFormatted = null;
+        TemporalAccessor ta = null;
         try {
-            //Check if date passed complies the xsd:dateTime definition
-            if (strDate.matches("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.*")) {
-                //For ISO compliant dates, the new operator suffices to get a DateTime here
-                DateTime dt = new DateTime(strDate);
-                DateTimeFormatter fmt = DateTimeFormat.forPattern(GENERALIZED_TIME_FORMAT);
-                utcFormatted = fmt.withZone(DateTimeZone.UTC).print(dt);
-                //drop UTC timezone info (4 zeroes and sign)
-                utcFormatted = utcFormatted.substring(0, utcFormatted.length() - 5) + "Z";
-            }
+            ta = ZonedDateTime.parse(strDate);
         } catch (Exception e) {
-            utcFormatted = null;
+            try {
+                LocalDateTime.parse(strDate);
+                //Assume local zone...
+                String zoneId = ZoneOffset.ofTotalSeconds(TimeZone.getDefault().getRawOffset() / 1000).toString();
+                ta = ZonedDateTime.parse(strDate + zoneId);
+            } catch (Exception e1) {
+                return null;
+            }
         }
-        return utcFormatted;
+
+        try {
+            long millis = Instant.from(ta).toEpochMilli();
+            return StaticUtils.encodeGeneralizedTime(millis);
+        } catch (Exception e) {
+            return null;
+        }
 
     }
 
@@ -78,15 +79,11 @@ public class DateUtil {
      */
     public static String generalizedToISOStringDate(String strDate) {
 
-        String isoFormatted;
         try {
-            DateTimeFormatter fmt = DateTimeFormat.forPattern(GENERALIZED_TIME_FORMAT);
-            DateTime dt = fmt.parseDateTime(strDate);
-            isoFormatted = ISODateTimeFormat.dateTime().print(dt);
+            return millisToISOString(StaticUtils.decodeGeneralizedTime(strDate).getTime());
         } catch (Exception e) {
-            isoFormatted = null;
+            return null;
         }
-        return isoFormatted;
 
     }
 
@@ -99,8 +96,7 @@ public class DateUtil {
      */
     public static String millisToISOString(long millis) {
         //Useful for SCIM-client
-        DateTime dt = new DateTime(millis);
-        return ISODateTimeFormat.dateTime().print(dt);
+        return Instant.ofEpochMilli(millis).toString();
     }
 
 
@@ -112,7 +108,7 @@ public class DateUtil {
     public static String gluuCouchbaseISODate(String value) {
 
         try {
-            String gluuISODate = ZonedDateTime.parse(value).format(java.time.format.DateTimeFormatter.ISO_INSTANT);
+            String gluuISODate = ZonedDateTime.parse(value).format(DateTimeFormatter.ISO_INSTANT);
             return gluuISODate.substring(0, gluuISODate.length() - 1);  // Drop Z
             //What? ask yurem...
             //https://github.com/GluuFederation/oxCore/commit/ed24e0d4387076b0089a86246c6ac82fcac14c4a

@@ -79,6 +79,11 @@
             <artifactId>resteasy-client</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.unboundid</groupId>
+            <artifactId>unboundid-ldapsdk</artifactId>
+        </dependency>
+
         <!-- Test -->
         <dependency>
             <groupId>junit</groupId>
