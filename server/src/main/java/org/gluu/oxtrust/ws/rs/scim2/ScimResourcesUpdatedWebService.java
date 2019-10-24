@@ -8,21 +8,20 @@ package org.gluu.oxtrust.ws.rs.scim2;
 //import org.gluu.oxtrust.ldap.service.IGroupService;
 //import org.gluu.oxtrust.model.GluuGroup;
 import org.apache.commons.lang.StringUtils;
+import org.gluu.model.attribute.AttributeDataType;
+import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.model.scim.ScimCustomPerson;
-import org.gluu.oxtrust.model.scim2.BaseScimResource;
 //import org.gluu.oxtrust.model.scim2.group.GroupResource;
 import org.gluu.oxtrust.model.scim2.util.DateUtil;
 import org.gluu.oxtrust.model.scim2.util.IntrospectUtil;
 import org.gluu.oxtrust.service.antlr.scimFilter.ScimFilterParserService;
-import org.gluu.oxtrust.service.filter.ProtectedApi;
 //import org.gluu.oxtrust.service.scim2.Scim2GroupService;
+import org.gluu.oxtrust.service.filter.ProtectedApi;
 import org.gluu.oxtrust.util.ServiceUtil;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.annotation.AttributeName;
 import org.gluu.persist.model.SearchScope;
-import org.gluu.persist.model.base.CustomObjectAttribute;
 import org.gluu.search.filter.Filter;
-import org.gluu.util.StringHelper;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -37,11 +36,8 @@ import javax.ws.rs.core.Response;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.time.Instant;
-//import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-//import java.time.format.DateTimeParseException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static org.gluu.oxtrust.model.scim2.Constants.UTF8_CHARSET_FRAGMENT;
 
@@ -57,7 +53,12 @@ public class ScimResourcesUpdatedWebService extends BaseScimWebService {
     @Inject
     private ScimFilterParserService scimFilterParserService;
 
+    @Inject
+    private AttributeService attributeService;
+
     private boolean ldapBackend;
+
+    private Map<String, AttributeDataType> attributeDataTypes;
 /*
     @Inject
     private UserWebService userWebService;
@@ -89,7 +90,7 @@ public class ScimResourcesUpdatedWebService extends BaseScimWebService {
 
             String date = ldapBackend ? DateUtil.ISOToGeneralizedStringDate(isoDate) : DateUtil.gluuCouchbaseISODate(isoDate);
             if (date == null) {
-                response = getErrorResponse(Response.Status.BAD_REQUEST, "Unparsable date " + isoDate);
+                response = getErrorResponse(Response.Status.BAD_REQUEST, "Unparsable date: " + isoDate);
             } else {
                 log.info("Searching users updated or created after {} (starting at index {} - at most {} results)", date, start, itemsPerPage);
                 Filter filter = Filter.createORFilter(
@@ -124,22 +125,47 @@ public class ScimResourcesUpdatedWebService extends BaseScimWebService {
             person.getTypedCustomAttributes().forEach(attr -> map.put(attr.getName(), new ArrayList<>(attr.getValues())));
             map.putAll(getNonCustomAttributes(person));
 
-            //Transform dates
+            //Do a best effort to supply output in proper data types
             for (String key : map.keySet()) {
                 List<Object> values = map.get(key);
                 for (int i = 0; i < values.size(); i++) {
 
-                    Object value = values.get(i);
-                    if (value.getClass().equals(Date.class)) {
-                        Instant instant = Instant.ofEpochMilli(Date.class.cast(value).getTime());
-                        values.set(i, DateTimeFormatter.ISO_INSTANT.format(instant));
-                    } else {
-                        String isoDate = ldapBackend ? DateUtil.generalizedToISOStringDate(value.toString())
-                                : DateUtil.gluuCouchbaseISODate(value.toString());
-                        if (isoDate != null) {
-                            values.set(i, isoDate);
+                    Object rawValue = values.get(i);
+                    String value = rawValue.toString();
+                    Object finalValue = null;
+
+                    AttributeDataType dataType = Optional.ofNullable(attributeDataTypes.get(key)).orElse(AttributeDataType.STRING);
+                    switch (dataType) {
+                        case DATE:
+                            finalValue = getStringDateFrom(value);
+                            break;
+                        case BOOLEAN:
+                            if (ldapBackend) {
+                                value = value.toLowerCase();
+                            }
+                            if (value.equals(Boolean.TRUE.toString()) || value.equals(Boolean.FALSE.toString())) {
+                                finalValue = Boolean.valueOf(value);
+                            }
+                            break;
+                        case NUMERIC:
+                            try {
+                                finalValue = new Integer(value);
+                            } catch (Exception e) {
+                                log.warn("{} is not a numeric value!", value);
+                            }
+                            break;
+                    }
+
+                    if (finalValue == null) {
+                        if (rawValue.getClass().equals(Date.class)) {
+                            Instant instant = Instant.ofEpochMilli(Date.class.cast(rawValue).getTime());
+                            finalValue = DateTimeFormatter.ISO_INSTANT.format(instant);
+                        } else {
+                            finalValue = getStringDateFrom(value);
+                            finalValue = finalValue == null ? value : finalValue;
                         }
                     }
+                    values.set(i, finalValue);
                 }
             }
 
@@ -192,9 +218,15 @@ public class ScimResourcesUpdatedWebService extends BaseScimWebService {
 
     }
 
+    private String getStringDateFrom(String str) {
+        return ldapBackend ? DateUtil.generalizedToISOStringDate(str) : DateUtil.gluuCouchbaseISODate(str);
+    }
+
     @PostConstruct
     private void init() {
         ldapBackend = scimFilterParserService.isLdapBackend();
+        attributeDataTypes = new HashMap<>();
+        attributeService.getAllAttributes().forEach(ga -> attributeDataTypes.put(ga.getName(), ga.getDataType()));
     }
 
 /*
