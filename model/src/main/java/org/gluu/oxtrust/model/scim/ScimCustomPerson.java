@@ -158,7 +158,7 @@ public class ScimCustomPerson extends Entry implements Serializable {
     }
 
     public void setUid(String value) {
-        setAttribute("uid", value);
+        setCustomAttribute("uid", value);
     }
 
     public void setUpdatedAt(Date updatedAt) {
@@ -166,7 +166,7 @@ public class ScimCustomPerson extends Entry implements Serializable {
     }
 
     public void setUserPassword(String value) {
-        setAttribute("userPassword", value);
+        setCustomAttribute("userPassword", value);
     }
 
     public void setAttribute(String attributeName, String[] attributeValue) {

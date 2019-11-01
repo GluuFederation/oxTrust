@@ -154,10 +154,10 @@ public class Scim2UserService implements Serializable {
 
 		// Set values trying to follow the order found in BaseScimResource class
 		person.setAttribute("oxTrustExternalId", res.getExternalId());
-		person.setAttribute("oxTrustMetaCreated", res.getMeta().getCreated());
-		person.setAttribute("oxTrustMetaLastModified", res.getMeta().getLastModified());
+		person.setCustomAttribute("oxTrustMetaCreated", res.getMeta().getCreated());
+		person.setCustomAttribute("oxTrustMetaLastModified", res.getMeta().getLastModified());
 		// When creating user, location will be set again when having an inum
-		person.setAttribute("oxTrustMetaLocation", res.getMeta().getLocation());
+		person.setCustomAttribute("oxTrustMetaLocation", res.getMeta().getLocation());
 
 		// Set values trying to follow the order found in UserResource class
 		person.setUid(res.getUserName());
