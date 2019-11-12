@@ -33,7 +33,7 @@ import org.gluu.oxtrust.service.cdi.event.EventTypeQualifier;
 import org.gluu.oxtrust.service.cdi.event.Events;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.search.filter.Filter;
-import org.gluu.service.CacheService;
+import org.gluu.service.BaseCacheService;
 import org.gluu.util.OxConstants;
 import org.gluu.util.StringHelper;
 
@@ -628,7 +628,7 @@ public class AttributeService extends org.gluu.service.AttributeService {
 	}
 
 	@Override
-	protected CacheService getCacheService() {
+	protected BaseCacheService getCacheService() {
 		return cacheService;
 	}
 
