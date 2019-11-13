@@ -1450,6 +1450,11 @@
                 "internal",
                 "remote"
             ]
+        },
+        "useLocalCache": {
+            "id": "useLocalCache",
+            "description": "Boolean value specifying whether to enable local in-memory cache for attributes, scopes, clients and organization configuration.",
+            "type": "boolean"
         }
     },
     "required": [
@@ -1579,6 +1584,7 @@
         "enabledOAuthAuditLogging",
         "jmsBrokerURISet",
         "jmsUserName",
-        "jmsPassword"
+        "jmsPassword",
+        "useLocalCache"
     ]
 }
