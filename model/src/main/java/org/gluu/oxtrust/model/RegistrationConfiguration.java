@@ -9,6 +9,7 @@
  */
 package org.gluu.oxtrust.model;
 
+import java.io.Serializable;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -19,8 +20,17 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
  *
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class RegistrationConfiguration {
+public class RegistrationConfiguration implements Serializable {
 		
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7310064771467874959L;
+
+	/**
+	 * 
+	 */
+
 	private List<String> additionalAttributes;
 
 	private boolean isCaptchaDisabled;
