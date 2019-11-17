@@ -6,6 +6,19 @@
 
 package org.gluu.oxtrust.ldap.service;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+
+import javax.ejb.Stateless;
+import javax.faces.context.FacesContext;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.config.oxtrust.LdapOxAuthConfiguration;
 import org.gluu.model.GluuStatus;
@@ -15,18 +28,12 @@ import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.exception.BasePersistenceException;
 import org.gluu.persist.model.base.GluuBoolean;
+import org.gluu.service.BaseCacheService;
 import org.gluu.service.CacheService;
+import org.gluu.service.LocalCacheService;
 import org.gluu.util.ArrayHelper;
 import org.gluu.util.StringHelper;
 import org.slf4j.Logger;
-
-import javax.ejb.Stateless;
-import javax.faces.context.FacesContext;
-import javax.inject.Inject;
-import javax.inject.Named;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.*;
 
 /**
  * Provides operations with organization
@@ -47,6 +54,9 @@ public class OrganizationService  extends org.gluu.service.OrganizationService{
 
 	@Inject
 	private CacheService cacheService;
+
+    @Inject
+    private LocalCacheService localCacheService;
 
 	@Inject
 	private AppConfiguration appConfiguration;
@@ -77,11 +87,12 @@ public class OrganizationService  extends org.gluu.service.OrganizationService{
 	 * @return Organization
 	 */
 	public GluuOrganization getOrganization() {
+    	BaseCacheService usedCacheService = getCacheService();
         String key = getDnForOrganization();
-        GluuOrganization organization = (GluuOrganization) cacheService.get(key);
+        GluuOrganization organization = (GluuOrganization) usedCacheService.get(key);
         if (organization == null) {
 			organization = ldapEntryManager.find(GluuOrganization.class, key);
-			cacheService.put(key, organization);
+			usedCacheService.put(key, organization);
 		}
 
 		return organization;
@@ -99,11 +110,13 @@ public class OrganizationService  extends org.gluu.service.OrganizationService{
 	 * @return custom message
 	 */
 	public String getOrganizationCustomMessage(String customMessageId) {
-		GluuOrganization organization = getOrganization();
+    	BaseCacheService usedCacheService = getCacheService();
+
+    	GluuOrganization organization = getOrganization();
 
 		String key = OxTrustConstants.CACHE_ORGANIZATION_CUSTOM_MESSAGE_KEY;
 		@SuppressWarnings("unchecked")
-		Map<String, String> organizationCustomMessage = (Map<String, String>) cacheService.get(key);
+		Map<String, String> organizationCustomMessage = (Map<String, String>) usedCacheService.get(key);
 		if (organizationCustomMessage == null) {
 			organizationCustomMessage = new HashMap<String, String>();
 
@@ -121,7 +134,7 @@ public class OrganizationService  extends org.gluu.service.OrganizationService{
 					}
 				}
 			}
-			cacheService.put(key, organizationCustomMessage);
+			usedCacheService.put(key, organizationCustomMessage);
 		}
 
 		return organizationCustomMessage.get(customMessageId);
@@ -219,4 +232,13 @@ public class OrganizationService  extends org.gluu.service.OrganizationService{
 	public void saveLdapOxAuthConfiguration(LdapOxAuthConfiguration ldapOxAuthConfiguration) {
 		ldapEntryManager.merge(ldapOxAuthConfiguration);
 	}
+
+    private BaseCacheService getCacheService() {
+    	if (appConfiguration.getUseLocalCache()) {
+    		return localCacheService;
+    	}
+    	
+    	return cacheService;
+    }
+
 }

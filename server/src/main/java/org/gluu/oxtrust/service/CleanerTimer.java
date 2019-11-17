@@ -15,9 +15,7 @@ import javax.inject.Named;
 
 import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.model.ApplicationType;
-import org.gluu.service.CacheService;
 import org.gluu.service.cache.CacheProvider;
-import org.gluu.service.cache.NativePersistenceCacheProvider;
 import org.gluu.service.cdi.async.Asynchronous;
 import org.gluu.service.cdi.event.CleanerEvent;
 import org.gluu.service.cdi.event.Scheduled;
@@ -36,7 +34,7 @@ import org.slf4j.Logger;
 public class CleanerTimer {
 
 	public final static int BATCH_SIZE = 100;
-	private final static int DEFAULT_INTERVAL = 600; // 10 minutes
+	private final static int DEFAULT_INTERVAL = 60; // 1 minute
 
 	@Inject
 	private Logger log;
@@ -59,39 +57,60 @@ public class CleanerTimer {
 	@Inject
 	private CleanUpLogger cleanUpLogger;
 
+	private long lastFinishedTime;
+
 	private AtomicBoolean isActive;
 
 	public void initTimer() {
 		log.debug("Initializing Cleaner Timer");
 		cleanUpLogger.addNewLogLine("Initializing Cleaner Timer at:" + new Date());
+
 		this.isActive = new AtomicBoolean(false);
-		int interval = appConfiguration.getCleanServiceInterval();
-		if (interval <= 0) {
-			interval = DEFAULT_INTERVAL;
-		}
+
+		// Schedule to start cleaner every 1 minute
 		cleanerEvent.fire(
-				new TimerEvent(new TimerSchedule(interval, interval), new CleanerEvent(), Scheduled.Literal.INSTANCE));
+				new TimerEvent(new TimerSchedule(DEFAULT_INTERVAL, DEFAULT_INTERVAL), new CleanerEvent(), Scheduled.Literal.INSTANCE));
+
 		cleanUpLogger.addNewLogLine("Initialization Done at :" + new Date());
 	}
 
 	@Asynchronous
 	public void process(@Observes @Scheduled CleanerEvent cleanerEvent) {
 		cleanUpLogger.addNewLogLine("++++Starting processing clean up services at:" + new Date());
+
 		if (this.isActive.get()) {
 			return;
 		}
+
 		if (!this.isActive.compareAndSet(false, true)) {
 			return;
 		}
+
 		try {
+			processImpl();
+		} finally {
+			this.isActive.set(false);
+		}
+
+		cleanUpLogger.addNewLogLine("+Processing clean up services done at:" + new Date());
+	}
+
+	public void processImpl() {
+        try {
+			if (!isStartProcess()) {
+				log.trace("Starting conditions aren't reached");
+				return;
+			}
+
 			Date now = new Date();
 			processCache(now);
 			processPasswordReset();
 			processMetricEntries();
-		} finally {
-			this.isActive.set(false);
+
+			this.lastFinishedTime = System.currentTimeMillis();
+		} catch (Exception e) {
+			log.error("Failed to process clean up.", e);
 		}
-		cleanUpLogger.addNewLogLine("+Processing clean up services done at:" + new Date());
 	}
 
 	protected void processPasswordReset() {
@@ -130,4 +149,20 @@ public class CleanerTimer {
 		log.debug("End metric entries clean up");
 		cleanUpLogger.addNewLogLine("#Processing Metric entries done at:" + new Date());
 	}
+
+	private boolean isStartProcess() {
+		int interval = appConfiguration.getCleanServiceInterval();
+		if (interval < 0) {
+			log.info("Cleaner Timer is disabled.");
+			log.warn("Cleaner Timer Interval (cleanServiceInterval in oxauth configuration) is negative which turns OFF internal clean up by the server. Please set it to positive value if you wish internal clean up timer run.");
+			return false;
+		}
+
+		long cleaningInterval = interval * 1000;
+
+		long timeDiffrence = System.currentTimeMillis() - this.lastFinishedTime;
+
+		return timeDiffrence >= cleaningInterval;
+	}
+
 }
