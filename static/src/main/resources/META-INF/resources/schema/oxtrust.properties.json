@@ -655,6 +655,11 @@
             "id": "enforceEmailUniqueness",
             "description": "Boolean value specifying whether to enforce email uniqueness on oxtrust side.",
             "type": "boolean"
+        },
+        "useLocalCache": {
+            "id": "useLocalCache",
+            "description": "Boolean value specifying whether to enable local in-memory cache for attributes, scopes, clients and organization configuration.",
+            "type": "boolean"
         }
     },
     "required": [
@@ -759,6 +764,7 @@
         "cleanServiceInterval",
         "passwordResetRequestExpirationTime",
         "authenticationRecaptchaEnabled",
-        "enforceEmailUniqueness"
+        "enforceEmailUniqueness",
+        "useLocalCache"
     ]
 }
