@@ -162,8 +162,7 @@ public class CacheRefreshTimer {
 		}
 
 		// Schedule to start cache refresh every 1 minute
-		final int delay = 1 * 60;
-		timerEvent.fire(new TimerEvent(new TimerSchedule(delay, DEFAULT_INTERVAL), new CacheRefreshEvent(),
+		timerEvent.fire(new TimerEvent(new TimerSchedule(DEFAULT_INTERVAL, DEFAULT_INTERVAL), new CacheRefreshEvent(),
 				Scheduled.Literal.INSTANCE));
 
 		this.lastFinishedTime = System.currentTimeMillis();
