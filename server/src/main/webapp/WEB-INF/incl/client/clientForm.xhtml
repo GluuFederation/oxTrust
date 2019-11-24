@@ -738,7 +738,7 @@
 													</h:panelGroup>
 												</h:panelGroup>
 											</b:panel>
-											<b:panel
+											<b:panel contentDisabled="true" disabled="true"
 												title="#{msg['clientForm.defaultRequestedAuthenticationContextClass']}"
 												id="defaultAcrButton" look="primary">
 												<h:panelGroup id="selectedCustomScriptAcrsId">
@@ -767,6 +767,7 @@
 														<a4j:commandButton
 															styleClass="btn btn-primary AddDefaultAcrButton"
 															style="margin-top:5px"
+															disabled="true"
 															value="#{msg['clientForm.addDefaultACRvalue']}"
 															oncomplete="#{rich:component('defaultAcr:selectEntityModalPanel')}.show();"
 															execute="@this" eventsQueue="clientQueue" />
