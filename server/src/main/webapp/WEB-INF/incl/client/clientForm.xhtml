@@ -1055,9 +1055,11 @@
 										<ui:param name="saveBtnId" value="updateButtons" />
 										<ui:param name="saveBtnLabel" value="Save attributes" />
 									</ui:decorate>
+									<h:panelGroup styleClass="hiddenFieldBox">
 									<h:inputHidden prependId="false" id="#{id}_hidden"
 										style="width:100%;" value="#{_clientAction.oxAttributesJson}"
 										class="hiddenField" />
+									</h:panelGroup>	
 								</h:panelGroup>
 							</div>
 						</div>
