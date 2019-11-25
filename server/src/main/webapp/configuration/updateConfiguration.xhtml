@@ -3,10 +3,12 @@
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
 	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
+	xmlns:b="http://bootsfaces.net/ui"
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	template="/WEB-INF/incl/layout/newtemplate.xhtml">
 	<f:metadata>
-	    <f:viewAction action="#{permissionService.requestPermission('configuration', 'access')}" />
+		<f:viewAction
+			action="#{permissionService.requestPermission('configuration', 'access')}" />
 		<f:viewAction action="#{conversationService.initConversation}" />
 		<f:viewAction action="#{jsonConfigAction.init}" onPostback="false" />
 	</f:metadata>
@@ -140,6 +142,10 @@
 							<div class="tab-pane" id="memcached-config">
 								<h:panelGrid border="0" cellpadding="0" cellspacing="0"
 									columnClasses="alignTop" columns="1" width="100%">
+									<div style="text-align: center;">
+									<b:label severity="warning" style="align:center"
+										text="oxauth restart is required if cache connection settings are changed." />
+									</div>	
 									<h:form id="oxMemCacheConfigForm" prependId="false">
 										<ui:decorate id="oxMemcache"
 											template="/WEB-INF/incl/layout/jsoneditor.xhtml">
