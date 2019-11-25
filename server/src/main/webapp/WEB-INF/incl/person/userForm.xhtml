@@ -438,6 +438,8 @@
 							</b:tab>
 							<b:tab rendered="#{_list.size() > 1}"
 								title="#{_customAttributeAction.originDisplayNames[_list.get(1).key]}">
+								<b:label severity="warning"
+										text="Only active attibute are displayed." />
 								<div class="row" style="margin-left: 5px;">
 									<a4j:repeat var="attr" value="#{_list.get(1).value}">
 										<ui:fragment rendered="#{attr.status.value eq 'active'}">
@@ -461,6 +463,8 @@
 							</b:tab>
 							<b:tab rendered="#{_list.size() > 2}"
 								title="#{_customAttributeAction.originDisplayNames[_list.get(2).key]}">
+								<b:label severity="warning"
+									text="Only active attibutes are displayed." />
 								<div class="row" style="margin-left: 5px;">
 									<a4j:repeat var="attr" value="#{_list.get(2).value}">
 										<ui:fragment rendered="#{attr.status.value eq 'active'}">
