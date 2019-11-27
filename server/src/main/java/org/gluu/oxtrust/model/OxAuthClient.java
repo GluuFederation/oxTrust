@@ -195,7 +195,7 @@ public class OxAuthClient extends Entry implements Serializable {
 	@AttributeName(name = "oxAuthInitiateLoginURI")
 	private String initiateLoginUri;
 
-	@AttributeName(name = "oxAuthClientSecretExpiresAt")
+	@AttributeName(name = "oxAuthExpiration")
 	private Date clientSecretExpiresAt;
 
 	@AttributeName(name = "oxAuthRequestURI")
