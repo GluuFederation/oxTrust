@@ -327,6 +327,8 @@ public class UpdateClientAction implements Serializable {
 				.before(Date.from(LocalDate.now().plusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant()))) {
 			this.client.setClientSecretExpiresAt(nextCenturyDate);
 		}
+		this.client.setDeletable(this.client.getClientSecretExpiresAt() != null);
+
 		if (previousClientExpirationDate != null && this.client.getClientSecretExpiresAt().before(new Date())) {
 			facesMessages.add(FacesMessage.SEVERITY_ERROR,
 					"This client has expired. Update the expiration date in order to save changes");

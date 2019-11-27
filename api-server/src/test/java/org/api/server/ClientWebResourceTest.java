@@ -128,6 +128,7 @@ public class ClientWebResourceTest extends BaseApiTest {
 		client.setDescription(name + " description");
 		client.setDisplayName(name);
 		client.setClientSecretExpiresAt(new Date());
+		client.setDeletable(true);
 		client.setOxAuthScopes(new ArrayList<>());
 		client.setRequestUris(new String[] {});
 		client.setDisabled(false);

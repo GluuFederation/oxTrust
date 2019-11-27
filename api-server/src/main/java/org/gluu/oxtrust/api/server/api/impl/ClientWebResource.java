@@ -146,6 +146,7 @@ public class ClientWebResource extends BaseWebResource {
 			String inum = clientService.generateInumForNewClient();
 			client.setInum(inum);
 			client.setDn(clientService.getDnForClient(inum));
+			client.setDeletable(client.getClientSecretExpiresAt() != null);
 			clientService.addClient(client);
 			return Response.ok(clientService.getClientByInum(inum)).build();
 		} catch (Exception e) {
@@ -169,6 +170,7 @@ public class ClientWebResource extends BaseWebResource {
 			if (existingClient != null) {
 				client.setInum(existingClient.getInum());
 				client.setBaseDn(clientService.getDnForClient(inum));
+				client.setDeletable(client.getClientSecretExpiresAt() != null);
 				clientService.updateClient(client);
 				return Response.ok(clientService.getClientByInum(existingClient.getInum())).build();
 			} else {
