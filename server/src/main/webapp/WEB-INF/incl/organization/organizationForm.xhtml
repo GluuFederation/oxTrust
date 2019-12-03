@@ -376,18 +376,18 @@
 									acceptedTypes="jar"
 									ontyperejected="alert('Only jar files are accepted');"
 									maxFilesQuantity="1" immediateUpload="true" listHeight="60px"
-									styleClass="Librairy" style="width:100% !important;"
+									styleClass="OxTrustLibrairy" style="width:100% !important;"
 									rendered="true">
 								</rich:fileUpload>
 							</b:panel>
 							<b:panel id="oxAuth" title="Add Lib to OxAuth" look="success"
 								collapsible="true" collapsed="true">
 								<rich:fileUpload id="oxauthLibs"
-									fileUploadListener="#{_organizationAction.addOxauthNewLib}"
+									fileUploadListener="#{_organizationAction.addNewOxauthLib}"
 									acceptedTypes="jar"
 									ontyperejected="alert('Only jar files are accepted');"
 									maxFilesQuantity="1" immediateUpload="true" listHeight="60px"
-									styleClass="Librairy" style="width:100% !important;"
+									styleClass="oxAuthLibrairy" style="width:100% !important;"
 									rendered="true">
 								</rich:fileUpload>
 							</b:panel>
