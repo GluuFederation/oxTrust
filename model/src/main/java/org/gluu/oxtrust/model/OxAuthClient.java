@@ -199,7 +199,7 @@ public class OxAuthClient extends Entry implements Serializable {
 	@AttributeName(name = "oxAuthInitiateLoginURI")
 	private String initiateLoginUri;
 
-	@AttributeName(name = "oxAuthClientSecretExpiresAt")
+	@AttributeName(name = "oxAuthExpiration")
 	private Date clientSecretExpiresAt;
 
 	@AttributeName(name = "oxAuthRequestURI")
@@ -222,6 +222,9 @@ public class OxAuthClient extends Entry implements Serializable {
 
 	@AttributeName(name = "oxdId")
 	private String oxdId;
+
+    @AttributeName(name = "del")
+    private boolean deletable;
 
 	@Transient
 	private String oxAuthClientSecret;
@@ -712,6 +715,14 @@ public class OxAuthClient extends Entry implements Serializable {
 
 	public final void setOxdId(String oxdId) {
 		this.oxdId = oxdId;
+	}
+
+	public boolean isDeletable() {
+		return deletable;
+	}
+
+	public void setDeletable(boolean deletable) {
+		this.deletable = deletable;
 	}
 
 	private Date inOneCentury() {

@@ -165,8 +165,7 @@ public class ManageCustomScriptAction
 					String dn = customScript.getDn();
 					String customScriptId = customScript.getInum();
 					if (StringHelper.isEmpty(dn)) {
-						String basedInum = organizationService.getDnForOrganization();
-						customScriptId = basedInum + "!" + INumGenerator.generate(2);
+						customScriptId =  INumGenerator.generate(2);
 						dn = customScriptService.buildDn(customScriptId);
 
 						customScript.setDn(dn);

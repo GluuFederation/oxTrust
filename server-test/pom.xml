@@ -33,7 +33,7 @@
                         <phase>process-sources</phase>
                         <configuration>
                             <target>
-                                <property name="oxtrust.server.basedir" value="${project.build.directory}/oxtrust-server-4.0.Final"/>
+                                <property name="oxtrust.server.basedir" value="${project.build.directory}/oxtrust-server-4.0.1.Final"/>
                                 <unwar dest="${project.build.directory}/${project.build.finalName}" src="${oxtrust.server.basedir}/target/${project.build.finalName}.war" />
                             </target>
                         </configuration>
