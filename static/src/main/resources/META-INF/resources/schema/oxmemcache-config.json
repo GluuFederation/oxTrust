@@ -103,7 +103,8 @@
 					"enum": [
 						"STANDALONE",
 						"CLUSTER",
-						"SHARDED"
+						"SHARDED",
+                        "SENTINEL"
 					]
 				},
 				"servers": {
@@ -131,6 +132,13 @@
 					"exclusiveMaximum": false,
 					"exclusiveMinimum": false
 				},
+                "sentinelMasterName": {
+                    "id": "sentinelMasterName",
+                    "description": "Sentinel Master Name (required if SENTINEL type of connection is selected)",
+                    "title": "sentinelMasterName",
+                    "type": "string",
+                    "minLength": 1
+                },
 				"useSSL": {
 					"id": "useSSL",
 					"description": "Enable SSL communication between Gluu Server and Redis cache ",
