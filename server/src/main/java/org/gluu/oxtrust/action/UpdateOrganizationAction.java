@@ -21,6 +21,13 @@ import javax.enterprise.context.ConversationScoped;
 import javax.faces.application.FacesMessage;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.gluu.config.oxauth.WebKeysSettings;
@@ -47,6 +54,9 @@ import org.gluu.util.StringHelper;
 import org.richfaces.event.FileUploadEvent;
 import org.richfaces.model.UploadedFile;
 import org.slf4j.Logger;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 /**
  * Action class for configuring application
@@ -300,6 +310,65 @@ public class UpdateOrganizationAction implements Serializable {
 		saveIdpFavIcon(uploadedFile);
 	}
 
+	public void addNewOxtrustLib(FileUploadEvent event) {
+		UploadedFile uploadedFile = event.getUploadedFile();
+		addLib(uploadedFile, true);
+	}
+
+	public void addNewOxauthLib(FileUploadEvent event) {
+		UploadedFile uploadedFile = event.getUploadedFile();
+		addLib(uploadedFile, false);
+	}
+
+	private void addLib(UploadedFile uploadedFile, boolean isOxTrust) {
+		String LIB_PATH = "/opt/gluu/jetty/identity/custom/libs/";
+		String XML_PATH = "/opt/gluu/jetty/identity/webapps/identity.xml";
+		if (!isOxTrust) {
+			LIB_PATH = "/opt/gluu/jetty/oxauth/custom/libs/";
+			XML_PATH = "/opt/gluu/jetty/oxauth/webapps/oxauth.xml";
+		}
+		String fileName = saveFile(uploadedFile, LIB_PATH);
+		boolean result = updateXml(XML_PATH, isOxTrust, fileName);
+		if (result) {
+			facesMessages.add(FacesMessage.SEVERITY_INFO, "Library " + fileName + " added");
+		} else {
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Error encountered while adding " + fileName + " library");
+		}
+	}
+
+	private boolean updateXml(String XML_PATH, boolean isOxTrust, String fileName) {
+		try {
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder builder = factory.newDocumentBuilder();
+			Document document = builder.parse(new File(XML_PATH));
+			document.getDocumentElement().normalize();
+			NodeList configures = document.getElementsByTagName("Configure");
+			Element configure = (Element) configures.item(0);
+			Element library = document.createElement("Set");
+			library.setAttribute("name", "extraClasspath");
+			if (isOxTrust) {
+				fileName = "/opt/gluu/jetty/identity/custom/libs/" + fileName;
+			} else {
+				fileName = "/opt/gluu/jetty/oxauth/custom/libs/" + fileName;
+			}
+			library.appendChild(document.createTextNode(fileName));
+			configure.appendChild(library);
+			document.getDocumentElement().normalize();
+			TransformerFactory transformerFactory = TransformerFactory.newInstance();
+			Transformer transformer = transformerFactory.newTransformer();
+			DOMSource source = new DOMSource(document);
+			File file = new File(XML_PATH);
+			file.setWritable(true);
+			StreamResult result = new StreamResult(file);
+			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+			transformer.transform(source, result);
+			return true;
+		} catch (Exception e) {
+			log.info("=========" + e);
+			return false;
+		}
+	}
+
 	private void saveLogo(UploadedFile uploadedFile) {
 		String fileName = saveFile(uploadedFile, LogoImageServlet.BASE_OXTRUST_LOGO_PATH);
 		if (fileName != null) {
@@ -467,7 +536,7 @@ public class UpdateOrganizationAction implements Serializable {
 	}
 
 	public String getRandonRnd() {
-		return "&rnd="+UUID.randomUUID().toString().substring(0, 8);
+		return "&rnd=" + UUID.randomUUID().toString().substring(0, 8);
 	}
 
 }
