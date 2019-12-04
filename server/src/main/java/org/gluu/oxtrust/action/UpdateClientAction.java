@@ -321,19 +321,18 @@ public class UpdateClientAction implements Serializable {
 	}
 
 	public String save() throws Exception {
-		Date nextCenturyDate = Date
-				.from(LocalDate.now().plusYears(100).atStartOfDay(ZoneId.systemDefault()).toInstant());
-		if (this.client.getClientSecretExpiresAt() != null && this.client.getClientSecretExpiresAt()
-				.before(Date.from(LocalDate.now().plusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant()))) {
-			this.client.setClientSecretExpiresAt(nextCenturyDate);
-		}
-		this.client.setDeletable(this.client.getClientSecretExpiresAt() != null);
-
-		if (previousClientExpirationDate != null && this.client.getClientSecretExpiresAt().before(new Date())) {
+		if (this.client.getClientSecretExpiresAt() != null
+				&& this.client.getClientSecretExpiresAt().before(new Date())) {
 			facesMessages.add(FacesMessage.SEVERITY_ERROR,
 					"This client has expired. Update the expiration date in order to save changes");
 			return OxTrustConstants.RESULT_FAILURE;
 		}
+		if (this.previousClientExpirationDate != null && this.client.getClientSecretExpiresAt().before(new Date())) {
+			facesMessages.add(FacesMessage.SEVERITY_ERROR,
+					"This client has expired. Update the expiration date in order to save changes");
+			return OxTrustConstants.RESULT_FAILURE;
+		}
+		this.client.setDeletable(this.client.getClientSecretExpiresAt() != null);
 		updateLoginURIs();
 		updateLogoutURIs();
 		updateClientLogoutURIs();
