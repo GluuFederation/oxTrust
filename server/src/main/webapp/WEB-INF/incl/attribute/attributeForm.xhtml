@@ -134,7 +134,7 @@
 					</ox:decorate>
 					<ox:decorate id="scimExtendedAttribute"
 						rendered="#{not _attributeAction.isScimAttribute(_attribute.name)}"
-						label="SCIM extended attribute">
+						label="Include in SCIM extension">
 						<h:selectBooleanCheckbox
 							value="#{_attribute.oxSCIMCustomAttribute}"
 							id="scimExtendedAttributeId"
@@ -143,7 +143,7 @@
 							<a4j:ajax event="click" render="validation" />
 						</h:selectBooleanCheckbox>
 						<h:outputText style="margin-left:5px;"
-							value="Determine whether this attribute is available via SCIM call or not." />
+							value="Signals whether this attribute is part of the SCIM user extension or not." />
 					</ox:decorate>
 					<ox:decorate id="description"
 						label="#{msg['attribute.description']}">
