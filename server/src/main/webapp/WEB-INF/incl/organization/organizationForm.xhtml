@@ -87,6 +87,7 @@
 						<li><a href="#smtp-server" data-toggle="tab">#{msg['organizationForm.smtpServerConfiguration']}</a></li>
 						<li><a href="#ox-trust" data-toggle="tab">Organization
 								Settings</a></li>
+						<li><a href="#libs" data-toggle="tab">Extra librairies</a></li>
 					</ul>
 					<div class="tab-content">
 						<div class="tab-pane active" id="sys-config">
@@ -114,12 +115,13 @@
 								<ox:decorate id="samlEnabledState"
 									label="#{msg['organizationForm.samlSupport']}">
 									<h:selectBooleanCheckbox value="#{_configuration.samlEnabled}"
-										styleClass="rounded samlSelectBox" id="samlEnabledStateId"/>
+										styleClass="rounded samlSelectBox" id="samlEnabledStateId" />
 								</ox:decorate>
 								<ox:decorate id="radiusEnabledState"
 									label="#{msg['organizationForm.radiusSupport']}">
-									<h:selectBooleanCheckbox value="#{_configuration.radiusEnabled}"
-										styleClass="rounded raduisSelectBox" id="radiusEnabledStateId"/>
+									<h:selectBooleanCheckbox
+										value="#{_configuration.radiusEnabled}"
+										styleClass="rounded raduisSelectBox" id="radiusEnabledStateId" />
 								</ox:decorate>
 								<ox:decorate id="profileManagment"
 									label="#{msg['organizationForm.userCanEditProfile']}">
@@ -215,7 +217,9 @@
 												<div class="row">
 													<div class="col-sm-6 col-lg-6"
 														style="padding: 0px; margin: 5px; max-height: 70px;">
-														<img src="#{request.contextPath}/servlet/logo?scale=large#{_organizationAction.getRandonRnd()}" height="70" width="150" />
+														<img
+															src="#{request.contextPath}/servlet/logo?scale=large#{_organizationAction.getRandonRnd()}"
+															height="70" width="150" />
 													</div>
 													<div class="col-sm-4 col-lg-4"
 														style="padding: 0px; margin: 2px;">
@@ -238,8 +242,9 @@
 												<div class="row">
 													<div class="col-sm-6 col-lg-6"
 														style="padding: 0px; margin: 5px; max-height: 70px;">
-														<img src="#{request.contextPath}/servlet/favicon?preview=true#{_organizationAction.getRandonRnd()}"
-														height="50" width="50" />
+														<img
+															src="#{request.contextPath}/servlet/favicon?preview=true#{_organizationAction.getRandonRnd()}"
+															height="50" width="50" />
 													</div>
 													<div class="col-sm-4 col-lg-4"
 														style="padding: 0px; margin: 2px;">
@@ -266,7 +271,9 @@
 												<div class="row">
 													<div class="col-sm-6 col-lg-6"
 														style="padding: 0px; margin: 5px; max-height: 70px;">
-														<img src="#{request.contextPath}/servlet/oxauth/logo?scale=large#{_organizationAction.getRandonRnd()}" height="70" width="150" />
+														<img
+															src="#{request.contextPath}/servlet/oxauth/logo?scale=large#{_organizationAction.getRandonRnd()}"
+															height="70" width="150" />
 													</div>
 													<div class="col-sm-4 col-lg-4"
 														style="padding: 0px; margin: 2px;">
@@ -287,9 +294,11 @@
 												title="Current oxAuth Favicon" look="success"
 												collapsible="true" collapsed="true">
 												<div class="row">
-													<div class="col-sm-6 col-lg-6" style="padding: 0px; margin: 2px; max-height: 70px;">
-														<img src="#{request.contextPath}/servlet/oxauth/favicon?value#{_organizationAction.getRandonRnd()}" 
-														height="50" width="50"/>
+													<div class="col-sm-6 col-lg-6"
+														style="padding: 0px; margin: 2px; max-height: 70px;">
+														<img
+															src="#{request.contextPath}/servlet/oxauth/favicon?value#{_organizationAction.getRandonRnd()}"
+															height="50" width="50" />
 													</div>
 													<div class="col-sm-4 col-lg-4"
 														style="padding: 0px; margin: 10px; max-height: 70px;">
@@ -358,6 +367,30 @@
 									</div>
 								</b:panel>
 							</h:panelGroup>
+						</div>
+						<div class="tab-pane" id="libs">
+							<b:panel id="oxTrust" title="Add Lib to Oxtrust" look="success"
+								collapsible="true" collapsed="true">
+								<rich:fileUpload id="oxtrustLibs"
+									fileUploadListener="#{_organizationAction.addNewOxtrustLib}"
+									acceptedTypes="jar"
+									ontyperejected="alert('Only jar files are accepted');"
+									maxFilesQuantity="1" immediateUpload="true" listHeight="60px"
+									styleClass="OxTrustLibrairy" style="width:100% !important;"
+									rendered="true">
+								</rich:fileUpload>
+							</b:panel>
+							<b:panel id="oxAuth" title="Add Lib to OxAuth" look="success"
+								collapsible="true" collapsed="true">
+								<rich:fileUpload id="oxauthLibs"
+									fileUploadListener="#{_organizationAction.addNewOxauthLib}"
+									acceptedTypes="jar"
+									ontyperejected="alert('Only jar files are accepted');"
+									maxFilesQuantity="1" immediateUpload="true" listHeight="60px"
+									styleClass="oxAuthLibrairy" style="width:100% !important;"
+									rendered="true">
+								</rich:fileUpload>
+							</b:panel>
 						</div>
 					</div>
 				</div>
