@@ -132,10 +132,10 @@
 					"exclusiveMaximum": false,
 					"exclusiveMinimum": false
 				},
-                "sentinelMasterName": {
-                    "id": "sentinelMasterName",
-                    "description": "Sentinel Master Name (required if SENTINEL type of connection is selected)",
-                    "title": "sentinelMasterName",
+                "sentinelMasterGroupName": {
+                    "id": "sentinelMasterGroupName",
+                    "description": "Sentinel Master Group Name (required if SENTINEL type of connection is selected)",
+                    "title": "sentinelMasterGroupName",
                     "type": "string",
                     "minLength": 1
                 },
