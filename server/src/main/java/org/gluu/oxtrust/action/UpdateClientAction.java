@@ -53,8 +53,6 @@ import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -241,7 +239,7 @@ public class UpdateClientAction implements Serializable {
 		try {
 			log.debug("inum : " + inum);
 			this.client = clientService.getClientByInum(inum);
-			previousClientExpirationDate = this.client.getClientSecretExpiresAt();
+			this.previousClientExpirationDate = this.client.getClientSecretExpiresAt();
 			this.client.setOxAuthClientSecret(encryptionService.decrypt(this.client.getEncodedClientSecret()));
 			log.trace("CLIENT SECRET UPDATE:" + this.client.getOxAuthClientSecret());
 		} catch (BasePersistenceException ex) {
