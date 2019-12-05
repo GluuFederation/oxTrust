@@ -23,8 +23,12 @@ import org.gluu.oxtrust.ldap.service.EncryptionService;
 import org.gluu.oxtrust.ldap.service.JsonConfigurationService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.service.JsonService;
+import org.gluu.service.cache.AbstractRedisProvider;
 import org.gluu.service.cache.CacheConfiguration;
+import org.gluu.service.cache.CacheProviderType;
+import org.gluu.service.cache.MemcachedProvider;
 import org.gluu.service.cache.RedisConfiguration;
+import org.gluu.service.cache.RedisProviderFactory;
 import org.gluu.service.security.Secure;
 import org.gluu.util.StringHelper;
 import org.gluu.util.security.StringEncrypter.EncryptionException;
@@ -144,6 +148,17 @@ public class JsonConfigurationAction implements Serializable {
 		try {
 			log.debug("Saving memcache-config.json:" + this.cacheConfigurationJson);
 			this.cacheConfiguration = convertToCacheConfiguration(this.cacheConfigurationJson);
+			// CacheProviderType type = this.cacheConfiguration.getCacheProviderType();
+			// if (type.equals(CacheProviderType.REDIS) && !canConnectToRedis()) {
+			// facesMessages.add(FacesMessage.SEVERITY_ERROR, "Error connecting to redis
+			// with provided configuration");
+			// return OxTrustConstants.RESULT_FAILURE;
+			// }
+			// if (type.equals(CacheProviderType.MEMCACHED) && !canConnectToMemCached()) {
+			// facesMessages.add(FacesMessage.SEVERITY_ERROR,
+			// "Error connecting to memcached with provided configuration");
+			// return OxTrustConstants.RESULT_FAILURE;
+			// }
 			jsonConfigurationService.saveOxMemCacheConfiguration(this.cacheConfiguration);
 			facesMessages.add(FacesMessage.SEVERITY_INFO, "Сache Configuration is updated.");
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -151,8 +166,28 @@ public class JsonConfigurationAction implements Serializable {
 			log.error("Failed to update oxMemcache-config.json", ex);
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update oxTrust configuration in LDAP");
 		}
-
 		return OxTrustConstants.RESULT_FAILURE;
+	}
+
+	private boolean canConnectToRedis() {
+		AbstractRedisProvider provider = RedisProviderFactory.create(cacheConfiguration.getRedisConfiguration());
+		if (provider.isConnected()) {
+			provider.destroy();
+			return true;
+		}
+		return false;
+	}
+
+	private boolean canConnectToMemCached() {
+		MemcachedProvider provider = new MemcachedProvider();
+		provider.setCacheConfiguration(cacheConfiguration);
+		provider.init();
+		provider.create();
+		if (provider.isConnected()) {
+			provider.destroy();
+			return true;
+		}
+		return false;
 	}
 
 	private void trimUriProperties() {
