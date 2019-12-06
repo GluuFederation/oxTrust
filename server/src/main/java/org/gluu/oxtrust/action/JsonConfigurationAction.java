@@ -29,6 +29,7 @@ import org.gluu.service.cache.CacheProviderType;
 import org.gluu.service.cache.MemcachedProvider;
 import org.gluu.service.cache.RedisConfiguration;
 import org.gluu.service.cache.RedisProviderFactory;
+import org.gluu.service.cdi.util.CdiUtil;
 import org.gluu.service.security.Secure;
 import org.gluu.util.StringHelper;
 import org.gluu.util.security.StringEncrypter.EncryptionException;
@@ -148,17 +149,16 @@ public class JsonConfigurationAction implements Serializable {
 		try {
 			log.debug("Saving memcache-config.json:" + this.cacheConfigurationJson);
 			this.cacheConfiguration = convertToCacheConfiguration(this.cacheConfigurationJson);
-			// CacheProviderType type = this.cacheConfiguration.getCacheProviderType();
-			// if (type.equals(CacheProviderType.REDIS) && !canConnectToRedis()) {
-			// facesMessages.add(FacesMessage.SEVERITY_ERROR, "Error connecting to redis
-			// with provided configuration");
-			// return OxTrustConstants.RESULT_FAILURE;
-			// }
-			// if (type.equals(CacheProviderType.MEMCACHED) && !canConnectToMemCached()) {
-			// facesMessages.add(FacesMessage.SEVERITY_ERROR,
-			// "Error connecting to memcached with provided configuration");
-			// return OxTrustConstants.RESULT_FAILURE;
-			// }
+			CacheProviderType type = this.cacheConfiguration.getCacheProviderType();
+			if (type.equals(CacheProviderType.REDIS) && !canConnectToRedis()) {
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Error connecting to redis with provided configuration");
+				return OxTrustConstants.RESULT_FAILURE;
+			}
+			if (type.equals(CacheProviderType.MEMCACHED) && !canConnectToMemCached()) {
+				facesMessages.add(FacesMessage.SEVERITY_ERROR,
+						"Error connecting to memcached server with provided configuration");
+				return OxTrustConstants.RESULT_FAILURE;
+			}
 			jsonConfigurationService.saveOxMemCacheConfiguration(this.cacheConfiguration);
 			facesMessages.add(FacesMessage.SEVERITY_INFO, "Сache Configuration is updated.");
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -170,24 +170,34 @@ public class JsonConfigurationAction implements Serializable {
 	}
 
 	private boolean canConnectToRedis() {
-		AbstractRedisProvider provider = RedisProviderFactory.create(cacheConfiguration.getRedisConfiguration());
-		if (provider.isConnected()) {
-			provider.destroy();
-			return true;
+		try {
+			CdiUtil.bean(RedisProviderFactory.class);
+			AbstractRedisProvider provider = RedisProviderFactory.create(cacheConfiguration.getRedisConfiguration());
+			if (provider.isConnected()) {
+				provider.destroy();
+				return true;
+			}
+			return false;
+		} catch (Exception e) {
+			return false;
 		}
-		return false;
 	}
 
 	private boolean canConnectToMemCached() {
-		MemcachedProvider provider = new MemcachedProvider();
-		provider.setCacheConfiguration(cacheConfiguration);
-		provider.init();
-		provider.create();
-		if (provider.isConnected()) {
-			provider.destroy();
-			return true;
+		try {
+			MemcachedProvider provider = CdiUtil.bean(MemcachedProvider.class);
+			provider.setCacheConfiguration(cacheConfiguration);
+			provider.init();
+			provider.create();
+			if (provider.isConnected()) {
+				provider.destroy();
+				return true;
+			}
+			return false;
+		} catch (Exception e) {
+			return false;
 		}
-		return false;
+
 	}
 
 	private void trimUriProperties() {
