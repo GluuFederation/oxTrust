@@ -6,9 +6,27 @@
 
 package org.gluu.oxtrust.action;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import net.steppschuh.markdowngenerator.list.UnorderedList;
-import net.steppschuh.markdowngenerator.text.heading.Heading;
+import java.io.IOException;
+import java.io.Serializable;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import java.util.regex.Pattern;
+
+import javax.enterprise.context.ConversationScoped;
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
@@ -25,10 +43,16 @@ import org.gluu.model.custom.script.model.CustomScript;
 import org.gluu.oxauth.model.common.GrantType;
 import org.gluu.oxauth.model.common.ResponseType;
 import org.gluu.oxauth.model.util.URLPatternList;
-import org.gluu.oxtrust.ldap.service.*;
+import org.gluu.oxtrust.ldap.service.AttributeService;
+import org.gluu.oxtrust.ldap.service.ClientService;
+import org.gluu.oxtrust.ldap.service.EncryptionService;
+import org.gluu.oxtrust.ldap.service.OxTrustAuditService;
+import org.gluu.oxtrust.ldap.service.ScopeService;
+import org.gluu.oxtrust.ldap.service.SectorIdentifierService;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.model.OxAuthSectorIdentifier;
+import org.gluu.oxtrust.model.OxAuthSubjectType;
 import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.exception.BasePersistenceException;
@@ -42,21 +66,10 @@ import org.oxauth.persistence.model.ClientAttributes;
 import org.oxauth.persistence.model.Scope;
 import org.slf4j.Logger;
 
-import javax.enterprise.context.ConversationScoped;
-import javax.faces.application.FacesMessage;
-import javax.faces.context.FacesContext;
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.io.Serializable;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.nio.charset.Charset;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.*;
-import java.util.regex.Pattern;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import net.steppschuh.markdowngenerator.list.UnorderedList;
+import net.steppschuh.markdowngenerator.text.heading.Heading;
 
 /**
  * Action class for viewing and updating clients.
@@ -241,7 +254,7 @@ public class UpdateClientAction implements Serializable {
 		try {
 			log.debug("inum : " + inum);
 			this.client = clientService.getClientByInum(inum);
-			previousClientExpirationDate = this.client.getClientSecretExpiresAt();
+			this.previousClientExpirationDate = this.client.getClientSecretExpiresAt();
 			this.client.setOxAuthClientSecret(encryptionService.decrypt(this.client.getEncodedClientSecret()));
 			log.trace("CLIENT SECRET UPDATE:" + this.client.getOxAuthClientSecret());
 		} catch (BasePersistenceException ex) {
@@ -321,19 +334,18 @@ public class UpdateClientAction implements Serializable {
 	}
 
 	public String save() throws Exception {
-		Date nextCenturyDate = Date
-				.from(LocalDate.now().plusYears(100).atStartOfDay(ZoneId.systemDefault()).toInstant());
-		if (this.client.getClientSecretExpiresAt() != null && this.client.getClientSecretExpiresAt()
-				.before(Date.from(LocalDate.now().plusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant()))) {
-			this.client.setClientSecretExpiresAt(nextCenturyDate);
-		}
-		this.client.setDeletable(this.client.getClientSecretExpiresAt() != null);
-
-		if (previousClientExpirationDate != null && this.client.getClientSecretExpiresAt().before(new Date())) {
+		if (this.client.getClientSecretExpiresAt() != null
+				&& this.client.getClientSecretExpiresAt().before(new Date())) {
 			facesMessages.add(FacesMessage.SEVERITY_ERROR,
 					"This client has expired. Update the expiration date in order to save changes");
 			return OxTrustConstants.RESULT_FAILURE;
 		}
+		if (this.previousClientExpirationDate != null && this.client.getClientSecretExpiresAt().before(new Date())) {
+			facesMessages.add(FacesMessage.SEVERITY_ERROR,
+					"This client has expired. Update the expiration date in order to save changes");
+			return OxTrustConstants.RESULT_FAILURE;
+		}
+		this.client.setDeletable(this.client.getClientSecretExpiresAt() != null);
 		updateLoginURIs();
 		updateLogoutURIs();
 		updateClientLogoutURIs();
@@ -556,7 +568,9 @@ public class UpdateClientAction implements Serializable {
 	private boolean isAcceptable(String availableLoginUri) {
 		boolean result = false;
 		try {
-			if (this.loginUris.size() < 1) {
+			if (this.client.getSubjectType().equals(OxAuthSubjectType.PUBLIC)) {
+				return true;
+			} else if (this.loginUris.size() < 1) {
 				result = true;
 			} else if (this.loginUris.size() >= 1 && hasSameHostname(this.availableLoginUri)) {
 				result = true;
@@ -1582,5 +1596,9 @@ public class UpdateClientAction implements Serializable {
 			return "{}";
 		}
 
+	}
+
+	public void subjectTypeChanged() {
+		this.client.getSubjectType();
 	}
 }
