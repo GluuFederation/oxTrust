@@ -1,14 +1,10 @@
 package org.gluu.oxtrust.api.server.model;
 
+import com.fasterxml.jackson.annotation.*;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({ "issuer", "baseEndpoint", "authorizationEndpoint", "tokenEndpoint", "tokenRevocationEndpoint",
@@ -278,6 +274,8 @@ public class OxAuthJsonConfiguration {
 	private String keyStoreSecret;
 	@JsonProperty("endSessionWithAccessToken")
 	private Boolean endSessionWithAccessToken;
+    @JsonProperty("сookieDomain")
+    private String сookieDomain;
 	@JsonProperty("clientWhiteList")
 	private List<String> clientWhiteList = null;
 	@JsonProperty("clientBlackList")
@@ -1450,7 +1448,15 @@ public class OxAuthJsonConfiguration {
 		this.endSessionWithAccessToken = endSessionWithAccessToken;
 	}
 
-	@JsonProperty("clientWhiteList")
+    public String getСookieDomain() {
+        return сookieDomain;
+    }
+
+    public void setСookieDomain(String сookieDomain) {
+        this.сookieDomain = сookieDomain;
+    }
+
+    @JsonProperty("clientWhiteList")
 	public List<String> getClientWhiteList() {
 		return clientWhiteList;
 	}
