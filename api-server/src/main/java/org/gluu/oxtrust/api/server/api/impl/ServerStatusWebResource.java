@@ -42,7 +42,7 @@ public class ServerStatusWebResource extends BaseWebResource {
 	public Response getServerStatus() {
 		log("Get server status");
 		try {
-			return Response.ok(convert(configurationService.getServerDetail(), configurationService.getConfiguration()))
+			return Response.ok(convert(configurationService.getOxtrustStat(), configurationService.getConfiguration()))
 					.build();
 		} catch (Exception e) {
 			log(logger, e);

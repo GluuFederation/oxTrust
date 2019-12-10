@@ -105,7 +105,7 @@ public class StatusCheckerDaily {
 		int personCount = personService.countPersons();
 
 		GluuConfiguration configuration = configurationService.getConfiguration();
-		GluuOxTrustStat serverDetail = configurationService.getServerDetail();
+		GluuOxTrustStat serverDetail = configurationService.getOxtrustStat();
 
 		log.debug("Setting ldap attributes");
 		serverDetail.setGroupCount(String.valueOf(groupCount));

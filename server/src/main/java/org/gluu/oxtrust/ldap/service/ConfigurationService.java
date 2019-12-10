@@ -7,12 +7,16 @@
 package org.gluu.oxtrust.ldap.service;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.gluu.model.ApplicationType;
 import org.gluu.model.AuthenticationScriptUsageType;
 import org.gluu.model.ProgrammingLanguage;
 import org.gluu.model.ScriptLocationType;
@@ -47,6 +51,8 @@ public class ConfigurationService implements Serializable {
 
 	@Inject
 	private EncryptionService encryptionService;
+	
+	private static final SimpleDateFormat PERIOD_DATE_FORMAT = new SimpleDateFormat("yyyyMM");
 
 	public boolean contains(String configurationDn) {
 		return ldapEntryManager.contains(configurationDn, GluuConfiguration.class);
@@ -116,14 +122,13 @@ public class ConfigurationService implements Serializable {
 		return result;
 	}
 
-	public GluuOxTrustStat getServerDetail(String[] returnAttributes) {
+	public GluuOxTrustStat getOxtrustStat(String[] returnAttributes) {
 		GluuOxTrustStat result = null;
-		if (ldapEntryManager.contains(getDnForServerDetail(), GluuOxTrustStat.class)) {
-			result = ldapEntryManager.find(getDnForServerDetail(), GluuOxTrustStat.class, returnAttributes);
+		if (ldapEntryManager.contains(getDnForOxtrustStat(), GluuOxTrustStat.class)) {
+			result = ldapEntryManager.find(getDnForOxtrustStat(), GluuOxTrustStat.class, returnAttributes);
 		} else {
 			result = new GluuOxTrustStat();
-			result.setDn(getDnForServerDetail());
-
+			result.setDn(getDnForOxtrustStat());
 			ldapEntryManager.persist(result);
 		}
 		return result;
@@ -139,8 +144,8 @@ public class ConfigurationService implements Serializable {
 		return getConfiguration(null);
 	}
 
-	public GluuOxTrustStat getServerDetail() {
-		return getServerDetail(null);
+	public GluuOxTrustStat getOxtrustStat() {
+		return getOxtrustStat(null);
 	}
 
 	/**
@@ -165,8 +170,8 @@ public class ConfigurationService implements Serializable {
 		return String.format("ou=configuration,%s", baseDn);
 	}
 
-	public String getDnForServerDetail() {
-		return String.format("ou=201912,ou=oxtrust,ou=statistic,o=metric"); 
+	public String getDnForOxtrustStat() {
+		return buildDn(UUID.randomUUID().toString(), new Date(), ApplicationType.OX_TRUST);
 	}
 
 	public AuthenticationScriptUsageType[] getScriptUsageTypes() {
@@ -219,5 +224,20 @@ public class ConfigurationService implements Serializable {
 			}
 		}
 	}
+	
+	 private String buildDn(String uniqueIdentifier, Date creationDate, ApplicationType applicationType) {
+	        final StringBuilder dn = new StringBuilder();
+	        if (StringHelper.isNotEmpty(uniqueIdentifier) && (creationDate != null) && (applicationType != null)) {
+	            dn.append(String.format("uniqueIdentifier=%s,", uniqueIdentifier));
+	        }
+	        if ((creationDate != null) && (applicationType != null)) {
+	            dn.append(String.format("ou=%s,", PERIOD_DATE_FORMAT.format(creationDate)));
+	        }
+	        if (applicationType != null) {
+	            dn.append(String.format("ou=%s,", applicationType.getValue()));
+	        }
+	        dn.append("ou=statistic,o=metric");
+	        return dn.toString();
+	    }
 
 }
