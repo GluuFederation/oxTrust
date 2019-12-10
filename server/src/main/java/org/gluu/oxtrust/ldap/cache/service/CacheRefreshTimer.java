@@ -52,7 +52,6 @@ import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
-import org.gluu.oxtrust.model.GluuOxTrustStat;
 import org.gluu.oxtrust.service.cdi.event.CacheRefreshEvent;
 import org.gluu.oxtrust.service.external.ExternalCacheRefreshService;
 import org.gluu.oxtrust.util.OxTrustConstants;
@@ -192,8 +191,7 @@ public class CacheRefreshTimer {
 		CacheRefreshConfiguration cacheRefreshConfiguration = configurationFactory.getCacheRefreshConfiguration();
 		try {
 			GluuConfiguration currentConfiguration = configurationService.getConfiguration();
-			GluuOxTrustStat gluuServerDetail = configurationService.getServerDetail();
-			if (!isStartCacheRefresh(cacheRefreshConfiguration, currentConfiguration, gluuServerDetail)) {
+			if (!isStartCacheRefresh(cacheRefreshConfiguration, currentConfiguration)) {
 				log.debug("Starting conditions aren't reached");
 				return;
 			}
@@ -208,7 +206,7 @@ public class CacheRefreshTimer {
 	}
 
 	private boolean isStartCacheRefresh(CacheRefreshConfiguration cacheRefreshConfiguration,
-			GluuConfiguration currentConfiguration, GluuOxTrustStat gluuServerDetail) {
+			GluuConfiguration currentConfiguration) {
 		if (!currentConfiguration.isVdsCacheRefreshEnabled()) {
 			return false;
 		}
