@@ -181,6 +181,7 @@ public class UpdateOrganizationAction implements Serializable {
 			organizationService.updateOrganization(this.organization);
 			configurationService.encryptedSmtpPassword(smtpConfiguration);
 			updateConfiguration();
+			// organizationService.updateServerDetail(gluuServerDetail);
 			saveWebKeySettings();
 		} catch (BasePersistenceException ex) {
 			log.error("Failed to update organization", ex);
@@ -198,13 +199,13 @@ public class UpdateOrganizationAction implements Serializable {
 		configurationUpdate.setPasswordResetAllowed(configuration.isPasswordResetAllowed());
 		configurationUpdate.setPassportEnabled(configuration.isPassportEnabled());
 		configurationUpdate.setRadiusEnabled(configuration.isRadiusEnabled());
-		configurationUpdate.setSamlEnabled(configuration.isSamlEnabled());
 		configurationUpdate.setScimEnabled(configuration.isScimEnabled());
 		configurationUpdate.setProfileManagment(configuration.isProfileManagment());
-		configurationUpdate.setSmtpConfiguration(smtpConfiguration);
 		configurationUpdate.setConfigurationDnsServer(configuration.getConfigurationDnsServer());
 		configurationUpdate.setMaxLogSize(configuration.getMaxLogSize());
 		configurationUpdate.setContactEmail(configuration.getContactEmail());
+		configurationUpdate.setSamlEnabled(configuration.isSamlEnabled());
+		configurationUpdate.setSmtpConfiguration(smtpConfiguration);
 		configurationService.updateConfiguration(configurationUpdate);
 	}
 

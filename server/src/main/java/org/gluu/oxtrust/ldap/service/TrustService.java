@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
+
 import org.apache.commons.lang.StringUtils;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.model.RenderParameters;
@@ -256,7 +257,6 @@ public class TrustService implements Serializable {
 		if (!StringUtils.isEmpty(mailMsgPlain)) {
 			try {
 				GluuConfiguration configuration = configurationService.getConfiguration();
-
 				if (configuration.getContactEmail() == null || configuration.getContactEmail().isEmpty())
 					log.warn("Failed to send the 'Attributes released' notification email: unconfigured contact email");
 				else if (configuration.getSmtpConfiguration() == null

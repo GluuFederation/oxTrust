@@ -19,6 +19,7 @@ import org.gluu.model.ScriptLocationType;
 import org.gluu.model.SmtpConfiguration;
 import org.gluu.model.custom.script.CustomScriptType;
 import org.gluu.oxtrust.model.GluuConfiguration;
+import org.gluu.oxtrust.model.GluuOxTrustStat;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.util.StringHelper;
 import org.gluu.util.security.StringEncrypter.EncryptionException;
@@ -71,6 +72,10 @@ public class ConfigurationService implements Serializable {
 		ldapEntryManager.merge(configuration);
 	}
 
+	public void updateServerDetail(GluuOxTrustStat serverDetail) {
+		ldapEntryManager.merge(serverDetail);
+	}
+
 	/**
 	 * Check if LDAP server contains configuration with specified attributes
 	 * 
@@ -111,6 +116,19 @@ public class ConfigurationService implements Serializable {
 		return result;
 	}
 
+	public GluuOxTrustStat getServerDetail(String[] returnAttributes) {
+		GluuOxTrustStat result = null;
+		if (ldapEntryManager.contains(getDnForServerDetail(), GluuOxTrustStat.class)) {
+			result = ldapEntryManager.find(getDnForServerDetail(), GluuOxTrustStat.class, returnAttributes);
+		} else {
+			result = new GluuOxTrustStat();
+			result.setDn(getDnForServerDetail());
+
+			ldapEntryManager.persist(result);
+		}
+		return result;
+	}
+
 	/**
 	 * Get configuration
 	 * 
@@ -119,6 +137,10 @@ public class ConfigurationService implements Serializable {
 	 */
 	public GluuConfiguration getConfiguration() {
 		return getConfiguration(null);
+	}
+
+	public GluuOxTrustStat getServerDetail() {
+		return getServerDetail(null);
 	}
 
 	/**
@@ -141,6 +163,10 @@ public class ConfigurationService implements Serializable {
 	public String getDnForConfiguration() {
 		String baseDn = organizationService.getBaseDn();
 		return String.format("ou=configuration,%s", baseDn);
+	}
+
+	public String getDnForServerDetail() {
+		return String.format("ou=201912,ou=oxtrust,ou=statistic,o=metric"); 
 	}
 
 	public AuthenticationScriptUsageType[] getScriptUsageTypes() {

@@ -26,9 +26,7 @@ import org.gluu.oxtrust.model.LogViewerConfig;
 import org.gluu.oxtrust.model.SimpleCustomPropertiesListModel;
 import org.gluu.oxtrust.service.logger.LoggerService;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.service.JsonService;
 import org.gluu.service.security.Secure;
-import org.gluu.util.StringHelper;
 import org.slf4j.Logger;
 
 /**
@@ -56,15 +54,14 @@ public class ConfigureLogViewerAction implements SimpleCustomPropertiesListModel
 	private ConversationService conversationService;
 
 	@Inject
-	private JsonService jsonService;
-
-	@Inject
 	private LoggerService loggerService;
 
 	@Inject
 	private JsonConfigurationService jsonConfigurationService;
 
 	private GluuConfiguration configuration;
+
+	private GluuConfiguration gluuServerDetail;
 
 	private String oxTrustLogConfigLocation;
 	private String oxAuthLogConfigLocation;
@@ -79,10 +76,12 @@ public class ConfigureLogViewerAction implements SimpleCustomPropertiesListModel
 		}
 
 		this.configuration = configurationService.getConfiguration();
-		this.oxTrustLogConfigLocation = configuration.getOxLogConfigLocation();
-		
+		this.gluuServerDetail = configurationService.getConfiguration();
+		this.oxTrustLogConfigLocation = gluuServerDetail.getOxLogConfigLocation();
+
 		try {
-			this.oxAuthLogConfigLocation = jsonConfigurationService.getOxauthAppConfiguration().getExternalLoggerConfiguration();
+			this.oxAuthLogConfigLocation = jsonConfigurationService.getOxauthAppConfiguration()
+					.getExternalLoggerConfiguration();
 		} catch (Exception e) {
 			log.error("Failed to retrieve oxauth configuration", e);
 		}
@@ -107,7 +106,7 @@ public class ConfigureLogViewerAction implements SimpleCustomPropertiesListModel
 		updateConfiguration();
 		updateOxAuthConfiguration();
 
-    facesMessages.add(FacesMessage.SEVERITY_INFO, "Log viewer configuration updated");
+		facesMessages.add(FacesMessage.SEVERITY_INFO, "Log viewer configuration updated");
 
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
@@ -117,7 +116,6 @@ public class ConfigureLogViewerAction implements SimpleCustomPropertiesListModel
 		try {
 			updateConfiguration.setOxLogViewerConfig(logViewerConfiguration);
 			updateConfiguration.setOxLogConfigLocation(oxTrustLogConfigLocation);
-
 			configurationService.updateConfiguration(updateConfiguration);
 			loggerService.updateLoggerConfigLocation();
 		} catch (Exception ex) {
