@@ -43,15 +43,16 @@ import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.ldap.cache.model.CacheCompoundKey;
 import org.gluu.oxtrust.ldap.cache.model.GluuInumMap;
 import org.gluu.oxtrust.ldap.cache.model.GluuSimplePerson;
-import org.gluu.oxtrust.ldap.service.ConfigurationService;
 import org.gluu.oxtrust.ldap.service.ApplicationFactory;
 import org.gluu.oxtrust.ldap.service.AttributeService;
+import org.gluu.oxtrust.ldap.service.ConfigurationService;
 import org.gluu.oxtrust.ldap.service.EncryptionService;
 import org.gluu.oxtrust.ldap.service.InumService;
 import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
+import org.gluu.oxtrust.model.GluuOxTrustStat;
 import org.gluu.oxtrust.service.cdi.event.CacheRefreshEvent;
 import org.gluu.oxtrust.service.external.ExternalCacheRefreshService;
 import org.gluu.oxtrust.util.OxTrustConstants;
@@ -64,7 +65,6 @@ import org.gluu.persist.exception.operation.SearchException;
 import org.gluu.persist.ldap.impl.LdapEntryManager;
 import org.gluu.persist.ldap.impl.LdapEntryManagerFactory;
 import org.gluu.persist.model.SearchScope;
-import org.gluu.persist.model.base.GluuBoolean;
 import org.gluu.persist.model.base.GluuDummyEntry;
 import org.gluu.persist.operation.PersistenceOperationService;
 import org.gluu.search.filter.Filter;
@@ -190,10 +190,10 @@ public class CacheRefreshTimer {
 
 	public void processInt() {
 		CacheRefreshConfiguration cacheRefreshConfiguration = configurationFactory.getCacheRefreshConfiguration();
-
 		try {
 			GluuConfiguration currentConfiguration = configurationService.getConfiguration();
-			if (!isStartCacheRefresh(cacheRefreshConfiguration, currentConfiguration)) {
+			GluuOxTrustStat gluuServerDetail = configurationService.getServerDetail();
+			if (!isStartCacheRefresh(cacheRefreshConfiguration, currentConfiguration, gluuServerDetail)) {
 				log.debug("Starting conditions aren't reached");
 				return;
 			}
@@ -208,7 +208,7 @@ public class CacheRefreshTimer {
 	}
 
 	private boolean isStartCacheRefresh(CacheRefreshConfiguration cacheRefreshConfiguration,
-			GluuConfiguration currentConfiguration) {
+			GluuConfiguration currentConfiguration, GluuOxTrustStat gluuServerDetail) {
 		if (!currentConfiguration.isVdsCacheRefreshEnabled()) {
 			return false;
 		}
@@ -219,10 +219,10 @@ public class CacheRefreshTimer {
 		}
 
 		String cacheRefreshServerIpAddress = currentConfiguration.getCacheRefreshServerIpAddress();
-//		if (StringHelper.isEmpty(cacheRefreshServerIpAddress)) {
-//			log.debug("There is no master Cache Refresh server");
-//			return false;
-//		}
+		// if (StringHelper.isEmpty(cacheRefreshServerIpAddress)) {
+		// log.debug("There is no master Cache Refresh server");
+		// return false;
+		// }
 
 		// Compare server IP address with cacheRefreshServerIp
 		boolean cacheRefreshServer = false;
@@ -244,13 +244,13 @@ public class CacheRefreshTimer {
 		} catch (SocketException ex) {
 			log.error("Failed to enumerate server IP addresses", ex);
 		}
-        
-        if (!cacheRefreshServer) {
-        	cacheRefreshServer = externalCacheRefreshService.executeExternalIsStartProcessMethods();
-        }
-        
-        if (!cacheRefreshServer) {
-        	log.debug("This server isn't master Cache Refresh server");
+
+		if (!cacheRefreshServer) {
+			cacheRefreshServer = externalCacheRefreshService.executeExternalIsStartProcessMethods();
+		}
+
+		if (!cacheRefreshServer) {
+			log.debug("This server isn't master Cache Refresh server");
 			return false;
 		}
 
@@ -265,7 +265,8 @@ public class CacheRefreshTimer {
 		return timeDiffrence >= poolingInterval;
 	}
 
-	private void processImpl(CacheRefreshConfiguration cacheRefreshConfiguration, GluuConfiguration currentConfiguration) throws SearchException {
+	private void processImpl(CacheRefreshConfiguration cacheRefreshConfiguration, GluuConfiguration currentConfiguration)
+			throws SearchException {
 		CacheRefreshUpdateMethod updateMethod = getUpdateMethod(cacheRefreshConfiguration);
 
 		// Prepare and check connections to LDAP servers
@@ -308,7 +309,7 @@ public class CacheRefreshTimer {
 			} catch (Exception e) {
 				// Nothing can be done
 			}
-			
+
 			if (!cacheRefreshConfiguration.isDefaultInumServer()) {
 				try {
 					closeLdapServerConnection(inumDbServerConnection);
@@ -854,7 +855,8 @@ public class CacheRefreshTimer {
 	}
 
 	private List<GluuSimplePerson> loadSourceServerEntriesWithoutLimits(
-			CacheRefreshConfiguration cacheRefreshConfiguration, LdapServerConnection[] sourceServerConnections) throws SearchException {
+			CacheRefreshConfiguration cacheRefreshConfiguration, LdapServerConnection[] sourceServerConnections)
+			throws SearchException {
 		Filter customFilter = cacheRefreshService.createFilter(cacheRefreshConfiguration.getCustomLdapFilter());
 		String[] keyAttributes = getCompoundKeyAttributes(cacheRefreshConfiguration);
 		String[] keyAttributesWithoutValues = getCompoundKeyAttributesWithoutValues(cacheRefreshConfiguration);
@@ -1134,7 +1136,8 @@ public class CacheRefreshTimer {
 		if (useLocalConnection) {
 			return new LdapServerConnection(ldapConfig, ldapEntryManager, getBaseDNs(ldapConfiguration));
 		}
-		PersistenceEntryManagerFactory entryManagerFactory = applicationFactory.getPersistenceEntryManagerFactory(LdapEntryManagerFactory.class);
+		PersistenceEntryManagerFactory entryManagerFactory = applicationFactory
+				.getPersistenceEntryManagerFactory(LdapEntryManagerFactory.class);
 		String persistenceType = entryManagerFactory.getPersistenceType();
 
 		Properties ldapProperties = toLdapProperties(entryManagerFactory, ldapConfiguration);
@@ -1146,10 +1149,12 @@ public class CacheRefreshTimer {
 		if (bindCredentials != null) {
 			log.error("Using updated password which got from getBindCredentials method");
 			ldapDecryptedProperties.setProperty(persistenceType + ".bindDN", bindCredentials.getBindDn());
-			ldapDecryptedProperties.setProperty(persistenceType + "." + PropertiesDecrypter.BIND_PASSWORD, bindCredentials.getBindPassword());
+			ldapDecryptedProperties.setProperty(persistenceType + "." + PropertiesDecrypter.BIND_PASSWORD,
+					bindCredentials.getBindPassword());
 		}
 
-		PersistenceEntryManager customPersistenceEntryManager = entryManagerFactory.createEntryManager(ldapDecryptedProperties);
+		PersistenceEntryManager customPersistenceEntryManager = entryManagerFactory
+				.createEntryManager(ldapDecryptedProperties);
 		log.info("Created Cache Refresh PersistenceEntryManager: {}", customPersistenceEntryManager);
 
 		if (!customPersistenceEntryManager.getOperationService().isConnected()) {
@@ -1193,12 +1198,10 @@ public class CacheRefreshTimer {
 
 	private void updateStatus(GluuConfiguration currentConfiguration, long lastRun) {
 		GluuConfiguration configuration = configurationService.getConfiguration();
-
 		Date currentDateTime = new Date();
 		configuration.setVdsCacheRefreshLastUpdate(currentDateTime);
 		configuration.setVdsCacheRefreshLastUpdateCount(currentConfiguration.getVdsCacheRefreshLastUpdateCount());
 		configuration.setVdsCacheRefreshProblemCount(currentConfiguration.getVdsCacheRefreshProblemCount());
-
 		configurationService.updateConfiguration(configuration);
 	}
 
@@ -1273,12 +1276,14 @@ public class CacheRefreshTimer {
 		return result;
 	}
 
-	private Properties toLdapProperties(PersistenceEntryManagerFactory ldapEntryManagerFactory, GluuLdapConfiguration ldapConfiguration) {
+	private Properties toLdapProperties(PersistenceEntryManagerFactory ldapEntryManagerFactory,
+			GluuLdapConfiguration ldapConfiguration) {
 		String persistenceType = ldapEntryManagerFactory.getPersistenceType();
 		Properties ldapProperties = new Properties();
 		ldapProperties.put(persistenceType + ".servers",
 				PropertyUtil.simplePropertiesToCommaSeparatedList(ldapConfiguration.getServers()));
-		ldapProperties.put(persistenceType + ".maxconnections", Integer.toString(ldapConfiguration.getMaxConnections()));
+		ldapProperties.put(persistenceType + ".maxconnections",
+				Integer.toString(ldapConfiguration.getMaxConnections()));
 		ldapProperties.put(persistenceType + ".useSSL", Boolean.toString(ldapConfiguration.isUseSSL()));
 		ldapProperties.put(persistenceType + ".bindDN", ldapConfiguration.getBindDN());
 		ldapProperties.put(persistenceType + ".bindPassword", ldapConfiguration.getBindPassword());

@@ -13,7 +13,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.gluu.oxtrust.ldap.service.ConfigurationService;
-import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.service.security.Secure;
 
@@ -38,8 +37,7 @@ public class ScimConfigureAction implements Serializable {
 		if (isInitialized) {
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
-		GluuConfiguration configuration = configurationService.getConfiguration();
-		if (configuration.isScimEnabled()) {
+		if (configurationService.getConfiguration().isScimEnabled()) {
 			return OxTrustConstants.RESULT_DISABLED;
 		}
 		this.isInitialized = true;

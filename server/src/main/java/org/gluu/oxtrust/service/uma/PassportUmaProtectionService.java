@@ -16,8 +16,6 @@ import javax.ws.rs.core.Response;
 
 import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.oxtrust.ldap.service.ConfigurationService;
-import org.gluu.oxtrust.model.GluuConfiguration;
-import org.gluu.persist.model.base.GluuBoolean;
 import org.slf4j.Logger;
 
 /**
@@ -69,8 +67,7 @@ public class PassportUmaProtectionService extends BaseUmaProtectionService imple
 	}
 
 	private boolean isPassportEnabled() {
-		GluuConfiguration configuration = configurationService.getConfiguration();
-		return configuration.isPassportEnabled();
+		return configurationService.getConfiguration().isPassportEnabled();
 	}
 
     public Response processAuthorization(HttpHeaders headers, ResourceInfo resourceInfo){

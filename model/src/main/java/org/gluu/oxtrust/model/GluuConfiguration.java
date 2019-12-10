@@ -43,29 +43,8 @@ public class GluuConfiguration extends InumEntry implements Serializable {
 	@AttributeName
 	private String displayName;
 
-	@AttributeName(name = "gluuFreeDiskSpace", updateOnly = true)
-	private String freeDiskSpace;
-
-	@AttributeName(name = "gluuFreeMemory", updateOnly = true)
-	private String freeMemory;
-
-	@AttributeName(name = "gluuFreeSwap", updateOnly = true)
-	private String freeSwap;
-
-	@AttributeName(name = "gluuGroupCount", updateOnly = true)
-	private String groupCount;
-
-	@AttributeName(name = "gluuPersonCount", updateOnly = true)
-	private String personCount;
-
 	@AttributeName(name = "gluuHostname", updateOnly = true)
 	private String hostname;
-
-	@AttributeName(name = "gluuIpAddress", updateOnly = true)
-	private String ipAddress;
-
-	@AttributeName(name = "gluuSystemUptime", updateOnly = true)
-	private String systemUptime;
 
 	@AttributeName(name = "gluuLastUpdate", updateOnly = true)
 	private Date lastUpdate;
@@ -127,7 +106,7 @@ public class GluuConfiguration extends InumEntry implements Serializable {
 	@AttributeName(name = "gluuRadiusEnabled")
 	private boolean radiusEnabled;
 
-	@AttributeName(name="gluuSamlEnabled")
+	@AttributeName(name = "gluuSamlEnabled")
 	private boolean samlEnabled;
 
 	@AttributeName(name = "oxTrustEmail")
@@ -142,9 +121,6 @@ public class GluuConfiguration extends InumEntry implements Serializable {
 
 	@AttributeName(name = "gluuMaxLogSize")
 	private int maxLogSize;
-
-	@AttributeName(name = "gluuLoadAvg", updateOnly = true)
-	private String loadAvg;
 
 	@AttributeName(name = "oxIDPAuthentication")
 	@JsonObject
@@ -237,30 +213,6 @@ public class GluuConfiguration extends InumEntry implements Serializable {
 		this.displayName = displayName;
 	}
 
-	public String getFreeDiskSpace() {
-		return freeDiskSpace;
-	}
-
-	public void setFreeDiskSpace(String freeDiskSpace) {
-		this.freeDiskSpace = freeDiskSpace;
-	}
-
-	public String getFreeMemory() {
-		return freeMemory;
-	}
-
-	public void setFreeMemory(String freeMemory) {
-		this.freeMemory = freeMemory;
-	}
-
-	public String getFreeSwap() {
-		return freeSwap;
-	}
-
-	public void setFreeSwap(String freeSwap) {
-		this.freeSwap = freeSwap;
-	}
-
 	public String getGluuDSStatus() {
 		return gluuDSStatus;
 	}
@@ -293,14 +245,6 @@ public class GluuConfiguration extends InumEntry implements Serializable {
 		this.gluuSPTR = gluuSPTR;
 	}
 
-	public String getGroupCount() {
-		return groupCount;
-	}
-
-	public void setGroupCount(String groupCount) {
-		this.groupCount = groupCount;
-	}
-
 	public String getHostname() {
 		return hostname;
 	}
@@ -309,28 +253,12 @@ public class GluuConfiguration extends InumEntry implements Serializable {
 		this.hostname = hostname;
 	}
 
-	public String getIpAddress() {
-		return ipAddress;
-	}
-
-	public void setIpAddress(String ipAddress) {
-		this.ipAddress = ipAddress;
-	}
-
 	public Date getLastUpdate() {
 		return lastUpdate;
 	}
 
 	public void setLastUpdate(Date lastUpdate) {
 		this.lastUpdate = lastUpdate;
-	}
-
-	public String getLoadAvg() {
-		return loadAvg;
-	}
-
-	public void setLoadAvg(String loadAvg) {
-		this.loadAvg = loadAvg;
 	}
 
 	public boolean isManageIdentityPermission() {
@@ -381,14 +309,6 @@ public class GluuConfiguration extends InumEntry implements Serializable {
 		this.passwordResetAllowed = passwordResetAllowed;
 	}
 
-	public String getPersonCount() {
-		return personCount;
-	}
-
-	public void setPersonCount(String personCount) {
-		this.personCount = personCount;
-	}
-
 	public String getPollingInterval() {
 		return pollingInterval;
 	}
@@ -435,14 +355,6 @@ public class GluuConfiguration extends InumEntry implements Serializable {
 
 	public void setStatus(GluuStatus status) {
 		this.status = status;
-	}
-
-	public String getSystemUptime() {
-		return systemUptime;
-	}
-
-	public void setSystemUptime(String systemUptime) {
-		this.systemUptime = systemUptime;
 	}
 
 	public List<TrustStoreCertificate> getTrustStoreCertificates() {
@@ -551,23 +463,24 @@ public class GluuConfiguration extends InumEntry implements Serializable {
 
 	@Override
 	public String toString() {
-		return "GluuConfiguration [description=" + description + ", displayName=" + displayName + ", freeDiskSpace=" + freeDiskSpace
-				+ ", freeMemory=" + freeMemory + ", freeSwap=" + freeSwap + ", groupCount=" + groupCount + ", personCount=" + personCount
-				+ ", hostname=" + hostname + ", ipAddress=" + ipAddress + ", systemUptime=" + systemUptime + ", lastUpdate=" + lastUpdate
-				+ ", pollingInterval=" + pollingInterval + ", status=" + status + ", userPassword=" + userPassword + ", gluuHttpStatus="
-				+ gluuHttpStatus + ", gluuDSStatus=" + gluuDSStatus + ", gluuVDSStatus=" + gluuVDSStatus + ", gluuSPTR=" + gluuSPTR
-				+ ", sslExpiry=" + sslExpiry + ", profileManagment=" + profileManagment + ", manageIdentityPermission="
-				+ manageIdentityPermission + ", vdsCacheRefreshEnabled=" + vdsCacheRefreshEnabled + ", cacheRefreshServerIpAddress="
-				+ cacheRefreshServerIpAddress + ", vdsCacheRefreshPollingInterval=" + vdsCacheRefreshPollingInterval
-				+ ", vdsCacheRefreshLastUpdate=" + vdsCacheRefreshLastUpdate + ", vdsCacheRefreshLastUpdateCount="
-				+ vdsCacheRefreshLastUpdateCount + ", vdsCacheRefreshProblemCount=" + vdsCacheRefreshProblemCount + ", scimEnabled="
-				+ scimEnabled + ", passportEnabled=" + passportEnabled + ", radiusEnabled=" 
-				+ radiusEnabled + ", samlEnabled="+ samlEnabled + ", contactEmail=" + contactEmail + ", smtpConfiguration="
-				+ smtpConfiguration + ", configurationDnsServer=" + configurationDnsServer + ", maxLogSize=" + maxLogSize + ", loadAvg="
-				+ loadAvg + ", oxIDPAuthentication=" + oxIDPAuthentication + ", authenticationMode=" + authenticationMode
-				+ ", oxTrustAuthenticationMode=" + oxTrustAuthenticationMode + ", oxLogViewerConfig=" + oxLogViewerConfig
-				+ ", oxLogConfigLocation=" + oxLogConfigLocation + ", passwordResetAllowed=" + passwordResetAllowed
-				+ ", trustStoreConfiguration=" + trustStoreConfiguration + ", trustStoreCertificates=" + trustStoreCertificates
-				+ ", cacheConfiguration=" + cacheConfiguration + "]";
+		return "GluuConfiguration [description=" + description + ", displayName=" + displayName + ", hostname="
+				+ hostname + "lastUpdate=" + lastUpdate + ", pollingInterval=" + pollingInterval + ", status=" + status
+				+ ", userPassword=" + userPassword + ", gluuHttpStatus=" + gluuHttpStatus + ", gluuDSStatus="
+				+ gluuDSStatus + ", gluuVDSStatus=" + gluuVDSStatus + ", gluuSPTR=" + gluuSPTR + ", sslExpiry="
+				+ sslExpiry + ", profileManagment=" + profileManagment + ", manageIdentityPermission="
+				+ manageIdentityPermission + ", vdsCacheRefreshEnabled=" + vdsCacheRefreshEnabled
+				+ ", cacheRefreshServerIpAddress=" + cacheRefreshServerIpAddress + ", vdsCacheRefreshPollingInterval="
+				+ vdsCacheRefreshPollingInterval + ", vdsCacheRefreshLastUpdate=" + vdsCacheRefreshLastUpdate
+				+ ", vdsCacheRefreshLastUpdateCount=" + vdsCacheRefreshLastUpdateCount
+				+ ", vdsCacheRefreshProblemCount=" + vdsCacheRefreshProblemCount + ", scimEnabled=" + scimEnabled
+				+ ", passportEnabled=" + passportEnabled + ", radiusEnabled=" + radiusEnabled + ", samlEnabled="
+				+ samlEnabled + ", contactEmail=" + contactEmail + ", smtpConfiguration=" + smtpConfiguration
+				+ ", configurationDnsServer=" + configurationDnsServer + ", maxLogSize=" + maxLogSize
+				+ ", oxIDPAuthentication=" + oxIDPAuthentication + ", authenticationMode=" + authenticationMode
+				+ ", oxTrustAuthenticationMode=" + oxTrustAuthenticationMode + ", oxLogViewerConfig="
+				+ oxLogViewerConfig + ", oxLogConfigLocation=" + oxLogConfigLocation + ", passwordResetAllowed="
+				+ passwordResetAllowed + ", trustStoreConfiguration=" + trustStoreConfiguration
+				+ ", trustStoreCertificates=" + trustStoreCertificates + ", cacheConfiguration=" + cacheConfiguration
+				+ "]";
 	}
 }

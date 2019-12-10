@@ -21,7 +21,6 @@ import org.gluu.oxauth.client.ClientInfoClient;
 import org.gluu.oxauth.client.ClientInfoResponse;
 import org.gluu.oxtrust.ldap.service.ConfigurationService;
 import org.gluu.oxtrust.ldap.service.JsonConfigurationService;
-import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.oxtrust.service.OpenIdService;
 import org.slf4j.Logger;
 
@@ -81,9 +80,7 @@ public class ScimUmaProtectionService extends BaseUmaProtectionService implement
 	}
 
 	private boolean isScimEnabled() {
-		GluuConfiguration configuration = configurationService.getConfiguration();
-		
-		return configuration.isScimEnabled();
+		return configurationService.getConfiguration() .isScimEnabled();
 	}
 
     /**

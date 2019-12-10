@@ -114,7 +114,7 @@ public class Authenticator implements Serializable {
 		try {
 			userName = identity.getOauthData().getUserUid();
 			String idToken = identity.getOauthData().getIdToken();
-			
+
 			if (StringHelper.isEmpty(userName) || StringHelper.isEmpty(idToken)) {
 				log.error("User is not authenticated");
 				return OxTrustConstants.RESULT_NO_PERMISSIONS;
@@ -405,7 +405,7 @@ public class Authenticator implements Serializable {
 		oauthData.setSessionState(sessionState);
 		identity.setWorkingParameter(OxTrustConstants.OXAUTH_SSO_SESSION_STATE, Boolean.FALSE);
 		log.info("user uid:" + oauthData.getUserUid());
-		
+
 		String result = authenticate();
 
 		return result;
