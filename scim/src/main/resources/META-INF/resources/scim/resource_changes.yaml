@@ -3,7 +3,9 @@ swagger: '2.0'
 info:
   version: "4.1.0"
   title: Modified Gluu users
-  description: Use this service to obtain the user entries that have changed after a certain time stamp.
+  description: |
+    Use this service to obtain the user entries that have changed after a certain time stamp.
+    See https://gluu.org/docs/ce/user-management/idm-sync/
   license:
     name: MIT
     url: http://opensource.org/licenses/MIT
@@ -42,7 +44,9 @@ paths:
         -
           name: pagesize
           in: query
-          description: Maximum number of results to retrieve by this search. In practice, no more than 1000 items will be returned
+          description: |
+            Maximum number of results to retrieve by this search. In practice, no more than 200 items will be returned.
+            See maxCount in oxTrust Json Configuration.
           required: true
           type: integer
         -
