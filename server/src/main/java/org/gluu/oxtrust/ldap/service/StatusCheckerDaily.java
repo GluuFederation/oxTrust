@@ -99,27 +99,18 @@ public class StatusCheckerDaily {
 		if (!appConfiguration.isUpdateStatus()) {
 			return;
 		}
-
 		log.debug("Getting data from ldap");
-		int groupCount = groupService.countGroups();
-		int personCount = personService.countPersons();
-
 		GluuConfiguration configuration = configurationService.getConfiguration();
-		GluuOxTrustStat serverDetail = configurationService.getOxtrustStat();
-
-		log.debug("Setting ldap attributes");
-		serverDetail.setGroupCount(String.valueOf(groupCount));
-		serverDetail.setPersonCount(String.valueOf(personCount));
+		GluuOxTrustStat oxTrustStat = configurationService.getOxtrustStat();
+		oxTrustStat.setGroupCount(String.valueOf(groupService.countGroups()));
+		oxTrustStat.setPersonCount(String.valueOf(personService.countPersons()));
 		Date currentDateTime = new Date();
 		configuration.setLastUpdate(currentDateTime);
-
 		configurationService.updateConfiguration(configuration);
-		configurationService.updateServerDetail(serverDetail);
-
+		configurationService.updateOxtrustStat(oxTrustStat);
 		if (centralLdapService.isUseCentralServer()) {
 			try {
 				boolean existConfiguration = centralLdapService.containsConfiguration(configuration.getDn());
-
 				if (existConfiguration) {
 					centralLdapService.updateConfiguration(configuration);
 				} else {
@@ -129,8 +120,19 @@ public class StatusCheckerDaily {
 				log.error("Failed to update configuration at central server", ex);
 				return;
 			}
+			
+			try {
+				boolean existConfiguration = centralLdapService.containsOxtrustStatForToday(oxTrustStat.getDn());
+				if (existConfiguration) {
+					centralLdapService.updateOxtrustStat(oxTrustStat);
+				} else {
+					centralLdapService.addOxtrustStat(oxTrustStat);
+				}
+			} catch (BasePersistenceException ex) {
+				log.error("Failed to update configuration at central server", ex);
+				return;
+			}
 		}
-
 		log.debug("Daily Configuration status update finished");
 	}
 

@@ -8,9 +8,10 @@ package org.gluu.oxtrust.ldap.service;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -51,8 +52,9 @@ public class ConfigurationService implements Serializable {
 
 	@Inject
 	private EncryptionService encryptionService;
-	
+
 	private static final SimpleDateFormat PERIOD_DATE_FORMAT = new SimpleDateFormat("yyyyMM");
+	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
 	public boolean contains(String configurationDn) {
 		return ldapEntryManager.contains(configurationDn, GluuConfiguration.class);
@@ -75,11 +77,22 @@ public class ConfigurationService implements Serializable {
 	 *            GluuConfiguration
 	 */
 	public void updateConfiguration(GluuConfiguration configuration) {
-		ldapEntryManager.merge(configuration);
+		try {
+			ldapEntryManager.merge(configuration);
+		} catch (Exception e) {
+			log.info("===============================Error Configuragtion");
+			log.info("", e);
+		}
 	}
 
-	public void updateServerDetail(GluuOxTrustStat serverDetail) {
-		ldapEntryManager.merge(serverDetail);
+	public void updateOxtrustStat(GluuOxTrustStat oxTrustStat) {
+		try {
+			ldapEntryManager.merge(oxTrustStat);
+		} catch (Exception e) {
+			log.info("===============================Error");
+			log.info("", e);
+		}
+
 	}
 
 	/**
@@ -171,7 +184,7 @@ public class ConfigurationService implements Serializable {
 	}
 
 	public String getDnForOxtrustStat() {
-		return buildDn(UUID.randomUUID().toString(), new Date(), ApplicationType.OX_TRUST);
+		return buildDn(LocalDateTime.now().format(formatter), new Date(), ApplicationType.OX_TRUST);
 	}
 
 	public AuthenticationScriptUsageType[] getScriptUsageTypes() {
@@ -224,20 +237,20 @@ public class ConfigurationService implements Serializable {
 			}
 		}
 	}
-	
-	 private String buildDn(String uniqueIdentifier, Date creationDate, ApplicationType applicationType) {
-	        final StringBuilder dn = new StringBuilder();
-	        if (StringHelper.isNotEmpty(uniqueIdentifier) && (creationDate != null) && (applicationType != null)) {
-	            dn.append(String.format("uniqueIdentifier=%s,", uniqueIdentifier));
-	        }
-	        if ((creationDate != null) && (applicationType != null)) {
-	            dn.append(String.format("ou=%s,", PERIOD_DATE_FORMAT.format(creationDate)));
-	        }
-	        if (applicationType != null) {
-	            dn.append(String.format("ou=%s,", applicationType.getValue()));
-	        }
-	        dn.append("ou=statistic,o=metric");
-	        return dn.toString();
-	    }
+
+	private String buildDn(String uniqueIdentifier, Date creationDate, ApplicationType applicationType) {
+		final StringBuilder dn = new StringBuilder();
+		if (StringHelper.isNotEmpty(uniqueIdentifier) && (creationDate != null) && (applicationType != null)) {
+			dn.append(String.format("uniqueIdentifier=%s,", uniqueIdentifier));
+		}
+		if ((creationDate != null) && (applicationType != null)) {
+			dn.append(String.format("ou=%s,", PERIOD_DATE_FORMAT.format(creationDate)));
+		}
+		if (applicationType != null) {
+			dn.append(String.format("ou=%s,", applicationType.getValue()));
+		}
+		dn.append("ou=statistic,o=metric");
+		return dn.toString();
+	}
 
 }

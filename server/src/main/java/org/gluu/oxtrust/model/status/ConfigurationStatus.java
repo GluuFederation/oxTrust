@@ -17,41 +17,13 @@ public class ConfigurationStatus implements Serializable {
 
     private static final long serialVersionUID = -1499003894646725601L;
 
-    private String freeDiskSpace;
-    private String freeMemory;
-    private String freeSwap;
     private String hostname;
-    private String ipAddress;
-    private String systemUptime;
     private String gluuHttpStatus;
     private String gluuBandwidthTX;
     private String gluuBandwidthRX;
     private String sslExpiry;
-    private String loadAvg;
 
-    public final String getFreeDiskSpace() {
-        return freeDiskSpace;
-    }
 
-    public final void setFreeDiskSpace(String freeDiskSpace) {
-        this.freeDiskSpace = freeDiskSpace;
-    }
-
-    public final String getFreeMemory() {
-        return freeMemory;
-    }
-
-    public final void setFreeMemory(String freeMemory) {
-        this.freeMemory = freeMemory;
-    }
-
-    public final String getFreeSwap() {
-        return freeSwap;
-    }
-
-    public final void setFreeSwap(String freeSwap) {
-        this.freeSwap = freeSwap;
-    }
 
     public final String getHostname() {
         return hostname;
@@ -59,22 +31,6 @@ public class ConfigurationStatus implements Serializable {
 
     public final void setHostname(String hostname) {
         this.hostname = hostname;
-    }
-
-    public final String getIpAddress() {
-        return ipAddress;
-    }
-
-    public final void setIpAddress(String ipAddress) {
-        this.ipAddress = ipAddress;
-    }
-
-    public final String getSystemUptime() {
-        return systemUptime;
-    }
-
-    public final void setSystemUptime(String systemUptime) {
-        this.systemUptime = systemUptime;
     }
 
     public final String getGluuHttpStatus() {
@@ -107,14 +63,6 @@ public class ConfigurationStatus implements Serializable {
 
     public final void setSslExpiry(String sslExpiry) {
         this.sslExpiry = sslExpiry;
-    }
-
-    public final String getLoadAvg() {
-        return loadAvg;
-    }
-
-    public final void setLoadAvg(String loadAvg) {
-        this.loadAvg = loadAvg;
     }
 
 }

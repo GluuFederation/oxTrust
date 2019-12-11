@@ -12,6 +12,7 @@ import javax.inject.Named;
 
 import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.model.GluuConfiguration;
+import org.gluu.oxtrust.model.GluuOxTrustStat;
 import org.gluu.oxtrust.service.cdi.event.CentralLdap;
 import org.gluu.persist.PersistenceEntryManager;
 
@@ -49,6 +50,16 @@ public class CentralLdapService {
 	public void updateConfiguration(GluuConfiguration configuration) {
 		centralLdapEntryManager.merge(configuration);
 	}
+	
+	
+	public void addOxtrustStat(GluuOxTrustStat gluuOxTrustStat) {
+		centralLdapEntryManager.persist(gluuOxTrustStat);
+	}
+
+	public void updateOxtrustStat(GluuOxTrustStat gluuOxTrustStat) {
+		centralLdapEntryManager.merge(gluuOxTrustStat);
+	}
+
 
 	/**
 	 * Check if LDAP server contains configuration with specified attributes
@@ -57,6 +68,10 @@ public class CentralLdapService {
 	 */
 	public boolean containsConfiguration(String dn) {
 		return centralLdapEntryManager.contains(dn, GluuConfiguration.class);
+	}
+	
+	public boolean containsOxtrustStatForToday(String dn) {
+		return centralLdapEntryManager.contains(dn, GluuOxTrustStat.class);
 	}
 
 	public boolean isUseCentralServer() {

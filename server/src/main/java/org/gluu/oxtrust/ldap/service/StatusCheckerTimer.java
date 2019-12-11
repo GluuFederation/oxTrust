@@ -47,7 +47,9 @@ import org.apache.commons.io.IOUtils;
 import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.model.GluuConfiguration;
+import org.gluu.oxtrust.model.GluuOxTrustStat;
 import org.gluu.oxtrust.model.status.ConfigurationStatus;
+import org.gluu.oxtrust.model.status.OxtrustStat;
 import org.gluu.oxtrust.service.cdi.event.StatusCheckerTimerEvent;
 import org.gluu.oxtrust.util.NumberHelper;
 import org.gluu.oxtrust.util.OxTrustConstants;
@@ -93,6 +95,12 @@ public class StatusCheckerTimer {
 
 	private AtomicBoolean isActive;
 
+	@Inject
+	private IGroupService groupService;
+
+	@Inject
+	private IPersonService personService;
+
 	@PostConstruct
 	public void create() {
 		this.numberFormat = NumberFormat.getNumberInstance(Locale.US);
@@ -136,20 +144,22 @@ public class StatusCheckerTimer {
 	 */
 	private void processInt() {
 		log.debug("Starting update of configuration status");
+		log.debug("=================================GETTING=======================================");
 		AppConfiguration appConfiguration = configurationFactory.getAppConfiguration();
 		if (!appConfiguration.isUpdateStatus()) {
 			log.debug("isUpdateStatus");
 			return;
 		}
 		ConfigurationStatus configurationStatus = new ConfigurationStatus();
-		// Execute facter and update configuration attributes
+		OxtrustStat oxtrustStatObject = new OxtrustStat();
+		oxtrustStatObject.setGroupCount(String.valueOf(groupService.countGroups()));
+		oxtrustStatObject.setPersonCount(String.valueOf(personService.countPersons()));
 		log.debug("Setting FactorAttributes");
-		setFactorAttributes(configurationStatus);
+		setFactorAttributes(configurationStatus, oxtrustStatObject);
 		// Execute df and update configuration attributes
-		setDfAttributes(configurationStatus);
+		setDfAttributes(configurationStatus, oxtrustStatObject);
 		// Set HTTPD attributes
 		setHttpdAttributes(configurationStatus);
-
 		try {
 			setCertificateExpiryAttributes(configurationStatus);
 		} catch (Exception ex) {
@@ -157,26 +167,37 @@ public class StatusCheckerTimer {
 		}
 
 		GluuConfiguration configuration = configurationService.getConfiguration();
+		GluuOxTrustStat gluuOxTrustStat = configurationService.getOxtrustStat();
 		try {
 			// Copy gathered values
 			BeanUtils.copyProperties(configuration, configurationStatus);
+			BeanUtils.copyProperties(gluuOxTrustStat, oxtrustStatObject);
 		} catch (Exception ex) {
 			log.error("Failed to copy status attributes", ex);
 		}
 
 		Date currentDateTime = new Date();
 		configuration.setLastUpdate(currentDateTime);
-
 		configurationService.updateConfiguration(configuration);
-
+		configurationService.updateOxtrustStat(gluuOxTrustStat);
 		if (centralLdapService.isUseCentralServer()) {
 			try {
 				boolean existConfiguration = centralLdapService.containsConfiguration(configuration.getDn());
-
 				if (existConfiguration) {
 					centralLdapService.updateConfiguration(configuration);
 				} else {
 					centralLdapService.addConfiguration(configuration);
+				}
+			} catch (BasePersistenceException ex) {
+				log.error("Failed to update configuration at central server", ex);
+				return;
+			}
+			try {
+				boolean existConfiguration = centralLdapService.containsOxtrustStatForToday(gluuOxTrustStat.getDn());
+				if (existConfiguration) {
+					centralLdapService.updateOxtrustStat(gluuOxTrustStat);
+				} else {
+					centralLdapService.addOxtrustStat(gluuOxTrustStat);
 				}
 			} catch (BasePersistenceException ex) {
 				log.error("Failed to update configuration at central server", ex);
@@ -265,7 +286,7 @@ public class StatusCheckerTimer {
 	}
 
 	@SuppressWarnings("deprecation")
-	private void setFactorAttributes(ConfigurationStatus configuration) {
+	private void setFactorAttributes(ConfigurationStatus configuration, OxtrustStat oxtrustStat) {
 		if (!isLinux()) {
 			return;
 		}
@@ -300,13 +321,13 @@ public class StatusCheckerTimer {
 		String[] outputLines = resultOutput.split("\\r?\\n");
 
 		if (isOldVersion) {
-			configuration.setFreeMemory(getFreeMemory(outputLines, OxTrustConstants.FACTER_FREE_MEMORY,
+			oxtrustStat.setFreeMemory(getFreeMemory(outputLines, OxTrustConstants.FACTER_FREE_MEMORY,
 					OxTrustConstants.FACTER_MEMORY_SIZE));
 		} else {
-			configuration.setFreeMemory(getFreeMemory(outputLines, OxTrustConstants.FACTER_FREE_MEMORY_MB,
+			oxtrustStat.setFreeMemory(getFreeMemory(outputLines, OxTrustConstants.FACTER_FREE_MEMORY_MB,
 					OxTrustConstants.FACTER_MEMORY_SIZE_MB));
 		}
-		configuration.setFreeSwap(toIntString(getFacterPercentResult(outputLines, OxTrustConstants.FACTER_FREE_SWAP,
+		oxtrustStat.setFreeSwap(toIntString(getFacterPercentResult(outputLines, OxTrustConstants.FACTER_FREE_SWAP,
 				OxTrustConstants.FACTER_FREE_SWAP_TOTAL)));
 		String hostname = "";
 		try {
@@ -318,10 +339,10 @@ public class StatusCheckerTimer {
 			hostname = getFacterResult(outputLines, OxTrustConstants.FACTER_HOST_NAME);
 		}
 		configuration.setHostname(hostname);
-		configuration.setIpAddress(getFacterResult(outputLines, OxTrustConstants.FACTER_IP_ADDRESS));
-		configuration.setLoadAvg(getFacterResult(outputLines, OxTrustConstants.FACTER_LOAD_AVERAGE));
+		oxtrustStat.setIpAddress(getFacterResult(outputLines, OxTrustConstants.FACTER_IP_ADDRESS));
+		oxtrustStat.setLoadAvg(getFacterResult(outputLines, OxTrustConstants.FACTER_LOAD_AVERAGE));
 		getFacterBandwidth(getFacterResult(outputLines, OxTrustConstants.FACTER_BANDWIDTH_USAGE), configuration);
-		configuration.setSystemUptime(getFacterResult(outputLines, OxTrustConstants.FACTER_SYSTEM_UP_TIME));
+		oxtrustStat.setSystemUptime(getFacterResult(outputLines, OxTrustConstants.FACTER_SYSTEM_UP_TIME));
 	}
 
 	@SuppressWarnings("deprecation")
@@ -366,7 +387,7 @@ public class StatusCheckerTimer {
 	}
 
 	@SuppressWarnings("deprecation")
-	private void setDfAttributes(ConfigurationStatus configuration) {
+	private void setDfAttributes(ConfigurationStatus configuration, OxtrustStat oxtrustStat) {
 		log.debug("Setting df attributes");
 		// Run df only on linux
 		if (!isLinux()) {
@@ -411,9 +432,7 @@ public class StatusCheckerTimer {
 
 			Number usedDiskSpace = getNumber(outputValues[4]);
 			Number freeDiskSpace = usedDiskSpace == null ? null : 100 - usedDiskSpace.doubleValue();
-
-			// Update configuration attributes
-			configuration.setFreeDiskSpace(toIntString(freeDiskSpace));
+			oxtrustStat.setFreeDiskSpace(toIntString(freeDiskSpace));
 		}
 	}
 
