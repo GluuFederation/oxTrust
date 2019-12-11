@@ -36,6 +36,7 @@ import javax.inject.Named;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.model.GluuAttribute;
 import org.gluu.model.GluuImage;
+import org.gluu.model.GluuUserRole;
 import org.gluu.model.attribute.AttributeDataType;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.ImageService;
@@ -96,9 +97,9 @@ public class CustomAttributeAction implements Serializable {
 		this.removedPhotos = new ArrayList<GluuImage>();
 	}
 
-	public void initCustomAttributes(List<GluuAttribute> attributes, List<GluuCustomAttribute> customAttributes, List<String> origins,
-			String[] objectClassTypes, String[] objectClassDisplayNames) {
-		this.attributes = new ArrayList<GluuAttribute>(attributes);
+	public void initCustomAttributes(List<GluuAttribute> noUsed, List<GluuCustomAttribute> customAttributes,
+			List<String> origins, String[] objectClassTypes, String[] objectClassDisplayNames) {
+		this.attributes = attributeService.getAllActivePersonAttributes(GluuUserRole.ADMIN);
 		this.customAttributes = customAttributes;
 		this.origCustomAttributes = new ArrayList<GluuCustomAttribute>(customAttributes);
 
@@ -107,7 +108,7 @@ public class CustomAttributeAction implements Serializable {
 		attributeService.sortCustomAttributes(customAttributes, "metadata.displayName");
 
 		// Prepare map which allows to build tab
-		this.attributeByOrigin = groupAttributesByOrigin(attributes);
+		this.attributeByOrigin = groupAttributesByOrigin(this.attributes);
 
 		// Init special list and maps
 		this.availableAttributeIds = new ArrayList<String>();
@@ -126,7 +127,8 @@ public class CustomAttributeAction implements Serializable {
 		}
 
 		// Init origin display names
-		this.originDisplayNames = attributeService.getAllAttributeOriginDisplayNames(origins, objectClassTypes, objectClassDisplayNames);
+		this.originDisplayNames = attributeService.getAllAttributeOriginDisplayNames(origins, objectClassTypes,
+				objectClassDisplayNames);
 		this.activeOrigin = this.originDisplayNames.get(origins.get(0));
 
 		// Sync Ids map
@@ -177,15 +179,17 @@ public class CustomAttributeAction implements Serializable {
 		if ((tmpAttribute == null) || containsCustomAttribute(tmpAttribute)) {
 			return;
 		}
-				
+
 		String id = this.attributeIds.get(tmpAttribute);
 		this.availableAttributeIds.remove(id);
 
-		GluuCustomAttribute tmpGluuPersonAttribute = new GluuCustomAttribute(tmpAttribute.getName(), (String) null, true, mandatory);
+		GluuCustomAttribute tmpGluuPersonAttribute = new GluuCustomAttribute(tmpAttribute.getName(), (String) null,
+				true, mandatory);
 		tmpGluuPersonAttribute.setMetadata(tmpAttribute);
 
 		this.customAttributes.add(tmpGluuPersonAttribute);
 	}
+
 	public void addMultiValuesInAttributes(String inum, boolean mandatory) {
 		if (StringHelper.isEmpty(inum)) {
 			return;
@@ -195,10 +199,10 @@ public class CustomAttributeAction implements Serializable {
 		if (tmpAttribute == null) {
 			return;
 		}
-		
+
 		String id = this.attributeIds.get(tmpAttribute);
 		this.availableAttributeIds.remove(id);
-		
+
 		String[] values = null;
 		int index = 0;
 		for (GluuCustomAttribute customAttribute : this.customAttributes) {
@@ -206,60 +210,63 @@ public class CustomAttributeAction implements Serializable {
 				values = customAttribute.getValues();
 				break;
 			}
-			index ++;
+			index++;
 		}
-		
-		String[] newValues = new String[values.length+1];
-		System.arraycopy(values, 0 , newValues , 0 , values.length);
+
+		String[] newValues = new String[values.length + 1];
+		System.arraycopy(values, 0, newValues, 0, values.length);
 		removeCustomAttribute(inum);
-		GluuCustomAttribute tmpGluuPersonAttribute = new GluuCustomAttribute(tmpAttribute.getName(),newValues , true, mandatory);
+		GluuCustomAttribute tmpGluuPersonAttribute = new GluuCustomAttribute(tmpAttribute.getName(), newValues, true,
+				mandatory);
 		tmpGluuPersonAttribute.setMetadata(tmpAttribute);
 
-		this.customAttributes.add(index,tmpGluuPersonAttribute);
+		this.customAttributes.add(index, tmpGluuPersonAttribute);
 	}
+
 	public void removeMultiValuesInAttributes(String inum, boolean mandatory, String removeValue) {
 		if (StringHelper.isEmpty(inum)) {
 			return;
 		}
-		
+
 		GluuAttribute tmpAttribute = this.attributeInums.get(inum);
 		if (tmpAttribute == null) {
 			return;
 		}
-		
+
 		String id = this.attributeIds.get(tmpAttribute);
 		this.availableAttributeIds.remove(id);
-		
+
 		String[] values = null;
 		String[] newValues = null;
 		int index = 0;
 		for (GluuCustomAttribute customAttribute : this.customAttributes) {
 			if (tmpAttribute.equals(customAttribute.getMetadata())) {
 				values = customAttribute.getValues();
-				newValues = removeElementFromArray(values , removeValue);
+				newValues = removeElementFromArray(values, removeValue);
 				break;
 			}
-			index ++;
+			index++;
 		}
-		
+
 		removeCustomAttribute(inum);
-		GluuCustomAttribute tmpGluuPersonAttribute = new GluuCustomAttribute(tmpAttribute.getName(),newValues , true, mandatory);
+		GluuCustomAttribute tmpGluuPersonAttribute = new GluuCustomAttribute(tmpAttribute.getName(), newValues, true,
+				mandatory);
 		tmpGluuPersonAttribute.setMetadata(tmpAttribute);
 
-		this.customAttributes.add(index,tmpGluuPersonAttribute);
+		this.customAttributes.add(index, tmpGluuPersonAttribute);
 	}
 
-	private String[] removeElementFromArray(String [] n , String removeElement){
-		  if(removeElement.isEmpty()){
-			  removeElement = null ;
-			  }
-		  List<String> list =  new ArrayList<String>();
-	      Collections.addAll(list, n); 
-	      list.remove(removeElement);
-	      n = list.toArray(new String[list.size()]);
-	      return n;
+	private String[] removeElementFromArray(String[] n, String removeElement) {
+		if (removeElement.isEmpty()) {
+			removeElement = null;
+		}
+		List<String> list = new ArrayList<String>();
+		Collections.addAll(list, n);
+		list.remove(removeElement);
+		n = list.toArray(new String[list.size()]);
+		return n;
 	}
-	
+
 	public void addCustomAttribute(String inum) {
 		addCustomAttribute(inum, false);
 	}
@@ -296,7 +303,7 @@ public class CustomAttributeAction implements Serializable {
 			}
 		}
 	}
-	
+
 	private void deselectCustomAttributes(List<GluuCustomAttribute> customAttributes) {
 		for (GluuCustomAttribute customAttribute : customAttributes) {
 			String id = this.attributeIds.get(customAttribute);
@@ -325,8 +332,8 @@ public class CustomAttributeAction implements Serializable {
 	}
 
 	/**
-	 * Override this method if you need to organize attributes to some specific
-	 * set of origins.
+	 * Override this method if you need to organize attributes to some specific set
+	 * of origins.
 	 * 
 	 * @param attribute
 	 * @return attribute.getOrigin()
@@ -367,28 +374,29 @@ public class CustomAttributeAction implements Serializable {
 
 	public List<GluuCustomAttribute> detectRemovedAttributes() {
 		Set<String> origCustomAttributesSet = new HashSet<String>();
-		
+
 		for (GluuCustomAttribute origCustomAttribute : origCustomAttributes) {
 			String attributeName = StringHelper.toLowerCase(origCustomAttribute.getName());
 			origCustomAttributesSet.add(attributeName);
 		}
-		
+
 		for (GluuCustomAttribute currentCustomAttribute : customAttributes) {
 			String attributeName = StringHelper.toLowerCase(currentCustomAttribute.getName());
 			origCustomAttributesSet.remove(attributeName);
 		}
 
-		List<GluuCustomAttribute> removedCustomAttributes = new ArrayList<GluuCustomAttribute>(origCustomAttributesSet.size());
+		List<GluuCustomAttribute> removedCustomAttributes = new ArrayList<GluuCustomAttribute>(
+				origCustomAttributesSet.size());
 		for (String removeCustomAttribute : origCustomAttributesSet) {
 			removedCustomAttributes.add(new GluuCustomAttribute(removeCustomAttribute, new String[0]));
 		}
-		
+
 		return removedCustomAttributes;
 	}
 
 	public void updateOriginCustomAttributes() {
 		this.origCustomAttributes = new ArrayList<GluuCustomAttribute>(customAttributes);
-		
+
 	}
 
 	public List<GluuAttribute> getAttributes() {
@@ -405,6 +413,11 @@ public class CustomAttributeAction implements Serializable {
 
 	public Map<String, List<GluuAttribute>> getAttributeByOrigin() {
 		return attributeByOrigin;
+	}
+
+	public List<String> getAttributeByOriginKeyList() {
+		facesMessages.add(FacesMessage.SEVERITY_ERROR, ""+attributeByOrigin.keySet().size());
+		return new ArrayList<>(attributeByOrigin.keySet());
 	}
 
 	public void setAttributeByOrigin(Map<String, List<GluuAttribute>> attributeByOrigin) {
@@ -472,7 +485,7 @@ public class CustomAttributeAction implements Serializable {
 		GluuCustomAttribute customAttribute = getCustomAttribute(inum);
 		if (customAttribute != null) {
 			GluuImage image = imageService.getImage(customAttribute);
-			if(image != null){
+			if (image != null) {
 				image.setStoreTemporary(addedPhotos.contains(image));
 				return imageService.getThumImageData(image);
 			}
@@ -503,7 +516,7 @@ public class CustomAttributeAction implements Serializable {
 		}
 
 		GluuImage image = imageService.getImage(customAttribute);
-		if(image!=null){
+		if (image != null) {
 			image.setStoreTemporary(addedPhotos.contains(image));
 			if (image.isStoreTemporary()) {
 				imageService.deleteImage(image);
@@ -555,7 +568,7 @@ public class CustomAttributeAction implements Serializable {
 		// Replace dummy component id with real one
 		String dummyId = event.getComponent().getAttributes().get("aid").toString();
 		String clientId = event.getComponent().getClientId();
-		
+
 		GluuAttribute attribute = this.attributeToIds.get(dummyId);
 		this.attributeIds.put(attribute, clientId);
 	}
@@ -568,45 +581,46 @@ public class CustomAttributeAction implements Serializable {
 	}
 
 	public void validateAttributeValues(ComponentSystemEvent event) {
-	    final FacesContext facesContext = FacesContext.getCurrentInstance();
-	    final List<Object> values = new ArrayList<Object>();
+		final FacesContext facesContext = FacesContext.getCurrentInstance();
+		final List<Object> values = new ArrayList<Object>();
 
-	    event.getComponent().visitTree(VisitContext.createVisitContext(facesContext), new VisitCallback() {
-	        @Override
-	        public VisitResult visit(VisitContext context, UIComponent target) {
-	    		if (target instanceof UIInput) {
-		    		GluuAttribute attribute = (GluuAttribute) target.getAttributes().get("attribute");
-		    		if (attribute != null) {
-		    			values.add(((UIInput) target).getValue());
-		    		}
-	            }
+		event.getComponent().visitTree(VisitContext.createVisitContext(facesContext), new VisitCallback() {
+			@Override
+			public VisitResult visit(VisitContext context, UIComponent target) {
+				if (target instanceof UIInput) {
+					GluuAttribute attribute = (GluuAttribute) target.getAttributes().get("attribute");
+					if (attribute != null) {
+						values.add(((UIInput) target).getValue());
+					}
+				}
 
-	    		return VisitResult.ACCEPT;
-	        }
-	    });
+				return VisitResult.ACCEPT;
+			}
+		});
 
-	    values.removeAll(Arrays.asList(null, ""));
-	    Set<Object> uniqValues = new HashSet<Object>(values);
-	    
-	    if (values.size() != uniqValues.size()) {
-	        event.getComponent().visitTree(VisitContext.createVisitContext(facesContext), new VisitCallback() {
-	            @Override
-	            public VisitResult visit(VisitContext context, UIComponent target) {
-	                if (target instanceof UIInput) {
-			    		GluuAttribute attribute = (GluuAttribute) target.getAttributes().get("attribute");
-			    		if (attribute != null) {
-			    			((UIInput) target).setValid(false);
+		values.removeAll(Arrays.asList(null, ""));
+		Set<Object> uniqValues = new HashSet<Object>(values);
 
-			    			String message = "Please fill out an unique value for all of '" + attribute.getDisplayName() + "' fields";
-			    			facesMessages.add(target.getClientId(facesContext), FacesMessage.SEVERITY_ERROR, message);
-			    		}
-	                }
-	                return VisitResult.ACCEPT;
-	            }
-	        });
+		if (values.size() != uniqValues.size()) {
+			event.getComponent().visitTree(VisitContext.createVisitContext(facesContext), new VisitCallback() {
+				@Override
+				public VisitResult visit(VisitContext context, UIComponent target) {
+					if (target instanceof UIInput) {
+						GluuAttribute attribute = (GluuAttribute) target.getAttributes().get("attribute");
+						if (attribute != null) {
+							((UIInput) target).setValid(false);
 
-	        facesContext.validationFailed();
-	    }
+							String message = "Please fill out an unique value for all of '" + attribute.getDisplayName()
+									+ "' fields";
+							facesMessages.add(target.getClientId(facesContext), FacesMessage.SEVERITY_ERROR, message);
+						}
+					}
+					return VisitResult.ACCEPT;
+				}
+			});
+
+			facesContext.validationFailed();
+		}
 	}
 
 }
