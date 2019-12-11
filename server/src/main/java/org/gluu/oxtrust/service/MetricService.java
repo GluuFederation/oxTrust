@@ -74,8 +74,7 @@ public class MetricService extends org.gluu.service.metric.MetricService {
 
 	@Override
 	public String baseDn() {
-		String baseDn = String.format("ou=statistic,o=metric");
-		return baseDn;
+		return String.format("ou=statistic,o=metric");
 	}
 
 	@Override
