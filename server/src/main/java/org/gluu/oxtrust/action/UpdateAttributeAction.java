@@ -197,7 +197,7 @@ public class UpdateAttributeAction implements Serializable {
 	}
 
 	private boolean isAllowEdit() {
-		return this.attribute.isAdminCanEdit();
+		return this.attribute.isAdminCanEdit() || this.attribute.getEditType() == null;
 	}
 
 	public String getScimValue(String key) {
