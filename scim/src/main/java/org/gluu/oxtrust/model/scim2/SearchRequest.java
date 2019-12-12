@@ -8,11 +8,11 @@ package org.gluu.oxtrust.model.scim2;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.base.Joiner;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.gluu.oxtrust.model.scim2.Constants.SEARCH_REQUEST_SCHEMA_ID;
 
@@ -47,8 +47,8 @@ public class SearchRequest {
      * Default no args constructor. It creates an instance of <code>SearchRequest</code> initializing {@link #getSchemas()
      * schemas} properly.
      */
-    public SearchRequest(){
-        schemas=Collections.singletonList(SEARCH_REQUEST_SCHEMA_ID);
+    public SearchRequest() {
+        schemas = Collections.singletonList(SEARCH_REQUEST_SCHEMA_ID);
     }
 
     public List<String> getSchemas() {
@@ -66,6 +66,7 @@ public class SearchRequest {
     /**
      * Specifies a list of strings indicating the names of the resource attributes to return in response to a search,
      * overriding the set of attributes that would be returned by default.
+     *
      * @param attributes A <code>List</code> of Strings
      */
     @JsonProperty
@@ -76,10 +77,11 @@ public class SearchRequest {
     /**
      * Specifies the names of the resource attributes to return in the response to a search, overriding the set of
      * attributes that would be returned by default.
+     *
      * @param commaSeparatedString The attribute names in a comma-separated String
      */
-    public void setAttributes(String commaSeparatedString){
-        setAttributes(commaSeparatedString==null ? null : Arrays.asList(commaSeparatedString.split(",")));
+    public void setAttributes(String commaSeparatedString) {
+        setAttributes(commaSeparatedString == null ? null : Arrays.asList(commaSeparatedString.split(",")));
     }
 
     public List<String> getExcludedAttributes() {
@@ -89,6 +91,7 @@ public class SearchRequest {
     /**
      * Specifies a list of strings indicating the names of the resource attributes to be removed from the default set of
      * attributes to return.
+     *
      * @param excludedAttributes A <code>List</code> of Strings
      */
     @JsonProperty
@@ -98,10 +101,11 @@ public class SearchRequest {
 
     /**
      * Specifies the names of the resource attributes to be removed from the default set of attributes to return.
+     *
      * @param commaSeparatedString The attribute names in a comma-separated String
      */
-    public void setExcludedAttributes(String commaSeparatedString){
-        setExcludedAttributes(commaSeparatedString==null ? null : Arrays.asList(commaSeparatedString.split(",")));
+    public void setExcludedAttributes(String commaSeparatedString) {
+        setExcludedAttributes(commaSeparatedString == null ? null : Arrays.asList(commaSeparatedString.split(",")));
     }
 
     public String getFilter() {
@@ -111,6 +115,7 @@ public class SearchRequest {
     /**
      * A filter expression so that the search will return only those resources matching the expression. To learn more
      * about SCIM filter expressions and operators, see section 3.4.2.2 of RFC 7644.
+     *
      * @param filter A valid filter
      */
     public void setFilter(String filter) {
@@ -123,6 +128,7 @@ public class SearchRequest {
 
     /**
      * Specifies the attribute whose value will be used to order the returned responses.
+     *
      * @param sortBy Attribute name path. Examples are: <code>userName, name.givenName, emails.value</code>.
      */
     public void setSortBy(String sortBy) {
@@ -136,6 +142,7 @@ public class SearchRequest {
     /**
      * The order in which the <code>sortBy</code> parameter is applied. Allowed values are "ascending" and "descending",
      * being "ascending" the default if unspecified.
+     *
      * @param sortOrder A string value
      */
     public void setSortOrder(String sortOrder) {
@@ -148,6 +155,7 @@ public class SearchRequest {
 
     /**
      * Sets the 1-based index of the first query result.
+     *
      * @param startIndex Specifies "where" the result set will start when the search is performed
      */
     public void setStartIndex(Integer startIndex) {
@@ -160,6 +168,7 @@ public class SearchRequest {
 
     /**
      * Specifies the desired maximum number of query results per page the response must include.
+     *
      * @param count An <code>Integer</code> object
      */
     public void setCount(Integer count) {
@@ -167,11 +176,11 @@ public class SearchRequest {
     }
 
     public String getAttributesStr() {
-        return attributes==null ? null : Joiner.on(",").join(attributes.toArray());
+        return attributes == null ? null : attributes.stream().collect(Collectors.joining(","));
     }
 
     public String getExcludedAttributesStr() {
-        return excludedAttributes==null ? null : Joiner.on(",").join(excludedAttributes.toArray());
+        return excludedAttributes == null ? null : excludedAttributes.stream().collect(Collectors.joining(","));
     }
 
 }

@@ -13,6 +13,7 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAccessor;
+import java.util.Optional;
 import java.util.TimeZone;
 
 /**
@@ -36,16 +37,7 @@ public class DateUtil {
     private DateUtil() {
     }
 
-    /**
-     * Converts a string representation of a date (expected to follow the pattern of DateTime XML schema data type) to a
-     * string representation of a date in LDAP generalized time syntax (see RFC 4517 section 3.3.13).
-     * <p><code>xsd:dateTime</code> is equivalent to ISO-8601 format, namely, <code>yyyy-MM-dd'T'HH:mm:ss.SSSZZ</code></p>
-     *
-     * @param strDate A string date in ISO format.
-     * @return A String representing a date in generalized time syntax. If the date passed as parameter did not adhere to
-     * xsd:dateTime, the returned value is null
-     */
-    public static String ISOToGeneralizedStringDate(String strDate) {
+    public static Long ISOToMillis(String strDate) {
 
         TemporalAccessor ta = null;
         try {
@@ -62,12 +54,24 @@ public class DateUtil {
         }
 
         try {
-            long millis = Instant.from(ta).toEpochMilli();
-            return StaticUtils.encodeGeneralizedTime(millis);
+            return Instant.from(ta).toEpochMilli();
         } catch (Exception e) {
             return null;
         }
 
+    }
+
+    /**
+     * Converts a string representation of a date (expected to follow the pattern of DateTime XML schema data type) to a
+     * string representation of a date in LDAP generalized time syntax (see RFC 4517 section 3.3.13).
+     * <p><code>xsd:dateTime</code> is equivalent to ISO-8601 format, namely, <code>yyyy-MM-dd'T'HH:mm:ss.SSSZZ</code></p>
+     *
+     * @param strDate A string date in ISO format.
+     * @return A String representing a date in generalized time syntax. If the date passed as parameter did not adhere to
+     * xsd:dateTime, the returned value is null
+     */
+    public static String ISOToGeneralizedStringDate(String strDate) {
+        return Optional.ofNullable(ISOToMillis(strDate)).map(StaticUtils::encodeGeneralizedTime).orElse(null);
     }
 
     /**
