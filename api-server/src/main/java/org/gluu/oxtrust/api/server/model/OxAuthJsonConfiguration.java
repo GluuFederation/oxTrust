@@ -274,8 +274,8 @@ public class OxAuthJsonConfiguration {
 	private String keyStoreSecret;
 	@JsonProperty("endSessionWithAccessToken")
 	private Boolean endSessionWithAccessToken;
-    @JsonProperty("сookieDomain")
-    private String сookieDomain;
+    @JsonProperty("cookieDomain")
+    private String cookieDomain;
 	@JsonProperty("clientWhiteList")
 	private List<String> clientWhiteList = null;
 	@JsonProperty("clientBlackList")
@@ -1448,15 +1448,15 @@ public class OxAuthJsonConfiguration {
 		this.endSessionWithAccessToken = endSessionWithAccessToken;
 	}
 
-    public String getСookieDomain() {
-        return сookieDomain;
-    }
+    public String getCookieDomain() {
+		return cookieDomain;
+	}
 
-    public void setСookieDomain(String сookieDomain) {
-        this.сookieDomain = сookieDomain;
-    }
+	public void setCookieDomain(String cookieDomain) {
+		this.cookieDomain = cookieDomain;
+	}
 
-    @JsonProperty("clientWhiteList")
+	@JsonProperty("clientWhiteList")
 	public List<String> getClientWhiteList() {
 		return clientWhiteList;
 	}
