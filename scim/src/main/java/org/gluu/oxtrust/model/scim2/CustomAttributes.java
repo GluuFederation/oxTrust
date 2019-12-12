@@ -130,6 +130,7 @@ public class CustomAttributes {
      * @param name Name of attribute
      * @param value A DateTime object. Must be non-null, or else it won't be stored
      */
+    @Deprecated
     public void setAttribute(String name, DateTime value){
         if (value!=null)
             setAttribute(name, ISODateTimeFormat.dateTime().print(value));
