@@ -18,6 +18,7 @@ import javax.inject.Named;
 import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.model.GluuConfiguration;
+import org.gluu.oxtrust.model.GluuOxTrustStat;
 import org.gluu.oxtrust.service.cdi.event.StatusCheckerDailyEvent;
 import org.gluu.persist.exception.BasePersistenceException;
 import org.gluu.service.cdi.async.Asynchronous;
@@ -54,35 +55,35 @@ public class StatusCheckerDaily {
 	@Inject
 	private ConfigurationFactory configurationFactory;
 
-    private AtomicBoolean isActive;
+	private AtomicBoolean isActive;
 
-    public void initTimer() {
-        log.info("Initializing Daily Status Cheker Timer");
-        this.isActive = new AtomicBoolean(false);
+	public void initTimer() {
+		log.info("Initializing Daily Status Cheker Timer");
+		this.isActive = new AtomicBoolean(false);
 
 		final int delay = 1 * 60;
 		final int interval = DEFAULT_INTERVAL;
 
 		timerEvent.fire(new TimerEvent(new TimerSchedule(delay, interval), new StatusCheckerDailyEvent(),
 				Scheduled.Literal.INSTANCE));
-    }
+	}
 
-    @Asynchronous
-    public void process(@Observes @Scheduled StatusCheckerDailyEvent statusCheckerDailyEvent) {
-        if (this.isActive.get()) {
-            return;
-        }
+	@Asynchronous
+	public void process(@Observes @Scheduled StatusCheckerDailyEvent statusCheckerDailyEvent) {
+		if (this.isActive.get()) {
+			return;
+		}
 
-        if (!this.isActive.compareAndSet(false, true)) {
-            return;
-        }
+		if (!this.isActive.compareAndSet(false, true)) {
+			return;
+		}
 
-        try {
-            processInt();
-        } finally {
-            this.isActive.set(false);
-        }
-    }
+		try {
+			processInt();
+		} finally {
+			this.isActive.set(false);
+		}
+	}
 
 	/**
 	 * Gather periodically site and server status
@@ -98,38 +99,40 @@ public class StatusCheckerDaily {
 		if (!appConfiguration.isUpdateStatus()) {
 			return;
 		}
-
-        log.debug("Getting data from ldap");
-        int groupCount = groupService.countGroups();
-        int personCount = personService.countPersons();
-
+		log.debug("Getting data from ldap");
 		GluuConfiguration configuration = configurationService.getConfiguration();
-
-        log.debug("Setting ldap attributes");
-        configuration.setGroupCount(String.valueOf(groupCount));
-        configuration.setPersonCount(String.valueOf(personCount)); 
-        configuration.setGluuDSStatus(Boolean.toString(groupCount > 0 && personCount > 0));
-
-    	Date currentDateTime = new Date();
+		GluuOxTrustStat oxTrustStat = configurationService.getOxtrustStat();
+		oxTrustStat.setGroupCount(String.valueOf(groupService.countGroups()));
+		oxTrustStat.setPersonCount(String.valueOf(personService.countPersons()));
+		Date currentDateTime = new Date();
 		configuration.setLastUpdate(currentDateTime);
-
 		configurationService.updateConfiguration(configuration);
-
+		configurationService.updateOxtrustStat(oxTrustStat);
 		if (centralLdapService.isUseCentralServer()) {
 			try {
 				boolean existConfiguration = centralLdapService.containsConfiguration(configuration.getDn());
-	
 				if (existConfiguration) {
 					centralLdapService.updateConfiguration(configuration);
 				} else {
 					centralLdapService.addConfiguration(configuration);
 				}
 			} catch (BasePersistenceException ex) {
-				log.error("Failed to update configuration at central server", ex);        
+				log.error("Failed to update configuration at central server", ex);
+				return;
+			}
+			
+			try {
+				boolean existConfiguration = centralLdapService.containsOxtrustStatForToday(oxTrustStat.getDn());
+				if (existConfiguration) {
+					centralLdapService.updateOxtrustStat(oxTrustStat);
+				} else {
+					centralLdapService.addOxtrustStat(oxTrustStat);
+				}
+			} catch (BasePersistenceException ex) {
+				log.error("Failed to update configuration at central server", ex);
 				return;
 			}
 		}
-
 		log.debug("Daily Configuration status update finished");
 	}
 

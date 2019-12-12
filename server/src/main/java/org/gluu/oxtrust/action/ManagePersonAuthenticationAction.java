@@ -93,7 +93,7 @@ public class ManagePersonAuthenticationAction
 	private GluuLdapConfiguration activeLdapConfig;
 
 	private String authenticationMode = "auth_ldap_server";
-	
+
 	private String oxTrustAuthenticationMode;
 
 	private String recaptchaSiteKey;
@@ -168,7 +168,6 @@ public class ManagePersonAuthenticationAction
 		try {
 			// Reload entry to include latest changes
 			GluuConfiguration configuration = configurationService.getConfiguration();
-
 			boolean updateAuthenticationMode = false;
 			boolean updateOxTrustAuthenticationMode = false;
 
@@ -183,7 +182,6 @@ public class ManagePersonAuthenticationAction
 			}
 
 			updateAuthConf(configuration);
-
 			String newAuthName = getFirstConfigName(configuration.getOxIDPAuthentication());
 			String updatedAuthMode = updateAuthenticationMode ? newAuthName : this.authenticationMode;
 			String updatedOxTrustAuthMode = updateOxTrustAuthenticationMode ? newAuthName
@@ -192,7 +190,6 @@ public class ManagePersonAuthenticationAction
 			configuration.setOxTrustAuthenticationMode(updatedOxTrustAuthMode);
 			setAuthenticationRecaptcha();
 			configuration.setPassportEnabled(passportEnable);
-
 			configurationService.updateConfiguration(configuration);
 		} catch (BasePersistenceException ex) {
 			log.error("Failed to update configuration configuration", ex);

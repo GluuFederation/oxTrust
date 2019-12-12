@@ -7,18 +7,24 @@
 package org.gluu.oxtrust.ldap.service;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.gluu.model.ApplicationType;
 import org.gluu.model.AuthenticationScriptUsageType;
 import org.gluu.model.ProgrammingLanguage;
 import org.gluu.model.ScriptLocationType;
 import org.gluu.model.SmtpConfiguration;
 import org.gluu.model.custom.script.CustomScriptType;
 import org.gluu.oxtrust.model.GluuConfiguration;
+import org.gluu.oxtrust.model.GluuOxTrustStat;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.util.StringHelper;
 import org.gluu.util.security.StringEncrypter.EncryptionException;
@@ -47,6 +53,9 @@ public class ConfigurationService implements Serializable {
 	@Inject
 	private EncryptionService encryptionService;
 
+	private static final SimpleDateFormat PERIOD_DATE_FORMAT = new SimpleDateFormat("yyyyMM");
+	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
 	public boolean contains(String configurationDn) {
 		return ldapEntryManager.contains(configurationDn, GluuConfiguration.class);
 	}
@@ -68,7 +77,22 @@ public class ConfigurationService implements Serializable {
 	 *            GluuConfiguration
 	 */
 	public void updateConfiguration(GluuConfiguration configuration) {
-		ldapEntryManager.merge(configuration);
+		try {
+			ldapEntryManager.merge(configuration);
+		} catch (Exception e) {
+			log.info("===============================Error Configuragtion");
+			log.info("", e);
+		}
+	}
+
+	public void updateOxtrustStat(GluuOxTrustStat oxTrustStat) {
+		try {
+			ldapEntryManager.merge(oxTrustStat);
+		} catch (Exception e) {
+			log.info("===============================Error");
+			log.info("", e);
+		}
+
 	}
 
 	/**
@@ -111,6 +135,18 @@ public class ConfigurationService implements Serializable {
 		return result;
 	}
 
+	public GluuOxTrustStat getOxtrustStat(String[] returnAttributes) {
+		GluuOxTrustStat result = null;
+		if (ldapEntryManager.contains(getDnForOxtrustStat(), GluuOxTrustStat.class)) {
+			result = ldapEntryManager.find(getDnForOxtrustStat(), GluuOxTrustStat.class, returnAttributes);
+		} else {
+			result = new GluuOxTrustStat();
+			result.setDn(getDnForOxtrustStat());
+			ldapEntryManager.persist(result);
+		}
+		return result;
+	}
+
 	/**
 	 * Get configuration
 	 * 
@@ -119,6 +155,10 @@ public class ConfigurationService implements Serializable {
 	 */
 	public GluuConfiguration getConfiguration() {
 		return getConfiguration(null);
+	}
+
+	public GluuOxTrustStat getOxtrustStat() {
+		return getOxtrustStat(null);
 	}
 
 	/**
@@ -141,6 +181,10 @@ public class ConfigurationService implements Serializable {
 	public String getDnForConfiguration() {
 		String baseDn = organizationService.getBaseDn();
 		return String.format("ou=configuration,%s", baseDn);
+	}
+
+	public String getDnForOxtrustStat() {
+		return buildDn(LocalDateTime.now().format(formatter), new Date(), ApplicationType.OX_TRUST);
 	}
 
 	public AuthenticationScriptUsageType[] getScriptUsageTypes() {
@@ -192,6 +236,21 @@ public class ConfigurationService implements Serializable {
 				log.error("Failed to decrypt SMTP password", ex);
 			}
 		}
+	}
+
+	private String buildDn(String uniqueIdentifier, Date creationDate, ApplicationType applicationType) {
+		final StringBuilder dn = new StringBuilder();
+		if (StringHelper.isNotEmpty(uniqueIdentifier) && (creationDate != null) && (applicationType != null)) {
+			dn.append(String.format("uniqueIdentifier=%s,", uniqueIdentifier));
+		}
+		if ((creationDate != null) && (applicationType != null)) {
+			dn.append(String.format("ou=%s,", PERIOD_DATE_FORMAT.format(creationDate)));
+		}
+		if (applicationType != null) {
+			dn.append(String.format("ou=%s,", applicationType.getValue()));
+		}
+		dn.append("ou=statistic,o=metric");
+		return dn.toString();
 	}
 
 }

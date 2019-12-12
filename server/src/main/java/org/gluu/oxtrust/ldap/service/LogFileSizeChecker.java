@@ -59,41 +59,41 @@ public class LogFileSizeChecker {
 
 	private AtomicBoolean isActive;
 
-    public void initTimer() {
-        log.info("Initializing Log File Size Checker Timer");
-        this.isActive = new AtomicBoolean(false);
+	public void initTimer() {
+		log.info("Initializing Log File Size Checker Timer");
+		this.isActive = new AtomicBoolean(false);
 
 		final int delay = 2 * 60;
 		final int interval = DEFAULT_INTERVAL;
 
 		timerEvent.fire(new TimerEvent(new TimerSchedule(delay, interval), new LogFileSizeChekerEvent(),
 				Scheduled.Literal.INSTANCE));
-    }
+	}
 
-    @Asynchronous
-    public void process(@Observes @Scheduled LogFileSizeChekerEvent logFileSizeChekerEvent) {
-        if (this.isActive.get()) {
-            return;
-        }
+	@Asynchronous
+	public void process(@Observes @Scheduled LogFileSizeChekerEvent logFileSizeChekerEvent) {
+		if (this.isActive.get()) {
+			return;
+		}
 
-        if (!this.isActive.compareAndSet(false, true)) {
-            return;
-        }
+		if (!this.isActive.compareAndSet(false, true)) {
+			return;
+		}
 
-        try {
-            processInt();
-        } finally {
-            this.isActive.set(false);
-        }
-    }
+		try {
+			processInt();
+		} finally {
+			this.isActive.set(false);
+		}
+	}
 
 	/**
 	 * Gather periodically site and server status
 	 */
 	private void processInt() {
-		GluuConfiguration configuration;
-		configuration = configurationService.getConfiguration();
-		long maxSize = configuration.getMaxLogSize();;
+		GluuConfiguration configuration = configurationService.getConfiguration();
+		long maxSize = configuration.getMaxLogSize();
+		;
 		log.debug("Max Log Size: " + maxSize);
 
 		if (maxSize > 0) {
@@ -106,8 +106,7 @@ public class LogFileSizeChecker {
 			String todayStr = sdf.format(today);
 
 			log.debug("Getting the tomcat home directory");
-			String filePath = ConfigurationFactory.DIR
-					+ ConfigurationFactory.LOG_ROTATION_CONFIGURATION;
+			String filePath = ConfigurationFactory.DIR + ConfigurationFactory.LOG_ROTATION_CONFIGURATION;
 			log.debug("FilePath: " + filePath);
 
 			List<LogDir> logDirs = readConfig(filePath);
@@ -120,10 +119,11 @@ public class LogFileSizeChecker {
 
 				if (files != null && files.length > 0) {
 					for (File singleFile : files) {
-						if (singleFile.getName().startsWith(logDir.getPrefix()) && singleFile.getName().endsWith(logDir.getExtension())) {
+						if (singleFile.getName().startsWith(logDir.getPrefix())
+								&& singleFile.getName().endsWith(logDir.getExtension())) {
 							totalSize += singleFile.length();
-							FileData fData = new FileData(singleFile.getName(), logDir.getLocation(), singleFile.lastModified(),
-									singleFile.length());
+							FileData fData = new FileData(singleFile.getName(), logDir.getLocation(),
+									singleFile.lastModified(), singleFile.length());
 							fDataList.add(fData);
 						}
 					}
@@ -157,7 +157,8 @@ public class LogFileSizeChecker {
 					log.error("Failed to delete the file.");
 				} else {
 					currentSize -= fileData.getSize();
-					log.debug("--Deleted File Name: " + fileData.getName() + " Date: " + sdf.format(date) + " Size: " + fileData.getSize());
+					log.debug("--Deleted File Name: " + fileData.getName() + " Date: " + sdf.format(date) + " Size: "
+							+ fileData.getSize());
 				}
 			}
 		}
@@ -177,13 +178,13 @@ public class LogFileSizeChecker {
 				String prefix = null;
 				String location = null;
 				String extension = null;
-				
+
 				NodeList subList = node.getChildNodes();
 				for (int j = 0; j < subList.getLength(); j++) {
 					Node subNode = subList.item(j);
 					String subNodeName = subNode.getNodeName();
 					String subNodeValue = subNode.getTextContent();
-				
+
 					if (StringHelper.equalsIgnoreCase(subNodeName, "prefix")) {
 						prefix = subNodeValue;
 					} else if (StringHelper.equalsIgnoreCase(subNodeName, "location")) {

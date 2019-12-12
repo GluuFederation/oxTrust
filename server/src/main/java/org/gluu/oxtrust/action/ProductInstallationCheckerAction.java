@@ -61,8 +61,7 @@ public class ProductInstallationCheckerAction implements Serializable {
 	}
 
 	public boolean isShowSAMLMenu() {
-		return showSAMLMenu
-			&& configurationService.getConfiguration().isSamlEnabled();
+		return showSAMLMenu && configurationService.getConfiguration().isSamlEnabled();
 	}
 
 	public void setShowSAMLMenu(boolean showSAMLMenu) {
@@ -70,8 +69,7 @@ public class ProductInstallationCheckerAction implements Serializable {
 	}
 
 	public boolean isShowSAMLSubmenu() {
-		return showSAMLSubmenu
-			&& configurationService.getConfiguration().isSamlEnabled();
+		return showSAMLSubmenu && configurationService.getConfiguration().isSamlEnabled();
 	}
 
 	public void setShowSAMLSubmenu(boolean showSAMLSubmenu) {
@@ -88,6 +86,6 @@ public class ProductInstallationCheckerAction implements Serializable {
 
 	public boolean isShowGluuRadiusMenu() {
 		return ProductInstallationChecker.isGluuRadiusInstalled()
-			&& configurationService.getConfiguration().isRadiusEnabled();
+				&& configurationService.getConfiguration().isRadiusEnabled();
 	}
 }
