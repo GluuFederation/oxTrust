@@ -96,15 +96,6 @@
 
 	<dependencyManagement>
 		<dependencies>
-			<!-- Gluu parent boom -->
-			<dependency>
-				<groupId>org.gluu</groupId>
-				<artifactId>gluu-core-bom</artifactId>
-				<version>${gluu.parent.version}</version>
-				<scope>import</scope>
-				<type>pom</type>
-			</dependency>
-
 			<!-- https://github.com/wywygmbh/log4j-plugin-fluency -->
 			<dependency>
 				<groupId>com.wywy</groupId>
