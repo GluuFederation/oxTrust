@@ -11,7 +11,7 @@
 	<parent>
 		<groupId>org.gluu</groupId>
 		<artifactId>oxtrust</artifactId>
-		<version>4.0.1.Final</version>
+		<version>4.1.0.Final</version>
 	</parent>
 
 	<prerequisites>
@@ -33,7 +33,7 @@
                         <phase>process-sources</phase>
                         <configuration>
                             <target>
-                                <property name="oxtrust.server.basedir" value="${project.build.directory}/oxtrust-server-4.0.1.Final"/>
+                                <property name="oxtrust.server.basedir" value="${project.build.directory}/oxtrust-server-4.1.0.Final"/>
                                 <unwar dest="${project.build.directory}/${project.build.finalName}" src="${oxtrust.server.basedir}/target/${project.build.finalName}.war" />
                             </target>
                         </configuration>
