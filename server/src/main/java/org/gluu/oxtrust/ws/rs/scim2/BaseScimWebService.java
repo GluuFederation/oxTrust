@@ -39,6 +39,7 @@ import org.gluu.oxtrust.model.scim2.util.IntrospectUtil;
 import org.gluu.oxtrust.model.scim2.util.ResourceValidator;
 import org.gluu.oxtrust.model.scim2.util.ScimResourceUtil;
 import org.gluu.oxtrust.service.antlr.scimFilter.util.FilterUtil;
+import org.gluu.oxtrust.service.external.ExternalScimService;
 import org.gluu.oxtrust.service.scim2.ExtensionService;
 import org.gluu.oxtrust.service.scim2.UserPersistenceHelper;
 import org.gluu.oxtrust.service.scim2.serialization.ListResponseJsonSerializer;
@@ -72,6 +73,9 @@ public class BaseScimWebService {
 
     @Inject
     UserPersistenceHelper userPersistenceHelper;
+
+    @Inject
+    ExternalScimService externalScimService;
 
     public static final String SEARCH_SUFFIX = ".search";
 

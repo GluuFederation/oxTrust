@@ -33,6 +33,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -125,16 +126,20 @@ public class UserWebService extends BaseScimWebService implements IUserWebServic
         Response response;
         try {
             log.debug("Executing web service method. getUserById");
-            UserResource user=new UserResource();
-            ScimCustomPerson person=userPersistenceHelper.getPersonByInum(id);  //person is not null (check associated decorator method)
+            UserResource user = new UserResource();
+            ScimCustomPerson person = userPersistenceHelper.getPersonByInum(id);  //person is not null (check associated decorator method)
+
+            if (externalScimService.isEnabled() && !externalScimService.executeScimGetUserMethods(person)) {
+                throw new WebApplicationException("Failed to execute SCIM script successfully",
+                        Response.Status.PRECONDITION_FAILED);
+            }
             scim2UserService.transferAttributesToUserResource(person, user, endpointUrl);
 
-            String json=resourceSerializer.serialize(user, attrsList, excludedAttrsList);
-            response=Response.ok(new URI(user.getMeta().getLocation())).entity(json).build();
-        }
-        catch (Exception e){
+            String json = resourceSerializer.serialize(user, attrsList, excludedAttrsList);
+            response = Response.ok(new URI(user.getMeta().getLocation())).entity(json).build();
+        } catch (Exception e) {
             log.error("Failure at getUserById method", e);
-            response=getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, "Unexpected error: " + e.getMessage());
+            response = getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, "Unexpected error: " + e.getMessage());
         }
         return response;
 

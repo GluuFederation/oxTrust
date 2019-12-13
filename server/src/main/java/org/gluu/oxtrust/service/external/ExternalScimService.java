@@ -30,7 +30,7 @@ public class ExternalScimService extends ExternalScriptService {
         super(CustomScriptType.SCIM);
     }
 
-    public boolean executeScimCreateUserMethod(ScimCustomPerson user, CustomScriptConfiguration customScriptConfiguration) {
+    private boolean executeScimCreateUserMethod(ScimCustomPerson user, CustomScriptConfiguration customScriptConfiguration) {
 
         try {
             log.debug("Executing python 'SCIM Create User' method");
@@ -49,7 +49,7 @@ public class ExternalScimService extends ExternalScriptService {
 
     }
 
-    public boolean executeScimPostCreateUserMethod(ScimCustomPerson user, CustomScriptConfiguration customScriptConfiguration) {
+    private boolean executeScimPostCreateUserMethod(ScimCustomPerson user, CustomScriptConfiguration customScriptConfiguration) {
 
         try {
             if (executeExternalGetApiVersion(customScriptConfiguration) < 2)
@@ -71,7 +71,7 @@ public class ExternalScimService extends ExternalScriptService {
 
     }
 
-    public boolean executeScimUpdateUserMethod(ScimCustomPerson user, CustomScriptConfiguration customScriptConfiguration) {
+    private boolean executeScimUpdateUserMethod(ScimCustomPerson user, CustomScriptConfiguration customScriptConfiguration) {
 
         try {
             log.debug("Executing python 'SCIM Update User' method");
@@ -90,7 +90,7 @@ public class ExternalScimService extends ExternalScriptService {
 
     }
 
-    public boolean executeScimPostUpdateUserMethod(ScimCustomPerson user, CustomScriptConfiguration customScriptConfiguration) {
+    private boolean executeScimPostUpdateUserMethod(ScimCustomPerson user, CustomScriptConfiguration customScriptConfiguration) {
 
         try {
             if (executeExternalGetApiVersion(customScriptConfiguration) < 2)
@@ -112,7 +112,7 @@ public class ExternalScimService extends ExternalScriptService {
 
     }
 
-    public boolean executeScimDeleteUserMethod(ScimCustomPerson user, CustomScriptConfiguration customScriptConfiguration) {
+    private boolean executeScimDeleteUserMethod(ScimCustomPerson user, CustomScriptConfiguration customScriptConfiguration) {
 
         try {
             log.debug("Executing python 'SCIM Delete User' method");
@@ -131,7 +131,7 @@ public class ExternalScimService extends ExternalScriptService {
 
     }
 
-    public boolean executeScimPostDeleteUserMethod(ScimCustomPerson user, CustomScriptConfiguration customScriptConfiguration) {
+    private boolean executeScimPostDeleteUserMethod(ScimCustomPerson user, CustomScriptConfiguration customScriptConfiguration) {
 
         try {
             if (executeExternalGetApiVersion(customScriptConfiguration) < 2)
@@ -153,7 +153,29 @@ public class ExternalScimService extends ExternalScriptService {
 
     }
 
-    public boolean executeScimCreateGroupMethod(GluuGroup group, CustomScriptConfiguration customScriptConfiguration) {
+    private boolean executeScimGetUserMethod(ScimCustomPerson user, CustomScriptConfiguration customScriptConfiguration) {
+
+        try {
+            if (executeExternalGetApiVersion(customScriptConfiguration) < 3)
+                return true;
+
+            log.debug("Executing python 'SCIM Get User' method");
+            ScimType externalType = (ScimType) customScriptConfiguration.getExternalType();
+            Map<String, SimpleCustomProperty> configurationAttributes = customScriptConfiguration.getConfigurationAttributes();
+
+            boolean result = externalType.getUser(user, configurationAttributes);
+            log.debug("executeScimGetUserMethod result = " + result);
+            return result;
+
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            saveScriptError(customScriptConfiguration.getCustomScript(), e);
+        }
+        return false;
+
+    }
+
+    private boolean executeScimCreateGroupMethod(GluuGroup group, CustomScriptConfiguration customScriptConfiguration) {
 
         try {
             log.debug("Executing python 'SCIM Create Group' method");
@@ -172,7 +194,7 @@ public class ExternalScimService extends ExternalScriptService {
 
     }
 
-    public boolean executeScimPostCreateGroupMethod(GluuGroup group, CustomScriptConfiguration customScriptConfiguration) {
+    private boolean executeScimPostCreateGroupMethod(GluuGroup group, CustomScriptConfiguration customScriptConfiguration) {
 
         try {
             if (executeExternalGetApiVersion(customScriptConfiguration) < 2)
@@ -194,7 +216,7 @@ public class ExternalScimService extends ExternalScriptService {
 
     }
 
-    public boolean executeScimUpdateGroupMethod(GluuGroup group, CustomScriptConfiguration customScriptConfiguration) {
+    private boolean executeScimUpdateGroupMethod(GluuGroup group, CustomScriptConfiguration customScriptConfiguration) {
 
         try {
             log.debug("Executing python 'SCIM Update Group' method");
@@ -213,7 +235,7 @@ public class ExternalScimService extends ExternalScriptService {
 
     }
 
-    public boolean executeScimPostUpdateGroupMethod(GluuGroup group, CustomScriptConfiguration customScriptConfiguration) {
+    private boolean executeScimPostUpdateGroupMethod(GluuGroup group, CustomScriptConfiguration customScriptConfiguration) {
 
         try {
             if (executeExternalGetApiVersion(customScriptConfiguration) < 2)
@@ -235,7 +257,7 @@ public class ExternalScimService extends ExternalScriptService {
 
     }
 
-    public boolean executeScimDeleteGroupMethod(GluuGroup group, CustomScriptConfiguration customScriptConfiguration) {
+    private boolean executeScimDeleteGroupMethod(GluuGroup group, CustomScriptConfiguration customScriptConfiguration) {
 
         try {
             log.debug("Executing python 'SCIM Delete Group' method");
@@ -254,7 +276,7 @@ public class ExternalScimService extends ExternalScriptService {
 
     }
 
-    public boolean executeScimPostDeleteGroupMethod(GluuGroup group, CustomScriptConfiguration customScriptConfiguration) {
+    private boolean executeScimPostDeleteGroupMethod(GluuGroup group, CustomScriptConfiguration customScriptConfiguration) {
 
         try {
             if (executeExternalGetApiVersion(customScriptConfiguration) < 2)
@@ -267,6 +289,28 @@ public class ExternalScimService extends ExternalScriptService {
             boolean result = externalType.postDeleteGroup(group, configurationAttributes);
             log.debug("executeScimPostDeleteGroupMethod result = " + result);
             return  result;
+
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            saveScriptError(customScriptConfiguration.getCustomScript(), e);
+        }
+        return false;
+
+    }
+
+    private boolean executeScimGetGroupMethod(GluuGroup group, CustomScriptConfiguration customScriptConfiguration) {
+
+        try {
+            if (executeExternalGetApiVersion(customScriptConfiguration) < 3)
+                return true;
+
+            log.debug("Executing python 'SCIM Get Group' method");
+            ScimType externalType = (ScimType) customScriptConfiguration.getExternalType();
+            Map<String, SimpleCustomProperty> configurationAttributes = customScriptConfiguration.getConfigurationAttributes();
+
+            boolean result = externalType.getGroup(group, configurationAttributes);
+            log.debug("executeScimGetGroupMethod result = " + result);
+            return result;
 
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -401,6 +445,28 @@ public class ExternalScimService extends ExternalScriptService {
 
         for (CustomScriptConfiguration customScriptConfiguration : this.customScriptConfigurations) {
             if (!executeScimPostDeleteGroupMethod(group, customScriptConfiguration)) {
+                return false;
+            }
+        }
+        return true;
+
+    }
+
+    public boolean executeScimGetUserMethods(ScimCustomPerson user) {
+
+        for (CustomScriptConfiguration customScriptConfiguration : this.customScriptConfigurations) {
+            if (!executeScimGetUserMethod(user, customScriptConfiguration)) {
+                return false;
+            }
+        }
+        return true;
+
+    }
+
+    public boolean executeScimGetGroupMethods(GluuGroup group) {
+
+        for (CustomScriptConfiguration customScriptConfiguration : this.customScriptConfigurations) {
+            if (!executeScimGetGroupMethod(group, customScriptConfiguration)) {
                 return false;
             }
         }

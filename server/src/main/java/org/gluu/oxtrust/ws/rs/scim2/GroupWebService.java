@@ -32,6 +32,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -127,19 +128,23 @@ public class GroupWebService extends BaseScimWebService implements IGroupWebServ
         Response response;
         try {
             log.debug("Executing web service method. getGroupById");
+            GroupResource group = new GroupResource();
+            GluuGroup gluuGroup = groupService.getGroupByInum(id);  //gluuGroup is not null (check associated decorator method)
 
-            GroupResource group=new GroupResource();
-            GluuGroup gluuGroup=groupService.getGroupByInum(id);  //gluuGroup is not null (check associated decorator method)
+            if (externalScimService.isEnabled() && !externalScimService.executeScimGetGroupMethods(gluuGroup)) {
+                throw new WebApplicationException("Failed to execute SCIM script successfully",
+                        Response.Status.PRECONDITION_FAILED);
+            }
             scim2GroupService.transferAttributesToGroupResource(gluuGroup, group, endpointUrl, userWebService.getEndpointUrl());
 
-            String json=resourceSerializer.serialize(group, attrsList, excludedAttrsList);
-            response=Response.ok(new URI(group.getMeta().getLocation())).entity(json).build();
-        }
-        catch (Exception e){
+            String json = resourceSerializer.serialize(group, attrsList, excludedAttrsList);
+            response = Response.ok(new URI(group.getMeta().getLocation())).entity(json).build();
+        } catch (Exception e) {
             log.error("Failure at getGroupById method", e);
-            response=getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, "Unexpected error: " + e.getMessage());
+            response = getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, "Unexpected error: " + e.getMessage());
         }
         return response;
+
     }
 
     /**
