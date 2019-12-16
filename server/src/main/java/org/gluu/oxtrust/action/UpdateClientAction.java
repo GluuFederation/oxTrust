@@ -44,6 +44,7 @@ import org.gluu.oxtrust.ldap.service.ScopeService;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.model.OxAuthScope;
+import org.gluu.oxtrust.model.OxAuthSubjectType;
 import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.site.ldap.persistence.exception.LdapMappingException;
@@ -551,6 +552,9 @@ public class UpdateClientAction implements Serializable {
 	private boolean isAcceptable(String availableLoginUri) {
 		boolean result = false;
 		try {
+			if (this.client.getSubjectType().equals(OxAuthSubjectType.PUBLIC)) {
+				return true;
+			}
 			if (this.loginUris.size() < 1) {
 				result = true;
 			} else if (this.loginUris.size() >= 1 && hasSameHostname(this.availableLoginUri)) {
@@ -559,8 +563,7 @@ public class UpdateClientAction implements Serializable {
 				result = true;
 			}
 		} catch (MalformedURLException e) {
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "The url is malformed",
-					"The url is malformed");
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "The url is malformed", "The url is malformed");
 			log.error(e.getMessage());
 		}
 		return result;
@@ -1543,5 +1546,9 @@ public class UpdateClientAction implements Serializable {
 
 	public void setMarkDown(String markDown) {
 		this.markDown = markDown;
+	}
+
+	public void subjectTypeChanged() {
+		this.client.getSubjectType();
 	}
 }
