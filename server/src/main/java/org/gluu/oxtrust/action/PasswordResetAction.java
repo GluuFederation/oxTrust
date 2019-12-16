@@ -87,6 +87,7 @@ public class PasswordResetAction implements Serializable {
 
 	private PasswordResetRequest request;
 	private String guid;
+	private String code;
 	private String securityQuestion;
 	private String securityAnswer;
 	private String password;
@@ -102,6 +103,7 @@ public class PasswordResetAction implements Serializable {
 		PasswordResetRequest passwordResetRequest;
 		try {
 			passwordResetRequest = passwordResetService.findPasswordResetRequest(guid);
+			this.code=guid;
 		} catch (EntryPersistenceException ex) {
 			log.error("Failed to find password reset request by '{}'", guid, ex);
 			sendExpirationError();
@@ -185,7 +187,7 @@ public class PasswordResetAction implements Serializable {
 		if (valid) {
 			GluuAppliance appliance = applianceService.getAppliance();
 			this.request = ldapEntryManager.find(PasswordResetRequest.class,
-					"oxGuid=" + this.guid + ", ou=resetPasswordRequests," + appliance.getDn());
+					"oxGuid=" + this.code + ", ou=resetPasswordRequests," + appliance.getDn());
 			Calendar requestCalendarExpiry = Calendar.getInstance();
 			Calendar currentCalendar = Calendar.getInstance();
 			if (request != null) {
@@ -291,6 +293,14 @@ public class PasswordResetAction implements Serializable {
 
 	public boolean getAuthenticationRecaptchaEnabled() {
 		return jsonConfigurationService.getOxTrustappConfiguration().isAuthenticationRecaptchaEnabled();
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
 	}
 
 }
