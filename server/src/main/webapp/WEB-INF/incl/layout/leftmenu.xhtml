@@ -61,7 +61,7 @@
 											value="Manage SAML Acrs" onclick="lock();"
 											ondbclick="lock();" oncomplete="unlock();"
 											action="#{menuAction.endConversation('/saml/samlAcrs.xhtml')}"
-											rendered="#{permissionService.hasPermission('trust', 'access')}">
+											rendered="#{permissionService.hasPermission('trust', 'access') and productInstallationCheckerAction.showSAMLMenu}">
 											<i class="fa fa-chevron-right"
 												style="float: left; margin-top: 2px;"></i>
 										</h:commandLink></li>
