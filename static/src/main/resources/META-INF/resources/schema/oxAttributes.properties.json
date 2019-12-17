@@ -5,22 +5,35 @@
     "title": "oxAttributes",
     "additionalProperties": true,
     "properties": {
-       "tlsClientAuthSubjectDn":
-           {
+       "tlsClientAuthSubjectDn": {
             "type":"string",
             "id":"tlsClientAuthSubjectDn"
-           },
-       "runIntrospectionScriptBeforeAccessTokenAsJwtCreationAndIncludeClaims":
-           {
+        },
+       "runIntrospectionScriptBeforeAccessTokenAsJwtCreationAndIncludeClaims": {
             "id": "runIntrospectionScriptBeforeAccessTokenAsJwtCreationAndIncludeClaims",
             "description": "Run Introspection Script Before Access Token As Jwt Creation And Include Claims.",
             "type": "boolean"
-           },  
-       "keepClientAuthorizationAfterExpiration":
-           {
+       },
+       "keepClientAuthorizationAfterExpiration": {
             "id": "keepClientAuthorizationAfterExpiration",
             "description": "Keep Client Authorization After Expiration.",
             "type": "boolean"
-           }          
+       },
+       "allowSpontaneousScopes": {
+           "id": "allowSpontaneousScopes",
+           "description": "Whether spontaneous scopes are allowed",
+           "type": "boolean"
+       },
+       "spontaneousScopes": {
+           "id":"spontaneousScopes",
+           "type": "array",
+           "minItems": 0,
+           "uniqueItems": true,
+           "additionalItems": true,
+               "items": {
+               "type": "string",
+               "minLength": 1
+           }
+       }
     }
 }
