@@ -219,6 +219,11 @@
 			</dependency>
 			<dependency>
 				<groupId>org.gluu</groupId>
+				<artifactId>oxcore-persistence-ldap-sample</artifactId>
+				<version>${oxcore.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.gluu</groupId>
 				<artifactId>oxcore-persistence-couchbase</artifactId>
 				<version>${oxcore.version}</version>
 			</dependency>

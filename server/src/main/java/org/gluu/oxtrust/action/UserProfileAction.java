@@ -29,6 +29,7 @@ import org.gluu.model.GluuUserRole;
 import org.gluu.model.ImapPassword;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.ConfigurationService;
+import org.gluu.oxtrust.ldap.service.DataSourceTypeService;
 import org.gluu.oxtrust.ldap.service.ImageService;
 import org.gluu.oxtrust.ldap.service.ImapDataService;
 import org.gluu.oxtrust.ldap.service.OxTrustAuditService;
@@ -97,6 +98,9 @@ public class UserProfileAction implements Serializable {
 
 	@Inject
 	private ExternalUpdateUserService externalUpdateUserService;
+	
+	@Inject
+	private DataSourceTypeService dataSourceTypeService;
 
 	private GluuCustomPerson person;
 
@@ -153,7 +157,7 @@ public class UserProfileAction implements Serializable {
 
 	public String update() {
 		try {
-			if (appConfiguration.getEnforceEmailUniqueness()) {
+			if (appConfiguration.getEnforceEmailUniqueness() && !dataSourceTypeService.isLDAP()) {
 				if (!userEmailIsUniqAtEditionTime(this.person.getAttribute("mail"))) {
 					facesMessages.add(FacesMessage.SEVERITY_ERROR,
 							"#{msg['UpdatePersonAction.faileUpdateUserMailidExist']} %s", person.getMail());
@@ -184,11 +188,22 @@ public class UserProfileAction implements Serializable {
 			if (runScript) {
 				externalUpdateUserService.executeExternalPostUpdateUserMethods(this.person);
 			}
-		} catch (BasePersistenceException ex) {
+		}
+		catch (DuplicateEmailException ex) {
+			log.error("Failed to update profile {}", person.getInum(), ex);
+			facesMessages.add(FacesMessage.SEVERITY_ERROR,ex.getMessage());
+			return OxTrustConstants.RESULT_FAILURE;
+		}
+		catch (BasePersistenceException ex) {
 			log.error("Failed to update profile {}", person.getInum(), ex);
 			facesMessages.add(FacesMessage.SEVERITY_ERROR,
 					"Failed to update profile '#{userProfileAction.person.displayName}'");
-
+			return OxTrustConstants.RESULT_FAILURE;
+		}
+		catch (Exception ex) {
+			log.error("Failed to update profile {}", person.getInum(), ex);
+			facesMessages.add(FacesMessage.SEVERITY_ERROR,
+					"Failed to update profile '#{userProfileAction.person.displayName}'");
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 

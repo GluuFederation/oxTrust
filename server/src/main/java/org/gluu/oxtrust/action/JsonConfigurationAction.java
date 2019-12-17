@@ -19,6 +19,8 @@ import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.config.oxtrust.ImportPersonConfig;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
+import org.gluu.oxtrust.ldap.service.DataSourceTypeService;
+import org.gluu.oxtrust.ldap.service.EmailUniquenessService;
 import org.gluu.oxtrust.ldap.service.EncryptionService;
 import org.gluu.oxtrust.ldap.service.JsonConfigurationService;
 import org.gluu.oxtrust.util.OxTrustConstants;
@@ -71,6 +73,12 @@ public class JsonConfigurationAction implements Serializable {
 
 	@Inject
 	private ConversationService conversationService;
+
+	@Inject
+	private EmailUniquenessService emailUniquenessService;
+
+	@Inject
+	private DataSourceTypeService dataSourceTypeService;
 
 	private AppConfiguration oxTrustappConfiguration;
 	private ImportPersonConfig oxTrustImportPersonConfiguration;
@@ -126,12 +134,13 @@ public class JsonConfigurationAction implements Serializable {
 	}
 
 	public String saveOxTrustConfigJson() {
-		// Update JSON configurations
 		try {
 			log.debug("Saving oxtrust-config.json:" + this.oxTrustConfigJson);
 			this.oxTrustappConfiguration = convertToOxTrustappConfiguration(this.oxTrustConfigJson);
-			// Trim all URI properties
 			trimUriProperties();
+			if (dataSourceTypeService.isLDAP()) {
+				emailUniquenessService.setEmailUniqueness(this.oxTrustappConfiguration.getEnforceEmailUniqueness());
+			}
 			jsonConfigurationService.saveOxTrustappConfiguration(this.oxTrustappConfiguration);
 			facesMessages.add(FacesMessage.SEVERITY_INFO, "oxTrust Configuration is updated.");
 

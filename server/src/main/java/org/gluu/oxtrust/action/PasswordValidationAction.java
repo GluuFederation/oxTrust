@@ -104,22 +104,39 @@ public class PasswordValidationAction implements Cloneable, Serializable {
 				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Old password isn't valid!");
 			} else {
 				person.setUserPassword(this.password);
-				personService.updatePerson(person);
-				oxTrustAuditService.audit(
-						"USER " + person.getInum() + " **" + person.getDisplayName() + "** PASSWORD UPDATED",
-						identity.getUser(),
-						(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
-				facesMessages.add(FacesMessage.SEVERITY_INFO, "Successfully changed!");
+				try {
+					personService.updatePerson(person);
+					oxTrustAuditService.audit(
+							"USER " + person.getInum() + " **" + person.getDisplayName() + "** PASSWORD UPDATED",
+							identity.getUser(),
+							(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
+					facesMessages.add(FacesMessage.SEVERITY_INFO, "Successfully changed!");
+				} 
+				catch (DuplicateEmailException e) {
+					facesMessages.add(FacesMessage.SEVERITY_ERROR, e.getMessage());
+				}
+				catch (Exception e) {
+					facesMessages.add(FacesMessage.SEVERITY_ERROR, " Error changing password");
+				}
+				
 			}
 		} else {
 			if (this.password.equals(this.confirm)) {
-				person.setUserPassword(this.password);
-				personService.updatePerson(person);
-				oxTrustAuditService.audit(
-						"USER " + person.getInum() + " **" + person.getDisplayName() + "** PASSWORD UPDATED",
-						identity.getUser(),
-						(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
-				facesMessages.add(FacesMessage.SEVERITY_INFO, "Successfully changed!");
+				try {
+					person.setUserPassword(this.password);
+					personService.updatePerson(person);
+					oxTrustAuditService.audit(
+							"USER " + person.getInum() + " **" + person.getDisplayName() + "** PASSWORD UPDATED",
+							identity.getUser(),
+							(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
+					facesMessages.add(FacesMessage.SEVERITY_INFO, "Successfully changed!");
+				}
+				catch (DuplicateEmailException e) {
+					facesMessages.add(FacesMessage.SEVERITY_ERROR, e.getMessage());
+				}
+				catch (Exception e) {
+					facesMessages.add(FacesMessage.SEVERITY_ERROR, " Error changing password");
+				}
 			} else {
 				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Password and confirm password value don't match");
 			}

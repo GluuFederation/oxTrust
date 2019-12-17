@@ -36,6 +36,7 @@ import org.gluu.model.attribute.AttributeValidation;
 import org.gluu.oxauth.model.fido.u2f.protocol.DeviceData;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.ClientService;
+import org.gluu.oxtrust.ldap.service.DataSourceTypeService;
 import org.gluu.oxtrust.ldap.service.Fido2DeviceService;
 import org.gluu.oxtrust.ldap.service.FidoDeviceService;
 import org.gluu.oxtrust.ldap.service.GroupService;
@@ -149,6 +150,9 @@ public class UpdatePersonAction implements Serializable {
 
 	@Inject
 	private PairwiseIdService pairwiseIdService;
+
+	@Inject
+	private DataSourceTypeService dataSourceTypeService;
 
 	@Inject
 	private Identity identity;
@@ -494,7 +498,7 @@ public class UpdatePersonAction implements Serializable {
 						this.person.getUid());
 				return OxTrustConstants.RESULT_FAILURE;
 			}
-			if (appConfiguration.getEnforceEmailUniqueness()) {
+			if (appConfiguration.getEnforceEmailUniqueness() && !dataSourceTypeService.isLDAP()) {
 				if (!userEmailIsUniqAtCreationTime(this.person.getAttribute(MAIL))) {
 					facesMessages.add(FacesMessage.SEVERITY_ERROR,
 							"#{msg['UpdatePersonAction.faileUpdateUserMailidExist']} %s",
@@ -504,13 +508,12 @@ public class UpdatePersonAction implements Serializable {
 			}
 
 		} else {
-
 			if (!userNameIsUniqAtEditionTime(this.person.getUid())) {
 				facesMessages.add(FacesMessage.SEVERITY_ERROR, "#{msg['UpdatePersonAction.faileAddUserUidExist']} %s",
 						this.person.getUid());
 				return OxTrustConstants.RESULT_FAILURE;
 			}
-			if (appConfiguration.getEnforceEmailUniqueness()) {
+			if (appConfiguration.getEnforceEmailUniqueness() && !dataSourceTypeService.isLDAP()) {
 				if (!userEmailIsUniqAtEditionTime(this.person.getAttribute(MAIL))) {
 					facesMessages.add(FacesMessage.SEVERITY_ERROR,
 							"#{msg['UpdatePersonAction.faileUpdateUserMailidExist']} %s",
@@ -526,6 +529,7 @@ public class UpdatePersonAction implements Serializable {
 		for (GluuCustomAttribute customAttribute : customAttributes) {
 			if (customAttribute.getName().equalsIgnoreCase("gluuStatus")) {
 				customAttribute.setValue(gluuStatus.getValue());
+				break;
 			}
 
 		}
@@ -547,14 +551,17 @@ public class UpdatePersonAction implements Serializable {
 				if (runScript) {
 					externalUpdateUserService.executeExternalPostUpdateUserMethods(this.person);
 				}
-			} catch (BasePersistenceException ex) {
+			}
+			catch (DuplicateEmailException ex) {
+				log.error("Failed to update person {}", inum, ex);
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, ex.getMessage());
+				return OxTrustConstants.RESULT_FAILURE;
+			} catch (Exception ex) {
 				log.error("Failed to update person {}", inum, ex);
 				facesMessages.add(FacesMessage.SEVERITY_ERROR,
 						"Failed to update person '#{updatePersonAction.person.displayName}'");
-
 				return OxTrustConstants.RESULT_FAILURE;
 			}
-
 			facesMessages.add(FacesMessage.SEVERITY_INFO,
 					"Person '#{updatePersonAction.person.displayName}' updated successfully");
 		} else {
@@ -590,17 +597,19 @@ public class UpdatePersonAction implements Serializable {
 				if (runScript) {
 					externalUpdateUserService.executeExternalPostAddUserMethods(this.person);
 				}
-			} catch (Exception ex) {
+			} catch (DuplicateEmailException ex) {
 				log.error("Failed to add new person {}", this.person.getInum(), ex);
-				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new person'");
-
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, ex.getMessage());
 				return OxTrustConstants.RESULT_FAILURE;
 			}
-
+			catch (Exception ex) {
+				log.error("Failed to add new person {}", this.person.getInum(), ex);
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new person'");
+				return OxTrustConstants.RESULT_FAILURE;
+			}
 			facesMessages.add(FacesMessage.SEVERITY_INFO,
 					"New person '#{updatePersonAction.person.displayName}' added successfully");
 			conversationService.endConversation();
-
 			this.update = true;
 		}
 
@@ -954,7 +963,7 @@ public class UpdatePersonAction implements Serializable {
 		return userNameIsUniq;
 	}
 
-	public boolean userNameIsUniqAtEditionTime(String uid) {
+	private boolean userNameIsUniqAtEditionTime(String uid) {
 		if (uid == null) {
 			return true;
 		}
@@ -970,7 +979,7 @@ public class UpdatePersonAction implements Serializable {
 		return userNameIsUniq;
 	}
 
-	public boolean userEmailIsUniqAtCreationTime(String email) {
+	private boolean userEmailIsUniqAtCreationTime(String email) {
 		if (email == null) {
 			return true;
 		}
@@ -987,7 +996,7 @@ public class UpdatePersonAction implements Serializable {
 		return emailIsUniq;
 	}
 
-	public boolean userEmailIsUniqAtEditionTime(String email) {
+	private boolean userEmailIsUniqAtEditionTime(String email) {
 		boolean emailIsUniq = false;
 		if (email == null) {
 			return true;

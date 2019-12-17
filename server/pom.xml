@@ -341,6 +341,10 @@
 		</dependency>
 		<dependency>
 			<groupId>org.gluu</groupId>
+			<artifactId>oxcore-persistence-ldap-sample</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.gluu</groupId>
 			<artifactId>oxcore-persistence-model</artifactId>
 		</dependency>
 		<dependency>
