@@ -102,7 +102,11 @@ public class GroupService implements Serializable, IGroupService {
 					updatedGroupDNs.addAll(groupDNs);
 					updatedGroupDNs.remove(group.getDn());
 					person.setMemberOf(updatedGroupDNs);
-					personService.updatePerson(person);
+					try {
+						personService.updatePerson(person);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 				}
 			}
 		}

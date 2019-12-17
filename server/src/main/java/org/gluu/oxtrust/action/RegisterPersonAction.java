@@ -298,7 +298,7 @@ public class RegisterPersonAction implements Serializable {
 				boolean result = false;
 				result = externalUserRegistrationService.executeExternalPreRegistrationMethods(this.person,
 						requestParameters);
-				postRegistrationRedirectUri=getRegistrationRedirectUri();
+				postRegistrationRedirectUri = getRegistrationRedirectUri();
 				if (!result) {
 					this.person = archivedPerson;
 					return OxTrustConstants.RESULT_FAILURE;
@@ -335,7 +335,14 @@ public class RegisterPersonAction implements Serializable {
 				if (GluuStatus.INACTIVE.equals(person.getStatus())) {
 					return OxTrustConstants.RESULT_DISABLED;
 				}
-			} catch (Exception ex) {
+			} catch (DuplicateEmailException ex) {
+				log.error("Failed to add new person {}", this.person.getInum(), ex);
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, ex.getMessage());
+				this.person = archivedPerson;
+				return OxTrustConstants.RESULT_FAILURE;
+			}
+
+			catch (Exception ex) {
 				log.error("Failed to add new person {}", this.person.getInum(), ex);
 				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new person");
 				this.person = archivedPerson;

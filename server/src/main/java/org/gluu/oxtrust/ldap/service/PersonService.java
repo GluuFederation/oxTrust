@@ -19,6 +19,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.gluu.oxtrust.action.DuplicateEmailException;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.User;
@@ -99,15 +100,24 @@ public class PersonService implements Serializable, IPersonService {
 	// method
 	@Override
 	public void addPerson(GluuCustomPerson person) throws Exception {
-		GluuCustomPerson uidPerson = new GluuCustomPerson();
-		uidPerson.setUid(person.getUid());
-		List<GluuCustomPerson> persons = findPersons(uidPerson, 1);
-		if (persons == null || persons.size() == 0) {
-			person.setCreationDate(new Date());
-			ldapEntryManager.persist(person);
-		} else {
-			throw new DuplicateEntryException("Duplicate UID value: " + person.getUid());
+		try {
+			GluuCustomPerson uidPerson = new GluuCustomPerson();
+			uidPerson.setUid(person.getUid());
+			List<GluuCustomPerson> persons = findPersons(uidPerson, 1);
+			if (persons == null || persons.size() == 0) {
+				person.setCreationDate(new Date());
+				ldapEntryManager.persist(person);
+			} else {
+				throw new DuplicateEntryException("Duplicate UID value: " + person.getUid());
+			}
+		} catch (Exception e) {
+			if (e.getCause().getMessage().contains("unique attribute conflict was detected for attribute mail")) {
+				throw new DuplicateEmailException("Email Already Registered");
+			} else {
+				throw new Exception("Duplicate UID value: " + person.getUid());
+			}
 		}
+
 	}
 
 	/*
@@ -118,14 +128,23 @@ public class PersonService implements Serializable, IPersonService {
 	 * model.GluuCustomPerson)
 	 */
 	@Override
-	public void updatePerson(GluuCustomPerson person) {
-		Date updateDate = new Date();
-		person.setUpdatedAt(updateDate);
-		if (person.getAttribute("oxTrustMetaLastModified") != null) {
-			person.setAttribute("oxTrustMetaLastModified",
-					ISODateTimeFormat.dateTime().withZoneUTC().print(updateDate.getTime()));
+	public void updatePerson(GluuCustomPerson person) throws Exception {
+		try {
+			Date updateDate = new Date();
+			person.setUpdatedAt(updateDate);
+			if (person.getAttribute("oxTrustMetaLastModified") != null) {
+				person.setAttribute("oxTrustMetaLastModified",
+						ISODateTimeFormat.dateTime().withZoneUTC().print(updateDate.getTime()));
+			}
+			ldapEntryManager.merge(person);
+		} catch (Exception e) {
+			if (e.getCause().getMessage().contains("unique attribute conflict was detected for attribute mail")) {
+				throw new DuplicateEmailException("Email Already Registered");
+			} else {
+				throw new Exception("Duplicate UID value: " + person.getUid());
+			}
 		}
-		ldapEntryManager.merge(person);
+
 	}
 
 	/*

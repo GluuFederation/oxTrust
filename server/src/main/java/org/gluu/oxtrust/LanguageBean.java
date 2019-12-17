@@ -79,7 +79,11 @@ public class LanguageBean implements Serializable {
 			locale.setValue(localeCode);
 		}
 
-		personService.updatePerson(gluuCustomPerson);
+		try {
+			personService.updatePerson(gluuCustomPerson);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void countryLocaleCodeChanged(ValueChangeEvent e) {

@@ -34,8 +34,9 @@ public interface IPersonService {
 	 * 
 	 * @param person
 	 *            Person
+	 * @throws Exception 
 	 */
-	public abstract void updatePerson(GluuCustomPerson person);
+	public abstract void updatePerson(GluuCustomPerson person) throws Exception;
 
 	/**
 	 * Remove person with persona and contacts branches

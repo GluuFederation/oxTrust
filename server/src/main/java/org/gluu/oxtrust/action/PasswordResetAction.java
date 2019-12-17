@@ -211,13 +211,27 @@ public class PasswordResetAction implements Serializable {
 					Boolean securityQuestionAnswered = (securityAnswer != null) && securityAnswer.equals(correctAnswer);
 					if (securityQuestionAnswered) {
 						person.setUserPassword(password);
-						personService.updatePerson(person);
-						return OxTrustConstants.RESULT_SUCCESS;
+						try {
+							personService.updatePerson(person);
+							return OxTrustConstants.RESULT_SUCCESS;
+						} catch (DuplicateEmailException e) {
+							facesMessages.add(FacesMessage.SEVERITY_ERROR, e.getMessage());
+						} catch (Exception e) {
+							facesMessages.add(FacesMessage.SEVERITY_ERROR, "Error while processing the request");
+						}
+						return OxTrustConstants.RESULT_FAILURE;
 					}
 				} else {
 					person.setUserPassword(password);
-					personService.updatePerson(person);
-					return OxTrustConstants.RESULT_SUCCESS;
+					try {
+						personService.updatePerson(person);
+						return OxTrustConstants.RESULT_SUCCESS;
+					} catch (DuplicateEmailException e) {
+						facesMessages.add(FacesMessage.SEVERITY_ERROR, e.getMessage());
+					} catch (Exception e) {
+						facesMessages.add(FacesMessage.SEVERITY_ERROR, "Error while processing the request");
+					}
+					return OxTrustConstants.RESULT_FAILURE;
 				}
 			}
 		} else {
