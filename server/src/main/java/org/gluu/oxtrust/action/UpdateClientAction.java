@@ -586,7 +586,7 @@ public class UpdateClientAction implements Serializable {
 					return true;
 				}
 				return false;
-			} else if (getProtocol(availableLoginUri).equalsIgnoreCase("https")) {
+			} else {
 				if (this.client.getSubjectType().equals(OxAuthSubjectType.PUBLIC)) {
 					return true;
 				} else if (this.loginUris.size() < 1) {
