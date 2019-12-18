@@ -338,6 +338,7 @@
 													styleClass="col-sm-12 form-control rounded applicationTypeSelectBox"
 													value="#{_client.oxAuthAppType}" id="applicationTypeId"
 													required="true">
+													<f:ajax listener="#{_clientAction.appTypeChanged}" />
 													<f:selectItems value="#{clientService.applicationType}"
 														var="_type" itemLabel="#{_type.displayName}" />
 													<f:converter
