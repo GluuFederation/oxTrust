@@ -93,32 +93,36 @@
 												label="#{_custAttr.metadata.displayName eq 'Gender, male or female' ? 'Gender' : _custAttr.metadata.displayName }  "
 												rendered="#{_custAttr.userCanAccess  and (_custAttr.metadata.dataType.value ne 'photo') and (_custAttr.metadata.displayName ne 'Inum') and (_custAttr.metadata.name ne 'gluuIMAPData')}"
 												template="/WEB-INF/incl/layout/#{_custAttr.userCanEdit  ? 'edit' : 'view'}.xhtml">
-												<div class="col-sm-11" tabindex="0">
-													<h:inputText tabindex="1"
-														defaultLabel="click to enter #{_custAttr.metadata.displayName}"
-														id="custId" inputWidth="300" maxlength="60"
-														styleClass="form-control"
-														rendered="#{_custAttr.userCanEdit and _custAttr.metadata.displayName ne 'Gender, male or female' and permissionService.hasPermission(configurationService.configuration, 'profile_management')}"
-														value="#{_custAttr.value}" />
-													<h:selectOneMenu value="#{_custAttr.value}"
-														styleClass="rounded form-control" tabindex="1"
-														rendered="#{_custAttr.userCanEdit and _custAttr.metadata.displayName eq 'Gender, male or female' and permissionService.hasPermission(configurationService.configuration, 'profile_management')}">
-														<f:selectItem itemValue="female" itemLabel="female" />
-														<f:selectItem itemValue="male" itemLabel="male" />
-													</h:selectOneMenu>
-													<h:outputText
-														rendered="#{not (_custAttr.userCanEdit and permissionService.hasPermission(configurationService.configuration, 'profile_management'))}"
-														value="#{_custAttr.value}" />
-													<h:outputText value=" " />
-												</div>
-												<a4j:commandLink
-													action="#{customAttributeAction.removeCustomAttribute(_custAttr.metadata.inum)}"
-													limitRender="true"
-													onbeforedomupdate="changeAttributeVisibility('#{_aid}', true);"
-													render="selectedCustomAttributesId"
-													rendered="#{_custAttr.userCanEdit and (not _mandatory) and permissionService.hasPermission(configurationService.configuration, 'profile_management')}"
-													styleClass="glyphicon glyphicon-remove" execute="@this">
-												</a4j:commandLink>
+												<a4j:repeat
+													value="#{userProfileAction.person.getAttributeValues(_custAttr.name)}"
+													var="_item">
+													<div class="col-sm-11" tabindex="0">
+														<h:inputText tabindex="1"
+															defaultLabel="click to enter #{_custAttr.metadata.displayName}"
+															id="custId" inputWidth="300" maxlength="60"
+															styleClass="form-control"
+															rendered="#{_custAttr.userCanEdit and _custAttr.metadata.displayName ne 'Gender, male or female' and permissionService.hasPermission(configurationService.configuration, 'profile_management')}"
+															value="#{_item}" />
+														<h:selectOneMenu value="#{_custAttr.value}"
+															styleClass="rounded form-control" tabindex="1"
+															rendered="#{_custAttr.userCanEdit and _custAttr.metadata.displayName eq 'Gender, male or female' and permissionService.hasPermission(configurationService.configuration, 'profile_management')}">
+															<f:selectItem itemValue="female" itemLabel="female" />
+															<f:selectItem itemValue="male" itemLabel="male" />
+														</h:selectOneMenu>
+														<h:outputText
+															rendered="#{not (_custAttr.userCanEdit and permissionService.hasPermission(configurationService.configuration, 'profile_management'))}"
+															value="#{_custAttr.value}" />
+														<h:outputText value=" " />
+													</div>
+													<a4j:commandLink
+														action="#{customAttributeAction.removeCustomAttribute(_custAttr.metadata.inum)}"
+														limitRender="true"
+														onbeforedomupdate="changeAttributeVisibility('#{_aid}', true);"
+														render="selectedCustomAttributesId"
+														rendered="#{_custAttr.userCanEdit and (not _custAttr.metadata.oxMultiValuedAttribute) and (not _mandatory) and permissionService.hasPermission(configurationService.configuration, 'profile_management')}"
+														styleClass="glyphicon glyphicon-remove" execute="@this">
+													</a4j:commandLink>
+												</a4j:repeat>
 											</ox:decorate>
 											<ox:decorate label="#{_custAttr.metadata.displayName}"
 												rendered="#{_custAttr.userCanAccess and (_custAttr.metadata.dataType.value eq 'photo')}"
