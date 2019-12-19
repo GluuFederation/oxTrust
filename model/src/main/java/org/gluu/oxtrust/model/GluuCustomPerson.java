@@ -221,6 +221,17 @@ public class GluuCustomPerson extends User
         }
         return value;
     }
+    
+    public String[] getAttributeValues(String attributeName) {
+        String[] value = null;
+        for (GluuCustomAttribute attribute : customAttributes) {
+            if (attribute.getName().equalsIgnoreCase(attributeName)) {
+                value = attribute.getValues();
+                break;
+            }
+        }
+        return value;
+    }
 
     public String[] getAttributeArray(String attributeName) {
         GluuCustomAttribute gluuCustomAttribute = 
