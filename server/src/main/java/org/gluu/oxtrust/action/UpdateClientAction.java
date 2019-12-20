@@ -624,9 +624,15 @@ public class UpdateClientAction implements Serializable {
 		return result;
 	}
 
-	private String getHostname(String url) throws MalformedURLException {
-		URL uri1 = new URL(url);
-		return uri1.getHost();
+	private String getHostname(String url) {
+		URL uri1;
+		try {
+			uri1 = new URL(url);
+			return uri1.getHost();
+		} catch (MalformedURLException e) {
+			return null;
+		}
+
 	}
 
 	private String getProtocol(String url) throws MalformedURLException {
@@ -1636,7 +1642,20 @@ public class UpdateClientAction implements Serializable {
 	}
 
 	public void subjectTypeChanged() {
+		if (this.client.getSubjectType().equals(OxAuthSubjectType.PAIRWISE)) {
+			if (!sectorExist() && hasDifferentHostname()) {
+				this.loginUris.clear();
+			}
+		}
 		this.client.getSubjectType();
+	}
+
+	private boolean hasDifferentHostname() {
+		long size = loginUris.stream().map(e -> getHostname(e)).distinct().count();
+		if (size > 1) {
+			return true;
+		}
+		return false;
 	}
 
 	public void appTypeChanged() {

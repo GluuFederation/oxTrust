@@ -353,7 +353,7 @@
 													styleClass="col-sm-9 form-control rounded subjectTypeSelectBox"
 													value="#{_client.subjectType}" id="subjectTypeId"
 													required="true">
-													<f:ajax listener="#{_clientAction.subjectTypeChanged}" />
+													<f:ajax render="clientForm:redirectLoginUrls" listener="#{_clientAction.subjectTypeChanged}" />
 													<f:selectItems value="#{clientService.subjectTypes}"
 														var="_subjectType" label="#{_subjectType.displayName}" />
 													<f:converter
