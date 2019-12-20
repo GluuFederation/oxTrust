@@ -244,6 +244,8 @@ public class OxAuthJsonConfiguration {
 	private Boolean sessionIdPersistOnPromptNone;
 	@JsonProperty("sessionIdLifetime")
 	private Integer sessionIdLifetime;
+    @JsonProperty("spontaneousScopeLifetime")
+    private Integer spontaneousScopeLifetime;
 	@JsonProperty("configurationUpdateInterval")
 	private Integer configurationUpdateInterval;
 	@JsonProperty("cssLocation")
@@ -1298,7 +1300,15 @@ public class OxAuthJsonConfiguration {
 		this.sessionIdLifetime = sessionIdLifetime;
 	}
 
-	@JsonProperty("configurationUpdateInterval")
+    public Integer getSpontaneousScopeLifetime() {
+        return spontaneousScopeLifetime;
+    }
+
+    public void setSpontaneousScopeLifetime(Integer spontaneousScopeLifetime) {
+        this.spontaneousScopeLifetime = spontaneousScopeLifetime;
+    }
+
+    @JsonProperty("configurationUpdateInterval")
 	public Integer getConfigurationUpdateInterval() {
 		return configurationUpdateInterval;
 	}
