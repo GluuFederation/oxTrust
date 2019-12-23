@@ -47,7 +47,6 @@ import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
-import org.gluu.oxtrust.model.GluuOxTrustStat;
 import org.gluu.oxtrust.model.LdapConfigurationModel;
 import org.gluu.oxtrust.model.SimpleCustomPropertiesListModel;
 import org.gluu.oxtrust.model.SimplePropertiesListModel;
@@ -70,6 +69,14 @@ import org.slf4j.Logger;
 @Secure("#{permissionService.hasPermission('configuration', 'access')}")
 public class ConfigureCacheRefreshAction
 		implements SimplePropertiesListModel, SimpleCustomPropertiesListModel, LdapConfigurationModel, Serializable {
+
+	public GluuConfiguration getConfiguration() {
+		return configuration;
+	}
+
+	public void setConfiguration(GluuConfiguration configuration) {
+		this.configuration = configuration;
+	}
 
 	private static final long serialVersionUID = -5210460481895022468L;
 
@@ -120,7 +127,7 @@ public class ConfigureCacheRefreshAction
 
 	private GluuLdapConfiguration activeLdapConfig;
 
-	private GluuConfiguration gluuServerDetail;
+	private GluuConfiguration configuration;
 
 	private List<SimpleProperty> keyAttributes;
 	private List<SimpleProperty> keyObjectClasses;
@@ -141,7 +148,7 @@ public class ConfigureCacheRefreshAction
 
 		this.showInterceptorValidationDialog = false;
 
-		this.gluuServerDetail = configurationService.getConfiguration();
+		this.configuration = configurationService.getConfiguration();
 
 		this.cacheRefreshConfiguration = getOxTrustCacheRefreshConfig();
 
@@ -227,16 +234,16 @@ public class ConfigureCacheRefreshAction
 
 	private void updateConfiguration() {
 		GluuConfiguration configuration = configurationService.getConfiguration();
-		configuration.setVdsCacheRefreshEnabled(this.gluuServerDetail.isVdsCacheRefreshEnabled());
-		configuration.setVdsCacheRefreshPollingInterval(this.gluuServerDetail.getVdsCacheRefreshPollingInterval());
-		configuration.setCacheRefreshServerIpAddress(this.gluuServerDetail.getCacheRefreshServerIpAddress());
+		configuration.setVdsCacheRefreshEnabled(this.configuration.isVdsCacheRefreshEnabled());
+		configuration.setVdsCacheRefreshPollingInterval(this.configuration.getVdsCacheRefreshPollingInterval());
+		configuration.setCacheRefreshServerIpAddress(this.configuration.getCacheRefreshServerIpAddress());
 		configurationService.updateConfiguration(configuration);
 	}
 
 	// TODO: Yuriy Movchan: Use @Min property annotation + convert type from String
 	// to Integer
 	private boolean vdsCacheRefreshPollingInterval() {
-		String intervalString = this.gluuServerDetail.getVdsCacheRefreshPollingInterval();
+		String intervalString = this.configuration.getVdsCacheRefreshPollingInterval();
 		if (StringHelper.isEmpty(intervalString)) {
 			return true;
 		}
