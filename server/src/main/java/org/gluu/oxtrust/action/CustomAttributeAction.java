@@ -36,7 +36,6 @@ import javax.inject.Named;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.model.GluuAttribute;
 import org.gluu.model.GluuImage;
-import org.gluu.model.GluuUserRole;
 import org.gluu.model.attribute.AttributeDataType;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.ImageService;
@@ -97,9 +96,9 @@ public class CustomAttributeAction implements Serializable {
 		this.removedPhotos = new ArrayList<GluuImage>();
 	}
 
-	public void initCustomAttributes(List<GluuAttribute> noUsed, List<GluuCustomAttribute> customAttributes,
+	public void initCustomAttributes(List<GluuAttribute> attributes, List<GluuCustomAttribute> customAttributes,
 			List<String> origins, String[] objectClassTypes, String[] objectClassDisplayNames) {
-		this.attributes = attributeService.getAllActivePersonAttributes(GluuUserRole.ADMIN);
+		this.attributes = attributes;
 		this.customAttributes = customAttributes;
 		this.origCustomAttributes = new ArrayList<GluuCustomAttribute>(customAttributes);
 
