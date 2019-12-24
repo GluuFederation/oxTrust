@@ -1,14 +1,14 @@
 swagger: '2.0'
 
 info:
-  version: "4.1.0"
+  version: "4.2.0"
   title: Modified Gluu users
   description: |
     Use this service to obtain the user entries that have changed after a certain time stamp.
     See https://gluu.org/docs/ce/user-management/idm-sync/
   license:
-    name: MIT
-    url: http://opensource.org/licenses/MIT
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
 
 #Your Gluu host
 host: your.gluu.org
