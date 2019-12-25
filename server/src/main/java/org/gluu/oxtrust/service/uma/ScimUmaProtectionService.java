@@ -31,7 +31,7 @@ import org.slf4j.Logger;
  */
 @ApplicationScoped
 @Named("scimUmaProtectionService")
-@BindingUrls({"/scim/v2"})
+@BindingUrls({"/scim"})
 public class ScimUmaProtectionService extends BaseUmaProtectionService implements Serializable {
 
 	private static final long serialVersionUID = -5447131971095468865L;
