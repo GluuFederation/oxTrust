@@ -78,14 +78,14 @@ public class ScimResourcesUpdatedWebService extends BaseScimWebService {
     @ProtectedApi
     public Response usersChangedAfter(@QueryParam("timeStamp") String isoDate,
                                       @QueryParam("start") int start,
-                                      @QueryParam("pagesize") int itemsPerPage) {
+                                      @QueryParam("pageSize") int itemsPerPage) {
 
         Response response;
         log.debug("Executing web service method. usersChangedAfter");
 
         try {
             if (start < 0 || itemsPerPage <=0) {
-                return getErrorResponse(Response.Status.BAD_REQUEST, "Not suitable values for 'start' or 'pagesize' params");
+                return getErrorResponse(Response.Status.BAD_REQUEST, "No suitable value for 'start' or 'pagesize' params");
             }
 
             String date = ldapBackend ? DateUtil.ISOToGeneralizedStringDate(isoDate) : DateUtil.gluuCouchbaseISODate(isoDate);
@@ -211,7 +211,9 @@ public class ScimResourcesUpdatedWebService extends BaseScimWebService {
 
         Map<String, Object> result = new LinkedHashMap<>();
         result.put("total", total);
-        result.put("latestUpdateAt", DateUtil.millisToISOString(fresher));
+        if (fresher > 0) {
+            result.put("latestUpdateAt", DateUtil.millisToISOString(fresher));
+        }
         result.put("results", resources);
 
         return ServiceUtil.getObjectMapper().writeValueAsString(result);
