@@ -1,8 +1,3 @@
-/*
- * oxTrust is available under the MIT License (2008). See http://opensource.org/licenses/MIT for full text.
- *
- * Copyright (c) 2019, Gluu
- */
 package org.gluu.oxtrust.ws.rs.scim2;
 
 //import org.gluu.oxtrust.ldap.service.IGroupService;
@@ -20,7 +15,7 @@ import org.gluu.oxtrust.service.filter.ProtectedApi;
 import org.gluu.oxtrust.util.ServiceUtil;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.annotation.AttributeName;
-import org.gluu.persist.model.SearchScope;
+import org.gluu.persist.model.SortOrder;
 import org.gluu.search.filter.Filter;
 
 import javax.annotation.PostConstruct;
@@ -85,7 +80,7 @@ public class ScimResourcesUpdatedWebService extends BaseScimWebService {
 
         try {
             if (start < 0 || itemsPerPage <=0) {
-                return getErrorResponse(Response.Status.BAD_REQUEST, "No suitable value for 'start' or 'pagesize' params");
+                return getErrorResponse(Response.Status.BAD_REQUEST, "No suitable value for 'start' or 'pageSize' params");
             }
 
             String date = ldapBackend ? DateUtil.ISOToGeneralizedStringDate(isoDate) : DateUtil.gluuCouchbaseISODate(isoDate);
@@ -98,8 +93,9 @@ public class ScimResourcesUpdatedWebService extends BaseScimWebService {
                         Filter.createGreaterOrEqualFilter("updatedAt", date));
                 log.trace("Using filter {}", filter.toString());
 
-                List<ScimCustomPerson> list = entryManager.findEntries(personService.getDnForPerson(null),
-                        ScimCustomPerson.class, filter, SearchScope.SUB, null, start, itemsPerPage, MAX_COUNT);
+                List<ScimCustomPerson> list = entryManager.findPagedEntries(personService.getDnForPerson(null), ScimCustomPerson.class,
+                        filter, null,  "uid", SortOrder.ASCENDING, start, itemsPerPage, MAX_COUNT).getEntries();
+
                 response = Response.ok(getUserResultsAsJson(list)).build();
             }
         } catch (Exception e1) {
