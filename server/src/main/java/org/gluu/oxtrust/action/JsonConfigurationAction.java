@@ -30,6 +30,7 @@ import org.gluu.service.cache.CacheConfiguration;
 import org.gluu.service.cache.CacheProviderType;
 import org.gluu.service.cache.MemcachedProvider;
 import org.gluu.service.cache.RedisConfiguration;
+import org.gluu.service.cache.RedisProvider;
 import org.gluu.service.cache.RedisProviderFactory;
 import org.gluu.service.cdi.util.CdiUtil;
 import org.gluu.service.security.Secure;
@@ -180,8 +181,11 @@ public class JsonConfigurationAction implements Serializable {
 
 	private boolean canConnectToRedis() {
 		try {
-			CdiUtil.bean(RedisProviderFactory.class);
-			AbstractRedisProvider provider = RedisProviderFactory.create(cacheConfiguration.getRedisConfiguration());
+			RedisProvider provider = CdiUtil.bean(RedisProvider.class);
+			CacheConfiguration cConfiguration = this.cacheConfiguration;
+			cConfiguration.setRedisConfiguration(this.cacheConfiguration.getRedisConfiguration());
+			provider.setCacheConfiguration(cConfiguration);
+			provider.create();
 			if (provider.isConnected()) {
 				provider.destroy();
 				return true;
