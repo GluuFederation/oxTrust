@@ -6,27 +6,31 @@
 
 package org.gluu.oxtrust.service;
 
-import org.gluu.oxtrust.ldap.service.ConfigurationService;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
+import javax.ejb.Stateless;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.model.ApplicationType;
 import org.gluu.model.metric.MetricType;
 import org.gluu.model.metric.counter.CounterMetricEntry;
 import org.gluu.model.metric.ldap.MetricEntry;
 import org.gluu.oxtrust.ldap.service.ApplicationFactory;
-import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.model.AuthenticationChartDto;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.service.CacheService;
 import org.gluu.service.metric.inject.ReportMetric;
 import org.slf4j.Logger;
-
-import javax.ejb.Stateless;
-import javax.enterprise.inject.Instance;
-import javax.inject.Inject;
-import javax.inject.Named;
-import java.text.SimpleDateFormat;
-import java.util.*;
 
 /**
  * Store and retrieve metric
@@ -55,21 +59,16 @@ public class MetricService extends org.gluu.service.metric.MetricService {
 	private CacheService cacheService;
 
 	@Inject
-	private ConfigurationService configurationService;
-
-	@Inject
-	private OrganizationService organizationService;
-
-	@Inject
 	private AppConfiguration appConfiguration;
 
 	@Inject
 	@Named(ApplicationFactory.PERSISTENCE_METRIC_ENTRY_MANAGER_NAME)
-    @ReportMetric
-    private PersistenceEntryManager ldapEntryManager;
+	@ReportMetric
+	private PersistenceEntryManager ldapEntryManager;
 
 	public void initTimer() {
-		initTimer(this.appConfiguration.getMetricReporterInterval(), this.appConfiguration.getMetricReporterKeepDataDays());
+		initTimer(this.appConfiguration.getMetricReporterInterval(),
+				this.appConfiguration.getMetricReporterKeepDataDays());
 	}
 
 	@Override
@@ -149,7 +148,8 @@ public class MetricService extends org.gluu.service.metric.MetricService {
 
 		Date startDate = calendar.getTime();
 
-		Map<MetricType, List<? extends MetricEntry>> entries = findMetricEntry(applicationType, metricTypes, startDate, endDate);
+		Map<MetricType, List<? extends MetricEntry>> entries = findMetricEntry(applicationType, metricTypes, startDate,
+				endDate);
 
 		return entries;
 	}
@@ -248,9 +248,9 @@ public class MetricService extends org.gluu.service.metric.MetricService {
 		}
 	}
 
-    @Override
-    public PersistenceEntryManager getEntryManager() {
-        return ldapEntryManager;
-    }
+	@Override
+	public PersistenceEntryManager getEntryManager() {
+		return ldapEntryManager;
+	}
 
 }

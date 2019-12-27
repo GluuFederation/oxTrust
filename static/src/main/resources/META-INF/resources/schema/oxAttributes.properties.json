@@ -18,22 +18,6 @@
             "id": "keepClientAuthorizationAfterExpiration",
             "description": "Keep Client Authorization After Expiration.",
             "type": "boolean"
-       },
-       "allowSpontaneousScopes": {
-           "id": "allowSpontaneousScopes",
-           "description": "Whether spontaneous scopes are allowed",
-           "type": "boolean"
-       },
-       "spontaneousScopes": {
-           "id":"spontaneousScopes",
-           "type": "array",
-           "minItems": 0,
-           "uniqueItems": true,
-           "additionalItems": true,
-               "items": {
-               "type": "string",
-               "minLength": 1
-           }
        }
     }
 }
