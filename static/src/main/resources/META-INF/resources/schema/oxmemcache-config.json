@@ -120,7 +120,6 @@
 					"description": "Redis password",
 					"title": "password",
 					"type": "string",
-					"required":false,
 					"minLength": 1
 				},
 				"defaultPutExpiration": {
