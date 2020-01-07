@@ -316,7 +316,7 @@ public class UpdateAttributeAction implements Serializable {
 			attribute.setSaml2Uri("urn:oid:" + attributeName);
 		}
 
-		if (dataSourceTypeService.isLDAP()) {
+		if (dataSourceTypeService.isLDAP(attributeService.getDnForAttribute(null))) {
 			String attributeOrigin = determineOrigin(attributeName);
 			if (StringHelper.isEmpty(attributeOrigin)) {
 				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to determine object class by attribute name");
@@ -348,7 +348,7 @@ public class UpdateAttributeAction implements Serializable {
 	}
 
 	private boolean validateAttributeDefinition(String attributeName) {
-		if (dataSourceTypeService.isLDAP()) {
+		if (dataSourceTypeService.isLDAP(attributeService.getDnForAttribute(null))) {
 			boolean containsAttribute = schemaService.containsAttributeTypeInSchema(attributeName);
 			if (!containsAttribute) {
 				facesMessages.add(FacesMessage.SEVERITY_ERROR,

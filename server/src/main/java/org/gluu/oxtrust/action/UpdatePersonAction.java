@@ -498,7 +498,8 @@ public class UpdatePersonAction implements Serializable {
 						this.person.getUid());
 				return OxTrustConstants.RESULT_FAILURE;
 			}
-			if (appConfiguration.getEnforceEmailUniqueness() && !dataSourceTypeService.isLDAP()) {
+			if (appConfiguration.getEnforceEmailUniqueness()
+					&& !dataSourceTypeService.isLDAP(personService.getDnForPerson(null))) {
 				if (!userEmailIsUniqAtCreationTime(this.person.getAttribute(MAIL))) {
 					facesMessages.add(FacesMessage.SEVERITY_ERROR,
 							"#{msg['UpdatePersonAction.faileUpdateUserMailidExist']} %s",
@@ -513,7 +514,8 @@ public class UpdatePersonAction implements Serializable {
 						this.person.getUid());
 				return OxTrustConstants.RESULT_FAILURE;
 			}
-			if (appConfiguration.getEnforceEmailUniqueness() && !dataSourceTypeService.isLDAP()) {
+			if (appConfiguration.getEnforceEmailUniqueness()
+					&& !dataSourceTypeService.isLDAP(personService.getDnForPerson(null))) {
 				if (!userEmailIsUniqAtEditionTime(this.person.getAttribute(MAIL))) {
 					facesMessages.add(FacesMessage.SEVERITY_ERROR,
 							"#{msg['UpdatePersonAction.faileUpdateUserMailidExist']} %s",
@@ -551,8 +553,7 @@ public class UpdatePersonAction implements Serializable {
 				if (runScript) {
 					externalUpdateUserService.executeExternalPostUpdateUserMethods(this.person);
 				}
-			}
-			catch (DuplicateEmailException ex) {
+			} catch (DuplicateEmailException ex) {
 				log.error("Failed to update person {}", inum, ex);
 				facesMessages.add(FacesMessage.SEVERITY_ERROR, ex.getMessage());
 				return OxTrustConstants.RESULT_FAILURE;
@@ -601,8 +602,7 @@ public class UpdatePersonAction implements Serializable {
 				log.error("Failed to add new person {}", this.person.getInum(), ex);
 				facesMessages.add(FacesMessage.SEVERITY_ERROR, ex.getMessage());
 				return OxTrustConstants.RESULT_FAILURE;
-			}
-			catch (Exception ex) {
+			} catch (Exception ex) {
 				log.error("Failed to add new person {}", this.person.getInum(), ex);
 				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new person'");
 				return OxTrustConstants.RESULT_FAILURE;

@@ -98,7 +98,7 @@ public class UserProfileAction implements Serializable {
 
 	@Inject
 	private ExternalUpdateUserService externalUpdateUserService;
-	
+
 	@Inject
 	private DataSourceTypeService dataSourceTypeService;
 
@@ -157,7 +157,8 @@ public class UserProfileAction implements Serializable {
 
 	public String update() {
 		try {
-			if (appConfiguration.getEnforceEmailUniqueness() && !dataSourceTypeService.isLDAP()) {
+			if (appConfiguration.getEnforceEmailUniqueness()
+					&& !dataSourceTypeService.isLDAP(personService.getDnForPerson(null))) {
 				if (!userEmailIsUniqAtEditionTime(this.person.getAttribute("mail"))) {
 					facesMessages.add(FacesMessage.SEVERITY_ERROR,
 							"#{msg['UpdatePersonAction.faileUpdateUserMailidExist']} %s", person.getMail());
@@ -188,19 +189,16 @@ public class UserProfileAction implements Serializable {
 			if (runScript) {
 				externalUpdateUserService.executeExternalPostUpdateUserMethods(this.person);
 			}
-		}
-		catch (DuplicateEmailException ex) {
+		} catch (DuplicateEmailException ex) {
 			log.error("Failed to update profile {}", person.getInum(), ex);
-			facesMessages.add(FacesMessage.SEVERITY_ERROR,ex.getMessage());
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, ex.getMessage());
 			return OxTrustConstants.RESULT_FAILURE;
-		}
-		catch (BasePersistenceException ex) {
+		} catch (BasePersistenceException ex) {
 			log.error("Failed to update profile {}", person.getInum(), ex);
 			facesMessages.add(FacesMessage.SEVERITY_ERROR,
 					"Failed to update profile '#{userProfileAction.person.displayName}'");
 			return OxTrustConstants.RESULT_FAILURE;
-		}
-		catch (Exception ex) {
+		} catch (Exception ex) {
 			log.error("Failed to update profile {}", person.getInum(), ex);
 			facesMessages.add(FacesMessage.SEVERITY_ERROR,
 					"Failed to update profile '#{userProfileAction.person.displayName}'");
