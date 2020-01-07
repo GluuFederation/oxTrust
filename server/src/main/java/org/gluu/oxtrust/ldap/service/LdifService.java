@@ -13,18 +13,16 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.ldap.impl.LdifDataUtility;
 import org.gluu.persist.ldap.operation.LdapOperationService;
+import org.gluu.persist.model.AttributeData;
+import org.gluu.persist.operation.PersistenceOperationService;
 import org.slf4j.Logger;
 
 import com.unboundid.ldap.sdk.Attribute;
@@ -33,8 +31,6 @@ import com.unboundid.ldap.sdk.LDAPConnection;
 import com.unboundid.ldap.sdk.LDAPException;
 import com.unboundid.ldap.sdk.ResultCode;
 import com.unboundid.ldif.LDIFReader;
-import org.gluu.persist.model.AttributeData;
-import org.gluu.persist.operation.PersistenceOperationService;
 
 /**
  * Provides operations with LDIF files
@@ -46,9 +42,6 @@ import org.gluu.persist.operation.PersistenceOperationService;
 @Named("ldifService")
 public class LdifService implements Serializable {
 
-	private static final String SEPERATOR = ":";
-	private static final String CLOSE = "]";
-	private static final String OPEN = "[";
 	private static final String LINE_SEPARATOR = "line.separator";
 
 	private static final long serialVersionUID = 6690460114767359078L;
@@ -58,12 +51,15 @@ public class LdifService implements Serializable {
 
 	@Inject
 	private DataSourceTypeService dataSourceTypeService;
+	
+	@Inject
+	private AttributeService attributeService;
 
 	@Inject
 	private PersistenceEntryManager persistenceManager;
 
 	public ResultCode importLdifFileInLdap(InputStream is) throws LDAPException {
-		if (dataSourceTypeService.isLDAP()) {
+		if (dataSourceTypeService.isLDAP(attributeService.getDnForAttribute(null))) {
 			ResultCode result = ResultCode.UNAVAILABLE;
 			PersistenceOperationService persistenceOperationService = persistenceManager.getOperationService();
 			LdapOperationService ldapOperationService = (LdapOperationService) persistenceOperationService;

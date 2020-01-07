@@ -7,7 +7,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.gluu.persist.PersistenceEntryManager;
-import org.gluu.persist.hybrid.impl.HybridEntryManagerFactory;
 import org.gluu.persist.ldap.impl.LdapEntryManagerFactory;
 
 @Stateless
@@ -19,18 +18,8 @@ public class DataSourceTypeService implements Serializable {
 	@Inject
 	private PersistenceEntryManager entryManager;
 
-	public boolean isLDAP() {
-		if (entryManager.getPersistenceType(null).equals(LdapEntryManagerFactory.PERSISTANCE_TYPE)) {
-			return true;
-		}
-		return false;
-	}
-
-	public boolean isHyBird() {
-		if (entryManager.getPersistenceType(null).equals(HybridEntryManagerFactory.PERSISTANCE_TYPE)) {
-			return true;
-		}
-		return false;
+	public boolean isLDAP(String key) {
+		return entryManager.getPersistenceType(key).equals(LdapEntryManagerFactory.PERSISTANCE_TYPE);
 	}
 
 }
