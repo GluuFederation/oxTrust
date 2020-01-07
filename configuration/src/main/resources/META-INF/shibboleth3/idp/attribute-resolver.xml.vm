@@ -44,7 +44,7 @@
     <!-- ========================================== -->
     <!--      Data Connectors                       -->
     <!-- ========================================== -->
-#if( $resovlerParams.persistenceType.equals('couchbase') || $resovlerParams.persistenceType.equals('hybrid') )
+#if( $resovlerParams.persistenceType.equals('couchbase') )
     <resolver:DataConnector id="siteDataConnector" xsi:type="dc:RelationalDatabase">
         <dc:BeanManagedConnection>siteDataSource</dc:BeanManagedConnection>
 
