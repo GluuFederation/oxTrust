@@ -586,7 +586,10 @@ public class Shibboleth3ConfService implements Serializable {
 		attributeResolverParams.put("attributes", nameIdAttributes);
 
 		String baseUserDn = personService.getDnForPerson(null);
-		attributeResolverParams.put("persistenceType", persistenceEntryManager.getPersistenceType(baseUserDn));
+		String persistenceType = persistenceEntryManager.getPersistenceType(baseUserDn);
+
+		log.debug(">>>>>>>>>> Shibboleth3ConfService.initAttributeResolverParamMap() - Persistance type: '{}'", persistenceType);
+		attributeResolverParams.put("persistenceType", persistenceType);
 		return attributeResolverParams;
 	}
 
