@@ -29,7 +29,6 @@ import org.gluu.model.GluuUserRole;
 import org.gluu.model.ImapPassword;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.ConfigurationService;
-import org.gluu.oxtrust.ldap.service.DataSourceTypeService;
 import org.gluu.oxtrust.ldap.service.ImageService;
 import org.gluu.oxtrust.ldap.service.ImapDataService;
 import org.gluu.oxtrust.ldap.service.OxTrustAuditService;
@@ -40,6 +39,7 @@ import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.service.external.ExternalUpdateUserService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.exception.BasePersistenceException;
+import org.gluu.service.DataSourceTypeService;
 import org.gluu.service.security.Secure;
 import org.slf4j.Logger;
 

@@ -23,6 +23,7 @@ import org.gluu.persist.ldap.impl.LdifDataUtility;
 import org.gluu.persist.ldap.operation.LdapOperationService;
 import org.gluu.persist.model.AttributeData;
 import org.gluu.persist.operation.PersistenceOperationService;
+import org.gluu.service.DataSourceTypeService;
 import org.slf4j.Logger;
 
 import com.unboundid.ldap.sdk.Attribute;
