@@ -46,6 +46,7 @@ import org.gluu.oxtrust.ldap.cache.model.GluuSimplePerson;
 import org.gluu.oxtrust.ldap.service.ApplicationFactory;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.ConfigurationService;
+import org.gluu.oxtrust.ldap.service.DataSourceTypeService;
 import org.gluu.oxtrust.ldap.service.EncryptionService;
 import org.gluu.oxtrust.ldap.service.InumService;
 import org.gluu.oxtrust.ldap.service.PersonService;
@@ -142,6 +143,9 @@ public class CacheRefreshTimer {
 
 	@Inject
 	private ObjectSerializationService objectSerializationService;
+	
+	@Inject
+	private DataSourceTypeService dataSourceTypeService;
 
 	private AtomicBoolean isActive;
 	private long lastFinishedTime;
@@ -268,25 +272,29 @@ public class CacheRefreshTimer {
 		CacheRefreshUpdateMethod updateMethod = getUpdateMethod(cacheRefreshConfiguration);
 
 		// Prepare and check connections to LDAP servers
-		LdapServerConnection[] sourceServerConnections = prepareLdapServerConnections(cacheRefreshConfiguration,
+		DbServerConnection[] sourceServerConnections = prepareLdapServerConnections(cacheRefreshConfiguration,
 				cacheRefreshConfiguration.getSourceConfigs());
 
-		LdapServerConnection inumDbServerConnection;
+		DbServerConnection inumDbServerConnection;
 		if (cacheRefreshConfiguration.isDefaultInumServer()) {
 			GluuLdapConfiguration ldapInumConfiguration = new GluuLdapConfiguration();
 			ldapInumConfiguration.setConfigId("local_inum");
 			ldapInumConfiguration.setBaseDNsStringsList(
 					Arrays.asList(new String[] { OxTrustConstants.CACHE_REFRESH_DEFAULT_BASE_DN }));
-
-			inumDbServerConnection = prepareLdapServerConnection(cacheRefreshConfiguration, ldapInumConfiguration,
-					true);
+			if (dataSourceTypeService.isLDAP(OxTrustConstants.CACHE_REFRESH_DEFAULT_BASE_DN)) {
+				inumDbServerConnection = prepareLdapServerConnection(cacheRefreshConfiguration, ldapInumConfiguration,
+						true);
+			} else {
+				String ldapConfig = ldapInumConfiguration.getConfigId();
+				inumDbServerConnection = new DbServerConnection(ldapConfig, ldapEntryManager, getBaseDNs(ldapInumConfiguration));
+			}
 		} else {
 			inumDbServerConnection = prepareLdapServerConnection(cacheRefreshConfiguration,
 					cacheRefreshConfiguration.getInumConfig());
 		}
 
 		boolean isVdsUpdate = CacheRefreshUpdateMethod.VDS.equals(updateMethod);
-		LdapServerConnection targetServerConnection = null;
+		DbServerConnection targetServerConnection = null;
 		if (isVdsUpdate) {
 			targetServerConnection = prepareLdapServerConnection(cacheRefreshConfiguration,
 					cacheRefreshConfiguration.getTargetConfig());
@@ -329,8 +337,8 @@ public class CacheRefreshTimer {
 
 	@SuppressWarnings("unchecked")
 	private boolean detectChangedEntries(CacheRefreshConfiguration cacheRefreshConfiguration,
-			GluuConfiguration currentConfiguration, LdapServerConnection[] sourceServerConnections,
-			LdapServerConnection inumDbServerConnection, LdapServerConnection targetServerConnection,
+			GluuConfiguration currentConfiguration, DbServerConnection[] sourceServerConnections,
+			DbServerConnection inumDbServerConnection, DbServerConnection targetServerConnection,
 			CacheRefreshUpdateMethod updateMethod) throws SearchException {
 		boolean isVDSMode = CacheRefreshUpdateMethod.VDS.equals(updateMethod);
 
@@ -559,7 +567,7 @@ public class CacheRefreshTimer {
 	}
 
 	private List<String> updateTargetEntriesViaVDS(CacheRefreshConfiguration cacheRefreshConfiguration,
-			LdapServerConnection targetServerConnection, Set<String> changedInums) {
+			DbServerConnection targetServerConnection, Set<String> changedInums) {
 		List<String> result = new ArrayList<String>();
 
 		PersistenceEntryManager targetPersistenceEntryManager = targetServerConnection.getPersistenceEntryManager();
@@ -750,7 +758,7 @@ public class CacheRefreshTimer {
 		return result;
 	}
 
-	private Pair<List<String>, List<String>> removeTargetEntries(LdapServerConnection inumDbServerConnection,
+	private Pair<List<String>, List<String>> removeTargetEntries(DbServerConnection inumDbServerConnection,
 			PersistenceEntryManager targetPersistenceEntryManager, List<GluuSimplePerson> removedPersons,
 			HashMap<String, GluuInumMap> inumInumMap) {
 
@@ -838,7 +846,7 @@ public class CacheRefreshTimer {
 	}
 
 	private List<GluuInumMap> loadInumServerEntries(CacheRefreshConfiguration cacheRefreshConfiguration,
-			LdapServerConnection inumDbServerConnection) {
+			DbServerConnection inumDbServerConnection) {
 		PersistenceEntryManager inumDbPersistenceEntryManager = inumDbServerConnection.getPersistenceEntryManager();
 		String inumbaseDn = inumDbServerConnection.getBaseDns()[0];
 
@@ -853,7 +861,7 @@ public class CacheRefreshTimer {
 	}
 
 	private List<GluuSimplePerson> loadSourceServerEntriesWithoutLimits(
-			CacheRefreshConfiguration cacheRefreshConfiguration, LdapServerConnection[] sourceServerConnections)
+			CacheRefreshConfiguration cacheRefreshConfiguration, DbServerConnection[] sourceServerConnections)
 			throws SearchException {
 		Filter customFilter = cacheRefreshService.createFilter(cacheRefreshConfiguration.getCustomLdapFilter());
 		String[] keyAttributes = getCompoundKeyAttributes(cacheRefreshConfiguration);
@@ -866,7 +874,7 @@ public class CacheRefreshTimer {
 		Set<String> addedDns = new HashSet<String>();
 
 		List<GluuSimplePerson> sourcePersons = new ArrayList<GluuSimplePerson>();
-		for (LdapServerConnection sourceServerConnection : sourceServerConnections) {
+		for (DbServerConnection sourceServerConnection : sourceServerConnections) {
 			String sourceServerName = sourceServerConnection.getSourceServerName();
 
 			PersistenceEntryManager sourcePersistenceEntryManager = sourceServerConnection.getPersistenceEntryManager();
@@ -900,7 +908,7 @@ public class CacheRefreshTimer {
 	}
 
 	private List<GluuSimplePerson> loadSourceServerEntries(CacheRefreshConfiguration cacheRefreshConfiguration,
-			LdapServerConnection[] sourceServerConnections) throws SearchException {
+			DbServerConnection[] sourceServerConnections) throws SearchException {
 		Filter customFilter = cacheRefreshService.createFilter(cacheRefreshConfiguration.getCustomLdapFilter());
 		String[] keyAttributes = getCompoundKeyAttributes(cacheRefreshConfiguration);
 		String[] keyAttributesWithoutValues = getCompoundKeyAttributesWithoutValues(cacheRefreshConfiguration);
@@ -913,7 +921,7 @@ public class CacheRefreshTimer {
 		Set<String> addedDns = new HashSet<String>();
 
 		List<GluuSimplePerson> sourcePersons = new ArrayList<GluuSimplePerson>();
-		for (LdapServerConnection sourceServerConnection : sourceServerConnections) {
+		for (DbServerConnection sourceServerConnection : sourceServerConnections) {
 			String sourceServerName = sourceServerConnection.getSourceServerName();
 
 			PersistenceEntryManager sourcePersistenceEntryManager = sourceServerConnection.getPersistenceEntryManager();
@@ -983,7 +991,7 @@ public class CacheRefreshTimer {
 	}
 
 	private HashMap<CacheCompoundKey, GluuInumMap> addNewInumServerEntries(
-			CacheRefreshConfiguration cacheRefreshConfiguration, LdapServerConnection inumDbServerConnection,
+			CacheRefreshConfiguration cacheRefreshConfiguration, DbServerConnection inumDbServerConnection,
 			Map<CacheCompoundKey, GluuSimplePerson> sourcePersonCacheCompoundKeyMap,
 			HashMap<CacheCompoundKey, GluuInumMap> primaryKeyAttrValueInumMap) {
 		PersistenceEntryManager inumDbPersistenceEntryManager = inumDbServerConnection.getPersistenceEntryManager();
@@ -1027,7 +1035,7 @@ public class CacheRefreshTimer {
 		return result;
 	}
 
-	private HashMap<String, Integer> getSourcePersonsHashCodesMap(LdapServerConnection inumDbServerConnection,
+	private HashMap<String, Integer> getSourcePersonsHashCodesMap(DbServerConnection inumDbServerConnection,
 			Map<CacheCompoundKey, GluuSimplePerson> sourcePersonCacheCompoundKeyMap,
 			HashMap<CacheCompoundKey, GluuInumMap> primaryKeyAttrValueInumMap) {
 		PersistenceEntryManager inumDbPersistenceEntryManager = inumDbServerConnection.getPersistenceEntryManager();
@@ -1108,9 +1116,9 @@ public class CacheRefreshTimer {
 		return result;
 	}
 
-	private LdapServerConnection[] prepareLdapServerConnections(CacheRefreshConfiguration cacheRefreshConfiguration,
+	private DbServerConnection[] prepareLdapServerConnections(CacheRefreshConfiguration cacheRefreshConfiguration,
 			List<GluuLdapConfiguration> ldapConfigurations) {
-		LdapServerConnection[] ldapServerConnections = new LdapServerConnection[ldapConfigurations.size()];
+		DbServerConnection[] ldapServerConnections = new DbServerConnection[ldapConfigurations.size()];
 		for (int i = 0; i < ldapConfigurations.size(); i++) {
 			ldapServerConnections[i] = prepareLdapServerConnection(cacheRefreshConfiguration,
 					ldapConfigurations.get(i));
@@ -1122,17 +1130,17 @@ public class CacheRefreshTimer {
 		return ldapServerConnections;
 	}
 
-	private LdapServerConnection prepareLdapServerConnection(CacheRefreshConfiguration cacheRefreshConfiguration,
+	private DbServerConnection prepareLdapServerConnection(CacheRefreshConfiguration cacheRefreshConfiguration,
 			GluuLdapConfiguration ldapConfiguration) {
 		return prepareLdapServerConnection(cacheRefreshConfiguration, ldapConfiguration, false);
 	}
 
-	private LdapServerConnection prepareLdapServerConnection(CacheRefreshConfiguration cacheRefreshConfiguration,
+	private DbServerConnection prepareLdapServerConnection(CacheRefreshConfiguration cacheRefreshConfiguration,
 			GluuLdapConfiguration ldapConfiguration, boolean useLocalConnection) {
 		String ldapConfig = ldapConfiguration.getConfigId();
 
 		if (useLocalConnection) {
-			return new LdapServerConnection(ldapConfig, ldapEntryManager, getBaseDNs(ldapConfiguration));
+			return new DbServerConnection(ldapConfig, ldapEntryManager, getBaseDNs(ldapConfiguration));
 		}
 		PersistenceEntryManagerFactory entryManagerFactory = applicationFactory
 				.getPersistenceEntryManagerFactory(LdapEntryManagerFactory.class);
@@ -1160,11 +1168,11 @@ public class CacheRefreshTimer {
 			return null;
 		}
 
-		return new LdapServerConnection(ldapConfig, customPersistenceEntryManager, getBaseDNs(ldapConfiguration));
+		return new DbServerConnection(ldapConfig, customPersistenceEntryManager, getBaseDNs(ldapConfiguration));
 	}
 
-	private void closeLdapServerConnection(LdapServerConnection... ldapServerConnections) {
-		for (LdapServerConnection ldapServerConnection : ldapServerConnections) {
+	private void closeLdapServerConnection(DbServerConnection... ldapServerConnections) {
+		for (DbServerConnection ldapServerConnection : ldapServerConnections) {
 			if ((ldapServerConnection != null) && (ldapServerConnection.getPersistenceEntryManager() != null)) {
 				ldapServerConnection.getPersistenceEntryManager().destroy();
 			}
@@ -1207,12 +1215,12 @@ public class CacheRefreshTimer {
 		return FilenameUtils.concat(cacheRefreshConfiguration.getSnapshotFolder(), "inum_cache.dat");
 	}
 
-	private class LdapServerConnection {
+	private class DbServerConnection {
 		private String sourceServerName;
 		private PersistenceEntryManager ldapEntryManager;
 		private String[] baseDns;
 
-		protected LdapServerConnection(String sourceServerName, PersistenceEntryManager ldapEntryManager,
+		protected DbServerConnection(String sourceServerName, PersistenceEntryManager ldapEntryManager,
 				String[] baseDns) {
 			this.sourceServerName = sourceServerName;
 			this.ldapEntryManager = ldapEntryManager;
