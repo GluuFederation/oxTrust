@@ -40,16 +40,6 @@
                 // TODO: Find a way how to expand panel in RichFaces 4. Maybe we can do that on server side
             }
         }
-        
-        function calcTime() {
-        	var spanvalue = document.querySelector('[id$=":lastrun"]');
-        	console.log("spanvalue : " + spanvalue.innerHTML);
-        	if(spanvalue.innerHTML != ''){
-				var lastRunValue = new Date(spanvalue.innerHTML + " UTC");
-				var displayLastRun = (lastRunValue.toString()).replace(/GMT.+/,"");	
-				spanvalue.innerHTML = displayLastRun; 
-			}   
-		}
     </h:outputScript>
 	<ox:changeBindPasswordDialog id="bindPasswordDialogId"
 		label="#{msg['organization.changeBackend']} '#{_configureCacheRefreshAction.activeLdapConfig.configId}' #{msg['organization.bindPassword']}"
@@ -302,7 +292,6 @@
 	<ui:include
 		src="/WEB-INF/incl/organization/cacheRefreshInterceptorValidationDialog.xhtml" />
 	<h:outputScript>
-    calcTime();
     </h:outputScript>
 	<script>
 		$('#cacheRefreshFormtab a').click(function(e) {
