@@ -302,6 +302,11 @@ public class UpdatePersonAction implements Serializable {
 					gluuDeviceDataBean.setCreationDate(DASH);
 					deviceDataMap.add(gluuDeviceDataBean);
 				} else if (firstPart.equalsIgnoreCase(TOTP) || firstPart.equalsIgnoreCase(HOTP)) {
+					gluuDeviceDataBean.setNickName(firstPart);
+					gluuDeviceDataBean.setModality(TOTP+"/"+HOTP);
+					gluuDeviceDataBean.setId(args[1]);
+					gluuDeviceDataBean.setCreationDate(DASH);
+					deviceDataMap.add(gluuDeviceDataBean);
 				} else {
 					gluuDeviceDataBean.setNickName(firstPart);
 					gluuDeviceDataBean.setModality(DASH);
