@@ -14,31 +14,45 @@
 			if="#{ updatePersonAction.person == null}" onPostback="false" />
 	</f:metadata>
 	<ui:define name="body">
-		<h:panelGroup id="formArea" layout="block">
-			<b:dateTimePicker id="calendar" renderLabel="false"
-				mode="toggle-icon" rendered="false" format="DD.MM.YYYY">
-			</b:dateTimePicker>
-			<ui:decorate template="/WEB-INF/incl/person/userForm.xhtml">
-				<ui:param name="_person" value="#{updatePersonAction.person}" />
-				<ui:param name="_customAttributeAction"
-					value="#{customAttributeAction}" />
-				<ui:param name="_new" value="true" />
-				<ui:define name="controlButtons">
-					<div class="box-footer">
-						<h:panelGroup id="updateButtons" layout="block"
-							style="margin-bottom:6px;">
-							<b:commandButton action="#{updatePersonAction.save}"
-								value="#{msg['person.add']}"
-								styleClass="btn btn-primary saveButton" ajax="true"
-								update="@form" look="primary" icon="save" />
-							<b:commandButton action="#{updatePersonAction.cancel}"
-								value="#{msg['person.cancel']}" styleClass="btn btn-primary"
-								ajax="true" update="@form" look="primary" icon="trash"
-								immediate="true" style="margin-left:3px;" />
-						</h:panelGroup>
-					</div>
-				</ui:define>
-			</ui:decorate>
-		</h:panelGroup>
+		<section class="content-header">
+			<h1 style="color: #333;">
+				#{msg['person.users']} <small><i class="fa fa-caret-right"
+					style="color: #333 !important;"></i> #{(updatePersonAction.update)
+					? msg['person.updateUser'] : msg['person.addUser'] }</small>
+			</h1>
+			<ol class="breadcrumb">
+				<li><a href="#{request.contextPath}/home.htm"><i
+						class="fa fa-home"></i></a></li>
+				<li class="organization/configuration">#{msg['person.addUpdateUser']}</li>
+			</ol>
+		</section>
+		<section class="content">
+			<h:panelGroup id="formArea" layout="block">
+				<b:dateTimePicker id="calendar" renderLabel="false"
+					mode="toggle-icon" rendered="false" format="DD.MM.YYYY">
+				</b:dateTimePicker>
+				<ui:decorate template="/WEB-INF/incl/person/userForm.xhtml">
+					<ui:param name="_person" value="#{updatePersonAction.person}" />
+					<ui:param name="_customAttributeAction"
+						value="#{customAttributeAction}" />
+					<ui:param name="_new" value="true" />
+					<ui:define name="controlButtons">
+						<div class="box-footer">
+							<h:panelGroup id="updateButtons" layout="block"
+								style="margin-bottom:6px;">
+								<b:commandButton action="#{updatePersonAction.save}"
+									value="#{msg['person.add']}"
+									styleClass="btn btn-primary saveButton" ajax="true"
+									update="@form" look="primary" icon="save" />
+								<b:commandButton action="#{updatePersonAction.cancel}"
+									value="#{msg['person.cancel']}" styleClass="btn btn-primary"
+									ajax="true" update="@form" look="primary" icon="trash"
+									immediate="true" style="margin-left:3px;" />
+							</h:panelGroup>
+						</div>
+					</ui:define>
+				</ui:decorate>
+			</h:panelGroup>
+		</section>
 	</ui:define>
 </ui:composition>

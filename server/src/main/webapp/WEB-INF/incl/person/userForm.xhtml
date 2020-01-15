@@ -167,19 +167,7 @@
 		
     </h:outputScript>
 	<ui:include src="/WEB-INF/incl/person/u2fPage.xhtml" />
-	<section class="content-header">
-	<h1 style="color: #333;">
-		#{msg['person.users']} <small><i class="fa fa-caret-right"
-			style="color: #333 !important;"></i> #{(updatePersonAction.update) ?
-			msg['person.updateUser'] : msg['person.addUser'] }</small>
-	</h1>
-	<ol class="breadcrumb">
-		<li><a href="#{request.contextPath}/home.htm"><i
-				class="fa fa-home"></i></a></li>
-		<li class="organization/configuration">#{msg['person.addUpdateUser']}</li>
-	</ol>
-	</section>
-	<section class="content"> <h:form id="PForm">
+	<h:form id="PForm">
 		<b:panel title="Person Add Form" look="primary"
 			iconAwesome="fa-user-plus" collapsible="false">
 			<div class="row"
@@ -439,7 +427,7 @@
 							<b:tab rendered="#{_list.size() > 1}"
 								title="#{_customAttributeAction.originDisplayNames[_list.get(1).key]}">
 								<b:label severity="warning"
-										text="Only active attibute are displayed." />
+									text="Only active attibute are displayed." />
 								<div class="row" style="margin-left: 5px;">
 									<a4j:repeat var="attr" value="#{_list.get(1).value}">
 										<ui:fragment rendered="#{attr.status.value eq 'active'}">
@@ -561,5 +549,5 @@
 			</div>
 			<ui:insert name="controlButtons" />
 		</b:panel>
-	</h:form> </section>
+	</h:form>
 </ui:composition>
