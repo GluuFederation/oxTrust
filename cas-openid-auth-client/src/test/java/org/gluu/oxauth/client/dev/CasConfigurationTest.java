@@ -2,15 +2,15 @@ package org.gluu.oxauth.client.dev;
 
 import java.io.IOException;
 
+import org.gluu.conf.service.ConfigurationFactory;
 import org.gluu.oxauth.cas.auth.client.AuthClient;
 import org.gluu.oxauth.cas.auth.conf.CasAppConfiguration;
 import org.gluu.oxauth.cas.auth.conf.CasLdapAppConfiguration;
-import org.gluu.oxauth.client.conf.Configuration;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-public class CasConfigurationTest extends Configuration<CasAppConfiguration, CasLdapAppConfiguration> {
+public class CasConfigurationTest extends ConfigurationFactory<CasAppConfiguration, CasLdapAppConfiguration> {
 
 	@Override
 	protected String getDefaultConfigurationFileName() {

@@ -6,7 +6,7 @@
 
 package org.gluu.oxauth.cas.auth.conf;
 
-import org.gluu.oxauth.client.conf.Configuration;
+import org.gluu.conf.service.ConfigurationFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,15 +16,15 @@ import org.slf4j.LoggerFactory;
  * @author Yuriy Movchan
  * @version 0.1, 03/25/2016
  */
-public final class CasConfiguration extends Configuration<CasAppConfiguration, CasLdapAppConfiguration> {
+public final class CasConfigurationFactory extends ConfigurationFactory<CasAppConfiguration, CasLdapAppConfiguration> {
 
-	private final Logger logger = LoggerFactory.getLogger(CasConfiguration.class);
+	private final Logger logger = LoggerFactory.getLogger(CasConfigurationFactory.class);
 
 	private static class ConfigurationSingleton {
-		static CasConfiguration INSTANCE = new CasConfiguration();
+		static CasConfigurationFactory INSTANCE = new CasConfigurationFactory();
 	}
 
-	public static CasConfiguration instance() {
+	public static CasConfigurationFactory instance() {
 		return ConfigurationSingleton.INSTANCE;
 	}
 

@@ -7,7 +7,7 @@
 package org.gluu.oxauth.cas.auth.client;
 
 import org.gluu.oxauth.cas.auth.conf.CasAppConfiguration;
-import org.gluu.oxauth.cas.auth.conf.CasConfiguration;
+import org.gluu.oxauth.cas.auth.conf.CasConfigurationFactory;
 import org.gluu.oxauth.cas.auth.conf.CasLdapAppConfiguration;
 import org.gluu.oxauth.cas.auth.login.flow.ClientAction;
 import org.gluu.oxauth.client.OpenIdClient;
@@ -25,7 +25,7 @@ public class AuthClient extends OpenIdClient<CasAppConfiguration, CasLdapAppConf
 	private final Logger logger = LoggerFactory.getLogger(ClientAction.class);
 
 	public AuthClient() {
-		super(CasConfiguration.instance());
+		super(CasConfigurationFactory.instance());
 	}
 
 	public boolean isOpenIdDefaultAuthenticator() {

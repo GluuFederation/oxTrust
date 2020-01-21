@@ -170,6 +170,11 @@
 				<artifactId>oxauth-persistence-model</artifactId>
 				<version>${oxauth.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>org.gluu</groupId>
+				<artifactId>oxcore-standalone</artifactId>
+				<version>${oxauth.version}</version>
+			</dependency>
 
 			<dependency>
 				<groupId>org.gluu</groupId>
