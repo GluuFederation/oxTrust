@@ -6,9 +6,9 @@
 
 package org.gluu.oxauth.client.util;
 
+import org.gluu.conf.model.AppConfiguration;
+import org.gluu.conf.model.AppConfigurationEntry;
 import org.gluu.oxauth.client.OpenIdClient;
-import org.gluu.oxauth.client.conf.AppConfiguration;
-import org.gluu.oxauth.client.conf.LdapAppConfiguration;
 import org.gluu.oxauth.client.OpenIdConfigurationResponse;
 import org.gluu.oxauth.model.util.Util;
 import org.gluu.util.StringHelper;
@@ -74,7 +74,7 @@ public final class Configuration {
     	SamlConfiguration samlConfiguration = SamlConfiguration.instance();
     	this.appConfiguration = samlConfiguration.getAppConfiguration();
 
-    	OpenIdClient<AppConfiguration, LdapAppConfiguration> openIdClient = new OpenIdClient<AppConfiguration, LdapAppConfiguration>(samlConfiguration);
+    	OpenIdClient<AppConfiguration, AppConfigurationEntry> openIdClient = new OpenIdClient<AppConfiguration, AppConfigurationEntry>(samlConfiguration);
     	openIdClient.init();
 
     	this.openIdConfiguration = openIdClient.getOpenIdConfiguration();

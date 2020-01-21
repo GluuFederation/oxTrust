@@ -12,7 +12,7 @@
  */
 package org.gluu.oxauth.cas.auth.conf;
 
-import org.gluu.oxauth.client.conf.AppConfiguration;
+import org.gluu.conf.model.AppConfiguration;
 
 /**
  * CAS application configuration

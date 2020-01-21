@@ -6,9 +6,9 @@
 
 package org.gluu.oxauth.client.util;
 
-import org.gluu.oxauth.client.conf.AppConfiguration;
-import org.gluu.oxauth.client.conf.Configuration;
-import org.gluu.oxauth.client.conf.LdapAppConfiguration;
+import org.gluu.conf.model.AppConfiguration;
+import org.gluu.conf.model.AppConfigurationEntry;
+import org.gluu.conf.service.ConfigurationFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
  * @author Yuriy Movchan
  * @version 0.1, 03/20/2013
  */
-public final class SamlConfiguration extends Configuration<AppConfiguration, LdapAppConfiguration> {
+public final class SamlConfiguration extends ConfigurationFactory<AppConfiguration, AppConfigurationEntry> {
 
 	@SuppressWarnings("unused")
 	private final Logger logger = LoggerFactory.getLogger(SamlConfiguration.class);
@@ -37,8 +37,8 @@ public final class SamlConfiguration extends Configuration<AppConfiguration, Lda
 	}
 
 	@Override
-	protected Class<LdapAppConfiguration> getAppConfigurationType() {
-		return LdapAppConfiguration.class;
+	protected Class<AppConfigurationEntry> getAppConfigurationType() {
+		return AppConfigurationEntry.class;
 	}
 
 	@Override

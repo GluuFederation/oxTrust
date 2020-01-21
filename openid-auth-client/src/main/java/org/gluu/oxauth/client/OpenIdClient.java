@@ -17,13 +17,13 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.gluu.oxauth.client.auth.principal.OpenIdCredentials;
 import org.gluu.oxauth.client.auth.user.CommonProfile;
 import org.gluu.oxauth.client.auth.user.UserProfile;
-import org.gluu.oxauth.client.conf.AppConfiguration;
-import org.gluu.oxauth.client.conf.ClaimToAttributeMapping;
-import org.gluu.oxauth.client.conf.Configuration;
-import org.gluu.oxauth.client.conf.LdapAppConfiguration;
 import org.gluu.oxauth.client.exception.CommunicationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.gluu.conf.model.AppConfiguration;
+import org.gluu.conf.model.AppConfigurationEntry;
+import org.gluu.conf.model.ClaimToAttributeMapping;
+import org.gluu.conf.service.ConfigurationFactory;
 import org.gluu.context.WebContext;
 import org.gluu.oxauth.client.AuthorizationRequest;
 import org.gluu.oxauth.client.EndSessionRequest;
@@ -58,7 +58,7 @@ import org.gluu.util.security.StringEncrypter.EncryptionException;
  * 
  * @author Yuriy Movchan 11/02/2015
  */
-public class OpenIdClient<C extends AppConfiguration, L extends LdapAppConfiguration> extends Initializable implements Client<UserProfile> {
+public class OpenIdClient<C extends AppConfiguration, L extends AppConfigurationEntry> extends Initializable implements Client<UserProfile> {
 
 	private final Logger logger = LoggerFactory.getLogger(OpenIdClient.class);
 
@@ -81,9 +81,9 @@ public class OpenIdClient<C extends AppConfiguration, L extends LdapAppConfigura
 
 	private OpenIdConfigurationResponse openIdConfiguration;
 
-	private Configuration<C, L> configuration;
+	private ConfigurationFactory<C, L> configuration;
 
-	public OpenIdClient(final Configuration<C, L> configuration) {
+	public OpenIdClient(final ConfigurationFactory<C, L> configuration) {
 		this.configuration = configuration;
 		this.appConfiguration = configuration.getAppConfiguration();
 	}

@@ -1,10 +1,10 @@
 package org.gluu.oxauth.cas.auth.conf;
 
-import org.gluu.oxauth.client.conf.LdapAppConfiguration;
+import org.gluu.conf.model.AppConfigurationEntry;
 import org.gluu.persist.annotation.AttributeName;
 import org.gluu.persist.annotation.JsonObject;
 
-public class CasLdapAppConfiguration extends LdapAppConfiguration {
+public class CasLdapAppConfiguration extends AppConfigurationEntry {
 
 	private static final long serialVersionUID = -7301311833970330177L;
 
