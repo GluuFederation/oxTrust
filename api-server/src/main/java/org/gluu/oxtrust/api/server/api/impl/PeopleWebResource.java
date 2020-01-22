@@ -10,6 +10,7 @@ import org.gluu.oxtrust.api.server.util.ApiConstants;
 import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.service.filter.ProtectedApi;
+import org.gluu.util.StringHelper;
 import org.slf4j.Logger;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -39,9 +40,9 @@ public class PeopleWebResource extends BaseWebResource {
 	}
 
 	@GET
-	@Operation(summary="Get people",description = "Get people")
+	@Operation(summary = "Get people", description = "Get people")
 	@ApiResponses(value = {
-            @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = GluuPersonApi[].class)), description = "Success"),
+			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = GluuPersonApi[].class)), description = "Success"),
 			@ApiResponse(responseCode = "500", description = "Server error") })
 	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response listPeople() {
@@ -57,9 +58,9 @@ public class PeopleWebResource extends BaseWebResource {
 
 	@GET
 	@Path(ApiConstants.SEARCH)
-	@Operation(summary="Search person",description = "Search person")
+	@Operation(summary = "Search person", description = "Search person")
 	@ApiResponses(value = {
-            @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = GluuPersonApi[].class)), description = "Success"),
+			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = GluuPersonApi[].class)), description = "Success"),
 			@ApiResponse(responseCode = "500", description = "Server error") })
 	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response searchPeople(@QueryParam(ApiConstants.SEARCH_PATTERN) @NotNull String pattern) {
@@ -75,9 +76,9 @@ public class PeopleWebResource extends BaseWebResource {
 
 	@GET
 	@Path(ApiConstants.INUM_PARAM_PATH)
-	@Operation(summary="Get person by inum",description = "Get a person by inum")
+	@Operation(summary = "Get person by inum", description = "Get a person by inum")
 	@ApiResponses(value = {
-            @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = GluuPersonApi.class)), description = "Success"),
+			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = GluuPersonApi.class)), description = "Success"),
 			@ApiResponse(responseCode = "500", description = "Server error") })
 	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response getPersonByInum(@PathParam(ApiConstants.INUM) @NotNull String inum) {
@@ -97,9 +98,9 @@ public class PeopleWebResource extends BaseWebResource {
 	}
 
 	@POST
-	@Operation(summary="Add person", description = "Add a person")
+	@Operation(summary = "Add person", description = "Add a person")
 	@ApiResponses(value = {
-            @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = GluuPersonApi.class)), description = "Success"),
+			@ApiResponse(responseCode = "201", content = @Content(schema = @Schema(implementation = GluuPersonApi.class)), description = "Success"),
 			@ApiResponse(responseCode = "500", description = "Server error") })
 	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response createPerson(GluuPersonApi person) {
@@ -107,11 +108,15 @@ public class PeopleWebResource extends BaseWebResource {
 		try {
 			Objects.requireNonNull(person, "Attempt to create null person");
 			GluuCustomPerson gluuPerson = copyAttributes(person);
-			String inum = personService.generateInumForNewPerson();
+			String inum = person.getInum();
+			if (StringHelper.isEmpty(inum)) {
+				inum = personService.generateInumForNewPerson();
+			}
 			gluuPerson.setDn(personService.getDnForPerson(inum));
 			gluuPerson.setInum(inum);
 			personService.addPerson(gluuPerson);
-			return Response.ok(convert(Arrays.asList(personService.getPersonByInum(inum))).get(0)).build();
+			return Response.status(Response.Status.CREATED)
+					.entity(convert(Arrays.asList(personService.getPersonByInum(inum))).get(0)).build();
 		} catch (Exception e) {
 			log(logger, e);
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
@@ -119,9 +124,9 @@ public class PeopleWebResource extends BaseWebResource {
 	}
 
 	@PUT
-	@Operation(summary="Update person", description = "Update a person")
+	@Operation(summary = "Update person", description = "Update a person")
 	@ApiResponses(value = {
-            @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = GluuPersonApi.class)), description = "Success"),
+			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = GluuPersonApi.class)), description = "Success"),
 			@ApiResponse(responseCode = "500", description = "Server error") })
 	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response updatePerson(GluuPersonApi person) {
@@ -149,7 +154,7 @@ public class PeopleWebResource extends BaseWebResource {
 
 	@DELETE
 	@Path(ApiConstants.INUM_PARAM_PATH)
-	@Operation(summary="Delete person",description = "Delete a person")
+	@Operation(summary = "Delete person", description = "Delete a person")
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Success"),
 			@ApiResponse(responseCode = "500", description = "Server error") })
 	@ProtectedApi(scopes = { WRITE_ACCESS })
@@ -168,16 +173,6 @@ public class PeopleWebResource extends BaseWebResource {
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 		}
 	}
-
-	//
-	//It is unclear what this API call does. We will comment it for now 
-	//and re-evaluate. 
-	//@DELETE
-	//@ProtectedApi(scopes = { WRITE_ACCESS })
-	//public Response deletePeople() {
-	//	return Response.status(Response.Status.UNAUTHORIZED).build();
-	//}
-	
 
 	private List<GluuPersonApi> convert(List<GluuCustomPerson> persons) {
 		List<GluuPersonApi> result = new ArrayList<GluuPersonApi>();

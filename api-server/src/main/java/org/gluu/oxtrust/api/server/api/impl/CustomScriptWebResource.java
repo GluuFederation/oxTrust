@@ -46,8 +46,8 @@ public class CustomScriptWebResource extends BaseWebResource {
 	@GET
 	@Operation(summary = "Get all custom scripts", description = "Get all custom scripts")
 	@ApiResponses(value = {
-            @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = CustomScript[].class)), description = "Success"),
-            @ApiResponse(responseCode = "500", description = "Server error")})
+			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = CustomScript[].class)), description = "Success"),
+			@ApiResponse(responseCode = "500", description = "Server error") })
 	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response listCustomScripts() {
 		log(logger, "Get all custom scripts");
@@ -64,8 +64,8 @@ public class CustomScriptWebResource extends BaseWebResource {
 	@Path(ApiConstants.TYPE_PATH + ApiConstants.TYPE_PARAM_PATH)
 	@Operation(summary = "Get person auth scripts", description = "Get person authentications scripts")
 	@ApiResponses(value = {
-            @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = CustomScript[].class)), description = "Success"),
-            @ApiResponse(responseCode = "500", description = "Server error")})
+			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = CustomScript[].class)), description = "Success"),
+			@ApiResponse(responseCode = "500", description = "Server error") })
 	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response listCustomScriptsByType(@PathParam(ApiConstants.TYPE) @NotNull String type) {
 		log(logger, "Get custom scripts of type: " + type);
@@ -87,10 +87,10 @@ public class CustomScriptWebResource extends BaseWebResource {
 
 	@GET
 	@Path(ApiConstants.INUM_PARAM_PATH)
-	@Operation(summary="Get scripts by inum",description = "Get scripts by inum")
+	@Operation(summary = "Get scripts by inum", description = "Get scripts by inum")
 	@ApiResponses(value = {
-            @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = CustomScript.class)), description = "Success"),
-            @ApiResponse(responseCode = "500", description = "Server error")})
+			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = CustomScript.class)), description = "Success"),
+			@ApiResponse(responseCode = "500", description = "Server error") })
 	@ProtectedApi(scopes = { READ_ACCESS })
 	public Response getCustomScriptsByInum(@PathParam(ApiConstants.INUM) @NotNull String inum) {
 		log(logger, "Get scripts by inum");
@@ -110,22 +110,21 @@ public class CustomScriptWebResource extends BaseWebResource {
 	@POST
 	@Operation(summary = "Add new custom script", description = "Add new custom script")
 	@ApiResponses(value = {
-            @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = CustomScript.class)), description = "Success"),
-            @ApiResponse(responseCode = "500", description = "Server error")})
+			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = CustomScript.class)), description = "Success"),
+			@ApiResponse(responseCode = "500", description = "Server error") })
 	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response createCustomScript(CustomScript customScript) {
 		log(logger, "Add new custom script ");
 		try {
 			Objects.requireNonNull(customScript, "Attempt to create null custom script");
-			if (StringHelper.isEmpty(customScript.getDn())) {
-				String inum = UUID.randomUUID().toString();
-				String dn = customScriptService.buildDn(inum);
-				customScript.setDn(dn);
-				customScript.setInum(inum);
-				customScriptService.add(customScript);
-				return Response.ok(customScriptService.getScriptByInum(inum)).build();
+			String inum = customScript.getInum();
+			if (StringHelper.isEmpty(inum)) {
+				inum = UUID.randomUUID().toString();
 			}
-			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+			customScript.setDn(customScriptService.buildDn(inum));
+			customScript.setInum(inum);
+			customScriptService.add(customScript);
+			return Response.ok(customScriptService.getScriptByInum(inum)).build();
 
 		} catch (Exception e) {
 			log(logger, e);
@@ -136,8 +135,8 @@ public class CustomScriptWebResource extends BaseWebResource {
 	@PUT
 	@Operation(summary = "Update custom script", description = "Update custom script")
 	@ApiResponses(value = {
-            @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = CustomScript.class)), description = "Success"),
-            @ApiResponse(responseCode = "500", description = "Server error")})
+			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = CustomScript.class)), description = "Success"),
+			@ApiResponse(responseCode = "500", description = "Server error") })
 	@ProtectedApi(scopes = { WRITE_ACCESS })
 	public Response updateCustomScript(CustomScript customScript) {
 		try {
