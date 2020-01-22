@@ -303,6 +303,12 @@ public class CustomAttributeAction implements Serializable {
 		}
 	}
 
+	public void handleMultiValuedAttributeRemoval(String inum, boolean canRemove) {
+		if (canRemove) {
+			removeCustomAttribute(inum);
+		}
+	}
+
 	private void deselectCustomAttributes(List<GluuCustomAttribute> customAttributes) {
 		for (GluuCustomAttribute customAttribute : customAttributes) {
 			String id = this.attributeIds.get(customAttribute);
@@ -415,7 +421,7 @@ public class CustomAttributeAction implements Serializable {
 	}
 
 	public List<String> getAttributeByOriginKeyList() {
-		facesMessages.add(FacesMessage.SEVERITY_ERROR, ""+attributeByOrigin.keySet().size());
+		facesMessages.add(FacesMessage.SEVERITY_ERROR, "" + attributeByOrigin.keySet().size());
 		return new ArrayList<>(attributeByOrigin.keySet());
 	}
 
