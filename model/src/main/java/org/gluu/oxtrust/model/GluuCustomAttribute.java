@@ -227,6 +227,10 @@ public class GluuCustomAttribute implements Serializable, Comparable<GluuCustomA
 	public boolean isUserCanEdit() {
 		return (this.metadata != null) && this.metadata.isUserCanEdit();
 	}
+	
+	public boolean isMultiValued() {
+		return (this.metadata != null) && this.metadata.getOxMultiValuedAttribute();
+	}
 
 	// public boolean equals(Object attribute) {
 	// return (attribute instanceof GluuCustomAttribute) &&

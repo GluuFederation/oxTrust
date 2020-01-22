@@ -325,4 +325,21 @@ public class UserProfileAction implements Serializable {
 	public void setEditable(boolean isEditable) {
 		this.isEditable = isEditable;
 	}
+
+	public boolean removeValueFromAttribute(String value, String name) {
+		List<GluuCustomAttribute> customAttributes = getPerson().getCustomAttributes();
+		for (GluuCustomAttribute attribute : customAttributes) {
+			if (attribute.getName().equalsIgnoreCase(name)) {
+				List<String> values = new ArrayList<>(Arrays.asList(attribute.getValues()));
+				values.remove(value);
+				attribute.setValues(values);
+				getPerson().setCustomAttributes(customAttributes);
+				if (values.isEmpty()) {
+					return true;
+				}
+				break;
+			}
+		}
+		return false;
+	}
 }
