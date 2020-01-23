@@ -124,31 +124,14 @@
 												label="#{_custAttr.metadata.displayName eq 'Gender, male or female' ? 'Gender' : _custAttr.metadata.displayName }  "
 												rendered="#{_custAttr.userCanAccess  and (_custAttr.metadata.dataType.value ne 'photo') and (_custAttr.metadata.displayName ne 'Inum') and (_custAttr.metadata.name ne 'gluuIMAPData') and _custAttr.isMultiValued()}"
 												template="/WEB-INF/incl/layout/#{_custAttr.userCanEdit  ? 'edit' : 'view'}.xhtml">
-
-												<a4j:repeat value="#{_custAttr.values}" var="_item">
+												<a4j:repeat value="#{_custAttr.values}" var="_item"
+													rowKeyVar="index">
 													<div class="col-sm-11" tabindex="0">
-														<h:inputText tabindex="1"
-															defaultLabel="click to enter #{_custAttr.metadata.displayName}"
-															id="custId" inputWidth="300" maxlength="60"
-															styleClass="form-control"
-															rendered="#{_custAttr.userCanEdit and _custAttr.isMultiValued() and permissionService.hasPermission(configurationService.configuration, 'profile_management')}"
-															value="#{_item}" />
 														<h:outputText
-															rendered="#{not (_custAttr.userCanEdit and permissionService.hasPermission(configurationService.configuration, 'profile_management'))}"
-															value="#{_custAttr.value}" />
+															rendered="#{permissionService.hasPermission(configurationService.configuration, 'profile_management')}"
+															value="#{_custAttr.values[index]}" />
 														<h:outputText value=" " />
 													</div>
-													<div class="col-sm-1" tabindex="0">
-													<a4j:commandLink
-															action="#{customAttributeAction.handleMultiValuedAttributeRemoval(_custAttr.metadata.inum,userProfileAction.removeValueFromAttribute(_item,_custAttr.name))}"
-															limitRender="true"
-															onbeforedomupdate="changeAttributeVisibility('#{_aid}', true);"
-															render="selectedCustomAttributesId"
-															rendered="#{_custAttr.userCanEdit and (not _mandatory) and _custAttr.isMultiValued() and permissionService.hasPermission(configurationService.configuration, 'profile_management')}"
-															styleClass="glyphicon glyphicon-remove" execute="@this">
-														</a4j:commandLink>
-													</div>
-
 												</a4j:repeat>
 											</ox:decorate>
 										</a4j:repeat>

@@ -221,13 +221,16 @@ public class UserProfileAction implements Serializable {
 	public String cancel() {
 		facesMessages.add(FacesMessage.SEVERITY_INFO, "Profile modification canceled");
 		conversationService.endConversation();
+
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
 	private void initAttributes() {
 		List<GluuAttribute> attributes = attributeService.getAllPersonAttributes(GluuUserRole.USER);
 		List<String> origins = Arrays.asList(tabName);
+
 		List<GluuCustomAttribute> customAttributes = this.person.getCustomAttributes();
+
 		customAttributeAction.initCustomAttributes(attributes, customAttributes, origins,
 				appConfiguration.getPersonObjectClassTypes(), appConfiguration.getPersonObjectClassDisplayNames());
 	}
