@@ -740,8 +740,9 @@
 													</h:panelGroup>
 												</h:panelGroup>
 											</b:panel>
-											<b:panel contentDisabled="true" disabled="true"
+											<b:panel contentDisabled="#{_client.inum.startsWith('1001.')}"
 												title="#{msg['clientForm.defaultRequestedAuthenticationContextClass']}"
+												collapsible="#{not _client.inum.startsWith('1001.')}"
 												id="defaultAcrButton" look="primary">
 												<h:panelGroup id="selectedCustomScriptAcrsId">
 													<h:panelGroup>
@@ -768,7 +769,7 @@
 														<richext:spacer height="16" />
 														<a4j:commandButton
 															styleClass="btn btn-primary AddDefaultAcrButton"
-															style="margin-top:5px" disabled="true"
+															style="margin-top:5px" disabled="{_client.inum.startsWith('1001.')}"
 															value="#{msg['clientForm.addDefaultACRvalue']}"
 															oncomplete="#{rich:component('defaultAcr:selectEntityModalPanel')}.show();"
 															execute="@this" eventsQueue="clientQueue" />
