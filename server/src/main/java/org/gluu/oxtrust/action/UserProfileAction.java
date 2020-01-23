@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.ConversationScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
@@ -23,14 +22,9 @@ import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
 import org.gluu.model.GluuAttribute;
-import org.gluu.model.GluuIMAPData;
-import org.gluu.model.GluuImage;
 import org.gluu.model.GluuUserRole;
-import org.gluu.model.ImapPassword;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.ConfigurationService;
-import org.gluu.oxtrust.ldap.service.ImageService;
-import org.gluu.oxtrust.ldap.service.ImapDataService;
 import org.gluu.oxtrust.ldap.service.OxTrustAuditService;
 import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
@@ -73,16 +67,10 @@ public class UserProfileAction implements Serializable {
 	private AttributeService attributeService;
 
 	@Inject
-	private ImageService imageService;
-
-	@Inject
 	private CustomAttributeAction customAttributeAction;
 
 	@Inject
 	private UserPasswordAction userPasswordAction;
-
-	@Inject
-	private ImapDataService imapDataService;
 
 	@Inject
 	private AppConfiguration appConfiguration;
@@ -108,23 +96,6 @@ public class UserProfileAction implements Serializable {
 
 	private List<String> optOuts;
 
-	private GluuIMAPData imapData;
-
-	public GluuIMAPData getImapData() {
-		return imapData;
-	}
-
-	public void setImapData(GluuIMAPData imapData) {
-		this.imapData = imapData;
-	}
-
-	@PostConstruct
-	public void init() {
-		this.imapData = new GluuIMAPData();
-		this.imapData.setImapPassword(new ImapPassword());
-
-	}
-
 	private static final String photoAttributes[][] = new String[][] { { "gluuPerson", "photo1" }, };
 
 	public String show() {
@@ -148,10 +119,6 @@ public class UserProfileAction implements Serializable {
 		addOpts();
 		addPhotoAttribute();
 		userPasswordAction.setPerson(this.person);
-		if (this.person.getGluuIMAPData() != null) {
-			this.imapData = imapDataService.getGluuIMAPDataFromJson(this.person.getGluuIMAPData());
-		}
-
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
@@ -165,16 +132,6 @@ public class UserProfileAction implements Serializable {
 					return OxTrustConstants.RESULT_FAILURE;
 				}
 			}
-			if (this.imapData != null) {
-				List<GluuCustomAttribute> customAttributes = this.person.getCustomAttributes();
-				for (GluuCustomAttribute gluuCustomAttribute : customAttributes) {
-					if (gluuCustomAttribute.getName().equals("gluuIMAPData")) {
-						gluuCustomAttribute.setValue(imapDataService.getJsonStringFromImap(this.imapData));
-						break;
-					}
-				}
-			}
-
 			GluuCustomPerson person = this.person;
 			person.setGluuOptOuts(optOuts.size() == 0 ? null : optOuts);
 			boolean runScript = externalUpdateUserService.isEnabled();
@@ -204,18 +161,9 @@ public class UserProfileAction implements Serializable {
 					"Failed to update profile '#{userProfileAction.person.displayName}'");
 			return OxTrustConstants.RESULT_FAILURE;
 		}
-
-		customAttributeAction.savePhotos();
-
 		facesMessages.add(FacesMessage.SEVERITY_INFO,
 				"Profile '#{userProfileAction.person.displayName}' updated successfully");
-
 		return OxTrustConstants.RESULT_SUCCESS;
-	}
-
-	public void removeImapData(String inum) {
-		this.imapData = null;
-		customAttributeAction.removeCustomAttribute(inum);
 	}
 
 	public String cancel() {
@@ -293,18 +241,6 @@ public class UserProfileAction implements Serializable {
 
 	public void configureListingOptions() {
 		this.person.setGluuOptOuts(optOuts);
-	}
-
-	public byte[] getPhotoThumbData() {
-		List<GluuAttribute> attributes = attributeService.getAllPersonAttributes(GluuUserRole.USER);
-		GluuAttribute photoAttribute = attributeService.getAttributeByName("photo1", attributes);
-		GluuCustomAttribute customAttribute = new GluuCustomAttribute("photo1", this.person.getAttribute("photo1"));
-		customAttribute.setMetadata(photoAttribute);
-		GluuImage image = imageService.getImage(customAttribute);
-		if (image == null) {
-			return imageService.getBlankPhotoData();
-		}
-		return imageService.getThumImageData(image);
 	}
 
 	public boolean userEmailIsUniqAtEditionTime(String email) {

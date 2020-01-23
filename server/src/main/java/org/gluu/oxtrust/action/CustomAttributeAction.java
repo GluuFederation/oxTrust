@@ -6,7 +6,6 @@
 
 package org.gluu.oxtrust.action;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,8 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import javax.enterprise.context.ConversationScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
@@ -35,15 +32,9 @@ import javax.inject.Named;
 
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.model.GluuAttribute;
-import org.gluu.model.GluuImage;
-import org.gluu.model.attribute.AttributeDataType;
 import org.gluu.oxtrust.ldap.service.AttributeService;
-import org.gluu.oxtrust.ldap.service.ImageService;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
-import org.gluu.oxtrust.security.Identity;
 import org.gluu.util.StringHelper;
-import org.richfaces.event.FileUploadEvent;
-import org.richfaces.model.UploadedFile;
 import org.slf4j.Logger;
 
 /**
@@ -61,18 +52,10 @@ public class CustomAttributeAction implements Serializable {
 	private Logger log;
 
 	@Inject
-	private Identity identity;
-
-	@Inject
 	private FacesMessages facesMessages;
 
 	@Inject
 	private AttributeService attributeService;
-
-	@Inject
-	private ImageService imageService;
-
-	private GluuImage uploadedImage;
 
 	private List<GluuAttribute> attributes;
 	private Map<GluuAttribute, String> attributeIds;
@@ -84,17 +67,8 @@ public class CustomAttributeAction implements Serializable {
 	private Map<String, String> originDisplayNames;
 	private String activeOrigin;
 
-	private List<GluuImage> addedPhotos;
-	private List<GluuImage> removedPhotos;
-
 	private List<GluuCustomAttribute> customAttributes;
 	private ArrayList<GluuCustomAttribute> origCustomAttributes;
-
-	@PostConstruct
-	public void init() {
-		this.addedPhotos = new ArrayList<GluuImage>();
-		this.removedPhotos = new ArrayList<GluuImage>();
-	}
 
 	public void initCustomAttributes(List<GluuAttribute> attributes, List<GluuCustomAttribute> customAttributes,
 			List<String> origins, String[] objectClassTypes, String[] objectClassDisplayNames) {
@@ -445,130 +419,6 @@ public class CustomAttributeAction implements Serializable {
 		this.activeOrigin = activeOrigin;
 	}
 
-	public void uploadImage(FileUploadEvent event) {
-		UploadedFile uploadedFile = event.getUploadedFile();
-		this.uploadedImage = null;
-		try {
-			GluuImage image = imageService.constructImage(identity.getUser(), uploadedFile);
-			image.setStoreTemporary(true);
-			if (imageService.createImageFiles(image)) {
-				this.uploadedImage = image;
-			}
-		} finally {
-			try {
-				uploadedFile.delete();
-			} catch (IOException ex) {
-				log.error("Failed to remove temporary image", ex);
-			}
-		}
-	}
-
-	public void addPhoto(String inum) {
-		if (this.uploadedImage == null) {
-			return;
-		}
-
-		GluuCustomAttribute customAttribute = getCustomAttribute(inum);
-		if (customAttribute == null) {
-			return;
-		}
-
-		setIconImageImpl(customAttribute, this.uploadedImage);
-	}
-
-	private void setIconImageImpl(GluuCustomAttribute customAttribute, GluuImage image) {
-		GluuImage oldImage = imageService.getGluuImageFromXML(customAttribute.getValue());
-		if (oldImage != null) {
-			removedPhotos.add(oldImage);
-		}
-
-		customAttribute.setValue(imageService.getXMLFromGluuImage(image));
-		addedPhotos.add(image);
-	}
-
-	public byte[] getPhotoThumbData(String inum) {
-		GluuCustomAttribute customAttribute = getCustomAttribute(inum);
-		if (customAttribute != null) {
-			GluuImage image = imageService.getImage(customAttribute);
-			if (image != null) {
-				image.setStoreTemporary(addedPhotos.contains(image));
-				return imageService.getThumImageData(image);
-			}
-		}
-
-		return imageService.getBlankPhotoData();
-	}
-
-	public String getPhotoSourceName(String inum) {
-		GluuCustomAttribute customAttribute = getCustomAttribute(inum);
-		if (customAttribute != null) {
-			GluuImage image = imageService.getImage(customAttribute);
-
-			return image == null ? null : image.getSourceName();
-		}
-
-		return null;
-	}
-
-	public void removePhoto(String inum) {
-		if (StringHelper.isEmpty(inum)) {
-			return;
-		}
-
-		GluuCustomAttribute customAttribute = getCustomAttribute(inum);
-		if ((customAttribute == null) || StringHelper.isEmpty(customAttribute.getValue())) {
-			return;
-		}
-
-		GluuImage image = imageService.getImage(customAttribute);
-		if (image != null) {
-			image.setStoreTemporary(addedPhotos.contains(image));
-			if (image.isStoreTemporary()) {
-				imageService.deleteImage(image);
-				addedPhotos.remove(image);
-			} else {
-				removedPhotos.add(image);
-			}
-		}
-		customAttribute.setValue(null);
-	}
-
-	private void removeRemovedPhotos() {
-		for (GluuImage image : removedPhotos) {
-			imageService.deleteImage(image);
-		}
-
-		removedPhotos.clear();
-	}
-
-	public void savePhotos() {
-		// Move added photos to persistent location
-		for (GluuImage image : addedPhotos) {
-			imageService.moveImageToPersistentStore(image);
-		}
-
-		addedPhotos.clear();
-		removeRemovedPhotos();
-	}
-
-	public void cancelPhotos() {
-		for (GluuImage image : addedPhotos) {
-			imageService.deleteImage(image);
-		}
-
-		removedPhotos.clear();
-	}
-
-	public void deletePhotos() {
-		for (GluuCustomAttribute customAttribute : this.customAttributes) {
-			if (AttributeDataType.BINARY.equals(customAttribute.getMetadata().getDataType())) {
-				removePhoto(customAttribute.getMetadata().getInum());
-			}
-		}
-
-		removeRemovedPhotos();
-	}
-
 	public void renderAttribute(ComponentSystemEvent event) {
 		// Replace dummy component id with real one
 		String dummyId = event.getComponent().getAttributes().get("aid").toString();
@@ -576,13 +426,6 @@ public class CustomAttributeAction implements Serializable {
 
 		GluuAttribute attribute = this.attributeToIds.get(dummyId);
 		this.attributeIds.put(attribute, clientId);
-	}
-
-	@PreDestroy
-	public void destroy() {
-		// When user decided to leave form without saving we must remove added
-		// images from disk
-		cancelPhotos();
 	}
 
 	public void validateAttributeValues(ComponentSystemEvent event) {
