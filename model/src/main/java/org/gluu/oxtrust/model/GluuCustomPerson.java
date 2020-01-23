@@ -96,13 +96,6 @@ public class GluuCustomPerson extends User
         setAttribute("mail", value);
     }
     
-    public String getGluuIMAPData() {
-        return getAttribute("gluuIMAPData");
-    }
-
-    public void setGluuIMAPData(String value) {
-        setAttribute("gluuIMAPData", value);
-    }
 
     public String getNetworkPoken() {
         return getAttribute("networkPoken");

@@ -14,12 +14,6 @@
             <h:panelGrid columns="1">
                 <h:outputText value="#{msg['profile.clickOnAttributeName']}" />
                 <h:panelGrid columns="2">
-                    <a4j:ajax event="click" listener="#{userProfileAction.toggle('photo1')}" render="configureListingOptionsForm" execute="@this" limitRender="true" />
-                    <h:outputText value="#{msg['profile.photo']}" styleClass="#{userProfileAction.released('photo1')? 'name' : 'striked name'}" />
-                    <h:graphicImage value="#{userProfileAction.getPhotoThumbData()}" width="50px"
-                                    rendered="#{userProfileAction.released('photo1')}"/>
-                </h:panelGrid>
-                <h:panelGrid columns="2">
                     <h:outputText value="#{msg['profile.name']} " styleClass="name" />
                     <h:outputText value="#{userProfileAction.person.getAttribute('cn')}" />
                 </h:panelGrid>
