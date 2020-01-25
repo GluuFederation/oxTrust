@@ -431,45 +431,45 @@ input[submit] {
 					</b:panel>
 				</div>
 				<div class="col-sm-4 col-lg-4" style="padding: 0px;">
-					<b:panel title="Release additional attributes" look="success"
+						<b:panel title="Release additional attributes" look="success"
 						collapsible="false">
-						<b:tabView id="attributeTabPanelId" pills="true"
-							contentStyle="border: 1px solid #337ab7; padding:10px; border-radius:5px;">
-							<ui:param name="_list"
-								value="#{gluufn:toList(_customAttributeAction.attributeByOrigin)}" />
+						<rich:tabPanel switchType="client" id="attributeTabPanelId">
+							<a4j:repeat
+								value="#{gluufn:toList(_customAttributeAction.attributeByOrigin)}"
+								var="origin">
 
-							<b:tab
-								title="#{_customAttributeAction.originDisplayNames[_list.get(0).key]}">
-								<div style="height: 450px; overflow-y: auto;"
-									class="SelectableCustomAttibutes">
-									<ul class="sidebar-menu">
-										<a4j:repeat value="#{_list.get(0).value}" var="attr">
-											<li class="treeview"
-												id="#{_customAttributeAction.attributeIds[attr]}"><ui:param
-													name="_aid"
-													value="#{_customAttributeAction.attributeIds[attr]}" /> <a4j:commandLink
-													p:aid="#{_aid}" value="#{attr.displayName}"
-													action="#{_customAttributeAction.addCustomAttribute(attr.inum)}"
-													render="selectedCustomAttributesId"
-													oncomplete="changeAttributeVisibility('${component.clientId}', false);"
-													style="#{_customAttributeAction.containsCustomAttribute(attr) ? 'display: none;' : ''}"
-													execute="@this" limitRender="true">
-													<rich:tooltip styleClass="tooltip" layout="block">
-														<span style="white-space: nowrap">
-															#{msg['trustmanager.samlURIFor']} this attribute: <br />
-															#{_trustRelationshipAction.getSAML1URI(attr)} <br />
-															#{_trustRelationshipAction.getSAML2URI(attr)}
-														</span>
-													</rich:tooltip>
-													<f:event
-														listener="#{_customAttributeAction.renderAttribute}"
-														type="preRenderComponent" />
-												</a4j:commandLink></li>
-										</a4j:repeat>
-									</ul>
-								</div>
-							</b:tab>
-						</b:tabView>
+								<rich:tab
+									header="#{_customAttributeAction.originDisplayNames[origin.key]}">
+									<div style="height: 450px; overflow-y: auto;">
+										<ul class="sidebar-menu">
+											<a4j:repeat value="#{origin.value}" var="attr">
+												<li class="treeview"
+													id="#{_customAttributeAction.attributeIds[attr]}"><ui:param
+														name="_aid"
+														value="#{_customAttributeAction.attributeIds[attr]}" /> <a4j:commandLink
+														p:aid="#{_aid}" value="#{attr.displayName}"
+														action="#{_customAttributeAction.addCustomAttribute(attr.inum)}"
+														render="selectedCustomAttributesId"
+														oncomplete="changeAttributeVisibility('${component.clientId}', false);"
+														style="#{_customAttributeAction.containsCustomAttribute(attr) ? 'display: none;' : ''}"
+														execute="@this" limitRender="true">
+														<rich:tooltip styleClass="tooltip" layout="block">
+															<span style="white-space: nowrap">
+																#{msg['trustmanager.samlURIFor']} this attribute: <br />
+																#{_trustRelationshipAction.getSAML1URI(attr)} <br />
+																#{_trustRelationshipAction.getSAML2URI(attr)}
+															</span>
+														</rich:tooltip>
+														<f:event
+															listener="#{_customAttributeAction.renderAttribute}"
+															type="preRenderComponent" />
+													</a4j:commandLink></li>
+											</a4j:repeat>
+										</ul>
+									</div>
+								</rich:tab>
+							</a4j:repeat>
+						</rich:tabPanel>
 					</b:panel>
 				</div>
 			</div>
