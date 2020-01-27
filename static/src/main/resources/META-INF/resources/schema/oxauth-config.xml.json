@@ -956,7 +956,12 @@
         },
         "sessionIdEnabled": {
             "id": "sessionIdEnabled",
-            "description": "Boolean value specifying whether to enable session ID parameter.",
+            "description": "Boolean value specifying whether to enable authentication by session_id.",
+            "type": "boolean"
+        },
+        "sessionIdRequestParameterEnabled": {
+            "id": "sessionIdRequestParameterEnabled",
+            "description": "Boolean value specifying whether to enable session_id HTTP request parameter.",
             "type": "boolean"
         },
         "sessionIdPersistOnPromptNone": {

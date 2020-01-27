@@ -240,6 +240,8 @@ public class OxAuthJsonConfiguration {
 	private Integer sessionIdUnauthenticatedUnusedLifetime;
 	@JsonProperty("sessionIdEnabled")
 	private Boolean sessionIdEnabled;
+    @JsonProperty("sessionIdRequestParameterEnabled")
+    private Boolean sessionIdRequestParameterEnabled;
 	@JsonProperty("sessionIdPersistOnPromptNone")
 	private Boolean sessionIdPersistOnPromptNone;
 	@JsonProperty("sessionIdLifetime")
@@ -1280,7 +1282,15 @@ public class OxAuthJsonConfiguration {
 		this.sessionIdEnabled = sessionIdEnabled;
 	}
 
-	@JsonProperty("sessionIdPersistOnPromptNone")
+    public Boolean getSessionIdRequestParameterEnabled() {
+        return sessionIdRequestParameterEnabled;
+    }
+
+    public void setSessionIdRequestParameterEnabled(Boolean sessionIdRequestParameterEnabled) {
+        this.sessionIdRequestParameterEnabled = sessionIdRequestParameterEnabled;
+    }
+
+    @JsonProperty("sessionIdPersistOnPromptNone")
 	public Boolean getSessionIdPersistOnPromptNone() {
 		return sessionIdPersistOnPromptNone;
 	}
