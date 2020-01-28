@@ -122,14 +122,12 @@
 											</ox:decorate>
 											<ox:decorate
 												label="#{_custAttr.metadata.displayName eq 'Gender, male or female' ? 'Gender' : _custAttr.metadata.displayName }  "
-												rendered="#{_custAttr.userCanAccess  and (_custAttr.metadata.dataType.value ne 'photo') and (_custAttr.metadata.displayName ne 'Inum') and (_custAttr.metadata.name ne 'gluuIMAPData') and _custAttr.isMultiValued()}"
+												rendered="#{_custAttr.userCanAccess and _custAttr.isMultiValued()}"
 												template="/WEB-INF/incl/layout/#{_custAttr.userCanEdit  ? 'edit' : 'view'}.xhtml">
 												<a4j:repeat value="#{_custAttr.values}" var="_item"
 													rowKeyVar="index">
 													<div class="col-sm-11" tabindex="0">
-														<h:outputText
-															rendered="#{permissionService.hasPermission(configurationService.configuration, 'profile_management')}"
-															value="#{_custAttr.values[index]}" />
+														<h:outputText value="#{_custAttr.values[index]}" />
 														<h:outputText value=" " />
 													</div>
 												</a4j:repeat>
