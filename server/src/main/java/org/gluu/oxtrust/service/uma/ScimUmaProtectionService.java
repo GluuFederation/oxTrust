@@ -138,7 +138,7 @@ public class ScimUmaProtectionService extends BaseUmaProtectionService implement
             ClientInfoClient clientInfoClient = new ClientInfoClient(clientInfoEndpoint);
             ClientInfoResponse clientInfoResponse = clientInfoClient.execClientInfo(token);
 
-            if (clientInfoResponse.getErrorType()!=null) {
+            if ((clientInfoResponse.getStatus() != Response.Status.OK.getStatusCode()) || (clientInfoResponse.getErrorType()!=null)) {
                 response=getErrorResponse(Response.Status.UNAUTHORIZED, "Invalid token "+ token);
                 log.debug("Error validating access token: {}", clientInfoResponse.getErrorDescription());
             }
