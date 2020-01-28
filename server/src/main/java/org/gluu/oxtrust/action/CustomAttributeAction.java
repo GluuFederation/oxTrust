@@ -98,7 +98,7 @@ public class CustomAttributeAction implements Serializable {
 
 	public void initCustomAttributes(List<GluuAttribute> attributes, List<GluuCustomAttribute> customAttributes, List<String> origins,
 			String[] objectClassTypes, String[] objectClassDisplayNames) {
-		this.attributes = new ArrayList<GluuAttribute>(attributes);
+		this.attributes = attributes;
 		this.customAttributes = customAttributes;
 		this.origCustomAttributes = new ArrayList<GluuCustomAttribute>(customAttributes);
 
