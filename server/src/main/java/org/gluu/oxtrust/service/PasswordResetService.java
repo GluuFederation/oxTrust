@@ -61,6 +61,11 @@ public class PasswordResetService implements Serializable {
 	}
 
 	public void prepareBranch() {
+        String baseDn = getDnForPasswordResetRequest(null);
+        if (!ldapEntryManager.hasBranchesSupport(baseDn)) {
+        	return;
+        }
+
 		// Create reset password requests branch if needed
 		if (!containsBranch()) {
 			addBranch();

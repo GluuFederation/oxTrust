@@ -115,7 +115,7 @@ public class ApiUmaProtectionService extends BaseUmaProtectionService implements
 			String clientInfoEndpoint = openIdService.getOpenIdConfiguration().getClientInfoEndpoint();
 			ClientInfoClient clientInfoClient = new ClientInfoClient(clientInfoEndpoint);
 			ClientInfoResponse clientInfoResponse = clientInfoClient.execClientInfo(token);
-			if (clientInfoResponse.getErrorType() != null) {
+			if ((clientInfoResponse.getStatus() != Response.Status.OK.getStatusCode()) || (clientInfoResponse.getErrorType() != null)) {
 				response = getErrorResponse(Status.UNAUTHORIZED, "Invalid token " + token);
 				log.debug("Error validating access token: {}", clientInfoResponse.getErrorDescription());
 			}

@@ -79,7 +79,7 @@ public abstract class BaseApiTest {
 			String keyId = umaAatClientKeyId;
 			System.out.println("UMA KEY ID:" + keyId);
 			if (StringHelper.isEmpty(keyId)) {
-				List<String> aliases = cryptoProvider.getKeyAliases();
+				List<String> aliases = cryptoProvider.getKeys();
 				System.out.println("KEY ALIASES : " + aliases.size());
 				if (aliases.size() > 0) {
 					keyId = aliases.get(0);

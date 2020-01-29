@@ -1519,7 +1519,7 @@ public class UpdateClientAction implements Serializable {
 
 	public void generatePassword() throws EncryptionException {
 		String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-		String pwd = RandomStringUtils.random(24, characters);
+		String pwd = RandomStringUtils.random(40, characters);
 		this.client.setOxAuthClientSecret(pwd);
 		this.client.setEncodedClientSecret(encryptionService.encrypt(pwd));
 	}
