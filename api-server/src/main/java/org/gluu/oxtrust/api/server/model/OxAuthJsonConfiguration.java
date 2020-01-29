@@ -240,6 +240,8 @@ public class OxAuthJsonConfiguration {
 	private Integer sessionIdUnauthenticatedUnusedLifetime;
 	@JsonProperty("sessionIdEnabled")
 	private Boolean sessionIdEnabled;
+    @JsonProperty("fapiCompatibility")
+	private Boolean fapiCompatibility;
     @JsonProperty("sessionIdRequestParameterEnabled")
     private Boolean sessionIdRequestParameterEnabled;
 	@JsonProperty("sessionIdPersistOnPromptNone")
@@ -329,7 +331,15 @@ public class OxAuthJsonConfiguration {
 	@JsonIgnore
 	private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
-	@JsonProperty("issuer")
+    public Boolean getFapiCompatibility() {
+        return fapiCompatibility;
+    }
+
+    public void setFapiCompatibility(Boolean fapiCompatibility) {
+        this.fapiCompatibility = fapiCompatibility;
+    }
+
+    @JsonProperty("issuer")
 	public String getIssuer() {
 		return issuer;
 	}
