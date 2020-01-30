@@ -5,125 +5,11 @@
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
 	xmlns:a4j="http://richfaces.org/a4j" xmlns:b="http://bootsfaces.net/ui"
-	xmlns:rich="http://richfaces.org/rich"
 	xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
 	xmlns:gluufn="http://www.gluu.org/jsf/functions"
 	xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
 	xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
 	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox">
-	<h:outputStylesheet>
-        .attributeColumn {
-            width: 350px;
-            text-align: left;
-            vertical-align: top;
-        }
-        .tableHearder {
-          background:#00BE79;
-          color:white;
-          margin: 10px;
-          background-color:#00BE79 !important;
-          border: 5px solid #00BE79 !important;
-          text-align:center;
-        }
-
-        .formColumn {
-            text-align: left;
-            vertical-align: top;
-        }
-        .col-xs-12 {
-   			 width: 1100px;
-    	}
-		.content {
-		    min-height: 250px;
-		    padding: 15px;
-		    margin-right: auto;
-		    margin-left: auto;
-		    padding-left: 15px;
-		    padding-right: 15px;
-		    overflow: scroll;
-		}
-		.rf-ii {
-		    display: inline-block !important;
-		    white-space: nowrap !important;
-		    background-color: white !important;
-		    border-bottom-width: 1px !important;
-		    border-bottom-style: dotted !important;
-		    border-bottom-color: #000000 !important;
-		    padding-left: 3px !important;
-		    padding-right: 3px !important;
-		    display: inline-block !important;
-		    position: relative !important;
-		    width: 500px !important;
-		    height: 31px !important;
-		    overflow: hidden;
-			text-overflow: ellipsis;
-		}
-		
-		span:focus {
-		    background:yellow;
-		}
-		
-				.form-group {
-		    margin-bottom: 15px;
-		    display: inline-block;
-		    width: 100%;
-		    position: relative;
-		    margin-left: 30px;
-		}
-
-		.form-group .right {
-		    float: right;
-		    width: 20%;
-		}
-		
-		.form-group .left {
-		    width: 30%;
-		    float: left;
-		    margin-right: 12px;
-		}
-		
-		.form-group .middle {
-		    width: 30%;
-		    float: left;
-		    margin-right: 12px;
-		}
-		
-		
-		.order-table{
-	border-collapse:collapse;
-	width:90%;
-}
-
-.order-table-header{
-	text-align:center;
-	background:none repeat scroll 0 0 #E5E5E5;
-	border-bottom:1px solid #BBBBBB;
-	padding:16px;
-}
-
-.order-table-odd-row{
-	text-align:center;
-	background:none repeat scroll 0 0 #FFFFFFF;
-	border-top:1px solid #BBBBBB;
-}
-
-.order-table-even-row{
-	text-align:center;
-	background:none repeat scroll 0 0 #F9F9F9;
-	border-top:1px solid #BBBBBB;
-}
-.fixed-size {
-    table-layout: fixed;
-    word-wrap: break-word;
-}
-
-  .iconButtonRemove{
-  }
-  .iconButtonAdd{
-    margin-left: 15px;
-  }
-    </h:outputStylesheet>
-
 	<h:outputScript>
 	    function reload (){
 	     window.location.reload();
@@ -201,6 +87,7 @@
 												style="width:100%" value="#{_custAttr.values[_valueIdx]}"
 												id="custId_text_#{_custAttrIdx}" require="#{_mustEnter}"
 												requiredMessage="#{msg['person.pleaseEnter']} #{_custAttr.metadata.displayName} #{_valueIdx == 0 ? '' : _valueIdx}. "
+												validator="gluuAttributeValidator"
 												rendered="#{(_custAttr.adminCanEdit or _mustEnter) and 
 			                                                            (_custAttr.metadata.dataType.value ne 'boolean') and 
 			                                                            (_custAttr.metadata.displayName ne 'Password') and 
@@ -209,16 +96,24 @@
 			                                                            (_custAttr.metadata.displayName ne 'Email') and
 			                                                            (_custAttr.metadata.displayName ne 'User Status') and 
 			                                                            (_custAttr.metadata.displayName ne 'Birthdate')}">
-												<rich:validator event="blur" />
-												<f:validator validatorId="attributeValidator" />
+
 											</h:inputText>
+											<b:message
+												rendered="#{(_custAttr.adminCanEdit or _mustEnter) and 
+			                                                            (_custAttr.metadata.dataType.value ne 'boolean') and 
+			                                                            (_custAttr.metadata.displayName ne 'Password') and 
+			                                                            (_custAttr.metadata.displayName ne 'Gender, male or female') and
+			                                                            (_custAttr.metadata.dataType.value ne 'certificate') and 
+			                                                            (_custAttr.metadata.displayName ne 'Email') and
+			                                                            (_custAttr.metadata.displayName ne 'User Status') and 
+			                                                            (_custAttr.metadata.displayName ne 'Birthdate')}" />
 											<h:inputText
 												styleClass="form-control #{_custAttr.metadata.displayName}"
 												p:placeholder="#{msg['person.clickToEnter']} email"
 												style="width:100%" value="#{_custAttr.values[_valueIdx]}"
 												id="Email" required="#{_mustEnter}" p:type="email"
 												prependId="false" maxlength="100"
-												p:title="Please provide a valid email address"
+												requiredMessage="Please provide a valid email address"
 												rendered="#{(_custAttr.adminCanEdit or _mustEnter) and 
 			                                                            (_custAttr.metadata.dataType.value ne 'boolean') and 
 			                                                            (_custAttr.metadata.displayName ne 'Password') and 
@@ -226,9 +121,17 @@
 			                                                            (_custAttr.metadata.dataType.value ne 'certificate') and
 			                                                            (_custAttr.metadata.displayName ne 'Birthdate') and
 			                                                            (_custAttr.metadata.displayName eq 'Email')}">
-												<rich:validator event="blur" />
-												<f:validator validatorId="attributeValidator" />
+												<f:validateRegex
+													pattern="[\w\.-]*[a-zA-Z0-9_]@[\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]" />
 											</h:inputText>
+											<b:message
+												rendered="#{(_custAttr.adminCanEdit or _mustEnter) and 
+			                                                            (_custAttr.metadata.dataType.value ne 'boolean') and 
+			                                                            (_custAttr.metadata.displayName ne 'Password') and 
+			                                                            (_custAttr.metadata.displayName ne 'Gender, male or female') and
+			                                                            (_custAttr.metadata.dataType.value ne 'certificate') and
+			                                                            (_custAttr.metadata.displayName ne 'Birthdate') and
+			                                                            (_custAttr.metadata.displayName eq 'Email')}" />
 											<b:dateTimePicker id="calendar" renderLabel="false"
 												mode="toggle-icon"
 												rendered="#{(_custAttr.adminCanEdit or _mustEnter) and 
@@ -273,8 +176,6 @@
 												required="#{_mustEnter}"
 												requiredMessage="#{msg['person.pleaseEnter']} #{_custAttr.metadata.displayName} #{_valueIdx == 0 ? '' : _valueIdx}. "
 												rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.dataType.value eq 'certificate')}">
-												<rich:validator event="blur" />
-												<f:validator validatorId="attributeValidator" />
 											</h:inputTextarea>
 										</div>
 										<h:outputText value="&#160;" />
@@ -342,12 +243,10 @@
 												styleClass="FirstPasswordField form-control togglefield #{_custAttr.metadata.displayName}"
 												validator="#{updatePersonAction.validateConfirmPassword}"
 												required="#{_mustEnter}"
-												requiredMessage="#{msg['person.pleaseEnter']} #{_custAttr.metadata.displayName}. "
+												requiredMessage="Password is required"
 												rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'Password')}">
-												<rich:validator event="blur"
-													oncomplete="hidePasswordValue(this, #{rich:component('custpasswordId')}.getValue(),'hidePassword')" />
 											</h:inputSecret>
-
+											<b:message />
 											<h:graphicImage value="/img/eye.png" id="viewPassword"
 												styleClass="FirstPasswordFieldShow"
 												style="float:right; margin-right:-35px; margin-top:-35px;"
@@ -370,11 +269,10 @@
 												maxlength="50" id="custconfirmpasswordId"
 												validator="#{updatePersonAction.validateConfirmPassword}"
 												required="#{_mustEnter}"
-												requiredMessage="Please enter Confirm Password"
+												requiredMessage="Confirm password is required"
 												rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'Password')}">
-												<rich:validator event="blur"
-													oncomplete="hidePasswordValue(this, #{rich:component('custconfirmpasswordId')}.getValue(),'hideCustPassword')" />
 											</h:inputSecret>
+											<b:message />
 											<h:graphicImage value="/img/eye.png"
 												styleClass="SecondPasswordFieldShow"
 												style="float:right; margin-right:-35px; margin-top:-35px;"
@@ -386,10 +284,9 @@
 												onclick="hidePassword2(); return false;" />
 
 										</div>
+
 									</ox:decorate>
-
 								</a4j:repeat>
-
 							</h:panelGroup>
 						</a4j:repeat>
 					</h:panelGroup>
