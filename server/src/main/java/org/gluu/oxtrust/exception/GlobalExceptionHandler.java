@@ -36,7 +36,6 @@ public class GlobalExceptionHandler extends ExceptionHandlerWrapper {
     }
 
     public void handle() throws FacesException {
-    	System.out.println(((javax.servlet.http.HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest()).getRequestURI());
         final Iterator<ExceptionQueuedEvent> i = getUnhandledExceptionQueuedEvents().iterator();
 
         while (i.hasNext()) {
