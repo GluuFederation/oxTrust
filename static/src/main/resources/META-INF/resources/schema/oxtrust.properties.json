@@ -660,6 +660,11 @@
             "id": "useLocalCache",
             "description": "Boolean value specifying whether to enable local in-memory cache for attributes, scopes, clients and organization configuration.",
             "type": "boolean"
+        },
+         "enableUpdateNotification": {
+            "id": "enableUpdateNotification",
+            "description": "Boolean value specifying whether to enable gluu-server update notification.",
+            "type": "boolean"
         }
     },
     "required": [
@@ -765,6 +770,7 @@
         "passwordResetRequestExpirationTime",
         "authenticationRecaptchaEnabled",
         "enforceEmailUniqueness",
-        "useLocalCache"
+        "useLocalCache",
+        "enableUpdateNotification"
     ]
 }

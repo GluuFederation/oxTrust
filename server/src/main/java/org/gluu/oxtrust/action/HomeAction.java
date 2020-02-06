@@ -12,6 +12,7 @@ import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.gluu.oxtrust.ldap.service.UpdateChecker;
 import org.gluu.oxtrust.model.AuthenticationChartDto;
 import org.gluu.oxtrust.service.MetricService;
 import org.gluu.oxtrust.service.PermissionService;
@@ -39,6 +40,9 @@ public class HomeAction implements Serializable {
 
 	@Inject
 	private JsonService jsonService;
+	
+	@Inject
+	private UpdateChecker updateChecker;
 
 	@Inject
 	private PermissionService permissionService;
@@ -73,6 +77,14 @@ public class HomeAction implements Serializable {
 
 	public AuthenticationChartDto getAuthenticationChartDto() {
 		return authenticationChartDto;
+	}
+	
+	public UpdateChecker getUpdateChecker() {
+		return updateChecker;
+	}
+
+	public void setUpdateChecker(UpdateChecker updateChecker) {
+		this.updateChecker = updateChecker;
 	}
 
 }
