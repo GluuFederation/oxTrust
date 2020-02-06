@@ -2,25 +2,37 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:b="http://bootsfaces.net/ui"
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	template="/WEB-INF/incl/layout/newtemplate.xhtml">
 	<f:metadata>
-	    <f:viewAction action="#{permissionService.requestPermission('#{identity.loggedIn}')}" />
+		<f:viewAction
+			action="#{permissionService.requestPermission('#{identity.loggedIn}')}" />
 		<f:viewAction action="#{conversationService.endConversation}" />
 		<f:viewAction action="#{homeAction.init}" onPostback="false" />
 	</f:metadata>
 	<ui:define name="body">
 		<section class="content-header">
-			<ui:param name="welcomeTitle" value="#{organizationService.getOrganizationCustomMessage('welcomeTitle')}" />
+			<ui:param name="welcomeTitle"
+				value="#{organizationService.getOrganizationCustomMessage('welcomeTitle')}" />
 			<ui:fragment
 				rendered="#{not empty welcomeTitle and not permissionService.hasPermission('configuration', 'access')}">
-				<h:panelGroup layout="block" style="margin-left:10%;text-align: center;">
+				<h:panelGroup layout="block"
+					style="margin-left:10%;text-align: center;">
 					<h:outputText escape="false" value="#{welcomeTitle}" />
 					<h:outputText escape="false"
 						value="#{organizationService.getVersion()}" />
 				</h:panelGroup>
 			</ui:fragment>
 			<ui:fragment rendered="#{empty welcomeTitle}">
+				<h:form rendered="#{updateChecker.isHasUpdate()}">
+					<b:poll interval="3000" update="updateNotification" />
+					<div
+						style="background: #337ab7; width: 100%; text-align: center; border-radius: 10px; color: white; padding: 2px;">
+						<h:outputText id="updateNotification"
+							value="#{updateChecker.getUpdateMessage()}" />
+					</div>
+				</h:form>
 				<h1>
 					<h:outputFormat value="#{msg['home.welcome']}">
 						<f:param value="#{organizationService.getVersion()}" />
@@ -38,11 +50,11 @@
 								class="fa  fa-bar-chart-o" style="line-height: 2em !important;" />
 							</span>
 							<div class="info-box-content">
-							
+
 								<ui:param name="_configuration"
 									value="#{configurationService.configuration}" />
 								<ui:param name="_stat"
-									value="#{configurationService.getOxtrustStat()}" />	
+									value="#{configurationService.getOxtrustStat()}" />
 								<span class="info-box-text">#{msg['home.freeMemory']}</span>
 								<h:outputText styleClass="info-box-number"
 									value="#{_stat.freeMemory}%" />
@@ -139,7 +151,7 @@
 							<!-- ./box-body -->
 							<div class="box-footer">
 								<div class="row">
-								   <div class="col-sm-3 col-xs-6">
+									<div class="col-sm-3 col-xs-6">
 										<div class="description-block border-right">
 											<h5 class="description-header">#{homeAction.authenticationChartDto.yearlyRequest}</h5>
 											<span class="description-text">#{msg['home.totalYearlyRequests']}</span>

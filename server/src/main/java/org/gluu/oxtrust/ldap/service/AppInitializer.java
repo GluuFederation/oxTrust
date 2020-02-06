@@ -115,6 +115,9 @@ public class AppInitializer {
 
 	@Inject
 	private StatusCheckerTimer statusCheckerTimer;
+	
+	@Inject
+	private UpdateChecker updateChecker;
 
 	@Inject
 	private PythonService pythonService;
@@ -206,6 +209,7 @@ public class AppInitializer {
 		statusCheckerDaily.initTimer();
 		statusCheckerTimer.initTimer();
 		logFileSizeChecker.initTimer();
+		updateChecker.initTimer();
 	}
 
 	protected void initSchedulerService() {
