@@ -59,6 +59,7 @@ import org.gluu.oxtrust.model.fido.GluuDeviceDataBean;
 import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.service.external.ExternalUpdateUserService;
 import org.gluu.oxtrust.util.OxTrustConstants;
+import org.gluu.oxtrust.util.ProductInstallationChecker;
 import org.gluu.oxtrust.util.ServiceUtil;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.exception.BasePersistenceException;
@@ -306,11 +307,13 @@ public class UpdatePersonAction implements Serializable {
 					gluuDeviceDataBean.setCreationDate(DASH);
 					deviceDataMap.add(gluuDeviceDataBean);
 				} else if (firstPart.equalsIgnoreCase(TOTP) || firstPart.equalsIgnoreCase(HOTP)) {
-					gluuDeviceDataBean.setNickName(firstPart);
-					gluuDeviceDataBean.setModality(TOTP+"/"+HOTP);
-					gluuDeviceDataBean.setId(args[1]);
-					gluuDeviceDataBean.setCreationDate(DASH);
-					deviceDataMap.add(gluuDeviceDataBean);
+					if(!ProductInstallationChecker.isCasaInstalled()) {
+						gluuDeviceDataBean.setNickName(firstPart);
+						gluuDeviceDataBean.setModality(TOTP+"/"+HOTP);
+						gluuDeviceDataBean.setId(args[1]);
+						gluuDeviceDataBean.setCreationDate(DASH);
+						deviceDataMap.add(gluuDeviceDataBean);
+					}
 				} else {
 					gluuDeviceDataBean.setNickName(firstPart);
 					gluuDeviceDataBean.setModality(DASH);

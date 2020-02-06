@@ -24,6 +24,7 @@ public class ProductInstallationChecker {
 	public static final String CAS_PATH = "/opt/gluu/jetty/cas/webapps/cas.war";
 	public static final String PASSPORT_PATH = "/opt/gluu/node/passport/server";
 	public static final String GLUU_RADIUS_PATH = "/opt/gluu/radius/super-gluu-radius-server.jar";
+	public static final String GLUU_CASA_PATH = "/opt/gluu/jetty/casa/.administrable";
 
 	public static boolean isGluuCE() {
 		return new File(GLUU_CE_PATH).exists();
@@ -61,5 +62,9 @@ public class ProductInstallationChecker {
 
 	public static boolean isGluuRadiusInstalled() {
 		return new File(GLUU_RADIUS_PATH).exists();
+	}
+
+	public static boolean isCasaInstalled() {
+		return new File(GLUU_CASA_PATH).exists();
 	}
 }
