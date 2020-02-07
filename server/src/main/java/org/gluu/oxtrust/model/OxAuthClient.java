@@ -6,6 +6,14 @@
 
 package org.gluu.oxtrust.model;
 
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
+
+import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 import org.gluu.oxauth.model.common.GrantType;
 import org.gluu.oxauth.model.common.ResponseType;
 import org.gluu.persist.annotation.AttributeName;
@@ -14,15 +22,6 @@ import org.gluu.persist.annotation.JsonObject;
 import org.gluu.persist.annotation.ObjectClass;
 import org.gluu.persist.model.base.Entry;
 import org.oxauth.persistence.model.ClientAttributes;
-
-import javax.persistence.Transient;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import java.io.Serializable;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.Date;
-import java.util.List;
 
 /**
  * oxAuthClient
@@ -222,8 +221,8 @@ public class OxAuthClient extends Entry implements Serializable {
 	@Transient
 	private String oxAuthClientSecret;
 
-    @AttributeName(name = "del")
-    private boolean deletable;
+	@AttributeName(name = "del")
+	private boolean deletable;
 
 	@AttributeName(name = "oxAttributes")
 	@JsonObject
@@ -694,11 +693,7 @@ public class OxAuthClient extends Entry implements Serializable {
 	}
 
 	public Date getClientSecretExpiresAt() {
-		if (clientSecretExpiresAt == null) {
-			return inOneCentury();
-		} else {
-			return clientSecretExpiresAt;
-		}
+		return clientSecretExpiresAt;
 	}
 
 	public void setClientSecretExpiresAt(Date clientSecretExpiresAt) {
@@ -719,11 +714,6 @@ public class OxAuthClient extends Entry implements Serializable {
 
 	public void setDeletable(boolean deletable) {
 		this.deletable = deletable;
-	}
-
-	private Date inOneCentury() {
-		LocalDate nextCentury = LocalDate.now().plusYears(100);
-		return Date.from(nextCentury.atStartOfDay(ZoneId.systemDefault()).toInstant());
 	}
 
 	public ClientAttributes getAttributes() {

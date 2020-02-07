@@ -11,6 +11,8 @@ import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -131,8 +133,6 @@ public class UpdateClientAction implements Serializable {
 	private String markDown = "";
 
 	private boolean update;
-
-	private Date previousClientExpirationDate;
 
 	private OxAuthClient client;
 
@@ -260,7 +260,6 @@ public class UpdateClientAction implements Serializable {
 		try {
 			log.debug("inum : " + inum);
 			this.client = clientService.getClientByInum(inum);
-			this.previousClientExpirationDate = this.client.getClientSecretExpiresAt();
 			this.client.setOxAuthClientSecret(encryptionService.decrypt(this.client.getEncodedClientSecret()));
 			log.trace("CLIENT SECRET UPDATE:" + this.client.getOxAuthClientSecret());
 		} catch (BasePersistenceException ex) {
@@ -340,18 +339,9 @@ public class UpdateClientAction implements Serializable {
 	}
 
 	public String save() throws Exception {
-		if (this.client.getClientSecretExpiresAt() != null
-				&& this.client.getClientSecretExpiresAt().before(new Date())) {
-			facesMessages.add(FacesMessage.SEVERITY_ERROR,
-					"This client has expired. Update the expiration date in order to save changes");
-			return OxTrustConstants.RESULT_FAILURE;
+		if (this.client.getClientSecretExpiresAt() == null && this.client.isDeletable()) {
+			this.client.setClientSecretExpiresAt(oneDay());
 		}
-		if (this.previousClientExpirationDate != null && this.client.getClientSecretExpiresAt().before(new Date())) {
-			facesMessages.add(FacesMessage.SEVERITY_ERROR,
-					"This client has expired. Update the expiration date in order to save changes");
-			return OxTrustConstants.RESULT_FAILURE;
-		}
-		this.client.setDeletable(this.client.getClientSecretExpiresAt() != null);
 		updateLoginURIs();
 		updateLogoutURIs();
 		updateClientLogoutURIs();
@@ -1657,6 +1647,11 @@ public class UpdateClientAction implements Serializable {
 			return true;
 		}
 		return false;
+	}
+
+	private Date oneDay() {
+		LocalDate nextCentury = LocalDate.now().plusDays(1);
+		return Date.from(nextCentury.atStartOfDay(ZoneId.systemDefault()).toInstant());
 	}
 
 	public void appTypeChanged() {

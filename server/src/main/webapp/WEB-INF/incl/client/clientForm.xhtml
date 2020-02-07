@@ -353,7 +353,8 @@
 													styleClass="col-sm-9 form-control rounded subjectTypeSelectBox"
 													value="#{_client.subjectType}" id="subjectTypeId"
 													required="true">
-													<f:ajax render="clientForm:redirectLoginUrls" listener="#{_clientAction.subjectTypeChanged}" />
+													<f:ajax render="clientForm:redirectLoginUrls"
+														listener="#{_clientAction.subjectTypeChanged}" />
 													<f:selectItems value="#{clientService.subjectTypes}"
 														var="_subjectType" label="#{_subjectType.displayName}" />
 													<f:converter
@@ -374,14 +375,25 @@
 														converterId="org.gluu.jsf2.converter.EnumConverter" />
 												</h:selectOneMenu>
 											</ox:decorate>
-											<ox:decorate id="clientsecretexpiry" leftClass="col-sm-6"
-												rightClass="col-sm-6"
+											<h:panelGroup id="expirationBlockId">
+											<ox:decorate id="shouldExpiredId" leftClass="col-sm-6"
+												rightClass="col-sm-6" label="Expirable client">
+												<h:selectBooleanCheckbox value="#{_client.deletable}"
+													id="expirableClientID" styleClass="col-sm-9 rounded"
+													required="false">
+													<a4j:ajax event="click" render="expirationBlockId"
+														execute="@this" limitRender="true" />
+												</h:selectBooleanCheckbox>
+											</ox:decorate>
+											<ox:decorate id="clientExpirationId" leftClass="col-sm-6"
+												rightClass="col-sm-6" rendered="#{_client.deletable}"
 												label="#{msg['clientForm.expirationDate']}">
 												<b:dateTimePicker id="calendar" renderLabel="false"
 													mode="toggle-icon" value="#{_client.clientSecretExpiresAt}"
 													format="DD.MM.YYYY HH:mm">
 												</b:dateTimePicker>
 											</ox:decorate>
+											</h:panelGroup>
 											<div class="row" style="padding-left: 25px;">
 												<b:panel title="#{msg['clientForm.grantTypes']}"
 													id="grantTypes" look="primary">
@@ -740,7 +752,8 @@
 													</h:panelGroup>
 												</h:panelGroup>
 											</b:panel>
-											<b:panel contentDisabled="#{_client.inum.startsWith('1001.')}"
+											<b:panel
+												contentDisabled="#{_client.inum.startsWith('1001.')}"
 												title="#{msg['clientForm.defaultRequestedAuthenticationContextClass']}"
 												collapsible="#{not _client.inum.startsWith('1001.')}"
 												id="defaultAcrButton" look="primary">
@@ -769,7 +782,8 @@
 														<richext:spacer height="16" />
 														<a4j:commandButton
 															styleClass="btn btn-primary AddDefaultAcrButton"
-															style="margin-top:5px" disabled="{_client.inum.startsWith('1001.')}"
+															style="margin-top:5px"
+															disabled="{_client.inum.startsWith('1001.')}"
 															value="#{msg['clientForm.addDefaultACRvalue']}"
 															oncomplete="#{rich:component('defaultAcr:selectEntityModalPanel')}.show();"
 															execute="@this" eventsQueue="clientQueue" />
