@@ -40,7 +40,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @ApplicationScoped
 @Named
 public class UpdateChecker {
-	private final static int DEFAULT_INTERVAL = 60 * 5; // 1 minute
+	private final static int DEFAULT_INTERVAL = 60 * 60 * 8; // 60 minute
 	private AtomicBoolean isActive;
 	@Inject
 	private Event<TimerEvent> timerEvent;
@@ -79,7 +79,7 @@ public class UpdateChecker {
 	}
 
 	private void processInt() {
-		log.info("================================Running update checker= timer==================================");
+		log.debug("================================Running update checker= timer==================================");
 		GluuVersionAvailability versionAvailability = new GluuVersionAvailability();
 		Map<String, GluuComponent> runningComponents = new HashMap<>();
 		Map<String, GluuComponent> availableComponents = new HashMap<>();
@@ -102,7 +102,9 @@ public class UpdateChecker {
 		}
 		Set<String> keys = runningComponents.keySet();
 		for (String key : keys) {
-			if (!runningComponents.get(key).getVersion().equalsIgnoreCase(availableComponents.get(key).getVersion())) {
+			GluuComponent gluuComponent = availableComponents.get(key);
+			if (gluuComponent != null
+					&& !runningComponents.get(key).getVersion().equalsIgnoreCase(gluuComponent.getVersion())) {
 				shouldUpdate = true;
 			}
 		}

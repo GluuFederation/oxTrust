@@ -19,6 +19,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.ConversationScoped;
 import javax.faces.application.FacesMessage;
@@ -1270,10 +1271,10 @@ public class UpdateClientAction implements Serializable {
 	}
 
 	public void selectAddedScopes() {
-		List<Scope> addedScopes = getScopes();
-		for (SelectableEntity<Scope> availableScope : this.availableScopes) {
-			availableScope.setSelected(addedScopes.contains(availableScope.getEntity()));
-		}
+		List<String> ids = getScopes().stream().map(item -> item.getId()).collect(Collectors.toList());
+		availableScopes.stream().forEach(item -> {
+			item.setSelected(ids.contains(item.getEntity().getId()));
+		});
 	}
 
 	private void selectAddedCustomScripts() {
