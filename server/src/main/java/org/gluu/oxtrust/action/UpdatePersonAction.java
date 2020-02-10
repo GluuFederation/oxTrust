@@ -22,6 +22,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIInput;
 import javax.faces.context.FacesContext;
+import javax.faces.validator.ValidatorException;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
@@ -80,6 +81,22 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Named("updatePersonAction")
 @Secure("#{permissionService.hasPermission('person', 'access')}")
 public class UpdatePersonAction implements Serializable {
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public String getConfirmPassword() {
+		return confirmPassword;
+	}
+
+	public void setConfirmPassword(String confirmPassword) {
+		this.confirmPassword = confirmPassword;
+	}
 
 	private static final String MOBILE = "mobile";
 
@@ -307,9 +324,9 @@ public class UpdatePersonAction implements Serializable {
 					gluuDeviceDataBean.setCreationDate(DASH);
 					deviceDataMap.add(gluuDeviceDataBean);
 				} else if (firstPart.equalsIgnoreCase(TOTP) || firstPart.equalsIgnoreCase(HOTP)) {
-					if(!ProductInstallationChecker.isCasaInstalled()) {
+					if (!ProductInstallationChecker.isCasaInstalled()) {
 						gluuDeviceDataBean.setNickName(firstPart);
-						gluuDeviceDataBean.setModality(TOTP+"/"+HOTP);
+						gluuDeviceDataBean.setModality(TOTP + "/" + HOTP);
 						gluuDeviceDataBean.setId(args[1]);
 						gluuDeviceDataBean.setCreationDate(DASH);
 						deviceDataMap.add(gluuDeviceDataBean);
@@ -759,6 +776,12 @@ public class UpdatePersonAction implements Serializable {
 
 	public void validateConfirmPassword(FacesContext context, UIComponent comp, Object value) {
 		Pattern pattern = null;
+		String attributeValue = (String) value;
+		if (StringHelper.isEmpty(attributeValue)) {
+			FacesMessage message = new FacesMessage("Value is required");
+			message.setSeverity(FacesMessage.SEVERITY_ERROR);
+			throw new ValidatorException(message);
+		}
 		AttributeValidation validation = attributeService.getAttributeByName("userPassword").getAttributeValidation();
 		boolean canValidate = validation != null && validation.getRegexp() != null && !validation.getRegexp().isEmpty();
 		if (comp.getClientId().endsWith("custpasswordId")) {
@@ -771,10 +794,9 @@ public class UpdatePersonAction implements Serializable {
 		}
 		if (!StringHelper.equalsIgnoreCase(password, confirmPassword)) {
 			((UIInput) comp).setValid(false);
-			FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR,
-					"Password and Confirm Password should be the same!",
-					"Password and Confirm Password should be the same!");
-			context.addMessage(comp.getClientId(context), message);
+			FacesMessage message = new FacesMessage("Both passwords should be the same!");
+			message.setSeverity(FacesMessage.SEVERITY_ERROR);
+			throw new ValidatorException(message);
 		}
 		if (canValidate && (!pattern.matcher(password).matches() || !pattern.matcher(confirmPassword).matches())) {
 			((UIInput) comp).setValid(false);
