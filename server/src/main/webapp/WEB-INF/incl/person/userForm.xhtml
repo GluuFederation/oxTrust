@@ -233,20 +233,20 @@
 											<h:graphicImage value="/img/remove.gif" />
 										</a4j:commandLink>
 									</ox:decorate>
-									<ox:decorate label="#{msg['person.password']}"
+									<ox:decorate label="#{msg['person.password']}" id="P"
 										rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'Password')}"
 										leftClass="col-sm-3" rightClass="col-sm-9">
 										<div class="col-xs-10">
-											<h:inputSecret style="width:100%"
+											<h:inputSecret
 												p:placeholder="#{msg['person.clickToEnter']} #{msg['person.password']}"
-												id="custpasswordId"
-												styleClass="FirstPasswordField form-control togglefield #{_custAttr.metadata.displayName}"
+												styleClass="FirstPasswordField form-control"
+												style="width:100%" value="#{updatePersonAction.password}"
 												validator="#{updatePersonAction.validateConfirmPassword}"
-												required="#{_mustEnter}"
+												id="custpasswordId"
+												require="#{_mustEnter}"
 												requiredMessage="Password is required"
 												rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'Password')}">
 											</h:inputSecret>
-											<b:message />
 											<h:graphicImage value="/img/eye.png" id="viewPassword"
 												styleClass="FirstPasswordFieldShow"
 												style="float:right; margin-right:-35px; margin-top:-35px;"
@@ -255,24 +255,23 @@
 												styleClass="FirstPasswordFieldHide"
 												style="display: none; float:right; margin-right:-35px; margin-top:-35px;"
 												onclick="hidePassword1(); return false;" />
+											<b:message />
 										</div>
 									</ox:decorate>
-
 									<ox:decorate label="#{msg['person.confirmPassword']}"
 										rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'Password')}"
 										leftClass="col-sm-3" rightClass="col-sm-9">
 										<div class="col-xs-10">
-											<h:inputSecret
-												styleClass="SecondPasswordField form-control #{_custAttr.metadata.displayName}"
+											<h:inputSecret styleClass="SecondPasswordField form-control"
 												style="width:100%"
 												p:placeholder="#{msg['person.clickToEnter']} #{msg['person.confirmPassword']}"
-												maxlength="50" id="custconfirmpasswordId"
 												validator="#{updatePersonAction.validateConfirmPassword}"
-												required="#{_mustEnter}"
+												require="#{_mustEnter}"
+												id="custconfirmpasswordId"
+												value="#{updatePersonAction.confirmPassword}"
 												requiredMessage="Confirm password is required"
 												rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'Password')}">
 											</h:inputSecret>
-											<b:message />
 											<h:graphicImage value="/img/eye.png"
 												styleClass="SecondPasswordFieldShow"
 												style="float:right; margin-right:-35px; margin-top:-35px;"
@@ -282,9 +281,8 @@
 												id="hideCustPassword" styleClass="SecondPasswordFieldHide"
 												style="float:right; margin-right:-35px; display: none;margin-top:-35px;"
 												onclick="hidePassword2(); return false;" />
-
+											<b:message />
 										</div>
-
 									</ox:decorate>
 								</a4j:repeat>
 							</h:panelGroup>
