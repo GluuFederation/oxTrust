@@ -339,8 +339,11 @@ public class UpdateClientAction implements Serializable {
 	}
 
 	public String save() throws Exception {
-		if (this.client.getClientSecretExpiresAt() == null && this.client.isDeletable()) {
+		if ( this.client.isDeletable() && this.client.getClientSecretExpiresAt() == null) {
 			this.client.setClientSecretExpiresAt(oneDay());
+		}
+		if (!this.client.isDeletable()) {
+			this.client.setClientSecretExpiresAt(null);
 		}
 		updateLoginURIs();
 		updateLogoutURIs();
