@@ -10,10 +10,9 @@ package org.gluu.oxtrust.ldap.service;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
+import java.util.UUID;
 
 import org.gluu.oxtrust.service.external.ExternalIdGeneratorService;
-import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.util.INumGenerator;
 import org.gluu.util.StringHelper;
 
 /**
@@ -28,25 +27,21 @@ public class IdGenService {
     @Inject
     private ExternalIdGeneratorService externalIdGenerationService;
 
-    public String generateId(String orgInum, String prefix) {
-		if (StringHelper.isEmptyString(orgInum) || StringHelper.isEmptyString(prefix)) {
-			return "";
-		}
-
-		String newPrefix = orgInum + OxTrustConstants.inumDelimiter + prefix;
-
+    public String generateId(String idType) {
+		
 		if (externalIdGenerationService.isEnabled()) {
-    		final String generatedId = externalIdGenerationService.executeExternalDefaultGenerateIdMethod("oxtrust", "", newPrefix);
+    		final String generatedId = externalIdGenerationService.executeExternalDefaultGenerateIdMethod("oxtrust",idType, "");
 
     		if (StringHelper.isNotEmpty(generatedId)) {
     			return generatedId;
     		}
     	}
     	
-    	return generateDefaultId(newPrefix);
+    	return generateDefaultId();
     }
-	public String generateDefaultId(String newPrefix) {
-		return newPrefix + OxTrustConstants.inumDelimiter + INumGenerator.generate(2);
+	public String generateDefaultId() {
+		
+		return UUID.randomUUID().toString();
 	}
 
 }
