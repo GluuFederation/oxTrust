@@ -1209,7 +1209,7 @@ public class UpdateClientAction implements Serializable {
 		List<SelectableEntity<Scope>> tmpAvailableScopes = new ArrayList<SelectableEntity<Scope>>();
 		List<Scope> scopes = new ArrayList<Scope>();
 		try {
-			scopes = scopeService.getAllScopesList(100);
+			scopes = scopeService.getAllScopesList(1000);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
