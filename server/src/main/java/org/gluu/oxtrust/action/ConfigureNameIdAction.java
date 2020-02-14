@@ -16,6 +16,8 @@ import javax.net.ssl.SSLContext;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.CookieSpecs;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
@@ -158,7 +160,9 @@ public class ConfigureNameIdAction implements Serializable {
 					HostnameVerifier allowAllHosts = new NoopHostnameVerifier();
 					SSLConnectionSocketFactory connectionFactory = new SSLConnectionSocketFactory(sslContext,
 							allowAllHosts);
-					HttpClient client = HttpClients.custom().setSSLSocketFactory(connectionFactory).build();
+					HttpClient client = HttpClients.custom()
+							.setDefaultRequestConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build())
+							.setSSLSocketFactory(connectionFactory).build();
 					HttpGet request = new HttpGet(
 							"https://localhost/idp/profile/admin/reload-service?id=shibboleth.NameIdentifierGenerationService");
 					request.addHeader("User-Agent", "Mozilla/5.0");
