@@ -37,8 +37,8 @@ import org.gluu.oxauth.model.uma.wrapper.Token;
 import org.gluu.oxtrust.ldap.service.AppInitializer;
 import org.gluu.util.Pair;
 import org.gluu.util.StringHelper;
-import org.jboss.resteasy.client.ClientExecutor;
-import org.jboss.resteasy.client.core.executors.ApacheHttpClient4Executor;
+import org.jboss.resteasy.client.jaxrs.ClientHttpEngine;
+import org.jboss.resteasy.client.jaxrs.engines.ApacheHttpClient4Engine;
 import org.slf4j.Logger;
 
 /**
@@ -88,7 +88,7 @@ public class UmaPermissionService implements Serializable {
 					.setKeepAliveStrategy(connectionKeepAliveStrategy)
 					.setConnectionManager(connectionManager)
 					.build();
-				ClientExecutor clientExecutor = new ApacheHttpClient4Executor(client);
+				ClientHttpEngine clientExecutor = new ApacheHttpClient4Engine(client);
 				log.info("##### Initializing custom ClientExecutor DONE");
 
 				this.permissionService = UmaClientFactory.instance().createPermissionService(this.umaMetadata, clientExecutor);
