@@ -99,11 +99,16 @@ public class FidoDeviceService implements IFidoDeviceService, Serializable {
 	
 	@Override
 	public 	List<GluuCustomFidoDevice> searchFidoDevices(String userInum, String ... returnAttributes) {
-		if(containsBranch(userInum)){	
-			String baseDnForU2fDevices = getDnForFidoDevice(userInum,null);	
-			return ldapEntryManager.findEntries(baseDnForU2fDevices, GluuCustomFidoDevice.class, null, returnAttributes);
+		String baseDnForU2fDevices = getDnForFidoDevice(userInum, null);
+		if (ldapEntryManager.hasBranchesSupport(baseDnForU2fDevices)) {
+			if (!containsBranch(userInum)) {
+				return null;
+			}
 		}
-		return null;
+
+		Filter userInumFilter = Filter.createEqualityFilter("personInum", userInum);
+
+		return ldapEntryManager.findEntries(baseDnForU2fDevices, GluuCustomFidoDevice.class, userInumFilter, returnAttributes);
 	}
 	
 	private boolean containsBranch(final String userInum) {
