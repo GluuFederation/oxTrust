@@ -16,7 +16,9 @@
 					<ox:decorate id="name" label="#{msg['attribute.name']}">
 						<h:inputText styleClass="form-control" value="#{_attribute.name}"
 							label="#{msg['attribute.name']}" size="30" maxlength="30"
-							required="true" id="nameId" rendered="#{_new}" />
+							validator="gluuAttributeValidator" required="true" id="nameId"
+							rendered="#{_new}" />
+						<b:message />
 						<h:outputText value="#{_attribute.name}" rendered="#{not _new}" />
 					</ox:decorate>
 					<ox:decorate id="saml1Uri" label="#{msg['attribute.samlURI']}">
@@ -35,7 +37,9 @@
 							value="#{_attribute.displayName}"
 							label="#{msg['attribute.displayName']}" size="30" maxlength="60"
 							required="true" id="displayNameId"
+							validator="gluuAttributeValidator"
 							rendered="#{_attributeAction.canEdit()}" />
+						<b:message />
 						<h:outputText value="#{_attribute.displayName}"
 							rendered="#{not _attributeAction.canEdit()}" />
 					</ox:decorate>
@@ -43,12 +47,14 @@
 						<h:selectOneMenu styleClass="form-control rounded chooseTypeField"
 							value="#{_attribute.dataType}" label="#{msg['attribute.type']}"
 							required="true" id="dataTypeId"
+							validator="gluuAttributeValidator"
 							rendered="#{_attributeAction.canEdit()}">
 							<f:selectItem noSelectionOption="true" itemLabel="Data type" />
 							<f:selectItems value="#{attributeService.dataTypes}" var="_type"
 								itemLabel="#{_type.displayName}" />
 							<f:converter converterId="org.gluu.jsf2.converter.EnumConverter" />
 						</h:selectOneMenu>
+						<b:message />
 						<h:outputText value="#{_attribute.dataType.value}"
 							rendered="#{not _attributeAction.canEdit()}" />
 					</ox:decorate>
@@ -150,9 +156,11 @@
 						<h:inputTextarea
 							styleClass="form-control rounded setAttributeDescriptionField"
 							value="#{_attribute.description}"
+							validator="gluuAttributeValidator"
 							label="#{msg['attribute.description']}" rows="3" size="40"
 							maxlength="4000" required="true" id="descriptionId"
 							disabled="#{not _attributeAction.canEdit()}" />
+						<b:message />
 					</ox:decorate>
 					<ox:decorate id="validationToggle"
 						label="#{msg['attribute.enableCustomValidation']}">
