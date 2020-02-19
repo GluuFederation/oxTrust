@@ -792,13 +792,14 @@ public class UpdatePersonAction implements Serializable {
 		if (canValidate) {
 			pattern = Pattern.compile(validation.getRegexp());
 		}
-		if (!StringHelper.equalsIgnoreCase(password, confirmPassword)) {
+		if (!StringHelper.equalsIgnoreCase(password, confirmPassword) && this.confirmPassword!=null) {
 			((UIInput) comp).setValid(false);
 			FacesMessage message = new FacesMessage("Both passwords should be the same!");
 			message.setSeverity(FacesMessage.SEVERITY_ERROR);
 			throw new ValidatorException(message);
 		}
-		if (canValidate && (!pattern.matcher(password).matches() || !pattern.matcher(confirmPassword).matches())) {
+		if (canValidate
+				&& (!pattern.matcher(this.password).matches() || !pattern.matcher(this.confirmPassword).matches())) {
 			((UIInput) comp).setValid(false);
 			FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR,
 					facesMessages.evalResourceAsString("#{msg['password.validation.invalid']}"),
