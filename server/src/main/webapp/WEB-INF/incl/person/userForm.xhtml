@@ -3,6 +3,7 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:rich="http://richfaces.org/rich"
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
 	xmlns:a4j="http://richfaces.org/a4j" xmlns:b="http://bootsfaces.net/ui"
 	xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
@@ -97,6 +98,7 @@
 			                                                            (_custAttr.metadata.displayName ne 'User Status') and 
 			                                                            (_custAttr.metadata.displayName ne 'Birthdate')}">
 
+												<rich:validator event="blur" />
 											</h:inputText>
 											<b:message
 												rendered="#{(_custAttr.adminCanEdit or _mustEnter) and 
@@ -113,6 +115,7 @@
 												style="width:100%" value="#{_custAttr.values[_valueIdx]}"
 												id="Email" required="#{_mustEnter}" p:type="email"
 												prependId="false" maxlength="100"
+												validator="gluuAttributeValidator"
 												requiredMessage="Please provide a valid email address"
 												rendered="#{(_custAttr.adminCanEdit or _mustEnter) and 
 			                                                            (_custAttr.metadata.dataType.value ne 'boolean') and 
@@ -123,6 +126,7 @@
 			                                                            (_custAttr.metadata.displayName eq 'Email')}">
 												<f:validateRegex
 													pattern="[\w\.-]*[a-zA-Z0-9_]@[\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]" />
+												<rich:validator event="blur" />
 											</h:inputText>
 											<b:message
 												rendered="#{(_custAttr.adminCanEdit or _mustEnter) and 
@@ -242,10 +246,10 @@
 												styleClass="FirstPasswordField form-control"
 												style="width:100%" value="#{updatePersonAction.password}"
 												validator="#{updatePersonAction.validateConfirmPassword}"
-												id="custpasswordId"
-												require="#{_mustEnter}"
+												id="custpasswordId" require="#{_mustEnter}"
 												requiredMessage="Password is required"
 												rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'Password')}">
+												<rich:validator event="blur" />
 											</h:inputSecret>
 											<h:graphicImage value="/img/eye.png" id="viewPassword"
 												styleClass="FirstPasswordFieldShow"
@@ -266,11 +270,11 @@
 												style="width:100%"
 												p:placeholder="#{msg['person.clickToEnter']} #{msg['person.confirmPassword']}"
 												validator="#{updatePersonAction.validateConfirmPassword}"
-												require="#{_mustEnter}"
-												id="custconfirmpasswordId"
+												require="#{_mustEnter}" id="custconfirmpasswordId"
 												value="#{updatePersonAction.confirmPassword}"
 												requiredMessage="Confirm password is required"
 												rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'Password')}">
+												<rich:validator event="blur" />
 											</h:inputSecret>
 											<h:graphicImage value="/img/eye.png"
 												styleClass="SecondPasswordFieldShow"
