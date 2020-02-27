@@ -56,6 +56,10 @@ public class ClientService implements Serializable {
 	@Inject
 	private OrganizationService organizationService;
 
+
+	@Inject
+	private IdGenService idGenService;
+
 	public boolean contains(String clientDn) {
 		return ldapEntryManager.contains(clientDn, OxAuthClient.class);
 	}
@@ -155,8 +159,14 @@ public class ClientService implements Serializable {
 	public String generateInumForNewClient() {
 		String newInum = null;
 		String newDn = null;
+		int trycount = 0;
 		do {
-			newInum = generateInumForNewClientImpl();
+			if(trycount < IdGenService.MAX_IDGEN_TRY_COUNT) {
+				newInum = idGenService.generateId("client");
+				trycount++;
+			}else {
+				newInum = idGenService.generateDefaultId();
+			}
 			newDn = getDnForClient(newInum);
 		} while (ldapEntryManager.contains(newDn, OxAuthClient.class));
 		return newInum;
@@ -167,8 +177,8 @@ public class ClientService implements Serializable {
 	 *
 	 * @return New inum for client
 	 */
-	private String generateInumForNewClientImpl() {
-		return UUID.randomUUID().toString();
+	private String generateInumForNewClientImpl(int trycount) {
+		return idGenService.generateId("client");
 	}
 
 	/**
