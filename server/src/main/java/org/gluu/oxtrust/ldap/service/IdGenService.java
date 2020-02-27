@@ -24,6 +24,8 @@ import org.gluu.util.StringHelper;
 @Named
 public class IdGenService {
 
+	public static final int MAX_IDGEN_TRY_COUNT = 10;
+
     @Inject
     private ExternalIdGeneratorService externalIdGenerationService;
 
@@ -38,10 +40,10 @@ public class IdGenService {
     	}
     	
     	return generateDefaultId();
-    }
+	}
+	
 	public String generateDefaultId() {
 		
 		return UUID.randomUUID().toString();
 	}
-
 }

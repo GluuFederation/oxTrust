@@ -42,7 +42,6 @@ import org.slf4j.Logger;
 public class ClientService implements Serializable {
 
 	private static final long serialVersionUID = 7912416439116338984L;
-	private static final int  MAX_IDGEN_TRY_COUNT = 10;
 
 	@Inject
 	private PersistenceEntryManager ldapEntryManager;
@@ -162,7 +161,7 @@ public class ClientService implements Serializable {
 		String newDn = null;
 		int trycount = 0;
 		do {
-			if(trycount < MAX_IDGEN_TRY_COUNT) {
+			if(trycount < IdGenService.MAX_IDGEN_TRY_COUNT) {
 				newInum = idGenService.generateId("client");
 				trycount++;
 			}else {
