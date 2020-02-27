@@ -175,6 +175,10 @@ public class PersonImportAction implements Serializable {
 			if (uploadedFile == null) {
 				return OxTrustConstants.RESULT_FAILURE;
 			}
+			if (uploadedFile.getName().contains(">") || uploadedFile.getName().contains("<")) {
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Bad file.");
+				return OxTrustConstants.RESULT_FAILURE;
+			}
 			Table table;
 			try (InputStream is = new ByteArrayInputStream(this.fileData);) {
 				table = excelService.read(is);

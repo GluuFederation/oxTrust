@@ -16,6 +16,8 @@ import javax.ws.rs.core.Response;
 import org.apache.http.HeaderElement;
 import org.apache.http.HeaderElementIterator;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.config.CookieSpecs;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.conn.ConnectionKeepAliveStrategy;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -35,8 +37,8 @@ import org.gluu.oxauth.model.uma.wrapper.Token;
 import org.gluu.oxtrust.ldap.service.AppInitializer;
 import org.gluu.util.Pair;
 import org.gluu.util.StringHelper;
-import org.jboss.resteasy.client.ClientExecutor;
-import org.jboss.resteasy.client.core.executors.ApacheHttpClient4Executor;
+import org.jboss.resteasy.client.jaxrs.ClientHttpEngine;
+import org.jboss.resteasy.client.jaxrs.engines.ApacheHttpClient4Engine;
 import org.slf4j.Logger;
 
 /**
@@ -82,10 +84,11 @@ public class UmaPermissionService implements Serializable {
 				connectionManager.setDefaultMaxPerRoute(appConfiguration.getRptConnectionPoolDefaultMaxPerRoute());
 				connectionManager.setValidateAfterInactivity(appConfiguration.getRptConnectionPoolValidateAfterInactivity() * 1000);
 				CloseableHttpClient client = HttpClients.custom()
+					.setDefaultRequestConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build())
 					.setKeepAliveStrategy(connectionKeepAliveStrategy)
 					.setConnectionManager(connectionManager)
 					.build();
-				ClientExecutor clientExecutor = new ApacheHttpClient4Executor(client);
+				ClientHttpEngine clientExecutor = new ApacheHttpClient4Engine(client);
 				log.info("##### Initializing custom ClientExecutor DONE");
 
 				this.permissionService = UmaClientFactory.instance().createPermissionService(this.umaMetadata, clientExecutor);
