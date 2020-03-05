@@ -974,6 +974,11 @@
             "description": "Boolean value specifying whether turn on FAPI compatibility mode. If true AS behaves in more strict mode.",
             "type": "boolean"
          },
+        "forceIdTokenHintPrecense": {
+            "id": "forceIdTokenHintPrecense",
+            "description": "Boolean value specifying whether forcee id_token_hint parameter precense (false by default)",
+            "type": "boolean"
+        },
         "spontaneousScopeLifetime": {
             "id": "spontaneousScopeLifetime",
             "description": "The lifetime of spontaneous scope in seconds.",

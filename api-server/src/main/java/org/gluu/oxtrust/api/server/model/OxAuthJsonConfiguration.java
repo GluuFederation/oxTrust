@@ -242,6 +242,8 @@ public class OxAuthJsonConfiguration {
 	private Boolean sessionIdEnabled;
     @JsonProperty("fapiCompatibility")
 	private Boolean fapiCompatibility;
+    @JsonProperty("forceIdTokenHintPrecense")
+    private Boolean forceIdTokenHintPrecense;
     @JsonProperty("sessionIdRequestParameterEnabled")
     private Boolean sessionIdRequestParameterEnabled;
 	@JsonProperty("sessionIdPersistOnPromptNone")
@@ -337,6 +339,14 @@ public class OxAuthJsonConfiguration {
 
     public void setFapiCompatibility(Boolean fapiCompatibility) {
         this.fapiCompatibility = fapiCompatibility;
+    }
+
+    public Boolean getForceIdTokenHintPrecense() {
+        return forceIdTokenHintPrecense;
+    }
+
+    public void setForceIdTokenHintPrecense(Boolean forceIdTokenHintPrecense) {
+        this.forceIdTokenHintPrecense = forceIdTokenHintPrecense;
     }
 
     @JsonProperty("issuer")
