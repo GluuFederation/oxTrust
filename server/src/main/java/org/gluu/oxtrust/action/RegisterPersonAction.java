@@ -37,6 +37,7 @@ import org.gluu.model.GluuStatus;
 import org.gluu.model.GluuUserRole;
 import org.gluu.model.SimpleCustomProperty;
 import org.gluu.model.custom.script.conf.CustomScriptConfiguration;
+import org.gluu.oxtrust.exception.DuplicateEmailException;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.ConfigurationService;
 import org.gluu.oxtrust.ldap.service.OrganizationService;

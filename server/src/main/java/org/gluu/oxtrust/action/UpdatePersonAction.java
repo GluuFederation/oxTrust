@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import javax.enterprise.context.ConversationScoped;
@@ -35,6 +36,7 @@ import org.gluu.model.GluuStatus;
 import org.gluu.model.GluuUserRole;
 import org.gluu.model.attribute.AttributeValidation;
 import org.gluu.oxauth.model.fido.u2f.protocol.DeviceData;
+import org.gluu.oxtrust.exception.DuplicateEmailException;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.ClientService;
 import org.gluu.oxtrust.ldap.service.Fido2DeviceService;
@@ -57,6 +59,7 @@ import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.model.Phone;
 import org.gluu.oxtrust.model.fido.GluuCustomFidoDevice;
 import org.gluu.oxtrust.model.fido.GluuDeviceDataBean;
+import org.gluu.oxtrust.model.scim2.user.Email;
 import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.service.external.ExternalUpdateUserService;
 import org.gluu.oxtrust.util.OxTrustConstants;
@@ -65,6 +68,7 @@ import org.gluu.oxtrust.util.ServiceUtil;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.exception.BasePersistenceException;
 import org.gluu.service.DataSourceTypeService;
+import org.gluu.service.JsonService;
 import org.gluu.service.security.Secure;
 import org.gluu.util.ArrayHelper;
 import org.gluu.util.StringHelper;
@@ -177,6 +181,9 @@ public class UpdatePersonAction implements Serializable {
 
 	@Inject
 	private OxTrustAuditService oxTrustAuditService;
+	
+	@Inject
+	private JsonService jsonService;
 
 	private GluuStatus gluuStatus;
 
@@ -563,7 +570,7 @@ public class UpdatePersonAction implements Serializable {
 		this.person.setCustomAttributes(customAttributeAction.getCustomAttributes());
 		this.person.getCustomAttributes().addAll(removedAttributes);
 		// Sync email, in reverse ("oxTrustEmail" <- "mail")
-		this.person = ServiceUtil.syncEmailReverse(this.person, true);
+		this.person = syncEmailReverse(this.person, true);
 		boolean runScript = externalUpdateUserService.isEnabled();
 		if (update) {
 			try {
@@ -639,6 +646,89 @@ public class UpdatePersonAction implements Serializable {
 		}
 
 		return OxTrustConstants.RESULT_SUCCESS;
+	}
+
+	/**
+	 * One-way sync from "mail" to "oxTrustEmail". This method takes current values
+	 * of "oxTrustEmail" attribute, deletes those that do not match any of those in
+	 * "mail", and adds new ones that are missing.
+	 * 
+	 * @param gluuCustomPerson
+	 * @param isScim2
+	 * @return
+	 * @throws Exception
+	 */
+	public GluuCustomPerson syncEmailReverse(GluuCustomPerson gluuCustomPerson, boolean isScim2)
+			throws Exception {
+
+		/*
+		 * Implementation of this method could not be simplified to creating a new empty
+		 * list for oxTrustEmail and then do the respective additions based on current
+		 * mail values since information such as display, primary, etc. would be lost.
+		 * Instead, it uses set operations to know which existing entries must be
+		 * removed or retained, and then apply additions of new data.
+		 */
+		log.info(" IN Utils.syncEmailReverse()...");
+
+		GluuCustomAttribute mail = gluuCustomPerson.getGluuCustomAttribute("mail");
+		GluuCustomAttribute oxTrustEmail = gluuCustomPerson.getGluuCustomAttribute("oxTrustEmail");
+
+		if (mail == null) {
+			gluuCustomPerson.setAttribute("oxTrustEmail", new String[0]);
+		} else {
+			Set<String> mailSet = new HashSet<String>();
+			if (mail.getValues() != null)
+				mailSet.addAll(Arrays.asList(mail.getValues()));
+
+			Set<String> mailSetCopy = new HashSet<String>(mailSet);
+			Set<String> oxTrustEmailSet = new HashSet<String>();
+			List<Email> oxTrustEmails = new ArrayList<Email>();
+
+			if (oxTrustEmail != null && oxTrustEmail.getValues() != null) {
+
+			    for (String oxTrustEmailJson : oxTrustEmail.getValues()) {
+                    oxTrustEmails.add(jsonService.jsonToObject(oxTrustEmailJson, Email.class));
+                }
+
+				for (Email email : oxTrustEmails) {
+                    oxTrustEmailSet.add(email.getValue());
+                }
+			}
+			mailSetCopy.removeAll(oxTrustEmailSet); // Keep those in "mail" and not in oxTrustEmail
+			oxTrustEmailSet.removeAll(mailSet); // Keep those in oxTrustEmail and not in "mail"
+
+			List<Integer> delIndexes = new ArrayList<Integer>();
+			// Build a list of indexes that should be removed in oxTrustEmails
+			for (int i = 0; i < oxTrustEmails.size(); i++) {
+				if (oxTrustEmailSet.contains(oxTrustEmails.get(i).getValue())) {
+                    delIndexes.add(0, i);
+                }
+			}
+			// Delete unmatched oxTrustEmail entries from highest index to lowest
+			for (Integer idx : delIndexes) {
+                oxTrustEmails.remove(idx.intValue()); // must not pass an Integer directly
+            }
+
+			List<String> newValues = new ArrayList<String>();
+			for (Email email : oxTrustEmails) {
+                newValues.add(jsonService.objectToPerttyJson(email));
+            }
+
+			for (String mailStr : mailSetCopy) {
+				Email email = new Email();
+				email.setValue(mailStr);
+				email.setPrimary(false);
+				newValues.add(jsonService.objectToPerttyJson(email));
+			}
+
+			gluuCustomPerson.setAttribute("oxTrustEmail", newValues.toArray(new String[0]));
+
+		}
+
+		log.info(" LEAVING Utils.syncEmailReverse()...");
+
+		return gluuCustomPerson;
+
 	}
 
 	private void updateCustomObjectClasses() {

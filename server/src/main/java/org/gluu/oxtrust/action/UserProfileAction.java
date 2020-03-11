@@ -23,6 +23,7 @@ import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
 import org.gluu.model.GluuAttribute;
 import org.gluu.model.GluuUserRole;
+import org.gluu.oxtrust.exception.DuplicateEmailException;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.ConfigurationService;
 import org.gluu.oxtrust.ldap.service.OxTrustAuditService;

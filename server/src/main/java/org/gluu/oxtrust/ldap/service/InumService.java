@@ -10,6 +10,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.EntityManager;
@@ -49,8 +50,7 @@ https://github.com/GluuFederation/docs/blob/master/sources/reference/api/id-gene
 
  */
 
-@Stateless
-@Named
+@ApplicationScoped
 public class InumService implements Serializable {
 
 	private static final long serialVersionUID = 6685720517520443399L;

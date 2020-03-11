@@ -438,41 +438,6 @@ public class AppInitializer {
 		return openIdConfiguration;
 	}
 
-	@Produces
-	@ApplicationScoped
-	@Named("umaMetadataConfiguration")
-	public UmaMetadata initUmaMetadataConfiguration() throws OxIntializationException {
-		String umaConfigurationEndpoint = getUmaConfigurationEndpoint();
-		if (StringHelper.isEmpty(umaConfigurationEndpoint)) {
-			return null;
-		}
-
-		UmaMetadataService metaDataConfigurationService = UmaClientFactory.instance()
-				.createMetadataService(umaConfigurationEndpoint);
-		UmaMetadata metadataConfiguration = metaDataConfigurationService.getMetadata();
-
-		if (metadataConfiguration == null) {
-			throw new OxIntializationException("UMA meta data configuration is invalid!");
-		}
-
-		return metadataConfiguration;
-	}
-
-	public String getUmaConfigurationEndpoint() {
-		String umaIssuer = this.configurationFactory.getAppConfiguration().getUmaIssuer();
-		if (StringHelper.isEmpty(umaIssuer)) {
-			log.trace("oxAuth UMA issuer isn't specified");
-			return null;
-		}
-
-		String umaConfigurationEndpoint = umaIssuer;
-		if (!umaConfigurationEndpoint.endsWith("uma2-configuration")) {
-			umaConfigurationEndpoint += "/.well-known/uma2-configuration";
-		}
-
-		return umaConfigurationEndpoint;
-	}
-
 	public void destroy(@Observes @BeforeDestroyed(ApplicationScoped.class) ServletContext init) {
 		log.info("Stopping services and closing DB connections at server shutdown...");
 		log.debug("Checking who intiated destory", new Throwable());

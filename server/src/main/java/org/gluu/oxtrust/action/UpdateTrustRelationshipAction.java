@@ -55,6 +55,7 @@ import org.bouncycastle.util.encoders.Base64;
 import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.jsf2.io.ResponseHelper;
 import org.gluu.jsf2.message.FacesMessages;
+import org.gluu.jsf2.model.RenderParameters;
 import org.gluu.jsf2.service.ConversationService;
 import org.gluu.model.GluuAttribute;
 import org.gluu.model.GluuStatus;
@@ -62,6 +63,7 @@ import org.gluu.model.GluuUserRole;
 import org.gluu.model.SchemaEntry;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.ClientService;
+import org.gluu.oxtrust.ldap.service.ConfigurationService;
 import org.gluu.oxtrust.ldap.service.MetadataValidationTimer;
 import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.ldap.service.OxTrustAuditService;
@@ -70,6 +72,7 @@ import org.gluu.oxtrust.ldap.service.Shibboleth3ConfService;
 import org.gluu.oxtrust.ldap.service.SvnSyncTimer;
 import org.gluu.oxtrust.ldap.service.TemplateService;
 import org.gluu.oxtrust.ldap.service.TrustService;
+import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuEntityType;
 import org.gluu.oxtrust.model.GluuMetadataSourceType;
@@ -78,6 +81,7 @@ import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.exception.BasePersistenceException;
+import org.gluu.service.MailService;
 import org.gluu.service.SchemaService;
 import org.gluu.service.cdi.async.Asynchronous;
 import org.gluu.service.security.Secure;
@@ -166,6 +170,21 @@ public class UpdateTrustRelationshipAction implements Serializable {
 	@Inject
 	private SSLService sslService;
 
+	@Inject
+	private RenderParameters rendererParameters;
+
+	@Inject
+	private ConfigurationService configurationService;
+
+	@Inject
+	private MailService mailService;
+
+	@Inject
+	private OxTrustAuditService oxTrustAuditService;
+
+	@Inject
+	private transient ExternalContext externalContext;
+
 	private Part fileWrapper;
 	private Part certWrapper;
 
@@ -178,13 +197,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 
 	private String filterString;
 
-	@Inject
-	private OxTrustAuditService oxTrustAuditService;
-
 	private List<String> availableEntitiesFiltered;
-
-	@Inject
-	private transient ExternalContext externalContext;
 
 	public List<GluuMetadataSourceType> getMetadataSourceTypesList() {
 		List<GluuMetadataSourceType> metadataSourceTypesList = (Arrays.asList(GluuMetadataSourceType.values()));
@@ -356,7 +369,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 
 				break;
 			}
-			trustService.updateReleasedAttributes(this.trustRelationship);
+			updateReleasedAttributes(this.trustRelationship);
 			if (trustRelationship.getSpMetaDataSourceType().equals(GluuMetadataSourceType.FEDERATION)) {
 				boolean federation = shibboleth3ConfService.isFederation(this.trustRelationship);
 				this.trustRelationship.setFederation(federation);
@@ -544,7 +557,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 					if (parentInactive) {
 						trust.setStatus(GluuStatus.INACTIVE);
 					}
-					trustService.updateReleasedAttributes(trust);
+					updateReleasedAttributes(trust);
 					trustService.updateTrustRelationship(trust);
 				}
 			}
@@ -583,6 +596,59 @@ public class UpdateTrustRelationshipAction implements Serializable {
 					(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 		}
 
+	}
+
+	public void updateReleasedAttributes(GluuSAMLTrustRelationship trustRelationship) {
+		List<String> releasedAttributes = new ArrayList<String>();
+		String mailMsgPlain = "";
+		String mailMsgHtml = "";
+		for (GluuCustomAttribute customAttribute : trustRelationship.getReleasedCustomAttributes()) {
+			if (customAttribute.isNew()) {
+				rendererParameters.setParameter("attributeName", customAttribute.getName());
+				rendererParameters.setParameter("attributeDisplayName", customAttribute.getMetadata().getDisplayName());
+				rendererParameters.setParameter("attributeValue", customAttribute.getValue());
+
+				mailMsgPlain += facesMessages.evalResourceAsString("#{msg['mail.trust.released.attribute.plain']}");
+				mailMsgHtml += facesMessages.evalResourceAsString("#{msg['mail.trust.released.attribute.html']}");
+				rendererParameters.reset();
+
+				customAttribute.setNew(false);
+			}
+			releasedAttributes.add(customAttribute.getMetadata().getDn());
+		}
+
+		// send email notification
+		if (!StringUtils.isEmpty(mailMsgPlain)) {
+			try {
+				GluuConfiguration configuration = configurationService.getConfiguration();
+				if (configuration.getContactEmail() == null || configuration.getContactEmail().isEmpty())
+					log.warn("Failed to send the 'Attributes released' notification email: unconfigured contact email");
+				else if (configuration.getSmtpConfiguration() == null
+						|| StringHelper.isEmpty(configuration.getSmtpConfiguration().getHost()))
+					log.warn("Failed to send the 'Attributes released' notification email: unconfigured SMTP server");
+				else {
+					String subj = facesMessages.evalResourceAsString("#{msg['mail.trust.released.subject']}");
+					rendererParameters.setParameter("trustRelationshipName", trustRelationship.getDisplayName());
+					rendererParameters.setParameter("trustRelationshipInum", trustRelationship.getInum());
+					String preMsgPlain = facesMessages.evalResourceAsString("#{msg['mail.trust.released.name.plain']}");
+					String preMsgHtml = facesMessages.evalResourceAsString("#{msg['mail.trust.released.name.html']}");
+					boolean result = mailService.sendMail(configuration.getContactEmail(), null, subj,
+							preMsgPlain + mailMsgPlain, preMsgHtml + mailMsgHtml);
+
+					if (!result) {
+						log.error("Failed to send the notification email");
+					}
+				}
+			} catch (Exception ex) {
+				log.error("Failed to send the notification email: ", ex);
+			}
+		}
+
+		if (!releasedAttributes.isEmpty()) {
+			trustRelationship.setReleasedAttributes(releasedAttributes);
+		} else {
+			trustRelationship.setReleasedAttributes(null);
+		}
 	}
 
 	private void updateSpMetaDataCert(Part certWrapper) throws IOException {

@@ -82,6 +82,7 @@
 		<module>configuration</module>
 		<module>model</module>
 		<module>client</module>
+		<module>service</module>
 		<module>server</module>
 		<module>scim</module>
 		<module>openid-auth-client</module>
@@ -156,6 +157,12 @@
 			<dependency>
 				<groupId>org.gluu</groupId>
 				<artifactId>oxtrust-client</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.gluu</groupId>
+				<artifactId>oxtrust-service</artifactId>
+				<type>jar</type>
 				<version>${project.version}</version>
 			</dependency>
 

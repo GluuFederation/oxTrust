@@ -16,27 +16,22 @@ import org.gluu.util.security.StringEncrypter.EncryptionException;
 import org.slf4j.Logger;
 
 import javax.ejb.Stateless;
-import javax.faces.context.FacesContext;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
-import java.util.Properties;
 
 /**
  * GluuConfiguration service
  * 
  * @author Reda Zerrad Date: 08.10.2012
  */
-@Stateless
-@Named("configurationService")
+@ApplicationScoped
 public class ConfigurationService implements Serializable {
 
 	private static final long serialVersionUID = 8842838732456296435L;
@@ -237,30 +232,6 @@ public class ConfigurationService implements Serializable {
 				log.error("Failed to decrypt SMTP password", ex);
 			}
 		}
-	}
-
-	/**
-	 * Get version for organization
-	 * 
-	 * @return version string for organization
-	 */
-	public String getVersion() {
-		String version  = getClass().getPackage().getImplementationVersion();
-    	if (version==null) {
-    	    Properties prop = new Properties();
-    	    try (InputStream is = FacesContext.getCurrentInstance().getExternalContext().getResourceAsStream("/META-INF/MANIFEST.MF")) {
-    	        prop.load(is);
-    	        version = prop.getProperty("Implementation-Version");
-    	    } catch (IOException e) {
-    	        log.error(e.toString());
-    	    }
-    	}
-    	log.info("Starting App version "+version);
-    	if(version != null){
-    		version = version.replace("-SNAPSHOT","");
-    		return version;
-    	}    		
-       	return "";
 	}
 
 	private String buildDn(String uniqueIdentifier, Date creationDate, ApplicationType applicationType) {

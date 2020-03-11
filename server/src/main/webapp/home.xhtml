@@ -21,7 +21,7 @@
 					style="margin-left:10%;text-align: center;">
 					<h:outputText escape="false" value="#{welcomeTitle}" />
 					<h:outputText escape="false"
-						value="#{organizationService.getVersion()}" />
+						value="#{configurationService.getVersion()}" />
 				</h:panelGroup>
 			</ui:fragment>
 			<ui:fragment rendered="#{empty welcomeTitle}">

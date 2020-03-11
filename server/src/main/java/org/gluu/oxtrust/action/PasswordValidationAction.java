@@ -20,6 +20,7 @@ import javax.validation.constraints.AssertTrue;
 
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.model.attribute.AttributeValidation;
+import org.gluu.oxtrust.exception.DuplicateEmailException;
 import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.ldap.service.OxTrustAuditService;
