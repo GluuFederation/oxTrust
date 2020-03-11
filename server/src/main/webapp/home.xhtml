@@ -35,7 +35,7 @@
 				</h:form>
 				<h1>
 					<h:outputFormat value="#{msg['home.welcome']}">
-						<f:param value="#{organizationService.getVersion()}" />
+						<f:param value="#{configurationService.getVersion()}" />
 					</h:outputFormat>
 				</h1>
 			</ui:fragment>
