@@ -89,7 +89,6 @@
 		<module>saml-openid-auth-client</module>
 		<module>cas-openid-auth-client</module>
 		<module>oxtrust-qa</module>
-		<module>api-server</module>
 		<module>server-test</module>
 	</modules>
 

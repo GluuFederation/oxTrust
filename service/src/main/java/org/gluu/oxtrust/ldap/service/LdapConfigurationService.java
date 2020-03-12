@@ -5,6 +5,7 @@ import static org.gluu.oxtrust.util.CollectionsUtil.trimToEmpty;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.gluu.model.ldap.GluuLdapConfiguration;
@@ -19,6 +20,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Iterables;
 
+@ApplicationScoped
 public class LdapConfigurationService {
 
 	private static final String AUTH = "auth";
