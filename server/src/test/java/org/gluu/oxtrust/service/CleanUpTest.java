@@ -14,9 +14,6 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.gluu.oxtrust.action.BaseTest;
-import org.gluu.oxtrust.ldap.service.IGroupService;
-import org.gluu.oxtrust.ldap.service.IPersonService;
-import org.gluu.oxtrust.ldap.service.MemberService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.persist.exception.EntryPersistenceException;

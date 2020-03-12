@@ -12,9 +12,9 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.gluu.jsf2.message.FacesMessages;
-import org.gluu.oxtrust.ldap.service.SamlAcrService;
-import org.gluu.oxtrust.ldap.service.Shibboleth3ConfService;
 import org.gluu.oxtrust.model.SamlAcr;
+import org.gluu.oxtrust.service.SamlAcrService;
+import org.gluu.oxtrust.service.Shibboleth3ConfService;
 import org.gluu.service.security.Secure;
 import org.slf4j.Logger;
 

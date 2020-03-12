@@ -17,9 +17,9 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.commons.lang.StringUtils;
-import org.gluu.oxtrust.ldap.service.FilterService;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.model.MetadataFilter;
+import org.gluu.oxtrust.service.FilterService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.service.security.Secure;
 import org.gluu.util.StringHelper;

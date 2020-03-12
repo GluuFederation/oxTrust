@@ -12,8 +12,8 @@ import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 import javax.inject.Inject;
 
-import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
+import org.gluu.oxtrust.service.IPersonService;
 
 @FacesConverter("PeopleUidConverter")
 public class PeopleUidConverter implements Converter {

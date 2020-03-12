@@ -24,8 +24,6 @@ import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.lang.StringUtils;
 import org.gluu.model.GluuStatus;
-import org.gluu.oxtrust.ldap.service.IGroupService;
-import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.scim.ScimCustomPerson;
 import org.gluu.oxtrust.model.scim2.BaseScimResource;
@@ -45,6 +43,8 @@ import org.gluu.oxtrust.model.scim2.user.UserResource;
 import org.gluu.oxtrust.model.scim2.user.X509Certificate;
 import org.gluu.oxtrust.model.scim2.util.IntrospectUtil;
 import org.gluu.oxtrust.model.scim2.util.ScimResourceUtil;
+import org.gluu.oxtrust.service.IGroupService;
+import org.gluu.oxtrust.service.IPersonService;
 import org.gluu.oxtrust.service.antlr.scimFilter.ScimFilterParserService;
 import org.gluu.oxtrust.service.external.ExternalScimService;
 import org.gluu.oxtrust.util.ServiceUtil;

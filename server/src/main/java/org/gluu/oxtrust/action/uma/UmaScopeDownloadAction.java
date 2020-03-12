@@ -12,8 +12,8 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.gluu.oxtrust.ldap.service.ImageService;
-import org.gluu.oxtrust.ldap.service.uma.UmaScopeService;
+import org.gluu.oxtrust.service.ImageService;
+import org.gluu.oxtrust.service.uma.UmaScopeService;
 import org.gluu.service.security.Secure;
 
 /**

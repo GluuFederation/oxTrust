@@ -1,7 +1,7 @@
 package org.gluu.oxtrust.util;
 
-import org.gluu.oxtrust.ldap.service.CASService;
 import org.gluu.config.oxtrust.ShibbolethCASProtocolConfiguration;
+import org.gluu.oxtrust.service.CASService;
 
 public class CASProtocolConfiguration {
 	private String casBaseURL;

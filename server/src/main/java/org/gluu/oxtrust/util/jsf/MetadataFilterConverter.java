@@ -14,8 +14,8 @@ import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 import javax.inject.Inject;
 
-import org.gluu.oxtrust.ldap.service.FilterService;
 import org.gluu.oxtrust.model.MetadataFilter;
+import org.gluu.oxtrust.service.FilterService;
 
 @FacesConverter("metadataFilterConverter")
 public class MetadataFilterConverter implements Converter {

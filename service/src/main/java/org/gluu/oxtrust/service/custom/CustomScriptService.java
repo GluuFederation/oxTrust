@@ -10,7 +10,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.gluu.model.custom.script.model.CustomScript;
-import org.gluu.oxtrust.ldap.service.OrganizationService;
+import org.gluu.oxtrust.service.OrganizationService;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.service.custom.script.AbstractCustomScriptService;
 

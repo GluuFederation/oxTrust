@@ -12,7 +12,6 @@ import static org.testng.Assert.assertTrue;
 import javax.inject.Inject;
 
 import org.gluu.oxtrust.action.BaseTest;
-import org.gluu.oxtrust.ldap.service.IGroupService;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 

@@ -20,7 +20,7 @@ import org.gluu.config.oxtrust.ImportPerson;
 import org.gluu.model.GluuAttribute;
 import org.gluu.model.attribute.AttributeDataType;
 import org.gluu.oxtrust.config.ConfigurationFactory;
-import org.gluu.oxtrust.ldap.service.AttributeService;
+import org.gluu.oxtrust.service.AttributeService;
 import org.gluu.persist.exception.EntryPersistenceException;
 import org.gluu.util.StringHelper;
 import org.gluu.util.properties.FileConfiguration;

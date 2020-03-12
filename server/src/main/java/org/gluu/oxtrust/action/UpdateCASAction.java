@@ -19,10 +19,10 @@ import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.configuration.PropertiesConfigurationLayout;
 import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.config.oxtrust.ShibbolethCASProtocolConfiguration;
-import org.gluu.oxtrust.ldap.service.CASService;
-import org.gluu.oxtrust.ldap.service.Shibboleth3ConfService;
-import org.gluu.oxtrust.ldap.service.TrustService;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
+import org.gluu.oxtrust.service.CASService;
+import org.gluu.oxtrust.service.Shibboleth3ConfService;
+import org.gluu.oxtrust.service.TrustService;
 import org.gluu.service.security.Secure;
 import org.slf4j.Logger;
 

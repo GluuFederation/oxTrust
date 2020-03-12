@@ -6,12 +6,12 @@
 package org.gluu.oxtrust.service.scim2.interceptor;
 
 import org.apache.commons.lang.StringUtils;
-import org.gluu.oxtrust.ldap.service.Fido2DeviceService;
 import org.gluu.oxtrust.model.GluuFido2Device;
 import org.gluu.oxtrust.model.exception.SCIMException;
 import org.gluu.oxtrust.model.scim2.ErrorScimType;
 import org.gluu.oxtrust.model.scim2.SearchRequest;
 import org.gluu.oxtrust.model.scim2.fido.Fido2DeviceResource;
+import org.gluu.oxtrust.service.Fido2DeviceService;
 import org.gluu.oxtrust.ws.rs.scim2.BaseScimWebService;
 import org.gluu.oxtrust.ws.rs.scim2.IFido2DeviceWebService;
 import org.slf4j.Logger;

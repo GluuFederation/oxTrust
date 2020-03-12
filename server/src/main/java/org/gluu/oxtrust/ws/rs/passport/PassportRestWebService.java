@@ -11,7 +11,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.gluu.oxtrust.ldap.service.PassportService;
+import org.gluu.oxtrust.service.PassportService;
 import org.gluu.oxtrust.service.filter.ProtectedApi;
 import org.slf4j.Logger;
 import org.gluu.config.oxtrust.LdapOxPassportConfiguration;

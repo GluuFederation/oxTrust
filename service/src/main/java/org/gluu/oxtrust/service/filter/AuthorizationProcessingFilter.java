@@ -19,8 +19,8 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
 
-import org.gluu.oxtrust.service.uma.BaseUmaProtectionService;
-import org.gluu.oxtrust.service.uma.BindingUrls;
+import org.gluu.oxtrust.auth.uma.BaseUmaProtectionService;
+import org.gluu.oxtrust.auth.uma.BindingUrls;
 import org.jboss.weld.inject.WeldInstance;
 import org.slf4j.Logger;
 

@@ -16,8 +16,8 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.commons.lang3.StringUtils;
-import org.gluu.oxtrust.ldap.service.ConfigurationService;
 import org.gluu.oxtrust.model.GluuConfiguration;
+import org.gluu.oxtrust.service.ConfigurationService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.service.security.Secure;
 import org.slf4j.Logger;

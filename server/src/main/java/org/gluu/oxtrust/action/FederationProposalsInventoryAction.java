@@ -13,9 +13,9 @@ import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.gluu.oxtrust.ldap.service.AttributeService;
-import org.gluu.oxtrust.ldap.service.FederationService;
 import org.gluu.oxtrust.model.GluuSAMLFederationProposal;
+import org.gluu.oxtrust.service.AttributeService;
+import org.gluu.oxtrust.service.FederationService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.service.security.Secure;
 import org.slf4j.Logger;

@@ -14,7 +14,7 @@ import javax.inject.Inject;
 
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.model.attribute.AttributeValidation;
-import org.gluu.oxtrust.ldap.service.AttributeService;
+import org.gluu.oxtrust.service.AttributeService;
 
 @ApplicationScoped
 @FacesValidator("gluuPasswordValidator")

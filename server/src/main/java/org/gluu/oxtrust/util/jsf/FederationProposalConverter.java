@@ -14,8 +14,8 @@ import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 import javax.inject.Inject;
 
-import org.gluu.oxtrust.ldap.service.FederationService;
 import org.gluu.oxtrust.model.GluuSAMLFederationProposal;
+import org.gluu.oxtrust.service.FederationService;
 
 @FacesConverter("federationProposalConverter")
 public class FederationProposalConverter implements Converter {

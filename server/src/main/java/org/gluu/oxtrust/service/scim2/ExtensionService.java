@@ -24,12 +24,12 @@ import javax.inject.Named;
 
 import org.gluu.model.GluuAttribute;
 import org.gluu.model.attribute.AttributeDataType;
-import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.model.scim2.BaseScimResource;
 import org.gluu.oxtrust.model.scim2.extensions.Extension;
 import org.gluu.oxtrust.model.scim2.extensions.ExtensionField;
 import org.gluu.oxtrust.model.scim2.user.UserResource;
 import org.gluu.oxtrust.model.scim2.util.DateUtil;
+import org.gluu.oxtrust.service.AttributeService;
 import org.slf4j.Logger;
 
 /**

@@ -38,7 +38,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import com.wordnik.swagger.annotations.ApiOperation;
-import org.gluu.oxtrust.ldap.service.Fido2DeviceService;
+
 import org.gluu.oxtrust.model.exception.SCIMException;
 import org.gluu.oxtrust.model.GluuFido2Device;
 import org.gluu.oxtrust.model.scim2.*;
@@ -46,6 +46,7 @@ import org.gluu.oxtrust.model.scim2.fido.Fido2DeviceResource;
 import org.gluu.oxtrust.model.scim2.patch.PatchRequest;
 import org.gluu.oxtrust.model.scim2.util.DateUtil;
 import org.gluu.oxtrust.model.scim2.util.ScimResourceUtil;
+import org.gluu.oxtrust.service.Fido2DeviceService;
 import org.gluu.oxtrust.service.antlr.scimFilter.ScimFilterParserService;
 import org.gluu.oxtrust.service.filter.ProtectedApi;
 import org.gluu.oxtrust.service.scim2.interceptor.RefAdjusted;

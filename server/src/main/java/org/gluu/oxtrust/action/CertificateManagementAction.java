@@ -25,10 +25,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.gluu.jsf2.message.FacesMessages;
-import org.gluu.oxtrust.ldap.service.ConfigurationService;
-import org.gluu.oxtrust.ldap.service.SSLService;
 import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.oxtrust.model.cert.TrustStoreCertificate;
+import org.gluu.oxtrust.service.ConfigurationService;
+import org.gluu.oxtrust.service.SSLService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.X509CertificateShortInfo;
 import org.slf4j.Logger;

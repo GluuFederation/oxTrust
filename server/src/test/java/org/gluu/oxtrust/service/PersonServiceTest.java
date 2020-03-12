@@ -15,7 +15,6 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.gluu.oxtrust.action.BaseTest;
-import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.testng.annotations.Parameters;

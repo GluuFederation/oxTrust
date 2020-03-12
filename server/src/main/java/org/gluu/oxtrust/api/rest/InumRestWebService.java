@@ -13,7 +13,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.gluu.oxtrust.ldap.service.InumService;
+import org.gluu.oxtrust.service.InumService;
 
 //Sets the path to base URL + /inum
 @Path("/inum")

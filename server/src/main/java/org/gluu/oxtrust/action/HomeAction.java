@@ -12,10 +12,10 @@ import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.gluu.oxtrust.ldap.service.UpdateChecker;
 import org.gluu.oxtrust.model.AuthenticationChartDto;
 import org.gluu.oxtrust.service.MetricService;
 import org.gluu.oxtrust.service.PermissionService;
+import org.gluu.oxtrust.service.UpdateChecker;
 import org.gluu.service.JsonService;
 import org.gluu.service.security.Secure;
 import org.slf4j.Logger;

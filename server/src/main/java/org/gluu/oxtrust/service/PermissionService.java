@@ -14,7 +14,6 @@ import javax.inject.Named;
 
 import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.model.user.UserRole;
-import org.gluu.oxtrust.ldap.service.ConfigurationService;
 import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.oxtrust.security.Identity;
 import org.gluu.service.el.ExpressionEvaluator;

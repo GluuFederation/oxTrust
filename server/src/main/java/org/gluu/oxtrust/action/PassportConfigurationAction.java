@@ -9,7 +9,7 @@ import javax.inject.Named;
 
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
-import org.gluu.oxtrust.ldap.service.PassportService;
+import org.gluu.oxtrust.service.PassportService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.slf4j.Logger;
 import org.gluu.config.oxtrust.LdapOxPassportConfiguration;

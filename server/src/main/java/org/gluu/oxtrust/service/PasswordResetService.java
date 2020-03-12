@@ -14,8 +14,6 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.gluu.oxtrust.ldap.service.ConfigurationService;
-import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.model.PasswordResetRequest;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.model.BatchOperation;

@@ -1,12 +1,13 @@
 package org.gluu.oxtrust.service.scim2;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.gluu.oxtrust.ldap.service.AttributeService;
-import org.gluu.oxtrust.ldap.service.IGroupService;
-import org.gluu.oxtrust.ldap.service.IPersonService;
+
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.scim.ScimCustomPerson;
 import org.gluu.oxtrust.model.scim2.user.Email;
+import org.gluu.oxtrust.service.AttributeService;
+import org.gluu.oxtrust.service.IGroupService;
+import org.gluu.oxtrust.service.IPersonService;
 import org.gluu.oxtrust.util.ServiceUtil;
 import org.gluu.persist.PersistenceEntryManager;
 import org.joda.time.format.ISODateTimeFormat;

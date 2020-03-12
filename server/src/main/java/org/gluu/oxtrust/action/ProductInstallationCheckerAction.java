@@ -12,8 +12,8 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.gluu.oxtrust.ldap.service.ConfigurationService;
-import org.gluu.oxtrust.ldap.service.Shibboleth3ConfService;
+import org.gluu.oxtrust.service.ConfigurationService;
+import org.gluu.oxtrust.service.Shibboleth3ConfService;
 import org.gluu.oxtrust.util.ProductInstallationChecker;
 import org.gluu.service.security.Secure;
 import org.slf4j.Logger;

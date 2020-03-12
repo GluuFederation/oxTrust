@@ -21,9 +21,9 @@ import javax.inject.Named;
 
 import org.gluu.oxtrust.ldap.cache.model.GluuInumMap;
 import org.gluu.oxtrust.ldap.cache.model.GluuSimplePerson;
-import org.gluu.oxtrust.ldap.service.InumService;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
+import org.gluu.oxtrust.service.InumService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.exception.operation.SearchException;

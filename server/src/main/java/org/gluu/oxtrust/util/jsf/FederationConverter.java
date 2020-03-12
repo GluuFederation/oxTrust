@@ -14,8 +14,8 @@ import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 import javax.inject.Inject;
 
-import org.gluu.oxtrust.ldap.service.TrustService;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
+import org.gluu.oxtrust.service.TrustService;
 
 @FacesConverter("federationConverter")
 public class FederationConverter implements Converter {

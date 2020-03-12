@@ -8,8 +8,8 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.gluu.jsf2.message.FacesMessages;
-import org.gluu.oxtrust.ldap.service.EncryptionService;
-import org.gluu.oxtrust.ldap.service.radius.GluuRadiusClientService;
+import org.gluu.oxtrust.service.EncryptionService;
+import org.gluu.oxtrust.service.radius.GluuRadiusClientService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.radius.model.RadiusClient;
 import org.gluu.service.security.Secure;

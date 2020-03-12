@@ -15,8 +15,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.model.GluuOrganization;
+import org.gluu.oxtrust.service.OrganizationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

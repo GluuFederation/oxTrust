@@ -15,8 +15,8 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.gluu.model.TrustContact;
-import org.gluu.oxtrust.ldap.service.TrustService;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
+import org.gluu.oxtrust.service.TrustService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.service.XmlService;
 import org.gluu.service.security.Secure;

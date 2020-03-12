@@ -15,7 +15,7 @@ import javax.inject.Named;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.gluu.model.SimpleProperty;
-import org.gluu.oxtrust.ldap.service.EncryptionService;
+import org.gluu.oxtrust.service.EncryptionService;
 import org.gluu.util.StringHelper;
 import org.gluu.util.security.StringEncrypter.EncryptionException;
 

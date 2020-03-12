@@ -17,8 +17,8 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.model.push.PushApplication;
+import org.gluu.oxtrust.service.OrganizationService;
 import org.gluu.util.StringHelper;
 import org.slf4j.Logger;
 

@@ -15,9 +15,9 @@ import javax.inject.Inject;
 
 import org.gluu.oxtrust.action.ConfigurationStatusAction;
 import org.gluu.oxtrust.action.Authenticator;
-import org.gluu.oxtrust.ldap.service.ConfigurationService;
 import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.oxtrust.security.Identity;
+import org.gluu.oxtrust.service.ConfigurationService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;

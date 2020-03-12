@@ -12,9 +12,9 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.gluu.oxtrust.ldap.service.ClientService;
-import org.gluu.oxtrust.ldap.service.EncryptionService;
 import org.gluu.oxtrust.model.OxAuthClient;
+import org.gluu.oxtrust.service.ClientService;
+import org.gluu.oxtrust.service.EncryptionService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.service.security.Secure;
 import org.gluu.util.security.StringEncrypter.EncryptionException;

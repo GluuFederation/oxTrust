@@ -22,10 +22,10 @@ import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.gluu.oxtrust.ldap.service.ProfileConfigurationService;
-import org.gluu.oxtrust.ldap.service.SamlAcrService;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.model.ProfileConfiguration;
+import org.gluu.oxtrust.service.ProfileConfigurationService;
+import org.gluu.oxtrust.service.SamlAcrService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.service.security.Secure;
 import org.gluu.util.StringHelper;

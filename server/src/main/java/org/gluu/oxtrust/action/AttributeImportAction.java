@@ -18,8 +18,8 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.gluu.jsf2.message.FacesMessages;
-import org.gluu.oxtrust.ldap.service.AttributeService;
-import org.gluu.oxtrust.ldap.service.LdifService;
+import org.gluu.oxtrust.service.AttributeService;
+import org.gluu.oxtrust.service.LdifService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.service.security.Secure;
 import org.richfaces.event.FileUploadEvent;

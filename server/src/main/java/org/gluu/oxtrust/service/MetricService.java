@@ -6,14 +6,11 @@
 
 package org.gluu.oxtrust.service;
 
-import org.gluu.oxtrust.ldap.service.ConfigurationService;
 import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.model.ApplicationType;
 import org.gluu.model.metric.MetricType;
 import org.gluu.model.metric.counter.CounterMetricEntry;
 import org.gluu.model.metric.ldap.MetricEntry;
-import org.gluu.oxtrust.ldap.service.ApplicationFactory;
-import org.gluu.oxtrust.ldap.service.OrganizationService;
 import org.gluu.oxtrust.model.AuthenticationChartDto;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.PersistenceEntryManager;

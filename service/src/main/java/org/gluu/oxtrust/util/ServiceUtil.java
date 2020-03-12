@@ -22,10 +22,10 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.commons.io.IOUtils;
-import org.gluu.oxtrust.ldap.service.IGroupService;
-import org.gluu.oxtrust.ldap.service.IPersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
+import org.gluu.oxtrust.service.IGroupService;
+import org.gluu.oxtrust.service.IPersonService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -18,7 +18,7 @@ import javax.validation.constraints.Size;
 
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
-import org.gluu.oxtrust.ldap.service.ScopeService;
+import org.gluu.oxtrust.service.ScopeService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.service.security.Secure;
 import org.gluu.util.Util;

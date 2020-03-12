@@ -27,7 +27,7 @@ import org.gluu.config.oxtrust.Configuration;
 import org.gluu.config.oxtrust.ImportPersonConfig;
 import org.gluu.config.oxtrust.LdapOxTrustConfiguration;
 import org.gluu.exception.ConfigurationException;
-import org.gluu.oxtrust.ldap.service.ApplicationFactory;
+import org.gluu.oxtrust.service.ApplicationFactory;
 import org.gluu.oxtrust.service.custom.LdapCentralConfigurationReload;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.exception.BasePersistenceException;

@@ -36,7 +36,6 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.gluu.oxtrust.ldap.service.IGroupService;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.exception.SCIMException;
 import org.gluu.oxtrust.model.scim2.BaseScimResource;
@@ -46,6 +45,7 @@ import org.gluu.oxtrust.model.scim2.SearchRequest;
 import org.gluu.oxtrust.model.scim2.group.GroupResource;
 import org.gluu.oxtrust.model.scim2.patch.PatchOperation;
 import org.gluu.oxtrust.model.scim2.patch.PatchRequest;
+import org.gluu.oxtrust.service.IGroupService;
 import org.gluu.oxtrust.service.filter.ProtectedApi;
 import org.gluu.oxtrust.service.scim2.Scim2GroupService;
 import org.gluu.oxtrust.service.scim2.Scim2PatchService;

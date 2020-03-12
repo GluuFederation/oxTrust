@@ -32,8 +32,8 @@ import javax.inject.Named;
 
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.model.GluuAttribute;
-import org.gluu.oxtrust.ldap.service.AttributeService;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
+import org.gluu.oxtrust.service.AttributeService;
 import org.gluu.util.StringHelper;
 import org.slf4j.Logger;
 

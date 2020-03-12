@@ -16,7 +16,7 @@ import javax.net.ssl.TrustManager;
 
 import org.apache.commons.httpclient.HttpClientError;
 import org.gluu.config.oxtrust.AppConfiguration;
-import org.gluu.oxtrust.ldap.service.EncryptionService;
+import org.gluu.oxtrust.service.EncryptionService;
 import org.gluu.util.EasySSLProtocolSocketFactory;
 import org.gluu.util.EasyX509TrustManager;
 import org.slf4j.Logger;

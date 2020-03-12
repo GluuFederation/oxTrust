@@ -5,7 +5,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.gluu.config.oxtrust.AppConfiguration;
-import org.gluu.oxtrust.ldap.service.ConfigurationService;
+import org.gluu.oxtrust.service.ConfigurationService;
 
 /**
  * Logger service

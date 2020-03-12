@@ -12,10 +12,10 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.gluu.oxtrust.action.HomeAction;
-import org.gluu.oxtrust.ldap.service.PersonService;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.security.Identity;
+import org.gluu.oxtrust.service.PersonService;
 
 /**
  * Created by eugeniuparvan on 3/6/17.

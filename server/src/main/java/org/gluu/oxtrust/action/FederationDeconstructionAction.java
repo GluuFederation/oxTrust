@@ -19,11 +19,11 @@ import javax.inject.Named;
 
 import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.model.GluuStatus;
-import org.gluu.oxtrust.ldap.service.OrganizationService;
-import org.gluu.oxtrust.ldap.service.Shibboleth3ConfService;
-import org.gluu.oxtrust.ldap.service.TrustService;
 import org.gluu.oxtrust.model.GluuMetadataSourceType;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
+import org.gluu.oxtrust.service.OrganizationService;
+import org.gluu.oxtrust.service.Shibboleth3ConfService;
+import org.gluu.oxtrust.service.TrustService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.saml.metadata.SAMLMetadataParser;
 import org.gluu.service.security.Secure;
