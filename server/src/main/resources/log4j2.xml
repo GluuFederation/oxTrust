@@ -183,7 +183,7 @@
 		<logger name="org.gluu.oxtrust.service.status.ldap" level="${log4j.default.log.level}" additivity="false">
 			<AppenderRef ref="OX_PERSISTENCE_LDAP_STATISTICS_FILE" />
 		</logger>
-		<logger name="org.gluu.oxtrust.ldap.service.OxTrustAuditService" level="${log4j.default.log.level}" additivity="false">
+		<logger name="org.gluu.oxtrust.service.OxTrustAuditService" level="${log4j.default.log.level}" additivity="false">
 			<AppenderRef ref="OXTRUST_AUDIT" />
 		</logger>
 		

@@ -4,7 +4,7 @@
  * Copyright (c) 2014, Gluu
  */
 
-package org.gluu.oxtrust.ldap.service.util;
+package org.gluu.oxtrust.service.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
