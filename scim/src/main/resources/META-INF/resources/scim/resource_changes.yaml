@@ -4,7 +4,7 @@ info:
   version: "4.2.0"
   title: Modified Gluu users
   description: |
-    Use this service to obtain the user entries that have changed after a certain time stamp.
+    Use this service to obtain the user entries that have been created or changed after a certain time stamp.
     See https://gluu.org/docs/ce/user-management/idm-sync/
   license:
     name: Apache 2.0
@@ -26,7 +26,7 @@ paths:
     get:
 
       description: |
-        This endpoint searches local user entries updated after the specified time
+        This endpoint searches local user entries updated or created after the specified time
 
       parameters:
         -
