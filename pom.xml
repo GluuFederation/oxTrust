@@ -181,7 +181,7 @@
 			<dependency>
 				<groupId>org.gluu</groupId>
 				<artifactId>oxcore-standalone</artifactId>
-				<version>${oxauth.version}</version>
+				<version>${oxcore.version}</version>
 			</dependency>
 
 			<dependency>
