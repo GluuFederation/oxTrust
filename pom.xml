@@ -189,17 +189,6 @@
 				<artifactId>oxauth-client</artifactId>
 				<version>${oxauth.version}</version>
 			</dependency>
-			<dependency>
-				<groupId>org.gluu</groupId>
-				<artifactId>uma-rs-resteasy</artifactId>
-				<version>4.1.1.Final</version>
-				<exclusions>
-					<exclusion>
-						<groupId>org.slf4j</groupId>
-						<artifactId>slf4j-log4j12</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
 
 			<!-- Gluu -->
 			<dependency>
