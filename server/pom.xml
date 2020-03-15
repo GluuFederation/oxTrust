@@ -660,6 +660,12 @@
 		<dependency>
 		    <groupId>org.opensaml</groupId>
 		    <artifactId>opensaml</artifactId>
+		    <exclusions>
+		    	<exclusion>
+		    		<groupId>org.apache.velocity</groupId>
+		    		<artifactId>velocity</artifactId>
+		    	</exclusion>
+		    </exclusions>
 		</dependency>
 
 		<!-- Test -->
