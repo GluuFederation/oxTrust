@@ -15,8 +15,8 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.min-version>3.3.9</maven.min-version>
 
-		<oxcore.version>4.1.0.Final</oxcore.version>
-		<oxauth.version>4.1.0.Final</oxauth.version>
+		<oxcore.version>4.1.1.Final</oxcore.version>
+		<oxauth.version>4.1.1.Final</oxauth.version>
 
 		<jackson.version>2.10.1</jackson.version>
 		<json.version>20180813</json.version>
@@ -620,6 +620,11 @@
 				<groupId>edu.internet2.middleware</groupId>
 				<artifactId>shibboleth-identityprovider</artifactId>
 				<version>${shibboleth.idp.version}</version>
+			</dependency>
+			<dependency>
+			    <groupId>org.opensaml</groupId>
+			    <artifactId>opensaml</artifactId>
+			    <version>2.6.4</version>
 			</dependency>
 			<dependency>
 				<groupId>dom4j</groupId>
