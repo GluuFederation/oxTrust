@@ -32,7 +32,11 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Source;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
+import javax.xml.validation.Validator;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
@@ -73,6 +77,9 @@ import org.gluu.util.io.HTTPFileDownloader;
 import org.gluu.util.security.StringEncrypter.EncryptionException;
 import org.gluu.xml.GluuErrorHandler;
 import org.gluu.xml.XMLValidator;
+import org.opensaml.common.xml.SAMLSchemaBuilder;
+import org.opensaml.xml.parse.BasicParserPool;
+import org.opensaml.xml.parse.XMLParserException;
 import org.opensaml.xml.schema.SchemaBuilder;
 import org.opensaml.xml.schema.SchemaBuilder.SchemaLanguage;
 import org.slf4j.Logger;
@@ -1187,36 +1194,11 @@ public class Shibboleth3ConfService implements Serializable {
 	 * @throws SAXException
 	 * @throws ParserConfigurationException
 	 * @return GluuErrorHandler
+	 * @throws XMLParserException 
 	 */
 	public GluuErrorHandler validateMetadata(InputStream stream)
-			throws ParserConfigurationException, SAXException, IOException {
-		Schema schema;
-		List<InputStream> collect = null;
-		try {
-			String schemaDir = "META-INF" + File.separator + "shibboleth3" + File.separator + "idp" + File.separator
-					+ "schema" + File.separator;
-			schemaValidationFileNames = templateService.getClasspathTemplateNames(schemaDir);
-			schemaValidationFileNames.remove("schema");
-			collect = schemaValidationFileNames.stream()
-					.map(e -> ClassUtils.getResourceAsStream(getClass(), schemaDir + e)).collect(Collectors.toList());
-			schema = SchemaBuilder.buildSchema(SchemaLanguage.XML, collect.toArray(new InputStream[0]));
-		} catch (Exception e) {
-			log.info("", e);
-			final List<String> validationLog = new ArrayList<String>();
-			validationLog.add(GluuErrorHandler.SCHEMA_CREATING_ERROR_MESSAGE);
-			validationLog.add(e.getMessage());
-			return new GluuErrorHandler(false, true, validationLog);
-		} finally {
-			if (collect != null) {
-				collect.stream().forEach(e -> {
-					try {
-						e.close();
-					} catch (IOException e1) {
-						log.error("error closing stream;", e1);
-					}
-				});
-			}
-		}
+			throws ParserConfigurationException, SAXException, IOException, XMLParserException {
+		Schema schema = SAMLSchemaBuilder.getSAML11Schema();
 		return XMLValidator.validateMetadata(stream, schema);
 	}
 
