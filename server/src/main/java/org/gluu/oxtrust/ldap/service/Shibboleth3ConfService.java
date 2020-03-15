@@ -26,7 +26,11 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Source;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
+import javax.xml.validation.Validator;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
@@ -46,6 +50,21 @@ import org.gluu.oxtrust.model.SubversionFile;
 import org.gluu.oxtrust.util.EasyCASSLProtocolSocketFactory;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.saml.metadata.SAMLMetadataParser;
+import org.gluu.service.SchemaService;
+import org.gluu.service.XmlService;
+import org.gluu.util.INumGenerator;
+import org.gluu.util.OxConstants;
+import org.gluu.util.StringHelper;
+import org.gluu.util.Util;
+import org.gluu.util.exception.InvalidConfigurationException;
+import org.gluu.util.io.FileUploadWrapper;
+import org.gluu.util.io.HTTPFileDownloader;
+import org.gluu.util.security.StringEncrypter.EncryptionException;
+import org.gluu.xml.GluuErrorHandler;
+import org.gluu.xml.XMLValidator;
+import org.opensaml.common.xml.SAMLSchemaBuilder;
+import org.opensaml.xml.parse.BasicParserPool;
+import org.opensaml.xml.parse.XMLParserException;
 import org.opensaml.xml.schema.SchemaBuilder;
 import org.opensaml.xml.schema.SchemaBuilder.SchemaLanguage;
 import org.slf4j.Logger;
@@ -1395,23 +1414,12 @@ public class Shibboleth3ConfService implements Serializable {
 	 * @throws IOException
 	 * @throws SAXException
 	 * @throws ParserConfigurationException
-         * @return GluuErrorHandler
+	 * @return GluuErrorHandler
+	 * @throws XMLParserException 
 	 */
-	public GluuErrorHandler validateMetadata(InputStream stream) throws ParserConfigurationException, SAXException, IOException {
-                Schema schema;
-                try {
-                    String idpTemplatesLocation = configurationFactory.getIDPTemplatesLocation();
-                    // String schemaDir = OxTrustConfiguration.DIR + "shibboleth3" + File.separator + "idp" + File.separator + "schema" + File.separator;
-                    String schemaDir = idpTemplatesLocation + "shibboleth3" + File.separator + "idp" + File.separator + "schema" + File.separator;
-                    schema = SchemaBuilder.buildSchema(SchemaLanguage.XML, schemaDir);
-                } catch (Exception e) {
-                    // Schema build error 
-                    final List<String> validationLog = new ArrayList<String>();
-                    validationLog.add(GluuErrorHandler.SCHEMA_CREATING_ERROR_MESSAGE);
-                    validationLog.add(e.getMessage());
-                    // return internal error
-                    return new GluuErrorHandler(false, true, validationLog);
-                }
+	public GluuErrorHandler validateMetadata(InputStream stream)
+			throws ParserConfigurationException, SAXException, IOException, XMLParserException {
+		Schema schema = SAMLSchemaBuilder.getSAML11Schema();
 		return XMLValidator.validateMetadata(stream, schema);
 	}
 
