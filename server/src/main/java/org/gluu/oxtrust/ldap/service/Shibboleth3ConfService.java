@@ -26,7 +26,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.xml.parsers.FactoryConfigurationError;
@@ -76,11 +78,9 @@ import org.gluu.util.io.HTTPFileDownloader;
 import org.gluu.util.security.StringEncrypter.EncryptionException;
 import org.gluu.xml.GluuErrorHandler;
 import org.gluu.xml.XMLValidator;
-import org.opensaml.common.xml.SAMLSchemaBuilder;
-import org.opensaml.xml.parse.BasicParserPool;
+import org.opensaml.saml.common.xml.SAMLSchemaBuilder;
+import org.opensaml.saml.common.xml.SAMLSchemaBuilder.SAML1Version;
 import org.opensaml.xml.parse.XMLParserException;
-import org.opensaml.xml.schema.SchemaBuilder;
-import org.opensaml.xml.schema.SchemaBuilder.SchemaLanguage;
 import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
@@ -93,7 +93,7 @@ import com.unboundid.ldap.sdk.schema.AttributeTypeDefinition;
  * 
  * @author Dmitry Ognyannikov, 2016
  */
-@Stateless
+@ApplicationScoped
 @Named("shibboleth3ConfService")
 public class Shibboleth3ConfService implements Serializable {
 
@@ -177,6 +177,18 @@ public class Shibboleth3ConfService implements Serializable {
 
 	@Inject
 	private PersonService personService;
+
+	private Schema samlSchema;
+	
+	@PostConstruct
+	public void create() {
+		SAMLSchemaBuilder samlSchemaBuilder = new SAMLSchemaBuilder(SAML1Version.SAML_11);
+		try {
+			this.samlSchema = samlSchemaBuilder.getSAMLSchema();
+		} catch (SAXException ex) {
+			log.error("Filed to load SAML schema", ex);
+		}
+	}
 
 	public boolean generateConfigurationFiles(SamlAcr[] acrs) {
 		log.info(">>>>>>>>>> IN generateConfigurationFiles(SamlAcr[] acrs)...");
@@ -1199,8 +1211,14 @@ public class Shibboleth3ConfService implements Serializable {
 	 */
 	public GluuErrorHandler validateMetadata(InputStream stream)
 			throws ParserConfigurationException, SAXException, IOException, XMLParserException {
-		Schema schema = SAMLSchemaBuilder.getSAML11Schema();
-		return XMLValidator.validateMetadata(stream, schema);
+		if (samlSchema == null) {
+			final List<String> validationLog = new ArrayList<String>();
+			validationLog.add(GluuErrorHandler.SCHEMA_CREATING_ERROR_MESSAGE);
+			validationLog.add("Failed to load SAML schema");
+			return new GluuErrorHandler(false, true, validationLog);
+		}
+
+		return XMLValidator.validateMetadata(stream, samlSchema);
 	}
 
 	public boolean existsResourceUri(String URLName) {
