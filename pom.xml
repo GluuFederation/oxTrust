@@ -578,11 +578,11 @@
 				<artifactId>shibboleth-identityprovider</artifactId>
 				<version>${shibboleth.idp.version}</version>
 			</dependency>
-			<dependency>
-			    <groupId>org.opensaml</groupId>
-			    <artifactId>opensaml</artifactId>
-			    <version>2.6.4</version>
-			</dependency>
+	        <dependency>
+	            <groupId>org.opensaml</groupId>
+	            <artifactId>opensaml-saml-api</artifactId>
+	            <version>3.4.3</version>
+	        </dependency>
 			<dependency>
 				<groupId>dom4j</groupId>
 				<artifactId>dom4j</artifactId>
