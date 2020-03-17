@@ -10,7 +10,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.Priority;
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.ws.rs.Priorities;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.ResourceInfo;
@@ -36,6 +39,8 @@ import org.slf4j.Logger;
 // for your particular case
 @Provider
 @ProtectedApi
+@Priority(Priorities.AUTHENTICATION)
+@RequestScoped
 public class AuthorizationProcessingFilter implements ContainerRequestFilter {
 
 	@Inject
@@ -66,7 +71,7 @@ public class AuthorizationProcessingFilter implements ContainerRequestFilter {
 	@Override
 	public void filter(ContainerRequestContext requestContext) throws IOException {
 		String path = requestContext.getUriInfo().getPath();
-		log.info("REST call to '{}' intercepted", path);
+		log.info("REST CALL ON '{}' INTERCEPTED", requestContext.getUriInfo().getRequestUri());
 		BaseUmaProtectionService protectionService = null;
 		for (String prefix : protectionMapping.keySet()) {
 			if (path.startsWith(prefix)) {
@@ -77,10 +82,12 @@ public class AuthorizationProcessingFilter implements ContainerRequestFilter {
 		if (protectionService == null) {
 			log.warn(
 					"No concrete UMA protection mechanism is associated to this path (resource will be accessed anonymously)");
+
 		} else {
 			log.info("Path is protected, proceeding with authorization processing...");
 			Response authorizationResponse = protectionService.processAuthorization(httpHeaders, resourceInfo);
 			if (authorizationResponse == null)
+		if (protectionService == null)
 				log.info("Authorization passed"); // If authorization passed, proceed with actual processing of request
 			else
 				requestContext.abortWith(authorizationResponse);
