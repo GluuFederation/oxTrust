@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
@@ -34,6 +35,7 @@ import org.slf4j.Logger;
 // them and ensure there is a proper subclass
 // of {@link BaseUmaProtectionService} that can handle specific protection logic
 // for your particular case
+@RequestScoped
 @Provider
 @ProtectedApi
 public class AuthorizationProcessingFilter implements ContainerRequestFilter {
