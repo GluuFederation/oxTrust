@@ -143,8 +143,58 @@
 					"type": "string",
 					"format": "url",
 					"minLength": 1
-				}
-			}
+				},
+                "maxIdleConnections": {
+                    "id": "maxIdleConnections",
+                    "description": "The cap on the number of \"idle\" instances in the pool. If maxIdle is set too low on heavily loaded systems it is possible you will see objects being destroyed and almost immediately new objects being created. This is a result of the active threads momentarily returning objects faster than they are requesting them, causing the number of idle objects to rise above maxIdle. The best value for maxIdle for heavily loaded system will vary but the default is a good starting point.",
+                    "type": "integer",
+                    "multipleOf": 1,
+                    "maximum": 2147483647,
+                    "minimum": 1,
+                    "exclusiveMaximum": false,
+                    "exclusiveMinimum": false
+                },
+                "maxTotalConnections": {
+                    "id": "maxTotalConnections",
+                    "description": "The number of maximum connection instances in the pool.",
+                    "type": "integer",
+                    "multipleOf": 1,
+                    "maximum": 2147483647,
+                    "minimum": 1,
+                    "exclusiveMaximum": false,
+                    "exclusiveMinimum": false
+                },
+                "connectionTimeout": {
+                    "id": "connectionTimeout",
+                    "description": "Connection time out.",
+                    "type": "integer",
+                    "multipleOf": 1,
+                    "maximum": 2147483647,
+                    "minimum": 1,
+                    "exclusiveMaximum": false,
+                    "exclusiveMinimum": false
+                },
+                "soTimeout": {
+                    "id": "soTimeout",
+                    "description": "With this option set to a non-zero timeout, a read() call on the InputStream associated with this Socket will block for only this amount of time. If the timeout expires, a java.net.SocketTimeoutException is raised, though the Socket is still valid. The option must be enabled prior to entering the blocking operation to have effect. The timeout must be > 0. A timeout of zero is interpreted as an infinite timeout.",
+                    "type": "integer",
+                    "multipleOf": 1,
+                    "maximum": 2147483647,
+                    "minimum": 1,
+                    "exclusiveMaximum": false,
+                    "exclusiveMinimum": false
+                },
+                "maxRetryAttempts": {
+                    "id": "maxRetryAttempts",
+                    "description": "Maximuma retry attepts in case of failure.",
+                    "type": "integer",
+                    "multipleOf": 1,
+                    "maximum": 2147483647,
+                    "minimum": 1,
+                    "exclusiveMaximum": false,
+                    "exclusiveMinimum": false
+                }
+            }
 		},
 		"nativePersistenceConfiguration": {
 			"type": "object",
