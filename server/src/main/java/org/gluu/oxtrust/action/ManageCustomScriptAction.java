@@ -74,9 +74,6 @@ public class ManageCustomScriptAction
 	private ConversationService conversationService;
 
 	@Inject
-	private OrganizationService organizationService;
-
-	@Inject
 	private ConfigurationService configurationService;
 
 	@Inject
@@ -86,7 +83,7 @@ public class ManageCustomScriptAction
 
 	private boolean initialized;
 
-	private static List<String> allAcrs = new ArrayList<>();
+	private List<String> allAcrs = new ArrayList<>();
 
 	@Inject
 	private SamlAcrService samlAcrService;
@@ -165,7 +162,7 @@ public class ManageCustomScriptAction
 					String dn = customScript.getDn();
 					String customScriptId = customScript.getInum();
 					if (StringHelper.isEmpty(dn)) {
-						customScriptId =  INumGenerator.generate(2);
+						customScriptId = INumGenerator.generate(2);
 						dn = customScriptService.buildDn(customScriptId);
 
 						customScript.setDn(dn);
@@ -369,9 +366,16 @@ public class ManageCustomScriptAction
 		}
 		return result;
 	}
-	
+
+	public void setAllAcrs(List<String> allAcrs) {
+		this.allAcrs = allAcrs;
+	}
+
 	public void resetAcrs(CustomScript script) {
 		script.setAliases(new ArrayList<>());
 	}
 
+	public List<String> getAllAcrs() {
+		return allAcrs;
+	}
 }

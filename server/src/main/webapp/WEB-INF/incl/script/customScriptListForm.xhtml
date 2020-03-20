@@ -4,7 +4,8 @@
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
-	xmlns:a4j="http://richfaces.org/a4j" xmlns:b="http://bootsfaces.net/ui"
+	xmlns:p="http://primefaces.org/ui" xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:b="http://bootsfaces.net/ui"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
 	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
@@ -121,19 +122,20 @@
 														</ox:decorate>
 													</div>
 													<div class="form-group">
-														<ox:decorate label="SAML ACRS" leftClass="col-sm-3"
+														<ox:decorate label="Select SAML ACRS" leftClass="col-sm-3"
 															rendered="#{_action.isPersonScript(_customScript)}"
 															rightClass="col-sm-8">
-															<h:selectManyListbox styleClass="samlAcrs"
-																value="#{_customScript.aliases}" id="SamlACRSId">
+															<p:selectManyMenu id="advanced"
+															    style="width:90%;"
+																value="#{_customScript.aliases}" var="t"
+																filter="true" showCheckbox="true">
 																<f:selectItems
-																	value="#{_action.getAvailableAcrs(_customScript.name)}" />
-															</h:selectManyListbox>
-															<b:commandButton
-																action="#{manageCustomScriptAction.resetAcrs(_customScript)}"
-																look="success" styleClass="clearAcrlButton"
-																style="float:right;" iconAwesome="fa-refresh"
-																value="clear" ajax="true" update="@parent" />
+																	value="#{manageCustomScriptAction.allAcrs}" var="acr"
+																	itemLabel="#{acr}" itemValue="#{acr}" />
+																<p:column>
+																	<h:outputText value="#{t}" />
+																</p:column>
+															</p:selectManyMenu>
 														</ox:decorate>
 													</div>
 													<div class="form-group">

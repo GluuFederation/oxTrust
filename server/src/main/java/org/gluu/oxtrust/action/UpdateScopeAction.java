@@ -98,7 +98,7 @@ public class UpdateScopeAction implements Serializable {
 		}
 		this.update = false;
 		this.scope = new Scope();
-		this.scope.setScopeType(ScopeType.OPENID);
+		this.scope.setScopeType(ScopeType.OAUTH);
 		try {
 			if (this.scope.getOxAuthClaims() != null && this.scope.getOxAuthClaims().size() > 0) {
 				this.claims = getClaimDisplayNameEntiries();
