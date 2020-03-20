@@ -1,50 +1,54 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://xmlns.jcp.org/jsf/core"
-                xmlns:h="http://xmlns.jcp.org/jsf/html"
-                xmlns:a4j="http://richfaces.org/a4j"
-                xmlns:ui="http://xmlns.jcp.org/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/WEB-INF/incl/layout/newtemplate.xhtml">
 
-    <f:metadata>
-        <f:viewAction action="#{conversationService.initConversation}" />
-		<f:viewAction action="#{manageCustomScriptAction.initAcrs}" onPostback="false" />
-		<f:viewAction action="#{manageCustomScriptAction.modify}" onPostback="false" />
-    </f:metadata>
-    <ui:define name="head">
-    </ui:define>
-    <ui:define name="body">
-        <section class="content-header">
-            <h1 style="color: #333;">
-                #{msg['customScript.configuration']}
-                <small>
-                    <i class="fa fa-caret-right"
-                       style="color: #333 !important;"/>#{msg['customScript.manageCustomScripts']}</small>
-            </h1>
-            <ol class="breadcrumb">
-                <li>
-                    <a href="#{request.contextPath}/home.htm">
-                        <i class="fa fa-home"/>
-                    </a>
-                </li>
-                <li class="organization/configuration">#{msg['customScript.manageCustomScripts']}</li>
-            </ol>
-        </section>
-        <section class="content">
-            <div id="formArea">
-                <ui:decorate template="/WEB-INF/incl/script/customScriptListForm.xhtml">
-                    <ui:param name="_action" value="#{manageCustomScriptAction}"/>
-                    <ui:define name="controlButttons">
-                        <div id="updateButtons" style="margin-top:10px;">
-                            <a4j:commandButton action="#{manageCustomScriptAction.save}" styleClass="btn btn-success"
-                                             oncomplete="document.location.reload(true);"
-                                             value="#{msg['customScript.update']}"/>
-                            <h:commandButton action="#{manageCustomScriptAction.cancel}" immediate="true"
-                                             onclick="document.location.reload();"
-                                             style="margin-left:5px !important;" styleClass="btn btn-success"
-                                             value="#{msg['customScript.cancel']}"/>
-                        </div>
-                    </ui:define>
-                </ui:decorate>
-            </div>
-        </section>
-    </ui:define>
+	<f:metadata>
+		<f:viewAction action="#{conversationService.initConversation}" />
+		<f:viewAction action="#{manageCustomScriptAction.initAcrs}"
+			onPostback="false" />
+		<f:viewAction action="#{manageCustomScriptAction.modify}"
+			onPostback="false" />
+	</f:metadata>
+	<ui:define name="head">
+	</ui:define>
+	<ui:define name="body">
+		<section class="content-header">
+			<h1 style="color: #333;">
+				#{msg['customScript.configuration']} <small> <i
+					class="fa fa-caret-right" style="color: #333 !important;" />#{msg['customScript.manageCustomScripts']}
+				</small>
+			</h1>
+			<ol class="breadcrumb">
+				<li><a href="#{request.contextPath}/home.htm"> <i
+						class="fa fa-home" />
+				</a></li>
+				<li class="organization/configuration">#{msg['customScript.manageCustomScripts']}</li>
+			</ol>
+		</section>
+		<section class="content">
+			<div id="formArea">
+				<ui:decorate
+					template="/WEB-INF/incl/script/customScriptListForm.xhtml">
+					<ui:param name="_action" value="#{manageCustomScriptAction}" />
+					<ui:define name="controlButttons">
+						<div id="updateButtons" style="margin-top: 10px;">
+							<a4j:commandButton action="#{manageCustomScriptAction.save}"
+								styleClass="btn btn-success"
+								oncomplete="document.location.reload(true);"
+								value="#{msg['customScript.update']}" />
+							<h:commandButton action="#{manageCustomScriptAction.cancel}"
+								immediate="true" onclick="document.location.reload();"
+								style="margin-left:5px !important;" styleClass="btn btn-success"
+								value="#{msg['customScript.cancel']}" />
+						</div>
+					</ui:define>
+				</ui:decorate>
+			</div>
+		</section>
+	</ui:define>
 </ui:composition>
