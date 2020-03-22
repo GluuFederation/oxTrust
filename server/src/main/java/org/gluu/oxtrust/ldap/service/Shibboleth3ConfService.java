@@ -5,10 +5,12 @@
  */
 package org.gluu.oxtrust.ldap.service;
 
+import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -23,17 +25,12 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Source;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
-import javax.xml.validation.Validator;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
@@ -53,18 +50,6 @@ import org.gluu.oxtrust.model.SubversionFile;
 import org.gluu.oxtrust.util.EasyCASSLProtocolSocketFactory;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.saml.metadata.SAMLMetadataParser;
-import org.gluu.service.SchemaService;
-import org.gluu.service.XmlService;
-import org.gluu.util.INumGenerator;
-import org.gluu.util.OxConstants;
-import org.gluu.util.StringHelper;
-import org.gluu.util.Util;
-import org.gluu.util.exception.InvalidConfigurationException;
-import org.gluu.util.io.FileUploadWrapper;
-import org.gluu.util.io.HTTPFileDownloader;
-import org.gluu.util.security.StringEncrypter.EncryptionException;
-import org.gluu.xml.GluuErrorHandler;
-import org.gluu.xml.XMLValidator;
 import org.opensaml.saml.common.xml.SAMLSchemaBuilder;
 import org.opensaml.saml.common.xml.SAMLSchemaBuilder.SAML1Version;
 import org.opensaml.xml.parse.XMLParserException;
@@ -94,8 +79,6 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import com.unboundid.ldap.sdk.schema.AttributeTypeDefinition;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 
 /**
  * Provides operations with attributes
@@ -190,12 +173,6 @@ public class Shibboleth3ConfService implements Serializable {
 
 	@Inject
 	private TrustService trustService;
-
-	@Inject
-	private PersistenceEntryManager persistenceEntryManager;
-
-	@Inject
-	private PersonService personService;
 
 	private Schema samlSchema;
 	
