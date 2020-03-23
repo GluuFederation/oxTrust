@@ -1461,6 +1461,30 @@
             "id": "useLocalCache",
             "description": "Boolean value specifying whether to enable local in-memory cache for attributes, scopes, clients and organization configuration.",
             "type": "boolean"
+        },
+        "jwksAlgorithmsSupported": {
+            "id": "jwksAlgorithmsSupported",
+            "description": "A list of algorithms that will be used in JWKS endpoint.",
+            "type": "array",
+            "format": "select",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+                "type": "string",
+                "enum": [
+                    "RS256",
+                    "RS384",
+                    "RS512",
+                    "ES256",
+                    "ES384",
+                    "ES512",
+                    "PS256",
+                    "PS384",
+                    "PS512",
+                    "RSA1_5",
+                    "RSA-OAEP"
+                ]
+            }
         }
     },
     "required": [
@@ -1591,6 +1615,7 @@
         "jmsBrokerURISet",
         "jmsUserName",
         "jmsPassword",
-        "useLocalCache"
+        "useLocalCache",
+        "jwksAlgorithmsSupported"
     ]
 }
