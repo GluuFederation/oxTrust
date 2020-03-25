@@ -21,12 +21,10 @@ import javax.inject.Named;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
 import org.gluu.model.GluuAttribute;
-import org.gluu.model.GluuImage;
 import org.gluu.model.GluuUserRole;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.service.AttributeService;
-import org.gluu.oxtrust.service.ImageService;
 import org.gluu.oxtrust.service.PersonService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.service.security.Secure;
@@ -44,8 +42,6 @@ public class WhitePagesAction implements Serializable {
 
 	private static final long serialVersionUID = 6730313815008211305L;
 
-	private static final String PHOTO_NAME = "photo1";
-
 	private List<String> tableAttributes;
 
 	@Inject
@@ -59,9 +55,6 @@ public class WhitePagesAction implements Serializable {
 
 	@Inject
 	private AttributeService attributeService;
-
-	@Inject
-	private ImageService imageService;
 
 	@Inject
 	private PersonService personService;
@@ -130,18 +123,6 @@ public class WhitePagesAction implements Serializable {
 			int index = this.selectedPersons.iterator().next();
 			return this.persons.get(index);
 		}
-	}
-
-	public byte[] getPhotoThumbData(GluuCustomPerson person) {
-		List<GluuAttribute> attributes = attributeService.getAllPersonAttributes(GluuUserRole.USER);
-		GluuAttribute photoAttribute = attributeService.getAttributeByName(PHOTO_NAME, attributes);
-		GluuCustomAttribute customAttribute = new GluuCustomAttribute(PHOTO_NAME, person.getAttribute(PHOTO_NAME));
-		customAttribute.setMetadata(photoAttribute);
-		GluuImage image = imageService.getImage(customAttribute);
-		if (image == null || (person.getGluuOptOuts() != null && person.getGluuOptOuts().contains(PHOTO_NAME))) {
-			return imageService.getBlankPhotoData();
-		}
-		return imageService.getThumImageData(image);
 	}
 
 	public List<GluuCustomAttribute> getReleasedAttributes(GluuCustomPerson person) {

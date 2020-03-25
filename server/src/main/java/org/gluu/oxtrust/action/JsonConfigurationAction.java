@@ -285,9 +285,6 @@ public class JsonConfigurationAction implements Serializable {
 		try {
 			AppConfiguration resultOxTrustappConfiguration = jsonService.jsonToObject(oxTrustappConfigurationJson,
 					AppConfiguration.class);
-
-			processPasswordProperty(this.oxTrustappConfiguration, resultOxTrustappConfiguration,
-					"svnConfigurationStorePassword");
 			processPasswordProperty(this.oxTrustappConfiguration, resultOxTrustappConfiguration, "keystorePassword");
 			processPasswordProperty(this.oxTrustappConfiguration, resultOxTrustappConfiguration,
 					"idpSecurityKeyPassword");

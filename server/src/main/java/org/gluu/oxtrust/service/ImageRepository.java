@@ -21,12 +21,10 @@ import javax.imageio.ImageIO;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.model.GluuImage;
-import org.gluu.util.StringHelper;
 import org.gluu.util.image.ImageTransformationUtility;
 import org.gluu.util.repository.RepositoryUtility;
 import org.slf4j.Logger;
@@ -47,11 +45,7 @@ public class ImageRepository {
 
 	@Inject
 	private AppConfiguration appConfiguration;
-
-	private static final String TEMP_FOLDER = "tmp";
-	private static final String REMOVED_FOLDER = "removed";
 	private static boolean createBackupDuringRemoval = true;
-
 	private String sourceHome, thumbHome;
 	private String tmpSourceHome, tmpThumbHome;
 	private String removedSourceHome, removedThumbHome;
@@ -67,40 +61,7 @@ public class ImageRepository {
 
 	@PostConstruct
 	public void init() throws Exception {
-		countLevels = appConfiguration.getPhotoRepositoryCountLeveles();
-		countFoldersPerLevel = appConfiguration.getPhotoRepositoryCountFoldersPerLevel();
 
-		String photoRepositoryRootDir = appConfiguration.getPhotoRepositoryRootDir();
-		photoRepositoryRootDirFile = new File(photoRepositoryRootDir);
-
-		// Create folders for persistent images
-		sourceHome = photoRepositoryRootDir + File.separator + "source";
-		thumbHome = photoRepositoryRootDir + File.separator + "thumb";
-
-		createFoldersTree(new File(sourceHome));
-		createFoldersTree(new File(thumbHome));
-
-		// Create folders for temporary images
-		tmpSourceHome = photoRepositoryRootDir + File.separator + TEMP_FOLDER + File.separator + "source";
-		tmpThumbHome = photoRepositoryRootDir + File.separator + TEMP_FOLDER + File.separator + "thumb";
-
-		createFoldersTree(new File(tmpSourceHome));
-		createFoldersTree(new File(tmpThumbHome));
-
-		// Create folders for removed images
-		if (createBackupDuringRemoval) {
-			removedSourceHome = photoRepositoryRootDir + File.separator + REMOVED_FOLDER + File.separator + "source";
-			removedThumbHome = photoRepositoryRootDir + File.separator + REMOVED_FOLDER + File.separator + "thumb";
-
-			createFoldersTree(new File(removedSourceHome));
-			createFoldersTree(new File(removedThumbHome));
-		}
-
-		prepareBlankImage();
-		prepareBlankPhoto();
-		prepareBlankIcon();
-
-		initFileTypesMap();
 	}
 
 	public void initFileTypesMap() throws Exception {
@@ -126,29 +87,6 @@ public class ImageRepository {
 	 * @return true if image was added successfully, false otherwise
 	 * @throws Exception
 	 */
-	public boolean createRepositoryImageFiles(GluuImage image, int thumbWidth, int thumbHeight) throws Exception {
-		if (image.getSourceContentType().equals("application/octet-stream")) {
-			image.setSourceContentType(fileTypeMap.getContentType(image.getSourceName()));
-		}
-		
-		if (!addThumbnail(image, thumbWidth, thumbHeight)) {
-			return false;
-		}
-
-		// Generate paths
-		setGeneratedImagePathes(image, ".jpg");
-
-		// Create folders tree
-		createImagePathes(image);
-		
-		// Save thumb image
-		FileUtils.writeByteArrayToFile(getThumbFile(image), image.getThumbData());
-
-		// Save source image
-		FileUtils.writeByteArrayToFile(getSourceFile(image), image.getData());
-
-		return true;
-	}
 
 	public boolean addThumbnail(GluuImage image, int thumbWidth, int thumbHeight) throws Exception {
 		if (!image.getSourceContentType().matches("image/(gif|png|jpeg|jpg|bmp)")) {
@@ -170,10 +108,10 @@ public class ImageRepository {
 		// Set thumb properties
 		image.setThumbWidth(bi.getWidth());
 		image.setThumbHeight(bi.getHeight());
-		
+
 		image.setThumbContentType(MediaType.PNG.toString());
-		
-		// Store thumb image 
+
+		// Store thumb image
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		try {
 			ImageIO.write(bufferedImage, "png", bos);
@@ -185,107 +123,20 @@ public class ImageRepository {
 		return true;
 	}
 
-	private void moveImageToPersistentStore(GluuImage image, boolean saveThumb, String destSourceFilePath, String destThumbFilePath)
-			throws IOException {
-		if (!image.isStoreTemporary()) {
-			return;
-		}
-
-		File tmpOrigFile = getSourceFile(image);
-		File tmpThumbFile = getThumbFile(image);
-
-		image.setStoreTemporary(false);
-
-		if (!StringHelper.isEmpty(destSourceFilePath)) {
-			image.setSourceFilePath(destSourceFilePath);
-		}
-
-		if (!StringHelper.isEmpty(destThumbFilePath)) {
-			image.setThumbFilePath(destThumbFilePath);
-		}
-
-		FileUtils.copyFile(tmpOrigFile, getSourceFile(image));
-		if (saveThumb) {
-			FileUtils.copyFile(tmpThumbFile, getThumbFile(image));
-		}
-
-		deleteFile(tmpOrigFile, true);
-		deleteFile(tmpThumbFile, true);
-	}
-
-	public void moveImageToPersistentStore(GluuImage image) throws Exception {
-		moveImageToPersistentStore(image, true, null, null);
-	}
-
-	public void moveLogoImageToPersistentStore(GluuImage image) throws IOException {
-		if (!image.isLogo()) {
-			return;
-		}
-
-		String logoSourceFilePath = "logo" + RepositoryUtility.getFileNameExtension(image.getSourceFilePath());
-		String logoThumbFilePath = "logo_thumb" + RepositoryUtility.getFileNameExtension(image.getSourceFilePath());
-		moveImageToPersistentStore(image, true, logoSourceFilePath, logoThumbFilePath);
-	}
-
 	private void setGeneratedImagePathes(GluuImage image, String thumbExt) throws Exception {
 		String uuid = RepositoryUtility.generateUUID();
 		String ext = RepositoryUtility.getFileNameExtension(image.getSourceName());
 		String sourceFileName = uuid + ext;
 		String thumbFileName = uuid + (thumbExt == null ? ext : thumbExt);
 
-		String sourceFilePath = RepositoryUtility.generateTreeFolderPath(countLevels, countFoldersPerLevel, sourceFileName);
-		String thumbFilePath = RepositoryUtility.generateTreeFolderPath(countLevels, countFoldersPerLevel, thumbFileName);
+		String sourceFilePath = RepositoryUtility.generateTreeFolderPath(countLevels, countFoldersPerLevel,
+				sourceFileName);
+		String thumbFilePath = RepositoryUtility.generateTreeFolderPath(countLevels, countFoldersPerLevel,
+				thumbFileName);
 
 		image.setUuid(uuid);
 		image.setSourceFilePath(sourceFilePath);
 		image.setThumbFilePath(thumbFilePath);
-	}
-
-	public File getThumbFile(GluuImage image) {
-		if (image.isLogo() && !image.isStoreTemporary()) {
-			return new File(appConfiguration.getLogoLocation() + File.separator + image.getThumbFilePath());
-		}
-
-		String parentFolder = image.isStoreTemporary() ? tmpThumbHome : thumbHome;
-		return new File(parentFolder + File.separator + image.getThumbFilePath());
-	}
-
-	public File getSourceFile(GluuImage image) {
-		if (image.isLogo() && !image.isStoreTemporary()) {
-			return new File(appConfiguration.getLogoLocation() + File.separator + image.getSourceFilePath());
-		}
-
-		String parentFolder = image.isStoreTemporary() ? tmpSourceHome : sourceHome;
-		return new File(parentFolder + File.separator + image.getSourceFilePath());
-	}
-
-	public byte[] getThumbImageData(GluuImage image) throws Exception {
-		return FileUtils.readFileToByteArray(getThumbFile(image));
-	}
-
-	public byte[] getSourceImageData(GluuImage image) throws Exception {
-		return FileUtils.readFileToByteArray(getSourceFile(image));
-	}
-
-	public void deleteImage(GluuImage image) {
-		File thumbFile = getThumbFile(image);
-		File sourceFile = getSourceFile(image);
-
-		if (!image.isStoreTemporary() && createBackupDuringRemoval) {
-			File reovedThumbFile = new File(removedThumbHome + File.separator + image.getThumbFilePath());
-			File removedSourceFile = new File(removedSourceHome + File.separator + image.getSourceFilePath());
-
-			try {
-				FileUtils.copyFile(thumbFile, reovedThumbFile);
-				FileUtils.copyFile(sourceFile, removedSourceFile);
-			} catch (IOException ex) {
-				log.error("Failed to create backup for photo {} before removal", image, ex);
-			}
-		}
-
-		// Delete thumb and source files
-		deleteFile(thumbFile, true);
-		deleteFile(sourceFile, true);
 	}
 
 	private boolean deleteFile(File file, boolean removeEmptyfoldersTree) {
@@ -324,11 +175,6 @@ public class ImageRepository {
 		}
 	}
 
-	private void createImagePathes(GluuImage image) throws Exception {
-		createFoldersTree(getSourceFile(image).getParentFile());
-		createFoldersTree(getThumbFile(image).getParentFile());
-	}
-
 	public byte[] getBlankImage() {
 		// findbugs: copy on return to not expose internal representation
 		return ArrayUtils.clone(blankImage);
@@ -341,76 +187,6 @@ public class ImageRepository {
 
 	public byte[] getBlankIcon() {
 		return ArrayUtils.clone(blankIcon);
-	}
-
-	private void prepareBlankImage() {
-		InputStream is = getClass().getResourceAsStream("/WEB-INF/static/images/blank_image.gif");
-		if(is != null){
-			try {
-				this.blankImage = IOUtils.toByteArray(is);
-			} catch (Exception ex) {
-				log.error("Failed to load blank image", ex);
-			} finally {
-				IOUtils.closeQuietly(is);
-			}
-		}else{
-			log.error("Failed to load blank image. ResourceLoader returned null stream.");
-		}
-	}
-
-	private void prepareBlankPhoto() {
-		InputStream is = getClass().getResourceAsStream("/WEB-INF/static/images/anonymous.png");
-		if(is != null){
-			try {
-				this.blankPhoto = IOUtils.toByteArray(is);
-			} catch (Exception ex) {
-				log.error("Failed to load blank photo", ex);
-			} finally {
-				IOUtils.closeQuietly(is);
-			}
-		}else{
-			log.error("Failed to load blank photo. ResourceLoader returned null stream.");
-		}
-	}
-
-	private void prepareBlankIcon() {
-		
-		InputStream is = getClass().getResourceAsStream("/WEB-INF/static/images/blank_icon.gif");
-		if(is != null){
-			try {
-				this.blankIcon = IOUtils.toByteArray(is);
-			} catch (Exception ex) {
-				log.error("Failed to load blank icon", ex);
-			} finally {
-				IOUtils.closeQuietly(is);
-			}
-		}else{
-			log.error("Failed to load blank icon. ResourceLoader returned null stream.");
-		}
-	}
-
-	public boolean createRepositoryFaviconImageFiles(GluuImage image) throws Exception {
-		if (!isIconImage(image)) {
-			return false;
-		}
-
-		// Generate paths
-		setGeneratedImagePathes(image, null);
-
-		// Create folders tree
-		createImagePathes(image);
-
-		// Set source image size
-		image.setWidth(16);
-		image.setHeight(16);
-
-		byte[] data = image.getData();
-		FileUtils.writeByteArrayToFile(getThumbFile(image), data);
-
-		// Save source image
-		FileUtils.writeByteArrayToFile(getSourceFile(image), data);
-
-		return true;
 	}
 
 	public boolean isIconImage(GluuImage image) {

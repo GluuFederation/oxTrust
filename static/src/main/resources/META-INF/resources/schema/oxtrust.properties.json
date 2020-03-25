@@ -77,47 +77,6 @@
                 "minLength": 1
             }
         },
-        "photoRepositoryRootDir": {
-            "id": "photoRepositoryRootDir",
-            "type": "string",
-            "minLength": 1
-        },
-        "photoRepositoryThumbWidth": {
-            "id": "photoRepositoryThumbWidth",
-            "type": "integer",
-            "multipleOf": 1,
-            "maximum": 2147483647,
-            "minimum": 1,
-            "exclusiveMaximum": false,
-            "exclusiveMinimum": false
-        },
-        "photoRepositoryThumbHeight": {
-            "id": "photoRepositoryThumbHeight",
-            "type": "integer",
-            "multipleOf": 1,
-            "maximum": 2147483647,
-            "minimum": 1,
-            "exclusiveMaximum": false,
-            "exclusiveMinimum": false
-        },
-        "photoRepositoryCountLeveles": {
-            "id": "photoRepositoryCountLeveles",
-            "type": "integer",
-            "multipleOf": 1,
-            "maximum": 2147483647,
-            "minimum": 1,
-            "exclusiveMaximum": false,
-            "exclusiveMinimum": false
-        },
-        "photoRepositoryCountFoldersPerLevel": {
-            "id": "photoRepositoryCountFoldersPerLevel",
-            "type": "integer",
-            "multipleOf": 1,
-            "maximum": 2147483647,
-            "minimum": 1,
-            "exclusiveMaximum": false,
-            "exclusiveMinimum": false
-        },
         "authMode": {
             "id": "authMode",
             "type": "string",
@@ -158,11 +117,6 @@
         },
         "spMetadataPath": {
             "id": "spMetadataPath",
-            "type": "string",
-            "minLength": 1
-        },
-        "logoLocation": {
-            "id": "logoLocation",
             "type": "string",
             "minLength": 1
         },
@@ -663,11 +617,6 @@
         "personObjectClassDisplayNames",
         "contactObjectClassTypes",
         "contactObjectClassDisplayNames",
-        "photoRepositoryRootDir",
-        "photoRepositoryThumbWidth",
-        "photoRepositoryThumbHeight",
-        "photoRepositoryCountLeveles",
-        "photoRepositoryCountFoldersPerLevel",
         "authMode",
         "ldifStore",
         "pokenApplicationSecret",
@@ -677,7 +626,6 @@
         "allowPersonModification",
         "idpUrl",
         "spMetadataPath",
-        "logoLocation",
         "idpSecurityKey",
         "idpSecurityKeyPassword",
         "idpSecurityCert",
