@@ -136,16 +136,6 @@
             "id": "updateStatus",
             "type": "boolean"
         },
-        "svnConfigurationStoreRoot": {
-            "id": "svnConfigurationStoreRoot",
-            "type": "string",
-            "minLength": 1
-        },
-        "svnConfigurationStorePassword": {
-            "id": "svnConfigurationStorePassword",
-            "type": "string",
-            "minLength": 1
-        },
         "keystorePath": {
             "id": "keystorePath",
             "type": "string",
@@ -276,10 +266,6 @@
             "id": "servicesRestartTrigger",
             "type": "string",
             "minLength": 1
-        },
-        "persistSVN": {
-            "id": "persistSVN",
-            "type": "boolean"
         },
         "oxAuthSectorIdentifierUrl": {
             "id": "oxAuthSectorIdentifierUrl",
@@ -686,8 +672,6 @@
         "ldifStore",
         "pokenApplicationSecret",
         "updateStatus",
-        "svnConfigurationStoreRoot",
-        "svnConfigurationStorePassword",
         "keystorePath",
         "keystorePassword",
         "allowPersonModification",
@@ -713,7 +697,6 @@
         "tempCertDir",
         "certDir",
         "servicesRestartTrigger",
-        "persistSVN",
         "oxAuthSectorIdentifierUrl",
         "oxAuthClientId",
         "oxAuthClientPassword",

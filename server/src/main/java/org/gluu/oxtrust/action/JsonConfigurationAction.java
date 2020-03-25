@@ -67,7 +67,7 @@ public class JsonConfigurationAction implements Serializable {
 
 	@Inject
 	private JsonConfigurationService jsonConfigurationService;
-	
+
 	@Inject
 	private AttributeService attributeService;
 
@@ -247,8 +247,6 @@ public class JsonConfigurationAction implements Serializable {
 		try {
 			AppConfiguration resultOxTrustappConfiguration = (AppConfiguration) BeanUtils
 					.cloneBean(oxTrustappConfiguration);
-
-			resultOxTrustappConfiguration.setSvnConfigurationStorePassword(HIDDEN_PASSWORD_TEXT);
 			resultOxTrustappConfiguration.setKeystorePassword(HIDDEN_PASSWORD_TEXT);
 			resultOxTrustappConfiguration.setIdpSecurityKeyPassword(HIDDEN_PASSWORD_TEXT);
 			resultOxTrustappConfiguration.setIdpBindPassword(HIDDEN_PASSWORD_TEXT);
