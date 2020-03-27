@@ -287,8 +287,11 @@ public class ManagePersonAuthenticationAction
 			properties.setProperty("bindPassword", ldapConfig.getBindPassword());
 			properties.setProperty("servers", buildServersString(ldapConfig.getServers()));
 			properties.setProperty("useSSL", Boolean.toString(ldapConfig.isUseSSL()));
-			LdapConnectionProvider connectionProvider = new LdapConnectionProvider(PropertiesDecrypter
-					.decryptProperties(properties, configurationFactory.getCryptoConfigurationSalt()));
+			Properties ldapDecryptedProperties = PropertiesDecrypter
+					.decryptProperties(properties, configurationFactory.getCryptoConfigurationSalt());
+			log.trace("Attemptint to create LDAP connection with properties: {}", ldapDecryptedProperties);
+
+			LdapConnectionProvider connectionProvider = new LdapConnectionProvider(ldapDecryptedProperties);
 			if (connectionProvider.isConnected()) {
 				connectionProvider.closeConnectionPool();
 
