@@ -383,6 +383,14 @@
 					<groupId>org.apache.velocity</groupId>
 					<artifactId>velocity</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>org.opensaml</groupId>
+					<artifactId>opensaml</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.ws.security</groupId>
+					<artifactId>wss4j</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
