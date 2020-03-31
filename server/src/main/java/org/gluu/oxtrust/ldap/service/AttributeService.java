@@ -374,7 +374,32 @@ public class AttributeService extends org.gluu.service.AttributeService {
 	 */
 	public void clearAttributesCache(@Observes @EventType(Events.EVENT_CLEAR_ATTRIBUTES) Events event) {
 		log.debug("Removing attributes from cache");
-		cacheService.clear();
+		
+		try {
+			cacheService.remove(OxConstants.CACHE_ATTRIBUTE_KEY_LIST);
+		}catch(Exception e) {
+			log.trace("An exception occured when clearing the attributes cache",e);
+		}
+
+		try {
+			cacheService.remove(OxTrustConstants.CACHE_ATTRIBUTE_ORIGIN_KEY_LIST);
+		}catch(Exception e) {
+			log.trace("An exception occured when clearing the attributes cache",e);
+		}
+
+		for(GluuUserRole gluuUserRole: GluuUserRole.values()) {
+			try {
+				cacheService.remove(OxTrustConstants.CACHE_ATTRIBUTE_PERSON_KEY_LIST+"_"+gluuUserRole.getValue());
+			}catch(Exception e) {
+				log.trace("An exception occured when clearing the attributes cache",e);
+			}
+
+			try {
+				cacheService.remove(OxTrustConstants.CACHE_ATTRIBUTE_CONTACT_KEY_LIST + "_" + gluuUserRole.getValue());
+			}catch(Exception e) {
+				log.trace("An exception occured when clearing the attributes cache",e);
+			}
+		}
 	}
 
 	public AttributeDataType[] getDataTypes() {
