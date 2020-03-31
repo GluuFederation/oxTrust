@@ -374,31 +374,14 @@ public class AttributeService extends org.gluu.service.AttributeService {
 	 */
 	public void clearAttributesCache(@Observes @EventType(Events.EVENT_CLEAR_ATTRIBUTES) Events event) {
 		log.debug("Removing attributes from cache");
+		removeAttributeKeySilent(OxConstants.CACHE_ATTRIBUTE_KEY_LIST);
+		removeAttributeKeySilent(OxTrustConstants.CACHE_ATTRIBUTE_ORIGIN_KEY_LIST);
 		
-		try {
-			cacheService.remove(OxConstants.CACHE_ATTRIBUTE_KEY_LIST);
-		}catch(Exception e) {
-			log.trace("An exception occured when clearing the attributes cache",e);
-		}
-
-		try {
-			cacheService.remove(OxTrustConstants.CACHE_ATTRIBUTE_ORIGIN_KEY_LIST);
-		}catch(Exception e) {
-			log.trace("An exception occured when clearing the attributes cache",e);
-		}
 
 		for(GluuUserRole gluuUserRole: GluuUserRole.values()) {
-			try {
-				cacheService.remove(OxTrustConstants.CACHE_ATTRIBUTE_PERSON_KEY_LIST+"_"+gluuUserRole.getValue());
-			}catch(Exception e) {
-				log.trace("An exception occured when clearing the attributes cache",e);
-			}
 
-			try {
-				cacheService.remove(OxTrustConstants.CACHE_ATTRIBUTE_CONTACT_KEY_LIST + "_" + gluuUserRole.getValue());
-			}catch(Exception e) {
-				log.trace("An exception occured when clearing the attributes cache",e);
-			}
+			removeAttributeKeySilent(OxTrustConstants.CACHE_ATTRIBUTE_PERSON_KEY_LIST+"_"+gluuUserRole.getValue());
+			removeAttributeKeySilent(OxTrustConstants.CACHE_ATTRIBUTE_CONTACT_KEY_LIST + "_" + gluuUserRole.getValue());
 		}
 	}
 
@@ -657,4 +640,12 @@ public class AttributeService extends org.gluu.service.AttributeService {
 		return cacheService;
 	}
 
+	private final void removeAttributeKeySilent(String key) {
+
+		try {
+			cacheService.remove(key);
+		}catch(Exception e) {
+			log.trace("An exception occured removing key from cache. "+key,e);
+		}
+	}
 }
