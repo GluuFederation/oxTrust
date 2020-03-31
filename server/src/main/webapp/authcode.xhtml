@@ -1,7 +1,24 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <f:view xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://xmlns.jcp.org/jsf/core" contentType="text/html"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
         locale="#{language.localeCode}">
     <f:metadata>
-        <f:viewAction action="#{authenticator.oAuthGetAccessToken}" onPostback="false"/>
+        <f:viewAction if="#{!authenticator.fapiCompatibility}" action="#{authenticator.oAuthGetAccessToken}" onPostback="false"/>
     </f:metadata>
+
+    <h:body >
+        <h:form id="form" rendered="#{authenticator.fapiCompatibility}" >
+            <h:inputHidden id="locationHash" value="#{authenticator.locationHash}" />
+
+            <h:commandButton id="button" action="#{authenticator.oAuthGetAccessToken}" value="Publicar" />
+        </h:form>
+
+        <script>
+            window.onload = window.onhashchange = function() {
+                document.getElementById("form:locationHash").value = window.location.hash;
+                document.getElementById("form:button").click();
+            }
+        </script>
+    </h:body>
+
 </f:view>

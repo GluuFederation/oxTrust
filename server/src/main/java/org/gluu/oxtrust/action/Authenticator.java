@@ -6,16 +6,31 @@
 
 package org.gluu.oxtrust.action;
 
-import java.io.IOException;
-import java.io.Serializable;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import org.codehaus.jettison.json.JSONException;
+import org.gluu.config.oxtrust.AppConfiguration;
+import org.gluu.jsf2.message.FacesMessages;
+import org.gluu.jsf2.service.FacesService;
+import org.gluu.model.GluuStatus;
+import org.gluu.model.user.UserRole;
+import org.gluu.oxauth.client.*;
+import org.gluu.oxauth.model.crypto.signature.RSAPrivateKey;
+import org.gluu.oxauth.model.crypto.signature.SignatureAlgorithm;
+import org.gluu.oxauth.model.exception.InvalidJwtException;
+import org.gluu.oxauth.model.jws.RSASigner;
+import org.gluu.oxauth.model.jwt.*;
+import org.gluu.oxtrust.model.GluuConfiguration;
+import org.gluu.oxtrust.model.GluuCustomPerson;
+import org.gluu.oxtrust.model.User;
+import org.gluu.oxtrust.security.Identity;
+import org.gluu.oxtrust.security.OauthData;
+import org.gluu.oxtrust.service.*;
+import org.gluu.oxtrust.util.OxTrustConstants;
+import org.gluu.util.ArrayHelper;
+import org.gluu.util.StringHelper;
+import org.gluu.util.security.StringEncrypter.EncryptionException;
+import org.slf4j.Logger;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
@@ -25,36 +40,12 @@ import javax.servlet.http.Cookie;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
-
-import org.codehaus.jettison.json.JSONException;
-import org.gluu.config.oxtrust.AppConfiguration;
-import org.gluu.jsf2.message.FacesMessages;
-import org.gluu.jsf2.service.FacesService;
-import org.gluu.model.GluuStatus;
-import org.gluu.model.user.UserRole;
-import org.gluu.oxauth.client.OpenIdConfigurationResponse;
-import org.gluu.oxauth.client.TokenClient;
-import org.gluu.oxauth.client.TokenResponse;
-import org.gluu.oxauth.client.UserInfoClient;
-import org.gluu.oxauth.client.UserInfoResponse;
-import org.gluu.oxauth.model.exception.InvalidJwtException;
-import org.gluu.oxauth.model.jwt.Jwt;
-import org.gluu.oxauth.model.jwt.JwtClaimName;
-import org.gluu.oxtrust.model.GluuConfiguration;
-import org.gluu.oxtrust.model.GluuCustomPerson;
-import org.gluu.oxtrust.model.User;
-import org.gluu.oxtrust.security.Identity;
-import org.gluu.oxtrust.security.OauthData;
-import org.gluu.oxtrust.service.ConfigurationService;
-import org.gluu.oxtrust.service.EncryptionService;
-import org.gluu.oxtrust.service.OpenIdService;
-import org.gluu.oxtrust.service.PersonService;
-import org.gluu.oxtrust.service.SecurityService;
-import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.util.ArrayHelper;
-import org.gluu.util.StringHelper;
-import org.gluu.util.security.StringEncrypter.EncryptionException;
-import org.slf4j.Logger;
+import java.io.IOException;
+import java.io.Serializable;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.security.SignatureException;
+import java.util.*;
 
 /**
  * Provides authentication using oAuth
@@ -99,6 +90,23 @@ public class Authenticator implements Serializable {
 
 	@Inject
 	private EncryptionService encryptionService;
+
+	@Inject
+	private JsonConfigurationService jsonConfigurationService;
+
+	private org.gluu.oxauth.model.configuration.AppConfiguration oxAuthAppConfiguration;
+	private Boolean fapiCompatibility;
+	private String locationHash;
+
+	@PostConstruct
+	public void init() {
+		try {
+			oxAuthAppConfiguration = jsonConfigurationService.getOxauthAppConfiguration();
+			fapiCompatibility = oxAuthAppConfiguration.getFapiCompatibility();
+		} catch (IOException e) {
+			log.error("Exceptio on loading oxAuth json configuration", e);
+		}
+	}
 
 	public boolean preAuthenticate() throws IOException, Exception {
 		boolean result = true;
@@ -148,7 +156,7 @@ public class Authenticator implements Serializable {
 
 	/**
 	 * Set session variables after user login
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	private void postLogin(User user) {
@@ -193,33 +201,34 @@ public class Authenticator implements Serializable {
 
 	/**
 	 * Main entry point for oAuth authentication.
-	 * 
+	 *
 	 * @throws IOException
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public boolean oAuthLogin() throws IOException, Exception {
-		Client client = ClientBuilder.newClient();
-		WebTarget target = client.target(openIdService.getOpenIdConfiguration().getAuthorizationEndpoint());
-		String clientId = appConfiguration.getOxAuthClientId();
-		String scope = appConfiguration.getOxAuthClientScope();
-		String responseType = "code";
-		String nonce = UUID.randomUUID().toString();
-		String state = UUID.randomUUID().toString();
-		target = target.queryParam(OxTrustConstants.OXAUTH_CLIENT_ID, clientId);
-		target = target.queryParam(OxTrustConstants.OXAUTH_REDIRECT_URI, appConfiguration.getLoginRedirectUrl());
-		target = target.queryParam(OxTrustConstants.OXAUTH_RESPONSE_TYPE, responseType);
-		target = target.queryParam(OxTrustConstants.OXAUTH_SCOPE, scope);
-		target = target.queryParam(OxTrustConstants.OXAUTH_NONCE, nonce);
-		target = target.queryParam(OxTrustConstants.OXAUTH_STATE, state);
-		// Store state and nonce
-		identity.getSessionMap().put(OxTrustConstants.OXAUTH_NONCE, nonce);
-		identity.getSessionMap().put(OxTrustConstants.OXAUTH_STATE, state);
 		GluuConfiguration configuration = configurationService
 				.getConfiguration(new String[] { "oxTrustAuthenticationMode" });
 		String acrValues = configuration.getOxTrustAuthenticationMode();
+		String nonce = UUID.randomUUID().toString();
+		String state = UUID.randomUUID().toString();
+		String clientId = appConfiguration.getOxAuthClientId();
+		String scope = appConfiguration.getOxAuthClientScope();
+
+		Client client = ClientBuilder.newClient();
+		WebTarget target = client.target(openIdService.getOpenIdConfiguration().getAuthorizationEndpoint());
+		if (oxAuthAppConfiguration.getFapiCompatibility()) {
+			target = getFapiAuthenticationRequest(target, acrValues, nonce, state, clientId, scope);
+		} else {
+			target = getNormalAuthenticationRequest(target, clientId, nonce, state, acrValues, scope);
+		}
+		if (target == null)
+			return false;
+		// Store state and nonce
+		identity.getSessionMap().put(OxTrustConstants.OXAUTH_NONCE, nonce);
+		identity.getSessionMap().put(OxTrustConstants.OXAUTH_STATE, state);
+
 		if (StringHelper.isNotEmpty(acrValues)) {
-			target = target.queryParam(OxTrustConstants.OXAUTH_ACR_VALUES, acrValues);
 			// Store authentication method
 			identity.getSessionMap().put(OxTrustConstants.OXAUTH_ACR_VALUES, acrValues);
 		}
@@ -230,7 +239,7 @@ public class Authenticator implements Serializable {
 	/**
 	 * After successful login, oxAuth will redirect user to this method. Obtains
 	 * access token using authorization code and verifies if access token is valid
-	 * 
+	 *
 	 * @return
 	 * @throws JSONException
 	 */
@@ -421,4 +430,95 @@ public class Authenticator implements Serializable {
 		return null;
 	}
 
+	private WebTarget getNormalAuthenticationRequest(WebTarget target, String clientId, String nonce,
+													 String state, String acrValues, String scope) {
+		String responseType = "code";
+
+		target = target.queryParam(OxTrustConstants.OXAUTH_CLIENT_ID, clientId);
+		target = target.queryParam(OxTrustConstants.OXAUTH_REDIRECT_URI, appConfiguration.getLoginRedirectUrl());
+		target = target.queryParam(OxTrustConstants.OXAUTH_RESPONSE_TYPE, responseType);
+		target = target.queryParam(OxTrustConstants.OXAUTH_SCOPE, scope);
+		target = target.queryParam(OxTrustConstants.OXAUTH_NONCE, nonce);
+		target = target.queryParam(OxTrustConstants.OXAUTH_STATE, state);
+		if (StringHelper.isNotEmpty(acrValues)) {
+			target = target.queryParam(OxTrustConstants.OXAUTH_ACR_VALUES, acrValues);
+		}
+		return target;
+	}
+
+	private WebTarget getFapiAuthenticationRequest(WebTarget target, String acrValues, String nonce,
+												   String state, String clientId, String scope) {
+		try {
+			String responseType = "code id_token";
+
+			Jwt jwt = new Jwt();
+			JwtSubClaimObject acr = new JwtSubClaimObject();
+			acr.setClaim("value", acrValues);
+			acr.setClaim("essential", true);
+
+			JwtSubClaimObject idToken = new JwtSubClaimObject();
+			idToken.setClaim("acr", acr.toJsonObject());
+
+			JwtSubClaimObject claims = new JwtSubClaimObject();
+			claims.setClaim("id_token", idToken.toJsonObject());
+
+			JwtClaims jwtClaims = new JwtClaims();
+			jwtClaims.setClaim("aud", appConfiguration.getOxAuthIssuer());
+			jwtClaims.setClaim("scope", scope);
+			jwtClaims.setClaim("claims", claims.toJsonObject());
+			jwtClaims.setClaim("iss", clientId);
+			jwtClaims.setClaim("response_type", responseType);
+			jwtClaims.setClaim("redirect_uri", appConfiguration.getLoginRedirectUrl());
+			jwtClaims.setClaim("state", state);
+			jwtClaims.setClaim("exp", new Date().getTime() / 1000 + 180L);
+			jwtClaims.setClaim("nonce", nonce);
+			jwtClaims.setClaim("client_id", clientId);
+
+			jwt.setClaims(jwtClaims);
+
+			JwtHeader jwtHeader = new JwtHeader();
+			jwtHeader.setAlgorithm(SignatureAlgorithm.PS256);
+			jwtHeader.setKeyId(clientId);
+			jwt.setHeader(jwtHeader);
+
+			RSAPrivateKey privateKey = new RSAPrivateKey(appConfiguration.getOxAuthClientFapiJWKPrivateKeyModulus(),
+					appConfiguration.getOxAuthClientFapiJWKPrivateKeyPrivateExponent());
+			RSASigner signer = new RSASigner(SignatureAlgorithm.PS256, privateKey);
+			String signing = signer.generateSignature(jwt.getSigningInput());
+			jwt.setEncodedSignature(signing);
+
+			String request = jwt.toString();
+
+			log.info("Fapi authorization JWT to process it : {}", jwt);
+
+			target = target.queryParam(OxTrustConstants.OXAUTH_CLIENT_ID, clientId);
+			target = target.queryParam(OxTrustConstants.OXAUTH_REDIRECT_URI, appConfiguration.getLoginRedirectUrl());
+			target = target.queryParam(OxTrustConstants.OXAUTH_RESPONSE_TYPE, responseType);
+			target = target.queryParam(OxTrustConstants.OXAUTH_SCOPE, scope);
+			target = target.queryParam(OxTrustConstants.OXAUTH_REQUEST, request);
+
+			return target;
+		} catch (SignatureException e) {
+			log.error("Problems when signing the JWT to process FAPI authorization", e);
+		} catch (InvalidJwtException e) {
+			log.error("Problems processing JWT to process FAPI authorization", e);
+		}
+		return null;
+	}
+
+	public Boolean getFapiCompatibility() {
+		return fapiCompatibility;
+	}
+
+	public void setFapiCompatibility(Boolean fapiCompatibility) {
+		this.fapiCompatibility = fapiCompatibility;
+	}
+
+	public String getLocationHash() {
+		return locationHash;
+	}
+
+	public void setLocationHash(String locationHash) {
+		this.locationHash = locationHash;
+	}
 }

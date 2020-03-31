@@ -141,6 +141,7 @@ public final class OxTrustConstants extends OxConstants {
 	public static final String OXAUTH_ID_TOKEN_HINT = "id_token_hint";
 	public static final String OXAUTH_ACCESS_TOKEN = "access_token";
 	public static final String OXAUTH_ACR_VALUES = "acr_values";
+	public static final String OXAUTH_REQUEST = "request";
 
 	public static final String OXAUTH_SESSION_STATE = "session_state";
 	public static final String OXAUTH_SSO_SESSION_STATE = "session_sso_state";
