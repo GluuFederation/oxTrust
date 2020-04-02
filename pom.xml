@@ -16,7 +16,7 @@
 
 		<oxcore.version>3.1.8.Final</oxcore.version>
 		<oxauth.version>3.1.8.Final</oxauth.version>
-		<oxasimba.version>3.1.7.Final</oxasimba.version>
+		<oxasimba.version>3.1.8.Final</oxasimba.version>
 
 		<jackson.version>2.9.5</jackson.version>
 		<jackson.databind.version>2.9.5</jackson.databind.version>
