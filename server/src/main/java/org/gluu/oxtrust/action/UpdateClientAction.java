@@ -42,6 +42,7 @@ import org.gluu.oxtrust.ldap.service.EncryptionService;
 import org.gluu.oxtrust.ldap.service.OxTrustAuditService;
 import org.gluu.oxtrust.ldap.service.ScopeService;
 import org.gluu.oxtrust.model.GluuGroup;
+import org.gluu.oxtrust.model.OxAuthApplicationType;
 import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.model.OxAuthScope;
 import org.gluu.oxtrust.model.OxAuthSubjectType;
@@ -179,11 +180,20 @@ public class UpdateClientAction implements Serializable {
 
 	public String add() throws Exception {
 		if (this.client != null) {
+			if (this.client.getOxAuthAppType() == null) {
+				this.client.setOxAuthAppType(OxAuthApplicationType.WEB);
+			}
+			if (this.client.getSubjectType() == null) {
+				this.client.setSubjectType(OxAuthSubjectType.PAIRWISE);
+			}
+
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
 
 		this.update = false;
 		this.client = new OxAuthClient();
+		this.client.setOxAuthAppType(OxAuthApplicationType.WEB);
+		this.client.setSubjectType(OxAuthSubjectType.PAIRWISE);
 
 		try {
 			this.loginUris = getNonEmptyStringList(client.getOxAuthRedirectURIs());
@@ -552,21 +562,41 @@ public class UpdateClientAction implements Serializable {
 	private boolean isAcceptable(String availableLoginUri) {
 		boolean result = false;
 		try {
-			if (this.client.getSubjectType().equals(OxAuthSubjectType.PUBLIC)) {
-				return true;
-			}
-			if (this.loginUris.size() < 1) {
-				result = true;
-			} else if (this.loginUris.size() >= 1 && hasSameHostname(this.availableLoginUri)) {
-				result = true;
-			} else if (this.loginUris.size() >= 1 && !hasSameHostname(this.availableLoginUri) && sectorExist()) {
-				result = true;
+			if (getProtocol(availableLoginUri).equalsIgnoreCase("http")) {
+				if (this.client.getOxAuthAppType().equals(OxAuthApplicationType.NATIVE) && isImplicitFlow()) {
+					return true;
+				}
+				if (!this.client.getOxAuthAppType().equals(OxAuthApplicationType.NATIVE)
+						&& getHostname(availableLoginUri).equalsIgnoreCase("localhost")) {
+					return true;
+				}
+				if (!this.client.getOxAuthAppType().equals(OxAuthApplicationType.NATIVE)
+						&& getHostname(availableLoginUri).equalsIgnoreCase("127.0.0.1")) {
+					return true;
+				}
+				return false;
+			} else {
+				if (this.client.getSubjectType().equals(OxAuthSubjectType.PUBLIC)) {
+					return true;
+				} else if (this.loginUris.size() < 1) {
+					result = true;
+				} else if (this.loginUris.size() >= 1 && hasSameHostname(this.availableLoginUri)) {
+					result = true;
+				} else if (this.loginUris.size() >= 1 && !hasSameHostname(this.availableLoginUri) && sectorExist()) {
+					result = true;
+				}
 			}
 		} catch (MalformedURLException e) {
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "The url is malformed", "The url is malformed");
 			log.error(e.getMessage());
 		}
 		return result;
+	}
+	private boolean isImplicitFlow() {
+		if (this.grantTypes.contains(GrantType.IMPLICIT)) {
+			return true;
+		}
+		return false;
 	}
 
 	private boolean hasSameHostname(String url1) throws MalformedURLException {
@@ -580,6 +610,22 @@ public class UpdateClientAction implements Serializable {
 			}
 		}
 		return result;
+	}
+
+	private String getHostname(String url) {
+		URL uri1;
+		try {
+			uri1 = new URL(url);
+			return uri1.getHost();
+		} catch (MalformedURLException e) {
+			return null;
+		}
+
+	}
+
+	private String getProtocol(String url) throws MalformedURLException {
+		URL uri1 = new URL(url);
+		return uri1.getProtocol();
 	}
 
 	private boolean sectorExist() {
