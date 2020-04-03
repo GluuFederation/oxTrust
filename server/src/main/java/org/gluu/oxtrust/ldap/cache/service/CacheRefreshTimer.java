@@ -1151,7 +1151,7 @@ public class CacheRefreshTimer {
 					bindCredentials.getBindPassword());
 		}
 
-		log.trace("Attemptint to create PersistenceEntryManager with properties: {}", ldapDecryptedProperties);
+		log.trace("Attempting to create PersistenceEntryManager with properties: {}", ldapDecryptedProperties);
 		PersistenceEntryManager customPersistenceEntryManager = entryManagerFactory
 				.createEntryManager(ldapDecryptedProperties);
 		log.info("Created Cache Refresh PersistenceEntryManager: {}", customPersistenceEntryManager);
