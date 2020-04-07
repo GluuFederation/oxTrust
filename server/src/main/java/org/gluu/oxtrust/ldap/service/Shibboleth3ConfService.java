@@ -5,9 +5,11 @@
  */
 package org.gluu.oxtrust.ldap.service;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -24,20 +26,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Source;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
-import javax.xml.validation.Validator;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
@@ -45,8 +41,8 @@ import javax.xml.xpath.XPathFactory;
 import org.apache.commons.httpclient.protocol.Protocol;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.velocity.VelocityContext;
-import org.apache.velocity.util.ClassUtils;
 import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.config.oxtrust.AttributeResolverConfiguration;
 import org.gluu.config.oxtrust.LdapOxTrustConfiguration;
@@ -1404,4 +1400,63 @@ public class Shibboleth3ConfService implements Serializable {
 		}
 
 	}
+
+	public boolean existsSpMetadataFilePath(String filePath) {
+		File file = new File(filePath);
+		return file.exists();
+	}
+
+	public void replaceSpMetadataCert(String metadataFileName, String certRegEx, String certificate) throws IOException {
+		File metadataFile = new File(getSpMetadataFilePath(metadataFileName));
+		String metadata = FileUtils.readFileToString(metadataFile, "UTF-8");
+		String updatedMetadata = metadata.replaceFirst(certRegEx, certificate);
+		FileUtils.writeStringToFile(metadataFile, updatedMetadata, "UTF-8");
+	}
+
+	public String readSpMetadataFile(GluuSAMLTrustRelationship trustRelationship) throws IOException {
+		String filename = trustRelationship.getSpMetaDataFN();
+		File metadataFile = null;
+		if (!StringUtils.isEmpty(filename)) {
+			metadataFile = new File(getSpMetadataFilePath(filename));
+			if (metadataFile.exists()) {
+				return FileUtils.readFileToString(metadataFile, "UTF-8");
+			}
+		}
+		return null;
+	}
+
+	public InputStream readAsStream(String filePath) throws IOException {
+		if (StringHelper.isEmpty(filePath)) {
+			return null;
+		}
+		
+		File fileName = new File(filePath);
+		if ((fileName != null) && fileName.exists()) {
+			return new BufferedInputStream(new FileInputStream(fileName));
+		}
+
+		return null;
+	}
+
+	public String getSslDirFN() {
+		String sslDirFN = appConfiguration.getShibboleth3IdpRootDir() + File.separator
+				+ TrustService.GENERATED_SSL_ARTIFACTS_DIR + File.separator;
+		
+		return sslDirFN;
+	}
+
+	public String getSpKeyFilePath(GluuSAMLTrustRelationship trustRelationship) {
+		String sslDirFN = getSslDirFN();
+		String spKeyFilePath = sslDirFN + getSpNewMetadataFileName(trustRelationship).replaceFirst("\\.xml$", ".key");
+
+		return spKeyFilePath;
+	}
+
+	public String getSpCertFilePath(GluuSAMLTrustRelationship trustRelationship) {
+		String sslDirFN = getSslDirFN();
+		String spCertFilePath = sslDirFN + getSpNewMetadataFileName(trustRelationship).replaceFirst("\\.xml$", ".crt");
+
+		return spCertFilePath;
+	}
+
 }
