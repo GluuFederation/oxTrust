@@ -41,8 +41,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.velocity.VelocityContext;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.cert.X509v3CertificateBuilder;
@@ -599,10 +597,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 			shibboleth3ConfService.saveKey(trustRelationship, null);
 
 			String metadataFileName = this.trustRelationship.getSpMetaDataFN();
-			File metadataFile = new File(shibboleth3ConfService.getSpMetadataFilePath(metadataFileName));
-			String metadata = FileUtils.readFileToString(metadataFile, "UTF-8");
-			String updatedMetadata = metadata.replaceFirst(certRegEx, certificate);
-			FileUtils.writeStringToFile(metadataFile, updatedMetadata, "UTF-8");
+			shibboleth3ConfService.replaceSpMetadataCert(metadataFileName, certRegEx, certificate);
 			this.trustRelationship.setStatus(GluuStatus.ACTIVE);
 		} catch (Exception e) {
 			log.error("Failed to update certificate", e);
@@ -639,12 +634,10 @@ public class UpdateTrustRelationshipAction implements Serializable {
 			if (filePath == null) {
 				return false;
 			}
+			
+			boolean filePathExists = shibboleth3ConfService.existsSpMetadataFilePath(filePath);
 
-			File file = new File(filePath);
-			if (!file.exists()) {
-				return false;
-			}
-			return true;
+			return filePathExists;
 		}
 		if (emptySpMetadataFileName) {
 			spMetadataFileName = shibboleth3ConfService.getSpNewMetadataFileName(this.trustRelationship);
@@ -752,45 +745,50 @@ public class UpdateTrustRelationshipAction implements Serializable {
 
 			// Add files
 			String idpMetadataFilePath = shibboleth3ConfService.getIdpMetadataFilePath();
-			if (!ResponseHelper.addFileToZip(idpMetadataFilePath, zos,
-					Shibboleth3ConfService.SHIB3_IDP_IDP_METADATA_FILE)) {
-				log.error("Failed to add " + idpMetadataFilePath + " to zip");
-				return OxTrustConstants.RESULT_FAILURE;
+			try (InputStream is = shibboleth3ConfService.readAsStream(idpMetadataFilePath)) {
+				if (!ResponseHelper.addResourceToZip(is, Shibboleth3ConfService.SHIB3_IDP_IDP_METADATA_FILE, zos)) {
+					log.error("Failed to add " + idpMetadataFilePath + " to zip");
+					return OxTrustConstants.RESULT_FAILURE;
+				}
 			}
 
 			if (trustRelationship.getSpMetaDataFN() == null) {
 				log.error("SpMetaDataFN is not set.");
 				return OxTrustConstants.RESULT_FAILURE;
 			}
-			String spMetadataFilePath = shibboleth3ConfService
-					.getSpMetadataFilePath(trustRelationship.getSpMetaDataFN());
-			if (!ResponseHelper.addFileToZip(spMetadataFilePath, zos,
-					Shibboleth3ConfService.SHIB3_IDP_SP_METADATA_FILE)) {
-				log.error("Failed to add " + spMetadataFilePath + " to zip");
-				return OxTrustConstants.RESULT_FAILURE;
-			}
-			String sslDirFN = appConfiguration.getShibboleth3IdpRootDir() + File.separator
-					+ TrustService.GENERATED_SSL_ARTIFACTS_DIR + File.separator;
-			String spKeyFilePath = sslDirFN + shibboleth3ConfService.getSpNewMetadataFileName(trustRelationship)
-					.replaceFirst("\\.xml$", ".key");
-			if (!ResponseHelper.addFileToZip(spKeyFilePath, zos, Shibboleth3ConfService.SHIB3_IDP_SP_KEY_FILE)) {
-				log.error("Failed to add " + spKeyFilePath + " to zip");
-			}
-			String spCertFilePath = sslDirFN + shibboleth3ConfService.getSpNewMetadataFileName(trustRelationship)
-					.replaceFirst("\\.xml$", ".crt");
-			if (!ResponseHelper.addFileToZip(spCertFilePath, zos, Shibboleth3ConfService.SHIB3_IDP_SP_CERT_FILE)) {
-				log.error("Failed to add " + spCertFilePath + " to zip");
+
+			String spMetadataFilePath = shibboleth3ConfService.getSpMetadataFilePath(trustRelationship.getSpMetaDataFN());
+			try (InputStream is = shibboleth3ConfService.readAsStream(spMetadataFilePath)) {
+				if (!ResponseHelper.addResourceToZip(is, Shibboleth3ConfService.SHIB3_IDP_SP_METADATA_FILE, zos)) {
+					log.error("Failed to add " + spMetadataFilePath + " to zip");
+					return OxTrustConstants.RESULT_FAILURE;
+				}
 			}
 
-			String spAttributeMap = shibboleth3ConfService.generateSpAttributeMapFile(trustRelationship);
-			if (spAttributeMap == null) {
+			String spKeyFilePath = shibboleth3ConfService.getSpKeyFilePath(trustRelationship);
+			try (InputStream is = shibboleth3ConfService.readAsStream(spKeyFilePath)) {
+				if (!ResponseHelper.addResourceToZip(is, Shibboleth3ConfService.SHIB3_IDP_SP_KEY_FILE, zos)) {
+					log.error("Failed to add " + spKeyFilePath + " to zip");
+				}
+			}
+
+			String spCertFilePath = shibboleth3ConfService.getSpCertFilePath(trustRelationship);
+			try (InputStream is = shibboleth3ConfService.readAsStream(spCertFilePath)) {
+				if (!ResponseHelper.addResourceToZip(is, Shibboleth3ConfService.SHIB3_IDP_SP_CERT_FILE, zos)) {
+					log.error("Failed to add " + spCertFilePath + " to zip");
+				}
+			}
+
+			String spAttributeMapPath = shibboleth3ConfService.generateSpAttributeMapFile(trustRelationship);
+			if (spAttributeMapPath == null) {
 				log.error("spAttributeMap is not set.");
 				return OxTrustConstants.RESULT_FAILURE;
 			}
-			if (!ResponseHelper.addFileContentToZip(spAttributeMap, zos,
-					Shibboleth3ConfService.SHIB3_SP_ATTRIBUTE_MAP_FILE)) {
-				log.error("Failed to add " + spAttributeMap + " to zip");
-				return OxTrustConstants.RESULT_FAILURE;
+			try (InputStream is = shibboleth3ConfService.readAsStream(spAttributeMapPath)) {
+				if (!ResponseHelper.addResourceToZip(is, Shibboleth3ConfService.SHIB3_SP_ATTRIBUTE_MAP_FILE, zos)) {
+					log.error("Failed to add " + spAttributeMapPath + " to zip");
+					return OxTrustConstants.RESULT_FAILURE;
+				}
 			}
 
 			VelocityContext context = new VelocityContext();
@@ -819,22 +817,24 @@ public class UpdateTrustRelationshipAction implements Serializable {
 			}
 
 			String spReadMeResourceName = shibboleth3ConfService.getSpReadMeResourceName();
-			String fileName = (new File(spReadMeResourceName)).getName();
-			InputStream is = FacesContext.getCurrentInstance().getExternalContext()
-					.getResourceAsStream(spReadMeResourceName);
-			if (!ResponseHelper.addResourceToZip(is, fileName, zos)) {
-				log.error("Failed to add " + spReadMeResourceName + " to zip");
-				return OxTrustConstants.RESULT_FAILURE;
+			String fileName = getFileName(spReadMeResourceName);
+			try (InputStream is = FacesContext.getCurrentInstance().getExternalContext()
+					.getResourceAsStream(spReadMeResourceName) ) {
+				if (!ResponseHelper.addResourceToZip(is, fileName, zos)) {
+					log.error("Failed to add " + spReadMeResourceName + " to zip");
+					return OxTrustConstants.RESULT_FAILURE;
+				}
 			}
 
 			String spReadMeWindowsResourceName = shibboleth3ConfService.getSpReadMeWindowsResourceName();
-			fileName = (new File(spReadMeWindowsResourceName)).getName();
-			is = FacesContext.getCurrentInstance().getExternalContext()
-					.getResourceAsStream(spReadMeWindowsResourceName);
-
-			if (!ResponseHelper.addResourceToZip(is, fileName, zos)) {
-				log.error("Failed to add " + spReadMeWindowsResourceName + " to zip");
-				return OxTrustConstants.RESULT_FAILURE;
+			fileName = getFileName(spReadMeWindowsResourceName);
+			try (InputStream is = FacesContext.getCurrentInstance().getExternalContext()
+					.getResourceAsStream(spReadMeWindowsResourceName)) {
+	
+				if (!ResponseHelper.addResourceToZip(is, fileName, zos)) {
+					log.error("Failed to add " + spReadMeWindowsResourceName + " to zip");
+					return OxTrustConstants.RESULT_FAILURE;
+				}
 			}
 			boolean result = ResponseHelper.downloadFile("shibboleth3-configuration.zip",
 					OxTrustConstants.CONTENT_TYPE_APPLICATION_ZIP, bos.toByteArray(),
@@ -843,6 +843,11 @@ public class UpdateTrustRelationshipAction implements Serializable {
 		} catch (Exception e) {
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
+	}
+
+	private String getFileName(String filePath) {
+		 String fileName = (new File(filePath)).getName();
+		return fileName;
 	}
 
 	public Part getFileWrapper() {
@@ -893,15 +898,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 		if (trustRelationship == null) {
 			return null;
 		}
-		String filename = trustRelationship.getSpMetaDataFN();
-		File metadataFile = null;
-		if (!StringUtils.isEmpty(filename)) {
-			metadataFile = new File(shibboleth3ConfService.getSpMetadataFilePath(filename));
-			if (metadataFile.exists()) {
-				return FileUtils.readFileToString(metadataFile, "UTF-8");
-			}
-		}
-		return null;
+		return shibboleth3ConfService.readSpMetadataFile(trustRelationship);
 	}
 
 	public boolean isUpdate() {
