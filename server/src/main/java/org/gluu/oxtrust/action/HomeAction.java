@@ -13,6 +13,9 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.gluu.oxtrust.model.AuthenticationChartDto;
+import org.gluu.oxtrust.model.GluuConfiguration;
+import org.gluu.oxtrust.model.GluuOxTrustStat;
+import org.gluu.oxtrust.service.ConfigurationService;
 import org.gluu.oxtrust.service.MetricService;
 import org.gluu.oxtrust.service.PermissionService;
 import org.gluu.oxtrust.service.UpdateChecker;
@@ -46,6 +49,9 @@ public class HomeAction implements Serializable {
 
 	@Inject
 	private PermissionService permissionService;
+	
+	@Inject
+	private ConfigurationService configurationService;
 
 	private AuthenticationChartDto authenticationChartDto;
 
@@ -85,6 +91,14 @@ public class HomeAction implements Serializable {
 
 	public void setUpdateChecker(UpdateChecker updateChecker) {
 		this.updateChecker = updateChecker;
+	}
+	
+	public GluuOxTrustStat  getServerStat() {
+		return configurationService.getOxtrustStat();
+	}
+	
+	public GluuConfiguration  getConfiguration() {
+		return configurationService.getConfiguration();
 	}
 
 }

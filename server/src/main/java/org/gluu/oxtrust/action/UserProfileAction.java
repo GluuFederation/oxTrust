@@ -24,6 +24,7 @@ import org.gluu.jsf2.service.ConversationService;
 import org.gluu.model.GluuAttribute;
 import org.gluu.model.GluuUserRole;
 import org.gluu.oxtrust.exception.DuplicateEmailException;
+import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.security.Identity;
@@ -281,5 +282,9 @@ public class UserProfileAction implements Serializable {
 			}
 		}
 		return false;
+	}
+	
+	public GluuConfiguration  getConfiguration() {
+		return configurationService.getConfiguration();
 	}
 }

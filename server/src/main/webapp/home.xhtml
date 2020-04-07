@@ -52,9 +52,9 @@
 							<div class="info-box-content">
 
 								<ui:param name="_configuration"
-									value="#{configurationService.configuration}" />
+									value="#{homeAction.getConfiguration()}" />
 								<ui:param name="_stat"
-									value="#{configurationService.getOxtrustStat()}" />
+									value="#{homeAction.getServerStat()}" />
 								<span class="info-box-text">#{msg['home.freeMemory']}</span>
 								<h:outputText styleClass="info-box-number"
 									value="#{_stat.freeMemory}%" />

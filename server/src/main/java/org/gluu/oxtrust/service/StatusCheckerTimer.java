@@ -156,20 +156,16 @@ public class StatusCheckerTimer {
 		oxtrustStatObject.setPersonCount(String.valueOf(personService.countPersons()));
 		log.debug("Setting FactorAttributes");
 		setFactorAttributes(configurationStatus, oxtrustStatObject);
-		// Execute df and update configuration attributes
 		setDfAttributes(configurationStatus, oxtrustStatObject);
-		// Set HTTPD attributes
 		setHttpdAttributes(configurationStatus);
 		try {
 			setCertificateExpiryAttributes(configurationStatus);
 		} catch (Exception ex) {
 			log.error("Failed to check certificate expiration", ex);
 		}
-
 		GluuConfiguration configuration = configurationService.getConfiguration();
 		GluuOxTrustStat gluuOxTrustStat = configurationService.getOxtrustStat();
 		try {
-			// Copy gathered values
 			BeanUtils.copyProperties(configuration, configurationStatus);
 			BeanUtils.copyProperties(gluuOxTrustStat, oxtrustStatObject);
 		} catch (Exception ex) {

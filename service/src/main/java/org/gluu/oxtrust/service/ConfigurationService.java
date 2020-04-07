@@ -6,7 +6,25 @@
 
 package org.gluu.oxtrust.service;
 
-import org.gluu.model.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
+import java.util.List;
+import java.util.Properties;
+
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.gluu.model.ApplicationType;
+import org.gluu.model.AuthenticationScriptUsageType;
+import org.gluu.model.ProgrammingLanguage;
+import org.gluu.model.ScriptLocationType;
+import org.gluu.model.SmtpConfiguration;
 import org.gluu.model.custom.script.CustomScriptType;
 import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.oxtrust.model.GluuOxTrustStat;
@@ -15,23 +33,13 @@ import org.gluu.util.StringHelper;
 import org.gluu.util.security.StringEncrypter.EncryptionException;
 import org.slf4j.Logger;
 
-import javax.ejb.Stateless;
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
-import java.io.Serializable;
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Date;
-import java.util.List;
-
 /**
  * GluuConfiguration service
  * 
  * @author Reda Zerrad Date: 08.10.2012
  */
 @ApplicationScoped
+@Named("configurationService")
 public class ConfigurationService implements Serializable {
 
 	private static final long serialVersionUID = 8842838732456296435L;
@@ -119,14 +127,7 @@ public class ConfigurationService implements Serializable {
 	 */
 	public GluuConfiguration getConfiguration(String[] returnAttributes) {
 		GluuConfiguration result = null;
-//		if (ldapEntryManager.contains(getDnForConfiguration(), GluuConfiguration.class)) {
-			result = ldapEntryManager.find(getDnForConfiguration(), GluuConfiguration.class, returnAttributes);
-//		} else {
-//			result = new GluuConfiguration();
-//			result.setDn(getDnForConfiguration());
-//
-//			ldapEntryManager.persist(result);
-//		}
+		result = ldapEntryManager.find(getDnForConfiguration(), GluuConfiguration.class, returnAttributes);
 		return result;
 	}
 
@@ -201,8 +202,7 @@ public class ConfigurationService implements Serializable {
 				CustomScriptType.DYNAMIC_SCOPE, CustomScriptType.ID_GENERATOR, CustomScriptType.CACHE_REFRESH,
 				CustomScriptType.UMA_RPT_POLICY, CustomScriptType.UMA_CLAIMS_GATHERING, CustomScriptType.INTROSPECTION,
 				CustomScriptType.RESOURCE_OWNER_PASSWORD_CREDENTIALS, CustomScriptType.APPLICATION_SESSION,
-                CustomScriptType.END_SESSION,
-				CustomScriptType.SCIM };
+				CustomScriptType.END_SESSION, CustomScriptType.SCIM };
 	}
 
 	public void encryptedSmtpPassword(SmtpConfiguration smtpConfiguration) {
@@ -232,6 +232,26 @@ public class ConfigurationService implements Serializable {
 				log.error("Failed to decrypt SMTP password", ex);
 			}
 		}
+	}
+	
+	
+	public String getVersion() {
+		String version  = getClass().getPackage().getImplementationVersion();
+    	if (version==null) {
+    	    Properties prop = new Properties();
+    	    try (InputStream is = getClass().getResourceAsStream("/META-INF/MANIFEST.MF")) {
+    	        prop.load(is);
+    	        version = prop.getProperty("Implementation-Version");
+    	    } catch (IOException e) {
+    	        log.error(e.toString());
+    	    }
+    	}
+    	log.info("Starting App version "+version);
+    	if(version != null){
+    		version = version.replace("-SNAPSHOT","");
+    		return version;
+    	}    		
+       	return "";
 	}
 
 	private String buildDn(String uniqueIdentifier, Date creationDate, ApplicationType applicationType) {
