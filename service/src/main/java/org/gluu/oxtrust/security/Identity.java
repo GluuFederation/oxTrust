@@ -4,11 +4,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.Priority;
 import javax.enterprise.context.SessionScoped;
+import javax.enterprise.inject.Alternative;
 import javax.inject.Named;
+import javax.interceptor.Interceptor;
 
 import org.gluu.oxtrust.model.GluuCustomPerson;
 
+@Alternative
+@Priority(Interceptor.Priority.APPLICATION + 20)
 @SessionScoped
 @Named
 public class Identity extends org.gluu.model.security.Identity {
