@@ -6,6 +6,20 @@
 
 package org.gluu.oxtrust.action;
 
+import com.google.common.base.Splitter;
+import org.apache.commons.lang.StringUtils;
+import org.apache.http.client.config.CookieSpecs;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.config.Registry;
+import org.apache.http.config.RegistryBuilder;
+import org.apache.http.conn.socket.ConnectionSocketFactory;
+import org.apache.http.conn.socket.PlainConnectionSocketFactory;
+import org.apache.http.conn.ssl.DefaultHostnameVerifier;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.http.ssl.SSLContexts;
 import org.codehaus.jettison.json.JSONException;
 import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.jsf2.message.FacesMessages;
@@ -28,6 +42,7 @@ import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.util.ArrayHelper;
 import org.gluu.util.StringHelper;
 import org.gluu.util.security.StringEncrypter.EncryptionException;
+import org.jboss.resteasy.client.core.executors.ApacheHttpClient4Executor;
 import org.slf4j.Logger;
 
 import javax.annotation.PostConstruct;
@@ -36,15 +51,16 @@ import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.net.ssl.SSLContext;
 import javax.servlet.http.Cookie;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
-import java.io.IOException;
-import java.io.Serializable;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.SignatureException;
+import java.security.*;
+import java.security.cert.CertificateException;
 import java.util.*;
 
 /**
@@ -217,7 +233,7 @@ public class Authenticator implements Serializable {
 
 		Client client = ClientBuilder.newClient();
 		WebTarget target = client.target(openIdService.getOpenIdConfiguration().getAuthorizationEndpoint());
-		if (oxAuthAppConfiguration.getFapiCompatibility()) {
+		if (this.fapiCompatibility) {
 			target = getFapiAuthenticationRequest(target, acrValues, nonce, state, clientId, scope);
 		} else {
 			target = getNormalAuthenticationRequest(target, clientId, nonce, state, acrValues, scope);
@@ -251,8 +267,13 @@ public class Authenticator implements Serializable {
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, LOGIN_FAILED_OX_TRUST);
 			return OxTrustConstants.RESULT_NO_PERMISSIONS;
 		}
-		Map<String, String> requestParameterMap = FacesContext.getCurrentInstance().getExternalContext()
-				.getRequestParameterMap();
+		Map<String, String> requestParameterMap;
+		if (this.fapiCompatibility) {
+			requestParameterMap = this.getFapiResponseParameters(this.locationHash);
+		} else {
+			requestParameterMap = FacesContext.getCurrentInstance().getExternalContext()
+					.getRequestParameterMap();
+		}
 		Map<String, Object> requestCookieMap = FacesContext.getCurrentInstance().getExternalContext()
 				.getRequestCookieMap();
 		String authorizationCode = requestParameterMap.get(OxTrustConstants.OXAUTH_CODE);
@@ -300,7 +321,7 @@ public class Authenticator implements Serializable {
 		log.info("clientID : " + clientID);
 
 		String clientPassword = appConfiguration.getOxAuthClientPassword();
-		if (clientPassword != null) {
+		if (clientPassword != null && !this.fapiCompatibility) {
 			try {
 				clientPassword = encryptionService.decrypt(clientPassword);
 			} catch (EncryptionException ex) {
@@ -323,14 +344,23 @@ public class Authenticator implements Serializable {
 	private String requestAccessToken(String oxAuthHost, String authorizationCode, String sessionState, String scopes,
 			String clientID, String clientPassword) {
 		OpenIdConfigurationResponse openIdConfiguration = openIdService.getOpenIdConfiguration();
+		ApacheHttpClient4Executor apacheHttpClient4Executor = this.getApacheHttpClient4ExecutorForMTLS();
+
 		// 1. Request access token using the authorization code.
 		TokenClient tokenClient1 = new TokenClient(openIdConfiguration.getTokenEndpoint());
+		if (this.fapiCompatibility && apacheHttpClient4Executor != null)
+			tokenClient1.setExecutor(apacheHttpClient4Executor);
 
 		log.info("Sending request to token endpoint");
 		String redirectURL = appConfiguration.getLoginRedirectUrl();
 		log.info("redirectURI : " + redirectURL);
-		TokenResponse tokenResponse = tokenClient1.execAuthorizationCode(authorizationCode, redirectURL, clientID,
-				clientPassword);
+		TokenResponse tokenResponse;
+		if (this.fapiCompatibility) {
+			tokenResponse = tokenClient1.execAuthorizationCodeMTLS(authorizationCode, redirectURL, clientID);
+		} else {
+			tokenResponse = tokenClient1.execAuthorizationCode(authorizationCode, redirectURL, clientID,
+					clientPassword);
+		}
 
 		log.debug(" tokenResponse : " + tokenResponse);
 		if (tokenResponse == null) {
@@ -353,6 +383,8 @@ public class Authenticator implements Serializable {
 
 		log.info("Session validation successful. User is logged in");
 		UserInfoClient userInfoClient = new UserInfoClient(openIdConfiguration.getUserInfoEndpoint());
+		if (this.fapiCompatibility && apacheHttpClient4Executor != null)
+			userInfoClient.setExecutor(apacheHttpClient4Executor);
 		UserInfoResponse userInfoResponse = userInfoClient.execUserInfo(accessToken);
 		if (userInfoResponse == null) {
 			log.error("Get empty token response. User can't log into application");
@@ -464,7 +496,7 @@ public class Authenticator implements Serializable {
 
 			JwtClaims jwtClaims = new JwtClaims();
 			jwtClaims.setClaim("aud", appConfiguration.getOxAuthIssuer());
-			jwtClaims.setClaim("scope", scope);
+			jwtClaims.setClaim("scope", StringUtils.replace(scope, "+", " "));
 			jwtClaims.setClaim("claims", claims.toJsonObject());
 			jwtClaims.setClaim("iss", clientId);
 			jwtClaims.setClaim("response_type", responseType);
@@ -502,6 +534,64 @@ public class Authenticator implements Serializable {
 			log.error("Problems when signing the JWT to process FAPI authorization", e);
 		} catch (InvalidJwtException e) {
 			log.error("Problems processing JWT to process FAPI authorization", e);
+		}
+		return null;
+	}
+
+	private Map<String, String> getFapiResponseParameters(String locationHash) {
+		locationHash = locationHash.replace("#", "");
+		Map<String, String> urlParamsMap = Splitter.on('&').trimResults().withKeyValueSeparator('=').split(locationHash);
+
+		Map<String, String> params = new HashMap<>();
+		params.put(OxTrustConstants.OXAUTH_CODE, urlParamsMap.get(OxTrustConstants.OXAUTH_CODE));
+		params.put(OxTrustConstants.OXAUTH_STATE, urlParamsMap.get(OxTrustConstants.OXAUTH_STATE));
+		params.put(OxTrustConstants.OXAUTH_ERROR, urlParamsMap.get(OxTrustConstants.OXAUTH_ERROR));
+		params.put(OxTrustConstants.OXAUTH_ERROR_DESCRIPTION, urlParamsMap.get(OxTrustConstants.OXAUTH_ERROR_DESCRIPTION));
+		return params;
+	}
+
+	private ApacheHttpClient4Executor getApacheHttpClient4ExecutorForMTLS() {
+		if (!this.fapiCompatibility)
+			return null;
+		try {
+			String keyPassphrase = appConfiguration.getOxAuthFapiClientKeystorePassword();
+			KeyStore keyStore = KeyStore.getInstance(appConfiguration.getOxAuthFapiClientKeystoreType());
+			keyStore.load(new FileInputStream(new File(appConfiguration.getOxAuthFapiClientKeystorePath())),
+					keyPassphrase.toCharArray());
+
+			SSLContext sslContext = SSLContexts.custom()
+					.loadKeyMaterial(keyStore, keyPassphrase.toCharArray())
+					.build();
+			SSLConnectionSocketFactory sslConnectionFactory = new SSLConnectionSocketFactory(sslContext,
+					new DefaultHostnameVerifier());
+			Registry<ConnectionSocketFactory> registry = RegistryBuilder.<ConnectionSocketFactory> create()
+					.register("https", sslConnectionFactory)
+					.register("http", new PlainConnectionSocketFactory())
+					.build();
+
+			PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager(registry);
+
+			CloseableHttpClient httpClient = HttpClients.custom()
+					.setSSLContext(sslContext)
+					.setDefaultRequestConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build())
+					.setConnectionManager(cm)
+					.build();
+
+			return new ApacheHttpClient4Executor(httpClient);
+		} catch (FileNotFoundException e) {
+			log.error("Fapi keystore not found in the path: {}", appConfiguration.getOxAuthFapiClientKeystorePath(), e);
+		} catch (NoSuchAlgorithmException e) {
+			log.error("Incorrect algorithm used in Fapi keystore: {}", appConfiguration.getOxAuthFapiClientKeystoreType(), e);
+		} catch (KeyManagementException e) {
+			log.error("Problems processing Fapi keystore", e);
+		} catch (CertificateException e) {
+			log.error("Error processing Fapi certificate", e);
+		} catch (KeyStoreException e) {
+			log.error("Error processing Fapi keystore", e);
+		} catch (UnrecoverableKeyException e) {
+			log.error("Problems getting key from the fapi keystore", e);
+		} catch (IOException e) {
+			log.error("Error accessing Fapi file", e);
 		}
 		return null;
 	}

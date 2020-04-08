@@ -7,10 +7,10 @@
     </f:metadata>
 
     <h:body >
-        <h:form id="form" rendered="#{authenticator.fapiCompatibility}" >
+        <h:form id="form" rendered="#{authenticator.fapiCompatibility}"  >
             <h:inputHidden id="locationHash" value="#{authenticator.locationHash}" />
 
-            <h:commandButton id="button" action="#{authenticator.oAuthGetAccessToken}" value="Publicar" />
+            <h:commandButton id="button" action="#{authenticator.oAuthGetAccessToken}" value="Submit" style="display: none" />
         </h:form>
 
         <script>
