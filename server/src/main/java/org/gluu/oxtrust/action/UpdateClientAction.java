@@ -550,11 +550,19 @@ public class UpdateClientAction implements Serializable {
 		}
 		if (!this.loginUris.contains(this.availableLoginUri) && checkWhiteListRedirectUris(availableLoginUri)
 				&& checkBlackListRedirectUris(availableLoginUri)) {
-			if (isAcceptable(this.availableLoginUri)) {
+			boolean acceptable = isAcceptable(this.availableLoginUri);
+			if (acceptable) {
 				this.loginUris.add(this.availableLoginUri);
 			} else {
-				facesMessages.add(FacesMessage.SEVERITY_ERROR, "A sector identifier must be defined first.",
-						"A sector identifier must be defined first.");
+				try {
+					if(getProtocol(availableLoginUri).equalsIgnoreCase("http")) {
+						facesMessages.add(FacesMessage.SEVERITY_ERROR,"http schema is only allow for local development.");
+					}else {
+						facesMessages.add(FacesMessage.SEVERITY_ERROR, "A sector identifier must be defined first.");
+					}
+				} catch (MalformedURLException e) {
+				}
+				
 			}
 
 		} else {
