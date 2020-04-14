@@ -289,7 +289,7 @@ public class ManagePersonAuthenticationAction
 			properties.setProperty("useSSL", Boolean.toString(ldapConfig.isUseSSL()));
 			Properties ldapDecryptedProperties = PropertiesDecrypter
 					.decryptProperties(properties, configurationFactory.getCryptoConfigurationSalt());
-			log.trace("Attemptint to create LDAP connection with properties: {}", ldapDecryptedProperties);
+			log.trace("Attempting to create LDAP connection with properties: {}", ldapDecryptedProperties);
 
 			LdapConnectionProvider connectionProvider = new LdapConnectionProvider(ldapDecryptedProperties);
 			if (connectionProvider.isConnected()) {

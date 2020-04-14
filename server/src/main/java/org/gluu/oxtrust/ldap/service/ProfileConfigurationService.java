@@ -6,12 +6,8 @@
 
 package org.gluu.oxtrust.ldap.service;
 
-import static org.gluu.oxtrust.ldap.service.Shibboleth3ConfService.SHIB3_IDP_METADATA_FOLDER;
-
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,15 +20,12 @@ import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.velocity.VelocityContext;
 import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.model.ProfileConfiguration;
 import org.gluu.service.XmlService;
 import org.gluu.util.StringHelper;
-import org.gluu.util.exception.InvalidConfigurationException;
 import org.gluu.util.io.FileUploadWrapper;
 import org.slf4j.Logger;
 import org.w3c.dom.Document;
@@ -65,6 +58,9 @@ public class ProfileConfigurationService implements Serializable {
 
 	@Inject
 	private XmlService xmlService;
+	
+	@Inject
+	private Shibboleth3ConfService shibboleth3ConfService;
 
 	@Inject
 	private AppConfiguration appConfiguration;
@@ -500,37 +496,10 @@ public class ProfileConfigurationService implements Serializable {
 		if (fileWrappers.get(name) != null && fileWrappers.get(name).getStream() != null) {
 			String profileConfigurationCertFileName = StringHelper
 					.removePunctuation(name + trustRelationship.getInum());
-			saveProfileConfigurationCert(profileConfigurationCertFileName, fileWrappers.get(name).getStream());
+			shibboleth3ConfService.saveProfileConfigurationCert(profileConfigurationCertFileName, fileWrappers.get(name).getStream());
 			trustRelationship.getProfileConfigurations().get(name).setProfileConfigurationCertFileName(
 					StringHelper.removePunctuation(profileConfigurationCertFileName));
 		}
-
-	}
-
-	public String saveProfileConfigurationCert(String profileConfigurationCertFileName, InputStream stream) {
-
-		if (appConfiguration.getShibboleth3IdpRootDir() == null) {
-			IOUtils.closeQuietly(stream);
-			throw new InvalidConfigurationException(
-					"Failed to save Profile Configuration file due to undefined IDP root folder");
-		}
-
-		String idpMetadataFolder = appConfiguration.getShibboleth3IdpRootDir() + File.separator
-				+ SHIB3_IDP_METADATA_FOLDER + File.separator + "credentials" + File.separator;
-		File filterCertFile = new File(idpMetadataFolder + profileConfigurationCertFileName);
-
-		try (FileOutputStream os = FileUtils.openOutputStream(filterCertFile)) {
-			IOUtils.copy(stream, os);
-			os.flush();
-		} catch (IOException ex) {
-			log.error("Failed to write  Profile Configuration  certificate file '{}'", filterCertFile, ex);
-			ex.printStackTrace();
-			return null;
-		} finally {
-			IOUtils.closeQuietly(stream);
-		}
-
-		return filterCertFile.getAbsolutePath();
 
 	}
 

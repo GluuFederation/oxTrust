@@ -596,8 +596,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 			shibboleth3ConfService.saveCert(trustRelationship, certificate);
 			shibboleth3ConfService.saveKey(trustRelationship, null);
 
-			String metadataFileName = this.trustRelationship.getSpMetaDataFN();
-			shibboleth3ConfService.replaceSpMetadataCert(metadataFileName, certRegEx, certificate);
+			shibboleth3ConfService.replaceSpMetadataCert(trustRelationship, certRegEx, certificate);
 			this.trustRelationship.setStatus(GluuStatus.ACTIVE);
 		} catch (Exception e) {
 			log.error("Failed to update certificate", e);

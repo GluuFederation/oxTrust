@@ -180,14 +180,20 @@
 			</dependency>
 			<dependency>
 				<groupId>org.gluu</groupId>
-				<artifactId>oxcore-standalone</artifactId>
-				<version>${oxcore.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>org.gluu</groupId>
 				<artifactId>oxauth-client</artifactId>
 				<version>${oxauth.version}</version>
+			</dependency>
+
+			<!-- oxCore -->
+			<dependency>
+				<groupId>org.gluu</groupId>
+				<artifactId>oxcore-document-store</artifactId>
+				<version>${oxcore.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.gluu</groupId>
+				<artifactId>oxcore-standalone</artifactId>
+				<version>${oxcore.version}</version>
 			</dependency>
 
 			<!-- Gluu -->

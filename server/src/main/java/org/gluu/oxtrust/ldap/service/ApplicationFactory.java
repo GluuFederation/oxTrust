@@ -8,7 +8,6 @@ package org.gluu.oxtrust.ldap.service;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.RequestScoped;
-import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -22,6 +21,9 @@ import org.gluu.persist.model.PersistenceConfiguration;
 import org.gluu.persist.service.PersistanceFactoryService;
 import org.gluu.service.cache.CacheConfiguration;
 import org.gluu.service.cache.InMemoryConfiguration;
+import org.gluu.service.document.store.conf.DocumentStoreConfiguration;
+import org.gluu.service.document.store.conf.LocalDocumentStoreConfiguration;
+import org.gluu.service.document.store.service.DocumentStoreService;
 import org.slf4j.Logger;
 
 /**
@@ -60,7 +62,7 @@ public class ApplicationFactory {
     @Produces @ApplicationScoped
    	public CacheConfiguration getCacheConfiguration() {
    		CacheConfiguration cacheConfiguration = configurationService.getConfiguration().getCacheConfiguration();
-   		if (cacheConfiguration == null || cacheConfiguration.getCacheProviderType() == null) {
+   		if ((cacheConfiguration == null) || (cacheConfiguration.getCacheProviderType() == null)) {
    			log.error("Failed to read cache configuration from DB. Please check configuration oxCacheConfiguration attribute " +
    					"that must contain cache configuration JSON represented by CacheConfiguration.class. Appliance DN: " + configurationService.getConfiguration().getDn());
    			log.info("Creating fallback IN-MEMORY cache configuration ... ");
@@ -74,6 +76,24 @@ public class ApplicationFactory {
 		}
    		log.info("Cache configuration: " + cacheConfiguration);
    		return cacheConfiguration;
+   	}
+
+    @Produces @ApplicationScoped
+   	public DocumentStoreConfiguration getDocumentStoreConfiguration() {
+    	DocumentStoreConfiguration documentStoreConfiguration = configurationService.getConfiguration().getDocumentStoreConfiguration();
+   		if ((documentStoreConfiguration == null) || (documentStoreConfiguration.getDocumentStoreType() == null)) {
+   			log.error("Failed to read document store configuration from DB. Please check configuration oxDocumentStoreConfiguration attribute " +
+   					"that must contain document store configuration JSON represented by DocumentStoreConfiguration.class. Appliance DN: " + configurationService.getConfiguration().getDn());
+   			log.info("Creating fallback LOCAL document store configuration ... ");
+
+   			documentStoreConfiguration = new DocumentStoreConfiguration();
+   			documentStoreConfiguration.setLocalConfiguration(new LocalDocumentStoreConfiguration());
+
+   			log.info("LOCAL document store configuration is created.");
+		}
+
+   		log.info("Document store configuration: " + documentStoreConfiguration);
+   		return documentStoreConfiguration;
    	}
 
 	@Produces @RequestScoped

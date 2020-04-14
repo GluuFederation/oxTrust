@@ -34,25 +34,35 @@ import org.slf4j.Logger;
 @Named
 @Secure("#{permissionService.hasPermission('trust', 'access')}")
 public class FederationDeconstructionAction implements Serializable {
-	private static final long serialVersionUID = 1216276324815043884L;
 
-	private List<String> bulkEntities;
-	private List<String> managedEntities;
-	private String filterString;
-	private List<String> filteredEntities;
+	private static final long serialVersionUID = 1216276324815043884L;
 
 	@Inject
 	private Logger log;
 	
 	@Inject
 	private OrganizationService organizationService;
+
+	@Inject
+	private TrustService trustService;
+	
+	@Inject
+	private SAMLMetadataParser samlMetadataParser;
+	
+	@Inject
+	private Shibboleth3ConfService shibboleth3ConfService;
+
+	@Inject
+	private AppConfiguration appConfiguration;
+
+	private List<String> bulkEntities;
+	private List<String> managedEntities;
+	private String filterString;
+	private List<String> filteredEntities;
 	
 	private List<String> bulkFiltered;
 
 	private List<String> managedFiltered;
-
-	@Inject
-	private TrustService trustService;
 
 	private Set<String> selectedList = new HashSet<String>();
 
@@ -63,9 +73,6 @@ public class FederationDeconstructionAction implements Serializable {
 	private boolean updateNameInProgress;
 
 	private GluuSAMLTrustRelationship trustRelationship;
-
-	@Inject
-	private AppConfiguration appConfiguration;
 
 	public String initFederationDeconstructions(GluuSAMLTrustRelationship trustRelationship) {
 		this.trustRelationship = trustRelationship;
@@ -176,10 +183,8 @@ public class FederationDeconstructionAction implements Serializable {
 		filteredEntities = null;
 		if (StringHelper.isNotEmpty(filterString)) {
 			filteredEntities = new ArrayList<String>();
-			String idpMetadataFolder = appConfiguration.getShibboleth3IdpRootDir() + File.separator
-					+ Shibboleth3ConfService.SHIB3_IDP_METADATA_FOLDER + File.separator;
-			File metadataFile = new File(idpMetadataFolder + trustRelationship.getSpMetaDataFN());
-			for (String entity : SAMLMetadataParser.getEntityIdFromMetadataFile(metadataFile)) {
+			String metadataFile = shibboleth3ConfService.getIdpMetadataDir() + trustRelationship.getSpMetaDataFN();
+			for (String entity : samlMetadataParser.getEntityIdFromMetadataFile(metadataFile)) {
 				if (entity.toLowerCase().contains(filterString.toLowerCase())) {
 					filteredEntities.add(entity);
 				}
