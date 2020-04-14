@@ -556,7 +556,7 @@ public class UpdateClientAction implements Serializable {
 			} else {
 				try {
 					if(getProtocol(availableLoginUri).equalsIgnoreCase("http")) {
-						facesMessages.add(FacesMessage.SEVERITY_ERROR,"http schema is only allow for local development.");
+						facesMessages.add(FacesMessage.SEVERITY_ERROR,"http schema is allowed with localhost/127.0.0.1");
 					}else {
 						facesMessages.add(FacesMessage.SEVERITY_ERROR, "A sector identifier must be defined first.");
 					}
