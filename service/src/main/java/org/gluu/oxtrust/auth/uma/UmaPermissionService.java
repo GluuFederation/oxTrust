@@ -72,32 +72,38 @@ public class UmaPermissionService implements Serializable {
 
 	@PostConstruct
 	public void init() {
-		if (this.umaMetadata != null) {
-			if (appConfiguration.isRptConnectionPoolUseConnectionPooling()) {
+		try {
+			if (this.umaMetadata != null) {
+				if (appConfiguration.isRptConnectionPoolUseConnectionPooling()) {
 
-				// For more information about PoolingHttpClientConnectionManager, please see:
-				// http://hc.apache.org/httpcomponents-client-ga/httpclient/apidocs/index.html?org/apache/http/impl/conn/PoolingHttpClientConnectionManager.html
+					// For more information about PoolingHttpClientConnectionManager, please see:
+					// http://hc.apache.org/httpcomponents-client-ga/httpclient/apidocs/index.html?org/apache/http/impl/conn/PoolingHttpClientConnectionManager.html
 
-				log.info("##### Initializing custom ClientExecutor...");
-				PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
-				connectionManager.setMaxTotal(appConfiguration.getRptConnectionPoolMaxTotal());
-				connectionManager.setDefaultMaxPerRoute(appConfiguration.getRptConnectionPoolDefaultMaxPerRoute());
-				connectionManager.setValidateAfterInactivity(appConfiguration.getRptConnectionPoolValidateAfterInactivity() * 1000);
-				CloseableHttpClient client = HttpClients.custom()
-					.setDefaultRequestConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build())
-					.setKeepAliveStrategy(connectionKeepAliveStrategy)
-					.setConnectionManager(connectionManager)
-					.build();
-				ClientHttpEngine clientHttpEngine = new ApacheHttpClient4Engine(client);
-				log.info("##### Initializing custom ClientExecutor DONE");
+					log.info("##### Initializing custom ClientExecutor...");
+					PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
+					connectionManager.setMaxTotal(appConfiguration.getRptConnectionPoolMaxTotal());
+					connectionManager.setDefaultMaxPerRoute(appConfiguration.getRptConnectionPoolDefaultMaxPerRoute());
+					connectionManager.setValidateAfterInactivity(
+							appConfiguration.getRptConnectionPoolValidateAfterInactivity() * 1000);
+					CloseableHttpClient client = HttpClients.custom()
+							.setDefaultRequestConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build())
+							.setKeepAliveStrategy(connectionKeepAliveStrategy).setConnectionManager(connectionManager)
+							.build();
+					ClientHttpEngine clientHttpEngine = new ApacheHttpClient4Engine(client);
+					log.info("##### Initializing custom ClientExecutor DONE");
 
-				this.permissionService = UmaClientFactory.instance().createPermissionService(this.umaMetadata, clientHttpEngine);
-				this.rptStatusService = UmaClientFactory.instance().createRptStatusService(this.umaMetadata, clientHttpEngine);
+					this.permissionService = UmaClientFactory.instance().createPermissionService(this.umaMetadata,
+							clientHttpEngine);
+					this.rptStatusService = UmaClientFactory.instance().createRptStatusService(this.umaMetadata,
+							clientHttpEngine);
 
-			} else {
-				this.permissionService = UmaClientFactory.instance().createPermissionService(this.umaMetadata);
-				this.rptStatusService = UmaClientFactory.instance().createRptStatusService(this.umaMetadata);
+				} else {
+					this.permissionService = UmaClientFactory.instance().createPermissionService(this.umaMetadata);
+					this.rptStatusService = UmaClientFactory.instance().createRptStatusService(this.umaMetadata);
+				}
 			}
+		} catch (Exception e) {
+			log.info(e.getMessage(), e);
 		}
 	}
 
@@ -136,67 +142,70 @@ public class UmaPermissionService implements Serializable {
 		return umaConfigurationEndpoint;
 	}
 
-	public Pair<Boolean, Response> validateRptToken(Token patToken, String authorization, String umaResourceId, String scopeId) {
+	public Pair<Boolean, Response> validateRptToken(Token patToken, String authorization, String umaResourceId,
+			String scopeId) {
 		return validateRptToken(patToken, authorization, umaResourceId, Arrays.asList(scopeId));
 	}
 
-	public Pair<Boolean, Response> validateRptToken(Token patToken, String authorization, String resourceId, List<String> scopeIds) {
-	    /* //caller of this method never pass null patToken
-		if (patToken == null) {
-	        return authenticationFailure;
-		} */
-	    log.trace("Validating RPT, resourceId: {}, scopeIds: {}, authorization: {}", resourceId, scopeIds, authorization);
+	public Pair<Boolean, Response> validateRptToken(Token patToken, String authorization, String resourceId,
+			List<String> scopeIds) {
+		/*
+		 * //caller of this method never pass null patToken if (patToken == null) {
+		 * return authenticationFailure; }
+		 */
+		log.trace("Validating RPT, resourceId: {}, scopeIds: {}, authorization: {}", resourceId, scopeIds,
+				authorization);
 
 		if (StringHelper.isNotEmpty(authorization) && authorization.startsWith("Bearer ")) {
 			String rptToken = authorization.substring(7);
-	
-	        RptIntrospectionResponse rptStatusResponse = getStatusResponse(patToken, rptToken);
-            log.trace("RPT status response: {} ", rptStatusResponse);
+
+			RptIntrospectionResponse rptStatusResponse = getStatusResponse(patToken, rptToken);
+			log.trace("RPT status response: {} ", rptStatusResponse);
 			if ((rptStatusResponse == null) || !rptStatusResponse.getActive()) {
 				log.error("Status response for RPT token: '{}' is invalid", rptToken);
-				//return authenticationFailure;
-			} else{
-                boolean rptHasPermissions = isRptHasPermissions(rptStatusResponse);
+				// return authenticationFailure;
+			} else {
+				boolean rptHasPermissions = isRptHasPermissions(rptStatusResponse);
 
-                if (rptHasPermissions) {
-                	// Collect all scopes
-                	List<String> returnScopeIds = new LinkedList<String>();
-                    for (UmaPermission umaPermission : rptStatusResponse.getPermissions()) {
-                        if (umaPermission.getScopes() != null) {
-                        	returnScopeIds.addAll(umaPermission.getScopes());
-                        }
-                    }
-                    
-                    if (returnScopeIds.containsAll(scopeIds)) {
-                        return authenticationSuccess;
-                    }
+				if (rptHasPermissions) {
+					// Collect all scopes
+					List<String> returnScopeIds = new LinkedList<String>();
+					for (UmaPermission umaPermission : rptStatusResponse.getPermissions()) {
+						if (umaPermission.getScopes() != null) {
+							returnScopeIds.addAll(umaPermission.getScopes());
+						}
+					}
 
-                    log.error("Status response for RPT token: '{}' not contains right permissions", rptToken);
-                }
-            }
+					if (returnScopeIds.containsAll(scopeIds)) {
+						return authenticationSuccess;
+					}
+
+					log.error("Status response for RPT token: '{}' not contains right permissions", rptToken);
+				}
+			}
 		}
 
 		Response registerPermissionsResponse = prepareRegisterPermissionsResponse(patToken, resourceId, scopeIds);
-        if (registerPermissionsResponse == null) {
-        	return authenticationFailure;
-        }
+		if (registerPermissionsResponse == null) {
+			return authenticationFailure;
+		}
 
-        return new Pair<Boolean, Response>(true, registerPermissionsResponse);
+		return new Pair<Boolean, Response>(true, registerPermissionsResponse);
 	}
 
 	private boolean isRptHasPermissions(RptIntrospectionResponse umaRptStatusResponse) {
-        return !((umaRptStatusResponse.getPermissions() == null) || umaRptStatusResponse.getPermissions().isEmpty());
-    }
+		return !((umaRptStatusResponse.getPermissions() == null) || umaRptStatusResponse.getPermissions().isEmpty());
+	}
 
 	private RptIntrospectionResponse getStatusResponse(Token patToken, String rptToken) {
 		String authorization = "Bearer " + patToken.getAccessToken();
 
 		// Determine RPT token to status
-        RptIntrospectionResponse rptStatusResponse = null;
+		RptIntrospectionResponse rptStatusResponse = null;
 		try {
 			log.info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-			log.info("++++++"+authorization);
-			log.info("++++++"+rptToken);
+			log.info("++++++" + authorization);
+			log.info("++++++" + rptToken);
 			rptStatusResponse = this.rptStatusService.requestRptStatus(authorization, rptToken, "");
 		} catch (Exception ex) {
 			log.error("Failed to determine RPT status", ex);
@@ -212,35 +221,35 @@ public class UmaPermissionService implements Serializable {
 	}
 
 	public String registerResourcePermission(Token patToken, String resourceId, List<String> scopes) {
-        UmaPermission permission = new UmaPermission();
-        permission.setResourceId(resourceId);
-        permission.setScopes(scopes);
-        PermissionTicket ticket = permissionService.registerPermission(
-                "Bearer " + patToken.getAccessToken(), UmaPermissionList.instance(permission));
-        if (ticket == null) {
-        	return null;
-        }
-        return ticket.getTicket();
-    }
+		UmaPermission permission = new UmaPermission();
+		permission.setResourceId(resourceId);
+		permission.setScopes(scopes);
+		PermissionTicket ticket = permissionService.registerPermission("Bearer " + patToken.getAccessToken(),
+				UmaPermissionList.instance(permission));
+		if (ticket == null) {
+			return null;
+		}
+		return ticket.getTicket();
+	}
 
 	private Response prepareRegisterPermissionsResponse(Token patToken, String resourceId, List<String> scopes) {
 		String ticket = registerResourcePermission(patToken, resourceId, scopes);
 		if (StringHelper.isEmpty(ticket)) {
 			return null;
 		}
-    	log.debug("Construct response: HTTP 401 (Unauthorized), ticket: '{}'",  ticket);
-        Response response = null;
+		log.debug("Construct response: HTTP 401 (Unauthorized), ticket: '{}'", ticket);
+		Response response = null;
 		try {
-			String authHeaderValue = String.format("UMA realm=\"Authorization required\", host_id=%s, as_uri=%s, ticket=%s",
-					getHost(appConfiguration.getIdpUrl()),  getUmaConfigurationEndpoint(), ticket);
-			response = Response.status(Response.Status.UNAUTHORIZED).
-			        header("WWW-Authenticate", authHeaderValue).
-			        build();
+			String authHeaderValue = String.format(
+					"UMA realm=\"Authorization required\", host_id=%s, as_uri=%s, ticket=%s",
+					getHost(appConfiguration.getIdpUrl()), getUmaConfigurationEndpoint(), ticket);
+			response = Response.status(Response.Status.UNAUTHORIZED).header("WWW-Authenticate", authHeaderValue)
+					.build();
 		} catch (MalformedURLException ex) {
-        	log.error("Failed to determine host by URI", ex);
+			log.error("Failed to determine host by URI", ex);
 		}
-                
-         return response;
+
+		return response;
 	}
 
 	private String getHost(String uri) throws MalformedURLException {
@@ -253,7 +262,8 @@ public class UmaPermissionService implements Serializable {
 		@Override
 		public long getKeepAliveDuration(HttpResponse httpResponse, HttpContext httpContext) {
 
-			HeaderElementIterator headerElementIterator = new BasicHeaderElementIterator(httpResponse.headerIterator(HTTP.CONN_KEEP_ALIVE));
+			HeaderElementIterator headerElementIterator = new BasicHeaderElementIterator(
+					httpResponse.headerIterator(HTTP.CONN_KEEP_ALIVE));
 
 			while (headerElementIterator.hasNext()) {
 
