@@ -48,6 +48,7 @@ import org.xml.sax.SAXException;
  * 
  */
 @ApplicationScoped
+@Named("filterService")
 public class FilterService implements Serializable {
 
 	/**
@@ -77,6 +78,9 @@ public class FilterService implements Serializable {
 
 	@Inject
 	private XmlService xmlService;
+
+	@Inject
+	private Shibboleth3ConfService shibboleth3ConfService;
 
 	public List<MetadataFilter> getAvailableMetadataFilters() {
 		String idpTemplatesLocation = configurationFactory.getIDPTemplatesLocation();
@@ -174,7 +178,7 @@ public class FilterService implements Serializable {
 		if (trustRelationship.getMetadataFilters().get("signatureValidation") != null) {
 			String filterCertFileName = StringHelper.removePunctuation(trustRelationship.getInum());
 			if (filterCertWrapper.getStream() != null) {
-				saveFilterCert(filterCertFileName, filterCertWrapper.getStream());
+				shibboleth3ConfService.saveFilterCert(filterCertFileName, filterCertWrapper.getStream());
 				trustRelationship.getMetadataFilters().get("signatureValidation")
 						.setFilterCertFileName(StringHelper.removePunctuation(trustRelationship.getInum()));
 			}
@@ -250,29 +254,6 @@ public class FilterService implements Serializable {
 
 			}
 		}
-	}
-
-	public String saveFilterCert(String filterCertFileName, InputStream input) {
-		if (appConfiguration.getShibboleth3IdpRootDir() == null) {
-			IOUtils.closeQuietly(input);
-			throw new InvalidConfigurationException("Failed to save filter certificate file due to undefined IDP root folder");
-		}
-
-		String idpMetadataFolder = appConfiguration.getShibboleth3IdpRootDir() + File.separator + SHIB3_IDP_METADATA_FOLDER + File.separator
-				+ "credentials" + File.separator;
-		File filterCertFile = new File(idpMetadataFolder + filterCertFileName);
-		try (FileOutputStream os = FileUtils.openOutputStream(filterCertFile)){
-			IOUtils.copy(input, os);
-			os.flush();
-		} catch (IOException ex) {
-			log.error("Failed to write  filter certificate file '{}'", filterCertFile, ex);
-			ex.printStackTrace();
-			return null;
-		} finally {
-			IOUtils.closeQuietly(input);
-		}
-
-		return filterCertFile.getAbsolutePath();
 	}
 
 }

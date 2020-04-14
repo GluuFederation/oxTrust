@@ -7,7 +7,6 @@
 package org.gluu.oxtrust.service;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -63,6 +62,9 @@ public class MetadataValidationTimer {
 	private TrustService trustService;
 
 	@Inject
+	private SAMLMetadataParser samlMetadataParser;
+
+	@Inject
 	private Shibboleth3ConfService shibboleth3ConfService;
 
 	private AtomicBoolean isActive;
@@ -111,11 +113,8 @@ public class MetadataValidationTimer {
 
 	private void procesMetadataValidation() {
 		log.debug("Starting metadata validation");
-		boolean result = validateMetadata(
-				appConfiguration.getShibboleth3IdpRootDir() + File.separator
-						+ Shibboleth3ConfService.SHIB3_IDP_TEMPMETADATA_FOLDER + File.separator,
-				appConfiguration.getShibboleth3IdpRootDir() + File.separator
-						+ Shibboleth3ConfService.SHIB3_IDP_METADATA_FOLDER + File.separator);
+		boolean result = validateMetadata(shibboleth3ConfService.getIdpMetadataTempDir(),
+				shibboleth3ConfService.getIdpMetadataDir());
 		log.debug("Metadata validation finished with result: '{}'", result);
 
 		if (result) {
@@ -190,8 +189,10 @@ public class MetadataValidationTimer {
 
 		synchronized (this) {
 			if (StringHelper.isNotEmpty(metadataFN)) {
-				File metadata = new File(shib3IdpTempmetadataFolder + metadataFN);
-				File target = new File(shib3IdpMetadataFolder + metadataFN.replaceAll(".{4}\\..{4}$", ""));
+				String metadataPath = shib3IdpTempmetadataFolder + metadataFN;
+				String destinationMetadataName = metadataFN.replaceAll(".{4}\\..{4}$", "");
+				String destinationMetadataPath = shib3IdpMetadataFolder + destinationMetadataName;
+
 				GluuSAMLTrustRelationship tr = trustService.getTrustByUnpunctuatedInum(
 						metadataFN.split("-" + Shibboleth3ConfService.SHIB3_IDP_SP_METADATA_FILE)[0]);
 				if (tr == null) {
@@ -204,7 +205,7 @@ public class MetadataValidationTimer {
 				GluuErrorHandler errorHandler = null;
 				List<String> validationLog = null;
 				try {
-					errorHandler = shibboleth3ConfService.validateMetadata(new FileInputStream(metadata));
+					errorHandler = shibboleth3ConfService.validateMetadata(metadataPath);
 				} catch (Exception e) {
 					tr.setValidationStatus(GluuValidationStatus.FAILED);
 					tr.setStatus(GluuStatus.INACTIVE);
@@ -219,19 +220,17 @@ public class MetadataValidationTimer {
 				if (errorHandler.isValid()) {
 					tr.setValidationLog(errorHandler.getLog());
 					tr.setValidationStatus(GluuValidationStatus.SUCCESS);
-					if (((!target.exists()) || target.delete()) && (!metadata.renameTo(target))) {
-						log.error("Failed to move metadata file to location:" + target.getAbsolutePath());
+					if (shibboleth3ConfService.renameMetadata(metadataPath, destinationMetadataPath)) {
+						log.error("Failed to move metadata file to location:" + destinationMetadataPath);
 						tr.setStatus(GluuStatus.INACTIVE);
 					} else {
-						tr.setSpMetaDataFN(target.getName());
+						tr.setSpMetaDataFN(destinationMetadataName);
 					}
 					boolean federation = shibboleth3ConfService.isFederation(tr);
 					tr.setFederation(federation);
-					String idpMetadataFolder = appConfiguration.getShibboleth3IdpRootDir() + File.separator
-							+ Shibboleth3ConfService.SHIB3_IDP_METADATA_FOLDER + File.separator;
-					File metadataFile = new File(idpMetadataFolder + tr.getSpMetaDataFN());
+					String metadataFile = shibboleth3ConfService.getIdpMetadataDir() + tr.getSpMetaDataFN();
 
-					List<String> entityIdList = SAMLMetadataParser.getEntityIdFromMetadataFile(metadataFile);
+					List<String> entityIdList = samlMetadataParser.getEntityIdFromMetadataFile(metadataFile);
 					Set<String> entityIdSet = new TreeSet<String>();
 					Set<String> duplicatesSet = new TreeSet<String>();
 					if (entityIdList != null && !entityIdList.isEmpty()) {
@@ -262,19 +261,17 @@ public class MetadataValidationTimer {
 				} else if (appConfiguration.isIgnoreValidation() || errorHandler.isInternalError()) {
 					tr.setValidationLog(new ArrayList<String>(new HashSet<String>(errorHandler.getLog())));
 					tr.setValidationStatus(GluuValidationStatus.FAILED);
-					if (((!target.exists()) || target.delete()) && (!metadata.renameTo(target))) {
-						log.error("Failed to move metadata file to location:" + target.getAbsolutePath());
+					if (shibboleth3ConfService.renameMetadata(metadataPath, destinationMetadataPath)) {
+						log.error("Failed to move metadata file to location:" + destinationMetadataPath);
 						tr.setStatus(GluuStatus.INACTIVE);
 					} else {
-						tr.setSpMetaDataFN(target.getName());
+						tr.setSpMetaDataFN(destinationMetadataName);
 					}
 					boolean federation = shibboleth3ConfService.isFederation(tr);
 					tr.setFederation(federation);
-					String idpMetadataFolder = appConfiguration.getShibboleth3IdpRootDir() + File.separator
-							+ Shibboleth3ConfService.SHIB3_IDP_METADATA_FOLDER + File.separator;
-					File metadataFile = new File(idpMetadataFolder + tr.getSpMetaDataFN());
+					String metadataFile = shibboleth3ConfService.getIdpMetadataDir() + tr.getSpMetaDataFN();
 
-					List<String> entityIdList = SAMLMetadataParser.getEntityIdFromMetadataFile(metadataFile);
+					List<String> entityIdList = samlMetadataParser.getEntityIdFromMetadataFile(metadataFile);
 					Set<String> duplicatesSet = new TreeSet<String>();
 					Set<String> entityIdSet = new TreeSet<String>();
 

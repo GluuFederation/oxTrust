@@ -34,6 +34,7 @@ import org.gluu.service.security.Secure;
 import org.gluu.util.StringHelper;
 import org.gluu.util.io.ExcludeFilterInputStream;
 import org.gluu.util.io.FileUploadWrapper;
+import org.slf4j.Logger;
 
 @ConversationScoped
 @Named("joinFederationAction")
@@ -45,6 +46,9 @@ public class JoinFederationAction implements Serializable {
 	private GluuSAMLFederationProposal federationProposal;
 
 	private String inum;
+
+	@Inject
+	private Logger log;
 
 	@Inject
 	private OrganizationService organizationService;
@@ -164,14 +168,14 @@ public class JoinFederationAction implements Serializable {
 			return result;
 		}
 
-		if (shibboleth3ConfService.isCorrectMetadataFile(federationProposal.getSpMetaDataFN())) {
+		if (shibboleth3ConfService.isCorrectMetadataFile(federationProposal)) {
 			return true;
 		}
 
 		facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to parse meta-data file. Please check if you provide correct file");
-		shibboleth3ConfService.removeMetadataFile(federationProposal.getSpMetaDataFN());
+		result = shibboleth3ConfService.removeMetadataFile(federationProposal.getSpMetaDataFN());
 
-		return false;
+		return result;
 	}
 
 	private boolean saveSpMetaDataFileSourceTypeFile() {
@@ -189,13 +193,7 @@ public class JoinFederationAction implements Serializable {
 				return false;
 			}
 
-			File file = new File(filePath);
-			if (!file.exists()) {
-				return false;
-			}
-
-			// File already exist
-			return true;
+			return shibboleth3ConfService.existsSpMetadataFilePath(filePath);
 		}
 
 		if (emptySpMetadataFileName) {

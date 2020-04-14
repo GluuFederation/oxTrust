@@ -6,7 +6,6 @@
 
 package org.gluu.oxtrust.service;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -63,6 +62,12 @@ public class EntityIDMonitoringService {
 
 	@Inject
 	private TrustService trustService;
+	
+	@Inject
+	private Shibboleth3ConfService shibboleth3ConfService;
+	
+	@Inject
+	private SAMLMetadataParser samlMetadataParser;
 
 	private AtomicBoolean isActive;
 
@@ -103,10 +108,9 @@ public class EntityIDMonitoringService {
 		for (GluuSAMLTrustRelationship tr : trustService.getAllTrustRelationships().stream()
 				.filter(e -> e.isFederation()).collect(Collectors.toList())) {
 			log.info("==========================CURRENT TR " + tr.getInum());
-			String idpMetadataFolder = appConfiguration.getShibboleth3IdpRootDir() + File.separator
-					+ Shibboleth3ConfService.SHIB3_IDP_METADATA_FOLDER + File.separator;
-			File metadataFile = new File(idpMetadataFolder + tr.getSpMetaDataFN());
-			List<String> entityIds = SAMLMetadataParser.getEntityIdFromMetadataFile(metadataFile);
+			String idpMetadataFolder = shibboleth3ConfService.getIdpMetadataDir();
+			String metadataFile = idpMetadataFolder + tr.getSpMetaDataFN();
+			List<String> entityIds = samlMetadataParser.getEntityIdFromMetadataFile(metadataFile);
 			Set<String> fromFileEntityIds = new HashSet<String>(entityIds);
 			if (fromFileEntityIds != null && !fromFileEntityIds.isEmpty()) {
 				log.trace("EntityIds from metadata: " + serviceUtil.iterableToString(entityIds));
