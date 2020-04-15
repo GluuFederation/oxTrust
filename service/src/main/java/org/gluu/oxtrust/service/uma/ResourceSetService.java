@@ -34,7 +34,7 @@ public class ResourceSetService implements Serializable {
 	private static final long serialVersionUID = -1537567020929600777L;
 
 	@Inject
-	private PersistenceEntryManager ldapEntryManager;
+	private PersistenceEntryManager persistenceEntryManager;
 	@Inject
 	private OrganizationService organizationService;
 
@@ -43,11 +43,11 @@ public class ResourceSetService implements Serializable {
 		branch.setOrganizationalUnitName("resources");
 		branch.setDn(getDnForResource(null));
 
-		ldapEntryManager.persist(branch);
+		persistenceEntryManager.persist(branch);
 	}
 
 	public boolean containsBranch() {
-		return ldapEntryManager.contains(getDnForResource(null), SimpleBranch.class);
+		return persistenceEntryManager.contains(getDnForResource(null), SimpleBranch.class);
 	}
 
 	/**
@@ -66,7 +66,7 @@ public class ResourceSetService implements Serializable {
 	 *            Resource
 	 */
 	public void addResource(UmaResource resource) {
-		ldapEntryManager.persist(resource);
+		persistenceEntryManager.persist(resource);
 	}
 
 	/**
@@ -76,7 +76,7 @@ public class ResourceSetService implements Serializable {
 	 *            Resource
 	 */
 	public void updateResource(UmaResource resource) {
-		ldapEntryManager.merge(resource);
+		persistenceEntryManager.merge(resource);
 	}
 
 	/**
@@ -86,7 +86,7 @@ public class ResourceSetService implements Serializable {
 	 *            Resource
 	 */
 	public void removeResource(UmaResource resource) {
-		ldapEntryManager.remove(resource);
+		persistenceEntryManager.remove(resource);
 	}
 
 	/**
@@ -95,11 +95,11 @@ public class ResourceSetService implements Serializable {
 	 * @return True if resource with specified attributes exist
 	 */
 	public boolean containsResource(String dn) {
-		return ldapEntryManager.contains(dn, UmaResource.class);
+		return persistenceEntryManager.contains(dn, UmaResource.class);
 	}
 
 	public List<UmaResource> getAllResources(int sizeLimit) {
-		return ldapEntryManager.findEntries(getDnForResource(null), UmaResource.class, null, sizeLimit);
+		return persistenceEntryManager.findEntries(getDnForResource(null), UmaResource.class, null, sizeLimit);
 	}
 
 	/**
@@ -108,7 +108,7 @@ public class ResourceSetService implements Serializable {
 	 * @return List of resources
 	 */
 	public List<UmaResource> getAllResources(String... ldapReturnAttributes) {
-		return ldapEntryManager.findEntries(getDnForResource(null), UmaResource.class, null, ldapReturnAttributes);
+		return persistenceEntryManager.findEntries(getDnForResource(null), UmaResource.class, null, ldapReturnAttributes);
 	}
 
 	/**
@@ -126,7 +126,7 @@ public class ResourceSetService implements Serializable {
 		Filter displayNameFilter = Filter.createSubstringFilter(OxTrustConstants.displayName, null, targetArray, null);
 		Filter searchFilter = Filter.createORFilter(oxIdFilter, displayNameFilter);
 
-		List<UmaResource> result = ldapEntryManager.findEntries(getDnForResource(null), UmaResource.class, searchFilter,
+		List<UmaResource> result = persistenceEntryManager.findEntries(getDnForResource(null), UmaResource.class, searchFilter,
 				sizeLimit);
 
 		return result;
@@ -140,7 +140,7 @@ public class ResourceSetService implements Serializable {
 	 * @return List of Resources which conform example
 	 */
 	public List<UmaResource> findResourceSets(UmaResource resource) {
-		return ldapEntryManager.findEntries(resource);
+		return persistenceEntryManager.findEntries(resource);
 	}
 
 	/**
@@ -151,7 +151,7 @@ public class ResourceSetService implements Serializable {
 	 * @return List of Resources which specified id
 	 */
 	public List<UmaResource> findResourcesById(String id) {
-		return ldapEntryManager.findEntries(getDnForResource(null), UmaResource.class,
+		return persistenceEntryManager.findEntries(getDnForResource(null), UmaResource.class,
 				Filter.createEqualityFilter("oxId", id));
 	}
 
@@ -163,7 +163,7 @@ public class ResourceSetService implements Serializable {
 	 * @return Resource set
 	 */
 	public UmaResource getResourceByDn(String dn) {
-		return ldapEntryManager.find(UmaResource.class, dn);
+		return persistenceEntryManager.find(UmaResource.class, dn);
 	}
 
 	/**
@@ -211,7 +211,7 @@ public class ResourceSetService implements Serializable {
 	 * @return List of Resources which specified scope
 	 */
 	public List<UmaResource> findResourcesByScope(String scopeId) {
-		return ldapEntryManager.findEntries(getDnForResource(null), UmaResource.class,
+		return persistenceEntryManager.findEntries(getDnForResource(null), UmaResource.class,
 				Filter.createEqualityFilter("oxAuthUmaScope", scopeId));
 	}
 

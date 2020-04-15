@@ -42,7 +42,7 @@ public class JsonConfigurationService implements Serializable {
 	private Logger log;
 
 	@Inject
-	private PersistenceEntryManager ldapEntryManager;
+	private PersistenceEntryManager persistenceEntryManager;
 	@Inject
 	private JsonService jsonService;
 
@@ -102,7 +102,7 @@ public class JsonConfigurationService implements Serializable {
 		LdapOxTrustConfiguration ldapOxTrustConfiguration = getOxTrustConfiguration();
 		ldapOxTrustConfiguration.setApplication(oxTrustappConfiguration);
 		ldapOxTrustConfiguration.setRevision(ldapOxTrustConfiguration.getRevision() + 1);
-		ldapEntryManager.merge(ldapOxTrustConfiguration);
+		persistenceEntryManager.merge(ldapOxTrustConfiguration);
 		return true;
 	}
 
@@ -110,7 +110,7 @@ public class JsonConfigurationService implements Serializable {
 		LdapOxTrustConfiguration ldapOxTrustConfiguration = getOxTrustConfiguration();
 		ldapOxTrustConfiguration.setImportPersonConfig(oxTrustImportPersonConfiguration);
 		ldapOxTrustConfiguration.setRevision(ldapOxTrustConfiguration.getRevision() + 1);
-		ldapEntryManager.merge(ldapOxTrustConfiguration);
+		persistenceEntryManager.merge(ldapOxTrustConfiguration);
 		return true;
 	}
 
@@ -118,7 +118,7 @@ public class JsonConfigurationService implements Serializable {
 		LdapOxTrustConfiguration ldapOxTrustConfiguration = getOxTrustConfiguration();
 		ldapOxTrustConfiguration.setCacheRefresh(oxTrustCacheRefreshConfiguration);
 		ldapOxTrustConfiguration.setRevision(ldapOxTrustConfiguration.getRevision() + 1);
-		ldapEntryManager.merge(ldapOxTrustConfiguration);
+		persistenceEntryManager.merge(ldapOxTrustConfiguration);
 		return true;
 	}
 
@@ -139,13 +139,13 @@ public class JsonConfigurationService implements Serializable {
 		LdapOxAuthConfiguration ldapOxAuthConfiguration = loadOxAuthConfig(configurationDn);
 		ldapOxAuthConfiguration.setOxAuthConfigDynamic(oxAuthDynamicConfigJson);
 		ldapOxAuthConfiguration.setRevision(ldapOxAuthConfiguration.getRevision() + 1);
-		ldapEntryManager.merge(ldapOxAuthConfiguration);
+		persistenceEntryManager.merge(ldapOxAuthConfiguration);
 		return true;
 	}
 
 	private LdapOxTrustConfiguration loadOxTrustConfig(String configurationDn) {
 		try {
-			LdapOxTrustConfiguration conf = ldapEntryManager.find(LdapOxTrustConfiguration.class, configurationDn);
+			LdapOxTrustConfiguration conf = persistenceEntryManager.find(LdapOxTrustConfiguration.class, configurationDn);
 
 			return conf;
 		} catch (BasePersistenceException ex) {
@@ -158,7 +158,7 @@ public class JsonConfigurationService implements Serializable {
 	private LdapOxAuthConfiguration loadOxAuthConfig(String configurationDn) {
 		try {
 			configurationDn = configurationDn.replace("ou=oxtrust", "ou=oxauth");
-			LdapOxAuthConfiguration conf = ldapEntryManager.find(LdapOxAuthConfiguration.class, configurationDn);
+			LdapOxAuthConfiguration conf = persistenceEntryManager.find(LdapOxAuthConfiguration.class, configurationDn);
 			return conf;
 		} catch (BasePersistenceException ex) {
 			log.error("Failed to load configuration from LDAP");

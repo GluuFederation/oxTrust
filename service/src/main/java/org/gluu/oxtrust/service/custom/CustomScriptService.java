@@ -26,7 +26,7 @@ public class CustomScriptService extends AbstractCustomScriptService {
 	private OrganizationService organizationService;
 
 	@Inject
-	private PersistenceEntryManager ldapEntryManager;
+	private PersistenceEntryManager persistenceEntryManager;
 
 	private static final long serialVersionUID = -5283102477313448031L;
 
@@ -38,7 +38,7 @@ public class CustomScriptService extends AbstractCustomScriptService {
 	public CustomScript getScriptByInum(String inum) {
 		CustomScript result = null;
 		try {
-			result = ldapEntryManager.find(CustomScript.class, buildDn(inum));
+			result = persistenceEntryManager.find(CustomScript.class, buildDn(inum));
 		} catch (Exception ex) {
 		}
 		return result;

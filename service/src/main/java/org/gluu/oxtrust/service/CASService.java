@@ -36,7 +36,7 @@ public class CASService implements Serializable {
     private Logger log;
     
     @Inject
-    private PersistenceEntryManager ldapEntryManager;
+    private PersistenceEntryManager persistenceEntryManager;
     
     @Inject
     OrganizationService organizationService;
@@ -51,7 +51,7 @@ public class CASService implements Serializable {
     
     public ShibbolethCASProtocolConfiguration loadCASConfiguration() {
         log.info("loadCASConfiguration() call");
-        List<LdapShibbolethCASProtocolConfiguration> entries = ldapEntryManager.findEntries(getDnForLdapShibbolethCASProtocolConfiguration(null), LdapShibbolethCASProtocolConfiguration.class, null);
+        List<LdapShibbolethCASProtocolConfiguration> entries = persistenceEntryManager.findEntries(getDnForLdapShibbolethCASProtocolConfiguration(null), LdapShibbolethCASProtocolConfiguration.class, null);
         if (!entries.isEmpty())
             return entries.get(0).getCasProtocolConfiguration();
         else
@@ -60,10 +60,10 @@ public class CASService implements Serializable {
     
     public void updateCASConfiguration(ShibbolethCASProtocolConfiguration entry) {
         log.info("updateCASConfiguration() call");
-        LdapShibbolethCASProtocolConfiguration ldapEntry = ldapEntryManager.find(LdapShibbolethCASProtocolConfiguration.class, getDnForLdapShibbolethCASProtocolConfiguration(entry.getInum()));
+        LdapShibbolethCASProtocolConfiguration ldapEntry = persistenceEntryManager.find(LdapShibbolethCASProtocolConfiguration.class, getDnForLdapShibbolethCASProtocolConfiguration(entry.getInum()));
         ldapEntry.setInum(entry.getInum());
         ldapEntry.setCasProtocolConfiguration(entry);
-        ldapEntryManager.merge(ldapEntry);
+        persistenceEntryManager.merge(ldapEntry);
     }
     
     public void addCASConfiguration(ShibbolethCASProtocolConfiguration entry) {
@@ -76,7 +76,7 @@ public class CASService implements Serializable {
             entry.setInum(inum);
             ldapEntry.setInum(inum);
             ldapEntry.setDn(getDnForLdapShibbolethCASProtocolConfiguration(inum));
-            ldapEntryManager.persist(ldapEntry);
+            persistenceEntryManager.persist(ldapEntry);
         } catch (Exception e) {
             log.error("addIDPEntry() exception", e);
         }

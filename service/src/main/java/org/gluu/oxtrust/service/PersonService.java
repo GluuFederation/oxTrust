@@ -52,7 +52,7 @@ public class PersonService implements Serializable, IPersonService {
 	private Logger log;
 
 	@Inject
-	private PersistenceEntryManager ldapEntryManager;
+	private PersistenceEntryManager persistenceEntryManager;
 
 	@Inject
 	private AttributeService attributeService;
@@ -106,7 +106,7 @@ public class PersonService implements Serializable, IPersonService {
 			List<GluuCustomPerson> persons = findPersons(uidPerson, 1);
 			if (persons == null || persons.size() == 0) {
 				person.setCreationDate(new Date());
-				ldapEntryManager.persist(person);
+				persistenceEntryManager.persist(person);
 			} else {
 				throw new DuplicateEntryException("Duplicate UID value: " + person.getUid());
 			}
@@ -136,7 +136,7 @@ public class PersonService implements Serializable, IPersonService {
 				person.setAttribute("oxTrustMetaLastModified",
 						ISODateTimeFormat.dateTime().withZoneUTC().print(updateDate.getTime()));
 			}
-			ldapEntryManager.merge(person);
+			persistenceEntryManager.merge(person);
 		} catch (Exception e) {
 			if (e.getCause().getMessage().contains("unique attribute conflict was detected for attribute mail")) {
 				throw new DuplicateEmailException("Email Already Registered");
@@ -156,7 +156,7 @@ public class PersonService implements Serializable, IPersonService {
 	 */
 	@Override
 	public void removePerson(GluuCustomPerson person) {
-		ldapEntryManager.removeRecursively(person.getDn());
+		persistenceEntryManager.removeRecursively(person.getDn());
 	}
 
 	/*
@@ -169,7 +169,7 @@ public class PersonService implements Serializable, IPersonService {
 	@Override
 	public List<GluuCustomPerson> searchPersons(String pattern, int sizeLimit) {
 		Filter searchFilter = buildFilter(pattern);
-		return ldapEntryManager.findEntries(getDnForPerson(null), GluuCustomPerson.class, searchFilter, sizeLimit);
+		return persistenceEntryManager.findEntries(getDnForPerson(null), GluuCustomPerson.class, searchFilter, sizeLimit);
 	}
 
 	/*
@@ -181,7 +181,7 @@ public class PersonService implements Serializable, IPersonService {
 	@Override
 	public List<GluuCustomPerson> searchPersons(String pattern) {
 		Filter searchFilter = buildFilter(pattern);
-		return ldapEntryManager.findEntries(getDnForPerson(null), GluuCustomPerson.class, searchFilter);
+		return persistenceEntryManager.findEntries(getDnForPerson(null), GluuCustomPerson.class, searchFilter);
 	}
 
 	private Filter buildFilter(String pattern) {
@@ -207,7 +207,7 @@ public class PersonService implements Serializable, IPersonService {
 	@Override
 	public List<GluuCustomPerson> findPersons(GluuCustomPerson person, int sizeLimit) {
 		person.setBaseDn(getDnForPerson(null));
-		return ldapEntryManager.findEntries(person, sizeLimit);
+		return persistenceEntryManager.findEntries(person, sizeLimit);
 	}
 
 	/*
@@ -237,7 +237,7 @@ public class PersonService implements Serializable, IPersonService {
 			Filter notFilter = Filter.createNOTFilter(orExcludeFilter);
 			searchFilter = Filter.createANDFilter(orFilter, notFilter);
 		}
-		return ldapEntryManager.findEntries(getDnForPerson(null), GluuCustomPerson.class, searchFilter, sizeLimit);
+		return persistenceEntryManager.findEntries(getDnForPerson(null), GluuCustomPerson.class, searchFilter, sizeLimit);
 	}
 
 	/*
@@ -249,7 +249,7 @@ public class PersonService implements Serializable, IPersonService {
 	 */
 	@Override
 	public List<GluuCustomPerson> findAllPersons(String[] returnAttributes) {
-		return ldapEntryManager.findEntries(getDnForPerson(null), GluuCustomPerson.class, null, returnAttributes);
+		return persistenceEntryManager.findEntries(getDnForPerson(null), GluuCustomPerson.class, null, returnAttributes);
 	}
 
 	/*
@@ -266,7 +266,7 @@ public class PersonService implements Serializable, IPersonService {
 			uidFilters.add(Filter.createEqualityFilter(OxConstants.UID, uid));
 		}
 		Filter filter = Filter.createORFilter(uidFilters);
-		return ldapEntryManager.findEntries(getDnForPerson(null), GluuCustomPerson.class, filter, returnAttributes);
+		return persistenceEntryManager.findEntries(getDnForPerson(null), GluuCustomPerson.class, filter, returnAttributes);
 	}
 
 	/*
@@ -284,7 +284,7 @@ public class PersonService implements Serializable, IPersonService {
 			mailidFilters.add(Filter.createEqualityFilter(OxTrustConstants.mail, mailid));
 		}
 		Filter filter = Filter.createORFilter(mailidFilters);
-		return ldapEntryManager.findEntries(getDnForPerson(null), GluuCustomPerson.class, filter, returnAttributes);
+		return persistenceEntryManager.findEntries(getDnForPerson(null), GluuCustomPerson.class, filter, returnAttributes);
 	}
 
 	/*
@@ -296,7 +296,7 @@ public class PersonService implements Serializable, IPersonService {
 	 */
 	@Override
 	public GluuCustomPerson findPersonByDn(String dn, String... returnAttributes) {
-		return ldapEntryManager.find(dn, GluuCustomPerson.class, returnAttributes);
+		return persistenceEntryManager.find(dn, GluuCustomPerson.class, returnAttributes);
 	}
 
 	/*
@@ -310,7 +310,7 @@ public class PersonService implements Serializable, IPersonService {
 	public boolean containsPerson(GluuCustomPerson person) {
 		boolean result = false;
 		try {
-			result = ldapEntryManager.contains(GluuCustomPerson.class);
+			result = persistenceEntryManager.contains(GluuCustomPerson.class);
 		} catch (Exception e) {
 			log.debug(e.getMessage(), e);
 		}
@@ -324,7 +324,7 @@ public class PersonService implements Serializable, IPersonService {
 	 */
 	@Override
 	public boolean contains(String dn) {
-		return ldapEntryManager.contains(dn, GluuCustomPerson.class);
+		return persistenceEntryManager.contains(dn, GluuCustomPerson.class);
 	}
 
 	/*
@@ -335,7 +335,7 @@ public class PersonService implements Serializable, IPersonService {
 	 */
 	@Override
 	public GluuCustomPerson getPersonByDn(String dn) {
-		GluuCustomPerson result = ldapEntryManager.find(GluuCustomPerson.class, dn);
+		GluuCustomPerson result = persistenceEntryManager.find(GluuCustomPerson.class, dn);
 
 		return result;
 
@@ -351,7 +351,7 @@ public class PersonService implements Serializable, IPersonService {
 	public GluuCustomPerson getPersonByInum(String inum) {
 		GluuCustomPerson person = null;
 		try {
-			person = ldapEntryManager.find(GluuCustomPerson.class, getDnForPerson(inum));
+			person = persistenceEntryManager.find(GluuCustomPerson.class, getDnForPerson(inum));
 		} catch (Exception e) {
 			log.error("Failed to find Person by Inum " + inum, e);
 		}
@@ -369,7 +369,7 @@ public class PersonService implements Serializable, IPersonService {
 		GluuCustomPerson person = new GluuCustomPerson();
 		person.setBaseDn(getDnForPerson(null));
 		person.setUid(uid);
-		List<GluuCustomPerson> persons = ldapEntryManager.findEntries(person);
+		List<GluuCustomPerson> persons = persistenceEntryManager.findEntries(person);
 		if ((persons != null) && (persons.size() > 0)) {
 			return persons.get(0);
 		}
@@ -386,11 +386,11 @@ public class PersonService implements Serializable, IPersonService {
 		String dn = getDnForPerson(null);
 
 		Class<?> searchClass = GluuCustomPerson.class;
-		if (ldapEntryManager.hasBranchesSupport(dn)) {
+		if (persistenceEntryManager.hasBranchesSupport(dn)) {
 			searchClass = SimpleBranch.class;
 		}
 
-		return ldapEntryManager.countEntries(dn, searchClass, null, SearchScope.BASE);
+		return persistenceEntryManager.countEntries(dn, searchClass, null, SearchScope.BASE);
 	}
 
 	/*
@@ -408,7 +408,7 @@ public class PersonService implements Serializable, IPersonService {
 			newDn = getDnForPerson(newInum);
 			person = new GluuCustomPerson();
 			person.setDn(newDn);
-		} while (ldapEntryManager.contains(newDn, GluuCustomPerson.class));
+		} while (persistenceEntryManager.contains(newDn, GluuCustomPerson.class));
 		return newInum;
 	}
 
@@ -447,7 +447,7 @@ public class PersonService implements Serializable, IPersonService {
 	 */
 	@Override
 	public boolean authenticate(String userName, String password) {
-		return ldapEntryManager.authenticate(userName, password);
+		return persistenceEntryManager.authenticate(userName, password);
 	}
 
 	/*
@@ -516,7 +516,7 @@ public class PersonService implements Serializable, IPersonService {
 	 */
 	@Override
 	public List<GluuCustomPerson> createEntities(Map<String, List<AttributeData>> entriesAttributes) throws Exception {
-		return ldapEntryManager.createEntities(GluuCustomPerson.class, entriesAttributes);
+		return persistenceEntryManager.createEntities(GluuCustomPerson.class, entriesAttributes);
 	}
 
 	/*
@@ -530,7 +530,7 @@ public class PersonService implements Serializable, IPersonService {
 		GluuCustomPerson person = new GluuCustomPerson();
 		person.setBaseDn(getDnForPerson(null));
 		person.setMail(email);
-		List<GluuCustomPerson> persons = ldapEntryManager.findEntries(person);
+		List<GluuCustomPerson> persons = persistenceEntryManager.findEntries(person);
 		if ((persons != null) && (persons.size() > 0)) {
 			return persons.get(0);
 		}
@@ -548,7 +548,7 @@ public class PersonService implements Serializable, IPersonService {
 		GluuCustomPerson person = new GluuCustomPerson();
 		person.setBaseDn(getDnForPerson(null));
 		person.setUid(uid);
-		return ldapEntryManager.findEntries(person);
+		return persistenceEntryManager.findEntries(person);
 	}
 
 	/*
@@ -563,7 +563,7 @@ public class PersonService implements Serializable, IPersonService {
 		GluuCustomPerson person = new GluuCustomPerson();
 		person.setBaseDn(getDnForPerson(null));
 		person.setMail(email);
-		return ldapEntryManager.findEntries(person);
+		return persistenceEntryManager.findEntries(person);
 	}
 
 	/*
@@ -578,7 +578,7 @@ public class PersonService implements Serializable, IPersonService {
 		GluuCustomPerson person = new GluuCustomPerson();
 		person.setBaseDn(getDnForPerson(null));
 		person.setAttribute(attribute, value);
-		List<GluuCustomPerson> persons = ldapEntryManager.findEntries(person);
+		List<GluuCustomPerson> persons = persistenceEntryManager.findEntries(person);
 		if ((persons != null) && (persons.size() > 0)) {
 			return persons.get(0);
 		}
@@ -597,9 +597,9 @@ public class PersonService implements Serializable, IPersonService {
 		simpleUser.setDn(getDnForPerson(null));
 		simpleUser.setUserId(uid);
 		simpleUser.setCustomObjectClasses(new String[] { "gluuPerson" });
-		List<SimpleUser> users = ldapEntryManager.findEntries(simpleUser, 1);// getLdapEntryManagerInstance().findEntries(person);
+		List<SimpleUser> users = persistenceEntryManager.findEntries(simpleUser, 1);// getLdapEntryManagerInstance().findEntries(person);
 		if ((users != null) && (users.size() > 0)) {
-			return ldapEntryManager.find(User.class, users.get(0).getDn());
+			return persistenceEntryManager.find(User.class, users.get(0).getDn());
 		}
 		return null;
 	}
@@ -618,7 +618,7 @@ public class PersonService implements Serializable, IPersonService {
 		GluuCustomPerson person = new GluuCustomPerson();
 		person.setBaseDn(getDnForPerson(null));
 		person.setAttribute(attribute, value);
-		List<GluuCustomPerson> persons = ldapEntryManager.findEntries(person);
+		List<GluuCustomPerson> persons = persistenceEntryManager.findEntries(person);
 		if ((persons != null) && (persons.size() > 0)) {
 			return persons;
 		}

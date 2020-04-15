@@ -407,10 +407,10 @@ public class ConfigurationFactory {
 	}
 
 	public LdapOxTrustConfiguration loadConfigurationFromLdap(String... returnAttributes) {
-		final PersistenceEntryManager ldapEntryManager = persistenceEntryManagerInstance.get();
+		final PersistenceEntryManager persistenceEntryManager = persistenceEntryManagerInstance.get();
 		final String configurationDn = getConfigurationDn();
 		try {
-			final LdapOxTrustConfiguration conf = ldapEntryManager.find(configurationDn, LdapOxTrustConfiguration.class,
+			final LdapOxTrustConfiguration conf = persistenceEntryManager.find(configurationDn, LdapOxTrustConfiguration.class,
 					returnAttributes);
 
 			return conf;

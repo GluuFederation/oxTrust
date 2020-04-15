@@ -82,7 +82,7 @@
 						<id>install-jar</id>
 						<phase>install</phase>
 						<goals>
-							<goal>install-file</goal>а
+							<goal>install-file</goal>
 						</goals>
 						<configuration>
 							<packaging>jar</packaging>

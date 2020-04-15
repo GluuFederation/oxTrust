@@ -32,7 +32,7 @@ public class SectorIdentifierService implements Serializable {
 	private Logger log;
 
 	@Inject
-	private PersistenceEntryManager ldapEntryManager;
+	private PersistenceEntryManager persistenceEntryManager;
 
 	@Inject
 	private OrganizationService organizationService;
@@ -71,14 +71,14 @@ public class SectorIdentifierService implements Serializable {
 		String[] targetArray = new String[] { pattern };
 		Filter searchFilter = Filter.createSubstringFilter(OxTrustConstants.oxId, null, targetArray, null);
 
-		List<OxAuthSectorIdentifier> result = ldapEntryManager.findEntries(getDnForSectorIdentifier(null),
+		List<OxAuthSectorIdentifier> result = persistenceEntryManager.findEntries(getDnForSectorIdentifier(null),
 				OxAuthSectorIdentifier.class, searchFilter, sizeLimit);
 
 		return result;
 	}
 
 	public List<OxAuthSectorIdentifier> getAllSectorIdentifiers() {
-		return ldapEntryManager.findEntries(getDnForSectorIdentifier(null), OxAuthSectorIdentifier.class, null);
+		return persistenceEntryManager.findEntries(getDnForSectorIdentifier(null), OxAuthSectorIdentifier.class, null);
 	}
 
 	/**
@@ -90,7 +90,7 @@ public class SectorIdentifierService implements Serializable {
 	 */
 	public OxAuthSectorIdentifier getSectorIdentifierById(String oxId) {
 		try {
-			return ldapEntryManager.find(OxAuthSectorIdentifier.class, getDnForSectorIdentifier(oxId));
+			return persistenceEntryManager.find(OxAuthSectorIdentifier.class, getDnForSectorIdentifier(oxId));
 		} catch (Exception e) {
 			log.warn("Failed to find sector identifier by oxId " + oxId, e);
 			return null;
@@ -111,7 +111,7 @@ public class SectorIdentifierService implements Serializable {
 			newId = generateIdForNewSectorIdentifierImpl();
 			newDn = getDnForSectorIdentifier(newId);
 			sectorIdentifier.setDn(newDn);
-		} while (ldapEntryManager.contains(newDn, OxAuthSectorIdentifier.class));
+		} while (persistenceEntryManager.contains(newDn, OxAuthSectorIdentifier.class));
 		return newId;
 	}
 
@@ -131,7 +131,7 @@ public class SectorIdentifierService implements Serializable {
 	 *            Sector identifier
 	 */
 	public void addSectorIdentifier(OxAuthSectorIdentifier sectorIdentifier) {
-		ldapEntryManager.persist(sectorIdentifier);
+		persistenceEntryManager.persist(sectorIdentifier);
 	}
 
 	/**
@@ -141,7 +141,7 @@ public class SectorIdentifierService implements Serializable {
 	 *            Sector identifier
 	 */
 	public void updateSectorIdentifier(OxAuthSectorIdentifier sectorIdentifier) {
-		ldapEntryManager.merge(sectorIdentifier);
+		persistenceEntryManager.merge(sectorIdentifier);
 	}
 
 	/**
@@ -162,7 +162,7 @@ public class SectorIdentifierService implements Serializable {
 			}
 		}
 
-		ldapEntryManager.remove(sectorIdentifier);
+		persistenceEntryManager.remove(sectorIdentifier);
 	}
 
 }

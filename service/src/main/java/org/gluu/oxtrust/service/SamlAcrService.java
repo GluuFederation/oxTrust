@@ -23,7 +23,7 @@ public class SamlAcrService implements Serializable {
 	private Logger log;
 
 	@Inject
-	private PersistenceEntryManager ldapEntryManager;
+	private PersistenceEntryManager persistenceEntryManager;
 
 	@Inject
 	private OrganizationService organizationService;
@@ -40,7 +40,7 @@ public class SamlAcrService implements Serializable {
 	public SamlAcr getByInum(String inum) {
 		SamlAcr samlAcr = null;
 		try {
-			samlAcr = ldapEntryManager.find(SamlAcr.class, getDn(inum));
+			samlAcr = persistenceEntryManager.find(SamlAcr.class, getDn(inum));
 		} catch (Exception e) {
 			log.error("Failed to find samlAcr by Inum " + inum, e);
 		}
@@ -48,29 +48,29 @@ public class SamlAcrService implements Serializable {
 	}
 
 	public void update(SamlAcr samlAcr) {
-		ldapEntryManager.merge(samlAcr);
+		persistenceEntryManager.merge(samlAcr);
 	}
 
 	public void add(SamlAcr samlAcr) {
-		ldapEntryManager.persist(samlAcr);
+		persistenceEntryManager.persist(samlAcr);
 	}
 
 	public void remove(SamlAcr samlAcr) {
 		if (samlAcr.getDn() == null) {
 			samlAcr.setDn(getDn(samlAcr.getInum()));
 		}
-		ldapEntryManager.remove(samlAcr);
+		persistenceEntryManager.remove(samlAcr);
 	}
 
 	public SamlAcr[] getAll() {
-		return ldapEntryManager.findEntries(getDn(null), SamlAcr.class, null).stream()
+		return persistenceEntryManager.findEntries(getDn(null), SamlAcr.class, null).stream()
 				.toArray(size -> new SamlAcr[size]);
 	}
 
 	public boolean contains(String dn) {
 		boolean result = false;
 		try {
-			result = ldapEntryManager.contains(dn, SamlAcr.class);
+			result = persistenceEntryManager.contains(dn, SamlAcr.class);
 		} catch (Exception e) {
 			log.debug(e.getMessage(), e);
 		}
@@ -86,7 +86,7 @@ public class SamlAcrService implements Serializable {
 			newDn = getDn(newInum);
 			samlAcr = new SamlAcr();
 			samlAcr.setDn(newDn);
-		} while (ldapEntryManager.contains(newDn, SamlAcr.class));
+		} while (persistenceEntryManager.contains(newDn, SamlAcr.class));
 		return newInum;
 	}
 

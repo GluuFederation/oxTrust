@@ -46,7 +46,7 @@ public class OrganizationService  extends org.gluu.service.OrganizationService{
     private Logger log;
 
     @Inject
-    private PersistenceEntryManager ldapEntryManager;
+    private PersistenceEntryManager persistenceEntryManager;
 
 	@Inject
 	private CacheService cacheService;
@@ -64,7 +64,7 @@ public class OrganizationService  extends org.gluu.service.OrganizationService{
 	 *            Organization
 	 */
 	public void updateOrganization(GluuOrganization organization) {
-		ldapEntryManager.merge(organization);
+		persistenceEntryManager.merge(organization);
         
 	}
 	
@@ -74,7 +74,7 @@ public class OrganizationService  extends org.gluu.service.OrganizationService{
 	 * @return True if organization with specified attributes exist
 	 */
 	public boolean containsOrganization(String dn) {
-		return ldapEntryManager.contains(dn, GluuOrganization.class);
+		return persistenceEntryManager.contains(dn, GluuOrganization.class);
 	}
 
 	/**
@@ -87,7 +87,7 @@ public class OrganizationService  extends org.gluu.service.OrganizationService{
         String key = getDnForOrganization();
         GluuOrganization organization = (GluuOrganization) usedCacheService.get(key);
         if (organization == null) {
-			organization = ldapEntryManager.find(GluuOrganization.class, key);
+			organization = persistenceEntryManager.find(GluuOrganization.class, key);
 			usedCacheService.put(key, organization);
 		}
 
@@ -192,7 +192,7 @@ public class OrganizationService  extends org.gluu.service.OrganizationService{
 		LdapOxAuthConfiguration ldapOxAuthConfiguration = null;
 		try {
 			configurationDn = configurationDn.replace("ou=oxtrust", "ou=oxauth");
-			ldapOxAuthConfiguration = ldapEntryManager.find(LdapOxAuthConfiguration.class, configurationDn);
+			ldapOxAuthConfiguration = persistenceEntryManager.find(LdapOxAuthConfiguration.class, configurationDn);
 			return ldapOxAuthConfiguration;
 		} catch (BasePersistenceException ex) {
 			log.error("Failed to load configuration from LDAP");
@@ -202,7 +202,7 @@ public class OrganizationService  extends org.gluu.service.OrganizationService{
 	}
 
 	public void saveLdapOxAuthConfiguration(LdapOxAuthConfiguration ldapOxAuthConfiguration) {
-		ldapEntryManager.merge(ldapOxAuthConfiguration);
+		persistenceEntryManager.merge(ldapOxAuthConfiguration);
 	}
 
     private BaseCacheService getCacheService() {

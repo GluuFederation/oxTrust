@@ -35,7 +35,7 @@ public class PassportService implements Serializable {
 	private Logger log;
 
 	@Inject
-	private PersistenceEntryManager ldapEntryManager;
+	private PersistenceEntryManager persistenceEntryManager;
 	@Inject
 	private ConfigurationFactory configurationFactory;
 
@@ -45,7 +45,7 @@ public class PassportService implements Serializable {
 			return false;
 		}
 
-		return ldapEntryManager.contains(configurationDn, LdapOxPassportConfiguration.class);
+		return persistenceEntryManager.contains(configurationDn, LdapOxPassportConfiguration.class);
 	}
 
 	public LdapOxPassportConfiguration loadConfigurationFromLdap() {
@@ -53,7 +53,7 @@ public class PassportService implements Serializable {
 		if (contains) {
 			String configurationDn = getConfigurationDn();
 			try {
-				return ldapEntryManager.find(LdapOxPassportConfiguration.class, configurationDn);
+				return persistenceEntryManager.find(LdapOxPassportConfiguration.class, configurationDn);
 			} catch (MappingException ex) {
 				log.error("Failed to load passport configuration from LDAP", ex);
 			}
@@ -79,9 +79,9 @@ public class PassportService implements Serializable {
 
 		boolean contains = containsPassportConfiguration();
 		if (contains) {
-			ldapEntryManager.merge(ldapOxPassportConfiguration);
+			persistenceEntryManager.merge(ldapOxPassportConfiguration);
 		} else {
-			ldapEntryManager.persist(ldapOxPassportConfiguration);
+			persistenceEntryManager.persist(ldapOxPassportConfiguration);
 		}
 
 	}

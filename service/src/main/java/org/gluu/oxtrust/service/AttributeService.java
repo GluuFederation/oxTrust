@@ -336,7 +336,7 @@ public class AttributeService extends org.gluu.service.AttributeService {
 	 *            Attribute
 	 */
 	public void addAttribute(GluuAttribute attribute) {
-		ldapEntryManager.persist(attribute);
+		persistenceEntryManager.persist(attribute);
 		event.select(new EventTypeQualifier(Events.EVENT_CLEAR_ATTRIBUTES)).fire(Events.EVENT_CLEAR_ATTRIBUTES);
 	}
 
@@ -354,7 +354,7 @@ public class AttributeService extends org.gluu.service.AttributeService {
 	 */
 	public void removeAttribute(GluuAttribute attribute) {
 		log.trace("Removing attribute {}", attribute.getDisplayName());
-		ldapEntryManager.remove(attribute);
+		persistenceEntryManager.remove(attribute);
 		event.select(new EventTypeQualifier(Events.EVENT_CLEAR_ATTRIBUTES)).fire(Events.EVENT_CLEAR_ATTRIBUTES);
 	}
 
@@ -365,7 +365,7 @@ public class AttributeService extends org.gluu.service.AttributeService {
 	 *            Attribute
 	 */
 	public void updateAttribute(GluuAttribute attribute) {
-		ldapEntryManager.merge(attribute);
+		persistenceEntryManager.merge(attribute);
 		event.select(new EventTypeQualifier(Events.EVENT_CLEAR_ATTRIBUTES)).fire(Events.EVENT_CLEAR_ATTRIBUTES);
 	}
 
@@ -394,11 +394,11 @@ public class AttributeService extends org.gluu.service.AttributeService {
 	}
 
 	public boolean containsAttribute(GluuAttribute attribute) {
-		return ldapEntryManager.contains(attribute);
+		return persistenceEntryManager.contains(attribute);
 	}
 
 	public boolean containsAttribute(String dn) {
-		return ldapEntryManager.contains(dn, GluuAttribute.class);
+		return persistenceEntryManager.contains(dn, GluuAttribute.class);
 	}
 
 	public String generateInumForNewAttribute() {
@@ -444,7 +444,7 @@ public class AttributeService extends org.gluu.service.AttributeService {
 
 	@Override
 	protected List<GluuAttribute> getAllAtributesImpl(String baseDn) {
-		List<GluuAttribute> attributeList = ldapEntryManager.findEntries(baseDn, GluuAttribute.class, null);
+		List<GluuAttribute> attributeList = persistenceEntryManager.findEntries(baseDn, GluuAttribute.class, null);
 		String customOrigin = getCustomOrigin();
 		for (GluuAttribute attribute : attributeList) {
 			attribute.setCustom(customOrigin.equals(attribute.getOrigin()));
@@ -509,7 +509,7 @@ public class AttributeService extends org.gluu.service.AttributeService {
 	}
 
 	public void sortCustomAttributes(List<GluuCustomAttribute> customAttributes, String sortByProperties) {
-		ldapEntryManager.sortListByProperties(GluuCustomAttribute.class, customAttributes, false, sortByProperties);
+		persistenceEntryManager.sortListByProperties(GluuCustomAttribute.class, customAttributes, false, sortByProperties);
 	}
 
 	/**
@@ -549,7 +549,7 @@ public class AttributeService extends org.gluu.service.AttributeService {
 	 */
 	private List<GluuAttribute> getAllActiveAtributesImpl(GluuUserRole gluuUserRole) {
 		Filter filter = Filter.createEqualityFilter("gluuStatus", "active");
-		List<GluuAttribute> attributeList = ldapEntryManager.findEntries(getDnForAttribute(null), GluuAttribute.class,
+		List<GluuAttribute> attributeList = persistenceEntryManager.findEntries(getDnForAttribute(null), GluuAttribute.class,
 				filter);
 		String customOrigin = getCustomOrigin();
 		String[] objectClassTypes = appConfiguration.getPersonObjectClassTypes();
@@ -589,7 +589,7 @@ public class AttributeService extends org.gluu.service.AttributeService {
 		Filter descriptionFilter = Filter.createSubstringFilter(OxTrustConstants.description, null, targetArray, null);
 		Filter nameFilter = Filter.createSubstringFilter(OxTrustConstants.attributeName, null, targetArray, null);
 		Filter searchFilter = Filter.createORFilter(displayNameFilter, descriptionFilter,nameFilter);
-		List<GluuAttribute> result = ldapEntryManager.findEntries(getDnForAttribute(null), GluuAttribute.class,
+		List<GluuAttribute> result = persistenceEntryManager.findEntries(getDnForAttribute(null), GluuAttribute.class,
 				searchFilter, sizeLimit);
 		String customOrigin = getCustomOrigin();
 		for (GluuAttribute attribute : result) {
@@ -612,11 +612,11 @@ public class AttributeService extends org.gluu.service.AttributeService {
 		Filter searchFilter = Filter.createORFilter(displayNameFilter, descriptionFilter);
 		Filter originFilter = Filter.createORFilter(originFilters.toArray(new Filter[0]));
 		Filter filter = Filter.createANDFilter(searchFilter, originFilter);
-		return ldapEntryManager.findEntries(getDnForAttribute(null), GluuAttribute.class, filter, sizeLimit);
+		return persistenceEntryManager.findEntries(getDnForAttribute(null), GluuAttribute.class, filter, sizeLimit);
 	}
 
 	public GluuAttribute getAttributeByDn(String Dn) throws Exception {
-		return ldapEntryManager.find(GluuAttribute.class, Dn);
+		return persistenceEntryManager.find(GluuAttribute.class, Dn);
 	}
 
 	public GluuUserRole[] getAttributeEditTypes() {

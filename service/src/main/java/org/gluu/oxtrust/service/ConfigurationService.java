@@ -48,7 +48,7 @@ public class ConfigurationService implements Serializable {
 	private Logger log;
 
 	@Inject
-	private PersistenceEntryManager ldapEntryManager;
+	private PersistenceEntryManager persistenceEntryManager;
 
 	@Inject
 	private OrganizationService organizationService;
@@ -60,7 +60,7 @@ public class ConfigurationService implements Serializable {
 	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
 	public boolean contains(String configurationDn) {
-		return ldapEntryManager.contains(configurationDn, GluuConfiguration.class);
+		return persistenceEntryManager.contains(configurationDn, GluuConfiguration.class);
 	}
 
 	/**
@@ -70,7 +70,7 @@ public class ConfigurationService implements Serializable {
 	 *            Configuration
 	 */
 	public void addConfiguration(GluuConfiguration configuration) {
-		ldapEntryManager.persist(configuration);
+		persistenceEntryManager.persist(configuration);
 	}
 
 	/**
@@ -81,7 +81,7 @@ public class ConfigurationService implements Serializable {
 	 */
 	public void updateConfiguration(GluuConfiguration configuration) {
 		try {
-			ldapEntryManager.merge(configuration);
+			persistenceEntryManager.merge(configuration);
 		} catch (Exception e) {
 			log.info("===============================Error Configuragtion");
 			log.info("", e);
@@ -90,7 +90,7 @@ public class ConfigurationService implements Serializable {
 
 	public void updateOxtrustStat(GluuOxTrustStat oxTrustStat) {
 		try {
-			ldapEntryManager.merge(oxTrustStat);
+			persistenceEntryManager.merge(oxTrustStat);
 		} catch (Exception e) {
 			log.info("===============================Error");
 			log.info("", e);
@@ -104,7 +104,7 @@ public class ConfigurationService implements Serializable {
 	 * @return True if configuration with specified attributes exist
 	 */
 	public boolean containsConfiguration(String dn) {
-		return ldapEntryManager.contains(dn, GluuConfiguration.class);
+		return persistenceEntryManager.contains(dn, GluuConfiguration.class);
 	}
 
 	/**
@@ -116,7 +116,7 @@ public class ConfigurationService implements Serializable {
 	 * @throws Exception
 	 */
 	public GluuConfiguration getConfigurationByInum(String inum) {
-		return ldapEntryManager.find(GluuConfiguration.class, getDnForConfiguration());
+		return persistenceEntryManager.find(GluuConfiguration.class, getDnForConfiguration());
 	}
 
 	/**
@@ -127,18 +127,18 @@ public class ConfigurationService implements Serializable {
 	 */
 	public GluuConfiguration getConfiguration(String[] returnAttributes) {
 		GluuConfiguration result = null;
-		result = ldapEntryManager.find(getDnForConfiguration(), GluuConfiguration.class, returnAttributes);
+		result = persistenceEntryManager.find(getDnForConfiguration(), GluuConfiguration.class, returnAttributes);
 		return result;
 	}
 
 	public GluuOxTrustStat getOxtrustStat(String[] returnAttributes) {
 		GluuOxTrustStat result = null;
-		if (ldapEntryManager.contains(getDnForOxtrustStat(), GluuOxTrustStat.class)) {
-			result = ldapEntryManager.find(getDnForOxtrustStat(), GluuOxTrustStat.class, returnAttributes);
+		if (persistenceEntryManager.contains(getDnForOxtrustStat(), GluuOxTrustStat.class)) {
+			result = persistenceEntryManager.find(getDnForOxtrustStat(), GluuOxTrustStat.class, returnAttributes);
 		} else {
 			result = new GluuOxTrustStat();
 			result.setDn(getDnForOxtrustStat());
-			ldapEntryManager.persist(result);
+			persistenceEntryManager.persist(result);
 		}
 		return result;
 	}
@@ -164,7 +164,7 @@ public class ConfigurationService implements Serializable {
 	 * @throws Exception
 	 */
 	public List<GluuConfiguration> getConfigurations() {
-		return ldapEntryManager.findEntries(getDnForConfiguration(), GluuConfiguration.class, null);
+		return persistenceEntryManager.findEntries(getDnForConfiguration(), GluuConfiguration.class, null);
 	}
 
 	/**

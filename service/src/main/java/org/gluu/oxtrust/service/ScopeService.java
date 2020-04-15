@@ -37,7 +37,7 @@ public class ScopeService implements Serializable {
 	private static final long serialVersionUID = 65734145678106186L;
 
 	@Inject
-	private PersistenceEntryManager ldapEntryManager;
+	private PersistenceEntryManager persistenceEntryManager;
 	@Inject
 	private OrganizationService organizationService;
 
@@ -51,7 +51,7 @@ public class ScopeService implements Serializable {
 	 *            scope
 	 */
 	public void addScope(Scope scope) throws Exception {
-		ldapEntryManager.persist(scope);
+		persistenceEntryManager.persist(scope);
 	}
 
 	/**
@@ -62,7 +62,7 @@ public class ScopeService implements Serializable {
 	 */
 	public void removeScope(Scope scope) throws Exception {
 
-		ldapEntryManager.remove(scope);
+		persistenceEntryManager.remove(scope);
 	}
 
 	/**
@@ -75,7 +75,7 @@ public class ScopeService implements Serializable {
 	public Scope getScopeByInum(String inum) throws Exception {
 		Scope result = null;
 		try {
-			result = ldapEntryManager.find(Scope.class, getDnForScope(inum));
+			result = persistenceEntryManager.find(Scope.class, getDnForScope(inum));
 		} catch (Exception e) {
 			logger.debug("", e);
 		}
@@ -105,7 +105,7 @@ public class ScopeService implements Serializable {
 	 *            scope
 	 */
 	public void updateScope(Scope scope) throws Exception {
-		ldapEntryManager.merge(scope);
+		persistenceEntryManager.merge(scope);
 	}
 
 	/**
@@ -121,7 +121,7 @@ public class ScopeService implements Serializable {
 			newInum = generateInumForNewScopeImpl();
 			newDn = getDnForScope(newInum);
 			scope.setDn(newDn);
-		} while (ldapEntryManager.contains(newDn, Scope.class));
+		} while (persistenceEntryManager.contains(newDn, Scope.class));
 		return newInum;
 	}
 
@@ -147,7 +147,7 @@ public class ScopeService implements Serializable {
 		}
 		List<Scope> result = new ArrayList<>();
 		try {
-			result = ldapEntryManager.findEntries(getDnForScope(null), Scope.class, searchFilter, sizeLimit);
+			result = persistenceEntryManager.findEntries(getDnForScope(null), Scope.class, searchFilter, sizeLimit);
 			return filter(result);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -167,7 +167,7 @@ public class ScopeService implements Serializable {
 
 	public List<Scope> getAllScopesList(int size) {
 		try {
-			List<Scope> scopes = ldapEntryManager.findEntries(getDnForScope(null), Scope.class, null, size);
+			List<Scope> scopes = persistenceEntryManager.findEntries(getDnForScope(null), Scope.class, null, size);
 			return filter(scopes);
 		} catch (Exception e) {
 			logger.error("", e);
@@ -182,7 +182,7 @@ public class ScopeService implements Serializable {
 	 */
 
 	public Scope getScopeByDn(String Dn) throws Exception {
-		return ldapEntryManager.find(Scope.class, Dn);
+		return persistenceEntryManager.find(Scope.class, Dn);
 	}
 
 	/**
@@ -205,7 +205,7 @@ public class ScopeService implements Serializable {
 	public Scope getScopeByDisplayName(String DisplayName) throws Exception {
 		Scope scope = new Scope();
 		scope.setDisplayName(DisplayName);
-		List<Scope> scopes = ldapEntryManager.findEntries(scope);
+		List<Scope> scopes = persistenceEntryManager.findEntries(scope);
 		if ((scopes != null) && (scopes.size() > 0)) {
 			return scopes.get(0);
 		}

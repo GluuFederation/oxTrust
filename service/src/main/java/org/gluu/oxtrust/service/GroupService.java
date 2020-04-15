@@ -44,7 +44,7 @@ public class GroupService implements Serializable, IGroupService {
 	private Logger log;
 
 	@Inject
-	private PersistenceEntryManager ldapEntryManager;
+	private PersistenceEntryManager persistenceEntryManager;
 
 	@Inject
 	private OrganizationService organizationService;
@@ -65,7 +65,7 @@ public class GroupService implements Serializable, IGroupService {
 		displayNameGroup.setDisplayName(group.getDisplayName());
 		List<GluuGroup> groups = findGroups(displayNameGroup, 1);
 		if (groups == null || groups.size() == 0) {
-			ldapEntryManager.persist(group);
+			persistenceEntryManager.persist(group);
 		} else {
 			throw new DuplicateEntryException("Duplicate displayName: " + group.getDisplayName());
 		}
@@ -80,7 +80,7 @@ public class GroupService implements Serializable, IGroupService {
 	 */
 	@Override
 	public void updateGroup(GluuGroup group) {
-		ldapEntryManager.merge(group);
+		persistenceEntryManager.merge(group);
 	}
 
 	/*
@@ -111,7 +111,7 @@ public class GroupService implements Serializable, IGroupService {
 			}
 		}
 
-		ldapEntryManager.remove(group);
+		persistenceEntryManager.remove(group);
 		// clear references in gluuPerson entries
 	}
 
@@ -122,7 +122,7 @@ public class GroupService implements Serializable, IGroupService {
 	 */
 	@Override
 	public List<GluuGroup> getAllGroups() {
-		return ldapEntryManager.findEntries(getDnForGroup(null), GluuGroup.class, null);
+		return persistenceEntryManager.findEntries(getDnForGroup(null), GluuGroup.class, null);
 	}
 
 	/*
@@ -140,7 +140,7 @@ public class GroupService implements Serializable, IGroupService {
 
 		boolean isMemberOrOwner = false;
 		try {
-			isMemberOrOwner = ldapEntryManager.findEntries(groupDN, GluuGroup.class, searchFilter, 1).size() > 0;
+			isMemberOrOwner = persistenceEntryManager.findEntries(groupDN, GluuGroup.class, searchFilter, 1).size() > 0;
 		} catch (EntryPersistenceException ex) {
 			log.error("Failed to determine if person '{}' memeber or owner of group '{}'", personDN, groupDN, ex);
 		}
@@ -158,7 +158,7 @@ public class GroupService implements Serializable, IGroupService {
 	public GluuGroup getGroupByInum(String inum) {
 		GluuGroup result = null;
 		try {
-			result = ldapEntryManager.find(GluuGroup.class, getDnForGroup(inum));
+			result = persistenceEntryManager.find(GluuGroup.class, getDnForGroup(inum));
 		} catch (Exception e) {
 			log.error("Failed to find group by Inum " + inum, e);
 		}
@@ -192,15 +192,15 @@ public class GroupService implements Serializable, IGroupService {
 		String dn = getDnForGroup(null);
 
 		Class<?> searchClass = GluuGroup.class;
-		if (ldapEntryManager.hasBranchesSupport(dn)) {
+		if (persistenceEntryManager.hasBranchesSupport(dn)) {
 			searchClass = SimpleBranch.class;
 		}
 
-		return ldapEntryManager.countEntries(dn, searchClass, null, SearchScope.BASE);
+		return persistenceEntryManager.countEntries(dn, searchClass, null, SearchScope.BASE);
 	}
 
 	public boolean contains(String groupDn) {
-		return ldapEntryManager.contains(groupDn, GluuCustomPerson.class);
+		return persistenceEntryManager.contains(groupDn, GluuCustomPerson.class);
 	}
 
 	/*
@@ -217,7 +217,7 @@ public class GroupService implements Serializable, IGroupService {
 			newInum = generateInumForNewGroupImpl();
 			newDn = getDnForGroup(newInum);
 			group.setDn(newDn);
-		} while (ldapEntryManager.contains(newDn, GluuCustomPerson.class));
+		} while (persistenceEntryManager.contains(newDn, GluuCustomPerson.class));
 
 		return newInum;
 	}
@@ -235,13 +235,13 @@ public class GroupService implements Serializable, IGroupService {
 		Filter displayNameFilter = Filter.createSubstringFilter(OxTrustConstants.displayName, null, targetArray, null);
 		Filter descriptionFilter = Filter.createSubstringFilter(OxTrustConstants.description, null, targetArray, null);
 		Filter searchFilter = Filter.createORFilter(displayNameFilter, descriptionFilter);
-		return  ldapEntryManager.findEntries(getDnForGroup(null), GluuGroup.class, searchFilter,
+		return  persistenceEntryManager.findEntries(getDnForGroup(null), GluuGroup.class, searchFilter,
 				sizeLimit);
 	}
 
 	@Override
 	public List<GluuGroup> getAllGroups(int sizeLimit) {
-		return ldapEntryManager.findEntries(getDnForGroup(null), GluuGroup.class, null, sizeLimit);
+		return persistenceEntryManager.findEntries(getDnForGroup(null), GluuGroup.class, null, sizeLimit);
 	}
 
 	/*
@@ -272,7 +272,7 @@ public class GroupService implements Serializable, IGroupService {
 
 	@Override
 	public GluuGroup getGroupByDn(String Dn) {
-		return  ldapEntryManager.find(GluuGroup.class, Dn);
+		return  persistenceEntryManager.find(GluuGroup.class, Dn);
 	}
 
 
@@ -288,7 +288,7 @@ public class GroupService implements Serializable, IGroupService {
 		GluuGroup group = new GluuGroup();
 		group.setBaseDn(getDnForGroup(null));
 		group.setDisplayName(DisplayName);
-		List<GluuGroup> groups = ldapEntryManager.findEntries(group);
+		List<GluuGroup> groups = persistenceEntryManager.findEntries(group);
 		if ((groups != null) && (groups.size() > 0)) {
 			return groups.get(0);
 		}
@@ -305,7 +305,7 @@ public class GroupService implements Serializable, IGroupService {
 	@Override
 	public List<GluuGroup> findGroups(GluuGroup group, int sizeLimit) {
 		group.setBaseDn(getDnForGroup(null));
-		return ldapEntryManager.findEntries(group, sizeLimit);
+		return persistenceEntryManager.findEntries(group, sizeLimit);
 	}
 
 	/*

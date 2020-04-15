@@ -32,7 +32,7 @@ public class FederationService implements Serializable {
 	private static final long serialVersionUID = 3701922947171190714L;
 
 	@Inject
-	private PersistenceEntryManager ldapEntryManager;
+	private PersistenceEntryManager persistenceEntryManager;
 	@Inject
 	private ConfigurationService configurationService;
 
@@ -43,7 +43,7 @@ public class FederationService implements Serializable {
 	private AppConfiguration appConfiguration;
 
 	public void addFederationProposal(GluuSAMLFederationProposal federationProposal) {
-		ldapEntryManager.persist(federationProposal);
+		persistenceEntryManager.persist(federationProposal);
 	}
 
 	/**
@@ -77,7 +77,7 @@ public class FederationService implements Serializable {
 	 * @return True if federation proposal with specified attributes exist
 	 */
 	public boolean containsFederationProposal(String dn) {
-		return ldapEntryManager.contains(dn, GluuSAMLFederationProposal.class);
+		return persistenceEntryManager.contains(dn, GluuSAMLFederationProposal.class);
 	}
 
 	/**
@@ -97,7 +97,7 @@ public class FederationService implements Serializable {
 	}
 
 	public void updateFederationProposal(GluuSAMLFederationProposal federationProposal) {
-		ldapEntryManager.merge(federationProposal);
+		persistenceEntryManager.merge(federationProposal);
 	}
 
 	/**
@@ -105,11 +105,11 @@ public class FederationService implements Serializable {
 	 * call LDAP to fetch all Federation Proposals.
 	 */
 	public List<GluuSAMLFederationProposal> getAllFederationProposals() {
-		return ldapEntryManager.findEntries(getDnForFederationProposal(null), GluuSAMLFederationProposal.class, null);
+		return persistenceEntryManager.findEntries(getDnForFederationProposal(null), GluuSAMLFederationProposal.class, null);
 	}
 
 	public GluuSAMLFederationProposal getProposalByInum(String inum) {
-		return ldapEntryManager.find(GluuSAMLFederationProposal.class, getDnForFederationProposal(inum));
+		return persistenceEntryManager.find(GluuSAMLFederationProposal.class, getDnForFederationProposal(inum));
 	}
 
 	public void removeFederationProposal(GluuSAMLFederationProposal federationProposal) {
@@ -125,7 +125,7 @@ public class FederationService implements Serializable {
 			shibboleth3ConfService.removeMetadataFile(federationProposal.getSpMetaDataFN());
 		}
 
-		ldapEntryManager.remove(federationProposal);
+		persistenceEntryManager.remove(federationProposal);
 	}
 
 	/**
@@ -144,7 +144,7 @@ public class FederationService implements Serializable {
 		GluuSAMLFederationProposal federationProposal = new GluuSAMLFederationProposal();
 		federationProposal.setBaseDn(getDnForFederationProposal(null));
 		federationProposal.setStatus(GluuStatus.ACTIVE);
-		return ldapEntryManager.findEntries(federationProposal);
+		return persistenceEntryManager.findEntries(federationProposal);
 	}
 
 	public List<GluuSAMLFederationProposal> getAllFederations() {
@@ -159,7 +159,7 @@ public class FederationService implements Serializable {
 
 	public GluuSAMLFederationProposal getProposalByDn(String dn) {
 		if (StringHelper.isNotEmpty(dn)) {
-			return ldapEntryManager.find(GluuSAMLFederationProposal.class, dn);
+			return persistenceEntryManager.find(GluuSAMLFederationProposal.class, dn);
 		}
 		return null;
 	}

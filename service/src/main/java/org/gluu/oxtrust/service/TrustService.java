@@ -46,7 +46,7 @@ public class TrustService implements Serializable {
 	private Logger log;
 
 	@Inject
-	private PersistenceEntryManager ldapEntryManager;
+	private PersistenceEntryManager persistenceEntryManager;
 
 	@Inject
 	private AttributeService attributeService;
@@ -65,9 +65,9 @@ public class TrustService implements Serializable {
 
 		if (!containsTrustRelationship(dn)) {
 			log.debug("Adding TR: {}", dn);
-			ldapEntryManager.persist(trustRelationship);
+			persistenceEntryManager.persist(trustRelationship);
 		} else {
-			ldapEntryManager.merge(trustRelationship);
+			persistenceEntryManager.merge(trustRelationship);
 		}
 	}
 
@@ -76,10 +76,10 @@ public class TrustService implements Serializable {
 		boolean containsTrustRelationship = trustExist(dn);
 		if (containsTrustRelationship) {
 			log.info("Updating TR: {}", dn);
-			ldapEntryManager.merge(trustRelationship);
+			persistenceEntryManager.merge(trustRelationship);
 		} else {
 			log.info("Adding TR: {}", dn);
-			ldapEntryManager.persist(trustRelationship);
+			persistenceEntryManager.persist(trustRelationship);
 		}
 	}
 
@@ -89,13 +89,13 @@ public class TrustService implements Serializable {
 
 		if (containsTrustRelationship(dn)) {
 			log.debug("Removing TR: {}", dn);
-			ldapEntryManager.remove(trustRelationship);
+			persistenceEntryManager.remove(trustRelationship);
 		}
 	}
 
 	public GluuSAMLTrustRelationship getRelationshipByInum(String inum) {
 		try {
-			return ldapEntryManager.find(GluuSAMLTrustRelationship.class, getDnForTrustRelationShip(inum));
+			return persistenceEntryManager.find(GluuSAMLTrustRelationship.class, getDnForTrustRelationShip(inum));
 		} catch (Exception e) {
 			log.error(e.getMessage());
 			return null;
@@ -106,7 +106,7 @@ public class TrustService implements Serializable {
 	public GluuSAMLTrustRelationship getRelationshipByDn(String dn) {
 		if (StringHelper.isNotEmpty(dn)) {
 			try {
-				return ldapEntryManager.find(GluuSAMLTrustRelationship.class, dn);
+				return persistenceEntryManager.find(GluuSAMLTrustRelationship.class, dn);
 			} catch (Exception e) {
 				log.info(e.getMessage());
 			}
@@ -120,7 +120,7 @@ public class TrustService implements Serializable {
 	 * call LDAP to fetch all Trust Relationships.
 	 */
 	public List<GluuSAMLTrustRelationship> getAllTrustRelationships() {
-		return ldapEntryManager.findEntries(getDnForTrustRelationShip(null), GluuSAMLTrustRelationship.class, null);
+		return persistenceEntryManager.findEntries(getDnForTrustRelationShip(null), GluuSAMLTrustRelationship.class, null);
 	}
 
 	public List<GluuSAMLTrustRelationship> getAllActiveTrustRelationships() {
@@ -128,7 +128,7 @@ public class TrustService implements Serializable {
 		trustRelationship.setBaseDn(getDnForTrustRelationShip(null));
 		trustRelationship.setStatus(GluuStatus.ACTIVE);
 
-		return ldapEntryManager.findEntries(trustRelationship);
+		return persistenceEntryManager.findEntries(trustRelationship);
 	}
 
 	public List<GluuSAMLTrustRelationship> getAllFederations() {
@@ -154,13 +154,13 @@ public class TrustService implements Serializable {
 	 * @return True if trust relationship with specified attributes exist
 	 */
 	public boolean containsTrustRelationship(String dn) {
-		return ldapEntryManager.contains(dn, GluuSAMLTrustRelationship.class);
+		return persistenceEntryManager.contains(dn, GluuSAMLTrustRelationship.class);
 	}
 
 	public boolean trustExist(String dn) {
 		GluuSAMLTrustRelationship trust = null;
 		try {
-			trust = ldapEntryManager.find(GluuSAMLTrustRelationship.class, dn);
+			trust = persistenceEntryManager.find(GluuSAMLTrustRelationship.class, dn);
 		} catch (Exception e) {
 			trust = null;
 		}
@@ -285,13 +285,13 @@ public class TrustService implements Serializable {
 		Filter descriptionFilter = Filter.createSubstringFilter(OxTrustConstants.description, null, targetArray, null);
 		Filter inumFilter = Filter.createSubstringFilter(OxTrustConstants.inum, null, targetArray, null);
 		Filter searchFilter = Filter.createORFilter(displayNameFilter, descriptionFilter, inumFilter);
-		return ldapEntryManager.findEntries(getDnForTrustRelationShip(null), GluuSAMLTrustRelationship.class,
+		return persistenceEntryManager.findEntries(getDnForTrustRelationShip(null), GluuSAMLTrustRelationship.class,
 				searchFilter, sizeLimit);
 
 	}
 
 	public List<GluuSAMLTrustRelationship> getAllSAMLTrustRelationships(int sizeLimit) {
-		return ldapEntryManager.findEntries(getDnForTrustRelationShip(null), GluuSAMLTrustRelationship.class, null,
+		return persistenceEntryManager.findEntries(getDnForTrustRelationShip(null), GluuSAMLTrustRelationship.class, null,
 				sizeLimit);
 	}
 

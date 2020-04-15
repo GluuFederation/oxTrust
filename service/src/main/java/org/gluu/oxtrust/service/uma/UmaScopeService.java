@@ -37,7 +37,7 @@ public class UmaScopeService implements Serializable {
 	private static final long serialVersionUID = -3537567020929600777L;
 
 	@Inject
-	private PersistenceEntryManager ldapEntryManager;
+	private PersistenceEntryManager persistenceEntryManager;
 	@Inject
 	private OrganizationService organizationService;
 
@@ -48,11 +48,11 @@ public class UmaScopeService implements Serializable {
 		SimpleBranch branch = new SimpleBranch();
 		branch.setOrganizationalUnitName("scopes");
 		branch.setDn(getDnForScope(null));
-		ldapEntryManager.persist(branch);
+		persistenceEntryManager.persist(branch);
 	}
 
 	public boolean containsBranch() {
-		return ldapEntryManager.contains(getDnForScope(null), SimpleBranch.class);
+		return persistenceEntryManager.contains(getDnForScope(null), SimpleBranch.class);
 	}
 
 	public void prepareScopeDescriptionBranch() {
@@ -62,15 +62,15 @@ public class UmaScopeService implements Serializable {
 	}
 
 	public Scope getUmaScopeByDn(String dn) {
-		return ldapEntryManager.find(Scope.class, dn);
+		return persistenceEntryManager.find(Scope.class, dn);
 	}
 
 	public void addUmaScope(Scope scope) {
-		ldapEntryManager.persist(scope);
+		persistenceEntryManager.persist(scope);
 	}
 
 	public void updateUmaScope(Scope scope) {
-		ldapEntryManager.merge(scope);
+		persistenceEntryManager.merge(scope);
 	}
 
 	/**
@@ -80,7 +80,7 @@ public class UmaScopeService implements Serializable {
 	 *            Scope description
 	 */
 	public void removeUmaScope(Scope scope) {
-		ldapEntryManager.remove(scope);
+		persistenceEntryManager.remove(scope);
 	}
 
 	/**
@@ -89,7 +89,7 @@ public class UmaScopeService implements Serializable {
 	 * @return True if scope description with specified attributes exist
 	 */
 	public boolean containsUmaScope(String dn) {
-		return ldapEntryManager.contains(dn, Scope.class);
+		return persistenceEntryManager.contains(dn, Scope.class);
 	}
 
 	/**
@@ -98,7 +98,7 @@ public class UmaScopeService implements Serializable {
 	 * @return List of scope descriptions
 	 */
 	public List<Scope> getAllUmaScope(String... ldapReturnAttributes) {
-		List<Scope> scopes = ldapEntryManager.findEntries(getDnForScope(null), Scope.class, null, ldapReturnAttributes);
+		List<Scope> scopes = persistenceEntryManager.findEntries(getDnForScope(null), Scope.class, null, ldapReturnAttributes);
 		return filter(scopes);
 	}
 
@@ -116,7 +116,7 @@ public class UmaScopeService implements Serializable {
 		Filter oxIdFilter = Filter.createSubstringFilter("oxId", null, targetArray, null);
 		Filter displayNameFilter = Filter.createSubstringFilter(OxTrustConstants.displayName, null, targetArray, null);
 		Filter searchFilter = Filter.createORFilter(oxIdFilter, displayNameFilter);
-		List<Scope> scopes = ldapEntryManager.findEntries(getDnForScope(null), Scope.class, searchFilter, sizeLimit);
+		List<Scope> scopes = persistenceEntryManager.findEntries(getDnForScope(null), Scope.class, searchFilter, sizeLimit);
 		return filter(scopes);
 	}
 
@@ -129,7 +129,7 @@ public class UmaScopeService implements Serializable {
 	}
 
 	public List<Scope> getAllUmaScopes(int sizeLimit) {
-		List<Scope> scopes = ldapEntryManager.findEntries(getDnForScope(null), Scope.class, null, sizeLimit);
+		List<Scope> scopes = persistenceEntryManager.findEntries(getDnForScope(null), Scope.class, null, sizeLimit);
 		return filter(scopes);
 	}
 
@@ -141,7 +141,7 @@ public class UmaScopeService implements Serializable {
 	 * @return List of ScopeDescription which conform example
 	 */
 	public List<Scope> findScope(Scope scopeDescription) {
-		List<Scope> scopes = ldapEntryManager.findEntries(scopeDescription);
+		List<Scope> scopes = persistenceEntryManager.findEntries(scopeDescription);
 		return filter(scopes);
 	}
 
@@ -153,7 +153,7 @@ public class UmaScopeService implements Serializable {
 	 * @return List of ScopeDescription which specified id
 	 */
 	public List<Scope> findUmaScopeById(String id) {
-		return ldapEntryManager.findEntries(getDnForScope(null), Scope.class, Filter.createEqualityFilter("oxId", id));
+		return persistenceEntryManager.findEntries(getDnForScope(null), Scope.class, Filter.createEqualityFilter("oxId", id));
 	}
 
 	/**
@@ -187,7 +187,7 @@ public class UmaScopeService implements Serializable {
 	public Scope getUmaScopeByInum(String inum) {
 		Scope umaScope = null;
 		try {
-			umaScope = ldapEntryManager.find(Scope.class, getDnForScope(inum));
+			umaScope = persistenceEntryManager.find(Scope.class, getDnForScope(inum));
 		} catch (Exception e) {
 			log.error("Failed to find scope by Inum " + inum, e);
 		}
@@ -197,7 +197,7 @@ public class UmaScopeService implements Serializable {
 
 	public Scope getScopeByDn(String Dn) {
 		try {
-			return ldapEntryManager.find(Scope.class, Dn);
+			return persistenceEntryManager.find(Scope.class, Dn);
 		} catch (Exception e) {
 			log.warn("", e);
 			return null;
