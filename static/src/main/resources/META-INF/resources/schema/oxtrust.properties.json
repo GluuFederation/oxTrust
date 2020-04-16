@@ -546,6 +546,16 @@
                 "OFF"
             ]
         },
+        "loggingLayout": {
+            "id": "loggingLayout",
+            "description": "Logging layout used for oxAuth loggers.",
+            "type": "string",
+            "format": "select",
+            "enum": [
+                "text",
+                "json"
+            ]
+        },
       "ScimProperties":{
         "id": "ScimProperties",
         "title": "Scim properties",
@@ -696,6 +706,7 @@
         "idp3EncryptionCert",
         "oxIncommonFlag",
         "loggingLevel",
+        "loggingLayout",
         "disableJdkLogger",
         "cleanServiceInterval",
         "passwordResetRequestExpirationTime",
