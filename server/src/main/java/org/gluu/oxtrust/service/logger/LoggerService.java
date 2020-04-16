@@ -1,11 +1,11 @@
 package org.gluu.oxtrust.service.logger;
 
+import org.gluu.config.oxtrust.AppConfiguration;
+import org.gluu.oxtrust.service.ConfigurationService;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-
-import org.gluu.config.oxtrust.AppConfiguration;
-import org.gluu.oxtrust.service.ConfigurationService;
 
 /**
  * Logger service
@@ -35,6 +35,11 @@ public class LoggerService extends org.gluu.service.logger.LoggerService {
     @Override
     public String getExternalLoggerConfiguration() {
         return configurationService.getConfiguration().getOxLogConfigLocation();
+    }
+
+    @Override
+    public String getLoggingLayout() {
+        return appConfiguration.getLoggingLayout();
     }
 
 }
