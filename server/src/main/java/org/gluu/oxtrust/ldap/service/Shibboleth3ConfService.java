@@ -742,15 +742,17 @@ public class Shibboleth3ConfService implements Serializable {
 		String tempFileName = getTempMetadataFilename(idpMetadataTempFolder, spMetadataFileName);
 		String spMetadataFile = idpMetadataTempFolder + tempFileName;
 		try {
-			documentStoreService.saveDocumentStream(spMetadataFile, stream);
-		} catch (IOException ex) {
+			boolean result = documentStoreService.saveDocumentStream(spMetadataFile, stream);
+			if (result) {
+				return tempFileName;
+			}
+		} catch (Exception ex) {
 			log.error("Failed to write SP meta-data file '{}'", spMetadataFile, ex);
-			return null;
 		} finally {
 			IOUtils.closeQuietly(stream);
 		}
 
-		return tempFileName;
+		return null;
 	}
 
 	private String getTempMetadataFilename(String idpMetadataFolder, String fileName) {
@@ -783,13 +785,15 @@ public class Shibboleth3ConfService implements Serializable {
 		String tempFileName = getTempMetadataFilename(idpMetadataTempFolder, spMetadataFileName);
 		String spMetadataFile = idpMetadataTempFolder + tempFileName;
 		try {
-			documentStoreService.saveDocument(spMetadataFile, spMetadataFileContent, UTF_8);
-		} catch (IOException ex) {
+			boolean result = documentStoreService.saveDocument(spMetadataFile, spMetadataFileContent, UTF_8);
+			if (result) {
+				return tempFileName;
+			}
+		} catch (Exception ex) {
 			log.error("Failed to write SP meta-data file '{}'", spMetadataFile, ex);
-			return null;
 		}
 
-		return tempFileName;
+		return null;
 	}
 
 	public String generateSpAttributeMapFile(GluuSAMLTrustRelationship trustRelationship) {
@@ -851,8 +855,8 @@ public class Shibboleth3ConfService implements Serializable {
 		String spMetadataFile = getIdpMetadataDir() + spMetadataFileName;
 
 		try {
-			documentStoreService.removeDocument(spMetadataFile);
-		} catch (IOException ex) {
+			boolean result = documentStoreService.removeDocument(spMetadataFile);
+		} catch (Exception ex) {
 			log.error("Failed to remove {}", spMetadataFile, ex);
 		}
 	}
@@ -1044,13 +1048,12 @@ public class Shibboleth3ConfService implements Serializable {
 		String spMetadataFile = metadataFolder + spMetaDataFN;
 		
 		try {
-			documentStoreService.removeDocument(spMetadataFile);
-		} catch (IOException ex) {
+			return documentStoreService.removeDocument(spMetadataFile);
+		} catch (Exception ex) {
 			log.error("Failed to remove {}", spMetadataFile, ex);
-			return false;
 		}
 		
-		return true;
+		return false;
 	}
 
 	public String getMetadataFilePath(String metadataFileName) {
@@ -1079,15 +1082,14 @@ public class Shibboleth3ConfService implements Serializable {
 
 		String spMetadataFile = getIdpMetadataDir() + metadataFileName;
 		try {
-			documentStoreService.saveDocumentStream(spMetadataFile, stream);
-		} catch (IOException ex) {
+			return documentStoreService.saveDocumentStream(spMetadataFile, stream);
+		} catch (Exception ex) {
 			log.error("Failed to write meta-data file '{}'", spMetadataFile, ex);
-			return false;
 		} finally {
 			IOUtils.closeQuietly(stream);
 		}
 
-		return true;
+		return false;
 	}
 
 	public boolean saveMetadataFile(String spMetaDataURL, String metadataFileName) {
@@ -1110,13 +1112,12 @@ public class Shibboleth3ConfService implements Serializable {
 
 		String spMetadataFile = getIdpMetadataDir() + metadataFileName;
 		try {
-			documentStoreService.saveDocument(spMetadataFile, metadataFileContent, UTF_8);
-		} catch (IOException ex) {
+			return documentStoreService.saveDocument(spMetadataFile, metadataFileContent, UTF_8);
+		} catch (Exception ex) {
 			log.error("Failed to write meta-data file '{}'", spMetadataFile, ex);
-			return false;
 		}
 
-		return true;
+		return false;
 	}
 
 	/**
@@ -1149,9 +1150,8 @@ public class Shibboleth3ConfService implements Serializable {
 					readDocument(appConfiguration.getIdp3SigningCert(), UTF_8).replaceAll("-{5}.*?-{5}", "");
 			context.put("idpSigningCertificate", idpSigningCertificate);
 
-		} catch (IOException e) {
+		} catch (Exception e) {
 			log.error("Unable to get IDP 3 signing certificate from " + appConfiguration.getIdp3SigningCert(), e);
-			e.printStackTrace();
 			return false;
 		}
 
@@ -1159,9 +1159,8 @@ public class Shibboleth3ConfService implements Serializable {
 			String idpEncryptionCertificate = documentStoreService.
 					readDocument(appConfiguration.getIdp3EncryptionCert(), UTF_8).replaceAll("-{5}.*?-{5}", "");
 			context.put("idpEncryptionCertificate", idpEncryptionCertificate);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			log.error("Unable to get IDP 3 encryption certificate from " + appConfiguration.getIdp3EncryptionCert(), e);
-			e.printStackTrace();
 			return false;
 		}
 
@@ -1252,7 +1251,7 @@ public class Shibboleth3ConfService implements Serializable {
 
 			generateSpMetadataFile(gluuSP, certificate);
 			result = isCorrectSpMetadataFile(gluuSP.getSpMetaDataFN());
-		} catch (IOException e) {
+		} catch (Exception e) {
 			log.error("Failed to gluu SP read certificate file.", e);
 		}
 
@@ -1316,10 +1315,11 @@ public class Shibboleth3ConfService implements Serializable {
 	public boolean writeConfFile(String confFile, String confContent) {
 		try {
 			return documentStoreService.saveDocument(confFile, confContent, UTF_8);
-		} catch (IOException ex) {
+		} catch (Exception ex) {
 			log.error("Failed to write IDP configuration file '{}'", confFile, ex);
-			return false;
 		}
+
+		return false;
 	}
 
 	/**
@@ -1420,9 +1420,11 @@ public class Shibboleth3ConfService implements Serializable {
 	public boolean renameMetadata(String metadataPath, String destinationMetadataPath) {
 		try {
 			return documentStoreService.renameDocument(metadataPath, destinationMetadataPath);
-		} catch (IOException ex) {
-			return false;
+		} catch (Exception ex) {
+			log.error("Failed to rename metadata '{}' to '{}'", metadataPath, destinationMetadataPath, ex);
 		}
+
+		return false;
 	}
 
 	public String saveProfileConfigurationCert(String profileConfigurationCertFileName, InputStream stream) {
@@ -1437,16 +1439,17 @@ public class Shibboleth3ConfService implements Serializable {
 		String filterCertFile = idpMetadataFolder + profileConfigurationCertFileName;
 
 		try {
-			documentStoreService.saveDocumentStream(filterCertFile, stream);
-		} catch (IOException ex) {
+			boolean result = documentStoreService.saveDocumentStream(filterCertFile, stream);
+			if (result) {
+				return filterCertFile;
+			}
+		} catch (Exception ex) {
 			log.error("Failed to write  Profile Configuration  certificate file '{}'", filterCertFile, ex);
-			return null;
 		} finally {
 			IOUtils.closeQuietly(stream);
 		}
 
-		return filterCertFile;
-
+		return null;
 	}
 
 	public String saveFilterCert(String filterCertFileName, InputStream stream) {
@@ -1459,16 +1462,17 @@ public class Shibboleth3ConfService implements Serializable {
 				+ "credentials" + File.separator;
 		String filterCertFile = idpMetadataFolder + filterCertFileName;
 		try {
-			documentStoreService.saveDocumentStream(filterCertFile, stream);
-		} catch (IOException ex) {
+			boolean result = documentStoreService.saveDocumentStream(filterCertFile, stream);
+			if (result) {
+				return filterCertFile;
+			}
+		} catch (Exception ex) {
 			log.error("Failed to write  filter certificate file '{}'", filterCertFile, ex);
-			ex.printStackTrace();
-			return null;
 		} finally {
 			IOUtils.closeQuietly(stream);
 		}
 
-		return filterCertFile;
+		return null;
 	}
 
 }
