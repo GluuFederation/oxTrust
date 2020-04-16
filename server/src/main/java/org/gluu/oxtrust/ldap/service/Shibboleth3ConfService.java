@@ -180,7 +180,6 @@ public class Shibboleth3ConfService implements Serializable {
 	private DocumentStoreService documentStoreService;
 
 	@Inject
-	@LocalDocumentStore
 	private LocalDocumentStoreService localDocumentStoreService;
 
 	private Schema samlSchema;
