@@ -58,7 +58,10 @@ import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.saml.metadata.SAMLMetadataParser;
 import org.gluu.service.SchemaService;
 import org.gluu.service.XmlService;
+import org.gluu.service.document.store.LocalDocumentStore;
+import org.gluu.service.document.store.conf.DocumentStoreType;
 import org.gluu.service.document.store.service.DocumentStoreService;
+import org.gluu.service.document.store.service.LocalDocumentStoreService;
 import org.gluu.util.INumGenerator;
 import org.gluu.util.OxConstants;
 import org.gluu.util.StringHelper;
@@ -175,6 +178,10 @@ public class Shibboleth3ConfService implements Serializable {
 
 	@Inject
 	private DocumentStoreService documentStoreService;
+
+	@Inject
+	@LocalDocumentStore
+	private LocalDocumentStoreService localDocumentStoreService;
 
 	private Schema samlSchema;
 	
@@ -1146,8 +1153,18 @@ public class Shibboleth3ConfService implements Serializable {
 		context.put("orgShortName", appConfiguration.getOrganizationName());
 
 		try {
-			String idpSigningCertificate = documentStoreService.
-					readDocument(appConfiguration.getIdp3SigningCert(), UTF_8).replaceAll("-{5}.*?-{5}", "");
+			String signingCert = appConfiguration.getIdp3SigningCert();
+			if (DocumentStoreType.LOCAL != documentStoreService.getProviderType()) {
+				// If it's not local store we need to check if file exists and put it into repo if needed
+				boolean hasSigningCert = documentStoreService.hasDocument(signingCert);
+				if (!hasSigningCert) {
+					try (InputStream signingCertStream = localDocumentStoreService.readDocumentAsStream(signingCert)) {
+						documentStoreService.saveDocumentStream(signingCert, signingCertStream);
+					}
+				}
+			}
+
+			String idpSigningCertificate = documentStoreService.readDocument(signingCert, UTF_8).replaceAll("-{5}.*?-{5}", "");
 			context.put("idpSigningCertificate", idpSigningCertificate);
 
 		} catch (Exception e) {
@@ -1156,8 +1173,19 @@ public class Shibboleth3ConfService implements Serializable {
 		}
 
 		try {
+			String encryptionCert = appConfiguration.getIdp3EncryptionCert();
+			if (DocumentStoreType.LOCAL != documentStoreService.getProviderType()) {
+				// If it's not local store we need to check if file exists and put it into repo if needed
+				boolean hasSigningCert = documentStoreService.hasDocument(encryptionCert);
+				if (!hasSigningCert) {
+					try (InputStream encryptionCertStream = localDocumentStoreService.readDocumentAsStream(encryptionCert)) {
+						documentStoreService.saveDocumentStream(encryptionCert, encryptionCertStream);
+					}
+				}
+			}
+
 			String idpEncryptionCertificate = documentStoreService.
-					readDocument(appConfiguration.getIdp3EncryptionCert(), UTF_8).replaceAll("-{5}.*?-{5}", "");
+					readDocument(encryptionCert, UTF_8).replaceAll("-{5}.*?-{5}", "");
 			context.put("idpEncryptionCertificate", idpEncryptionCertificate);
 		} catch (Exception e) {
 			log.error("Unable to get IDP 3 encryption certificate from " + appConfiguration.getIdp3EncryptionCert(), e);
