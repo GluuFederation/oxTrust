@@ -54,7 +54,9 @@
 							</li>
 							<li><a data-toggle="tab" href="#oxauth-config">#{msg['updateConfiguration.oxAuthConfiguration']}</a>
 							</li>
-							<li><a data-toggle="tab" href="#memcached-config">#{msg['updateConfiguration.memcachedConfiguration']}</a>
+							<li><a data-toggle="tab" href="#cached-config">#{msg['updateConfiguration.memcachedConfiguration']}</a>
+							</li>
+							<li><a data-toggle="tab" href="#store-config">#{msg['updateConfiguration.storeConfiguration']}</a>
 							</li>
 							<li><a data-toggle="tab"
 								href="#oxtrust-import-person-config">#{msg['updateConfiguration.oxTrustImportConfiguration']}</a>
@@ -139,12 +141,12 @@
 								</h:panelGrid>
 							</div>
 
-							<div class="tab-pane" id="memcached-config">
+							<div class="tab-pane" id="cached-config">
 								<h:panelGrid border="0" cellpadding="0" cellspacing="0"
 									columnClasses="alignTop" columns="1" width="100%">
 									<div style="text-align: center;">
 									<b:label severity="warning" style="align:center"
-										text="oxauth restart is required if cache connection settings are changed." />
+										text="oxauth/oxtrust restart is required if cache connection settings are changed." />
 									</div>	
 									<h:form id="oxMemCacheConfigForm" prependId="false">
 										<ui:decorate id="oxMemcache"
@@ -164,6 +166,35 @@
 											id="saveOxMemcacheConfigBtn" prependId="false"
 											style="display:none"
 											value="#{msg['updateConfiguration.saveMemCacheConfiguration']}" />
+									</h:form>
+								</h:panelGrid>
+							</div>
+
+							<div class="tab-pane" id="store-config">
+								<h:panelGrid border="0" cellpadding="0" cellspacing="0"
+									columnClasses="alignTop" columns="1" width="100%">
+									<div style="text-align: center;">
+									<b:label severity="warning" style="align:center"
+										text="oxauth/oxtrust restart is required if store connection settings are changed." />
+									</div>	
+									<h:form id="storeConfigForm" prependId="false">
+										<ui:decorate id="oxStore"
+											template="/WEB-INF/incl/layout/jsoneditor.xhtml">
+											<ui:param name="id" value="oxStoreConfig" />
+											<ui:param name="parentId" value="oxStore" />
+											<ui:param name="json"
+												value="#{jsonConfigAction.storeConfigurationJson}" />
+											<ui:param name="jsonSchema"
+												value="#{request.contextPath}/schema/oxstore-config.json" />
+											<ui:param name="saveBtnId" value="saveOxStoreConfigBtn" />
+											<ui:param name="saveBtnLabel"
+												value="#{msg['updateConfiguration.saveConfiguration']}" />
+										</ui:decorate>
+										<h:commandButton
+											action="#{jsonConfigAction.saveStoreConfigJson}"
+											id="saveOxStoreConfigBtn" prependId="false"
+											style="display:none"
+											value="#{msg['updateConfiguration.saveStoreConfiguration']}" />
 									</h:form>
 								</h:panelGrid>
 							</div>

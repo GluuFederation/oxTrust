@@ -25,6 +25,7 @@ import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.exception.BasePersistenceException;
 import org.gluu.service.JsonService;
 import org.gluu.service.cache.CacheConfiguration;
+import org.gluu.service.document.store.conf.DocumentStoreConfiguration;
 import org.slf4j.Logger;
 
 /**
@@ -62,11 +63,9 @@ public class JsonConfigurationService implements Serializable {
 		return cachedConfiguration;
 	}
 
-	public boolean saveOxMemCacheConfiguration(CacheConfiguration cachedConfiguration) {
-		GluuConfiguration gluuConfiguration = configurationService.getConfiguration();
-		gluuConfiguration.setCacheConfiguration(cachedConfiguration);
-		configurationService.updateConfiguration(gluuConfiguration);
-		return true;
+	public DocumentStoreConfiguration getDocumentStoreConfiguration() {
+		DocumentStoreConfiguration documentStoreConfiguration = configurationService.getConfiguration().getDocumentStoreConfiguration();
+		return documentStoreConfiguration;
 	}
 
 	public ImportPersonConfig getOxTrustImportPersonConfiguration() {
@@ -140,6 +139,20 @@ public class JsonConfigurationService implements Serializable {
 		ldapOxAuthConfiguration.setOxAuthConfigDynamic(oxAuthDynamicConfigJson);
 		ldapOxAuthConfiguration.setRevision(ldapOxAuthConfiguration.getRevision() + 1);
 		persistenceEntryManager.merge(ldapOxAuthConfiguration);
+		return true;
+	}
+
+	public boolean saveOxMemCacheConfiguration(CacheConfiguration cachedConfiguration) {
+		GluuConfiguration gluuConfiguration = configurationService.getConfiguration();
+		gluuConfiguration.setCacheConfiguration(cachedConfiguration);
+		configurationService.updateConfiguration(gluuConfiguration);
+		return true;
+	}
+
+	public boolean saveDocumentStoreConfiguration(DocumentStoreConfiguration documentStoreConfiguration) {
+		GluuConfiguration gluuConfiguration = configurationService.getConfiguration();
+		gluuConfiguration.setDocumentStoreConfiguration(documentStoreConfiguration);
+		configurationService.updateConfiguration(gluuConfiguration);
 		return true;
 	}
 

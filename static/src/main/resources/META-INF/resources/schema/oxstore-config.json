@@ -1,0 +1,92 @@
+{
+	"$schema": "http://json-schema.org/draft-04/schema#",
+	"id": "/",
+	"title": "Document Store Configuration",
+	"type": "object",
+	"additionalProperties": false,
+	"properties": {
+		"documentStoreType": {
+			"id": "documentStoreType",
+			"description": "Document store type",
+			"title": "Document store Type",
+			"type": "string",
+			"enum": [
+				"LOCAL",
+				"JCA"
+			]
+		},
+		"localConfiguration": {
+			"title": "Local configuration",
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"baseLocation": {
+					"id": "baseLocation",
+					"description": "Base location in file system",
+					"title": "Base",
+					"type": "string",
+					"format": "string",
+					"minLength": 1
+				}
+			},
+			"required": [
+				"baseLocation"
+			]
+		},
+		"jcaConfiguration": {
+			"title": "JCA configuration",
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"serverUrl": {
+					"id": "serverUrl",
+					"description": "Server details, e.g. 'http://localhost:8080/rmi'",
+					"title": "Server",
+					"type": "string",
+					"format": "url",
+					"minLength": 3
+				},
+				"workspaceName": {
+					"id": "workspaceName",
+					"description": "Workspace name, e.g. 'default'",
+					"title": "Workspace",
+					"type": "string",
+					"format": "string",
+					"minLength": 3
+				},
+				"userId": {
+					"id": "userId",
+					"description": "User Id",
+					"title": "User Id",
+					"type": "string",
+					"minLength": 1
+				},
+				"password": {
+					"id": "password",
+					"description": "Password",
+					"title": "Password",
+					"type": "string",
+					"minLength": 0
+				},
+				"connectionTimeout": {
+					"id": "connectionTimeout",
+					"description": "Connection timeout timeout value in seconds",
+					"title": "Connection timeout",
+					"type": "integer",
+					"multipleOf": 1,
+					"maximum": 2147483647,
+					"minimum": 1,
+					"exclusiveMaximum": false,
+					"exclusiveMinimum": false
+				}
+			},
+			"required": [
+				"serverUrl",
+				"workspaceName",
+				"userId",
+				"password",
+				"workspaceName"
+			]
+		}
+	}
+}
