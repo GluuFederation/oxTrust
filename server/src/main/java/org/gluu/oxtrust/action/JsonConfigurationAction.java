@@ -32,6 +32,9 @@ import org.gluu.service.cache.MemcachedProvider;
 import org.gluu.service.cache.RedisConfiguration;
 import org.gluu.service.cache.RedisProvider;
 import org.gluu.service.cdi.util.CdiUtil;
+import org.gluu.service.document.store.conf.DocumentStoreConfiguration;
+import org.gluu.service.document.store.conf.DocumentStoreType;
+import org.gluu.service.document.store.provider.JcaDocumentStoreProvider;
 import org.gluu.service.security.Secure;
 import org.gluu.util.StringHelper;
 import org.gluu.util.security.StringEncrypter.EncryptionException;
@@ -92,8 +95,10 @@ public class JsonConfigurationAction implements Serializable {
 	private String oxAuthDynamicConfigJson;
 
 	private CacheConfiguration cacheConfiguration;
+	private DocumentStoreConfiguration storeConfiguration;
 
 	private String cacheConfigurationJson;
+	private String storeConfigurationJson;
 
 	public String init() {
 		try {
@@ -101,11 +106,13 @@ public class JsonConfigurationAction implements Serializable {
 			this.oxTrustappConfiguration = jsonConfigurationService.getOxTrustappConfiguration();
 			this.oxTrustImportPersonConfiguration = jsonConfigurationService.getOxTrustImportPersonConfiguration();
 			this.cacheConfiguration = jsonConfigurationService.getOxMemCacheConfiguration();
+			this.storeConfiguration = jsonConfigurationService.getDocumentStoreConfiguration();
 			this.oxTrustConfigJson = getProtectedOxTrustappConfiguration(this.oxTrustappConfiguration);
 			this.oxTrustImportPersonConfigJson = getOxTrustImportPersonConfiguration(
 					this.oxTrustImportPersonConfiguration);
 			this.oxAuthDynamicConfigJson = jsonConfigurationService.getOxAuthDynamicConfigJson();
 			this.cacheConfigurationJson = getCacheConfiguration(cacheConfiguration);
+			this.storeConfigurationJson = getStoreConfiguration(storeConfiguration);
 
 			if ((this.oxTrustConfigJson != null) && (this.oxAuthDynamicConfigJson != null)) {
 				return OxTrustConstants.RESULT_SUCCESS;
@@ -181,6 +188,27 @@ public class JsonConfigurationAction implements Serializable {
 		return OxTrustConstants.RESULT_FAILURE;
 	}
 
+	public String saveStoreConfigJson() {
+		// Update JSON configurations
+		try {
+			log.debug("Saving store-config.json:" + this.storeConfigurationJson);
+			this.storeConfiguration = convertToStoreConfiguration(this.storeConfigurationJson);
+			DocumentStoreType type = this.storeConfiguration.getDocumentStoreType();
+			if (type.equals(DocumentStoreType.JCA) && !canConnectToJca()) {
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Error connecting to JCA with provided configuration");
+				return OxTrustConstants.RESULT_FAILURE;
+			}
+			jsonConfigurationService.saveDocumentStoreConfiguration(this.storeConfiguration);
+			facesMessages.add(FacesMessage.SEVERITY_INFO, "Document store configuration is updated.");
+			return OxTrustConstants.RESULT_SUCCESS;
+		} catch (Exception ex) {
+			log.error("Failed to update store-config.json", ex);
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update document store configuration in DB");
+		}
+
+		return OxTrustConstants.RESULT_FAILURE;
+	}
+
 	private boolean canConnectToRedis() {
 		try {
 			RedisProvider provider = CdiUtil.bean(RedisProvider.class);
@@ -213,6 +241,21 @@ public class JsonConfigurationAction implements Serializable {
 			return false;
 		}
 
+	}
+
+	private boolean canConnectToJca() {
+		try {
+			JcaDocumentStoreProvider provider = CdiUtil.bean(JcaDocumentStoreProvider.class);
+			provider.setJcaDocumentStoreConfiguration(storeConfiguration.getJcaConfiguration());
+			provider.create();
+			if (provider.isConnected()) {
+				provider.destroy();
+				return true;
+			}
+			return false;
+		} catch (Exception e) {
+			return false;
+		}
 	}
 
 	private void trimUriProperties() {
@@ -277,7 +320,17 @@ public class JsonConfigurationAction implements Serializable {
 		try {
 			return jsonService.objectToJson(cachedConfig);
 		} catch (Exception ex) {
-			log.error("Failed to prepare JSON from ImportPersonConfig: '{}'", oxTrustImportPersonConfiguration, ex);
+			log.error("Failed to prepare JSON from CacheConfiguration: '{}'", cachedConfig, ex);
+		}
+
+		return null;
+	}
+
+	private String getStoreConfiguration(DocumentStoreConfiguration documentStoreConfiguration) {
+		try {
+			return jsonService.objectToJson(documentStoreConfiguration);
+		} catch (Exception ex) {
+			log.error("Failed to prepare JSON from documentStoreConfiguration: '{}'", documentStoreConfiguration, ex);
 		}
 
 		return null;
@@ -326,7 +379,7 @@ public class JsonConfigurationAction implements Serializable {
 			CacheConfiguration cacheConfiguration = jsonService.jsonToObject(oxCacheConfigurationJson,
 					CacheConfiguration.class);
 			RedisConfiguration redisConfiguration = cacheConfiguration.getRedisConfiguration();
-			processRedisPasswordProperty(redisConfiguration, "password");
+			processPasswordProperty(redisConfiguration, "password");
 			cacheConfiguration.setRedisConfiguration(redisConfiguration);
 			return cacheConfiguration;
 		} catch (Exception ex) {
@@ -336,7 +389,20 @@ public class JsonConfigurationAction implements Serializable {
 		return null;
 	}
 
-	private void processRedisPasswordProperty(RedisConfiguration current, String property)
+	private DocumentStoreConfiguration convertToStoreConfiguration(String storeConfigurationJson) {
+		try {
+			DocumentStoreConfiguration storeConfiguration = jsonService.jsonToObject(storeConfigurationJson,
+					DocumentStoreConfiguration.class);
+			processPasswordProperty(storeConfiguration.getJcaConfiguration(), "password");
+			return storeConfiguration;
+		} catch (Exception ex) {
+			log.error("Failed to prepare DocumentStoreConfiguration from JSON: '{}'", storeConfigurationJson, ex);
+		}
+
+		return null;
+	}
+
+	private void processPasswordProperty(Object current, String property)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, EncryptionException {
 		String currentValue = BeanUtils.getProperty(current, property);
 		BeanUtils.setProperty(current, property, encryptionService.encrypt(currentValue));
@@ -383,4 +449,13 @@ public class JsonConfigurationAction implements Serializable {
 	public void setCacheConfigurationJson(String cacheConfigurationJson) {
 		this.cacheConfigurationJson = cacheConfigurationJson;
 	}
+
+	public String getStoreConfigurationJson() {
+		return storeConfigurationJson;
+	}
+
+	public void setStoreConfigurationJson(String storeConfigurationJson) {
+		this.storeConfigurationJson = storeConfigurationJson;
+	}
+
 }
