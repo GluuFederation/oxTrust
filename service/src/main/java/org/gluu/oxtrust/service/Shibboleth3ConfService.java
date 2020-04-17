@@ -5,10 +5,8 @@
  */
 package org.gluu.oxtrust.service;
 
-import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -36,6 +34,7 @@ import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.httpclient.protocol.Protocol;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.velocity.VelocityContext;
 import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.config.oxtrust.AttributeResolverConfiguration;
@@ -56,7 +55,6 @@ import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.saml.metadata.SAMLMetadataParser;
 import org.gluu.service.SchemaService;
 import org.gluu.service.XmlService;
-import org.gluu.service.document.store.LocalDocumentStore;
 import org.gluu.service.document.store.conf.DocumentStoreType;
 import org.gluu.service.document.store.service.DocumentStoreService;
 import org.gluu.service.document.store.service.LocalDocumentStoreService;
@@ -1248,77 +1246,6 @@ public class Shibboleth3ConfService implements Serializable {
 	}
 
 	/**
-	 * Adds Trust relationship for own shibboleth SP and restarts services after
-	 * done.
-	 * 
-	 * @author �Oleksiy Tataryn�
-	 */
-	public void addGluuSP() {
-		String gluuSPInum = trustService.generateInumForNewTrustRelationship();
-		String metadataFN = getSpNewMetadataFileName(gluuSPInum);
-		GluuSAMLTrustRelationship gluuSP = new GluuSAMLTrustRelationship();
-		gluuSP.setInum(gluuSPInum);
-		gluuSP.setDisplayName("gluu SP on configuration");
-		gluuSP.setDescription("Trust Relationship for the SP");
-		gluuSP.setSpMetaDataSourceType(GluuMetadataSourceType.FILE);
-		gluuSP.setSpMetaDataFN(metadataFN);
-		// TODO:
-		gluuSP.setEntityId(StringHelper.removePunctuation(gluuSP.getInum()));
-		gluuSP.setUrl(appConfiguration.getApplicationUrl());
-
-		String certificate = "";
-		boolean result = false;
-		try {
-			certificate = documentStoreService.readDocument(appConfiguration.getGluuSpCert(), UTF_8);
-			certificate = certificate.replaceAll("-{5}.*?-{5}", "");
-
-			generateSpMetadataFile(gluuSP, certificate);
-			result = isCorrectSpMetadataFile(gluuSP.getSpMetaDataFN());
-		} catch (Exception e) {
-			log.error("Failed to gluu SP read certificate file.", e);
-		}
-
-		if (result) {
-			gluuSP.setStatus(GluuStatus.ACTIVE);
-			String inum = gluuSP.getInum();
-			String dn = trustService.getDnForTrustRelationShip(inum);
-
-			gluuSP.setDn(dn);
-			List<GluuCustomAttribute> customAttributes = new ArrayList<GluuCustomAttribute>();
-			List<GluuAttribute> attributes = attributeService.getAllPersonAttributes(GluuUserRole.ADMIN);
-			HashMap<String, GluuAttribute> attributesByDNs = attributeService.getAttributeMapByDNs(attributes);
-			List<String> customAttributeDNs = new ArrayList<String>();
-			List<String> attributeNames = new ArrayList<String>();
-
-			for (String attributeName : appConfiguration.getGluuSpAttributes()) {
-				GluuAttribute attribute = attributeService.getAttributeByName(attributeName, attributes);
-				if (attribute != null) {
-					customAttributeDNs.add(attribute.getDn());
-				}
-			}
-
-			customAttributes
-					.addAll(attributeService.getCustomAttributesByAttributeDNs(customAttributeDNs, attributesByDNs));
-			gluuSP.setReleasedCustomAttributes(customAttributes);
-			gluuSP.setReleasedAttributes(attributeNames);
-			trustService.updateReleasedAttributes(gluuSP);
-			trustService.addTrustRelationship(gluuSP);
-
-			GluuConfiguration configuration = configurationService.getConfiguration();
-			configuration.setGluuSPTR(gluuSP.getInum());
-			configurationService.updateConfiguration(configuration);
-		}
-
-		if (result) {
-			log.warn("gluuSP EntityID set to " + StringHelper.removePunctuation(gluuSP.getInum())
-					+ ". Shibboleth3 configuration should be updated.");
-		} else {
-			log.error("IDP configuration update failed. GluuSP was not generated.");
-		}
-	}
-
-	/**
->>>>>>> e5248513a... Store IDP/SP files in configurable document store #1939:server/src/main/java/org/gluu/oxtrust/ldap/service/Shibboleth3ConfService.java
 	 * Analyzes trustRelationship metadata to find out if it is federation.
 	 * 
 	 * @author �Oleksiy Tataryn�
@@ -1387,8 +1314,6 @@ public class Shibboleth3ConfService implements Serializable {
 			}
 		}
 	}
-<<<<<<< HEAD:service/src/main/java/org/gluu/oxtrust/service/Shibboleth3ConfService.java
-=======
 
 	public boolean existsSpMetadataFilePath(String filePath) {
 		return documentStoreService.hasDocument(filePath);
