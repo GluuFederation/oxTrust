@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Properties;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -233,25 +234,25 @@ public class ConfigurationService implements Serializable {
 			}
 		}
 	}
-	
-	
+
 	public String getVersion() {
-		String version  = getClass().getPackage().getImplementationVersion();
-    	if (version==null) {
-    	    Properties prop = new Properties();
-    	    try (InputStream is = getClass().getResourceAsStream("/META-INF/MANIFEST.MF")) {
-    	        prop.load(is);
-    	        version = prop.getProperty("Implementation-Version");
-    	    } catch (IOException e) {
-    	        log.error(e.toString());
-    	    }
-    	}
-    	log.info("Starting App version "+version);
-    	if(version != null){
-    		version = version.replace("-SNAPSHOT","");
-    		return version;
-    	}    		
-       	return "";
+		String version = getClass().getPackage().getImplementationVersion();
+		if (version == null) {
+			Properties prop = new Properties();
+			try (InputStream is = FacesContext.getCurrentInstance().getExternalContext()
+					.getResourceAsStream("/META-INF/MANIFEST.MF")) {
+				prop.load(is);
+				version = prop.getProperty("Implementation-Version");
+			} catch (IOException e) {
+				log.error(e.toString());
+			}
+		}
+		log.info("Starting App version " + version);
+		if (version != null) {
+			version = version.replace("-SNAPSHOT", "");
+			return version;
+		}
+		return "";
 	}
 
 	private String buildDn(String uniqueIdentifier, Date creationDate, ApplicationType applicationType) {

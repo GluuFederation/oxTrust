@@ -26,17 +26,17 @@
 			</resource>
 		</resources>
 
-        <testResources>
-            <testResource>
-                <directory>src/test/resources</directory>
-                <filtering>true</filtering>
-                <includes>
-                    <include>**/*.xml</include>
-                    <include>**/services/*</include>
-                    <include>**/*.properties</include>
-                </includes>
-            </testResource>
-        </testResources>
+		<testResources>
+			<testResource>
+				<directory>src/test/resources</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>**/*.xml</include>
+					<include>**/services/*</include>
+					<include>**/*.properties</include>
+				</includes>
+			</testResource>
+		</testResources>
 
 		<plugins>
 			<plugin>
@@ -59,15 +59,15 @@
 			<groupId>org.gluu</groupId>
 			<artifactId>oxcore-persistence-ldap</artifactId>
 		</dependency>
-        <dependency>
-            <groupId>org.gluu</groupId>
-            <artifactId>oxcore-persistence-couchbase</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>oxcore-persistence-hybrid</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+		<dependency>
+			<groupId>org.gluu</groupId>
+			<artifactId>oxcore-persistence-couchbase</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>oxcore-persistence-hybrid</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>org.gluu</groupId>
 			<artifactId>oxcore-util</artifactId>
@@ -115,6 +115,10 @@
 			<artifactId>javax.inject</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>org.glassfish</groupId>
+			<artifactId>javax.faces</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>javax.validation</groupId>
 			<artifactId>validation-api</artifactId>
 		</dependency>
@@ -144,7 +148,7 @@
 			<groupId>net.jodah</groupId>
 			<artifactId>expiringmap</artifactId>
 		</dependency>
-		
+
 		<!-- SAML -->
 		<dependency>
 			<groupId>org.opensaml</groupId>
@@ -158,12 +162,12 @@
 		</dependency>
 
 		<!-- Google Guava -->
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-        </dependency>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+		</dependency>
 
-        <!-- Quartz -->
+		<!-- Quartz -->
 		<dependency>
 			<groupId>org.quartz-scheduler</groupId>
 			<artifactId>quartz</artifactId>
