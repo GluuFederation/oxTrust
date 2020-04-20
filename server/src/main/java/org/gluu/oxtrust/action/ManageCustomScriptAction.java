@@ -39,7 +39,6 @@ import org.gluu.model.custom.script.model.auth.AuthenticationCustomScript;
 import org.gluu.oxtrust.model.SimpleCustomPropertiesListModel;
 import org.gluu.oxtrust.model.SimplePropertiesListModel;
 import org.gluu.oxtrust.service.ConfigurationService;
-import org.gluu.oxtrust.service.OrganizationService;
 import org.gluu.oxtrust.service.SamlAcrService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.service.custom.script.AbstractCustomScriptService;
@@ -123,14 +122,10 @@ public class ManageCustomScriptAction
 		} catch (Exception ex) {
 			log.error("Failed to load custom scripts ", ex);
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to load custom scripts");
-
 			conversationService.endConversation();
-
 			return OxTrustConstants.RESULT_FAILURE;
 		}
-
 		this.initialized = true;
-
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
@@ -142,7 +137,6 @@ public class ManageCustomScriptAction
 			for (Entry<CustomScriptType, List<CustomScript>> customScriptsByType : this.customScriptsByTypes
 					.entrySet()) {
 				List<CustomScript> customScripts = customScriptsByType.getValue();
-
 				for (CustomScript customScript : customScripts) {
 					String configId = customScript.getName();
 					if (StringHelper.equalsIgnoreCase(configId, OxConstants.SCRIPT_TYPE_INTERNAL_RESERVED_NAME)) {

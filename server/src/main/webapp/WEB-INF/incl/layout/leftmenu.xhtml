@@ -65,14 +65,31 @@
 											<i class="fa fa-chevron-right"
 												style="float: left; margin-top: 2px;"></i>
 										</h:commandLink></li>
-									<li id="subMenuLinkConfiguration4"><h:commandLink
-											value="#{msg['leftmenu.manageCustomScripts']}"
-											onclick="lock();" ondbclick="lock();" oncomplete="unlock();"
-											action="#{menuAction.endConversation('/script/manageCustomScript.xhtml')}"
-											rendered="#{permissionService.hasPermission('configuration', 'access')}">
-											<i class="fa fa-chevron-right"
-												style="float: left; margin-top: 2px;"></i>
-										</h:commandLink></li>
+
+									<li class="treeview" id="subMenuLinkConfiguration4"><a
+										href="#"> <i class="fa fa-chevron-right"></i> <span>#{msg['leftmenu.manageCustomScripts']}</span>
+											<i class="fa fa-angle-left pull-down"></i>
+									</a>
+										<ul class="treeview-menu" id="subMenuPersonAuthScripts">
+											<li id="menuPersonAuthScript"><h:commandLink
+													value="Authentication Scripts"
+													onclick="lock();" ondbclick="lock();"
+													oncomplete="unlock();"
+													action="#{menuAction.endConversation('/script/manageAuthScript.xhtml')}"
+													rendered="#{permissionService.hasPermission('passport', 'access') and productInstallationCheckerAction.canShowPassPassport()}">
+													<i class="fa fa-chevron-right"
+														style="float: left; margin-top: 2px;"></i>
+												</h:commandLink></li>
+											<li id="menuOtherAuthScript"><h:commandLink
+													value="Others Scripts"
+													onclick="lock();" ondbclick="lock();"
+													oncomplete="unlock();"
+													action="#{menuAction.endConversation('/script/manageOtherScript.xhtml')}"
+													rendered="#{permissionService.hasPermission('passport', 'access') and productInstallationCheckerAction.canShowPassPassport()}">
+													<i class="fa fa-chevron-right"
+														style="float: left; margin-top: 2px;"></i>
+												</h:commandLink></li>
+										</ul></li>
 									<li id="subMenuLinkConfiguration5"><h:commandLink
 											value="#{msg['leftmenu.manageRegistration']}"
 											onclick="lock();" ondbclick="lock();" oncomplete="unlock();"
@@ -443,10 +460,18 @@
 							}
 
 							if (window.location.href
-									.indexOf("script/manageCustomScript") != -1) {
+									.indexOf("script/manageAuthScript") != -1) {
 								$('#subMenuConfiguration').css('display',
 										'block');
-								$('#menuConfiguration').addClass('active');
+								$('#menuPersonAuthScript').addClass('active');
+								$('#subMenuLinkConfiguration4').addClass(
+										'active');
+							}
+							if (window.location.href
+									.indexOf("script/manageOtherScript") != -1) {
+								$('#subMenuConfiguration').css('display',
+										'block');
+								$('#menuOtherAuthScript').addClass('active');
 								$('#subMenuLinkConfiguration4').addClass(
 										'active');
 							}
@@ -675,13 +700,12 @@
 								$('#subMenuRadius').css('display', 'block');
 								$('#menuRadiusConfig').addClass('active');
 							}
-							
+
 							if (window.location.href
 									.indexOf("radius/radiusClientInventory") != -1) {
 								$('#subMenuRadius').css('display', 'block');
 								$('#menuRadiusClients').addClass('active');
 							}
-
 
 							if (window.location.href.indexOf("person/add") != -1) {
 								$('#subMenuUsers').css('display', 'block');
