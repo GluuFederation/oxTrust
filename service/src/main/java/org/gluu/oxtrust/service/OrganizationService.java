@@ -11,8 +11,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Priority;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.config.oxtrust.LdapOxAuthConfiguration;
@@ -36,6 +38,8 @@ import org.slf4j.Logger;
  * @author Yuriy Movchan Date: 11.02.2010
  */
 @ApplicationScoped
+@Priority(value=5)
+@Named("organizationService")
 public class OrganizationService  extends org.gluu.service.OrganizationService{
 
 	private static final long serialVersionUID = -1959146007518514678L;
@@ -90,6 +94,13 @@ public class OrganizationService  extends org.gluu.service.OrganizationService{
 		}
 
 		return organization;
+	}
+	
+	public String getOrgName() {
+		log.info("#######################################");
+		String name=getOrganization().getDisplayName();
+		log.info("=============result========:"+name);
+		return name;
 	}
 
 	public String getDnForOrganization() {
