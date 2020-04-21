@@ -172,6 +172,9 @@ public class ManageCustomScriptAction
 							&& (customScript.getModuleProperties().size() == 0)) {
 						customScript.setModuleProperties(null);
 					}
+					if (ScriptLocationType.FILE == customScript.getLocationType()) {
+						customScript.setScript(null);
+					}
 					updatedInums.add(customScriptId);
 					if (update) {
 						customScriptService.update(customScript);
