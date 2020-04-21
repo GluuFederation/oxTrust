@@ -38,23 +38,23 @@ import org.slf4j.Logger;
  * @author Yuriy Movchan Date: 11.02.2010
  */
 @ApplicationScoped
-@Priority(value=5)
+@Priority(value = 5)
 @Named("organizationService")
-public class OrganizationService  extends org.gluu.service.OrganizationService{
+public class OrganizationService extends org.gluu.service.OrganizationService {
 
 	private static final long serialVersionUID = -1959146007518514678L;
 
 	@Inject
-    private Logger log;
+	private Logger log;
 
-    @Inject
-    private PersistenceEntryManager persistenceEntryManager;
+	@Inject
+	private PersistenceEntryManager persistenceEntryManager;
 
 	@Inject
 	private CacheService cacheService;
 
-    @Inject
-    private LocalCacheService localCacheService;
+	@Inject
+	private LocalCacheService localCacheService;
 
 	@Inject
 	private AppConfiguration appConfiguration;
@@ -67,9 +67,9 @@ public class OrganizationService  extends org.gluu.service.OrganizationService{
 	 */
 	public void updateOrganization(GluuOrganization organization) {
 		persistenceEntryManager.merge(organization);
-        
+
 	}
-	
+
 	/**
 	 * Check if LDAP server contains organization with specified attributes
 	 * 
@@ -85,22 +85,19 @@ public class OrganizationService  extends org.gluu.service.OrganizationService{
 	 * @return Organization
 	 */
 	public GluuOrganization getOrganization() {
-    	BaseCacheService usedCacheService = getCacheService();
-        String key = getDnForOrganization();
-        GluuOrganization organization = (GluuOrganization) usedCacheService.get(key);
-        if (organization == null) {
+		BaseCacheService usedCacheService = getCacheService();
+		String key = getDnForOrganization();
+		GluuOrganization organization = (GluuOrganization) usedCacheService.get(key);
+		if (organization == null) {
 			organization = persistenceEntryManager.find(GluuOrganization.class, key);
 			usedCacheService.put(key, organization);
 		}
 
 		return organization;
 	}
-	
+
 	public String getOrgName() {
-		log.info("#######################################");
-		String name=getOrganization().getDisplayName();
-		log.info("=============result========:"+name);
-		return name;
+		return getOrganization().getDisplayName();
 	}
 
 	public String getDnForOrganization() {
@@ -115,9 +112,9 @@ public class OrganizationService  extends org.gluu.service.OrganizationService{
 	 * @return custom message
 	 */
 	public String getOrganizationCustomMessage(String customMessageId) {
-    	BaseCacheService usedCacheService = getCacheService();
+		BaseCacheService usedCacheService = getCacheService();
 
-    	GluuOrganization organization = getOrganization();
+		GluuOrganization organization = getOrganization();
 
 		String key = OxTrustConstants.CACHE_ORGANIZATION_CUSTOM_MESSAGE_KEY;
 		@SuppressWarnings("unchecked")
@@ -171,14 +168,14 @@ public class OrganizationService  extends org.gluu.service.OrganizationService{
 	public String getBaseDn() {
 		return appConfiguration.getBaseDN();
 	}
-	
+
 	public boolean isAllowPersonModification() {
 		return appConfiguration.isAllowPersonModification(); // todo &&
-																		// configurationService.getConfiguration().getManageIdentityPermission()
-																		// !=
-																		// null
-																		// &&
-																		// configurationService.getConfiguration().getProfileManagment().isBooleanValue();
+																// configurationService.getConfiguration().getManageIdentityPermission()
+																// !=
+																// null
+																// &&
+																// configurationService.getConfiguration().getProfileManagment().isBooleanValue();
 	}
 
 	public GluuBoolean[] getBooleanSelectionTypes() {
@@ -196,7 +193,7 @@ public class OrganizationService  extends org.gluu.service.OrganizationService{
 	public ProgrammingLanguage[] getProgrammingLanguageTypes() {
 		return new ProgrammingLanguage[] { ProgrammingLanguage.PYTHON, ProgrammingLanguage.JAVA_SCRIPT };
 	}
-	
+
 	public LdapOxAuthConfiguration getOxAuthSetting(String configurationDn) {
 		LdapOxAuthConfiguration ldapOxAuthConfiguration = null;
 		try {
@@ -214,12 +211,12 @@ public class OrganizationService  extends org.gluu.service.OrganizationService{
 		persistenceEntryManager.merge(ldapOxAuthConfiguration);
 	}
 
-    private BaseCacheService getCacheService() {
-    	if (appConfiguration.getUseLocalCache()) {
-    		return localCacheService;
-    	}
-    	
-    	return cacheService;
-    }
+	private BaseCacheService getCacheService() {
+		if (appConfiguration.getUseLocalCache()) {
+			return localCacheService;
+		}
+
+		return cacheService;
+	}
 
 }

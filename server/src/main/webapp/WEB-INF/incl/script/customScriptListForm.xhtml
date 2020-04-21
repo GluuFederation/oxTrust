@@ -55,7 +55,7 @@
 				collapsible="false">
 				<rich:tabPanel switchType="ajax" id="scriptTypeTabPanelId"
 					style="overflow-x:auto !important;">
-					<a4j:repeat value="#{configurationService.customScriptTypes}"
+					<a4j:repeat value="#{_action.getScriptType()}"
 						var="_scriptType">
 						<ui:param name="_customScripts"
 							value="#{_action.customScriptsByTypes[_scriptType]}" />
@@ -130,7 +130,7 @@
 																value="#{_customScript.aliases}" var="t"
 																filter="true" showCheckbox="true">
 																<f:selectItems
-																	value="#{manageCustomScriptAction.allAcrs}" var="acr"
+																	value="#{_action.allAcrs}" var="acr"
 																	itemLabel="#{acr}" itemValue="#{acr}" />
 																<p:column>
 																	<h:outputText value="#{t}" />
@@ -269,7 +269,7 @@
 													<hr></hr>
 													<ox:acceptRemovalDialog id="deleteConfirmation"
 														subject="Script" value="#{_customScript.name}"
-														deleteMethod="#{manageCustomScriptAction.removeCustomScript(_customScript)}"
+														deleteMethod="#{_action.removeCustomScript(_customScript)}"
 														render="customScriptTypeId" />
 												</h:panelGroup>
 											</h:panelGroup>
