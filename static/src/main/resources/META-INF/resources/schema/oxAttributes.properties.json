@@ -34,6 +34,17 @@
                "type": "string",
                "minLength": 1
            }
+       },
+       "additionalAudience": {
+           "id":"additionalAudience",
+           "type": "array",
+           "minItems": 0,
+           "uniqueItems": true,
+           "additionalItems": true,
+           "items": {
+               "type": "string",
+               "minLength": 1
+           }
        }
     }
 }
