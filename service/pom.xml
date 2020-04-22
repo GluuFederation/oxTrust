@@ -78,14 +78,6 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-		    <groupId>org.gluu</groupId>
-		    <artifactId>security-extension-cdi</artifactId>
-		</dependency>
-		<dependency>
-		    <groupId>org.gluu</groupId>
-		    <artifactId>exception-extension-cdi</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>oxcore-radius</artifactId>
 			<version>${project.version}</version>
