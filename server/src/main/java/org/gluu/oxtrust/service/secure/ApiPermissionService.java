@@ -3,7 +3,7 @@
  *
  * Copyright (c) 2018, Gluu
  */
-package org.gluu.oxtrust.auth.uma.annotations;
+package org.gluu.oxtrust.service.secure;
 
 import java.io.Serializable;
 
