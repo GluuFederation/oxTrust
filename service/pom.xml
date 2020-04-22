@@ -80,12 +80,10 @@
 		<dependency>
 		    <groupId>org.gluu</groupId>
 		    <artifactId>security-extension-cdi</artifactId>
-		    <version>${project.version}</version>
 		</dependency>
 		<dependency>
 		    <groupId>org.gluu</groupId>
 		    <artifactId>exception-extension-cdi</artifactId>
-		    <version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
