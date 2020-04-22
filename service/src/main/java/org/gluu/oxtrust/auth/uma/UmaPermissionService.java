@@ -102,8 +102,8 @@ public class UmaPermissionService implements Serializable {
 					this.rptStatusService = UmaClientFactory.instance().createRptStatusService(this.umaMetadata);
 				}
 			}
-		} catch (Exception e) {
-			log.info(e.getMessage(), e);
+		} catch (Exception ex) {
+			log.error("Failed to initialize UmaPermissionService", ex);
 		}
 	}
 
