@@ -6,12 +6,18 @@
 package org.gluu.oxtrust.service.filter;
 
 import java.io.IOException;
+import java.lang.annotation.Annotation;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Priority;
 import javax.enterprise.context.RequestScoped;
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.spi.Bean;
+import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 import javax.ws.rs.Priorities;
 import javax.ws.rs.container.ContainerRequestContext;
@@ -24,7 +30,6 @@ import javax.ws.rs.ext.Provider;
 
 import org.gluu.oxtrust.auth.uma.BaseUmaProtectionService;
 import org.gluu.oxtrust.auth.uma.BindingUrls;
-import org.jboss.weld.inject.WeldInstance;
 import org.slf4j.Logger;
 
 /**
@@ -53,7 +58,10 @@ public class AuthorizationProcessingFilter implements ContainerRequestFilter {
 	private ResourceInfo resourceInfo;
 
 	@Inject
-	private WeldInstance<BaseUmaProtectionService> protectionServiceInstance;
+	private Instance<BaseUmaProtectionService> protectionServiceInstance;
+	
+	@Inject
+	private BeanManager beanManager;
 
 	private Map<String, Class<BaseUmaProtectionService>> protectionMapping;
 
@@ -102,12 +110,13 @@ public class AuthorizationProcessingFilter implements ContainerRequestFilter {
 	@PostConstruct
 	private void init() {
 		protectionMapping = new HashMap<String, Class<BaseUmaProtectionService>>();
-		for (WeldInstance.Handler<BaseUmaProtectionService> handler : protectionServiceInstance.handlers()) {
-			Class<BaseUmaProtectionService> beanClass = (Class<BaseUmaProtectionService>) handler.getBean()
-					.getBeanClass();
-			BindingUrls annotation = beanClass.getAnnotation(BindingUrls.class);
-			if (annotation != null) {
-				for (String pattern : annotation.value()) {
+		Set<Bean<?>> beans = beanManager.getBeans(BaseUmaProtectionService.class, Any.Literal.INSTANCE);
+		
+		for (Bean bean : beans) {
+			Class beanClass = bean.getBeanClass();
+			Annotation beanAnnotation = beanClass.getAnnotation(BindingUrls.class);
+			if (beanAnnotation != null) {
+				for (String pattern : ((BindingUrls) beanAnnotation).value()) {
 					if (pattern.length() > 0) {
 						protectionMapping.put(pattern, beanClass);
 					}
