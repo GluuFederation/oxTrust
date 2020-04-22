@@ -11,6 +11,7 @@ import javax.inject.Named;
 import javax.interceptor.Interceptor;
 
 import org.gluu.oxtrust.model.GluuCustomPerson;
+import org.gluu.service.security.Secure;
 
 @Alternative
 @Priority(Interceptor.Priority.APPLICATION + 20)
@@ -70,6 +71,11 @@ public class Identity extends org.gluu.model.security.Identity {
         this.sessionMap = new HashMap<String, Object>();
         this.oauthData = new OauthData();
         this.savedRequestUri = null;
+    }
+
+    @Secure("#{identity.loggedIn}")
+    public boolean checkLoggedIn() {
+        return isLoggedIn();
     }
 
 }
