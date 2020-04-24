@@ -70,6 +70,8 @@ public class UmaPermissionService implements Serializable {
 	private final Pair<Boolean, Response> authenticationFailure = new Pair<Boolean, Response>(false, null);
 	private final Pair<Boolean, Response> authenticationSuccess = new Pair<Boolean, Response>(true, null);
 
+	private ApacheHttpClient4Engine clientHttpEngine;
+
 	@PostConstruct
 	public void init() {
 		try {
@@ -89,7 +91,7 @@ public class UmaPermissionService implements Serializable {
 							.setDefaultRequestConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build())
 							.setKeepAliveStrategy(connectionKeepAliveStrategy).setConnectionManager(connectionManager)
 							.build();
-					ClientHttpEngine clientHttpEngine = new ApacheHttpClient4Engine(client);
+					this.clientHttpEngine = new ApacheHttpClient4Engine(client);
 					log.info("##### Initializing custom ClientExecutor DONE");
 
 					this.permissionService = UmaClientFactory.instance().createPermissionService(this.umaMetadata,
@@ -116,9 +118,17 @@ public class UmaPermissionService implements Serializable {
 			return null;
 		}
 
-		UmaMetadataService metaDataConfigurationService = UmaClientFactory.instance()
-				.createMetadataService(umaConfigurationEndpoint);
+		log.info("##### Getting UMA metadata ...");
+		UmaMetadataService metaDataConfigurationService;
+		if (this.clientHttpEngine == null) {
+			metaDataConfigurationService = UmaClientFactory.instance().createMetadataService(umaConfigurationEndpoint);
+		} else {
+			metaDataConfigurationService = UmaClientFactory.instance().createMetadataService(umaConfigurationEndpoint,
+					this.clientHttpEngine);
+		}
 		UmaMetadata metadataConfiguration = metaDataConfigurationService.getMetadata();
+
+		log.info("##### Getting UMA metadata ... DONE");
 
 		if (metadataConfiguration == null) {
 			throw new OxIntializationException("UMA meta data configuration is invalid!");
