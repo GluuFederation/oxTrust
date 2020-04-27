@@ -12,76 +12,55 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
-    <!-- For the equivalent to the V2 setting of "conditional" in the legacy configuration format -->
-    <bean id="SignNoIntegrity" class="org.opensaml.profile.logic.NoIntegrityMessageChannelPredicate" />
-    <bean id="EncryptNoConfidentiality" class="org.opensaml.profile.logic.NoConfidentialityMessageChannelPredicate" />
-
-    <bean id="shibboleth.UnverifiedRelyingParty" parent="RelyingParty" />
-
-    <bean id="shibboleth.DefaultRelyingParty" parent="RelyingParty">
+    <!--
+    Unverified RP configuration, defaults to no support for any profiles. Add <ref> elements to the list
+    to enable specific default profile settings (as below), or create new beans inline to override defaults.
+    
+    "Unverified" typically means the IdP has no metadata, or equivalent way of assuring the identity and
+    legitimacy of a requesting system. To run an "open" IdP, you can enable profiles here.
+    -->
+    <bean id="shibboleth.UnverifiedRelyingParty" parent="RelyingParty">
         <property name="profileConfigurations">
             <list>
-
-                <bean parent="SAML2.SSO"
-                      p:includeAttributeStatement="true"
-                      p:assertionLifetime="PT5M"
-                      p:signResponses-ref="SignNoIntegrity"
-                      p:signAssertions="false"
-                      p:encryptNameIDs="false"
-                      p:encryptAssertions-ref="EncryptNoConfidentiality" />
-
-                <bean parent="SAML2.ECP"
-                      p:includeAttributeStatement="true"
-                      p:assertionLifetime="PT5M"
-                      p:signResponses-ref="SignNoIntegrity"
-                      p:signAssertions="false"
-                      p:encryptNameIDs="false"
-                      p:encryptAssertions-ref="EncryptNoConfidentiality" />
-
-                <bean parent="SAML2.AttributeQuery"
-                      p:assertionLifetime="PT5M"
-                      p:signResponses-ref="SignNoIntegrity"
-                      p:signAssertions="false"
-                      p:encryptNameIDs="false"
-                      p:encryptAssertions-ref="EncryptNoConfidentiality" />
-
-                <bean parent="SAML2.ArtifactResolution"
-                      p:signResponses-ref="SignNoIntegrity"
-                      p:signAssertions="false"
-                      p:encryptNameIDs="false"
-                      p:encryptAssertions-ref="EncryptNoConfidentiality" />
-
-                <bean parent="Shibboleth.SSO"
-                      p:includeAttributeStatement="false"
-                      p:assertionLifetime="PT5M"
-                      p:signResponses-ref="SignNoIntegrity"
-                      p:signAssertions="false" />
-
-                <bean parent="SAML2.Logout"
-                      p:assertionLifetime="PT5M"
-                      p:signResponses-ref="SignNoIntegrity"
-                      p:signAssertions="false"
-                      p:encryptAssertions-ref="EncryptNoConfidentiality" />
-
-                #if ($casParams.enabled)
-                <ref bean="CAS.LoginConfiguration" />
-                <ref bean="CAS.ProxyConfiguration" />
-                <ref bean="CAS.ValidateConfiguration" />
-                #end
+            <!-- <bean parent="SAML2.SSO" p:encryptAssertions="false" /> -->
             </list>
         </property>
     </bean>
 
+    <!--
+    Default configuration, with default settings applied for all profiles, and enables
+    the attribute-release consent flow.
+    -->
+    <bean id="shibboleth.DefaultRelyingParty" parent="RelyingParty">
+        <property name="profileConfigurations">
+            <list>
+                <!-- SAML 1.1 and SAML 2.0 AttributeQuery are disabled by default. -->
+                <!--
+                <bean parent="Shibboleth.SSO" p:postAuthenticationFlows="attribute-release" />
+                <ref bean="SAML1.AttributeQuery" />
+                <ref bean="SAML1.ArtifactResolution" />
+                -->
+                <ref bean="SAML2.SSO" />
+                <ref bean="SAML2.ECP" />
+                <ref bean="SAML2.Logout" />
+                <ref bean="SAML2.AttributeQuery" />
+                <ref bean="SAML2.ArtifactResolution" />
+                <ref bean="Shibboleth.SSO" />
+                <ref bean="Liberty.SSOS" />
+            </list>
+        </property>
+    </bean>
+	
     <!-- Container for any overrides you want to add. -->
     <util:list id="shibboleth.RelyingPartyOverrides">
         <!--
         Override example that identifies a single RP by name and configures it
         for SAML 2 SSO without encryption. This is a common "vendor" scenario.
         -->
-        
+
 #foreach( $trustRelationship in $trustParams.trusts )
-    
-    	<!-- TrustRelationship -->
+
+        <!-- TrustRelationship -->
         #set ($profileConfigMap = $trustRelationship.profileConfigurations)
         <!--#if(!$profileConfigMap.isEmpty())-->
 
@@ -133,7 +112,7 @@
                         #end
                         #if($profileConfig.signingCredentialRef)
                           p:signingCredentialRef="$profileConfig.signingCredentialRef"
-                        #end 
+                        #end
                         #if($profileConfig.nameIDFormatPrecedence != '')
                           p:nameIDFormatPrecedence="$profileConfig.nameIDFormatPrecedence"
                         #end >
@@ -349,3 +328,4 @@
     </util:list>
 
 </beans>
+
