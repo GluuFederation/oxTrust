@@ -7,8 +7,8 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -37,10 +37,10 @@ import org.gluu.oxauth.model.uma.UmaMetadata;
 import org.gluu.oxauth.model.uma.UmaPermission;
 import org.gluu.oxauth.model.uma.UmaPermissionList;
 import org.gluu.oxauth.model.uma.wrapper.Token;
+import org.gluu.service.cdi.event.ApplicationInitialized;
+import org.gluu.service.cdi.event.ApplicationInitializedEvent;
 import org.gluu.util.Pair;
 import org.gluu.util.StringHelper;
-import org.jboss.resteasy.client.core.executors.ApacheHttpClient4Executor;
-import org.jboss.resteasy.client.jaxrs.ClientHttpEngine;
 import org.jboss.resteasy.client.jaxrs.engines.ApacheHttpClient4Engine;
 import org.slf4j.Logger;
 
@@ -72,8 +72,7 @@ public class UmaPermissionService implements Serializable {
 
 	private ApacheHttpClient4Engine clientHttpEngine;
 
-	@PostConstruct
-	public void init() {
+	public void init(@Observes @ApplicationInitialized(ApplicationScoped.class) ApplicationInitializedEvent init) {
 		try {
 			if (this.umaMetadata != null) {
 				if (appConfiguration.isRptConnectionPoolUseConnectionPooling()) {

@@ -16,6 +16,7 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.BeforeDestroyed;
 import javax.enterprise.context.Initialized;
+import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Produces;
@@ -39,6 +40,8 @@ import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.ldap.impl.LdapEntryManager;
 import org.gluu.persist.model.PersistenceConfiguration;
 import org.gluu.service.PythonService;
+import org.gluu.service.cdi.event.ApplicationInitialized;
+import org.gluu.service.cdi.event.ApplicationInitializedEvent;
 import org.gluu.service.cdi.event.LdapConfigurationReload;
 import org.gluu.service.cdi.util.CdiUtil;
 import org.gluu.service.custom.lib.CustomLibrariesLoader;
@@ -153,6 +156,9 @@ public class AppInitializer {
 	@Inject
 	private CleanerTimer cleanerTimer;
 
+	@Inject
+	private Event<ApplicationInitializedEvent> eventApplicationInitialized;
+
 	@PostConstruct
 	public void createApplicationComponents() {
 		SecurityProviderUtility.installBCProvider();
@@ -208,6 +214,10 @@ public class AppInitializer {
 		statusCheckerTimer.initTimer();
 		logFileSizeChecker.initTimer();
 		updateChecker.initTimer();
+
+		// Notify other components/plugins about finish application initialization
+		eventApplicationInitialized.select(ApplicationInitialized.Literal.APPLICATION)
+				.fire(new ApplicationInitializedEvent());
 	}
 
 	protected void initSchedulerService() {
