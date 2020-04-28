@@ -7,7 +7,6 @@
 package org.gluu.oxtrust.action;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -51,8 +50,8 @@ import org.gluu.persist.exception.EntryPersistenceException;
 import org.gluu.persist.model.AttributeData;
 import org.gluu.service.security.Secure;
 import org.gluu.util.StringHelper;
-import org.richfaces.event.FileUploadEvent;
-import org.richfaces.model.UploadedFile;
+import org.primefaces.event.FileUploadEvent;
+import org.primefaces.model.file.UploadedFile;
 import org.slf4j.Logger;
 
 /**
@@ -114,8 +113,7 @@ public class PersonImportAction implements Serializable {
 
 	@Inject
 	private OxTrustAuditService oxTrustAuditService;
-
-	private UploadedFile uploadedFile;
+	private UploadedFile file;
 	private FileDataToImport fileDataToImport;
 	private List<GluuAttribute> attributes;
 	private Map<String, GluuAttribute> attributesDisplayNameMap;
@@ -172,10 +170,10 @@ public class PersonImportAction implements Serializable {
 	public String validateFileToImport() {
 		try {
 			removeFileDataToImport();
-			if (uploadedFile == null) {
+			if (file == null) {
 				return OxTrustConstants.RESULT_FAILURE;
 			}
-			if (uploadedFile.getName().contains(">") || uploadedFile.getName().contains("<")) {
+			if (file.getFileName().contains(">") || file.getFileName().contains("<")) {
 				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Bad file.");
 				return OxTrustConstants.RESULT_FAILURE;
 			}
@@ -187,7 +185,7 @@ public class PersonImportAction implements Serializable {
 			}
 			this.fileDataToImport.setTable(table);
 			if (table != null) {
-				this.fileDataToImport.setFileName(FilenameUtils.getName(uploadedFile.getName()));
+				this.fileDataToImport.setFileName(FilenameUtils.getName(file.getFileName()));
 				this.fileDataToImport.setImportAttributes(getAttributesForImport(table));
 				this.fileDataToImport.setReady(true);
 			}
@@ -202,14 +200,14 @@ public class PersonImportAction implements Serializable {
 			return OxTrustConstants.RESULT_SUCCESS;
 		} catch (Exception e) {
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Invalid file content");
-			log.error(e.getMessage());
+			log.error("", e);
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 
 	}
 
 	public String cancel() {
-		boolean cancel = this.uploadedFile != null;
+		boolean cancel = this.file != null;
 		destroy();
 
 		if (cancel) {
@@ -227,10 +225,6 @@ public class PersonImportAction implements Serializable {
 		removeFileToImport();
 	}
 
-	public UploadedFile getUploadedFile() {
-		return uploadedFile;
-	}
-
 	public FileDataToImport getFileDataToImport() {
 		return this.fileDataToImport;
 	}
@@ -239,22 +233,16 @@ public class PersonImportAction implements Serializable {
 		this.fileDataToImport.reset();
 	}
 
-	public void uploadFile(FileUploadEvent event) {
-		removeFileToImport();
-
-		this.uploadedFile = event.getUploadedFile();
-		this.fileData = this.uploadedFile.getData();
+	public void handleFileUpload(FileUploadEvent event) {
+		this.file = null;
+		this.fileDataToImport.reset();
+		this.file = event.getFile();
+		this.fileData = this.file.getContent();
 	}
 
 	public void removeFileToImport() {
-		if (uploadedFile != null) {
-			try {
-				uploadedFile.delete();
-			} catch (IOException ex) {
-				log.error("Failed to remove temporary file", ex);
-			}
-
-			this.uploadedFile = null;
+		if (file != null) {
+			this.file = null;
 		}
 		removeFileDataToImport();
 	}
@@ -598,6 +586,14 @@ public class PersonImportAction implements Serializable {
 		this.person = new GluuCustomPerson();
 		initAttributes();
 		return OxTrustConstants.RESULT_SUCCESS;
+	}
+
+	public org.primefaces.model.file.UploadedFile getFile() {
+		return file;
+	}
+
+	public void setFile(org.primefaces.model.file.UploadedFile file) {
+		this.file = file;
 	}
 
 	public static class FileDataToImport implements Serializable {
