@@ -7,8 +7,8 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -37,10 +37,10 @@ import org.gluu.oxauth.model.uma.UmaMetadata;
 import org.gluu.oxauth.model.uma.UmaPermission;
 import org.gluu.oxauth.model.uma.UmaPermissionList;
 import org.gluu.oxauth.model.uma.wrapper.Token;
+import org.gluu.service.cdi.event.ApplicationInitialized;
+import org.gluu.service.cdi.event.ApplicationInitializedEvent;
 import org.gluu.util.Pair;
 import org.gluu.util.StringHelper;
-import org.jboss.resteasy.client.core.executors.ApacheHttpClient4Executor;
-import org.jboss.resteasy.client.jaxrs.ClientHttpEngine;
 import org.jboss.resteasy.client.jaxrs.engines.ApacheHttpClient4Engine;
 import org.slf4j.Logger;
 
@@ -70,8 +70,9 @@ public class UmaPermissionService implements Serializable {
 	private final Pair<Boolean, Response> authenticationFailure = new Pair<Boolean, Response>(false, null);
 	private final Pair<Boolean, Response> authenticationSuccess = new Pair<Boolean, Response>(true, null);
 
-	@PostConstruct
-	public void init() {
+	private ApacheHttpClient4Engine clientHttpEngine;
+
+	public void init(@Observes @ApplicationInitialized(ApplicationScoped.class) ApplicationInitializedEvent init) {
 		try {
 			if (this.umaMetadata != null) {
 				if (appConfiguration.isRptConnectionPoolUseConnectionPooling()) {
@@ -89,7 +90,7 @@ public class UmaPermissionService implements Serializable {
 							.setDefaultRequestConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build())
 							.setKeepAliveStrategy(connectionKeepAliveStrategy).setConnectionManager(connectionManager)
 							.build();
-					ClientHttpEngine clientHttpEngine = new ApacheHttpClient4Engine(client);
+					this.clientHttpEngine = new ApacheHttpClient4Engine(client);
 					log.info("##### Initializing custom ClientExecutor DONE");
 
 					this.permissionService = UmaClientFactory.instance().createPermissionService(this.umaMetadata,
@@ -116,9 +117,17 @@ public class UmaPermissionService implements Serializable {
 			return null;
 		}
 
-		UmaMetadataService metaDataConfigurationService = UmaClientFactory.instance()
-				.createMetadataService(umaConfigurationEndpoint);
+		log.info("##### Getting UMA metadata ...");
+		UmaMetadataService metaDataConfigurationService;
+		if (this.clientHttpEngine == null) {
+			metaDataConfigurationService = UmaClientFactory.instance().createMetadataService(umaConfigurationEndpoint);
+		} else {
+			metaDataConfigurationService = UmaClientFactory.instance().createMetadataService(umaConfigurationEndpoint,
+					this.clientHttpEngine);
+		}
 		UmaMetadata metadataConfiguration = metaDataConfigurationService.getMetadata();
+
+		log.info("##### Getting UMA metadata ... DONE");
 
 		if (metadataConfiguration == null) {
 			throw new OxIntializationException("UMA meta data configuration is invalid!");

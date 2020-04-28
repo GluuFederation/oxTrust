@@ -6,14 +6,11 @@
 
 package org.gluu.oxtrust.model;
 
-import javax.enterprise.context.ApplicationScoped;
-
-import org.gluu.service.cdi.util.CdiUtil;
 import org.gluu.oxtrust.service.FederationService;
 import org.gluu.persist.annotation.AttributeName;
+import org.gluu.service.cdi.util.CdiUtil;
 import org.gluu.util.StringHelper;
 
-@ApplicationScoped
 public class GluuSAMLFederationProposal extends GluuSAMLTrustRelationship {
 
 	private static final long serialVersionUID = 917608495756044798L;

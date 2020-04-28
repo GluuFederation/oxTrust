@@ -67,7 +67,7 @@ public class RelyingPartyAction implements Serializable {
 	private Map<String, FileUploadWrapper> fileWrappers = new HashMap<String, FileUploadWrapper>();
 	private List<String> allAcrs = new ArrayList<>();
 	private List<String> supportedNameIdFormats = new ArrayList<>();
-	private boolean unspecifiedNameIDFormatSupported = false;
+	private boolean unspecifiedNameIDFormatSupported = true;
 
 	@PostConstruct
 	public void init() {
@@ -83,6 +83,7 @@ public class RelyingPartyAction implements Serializable {
 		supportedNameIdFormats.add("urn:oasis:names:tc:SAML:1.1:nameid-format:WindowsDomainQualifiedName");
 		supportedNameIdFormats.add("urn:oasis:names:tc:SAML:2.0:nameid-format:kerberos");
 		supportedNameIdFormats.add("urn:oasis:names:tc:SAML:2.0:nameid-format:entity");
+		supportedNameIdFormats.add(NAMEID_FORMAT_UNSPECIFIED);
 	}
 
 	public List<String> getSupportedNameIdFormats() {
