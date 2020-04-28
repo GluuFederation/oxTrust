@@ -1525,6 +1525,63 @@
                     "RSA-OAEP"
                 ]
             }
+        },
+        "cibaEndUserNotificationConfig": {
+            "id": "cibaEndUserNotificationConfig",
+            "description": "Configuration needed to process CIBA authorization using Firebase integration.",
+            "type": "object",
+            "properties": {
+                "apiKey": {
+                    "id": "apiKey",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "authDomain": {
+                    "id": "authDomain",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "databaseURL": {
+                    "id": "databaseURL",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "projectId": {
+                    "id": "projectId",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "storageBucket": {
+                    "id": "storageBucket",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "messagingSenderId": {
+                    "id": "messagingSenderId",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "appId": {
+                    "id": "appId",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "notificationUrl": {
+                    "id": "notificationUrl",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "notificationKey": {
+                    "id": "notificationKey",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "publicVapidKey": {
+                    "id": "publicVapidKey",
+                    "type": "string",
+                    "minLength": 1
+                }
+            }
         }
     },
     "required": [
@@ -1657,6 +1714,7 @@
         "jmsUserName",
         "jmsPassword",
         "useLocalCache",
-        "jwksAlgorithmsSupported"
+        "jwksAlgorithmsSupported",
+        "cibaEndUserNotificationConfig"
     ]
 }
