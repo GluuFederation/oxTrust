@@ -22,9 +22,8 @@ import org.gluu.oxtrust.service.AttributeService;
 import org.gluu.oxtrust.service.LdifService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.service.security.Secure;
-import org.richfaces.event.FileUploadEvent;
-import org.richfaces.model.UploadedFile;
-import org.slf4j.Logger;
+import org.primefaces.event.FileUploadEvent;
+import org.primefaces.model.file.UploadedFile;
 
 import com.unboundid.ldap.sdk.LDAPException;
 import com.unboundid.ldap.sdk.ResultCode;
@@ -41,9 +40,6 @@ import com.unboundid.ldap.sdk.ResultCode;
 public class AttributeImportAction implements Serializable {
 
 	private static final long serialVersionUID = 8755036208872218664L;
-
-	@Inject
-	private Logger log;
 
 	@Inject
 	private LdifService ldifService;
@@ -139,17 +135,12 @@ public class AttributeImportAction implements Serializable {
 
 	public void uploadFile(FileUploadEvent event) {
 		removeFileToImport();
-		this.uploadedFile = event.getUploadedFile();
-		this.fileData = this.uploadedFile.getData();
+		this.uploadedFile = event.getFile();
+		this.fileData = this.uploadedFile.getContent();
 	}
 
 	public void removeFileToImport() {
 		if (uploadedFile != null) {
-			try {
-				uploadedFile.delete();
-			} catch (IOException ex) {
-				log.error("Failed to remove temporary file", ex);
-			}
 			this.uploadedFile = null;
 		}
 		removeFileDataToImport();
