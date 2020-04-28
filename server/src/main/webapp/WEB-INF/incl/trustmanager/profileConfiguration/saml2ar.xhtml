@@ -56,13 +56,6 @@
                     <f:selectItem itemLabel="#{msg['trustmanager.always']}" itemValue="always" />
                 </h:selectOneMenu>
             </h:panelGrid>
-            <rich:fileUpload id="SAML2ArtifactResolutionWrapperId" fileName="#{_relyingPartyAction.fileWrappers.get('SAML2ArtifactResolution').fileName}"
-                data="#{_relyingPartyAction.fileWrappers.get('SAML2ArtifactResolution').stream}" fileSize="#{_relyingPartyAction.fileWrappers.get('SAML2ArtifactResolution').fileSize}"
-                contentType="#{_relyingPartyAction.fileWrappers.get('SAML2ArtifactResolution').contentType}" maxlength="100"
-                rendered="#{empty _profileConfigurationSelected.profileConfigurationCertFileName}" immediate="true" style="width: 180px;">
-<!--                <a4j:ajax event="complete" action="#{_relyingPartyAction.showFile()}"/> -->
-            </rich:fileUpload>
-
             <h:panelGrid>
                 <h:outputText value="#{_profileConfigurationSelected.profileConfigurationCertFileName}"
                     rendered="#{not empty _profileConfigurationSelected.profileConfigurationCertFileName}" />
