@@ -35,6 +35,8 @@ import org.gluu.persist.model.PersistenceConfiguration;
 import org.gluu.persist.service.PersistanceFactoryService;
 import org.gluu.service.JsonService;
 import org.gluu.service.cdi.async.Asynchronous;
+import org.gluu.service.cdi.event.ApplicationInitialized;
+import org.gluu.service.cdi.event.ApplicationInitializedEvent;
 import org.gluu.service.cdi.event.BaseConfigurationReload;
 import org.gluu.service.cdi.event.ConfigurationEvent;
 import org.gluu.service.cdi.event.ConfigurationUpdate;
@@ -133,8 +135,7 @@ public class ConfigurationFactory {
 	private long loadedRevision = -1;
 	private boolean loadedFromLdap = true;
 
-	@PostConstruct
-	public void init() {
+	public void init(@Observes @ApplicationInitialized(ApplicationScoped.class) ApplicationInitializedEvent init) {
 		this.isActive = new AtomicBoolean(true);
 		try {
 			log.info("Creating oxTrustConfiguration");
