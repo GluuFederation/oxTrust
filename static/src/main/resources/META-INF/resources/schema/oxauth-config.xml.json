@@ -1525,6 +1525,60 @@
                     "RSA-OAEP"
                 ]
             }
+        },
+        "CIBAConfiguration": {
+            "id": "CIBAConfiguration",
+            "description": "CIBA Configuration.",
+            "type": "object",
+            "properties": {
+                "backchannelTokenDeliveryModesSupported": {
+                    "id": "backchannelTokenDeliveryModesSupported",
+                    "description": "Backchannel Token Delivery Modes Supported.",
+                    "type": "array",
+                    "format": "select",
+                    "minItems": 0,
+                    "uniqueItems": true,
+                    "items": {
+                        "type": "string",
+                        "enum": [
+                            "poll",
+                            "ping",
+                            "push"
+                        ]
+                    }
+                },
+                "backchannelAuthenticationRequestSigningAlgValuesSupported": {
+                    "id": "backchannelAuthenticationRequestSigningAlgValuesSupported",
+                    "description": "Backchannel Authentication Request Signing Alg Values Supported.",
+                    "type": "array",
+                    "format": "select",
+                    "minItems": 0,
+                    "uniqueItems": true,
+                    "items": {
+                        "type": "string",
+                        "enum": [
+                            "RS512",
+                            "ES256",
+                            "ES384",
+                            "ES512",
+                            "PS256",
+                            "PS384",
+                            "PS512"
+                        ]
+                    }
+                },
+                "backchannelClientId": {
+                    "id": "backchannelClientId",
+                    "description": "Backchannel Client Id",
+                    "type": "string",
+                    "minLength": 0
+                },
+                "backchannelRedirectUri": {
+                    "id": "backchannelRedirectUri",
+                    "description": "Backchannel Redirect Uri",
+                    "type": "boolean"
+                }
+            }
         }
     },
     "required": [
