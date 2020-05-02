@@ -81,7 +81,7 @@ public class UmaPermissionService implements Serializable {
 					// For more information about PoolingHttpClientConnectionManager, please see:
 					// http://hc.apache.org/httpcomponents-client-ga/httpclient/apidocs/index.html?org/apache/http/impl/conn/PoolingHttpClientConnectionManager.html
 
-					log.info("##### Initializing custom ClientExecutor...");
+					log.debug("##### Initializing custom ClientExecutor...");
 					PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
 					connectionManager.setMaxTotal(appConfiguration.getRptConnectionPoolMaxTotal());
 					connectionManager.setDefaultMaxPerRoute(appConfiguration.getRptConnectionPoolDefaultMaxPerRoute());
@@ -92,7 +92,7 @@ public class UmaPermissionService implements Serializable {
 							.setKeepAliveStrategy(connectionKeepAliveStrategy).setConnectionManager(connectionManager)
 							.build();
 					this.clientHttpEngine = new ApacheHttpClient43Engine(client);
-					log.info("##### Initializing custom ClientExecutor DONE");
+					log.debug("##### Initializing custom ClientExecutor DONE");
 
 					this.permissionService = UmaClientFactory.instance().createPermissionService(this.umaMetadata,
 							clientHttpEngine);
@@ -213,9 +213,6 @@ public class UmaPermissionService implements Serializable {
 		// Determine RPT token to status
 		RptIntrospectionResponse rptStatusResponse = null;
 		try {
-			log.info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-			log.info("++++++" + authorization);
-			log.info("++++++" + rptToken);
 			rptStatusResponse = this.rptStatusService.requestRptStatus(authorization, rptToken, "");
 		} catch (Exception ex) {
 			log.error("Failed to determine RPT status", ex);
