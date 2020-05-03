@@ -840,6 +840,11 @@
             "type": "string",
             "minLength": 1
         },
+        "returnClientSecretOnRead": {
+            "id": "returnClientSecretOnRead",
+            "description": "Boolean value specifying whether a client_secret is returned on client GET or PUT. Set to false by default which means to not return secret.",
+            "type": "boolean"
+        },
         "personCustomObjectClassList": {
             "id": "personCustomObjectClassList",
             "description": "LDAP custom object class list for dynamic person enrollment.",
