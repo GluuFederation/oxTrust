@@ -1531,6 +1531,18 @@
                 ]
             }
         },
+        "backchannelAuthenticationEndpoint": {
+            "id": "backchannelAuthenticationEndpoint",
+            "description": "Backchannel Authentication Endpoint",
+            "type": "string",
+            "minLength": 0
+        },
+        "backchannelDeviceRegistrationEndpoint": {
+            "id": "backchannelDeviceRegistrationEndpoint",
+            "description": "Backchannel Device Registration Endpoint",
+            "type": "string",
+            "minLength": 0
+        },
         "backchannelTokenDeliveryModesSupported": {
             "id": "backchannelTokenDeliveryModesSupported",
             "description": "Backchannel Token Delivery Modes Supported.",
@@ -1821,6 +1833,8 @@
         "jmsPassword",
         "useLocalCache",
         "jwksAlgorithmsSupported",
+        "backchannelAuthenticationEndpoint",
+        "backchannelAuthenticationEndpoint",
         "backchannelTokenDeliveryModesSupported",
         "backchannelAuthenticationRequestSigningAlgValuesSupported",
         "backchannelClientId",
