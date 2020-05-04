@@ -42,10 +42,6 @@
                         <f:facet name="header">#{msg['federation.status']}</f:facet>
                         <h:outputText value="#{tsps.status.displayName}" />
                     </p:column>
-                    <f:facet name="footer">
-                        <rich:dataScroller renderIfSinglePage="false" rendered="#{trustRelationshipInventoryAction.trustedSpList.size() > 0}" for="relationshipstable" maxPages="10" stepControls="auto"
-                            align="left" />
-                    </f:facet>
                 </p:dataTable>
             </h:form>
         </h:panelGrid>
