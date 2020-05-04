@@ -22,31 +22,31 @@
                     <h:outputText value="#{msg['federation.noTrustRelationshipsFound']}" />
                 </ui:fragment>
 
-                <rich:dataTable sortMode="single" id="relationshipstable" value="#{federationProposalsInventoryAction.proposalsList}" rows="20" styleClass="data sortable" var="tsps"
+                <p:dataTable id="relationshipstable" value="#{federationProposalsInventoryAction.proposalsList}" rows="20" styleClass="data sortable" var="tsps"
                     rendered="#{federationProposalsInventoryAction.proposalsList.size() gt 0}">
-                    <rich:column sortBy="#{tsps.displayName}">
+                    <p:column sortBy="#{tsps.displayName}">
                         <f:facet name="header">#{msg['federation.community']}</f:facet>
                         <h:link includeViewParams="false" outcome="/federation/proposal/viewProposal" value="#{tsps.displayName}">
                             <f:param name="inum" value="#{tsps.inum}" />
                         </h:link>
-                    </rich:column>
-                    <rich:column sortBy="#{tsps.description}">
+                    </p:column>
+                    <p:column sortBy="#{tsps.description}">
                         <f:facet name="header">#{msg['federation.description']}</f:facet>
                         <h:outputText value="#{tsps.description}" />
-                    </rich:column>
-                    <rich:column sortBy="#{tsps.isFederation()}">
+                    </p:column>
+                    <p:column sortBy="#{tsps.isFederation()}">
                         <f:facet name="header">#{msg['federation.relationshipType']}</f:facet>
                         <h:outputText value="#{tsps.isFederation() ? 'federation' : (trustService.getTrustContainerFederation(tsps) ne null ? 'site federated with '.concat(trustService.getTrustContainerFederation(tsps).displayName) : 'site')}" />
-                    </rich:column>
-                    <rich:column sortBy="#{tsps.status.value}">
+                    </p:column>
+                    <p:column sortBy="#{tsps.status.value}">
                         <f:facet name="header">#{msg['federation.status']}</f:facet>
                         <h:outputText value="#{tsps.status.displayName}" />
-                    </rich:column>
+                    </p:column>
                     <f:facet name="footer">
                         <rich:dataScroller renderIfSinglePage="false" rendered="#{trustRelationshipInventoryAction.trustedSpList.size() > 0}" for="relationshipstable" maxPages="10" stepControls="auto"
                             align="left" />
                     </f:facet>
-                </rich:dataTable>
+                </p:dataTable>
             </h:form>
         </h:panelGrid>
     </div>

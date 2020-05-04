@@ -1,94 +1,127 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-    xmlns:f="http://xmlns.jcp.org/jsf/core"
-    xmlns:h="http://xmlns.jcp.org/jsf/html" 
-    xmlns:a4j="http://richfaces.org/a4j" 
-    xmlns:p="http://primefaces.org/ui"
-    xmlns:rich="http://richfaces.org/rich"
-    xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
-    xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
-    xmlns:cc="http://xmlns.jcp.org/jsf/composite">
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j" xmlns:p="http://primefaces.org/ui"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
+	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
+	xmlns:cc="http://xmlns.jcp.org/jsf/composite">
 
 <cc:interface>
-    <cc:attribute name="label" default="Add Members" required="false" type="java.lang.String" />
-    <cc:attribute name="searchPattern" required="true" type="java.lang.String" />
-    <cc:attribute name="searchMethod" required="true" method-signature="void action()" />
-    <cc:attribute name="acceptMethod" required="true" method-signature="void action()" />
-    <cc:attribute name="cancelMethod" required="true" method-signature="void action()" />
-    <cc:attribute name="updateSelectionMethod" required="false" method-signature="void action()" />
-    <cc:attribute name="searchResult" required="true" type="java.util.List" />
-    <cc:attribute name="render" required="false" type="java.lang.String" />
+	<cc:attribute name="label" default="Add Members" required="false"
+		type="java.lang.String" />
+	<cc:attribute name="searchPattern" required="true"
+		type="java.lang.String" />
+	<cc:attribute name="searchMethod" required="true"
+		method-signature="void action()" />
+	<cc:attribute name="acceptMethod" required="true"
+		method-signature="void action()" />
+	<cc:attribute name="cancelMethod" required="true"
+		method-signature="void action()" />
+	<cc:attribute name="updateSelectionMethod" required="false"
+		method-signature="void action()" />
+	<cc:attribute name="searchResult" required="true" type="java.util.List" />
+	<cc:attribute name="render" required="false" type="java.lang.String" />
 </cc:interface>
 
 <cc:implementation>
-    <rich:popupPanel id="selectMemberModalPanel" onmaskclick="#{rich:component('selectMemberModalPanel')}.hide()" top="100" zindex="2000" moveable="true" autosized="true" width="725" height="460" onbeforeshow="if (#{cc.attrs.updateSelectionMethod != null}) {executeUpdateSelection();}">
-        <f:facet name="header">
-            <h:outputText value="#{cc.attrs.label}" />
-        </f:facet>
-        <f:facet name="controls">
-            <h:graphicImage value="/img/close.gif" styleClass="hidelink" style="cursor:pointer" onclick="#{rich:component('selectMemberModalPanel')}.hide(); return false;" />
-        </f:facet>
+	<rich:popupPanel id="selectMemberModalPanel"
+		onmaskclick="#{rich:component('selectMemberModalPanel')}.hide()"
+		top="100" zindex="2000" moveable="true" autosized="true" width="725"
+		height="460"
+		onbeforeshow="if (#{cc.attrs.updateSelectionMethod != null}) {executeUpdateSelection();}">
+		<f:facet name="header">
+			<h:outputText value="#{cc.attrs.label}" />
+		</f:facet>
+		<f:facet name="controls">
+			<h:graphicImage value="/img/close.gif" styleClass="hidelink"
+				style="cursor:pointer"
+				onclick="#{rich:component('selectMemberModalPanel')}.hide(); return false;" />
+		</f:facet>
 
-        <h:form id="fff" prepend="false">
-            <h:panelGrid id="memberPanelId" columns="1" border="0" cellpadding="0" cellspacing="0" width="100%" columnClasses="alignLeft" style="float:left !important;width:100% !important;">
-                <ox:decorate id="searchPattern" hideLabel="true">
-                    <div style="float: left;">
-                    <h:inputText style="float: left;width: 70%;" value="#{cc.attrs.searchPattern}" size="30" maxlength="30" id="searchMemberPatternId" styleClass="searchParameters form-control" alt="Search parameters like iNum, Display Name" />
+		<h:form id="fff" prepend="false">
+			<h:panelGrid id="memberPanelId" columns="1" border="0"
+				cellpadding="0" cellspacing="0" width="100%"
+				columnClasses="alignLeft"
+				style="float:left !important;width:100% !important;">
+				<ox:decorate id="searchPattern" hideLabel="true">
+					<div style="float: left;">
+						<h:inputText style="float: left;width: 70%;"
+							value="#{cc.attrs.searchPattern}" size="30" maxlength="30"
+							id="searchMemberPatternId"
+							styleClass="searchParameters form-control"
+							alt="Search parameters like iNum, Display Name" />
 
-                    <a4j:commandButton style="float: left;margin-left: 5px;" value="Search" action="#{cc.attrs.searchMethod}" render="memberPanelId" styleClass="btn btn-primary" />
-                        </div>
-                </ox:decorate>
-    
-                <h:panelGroup id="memberNoResultId" rendered="#{cc.attrs.searchResult.size() eq 0}">
-                    <h:outputText value="No Search Result Found" />
-                </h:panelGroup>
-    
-                <ui:fragment rendered="#{cc.attrs.updateSelectionMethod != null}">
-                    <a4j:jsFunction name="executeUpdateSelection" action="#{cc.attrs.updateSelectionMethod}" render="memberPanelId"/>
-                </ui:fragment>
-    
-                <h:panelGroup style="overflow-y:auto; width:715px;#{cc.attrs.searchResult.size() gt 5 ? ' height:310px;' : ''}" layout="block" rendered="#{cc.attrs.searchResult.size() gt 0}">
-                    <rich:dataTable sortMode="single" id="memberListId" value="#{cc.attrs.searchResult}" styleClass="data sortable" var="_item">
-                        <rich:column>
-                            <f:facet name="header">X</f:facet>
-                            <h:selectBooleanCheckbox value="#{_item.selected}" />
-                        </rich:column>
-                        <rich:column sortBy="#{_item.displayName}">
-                            <f:facet name="header">Display Name</f:facet>
-                            <h:outputText value="#{_item.displayName}" />
-                        </rich:column>
-                        <rich:column sortBy="#{_item.inum}">
-                            <f:facet name="header">iNum</f:facet>
-                            <h:outputText value="#{_item.inum}" />
-                        </rich:column>
-                        <rich:column sortBy="#{_item.uid}">
-                            <f:facet name="header">UID</f:facet>
-                            <h:outputText value="#{_item.uid}" />
-                        </rich:column>
-                        <rich:column sortBy="#{_item.mail}">
-                            <f:facet name="header">Email</f:facet>
-                            <h:outputText value="#{_item.mail}" />
-                        </rich:column>
-                        <rich:column sortBy="#{_item.status.value}">
-                            <f:facet name="header">Status</f:facet>
-                            <h:outputText value="#{_item.status.value}" />
-                        </rich:column>
-                    </rich:dataTable>
-                </h:panelGroup>
+						<a4j:commandButton style="float: left;margin-left: 5px;"
+							value="Search" action="#{cc.attrs.searchMethod}"
+							render="memberPanelId" styleClass="btn btn-primary" />
+					</div>
+				</ox:decorate>
 
-                <p:spacer height="16" />
+				<h:panelGroup id="memberNoResultId"
+					rendered="#{cc.attrs.searchResult.size() eq 0}">
+					<h:outputText value="No Search Result Found" />
+				</h:panelGroup>
 
-                <h:panelGroup>
-                    <a4j:commandButton styleClass="btn btn-primary" action="#{cc.attrs.acceptMethod}" value="Ok" oncomplete="#{rich:component('selectMemberModalPanel')}.hide();" render="#{cc.attrs.render}" />
+				<ui:fragment rendered="#{cc.attrs.updateSelectionMethod != null}">
+					<a4j:jsFunction name="executeUpdateSelection"
+						action="#{cc.attrs.updateSelectionMethod}" render="memberPanelId" />
+				</ui:fragment>
+
+				<h:panelGroup
+					style="overflow-y:auto; width:715px;#{cc.attrs.searchResult.size() gt 5 ? ' height:310px;' : ''}"
+					layout="block" rendered="#{cc.attrs.searchResult.size() gt 0}">
+					<p:dataTable id="memberListId"
+						value="#{cc.attrs.searchResult}" styleClass="data sortable"
+						var="_item">
+						<p:column width="50">
+							<f:facet name="header">X</f:facet>
+							<h:selectBooleanCheckbox value="#{_item.selected}" />
+						</p:column>
+						<p:column sortBy="#{_item.displayName}">
+							<f:facet name="header">Display Name</f:facet>
+							<h:outputText value="#{_item.displayName}" />
+						</p:column>
+						<p:column sortBy="#{_item.inum}">
+							<f:facet name="header">iNum</f:facet>
+							<h:outputText value="#{_item.inum}" />
+						</p:column>
+						<p:column sortBy="#{_item.uid}">
+							<f:facet name="header">UID</f:facet>
+							<h:outputText value="#{_item.uid}" />
+						</p:column>
+						<p:column sortBy="#{_item.mail}">
+							<f:facet name="header">Email</f:facet>
+							<h:outputText value="#{_item.mail}" />
+						</p:column>
+						<p:column sortBy="#{_item.status.value}">
+							<f:facet name="header">Status</f:facet>
+							<h:outputText value="#{_item.status.value}" />
+						</p:column>
+					</p:dataTable>
+				</h:panelGroup>
+
+				<p:spacer height="16" />
+
+				<h:panelGroup>
+					<a4j:commandButton styleClass="btn btn-primary"
+						action="#{cc.attrs.acceptMethod}" value="Ok"
+						oncomplete="#{rich:component('selectMemberModalPanel')}.hide();"
+						render="#{cc.attrs.render}" />
                     &nbsp;
-                    <a4j:commandButton styleClass="btn btn-primary" action="#{cc.attrs.cancelMethod}" value="Cancel" oncomplete="#{rich:component('selectMemberModalPanel')}.hide(); return false;" />
+                    <a4j:commandButton styleClass="btn btn-primary"
+						action="#{cc.attrs.cancelMethod}" value="Cancel"
+						oncomplete="#{rich:component('selectMemberModalPanel')}.hide(); return false;" />
                     &nbsp;
-                    <a4j:status startText="Request in progress please wait......" stopText="" startStyle="color:red" />
-                </h:panelGroup>
-            </h:panelGrid>
-        </h:form>
-    </rich:popupPanel>
+                    <a4j:status
+						startText="Request in progress please wait......" stopText=""
+						startStyle="color:red" />
+				</h:panelGroup>
+			</h:panelGrid>
+		</h:form>
+	</rich:popupPanel>
 </cc:implementation>
 
 </html>

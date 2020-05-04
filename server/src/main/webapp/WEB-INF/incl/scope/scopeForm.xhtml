@@ -45,7 +45,7 @@
 								<h:selectOneMenu
 									styleClass="col-sm-9 rounded form-control scopeType"
 									value="#{_scope.scopeType}">
-									<f:selectItems value="#{scopeService.scopeTypes}" var="_type"
+									<f:selectItems value="#{_scopeAction.getScopeTypes()}" var="_type"
 										itemLabel="#{_type.displayName}" />
 									<f:converter
 										converterId="org.gluu.jsf2.converter.EnumConverter" />

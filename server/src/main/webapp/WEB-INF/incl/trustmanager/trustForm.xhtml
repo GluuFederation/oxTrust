@@ -403,12 +403,12 @@ input[submit] {
 											<h:outputText
 												value="#{msg['trustmanager.metadataValidationLog']}" />
 										</f:facet>
-										<rich:dataTable var="log"
+										<p:dataTable var="log"
 											value="#{_trustRelationship.validationLog}">
-											<rich:column>
+											<p:column headerText="Id">
 												<h:outputText value="#{log}" style="color:red;" />
-											</rich:column>
-										</rich:dataTable>
+											</p:column>
+										</p:dataTable>
 									</h:panelGrid>
 								</div>
 							</b:tab>

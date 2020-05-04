@@ -50,7 +50,7 @@
 							validator="gluuAttributeValidator"
 							rendered="#{_attributeAction.canEdit()}">
 							<f:selectItem noSelectionOption="true" itemLabel="Data type" />
-							<f:selectItems value="#{attributeService.dataTypes}" var="_type"
+							<f:selectItems value="#{_attributeAction.getDataTypes()}" var="_type"
 								itemLabel="#{_type.displayName}" />
 							<f:converter converterId="org.gluu.jsf2.converter.EnumConverter" />
 						</h:selectOneMenu>
@@ -63,7 +63,7 @@
 						<h:selectManyListbox styleClass="form-control editTypeField"
 							value="#{_attribute.editType}" id="editTypeId"
 							rendered="#{_attributeAction.canEdit()}">
-							<f:selectItems value="#{attributeService.attributeEditTypes}"
+							<f:selectItems value="#{_attributeAction.getAttributeEditTypes()}"
 								var="_type" itemLabel="#{_type.displayName}"
 								itemValue="#{_type}" />
 						</h:selectManyListbox>
@@ -81,7 +81,7 @@
 						<h:selectManyListbox styleClass="form-control viewTypeField"
 							value="#{_attribute.viewType}" id="viewTypeId"
 							rendered="#{_attributeAction.canEdit()}">
-							<f:selectItems value="#{attributeService.attributeEditTypes}"
+							<f:selectItems value="#{_attributeAction.getAttributeEditTypes()}"
 								var="_type" itemLabel="#{_type.displayName}"
 								itemValue="#{_type}" />
 						</h:selectManyListbox>
@@ -99,7 +99,7 @@
 							value="#{_attribute.usageType}" required="false" id="usageTypeId"
 							rendered="#{_attributeAction.canEdit()}">
 							<f:selectItem noSelectionOption="true" itemLabel="Not defined" />
-							<f:selectItems value="#{attributeService.attributeUsageTypes}"
+							<f:selectItems value="#{_attributeAction.getAttributeUsageTypes()}"
 								var="_type" itemLabel="#{_type.displayName}"
 								itemValue="#{_type}" />
 						</h:selectManyListbox>

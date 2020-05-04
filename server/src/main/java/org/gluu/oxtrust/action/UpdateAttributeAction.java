@@ -27,9 +27,11 @@ import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
 import org.gluu.model.GluuAttribute;
+import org.gluu.model.GluuAttributeUsageType;
 import org.gluu.model.GluuStatus;
 import org.gluu.model.GluuUserRole;
 import org.gluu.model.SchemaEntry;
+import org.gluu.model.attribute.AttributeDataType;
 import org.gluu.model.attribute.AttributeValidation;
 import org.gluu.oxtrust.model.scim2.BaseScimResource;
 import org.gluu.oxtrust.model.scim2.fido.Fido2DeviceResource;
@@ -526,6 +528,18 @@ public class UpdateAttributeAction implements Serializable {
 	 */
 	public void setCanEdit(boolean canEdit) {
 		this.canEdit = canEdit;
+	}
+
+	public AttributeDataType[] getDataTypes() {
+		return attributeService.getDataTypes();
+	}
+	
+	public GluuUserRole[] getAttributeEditTypes() {
+		return attributeService.getAttributeEditTypes();
+	}
+	
+	public GluuAttributeUsageType[] getAttributeUsageTypes() {
+		return attributeService.getAttributeUsageTypes();
 	}
 
 }
