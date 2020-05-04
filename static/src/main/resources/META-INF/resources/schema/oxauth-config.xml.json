@@ -1828,6 +1828,8 @@
         "jmsPassword",
         "useLocalCache",
         "jwksAlgorithmsSupported",
+        "backchannelAuthenticationEndpoint",
+        "backchannelAuthenticationEndpoint",
         "backchannelTokenDeliveryModesSupported",
         "backchannelAuthenticationRequestSigningAlgValuesSupported",
         "backchannelClientId",
