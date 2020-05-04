@@ -4,12 +4,11 @@
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
-	xmlns:a4j="http://richfaces.org/a4j" xmlns:b="http://bootsfaces.net/ui"
-	xmlns:rich="http://richfaces.org/rich"
-	xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
+	xmlns:b="http://bootsfaces.net/ui"
 	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
-	xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
-	xmlns:gluufn="http://www.gluu.org/jsf/functions">
+	xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:gluufn="http://www.gluu.org/jsf/functions"
+	xmlns:p="http://primefaces.org/ui">
 
 	<h:outputStylesheet>
         .addConfig {
@@ -132,8 +131,8 @@
 								</ox:decorate>
 								<ox:decorate label="#{msg['organizationForm.contactEmail']}">
 									<h:inputText
-										p:oninvalid="this.setCustomValidity('Please provide a valid email address.')"
-										p:type="email" value="#{_configuration.contactEmail}"
+										pt:oninvalid="this.setCustomValidity('Please provide a valid email address.')"
+										pt:type="email" value="#{_configuration.contactEmail}"
 										styleClass="rounded form-control contactEmailTextBox" />
 								</ox:decorate>
 								<ox:decorate id="maxLogSize"
@@ -223,14 +222,14 @@
 													</div>
 													<div class="col-sm-4 col-lg-4"
 														style="padding: 0px; margin: 2px;">
-														<rich:fileUpload id="oxTrustLogo"
-															fileUploadListener="#{_organizationAction.setOxTrustLogoImage}"
-															acceptedTypes="jpg, jpeg, gif, png, bmp"
-															ontyperejected="alert('Only JPG, GIF, PNG and BMP files are accepted');"
-															maxFilesQuantity="1" immediateUpload="true"
-															listHeight="60px" styleClass="oxTrustLogo"
-															style="width:100% !important;" rendered="true">
-														</rich:fileUpload>
+														<p:fileUpload id="oxTrustLogo"
+															listener="#{_organizationAction.setOxTrustLogoImage}"
+															required="false" mode="advanced" dragDropSupport="false"
+															multiple="false" sizeLimit="1000000" fileLimit="1"
+															label="Select a file" validateContentType="true"
+															styleClass="oxTrustLogo" style="width:100% !important;"
+															allowTypes="/(\.|\/)(ico|jpeg|jpg|png)$/">
+														</p:fileUpload>
 													</div>
 												</div>
 											</b:panel>
@@ -248,14 +247,15 @@
 													</div>
 													<div class="col-sm-4 col-lg-4"
 														style="padding: 0px; margin: 2px;">
-														<rich:fileUpload id="oxTrustFavicon"
-															fileUploadListener="#{_organizationAction.setOxTrustFaviconImage}"
-															acceptedTypes="ico, jpeg, jpg, png"
-															ontyperejected="alert('Only ICO, JPEG, JPG and PNG files are accepted');"
-															maxFilesQuantity="1" immediateUpload="true"
-															listHeight="60px" styleClass="oxTrustFavicon"
-															style="width:100% !important;" rendered="true">
-														</rich:fileUpload>
+														<p:fileUpload id="oxTrustFavicon"
+															listener="#{_organizationAction.setOxTrustFaviconImage}"
+															required="false" mode="advanced" dragDropSupport="false"
+															multiple="false" sizeLimit="1000000" fileLimit="1"
+															label="Select a file" validateContentType="true"
+															styleClass="oxTrustFavicon"
+															style="width:100% !important;"
+															allowTypes="/(\.|\/)(ico|jpeg|jpg|png)$/">
+														</p:fileUpload>
 													</div>
 												</div>
 											</b:panel>
@@ -277,14 +277,14 @@
 													</div>
 													<div class="col-sm-4 col-lg-4"
 														style="padding: 0px; margin: 2px;">
-														<rich:fileUpload id="oxAuthLogo"
-															fileUploadListener="#{_organizationAction.setOxAuthLogoImage}"
-															acceptedTypes="jpg, jpeg, gif, png, bmp"
-															ontyperejected="alert('Only JPG, GIF, PNG and BMP files are accepted');"
-															maxFilesQuantity="1" immediateUpload="true"
-															listHeight="60px" styleClass="oxAuthLogo"
-															style="width:100% !important;" rendered="true">
-														</rich:fileUpload>
+														<p:fileUpload id="oxAuthLogo"
+															listener="#{_organizationAction.setOxAuthLogoImage}"
+															required="false" mode="advanced" dragDropSupport="false"
+															multiple="false" sizeLimit="1000000" fileLimit="1"
+															label="Select a file" validateContentType="true"
+															styleClass="oxAuthLogo" style="width:100% !important;"
+															allowTypes="/(\.|\/)(ico|jpeg|jpg|png)$/">
+														</p:fileUpload>
 													</div>
 												</div>
 											</b:panel>
@@ -302,14 +302,14 @@
 													</div>
 													<div class="col-sm-4 col-lg-4"
 														style="padding: 0px; margin: 10px; max-height: 70px;">
-														<rich:fileUpload id="oxAuthFavicon"
-															fileUploadListener="#{_organizationAction.setOxAuthFaviconImage}"
-															acceptedTypes="ico, jpeg, jpg, png"
-															ontyperejected="alert('Only ICO, JPEG, JPG and PNG files are accepted');"
-															maxFilesQuantity="1" immediateUpload="true"
-															listHeight="60px" styleClass="oxAuthFavicon"
-															style="width:100% !important;" rendered="true">
-														</rich:fileUpload>
+														<p:fileUpload id="oxAuthFavicon"
+															listener="#{_organizationAction.setOxAuthFaviconImage}"
+															required="false" mode="advanced" dragDropSupport="false"
+															multiple="false" sizeLimit="1000000" fileLimit="1"
+															label="Select a file" validateContentType="true"
+															styleClass="oxAuthFavicon" style="width:100% !important;"
+															allowTypes="/(\.|\/)(ico|jpeg|jpg|png)$/">
+														</p:fileUpload>
 													</div>
 												</div>
 											</b:panel>
@@ -329,14 +329,14 @@
 													</div>
 													<div class="col-sm-4 col-lg-4"
 														style="padding: 0px; margin: 10px;">
-														<rich:fileUpload id="idpLogo"
-															fileUploadListener="#{_organizationAction.setIdpLogoImage}"
-															acceptedTypes="jpg, jpeg, gif, png, bmp"
-															ontyperejected="alert('Only JPG, GIF, PNG and BMP files are accepted');"
-															maxFilesQuantity="1" immediateUpload="true"
-															listHeight="60px" styleClass="idpLogo"
-															style="width:100% !important;" rendered="true">
-														</rich:fileUpload>
+														<p:fileUpload id="idpLogo"
+															listener="#{_organizationAction.setIdpLogoImage}"
+															required="false" mode="advanced" dragDropSupport="false"
+															multiple="false" sizeLimit="1000000" fileLimit="1"
+															label="Select a file" validateContentType="true"
+															styleClass="idpLogo" style="width:100% !important;"
+															allowTypes="/(\.|\/)(ico|jpeg|jpg|png)$/">
+														</p:fileUpload>
 													</div>
 												</div>
 											</b:panel>
@@ -352,14 +352,14 @@
 													</div>
 													<div class="col-sm-4 col-lg-4"
 														style="padding: 0px; margin: 2px;">
-														<rich:fileUpload id="idpFavicon"
-															fileUploadListener="#{_organizationAction.setIdpFaviconImage}"
-															acceptedTypes="ico, jpeg, jpg, png"
-															ontyperejected="alert('Only ICO, JPEG, JPG and PNG files are accepted');"
-															maxFilesQuantity="1" immediateUpload="true"
-															listHeight="60px" styleClass="idpFavicon"
-															style="width:100% !important;" rendered="true">
-														</rich:fileUpload>
+														<p:fileUpload id="idpFavicon"
+															listener="#{_organizationAction.setIdpFaviconImage}"
+															required="false" mode="advanced" dragDropSupport="false"
+															multiple="false" sizeLimit="1000000" fileLimit="1"
+															label="Select a file" validateContentType="true"
+															style="width:100% !important;" styleClass="idpFavicon"
+															allowTypes="/(\.|\/)(ico|jpeg|jpg|png)$/">
+														</p:fileUpload>
 													</div>
 												</div>
 											</b:panel>
@@ -371,25 +371,25 @@
 						<div class="tab-pane" id="libs">
 							<b:panel id="oxTrust" title="Add Lib to Oxtrust" look="success"
 								collapsible="true" collapsed="true">
-								<rich:fileUpload id="oxtrustLibs"
-									fileUploadListener="#{_organizationAction.addNewOxtrustLib}"
-									acceptedTypes="jar"
-									ontyperejected="alert('Only jar files are accepted');"
-									maxFilesQuantity="1" immediateUpload="true" listHeight="60px"
+								<p:fileUpload id="oxtrustLibs"
+									listener="#{_organizationAction.addNewOxtrustLib}"
+									required="false" mode="advanced" dragDropSupport="false"
+									multiple="false" sizeLimit="1000000" fileLimit="1"
+									label="Select a file" validateContentType="true"
 									styleClass="OxTrustLibrairy" style="width:100% !important;"
-									rendered="true">
-								</rich:fileUpload>
+									allowTypes="/(\.|\/)(jar)$/">
+								</p:fileUpload>
 							</b:panel>
 							<b:panel id="oxAuth" title="Add Lib to OxAuth" look="success"
 								collapsible="true" collapsed="true">
-								<rich:fileUpload id="oxauthLibs"
-									fileUploadListener="#{_organizationAction.addNewOxauthLib}"
-									acceptedTypes="jar"
-									ontyperejected="alert('Only jar files are accepted');"
-									maxFilesQuantity="1" immediateUpload="true" listHeight="60px"
+								<p:fileUpload id="oxauthLibs"
+									listener="#{_organizationAction.addNewOxauthLib}"
+									required="false" mode="advanced" dragDropSupport="false"
+									multiple="false" sizeLimit="1000000" fileLimit="1"
+									label="Select a file" validateContentType="true"
 									styleClass="oxAuthLibrairy" style="width:100% !important;"
-									rendered="true">
-								</rich:fileUpload>
+									allowTypes="/(\.|\/)(jar)$/">
+								</p:fileUpload>
 							</b:panel>
 						</div>
 					</div>

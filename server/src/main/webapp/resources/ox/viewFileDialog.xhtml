@@ -1,46 +1,57 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-    xmlns:f="http://xmlns.jcp.org/jsf/core"
-    xmlns:h="http://xmlns.jcp.org/jsf/html"
-    xmlns:a4j="http://richfaces.org/a4j"
-    xmlns:rich="http://richfaces.org/rich"
-    xmlns:gluufn="http://www.gluu.org/jsf/functions"
-    xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
-    xmlns:cc="http://xmlns.jcp.org/jsf/composite">
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
+	xmlns:cc="http://xmlns.jcp.org/jsf/composite">
 
 <cc:interface>
-    <cc:attribute name="text" required="true" type="java.lang.String" />
-    <cc:attribute name="label" default="Input Text" required="false" type="java.lang.String" />
-    <cc:attribute name="textHeight" default="400" required="false" type="java.lang.Integer" />
-    <cc:attribute name="textWidth" default="500" required="false" type="java.lang.Integer" />
+	<cc:attribute name="text" required="true" type="java.lang.String" />
+	<cc:attribute name="label" default="Input Text" required="false"
+		type="java.lang.String" />
+	<cc:attribute name="textHeight" default="400" required="false"
+		type="java.lang.Integer" />
+	<cc:attribute name="textWidth" default="500" required="false"
+		type="java.lang.Integer" />
 </cc:interface>
 
 <cc:implementation>
-    <rich:popupPanel id="viewFile" onmaskclick="#{rich:component('viewFile')}.hide()" zindex="2000" moveable="true" autosized="true">
-        <f:facet name="header">
-            <h:outputText value="#{cc.attrs.label}" />
-        </f:facet>
-        <f:facet name="controls">
-            <h:graphicImage value="/img/close.gif" styleClass="hidelink" style="cursor:pointer" onclick="#{rich:component('viewFile')}.hide(); return false;" />
-        </f:facet>
+	<rich:popupPanel id="viewFile"
+		onmaskclick="#{rich:component('viewFile')}.hide()" zindex="2000"
+		moveable="true" autosized="true">
+		<f:facet name="header">
+			<h:outputText value="#{cc.attrs.label}" />
+		</f:facet>
+		<f:facet name="controls">
+			<h:graphicImage value="/img/close.gif" styleClass="hidelink"
+				style="cursor:pointer"
+				onclick="#{rich:component('viewFile')}.hide(); return false;" />
+		</f:facet>
 
-        <h:panelGrid id="filePanel" columns="1" border="0" cellpadding="0" cellspacing="0" width="100%" columnClasses="alignLeft">
-            <rich:panel>
-                <h:panelGroup layout="block" style="width: #{cc.attrs.textWidth}px; height: #{cc.attrs.textHeight}px; overflow: auto">
-                    <pre>
+		<h:panelGrid id="filePanel" columns="1" border="0" cellpadding="0"
+			cellspacing="0" width="100%" columnClasses="alignLeft">
+			<rich:panel>
+				<h:panelGroup layout="block"
+					style="width: #{cc.attrs.textWidth}px; height: #{cc.attrs.textHeight}px; overflow: auto">
+					<pre>
                         <h:outputText value="#{cc.attrs.text}" />
                     </pre>
-                </h:panelGroup>
-            </rich:panel>
+				</h:panelGroup>
+			</rich:panel>
 
-            <richext:spacer height="16" />
+			<p:spacer height="16" />
 
-            <h:panelGroup>
-                <a4j:commandButton value="Back" oncomplete="#{rich:component('viewFile')}.hide(); return false;" immediate="true" execute="@this"/>
-            </h:panelGroup>
-        </h:panelGrid>
-    </rich:popupPanel>
+			<h:panelGroup>
+				<a4j:commandButton value="Back"
+					oncomplete="#{rich:component('viewFile')}.hide(); return false;"
+					immediate="true" execute="@this" />
+			</h:panelGroup>
+		</h:panelGrid>
+	</rich:popupPanel>
 </cc:implementation>
 
 </html>

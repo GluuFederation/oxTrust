@@ -13,10 +13,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import javax.ejb.Stateless;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import org.gluu.oxauth.model.common.ScopeType;
 import org.gluu.oxtrust.util.OxTrustConstants;
@@ -116,7 +114,7 @@ public class ScopeService implements Serializable {
 	public String generateInumForNewScope() throws Exception {
 		Scope scope = new Scope();
 		String newInum = null;
-		String newDn=null;
+		String newDn = null;
 		do {
 			newInum = generateInumForNewScopeImpl();
 			newDn = getDnForScope(newInum);
@@ -191,7 +189,8 @@ public class ScopeService implements Serializable {
 	 * @return Array of scope types
 	 */
 	public List<ScopeType> getScopeTypes() {
-		List<ScopeType> scopeTypes = new ArrayList<ScopeType>(Arrays.asList(org.gluu.oxauth.model.common.ScopeType.values()));
+		List<ScopeType> scopeTypes = new ArrayList<ScopeType>(
+				Arrays.asList(org.gluu.oxauth.model.common.ScopeType.values()));
 		scopeTypes.remove(ScopeType.UMA);
 		return scopeTypes;
 	}

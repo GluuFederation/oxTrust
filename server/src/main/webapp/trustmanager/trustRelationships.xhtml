@@ -8,7 +8,8 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-	template="/WEB-INF/incl/layout/newtemplate.xhtml">
+	template="/WEB-INF/incl/layout/newtemplate.xhtml"
+	xmlns:p="http://primefaces.org/ui">
 	<f:metadata>
 		<f:viewAction
 			action="#{permissionService.requestPermission('trust', 'access')}" />
@@ -49,7 +50,7 @@
 							outcome="/trustmanager/addTrustRelationship"
 							value="#{msg['trustmanager.addRelationship']}" propagation="none"
 							includeViewParams="false" />
-						<richext:spacer height="50" />
+						<p:spacer height="50" />
 						<a4j:region>
 							<h:form>
 								<a4j:poll action="#{trustRelationshipInventoryAction.search()}"

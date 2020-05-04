@@ -6,7 +6,8 @@
 	xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
 	xmlns:b="http://bootsfaces.net/ui"
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-	template="/WEB-INF/incl/layout/newtemplate.xhtml">
+	template="/WEB-INF/incl/layout/newtemplate.xhtml"
+	xmlns:p="http://primefaces.org/ui">
 	<f:metadata>
 		<f:viewAction
 			action="#{permissionService.requestPermission('group', 'access')}" />
@@ -41,7 +42,7 @@
 						    icon="plus"
 							outcome="/group/addGroup" value="#{msg['group.addGroup']}"
 							includeViewParams="false" style="margin-left:5px !important;" />
-						<richext:spacer height="16" />
+						<p:spacer height="16" />
 						<h:form class="searchArea">
 							<ox:decorate hideLabel="true" id="searchPattern">
 								<h:inputText
@@ -55,11 +56,11 @@
 									value="#{msg['group.search']}" />
 							</ox:decorate>
 						</h:form>
-						<richext:spacer height="16" />
+						<p:spacer height="16" />
 						<h:form id="groupsFormId">
 							<ui:fragment
 								rendered="#{searchGroupAction.groupList.size() eq 0}">
-								<richext:spacer height="30" />
+								<p:spacer height="30" />
 								<h:outputText value="#{msg['group.noSearchResultFound']}" />
 							</ui:fragment>
 							<b:dataTable id="groupsListId" style="text-align:center; width:100%;"

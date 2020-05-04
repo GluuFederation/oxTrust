@@ -52,11 +52,6 @@
                 </h:selectOneMenu>
                 <h:outputText value="#{msg['trustmanager.encryptNameIds']} " />
             </h:panelGrid>
-            <rich:fileUpload id="SAML2LogoutWrapperId" fileName="#{_relyingPartyAction.fileWrappers.get('SAML2Logout').fileName}" data="#{_relyingPartyAction.fileWrappers.get('SAML2Logout').stream}"
-                fileSize="#{_relyingPartyAction.fileWrappers.get('SAML2Logout').fileSize}" contentType="#{_relyingPartyAction.fileWrappers.get('SAML2Logout').contentType}" maxlength="100"
-                rendered="#{empty _profileConfigurationSelected.profileConfigurationCertFileName}" immediate="true" style="width: 180px;">
-<!--                <a4j:ajax event="complete" action="#{_relyingPartyAction.showFile()}"/> -->
-            </rich:fileUpload>
 
             <h:panelGrid>
                 <h:outputText value="#{_profileConfigurationSelected.profileConfigurationCertFileName}"

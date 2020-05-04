@@ -2,6 +2,7 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
 	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:b="http://bootsfaces.net/ui" xmlns:a4j="http://richfaces.org/a4j"
@@ -36,7 +37,7 @@
 								outcome="/radius/addRadiusClient" value="#{msg['radius.client.add.title']}"/>
 							
 						</div>
-						<richext:spacer height="16"/>
+						<p:spacer height="16"/>
 						<h:form>
 							<ox:decorate hideLabel="true" id="search-pattern">
 								<div style="width: 100%; float: left; margin-left: 17px;">

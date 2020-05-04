@@ -51,8 +51,8 @@ import org.gluu.persist.exception.BasePersistenceException;
 import org.gluu.service.MailService;
 import org.gluu.service.security.Secure;
 import org.gluu.util.StringHelper;
-import org.richfaces.event.FileUploadEvent;
-import org.richfaces.model.UploadedFile;
+import org.primefaces.event.FileUploadEvent;
+import org.primefaces.model.file.UploadedFile;
 import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -282,42 +282,42 @@ public class UpdateOrganizationAction implements Serializable {
 	}
 
 	public void setOxTrustLogoImage(FileUploadEvent event) {
-		UploadedFile uploadedFile = event.getUploadedFile();
+		UploadedFile uploadedFile = event.getFile();
 		saveLogo(uploadedFile);
 	}
 
 	public void setOxTrustFaviconImage(FileUploadEvent event) {
-		UploadedFile uploadedFile = event.getUploadedFile();
+		UploadedFile uploadedFile = event.getFile();
 		saveFavIcon(uploadedFile);
 	}
 
 	public void setOxAuthLogoImage(FileUploadEvent event) {
-		UploadedFile uploadedFile = event.getUploadedFile();
+		UploadedFile uploadedFile = event.getFile();
 		saveOxAuthLogo(uploadedFile);
 	}
 
 	public void setOxAuthFaviconImage(FileUploadEvent event) {
-		UploadedFile uploadedFile = event.getUploadedFile();
+		UploadedFile uploadedFile = event.getFile();
 		saveOxAuthFavIcon(uploadedFile);
 	}
 
 	public void setIdpLogoImage(FileUploadEvent event) {
-		UploadedFile uploadedFile = event.getUploadedFile();
+		UploadedFile uploadedFile = event.getFile();
 		saveIdpLogo(uploadedFile);
 	}
 
 	public void setdpFaviconImage(FileUploadEvent event) {
-		UploadedFile uploadedFile = event.getUploadedFile();
+		UploadedFile uploadedFile = event.getFile();
 		saveIdpFavIcon(uploadedFile);
 	}
 
 	public void addNewOxtrustLib(FileUploadEvent event) {
-		UploadedFile uploadedFile = event.getUploadedFile();
+		UploadedFile uploadedFile = event.getFile();
 		addLib(uploadedFile, true);
 	}
 
 	public void addNewOxauthLib(FileUploadEvent event) {
-		UploadedFile uploadedFile = event.getUploadedFile();
+		UploadedFile uploadedFile = event.getFile();
 		addLib(uploadedFile, false);
 	}
 
@@ -449,7 +449,7 @@ public class UpdateOrganizationAction implements Serializable {
 	}
 
 	private String saveFile(UploadedFile uploadedFile, String basePath) {
-		String fileName = uploadedFile.getName();
+		String fileName = uploadedFile.getFileName();
 		try {
 			File logo = new File(basePath, fileName);
 			if (!logo.exists()) {
