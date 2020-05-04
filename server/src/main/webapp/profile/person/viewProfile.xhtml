@@ -9,7 +9,8 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-	xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+    xmlns:p="http://primefaces.org/ui"
 	template="/WEB-INF/incl/layout/newtemplate.xhtml">
 	<f:metadata>
 		<f:viewAction
@@ -69,9 +70,7 @@
 											<f:param
 												value="#{organizationService.getOrgName()}" />
 										</h:outputFormat>
-										<br />
-										<br />
-										<richext:spacer width="40" />
+										<p:spacer width="5"/>
 										<h:panelGroup id="configureListing">
 											<a4j:commandButton execute="@this" limitRender="true"
 												oncomplete="#{rich:component('configureListingOptions')}.show();"
@@ -135,7 +134,7 @@
 										</a4j:repeat>
 									</h:panelGroup>
 								</h:panelGroup>
-								<richext:spacer height="16" />
+								<p:spacer height="16" />
 							</h:panelGroup>
 						</b:panel>
 					</h:panelGroup>
@@ -152,9 +151,9 @@
 										<ui:param name="_aid"
 											value="#{customAttributeAction.attributeIds[attr]}" />
 										<li class="treeview"
-											p:id="#{customAttributeAction.attributeIds[attr]}"><a4j:commandLink
+											pt:id="#{customAttributeAction.attributeIds[attr]}"><a4j:commandLink
 												action="#{customAttributeAction.addCustomAttribute(attr.inum)}"
-												p:aid="#{_aid}"
+												pt:aid="#{_aid}"
 												oncomplete="changeAttributeVisibility('${component.clientId}', false);"
 												render="selectedCustomAttributesId"
 												style="#{customAttributeAction.containsCustomAttribute(attr) ? 'display: none;' : ''}"

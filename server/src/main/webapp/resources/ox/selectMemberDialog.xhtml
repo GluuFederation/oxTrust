@@ -4,8 +4,8 @@
     xmlns:f="http://xmlns.jcp.org/jsf/core"
     xmlns:h="http://xmlns.jcp.org/jsf/html" 
     xmlns:a4j="http://richfaces.org/a4j" 
+    xmlns:p="http://primefaces.org/ui"
     xmlns:rich="http://richfaces.org/rich"
-    xmlns:gluufn="http://www.gluu.org/jsf/functions"
     xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
     xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
     xmlns:cc="http://xmlns.jcp.org/jsf/composite">
@@ -77,7 +77,7 @@
                     </rich:dataTable>
                 </h:panelGroup>
 
-                <richext:spacer height="16" />
+                <p:spacer height="16" />
 
                 <h:panelGroup>
                     <a4j:commandButton styleClass="btn btn-primary" action="#{cc.attrs.acceptMethod}" value="Ok" oncomplete="#{rich:component('selectMemberModalPanel')}.hide();" render="#{cc.attrs.render}" />

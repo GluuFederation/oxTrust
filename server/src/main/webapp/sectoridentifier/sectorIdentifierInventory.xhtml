@@ -7,6 +7,7 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
 	template="/WEB-INF/incl/layout/newtemplate.xhtml">
 	<f:metadata>
 		<f:viewAction
@@ -46,7 +47,7 @@
 								style="margin-left:5px !important;"
 								value="#{msg['sectorIdentifier.addSectorIdentifiers']}"
 								includeViewParams="false" />
-							<richext:spacer height="16" />
+							<p:spacer height="16" />
 							<h:form>
 								<ox:decorate hideLabel="true" id="searchPattern">
 									<h:inputText
@@ -61,7 +62,7 @@
 										value="#{msg['sectorIdentifier.search']}" iconAwesome="fa-search"/>
 								</ox:decorate>
 							</h:form>
-							<richext:spacer height="16" />
+							<p:spacer height="16" />
 							<h:form id="sectorIdentifiersFormId">
 								<b:dataTable id="sectorIdentifierListId"
 									style="text-align:center;width:100%;"

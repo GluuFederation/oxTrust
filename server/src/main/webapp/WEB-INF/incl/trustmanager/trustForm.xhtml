@@ -6,9 +6,10 @@
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
 	xmlns:a4j="http://richfaces.org/a4j" xmlns:b="http://bootsfaces.net/ui"
 	xmlns:rich="http://richfaces.org/rich"
+	xmlns:p="http://primefaces.org/ui"
 	xmlns:gluufn="http://www.gluu.org/jsf/functions"
 	xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
-	xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
 	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
 	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
 	<h:outputScript>		
@@ -374,7 +375,7 @@ input[submit] {
 																<h:outputText value="#{_metadata.displayName}"
 																	styleClass="attributeTooltip"
 																	title="#{msg['trustmanager.samlURIForThisAttribute']} | #{_trustRelationshipAction.getSAML1URI(_metadata)} | #{_trustRelationshipAction.getSAML2URI(_metadata)}" />
-																<richext:spacer width="8" />
+																<p:spacer width="8" />
 																<a4j:commandLink
 																	action="#{_customAttributeAction.removeCustomAttribute(_metadata.inum)}"
 																	render="newTrustId"
@@ -448,7 +449,7 @@ input[submit] {
 													id="#{_customAttributeAction.attributeIds[attr]}"><ui:param
 														name="_aid"
 														value="#{_customAttributeAction.attributeIds[attr]}" /> <a4j:commandLink
-														p:aid="#{_aid}" value="#{attr.displayName}"
+														pt:aid="#{_aid}" value="#{attr.displayName}"
 														action="#{_customAttributeAction.addCustomAttribute(attr.inum)}"
 														render="selectedCustomAttributesId"
 														oncomplete="changeAttributeVisibility('${component.clientId}', false);"
@@ -479,7 +480,7 @@ input[submit] {
 				<ui:insert name="controlButttons" />
 
 				<h:panelGrid columns="1" width="100%" columnClasses="alignLeft">
-					<richext:spacer height="8" />
+					<p:spacer height="8" />
 					<ui:insert name="configurationLink" />
 				</h:panelGrid>
 			</div>
