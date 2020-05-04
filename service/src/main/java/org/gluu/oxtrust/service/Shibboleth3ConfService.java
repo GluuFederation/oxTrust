@@ -855,7 +855,7 @@ public class Shibboleth3ConfService implements Serializable {
 		String spMetadataFile = getIdpMetadataDir() + spMetadataFileName;
 
 		try {
-			boolean result = documentStoreService.removeDocument(spMetadataFile);
+			documentStoreService.removeDocument(spMetadataFile);
 		} catch (Exception ex) {
 			log.error("Failed to remove {}", spMetadataFile, ex);
 		}

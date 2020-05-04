@@ -7,8 +7,8 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -37,6 +37,8 @@ import org.gluu.oxauth.model.uma.UmaMetadata;
 import org.gluu.oxauth.model.uma.UmaPermission;
 import org.gluu.oxauth.model.uma.UmaPermissionList;
 import org.gluu.oxauth.model.uma.wrapper.Token;
+import org.gluu.service.cdi.event.ApplicationInitialized;
+import org.gluu.service.cdi.event.ApplicationInitializedEvent;
 import org.gluu.util.Pair;
 import org.gluu.util.StringHelper;
 import org.jboss.resteasy.client.core.executors.ApacheHttpClient4Executor;
@@ -70,11 +72,9 @@ public class UmaPermissionService implements Serializable {
 	private final Pair<Boolean, Response> authenticationFailure = new Pair<Boolean, Response>(false, null);
 	private final Pair<Boolean, Response> authenticationSuccess = new Pair<Boolean, Response>(true, null);
 
-	//private ApacheHttpClient4Engine clientHttpEngine;
 	private ClientHttpEngine clientHttpEngine;
 
-	@PostConstruct
-	public void init() {
+	public void init(@Observes @ApplicationInitialized(ApplicationScoped.class) ApplicationInitializedEvent init) {
 		try {
 			if (this.umaMetadata != null) {
 				if (appConfiguration.isRptConnectionPoolUseConnectionPooling()) {
@@ -82,7 +82,7 @@ public class UmaPermissionService implements Serializable {
 					// For more information about PoolingHttpClientConnectionManager, please see:
 					// http://hc.apache.org/httpcomponents-client-ga/httpclient/apidocs/index.html?org/apache/http/impl/conn/PoolingHttpClientConnectionManager.html
 
-					log.info("##### Initializing custom ClientExecutor...");
+					log.debug("##### Initializing custom ClientExecutor...");
 					PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
 					connectionManager.setMaxTotal(appConfiguration.getRptConnectionPoolMaxTotal());
 					connectionManager.setDefaultMaxPerRoute(appConfiguration.getRptConnectionPoolDefaultMaxPerRoute());
@@ -92,7 +92,7 @@ public class UmaPermissionService implements Serializable {
 							.setDefaultRequestConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build())
 							.setKeepAliveStrategy(connectionKeepAliveStrategy).setConnectionManager(connectionManager)
 							.build();
-					//this.clientHttpEngine = new ApacheHttpClient4Engine(client);
+					
 					this.clientHttpEngine = ApacheHttpClient4EngineFactory.create(client);
 					log.info("##### Initializing custom ClientExecutor DONE");
 
@@ -215,9 +215,6 @@ public class UmaPermissionService implements Serializable {
 		// Determine RPT token to status
 		RptIntrospectionResponse rptStatusResponse = null;
 		try {
-			log.info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-			log.info("++++++" + authorization);
-			log.info("++++++" + rptToken);
 			rptStatusResponse = this.rptStatusService.requestRptStatus(authorization, rptToken, "");
 		} catch (Exception ex) {
 			log.error("Failed to determine RPT status", ex);
