@@ -969,6 +969,11 @@
             "description": "Boolean value specifying whether to enable authentication by session_id.",
             "type": "boolean"
         },
+        "changeSessionIdOnAuthentication": {
+            "id": "changeSessionIdOnAuthentication",
+            "description": "Boolean value specifying whether change session_id on authentication. Default value is true.",
+            "type": "boolean"
+        },
         "sessionIdRequestParameterEnabled": {
             "id": "sessionIdRequestParameterEnabled",
             "description": "Boolean value specifying whether to enable session_id HTTP request parameter.",
