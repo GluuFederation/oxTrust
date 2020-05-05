@@ -6,11 +6,10 @@
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
 	xmlns:b="http://bootsfaces.net/ui"
 	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
-	xmlns:rich="http://richfaces.org/rich"
 	xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
-    xmlns:p="http://primefaces.org/ui"
+	xmlns:p="http://primefaces.org/ui"
 	template="/WEB-INF/incl/layout/newtemplate.xhtml">
 	<f:metadata>
 		<f:viewAction
@@ -67,13 +66,12 @@
 										<h:outputFormat
 											style="margin-left: 2.3%;  font-size: 13pt;  font-weight: 700;  margin-bottom: 15px;  display: block;"
 											styleClass="headertext" value="#{msg['profile.myProfile']}">
-											<f:param
-												value="#{organizationService.getOrgName()}" />
+											<f:param value="#{organizationService.getOrgName()}" />
 										</h:outputFormat>
-										<p:spacer width="5"/>
+										<p:spacer width="5" />
 										<h:panelGroup id="configureListing">
-											<a4j:commandButton execute="@this" limitRender="true"
-												oncomplete="#{rich:component('configureListingOptions')}.show();"
+											<h:commandButton execute="@this" limitRender="true" type="button"
+												oncomplete="PF('configureListingOptions').show();"
 												rendered="#{(userProfileAction.person.allowPublication)}"
 												styleClass="btn btn-success"
 												value="#{msg['profile.configureListing']}" />
@@ -166,8 +164,8 @@
 					</h:panelGroup>
 				</div>
 				<div class="box-footer">
-					<a4j:commandButton
-						onclick="#{rich:component('personPassword:changePasswordModalPanel')}.show();"
+					<h:commandButton type="button"
+						onclick="PF('changePasswordModalPanel').show();"
 						rendered="#{permissionService.hasPermission(configurationService.configuration, 'profile_management')}"
 						styleClass="btn btn-success changeUserPasswordButton"
 						value="#{msg['profile.changePassword']}" />
@@ -181,7 +179,7 @@
 				</div>
 			</h:form>
 		</section>
-		<ox:changePasswordDialog id="personPassword"
+		<ox:changePasswordDialog
 			label="#{msg['profile.changePassword']}"
 			password="#{userPasswordAction.newPassword}"
 			person="#{userProfileAction.person}"
