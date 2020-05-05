@@ -6,7 +6,8 @@
 	xmlns:b="http://bootsfaces.net/ui" xmlns:o="http://omnifaces.org/ui"
 	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
 	xmlns:rich="http://richfaces.org/rich"
-	xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:p="http://primefaces.org/ui"
 	xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	template="/WEB-INF/incl/layout/newtemplate.xhtml">
@@ -59,8 +60,8 @@
 										value="#{_scope.displayName}" />
 								</ox:decorate>
 								<ox:decorate id="IconUrl" label="IconUrl">
-									<h:inputText styleClass="form-control IconUrlId" p:type="url"
-										p:placeholder="Enter a valid icon url" leftClass="col-sm-4"
+									<h:inputText styleClass="form-control IconUrlId" pt:type="url"
+										pt:placeholder="Enter a valid icon url" leftClass="col-sm-4"
 										rightClass="col-sm-8" id="IconUrlId" value="#{_scope.iconUrl}" />
 								</ox:decorate>
 								<div class="row" style="margin-left: 10px; margin-right: 10px;">
@@ -85,7 +86,7 @@
 													</div>
 												</div>
 											</a4j:repeat>
-											<richext:spacer height="16" />
+											<p:spacer height="16" />
 										</h:panelGroup>
 										<h:panelGroup>
 											<a4j:commandButton execute="@this"

@@ -35,6 +35,8 @@ import org.gluu.persist.model.PersistenceConfiguration;
 import org.gluu.persist.service.PersistanceFactoryService;
 import org.gluu.service.JsonService;
 import org.gluu.service.cdi.async.Asynchronous;
+import org.gluu.service.cdi.event.ApplicationInitialized;
+import org.gluu.service.cdi.event.ApplicationInitializedEvent;
 import org.gluu.service.cdi.event.BaseConfigurationReload;
 import org.gluu.service.cdi.event.ConfigurationEvent;
 import org.gluu.service.cdi.event.ConfigurationUpdate;
@@ -43,6 +45,7 @@ import org.gluu.service.cdi.event.Scheduled;
 import org.gluu.service.timer.event.TimerEvent;
 import org.gluu.service.timer.schedule.TimerSchedule;
 import org.gluu.util.StringHelper;
+import org.gluu.util.init.Initializable;
 import org.gluu.util.properties.FileConfiguration;
 import org.slf4j.Logger;
 
@@ -51,7 +54,7 @@ import org.slf4j.Logger;
  * @version 0.1, 05/15/2013
  */
 @ApplicationScoped
-public class ConfigurationFactory {
+public class ConfigurationFactory extends Initializable {
 
 	@Inject
 	private Logger log;
@@ -133,8 +136,12 @@ public class ConfigurationFactory {
 	private long loadedRevision = -1;
 	private boolean loadedFromLdap = true;
 
-	@PostConstruct
-	public void init() {
+	public void init(@Observes @ApplicationInitialized(ApplicationScoped.class) ApplicationInitializedEvent init) {
+		init();
+	}
+
+	@Override
+	protected void initInternal() {
 		this.isActive = new AtomicBoolean(true);
 		try {
 			log.info("Creating oxTrustConfiguration");
@@ -155,6 +162,7 @@ public class ConfigurationFactory {
 	}
 
 	public void create() {
+		init();
 		if (!createFromLdap(true)) {
 			log.error("Failed to load configuration from LDAP. Please fix it!!!.");
 			throw new ConfigurationException("Failed to load configuration from LDAP.");

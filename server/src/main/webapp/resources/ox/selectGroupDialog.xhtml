@@ -1,79 +1,104 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-    xmlns:f="http://xmlns.jcp.org/jsf/core"
-    xmlns:h="http://xmlns.jcp.org/jsf/html" 
-    xmlns:a4j="http://richfaces.org/a4j" 
-    xmlns:rich="http://richfaces.org/rich"
-    xmlns:gluufn="http://www.gluu.org/jsf/functions"
-    xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
-    xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
-    xmlns:cc="http://xmlns.jcp.org/jsf/composite">
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
+	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
+	xmlns:cc="http://xmlns.jcp.org/jsf/composite">
 
 <cc:interface>
-    <cc:attribute name="label" default="Add Groups" required="false" type="java.lang.String" />
-    <cc:attribute name="searchPattern" required="true" type="java.lang.String" />
-    <cc:attribute name="searchMethod" required="true" method-signature="void action()" />
-    <cc:attribute name="acceptMethod" required="true" method-signature="void action()" />
-    <cc:attribute name="cancelMethod" required="true" method-signature="void action()" />
-    <cc:attribute name="updateSelectionMethod" required="false" method-signature="void action()" />
-    <cc:attribute name="searchResult" required="true" type="java.util.List" />
-    <cc:attribute name="render" required="false" type="java.lang.String" />
+	<cc:attribute name="label" default="Add Groups" required="false"
+		type="java.lang.String" />
+	<cc:attribute name="searchPattern" required="true"
+		type="java.lang.String" />
+	<cc:attribute name="searchMethod" required="true"
+		method-signature="void action()" />
+	<cc:attribute name="acceptMethod" required="true"
+		method-signature="void action()" />
+	<cc:attribute name="cancelMethod" required="true"
+		method-signature="void action()" />
+	<cc:attribute name="updateSelectionMethod" required="false"
+		method-signature="void action()" />
+	<cc:attribute name="searchResult" required="true" type="java.util.List" />
+	<cc:attribute name="render" required="false" type="java.lang.String" />
 </cc:interface>
 
 <cc:implementation>
-    <rich:popupPanel id="selectGroupModalPanel" onmaskclick="#{rich:component('selectGroupModalPanel')}.hide()" zindex="2000" moveable="true" autosized="true" width="725" height="460" onbeforeshow="if (#{cc.attrs.updateSelectionMethod != null}) {executeUpdateSelection();}">
-        <f:facet name="header">
-            <h:outputText value="#{cc.attrs.label}" />
-        </f:facet>
-        <f:facet name="controls">
-            <h:graphicImage value="/img/close.gif" styleClass="hidelink" style="cursor:pointer" onclick="#{rich:component('selectGroupModalPanel')}.hide(); return false;" />
-        </f:facet>
+	<rich:popupPanel id="selectGroupModalPanel"
+		onmaskclick="#{rich:component('selectGroupModalPanel')}.hide()"
+		zindex="2000" moveable="true" autosized="true" width="725"
+		height="460"
+		onbeforeshow="if (#{cc.attrs.updateSelectionMethod != null}) {executeUpdateSelection();}">
+		<f:facet name="header">
+			<h:outputText value="#{cc.attrs.label}" />
+		</f:facet>
+		<f:facet name="controls">
+			<h:graphicImage value="/img/close.gif" styleClass="hidelink"
+				style="cursor:pointer"
+				onclick="#{rich:component('selectGroupModalPanel')}.hide(); return false;" />
+		</f:facet>
 
-        <h:form>
-            <h:panelGrid id="groupPanelId" columns="1" border="0" cellpadding="0" cellspacing="0" width="100%" columnClasses="alignLeft">
-                <ox:decorate id="searchPattern" hideLabel="true">
-                    <h:inputText value="#{cc.attrs.searchPattern}" size="30" maxlength="30" id="searchGroupPatternId" styleClass="searchParameters" alt="Search parameters like iNum, Display Name" />
-                    <a4j:commandButton value="Search" action="#{cc.attrs.searchMethod}" render="groupPanelId" />
-                </ox:decorate>
+		<h:form>
+			<h:panelGrid id="groupPanelId" columns="1" border="0" cellpadding="0"
+				cellspacing="0" width="100%" columnClasses="alignLeft">
+				<ox:decorate id="searchPattern" hideLabel="true">
+					<h:inputText value="#{cc.attrs.searchPattern}" size="30"
+						maxlength="30" id="searchGroupPatternId"
+						styleClass="searchParameters"
+						alt="Search parameters like iNum, Display Name" />
+					<a4j:commandButton value="Search" action="#{cc.attrs.searchMethod}"
+						render="groupPanelId" />
+				</ox:decorate>
 
-                <h:panelGroup id="groupNoResultId" rendered="#{cc.attrs.searchResult.size() eq 0}">
-                    <h:outputText value="No Search Result Found" />
-                </h:panelGroup>
+				<h:panelGroup id="groupNoResultId"
+					rendered="#{cc.attrs.searchResult.size() eq 0}">
+					<h:outputText value="No Search Result Found" />
+				</h:panelGroup>
 
-                <ui:fragment rendered="#{cc.attrs.updateSelectionMethod != null}">
-                    <a4j:jsFunction name="executeUpdateSelection" action="#{cc.attrs.updateSelectionMethod}" render="groupPanelId"/>
-                </ui:fragment>
+				<ui:fragment rendered="#{cc.attrs.updateSelectionMethod != null}">
+					<a4j:jsFunction name="executeUpdateSelection"
+						action="#{cc.attrs.updateSelectionMethod}" render="groupPanelId" />
+				</ui:fragment>
 
-                <h:panelGroup style="overflow-y:auto; width:715px;#{cc.attrs.searchResult.size() gt 5 ? ' height:310px;' : ''}" layout="block" rendered="#{cc.attrs.searchResult.size() gt 0}">
-                    <rich:dataTable sortMode="single" id="groupListId" value="#{cc.attrs.searchResult}" styleClass="data sortable" var="prs">
-                        <rich:column>
-                            <f:facet name="header">X</f:facet>
-                            <h:selectBooleanCheckbox value="#{prs.selected}" />
-                        </rich:column>
-                        <rich:column sortBy="#{prs.displayName}">
-                            <f:facet name="header">Display Name</f:facet>
-                            <h:outputText value="#{prs.displayName}" />
-                        </rich:column>
-                        <rich:column sortBy="#{prs.inum}">
-                            <f:facet name="header">iNum</f:facet>
-                            <h:outputText value="#{prs.inum}" />
-                        </rich:column>
-                    </rich:dataTable>
-                </h:panelGroup>
+				<h:panelGroup
+					style="overflow-y:auto; width:715px;#{cc.attrs.searchResult.size() gt 5 ? ' height:310px;' : ''}"
+					layout="block" rendered="#{cc.attrs.searchResult.size() gt 0}">
+					<p:dataTable id="groupListId" value="#{cc.attrs.searchResult}"
+						styleClass="data sortable" var="prs">
+						<p:column  width="50" headerText="X">
+							<h:selectBooleanCheckbox value="#{prs.selected}" />
+						</p:column>
+						<p:column sortBy="#{prs.displayName}" headerText="Display Name">
+							<h:outputText value="#{prs.displayName}" />
+						</p:column>
+						<p:column headerText="Inum" sortBy="#{prs.inum}">
+							<h:outputText value="#{prs.inum}" />
+						</p:column>
+					</p:dataTable>
+				</h:panelGroup>
 
-                <richext:spacer height="16" />
+				<p:spacer height="16" />
 
-                <h:panelGroup>
-                    <a4j:commandButton action="#{cc.attrs.acceptMethod}" value="Ok" oncomplete="#{rich:component('selectGroupModalPanel')}.hide();" render="#{cc.attrs.render}" />
+				<h:panelGroup>
+					<a4j:commandButton action="#{cc.attrs.acceptMethod}" value="Ok"
+						oncomplete="#{rich:component('selectGroupModalPanel')}.hide();"
+						render="#{cc.attrs.render}" />
                     &nbsp;
-                    <a4j:commandButton action="#{cc.attrs.cancelMethod}" value="Cancel" oncomplete="#{rich:component('selectGroupModalPanel')}.hide(); return false;" />
+                    <a4j:commandButton action="#{cc.attrs.cancelMethod}"
+						value="Cancel"
+						oncomplete="#{rich:component('selectGroupModalPanel')}.hide(); return false;" />
                     &nbsp;
-                    <a4j:status startText="Request in progress please wait......" stopText="" startStyle="color:red" />
-                </h:panelGroup>
-            </h:panelGrid>
-        </h:form>
-    </rich:popupPanel>
+                    <a4j:status
+						startText="Request in progress please wait......" stopText=""
+						startStyle="color:red" />
+				</h:panelGroup>
+			</h:panelGrid>
+		</h:form>
+	</rich:popupPanel>
 </cc:implementation>
 
 </html>

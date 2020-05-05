@@ -4,6 +4,7 @@
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:b="http://bootsfaces.net/ui"
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
 	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
@@ -48,7 +49,7 @@
 											outcome="/uma/resource/modifyResource"
 											value="#{msg['uma.addResourceSet']}"
 											includeViewParams="false" />
-										<richext:spacer height="8" />
+										<p:spacer height="8" />
 										<ox:decorate id="searchPattern"
 											label="#{msg['uma.searchKey']}" style="height:60px;">
 											<h:inputText

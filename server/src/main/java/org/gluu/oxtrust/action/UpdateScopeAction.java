@@ -520,4 +520,8 @@ public class UpdateScopeAction implements Serializable {
 	public boolean isUpdate() {
 		return update;
 	}
+
+	public List<ScopeType> getScopeTypes() {
+		return scopeService.getScopeTypes();
+	}
 }

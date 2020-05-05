@@ -28,11 +28,6 @@
                 <h:selectBooleanCheckbox value="#{_metadataFilterSelected.requireSignedMetadata}" />
             </h:panelGrid>
             <h:outputText value="#{msg['trustmanager.validationCertificate']}" />
-            <rich:fileUpload id="filterCertWrapperId" fileName="#{_metadataFiltersAction.filterCertWrapper.fileName}" data="#{_metadataFiltersAction.filterCertWrapper.stream}"
-                fileSize="#{_metadataFiltersAction.filterCertWrapper.fileSize}" contentType="#{_metadataFiltersAction.filterCertWrapper.contentType}" maxlength="100"
-                rendered="#{empty _metadataFilterSelected.filterCertFileName}" immediate="true" style="width: 180px;">
-<!--                <a4j:ajax event="complete" action="#{_metadataFiltersAction.showFile()}"/> -->
-            </rich:fileUpload>
             <h:panelGrid>
                 <h:outputText value="#{_metadataFilterSelected.filterCertFileName}" rendered="#{not empty _metadataFilterSelected.filterCertFileName}" />
                 <a4j:commandLink action="#{_metadataFilterSelected.setFilterCertFileName('')}" limitRender="true" render="SignatureValidationFilterMenu"

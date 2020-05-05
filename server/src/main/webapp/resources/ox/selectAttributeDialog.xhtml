@@ -3,8 +3,8 @@
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
-	xmlns:b="http://bootsfaces.net/ui"
-	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:b="http://bootsfaces.net/ui" xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:p="http://primefaces.org/ui"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
 	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
@@ -40,8 +40,8 @@
 				onclick="#{rich:component('selectAttributeModalPanel')}.hide(); return false;" />
 		</f:facet>
 		<b:form id="myForm" appendId="false">
-			<h:panelGroup id="attributePanelId" styleClass="attributePanelId" columns="1" border="0"
-				cellpadding="0" cellspacing="0" width="100%"
+			<h:panelGroup id="attributePanelId" styleClass="attributePanelId"
+				columns="1" border="0" cellpadding="0" cellspacing="0" width="100%"
 				columnClasses="alignLeft"
 				style="float:left !important;width:100% !important;">
 				<ox:decorate id="searchPattern" hideLabel="true">
@@ -53,8 +53,9 @@
 					<div class="row"
 						style="float: left; margin-left: 20px; margin-top: -5px;">
 						<a4j:commandButton value="Search" style="margin-top:5px;"
-							styleClass="btn btn-primary searchButtonClass" action="#{cc.attrs.searchMethod}"
-							render="attributePanelId" eventsQueue="#{cc.attrs.queue}" />
+							styleClass="btn btn-primary searchButtonClass"
+							action="#{cc.attrs.searchMethod}" render="attributePanelId"
+							eventsQueue="#{cc.attrs.queue}" />
 					</div>
 				</ox:decorate>
 				<h:panelGroup id="attributeNoResultId"
@@ -64,32 +65,31 @@
 				<h:panelGroup id="attributeSecondPanelId"
 					style="overflow-y:auto; width:715px;#{cc.attrs.searchResult.size() gt 5 ? ' height:310px;' : ''}"
 					layout="block" rendered="#{cc.attrs.searchResult.size() gt 0}">
-					<rich:dataTable sortMode="single" id="attributeListId"
-						value="#{cc.attrs.searchResult}" styleClass="data sortable attributeListId"
-						var="prs">
-						<rich:column>
+					<p:dataTable id="attributeListId" value="#{cc.attrs.searchResult}"
+						styleClass="data sortable attributeListId" var="prs">
+						<p:column width="50">
 							<f:facet name="header">X</f:facet>
 							<h:selectBooleanCheckbox value="#{prs.selected}" />
-						</rich:column>
-						<rich:column sortBy="#{prs.displayName}">
+						</p:column>
+						<p:column sortBy="#{prs.displayName}">
 							<f:facet name="header">Display Name</f:facet>
 							<h:outputText value="#{prs.displayName}" />
-						</rich:column>
-						<rich:column sortBy="#{prs.name}">
+						</p:column>
+						<p:column sortBy="#{prs.name}">
 							<f:facet name="header">Atribute Name</f:facet>
 							<h:outputText value="#{prs.name}" />
-						</rich:column>
-						<rich:column sortBy="#{prs.inum}">
+						</p:column>
+						<p:column sortBy="#{prs.inum}">
 							<f:facet name="header">iNum</f:facet>
 							<h:outputText value="#{prs.inum}" />
-						</rich:column>
-						<rich:column sortBy="#{prs.origin}">
+						</p:column>
+						<p:column sortBy="#{prs.origin}">
 							<f:facet name="header">Origin</f:facet>
 							<h:outputText value="#{prs.origin}" />
-						</rich:column>
-					</rich:dataTable>
+						</p:column>
+					</p:dataTable>
 				</h:panelGroup>
-				<richext:spacer height="16" />
+				<p:spacer height="16" />
 				<div class="box-footer">
 					<h:panelGroup>
 						<div class="row" style="margin-left: -4px !important">

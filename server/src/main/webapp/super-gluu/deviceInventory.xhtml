@@ -1,86 +1,97 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://xmlns.jcp.org/jsf/core"
-                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
-                xmlns:rich="http://richfaces.org/rich" xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
-                xmlns:ui="http://xmlns.jcp.org/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
-    <f:metadata>
-        <f:viewAction action="#{permissionService.requestPermission('super-gluu', 'access')}" />
-        <f:viewAction action="#{pushDeviceInventoryAction.setSearchPattern(param['searchPattern'])}"/>
-        <f:viewAction action="#{conversationService.initConversation}" />
-        <f:viewAction action="#{pushDeviceInventoryAction.start}"
-                      if="#{pushDeviceInventoryAction.pushDeviceList == null }"
-                      onPostback="false"/>
-    </f:metadata>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/WEB-INF/incl/layout/newtemplate.xhtml">
+	<f:metadata>
+		<f:viewAction
+			action="#{permissionService.requestPermission('super-gluu', 'access')}" />
+		<f:viewAction
+			action="#{pushDeviceInventoryAction.setSearchPattern(param['searchPattern'])}" />
+		<f:viewAction action="#{conversationService.initConversation}" />
+		<f:viewAction action="#{pushDeviceInventoryAction.start}"
+			if="#{pushDeviceInventoryAction.pushDeviceList == null }"
+			onPostback="false" />
+	</f:metadata>
 
-    <ui:define name="body">
-        <div id="formArea">
-            <h:panelGrid border="0" cellpadding="0" cellspacing="0" columns="1" width="100%">
-                <h:form>
-                    <ox:decorate hideLabel="true" id="searchPattern">
-                        <h:inputText alt="Search parameters for client like inum,displayName" id="searchPatternId"
-                                     maxlength="30" size="30" styleClass="searchParameters"
-                                     value="#{pushDeviceInventoryAction.searchPattern}"/>
-                        <h:commandButton action="#{pushDeviceInventoryAction.search}"
-                                         value="#{msg['deviceInventory.search']}"/>
-                    </ox:decorate>
-                </h:form>
+	<ui:define name="body">
+		<div id="formArea">
+			<h:panelGrid border="0" cellpadding="0" cellspacing="0" columns="1"
+				width="100%">
+				<h:form>
+					<ox:decorate hideLabel="true" id="searchPattern">
+						<h:inputText
+							alt="Search parameters for client like inum,displayName"
+							id="searchPatternId" maxlength="30" size="30"
+							styleClass="searchParameters"
+							value="#{pushDeviceInventoryAction.searchPattern}" />
+						<h:commandButton action="#{pushDeviceInventoryAction.search}"
+							value="#{msg['deviceInventory.search']}" />
+					</ox:decorate>
+				</h:form>
 
-                <richext:spacer height="16"/>
+				<p:spacer height="16" />
 
-                <h:form id="clientsFormId">
-                    <ui:fragment rendered="#{pushDeviceInventoryAction.pushDeviceList.size() eq 0}">
-                        <richext:spacer height="30"/>
-                        <h:outputText value="#{msg['deviceInventory.noSearchResultFound']}"/>
-                    </ui:fragment>
+				<h:form id="clientsFormId">
+					<ui:fragment
+						rendered="#{pushDeviceInventoryAction.pushDeviceList.size() eq 0}">
+						<p:spacer height="30" />
+						<h:outputText
+							value="#{msg['deviceInventory.noSearchResultFound']}" />
+					</ui:fragment>
 
-                    <rich:dataTable id="devicesListId" rendered="#{pushDeviceInventoryAction.pushDeviceList.size() gt 0}"
-                                    rows="20" sortMode="single" styleClass="data sortable"
-                                    value="#{pushDeviceInventoryAction.pushDeviceList}" var="_device">
-                        <rich:column>
-                            <f:facet name="header">#{msg['deviceInventory.application']}</f:facet>
-                            <ui:param name="_application"
-                                      value="#{lookupService.getDisplayNameEntry(_device.application)}"/>
-                            <h:outputText value="#{_application.displayName}"/>
-                        </rich:column>
-                        <rich:column sortBy="#{_device.type}">
-                            <f:facet name="header">#{msg['deviceInventory.type']}</f:facet>
-                            <h:outputText value="#{_device.type}"/>
-                        </rich:column>
-                        <rich:column sortBy="#{_device.userId}">
-                            <f:facet name="header">#{msg['deviceInventory.userId']}</f:facet>
-                            <h:outputText value="#{_device.userId}"/>
-                        </rich:column>
-                        <rich:column>
-                            <f:facet name="header">#{msg['deviceInventory.os']}</f:facet>
-                            <h:outputText
-                                    value="#{_device.deviceConfiguration.osName} - #{_device.deviceConfiguration.osVersion}"/>
-                        </rich:column>
-                        <rich:column>
-                            <f:facet name="header">#{msg['deviceInventory.device']}</f:facet>
-                            <h:outputText value="#{_device.deviceConfiguration.deviceName}"/>
-                        </rich:column>
-                        <rich:column>
-                            <f:facet name="header">#{msg['deviceInventory.deviceUUID']}</f:facet>
-                            <h:outputText value="#{_device.deviceConfiguration.deviceUuid}"/>
-                        </rich:column>
-                        <rich:column>
-                            <f:facet name="header">#{msg['deviceInventory.approvedAt']}</f:facet>
-                            <h:outputText value="#{_device.deviceConfiguration.approvedTime}">
-                                <f:convertDateTime pattern="MMM. d yyyy hh:mm a"/>
-                            </h:outputText>
-                        </rich:column>
-                        <rich:column>
-                            <f:facet name="header">#{msg['deviceInventory.approvedFrom']}</f:facet>
-                            <h:outputText value="#{_device.deviceConfiguration.approvedIp}"/>
-                        </rich:column>
-                        <f:facet name="footer">
-                            <rich:dataScroller align="left" for="devicesListId" renderIfSinglePage="false"
-                                               rendered="#{pushDeviceInventoryAction.pushDeviceList.size() gt 0}"
-                                               stepControls="auto"/>
-                        </f:facet>
-                    </rich:dataTable>
-                </h:form>
-            </h:panelGrid>
-        </div>
-    </ui:define>
+					<p:dataTable id="devicesListId"
+						rendered="#{pushDeviceInventoryAction.pushDeviceList.size() gt 0}"
+						rows="20" sortMode="single" styleClass="data sortable"
+						value="#{pushDeviceInventoryAction.pushDeviceList}" var="_device">
+						<p:column>
+							<f:facet name="header">#{msg['deviceInventory.application']}</f:facet>
+							<ui:param name="_application"
+								value="#{lookupService.getDisplayNameEntry(_device.application)}" />
+							<h:outputText value="#{_application.displayName}" />
+						</p:column>
+						<p:column sortBy="#{_device.type}">
+							<f:facet name="header">#{msg['deviceInventory.type']}</f:facet>
+							<h:outputText value="#{_device.type}" />
+						</p:column>
+						<p:column sortBy="#{_device.userId}">
+							<f:facet name="header">#{msg['deviceInventory.userId']}</f:facet>
+							<h:outputText value="#{_device.userId}" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">#{msg['deviceInventory.os']}</f:facet>
+							<h:outputText
+								value="#{_device.deviceConfiguration.osName} - #{_device.deviceConfiguration.osVersion}" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">#{msg['deviceInventory.device']}</f:facet>
+							<h:outputText value="#{_device.deviceConfiguration.deviceName}" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">#{msg['deviceInventory.deviceUUID']}</f:facet>
+							<h:outputText value="#{_device.deviceConfiguration.deviceUuid}" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">#{msg['deviceInventory.approvedAt']}</f:facet>
+							<h:outputText value="#{_device.deviceConfiguration.approvedTime}">
+								<f:convertDateTime pattern="MMM. d yyyy hh:mm a" />
+							</h:outputText>
+						</p:column>
+						<p:column>
+							<f:facet name="header">#{msg['deviceInventory.approvedFrom']}</f:facet>
+							<h:outputText value="#{_device.deviceConfiguration.approvedIp}" />
+						</p:column>
+						<f:facet name="footer">
+							<p:dataScroller chunkSize="10" />
+						</f:facet>
+					</p:dataTable>
+				</h:form>
+			</h:panelGrid>
+		</div>
+	</ui:define>
 </ui:composition>

@@ -237,7 +237,7 @@
 				<version>${oxcore.version}</version>
 			</dependency>
 			<dependency>
-			<groupId>org.gluu</groupId>
+				<groupId>org.gluu</groupId>
 				<artifactId>oxcore-persistence-cdi</artifactId>
 				<version>${oxcore.version}</version>
 			</dependency>
@@ -288,7 +288,14 @@
 			<dependency>
 				<groupId>org.primefaces</groupId>
 				<artifactId>primefaces</artifactId>
-				<version>6.2</version>
+				<version>8.0</version>
+			</dependency>
+			<!-- bootsfaces -->
+			<dependency>
+				<groupId>net.bootsfaces</groupId>
+				<artifactId>bootsfaces</artifactId>
+				<version>1.4.2</version>
+				<scope>compile</scope>
 			</dependency>
 
 			<!-- Commons libs -->
@@ -306,6 +313,11 @@
 				<groupId>commons-io</groupId>
 				<artifactId>commons-io</artifactId>
 				<version>2.6</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-fileupload</groupId>
+				<artifactId>commons-fileupload</artifactId>
+				<version>1.4</version>
 			</dependency>
 			<dependency>
 				<groupId>commons-beanutils</groupId>
@@ -445,11 +457,11 @@
 				<artifactId>shibboleth-identityprovider</artifactId>
 				<version>${shibboleth.idp.version}</version>
 			</dependency>
-	        <dependency>
-	            <groupId>org.opensaml</groupId>
-	            <artifactId>opensaml-saml-api</artifactId>
-	            <version>3.4.3</version>
-	        </dependency>
+			<dependency>
+				<groupId>org.opensaml</groupId>
+				<artifactId>opensaml-saml-api</artifactId>
+				<version>3.4.3</version>
+			</dependency>
 			<dependency>
 				<groupId>dom4j</groupId>
 				<artifactId>dom4j</artifactId>

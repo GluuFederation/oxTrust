@@ -840,6 +840,11 @@
             "type": "string",
             "minLength": 1
         },
+        "returnClientSecretOnRead": {
+            "id": "returnClientSecretOnRead",
+            "description": "Boolean value specifying whether a client_secret is returned on client GET or PUT. Set to false by default which means to not return secret.",
+            "type": "boolean"
+        },
         "personCustomObjectClassList": {
             "id": "personCustomObjectClassList",
             "description": "LDAP custom object class list for dynamic person enrollment.",
@@ -1526,58 +1531,171 @@
                 ]
             }
         },
+        "backchannelAuthenticationEndpoint": {
+            "id": "backchannelAuthenticationEndpoint",
+            "description": "Backchannel Authentication Endpoint",
+            "type": "string",
+            "minLength": 0
+        },
+        "backchannelDeviceRegistrationEndpoint": {
+            "id": "backchannelDeviceRegistrationEndpoint",
+            "description": "Backchannel Device Registration Endpoint",
+            "type": "string",
+            "minLength": 0
+        },
+        "backchannelTokenDeliveryModesSupported": {
+            "id": "backchannelTokenDeliveryModesSupported",
+            "description": "Backchannel Token Delivery Modes Supported.",
+            "type": "array",
+            "format": "select",
+            "minItems": 0,
+            "uniqueItems": true,
+            "items": {
+                "type": "string",
+                "enum": [
+                    "poll",
+                    "ping",
+                    "push"
+                ]
+            }
+        },
+        "backchannelAuthenticationRequestSigningAlgValuesSupported": {
+            "id": "backchannelAuthenticationRequestSigningAlgValuesSupported",
+            "description": "Backchannel Authentication Request Signing Alg Values Supported.",
+            "type": "array",
+            "format": "select",
+            "minItems": 0,
+            "uniqueItems": true,
+            "items": {
+                "type": "string",
+                "enum": [
+                    "RS512",
+                    "ES256",
+                    "ES384",
+                    "ES512",
+                    "PS256",
+                    "PS384",
+                    "PS512"
+                ]
+            }
+        },
+        "backchannelClientId": {
+            "id": "backchannelClientId",
+            "description": "Backchannel Client Id",
+            "type": "string",
+            "minLength": 0
+        },
+        "backchannelRedirectUri": {
+            "id": "backchannelRedirectUri",
+            "description": "Backchannel Redirect Uri",
+            "type": "string",
+            "minLength": 0
+        },
+        "backchannelUserCodeParameterSupported": {
+            "id": "backchannelUserCodeParameterSupported",
+            "description": "Backchannel User Code Parameter Supported",
+            "type": "boolean"
+        },
+        "backchannelBindingMessagePattern": {
+            "id": "backchannelBindingMessagePattern",
+            "description": "Backchannel Binding Message Pattern",
+            "type": "string",
+            "minLength": 0
+        },
+        "backchannelAuthenticationResponseExpiresIn": {
+            "id": "backchannelAuthenticationResponseExpiresIn",
+            "description": "Backchannel Authentication Response Expires In",
+            "type": "integer",
+            "multipleOf": 1,
+            "maximum": 2147483647,
+            "minimum": 1,
+            "exclusiveMaximum": false,
+            "exclusiveMinimum": false
+        },
+        "backchannelAuthenticationResponseInterval": {
+            "id": "backchannelAuthenticationResponseInterval",
+            "description": "Backchannel Authentication Response Interval",
+            "type": "integer",
+            "multipleOf": 1,
+            "maximum": 2147483647,
+            "minimum": 1,
+            "exclusiveMaximum": false,
+            "exclusiveMinimum": false
+        },
+        "backchannelLoginHintClaims": {
+            "id": "backchannelLoginHintClaims",
+            "description": "Backchannel Login Hint Claims",
+            "type": "array",
+            "minItems": 0,
+            "uniqueItems": true,
+            "additionalItems": true,
+            "items": {
+                "type": "string",
+                "minLength": 1
+            }
+        },
         "cibaEndUserNotificationConfig": {
             "id": "cibaEndUserNotificationConfig",
-            "description": "Configuration needed to process CIBA authorization using Firebase integration.",
+            "description": "CIBA End User Notification Config",
             "type": "object",
             "properties": {
                 "apiKey": {
                     "id": "apiKey",
+                    "description": "API Key",
                     "type": "string",
                     "minLength": 1
                 },
                 "authDomain": {
                     "id": "authDomain",
+                    "description": "Auth Domain",
                     "type": "string",
                     "minLength": 1
                 },
                 "databaseURL": {
                     "id": "databaseURL",
+                    "description": "Database URL",
                     "type": "string",
                     "minLength": 1
                 },
                 "projectId": {
                     "id": "projectId",
+                    "description": "Project ID",
                     "type": "string",
                     "minLength": 1
                 },
                 "storageBucket": {
                     "id": "storageBucket",
+                    "description": "Storage Bucket",
                     "type": "string",
                     "minLength": 1
                 },
                 "messagingSenderId": {
                     "id": "messagingSenderId",
+                    "description": "Messaging Sender ID",
                     "type": "string",
                     "minLength": 1
                 },
                 "appId": {
                     "id": "appId",
+                    "description": "App ID",
                     "type": "string",
                     "minLength": 1
                 },
                 "notificationUrl": {
                     "id": "notificationUrl",
+                    "description": "Notification URL",
                     "type": "string",
                     "minLength": 1
                 },
                 "notificationKey": {
                     "id": "notificationKey",
+                    "description": "Notification Key",
                     "type": "string",
                     "minLength": 1
                 },
                 "publicVapidKey": {
                     "id": "publicVapidKey",
+                    "description": "Public Vapid Key",
                     "type": "string",
                     "minLength": 1
                 }
@@ -1715,6 +1833,17 @@
         "jmsPassword",
         "useLocalCache",
         "jwksAlgorithmsSupported",
+        "backchannelAuthenticationEndpoint",
+        "backchannelAuthenticationEndpoint",
+        "backchannelTokenDeliveryModesSupported",
+        "backchannelAuthenticationRequestSigningAlgValuesSupported",
+        "backchannelClientId",
+        "backchannelRedirectUri",
+        "backchannelUserCodeParameterSupported",
+        "backchannelBindingMessagePattern",
+        "backchannelAuthenticationResponseExpiresIn",
+        "backchannelAuthenticationResponseInterval",
+        "backchannelLoginHintClaims",
         "cibaEndUserNotificationConfig"
     ]
 }

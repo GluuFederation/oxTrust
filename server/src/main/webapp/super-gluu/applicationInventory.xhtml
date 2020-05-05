@@ -1,66 +1,75 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://xmlns.jcp.org/jsf/core"
-                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
-                xmlns:rich="http://richfaces.org/rich" xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
-                xmlns:ui="http://xmlns.jcp.org/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
-    <f:metadata>    
-        <f:viewAction action="#{permissionService.requestPermission('super-gluu', 'access')}" />	
-        <f:viewParam name="searchPattern" value="#{pushApplicationInventoryAction.searchPattern}" />
-        <f:viewAction action="#{conversationService.initConversation}" />
-        <f:viewAction action="#{pushApplicationInventoryAction.start}"
-                      if="#{pushApplicationInventoryAction.pushApplicationList == null }"
-                      onPostback="false"/>
-    </f:metadata>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/WEB-INF/incl/layout/newtemplate.xhtml">
+	<f:metadata>
+		<f:viewAction
+			action="#{permissionService.requestPermission('super-gluu', 'access')}" />
+		<f:viewParam name="searchPattern"
+			value="#{pushApplicationInventoryAction.searchPattern}" />
+		<f:viewAction action="#{conversationService.initConversation}" />
+		<f:viewAction action="#{pushApplicationInventoryAction.start}"
+			if="#{pushApplicationInventoryAction.pushApplicationList == null }"
+			onPostback="false" />
+	</f:metadata>
 
-    <ui:define name="body">
-        <div id="formArea">
-            <h:panelGrid border="0" cellpadding="0" cellspacing="0" columns="1" width="100%">
-                <h:form>
-                    <ox:decorate hideLabel="true" id="searchPattern">
-                        <h:inputText alt="Search parameters for client like inum,displayName" id="searchPatternId"
-                                     maxlength="30" size="30" styleClass="searchParameters"
-                                     value="#{pushApplicationInventoryAction.searchPattern}"/>
-                        <h:commandButton action="#{pushApplicationInventoryAction.search}"
-                                         value="#{msg['applicationInventory.search']}"/>
-                    </ox:decorate>
-                </h:form>
+	<ui:define name="body">
+		<div id="formArea">
+			<h:panelGrid border="0" cellpadding="0" cellspacing="0" columns="1"
+				width="100%">
+				<h:form>
+					<ox:decorate hideLabel="true" id="searchPattern">
+						<h:inputText
+							alt="Search parameters for client like inum,displayName"
+							id="searchPatternId" maxlength="30" size="30"
+							styleClass="searchParameters"
+							value="#{pushApplicationInventoryAction.searchPattern}" />
+						<h:commandButton action="#{pushApplicationInventoryAction.search}"
+							value="#{msg['applicationInventory.search']}" />
+					</ox:decorate>
+				</h:form>
 
-                <richext:spacer height="16"/>
+				<p:spacer height="16" />
 
-                <h:form id="clientsFormId">
-                    <ui:fragment rendered="#{pushApplicationInventoryAction.pushApplicationList.size() eq 0}">
-                        <richext:spacer height="30"/>
-                        <h:outputText value="#{msg['applicationInventory.noSearchResultFound']}"/>
-                    </ui:fragment>
+				<h:form id="clientsFormId">
+					<ui:fragment
+						rendered="#{pushApplicationInventoryAction.pushApplicationList.size() eq 0}">
+						<p:spacer height="30" />
+						<h:outputText
+							value="#{msg['applicationInventory.noSearchResultFound']}" />
+					</ui:fragment>
 
-                    <rich:dataTable id="applicationsListId"
-                                    rendered="#{pushApplicationInventoryAction.pushApplicationList.size() gt 0}" rows="20"
-                                    sortMode="single" styleClass="data sortable"
-                                    value="#{pushApplicationInventoryAction.pushApplicationList}" var="_application">
-                        <rich:column>
-                            <f:facet name="header">Name</f:facet>
-                            <h:outputText value="#{_application.name}"/>
-                            <!--
-                                                        <h:link includeViewParams="false" outcome="/push/application/updateApplication" value="#{_application.name}">
-                                                            <f:param name="id" value="#{_application.id}" />
-                                                        </h:link>
-                            -->
-                        </rich:column>
-                        <rich:column sortBy="#{_application.displayName}">
-                            <f:facet name="header">#{msg['applicationInventory.displayName']}</f:facet>
-                            <h:outputText value="#{_application.displayName}"/>
-                        </rich:column>
-                        <rich:column sortBy="#{_application.id}">
-                            <f:facet name="header">#{msg['applicationInventory.id']}</f:facet>
-                            <h:outputText value="#{_application.id}"/>
-                        </rich:column>
-                        <rich:column>
-                            <f:facet name="header">#{msg['applicationInventory.platforms']}</f:facet>
-                            <ox:stringList value="#{pushApplicationInventoryAction.getPlatforms(_application)}"/>
-                        </rich:column>
-                    </rich:dataTable>
-                </h:form>
-            </h:panelGrid>
-        </div>
-    </ui:define>
+					<p:dataTable id="applicationsListId"
+						rendered="#{pushApplicationInventoryAction.pushApplicationList.size() gt 0}"
+						rows="20" styleClass="data sortable"
+						value="#{pushApplicationInventoryAction.pushApplicationList}"
+						var="_application">
+						<p:column>
+							<f:facet name="header">Name</f:facet>
+							<h:outputText value="#{_application.name}" />
+						</p:column>
+						<p:column sortBy="#{_application.displayName}">
+							<f:facet name="header">#{msg['applicationInventory.displayName']}</f:facet>
+							<h:outputText value="#{_application.displayName}" />
+						</p:column>
+						<p:column sortBy="#{_application.id}">
+							<f:facet name="header">#{msg['applicationInventory.id']}</f:facet>
+							<h:outputText value="#{_application.id}" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">#{msg['applicationInventory.platforms']}</f:facet>
+							<ox:stringList
+								value="#{pushApplicationInventoryAction.getPlatforms(_application)}" />
+						</p:column>
+					</p:dataTable>
+				</h:form>
+			</h:panelGrid>
+		</div>
+	</ui:define>
 </ui:composition>

@@ -13,14 +13,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
-import javax.ejb.Stateless;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Any;
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.model.GluuAttribute;

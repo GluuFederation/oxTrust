@@ -6,7 +6,7 @@
 	xmlns:b="http://bootsfaces.net/ui"
 	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
-	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:p="http://primefaces.org/ui" xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext">
 	<div class="row"
@@ -20,8 +20,8 @@
 				leftClass="col-sm-6" rightClass="col-sm-6">
 				<b:touchSpin id="assertionLifetimeCheckBoxValue" col-md="12"
 					styleClass="rounded assertionLifetimeCheckBoxValue"
-					value="#{_ssoProfile.assertionLifetime}"
-					min="60" max="2147483647" step="300000" />
+					value="#{_ssoProfile.assertionLifetime}" min="60" max="2147483647"
+					step="300000" />
 			</ox:decorate>
 			<ox:decorate id="signResponseCheckBox"
 				label="#{msg['trustmanager.signResponses']}" leftClass="col-sm-6"
@@ -76,8 +76,8 @@
 				</b:selectOneMenu>
 			</ox:decorate>
 			<ox:decorate id="encryptNamedIdCheckBox"
-				label="#{msg['trustmanager.encryptNameIds']}"
-				leftClass="col-sm-6" rightClass="col-sm-6">
+				label="#{msg['trustmanager.encryptNameIds']}" leftClass="col-sm-6"
+				rightClass="col-sm-6">
 				<b:selectOneMenu small-screen="12"
 					value="#{_ssoProfile.encryptNameIds}">
 					<f:selectItem itemLabel="#{msg['trustmanager.never']}"
@@ -139,30 +139,5 @@
 					var="nameIdFormat" />
 			</rich:pickList>
 		</b:formGroup>
-		<b:panelGrid id="saml2sso" colSpans="3,9"
-			rendered="#{_relyingPartyAction.isProfileConfigurationSelected('SAML2SSO')}">
-			<rich:fileUpload id="SAML2SSOWrapperId"
-				fileName="#{_relyingPartyAction.fileWrappers.get('SAML2SSO').fileName}"
-				data="#{_relyingPartyAction.fileWrappers.get('SAML2SSO').stream}"
-				fileSize="#{_relyingPartyAction.fileWrappers.get('SAML2SSO').fileSize}"
-				contentType="#{_relyingPartyAction.fileWrappers.get('SAML2SSO').contentType}"
-				maxlength="100" style="height:100px;"
-				rendered="#{empty _ssoProfile.profileConfigurationCertFileName}"
-				immediate="true">
-			</rich:fileUpload>
-			<h:panelGrid
-				rendered="#{not empty _ssoProfile.profileConfigurationCertFileName}">
-				<h:outputText style="font-weight:bold;"
-					value="#{_ssoProfile.profileConfigurationCertFileName}"
-					rendered="#{not empty _ssoProfile.profileConfigurationCertFileName}" />
-				<a4j:commandLink
-					action="#{_ssoProfile.setProfileConfigurationCertFileName('')}"
-					limitRender="true" render="SAML2SSOMenu"
-					rendered="#{not empty _ssoProfile.profileConfigurationCertFileName}"
-					execute="@this">
-					<h:graphicImage value="/img/remove.gif" />
-				</a4j:commandLink>
-			</h:panelGrid>
-		</b:panelGrid>
 	</div>
 </ui:composition>

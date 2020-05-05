@@ -4,11 +4,12 @@
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
 	xmlns:b="http://bootsfaces.net/ui"
-	xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
 	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
 	template="/WEB-INF/incl/layout/newtemplate.xhtml">
 	<f:metadata>
 		<f:viewAction
@@ -173,7 +174,7 @@
 													<b:formGroup>
 														<b:inputText id="RedirectURI" colMd="9" labelColMd="3"
 															value="#{passportIdpInitiatedAction.authzParam.redirectUri}"
-															p:type="url" p:placeholder="Enter a valid url"
+															pt:type="url" pt:placeholder="Enter a valid url"
 															styleClass="rounded form-control RedirectURI"
 															required="true"
 															label="#{msg['passport.idpinitiated.authParams.redirectUri']}" />
@@ -207,7 +208,7 @@
 																</div>
 																<br />
 															</a4j:repeat>
-															<richext:spacer height="16" />
+															<p:spacer height="16" />
 															<a4j:commandButton
 																styleClass="btn btn-primary AddResponseTypeButton"
 																style="margin-top:5px"
@@ -243,7 +244,7 @@
 																</div>
 																<br />
 															</a4j:repeat>
-															<richext:spacer height="16" />
+															<p:spacer height="16" />
 															<a4j:commandButton
 																styleClass="btn btn-primary AddScopeButton"
 																style="margin-top:5px"

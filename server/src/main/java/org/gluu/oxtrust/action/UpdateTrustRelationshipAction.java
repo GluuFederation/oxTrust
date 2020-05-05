@@ -316,6 +316,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 				this.inum = trustService.generateInumForNewTrustRelationship();
 				this.trustRelationship.setInum(this.inum);
 			} else {
+				log.info("#################Setting inum");
 				this.inum = this.trustRelationship.getInum();
 				if (this.trustRelationship.getSpMetaDataFN() == null)
 					update = true;
@@ -734,6 +735,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 		boolean emptySpMetadataFileName = StringHelper.isEmpty(spMetadataFileName);
 		if (emptySpMetadataFileName) {
 			spMetadataFileName = shibboleth3ConfService.getSpNewMetadataFileName(this.trustRelationship);
+			this.trustRelationship.setSpMetaDataFN(spMetadataFileName);
 		}
 		String result = shibboleth3ConfService.saveSpMetadataFile(trustRelationship.getSpMetaDataURL(),
 				spMetadataFileName);

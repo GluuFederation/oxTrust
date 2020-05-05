@@ -41,7 +41,9 @@ import org.gluu.service.cdi.event.ApplicationInitialized;
 import org.gluu.service.cdi.event.ApplicationInitializedEvent;
 import org.gluu.util.Pair;
 import org.gluu.util.StringHelper;
-import org.jboss.resteasy.client.jaxrs.engines.ApacheHttpClient4Engine;
+import org.jboss.resteasy.client.core.executors.ApacheHttpClient4Executor;
+import org.jboss.resteasy.client.jaxrs.ClientHttpEngine;
+import org.jboss.resteasy.client.jaxrs.engines.factory.ApacheHttpClient4EngineFactory;
 import org.slf4j.Logger;
 
 /**
@@ -70,7 +72,7 @@ public class UmaPermissionService implements Serializable {
 	private final Pair<Boolean, Response> authenticationFailure = new Pair<Boolean, Response>(false, null);
 	private final Pair<Boolean, Response> authenticationSuccess = new Pair<Boolean, Response>(true, null);
 
-	private ApacheHttpClient4Engine clientHttpEngine;
+	private ClientHttpEngine clientHttpEngine;
 
 	public void init(@Observes @ApplicationInitialized(ApplicationScoped.class) ApplicationInitializedEvent init) {
 		try {
@@ -80,7 +82,7 @@ public class UmaPermissionService implements Serializable {
 					// For more information about PoolingHttpClientConnectionManager, please see:
 					// http://hc.apache.org/httpcomponents-client-ga/httpclient/apidocs/index.html?org/apache/http/impl/conn/PoolingHttpClientConnectionManager.html
 
-					log.info("##### Initializing custom ClientExecutor...");
+					log.debug("##### Initializing custom ClientExecutor...");
 					PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
 					connectionManager.setMaxTotal(appConfiguration.getRptConnectionPoolMaxTotal());
 					connectionManager.setDefaultMaxPerRoute(appConfiguration.getRptConnectionPoolDefaultMaxPerRoute());
@@ -90,7 +92,8 @@ public class UmaPermissionService implements Serializable {
 							.setDefaultRequestConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build())
 							.setKeepAliveStrategy(connectionKeepAliveStrategy).setConnectionManager(connectionManager)
 							.build();
-					this.clientHttpEngine = new ApacheHttpClient4Engine(client);
+					
+					this.clientHttpEngine = ApacheHttpClient4EngineFactory.create(client);
 					log.info("##### Initializing custom ClientExecutor DONE");
 
 					this.permissionService = UmaClientFactory.instance().createPermissionService(this.umaMetadata,
@@ -212,9 +215,6 @@ public class UmaPermissionService implements Serializable {
 		// Determine RPT token to status
 		RptIntrospectionResponse rptStatusResponse = null;
 		try {
-			log.info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-			log.info("++++++" + authorization);
-			log.info("++++++" + rptToken);
 			rptStatusResponse = this.rptStatusService.requestRptStatus(authorization, rptToken, "");
 		} catch (Exception ex) {
 			log.error("Failed to determine RPT status", ex);
