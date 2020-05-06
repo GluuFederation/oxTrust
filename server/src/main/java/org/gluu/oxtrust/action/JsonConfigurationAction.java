@@ -305,16 +305,19 @@ public class JsonConfigurationAction implements Serializable {
 		try {
 			org.gluu.oxauth.model.configuration.AppConfiguration appConfiguration = jsonService.jsonToObject(
 					oxAuthAppConfiguration, org.gluu.oxauth.model.configuration.AppConfiguration.class);
-			String decryptedKey = encryptionService.decrypt(appConfiguration
-					.getCibaEndUserNotificationConfig().getNotificationKey());
-			appConfiguration.getCibaEndUserNotificationConfig().setNotificationKey(decryptedKey);
-
+			try {
+				String decryptedKey = encryptionService.decrypt(appConfiguration
+						.getCibaEndUserNotificationConfig().getNotificationKey());
+				appConfiguration.getCibaEndUserNotificationConfig().setNotificationKey(decryptedKey);
+			} catch (EncryptionException ex) {
+				log.error("Failed to decrypt values in the oxAuth json configuration: '{}'", oxAuthAppConfiguration, ex);
+				appConfiguration.getCibaEndUserNotificationConfig().setNotificationKey("");
+			}
 			return jsonService.objectToJson(appConfiguration);
-		} catch (Exception ex) {
-			log.error("Failed to prepare JSON from oxAuth AppConfiguration: '{}'", oxAuthAppConfiguration, ex);
+		} catch (Exception e) {
+			log.error("Problems processing oxAuth App configuration file: {}", oxAuthAppConfiguration, e);
+			return null;
 		}
-
-		return null;
 	}
 
 	private String getOxTrustImportPersonConfiguration(ImportPersonConfig oxTrustImportPersonConfiguration) {
