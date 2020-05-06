@@ -31,6 +31,9 @@
     Default configuration, with default settings applied for all profiles, and enables
     the attribute-release consent flow.
     -->
+    <bean id="SignNoIntegrity" class="org.opensaml.profile.logic.NoIntegrityMessageChannelPredicate" />
+    <bean id="EncryptNoConfidentiality" class="org.opensaml.profile.logic.NoConfidentialityMessageChannelPredicate" />
+
     <bean id="shibboleth.DefaultRelyingParty" parent="RelyingParty">
         <property name="profileConfigurations">
             <list>
@@ -40,13 +43,53 @@
                 <ref bean="SAML1.AttributeQuery" />
                 <ref bean="SAML1.ArtifactResolution" />
                 -->
-                <ref bean="SAML2.SSO" />
-                <ref bean="SAML2.ECP" />
-                <ref bean="SAML2.Logout" />
-                <ref bean="SAML2.AttributeQuery" />
-                <ref bean="SAML2.ArtifactResolution" />
-                <ref bean="Shibboleth.SSO" />
+                <bean parent="SAML2.SSO"
+                      p:includeAttributeStatement="true"
+                      p:assertionLifetime="PT5M"
+                      p:signResponsesPredicate-ref="SignNoIntegrity"
+                      p:signAssertions="false"
+                      p:encryptNameIDs="false"
+                      p:encryptAssertionsPredicate-ref="EncryptNoConfidentiality" />
+
+                <bean parent="SAML2.ECP"
+                      p:includeAttributeStatement="true"
+                      p:assertionLifetime="PT5M"
+                      p:signResponsesPredicate-ref="SignNoIntegrity"
+                      p:signAssertions="false"
+                      p:encryptNameIDs="false"
+                      p:encryptAssertionsPredicate-ref="EncryptNoConfidentiality" />
+
+                <bean parent="SAML2.AttributeQuery"
+                      p:assertionLifetime="PT5M"
+                      p:signResponsesPredicate-ref="SignNoIntegrity"
+                      p:signAssertions="false"
+                      p:encryptNameIDs="false"
+                      p:encryptAssertionsPredicate-ref="EncryptNoConfidentiality" />
+
+                <bean parent="SAML2.ArtifactResolution"
+                      p:signResponsesPredicate-ref="SignNoIntegrity"
+                      p:signAssertions="false"
+                      p:encryptNameIDs="false"
+                      p:encryptAssertionsPredicate-ref="EncryptNoConfidentiality" />
+
+                <bean parent="Shibboleth.SSO"
+                      p:includeAttributeStatement="false"
+                      p:assertionLifetime="PT5M"
+                      p:signResponsesPredicate-ref="SignNoIntegrity"
+                      p:signAssertions="false" />
+
+                <bean parent="SAML2.Logout"
+                      p:assertionLifetime="PT5M"
+                      p:signResponsesPredicate-ref="SignNoIntegrity"
+                      p:signAssertions="false"
+                      p:encryptAssertionsPredicate-ref="EncryptNoConfidentiality" />
+
                 <ref bean="Liberty.SSOS" />
+                #if ($casParams.enabled)
+                <ref bean="CAS.LoginConfiguration" />
+                <ref bean="CAS.ProxyConfiguration" />
+                <ref bean="CAS.ValidateConfiguration" />
+                #end
             </list>
         </property>
     </bean>
@@ -81,31 +124,31 @@
                           p:includeAttributeStatement="$profileConfig.includeAttributeStatement"
                           p:assertionLifetime="$profileConfig.assertionLifetime"
                         #if ($profileConfig.signResponses == 'conditional')
-                          p:signResponses-ref="SignNoIntegrity"
+                          p:signResponsesPredicate-ref="SignNoIntegrity"
                         #{else}
                             #set($signResponses = "#if ($profileConfig.signResponses == 'always')true#{else}false#end")
                           p:signResponses="$signResponses"
                         #end
                         #if ($profileConfig.signAssertions == 'conditional')
-                          p:signAssertions-ref="SignNoIntegrity"
+                          p:signAssertionsPredicate-ref="SignNoIntegrity"
                         #{else}
                             #set($signAssertions = "#if ($profileConfig.signAssertions == 'always')true#{else}false#end")
                           p:signAssertions="$signAssertions"
                         #end
                         #if ($profileConfig.signRequests == 'conditional')
-                          p:signRequests-ref="SignNoIntegrity"
+                          p:signRequestsPredicate-ref="SignNoIntegrity"
                         #{else}
                             #set($signRequests = "#if ($profileConfig.signRequests == 'always')true#{else}false#end")
                           p:signRequests="$signRequests"
                         #end
                         #if ($profileConfig.encryptNameIds == 'conditional')
-                          p:encryptNameIDs-ref="EncryptNoConfidentiality"
+                          p:encryptNameIDsPredicate-ref="EncryptNoConfidentiality"
                         #{else}
                             #set($encryptNameIds = "#if ($profileConfig.encryptNameIds == 'always')true#{else}false#end")
                           p:encryptNameIDs="$encryptNameIds"
                         #end
                         #if ($profileConfig.encryptAssertions == 'conditional')
-                          p:encryptAssertions-ref="EncryptNoConfidentiality"
+                          p:encryptAssertionsPredicate-ref="EncryptNoConfidentiality"
                         #{else}
                             #set($encryptAssertions = "#if ($profileConfig.encryptAssertions == 'always')true#{else}false#end")
                           p:encryptAssertions="$encryptAssertions"
@@ -129,25 +172,25 @@
                     <bean parent="SAML2.Logout"
                           p:assertionLifetime="$profileConfig.assertionLifetime"
                         #if ($profileConfig.signResponses == 'conditional')
-                          p:signResponses-ref="SignNoIntegrity"
+                          p:signResponsesPredicate-ref="SignNoIntegrity"
                         #{else}
                             #set($signResponses = "#if ($profileConfig.signResponses == 'always')true#{else}false#end")
                           p:signResponses="$signResponses"
                         #end
                         #if ($profileConfig.signAssertions == 'conditional')
-                          p:signAssertions-ref="SignNoIntegrity"
+                          p:signAssertionsPredicate-ref="SignNoIntegrity"
                         #{else}
                             #set($signAssertions = "#if ($profileConfig.signAssertions == 'always')true#{else}false#end")
                           p:signAssertions="$signAssertions"
                         #end
                         #if ($profileConfig.signRequests == 'conditional')
-                          p:signRequests-ref="SignNoIntegrity"
+                          p:signRequestsPredicate-ref="SignNoIntegrity"
                         #{else}
                             #set($signRequests = "#if ($profileConfig.signRequests == 'always')true#{else}false#end")
                           p:signRequests="$signRequests"
                         #end
                         #if ($profileConfig.encryptAssertions == 'conditional')
-                          p:encryptAssertions-ref="EncryptNoConfidentiality"
+                          p:encryptAssertionsPredicate-ref="EncryptNoConfidentiality"
                         #{else}
                             #set($encryptAssertions = "#if ($profileConfig.encryptAssertions == 'always')true#{else}false#end")
                           p:encryptAssertions="$encryptAssertions"
@@ -162,31 +205,31 @@
                     <bean parent="SAML2.AttributeQuery"
                           p:assertionLifetime="$profileConfig.assertionLifetime"
                         #if ($profileConfig.signResponses == 'conditional')
-                          p:signResponses-ref="SignNoIntegrity"
+                          p:signResponsesPredicate-ref="SignNoIntegrity"
                         #{else}
                             #set($signResponses = "#if ($profileConfig.signResponses == 'always')true#{else}false#end")
                           p:signResponses="$signResponses"
                         #end
                         #if ($profileConfig.signAssertions == 'conditional')
-                          p:signAssertions-ref="SignNoIntegrity"
+                          p:signAssertionsPredicate-ref="SignNoIntegrity"
                         #{else}
                             #set($signAssertions = "#if ($profileConfig.signAssertions == 'always')true#{else}false#end")
                           p:signAssertions="$signAssertions"
                         #end
                         #if ($profileConfig.signRequests == 'conditional')
-                          p:signRequests-ref="SignNoIntegrity"
+                          p:signRequestsPredicate-ref="SignNoIntegrity"
                         #{else}
                             #set($signRequests = "#if ($profileConfig.signRequests == 'always')true#{else}false#end")
                           p:signRequests="$signRequests"
                         #end
                         #if ($profileConfig.encryptNameIds == 'conditional')
-                          p:encryptNameIDs-ref="EncryptNoConfidentiality"
+                          p:encryptNameIDsPredicate-ref="EncryptNoConfidentiality"
                         #{else}
                             #set($encryptNameIds = "#if ($profileConfig.encryptNameIds == 'always')true#{else}false#end")
                           p:encryptNameIDs="$encryptNameIds"
                         #end
                         #if ($profileConfig.encryptAssertions == 'conditional')
-                          p:encryptAssertions-ref="EncryptNoConfidentiality"
+                          p:encryptAssertionsPredicate-ref="EncryptNoConfidentiality"
                         #{else}
                             #set($encryptAssertions = "#if ($profileConfig.encryptAssertions == 'always')true#{else}false#end")
                           p:encryptAssertions="$encryptAssertions"
@@ -200,31 +243,31 @@
 
                     <bean parent="SAML2.ArtifactResolution"
                         #if ($profileConfig.signResponses == 'conditional')
-                          p:signResponses-ref="SignNoIntegrity"
+                          p:signResponsesPredicate-ref="SignNoIntegrity"
                         #{else}
                             #set($signResponses = "#if ($profileConfig.signResponses == 'always')true#{else}false#end")
                           p:signResponses="$signResponses"
                         #end
                         #if ($profileConfig.signAssertions == 'conditional')
-                          p:signAssertions-ref="SignNoIntegrity"
+                          p:signAssertionsPredicate-ref="SignNoIntegrity"
                         #{else}
                             #set($signAssertions = "#if ($profileConfig.signAssertions == 'always')true#{else}false#end")
                           p:signAssertions="$signAssertions"
                         #end
                         #if ($profileConfig.signRequests == 'conditional')
-                          p:signRequests-ref="SignNoIntegrity"
+                          p:signRequestsPredicate-ref="SignNoIntegrity"
                         #{else}
                             #set($signRequests = "#if ($profileConfig.signRequests == 'always')true#{else}false#end")
                           p:signRequests="$signRequests"
                         #end
                         #if ($profileConfig.encryptNameIds == 'conditional')
-                          p:encryptNameIDs-ref="EncryptNoConfidentiality"
+                          p:encryptNameIDsPredicate-ref="EncryptNoConfidentiality"
                         #{else}
                             #set($encryptNameIds = "#if ($profileConfig.encryptNameIds == 'always')true#{else}false#end")
                           p:encryptNameIDs="$encryptNameIds"
                         #end
                         #if ($profileConfig.encryptAssertions == 'conditional')
-                          p:encryptAssertions-ref="EncryptNoConfidentiality"
+                          p:encryptAssertionsPredicate-ref="EncryptNoConfidentiality"
                         #{else}
                             #set($encryptAssertions = "#if ($profileConfig.encryptAssertions == 'always')true#{else}false#end")
                           p:encryptAssertions="$encryptAssertions"
@@ -240,19 +283,19 @@
                           p:includeAttributeStatement="$profileConfig.includeAttributeStatement"
                           p:assertionLifetime="$profileConfig.assertionLifetime"
                         #if ($profileConfig.signResponses == 'conditional')
-                          p:signResponses-ref="SignNoIntegrity"
+                          p:signResponsesPredicate-ref="SignNoIntegrity"
                         #{else}
                             #set($signResponses = "#if ($profileConfig.signResponses == 'always')true#{else}false#end")
                           p:signResponses="$signResponses"
                         #end
                         #if ($profileConfig.signAssertions == 'conditional')
-                          p:signAssertions-ref="SignNoIntegrity"
+                          p:signAssertionsPredicate-ref="SignNoIntegrity"
                         #{else}
                             #set($signAssertions = "#if ($profileConfig.signAssertions == 'always')true#{else}false#end")
                           p:signAssertions="$signAssertions"
                         #end
                         #if ($profileConfig.signRequests == 'conditional')
-                          p:signRequests-ref="SignNoIntegrity"
+                          p:signRequestsPredicate-ref="SignNoIntegrity"
                         #{else}
                             #set($signRequests = "#if ($profileConfig.signRequests == 'always')true#{else}false#end")
                           p:signRequests="$signRequests"
@@ -267,19 +310,19 @@
                     <bean parent="SAML1.AttributeQuery"
                           p:assertionLifetime="$profileConfig.assertionLifetime"
                         #if ($profileConfig.signResponses == 'conditional')
-                          p:signResponses-ref="SignNoIntegrity"
+                          p:signResponsesPredicate-ref="SignNoIntegrity"
                         #{else}
                             #set($signResponses = "#if ($profileConfig.signResponses == 'always')true#{else}false#end")
                           p:signResponses="$signResponses"
                         #end
                         #if ($profileConfig.signAssertions == 'conditional')
-                          p:signAssertions-ref="SignNoIntegrity"
+                          p:signAssertionsPredicate-ref="SignNoIntegrity"
                         #{else}
                             #set($signAssertions = "#if ($profileConfig.signAssertions == 'always')true#{else}false#end")
                           p:signAssertions="$signAssertions"
                         #end
                         #if ($profileConfig.signRequests == 'conditional')
-                          p:signRequests-ref="SignNoIntegrity"
+                          p:signRequestsPredicate-ref="SignNoIntegrity"
                         #{else}
                             #set($signRequests = "#if ($profileConfig.signRequests == 'always')true#{else}false#end")
                           p:signRequests="$signRequests"
@@ -293,19 +336,19 @@
 
                     <bean parent="SAML1.ArtifactResolution"
                         #if ($profileConfig.signResponses == 'conditional')
-                          p:signResponses-ref="SignNoIntegrity"
+                          p:signResponsesPredicate-ref="SignNoIntegrity"
                         #{else}
                             #set($signResponses = "#if ($profileConfig.signResponses == 'always')true#{else}false#end")
                           p:signResponses="$signResponses"
                         #end
                         #if ($profileConfig.signAssertions == 'conditional')
-                          p:signAssertions-ref="SignNoIntegrity"
+                          p:signAssertionsPredicate-ref="SignNoIntegrity"
                         #{else}
                             #set($signAssertions = "#if ($profileConfig.signAssertions == 'always')true#{else}false#end")
                           p:signAssertions="$signAssertions"
                         #end
                         #if ($profileConfig.signRequests == 'conditional')
-                          p:signRequests-ref="SignNoIntegrity"
+                          p:signRequestsPredicate-ref="SignNoIntegrity"
                         #{else}
                             #set($signRequests = "#if ($profileConfig.signRequests == 'always')true#{else}false#end")
                           p:signRequests="$signRequests"
@@ -328,4 +371,5 @@
     </util:list>
 
 </beans>
+
 
