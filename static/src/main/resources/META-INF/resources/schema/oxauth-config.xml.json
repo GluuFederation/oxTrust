@@ -991,7 +991,12 @@
          },
         "forceIdTokenHintPrecense": {
             "id": "forceIdTokenHintPrecense",
-            "description": "Boolean value specifying whether forcee id_token_hint parameter precense (false by default)",
+            "description": "Boolean value specifying whether force id_token_hint parameter precense (false by default)",
+            "type": "boolean"
+        },
+        "forceOfflineAccessScopeToEnableRefreshToken": {
+            "id": "forceOfflineAccessScopeToEnableRefreshToken",
+            "description": "Boolean value specifying whether force offline_access scope to enable refresh_token grant type. Default value is true.",
             "type": "boolean"
         },
         "spontaneousScopeLifetime": {

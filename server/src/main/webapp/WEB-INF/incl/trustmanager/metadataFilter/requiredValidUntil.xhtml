@@ -1,33 +1,40 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-    xmlns:f="http://xmlns.jcp.org/jsf/core"
-    xmlns:h="http://xmlns.jcp.org/jsf/html"
-    xmlns:a4j="http://richfaces.org/a4j"
-    xmlns:rich="http://richfaces.org/rich"
-    xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
-    xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j" xmlns:b="http://bootsfaces.net/ui"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
 
-    <h:panelGrid columns="2" id="RequiredValidUntilFilter" columnClasses="half,half"
-        rendered="#{_metadataFiltersAction.isMetadataFilterSelected('requiredValidUntil')}" width="100%">
+	<h:panelGrid columns="2" id="RequiredValidUntilFilter"
+		columnClasses="half,half"
+		rendered="#{_metadataFiltersAction.isMetadataFilterSelected('requiredValidUntil')}"
+		width="100%">
 
-        <ui:param name="_metadataFilterSelected" value="#{_metadataFiltersAction.getMetadataFilter('requiredValidUntil')}" />
+		<ui:param name="_metadataFilterSelected"
+			value="#{_metadataFiltersAction.getMetadataFilter('requiredValidUntil')}" />
 
-        <rich:panel id="RequiredValidUntilFilterDescription" bodyClass="inpanelBody">
-            <f:facet name="header">
-                <h:outputText value="RequiredValidUntil Filter help" />
-            </f:facet>
+		<rich:panel id="RequiredValidUntilFilterDescription"
+			bodyClass="inpanelBody">
+			<f:facet name="header">
+				<h:outputText value="RequiredValidUntil Filter help" />
+			</f:facet>
             #{msg['trustmanager.thisMetadataFilterRequiresThePresence']}
         </rich:panel>
-        <rich:panel id="RequiredValidUntilFilterMenu" bodyClass="inpanelBody">
-            <f:facet name="header">
-                <h:outputText value="#{msg['trustmanager.requiredValidUntilFilter']}" />
-            </f:facet>
-            <h:panelGrid>
-                <h:outputText value="#{msg['trustmanager.enterMaxValidatyInternal']}" />
-                <rich:inputNumberSpinner value="#{_metadataFilterSelected.maxValidityInterval}" step="86400" maxValue="2147483647" />
-            </h:panelGrid>
-        </rich:panel>
-    </h:panelGrid>
+		<rich:panel id="RequiredValidUntilFilterMenu" bodyClass="inpanelBody">
+			<f:facet name="header">
+				<h:outputText
+					value="#{msg['trustmanager.requiredValidUntilFilter']}" />
+			</f:facet>
+			<h:panelGrid>
+				<h:outputText
+					value="#{msg['trustmanager.enterMaxValidatyInternal']}" />
+				<b:touchSpin col-md="6" min="0" max="2147483647"
+					value="#{_metadataFilterSelected.maxValidityInterval}" step="86400" />
+			</h:panelGrid>
+		</rich:panel>
+	</h:panelGrid>
 </ui:composition>

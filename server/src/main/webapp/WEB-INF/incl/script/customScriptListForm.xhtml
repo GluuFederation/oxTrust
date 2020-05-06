@@ -55,8 +55,7 @@
 				collapsible="false">
 				<rich:tabPanel switchType="ajax" id="scriptTypeTabPanelId"
 					style="overflow-x:auto !important;">
-					<a4j:repeat value="#{_action.getScriptType()}"
-						var="_scriptType">
+					<a4j:repeat value="#{_action.getScriptType()}" var="_scriptType">
 						<ui:param name="_customScripts"
 							value="#{_action.customScriptsByTypes[_scriptType]}" />
 						<rich:tab styleClass="#{_scriptType.displayName}"
@@ -125,12 +124,10 @@
 														<ox:decorate label="Select SAML ACRS" leftClass="col-sm-3"
 															rendered="#{_action.isPersonScript(_customScript)}"
 															rightClass="col-sm-8">
-															<p:selectManyMenu id="advanced"
-															    style="width:90%;"
-																value="#{_customScript.aliases}" var="t"
-																filter="true" showCheckbox="true">
-																<f:selectItems
-																	value="#{_action.allAcrs}" var="acr"
+															<p:selectManyMenu id="advanced" style="width:90%;"
+																value="#{_customScript.aliases}" var="t" filter="true"
+																showCheckbox="true">
+																<f:selectItems value="#{_action.allAcrs}" var="acr"
 																	itemLabel="#{acr}" itemValue="#{acr}" />
 																<p:column>
 																	<h:outputText value="#{t}" />
@@ -175,9 +172,10 @@
 																forId="#{msg['customScript.description']}"
 																tooltip="#{msg['customScript.description']}"
 																oneColumn="true">
-																<rich:inputNumberSpinner value="#{_customScript.level}"
-																	styleClass="inputNumberSpinnerBox" inputSize="4"
-																	minValue="0" maxValue="100" />
+																<b:touchSpin col-md="6" required="true"
+																	styleClass="inputNumberSpinnerBox" disabled="false"
+																	value="#{_customScript.level}" min="0" max="100"
+																	step="1" />
 															</ox:decorate>
 														</div>
 													</div>
