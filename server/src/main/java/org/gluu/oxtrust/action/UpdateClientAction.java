@@ -46,11 +46,15 @@ import org.gluu.model.custom.script.model.CustomScript;
 import org.gluu.oxauth.model.common.GrantType;
 import org.gluu.oxauth.model.common.ResponseType;
 import org.gluu.oxauth.model.util.URLPatternList;
+import org.gluu.oxtrust.model.AuthenticationMethod;
+import org.gluu.oxtrust.model.BlockEncryptionAlgorithm;
 import org.gluu.oxtrust.model.GluuGroup;
+import org.gluu.oxtrust.model.KeyEncryptionAlgorithm;
 import org.gluu.oxtrust.model.OxAuthApplicationType;
 import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.model.OxAuthSectorIdentifier;
 import org.gluu.oxtrust.model.OxAuthSubjectType;
+import org.gluu.oxtrust.model.SignatureAlgorithm;
 import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.service.AttributeService;
 import org.gluu.oxtrust.service.ClientService;
@@ -339,7 +343,7 @@ public class UpdateClientAction implements Serializable {
 	}
 
 	public String save() throws Exception {
-		if ( this.client.isDeletable() && this.client.getClientSecretExpiresAt() == null) {
+		if (this.client.isDeletable() && this.client.getClientSecretExpiresAt() == null) {
 			this.client.setClientSecretExpiresAt(oneDay());
 		}
 		if (!this.client.isDeletable()) {
@@ -555,14 +559,15 @@ public class UpdateClientAction implements Serializable {
 				this.loginUris.add(this.availableLoginUri);
 			} else {
 				try {
-					if(getProtocol(availableLoginUri).equalsIgnoreCase("http")) {
-						facesMessages.add(FacesMessage.SEVERITY_ERROR,"http schema is allowed with localhost/127.0.0.1");
-					}else {
+					if (getProtocol(availableLoginUri).equalsIgnoreCase("http")) {
+						facesMessages.add(FacesMessage.SEVERITY_ERROR,
+								"http schema is allowed with localhost/127.0.0.1");
+					} else {
 						facesMessages.add(FacesMessage.SEVERITY_ERROR, "A sector identifier must be defined first.");
 					}
 				} catch (MalformedURLException e) {
 				}
-				
+
 			}
 
 		} else {
@@ -1667,5 +1672,34 @@ public class UpdateClientAction implements Serializable {
 
 	public void appTypeChanged() {
 
+	}
+	public OxAuthApplicationType[] getApplicationType() {
+		return clientService.getApplicationType();
+	}
+
+	
+	public OxAuthSubjectType[] getSubjectTypes() {
+		return clientService.getSubjectTypes();
+	}
+
+
+	public SignatureAlgorithm[] getSignatureAlgorithmsWithoutNone() {
+		return clientService.getSignatureAlgorithmsWithoutNone();
+	}
+
+	public SignatureAlgorithm[] getSignatureAlgorithms() {
+		return clientService.getSignatureAlgorithms();
+	}
+
+	public KeyEncryptionAlgorithm[] getKeyEncryptionAlgorithms() {
+		return clientService.getKeyEncryptionAlgorithms();
+	}
+
+	public BlockEncryptionAlgorithm[] getBlockEncryptionAlgorithms() {
+		return clientService.getBlockEncryptionAlgorithms();
+	}
+
+	public AuthenticationMethod[] getAuthenticationMethods() {
+		return clientService.getAuthenticationMethods();
 	}
 }
