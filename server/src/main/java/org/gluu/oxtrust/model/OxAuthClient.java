@@ -6,22 +6,22 @@
 
 package org.gluu.oxtrust.model;
 
-import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
-
-import javax.persistence.Transient;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
 import org.gluu.oxauth.model.common.GrantType;
 import org.gluu.oxauth.model.common.ResponseType;
+import org.gluu.oxauth.model.crypto.signature.AsymmetricSignatureAlgorithm;
 import org.gluu.persist.annotation.AttributeName;
 import org.gluu.persist.annotation.DataEntry;
 import org.gluu.persist.annotation.JsonObject;
 import org.gluu.persist.annotation.ObjectClass;
 import org.gluu.persist.model.base.Entry;
 import org.oxauth.persistence.model.ClientAttributes;
+
+import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
 
 /**
  * oxAuthClient
@@ -227,6 +227,18 @@ public class OxAuthClient extends Entry implements Serializable {
 	@AttributeName(name = "oxAttributes")
 	@JsonObject
 	private ClientAttributes attributes;
+
+	@AttributeName(name = "oxAuthBackchannelAuthenticationRequestSigningAlg")
+	private AsymmetricSignatureAlgorithm backchannelAuthenticationRequestSigningAlg;
+
+	@AttributeName(name = "oxAuthBackchannelTokenDeliveryMode")
+	private String backchannelTokenDeliveryMode;
+
+	@AttributeName(name = "oxAuthBackchannelClientNotificationEndpoint")
+	private String backchannelClientNotificationEndpoint;
+
+	@AttributeName(name = "oxAuthBackchannelUserCodeParameter")
+	private Boolean backchannelUserCodeParameter;
 
 	public boolean isSelected() {
 		return selected;
@@ -727,4 +739,35 @@ public class OxAuthClient extends Entry implements Serializable {
 		this.attributes = attributes;
 	}
 
+	public AsymmetricSignatureAlgorithm getBackchannelAuthenticationRequestSigningAlg() {
+		return backchannelAuthenticationRequestSigningAlg;
+	}
+
+	public void setBackchannelAuthenticationRequestSigningAlg(AsymmetricSignatureAlgorithm backchannelAuthenticationRequestSigningAlg) {
+		this.backchannelAuthenticationRequestSigningAlg = backchannelAuthenticationRequestSigningAlg;
+	}
+
+	public String getBackchannelTokenDeliveryMode() {
+		return backchannelTokenDeliveryMode;
+	}
+
+	public void setBackchannelTokenDeliveryMode(String backchannelTokenDeliveryMode) {
+		this.backchannelTokenDeliveryMode = backchannelTokenDeliveryMode;
+	}
+
+	public String getBackchannelClientNotificationEndpoint() {
+		return backchannelClientNotificationEndpoint;
+	}
+
+	public void setBackchannelClientNotificationEndpoint(String backchannelClientNotificationEndpoint) {
+		this.backchannelClientNotificationEndpoint = backchannelClientNotificationEndpoint;
+	}
+
+	public Boolean getBackchannelUserCodeParameter() {
+		return backchannelUserCodeParameter;
+	}
+
+	public void setBackchannelUserCodeParameter(Boolean backchannelUserCodeParameter) {
+		this.backchannelUserCodeParameter = backchannelUserCodeParameter;
+	}
 }
