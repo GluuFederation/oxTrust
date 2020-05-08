@@ -1,81 +1,87 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<resolver:AttributeResolver
-        xmlns:resolver="urn:mace:shibboleth:2.0:resolver"
-        xmlns:ad="urn:mace:shibboleth:2.0:resolver:ad" 
-        xmlns:dc="urn:mace:shibboleth:2.0:resolver:dc"
-        xmlns:enc="urn:mace:shibboleth:2.0:attribute:encoder" 
-        xmlns:sec="urn:mace:shibboleth:2.0:security"
+<!-- 
+    This file is an EXAMPLE configuration file. While the configuration
+    presented in this example file is semi-functional, it isn't very
+    interesting. It is here only as a starting point for your deployment
+    process.
+    
+    Very few attribute definitions and data connectors are demonstrated,
+    and the data is derived statically from the logged-in username and a
+    static example connector.
+
+    Attribute-resolver-full.xml contains more examples of attributes,
+    encoders, and data connectors. Deployers should refer to the Shibboleth
+    documentation for a complete list of components and their options.
+-->
+<AttributeResolver
+        xmlns="urn:mace:shibboleth:2.0:resolver" 
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-        xsi:schemaLocation="urn:mace:shibboleth:2.0:resolver http://shibboleth.net/schema/idp/shibboleth-attribute-resolver.xsd
-                            urn:mace:shibboleth:2.0:resolver:ad http://shibboleth.net/schema/idp/shibboleth-attribute-resolver-ad.xsd
-                            urn:mace:shibboleth:2.0:resolver:dc http://shibboleth.net/schema/idp/shibboleth-attribute-resolver-dc.xsd
-                            urn:mace:shibboleth:2.0:attribute:encoder http://shibboleth.net/schema/idp/shibboleth-attribute-encoder.xsd
-                            urn:mace:shibboleth:2.0:security http://shibboleth.net/schema/idp/shibboleth-security.xsd">
+        xsi:schemaLocation="urn:mace:shibboleth:2.0:resolver http://shibboleth.net/schema/idp/shibboleth-attribute-resolver.xsd">
+
 
     <!-- ========================================== -->
     <!--      Attribute Definitions                 -->
     <!-- ========================================== -->
 
+    <!--
+    The EPPN is the "standard" federated username in higher ed.
+    For guidelines on the implementation of this attribute, refer
+    to the Shibboleth and eduPerson documentation. Above all, do
+    not expose a value for this attribute without considering the
+    long term implications. 
+    -->
+
 #foreach( $attribute in $attrParams.attributes )
 #if( ! ($attribute.name.equals('transientId') or $attribute.name.equals('persistentId') ) )
-#if($attribute.name.equals('eppnForNIH'))
-
-    <resolver:AttributeDefinition id="eduPersonPrincipalName" xsi:type="ad:Scoped" scope="%{idp.scope}" sourceAttributeID="uid">
-        <resolver:Dependency ref="siteDataConnector" />
-        <resolver:AttributeEncoder xsi:type="enc:SAML2ScopedString" name="urn:oid:1.3.6.1.4.1.5923.1.1.1.6" friendlyName="eduPersonPrincipalName" encodeType="false" />
-    </resolver:AttributeDefinition>
-
+#if( $attribute.name.equals('eppnForNIH') )
+    <AttributeDefinition id="eduPersonPrincipalName" xsi:type="Scoped" scope="%{idp.scope}">
+        <InputDataConnector ref="siteDataConnector" attributeNames="uid"/>
+        <AttributeEncoder xsi:type="SAML2ScopedString" name="urn:oid:1.3.6.1.4.1.5923.1.1.1.6" friendlyName="eduPersonPrincipalName" encodeType="false" />
+    </AttributeDefinition
 #else
-    <resolver:AttributeDefinition xsi:type="ad:Simple" id="$attribute.name" sourceAttributeID="$attribute.name">
-        <resolver:Dependency ref="siteDataConnector" />
-        <resolver:AttributeEncoder xsi:type="enc:SAML2String" name="$attrParams.attributeSAML2Strings.get($attribute.name)" friendlyName="$attribute.name" encodeType="false" />
-    </resolver:AttributeDefinition>
+    <AttributeDefinition xsi:type="Simple" id="$attribute.name">
+        <InputDataConnector ref="siteDataConnector" attributeNames="$attribute.name"/>
+        <AttributeEncoder xsi:type="SAML2String" name="$attrParams.attributeSAML2Strings.get($attribute.name)" friendlyName="$attribute.name" encodeType="false" />
+    </AttributeDefinition>
 #end
 #end
 #end
 
 #foreach( $attribute in $resovlerParams.attributes )
-    <resolver:AttributeDefinition xsi:type="ad:Simple" id="$attribute.name" sourceAttributeID="$attribute.name">
-        <resolver:Dependency ref="siteDataConnector" />
-        <resolver:AttributeEncoder xsi:type="enc:SAML2String" name="$resovlerParams.attributeSAML2Strings.get($attribute.name)" friendlyName="$attribute.name" encodeType="false" />
-    </resolver:AttributeDefinition>
+    <AttributeDefinition xsi:type="Simple" id="$attribute.name">
+        <InputDataConnector ref="siteDataConnector" attributeNames="$attribute.name"/>
+        <AttributeEncoder xsi:type="SAML2String" name="$attrParams.attributeSAML2Strings.get($attribute.name)" friendlyName="$attribute.name" encodeType="false" />
+    </AttributeDefinition>
 #end
 
     <!-- ========================================== -->
     <!--      Data Connectors                       -->
     <!-- ========================================== -->
+
 #if( $resovlerParams.persistenceType.equals('couchbase') )
-    <resolver:DataConnector id="siteDataConnector" xsi:type="dc:RelationalDatabase">
-        <dc:BeanManagedConnection>siteDataSource</dc:BeanManagedConnection>
-
-         <dc:QueryTemplate>
-
-             <![CDATA[
+    <DataConnector id="siteDataConnector" xsi:type="RelationalDatabase">
+        <BeanManagedConnection>siteDataSource</dBeanManagedConnection>
+        <QueryTemplate>
+            <![CDATA[
                 %{idp.attribute.resolver.N1QL.searchFilter}
             ]]>
-        </dc:QueryTemplate>
-    </resolver:DataConnector>
-#else
-    <resolver:DataConnector id="siteDataConnector" xsi:type="dc:LDAPDirectory"
-                            ldapURL="%{idp.attribute.resolver.LDAP.ldapURL}"
-                            baseDN="%{idp.attribute.resolver.LDAP.baseDN}"
-                            principal="%{idp.attribute.resolver.LDAP.bindDN}"
-                            principalCredential="%{idp.attribute.resolver.LDAP.bindDNCredential}"
-                            useStartTLS="%{idp.attribute.resolver.LDAP.useStartTLS}">
+        </QueryTemplate>
 
-        <dc:FilterTemplate>
+    </DataConnector>
+#else
+    <DataConnector id="siteDataConnector" xsi:type="LDAPDirectory"
+                   ldapURL="%{idp.attribute.resolver.LDAP.ldapURL}"
+                   baseDN="%{idp.attribute.resolver.LDAP.baseDN}"
+                   principal="%{idp.attribute.resolver.LDAP.bindDN}"
+                   principalCredential="%{idp.attribute.resolver.LDAP.bindDNCredential}"
+                   useStartTLS="%{idp.attribute.resolver.LDAP.useStartTLS:true}"
+                   trustFile="%{idp.attribute.resolver.LDAP.trustCertificates}" >
+        <FilterTemplate>
             <![CDATA[
                 %{idp.attribute.resolver.LDAP.searchFilter}
             ]]>
-        </dc:FilterTemplate>
-
-        <!-- <dc:ReturnAttributes>%{idp.attribute.resolver.LDAP.returnAttributes}</dc:ReturnAttributes> -->
-
-        <dc:StartTLSTrustCredential id="LDAPtoIdPCredential" xsi:type="sec:X509ResourceBacked">
-            <sec:Certificate>%{idp.attribute.resolver.LDAP.trustCertificates}</sec:Certificate>
-        </dc:StartTLSTrustCredential>
-
-    </resolver:DataConnector>
+        </FilterTemplate>
+    </DataConnector>
 #end
 
-</resolver:AttributeResolver>
+</AttributeResolver>
