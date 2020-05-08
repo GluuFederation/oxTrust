@@ -82,6 +82,7 @@
 		</plugins>
     </build>
 	<dependencies>
+<!--
 		<dependency>
 			<groupId>org.gluu</groupId>
 			<artifactId>oxtrust-api-server</artifactId>
@@ -92,6 +93,7 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+-->
 		<dependency>
 			<groupId>org.gluu</groupId>
 			<artifactId>oxtrust-server</artifactId>

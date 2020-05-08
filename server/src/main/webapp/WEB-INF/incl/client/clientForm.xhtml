@@ -340,7 +340,7 @@
 													value="#{_client.oxAuthAppType}" id="applicationTypeId"
 													required="true">
 													<f:ajax listener="#{_clientAction.appTypeChanged}" />
-													<f:selectItems value="#{clientService.applicationType}"
+													<f:selectItems value="#{_clientAction.applicationType}"
 														var="_type" itemLabel="#{_type.displayName}" />
 													<f:converter
 														converterId="org.gluu.jsf2.converter.EnumConverter" />
@@ -356,7 +356,7 @@
 													required="true">
 													<f:ajax render="clientForm:redirectLoginUrls"
 														listener="#{_clientAction.subjectTypeChanged}" />
-													<f:selectItems value="#{clientService.subjectTypes}"
+													<f:selectItems value="#{_clientAction.subjectTypes}"
 														var="_subjectType" label="#{_subjectType.displayName}" />
 													<f:converter
 														converterId="org.gluu.jsf2.converter.EnumConverter" />
@@ -370,7 +370,7 @@
 													value="#{_client.tokenEndpointAuthMethod}"
 													id="tokenEndpointAuthMethodId" required="false">
 													<f:selectItems
-														value="#{clientService.authenticationMethods}"
+														value="#{_clientAction.authenticationMethods}"
 														var="_method" label="#{_method.displayName}" />
 													<f:converter
 														converterId="org.gluu.jsf2.converter.EnumConverter" />
@@ -892,7 +892,7 @@
 													id="requestObjectEncryptionAlgId" required="false">
 													<f:selectItem noSelectionOption="true" itemLabel="" />
 													<f:selectItems
-														value="#{clientService.keyEncryptionAlgorithms}"
+														value="#{_clientAction.keyEncryptionAlgorithms}"
 														var="_type" itemLabel="#{_type.displayName}" />
 													<f:converter
 														converterId="org.gluu.jsf2.converter.EnumConverter" />
@@ -906,7 +906,7 @@
 													id="requestObjectEncryptionEncId" required="false">
 													<f:selectItem noSelectionOption="true" itemLabel="" />
 													<f:selectItems
-														value="#{clientService.blockEncryptionAlgorithms}"
+														value="#{_clientAction.blockEncryptionAlgorithms}"
 														var="_type" itemLabel="#{_type.displayName}" />
 													<f:converter
 														converterId="org.gluu.jsf2.converter.EnumConverter" />
@@ -919,7 +919,7 @@
 													value="#{_client.requestObjectSigningAlg}"
 													id="requestObjectSigningAlgId" required="false">
 													<f:selectItem noSelectionOption="true" itemLabel="" />
-													<f:selectItems value="#{clientService.signatureAlgorithms}"
+													<f:selectItems value="#{_clientAction.signatureAlgorithms}"
 														var="_type" itemLabel="#{_type.displayName}" />
 													<f:converter
 														converterId="org.gluu.jsf2.converter.EnumConverter" />
@@ -933,7 +933,7 @@
 													id="userInfoEncryptedResponseAlgId" required="false">
 													<f:selectItem noSelectionOption="true" itemLabel="" />
 													<f:selectItems
-														value="#{clientService.keyEncryptionAlgorithms}"
+														value="#{_clientAction.keyEncryptionAlgorithms}"
 														var="_type" itemLabel="#{_type.displayName}" />
 													<f:converter
 														converterId="org.gluu.jsf2.converter.EnumConverter" />
@@ -947,7 +947,7 @@
 													id="userInfoEncryptedResponseEncId" required="false">
 													<f:selectItem noSelectionOption="true" itemLabel="" />
 													<f:selectItems
-														value="#{clientService.blockEncryptionAlgorithms}"
+														value="#{_clientAction.blockEncryptionAlgorithms}"
 														var="_type" itemLabel="#{_type.displayName}" />
 													<f:converter
 														converterId="org.gluu.jsf2.converter.EnumConverter" />
@@ -960,7 +960,7 @@
 													value="#{_client.userInfoSignedResponseAlg}"
 													id="userInfoSignedResponseAlgId" required="false">
 													<f:selectItem noSelectionOption="true" itemLabel="" />
-													<f:selectItems value="#{clientService.signatureAlgorithms}"
+													<f:selectItems value="#{_clientAction.signatureAlgorithms}"
 														var="_type" itemLabel="#{_type.displayName}" />
 													<f:converter
 														converterId="org.gluu.jsf2.converter.EnumConverter" />
@@ -976,7 +976,7 @@
 													id="accessTokenSigningAlgId" required="false">
 													<f:selectItem noSelectionOption="true" itemLabel="" />
 													<f:selectItems
-														value="#{clientService.signatureAlgorithmsWithoutNone}"
+														value="#{_clientAction.signatureAlgorithmsWithoutNone}"
 														var="_type" itemLabel="#{_type.displayName}" />
 													<f:converter
 														converterId="org.gluu.jsf2.converter.EnumConverter" />
@@ -990,7 +990,7 @@
 													id="idTokenEncryptedResponseAlgId" required="false">
 													<f:selectItem noSelectionOption="true" itemLabel="" />
 													<f:selectItems
-														value="#{clientService.keyEncryptionAlgorithms}"
+														value="#{_clientAction.keyEncryptionAlgorithms}"
 														var="_type" itemLabel="#{_type.displayName}" />
 													<f:converter
 														converterId="org.gluu.jsf2.converter.EnumConverter" />
@@ -1004,7 +1004,7 @@
 													id="idTokenSignedResponseAlgId" required="false">
 													<f:selectItem noSelectionOption="true" itemLabel="" />
 													<f:selectItems
-														value="#{clientService.signatureAlgorithmsWithoutNone}"
+														value="#{_clientAction.signatureAlgorithmsWithoutNone}"
 														var="_type" itemLabel="#{_type.displayName}" />
 													<f:converter
 														converterId="org.gluu.jsf2.converter.EnumConverter" />
@@ -1018,7 +1018,7 @@
 													id="idTokenEncryptedResponseEncId" required="false">
 													<f:selectItem noSelectionOption="true" itemLabel="" />
 													<f:selectItems
-														value="#{clientService.blockEncryptionAlgorithms}"
+														value="#{_clientAction.blockEncryptionAlgorithms}"
 														var="_type" itemLabel="#{_type.displayName}" />
 													<f:converter
 														converterId="org.gluu.jsf2.converter.EnumConverter" />
@@ -1031,7 +1031,7 @@
 													value="#{_client.tokenEndpointAuthSigningAlg}"
 													id="tokenEndpointAuthSigningAlgId" required="false">
 													<f:selectItem noSelectionOption="true" itemLabel="" />
-													<f:selectItems value="#{clientService.signatureAlgorithms}"
+													<f:selectItems value="#{_clientAction.signatureAlgorithms}"
 														var="_type" itemLabel="#{_type.displayName}" />
 													<f:converter
 														converterId="org.gluu.jsf2.converter.EnumConverter" />
