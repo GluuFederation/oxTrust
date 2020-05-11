@@ -873,6 +873,30 @@
 														readonly="true" value="#{_client.softwareStatement}"
 														rows="3" cols="80" maxlength="4000" id="softwareStatement" />
 												</ox:decorate>
+												<ox:decorate id="cibaTokenDeliveryMode" leftClass="col-sm-3"
+															 rightClass="col-sm-9"
+															 label="#{msg['clientForm.cibaTokenDeliveryMode']}">
+													<h:selectOneMenu styleClass="col-sm-9 form-control rounded"
+																	 value="#{_client.backchannelTokenDeliveryMode}"
+																	 id="cibaTokenDeliveryModeId" required="false">
+														<f:selectItem noSelectionOption="true" itemLabel="" />
+														<f:selectItems value="#{_clientAction.cibaTokenDeliveryModes}" />
+													</h:selectOneMenu>
+												</ox:decorate>
+												<ox:decorate id="cibaClientNotificationEndpoint" leftClass="col-sm-3"
+															 rightClass="col-sm-9"
+															 label="#{msg['clientForm.cibaClientNotificationEndpoint']}">
+													<h:inputText value="#{_client.backchannelClientNotificationEndpoint}"
+																 required="false" styleClass="form-control cibaClientNotificationEndpoint"
+																 id="cibaClientNotificationEndpointId" />
+												</ox:decorate>
+												<ox:decorate id="cibaUserCodeParameter" leftClass="col-sm-3"
+															 rightClass="col-sm-9"
+															 label="#{msg['clientForm.cibaUserCodeParameter']}">
+													<h:selectBooleanCheckbox value="#{_client.backchannelUserCodeParameter}"
+																			 id="cibaUserCodeParameterId" styleClass="col-sm-9 rounded"
+																			 required="false" />
+												</ox:decorate>
 											</div>
 										</div>
 									</div>
@@ -1035,6 +1059,19 @@
 														var="_type" itemLabel="#{_type.displayName}" />
 													<f:converter
 														converterId="org.gluu.jsf2.converter.EnumConverter" />
+												</h:selectOneMenu>
+											</ox:decorate>
+											<ox:decorate id="cibaAuthenticationRequestSigningAlg"
+														 label="#{msg['clientForm.cibaAuthenticationRequestSigningAlg']}"
+														 leftClass="col-sm-6" rightClass="col-sm-6">
+												<h:selectOneMenu styleClass="col-sm-9 form-control rounded"
+																 value="#{_client.backchannelAuthenticationRequestSigningAlg}"
+																 id="cibaAuthenticationRequestSigningAlgId" required="false">
+													<f:selectItem noSelectionOption="true" itemLabel="" />
+													<f:selectItems value="#{_clientAction.asymmetricSignatureAlgorithms}"
+																   var="_type" itemLabel="#{_type.paramName}" />
+													<f:converter
+															converterId="org.gluu.jsf2.converter.EnumConverter" />
 												</h:selectOneMenu>
 											</ox:decorate>
 										</div>

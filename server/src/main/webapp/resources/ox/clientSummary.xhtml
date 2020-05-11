@@ -562,6 +562,38 @@
 							<h:outputText value="#{cc.attrs._client.clientSecretExpiresAt}" />
 						</ox:decorate>
 
+						<ox:decorate id="cibaAuthenticationRequestSigningAlg"
+									 rendered="#{!empty cc.attrs._client.backchannelAuthenticationRequestSigningAlg and cc.attrs._client.backchannelAuthenticationRequestSigningAlg ne null }"
+									 label="#{msg['clientForm.cibaAuthenticationRequestSigningAlg']}">
+							<h:outputText
+									value="#{cc.attrs._client.backchannelAuthenticationRequestSigningAlg}"
+									id="cibaAuthenticationRequestSigningAlgId" />
+						</ox:decorate>
+
+						<ox:decorate id="cibaTokenDeliveryMode"
+									 rendered="#{!empty cc.attrs._client.backchannelTokenDeliveryMode and cc.attrs._client.backchannelTokenDeliveryMode ne null }"
+									 label="#{msg['clientForm.cibaTokenDeliveryMode']}">
+							<h:outputText
+									value="#{cc.attrs._client.backchannelTokenDeliveryMode}"
+									id="cibaTokenDeliveryModeId" />
+						</ox:decorate>
+
+						<ox:decorate id="cibaClientNotificationEndpoint"
+									 rendered="#{!empty cc.attrs._client.backchannelClientNotificationEndpoint and cc.attrs._client.backchannelClientNotificationEndpoint ne null }"
+									 label="#{msg['clientForm.cibaClientNotificationEndpoint']}">
+							<h:outputText
+									value="#{cc.attrs._client.backchannelClientNotificationEndpoint}"
+									id="cibaClientNotificationEndpointId" />
+						</ox:decorate>
+
+						<ox:decorate id="cibaUserCodeParameter"
+									 rendered="#{!empty cc.attrs._client.backchannelUserCodeParameter and cc.attrs._client.backchannelUserCodeParameter ne null }"
+									 label="#{msg['clientForm.cibaUserCodeParameter']}">
+							<h:outputText
+									value="#{cc.attrs._client.backchannelUserCodeParameter}"
+									id="cibaUserCodeParameterId" />
+						</ox:decorate>
+
 					</div>
 				</div>
 			</h:panelGroup>
