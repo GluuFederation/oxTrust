@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
+	xmlns:cc="http://xmlns.jcp.org/jsf/composite">
+<cc:interface>
+	<cc:attribute name="subject" required="true" type="java.lang.String" />
+	<cc:attribute name="message" required="false" type="java.lang.String" />
+	<cc:attribute name="value" required="true" type="java.lang.String" />
+	<cc:attribute name="deleteMethod" required="true"
+		method-signature="void action()" />
+	<cc:attribute name="cancelMethod" required="false"
+		method-signature="void action()" />
+	<cc:attribute name="render" required="false" type="java.lang.String" />
+	<cc:attribute name="id" required="true" type="java.lang.String" />
+</cc:interface>
+<cc:implementation>
+	<h:outputScript id="myScript">
+	</h:outputScript>
+	<ui:param name="id" value="#{cc.attrs.id}" />
+	<p:dialog header="Accept #{cc.attrs.subject} removal"
+		widgetVar="#{cc.attrs.id}" modal="true" height="150" width="400">
+		<p:panelGrid columns="1" layout="flex"
+			styleClass="showcase-text-align-center ui-noborder">
+			<h:panelGroup>
+				<h:outputText value="Warning:&#160;" styleClass="bolded" />
+				<h:outputText rendered="#{cc.attrs.message eq null}"
+					value="Removing #{cc.attrs.subject} '#{cc.attrs.value}' will cause any data stored 
+                   in the #{cc.attrs.subject} to be permanently lost. Are you sure you want to continue?" />
+				<h:outputText rendered="#{cc.attrs.message ne null}"
+					value="#{cc.attrs.message}" />
+			</h:panelGroup>
+			<p:spacer height="2" />
+		</p:panelGrid>
+		<h:panelGroup>
+			<p:commandLink styleClass="btn btn-primary confirmDialogButton"
+				value="Yes" onclick="PF('#{cc.attrs.id}').hide();"
+				action="#{cc.attrs.deleteMethod}" />
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			<h:commandButton type="button"
+				styleClass="btn btn-primary cancelDialogButton" value="No"
+				onclick="PF('#{cc.attrs.id}').hide();"
+				rendered="#{cc.attrs.cancelMethod == null}" />
+		</h:panelGroup>
+	</p:dialog>
+</cc:implementation>
+</html>

@@ -165,7 +165,7 @@
 				</div>
 				<div class="box-footer">
 					<h:commandButton type="button"
-						onclick="PF('changePasswordModalPanel').show();"
+						onclick="PF('changeUserPasswordDialog').show();"
 						rendered="#{permissionService.hasPermission(configurationService.configuration, 'profile_management')}"
 						styleClass="btn btn-success changeUserPasswordButton"
 						value="#{msg['profile.changePassword']}" />
@@ -180,6 +180,7 @@
 			</h:form>
 		</section>
 		<ox:changePasswordDialog
+		    id="changeUserPasswordDialog"
 			label="#{msg['profile.changePassword']}"
 			password="#{userPasswordAction.newPassword}"
 			person="#{userProfileAction.person}"
