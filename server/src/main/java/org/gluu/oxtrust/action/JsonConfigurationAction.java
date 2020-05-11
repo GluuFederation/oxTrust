@@ -6,14 +6,6 @@
 
 package org.gluu.oxtrust.action;
 
-import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
-
-import javax.enterprise.context.ConversationScoped;
-import javax.faces.application.FacesMessage;
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.apache.commons.beanutils.BeanUtils;
 import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.config.oxtrust.ImportPersonConfig;
@@ -26,11 +18,7 @@ import org.gluu.oxtrust.service.JsonConfigurationService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.service.DataSourceTypeService;
 import org.gluu.service.JsonService;
-import org.gluu.service.cache.CacheConfiguration;
-import org.gluu.service.cache.CacheProviderType;
-import org.gluu.service.cache.MemcachedProvider;
-import org.gluu.service.cache.RedisConfiguration;
-import org.gluu.service.cache.RedisProvider;
+import org.gluu.service.cache.*;
 import org.gluu.service.cdi.util.CdiUtil;
 import org.gluu.service.document.store.conf.DocumentStoreConfiguration;
 import org.gluu.service.document.store.conf.DocumentStoreType;
@@ -39,6 +27,13 @@ import org.gluu.service.security.Secure;
 import org.gluu.util.StringHelper;
 import org.gluu.util.security.StringEncrypter.EncryptionException;
 import org.slf4j.Logger;
+
+import javax.enterprise.context.ConversationScoped;
+import javax.faces.application.FacesMessage;
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * Action class for json configuring This class loads the JSON configurations
@@ -110,7 +105,8 @@ public class JsonConfigurationAction implements Serializable {
 			this.oxTrustConfigJson = getProtectedOxTrustappConfiguration(this.oxTrustappConfiguration);
 			this.oxTrustImportPersonConfigJson = getOxTrustImportPersonConfiguration(
 					this.oxTrustImportPersonConfiguration);
-			this.oxAuthDynamicConfigJson = jsonConfigurationService.getOxAuthDynamicConfigJson();
+			this.oxAuthDynamicConfigJson = getProtectedOxAuthAppConfiguration(
+					this.jsonConfigurationService.getOxAuthDynamicConfigJson());
 			this.cacheConfigurationJson = getCacheConfiguration(cacheConfiguration);
 			this.storeConfigurationJson = getStoreConfiguration(storeConfiguration);
 
@@ -131,7 +127,8 @@ public class JsonConfigurationAction implements Serializable {
 		// Update JSON configurations
 		try {
 			log.debug("Saving oxauth-config.json:" + oxAuthDynamicConfigJson);
-			jsonConfigurationService.saveOxAuthDynamicConfigJson(oxAuthDynamicConfigJson);
+			String configurationJson = convertToOxAuthAppConfiguration(oxAuthDynamicConfigJson);
+			jsonConfigurationService.saveOxAuthDynamicConfigJson(configurationJson);
 			facesMessages.add(FacesMessage.SEVERITY_INFO, "oxAuthDynamic Configuration is updated.");
 
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -304,6 +301,25 @@ public class JsonConfigurationAction implements Serializable {
 		return null;
 	}
 
+	private String getProtectedOxAuthAppConfiguration(String oxAuthAppConfiguration) {
+		try {
+			org.gluu.oxauth.model.configuration.AppConfiguration appConfiguration = jsonService.jsonToObject(
+					oxAuthAppConfiguration, org.gluu.oxauth.model.configuration.AppConfiguration.class);
+			try {
+				String decryptedKey = encryptionService.decrypt(appConfiguration
+						.getCibaEndUserNotificationConfig().getNotificationKey());
+				appConfiguration.getCibaEndUserNotificationConfig().setNotificationKey(decryptedKey);
+			} catch (EncryptionException ex) {
+				log.error("Failed to decrypt values in the oxAuth json configuration: '{}'", oxAuthAppConfiguration, ex);
+				appConfiguration.getCibaEndUserNotificationConfig().setNotificationKey("");
+			}
+			return jsonService.objectToJson(appConfiguration);
+		} catch (Exception e) {
+			log.error("Problems processing oxAuth App configuration file: {}", oxAuthAppConfiguration, e);
+			return null;
+		}
+	}
+
 	private String getOxTrustImportPersonConfiguration(ImportPersonConfig oxTrustImportPersonConfiguration) {
 		try {
 			return jsonService.objectToJson(oxTrustImportPersonConfiguration);
@@ -353,6 +369,19 @@ public class JsonConfigurationAction implements Serializable {
 			log.error("Failed to prepare appConfiguration from JSON: '{}'", oxTrustappConfigurationJson, ex);
 		}
 
+		return null;
+	}
+
+	private String convertToOxAuthAppConfiguration(String oxAuthAppConfigurationJson) {
+		try {
+			org.gluu.oxauth.model.configuration.AppConfiguration appConfiguration = jsonService
+					.jsonToObject(oxAuthAppConfigurationJson, org.gluu.oxauth.model.configuration.AppConfiguration.class);
+			String encryptedKey = encryptionService.encrypt(appConfiguration.getCibaEndUserNotificationConfig().getNotificationKey());
+			appConfiguration.getCibaEndUserNotificationConfig().setNotificationKey(encryptedKey);
+			return jsonService.objectToJson(appConfiguration);
+		} catch (Exception ex) {
+			log.error("Failed to prepare oxAuth AppConfiguration from JSON: '{}'", oxAuthAppConfigurationJson, ex);
+		}
 		return null;
 	}
 
