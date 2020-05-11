@@ -999,6 +999,16 @@
             "description": "Boolean value specifying whether force offline_access scope to enable refresh_token grant type. Default value is true.",
             "type": "boolean"
         },
+        "errorReasonEnabled": {
+            "id": "errorReasonEnabled",
+            "description": "Boolean value specifying whether to return detailed reason of the error from AS. Default value is false.",
+            "type": "boolean"
+        },
+        "removeRefreshTokensForClientOnLogout": {
+            "id": "removeRefreshTokensForClientOnLogout",
+            "description": "Boolean value specifying whether to remove refresh tokens on logout. Default value is true.",
+            "type": "boolean"
+        },
         "spontaneousScopeLifetime": {
             "id": "spontaneousScopeLifetime",
             "description": "The lifetime of spontaneous scope in seconds.",
