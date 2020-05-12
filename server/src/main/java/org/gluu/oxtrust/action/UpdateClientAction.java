@@ -6,30 +6,9 @@
 
 package org.gluu.oxtrust.action;
 
-import java.io.IOException;
-import java.io.Serializable;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.nio.charset.Charset;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-
-import javax.enterprise.context.ConversationScoped;
-import javax.faces.application.FacesMessage;
-import javax.faces.context.FacesContext;
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.servlet.http.HttpServletRequest;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import net.steppschuh.markdowngenerator.list.UnorderedList;
+import net.steppschuh.markdowngenerator.text.heading.Heading;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
@@ -43,25 +22,14 @@ import org.gluu.model.GluuAttribute;
 import org.gluu.model.SelectableEntity;
 import org.gluu.model.custom.script.CustomScriptType;
 import org.gluu.model.custom.script.model.CustomScript;
+import org.gluu.oxauth.model.common.BackchannelTokenDeliveryMode;
 import org.gluu.oxauth.model.common.GrantType;
 import org.gluu.oxauth.model.common.ResponseType;
+import org.gluu.oxauth.model.crypto.signature.AsymmetricSignatureAlgorithm;
 import org.gluu.oxauth.model.util.URLPatternList;
-import org.gluu.oxtrust.model.AuthenticationMethod;
-import org.gluu.oxtrust.model.BlockEncryptionAlgorithm;
-import org.gluu.oxtrust.model.GluuGroup;
-import org.gluu.oxtrust.model.KeyEncryptionAlgorithm;
-import org.gluu.oxtrust.model.OxAuthApplicationType;
-import org.gluu.oxtrust.model.OxAuthClient;
-import org.gluu.oxtrust.model.OxAuthSectorIdentifier;
-import org.gluu.oxtrust.model.OxAuthSubjectType;
-import org.gluu.oxtrust.model.SignatureAlgorithm;
+import org.gluu.oxtrust.model.*;
 import org.gluu.oxtrust.security.Identity;
-import org.gluu.oxtrust.service.AttributeService;
-import org.gluu.oxtrust.service.ClientService;
-import org.gluu.oxtrust.service.EncryptionService;
-import org.gluu.oxtrust.service.OxTrustAuditService;
-import org.gluu.oxtrust.service.ScopeService;
-import org.gluu.oxtrust.service.SectorIdentifierService;
+import org.gluu.oxtrust.service.*;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.exception.BasePersistenceException;
 import org.gluu.service.LookupService;
@@ -74,10 +42,22 @@ import org.oxauth.persistence.model.ClientAttributes;
 import org.oxauth.persistence.model.Scope;
 import org.slf4j.Logger;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import net.steppschuh.markdowngenerator.list.UnorderedList;
-import net.steppschuh.markdowngenerator.text.heading.Heading;
+import javax.enterprise.context.ConversationScoped;
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.io.Serializable;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.charset.Charset;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.*;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Action class for viewing and updating clients.
@@ -1701,5 +1681,17 @@ public class UpdateClientAction implements Serializable {
 
 	public AuthenticationMethod[] getAuthenticationMethods() {
 		return clientService.getAuthenticationMethods();
+	}
+
+	public AsymmetricSignatureAlgorithm[] getAsymmetricSignatureAlgorithms() {
+		return AsymmetricSignatureAlgorithm.values();
+	}
+
+	public List<String> getCibaTokenDeliveryModes() {
+		List<String> modes = new ArrayList<>();
+		for (BackchannelTokenDeliveryMode deliveryMode : BackchannelTokenDeliveryMode.values()) {
+			modes.add(deliveryMode.getValue());
+		}
+		return modes;
 	}
 }
