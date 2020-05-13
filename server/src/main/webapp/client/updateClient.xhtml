@@ -191,7 +191,7 @@
 				password="#{clientPasswordAction.newPassword}"
 				setPasswordMethod="#{clientPasswordAction.update}" />
 
-			<ox:acceptRemovalDialog deleteMethod="#{updateClientAction.delete}"
+			<ox:confirmDialog deleteMethod="#{updateClientAction.delete()}"
 				id="deleteConfirmation" queue="clientQueue" subject="client"
 				value="#{updateClientAction.client.displayName}" />
 

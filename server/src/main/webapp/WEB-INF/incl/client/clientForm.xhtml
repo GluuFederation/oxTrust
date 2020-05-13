@@ -83,9 +83,9 @@
 							value="#{msg['clientForm.clientSummary']}"
 							onclick="#{rich:component('summary:clientSummary')}.show();"
 							eventsQueue="clientQueue" />
-						<a4j:commandButton ajaxSingle="true" eventsQueue="clientQueue"
-							onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();"
-							rendered="#{not _new}"
+						<b:commandButton ajax="true" eventsQueue="clientQueue"
+							onclick="PF('deleteConfirmation').show();"
+							rendered="#{not _new}" type="button"
 							styleClass="btn btn-primary deleteOIDCButton"
 							style="float: right; margin-right:1%; width:150px; border:none !important; background: #d62728 !important; background-color: #d62728 !important;"
 							value="#{msg['client.delete']}" />

@@ -30,8 +30,8 @@
 							value="#{msg['group.update']}">
 							<f:param name="blockui.disabled" value="true" />
 						</b:commandButton>
-						<a4j:commandButton ajaxSingle="true" eventsQueue="groupQueue"
-							onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();"
+						<b:commandButton ajax="true" eventsQueue="groupQueue" type="button"
+							onclick="PF('deleteConfirmation').show();"
 							rendered="#{not _new}" style="margin-left:3px;"
 							styleClass="btn btn-primary" value="#{msg['group.delete']}" />
 						<b:commandButton action="#{updateGroupAction.cancel}"
@@ -49,7 +49,7 @@
 				searchPattern="#{updateGroupAction.searchAvailableMemberPattern}"
 				searchResult="#{updateGroupAction.availableMembers}" />
 
-			<ox:acceptRemovalDialog deleteMethod="#{updateGroupAction.delete}"
+			<ox:confirmDialog deleteMethod="#{updateGroupAction.delete()}"
 				id="deleteConfirmation" queue="groupQueue" subject="group"
 				value="#{updateGroupAction.group.displayName}" />
 		</div>

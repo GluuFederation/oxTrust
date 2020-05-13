@@ -74,17 +74,7 @@
 													<b:dataTableColumn label="#{msg['client.applicationType']}">
 														<b:label text="#{clt.oxAuthAppType}" severity="primary" />
 													</b:dataTableColumn>
-													<b:dataTableColumn
-														label="#{msg['passport.deleteProvider']}">
-														<h:selectBooleanCheckbox id="selectId"
-															onchange="displayButton();" value="#{clt.selected}" />
-													</b:dataTableColumn>
 												</b:dataTable>
-												<a4j:commandButton ajaxSingle="true" id="deleteId"
-													eventsQueue="clientQueue"
-													onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();"
-													styleClass="btn btn-primary DeleteBulkClients"
-													style="float:left;margin-left :3px;" value="Delete" />
 											</h:form>
 										</div>
 									</div>
@@ -96,24 +86,6 @@
 						</b:panel>
 					</div>
 				</div>
-				<ox:acceptRemovalDialog
-					deleteMethod="#{searchClientAction.deleteClients}"
-					render="oidcClientsTable" id="deleteConfirmation"
-					queue="clientQueue" subject="client" value="all selected clients" />
-		<h:outputScript> 
-	    	function displayButton() {  	
-		    	var selectedIds = $("input[id$=selectId]:checked");
-		    	deleteBtn = $("input[id$=deleteId]");
-		    	
-		    	if (selectedIds.length == 0) {
-		    		deleteBtn.attr("disabled", "disabled");
-		    	} else {
-		    		deleteBtn.removeAttr("disabled");
-		    	}
-		    	
-	    	} 
-	    	displayButton();
-   	      </h:outputScript>
 			</div>
 		</section>
 	</ui:define>

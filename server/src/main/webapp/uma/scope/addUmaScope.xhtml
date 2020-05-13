@@ -116,12 +116,12 @@
 									<h:commandButton action="#{updateUmaScopeAction.save}"
 										styleClass="btn btn-primary updateScopeButtonId"
 										value="#{updateUmaScopeAction.update ? 'Update' : 'Add Scope'}" />
-									<a4j:commandButton ajaxSingle="true"
-										onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();"
+									<b:commandButton ajax="true"
+										onclick="PF('deleteConfirmation').show();"
 										rendered="#{updateUmaScopeAction.update}"
 										style="margin-left:3px;"
 										styleClass="btn btn-primary deleteScopeButtonId"
-										value="Delete" />
+										value="Delete" type="button" />
 									<h:commandButton action="#{updateUmaScopeAction.cancel}"
 										immediate="true" style="margin-left:3px;"
 										styleClass="btn btn-primary" value="#{msg['uma.cancel']}" />
@@ -140,7 +140,7 @@
 			nameProperty="entity.name" render="selectedAuthorizationPolicyId"
 			searchMethod="#{updateUmaScopeAction.searchAvailableAuthorizationPolicies}"
 			searchResult="#{updateUmaScopeAction.availableAuthorizationPolicies}" />
-		<ox:acceptRemovalDialog deleteMethod="#{updateUmaScopeAction.delete}"
+		<ox:confirmDialog deleteMethod="#{updateUmaScopeAction.delete()}"
 			id="deleteConfirmation" subject="scope"
 			value="#{updateUmaScopeAction.umaScope.id}" />
 	</ui:define>

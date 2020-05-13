@@ -4,6 +4,7 @@
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
 	xmlns:b="http://bootsfaces.net/ui"
+	xmlns:p="http://primefaces.org/ui"
 	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
@@ -44,8 +45,8 @@
 							<b:commandButton action="#{updateScopeAction.save}"
 								styleClass="btn btn-primary" ajax="true" update="@form"
 								value="#{msg['scope.update']}" />
-							<a4j:commandButton ajaxSingle="true" eventsQueue="scopeQueue"
-								onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();"
+							<b:commandButton ajax="true" eventsQueue="scopeQueue"
+								onclick="PF('deleteConfirmation').show();" type="button"
 								rendered="#{not _new}" style="margin-left:3px;"
 								styleClass="btn btn-primary" value="#{msg['scope.delete']}" />
 							<b:commandButton action="#{updateScopeAction.cancel}"
@@ -63,7 +64,7 @@
 					searchMethod="#{updateScopeAction.searchAvailableClaims}"
 					searchPattern="#{updateScopeAction.searchAvailableClaimPattern}"
 					searchResult="#{updateScopeAction.availableClaims}" />
-				<ox:acceptRemovalDialog deleteMethod="#{updateScopeAction.delete}"
+				<ox:confirmDialog deleteMethod="#{updateScopeAction.delete()}"
 					id="deleteConfirmation" queue="scopeQueue" subject="scope"
 					value="#{updateScopeAction.scope.displayName}" />
 			</h:panelGroup>

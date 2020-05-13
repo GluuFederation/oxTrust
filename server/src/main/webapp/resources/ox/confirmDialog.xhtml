@@ -24,7 +24,7 @@
 	</h:outputScript>
 	<ui:param name="id" value="#{cc.attrs.id}" />
 	<p:dialog header="Accept #{cc.attrs.subject} removal"
-		widgetVar="#{cc.attrs.id}" modal="true" height="150" width="400">
+		widgetVar="#{cc.attrs.id}" modal="true" height="150" width="500">
 		<p:panelGrid columns="1" layout="flex"
 			styleClass="showcase-text-align-center ui-noborder">
 			<h:panelGroup>
@@ -46,6 +46,12 @@
 				styleClass="btn btn-primary cancelDialogButton" value="No"
 				onclick="PF('#{cc.attrs.id}').hide();"
 				rendered="#{cc.attrs.cancelMethod == null}" />
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		    <h:commandButton type="button"
+				styleClass="btn btn-primary cancelDialogButton" value="No"
+				oncomplete="PF('#{cc.attrs.id}').hide();"
+				rendered="#{cc.attrs.cancelMethod != null}"
+				action="#{cc.attrs.cancelMethod}" />
 		</h:panelGroup>
 	</p:dialog>
 </cc:implementation>

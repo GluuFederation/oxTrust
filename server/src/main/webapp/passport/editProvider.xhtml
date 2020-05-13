@@ -4,6 +4,7 @@
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
 	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
+	xmlns:b="http://bootsfaces.net/ui"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
@@ -46,15 +47,15 @@
 						<h:commandButton action="#{passportProvidersAction.cancel}"
 							immediate="true" style="margin-left:3px;"
 							styleClass="btn btn-primary" value="#{msg['client.cancel']}" />
-						<a4j:commandButton ajaxSingle="true" id="deleteId"
-								eventsQueue="providerQueue"
-								onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();"
+						<b:commandButton ajax="true" id="deleteId"
+								eventsQueue="providerQueue" type="button"
+								onclick="PF('deleteProvider').show();"
 								styleClass="btn btn-primary DeleteProviderButton"
 								value="#{msg['passport.deleteProvider']}" />
 					</div>
-					<ox:acceptRemovalDialog
+					<ox:confirmDialog
 						deleteMethod="#{passportProvidersAction.deleteProvider(_provider)}"
-						render="providersTableId" id="deleteConfirmation"
+						render="providersTableId" id="deleteProvider"
 						queue="providerQueue" subject="provider"
 						value="#{_provider.displayName}" />
 				</ui:define>

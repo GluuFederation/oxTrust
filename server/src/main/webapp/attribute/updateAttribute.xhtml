@@ -3,6 +3,8 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:b="http://bootsfaces.net/ui"
 	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
@@ -51,11 +53,11 @@
 								rendered="#{updateAttributeAction.canEdit()}"
 								styleClass="btn btn-primary updateButton"
 								value="#{msg['attribute.update']}" />
-							<a4j:commandButton ajaxSingle="true"
-								onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();"
+							<b:commandButton ajax="true"
+								onclick="PF('deleteConfirmation').show();"
 								rendered="#{updateAttributeAction.canEdit()}"
 								styleClass="btn btn-primary deleteButton"
-								value="#{msg['attribute.delete']}" />
+								value="#{msg['attribute.delete']}" type="button"/>
 							<h:commandButton action="#{updateAttributeAction.cancel}"
 								immediate="true" style="margin-left:5px"
 								styleClass="btn btn-primary cancelButton"
@@ -63,7 +65,7 @@
 						</div>
 					</ui:define>
 				</ui:decorate>
-				<ox:acceptRemovalDialog
+				<ox:confirmDialog
 					deleteMethod="#{updateAttributeAction.delete}"
 					id="deleteConfirmation" subject="attribute"
 					value="#{updateAttributeAction.attribute.displayName}" />

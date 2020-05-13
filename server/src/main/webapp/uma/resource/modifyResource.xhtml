@@ -190,11 +190,11 @@
 													style="margin-left:3px;" styleClass="btn btn-primary"
 													 ajax="true" update="@form"
 													value="#{updateResourceAction.update ? 'Update' : 'Add'}" />
-												<a4j:commandButton ajaxSingle="true"
-													onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();"
+												<b:commandButton ajaxSingle="true"
+													onclick="PF('deleteConfirmation').show();"
 													rendered="#{updateResourceAction.update}"
 													style="margin-left:3px;" styleClass="btn btn-primary"
-													value="Delete" />
+													value="Delete" type="button"/>
 												<b:commandButton action="#{updateResourceAction.cancel}"
 													immediate="true" style="margin-left:3px;"
 													 ajax="true" update="@form"
@@ -233,8 +233,8 @@
 								searchPattern="#{updateResourceAction.searchAvailableClientPattern}"
 								searchResult="#{updateResourceAction.availableClients}" />
 
-							<ox:acceptRemovalDialog
-								deleteMethod="#{updateResourceAction.delete}"
+							<ox:confirmDialog
+								deleteMethod="#{updateResourceAction.delete()}"
 								id="deleteConfirmation" subject="resource set"
 								value="#{updateResourceAction.resource.id}" />
 						</div>

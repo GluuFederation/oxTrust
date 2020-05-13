@@ -11,10 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import javax.ejb.Stateless;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
@@ -235,8 +233,7 @@ public class GroupService implements Serializable, IGroupService {
 		Filter displayNameFilter = Filter.createSubstringFilter(OxTrustConstants.displayName, null, targetArray, null);
 		Filter descriptionFilter = Filter.createSubstringFilter(OxTrustConstants.description, null, targetArray, null);
 		Filter searchFilter = Filter.createORFilter(displayNameFilter, descriptionFilter);
-		return  persistenceEntryManager.findEntries(getDnForGroup(null), GluuGroup.class, searchFilter,
-				sizeLimit);
+		return persistenceEntryManager.findEntries(getDnForGroup(null), GluuGroup.class, searchFilter, sizeLimit);
 	}
 
 	@Override
@@ -250,7 +247,7 @@ public class GroupService implements Serializable, IGroupService {
 	 * @see org.gluu.oxtrust.ldap.service.IGroupService#getVisibilityTypes()
 	 */
 	@Override
-	public GluuGroupVisibility[] getVisibilityTypes() throws Exception {
+	public GluuGroupVisibility[] getVisibilityTypes() {
 		return GluuGroupVisibility.values();
 	}
 
@@ -272,9 +269,8 @@ public class GroupService implements Serializable, IGroupService {
 
 	@Override
 	public GluuGroup getGroupByDn(String Dn) {
-		return  persistenceEntryManager.find(GluuGroup.class, Dn);
+		return persistenceEntryManager.find(GluuGroup.class, Dn);
 	}
-
 
 	/*
 	 * (non-Javadoc)

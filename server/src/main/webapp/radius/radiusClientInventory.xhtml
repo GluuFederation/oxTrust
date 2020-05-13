@@ -80,9 +80,9 @@
 													id="select-radius-client" onclick="displayDeleteButton();"/>
 											</b:dataTableColumn>
 										</b:dataTable>
-										<a4j:commandButton ajaxSingle="true" eventsQueue="radiusClientQueue"
-											id="delete-radius-clients"
-											onclick="#{rich:component('removeConfirmation:acceptRemovalModalPanel')}.show();"
+										<b:commandButton ajax="true" eventsQueue="radiusClientQueue"
+											id="delete-radius-clients" type="button"
+											onclick="PF('removeConfirmation').show();"
 											styleClass="btn btn-primary"
 											style="float: left; margin-left: 3px;"
 											value="#{msg['radius.clients.table.delete']}"
@@ -95,9 +95,9 @@
 				</b:panel>
 			</div>
 		</div>
-		<ox:acceptRemovalDialog
+		<ox:confirmDialog
 			id="removeConfirmation"
-			deleteMethod="#{searchRadiusClientAction.deleteRadiusClients}"
+			deleteMethod="#{searchRadiusClientAction.deleteRadiusClients()}"
 			render="radius-clients-table" queue="radiusClientQueue"
 			subject="Radius Clients" value="all selected radius clients"/>
 		<h:outputScript>

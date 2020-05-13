@@ -89,7 +89,7 @@
 											expanded="#{_customScript.dn == null}">
 											<h:panelGroup layout="block" class="card-body">
 												<a4j:commandLink value="Delete Script" immediate="true"
-													onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();"
+													onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel'}).show();"
 													execute="@region"
 													styleClass="btn btn-danger deleteScriptButton" />
 												<h:panelGroup id="scriptErrorViewId">
