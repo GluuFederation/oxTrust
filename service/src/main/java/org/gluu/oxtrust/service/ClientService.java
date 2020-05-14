@@ -32,7 +32,7 @@ import org.slf4j.Logger;
  *
  * @author Reda Zerrad Date: 06.08.2012
  * @author Javier Rojas Blum
- * @version July 19, 2016
+ * @version May 13, 2020
  */
 
 @ApplicationScoped
@@ -313,9 +313,12 @@ public class ClientService implements Serializable {
 	}
 
 	public SignatureAlgorithm[] getSignatureAlgorithmsWithoutNone() {
-		return new SignatureAlgorithm[] { SignatureAlgorithm.HS256, SignatureAlgorithm.HS384, SignatureAlgorithm.HS512,
-				SignatureAlgorithm.RS256, SignatureAlgorithm.RS384, SignatureAlgorithm.RS512, SignatureAlgorithm.ES256,
-				SignatureAlgorithm.ES384, SignatureAlgorithm.ES512, };
+		return new SignatureAlgorithm[] {
+				SignatureAlgorithm.HS256, SignatureAlgorithm.HS384, SignatureAlgorithm.HS512,
+				SignatureAlgorithm.RS256, SignatureAlgorithm.RS384, SignatureAlgorithm.RS512,
+				SignatureAlgorithm.ES256, SignatureAlgorithm.ES384, SignatureAlgorithm.ES512,
+				SignatureAlgorithm.PS256, SignatureAlgorithm.PS384, SignatureAlgorithm.PS512
+		};
 	}
 
 	/**

@@ -229,7 +229,8 @@
                     "password",
                     "client_credentials",
                     "refresh_token",
-                    "urn:ietf:params:oauth:grant-type:uma-ticket"
+                    "urn:ietf:params:oauth:grant-type:uma-ticket",
+                    "urn:openid:params:grant-type:ciba"
                 ]
             }
         },
@@ -248,7 +249,8 @@
                     "password",
                     "client_credentials",
                     "refresh_token",
-                    "urn:ietf:params:oauth:grant-type:uma-ticket"
+                    "urn:ietf:params:oauth:grant-type:uma-ticket",
+                    "urn:openid:params:grant-type:ciba"
                 ]
             }
         },
@@ -294,7 +296,10 @@
                     "RS512",
                     "ES256",
                     "ES384",
-                    "ES512"
+                    "ES512",
+                    "PS256",
+                    "PS384",
+                    "PS512"
                 ]
             }
         },
@@ -411,7 +416,10 @@
                     "RS512",
                     "ES256",
                     "ES384",
-                    "ES512"
+                    "ES512",
+                    "PS256",
+                    "PS384",
+                    "PS512"
                 ]
             }
         },
@@ -484,7 +492,10 @@
                     "RS512",
                     "ES256",
                     "ES384",
-                    "ES512"
+                    "ES512",
+                    "PS256",
+                    "PS384",
+                    "PS512"
                 ]
             }
         },
