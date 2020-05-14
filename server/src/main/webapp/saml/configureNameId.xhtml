@@ -2,6 +2,7 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	xmlns:b="http://bootsfaces.net/ui" xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:rich="http://richfaces.org/rich"
@@ -35,7 +36,7 @@
 					<h:form>
 						<div class="row" style="padding-left: 5px; padding-right: 5px;">
 							<a4j:region>
-								<rich:dataGrid id="nameIdConfigsId"
+								<p:dataGrid id="nameIdConfigsId"
 									value="#{configureNameIdAction.nameIdConfigs}"
 									var="_nameIdConfig" columns="1" style="width: 100%;" border="0"
 									columnClasses="noBorder">
@@ -82,7 +83,7 @@
 										subject="nameId" value="#{_nameIdConfig.nameIdType}"
 										deleteMethod="#{configureNameIdAction.removeNameIdConfig(_nameIdConfig)}"
 										render="nameIdConfigsId" />
-								</rich:dataGrid>
+								</p:dataGrid>
 							</a4j:region>
 							<h:panelGroup layout="block" styleClass="addConfig">
 								<a4j:commandLink styleClass="btn btn-primary addConfigButton"

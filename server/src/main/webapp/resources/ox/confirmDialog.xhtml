@@ -25,6 +25,7 @@
 	<ui:param name="id" value="#{cc.attrs.id}" />
 	<p:dialog header="Accept #{cc.attrs.subject} removal"
 		widgetVar="#{cc.attrs.id}" modal="true" height="150" width="500">
+		<p:ajax event="close" update=":content" />
 		<p:panelGrid columns="1" layout="flex"
 			styleClass="showcase-text-align-center ui-noborder">
 			<h:panelGroup>
@@ -38,9 +39,9 @@
 			<p:spacer height="2" />
 		</p:panelGrid>
 		<h:panelGroup>
-			<p:commandLink styleClass="btn btn-primary confirmDialogButton"
+			<p:commandLink id="confirmDialogButton" styleClass="btn btn-primary confirmDialogButton"
 				value="Yes" onclick="PF('#{cc.attrs.id}').hide();"
-				action="#{cc.attrs.deleteMethod}" />
+				action="#{cc.attrs.deleteMethod}"/>
 				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 			<h:commandButton type="button"
 				styleClass="btn btn-primary cancelDialogButton" value="No"
