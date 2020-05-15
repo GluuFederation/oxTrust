@@ -30,6 +30,7 @@ import org.gluu.model.DisplayNameEntry;
 import org.gluu.model.GluuStatus;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
+import org.gluu.oxtrust.model.GluuGroupVisibility;
 import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.service.GroupService;
@@ -430,6 +431,10 @@ public class UpdateGroupAction implements Serializable {
 		}
 
 		return memberDns;
+	}
+	
+	public GluuGroupVisibility[] getVisibilityTypes(){
+		return groupService.getVisibilityTypes();
 	}
 
 	public String getInum() {

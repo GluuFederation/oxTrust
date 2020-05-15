@@ -45,7 +45,7 @@
 					<ox:decorate id="visibility" label="#{msg['group.type']}">
 						<h:selectOneMenu value="#{_group.visibility}" id="visibilityId"
 							styleClass="rounded visibilityField form-control">
-							<f:selectItems value="#{groupService.visibilityTypes}"
+							<f:selectItems value="#{_groupAction.visibilityTypes}"
 								var="_type" itemLabel="#{_type.displayName}" />
 							<f:converter converterId="org.gluu.jsf2.converter.EnumConverter" />
 						</h:selectOneMenu>

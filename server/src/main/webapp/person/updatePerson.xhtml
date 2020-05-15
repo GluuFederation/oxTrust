@@ -5,6 +5,7 @@
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
 	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
 	xmlns:rich="http://richfaces.org/rich"
+	xmlns:p="http://primefaces.org/ui"
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	template="/WEB-INF/incl/layout/newtemplate.xhtml">
 	<f:metadata>
@@ -39,8 +40,8 @@
 					<ui:define name="controlButtons">
 						<h:panelGroup id="updateButtons" class="updateButtons"
 							layout="block">
-							<a4j:commandButton
-								onclick="#{rich:component('personPassword:changePasswordModalPanel')}.show();"
+							<b:commandButton ajax="true" type="button"
+								onclick="PF('changePasswordModalPanel').show();"
 								styleClass="btn btn-primary changePasswordButton"
 								value="#{msg['person.changePassword']}" />
 							<b:commandButton action="#{updatePersonAction.save}" ajax="true"

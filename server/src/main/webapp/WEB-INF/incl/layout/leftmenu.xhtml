@@ -70,7 +70,7 @@
 											value="Person Authentication Scripts" onclick="lock();"
 											ondbclick="lock();" oncomplete="unlock();"
 											action="#{menuAction.endConversation('/script/manageAuthScript.xhtml')}"
-											rendered="#{permissionService.hasPermission('passport', 'access') and productInstallationCheckerAction.canShowPassPassport()}">
+											rendered="#{permissionService.hasPermission('passport', 'access')}">
 											<i class="fa fa-chevron-right"
 												style="float: left; margin-top: 2px;"></i>
 										</h:commandLink></li>
@@ -78,7 +78,7 @@
 											value="Others Custom Scripts" onclick="lock();"
 											ondbclick="lock();" oncomplete="unlock();"
 											action="#{menuAction.endConversation('/script/manageOtherScript.xhtml')}"
-											rendered="#{permissionService.hasPermission('passport', 'access') and productInstallationCheckerAction.canShowPassPassport()}">
+											rendered="#{permissionService.hasPermission('passport', 'access')}">
 											<i class="fa fa-chevron-right"
 												style="float: left; margin-top: 2px;"></i>
 										</h:commandLink></li>
