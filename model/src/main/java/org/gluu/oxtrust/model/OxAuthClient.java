@@ -200,8 +200,8 @@ public class OxAuthClient extends Entry implements Serializable {
 	@AttributeName(name = "oxAuthInitiateLoginURI")
 	private String initiateLoginUri;
 
-	@AttributeName(name = "oxAuthExpiration")
-	private Date clientSecretExpiresAt;
+	@AttributeName(name = "exp")
+	private Date exp;
 
 	@AttributeName(name = "oxAuthRequestURI")
 	private String[] requestUris;
@@ -224,8 +224,8 @@ public class OxAuthClient extends Entry implements Serializable {
 	@AttributeName(name = "oxdId")
 	private String oxdId;
 
-    @AttributeName(name = "del")
-    private boolean deletable;
+	@AttributeName(name = "del")
+	private boolean deletable;
 
 	@Transient
 	private String oxAuthClientSecret;
@@ -710,16 +710,16 @@ public class OxAuthClient extends Entry implements Serializable {
 		return oxAuthClientSecret;
 	}
 
-	public Date getClientSecretExpiresAt() {
-		if (clientSecretExpiresAt == null) {
+	public Date getExp() {
+		if (exp == null) {
 			return inOneCentury();
 		} else {
-			return clientSecretExpiresAt;
+			return exp;
 		}
 	}
 
-	public void setClientSecretExpiresAt(Date clientSecretExpiresAt) {
-		this.clientSecretExpiresAt = clientSecretExpiresAt;
+	public void setExp(Date exp) {
+		this.exp = exp;
 	}
 
 	public final String getOxdId() {
@@ -758,7 +758,8 @@ public class OxAuthClient extends Entry implements Serializable {
 		return backchannelAuthenticationRequestSigningAlg;
 	}
 
-	public void setBackchannelAuthenticationRequestSigningAlg(AsymmetricSignatureAlgorithm backchannelAuthenticationRequestSigningAlg) {
+	public void setBackchannelAuthenticationRequestSigningAlg(
+			AsymmetricSignatureAlgorithm backchannelAuthenticationRequestSigningAlg) {
 		this.backchannelAuthenticationRequestSigningAlg = backchannelAuthenticationRequestSigningAlg;
 	}
 

@@ -557,9 +557,9 @@
 						</ox:decorate>
 
 						<ox:decorate id="clientsecretexpiry"
-							rendered="#{cc.attrs._client.clientSecretExpiresAt != null || !cc.attrs._clientAction.update}"
+							rendered="#{cc.attrs._client.exp != null || !cc.attrs._clientAction.update}"
 							label="#{msg['clientForm.expirationDate']}">
-							<h:outputText value="#{cc.attrs._client.clientSecretExpiresAt}" />
+							<h:outputText value="#{cc.attrs._client.exp}" />
 						</ox:decorate>
 
 						<ox:decorate id="cibaAuthenticationRequestSigningAlg"

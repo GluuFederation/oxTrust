@@ -323,11 +323,11 @@ public class UpdateClientAction implements Serializable {
 	}
 
 	public String save() throws Exception {
-		if (this.client.isDeletable() && this.client.getClientSecretExpiresAt() == null) {
-			this.client.setClientSecretExpiresAt(oneDay());
+		if (this.client.isDeletable() && this.client.getExp() == null) {
+			this.client.setExp(oneDay());
 		}
 		if (!this.client.isDeletable()) {
-			this.client.setClientSecretExpiresAt(null);
+			this.client.setExp(null);
 		}
 		updateLoginURIs();
 		updateLogoutURIs();
@@ -1536,8 +1536,8 @@ public class UpdateClientAction implements Serializable {
 				items.add("**Subject Type:** " + client.getSubjectType());
 			}
 
-			if (client.getClientSecretExpiresAt() != null && !client.getClientSecretExpiresAt().toString().isEmpty()) {
-				items.add("**Expirattion date:** " + client.getClientSecretExpiresAt());
+			if (client.getExp() != null && !client.getExp().toString().isEmpty()) {
+				items.add("**Expirattion date:** " + client.getExp());
 			}
 			if (client.getOxAuthClientSecret() != null && !client.getOxAuthClientSecret().toString().isEmpty()) {
 				items.add("**ClientSecret:** XXXXXXXXXXX");
@@ -1653,15 +1653,14 @@ public class UpdateClientAction implements Serializable {
 	public void appTypeChanged() {
 
 	}
+
 	public OxAuthApplicationType[] getApplicationType() {
 		return clientService.getApplicationType();
 	}
 
-	
 	public OxAuthSubjectType[] getSubjectTypes() {
 		return clientService.getSubjectTypes();
 	}
-
 
 	public SignatureAlgorithm[] getSignatureAlgorithmsWithoutNone() {
 		return clientService.getSignatureAlgorithmsWithoutNone();
