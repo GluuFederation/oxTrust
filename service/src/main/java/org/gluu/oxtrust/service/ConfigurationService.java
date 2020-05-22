@@ -6,6 +6,19 @@
 
 package org.gluu.oxtrust.service;
 
+import org.gluu.model.*;
+import org.gluu.model.custom.script.CustomScriptType;
+import org.gluu.oxtrust.model.GluuConfiguration;
+import org.gluu.oxtrust.model.GluuOxTrustStat;
+import org.gluu.persist.PersistenceEntryManager;
+import org.gluu.util.StringHelper;
+import org.gluu.util.security.StringEncrypter.EncryptionException;
+import org.slf4j.Logger;
+
+import javax.enterprise.context.ApplicationScoped;
+import javax.faces.context.FacesContext;
+import javax.inject.Inject;
+import javax.inject.Named;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
@@ -15,24 +28,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.faces.context.FacesContext;
-import javax.inject.Inject;
-import javax.inject.Named;
-
-import org.gluu.model.ApplicationType;
-import org.gluu.model.AuthenticationScriptUsageType;
-import org.gluu.model.ProgrammingLanguage;
-import org.gluu.model.ScriptLocationType;
-import org.gluu.model.SmtpConfiguration;
-import org.gluu.model.custom.script.CustomScriptType;
-import org.gluu.oxtrust.model.GluuConfiguration;
-import org.gluu.oxtrust.model.GluuOxTrustStat;
-import org.gluu.persist.PersistenceEntryManager;
-import org.gluu.util.StringHelper;
-import org.gluu.util.security.StringEncrypter.EncryptionException;
-import org.slf4j.Logger;
 
 /**
  * GluuConfiguration service
@@ -203,7 +198,7 @@ public class ConfigurationService implements Serializable {
 				CustomScriptType.DYNAMIC_SCOPE, CustomScriptType.ID_GENERATOR, CustomScriptType.CACHE_REFRESH,
 				CustomScriptType.UMA_RPT_POLICY, CustomScriptType.UMA_CLAIMS_GATHERING, CustomScriptType.INTROSPECTION,
 				CustomScriptType.RESOURCE_OWNER_PASSWORD_CREDENTIALS, CustomScriptType.APPLICATION_SESSION,
-				CustomScriptType.END_SESSION, CustomScriptType.SCIM };
+				CustomScriptType.END_SESSION, CustomScriptType.SCIM, CustomScriptType.POST_AUTHN };
 	}
 
 	public CustomScriptType[] getOthersCustomScriptTypes() {
@@ -212,7 +207,7 @@ public class ConfigurationService implements Serializable {
 				CustomScriptType.DYNAMIC_SCOPE, CustomScriptType.ID_GENERATOR, CustomScriptType.CACHE_REFRESH,
 				CustomScriptType.UMA_RPT_POLICY, CustomScriptType.UMA_CLAIMS_GATHERING, CustomScriptType.INTROSPECTION,
 				CustomScriptType.RESOURCE_OWNER_PASSWORD_CREDENTIALS, CustomScriptType.APPLICATION_SESSION,
-				CustomScriptType.END_SESSION, CustomScriptType.SCIM };
+				CustomScriptType.END_SESSION, CustomScriptType.SCIM, CustomScriptType.POST_AUTHN };
 	}
 
 	public void encryptedSmtpPassword(SmtpConfiguration smtpConfiguration) {
