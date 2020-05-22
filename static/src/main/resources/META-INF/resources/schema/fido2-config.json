@@ -1,0 +1,252 @@
+{
+   "$schema":"http://json-schema.org/draft-04/schema#",
+   "id":"/",
+   "title":"Fido2 Server Configuration",
+   "type":"object",
+   "additionalProperties":false,
+   "properties":{
+      "issuer":{
+         "id":"issuer",
+         "description":"URL using the https scheme with no query or fragment component that the OP asserts as its Issuer Identifier.",
+         "title":"Issuer",
+         "type":"string",
+         "format":"url",
+         "minLength":1
+      },
+      "baseEndpoint":{
+         "id":"baseEndpoint",
+         "description":"Base URL of the Endpoints.",
+         "type":"string",
+         "format":"url",
+         "minLength":1
+      },
+      "cleanServiceInterval":{
+         "id":"cleanServiceInterval",
+         "description":"Time interval for the Clean Service in seconds.",
+         "type":"integer",
+         "multipleOf":1,
+         "maximum":2147483647,
+         "minimum":1,
+         "exclusiveMaximum":false,
+         "exclusiveMinimum":false
+      },
+      "cleanServiceBatchChunkSize":{
+         "id":"cleanServiceBatchChunkSize",
+         "description":"Each clean up iteration fetches chunk of expired data per base dn and removes it from storage.",
+         "type":"integer",
+         "multipleOf":1,
+         "maximum":2147483647,
+         "minimum":1,
+         "exclusiveMaximum":false,
+         "exclusiveMinimum":false
+      },
+      "useLocalCache": {
+          "id": "useLocalCache",
+          "description": "Boolean value specifying whether to enable local in-memory cache for attributes, scopes, clients and organization configuration.",
+          "type": "boolean"
+      },
+      "disableJdkLogger":{
+         "id":"disableJdkLogger",
+         "description":"Boolean value specifying whether to enable JDK Loggers.",
+         "type":"boolean"
+      },
+      "loggingLevel":{
+         "id":"loggingLevel",
+         "description":"Logging level for oxAuth logers.",
+         "type":"string",
+         "format":"select",
+         "enum":[
+            "TRACE",
+            "DEBUG",
+            "INFO",
+            "WARN",
+            "ERROR",
+            "FATAL",
+            "OFF"
+         ]
+      },
+      "loggingLayout":{
+         "id":"loggingLayout",
+         "description":"Logging layout used for oxAuth loggers.",
+         "type":"string",
+         "format":"select",
+         "enum":[
+            "text",
+            "json"
+         ]
+      },
+      "externalLoggerConfiguration":{
+         "id":"externalLoggerConfiguration",
+         "description":"Path to external log4j2 logging configuration.",
+         "type":"string",
+         "minLength":1
+      },
+      "metricReporterInterval":{
+         "id":"metricReporterInterval",
+         "description":"The interval for metric reporter in seconds.",
+         "type":"integer",
+         "multipleOf":1,
+         "maximum":2147483647,
+         "minimum":1,
+         "exclusiveMaximum":false,
+         "exclusiveMinimum":false
+      },
+      "metricReporterKeepDataDays":{
+         "id":"metricReporterKeepDataDays",
+         "description":"The days to keep metric reported data.",
+         "type":"integer",
+         "multipleOf":1,
+         "maximum":2147483647,
+         "minimum":1,
+         "exclusiveMaximum":false,
+         "exclusiveMinimum":false
+      },
+      "metricReporterEnabled":{
+         "id":"metricReporterEnabled",
+         "description":"Boolean value specifying whether to enable Metric Reporter.",
+         "type":"boolean"
+      },
+      "personCustomObjectClassList":{
+         "id":"personCustomObjectClassList",
+         "description":"LDAP custom object class list for dynamic person enrollment.",
+         "type":"array",
+         "minItems":0,
+         "uniqueItems":true,
+         "additionalItems":true,
+         "items":{
+            "type":"string",
+            "minLength":1
+         }
+      },
+      "fido2Configuration":{
+         "id":"fido2Configuration",
+         "description":"Fido2 Configuration.",
+         "type":"object",
+         "properties":{
+            "authenticatorCertsFolder":{
+               "id":"authenticatorCertsFolder",
+               "description":"Authenticators certificates fodler.",
+               "type":"string",
+               "minLength":1
+            },
+            "mdsAccessToken":{
+               "id":"mdsAccessToken",
+               "description":"MDS Access token.",
+               "type":"string",
+               "minLength":1
+            },
+            "mdsCertsFolder":{
+               "id":"mdsCertsFolder",
+               "description":"MDS TOC root certificates folder.",
+               "type":"string",
+               "minLength":1
+            },
+            "mdsTocsFolder":{
+               "id":"mdsTocsFolder",
+               "description":"MDS TOC files folder.",
+               "type":"string",
+               "minLength":1
+            },
+            "userAutoEnrollment":{
+               "id":"userAutoEnrollment",
+               "description":"Allow to enroll users on enrollment/authentication requests.",
+               "type":"boolean"
+            },
+            "unfinishedRequestExpiration":{
+               "id":"unfinishedRequestExpiration",
+               "description":"Expiration time in seconds for pending enrollment/authentication requests",
+               "type":"integer",
+               "multipleOf":1,
+               "maximum":2147483647,
+               "minimum":0,
+               "exclusiveMaximum":false,
+               "exclusiveMinimum":false
+            },
+            "authenticationHistoryExpiration":{
+               "id":"authenticationHistoryExpiration",
+               "description":"Expiration time in seconds for approved authentication requests.",
+               "type":"integer",
+               "multipleOf":1,
+               "maximum":2147483647,
+               "minimum":0,
+               "exclusiveMaximum":false,
+               "exclusiveMinimum":false
+            },
+            "serverMetadataFolder":{
+               "id":"serverMetadataFolder",
+               "description":"Authenticators metadata in json format. Example: virtual devices.",
+               "type":"string",
+               "minLength":1
+            },
+            "requestedCredentialTypes":{
+               "id":"requestedCredentialTypes",
+               "description":"A list of types of public-key credential to be used in attestation options.",
+               "type":"array",
+               "format":"select",
+               "minItems":1,
+               "uniqueItems":true,
+               "items":{
+                  "type":"string",
+                  "enum":[
+                     "ES256",
+                     "ES384",
+                     "ES512",
+                     "ED256",
+                     "ED512",
+                     "ECDH_ES_HKDF_256",
+                     "RS256",
+                     "RS384",
+                     "RS512",
+                     "RS65535",
+                     "PS256",
+                     "PS384",
+                     "PS512",
+                     "RS1"
+                  ]
+               }
+            },
+            "requestedParties":{
+               "id":"requestedParties",
+               "description":"Allowed requested parties.",
+               "type":"object",
+               "properties":{
+                  "name":{
+                     "id":"name",
+                     "description":"Requested party name.",
+                     "type":"string",
+                     "minLength":1
+                  },
+                  "domains":{
+                     "id":"domains",
+                     "description":"Domains.",
+                     "type":"array",
+                     "minItems":0,
+                     "uniqueItems":true,
+                     "additionalItems":true,
+                     "items":{
+                        "type":"string",
+                        "minLength":1
+                     }
+                  }
+               }
+            }
+         }
+      }
+   },
+   "required":[
+      "issuer",
+      "baseEndpoint",
+      "cleanServiceInterval",
+      "cleanServiceBatchChunkSize",
+      "useLocalCache",
+      "disableJdkLogger",
+      "loggingLevel",
+      "loggingLayout",
+      "externalLoggerConfiguration",
+      "metricReporterInterval",
+      "metricReporterKeepDataDays",
+      "metricReporterEnabled",
+      "personCustomObjectClassList",
+      "fido2Configuration"
+   ]
+}

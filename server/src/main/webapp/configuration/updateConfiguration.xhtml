@@ -54,6 +54,8 @@
 							</li>
 							<li><a data-toggle="tab" href="#oxauth-config">#{msg['updateConfiguration.oxAuthConfiguration']}</a>
 							</li>
+							<li><a data-toggle="tab" href="#fido2-config">#{msg['updateConfiguration.fido2Configuration']}</a>
+							</li>
 							<li><a data-toggle="tab" href="#cached-config">#{msg['updateConfiguration.memcachedConfiguration']}</a>
 							</li>
 							<li><a data-toggle="tab" href="#store-config">#{msg['updateConfiguration.storeConfiguration']}</a>
@@ -111,6 +113,31 @@
 											id="saveOxAuthConfigBtn" prependId="false"
 											style="display:none"
 											value="#{msg['updateConfiguration.saveOxAuthConfiguration']}" />
+									</h:form>
+								</h:panelGrid>
+							</div>
+
+							<div class="tab-pane" id="fido2-config">
+								<h:panelGrid border="0" cellpadding="0" cellspacing="0"
+									columnClasses="alignTop" columns="1" width="100%">
+									<h:form id="fido2ConfigForm" prependId="false">
+										<ui:decorate id="fido2"
+											template="/WEB-INF/incl/layout/jsoneditor.xhtml">
+											<ui:param name="id" value="fido2Config" />
+											<ui:param name="parentId" value="fido2" />
+											<ui:param name="json"
+												value="#{jsonConfigAction.fido2ConfigJson}" />
+											<ui:param name="jsonSchema"
+												value="#{request.contextPath}/schema/fido2-config.json" />
+											<ui:param name="saveBtnId" value="saveFido2ConfigBtn" />
+											<ui:param name="saveBtnLabel"
+												value="#{msg['updateConfiguration.saveConfiguration']}" />
+										</ui:decorate>
+										<h:commandButton
+											action="#{jsonConfigAction.saveFido2ConfigJson}"
+											id="saveFido2ConfigBtn" prependId="false"
+											style="display:none"
+											value="#{msg['updateConfiguration.saveFido2Configuration']}" />
 									</h:form>
 								</h:panelGrid>
 							</div>

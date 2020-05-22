@@ -11,6 +11,7 @@ import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.config.oxtrust.ImportPersonConfig;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
+import org.gluu.oxauth.model.configuration.CIBAEndUserNotificationConfig;
 import org.gluu.oxtrust.service.AttributeService;
 import org.gluu.oxtrust.service.EmailUniquenessService;
 import org.gluu.oxtrust.service.EncryptionService;
@@ -95,6 +96,8 @@ public class JsonConfigurationAction implements Serializable {
 	private String cacheConfigurationJson;
 	private String storeConfigurationJson;
 
+	private String fido2ConfigJson;
+
 	public String init() {
 		try {
 			log.debug("Loading oxauth-config.json and oxtrust-config.json");
@@ -109,6 +112,7 @@ public class JsonConfigurationAction implements Serializable {
 					this.jsonConfigurationService.getOxAuthDynamicConfigJson());
 			this.cacheConfigurationJson = getCacheConfiguration(cacheConfiguration);
 			this.storeConfigurationJson = getStoreConfiguration(storeConfiguration);
+			this.fido2ConfigJson = jsonConfigurationService.loadFido2Configuration().getDynamicConf();
 
 			if ((this.oxTrustConfigJson != null) && (this.oxAuthDynamicConfigJson != null)) {
 				return OxTrustConstants.RESULT_SUCCESS;
@@ -150,6 +154,21 @@ public class JsonConfigurationAction implements Serializable {
 			}
 			jsonConfigurationService.saveOxTrustappConfiguration(this.oxTrustappConfiguration);
 			facesMessages.add(FacesMessage.SEVERITY_INFO, "oxTrust Configuration is updated.");
+
+			return OxTrustConstants.RESULT_SUCCESS;
+		} catch (Exception ex) {
+			log.error("Failed to update oxtrust-config.json", ex);
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update oxTrust configuration in LDAP");
+		}
+
+		return OxTrustConstants.RESULT_FAILURE;
+	}
+
+	public String saveFido2ConfigJson() {
+		try {
+			log.debug("Saving fido2-config.json:" + this.oxTrustConfigJson);
+			jsonConfigurationService.saveFido2Configuration(this.oxTrustConfigJson);
+			facesMessages.add(FacesMessage.SEVERITY_INFO, "Fido2 Configuration is updated.");
 
 			return OxTrustConstants.RESULT_SUCCESS;
 		} catch (Exception ex) {
@@ -305,6 +324,13 @@ public class JsonConfigurationAction implements Serializable {
 		try {
 			org.gluu.oxauth.model.configuration.AppConfiguration appConfiguration = jsonService.jsonToObject(
 					oxAuthAppConfiguration, org.gluu.oxauth.model.configuration.AppConfiguration.class);
+
+			// Add missing config if needed
+			if (appConfiguration.getCibaEndUserNotificationConfig() == null) {
+				appConfiguration.setCibaEndUserNotificationConfig(new CIBAEndUserNotificationConfig());
+				appConfiguration.getCibaEndUserNotificationConfig().setNotificationKey("");
+			}
+
 			try {
 				String decryptedKey = encryptionService.decrypt(appConfiguration
 						.getCibaEndUserNotificationConfig().getNotificationKey());
@@ -464,6 +490,14 @@ public class JsonConfigurationAction implements Serializable {
 
 	public void setOxAuthDynamicConfigJson(String oxAuthDynamicConfigJson) {
 		this.oxAuthDynamicConfigJson = oxAuthDynamicConfigJson;
+	}
+
+	public String getFido2ConfigJson() {
+		return fido2ConfigJson;
+	}
+
+	public void setFido2ConfigJson(String fido2ConfigJson) {
+		this.fido2ConfigJson = fido2ConfigJson;
 	}
 
 	public String getCacheConfigurationJson() {
