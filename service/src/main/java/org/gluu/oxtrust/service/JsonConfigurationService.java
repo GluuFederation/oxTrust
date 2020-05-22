@@ -9,13 +9,13 @@ package org.gluu.oxtrust.service;
 import java.io.IOException;
 import java.io.Serializable;
 
-import javax.ejb.Stateless;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.config.oxtrust.CacheRefreshConfiguration;
+import org.gluu.config.oxtrust.DbApplicationConfiguration;
 import org.gluu.config.oxtrust.ImportPersonConfig;
 import org.gluu.config.oxtrust.LdapOxAuthConfiguration;
 import org.gluu.config.oxtrust.LdapOxTrustConfiguration;
@@ -178,6 +178,26 @@ public class JsonConfigurationService implements Serializable {
 		}
 
 		return null;
+	}
+
+	public DbApplicationConfiguration loadFido2Configuration() {
+		try {
+			String configurationDn = configurationFactory.getFido2ConfigurationDn();
+			DbApplicationConfiguration conf = persistenceEntryManager.find(DbApplicationConfiguration.class, configurationDn);
+			return conf;
+		} catch (BasePersistenceException ex) {
+			log.error("Failed to load Fido2 configuration from LDAP");
+		}
+
+		return null;
+	}
+
+	public void saveFido2Configuration(String fido2ConfigJson) {
+		DbApplicationConfiguration fido2Configuration = loadFido2Configuration();
+		
+		fido2Configuration.setDynamicConf(fido2ConfigJson);
+		fido2Configuration.setRevision(fido2Configuration.getRevision() + 1);
+		persistenceEntryManager.merge(fido2Configuration);
 	}
 	
 }

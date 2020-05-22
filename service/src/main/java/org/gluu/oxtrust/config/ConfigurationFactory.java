@@ -305,6 +305,10 @@ public class ConfigurationFactory extends Initializable {
 		return this.baseConfiguration.getString("oxtrust_ConfigurationEntryDN");
 	}
 
+	public String getFido2ConfigurationDn() {
+		return this.baseConfiguration.getString("fido2_ConfigurationEntryDN");
+	}
+
 	private boolean createFromFile() {
 		boolean result = reloadAppConfFromFile();
 
