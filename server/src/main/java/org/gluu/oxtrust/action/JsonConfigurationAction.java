@@ -166,14 +166,14 @@ public class JsonConfigurationAction implements Serializable {
 
 	public String saveFido2ConfigJson() {
 		try {
-			log.debug("Saving fido2-config.json:" + this.oxTrustConfigJson);
-			jsonConfigurationService.saveFido2Configuration(this.oxTrustConfigJson);
+			log.debug("Saving fido2-config.json:" + this.fido2ConfigJson);
+			jsonConfigurationService.saveFido2Configuration(this.fido2ConfigJson);
 			facesMessages.add(FacesMessage.SEVERITY_INFO, "Fido2 Configuration is updated.");
 
 			return OxTrustConstants.RESULT_SUCCESS;
 		} catch (Exception ex) {
-			log.error("Failed to update oxtrust-config.json", ex);
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update oxTrust configuration in LDAP");
+			log.error("Failed to update fido2-config.json", ex);
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update Fido2 configuration in DB");
 		}
 
 		return OxTrustConstants.RESULT_FAILURE;

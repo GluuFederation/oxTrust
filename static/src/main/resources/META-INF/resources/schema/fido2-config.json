@@ -40,10 +40,10 @@
          "exclusiveMaximum":false,
          "exclusiveMinimum":false
       },
-      "useLocalCache": {
-          "id": "useLocalCache",
-          "description": "Boolean value specifying whether to enable local in-memory cache for attributes, scopes, clients and organization configuration.",
-          "type": "boolean"
+      "useLocalCache":{
+         "id":"useLocalCache",
+         "description":"Boolean value specifying whether to enable local in-memory cache for attributes, scopes, clients and organization configuration.",
+         "type":"boolean"
       },
       "disableJdkLogger":{
          "id":"disableJdkLogger",
@@ -208,24 +208,31 @@
             "requestedParties":{
                "id":"requestedParties",
                "description":"Allowed requested parties.",
-               "type":"object",
-               "properties":{
-                  "name":{
-                     "id":"name",
-                     "description":"Requested party name.",
-                     "type":"string",
-                     "minLength":1
-                  },
-                  "domains":{
-                     "id":"domains",
-                     "description":"Domains.",
-                     "type":"array",
-                     "minItems":0,
-                     "uniqueItems":true,
-                     "additionalItems":true,
-                     "items":{
+               "type":"array",
+               "minItems":1,
+               "uniqueItems":false,
+               "additionalItems":true,
+               "items":{
+                  "type":"object",
+                  "additionalProperties":false,
+                  "properties":{
+                     "name":{
+                        "id":"name",
+                        "description":"Requested party name.",
                         "type":"string",
                         "minLength":1
+                     },
+                     "domains":{
+                        "id":"domains",
+                        "description":"Domains.",
+                        "type":"array",
+                        "minItems":0,
+                        "uniqueItems":true,
+                        "additionalItems":true,
+                        "items":{
+                           "type":"string",
+                           "minLength":1
+                        }
                      }
                   }
                }
