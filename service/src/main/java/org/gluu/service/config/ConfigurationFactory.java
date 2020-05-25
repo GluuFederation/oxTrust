@@ -4,17 +4,15 @@
  * Copyright (c) 2014, Gluu
  */
 
-package org.gluu.oxtrust.config;
+package org.gluu.service.config;
 
 import java.io.File;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Instance;
-import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -22,15 +20,10 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.config.oxtrust.AttributeResolverConfiguration;
-import org.gluu.config.oxtrust.CacheRefreshConfiguration;
 import org.gluu.config.oxtrust.Configuration;
-import org.gluu.config.oxtrust.ImportPersonConfig;
-import org.gluu.config.oxtrust.LdapOxTrustConfiguration;
 import org.gluu.exception.ConfigurationException;
 import org.gluu.oxtrust.service.ApplicationFactory;
-import org.gluu.oxtrust.service.custom.LdapCentralConfigurationReload;
 import org.gluu.persist.PersistenceEntryManager;
-import org.gluu.persist.exception.BasePersistenceException;
 import org.gluu.persist.model.PersistenceConfiguration;
 import org.gluu.persist.service.PersistanceFactoryService;
 import org.gluu.service.JsonService;
@@ -53,8 +46,7 @@ import org.slf4j.Logger;
  * @author Yuriy Movchan
  * @version 0.1, 05/15/2013
  */
-@ApplicationScoped
-public class ConfigurationFactory extends Initializable {
+public abstract class ConfigurationFactory<C> extends Initializable {
 
 	@Inject
 	private Logger log;
@@ -82,7 +74,6 @@ public class ConfigurationFactory extends Initializable {
 	private Instance<Configuration> configurationInstance;
 
 	public final static String PERSISTENCE_CONFIGUARION_RELOAD_EVENT_TYPE = "persistenceConfigurationReloadEvent";
-	public final static String PERSISTENCE_CENTRAL_CONFIGUARION_RELOAD_EVENT_TYPE = "persistenceCentralConfigurationReloadEvent";
 	public final static String BASE_CONFIGUARION_RELOAD_EVENT_TYPE = "baseConfigurationReloadEvent";
 
 	private final static int DEFAULT_INTERVAL = 30; // 30 seconds
@@ -121,19 +112,14 @@ public class ConfigurationFactory extends Initializable {
 
 	private PersistenceConfiguration persistenceConfiguration;
 
-	private FileConfiguration ldapCentralConfiguration;
-	private AppConfiguration appConfiguration;
-	private CacheRefreshConfiguration cacheRefreshConfiguration;
-	private ImportPersonConfig importPersonConfig;
-	private AttributeResolverConfiguration attributeResolverConfiguration;
+	protected AppConfiguration appConfiguration;
+	protected AttributeResolverConfiguration attributeResolverConfiguration;
 	private String cryptoConfigurationSalt;
 
 	private AtomicBoolean isActive;
 
 	private long baseConfigurationFileLastModifiedTime = -1;
-	private long ldapCentralFileLastModifiedTime = -1;
 
-	private long loadedRevision = -1;
 	private boolean loadedFromLdap = true;
 
 	public void init(@Observes @ApplicationInitialized(ApplicationScoped.class) ApplicationInitializedEvent init) {
@@ -148,7 +134,7 @@ public class ConfigurationFactory extends Initializable {
 			loadBaseConfiguration();
 
 			this.persistenceConfiguration = persistanceFactoryService
-					.loadPersistenceConfiguration(LDAP_PROPERTIES_FILE);
+					.loadPersistenceConfiguration(getApplicationPropertiesFileName());
 			this.confDir = confDir();
 			this.configFilePath = confDir + APPLICATION_CONFIGURATION;
 			this.cacheRefreshFilePath = confDir + CACHE_PROPERTIES_FILE;
@@ -203,7 +189,7 @@ public class ConfigurationFactory extends Initializable {
 	private void reloadConfiguration() {
 		// Reload LDAP configuration if needed
 		PersistenceConfiguration newPersistenceConfiguration = persistanceFactoryService
-				.loadPersistenceConfiguration(LDAP_PROPERTIES_FILE);
+				.loadPersistenceConfiguration(getApplicationPropertiesFileName());
 
 		if (newPersistenceConfiguration != null) {
 			if (!StringHelper.equalsIgnoreCase(this.persistenceConfiguration.getFileName(),
@@ -227,27 +213,24 @@ public class ConfigurationFactory extends Initializable {
 			}
 		}
 
-		if (this.ldapCentralConfiguration != null) {
-			// Allow to remove not mandatory configuration file
-			this.ldapCentralConfiguration = null;
-			event.select(LdapCentralConfigurationReload.Literal.INSTANCE)
-					.fire(PERSISTENCE_CENTRAL_CONFIGUARION_RELOAD_EVENT_TYPE);
-		}
-
 		if (!loadedFromLdap) {
 			return;
 		}
 
-		final LdapOxTrustConfiguration conf = loadConfigurationFromLdap("oxRevision");
+		final C conf = loadConfigurationFromLdap("oxRevision");
 		if (conf == null) {
 			return;
 		}
 
-		if (conf.getRevision() <= this.loadedRevision) {
+		if (!isNewRevision(conf)) {
 			return;
 		}
 
 		createFromLdap(false);
+	}
+
+	protected String getApplicationPropertiesFileName() {
+		return LDAP_PROPERTIES_FILE;
 	}
 
 	public String confDir() {
@@ -263,36 +246,10 @@ public class ConfigurationFactory extends Initializable {
 		return baseConfiguration;
 	}
 
-	@Produces
-	@ApplicationScoped
 	public PersistenceConfiguration getPersistenceConfiguration() {
 		return persistenceConfiguration;
 	}
 
-	public FileConfiguration getLdapCentralConfiguration() {
-		return ldapCentralConfiguration;
-	}
-
-	@Produces
-	@ApplicationScoped
-	public AppConfiguration getAppConfiguration() {
-		return appConfiguration;
-	}
-
-	@Produces
-	@ApplicationScoped
-	public CacheRefreshConfiguration getCacheRefreshConfiguration() {
-		return cacheRefreshConfiguration;
-	}
-
-	@Produces
-	@ApplicationScoped
-	public ImportPersonConfig getImportPersonConfig() {
-		return importPersonConfig;
-	}
-
-	@Produces
-	@ApplicationScoped
 	public AttributeResolverConfiguration getAttributeResolverConfiguration() {
 		return attributeResolverConfiguration;
 	}
@@ -303,10 +260,6 @@ public class ConfigurationFactory extends Initializable {
 
 	public String getConfigurationDn() {
 		return this.baseConfiguration.getString("oxtrust_ConfigurationEntryDN");
-	}
-
-	public String getFido2ConfigurationDn() {
-		return this.baseConfiguration.getString("fido2_ConfigurationEntryDN");
 	}
 
 	private boolean createFromFile() {
@@ -381,16 +334,13 @@ public class ConfigurationFactory extends Initializable {
 	private boolean createFromLdap(boolean recoverFromFiles) {
 		log.info("Loading configuration from '{}' DB...", baseConfiguration.getString("persistence.type"));
 		try {
-			final LdapOxTrustConfiguration conf = loadConfigurationFromLdap();
+			final C conf = loadConfigurationFromLdap();
 			if (conf != null) {
 				init(conf);
 
 				// Destroy old configuration
 				if (this.loaded) {
-					destroy(AppConfiguration.class);
-					destroy(CacheRefreshConfiguration.class);
-					destroy(ImportPersonConfig.class);
-					destroy(AttributeResolverConfiguration.class);
+					destroryLoadedConfiguration();
 				}
 
 				this.loaded = true;
@@ -413,42 +363,14 @@ public class ConfigurationFactory extends Initializable {
 		return false;
 	}
 
-	public void destroy(Class<? extends Configuration> clazz) {
+	protected void destroy(Class<? extends Configuration> clazz) {
 		Instance<? extends Configuration> confInstance = configurationInstance.select(clazz);
 		configurationInstance.destroy(confInstance.get());
 	}
 
-	public LdapOxTrustConfiguration loadConfigurationFromLdap(String... returnAttributes) {
-		final PersistenceEntryManager persistenceEntryManager = persistenceEntryManagerInstance.get();
-		final String configurationDn = getConfigurationDn();
-		try {
-			final LdapOxTrustConfiguration conf = persistenceEntryManager.find(configurationDn, LdapOxTrustConfiguration.class,
-					returnAttributes);
+	protected abstract void init(C conf);
+	protected abstract C loadConfigurationFromLdap(String... returnAttributes);
+	protected abstract void destroryLoadedConfiguration();
 
-			return conf;
-		} catch (BasePersistenceException ex) {
-			log.error("Failed to load configuration from LDAP", ex);
-		}
-
-		return null;
-	}
-
-	private void init(LdapOxTrustConfiguration conf) {
-		this.appConfiguration = conf.getApplication();
-		this.cacheRefreshConfiguration = conf.getCacheRefresh();
-		this.importPersonConfig = conf.getImportPersonConfig();
-		this.attributeResolverConfiguration = conf.getAttributeResolverConfig();
-		this.loadedRevision = conf.getRevision();
-	}
-
-	public String getIDPTemplatesLocation() {
-		String jetyBase = System.getProperty("jetty.base");
-
-		if (StringHelper.isEmpty(jetyBase)) {
-			return ConfigurationFactory.DIR;
-		}
-
-		return jetyBase + File.separator + "conf" + File.separator;
-	}
-
+	protected abstract boolean isNewRevision(C c);
 }

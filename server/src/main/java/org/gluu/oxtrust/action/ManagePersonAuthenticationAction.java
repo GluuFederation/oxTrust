@@ -29,7 +29,7 @@ import org.gluu.model.custom.script.CustomScriptType;
 import org.gluu.model.custom.script.model.CustomScript;
 import org.gluu.model.ldap.GluuLdapConfiguration;
 import org.gluu.model.passport.PassportConfiguration;
-import org.gluu.oxtrust.config.ConfigurationFactory;
+import org.gluu.oxtrust.service.config.ConfigurationFactory;
 import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.oxtrust.model.LdapConfigurationModel;
 import org.gluu.oxtrust.model.OxIDPAuthConf;

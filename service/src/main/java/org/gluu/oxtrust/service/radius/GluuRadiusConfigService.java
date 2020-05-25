@@ -6,7 +6,7 @@ import javax.ejb.Stateless;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import org.gluu.oxtrust.config.ConfigurationFactory;
+import org.gluu.service.config.ConfigurationFactory;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.exception.MappingException;
 import org.gluu.radius.model.ServerConfiguration;
@@ -28,7 +28,7 @@ public class GluuRadiusConfigService implements Serializable {
     private PersistenceEntryManager persistenceEntryManager;
 
     @Inject
-    private ConfigurationFactory configurationFactory;
+    private ConfigurationFactory<?> configurationFactory;
 
     @Inject
     private Logger log;

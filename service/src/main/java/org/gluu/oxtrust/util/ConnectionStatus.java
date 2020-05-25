@@ -8,7 +8,7 @@ import java.util.Properties;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import org.gluu.oxtrust.config.ConfigurationFactory;
+import org.gluu.service.config.ConfigurationFactory;
 import org.gluu.persist.ldap.impl.LdapEntryManagerFactory;
 import org.gluu.persist.ldap.operation.impl.LdapConnectionProvider;
 import org.gluu.util.properties.FileConfiguration;
@@ -18,7 +18,7 @@ import org.gluu.util.security.PropertiesDecrypter;
 public class ConnectionStatus {
 
 	@Inject
-	private ConfigurationFactory configurationFactory;
+	private ConfigurationFactory<?> configurationFactory;
 
 	public boolean isUp(LdapConnectionData ldapConnectionData) {
 		FileConfiguration configuration = loadFileConfiguration();

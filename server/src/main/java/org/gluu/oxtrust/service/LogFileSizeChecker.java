@@ -25,7 +25,7 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.io.FileUtils;
-import org.gluu.oxtrust.config.ConfigurationFactory;
+import org.gluu.oxtrust.service.config.ConfigurationFactory;
 import org.gluu.oxtrust.model.FileData;
 import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.oxtrust.service.cdi.event.LogFileSizeChekerEvent;

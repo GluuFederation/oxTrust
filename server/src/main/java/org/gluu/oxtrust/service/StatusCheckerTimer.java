@@ -45,7 +45,7 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.io.IOUtils;
 import org.gluu.config.oxtrust.AppConfiguration;
-import org.gluu.oxtrust.config.ConfigurationFactory;
+import org.gluu.oxtrust.service.config.ConfigurationFactory;
 import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.oxtrust.model.GluuOxTrustStat;
 import org.gluu.oxtrust.model.status.ConfigurationStatus;
@@ -81,9 +81,6 @@ public class StatusCheckerTimer {
 
 	@Inject
 	private ConfigurationService configurationService;
-
-	@Inject
-	private CentralLdapService centralLdapService;
 
 	@Inject
 	private ConfigurationFactory configurationFactory;
@@ -176,30 +173,6 @@ public class StatusCheckerTimer {
 		configuration.setLastUpdate(currentDateTime);
 		configurationService.updateConfiguration(configuration);
 		configurationService.updateOxtrustStat(gluuOxTrustStat);
-		if (centralLdapService.isUseCentralServer()) {
-			try {
-				boolean existConfiguration = centralLdapService.containsConfiguration(configuration.getDn());
-				if (existConfiguration) {
-					centralLdapService.updateConfiguration(configuration);
-				} else {
-					centralLdapService.addConfiguration(configuration);
-				}
-			} catch (BasePersistenceException ex) {
-				log.error("Failed to update configuration at central server", ex);
-				return;
-			}
-			try {
-				boolean existConfiguration = centralLdapService.containsOxtrustStatForToday(gluuOxTrustStat.getDn());
-				if (existConfiguration) {
-					centralLdapService.updateOxtrustStat(gluuOxTrustStat);
-				} else {
-					centralLdapService.addOxtrustStat(gluuOxTrustStat);
-				}
-			} catch (BasePersistenceException ex) {
-				log.error("Failed to update configuration at central server", ex);
-				return;
-			}
-		}
 
 		log.debug("Configuration status update finished");
 	}

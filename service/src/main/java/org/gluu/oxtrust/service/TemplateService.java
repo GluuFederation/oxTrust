@@ -12,14 +12,11 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.io.StringWriter;
 import java.net.JarURLConnection;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
@@ -28,13 +25,12 @@ import java.util.jar.JarFile;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
-import org.gluu.oxtrust.config.ConfigurationFactory;
+import org.gluu.service.config.ConfigurationFactory;
+import org.gluu.util.StringHelper;
 import org.slf4j.Logger;
 
 /**
@@ -49,9 +45,6 @@ public class TemplateService implements Serializable {
 
 	@Inject
 	private Logger log;
-
-	@Inject
-	private ConfigurationFactory configurationFactory;
 
 	/*
 	 * Generate relying-party.xml using relying-party.xml.vm template
@@ -116,7 +109,7 @@ public class TemplateService implements Serializable {
 	}
 
 	private Properties loadFromFileSystem(Properties properties) {
-		String idpTemplatesLocation = configurationFactory.getIDPTemplatesLocation();
+		String idpTemplatesLocation = getTemplatesLocation();
 		String pathes = getTemplatePathes(idpTemplatesLocation);
 
 		properties.setProperty("file.resource.loader.path", pathes);
@@ -152,7 +145,7 @@ public class TemplateService implements Serializable {
 		String classpathIdpTemplatesLocation = "META-INF";
 		List<String> classpathTemplateNames = getClasspathTemplateNames(classpathIdpTemplatesLocation + "/" + baseFolder);
 
-		String fileIdpTemplatesLocation = configurationFactory.getIDPTemplatesLocation();
+		String fileIdpTemplatesLocation = getTemplatesLocation();
 		List<String> filesystemTemplateNames = getFilesystemTemplateNames(fileIdpTemplatesLocation + "/" + baseFolder);
 		
 		Set<String> merged = new HashSet<String>();
@@ -228,6 +221,16 @@ public class TemplateService implements Serializable {
 		} catch (Exception ex) {
 			log.error("Failed to initialize Velocity", ex);
 		}
+	}
+
+	public String getTemplatesLocation() {
+		String jetyBase = System.getProperty("jetty.base");
+
+		if (StringHelper.isEmpty(jetyBase)) {
+			return ConfigurationFactory.DIR;
+		}
+
+		return jetyBase + File.separator + "conf" + File.separator;
 	}
 
 }

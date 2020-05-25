@@ -15,7 +15,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.gluu.oxtrust.service.ApplicationFactory;
-import org.gluu.oxtrust.service.CentralLdapService;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.ldap.impl.LdapEntryManager;
 import org.gluu.persist.ldap.operation.impl.LdapConnectionProvider;
@@ -39,18 +38,12 @@ public class PersistanceStatusTimer {
 
     @Inject
     private Logger log;
-    
-    @Inject
-    private CentralLdapService centralLdapService;
 
 	@Inject
 	private Event<TimerEvent> timerEvent;
 
 	@Inject @Named(ApplicationFactory.PERSISTENCE_ENTRY_MANAGER_NAME)
     private PersistenceEntryManager ldapEntryManager;
-
-	@Inject @Named(ApplicationFactory.PERSISTENCE_CENTRAL_ENTRY_MANAGER_NAME)
-    private PersistenceEntryManager ldapCentralEntryManager;
 
     private AtomicBoolean isActive;
 
@@ -81,10 +74,6 @@ public class PersistanceStatusTimer {
 
     private void processInt() {
     	logConnectionProviderStatistic(ldapEntryManager, "connectionProvider");
-    	
-    	if (centralLdapService.isUseCentralServer() && (ldapCentralEntryManager.getOperationService() != null)) {
-    		logConnectionProviderStatistic(ldapCentralEntryManager, "centralConnectionProvider");
-    	}
     }
 
 	public void logConnectionProviderStatistic(PersistenceEntryManager ldapEntryManager, String connectionProviderName) {

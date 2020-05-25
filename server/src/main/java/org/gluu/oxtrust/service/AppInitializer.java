@@ -27,17 +27,18 @@ import javax.servlet.ServletContext;
 
 import org.gluu.exception.OxIntializationException;
 import org.gluu.model.custom.script.CustomScriptType;
-import org.gluu.oxauth.model.uma.UmaMetadata;
+import org.gluu.oxauth.client.OpenIdConfigurationClient;
+import org.gluu.oxauth.client.OpenIdConfigurationResponse;
+import org.gluu.oxauth.client.OpenIdConnectDiscoveryClient;
+import org.gluu.oxauth.client.OpenIdConnectDiscoveryResponse;
 import org.gluu.oxauth.model.util.SecurityProviderUtility;
-import org.gluu.oxtrust.config.ConfigurationFactory;
 import org.gluu.oxtrust.ldap.cache.service.CacheRefreshTimer;
 import org.gluu.oxtrust.service.cdi.event.CentralLdap;
-import org.gluu.oxtrust.service.custom.LdapCentralConfigurationReload;
+import org.gluu.oxtrust.service.config.ConfigurationFactory;
 import org.gluu.oxtrust.service.logger.LoggerService;
 import org.gluu.oxtrust.service.status.ldap.PersistanceStatusTimer;
 import org.gluu.oxtrust.util.BuildVersionService;
 import org.gluu.persist.PersistenceEntryManager;
-import org.gluu.persist.ldap.impl.LdapEntryManager;
 import org.gluu.persist.model.PersistenceConfiguration;
 import org.gluu.service.PythonService;
 import org.gluu.service.cdi.event.ApplicationInitialized;
@@ -54,12 +55,6 @@ import org.gluu.util.security.StringEncrypter;
 import org.gluu.util.security.StringEncrypter.EncryptionException;
 import org.slf4j.Logger;
 import org.slf4j.bridge.SLF4JBridgeHandler;
-import org.gluu.oxauth.client.OpenIdConfigurationClient;
-import org.gluu.oxauth.client.OpenIdConfigurationResponse;
-import org.gluu.oxauth.client.OpenIdConnectDiscoveryClient;
-import org.gluu.oxauth.client.OpenIdConnectDiscoveryResponse;
-import org.gluu.oxauth.client.uma.UmaClientFactory;
-import org.gluu.oxauth.client.uma.UmaMetadataService;
 
 /**
  * Perform startup time initialization
@@ -318,32 +313,6 @@ public class AppInitializer {
 		return persistenceEntryManager;
 	}
 
-	@Produces
-	@ApplicationScoped
-	@Named(ApplicationFactory.PERSISTENCE_CENTRAL_ENTRY_MANAGER_NAME)
-	@CentralLdap
-	public PersistenceEntryManager createCentralLdapEntryManager() {
-		if (!((configurationFactory.getLdapCentralConfiguration() != null)
-				&& configurationFactory.getAppConfiguration().isUpdateStatus())) {
-			return new LdapEntryManager();
-		}
-
-		FileConfiguration ldapCentralConfig = configurationFactory.getLdapCentralConfiguration();
-		Properties centralConnectionProperties = (Properties) ldapCentralConfig.getProperties();
-
-		EncryptionService securityService = encryptionServiceInstance.get();
-		Properties decryptedCentralConnectionProperties = securityService
-				.decryptProperties(centralConnectionProperties);
-
-		// TODO: Review if it works well with couchbase
-		PersistenceEntryManager centralLdapEntryManager = applicationFactory.getPersistenceEntryManagerFactory()
-				.createEntryManager(decryptedCentralConnectionProperties);
-		log.info("Created {}: {}", new Object[] { ApplicationFactory.PERSISTENCE_CENTRAL_ENTRY_MANAGER_NAME,
-				centralLdapEntryManager.getOperationService() });
-
-		return centralLdapEntryManager;
-	}
-
 	public void recreatePersistanceEntryManager(@Observes @LdapConfigurationReload String event) {
 		recreatePersistanceEntryManagerImpl(persistenceEntryManagerInstance,
 				ApplicationFactory.PERSISTENCE_ENTRY_MANAGER_NAME);
@@ -366,22 +335,6 @@ public class AppInitializer {
 		instance.destroy(ldapEntryManager);
 		log.info("Recreated instance {}: {} with operation service: {}", persistenceEntryManagerName, ldapEntryManager,
 				ldapEntryManager.getOperationService());
-	}
-
-	public void recreateCentralPersistanceEntryManager(@Observes @LdapCentralConfigurationReload String event) {
-		// Get existing application scoped instance
-		PersistenceEntryManager oldCentralLdapEntryManager = CdiUtil.getContextBean(beanManager,
-				PersistenceEntryManager.class, ApplicationFactory.PERSISTENCE_CENTRAL_ENTRY_MANAGER_NAME);
-
-		// Close existing connections
-		closePersistenceEntryManager(oldCentralLdapEntryManager,
-				ApplicationFactory.PERSISTENCE_CENTRAL_ENTRY_MANAGER_NAME);
-
-		// Force to create new bean
-		PersistenceEntryManager ldapCentralEntryManager = persistenceCentralEntryManagerInstance.get();
-		persistenceEntryManagerInstance.destroy(ldapCentralEntryManager);
-		log.info("Recreated instance {}: {}", ApplicationFactory.PERSISTENCE_CENTRAL_ENTRY_MANAGER_NAME,
-				ldapCentralEntryManager);
 	}
 
 	private void closePersistenceEntryManager(PersistenceEntryManager oldPersistenceEntryManager,

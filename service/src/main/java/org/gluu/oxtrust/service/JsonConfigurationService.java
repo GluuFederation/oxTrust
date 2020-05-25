@@ -14,12 +14,13 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.gluu.config.oxtrust.AppConfiguration;
+import org.gluu.config.oxtrust.AttributeResolverConfiguration;
 import org.gluu.config.oxtrust.CacheRefreshConfiguration;
 import org.gluu.config.oxtrust.DbApplicationConfiguration;
 import org.gluu.config.oxtrust.ImportPersonConfig;
 import org.gluu.config.oxtrust.LdapOxAuthConfiguration;
 import org.gluu.config.oxtrust.LdapOxTrustConfiguration;
-import org.gluu.oxtrust.config.ConfigurationFactory;
+import org.gluu.service.config.ConfigurationFactory;
 import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.exception.BasePersistenceException;
@@ -48,7 +49,7 @@ public class JsonConfigurationService implements Serializable {
 	private JsonService jsonService;
 
 	@Inject
-	private ConfigurationFactory configurationFactory;
+	private ConfigurationFactory<?> configurationFactory;
 
 	@Inject
 	private ConfigurationService configurationService;
@@ -121,6 +122,14 @@ public class JsonConfigurationService implements Serializable {
 		return true;
 	}
 
+	public boolean saveOxTrustAttributeResolverConfigurationConfiguration(AttributeResolverConfiguration attributeResolverConfiguration) {
+		LdapOxTrustConfiguration ldapOxTrustConfiguration = getOxTrustConfiguration();
+		ldapOxTrustConfiguration.setAttributeResolverConfig(attributeResolverConfiguration);
+		ldapOxTrustConfiguration.setRevision(ldapOxTrustConfiguration.getRevision() + 1);
+		persistenceEntryManager.merge(ldapOxTrustConfiguration);
+		return true;
+	}
+
 	public boolean saveOxAuthAppConfiguration(org.gluu.oxauth.model.configuration.AppConfiguration appConfiguration) {
 		try {
 			String appConfigurationJson = jsonService.objectToJson(appConfiguration);
@@ -182,7 +191,7 @@ public class JsonConfigurationService implements Serializable {
 
 	public DbApplicationConfiguration loadFido2Configuration() {
 		try {
-			String configurationDn = configurationFactory.getFido2ConfigurationDn();
+			String configurationDn = configurationFactory.getBaseConfiguration().getString("fido2_ConfigurationEntryDN");
 			DbApplicationConfiguration conf = persistenceEntryManager.find(DbApplicationConfiguration.class, configurationDn);
 			return conf;
 		} catch (BasePersistenceException ex) {
