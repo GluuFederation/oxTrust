@@ -39,6 +39,7 @@ public class ConfigurationFactory extends org.gluu.service.config.ConfigurationF
 
 	private CacheRefreshConfiguration cacheRefreshConfiguration;
 	private ImportPersonConfig importPersonConfig;
+	private AppConfiguration appConfiguration;
 
 	private long loadedRevision = -1;
 
@@ -98,6 +99,11 @@ public class ConfigurationFactory extends org.gluu.service.config.ConfigurationF
 	@ApplicationScoped
 	public AppConfiguration getAppConfiguration() {
 		return appConfiguration;
+	}
+
+	@Override
+	protected String getApplicationPropertiesFileName() {
+		return APP_PROPERTIES_FILE;
 	}
 
 }

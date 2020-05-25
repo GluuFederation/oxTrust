@@ -17,7 +17,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.commons.lang.StringUtils;
-import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.config.oxtrust.AttributeResolverConfiguration;
 import org.gluu.config.oxtrust.Configuration;
 import org.gluu.exception.ConfigurationException;
@@ -26,6 +25,7 @@ import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.model.PersistenceConfiguration;
 import org.gluu.persist.service.PersistanceFactoryService;
 import org.gluu.service.cdi.async.Asynchronous;
+import org.gluu.service.cdi.event.AppConfigurationReloadEvent;
 import org.gluu.service.cdi.event.ApplicationInitialized;
 import org.gluu.service.cdi.event.ApplicationInitializedEvent;
 import org.gluu.service.cdi.event.BaseConfigurationReload;
@@ -53,7 +53,7 @@ public abstract class ConfigurationFactory<C> extends Initializable {
 	private Event<TimerEvent> timerEvent;
 
 	@Inject
-	private Event<AppConfiguration> configurationUpdateEvent;
+	private Event<AppConfigurationReloadEvent> configurationUpdateEvent;
 
 	@Inject
 	private Event<String> event;
@@ -92,7 +92,7 @@ public abstract class ConfigurationFactory<C> extends Initializable {
 	public static final String DIR = BASE_DIR + File.separator + "conf" + File.separator;
 
 	private static final String BASE_PROPERTIES_FILE = DIR + "gluu.properties";
-	public static final String LDAP_PROPERTIES_FILE = DIR + "oxtrust.properties";
+	public static final String APP_PROPERTIES_FILE = DIR + "oxtrust.properties";
 
 	public static final String APPLICATION_CONFIGURATION = "oxtrust-config.json";
 	public static final String CACHE_PROPERTIES_FILE = "oxTrustCacheRefresh.properties";
@@ -107,7 +107,6 @@ public abstract class ConfigurationFactory<C> extends Initializable {
 
 	private PersistenceConfiguration persistenceConfiguration;
 
-	protected AppConfiguration appConfiguration;
 	protected AttributeResolverConfiguration attributeResolverConfiguration;
 	private String cryptoConfigurationSalt;
 
@@ -224,10 +223,6 @@ public abstract class ConfigurationFactory<C> extends Initializable {
 		createFromDb();
 	}
 
-	protected String getApplicationPropertiesFileName() {
-		return LDAP_PROPERTIES_FILE;
-	}
-
 	public String confDir() {
 		final String confDir = this.baseConfiguration.getString("confDir", null);
 		if (StringUtils.isNotBlank(confDir)) {
@@ -303,7 +298,7 @@ public abstract class ConfigurationFactory<C> extends Initializable {
 				}
 
 				this.loaded = true;
-				configurationUpdateEvent.select(ConfigurationUpdate.Literal.INSTANCE).fire(this.appConfiguration);
+				configurationUpdateEvent.select(ConfigurationUpdate.Literal.INSTANCE).fire(new AppConfigurationReloadEvent());
 
 				return true;
 			}
@@ -320,6 +315,8 @@ public abstract class ConfigurationFactory<C> extends Initializable {
 	}
 
 	public abstract String getConfigurationDn();
+
+	protected abstract String getApplicationPropertiesFileName();
 
 	protected abstract void init(C conf);
 	protected abstract C loadConfigurationFromDb(String... returnAttributes);

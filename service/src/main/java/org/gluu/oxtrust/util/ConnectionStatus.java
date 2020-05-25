@@ -39,7 +39,7 @@ public class ConnectionStatus {
 	}
 
 	private FileConfiguration loadFileConfiguration() {
-		FileConfiguration configuration = new FileConfiguration(ConfigurationFactory.LDAP_PROPERTIES_FILE);
+		FileConfiguration configuration = new FileConfiguration(ConfigurationFactory.APP_PROPERTIES_FILE);
 		if (!configuration.isLoaded()) {
 			configuration = new FileConfiguration(LdapEntryManagerFactory.LDAP_DEFAULT_PROPERTIES_FILE);
 		}
