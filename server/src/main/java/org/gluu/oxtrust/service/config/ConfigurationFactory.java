@@ -52,7 +52,7 @@ public class ConfigurationFactory extends org.gluu.service.config.ConfigurationF
 	}
 
 	@Override
-	protected LdapOxTrustConfiguration loadConfigurationFromLdap(String... returnAttributes) {
+	protected LdapOxTrustConfiguration loadConfigurationFromDb(String... returnAttributes) {
 		final PersistenceEntryManager persistenceEntryManager = persistenceEntryManagerInstance.get();
 		final String configurationDn = getConfigurationDn();
 		try {
@@ -79,6 +79,11 @@ public class ConfigurationFactory extends org.gluu.service.config.ConfigurationF
 	@Override
 	protected boolean isNewRevision(LdapOxTrustConfiguration conf) {
 		return conf.getRevision() > this.loadedRevision;
+	}
+
+	@Override
+	public String getConfigurationDn() {
+		return this.baseConfiguration.getString("oxtrust_ConfigurationEntryDN");
 	}
 
 	public CacheRefreshConfiguration getCacheRefreshConfiguration() {

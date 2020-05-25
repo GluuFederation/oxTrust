@@ -16,7 +16,6 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.config.oxtrust.AttributeResolverConfiguration;
@@ -26,7 +25,6 @@ import org.gluu.oxtrust.service.ApplicationFactory;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.model.PersistenceConfiguration;
 import org.gluu.persist.service.PersistanceFactoryService;
-import org.gluu.service.JsonService;
 import org.gluu.service.cdi.async.Asynchronous;
 import org.gluu.service.cdi.event.ApplicationInitialized;
 import org.gluu.service.cdi.event.ApplicationInitializedEvent;
@@ -50,9 +48,6 @@ public abstract class ConfigurationFactory<C> extends Initializable {
 
 	@Inject
 	private Logger log;
-
-	@Inject
-	private JsonService jsonService;
 
 	@Inject
 	private Event<TimerEvent> timerEvent;
@@ -108,7 +103,7 @@ public abstract class ConfigurationFactory<C> extends Initializable {
 
 	private boolean loaded = false;
 
-	private FileConfiguration baseConfiguration;
+	protected FileConfiguration baseConfiguration;
 
 	private PersistenceConfiguration persistenceConfiguration;
 
@@ -149,7 +144,7 @@ public abstract class ConfigurationFactory<C> extends Initializable {
 
 	public void create() {
 		init();
-		if (!createFromLdap(true)) {
+		if (!createFromDb()) {
 			log.error("Failed to load configuration from LDAP. Please fix it!!!.");
 			throw new ConfigurationException("Failed to load configuration from LDAP.");
 		} else {
@@ -217,7 +212,7 @@ public abstract class ConfigurationFactory<C> extends Initializable {
 			return;
 		}
 
-		final C conf = loadConfigurationFromLdap("oxRevision");
+		final C conf = loadConfigurationFromDb("oxRevision");
 		if (conf == null) {
 			return;
 		}
@@ -226,7 +221,7 @@ public abstract class ConfigurationFactory<C> extends Initializable {
 			return;
 		}
 
-		createFromLdap(false);
+		createFromDb();
 	}
 
 	protected String getApplicationPropertiesFileName() {
@@ -256,42 +251,6 @@ public abstract class ConfigurationFactory<C> extends Initializable {
 
 	public String getCryptoConfigurationSalt() {
 		return cryptoConfigurationSalt;
-	}
-
-	public String getConfigurationDn() {
-		return this.baseConfiguration.getString("oxtrust_ConfigurationEntryDN");
-	}
-
-	private boolean createFromFile() {
-		boolean result = reloadAppConfFromFile();
-
-		return result;
-	}
-
-	private boolean reloadAppConfFromFile() {
-		final AppConfiguration appConfiguration = loadAppConfFromFile();
-		if (appConfiguration != null) {
-			log.info("Reloaded application configuration from file: " + configFilePath);
-			this.appConfiguration = appConfiguration;
-			return true;
-		} else {
-			log.error("Failed to load application configuration from file: " + configFilePath);
-		}
-
-		return false;
-	}
-
-	private AppConfiguration loadAppConfFromFile() {
-		try {
-			String jsonConfig = FileUtils.readFileToString(new File(configFilePath), "UTF-8");
-			AppConfiguration appConfiguration = jsonService.jsonToObject(jsonConfig, AppConfiguration.class);
-
-			return appConfiguration;
-		} catch (Exception ex) {
-			log.error("Failed to load configuration from {}", configFilePath, ex);
-		}
-
-		return null;
 	}
 
 	private void loadBaseConfiguration() {
@@ -331,10 +290,10 @@ public abstract class ConfigurationFactory<C> extends Initializable {
 		return null;
 	}
 
-	private boolean createFromLdap(boolean recoverFromFiles) {
+	private boolean createFromDb() {
 		log.info("Loading configuration from '{}' DB...", baseConfiguration.getString("persistence.type"));
 		try {
-			final C conf = loadConfigurationFromLdap();
+			final C conf = loadConfigurationFromDb();
 			if (conf != null) {
 				init(conf);
 
@@ -352,14 +311,6 @@ public abstract class ConfigurationFactory<C> extends Initializable {
 			log.error(ex.getMessage(), ex);
 		}
 
-		if (recoverFromFiles) {
-			log.warn("Unable to find configuration in LDAP, try to load configuration from file system... ");
-			if (createFromFile()) {
-				this.loadedFromLdap = false;
-				return true;
-			}
-		}
-
 		return false;
 	}
 
@@ -368,8 +319,10 @@ public abstract class ConfigurationFactory<C> extends Initializable {
 		configurationInstance.destroy(confInstance.get());
 	}
 
+	public abstract String getConfigurationDn();
+
 	protected abstract void init(C conf);
-	protected abstract C loadConfigurationFromLdap(String... returnAttributes);
+	protected abstract C loadConfigurationFromDb(String... returnAttributes);
 	protected abstract void destroryLoadedConfiguration();
 
 	protected abstract boolean isNewRevision(C c);
