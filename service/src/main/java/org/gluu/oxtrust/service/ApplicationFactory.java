@@ -109,9 +109,12 @@ public class ApplicationFactory {
 
     public PersistenceEntryManagerFactory getPersistenceEntryManagerFactory() {
         PersistenceConfiguration persistenceConfiguration = configurationFactory.getPersistenceConfiguration();
-
         return persistanceFactoryService.getPersistenceEntryManagerFactory(persistenceConfiguration);
     }
+
+	public PersistenceEntryManagerFactory getPersistenceEntryManagerFactory(PersistenceConfiguration persistenceConfiguration) {
+		return persistanceFactoryService.getPersistenceEntryManagerFactory(persistenceConfiguration);
+	}
 
     public PersistenceEntryManagerFactory getPersistenceEntryManagerFactory(Class<? extends PersistenceEntryManagerFactory> persistenceEntryManagerFactoryClass) {
         return persistanceFactoryService.getPersistenceEntryManagerFactory(persistenceEntryManagerFactoryClass);

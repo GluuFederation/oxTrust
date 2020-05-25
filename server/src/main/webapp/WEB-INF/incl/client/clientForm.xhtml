@@ -101,6 +101,8 @@
 								class="EncryptionTab" data-toggle="tab">#{msg['clientForm.tab.encryption']}</a></li>
 							<li><a href="#clientAttributes" class="ClientAttributesTab"
 								data-toggle="tab">Client Attributes</a></li>
+                            <li><a href="#customScripts" class="CustomScriptsTab"
+                                   data-toggle="tab">#{msg['clientForm.tab.customscripts']}</a></li>
 						</ul>
 						<div class="tab-content">
 							<div class="tab-pane active box box-primary"
@@ -1117,6 +1119,42 @@
 									</h:panelGroup>
 								</h:panelGroup>
 							</div>
+                            <div class="tab-pane box box-primary" id="customScripts" style="background-color: white;">
+                                <div class="row" style="padding-left: 25px;">
+                                    <b:panel title="#{msg['clientForm.postAuthnScripts']}"
+                                             id="postAuthnScripts" look="primary">
+                                        <h:panelGroup id="selectedPostAuthnScriptsId">
+
+                                            <a4j:repeat rowKeyVar="_scriptIdx"
+                                                        value="#{_clientAction.postAuthnScripts}"
+                                                        var="_item">
+                                                <div class="col-sm-12">
+                                                    <div class="col-sm-6">
+                                                        <h:outputText style="margin-left:-29px;"
+                                                                      value="#{_item.name}" />
+                                                        <h:outputText value=" " />
+                                                    </div>
+                                                    <div class="col-sm-6">
+                                                        <a4j:commandLink
+                                                                action="#{_clientAction.removePostAuthnScript(_item)}"
+                                                                execute="@this" render="selectedPostAuthnScriptsId"
+                                                                styleClass="glyphicon glyphicon-remove removePostAuthnScript">
+                                                        </a4j:commandLink>
+                                                    </div>
+                                                </div>
+                                            </a4j:repeat>
+
+                                            <p:spacer height="16" />
+                                            <a4j:commandButton
+                                                    styleClass="btn btn-primary AddPostAuthnScript"
+                                                    style="margin-top:5px"
+                                                    value="#{msg['clientForm.add']}"
+                                                    oncomplete="#{rich:component('postAuthnDialog:selectEntityModalPanel')}.show();"
+                                                    execute="@this" eventsQueue="clientQueue" />
+                                        </h:panelGroup>
+                                    </b:panel>
+                                </div>
+                            </div>
 						</div>
 					</div>
 				</div>
@@ -1126,7 +1164,14 @@
 			</div>
 		</b:panel>
 	</h:form>
-
+    <ox:selectSelectableEntityDialog
+            acceptMethod="#{_clientAction.acceptPostAuthnScripts}"
+            cancelMethod="#{_clientAction.cancelPostAuthnScripts}"
+            displayNameProperty="entity.description" displaySearchForm="false"
+            id="postAuthnDialog" label="#{msg['clientForm.postAuthnScripts']}"
+            nameProperty="entity.name" render="selectedPostAuthnScriptsId"
+            searchMethod="#{_clientAction.searchAvailablePostAuthnCustomScripts}"
+            searchResult="#{_clientAction.availablePostAuthnScripts}" />
 	<script>
 	    $('#oidctab a').click(function(e) {
 		  e.preventDefault();

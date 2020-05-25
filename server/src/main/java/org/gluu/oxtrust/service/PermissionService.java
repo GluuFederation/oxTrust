@@ -15,6 +15,7 @@ import javax.inject.Named;
 import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.model.user.UserRole;
 import org.gluu.oxtrust.model.GluuConfiguration;
+import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.security.Identity;
 import org.gluu.service.el.ExpressionEvaluator;
 import org.gluu.service.security.SecurityEvaluationException;
@@ -107,6 +108,17 @@ public class PermissionService implements Serializable {
 
 
         return false;
+    }
+
+    private void auth() {
+        if (!identity.isLoggedIn()) {
+            final GluuCustomPerson user = new GluuCustomPerson();
+            user.setDisplayName("admin");
+            user.setGivenName("admin");
+
+            identity.acceptExternallyAuthenticatedPrincipal(new SimplePrincipal("admin"));
+            identity.setUser(user);
+        }
     }
 
     public void requestPermission(Object target, String action) {
