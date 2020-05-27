@@ -1154,6 +1154,40 @@
                                         </h:panelGroup>
                                     </b:panel>
                                 </div>
+                                <div class="row" style="padding-left: 25px;">
+                                    <b:panel title="#{msg['clientForm.consentGatheringScripts']}"
+                                             id="postConsentScripts" look="primary">
+                                        <h:panelGroup id="selectedConsentScriptsId">
+
+                                            <a4j:repeat rowKeyVar="_scriptIdx"
+                                                        value="#{_clientAction.consentScripts}"
+                                                        var="_item">
+                                                <div class="col-sm-12">
+                                                    <div class="col-sm-6">
+                                                        <h:outputText style="margin-left:-29px;"
+                                                                      value="#{_item.name}" />
+                                                        <h:outputText value=" " />
+                                                    </div>
+                                                    <div class="col-sm-6">
+                                                        <a4j:commandLink
+                                                                action="#{_clientAction.removeConsentScript(_item)}"
+                                                                execute="@this" render="selectedConsentScriptsId"
+                                                                styleClass="glyphicon glyphicon-remove removeConsentScript">
+                                                        </a4j:commandLink>
+                                                    </div>
+                                                </div>
+                                            </a4j:repeat>
+
+                                            <p:spacer height="16" />
+                                            <a4j:commandButton
+                                                    styleClass="btn btn-primary AddConsentScript"
+                                                    style="margin-top:5px"
+                                                    value="#{msg['clientForm.add']}"
+                                                    oncomplete="#{rich:component('consentDialog:selectEntityModalPanel')}.show();"
+                                                    execute="@this" eventsQueue="clientQueue" />
+                                        </h:panelGroup>
+                                    </b:panel>
+                                </div>
                             </div>
 						</div>
 					</div>
@@ -1172,6 +1206,14 @@
             nameProperty="entity.name" render="selectedPostAuthnScriptsId"
             searchMethod="#{_clientAction.searchAvailablePostAuthnCustomScripts}"
             searchResult="#{_clientAction.availablePostAuthnScripts}" />
+    <ox:selectSelectableEntityDialog
+            acceptMethod="#{_clientAction.acceptConsentScripts}"
+            cancelMethod="#{_clientAction.cancelConsentScripts}"
+            displayNameProperty="entity.description" displaySearchForm="false"
+            id="consentDialog" label="#{msg['clientForm.consentScripts']}"
+            nameProperty="entity.name" render="selectedConsentScriptsId"
+            searchMethod="#{_clientAction.searchAvailableConsentCustomScripts}"
+            searchResult="#{_clientAction.availableConsentScripts}" />
 	<script>
 	    $('#oidctab a').click(function(e) {
 		  e.preventDefault();

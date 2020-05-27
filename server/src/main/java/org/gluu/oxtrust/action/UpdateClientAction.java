@@ -278,6 +278,7 @@ public class UpdateClientAction implements Serializable {
 			this.claimRedirectURIList = getNonEmptyStringList(client.getClaimRedirectURI());
 			this.customScripts = getInitialAcrs();
 			this.postAuthnScripts = searchAvailablePostAuthnCustomScripts().stream().filter(entity -> client.getAttributes().getPostAuthnScripts().contains(entity.getEntity().getDn())).map(SelectableEntity::getEntity).collect(Collectors.toList());
+			this.consentScripts = searchAvailableConsentCustomScripts().stream().filter(entity -> client.getAttributes().getConsentGatheringScripts().contains(entity.getEntity().getDn())).map(SelectableEntity::getEntity).collect(Collectors.toList());
 			this.sectorIdentifiers = initSectors();
 			this.oxAttributesJson = getClientAttributesJson();
 		} catch (BasePersistenceException ex) {
@@ -406,6 +407,7 @@ public class UpdateClientAction implements Serializable {
 			log.info("error parsing json:" + e);
 		}
         clientAttributes.setPostAuthnScripts(postAuthnScripts.stream().map(CustomScript::getDn).collect(Collectors.toList()));
+		clientAttributes.setConsentGatheringScripts(consentScripts.stream().map(CustomScript::getDn).collect(Collectors.toList()));
 		this.client.setAttributes(clientAttributes);
 	}
 
@@ -749,6 +751,9 @@ public class UpdateClientAction implements Serializable {
 	}
 
     public void cancelPostAuthnScripts() {
+    }
+
+    public void cancelConsentScripts() {
     }
 
 	public void cancelSelectClaims() {
