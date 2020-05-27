@@ -79,7 +79,7 @@ public class AuthorizationProcessingFilter implements ContainerRequestFilter {
 	@Override
 	public void filter(ContainerRequestContext requestContext) throws IOException {
 		String path = requestContext.getUriInfo().getPath();
-		log.info("REST call to '{}' intercepted", path);
+		log.debug("REST call to '{}' intercepted", path);
 		BaseUmaProtectionService protectionService = null;
 		for (String prefix : protectionMapping.keySet()) {
 			if (path.startsWith(prefix)) {
@@ -92,10 +92,10 @@ public class AuthorizationProcessingFilter implements ContainerRequestFilter {
 					"No concrete UMA protection mechanism is associated to this path (resource will be accessed anonymously)");
 
 		} else {
-			log.info("Path is protected, proceeding with authorization processing...");
+			log.debug("Path is protected, proceeding with authorization processing...");
 			Response authorizationResponse = protectionService.processAuthorization(httpHeaders, resourceInfo);
 			if (authorizationResponse == null)
-				log.info("Authorization passed"); // If authorization passed, proceed with actual processing of request
+				log.debug("Authorization passed"); // If authorization passed, proceed with actual processing of request
 			else
 				requestContext.abortWith(authorizationResponse);
 		}
