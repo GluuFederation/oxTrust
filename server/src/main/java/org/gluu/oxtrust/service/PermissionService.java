@@ -5,22 +5,20 @@
  */
 package org.gluu.oxtrust.service;
 
-import java.io.Serializable;
-import java.util.Collections;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.model.user.UserRole;
 import org.gluu.oxtrust.model.GluuConfiguration;
-import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.security.Identity;
 import org.gluu.service.el.ExpressionEvaluator;
 import org.gluu.service.security.SecurityEvaluationException;
 import org.gluu.util.StringHelper;
 import org.slf4j.Logger;
+
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.io.Serializable;
+import java.util.Collections;
 
 /**
  * @author Yuriy Movchan Date: 05/17/2017
@@ -28,7 +26,7 @@ import org.slf4j.Logger;
 @ApplicationScoped
 @Named
 public class PermissionService implements Serializable {
-    
+
     private static final long serialVersionUID = 8880839485161960537L;
 
     @Inject
@@ -96,7 +94,7 @@ public class PermissionService implements Serializable {
                 }
             }
         }
-        
+
         if (identity.hasRole(UserRole.USER.getValue())) {
             for (String[] managerAction : managerActions) {
                 String targetString = (String) target;
@@ -110,20 +108,9 @@ public class PermissionService implements Serializable {
         return false;
     }
 
-    private void auth() {
-        if (!identity.isLoggedIn()) {
-            final GluuCustomPerson user = new GluuCustomPerson();
-            user.setDisplayName("admin");
-            user.setGivenName("admin");
-
-            identity.acceptExternallyAuthenticatedPrincipal(new SimplePrincipal("admin"));
-            identity.setUser(user);
-        }
-    }
-
     public void requestPermission(Object target, String action) {
         boolean hasPermission = hasPermission(target, action);
-        
+
         if (!hasPermission) {
             throw new SecurityEvaluationException();
         }
