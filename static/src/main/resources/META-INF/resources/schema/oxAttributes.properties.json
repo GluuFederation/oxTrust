@@ -1,50 +1,99 @@
 {
-"$schema": "http://json-schema.org/draft-04/schema#",
-    "id": "/",
-    "type": "object",
-    "title": "oxAttributes",
-    "additionalProperties": true,
-    "properties": {
-       "tlsClientAuthSubjectDn": {
-            "type":"string",
-            "id":"tlsClientAuthSubjectDn"
-        },
-       "runIntrospectionScriptBeforeAccessTokenAsJwtCreationAndIncludeClaims": {
-            "id": "runIntrospectionScriptBeforeAccessTokenAsJwtCreationAndIncludeClaims",
-            "description": "Run Introspection Script Before Access Token As Jwt Creation And Include Claims.",
-            "type": "boolean"
-       },
-       "keepClientAuthorizationAfterExpiration": {
-            "id": "keepClientAuthorizationAfterExpiration",
-            "description": "Keep Client Authorization After Expiration.",
-            "type": "boolean"
-       },
-       "allowSpontaneousScopes": {
-           "id": "allowSpontaneousScopes",
-           "description": "Whether spontaneous scopes are allowed",
-           "type": "boolean"
-       },
-       "spontaneousScopes": {
-           "id":"spontaneousScopes",
-           "type": "array",
-           "minItems": 0,
-           "uniqueItems": true,
-           "additionalItems": true,
-               "items": {
-               "type": "string",
-               "minLength": 1
-           }
-       },
-       "additionalAudience": {
-           "id":"additionalAudience",
-           "type": "array",
-           "minItems": 0,
-           "uniqueItems": true,
-           "additionalItems": true,
-           "items": {
-               "type": "string",
-               "minLength": 1
-           }
-       }
-    }
+	"$schema": "http://json-schema.org/draft-04/schema#",
+	"id": "/",
+	"type": "object",
+	"title": "oxAttributes",
+	"additionalProperties": true,
+	"properties": {
+		"tlsClientAuthSubjectDn": {
+			"type": "string",
+			"id": "tlsClientAuthSubjectDn"
+		},
+		"runIntrospectionScriptBeforeAccessTokenAsJwtCreationAndIncludeClaims": {
+			"id": "runIntrospectionScriptBeforeAccessTokenAsJwtCreationAndIncludeClaims",
+			"description": "Run Introspection Script Before Access Token As Jwt Creation And Include Claims.",
+			"type": "boolean"
+		},
+		"keepClientAuthorizationAfterExpiration": {
+			"id": "keepClientAuthorizationAfterExpiration",
+			"description": "Keep Client Authorization After Expiration.",
+			"type": "boolean"
+		},
+		"allowSpontaneousScopes": {
+			"id": "allowSpontaneousScopes",
+			"description": "Whether spontaneous scopes are allowed",
+			"type": "boolean"
+		},
+		"spontaneousScopes": {
+			"id": "spontaneousScopes",
+			"type": "array",
+			"minItems": 0,
+			"uniqueItems": true,
+			"additionalItems": true,
+			"items": {
+				"type": "string",
+				"minLength": 1
+			}
+		},
+		"spontaneousScopeScriptDns": {
+			"id": "spontaneousScopeScriptDns",
+			"type": "array",
+			"minItems": 0,
+			"uniqueItems": true,
+			"additionalItems": true,
+			"items": {
+				"type": "string",
+				"minLength": 1
+			}
+		},
+		"backchannelLogoutSessionRequired": {
+			"id": "backchannelLogoutSessionRequired",
+			"description": "Back channel Logout Session Required.",
+			"type": "boolean"
+		},
+		"backchannelLogoutUri": {
+			"id": "backchannelLogoutUri",
+			"type": "array",
+			"minItems": 0,
+			"uniqueItems": true,
+			"additionalItems": true,
+			"items": {
+				"type": "string",
+				"minLength": 1
+			}
+		},
+		"additionalAudience": {
+			"id": "additionalAudience",
+			"type": "array",
+			"minItems": 0,
+			"uniqueItems": true,
+			"additionalItems": true,
+			"items": {
+				"type": "string",
+				"minLength": 1
+			}
+		},
+		"postAuthnScripts": {
+			"id": "postAuthnScripts",
+			"type": "array",
+			"minItems": 0,
+			"uniqueItems": true,
+			"additionalItems": true,
+			"items": {
+				"type": "string",
+				"minLength": 1
+			}
+		},
+		"consentGatheringScripts": {
+			"id": "consentGatheringScripts",
+			"type": "array",
+			"minItems": 0,
+			"uniqueItems": true,
+			"additionalItems": true,
+			"items": {
+				"type": "string",
+				"minLength": 1
+			}
+		}
+	}
 }
