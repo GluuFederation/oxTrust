@@ -35,7 +35,7 @@ import org.gluu.config.oxtrust.LdapOxAuthConfiguration;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
 import org.gluu.model.SmtpConfiguration;
-import org.gluu.oxtrust.config.ConfigurationFactory;
+import org.gluu.oxtrust.service.config.ConfigurationFactory;
 import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.service.ConfigurationService;

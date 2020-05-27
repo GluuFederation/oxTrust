@@ -31,7 +31,7 @@ import javax.xml.xpath.XPathFactory;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.velocity.VelocityContext;
-import org.gluu.oxtrust.config.ConfigurationFactory;
+import org.gluu.service.config.ConfigurationFactory;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.model.MetadataFilter;
 import org.slf4j.Logger;
@@ -68,12 +68,6 @@ public class FilterService implements Serializable {
 	private Logger log;
 
 	@Inject
-	private ConfigurationFactory configurationFactory;
-
-	@Inject
-	private AppConfiguration appConfiguration;
-
-	@Inject
 	private TemplateService templateService;
 
 	@Inject
@@ -83,7 +77,7 @@ public class FilterService implements Serializable {
 	private Shibboleth3ConfService shibboleth3ConfService;
 
 	public List<MetadataFilter> getAvailableMetadataFilters() {
-		String idpTemplatesLocation = configurationFactory.getIDPTemplatesLocation();
+		String idpTemplatesLocation = templateService.getTemplatesLocation();
 		// File filterFolder = new File(configurationFactory.DIR + "shibboleth3" + File.separator + "idp" + File.separator + "MetadataFilter");
 		File filterFolder = new File(idpTemplatesLocation + "shibboleth3" + File.separator + "idp" + File.separator + "MetadataFilter");
 

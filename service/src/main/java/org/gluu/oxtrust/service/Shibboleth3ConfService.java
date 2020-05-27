@@ -45,7 +45,7 @@ import org.gluu.model.GluuAttribute;
 import org.gluu.model.GluuStatus;
 import org.gluu.model.GluuUserRole;
 import org.gluu.model.SchemaEntry;
-import org.gluu.oxtrust.config.ConfigurationFactory;
+import org.gluu.service.config.ConfigurationFactory;
 import org.gluu.oxtrust.model.GluuMetadataSourceType;
 import org.gluu.oxtrust.model.GluuSAMLFederationProposal;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
@@ -138,7 +138,7 @@ public class Shibboleth3ConfService implements Serializable {
 	private ConfigurationService configurationService;
 
 	@Inject
-	private ConfigurationFactory configurationFactory;
+	private ConfigurationFactory<?> configurationFactory;
 
 	@Inject
 	private AppConfiguration appConfiguration;
@@ -584,8 +584,7 @@ public class Shibboleth3ConfService implements Serializable {
 		List<NameIdConfig> nameIdConfigs = new ArrayList<NameIdConfig>();
 		Set<GluuAttribute> nameIdAttributes = new HashSet<GluuAttribute>();
 
-		final LdapOxTrustConfiguration conf = configurationFactory.loadConfigurationFromLdap();
-		AttributeResolverConfiguration attributeResolverConfiguration = conf.getAttributeResolverConfig();
+		AttributeResolverConfiguration attributeResolverConfiguration = configurationFactory.getAttributeResolverConfiguration();
 		if ((attributeResolverConfiguration != null) && (attributeResolverConfiguration.getNameIdConfigs() != null)) {
 			for (NameIdConfig nameIdConfig : attributeResolverConfiguration.getNameIdConfigs()) {
 				if (StringHelper.isNotEmpty(nameIdConfig.getSourceAttribute()) && nameIdConfig.isEnabled()) {

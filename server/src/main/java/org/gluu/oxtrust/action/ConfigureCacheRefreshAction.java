@@ -34,7 +34,7 @@ import org.gluu.model.GluuStatus;
 import org.gluu.model.SimpleCustomProperty;
 import org.gluu.model.SimpleProperty;
 import org.gluu.model.ldap.GluuLdapConfiguration;
-import org.gluu.oxtrust.config.ConfigurationFactory;
+import org.gluu.oxtrust.service.config.ConfigurationFactory;
 import org.gluu.oxtrust.ldap.cache.model.GluuSimplePerson;
 import org.gluu.oxtrust.ldap.cache.service.CacheRefreshService;
 import org.gluu.oxtrust.ldap.cache.service.CacheRefreshUpdateMethod;
@@ -116,7 +116,6 @@ public class ConfigureCacheRefreshAction
 	@Inject
 	private EncryptionService encryptionService;
 
-	@Inject
 	private CacheRefreshConfiguration cacheRefreshConfiguration;
 
 	@Inject

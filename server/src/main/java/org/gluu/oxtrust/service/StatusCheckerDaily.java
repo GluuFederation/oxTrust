@@ -16,7 +16,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.gluu.config.oxtrust.AppConfiguration;
-import org.gluu.oxtrust.config.ConfigurationFactory;
+import org.gluu.oxtrust.service.config.ConfigurationFactory;
 import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.oxtrust.model.GluuOxTrustStat;
 import org.gluu.oxtrust.service.cdi.event.StatusCheckerDailyEvent;
@@ -48,9 +48,6 @@ public class StatusCheckerDaily {
 
 	@Inject
 	private IPersonService personService;
-
-	@Inject
-	private CentralLdapService centralLdapService;
 
 	@Inject
 	private ConfigurationFactory configurationFactory;
@@ -108,31 +105,6 @@ public class StatusCheckerDaily {
 		configuration.setLastUpdate(currentDateTime);
 		configurationService.updateConfiguration(configuration);
 		configurationService.updateOxtrustStat(oxTrustStat);
-		if (centralLdapService.isUseCentralServer()) {
-			try {
-				boolean existConfiguration = centralLdapService.containsConfiguration(configuration.getDn());
-				if (existConfiguration) {
-					centralLdapService.updateConfiguration(configuration);
-				} else {
-					centralLdapService.addConfiguration(configuration);
-				}
-			} catch (BasePersistenceException ex) {
-				log.error("Failed to update configuration at central server", ex);
-				return;
-			}
-			
-			try {
-				boolean existConfiguration = centralLdapService.containsOxtrustStatForToday(oxTrustStat.getDn());
-				if (existConfiguration) {
-					centralLdapService.updateOxtrustStat(oxTrustStat);
-				} else {
-					centralLdapService.addOxtrustStat(oxTrustStat);
-				}
-			} catch (BasePersistenceException ex) {
-				log.error("Failed to update configuration at central server", ex);
-				return;
-			}
-		}
 		log.debug("Daily Configuration status update finished");
 	}
 

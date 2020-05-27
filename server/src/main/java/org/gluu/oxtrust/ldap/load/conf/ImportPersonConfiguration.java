@@ -19,7 +19,7 @@ import javax.inject.Named;
 import org.gluu.config.oxtrust.ImportPerson;
 import org.gluu.model.GluuAttribute;
 import org.gluu.model.attribute.AttributeDataType;
-import org.gluu.oxtrust.config.ConfigurationFactory;
+import org.gluu.oxtrust.service.config.ConfigurationFactory;
 import org.gluu.oxtrust.service.AttributeService;
 import org.gluu.persist.exception.EntryPersistenceException;
 import org.gluu.util.StringHelper;

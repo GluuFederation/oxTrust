@@ -39,7 +39,7 @@ import org.gluu.model.GluuStatus;
 import org.gluu.model.SchemaEntry;
 import org.gluu.model.custom.script.model.bind.BindCredentials;
 import org.gluu.model.ldap.GluuLdapConfiguration;
-import org.gluu.oxtrust.config.ConfigurationFactory;
+import org.gluu.oxtrust.service.config.ConfigurationFactory;
 import org.gluu.oxtrust.ldap.cache.model.CacheCompoundKey;
 import org.gluu.oxtrust.ldap.cache.model.GluuInumMap;
 import org.gluu.oxtrust.ldap.cache.model.GluuSimplePerson;

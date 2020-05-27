@@ -10,11 +10,10 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.model.SmtpConfiguration;
-import org.gluu.oxtrust.config.ConfigurationFactory;
+import org.gluu.service.config.ConfigurationFactory;
 import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.persist.PersistenceEntryManagerFactory;
 import org.gluu.persist.model.PersistenceConfiguration;
@@ -23,7 +22,6 @@ import org.gluu.service.cache.CacheConfiguration;
 import org.gluu.service.cache.InMemoryConfiguration;
 import org.gluu.service.document.store.conf.DocumentStoreConfiguration;
 import org.gluu.service.document.store.conf.LocalDocumentStoreConfiguration;
-import org.gluu.service.document.store.service.DocumentStoreService;
 import org.slf4j.Logger;
 
 /**
@@ -38,7 +36,7 @@ public class ApplicationFactory {
     private Logger log;
 
     @Inject
-    private ConfigurationFactory configurationFactory;
+    private ConfigurationFactory<?> configurationFactory;
 
     @Inject
     private ConfigurationService configurationService;
