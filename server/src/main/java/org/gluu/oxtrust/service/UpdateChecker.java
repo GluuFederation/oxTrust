@@ -82,9 +82,7 @@ public class UpdateChecker {
 			ObjectMapper objectMapper = new ObjectMapper();
 			objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 			versionAvailability = objectMapper.readValue(getVersionAvailability(), GluuVersionAvailability.class);
-			versionAvailability.setVersion("4.3.0");
 			this.hasUpdate = versionAvailability.isNewVersionAvailable();
-			this.hasUpdate = true;
 			if (this.hasUpdate) {
 				this.updateMessage = " Good news: Gluu version " + versionAvailability.getVersion().split("\\(")[0]
 						+ " is available.";
