@@ -35,17 +35,6 @@
 				"minLength": 1
 			}
 		},
-		"spontaneousScopeScriptDns": {
-			"id": "spontaneousScopeScriptDns",
-			"type": "array",
-			"minItems": 0,
-			"uniqueItems": true,
-			"additionalItems": true,
-			"items": {
-				"type": "string",
-				"minLength": 1
-			}
-		},
 		"backchannelLogoutSessionRequired": {
 			"id": "backchannelLogoutSessionRequired",
 			"description": "Back channel Logout Session Required.",
@@ -64,28 +53,6 @@
 		},
 		"additionalAudience": {
 			"id": "additionalAudience",
-			"type": "array",
-			"minItems": 0,
-			"uniqueItems": true,
-			"additionalItems": true,
-			"items": {
-				"type": "string",
-				"minLength": 1
-			}
-		},
-		"postAuthnScripts": {
-			"id": "postAuthnScripts",
-			"type": "array",
-			"minItems": 0,
-			"uniqueItems": true,
-			"additionalItems": true,
-			"items": {
-				"type": "string",
-				"minLength": 1
-			}
-		},
-		"consentGatheringScripts": {
-			"id": "consentGatheringScripts",
 			"type": "array",
 			"minItems": 0,
 			"uniqueItems": true,
