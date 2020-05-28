@@ -1575,6 +1575,11 @@
                 ]
             }
         },
+        "keepAuthenticatorAttributesOnAcrChange": {
+            "id": "keepAuthenticatorAttributesOnAcrChange",
+            "description": "Boolean value specifying whether to keep authenticator attributes on ACR change.",
+            "type": "boolean"
+        },
         "backchannelAuthenticationEndpoint": {
             "id": "backchannelAuthenticationEndpoint",
             "description": "Backchannel Authentication Endpoint",
