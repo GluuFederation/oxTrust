@@ -1008,6 +1008,11 @@
              "description": "Boolean value specifying whether turn on Consent Gathering Script backward compatibility mode. If true AS will pick up script with higher level globally. If false (default) AS will pick up script based on client configuration.",
              "type": "boolean"
          },
+         "rejectJwtWithNoneAlg": {
+             "id": "rejectJwtWithNoneAlg",
+             "description": "Boolean value specifying whether reject JWT requested or validated with algorithm None. Default value is true.",
+             "type": "boolean"
+         },
         "forceIdTokenHintPrecense": {
             "id": "forceIdTokenHintPrecense",
             "description": "Boolean value specifying whether force id_token_hint parameter precense (false by default)",
