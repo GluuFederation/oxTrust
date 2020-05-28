@@ -6,11 +6,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.UnknownHostException;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
@@ -47,7 +44,6 @@ public class UpdateChecker {
 	@Inject
 	private Logger log;
 	private boolean hasUpdate = false;
-	private boolean shouldUpdate = false;
 	@Inject
 	private AppConfiguration appConfiguration;
 
@@ -79,42 +75,27 @@ public class UpdateChecker {
 	}
 
 	private void processInt() {
-		log.debug("================================Running update checker= timer==================================");
+		log.debug("================================Running update checker timer==================================");
 		GluuVersionAvailability versionAvailability = new GluuVersionAvailability();
-		Map<String, GluuComponent> runningComponents = new HashMap<>();
-		Map<String, GluuComponent> availableComponents = new HashMap<>();
 		hasUpdate = false;
-		shouldUpdate = false;
 		try {
 			ObjectMapper objectMapper = new ObjectMapper();
 			objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 			versionAvailability = objectMapper.readValue(getVersionAvailability(), GluuVersionAvailability.class);
-			runningComponents = convertToMap(
-					Arrays.asList(objectMapper.readValue(getRunningComponents(), GluuComponent[].class)));
-			availableComponents = convertToMap(
-					Arrays.asList(objectMapper.readValue(getAvailableComponents(), GluuComponent[].class)));
+			versionAvailability.setVersion("4.3.0");
+			this.hasUpdate = versionAvailability.isNewVersionAvailable();
+			this.hasUpdate = true;
+			if (this.hasUpdate) {
+				this.updateMessage = " Good news: Gluu version " + versionAvailability.getVersion().split("\\(")[0]
+						+ " is available.";
+			}
+
 		} catch (JsonMappingException e) {
 			log.error("JsonMappingException", e);
 		} catch (JsonProcessingException e) {
 			log.error("JsonProcessingException ", e);
 		} catch (Exception e) {
 			log.error("Exception ", e);
-		}
-		Set<String> keys = runningComponents.keySet();
-		for (String key : keys) {
-			GluuComponent gluuComponent = availableComponents.get(key);
-			if (gluuComponent != null
-					&& !runningComponents.get(key).getVersion().equalsIgnoreCase(gluuComponent.getVersion())) {
-				shouldUpdate = true;
-			}
-		}
-		if (versionAvailability.isNewVersionAvailable()) {
-			this.hasUpdate = true;
-			this.updateMessage = "Gluu Identity Server version " + versionAvailability.getVersion().split("\\(")[0]
-					+ " is available!";
-		}
-		if (shouldUpdate) {
-			this.updateMessage += " Looks like some running service aren't up to date.";
 		}
 	}
 
@@ -139,7 +120,7 @@ public class UpdateChecker {
 		return builder.toString();
 	}
 
-	private String getRunningComponents() {
+	private String getLocalComponents() {
 		String command = "python /opt/gluu/bin/show_version.py --json";
 		Process p;
 		StringBuilder builder = new StringBuilder();
@@ -156,7 +137,7 @@ public class UpdateChecker {
 		return builder.toString();
 	}
 
-	private String getAvailableComponents() {
+	private String getRemoteComponents() {
 		String command = "python /opt/gluu/bin/show_version.py -target=/opt/dist/gluu/ --json";
 		Process p;
 		StringBuilder builder = new StringBuilder();
@@ -230,13 +211,4 @@ public class UpdateChecker {
 	public void setHasUpdate(boolean hasUpdate) {
 		this.hasUpdate = hasUpdate;
 	}
-
-	public boolean isShouldUpdate() {
-		return shouldUpdate;
-	}
-
-	public void setShouldUpdate(boolean shouldUpdate) {
-		this.shouldUpdate = shouldUpdate;
-	}
-
 }

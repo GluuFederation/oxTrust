@@ -2,7 +2,7 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
-	xmlns:b="http://bootsfaces.net/ui"
+    xmlns:b="http://bootsfaces.net/ui"
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	template="/WEB-INF/incl/layout/newtemplate.xhtml">
 	<f:metadata>
@@ -53,8 +53,7 @@
 
 								<ui:param name="_configuration"
 									value="#{homeAction.getConfiguration()}" />
-								<ui:param name="_stat"
-									value="#{homeAction.getServerStat()}" />
+								<ui:param name="_stat" value="#{homeAction.getServerStat()}" />
 								<span class="info-box-text">#{msg['home.freeMemory']}</span>
 								<h:outputText styleClass="info-box-number"
 									value="#{_stat.freeMemory}%" />
