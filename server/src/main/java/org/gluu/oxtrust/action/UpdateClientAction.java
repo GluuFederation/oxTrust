@@ -134,6 +134,7 @@ public class UpdateClientAction implements Serializable {
 	private List<CustomScript> customScripts;
 	private List<CustomScript> postAuthnScripts = Lists.newArrayList();
 	private List<CustomScript> consentScripts = Lists.newArrayList();
+	private List<CustomScript> spontaneousScopesScripts = Lists.newArrayList();
 	private List<GrantType> grantTypes;
 	private List<String> contacts;
 	private List<String> requestUris;
@@ -174,6 +175,7 @@ public class UpdateClientAction implements Serializable {
 	private List<SelectableEntity<CustomScript>> availableCustomScripts;
 	private List<SelectableEntity<CustomScript>> availablePostAuthnScripts;
 	private List<SelectableEntity<CustomScript>> availableConsentScripts;
+	private List<SelectableEntity<CustomScript>> availableSpontaneousScripts;
 	private List<SelectableEntity<GrantType>> availableGrantTypes;
 	private List<SelectableEntity<Scope>> availableScopes;
 	private List<SelectableEntity<OxAuthSectorIdentifier>> availableSectors;
@@ -204,6 +206,7 @@ public class UpdateClientAction implements Serializable {
 			this.customScripts = getInitialAcrs();
 			this.postAuthnScripts = Lists.newArrayList();
 			this.consentScripts = Lists.newArrayList();
+			this.spontaneousScopesScripts = Lists.newArrayList();
 			this.sectorIdentifiers = initSectors();
 		} catch (BasePersistenceException ex) {
 			log.error("Failed to prepare lists", ex);
@@ -277,8 +280,16 @@ public class UpdateClientAction implements Serializable {
 			this.authorizedOrigins = getNonEmptyStringList(client.getAuthorizedOrigins());
 			this.claimRedirectURIList = getNonEmptyStringList(client.getClaimRedirectURI());
 			this.customScripts = getInitialAcrs();
-			this.postAuthnScripts = searchAvailablePostAuthnCustomScripts().stream().filter(entity -> client.getAttributes().getPostAuthnScripts().contains(entity.getEntity().getDn())).map(SelectableEntity::getEntity).collect(Collectors.toList());
-			this.consentScripts = searchAvailableConsentCustomScripts().stream().filter(entity -> client.getAttributes().getConsentGatheringScripts().contains(entity.getEntity().getDn())).map(SelectableEntity::getEntity).collect(Collectors.toList());
+			this.postAuthnScripts = searchAvailablePostAuthnCustomScripts().stream()
+					.filter(entity -> client.getAttributes().getPostAuthnScripts().contains(entity.getEntity().getDn()))
+					.map(SelectableEntity::getEntity).collect(Collectors.toList());
+			this.consentScripts = searchAvailableConsentCustomScripts().stream().filter(
+					entity -> client.getAttributes().getConsentGatheringScripts().contains(entity.getEntity().getDn()))
+					.map(SelectableEntity::getEntity).collect(Collectors.toList());
+			this.spontaneousScopesScripts = searchAvailableSpontaneousScopeScripts().stream()
+					.filter(entity -> client.getAttributes().getSpontaneousScopeScriptDns()
+							.contains(entity.getEntity().getDn()))
+					.map(SelectableEntity::getEntity).collect(Collectors.toList());
 			this.sectorIdentifiers = initSectors();
 			this.oxAttributesJson = getClientAttributesJson();
 		} catch (BasePersistenceException ex) {
@@ -406,8 +417,12 @@ public class UpdateClientAction implements Serializable {
 		} catch (Exception e) {
 			log.info("error parsing json:" + e);
 		}
-        clientAttributes.setPostAuthnScripts(postAuthnScripts.stream().map(CustomScript::getDn).collect(Collectors.toList()));
-		clientAttributes.setConsentGatheringScripts(consentScripts.stream().map(CustomScript::getDn).collect(Collectors.toList()));
+		clientAttributes
+				.setPostAuthnScripts(postAuthnScripts.stream().map(CustomScript::getDn).collect(Collectors.toList()));
+		clientAttributes.setConsentGatheringScripts(
+				consentScripts.stream().map(CustomScript::getDn).collect(Collectors.toList()));
+		clientAttributes.setSpontaneousScopeScriptDns(
+				spontaneousScopesScripts.stream().map(CustomScript::getDn).collect(Collectors.toList()));
 		this.client.setAttributes(clientAttributes);
 	}
 
@@ -458,13 +473,13 @@ public class UpdateClientAction implements Serializable {
 		removeFromList(this.claimRedirectURIList, uri);
 	}
 
-    public void removePostAuthnScript(CustomScript script) {
-	    postAuthnScripts.remove(script);
-    }
+	public void removePostAuthnScript(CustomScript script) {
+		postAuthnScripts.remove(script);
+	}
 
-    public void removeConsentScript(CustomScript script) {
-        consentScripts.remove(script);
-    }
+	public void removeConsentScript(CustomScript script) {
+		consentScripts.remove(script);
+	}
 
 	public void removeContact(String contact) {
 		if (StringUtils.isEmpty(contact)) {
@@ -750,11 +765,14 @@ public class UpdateClientAction implements Serializable {
 		this.availableAuthorizedOrigin = "https://";
 	}
 
-    public void cancelPostAuthnScripts() {
-    }
+	public void cancelPostAuthnScripts() {
+	}
 
-    public void cancelConsentScripts() {
-    }
+	public void cancelConsentScripts() {
+	}
+	
+	public void cancelSpontaneousScopesScripts() {
+	}
 
 	public void cancelSelectClaims() {
 	}
@@ -944,8 +962,10 @@ public class UpdateClientAction implements Serializable {
 		}
 		this.client.setDefaultAcrValues(customScripts.toArray(new String[customScripts.size()]));
 
-		this.client.getAttributes().setPostAuthnScripts(getPostAuthnScripts().stream().map(BaseEntry::getDn).collect(Collectors.toList()));
-		this.client.getAttributes().setConsentGatheringScripts(getConsentScripts().stream().map(BaseEntry::getDn).collect(Collectors.toList()));
+		this.client.getAttributes()
+				.setPostAuthnScripts(getPostAuthnScripts().stream().map(BaseEntry::getDn).collect(Collectors.toList()));
+		this.client.getAttributes().setConsentGatheringScripts(
+				getConsentScripts().stream().map(BaseEntry::getDn).collect(Collectors.toList()));
 	}
 
 	public void selectAddedClaims() {
@@ -1052,14 +1072,22 @@ public class UpdateClientAction implements Serializable {
 	}
 
 	public void acceptPostAuthnScripts() {
-	    postAuthnScripts.clear();
-	    postAuthnScripts.addAll(availablePostAuthnScripts.stream().filter(SelectableEntity::isSelected).map(SelectableEntity::getEntity).collect(Collectors.toList()));
-    }
+		postAuthnScripts.clear();
+		postAuthnScripts.addAll(availablePostAuthnScripts.stream().filter(SelectableEntity::isSelected)
+				.map(SelectableEntity::getEntity).collect(Collectors.toList()));
+	}
 
-    public void acceptConsentScripts() {
-        consentScripts.clear();
-        consentScripts.addAll(availableConsentScripts.stream().filter(SelectableEntity::isSelected).map(SelectableEntity::getEntity).collect(Collectors.toList()));
-    }
+	public void acceptConsentScripts() {
+		consentScripts.clear();
+		consentScripts.addAll(availableConsentScripts.stream().filter(SelectableEntity::isSelected)
+				.map(SelectableEntity::getEntity).collect(Collectors.toList()));
+	}
+
+	public void acceptSpontaneousScopesScripts() {
+		spontaneousScopesScripts.clear();
+		spontaneousScopesScripts.addAll(availableSpontaneousScripts.stream().filter(SelectableEntity::isSelected)
+				.map(SelectableEntity::getEntity).collect(Collectors.toList()));
+	}
 
 	public void acceptSelectScopes() {
 		List<Scope> addedScopes = getScopes();
@@ -1227,33 +1255,44 @@ public class UpdateClientAction implements Serializable {
 		selectAddedCustomScripts();
 	}
 
-    public List<SelectableEntity<CustomScript>> searchAvailablePostAuthnCustomScripts() {
-        if (availablePostAuthnScripts != null) {
-            SelectableEntityHelper.select(availablePostAuthnScripts, postAuthnScripts);
-            return availablePostAuthnScripts;
-        }
-        availablePostAuthnScripts = getSelectableScripts(CustomScriptType.POST_AUTHN);
-        SelectableEntityHelper.select(availablePostAuthnScripts, postAuthnScripts);
-        return availablePostAuthnScripts;
-    }
+	public List<SelectableEntity<CustomScript>> searchAvailablePostAuthnCustomScripts() {
+		if (availablePostAuthnScripts != null) {
+			SelectableEntityHelper.select(availablePostAuthnScripts, postAuthnScripts);
+			return availablePostAuthnScripts;
+		}
+		availablePostAuthnScripts = getSelectableScripts(CustomScriptType.POST_AUTHN);
+		SelectableEntityHelper.select(availablePostAuthnScripts, postAuthnScripts);
+		return availablePostAuthnScripts;
+	}
 
-    public List<SelectableEntity<CustomScript>> searchAvailableConsentCustomScripts() {
-        if (availableConsentScripts != null) {
-            SelectableEntityHelper.select(availableConsentScripts, consentScripts);
-            return availableConsentScripts;
-        }
-        availableConsentScripts = getSelectableScripts(CustomScriptType.CONSENT_GATHERING);
-        SelectableEntityHelper.select(availableConsentScripts, consentScripts);
-        return availableConsentScripts;
-    }
+	public List<SelectableEntity<CustomScript>> searchAvailableConsentCustomScripts() {
+		if (availableConsentScripts != null) {
+			SelectableEntityHelper.select(availableConsentScripts, consentScripts);
+			return availableConsentScripts;
+		}
+		availableConsentScripts = getSelectableScripts(CustomScriptType.CONSENT_GATHERING);
+		SelectableEntityHelper.select(availableConsentScripts, consentScripts);
+		return availableConsentScripts;
+	}
+	
 
-    public List<SelectableEntity<CustomScript>> getSelectableScripts(CustomScriptType type) {
-        return getScripts(type).stream().map(SelectableEntity::new).collect(Collectors.toList());
-    }
+	public List<SelectableEntity<CustomScript>> searchAvailableSpontaneousScopeScripts() {
+		if (availableSpontaneousScripts != null) {
+			SelectableEntityHelper.select(availableSpontaneousScripts, spontaneousScopesScripts);
+			return availableSpontaneousScripts;
+		}
+		availableSpontaneousScripts = getSelectableScripts(CustomScriptType.SPONTANEOUS_SCOPE);
+		SelectableEntityHelper.select(availableSpontaneousScripts, spontaneousScopesScripts);
+		return availableSpontaneousScripts;
+	}
+
+	public List<SelectableEntity<CustomScript>> getSelectableScripts(CustomScriptType type) {
+		return getScripts(type).stream().map(SelectableEntity::new).collect(Collectors.toList());
+	}
 
 	public List<CustomScript> getScripts(CustomScriptType type) {
-        return customScriptService.findCustomScripts(Lists.newArrayList(type));
-    }
+		return customScriptService.findCustomScripts(Lists.newArrayList(type));
+	}
 
 	public void searchAvailableScopes() {
 		if (this.availableScopes != null) {
@@ -1418,23 +1457,27 @@ public class UpdateClientAction implements Serializable {
 		return this.availableCustomScripts;
 	}
 
-    public List<CustomScript> getPostAuthnScripts() {
-        return postAuthnScripts;
-    }
+	public List<CustomScript> getPostAuthnScripts() {
+		return postAuthnScripts;
+	}
 
-    public List<CustomScript> getConsentScripts() {
-        return consentScripts;
-    }
+	public List<CustomScript> getConsentScripts() {
+		return consentScripts;
+	}
 
-    public List<SelectableEntity<CustomScript>> getAvailablePostAuthnScripts() {
-        return availablePostAuthnScripts;
-    }
+	public List<SelectableEntity<CustomScript>> getAvailablePostAuthnScripts() {
+		return availablePostAuthnScripts;
+	}
 
-    public List<SelectableEntity<CustomScript>> getAvailableConsentScripts() {
-        return availableConsentScripts;
-    }
+	public List<SelectableEntity<CustomScript>> getAvailableConsentScripts() {
+		return availableConsentScripts;
+	}
 
-    public List<SelectableEntity<GrantType>> getAvailableGrantTypes() {
+	public List<SelectableEntity<CustomScript>> getAvailableSpontaneousScopesScripts() {
+		return availableSpontaneousScripts;
+	}
+
+	public List<SelectableEntity<GrantType>> getAvailableGrantTypes() {
 		return this.availableGrantTypes;
 	}
 
@@ -1769,4 +1812,8 @@ public class UpdateClientAction implements Serializable {
 		}
 		return modes;
 	}
+	public List<SelectableEntity<CustomScript>> getAvailableSpontaneousScripts() {
+		return availableSpontaneousScripts;
+	}
+
 }

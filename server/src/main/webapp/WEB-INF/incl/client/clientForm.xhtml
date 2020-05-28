@@ -101,8 +101,8 @@
 								class="EncryptionTab" data-toggle="tab">#{msg['clientForm.tab.encryption']}</a></li>
 							<li><a href="#clientAttributes" class="ClientAttributesTab"
 								data-toggle="tab">Client Attributes</a></li>
-                            <li><a href="#customScripts" class="CustomScriptsTab"
-                                   data-toggle="tab">#{msg['clientForm.tab.customscripts']}</a></li>
+							<li><a href="#customScripts" class="CustomScriptsTab"
+								data-toggle="tab">#{msg['clientForm.tab.customscripts']}</a></li>
 						</ul>
 						<div class="tab-content">
 							<div class="tab-pane active box box-primary"
@@ -379,23 +379,23 @@
 												</h:selectOneMenu>
 											</ox:decorate>
 											<h:panelGroup id="expirationBlockId">
-											<ox:decorate id="shouldExpiredId" leftClass="col-sm-6"
-												rightClass="col-sm-6" label="Expirable client">
-												<h:selectBooleanCheckbox value="#{_client.deletable}"
-													id="expirableClientID" styleClass="col-sm-9 rounded"
-													required="false">
-													<a4j:ajax event="click" render="expirationBlockId"
-														execute="@this" limitRender="true" />
-												</h:selectBooleanCheckbox>
-											</ox:decorate>
-											<ox:decorate id="clientExpirationId" leftClass="col-sm-6"
-												rightClass="col-sm-6" rendered="#{_client.deletable}"
-												label="#{msg['clientForm.expirationDate']}">
-												<b:dateTimePicker id="calendar" renderLabel="false"
-													mode="toggle-icon" value="#{_client.exp}"
-													format="DD.MM.YYYY HH:mm">
-												</b:dateTimePicker>
-											</ox:decorate>
+												<ox:decorate id="shouldExpiredId" leftClass="col-sm-6"
+													rightClass="col-sm-6" label="Expirable client">
+													<h:selectBooleanCheckbox value="#{_client.deletable}"
+														id="expirableClientID" styleClass="col-sm-9 rounded"
+														required="false">
+														<a4j:ajax event="click" render="expirationBlockId"
+															execute="@this" limitRender="true" />
+													</h:selectBooleanCheckbox>
+												</ox:decorate>
+												<ox:decorate id="clientExpirationId" leftClass="col-sm-6"
+													rightClass="col-sm-6" rendered="#{_client.deletable}"
+													label="#{msg['clientForm.expirationDate']}">
+													<b:dateTimePicker id="calendar" renderLabel="false"
+														mode="toggle-icon" value="#{_client.exp}"
+														format="DD.MM.YYYY HH:mm">
+													</b:dateTimePicker>
+												</ox:decorate>
 											</h:panelGroup>
 											<div class="row" style="padding-left: 25px;">
 												<b:panel title="#{msg['clientForm.grantTypes']}"
@@ -876,28 +876,32 @@
 														rows="3" cols="80" maxlength="4000" id="softwareStatement" />
 												</ox:decorate>
 												<ox:decorate id="cibaTokenDeliveryMode" leftClass="col-sm-3"
-															 rightClass="col-sm-9"
-															 label="#{msg['clientForm.cibaTokenDeliveryMode']}">
+													rightClass="col-sm-9"
+													label="#{msg['clientForm.cibaTokenDeliveryMode']}">
 													<h:selectOneMenu styleClass="col-sm-9 form-control rounded"
-																	 value="#{_client.backchannelTokenDeliveryMode}"
-																	 id="cibaTokenDeliveryModeId" required="false">
+														value="#{_client.backchannelTokenDeliveryMode}"
+														id="cibaTokenDeliveryModeId" required="false">
 														<f:selectItem noSelectionOption="true" itemLabel="" />
-														<f:selectItems value="#{_clientAction.cibaTokenDeliveryModes}" />
+														<f:selectItems
+															value="#{_clientAction.cibaTokenDeliveryModes}" />
 													</h:selectOneMenu>
 												</ox:decorate>
-												<ox:decorate id="cibaClientNotificationEndpoint" leftClass="col-sm-3"
-															 rightClass="col-sm-9"
-															 label="#{msg['clientForm.cibaClientNotificationEndpoint']}">
-													<h:inputText value="#{_client.backchannelClientNotificationEndpoint}"
-																 required="false" styleClass="form-control cibaClientNotificationEndpoint"
-																 id="cibaClientNotificationEndpointId" />
+												<ox:decorate id="cibaClientNotificationEndpoint"
+													leftClass="col-sm-3" rightClass="col-sm-9"
+													label="#{msg['clientForm.cibaClientNotificationEndpoint']}">
+													<h:inputText
+														value="#{_client.backchannelClientNotificationEndpoint}"
+														required="false"
+														styleClass="form-control cibaClientNotificationEndpoint"
+														id="cibaClientNotificationEndpointId" />
 												</ox:decorate>
 												<ox:decorate id="cibaUserCodeParameter" leftClass="col-sm-3"
-															 rightClass="col-sm-9"
-															 label="#{msg['clientForm.cibaUserCodeParameter']}">
-													<h:selectBooleanCheckbox value="#{_client.backchannelUserCodeParameter}"
-																			 id="cibaUserCodeParameterId" styleClass="col-sm-9 rounded"
-																			 required="false" />
+													rightClass="col-sm-9"
+													label="#{msg['clientForm.cibaUserCodeParameter']}">
+													<h:selectBooleanCheckbox
+														value="#{_client.backchannelUserCodeParameter}"
+														id="cibaUserCodeParameterId" styleClass="col-sm-9 rounded"
+														required="false" />
 												</ox:decorate>
 											</div>
 										</div>
@@ -1064,16 +1068,17 @@
 												</h:selectOneMenu>
 											</ox:decorate>
 											<ox:decorate id="cibaAuthenticationRequestSigningAlg"
-														 label="#{msg['clientForm.cibaAuthenticationRequestSigningAlg']}"
-														 leftClass="col-sm-6" rightClass="col-sm-6">
+												label="#{msg['clientForm.cibaAuthenticationRequestSigningAlg']}"
+												leftClass="col-sm-6" rightClass="col-sm-6">
 												<h:selectOneMenu styleClass="col-sm-9 form-control rounded"
-																 value="#{_client.backchannelAuthenticationRequestSigningAlg}"
-																 id="cibaAuthenticationRequestSigningAlgId" required="false">
+													value="#{_client.backchannelAuthenticationRequestSigningAlg}"
+													id="cibaAuthenticationRequestSigningAlgId" required="false">
 													<f:selectItem noSelectionOption="true" itemLabel="" />
-													<f:selectItems value="#{_clientAction.asymmetricSignatureAlgorithms}"
-																   var="_type" itemLabel="#{_type.paramName}" />
+													<f:selectItems
+														value="#{_clientAction.asymmetricSignatureAlgorithms}"
+														var="_type" itemLabel="#{_type.paramName}" />
 													<f:converter
-															converterId="org.gluu.jsf2.converter.EnumConverter" />
+														converterId="org.gluu.jsf2.converter.EnumConverter" />
 												</h:selectOneMenu>
 											</ox:decorate>
 										</div>
@@ -1119,76 +1124,103 @@
 									</h:panelGroup>
 								</h:panelGroup>
 							</div>
-                            <div class="tab-pane box box-primary" id="customScripts" style="background-color: white;">
-                                <div class="row" style="padding-left: 25px;">
-                                    <b:panel title="#{msg['clientForm.postAuthnScripts']}"
-                                             id="postAuthnScripts" look="primary">
-                                        <h:panelGroup id="selectedPostAuthnScriptsId">
+							<div class="tab-pane box box-primary" id="customScripts"
+								style="background-color: white;">
+								<div class="row" style="padding-left: 25px;">
+									<b:panel title="#{msg['clientForm.postAuthnScripts']}"
+										id="postAuthnScripts" look="primary">
+										<h:panelGroup id="selectedPostAuthnScriptsId">
 
-                                            <a4j:repeat rowKeyVar="_scriptIdx"
-                                                        value="#{_clientAction.postAuthnScripts}"
-                                                        var="_item">
-                                                <div class="col-sm-12">
-                                                    <div class="col-sm-6">
-                                                        <h:outputText style="margin-left:-29px;"
-                                                                      value="#{_item.name}" />
-                                                        <h:outputText value=" " />
-                                                    </div>
-                                                    <div class="col-sm-6">
-                                                        <a4j:commandLink
-                                                                action="#{_clientAction.removePostAuthnScript(_item)}"
-                                                                execute="@this" render="selectedPostAuthnScriptsId"
-                                                                styleClass="glyphicon glyphicon-remove removePostAuthnScript">
-                                                        </a4j:commandLink>
-                                                    </div>
-                                                </div>
-                                            </a4j:repeat>
+											<a4j:repeat rowKeyVar="_scriptIdx"
+												value="#{_clientAction.postAuthnScripts}" var="_item">
+												<div class="col-sm-12">
+													<div class="col-sm-6">
+														<h:outputText style="margin-left:-29px;"
+															value="#{_item.name}" />
+														<h:outputText value=" " />
+													</div>
+													<div class="col-sm-6">
+														<a4j:commandLink
+															action="#{_clientAction.removePostAuthnScript(_item)}"
+															execute="@this" render="selectedPostAuthnScriptsId"
+															styleClass="glyphicon glyphicon-remove removePostAuthnScript">
+														</a4j:commandLink>
+													</div>
+												</div>
+											</a4j:repeat>
 
-                                            <p:spacer height="16" />
-                                            <a4j:commandButton
-                                                    styleClass="btn btn-primary AddPostAuthnScript"
-                                                    style="margin-top:5px"
-                                                    value="#{msg['clientForm.add']}"
-                                                    oncomplete="#{rich:component('postAuthnDialog:selectEntityModalPanel')}.show();"
-                                                    execute="@this" eventsQueue="clientQueue" />
-                                        </h:panelGroup>
-                                    </b:panel>
-                                </div>
-                                <div class="row" style="padding-left: 25px;">
-                                    <b:panel title="#{msg['clientForm.consentGatheringScripts']}"
-                                             id="postConsentScripts" look="primary">
-                                        <h:panelGroup id="selectedConsentScriptsId">
+											<p:spacer height="16" />
+											<a4j:commandButton
+												styleClass="btn btn-primary AddPostAuthnScript"
+												style="margin-top:5px" value="#{msg['clientForm.add']}"
+												oncomplete="#{rich:component('postAuthnDialog:selectEntityModalPanel')}.show();"
+												execute="@this" eventsQueue="clientQueue" />
+										</h:panelGroup>
+									</b:panel>
+								</div>
+								<div class="row" style="padding-left: 25px;">
+									<b:panel title="#{msg['clientForm.consentGatheringScripts']}"
+										id="postConsentScripts" look="primary">
+										<h:panelGroup id="selectedConsentScriptsId">
 
-                                            <a4j:repeat rowKeyVar="_scriptIdx"
-                                                        value="#{_clientAction.consentScripts}"
-                                                        var="_item">
-                                                <div class="col-sm-12">
-                                                    <div class="col-sm-6">
-                                                        <h:outputText style="margin-left:-29px;"
-                                                                      value="#{_item.name}" />
-                                                        <h:outputText value=" " />
-                                                    </div>
-                                                    <div class="col-sm-6">
-                                                        <a4j:commandLink
-                                                                action="#{_clientAction.removeConsentScript(_item)}"
-                                                                execute="@this" render="selectedConsentScriptsId"
-                                                                styleClass="glyphicon glyphicon-remove removeConsentScript">
-                                                        </a4j:commandLink>
-                                                    </div>
-                                                </div>
-                                            </a4j:repeat>
+											<a4j:repeat rowKeyVar="_scriptIdx"
+												value="#{_clientAction.consentScripts}" var="_item">
+												<div class="col-sm-12">
+													<div class="col-sm-6">
+														<h:outputText style="margin-left:-29px;"
+															value="#{_item.name}" />
+														<h:outputText value=" " />
+													</div>
+													<div class="col-sm-6">
+														<a4j:commandLink
+															action="#{_clientAction.removeConsentScript(_item)}"
+															execute="@this" render="selectedConsentScriptsId"
+															styleClass="glyphicon glyphicon-remove removeConsentScript">
+														</a4j:commandLink>
+													</div>
+												</div>
+											</a4j:repeat>
 
-                                            <p:spacer height="16" />
-                                            <a4j:commandButton
-                                                    styleClass="btn btn-primary AddConsentScript"
-                                                    style="margin-top:5px"
-                                                    value="#{msg['clientForm.add']}"
-                                                    oncomplete="#{rich:component('consentDialog:selectEntityModalPanel')}.show();"
-                                                    execute="@this" eventsQueue="clientQueue" />
-                                        </h:panelGroup>
-                                    </b:panel>
-                                </div>
-                            </div>
+											<p:spacer height="5" />
+											<a4j:commandButton
+												styleClass="btn btn-primary AddConsentScript"
+												style="margin-top:5px" value="#{msg['clientForm.add']}"
+												oncomplete="#{rich:component('consentDialog:selectEntityModalPanel')}.show();"
+												execute="@this" eventsQueue="clientQueue" />
+										</h:panelGroup>
+									</b:panel>
+								</div>
+								<div class="row" style="padding-left: 25px;">
+									<b:panel title="#{msg['clientForm.spontaneousScopeScripts']}"
+										id="spontaneousScopeScriptDns" look="primary">
+										<h:panelGroup id="selectedSpontaneousScopeScriptDnsId">
+										   <a4j:repeat rowKeyVar="_scriptIdx"
+												value="#{_clientAction.consentScripts}" var="_item">
+												<div class="col-sm-12">
+													<div class="col-sm-6">
+														<h:outputText style="margin-left:-29px;"
+															value="#{_item.name}" />
+														<h:outputText value=" " />
+													</div>
+													<div class="col-sm-6">
+														<a4j:commandLink
+															action="#{_clientAction.removeConsentScript(_item)}"
+															execute="@this" render="selectedConsentScriptsId"
+															styleClass="glyphicon glyphicon-remove removeConsentScript">
+														</a4j:commandLink>
+													</div>
+												</div>
+											</a4j:repeat>
+											<p:spacer height="5" />
+											<a4j:commandButton
+												styleClass="btn btn-primary AddSpontaneousScopeScript"
+												style="margin-top:5px" value="#{msg['clientForm.add']}"
+												oncomplete="#{rich:component('spontaneousScopeDialog:selectEntityModalPanel')}.show();"
+												execute="@this" eventsQueue="clientQueue" />
+										</h:panelGroup>
+									</b:panel>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -1198,22 +1230,31 @@
 			</div>
 		</b:panel>
 	</h:form>
+	<ox:selectSelectableEntityDialog
+		acceptMethod="#{_clientAction.acceptPostAuthnScripts}"
+		cancelMethod="#{_clientAction.cancelPostAuthnScripts}"
+		displayNameProperty="entity.description" displaySearchForm="false"
+		id="postAuthnDialog" label="#{msg['clientForm.postAuthnScripts']}"
+		nameProperty="entity.name" render="selectedPostAuthnScriptsId"
+		searchMethod="#{_clientAction.searchAvailablePostAuthnCustomScripts}"
+		searchResult="#{_clientAction.availablePostAuthnScripts}" />
+	<ox:selectSelectableEntityDialog
+		acceptMethod="#{_clientAction.acceptConsentScripts}"
+		cancelMethod="#{_clientAction.cancelConsentScripts}"
+		displayNameProperty="entity.description" displaySearchForm="false"
+		id="consentDialog" label="#{msg['clientForm.consentGatheringScripts']}"
+		nameProperty="entity.name" render="selectedConsentScriptsId"
+		searchMethod="#{_clientAction.searchAvailableConsentCustomScripts}"
+		searchResult="#{_clientAction.availableConsentScripts}" />
+
     <ox:selectSelectableEntityDialog
-            acceptMethod="#{_clientAction.acceptPostAuthnScripts}"
-            cancelMethod="#{_clientAction.cancelPostAuthnScripts}"
-            displayNameProperty="entity.description" displaySearchForm="false"
-            id="postAuthnDialog" label="#{msg['clientForm.postAuthnScripts']}"
-            nameProperty="entity.name" render="selectedPostAuthnScriptsId"
-            searchMethod="#{_clientAction.searchAvailablePostAuthnCustomScripts}"
-            searchResult="#{_clientAction.availablePostAuthnScripts}" />
-    <ox:selectSelectableEntityDialog
-            acceptMethod="#{_clientAction.acceptConsentScripts}"
-            cancelMethod="#{_clientAction.cancelConsentScripts}"
-            displayNameProperty="entity.description" displaySearchForm="false"
-            id="consentDialog" label="#{msg['clientForm.consentScripts']}"
-            nameProperty="entity.name" render="selectedConsentScriptsId"
-            searchMethod="#{_clientAction.searchAvailableConsentCustomScripts}"
-            searchResult="#{_clientAction.availableConsentScripts}" />
+		acceptMethod="#{_clientAction.acceptSpontaneousScopesScripts}"
+		cancelMethod="#{_clientAction.cancelSpontaneousScopesScripts}"
+		displayNameProperty="entity.description" displaySearchForm="false"
+		id="spontaneousScopeDialog" label="#{msg['clientForm.spontaneousScopeScripts']}"
+		nameProperty="entity.name" render="selectedSpontaneousScopeScriptDnsId"
+		searchMethod="#{_clientAction.searchAvailableSpontaneousScopeScripts}"
+		searchResult="#{_clientAction.availableSpontaneousScripts}" />		
 	<script>
 	    $('#oidctab a').click(function(e) {
 		  e.preventDefault();
