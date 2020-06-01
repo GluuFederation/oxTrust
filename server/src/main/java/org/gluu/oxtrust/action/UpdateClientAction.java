@@ -128,18 +128,19 @@ public class UpdateClientAction implements Serializable {
 	private List<String> clientlogoutUris;
 	private List<String> claimRedirectURIList;
 
-	private List<Scope> scopes;
-	private List<DisplayNameEntry> claims;
-	private List<ResponseType> responseTypes;
-	private List<CustomScript> customScripts;
-	private List<CustomScript> postAuthnScripts = Lists.newArrayList();
-	private List<CustomScript> consentScripts = Lists.newArrayList();
-	private List<CustomScript> spontaneousScopesScripts = Lists.newArrayList();
-	private List<GrantType> grantTypes;
-	private List<String> contacts;
-	private List<String> requestUris;
-	private List<String> authorizedOrigins;
-	private List<OxAuthSectorIdentifier> sectorIdentifiers = new ArrayList<>();
+    private List<Scope> scopes;
+    private List<DisplayNameEntry> claims;
+    private List<ResponseType> responseTypes;
+    private List<CustomScript> customScripts;
+    private List<CustomScript> postAuthnScripts = Lists.newArrayList();
+    private List<CustomScript> consentScripts = Lists.newArrayList();
+    private List<CustomScript> spontaneousScopesScripts = Lists.newArrayList();
+    private List<CustomScript> introspectionScripts = Lists.newArrayList();
+    private List<GrantType> grantTypes;
+    private List<String> contacts;
+    private List<String> requestUris;
+    private List<String> authorizedOrigins;
+    private List<OxAuthSectorIdentifier> sectorIdentifiers = new ArrayList<>();
 
 	private String searchAvailableClaimPattern;
 	private String oldSearchAvailableClaimPattern;
@@ -169,16 +170,17 @@ public class UpdateClientAction implements Serializable {
 		this.availableClaimRedirectUri = availableClaimRedirectUri;
 	}
 
-	private List<GluuAttribute> availableClaims;
-	private List<GluuGroup> availableGroups;
-	private List<SelectableEntity<ResponseType>> availableResponseTypes;
-	private List<SelectableEntity<CustomScript>> availableCustomScripts;
-	private List<SelectableEntity<CustomScript>> availablePostAuthnScripts;
-	private List<SelectableEntity<CustomScript>> availableConsentScripts;
-	private List<SelectableEntity<CustomScript>> availableSpontaneousScripts;
-	private List<SelectableEntity<GrantType>> availableGrantTypes;
-	private List<SelectableEntity<Scope>> availableScopes;
-	private List<SelectableEntity<OxAuthSectorIdentifier>> availableSectors;
+    private List<GluuAttribute> availableClaims;
+    private List<GluuGroup> availableGroups;
+    private List<SelectableEntity<ResponseType>> availableResponseTypes;
+    private List<SelectableEntity<CustomScript>> availableCustomScripts;
+    private List<SelectableEntity<CustomScript>> availablePostAuthnScripts;
+    private List<SelectableEntity<CustomScript>> availableConsentScripts;
+    private List<SelectableEntity<CustomScript>> availableSpontaneousScripts;
+    private List<SelectableEntity<CustomScript>> availableIntrospectionScripts;
+    private List<SelectableEntity<GrantType>> availableGrantTypes;
+    private List<SelectableEntity<Scope>> availableScopes;
+    private List<SelectableEntity<OxAuthSectorIdentifier>> availableSectors;
 
 	public String add() throws Exception {
 		if (this.client != null) {
@@ -247,57 +249,59 @@ public class UpdateClientAction implements Serializable {
 		return existingScopes;
 	}
 
-	public String update() throws Exception {
-		if (this.client != null) {
-			return OxTrustConstants.RESULT_SUCCESS;
-		}
-		this.update = true;
-		log.debug("this.update : " + this.update);
-		try {
-			log.debug("inum : " + inum);
-			this.client = clientService.getClientByInum(inum);
-			this.client.setOxAuthClientSecret(encryptionService.decrypt(this.client.getEncodedClientSecret()));
-			log.trace("CLIENT SECRET UPDATE:" + this.client.getOxAuthClientSecret());
-		} catch (BasePersistenceException ex) {
-			log.error("Failed to find client {}", inum, ex);
-		}
-		if (this.client == null) {
-			log.error("Failed to load client {}", inum);
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to find client");
-			conversationService.endConversation();
-			return OxTrustConstants.RESULT_FAILURE;
-		}
-		try {
-			this.loginUris = getNonEmptyStringList(client.getOxAuthRedirectURIs());
-			this.logoutUris = getNonEmptyStringList(client.getOxAuthPostLogoutRedirectURIs());
-			this.clientlogoutUris = getNonEmptyStringList(client.getLogoutUri());
-			this.scopes = getInitialEntries();
-			this.claims = getInitialClaimDisplayNameEntries();
-			this.responseTypes = getInitialResponseTypes();
-			this.grantTypes = getInitialGrantTypes();
-			this.contacts = getNonEmptyStringList(client.getContacts());
-			this.requestUris = getNonEmptyStringList(client.getRequestUris());
-			this.authorizedOrigins = getNonEmptyStringList(client.getAuthorizedOrigins());
-			this.claimRedirectURIList = getNonEmptyStringList(client.getClaimRedirectURI());
-			this.customScripts = getInitialAcrs();
-			this.postAuthnScripts = searchAvailablePostAuthnCustomScripts().stream()
-					.filter(entity -> client.getAttributes().getPostAuthnScripts().contains(entity.getEntity().getDn()))
-					.map(SelectableEntity::getEntity).collect(Collectors.toList());
-			this.consentScripts = searchAvailableConsentCustomScripts().stream().filter(
-					entity -> client.getAttributes().getConsentGatheringScripts().contains(entity.getEntity().getDn()))
-					.map(SelectableEntity::getEntity).collect(Collectors.toList());
-			this.spontaneousScopesScripts = searchAvailableSpontaneousScopeScripts().stream()
-					.filter(entity -> client.getAttributes().getSpontaneousScopeScriptDns()
-							.contains(entity.getEntity().getDn()))
-					.map(SelectableEntity::getEntity).collect(Collectors.toList());
-			this.sectorIdentifiers = initSectors();
-			this.oxAttributesJson = getClientAttributesJson();
-		} catch (BasePersistenceException ex) {
-			log.error("Failed to prepare lists", ex);
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to load client");
-			conversationService.endConversation();
-			return OxTrustConstants.RESULT_FAILURE;
-		}
+    public String update() throws Exception {
+        if (this.client != null) {
+            return OxTrustConstants.RESULT_SUCCESS;
+        }
+        this.update = true;
+        log.debug("this.update : " + this.update);
+        try {
+            log.debug("inum : " + inum);
+            this.client = clientService.getClientByInum(inum);
+            this.client.setOxAuthClientSecret(encryptionService.decrypt(this.client.getEncodedClientSecret()));
+            log.trace("CLIENT SECRET UPDATE:" + this.client.getOxAuthClientSecret());
+        } catch (BasePersistenceException ex) {
+            log.error("Failed to find client {}", inum, ex);
+        }
+        if (this.client == null) {
+            log.error("Failed to load client {}", inum);
+            facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to find client");
+            conversationService.endConversation();
+            return OxTrustConstants.RESULT_FAILURE;
+        }
+        try {
+            this.loginUris = getNonEmptyStringList(client.getOxAuthRedirectURIs());
+            this.logoutUris = getNonEmptyStringList(client.getOxAuthPostLogoutRedirectURIs());
+            this.clientlogoutUris = getNonEmptyStringList(client.getLogoutUri());
+            this.scopes = getInitialEntries();
+            this.claims = getInitialClaimDisplayNameEntries();
+            this.responseTypes = getInitialResponseTypes();
+            this.grantTypes = getInitialGrantTypes();
+            this.contacts = getNonEmptyStringList(client.getContacts());
+            this.requestUris = getNonEmptyStringList(client.getRequestUris());
+            this.authorizedOrigins = getNonEmptyStringList(client.getAuthorizedOrigins());
+            this.claimRedirectURIList = getNonEmptyStringList(client.getClaimRedirectURI());
+            this.customScripts = getInitialAcrs();
+            this.postAuthnScripts = searchAvailablePostAuthnCustomScripts().stream()
+                    .filter(entity -> client.getAttributes().getPostAuthnScripts().contains(entity.getEntity().getDn()))
+                    .map(SelectableEntity::getEntity).collect(Collectors.toList());
+            this.consentScripts = searchAvailableConsentCustomScripts().stream()
+                    .filter(entity -> client.getAttributes().getConsentGatheringScripts().contains(entity.getEntity().getDn()))
+                    .map(SelectableEntity::getEntity).collect(Collectors.toList());
+            this.spontaneousScopesScripts = searchAvailableSpontaneousScopeScripts().stream()
+                    .filter(entity -> client.getAttributes().getSpontaneousScopeScriptDns().contains(entity.getEntity().getDn()))
+                    .map(SelectableEntity::getEntity).collect(Collectors.toList());
+            this.introspectionScripts = searchAvailableIntrospectionCustomScripts().stream()
+                    .filter(entity -> client.getAttributes().getIntrospectionScripts().contains(entity.getEntity().getDn()))
+                    .map(SelectableEntity::getEntity).collect(Collectors.toList());
+            this.sectorIdentifiers = initSectors();
+            this.oxAttributesJson = getClientAttributesJson();
+        } catch (BasePersistenceException ex) {
+            log.error("Failed to prepare lists", ex);
+            facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to load client");
+            conversationService.endConversation();
+            return OxTrustConstants.RESULT_FAILURE;
+        }
 
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
@@ -344,1206 +348,1243 @@ public class UpdateClientAction implements Serializable {
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	public String save() throws Exception {
-		if (this.client.isDeletable() && this.client.getExp() == null) {
-			this.client.setExp(oneDay());
-		}
-		if (!this.client.isDeletable()) {
-			this.client.setExp(null);
-		}
-		updateLoginURIs();
-		updateLogoutURIs();
-		updateClientLogoutURIs();
-		updateScopes();
-		updateSector();
-		updateClaims();
-		updateResponseTypes();
-		updateCustomScripts();
-		updateGrantTypes();
-		updateContacts();
-		updateRequestUris();
-		updateAuthorizedOrigins();
-		updateClaimredirectUri();
-		saveAttributesJson();
-		trimUriProperties();
-		this.client.setEncodedClientSecret(encryptionService.encrypt(this.client.getOxAuthClientSecret()));
-		if (update) {
-			try {
-				clientService.updateClient(this.client);
-				oxTrustAuditService.audit(
-						"OPENID CLIENT " + this.client.getInum() + " **" + this.client.getDisplayName() + "** UPDATED",
-						identity.getUser(),
-						(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
-			} catch (BasePersistenceException ex) {
-				log.error("Failed to update client {}", this.inum, ex);
-				facesMessages.add(FacesMessage.SEVERITY_ERROR,
-						"Failed to update client '#{updateClientAction.client.displayName}'");
-				return OxTrustConstants.RESULT_FAILURE;
-			}
-			facesMessages.add(FacesMessage.SEVERITY_INFO,
-					"Client '#{updateClientAction.client.displayName}' updated successfully");
-		} else {
-			this.inum = clientService.generateInumForNewClient();
-			String dn = clientService.getDnForClient(this.inum);
-			if (StringHelper.isEmpty(this.client.getEncodedClientSecret())) {
-				generatePassword();
-			}
-			this.client.setDn(dn);
-			this.client.setInum(this.inum);
-			try {
-				clientService.addClient(this.client);
-				oxTrustAuditService.audit(
-						"OPENID CLIENT " + this.client.getInum() + " **" + this.client.getDisplayName() + "** ADDED ",
-						identity.getUser(),
-						(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
-			} catch (BasePersistenceException ex) {
-				log.error("Failed to add new client {}", this.inum, ex);
-				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new client");
-				return OxTrustConstants.RESULT_FAILURE;
-			}
-
-			facesMessages.add(FacesMessage.SEVERITY_INFO,
-					"New client '#{updateClientAction.client.displayName}' added successfully");
-			conversationService.endConversation();
-			this.update = true;
-		}
-		return OxTrustConstants.RESULT_SUCCESS;
-	}
-
-	private void saveAttributesJson() {
-		ClientAttributes clientAttributes = new ClientAttributes();
-		try {
-			clientAttributes = new ObjectMapper().readValue(this.oxAttributesJson, ClientAttributes.class);
-		} catch (Exception e) {
-			log.info("error parsing json:" + e);
-		}
-		clientAttributes
-				.setPostAuthnScripts(postAuthnScripts.stream().map(CustomScript::getDn).collect(Collectors.toList()));
-		clientAttributes.setConsentGatheringScripts(
-				consentScripts.stream().map(CustomScript::getDn).collect(Collectors.toList()));
-		clientAttributes.setSpontaneousScopeScriptDns(
-				spontaneousScopesScripts.stream().map(CustomScript::getDn).collect(Collectors.toList()));
-		this.client.setAttributes(clientAttributes);
-	}
-
-	private void trimUriProperties() {
-		this.client.setClientUri(StringHelper.trimAll(this.client.getClientUri()));
-		this.client.setJwksUri(StringHelper.trimAll(this.client.getJwksUri()));
-		this.client.setLogoUri(StringHelper.trimAll(this.client.getLogoUri()));
-		this.client.setPolicyUri(StringHelper.trimAll(this.client.getPolicyUri()));
-		this.client.setSectorIdentifierUri(StringHelper.trimAll(this.client.getSectorIdentifierUri()));
-		this.client.setTosUri(StringHelper.trimAll(this.client.getTosUri()));
-		this.client.setInitiateLoginUri(StringHelper.trimAll(this.client.getInitiateLoginUri()));
-	}
-
-	public String delete() throws Exception {
-		if (update) {
-			try {
-				clientService.removeClient(this.client);
-				oxTrustAuditService.audit(
-						"OPENID CLIENT " + this.client.getInum() + " **" + this.client.getDisplayName() + "** DELETED ",
-						identity.getUser(),
-						(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
-				facesMessages.add(FacesMessage.SEVERITY_INFO,
-						"Client '#{updateClientAction.client.displayName}' removed successfully");
-				conversationService.endConversation();
-				return OxTrustConstants.RESULT_SUCCESS;
-			} catch (BasePersistenceException ex) {
-				log.error("Failed to remove client {}", this.inum, ex);
-			}
-		}
-		facesMessages.add(FacesMessage.SEVERITY_ERROR,
-				"Failed to remove client '#{updateClientAction.client.displayName}'");
-		return OxTrustConstants.RESULT_FAILURE;
-	}
-
-	public void removeLoginURI(String uri) {
-		removeFromList(this.loginUris, uri);
-	}
-
-	public void removeLogoutURI(String uri) {
-		removeFromList(this.logoutUris, uri);
-	}
-
-	public void removeClientLogoutURI(String uri) {
-		removeFromList(this.clientlogoutUris, uri);
-	}
-
-	public void removeClaimRedirectURI(String uri) {
-		removeFromList(this.claimRedirectURIList, uri);
-	}
-
-	public void removePostAuthnScript(CustomScript script) {
-		postAuthnScripts.remove(script);
-	}
-
-	public void removeConsentScript(CustomScript script) {
-		consentScripts.remove(script);
-	}
-
-	public void removeContact(String contact) {
-		if (StringUtils.isEmpty(contact)) {
-			return;
-		}
-		for (Iterator<String> iterator = contacts.iterator(); iterator.hasNext();) {
-			String tmpContact = iterator.next();
-			if (contact.equals(tmpContact)) {
-				iterator.remove();
-				break;
-			}
-		}
-	}
-
-	public void removeRequestUri(String requestUri) {
-		if (StringUtils.isEmpty(requestUri)) {
-			return;
-		}
-		for (Iterator<String> iterator = requestUris.iterator(); iterator.hasNext();) {
-			String tmpRequestUri = iterator.next();
-			if (requestUri.equals(tmpRequestUri)) {
-				iterator.remove();
-				break;
-			}
-		}
-	}
-
-	public void removeAuthorizedOrigin(String authorizedOrigin) {
-		if (StringUtils.isEmpty(authorizedOrigin)) {
-			return;
-		}
-		for (Iterator<String> iterator = authorizedOrigins.iterator(); iterator.hasNext();) {
-			String tmpAuthorizationOrigin = iterator.next();
-			if (authorizedOrigin.equals(tmpAuthorizationOrigin)) {
-				iterator.remove();
-				break;
-			}
-		}
-	}
-
-	private void removeFromList(List<String> uriList, String uri) {
-		if (StringUtils.isEmpty(uri)) {
-			return;
-		}
-		for (Iterator<String> iterator = uriList.iterator(); iterator.hasNext();) {
-			String tmpUri = iterator.next();
-			if (uri.equals(tmpUri)) {
-				iterator.remove();
-				break;
-			}
-		}
-	}
-
-	public void removeScope(String inum) {
-		if (StringHelper.isEmpty(inum)) {
-			return;
-		}
-		for (Scope scope : this.scopes) {
-			if (scope.getInum().equalsIgnoreCase(inum)) {
-				this.scopes.remove(scope);
-				break;
-			}
-		}
-	}
-
-	private void addClaim(GluuAttribute claim) {
-		DisplayNameEntry oneClaim = new DisplayNameEntry(claim.getDn(), claim.getInum(), claim.getDisplayName());
-		this.claims.add(oneClaim);
-	}
-
-	public void removeClaim(String inum) throws Exception {
-		if (StringHelper.isEmpty(inum)) {
-			return;
-		}
-		String removeClaimDn = attributeService.getDnForAttribute(inum);
-		for (Iterator<DisplayNameEntry> iterator = this.claims.iterator(); iterator.hasNext();) {
-			DisplayNameEntry oneClaim = iterator.next();
-			if (removeClaimDn.equals(oneClaim.getDn())) {
-				iterator.remove();
-				break;
-			}
-		}
-	}
-
-	public void acceptSelectLoginUri() {
-		if (StringHelper.isEmpty(this.availableLoginUri)) {
-			return;
-		}
-		if (!this.loginUris.contains(this.availableLoginUri) && checkWhiteListRedirectUris(availableLoginUri)
-				&& checkBlackListRedirectUris(availableLoginUri)) {
-			boolean acceptable = isAcceptable(this.availableLoginUri);
-			if (acceptable) {
-				this.loginUris.add(this.availableLoginUri);
-			} else {
-				try {
-					if (getProtocol(availableLoginUri).equalsIgnoreCase("http")) {
-						facesMessages.add(FacesMessage.SEVERITY_ERROR,
-								"http schema is allowed with localhost/127.0.0.1");
-					} else {
-						facesMessages.add(FacesMessage.SEVERITY_ERROR, "A sector identifier must be defined first.");
-					}
-				} catch (MalformedURLException e) {
-				}
-
-			}
-
-		} else {
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "The URL is not valid or may be Blacklisted.",
-					"The URL is not valid or may be Blacklisted.");
-		}
-		this.availableLoginUri = "https://";
-	}
-
-	private boolean isAcceptable(String availableLoginUri) {
-		boolean result = false;
-		try {
-			if (getProtocol(availableLoginUri).equalsIgnoreCase("http")) {
-				if (this.client.getOxAuthAppType().equals(OxAuthApplicationType.NATIVE) && isImplicitFlow()) {
-					return true;
-				}
-				if (!this.client.getOxAuthAppType().equals(OxAuthApplicationType.NATIVE)
-						&& getHostname(availableLoginUri).equalsIgnoreCase("localhost")) {
-					return true;
-				}
-				if (!this.client.getOxAuthAppType().equals(OxAuthApplicationType.NATIVE)
-						&& getHostname(availableLoginUri).equalsIgnoreCase("127.0.0.1")) {
-					return true;
-				}
-				return false;
-			} else {
-				if (this.client.getSubjectType().equals(OxAuthSubjectType.PUBLIC)) {
-					return true;
-				} else if (this.loginUris.size() < 1) {
-					result = true;
-				} else if (this.loginUris.size() >= 1 && hasSameHostname(this.availableLoginUri)) {
-					result = true;
-				} else if (this.loginUris.size() >= 1 && !hasSameHostname(this.availableLoginUri) && sectorExist()) {
-					result = true;
-				}
-			}
-		} catch (MalformedURLException e) {
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "The url is malformed", "The url is malformed");
-			log.error(e.getMessage());
-		}
-		return result;
-	}
-
-	private boolean isImplicitFlow() {
-		if (this.grantTypes.contains(GrantType.IMPLICIT)) {
-			return true;
-		}
-		return false;
-	}
-
-	private boolean hasSameHostname(String url1) throws MalformedURLException {
-		boolean result = true;
-		URL uri1 = new URL(url1);
-		for (String url : this.loginUris) {
-			URL uri = new URL(url);
-			if (!(uri1.getHost().equalsIgnoreCase(uri.getHost()))) {
-				result = false;
-				break;
-			}
-		}
-		return result;
-	}
-
-	private String getHostname(String url) {
-		URL uri1;
-		try {
-			uri1 = new URL(url);
-			return uri1.getHost();
-		} catch (MalformedURLException e) {
-			return null;
-		}
-
-	}
-
-	private String getProtocol(String url) throws MalformedURLException {
-		URL uri1 = new URL(url);
-		return uri1.getProtocol();
-	}
-
-	private boolean sectorExist() {
-		boolean result = false;
-		String sectorUri = this.client.getSectorIdentifierUri();
-		try {
-			if (sectorUri != null && !sectorUri.isEmpty()) {
-				JSONArray json = new JSONArray(IOUtils.toString(new URL(sectorUri), Charset.forName("UTF-8")));
-				if (json != null) {
-					result = true;
-				}
-			}
-		} catch (MalformedURLException e) {
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "The url of the sector assigned to this client is malformed",
-					"The url of the sector assigned to this client is malformed");
-			log.error(e.getMessage());
-		} catch (IOException e) {
-			log.error(e.getMessage());
-		} catch (JSONException e) {
-			log.error(e.getMessage());
-		}
-		return result;
-	}
-
-	public void acceptSelectClaims() {
-		if (this.availableClaims == null) {
-			return;
-		}
-		Set<String> addedClaimInums = new HashSet<String>();
-		for (DisplayNameEntry claim : claims) {
-			addedClaimInums.add(claim.getInum());
-		}
-
-		for (GluuAttribute aClaim : this.availableClaims) {
-			if (aClaim.isSelected() && !addedClaimInums.contains(aClaim.getInum())) {
-				addClaim(aClaim);
-			}
-		}
-		this.searchAvailableClaimPattern = "";
-	}
-
-	public void acceptSelectLogoutUri() {
-		if (StringHelper.isEmpty(this.availableLogoutUri)) {
-			return;
-		}
-		if (!this.logoutUris.contains(this.availableLogoutUri) && checkWhiteListRedirectUris(availableLogoutUri)
-				&& checkBlackListRedirectUris(availableLogoutUri)) {
-			this.logoutUris.add(this.availableLogoutUri);
-		} else {
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "The URL is not valid or may be Blacklisted.");
-		}
-		this.availableLogoutUri = "https://";
-	}
-
-	public void acceptSelectClientLogoutUri() {
-		if (StringHelper.isEmpty(this.availableClientlogoutUri)) {
-			return;
-		}
-		if (!this.clientlogoutUris.contains(this.availableClientlogoutUri)) {
-			this.clientlogoutUris.add(this.availableClientlogoutUri);
-		}
-		this.availableClientlogoutUri = "https://";
-	}
-
-	public void acceptSelectClaimRedirectUri() {
-		if (StringHelper.isEmpty(this.availableClaimRedirectUri)) {
-			return;
-		}
-		if (!this.claimRedirectURIList.contains(this.availableClaimRedirectUri)) {
-			this.claimRedirectURIList.add(this.availableClaimRedirectUri);
-		}
-		this.availableClaimRedirectUri = "https://";
-	}
-
-	public void acceptSelectContact() {
-		if (StringHelper.isEmpty(this.availableContact)) {
-			return;
-		}
-		if (!contacts.contains((availableContact))) {
-			contacts.add(availableContact);
-		}
-		this.availableContact = "";
-	}
-
-	public void acceptSelectRequestUri() {
-		if (StringHelper.isEmpty(this.availableRequestUri)) {
-			return;
-		}
-		if (!this.requestUris.contains(this.availableRequestUri)) {
-			this.requestUris.add(this.availableRequestUri);
-		}
-		this.availableRequestUri = "https://";
-	}
-
-	public void acceptSelectAuthorizedOrigin() {
-		if (StringHelper.isEmpty(this.availableAuthorizedOrigin)) {
-			return;
-		}
-		if (!this.authorizedOrigins.contains(this.availableAuthorizedOrigin)) {
-			this.authorizedOrigins.add(this.availableAuthorizedOrigin);
-		}
-		this.availableAuthorizedOrigin = "https://";
-	}
-
-	public void cancelPostAuthnScripts() {
-	}
-
-	public void cancelConsentScripts() {
-	}
-	
-	public void cancelSpontaneousScopesScripts() {
-	}
-
-	public void cancelSelectClaims() {
-	}
-
-	public void cancelSelectGroups() {
-	}
-
-	public void cancelSelectLoginUri() {
-		this.availableLoginUri = "http://";
-	}
-
-	public void cancelSelectLogoutUri() {
-		this.availableLogoutUri = "http://";
-	}
-
-	public void cancelClientLogoutUri() {
-		this.availableClientlogoutUri = "http://";
-	}
-
-	public void cancelClaimRedirectUri() {
-		this.availableClaimRedirectUri = "http://";
-	}
-
-	public void cancelSelectContact() {
-		this.availableContact = "";
-	}
-
-	public void cancelSelectDefaultAcrValue() {
-	}
-
-	public void cancelSelectRequestUri() {
-	}
-
-	public void cancelSelectAuthorizedOrigin() {
-	}
-
-	private void updateLoginURIs() {
-		if (this.loginUris == null || this.loginUris.size() == 0) {
-			this.client.setOxAuthRedirectURIs(null);
-			return;
-		}
-		List<String> tmpUris = new ArrayList<String>();
-		for (String uri : this.loginUris) {
-			tmpUris.add(StringHelper.trimAll(uri));
-		}
-		this.client.setOxAuthRedirectURIs(tmpUris);
-	}
-
-	private void updateLogoutURIs() {
-		if (this.logoutUris == null || this.logoutUris.size() == 0) {
-			this.client.setOxAuthPostLogoutRedirectURIs(null);
-			return;
-		}
-		List<String> tmpUris = new ArrayList<String>();
-		for (String uri : this.logoutUris) {
-			tmpUris.add(StringHelper.trimAll(uri));
-		}
-		this.client.setOxAuthPostLogoutRedirectURIs(tmpUris);
-	}
-
-	private void updateClientLogoutURIs() {
-		if (this.clientlogoutUris == null || this.clientlogoutUris.size() == 0) {
-			this.client.setLogoutUri(null);
-			return;
-		}
-		List<String> tmpUris = new ArrayList<String>();
-		for (String uri : this.clientlogoutUris) {
-			tmpUris.add(StringHelper.trimAll(uri));
-		}
-		this.client.setLogoutUri(tmpUris);
-	}
-
-	private void updateContacts() {
-		validateContacts();
-		if (contacts == null || contacts.size() == 0) {
-			client.setContacts(null);
-			return;
-		}
-		List<String> tmpContacts = new ArrayList<String>();
-		for (String contact : contacts) {
-			tmpContacts.add(contact);
-		}
-		client.setContacts(tmpContacts);
-	}
-
-	private void updateRequestUris() {
-		if (requestUris == null || requestUris.size() == 0) {
-			client.setRequestUris(null);
-			return;
-		}
-		List<String> tmpRequestUris = new ArrayList<String>();
-		for (String requestUri : requestUris) {
-			tmpRequestUris.add(StringHelper.trimAll(requestUri));
-		}
-		client.setRequestUris(tmpRequestUris.toArray(new String[tmpRequestUris.size()]));
-	}
-
-	private void updateAuthorizedOrigins() {
-		if (authorizedOrigins == null || authorizedOrigins.size() == 0) {
-			client.setAuthorizedOrigins(null);
-			return;
-		}
-		List<String> tmpAuthorizedOrigins = new ArrayList<String>();
-		for (String authorizedOrigin : authorizedOrigins) {
-			tmpAuthorizedOrigins.add(StringHelper.trimAll(authorizedOrigin));
-		}
-		client.setAuthorizedOrigins(tmpAuthorizedOrigins.toArray(new String[tmpAuthorizedOrigins.size()]));
-	}
-
-	private void updateClaimredirectUri() {
-		if (claimRedirectURIList == null || claimRedirectURIList.size() == 0) {
-			client.setClaimRedirectURI(null);
-			return;
-		}
-		List<String> tmpClaimRedirectURI = new ArrayList<String>();
-		for (String claimRedirectURI : claimRedirectURIList) {
-			tmpClaimRedirectURI.add(StringHelper.trimAll(claimRedirectURI));
-		}
-		client.setClaimRedirectURI(tmpClaimRedirectURI.toArray(new String[tmpClaimRedirectURI.size()]));
-	}
-
-	private void updateClaims() {
-		if (this.claims == null || this.claims.size() == 0) {
-			this.client.setOxAuthClaims(null);
-			return;
-		}
-		List<String> tmpClaims = new ArrayList<String>();
-		for (DisplayNameEntry claim : this.claims) {
-			tmpClaims.add(claim.getDn());
-		}
-		this.client.setOxAuthClaims(tmpClaims);
-	}
-
-	private void updateResponseTypes() {
-		List<ResponseType> currentResponseTypes = this.responseTypes;
-		if (currentResponseTypes == null || currentResponseTypes.size() == 0) {
-			this.client.setResponseTypes(null);
-			return;
-		}
-		this.client.setResponseTypes(currentResponseTypes.toArray(new ResponseType[currentResponseTypes.size()]));
-	}
-
-	private void updateScopes() {
-		List<Scope> currentResponseTypes = this.scopes;
-		if (currentResponseTypes == null || currentResponseTypes.size() == 0) {
-			this.client.setOxAuthScopes(null);
-			return;
-		}
-		List<String> scopes = new ArrayList<String>();
-		for (Scope scope : this.scopes) {
-			scopes.add(scope.getDn());
-		}
-		this.client.setOxAuthScopes(scopes);
-	}
-
-	private void updateSector() {
-		if (this.sectorIdentifiers != null && this.sectorIdentifiers.size() > 0) {
-			String url = appConfiguration.getOxAuthSectorIdentifierUrl() + "/" + this.sectorIdentifiers.get(0).getId();
-			this.client.setSectorIdentifierUri(url);
-			OxAuthSectorIdentifier sectorIdentifier = sectorIdentifierService
-					.getSectorIdentifierById(this.sectorIdentifiers.get(0).getId());
-			if (sectorIdentifier != null) {
-				sectorIdentifier.addNewClient(this.getInum());
-				sectorIdentifierService.updateSectorIdentifier(sectorIdentifier);
-			}
-		}
-	}
-
-	private void updateGrantTypes() {
-		List<GrantType> currentGrantTypes = this.grantTypes;
-		if (currentGrantTypes == null || currentGrantTypes.size() == 0) {
-			this.client.setGrantTypes(null);
-			return;
-		}
-		this.client.setGrantTypes(currentGrantTypes.toArray(new GrantType[currentGrantTypes.size()]));
-	}
-
-	private void updateCustomScripts() {
-		List<CustomScript> currentCustomScripts = this.customScripts;
-		if (currentCustomScripts == null || currentCustomScripts.size() == 0) {
-			this.client.setDefaultAcrValues(null);
-			return;
-		}
-		List<String> customScripts = new ArrayList<String>();
-		for (CustomScript customScript : currentCustomScripts) {
-			customScripts.add(customScript.getName());
-		}
-		this.client.setDefaultAcrValues(customScripts.toArray(new String[customScripts.size()]));
-
-		this.client.getAttributes()
-				.setPostAuthnScripts(getPostAuthnScripts().stream().map(BaseEntry::getDn).collect(Collectors.toList()));
-		this.client.getAttributes().setConsentGatheringScripts(
-				getConsentScripts().stream().map(BaseEntry::getDn).collect(Collectors.toList()));
-	}
-
-	public void selectAddedClaims() {
-		if (this.availableClaims == null) {
-			return;
-		}
-		Set<String> addedClaimInums = new HashSet<String>();
-		for (DisplayNameEntry claim : this.claims) {
-			addedClaimInums.add(claim.getInum());
-		}
-		for (GluuAttribute aClaim : this.availableClaims) {
-			aClaim.setSelected(addedClaimInums.contains(aClaim.getInum()));
-		}
-	}
-
-	public void searchAvailableClaims() {
-		if (Util.equals(this.oldSearchAvailableClaimPattern, this.searchAvailableClaimPattern)) {
-			return;
-		}
-		try {
-			this.availableClaims = attributeService.searchAttributes(this.searchAvailableClaimPattern,
-					OxTrustConstants.searchClientsSizeLimit);
-			this.oldSearchAvailableClaimPattern = this.searchAvailableClaimPattern;
-			selectAddedClaims();
-		} catch (Exception ex) {
-			log.error("Failed to find attributes", ex);
-		}
-	}
-
-	private List<DisplayNameEntry> getInitialClaimDisplayNameEntries() throws Exception {
-		List<DisplayNameEntry> result = new ArrayList<DisplayNameEntry>();
-		if ((client.getOxAuthClaims() == null) || (client.getOxAuthClaims().size() == 0)) {
-			return result;
-		}
-		List<DisplayNameEntry> tmp = lookupService.getDisplayNameEntries(attributeService.getDnForAttribute(null),
-				this.client.getOxAuthClaims());
-		if (tmp != null) {
-			result.addAll(tmp);
-		}
-		return result;
-	}
-
-	private List<ResponseType> getInitialResponseTypes() {
-		List<ResponseType> result = new ArrayList<ResponseType>();
-		ResponseType[] currentResponseTypes = this.client.getResponseTypes();
-		if ((currentResponseTypes == null) || (currentResponseTypes.length == 0)) {
-			return result;
-		}
-		result.addAll(Arrays.asList(currentResponseTypes));
-		return result;
-	}
-
-	private List<GrantType> getInitialGrantTypes() {
-		List<GrantType> result = new ArrayList<GrantType>();
-		GrantType[] currentGrantTypes = this.client.getGrantTypes();
-		if (currentGrantTypes == null || currentGrantTypes.length == 0) {
-			return result;
-		}
-		result.addAll(Arrays.asList(currentGrantTypes));
-		return result;
-	}
-
-	public void acceptSelectResponseTypes() {
-		List<ResponseType> addedResponseTypes = getResponseTypes();
-		for (SelectableEntity<ResponseType> availableResponseType : this.availableResponseTypes) {
-			ResponseType responseType = availableResponseType.getEntity();
-			if (availableResponseType.isSelected() && !addedResponseTypes.contains(responseType)) {
-				addResponseType(responseType.getValue());
-			}
-			if (!availableResponseType.isSelected() && addedResponseTypes.contains(responseType)) {
-				removeResponseType(responseType.getValue());
-			}
-		}
-	}
-
-	public void acceptSelectSectors() {
-		List<OxAuthSectorIdentifier> addedSectors = getSectorIdentifiers();
-		for (SelectableEntity<OxAuthSectorIdentifier> availableSector : this.availableSectors) {
-			OxAuthSectorIdentifier sector = availableSector.getEntity();
-			if (availableSector.isSelected() && !addedSectors.contains(sector) && addedSectors.size() == 0) {
-				addSector(sector);
-			}
-			if (!availableSector.isSelected() && addedSectors.contains(sector)) {
-				removeSector(sector);
-			}
-		}
-	}
-
-	public void cancelSelectSectors() {
-
-	}
-
-	public void acceptSelectCustomScripts() {
-		List<CustomScript> addedCustomScripts = getCustomScripts();
-		for (SelectableEntity<CustomScript> availableCustomScript : this.availableCustomScripts) {
-			CustomScript customScript = availableCustomScript.getEntity();
-			if (availableCustomScript.isSelected() && !addedCustomScripts.contains(customScript)) {
-				addCustomScript(customScript.getName());
-			}
-			if (!availableCustomScript.isSelected() && addedCustomScripts.contains(customScript)) {
-				removeCustomScript(customScript.getName());
-			}
-		}
-	}
-
-	public void acceptPostAuthnScripts() {
-		postAuthnScripts.clear();
-		postAuthnScripts.addAll(availablePostAuthnScripts.stream().filter(SelectableEntity::isSelected)
-				.map(SelectableEntity::getEntity).collect(Collectors.toList()));
-	}
-
-	public void acceptConsentScripts() {
-		consentScripts.clear();
-		consentScripts.addAll(availableConsentScripts.stream().filter(SelectableEntity::isSelected)
-				.map(SelectableEntity::getEntity).collect(Collectors.toList()));
-	}
-
-	public void acceptSpontaneousScopesScripts() {
-		spontaneousScopesScripts.clear();
-		spontaneousScopesScripts.addAll(availableSpontaneousScripts.stream().filter(SelectableEntity::isSelected)
-				.map(SelectableEntity::getEntity).collect(Collectors.toList()));
-	}
-
-	public void acceptSelectScopes() {
-		List<Scope> addedScopes = getScopes();
-		for (SelectableEntity<Scope> availableScope : this.availableScopes) {
-			Scope scope = availableScope.getEntity();
-			if (availableScope.isSelected() && !contain(addedScopes, scope)) {
-				addScope(scope.getInum());
-			}
-			if (!availableScope.isSelected() && addedScopes.contains(scope)) {
-				removeScope(scope.getInum());
-			}
-		}
-	}
-
-	private boolean contain(List<Scope> scopes, Scope element) {
-		boolean found = false;
-		for (Scope scope : scopes) {
-			if (scope.getInum().equalsIgnoreCase(element.getInum())) {
-				found = true;
-				break;
-			}
-		}
-		return found;
-	}
-
-	private void addScope(String inum) {
-		if (StringHelper.isEmpty(inum)) {
-			return;
-		}
-		Scope addScope = new Scope();
-		try {
-			addScope = scopeService.getScopeByInum(inum);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		if (addScope != null) {
-			this.scopes.add(addScope);
-		}
-	}
-
-	private void addCustomScript(String name) {
-		if (StringHelper.isEmpty(name)) {
-			return;
-		}
-		CustomScript addCustomScript = new CustomScript();
-		addCustomScript.setName(name);
-		if (addCustomScript != null) {
-			this.customScripts.add(addCustomScript);
-		}
-	}
-
-	public void removeCustomScript(String value) {
-		if (StringHelper.isEmpty(value)) {
-			return;
-		}
-		for (CustomScript customScript : customScripts) {
-			if (customScript.getName().equalsIgnoreCase(value)) {
-				this.customScripts.remove(customScript);
-				break;
-			}
-		}
-	}
-
-	public void acceptSelectGrantTypes() {
-		List<GrantType> addedGrantTypes = getGrantTypes();
-		for (SelectableEntity<GrantType> availableGrantType : this.availableGrantTypes) {
-			GrantType grantType = availableGrantType.getEntity();
-			if (availableGrantType.isSelected() && !addedGrantTypes.contains(grantType)) {
-				addGrantType(grantType.toString());
-			}
-			if (!availableGrantType.isSelected() && addedGrantTypes.contains(grantType)) {
-				removeGrantType(grantType.toString());
-			}
-		}
-	}
-
-	public void cancelSelectCustomScripts() {
-	}
-
-	public void cancelSelectScopes() {
-	}
-
-	public void cancelSelectResponseTypes() {
-	}
-
-	public void cancelSelectGrantTypes() {
-	}
-
-	public void addResponseType(String value) {
-		if (StringHelper.isEmpty(value)) {
-			return;
-		}
-		ResponseType addResponseType = ResponseType.getByValue(value);
-		if (addResponseType != null) {
-			this.responseTypes.add(addResponseType);
-		}
-	}
-
-	public void addSector(OxAuthSectorIdentifier value) {
-		if (value == null) {
-			return;
-		}
-		this.sectorIdentifiers.add(value);
-	}
-
-	public void addGrantType(String value) {
-		if (StringHelper.isEmpty(value)) {
-			return;
-		}
-		GrantType addGrantType = GrantType.fromString(value);
-		if (addGrantType != null) {
-			this.grantTypes.add(addGrantType);
-		}
-	}
-
-	public void removeResponseType(String value) {
-		if (StringHelper.isEmpty(value)) {
-			return;
-		}
-		ResponseType removeResponseType = ResponseType.getByValue(value);
-		if (removeResponseType != null) {
-			this.responseTypes.remove(removeResponseType);
-		}
-	}
-
-	public void removeSector(OxAuthSectorIdentifier value) {
-		if (value == null) {
-			return;
-		}
-		this.sectorIdentifiers.remove(value);
-	}
-
-	public void removeGrantType(String value) {
-		if (StringHelper.isEmpty(value)) {
-			return;
-		}
-		GrantType removeGrantType = GrantType.fromString(value);
-		if (removeGrantType != null) {
-			this.grantTypes.remove(removeGrantType);
-		}
-	}
-
-	public void searchAvailableResponseTypes() {
-		if (this.availableResponseTypes != null) {
-			selectAddedResponseTypes();
-			return;
-		}
-
-		List<SelectableEntity<ResponseType>> tmpAvailableResponseTypes = new ArrayList<SelectableEntity<ResponseType>>();
-
-		for (ResponseType responseType : ResponseType.values()) {
-			tmpAvailableResponseTypes.add(new SelectableEntity<ResponseType>(responseType));
-		}
-
-		this.availableResponseTypes = tmpAvailableResponseTypes;
-		selectAddedResponseTypes();
-	}
-
-	public void searchAvailableCustomScripts() {
-		if (this.availableCustomScripts != null) {
-			selectAddedCustomScripts();
-			return;
-		}
-		this.availableCustomScripts = getSelectableScripts(CustomScriptType.PERSON_AUTHENTICATION);
-		selectAddedCustomScripts();
-	}
-
-	public List<SelectableEntity<CustomScript>> searchAvailablePostAuthnCustomScripts() {
-		if (availablePostAuthnScripts != null) {
-			SelectableEntityHelper.select(availablePostAuthnScripts, postAuthnScripts);
-			return availablePostAuthnScripts;
-		}
-		availablePostAuthnScripts = getSelectableScripts(CustomScriptType.POST_AUTHN);
-		SelectableEntityHelper.select(availablePostAuthnScripts, postAuthnScripts);
-		return availablePostAuthnScripts;
-	}
-
-	public List<SelectableEntity<CustomScript>> searchAvailableConsentCustomScripts() {
-		if (availableConsentScripts != null) {
-			SelectableEntityHelper.select(availableConsentScripts, consentScripts);
-			return availableConsentScripts;
-		}
-		availableConsentScripts = getSelectableScripts(CustomScriptType.CONSENT_GATHERING);
-		SelectableEntityHelper.select(availableConsentScripts, consentScripts);
-		return availableConsentScripts;
-	}
-	
-
-	public List<SelectableEntity<CustomScript>> searchAvailableSpontaneousScopeScripts() {
-		if (availableSpontaneousScripts != null) {
-			SelectableEntityHelper.select(availableSpontaneousScripts, spontaneousScopesScripts);
-			return availableSpontaneousScripts;
-		}
-		availableSpontaneousScripts = getSelectableScripts(CustomScriptType.SPONTANEOUS_SCOPE);
-		SelectableEntityHelper.select(availableSpontaneousScripts, spontaneousScopesScripts);
-		return availableSpontaneousScripts;
-	}
-
-	public List<SelectableEntity<CustomScript>> getSelectableScripts(CustomScriptType type) {
-		return getScripts(type).stream().map(SelectableEntity::new).collect(Collectors.toList());
-	}
-
-	public List<CustomScript> getScripts(CustomScriptType type) {
-		return customScriptService.findCustomScripts(Lists.newArrayList(type));
-	}
-
-	public void searchAvailableScopes() {
-		if (this.availableScopes != null) {
-			selectAddedScopes();
-			return;
-		}
-		List<SelectableEntity<Scope>> tmpAvailableScopes = new ArrayList<SelectableEntity<Scope>>();
-		List<Scope> scopes = new ArrayList<Scope>();
-		try {
-			scopes = scopeService.getAllScopesList(1000);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		for (Scope scope : scopes) {
-			tmpAvailableScopes.add(new SelectableEntity<Scope>(scope));
-		}
-		this.availableScopes = tmpAvailableScopes;
-		selectAddedScopes();
-	}
-
-	public void searchAvailableSectors() {
-		if (this.availableSectors != null) {
-			selectAddedSector();
-			return;
-		}
-		List<SelectableEntity<OxAuthSectorIdentifier>> tmpAvailableSectors = new ArrayList<SelectableEntity<OxAuthSectorIdentifier>>();
-		for (OxAuthSectorIdentifier sector : sectorIdentifierService.getAllSectorIdentifiers()) {
-			tmpAvailableSectors.add(new SelectableEntity<OxAuthSectorIdentifier>(sector));
-		}
-		this.availableSectors = tmpAvailableSectors;
-		selectAddedSector();
-	}
-
-	public void searchAvailableGrantTypes() {
-		if (this.availableGrantTypes != null) {
-			selectAddedGrantTypes();
-			return;
-		}
-		List<SelectableEntity<GrantType>> tmpAvailableGrantTypes = new ArrayList<SelectableEntity<GrantType>>();
-		tmpAvailableGrantTypes.add(new SelectableEntity<GrantType>(GrantType.AUTHORIZATION_CODE));
-		tmpAvailableGrantTypes.add(new SelectableEntity<GrantType>(GrantType.IMPLICIT));
-		tmpAvailableGrantTypes.add(new SelectableEntity<GrantType>(GrantType.REFRESH_TOKEN));
-		tmpAvailableGrantTypes.add(new SelectableEntity<GrantType>(GrantType.CLIENT_CREDENTIALS));
-		tmpAvailableGrantTypes.add(new SelectableEntity<GrantType>(GrantType.RESOURCE_OWNER_PASSWORD_CREDENTIALS));
-		tmpAvailableGrantTypes.add(new SelectableEntity<GrantType>(GrantType.OXAUTH_UMA_TICKET));
-		this.availableGrantTypes = tmpAvailableGrantTypes;
-		selectAddedGrantTypes();
-	}
-
-	private void selectAddedResponseTypes() {
-		List<ResponseType> addedResponseTypes = getResponseTypes();
-		for (SelectableEntity<ResponseType> availableResponseType : this.availableResponseTypes) {
-			availableResponseType.setSelected(addedResponseTypes.contains(availableResponseType.getEntity()));
-		}
-	}
-
-	private void selectAddedSector() {
-		List<OxAuthSectorIdentifier> addedSectors = getSectorIdentifiers();
-		for (SelectableEntity<OxAuthSectorIdentifier> availableSector : this.availableSectors) {
-			availableSector.setSelected(addedSectors.contains(availableSector.getEntity()));
-		}
-	}
-
-	public void selectAddedScopes() {
-		List<String> ids = getScopes().stream().map(item -> item.getId()).collect(Collectors.toList());
-		availableScopes.stream().forEach(item -> {
-			item.setSelected(ids.contains(item.getEntity().getId()));
-		});
-	}
-
-	private void selectAddedCustomScripts() {
-		List<CustomScript> addedCustomScripts = getCustomScripts();
-		for (SelectableEntity<CustomScript> availableCustomScript : this.availableCustomScripts) {
-			availableCustomScript.setSelected(addedCustomScripts.contains(availableCustomScript.getEntity()));
-		}
-	}
-
-	private void selectAddedGrantTypes() {
-		List<GrantType> addedGrantTypes = getGrantTypes();
-		for (SelectableEntity<GrantType> availableGrantType : this.availableGrantTypes) {
-			availableGrantType.setSelected(addedGrantTypes.contains(availableGrantType.getEntity()));
-		}
-	}
-
-	public List<String> getClaimRedirectURIList() {
-		return claimRedirectURIList;
-	}
-
-	public void setClaimRedirectURIList(List<String> claimRedirectURIList) {
-		this.claimRedirectURIList = claimRedirectURIList;
-	}
-
-	public String getInum() {
-		return inum;
-	}
-
-	public void setInum(String inum) {
-		this.inum = inum;
-	}
-
-	public OxAuthClient getClient() {
-		return client;
-	}
-
-	public boolean isUpdate() {
-		return update;
-	}
-
-	public String getAvailableLoginUri() {
-		return availableLoginUri;
-	}
-
-	public void setAvailableLoginUri(String availableLoginUri) {
-		this.availableLoginUri = availableLoginUri;
-	}
-
-	public String getAvailableLogoutUri() {
-		return availableLogoutUri;
-	}
-
-	public void setAvailableLogoutUri(String availableLogoutUri) {
-		this.availableLogoutUri = availableLogoutUri;
-	}
-
-	public String getAvailableContact() {
-		return availableContact;
-	}
-
-	public void setAvailableContact(String availableContact) {
-		this.availableContact = availableContact;
-	}
-
-	public String getAvailableRequestUri() {
-		return availableRequestUri;
-	}
-
-	public String availableAuthorizedOrigin() {
-		return availableAuthorizedOrigin;
-	}
-
-	public void setAvailableRequestUri(String availableRequestUri) {
-		this.availableRequestUri = availableRequestUri;
-	}
-
-	public List<SelectableEntity<Scope>> getAvailableScopes() {
-		return this.availableScopes;
-	}
-
-	public List<GluuAttribute> getAvailableClaims() {
-		return this.availableClaims;
-	}
-
-	public List<GluuGroup> getAvailableGroups() {
-		return this.availableGroups;
-	}
-
-	public List<SelectableEntity<ResponseType>> getAvailableResponseTypes() {
-		return this.availableResponseTypes;
-	}
-
-	public List<SelectableEntity<CustomScript>> getAvailableCustomScripts() {
-		return this.availableCustomScripts;
-	}
-
-	public List<CustomScript> getPostAuthnScripts() {
-		return postAuthnScripts;
-	}
-
-	public List<CustomScript> getConsentScripts() {
-		return consentScripts;
-	}
-
-	public List<SelectableEntity<CustomScript>> getAvailablePostAuthnScripts() {
-		return availablePostAuthnScripts;
-	}
-
-	public List<SelectableEntity<CustomScript>> getAvailableConsentScripts() {
-		return availableConsentScripts;
-	}
-
-	public List<SelectableEntity<CustomScript>> getAvailableSpontaneousScopesScripts() {
-		return availableSpontaneousScripts;
-	}
-
-	public List<SelectableEntity<GrantType>> getAvailableGrantTypes() {
-		return this.availableGrantTypes;
-	}
-
-	public List<String> getLoginUris() {
-		return loginUris;
-	}
-
-	public void setLoginUris(List<String> values) {
-		this.loginUris = values;
-	}
-
-	public List<String> getLogoutUris() {
-		return logoutUris;
-	}
-
-	public List<Scope> getScopes() {
-		return this.scopes;
-	}
-
-	public List<DisplayNameEntry> getClaims() {
-		return this.claims;
-	}
-
-	public List<ResponseType> getResponseTypes() {
-		return responseTypes;
-	}
-
-	public List<OxAuthSectorIdentifier> getSectorIdentifiers() {
-		return sectorIdentifiers;
-	}
-
-	public void setSectorIdentifiers(List<OxAuthSectorIdentifier> sectorIdentifiers) {
-		this.sectorIdentifiers = sectorIdentifiers;
-	}
-
-	public List<CustomScript> getCustomScripts() {
-		return customScripts;
-	}
-
-	public List<GrantType> getGrantTypes() {
-		return grantTypes;
-	}
-
-	public List<String> getContacts() {
-		return contacts;
-	}
-
-	public List<String> getRequestUris() {
-		return requestUris;
-	}
-
-	public List<String> getAuthorizedOrigins() {
-		return authorizedOrigins;
-	}
-
-	public String getSearchAvailableClaimPattern() {
-		return searchAvailableClaimPattern;
-	}
-
-	public void setSearchAvailableClaimPattern(String searchAvailableClaimPattern) {
-		this.searchAvailableClaimPattern = searchAvailableClaimPattern;
-	}
-
-	public List<SelectableEntity<OxAuthSectorIdentifier>> getAvailableSectors() {
-		return availableSectors;
-	}
+    public String save() throws Exception {
+        if (this.client.isDeletable() && this.client.getExp() == null) {
+            this.client.setExp(oneDay());
+        }
+        if (!this.client.isDeletable()) {
+            this.client.setExp(null);
+        }
+        updateLoginURIs();
+        updateLogoutURIs();
+        updateClientLogoutURIs();
+        updateScopes();
+        updateSector();
+        updateClaims();
+        updateResponseTypes();
+        updateCustomScripts();
+        updateGrantTypes();
+        updateContacts();
+        updateRequestUris();
+        updateAuthorizedOrigins();
+        updateClaimredirectUri();
+        saveAttributesJson();
+        trimUriProperties();
+        this.client.setEncodedClientSecret(encryptionService.encrypt(this.client.getOxAuthClientSecret()));
+        if (update) {
+            try {
+                clientService.updateClient(this.client);
+                oxTrustAuditService.audit(
+                        "OPENID CLIENT " + this.client.getInum() + " **" + this.client.getDisplayName() + "** UPDATED",
+                        identity.getUser(),
+                        (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
+            } catch (BasePersistenceException ex) {
+                log.error("Failed to update client {}", this.inum, ex);
+                facesMessages.add(FacesMessage.SEVERITY_ERROR,
+                        "Failed to update client '#{updateClientAction.client.displayName}'");
+                return OxTrustConstants.RESULT_FAILURE;
+            }
+            facesMessages.add(FacesMessage.SEVERITY_INFO,
+                    "Client '#{updateClientAction.client.displayName}' updated successfully");
+        } else {
+            this.inum = clientService.generateInumForNewClient();
+            String dn = clientService.getDnForClient(this.inum);
+            if (StringHelper.isEmpty(this.client.getEncodedClientSecret())) {
+                generatePassword();
+            }
+            this.client.setDn(dn);
+            this.client.setInum(this.inum);
+            try {
+                clientService.addClient(this.client);
+                oxTrustAuditService.audit(
+                        "OPENID CLIENT " + this.client.getInum() + " **" + this.client.getDisplayName() + "** ADDED ",
+                        identity.getUser(),
+                        (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
+            } catch (BasePersistenceException ex) {
+                log.error("Failed to add new client {}", this.inum, ex);
+                facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new client");
+                return OxTrustConstants.RESULT_FAILURE;
+            }
+
+            facesMessages.add(FacesMessage.SEVERITY_INFO,
+                    "New client '#{updateClientAction.client.displayName}' added successfully");
+            conversationService.endConversation();
+            this.update = true;
+        }
+        return OxTrustConstants.RESULT_SUCCESS;
+    }
+
+    private void saveAttributesJson() {
+        ClientAttributes clientAttributes = new ClientAttributes();
+        try {
+            clientAttributes = new ObjectMapper().readValue(this.oxAttributesJson, ClientAttributes.class);
+        } catch (Exception e) {
+            log.info("error parsing json:" + e);
+        }
+        clientAttributes.setPostAuthnScripts(postAuthnScripts.stream().map(CustomScript::getDn).collect(Collectors.toList()));
+        clientAttributes.setConsentGatheringScripts(consentScripts.stream().map(CustomScript::getDn).collect(Collectors.toList()));
+        clientAttributes.setSpontaneousScopeScriptDns(spontaneousScopesScripts.stream().map(CustomScript::getDn).collect(Collectors.toList()));
+        clientAttributes.setIntrospectionScripts(introspectionScripts.stream().map(CustomScript::getDn).collect(Collectors.toList()));
+        this.client.setAttributes(clientAttributes);
+    }
+
+    private void trimUriProperties() {
+        this.client.setClientUri(StringHelper.trimAll(this.client.getClientUri()));
+        this.client.setJwksUri(StringHelper.trimAll(this.client.getJwksUri()));
+        this.client.setLogoUri(StringHelper.trimAll(this.client.getLogoUri()));
+        this.client.setPolicyUri(StringHelper.trimAll(this.client.getPolicyUri()));
+        this.client.setSectorIdentifierUri(StringHelper.trimAll(this.client.getSectorIdentifierUri()));
+        this.client.setTosUri(StringHelper.trimAll(this.client.getTosUri()));
+        this.client.setInitiateLoginUri(StringHelper.trimAll(this.client.getInitiateLoginUri()));
+    }
+
+    public String delete() throws Exception {
+        if (update) {
+            try {
+                clientService.removeClient(this.client);
+                oxTrustAuditService.audit(
+                        "OPENID CLIENT " + this.client.getInum() + " **" + this.client.getDisplayName() + "** DELETED ",
+                        identity.getUser(),
+                        (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
+                facesMessages.add(FacesMessage.SEVERITY_INFO,
+                        "Client '#{updateClientAction.client.displayName}' removed successfully");
+                conversationService.endConversation();
+                return OxTrustConstants.RESULT_SUCCESS;
+            } catch (BasePersistenceException ex) {
+                log.error("Failed to remove client {}", this.inum, ex);
+            }
+        }
+        facesMessages.add(FacesMessage.SEVERITY_ERROR,
+                "Failed to remove client '#{updateClientAction.client.displayName}'");
+        return OxTrustConstants.RESULT_FAILURE;
+    }
+
+    public void removeLoginURI(String uri) {
+        removeFromList(this.loginUris, uri);
+    }
+
+    public void removeLogoutURI(String uri) {
+        removeFromList(this.logoutUris, uri);
+    }
+
+    public void removeClientLogoutURI(String uri) {
+        removeFromList(this.clientlogoutUris, uri);
+    }
+
+    public void removeClaimRedirectURI(String uri) {
+        removeFromList(this.claimRedirectURIList, uri);
+    }
+
+    public void removePostAuthnScript(CustomScript script) {
+        postAuthnScripts.remove(script);
+    }
+
+    public void removeConsentScript(CustomScript script) {
+        consentScripts.remove(script);
+    }
+
+    public void removeSpontaneousScript(CustomScript script) {
+        spontaneousScopesScripts.remove(script);
+    }
+
+    public void removeIntrospectionScript(CustomScript script) {
+        introspectionScripts.remove(script);
+    }
+
+    public void removeContact(String contact) {
+        if (StringUtils.isEmpty(contact)) {
+            return;
+        }
+        for (Iterator<String> iterator = contacts.iterator(); iterator.hasNext(); ) {
+            String tmpContact = iterator.next();
+            if (contact.equals(tmpContact)) {
+                iterator.remove();
+                break;
+            }
+        }
+    }
+
+    public void removeRequestUri(String requestUri) {
+        if (StringUtils.isEmpty(requestUri)) {
+            return;
+        }
+        for (Iterator<String> iterator = requestUris.iterator(); iterator.hasNext(); ) {
+            String tmpRequestUri = iterator.next();
+            if (requestUri.equals(tmpRequestUri)) {
+                iterator.remove();
+                break;
+            }
+        }
+    }
+
+    public void removeAuthorizedOrigin(String authorizedOrigin) {
+        if (StringUtils.isEmpty(authorizedOrigin)) {
+            return;
+        }
+        for (Iterator<String> iterator = authorizedOrigins.iterator(); iterator.hasNext(); ) {
+            String tmpAuthorizationOrigin = iterator.next();
+            if (authorizedOrigin.equals(tmpAuthorizationOrigin)) {
+                iterator.remove();
+                break;
+            }
+        }
+    }
+
+    private void removeFromList(List<String> uriList, String uri) {
+        if (StringUtils.isEmpty(uri)) {
+            return;
+        }
+        for (Iterator<String> iterator = uriList.iterator(); iterator.hasNext(); ) {
+            String tmpUri = iterator.next();
+            if (uri.equals(tmpUri)) {
+                iterator.remove();
+                break;
+            }
+        }
+    }
+
+    public void removeScope(String inum) {
+        if (StringHelper.isEmpty(inum)) {
+            return;
+        }
+        for (Scope scope : this.scopes) {
+            if (scope.getInum().equalsIgnoreCase(inum)) {
+                this.scopes.remove(scope);
+                break;
+            }
+        }
+    }
+
+    private void addClaim(GluuAttribute claim) {
+        DisplayNameEntry oneClaim = new DisplayNameEntry(claim.getDn(), claim.getInum(), claim.getDisplayName());
+        this.claims.add(oneClaim);
+    }
+
+    public void removeClaim(String inum) throws Exception {
+        if (StringHelper.isEmpty(inum)) {
+            return;
+        }
+        String removeClaimDn = attributeService.getDnForAttribute(inum);
+        for (Iterator<DisplayNameEntry> iterator = this.claims.iterator(); iterator.hasNext(); ) {
+            DisplayNameEntry oneClaim = iterator.next();
+            if (removeClaimDn.equals(oneClaim.getDn())) {
+                iterator.remove();
+                break;
+            }
+        }
+    }
+
+    public void acceptSelectLoginUri() {
+        if (StringHelper.isEmpty(this.availableLoginUri)) {
+            return;
+        }
+        if (!this.loginUris.contains(this.availableLoginUri) && checkWhiteListRedirectUris(availableLoginUri)
+                && checkBlackListRedirectUris(availableLoginUri)) {
+            boolean acceptable = isAcceptable(this.availableLoginUri);
+            if (acceptable) {
+                this.loginUris.add(this.availableLoginUri);
+            } else {
+                try {
+                    if (getProtocol(availableLoginUri).equalsIgnoreCase("http")) {
+                        facesMessages.add(FacesMessage.SEVERITY_ERROR,
+                                "http schema is allowed with localhost/127.0.0.1");
+                    } else {
+                        facesMessages.add(FacesMessage.SEVERITY_ERROR, "A sector identifier must be defined first.");
+                    }
+                } catch (MalformedURLException e) {
+                }
+
+            }
+
+        } else {
+            facesMessages.add(FacesMessage.SEVERITY_ERROR, "The URL is not valid or may be Blacklisted.",
+                    "The URL is not valid or may be Blacklisted.");
+        }
+        this.availableLoginUri = "https://";
+    }
+
+    private boolean isAcceptable(String availableLoginUri) {
+        boolean result = false;
+        try {
+            if (getProtocol(availableLoginUri).equalsIgnoreCase("http")) {
+                if (this.client.getOxAuthAppType().equals(OxAuthApplicationType.NATIVE) && isImplicitFlow()) {
+                    return true;
+                }
+                if (!this.client.getOxAuthAppType().equals(OxAuthApplicationType.NATIVE)
+                        && getHostname(availableLoginUri).equalsIgnoreCase("localhost")) {
+                    return true;
+                }
+                if (!this.client.getOxAuthAppType().equals(OxAuthApplicationType.NATIVE)
+                        && getHostname(availableLoginUri).equalsIgnoreCase("127.0.0.1")) {
+                    return true;
+                }
+                return false;
+            } else {
+                if (this.client.getSubjectType().equals(OxAuthSubjectType.PUBLIC)) {
+                    return true;
+                } else if (this.loginUris.size() < 1) {
+                    result = true;
+                } else if (this.loginUris.size() >= 1 && hasSameHostname(this.availableLoginUri)) {
+                    result = true;
+                } else if (this.loginUris.size() >= 1 && !hasSameHostname(this.availableLoginUri) && sectorExist()) {
+                    result = true;
+                }
+            }
+        } catch (MalformedURLException e) {
+            facesMessages.add(FacesMessage.SEVERITY_ERROR, "The url is malformed", "The url is malformed");
+            log.error(e.getMessage());
+        }
+        return result;
+    }
+
+    private boolean isImplicitFlow() {
+        if (this.grantTypes.contains(GrantType.IMPLICIT)) {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean hasSameHostname(String url1) throws MalformedURLException {
+        boolean result = true;
+        URL uri1 = new URL(url1);
+        for (String url : this.loginUris) {
+            URL uri = new URL(url);
+            if (!(uri1.getHost().equalsIgnoreCase(uri.getHost()))) {
+                result = false;
+                break;
+            }
+        }
+        return result;
+    }
+
+    private String getHostname(String url) {
+        URL uri1;
+        try {
+            uri1 = new URL(url);
+            return uri1.getHost();
+        } catch (MalformedURLException e) {
+            return null;
+        }
+
+    }
+
+    private String getProtocol(String url) throws MalformedURLException {
+        URL uri1 = new URL(url);
+        return uri1.getProtocol();
+    }
+
+    private boolean sectorExist() {
+        boolean result = false;
+        String sectorUri = this.client.getSectorIdentifierUri();
+        try {
+            if (sectorUri != null && !sectorUri.isEmpty()) {
+                JSONArray json = new JSONArray(IOUtils.toString(new URL(sectorUri), Charset.forName("UTF-8")));
+                if (json != null) {
+                    result = true;
+                }
+            }
+        } catch (MalformedURLException e) {
+            facesMessages.add(FacesMessage.SEVERITY_ERROR, "The url of the sector assigned to this client is malformed",
+                    "The url of the sector assigned to this client is malformed");
+            log.error(e.getMessage());
+        } catch (IOException e) {
+            log.error(e.getMessage());
+        } catch (JSONException e) {
+            log.error(e.getMessage());
+        }
+        return result;
+    }
+
+    public void acceptSelectClaims() {
+        if (this.availableClaims == null) {
+            return;
+        }
+        Set<String> addedClaimInums = new HashSet<String>();
+        for (DisplayNameEntry claim : claims) {
+            addedClaimInums.add(claim.getInum());
+        }
+
+        for (GluuAttribute aClaim : this.availableClaims) {
+            if (aClaim.isSelected() && !addedClaimInums.contains(aClaim.getInum())) {
+                addClaim(aClaim);
+            }
+        }
+        this.searchAvailableClaimPattern = "";
+    }
+
+    public void acceptSelectLogoutUri() {
+        if (StringHelper.isEmpty(this.availableLogoutUri)) {
+            return;
+        }
+        if (!this.logoutUris.contains(this.availableLogoutUri) && checkWhiteListRedirectUris(availableLogoutUri)
+                && checkBlackListRedirectUris(availableLogoutUri)) {
+            this.logoutUris.add(this.availableLogoutUri);
+        } else {
+            facesMessages.add(FacesMessage.SEVERITY_ERROR, "The URL is not valid or may be Blacklisted.");
+        }
+        this.availableLogoutUri = "https://";
+    }
+
+    public void acceptSelectClientLogoutUri() {
+        if (StringHelper.isEmpty(this.availableClientlogoutUri)) {
+            return;
+        }
+        if (!this.clientlogoutUris.contains(this.availableClientlogoutUri)) {
+            this.clientlogoutUris.add(this.availableClientlogoutUri);
+        }
+        this.availableClientlogoutUri = "https://";
+    }
+
+    public void acceptSelectClaimRedirectUri() {
+        if (StringHelper.isEmpty(this.availableClaimRedirectUri)) {
+            return;
+        }
+        if (!this.claimRedirectURIList.contains(this.availableClaimRedirectUri)) {
+            this.claimRedirectURIList.add(this.availableClaimRedirectUri);
+        }
+        this.availableClaimRedirectUri = "https://";
+    }
+
+    public void acceptSelectContact() {
+        if (StringHelper.isEmpty(this.availableContact)) {
+            return;
+        }
+        if (!contacts.contains((availableContact))) {
+            contacts.add(availableContact);
+        }
+        this.availableContact = "";
+    }
+
+    public void acceptSelectRequestUri() {
+        if (StringHelper.isEmpty(this.availableRequestUri)) {
+            return;
+        }
+        if (!this.requestUris.contains(this.availableRequestUri)) {
+            this.requestUris.add(this.availableRequestUri);
+        }
+        this.availableRequestUri = "https://";
+    }
+
+    public void acceptSelectAuthorizedOrigin() {
+        if (StringHelper.isEmpty(this.availableAuthorizedOrigin)) {
+            return;
+        }
+        if (!this.authorizedOrigins.contains(this.availableAuthorizedOrigin)) {
+            this.authorizedOrigins.add(this.availableAuthorizedOrigin);
+        }
+        this.availableAuthorizedOrigin = "https://";
+    }
+
+    public void cancelIntrospectionScripts() {
+    }
+
+    public void cancelPostAuthnScripts() {
+    }
+
+    public void cancelConsentScripts() {
+    }
+
+    public void cancelSpontaneousScopesScripts() {
+    }
+
+    public void cancelSelectClaims() {
+    }
+
+    public void cancelSelectGroups() {
+    }
+
+    public void cancelSelectLoginUri() {
+        this.availableLoginUri = "http://";
+    }
+
+    public void cancelSelectLogoutUri() {
+        this.availableLogoutUri = "http://";
+    }
+
+    public void cancelClientLogoutUri() {
+        this.availableClientlogoutUri = "http://";
+    }
+
+    public void cancelClaimRedirectUri() {
+        this.availableClaimRedirectUri = "http://";
+    }
+
+    public void cancelSelectContact() {
+        this.availableContact = "";
+    }
+
+    public void cancelSelectDefaultAcrValue() {
+    }
+
+    public void cancelSelectRequestUri() {
+    }
+
+    public void cancelSelectAuthorizedOrigin() {
+    }
+
+    private void updateLoginURIs() {
+        if (this.loginUris == null || this.loginUris.size() == 0) {
+            this.client.setOxAuthRedirectURIs(null);
+            return;
+        }
+        List<String> tmpUris = new ArrayList<String>();
+        for (String uri : this.loginUris) {
+            tmpUris.add(StringHelper.trimAll(uri));
+        }
+        this.client.setOxAuthRedirectURIs(tmpUris);
+    }
+
+    private void updateLogoutURIs() {
+        if (this.logoutUris == null || this.logoutUris.size() == 0) {
+            this.client.setOxAuthPostLogoutRedirectURIs(null);
+            return;
+        }
+        List<String> tmpUris = new ArrayList<String>();
+        for (String uri : this.logoutUris) {
+            tmpUris.add(StringHelper.trimAll(uri));
+        }
+        this.client.setOxAuthPostLogoutRedirectURIs(tmpUris);
+    }
+
+    private void updateClientLogoutURIs() {
+        if (this.clientlogoutUris == null || this.clientlogoutUris.size() == 0) {
+            this.client.setLogoutUri(null);
+            return;
+        }
+        List<String> tmpUris = new ArrayList<String>();
+        for (String uri : this.clientlogoutUris) {
+            tmpUris.add(StringHelper.trimAll(uri));
+        }
+        this.client.setLogoutUri(tmpUris);
+    }
+
+    private void updateContacts() {
+        validateContacts();
+        if (contacts == null || contacts.size() == 0) {
+            client.setContacts(null);
+            return;
+        }
+        List<String> tmpContacts = new ArrayList<String>();
+        for (String contact : contacts) {
+            tmpContacts.add(contact);
+        }
+        client.setContacts(tmpContacts);
+    }
+
+    private void updateRequestUris() {
+        if (requestUris == null || requestUris.size() == 0) {
+            client.setRequestUris(null);
+            return;
+        }
+        List<String> tmpRequestUris = new ArrayList<String>();
+        for (String requestUri : requestUris) {
+            tmpRequestUris.add(StringHelper.trimAll(requestUri));
+        }
+        client.setRequestUris(tmpRequestUris.toArray(new String[tmpRequestUris.size()]));
+    }
+
+    private void updateAuthorizedOrigins() {
+        if (authorizedOrigins == null || authorizedOrigins.size() == 0) {
+            client.setAuthorizedOrigins(null);
+            return;
+        }
+        List<String> tmpAuthorizedOrigins = new ArrayList<String>();
+        for (String authorizedOrigin : authorizedOrigins) {
+            tmpAuthorizedOrigins.add(StringHelper.trimAll(authorizedOrigin));
+        }
+        client.setAuthorizedOrigins(tmpAuthorizedOrigins.toArray(new String[tmpAuthorizedOrigins.size()]));
+    }
+
+    private void updateClaimredirectUri() {
+        if (claimRedirectURIList == null || claimRedirectURIList.size() == 0) {
+            client.setClaimRedirectURI(null);
+            return;
+        }
+        List<String> tmpClaimRedirectURI = new ArrayList<String>();
+        for (String claimRedirectURI : claimRedirectURIList) {
+            tmpClaimRedirectURI.add(StringHelper.trimAll(claimRedirectURI));
+        }
+        client.setClaimRedirectURI(tmpClaimRedirectURI.toArray(new String[tmpClaimRedirectURI.size()]));
+    }
+
+    private void updateClaims() {
+        if (this.claims == null || this.claims.size() == 0) {
+            this.client.setOxAuthClaims(null);
+            return;
+        }
+        List<String> tmpClaims = new ArrayList<String>();
+        for (DisplayNameEntry claim : this.claims) {
+            tmpClaims.add(claim.getDn());
+        }
+        this.client.setOxAuthClaims(tmpClaims);
+    }
+
+    private void updateResponseTypes() {
+        List<ResponseType> currentResponseTypes = this.responseTypes;
+        if (currentResponseTypes == null || currentResponseTypes.size() == 0) {
+            this.client.setResponseTypes(null);
+            return;
+        }
+        this.client.setResponseTypes(currentResponseTypes.toArray(new ResponseType[currentResponseTypes.size()]));
+    }
+
+    private void updateScopes() {
+        List<Scope> currentResponseTypes = this.scopes;
+        if (currentResponseTypes == null || currentResponseTypes.size() == 0) {
+            this.client.setOxAuthScopes(null);
+            return;
+        }
+        List<String> scopes = new ArrayList<String>();
+        for (Scope scope : this.scopes) {
+            scopes.add(scope.getDn());
+        }
+        this.client.setOxAuthScopes(scopes);
+    }
+
+    private void updateSector() {
+        if (this.sectorIdentifiers != null && this.sectorIdentifiers.size() > 0) {
+            String url = appConfiguration.getOxAuthSectorIdentifierUrl() + "/" + this.sectorIdentifiers.get(0).getId();
+            this.client.setSectorIdentifierUri(url);
+            OxAuthSectorIdentifier sectorIdentifier = sectorIdentifierService
+                    .getSectorIdentifierById(this.sectorIdentifiers.get(0).getId());
+            if (sectorIdentifier != null) {
+                sectorIdentifier.addNewClient(this.getInum());
+                sectorIdentifierService.updateSectorIdentifier(sectorIdentifier);
+            }
+        }
+    }
+
+    private void updateGrantTypes() {
+        List<GrantType> currentGrantTypes = this.grantTypes;
+        if (currentGrantTypes == null || currentGrantTypes.size() == 0) {
+            this.client.setGrantTypes(null);
+            return;
+        }
+        this.client.setGrantTypes(currentGrantTypes.toArray(new GrantType[currentGrantTypes.size()]));
+    }
+
+    private void updateCustomScripts() {
+        List<CustomScript> currentCustomScripts = this.customScripts;
+        if (currentCustomScripts == null || currentCustomScripts.size() == 0) {
+            this.client.setDefaultAcrValues(null);
+            return;
+        }
+        List<String> customScripts = new ArrayList<String>();
+        for (CustomScript customScript : currentCustomScripts) {
+            customScripts.add(customScript.getName());
+        }
+        this.client.setDefaultAcrValues(customScripts.toArray(new String[customScripts.size()]));
+
+        this.client.getAttributes().setPostAuthnScripts(BaseEntry.getDNs(getPostAuthnScripts()));
+        this.client.getAttributes().setConsentGatheringScripts(BaseEntry.getDNs(getConsentScripts()));
+        this.client.getAttributes().setIntrospectionScripts(BaseEntry.getDNs(getIntrospectionScripts()));
+        this.client.getAttributes().setSpontaneousScopeScriptDns(BaseEntry.getDNs(getSpontaneousScopesScripts()));
+    }
+
+    public void selectAddedClaims() {
+        if (this.availableClaims == null) {
+            return;
+        }
+        Set<String> addedClaimInums = new HashSet<String>();
+        for (DisplayNameEntry claim : this.claims) {
+            addedClaimInums.add(claim.getInum());
+        }
+        for (GluuAttribute aClaim : this.availableClaims) {
+            aClaim.setSelected(addedClaimInums.contains(aClaim.getInum()));
+        }
+    }
+
+    public void searchAvailableClaims() {
+        if (Util.equals(this.oldSearchAvailableClaimPattern, this.searchAvailableClaimPattern)) {
+            return;
+        }
+        try {
+            this.availableClaims = attributeService.searchAttributes(this.searchAvailableClaimPattern,
+                    OxTrustConstants.searchClientsSizeLimit);
+            this.oldSearchAvailableClaimPattern = this.searchAvailableClaimPattern;
+            selectAddedClaims();
+        } catch (Exception ex) {
+            log.error("Failed to find attributes", ex);
+        }
+    }
+
+    private List<DisplayNameEntry> getInitialClaimDisplayNameEntries() throws Exception {
+        List<DisplayNameEntry> result = new ArrayList<DisplayNameEntry>();
+        if ((client.getOxAuthClaims() == null) || (client.getOxAuthClaims().size() == 0)) {
+            return result;
+        }
+        List<DisplayNameEntry> tmp = lookupService.getDisplayNameEntries(attributeService.getDnForAttribute(null),
+                this.client.getOxAuthClaims());
+        if (tmp != null) {
+            result.addAll(tmp);
+        }
+        return result;
+    }
+
+    private List<ResponseType> getInitialResponseTypes() {
+        List<ResponseType> result = new ArrayList<ResponseType>();
+        ResponseType[] currentResponseTypes = this.client.getResponseTypes();
+        if ((currentResponseTypes == null) || (currentResponseTypes.length == 0)) {
+            return result;
+        }
+        result.addAll(Arrays.asList(currentResponseTypes));
+        return result;
+    }
+
+    private List<GrantType> getInitialGrantTypes() {
+        List<GrantType> result = new ArrayList<GrantType>();
+        GrantType[] currentGrantTypes = this.client.getGrantTypes();
+        if (currentGrantTypes == null || currentGrantTypes.length == 0) {
+            return result;
+        }
+        result.addAll(Arrays.asList(currentGrantTypes));
+        return result;
+    }
+
+    public void acceptSelectResponseTypes() {
+        List<ResponseType> addedResponseTypes = getResponseTypes();
+        for (SelectableEntity<ResponseType> availableResponseType : this.availableResponseTypes) {
+            ResponseType responseType = availableResponseType.getEntity();
+            if (availableResponseType.isSelected() && !addedResponseTypes.contains(responseType)) {
+                addResponseType(responseType.getValue());
+            }
+            if (!availableResponseType.isSelected() && addedResponseTypes.contains(responseType)) {
+                removeResponseType(responseType.getValue());
+            }
+        }
+    }
+
+    public void acceptSelectSectors() {
+        List<OxAuthSectorIdentifier> addedSectors = getSectorIdentifiers();
+        for (SelectableEntity<OxAuthSectorIdentifier> availableSector : this.availableSectors) {
+            OxAuthSectorIdentifier sector = availableSector.getEntity();
+            if (availableSector.isSelected() && !addedSectors.contains(sector) && addedSectors.size() == 0) {
+                addSector(sector);
+            }
+            if (!availableSector.isSelected() && addedSectors.contains(sector)) {
+                removeSector(sector);
+            }
+        }
+    }
+
+    public void cancelSelectSectors() {
+
+    }
+
+    public void acceptSelectCustomScripts() {
+        List<CustomScript> addedCustomScripts = getCustomScripts();
+        for (SelectableEntity<CustomScript> availableCustomScript : this.availableCustomScripts) {
+            CustomScript customScript = availableCustomScript.getEntity();
+            if (availableCustomScript.isSelected() && !addedCustomScripts.contains(customScript)) {
+                addCustomScript(customScript.getName());
+            }
+            if (!availableCustomScript.isSelected() && addedCustomScripts.contains(customScript)) {
+                removeCustomScript(customScript.getName());
+            }
+        }
+    }
+
+    public void acceptIntrospectionScripts() {
+        introspectionScripts.clear();
+        introspectionScripts.addAll(availableIntrospectionScripts.stream().filter(SelectableEntity::isSelected)
+                .map(SelectableEntity::getEntity).collect(Collectors.toList()));
+    }
+
+    public void acceptPostAuthnScripts() {
+        postAuthnScripts.clear();
+        postAuthnScripts.addAll(availablePostAuthnScripts.stream().filter(SelectableEntity::isSelected)
+                .map(SelectableEntity::getEntity).collect(Collectors.toList()));
+    }
+
+    public void acceptConsentScripts() {
+        consentScripts.clear();
+        consentScripts.addAll(availableConsentScripts.stream().filter(SelectableEntity::isSelected)
+                .map(SelectableEntity::getEntity).collect(Collectors.toList()));
+    }
+
+    public void acceptSpontaneousScopesScripts() {
+        spontaneousScopesScripts.clear();
+        spontaneousScopesScripts.addAll(availableSpontaneousScripts.stream().filter(SelectableEntity::isSelected)
+                .map(SelectableEntity::getEntity).collect(Collectors.toList()));
+    }
+
+    public void acceptSelectScopes() {
+        List<Scope> addedScopes = getScopes();
+        for (SelectableEntity<Scope> availableScope : this.availableScopes) {
+            Scope scope = availableScope.getEntity();
+            if (availableScope.isSelected() && !contain(addedScopes, scope)) {
+                addScope(scope.getInum());
+            }
+            if (!availableScope.isSelected() && addedScopes.contains(scope)) {
+                removeScope(scope.getInum());
+            }
+        }
+    }
+
+    private boolean contain(List<Scope> scopes, Scope element) {
+        boolean found = false;
+        for (Scope scope : scopes) {
+            if (scope.getInum().equalsIgnoreCase(element.getInum())) {
+                found = true;
+                break;
+            }
+        }
+        return found;
+    }
+
+    private void addScope(String inum) {
+        if (StringHelper.isEmpty(inum)) {
+            return;
+        }
+        Scope addScope = new Scope();
+        try {
+            addScope = scopeService.getScopeByInum(inum);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (addScope != null) {
+            this.scopes.add(addScope);
+        }
+    }
+
+    private void addCustomScript(String name) {
+        if (StringHelper.isEmpty(name)) {
+            return;
+        }
+        CustomScript addCustomScript = new CustomScript();
+        addCustomScript.setName(name);
+        if (addCustomScript != null) {
+            this.customScripts.add(addCustomScript);
+        }
+    }
+
+    public void removeCustomScript(String value) {
+        if (StringHelper.isEmpty(value)) {
+            return;
+        }
+        for (CustomScript customScript : customScripts) {
+            if (customScript.getName().equalsIgnoreCase(value)) {
+                this.customScripts.remove(customScript);
+                break;
+            }
+        }
+    }
+
+    public void acceptSelectGrantTypes() {
+        List<GrantType> addedGrantTypes = getGrantTypes();
+        for (SelectableEntity<GrantType> availableGrantType : this.availableGrantTypes) {
+            GrantType grantType = availableGrantType.getEntity();
+            if (availableGrantType.isSelected() && !addedGrantTypes.contains(grantType)) {
+                addGrantType(grantType.toString());
+            }
+            if (!availableGrantType.isSelected() && addedGrantTypes.contains(grantType)) {
+                removeGrantType(grantType.toString());
+            }
+        }
+    }
+
+    public void cancelSelectCustomScripts() {
+    }
+
+    public void cancelSelectScopes() {
+    }
+
+    public void cancelSelectResponseTypes() {
+    }
+
+    public void cancelSelectGrantTypes() {
+    }
+
+    public void addResponseType(String value) {
+        if (StringHelper.isEmpty(value)) {
+            return;
+        }
+        ResponseType addResponseType = ResponseType.getByValue(value);
+        if (addResponseType != null) {
+            this.responseTypes.add(addResponseType);
+        }
+    }
+
+    public void addSector(OxAuthSectorIdentifier value) {
+        if (value == null) {
+            return;
+        }
+        this.sectorIdentifiers.add(value);
+    }
+
+    public void addGrantType(String value) {
+        if (StringHelper.isEmpty(value)) {
+            return;
+        }
+        GrantType addGrantType = GrantType.fromString(value);
+        if (addGrantType != null) {
+            this.grantTypes.add(addGrantType);
+        }
+    }
+
+    public void removeResponseType(String value) {
+        if (StringHelper.isEmpty(value)) {
+            return;
+        }
+        ResponseType removeResponseType = ResponseType.getByValue(value);
+        if (removeResponseType != null) {
+            this.responseTypes.remove(removeResponseType);
+        }
+    }
+
+    public void removeSector(OxAuthSectorIdentifier value) {
+        if (value == null) {
+            return;
+        }
+        this.sectorIdentifiers.remove(value);
+    }
+
+    public void removeGrantType(String value) {
+        if (StringHelper.isEmpty(value)) {
+            return;
+        }
+        GrantType removeGrantType = GrantType.fromString(value);
+        if (removeGrantType != null) {
+            this.grantTypes.remove(removeGrantType);
+        }
+    }
+
+    public void searchAvailableResponseTypes() {
+        if (this.availableResponseTypes != null) {
+            selectAddedResponseTypes();
+            return;
+        }
+
+        List<SelectableEntity<ResponseType>> tmpAvailableResponseTypes = new ArrayList<SelectableEntity<ResponseType>>();
+
+        for (ResponseType responseType : ResponseType.values()) {
+            tmpAvailableResponseTypes.add(new SelectableEntity<ResponseType>(responseType));
+        }
+
+        this.availableResponseTypes = tmpAvailableResponseTypes;
+        selectAddedResponseTypes();
+    }
+
+    public void searchAvailableCustomScripts() {
+        if (this.availableCustomScripts != null) {
+            selectAddedCustomScripts();
+            return;
+        }
+        this.availableCustomScripts = getSelectableScripts(CustomScriptType.PERSON_AUTHENTICATION);
+        selectAddedCustomScripts();
+    }
+
+    public List<SelectableEntity<CustomScript>> searchAvailableIntrospectionCustomScripts() {
+        if (availableIntrospectionScripts != null) {
+            SelectableEntityHelper.select(availableIntrospectionScripts, introspectionScripts);
+            return availableIntrospectionScripts;
+        }
+        availableIntrospectionScripts = getSelectableScripts(CustomScriptType.INTROSPECTION);
+        SelectableEntityHelper.select(availableIntrospectionScripts, introspectionScripts);
+        return availableIntrospectionScripts;
+    }
+
+    public List<SelectableEntity<CustomScript>> searchAvailablePostAuthnCustomScripts() {
+        if (availablePostAuthnScripts != null) {
+            SelectableEntityHelper.select(availablePostAuthnScripts, postAuthnScripts);
+            return availablePostAuthnScripts;
+        }
+        availablePostAuthnScripts = getSelectableScripts(CustomScriptType.POST_AUTHN);
+        SelectableEntityHelper.select(availablePostAuthnScripts, postAuthnScripts);
+        return availablePostAuthnScripts;
+    }
+
+    public List<SelectableEntity<CustomScript>> searchAvailableConsentCustomScripts() {
+        if (availableConsentScripts != null) {
+            SelectableEntityHelper.select(availableConsentScripts, consentScripts);
+            return availableConsentScripts;
+        }
+        availableConsentScripts = getSelectableScripts(CustomScriptType.CONSENT_GATHERING);
+        SelectableEntityHelper.select(availableConsentScripts, consentScripts);
+        return availableConsentScripts;
+    }
+
+
+    public List<SelectableEntity<CustomScript>> searchAvailableSpontaneousScopeScripts() {
+        if (availableSpontaneousScripts != null) {
+            SelectableEntityHelper.select(availableSpontaneousScripts, spontaneousScopesScripts);
+            return availableSpontaneousScripts;
+        }
+        availableSpontaneousScripts = getSelectableScripts(CustomScriptType.SPONTANEOUS_SCOPE);
+        SelectableEntityHelper.select(availableSpontaneousScripts, spontaneousScopesScripts);
+        return availableSpontaneousScripts;
+    }
+
+    public List<SelectableEntity<CustomScript>> getSelectableScripts(CustomScriptType type) {
+        return getScripts(type).stream().map(SelectableEntity::new).collect(Collectors.toList());
+    }
+
+    public List<CustomScript> getScripts(CustomScriptType type) {
+        return customScriptService.findCustomScripts(Lists.newArrayList(type));
+    }
+
+    public void searchAvailableScopes() {
+        if (this.availableScopes != null) {
+            selectAddedScopes();
+            return;
+        }
+        List<SelectableEntity<Scope>> tmpAvailableScopes = new ArrayList<SelectableEntity<Scope>>();
+        List<Scope> scopes = new ArrayList<Scope>();
+        try {
+            scopes = scopeService.getAllScopesList(1000);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        for (Scope scope : scopes) {
+            tmpAvailableScopes.add(new SelectableEntity<Scope>(scope));
+        }
+        this.availableScopes = tmpAvailableScopes;
+        selectAddedScopes();
+    }
+
+    public void searchAvailableSectors() {
+        if (this.availableSectors != null) {
+            selectAddedSector();
+            return;
+        }
+        List<SelectableEntity<OxAuthSectorIdentifier>> tmpAvailableSectors = new ArrayList<SelectableEntity<OxAuthSectorIdentifier>>();
+        for (OxAuthSectorIdentifier sector : sectorIdentifierService.getAllSectorIdentifiers()) {
+            tmpAvailableSectors.add(new SelectableEntity<OxAuthSectorIdentifier>(sector));
+        }
+        this.availableSectors = tmpAvailableSectors;
+        selectAddedSector();
+    }
+
+    public void searchAvailableGrantTypes() {
+        if (this.availableGrantTypes != null) {
+            selectAddedGrantTypes();
+            return;
+        }
+        List<SelectableEntity<GrantType>> tmpAvailableGrantTypes = new ArrayList<SelectableEntity<GrantType>>();
+        tmpAvailableGrantTypes.add(new SelectableEntity<GrantType>(GrantType.AUTHORIZATION_CODE));
+        tmpAvailableGrantTypes.add(new SelectableEntity<GrantType>(GrantType.IMPLICIT));
+        tmpAvailableGrantTypes.add(new SelectableEntity<GrantType>(GrantType.REFRESH_TOKEN));
+        tmpAvailableGrantTypes.add(new SelectableEntity<GrantType>(GrantType.CLIENT_CREDENTIALS));
+        tmpAvailableGrantTypes.add(new SelectableEntity<GrantType>(GrantType.RESOURCE_OWNER_PASSWORD_CREDENTIALS));
+        tmpAvailableGrantTypes.add(new SelectableEntity<GrantType>(GrantType.OXAUTH_UMA_TICKET));
+        this.availableGrantTypes = tmpAvailableGrantTypes;
+        selectAddedGrantTypes();
+    }
+
+    private void selectAddedResponseTypes() {
+        List<ResponseType> addedResponseTypes = getResponseTypes();
+        for (SelectableEntity<ResponseType> availableResponseType : this.availableResponseTypes) {
+            availableResponseType.setSelected(addedResponseTypes.contains(availableResponseType.getEntity()));
+        }
+    }
+
+    private void selectAddedSector() {
+        List<OxAuthSectorIdentifier> addedSectors = getSectorIdentifiers();
+        for (SelectableEntity<OxAuthSectorIdentifier> availableSector : this.availableSectors) {
+            availableSector.setSelected(addedSectors.contains(availableSector.getEntity()));
+        }
+    }
+
+    public void selectAddedScopes() {
+        List<String> ids = getScopes().stream().map(item -> item.getId()).collect(Collectors.toList());
+        availableScopes.stream().forEach(item -> {
+            item.setSelected(ids.contains(item.getEntity().getId()));
+        });
+    }
+
+    private void selectAddedCustomScripts() {
+        List<CustomScript> addedCustomScripts = getCustomScripts();
+        for (SelectableEntity<CustomScript> availableCustomScript : this.availableCustomScripts) {
+            availableCustomScript.setSelected(addedCustomScripts.contains(availableCustomScript.getEntity()));
+        }
+    }
+
+    private void selectAddedGrantTypes() {
+        List<GrantType> addedGrantTypes = getGrantTypes();
+        for (SelectableEntity<GrantType> availableGrantType : this.availableGrantTypes) {
+            availableGrantType.setSelected(addedGrantTypes.contains(availableGrantType.getEntity()));
+        }
+    }
+
+    public List<String> getClaimRedirectURIList() {
+        return claimRedirectURIList;
+    }
+
+    public void setClaimRedirectURIList(List<String> claimRedirectURIList) {
+        this.claimRedirectURIList = claimRedirectURIList;
+    }
+
+    public String getInum() {
+        return inum;
+    }
+
+    public void setInum(String inum) {
+        this.inum = inum;
+    }
+
+    public OxAuthClient getClient() {
+        return client;
+    }
+
+    public boolean isUpdate() {
+        return update;
+    }
+
+    public String getAvailableLoginUri() {
+        return availableLoginUri;
+    }
+
+    public void setAvailableLoginUri(String availableLoginUri) {
+        this.availableLoginUri = availableLoginUri;
+    }
+
+    public String getAvailableLogoutUri() {
+        return availableLogoutUri;
+    }
+
+    public void setAvailableLogoutUri(String availableLogoutUri) {
+        this.availableLogoutUri = availableLogoutUri;
+    }
+
+    public String getAvailableContact() {
+        return availableContact;
+    }
+
+    public void setAvailableContact(String availableContact) {
+        this.availableContact = availableContact;
+    }
+
+    public String getAvailableRequestUri() {
+        return availableRequestUri;
+    }
+
+    public String availableAuthorizedOrigin() {
+        return availableAuthorizedOrigin;
+    }
+
+    public void setAvailableRequestUri(String availableRequestUri) {
+        this.availableRequestUri = availableRequestUri;
+    }
+
+    public List<SelectableEntity<Scope>> getAvailableScopes() {
+        return this.availableScopes;
+    }
+
+    public List<GluuAttribute> getAvailableClaims() {
+        return this.availableClaims;
+    }
+
+    public List<GluuGroup> getAvailableGroups() {
+        return this.availableGroups;
+    }
+
+    public List<SelectableEntity<ResponseType>> getAvailableResponseTypes() {
+        return this.availableResponseTypes;
+    }
+
+    public List<SelectableEntity<CustomScript>> getAvailableCustomScripts() {
+        return this.availableCustomScripts;
+    }
+
+    public List<CustomScript> getPostAuthnScripts() {
+        return postAuthnScripts;
+    }
+
+    public List<CustomScript> getConsentScripts() {
+        return consentScripts;
+    }
+
+    public List<CustomScript> getSpontaneousScopesScripts() {
+        return spontaneousScopesScripts;
+    }
+
+    public List<CustomScript> getIntrospectionScripts() {
+        return introspectionScripts;
+    }
+
+    public List<SelectableEntity<CustomScript>> getAvailablePostAuthnScripts() {
+        return availablePostAuthnScripts;
+    }
+
+    public List<SelectableEntity<CustomScript>> getAvailableConsentScripts() {
+        return availableConsentScripts;
+    }
+
+    public List<SelectableEntity<CustomScript>> getAvailableSpontaneousScopesScripts() {
+        return availableSpontaneousScripts;
+    }
+
+    public List<SelectableEntity<CustomScript>> getAvailableIntrospectionScripts() {
+        return availableIntrospectionScripts;
+    }
+
+    public List<SelectableEntity<GrantType>> getAvailableGrantTypes() {
+        return this.availableGrantTypes;
+    }
+
+    public List<String> getLoginUris() {
+        return loginUris;
+    }
+
+    public void setLoginUris(List<String> values) {
+        this.loginUris = values;
+    }
+
+    public List<String> getLogoutUris() {
+        return logoutUris;
+    }
+
+    public List<Scope> getScopes() {
+        return this.scopes;
+    }
+
+    public List<DisplayNameEntry> getClaims() {
+        return this.claims;
+    }
+
+    public List<ResponseType> getResponseTypes() {
+        return responseTypes;
+    }
+
+    public List<OxAuthSectorIdentifier> getSectorIdentifiers() {
+        return sectorIdentifiers;
+    }
+
+    public void setSectorIdentifiers(List<OxAuthSectorIdentifier> sectorIdentifiers) {
+        this.sectorIdentifiers = sectorIdentifiers;
+    }
+
+    public List<CustomScript> getCustomScripts() {
+        return customScripts;
+    }
+
+    public List<GrantType> getGrantTypes() {
+        return grantTypes;
+    }
+
+    public List<String> getContacts() {
+        return contacts;
+    }
+
+    public List<String> getRequestUris() {
+        return requestUris;
+    }
+
+    public List<String> getAuthorizedOrigins() {
+        return authorizedOrigins;
+    }
+
+    public String getSearchAvailableClaimPattern() {
+        return searchAvailableClaimPattern;
+    }
+
+    public void setSearchAvailableClaimPattern(String searchAvailableClaimPattern) {
+        this.searchAvailableClaimPattern = searchAvailableClaimPattern;
+    }
+
+    public List<SelectableEntity<OxAuthSectorIdentifier>> getAvailableSectors() {
+        return availableSectors;
+    }
 
 	public void setAvailableSectors(List<SelectableEntity<OxAuthSectorIdentifier>> availableSectors) {
 		this.availableSectors = availableSectors;

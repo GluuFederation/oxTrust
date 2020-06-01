@@ -859,6 +859,11 @@
             "description": "Boolean value specifying whether a client_secret is returned on client GET or PUT. Set to false by default which means to not return secret.",
             "type": "boolean"
         },
+        "introspectionScriptBackwardCompatibility": {
+            "id": "introspectionScriptBackwardCompatibility",
+            "description": "Boolean value specifying whether switch off client's introspection scripts (true value) and run all scripts that exists on server. Default value is false.",
+            "type": "boolean"
+        },
         "personCustomObjectClassList": {
             "id": "personCustomObjectClassList",
             "description": "LDAP custom object class list for dynamic person enrollment.",
