@@ -67,7 +67,7 @@
 										</h:commandLink></li>
 
 									<li id="menuPersonAuthScript"><h:commandLink
-											value="Person Authentication Scripts" onclick="lock();"
+											value="#{msg['leftmenu.personAuthnCustomScripts']}" onclick="lock();"
 											ondbclick="lock();" oncomplete="unlock();"
 											action="#{menuAction.endConversation('/script/manageAuthScript.xhtml')}"
 											rendered="#{permissionService.hasPermission('passport', 'access')}">
@@ -75,7 +75,7 @@
 												style="float: left; margin-top: 2px;"></i>
 										</h:commandLink></li>
 									<li id="menuOtherAuthScript"><h:commandLink
-											value="Others Custom Scripts" onclick="lock();"
+											value="#{msg['leftmenu.otherCustomScripts']}" onclick="lock();"
 											ondbclick="lock();" oncomplete="unlock();"
 											action="#{menuAction.endConversation('/script/manageOtherScript.xhtml')}"
 											rendered="#{permissionService.hasPermission('passport', 'access')}">
@@ -101,7 +101,7 @@
 										</h:commandLink></li>
 
 									<li id="subMenuLinkConfiguration12"><h:commandLink
-											value="Import/Export Attribute LDIF" onclick="lock();"
+											value="#{msg['leftmenu.importExportAttribute']}" onclick="lock();"
 											ondbclick="lock();" oncomplete="unlock();"
 											action="#{menuAction.endConversation('/attribute/attributeImport.xhtml')}"
 											rendered="#{permissionService.hasPermission('attribute', 'access')}">

@@ -181,7 +181,6 @@ public class UpdateOrganizationAction implements Serializable {
 			organizationService.updateOrganization(this.organization);
 			configurationService.encryptedSmtpPassword(smtpConfiguration);
 			updateConfiguration();
-			// organizationService.updateServerDetail(gluuServerDetail);
 			saveWebKeySettings();
 		} catch (BasePersistenceException ex) {
 			log.error("Failed to update organization", ex);
