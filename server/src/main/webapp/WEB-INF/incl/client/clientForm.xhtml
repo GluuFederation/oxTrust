@@ -1195,7 +1195,7 @@
 										id="spontaneousScopeScriptDns" look="primary">
 										<h:panelGroup id="selectedSpontaneousScopeScriptDnsId">
 										   <a4j:repeat rowKeyVar="_scriptIdx"
-												value="#{_clientAction.consentScripts}" var="_item">
+												value="#{_clientAction.spontaneousScopesScripts}" var="_item">
 												<div class="col-sm-12">
 													<div class="col-sm-6">
 														<h:outputText style="margin-left:-29px;"
@@ -1204,8 +1204,8 @@
 													</div>
 													<div class="col-sm-6">
 														<a4j:commandLink
-															action="#{_clientAction.removeConsentScript(_item)}"
-															execute="@this" render="selectedConsentScriptsId"
+															action="#{_clientAction.removeSpontaneousScript(_item)}"
+															execute="@this" render="selectedSpontaneousScopeScriptDnsId"
 															styleClass="glyphicon glyphicon-remove removeConsentScript">
 														</a4j:commandLink>
 													</div>
@@ -1220,6 +1220,38 @@
 										</h:panelGroup>
 									</b:panel>
 								</div>
+                                <div class="row" style="padding-left: 25px;">
+                                    <b:panel title="#{msg['clientForm.introspectionScripts']}"
+                                             id="introspectionScripts" look="primary">
+                                        <h:panelGroup id="selectedIntrospectionScriptsId">
+
+                                            <a4j:repeat rowKeyVar="_scriptIdx"
+                                                        value="#{_clientAction.introspectionScripts}" var="_item">
+                                                <div class="col-sm-12">
+                                                    <div class="col-sm-6">
+                                                        <h:outputText style="margin-left:-29px;"
+                                                                      value="#{_item.name}" />
+                                                        <h:outputText value=" " />
+                                                    </div>
+                                                    <div class="col-sm-6">
+                                                        <a4j:commandLink
+                                                                action="#{_clientAction.removeIntrospectionScript(_item)}"
+                                                                execute="@this" render="selectedIntrospectionScriptsId"
+                                                                styleClass="glyphicon glyphicon-remove removeIntrospectionScript">
+                                                        </a4j:commandLink>
+                                                    </div>
+                                                </div>
+                                            </a4j:repeat>
+
+                                            <p:spacer height="5" />
+                                            <a4j:commandButton
+                                                    styleClass="btn btn-primary AddIntrospectionScript"
+                                                    style="margin-top:5px" value="#{msg['clientForm.add']}"
+                                                    oncomplete="#{rich:component('introspectionDialog:selectEntityModalPanel')}.show();"
+                                                    execute="@this" eventsQueue="clientQueue" />
+                                        </h:panelGroup>
+                                    </b:panel>
+                                </div>
 							</div>
 						</div>
 					</div>
@@ -1254,8 +1286,16 @@
 		id="spontaneousScopeDialog" label="#{msg['clientForm.spontaneousScopeScripts']}"
 		nameProperty="entity.name" render="selectedSpontaneousScopeScriptDnsId"
 		searchMethod="#{_clientAction.searchAvailableSpontaneousScopeScripts}"
-		searchResult="#{_clientAction.availableSpontaneousScripts}" />		
-	<script>
+		searchResult="#{_clientAction.availableSpontaneousScripts}" />
+    <ox:selectSelectableEntityDialog
+            acceptMethod="#{_clientAction.acceptIntrospectionScripts}"
+            cancelMethod="#{_clientAction.cancelIntrospectionScripts}"
+            displayNameProperty="entity.description" displaySearchForm="false"
+            id="introspectionDialog" label="#{msg['clientForm.introspectionScripts']}"
+            nameProperty="entity.name" render="selectedIntrospectionScriptsId"
+            searchMethod="#{_clientAction.searchAvailableIntrospectionCustomScripts}"
+            searchResult="#{_clientAction.availableIntrospectionScripts}" />
+    <script>
 	    $('#oidctab a').click(function(e) {
 		  e.preventDefault();
 		  $(this).tab('show');
