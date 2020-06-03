@@ -15,7 +15,16 @@
 		<f:viewAction action="#{conversationService.initConversation}" />
 		<f:viewAction action="#{updateScopeAction.update}" onPostback="false" />
 	</f:metadata>
-
+	<ui:define name="head">
+		<script
+			src="#{oxTrustConfigurationService.jsLocation}/jsoneditor.min.js"
+			type="text/javascript" />
+		<script>
+			// Set the default CSS theme and icon library globally
+			JSONEditor.defaults.theme = 'bootstrap3';
+			JSONEditor.defaults.iconlib = 'bootstrap3';
+		</script>
+	</ui:define>
 	<ui:define name="body">
 		<section class="content-header">
 			<h1 style="color: #333;">

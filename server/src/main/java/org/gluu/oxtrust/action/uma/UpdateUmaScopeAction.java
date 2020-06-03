@@ -42,9 +42,12 @@ import org.gluu.service.LookupService;
 import org.gluu.service.security.Secure;
 import org.gluu.util.StringHelper;
 import org.oxauth.persistence.model.Scope;
+import org.oxauth.persistence.model.ScopeAttributes;
 import org.richfaces.event.FileUploadEvent;
 import org.richfaces.model.UploadedFile;
 import org.slf4j.Logger;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Action class for view and update UMA resource
@@ -101,6 +104,8 @@ public class UpdateUmaScopeAction implements Serializable {
 
 	private boolean update;
 
+	private String oxAttributesJson;
+
 	private List<OxAuthClient> clientList;
 
 	public List<OxAuthClient> getClientList() {
@@ -114,10 +119,12 @@ public class UpdateUmaScopeAction implements Serializable {
 	public String add() {
 		try {
 			if (this.umaScope != null) {
+				this.oxAttributesJson = getScopeAttributesJson();
 				return OxTrustConstants.RESULT_SUCCESS;
 			}
 			this.umaScope = new Scope();
 			this.update = false;
+			this.oxAttributesJson = getScopeAttributesJson();
 			this.authorizationPolicies = getInitialAuthorizationPolicies();
 			return OxTrustConstants.RESULT_SUCCESS;
 		} catch (Exception e) {
@@ -131,11 +138,13 @@ public class UpdateUmaScopeAction implements Serializable {
 	public String update() {
 		this.update = true;
 		if (this.umaScope != null) {
+			this.oxAttributesJson = getScopeAttributesJson();
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
 		try {
 			String scopeDn = scopeDescriptionService.getDnForScope(this.scopeInum);
 			this.umaScope = scopeDescriptionService.getUmaScopeByDn(scopeDn);
+			this.oxAttributesJson = getScopeAttributesJson();
 			this.authorizationPolicies = getInitialAuthorizationPolicies();
 			List<UmaResource> umaResourceList = resourceSetService.findResourcesByScope(scopeDn);
 			if (umaResourceList != null) {
@@ -181,6 +190,7 @@ public class UpdateUmaScopeAction implements Serializable {
 		this.umaScope.setDisplayName(this.umaScope.getDisplayName().trim());
 		this.umaScope.setScopeType(ScopeType.UMA);
 		updateAuthorizationPolicies();
+		saveAttributesJson();
 		if (this.update) {
 			if (scopeWithSameNameExistInUpdate()) {
 				facesMessages.add(FacesMessage.SEVERITY_ERROR, "A scope with same name already exist");
@@ -450,5 +460,36 @@ public class UpdateUmaScopeAction implements Serializable {
 
 	public List<CustomScript> getAuthorizationPolicies() {
 		return authorizationPolicies;
+	}
+
+	public String getOxAttributesJson() {
+		return oxAttributesJson;
+	}
+
+	public void setOxAttributesJson(String oxAttributesJson) {
+		this.oxAttributesJson = oxAttributesJson;
+	}
+
+	private void saveAttributesJson() {
+		ScopeAttributes scopeAttributes = new ScopeAttributes();
+		try {
+			scopeAttributes = new ObjectMapper().readValue(this.oxAttributesJson, ScopeAttributes.class);
+		} catch (Exception e) {
+			log.info("error parsing json:" + e);
+		}
+
+		this.umaScope.setAttributes(scopeAttributes);
+	}
+
+	private String getScopeAttributesJson() {
+		if (umaScope != null) {
+			try {
+				return new ObjectMapper().writeValueAsString(this.umaScope.getAttributes());
+			} catch (Exception e) {
+				return "{}";
+			}
+		} else {
+			return "{}";
+		}
 	}
 }

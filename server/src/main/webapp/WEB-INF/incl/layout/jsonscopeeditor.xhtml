@@ -1,0 +1,55 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core">
+	<h:panelGroup styleClass="hiddenFieldContainer">
+		<h:inputHidden prependId="false" id="#{id}_hidden" value="#{json}"
+			class="hiddenField" />
+	</h:panelGroup>
+	<div id="#{id}"></div>
+	<h:panelGroup rendered="#{saveBtnLabelHide ne 'hide'}">
+		<button id="save_#{id}" type="button" class="btn btn-primary"
+			style="margin-bottom: 5px !important; margin-top: 10px !important;">#{saveBtnLabel}</button>
+	</h:panelGroup>
+	<h:outputScript>        
+		  var container = document.getElementById("#{id}");
+		        
+		  var editor_#{id} = new JSONEditor(container, {
+		        // Enable fetching schemas via ajax
+		        ajax: true,
+		        
+		        // The schema for the editor
+		        schema: {
+		          $ref: "#{jsonSchema}",
+		          format: "tabs"
+				},
+
+		        // Seed the form with a starting value
+		        startval: #{json},
+		        
+		        // Disable additional properties
+		        no_additional_properties: true,
+		        
+		        // Require all properties by default
+		        required_by_default: true,
+		        
+		        disable_properties: true,
+		        disable_edit_json: true
+    		  });
+
+		  document.getElementById('save_#{id}').onclick = function () {
+		  		var hiddenField = document.getElementById("#{id}_hidden");
+		  		if(hiddenField == null){
+		  		   hiddenField = $('.hiddenFieldContainer input[type=hidden]')[0];
+		  		}
+		  		var action = document.getElementsByClassName("#{saveBtnId}");
+		  		var editedJson = editor_#{id}.getValue();
+		  		hiddenField.value=JSON.stringify(editedJson);
+		  		hiddenField = $('.hiddenFieldBox input[type=hidden]')[0];
+		  		hiddenField.value=JSON.stringify(editedJson);
+		  		action.click();
+			  	return false;
+		  };
+	    </h:outputScript>
+</ui:composition>

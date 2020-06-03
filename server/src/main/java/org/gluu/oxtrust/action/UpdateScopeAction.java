@@ -13,7 +13,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-
 import javax.enterprise.context.ConversationScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
@@ -41,7 +40,10 @@ import org.gluu.service.security.Secure;
 import org.gluu.util.StringHelper;
 import org.gluu.util.Util;
 import org.oxauth.persistence.model.Scope;
+import org.oxauth.persistence.model.ScopeAttributes;
 import org.slf4j.Logger;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Action class for viewing and updating scopes.
@@ -92,6 +94,8 @@ public class UpdateScopeAction implements Serializable {
 	private List<CustomScript> dynamicScripts;
 	private List<SelectableEntity<CustomScript>> availableDynamicScripts = new ArrayList<>();
 
+	private String oxAttributesJson;
+
 	public String add() throws Exception {
 		if (this.scope != null) {
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -113,6 +117,7 @@ public class UpdateScopeAction implements Serializable {
 		}
 		this.dynamicScripts = getInitialDynamicScripts();
 		fillAvailableDynScript();
+		this.oxAttributesJson = getScopeAttributesJson();
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
@@ -165,6 +170,7 @@ public class UpdateScopeAction implements Serializable {
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 		fillAvailableDynScript();
+		this.oxAttributesJson = getScopeAttributesJson();
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
@@ -184,6 +190,7 @@ public class UpdateScopeAction implements Serializable {
 			this.scope.setId(this.scope.getDisplayName());
 			updateDynamicScripts();
 			updateClaims();
+			saveAttributesJson();
 			if (update) {
 				try {
 					scopeService.updateScope(this.scope);
@@ -523,5 +530,36 @@ public class UpdateScopeAction implements Serializable {
 
 	public List<ScopeType> getScopeTypes() {
 		return scopeService.getScopeTypes();
+	}
+
+	public String getOxAttributesJson() {
+		return oxAttributesJson;
+	}
+
+	public void setOxAttributesJson(String oxAttributesJson) {
+		this.oxAttributesJson = oxAttributesJson;
+	}
+
+	private void saveAttributesJson() {
+		ScopeAttributes scopeAttributes = new ScopeAttributes();
+		try {
+			scopeAttributes = new ObjectMapper().readValue(this.oxAttributesJson, ScopeAttributes.class);
+		} catch (Exception e) {
+			log.info("error parsing json:" + e);
+		}
+
+		this.scope.setAttributes(scopeAttributes);
+	}
+
+	private String getScopeAttributesJson() {
+		if (scope != null) {
+			try {
+				return new ObjectMapper().writeValueAsString(this.scope.getAttributes());
+			} catch (Exception e) {
+				return "{}";
+			}
+		} else {
+			return "{}";
+		}
 	}
 }

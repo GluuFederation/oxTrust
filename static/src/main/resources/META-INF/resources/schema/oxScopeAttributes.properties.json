@@ -1,0 +1,24 @@
+{
+	"$schema": "http://json-schema.org/draft-04/schema#",
+	"id": "/",
+	"type": "object",
+	"title": "oxAttributes",
+	"additionalProperties": true,
+	"properties": {
+		"spontaneousClientId": {
+			"type": "string",
+			"id": "spontaneousClientId"
+		},
+		"spontaneousClientScopes": {
+			"id": "spontaneousClientScopes",
+			"type": "array",
+			"minItems": 0,
+			"uniqueItems": true,
+			"additionalItems": true,
+			"items": {
+				"type": "string",
+				"minLength": 1
+			}
+		}
+	}
+}

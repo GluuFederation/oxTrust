@@ -45,8 +45,8 @@
 								<h:selectOneMenu
 									styleClass="col-sm-9 rounded form-control scopeType"
 									value="#{_scope.scopeType}">
-									<f:selectItems value="#{_scopeAction.getScopeTypes()}" var="_type"
-										itemLabel="#{_type.displayName}" />
+									<f:selectItems value="#{_scopeAction.getScopeTypes()}"
+										var="_type" itemLabel="#{_type.displayName}" />
 									<f:converter
 										converterId="org.gluu.jsf2.converter.EnumConverter" />
 									<a4j:ajax event="change"
@@ -90,8 +90,7 @@
 											<br />
 										</a4j:repeat>
 										<a4j:commandButton styleClass="btn btn-primary"
-											value="Add Claim"
-											update="claim"
+											value="Add Claim" update="claim"
 											action="#{_scopeAction.clearAvailableClaims()}"
 											oncomplete="#{rich:component('claim:selectAttributeModalPanel')}.show(); refresh();"
 											execute="@this" eventsQueue="scopeQueue" />
@@ -136,6 +135,29 @@
 							</b:panel>
 						</a4j:region>
 					</h:panelGroup>
+
+					<div class="tab-pane box box-primary" id="scopeAttributes"
+						style="background-color: white;">
+						<h:panelGroup columns="1" width="100%" prependId="false"
+							style="background-color: white;">
+							<ui:decorate id="scopeAttributes" prependId="false"
+								template="/WEB-INF/incl/layout/jsonscopeeditor.xhtml">
+								<ui:param name="id" value="scopeAttributes" />
+								<ui:param name="parentId" value="scopeAttributes" />
+								<ui:param name="json" value="#{updateScopeAction.oxAttributesJson}" />
+								<ui:param name="jsonSchema"
+									value="#{request.contextPath}/schema/oxScopeAttributes.properties.json" />
+								<ui:param name="saveBtnId" value="updateButtons" />
+								<ui:param name="saveBtnLabel" value="Save attributes" />
+							</ui:decorate>
+							<h:panelGroup styleClass="hiddenFieldBox">
+								<h:inputHidden prependId="false" id="#{id}_hidden"
+									style="width:100%;" value="#{updateScopeAction.oxAttributesJson}"
+									class="hiddenField" />
+							</h:panelGroup>
+						</h:panelGroup>
+					</div>
+
 				</h:panelGroup>
 				<div class="box-footer">
 					<ui:insert name="controlButttons" />
