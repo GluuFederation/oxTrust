@@ -51,7 +51,7 @@
 					<ui:define name="controlButttons">
 						<div id="updateButtons">
 							<b:commandButton action="#{updateScopeAction.save}"
-								styleClass="btn btn-primary" ajax="true" update="@form"
+								styleClass="btn btn-primary updateScopeButtonId" ajax="true" update="@form"
 								value="#{msg['scope.update']}" />
 							<a4j:commandButton ajaxSingle="true" eventsQueue="scopeQueue"
 								onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();"
