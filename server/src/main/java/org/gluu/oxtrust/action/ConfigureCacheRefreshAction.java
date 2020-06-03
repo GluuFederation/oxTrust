@@ -30,11 +30,9 @@ import org.gluu.config.oxtrust.CacheRefreshAttributeMapping;
 import org.gluu.config.oxtrust.CacheRefreshConfiguration;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
-import org.gluu.model.GluuStatus;
 import org.gluu.model.SimpleCustomProperty;
 import org.gluu.model.SimpleProperty;
 import org.gluu.model.ldap.GluuLdapConfiguration;
-import org.gluu.oxtrust.service.config.ConfigurationFactory;
 import org.gluu.oxtrust.ldap.cache.model.GluuSimplePerson;
 import org.gluu.oxtrust.ldap.cache.service.CacheRefreshService;
 import org.gluu.oxtrust.ldap.cache.service.CacheRefreshUpdateMethod;
@@ -50,6 +48,7 @@ import org.gluu.oxtrust.service.InumService;
 import org.gluu.oxtrust.service.JsonConfigurationService;
 import org.gluu.oxtrust.service.OxTrustAuditService;
 import org.gluu.oxtrust.service.PersonService;
+import org.gluu.oxtrust.service.config.ConfigurationFactory;
 import org.gluu.oxtrust.service.external.ExternalCacheRefreshService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.ldap.operation.impl.LdapConnectionProvider;
@@ -387,7 +386,6 @@ public class ConfigureCacheRefreshAction
 		return this.cacheRefreshConfiguration;
 	}
 
-
 	private GluuLdapConfiguration fixLdapConfiguration(GluuLdapConfiguration ldapConfig) {
 		ldapConfig.updateStringsLists();
 		if (ldapConfig.isUseAnonymousBind()) {
@@ -459,7 +457,7 @@ public class ConfigureCacheRefreshAction
 		GluuCustomPerson targetPerson = new GluuCustomPerson();
 		targetPerson.setDn(targetPersonDn);
 		targetPerson.setInum(targetInum);
-		targetPerson.setStatus(GluuStatus.ACTIVE);
+		targetPerson.setStatus(appConfiguration.getSupportedUserStatus().get(0));
 		targetPerson.setCustomObjectClasses(targetCustomObjectClasses);
 
 		// Execute mapping according to configuration

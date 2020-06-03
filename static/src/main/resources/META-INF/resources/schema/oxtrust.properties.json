@@ -615,6 +615,17 @@
             "id": "enableUpdateNotification",
             "description": "Boolean value specifying whether to enable gluu-server update notification.",
             "type": "boolean"
+        },
+        "supportedUserStatus": {
+            "id": "supportedUserStatus",
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "additionalItems": true,
+            "items": {
+                "type": "string",
+                "minLength": 1
+            }
         }
     },
     "required": [
@@ -713,6 +724,7 @@
         "authenticationRecaptchaEnabled",
         "enforceEmailUniqueness",
         "useLocalCache",
-        "enableUpdateNotification"
+        "enableUpdateNotification",
+        "supportedUserStatus"
     ]
 }

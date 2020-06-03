@@ -31,7 +31,6 @@ import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
 import org.gluu.model.GluuAttribute;
-import org.gluu.model.GluuStatus;
 import org.gluu.model.GluuUserRole;
 import org.gluu.model.attribute.AttributeDataType;
 import org.gluu.oxtrust.ldap.load.conf.ImportPersonConfiguration;
@@ -436,7 +435,7 @@ public class PersonImportAction implements Serializable {
 		log.trace("Found {} persons in input Excel file", persons.size());
 		for (GluuCustomPerson person : persons) {
 			if (person.getStatus() == null) {
-				person.setStatus(GluuStatus.INACTIVE);
+				person.setStatus(appConfiguration.getSupportedUserStatus().get(1));
 			}
 			if (uidPAsswords.containsKey(person.getUid())) {
 				String password = uidPAsswords.get(person.getUid());

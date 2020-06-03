@@ -13,7 +13,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import org.gluu.model.GluuStatus;
 import org.gluu.persist.annotation.AttributeName;
 import org.gluu.persist.annotation.DataEntry;
 import org.gluu.persist.annotation.JsonObject;
@@ -121,12 +120,12 @@ public class GluuCustomPerson extends User
         setAttribute("givenName", value);
     }
 
-    public GluuStatus getStatus() {
-        return GluuStatus.getByValue(getAttribute("gluuStatus"));
+    public String getStatus() {
+        return getAttribute("gluuStatus");
     }
 
-    public void setStatus(GluuStatus value) {
-        setAttribute("gluuStatus", value.getValue());
+    public void setStatus(String value) {
+        setAttribute("gluuStatus", value);
     }
 
     public String getUserPassword() {

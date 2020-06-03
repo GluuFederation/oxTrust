@@ -151,9 +151,7 @@
 												rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'User Status') }">
 												<f:selectItems
 													value="#{updatePersonAction.activeInactiveStatuses}"
-													var="_type" itemLabel="#{_type.displayName}" />
-												<f:converter
-													converterId="org.gluu.jsf2.converter.EnumConverter" />
+													var="_type" itemLabel="#{_type}" />
 											</h:selectOneMenu>
 											<h:selectOneMenu
 												styleClass="rounded form-control #{_custAttr.metadata.displayName}"

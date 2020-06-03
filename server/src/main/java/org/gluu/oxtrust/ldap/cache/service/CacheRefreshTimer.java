@@ -632,7 +632,7 @@ public class CacheRefreshTimer {
 		GluuCustomPerson targetPerson = new GluuCustomPerson();
 		targetPerson.setDn(targetPersonDn);
 		targetPerson.setInum(targetInum);
-		targetPerson.setStatus(GluuStatus.ACTIVE);
+		targetPerson.setStatus(appConfiguration.getSupportedUserStatus().get(0));
 		targetPerson.setCustomObjectClasses(customObjectClasses);
 
 		// Update list of return attributes according mapping
@@ -705,7 +705,7 @@ public class CacheRefreshTimer {
 			targetPerson = new GluuCustomPerson();
 			targetPerson.setDn(targetPersonDn);
 			targetPerson.setInum(targetInum);
-			targetPerson.setStatus(GluuStatus.ACTIVE);
+			targetPerson.setStatus(appConfiguration.getSupportedUserStatus().get(0));
 			updatePerson = false;
 		}
 		targetPerson.setCustomObjectClasses(targetCustomObjectClasses);

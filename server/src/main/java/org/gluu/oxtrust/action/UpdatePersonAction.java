@@ -32,7 +32,6 @@ import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
 import org.gluu.model.GluuAttribute;
-import org.gluu.model.GluuStatus;
 import org.gluu.model.GluuUserRole;
 import org.gluu.model.attribute.AttributeValidation;
 import org.gluu.oxauth.model.fido.u2f.protocol.DeviceData;
@@ -64,7 +63,6 @@ import org.gluu.oxtrust.service.PersonService;
 import org.gluu.oxtrust.service.external.ExternalUpdateUserService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.ProductInstallationChecker;
-import org.gluu.oxtrust.util.ServiceUtil;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.exception.BasePersistenceException;
 import org.gluu.service.DataSourceTypeService;
@@ -181,11 +179,11 @@ public class UpdatePersonAction implements Serializable {
 
 	@Inject
 	private OxTrustAuditService oxTrustAuditService;
-	
+
 	@Inject
 	private JsonService jsonService;
 
-	private GluuStatus gluuStatus;
+	private String gluuStatus;
 
 	private String password;
 
@@ -253,11 +251,11 @@ public class UpdatePersonAction implements Serializable {
 		this.externalAuthCustomAttributes = externalAuthCustomAttributes;
 	}
 
-	public GluuStatus getGluuStatus() {
+	public String getGluuStatus() {
 		return gluuStatus;
 	}
 
-	public void setGluuStatus(GluuStatus gluuStatus) {
+	public void setGluuStatus(String gluuStatus) {
 		this.gluuStatus = gluuStatus;
 	}
 
@@ -562,7 +560,7 @@ public class UpdatePersonAction implements Serializable {
 		List<GluuCustomAttribute> customAttributes = customAttributeAction.getCustomAttributes();
 		for (GluuCustomAttribute customAttribute : customAttributes) {
 			if (customAttribute.getName().equalsIgnoreCase("gluuStatus")) {
-				customAttribute.setValue(gluuStatus.getValue());
+				customAttribute.setValue(gluuStatus);
 				break;
 			}
 
@@ -658,8 +656,7 @@ public class UpdatePersonAction implements Serializable {
 	 * @return
 	 * @throws Exception
 	 */
-	public GluuCustomPerson syncEmailReverse(GluuCustomPerson gluuCustomPerson, boolean isScim2)
-			throws Exception {
+	public GluuCustomPerson syncEmailReverse(GluuCustomPerson gluuCustomPerson, boolean isScim2) throws Exception {
 
 		/*
 		 * Implementation of this method could not be simplified to creating a new empty
@@ -686,13 +683,13 @@ public class UpdatePersonAction implements Serializable {
 
 			if (oxTrustEmail != null && oxTrustEmail.getValues() != null) {
 
-			    for (String oxTrustEmailJson : oxTrustEmail.getValues()) {
-                    oxTrustEmails.add(jsonService.jsonToObject(oxTrustEmailJson, Email.class));
-                }
+				for (String oxTrustEmailJson : oxTrustEmail.getValues()) {
+					oxTrustEmails.add(jsonService.jsonToObject(oxTrustEmailJson, Email.class));
+				}
 
 				for (Email email : oxTrustEmails) {
-                    oxTrustEmailSet.add(email.getValue());
-                }
+					oxTrustEmailSet.add(email.getValue());
+				}
 			}
 			mailSetCopy.removeAll(oxTrustEmailSet); // Keep those in "mail" and not in oxTrustEmail
 			oxTrustEmailSet.removeAll(mailSet); // Keep those in oxTrustEmail and not in "mail"
@@ -701,18 +698,18 @@ public class UpdatePersonAction implements Serializable {
 			// Build a list of indexes that should be removed in oxTrustEmails
 			for (int i = 0; i < oxTrustEmails.size(); i++) {
 				if (oxTrustEmailSet.contains(oxTrustEmails.get(i).getValue())) {
-                    delIndexes.add(0, i);
-                }
+					delIndexes.add(0, i);
+				}
 			}
 			// Delete unmatched oxTrustEmail entries from highest index to lowest
 			for (Integer idx : delIndexes) {
-                oxTrustEmails.remove(idx.intValue()); // must not pass an Integer directly
-            }
+				oxTrustEmails.remove(idx.intValue()); // must not pass an Integer directly
+			}
 
 			List<String> newValues = new ArrayList<String>();
 			for (Email email : oxTrustEmails) {
-                newValues.add(jsonService.objectToPerttyJson(email));
-            }
+				newValues.add(jsonService.objectToPerttyJson(email));
+			}
 
 			for (String mailStr : mailSetCopy) {
 				Email email = new Email();
@@ -860,8 +857,8 @@ public class UpdatePersonAction implements Serializable {
 		return update;
 	}
 
-	public GluuStatus[] getActiveInactiveStatuses() {
-		return new GluuStatus[] { GluuStatus.ACTIVE, GluuStatus.INACTIVE };
+	public List<String> getActiveInactiveStatuses() {
+		return appConfiguration.getSupportedUserStatus();
 	}
 
 	public void validateConfirmPassword(FacesContext context, UIComponent comp, Object value) {
@@ -882,7 +879,7 @@ public class UpdatePersonAction implements Serializable {
 		if (canValidate) {
 			pattern = Pattern.compile(validation.getRegexp());
 		}
-		if (!StringHelper.equalsIgnoreCase(password, confirmPassword) && this.confirmPassword!=null) {
+		if (!StringHelper.equalsIgnoreCase(password, confirmPassword) && this.confirmPassword != null) {
 			((UIInput) comp).setValid(false);
 			FacesMessage message = new FacesMessage("Both passwords should be the same!");
 			message.setSeverity(FacesMessage.SEVERITY_ERROR);
