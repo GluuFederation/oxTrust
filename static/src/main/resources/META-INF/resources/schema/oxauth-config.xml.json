@@ -888,7 +888,7 @@
         },
         "clientRegDefaultToCodeFlowWithRefresh": {
             "id": "clientRegDefaultToCodeFlowWithRefresh",
-            "description": "Boolean value specifying default behaviour for code flow about grant and response types.",
+            "description": "Boolean value specifying whether to add Authorization Code Flow with Refresh grant during client registration.",
             "type": "boolean"
         },
         "authenticationFilters": {
