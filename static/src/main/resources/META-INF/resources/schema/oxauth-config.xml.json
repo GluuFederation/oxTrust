@@ -886,6 +886,11 @@
             "description": "Boolean value specifying whether to enable client authentication filters.",
             "type": "boolean"
         },
+        "clientRegDefaultToCodeFlowWithRefresh": {
+            "id": "clientRegDefaultToCodeFlowWithRefresh",
+            "description": "Boolean value specifying whether to add Authorization Code Flow with Refresh grant during client registration.",
+            "type": "boolean"
+        },
         "authenticationFilters": {
             "id": "authenticationFilters",
             "description": "User authentication filters.",
@@ -1767,6 +1772,7 @@
         "personCustomObjectClassList",
         "authenticationFiltersEnabled",
         "clientAuthenticationFiltersEnabled",
+        "clientRegDefaultToCodeFlowWithRefresh",
         "authenticationFilters",
         "clientAuthenticationFilters",
         "sessionIdUnusedLifetime",
