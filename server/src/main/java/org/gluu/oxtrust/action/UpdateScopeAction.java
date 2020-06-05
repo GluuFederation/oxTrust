@@ -103,6 +103,7 @@ public class UpdateScopeAction implements Serializable {
 		this.update = false;
 		this.scope = new Scope();
 		this.scope.setScopeType(ScopeType.OAUTH);
+		this.scope.setNotShowInDiscovery(true);
 		try {
 			if (this.scope.getOxAuthClaims() != null && this.scope.getOxAuthClaims().size() > 0) {
 				this.claims = getClaimDisplayNameEntiries();
@@ -146,6 +147,7 @@ public class UpdateScopeAction implements Serializable {
 			if (this.scope.getDisplayName() == null) {
 				this.scope.setDisplayName(this.scope.getId());
 			}
+			this.scope.setNotShowInDiscovery(!this.scope.getNotShowInDiscovery());
 		} catch (BasePersistenceException ex) {
 			log.error("Failed to find scope {}", inum, ex);
 		}
@@ -188,6 +190,7 @@ public class UpdateScopeAction implements Serializable {
 		try {
 			this.scope.setDisplayName(this.scope.getDisplayName().trim());
 			this.scope.setId(this.scope.getDisplayName());
+			this.scope.setNotShowInDiscovery(!this.scope.getNotShowInDiscovery());
 			updateDynamicScripts();
 			updateClaims();
 			saveAttributesJson();
@@ -227,6 +230,7 @@ public class UpdateScopeAction implements Serializable {
 				conversationService.endConversation();
 				this.update = true;
 			}
+			this.scope.setNotShowInDiscovery(!this.scope.getNotShowInDiscovery());
 			log.debug(" returning success updating or saving scope");
 			return OxTrustConstants.RESULT_SUCCESS;
 		} catch (Exception e) {

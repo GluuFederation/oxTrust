@@ -40,7 +40,7 @@
 							id="descriptionId" />
 					</ox:decorate>
 					<div class="row">
-						<div class="col-sm-6 col-lg-6">
+						<div class="col-sm-4 col-lg-4">
 							<ox:decorate label="#{msg['scope.scopeType']}">
 								<h:selectOneMenu
 									styleClass="col-sm-9 rounded form-control scopeType"
@@ -54,10 +54,17 @@
 								</h:selectOneMenu>
 							</ox:decorate>
 						</div>
-						<div class="col-sm-6 col-lg-6">
+						<div class="col-sm-4 col-lg-4">
 							<ox:decorate label="#{msg['scope.defaultScope']}">
 								<h:selectBooleanCheckbox value="#{_scope.defaultScope}"
 									styleClass="col-sm-9 rounded registrationType">
+								</h:selectBooleanCheckbox>
+							</ox:decorate>
+						</div>
+						<div class="col-sm-4 col-lg-4">
+							<ox:decorate label="#{msg['scope.showInDiscovery']}">
+								<h:selectBooleanCheckbox value="#{_scope.notShowInDiscovery}"
+														 styleClass="col-sm-9 rounded registrationType">
 								</h:selectBooleanCheckbox>
 							</ox:decorate>
 						</div>
