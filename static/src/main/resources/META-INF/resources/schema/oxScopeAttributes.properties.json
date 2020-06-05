@@ -19,6 +19,11 @@
 				"type": "string",
 				"minLength": 1
 			}
+		},
+		"notShowInDiscovery": {
+			"id": "notShowInDiscovery",
+			"title": "Not show in discovery",
+			"type": "boolean"
 		}
 	}
 }
