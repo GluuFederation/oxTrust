@@ -230,6 +230,12 @@ public class UmaPermissionService implements Serializable {
 	}
 
 	public String registerResourcePermission(Token patToken, String resourceId, List<String> scopes) {
+		//TODO: Added this if as a hack since init method is not called upon app startup in scim project   
+		if (permissionService == null) {
+			init();
+		}
+		//end
+		
 		UmaPermission permission = new UmaPermission();
 		permission.setResourceId(resourceId);
 		permission.setScopes(scopes);
