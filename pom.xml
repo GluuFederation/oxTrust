@@ -79,7 +79,6 @@
 		<module>client</module>
 		<module>service</module>
 		<module>server</module>
-		<module>scim</module>
 		<module>openid-auth-client</module>
 		<module>saml-openid-auth-client</module>
 		<module>cas-openid-auth-client</module>
@@ -136,11 +135,6 @@
 			<dependency>
 				<groupId>org.gluu</groupId>
 				<artifactId>oxtrust-openid-auth-client</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.gluu</groupId>
-				<artifactId>oxtrust-scim</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
