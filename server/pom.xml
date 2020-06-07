@@ -299,7 +299,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.gluu</groupId>
-			<artifactId>oxtrust-scim</artifactId>
+			<artifactId>scim-model</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.gluu</groupId>

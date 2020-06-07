@@ -139,6 +139,11 @@
 			</dependency>
 			<dependency>
 				<groupId>org.gluu</groupId>
+				<artifactId>scim-model</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.gluu</groupId>
 				<artifactId>oxtrust-model</artifactId>
 				<version>${project.version}</version>
 			</dependency>
