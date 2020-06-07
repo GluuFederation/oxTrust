@@ -1,16 +1,10 @@
-/*
- * oxTrust is available under the MIT License (2008). See http://opensource.org/licenses/MIT for full text.
- *
- * Copyright (c) 2014, Gluu
- */
 package org.gluu.oxtrust.service;
 
 import java.io.Serializable;
 import java.util.List;
 
-import javax.ejb.Stateless;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import org.apache.commons.lang.StringUtils;
 import org.gluu.oxtrust.model.fido.GluuCustomFidoDevice;
@@ -23,13 +17,9 @@ import org.slf4j.Logger;
  * @author Val Pecaoco
  * Updated by jgomer on 2017-10-22
  */
-@Stateless
-@Named
+@ApplicationScoped
 public class FidoDeviceService implements IFidoDeviceService, Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -206231314840676189L;
 
 	@Inject
