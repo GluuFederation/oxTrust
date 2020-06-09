@@ -35,7 +35,6 @@ import org.gluu.oxauth.model.util.SecurityProviderUtility;
 import org.gluu.oxtrust.ldap.cache.service.CacheRefreshTimer;
 import org.gluu.oxtrust.service.cdi.event.CentralLdap;
 import org.gluu.oxtrust.service.config.ConfigurationFactory;
-import org.gluu.oxtrust.service.external.ExtendedExternalPersistenceExtensionService;
 import org.gluu.oxtrust.service.logger.LoggerService;
 import org.gluu.oxtrust.service.status.ldap.PersistanceStatusTimer;
 import org.gluu.oxtrust.util.BuildVersionService;
@@ -48,6 +47,7 @@ import org.gluu.service.cdi.event.LdapConfigurationReload;
 import org.gluu.service.cdi.util.CdiUtil;
 import org.gluu.service.custom.lib.CustomLibrariesLoader;
 import org.gluu.service.custom.script.CustomScriptManager;
+import org.gluu.service.external.ExternalPersistenceExtensionService;
 import org.gluu.service.external.context.PersistenceExternalContext;
 import org.gluu.service.metric.inject.ReportMetric;
 import org.gluu.service.timer.QuartzSchedulerManager;
@@ -127,7 +127,7 @@ public class AppInitializer {
 	private CustomScriptManager customScriptManager;
 
 	@Inject
-	private ExtendedExternalPersistenceExtensionService extendedExternalPersistenceExtensionService;
+	private ExternalPersistenceExtensionService externalPersistenceExtensionService;
 
 	@Inject
 	private PersistanceStatusTimer ldapStatusTimer;
@@ -431,21 +431,23 @@ public class AppInitializer {
 	}
 
 	private void executePersistenceExtensionAfterCreate(Properties connectionProperties, PersistenceEntryManager persistenceEntryManager) {
-		if (extendedExternalPersistenceExtensionService.isEnabled()) {
+		if (externalPersistenceExtensionService.isEnabled()) {
 			PersistenceExternalContext persistenceExternalContext = new PersistenceExternalContext();
 			persistenceExternalContext.setConnectionProperties(connectionProperties);
 			persistenceExternalContext.setPersistenceEntryManager(persistenceEntryManager);
 			
-			extendedExternalPersistenceExtensionService.executeExternalOnAfterCreateMethod(persistenceExternalContext);
+			externalPersistenceExtensionService.executeExternalOnAfterCreateMethod(persistenceExternalContext);
+			
+			externalPersistenceExtensionService.setPersistenceExtension(persistenceEntryManager);
 		}
 	}
 
 	private void executePersistenceExtensionAfterDestroy(PersistenceEntryManager persistenceEntryManager) {
-		if (extendedExternalPersistenceExtensionService.isEnabled()) {
+		if (externalPersistenceExtensionService.isEnabled()) {
 			PersistenceExternalContext persistenceExternalContext = new PersistenceExternalContext();
 			persistenceExternalContext.setPersistenceEntryManager(persistenceEntryManager);
 			
-			extendedExternalPersistenceExtensionService.executeExternalOnAfterDestroyMethod(persistenceExternalContext);
+			externalPersistenceExtensionService.executeExternalOnAfterDestroyMethod(persistenceExternalContext);
 		}
 	}
 
