@@ -35,6 +35,7 @@ import org.gluu.oxauth.model.util.SecurityProviderUtility;
 import org.gluu.oxtrust.ldap.cache.service.CacheRefreshTimer;
 import org.gluu.oxtrust.service.cdi.event.CentralLdap;
 import org.gluu.oxtrust.service.config.ConfigurationFactory;
+import org.gluu.oxtrust.service.external.ExtendedExternalPersistenceExtensionService;
 import org.gluu.oxtrust.service.logger.LoggerService;
 import org.gluu.oxtrust.service.status.ldap.PersistanceStatusTimer;
 import org.gluu.oxtrust.util.BuildVersionService;
@@ -47,6 +48,7 @@ import org.gluu.service.cdi.event.LdapConfigurationReload;
 import org.gluu.service.cdi.util.CdiUtil;
 import org.gluu.service.custom.lib.CustomLibrariesLoader;
 import org.gluu.service.custom.script.CustomScriptManager;
+import org.gluu.service.external.context.PersistenceExternalContext;
 import org.gluu.service.metric.inject.ReportMetric;
 import org.gluu.service.timer.QuartzSchedulerManager;
 import org.gluu.util.StringHelper;
@@ -125,6 +127,9 @@ public class AppInitializer {
 	private CustomScriptManager customScriptManager;
 
 	@Inject
+	private ExtendedExternalPersistenceExtensionService extendedExternalPersistenceExtensionService;
+
+	@Inject
 	private PersistanceStatusTimer ldapStatusTimer;
 
 	@Inject
@@ -190,7 +195,7 @@ public class AppInitializer {
 		// Initialize script manager
 		List<CustomScriptType> supportedCustomScriptTypes = Arrays.asList(CustomScriptType.CACHE_REFRESH,
 				CustomScriptType.UPDATE_USER, CustomScriptType.USER_REGISTRATION, CustomScriptType.ID_GENERATOR,
-				CustomScriptType.SCIM);
+				CustomScriptType.SCIM, CustomScriptType.PERSISTENCE_EXTENSION);
 
 		// Start timer
 		initSchedulerService();
@@ -293,6 +298,8 @@ public class AppInitializer {
 				new Object[] { ApplicationFactory.PERSISTENCE_ENTRY_MANAGER_NAME, persistenceEntryManager,
 						persistenceEntryManager.getOperationService() });
 
+		executePersistenceExtensionAfterCreate(connectionProperties, persistenceEntryManager);
+
 		return persistenceEntryManager;
 	}
 
@@ -309,6 +316,8 @@ public class AppInitializer {
 		log.info("Created {}: {} with operation service: {}",
 				new Object[] { ApplicationFactory.PERSISTENCE_METRIC_ENTRY_MANAGER_NAME, persistenceEntryManager,
 						persistenceEntryManager.getOperationService() });
+
+		executePersistenceExtensionAfterCreate(connectionProperties, persistenceEntryManager);
 
 		return persistenceEntryManager;
 	}
@@ -346,6 +355,8 @@ public class AppInitializer {
 			oldPersistenceEntryManager.destroy();
 			log.debug("Destroyed {}:{} with operation service: {}", persistenceEntryManagerName,
 					oldPersistenceEntryManager, oldPersistenceEntryManager.getOperationService());
+
+			executePersistenceExtensionAfterDestroy(oldPersistenceEntryManager);
 		}
 	}
 
@@ -416,6 +427,25 @@ public class AppInitializer {
 		if (persistanceCentralEntryManager != null) {
 			closePersistenceEntryManager(persistanceCentralEntryManager,
 					ApplicationFactory.PERSISTENCE_CENTRAL_ENTRY_MANAGER_NAME);
+		}
+	}
+
+	private void executePersistenceExtensionAfterCreate(Properties connectionProperties, PersistenceEntryManager persistenceEntryManager) {
+		if (extendedExternalPersistenceExtensionService.isEnabled()) {
+			PersistenceExternalContext persistenceExternalContext = new PersistenceExternalContext();
+			persistenceExternalContext.setConnectionProperties(connectionProperties);
+			persistenceExternalContext.setPersistenceEntryManager(persistenceEntryManager);
+			
+			extendedExternalPersistenceExtensionService.executeExternalOnAfterCreateMethod(persistenceExternalContext);
+		}
+	}
+
+	private void executePersistenceExtensionAfterDestroy(PersistenceEntryManager persistenceEntryManager) {
+		if (extendedExternalPersistenceExtensionService.isEnabled()) {
+			PersistenceExternalContext persistenceExternalContext = new PersistenceExternalContext();
+			persistenceExternalContext.setPersistenceEntryManager(persistenceEntryManager);
+			
+			extendedExternalPersistenceExtensionService.executeExternalOnAfterDestroyMethod(persistenceExternalContext);
 		}
 	}
 
