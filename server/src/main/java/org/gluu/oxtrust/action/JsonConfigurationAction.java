@@ -8,6 +8,7 @@ package org.gluu.oxtrust.action;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.gluu.config.oxtrust.AppConfiguration;
+import org.gluu.config.oxtrust.DbApplicationConfiguration;
 import org.gluu.config.oxtrust.ImportPersonConfig;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
@@ -112,8 +113,10 @@ public class JsonConfigurationAction implements Serializable {
 					this.jsonConfigurationService.getOxAuthDynamicConfigJson());
 			this.cacheConfigurationJson = getCacheConfiguration(cacheConfiguration);
 			this.storeConfigurationJson = getStoreConfiguration(storeConfiguration);
-			this.fido2ConfigJson = jsonConfigurationService.loadFido2Configuration().getDynamicConf();
-
+			DbApplicationConfiguration loadFido2Configuration = jsonConfigurationService.loadFido2Configuration();
+			if (loadFido2Configuration != null) {
+				this.fido2ConfigJson = loadFido2Configuration.getDynamicConf();
+			}
 			if ((this.oxTrustConfigJson != null) && (this.oxAuthDynamicConfigJson != null)) {
 				return OxTrustConstants.RESULT_SUCCESS;
 			}
@@ -121,55 +124,54 @@ public class JsonConfigurationAction implements Serializable {
 			log.error("Failed to load configuration from LDAP", ex);
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to load configuration from LDAP");
 		}
-
 		conversationService.endConversation();
-
 		return OxTrustConstants.RESULT_FAILURE;
 	}
 
 	public String saveOxAuthDynamicConfigJson() {
 		// Update JSON configurations
 		try {
-			log.debug("Saving oxauth-config.json:" + oxAuthDynamicConfigJson);
-			String configurationJson = convertToOxAuthAppConfiguration(oxAuthDynamicConfigJson);
-			jsonConfigurationService.saveOxAuthDynamicConfigJson(configurationJson);
+			log.debug("Saving oxauth-config.json:" + this.oxAuthDynamicConfigJson);
+			if (this.oxAuthDynamicConfigJson != null) {
+				String configurationJson = convertToOxAuthAppConfiguration(oxAuthDynamicConfigJson);
+				jsonConfigurationService.saveOxAuthDynamicConfigJson(configurationJson);
+			}
 			facesMessages.add(FacesMessage.SEVERITY_INFO, "oxAuthDynamic Configuration is updated.");
-
 			return OxTrustConstants.RESULT_SUCCESS;
 		} catch (Exception ex) {
 			log.error("Failed to update oxauth-config.json", ex);
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update oxAuth configuration in LDAP");
 		}
-
 		return OxTrustConstants.RESULT_FAILURE;
 	}
 
 	public String saveOxTrustConfigJson() {
 		try {
 			log.debug("Saving oxtrust-config.json:" + this.oxTrustConfigJson);
-			this.oxTrustappConfiguration = convertToOxTrustappConfiguration(this.oxTrustConfigJson);
-			trimUriProperties();
-			if (dataSourceTypeService.isLDAP(attributeService.getDnForAttribute(null))) {
-				emailUniquenessService.setEmailUniqueness(this.oxTrustappConfiguration.getEnforceEmailUniqueness());
+			if (this.oxTrustConfigJson != null) {
+				this.oxTrustappConfiguration = convertToOxTrustappConfiguration(this.oxTrustConfigJson);
+				trimUriProperties();
+				if (dataSourceTypeService.isLDAP(attributeService.getDnForAttribute(null))) {
+					emailUniquenessService.setEmailUniqueness(this.oxTrustappConfiguration.getEnforceEmailUniqueness());
+				}
+				jsonConfigurationService.saveOxTrustappConfiguration(this.oxTrustappConfiguration);
 			}
-			jsonConfigurationService.saveOxTrustappConfiguration(this.oxTrustappConfiguration);
 			facesMessages.add(FacesMessage.SEVERITY_INFO, "oxTrust Configuration is updated.");
-
 			return OxTrustConstants.RESULT_SUCCESS;
 		} catch (Exception ex) {
 			log.error("Failed to update oxtrust-config.json", ex);
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update oxTrust configuration in LDAP");
 		}
-
 		return OxTrustConstants.RESULT_FAILURE;
 	}
 
 	public String saveFido2ConfigJson() {
 		try {
 			log.debug("Saving fido2-config.json:" + this.fido2ConfigJson);
-			jsonConfigurationService.saveFido2Configuration(this.fido2ConfigJson);
+			if (this.fido2ConfigJson != null) {
+				jsonConfigurationService.saveFido2Configuration(this.fido2ConfigJson);
+			}
 			facesMessages.add(FacesMessage.SEVERITY_INFO, "Fido2 Configuration is updated.");
-
 			return OxTrustConstants.RESULT_SUCCESS;
 		} catch (Exception ex) {
 			log.error("Failed to update fido2-config.json", ex);
@@ -183,18 +185,22 @@ public class JsonConfigurationAction implements Serializable {
 		// Update JSON configurations
 		try {
 			log.debug("Saving memcache-config.json:" + this.cacheConfigurationJson);
-			this.cacheConfiguration = convertToCacheConfiguration(this.cacheConfigurationJson);
-			CacheProviderType type = this.cacheConfiguration.getCacheProviderType();
-			if (type.equals(CacheProviderType.REDIS) && !canConnectToRedis()) {
-				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Error connecting to redis with provided configuration");
-				return OxTrustConstants.RESULT_FAILURE;
+
+			if (this.cacheConfigurationJson != null) {
+				this.cacheConfiguration = convertToCacheConfiguration(this.cacheConfigurationJson);
+				CacheProviderType type = this.cacheConfiguration.getCacheProviderType();
+				if (type.equals(CacheProviderType.REDIS) && !canConnectToRedis()) {
+					facesMessages.add(FacesMessage.SEVERITY_ERROR,
+							"Error connecting to redis with provided configuration");
+					return OxTrustConstants.RESULT_FAILURE;
+				}
+				if (type.equals(CacheProviderType.MEMCACHED) && !canConnectToMemCached()) {
+					facesMessages.add(FacesMessage.SEVERITY_ERROR,
+							"Error connecting to memcached server with provided configuration");
+					return OxTrustConstants.RESULT_FAILURE;
+				}
+				jsonConfigurationService.saveOxMemCacheConfiguration(this.cacheConfiguration);
 			}
-			if (type.equals(CacheProviderType.MEMCACHED) && !canConnectToMemCached()) {
-				facesMessages.add(FacesMessage.SEVERITY_ERROR,
-						"Error connecting to memcached server with provided configuration");
-				return OxTrustConstants.RESULT_FAILURE;
-			}
-			jsonConfigurationService.saveOxMemCacheConfiguration(this.cacheConfiguration);
 			facesMessages.add(FacesMessage.SEVERITY_INFO, "Сache Configuration is updated.");
 			return OxTrustConstants.RESULT_SUCCESS;
 		} catch (Exception ex) {
@@ -208,13 +214,16 @@ public class JsonConfigurationAction implements Serializable {
 		// Update JSON configurations
 		try {
 			log.debug("Saving store-config.json:" + this.storeConfigurationJson);
-			this.storeConfiguration = convertToStoreConfiguration(this.storeConfigurationJson);
-			DocumentStoreType type = this.storeConfiguration.getDocumentStoreType();
-			if (type.equals(DocumentStoreType.JCA) && !canConnectToJca()) {
-				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Error connecting to JCA with provided configuration");
-				return OxTrustConstants.RESULT_FAILURE;
+			if (this.storeConfigurationJson != null) {
+				this.storeConfiguration = convertToStoreConfiguration(this.storeConfigurationJson);
+				DocumentStoreType type = this.storeConfiguration.getDocumentStoreType();
+				if (type.equals(DocumentStoreType.JCA) && !canConnectToJca()) {
+					facesMessages.add(FacesMessage.SEVERITY_ERROR,
+							"Error connecting to JCA with provided configuration");
+					return OxTrustConstants.RESULT_FAILURE;
+				}
+				jsonConfigurationService.saveDocumentStoreConfiguration(this.storeConfiguration);
 			}
-			jsonConfigurationService.saveDocumentStoreConfiguration(this.storeConfiguration);
 			facesMessages.add(FacesMessage.SEVERITY_INFO, "Document store configuration is updated.");
 			return OxTrustConstants.RESULT_SUCCESS;
 		} catch (Exception ex) {
@@ -303,52 +312,65 @@ public class JsonConfigurationAction implements Serializable {
 	}
 
 	private String getProtectedOxTrustappConfiguration(AppConfiguration oxTrustappConfiguration) {
-		try {
-			AppConfiguration resultOxTrustappConfiguration = (AppConfiguration) BeanUtils
-					.cloneBean(oxTrustappConfiguration);
-			resultOxTrustappConfiguration.setKeystorePassword(HIDDEN_PASSWORD_TEXT);
-			resultOxTrustappConfiguration.setIdpSecurityKeyPassword(HIDDEN_PASSWORD_TEXT);
-			resultOxTrustappConfiguration.setIdpBindPassword(HIDDEN_PASSWORD_TEXT);
-			resultOxTrustappConfiguration.setCaCertsPassphrase(HIDDEN_PASSWORD_TEXT);
-			resultOxTrustappConfiguration.setOxAuthClientPassword(HIDDEN_PASSWORD_TEXT);
+		if (oxTrustappConfiguration != null) {
+			try {
+				AppConfiguration resultOxTrustappConfiguration = (AppConfiguration) BeanUtils
+						.cloneBean(oxTrustappConfiguration);
+				resultOxTrustappConfiguration.setKeystorePassword(HIDDEN_PASSWORD_TEXT);
+				resultOxTrustappConfiguration.setIdpSecurityKeyPassword(HIDDEN_PASSWORD_TEXT);
+				resultOxTrustappConfiguration.setIdpBindPassword(HIDDEN_PASSWORD_TEXT);
+				resultOxTrustappConfiguration.setCaCertsPassphrase(HIDDEN_PASSWORD_TEXT);
+				resultOxTrustappConfiguration.setOxAuthClientPassword(HIDDEN_PASSWORD_TEXT);
 
-			return jsonService.objectToJson(resultOxTrustappConfiguration);
-		} catch (Exception ex) {
-			log.error("Failed to prepare JSON from appConfiguration: '{}'", oxTrustappConfiguration, ex);
+				return jsonService.objectToJson(resultOxTrustappConfiguration);
+			} catch (Exception ex) {
+				log.error("Failed to prepare JSON from appConfiguration: '{}'", oxTrustappConfiguration, ex);
+			}
+
+			return null;
 		}
-
 		return null;
+
 	}
 
 	private String getProtectedOxAuthAppConfiguration(String oxAuthAppConfiguration) {
-		try {
-			org.gluu.oxauth.model.configuration.AppConfiguration appConfiguration = jsonService.jsonToObject(
-					oxAuthAppConfiguration, org.gluu.oxauth.model.configuration.AppConfiguration.class);
 
-			// Add missing config if needed
-			if (appConfiguration.getCibaEndUserNotificationConfig() == null) {
-				appConfiguration.setCibaEndUserNotificationConfig(new CIBAEndUserNotificationConfig());
-				appConfiguration.getCibaEndUserNotificationConfig().setNotificationKey("");
-			}
-
+		if (oxAuthAppConfiguration != null) {
 			try {
-				String decryptedKey = encryptionService.decrypt(appConfiguration
-						.getCibaEndUserNotificationConfig().getNotificationKey());
-				appConfiguration.getCibaEndUserNotificationConfig().setNotificationKey(decryptedKey);
-			} catch (EncryptionException ex) {
-				log.error("Failed to decrypt values in the oxAuth json configuration: '{}'", oxAuthAppConfiguration, ex);
-				appConfiguration.getCibaEndUserNotificationConfig().setNotificationKey("");
+				org.gluu.oxauth.model.configuration.AppConfiguration appConfiguration = jsonService.jsonToObject(
+						oxAuthAppConfiguration, org.gluu.oxauth.model.configuration.AppConfiguration.class);
+
+				// Add missing config if needed
+				if (appConfiguration.getCibaEndUserNotificationConfig() == null) {
+					appConfiguration.setCibaEndUserNotificationConfig(new CIBAEndUserNotificationConfig());
+					appConfiguration.getCibaEndUserNotificationConfig().setNotificationKey("");
+				}
+
+				try {
+					String decryptedKey = encryptionService
+							.decrypt(appConfiguration.getCibaEndUserNotificationConfig().getNotificationKey());
+					appConfiguration.getCibaEndUserNotificationConfig().setNotificationKey(decryptedKey);
+				} catch (EncryptionException ex) {
+					log.error("Failed to decrypt values in the oxAuth json configuration: '{}'", oxAuthAppConfiguration,
+							ex);
+					appConfiguration.getCibaEndUserNotificationConfig().setNotificationKey("");
+				}
+				return jsonService.objectToJson(appConfiguration);
+			} catch (Exception e) {
+				log.error("Problems processing oxAuth App configuration file: {}", oxAuthAppConfiguration, e);
+				return null;
 			}
-			return jsonService.objectToJson(appConfiguration);
-		} catch (Exception e) {
-			log.error("Problems processing oxAuth App configuration file: {}", oxAuthAppConfiguration, e);
-			return null;
 		}
+		return null;
+
 	}
 
 	private String getOxTrustImportPersonConfiguration(ImportPersonConfig oxTrustImportPersonConfiguration) {
 		try {
-			return jsonService.objectToJson(oxTrustImportPersonConfiguration);
+			if (oxTrustImportPersonConfiguration != null) {
+				return jsonService.objectToJson(oxTrustImportPersonConfiguration);
+			}
+			return null;
 		} catch (Exception ex) {
 			log.error("Failed to prepare JSON from ImportPersonConfig: '{}'", oxTrustImportPersonConfiguration, ex);
 		}
@@ -358,7 +380,10 @@ public class JsonConfigurationAction implements Serializable {
 
 	private String getCacheConfiguration(CacheConfiguration cachedConfig) {
 		try {
-			return jsonService.objectToJson(cachedConfig);
+			if (cachedConfig != null) {
+				return jsonService.objectToJson(cachedConfig);
+			}
+			return null;
 		} catch (Exception ex) {
 			log.error("Failed to prepare JSON from CacheConfiguration: '{}'", cachedConfig, ex);
 		}
@@ -400,9 +425,10 @@ public class JsonConfigurationAction implements Serializable {
 
 	private String convertToOxAuthAppConfiguration(String oxAuthAppConfigurationJson) {
 		try {
-			org.gluu.oxauth.model.configuration.AppConfiguration appConfiguration = jsonService
-					.jsonToObject(oxAuthAppConfigurationJson, org.gluu.oxauth.model.configuration.AppConfiguration.class);
-			String encryptedKey = encryptionService.encrypt(appConfiguration.getCibaEndUserNotificationConfig().getNotificationKey());
+			org.gluu.oxauth.model.configuration.AppConfiguration appConfiguration = jsonService.jsonToObject(
+					oxAuthAppConfigurationJson, org.gluu.oxauth.model.configuration.AppConfiguration.class);
+			String encryptedKey = encryptionService
+					.encrypt(appConfiguration.getCibaEndUserNotificationConfig().getNotificationKey());
 			appConfiguration.getCibaEndUserNotificationConfig().setNotificationKey(encryptedKey);
 			return jsonService.objectToJson(appConfiguration);
 		} catch (Exception ex) {
