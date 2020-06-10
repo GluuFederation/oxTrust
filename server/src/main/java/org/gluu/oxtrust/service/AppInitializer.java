@@ -298,7 +298,7 @@ public class AppInitializer {
 				new Object[] { ApplicationFactory.PERSISTENCE_ENTRY_MANAGER_NAME, persistenceEntryManager,
 						persistenceEntryManager.getOperationService() });
 
-		executePersistenceExtensionAfterCreate(connectionProperties, persistenceEntryManager);
+		externalPersistenceExtensionService.executePersistenceExtensionAfterCreate(connectionProperties, persistenceEntryManager);
 
 		return persistenceEntryManager;
 	}
@@ -317,7 +317,7 @@ public class AppInitializer {
 				new Object[] { ApplicationFactory.PERSISTENCE_METRIC_ENTRY_MANAGER_NAME, persistenceEntryManager,
 						persistenceEntryManager.getOperationService() });
 
-		executePersistenceExtensionAfterCreate(connectionProperties, persistenceEntryManager);
+		externalPersistenceExtensionService.executePersistenceExtensionAfterCreate(connectionProperties, persistenceEntryManager);
 
 		return persistenceEntryManager;
 	}
@@ -356,7 +356,7 @@ public class AppInitializer {
 			log.debug("Destroyed {}:{} with operation service: {}", persistenceEntryManagerName,
 					oldPersistenceEntryManager, oldPersistenceEntryManager.getOperationService());
 
-			executePersistenceExtensionAfterDestroy(oldPersistenceEntryManager);
+			externalPersistenceExtensionService.executePersistenceExtensionAfterDestroy(oldPersistenceEntryManager);
 		}
 	}
 
@@ -427,27 +427,6 @@ public class AppInitializer {
 		if (persistanceCentralEntryManager != null) {
 			closePersistenceEntryManager(persistanceCentralEntryManager,
 					ApplicationFactory.PERSISTENCE_CENTRAL_ENTRY_MANAGER_NAME);
-		}
-	}
-
-	private void executePersistenceExtensionAfterCreate(Properties connectionProperties, PersistenceEntryManager persistenceEntryManager) {
-		if (externalPersistenceExtensionService.isEnabled()) {
-			PersistenceExternalContext persistenceExternalContext = new PersistenceExternalContext();
-			persistenceExternalContext.setConnectionProperties(connectionProperties);
-			persistenceExternalContext.setPersistenceEntryManager(persistenceEntryManager);
-			
-			externalPersistenceExtensionService.executeExternalOnAfterCreateMethod(persistenceExternalContext);
-			
-			externalPersistenceExtensionService.setPersistenceExtension(persistenceEntryManager);
-		}
-	}
-
-	private void executePersistenceExtensionAfterDestroy(PersistenceEntryManager persistenceEntryManager) {
-		if (externalPersistenceExtensionService.isEnabled()) {
-			PersistenceExternalContext persistenceExternalContext = new PersistenceExternalContext();
-			persistenceExternalContext.setPersistenceEntryManager(persistenceEntryManager);
-			
-			externalPersistenceExtensionService.executeExternalOnAfterDestroyMethod(persistenceExternalContext);
 		}
 	}
 
