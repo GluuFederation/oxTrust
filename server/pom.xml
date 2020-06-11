@@ -46,6 +46,7 @@
 					<include>**/*.ico</include>
 					<include>META-INF/navigation/*.navigation.xml</include>
 					<include>META-INF/beans.xml</include>
+					<include>META-INF/services/*.*</include>
 				</includes>
 			</resource>
 		</resources>
