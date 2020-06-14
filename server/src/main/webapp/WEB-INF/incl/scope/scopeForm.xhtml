@@ -136,31 +136,27 @@
 						</a4j:region>
 					</h:panelGroup>
 					<b:panel id="Attributes" title="Attributes" look="primary">
-						<div class="tab-pane box box-primary" id="scopeAttributes"
+						<h:panelGroup columns="1" width="100%" prependId="false"
 							style="background-color: white;">
-							<h:panelGroup columns="1" width="100%" prependId="false"
-								style="background-color: white;">
-								<ui:decorate id="scopeAttributes" prependId="false"
-									template="/WEB-INF/incl/layout/jsonscopeeditor.xhtml">
-									<ui:param name="id" value="scopeAttributes" />
-									<ui:param name="parentId" value="scopeAttributes" />
-									<ui:param name="json"
-										value="#{updateScopeAction.oxAttributesJson}" />
-									<ui:param name="jsonSchema"
-										value="#{request.contextPath}/schema/oxScopeAttributes.properties.json" />
-									<ui:param name="saveBtnId" value="updateScopeButtonId" />
-									<ui:param name="saveBtnLabel" value="Save attributes" />
-								</ui:decorate>
-								<h:panelGroup styleClass="hiddenFieldBox">
-									<h:inputHidden prependId="false" id="#{id}_hidden"
-										style="width:100%;"
-										value="#{updateScopeAction.oxAttributesJson}"
-										class="hiddenField" />
-								</h:panelGroup>
+							<ui:decorate id="scopeAttributes" prependId="false"
+								template="/WEB-INF/incl/layout/jsonscopeeditor.xhtml">
+								<ui:param name="id" value="scopeAttributes" />
+								<ui:param name="parentId" value="scopeAttributes" />
+								<ui:param name="json"
+									value="#{updateScopeAction.oxAttributesJson}" />
+								<ui:param name="jsonSchema"
+									value="#{request.contextPath}/schema/oxScopeAttributes.properties.json" />
+								<ui:param name="saveBtnId" value="updateScopeButtonId" />
+								<ui:param name="saveBtnLabel" value="Save attributes" />
+							</ui:decorate>
+							<h:panelGroup styleClass="hiddenFieldBox">
+								<h:inputHidden prependId="false" id="#{id}_hidden"
+									style="width:100%;"
+									value="#{updateScopeAction.oxAttributesJson}"
+									class="hiddenField" />
 							</h:panelGroup>
-						</div>
+						</h:panelGroup>
 					</b:panel>
-
 				</h:panelGroup>
 				<div class="box-footer">
 					<ui:insert name="controlButttons" />
