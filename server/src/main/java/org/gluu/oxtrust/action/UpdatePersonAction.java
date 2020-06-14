@@ -418,6 +418,7 @@ public class UpdatePersonAction implements Serializable {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	private void addFido2Devices() {
 		try {
 			List<GluuFido2Device> fido2Devices = fido2DeviceService.findAllFido2Devices(this.person);
@@ -425,7 +426,9 @@ public class UpdatePersonAction implements Serializable {
 				for (GluuFido2Device entry : fido2Devices) {
 					GluuDeviceDataBean gluuDeviceDataBean = new GluuDeviceDataBean();
 					gluuDeviceDataBean.setId(entry.getId());
-					gluuDeviceDataBean.setCreationDate(entry.getCreationDate().toString());
+					String convertedDate = ldapEntryManager
+							.decodeTime(null, ldapEntryManager.encodeTime(null, entry.getCreationDate())).toGMTString();
+					gluuDeviceDataBean.setCreationDate(convertedDate.toString());
 					gluuDeviceDataBean.setModality("FIDO2");
 					gluuDeviceDataBean.setNickName(entry.getDisplayName() != null ? entry.getDisplayName() : DASH);
 					deviceDataMap.add(gluuDeviceDataBean);
