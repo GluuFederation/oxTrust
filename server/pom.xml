@@ -371,6 +371,12 @@
 		<dependency>
 			<groupId>org.gluu</groupId>
 			<artifactId>oxcore-service</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>javax.activation</groupId>
+					<artifactId>javax.activation-api</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.gluu</groupId>
@@ -690,10 +696,6 @@
 			<artifactId>javatuples</artifactId>
 		</dependency>
 			
-		<dependency>
-			<groupId>com.sun.activation</groupId>
-			<artifactId>javax.activation</artifactId>
-		</dependency>
 
 		<!-- Test -->
 		<dependency>
