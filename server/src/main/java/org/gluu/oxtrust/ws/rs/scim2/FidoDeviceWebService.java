@@ -37,6 +37,10 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import com.wordnik.swagger.annotations.ApiOperation;
+
+import org.apache.commons.lang.StringUtils;
+
 import org.gluu.oxtrust.ldap.service.IFidoDeviceService;
 import org.gluu.oxtrust.model.exception.SCIMException;
 import org.gluu.oxtrust.model.fido.GluuCustomFidoDevice;
@@ -57,8 +61,6 @@ import org.gluu.persist.model.PagedResult;
 import org.gluu.persist.model.SortOrder;
 import org.gluu.search.filter.Filter;
 import org.joda.time.format.ISODateTimeFormat;
-
-import com.wordnik.swagger.annotations.ApiOperation;
 
 /**
  * Implementation of /FidoDevices endpoint. Methods here are intercepted and/or decorated.
@@ -351,8 +353,14 @@ public class FidoDeviceWebService extends BaseScimWebService implements IFidoDev
                                                     int count, String url) throws Exception {
 
         Filter ldapFilter=scimFilterParserService.createFilter(filter, Filter.createPresenceFilter("oxId"), FidoDeviceResource.class);
-        log.info("Executing search for fido devices using: ldapfilter '{}', sortBy '{}', sortOrder '{}', startIndex '{}', count '{}'",
-                ldapFilter.toString(), sortBy, sortOrder.getValue(), startIndex, count);
+        log.info("Executing search for fido devices using: ldapfilter '{}', sortBy '{}', sortOrder '{}', startIndex '{}', count '{}', userId '{}'",
+                ldapFilter.toString(), sortBy, sortOrder.getValue(), startIndex, count, userId);
+
+        //workaround for https://github.com/GluuFederation/scim/issues/1: 
+        //Currently, searching with SUB scope in Couchbase requires some help (beyond use of baseDN) 
+        if (StringUtils.isNotEmpty(userId)) {
+        	ldapFilter=Filter.createANDFilter(ldapFilter, Filter.createEqualityFilter("personInum", userId));
+        }
 
         PagedResult<GluuCustomFidoDevice> list;
         try {
