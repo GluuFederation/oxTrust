@@ -371,12 +371,6 @@
 		<dependency>
 			<groupId>org.gluu</groupId>
 			<artifactId>oxcore-service</artifactId>
-			<exclusions>
-				<exclusion>
-					<groupId>javax.activation</groupId>
-					<artifactId>javax.activation-api</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.gluu</groupId>
