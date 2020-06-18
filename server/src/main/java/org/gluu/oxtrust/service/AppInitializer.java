@@ -195,7 +195,7 @@ public class AppInitializer {
 		// Initialize script manager
 		List<CustomScriptType> supportedCustomScriptTypes = Arrays.asList(CustomScriptType.CACHE_REFRESH,
 				CustomScriptType.UPDATE_USER, CustomScriptType.USER_REGISTRATION, CustomScriptType.ID_GENERATOR,
-				CustomScriptType.SCIM, CustomScriptType.PERSISTENCE_EXTENSION);
+				CustomScriptType.PERSISTENCE_EXTENSION);
 
 		// Start timer
 		initSchedulerService();
