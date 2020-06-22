@@ -2,7 +2,7 @@
 <faces-config xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.2" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
 
   <navigation-rule>
-    <from-view-id>/script/manageCustomScript.xhtml</from-view-id>
+    <from-view-id>/script/manageAuthScript.xhtml</from-view-id>
 
     <navigation-case>
       <from-action>#{manageCustomScriptAction.modify}</from-action>
@@ -12,10 +12,17 @@
     </navigation-case>
 
     <navigation-case>
+      <from-action>#{manageCustomScriptAction.save}</from-action>
+      <from-outcome>success</from-outcome>
+      <to-view-id>/script/manageAuthScript.xhtml</to-view-id>
+      <redirect/>
+    </navigation-case>
+
+    <navigation-case>
       <from-action>#{manageCustomScriptAction.cancel}</from-action>
       <from-outcome>success</from-outcome>
       <to-view-id>/home.xhtml</to-view-id>
-      <redirect />
+      <redirect/>
     </navigation-case>
   </navigation-rule>
 
