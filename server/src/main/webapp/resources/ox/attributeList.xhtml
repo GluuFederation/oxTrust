@@ -4,8 +4,8 @@
     xmlns:f="http://xmlns.jcp.org/jsf/core"
     xmlns:h="http://xmlns.jcp.org/jsf/html"
     xmlns:a4j="http://richfaces.org/a4j"
+    xmlns:b="http://bootsfaces.net/ui"
     xmlns:rich="http://richfaces.org/rich"
-    xmlns:gluufn="http://www.gluu.org/jsf/functions"
     xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
     xmlns:cc="http://xmlns.jcp.org/jsf/composite">
 
@@ -14,9 +14,9 @@
 </cc:interface>
 
 <cc:implementation>
-    <a4j:repeat value="#{cc.attrs.value}" rowKeyVar="_attrIdx" var="_attribute">
-        <h:outputText value="#{_attribute.metadata.displayName}"/><h:outputText rendered="#{_attrIdx != cc.attrs.value.size() - 1}" value=", "/>
-    </a4j:repeat>
+    <ui:repeat value="#{cc.attrs.value}" rowKeyVar="_attrIdx" var="_attribute">
+		<b:label text="#{_attribute.metadata.displayName}" severity="info" />&nbsp;
+    </ui:repeat>
 </cc:implementation>
 
 </html>
