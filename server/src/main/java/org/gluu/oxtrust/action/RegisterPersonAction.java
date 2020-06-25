@@ -216,10 +216,15 @@ public class RegisterPersonAction implements Serializable {
 	}
 
 	public String register() throws CloneNotSupportedException {
-		GluuCustomPerson gluuCustomPerson = personService.getPersonByEmail(email);
-		if (gluuCustomPerson != null && appConfiguration.getEnforceEmailUniqueness()) {
-			facesMessages.add(FacesMessage.SEVERITY_ERROR,
-					"Registration failed. Please try again, or contact the system administrator.");
+		try {
+			GluuCustomPerson gluuCustomPerson = personService.getPersonByEmail(email);
+			if (gluuCustomPerson != null && appConfiguration.getEnforceEmailUniqueness()) {
+				facesMessages.add(FacesMessage.SEVERITY_ERROR,
+						"Registration failed. Please try again, or contact the system administrator.");
+				return OxTrustConstants.RESULT_FAILURE;
+			}
+		} catch (Exception e) {
+			log.error("===========", e);
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 		String outcome = registerImpl();
@@ -271,30 +276,30 @@ public class RegisterPersonAction implements Serializable {
 		}
 		if (registrationFormValid) {
 			GluuCustomPerson archivedPerson = (GluuCustomPerson) person.clone();
-			String customObjectClass = attributeService.getCustomOrigin();
-			this.person.setCustomObjectClasses(new String[] { customObjectClass });
-			if (person.getInum() == null) {
-				String inum = personService.generateInumForNewPerson();
-				this.person.setInum(inum);
-			}
-			if (person.getDn() == null) {
-				String dn = personService.getDnForPerson(this.person.getInum());
-				this.person.setDn(dn);
-			}
-			List<GluuCustomAttribute> personAttributes = this.person.getCustomAttributes();
-			if (!personAttributes.contains(new GluuCustomAttribute("cn", ""))) {
-				List<GluuCustomAttribute> changedAttributes = new ArrayList<GluuCustomAttribute>();
-				changedAttributes.addAll(personAttributes);
-				changedAttributes.add(
-						new GluuCustomAttribute("cn", this.person.getGivenName() + " " + this.person.getSurname()));
-				this.person.setCustomAttributes(changedAttributes);
-			} else {
-				this.person.setCommonName(this.person.getCommonName());
-			}
-			this.person.setUserPassword(password);
-			this.person.setCreationDate(new Date());
-			this.person.setMail(email);
 			try {
+				String customObjectClass = attributeService.getCustomOrigin();
+				this.person.setCustomObjectClasses(new String[] { customObjectClass });
+				if (person.getInum() == null) {
+					String inum = personService.generateInumForNewPerson();
+					this.person.setInum(inum);
+				}
+				if (person.getDn() == null) {
+					String dn = personService.getDnForPerson(this.person.getInum());
+					this.person.setDn(dn);
+				}
+				List<GluuCustomAttribute> personAttributes = this.person.getCustomAttributes();
+				if (!personAttributes.contains(new GluuCustomAttribute("cn", ""))) {
+					List<GluuCustomAttribute> changedAttributes = new ArrayList<GluuCustomAttribute>();
+					changedAttributes.addAll(personAttributes);
+					changedAttributes.add(
+							new GluuCustomAttribute("cn", this.person.getGivenName() + " " + this.person.getSurname()));
+					this.person.setCustomAttributes(changedAttributes);
+				} else {
+					this.person.setCommonName(this.person.getCommonName());
+				}
+				this.person.setUserPassword(password);
+				this.person.setCreationDate(new Date());
+				this.person.setMail(email);
 				this.postRegistrationInformation = "You have successfully registered with oxTrust. Login to begin your session.";
 				boolean result = false;
 				result = externalUserRegistrationService.executeExternalPreRegistrationMethods(this.person,

@@ -15,10 +15,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import javax.ejb.Stateless;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import org.gluu.oxtrust.exception.DuplicateEmailException;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
@@ -306,6 +304,7 @@ public class PersonService implements Serializable, IPersonService {
 	 * org.gluu.oxtrust.ldap.service.IPersonService#containsPerson(org.gluu.oxtrust.
 	 * model.GluuCustomPerson)
 	 */
+	@SuppressWarnings("deprecation")
 	@Override
 	public boolean containsPerson(GluuCustomPerson person) {
 		boolean result = false;

@@ -79,7 +79,6 @@ public class ConfigurationService implements Serializable {
 		try {
 			persistenceEntryManager.merge(configuration);
 		} catch (Exception e) {
-			log.info("===============================Error Configuragtion");
 			log.info("", e);
 		}
 	}
