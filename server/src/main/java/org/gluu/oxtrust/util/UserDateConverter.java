@@ -13,8 +13,10 @@ import javax.inject.Inject;
 
 import org.gluu.oxtrust.service.PersonService;
 import org.gluu.persist.PersistenceEntryManager;
+import org.gluu.service.cdi.util.CdiUtil;
 import org.slf4j.Logger;
 
+@SuppressWarnings("rawtypes")
 @FacesConverter("org.gluu.jsf2.converter.UserDateConverter")
 public class UserDateConverter implements Converter {
 
@@ -31,13 +33,20 @@ public class UserDateConverter implements Converter {
 
 	@PostConstruct
 	public void create() {
+		if (personService == null) {
+			personService = CdiUtil.bean(PersonService.class);
+		}
 		this.baseDn = personService.getDnForPerson(null);
 	}
 
 	@Override
 	public Object getAsObject(FacesContext ctx, UIComponent uiComponent, String value) {
+		if (manager == null) {
+			manager = CdiUtil.bean(PersistenceEntryManager.class);
+		}
 		try {
 			Date date = new SimpleDateFormat("dd.MM.yyyy").parse(value);
+
 			return manager.encodeTime(baseDn, date);
 		} catch (ParseException e) {
 			log.info("", e);

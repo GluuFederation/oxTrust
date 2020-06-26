@@ -139,7 +139,7 @@ public class PersonService implements Serializable, IPersonService {
 			if (e.getCause().getMessage().contains("unique attribute conflict was detected for attribute mail")) {
 				throw new DuplicateEmailException("Email Already Registered");
 			} else {
-				throw new Exception("Duplicate UID value: " + person.getUid());
+				throw new Exception("Duplicate UID value: " + person.getUid(), e);
 			}
 		}
 
