@@ -7,7 +7,6 @@ import java.util.List;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.apache.logging.log4j.core.util.UuidUtil;
 import org.gluu.persist.annotation.AttributeName;
 import org.gluu.persist.annotation.DataEntry;
 import org.gluu.persist.annotation.ObjectClass;
@@ -91,7 +90,7 @@ public class OxAuthSectorIdentifier extends Entry implements Serializable {
 
 	public String getDescription() {
 		if (description == null) {
-			description = "Default description " + UuidUtil.getTimeBasedUuid().toString().substring(0, 5);
+			description = "Default description";
 		}
 		return description;
 	}
