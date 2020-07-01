@@ -737,6 +737,11 @@
             "description": "Issue RPT as JWT or as random string.",
             "type": "boolean"
         },
+        "expirationNotificatorEnabled": {
+            "id": "expirationNotificatorEnabled",
+            "description": "Boolean value specifying whether expiration notificator is enabled (used to identify expiration for persistence that support TTL, like Couchbase). Default value is true",
+            "type": "boolean"
+        },
         "cleanServiceInterval": {
             "id": "cleanServiceInterval",
             "description": "Time interval for the Clean Service in seconds.",
