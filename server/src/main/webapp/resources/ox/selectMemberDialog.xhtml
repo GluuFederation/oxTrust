@@ -96,9 +96,9 @@
 							<f:facet name="header">Email</f:facet>
 							<h:outputText value="#{_item.mail}" />
 						</p:column>
-						<p:column sortBy="#{_item.status.value}">
+						<p:column sortBy="#{_item.status}">
 							<f:facet name="header">Status</f:facet>
-							<h:outputText value="#{_item.status.value}" />
+							<h:outputText value="#{_item.status}" />
 						</p:column>
 					</p:dataTable>
 				</h:panelGroup>
