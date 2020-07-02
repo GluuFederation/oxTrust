@@ -16,11 +16,10 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.gluu.config.oxtrust.AppConfiguration;
-import org.gluu.oxtrust.service.config.ConfigurationFactory;
 import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.oxtrust.model.GluuOxTrustStat;
 import org.gluu.oxtrust.service.cdi.event.StatusCheckerDailyEvent;
-import org.gluu.persist.exception.BasePersistenceException;
+import org.gluu.oxtrust.service.config.ConfigurationFactory;
 import org.gluu.service.cdi.async.Asynchronous;
 import org.gluu.service.cdi.event.Scheduled;
 import org.gluu.service.timer.event.TimerEvent;

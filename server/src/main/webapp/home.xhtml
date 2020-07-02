@@ -56,7 +56,7 @@
 								<ui:param name="_stat" value="#{homeAction.getServerStat()}" />
 								<span class="info-box-text">#{msg['home.freeMemory']}</span>
 								<h:outputText styleClass="info-box-number"
-									value="#{_stat.freeMemory}%" />
+									value="#{_stat.freeMemory}" />
 								<span> </span>
 							</div>
 						</div>
@@ -69,7 +69,7 @@
 							<div class="info-box-content">
 								<span class="info-box-text">#{msg['home.freeDiskSpace']}</span>
 								<h:outputText styleClass="info-box-number"
-									value="#{_stat.freeDiskSpace}%" />
+									value="#{_stat.freeDiskSpace}" />
 							</div>
 						</div>
 					</div>
@@ -80,8 +80,7 @@
 							</span>
 							<div class="info-box-content">
 								<span class="info-box-text">#{msg['home.systemUptime']}</span>
-								<h:outputText converter="uptimeConverter"
-									styleClass="info-box-number" value="#{_stat.systemUptime}" />
+								<h:outputText styleClass="info-box-number" value="#{_stat.systemUptime}" />
 							</div>
 						</div>
 					</div>
