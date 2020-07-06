@@ -40,8 +40,7 @@
 					<div style="display: inline-block; width: 95% !important;">
 						<ui:param name="_configuration"
 							value="#{homeAction.getConfiguration()}" />
-						<ui:param name="_stat"
-									value="#{homeAction.getServerStat()}" />		
+						<ui:param name="_stat" value="#{homeAction.getServerStat()}" />
 						<div class="row" style="margin-left: 5px; margin-right: 5px;">
 							<div class="col-sm-6 col-lg-6" style="padding: 0px;">
 								<h:panelGrid border="0" cellpadding="0" cellspacing="0"
@@ -49,7 +48,8 @@
 									<ox:decorate label="#{msg['configurationStatus.hostName']}"
 										leftClass="col-sm-6" rightClass="col-sm-6">
 										<b:label styleClass="hostnameValueBox"
-											text="#{configurationStatusAction.getHostName(_configuration.hostname)}" severity="primary" />
+											text="#{configurationStatusAction.getHostName(_configuration.hostname)}"
+											severity="primary" />
 									</ox:decorate>
 									<ox:decorate label="#{msg['configurationStatus.ipAddress']}"
 										leftClass="col-sm-6" rightClass="col-sm-6">
@@ -59,7 +59,6 @@
 									<ox:decorate label="#{msg['configurationStatus.systemUptime']}"
 										leftClass="col-sm-6" rightClass="col-sm-6">
 										<h:outputText styleClass="systemUptimeValueBox"
-											converter="uptimeConverter"
 											value="#{_stat.systemUptime}" />
 									</ox:decorate>
 									<ox:decorate label="#{msg['configurationStatus.lastUpdate']}"
@@ -74,7 +73,6 @@
 										leftClass="col-sm-6" rightClass="col-sm-6">
 										<h:outputText styleClass="freeDiskSpaceValueBox"
 											value="#{_stat.freeDiskSpace}" />
-										<h:outputText value="%" />
 									</ox:decorate>
 								</h:panelGrid>
 							</div>
@@ -101,7 +99,6 @@
 										leftClass="col-sm-6" rightClass="col-sm-6">
 										<h:outputText styleClass="freeMemoryValueBox"
 											value="#{_stat.freeMemory}" />
-										<h:outputText value="%" />
 									</ox:decorate>
 								</h:panelGrid>
 							</div>
