@@ -144,7 +144,7 @@ public class StatusCheckerTimer {
 		oxtrustStatObject.setLoadAvg(facterData.getLoadAverage());
 		oxtrustStatObject.setSystemUptime(facterData.getUptime());
 		oxtrustStatObject.setFreeDiskSpace(facterData.getFreeDiskSpace());
-		oxtrustStatObject.setFreeMemory(facterData.getFreeDiskSpace());
+		oxtrustStatObject.setFreeMemory(facterData.getMemoryfree());
 		setHttpdAttributes(configurationStatus);
 		try {
 			setCertificateExpiryAttributes(configurationStatus);
