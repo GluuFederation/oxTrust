@@ -133,6 +133,7 @@ public class UpdateClientAction implements Serializable {
     private List<ResponseType> responseTypes;
     private List<CustomScript> customScripts;
     private List<CustomScript> postAuthnScripts = Lists.newArrayList();
+    private List<CustomScript> rptClaimsScripts = Lists.newArrayList();
     private List<CustomScript> consentScripts = Lists.newArrayList();
     private List<CustomScript> spontaneousScopesScripts = Lists.newArrayList();
     private List<CustomScript> introspectionScripts = Lists.newArrayList();
@@ -175,6 +176,7 @@ public class UpdateClientAction implements Serializable {
     private List<SelectableEntity<ResponseType>> availableResponseTypes;
     private List<SelectableEntity<CustomScript>> availableCustomScripts;
     private List<SelectableEntity<CustomScript>> availablePostAuthnScripts;
+    private List<SelectableEntity<CustomScript>> availableRptClaimsScripts;
     private List<SelectableEntity<CustomScript>> availableConsentScripts;
     private List<SelectableEntity<CustomScript>> availableSpontaneousScripts;
     private List<SelectableEntity<CustomScript>> availableIntrospectionScripts;
@@ -207,6 +209,7 @@ public class UpdateClientAction implements Serializable {
 			this.claimRedirectURIList = getNonEmptyStringList(client.getClaimRedirectURI());
 			this.customScripts = getInitialAcrs();
 			this.postAuthnScripts = Lists.newArrayList();
+			this.rptClaimsScripts = Lists.newArrayList();
 			this.consentScripts = Lists.newArrayList();
 			this.spontaneousScopesScripts = Lists.newArrayList();
 			this.sectorIdentifiers = initSectors();
@@ -284,6 +287,9 @@ public class UpdateClientAction implements Serializable {
             this.customScripts = getInitialAcrs();
             this.postAuthnScripts = searchAvailablePostAuthnCustomScripts().stream()
                     .filter(entity -> client.getAttributes().getPostAuthnScripts().contains(entity.getEntity().getDn()))
+                    .map(SelectableEntity::getEntity).collect(Collectors.toList());
+            this.rptClaimsScripts = searchAvailableRptClaimsCustomScripts().stream()
+                    .filter(entity -> client.getAttributes().getRptClaimsScripts().contains(entity.getEntity().getDn()))
                     .map(SelectableEntity::getEntity).collect(Collectors.toList());
             this.consentScripts = searchAvailableConsentCustomScripts().stream()
                     .filter(entity -> client.getAttributes().getConsentGatheringScripts().contains(entity.getEntity().getDn()))
@@ -422,6 +428,7 @@ public class UpdateClientAction implements Serializable {
             log.info("error parsing json:" + e);
         }
         clientAttributes.setPostAuthnScripts(postAuthnScripts.stream().map(CustomScript::getDn).collect(Collectors.toList()));
+        clientAttributes.setRptClaimsScripts(rptClaimsScripts.stream().map(CustomScript::getDn).collect(Collectors.toList()));
         clientAttributes.setConsentGatheringScripts(consentScripts.stream().map(CustomScript::getDn).collect(Collectors.toList()));
         clientAttributes.setSpontaneousScopeScriptDns(spontaneousScopesScripts.stream().map(CustomScript::getDn).collect(Collectors.toList()));
         clientAttributes.setIntrospectionScripts(introspectionScripts.stream().map(CustomScript::getDn).collect(Collectors.toList()));
@@ -477,6 +484,10 @@ public class UpdateClientAction implements Serializable {
 
     public void removePostAuthnScript(CustomScript script) {
         postAuthnScripts.remove(script);
+    }
+
+    public void removeRptClaimsScript(CustomScript script) {
+        rptClaimsScripts.remove(script);
     }
 
     public void removeConsentScript(CustomScript script) {
@@ -781,6 +792,9 @@ public class UpdateClientAction implements Serializable {
     public void cancelPostAuthnScripts() {
     }
 
+    public void cancelRptClaimsScripts() {
+    }
+
     public void cancelConsentScripts() {
     }
 
@@ -976,6 +990,7 @@ public class UpdateClientAction implements Serializable {
         this.client.setDefaultAcrValues(customScripts.toArray(new String[customScripts.size()]));
 
         this.client.getAttributes().setPostAuthnScripts(BaseEntry.getDNs(getPostAuthnScripts()));
+        this.client.getAttributes().setRptClaimsScripts(BaseEntry.getDNs(getRptClaimsScripts()));
         this.client.getAttributes().setConsentGatheringScripts(BaseEntry.getDNs(getConsentScripts()));
         this.client.getAttributes().setIntrospectionScripts(BaseEntry.getDNs(getIntrospectionScripts()));
         this.client.getAttributes().setSpontaneousScopeScriptDns(BaseEntry.getDNs(getSpontaneousScopesScripts()));
@@ -1093,6 +1108,12 @@ public class UpdateClientAction implements Serializable {
     public void acceptPostAuthnScripts() {
         postAuthnScripts.clear();
         postAuthnScripts.addAll(availablePostAuthnScripts.stream().filter(SelectableEntity::isSelected)
+                .map(SelectableEntity::getEntity).collect(Collectors.toList()));
+    }
+
+    public void acceptRptClaimsScripts() {
+        rptClaimsScripts.clear();
+        rptClaimsScripts.addAll(availableRptClaimsScripts.stream().filter(SelectableEntity::isSelected)
                 .map(SelectableEntity::getEntity).collect(Collectors.toList()));
     }
 
@@ -1294,6 +1315,16 @@ public class UpdateClientAction implements Serializable {
         return availablePostAuthnScripts;
     }
 
+    public List<SelectableEntity<CustomScript>> searchAvailableRptClaimsCustomScripts() {
+        if (availableRptClaimsScripts != null) {
+            SelectableEntityHelper.select(availableRptClaimsScripts, rptClaimsScripts);
+            return availableRptClaimsScripts;
+        }
+        availableRptClaimsScripts = getSelectableScripts(CustomScriptType.UMA_RPT_CLAIMS);
+        SelectableEntityHelper.select(availableRptClaimsScripts, rptClaimsScripts);
+        return availableRptClaimsScripts;
+    }
+
     public List<SelectableEntity<CustomScript>> searchAvailableConsentCustomScripts() {
         if (availableConsentScripts != null) {
             SelectableEntityHelper.select(availableConsentScripts, consentScripts);
@@ -1490,6 +1521,10 @@ public class UpdateClientAction implements Serializable {
         return postAuthnScripts;
     }
 
+    public List<CustomScript> getRptClaimsScripts() {
+        return rptClaimsScripts;
+    }
+
     public List<CustomScript> getConsentScripts() {
         return consentScripts;
     }
@@ -1504,6 +1539,10 @@ public class UpdateClientAction implements Serializable {
 
     public List<SelectableEntity<CustomScript>> getAvailablePostAuthnScripts() {
         return availablePostAuthnScripts;
+    }
+
+    public List<SelectableEntity<CustomScript>> getAvailableRptClaimsScripts() {
+        return availableRptClaimsScripts;
     }
 
     public List<SelectableEntity<CustomScript>> getAvailableConsentScripts() {
