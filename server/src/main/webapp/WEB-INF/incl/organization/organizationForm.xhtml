@@ -218,14 +218,15 @@
 											<b:panel id="oxTrustLogoPanelId" title="Current oxTrust Logo"
 												look="success" collapsible="true" collapsed="true">
 												<div class="row">
-													<div class="col-sm-6 col-lg-6"
+													<div class="col-sm-4 col-lg-4"
 														style="padding: 0px; margin: 5px; max-height: 70px;">
 														<img
 															src="#{request.contextPath}/servlet/logo?scale=large#{_organizationAction.getRandonRnd()}"
-															height="70" width="150" />
+															height="50" width="50" />
 													</div>
-													<div class="col-sm-4 col-lg-4"
-														style="padding: 0px; margin: 2px;">
+												</div>
+												<div class="row">
+													<div class="col-sm-12 col-lg-12" style="padding: 0px;">
 														<p:fileUpload id="oxTrustLogo"
 															listener="#{_organizationAction.setOxTrustLogoImage}"
 															required="false" mode="advanced" dragDropSupport="false"
@@ -243,13 +244,15 @@
 												title="Current oxTrust Favicon" look="success"
 												collapsible="true" collapsed="true">
 												<div class="row">
-													<div class="col-sm-6 col-lg-6"
+													<div class="col-sm-4 col-lg-4"
 														style="padding: 0px; margin: 5px; max-height: 70px;">
 														<img
 															src="#{request.contextPath}/servlet/favicon?preview=true#{_organizationAction.getRandonRnd()}"
 															height="50" width="50" />
 													</div>
-													<div class="col-sm-4 col-lg-4"
+												</div>
+												<div class="row">
+													<div class="col-sm-12 col-lg-12"
 														style="padding: 0px; margin: 2px;">
 														<p:fileUpload id="oxTrustFavicon"
 															listener="#{_organizationAction.setOxTrustFaviconImage}"
@@ -273,14 +276,16 @@
 											<b:panel id="oxAuthLogoPanelId" title="Current oxAuth Logo"
 												look="success" collapsible="true" collapsed="true">
 												<div class="row">
-													<div class="col-sm-6 col-lg-6"
+													<div class="col-sm-4 col-lg-4"
 														style="padding: 0px; margin: 5px; max-height: 70px;">
 														<img
 															src="#{request.contextPath}/servlet/oxauth/logo?scale=large#{_organizationAction.getRandonRnd()}"
-															height="70" width="150" />
+															height="50" width="50" />
 													</div>
-													<div class="col-sm-4 col-lg-4"
-														style="padding: 0px; margin: 2px;">
+												</div>
+												<div class="row">
+													<div class="col-sm-12 col-lg-12"
+														style="padding: 0px;">
 														<p:fileUpload id="oxAuthLogo"
 															listener="#{_organizationAction.setOxAuthLogoImage}"
 															required="false" mode="advanced" dragDropSupport="false"
@@ -298,14 +303,16 @@
 												title="Current oxAuth Favicon" look="success"
 												collapsible="true" collapsed="true">
 												<div class="row">
-													<div class="col-sm-6 col-lg-6"
+													<div class="col-sm-4 col-lg-4"
 														style="padding: 0px; margin: 2px; max-height: 70px;">
 														<img
 															src="#{request.contextPath}/servlet/oxauth/favicon?value#{_organizationAction.getRandonRnd()}"
 															height="50" width="50" />
 													</div>
-													<div class="col-sm-4 col-lg-4"
-														style="padding: 0px; margin: 10px; max-height: 70px;">
+												</div>
+												<div class="row">
+													<div class="col-sm-12 col-lg-12"
+														style="padding: 0px; max-height: 70px;">
 														<p:fileUpload id="oxAuthFavicon"
 															listener="#{_organizationAction.setOxAuthFaviconImage}"
 															required="false" mode="advanced" dragDropSupport="false"
@@ -327,11 +334,12 @@
 											<b:panel id="idpLogoPanelId" title="Current IDP Logo"
 												look="success" collapsible="true" collapsed="true">
 												<div class="row">
-													<div class="col-sm-6 col-lg-6"
+													<div class="col-sm-3 col-lg-3"
 														style="padding: 0px; margin: 5px; max-height: 70px;">
-														<img src="#{request.contextPath}/servlet/idp/logo" />
+														<img height="50" width="50"
+															src="#{request.contextPath}/servlet/idp/logo" />
 													</div>
-													<div class="col-sm-4 col-lg-4"
+													<div class="col-sm-8 col-lg-8"
 														style="padding: 0px; margin: 10px;">
 														<p:fileUpload id="idpLogo"
 															listener="#{_organizationAction.setIdpLogoImage}"
@@ -349,12 +357,12 @@
 											<b:panel id="idpFaviconPanelId" title="Current IDP Favicon"
 												look="success" collapsible="true" collapsed="true">
 												<div class="row">
-													<div class="col-sm-6 col-lg-6"
+													<div class="col-sm-3 col-lg-3"
 														style="padding: 0px; margin: 5px; max-height: 70px;">
 														<img height="50" width="50"
 															src="#{request.contextPath}/servlet/idp/favicon?preview=true" />
 													</div>
-													<div class="col-sm-4 col-lg-4"
+													<div class="col-sm-8 col-lg-8"
 														style="padding: 0px; margin: 2px;">
 														<p:fileUpload id="idpFavicon"
 															listener="#{_organizationAction.setIdpFaviconImage}"
@@ -378,7 +386,7 @@
 								<p:fileUpload id="oxtrustLibs"
 									listener="#{_organizationAction.addNewOxtrustLib}"
 									required="false" mode="advanced" dragDropSupport="false"
-									multiple="false" sizeLimit="1000000" fileLimit="1"
+									multiple="false" sizeLimit="10000000" fileLimit="1"
 									label="Select a file" validateContentType="true"
 									styleClass="OxTrustLibrairy" style="width:100% !important;"
 									allowTypes="/(\.|\/)(jar)$/">
@@ -389,7 +397,7 @@
 								<p:fileUpload id="oxauthLibs"
 									listener="#{_organizationAction.addNewOxauthLib}"
 									required="false" mode="advanced" dragDropSupport="false"
-									multiple="false" sizeLimit="1000000" fileLimit="1"
+									multiple="false" sizeLimit="10000000" fileLimit="1"
 									label="Select a file" validateContentType="true"
 									styleClass="oxAuthLibrairy" style="width:100% !important;"
 									allowTypes="/(\.|\/)(jar)$/">
