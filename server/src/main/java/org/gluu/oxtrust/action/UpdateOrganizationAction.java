@@ -346,11 +346,7 @@ public class UpdateOrganizationAction implements Serializable {
 			Element configure = (Element) configures.item(0);
 			Element library = document.createElement("Set");
 			library.setAttribute("name", "extraClasspath");
-			if (isOxTrust) {
-				fileName = "/opt/gluu/jetty/identity/custom/libs/" + fileName;
-			} else {
-				fileName = "/opt/gluu/jetty/oxauth/custom/libs/" + fileName;
-			}
+			fileName = XML_PATH + fileName;
 			library.appendChild(document.createTextNode(fileName));
 			configure.appendChild(library);
 			document.getDocumentElement().normalize();
@@ -360,7 +356,7 @@ public class UpdateOrganizationAction implements Serializable {
 			File file = new File(XML_PATH);
 			file.setWritable(true);
 			StreamResult result = new StreamResult(file);
-			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+			transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
 			transformer.transform(source, result);
 			return true;
 		} catch (Exception e) {
