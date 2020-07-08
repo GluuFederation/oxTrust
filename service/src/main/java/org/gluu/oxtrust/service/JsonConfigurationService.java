@@ -60,37 +60,29 @@ public class JsonConfigurationService implements Serializable {
 	}
 
 	public CacheConfiguration getOxMemCacheConfiguration() {
-		CacheConfiguration cachedConfiguration = configurationService.getConfiguration().getCacheConfiguration();
-		return cachedConfiguration;
+		return configurationService.getConfiguration().getCacheConfiguration();
 	}
 
 	public DocumentStoreConfiguration getDocumentStoreConfiguration() {
-		DocumentStoreConfiguration documentStoreConfiguration = configurationService.getConfiguration().getDocumentStoreConfiguration();
-		return documentStoreConfiguration;
+		return configurationService.getConfiguration().getDocumentStoreConfiguration();
 	}
 
 	public ImportPersonConfig getOxTrustImportPersonConfiguration() {
-		LdapOxTrustConfiguration ldapOxTrustConfiguration = getOxTrustConfiguration();
-		return ldapOxTrustConfiguration.getImportPersonConfig();
+		return getOxTrustConfiguration().getImportPersonConfig();
 	}
 
 	public CacheRefreshConfiguration getOxTrustCacheRefreshConfiguration() {
-		LdapOxTrustConfiguration ldapOxTrustConfiguration = getOxTrustConfiguration();
-		return ldapOxTrustConfiguration.getCacheRefresh();
+		return getOxTrustConfiguration().getCacheRefresh();
 	}
 
 	private LdapOxTrustConfiguration getOxTrustConfiguration() {
 		String configurationDn = configurationFactory.getConfigurationDn();
-
-		LdapOxTrustConfiguration ldapOxTrustConfiguration = loadOxTrustConfig(configurationDn);
-		return ldapOxTrustConfiguration;
+		return  loadOxTrustConfig(configurationDn);
 	}
 
 	public String getOxAuthDynamicConfigJson() throws IOException {
 		String configurationDn = configurationFactory.getConfigurationDn();
-
-		LdapOxAuthConfiguration ldapOxAuthConfiguration = loadOxAuthConfig(configurationDn);
-		return ldapOxAuthConfiguration.getOxAuthConfigDynamic();
+		return loadOxAuthConfig(configurationDn).getOxAuthConfigDynamic();
 	}
 
 	public org.gluu.oxauth.model.configuration.AppConfiguration getOxauthAppConfiguration() throws IOException {
@@ -122,7 +114,8 @@ public class JsonConfigurationService implements Serializable {
 		return true;
 	}
 
-	public boolean saveOxTrustAttributeResolverConfigurationConfiguration(AttributeResolverConfiguration attributeResolverConfiguration) {
+	public boolean saveOxTrustAttributeResolverConfigurationConfiguration(
+			AttributeResolverConfiguration attributeResolverConfiguration) {
 		LdapOxTrustConfiguration ldapOxTrustConfiguration = getOxTrustConfiguration();
 		ldapOxTrustConfiguration.setAttributeResolverConfig(attributeResolverConfiguration);
 		ldapOxTrustConfiguration.setRevision(ldapOxTrustConfiguration.getRevision() + 1);
@@ -140,8 +133,7 @@ public class JsonConfigurationService implements Serializable {
 		return false;
 	}
 
-	public boolean saveOxAuthDynamicConfigJson(String oxAuthDynamicConfigJson)
-			throws IOException {
+	public boolean saveOxAuthDynamicConfigJson(String oxAuthDynamicConfigJson) throws IOException {
 		String configurationDn = configurationFactory.getConfigurationDn();
 
 		LdapOxAuthConfiguration ldapOxAuthConfiguration = loadOxAuthConfig(configurationDn);
@@ -167,7 +159,8 @@ public class JsonConfigurationService implements Serializable {
 
 	private LdapOxTrustConfiguration loadOxTrustConfig(String configurationDn) {
 		try {
-			LdapOxTrustConfiguration conf = persistenceEntryManager.find(LdapOxTrustConfiguration.class, configurationDn);
+			LdapOxTrustConfiguration conf = persistenceEntryManager.find(LdapOxTrustConfiguration.class,
+					configurationDn);
 
 			return conf;
 		} catch (BasePersistenceException ex) {
@@ -191,8 +184,10 @@ public class JsonConfigurationService implements Serializable {
 
 	public DbApplicationConfiguration loadFido2Configuration() {
 		try {
-			String configurationDn = configurationFactory.getBaseConfiguration().getString("fido2_ConfigurationEntryDN");
-			DbApplicationConfiguration conf = persistenceEntryManager.find(DbApplicationConfiguration.class, configurationDn);
+			String configurationDn = configurationFactory.getBaseConfiguration()
+					.getString("fido2_ConfigurationEntryDN");
+			DbApplicationConfiguration conf = persistenceEntryManager.find(DbApplicationConfiguration.class,
+					configurationDn);
 			return conf;
 		} catch (BasePersistenceException ex) {
 			log.error("Failed to load Fido2 configuration from LDAP");
@@ -203,10 +198,9 @@ public class JsonConfigurationService implements Serializable {
 
 	public void saveFido2Configuration(String fido2ConfigJson) {
 		DbApplicationConfiguration fido2Configuration = loadFido2Configuration();
-		
 		fido2Configuration.setDynamicConf(fido2ConfigJson);
 		fido2Configuration.setRevision(fido2Configuration.getRevision() + 1);
 		persistenceEntryManager.merge(fido2Configuration);
 	}
-	
+
 }
