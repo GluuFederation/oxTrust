@@ -7,6 +7,7 @@
 package org.gluu.oxtrust.action;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang.StringUtils;
 import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.config.oxtrust.DbApplicationConfiguration;
 import org.gluu.config.oxtrust.ImportPersonConfig;
@@ -27,6 +28,7 @@ import org.gluu.service.document.store.conf.DocumentStoreType;
 import org.gluu.service.document.store.provider.JcaDocumentStoreProvider;
 import org.gluu.service.security.Secure;
 import org.gluu.util.StringHelper;
+import org.gluu.util.security.StringEncrypter;
 import org.gluu.util.security.StringEncrypter.EncryptionException;
 import org.slf4j.Logger;
 
@@ -83,7 +85,10 @@ public class JsonConfigurationAction implements Serializable {
 	@Inject
 	private DataSourceTypeService dataSourceTypeService;
 
-	private AppConfiguration oxTrustappConfiguration;
+    @Inject
+    private StringEncrypter stringEncrypter;
+
+    private AppConfiguration oxTrustappConfiguration;
 	private ImportPersonConfig oxTrustImportPersonConfiguration;
 
 	private String oxTrustConfigJson;
@@ -242,10 +247,8 @@ public class JsonConfigurationAction implements Serializable {
 
 	private boolean canConnectToRedis() {
 		try {
-			RedisProvider provider = CdiUtil.bean(RedisProvider.class);
-			CacheConfiguration cConfiguration = this.cacheConfiguration;
-			cConfiguration.setRedisConfiguration(this.cacheConfiguration.getRedisConfiguration());
-			provider.setCacheConfiguration(cConfiguration);
+            decryptPassword(this.cacheConfiguration.getRedisConfiguration());
+            AbstractRedisProvider provider = RedisProviderFactory.create(this.cacheConfiguration.getRedisConfiguration());
 			provider.create();
 			if (provider.isConnected()) {
 				provider.destroy();
@@ -256,6 +259,18 @@ public class JsonConfigurationAction implements Serializable {
 			return false;
 		}
 	}
+
+    private void decryptPassword(RedisConfiguration redisConfiguration) {
+        try {
+            String encryptedPassword = redisConfiguration.getPassword();
+            if (StringUtils.isNotBlank(encryptedPassword)) {
+                redisConfiguration.setDecryptedPassword(stringEncrypter.decrypt(encryptedPassword));
+                log.trace("Decrypted redis password successfully.");
+            }
+        } catch (StringEncrypter.EncryptionException e) {
+            log.error("Error during redis password decryption", e);
+        }
+    }
 
 	private boolean canConnectToMemCached() {
 		try {
