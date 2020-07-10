@@ -60,7 +60,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Named
 public class StatusCheckerTimer {
 
-	private final static int DEFAULT_INTERVAL = 60; // 1 minute
+	private final static int DEFAULT_INTERVAL =  5 * 60; // 1 minute
 
 	@Inject
 	private Logger log;

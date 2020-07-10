@@ -251,13 +251,10 @@ public class UpdateOrganizationAction implements Serializable {
 				this.smtpConfiguration = new SmtpConfiguration();
 				this.configuration.setSmtpConfiguration(smtpConfiguration);
 			}
-
 			configurationService.decryptSmtpPassword(smtpConfiguration);
-
 			return OxTrustConstants.RESULT_SUCCESS;
 		} catch (Exception ex) {
 			log.error("an error occured", ex);
-
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 	}
@@ -459,6 +456,8 @@ public class UpdateOrganizationAction implements Serializable {
 		} catch (IOException ex) {
 			log.debug("Error loading custom idp favicon", ex);
 			return null;
+		}finally {
+			uploadedFile=null;
 		}
 		return fileName;
 	}
