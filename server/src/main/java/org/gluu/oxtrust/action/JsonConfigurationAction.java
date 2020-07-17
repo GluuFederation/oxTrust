@@ -110,11 +110,8 @@ public class JsonConfigurationAction implements Serializable {
 			this.oxTrustappConfiguration = jsonConfigurationService.getOxTrustappConfiguration();
 			this.oxTrustImportPersonConfiguration = jsonConfigurationService.getOxTrustImportPersonConfiguration();
 			this.cacheConfiguration = jsonConfigurationService.getOxMemCacheConfiguration();
-			if (this.cacheConfiguration.getRedisConfiguration().getDecryptedPassword() != null) {
-				String temp = this.cacheConfiguration.getRedisConfiguration().getPassword();
-				this.cacheConfiguration.getRedisConfiguration()
-						.setPassword(this.cacheConfiguration.getRedisConfiguration().getDecryptedPassword());
-				this.cacheConfiguration.getRedisConfiguration().setDecryptedPassword(temp);
+			if (this.cacheConfiguration.getRedisConfiguration().getPassword() != null) {
+				decryptPassword(this.cacheConfiguration.getRedisConfiguration());
 			}
 			this.storeConfiguration = jsonConfigurationService.getDocumentStoreConfiguration();
 			this.oxTrustConfigJson = getProtectedOxTrustappConfiguration(this.oxTrustappConfiguration);
@@ -264,14 +261,13 @@ public class JsonConfigurationAction implements Serializable {
         try {
             String encryptedPassword = redisConfiguration.getPassword();
             if (StringUtils.isNotBlank(encryptedPassword)) {
-                redisConfiguration.setDecryptedPassword(stringEncrypter.decrypt(encryptedPassword));
+                redisConfiguration.setPassword(stringEncrypter.decrypt(encryptedPassword));
                 log.trace("Decrypted redis password successfully.");
             }
         } catch (StringEncrypter.EncryptionException e) {
             log.error("Error during redis password decryption", e);
         }
     }
-
 	private boolean canConnectToMemCached() {
 		try {
 			MemcachedProvider provider = CdiUtil.bean(MemcachedProvider.class);

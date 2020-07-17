@@ -13,6 +13,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.lang.StringUtils;
 import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.config.oxtrust.AttributeResolverConfiguration;
 import org.gluu.config.oxtrust.CacheRefreshConfiguration;
@@ -26,7 +27,9 @@ import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.exception.BasePersistenceException;
 import org.gluu.service.JsonService;
 import org.gluu.service.cache.CacheConfiguration;
+import org.gluu.service.cache.RedisConfiguration;
 import org.gluu.service.document.store.conf.DocumentStoreConfiguration;
+import org.gluu.util.security.StringEncrypter;
 import org.slf4j.Logger;
 
 /**
@@ -47,6 +50,9 @@ public class JsonConfigurationService implements Serializable {
 	private PersistenceEntryManager persistenceEntryManager;
 	@Inject
 	private JsonService jsonService;
+
+	@Inject
+	private StringEncrypter stringEncrypter;
 
 	@Inject
 	private ConfigurationFactory<?> configurationFactory;
@@ -77,7 +83,7 @@ public class JsonConfigurationService implements Serializable {
 
 	private LdapOxTrustConfiguration getOxTrustConfiguration() {
 		String configurationDn = configurationFactory.getConfigurationDn();
-		return  loadOxTrustConfig(configurationDn);
+		return loadOxTrustConfig(configurationDn);
 	}
 
 	public String getOxAuthDynamicConfigJson() throws IOException {
@@ -144,6 +150,7 @@ public class JsonConfigurationService implements Serializable {
 	}
 
 	public boolean saveOxMemCacheConfiguration(CacheConfiguration cachedConfiguration) {
+		encrypPassword(cachedConfiguration.getRedisConfiguration());
 		GluuConfiguration gluuConfiguration = configurationService.getConfiguration();
 		gluuConfiguration.setCacheConfiguration(cachedConfiguration);
 		configurationService.updateConfiguration(gluuConfiguration);
@@ -181,6 +188,18 @@ public class JsonConfigurationService implements Serializable {
 
 		return null;
 	}
+	
+	private void encrypPassword(RedisConfiguration redisConfiguration) {
+        try {
+            String password = redisConfiguration.getPassword();
+            if (StringUtils.isNotBlank(password)) {
+                redisConfiguration.setPassword(stringEncrypter.encrypt(password));
+                log.trace("Decrypted redis password successfully.");
+            }
+        } catch (StringEncrypter.EncryptionException e) {
+            log.error("Error during redis password decryption", e);
+        }
+    }
 
 	public DbApplicationConfiguration loadFido2Configuration() {
 		try {

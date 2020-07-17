@@ -41,7 +41,6 @@ import org.gluu.service.cdi.event.ApplicationInitialized;
 import org.gluu.service.cdi.event.ApplicationInitializedEvent;
 import org.gluu.util.Pair;
 import org.gluu.util.StringHelper;
-import org.jboss.resteasy.client.core.executors.ApacheHttpClient4Executor;
 import org.jboss.resteasy.client.jaxrs.ClientHttpEngine;
 import org.jboss.resteasy.client.jaxrs.engines.factory.ApacheHttpClient4EngineFactory;
 import org.slf4j.Logger;
@@ -174,8 +173,7 @@ public class UmaPermissionService implements Serializable {
 			RptIntrospectionResponse rptStatusResponse = getStatusResponse(patToken, rptToken);
 			log.trace("RPT status response: {} ", rptStatusResponse);
 			if ((rptStatusResponse == null) || !rptStatusResponse.getActive()) {
-				log.error("Status response for RPT token: '{}' is invalid", rptToken);
-				// return authenticationFailure;
+				log.warn("Status response for RPT token: '{}' is invalid, will do a retry", rptToken);
 			} else {
 				boolean rptHasPermissions = isRptHasPermissions(rptStatusResponse);
 
