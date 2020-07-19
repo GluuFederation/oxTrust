@@ -88,15 +88,15 @@ public class PasswordResetAction implements Serializable {
 	private JsonConfigurationService jsonConfigurationService;
 
 	private PasswordResetRequest request;
-	private String guid;
-	private String securityQuestion;
-	private String securityAnswer;
+
 	@Size(min = 3, max = 60, message = "Password length must be between {min} and {max} characters.")
 	private String password;
 	@Size(min = 3, max = 60, message = "Password length must be between {min} and {max} characters.")
 	private String confirm;
-
 	private String code;
+	private String guid;
+	private String securityQuestion;
+	private String securityAnswer;
 
 	public String start() throws ParseException {
 		if (StringHelper.isEmpty(guid)) {
@@ -138,6 +138,7 @@ public class PasswordResetAction implements Serializable {
 		if (person != null) {
 			question = person.getGluuCustomAttribute("secretQuestion");
 		}
+
 		if ((request != null) && requestCalendarExpiry.after(currentCalendar)) {
 			if (question != null) {
 				securityQuestion = question.getValue();
@@ -182,7 +183,8 @@ public class PasswordResetAction implements Serializable {
 				this.request = ldapEntryManager.find(PasswordResetRequest.class,
 						"oxGuid=" + getCode() + ",ou=resetPasswordRequests," + organization.getDn());
 			} catch (Exception e) {
-				log.info("", e);
+				log.error("=================", e);
+				return OxTrustConstants.RESULT_FAILURE;
 			}
 			Calendar requestCalendarExpiry = Calendar.getInstance();
 			Calendar currentCalendar = Calendar.getInstance();
@@ -209,7 +211,8 @@ public class PasswordResetAction implements Serializable {
 				}
 				if (question != null && answer != null) {
 					String correctAnswer = answer.getValue();
-					Boolean securityQuestionAnswered = (securityAnswer != null) && securityAnswer.equals(correctAnswer);
+					Boolean securityQuestionAnswered = (this.securityAnswer != null)
+							&& this.securityAnswer.equalsIgnoreCase(correctAnswer);
 					if (securityQuestionAnswered) {
 						person.setUserPassword(password);
 						try {
@@ -217,8 +220,10 @@ public class PasswordResetAction implements Serializable {
 							return OxTrustConstants.RESULT_SUCCESS;
 						} catch (DuplicateEmailException e) {
 							facesMessages.add(FacesMessage.SEVERITY_ERROR, e.getMessage());
+							log.error("", e);
 						} catch (Exception e) {
 							facesMessages.add(FacesMessage.SEVERITY_ERROR, "Error while processing the request");
+							log.error("", e);
 						}
 						return OxTrustConstants.RESULT_FAILURE;
 					}
