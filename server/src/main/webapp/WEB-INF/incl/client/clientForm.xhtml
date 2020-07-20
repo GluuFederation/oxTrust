@@ -227,10 +227,10 @@
 																	<h:outputText
 																		value="#{_scope.id eq null ? _scope.displayName : _scope.id}" />
 																	<h:outputText value="&#160;" />
-																	<div class="span6 pull-right">
+																	<div>
 																		<a4j:commandLink
 																			styleClass="glyphicon glyphicon-remove"
-																			style="margin-top:-20px;"
+																			style="margin-top:-20px; float:right;"
 																			action="#{_clientAction.removeScope(_scope.inum)}"
 																			execute="@this" render="selectedScopesId"
 																			eventsQueue="clientQueue">
@@ -259,10 +259,10 @@
 																<div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
 																	<h:outputText value="#{_responseType.value}" />
 																	<h:outputText value="&#160;" />
-																	<div class="span6 pull-right">
+																	<div>
 																		<a4j:commandLink
 																			styleClass="glyphicon glyphicon-remove"
-																			style="margin-top:-20px;"
+																			style="margin-top:-20px;float:right;"
 																			action="#{_clientAction.removeResponseType(_responseType.value)}"
 																			execute="@this" render="selectedResponseTypesId"
 																			eventsQueue="clientQueue">
@@ -555,10 +555,10 @@
 																	style="overflow-x: scroll;">
 																	<h:outputText value="#{empty _uri ? _uri : _uri}" />
 																	<h:outputText value="&#160;" />
-																	<div class="span6 pull-right">
+																	<div>
 																		<a4j:commandLink
 																			styleClass="glyphicon glyphicon-remove"
-																			style="margin-top:-20px;"
+																			style="margin-top:-20px; float:right;"
 																			action="#{_clientAction.removeClaimRedirectURI(_uri)}"
 																			execute="@this" render="selectedClaimRedirectURIIsId"
 																			eventsQueue="clientQueue">
