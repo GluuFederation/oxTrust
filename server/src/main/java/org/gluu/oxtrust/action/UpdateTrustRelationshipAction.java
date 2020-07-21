@@ -609,8 +609,8 @@ public class UpdateTrustRelationshipAction implements Serializable {
 				rendererParameters.setParameter("attributeDisplayName", customAttribute.getMetadata().getDisplayName());
 				rendererParameters.setParameter("attributeValue", customAttribute.getValue());
 
-				mailMsgPlain += facesMessages.evalResourceAsString("#{msg['mail.trust.released.attribute.plain']}");
-				mailMsgHtml += facesMessages.evalResourceAsString("#{msg['mail.trust.released.attribute.html']}");
+				mailMsgPlain += facesMessages.evalResourceAsString("#{msgs['mail.trust.released.attribute.plain']}");
+				mailMsgHtml += facesMessages.evalResourceAsString("#{msgs['mail.trust.released.attribute.html']}");
 				rendererParameters.reset();
 
 				customAttribute.setNew(false);
@@ -628,11 +628,11 @@ public class UpdateTrustRelationshipAction implements Serializable {
 						|| StringHelper.isEmpty(configuration.getSmtpConfiguration().getHost()))
 					log.warn("Failed to send the 'Attributes released' notification email: unconfigured SMTP server");
 				else {
-					String subj = facesMessages.evalResourceAsString("#{msg['mail.trust.released.subject']}");
+					String subj = facesMessages.evalResourceAsString("#{msgs['mail.trust.released.subject']}");
 					rendererParameters.setParameter("trustRelationshipName", trustRelationship.getDisplayName());
 					rendererParameters.setParameter("trustRelationshipInum", trustRelationship.getInum());
-					String preMsgPlain = facesMessages.evalResourceAsString("#{msg['mail.trust.released.name.plain']}");
-					String preMsgHtml = facesMessages.evalResourceAsString("#{msg['mail.trust.released.name.html']}");
+					String preMsgPlain = facesMessages.evalResourceAsString("#{msgs['mail.trust.released.name.plain']}");
+					String preMsgHtml = facesMessages.evalResourceAsString("#{msgs['mail.trust.released.name.html']}");
 					boolean result = mailService.sendMail(configuration.getContactEmail(), null, subj,
 							preMsgPlain + mailMsgPlain, preMsgHtml + mailMsgHtml);
 

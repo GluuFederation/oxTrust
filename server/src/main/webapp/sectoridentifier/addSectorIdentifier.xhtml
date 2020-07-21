@@ -21,18 +21,18 @@
                 <ui:define name="controlButttons">
                     <div id="updateButtons">
                         <h:commandButton action="#{updateSectorIdentifierAction.save}" styleClass="btn btn-primary"
-                                         value="#{msg['sectoridentifier.add']}"/>
+                                         value="#{msgs['sectoridentifier.add']}"/>
                         <h:commandButton action="#{updateSectorIdentifierAction.cancel}" immediate="true"
                                          style="margin-left: 5px;" styleClass="btn btn-primary"
-                                         value="#{msg['sectorIdentifier.cancel']}"/>
+                                         value="#{msgs['sectorIdentifier.cancel']}"/>
                     </div>
                 </ui:define>
             </ui:decorate>
 
             <ox:inputTextDialog acceptMethod="#{updateSectorIdentifierAction.acceptSelectLoginUri}"
                                 cancelMethod="#{updateSectorIdentifierAction.cancelSelectLoginUri}" dialogWidth="600"
-                                id="loginRedirect" inputLabel="#{msg['sectorIdentifier.loginRedirectURI']}"
-                                inputWidth="80" label="#{msg['sectorIdentifier.selectLoginRedirectURI']}"
+                                id="loginRedirect" inputLabel="#{msgs['sectorIdentifier.loginRedirectURI']}"
+                                inputWidth="80" label="#{msgs['sectorIdentifier.selectLoginRedirectURI']}"
                                 maxLength="256" queue="sectorIdentifierQueue" render="selectedLoginURIsId"
                                 text="#{updateSectorIdentifierAction.availableLoginUri}" textId="loginTextId"/>
 

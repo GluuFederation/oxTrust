@@ -22,16 +22,16 @@
 			<f:facet name="header">
 				<h:outputText value="RequiredValidUntil Filter help" />
 			</f:facet>
-            #{msg['trustmanager.thisMetadataFilterRequiresThePresence']}
+            #{msgs['trustmanager.thisMetadataFilterRequiresThePresence']}
         </rich:panel>
 		<rich:panel id="RequiredValidUntilFilterMenu" bodyClass="inpanelBody">
 			<f:facet name="header">
 				<h:outputText
-					value="#{msg['trustmanager.requiredValidUntilFilter']}" />
+					value="#{msgs['trustmanager.requiredValidUntilFilter']}" />
 			</f:facet>
 			<h:panelGrid>
 				<h:outputText
-					value="#{msg['trustmanager.enterMaxValidatyInternal']}" />
+					value="#{msgs['trustmanager.enterMaxValidatyInternal']}" />
 				<b:touchSpin col-md="6" min="0" max="2147483647"
 					value="#{_metadataFilterSelected.maxValidityInterval}" step="86400" />
 			</h:panelGrid>

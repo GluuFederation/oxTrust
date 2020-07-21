@@ -24,9 +24,9 @@
 	<ui:define name="body">
 		<section class="content-header">
 			<h1 style="color: #333;">
-				#{msg['trustmanager.saml']} <small> <i
+				#{msgs['trustmanager.saml']} <small> <i
 					class="fa fa-caret-right" style="color: #333 !important;" />
-					#{msg['trustmanager.trustRelationships']}
+					#{msgs['trustmanager.trustRelationships']}
 				</small>
 			</h1>
 			<ol class="breadcrumb">
@@ -34,7 +34,7 @@
 						class="fa fa-home" />
 				</a></li>
 				<li class="organization/configuration"><a
-					href="#{request.contextPath}/trustmanager/trustRelationships.htm">#{msg['trustmanager.trustRelationships']}</a>
+					href="#{request.contextPath}/trustmanager/trustRelationships.htm">#{msgs['trustmanager.trustRelationships']}</a>
 				</li>
 			</ol>
 		</section>
@@ -48,7 +48,7 @@
 						iconAwesome="fa-list" collapsible="false">
 						<b:link style-class="btn btn-primary" icon="plus"
 							outcome="/trustmanager/addTrustRelationship"
-							value="#{msg['trustmanager.addRelationship']}" propagation="none"
+							value="#{msgs['trustmanager.addRelationship']}" propagation="none"
 							includeViewParams="false" />
 						<p:spacer height="50" />
 						<a4j:region>
@@ -72,7 +72,7 @@
 											action="#{trustRelationshipInventoryAction.search}"
 											style="float:left;margin-left :3px;"
 											styleClass="btn btn-primary searchButton"
-											value="#{msg['trustmanager.search']}" iconAwesome="fa-search" />
+											value="#{msgs['trustmanager.search']}" iconAwesome="fa-search" />
 									</div>
 								</ox:decorate>
 							</h:form>
@@ -87,7 +87,7 @@
 											value="#{trustRelationshipInventoryAction.trustedSpList}"
 											var="tsps" print="true" excel="true" csv="true" pdf="true"
 											select="true" responsive="true">
-											<b:dataTableColumn label="#{msg['trustmanager.community']}"
+											<b:dataTableColumn label="#{msgs['trustmanager.community']}"
 												order="asc">
 												<h:link includeViewParams="false"
 													outcome="/trustmanager/updateTrustRelationship"
@@ -96,7 +96,7 @@
 												</h:link>
 											</b:dataTableColumn>
 											<b:dataTableColumn
-												label="#{msg['trustmanager.attributesPublished']}">
+												label="#{msgs['trustmanager.attributesPublished']}">
 												<ox:attributeList value="#{tsps.releasedCustomAttributes}" />
 											</b:dataTableColumn>
 											<b:dataTableColumn>
@@ -134,14 +134,14 @@
 													rendered="#{metadataValidationTimer.getValidationStatus(tsps.spMetaDataFN,tsps) eq 'Success'}"
 													severity="success" />
 											</b:dataTableColumn>
-											<b:dataTableColumn label="#{msg['trustmanager.status']}" width="5%">
+											<b:dataTableColumn label="#{msgs['trustmanager.status']}" width="5%">
 												<b:label rendered="#{tsps.status.displayName eq 'Active'}"
 													text="#{tsps.status.displayName}" severity="primary" />
 												<b:label rendered="#{tsps.status.displayName eq 'Inactive'}"
 													text="#{tsps.status.displayName}" severity="danger" />
 											</b:dataTableColumn>
 											<b:dataTableColumn value="#{tsps.description}"
-												label="#{msg['trustmanager.description']}" />
+												label="#{msgs['trustmanager.description']}" />
 										</b:dataTable>
 									</div>
 								</h:form>

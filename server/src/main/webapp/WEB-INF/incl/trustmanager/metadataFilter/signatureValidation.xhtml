@@ -15,19 +15,19 @@
 
         <rich:panel id="SignatureValidationFilterDescription" bodyClass="inpanelBody">
             <f:facet name="header">
-                <h:outputText value="#{msg['trustmanager.signatureValidationFilterHelp']}" />
+                <h:outputText value="#{msgs['trustmanager.signatureValidationFilterHelp']}" />
             </f:facet>
-            #{msg['trustmanager.thisMetadataFilterValidate']}
+            #{msgs['trustmanager.thisMetadataFilterValidate']}
         </rich:panel>
         <rich:panel id="SignatureValidationFilterMenu" bodyClass="inpanelBody">
             <f:facet name="header">
-                <h:outputText value="#{msg['trustmanager.signatureValidationFilterConfiguration']}" />
+                <h:outputText value="#{msgs['trustmanager.signatureValidationFilterConfiguration']}" />
             </f:facet>
             <h:panelGrid columns="2">
                 <h:outputText value="requireSignedMetadata: " />
                 <h:selectBooleanCheckbox value="#{_metadataFilterSelected.requireSignedMetadata}" />
             </h:panelGrid>
-            <h:outputText value="#{msg['trustmanager.validationCertificate']}" />
+            <h:outputText value="#{msgs['trustmanager.validationCertificate']}" />
             <h:panelGrid>
                 <h:outputText value="#{_metadataFilterSelected.filterCertFileName}" rendered="#{not empty _metadataFilterSelected.filterCertFileName}" />
                 <a4j:commandLink action="#{_metadataFilterSelected.setFilterCertFileName('')}" limitRender="true" render="SignatureValidationFilterMenu"

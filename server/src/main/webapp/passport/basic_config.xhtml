@@ -19,9 +19,9 @@
 	<ui:define name="body">
 		<section class="content-header">
 			<h1 style="color: #333;">
-				#{msg['passport.title']} <small> <i
+				#{msgs['passport.title']} <small> <i
 					class="fa fa-caret-right" style="color: #333 !important;" />
-					#{msg['passport.basic.configuration']}
+					#{msgs['passport.basic.configuration']}
 				</small>
 			</h1>
 			<ol class="breadcrumb">
@@ -29,7 +29,7 @@
 						class="fa fa-home" />
 				</a></li>
 				<li class="organization/configuration"><a
-					href="#{request.contextPath}/passport/providers.htm">#{msg['passport.providers']}</a></li>
+					href="#{request.contextPath}/passport/providers.htm">#{msgs['passport.providers']}</a></li>
 			</ol>
 		</section>
 		<section class="content">
@@ -48,7 +48,7 @@
 											<!-- First column-->
 											<div class="col-sm-6 col-lg-6" style="padding: 0px;">
 												<ox:decorate
-													label="#{msg['passport.basicconfig.form.serverURI']}"
+													label="#{msgs['passport.basicconfig.form.serverURI']}"
 													leftClass="col-sm-3" rightClass="col-sm-9">
 													<h:inputText styleClass="form-control ServerURIId"
 														style="width:100%" required="true"
@@ -64,7 +64,7 @@
 													<div class="col-sm-6 col-lg-6" style="margin-top: 3px;">
 														<h:outputText
 															style=" margin-left:25px; color:black; font-size:1em;font-weight:bold;"
-															value="#{msg['passport.basicconfig.form.serverPort']}:" />
+															value="#{msgs['passport.basicconfig.form.serverPort']}:" />
 													</div>
 													<div class="col-sm-6 col-lg-6" style="margin-top: -15px;">
 														<b:touchSpin id="serverPortID" col-md="9" required="true"
@@ -77,7 +77,7 @@
 										</div>
 										<div class="row" style="margin-left: 5px; margin-right: 5px;">
 											<ox:decorate
-												label="#{msg['passport.basicconfig.form.postProfileEndpoint']}"
+												label="#{msgs['passport.basicconfig.form.postProfileEndpoint']}"
 												leftClass="col-sm-3" rightClass="col-sm-9"
 												id="PostProfileEndpointID">
 												<h:inputText styleClass="form-control PostProfileEndpointID"
@@ -90,7 +90,7 @@
 										</div>
 										<div class="row" style="margin-left: 5px; margin-right: 5px;">
 											<ox:decorate
-												label="#{msg['passport.basicconfig.form.spTLSCert']}"
+												label="#{msgs['passport.basicconfig.form.spTLSCert']}"
 												leftClass="col-sm-3" rightClass="col-sm-9">
 												<h:inputText styleClass="rounded form-control SpTLSCertID"
 													id="SpTLSCertID" style="width:100%" required="true"
@@ -101,7 +101,7 @@
 										</div>
 										<div class="row" style="margin-left: 5px; margin-right: 5px;">
 											<ox:decorate
-												label="#{msg['passport.basicconfig.form.spTLSKey']}"
+												label="#{msgs['passport.basicconfig.form.spTLSKey']}"
 												leftClass="col-sm-3" rightClass="col-sm-9">
 												<h:inputText
 													styleClass="rounded form-control text-centered SpTLSCertKeyID"
@@ -114,13 +114,13 @@
 										<div class="row"
 											style="margin-right: 20px; margin-left: 20px;">
 											<b:panel
-												title="#{msg['passport.basic.config.logging.title']}"
+												title="#{msgs['passport.basic.config.logging.title']}"
 												look="primary" iconAwesome="fa-gear" collapsible="false">
 												<div class="row"
 													style="margin-left: 50px; margin-right: 5px;">
 													<div class="col-sm-6 col-lg-6" style="padding: 0px;">
 														<ox:decorate
-															label="#{msg['passport.basicconfig.logging.form.level']}"
+															label="#{msgs['passport.basicconfig.logging.form.level']}"
 															leftClass="col-sm-3" rightClass="col-sm-9">
 															<h:selectOneMenu
 																styleClass="rounded form-control PassportLogLevelID"
@@ -134,7 +134,7 @@
 													</div>
 													<div class="col-sm-6 col-lg-6" style="padding: 0px;">
 														<ox:decorate
-															label="#{msg['passport.basicconfig.logging.form.consoleLogOnly']}"
+															label="#{msgs['passport.basicconfig.logging.form.consoleLogOnly']}"
 															leftClass="col-sm-7" rightClass="col-sm-1">
 															<h:selectBooleanCheckbox
 																value="#{passportConfigurationAction.configuration.logging.consoleLogOnly}"
@@ -144,13 +144,13 @@
 												</div>
 
 												<b:panel
-													title="#{msg['passport.basic.config.logging.mq.title']}"
+													title="#{msgs['passport.basic.config.logging.mq.title']}"
 													look="primary" iconAwesome="fa-slack" collapsible="false">
 													<div class="row"
 														style="margin-left: 90px; margin-right: 5px;">
 														<div class="col-sm-6 col-lg-6" style="padding: 0px;">
 															<ox:decorate
-																label="#{msg['passport.basicconfig.logging.mq.form.host']}"
+																label="#{msgs['passport.basicconfig.logging.mq.form.host']}"
 																leftClass="col-sm-3" rightClass="col-sm-9">
 																<h:inputText styleClass="form-control MQServerHostID"
 																	style="width:100%"
@@ -160,7 +160,7 @@
 																</h:inputText>
 															</ox:decorate>
 															<ox:decorate id="MQServerHostPortID"
-																label="#{msg['passport.basicconfig.logging.mq.form.port']}"
+																label="#{msgs['passport.basicconfig.logging.mq.form.port']}"
 																leftClass="col-sm-3" rightClass="col-sm-9">
 																<b:touchSpin id="MQServerHostPortID" col-md="6"
 																	required="true" styleClass="rounded MQServerHostPortID"
@@ -169,7 +169,7 @@
 																	min="0" max="10000" step="1" />
 															</ox:decorate>
 															<ox:decorate
-																label="#{msg['passport.basicconfig.logging.mq.form.enabled']}"
+																label="#{msgs['passport.basicconfig.logging.mq.form.enabled']}"
 																leftClass="col-sm-4" rightClass="col-sm-1">
 																<h:selectBooleanCheckbox
 																	value="#{passportConfigurationAction.configuration.logging.activeMQConf.enabled}"
@@ -178,7 +178,7 @@
 														</div>
 														<div class="col-sm-6 col-lg-6" style="padding: 0px;">
 															<ox:decorate
-																label="#{msg['passport.basicconfig.logging.mq.form.username']}"
+																label="#{msgs['passport.basicconfig.logging.mq.form.username']}"
 																leftClass="col-sm-3" rightClass="col-sm-9"
 																id="UserNameID">
 																<h:inputText styleClass="form-control UserNameID"
@@ -189,7 +189,7 @@
 																</h:inputText>
 															</ox:decorate>
 															<ox:decorate
-																label="#{msg['passport.basicconfig.logging.mq.form.password']}"
+																label="#{msgs['passport.basicconfig.logging.mq.form.password']}"
 																leftClass="col-sm-3" rightClass="col-sm-9"
 																id="PasswordID">
 																<h:inputText styleClass="form-control PasswordID"
@@ -212,10 +212,10 @@
 							<div class="box-footer">
 								<div id="updateButtons">
 									<h:commandButton action="#{passportConfigurationAction.save}"
-										styleClass="btn btn-primary" value="#{msg['client.update']}" />
+										styleClass="btn btn-primary" value="#{msgs['client.update']}" />
 									<h:commandButton action="#{passportConfigurationAction.cancel}"
 										immediate="true" style="margin-left:3px;"
-										styleClass="btn btn-primary" value="#{msg['client.cancel']}" />
+										styleClass="btn btn-primary" value="#{msgs['client.cancel']}" />
 								</div>
 							</div>
 						</h:form>

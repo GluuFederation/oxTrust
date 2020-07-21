@@ -52,7 +52,7 @@
 									</p>
 									<p style="font-size: 18px; color: whitesmoke;">
 										<br />
-										<h:outputText value="#{msg['topmenu.organization']} " />
+										<h:outputText value="#{msgs['topmenu.organization']} " />
 										<b:label
 											text="#{organizationService.getOrgName()}"
 											severity="success" />
@@ -63,13 +63,13 @@
 									<div class="pull-left">
 										<b:commandLink includeViewParams="false"
 											href="#{request.contextPath}/profile/person/viewProfile.htm"
-											value="#{msg['topmenu.profile']}" iconAwesome="fa-user"
+											value="#{msgs['topmenu.profile']}" iconAwesome="fa-user"
 											styleClass="btn bg-green btn-flat profileButton"
 											rendered="#{identity.loggedIn}" />
 									</div>
 									<div class="pull-right">
 										<b:commandLink includeViewParams="false" outcome="/logout.htm"
-											value="#{msg['topmenu.logout']}" iconAwesome="fa-sign-out"
+											value="#{msgs['topmenu.logout']}" iconAwesome="fa-sign-out"
 											styleClass="btn bg-green btn-flat logoutButton"
 											rendered="#{identity.loggedIn}" />
 									</div>

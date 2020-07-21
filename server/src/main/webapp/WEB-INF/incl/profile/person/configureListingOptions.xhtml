@@ -8,13 +8,13 @@
 	<p:dialog id="configureListingOptions"
 		widgetVar="configureListingOptions" modal="true">
 		<f:facet name="header">
-			<h:outputText value="#{msg['profile.configureWhitePage']}" />
+			<h:outputText value="#{msgs['profile.configureWhitePage']}" />
 		</f:facet>
 		<h:form id="configureListingOptionsForm">
 			<h:panelGrid columns="1">
-				<h:outputText value="#{msg['profile.clickOnAttributeName']}" />
+				<h:outputText value="#{msgs['profile.clickOnAttributeName']}" />
 				<h:panelGrid columns="2">
-					<h:outputText value="#{msg['profile.name']} " styleClass="name" />
+					<h:outputText value="#{msgs['profile.name']} " styleClass="name" />
 					<h:outputText
 						value="#{userProfileAction.person.getAttribute('cn')}" />
 				</h:panelGrid>
@@ -23,7 +23,7 @@
 						listener="#{userProfileAction.toggle('mail')}"
 						render="configureListingOptionsForm" execute="@this"
 						limitRender="true" />
-					<h:outputText value="#{msg['profile.email']} "
+					<h:outputText value="#{msgs['profile.email']} "
 						styleClass="#{userProfileAction.released('mail')? 'name' : 'striked name'}" />
 					<h:outputText
 						value="#{userProfileAction.person.getAttribute('mail')}"
@@ -36,7 +36,7 @@
 						listener="#{userProfileAction.toggle('telephoneNumber')}"
 						render="configureListingOptionsForm" execute="@this"
 						limitRender="true" />
-					<h:outputText value="#{msg['profile.phone']} "
+					<h:outputText value="#{msgs['profile.phone']} "
 						styleClass="#{userProfileAction.released('telephoneNumber')? 'name' : 'striked name'}" />
 					<h:outputText value="#{sel.getAttribute('telephoneNumber')}"
 						rendered="#{userProfileAction.released('telephoneNumber')}" />
@@ -63,7 +63,7 @@
 					value="Change" onclick="PF('configureListingOptions').hide();"
 					styleClass="btn btn-success" />
                 &nbsp;
-               <h:commandButton value="#{msg['profile.cancel']}"
+               <h:commandButton value="#{msgs['profile.cancel']}"
 					type="button"
 					onclick="PF('configureListingOptions').hide(); return false;"
 					styleClass="btn btn-success" />

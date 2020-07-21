@@ -42,7 +42,7 @@ public class SearchRadiusClientAction implements Serializable {
     private ConversationService conversationService;
 
     @NotNull
-    @Size(min=0,max=30,message="#{msg['radius.clients.searchpattern.outofrange']}")
+    @Size(min=0,max=30,message="#{msgs['radius.clients.searchpattern.outofrange']}")
     private String searchPattern = "";
 
     private String oldSearchPattern;
@@ -98,7 +98,7 @@ public class SearchRadiusClientAction implements Serializable {
             this.searchPattern = "";
         }catch(Exception e) {
             log.debug("Failed to find radius clients",e);
-            facesMessages.add(FacesMessage.SEVERITY_ERROR,"#{msg['radius.clients.search.error']}");
+            facesMessages.add(FacesMessage.SEVERITY_ERROR,"#{msgs['radius.clients.search.error']}");
             conversationService.endConversation();
             return OxTrustConstants.RESULT_FAILURE;
         }

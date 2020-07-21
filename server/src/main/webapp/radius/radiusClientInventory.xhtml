@@ -19,22 +19,22 @@
 	<ui:define name="body">
 		<section class="content-header">
 			<h1 style="color: #333;">
-			  #{msg['radius.title']}
-			  <small><i class="fa fa-caret-right" style="color: #333 !important;"/>#{msg['radius.clients.title']}</small>
+			  #{msgs['radius.title']}
+			  <small><i class="fa fa-caret-right" style="color: #333 !important;"/>#{msgs['radius.clients.title']}</small>
 			</h1>
 			<ol class="breadcrumb">
 			  <li><a href="#{request.contextPath}/home.htm"><i class="fa fa-home"/></a></li>
-			  <li class="organization/configuration"><a href="#">#{msg['radius.clients.title']}</a></li>
+			  <li class="organization/configuration"><a href="#">#{msgs['radius.clients.title']}</a></li>
 			</ol>
 		</section>
 		<div class="formArea" style="margin-top: 10px">
 			<div class="col-xs-12 col-md-12">
-				<b:panel title="#{msg['radius.clients.panel.title']}" look="primary" iconAwesome="fa-list">
+				<b:panel title="#{msgs['radius.clients.panel.title']}" look="primary" iconAwesome="fa-list">
 					<h:panelGroup id="radius-clients-table">
 						<div class="row" style="padding: 5px; margin-bottom: 5px; margin-left: 15px;">
 							<b:link 
 								style-class="btn btn-primary" icon="plus"
-								outcome="/radius/addRadiusClient" value="#{msg['radius.client.add.title']}"/>
+								outcome="/radius/addRadiusClient" value="#{msgs['radius.client.add.title']}"/>
 							
 						</div>
 						<p:spacer height="16"/>
@@ -48,7 +48,7 @@
 										value="#{searchRadiusClientAction.searchPattern}"/>
 									<b:commandButton action="#{searchRadiusClientAction.search}"
 											style="float: left; margin-left: 3px;" styleClass="btn btn-primary searchButton"
-											value="#{msg['radius.clients.search.label']}" iconAwesome="fa-search"/>	
+											value="#{msgs['radius.clients.search.label']}" iconAwesome="fa-search"/>	
 									
 								</div>
 							</ox:decorate>
@@ -58,24 +58,24 @@
 								<div class="table-responsive" style="overflow:auto;">
 									<h:form id="radius-clients-form">
 										<ui:fragment rendered="#{searchRadiusClientAction.results.size() eq 0}">
-											<h:outputText value="#{msg['radius.clients.search.noresults']}"/>
+											<h:outputText value="#{msgs['radius.clients.search.noresults']}"/>
 										</ui:fragment>
 										<b:dataTable style="text-align:center;width:100%;"
 											rendered="#{searchRadiusClientAction.results.size() gt 0}"
 											value="#{searchRadiusClientAction.results}" var="rclient"
 											print="true" excel="true" csv="true" pdf="true" select="true">
-											<b:dataTableColumn label="#{msg['radius.client.name']}" order="desc">
+											<b:dataTableColumn label="#{msgs['radius.client.name']}" order="desc">
 												<h:link includeViewParams="false" 
 													outcome="/radius/updateRadiusClient"
 													value="#{rclient.entity.name}">
 													<f:param name="inum" value="#{rclient.entity.inum}"/>
 												</h:link>
 											</b:dataTableColumn>
-											<b:dataTableColumn label="#{msg['radius.client.inum']}" 
+											<b:dataTableColumn label="#{msgs['radius.client.inum']}" 
 												value="#{rclient.entity.inum}"/>
-											<b:dataTableColumn label="#{msg['radius.client.ipaddress']}"
+											<b:dataTableColumn label="#{msgs['radius.client.ipaddress']}"
 												value="#{rclient.entity.ipAddress}"/>
-											<b:dataTableColumn label="#{msg['radius.clients.table.delete']}" orderable="false">
+											<b:dataTableColumn label="#{msgs['radius.clients.table.delete']}" orderable="false">
 												<h:selectBooleanCheckbox value="#{rclient.selected}" 
 													id="select-radius-client" onclick="displayDeleteButton();"/>
 											</b:dataTableColumn>
@@ -85,7 +85,7 @@
 											onclick="#{rich:component('removeConfirmation:acceptRemovalModalPanel')}.show();"
 											styleClass="btn btn-primary"
 											style="float: left; margin-left: 3px;"
-											value="#{msg['radius.clients.table.delete']}"
+											value="#{msgs['radius.clients.table.delete']}"
 											rendered="#{searchRadiusClientAction.results.size() gt 0}"/>
 									</h:form>
 								</div>

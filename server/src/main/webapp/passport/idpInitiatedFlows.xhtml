@@ -21,8 +21,8 @@
 	<ui:define name="body">
 		<section class="content-header">
 			<h1 style="color: #333;">
-				#{msg['passport.title']} <small> <i
-					class="fa fa-caret-right" style="color: #333 !important;" />#{msg['passport.idpInitiated']}
+				#{msgs['passport.title']} <small> <i
+					class="fa fa-caret-right" style="color: #333 !important;" />#{msgs['passport.idpInitiated']}
 				</small>
 			</h1>
 			<ol class="breadcrumb">
@@ -30,7 +30,7 @@
 						class="fa fa-home" />
 				</a></li>
 				<li class="organization/configuration"><a
-					href="#{request.contextPath}/passport/idpInitiatedFlows.htm">#{msg['passport.idpInitiated']}</a></li>
+					href="#{request.contextPath}/passport/idpInitiatedFlows.htm">#{msgs['passport.idpInitiated']}</a></li>
 			</ol>
 		</section>
 		<section class="content">
@@ -42,14 +42,14 @@
 							<div class="row"
 								style="margin-left: 10px; margin-right: 10px; margin-top: 10px;">
 								<h:panelGroup columns="1" width="100%" id="openIDConnectSection">
-									<b:panel title="#{msg['passport.idpinitiated.oidc.title']}"
+									<b:panel title="#{msgs['passport.idpinitiated.oidc.title']}"
 									   rendered="#{!passportIdpInitiatedAction.showForm}"
 										look="primary" iconAwesome="fa-building" collapsible="false">
 										<div class="row">
 											<!-- First column-->
 											<div class="col-sm-6 col-lg-6" style="padding: 0px;">
 												<ox:decorate
-													label="#{msg['passport.idpinitiated.oidc.passport.authorizationEndpoint']}"
+													label="#{msgs['passport.idpinitiated.oidc.passport.authorizationEndpoint']}"
 													leftClass="col-sm-3" rightClass="col-sm-9">
 													<h:inputText
 														styleClass="form-control AuthorizationEndPointID"
@@ -60,7 +60,7 @@
 													</h:inputText>
 												</ox:decorate>
 												<ox:decorate
-													label="#{msg['passport.idpinitiated.oidc.passport.acrValues']}"
+													label="#{msgs['passport.idpinitiated.oidc.passport.acrValues']}"
 													leftClass="col-sm-3" rightClass="col-sm-9"
 													id="PostProfileEndpointID">
 													<h:outputText styleClass="form-control AcrValuesID"
@@ -77,7 +77,7 @@
 														<b:selectOneMenu id="ClientID"
 															value="#{passportIdpInitiatedAction.iiConfiguration.openidclient.clientId}"
 															select2="true" colMd="9" required="true" labelColMd="3"
-															label="#{msg['passport.idpinitiated.oidc.passport.clientId']}">
+															label="#{msgs['passport.idpinitiated.oidc.passport.clientId']}">
 															<f:selectItem itemLabel="(Please select a client)"
 																itemValue="" />
 															<f:selectItems
@@ -92,7 +92,7 @@
 									</b:panel>
 									<b:panel id="AuthParametersListID"
 										rendered="#{!passportIdpInitiatedAction.showForm}"
-										title="#{msg['passport.idpinitiated.authParams.title']}"
+										title="#{msgs['passport.idpinitiated.authParams.title']}"
 										look="primary" iconAwesome="fa-building" collapsible="false">
 										<h:panelGroup columns="1" width="100%" id="AuthParamsSection">
 											<!-- AuthorizationParams List section-->
@@ -108,7 +108,7 @@
 												rendered="#{(passportIdpInitiatedAction.authzParams.size() gt 0)}"
 												select="true">
 												<b:dataTableColumn
-													label="#{msg['passport.idpinitiated.authParams.provider']}">
+													label="#{msgs['passport.idpinitiated.authParams.provider']}">
 													<h:link includeViewParams="false"
 														outcome="/passport/editProvider"
 														value="#{passportIdpInitiatedAction.getProviderName(c.provider)}">
@@ -116,7 +116,7 @@
 													</h:link>
 												</b:dataTableColumn>
 												<b:dataTableColumn value="#{c.redirectUri}" order="asc"
-													label="#{msg['passport.idpinitiated.authParams.redirectUri']}" />
+													label="#{msgs['passport.idpinitiated.authParams.redirectUri']}" />
 												<b:dataTableColumn label="Actions">
 													<b:commandButton
 														styleClass="btn btn-primary cancelAuthParamId"
@@ -141,7 +141,7 @@
 											value="Update" />
 										<h:commandButton action="#{passportIdpInitiatedAction.cancel}"
 											immediate="true" style="margin-left:5px;"
-											styleClass="btn btn-primary" value="#{msg['client.cancel']}" />
+											styleClass="btn btn-primary" value="#{msgs['client.cancel']}" />
 									</div>
 								</h:panelGroup>
 							</div>
@@ -162,7 +162,7 @@
 														<b:selectOneMenu id="ProviderID"
 															value="#{passportIdpInitiatedAction.authzParam.provider}"
 															select2="true" colMd="9" required="true" labelColMd="3"
-															label="#{msg['passport.idpinitiated.authParams.provider']}">
+															label="#{msgs['passport.idpinitiated.authParams.provider']}">
 															<f:selectItem itemLabel="Please select a provider"
 																itemValue="" />
 															<f:selectItems
@@ -177,14 +177,14 @@
 															pt:type="url" pt:placeholder="Enter a valid url"
 															styleClass="rounded form-control RedirectURI"
 															required="true"
-															label="#{msg['passport.idpinitiated.authParams.redirectUri']}" />
+															label="#{msgs['passport.idpinitiated.authParams.redirectUri']}" />
 													</b:formGroup>
 												</b:form>
 											</div>
 											<!-- Second column-->
 											<div class="col-sm-6 col-lg-6" style="padding: 0px;">
 												<ox:decorate id="responseTypes"
-													label="#{msg['passport.idpinitiated.authParams.responseType']}">
+													label="#{msgs['passport.idpinitiated.authParams.responseType']}">
 													<h:panelGroup id="selectedResponseTypesId">
 														<h:panelGroup>
 															<a4j:repeat
@@ -212,7 +212,7 @@
 															<a4j:commandButton
 																styleClass="btn btn-primary AddResponseTypeButton"
 																style="margin-top:5px"
-																value="#{msg['clientForm.addResponseType']}"
+																value="#{msgs['clientForm.addResponseType']}"
 																oncomplete="#{rich:component('responseType:selectEntityModalPanel')}.show();"
 																execute="@this" eventsQueue="clientQueue" />
 														</h:panelGroup>
@@ -221,7 +221,7 @@
 												<hr
 													style="height: 1px; background: green; border-color: green; border-width: 0px;"></hr>
 												<ox:decorate id="scopes"
-													label="#{msg['passport.idpinitiated.authParams.scope']}">
+													label="#{msgs['passport.idpinitiated.authParams.scope']}">
 													<h:panelGroup id="selectedScopesId">
 														<h:panelGroup>
 															<a4j:repeat value="#{passportIdpInitiatedAction.scopes}"
@@ -248,7 +248,7 @@
 															<a4j:commandButton
 																styleClass="btn btn-primary AddScopeButton"
 																style="margin-top:5px"
-																value="#{msg['clientForm.addScope']}"
+																value="#{msgs['clientForm.addScope']}"
 																oncomplete="#{rich:component('scope:selectEntityModalPanel')}.show();"
 																execute="@this" eventsQueue="providerQueue" />
 														</h:panelGroup>
@@ -280,7 +280,7 @@
 													render="AuthZParamFormId" execute="@this" />
 												<a4j:commandButton
 													styleClass="btn btn-primary cancelAuthParamId"
-													value="#{msg['client.cancel']}" style="margin-left: 5px;"
+													value="#{msgs['client.cancel']}" style="margin-left: 5px;"
 													action="#{passportIdpInitiatedAction.cancelParamAdd}"
 													render="AuthZParamFormId,IdpInitiatedForm" execute="@this" />
 											</div>
@@ -296,7 +296,7 @@
 				acceptMethod="#{passportIdpInitiatedAction.acceptSelectResponseTypes}"
 				cancelMethod="#{passportIdpInitiatedAction.cancelSelectResponseTypes}"
 				displayNameProperty="entity" displaySearchForm="false"
-				id="responseType" label="#{msg['client.addResponseType']}"
+				id="responseType" label="#{msgs['client.addResponseType']}"
 				nameProperty="entity" render="selectedResponseTypesId"
 				searchMethod="#{passportIdpInitiatedAction.searchAvailableResponseTypes}"
 				searchResult="#{passportIdpInitiatedAction.availableResponseTypes}" />
@@ -304,7 +304,7 @@
 				acceptMethod="#{passportIdpInitiatedAction.acceptSelectScopes()}"
 				cancelMethod="#{passportIdpInitiatedAction.cancelSelectScopes()}"
 				displayNameProperty="entity" displaySearchForm="false" id="scope"
-				label="#{msg['client.scopes']}" nameProperty="entity"
+				label="#{msgs['client.scopes']}" nameProperty="entity"
 				render="selectedScopesId"
 				searchMethod="#{passportIdpInitiatedAction.searchAvailableScopes}"
 				searchResult="#{passportIdpInitiatedAction.availableScopes}" />

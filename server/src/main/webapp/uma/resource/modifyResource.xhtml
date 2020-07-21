@@ -30,10 +30,10 @@
 
 		<section class="content-header">
 			<h1 style="color: #333;">
-				#{msg['uma.uma']} <small> <i class="fa fa-caret-right"
-					style="color: #333 !important;" /> #{msg['uma.resources']}
+				#{msgs['uma.uma']} <small> <i class="fa fa-caret-right"
+					style="color: #333 !important;" /> #{msgs['uma.resources']}
 				</small> <small> <i class="fa fa-caret-right"
-					style="color: #333 !important;" /> #{msg['uma.updateResources']}
+					style="color: #333 !important;" /> #{msgs['uma.updateResources']}
 				</small>
 			</h1>
 			<ol class="breadcrumb">
@@ -41,7 +41,7 @@
 						class="fa fa-home" />
 				</a></li>
 				<li class="organization/configuration"><a
-					href="#{request.contextPath}/uma/resource.htm">#{msg['uma.updateResources']}</a>
+					href="#{request.contextPath}/uma/resource.htm">#{msgs['uma.updateResources']}</a>
 				</li>
 			</ol>
 		</section>
@@ -61,20 +61,20 @@
 								<ui:param name="_resourceSet"
 									value="#{updateResourceAction.resource}" />
 								<h:form id="resourceid">
-									<ox:decorate id="resourceSet" label="#{msg['uma.resource']}"
+									<ox:decorate id="resourceSet" label="#{msgs['uma.resource']}"
 										leftClass="col-sm-4" rightClass="col-sm-8"
 										styleClass="resourceSet"
 										rendered="#{updateResourceAction.update}">
 										<h:outputText value="#{_resourceSet.id}" />
 									</ox:decorate>
 									<ox:decorate id="displayName" leftClass="col-sm-4"
-										rightClass="col-sm-8" label="#{msg['uma.displayName']}">
+										rightClass="col-sm-8" label="#{msgs['uma.displayName']}">
 										<h:inputText styleClass="form-control"
 											defaultLabel="Click to enter Display Name" id="displayNameId"
 											maxlength="60" required="true" value="#{_resourceSet.name}" />
 									</ox:decorate>
 									<ox:decorate id="iconUrl" leftClass="col-sm-4"
-										rightClass="col-sm-8" label="#{msg['uma.iconURI']}">
+										rightClass="col-sm-8" label="#{msgs['uma.iconURI']}">
 										<h:inputText defaultLabel="Click to enter Icon Url"
 											id="iconUrlId" maxlength="60" required="true"
 											styleClass="form-control" value="#{_resourceSet.iconUri}" />
@@ -93,7 +93,7 @@
 									</ox:decorate>
 									<div style="margin: 10px;">
 										<h:panelGroup id="selectiongroup">
-											<b:panel title="#{msg['uma.scope']}" look="primary"
+											<b:panel title="#{msgs['uma.scope']}" look="primary"
 												id="scopesid"
 												rendered="#{updateResourceAction.scopeSelection eq 'Scopes'}">
 												<h:panelGroup id="selectedScopesId">
@@ -121,7 +121,7 @@
 														rendered="#{updateResourceAction.scopeSelection eq 'Scopes'}"
 														onclick="#{rich:component('scope:selectEntityModalPanel')}.show();"
 														style="margin-left:3px;" styleClass="btn btn-primary"
-														value="#{msg['uma.addScope']}" />
+														value="#{msgs['uma.addScope']}" />
 												</h:panelGroup>
 											</b:panel>
 											<b:panel title="clients" id="clients" look="primary">
@@ -153,13 +153,13 @@
 													<a4j:commandButton
 														onclick="#{rich:component('client:selectEntityModalPanel')}.show();"
 														style="margin-left:3px;" styleClass="btn btn-primary"
-														value="#{msg['uma.addClient']}" />
+														value="#{msgs['uma.addClient']}" />
 												</h:panelGroup>
 											</b:panel>
 											<h:panelGroup id="subselectiongroup"
 												rendered="#{updateResourceAction.scopeSelection eq 'ScopeExpression'}">
 												<ox:decorate id="expression"
-													label="#{msg['uma.scopeExpression']}"
+													label="#{msgs['uma.scopeExpression']}"
 													rendered="#{updateResourceAction.scopeSelection eq 'ScopeExpression'}">
 												</ox:decorate>
 												<ui:decorate id="expresionui"
@@ -176,7 +176,7 @@
 											</h:panelGroup>
 										</h:panelGroup>
 									</div>
-									<ox:decorate id="creatDate" label="#{msg['uma.creationTime']}"
+									<ox:decorate id="creatDate" label="#{msgs['uma.creationTime']}"
 										rendered="#{updateResourceAction.update and _resourceSet.creationDate != null}">
 										<div class="col-sm-9">
 											<h:outputText value="#{_resourceSet.creationDate}" />
@@ -208,8 +208,8 @@
 								acceptMethod="#{updateResourceAction.acceptResource}"
 								cancelMethod="#{updateResourceAction.cancelResource}"
 								dialogWidth="600" id="resource"
-								inputLabel="#{msg['uma.resource']}" inputWidth="80"
-								label="#{msg['uma.addResource']}" maxLength="256"
+								inputLabel="#{msgs['uma.resource']}" inputWidth="80"
+								label="#{msgs['uma.addResource']}" maxLength="256"
 								queue="resourceSetQueue" render="selectedResourcesId"
 								text="#{updateResourceAction.newResource}" />
 
@@ -217,7 +217,7 @@
 								acceptMethod="#{updateResourceAction.acceptSelectScopes}"
 								cancelMethod="#{updateResourceAction.cancelSelectScopes}"
 								displayNameProperty="entity.displayName" id="scope"
-								label="#{msg['uma.addScope']}" nameProperty="entity.id"
+								label="#{msgs['uma.addScope']}" nameProperty="entity.id"
 								render="selectedScopesId"
 								searchMethod="#{updateResourceAction.searchAvailableScopes}"
 								searchPattern="#{updateResourceAction.searchAvailableScopePattern}"
@@ -227,7 +227,7 @@
 								acceptMethod="#{updateResourceAction.acceptSelectClients}"
 								cancelMethod="#{updateResourceAction.cancelSelectClients}"
 								displayNameProperty="entity.displayName" id="client"
-								label="#{msg['uma.addClient']}" nameProperty="entity.inum"
+								label="#{msgs['uma.addClient']}" nameProperty="entity.inum"
 								render="selectedClientsId"
 								searchMethod="#{updateResourceAction.searchAvailableClients}"
 								searchPattern="#{updateResourceAction.searchAvailableClientPattern}"

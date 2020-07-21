@@ -13,28 +13,28 @@
 							<li class="treeview" id="menu2"><a
 								href="http://www.gluu.org/"
 								style="margin: 0; border: none; padding-left: 20px; font-weight: 600;"
-								target="_blank"> <span>#{msg['leftmenu.website']}</span>
+								target="_blank"> <span>#{msgs['leftmenu.website']}</span>
 							</a></li>
 							<li class="treeview" id="menu3"><a
 								href="http://www.gluu.org/docs/"
 								style="margin: 0; border: none; padding-left: 20px; font-weight: 600;"
-								target="_blank"> <span>#{msg['leftmenu.documentation']}</span>
+								target="_blank"> <span>#{msgs['leftmenu.documentation']}</span>
 							</a></li>
 							<li class="treeview" id="menu4"><a
 								href="https://support.gluu.org/"
 								style="margin: 0; border: none; padding-left: 20px; font-weight: 600;"
-								target="_blank"> <span>#{msg['leftmenu.supportForum']}</span>
+								target="_blank"> <span>#{msgs['leftmenu.supportForum']}</span>
 							</a></li>
 						</ul>
 						<ui:fragment
 							rendered="#{permissionService.hasPermission('configuration', 'access') or permissionService.hasPermission('scim', 'access') or permissionService.hasPermission('attribute', 'access')}">
 							<li class="treeview" id="menuConfiguration"><a href="#">
-									<i class="fa fa-wrench"></i> <span>#{msg['leftmenu.configuration']}</span>
+									<i class="fa fa-wrench"></i> <span>#{msgs['leftmenu.configuration']}</span>
 									<i class="fa fa-angle-left pull-right"></i>
 							</a>
 								<ul class="treeview-menu" id="subMenuConfiguration">
 									<li id="subMenuLinkConfiguration1"><h:commandLink
-											value="#{msg['leftmenu.organizationConfiguration']}"
+											value="#{msgs['leftmenu.organizationConfiguration']}"
 											onclick="lock();" ondbclick="lock();" oncomplete="unlock();"
 											action="#{menuAction.endConversation('/organization/updateOrganization.xhtml')}"
 											rendered="#{permissionService.hasPermission('configuration', 'access')}">
@@ -42,7 +42,7 @@
 												style="float: left; margin-top: 2px;"></i>
 										</h:commandLink></li>
 									<li id="subMenuLinkConfiguration2"><h:commandLink
-											value="#{msg['leftmenu.jsonConfiguration']}"
+											value="#{msgs['leftmenu.jsonConfiguration']}"
 											onclick="lock();" ondbclick="lock();" oncomplete="unlock();"
 											action="#{menuAction.endConversation('/configuration/updateConfiguration.xhtml')}"
 											rendered="#{permissionService.hasPermission('configuration', 'access')}">
@@ -50,7 +50,7 @@
 												style="float: left; margin-top: 2px;"></i>
 										</h:commandLink></li>
 									<li id="subMenuLinkConfiguration3"><h:commandLink
-											value="#{msg['leftmenu.manageAuthentication']}"
+											value="#{msgs['leftmenu.manageAuthentication']}"
 											onclick="lock();" ondbclick="lock();" oncomplete="unlock();"
 											action="#{menuAction.endConversation('/authentication/manageCustomAuthentication.xhtml')}"
 											rendered="#{permissionService.hasPermission('configuration', 'access')}">
@@ -67,7 +67,7 @@
 										</h:commandLink></li>
 
 									<li id="menuPersonAuthScript"><h:commandLink
-											value="#{msg['leftmenu.personAuthnCustomScripts']}" onclick="lock();"
+											value="#{msgs['leftmenu.personAuthnCustomScripts']}" onclick="lock();"
 											ondbclick="lock();" oncomplete="unlock();"
 											action="#{menuAction.endConversation('/script/manageAuthScript.xhtml')}"
 											rendered="#{permissionService.hasPermission('passport', 'access')}">
@@ -75,7 +75,7 @@
 												style="float: left; margin-top: 2px;"></i>
 										</h:commandLink></li>
 									<li id="menuOtherAuthScript"><h:commandLink
-											value="#{msg['leftmenu.otherCustomScripts']}" onclick="lock();"
+											value="#{msgs['leftmenu.otherCustomScripts']}" onclick="lock();"
 											ondbclick="lock();" oncomplete="unlock();"
 											action="#{menuAction.endConversation('/script/manageOtherScript.xhtml')}"
 											rendered="#{permissionService.hasPermission('passport', 'access')}">
@@ -83,7 +83,7 @@
 												style="float: left; margin-top: 2px;"></i>
 										</h:commandLink></li>
 									<li id="subMenuLinkConfiguration5"><h:commandLink
-											value="#{msg['leftmenu.manageRegistration']}"
+											value="#{msgs['leftmenu.manageRegistration']}"
 											onclick="lock();" ondbclick="lock();" oncomplete="unlock();"
 											action="#{menuAction.endConversation('/organization/manageRegistration.xhtml')}"
 											rendered="#{permissionService.hasPermission('configuration', 'access')}">
@@ -92,7 +92,7 @@
 										</h:commandLink></li>
 
 									<li id="subMenuLinkConfiguration6"><h:commandLink
-											value="#{msg['leftmenu.attributes']}" onclick="lock();"
+											value="#{msgs['leftmenu.attributes']}" onclick="lock();"
 											ondbclick="lock();" oncomplete="unlock();"
 											action="#{menuAction.endConversation('/attribute/attributeInventory.xhtml')}"
 											rendered="#{permissionService.hasPermission('configuration', 'access')}">
@@ -101,7 +101,7 @@
 										</h:commandLink></li>
 
 									<li id="subMenuLinkConfiguration12"><h:commandLink
-											value="#{msg['leftmenu.importExportAttribute']}" onclick="lock();"
+											value="#{msgs['leftmenu.importExportAttribute']}" onclick="lock();"
 											ondbclick="lock();" oncomplete="unlock();"
 											action="#{menuAction.endConversation('/attribute/attributeImport.xhtml')}"
 											rendered="#{permissionService.hasPermission('attribute', 'access')}">
@@ -109,7 +109,7 @@
 												style="float: left; margin-top: 2px;"></i>
 										</h:commandLink></li>
 									<li id="subMenuLinkConfiguration8"><h:commandLink
-											value="#{msg['leftmenu.cacheRefresh']}" onclick="lock();"
+											value="#{msgs['leftmenu.cacheRefresh']}" onclick="lock();"
 											ondbclick="lock();" oncomplete="unlock();"
 											action="#{menuAction.endConversation('/organization/cacheRefresh.xhtml')}"
 											rendered="#{permissionService.hasPermission('configuration', 'access')}">
@@ -117,7 +117,7 @@
 												style="float: left; margin-top: 2px;"></i>
 										</h:commandLink></li>
 									<li id="subMenuLinkConfiguration9"><h:commandLink
-											value="#{msg['leftmenu.configureLogViewer']}"
+											value="#{msgs['leftmenu.configureLogViewer']}"
 											onclick="lock();" ondbclick="lock();" oncomplete="unlock();"
 											action="#{menuAction.endConversation('/logviewer/configureLogViewer.xhtml')}"
 											rendered="#{permissionService.hasPermission('configuration', 'access')}">
@@ -125,7 +125,7 @@
 												style="float: left; margin-top: 2px;"></i>
 										</h:commandLink></li>
 									<li id="subMenuLinkConfiguration10"><h:commandLink
-											value="#{msg['leftmenu.viewLogFile']}" onclick="lock();"
+											value="#{msgs['leftmenu.viewLogFile']}" onclick="lock();"
 											ondbclick="lock();" oncomplete="unlock();"
 											action="#{menuAction.endConversation('/logviewer/viewLogFile.xhtml')}"
 											rendered="#{permissionService.hasPermission('log', 'access')}">
@@ -134,7 +134,7 @@
 										</h:commandLink></li>
 
 									<li id="subMenuLinkConfiguration11"><h:commandLink
-											value="#{msg['leftmenu.serverStatus']}" onclick="lock();"
+											value="#{msgs['leftmenu.serverStatus']}" onclick="lock();"
 											ondbclick="lock();" oncomplete="unlock();"
 											action="#{menuAction.endConversation('/status/applicationStatus.xhtml')}"
 											rendered="#{permissionService.hasPermission('configuration', 'access')}">
@@ -144,7 +144,7 @@
 
 
 									<li id="subMenuLinkCertificates1"><h:commandLink
-											value="#{msg['leftmenu.certificates']}" onclick="lock();"
+											value="#{msgs['leftmenu.certificates']}" onclick="lock();"
 											ondbclick="lock();" oncomplete="unlock();"
 											action="#{menuAction.endConversation('/configuration/certificateManagement.xhtml')}"
 											rendered="#{permissionService.hasPermission('trust', 'access')}">
@@ -156,16 +156,16 @@
 						<ui:fragment
 							rendered="#{permissionService.hasPermission('trust', 'access') and productInstallationCheckerAction.showSAMLMenu}">
 							<li class="treeview" id="menuSAML"><a href="#"> <i
-									class="fa fa-pencil-square-o"></i> <span>#{msg['leftmenu.saml']}</span>
+									class="fa fa-pencil-square-o"></i> <span>#{msgs['leftmenu.saml']}</span>
 									<i class="fa fa-angle-left pull-right"></i>
 							</a>
 								<ul class="treeview-menu" id="subMenuSAML">
 									<li id="menuSAMLShibboleth"><h:panelGroup rendered="false">
-											<a href="#"> <i class="fa fa-pencil-square-o"></i> <span>#{msg['leftmenu.outbound']}</span>
+											<a href="#"> <i class="fa fa-pencil-square-o"></i> <span>#{msgs['leftmenu.outbound']}</span>
 												<i class="fa fa-angle-left pull-right"></i></a>
 										</h:panelGroup> <!--Shibboleth-->
 									<li id="subMenuLinkSAML1"><h:commandLink
-											value="#{msg['leftmenu.trustRelationships']}"
+											value="#{msgs['leftmenu.trustRelationships']}"
 											onclick="lock();" ondbclick="lock();" oncomplete="unlock();"
 											action="#{menuAction.endConversation('/trustmanager/trustRelationships.xhtml')}"
 											rendered="#{permissionService.hasPermission('trust', 'access') and productInstallationCheckerAction.showSAMLSubmenu}">
@@ -173,7 +173,7 @@
 												style="float: left; margin-top: 2px;"></i>
 										</h:commandLink></li>
 									<li id="subMenuLinkSAML2"><h:commandLink
-											value="#{msg['leftmenu.addRelationships']}" onclick="lock();"
+											value="#{msgs['leftmenu.addRelationships']}" onclick="lock();"
 											ondbclick="lock();" oncomplete="unlock();"
 											action="#{menuAction.endConversation('/trustmanager/addTrustRelationship.xhtml')}"
 											rendered="#{permissionService.hasPermission('trust', 'access') and productInstallationCheckerAction.showSAMLSubmenu}">
@@ -182,7 +182,7 @@
 										</h:commandLink></li>
 
 									<li id="subMenuLinkSAML3"><h:commandLink
-											value="#{msg['leftmenu.nameId']}" onclick="lock();"
+											value="#{msgs['leftmenu.nameId']}" onclick="lock();"
 											ondbclick="lock();" oncomplete="unlock();"
 											action="#{menuAction.endConversation('/saml/configureNameId.xhtml')}"
 											rendered="#{permissionService.hasPermission('trust', 'access')}">
@@ -199,12 +199,12 @@
 						rendered="#{permissionService.hasPermission('passport', 'access') and productInstallationCheckerAction.canShowPassPassport()}">
 
 						<li class="treeview" id="menuPassport"><a href="#"> <i
-								class="fa fa-id-card-o"></i> <span>#{msg['passport.title']}</span>
+								class="fa fa-id-card-o"></i> <span>#{msgs['passport.title']}</span>
 								<i class="fa fa-angle-left pull-right"></i>
 						</a>
 							<ul class="treeview-menu" id="subMenuPassport">
 								<li id="menuPassportBasicConfig"><h:commandLink
-										value="#{msg['passport.basic.configuration']}"
+										value="#{msgs['passport.basic.configuration']}"
 										onclick="lock();" ondbclick="lock();" oncomplete="unlock();"
 										action="#{menuAction.endConversation('/passport/basic_config.xhtml')}"
 										rendered="#{permissionService.hasPermission('passport', 'access') and productInstallationCheckerAction.canShowPassPassport()}">
@@ -212,7 +212,7 @@
 											style="float: left; margin-top: 2px;"></i>
 									</h:commandLink></li>
 								<li id="menuPassportProviders"><h:commandLink
-										value="#{msg['passport.providers']}" onclick="lock();"
+										value="#{msgs['passport.providers']}" onclick="lock();"
 										ondbclick="lock();" oncomplete="unlock();"
 										action="#{menuAction.endConversation('/passport/providers.xhtml')}"
 										rendered="#{permissionService.hasPermission('passport', 'access') and productInstallationCheckerAction.canShowPassPassport()}">
@@ -220,7 +220,7 @@
 											style="float: left; margin-top: 2px;"></i>
 									</h:commandLink></li>
 								<li id="menuPassportIdpInitiated"><h:commandLink
-										value="#{msg['passport.idpInitiated']}" onclick="lock();"
+										value="#{msgs['passport.idpInitiated']}" onclick="lock();"
 										ondbclick="lock();" oncomplete="unlock();"
 										action="#{menuAction.endConversation('/passport/idpInitiatedFlows.xhtml')}"
 										rendered="#{permissionService.hasPermission('passport', 'access') and productInstallationCheckerAction.canShowPassPassport()}">
@@ -233,12 +233,12 @@
 					<ui:fragment
 						rendered="#{permissionService.hasPermission('oxauth', 'access')}">
 						<li class="treeview" id="menuOpenID"><a href="#"> <i
-								class="fa fa-external-link"></i> <span>#{msg['leftmenu.openidConnect']}</span>
+								class="fa fa-external-link"></i> <span>#{msgs['leftmenu.openidConnect']}</span>
 								<i class="fa fa-angle-left pull-right"></i>
 						</a>
 							<ul class="treeview-menu" id="subMenuOpenID">
 								<li id="subMenuLinkOpenID1"><h:commandLink
-										value="#{msg['leftmenu.scopes']}" onclick="lock();"
+										value="#{msgs['leftmenu.scopes']}" onclick="lock();"
 										ondbclick="lock();" oncomplete="unlock();"
 										action="#{menuAction.endConversation('/scope/scopeInventory.xhtml')}"
 										rendered="#{permissionService.hasPermission('scope', 'access')}">
@@ -246,7 +246,7 @@
 											style="float: left; margin-top: 2px;"></i>
 									</h:commandLink></li>
 								<li id="subMenuLinkOpenID2"><h:commandLink
-										value="#{msg['leftmenu.clients']}" onclick="lock();"
+										value="#{msgs['leftmenu.clients']}" onclick="lock();"
 										ondbclick="clearOIDC();lock();" oncomplete="unlock();"
 										action="#{menuAction.endConversation('/client/clientInventory.xhtml')}"
 										rendered="#{permissionService.hasPermission('client', 'access')}">
@@ -254,7 +254,7 @@
 											style="float: left; margin-top: 2px;"></i>
 									</h:commandLink></li>
 								<li id="subMenuLinkOpenID3"><h:commandLink
-										value="#{msg['leftmenu.sectorIdentifier']}" onclick="lock();"
+										value="#{msgs['leftmenu.sectorIdentifier']}" onclick="lock();"
 										ondbclick="lock();" oncomplete="unlock();"
 										action="#{menuAction.endConversation('/sectoridentifier/sectorIdentifierInventory.xhtml')}"
 										rendered="#{permissionService.hasPermission('sectorIdentifier', 'access')}">
@@ -267,12 +267,12 @@
 						rendered="#{permissionService.hasPermission('uma', 'access')}">
 
 						<li class="treeview" id="menuUMA"><a href="#"> <i
-								class="fa fa-folder-open-o"></i> <span>#{msg['leftmenu.uma']}</span>
+								class="fa fa-folder-open-o"></i> <span>#{msgs['leftmenu.uma']}</span>
 								<i class="fa fa-angle-left pull-right"></i>
 						</a>
 							<ul class="treeview-menu" id="subMenuUMA">
 								<li id="subMenuLinkUMA1"><h:commandLink
-										value="#{msg['leftmenu.scopes']}" onclick="lock();"
+										value="#{msgs['leftmenu.scopes']}" onclick="lock();"
 										ondbclick="lock();" oncomplete="unlock();"
 										action="#{menuAction.endConversation('/uma/scope.xhtml?scopes=1')}"
 										rendered="#{permissionService.hasPermission('uma', 'access')}">
@@ -280,7 +280,7 @@
 											style="float: left; margin-top: 2px;"></i>
 									</h:commandLink></li>
 								<li id="subMenuLinkUMA2"><h:commandLink
-										value="#{msg['leftmenu.resources']}" onclick="lock();"
+										value="#{msgs['leftmenu.resources']}" onclick="lock();"
 										ondbclick="lock();" oncomplete="unlock();"
 										action="#{menuAction.endConversation('/uma/resource.xhtml?resources=1')}"
 										rendered="#{permissionService.hasPermission('uma', 'access')}">
@@ -293,12 +293,12 @@
 					<ui:fragment
 						rendered="#{permissionService.hasPermission('group', 'access') or permissionService.hasPermission('person', 'access')}">
 						<li class="treeview" id="menuUsers"><a href="#"> <i
-								class="fa fa-group"></i> <span>#{msg['leftmenu.users']}</span> <i
+								class="fa fa-group"></i> <span>#{msgs['leftmenu.users']}</span> <i
 								class="fa fa-angle-left pull-right"></i>
 						</a>
 							<ul class="treeview-menu" id="subMenuUsers">
 								<li id="subMenuLinkUsers1"><h:commandLink
-										value="#{msg['leftmenu.manageGroups']}" onclick="lock();"
+										value="#{msgs['leftmenu.manageGroups']}" onclick="lock();"
 										ondbclick="lock();" oncomplete="unlock();"
 										action="#{menuAction.endConversation('/group/groupInventory.xhtml')}"
 										rendered="#{permissionService.hasPermission('group', 'access')}">
@@ -306,7 +306,7 @@
 											style="float: left; margin-top: 2px;"></i>
 									</h:commandLink></li>
 								<li id="subMenuLinkUsers2"><h:commandLink
-										value="#{msg['leftmenu.managePeople']}" onclick="lock();"
+										value="#{msgs['leftmenu.managePeople']}" onclick="lock();"
 										ondbclick="lock();" oncomplete="unlock();"
 										action="#{menuAction.endConversation('/person/personInventory.xhtml')}"
 										rendered="#{permissionService.hasPermission('person', 'access')}">
@@ -314,7 +314,7 @@
 											style="float: left; margin-top: 2px;"></i>
 									</h:commandLink></li>
 								<li id="subMenuLinkUsers3"><h:commandLink
-										value="#{msg['leftmenu.addPerson']}" onclick="lock();"
+										value="#{msgs['leftmenu.addPerson']}" onclick="lock();"
 										ondbclick="lock();" oncomplete="unlock();"
 										action="#{menuAction.endConversation('/person/addPerson.xhtml')}"
 										rendered="#{permissionService.hasPermission('person', 'access')}">
@@ -322,7 +322,7 @@
 											style="float: left; margin-top: 2px;"></i>
 									</h:commandLink></li>
 								<li id="subMenuLinkUsers4"><h:commandLink
-										value="#{msg['leftmenu.importPeople']}" onclick="lock();"
+										value="#{msgs['leftmenu.importPeople']}" onclick="lock();"
 										ondbclick="lock();" oncomplete="unlock();"
 										action="#{menuAction.endConversation('/person/personImport.xhtml')}"
 										rendered="#{permissionService.hasPermission('person', 'import')}">
@@ -336,12 +336,12 @@
 					<ui:fragment
 						rendered="#{permissionService.hasPermission('radius','access') and productInstallationCheckerAction.isShowGluuRadiusMenu()}">
 						<li class="treeview" id="menuRadius"><a href="#"> <i
-								class="fa fa-rss"></i><span>#{msg['radius.title']}</span> <i
+								class="fa fa-rss"></i><span>#{msgs['radius.title']}</span> <i
 								class="fa fa-angle-left pull-right"></i>
 						</a>
 							<ul class="treeview-menu" id="subMenuRadius">
 								<li id="menuRadiusConfig"><h:commandLink
-										value="#{msg['radius.config.title']}" onclick="lock();"
+										value="#{msgs['radius.config.title']}" onclick="lock();"
 										ondbclick="lock();" oncomplete="unlock();"
 										action="#{menuAction.endConversation('/radius/radiusServerConfiguration.xhtml')}"
 										rendered="#{permissionService.hasPermission('radius','access') and productInstallationCheckerAction.isShowGluuRadiusMenu()}">
@@ -349,7 +349,7 @@
 											style="float: left; margin-top: 2px;"></i>
 									</h:commandLink></li>
 								<li id="menuRadiusClients"><h:commandLink
-										value="#{msg['radius.clients.title']}" onclick="lock();"
+										value="#{msgs['radius.clients.title']}" onclick="lock();"
 										ondbclick="lock();" oncomplete="unlock();"
 										action="#{menuAction.endConversation('/radius/radiusClientInventory.xhtml')}"
 										rendered="#{permissionService.hasPermission('radius','access') and productInstallationCheckerAction.isShowGluuRadiusMenu()}">
@@ -362,12 +362,12 @@
 					<ui:fragment
 						rendered="#{permissionService.hasPermission('profile', 'access') or permissionService.hasPermission(configurationService.configuration, 'whitePagesEnabled')}">
 						<li class="treeview" id="menuPersonal"><a href="#"> <i
-								class="fa fa-user"></i> <span>#{msg['leftmenu.personal']}</span>
+								class="fa fa-user"></i> <span>#{msgs['leftmenu.personal']}</span>
 								<i class="fa fa-angle-left pull-right"></i>
 						</a>
 							<ul class="treeview-menu" id="subMenuPersonal">
 								<li id="subMenuLinkPersonal1"><h:commandLink
-										value="#{msg['leftmenu.profile']}" onclick="lock();"
+										value="#{msgs['leftmenu.profile']}" onclick="lock();"
 										ondbclick="lock();" oncomplete="unlock();"
 										action="#{menuAction.endConversation('/profile/person/viewProfile.xhtml')}"
 										rendered="#{permissionService.hasPermission('profile', 'access')}">

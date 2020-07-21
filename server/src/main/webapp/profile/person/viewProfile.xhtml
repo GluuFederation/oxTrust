@@ -35,14 +35,14 @@
 		<section class="content-header">
 			<h1 style="color: #333;">
 				Personal <small> <i class="fa fa-caret-right"
-					style="color: #333 !important;" /> #{msg['profile.profile']}
+					style="color: #333 !important;" /> #{msgs['profile.profile']}
 				</small>
 			</h1>
 			<ol class="breadcrumb">
 				<li><a href="#{request.contextPath}/home.htm"> <i
 						class="fa fa-home" />
 				</a></li>
-				<li class="organization/configuration">#{msg['profile.profile']}</li>
+				<li class="organization/configuration">#{msgs['profile.profile']}</li>
 			</ol>
 		</section>
 		<section class="content" style="background: white;">
@@ -65,7 +65,7 @@
 									<h:panelGroup columns="5">
 										<h:outputFormat
 											style="margin-left: 2.3%;  font-size: 13pt;  font-weight: 700;  margin-bottom: 15px;  display: block;"
-											styleClass="headertext" value="#{msg['profile.myProfile']}">
+											styleClass="headertext" value="#{msgs['profile.myProfile']}">
 											<f:param value="#{organizationService.getOrgName()}" />
 										</h:outputFormat>
 										<p:spacer width="5" />
@@ -74,7 +74,7 @@
 												oncomplete="PF('configureListingOptions').show();"
 												rendered="#{(userProfileAction.person.allowPublication)}"
 												styleClass="btn btn-success"
-												value="#{msg['profile.configureListing']}" />
+												value="#{msgs['profile.configureListing']}" />
 										</h:panelGroup>
 									</h:panelGroup>
 									<ui:param name="_mandatoryAttributes"
@@ -168,7 +168,7 @@
 						onclick="PF('changePasswordModalPanel').show();"
 						rendered="#{permissionService.hasPermission(configurationService.configuration, 'profile_management')}"
 						styleClass="btn btn-success changeUserPasswordButton"
-						value="#{msg['profile.changePassword']}" />
+						value="#{msgs['profile.changePassword']}" />
 					<h:commandButton action="#{userProfileAction.update}"
 						rendered="#{permissionService.hasPermission(configurationService.configuration, 'profile_management')}"
 						styleClass="btn btn-success updateProfileButton" value="Update" />
@@ -180,7 +180,7 @@
 			</h:form>
 		</section>
 		<ox:changePasswordDialog
-			label="#{msg['profile.changePassword']}"
+			label="#{msgs['profile.changePassword']}"
 			password="#{userPasswordAction.newPassword}"
 			person="#{userProfileAction.person}"
 			setPasswordMethod="#{userPasswordAction.update}"

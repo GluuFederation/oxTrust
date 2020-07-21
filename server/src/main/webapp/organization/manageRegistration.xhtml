@@ -115,9 +115,9 @@
         </h:outputScript>
 		<section class="content-header">
 			<h1 style="color: #333;">
-				#{msg['organization.configuration']} <small> <i
+				#{msgs['organization.configuration']} <small> <i
 					class="fa fa-caret-right" style="color: #333 !important;" />
-					#{msg['organization.manageRegistration']}
+					#{msgs['organization.manageRegistration']}
 				</small>
 			</h1>
 			<ol class="breadcrumb">
@@ -125,7 +125,7 @@
 						class="fa fa-home" />
 				</a></li>
 				<li class="organization/configuration"><a
-					href="#{request.contextPath}/organization/manageRegistration.htm">#{msg['organization.manageRegistration']}</a>
+					href="#{request.contextPath}/organization/manageRegistration.htm">#{msgs['organization.manageRegistration']}</a>
 				</li>
 			</ol>
 		</section>
@@ -137,13 +137,13 @@
 							iconAwesome="fa-retweet" collapsible="false">
 							<h:panelGroup>
 								<a4j:region>
-									<ox:decorate label="#{msg['organization.disableCaptcha']}">
+									<ox:decorate label="#{msgs['organization.disableCaptcha']}">
 										<h:selectBooleanCheckbox styleClass="enbaleCaptchaSelectBox"
 											value="#{registrationManagementAction.captchaDisabled}">
 										</h:selectBooleanCheckbox>
 									</ox:decorate>
 									<ox:decorate
-										label="#{msg['organization.configureRegistrationAttributes']}">
+										label="#{msgs['organization.configureRegistrationAttributes']}">
 										<h:selectBooleanCheckbox id="selectConfigureRegistration"
 											styleClass="checkbox checkbox2 registrationSelectBox"
 											value="#{registrationManagementAction.configureRegistrationForm}">
@@ -168,12 +168,12 @@
 											rendered="#{registrationManagementAction.configureRegistrationForm}">
 											<a4j:region>
 												<ox:decorate id="searchPattern"
-													label="#{msg['organization.attributesFilter']}">
+													label="#{msgs['organization.attributesFilter']}">
 													<h:inputText
 														alt="search parameters for attribute like name,description"
 														id="searchPatternId" maxlength="30" size="30"
 														styleClass="form-control searchTextBox"
-														title="#{msg['organization.enterAtLeastTwoCharacters']}"
+														title="#{msgs['organization.enterAtLeastTwoCharacters']}"
 														value="#{registrationManagementAction.searchPattern}">
 
 														<a4j:ajax event="keyup" execute="@region"
@@ -183,7 +183,7 @@
 													</h:inputText>
 												</ox:decorate>
 												<h:panelGroup id="foundAttributes">
-													<ox:decorate label="#{msg['organization.attributes']}">
+													<ox:decorate label="#{msgs['organization.attributes']}">
 														<rich:pickList orderable="true"
 															rendered="#{not empty registrationManagementAction.selectedAttributes or not empty registrationManagementAction.attributes}"
 															value="#{registrationManagementAction.selectedAttributes}">

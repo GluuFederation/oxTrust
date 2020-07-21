@@ -25,23 +25,23 @@
 				iconAwesome="fa-list" collapsible="false">
 				<h:panelGroup>
 					<ox:decorate id="inum" rendered="#{not _new}"
-						label="#{msg['scope.inum']}">
+						label="#{msgs['scope.inum']}">
 						<h:outputText styleClass="form-control" value="#{_scope.inum}" />
 					</ox:decorate>
-					<ox:decorate id="displayName" label="#{msg['scope.displayName']}">
+					<ox:decorate id="displayName" label="#{msgs['scope.displayName']}">
 						<h:inputText value="#{_scope.displayName}"
 							styleClass="form-control displayNameId"
 							defaultLabel="Click to enter Display Name" maxlength="60"
 							inputWidth="704" required="true" id="displayNameId" />
 					</ox:decorate>
-					<ox:decorate id="description" label="#{msg['scope.description']}">
+					<ox:decorate id="description" label="#{msgs['scope.description']}">
 						<h:inputTextarea styleClass="form-control"
 							value="#{_scope.description}" rows="3" cols="80" maxlength="4000"
 							id="descriptionId" />
 					</ox:decorate>
 					<div class="row">
 						<div class="col-sm-6 col-lg-6">
-							<ox:decorate label="#{msg['scope.scopeType']}">
+							<ox:decorate label="#{msgs['scope.scopeType']}">
 								<h:selectOneMenu
 									styleClass="col-sm-9 rounded form-control scopeType"
 									value="#{_scope.scopeType}">
@@ -55,7 +55,7 @@
 							</ox:decorate>
 						</div>
 						<div class="col-sm-6 col-lg-6">
-							<ox:decorate label="#{msg['scope.defaultScope']}">
+							<ox:decorate label="#{msgs['scope.defaultScope']}">
 								<h:selectBooleanCheckbox value="#{_scope.defaultScope}"
 									styleClass="col-sm-9 rounded registrationType">
 								</h:selectBooleanCheckbox>
@@ -65,7 +65,7 @@
 					<h:panelGroup id="selectedClaims">
 						<a4j:region
 							rendered="#{(not empty _scope.scopeType) and (_scope.scopeType.value eq 'openid')}">
-							<b:panel id="claims" title="#{msg['scope.claims']}"
+							<b:panel id="claims" title="#{msgs['scope.claims']}"
 								look="primary" iconAwesome="fa-list">
 								<h:panelGroup id="selectedClaimsId"
 									styleClass="selectedClaimsId">
@@ -102,7 +102,7 @@
 					<h:panelGroup id="dynamicScripts">
 						<a4j:region
 							rendered="#{(not empty _scope.scopeType) and (_scope.scopeType.value eq 'dynamic')}">
-							<b:panel title="#{msg['scope.dynamicScopeScripts']}"
+							<b:panel title="#{msgs['scope.dynamicScopeScripts']}"
 								look="primary" iconAwesome="fa-list">
 								<h:panelGroup id="selectedDynamicScriptId">
 									<h:panelGrid columns="1" width="100%" border="0"
@@ -128,7 +128,7 @@
 								</h:panelGroup>
 								<h:panelGroup>
 									<a4j:commandButton
-										value="#{msg['scope.addDynamicScopeScript']}"
+										value="#{msgs['scope.addDynamicScopeScript']}"
 										oncomplete="#{rich:component('dynamicScript:selectEntityModalPanel')}.show();"
 										execute="@this" styleClass="btn btn-primary" />
 								</h:panelGroup>
@@ -177,5 +177,5 @@
 		cancelMethod="#{updateScopeAction.cancelSelectDynamicScripts}"
 		render="selectedDynamicScriptId" nameProperty="entity.name"
 		displayNameProperty="entity.description"
-		label="#{msg['scope.addDynamicScripts']}" />
+		label="#{msgs['scope.addDynamicScripts']}" />
 </ui:composition>

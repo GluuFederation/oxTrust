@@ -19,36 +19,36 @@
 	<ui:define name="body">
 		<section class="content-header">
 		<h1 style="color: #333;">
-			#{msg['configuration.configuration']} <small><i
+			#{msgs['configuration.configuration']} <small><i
 				class="fa fa-caret-right" style="color: #333 !important;" />
-				#{msg['configuration.certificates']}</small>
+				#{msgs['configuration.certificates']}</small>
 		</h1>
 		<ol class="breadcrumb">
 			<li><a
 				href="#{request.contextPath}/configuration/certificateManagement.htm"><i
-					class="fa fa-home"></i> #{msg['configuration.certificates']}</a></li>
+					class="fa fa-home"></i> #{msgs['configuration.certificates']}</a></li>
 		</ol>
 		</section>
 		<section class="content">
 		<div class="row" style="margin: 1px;">
 			<h:form id="internalCertificatesFormId" style="width:100%;">
-				<b:panel title="#{msg['configuration.internalGluuCertificates']}"
+				<b:panel title="#{msgs['configuration.internalGluuCertificates']}"
 					look="primary" iconAwesome="fa-sun-o" collapsible="false">
 					<b:dataTable
 						value="#{certificateManagementAction.internalCertificates}"
 						var="cert" id="asimbaCertificatesListId"
 						rendered="#{certificateManagementAction.internalCertificates.size() gt 0}"
 						style="text-align:center; width:100%;" responsive="true" select="true">
-						<b:dataTableColumn label="#{msg['configuration.alias']}"
+						<b:dataTableColumn label="#{msgs['configuration.alias']}"
 							value="#{cert.alias}">
 						</b:dataTableColumn>
-						<b:dataTableColumn label="#{msg['configuration.algorithm']}"
+						<b:dataTableColumn label="#{msgs['configuration.algorithm']}"
 							value="#{cert.algorithm}">
 						</b:dataTableColumn>
-						<b:dataTableColumn label="#{msg['configuration.notBefore']}"
+						<b:dataTableColumn label="#{msgs['configuration.notBefore']}"
 							value="#{cert.notBeforeDatetime}">
 						</b:dataTableColumn>
-						<b:dataTableColumn label="#{msg['configuration.notAfter']}"
+						<b:dataTableColumn label="#{msgs['configuration.notAfter']}"
 							value="#{cert.notAfterDatetime}">
 						</b:dataTableColumn>
 						<b:dataTableColumn label="Actions">
@@ -56,7 +56,7 @@
 								action="#{certificateManagementAction.download(cert)}"
 								class="col-xs-12" styleClass="btn btn-primary" />
 						</b:dataTableColumn>
-						<b:dataTableColumn label="#{msg['configuration.issuer']}"
+						<b:dataTableColumn label="#{msgs['configuration.issuer']}"
 							value="#{cert.issuer}">
 						</b:dataTableColumn>
 					</b:dataTable>

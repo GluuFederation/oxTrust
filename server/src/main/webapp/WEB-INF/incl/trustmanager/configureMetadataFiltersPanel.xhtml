@@ -11,7 +11,7 @@
 
   <rich:popupPanel id="additionalTRParamsPanel" onmaskclick="#{rich:component('additionalTRParamsPanel')}.hide()" keepVisualState="true" autosized="true">
         <f:facet name="header">
-            <h:outputText value="#{msg['trustmanager.metadataFiltersConfiguration']}" />
+            <h:outputText value="#{msgs['trustmanager.metadataFiltersConfiguration']}" />
         </f:facet>
 
         <f:facet name="controls">
@@ -21,7 +21,7 @@
         <h:form>
             <h:panelGrid columns="1" id="MetadataFilterMenu">
                 <rich:pickList id="metadataFilterSelection" value="#{metadataFiltersAction.metadataFilters}"
-                    listsHeight="150" listWidth="130" sourceCaption="#{msg['trustmanager.availableFilter']}" targetCaption="Selected Filters">
+                    listsHeight="150" listWidth="130" sourceCaption="#{msgs['trustmanager.availableFilter']}" targetCaption="Selected Filters">
 
                     <f:selectItems value="#{metadataFiltersAction.availableMetadataFilters}" var="item" itemValue="#{item}" itemLabel="#{item.name}" />
                     <f:converter converterId="metadataFilterConverter" />
@@ -51,8 +51,8 @@
             </h:panelGrid>
 
             <div id="filtersUpdate">
-                <a4j:commandButton styleClass="btn btn-primary" value="#{msg['trustmanager.save']}" action="#{metadataFiltersAction.saveFilters}" oncomplete="#{rich:component('additionalTRParamsPanel')}.hide()" render="MetadataFilterMenu" />
-                <a4j:commandButton styleClass="btn btn-primary" value="#{msg['trustmanager.back']}" onclick="#{rich:component('additionalTRParamsPanel')}.hide()" immediate="true" />
+                <a4j:commandButton styleClass="btn btn-primary" value="#{msgs['trustmanager.save']}" action="#{metadataFiltersAction.saveFilters}" oncomplete="#{rich:component('additionalTRParamsPanel')}.hide()" render="MetadataFilterMenu" />
+                <a4j:commandButton styleClass="btn btn-primary" value="#{msgs['trustmanager.back']}" onclick="#{rich:component('additionalTRParamsPanel')}.hide()" immediate="true" />
             </div>
         </h:form>
     </rich:popupPanel>

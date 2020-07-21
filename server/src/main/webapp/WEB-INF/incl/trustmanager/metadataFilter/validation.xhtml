@@ -16,15 +16,15 @@
 
         <rich:panel id="ValidationFilterDescription" bodyClass="inpanelBody">
             <f:facet name="header">
-                <h:outputText value="#{msg['trustmanager.validationFilterHelp']}" />
+                <h:outputText value="#{msgs['trustmanager.validationFilterHelp']}" />
             </f:facet>
-            #{msg['trustmanager.theMetadataFilterValidate']}
+            #{msgs['trustmanager.theMetadataFilterValidate']}
         </rich:panel>
         <rich:panel id="ValidationFilterMenu" bodyClass="inpanelBody">
             <f:facet name="header">
-                <h:outputText value="#{msg['trustmanager.validationFilterConfiguration']}" />
+                <h:outputText value="#{msgs['trustmanager.validationFilterConfiguration']}" />
             </f:facet>
-            <h:outputText value="#{msg['trustmanager.addedExtensionSchemas']}" />
+            <h:outputText value="#{msgs['trustmanager.addedExtensionSchemas']}" />
             <rich:list var="_extensionSchema" value="#{_metadataFilterSelected.extensionSchemas}" id="schemaList">
                 <h:outputText value="#{_extensionSchema}" />
                 <h:outputText value="&#160;">
@@ -34,8 +34,8 @@
                 </h:outputText>
             </rich:list>
             <h:panelGrid>
-                <h:outputText value="#{msg['trustmanager.enterNewExtensionSchema']}" />
-                <rich:inplaceInput defaultLabel="#{msg['trustmanager.clickToEnterExtensionSchema']}" value="#{_metadataFilterSelected.extensionSchema}">
+                <h:outputText value="#{msgs['trustmanager.enterNewExtensionSchema']}" />
+                <rich:inplaceInput defaultLabel="#{msgs['trustmanager.clickToEnterExtensionSchema']}" value="#{_metadataFilterSelected.extensionSchema}">
                     <a4j:ajax event="change" render="ValidationFilterMenu" />
                 </rich:inplaceInput>
             </h:panelGrid>

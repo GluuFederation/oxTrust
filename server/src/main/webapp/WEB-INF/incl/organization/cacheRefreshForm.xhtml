@@ -42,7 +42,7 @@
         }
     </h:outputScript>
 	<ox:changeBindPasswordDialog id="bindPasswordDialogId"
-		label="#{msg['organization.changeBackend']} '#{_configureCacheRefreshAction.activeLdapConfig.configId}' #{msg['organization.bindPassword']}"
+		label="#{msgs['organization.changeBackend']} '#{_configureCacheRefreshAction.activeLdapConfig.configId}' #{msgs['organization.bindPassword']}"
 		password="#{_configureCacheRefreshAction.activeLdapConfig.bindPassword}"
 		setPasswordMethod="#{configureCacheRefreshAction.updateBindPassword}" />
 	<h:form id="cacheRefreshForm">
@@ -56,34 +56,34 @@
 							style="margin-bottom: 0px; overflow: auto;">
 							<ul class="nav nav-tabs" id="cacheRefreshFormtab">
 								<li class="active"><a href="#cache-refresh"
-									data-toggle="tab">#{msg['organization.cacheRefresh']}</a></li>
-								<li><a href="#key-attributes" data-toggle="tab">#{msg['organization.customerBackend']}</a></li>
-								<li><a href="#ldap-servers" data-toggle="tab">#{msg['organization.sourceBackend']}</a></li>
-								<li><a href="#Inum" data-toggle="tab">#{msg['organization.inumLDAPServer']}</a></li>
+									data-toggle="tab">#{msgs['organization.cacheRefresh']}</a></li>
+								<li><a href="#key-attributes" data-toggle="tab">#{msgs['organization.customerBackend']}</a></li>
+								<li><a href="#ldap-servers" data-toggle="tab">#{msgs['organization.sourceBackend']}</a></li>
+								<li><a href="#Inum" data-toggle="tab">#{msgs['organization.inumLDAPServer']}</a></li>
 							</ul>
 							<div class="tab-content">
 								<div class="tab-pane active" id="cache-refresh">
 									<div style="display: inline-block; width: 75% !important;">
 										<h:panelGroup columns="1" width="100%" border="0"
 											cellpadding="0" cellspacing="0">
-											<ox:decorate label="#{msg['organization.lastRun']}">
+											<ox:decorate label="#{msgs['organization.lastRun']}">
 												<h:outputText id="lastrun" styleClass="lastRunValueBox"
 													value="#{_configureCacheRefreshAction.configuration.vdsCacheRefreshLastUpdate}">
 													<f:convertDateTime pattern="MMM. d yyyy hh:mm a" />
 												</h:outputText>
 											</ox:decorate>
 											<ox:decorate
-												label="#{msg['organization.updatesAtTheLastRun']}">
+												label="#{msgs['organization.updatesAtTheLastRun']}">
 												<h:outputText styleClass="updatesAtTheLastRunValueBox"
 													value="#{_configureCacheRefreshAction.configuration.vdsCacheRefreshLastUpdateCount}" />
 											</ox:decorate>
 											<ox:decorate
-												label="#{msg['organization.problemsAtTheLastRun']}">
+												label="#{msgs['organization.problemsAtTheLastRun']}">
 												<h:outputText styleClass="problemsAtTheLastRunValueBox"
 													value="#{_configureCacheRefreshAction.configuration.vdsCacheRefreshProblemCount}" />
 											</ox:decorate>
 											<ox:decorate id="editType"
-												label="#{msg['organization.refreshMethod']}">
+												label="#{msgs['organization.refreshMethod']}">
 												<h:selectOneMenu
 													styleClass="rounded form-control refreshMetodSelectBox"
 													value="#{_configureCacheRefreshAction.updateMethod}"
@@ -104,7 +104,7 @@
 													<ox:simpleCustomPropertiesList id="scpl"
 														leftClass="col-sm-4" rightClass="col-sm-8"
 														rendered="#{_configureCacheRefreshAction.updateMethod.value eq 'copy'}"
-														label="#{msg['organization.sourceAttributeToDesitnation']}"
+														label="#{msgs['organization.sourceAttributeToDesitnation']}"
 														properties="#{_configureCacheRefreshAction.attributeMapping}"
 														propertiesAction="#{_configureCacheRefreshAction}" />
 												</h:panelGroup>
@@ -116,47 +116,47 @@
                                            validateCollapsiblePanel("cacheRefreshForm\\:vdsTogglePanel");
                                            validateCollapsiblePanel("cacheRefreshForm\\:copyTogglePanel");
                                         </h:outputScript>
-											<ox:decorate label="#{msg['organization.pollingInterval']}">
+											<ox:decorate label="#{msgs['organization.pollingInterval']}">
 												<h:inputText
 													styleClass="form-control pollingIntervalTextBox"
 													value="#{_configureCacheRefreshAction.configuration.vdsCacheRefreshPollingInterval}"
 													id="vdsCacheRefreshPollingIntervalId" size="5" />
 											</ox:decorate>
-											<ox:decorate label="#{msg['organization.serverIPAddress']}">
+											<ox:decorate label="#{msgs['organization.serverIPAddress']}">
 												<h:inputText styleClass="form-control serverIpTextBox"
 													value="#{_configureCacheRefreshAction.configuration.cacheRefreshServerIpAddress}"
 													id="cacheRefreshServerIpAddressId" size="16" />
 											</ox:decorate>
-											<ox:decorate label="#{msg['organization.snapshotFolder']}">
+											<ox:decorate label="#{msgs['organization.snapshotFolder']}">
 												<h:inputText styleClass="form-control snapshotFolderTextBox"
 													value="#{_configureCacheRefreshAction.cacheRefreshConfig.snapshotFolder}"
 													size="48" required="true" />
 											</ox:decorate>
-											<ox:decorate label="#{msg['organization.snapshotCount']}">
+											<ox:decorate label="#{msgs['organization.snapshotCount']}">
 												<h:inputText styleClass="form-control snapshotCount"
 													value="#{_configureCacheRefreshAction.cacheRefreshConfig.snapshotMaxCount}"
 													size="5" required="true" />
 											</ox:decorate>
 											<ox:decorate
-												label="#{msg['organization.keepExternalPersons']}">
+												label="#{msgs['organization.keepExternalPersons']}">
 												<h:selectBooleanCheckbox
 													value="#{_configureCacheRefreshAction.cacheRefreshConfig.keepExternalPerson}"
 													styleClass="rounded keepInternalPersonCheckBox"
 													id="profileManagmentStateId" />
 											</ox:decorate>
 
-											<ox:decorate label="#{msg['organization.loadSourceData']}">
+											<ox:decorate label="#{msgs['organization.loadSourceData']}">
 
 												<h:selectBooleanCheckbox styleClass="loadSourceDataCheckBox"
 													value="#{_configureCacheRefreshAction.cacheRefreshConfig.useSearchLimit}" />
 											</ox:decorate>
-											<ox:decorate label="#{msg['organization.searchSizeLimit']} ">
+											<ox:decorate label="#{msgs['organization.searchSizeLimit']} ">
 												<h:inputText styleClass="form-control searchLimitTextBox"
 													value="#{_configureCacheRefreshAction.cacheRefreshConfig.ldapSearchSizeLimit}"
 													size="6" required="false" />
 											</ox:decorate>
 											<ox:decorate id="vdsCacheRefreshState"
-												label="#{msg['organization.cacheRefresh']}">
+												label="#{msgs['organization.cacheRefresh']}">
 												<h:selectBooleanCheckbox
 													value="#{_configureCacheRefreshAction.configuration.vdsCacheRefreshEnabled}"
 													styleClass="enableCacheRefreshSelectBox"
@@ -180,28 +180,28 @@
 										style="display: inline-block; width: 90% !important;">
 										<h:panelGroup id="kp">
 											<ox:simplePropertiesList id="ka1"
-												label="#{msg['organization.keyAttribute']}"
+												label="#{msgs['organization.keyAttribute']}"
 												labelAdd="key attribute" maxItems="3"
 												properties="#{_configureCacheRefreshAction.keyAttributes}"
 												propertiesAction="#{_configureCacheRefreshAction}"
 												required="true" tableId="KeyAttributeList" />
 
 											<ox:simplePropertiesList id="ka2"
-												label="#{msg['organization.objectClass']}"
+												label="#{msgs['organization.objectClass']}"
 												labelAdd="object class"
 												properties="#{_configureCacheRefreshAction.keyObjectClasses}"
 												propertiesAction="#{_configureCacheRefreshAction}"
 												required="true" tableId="ObjectClassList" />
 
 											<ox:simplePropertiesList id="ka3"
-												label="#{msg['organization.sourceAttribute']}"
+												label="#{msgs['organization.sourceAttribute']}"
 												labelAdd="source attribute"
 												properties="#{_configureCacheRefreshAction.sourceAttributes}"
 												propertiesAction="#{_configureCacheRefreshAction}"
 												required="true" tableId="SourceAttribeList" />
 
 											<ox:decorate id="customLdapFilter"
-												label="#{msg['organization.customLDAPFilter']}">
+												label="#{msgs['organization.customLDAPFilter']}">
 												<h:panelGroup>
 													<h:inputText styleClass="form-control customFilterTextBox"
 														value="#{_configureCacheRefreshAction.cacheRefreshConfig.customLdapFilter}"
@@ -233,7 +233,7 @@
 											<h:panelGroup layout="block" styleClass="addConfig">
 												<a4j:commandLink
 													styleClass="btn btn-primary addSourceServerButton"
-													value="#{msg['organization.addSourceLDAPServer']}"
+													value="#{msgs['organization.addSourceLDAPServer']}"
 													action="#{_configureCacheRefreshAction.addSourceConfig()}"
 													render="sourceConfigsId"
 													style="margin-right:1100px;margin-top:50px;" />
@@ -245,7 +245,7 @@
 									<div style="display: inline-block; width: 75% !important;">
 										<h:panelGroup columns="1" width="100%" border="0"
 											cellpadding="0" cellspacing="0">
-											<ox:decorate label="#{msg['organization.defaultInumServer']}">
+											<ox:decorate label="#{msgs['organization.defaultInumServer']}">
 												<h:selectBooleanCheckbox
 													styleClass="rounded defaultInumServerCheckBox"
 													value="#{_configureCacheRefreshAction.cacheRefreshConfig.defaultInumServer}">
@@ -272,15 +272,15 @@
 							<rich:notifyMessages stayTime="2000" nonblocking="true"
 								rendered="#{showGlobalMessages == 'false'}" />
 							<h:commandButton styleClass="btn btn-primary updateButon"
-								value="#{msg['organization.update']}"
+								value="#{msgs['organization.update']}"
 								action="#{configureCacheRefreshAction.update}" />
 							<h:commandButton styleClass="btn btn-primary cancelButton"
-								value="#{msg['organization.cancel']}"
+								value="#{msgs['organization.cancel']}"
 								action="#{configureCacheRefreshAction.cancel}" immediate="true"
 								onclick="lock();" ondbclick="lock();" oncomplete="unlock();"
 								style="margin-left:5px" />
 							<h:commandButton styleClass="btn btn-primary validateButton"
-								value="#{msg['organization.update']} &amp; #{msg['organization.validateScript']}"
+								value="#{msgs['organization.update']} &amp; #{msgs['organization.validateScript']}"
 								action="#{configureCacheRefreshAction.validateInterceptorScript}"
 								style="margin-left:5px" />
 						</div>

@@ -15,7 +15,7 @@
 
     <rich:popupPanel id="POPPanel" onmaskclick="#{rich:component('POPPanel')}.hide()" keepVisualState="true" autosized="true" width="500" height="500">
         <f:facet name="header">
-            <h:outputText value="#{msg['trustmanager.policesAndOperatingProcedures']}" />
+            <h:outputText value="#{msgs['trustmanager.policesAndOperatingProcedures']}" />
         </f:facet>
 
         <f:facet name="controls">
@@ -28,6 +28,6 @@
             </pre>
         </h:panelGroup>
 
-        <a4j:commandButton value="#{msg['trustmanager.back']}" onclick="#{rich:component('POPPanel')}.hide()" />
+        <a4j:commandButton value="#{msgs['trustmanager.back']}" onclick="#{rich:component('POPPanel')}.hide()" />
     </rich:popupPanel>
 </ui:composition>

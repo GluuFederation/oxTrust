@@ -12,34 +12,34 @@
 
     <div id="trustRelationships">
         <h:panelGrid columns="1" border="0" cellpadding="0" cellspacing="0" width="100%">
-            <h:link includeViewParams="false" outcome="/federation/hosted/addFederation" styleClass="addAttribute" value="#{msg['federation.addFederation']}" />
+            <h:link includeViewParams="false" outcome="/federation/hosted/addFederation" styleClass="addAttribute" value="#{msgs['federation.addFederation']}" />
 
             <p:spacer height="16" />
 
             <h:form id="trustRelationsshipList">
                 <ui:fragment rendered="#{federationProposalsInventoryAction.proposalsList.size() eq 0}">
                     <p:spacer height="30" />
-                    <h:outputText value="#{msg['federation.noTrustRelationshipsFound']}" />
+                    <h:outputText value="#{msgs['federation.noTrustRelationshipsFound']}" />
                 </ui:fragment>
 
                 <p:dataTable id="relationshipstable" value="#{federationProposalsInventoryAction.proposalsList}" rows="20" styleClass="data sortable" var="tsps"
                     rendered="#{federationProposalsInventoryAction.proposalsList.size() gt 0}">
                     <p:column sortBy="#{tsps.displayName}">
-                        <f:facet name="header">#{msg['federation.community']}</f:facet>
+                        <f:facet name="header">#{msgs['federation.community']}</f:facet>
                         <h:link includeViewParams="false" outcome="/federation/proposal/viewProposal" value="#{tsps.displayName}">
                             <f:param name="inum" value="#{tsps.inum}" />
                         </h:link>
                     </p:column>
                     <p:column sortBy="#{tsps.description}">
-                        <f:facet name="header">#{msg['federation.description']}</f:facet>
+                        <f:facet name="header">#{msgs['federation.description']}</f:facet>
                         <h:outputText value="#{tsps.description}" />
                     </p:column>
                     <p:column sortBy="#{tsps.isFederation()}">
-                        <f:facet name="header">#{msg['federation.relationshipType']}</f:facet>
+                        <f:facet name="header">#{msgs['federation.relationshipType']}</f:facet>
                         <h:outputText value="#{tsps.isFederation() ? 'federation' : (trustService.getTrustContainerFederation(tsps) ne null ? 'site federated with '.concat(trustService.getTrustContainerFederation(tsps).displayName) : 'site')}" />
                     </p:column>
                     <p:column sortBy="#{tsps.status.value}">
-                        <f:facet name="header">#{msg['federation.status']}</f:facet>
+                        <f:facet name="header">#{msgs['federation.status']}</f:facet>
                         <h:outputText value="#{tsps.status.displayName}" />
                     </p:column>
                 </p:dataTable>

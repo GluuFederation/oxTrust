@@ -18,8 +18,8 @@
 	<ui:define name="body">
 		<section class="content-header">
 			<h1 style="color: #333;">
-				#{msg['passport.title']} <small> <i
-					class="fa fa-caret-right" style="color: #333 !important;" />#{msg['passport.providers']}
+				#{msgs['passport.title']} <small> <i
+					class="fa fa-caret-right" style="color: #333 !important;" />#{msgs['passport.providers']}
 				</small>
 			</h1>
 			<ol class="breadcrumb">
@@ -27,7 +27,7 @@
 						class="fa fa-home" />
 				</a></li>
 				<li class="organization/configuration"><a
-					href="#{request.contextPath}/passport/idpInitiatedFlows.htm">#{msg['passport.idpInitiated']}</a></li>
+					href="#{request.contextPath}/passport/idpInitiatedFlows.htm">#{msgs['passport.idpInitiated']}</a></li>
 			</ol>
 		</section>
 		<section class="content">
@@ -37,7 +37,7 @@
 						<div class="row" style="padding: 5px; margin-bottom: 5px;">
 							<b:link style-class="addProviderButtonClass btn btn-primary"
 								icon="plus" outcome="/passport/addProvider"
-								value="#{msg['passport.addNewProvider']}"
+								value="#{msgs['passport.addNewProvider']}"
 								includeViewParams="false" />
 						</div>
 						<div class="row" style="padding: 10px;">
@@ -47,7 +47,7 @@
 								value="#{passportProvidersAction.providerSelections}" var="c"
 								print="true" excel="true" csv="true" pdf="true" select="true">
 								<b:dataTableColumn
-									label="#{msg['passport.provider.form.id']}">
+									label="#{msgs['passport.provider.form.id']}">
 									<b:link includeViewParams="false"
 										outcome="/passport/editProvider"
 										value="#{c.provider.id}">
@@ -55,11 +55,11 @@
 									</b:link>
 								</b:dataTableColumn>
 								<b:dataTableColumn value="#{c.provider.displayName}"
-									label="#{msg['passport.provider.form.displayName']}" />
+									label="#{msgs['passport.provider.form.displayName']}" />
 								<b:dataTableColumn value="#{c.provider.passportStrategyId}"
-									label="#{msg['passport.provider.form.strategyId']}" />
+									label="#{msgs['passport.provider.form.strategyId']}" />
 								<b:dataTableColumn value="#{c.provider.type}"
-									label="#{msg['passport.provider.form.type']}" />
+									label="#{msgs['passport.provider.form.type']}" />
 								<b:dataTableColumn label="Status">
 									<b:label text="Enabled" rendered="#{c.provider.enabled}"
 										severity="success" />

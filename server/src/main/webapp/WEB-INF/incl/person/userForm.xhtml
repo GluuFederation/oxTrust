@@ -84,10 +84,10 @@
 										<div class="col-xs-10" id="attributeID">
 											<h:inputText
 												styleClass="form-control #{_custAttr.metadata.displayName}"
-												p:placeholder="#{msg['person.clickToEnter']} #{_custAttr.metadata.displayName} #{_valueIdx == 0 ? '' : _valueIdx}"
+												p:placeholder="#{msgs['person.clickToEnter']} #{_custAttr.metadata.displayName} #{_valueIdx == 0 ? '' : _valueIdx}"
 												style="width:100%" value="#{_custAttr.values[_valueIdx]}"
 												id="custId_text_#{_custAttrIdx}" require="#{_mustEnter}"
-												requiredMessage="#{msg['person.pleaseEnter']} #{_custAttr.metadata.displayName} #{_valueIdx == 0 ? '' : _valueIdx}. "
+												requiredMessage="#{msgs['person.pleaseEnter']} #{_custAttr.metadata.displayName} #{_valueIdx == 0 ? '' : _valueIdx}. "
 												validator="gluuAttributeValidator"
 												rendered="#{(_custAttr.adminCanEdit or _mustEnter) and 
 			                                                            (_custAttr.metadata.dataType.value ne 'boolean') and 
@@ -111,7 +111,7 @@
 			                                                            (_custAttr.metadata.displayName ne 'Birthdate')}" />
 											<h:inputText
 												styleClass="form-control #{_custAttr.metadata.displayName}"
-												p:placeholder="#{msg['person.clickToEnter']} email"
+												p:placeholder="#{msgs['person.clickToEnter']} email"
 												style="width:100%" value="#{_custAttr.values[_valueIdx]}"
 												id="Email" required="#{_mustEnter}" p:type="email"
 												prependId="false" maxlength="100"
@@ -176,7 +176,7 @@
 												styleClass="form-control #{_custAttr.metadata.displayName}"
 												value="#{_custAttr.values[_valueIdx]}"
 												required="#{_mustEnter}"
-												requiredMessage="#{msg['person.pleaseEnter']} #{_custAttr.metadata.displayName} #{_valueIdx == 0 ? '' : _valueIdx}. "
+												requiredMessage="#{msgs['person.pleaseEnter']} #{_custAttr.metadata.displayName} #{_valueIdx == 0 ? '' : _valueIdx}. "
 												rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.dataType.value eq 'certificate')}">
 											</h:inputTextarea>
 										</div>
@@ -235,12 +235,12 @@
 											<h:graphicImage value="/img/remove.gif" />
 										</a4j:commandLink>
 									</ox:decorate>
-									<ox:decorate label="#{msg['person.password']}" id="P"
+									<ox:decorate label="#{msgs['person.password']}" id="P"
 										rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'Password')}"
 										leftClass="col-sm-3" rightClass="col-sm-9">
 										<div class="col-xs-10">
 											<h:inputSecret
-												p:placeholder="#{msg['person.clickToEnter']} #{msg['person.password']}"
+												p:placeholder="#{msgs['person.clickToEnter']} #{msgs['person.password']}"
 												styleClass="FirstPasswordField form-control"
 												style="width:100%" value="#{updatePersonAction.password}"
 												validator="#{updatePersonAction.validateConfirmPassword}"
@@ -260,13 +260,13 @@
 											<b:message />
 										</div>
 									</ox:decorate>
-									<ox:decorate label="#{msg['person.confirmPassword']}"
+									<ox:decorate label="#{msgs['person.confirmPassword']}"
 										rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'Password')}"
 										leftClass="col-sm-3" rightClass="col-sm-9">
 										<div class="col-xs-10">
 											<h:inputSecret styleClass="SecondPasswordField form-control"
 												style="width:100%"
-												p:placeholder="#{msg['person.clickToEnter']} #{msg['person.confirmPassword']}"
+												p:placeholder="#{msgs['person.clickToEnter']} #{msgs['person.confirmPassword']}"
 												validator="#{updatePersonAction.validateConfirmPassword}"
 												require="#{_mustEnter}" id="custconfirmpasswordId"
 												value="#{updatePersonAction.confirmPassword}"
@@ -377,7 +377,7 @@
 			</div>
 			<div class="row"
 				style="margin-left: 5px; margin-right: 5px; background: white;">
-				<b:panel title="#{msg['person.authenticationmethods']}"
+				<b:panel title="#{msgs['person.authenticationmethods']}"
 					look="success"
 					rendered="#{updatePersonAction.deviceDataMap.size() gt 0}">
 					<b:dataTable id="AuthMethod" style="text-align:center;"

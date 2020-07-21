@@ -49,12 +49,12 @@ public class UpdateRadiusClientAction implements Serializable {
             client = gluuRadiusClientService.getRadiusClientByInum(inum);
             if(client == null) {
                 log.debug("Radius client " + inum + " not found.");
-                facesMessages.add(FacesMessage.SEVERITY_ERROR,"#{msg['radius.client.notfound']}");
+                facesMessages.add(FacesMessage.SEVERITY_ERROR,"#{msgs['radius.client.notfound']}");
                 return OxTrustConstants.RESULT_FAILURE;
             }
         }catch(Exception e) {
             log.debug("An error occured while loading client " + inum,e);
-            facesMessages.add(FacesMessage.SEVERITY_ERROR,"#{msg['radius.client.update.loaderror']}");
+            facesMessages.add(FacesMessage.SEVERITY_ERROR,"#{msgs['radius.client.update.loaderror']}");
             return OxTrustConstants.RESULT_FAILURE;
         }
         return OxTrustConstants.RESULT_SUCCESS;
@@ -77,10 +77,10 @@ public class UpdateRadiusClientAction implements Serializable {
             client.setDn(tmpclient.getDn());
             client.setInum(tmpclient.getInum());
             gluuRadiusClientService.updateRadiusClient(client);
-            facesMessages.add(FacesMessage.SEVERITY_INFO,"#{msg['radius.client.update.success']}");
+            facesMessages.add(FacesMessage.SEVERITY_INFO,"#{msgs['radius.client.update.success']}");
         }catch(Exception e) {
             log.debug("Could not update client " + inum,e);
-            facesMessages.add(FacesMessage.SEVERITY_ERROR,"#{msg['radius.client.update.error']}");
+            facesMessages.add(FacesMessage.SEVERITY_ERROR,"#{msgs['radius.client.update.error']}");
             return OxTrustConstants.RESULT_FAILURE;
         }
         return OxTrustConstants.RESULT_SUCCESS;

@@ -19,15 +19,15 @@
 	<ui:define name="body">
 		<section class="content-header">
 			<h1 style="color: #333;">
-				#{msg['customScript.configuration']} <small> <i
-					class="fa fa-caret-right" style="color: #333 !important;" />#{msg['customScript.manageCustomScripts']}
+				#{msgs['customScript.configuration']} <small> <i
+					class="fa fa-caret-right" style="color: #333 !important;" />#{msgs['customScript.manageCustomScripts']}
 				</small>
 			</h1>
 			<ol class="breadcrumb">
 				<li><a href="#{request.contextPath}/home.htm"> <i
 						class="fa fa-home" />
 				</a></li>
-				<li class="organization/configuration">#{msg['customScript.manageCustomScripts']}</li>
+				<li class="organization/configuration">#{msgs['customScript.manageCustomScripts']}</li>
 			</ol>
 		</section>
 		<section class="content">
@@ -40,11 +40,11 @@
 							<a4j:commandButton action="#{manageCustomScriptAction.save}"
 								styleClass="btn btn-success"
 								oncomplete="document.location.reload(true);"
-								value="#{msg['customScript.update']}" />
+								value="#{msgs['customScript.update']}" />
 							<h:commandButton action="#{manageCustomScriptAction.cancel}"
 								immediate="true" onclick="document.location.reload();"
 								style="margin-left:5px !important;" styleClass="btn btn-success"
-								value="#{msg['customScript.cancel']}" />
+								value="#{msgs['customScript.cancel']}" />
 						</div>
 					</ui:define>
 				</ui:decorate>

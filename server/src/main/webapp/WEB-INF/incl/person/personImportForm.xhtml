@@ -16,7 +16,7 @@
 					<div style="display: inline-block; width: 75% !important;">
 						<h:panelGroup columns="1" width="100%" border="0" cellpadding="0"
 							cellspacing="0">
-							<ox:decorate label="#{msg['person.fileToImport']}">
+							<ox:decorate label="#{msgs['person.fileToImport']}">
 								<h:panelGroup id="fileImportPanelId" columns="1" width="100%"
 									border="0" cellpadding="0" cellspacing="0">
 									<p:fileUpload listener="#{_importAction.handleFileUpload}"
@@ -33,15 +33,15 @@
 					<div class="box-footer">
 						<ui:insert name="controlButttons" />
 						<div id="updateButtons">
-							<h:commandButton value="#{msg['person.validation']}"
+							<h:commandButton value="#{msgs['person.validation']}"
 								styleClass="btn btn-primary"
 								action="#{personImportAction.validateFileToImport}"
 								rendered="#{not personImportAction.fileDataToImport.ready and personImportAction.file ne null}" />
-							<h:commandButton value="#{msg['person.import']}"
+							<h:commandButton value="#{msgs['person.import']}"
 								styleClass="btn btn-primary"
 								action="#{personImportAction.importPersons}"
 								rendered="#{personImportAction.fileDataToImport.ready}" />
-							<h:commandButton value="#{msg['person.cancel']}"
+							<h:commandButton value="#{msgs['person.cancel']}"
 								styleClass="btn btn-primary"
 								action="#{personImportAction.cancel}" immediate="true"
 								style="margin-left:5px;" />

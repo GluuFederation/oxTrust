@@ -15,9 +15,9 @@
         <section class="content-header">
 
             <h1 style="color: #333;">
-                #{msg['attribute.importExports']}
+                #{msgs['attribute.importExports']}
                 <small>
-                    <i class="fa fa-caret-right" style="color: #333 !important;"/>  #{msg['attribute.export']}
+                    <i class="fa fa-caret-right" style="color: #333 !important;"/>  #{msgs['attribute.export']}
                 </small>
             </h1>
             <ol class="breadcrumb">
@@ -28,7 +28,7 @@
                 </li>
                 <li class="organization/configuration">
                     <a href="#{request.contextPath}/attribute/attributeInventory.htm">
-                        #{msg['attribute.attributes']}</a>
+                        #{msgs['attribute.attributes']}</a>
                 </li>
             </ol>
         </section>
@@ -47,7 +47,7 @@
                                     <ul class="nav nav-tabs">
 
                                         <li class="active">
-                                            <a data-toggle="tab" href="#attribuiteInventory">#{msg['attribute.export']} </a>
+                                            <a data-toggle="tab" href="#attribuiteInventory">#{msgs['attribute.export']} </a>
                                         </li>
                                     </ul>
                                     <div class="tab-content">
@@ -83,7 +83,7 @@
                                                                             <h:column class="col-xs-12"
                                                                                       sortBy="#{attr.displayName}">
                                                                                 <f:facet name="header">
-                                                                                    <div style="text-align: center;">#{msg['attribute.exportText']}</div>
+                                                                                    <div style="text-align: center;">#{msgs['attribute.exportText']}</div>
                                                                                 </f:facet>
                                                                                 <h:selectBooleanCheckbox styleClass="rowCheckBox"
                                                                                         value="#{attributeInventoryAction.checked[attr.dn]}"/>
@@ -92,7 +92,7 @@
                                                                             <h:column class="col-xs-12"
                                                                                       sortBy="#{attr.displayName}">
                                                                                 <f:facet name="header">
-                                                                                    <div style="text-align: center;"> #{msg['attribute.displayName']}</div>
+                                                                                    <div style="text-align: center;"> #{msgs['attribute.displayName']}</div>
                                                                                 </f:facet>
                                                                                 <h:link includeViewParams="false"
                                                                                         outcome="/attribute/updateAttribute"
@@ -104,7 +104,7 @@
 
                                                                             <h:column sortBy="#{attr.name}">
                                                                                 <f:facet name="header">
-                                                                                    <div style="text-align: center;">#{msg['attribute.name']}</div>
+                                                                                    <div style="text-align: center;">#{msgs['attribute.name']}</div>
                                                                                 </f:facet>
                                                                                 <h:outputText class="col-xs-12"
                                                                                               value="#{attr.name}"/>
@@ -113,7 +113,7 @@
                                                                             <h:column class="col-xs-12"
                                                                                       sortBy="#{attr.origin}">
                                                                                 <f:facet name="header">
-                                                                                    <div style="text-align: center;">#{msg['attribute.origin']}</div>
+                                                                                    <div style="text-align: center;">#{msgs['attribute.origin']}</div>
                                                                                 </f:facet>
 
                                                                                 <h:outputText class="col-xs-12"
@@ -122,7 +122,7 @@
 
                                                                             <h:column>
                                                                                 <f:facet name="header">
-                                                                                    <div style="text-align: center;"> #{msg['attribute.description']}</div>
+                                                                                    <div style="text-align: center;"> #{msgs['attribute.description']}</div>
                                                                                 </f:facet>
                                                                                 <h:outputText class="col-xs-12"
                                                                                               value="#{attr.description}"/>
@@ -130,7 +130,7 @@
 
                                                                             <h:column>
                                                                                 <f:facet name="header">
-                                                                                    <div style="text-align: center;"> #{msg['attribute.status']}</div>
+                                                                                    <div style="text-align: center;"> #{msgs['attribute.status']}</div>
                                                                                 </f:facet>
                                                                                 <h:outputText class="col-xs-1"
                                                                                               value="#{attr.status}"/>

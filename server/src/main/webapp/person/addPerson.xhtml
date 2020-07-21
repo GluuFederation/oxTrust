@@ -16,14 +16,14 @@
 	<ui:define name="body">
 		<section class="content-header">
 			<h1 style="color: #333;">
-				#{msg['person.users']} <small><i class="fa fa-caret-right"
+				#{msgs['person.users']} <small><i class="fa fa-caret-right"
 					style="color: #333 !important;"></i> #{(updatePersonAction.update)
-					? msg['person.updateUser'] : msg['person.addUser'] }</small>
+					? msgs['person.updateUser'] : msgs['person.addUser'] }</small>
 			</h1>
 			<ol class="breadcrumb">
 				<li><a href="#{request.contextPath}/home.htm"><i
 						class="fa fa-home"></i></a></li>
-				<li class="organization/configuration">#{msg['person.addUpdateUser']}</li>
+				<li class="organization/configuration">#{msgs['person.addUpdateUser']}</li>
 			</ol>
 		</section>
 		<section class="content">
@@ -41,11 +41,11 @@
 							<h:panelGroup id="updateButtons" layout="block"
 								style="margin-bottom:6px;">
 								<b:commandButton action="#{updatePersonAction.save}"
-									value="#{msg['person.add']}"
+									value="#{msgs['person.add']}"
 									styleClass="btn btn-primary saveButton" ajax="true"
 									update="@form" look="primary" icon="save" />
 								<b:commandButton action="#{updatePersonAction.cancel}"
-									value="#{msg['person.cancel']}" styleClass="btn btn-primary"
+									value="#{msgs['person.cancel']}" styleClass="btn btn-primary"
 									ajax="true" update="@form" look="primary" icon="trash"
 									immediate="true" style="margin-left:3px;" />
 							</h:panelGroup>

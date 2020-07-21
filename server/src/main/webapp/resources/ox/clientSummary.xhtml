@@ -76,60 +76,60 @@
 					<div class="col-sm-6 col-lg-6">
 						<ox:decorate id="inum"
 							rendered="#{not _new and cc.attrs._client.inum ne '' and cc.attrs._client.inum ne null}"
-							label="#{msg['clientForm.inum']}">
+							label="#{msgs['clientForm.inum']}">
 							<h:outputText value="#{cc.attrs._client.inum}" />
 						</ox:decorate>
 						<ox:decorate id="description"
-							label="#{msg['clientForm.clientDescription']}"
+							label="#{msgs['clientForm.clientDescription']}"
 							rendered="#{!empty cc.attrs._client.description and cc.attrs._client.description ne null }">
 							<h:outputText value="#{cc.attrs._client.description}" />
 						</ox:decorate>
 						<ox:decorate id="applicatonType"
-							label="#{msg['clientForm.applicationType']}"
+							label="#{msgs['clientForm.applicationType']}"
 							rendered="#{!empty cc.attrs._client.oxAuthAppType and cc.attrs._client.oxAuthAppType ne null }">
 							<h:outputText value="#{cc.attrs._client.oxAuthAppType}" />
 						</ox:decorate>
 						<ox:decorate id="oxAuthTrustedClientBox"
-							label="#{msg['clientForm.preAuthorization']}"
+							label="#{msgs['clientForm.preAuthorization']}"
 							rendered="#{!empty cc.attrs._client.oxAuthTrustedClient and cc.attrs._client.oxAuthTrustedClient ne null }">
 							<h:outputText id="trustedClientId"
 								value="#{cc.attrs._client.oxAuthTrustedClient}" />
 						</ox:decorate>
-						<ox:decorate id="logoUri" label="#{msg['clientForm.logoURI']}"
+						<ox:decorate id="logoUri" label="#{msgs['clientForm.logoURI']}"
 							rendered="#{!empty cc.attrs._client.logoUri and cc.attrs._client.logoUri ne null }">
 							<h:outputText value="#{cc.attrs._client.logoUri}" />
 						</ox:decorate>
-						<ox:decorate id="policyUri" label="#{msg['clientForm.policyUri']}"
+						<ox:decorate id="policyUri" label="#{msgs['clientForm.policyUri']}"
 							rendered="#{!empty cc.attrs._client.policyUri and cc.attrs._client.policyUri ne null }">
 							<h:outputText value="#{cc.attrs._client.policyUri}" />
 						</ox:decorate>
-						<ox:decorate id="jwksUri" label="#{msg['clientForm.jwksURI']}"
+						<ox:decorate id="jwksUri" label="#{msgs['clientForm.jwksURI']}"
 							rendered="#{!empty cc.attrs._client.jwksUri and cc.attrs._client.jwksUri ne null }">
 							<h:outputText value="#{cc.attrs._client.jwksUri}" id="jwksUriId" />
 						</ox:decorate>
 						<ox:decorate id="sectorIdentifierUri"
-							label="#{msg['clientForm.sectorIdentifierURI']}"
+							label="#{msgs['clientForm.sectorIdentifierURI']}"
 							rendered="#{!empty cc.attrs._client.sectorIdentifierUri and cc.attrs._client.sectorIdentifierUri ne null }">
 							<h:outputText value="#{cc.attrs._client.sectorIdentifierUri}"
 								id="sectorIdentifierUriId" />
 						</ox:decorate>
 						<ox:decorate id="idTokenSignedResponseAlg"
 							rendered="#{!empty cc.attrs._client.idTokenSignedResponseAlg and cc.attrs._client.idTokenSignedResponseAlg ne null }"
-							label="#{msg['clientForm.jWSAlgorithmForSigning']}">
+							label="#{msgs['clientForm.jWSAlgorithmForSigning']}">
 							<h:outputText
 								value="#{cc.attrs._client.idTokenSignedResponseAlg}"
 								id="idTokenSignedResponseAlgId" />
 						</ox:decorate>
 						<ox:decorate id="idTokenEncryptedResponseEnc"
 							rendered="#{!empty cc.attrs._client.idTokenEncryptedResponseEnc and cc.attrs._client.idTokenEncryptedResponseEnc ne null }"
-							label="#{msg['clientForm.jweEncAlgorithmForEncrypting']}">
+							label="#{msgs['clientForm.jweEncAlgorithmForEncrypting']}">
 							<h:outputText
 								value="#{cc.attrs._client.idTokenEncryptedResponseEnc}"
 								id="idTokenEncryptedResponseEncId" />
 						</ox:decorate>
 						<ox:decorate id="responseTypes"
 							rendered="#{!empty cc.attrs._clientAction.responseTypes and cc.attrs._clientAction.responseTypes ne null }"
-							label="#{msg['clientForm.responseTypes']}">
+							label="#{msgs['clientForm.responseTypes']}">
 							<h:panelGroup id="selectedResponseTypesId">
 								<h:panelGroup>
 									<a4j:repeat value="#{cc.attrs._clientAction.responseTypes}"
@@ -150,7 +150,7 @@
 
 						<ox:decorate id="grantTypes"
 							rendered="#{!empty cc.attrs._clientAction.grantTypes and cc.attrs._clientAction.grantTypes ne null }"
-							label="#{msg['clientForm.grantTypes']}">
+							label="#{msgs['clientForm.grantTypes']}">
 							<h:panelGroup id="selectedGrantTypesId">
 								<h:panelGroup>
 									<a4j:repeat value="#{cc.attrs._clientAction.grantTypes}"
@@ -171,7 +171,7 @@
 
 						<ox:decorate id="contacts"
 							rendered="#{not empty cc.attrs._clientAction.contacts and  cc.attrs._clientAction.contacts ne null }"
-							label="#{msg['clientForm.contacts']}">
+							label="#{msgs['clientForm.contacts']}">
 							<h:panelGroup id="selectedContactsId">
 								<h:panelGroup columns="1" width="100%" border="0"
 									cellpadding="0" cellspacing="0">
@@ -195,7 +195,7 @@
 
 						<ox:decorate id="acrs"
 							rendered="#{!empty cc.attrs._clientAction.customScripts and cc.attrs._clientAction.customScripts ne null }"
-							label="#{msg['clientForm.defaultRequestedAuthenticationContextClass']}">
+							label="#{msgs['clientForm.defaultRequestedAuthenticationContextClass']}">
 							<h:panelGroup id="selectedDefaultAcrValuesId">
 								<h:panelGroup>
 									<a4j:repeat value="#{cc.attrs._clientAction.customScripts}"
@@ -214,14 +214,14 @@
 
 						<ox:decorate id="initiateLoginUri"
 							rendered="#{!empty cc.attrs._client.initiateLoginUri and cc.attrs._client.initiateLoginUri ne null }"
-							label="#{msg['clientForm.initiateLoginURI']}">
+							label="#{msgs['clientForm.initiateLoginURI']}">
 							<h:outputText value="#{cc.attrs._client.initiateLoginUri}"
 								id="initiateLoginUriId" />
 						</ox:decorate>
 
 						<ox:decorate id="requestUris"
 							rendered="#{!empty cc.attrs._clientAction.requestUris and cc.attrs._clientAction.requestUris ne null }"
-							label="#{msg['clientForm.requestURI']}">
+							label="#{msgs['clientForm.requestURI']}">
 							<h:panelGroup id="selectedRequestUrisId">
 								<h:panelGroup columns="1" width="100%" border="0"
 									cellpadding="0" cellspacing="0">
@@ -243,7 +243,7 @@
 
 						<ox:decorate id="authorizedOrigins"
 							rendered="#{!empty cc.attrs._clientAction.authorizedOrigins and cc.attrs._clientAction.authorizedOrigins ne null }"
-							label="#{msg['clientForm.authorizedOrigin']}">
+							label="#{msgs['clientForm.authorizedOrigin']}">
 							<h:panelGroup id="selectedAuthorizedOriginsId">
 								<h:panelGroup columns="1" width="100%" border="0"
 									cellpadding="0" cellspacing="0">
@@ -264,7 +264,7 @@
 						</ox:decorate>
 						<ox:decorate id="scopes"
 							rendered="#{!empty cc.attrs._clientAction.scopes and cc.attrs._clientAction.scopes ne null }"
-							label="#{msg['clientForm.scopes']}">
+							label="#{msgs['clientForm.scopes']}">
 							<h:panelGroup id="selectedScopesId">
 								<h:panelGroup>
 									<a4j:repeat value="#{cc.attrs._clientAction.scopes}"
@@ -284,7 +284,7 @@
 
 						<ox:decorate id="claims"
 							rendered="#{!empty cc.attrs._clientAction.claims and cc.attrs._clientAction.claims ne null }"
-							label="#{msg['clientForm.claims']}">
+							label="#{msgs['clientForm.claims']}">
 							<h:panelGroup id="selectedClaimsId">
 								<h:panelGroup>
 									<a4j:repeat value="#{cc.attrs._clientAction.claims}"
@@ -311,7 +311,7 @@
 
 						<ox:decorate id="clientLogoutUrls"
 							rendered="#{!empty cc.attrs._clientAction.clientlogoutUris and cc.attrs._clientAction.clientlogoutUris ne null  }"
-							label="#{msg['clientForm.frontChannelLogoutURI']}">
+							label="#{msgs['clientForm.frontChannelLogoutURI']}">
 							<h:panelGroup id="selectedClientUrisId">
 								<h:panelGroup columns="1" width="100%" border="0"
 									cellpadding="0" cellspacing="0">
@@ -331,7 +331,7 @@
 						</ox:decorate>
 						<ox:decorate id="claimRedirectUrls"
 							rendered="#{!empty cc.attrs._clientAction.claimRedirectURIList and cc.attrs._clientAction.claimRedirectURIList ne null }"
-							label="#{msg['clientForm.claimRedirectURI']}">
+							label="#{msgs['clientForm.claimRedirectURI']}">
 							<h:panelGroup id="selectedClaimRedirectURIIsId">
 								<h:panelGroup columns="1" width="100%" border="0"
 									cellpadding="0" cellspacing="0">
@@ -356,7 +356,7 @@
 
 						<ox:decorate id="logoutSessionRequired"
 							rendered="#{!empty cc.attrs._client.logoutSessionRequired and cc.attrs._client.logoutSessionRequired ne null }"
-							label="#{msg['clientForm.logoutSessionRequired']}">
+							label="#{msgs['clientForm.logoutSessionRequired']}">
 							<h:outputText value="#{cc.attrs._client.logoutSessionRequired}" />
 
 						</ox:decorate>
@@ -364,7 +364,7 @@
 						<a4j:outputPanel>
 							<ox:decorate id="includeClaimsInIdToken"
 								rendered="#{!empty cc.attrs._client.oxIncludeClaimsInIdToken and cc.attrs._client.oxIncludeClaimsInIdToken ne null }"
-								label="#{msg['clientForm.includeClaimsInIdToken']}">
+								label="#{msgs['clientForm.includeClaimsInIdToken']}">
 								<h:outputText
 									value="#{cc.attrs._client.oxIncludeClaimsInIdToken}" />
 							</ox:decorate>
@@ -373,28 +373,28 @@
 
 						<ox:decorate id="oxRefreshTokenLifetime"
 							rendered="#{!empty cc.attrs._client.oxRefreshTokenLifetime and cc.attrs._client.oxRefreshTokenLifetime ne null }"
-							label="#{msg['clientForm.oxRefreshTokenLifetime']}">
+							label="#{msgs['clientForm.oxRefreshTokenLifetime']}">
 							<h:outputText value="#{cc.attrs._client.oxRefreshTokenLifetime}"
 								id="oxRefreshTokenLifetimeId" />
 						</ox:decorate>
 
 						<ox:decorate id="oxdId"
 							rendered="#{!empty cc.attrs._client.oxdId and cc.attrs._client.oxdId ne null }"
-							label="#{msg['clientForm.oxdId']}">
+							label="#{msgs['clientForm.oxdId']}">
 							<h:outputText value="#{cc.attrs._client.oxdId}" id="oxdIdId" />
 						</ox:decorate>
 					</div>
 
 					<div class="col-sm-6 col-lg-6">
 						<ox:decorate id="displayName"
-							label="#{msg['clientForm.clientName']}"
+							label="#{msgs['clientForm.clientName']}"
 							rendered="#{!empty cc.attrs._client.displayName and cc.attrs._client.displayName ne null }">
 							<h:outputText value="#{cc.attrs._client.displayName}" />
 						</ox:decorate>
 						<h:panelGroup id="secretid"
 							rendered="#{!empty cc.attrs._client.oxAuthClientSecret and cc.attrs._client.oxAuthClientSecret ne null }">
 							<ox:decorate id="clientSecret"
-								label="#{msg['clientForm.clientSecret']}">
+								label="#{msgs['clientForm.clientSecret']}">
 								<h:outputText styleClass="togglefield"
 									value="#{cc.attrs._client.oxAuthClientSecret}"
 									defaultLabel="click to enter Client Secret" maxlength="60"
@@ -404,42 +404,42 @@
 						</h:panelGroup>
 						<ox:decorate id="persistClientAuthorizations"
 							rendered="#{!empty cc.attrs._client.oxAuthPersistClientAuthorizations and cc.attrs._client.oxAuthPersistClientAuthorizations ne null }"
-							label="#{msg['clientForm.persistClientAuthorization']}">
+							label="#{msgs['clientForm.persistClientAuthorization']}">
 							<h:outputText id="persisteClientAuthorizationsId"
 								value="#{cc.attrs._client.oxAuthPersistClientAuthorizations}" />
 						</ox:decorate>
-						<ox:decorate id="clientUri" label="#{msg['clientForm.clientUri']}"
+						<ox:decorate id="clientUri" label="#{msgs['clientForm.clientUri']}"
 							rendered="#{!empty cc.attrs._client.clientUri and cc.attrs._client.clientUri ne null }">
 							<h:outputText value="#{cc.attrs._client.clientUri}"
 								id="clientUriId" />
 						</ox:decorate>
 						<ox:decorate id="tosUri"
-							label="#{msg['clientForm.termsOfServiceURI']}"
+							label="#{msgs['clientForm.termsOfServiceURI']}"
 							rendered="#{!empty cc.attrs._client.tosUri and cc.attrs._client.tosUri ne null }">
 							<h:outputText value="#{cc.attrs._client.tosUri}" id="tosUriId" />
 						</ox:decorate>
-						<ox:decorate id="jwks" label="#{msg['clientForm.jwks']}"
+						<ox:decorate id="jwks" label="#{msgs['clientForm.jwks']}"
 							rendered="#{!empty cc.attrs._client.jwks and cc.attrs._client.jwks ne null }">
 							<h:outputText style="max-width: 150px;word-wrap:break-word;"
 								value="#{cc.attrs._client.jwks.length() gt 100 ? cc.attrs._client.jwks.substring(0,97).concat('...') : cc.attrs._client.jwks}"
 								id="jwksId" escape="false" />
 						</ox:decorate>
 						<ox:decorate id="subjectType"
-							label="#{msg['clientForm.subjectType']}"
+							label="#{msgs['clientForm.subjectType']}"
 							rendered="#{!empty cc.attrs._client.subjectType and cc.attrs._client.subjectType ne null }">
 							<h:outputText value="#{cc.attrs._client.subjectType}"
 								id="subjectTypeId" />
 						</ox:decorate>
 						<ox:decorate id="idTokenEncryptedResponseAlg"
 							rendered="#{!empty cc.attrs._client.idTokenEncryptedResponseAlg and cc.attrs._client.idTokenEncryptedResponseAlg ne null }"
-							label="#{msg['clientForm.jweAlgorithmForEncrypting']}">
+							label="#{msgs['clientForm.jweAlgorithmForEncrypting']}">
 							<h:outputText
 								value="#{cc.attrs._client.idTokenEncryptedResponseAlg}"
 								id="idTokenEncryptedResponseAlgId" />
 						</ox:decorate>
 						<ox:decorate id="userInfoSignedResponseAlg"
 							rendered="#{!empty cc.attrs._client.userInfoSignedResponseAlg and cc.attrs._client.userInfoSignedResponseAlg ne null }"
-							label="#{msg['clientForm.jwsAlgAlgorithm']}">
+							label="#{msgs['clientForm.jwsAlgAlgorithm']}">
 							<h:outputText
 								value="#{cc.attrs._client.userInfoSignedResponseAlg}"
 								id="userInfoSignedResponseAlgId" />
@@ -447,7 +447,7 @@
 
 						<ox:decorate id="userInfoEncryptedResponseAlg"
 							rendered="#{!empty cc.attrs._client.userInfoEncryptedResponseAlg and cc.attrs._client.userInfoEncryptedResponseAlg ne null }"
-							label="#{msg['clientForm.jweAlgAlgorithm']}">
+							label="#{msgs['clientForm.jweAlgAlgorithm']}">
 							<h:outputText
 								value="#{cc.attrs._client.userInfoEncryptedResponseAlg}"
 								id="userInfoEncryptedResponseAlgId" />
@@ -455,7 +455,7 @@
 
 						<ox:decorate id="userInfoEncryptedResponseEnc"
 							rendered="#{!empty cc.attrs._client.userInfoEncryptedResponseEnc and cc.attrs._client.userInfoEncryptedResponseEnc ne null }"
-							label="#{msg['clientForm.jweEncAlgorithm']}">
+							label="#{msgs['clientForm.jweEncAlgorithm']}">
 							<h:outputText
 								value="#{cc.attrs._client.userInfoEncryptedResponseEnc}"
 								id="userInfoEncryptedResponseEncId" />
@@ -463,14 +463,14 @@
 
 						<ox:decorate id="requestObjectSigningAlg"
 							rendered="#{!empty cc.attrs._client.requestObjectSigningAlg and cc.attrs._client.requestObjectSigningAlg ne null }"
-							label="#{msg['clientForm.jwsAlgAlgorithmForSigningRequestObjects']}">
+							label="#{msgs['clientForm.jwsAlgAlgorithmForSigningRequestObjects']}">
 							<h:outputText value="#{cc.attrs._client.requestObjectSigningAlg}"
 								id="requestObjectSigningAlgId" />
 						</ox:decorate>
 
 						<ox:decorate id="requestObjectEncryptionAlg"
 							rendered="#{!empty cc.attrs._client.requestObjectEncryptionAlg and cc.attrs._client.requestObjectEncryptionAlg ne null }"
-							label="#{msg['clientForm.jweAlgAlgorithmforEncryptingRequestObjects']}">
+							label="#{msgs['clientForm.jweAlgAlgorithmforEncryptingRequestObjects']}">
 							<h:outputText
 								value="#{cc.attrs._client.requestObjectEncryptionAlg}"
 								id="requestObjectEncryptionAlgId" />
@@ -478,7 +478,7 @@
 
 						<ox:decorate id="requestObjectEncryptionEnc"
 							rendered="#{!empty cc.attrs._client.requestObjectEncryptionEnc and cc.attrs._client.requestObjectEncryptionEnc ne null }"
-							label="#{msg['clientForm.jweEncAlgorithmForEncryptingRequestObjects']}">
+							label="#{msgs['clientForm.jweEncAlgorithmForEncryptingRequestObjects']}">
 							<h:outputText
 								value="#{cc.attrs._client.requestObjectEncryptionEnc}"
 								id="requestObjectEncryptionEncId" />
@@ -486,14 +486,14 @@
 
 						<ox:decorate id="tokenEndpointAuthMethod"
 							rendered="#{!empty cc.attrs._client.tokenEndpointAuthMethod and cc.attrs._client.tokenEndpointAuthMethod ne null }"
-							label="#{msg['clientForm.authenticationMethod']}">
+							label="#{msgs['clientForm.authenticationMethod']}">
 							<h:outputText value="#{cc.attrs._client.tokenEndpointAuthMethod}"
 								id="tokenEndpointAuthMethodId" />
 						</ox:decorate>
 
 						<ox:decorate id="tokenEndpointAuthSigningAlg"
 							rendered="#{!empty cc.attrs._client.tokenEndpointAuthSigningAlg and cc.attrs._client.tokenEndpointAuthSigningAlg ne null }"
-							label="#{msg['clientForm.jwsAlgAlgorithmForAuthentication']}">
+							label="#{msgs['clientForm.jwsAlgAlgorithmForAuthentication']}">
 							<h:outputText
 								value="#{cc.attrs._client.tokenEndpointAuthSigningAlg}"
 								id="tokenEndpointAuthSigningAlgId" />
@@ -501,20 +501,20 @@
 
 						<ox:decorate id="defaultMaxAge"
 							rendered="#{!empty cc.attrs._client.defaultMaxAge and cc.attrs._client.defaultMaxAge ne null }"
-							label="#{msg['clientForm.defaultMaximumAuthenticationAge']}">
+							label="#{msgs['clientForm.defaultMaximumAuthenticationAge']}">
 							<h:outputText value="#{cc.attrs._client.defaultMaxAge}"
 								id="defaultMaxAgeId" />
 						</ox:decorate>
 
 						<ox:decorate id="requireAuthTime"
 							rendered="#{!empty cc.attrs._client.requireAuthTime and cc.attrs._client.requireAuthTime ne null }"
-							label="#{msg['clientForm.requireAuthTime']}">
+							label="#{msgs['clientForm.requireAuthTime']}">
 							<h:outputText value="#{cc.attrs._client.requireAuthTime}" />
 						</ox:decorate>
 
 						<ox:decorate id="redirectLoginUrls"
 							rendered="#{!empty cc.attrs._clientAction.loginUris and cc.attrs._clientAction.loginUris ne null }"
-							label="#{msg['clientForm.redirectLoginURIs']}">
+							label="#{msgs['clientForm.redirectLoginURIs']}">
 							<h:panelGroup id="selectedLoginURIsId">
 								<h:panelGroup columns="1" width="100%" border="0"
 									cellpadding="0" cellspacing="0">
@@ -533,7 +533,7 @@
 
 						<ox:decorate id="redirectLogoutUrls"
 							rendered="#{!empty cc.attrs._clientAction.logoutUris and cc.attrs._clientAction.logoutUris ne null }"
-							label="#{msg['clientForm.redirectLogoutURIs']}">
+							label="#{msgs['clientForm.redirectLogoutURIs']}">
 							<h:panelGroup id="selectedLogoutURIsId">
 								<h:panelGroup columns="1" width="100%" border="0"
 									cellpadding="0" cellspacing="0">
@@ -552,19 +552,19 @@
 						</ox:decorate>
 						<ox:decorate
 							rendered="#{!empty cc.attrs._client.disabled and cc.attrs._client.disabled ne null }"
-							label="#{msg['clientForm.disabled']}">
+							label="#{msgs['clientForm.disabled']}">
 							<h:outputText value="#{cc.attrs._client.disabled}" />
 						</ox:decorate>
 
 						<ox:decorate id="clientsecretexpiry"
 							rendered="#{cc.attrs._client.exp != null || !cc.attrs._clientAction.update}"
-							label="#{msg['clientForm.expirationDate']}">
+							label="#{msgs['clientForm.expirationDate']}">
 							<h:outputText value="#{cc.attrs._client.exp}" />
 						</ox:decorate>
 
 						<ox:decorate id="cibaAuthenticationRequestSigningAlg"
 									 rendered="#{!empty cc.attrs._client.backchannelAuthenticationRequestSigningAlg and cc.attrs._client.backchannelAuthenticationRequestSigningAlg ne null }"
-									 label="#{msg['clientForm.cibaAuthenticationRequestSigningAlg']}">
+									 label="#{msgs['clientForm.cibaAuthenticationRequestSigningAlg']}">
 							<h:outputText
 									value="#{cc.attrs._client.backchannelAuthenticationRequestSigningAlg}"
 									id="cibaAuthenticationRequestSigningAlgId" />
@@ -572,7 +572,7 @@
 
 						<ox:decorate id="cibaTokenDeliveryMode"
 									 rendered="#{!empty cc.attrs._client.backchannelTokenDeliveryMode and cc.attrs._client.backchannelTokenDeliveryMode ne null }"
-									 label="#{msg['clientForm.cibaTokenDeliveryMode']}">
+									 label="#{msgs['clientForm.cibaTokenDeliveryMode']}">
 							<h:outputText
 									value="#{cc.attrs._client.backchannelTokenDeliveryMode}"
 									id="cibaTokenDeliveryModeId" />
@@ -580,7 +580,7 @@
 
 						<ox:decorate id="cibaClientNotificationEndpoint"
 									 rendered="#{!empty cc.attrs._client.backchannelClientNotificationEndpoint and cc.attrs._client.backchannelClientNotificationEndpoint ne null }"
-									 label="#{msg['clientForm.cibaClientNotificationEndpoint']}">
+									 label="#{msgs['clientForm.cibaClientNotificationEndpoint']}">
 							<h:outputText
 									value="#{cc.attrs._client.backchannelClientNotificationEndpoint}"
 									id="cibaClientNotificationEndpointId" />
@@ -588,7 +588,7 @@
 
 						<ox:decorate id="cibaUserCodeParameter"
 									 rendered="#{!empty cc.attrs._client.backchannelUserCodeParameter and cc.attrs._client.backchannelUserCodeParameter ne null }"
-									 label="#{msg['clientForm.cibaUserCodeParameter']}">
+									 label="#{msgs['clientForm.cibaUserCodeParameter']}">
 							<h:outputText
 									value="#{cc.attrs._client.backchannelUserCodeParameter}"
 									id="cibaUserCodeParameterId" />

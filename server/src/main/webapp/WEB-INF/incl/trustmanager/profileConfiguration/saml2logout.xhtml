@@ -19,58 +19,58 @@
 			<f:facet name="header">
 				<h:outputText value="SAML 2 Logout Profile Help" />
 			</f:facet>
-            #{msg['trustmanager.thisProfileConfiguration']}
+            #{msgs['trustmanager.thisProfileConfiguration']}
         </rich:panel>
 		<rich:panel id="SAML2LogoutMenu" bodyClass="inpanelBody">
 			<f:facet name="header">
 				<h:outputText value="SAML 2 Logout Profile Configuration" />
 			</f:facet>
 			<h:panelGrid columns="2">
-				<h:outputText value="#{msg['trustmanager.assertionLifetime']} " />
+				<h:outputText value="#{msgs['trustmanager.assertionLifetime']} " />
 				<b:touchSpin col-md="6" min="0" max="2147483647"
 					value="#{_profileConfigurationSelected.assertionLifetime}"
 					step="300000" />
-				<h:outputText value="#{msg['trustmanager.signResponses']} " />
+				<h:outputText value="#{msgs['trustmanager.signResponses']} " />
 				<h:selectOneMenu
 					value="#{_profileConfigurationSelected.signResponses}">
-					<f:selectItem itemLabel="#{msg['trustmanager.never']}"
+					<f:selectItem itemLabel="#{msgs['trustmanager.never']}"
 						itemValue="never" />
-					<f:selectItem itemLabel="#{msg['trustmanager.conditional']}"
+					<f:selectItem itemLabel="#{msgs['trustmanager.conditional']}"
 						itemValue="conditional" />
-					<f:selectItem itemLabel="#{msg['trustmanager.always']}"
+					<f:selectItem itemLabel="#{msgs['trustmanager.always']}"
 						itemValue="always" />
 				</h:selectOneMenu>
-				<h:outputText value="#{msg['trustmanager.signAssertions']} " />
+				<h:outputText value="#{msgs['trustmanager.signAssertions']} " />
 				<h:selectOneMenu
 					value="#{_profileConfigurationSelected.signAssertions}">
-					<f:selectItem itemLabel="#{msg['trustmanager.never']}"
+					<f:selectItem itemLabel="#{msgs['trustmanager.never']}"
 						itemValue="never" />
-					<f:selectItem itemLabel="#{msg['trustmanager.conditional']}"
+					<f:selectItem itemLabel="#{msgs['trustmanager.conditional']}"
 						itemValue="conditional" />
-					<f:selectItem itemLabel="#{msg['trustmanager.always']}"
+					<f:selectItem itemLabel="#{msgs['trustmanager.always']}"
 						itemValue="always" />
 				</h:selectOneMenu>
-				<h:outputText value="#{msg['trustmanager.signRequests']}" />
+				<h:outputText value="#{msgs['trustmanager.signRequests']}" />
 				<h:selectOneMenu
 					value="#{_profileConfigurationSelected.signRequests}">
-					<f:selectItem itemLabel="#{msg['trustmanager.never']}"
+					<f:selectItem itemLabel="#{msgs['trustmanager.never']}"
 						itemValue="never" />
-					<f:selectItem itemLabel="#{msg['trustmanager.conditional']}"
+					<f:selectItem itemLabel="#{msgs['trustmanager.conditional']}"
 						itemValue="conditional" />
-					<f:selectItem itemLabel="#{msg['trustmanager.always']}"
+					<f:selectItem itemLabel="#{msgs['trustmanager.always']}"
 						itemValue="always" />
 				</h:selectOneMenu>
-				<h:outputText value="#{msg['trustmanager.encryptAssertions']} " />
+				<h:outputText value="#{msgs['trustmanager.encryptAssertions']} " />
 				<h:selectOneMenu
 					value="#{_profileConfigurationSelected.encryptAssertions}">
-					<f:selectItem itemLabel="#{msg['trustmanager.never']}"
+					<f:selectItem itemLabel="#{msgs['trustmanager.never']}"
 						itemValue="never" />
-					<f:selectItem itemLabel="#{msg['trustmanager.conditional']}"
+					<f:selectItem itemLabel="#{msgs['trustmanager.conditional']}"
 						itemValue="conditional" />
-					<f:selectItem itemLabel="#{msg['trustmanager.always']}"
+					<f:selectItem itemLabel="#{msgs['trustmanager.always']}"
 						itemValue="always" />
 				</h:selectOneMenu>
-				<h:outputText value="#{msg['trustmanager.encryptNameIds']} " />
+				<h:outputText value="#{msgs['trustmanager.encryptNameIds']} " />
 			</h:panelGrid>
 
 			<h:panelGrid>

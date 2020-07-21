@@ -28,8 +28,8 @@
 
 		<section class="content-header">
 			<h1 style="color: #333;">
-				#{msg['updateConfiguration.configuration']} <small> <i
-					class="fa fa-caret-right" style="color: #333 !important;" />#{msg['updateConfiguration.jsonConfiguration']}
+				#{msgs['updateConfiguration.configuration']} <small> <i
+					class="fa fa-caret-right" style="color: #333 !important;" />#{msgs['updateConfiguration.jsonConfiguration']}
 				</small>
 			</h1>
 			<ol class="breadcrumb">
@@ -37,7 +37,7 @@
 						class="fa fa-home" />
 				</a></li>
 				<li class="organization/configuration"><a
-					href="#{request.contextPath}/configuration/updateConfiguration.htm">#{msg['updateConfiguration.jsonConfiguration']}</a>
+					href="#{request.contextPath}/configuration/updateConfiguration.htm">#{msgs['updateConfiguration.jsonConfiguration']}</a>
 				</li>
 			</ol>
 		</section>
@@ -50,18 +50,18 @@
 						<ul class="nav nav-tabs" id="jsonconfigurationformtab">
 
 							<li class="active"><a data-toggle="tab"
-								href="#oxtrust-config">#{msg['updateConfiguration.oxTrustConfiguration']}</a>
+								href="#oxtrust-config">#{msgs['updateConfiguration.oxTrustConfiguration']}</a>
 							</li>
-							<li><a data-toggle="tab" href="#oxauth-config">#{msg['updateConfiguration.oxAuthConfiguration']}</a>
+							<li><a data-toggle="tab" href="#oxauth-config">#{msgs['updateConfiguration.oxAuthConfiguration']}</a>
 							</li>
-							<li><a data-toggle="tab" href="#fido2-config">#{msg['updateConfiguration.fido2Configuration']}</a>
+							<li><a data-toggle="tab" href="#fido2-config">#{msgs['updateConfiguration.fido2Configuration']}</a>
 							</li>
-							<li><a data-toggle="tab" href="#cached-config">#{msg['updateConfiguration.memcachedConfiguration']}</a>
+							<li><a data-toggle="tab" href="#cached-config">#{msgs['updateConfiguration.memcachedConfiguration']}</a>
 							</li>
-							<li><a data-toggle="tab" href="#store-config">#{msg['updateConfiguration.storeConfiguration']}</a>
+							<li><a data-toggle="tab" href="#store-config">#{msgs['updateConfiguration.storeConfiguration']}</a>
 							</li>
 							<li><a data-toggle="tab"
-								href="#oxtrust-import-person-config">#{msg['updateConfiguration.oxTrustImportConfiguration']}</a>
+								href="#oxtrust-import-person-config">#{msgs['updateConfiguration.oxTrustImportConfiguration']}</a>
 							</li>
 
 						</ul>
@@ -81,13 +81,13 @@
 												value="#{request.contextPath}/schema/oxtrust.properties.json" />
 											<ui:param name="saveBtnId" value="saveOxTrustConfigBtn" />
 											<ui:param name="saveBtnLabel"
-												value="#{msg['updateConfiguration.saveConfiguration']}" />
+												value="#{msgs['updateConfiguration.saveConfiguration']}" />
 										</ui:decorate>
 										<h:commandButton
 											action="#{jsonConfigAction.saveOxTrustConfigJson}"
 											id="saveOxTrustConfigBtn" prependId="false"
 											style="display:none" styleClass="btn btn-primary"
-											value="#{msg['updateConfiguration.saveOxTrustConfiguration']}" />
+											value="#{msgs['updateConfiguration.saveOxTrustConfiguration']}" />
 									</h:form>
 								</h:panelGrid>
 							</div>
@@ -106,13 +106,13 @@
 												value="#{request.contextPath}/schema/oxauth-config.xml.json" />
 											<ui:param name="saveBtnId" value="saveOxAuthConfigBtn" />
 											<ui:param name="saveBtnLabel"
-												value="#{msg['updateConfiguration.saveConfiguration']}" />
+												value="#{msgs['updateConfiguration.saveConfiguration']}" />
 										</ui:decorate>
 										<h:commandButton
 											action="#{jsonConfigAction.saveOxAuthDynamicConfigJson}"
 											id="saveOxAuthConfigBtn" prependId="false"
 											style="display:none" styleClass="btn btn-primary"
-											value="#{msg['updateConfiguration.saveOxAuthConfiguration']}" />
+											value="#{msgs['updateConfiguration.saveOxAuthConfiguration']}" />
 									</h:form>
 								</h:panelGrid>
 							</div>
@@ -131,13 +131,13 @@
 												value="#{request.contextPath}/schema/fido2-config.json" />
 											<ui:param name="saveBtnId" value="saveFido2ConfigBtn" />
 											<ui:param name="saveBtnLabel"
-												value="#{msg['updateConfiguration.saveConfiguration']}" />
+												value="#{msgs['updateConfiguration.saveConfiguration']}" />
 										</ui:decorate>
 										<h:commandButton
 											action="#{jsonConfigAction.saveFido2ConfigJson}"
 											id="saveFido2ConfigBtn" prependId="false"
 											style="display:none" styleClass="btn btn-primary"
-											value="#{msg['updateConfiguration.saveFido2Configuration']}" />
+											value="#{msgs['updateConfiguration.saveFido2Configuration']}" />
 									</h:form>
 								</h:panelGrid>
 							</div>
@@ -157,13 +157,13 @@
 											<ui:param name="saveBtnId"
 												value="saveOxTrustImportPersonConfigBtn" />
 											<ui:param name="saveBtnLabel"
-												value="#{msg['updateConfiguration.saveConfiguration']}" />
+												value="#{msgs['updateConfiguration.saveConfiguration']}" />
 										</ui:decorate>
 										<h:commandButton
 											action="#{jsonConfigAction.saveOxTrustImportPersonConfigJson}"
 											id="saveOxTrustImportPersonConfigBtn" prependId="false"
 											style="display:none" styleClass="btn btn-primary"
-											value="#{msg['updateConfiguration.saveOxTrustImportPersonConfiguration']}" />
+											value="#{msgs['updateConfiguration.saveOxTrustImportPersonConfiguration']}" />
 									</h:form>
 								</h:panelGrid>
 							</div>
@@ -186,13 +186,13 @@
 												value="#{request.contextPath}/schema/oxmemcache-config.json" />
 											<ui:param name="saveBtnId" value="saveOxMemcacheConfigBtn" />
 											<ui:param name="saveBtnLabel"
-												value="#{msg['updateConfiguration.saveConfiguration']}" />
+												value="#{msgs['updateConfiguration.saveConfiguration']}" />
 										</ui:decorate>
 										<h:commandButton
 											action="#{jsonConfigAction.saveOxMemCacheConfigJson}"
 											id="saveOxMemcacheConfigBtn" prependId="false"
 											style="display:none" styleClass="btn btn-primary"
-											value="#{msg['updateConfiguration.saveMemCacheConfiguration']}" />
+											value="#{msgs['updateConfiguration.saveMemCacheConfiguration']}" />
 									</h:form>
 								</h:panelGrid>
 							</div>
@@ -215,13 +215,13 @@
 												value="#{request.contextPath}/schema/oxstore-config.json" />
 											<ui:param name="saveBtnId" value="saveOxStoreConfigBtn" />
 											<ui:param name="saveBtnLabel"
-												value="#{msg['updateConfiguration.saveConfiguration']}" />
+												value="#{msgs['updateConfiguration.saveConfiguration']}" />
 										</ui:decorate>
 										<h:commandButton
 											action="#{jsonConfigAction.saveStoreConfigJson}"
 											id="saveOxStoreConfigBtn" prependId="false"
 											style="display:none" styleClass="btn btn-primary"
-											value="#{msg['updateConfiguration.saveStoreConfiguration']}" />
+											value="#{msgs['updateConfiguration.saveStoreConfiguration']}" />
 									</h:form>
 								</h:panelGrid>
 							</div>

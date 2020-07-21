@@ -19,7 +19,7 @@
     </h:outputStylesheet>
     <rich:popupPanel id="entityIdSelector" onmaskclick="#{rich:component('entityIdSelector')}.hide()" keepVisualState="true" autosized="true" zindex="2000"  >
         <f:facet name="header">
-            <h:outputText value="#{msg['trustmanager.selectEntityID']}" />
+            <h:outputText value="#{msgs['trustmanager.selectEntityID']}" />
         </f:facet>
 
         <f:facet name="controls">
@@ -29,10 +29,10 @@
         <h:panelGrid columns="1" id="entityIdSelectionMenu">
             <h:form>
                 <h:panelGrid columns="3">
-                    <h:outputText value="#{msg['trustmanager.filter']}: " />
+                    <h:outputText value="#{msgs['trustmanager.filter']}: " />
                     <h:inputText value="#{_trustRelationshipAction.filterString}">
                     </h:inputText>
-                    <a4j:commandButton value="#{msg['trustmanager.filter']}" action="#{_trustRelationshipAction.filterEntities()}" eventsQueue="trustQueue" render="EntityIds">
+                    <a4j:commandButton value="#{msgs['trustmanager.filter']}" action="#{_trustRelationshipAction.filterEntities()}" eventsQueue="trustQueue" render="EntityIds">
                     </a4j:commandButton>
                 </h:panelGrid>
             </h:form>

@@ -19,7 +19,7 @@
 					<h:panelGroup columns="1" width="100%" id="mainContentID">
 						<!-- First row-->
 						<div class="row" style="margin-left: 5px; margin-right: 5px;">
-							<ox:decorate label="#{msg['passport.provider.form.id']}"
+							<ox:decorate label="#{msgs['passport.provider.form.id']}"
 								leftClass="col-sm-3" rightClass="col-sm-9">
 								<h:inputText styleClass="form-control providerID"
 									style="width:100%" required="true"
@@ -33,7 +33,7 @@
 							<!-- First column-->
 							<div class="col-sm-6 col-lg-6" style="padding: 0px;">
 								<ox:decorate
-									label="#{msg['passport.provider.form.displayName']}"
+									label="#{msgs['passport.provider.form.displayName']}"
 									leftClass="col-sm-3" rightClass="col-sm-9">
 									<h:inputText styleClass="form-control DisplayName"
 										style="width:100%" required="true"
@@ -42,7 +42,7 @@
 										<rich:validator event="blur" />
 									</h:inputText>
 								</ox:decorate>
-								<ox:decorate label="#{msg['passport.provider.form.type']}"
+								<ox:decorate label="#{msgs['passport.provider.form.type']}"
 									leftClass="col-sm-3" rightClass="col-sm-9">
 									<h:selectOneMenu styleClass="rounded form-control ProviderType"
 										valueChangeListener="#{_providerAction.handleRequiredOptions}"
@@ -54,7 +54,7 @@
 											var="_type" itemLabel="#{_type}" />
 									</h:selectOneMenu>
 								</ox:decorate>
-								<ox:decorate label="#{msg['passport.provider.form.strategyId']}"
+								<ox:decorate label="#{msgs['passport.provider.form.strategyId']}"
 									leftClass="col-sm-3" rightClass="col-sm-9">
 									<h:inputText styleClass="form-control PassportStrategyId"
 										style="width:100%" required="true"
@@ -66,7 +66,7 @@
 							</div>
 							<!-- Second column-->
 							<div class="col-sm-6 col-lg-6" style="padding: 0px;">
-								<ox:decorate label="#{msg['passport.provider.form.mapping']}"
+								<ox:decorate label="#{msgs['passport.provider.form.mapping']}"
 									leftClass="col-sm-3" rightClass="col-sm-9">
 									<h:inputText styleClass="form-control MappingId"
 										style="width:100%" required="true"
@@ -76,7 +76,7 @@
 									</h:inputText>
 								</ox:decorate>
 								<ox:decorate
-									label="#{msg['passport.provider.form.passportAuthnParams']}"
+									label="#{msgs['passport.provider.form.passportAuthnParams']}"
 									required="true" leftClass="col-sm-3" rightClass="col-sm-9">
 									<h:inputTextarea styleClass="rounded form-control AuthnParams"
 										id="AuthnParamsId" style="width:100%"
@@ -85,7 +85,7 @@
 										<rich:validator event="blur" />
 									</h:inputTextarea>
 								</ox:decorate>
-								<ox:decorate label="#{msg['passport.provider.form.logoPath']}"
+								<ox:decorate label="#{msgs['passport.provider.form.logoPath']}"
 									leftClass="col-sm-3" rightClass="col-sm-9">
 									<h:inputText styleClass="form-control LogoImg"
 										style="width:100%" value="#{_providerAction.provider.logoImg}"
@@ -101,7 +101,7 @@
 							style="margin-left: 5px; margin-right: 5px; margin-top: 15px;">
 							<!-- First column-->
 							<div class="col-sm-4 col-lg-4" style="padding: 0px;">
-								<ox:decorate label="#{msg['passport.provider.form.enable']}"
+								<ox:decorate label="#{msgs['passport.provider.form.enable']}"
 									leftClass="col-sm-5" rightClass="col-sm-2">
 									<h:selectBooleanCheckbox
 										value="#{_providerAction.provider.enabled}"
@@ -111,7 +111,7 @@
 							<!-- Second column-->
 							<div class="col-sm-4 col-lg-4" style="padding: 0px;">
 								<ox:decorate
-									label="#{msg['passport.provider.form.requestForEmail']}"
+									label="#{msgs['passport.provider.form.requestForEmail']}"
 									leftClass="col-sm-7" rightClass="col-sm-2">
 									<h:selectBooleanCheckbox
 										value="#{_providerAction.provider.requestForEmail}"
@@ -121,7 +121,7 @@
 							<!-- Third inner column-->
 							<div class="col-sm-4 col-lg-4" style="padding: 0px;">
 								<ox:decorate
-									label="#{msg['passport.provider.form.enableEmailLinkage']}"
+									label="#{msgs['passport.provider.form.enableEmailLinkage']}"
 									leftClass="col-sm-7" rightClass="col-sm-2">
 									<h:selectBooleanCheckbox
 										value="#{_providerAction.provider.emailLinkingSafe}"
@@ -130,7 +130,7 @@
 							</div>
 						</div>
 						<div class="row" style="margin-left: 5px; margin-right: 5px;">
-							<ox:decorate label="#{msg['passport.provider.form.callbackUrl']}"
+							<ox:decorate label="#{msgs['passport.provider.form.callbackUrl']}"
 								leftClass="col-sm-3" rightClass="col-sm-9" rendered="#{_providerAction.isUpdate()}">
 								<h:outputText styleClass="form-control callBackUrlID"
 									style="width:100%" required="true"
@@ -141,11 +141,11 @@
 						</div>
 						<!-- 3nd row-->
 						<div class="row" style="margin-left: 5px; margin-right: 5px;">
-							<b:panel title="#{msg['passport.provider.form.options']}"
+							<b:panel title="#{msgs['passport.provider.form.options']}"
 								look="primary">
 								<div class="col-sm-12 col-lg-12" style="padding: 0px;">
 									<ox:simpleMapProperties
-										label="#{msg['manageAuthentication.passport.strategy.addProperty']}"
+										label="#{msgs['manageAuthentication.passport.strategy.addProperty']}"
 										hideLabel="true" showRemoveDialogue="true"
 										properties="#{_providerAction.options}"
 										propertiesAction="#{_providerAction}" hideValue="true" />

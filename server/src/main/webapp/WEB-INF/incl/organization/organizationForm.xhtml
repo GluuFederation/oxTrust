@@ -82,8 +82,8 @@
 				iconAwesome="fa-university" collapsible="false">
 				<div class="nav-tabs-custom" style="margin-bottom: 0px;">
 					<ul class="nav nav-tabs" id="organizationFormtab">
-						<li class="active"><a href="#sys-config" data-toggle="tab">#{msg['organizationForm.systemConfiguration']}</a></li>
-						<li><a href="#smtp-server" data-toggle="tab">#{msg['organizationForm.smtpServerConfiguration']}</a></li>
+						<li class="active"><a href="#sys-config" data-toggle="tab">#{msgs['organizationForm.systemConfiguration']}</a></li>
+						<li><a href="#smtp-server" data-toggle="tab">#{msgs['organizationForm.smtpServerConfiguration']}</a></li>
 						<li><a href="#ox-trust" data-toggle="tab">Organization
 								Settings</a></li>
 						<li><a href="#libs" data-toggle="tab">Extra libraries</a></li>
@@ -92,44 +92,44 @@
 						<div class="tab-pane active" id="sys-config">
 							<h:panelGroup layout="block" style="width:100%;">
 								<ox:decorate id="passwordReset"
-									label="#{msg['organizationForm.selfServicePasswordReset']}">
+									label="#{msgs['organizationForm.selfServicePasswordReset']}">
 									<h:selectBooleanCheckbox
 										value="#{_configuration.passwordResetAllowed}"
 										styleClass="rounded passwordResetSelectBox"
 										id="passwordResetId" />
 								</ox:decorate>
 								<ox:decorate id="scimEnabledState"
-									label="#{msg['organizationForm.scimSupport']}">
+									label="#{msgs['organizationForm.scimSupport']}">
 									<h:selectBooleanCheckbox value="#{_configuration.scimEnabled}"
 										styleClass="rounded scimEnableStateSelectBox"
 										id="scimEnabledStateId" />
 								</ox:decorate>
 								<ox:decorate id="passportEnabledState"
-									label="#{msg['organizationForm.passportSupport']}">
+									label="#{msgs['organizationForm.passportSupport']}">
 									<h:selectBooleanCheckbox
 										value="#{_configuration.passportEnabled}"
 										styleClass="rounded passportEnableStateSelectBox"
 										id="passportEnabledStateId" />
 								</ox:decorate>
 								<ox:decorate id="samlEnabledState"
-									label="#{msg['organizationForm.samlSupport']}">
+									label="#{msgs['organizationForm.samlSupport']}">
 									<h:selectBooleanCheckbox value="#{_configuration.samlEnabled}"
 										styleClass="rounded samlSelectBox" id="samlEnabledStateId" />
 								</ox:decorate>
 								<ox:decorate id="radiusEnabledState"
-									label="#{msg['organizationForm.radiusSupport']}">
+									label="#{msgs['organizationForm.radiusSupport']}">
 									<h:selectBooleanCheckbox
 										value="#{_configuration.radiusEnabled}"
 										styleClass="rounded raduisSelectBox" id="radiusEnabledStateId" />
 								</ox:decorate>
 								<ox:decorate id="profileManagment"
-									label="#{msg['organizationForm.userCanEditProfile']}">
+									label="#{msgs['organizationForm.userCanEditProfile']}">
 									<h:selectBooleanCheckbox
 										value="#{_configuration.profileManagment}"
 										styleClass="rounded profileManagmentSelectBox"
 										id="profileManagmentStateId" />
 								</ox:decorate>
-								<ox:decorate label="#{msg['organizationForm.contactEmail']}">
+								<ox:decorate label="#{msgs['organizationForm.contactEmail']}">
 									<h:inputText id="email" required="true"
 										value="#{_configuration.contactEmail}"
 										styleClass="rounded form-control contactEmailTextBox"
@@ -140,7 +140,7 @@
 									<p:message for="email" />
 								</ox:decorate>
 								<ox:decorate id="maxLogSize"
-									label="#{msg['organizationForm.maxLogSize']}">
+									label="#{msgs['organizationForm.maxLogSize']}">
 									<h:inputText value="#{_configuration.maxLogSize}"
 										required="true"
 										styleClass="rounded form-control maxLogSizeTextBox" size="10" />
@@ -149,48 +149,48 @@
 						</div>
 						<div class="tab-pane" id="smtp-server">
 							<h:panelGroup layout="block" style="width:100%;">
-								<ox:decorate label="#{msg['organizationForm.smtpHost']}">
+								<ox:decorate label="#{msgs['organizationForm.smtpHost']}">
 									<h:inputText value="#{_smtp.host}"
 										styleClass="form-control smtpHostTextBox" />
 								</ox:decorate>
-								<ox:decorate label="#{msg['organizationForm.fromName']}">
+								<ox:decorate label="#{msgs['organizationForm.fromName']}">
 									<h:inputText value="#{_smtp.fromName}"
 										styleClass="form-control fromNameTextBox" />
 								</ox:decorate>
-								<ox:decorate label="#{msg['organizationForm.fromEmailAddress']}">
+								<ox:decorate label="#{msgs['organizationForm.fromEmailAddress']}">
 									<h:inputText value="#{_smtp.fromEmailAddress}"
 										styleClass="form-control fromEmailAddressTextBox" />
 								</ox:decorate>
 								<ox:decorate id="requiresAuthenticationCheckBox"
-									label="#{msg['organizationForm.requiresAuthentication']}">
+									label="#{msgs['organizationForm.requiresAuthentication']}">
 									<h:selectBooleanCheckbox
 										styleClass="requiresAuthenticationCheckBox"
 										value="#{_smtp.requiresAuthentication}" />
 								</ox:decorate>
-								<ox:decorate label="#{msg['organizationForm.smtpUserName']}">
+								<ox:decorate label="#{msgs['organizationForm.smtpUserName']}">
 									<h:inputText value="#{_smtp.userName}"
 										styleClass="form-control smtpUserNameTextBox" />
 								</ox:decorate>
-								<ox:decorate label="#{msg['organizationForm.smtpPassword']}">
+								<ox:decorate label="#{msgs['organizationForm.smtpPassword']}">
 									<h:inputSecret value="#{_smtp.passwordDecrypted}"
 										styleClass="form-control smtpPasswordTextBox" redisplay="true" />
 								</ox:decorate>
-								<ox:decorate label="#{msg['organizationForm.requiresSSL']}">
+								<ox:decorate label="#{msgs['organizationForm.requiresSSL']}">
 									<h:selectBooleanCheckbox value="#{_smtp.requiresSsl}"
 										styleClass="requiresSSLCheckBox" />
 								</ox:decorate>
 
-								<ox:decorate label="#{msg['organizationForm.trustserver']}">
+								<ox:decorate label="#{msgs['organizationForm.trustserver']}">
 									<h:selectBooleanCheckbox value="#{_smtp.serverTrust}"
 										styleClass="trustserverCheckBox" />
 								</ox:decorate>
 
-								<ox:decorate label="#{msg['organizationForm.smtpPort']}">
+								<ox:decorate label="#{msgs['organizationForm.smtpPort']}">
 									<h:inputText value="#{_smtp.port}"
 										styleClass="form-control smtpPortTextBox" />
 								</ox:decorate>
 								<h:commandButton
-									value="#{msg['organizationForm.testConfiguration']}"
+									value="#{msgs['organizationForm.testConfiguration']}"
 									styleClass="btn btn-success verifyButton"
 									action="#{updateOrganizationAction.verifySmtpConfiguration}" />
 							</h:panelGroup>
@@ -198,14 +198,14 @@
 						<div class="tab-pane" id="ox-trust">
 							<h:panelGroup style="width:100%;">
 								<ox:decorate id="displayName"
-									label="#{msg['organizationForm.organizationName']}">
+									label="#{msgs['organizationForm.organizationName']}">
 									<h:inputText value="#{_organization.displayName}" size="100"
 										styleClass="form-control orgNameTextBox" style="width:100%;" />
 								</ox:decorate>
 								<ui:param name="_managerGroup"
 									value="#{gluufn:getDisplayNameEntry(_organization.managerGroup)}" />
 								<ox:decorate id="managerGroup"
-									label="#{msg['organizationForm.managerGroup']}">
+									label="#{msgs['organizationForm.managerGroup']}">
 									<h:link includeViewParams="false" outcome="/group/updateGroup"
 										value="#{_managerGroup.displayName}" styleClass="GroupLinkBox">
 										<f:param name="inum" value="#{_managerGroup.inum}" />

@@ -21,8 +21,8 @@
 	<ui:define name="body">
 		<section class="content-header">
 			<h1 style="color: #333;">
-				#{msg['group.users']} <small> <i class="fa fa-caret-right"
-					style="color: #333 !important;" /> #{msg['group.manageGroups']}
+				#{msgs['group.users']} <small> <i class="fa fa-caret-right"
+					style="color: #333 !important;" /> #{msgs['group.manageGroups']}
 				</small>
 			</h1>
 			<ol class="breadcrumb">
@@ -31,7 +31,7 @@
 				</a></li>
 				<li class="organization/configuration"><a
 					href="#{request.contextPath}/group/groupInventory.htm">
-						#{msg['group.manageGroups']}</a></li>
+						#{msgs['group.manageGroups']}</a></li>
 			</ol>
 		</section>
 		<section class="content">
@@ -40,7 +40,7 @@
 					<div id="formArea">
 						<b:link style-class="addGroup btn btn-primary"
 						    icon="plus"
-							outcome="/group/addGroup" value="#{msg['group.addGroup']}"
+							outcome="/group/addGroup" value="#{msgs['group.addGroup']}"
 							includeViewParams="false" style="margin-left:5px !important;" />
 						<p:spacer height="16" />
 						<h:form class="searchArea">
@@ -53,7 +53,7 @@
 									value="#{searchGroupAction.searchPattern}" />
 								<b:commandButton action="#{searchGroupAction.search}"
 									class="btn btn-primary searchButton" style="float:left;" iconAwesome="fa-search"
-									value="#{msg['group.search']}" />
+									value="#{msgs['group.search']}" />
 							</ox:decorate>
 						</h:form>
 						<p:spacer height="16" />
@@ -61,21 +61,21 @@
 							<ui:fragment
 								rendered="#{searchGroupAction.groupList.size() eq 0}">
 								<p:spacer height="30" />
-								<h:outputText value="#{msg['group.noSearchResultFound']}" />
+								<h:outputText value="#{msgs['group.noSearchResultFound']}" />
 							</ui:fragment>
 							<b:dataTable id="groupsListId" style="text-align:center; width:100%;"
 								responsive="true"
 								rendered="#{searchGroupAction.groupList.size() gt 0}"
 								value="#{searchGroupAction.groupList}" var="grp" print="true"
 								excel="true" csv="true" pdf="true" select="true">
-								<b:dataTableColumn label="#{msg['group.displayName']}">
+								<b:dataTableColumn label="#{msgs['group.displayName']}">
 									<h:link includeViewParams="false" outcome="/group/updateGroup"
 										value="#{grp.displayName}">
 										<f:param name="inum" value="#{grp.inum}" />
 									</h:link>
 								</b:dataTableColumn>
 								<b:dataTableColumn value="#{grp.description}"
-									label="#{msg['group.description']}" />
+									label="#{msgs['group.description']}" />
 								<b:dataTableColumn label="Size">
 									<b:label text="#{grp.getMembers().size()}" severity="primary" />
 								</b:dataTableColumn>

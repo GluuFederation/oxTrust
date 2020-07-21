@@ -18,9 +18,9 @@
 	<ui:define name="body">
 		<section class="content-header">
 			<h1 style="color: #333;">
-				#{msg['updateorganization.configuration']} <small> <i
+				#{msgs['updateorganization.configuration']} <small> <i
 					class="fa fa-caret-right" style="color: #333 !important;" />
-					#{msg['updateorganization.organizationConfiguration']}
+					#{msgs['updateorganization.organizationConfiguration']}
 				</small>
 			</h1>
 			<ol class="breadcrumb">
@@ -28,7 +28,7 @@
 						class="fa fa-home" />
 				</a></li>
 				<li class="organization/configuration"><a
-					href="#{request.contextPath}/organization/updateOrganization.htm">#{msg['updateorganization.organizationConfiguration']}</a>
+					href="#{request.contextPath}/organization/updateOrganization.htm">#{msgs['updateorganization.organizationConfiguration']}</a>
 				</li>
 			</ol>
 		</section>
@@ -53,12 +53,12 @@
 							<h:panelGroup id="updateButtons" layout="block">
 								<h:commandButton action="#{updateOrganizationAction.save}"
 									style="margin-left:5px" styleClass="btn btn-primary"
-									value="#{msg['updateorganization.update']}" />
+									value="#{msgs['updateorganization.update']}" />
 								<b:commandButton action="#{updateOrganizationAction.cancel}"
 									style="margin-left:5px" styleClass="btn btn-primary"
 									ajax="true" update="@form" onclick="lock();"
 									ondbclick="lock();" oncomplete="unlock();"
-									value="#{msg['updateorganization.cancel']}" />
+									value="#{msgs['updateorganization.cancel']}" />
 							</h:panelGroup>
 						</div>
 					</ui:define>

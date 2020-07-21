@@ -27,16 +27,16 @@
 					<div id="updateButtons">
 						<b:commandButton action="#{updateGroupAction.save}" ajax="true"
 							update="@form" styleClass="btn btn-primary"
-							value="#{msg['group.update']}">
+							value="#{msgs['group.update']}">
 							<f:param name="blockui.disabled" value="true" />
 						</b:commandButton>
 						<a4j:commandButton ajaxSingle="true" eventsQueue="groupQueue"
 							onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();"
 							rendered="#{not _new}" style="margin-left:3px;"
-							styleClass="btn btn-primary" value="#{msg['group.delete']}" />
+							styleClass="btn btn-primary" value="#{msgs['group.delete']}" />
 						<b:commandButton action="#{updateGroupAction.cancel}"
 							style="margin-left:3px;" ajax="true" update="@form"
-							styleClass="btn btn-primary" value="#{msg['group.cancel']}" />
+							styleClass="btn btn-primary" value="#{msgs['group.cancel']}" />
 					</div>
 				</ui:define>
 			</ui:decorate>

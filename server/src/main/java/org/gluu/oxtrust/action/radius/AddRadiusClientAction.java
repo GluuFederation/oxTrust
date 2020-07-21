@@ -60,10 +60,10 @@ public class AddRadiusClientAction implements Serializable {
             String encsecret = encryptionService.encrypt(client.getSecret());
             client.setSecret(encsecret);
             gluuRadiusClientService.addRadiusClient(client);
-            facesMessages.add(FacesMessage.SEVERITY_INFO,"#{msg['radius.client.add.success']}");
+            facesMessages.add(FacesMessage.SEVERITY_INFO,"#{msgs['radius.client.add.success']}");
         }catch(Exception e) {
             log.error("Could not add new radius client",e);
-            facesMessages.add(FacesMessage.SEVERITY_ERROR,"#{msg['radius.client.add.error']}");
+            facesMessages.add(FacesMessage.SEVERITY_ERROR,"#{msgs['radius.client.add.error']}");
             return OxTrustConstants.RESULT_FAILURE;
         }
         return OxTrustConstants.RESULT_SUCCESS;

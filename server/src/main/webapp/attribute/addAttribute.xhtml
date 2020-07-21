@@ -12,9 +12,9 @@
     <ui:define name="body">
         <section class="content-header">
             <h1 style="color: #333;">
-                #{msg['attribute.attributes']}
+                #{msgs['attribute.attributes']}
                 <small>
-                    <i class="fa fa-caret-right" style="color: #333 !important;"/>#{msg['attribute.registerAttribute']}
+                    <i class="fa fa-caret-right" style="color: #333 !important;"/>#{msgs['attribute.registerAttribute']}
                 </small>
             </h1>
             <ol class="breadcrumb">
@@ -24,7 +24,7 @@
                     </a>
                 </li>
                 <li class="organization/configuration">
-                    <a href="#{request.contextPath}/attribute/attributeInventory.htm">#{msg['attribute.attributes']}</a>
+                    <a href="#{request.contextPath}/attribute/attributeInventory.htm">#{msgs['attribute.attributes']}</a>
                 </li>
             </ol>
         </section>
@@ -38,10 +38,10 @@
                     <ui:define name="controlButttons">
                         <div id="updateButtons">
                             <h:commandButton action="#{updateAttributeAction.save}" styleClass="btn btn-primary"
-                                             value="#{msg['attribute.register']}"/>
+                                             value="#{msgs['attribute.register']}"/>
                             <h:commandButton action="#{updateAttributeAction.cancel}" immediate="true"
                                              style="margin-left:5px" styleClass="btn btn-success"
-                                             value="#{msg['attribute.cancel']}"/>
+                                             value="#{msgs['attribute.cancel']}"/>
                         </div>
                     </ui:define>
                 </ui:decorate>

@@ -22,9 +22,9 @@
 	<ui:define name="body">
 		<section class="content-header">
 			<h1 style="color: #333;">
-				#{msg['uma.uma']} <small> <i class="fa fa-caret-right"
+				#{msgs['uma.uma']} <small> <i class="fa fa-caret-right"
 					style="color: #333 !important;" />
-					#{msg['uma.resourcesAndScopes']}
+					#{msgs['uma.resourcesAndScopes']}
 				</small>
 			</h1>
 			<ol class="breadcrumb">
@@ -32,7 +32,7 @@
 						class="fa fa-home" />
 				</a></li>
 				<li class="organization/configuration"><a
-					href="#{request.contextPath}/uma/resource.htm">#{msg['uma.resourcesAndScopes']}</a>
+					href="#{request.contextPath}/uma/resource.htm">#{msgs['uma.resourcesAndScopes']}</a>
 				</li>
 			</ol>
 		</section>
@@ -47,11 +47,11 @@
 									<div class="tab-pane active" id="resourceTab">
 										<b:link style-class="btn btn-primary" icon="plus"
 											outcome="/uma/resource/modifyResource"
-											value="#{msg['uma.addResourceSet']}"
+											value="#{msgs['uma.addResourceSet']}"
 											includeViewParams="false" />
 										<p:spacer height="8" />
 										<ox:decorate id="searchPattern"
-											label="#{msg['uma.searchKey']}" style="height:60px;">
+											label="#{msgs['uma.searchKey']}" style="height:60px;">
 											<h:inputText
 												alt="Search parameters for UMA resource set like Inum, Display Name"
 												id="searchPatternId" maxlength="30" placeholder="Search Key"
@@ -62,7 +62,7 @@
 												render="resourcesListId, scopesListId"
 												style="float: left;margin-left:5px;"
 												styleClass="btn btn-primary searchButtonClass"
-												value="#{msg['uma.search']}" iconAwesome="fa-search"/>
+												value="#{msgs['uma.search']}" iconAwesome="fa-search"/>
 										</ox:decorate>
 										<b:dataTable id="resourcesListId" style="text-align:center;width:100%;"
 											responsive="true"
@@ -70,15 +70,15 @@
 											value="#{umaInventoryAction.resourcesList}" var="_row"
 											styleClass="resourceScopeListClass" print="true" excel="true"
 											csv="true" pdf="true" select="true">
-											<b:dataTableColumn label="#{msg['uma.name']}">
+											<b:dataTableColumn label="#{msgs['uma.name']}">
 												<h:link includeViewParams="false"
 													outcome="/uma/resource/modifyResource" value="#{_row.name}">
 													<f:param name="resource" value="#{_row.id}" />
 												</h:link>
 											</b:dataTableColumn>
 											<b:dataTableColumn value="#{_row.id}"
-												label="#{msg['uma.id']}" />
-											<b:dataTableColumn label="#{msg['uma.scopes']}">
+												label="#{msgs['uma.id']}" />
+											<b:dataTableColumn label="#{msgs['uma.scopes']}">
 												<ui:repeat value="#{umaInventoryAction.getScopes(_row)}"
 													var="item">
 													<b:label text="#{item}" severity="info"
@@ -86,7 +86,7 @@
 												</ui:repeat>
 											</b:dataTableColumn>
 											<b:dataTableColumn value="#{_row.iconUri}" order="asc"
-												label="#{msg['uma.iconURI']}" />
+												label="#{msgs['uma.iconURI']}" />
 										</b:dataTable>
 									</div>
 								</div>
