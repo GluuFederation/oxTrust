@@ -18,7 +18,7 @@
                     <f:facet name="header">
                         <ui:fragment>
                             <h:outputText value="#{_contact.title} #{_contact.name}" rendered="#{(not empty _contact.title) or (not empty _contact.name)}" />
-                            <h:outputText value="#{msg['trustmanager.newContact']}" rendered="#{(empty _contact.title) and (empty _contact.name)}" />
+                            <h:outputText value="#{msgs['trustmanager.newContact']}" rendered="#{(empty _contact.title) and (empty _contact.name)}" />
 
                             <a4j:commandLink style="float:right;" styleClass="glyphicon glyphicon-remove" action="#{trustContactsAction.removeContact(_contact)}" render="trustContacts" eventsQueue="trustQueue">
                                <!--  <h:graphicImage value="/img/remove.gif" />  -->
@@ -31,7 +31,7 @@
                     
                         <div class="row" style="margin-bottom: 8px;margin-left:0px">
 							<div class="col-sm-5">
-								<label>#{msg['trustmanager.name']}</label>
+								<label>#{msgs['trustmanager.name']}</label>
 							</div>
 
 							<div class="col-sm-7 prop" style="padding-left:0px;">
@@ -45,7 +45,7 @@
 						
 						<div class="row" style="padding:5px;margin-bottom: 5px;margin-left:0px">
 							<div class="col-sm-5">
-								<label>#{msg['trustmanager.title']}</label>
+								<label>#{msgs['trustmanager.title']}</label>
 							</div>
 
 							<div class="col-sm-7 prop" style="padding-left:0px;">
@@ -57,7 +57,7 @@
 						
 						<div class="row" style="padding:5px;margin-bottom: 5px;margin-left:0px">
 							<div class="col-sm-5">
-								<label>#{msg['trustmanager.telephoneNumber']}</label>
+								<label>#{msgs['trustmanager.telephoneNumber']}</label>
 							</div>
 
 							<div class="col-sm-7 prop" style="padding-left:0px;">
@@ -69,7 +69,7 @@
                         
                         <div class="row" style="padding:5px;margin-bottom: 5px;margin-left:0px">
 							<div class="col-sm-5">
-								<label>#{msg['trustmanager.mail']}</label>
+								<label>#{msgs['trustmanager.mail']}</label>
 							</div>
 
 							<div class="col-sm-7 prop" style="padding-left:0px;">
@@ -90,7 +90,7 @@
                 </rich:panel></div>
             </rich:dataGrid>
 <div class="col-sm-12" style="margin-top:15px !important">
-            <a4j:commandLink style="margin-top:10px !important" styleClass="btn btn-success" value="#{msg['trustmanager.addNewContact']}" eventsQueue="trustQueue" action="#{trustContactsAction.addEmptyContact()}" render="trustContacts" limitRender="true" />
+            <a4j:commandLink style="margin-top:10px !important" styleClass="btn btn-success" value="#{msgs['trustmanager.addNewContact']}" eventsQueue="trustQueue" action="#{trustContactsAction.addEmptyContact()}" render="trustContacts" limitRender="true" />
        </div> </h:panelGrid>
     </a4j:region>
 

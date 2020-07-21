@@ -21,7 +21,7 @@
         }
     </h:outputStylesheet>
 	<ox:changeBindPasswordDialog id="bindPasswordDialogId"
-		label="#{msg['manageAuthentication.changeBindPassword']}"
+		label="#{msgs['manageAuthentication.changeBindPassword']}"
 		password="#{managePersonAuthenticationAction.activeLdapConfig.bindPassword}"
 		setPasswordMethod="#{managePersonAuthenticationAction.updateBindPassword}" />
 	<h:form id="customAuthenticationForm">
@@ -30,10 +30,10 @@
 				iconAwesome="fa-suitcase" collapsible="false">
 				<div class="nav-tabs-custom" style="margin-bottom: 0px;">
 					<ul class="nav nav-tabs" id="customAuthenticationFormtab">
-						<li class="active"><a href="#manage-ldap" data-toggle="tab">#{msg['manageAuthentication.manageLDAPAuthentication']}</a></li>
-						<li><a href="#authentication-recaptcha" data-toggle="tab">#{msg['manageAuthentication.manageAuthenticationRecaptcha']}</a></li>
-						<li><a href="#authentication-method" data-toggle="tab">#{msg['manageAuthentication.defaultAuthentication']}</a></li>
-						<li><a href="#cas" data-toggle="tab">#{msg['manageAuthentication.casProtocol']}</a></li>
+						<li class="active"><a href="#manage-ldap" data-toggle="tab">#{msgs['manageAuthentication.manageLDAPAuthentication']}</a></li>
+						<li><a href="#authentication-recaptcha" data-toggle="tab">#{msgs['manageAuthentication.manageAuthenticationRecaptcha']}</a></li>
+						<li><a href="#authentication-method" data-toggle="tab">#{msgs['manageAuthentication.defaultAuthentication']}</a></li>
+						<li><a href="#cas" data-toggle="tab">#{msgs['manageAuthentication.casProtocol']}</a></li>
 					</ul>
 					<div class="tab-content">
 						<div class="tab-pane active" id="manage-ldap">
@@ -52,14 +52,14 @@
 												renderAfterRomoval="sourceConfigsId"
 												changePasswordDialogId="bindPasswordDialogId:changePasswordModalPanel" />
 											<a4j:commandButton
-												value="#{msg['manageAuthentication.activate']}"
+												value="#{msgs['manageAuthentication.activate']}"
 												action="#{_ldapConfig.setEnabled(true)}"
 												rendered="#{not _ldapConfig.enabled}"
 												render="ldapManagementGroupId" limitRender="true"
 												styleClass="btn btn-primary buttonActivate"
 												style="margin-left:20px;" />
 											<a4j:commandButton
-												value="#{msg['manageAuthentication.deactivate']}"
+												value="#{msgs['manageAuthentication.deactivate']}"
 												action="#{_ldapConfig.setEnabled(false)}"
 												rendered="#{_ldapConfig.enabled}"
 												render="ldapManagementGroupId" limitRender="true"
@@ -68,7 +68,7 @@
 												style="margin-left:20px;" />
 											<a4j:commandLink style="margin-left:5px;"
 												styleClass="btn btn-primary buttonTestConnection"
-												value="#{msg['manageAuthentication.testLDAPConnection']}"
+												value="#{msgs['manageAuthentication.testLDAPConnection']}"
 												rendered="#{_ldapConfig.enabled}"
 												action="#{_action.testLdapConnection(_ldapConfig)}" />
 										</div>
@@ -76,7 +76,7 @@
 									<h:panelGroup layout="block" styleClass="addConfig">
 										<a4j:commandLink
 											styleClass="btn btn-primary addSourceLDAPServer"
-											value="#{msg['organization.addSourceLDAPServer']}"
+											value="#{msgs['organization.addSourceLDAPServer']}"
 											action="#{_action.addSourceConfig()}"
 											render="sourceConfigsId" execute="@this"
 											style="margin-right:1100px;margin-top:50px;" />
@@ -87,7 +87,7 @@
 						<div class="tab-pane" id="authentication-recaptcha">
 							<div style="display: inline-block; width: 100% !important;">
 								<ox:decorate
-									label="#{msg['manageAuthentication.disableCaptcha']}">
+									label="#{msgs['manageAuthentication.disableCaptcha']}">
 									<h:selectBooleanCheckbox
 										value="#{managePersonAuthenticationAction.authenticationRecaptchaEnabled}">
 									</h:selectBooleanCheckbox>
@@ -99,7 +99,7 @@
 							<div style="display: inline-block; width: 100% !important;">
 								<h:panelGroup>
 									<ox:decorate id="auntheticationMode"
-										label="#{msg['manageAuthentication.authenticationMode']}">
+										label="#{msgs['manageAuthentication.authenticationMode']}">
 										<h:selectOneMenu value="#{_action.authenticationMode}"
 											styleClass="rounded form-control defaultAcrSelectBox">
 											<f:selectItems
@@ -108,7 +108,7 @@
 										</h:selectOneMenu>
 									</ox:decorate>
 									<ox:decorate id="oxTrustAuntheticationMode"
-										label="#{msg['manageAuthentication.oxTrustAuthenticationMode']}">
+										label="#{msgs['manageAuthentication.oxTrustAuthenticationMode']}">
 										<h:selectOneMenu value="#{_action.oxTrustAuthenticationMode}"
 											styleClass="rounded form-control oxTrustAcrSelectBox">
 											<f:selectItems
@@ -124,7 +124,7 @@
 								<h:panelGroup
 									rendered="#{productInstallationCheckerAction.showIDP_CAS}">
 									<ox:decorate id="casProtocolEnabled"
-										label="#{msg['manageAuthentication.enabled']}">
+										label="#{msgs['manageAuthentication.enabled']}">
 										<h:selectBooleanCheckbox
 											value="#{updateCASAction.configuration.enabled}"
 											styleClass="form-control enableCasProtocolSelectBox"
@@ -132,7 +132,7 @@
 										</h:selectBooleanCheckbox>
 									</ox:decorate>
 									<ox:decorate id="casProtocolSessionStorageType"
-										label="#{msg['manageAuthentication.shibbolethSession']}">
+										label="#{msgs['manageAuthentication.shibbolethSession']}">
 										<h:selectOneMenu
 											value="#{updateCASAction.configuration.sessionStorageType}"
 											styleClass="rounded form-control casProtocolSessionStorageTypeSelectBox"
@@ -143,13 +143,13 @@
 										</h:selectOneMenu>
 									</ox:decorate>
 									<ox:decorate id="casProtocolBaseURL"
-										label="#{msg['manageAuthentication.baseCASServerURL']}">
+										label="#{msgs['manageAuthentication.baseCASServerURL']}">
 										<h:outputText
 											styleClass="rounded form-control casProtocolBaseURLTextBox"
 											title="" value="#{updateCASAction.casBaseURL}" size="100" />
 									</ox:decorate>
 									<ox:decorate id="casProtocolAuthorizedToProxy"
-										label="#{msg['manageAuthentication.authorizedProxyPattern']}">
+										label="#{msgs['manageAuthentication.authorizedProxyPattern']}">
 										<h:inputText
 											styleClass="form-control casProtocolAuthorizedToProxyTextBox"
 											title=""
@@ -157,7 +157,7 @@
 											size="100" tabindex="2" required="false" disabled="true" />
 									</ox:decorate>
 									<ox:decorate id="casProtocolUnauthorizedToProxy"
-										label="#{msg['manageAuthentication.unauthorizedProxyPattern']}">
+										label="#{msgs['manageAuthentication.unauthorizedProxyPattern']}">
 										<h:inputText
 											styleClass="form-control casProtocolUnauthorizedToProxyTextBox"
 											title=""
@@ -166,7 +166,7 @@
 									</ox:decorate>
 									<h:commandButton styleClass="btn btn-primary saveCasButton"
 										style="margin-left:4px"
-										value="#{msg['manageAuthentication.updateConfigurationFiles']}"
+										value="#{msgs['manageAuthentication.updateConfigurationFiles']}"
 										action="#{updateCASAction.save}" />
 								</h:panelGroup>
 							</div>
@@ -178,10 +178,10 @@
 					<div id="updateButtons">
 						<h:commandButton styleClass="btn btn-primary"
 							style="margin-left:4px"
-							value="#{msg['manageAuthentication.updated']}"
+							value="#{msgs['manageAuthentication.updated']}"
 							action="#{managePersonAuthenticationAction.save}" />
 						<h:commandButton styleClass="btn btn-primary"
-							value="#{msg['manageAuthentication.cancel']}"
+							value="#{msgs['manageAuthentication.cancel']}"
 							action="#{managePersonAuthenticationAction.cancel}"
 							immediate="true" style="margin-left:4px" />
 					</div>

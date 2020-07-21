@@ -20,14 +20,14 @@
 	<ui:define name="body">
 		<section class="content-header">
 			<h1 style="color: #333;">
-				#{msg['person.users']} <small><i class="fa fa-caret-right"
+				#{msgs['person.users']} <small><i class="fa fa-caret-right"
 					style="color: #333 !important;"></i> #{(updatePersonAction.update)
-					? msg['person.updateUser'] : msg['person.addUser'] }</small>
+					? msgs['person.updateUser'] : msgs['person.addUser'] }</small>
 			</h1>
 			<ol class="breadcrumb">
 				<li><a href="#{request.contextPath}/home.htm"><i
 						class="fa fa-home"></i></a></li>
-				<li class="organization/configuration">#{msg['person.addUpdateUser']}</li>
+				<li class="organization/configuration">#{msgs['person.addUpdateUser']}</li>
 			</ol>
 		</section>
 		<section class="content">
@@ -43,17 +43,17 @@
 							<b:commandButton ajax="true" type="button"
 								onclick="PF('changePasswordModalPanel').show();"
 								styleClass="btn btn-primary changePasswordButton"
-								value="#{msg['person.changePassword']}" />
+								value="#{msgs['person.changePassword']}" />
 							<b:commandButton action="#{updatePersonAction.save}" ajax="true"
 								update="@form"
 								rendered="#{organizationService.allowPersonModification}"
 								styleClass="btn btn-primary savePersonButon"
-								style="margin-right:5px;" value="#{msg['person.update']}" />
+								style="margin-right:5px;" value="#{msgs['person.update']}" />
 							<a4j:commandButton eventsQueue="personQueue"
 								onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();"
 								rendered="#{not _new and organizationService.allowPersonModification}"
 								styleClass="btn btn-primary deletePersonButton"
-								value="#{msg['person.delete']}" />
+								value="#{msgs['person.delete']}" />
 							<b:commandButton action="#{updatePersonAction.cancel}"
 								styleClass="btn btn-primary" ajax="true" update="@form"
 								value="#{organizationService.allowPersonModification ? 'Cancel' : 'Back' }" />
@@ -62,7 +62,7 @@
 				</ui:decorate>
 
 				<ox:changePasswordDialog id="personPassword"
-					label="#{msg['person.changePersonPassword']}"
+					label="#{msgs['person.changePersonPassword']}"
 					password="#{userPasswordAction.newPassword}"
 					person="#{updatePersonAction.person}" verifyOldPassword="false"
 					setPasswordMethod="#{userPasswordAction.update}" />

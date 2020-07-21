@@ -12,16 +12,16 @@
 
 	<section class="content-header">
 	<h1 style="color: #333;">
-		#{msg['group.users']}<small><i class="fa fa-caret-right"
-			style="color: #333 !important;"></i> #{msg['group.manageGroups']}</small> <small><i
+		#{msgs['group.users']}<small><i class="fa fa-caret-right"
+			style="color: #333 !important;"></i> #{msgs['group.manageGroups']}</small> <small><i
 			class="fa fa-caret-right" style="color: #333 !important;"></i>
-			#{msg['group.addGroup']}</small>
+			#{msgs['group.addGroup']}</small>
 	</h1>
 	<ol class="breadcrumb">
 		<li><a href="#{request.contextPath}"><i class="fa fa-home"></i></a></li>
 		<li class="organization/configuration"><a
 			href="#{request.contextPath}/group/groupInventory.htm">
-				#{msg['group.manageGroups']}</a></li>
+				#{msgs['group.manageGroups']}</a></li>
 	</ol>
 	</section>
 	<section class="content"> <h:form>
@@ -32,17 +32,17 @@
 					cellspacing="0">
 					<ui:param name="_organization"
 						value="#{gluufn:getDisplayNameEntry(_group.organization)}" />
-					<ox:decorate id="organization" label="#{msg['group.organization']}">
+					<ox:decorate id="organization" label="#{msgs['group.organization']}">
 						<h:outputText value="#{_organization.displayName}" />
 					</ox:decorate>
 					<ox:decorate id="displayName" leftClass="col-sm-4"
-						rightClass="col-sm-8" label="#{msg['group.displayName']}">
+						rightClass="col-sm-8" label="#{msgs['group.displayName']}">
 						<h:inputText class="form-control displayNameField"
 							value="#{_group.displayName}"
 							defaultLabel="click to enter display name" maxlength="60"
 							required="true" id="displayNameId" />
 					</ox:decorate>
-					<ox:decorate id="visibility" label="#{msg['group.type']}">
+					<ox:decorate id="visibility" label="#{msgs['group.type']}">
 						<h:selectOneMenu value="#{_group.visibility}" id="visibilityId"
 							styleClass="rounded visibilityField form-control">
 							<f:selectItems value="#{_groupAction.visibilityTypes}"
@@ -50,12 +50,12 @@
 							<f:converter converterId="org.gluu.jsf2.converter.EnumConverter" />
 						</h:selectOneMenu>
 					</ox:decorate>
-					<ox:decorate id="description" label="#{msg['group.description']}">
+					<ox:decorate id="description" label="#{msgs['group.description']}">
 						<h:inputTextarea class="rounded descriptionField"
 							value="#{_group.description}" rows="3" size="40" maxlength="4000"
 							id="descriptionId" styleClass="form-control" />
 					</ox:decorate>
-					<b:panel title="#{msg['group.users']}" id="members" look="success"
+					<b:panel title="#{msgs['group.users']}" id="members" look="success"
 						iconAwesome="fa-users">
 						<h:panelGroup id="selectedMembersId" class="selectedMembersId">
 							<a4j:repeat value="#{_groupAction.members}"

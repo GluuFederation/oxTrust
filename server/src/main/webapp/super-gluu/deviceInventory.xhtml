@@ -31,7 +31,7 @@
 							styleClass="searchParameters"
 							value="#{pushDeviceInventoryAction.searchPattern}" />
 						<h:commandButton action="#{pushDeviceInventoryAction.search}"
-							value="#{msg['deviceInventory.search']}" />
+							value="#{msgs['deviceInventory.search']}" />
 					</ox:decorate>
 				</h:form>
 
@@ -42,7 +42,7 @@
 						rendered="#{pushDeviceInventoryAction.pushDeviceList.size() eq 0}">
 						<p:spacer height="30" />
 						<h:outputText
-							value="#{msg['deviceInventory.noSearchResultFound']}" />
+							value="#{msgs['deviceInventory.noSearchResultFound']}" />
 					</ui:fragment>
 
 					<p:dataTable id="devicesListId"
@@ -50,40 +50,40 @@
 						rows="20" sortMode="single" styleClass="data sortable"
 						value="#{pushDeviceInventoryAction.pushDeviceList}" var="_device">
 						<p:column>
-							<f:facet name="header">#{msg['deviceInventory.application']}</f:facet>
+							<f:facet name="header">#{msgs['deviceInventory.application']}</f:facet>
 							<ui:param name="_application"
 								value="#{lookupService.getDisplayNameEntry(_device.application)}" />
 							<h:outputText value="#{_application.displayName}" />
 						</p:column>
 						<p:column sortBy="#{_device.type}">
-							<f:facet name="header">#{msg['deviceInventory.type']}</f:facet>
+							<f:facet name="header">#{msgs['deviceInventory.type']}</f:facet>
 							<h:outputText value="#{_device.type}" />
 						</p:column>
 						<p:column sortBy="#{_device.userId}">
-							<f:facet name="header">#{msg['deviceInventory.userId']}</f:facet>
+							<f:facet name="header">#{msgs['deviceInventory.userId']}</f:facet>
 							<h:outputText value="#{_device.userId}" />
 						</p:column>
 						<p:column>
-							<f:facet name="header">#{msg['deviceInventory.os']}</f:facet>
+							<f:facet name="header">#{msgs['deviceInventory.os']}</f:facet>
 							<h:outputText
 								value="#{_device.deviceConfiguration.osName} - #{_device.deviceConfiguration.osVersion}" />
 						</p:column>
 						<p:column>
-							<f:facet name="header">#{msg['deviceInventory.device']}</f:facet>
+							<f:facet name="header">#{msgs['deviceInventory.device']}</f:facet>
 							<h:outputText value="#{_device.deviceConfiguration.deviceName}" />
 						</p:column>
 						<p:column>
-							<f:facet name="header">#{msg['deviceInventory.deviceUUID']}</f:facet>
+							<f:facet name="header">#{msgs['deviceInventory.deviceUUID']}</f:facet>
 							<h:outputText value="#{_device.deviceConfiguration.deviceUuid}" />
 						</p:column>
 						<p:column>
-							<f:facet name="header">#{msg['deviceInventory.approvedAt']}</f:facet>
+							<f:facet name="header">#{msgs['deviceInventory.approvedAt']}</f:facet>
 							<h:outputText value="#{_device.deviceConfiguration.approvedTime}">
 								<f:convertDateTime pattern="MMM. d yyyy hh:mm a" />
 							</h:outputText>
 						</p:column>
 						<p:column>
-							<f:facet name="header">#{msg['deviceInventory.approvedFrom']}</f:facet>
+							<f:facet name="header">#{msgs['deviceInventory.approvedFrom']}</f:facet>
 							<h:outputText value="#{_device.deviceConfiguration.approvedIp}" />
 						</p:column>
 						<f:facet name="footer">

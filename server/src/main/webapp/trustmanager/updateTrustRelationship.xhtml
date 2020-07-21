@@ -35,7 +35,7 @@
 								<div id="updateButtons" style="float: right; width: 620px;">
 									<h:commandButton action="#{updateTrustRelationshipAction.save}"
 										styleClass="btn btn-primary"
-										value="   #{msg['trustmanager.update']}   " />
+										value="   #{msgs['trustmanager.update']}   " />
 									<h:commandButton
 										action="#{updateTrustRelationshipAction.activationToggle}"
 										style="margin-left:3px;" styleClass="btn btn-primary"
@@ -73,7 +73,7 @@
 			<ox:createSPMetadataDialog
 				generateMethod="#{updateTrustRelationshipAction.generateSp()}"
 				id="createSPMetadata"
-				label="#{msg['trustmanager.generateSPMetadata']}"
+				label="#{msgs['trustmanager.generateSPMetadata']}"
 				logoutUri="#{updateTrustRelationshipAction.trustRelationship.spLogoutURL}"
 				metadataUri="#{updateTrustRelationshipAction.trustRelationship.spMetaDataURL}"
 				uri="#{updateTrustRelationshipAction.trustRelationship.url}" />

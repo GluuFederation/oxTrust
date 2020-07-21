@@ -19,8 +19,8 @@
 	<ui:define name="body">
 		<section class="content-header">
 			<h1 style="color: #333;">
-				#{msg['passport.title']} <small> <i
-					class="fa fa-caret-right" style="color: #333 !important;" />#{msg['passport.providers']}
+				#{msgs['passport.title']} <small> <i
+					class="fa fa-caret-right" style="color: #333 !important;" />#{msgs['passport.providers']}
 				</small>
 			</h1>
 			<ol class="breadcrumb">
@@ -28,7 +28,7 @@
 						class="fa fa-home" />
 				</a></li>
 				<li class="organization/configuration"><a
-					href="#{request.contextPath}/passport/idpInitiatedFlows.htm">#{msg['passport.idpInitiated']}</a></li>
+					href="#{request.contextPath}/passport/idpInitiatedFlows.htm">#{msgs['passport.idpInitiated']}</a></li>
 			</ol>
 		</section>
 		<section class="content">
@@ -40,10 +40,10 @@
 				<ui:define name="controlButttons">
 					<div id="updateButtons">
 						<h:commandButton action="#{passportProvidersAction.save}"
-							styleClass="btn btn-primary" value="#{msg['client.add']}" />
+							styleClass="btn btn-primary" value="#{msgs['client.add']}" />
 						<h:commandButton action="#{passportProvidersAction.cancel}"
 							immediate="true" style="margin-left:3px;"
-							styleClass="btn btn-primary" value="#{msg['client.cancel']}" />
+							styleClass="btn btn-primary" value="#{msgs['client.cancel']}" />
 					</div>
 				</ui:define>
 			</ui:decorate>

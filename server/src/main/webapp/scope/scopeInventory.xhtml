@@ -29,7 +29,7 @@
 									style="padding: 5px; margin-bottom: 5px; margin-left: 15px">
 									<b:link style-class="addScopeButtonClass btn btn-primary"
 										icon="plus" outcome="/scope/addScope"
-										value="#{msg['scope.addScope']}" includeViewParams="false" />
+										value="#{msgs['scope.addScope']}" includeViewParams="false" />
 								</div>
 								<p:spacer height="16" />
 								<h:form>
@@ -57,18 +57,18 @@
 												value="#{searchScopeAction.scopeList}" var="clt"
 												print="true" excel="true" csv="true" pdf="true"
 												select="true">
-												<b:dataTableColumn label="#{msg['scope.inum']}">
+												<b:dataTableColumn label="#{msgs['scope.inum']}">
 													<h:link includeViewParams="false"
 														outcome="/scope/updateScope" value="#{clt.inum}">
 														<f:param name="inum" value="#{clt.inum}" />
 													</h:link>
 												</b:dataTableColumn>
-												<b:dataTableColumn label="#{msg['scope.displayName']}"
+												<b:dataTableColumn label="#{msgs['scope.displayName']}"
 													value="#{clt.id eq null ? clt.displayName : clt.id}">
 												</b:dataTableColumn>
 												<b:dataTableColumn value="#{clt.description}"
-													label="#{msg['scope.description']}" />
-												<b:dataTableColumn label="#{msg['scope.default']}">
+													label="#{msgs['scope.description']}" />
+												<b:dataTableColumn label="#{msgs['scope.default']}">
 													<b:label rendered="#{clt.isDefaultScope() eq 'true'}"
 														text="#{clt.isDefaultScope()}" severity="primary" />
 													<b:label rendered="#{clt.isDefaultScope() eq 'false'}"

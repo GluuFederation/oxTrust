@@ -29,7 +29,7 @@
 									style="padding: 5px; margin-bottom: 5px; margin-left: 15px">
 									<b:link style-class="addClientButtonClass btn btn-primary"
 										icon="plus" outcome="/client/addClient" onclick="clearOIDC();"
-										value="#{msg['client.addClient']}" includeViewParams="false" />
+										value="#{msgs['client.addClient']}" includeViewParams="false" />
 								</div>
 								<h:form>
 									<ox:decorate hideLabel="true" id="searchPattern">
@@ -43,7 +43,7 @@
 											<b:commandButton action="#{searchClientAction.search}"
 												style="float:left;margin-left :3px;"
 												styleClass="btn btn-primary searchButtonClass"
-												value="#{msg['client.search']}" iconAwesome="fa-search" />
+												value="#{msgs['client.search']}" iconAwesome="fa-search" />
 										</div>
 									</ox:decorate>
 								</h:form>
@@ -54,14 +54,14 @@
 												<ui:fragment
 													rendered="#{searchClientAction.clientList.size() eq 0}">
 
-													<h:outputText value="#{msg['client.noSearchResultFound']}" />
+													<h:outputText value="#{msgs['client.noSearchResultFound']}" />
 												</ui:fragment>
 												<b:dataTable id="clientsListId" style="text-align:center;width:100%;"
 													rendered="#{searchClientAction.clientList.size() gt 0}"
 													value="#{searchClientAction.clientList}" var="clt"
 													print="true" excel="true" csv="true" pdf="true"
 													select="true" responsive="true">
-													<b:dataTableColumn label="#{msg['client.displayName']}"
+													<b:dataTableColumn label="#{msgs['client.displayName']}"
 														order="desc">
 														<h:link includeViewParams="false"
 															outcome="/client/updateClient" onclick="clearOIDC();"
@@ -70,12 +70,12 @@
 														</h:link>
 													</b:dataTableColumn>
 													<b:dataTableColumn value="#{clt.inum}"
-														label="#{msg['client.inum']}" />
-													<b:dataTableColumn label="#{msg['client.applicationType']}">
+														label="#{msgs['client.inum']}" />
+													<b:dataTableColumn label="#{msgs['client.applicationType']}">
 														<b:label text="#{clt.oxAuthAppType}" severity="primary" />
 													</b:dataTableColumn>
 													<b:dataTableColumn
-														label="#{msg['passport.deleteProvider']}">
+														label="#{msgs['passport.deleteProvider']}">
 														<h:selectBooleanCheckbox id="selectId"
 															onchange="displayButton();" value="#{clt.selected}" />
 													</b:dataTableColumn>

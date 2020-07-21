@@ -120,7 +120,7 @@ public class UpdateOrganizationAction implements Serializable {
 				|| !StringHelper.equals(OxTrustConstants.RESULT_SUCCESS, resultApplliance)) {
 
 			facesMessages.add(FacesMessage.SEVERITY_ERROR,
-					facesMessages.evalResourceAsString("#{msg['organization.prepareUpdateFailed']}"));
+					facesMessages.evalResourceAsString("#{msgs['organization.prepareUpdateFailed']}"));
 			conversationService.endConversation();
 
 			return OxTrustConstants.RESULT_FAILURE;
@@ -185,11 +185,11 @@ public class UpdateOrganizationAction implements Serializable {
 		} catch (BasePersistenceException ex) {
 			log.error("Failed to update organization", ex);
 			facesMessages.add(FacesMessage.SEVERITY_ERROR,
-					facesMessages.evalResourceAsString("#{msg['organization.UpdateFailed']}"));
+					facesMessages.evalResourceAsString("#{msgs['organization.UpdateFailed']}"));
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 		facesMessages.add(FacesMessage.SEVERITY_INFO,
-				facesMessages.evalResourceAsString("#{msg['organization.UpdateSucceed']}"));
+				facesMessages.evalResourceAsString("#{msgs['organization.UpdateSucceed']}"));
 		return modify();
 	}
 
@@ -224,9 +224,9 @@ public class UpdateOrganizationAction implements Serializable {
 				+ smtpConfiguration.getPasswordDecrypted());
 		boolean result = mailService.sendMail(smtpConfiguration, smtpConfiguration.getFromEmailAddress(),
 				smtpConfiguration.getFromName(), smtpConfiguration.getFromEmailAddress(), null,
-				facesMessages.evalResourceAsString("#{msg['mail.verify.message.subject']}"),
-				facesMessages.evalResourceAsString("#{msg['mail.verify.message.plain.body']}"),
-				facesMessages.evalResourceAsString("#{msg['mail.verify.message.html.body']}"));
+				facesMessages.evalResourceAsString("#{msgs['mail.verify.message.subject']}"),
+				facesMessages.evalResourceAsString("#{msgs['mail.verify.message.plain.body']}"),
+				facesMessages.evalResourceAsString("#{msgs['mail.verify.message.html.body']}"));
 
 		if (result) {
 			log.info("Connection Successful");

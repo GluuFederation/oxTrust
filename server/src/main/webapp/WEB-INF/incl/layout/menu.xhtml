@@ -21,57 +21,57 @@
     <rich:toolbarGroup location="right">
         <h:outputText id="menuWelcomeId" value="signed in as: #{credentials.username}" rendered="#{identity.loggedIn}" />
         <h:link includeViewParams="false" outcome="/login.htm" value="Login" style="color: white; text-decoration: none;" rendered="#{not identity.loggedIn and not isLogin}" />
-        <h:link includeViewParams="false" outcome="/register.htm" value="#{msg['layout.register']}" style="color: white; text-decoration: none;" rendered="#{not identity.loggedIn}" />
+        <h:link includeViewParams="false" outcome="/register.htm" value="#{msgs['layout.register']}" style="color: white; text-decoration: none;" rendered="#{not identity.loggedIn}" />
 
-        <rich:dropDownMenu mode="server" label="#{msg['layout.configuration']}" rendered="#{permissionService.hasPermission('configuration', 'access') or permissionService.hasPermission('scim', 'access') or permissionService.hasPermission('attribute', 'access') or permissionService.hasPermission('configuration', 'access')}">
-            <rich:menuItem label="#{msg['layout.organizationConfiguration']}" action="#{menuAction.endConversation('/organization/updateOrganization.xhtml')}" rendered="#{permissionService.hasPermission('configuration', 'access')}" />
-            <rich:menuItem label="#{msg['layout.jsonConfiguration']}" action="#{menuAction.endConversation('/configuration/updateConfiguration.xhtml')}" rendered="#{permissionService.hasPermission('configuration', 'access')}" />
+        <rich:dropDownMenu mode="server" label="#{msgs['layout.configuration']}" rendered="#{permissionService.hasPermission('configuration', 'access') or permissionService.hasPermission('scim', 'access') or permissionService.hasPermission('attribute', 'access') or permissionService.hasPermission('configuration', 'access')}">
+            <rich:menuItem label="#{msgs['layout.organizationConfiguration']}" action="#{menuAction.endConversation('/organization/updateOrganization.xhtml')}" rendered="#{permissionService.hasPermission('configuration', 'access')}" />
+            <rich:menuItem label="#{msgs['layout.jsonConfiguration']}" action="#{menuAction.endConversation('/configuration/updateConfiguration.xhtml')}" rendered="#{permissionService.hasPermission('configuration', 'access')}" />
 <!--
             <rich:menuItem label="Manage Certificates" action="#{menuAction.endConversation('/cert/certificateManagement.xhtml')}" rendered="#{permissionService.hasPermission('configuration', 'access')}" />
 -->
-            <rich:menuItem label="#{msg['layout.manageAuthentication']}" action="#{menuAction.endConversation('/authentication/manageCustomAuthentication.xhtml')}" rendered="#{permissionService.hasPermission('configuration', 'access')}" />
-            <rich:menuItem label="#{msg['layout.manageCustomScripts']}" action="#{menuAction.endConversation('/script/manageCustomScript.xhtml')}" rendered="#{permissionService.hasPermission('configuration', 'access')}" />
-            <rich:menuItem label="#{msg['layout.manageRegistration']}" action="#{menuAction.endConversation('/organization/manageRegistration.xhtml')}" rendered="#{permissionService.hasPermission('configuration', 'access')}" />
+            <rich:menuItem label="#{msgs['layout.manageAuthentication']}" action="#{menuAction.endConversation('/authentication/manageCustomAuthentication.xhtml')}" rendered="#{permissionService.hasPermission('configuration', 'access')}" />
+            <rich:menuItem label="#{msgs['layout.manageCustomScripts']}" action="#{menuAction.endConversation('/script/manageCustomScript.xhtml')}" rendered="#{permissionService.hasPermission('configuration', 'access')}" />
+            <rich:menuItem label="#{msgs['layout.manageRegistration']}" action="#{menuAction.endConversation('/organization/manageRegistration.xhtml')}" rendered="#{permissionService.hasPermission('configuration', 'access')}" />
             <rich:menuSeparator/>
-            <rich:menuItem label="#{msg['layout.attributes']}" action="#{menuAction.endConversation('/attribute/attributeInventory.xhtml')}" rendered="#{permissionService.hasPermission('attribute', 'access')}" />
-            <rich:menuItem label="#{msg['layout.cacheRefresh']}" action="#{menuAction.endConversation('/organization/cacheRefresh.xhtml')}" rendered="#{permissionService.hasPermission('configuration', 'access')}" />
+            <rich:menuItem label="#{msgs['layout.attributes']}" action="#{menuAction.endConversation('/attribute/attributeInventory.xhtml')}" rendered="#{permissionService.hasPermission('attribute', 'access')}" />
+            <rich:menuItem label="#{msgs['layout.cacheRefresh']}" action="#{menuAction.endConversation('/organization/cacheRefresh.xhtml')}" rendered="#{permissionService.hasPermission('configuration', 'access')}" />
             <rich:menuSeparator/>
-            <rich:menuItem label="#{msg['layout.configureLogViewer']}" action="#{menuAction.endConversation('/logviewer/configureLogViewer.xhtml')}" rendered="#{permissionService.hasPermission('configuration', 'access')}" />
-            <rich:menuItem label="#{msg['layout.viewLogFile']}" action="#{menuAction.endConversation('/logviewer/viewLogFile.xhtml')}" rendered="#{permissionService.hasPermission('log', 'access')}" />
-            <rich:menuItem label="#{msg['layout.serverStatus']}" action="#{menuAction.endConversation('/status/applicationStatus.xhtml')}" rendered="#{permissionService.hasPermission('configuration', 'access')}" />
+            <rich:menuItem label="#{msgs['layout.configureLogViewer']}" action="#{menuAction.endConversation('/logviewer/configureLogViewer.xhtml')}" rendered="#{permissionService.hasPermission('configuration', 'access')}" />
+            <rich:menuItem label="#{msgs['layout.viewLogFile']}" action="#{menuAction.endConversation('/logviewer/viewLogFile.xhtml')}" rendered="#{permissionService.hasPermission('log', 'access')}" />
+            <rich:menuItem label="#{msgs['layout.serverStatus']}" action="#{menuAction.endConversation('/status/applicationStatus.xhtml')}" rendered="#{permissionService.hasPermission('configuration', 'access')}" />
         </rich:dropDownMenu>
         
-        <rich:dropDownMenu mode="server" label="#{msg['layout.saml']}" rendered="#{permissionService.hasPermission('trust', 'access')}">
-            <rich:menuItem label="#{msg['layout.trustRelationships']}" action="#{menuAction.endConversation('/trustmanager/trustRelationships.xhtml')}" rendered="#{permissionService.hasPermission('trust', 'access')}" />
+        <rich:dropDownMenu mode="server" label="#{msgs['layout.saml']}" rendered="#{permissionService.hasPermission('trust', 'access')}">
+            <rich:menuItem label="#{msgs['layout.trustRelationships']}" action="#{menuAction.endConversation('/trustmanager/trustRelationships.xhtml')}" rendered="#{permissionService.hasPermission('trust', 'access')}" />
         </rich:dropDownMenu>
 
-        <rich:dropDownMenu mode="server" label="#{msg['layout.openIDConnect']}" rendered="#{permissionService.hasPermission('oxauth', 'access')}">
-            <rich:menuItem label="#{msg['layout.scopes']}" action="#{menuAction.endConversation('/scope/scopeInventory.xhtml')}" rendered="#{permissionService.hasPermission('oxauth', 'access')}" />
-            <rich:menuItem label="#{msg['layout.clients']}" action="#{menuAction.endConversation('/client/clientInventory.xhtml')}" rendered="#{permissionService.hasPermission('oxauth', 'access')}" />
+        <rich:dropDownMenu mode="server" label="#{msgs['layout.openIDConnect']}" rendered="#{permissionService.hasPermission('oxauth', 'access')}">
+            <rich:menuItem label="#{msgs['layout.scopes']}" action="#{menuAction.endConversation('/scope/scopeInventory.xhtml')}" rendered="#{permissionService.hasPermission('oxauth', 'access')}" />
+            <rich:menuItem label="#{msgs['layout.clients']}" action="#{menuAction.endConversation('/client/clientInventory.xhtml')}" rendered="#{permissionService.hasPermission('oxauth', 'access')}" />
         </rich:dropDownMenu>
 
-        <rich:dropDownMenu mode="server" label="#{msg['layout.uma']}" rendered="#{permissionService.hasPermission('uma', 'access')}">
-            <rich:menuItem label="#{msg['layout.scopes']}" action="#{menuAction.endConversation('/uma/inventory.xhtml')}" rendered="#{permissionService.hasPermission('uma', 'access')}" />
-            <rich:menuItem label="#{msg['layout.resources']}" action="#{menuAction.endConversation('/uma/inventory.xhtml')}" rendered="#{permissionService.hasPermission('uma', 'access')}" />
+        <rich:dropDownMenu mode="server" label="#{msgs['layout.uma']}" rendered="#{permissionService.hasPermission('uma', 'access')}">
+            <rich:menuItem label="#{msgs['layout.scopes']}" action="#{menuAction.endConversation('/uma/inventory.xhtml')}" rendered="#{permissionService.hasPermission('uma', 'access')}" />
+            <rich:menuItem label="#{msgs['layout.resources']}" action="#{menuAction.endConversation('/uma/inventory.xhtml')}" rendered="#{permissionService.hasPermission('uma', 'access')}" />
         </rich:dropDownMenu>
 
-        <rich:dropDownMenu mode="server" label="#{msg['layout.oxPush']}" rendered="#{false and permissionService.hasPermission('oxpush', 'access')}">
-            <rich:menuItem label="#{msg['layout.oxPushApplications']}" action="#{menuAction.endConversation('/push/application/applicationInventory.xhtml')}" rendered="#{permissionService.hasPermission('oxpush', 'access')}" render="false"/>
-            <rich:menuItem label="#{msg['layout.oxPushDevices']}" action="#{menuAction.endConversation('/push/device/deviceInventory.xhtml')}" rendered="#{permissionService.hasPermission('oxpush', 'access')}" render="false" />
+        <rich:dropDownMenu mode="server" label="#{msgs['layout.oxPush']}" rendered="#{false and permissionService.hasPermission('oxpush', 'access')}">
+            <rich:menuItem label="#{msgs['layout.oxPushApplications']}" action="#{menuAction.endConversation('/push/application/applicationInventory.xhtml')}" rendered="#{permissionService.hasPermission('oxpush', 'access')}" render="false"/>
+            <rich:menuItem label="#{msgs['layout.oxPushDevices']}" action="#{menuAction.endConversation('/push/device/deviceInventory.xhtml')}" rendered="#{permissionService.hasPermission('oxpush', 'access')}" render="false" />
         </rich:dropDownMenu>
 
-        <rich:dropDownMenu mode="server" label="#{msg['layout.users']}" rendered="#{permissionService.hasPermission('group', 'access') or permissionService.hasPermission('person', 'access')}">
-            <rich:menuItem label="#{msg['layout.manageGroups']}" action="#{menuAction.endConversation('/group/groupInventory.xhtml')}" rendered="#{permissionService.hasPermission('group', 'access')}" />
-            <rich:menuItem label="#{msg['layout.managePeople']}" action="#{menuAction.endConversation('/person/personInventory.xhtml')}" rendered="#{permissionService.hasPermission('person', 'access')}" />
-            <rich:menuItem label="#{msg['layout.addPerson']}" action="#{menuAction.endConversation('/person/addPerson.xhtml')}" rendered="#{permissionService.hasPermission('person', 'access')}" />
-            <rich:menuItem label="#{msg['layout.importPeople']}" action="#{menuAction.endConversation('/person/personImport.xhtml')}" rendered="#{permissionService.hasPermission('person', 'import')}" />
+        <rich:dropDownMenu mode="server" label="#{msgs['layout.users']}" rendered="#{permissionService.hasPermission('group', 'access') or permissionService.hasPermission('person', 'access')}">
+            <rich:menuItem label="#{msgs['layout.manageGroups']}" action="#{menuAction.endConversation('/group/groupInventory.xhtml')}" rendered="#{permissionService.hasPermission('group', 'access')}" />
+            <rich:menuItem label="#{msgs['layout.managePeople']}" action="#{menuAction.endConversation('/person/personInventory.xhtml')}" rendered="#{permissionService.hasPermission('person', 'access')}" />
+            <rich:menuItem label="#{msgs['layout.addPerson']}" action="#{menuAction.endConversation('/person/addPerson.xhtml')}" rendered="#{permissionService.hasPermission('person', 'access')}" />
+            <rich:menuItem label="#{msgs['layout.importPeople']}" action="#{menuAction.endConversation('/person/personImport.xhtml')}" rendered="#{permissionService.hasPermission('person', 'import')}" />
         </rich:dropDownMenu>
 
-        <rich:dropDownMenu mode="server" label="#{msg['layout.personal']}" rendered="#{permissionService.hasPermission('profile', 'access') or permissionService.hasPermission(configurationService.configuration, 'whitePagesEnabled')}">
-            <rich:menuItem label="#{msg['layout.profile']}" action="#{menuAction.endConversation('/profile/person/viewProfile.xhtml')}" rendered="#{permissionService.hasPermission('profile', 'access')}" />
-            <rich:menuItem label="#{msg['layout.whitePages']}" action="#{menuAction.endConversation('/whitePage/viewWhitePages.xhtml')}" rendered="#{permissionService.hasPermission(configurationService.configuration, 'whitePagesEnabled')}" />
+        <rich:dropDownMenu mode="server" label="#{msgs['layout.personal']}" rendered="#{permissionService.hasPermission('profile', 'access') or permissionService.hasPermission(configurationService.configuration, 'whitePagesEnabled')}">
+            <rich:menuItem label="#{msgs['layout.profile']}" action="#{menuAction.endConversation('/profile/person/viewProfile.xhtml')}" rendered="#{permissionService.hasPermission('profile', 'access')}" />
+            <rich:menuItem label="#{msgs['layout.whitePages']}" action="#{menuAction.endConversation('/whitePage/viewWhitePages.xhtml')}" rendered="#{permissionService.hasPermission(configurationService.configuration, 'whitePagesEnabled')}" />
         </rich:dropDownMenu>
 
-        <h:link includeViewParams="false" outcome="/logout.htm" value="#{msg['layout.logout']}" style="color: white; text-decoration: none;" rendered="#{identity.loggedIn}" />
+        <h:link includeViewParams="false" outcome="/logout.htm" value="#{msgs['layout.logout']}" style="color: white; text-decoration: none;" rendered="#{identity.loggedIn}" />
     </rich:toolbarGroup>
 </rich:toolbar>

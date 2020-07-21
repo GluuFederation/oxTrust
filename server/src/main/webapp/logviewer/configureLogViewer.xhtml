@@ -17,9 +17,9 @@
 	<ui:define name="body">
 		<section class="content-header">
 			<h1 style="color: #333;">
-				#{msg['logViewer.configuration']} <small> <i
+				#{msgs['logViewer.configuration']} <small> <i
 					class="fa fa-caret-right" style="color: #333 !important;" />
-					#{msg['logViewer.configureLogViewer']}
+					#{msgs['logViewer.configureLogViewer']}
 				</small>
 			</h1>
 			<ol class="breadcrumb">
@@ -27,7 +27,7 @@
 						class="fa fa-home" />
 				</a></li>
 				<li class="organization/configuration"><a
-					href="#{request.contextPath}/logviewer/configureLogViewer.htm">#{msg['logViewer.configureLogViewer']}</a>
+					href="#{request.contextPath}/logviewer/configureLogViewer.htm">#{msgs['logViewer.configureLogViewer']}</a>
 				</li>
 			</ol>
 		</section>
@@ -65,11 +65,11 @@
 								<div id="updateButtons">
 									<h:commandButton action="#{configureLogViewerAction.update}"
 										styleClass="btn btn-primary addLogButtonClass"
-										value="#{msg['logViewer.update']}" />
+										value="#{msgs['logViewer.update']}" />
 									<h:commandButton action="#{configureLogViewerAction.cancel}"
 										immediate="true" style="margin-left:5px"
 										styleClass="btn btn-primary"
-										value="#{msg['logViewer.cancel']}" />
+										value="#{msgs['logViewer.cancel']}" />
 								</div>
 							</div>
 						</b:panel>

@@ -21,8 +21,8 @@
 	<ui:define name="body">
 		<section class="content-header">
 			<h1 style="color: #333;">
-				#{msg['person.users']} <small> <i class="fa fa-caret-right"
-					style="color: #333 !important;" /> #{msg['person.managePeople']}
+				#{msgs['person.users']} <small> <i class="fa fa-caret-right"
+					style="color: #333 !important;" /> #{msgs['person.managePeople']}
 				</small>
 			</h1>
 			<ol class="breadcrumb">
@@ -31,7 +31,7 @@
 				</a></li>
 				<li class="organization/configuration"><a
 					href="#{request.contextPath}/person/personInventory.htm">
-						#{msg['person.managePeople']}</a></li>
+						#{msgs['person.managePeople']}</a></li>
 			</ol>
 		</section>
 		<section class="content">
@@ -43,7 +43,7 @@
 							<div style="margin-left: 5px;">
 								<b:link style-class="addPerson btn btn-primary" icon="plus"
 									rendered="#{organizationService.allowPersonModification}"
-									outcome="/person/addPerson" value="#{msg['person.addPerson']}"
+									outcome="/person/addPerson" value="#{msgs['person.addPerson']}"
 									includeViewParams="false" />
 							</div>
 							<h:panelGrid border="0" cellpadding="0" cellspacing="0"
@@ -67,20 +67,20 @@
 									<ui:fragment
 										rendered="#{searchPersonAction.personList.size() eq 0}">
 										<p:spacer height="30" />
-										<h:outputText value="#{msg['person.noSearchResultFound']}" />
+										<h:outputText value="#{msgs['person.noSearchResultFound']}" />
 									</ui:fragment>
 									<b:dataTable id="personsListId" style="text-align:center;width:100%;"
 										responsive="true"
 										rendered="#{searchPersonAction.personList.size() gt 0}"
 										value="#{searchPersonAction.personList}" var="prs"
 										print="true" excel="true" csv="true" pdf="true" select="true">
-										<b:dataTableColumn label="#{msg['person.uid']}">
+										<b:dataTableColumn label="#{msgs['person.uid']}">
 											<h:link includeViewParams="false"
 												outcome="/person/updatePerson" value="#{prs.uid}">
 												<f:param name="inum" value="#{prs.inum}" />
 											</h:link>
 										</b:dataTableColumn>
-										<b:dataTableColumn label="#{msg['person.displayName']}"
+										<b:dataTableColumn label="#{msgs['person.displayName']}"
 											value="#{prs.displayName}" />
 										<b:dataTableColumn label="First Name" value="#{prs.givenName}" />
 										<b:dataTableColumn label="Group Count">
@@ -88,8 +88,8 @@
 												severity="primary" />
 										</b:dataTableColumn>
 										<b:dataTableColumn value="#{prs.mail}"
-											label="#{msg['person.email']}" />
-										<b:dataTableColumn label="#{msg['person.status']}">
+											label="#{msgs['person.email']}" />
+										<b:dataTableColumn label="#{msgs['person.status']}">
 											<b:label text="#{prs.status}" severity="info" />
 										</b:dataTableColumn>
 									</b:dataTable>

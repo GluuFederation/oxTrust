@@ -19,8 +19,8 @@
 	<ui:define name="body">
 		<section class="content-header">
 			<h1 style="color: #333;">
-				#{msg['leftmenu.saml']}<small><i class="fa fa-caret-right"
-					style="color: #333 !important;"></i> #{msg['leftmenu.nameId']}</small>
+				#{msgs['leftmenu.saml']}<small><i class="fa fa-caret-right"
+					style="color: #333 !important;"></i> #{msgs['leftmenu.nameId']}</small>
 			</h1>
 			<ol class="breadcrumb">
 				<li><a href="#{request.contextPath}/home.htm"><i
@@ -48,13 +48,13 @@
 												styleClass="btn btn-danger deleteNameIDButton" />
 											<h:panelGroup layout="block" class="form-script">
 												<div class="form-group">
-													<ox:decorate id="enabled" label="#{msg['nameId.enabled']}">
+													<ox:decorate id="enabled" label="#{msgs['nameId.enabled']}">
 														<h:selectBooleanCheckbox
 															styleClass="rounded enableCheckBoxButton" id="enabled"
 															value="#{_nameIdConfig.enabled}" />
 													</ox:decorate>
 													<ox:decorate id="sourceAttribute"
-														label="#{msg['nameId.sourceAttribute']}">
+														label="#{msgs['nameId.sourceAttribute']}">
 														<h:selectOneMenu value="#{_nameIdConfig.sourceAttribute}"
 															styleClass="rounded form-control sourceAttributeSelectBox">
 															<f:selectItems var="_attribute"
@@ -64,7 +64,7 @@
 														</h:selectOneMenu>
 													</ox:decorate>
 													<ox:decorate id="nameIdType"
-														label="#{msg['nameId.nameIdType']}">
+														label="#{msgs['nameId.nameIdType']}">
 														<h:selectOneMenu value="#{_nameIdConfig.nameIdType}"
 															styleClass="rounded form-control nameIdTypeSelectBox">
 															<f:selectItem itemLabel="" itemValue="null" />
@@ -87,17 +87,17 @@
 							<h:panelGroup layout="block" styleClass="addConfig">
 								<a4j:commandLink styleClass="btn btn-primary addConfigButton"
 									style="font-size:13px !important;"
-									value="#{msg['nameId.addNameIdConfiguration']}"
+									value="#{msgs['nameId.addNameIdConfiguration']}"
 									action="#{configureNameIdAction.addNameIdConfig()}"
 									render="nameIdConfigsId" execute="@region" />
 							</h:panelGroup>
 						</div>
 						<div id="updateButtons" style="margin: 10px;margin-top: 20px;">
 							<h:commandButton styleClass="btn btn-primary"
-								value="#{msg['nameId.update']}"
+								value="#{msgs['nameId.update']}"
 								action="#{configureNameIdAction.save}" />
 							<h:commandButton styleClass="btn btn-success"
-								value="#{msg['nameId.cancel']}"
+								value="#{msgs['nameId.cancel']}"
 								action="#{configureNameIdAction.cancel}" immediate="true"
 								style="margin-left:5px" />
 						</div>

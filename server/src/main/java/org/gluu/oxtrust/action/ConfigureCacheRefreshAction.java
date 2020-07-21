@@ -715,7 +715,7 @@ public class ConfigureCacheRefreshAction
 			if (connectionProvider.isConnected()) {
 				connectionProvider.closeConnectionPool();
 				facesMessages.add(FacesMessage.SEVERITY_INFO, facesMessages
-						.evalResourceAsString("#{msg['configuration.manageAuthentication.ldap.testSucceed']}"));
+						.evalResourceAsString("#{msgs['configuration.manageAuthentication.ldap.testSucceed']}"));
 				return OxTrustConstants.RESULT_SUCCESS;
 			}
 			if (connectionProvider.getConnectionPool() != null) {
@@ -726,7 +726,7 @@ public class ConfigureCacheRefreshAction
 		}
 
 		facesMessages.add(FacesMessage.SEVERITY_ERROR,
-				facesMessages.evalResourceAsString("#{msg['configuration.manageAuthentication.ldap.testFailed']}"));
+				facesMessages.evalResourceAsString("#{msgs['configuration.manageAuthentication.ldap.testFailed']}"));
 
 		return OxTrustConstants.RESULT_FAILURE;
 	}

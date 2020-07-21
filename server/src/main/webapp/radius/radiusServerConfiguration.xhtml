@@ -14,12 +14,12 @@
 	<ui:define name="body">
         <section class="content-header">
 		  <h1 style="color: #333;">
-			#{msg['radius.title']}
-			<small><i class="fa fa-caret-right" style="color: #333 !important;"/>#{msg['radius.config.title']}</small>
+			#{msgs['radius.title']}
+			<small><i class="fa fa-caret-right" style="color: #333 !important;"/>#{msgs['radius.config.title']}</small>
 		  </h1>
 		  <ol class="breadcrumb">
 			<li><a href="#{request.contextPath}/home.htm"><i class="fa fa-home"/></a></li>
-			<li class="organization/configuration"><a href="#">#{msg['radius.config.title']}</a></li>
+			<li class="organization/configuration"><a href="#">#{msgs['radius.config.title']}</a></li>
 		  </ol>
 		</section>
 		<section class="content">
@@ -33,9 +33,9 @@
 					<ui:define name="control-buttons">
 						<div>
 							<h:commandButton action="#{updateGluuRadiusConfigAction.save}"
-								styleClass="btn btn-primary" value="#{msg['radius.config.save.label']}"/>
+								styleClass="btn btn-primary" value="#{msgs['radius.config.save.label']}"/>
 							<h:commandButton action="#{updateGluuRadiusConfigAction.cancel}"
-								styleClass="btn btn-primary" value="#{msg['radius.config.cancel.label']}"/>
+								styleClass="btn btn-primary" value="#{msgs['radius.config.cancel.label']}"/>
 						</div>
 					</ui:define>
 				</ui:decorate>
@@ -43,7 +43,7 @@
 						acceptMethod="#{updateGluuRadiusConfigAction.acceptSelectedScopes}"
 						cancelMethod="#{updateGluuRadiusConfigAction.cancelSelectedScopes}"
 						displayNameProperty="entity.description" displaySearchForm="false"
-						id="scopedialog" label="#{msg['radius.config.scopes.label']}"
+						id="scopedialog" label="#{msgs['radius.config.scopes.label']}"
 						nameProperty="entity.id" render="openid-scopes"
 						searchMethod="#{updateGluuRadiusConfigAction.searchAvailableScopes}"
 						searchResult="#{updateGluuRadiusConfigAction.availableScopes}"/>

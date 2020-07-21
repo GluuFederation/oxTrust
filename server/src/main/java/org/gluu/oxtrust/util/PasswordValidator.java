@@ -51,7 +51,7 @@ public class PasswordValidator implements Validator<Object> {
 		}
 		if (hasValidation && !matcher.matches()) {
 			FacesMessage msg = new FacesMessage(
-					facesMessages.evalResourceAsString("#{msg['password.validation.invalid']}"));
+					facesMessages.evalResourceAsString("#{msgs['password.validation.invalid']}"));
 			msg.setSeverity(FacesMessage.SEVERITY_ERROR);
 			throw new ValidatorException(msg);
 

@@ -18,18 +18,18 @@
 		<div class="lockscreen-wrapper" style="text-align: center;">
 			<div class="lockscreen-logo"
 				style="margin-bottom: 0px !important; margin-top: 10%;">
-				<b style="font-size: 1.7em !important; color: black;">#{msg['error.oops']}</b>
+				<b style="font-size: 1.7em !important; color: black;">#{msgs['error.oops']}</b>
 			</div>
 			<!-- User name -->
 			<div class="lockscreen-name"
 				style="text-align: center; font-size: 1.2em !important;">
-				#{msg['error.conversation.wrong']} <br />
+				#{msgs['error.conversation.wrong']} <br />
 				<b:messages redisplay="true" recursive="true"
 							globalOnly="true" severity="info,warn,error,fatal" />
-				<br /> <span style="font-size: 14px;">#{msg['error.returnToTheApplication']}</span>
+				<br /> <span style="font-size: 14px;">#{msgs['error.returnToTheApplication']}</span>
 			</div>
 			<a class="btn btn-block btn-primary btn-lg"
-				href="#{request.contextPath}/home.htm" style="width: 50%;">#{msg['error.return']}</a>
+				href="#{request.contextPath}/home.htm" style="width: 50%;">#{msgs['error.return']}</a>
 		</div>
 	</ui:define>
 </ui:composition>

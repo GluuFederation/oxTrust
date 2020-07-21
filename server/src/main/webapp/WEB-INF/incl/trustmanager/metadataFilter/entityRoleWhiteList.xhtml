@@ -16,21 +16,21 @@
 
         <rich:panel id="EntityRoleWhiteListFilterDescription" bodyClass="inpanelBody">
             <f:facet name="header">
-                <h:outputText value="#{msg['trustmanager.entityRoleWhiteListFilterHelp']}" />
+                <h:outputText value="#{msgs['trustmanager.entityRoleWhiteListFilterHelp']}" />
             </f:facet>
-            #{msg['trustmanager.metadataFilesCanGrowQuiteLarge']}
+            #{msgs['trustmanager.metadataFilesCanGrowQuiteLarge']}
         </rich:panel>
         <rich:panel id="EntityRoleWhiteListFilterMenu" bodyClass="inpanelBody">
             <f:facet name="header">
-                <h:outputText value="#{msg['trustmanager.entityRoleWhiteListFilterConfiguration']}" />
+                <h:outputText value="#{msgs['trustmanager.entityRoleWhiteListFilterConfiguration']}" />
             </f:facet>
             <h:panelGrid columns="2">
-                <h:outputText value="#{msg['trustmanager.removeRolelessEntityDescriptors']} " />
+                <h:outputText value="#{msgs['trustmanager.removeRolelessEntityDescriptors']} " />
                 <h:selectBooleanCheckbox value="#{_metadataFilterSelected.removeRolelessEntityDescriptors}" />
-                <h:outputText value="#{msg['trustmanager.removeEmptyEntitiesDescriptors']} " />
+                <h:outputText value="#{msgs['trustmanager.removeEmptyEntitiesDescriptors']} " />
                 <h:selectBooleanCheckbox value="#{_metadataFilterSelected.removeEmptyEntitiesDescriptors}" />
             </h:panelGrid>
-            <h:outputText value="#{msg['trustmanager.retainedRolesWhiteList']}" />
+            <h:outputText value="#{msgs['trustmanager.retainedRolesWhiteList']}" />
             <rich:list var="_retainedRole" value="#{_metadataFilterSelected.retainedRoles}" id="roleList">
                 <h:outputText value="#{_retainedRole}" />
                 <h:outputText value="&#160;">
@@ -40,7 +40,7 @@
                 </h:outputText>
             </rich:list>
             <h:panelGrid>
-                <h:outputText value="#{msg['trustmanager.enterNewRetainedRole']}" />
+                <h:outputText value="#{msgs['trustmanager.enterNewRetainedRole']}" />
                 <rich:inplaceInput defaultLabel="click to enter RetainedRole" value="#{_metadataFilterSelected.retainedRole}">
                     <a4j:ajax event="change" render="EntityRoleWhiteListFilterMenu" />
                 </rich:inplaceInput>

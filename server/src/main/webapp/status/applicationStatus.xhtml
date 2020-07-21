@@ -19,9 +19,9 @@
 	<ui:define name="body">
 		<section class="content-header">
 			<h1 style="color: #333;">
-				#{msg['configurationStatus.configuration']} <small> <i
+				#{msgs['configurationStatus.configuration']} <small> <i
 					class="fa fa-caret-right" style="color: #333 !important;" />
-					#{msg['configurationStatus.serverStatus']}
+					#{msgs['configurationStatus.serverStatus']}
 				</small>
 			</h1>
 			<ol class="breadcrumb">
@@ -29,13 +29,13 @@
 						class="fa fa-home" />
 				</a></li>
 				<li class="organization/configuration"><a
-					href="#{request.contextPath}/status/applicationStatus.htm">#{msg['configurationStatus.serverStatus']}</a>
+					href="#{request.contextPath}/status/applicationStatus.htm">#{msgs['configurationStatus.serverStatus']}</a>
 				</li>
 			</ol>
 		</section>
 		<section class="content">
 			<h:panelGroup id="formArea" layout="block">
-				<b:panel title="#{msg['configurationStatus.serverStatus']}"
+				<b:panel title="#{msgs['configurationStatus.serverStatus']}"
 					look="primary" iconAwesome="fa-gear" collapsible="false">
 					<div style="display: inline-block; width: 95% !important;">
 						<ui:param name="_configuration"
@@ -45,23 +45,23 @@
 							<div class="col-sm-6 col-lg-6" style="padding: 0px;">
 								<h:panelGrid border="0" cellpadding="0" cellspacing="0"
 									columns="1" id="statusTable1" width="100%">
-									<ox:decorate label="#{msg['configurationStatus.hostName']}"
+									<ox:decorate label="#{msgs['configurationStatus.hostName']}"
 										leftClass="col-sm-6" rightClass="col-sm-6">
 										<b:label styleClass="hostnameValueBox"
 											text="#{configurationStatusAction.getHostName(_configuration.hostname)}"
 											severity="primary" />
 									</ox:decorate>
-									<ox:decorate label="#{msg['configurationStatus.ipAddress']}"
+									<ox:decorate label="#{msgs['configurationStatus.ipAddress']}"
 										leftClass="col-sm-6" rightClass="col-sm-6">
 										<b:label styleClass="ipAddressValueBox"
 											text="#{_stat.ipAddress}" severity="success" />
 									</ox:decorate>
-									<ox:decorate label="#{msg['configurationStatus.systemUptime']}"
+									<ox:decorate label="#{msgs['configurationStatus.systemUptime']}"
 										leftClass="col-sm-6" rightClass="col-sm-6">
 										<h:outputText styleClass="systemUptimeValueBox"
 											value="#{_stat.systemUptime}" />
 									</ox:decorate>
-									<ox:decorate label="#{msg['configurationStatus.lastUpdate']}"
+									<ox:decorate label="#{msgs['configurationStatus.lastUpdate']}"
 										leftClass="col-sm-6" rightClass="col-sm-6">
 										<h:outputText styleClass="lastUpdateValueBox"
 											value="#{_configuration.lastUpdate}">
@@ -69,7 +69,7 @@
 										</h:outputText>
 									</ox:decorate>
 									<ox:decorate
-										label="#{msg['configurationStatus.freeDiskSpace']}"
+										label="#{msgs['configurationStatus.freeDiskSpace']}"
 										leftClass="col-sm-6" rightClass="col-sm-6">
 										<h:outputText styleClass="freeDiskSpaceValueBox"
 											value="#{_stat.freeDiskSpace}" />
@@ -80,22 +80,22 @@
 								<h:panelGrid border="0" cellpadding="0" cellspacing="0"
 									columns="1" id="statusTable2" width="100%">
 									<ox:decorate
-										label="#{msg['configurationStatus.pollingInterval']}"
+										label="#{msgs['configurationStatus.pollingInterval']}"
 										leftClass="col-sm-6" rightClass="col-sm-6">
 										<h:outputText styleClass="pollingIntervalValueBox"
 											value="60 seconds" />
 									</ox:decorate>
-									<ox:decorate label="#{msg['configurationStatus.personCount']}"
+									<ox:decorate label="#{msgs['configurationStatus.personCount']}"
 										leftClass="col-sm-6" rightClass="col-sm-6">
 										<h:outputText styleClass="personCountValueBox"
 											value="#{_stat.personCount}" />
 									</ox:decorate>
-									<ox:decorate label="#{msg['configurationStatus.groupCount']}"
+									<ox:decorate label="#{msgs['configurationStatus.groupCount']}"
 										leftClass="col-sm-6" rightClass="col-sm-6">
 										<h:outputText styleClass="groupCountValueBox"
 											value="#{_stat.groupCount}" />
 									</ox:decorate>
-									<ox:decorate label="#{msg['configurationStatus.freeMemory']}"
+									<ox:decorate label="#{msgs['configurationStatus.freeMemory']}"
 										leftClass="col-sm-6" rightClass="col-sm-6">
 										<h:outputText styleClass="freeMemoryValueBox"
 											value="#{_stat.freeMemory}" />

@@ -18,7 +18,7 @@
     <rich:popupPanel id="federationDeconstruction" onmaskclick="#{rich:component('federationDeconstruction')}.hide()" keepVisualState="true" autosized="true"
         rendered="#{_trustRelationship.isFederation()}">
         <f:facet name="header">
-            <h:outputText value="#{msg['trustmanager.selectWhichMembers']}" />
+            <h:outputText value="#{msgs['trustmanager.selectWhichMembers']}" />
         </f:facet>
 
         <f:facet name="controls">
@@ -39,8 +39,8 @@
 
             <h:form>
                 <rich:pickList id="federationDeconstructionSelection" value="#{federationDeconstructionAction.managedEntities}"
-                    listsHeigh="150" listWidth="230" sourceCaption="#{msg['trustmanager.availableFederationMembers']}"
-                    targetCaption="#{msg['trustmanager.membersSelectedForIndividualsConfiguration']}">
+                    listsHeigh="150" listWidth="230" sourceCaption="#{msgs['trustmanager.availableFederationMembers']}"
+                    targetCaption="#{msgs['trustmanager.membersSelectedForIndividualsConfiguration']}">
 
                     <f:selectItems value="#{federationDeconstructionAction.bulkEntities}" var="item" itemLabel="#{item}" />
 

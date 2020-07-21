@@ -26,9 +26,9 @@
 	<ui:define name="body">
 		<section class="content-header">
 			<h1 style="color: #333;">
-				#{msg['scope.openIDConnect']} <small> <i
+				#{msgs['scope.openIDConnect']} <small> <i
 					class="fa fa-caret-right" style="color: #333 !important;" />
-					#{msg['scope.addScope']}
+					#{msgs['scope.addScope']}
 				</small>
 			</h1>
 			<ol class="breadcrumb">
@@ -37,7 +37,7 @@
 				</a></li>
 				<li class="organization/configuration"><a
 					href="#{request.contextPath}/scope/scopeInventory.htm">
-						#{msg['scope.scopes']}</a></li>
+						#{msgs['scope.scopes']}</a></li>
 			</ol>
 		</section>
 		<section class="content">
@@ -50,11 +50,11 @@
 						<div id="updateButtons">
 							<b:commandButton action="#{updateScopeAction.save}"
 								styleClass="btn btn-primary updateScopeButtonId" ajax="true" update="@form"
-								value="#{msg['scope.add']}" />
+								value="#{msgs['scope.add']}" />
 							<b:commandButton action="#{updateScopeAction.cancel}"
 								immediate="true" ajax="true" update="@form"
 								style="margin-left:3px;" styleClass="btn btn-primary"
-								value="#{msg['scope.cancel']}" />
+								value="#{msgs['scope.cancel']}" />
 						</div>
 					</ui:define>
 				</ui:decorate>
@@ -62,7 +62,7 @@
 			<ox:selectAttributeDialog
 				acceptMethod="#{updateScopeAction.acceptSelectClaims}"
 				cancelMethod="#{updateScopeAction.cancelSelectClaims}" id="claim"
-				label="#{msg['scope.addClaim']}" queue="scopeQueue"
+				label="#{msgs['scope.addClaim']}" queue="scopeQueue"
 				render="selectedClaimsId"
 				searchMethod="#{updateScopeAction.searchAvailableClaims}"
 				searchPattern="#{updateScopeAction.searchAvailableClaimPattern}"

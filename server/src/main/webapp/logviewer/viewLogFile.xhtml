@@ -25,9 +25,9 @@
 	<ui:define name="body">
 		<section class="content-header">
 			<h1 style="color: #333;">
-				#{msg['logViewer.configuration']} <small> <i
+				#{msgs['logViewer.configuration']} <small> <i
 					class="fa fa-caret-right" style="color: #333 !important;" />
-					#{msg['logViewer.viewLogFile']}
+					#{msgs['logViewer.viewLogFile']}
 				</small>
 			</h1>
 			<ol class="breadcrumb">
@@ -35,13 +35,13 @@
 						class="fa fa-home" />
 				</a></li>
 				<li class="organization/configuration"><a
-					href="#{request.contextPath}/logviewer/viewLogFile.htm">#{msg['logViewer.viewLogFile']}</a>
+					href="#{request.contextPath}/logviewer/viewLogFile.htm">#{msgs['logViewer.viewLogFile']}</a>
 				</li>
 			</ol>
 		</section>
 		<section class="content">
 			<div id="formArea">
-				<b:panel id="panelId" title="#{msg['logViewer.viewLogFile']}" look="primary"
+				<b:panel id="panelId" title="#{msgs['logViewer.viewLogFile']}" look="primary"
 					iconAwesome="fa-file-archive-o" collapsible="false">
 					<h:form id="logViewForm">
 						<f:validateBean>
@@ -51,11 +51,11 @@
 									<div class="nav-tabs-custom" style="margin-bottom: 0px;">
 										<ul class="nav nav-tabs" id="logViewFormtab">
 											<li class="active"><a data-toggle="tab"
-												href="#logged-files">#{msg['logViewer.allowedLogFiles']}</a>
+												href="#logged-files">#{msgs['logViewer.allowedLogFiles']}</a>
 											</li>
-											<li><a data-toggle="tab" href="#config">#{msg['logViewer.configuration']}</a>
+											<li><a data-toggle="tab" href="#config">#{msgs['logViewer.configuration']}</a>
 											</li>
-											<li><a data-toggle="tab" href="#tail">#{msg['logViewer.tailOfLogFile']}</a>
+											<li><a data-toggle="tab" href="#tail">#{msgs['logViewer.tailOfLogFile']}</a>
 											</li>
 										</ul>
 										<div class="tab-content">
@@ -85,7 +85,7 @@
 												<div style="display: inline-block; width: 100% !important;">
 													<h:panelGroup>
 														<ox:decorate
-															label="#{msg['logViewer.displayLastLinesCount']}">
+															label="#{msgs['logViewer.displayLastLinesCount']}">
 															<h:inputText required="true" styleClass="form-control"
 																value="#{viewLogFileAction.displayLastLinesCount}" />
 														</ox:decorate>

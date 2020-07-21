@@ -24,10 +24,10 @@
 		<h:form>
 			<section class="content-header">
 				<h1 style="color: #333;">
-					#{msg['uma.uma']} <small> <i class="fa fa-caret-right"
-						style="color: #333 !important;" /> #{msg['uma.scopes']}
+					#{msgs['uma.uma']} <small> <i class="fa fa-caret-right"
+						style="color: #333 !important;" /> #{msgs['uma.scopes']}
 					</small> <small> <i class="fa fa-caret-right"
-						style="color: #333 !important;" /> #{msg['uma.updateScope']}
+						style="color: #333 !important;" /> #{msgs['uma.updateScope']}
 					</small>
 				</h1>
 				<ol class="breadcrumb">
@@ -35,7 +35,7 @@
 							class="fa fa-home" />
 					</a></li>
 					<li class="organization/configuration"><a
-						href="#{request.contextPath}/uma/scope.htm">#{msg['uma.scopes']}
+						href="#{request.contextPath}/uma/scope.htm">#{msgs['uma.scopes']}
 					</a></li>
 				</ol>
 			</section>
@@ -52,13 +52,13 @@
 							iconAwesome="fa-building">
 							<div style="width: 90%!imprtant;">
 								<ui:param name="_scope" value="#{updateUmaScopeAction.umaScope}" />
-								<ox:decorate id="oxid" label="#{msg['uma.id']}">
+								<ox:decorate id="oxid" label="#{msgs['uma.id']}">
 									<h:inputText styleClass=" form-control oxId"
 										leftClass="col-sm-4" rightClass="col-sm-8" id="oxId"
 										required="true" style="width:100% !important"
 										value="#{_scope.id}" />
 								</ox:decorate>
-								<ox:decorate id="displayName" label="#{msg['uma.displayName']}">
+								<ox:decorate id="displayName" label="#{msgs['uma.displayName']}">
 									<h:inputText styleClass="form-control displayNameId"
 										leftClass="col-sm-4" rightClass="col-sm-8" id="displayNameId"
 										value="#{_scope.displayName}" />
@@ -70,7 +70,7 @@
 								</ox:decorate>
 								<div class="row" style="margin-left: 10px; margin-right: 10px;">
 									<b:panel id="responseTypes"
-										title="#{msg['uma.authorizationPolicy']}" look="primary">
+										title="#{msgs['uma.authorizationPolicy']}" look="primary">
 										<h:panelGroup id="selectedAuthorizationPolicyId">
 											<a4j:repeat rowKeyVar="_authorizationPolicyIdx"
 												value="#{updateUmaScopeAction.authorizationPolicies}"
@@ -96,7 +96,7 @@
 											<a4j:commandButton execute="@this"
 												oncomplete="#{rich:component('authorizationPolicy:selectEntityModalPanel')}.show();"
 												styleClass="btn btn-primary AddAuthorizationButtonClass"
-												value="#{msg['uma.addAuthorizationPolicy']}" />
+												value="#{msgs['uma.addAuthorizationPolicy']}" />
 										</h:panelGroup>
 									</b:panel>
 								</div>
@@ -128,7 +128,7 @@
 										value="Delete" />
 									<h:commandButton action="#{updateUmaScopeAction.cancel}"
 										immediate="true" style="margin-left:3px;"
-										styleClass="btn btn-primary" value="#{msg['uma.cancel']}" />
+										styleClass="btn btn-primary" value="#{msgs['uma.cancel']}" />
 								</h:panelGroup>
 							</div>
 						</b:panel>
@@ -140,7 +140,7 @@
 			acceptMethod="#{updateUmaScopeAction.acceptSelectAuthorizationPolicies}"
 			cancelMethod="#{updateUmaScopeAction.cancelSelectAuthorizationPolicies}"
 			displayNameProperty="entity.description" displaySearchForm="false"
-			id="authorizationPolicy" label="#{msg['uma.addAuthorizationPolicy']}"
+			id="authorizationPolicy" label="#{msgs['uma.addAuthorizationPolicy']}"
 			nameProperty="entity.name" render="selectedAuthorizationPolicyId"
 			searchMethod="#{updateUmaScopeAction.searchAvailableAuthorizationPolicies}"
 			searchResult="#{updateUmaScopeAction.availableAuthorizationPolicies}" />

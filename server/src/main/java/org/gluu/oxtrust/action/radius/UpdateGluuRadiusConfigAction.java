@@ -162,12 +162,12 @@ public class UpdateGluuRadiusConfigAction implements Serializable {
         serverConfiguration.setScopes(scopednlist);
         try {
             gluuRadiusConfigService.updateServerConfiguration(serverConfiguration);
-            facesMessages.add(FacesMessage.SEVERITY_INFO,"#{msg['radius.config.save.success']}");
+            facesMessages.add(FacesMessage.SEVERITY_INFO,"#{msgs['radius.config.save.success']}");
             conversationService.endConversation();
             return OxTrustConstants.RESULT_SUCCESS;
         }catch(Exception e) {
             log.error("Failed to save radius server configuration",e);
-            facesMessages.add(FacesMessage.SEVERITY_ERROR,"#{msg['radius.config.save.error']}");
+            facesMessages.add(FacesMessage.SEVERITY_ERROR,"#{msgs['radius.config.save.error']}");
             return OxTrustConstants.RESULT_FAILURE;
         }
     }

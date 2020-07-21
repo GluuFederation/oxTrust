@@ -527,7 +527,7 @@ public class UpdatePersonAction implements Serializable {
 			}
 
 			if (!userNameIsUniqAtCreationTime(this.person.getUid())) {
-				facesMessages.add(FacesMessage.SEVERITY_ERROR, "#{msg['UpdatePersonAction.faileAddUserUidExist']} %s",
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, "#{msgs['UpdatePersonAction.faileAddUserUidExist']} %s",
 						this.person.getUid());
 				return OxTrustConstants.RESULT_FAILURE;
 			}
@@ -535,7 +535,7 @@ public class UpdatePersonAction implements Serializable {
 					&& !dataSourceTypeService.isLDAP(personService.getDnForPerson(null))) {
 				if (!userEmailIsUniqAtCreationTime(this.person.getAttribute(MAIL))) {
 					facesMessages.add(FacesMessage.SEVERITY_ERROR,
-							"#{msg['UpdatePersonAction.faileUpdateUserMailidExist']} %s",
+							"#{msgs['UpdatePersonAction.faileUpdateUserMailidExist']} %s",
 							this.person.getAttribute(MAIL));
 					return OxTrustConstants.RESULT_FAILURE;
 				}
@@ -543,7 +543,7 @@ public class UpdatePersonAction implements Serializable {
 
 		} else {
 			if (!userNameIsUniqAtEditionTime(this.person.getUid())) {
-				facesMessages.add(FacesMessage.SEVERITY_ERROR, "#{msg['UpdatePersonAction.faileAddUserUidExist']} %s",
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, "#{msgs['UpdatePersonAction.faileAddUserUidExist']} %s",
 						this.person.getUid());
 				return OxTrustConstants.RESULT_FAILURE;
 			}
@@ -551,7 +551,7 @@ public class UpdatePersonAction implements Serializable {
 					&& !dataSourceTypeService.isLDAP(personService.getDnForPerson(null))) {
 				if (!userEmailIsUniqAtEditionTime(this.person.getAttribute(MAIL))) {
 					facesMessages.add(FacesMessage.SEVERITY_ERROR,
-							"#{msg['UpdatePersonAction.faileUpdateUserMailidExist']} %s",
+							"#{msgs['UpdatePersonAction.faileUpdateUserMailidExist']} %s",
 							this.person.getAttribute(MAIL));
 					return OxTrustConstants.RESULT_FAILURE;
 				}
@@ -892,8 +892,8 @@ public class UpdatePersonAction implements Serializable {
 				&& (!pattern.matcher(this.password).matches() || !pattern.matcher(this.confirmPassword).matches())) {
 			((UIInput) comp).setValid(false);
 			FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR,
-					facesMessages.evalResourceAsString("#{msg['password.validation.invalid']}"),
-					facesMessages.evalResourceAsString("#{msg['password.validation.invalid']}"));
+					facesMessages.evalResourceAsString("#{msgs['password.validation.invalid']}"),
+					facesMessages.evalResourceAsString("#{msgs['password.validation.invalid']}"));
 			context.addMessage(comp.getClientId(context), message);
 		}
 	}

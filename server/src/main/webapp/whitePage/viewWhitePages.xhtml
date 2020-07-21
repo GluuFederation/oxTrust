@@ -13,22 +13,22 @@
     <ui:define name="body">
         <section class="content-header">
             <h1 style="color: #333;">
-                #{msg['whitePages.whitePages']}
+                #{msgs['whitePages.whitePages']}
                 <small>
-                    <i class="fa fa-caret-right" style="color: #333 !important;"/>#{msg['whitePages.view']}</small>
+                    <i class="fa fa-caret-right" style="color: #333 !important;"/>#{msgs['whitePages.view']}</small>
             </h1>
             <ol class="breadcrumb">
                 <li>
                     <a href="#{request.contextPath}/home.htm">
-                        <i class="fa fa-home"/>#{msg['whitePages.whitePages']}</a>
+                        <i class="fa fa-home"/>#{msgs['whitePages.whitePages']}</a>
                 </li>
-                <li class="organization/configuration">#{msg['whitePages.view']}</li>
+                <li class="organization/configuration">#{msgs['whitePages.view']}</li>
             </ol>
         </section>
         <section class="content">
             <div id="formArea">
                 <a4j:queue size="1"/>
-                <h:outputText value="#{msg['whitePages.whitePages']}"/>
+                <h:outputText value="#{msgs['whitePages.whitePages']}"/>
 
                 <h:form id="form">
                     <h:panelGrid columnClasses="alignTop, alignTop" columns="2">
@@ -40,15 +40,15 @@
                                                 value="#{whitePagesAction.persons}" var="entry" width="563px">
                             <rich:column id="col_1" label="Photo" sortable="false" width="53px">
                                 <f:facet name="header">
-                                    <h:outputText value="#{msg['whitePages.photo']}"/>
+                                    <h:outputText value="#{msgs['whitePages.photo']}"/>
                                 </f:facet>
                                 <h:graphicImage value="#{whitePagesAction.getPhotoThumbData(entry)}" width="45px"/>
                             </rich:column>
                             <rich:column filterBy="#{entry.getAttribute('cn')}" filterEvent="onkeyup" id="col_2"
-                                         label="#{msg['whitePages.name']}" sortBy="#{entry.getAttribute('cn')}"
+                                         label="#{msgs['whitePages.name']}" sortBy="#{entry.getAttribute('cn')}"
                                          sortable="true" width="170px">
                                 <f:facet name="header">
-                                    <h:outputText value="#{msg['whitePages.name']}"/>
+                                    <h:outputText value="#{msgs['whitePages.name']}"/>
                                 </f:facet>
                                 <h:outputText id="entry_name" value="#{entry.getAttribute('cn')}"/>
                             </rich:column>
@@ -56,17 +56,17 @@
                                          label="E-Mail" sortBy="#{entry.getAttribute('mail')}" sortable="true"
                                          width="170px">
                                 <f:facet name="header">
-                                    <h:outputText value="#{msg['whitePages.email']}"/>
+                                    <h:outputText value="#{msgs['whitePages.email']}"/>
                                 </f:facet>
                                 <h:outputText id="entry_email" rendered="#{whitePagesAction.released(entry, 'mail')}"
                                               value="#{entry.getAttribute('mail')}"/>
                             </rich:column>
                             <rich:column filterBy="#{entry.getAttribute('telephoneNumber')}" filterEvent="onkeyup"
-                                         id="col_4" label="#{msg['whitePages.phoneNumber']}"
+                                         id="col_4" label="#{msgs['whitePages.phoneNumber']}"
                                          sortBy="#{entry.getAttribute('telephoneNumber')}" sortable="true"
                                          width="170px">
                                 <f:facet name="header">
-                                    <h:outputText value="#{msg['whitePages.phoneNumber']}"/>
+                                    <h:outputText value="#{msgs['whitePages.phoneNumber']}"/>
                                 </f:facet>
                                 <h:outputText id="entry_phone"
                                               rendered="#{whitePagesAction.released(entry, 'telephoneNumber')}"
@@ -87,17 +87,17 @@
                                     <h:graphicImage value="#{whitePagesAction.getPhotoThumbData(sel)}" width="275px"/>
                                     <h:panelGrid columns="1">
                                         <h:panelGroup>
-                                            <h:outputText styleClass="name" value="#{msg['whitePages.name']} "/>
+                                            <h:outputText styleClass="name" value="#{msgs['whitePages.name']} "/>
                                             <h:outputText value="#{sel.getAttribute('cn')}"/>
                                         </h:panelGroup>
                                         <h:panelGroup
                                                 rendered="#{(sel.getAttribute('mail') ne null) and whitePagesAction.released(sel, 'mail')}">
-                                            <h:outputText styleClass="name" value="#{msg['whitePages.email']} "/>
+                                            <h:outputText styleClass="name" value="#{msgs['whitePages.email']} "/>
                                             <h:outputText value="#{sel.getAttribute('mail')}"/>
                                         </h:panelGroup>
                                         <h:panelGroup
                                                 rendered="#{(sel.getAttribute('telephoneNumber') ne null) and whitePagesAction.released(sel, 'telephoneNumber')}">
-                                            <h:outputText styleClass="name" value="#{msg['whitePages.phone']} "/>
+                                            <h:outputText styleClass="name" value="#{msgs['whitePages.phone']} "/>
                                             <h:outputText value="#{sel.getAttribute('telephoneNumber')}"/>
                                         </h:panelGroup>
 

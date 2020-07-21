@@ -104,7 +104,7 @@ public class PasswordReminderAction implements Serializable {
 		if (OxTrustConstants.RESULT_FAILURE.equals(outcome)) {
 			if (passwordResetIsEnable) {
 				facesMessages.add(FacesMessage.SEVERITY_ERROR,
-						facesMessages.evalResourceAsString("#{msg['person.passwordreset.letterNotSent']}"));
+						facesMessages.evalResourceAsString("#{msgs['person.passwordreset.letterNotSent']}"));
 			}
 		}
 		this.email = null;
@@ -140,10 +140,10 @@ public class PasswordReminderAction implements Serializable {
 				rendererParameters.setParameter("resetLink", appConfiguration.getApplicationUrl()
 						+ httpServletRequest.getContextPath() + "/resetPassword.htm?guid=" + request.getOxGuid());
 
-				String subj = facesMessages.evalResourceAsString("#{msg['mail.reset.found.message.subject']}");
+				String subj = facesMessages.evalResourceAsString("#{msgs['mail.reset.found.message.subject']}");
 				String messagePlain = facesMessages
-						.evalResourceAsString("#{msg['mail.reset.found.message.plain.body']}");
-				String messageHtml = facesMessages.evalResourceAsString("#{msg['mail.reset.found.message.html.body']}");
+						.evalResourceAsString("#{msgs['mail.reset.found.message.plain.body']}");
+				String messageHtml = facesMessages.evalResourceAsString("#{msgs['mail.reset.found.message.html.body']}");
 				mailService.sendMail(email, null, subj, messagePlain, messageHtml);
 				passwordResetService.addPasswordResetRequest(request);
 				try {
@@ -154,7 +154,7 @@ public class PasswordReminderAction implements Serializable {
 				}
 			}
 			facesMessages.add(FacesMessage.SEVERITY_INFO,
-					facesMessages.evalResourceAsString("#{msg['resetPasswordSuccess.pleaseCheckYourEmail']}"));
+					facesMessages.evalResourceAsString("#{msgs['resetPasswordSuccess.pleaseCheckYourEmail']}"));
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
 		return OxTrustConstants.RESULT_FAILURE;
@@ -171,13 +171,13 @@ public class PasswordReminderAction implements Serializable {
 				valid = recaptchaService.verifyRecaptchaResponse();
 				if (!valid) {
 					facesMessages.add(FacesMessage.SEVERITY_ERROR, facesMessages
-							.evalResourceAsString("#{msg['person.passwordreset.catch.checkInputAndCaptcha']}"));
+							.evalResourceAsString("#{msgs['person.passwordreset.catch.checkInputAndCaptcha']}"));
 				}
 
 			}
 		} else {
 			facesMessages.add(FacesMessage.SEVERITY_ERROR,
-					facesMessages.evalResourceAsString("#{msg['person.passwordreset.notActivate']}"));
+					facesMessages.evalResourceAsString("#{msgs['person.passwordreset.notActivate']}"));
 		}
 		return valid;
 	}

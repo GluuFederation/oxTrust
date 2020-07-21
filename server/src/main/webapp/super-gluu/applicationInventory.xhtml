@@ -31,7 +31,7 @@
 							styleClass="searchParameters"
 							value="#{pushApplicationInventoryAction.searchPattern}" />
 						<h:commandButton action="#{pushApplicationInventoryAction.search}"
-							value="#{msg['applicationInventory.search']}" />
+							value="#{msgs['applicationInventory.search']}" />
 					</ox:decorate>
 				</h:form>
 
@@ -42,7 +42,7 @@
 						rendered="#{pushApplicationInventoryAction.pushApplicationList.size() eq 0}">
 						<p:spacer height="30" />
 						<h:outputText
-							value="#{msg['applicationInventory.noSearchResultFound']}" />
+							value="#{msgs['applicationInventory.noSearchResultFound']}" />
 					</ui:fragment>
 
 					<p:dataTable id="applicationsListId"
@@ -55,15 +55,15 @@
 							<h:outputText value="#{_application.name}" />
 						</p:column>
 						<p:column sortBy="#{_application.displayName}">
-							<f:facet name="header">#{msg['applicationInventory.displayName']}</f:facet>
+							<f:facet name="header">#{msgs['applicationInventory.displayName']}</f:facet>
 							<h:outputText value="#{_application.displayName}" />
 						</p:column>
 						<p:column sortBy="#{_application.id}">
-							<f:facet name="header">#{msg['applicationInventory.id']}</f:facet>
+							<f:facet name="header">#{msgs['applicationInventory.id']}</f:facet>
 							<h:outputText value="#{_application.id}" />
 						</p:column>
 						<p:column>
-							<f:facet name="header">#{msg['applicationInventory.platforms']}</f:facet>
+							<f:facet name="header">#{msgs['applicationInventory.platforms']}</f:facet>
 							<ox:stringList
 								value="#{pushApplicationInventoryAction.getPlatforms(_application)}" />
 						</p:column>

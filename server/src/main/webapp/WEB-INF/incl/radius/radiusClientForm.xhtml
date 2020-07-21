@@ -17,27 +17,27 @@
                     <div class="row">
                         <div class="col-sm-6 col-lg-6">
                             <ox:decorate id="inum" rendered="#{not _new}"
-                                label="#{msg['radius.client.inum']}"
+                                label="#{msgs['radius.client.inum']}"
                                 leftClass="col-sm-4" rightClass="col-sm-8">
                                 <h:outputText styleClass="form-control rounded" value="#{_client.inum}"/>
                             </ox:decorate>
 
-                            <ox:decorate id="name" label="#{msg['radius.client.name']}"
+                            <ox:decorate id="name" label="#{msgs['radius.client.name']}"
                                 leftClass="col-sm-4" rightClass="col-sm-8">
                                 <h:inputText value="#{_client.name}" required="true" styleClass="form-control rounded"/>
                             </ox:decorate>
 
-                            <ox:decorate id="ipaddress" label="#{msg['radius.client.ipaddress']}"
+                            <ox:decorate id="ipaddress" label="#{msgs['radius.client.ipaddress']}"
                                 leftClass="col-sm-4" rightClass="col-sm-8">
                                 <h:inputText value="#{_client.ipAddress}" required="true" styleClass="form-control rounded"/>
                             </ox:decorate>
 
-                            <ox:decorate id="secret" label="#{msg['radius.client.secret']}"
+                            <ox:decorate id="secret" label="#{msgs['radius.client.secret']}"
                                 leftClass="col-sm-4" rightClass="col-sm-8">
                                 <h:inputSecret value="#{_client.secret}" required="#{_new}" styleClass="form-control rounded"/>
                             </ox:decorate>
 
-                            <ox:decorate id="priority" label="#{msg['radius.client.priority']}"
+                            <ox:decorate id="priority" label="#{msgs['radius.client.priority']}"
                                 leftClass="col-sm-4" rightClass="col-sm-2">
                                 <h:inputText value="#{_client.priority}" styleClass="form-control rounded"
                                     required="true" p:type="number" p:min="1" p:max="100"/>

@@ -11,12 +11,12 @@
 	xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext">
 	<div class="row"
 		style="padding-left: 5px; padding-right: 5px; max-height: 300px; overflow-x: scroll;">
-		<h4 style="text-align: center;">#{msg['trustmanager.saml2SSOProfileHelp']}</h4>
-		<h6 style="text-align: center;">#{msg['trustmanager.thisProfileConfiguration']}</h6>
+		<h4 style="text-align: center;">#{msgs['trustmanager.saml2SSOProfileHelp']}</h4>
+		<h6 style="text-align: center;">#{msgs['trustmanager.thisProfileConfiguration']}</h6>
 		<br></br>
 		<div class="col-sm-12 col-md-12 col-lg-12">
 			<ox:decorate id="assertionLifetimeCheckBox"
-				label="#{msg['trustmanager.assertionLifetime']}"
+				label="#{msgs['trustmanager.assertionLifetime']}"
 				leftClass="col-sm-6" rightClass="col-sm-6">
 				<b:touchSpin id="assertionLifetimeCheckBoxValue" col-md="12"
 					styleClass="rounded assertionLifetimeCheckBoxValue"
@@ -24,67 +24,67 @@
 					step="300000" />
 			</ox:decorate>
 			<ox:decorate id="signResponseCheckBox"
-				label="#{msg['trustmanager.signResponses']}" leftClass="col-sm-6"
+				label="#{msgs['trustmanager.signResponses']}" leftClass="col-sm-6"
 				rightClass="col-sm-6">
 				<b:selectOneMenu small-screen="12"
 					value="#{_ssoProfile.signResponses}">
-					<f:selectItem itemLabel="#{msg['trustmanager.never']}"
+					<f:selectItem itemLabel="#{msgs['trustmanager.never']}"
 						itemValue="never" />
-					<f:selectItem itemLabel="#{msg['trustmanager.conditional']}"
+					<f:selectItem itemLabel="#{msgs['trustmanager.conditional']}"
 						itemValue="conditional" />
-					<f:selectItem itemLabel="#{msg['trustmanager.always']}"
+					<f:selectItem itemLabel="#{msgs['trustmanager.always']}"
 						itemValue="always" />
 				</b:selectOneMenu>
 			</ox:decorate>
 			<ox:decorate id="signAssertionCheckBox"
-				label="#{msg['trustmanager.signAssertions']}" leftClass="col-sm-6"
+				label="#{msgs['trustmanager.signAssertions']}" leftClass="col-sm-6"
 				rightClass="col-sm-6">
 				<b:selectOneMenu small-screen="12"
 					value="#{_ssoProfile.signAssertions}">
-					<f:selectItem itemLabel="#{msg['trustmanager.never']}"
+					<f:selectItem itemLabel="#{msgs['trustmanager.never']}"
 						itemValue="never" />
-					<f:selectItem itemLabel="#{msg['trustmanager.conditional']}"
+					<f:selectItem itemLabel="#{msgs['trustmanager.conditional']}"
 						itemValue="conditional" />
-					<f:selectItem itemLabel="#{msg['trustmanager.always']}"
+					<f:selectItem itemLabel="#{msgs['trustmanager.always']}"
 						itemValue="always" />
 				</b:selectOneMenu>
 			</ox:decorate>
 			<ox:decorate id="signRequestCheckBox"
-				label="#{msg['trustmanager.signRequests']}" leftClass="col-sm-6"
+				label="#{msgs['trustmanager.signRequests']}" leftClass="col-sm-6"
 				rightClass="col-sm-6">
 				<b:selectOneMenu small-screen="12"
 					value="#{_ssoProfile.signRequests}">
-					<f:selectItem itemLabel="#{msg['trustmanager.never']}"
+					<f:selectItem itemLabel="#{msgs['trustmanager.never']}"
 						itemValue="never" />
-					<f:selectItem itemLabel="#{msg['trustmanager.conditional']}"
+					<f:selectItem itemLabel="#{msgs['trustmanager.conditional']}"
 						itemValue="conditional" />
-					<f:selectItem itemLabel="#{msg['trustmanager.always']}"
+					<f:selectItem itemLabel="#{msgs['trustmanager.always']}"
 						itemValue="always" />
 				</b:selectOneMenu>
 			</ox:decorate>
 			<ox:decorate id="encryptAssertionsCheckBox"
-				label="#{msg['trustmanager.encryptAssertions']}"
+				label="#{msgs['trustmanager.encryptAssertions']}"
 				leftClass="col-sm-6" rightClass="col-sm-6">
 				<b:selectOneMenu small-screen="12"
 					value="#{_ssoProfile.encryptAssertions}">
-					<f:selectItem itemLabel="#{msg['trustmanager.never']}"
+					<f:selectItem itemLabel="#{msgs['trustmanager.never']}"
 						itemValue="never" />
-					<f:selectItem itemLabel="#{msg['trustmanager.conditional']}"
+					<f:selectItem itemLabel="#{msgs['trustmanager.conditional']}"
 						itemValue="conditional" />
-					<f:selectItem itemLabel="#{msg['trustmanager.always']}"
+					<f:selectItem itemLabel="#{msgs['trustmanager.always']}"
 						itemValue="always" />
 				</b:selectOneMenu>
 			</ox:decorate>
 			<ox:decorate id="encryptNamedIdCheckBox"
-				label="#{msg['trustmanager.encryptNameIds']}" leftClass="col-sm-6"
+				label="#{msgs['trustmanager.encryptNameIds']}" leftClass="col-sm-6"
 				rightClass="col-sm-6">
 				<b:selectOneMenu small-screen="12"
 					value="#{_ssoProfile.encryptNameIds}">
-					<f:selectItem itemLabel="#{msg['trustmanager.never']}"
+					<f:selectItem itemLabel="#{msgs['trustmanager.never']}"
 						itemValue="never" />
-					<f:selectItem itemLabel="#{msg['trustmanager.conditional']}"
+					<f:selectItem itemLabel="#{msgs['trustmanager.conditional']}"
 						itemValue="conditional" />
-					<f:selectItem itemLabel="#{msg['trustmanager.always']}"
+					<f:selectItem itemLabel="#{msgs['trustmanager.always']}"
 						itemValue="always" />
 				</b:selectOneMenu>
 			</ox:decorate>
@@ -102,7 +102,7 @@
 				<div class="col-sm-6 col-md-6 col-lg-6">
 					<h:outputText
 						style="color:black;font-weight: bold;font-size: 14px;"
-						value="#{msg['trustmanager.includeAttributeStatement']}" />
+						value="#{msgs['trustmanager.includeAttributeStatement']}" />
 				</div>
 				<div class="col-sm-6 col-md-6 col-lg-6">
 					<h:selectBooleanCheckbox style="float:right;"

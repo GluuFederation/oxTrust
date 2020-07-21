@@ -34,7 +34,7 @@
 					</div>
 				</h:form>
 				<h1>
-					<h:outputFormat value="#{msg['home.welcome']}">
+					<h:outputFormat value="#{msgs['home.welcome']}">
 						<f:param value="#{configurationService.getVersion()}" />
 					</h:outputFormat>
 				</h1>
@@ -54,7 +54,7 @@
 								<ui:param name="_configuration"
 									value="#{homeAction.getConfiguration()}" />
 								<ui:param name="_stat" value="#{homeAction.getServerStat()}" />
-								<span class="info-box-text">#{msg['home.freeMemory']}</span>
+								<span class="info-box-text">#{msgs['home.freeMemory']}</span>
 								<h:outputText styleClass="info-box-number"
 									value="#{_stat.freeMemory}" />
 								<span> </span>
@@ -67,7 +67,7 @@
 								style="line-height: 2em !important;" />
 							</span>
 							<div class="info-box-content">
-								<span class="info-box-text">#{msg['home.freeDiskSpace']}</span>
+								<span class="info-box-text">#{msgs['home.freeDiskSpace']}</span>
 								<h:outputText styleClass="info-box-number"
 									value="#{_stat.freeDiskSpace}" />
 							</div>
@@ -79,7 +79,7 @@
 								class="fa fa-power-off" style="line-height: 2em !important;" />
 							</span>
 							<div class="info-box-content">
-								<span class="info-box-text">#{msg['home.systemUptime']}</span>
+								<span class="info-box-text">#{msgs['home.systemUptime']}</span>
 								<h:outputText styleClass="info-box-number" value="#{_stat.systemUptime}" />
 							</div>
 						</div>
@@ -90,7 +90,7 @@
 								class="fa  fa-cloud" style="line-height: 2em !important;" />
 							</span>
 							<div class="info-box-content">
-								<span class="info-box-text">#{msg['home.ipAddress']}</span>
+								<span class="info-box-text">#{msgs['home.ipAddress']}</span>
 								<h:outputText styleClass="info-box-number"
 									value="#{_stat.ipAddress}" />
 							</div>
@@ -105,8 +105,8 @@
 					<div class="col-md-12">
 						<div class="box">
 							<div class="box-header with-border">
-								<h5 class="box-title">#{msg['home.authenticationRequests']}</h5>
-								<h3 class="description-header text-center">#{msg['home.lastDaysStatistics']}</h3>
+								<h5 class="box-title">#{msgs['home.authenticationRequests']}</h5>
+								<h3 class="description-header text-center">#{msgs['home.lastDaysStatistics']}</h3>
 								<div class="box-tools pull-right">
 									<button class="btn btn-box-tool" data-widget="collapse">
 										<i class="fa fa-minus" />
@@ -117,11 +117,11 @@
 											<i class="fa fa-wrench" />
 										</button>
 										<ul class="dropdown-menu" role="menu">
-											<li><a href="#">#{msg['home.action']}</a></li>
-											<li><a href="#">#{msg['home.anotherAction']}</a></li>
-											<li><a href="#">#{msg['home.somethingElseHere']}</a></li>
+											<li><a href="#">#{msgs['home.action']}</a></li>
+											<li><a href="#">#{msgs['home.anotherAction']}</a></li>
+											<li><a href="#">#{msgs['home.somethingElseHere']}</a></li>
 											<li class="divider" />
-											<li><a href="#">#{msg['home.separatedLink']}</a></li>
+											<li><a href="#">#{msgs['home.separatedLink']}</a></li>
 										</ul>
 									</div>
 									<button class="btn btn-box-tool" data-widget="remove">
@@ -152,25 +152,25 @@
 									<div class="col-sm-3 col-xs-6">
 										<div class="description-block border-right">
 											<h5 class="description-header">#{homeAction.authenticationChartDto.yearlyRequest}</h5>
-											<span class="description-text">#{msg['home.totalYearlyRequests']}</span>
+											<span class="description-text">#{msgs['home.totalYearlyRequests']}</span>
 										</div>
 									</div>
 									<div class="col-sm-3 col-xs-6">
 										<div class="description-block border-right">
 											<h5 class="description-header">#{homeAction.authenticationChartDto.totalRequest}</h5>
-											<span class="description-text">#{msg['home.totalWeeklyRequests']}</span>
+											<span class="description-text">#{msgs['home.totalWeeklyRequests']}</span>
 										</div>
 									</div>
 									<div class="col-sm-3 col-xs-6">
 										<div class="description-block border-right">
 											<h5 class="description-header">#{homeAction.authenticationChartDto.totalSuccess}</h5>
-											<span class="description-text">#{msg['home.totalSuccessfulLogin']}</span>
+											<span class="description-text">#{msgs['home.totalSuccessfulLogin']}</span>
 										</div>
 									</div>
 									<div class="col-sm-3 col-xs-6">
 										<div class="description-block border-right">
 											<h5 class="description-header">#{homeAction.authenticationChartDto.totalFailure}</h5>
-											<span class="description-text">#{msg['home.totalFailedLogin']}</span>
+											<span class="description-text">#{msgs['home.totalFailedLogin']}</span>
 										</div>
 									</div>
 								</div>

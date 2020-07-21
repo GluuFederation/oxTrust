@@ -124,7 +124,7 @@ public class ManagePersonAuthenticationAction
 
 		if (OxTrustConstants.RESULT_FAILURE.equals(outcome)) {
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, facesMessages
-					.evalResourceAsString("#{msg['configuration.manageAuthentication.failToPrepareUpdate']}"));
+					.evalResourceAsString("#{msgs['configuration.manageAuthentication.failToPrepareUpdate']}"));
 			conversationService.endConversation();
 		}
 
@@ -199,7 +199,7 @@ public class ManagePersonAuthenticationAction
 
 		reset();
 		facesMessages.add(FacesMessage.SEVERITY_INFO,
-				facesMessages.evalResourceAsString("#{msg['configuration.manageAuthentication.updateSucceed']}"));
+				facesMessages.evalResourceAsString("#{msgs['configuration.manageAuthentication.updateSucceed']}"));
 		conversationService.endConversation();
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
@@ -218,7 +218,7 @@ public class ManagePersonAuthenticationAction
 
 	public String cancel() {
 		facesMessages.add(FacesMessage.SEVERITY_INFO,
-				facesMessages.evalResourceAsString("#{msg['configuration.manageAuthentication.updateFailed']}"));
+				facesMessages.evalResourceAsString("#{msgs['configuration.manageAuthentication.updateFailed']}"));
 		conversationService.endConversation();
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
@@ -296,7 +296,7 @@ public class ManagePersonAuthenticationAction
 				connectionProvider.closeConnectionPool();
 
 				facesMessages.add(FacesMessage.SEVERITY_INFO, facesMessages
-						.evalResourceAsString("#{msg['configuration.manageAuthentication.ldap.testSucceed']}"));
+						.evalResourceAsString("#{msgs['configuration.manageAuthentication.ldap.testSucceed']}"));
 
 				return OxTrustConstants.RESULT_SUCCESS;
 
@@ -309,7 +309,7 @@ public class ManagePersonAuthenticationAction
 		}
 
 		facesMessages.add(FacesMessage.SEVERITY_ERROR,
-				facesMessages.evalResourceAsString("#{msg['configuration.manageAuthentication.ldap.testFailed']}"));
+				facesMessages.evalResourceAsString("#{msgs['configuration.manageAuthentication.ldap.testFailed']}"));
 
 		return OxTrustConstants.RESULT_FAILURE;
 	}

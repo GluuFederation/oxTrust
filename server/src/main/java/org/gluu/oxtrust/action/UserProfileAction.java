@@ -130,7 +130,7 @@ public class UserProfileAction implements Serializable {
 					&& !dataSourceTypeService.isLDAP(personService.getDnForPerson(null))) {
 				if (!userEmailIsUniqAtEditionTime(this.person.getAttribute("mail"))) {
 					facesMessages.add(FacesMessage.SEVERITY_ERROR,
-							"#{msg['UpdatePersonAction.faileUpdateUserMailidExist']} %s", person.getMail());
+							"#{msgs['UpdatePersonAction.faileUpdateUserMailidExist']} %s", person.getMail());
 					return OxTrustConstants.RESULT_FAILURE;
 				}
 			}

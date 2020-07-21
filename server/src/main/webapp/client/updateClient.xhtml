@@ -38,9 +38,9 @@
         </h:outputStylesheet>
 		<section class="content-header">
 			<h1 style="color: #333;">
-				#{msg['client.openIDConnect']} <small> <i
+				#{msgs['client.openIDConnect']} <small> <i
 					class="fa fa-caret-right" style="color: #333 !important;" />
-					#{msg['client.clients']}
+					#{msgs['client.clients']}
 				</small>
 			</h1>
 			<ol class="breadcrumb">
@@ -49,7 +49,7 @@
 				</a></li>
 				<li class="organization/configuration"><a
 					href="#{request.contextPath}/client/clientInventory.htm">
-						#{msg['client.clients']}</a></li>
+						#{msgs['client.clients']}</a></li>
 			</ol>
 		</section>
 		<div id="formArea">
@@ -62,10 +62,10 @@
 					<div id="updateButtons">
 						<b:commandButton action="#{updateClientAction.save}" ajax="true"
 							update="@form" styleClass="btn btn-primary saveButtonClass"
-							value="#{msg['client.update']}" />
+							value="#{msgs['client.update']}" />
 						<b:commandButton action="#{updateClientAction.cancel}" ajax="true"
 							update="@form" immediate="true" style="margin-left:3px;"
-							styleClass="btn btn-primary" value="#{msg['client.cancel']}" />
+							styleClass="btn btn-primary" value="#{msgs['client.cancel']}" />
 					</div>
 				</ui:define>
 			</ui:decorate>
@@ -78,8 +78,8 @@
 				acceptMethod="#{updateClientAction.acceptSelectLoginUri}"
 				cancelMethod="#{updateClientAction.cancelSelectLoginUri}"
 				dialogWidth="600" id="loginRedirect"
-				inputLabel="#{msg['client.loginRedirectURI']}" inputWidth="80"
-				label="#{msg['client.selectLoginRedirectURI']}" maxLength="256"
+				inputLabel="#{msgs['client.loginRedirectURI']}" inputWidth="80"
+				label="#{msgs['client.selectLoginRedirectURI']}" maxLength="256"
 				queue="clientQueue" render="selectedLoginURIsId"
 				text="#{updateClientAction.availableLoginUri}" textId="loginTextId" />
 
@@ -87,8 +87,8 @@
 				acceptMethod="#{updateClientAction.acceptSelectLogoutUri}"
 				cancelMethod="#{updateClientAction.cancelSelectLogoutUri}"
 				dialogWidth="600" id="logoutRedirect"
-				inputLabel="#{msg['client.logoutRedirectURI']}" inputWidth="80"
-				label="#{msg['client.selectLogoutRedirectURI']}" maxLength="256"
+				inputLabel="#{msgs['client.logoutRedirectURI']}" inputWidth="80"
+				label="#{msgs['client.selectLogoutRedirectURI']}" maxLength="256"
 				queue="clientQueue" render="selectedLogoutURIsId"
 				text="#{updateClientAction.availableLogoutUri}"
 				textId="logoutTextId" />
@@ -106,7 +106,7 @@
 				acceptMethod="#{updateClientAction.acceptSelectScopes()}"
 				cancelMethod="#{updateClientAction.cancelSelectScopes()}"
 				displayNameProperty="entity.description" displaySearchForm="false"
-				id="scope" label="#{msg['client.scopes']}" nameProperty="entity.id"
+				id="scope" label="#{msgs['client.scopes']}" nameProperty="entity.id"
 				render="selectedScopesId"
 				searchMethod="#{updateClientAction.searchAvailableScopes}"
 				searchResult="#{updateClientAction.availableScopes}" />
@@ -115,7 +115,7 @@
 				acceptMethod="#{updateClientAction.acceptSelectResponseTypes}"
 				cancelMethod="#{updateClientAction.cancelSelectResponseTypes}"
 				displayNameProperty="entity.value" displaySearchForm="false"
-				id="responseType" label="#{msg['client.addResponseType']}"
+				id="responseType" label="#{msgs['client.addResponseType']}"
 				nameProperty="entity.value" render="selectedResponseTypesId"
 				searchMethod="#{updateClientAction.searchAvailableResponseTypes}"
 				searchResult="#{updateClientAction.availableResponseTypes}" />
@@ -133,7 +133,7 @@
 				acceptMethod="#{updateClientAction.acceptSelectCustomScripts}"
 				cancelMethod="#{updateClientAction.cancelSelectCustomScripts}"
 				displayNameProperty="entity.description" displaySearchForm="false"
-				id="defaultAcr" label="#{msg['client.defaultAcrValue']}"
+				id="defaultAcr" label="#{msgs['client.defaultAcrValue']}"
 				nameProperty="entity.name" render="selectedCustomScriptAcrsId"
 				searchMethod="#{updateClientAction.searchAvailableCustomScripts}"
 				searchResult="#{updateClientAction.availableCustomScripts}" />
@@ -142,7 +142,7 @@
 				acceptMethod="#{updateClientAction.acceptSelectGrantTypes}"
 				cancelMethod="#{updateClientAction.cancelSelectGrantTypes}"
 				displayNameProperty="entity.value" displaySearchForm="false"
-				id="grantType" label="#{msg['client.addGrantType']}"
+				id="grantType" label="#{msgs['client.addGrantType']}"
 				nameProperty="entity.value" render="selectedGrantTypesId"
 				searchMethod="#{updateClientAction.searchAvailableGrantTypes}"
 				searchResult="#{updateClientAction.availableGrantTypes}" />
@@ -151,7 +151,7 @@
 				acceptMethod="#{updateClientAction.acceptSelectContact()}"
 				cancelMethod="#{updateClientAction.cancelSelectContact()}"
 				dialogWidth="600" id="contact"
-				inputLabel="#{msg['client.contactEmailAddress']}" inputWidth="80"
+				inputLabel="#{msgs['client.contactEmailAddress']}" inputWidth="80"
 				label="Select Contact" maxLength="256" queue="clientQueue"
 				render="selectedContactsId"
 				text="#{updateClientAction.availableContact}" textId="contactTextId" />
@@ -160,7 +160,7 @@
 				acceptMethod="#{updateClientAction.acceptSelectRequestUri()}"
 				cancelMethod="#{updateClientAction.cancelSelectRequestUri()}"
 				dialogWidth="600" id="requestUri"
-				inputLabel="#{msg['client.requestURI']}" inputWidth="80"
+				inputLabel="#{msgs['client.requestURI']}" inputWidth="80"
 				label="Select Request URI" maxLength="256" queue="clientQueue"
 				render="selectedRequestUrisId"
 				text="#{updateClientAction.availableRequestUri}"
@@ -170,8 +170,8 @@
 				acceptMethod="#{updateClientAction.acceptSelectAuthorizedOrigin()}"
 				cancelMethod="#{updateClientAction.cancelSelectAuthorizedOrigin()}"
 				dialogWidth="600" id="authorizedOrigin"
-				inputLabel="#{msg['client.authorizedOrigin']}" inputWidth="80"
-				label="#{msg['client.selectAuthorizedOrigin']}" maxLength="256"
+				inputLabel="#{msgs['client.authorizedOrigin']}" inputWidth="80"
+				label="#{msgs['client.selectAuthorizedOrigin']}" maxLength="256"
 				queue="clientQueue" render="selectedAuthorizedOriginsId"
 				text="#{updateClientAction.availableAuthorizedOrigin}"
 				textId="authorizedOriginTextId" />
@@ -180,14 +180,14 @@
 				acceptMethod="#{updateClientAction.acceptSelectClientLogoutUri()}"
 				cancelMethod="#{updateClientAction.cancelClientLogoutUri()}"
 				dialogWidth="600" id="clientLogoutUri"
-				inputLabel="#{msg['client.logoutURI']}" inputWidth="80"
+				inputLabel="#{msgs['client.logoutURI']}" inputWidth="80"
 				label="Logout URI" maxLength="256" queue="clientQueue"
 				render="selectedClientUrisId"
 				text="#{updateClientAction.availableClientlogoutUri}"
 				textId="clientLogoutTextId" />
 
 			<ox:changeClientPasswordDialog id="clientPassword"
-				label="#{msg['client.changeClientSecret']}"
+				label="#{msgs['client.changeClientSecret']}"
 				password="#{clientPasswordAction.newPassword}"
 				setPasswordMethod="#{clientPasswordAction.update}" />
 
@@ -199,8 +199,8 @@
 				acceptMethod="#{updateClientAction.acceptSelectClaimRedirectUri()}"
 				cancelMethod="#{updateClientAction.cancelClaimRedirectUri()}"
 				dialogWidth="600" id="claimRedirectUri"
-				inputLabel="#{msg['client.claimRedirect']}" inputWidth="80"
-				label="#{msg['client.claimRedirect']}" maxLength="256"
+				inputLabel="#{msgs['client.claimRedirect']}" inputWidth="80"
+				label="#{msgs['client.claimRedirect']}" maxLength="256"
 				queue="clientQueue" render="selectedClaimRedirectURIIsId"
 				text="#{updateClientAction.availableClaimRedirectUri}"
 				textId="claimRedirectTextId" />

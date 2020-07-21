@@ -13,12 +13,12 @@
 	<ui:define name="body">
 		<section class="content-header">
 			<h1 style="color: #333;">
-				#{msg['radius.title']}
-				<small><i class="fa fa-caret-right" style="color: #333 !important;"/>#{msg['radius.client.add.title']}</small>
+				#{msgs['radius.title']}
+				<small><i class="fa fa-caret-right" style="color: #333 !important;"/>#{msgs['radius.client.add.title']}</small>
 			</h1>
 			<ol class="breadcrumb">
 				<li><a href="#{request.contextPath}/home.htm"><i class="fa fa-home"/></a></li>
-				<li class="organization/configuration"><a href="#">#{msg['radius.client.add.title']}</a></li>
+				<li class="organization/configuration"><a href="#">#{msgs['radius.client.add.title']}</a></li>
 			</ol>
 		</section>
 		<section class="content">
@@ -26,14 +26,14 @@
 				<ui:decorate template="/WEB-INF/incl/radius/radiusClientForm.xhtml">
 					<ui:param name="_client" value="#{addRadiusClientAction.client}"/>
 					<ui:param name="_new" value="true"/>
-					<ui:param name="_paneltitle" value="#{msg['radius.client.add.title']}"/>
+					<ui:param name="_paneltitle" value="#{msgs['radius.client.add.title']}"/>
 					<ui:define name="control-buttons">
 						<div>
 							<h:commandButton action="#{addRadiusClientAction.save}"
-								styleClass="btn btn-primary" value="#{msg['radius.client.add.button']}"/>
+								styleClass="btn btn-primary" value="#{msgs['radius.client.add.button']}"/>
 							<h:commandButton action="#{addRadiusClientAction.cancel}"
 								style="margin-left: 3px;" immediate="true"
-								styleClass="btn btn-primary" value="#{msg['radius.client.cancel.button']}"/>
+								styleClass="btn btn-primary" value="#{msgs['radius.client.cancel.button']}"/>
 						</div>
 					</ui:define>
 				</ui:decorate>

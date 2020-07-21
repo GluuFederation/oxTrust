@@ -22,19 +22,19 @@
 
 	<section class="content-header">
 	<h1 style="color: #333;">
-		#{msg['sectorIdentifier.openIDConnect']} <small> <i
+		#{msgs['sectorIdentifier.openIDConnect']} <small> <i
 			class="fa fa-caret-right" style="color: #333 !important;"></i>
-			#{msg['sectorIdentifier.manageSectorIdentifiers']}
+			#{msgs['sectorIdentifier.manageSectorIdentifiers']}
 		</small> <small> <i class="fa fa-caret-right"
 			style="color: #333 !important;"></i>
-			#{msg['sectorIdentifier.addSectorIdentifiers']}
+			#{msgs['sectorIdentifier.addSectorIdentifiers']}
 		</small>
 	</h1>
 	<ol class="breadcrumb">
 		<li><a href="#{request.contextPath}"><i class="fa fa-home"></i></a>
 		</li>
 		<li class="organization/configuration"><a
-			href="#{request.contextPath}/sectoridentifier/sectorIdentifierInventory.htm">#{msg['sectorIdentifier.manageSectorIdentifiers']}</a>
+			href="#{request.contextPath}/sectoridentifier/sectorIdentifierInventory.htm">#{msgs['sectorIdentifier.manageSectorIdentifiers']}</a>
 		</li>
 	</ol>
 	</section>
@@ -47,7 +47,7 @@
 							<h:panelGrid columns="1" width="100%" border="0" cellpadding="0"
 								cellspacing="0">
 								<ox:decorate id="inu" rendered="#{not _new}"
-									label="#{msg['sectorIdentifier.id']}">
+									label="#{msgs['sectorIdentifier.id']}">
 									<h:outputText
 										value="#{_sectorIdentifierAction.sectorIdentifier.id}" />
 								</ox:decorate>
@@ -59,7 +59,7 @@
 										value="#{_sectorIdentifierAction.sectorIdentifier.description}" />
 								</ox:decorate>
 								<ox:decorate id="url" rendered="#{not _new}"
-									label="#{msg['sectorIdentifier.url']}">
+									label="#{msgs['sectorIdentifier.url']}">
 									<h:outputLink
 										value="#{_sectorIdentifierAction.sectorIdentifierUrl}"
 										target="_blank">
@@ -71,7 +71,7 @@
 								</ox:decorate>
 								<div class="row" style="margin-left: 10px; margin-right: 10px;">
 									<b:panel id="redirectLoginUrls"
-										title="#{msg['sectorIdentifier.redirectLoginURIs']}"
+										title="#{msgs['sectorIdentifier.redirectLoginURIs']}"
 										look="primary" iconAwesome="fa-forward">
 										<h:panelGroup id="selectedLoginURIsId">
 											<h:panelGroup columns="1" width="100%" border="0"
@@ -96,7 +96,7 @@
 												<p:spacer height="16" />
 											</h:panelGroup>
 											<a4j:commandButton styleClass="btn btn-primary AddLoginUrl"
-												value="#{msg['sectorIdentifier.addLoginUri']}"
+												value="#{msgs['sectorIdentifier.addLoginUri']}"
 												oncomplete="#{rich:component('loginRedirect:inputText')}.show();"
 												execute="@this" eventsQueue="sectorIdentifierQueue" />
 										</h:panelGroup>
@@ -104,7 +104,7 @@
 								</div>
 								<div class="row" style="margin-left: 10px; margin-right: 10px;">
 									<b:panel id="clients" iconAwesome="fa-tasks"
-										title="#{msg['sectorIdentifier.clients']}" look="primary">
+										title="#{msgs['sectorIdentifier.clients']}" look="primary">
 										<h:panelGroup id="selectedClientsId">
 											<div class="col-sm-12 prop">
 												<a4j:repeat
@@ -130,7 +130,7 @@
 											</div>
 										</h:panelGroup>
 										<a4j:commandButton styleClass="btn btn-primary AddClient"
-											value="#{msg['sectorIdentifier.addClient']}"
+											value="#{msgs['sectorIdentifier.addClient']}"
 											action="#{_sectorIdentifierAction.selectAddedClients}"
 											oncomplete="#{rich:component('client:selectClientModalPanel')}.show();"
 											execute="@this" eventsQueue="sectorIdentifierQueue" />

@@ -19,9 +19,9 @@
 	<ui:define name="body">
 		<section class="content-header">
 			<h1 style="color: #333;">
-				#{msg['attribute.attributes']} <small> <i
+				#{msgs['attribute.attributes']} <small> <i
 					class="fa fa-caret-right" style="color: #333 !important;" />
-					#{msg['attribute.editAttribute']}
+					#{msgs['attribute.editAttribute']}
 				</small>
 			</h1>
 			<ol class="breadcrumb">
@@ -29,7 +29,7 @@
 						class="fa fa-home" />
 				</a></li>
 				<li class="organization/configuration"><a
-					href="#{request.contextPath}/attribute/attributeInventory.htm">#{msg['attribute.attributes']}</a>
+					href="#{request.contextPath}/attribute/attributeInventory.htm">#{msgs['attribute.attributes']}</a>
 				</li>
 			</ol>
 		</section>
@@ -39,7 +39,7 @@
 					outcome="/attribute/addAttribute"
 					style="margin-top: -5px;float:right;"
 					styleClass="label label-success"
-					value="#{msg['attribute.registerAttribute']}" />
+					value="#{msgs['attribute.registerAttribute']}" />
 				<ui:decorate template="/WEB-INF/incl/attribute/attributeForm.xhtml">
 					<ui:param name="_attribute"
 						value="#{updateAttributeAction.attribute}" />
@@ -50,16 +50,16 @@
 							<h:commandButton action="#{updateAttributeAction.save}"
 								rendered="#{updateAttributeAction.canEdit()}"
 								styleClass="btn btn-primary updateButton"
-								value="#{msg['attribute.update']}" />
+								value="#{msgs['attribute.update']}" />
 							<a4j:commandButton ajaxSingle="true"
 								onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();"
 								rendered="#{updateAttributeAction.canEdit()}"
 								styleClass="btn btn-primary deleteButton"
-								value="#{msg['attribute.delete']}" />
+								value="#{msgs['attribute.delete']}" />
 							<h:commandButton action="#{updateAttributeAction.cancel}"
 								immediate="true" style="margin-left:5px"
 								styleClass="btn btn-primary cancelButton"
-								value="#{msg['attribute.cancel']}" />
+								value="#{msgs['attribute.cancel']}" />
 						</div>
 					</ui:define>
 				</ui:decorate>

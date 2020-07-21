@@ -77,7 +77,7 @@
 													href="#collapseOne#{gluufn:hashCode(_customScript.name)}"
 													aria-expanded="true" aria-controls="collapseOne">
 													#{(_customScript.name == null) ?
-													msg['customScript.newscript'] : _customScript.name } </a>
+													msgs['customScript.newscript'] : _customScript.name } </a>
 											</h5>
 										</h:panelGroup>
 										<ui:param name="_customScriptId"
@@ -107,13 +107,13 @@
 												</h:panelGroup>
 												<h:panelGroup layout="block" class="form-script">
 													<div class="form-group">
-														<ox:decorate label="#{msg['customScript.name']}"
-															forId="#{msg['customScript.name']}"
-															tooltip="#{msg['customScript.name']}"
+														<ox:decorate label="#{msgs['customScript.name']}"
+															forId="#{msgs['customScript.name']}"
+															tooltip="#{msgs['customScript.name']}"
 															leftClass="col-sm-3" rightClass="col-sm-8">
 															<h:inputText value="#{_customScript.name}" size="90"
 																required="#{empty param['rq']}"
-																validatorMessage="#{msg['customScript.name.error']}"
+																validatorMessage="#{msgs['customScript.name.error']}"
 																styleClass="form-control scriptNameTextBox"
 																style="width: 90%;">
 																<f:validateRegex pattern="^[a-zA-Z0-9-_\\-\\:\\/\\.]+$" />
@@ -136,10 +136,10 @@
 														</ox:decorate>
 													</div>
 													<div class="form-group">
-														<ox:decorate label="#{msg['customScript.description']}"
+														<ox:decorate label="#{msgs['customScript.description']}"
 															required="true" styleClass="break-word"
-															forId="#{msg['customScript.description']}"
-															tooltip="#{msg['customScript.description']}"
+															forId="#{msgs['customScript.description']}"
+															tooltip="#{msgs['customScript.description']}"
 															leftClass="col-sm-3" rightClass="col-sm-8">
 															<h:inputText value="#{_customScript.description}"
 																size="90" styleClass="form-control descriptionTextBox"
@@ -150,10 +150,10 @@
 													<div class="form-group">
 														<div class="left">
 															<ox:decorate
-																label="#{msg['customScript.programmingLanguage']}"
+																label="#{msgs['customScript.programmingLanguage']}"
 																required="true" styleClass="break-word"
-																forId="#{msg['customScript.description']}"
-																tooltip="#{msg['customScript.description']}"
+																forId="#{msgs['customScript.description']}"
+																tooltip="#{msgs['customScript.description']}"
 																oneColumn="true">
 																<h:selectOneMenu
 																	value="#{_customScript.programmingLanguage}"
@@ -167,10 +167,10 @@
 														</div>
 														<div class="right">
 															<ox:decorate
-																label="#{(_scriptType.value != 'uma_claims_gathering')   ? msg['customScript.level']  : msg['customScript.priority']}"
+																label="#{(_scriptType.value != 'uma_claims_gathering')   ? msgs['customScript.level']  : msgs['customScript.priority']}"
 																required="true" styleClass="break-word"
-																forId="#{msg['customScript.description']}"
-																tooltip="#{msg['customScript.description']}"
+																forId="#{msgs['customScript.description']}"
+																tooltip="#{msgs['customScript.description']}"
 																oneColumn="true">
 																<b:touchSpin col-md="6" required="true"
 																	styleClass="inputNumberSpinnerBox" disabled="false"
@@ -181,10 +181,10 @@
 													</div>
 													<div class="form-group">
 														<div class="left">
-															<ox:decorate label="#{msg['customScript.locationType']}"
+															<ox:decorate label="#{msgs['customScript.locationType']}"
 																styleClass="break-word"
-																forId="#{msg['customScript.locationType']}"
-																tooltip="#{msg['customScript.locationType']}"
+																forId="#{msgs['customScript.locationType']}"
+																tooltip="#{msgs['customScript.locationType']}"
 																oneColumn="true">
 																<h:selectOneMenu value="#{_customScript.locationType}"
 																	required="false"
@@ -217,26 +217,26 @@
 													<div class="form-group">
 														<div class="left">
 															<ox:decorate
-																label="#{msg['customScript.customProperty']}"
+																label="#{msgs['customScript.customProperty']}"
 																styleClass="break-word"
-																forId="#{msg['customScript.customProperty']}"
-																tooltip="#{msg['customScript.customProperty']}"
+																forId="#{msgs['customScript.customProperty']}"
+																tooltip="#{msgs['customScript.customProperty']}"
 																leftClass="col-sm-8" rightClass="col-sm-3">
 															</ox:decorate>
 														</div>
 														<div class="right"></div>
 													</div>
 													<ox:simpleCustomPropertiesList
-														label="#{msg['manageAuthentication.passport.strategy.addProperty']}"
+														label="#{msgs['manageAuthentication.passport.strategy.addProperty']}"
 														hideLabel="true" showRemoveDialogue="true"
 														properties="#{_customScript.configurationProperties}"
 														propertiesAction="#{_action}" hideValue="true" />
 													<h:panelGroup id="scriptAreaId">
 														<h:panelGroup layout="block" styleClass="form-group"
 															rendered="#{_customScript.locationType.value ne 'file'}">
-															<ox:decorate label="#{msg['customScript.script']}"
-																forId="#{msg['customScript.script']}"
-																tooltip="#{msg['customScript.script']}"
+															<ox:decorate label="#{msgs['customScript.script']}"
+																forId="#{msgs['customScript.script']}"
+																tooltip="#{msgs['customScript.script']}"
 																rendered="#{_customScript.locationType.value ne 'file'}">
 																<h:inputTextarea value="#{_customScript.script}"
 																	styleClass="scriptTextArea" cols="110" rows="10" />
@@ -246,9 +246,9 @@
 													<h:panelGroup id="scriptPathId">
 														<h:panelGroup layout="block" styleClass="form-group"
 															rendered="#{_customScript.locationType.value eq 'file'}">
-															<ox:decorate label="#{msg['customScript.scriptPath']}"
-																forId="#{msg['customScript.scriptPath']}"
-																tooltip="#{msg['customScript.scriptPath']}"
+															<ox:decorate label="#{msgs['customScript.scriptPath']}"
+																forId="#{msgs['customScript.scriptPath']}"
+																tooltip="#{msgs['customScript.scriptPath']}"
 																rendered="#{_customScript.locationType.value eq 'file'}">
 																<h:inputText value="#{_customScript.locationPath}"
 																	size="90" styleClass="form-control scriptPathTextBox" />
@@ -257,9 +257,9 @@
 													</h:panelGroup>
 													<h:panelGroup layout="block" styleClass="form-group"
 														id="scriptEnableid">
-														<ox:decorate label="#{msg['customScript.enabled']}"
-															forId="#{msg['customScript.enabled']}"
-															tooltip="#{msg['customScript.enabled']}">
+														<ox:decorate label="#{msgs['customScript.enabled']}"
+															forId="#{msgs['customScript.enabled']}"
+															tooltip="#{msgs['customScript.enabled']}">
 															<h:selectBooleanCheckbox value="#{_customScript.enabled}"
 																styleClass="customScriptStatusCheckBox" />
 														</ox:decorate>
@@ -276,7 +276,7 @@
 									<h:panelGroup layout="block" styleClass="addConfig">
 										<a4j:commandLink styleClass="btn btn-primary addConfigButton"
 											style="font-size:13px !important;"
-											value="#{msg['customScript.addCustomScriptConfiguration']}"
+											value="#{msgs['customScript.addCustomScriptConfiguration']}"
 											action="#{_action.addCustomScript(_scriptType)}"
 											render="customScriptTypeId" execute="@region">
 											<f:param name="rq" value="1" />

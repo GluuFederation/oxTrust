@@ -23,9 +23,9 @@
 	<ui:define name="body">
 		<section class="content-header">
 			<h1 style="color: #333;">
-				#{msg['sectorIdentifier.openIDConnect']} <small> <i
+				#{msgs['sectorIdentifier.openIDConnect']} <small> <i
 					class="fa fa-caret-right" style="color: #333 !important;" />
-					#{msg['sectorIdentifier.manageSectorIdentifiers']}
+					#{msgs['sectorIdentifier.manageSectorIdentifiers']}
 				</small>
 			</h1>
 			<ol class="breadcrumb">
@@ -33,7 +33,7 @@
 						class="fa fa-home" />
 				</a></li>
 				<li class="organization/configuration"><a
-					href="#{request.contextPath}/sectoridentifier/sectorIdentifierInventory.htm">#{msg['sectorIdentifier.manageSectorIdentifiers']}</a>
+					href="#{request.contextPath}/sectoridentifier/sectorIdentifierInventory.htm">#{msgs['sectorIdentifier.manageSectorIdentifiers']}</a>
 				</li>
 			</ol>
 		</section>
@@ -45,7 +45,7 @@
 							<b:link style-class=" addSectorIdentifier btn btn-primary"
 								icon="plus" outcome="/sectoridentifier/addSectorIdentifier"
 								style="margin-left:5px !important;"
-								value="#{msg['sectorIdentifier.addSectorIdentifiers']}"
+								value="#{msgs['sectorIdentifier.addSectorIdentifiers']}"
 								includeViewParams="false" />
 							<p:spacer height="16" />
 							<h:form>
@@ -59,7 +59,7 @@
 									<b:commandButton
 										action="#{searchSectorIdentifierAction.search}"
 										class="btn btn-primary" style="float:left;"
-										value="#{msg['sectorIdentifier.search']}" iconAwesome="fa-search"/>
+										value="#{msgs['sectorIdentifier.search']}" iconAwesome="fa-search"/>
 								</ox:decorate>
 							</h:form>
 							<p:spacer height="16" />

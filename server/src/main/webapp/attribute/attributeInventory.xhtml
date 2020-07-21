@@ -33,9 +33,9 @@
       </h:outputStylesheet>
 		<section class="content-header">
 			<h1 style="color: #333;">
-				#{msg['attribute.configuration']} <small> <i
+				#{msgs['attribute.configuration']} <small> <i
 					class="fa fa-caret-right" style="color: #333 !important;" />
-					#{msg['attribute.attributes']}
+					#{msgs['attribute.attributes']}
 				</small>
 			</h1>
 			<ol class="breadcrumb">
@@ -44,7 +44,7 @@
 				</a></li>
 				<li class="organization/configuration"><a
 					href="#{request.contextPath}/attribute/attributeInventory.htm">
-						#{msg['attribute.attributes']}</a></li>
+						#{msgs['attribute.attributes']}</a></li>
 			</ol>
 		</section>
 		<section class="content">
@@ -57,13 +57,13 @@
 							<h:link id="register" includeViewParams="false"
 								outcome="/attribute/addAttribute" style="padding:6px;"
 								styleClass="label label-success"
-								value="#{msg['attribute.registerAttribute']}" />
+								value="#{msgs['attribute.registerAttribute']}" />
 							<ui:fragment rendered="#{attributeInventoryAction.showInactive}">
 								<a4j:commandLink
 									action="#{attributeInventoryAction.toggleShowInactive}"
 									render="attributesFormId" style="margin-left:5px;padding:6px;"
 									styleClass="label label-success"
-									value="#{msg['attribute.showOnlyActiveAttributes']}" />
+									value="#{msgs['attribute.showOnlyActiveAttributes']}" />
 							</ui:fragment>
 							<ui:fragment
 								rendered="#{not attributeInventoryAction.showInactive}">
@@ -71,7 +71,7 @@
 									action="#{attributeInventoryAction.toggleShowInactive}"
 									render="attributesFormId" style="margin-left:5px;padding:6px;"
 									styleClass="label label-success showAllAttributesButton"
-									value="#{msg['attribute.showAllAttributes']}" />
+									value="#{msgs['attribute.showAllAttributes']}" />
 							</ui:fragment>
 							<div style="padding-top: 20px">
 								<h:panelGroup id="attributeInventory">
@@ -90,7 +90,7 @@
 													<b:commandButton iconAwesome="fa-search"
 														action="#{attributeInventoryAction.search}"
 														class="btn btn-primary searchAttributeButton"
-														style="float:left;" value="#{msg['group.search']}" />
+														style="float:left;" value="#{msgs['group.search']}" />
 												</div>
 											</div>
 										</h:form>
@@ -101,7 +101,7 @@
 											sortMode="single"
 											value="#{attributeInventoryAction.attributeList}" var="attr"
 											print="true" excel="true" csv="true" pdf="true" select="true">
-											<b:dataTableColumn label="#{msg['attribute.displayName']}">
+											<b:dataTableColumn label="#{msgs['attribute.displayName']}">
 												<h:link includeViewParams="false"
 													outcome="/attribute/updateAttribute"
 													value="#{attr.displayName}">
@@ -109,12 +109,12 @@
 												</h:link>
 											</b:dataTableColumn>
 											<b:dataTableColumn value="#{attr.name}"
-												label="#{msg['attribute.name']}" />
+												label="#{msgs['attribute.name']}" />
 											<b:dataTableColumn value="#{attr.origin}"
-												label="#{msg['attribute.origin']}" />
+												label="#{msgs['attribute.origin']}" />
 											<b:dataTableColumn value="#{attr.description}"
-												label="#{msg['attribute.description']}" />
-											<b:dataTableColumn label="#{msg['attribute.status']}">
+												label="#{msgs['attribute.description']}" />
+											<b:dataTableColumn label="#{msgs['attribute.status']}">
 												<b:label rendered="#{attr.status eq 'ACTIVE'}"
 													text="#{attr.status}" severity="primary" />
 												<b:label rendered="#{attr.status eq 'INACTIVE'}"

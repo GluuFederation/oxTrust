@@ -71,10 +71,10 @@ iframe {
 								<div class="col-md-12">
 									<div id="register" style="color: #1ab26b;">
 										<p class="text-center">
-											#{msg['register.toCreateAnAccount']}
+											#{msgs['register.toCreateAnAccount']}
 											<h:link styleClass="text-center" includeViewParams="false"
 												outcome="/login.htm" style="color:blue;font-weight:bold;"
-												value="#{msg['register.alreadyHaveAnAccount']}" />
+												value="#{msgs['register.alreadyHaveAnAccount']}" />
 										</p>
 									</div>
 								</div>
@@ -146,7 +146,7 @@ iframe {
 											</a4j:outputPanel>
 										</a4j:repeat>
 										<ox:decorate id="passwordField"
-											label="#{msg['register.password']}"
+											label="#{msgs['register.password']}"
 											style="margin-left: -15px;"
 											template="/WEB-INF/incl/layout/edit.xhtml">
 											<h:inputSecret autocomplete="off" class="form-control"
@@ -156,7 +156,7 @@ iframe {
 											<h:outputText value=" " />
 										</ox:decorate>
 										<ox:decorate id="repeatPasswordField"
-											label="#{msg['register.repeatPassword']}"
+											label="#{msgs['register.repeatPassword']}"
 											style="margin-left: -15px;"
 											template="/WEB-INF/incl/layout/edit.xhtml">
 											<h:inputSecret autocomplete="off" class="form-control"
@@ -169,13 +169,13 @@ iframe {
 											</h:inputSecret>
 											<h:outputText value=" " />
 										</ox:decorate>
-										<ox:decorate id="email" label="#{msg['register.email']} "
+										<ox:decorate id="email" label="#{msgs['register.email']} "
 											style="margin-left: -15px;"
 											template="/WEB-INF/incl/layout/edit.xhtml">
 											<h:inputText autocomplete="off" class="form-control"
 												id="emailValidation" maxlength="60" redisplay="true"
 												required="true"
-												requiredMessage="#{msg['register.pleaseEnterYourEmailAddress']}"
+												requiredMessage="#{msgs['register.pleaseEnterYourEmailAddress']}"
 												size="40" tabindex="7"
 												validator="#{registerPersonAction.validateEmail}"
 												value="#{registerPersonAction.email}">
@@ -197,11 +197,11 @@ iframe {
 											<div id="updateButtons" style="margin-top: 20px;">
 												<h:commandButton action="#{registerPersonAction.register}"
 													class="btn btn-primary btn-flat" style="width:90px;"
-													value="#{msg['register.register']}" />
+													value="#{msgs['register.register']}" />
 												<h:commandButton action="#{registerPersonAction.cancel}"
 													class="btn btn-primary btn-flat" immediate="true"
 													style="margin-left:3px; width:90px;"
-													value="#{msg['register.cancel']}" />
+													value="#{msgs['register.cancel']}" />
 											</div>
 										</div>
 									</div>
