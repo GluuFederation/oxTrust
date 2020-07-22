@@ -9,7 +9,7 @@
         </locale-config>
         <resource-bundle>
             <base-name>org.gluu.oxtrust.i18n.CustomResourceBundle</base-name>
-            <var>msg</var>
+            <var>msgs</var>
         </resource-bundle>
         <message-bundle>
            OxtrustCustomValidationMessage
