@@ -621,10 +621,10 @@
 																	style="overflow-x: scroll;">
 																	<h:outputText value="#{_requestUri}" />
 																	<h:outputText value="&#160;" />
-																	<div class="span6 pull-right">
+																	<div>
 																		<a4j:commandLink
 																			styleClass="glyphicon glyphicon-remove"
-																			style="margin-top:-20px;"
+																			style="margin-top:-20px; float:right;"
 																			action="#{_clientAction.removeRequestUri(_requestUri)}"
 																			execute="@this" render="selectedRequestUrisId"
 																			eventsQueue="clientQueue">
