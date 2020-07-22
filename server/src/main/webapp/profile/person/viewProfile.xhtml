@@ -169,9 +169,11 @@
 						rendered="#{permissionService.hasPermission(configurationService.configuration, 'profile_management')}"
 						styleClass="btn btn-success changeUserPasswordButton"
 						value="#{msgs['profile.changePassword']}" />
+					<p:spacer width="10" height="10" />	
 					<h:commandButton action="#{userProfileAction.update}"
 						rendered="#{permissionService.hasPermission(configurationService.configuration, 'profile_management')}"
 						styleClass="btn btn-success updateProfileButton" value="Update" />
+					<p:spacer width="10" height="10" />	
 					<h:commandButton action="#{userProfileAction.cancel}"
 						immediate="true"
 						rendered="#{permissionService.hasPermission(configurationService.configuration, 'profile_management')}"
