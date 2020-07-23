@@ -116,6 +116,13 @@
             "format": "url",
             "minLength": 1
         },
+        "deviceAuthzEndpoint": {
+            "id": "deviceAuthzEndpoint",
+            "description": "URL for device authorization requests.",
+            "type": "string",
+            "format": "url",
+            "minLength": 1
+        },
         "introspectionAccessTokenMustHaveUmaProtectionScope": {
             "id": "introspectionAccessTokenMustHaveUmaProtectionScope",
             "description":"Reject introspection requests if access_token in Authorization header does not have uma_protection scope.",
@@ -230,7 +237,8 @@
                     "client_credentials",
                     "refresh_token",
                     "urn:ietf:params:oauth:grant-type:uma-ticket",
-                    "urn:openid:params:grant-type:ciba"
+                    "urn:openid:params:grant-type:ciba",
+                    "urn:ietf:params:oauth:grant-type:device_code"
                 ]
             }
         },
@@ -250,7 +258,8 @@
                     "client_credentials",
                     "refresh_token",
                     "urn:ietf:params:oauth:grant-type:uma-ticket",
-                    "urn:openid:params:grant-type:ciba"
+                    "urn:openid:params:grant-type:ciba",
+                    "urn:ietf:params:oauth:grant-type:device_code"
                 ]
             }
         },
@@ -1697,6 +1706,32 @@
                     "minLength": 1
                 }
             }
+        },
+        "deviceAuthzRequestExpiresIn": {
+            "id": "deviceAuthzRequestExpiresIn",
+            "description": "Expiration time given for device authorization requests",
+            "type": "integer",
+            "multipleOf": 1,
+            "maximum": 2147483647,
+            "minimum": 1,
+            "exclusiveMaximum": false,
+            "exclusiveMinimum": false
+        },
+        "deviceAuthzTokenPollInterval": {
+            "id": "deviceAuthzTokenPollInterval",
+            "description": "Default interval returned to the client to process device token requests.",
+            "type": "integer",
+            "multipleOf": 1,
+            "maximum": 3600,
+            "minimum": 1,
+            "exclusiveMaximum": false,
+            "exclusiveMinimum": false
+        },
+        "deviceAuthzResponseTypeToProcessAuthz": {
+            "id": "deviceAuthzResponseTypeToProcessAuthz",
+            "description": "Response type used to process device authz requests",
+            "type": "string",
+            "minLength": 0
         }
     },
     "required": [
@@ -1715,6 +1750,7 @@
         "openIdConfigurationEndpoint",
         "idGenerationEndpoint",
         "introspectionEndpoint",
+        "deviceAuthzEndpoint",
         "umaConfigurationEndpoint",
         "sectorIdentifierEndpoint",
         "oxElevenGenerateKeyEndpoint",
@@ -1842,6 +1878,9 @@
         "backchannelAuthenticationResponseExpiresIn",
         "backchannelAuthenticationResponseInterval",
         "backchannelLoginHintClaims",
-        "cibaEndUserNotificationConfig"
+        "cibaEndUserNotificationConfig",
+        "deviceAuthzRequestExpiresIn",
+        "deviceAuthzTokenPollInterval",
+        "deviceAuthzResponseTypeToProcessAuthz"
     ]
 }
