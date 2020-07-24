@@ -3,8 +3,7 @@
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
 	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
-	xmlns:b="http://bootsfaces.net/ui"
-	xmlns:p="http://primefaces.org/ui"
+	xmlns:b="http://bootsfaces.net/ui" xmlns:p="http://primefaces.org/ui"
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	template="/WEB-INF/incl/layout/newtemplate.xhtml">
 	<f:metadata>
@@ -88,7 +87,8 @@
 										<h:commandButton
 											action="#{jsonConfigAction.saveOxTrustConfigJson}"
 											id="saveOxTrustConfigBtn" prependId="false"
-											style="display:none" styleClass="btn btn-primary"
+											style="display:none;margin-top: 5px;"
+											styleClass="btn btn-primary"
 											value="#{msgs['updateConfiguration.saveOxTrustConfiguration']}" />
 									</h:form>
 								</h:panelGrid>
@@ -114,7 +114,8 @@
 										<h:commandButton
 											action="#{jsonConfigAction.saveOxAuthDynamicConfigJson}"
 											id="saveOxAuthConfigBtn" prependId="false"
-											style="display:none" styleClass="btn btn-primary"
+											style="display:none;margin-top: 5px;"
+											styleClass="btn btn-primary"
 											value="#{msgs['updateConfiguration.saveOxAuthConfiguration']}" />
 									</h:form>
 								</h:panelGrid>
@@ -140,7 +141,8 @@
 										<h:commandButton
 											action="#{jsonConfigAction.saveFido2ConfigJson}"
 											id="saveFido2ConfigBtn" prependId="false"
-											style="display:none" styleClass="btn btn-primary"
+											style="display:none;margin-top: 5px;"
+											styleClass="btn btn-primary"
 											value="#{msgs['updateConfiguration.saveFido2Configuration']}" />
 									</h:form>
 								</h:panelGrid>
@@ -167,7 +169,8 @@
 										<h:commandButton
 											action="#{jsonConfigAction.saveOxTrustImportPersonConfigJson}"
 											id="saveOxTrustImportPersonConfigBtn" prependId="false"
-											style="display:none" styleClass="btn btn-primary"
+											style="display:none;margin-top: 5px;"
+											styleClass="btn btn-primary"
 											value="#{msgs['updateConfiguration.saveOxTrustImportPersonConfiguration']}" />
 									</h:form>
 								</h:panelGrid>
@@ -177,9 +180,9 @@
 								<h:panelGrid border="0" cellpadding="0" cellspacing="0"
 									columnClasses="alignTop" columns="1" width="100%">
 									<div style="text-align: center;">
-									<b:label severity="warning" style="align:center"
-										text="oxauth/oxtrust restart is required if cache connection settings are changed." />
-									</div>	
+										<b:label severity="warning" style="align:center"
+											text="oxauth/oxtrust restart is required if cache connection settings are changed." />
+									</div>
 									<h:form id="oxMemCacheConfigForm" prependId="false">
 										<ui:decorate id="oxMemcache"
 											template="/WEB-INF/incl/layout/jsoneditor.xhtml">
@@ -197,7 +200,8 @@
 										<h:commandButton
 											action="#{jsonConfigAction.saveOxMemCacheConfigJson}"
 											id="saveOxMemcacheConfigBtn" prependId="false"
-											style="display:none" styleClass="btn btn-primary"
+											style="display:none; margin-top: 5px;"
+											styleClass="btn btn-primary"
 											value="#{msgs['updateConfiguration.saveMemCacheConfiguration']}" />
 									</h:form>
 								</h:panelGrid>
@@ -207,9 +211,9 @@
 								<h:panelGrid border="0" cellpadding="0" cellspacing="0"
 									columnClasses="alignTop" columns="1" width="100%">
 									<div style="text-align: center;">
-									<b:label severity="warning" style="align:center"
-										text="oxauth/oxtrust restart is required if store connection settings are changed." />
-									</div>	
+										<b:label severity="warning" style="align:center"
+											text="oxauth/oxtrust restart is required if store connection settings are changed." />
+									</div>
 									<h:form id="storeConfigForm" prependId="false">
 										<ui:decorate id="oxStore"
 											template="/WEB-INF/incl/layout/jsoneditor.xhtml">
@@ -227,7 +231,8 @@
 										<h:commandButton
 											action="#{jsonConfigAction.saveStoreConfigJson}"
 											id="saveOxStoreConfigBtn" prependId="false"
-											style="display:none" styleClass="btn btn-primary"
+											style="display:none; margin-top: 5px;"
+											styleClass="btn btn-primary"
 											value="#{msgs['updateConfiguration.saveStoreConfiguration']}" />
 									</h:form>
 								</h:panelGrid>
