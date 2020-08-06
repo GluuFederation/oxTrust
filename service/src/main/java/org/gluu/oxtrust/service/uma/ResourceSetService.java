@@ -10,10 +10,8 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.UUID;
 
-import javax.ejb.Stateless;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import org.gluu.oxauth.model.uma.persistence.UmaResource;
 import org.gluu.oxtrust.service.OrganizationService;
@@ -22,6 +20,7 @@ import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.model.base.SimpleBranch;
 import org.gluu.search.filter.Filter;
 import org.gluu.util.StringHelper;
+import org.python.jline.internal.Log;
 
 /**
  * Provides operations with resources
@@ -108,7 +107,8 @@ public class ResourceSetService implements Serializable {
 	 * @return List of resources
 	 */
 	public List<UmaResource> getAllResources(String... ldapReturnAttributes) {
-		return persistenceEntryManager.findEntries(getDnForResource(null), UmaResource.class, null, ldapReturnAttributes);
+		return persistenceEntryManager.findEntries(getDnForResource(null), UmaResource.class, null,
+				ldapReturnAttributes);
 	}
 
 	/**
@@ -126,8 +126,8 @@ public class ResourceSetService implements Serializable {
 		Filter displayNameFilter = Filter.createSubstringFilter(OxTrustConstants.displayName, null, targetArray, null);
 		Filter searchFilter = Filter.createORFilter(oxIdFilter, displayNameFilter);
 
-		List<UmaResource> result = persistenceEntryManager.findEntries(getDnForResource(null), UmaResource.class, searchFilter,
-				sizeLimit);
+		List<UmaResource> result = persistenceEntryManager.findEntries(getDnForResource(null), UmaResource.class,
+				searchFilter, sizeLimit);
 
 		return result;
 	}
@@ -163,7 +163,13 @@ public class ResourceSetService implements Serializable {
 	 * @return Resource set
 	 */
 	public UmaResource getResourceByDn(String dn) {
-		return persistenceEntryManager.find(UmaResource.class, dn);
+		try {
+			return persistenceEntryManager.find(UmaResource.class, dn);
+		} catch (Exception e) {
+			Log.info("Error fetching resource", e);
+			return null;
+		}
+
 	}
 
 	/**
