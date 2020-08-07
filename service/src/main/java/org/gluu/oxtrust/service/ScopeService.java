@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -135,6 +134,7 @@ public class ScopeService implements Serializable {
 	 */
 	public List<Scope> searchScopes(String pattern, int sizeLimit) {
 		Filter searchFilter = null;
+		Filter scopeTypeFilter = Filter.createEqualityFilter("oxScopeType", "openid");
 		if (StringHelper.isNotEmpty(pattern)) {
 			String[] targetArray = new String[] { pattern };
 			Filter displayNameFilter = Filter.createSubstringFilter(OxTrustConstants.displayName, null, targetArray,
@@ -145,8 +145,9 @@ public class ScopeService implements Serializable {
 		}
 		List<Scope> result = new ArrayList<>();
 		try {
-			result = persistenceEntryManager.findEntries(getDnForScope(null), Scope.class, searchFilter, sizeLimit);
-			return filter(result);
+			result = persistenceEntryManager.findEntries(getDnForScope(null), Scope.class,
+					Filter.createANDFilter(searchFilter, scopeTypeFilter), sizeLimit);
+			return result;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -165,8 +166,10 @@ public class ScopeService implements Serializable {
 
 	public List<Scope> getAllScopesList(int size) {
 		try {
-			List<Scope> scopes = persistenceEntryManager.findEntries(getDnForScope(null), Scope.class, null, size);
-			return filter(scopes);
+			Filter scopeTypeFilter = Filter.createEqualityFilter("oxScopeType", "openid");
+			List<Scope> scopes = persistenceEntryManager.findEntries(getDnForScope(null), Scope.class, scopeTypeFilter,
+					size);
+			return scopes;
 		} catch (Exception e) {
 			logger.error("", e);
 			return new ArrayList<>();
@@ -209,13 +212,5 @@ public class ScopeService implements Serializable {
 			return scopes.get(0);
 		}
 		return null;
-	}
-
-	private List<Scope> filter(List<Scope> scopes) {
-		if (scopes != null) {
-			return scopes.stream().filter(e -> !e.isUmaType()).collect(Collectors.toList());
-		} else {
-			return new ArrayList<>();
-		}
 	}
 }
