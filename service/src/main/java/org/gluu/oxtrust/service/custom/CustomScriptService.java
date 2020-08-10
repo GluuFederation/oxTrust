@@ -9,10 +9,16 @@ package org.gluu.oxtrust.service.custom;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import org.gluu.model.custom.script.CustomScriptType;
 import org.gluu.model.custom.script.model.CustomScript;
 import org.gluu.oxtrust.service.OrganizationService;
+import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.PersistenceEntryManager;
+import org.gluu.search.filter.Filter;
 import org.gluu.service.custom.script.AbstractCustomScriptService;
+import org.gluu.util.StringHelper;
+
+import java.util.List;
 
 /**
  * Operations with custom scripts
@@ -43,5 +49,34 @@ public class CustomScriptService extends AbstractCustomScriptService {
 		}
 		return result;
 	}
+	public List<CustomScript> findCustomAuthScripts(String pattern, int sizeLimit) {
+		String[] targetArray = new String[] { pattern };
+		Filter descriptionFilter = Filter.createSubstringFilter(OxTrustConstants.DESCRIPTION, null, targetArray, null);
+		Filter scriptTypeFilter = Filter.createEqualityFilter("oxScriptType", CustomScriptType.PERSON_AUTHENTICATION);
+		Filter displayNameFilter = Filter.createSubstringFilter(OxTrustConstants.displayName, null, targetArray, null);
+		Filter searchFilter = Filter.createORFilter(descriptionFilter, displayNameFilter);
+		return  persistenceEntryManager.findEntries(getDnForCustomScript(null), CustomScript.class,
+				Filter.createANDFilter(searchFilter, scriptTypeFilter), sizeLimit);
+	}
+
+	public List<CustomScript> findOtherCustomScripts(String pattern, int sizeLimit) {
+		String[] targetArray = new String[] { pattern };
+		Filter descriptionFilter = Filter.createSubstringFilter(OxTrustConstants.DESCRIPTION, null, targetArray, null);
+		Filter scriptTypeFilter = Filter.createNOTFilter(Filter.createEqualityFilter("oxScriptType", CustomScriptType.PERSON_AUTHENTICATION));
+		Filter displayNameFilter = Filter.createSubstringFilter(OxTrustConstants.displayName, null, targetArray, null);
+		Filter searchFilter = Filter.createORFilter(descriptionFilter, displayNameFilter);
+		return  persistenceEntryManager.findEntries(getDnForCustomScript(null), CustomScript.class,
+				Filter.createANDFilter(searchFilter, scriptTypeFilter), sizeLimit);
+	}
+
+
+	public String getDnForCustomScript(String inum) {
+		String orgDn = organizationService.getDnForOrganization();
+		if (StringHelper.isEmpty(inum)) {
+			return String.format("ou=scripts,%s", orgDn);
+		}
+		return String.format("inum=%s,ou=scripts,%s", inum, orgDn);
+	}
+
 
 }
