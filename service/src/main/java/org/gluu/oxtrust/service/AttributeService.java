@@ -24,6 +24,7 @@ import org.gluu.model.GluuAttribute;
 import org.gluu.model.GluuAttributeUsageType;
 import org.gluu.model.GluuUserRole;
 import org.gluu.model.attribute.AttributeDataType;
+import org.gluu.model.custom.script.CustomScriptType;
 import org.gluu.model.user.UserRole;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.service.cdi.event.EventType;
@@ -592,9 +593,54 @@ public class AttributeService extends org.gluu.service.AttributeService {
 		for (GluuAttribute attribute : result) {
 			attribute.setCustom(customOrigin.equals(attribute.getOrigin()));
 		}
-
 		return result;
 	}
+
+	public List<GluuAttribute> searchAttributes(int sizeLimit) throws Exception {
+		List<GluuAttribute> result = persistenceEntryManager.findEntries(getDnForAttribute(null), GluuAttribute.class,
+				null, sizeLimit);
+		String customOrigin = getCustomOrigin();
+		for (GluuAttribute attribute : result) {
+			attribute.setCustom(customOrigin.equals(attribute.getOrigin()));
+		}
+		return result;
+	}
+
+
+
+	public List<GluuAttribute> searchAttributes(int sizeLimit, boolean active) throws Exception {
+		Filter activeFilter = Filter.createEqualityFilter(OxTrustConstants.gluuStatus, "active");
+		if(!active){
+			activeFilter = Filter.createEqualityFilter(OxTrustConstants.gluuStatus, "inactive");
+		}
+		List<GluuAttribute> result = persistenceEntryManager.findEntries(getDnForAttribute(null), GluuAttribute.class,
+				activeFilter, sizeLimit);
+		String customOrigin = getCustomOrigin();
+		for (GluuAttribute attribute : result) {
+			attribute.setCustom(customOrigin.equals(attribute.getOrigin()));
+		}
+		return result;
+	}
+
+	public List<GluuAttribute> findAttributes(String pattern, int sizeLimit,boolean active) throws Exception {
+		Filter activeFilter = Filter.createEqualityFilter(OxTrustConstants.gluuStatus, "active");
+		if(!active){
+			activeFilter = Filter.createEqualityFilter(OxTrustConstants.gluuStatus, "inactive");
+		}
+		String[] targetArray = new String[] { pattern };
+		Filter displayNameFilter = Filter.createSubstringFilter(OxTrustConstants.displayName, null, targetArray, null);
+		Filter descriptionFilter = Filter.createSubstringFilter(OxTrustConstants.description, null, targetArray, null);
+		Filter nameFilter = Filter.createSubstringFilter(OxTrustConstants.attributeName, null, targetArray, null);
+		Filter searchFilter = Filter.createORFilter(displayNameFilter, descriptionFilter,nameFilter);
+		List<GluuAttribute> result = persistenceEntryManager.findEntries(getDnForAttribute(null), GluuAttribute.class,
+				Filter.createANDFilter(searchFilter, activeFilter), sizeLimit);
+		String customOrigin = getCustomOrigin();
+		for (GluuAttribute attribute : result) {
+			attribute.setCustom(customOrigin.equals(attribute.getOrigin()));
+		}
+		return result;
+	}
+
 
 	public List<GluuAttribute> searchPersonAttributes(String pattern, int sizeLimit) throws Exception {
 		String[] objectClassTypes = appConfiguration.getPersonObjectClassTypes();
