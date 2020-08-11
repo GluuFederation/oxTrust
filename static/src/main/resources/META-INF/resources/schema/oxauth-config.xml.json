@@ -839,6 +839,7 @@
         },
         "dynamicRegistrationAllowedPasswordGrantScopes": {
             "id": "dynamicRegistrationAllowedPasswordGrantScopes",
+            "description": "Specifies allowed scopes during registration if client has grant_type=password. Otherwise ignored. It's also ignored when list is empty.",
             "type": "array",
             "minItems": 0,
             "uniqueItems": true,
