@@ -59,6 +59,11 @@ public class CustomScriptService extends AbstractCustomScriptService {
 				Filter.createANDFilter(searchFilter, scriptTypeFilter), sizeLimit);
 	}
 
+	public List<CustomScript> findCustomAuthScripts(int sizeLimit) {
+		Filter searchFilter = Filter.createEqualityFilter("oxScriptType", CustomScriptType.PERSON_AUTHENTICATION.getValue());
+		return  persistenceEntryManager.findEntries(getDnForCustomScript(null), CustomScript.class,searchFilter, sizeLimit);
+	}
+
 	public List<CustomScript> findOtherCustomScripts(String pattern, int sizeLimit) {
 		String[] targetArray = new String[] { pattern };
 		Filter descriptionFilter = Filter.createSubstringFilter(OxTrustConstants.DESCRIPTION, null, targetArray, null);
@@ -67,6 +72,11 @@ public class CustomScriptService extends AbstractCustomScriptService {
 		Filter searchFilter = Filter.createORFilter(descriptionFilter, displayNameFilter);
 		return  persistenceEntryManager.findEntries(getDnForCustomScript(null), CustomScript.class,
 				Filter.createANDFilter(searchFilter, scriptTypeFilter), sizeLimit);
+	}
+
+	public List<CustomScript> findOtherCustomScripts(int sizeLimit) {
+		Filter searchFilter = Filter.createNOTFilter(Filter.createEqualityFilter("oxScriptType", CustomScriptType.PERSON_AUTHENTICATION));
+		return  persistenceEntryManager.findEntries(getDnForCustomScript(null), CustomScript.class,searchFilter, sizeLimit);
 	}
 
 
