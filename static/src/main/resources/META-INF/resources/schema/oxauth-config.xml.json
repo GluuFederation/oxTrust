@@ -837,6 +837,17 @@
             "description": "Boolean value specifying whether to enable Password Grant Type during Dynamic Registration.",
             "type": "boolean"
         },
+        "dynamicRegistrationAllowedPasswordGrantScopes": {
+            "id": "dynamicRegistrationAllowedPasswordGrantScopes",
+            "type": "array",
+            "minItems": 0,
+            "uniqueItems": true,
+            "additionalItems": true,
+            "items": {
+                "type": "string",
+                "minLength": 1
+            }
+        },
         "dynamicRegistrationExpirationTime": {
             "id": "dynamicRegistrationExpirationTime",
             "description": "Expiration time in seconds for clients created with dynamic registration, -1 means never expire.",
