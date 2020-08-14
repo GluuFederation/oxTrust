@@ -263,6 +263,22 @@
                 ]
             }
         },
+        "softwareStatementValidationType": {
+            "id": "softwareStatementValidationType",
+            "description": "Specifies validation type for software statement during Dynamic Client Registration. `script` - validate with help of Dynamic Client Registration custom script, `jwks_uri` - validate by JWKS fetched by uri where jwks_uri is specified as claim of software statement by name defined in softwareStatementValidationClaimName. `jwks` - validate by JWKS which are taken from sofware statement claims. Not recommended. Claim name specified by softwareStatementValidationClaimName. `none` - validation of software statement is skipped.",
+            "type": "string",
+            "enum": [
+                "script",
+                "jwks",
+                "jwks_uri",
+                "none"
+            ]
+        },
+        "softwareStatementValidationClaimName": {
+            "id": "softwareStatementValidationClaimName",
+            "description": "Specifies claim name within software statement. Used with softwareStatementValidationType=jwks_uri or softwareStatementValidationType=jwks.",
+            "type": "string"
+        },
         "subjectTypesSupported": {
             "id": "subjectTypesSupported",
             "description": "A list of the Subject Identifier types that this OP supports. Valid types include pairwise and public.",
