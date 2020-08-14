@@ -1793,6 +1793,8 @@
         "dynamicGrantTypeDefault",
         "subjectTypesSupported",
         "defaultSubjectType",
+        "softwareStatementValidationType",
+        "softwareStatementValidationClaimName",
         "userInfoSigningAlgValuesSupported",
         "userInfoEncryptionAlgValuesSupported",
         "userInfoEncryptionEncValuesSupported",
