@@ -7,6 +7,7 @@
 package org.gluu.oxtrust.action;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.regex.Pattern;
 
 import javax.enterprise.context.RequestScoped;
@@ -19,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.AssertTrue;
 
 import org.gluu.jsf2.message.FacesMessages;
+import org.gluu.jsf2.service.FacesService;
 import org.gluu.model.attribute.AttributeValidation;
 import org.gluu.oxtrust.exception.DuplicateEmailException;
 import org.gluu.oxtrust.model.GluuCustomPerson;
@@ -61,6 +63,9 @@ public class PasswordValidationAction implements Cloneable, Serializable {
 
 	@Inject
 	private FacesMessages facesMessages;
+
+	@Inject
+	private FacesService facesService;
 
 	private String oldPassword = "";
 
@@ -112,14 +117,14 @@ public class PasswordValidationAction implements Cloneable, Serializable {
 							identity.getUser(),
 							(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 					facesMessages.add(FacesMessage.SEVERITY_INFO, "Successfully changed!");
-				} 
-				catch (DuplicateEmailException e) {
+					facesService.redirectWithExternal("/logout.htm", new HashMap<String, Object>());
+				} catch (DuplicateEmailException e) {
 					facesMessages.add(FacesMessage.SEVERITY_ERROR, e.getMessage());
-				}
-				catch (Exception e) {
+				} catch (Exception e) {
 					facesMessages.add(FacesMessage.SEVERITY_ERROR, " Error changing password");
+					log.error("",e);
 				}
-				
+
 			}
 		} else {
 			if (this.password.equals(this.confirm)) {
@@ -131,11 +136,9 @@ public class PasswordValidationAction implements Cloneable, Serializable {
 							identity.getUser(),
 							(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 					facesMessages.add(FacesMessage.SEVERITY_INFO, "Successfully changed!");
-				}
-				catch (DuplicateEmailException e) {
+				} catch (DuplicateEmailException e) {
 					facesMessages.add(FacesMessage.SEVERITY_ERROR, e.getMessage());
-				}
-				catch (Exception e) {
+				} catch (Exception e) {
 					facesMessages.add(FacesMessage.SEVERITY_ERROR, " Error changing password");
 				}
 			} else {
