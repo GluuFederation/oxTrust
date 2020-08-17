@@ -54,7 +54,7 @@
 		
     </h:outputScript>
 	<ui:include src="/WEB-INF/incl/person/u2fPage.xhtml" />
-	<h:form id="PForm">
+	<h:form id="PForm" autocomplete="off">
 		<b:panel title="Person Add Form" look="primary"
 			iconAwesome="fa-user-plus" collapsible="false">
 			<div class="row"
@@ -88,7 +88,7 @@
 												style="width:100%" value="#{_custAttr.values[_valueIdx]}"
 												id="custId_text_#{_custAttrIdx}" require="#{_mustEnter}"
 												requiredMessage="#{msgs['person.pleaseEnter']} #{_custAttr.metadata.displayName} #{_valueIdx == 0 ? '' : _valueIdx}. "
-												validator="gluuAttributeValidator"
+												validator="gluuAttributeValidator" autocomplete="off"
 												rendered="#{(_custAttr.adminCanEdit or _mustEnter) and 
 			                                                            (_custAttr.metadata.dataType.value ne 'boolean') and 
 			                                                            (_custAttr.metadata.displayName ne 'Password') and 
@@ -115,7 +115,7 @@
 												style="width:100%" value="#{_custAttr.values[_valueIdx]}"
 												id="Email" required="#{_mustEnter}" p:type="email"
 												prependId="false" maxlength="100"
-												validator="gluuAttributeValidator"
+												validator="gluuAttributeValidator" autocomplete="off"
 												requiredMessage="Please provide a valid email address"
 												rendered="#{(_custAttr.adminCanEdit or _mustEnter) and 
 			                                                            (_custAttr.metadata.dataType.value ne 'boolean') and 
