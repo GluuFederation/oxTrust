@@ -1,6 +1,7 @@
 package org.gluu.oxtrust.service;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -9,13 +10,11 @@ import javax.inject.Inject;
 import org.apache.commons.lang.StringUtils;
 import org.gluu.oxtrust.model.fido.GluuCustomFidoDevice;
 import org.gluu.persist.PersistenceEntryManager;
-import org.gluu.persist.model.base.SimpleBranch;
 import org.gluu.search.filter.Filter;
 import org.slf4j.Logger;
 
 /**
- * @author Val Pecaoco
- * Updated by jgomer on 2017-10-22
+ * @author Val Pecaoco Updated by jgomer on 2017-10-22
  */
 @ApplicationScoped
 public class FidoDeviceService implements IFidoDeviceService, Serializable {
@@ -30,7 +29,7 @@ public class FidoDeviceService implements IFidoDeviceService, Serializable {
 
 	@Inject
 	private PersistenceEntryManager ldapEntryManager;
-	
+
 	@Override
 	public String getDnForFidoDevice(String userId, String id) {
 		String baseDn;
@@ -51,15 +50,14 @@ public class FidoDeviceService implements IFidoDeviceService, Serializable {
 		GluuCustomFidoDevice gluuCustomFidoDevice = null;
 
 		try {
-		    String dn=getDnForFidoDevice(userId, id);
-		    if (StringUtils.isNotEmpty(userId))
-                gluuCustomFidoDevice = ldapEntryManager.find(GluuCustomFidoDevice.class, dn);
-		    else{
-		        Filter filter=Filter.createEqualityFilter("oxId", id);
-		        gluuCustomFidoDevice = ldapEntryManager.findEntries(dn, GluuCustomFidoDevice.class, filter).get(0);
-            }
-		}
-		catch (Exception e) {
+			String dn = getDnForFidoDevice(userId, id);
+			if (StringUtils.isNotEmpty(userId))
+				gluuCustomFidoDevice = ldapEntryManager.find(GluuCustomFidoDevice.class, dn);
+			else {
+				Filter filter = Filter.createEqualityFilter("oxId", id);
+				gluuCustomFidoDevice = ldapEntryManager.findEntries(dn, GluuCustomFidoDevice.class, filter).get(0);
+			}
+		} catch (Exception e) {
 			log.error("Failed to find device by id " + id, e);
 		}
 
@@ -69,7 +67,8 @@ public class FidoDeviceService implements IFidoDeviceService, Serializable {
 	public GluuCustomFidoDevice searchFidoDevice(Filter filter, String userId, String id) throws Exception {
 		GluuCustomFidoDevice gluuCustomFidoDevice = null;
 
-		List<GluuCustomFidoDevice> gluuCustomFidoDevices = ldapEntryManager.findEntries(getDnForFidoDevice(userId, id), GluuCustomFidoDevice.class, filter, 1);
+		List<GluuCustomFidoDevice> gluuCustomFidoDevices = ldapEntryManager.findEntries(getDnForFidoDevice(userId, id),
+				GluuCustomFidoDevice.class, filter, 1);
 		if (gluuCustomFidoDevices != null && !gluuCustomFidoDevices.isEmpty()) {
 			gluuCustomFidoDevice = gluuCustomFidoDevices.get(0);
 		}
@@ -86,18 +85,16 @@ public class FidoDeviceService implements IFidoDeviceService, Serializable {
 	public void removeGluuCustomFidoDevice(GluuCustomFidoDevice gluuCustomFidoDevice) {
 		ldapEntryManager.removeRecursively(gluuCustomFidoDevice.getDn());
 	}
-	
-	@Override
-	public 	List<GluuCustomFidoDevice> searchFidoDevices(String userInum, String ... returnAttributes) {
-		if(containsBranch(userInum)){	
-			String baseDnForU2fDevices = getDnForFidoDevice(userInum,null);	
-			return ldapEntryManager.findEntries(baseDnForU2fDevices, GluuCustomFidoDevice.class, null, returnAttributes);
-		}
-		return null;
-	}
-	
-	private boolean containsBranch(final String userInum) {
-		return ldapEntryManager.contains(getDnForFidoDevice(userInum,null), SimpleBranch.class);
-	}
 
+	@Override
+	public List<GluuCustomFidoDevice> searchFidoDevices(String userInum, String... returnAttributes) {
+		try {
+			Filter equalityFilter = Filter.createEqualityFilter("personInum", userInum);
+			return ldapEntryManager.findEntries(getDnForFidoDevice(userInum, null), GluuCustomFidoDevice.class,
+					equalityFilter, returnAttributes);
+		} catch (Exception e) {
+			log.error("", e);
+			return new ArrayList<>();
+		}
+	}
 }

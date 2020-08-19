@@ -6,18 +6,13 @@
 
 package org.gluu.oxtrust.service;
 
-import static org.gluu.oxtrust.service.Shibboleth3ConfService.SHIB3_IDP_METADATA_FOLDER;
-
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.ejb.Stateless;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -28,19 +23,14 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.velocity.VelocityContext;
-import org.gluu.service.config.ConfigurationFactory;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.model.MetadataFilter;
-import org.slf4j.Logger;
-import org.w3c.dom.Document;
-import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.service.XmlService;
 import org.gluu.util.StringHelper;
-import org.gluu.util.exception.InvalidConfigurationException;
 import org.gluu.util.io.FileUploadWrapper;
+import org.slf4j.Logger;
+import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 /**
@@ -78,8 +68,10 @@ public class FilterService implements Serializable {
 
 	public List<MetadataFilter> getAvailableMetadataFilters() {
 		String idpTemplatesLocation = templateService.getTemplatesLocation();
-		// File filterFolder = new File(configurationFactory.DIR + "shibboleth3" + File.separator + "idp" + File.separator + "MetadataFilter");
-		File filterFolder = new File(idpTemplatesLocation + "shibboleth3" + File.separator + "idp" + File.separator + "MetadataFilter");
+		// File filterFolder = new File(configurationFactory.DIR + "shibboleth3" +
+		// File.separator + "idp" + File.separator + "MetadataFilter");
+		File filterFolder = new File(
+				idpTemplatesLocation + "shibboleth3" + File.separator + "idp" + File.separator + "MetadataFilter");
 
 		File[] filterTemplates = null;
 		List<MetadataFilter> metadataFilters = new ArrayList<MetadataFilter>();
@@ -138,7 +130,8 @@ public class FilterService implements Serializable {
 	public void saveFilters(GluuSAMLTrustRelationship trustRelationship, FileUploadWrapper filterCertWrapper) {
 		VelocityContext context = new VelocityContext();
 		if (trustRelationship.getMetadataFilters().get("validation") != null) {
-			List<String> extensionSchemas = trustRelationship.getMetadataFilters().get("validation").getExtensionSchemas();
+			List<String> extensionSchemas = trustRelationship.getMetadataFilters().get("validation")
+					.getExtensionSchemas();
 			if (extensionSchemas != null && !extensionSchemas.isEmpty()) {
 				context.put("extensionSchemas", extensionSchemas);
 			} else {
@@ -148,24 +141,27 @@ public class FilterService implements Serializable {
 		}
 
 		if (trustRelationship.getMetadataFilters().get("entityRoleWhiteList") != null) {
-			List<String> retainedRoles = trustRelationship.getMetadataFilters().get("entityRoleWhiteList").getRetainedRoles();
+			List<String> retainedRoles = trustRelationship.getMetadataFilters().get("entityRoleWhiteList")
+					.getRetainedRoles();
 			if (retainedRoles != null && !retainedRoles.isEmpty()) {
 				context.put("retainedRoles", retainedRoles);
-				boolean removeEmptyEntitiesDescriptors = trustRelationship.getMetadataFilters().get("entityRoleWhiteList")
-						.getRemoveEmptyEntitiesDescriptors();
+				boolean removeEmptyEntitiesDescriptors = trustRelationship.getMetadataFilters()
+						.get("entityRoleWhiteList").getRemoveEmptyEntitiesDescriptors();
 				context.put("removeEmptyEntitiesDescriptors", removeEmptyEntitiesDescriptors);
-				boolean removeRolelessEntityDescriptors = trustRelationship.getMetadataFilters().get("entityRoleWhiteList")
-						.getRemoveRolelessEntityDescriptors();
+				boolean removeRolelessEntityDescriptors = trustRelationship.getMetadataFilters()
+						.get("entityRoleWhiteList").getRemoveRolelessEntityDescriptors();
 				context.put("removeRolelessEntityDescriptors", removeRolelessEntityDescriptors);
 			} else {
-				log.warn("entityRoleWhiteList filter on " + trustRelationship.getDisplayName() + "is invalid. Removing it.");
+				log.warn("entityRoleWhiteList filter on " + trustRelationship.getDisplayName()
+						+ "is invalid. Removing it.");
 				trustRelationship.getMetadataFilters().remove("entityRoleWhiteList");
 			}
 
 		}
 
 		if (trustRelationship.getMetadataFilters().get("requiredValidUntil") != null) {
-			int maxValidityInterval = trustRelationship.getMetadataFilters().get("requiredValidUntil").getMaxValidityInterval();
+			int maxValidityInterval = trustRelationship.getMetadataFilters().get("requiredValidUntil")
+					.getMaxValidityInterval();
 			context.put("maxValidityInterval", maxValidityInterval);
 		}
 
@@ -177,12 +173,15 @@ public class FilterService implements Serializable {
 						.setFilterCertFileName(StringHelper.removePunctuation(trustRelationship.getInum()));
 			}
 
-			if (StringHelper.isNotEmpty(trustRelationship.getMetadataFilters().get("signatureValidation").getFilterCertFileName())) {
-				boolean requireSignedMetadata = trustRelationship.getMetadataFilters().get("signatureValidation").getRequireSignedMetadata();
+			if (StringHelper.isNotEmpty(
+					trustRelationship.getMetadataFilters().get("signatureValidation").getFilterCertFileName())) {
+				boolean requireSignedMetadata = trustRelationship.getMetadataFilters().get("signatureValidation")
+						.getRequireSignedMetadata();
 				context.put("trustEngine", "shibboleth.FedTrustEngine");
 				context.put("requireSignedMetadata", requireSignedMetadata);
 			} else {
-				log.warn("signatureValidation filter on " + trustRelationship.getDisplayName() + " is invalid. Removing it.");
+				log.warn("signatureValidation filter on " + trustRelationship.getDisplayName()
+						+ " is invalid. Removing it.");
 				trustRelationship.getMetadataFilters().remove("signatureValidation");
 			}
 		}
@@ -190,17 +189,19 @@ public class FilterService implements Serializable {
 		trustRelationship.setGluuSAMLMetaDataFilter(new ArrayList<String>());
 
 		for (String filterName : trustRelationship.getMetadataFilters().keySet()) {
-			trustRelationship.getGluuSAMLMetaDataFilter().add(templateService.generateConfFile(filterName + "Filter.xml", context));
+			trustRelationship.getGluuSAMLMetaDataFilter()
+					.add(templateService.generateConfFile(filterName + "Filter.xml", context));
 		}
 	}
 
-	public void parseFilters(GluuSAMLTrustRelationship trustRelationship) throws SAXException, IOException, ParserConfigurationException,
-			FactoryConfigurationError, XPathExpressionException {
+	public void parseFilters(GluuSAMLTrustRelationship trustRelationship) throws SAXException, IOException,
+			ParserConfigurationException, FactoryConfigurationError, XPathExpressionException {
 		if (trustRelationship.getGluuSAMLMetaDataFilter() != null) {
 			XPath xPath = XPathFactory.newInstance().newXPath();
 			for (String filterXML : trustRelationship.getGluuSAMLMetaDataFilter()) {
 				Document xmlDocument = xmlService.getXmlDocument(filterXML.getBytes());
-				if (xmlDocument.getFirstChild().getAttributes().getNamedItem("xsi:type").getNodeValue().equals(VALIDATION_TYPE)) {
+				if (xmlDocument.getFirstChild().getAttributes().getNamedItem("xsi:type").getNodeValue()
+						.equals(VALIDATION_TYPE)) {
 					MetadataFilter filter = createMetadataFilter("validation");
 					XPathExpression contactCountXPath = xPath.compile("count(/MetadataFilter/ExtensionSchema)");
 					int schemasNumber = Integer.parseInt(contactCountXPath.evaluate(xmlDocument));
@@ -213,12 +214,13 @@ public class FilterService implements Serializable {
 					continue;
 				}
 
-				if (xmlDocument.getFirstChild().getAttributes().getNamedItem("xsi:type").getNodeValue().equals(ENTITY_ROLE_WHITE_LIST_TYPE)) {
+				if (xmlDocument.getFirstChild().getAttributes().getNamedItem("xsi:type").getNodeValue()
+						.equals(ENTITY_ROLE_WHITE_LIST_TYPE)) {
 					MetadataFilter filter = createMetadataFilter("entityRoleWhiteList");
-					filter.setRemoveRolelessEntityDescriptors(Boolean.parseBoolean(xmlDocument.getFirstChild().getAttributes()
-							.getNamedItem("removeRolelessEntityDescriptors").getNodeValue()));
-					filter.setRemoveEmptyEntitiesDescriptors(Boolean.parseBoolean(xmlDocument.getFirstChild().getAttributes()
-							.getNamedItem("removeEmptyEntitiesDescriptors").getNodeValue()));
+					filter.setRemoveRolelessEntityDescriptors(Boolean.parseBoolean(xmlDocument.getFirstChild()
+							.getAttributes().getNamedItem("removeRolelessEntityDescriptors").getNodeValue()));
+					filter.setRemoveEmptyEntitiesDescriptors(Boolean.parseBoolean(xmlDocument.getFirstChild()
+							.getAttributes().getNamedItem("removeEmptyEntitiesDescriptors").getNodeValue()));
 
 					XPathExpression contactCountXPath = xPath.compile("count(/MetadataFilter/RetainedRole)");
 					int schemasNumber = Integer.parseInt(contactCountXPath.evaluate(xmlDocument));
@@ -231,7 +233,8 @@ public class FilterService implements Serializable {
 					continue;
 				}
 
-				if (xmlDocument.getFirstChild().getAttributes().getNamedItem("xsi:type").getNodeValue().equals(VALID_UNTIL_REQUIRED_TYPE)) {
+				if (xmlDocument.getFirstChild().getAttributes().getNamedItem("xsi:type").getNodeValue()
+						.equals(VALID_UNTIL_REQUIRED_TYPE)) {
 					MetadataFilter filter = createMetadataFilter("requiredValidUntil");
 					filter.setMaxValidityInterval(Integer.parseInt(xmlDocument.getFirstChild().getAttributes()
 							.getNamedItem("maxValidityInterval").getNodeValue()));
@@ -239,7 +242,8 @@ public class FilterService implements Serializable {
 					continue;
 				}
 
-				if (xmlDocument.getFirstChild().getAttributes().getNamedItem("xsi:type").getNodeValue().equals(SIGNATURE_VALIDATION_TYPE)) {
+				if (xmlDocument.getFirstChild().getAttributes().getNamedItem("xsi:type").getNodeValue()
+						.equals(SIGNATURE_VALIDATION_TYPE)) {
 					MetadataFilter filter = createMetadataFilter("signatureValidation");
 					filter.setFilterCertFileName(StringHelper.removePunctuation(trustRelationship.getInum()));
 					trustRelationship.getMetadataFilters().put("signatureValidation", filter);

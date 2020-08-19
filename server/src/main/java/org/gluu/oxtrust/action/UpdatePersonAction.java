@@ -442,9 +442,9 @@ public class UpdatePersonAction implements Serializable {
 	@SuppressWarnings("deprecation")
 	private void addFidoDevices() {
 		String baseDnForU2fDevices = fidoDeviceService.getDnForFidoDevice(this.person.getInum(), null);
-
 		List<GluuCustomFidoDevice> fidoDevices = fidoDeviceService.searchFidoDevices(this.person.getInum());
-		if (fidoDevices != null) {
+		if (fidoDevices != null && !fidoDevices.isEmpty()) {
+			int count = 1;
 			for (GluuCustomFidoDevice gluuCustomFidoDevice : fidoDevices) {
 				GluuDeviceDataBean gluuDeviceDataBean = new GluuDeviceDataBean();
 				String creationDate = gluuCustomFidoDevice.getCreationDate();
@@ -469,10 +469,11 @@ public class UpdatePersonAction implements Serializable {
 					gluuDeviceDataBean.setNickName(gluuCustomFidoDevice.getDescription());
 				}
 				if (gluuDeviceDataBean.getNickName() == null || gluuDeviceDataBean.getNickName().isEmpty()) {
-					gluuDeviceDataBean.setNickName(DASH);
+					gluuDeviceDataBean.setNickName(this.person.getDisplayName() + DASH + "Device" + DASH + count);
 				}
 				gluuDeviceDataBean.setModality(modality);
 				deviceDataMap.add(gluuDeviceDataBean);
+				count++;
 			}
 		}
 	}

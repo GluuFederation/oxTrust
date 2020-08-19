@@ -6,12 +6,10 @@
 
 package org.gluu.oxtrust.service;
 
+import java.util.UUID;
 
-import javax.ejb.Stateless;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.inject.Named;
-import java.util.UUID;
 
 import org.gluu.oxtrust.service.external.ExternalIdGeneratorService;
 import org.gluu.util.StringHelper;
@@ -26,24 +24,25 @@ public class IdGenService {
 
 	public static final int MAX_IDGEN_TRY_COUNT = 10;
 
-    @Inject
-    private ExternalIdGeneratorService externalIdGenerationService;
+	@Inject
+	private ExternalIdGeneratorService externalIdGenerationService;
 
-    public String generateId(String idType) {
-		
+	public String generateId(String idType) {
+
 		if (externalIdGenerationService.isEnabled()) {
-    		final String generatedId = externalIdGenerationService.executeExternalDefaultGenerateIdMethod("oxtrust",idType, "");
+			final String generatedId = externalIdGenerationService.executeExternalDefaultGenerateIdMethod("oxtrust",
+					idType, "");
 
-    		if (StringHelper.isNotEmpty(generatedId)) {
-    			return generatedId;
-    		}
-    	}
-    	
-    	return generateDefaultId();
+			if (StringHelper.isNotEmpty(generatedId)) {
+				return generatedId;
+			}
+		}
+
+		return generateDefaultId();
 	}
-	
+
 	public String generateDefaultId() {
-		
+
 		return UUID.randomUUID().toString();
 	}
 }

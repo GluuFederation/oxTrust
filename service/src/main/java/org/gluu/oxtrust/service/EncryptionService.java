@@ -8,10 +8,8 @@ package org.gluu.oxtrust.service;
 import java.io.Serializable;
 import java.util.Properties;
 
-import javax.ejb.Stateless;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import org.gluu.util.StringHelper;
 import org.gluu.util.security.PropertiesDecrypter;
@@ -28,16 +26,16 @@ public class EncryptionService implements Serializable {
 
 	private static final long serialVersionUID = -5813201875981117513L;
 
-    @Inject
-    private StringEncrypter stringEncrypter;
+	@Inject
+	private StringEncrypter stringEncrypter;
 
-    public String decrypt(String encryptedString) throws EncryptionException {
+	public String decrypt(String encryptedString) throws EncryptionException {
 		if (StringHelper.isEmpty(encryptedString)) {
 			return null;
 		}
 
 		return stringEncrypter.decrypt(encryptedString);
-    }
+	}
 
 	public String encrypt(String unencryptedString) throws EncryptionException {
 		if (StringHelper.isEmpty(unencryptedString)) {
@@ -51,8 +49,8 @@ public class EncryptionService implements Serializable {
 		return PropertiesDecrypter.decryptProperties(stringEncrypter, connectionProperties);
 	}
 
-    public Properties decryptAllProperties(Properties connectionProperties) {
-        return PropertiesDecrypter.decryptAllProperties(stringEncrypter, connectionProperties);
-    }
+	public Properties decryptAllProperties(Properties connectionProperties) {
+		return PropertiesDecrypter.decryptAllProperties(stringEncrypter, connectionProperties);
+	}
 
 }

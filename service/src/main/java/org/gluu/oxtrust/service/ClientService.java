@@ -170,15 +170,6 @@ public class ClientService implements Serializable {
 	}
 
 	/**
-	 * Generate new inum for client
-	 *
-	 * @return New inum for client
-	 */
-	private String generateInumForNewClientImpl(int trycount) {
-		return idGenService.generateId("client");
-	}
-
-	/**
 	 * Search clients by pattern
 	 *
 	 * @param pattern
