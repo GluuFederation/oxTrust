@@ -293,10 +293,10 @@
 																	<div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
 																		<h:outputText value="#{_sectorIdentifier.id}" />
 																		<h:outputText value="&#160;" />
-																		<div class="span6 pull-right">
+																		<div>
 																			<a4j:commandLink
 																				styleClass="glyphicon glyphicon-remove"
-																				style="margin-top:-20px;"
+																				style="margin-top:-20px; float:right;"
 																				action="#{_clientAction.removeSector(_sectorIdentifier)}"
 																				execute="@this" render="selectedSectorId"
 																				eventsQueue="clientQueue">
@@ -592,10 +592,10 @@
 																	style="overflow-x: scroll;">
 																	<h:outputText value="#{_claim.displayName}" />
 																	<h:outputText value="&#160;" />
-																	<div class="span6 pull-right">
+																	<div>
 																		<a4j:commandLink
 																			styleClass="glyphicon glyphicon-remove"
-																			style="margin-top: -20px;"
+																			style="margin-top: -20px; float:right;"
 																			action="#{_clientAction.removeClaim(_claim.inum)}"
 																			execute="@this" render="selectedClaimsId"
 																			eventsQueue="clientQueue"></a4j:commandLink>
@@ -657,10 +657,10 @@
 																	style="overflow-x: scroll;">
 																	<h:outputText value="#{_authorizedOrigin}" />
 																	<h:outputText value="&#160;" />
-																	<div class="span6 pull-right">
+																	<div>
 																		<a4j:commandLink
 																			styleClass="glyphicon glyphicon-remove"
-																			style="margin-top:-20px;"
+																			style="margin-top:-20px; float:right;"
 																			action="#{_clientAction.removeAuthorizedOrigin(_authorizedOrigin)}"
 																			execute="@this" render="selectedAuthorizedOriginsId"
 																			eventsQueue="clientQueue">
@@ -696,10 +696,10 @@
 																	<h:outputText
 																		value="#{empty _contact ? _contact : _contact}" />
 																	<h:outputText value="&#160;" />
-																	<div class="span6 pull-right">
+																	<div>
 																		<a4j:commandLink
 																			styleClass="glyphicon glyphicon-remove"
-																			style="margin-top:-20px;"
+																			style="margin-top:-20px; float:right;"
 																			action="#{_clientAction.removeContact(_contact)}"
 																			execute="@this" render="selectedContactsId"
 																			eventsQueue="clientQueue">
@@ -731,14 +731,13 @@
 																	style="overflow-x: scroll;">
 																	<h:outputText value="#{empty _uri ? _uri : _uri}" />
 																	<h:outputText value="&#160;" />
-																	<div class="span6 pull-right">
+																	<div>
 																		<a4j:commandLink
 																			styleClass="glyphicon glyphicon-remove"
-																			style="margin-top:-20px;"
+																			style="margin-top:-20px; float:right;"
 																			action="#{_clientAction.removeClientLogoutURI(_uri)}"
 																			execute="@this" render="selectedClientUrisId"
 																			eventsQueue="clientQueue">
-																			<!-- <h:graphicImage value="/img/remove.gif" /> -->
 																		</a4j:commandLink>
 																	</div>
 																</div>
@@ -769,10 +768,10 @@
 																	style="overflow-x: scroll;">
 																	<h:outputText value="#{_acr.name}" />
 																	<h:outputText value="&#160;" />
-																	<div class="span6 pull-right">
+																	<div>
 																		<a4j:commandLink
 																			styleClass="glyphicon glyphicon-remove"
-																			style="margin-top:-20px;"
+																			style="margin-top:-20px; float:right;"
 																			action="#{_clientAction.removeCustomScript(_acr.name)}"
 																			execute="@this" render="selectedCustomScriptAcrsId"
 																			eventsQueue="clientQueue">
