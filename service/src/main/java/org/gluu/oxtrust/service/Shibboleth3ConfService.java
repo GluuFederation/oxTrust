@@ -38,14 +38,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.velocity.VelocityContext;
 import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.config.oxtrust.AttributeResolverConfiguration;
-import org.gluu.config.oxtrust.LdapOxTrustConfiguration;
 import org.gluu.config.oxtrust.NameIdConfig;
 import org.gluu.config.oxtrust.ShibbolethCASProtocolConfiguration;
 import org.gluu.model.GluuAttribute;
 import org.gluu.model.GluuStatus;
 import org.gluu.model.GluuUserRole;
 import org.gluu.model.SchemaEntry;
-import org.gluu.service.config.ConfigurationFactory;
 import org.gluu.oxtrust.model.GluuMetadataSourceType;
 import org.gluu.oxtrust.model.GluuSAMLFederationProposal;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
@@ -55,6 +53,7 @@ import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.saml.metadata.SAMLMetadataParser;
 import org.gluu.service.SchemaService;
 import org.gluu.service.XmlService;
+import org.gluu.service.config.ConfigurationFactory;
 import org.gluu.service.document.store.conf.DocumentStoreType;
 import org.gluu.service.document.store.service.DocumentStoreService;
 import org.gluu.service.document.store.service.LocalDocumentStoreService;
@@ -119,7 +118,7 @@ public class Shibboleth3ConfService implements Serializable {
 	public static final String SHIB3_IDP_SP_CERT_FILE = "spcert.crt";
 
 	public static final String GLUU_SAML_OXAUTH_SUPPORTED_PRINCIPALS_FILE = "oxauth-supported-principals.xml";
-	
+
 	Charset UTF_8 = Charset.forName("utf-8");
 
 	@Inject
@@ -177,7 +176,7 @@ public class Shibboleth3ConfService implements Serializable {
 	private LocalDocumentStoreService localDocumentStoreService;
 
 	private Schema samlSchema;
-	
+
 	@PostConstruct
 	public void create() {
 		SAMLSchemaBuilder samlSchemaBuilder = new SAMLSchemaBuilder(SAML1Version.SAML_11);
@@ -203,8 +202,7 @@ public class Shibboleth3ConfService implements Serializable {
 		context.put("acrs", acrs2);
 
 		// Generate metadata-providers.xml
-		String oxAuthSupportedPrincipals = generateConfFile(GLUU_SAML_OXAUTH_SUPPORTED_PRINCIPALS_FILE,
-				context);
+		String oxAuthSupportedPrincipals = generateConfFile(GLUU_SAML_OXAUTH_SUPPORTED_PRINCIPALS_FILE, context);
 		boolean result = writeConfFile(idpConfAuthnFolder + GLUU_SAML_OXAUTH_SUPPORTED_PRINCIPALS_FILE,
 				oxAuthSupportedPrincipals);
 
@@ -584,7 +582,8 @@ public class Shibboleth3ConfService implements Serializable {
 		List<NameIdConfig> nameIdConfigs = new ArrayList<NameIdConfig>();
 		Set<GluuAttribute> nameIdAttributes = new HashSet<GluuAttribute>();
 
-		AttributeResolverConfiguration attributeResolverConfiguration = configurationFactory.getAttributeResolverConfiguration();
+		AttributeResolverConfiguration attributeResolverConfiguration = configurationFactory
+				.getAttributeResolverConfiguration();
 		if ((attributeResolverConfiguration != null) && (attributeResolverConfiguration.getNameIdConfigs() != null)) {
 			for (NameIdConfig nameIdConfig : attributeResolverConfiguration.getNameIdConfigs()) {
 				if (StringHelper.isNotEmpty(nameIdConfig.getSourceAttribute()) && nameIdConfig.isEnabled()) {
@@ -604,7 +603,8 @@ public class Shibboleth3ConfService implements Serializable {
 		String baseUserDn = personService.getDnForPerson(null);
 		String persistenceType = persistenceEntryManager.getPersistenceType(baseUserDn);
 
-		log.debug(">>>>>>>>>> Shibboleth3ConfService.initAttributeResolverParamMap() - Persistance type: '{}'", persistenceType);
+		log.debug(">>>>>>>>>> Shibboleth3ConfService.initAttributeResolverParamMap() - Persistance type: '{}'",
+				persistenceType);
 		attributeResolverParams.put("persistenceType", persistenceType);
 		return attributeResolverParams;
 	}
@@ -734,7 +734,8 @@ public class Shibboleth3ConfService implements Serializable {
 
 	public String saveSpMetadataFile(String spMetadataFileName, InputStream stream) {
 		if (appConfiguration.getShibboleth3IdpRootDir() == null) {
-			throw new InvalidConfigurationException("Failed to save SP meta-data file due to undefined IDP root folder");
+			throw new InvalidConfigurationException(
+					"Failed to save SP meta-data file due to undefined IDP root folder");
 		}
 
 		String idpMetadataTempFolder = getIdpMetadataTempDir();
@@ -770,11 +771,13 @@ public class Shibboleth3ConfService implements Serializable {
 		}
 
 		if (appConfiguration.getShibboleth3IdpRootDir() == null) {
-			throw new InvalidConfigurationException("Failed to save SP meta-data file due to undefined IDP root folder");
+			throw new InvalidConfigurationException(
+					"Failed to save SP meta-data file due to undefined IDP root folder");
 		}
 
 		HTTPFileDownloader.setEasyhttps(new Protocol("https", new EasyCASSLProtocolSocketFactory(), 443));
-		String spMetadataFileContent = HTTPFileDownloader.getResource(spMetaDataURL, "application/xml, text/xml", null, null);
+		String spMetadataFileContent = HTTPFileDownloader.getResource(spMetaDataURL, "application/xml, text/xml", null,
+				null);
 
 		if (StringHelper.isEmpty(spMetadataFileContent)) {
 			return null;
@@ -829,8 +832,7 @@ public class Shibboleth3ConfService implements Serializable {
 			return false;
 		}
 
-		return writeConfFile(idpMetadataFolder + trustRelationship.getSpMetaDataFN(),
-				spMetadataFileContent);
+		return writeConfFile(idpMetadataFolder + trustRelationship.getSpMetaDataFN(), spMetadataFileContent);
 	}
 
 	public String generateSpMetadataFileContent(GluuSAMLTrustRelationship trustRelationship, String certificate) {
@@ -1045,13 +1047,13 @@ public class Shibboleth3ConfService implements Serializable {
 
 		String metadataFolder = getIdpMetadataDir();
 		String spMetadataFile = metadataFolder + spMetaDataFN;
-		
+
 		try {
 			return documentStoreService.removeDocument(spMetadataFile);
 		} catch (Exception ex) {
 			log.error("Failed to remove {}", spMetadataFile, ex);
 		}
-		
+
 		return false;
 	}
 
@@ -1147,7 +1149,8 @@ public class Shibboleth3ConfService implements Serializable {
 		try {
 			String signingCert = appConfiguration.getIdp3SigningCert();
 			if (DocumentStoreType.LOCAL != documentStoreService.getProviderType()) {
-				// If it's not local store we need to check if file exists and put it into repo if needed
+				// If it's not local store we need to check if file exists and put it into repo
+				// if needed
 				boolean hasSigningCert = documentStoreService.hasDocument(signingCert);
 				if (!hasSigningCert) {
 					try (InputStream signingCertStream = localDocumentStoreService.readDocumentAsStream(signingCert)) {
@@ -1156,7 +1159,8 @@ public class Shibboleth3ConfService implements Serializable {
 				}
 			}
 
-			String idpSigningCertificate = documentStoreService.readDocument(signingCert, UTF_8).replaceAll("-{5}.*?-{5}", "");
+			String idpSigningCertificate = documentStoreService.readDocument(signingCert, UTF_8)
+					.replaceAll("-{5}.*?-{5}", "");
 			context.put("idpSigningCertificate", idpSigningCertificate);
 
 		} catch (Exception e) {
@@ -1167,17 +1171,19 @@ public class Shibboleth3ConfService implements Serializable {
 		try {
 			String encryptionCert = appConfiguration.getIdp3EncryptionCert();
 			if (DocumentStoreType.LOCAL != documentStoreService.getProviderType()) {
-				// If it's not local store we need to check if file exists and put it into repo if needed
+				// If it's not local store we need to check if file exists and put it into repo
+				// if needed
 				boolean hasSigningCert = documentStoreService.hasDocument(encryptionCert);
 				if (!hasSigningCert) {
-					try (InputStream encryptionCertStream = localDocumentStoreService.readDocumentAsStream(encryptionCert)) {
+					try (InputStream encryptionCertStream = localDocumentStoreService
+							.readDocumentAsStream(encryptionCert)) {
 						documentStoreService.saveDocumentStream(encryptionCert, encryptionCertStream);
 					}
 				}
 			}
 
-			String idpEncryptionCertificate = documentStoreService.
-					readDocument(encryptionCert, UTF_8).replaceAll("-{5}.*?-{5}", "");
+			String idpEncryptionCertificate = documentStoreService.readDocument(encryptionCert, UTF_8)
+					.replaceAll("-{5}.*?-{5}", "");
 			context.put("idpEncryptionCertificate", idpEncryptionCertificate);
 		} catch (Exception e) {
 			log.error("Unable to get IDP 3 encryption certificate from " + appConfiguration.getIdp3EncryptionCert(), e);
@@ -1205,7 +1211,7 @@ public class Shibboleth3ConfService implements Serializable {
 	 * @throws SAXException
 	 * @throws ParserConfigurationException
 	 * @return GluuErrorHandler
-	 * @throws XMLParserException 
+	 * @throws XMLParserException
 	 */
 	public GluuErrorHandler validateMetadata(String metadataPath)
 			throws ParserConfigurationException, SAXException, IOException, XMLParserException {
@@ -1215,7 +1221,7 @@ public class Shibboleth3ConfService implements Serializable {
 			validationLog.add("Failed to load SAML schema");
 			return new GluuErrorHandler(false, true, validationLog);
 		}
-		
+
 		try (InputStream stream = documentStoreService.readDocumentAsStream(metadataPath)) {
 			return XMLValidator.validateMetadata(stream, samlSchema);
 		}
@@ -1231,7 +1237,7 @@ public class Shibboleth3ConfService implements Serializable {
 			return (con.getResponseCode() == HttpURLConnection.HTTP_OK);
 
 		} catch (Exception e) {
-			log.error("existsResourceUri: {}" , resourceUrlName);
+			log.error("existsResourceUri: {}", resourceUrlName);
 			return false;
 		}
 	}
@@ -1258,7 +1264,7 @@ public class Shibboleth3ConfService implements Serializable {
 
 	public String generateConfFile(String template, VelocityContext context) {
 		String generatedConf = templateService.generateConfFile(template, context);
-		
+
 		return generatedConf;
 	}
 
@@ -1275,7 +1281,7 @@ public class Shibboleth3ConfService implements Serializable {
 	/**
 	 * @param trustRelationship
 	 * @param certificate
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	public void saveCert(GluuSAMLTrustRelationship trustRelationship, String certificate) throws IOException {
 		String sslDirFN = appConfiguration.getShibboleth3IdpRootDir() + File.separator
@@ -1284,7 +1290,7 @@ public class Shibboleth3ConfService implements Serializable {
 		String certPath = sslDirFN + getSpNewMetadataFileName(trustRelationship).replaceFirst("\\.xml$", ".crt");
 		String certData = Shibboleth3ConfService.PUBLIC_CERTIFICATE_START_LINE + "\n" + certificate
 				+ Shibboleth3ConfService.PUBLIC_CERTIFICATE_END_LINE;
-		
+
 		if (certificate != null) {
 			documentStoreService.saveDocument(certPath, certData, UTF_8);
 		} else {
@@ -1297,14 +1303,14 @@ public class Shibboleth3ConfService implements Serializable {
 	/**
 	 * @param trustRelationship
 	 * @param key
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	public void saveKey(GluuSAMLTrustRelationship trustRelationship, String key) throws IOException {
 		String sslDirFN = appConfiguration.getShibboleth3IdpRootDir() + File.separator
 				+ TrustService.GENERATED_SSL_ARTIFACTS_DIR + File.separator;
 
 		String keyPath = sslDirFN + getSpNewMetadataFileName(trustRelationship).replaceFirst("\\.xml$", ".key");
-		
+
 		if (key != null) {
 			documentStoreService.saveDocument(keyPath, key, UTF_8);
 		} else {
@@ -1318,7 +1324,8 @@ public class Shibboleth3ConfService implements Serializable {
 		return documentStoreService.hasDocument(filePath);
 	}
 
-	public void replaceSpMetadataCert(GluuSAMLTrustRelationship trustRelationship, String certRegEx, String certificate) throws IOException {
+	public void replaceSpMetadataCert(GluuSAMLTrustRelationship trustRelationship, String certRegEx, String certificate)
+			throws IOException {
 		String metadataFileName = trustRelationship.getSpMetaDataFN();
 
 		String metadataFile = getSpMetadataFilePath(metadataFileName);
@@ -1342,14 +1349,14 @@ public class Shibboleth3ConfService implements Serializable {
 		if (StringHelper.isEmpty(filePath)) {
 			return null;
 		}
-		
+
 		return documentStoreService.readDocumentAsStream(filePath);
 	}
 
 	public String getSslDirFN() {
-		String sslDirFN = appConfiguration.getShibboleth3IdpRootDir() + File.separator + TrustService.GENERATED_SSL_ARTIFACTS_DIR
-				+ File.separator;
-		
+		String sslDirFN = appConfiguration.getShibboleth3IdpRootDir() + File.separator
+				+ TrustService.GENERATED_SSL_ARTIFACTS_DIR + File.separator;
+
 		return sslDirFN;
 	}
 
@@ -1405,11 +1412,12 @@ public class Shibboleth3ConfService implements Serializable {
 	public String saveFilterCert(String filterCertFileName, InputStream stream) {
 		if (appConfiguration.getShibboleth3IdpRootDir() == null) {
 			IOUtils.closeQuietly(stream);
-			throw new InvalidConfigurationException("Failed to save filter certificate file due to undefined IDP root folder");
+			throw new InvalidConfigurationException(
+					"Failed to save filter certificate file due to undefined IDP root folder");
 		}
 
-		String idpMetadataFolder = appConfiguration.getShibboleth3IdpRootDir() + File.separator + SHIB3_IDP_METADATA_FOLDER + File.separator
-				+ "credentials" + File.separator;
+		String idpMetadataFolder = appConfiguration.getShibboleth3IdpRootDir() + File.separator
+				+ SHIB3_IDP_METADATA_FOLDER + File.separator + "credentials" + File.separator;
 		String filterCertFile = idpMetadataFolder + filterCertFileName;
 		try {
 			boolean result = documentStoreService.saveDocumentStream(filterCertFile, stream);

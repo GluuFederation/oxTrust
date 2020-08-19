@@ -11,18 +11,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.ejb.Stateless;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.inject.Named;
 
-import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.model.GluuStatus;
 import org.gluu.oxtrust.model.GluuMetadataSourceType;
 import org.gluu.oxtrust.model.GluuSAMLFederationProposal;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.PersistenceEntryManager;
-import org.gluu.persist.model.base.InumEntry;
 import org.gluu.util.INumGenerator;
 import org.gluu.util.StringHelper;
 
@@ -38,9 +34,6 @@ public class FederationService implements Serializable {
 
 	@Inject
 	private Shibboleth3ConfService shibboleth3ConfService;
-
-	@Inject
-	private AppConfiguration appConfiguration;
 
 	public void addFederationProposal(GluuSAMLFederationProposal federationProposal) {
 		persistenceEntryManager.persist(federationProposal);
@@ -105,7 +98,8 @@ public class FederationService implements Serializable {
 	 * call LDAP to fetch all Federation Proposals.
 	 */
 	public List<GluuSAMLFederationProposal> getAllFederationProposals() {
-		return persistenceEntryManager.findEntries(getDnForFederationProposal(null), GluuSAMLFederationProposal.class, null);
+		return persistenceEntryManager.findEntries(getDnForFederationProposal(null), GluuSAMLFederationProposal.class,
+				null);
 	}
 
 	public GluuSAMLFederationProposal getProposalByInum(String inum) {

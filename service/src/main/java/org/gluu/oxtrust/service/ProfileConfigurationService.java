@@ -6,8 +6,6 @@
 
 package org.gluu.oxtrust.service;
 
-import static org.gluu.oxtrust.service.Shibboleth3ConfService.SHIB3_IDP_METADATA_FOLDER;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
@@ -15,22 +13,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.ejb.Stateless;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 
 import org.apache.velocity.VelocityContext;
-import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.model.ProfileConfiguration;
 import org.gluu.service.XmlService;
 import org.gluu.util.StringHelper;
 import org.gluu.util.io.FileUploadWrapper;
-import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
@@ -53,28 +47,22 @@ public class ProfileConfigurationService implements Serializable {
 	private static final String SAML2_ATTRIBUTE_QUERY = "SAML2AttributeQuery";
 
 	@Inject
-	private Logger log;
-
-	@Inject
 	private TemplateService templateService;
 
 	@Inject
 	private XmlService xmlService;
-	
+
 	@Inject
 	private Shibboleth3ConfService shibboleth3ConfService;
 
-	@Inject
-	private AppConfiguration appConfiguration;
-
 	public List<ProfileConfiguration> getAvailableProfileConfigurations() {
-		List<String> templateNames = templateService.getTemplateNames("shibboleth3" + File.separator + "idp" + File.separator + "ProfileConfiguration");
+		List<String> templateNames = templateService
+				.getTemplateNames("shibboleth3" + File.separator + "idp" + File.separator + "ProfileConfiguration");
 
 		List<ProfileConfiguration> profileConfigurations = new ArrayList<ProfileConfiguration>();
 		for (String templateName : templateNames) {
 			if (templateName.endsWith("ProfileConfiguration.xml.vm")) {
-				profileConfigurations.add(createProfileConfiguration(
-						templateName.split("ProfileConfiguration")[0]));
+				profileConfigurations.add(createProfileConfiguration(templateName.split("ProfileConfiguration")[0]));
 			}
 		}
 
@@ -245,18 +233,20 @@ public class ProfileConfigurationService implements Serializable {
 					profileConfiguration.setEncryptNameIds(
 							xmlDocument.getFirstChild().getAttributes().getNamedItem("encryptNameIds").getNodeValue());
 
-					Node attribute = xmlDocument.getFirstChild().getAttributes().getNamedItem("defaultAuthenticationMethod");
-					if (attribute != null) 
+					Node attribute = xmlDocument.getFirstChild().getAttributes()
+							.getNamedItem("defaultAuthenticationMethod");
+					if (attribute != null)
 						profileConfiguration.setDefaultAuthenticationMethod(attribute.getNodeValue());
-					
-					Node attribute2 = xmlDocument.getFirstChild().getAttributes().getNamedItem("nameIDFormatPrecedence");
-					if (attribute2 != null) 
+
+					Node attribute2 = xmlDocument.getFirstChild().getAttributes()
+							.getNamedItem("nameIDFormatPrecedence");
+					if (attribute2 != null)
 						profileConfiguration.setNameIDFormatPrecedence(attribute2.getNodeValue());
-					
+
 					Node attribute3 = xmlDocument.getFirstChild().getAttributes().getNamedItem("signingCredentialRef");
-					if (attribute3 != null) 
+					if (attribute3 != null)
 						profileConfiguration.setProfileConfigurationCertFileName(attribute3.getNodeValue());
-					
+
 					trustRelationship.getProfileConfigurations().put(SAML2_SSO, profileConfiguration);
 					continue;
 				}
@@ -422,7 +412,8 @@ public class ProfileConfigurationService implements Serializable {
 			context.put(SAML2_SSO + "SignRequests", profileConfiguration.getSignRequests());
 			context.put(SAML2_SSO + "EncryptNameIds", profileConfiguration.getEncryptNameIds());
 			context.put(SAML2_SSO + "EncryptAssertions", profileConfiguration.getEncryptAssertions());
-			context.put(SAML2_SSO + "DefaultAuthenticationMethod", profileConfiguration.getDefaultAuthenticationMethod());
+			context.put(SAML2_SSO + "DefaultAuthenticationMethod",
+					profileConfiguration.getDefaultAuthenticationMethod());
 			context.put(SAML2_SSO + "NameIDFormatPrecedence", profileConfiguration.getNameIDFormatPrecedence());
 			saveCertificate(trustRelationship, fileWrappers, SAML2_SSO);
 			String certName = trustRelationship.getProfileConfigurations().get(SAML2_SSO)
@@ -498,7 +489,8 @@ public class ProfileConfigurationService implements Serializable {
 		if (fileWrappers.get(name) != null && fileWrappers.get(name).getStream() != null) {
 			String profileConfigurationCertFileName = StringHelper
 					.removePunctuation(name + trustRelationship.getInum());
-			shibboleth3ConfService.saveProfileConfigurationCert(profileConfigurationCertFileName, fileWrappers.get(name).getStream());
+			shibboleth3ConfService.saveProfileConfigurationCert(profileConfigurationCertFileName,
+					fileWrappers.get(name).getStream());
 			trustRelationship.getProfileConfigurations().get(name).setProfileConfigurationCertFileName(
 					StringHelper.removePunctuation(profileConfigurationCertFileName));
 		}
