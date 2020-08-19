@@ -933,6 +933,11 @@
             "description": "Boolean value specifying whether to add Authorization Code Flow with Refresh grant during client registration.",
             "type": "boolean"
         },
+        "refreshTokenExtendLifetimeOnRotation": {
+            "id": "refreshTokenExtendLifetimeOnRotation",
+            "description": "Boolean value specifying whether to extend refresh token lifetime on rotation.",
+            "type": "boolean"
+        },
         "authenticationFilters": {
             "id": "authenticationFilters",
             "description": "User authentication filters.",
