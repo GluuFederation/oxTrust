@@ -20,9 +20,9 @@
 				"minLength": 1
 			}
 		},
-		"notShowInDiscovery": {
-			"id": "notShowInDiscovery",
-			"title": "Not show in discovery",
+		"showInConfigurationEndpoint": {
+			"id": "showInConfigurationEndpoint",
+			"title": "Show in configuration endpoint",
 			"type": "boolean"
 		}
 	}

@@ -44,16 +44,19 @@
 								onclick="PF('changePasswordModalPanel').show();"
 								styleClass="btn btn-primary changePasswordButton"
 								value="#{msgs['person.changePassword']}" />
+							<p:spacer width="10" height="10" />
 							<b:commandButton action="#{updatePersonAction.save}" ajax="true"
 								update="@form"
 								rendered="#{organizationService.allowPersonModification}"
 								styleClass="btn btn-primary savePersonButon"
-								style="margin-right:5px;" value="#{msgs['person.update']}" />
+								value="#{msgs['person.update']}" />
+							<p:spacer width="10" height="10" />
 							<a4j:commandButton eventsQueue="personQueue"
 								onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();"
 								rendered="#{not _new and organizationService.allowPersonModification}"
 								styleClass="btn btn-primary deletePersonButton"
 								value="#{msgs['person.delete']}" />
+							<p:spacer width="10" height="10" />
 							<b:commandButton action="#{updatePersonAction.cancel}"
 								styleClass="btn btn-primary" ajax="true" update="@form"
 								value="#{organizationService.allowPersonModification ? 'Cancel' : 'Back' }" />
