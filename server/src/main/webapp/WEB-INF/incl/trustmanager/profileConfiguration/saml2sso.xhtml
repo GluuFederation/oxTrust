@@ -18,10 +18,10 @@
 			<ox:decorate id="assertionLifetimeCheckBox"
 				label="#{msgs['trustmanager.assertionLifetime']}"
 				leftClass="col-sm-6" rightClass="col-sm-6">
-				<b:touchSpin id="assertionLifetimeCheckBoxValue" col-md="12"
+				<p:spinner id="assertionLifetimeCheckBoxValue"
 					styleClass="rounded assertionLifetimeCheckBoxValue"
 					value="#{_ssoProfile.assertionLifetime}" min="60" max="2147483647"
-					step="300000" />
+					stepFactor="300000" style=" margin-left:15px;width:90%;" />
 			</ox:decorate>
 			<ox:decorate id="signResponseCheckBox"
 				label="#{msgs['trustmanager.signResponses']}" leftClass="col-sm-6"

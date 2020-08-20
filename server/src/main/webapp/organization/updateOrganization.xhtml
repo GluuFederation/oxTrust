@@ -2,7 +2,7 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
-	xmlns:b="http://bootsfaces.net/ui"
+	xmlns:b="http://bootsfaces.net/ui" xmlns:p="http://primefaces.org/ui"
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	template="/WEB-INF/incl/layout/newtemplate.xhtml">
 
@@ -52,12 +52,12 @@
 						<div class="box-footer" style="margin-top: -16px !important;">
 							<h:panelGroup id="updateButtons" layout="block">
 								<h:commandButton action="#{updateOrganizationAction.save}"
-									style="margin-left:5px" styleClass="btn btn-primary"
+									styleClass="btn btn-primary"
 									value="#{msgs['updateorganization.update']}" />
+								<p:spacer height="10" width="10" />
 								<b:commandButton action="#{updateOrganizationAction.cancel}"
-									style="margin-left:5px" styleClass="btn btn-primary"
-									ajax="true" update="@form" onclick="lock();"
-									ondbclick="lock();" oncomplete="unlock();"
+									styleClass="btn btn-primary" ajax="true" update="@form"
+									onclick="lock();" ondbclick="lock();" oncomplete="unlock();"
 									value="#{msgs['updateorganization.cancel']}" />
 							</h:panelGroup>
 						</div>
