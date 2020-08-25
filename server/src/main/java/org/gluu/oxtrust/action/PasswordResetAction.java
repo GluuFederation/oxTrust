@@ -99,6 +99,7 @@ public class PasswordResetAction implements Serializable {
 	private String securityAnswer;
 
 	public String start() throws ParseException {
+		this.securityAnswer = null;
 		if (StringHelper.isEmpty(guid)) {
 			sendExpirationError();
 			return OxTrustConstants.RESULT_FAILURE;
