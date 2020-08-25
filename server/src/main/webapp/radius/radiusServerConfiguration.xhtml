@@ -7,50 +7,66 @@
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	template="/WEB-INF/incl/layout/newtemplate.xhtml">
 	<f:metadata>
-		<f:viewAction action="#{permissionService.requestPermission('radius','access')}"/>
-		<f:viewAction action="#{conversationService.initConversation}"/>
-		<f:viewAction action="#{updateGluuRadiusConfigAction.init}"/>
+		<f:viewAction
+			action="#{permissionService.requestPermission('radius','access')}" />
+		<f:viewAction action="#{conversationService.initConversation}" />
+		<f:viewAction action="#{updateGluuRadiusConfigAction.init}" />
 	</f:metadata>
-
 	<ui:define name="body">
-        <section class="content-header">
-		  <h1 style="color: #333;">
-			#{msgs['radius.title']}
-			<small><i class="fa fa-caret-right" style="color: #333 !important;"/>#{msgs['radius.config.title']}</small>
-		  </h1>
-		  <ol class="breadcrumb">
-			<li><a href="#{request.contextPath}/home.htm"><i class="fa fa-home"/></a></li>
-			<li class="organization/configuration"><a href="#">#{msgs['radius.config.title']}</a></li>
-		  </ol>
+		<section class="content-header">
+			<h1 style="color: #333;">
+				#{msgs['radius.title']} <small><i class="fa fa-caret-right"
+					style="color: #333 !important;" />#{msgs['radius.config.title']}</small>
+			</h1>
+			<ol class="breadcrumb">
+				<li><a href="#{request.contextPath}/home.htm"><i
+						class="fa fa-home" /></a></li>
+				<li class="organization/configuration"><a href="#">#{msgs['radius.config.title']}</a></li>
+			</ol>
 		</section>
 		<section class="content">
-			<h:panelGroup id="formArea" layout="block">
-				<ui:decorate template="/WEB-INF/incl/radius/serverConfigForm.xhtml">
-					<ui:param name="_config" value="#{updateGluuRadiusConfigAction.serverConfiguration}"/>
-					<ui:param name="_customscripts" value="#{updateGluuRadiusConfigAction.roPasswordScripts}"/>
-					<ui:param name="_scopes" value="#{updateGluuRadiusConfigAction.scopes}"/>
-					<ui:param name="_clients" value="#{updateGluuRadiusConfigAction.openidClients}"/>
-					<ui:param name="_action" value="#{updateGluuRadiusConfigAction}"/>
-					<ui:define name="control-buttons">
-						<div>
-							<h:commandButton action="#{updateGluuRadiusConfigAction.save}"
-								styleClass="btn btn-primary" value="#{msgs['radius.config.save.label']}"/>
-							<p:spacer width="10" height="10" />	
-							<h:commandButton action="#{updateGluuRadiusConfigAction.cancel}"
-								styleClass="btn btn-primary" value="#{msgs['radius.config.cancel.label']}"/>
-						</div>
-					</ui:define>
-				</ui:decorate>
-				<ox:selectSelectableEntityDialog
-						acceptMethod="#{updateGluuRadiusConfigAction.acceptSelectedScopes}"
-						cancelMethod="#{updateGluuRadiusConfigAction.cancelSelectedScopes}"
-						displayNameProperty="entity.description" displaySearchForm="false"
-						id="scopedialog" label="#{msgs['radius.config.scopes.label']}"
-						nameProperty="entity.id" render="openid-scopes"
-						searchMethod="#{updateGluuRadiusConfigAction.searchAvailableScopes}"
-						searchResult="#{updateGluuRadiusConfigAction.availableScopes}"/>
-				
-			</h:panelGroup>
+			<div class="formArea" style="margin-top: 10px">
+				<div class="row">
+					<div class="col-xs-12 col-md-12">
+						<h:panelGroup id="formArea" layout="block">
+							<ui:decorate
+								template="/WEB-INF/incl/radius/serverConfigForm.xhtml">
+								<ui:param name="_config"
+									value="#{updateGluuRadiusConfigAction.serverConfiguration}" />
+								<ui:param name="_customscripts"
+									value="#{updateGluuRadiusConfigAction.roPasswordScripts}" />
+								<ui:param name="_scopes"
+									value="#{updateGluuRadiusConfigAction.scopes}" />
+								<ui:param name="_clients"
+									value="#{updateGluuRadiusConfigAction.openidClients}" />
+								<ui:param name="_action" value="#{updateGluuRadiusConfigAction}" />
+								<ui:define name="control-buttons">
+									<div>
+										<h:commandButton action="#{updateGluuRadiusConfigAction.save}"
+											styleClass="btn btn-primary"
+											value="#{msgs['radius.config.save.label']}" />
+										<p:spacer width="10" height="10" />
+										<h:commandButton
+											action="#{updateGluuRadiusConfigAction.cancel}"
+											styleClass="btn btn-primary"
+											value="#{msgs['radius.config.cancel.label']}" />
+									</div>
+								</ui:define>
+							</ui:decorate>
+							<ox:selectSelectableEntityDialog
+								acceptMethod="#{updateGluuRadiusConfigAction.acceptSelectedScopes}"
+								cancelMethod="#{updateGluuRadiusConfigAction.cancelSelectedScopes}"
+								displayNameProperty="entity.description"
+								displaySearchForm="false" id="scopedialog"
+								label="#{msgs['radius.config.scopes.label']}"
+								nameProperty="entity.id" render="openid-scopes"
+								searchMethod="#{updateGluuRadiusConfigAction.searchAvailableScopes}"
+								searchResult="#{updateGluuRadiusConfigAction.availableScopes}" />
+
+						</h:panelGroup>
+					</div>
+				</div>
+			</div>
 		</section>
-    </ui:define>
+	</ui:define>
 </ui:composition>

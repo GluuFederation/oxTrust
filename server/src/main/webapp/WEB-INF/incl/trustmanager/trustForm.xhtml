@@ -111,6 +111,10 @@ input[submit] {
 	border: 2px solid #2e6da4 !important;
 	border-radius: 5px !important;
 }
+
+.ui-dialog .ui-dialog-titlebar {
+	background-color: #2e6da4 !important;
+}
 </style>
 		</h:head>
 		<h:form enctype="multipart/form-data" id="trustForm">
@@ -239,7 +243,7 @@ input[submit] {
 
 													<a4j:commandLink id="fileWrapperFileNameId"
 														value="#{_trustRelationship.spMetaDataFN}"
-														onclick="#{rich:component('spMetadataPanel')}.show();"
+														onclick="PF('spMetadataPanel').show();"
 														rendered="#{not empty _trustRelationship.spMetaDataFN}"
 														execute="@this" />
 													<a4j:commandLink style="margin-left:305px;"
@@ -247,10 +251,18 @@ input[submit] {
 														action="#{_trustRelationship.setSpMetaDataFN('')}"
 														limitRender="true" render="MetadataOperations"
 														rendered="#{not empty _trustRelationship.spMetaDataFN}">
-														<!-- <h:graphicImage value="/img/remove.gif" />  -->
 													</a4j:commandLink>
 												</ox:decorate>
 											</h:panelGroup>
+											<p:dialog id="spMetadataPanel" header="SP METADATA" draggable="true"
+												closeOnEscape="true" minHeight="400" width="600"
+												resizable="true" widgetVar="spMetadataPanel" modal="true"
+												responsive="true">
+												<pre>
+		                                            <h:outputText
+														value="#{_trustRelationshipAction.metadata}" />
+		                                         </pre>
+											</p:dialog>
 										</a4j:region>
 										<h:panelGroup id="certUpdateWrapperGroupId"
 											rendered="#{((not empty _trustRelationship.spMetaDataFN) and (_trustRelationship.spMetaDataSourceType.value eq 'file'))}">
@@ -478,7 +490,6 @@ input[submit] {
 			<div class="row"
 				style="margin-left: 5px; margin-right: 5px; background: white;">
 				<ui:insert name="controlButttons" />
-
 				<h:panelGrid columns="1" width="100%" columnClasses="alignLeft">
 					<p:spacer height="8" />
 					<ui:insert name="configurationLink" />

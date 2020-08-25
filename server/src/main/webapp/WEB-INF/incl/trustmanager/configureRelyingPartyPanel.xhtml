@@ -3,6 +3,7 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
 	xmlns:a4j="http://richfaces.org/a4j" xmlns:b="http://bootsfaces.net/ui"
 	xmlns:rich="http://richfaces.org/rich"
@@ -53,6 +54,10 @@
 	border-width: 1px;
 	border-style: dotted;
 	border-color: #000000;
+}
+
+.ui-panel .ui-panel-titlebar {
+	background-color: #337AB7;
 }
 
 .rf-pick-src, .rf-pick-tgt {
@@ -120,43 +125,44 @@ button, input[type="reset"], input[type="submit"], input[type="button"]
 				</rich:pickList>
 				<h:panelGroup id="ProfileConfigurationConfigMenu"
 					style="heihgt: 50%; width: 100%;" layout="block">
-					<b:accordion expanded-panels="panel1,panel3">
-						<b:panel id="panel1" title="SAML 2 SSO Profile" look="info"
-							rendered="#{relyingPartyAction.isProfileConfigurationSelected('SAML2SSO')}">
-							<ui:decorate
-								template="/WEB-INF/incl/trustmanager/profileConfiguration/saml2sso.xhtml">
-								<ui:param name="_relyingPartyAction"
-									value="#{relyingPartyAction}" />
-								<ui:param name="_ssoProfile"
-									value="#{relyingPartyAction.getProfileConfiguration('SAML2SSO')}" />
-							</ui:decorate>
-						</b:panel>
-						<b:panel id="panel2" title="SAML 2 Logout Profile" look="info"
-							rendered="#{relyingPartyAction.isProfileConfigurationSelected('SAML2Logout')}">
-							<ui:decorate
-								template="/WEB-INF/incl/trustmanager/profileConfiguration/saml2logout.xhtml">
-								<ui:param name="_relyingPartyAction"
-									value="#{relyingPartyAction}" />
-							</ui:decorate>
-						</b:panel>
-						<b:panel id="panel3" title="SAML 2 Artifact Resolution "
-							look="info"
-							rendered="#{relyingPartyAction.isProfileConfigurationSelected('SAML2ArtifactResolution')}">
-							<ui:decorate
-								template="/WEB-INF/incl/trustmanager/profileConfiguration/saml2ar.xhtml">
-								<ui:param name="_relyingPartyAction"
-									value="#{relyingPartyAction}" />
-							</ui:decorate>
-						</b:panel>
-						<b:panel id="panel4" title="SAML 2 Attribute Query" look="info"
-							rendered="#{relyingPartyAction.isProfileConfigurationSelected('SAML2AttributeQuery')}">
-							<ui:decorate
-								template="/WEB-INF/incl/trustmanager/profileConfiguration/saml2aq.xhtml">
-								<ui:param name="_relyingPartyAction"
-									value="#{relyingPartyAction}" />
-							</ui:decorate>
-						</b:panel>
-					</b:accordion>
+					<p:panel id="panel1" header="SAML 2 SSO Profile" toggleable="true"
+						collapsed="true" toggleableHeader="true"
+						rendered="#{relyingPartyAction.isProfileConfigurationSelected('SAML2SSO')}">
+						<ui:decorate
+							template="/WEB-INF/incl/trustmanager/profileConfiguration/saml2sso.xhtml">
+							<ui:param name="_relyingPartyAction"
+								value="#{relyingPartyAction}" />
+							<ui:param name="_ssoProfile"
+								value="#{relyingPartyAction.getProfileConfiguration('SAML2SSO')}" />
+						</ui:decorate>
+					</p:panel>
+					<p:panel id="panel2" header="SAML 2 Logout Profile"
+						toggleable="true" collapsed="true" toggleableHeader="true"
+						rendered="#{relyingPartyAction.isProfileConfigurationSelected('SAML2Logout')}">
+						<ui:decorate
+							template="/WEB-INF/incl/trustmanager/profileConfiguration/saml2logout.xhtml">
+							<ui:param name="_relyingPartyAction"
+								value="#{relyingPartyAction}" />
+						</ui:decorate>
+					</p:panel>
+					<p:panel id="panel3" hearder="SAML 2 Artifact Resolution"
+						toggleable="true" collapsed="true" toggleableHeader="true"
+						rendered="#{relyingPartyAction.isProfileConfigurationSelected('SAML2ArtifactResolution')}">
+						<ui:decorate
+							template="/WEB-INF/incl/trustmanager/profileConfiguration/saml2ar.xhtml">
+							<ui:param name="_relyingPartyAction"
+								value="#{relyingPartyAction}" />
+						</ui:decorate>
+					</p:panel>
+					<p:panel id="panel4" title="SAML 2 Attribute Query"
+						toggleable="true" collapsed="true" toggleableHeader="true"
+						rendered="#{relyingPartyAction.isProfileConfigurationSelected('SAML2AttributeQuery')}">
+						<ui:decorate
+							template="/WEB-INF/incl/trustmanager/profileConfiguration/saml2aq.xhtml">
+							<ui:param name="_relyingPartyAction"
+								value="#{relyingPartyAction}" />
+						</ui:decorate>
+					</p:panel>
 				</h:panelGroup>
 			</div>
 			<div class="row" id="relyingPartyUpdate"
@@ -165,6 +171,7 @@ button, input[type="reset"], input[type="submit"], input[type="button"]
 					action="#{relyingPartyAction.saveFilters}" class="btn-primary"
 					oncomplete="#{rich:component('TRConfigPanel')}.hide()"
 					render="RelyingPartyMenu" />
+				<p:spacer height="10" width="10" />
 				<a4j:commandButton value="#{msgs['trustmanager.back']}"
 					class="btn-primary"
 					onclick="#{rich:component('TRConfigPanel')}.hide()"

@@ -211,6 +211,10 @@ select {
 	height: 50px;
 	border-radius: 0;
 }
+
+.content {
+	min-height: 550px;
+}
 </style>
 	</h:head>
 	<h:body styleClass="skin-green">
@@ -260,10 +264,10 @@ select {
 		<script
 			src='#{oxTrustConfigurationService.cssLocation}/../theme/dist/js/clipboard.min.js'
 			type="text/javascript"></script>
-		<script>	
-		$.blockUI.defaults.message = $('div.gluuBusyIndicator')
-		$.blockUI.defaults.fadeIn = 0
-		$.blockUI.defaults.fadeOut = 0
+		<script>
+			$.blockUI.defaults.message = $('div.gluuBusyIndicator')
+			$.blockUI.defaults.fadeIn = 0
+			$.blockUI.defaults.fadeOut = 0
 		</script>
 		<div class="footer"></div>
 	</h:body>

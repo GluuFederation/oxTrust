@@ -12,7 +12,7 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
-import javax.enterprise.context.ConversationScoped;
+import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
@@ -45,7 +45,7 @@ import org.slf4j.Logger;
 /**
  * User: Dejan Maric
  */
-@ConversationScoped
+@SessionScoped
 @Named("passwordResetAction")
 public class PasswordResetAction implements Serializable {
 
@@ -99,6 +99,7 @@ public class PasswordResetAction implements Serializable {
 	private String securityAnswer;
 
 	public String start() throws ParseException {
+		this.securityAnswer = null;
 		if (StringHelper.isEmpty(guid)) {
 			sendExpirationError();
 			return OxTrustConstants.RESULT_FAILURE;
@@ -176,6 +177,15 @@ public class PasswordResetAction implements Serializable {
 		if (recaptchaService.isEnabled() && getAuthenticationRecaptchaEnabled()) {
 			valid = recaptchaService.verifyRecaptchaResponse();
 		}
+		if (this.password != null && this.confirm != null) {
+			if (!this.password.equalsIgnoreCase(this.confirm)) {
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Password mismatch.");
+				return OxTrustConstants.RESULT_FAILURE;
+			}
+		} else {
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Inccorrect data send.");
+			return OxTrustConstants.RESULT_FAILURE;
+		}
 
 		if (valid) {
 			GluuOrganization organization = organizationService.getOrganization();
@@ -225,6 +235,9 @@ public class PasswordResetAction implements Serializable {
 							facesMessages.add(FacesMessage.SEVERITY_ERROR, "Error while processing the request");
 							log.error("", e);
 						}
+						return OxTrustConstants.RESULT_FAILURE;
+					} else {
+						facesMessages.add(FacesMessage.SEVERITY_ERROR, "The provided security answer is not correct.");
 						return OxTrustConstants.RESULT_FAILURE;
 					}
 				} else {
@@ -315,6 +328,10 @@ public class PasswordResetAction implements Serializable {
 
 	public void setCode(String code) {
 		this.code = code;
+	}
+
+	public boolean canShowSecurityPanel() {
+		return this.securityQuestion != null && !this.securityQuestion.isEmpty();
 	}
 
 }

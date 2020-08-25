@@ -12,10 +12,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import javax.ejb.Stateless;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import org.gluu.model.GluuAttribute;
 import org.gluu.model.GluuStatus;
@@ -25,7 +23,6 @@ import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.search.filter.Filter;
-import org.gluu.service.MailService;
 import org.gluu.service.XmlService;
 import org.gluu.util.StringHelper;
 import org.slf4j.Logger;
@@ -120,7 +117,8 @@ public class TrustService implements Serializable {
 	 * call LDAP to fetch all Trust Relationships.
 	 */
 	public List<GluuSAMLTrustRelationship> getAllTrustRelationships() {
-		return persistenceEntryManager.findEntries(getDnForTrustRelationShip(null), GluuSAMLTrustRelationship.class, null);
+		return persistenceEntryManager.findEntries(getDnForTrustRelationShip(null), GluuSAMLTrustRelationship.class,
+				null);
 	}
 
 	public List<GluuSAMLTrustRelationship> getAllActiveTrustRelationships() {
@@ -291,8 +289,8 @@ public class TrustService implements Serializable {
 	}
 
 	public List<GluuSAMLTrustRelationship> getAllSAMLTrustRelationships(int sizeLimit) {
-		return persistenceEntryManager.findEntries(getDnForTrustRelationShip(null), GluuSAMLTrustRelationship.class, null,
-				sizeLimit);
+		return persistenceEntryManager.findEntries(getDnForTrustRelationShip(null), GluuSAMLTrustRelationship.class,
+				null, sizeLimit);
 	}
 
 	/**
