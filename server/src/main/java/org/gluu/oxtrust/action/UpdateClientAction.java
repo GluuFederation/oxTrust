@@ -597,6 +597,11 @@ public class UpdateClientAction implements Serializable {
 		if (StringHelper.isEmpty(this.availableLoginUri)) {
 			return;
 		}
+        if (availableLoginUri.contains("#")) {
+            facesMessages.add(FacesMessage.SEVERITY_ERROR, "Fragment is not allowed in URI.");
+            this.availableLoginUri = HTTPS;
+            return;
+        }
 		if (!this.loginUris.contains(this.availableLoginUri) && checkWhiteListRedirectUris(availableLoginUri)
 				&& checkBlackListRedirectUris(availableLoginUri)) {
 			boolean acceptable = isAcceptable(this.availableLoginUri);
