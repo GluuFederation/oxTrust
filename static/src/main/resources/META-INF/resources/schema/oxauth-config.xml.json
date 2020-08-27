@@ -1256,11 +1256,6 @@
             "description": "Boolean value to specify support for front channel logout session.",
             "type": "boolean"
         },
-        "useCacheForAllImplicitFlowObjects": {
-            "id": "useCacheForAllImplicitFlowObjects",
-            "description": "Boolean value to specify whether to persist all objects into cache during Implicit Flow.",
-            "type": "boolean"
-        },
         "invalidateSessionCookiesAfterAuthorizationFlow": {
             "id": "invalidateSessionCookiesAfterAuthorizationFlow",
             "description": "Boolean value to specify whether to invalidate `session_id` and `consent_session_id` cookies right after successful or unsuccessful authorization",
