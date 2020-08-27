@@ -6,12 +6,14 @@
 
 package org.gluu.oxtrust.service;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
@@ -23,9 +25,12 @@ import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.search.filter.Filter;
-import org.gluu.service.XmlService;
 import org.gluu.util.StringHelper;
 import org.slf4j.Logger;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * Provides operations with trust relationships
@@ -51,8 +56,12 @@ public class TrustService implements Serializable {
 	@Inject
 	private OrganizationService organizationService;
 
-	@Inject
-	private XmlService xmlService;
+	private ObjectMapper objectMapper;
+	
+	@PostConstruct
+	public void init() {
+		this.objectMapper = new ObjectMapper();
+	}
 
 	public static final String GENERATED_SSL_ARTIFACTS_DIR = "ssl";
 
@@ -220,7 +229,7 @@ public class TrustService implements Serializable {
 		List<TrustContact> contacts = new ArrayList<TrustContact>();
 		if (gluuTrustContacts != null) {
 			for (String contact : gluuTrustContacts) {
-				contacts.add(xmlService.getTrustContactFromXML(contact));
+				contacts.add(getTrustContactFromXML(contact));
 			}
 		}
 		return contacts;
@@ -230,7 +239,7 @@ public class TrustService implements Serializable {
 		if (contacts != null && !contacts.isEmpty()) {
 			List<String> gluuTrustContacts = new ArrayList<String>();
 			for (TrustContact contact : contacts) {
-				gluuTrustContacts.add(xmlService.getXMLFromTrustContact(contact));
+				gluuTrustContacts.add(getXMLFromTrustContact(contact));
 			}
 			trustRelationship.setGluuTrustContact(gluuTrustContacts);
 		}
@@ -328,5 +337,57 @@ public class TrustService implements Serializable {
 		attributeService.removeAttribute(attribute);
 		return true;
 	}
+    public TrustContact getTrustContactFromXML(String xml) {
+        if (xml == null) {
+            return null;
+        }
+
+        JsonNode rootNode;
+        try {
+        	rootNode = objectMapper.readTree(xml);
+        } catch (IOException ex) {
+            log.error("Failed to create TrustContact from XML {}", ex, xml);
+
+            return null;
+        }
+        
+        TrustContact trustContact = new TrustContact();
+        if (rootNode.hasNonNull("name")) {
+        	trustContact.setName(rootNode.get("name").asText());
+        }
+        if (rootNode.hasNonNull("phone")) {
+        	trustContact.setPhone(rootNode.get("phone").asText());
+        }
+        if (rootNode.hasNonNull("mail")) {
+        	trustContact.setMail(rootNode.get("mail").asText());
+        }
+        if (rootNode.hasNonNull("title")) {
+        	trustContact.setTitle(rootNode.get("title").asText());
+        }
+
+        return trustContact;
+    }
+
+    public String getXMLFromTrustContact(TrustContact contact) {
+        if (contact == null) {
+            return null;
+        }
+
+        ObjectNode rootNode = objectMapper.createObjectNode();
+        if (StringHelper.isNotEmpty(contact.getName())) {
+        	rootNode.put("name", contact.getName());
+        }
+        if (StringHelper.isNotEmpty(contact.getPhone())) {
+	        rootNode.put("phone", contact.getPhone());
+	    }
+        if (StringHelper.isNotEmpty(contact.getMail())) {
+        	rootNode.put("mail", contact.getMail());
+        }
+        if (StringHelper.isNotEmpty(contact.getTitle())) {
+        	rootNode.put("title", contact.getTitle());
+        }
+
+        return rootNode.toString();
+    }
 
 }
