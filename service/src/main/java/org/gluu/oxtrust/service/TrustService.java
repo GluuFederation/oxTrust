@@ -16,6 +16,8 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPathExpressionException;
 
 import org.gluu.model.GluuAttribute;
 import org.gluu.model.GluuStatus;
@@ -25,8 +27,11 @@ import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.search.filter.Filter;
+import org.gluu.service.XmlService;
 import org.gluu.util.StringHelper;
 import org.slf4j.Logger;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -55,6 +60,9 @@ public class TrustService implements Serializable {
 
 	@Inject
 	private OrganizationService organizationService;
+
+	@Inject
+	private XmlService xmlService;
 
 	private ObjectMapper objectMapper;
 	
@@ -229,7 +237,7 @@ public class TrustService implements Serializable {
 		List<TrustContact> contacts = new ArrayList<TrustContact>();
 		if (gluuTrustContacts != null) {
 			for (String contact : gluuTrustContacts) {
-				contacts.add(getTrustContactFromXML(contact));
+				contacts.add(getTrustContactFromString(contact));
 			}
 		}
 		return contacts;
@@ -239,7 +247,7 @@ public class TrustService implements Serializable {
 		if (contacts != null && !contacts.isEmpty()) {
 			List<String> gluuTrustContacts = new ArrayList<String>();
 			for (TrustContact contact : contacts) {
-				gluuTrustContacts.add(getXMLFromTrustContact(contact));
+				gluuTrustContacts.add(getStringFromTrustContact(contact));
 			}
 			trustRelationship.setGluuTrustContact(gluuTrustContacts);
 		}
@@ -337,38 +345,64 @@ public class TrustService implements Serializable {
 		attributeService.removeAttribute(attribute);
 		return true;
 	}
-    public TrustContact getTrustContactFromXML(String xml) {
-        if (xml == null) {
-            return null;
-        }
-
-        JsonNode rootNode;
-        try {
-        	rootNode = objectMapper.readTree(xml);
-        } catch (IOException ex) {
-            log.error("Failed to create TrustContact from XML {}", ex, xml);
-
+    public TrustContact getTrustContactFromString(String data) {
+        if (data == null) {
             return null;
         }
         
-        TrustContact trustContact = new TrustContact();
-        if (rootNode.hasNonNull("name")) {
-        	trustContact.setName(rootNode.get("name").asText());
-        }
-        if (rootNode.hasNonNull("phone")) {
-        	trustContact.setPhone(rootNode.get("phone").asText());
-        }
-        if (rootNode.hasNonNull("mail")) {
-        	trustContact.setMail(rootNode.get("mail").asText());
-        }
-        if (rootNode.hasNonNull("title")) {
-        	trustContact.setTitle(rootNode.get("title").asText());
-        }
+        // Try to convert from XML first
+        if (data.startsWith("<")) {
+            Document doc;
+    		try {
+    			doc = xmlService.getXmlDocument(data, true);
 
-        return trustContact;
+        		String name = xmlService.getNodeValue(doc, "/trustContact/name", null);
+                String mail = xmlService.getNodeValue(doc, "/trustContact/mail", null);
+                String phone = xmlService.getNodeValue(doc, "/trustContact/phone", null);
+                String title = xmlService.getNodeValue(doc, "/trustContact/title", null);
+
+                TrustContact trustContact = new TrustContact();
+
+                trustContact.setName(name);
+	        	trustContact.setPhone(mail);
+	        	trustContact.setMail(phone);
+	        	trustContact.setTitle(title);
+
+	        	return trustContact;
+    		} catch (SAXException | IOException | ParserConfigurationException | XPathExpressionException ex) {
+                log.error("Failed to create TrustContact from XML {}", ex, data);
+            	
+                return null;
+			}
+        } else {	
+	        JsonNode rootNode;
+	        try {
+	        	rootNode = objectMapper.readTree(data);
+	        } catch (IOException ex) {
+	            log.error("Failed to create TrustContact from JSON {}", ex, data);
+	
+	            return null;
+	        }
+	        
+	        TrustContact trustContact = new TrustContact();
+	        if (rootNode.hasNonNull("name")) {
+	        	trustContact.setName(rootNode.get("name").asText());
+	        }
+	        if (rootNode.hasNonNull("phone")) {
+	        	trustContact.setPhone(rootNode.get("phone").asText());
+	        }
+	        if (rootNode.hasNonNull("mail")) {
+	        	trustContact.setMail(rootNode.get("mail").asText());
+	        }
+	        if (rootNode.hasNonNull("title")) {
+	        	trustContact.setTitle(rootNode.get("title").asText());
+	        }
+	
+	        return trustContact;
+        }
     }
 
-    public String getXMLFromTrustContact(TrustContact contact) {
+    public String getStringFromTrustContact(TrustContact contact) {
         if (contact == null) {
             return null;
         }
@@ -388,6 +422,6 @@ public class TrustService implements Serializable {
         }
 
         return rootNode.toString();
-    }
+    }      
 
 }
