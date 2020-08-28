@@ -12,12 +12,10 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
-import javax.enterprise.context.SessionScoped;
+import javax.enterprise.context.ConversationScoped;
 import javax.faces.application.FacesMessage;
-import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.Size;
 
@@ -29,10 +27,8 @@ import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuOrganization;
 import org.gluu.oxtrust.model.PasswordResetRequest;
-import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.service.JsonConfigurationService;
 import org.gluu.oxtrust.service.OrganizationService;
-import org.gluu.oxtrust.service.OxTrustAuditService;
 import org.gluu.oxtrust.service.PasswordResetService;
 import org.gluu.oxtrust.service.PersonService;
 import org.gluu.oxtrust.service.RecaptchaService;
@@ -45,9 +41,15 @@ import org.slf4j.Logger;
 /**
  * User: Dejan Maric
  */
-@SessionScoped
+@ConversationScoped
 @Named("passwordResetAction")
 public class PasswordResetAction implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final String SECRET_QUESTION = "secretQuestion";
+	private static final String SECRET_ANSWER = "secretAnswer";
 
 	private static final long serialVersionUID = 6457422770824016614L;
 
@@ -76,18 +78,14 @@ public class PasswordResetAction implements Serializable {
 	private PasswordResetService passwordResetService;
 
 	@Inject
-	private Identity identity;
-
-	@Inject
-	private OxTrustAuditService oxTrustAuditService;
-
-	@Inject
 	private AppConfiguration appConfiguration;
 
 	@Inject
 	private JsonConfigurationService jsonConfigurationService;
 
 	private PasswordResetRequest request;
+
+	private boolean securityQuestionActived = false;
 
 	@Size(min = 3, max = 60, message = "Password length must be between {min} and {max} characters.")
 	private String password;
@@ -96,12 +94,13 @@ public class PasswordResetAction implements Serializable {
 	private String code;
 	private String guid;
 	private String securityQuestion;
+	private GluuCustomAttribute answer;
 	private String securityAnswer;
 
 	public String start() throws ParseException {
-		this.securityAnswer = null;
 		if (StringHelper.isEmpty(guid)) {
 			sendExpirationError();
+			conversationService.endConversation();
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 		setCode(guid);
@@ -110,44 +109,56 @@ public class PasswordResetAction implements Serializable {
 			passwordResetRequest = passwordResetService.findPasswordResetRequest(getGuid());
 		} catch (EntryPersistenceException ex) {
 			log.error("Failed to find password reset request by '{}'", guid, ex);
-			sendExpirationError();
-			return OxTrustConstants.RESULT_FAILURE;
+			passwordResetRequest = null;
 		}
 		if (passwordResetRequest == null) {
 			sendExpirationError();
+			conversationService.endConversation();
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 		PasswordResetRequest personPasswordResetRequest = passwordResetService
 				.findActualPasswordResetRequest(passwordResetRequest.getPersonInum());
 		if (personPasswordResetRequest == null) {
 			sendExpirationError();
+			conversationService.endConversation();
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 		if (!StringHelper.equalsIgnoreCase(guid, personPasswordResetRequest.getOxGuid())) {
 			sendExpirationError();
+			conversationService.endConversation();
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 		this.request = personPasswordResetRequest;
 		Calendar requestCalendarExpiry = new GregorianCalendar(TimeZone.getTimeZone("UTC"));
 		Calendar currentCalendar = new GregorianCalendar(TimeZone.getTimeZone("UTC"));
-		if (request != null) {
-			requestCalendarExpiry.setTime(request.getCreationDate());
-		}
+		requestCalendarExpiry.setTime(request.getCreationDate());
 		currentCalendar.add(Calendar.SECOND, -appConfiguration.getPasswordResetRequestExpirationTime());
-		GluuCustomPerson person = personService.getPersonByInum(request.getPersonInum());
-		GluuCustomAttribute question = null;
-		if (person != null) {
-			question = person.getGluuCustomAttribute("secretQuestion");
-		}
-
-		if ((request != null) && requestCalendarExpiry.after(currentCalendar)) {
-			if (question != null) {
-				securityQuestion = question.getValue();
-			}
-			return OxTrustConstants.RESULT_SUCCESS;
+		if (requestCalendarExpiry.after(currentCalendar)) {
+			return checkSecurityQuetion();
 		} else {
 			facesMessages.add(FacesMessage.SEVERITY_ERROR,
 					"Your link is not valid or your user is not allowed to perform a password reset. If you want to initiate a reset password procedure please fill this form.");
+			conversationService.endConversation();
+			return OxTrustConstants.RESULT_FAILURE;
+		}
+	}
+
+	/**
+	 * 
+	 */
+	private String checkSecurityQuetion() {
+		GluuCustomPerson person = personService.getPersonByInum(request.getPersonInum());
+		GluuCustomAttribute question = null;
+		if (person != null) {
+			question = person.getGluuCustomAttribute(SECRET_QUESTION);
+			this.setAnswer(person.getGluuCustomAttribute(SECRET_ANSWER));
+			if (question != null && question.getValue() != null && !question.getValue().isEmpty()) {
+				this.securityQuestion = question.getValue();
+				this.securityQuestionActived = true;
+				setSecurityQuestionActived(true);
+			}
+			return OxTrustConstants.RESULT_SUCCESS;
+		} else {
 			conversationService.endConversation();
 			return OxTrustConstants.RESULT_FAILURE;
 		}
@@ -163,12 +174,8 @@ public class PasswordResetAction implements Serializable {
 		String outcome = updateImpl();
 		if (OxTrustConstants.RESULT_SUCCESS.equals(outcome)) {
 			facesMessages.add(FacesMessage.SEVERITY_INFO, "Password reset successful.");
-			conversationService.endConversation();
-		} else if (OxTrustConstants.RESULT_FAILURE.equals(outcome)) {
-			facesMessages.add(FacesMessage.SEVERITY_ERROR,
-					"Your secret answer or Captcha code may have been wrong. Please try to correct it or contact your administrator to change your password.");
-			conversationService.endConversation();
 		}
+		conversationService.endConversation();
 		return outcome;
 	}
 
@@ -196,6 +203,7 @@ public class PasswordResetAction implements Serializable {
 				log.error("=================", e);
 				return OxTrustConstants.RESULT_FAILURE;
 			}
+			checkSecurityQuetion();
 			Calendar requestCalendarExpiry = Calendar.getInstance();
 			Calendar currentCalendar = Calendar.getInstance();
 			if (request != null) {
@@ -203,26 +211,18 @@ public class PasswordResetAction implements Serializable {
 				requestCalendarExpiry.add(Calendar.HOUR, 2);
 			}
 			GluuCustomPerson person = personService.getPersonByInum(request.getPersonInum());
-			GluuCustomAttribute question = null;
-			GluuCustomAttribute answer = null;
-			if (person != null) {
-				question = person.getGluuCustomAttribute("secretQuestion");
-				answer = person.getGluuCustomAttribute("secretAnswer");
-			}
+			log.info("================= CAPTCHA SERVICE IS VALID");
+			log.info("================= Qunswer: " + answer.getValue());
+			log.info("================= My Anwser: " + securityAnswer);
+			log.info("================= Password:" + password);
+			log.info("================= enable :" + securityQuestionActived);
 			if (request != null && requestCalendarExpiry.after(currentCalendar)) {
 				PasswordResetRequest removeRequest = new PasswordResetRequest();
 				removeRequest.setBaseDn(request.getBaseDn());
-				ldapEntryManager.remove(removeRequest);
-				try {
-					oxTrustAuditService.audit("PASSWORD RESET REQUEST" + removeRequest.getBaseDn() + " REMOVED",
-							identity.getUser(),
-							(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
-				} catch (Exception e) {
-				}
-				if (question != null && answer != null) {
-					String correctAnswer = answer.getValue();
+				// ldapEntryManager.remove(removeRequest);
+				if (this.securityQuestion != null && this.answer != null) {
 					Boolean securityQuestionAnswered = (this.securityAnswer != null)
-							&& this.securityAnswer.equalsIgnoreCase(correctAnswer);
+							&& this.securityAnswer.equalsIgnoreCase(answer.getValue());
 					if (securityQuestionAnswered) {
 						person.setUserPassword(password);
 						try {
@@ -237,7 +237,8 @@ public class PasswordResetAction implements Serializable {
 						}
 						return OxTrustConstants.RESULT_FAILURE;
 					} else {
-						facesMessages.add(FacesMessage.SEVERITY_ERROR, "The provided security answer is not correct.");
+						facesMessages.add(FacesMessage.SEVERITY_ERROR,
+								"The provided security answer is not correct. Please try again from the link!");
 						return OxTrustConstants.RESULT_FAILURE;
 					}
 				} else {
@@ -262,6 +263,7 @@ public class PasswordResetAction implements Serializable {
 	}
 
 	public String cancel() {
+		conversationService.endConversation();
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
@@ -330,8 +332,20 @@ public class PasswordResetAction implements Serializable {
 		this.code = code;
 	}
 
-	public boolean canShowSecurityPanel() {
-		return this.securityQuestion != null && !this.securityQuestion.isEmpty();
+	public boolean isSecurityQuestionActived() {
+		return securityQuestionActived;
+	}
+
+	public void setSecurityQuestionActived(boolean securityQuestionActived) {
+		this.securityQuestionActived = securityQuestionActived;
+	}
+
+	public GluuCustomAttribute getAnswer() {
+		return answer;
+	}
+
+	public void setAnswer(GluuCustomAttribute answer) {
+		this.answer = answer;
 	}
 
 }
