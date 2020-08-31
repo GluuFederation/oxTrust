@@ -85,7 +85,7 @@ public class PasswordResetAction implements Serializable {
 
 	private PasswordResetRequest request;
 
-	private boolean securityQuestionActived = false;
+	private boolean hasSecurityQuestion = false;
 
 	@Size(min = 3, max = 60, message = "Password length must be between {min} and {max} characters.")
 	private String password;
@@ -96,6 +96,7 @@ public class PasswordResetAction implements Serializable {
 	private String securityQuestion;
 	private GluuCustomAttribute answer;
 	private String securityAnswer;
+	private String response;
 
 	public String start() throws ParseException {
 		if (StringHelper.isEmpty(guid)) {
@@ -154,8 +155,8 @@ public class PasswordResetAction implements Serializable {
 			this.setAnswer(person.getGluuCustomAttribute(SECRET_ANSWER));
 			if (question != null && question.getValue() != null && !question.getValue().isEmpty()) {
 				this.securityQuestion = question.getValue();
-				this.securityQuestionActived = true;
-				setSecurityQuestionActived(true);
+				this.hasSecurityQuestion = true;
+				hasSecurityQuestion(true);
 			}
 			return OxTrustConstants.RESULT_SUCCESS;
 		} else {
@@ -181,7 +182,7 @@ public class PasswordResetAction implements Serializable {
 
 	public String updateImpl() {
 		boolean valid = true;
-		if (recaptchaService.isEnabled() && getAuthenticationRecaptchaEnabled()) {
+		if (captchaEnable()) {
 			valid = recaptchaService.verifyRecaptchaResponse();
 		}
 		if (this.password != null && this.confirm != null) {
@@ -211,15 +212,12 @@ public class PasswordResetAction implements Serializable {
 				requestCalendarExpiry.add(Calendar.HOUR, 2);
 			}
 			GluuCustomPerson person = personService.getPersonByInum(request.getPersonInum());
-			log.info("================= CAPTCHA SERVICE IS VALID");
-			log.info("================= Qunswer: " + answer.getValue());
-			log.info("================= My Anwser: " + securityAnswer);
-			log.info("================= Password:" + password);
-			log.info("================= enable :" + securityQuestionActived);
-			if (request != null && requestCalendarExpiry.after(currentCalendar)) {
+			if (securityAnswer == null) {
+				securityAnswer = getResponse();
+			}
+			if (requestCalendarExpiry.after(currentCalendar)) {
 				PasswordResetRequest removeRequest = new PasswordResetRequest();
 				removeRequest.setBaseDn(request.getBaseDn());
-				// ldapEntryManager.remove(removeRequest);
 				if (this.securityQuestion != null && this.answer != null) {
 					Boolean securityQuestionAnswered = (this.securityAnswer != null)
 							&& this.securityAnswer.equalsIgnoreCase(answer.getValue());
@@ -227,6 +225,7 @@ public class PasswordResetAction implements Serializable {
 						person.setUserPassword(password);
 						try {
 							personService.updatePerson(person);
+							ldapEntryManager.remove(removeRequest);
 							return OxTrustConstants.RESULT_SUCCESS;
 						} catch (DuplicateEmailException e) {
 							facesMessages.add(FacesMessage.SEVERITY_ERROR, e.getMessage());
@@ -245,6 +244,7 @@ public class PasswordResetAction implements Serializable {
 					person.setUserPassword(password);
 					try {
 						personService.updatePerson(person);
+						ldapEntryManager.remove(removeRequest);
 						return OxTrustConstants.RESULT_SUCCESS;
 					} catch (DuplicateEmailException e) {
 						facesMessages.add(FacesMessage.SEVERITY_ERROR, e.getMessage());
@@ -260,6 +260,10 @@ public class PasswordResetAction implements Serializable {
 		}
 
 		return OxTrustConstants.RESULT_FAILURE;
+	}
+
+	public boolean captchaEnable() {
+		return recaptchaService.isEnabled() && getAuthenticationRecaptchaEnabled();
 	}
 
 	public String cancel() {
@@ -332,14 +336,6 @@ public class PasswordResetAction implements Serializable {
 		this.code = code;
 	}
 
-	public boolean isSecurityQuestionActived() {
-		return securityQuestionActived;
-	}
-
-	public void setSecurityQuestionActived(boolean securityQuestionActived) {
-		this.securityQuestionActived = securityQuestionActived;
-	}
-
 	public GluuCustomAttribute getAnswer() {
 		return answer;
 	}
@@ -348,4 +344,19 @@ public class PasswordResetAction implements Serializable {
 		this.answer = answer;
 	}
 
+	public boolean hasSecurityQuestion() {
+		return hasSecurityQuestion;
+	}
+
+	public void hasSecurityQuestion(boolean hasSecurityQuestion) {
+		this.hasSecurityQuestion = hasSecurityQuestion;
+	}
+
+	public String getResponse() {
+		return response;
+	}
+
+	public void setResponse(String response) {
+		this.response = response;
+	}
 }
