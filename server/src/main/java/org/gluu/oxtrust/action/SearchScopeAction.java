@@ -7,6 +7,7 @@
 package org.gluu.oxtrust.action;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.enterprise.context.ConversationScoped;
@@ -21,7 +22,6 @@ import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.service.ScopeService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.service.security.Secure;
-import org.gluu.util.Util;
 import org.oxauth.persistence.model.Scope;
 import org.slf4j.Logger;
 
@@ -51,31 +51,25 @@ public class SearchScopeAction implements Serializable {
 
 	@NotNull
 	@Size(min = 0, max = 30, message = "Length of search string should be less than 30")
-	private String searchPattern = " ";
+	private String searchPattern = "";
 
-	private String oldSearchPattern;
-
-	private List<Scope> scopeList;
+	private List<Scope> scopeList = new ArrayList<>();
 
 	public String start() {
 		return search();
 	}
 
 	public String search() {
-		if (Util.equals(this.oldSearchPattern, this.searchPattern)) {
-			return OxTrustConstants.RESULT_SUCCESS;
-		}
 		try {
 			this.scopeList = scopeService.searchScopes(this.searchPattern, 1000);
-			this.oldSearchPattern = this.searchPattern;
 			this.searchPattern = "";
+			return OxTrustConstants.RESULT_SUCCESS;
 		} catch (Exception ex) {
 			log.error("Failed to find scopes", ex);
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to find scopes");
 			conversationService.endConversation();
 			return OxTrustConstants.RESULT_FAILURE;
 		}
-		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
 	public String getSearchPattern() {
