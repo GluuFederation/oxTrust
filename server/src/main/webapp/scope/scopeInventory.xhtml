@@ -14,7 +14,7 @@
 			value="#{searchScopeAction.searchPattern}" />
 		<f:viewAction action="#{conversationService.initConversation}" />
 		<f:viewAction action="#{searchScopeAction.start}"
-			if="#{searchScopeAction.scopeList == null}" onPostback="false" />
+			if="#{searchScopeAction.scopeList.size() == 0}" onPostback="false" />
 	</f:metadata>
 	<ui:define name="body">
 		<section class="content">

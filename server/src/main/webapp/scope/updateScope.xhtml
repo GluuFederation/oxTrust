@@ -23,6 +23,8 @@
 			// Set the default CSS theme and icon library globally
 			JSONEditor.defaults.theme = 'bootstrap3';
 			JSONEditor.defaults.iconlib = 'bootstrap3';
+			function saveScopeAttributes() {
+			}
 		</script>
 	</ui:define>
 	<ui:define name="body">
@@ -52,6 +54,7 @@
 						<div id="updateButtons">
 							<b:commandButton action="#{updateScopeAction.save}"
 								styleClass="btn btn-primary updateScopeButtonId" ajax="true" update="@form"
+								onclick="saveScopeAttributes()"
 								value="#{msgs['scope.update']}" />
 							<a4j:commandButton ajaxSingle="true" eventsQueue="scopeQueue"
 								onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();"
