@@ -172,8 +172,8 @@
 										styleClass="form-control smtpUserNameTextBox" />
 								</ox:decorate>
 								<ox:decorate label="#{msgs['organizationForm.smtpPassword']}">
-									<h:inputSecret value="#{_smtp.passwordDecrypted}"
-										styleClass="form-control smtpPasswordTextBox" redisplay="true" />
+									<h:inputSecret value="#{_smtp.passwordDecrypted}" autocomplete="off"
+										styleClass="form-control smtpPasswordTextBox" />
 								</ox:decorate>
 								<ox:decorate label="#{msgs['organizationForm.requiresSSL']}">
 									<h:selectBooleanCheckbox value="#{_smtp.requiresSsl}"

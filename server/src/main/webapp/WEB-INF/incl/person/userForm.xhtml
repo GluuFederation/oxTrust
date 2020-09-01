@@ -245,7 +245,7 @@
 												style="width:100%" value="#{updatePersonAction.password}"
 												validator="#{updatePersonAction.validateConfirmPassword}"
 												id="custpasswordId" require="#{_mustEnter}"
-												requiredMessage="Password is required"
+												requiredMessage="Password is required" autocomplete="off"
 												rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'Password')}">
 												<rich:validator event="blur" />
 											</h:inputSecret>
@@ -270,7 +270,7 @@
 												validator="#{updatePersonAction.validateConfirmPassword}"
 												require="#{_mustEnter}" id="custconfirmpasswordId"
 												value="#{updatePersonAction.confirmPassword}"
-												requiredMessage="Confirm password is required"
+												requiredMessage="Confirm password is required" autocomplete="off"
 												rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'Password')}">
 												<rich:validator event="blur" />
 											</h:inputSecret>
