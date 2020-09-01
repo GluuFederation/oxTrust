@@ -638,6 +638,16 @@
             "description": "Boolean value specifying whether the OP requires any request_uri values used to be pre-registered using the request_uris registration parameter.",
             "type": "boolean"
         },
+        "requestUriHashVerificationEnabled": {
+            "id": "requestUriHashVerificationEnabled",
+            "description": "Boolean value specifying whether the OP should validate or not the content gotten from the request_uri using the hash included in the same request_uri param.",
+            "type": "boolean"
+        },
+        "idTokenFilterClaimsBasedOnAccessToken": {
+            "id": "idTokenFilterClaimsBasedOnAccessToken",
+            "description": "Boolean value specifying whether the OP should include or not profile, email, address and phone number claims from the IdToken depending on the kind of access token issued.",
+            "type": "boolean"
+        },
         "opPolicyUri": {
             "id": "opPolicyUri",
             "description": "URL that the OpenID Provider provides to the person registering the Client to read about the OP's requirements on how the Relying Party can use the data provided by the OP.",
@@ -1821,6 +1831,8 @@
         "requestParameterSupported",
         "requestUriParameterSupported",
         "requireRequestUriRegistration",
+        "requestUriHashVerificationEnabled",
+        "idTokenFilterClaimsBasedOnAccessToken",
         "opPolicyUri",
         "opTosUri",
         "authorizationCodeLifetime",
