@@ -34,7 +34,7 @@
 
                             <ox:decorate id="secret" label="#{msgs['radius.client.secret']}"
                                 leftClass="col-sm-4" rightClass="col-sm-8">
-                                <h:inputSecret value="#{_client.secret}" required="#{_new}" styleClass="form-control rounded"/>
+                                <h:inputSecret value="#{_client.secret}" required="#{_new}" autocomplete="off" styleClass="form-control rounded"/>
                             </ox:decorate>
 
                             <ox:decorate id="priority" label="#{msgs['radius.client.priority']}"
