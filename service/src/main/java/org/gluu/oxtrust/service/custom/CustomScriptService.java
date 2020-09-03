@@ -49,36 +49,58 @@ public class CustomScriptService extends AbstractCustomScriptService {
 		}
 		return result;
 	}
+
 	public List<CustomScript> findCustomAuthScripts(String pattern, int sizeLimit) {
 		String[] targetArray = new String[] { pattern };
 		Filter descriptionFilter = Filter.createSubstringFilter(OxTrustConstants.DESCRIPTION, null, targetArray, null);
-		Filter scriptTypeFilter = Filter.createEqualityFilter("oxScriptType", CustomScriptType.PERSON_AUTHENTICATION);
+		Filter scriptTypeFilter = Filter.createEqualityFilter(OxTrustConstants.SCRYPT_TYPE,
+				CustomScriptType.PERSON_AUTHENTICATION);
 		Filter displayNameFilter = Filter.createSubstringFilter(OxTrustConstants.displayName, null, targetArray, null);
 		Filter searchFilter = Filter.createORFilter(descriptionFilter, displayNameFilter);
-		return  persistenceEntryManager.findEntries(getDnForCustomScript(null), CustomScript.class,
+		return persistenceEntryManager.findEntries(getDnForCustomScript(null), CustomScript.class,
 				Filter.createANDFilter(searchFilter, scriptTypeFilter), sizeLimit);
 	}
 
 	public List<CustomScript> findCustomAuthScripts(int sizeLimit) {
-		Filter searchFilter = Filter.createEqualityFilter("oxScriptType", CustomScriptType.PERSON_AUTHENTICATION.getValue());
-		return  persistenceEntryManager.findEntries(getDnForCustomScript(null), CustomScript.class,searchFilter, sizeLimit);
+		Filter searchFilter = Filter.createEqualityFilter(OxTrustConstants.SCRYPT_TYPE,
+				CustomScriptType.PERSON_AUTHENTICATION.getValue());
+		return persistenceEntryManager.findEntries(getDnForCustomScript(null), CustomScript.class, searchFilter,
+				sizeLimit);
 	}
 
 	public List<CustomScript> findOtherCustomScripts(String pattern, int sizeLimit) {
 		String[] targetArray = new String[] { pattern };
 		Filter descriptionFilter = Filter.createSubstringFilter(OxTrustConstants.DESCRIPTION, null, targetArray, null);
-		Filter scriptTypeFilter = Filter.createNOTFilter(Filter.createEqualityFilter("oxScriptType", CustomScriptType.PERSON_AUTHENTICATION));
+		Filter scriptTypeFilter = Filter.createNOTFilter(
+				Filter.createEqualityFilter(OxTrustConstants.SCRYPT_TYPE, CustomScriptType.PERSON_AUTHENTICATION));
 		Filter displayNameFilter = Filter.createSubstringFilter(OxTrustConstants.displayName, null, targetArray, null);
 		Filter searchFilter = Filter.createORFilter(descriptionFilter, displayNameFilter);
-		return  persistenceEntryManager.findEntries(getDnForCustomScript(null), CustomScript.class,
+		return persistenceEntryManager.findEntries(getDnForCustomScript(null), CustomScript.class,
 				Filter.createANDFilter(searchFilter, scriptTypeFilter), sizeLimit);
 	}
 
-	public List<CustomScript> findOtherCustomScripts(int sizeLimit) {
-		Filter searchFilter = Filter.createNOTFilter(Filter.createEqualityFilter("oxScriptType", CustomScriptType.PERSON_AUTHENTICATION));
-		return  persistenceEntryManager.findEntries(getDnForCustomScript(null), CustomScript.class,searchFilter, sizeLimit);
+	public List<CustomScript> findScriptByType(int sizeLimit, CustomScriptType type) {
+		Filter searchFilter = Filter.createEqualityFilter(OxTrustConstants.SCRYPT_TYPE, type);
+		return persistenceEntryManager.findEntries(getDnForCustomScript(null), CustomScript.class, searchFilter,
+				sizeLimit);
 	}
 
+	public List<CustomScript> findScriptByPatternAndType(String pattern, int sizeLimit, CustomScriptType type) {
+		String[] targetArray = new String[] { pattern };
+		Filter descriptionFilter = Filter.createSubstringFilter(OxTrustConstants.DESCRIPTION, null, targetArray, null);
+		Filter displayNameFilter = Filter.createSubstringFilter(OxTrustConstants.displayName, null, targetArray, null);
+		Filter searchFilter = Filter.createORFilter(descriptionFilter, displayNameFilter);
+		Filter typeFilter = Filter.createEqualityFilter(OxTrustConstants.SCRYPT_TYPE, type);
+		return persistenceEntryManager.findEntries(getDnForCustomScript(null), CustomScript.class,
+				Filter.createANDFilter(searchFilter, typeFilter), sizeLimit);
+	}
+
+	public List<CustomScript> findOtherCustomScripts(int sizeLimit) {
+		Filter searchFilter = Filter.createNOTFilter(
+				Filter.createEqualityFilter(OxTrustConstants.SCRYPT_TYPE, CustomScriptType.PERSON_AUTHENTICATION));
+		return persistenceEntryManager.findEntries(getDnForCustomScript(null), CustomScript.class, searchFilter,
+				sizeLimit);
+	}
 
 	public String getDnForCustomScript(String inum) {
 		String orgDn = organizationService.getDnForOrganization();
@@ -87,6 +109,5 @@ public class CustomScriptService extends AbstractCustomScriptService {
 		}
 		return String.format("inum=%s,ou=scripts,%s", inum, orgDn);
 	}
-
 
 }
