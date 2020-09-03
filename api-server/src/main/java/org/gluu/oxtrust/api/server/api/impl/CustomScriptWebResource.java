@@ -8,8 +8,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.gluu.model.custom.script.model.CustomScript;
 import org.gluu.oxtrust.api.server.util.ApiConstants;
 import org.gluu.oxtrust.service.ConfigurationService;
-import org.gluu.oxtrust.service.custom.CustomScriptService;
 import org.gluu.oxtrust.service.filter.ProtectedApi;
+import org.gluu.service.ScriptService;
 import org.gluu.util.StringHelper;
 import org.slf4j.Logger;
 
@@ -35,7 +35,7 @@ public class CustomScriptWebResource extends BaseWebResource {
 	private Logger logger;
 
 	@Inject
-	private CustomScriptService customScriptService;
+	private ScriptService customScriptService;
 
 	@Inject
 	private ConfigurationService configurationService;
