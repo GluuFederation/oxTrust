@@ -17,6 +17,7 @@ import javax.inject.Named;
 import org.gluu.oxtrust.service.ApplicationFactory;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.ldap.impl.LdapEntryManager;
+import org.gluu.persist.ldap.operation.LdapOperationService;
 import org.gluu.persist.ldap.operation.impl.LdapConnectionProvider;
 import org.gluu.persist.operation.PersistenceOperationService;
 import org.gluu.service.cdi.async.Asynchronous;
@@ -78,7 +79,7 @@ public class PersistanceStatusTimer {
 
 	public void logConnectionProviderStatistic(PersistenceEntryManager ldapEntryManager, String connectionProviderName) {
 	    PersistenceOperationService persistenceOperationService = ldapEntryManager.getOperationService();
-	    if (!(persistenceOperationService instanceof LdapEntryManager)) {
+	    if (!(persistenceOperationService instanceof LdapOperationService)) {
 	        return;
 	    }
 
