@@ -63,6 +63,7 @@ import org.gluu.persist.exception.EntryPersistenceException;
 import org.gluu.persist.exception.operation.SearchException;
 import org.gluu.persist.ldap.impl.LdapEntryManager;
 import org.gluu.persist.ldap.impl.LdapEntryManagerFactory;
+import org.gluu.persist.ldap.operation.LdapOperationService;
 import org.gluu.persist.model.SearchScope;
 import org.gluu.persist.model.base.GluuDummyEntry;
 import org.gluu.persist.operation.PersistenceOperationService;
@@ -1289,9 +1290,9 @@ public class CacheRefreshTimer {
 
 		// Copy binary attributes list from main LDAP connection
 		PersistenceOperationService persistenceOperationService = ldapEntryManager.getOperationService();
-		if (persistenceOperationService instanceof LdapEntryManager) {
+		if (persistenceOperationService instanceof LdapOperationService) {
 			ldapProperties.put(persistenceType + ".binaryAttributes",
-					PropertyUtil.stringsToCommaSeparatedList(((LdapEntryManager) ldapEntryManager).getOperationService()
+					PropertyUtil.stringsToCommaSeparatedList(((LdapOperationService) persistenceOperationService)
 							.getConnectionProvider().getBinaryAttributes()));
 		}
 
