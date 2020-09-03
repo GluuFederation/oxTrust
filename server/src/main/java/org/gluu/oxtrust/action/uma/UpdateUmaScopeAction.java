@@ -33,12 +33,12 @@ import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.service.ClientService;
 import org.gluu.oxtrust.service.ImageService;
-import org.gluu.oxtrust.service.custom.CustomScriptService;
 import org.gluu.oxtrust.service.uma.ResourceSetService;
 import org.gluu.oxtrust.service.uma.UmaScopeService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.exception.BasePersistenceException;
 import org.gluu.service.LookupService;
+import org.gluu.service.ScriptService;
 import org.gluu.service.security.Secure;
 import org.gluu.util.StringHelper;
 import org.oxauth.persistence.model.Scope;
@@ -85,7 +85,7 @@ public class UpdateUmaScopeAction implements Serializable {
 	private LookupService lookupService;
 
 	@Inject
-	private CustomScriptService customScriptService;
+	private ScriptService customScriptService;
 
 	@Inject
 	private ResourceSetService resourceSetService;
