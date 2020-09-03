@@ -79,13 +79,18 @@ public class CustomScriptService extends AbstractCustomScriptService {
 				Filter.createANDFilter(searchFilter, scriptTypeFilter), sizeLimit);
 	}
 
-	public List<CustomScript> findScriptByType(int sizeLimit, CustomScriptType type) {
+	public List<CustomScript> findScriptByType(CustomScriptType type, int sizeLimit) {
 		Filter searchFilter = Filter.createEqualityFilter(OxTrustConstants.SCRYPT_TYPE, type);
 		return persistenceEntryManager.findEntries(getDnForCustomScript(null), CustomScript.class, searchFilter,
 				sizeLimit);
 	}
 
-	public List<CustomScript> findScriptByPatternAndType(String pattern, int sizeLimit, CustomScriptType type) {
+	public List<CustomScript> findScriptByType(CustomScriptType type) {
+		Filter searchFilter = Filter.createEqualityFilter(OxTrustConstants.SCRYPT_TYPE, type);
+		return persistenceEntryManager.findEntries(getDnForCustomScript(null), CustomScript.class, searchFilter, null);
+	}
+
+	public List<CustomScript> findScriptByPatternAndType(String pattern, CustomScriptType type, int sizeLimit) {
 		String[] targetArray = new String[] { pattern };
 		Filter descriptionFilter = Filter.createSubstringFilter(OxTrustConstants.DESCRIPTION, null, targetArray, null);
 		Filter displayNameFilter = Filter.createSubstringFilter(OxTrustConstants.displayName, null, targetArray, null);
@@ -93,6 +98,16 @@ public class CustomScriptService extends AbstractCustomScriptService {
 		Filter typeFilter = Filter.createEqualityFilter(OxTrustConstants.SCRYPT_TYPE, type);
 		return persistenceEntryManager.findEntries(getDnForCustomScript(null), CustomScript.class,
 				Filter.createANDFilter(searchFilter, typeFilter), sizeLimit);
+	}
+
+	public List<CustomScript> findScriptByPatternAndType(String pattern, CustomScriptType type) {
+		String[] targetArray = new String[] { pattern };
+		Filter descriptionFilter = Filter.createSubstringFilter(OxTrustConstants.DESCRIPTION, null, targetArray, null);
+		Filter displayNameFilter = Filter.createSubstringFilter(OxTrustConstants.displayName, null, targetArray, null);
+		Filter searchFilter = Filter.createORFilter(descriptionFilter, displayNameFilter);
+		Filter typeFilter = Filter.createEqualityFilter(OxTrustConstants.SCRYPT_TYPE, type);
+		return persistenceEntryManager.findEntries(getDnForCustomScript(null), CustomScript.class,
+				Filter.createANDFilter(searchFilter, typeFilter), null);
 	}
 
 	public List<CustomScript> findOtherCustomScripts(int sizeLimit) {
@@ -109,5 +124,4 @@ public class CustomScriptService extends AbstractCustomScriptService {
 		}
 		return String.format("inum=%s,ou=scripts,%s", inum, orgDn);
 	}
-
 }
