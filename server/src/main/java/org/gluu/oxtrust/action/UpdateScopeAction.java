@@ -32,10 +32,10 @@ import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.service.AttributeService;
 import org.gluu.oxtrust.service.OxTrustAuditService;
 import org.gluu.oxtrust.service.ScopeService;
-import org.gluu.oxtrust.service.custom.CustomScriptService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.exception.BasePersistenceException;
 import org.gluu.service.LookupService;
+import org.gluu.service.ScriptService;
 import org.gluu.service.security.Secure;
 import org.gluu.util.StringHelper;
 import org.gluu.util.Util;
@@ -86,7 +86,7 @@ public class UpdateScopeAction implements Serializable {
 	@Inject
 	private AttributeService attributeService;
 	@Inject
-	private CustomScriptService customScriptService;
+	private ScriptService customScriptService;
 	@Inject
 	private Identity identity;
 	@Inject
