@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
@@ -24,7 +25,6 @@ import org.gluu.model.GluuAttribute;
 import org.gluu.model.GluuAttributeUsageType;
 import org.gluu.model.GluuUserRole;
 import org.gluu.model.attribute.AttributeDataType;
-import org.gluu.model.custom.script.CustomScriptType;
 import org.gluu.model.user.UserRole;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.service.cdi.event.EventType;

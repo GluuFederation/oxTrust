@@ -69,7 +69,7 @@ public class ScopeService implements Serializable {
 	 *            scope Inum
 	 * @return scope
 	 */
-	public Scope getScopeByInum(String inum) throws Exception {
+	public Scope getScopeByInum(String inum) {
 		Scope result = null;
 		try {
 			result = persistenceEntryManager.find(Scope.class, getDnForScope(inum));
