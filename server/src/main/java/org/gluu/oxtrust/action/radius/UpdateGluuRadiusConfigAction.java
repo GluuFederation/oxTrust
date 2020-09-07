@@ -22,7 +22,7 @@ import org.gluu.oxtrust.service.ScopeService;
 import org.gluu.oxtrust.service.radius.GluuRadiusConfigService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.radius.model.ServerConfiguration;
-import org.gluu.service.CustomScriptService;
+import org.gluu.service.custom.CustomScriptService;
 import org.gluu.service.security.Secure;
 import org.oxauth.persistence.model.Scope;
 import org.slf4j.Logger;
