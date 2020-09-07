@@ -24,7 +24,7 @@ import org.gluu.model.custom.script.model.CustomScript;
 import org.gluu.oxtrust.api.server.util.ApiConstants;
 import org.gluu.oxtrust.service.ConfigurationService;
 import org.gluu.oxtrust.service.filter.ProtectedApi;
-import org.gluu.service.CustomScriptService;
+import org.gluu.service.custom.CustomScriptService;
 import org.gluu.util.StringHelper;
 import org.slf4j.Logger;
 
