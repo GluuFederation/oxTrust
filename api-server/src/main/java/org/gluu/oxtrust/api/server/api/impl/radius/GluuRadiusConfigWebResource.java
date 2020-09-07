@@ -6,7 +6,11 @@ import java.util.Objects;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -15,14 +19,14 @@ import org.gluu.model.custom.script.CustomScriptType;
 import org.gluu.model.custom.script.model.CustomScript;
 import org.gluu.oxtrust.api.server.api.impl.BaseWebResource;
 import org.gluu.oxtrust.api.server.util.ApiConstants;
+import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.service.ClientService;
 import org.gluu.oxtrust.service.ScopeService;
-import org.gluu.oxtrust.service.radius.GluuRadiusConfigService;
-import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.service.filter.ProtectedApi;
+import org.gluu.oxtrust.service.radius.GluuRadiusConfigService;
 import org.gluu.oxtrust.util.ProductInstallationChecker;
 import org.gluu.radius.model.ServerConfiguration;
-import org.gluu.service.ScriptService;
+import org.gluu.service.CustomScriptService;
 import org.slf4j.Logger;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -47,7 +51,7 @@ public class GluuRadiusConfigWebResource extends BaseWebResource {
     private ScopeService scopeService;
 
     @Inject 
-    private ScriptService customScriptService;
+    private CustomScriptService customScriptService;
 
     @Inject
     private ClientService clientService;

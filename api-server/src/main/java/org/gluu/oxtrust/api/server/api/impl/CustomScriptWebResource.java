@@ -1,29 +1,38 @@
 package org.gluu.oxtrust.api.server.api.impl;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import org.gluu.model.custom.script.model.CustomScript;
-import org.gluu.oxtrust.api.server.util.ApiConstants;
-import org.gluu.oxtrust.service.ConfigurationService;
-import org.gluu.oxtrust.service.filter.ProtectedApi;
-import org.gluu.service.ScriptService;
-import org.gluu.util.StringHelper;
-import org.slf4j.Logger;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
+import org.gluu.model.custom.script.model.CustomScript;
+import org.gluu.oxtrust.api.server.util.ApiConstants;
+import org.gluu.oxtrust.service.ConfigurationService;
+import org.gluu.oxtrust.service.filter.ProtectedApi;
+import org.gluu.service.CustomScriptService;
+import org.gluu.util.StringHelper;
+import org.slf4j.Logger;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 @Path(ApiConstants.BASE_API_URL + ApiConstants.CONFIGURATION + ApiConstants.SCRIPTS)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -35,7 +44,7 @@ public class CustomScriptWebResource extends BaseWebResource {
 	private Logger logger;
 
 	@Inject
-	private ScriptService customScriptService;
+	private CustomScriptService customScriptService;
 
 	@Inject
 	private ConfigurationService configurationService;
