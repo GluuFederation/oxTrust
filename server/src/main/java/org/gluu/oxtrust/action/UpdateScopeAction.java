@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+
 import javax.enterprise.context.ConversationScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
@@ -34,8 +35,8 @@ import org.gluu.oxtrust.service.OxTrustAuditService;
 import org.gluu.oxtrust.service.ScopeService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.exception.BasePersistenceException;
+import org.gluu.service.CustomScriptService;
 import org.gluu.service.LookupService;
-import org.gluu.service.ScriptService;
 import org.gluu.service.security.Secure;
 import org.gluu.util.StringHelper;
 import org.gluu.util.Util;
@@ -86,7 +87,7 @@ public class UpdateScopeAction implements Serializable {
 	@Inject
 	private AttributeService attributeService;
 	@Inject
-	private ScriptService customScriptService;
+	private CustomScriptService customScriptService;
 	@Inject
 	private Identity identity;
 	@Inject

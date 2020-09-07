@@ -22,7 +22,7 @@ import org.gluu.oxtrust.service.ScopeService;
 import org.gluu.oxtrust.service.radius.GluuRadiusConfigService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.radius.model.ServerConfiguration;
-import org.gluu.service.ScriptService;
+import org.gluu.service.CustomScriptService;
 import org.gluu.service.security.Secure;
 import org.oxauth.persistence.model.Scope;
 import org.slf4j.Logger;
@@ -41,7 +41,7 @@ public class UpdateGluuRadiusConfigAction implements Serializable {
     private GluuRadiusConfigService gluuRadiusConfigService;
 
     @Inject
-    private ScriptService customScriptService;
+    private CustomScriptService customScriptService;
 
     @Inject
     private ScopeService scopeService;
