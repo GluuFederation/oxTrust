@@ -147,6 +147,11 @@
                "type":"string",
                "minLength":1
             },
+            "checkU2fAttestations":{
+               "id":"checkU2fAttestations",
+               "description":" Check device attestations on enrollment",
+               "type":"boolean"
+            },
             "userAutoEnrollment":{
                "id":"userAutoEnrollment",
                "description":"Allow to enroll users on enrollment/authentication requests.",
