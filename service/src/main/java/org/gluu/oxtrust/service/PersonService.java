@@ -357,22 +357,14 @@ public class PersonService implements Serializable, IPersonService {
 		return person;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.gluu.oxtrust.ldap.service.IPersonService#getPersonByUid(java.lang.String)
-	 */
-	@Override
-	public GluuCustomPerson getPersonByUid(String uid) {
-		GluuCustomPerson person = new GluuCustomPerson();
-		person.setBaseDn(getDnForPerson(null));
-		person.setUid(uid);
-		List<GluuCustomPerson> persons = persistenceEntryManager.findEntries(person);
-		if ((persons != null) && (persons.size() > 0)) {
-			return persons.get(0);
+	public GluuCustomPerson getPersonByUid(String uid, String... returnAttributes) {
+		List<GluuCustomPerson> entries = getPersonsByUid(uid, returnAttributes);
+
+		if (entries.size() > 0) {
+			return entries.get(0);
+		} else {
+			return null;
 		}
-		return null;
 	}
 
 	/*
@@ -543,11 +535,19 @@ public class PersonService implements Serializable, IPersonService {
 	 * String)
 	 */
 	@Override
-	public List<GluuCustomPerson> getPersonsByUid(String uid) {
-		GluuCustomPerson person = new GluuCustomPerson();
-		person.setBaseDn(getDnForPerson(null));
-		person.setUid(uid);
-		return persistenceEntryManager.findEntries(person);
+	public List<GluuCustomPerson> getPersonsByUid(String uid, String... returnAttributes) {
+		log.debug("Getting user information from LDAP: userId = {}", uid);
+
+		if (StringHelper.isEmpty(uid)) {
+			return null;
+		}
+
+		Filter userUidFilter = Filter.createEqualityFilter(Filter.createLowercaseFilter("uid"), StringHelper.toLowerCase(uid));
+
+		List<GluuCustomPerson> entries = persistenceEntryManager.findEntries(getDnForPerson(null), GluuCustomPerson.class, userUidFilter, returnAttributes);
+		log.debug("Found {} entries for userId = {}", entries.size(), uid);
+
+		return entries;
 	}
 
 	/*

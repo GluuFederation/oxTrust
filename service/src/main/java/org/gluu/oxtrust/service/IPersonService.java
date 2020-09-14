@@ -135,7 +135,7 @@ public interface IPersonService {
 	 *            Uid
 	 * @return Person
 	 */
-	public abstract GluuCustomPerson getPersonByUid(String uid);
+	public abstract GluuCustomPerson getPersonByUid(String uid, String... returnAttributes);
 
 	public abstract int countPersons();
 
@@ -219,7 +219,7 @@ public interface IPersonService {
 
 	String getPersonMailids(List<GluuCustomPerson> persons) throws Exception;
 
-	List<GluuCustomPerson> getPersonsByUid(String uid);
+	List<GluuCustomPerson> getPersonsByUid(String uid, String... returnAttributes);
 
 	List<GluuCustomPerson> getPersonsByEmail(String email);
 
