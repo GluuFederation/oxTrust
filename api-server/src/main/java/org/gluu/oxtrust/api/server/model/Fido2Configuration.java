@@ -13,7 +13,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonPropertyOrder({ "authenticatorCertsFolder", "mdsCertsFolder", "mdsTocsFolder", "serverMetadataFolder",
-		"userAutoEnrollment", "unfinishedRequestExpiration", "authenticationHistoryExpiration", "disableFido2" })
+		"checkU2fAttestations", "userAutoEnrollment", "unfinishedRequestExpiration", "authenticationHistoryExpiration",
+		"disableFido2" })
 public class Fido2Configuration {
 
 	@JsonProperty("authenticatorCertsFolder")
@@ -24,6 +25,8 @@ public class Fido2Configuration {
 	private String mdsTocsFolder;
 	@JsonProperty("serverMetadataFolder")
 	private String serverMetadataFolder;
+	@JsonProperty("checkU2fAttestations")
+	private Boolean checkU2fAttestations;
 	@JsonProperty("userAutoEnrollment")
 	private Boolean userAutoEnrollment;
 	@JsonProperty("unfinishedRequestExpiration")
@@ -73,6 +76,16 @@ public class Fido2Configuration {
 	@JsonProperty("serverMetadataFolder")
 	public void setServerMetadataFolder(String serverMetadataFolder) {
 		this.serverMetadataFolder = serverMetadataFolder;
+	}
+
+	@JsonProperty("checkU2fAttestations")
+	public Boolean getCheckU2fAttestations() {
+		return checkU2fAttestations;
+	}
+
+	@JsonProperty("checkU2fAttestations")
+	public void setCheckU2fAttestations(Boolean checkU2fAttestations) {
+		this.checkU2fAttestations = checkU2fAttestations;
 	}
 
 	@JsonProperty("userAutoEnrollment")
