@@ -100,9 +100,7 @@ public class PersonService implements Serializable, IPersonService {
 	@Override
 	public void addPerson(GluuCustomPerson person) throws Exception {
 		try {
-			GluuCustomPerson uidPerson = new GluuCustomPerson();
-			uidPerson.setUid(person.getUid());
-			List<GluuCustomPerson> persons = findPersons(uidPerson, 1);
+			List<GluuCustomPerson> persons = getPersonsByUid(person.getUid());
 			if (persons == null || persons.size() == 0) {
 				person.setCreationDate(new Date());
 				persistenceEntryManager.persist(person);
@@ -540,7 +538,7 @@ public class PersonService implements Serializable, IPersonService {
 			return null;
 		}
 
-		Filter userUidFilter = Filter.createEqualityFilter(Filter.createLowercaseFilter(OxConstants.UID), StringHelper.toLowerCase(uid)).multiValued(false);
+		Filter userUidFilter = Filter.createEqualityFilter(Filter.createLowercaseFilter(OxConstants.UID), StringHelper.toLowerCase(uid));
 
 		List<GluuCustomPerson> entries = persistenceEntryManager.findEntries(getDnForPerson(null), GluuCustomPerson.class, userUidFilter, returnAttributes);
 		log.debug("Found {} entries for userId = {}", entries.size(), uid);
