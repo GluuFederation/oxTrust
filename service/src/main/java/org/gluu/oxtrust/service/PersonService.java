@@ -605,11 +605,11 @@ public class PersonService implements Serializable, IPersonService {
 	 */
 	@Override
 	public User getUserByUid(String uid) {
-		SimpleUser simpleUser = new SimpleUser();
-		simpleUser.setDn(getDnForPerson(null));
-		simpleUser.setUserId(uid);
-		simpleUser.setCustomObjectClasses(new String[] { "gluuPerson" });
-		List<SimpleUser> users = persistenceEntryManager.findEntries(simpleUser, 1);// getLdapEntryManagerInstance().findEntries(person);
+		Filter userUidFilter = Filter.createEqualityFilter(Filter.createLowercaseFilter(OxConstants.UID), StringHelper.toLowerCase(uid));
+		Filter userObjectClassFilter = Filter.createEqualityFilter(OxConstants.OBJECT_CLASS, "gluuPerson");
+		Filter filter = Filter.createANDFilter(userObjectClassFilter, userUidFilter);
+
+		List<SimpleUser> users = persistenceEntryManager.findEntries(getDnForPerson(null), SimpleUser.class, filter, 1);
 		if ((users != null) && (users.size() > 0)) {
 			return persistenceEntryManager.find(User.class, users.get(0).getDn());
 		}
