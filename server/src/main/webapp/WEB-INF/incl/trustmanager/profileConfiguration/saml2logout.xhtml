@@ -3,6 +3,7 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
 	xmlns:b="http://bootsfaces.net/ui" xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:rich="http://richfaces.org/rich"
@@ -27,9 +28,11 @@
 			</f:facet>
 			<h:panelGrid columns="2">
 				<h:outputText value="#{msgs['trustmanager.assertionLifetime']} " />
-				<b:touchSpin col-md="6" min="0" max="2147483647"
-					value="#{_profileConfigurationSelected.assertionLifetime}"
-					step="300000" />
+				<p:spinner id="assertionLifetimeSpinner"
+					styleClass="rounded assertionLifetimeSpinner"
+					value="#{_profileConfigurationSelected.assertionLifetime}" min="0"
+					max="2147483647" stepFactor="300000"
+					style="width:100%;" />
 				<h:outputText value="#{msgs['trustmanager.signResponses']} " />
 				<h:selectOneMenu
 					value="#{_profileConfigurationSelected.signResponses}">
