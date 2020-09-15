@@ -180,7 +180,7 @@ public interface IPersonService {
 	 *            email
 	 * @return Person
 	 */
-	public abstract GluuCustomPerson getPersonByEmail(String email);
+	public abstract GluuCustomPerson getPersonByEmail(String mail, String... returnAttributes);
 
 	/**
 	 * Get person by attribute
@@ -221,6 +221,6 @@ public interface IPersonService {
 
 	List<GluuCustomPerson> getPersonsByUid(String uid, String... returnAttributes);
 
-	List<GluuCustomPerson> getPersonsByEmail(String email);
+	List<GluuCustomPerson> getPersonsByEmail(String mail, String... returnAttributes);
 
 }

@@ -532,8 +532,7 @@ public class UpdatePersonAction implements Serializable {
 						this.person.getUid());
 				return OxTrustConstants.RESULT_FAILURE;
 			}
-			if (appConfiguration.getEnforceEmailUniqueness()
-					&& !dataSourceTypeService.isLDAP(personService.getDnForPerson(null))) {
+			if (appConfiguration.getEnforceEmailUniqueness()) {
 				if (!userEmailIsUniqAtCreationTime(this.person.getAttribute(MAIL))) {
 					facesMessages.add(FacesMessage.SEVERITY_ERROR,
 							"#{msgs['UpdatePersonAction.faileUpdateUserMailidExist']} %s",
@@ -548,8 +547,7 @@ public class UpdatePersonAction implements Serializable {
 						this.person.getUid());
 				return OxTrustConstants.RESULT_FAILURE;
 			}
-			if (appConfiguration.getEnforceEmailUniqueness()
-					&& !dataSourceTypeService.isLDAP(personService.getDnForPerson(null))) {
+			if (appConfiguration.getEnforceEmailUniqueness()) {
 				if (!userEmailIsUniqAtEditionTime(this.person.getAttribute(MAIL))) {
 					facesMessages.add(FacesMessage.SEVERITY_ERROR,
 							"#{msgs['UpdatePersonAction.faileUpdateUserMailidExist']} %s",
