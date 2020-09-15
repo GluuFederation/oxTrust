@@ -18,6 +18,7 @@ import java.util.UUID;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import org.gluu.model.GluuAttribute;
 import org.gluu.oxtrust.exception.DuplicateEmailException;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
@@ -450,7 +451,7 @@ public class PersonService implements Serializable, IPersonService {
 	public List<GluuCustomAttribute> getMandatoryAtributes() {
 		if (this.mandatoryAttributes == null) {
 			mandatoryAttributes = new ArrayList<GluuCustomAttribute>();
-			mandatoryAttributes.add(new GluuCustomAttribute("uid", "", true, true));
+			mandatoryAttributes.add(new GluuCustomAttribute(OxConstants.UID, "", true, true));
 			mandatoryAttributes.add(new GluuCustomAttribute("givenName", "", true, true));
 			mandatoryAttributes.add(new GluuCustomAttribute("displayName", "", true, true));
 			mandatoryAttributes.add(new GluuCustomAttribute("sn", "", true, true));
@@ -517,11 +518,8 @@ public class PersonService implements Serializable, IPersonService {
 	 * String)
 	 */
 	@Override
-	public GluuCustomPerson getPersonByEmail(String email) {
-		GluuCustomPerson person = new GluuCustomPerson();
-		person.setBaseDn(getDnForPerson(null));
-		person.setMail(email);
-		List<GluuCustomPerson> persons = persistenceEntryManager.findEntries(person);
+	public GluuCustomPerson getPersonByEmail(String mail, String... returnAttributes) {
+		List<GluuCustomPerson> persons = getPersonsByEmail(mail, returnAttributes);
 		if ((persons != null) && (persons.size() > 0)) {
 			return persons.get(0);
 		}
@@ -536,13 +534,13 @@ public class PersonService implements Serializable, IPersonService {
 	 */
 	@Override
 	public List<GluuCustomPerson> getPersonsByUid(String uid, String... returnAttributes) {
-		log.debug("Getting user information from LDAP: userId = {}", uid);
+		log.debug("Getting user information from DB: userId = {}", uid);
 
 		if (StringHelper.isEmpty(uid)) {
 			return null;
 		}
 
-		Filter userUidFilter = Filter.createEqualityFilter(Filter.createLowercaseFilter("uid"), StringHelper.toLowerCase(uid));
+		Filter userUidFilter = Filter.createEqualityFilter(Filter.createLowercaseFilter(OxConstants.UID), StringHelper.toLowerCase(uid));
 
 		List<GluuCustomPerson> entries = persistenceEntryManager.findEntries(getDnForPerson(null), GluuCustomPerson.class, userUidFilter, returnAttributes);
 		log.debug("Found {} entries for userId = {}", entries.size(), uid);
@@ -558,11 +556,26 @@ public class PersonService implements Serializable, IPersonService {
 	 * String)
 	 */
 	@Override
-	public List<GluuCustomPerson> getPersonsByEmail(String email) {
-		GluuCustomPerson person = new GluuCustomPerson();
-		person.setBaseDn(getDnForPerson(null));
-		person.setMail(email);
-		return persistenceEntryManager.findEntries(person);
+	public List<GluuCustomPerson> getPersonsByEmail(String mail, String... returnAttributes) {
+		log.debug("Getting user information from DB: mail = {}", mail);
+
+		if (StringHelper.isEmpty(mail)) {
+			return null;
+		}
+
+		Filter userMailFilter = Filter.createEqualityFilter(Filter.createLowercaseFilter("mail"), StringHelper.toLowerCase(mail));
+		
+		boolean multiValued = false;
+		GluuAttribute mailAttribute = attributeService.getAttributeByName("mail");
+		if ((mailAttribute != null) && (mailAttribute.getOxMultiValuedAttribute() != null) && mailAttribute.getOxMultiValuedAttribute()) {
+			multiValued = true;
+		}
+		userMailFilter.multiValued(multiValued);
+
+		List<GluuCustomPerson> entries = persistenceEntryManager.findEntries(getDnForPerson(null), GluuCustomPerson.class, userMailFilter, returnAttributes);
+		log.debug("Found {} entries for mail = {}", entries.size(), mail);
+
+		return entries;
 	}
 
 	/*
