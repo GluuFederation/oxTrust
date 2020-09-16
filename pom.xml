@@ -405,7 +405,7 @@
 			<dependency>
 				<groupId>org.hibernate</groupId>
 				<artifactId>hibernate-validator-cdi</artifactId>
-				<version>5.4.1.Final</version>
+				<version>5.4.3.Final</version>
 			</dependency>
 			<dependency>
 				<groupId>javax.validation</groupId>
