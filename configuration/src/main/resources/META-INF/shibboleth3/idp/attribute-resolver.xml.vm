@@ -60,7 +60,7 @@
 
 #if( $resovlerParams.persistenceType.equals('couchbase') )
     <DataConnector id="siteDataConnector" xsi:type="RelationalDatabase">
-        <BeanManagedConnection>siteDataSource</dBeanManagedConnection>
+        <BeanManagedConnection>siteDataSource</BeanManagedConnection>
         <QueryTemplate>
             <![CDATA[
                 %{idp.attribute.resolver.N1QL.searchFilter}
