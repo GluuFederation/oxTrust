@@ -22,7 +22,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.model.GluuStatus;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.model.GluuValidationStatus;
@@ -54,8 +53,7 @@ public class EntityIDMonitoringService {
 	@Inject
 	private Event<TimerEvent> timerEvent;
 
-	@Inject
-	private AppConfiguration appConfiguration;
+	
 
 	@Inject
 	private ServiceUtil serviceUtil;
