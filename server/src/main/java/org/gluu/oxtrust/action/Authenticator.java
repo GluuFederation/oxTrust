@@ -66,359 +66,383 @@ import org.slf4j.Logger;
 @SessionScoped
 public class Authenticator implements Serializable {
 
-	private static final String LOGIN_FAILED_OX_TRUST = "Login failed, oxTrust wasn't allowed to access user data";
+    /**
+     * 
+     */
+    private static final String CN_OXAUTH_HOST = "CN_OXAUTH_HOST";
 
-	private static final long serialVersionUID = -3975272457541385597L;
+    private static final String LOGIN_FAILED_OX_TRUST = "Login failed, oxTrust wasn't allowed to access user data";
 
-	@Inject
-	private Logger log;
+    private static final long serialVersionUID = -3975272457541385597L;
 
-	@Inject
-	private Identity identity;
+    @Inject
+    private Logger log;
 
-	@Inject
-	private FacesService facesService;
+    @Inject
+    private Identity identity;
 
-	@Inject
-	private PersonService personService;
+    @Inject
+    private FacesService facesService;
 
-	@Inject
-	private SecurityService securityService;
+    @Inject
+    private PersonService personService;
 
-	@Inject
-	private ConfigurationService configurationService;
+    @Inject
+    private SecurityService securityService;
 
-	@Inject
-	private OpenIdService openIdService;
+    @Inject
+    private ConfigurationService configurationService;
 
-	@Inject
-	private FacesMessages facesMessages;
+    @Inject
+    private OpenIdService openIdService;
 
-	@Inject
-	private AppConfiguration appConfiguration;
+    @Inject
+    private FacesMessages facesMessages;
 
-	@Inject
-	private EncryptionService encryptionService;
+    @Inject
+    private AppConfiguration appConfiguration;
 
-	public boolean preAuthenticate() throws IOException, Exception {
-		boolean result = true;
-		if (!identity.isLoggedIn()) {
-			result = oAuthLogin();
-		}
+    @Inject
+    private EncryptionService encryptionService;
 
-		return result;
-	}
+    public boolean preAuthenticate() throws IOException, Exception {
+        boolean result = true;
+        if (!identity.isLoggedIn()) {
+            result = oAuthLogin();
+        }
 
-	protected String authenticate() {
-		String userName = null;
-		try {
-			userName = identity.getOauthData().getUserUid();
-			String idToken = identity.getOauthData().getIdToken();
+        return result;
+    }
 
-			if (StringHelper.isEmpty(userName) || StringHelper.isEmpty(idToken)) {
-				log.error("User is not authenticated");
-				return OxTrustConstants.RESULT_NO_PERMISSIONS;
-			}
+    protected String authenticate() {
+        String userName = null;
+        try {
+            userName = identity.getOauthData().getUserUid();
+            String idToken = identity.getOauthData().getIdToken();
 
-			identity.getCredentials().setUsername(userName);
-			log.info("Authenticating user '{}'", userName);
+            if (StringHelper.isEmpty(userName) || StringHelper.isEmpty(idToken)) {
+                log.error("User is not authenticated");
+                return OxTrustConstants.RESULT_NO_PERMISSIONS;
+            }
 
-			User user = findUserByUserName(userName);
-			if (user == null) {
-				log.error("Person '{}' not found in LDAP", userName);
-				return OxTrustConstants.RESULT_NO_PERMISSIONS;
-			} else if (GluuStatus.EXPIRED.getValue().equals(user.getAttribute("gluuStatus"))
-					|| GluuStatus.REGISTER.getValue().equals(user.getAttribute("gluuStatus"))) {
-				HashMap<String, Object> params = new HashMap<String, Object>();
-				params.put("inum", user.getInum());
-				facesService.redirect("/register.xhtml", params);
-				return OxTrustConstants.RESULT_REGISTER;
-			}
+            identity.getCredentials().setUsername(userName);
+            log.info("Authenticating user '{}'", userName);
 
-			postLogin(user);
-			log.info("User '{}' authenticated successfully", userName);
+            User user = findUserByUserName(userName);
+            if (user == null) {
+                log.error("Person '{}' not found in LDAP", userName);
+                return OxTrustConstants.RESULT_NO_PERMISSIONS;
+            } else if (GluuStatus.EXPIRED.getValue().equals(user.getAttribute("gluuStatus"))
+                    || GluuStatus.REGISTER.getValue().equals(user.getAttribute("gluuStatus"))) {
+                HashMap<String, Object> params = new HashMap<String, Object>();
+                params.put("inum", user.getInum());
+                facesService.redirect("/register.xhtml", params);
+                return OxTrustConstants.RESULT_REGISTER;
+            }
 
-			return OxTrustConstants.RESULT_SUCCESS;
-		} catch (Exception ex) {
-			log.error("Failed to authenticate user '{}'", userName, ex);
-		}
+            postLogin(user);
+            log.info("User '{}' authenticated successfully", userName);
 
-		return OxTrustConstants.RESULT_NO_PERMISSIONS;
-	}
+            return OxTrustConstants.RESULT_SUCCESS;
+        } catch (Exception ex) {
+            log.error("Failed to authenticate user '{}'", userName, ex);
+        }
 
-	/**
-	 * Set session variables after user login
-	 * 
-	 * @throws Exception
-	 */
-	private void postLogin(User user) {
-		identity.login();
-		log.debug("Configuring application after user '{}' login", user.getUid());
-		GluuCustomPerson person = findPersonByDn(user.getDn());
-		identity.setUser(person);
+        return OxTrustConstants.RESULT_NO_PERMISSIONS;
+    }
 
-		// Set user roles
-		UserRole[] userRoles = securityService.getUserRoles(user);
-		if (ArrayHelper.isNotEmpty(userRoles)) {
-			log.debug("Get '{}' user roles", Arrays.toString(userRoles));
-		} else {
-			log.debug("Get 0 user roles");
-		}
-		for (UserRole userRole : userRoles) {
-			identity.addRole(userRole.getRoleName());
-		}
-	}
+    /**
+     * Set session variables after user login
+     * 
+     * @throws Exception
+     */
+    private void postLogin(User user) {
+        identity.login();
+        log.debug("Configuring application after user '{}' login", user.getUid());
+        GluuCustomPerson person = findPersonByDn(user.getDn());
+        identity.setUser(person);
 
-	private User findUserByUserName(String userName) {
-		User user = null;
-		try {
-			user = personService.getUserByUid(userName);
-		} catch (Exception ex) {
-			log.error("Failed to find user '{}' in ldap", userName, ex);
-		}
+        // Set user roles
+        UserRole[] userRoles = securityService.getUserRoles(user);
+        if (ArrayHelper.isNotEmpty(userRoles)) {
+            log.debug("Get '{}' user roles", Arrays.toString(userRoles));
+        } else {
+            log.debug("Get 0 user roles");
+        }
+        for (UserRole userRole : userRoles) {
+            identity.addRole(userRole.getRoleName());
+        }
+    }
 
-		return user;
-	}
+    private User findUserByUserName(String userName) {
+        User user = null;
+        try {
+            user = personService.getUserByUid(userName);
+        } catch (Exception ex) {
+            log.error("Failed to find user '{}' in ldap", userName, ex);
+        }
 
-	private GluuCustomPerson findPersonByDn(String userDn) {
-		GluuCustomPerson person = null;
-		try {
-			person = personService.getPersonByDn(userDn);
-		} catch (Exception ex) {
-			log.error("Failed to find person '{}' in ldap", userDn, ex);
-		}
+        return user;
+    }
 
-		return person;
-	}
+    private GluuCustomPerson findPersonByDn(String userDn) {
+        GluuCustomPerson person = null;
+        try {
+            person = personService.getPersonByDn(userDn);
+        } catch (Exception ex) {
+            log.error("Failed to find person '{}' in ldap", userDn, ex);
+        }
 
-	/**
-	 * Main entry point for oAuth authentication.
-	 * 
-	 * @throws IOException
-	 * 
-	 * @throws Exception
-	 */
-	public boolean oAuthLogin() throws IOException, Exception {
-		Client client = ClientBuilder.newClient();
-		WebTarget target = client.target(openIdService.getOpenIdConfiguration().getAuthorizationEndpoint());
-		String clientId = appConfiguration.getOxAuthClientId();
-		String scope = appConfiguration.getOxAuthClientScope();
-		String responseType = "code";
-		String nonce = UUID.randomUUID().toString();
-		String state = UUID.randomUUID().toString();
-		target = target.queryParam(OxTrustConstants.OXAUTH_CLIENT_ID, clientId);
-		target = target.queryParam(OxTrustConstants.OXAUTH_REDIRECT_URI, appConfiguration.getLoginRedirectUrl());
-		target = target.queryParam(OxTrustConstants.OXAUTH_RESPONSE_TYPE, responseType);
-		target = target.queryParam(OxTrustConstants.OXAUTH_SCOPE, scope);
-		target = target.queryParam(OxTrustConstants.OXAUTH_NONCE, nonce);
-		target = target.queryParam(OxTrustConstants.OXAUTH_STATE, state);
-		// Store state and nonce
-		identity.getSessionMap().put(OxTrustConstants.OXAUTH_NONCE, nonce);
-		identity.getSessionMap().put(OxTrustConstants.OXAUTH_STATE, state);
-		GluuConfiguration configuration = configurationService
-				.getConfiguration(new String[] { "oxTrustAuthenticationMode" });
-		String acrValues = configuration.getOxTrustAuthenticationMode();
-		if (StringHelper.isNotEmpty(acrValues)) {
-			target = target.queryParam(OxTrustConstants.OXAUTH_ACR_VALUES, acrValues);
-			// Store authentication method
-			identity.getSessionMap().put(OxTrustConstants.OXAUTH_ACR_VALUES, acrValues);
-		}
-		facesService.redirectToExternalURL(target.getUri().toString().replaceAll("%2B", "+"));
-		return true;
-	}
+        return person;
+    }
 
-	/**
-	 * After successful login, oxAuth will redirect user to this method. Obtains
-	 * access token using authorization code and verifies if access token is valid
-	 * 
-	 * @return
-	 * @throws JSONException
-	 */
-	public String oAuthGetAccessToken() throws JSONException {
-		String oxAuthAuthorizeUrl = openIdService.getOpenIdConfiguration().getAuthorizationEndpoint();
-		String oxAuthHost = getOxAuthHost(oxAuthAuthorizeUrl);
-		if (StringHelper.isEmpty(oxAuthHost)) {
-			log.info("Failed to determine oxAuth host using oxAuthAuthorizeUrl: '{}'", oxAuthAuthorizeUrl);
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, LOGIN_FAILED_OX_TRUST);
-			return OxTrustConstants.RESULT_NO_PERMISSIONS;
-		}
-		Map<String, String> requestParameterMap = FacesContext.getCurrentInstance().getExternalContext()
-				.getRequestParameterMap();
-		Map<String, Object> requestCookieMap = FacesContext.getCurrentInstance().getExternalContext()
-				.getRequestCookieMap();
-		String authorizationCode = requestParameterMap.get(OxTrustConstants.OXAUTH_CODE);
-		// Check state
-		String authorizationState = requestParameterMap.get(OxTrustConstants.OXAUTH_STATE);
-		String stateSession = (String) identity.getSessionMap().get(OxTrustConstants.OXAUTH_STATE);
-		if (!StringHelper.equals(stateSession, authorizationState)) {
-			String error = requestParameterMap.get(OxTrustConstants.OXAUTH_ERROR);
-			String errorDescription = requestParameterMap.get(OxTrustConstants.OXAUTH_ERROR_DESCRIPTION);
-			log.error("No state sent. Error: " + error + ". Error description: " + errorDescription);
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, LOGIN_FAILED_OX_TRUST);
-			return OxTrustConstants.RESULT_NO_PERMISSIONS;
-		}
+    /**
+     * Main entry point for oAuth authentication.
+     * 
+     * @throws IOException
+     * 
+     * @throws Exception
+     */
+    public boolean oAuthLogin() throws IOException, Exception {
+        Client client = ClientBuilder.newClient();
+        WebTarget target = client.target(getAuthorizationUrl());
+        String clientId = appConfiguration.getOxAuthClientId();
+        String scope = appConfiguration.getOxAuthClientScope();
+        String responseType = "code";
+        String nonce = UUID.randomUUID().toString();
+        String state = UUID.randomUUID().toString();
+        target = target.queryParam(OxTrustConstants.OXAUTH_CLIENT_ID, clientId);
+        target = target.queryParam(OxTrustConstants.OXAUTH_REDIRECT_URI, appConfiguration.getLoginRedirectUrl());
+        target = target.queryParam(OxTrustConstants.OXAUTH_RESPONSE_TYPE, responseType);
+        target = target.queryParam(OxTrustConstants.OXAUTH_SCOPE, scope);
+        target = target.queryParam(OxTrustConstants.OXAUTH_NONCE, nonce);
+        target = target.queryParam(OxTrustConstants.OXAUTH_STATE, state);
+        // Store state and nonce
+        identity.getSessionMap().put(OxTrustConstants.OXAUTH_NONCE, nonce);
+        identity.getSessionMap().put(OxTrustConstants.OXAUTH_STATE, state);
+        GluuConfiguration configuration = configurationService
+                .getConfiguration(new String[] { "oxTrustAuthenticationMode" });
+        String acrValues = configuration.getOxTrustAuthenticationMode();
+        if (StringHelper.isNotEmpty(acrValues)) {
+            target = target.queryParam(OxTrustConstants.OXAUTH_ACR_VALUES, acrValues);
+            // Store authentication method
+            identity.getSessionMap().put(OxTrustConstants.OXAUTH_ACR_VALUES, acrValues);
+        }
+        facesService.redirectToExternalURL(target.getUri().toString().replaceAll("%2B", "+"));
+        return true;
+    }
 
-		Object sessionStateCookie = requestCookieMap.get(OxTrustConstants.OXAUTH_SESSION_STATE);
-		String sessionState = null;
-		if (sessionStateCookie != null) {
-			sessionState = ((Cookie) sessionStateCookie).getValue();
-		}
+    /**
+     * After successful login, oxAuth will redirect user to this method. Obtains
+     * access token using authorization code and verifies if access token is valid
+     * 
+     * @return
+     * @throws JSONException
+     */
+    public String oAuthGetAccessToken() throws JSONException {
+        String oxAuthAuthorizeUrl = getAuthorizationUrl();
+        String oxAuthHost = getOxAuthHost(oxAuthAuthorizeUrl);
+        if (StringHelper.isEmpty(oxAuthHost)) {
+            log.info("Failed to determine oxAuth host using oxAuthAuthorizeUrl: '{}'", oxAuthAuthorizeUrl);
+            facesMessages.add(FacesMessage.SEVERITY_ERROR, LOGIN_FAILED_OX_TRUST);
+            return OxTrustConstants.RESULT_NO_PERMISSIONS;
+        }
+        Map<String, String> requestParameterMap = FacesContext.getCurrentInstance().getExternalContext()
+                .getRequestParameterMap();
+        Map<String, Object> requestCookieMap = FacesContext.getCurrentInstance().getExternalContext()
+                .getRequestCookieMap();
+        String authorizationCode = requestParameterMap.get(OxTrustConstants.OXAUTH_CODE);
+        // Check state
+        String authorizationState = requestParameterMap.get(OxTrustConstants.OXAUTH_STATE);
+        String stateSession = (String) identity.getSessionMap().get(OxTrustConstants.OXAUTH_STATE);
+        if (!StringHelper.equals(stateSession, authorizationState)) {
+            String error = requestParameterMap.get(OxTrustConstants.OXAUTH_ERROR);
+            String errorDescription = requestParameterMap.get(OxTrustConstants.OXAUTH_ERROR_DESCRIPTION);
+            log.error("No state sent. Error: " + error + ". Error description: " + errorDescription);
+            facesMessages.add(FacesMessage.SEVERITY_ERROR, LOGIN_FAILED_OX_TRUST);
+            return OxTrustConstants.RESULT_NO_PERMISSIONS;
+        }
 
-		if (authorizationCode == null) {
-			String error = requestParameterMap.get(OxTrustConstants.OXAUTH_ERROR);
-			String errorDescription = requestParameterMap.get(OxTrustConstants.OXAUTH_ERROR_DESCRIPTION);
+        Object sessionStateCookie = requestCookieMap.get(OxTrustConstants.OXAUTH_SESSION_STATE);
+        String sessionState = null;
+        if (sessionStateCookie != null) {
+            sessionState = ((Cookie) sessionStateCookie).getValue();
+        }
 
-			log.error("No authorization code sent. Error: " + error + ". Error description: " + errorDescription);
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, LOGIN_FAILED_OX_TRUST);
+        if (authorizationCode == null) {
+            String error = requestParameterMap.get(OxTrustConstants.OXAUTH_ERROR);
+            String errorDescription = requestParameterMap.get(OxTrustConstants.OXAUTH_ERROR_DESCRIPTION);
 
-			return OxTrustConstants.RESULT_NO_PERMISSIONS;
-		}
+            log.error("No authorization code sent. Error: " + error + ". Error description: " + errorDescription);
+            facesMessages.add(FacesMessage.SEVERITY_ERROR, LOGIN_FAILED_OX_TRUST);
 
-		// todo hardcoded for now. Once clients are dynamically registered with
-		// oxAuth, change this
-		// String credentials = appConfiguration.getOxAuthClientId() +
-		// ":secret";
-		// String credentials = appConfiguration.getOxAuthClientId() +
-		// ":5967d41c-ce9c-4137-9068-42578df0c606";
-		// String clientCredentials =
-		// appConfiguration.getOxAuthClientCredentials();
-		log.info("authorizationCode : " + authorizationCode);
+            return OxTrustConstants.RESULT_NO_PERMISSIONS;
+        }
 
-		String scopes = requestParameterMap.get(OxTrustConstants.OXAUTH_SCOPE);
-		log.info(" scopes : " + scopes);
+        // todo hardcoded for now. Once clients are dynamically registered with
+        // oxAuth, change this
+        // String credentials = appConfiguration.getOxAuthClientId() +
+        // ":secret";
+        // String credentials = appConfiguration.getOxAuthClientId() +
+        // ":5967d41c-ce9c-4137-9068-42578df0c606";
+        // String clientCredentials =
+        // appConfiguration.getOxAuthClientCredentials();
+        log.info("authorizationCode : " + authorizationCode);
 
-		String clientID = appConfiguration.getOxAuthClientId();
-		log.info("clientID : " + clientID);
+        String scopes = requestParameterMap.get(OxTrustConstants.OXAUTH_SCOPE);
+        log.info(" scopes : " + scopes);
 
-		String clientPassword = appConfiguration.getOxAuthClientPassword();
-		if (clientPassword != null) {
-			try {
-				clientPassword = encryptionService.decrypt(clientPassword);
-			} catch (EncryptionException ex) {
-				log.error("Failed to decrypt client password", ex);
-			}
-		}
+        String clientID = appConfiguration.getOxAuthClientId();
+        log.info("clientID : " + clientID);
 
-		String result = requestAccessToken(oxAuthHost, authorizationCode, sessionState, scopes, clientID,
-				clientPassword);
+        String clientPassword = appConfiguration.getOxAuthClientPassword();
+        if (clientPassword != null) {
+            try {
+                clientPassword = encryptionService.decrypt(clientPassword);
+            } catch (EncryptionException ex) {
+                log.error("Failed to decrypt client password", ex);
+            }
+        }
 
-		if (OxTrustConstants.RESULT_NO_PERMISSIONS.equals(result)) {
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, LOGIN_FAILED_OX_TRUST);
-		} else if (OxTrustConstants.RESULT_FAILURE.equals(result)) {
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Login failed");
-		}
+        String result = requestAccessToken(oxAuthHost, authorizationCode, sessionState, scopes, clientID,
+                clientPassword);
 
-		return result;
-	}
+        if (OxTrustConstants.RESULT_NO_PERMISSIONS.equals(result)) {
+            facesMessages.add(FacesMessage.SEVERITY_ERROR, LOGIN_FAILED_OX_TRUST);
+        } else if (OxTrustConstants.RESULT_FAILURE.equals(result)) {
+            facesMessages.add(FacesMessage.SEVERITY_ERROR, "Login failed");
+        }
 
-	private String requestAccessToken(String oxAuthHost, String authorizationCode, String sessionState, String scopes,
-			String clientID, String clientPassword) {
-		OpenIdConfigurationResponse openIdConfiguration = openIdService.getOpenIdConfiguration();
-		// 1. Request access token using the authorization code.
-		TokenClient tokenClient1 = new TokenClient(openIdConfiguration.getTokenEndpoint());
+        return result;
+    }
 
-		log.info("Sending request to token endpoint");
-		String redirectURL = appConfiguration.getLoginRedirectUrl();
-		log.info("redirectURI : " + redirectURL);
-		TokenResponse tokenResponse = tokenClient1.execAuthorizationCode(authorizationCode, redirectURL, clientID,
-				clientPassword);
+    private String requestAccessToken(String oxAuthHost, String authorizationCode, String sessionState, String scopes,
+            String clientID, String clientPassword) {
+        OpenIdConfigurationResponse openIdConfiguration = openIdService.getOpenIdConfiguration();
+        // 1. Request access token using the authorization code.
+        TokenClient tokenClient1 = new TokenClient(openIdConfiguration.getTokenEndpoint());
 
-		log.debug(" tokenResponse : " + tokenResponse);
-		if (tokenResponse == null) {
-			log.error("Get empty token response. User rcan't log into application");
-			return OxTrustConstants.RESULT_NO_PERMISSIONS;
-		}
+        log.info("Sending request to token endpoint");
+        String redirectURL = appConfiguration.getLoginRedirectUrl();
+        log.info("redirectURI : " + redirectURL);
+        TokenResponse tokenResponse = tokenClient1.execAuthorizationCode(authorizationCode, redirectURL, clientID,
+                clientPassword);
 
-		log.debug(" tokenResponse.getErrorType() : " + tokenResponse.getErrorType());
+        log.debug(" tokenResponse : " + tokenResponse);
+        if (tokenResponse == null) {
+            log.error("Get empty token response. User rcan't log into application");
+            return OxTrustConstants.RESULT_NO_PERMISSIONS;
+        }
 
-		String accessToken = tokenResponse.getAccessToken();
-		log.debug(" accessToken : " + accessToken);
+        log.debug(" tokenResponse.getErrorType() : " + tokenResponse.getErrorType());
 
-		String idToken = tokenResponse.getIdToken();
-		log.debug(" idToken : " + idToken);
+        String accessToken = tokenResponse.getAccessToken();
+        log.debug(" accessToken : " + accessToken);
 
-		if (idToken == null) {
-			log.error("Failed to get id_token");
-			return OxTrustConstants.RESULT_NO_PERMISSIONS;
-		}
+        String idToken = tokenResponse.getIdToken();
+        log.debug(" idToken : " + idToken);
 
-		log.info("Session validation successful. User is logged in");
-		UserInfoClient userInfoClient = new UserInfoClient(openIdConfiguration.getUserInfoEndpoint());
-		UserInfoResponse userInfoResponse = userInfoClient.execUserInfo(accessToken);
-		if (userInfoResponse == null) {
-			log.error("Get empty token response. User can't log into application");
-			return OxTrustConstants.RESULT_NO_PERMISSIONS;
-		}
+        if (idToken == null) {
+            log.error("Failed to get id_token");
+            return OxTrustConstants.RESULT_NO_PERMISSIONS;
+        }
 
-		// Parse JWT
-		Jwt jwt;
-		try {
-			jwt = Jwt.parse(idToken);
-		} catch (InvalidJwtException ex) {
-			log.error("Failed to parse id_token");
-			return OxTrustConstants.RESULT_NO_PERMISSIONS;
-		}
+        log.info("Session validation successful. User is logged in");
+        UserInfoClient userInfoClient = new UserInfoClient(openIdConfiguration.getUserInfoEndpoint());
+        UserInfoResponse userInfoResponse = userInfoClient.execUserInfo(accessToken);
+        if (userInfoResponse == null) {
+            log.error("Get empty token response. User can't log into application");
+            return OxTrustConstants.RESULT_NO_PERMISSIONS;
+        }
 
-		// Check nonce
-		String nonceResponse = (String) jwt.getClaims().getClaim(JwtClaimName.NONCE);
-		String nonceSession = (String) identity.getSessionMap().get(OxTrustConstants.OXAUTH_NONCE);
-		if (!StringHelper.equals(nonceSession, nonceResponse)) {
-			log.error("User info response :  nonce is not matching.");
-			return OxTrustConstants.RESULT_NO_PERMISSIONS;
-		}
+        // Parse JWT
+        Jwt jwt;
+        try {
+            jwt = Jwt.parse(idToken);
+        } catch (InvalidJwtException ex) {
+            log.error("Failed to parse id_token");
+            return OxTrustConstants.RESULT_NO_PERMISSIONS;
+        }
 
-		// Determine uid
-		List<String> uidValues = userInfoResponse.getClaims().get(JwtClaimName.USER_NAME);
-		if ((uidValues == null) || (uidValues.size() == 0)) {
-			log.error("User info response doesn't contains uid claim");
-			return OxTrustConstants.RESULT_NO_PERMISSIONS;
-		}
-		// Check requested authentication method
-		if (identity.getSessionMap().containsKey(OxTrustConstants.OXAUTH_ACR_VALUES)) {
-			String requestAcrValues = (String) identity.getSessionMap().get(OxTrustConstants.OXAUTH_ACR_VALUES);
-			String issuer = openIdConfiguration.getIssuer();
-			String responseIssuer = (String) jwt.getClaims().getClaim(JwtClaimName.ISSUER);
-			if (issuer == null || responseIssuer == null || !issuer.equals(responseIssuer)) {
-				log.error("User info response :  Issuer.");
-				return OxTrustConstants.RESULT_NO_PERMISSIONS;
-			}
+        // Check nonce
+        String nonceResponse = (String) jwt.getClaims().getClaim(JwtClaimName.NONCE);
+        String nonceSession = (String) identity.getSessionMap().get(OxTrustConstants.OXAUTH_NONCE);
+        if (!StringHelper.equals(nonceSession, nonceResponse)) {
+            log.error("User info response :  nonce is not matching.");
+            return OxTrustConstants.RESULT_NO_PERMISSIONS;
+        }
 
-			List<String> acrValues = jwt.getClaims()
-					.getClaimAsStringList(JwtClaimName.AUTHENTICATION_CONTEXT_CLASS_REFERENCE);
-			if ((acrValues == null) || (acrValues.size() == 0) || !acrValues.contains(requestAcrValues)) {
-				log.error("User info response doesn't contains acr claim");
-				return OxTrustConstants.RESULT_NO_PERMISSIONS;
-			}
-			if (!acrValues.contains(requestAcrValues)) {
-				log.error("User info response contains acr='{}' claim but expected acr='{}'", acrValues,
-						requestAcrValues);
-				return OxTrustConstants.RESULT_NO_PERMISSIONS;
-			}
-		}
-		OauthData oauthData = identity.getOauthData();
-		oauthData.setHost(oxAuthHost);
-		oauthData.setUserUid(uidValues.get(0));
-		oauthData.setAccessToken(accessToken);
-		oauthData.setAccessTokenExpirationInSeconds(tokenResponse.getExpiresIn());
-		oauthData.setScopes(scopes);
-		oauthData.setIdToken(idToken);
-		oauthData.setSessionState(sessionState);
-		identity.setWorkingParameter(OxTrustConstants.OXAUTH_SSO_SESSION_STATE, Boolean.FALSE);
-		log.info("user uid:" + oauthData.getUserUid());
+        // Determine uid
+        List<String> uidValues = userInfoResponse.getClaims().get(JwtClaimName.USER_NAME);
+        if ((uidValues == null) || (uidValues.size() == 0)) {
+            log.error("User info response doesn't contains uid claim");
+            return OxTrustConstants.RESULT_NO_PERMISSIONS;
+        }
+        // Check requested authentication method
+        if (identity.getSessionMap().containsKey(OxTrustConstants.OXAUTH_ACR_VALUES)) {
+            String requestAcrValues = (String) identity.getSessionMap().get(OxTrustConstants.OXAUTH_ACR_VALUES);
+            String issuer = openIdConfiguration.getIssuer();
+            String responseIssuer = (String) jwt.getClaims().getClaim(JwtClaimName.ISSUER);
+            if (issuer == null || responseIssuer == null || !issuer.equals(responseIssuer)) {
+                log.error("User info response :  Issuer.");
+                return OxTrustConstants.RESULT_NO_PERMISSIONS;
+            }
 
-		String result = authenticate();
+            List<String> acrValues = jwt.getClaims()
+                    .getClaimAsStringList(JwtClaimName.AUTHENTICATION_CONTEXT_CLASS_REFERENCE);
+            if ((acrValues == null) || (acrValues.size() == 0) || !acrValues.contains(requestAcrValues)) {
+                log.error("User info response doesn't contains acr claim");
+                return OxTrustConstants.RESULT_NO_PERMISSIONS;
+            }
+            if (!acrValues.contains(requestAcrValues)) {
+                log.error("User info response contains acr='{}' claim but expected acr='{}'", acrValues,
+                        requestAcrValues);
+                return OxTrustConstants.RESULT_NO_PERMISSIONS;
+            }
+        }
+        OauthData oauthData = identity.getOauthData();
+        oauthData.setHost(oxAuthHost);
+        oauthData.setUserUid(uidValues.get(0));
+        oauthData.setAccessToken(accessToken);
+        oauthData.setAccessTokenExpirationInSeconds(tokenResponse.getExpiresIn());
+        oauthData.setScopes(scopes);
+        oauthData.setIdToken(idToken);
+        oauthData.setSessionState(sessionState);
+        identity.setWorkingParameter(OxTrustConstants.OXAUTH_SSO_SESSION_STATE, Boolean.FALSE);
+        log.info("user uid:" + oauthData.getUserUid());
 
-		return result;
-	}
+        String result = authenticate();
 
-	private String getOxAuthHost(String oxAuthAuthorizeUrl) {
-		try {
-			URL url = new URL(oxAuthAuthorizeUrl);
-			return String.format("%s://%s:%s", url.getProtocol(), url.getHost(), url.getPort());
-		} catch (MalformedURLException ex) {
-			log.error("Invalid oxAuth authorization URI: '{}'", oxAuthAuthorizeUrl, ex);
-		}
-		return null;
-	}
+        return result;
+    }
+
+    private String getOxAuthHost(String oxAuthAuthorizeUrl) {
+        try {
+            URL url = new URL(oxAuthAuthorizeUrl);
+            return String.format("%s://%s:%s", url.getProtocol(), url.getHost(), url.getPort());
+        } catch (MalformedURLException ex) {
+            log.error("Invalid oxAuth authorization URI: '{}'", oxAuthAuthorizeUrl, ex);
+        }
+        return null;
+    }
+
+    private String getAuthorizationUrl() {
+        try {
+            URL url = new URL(openIdService.getOpenIdConfiguration().getAuthorizationEndpoint());
+            String oxauth_env_host_port = System.getProperty(CN_OXAUTH_HOST);
+            if (oxauth_env_host_port != null) {
+                String[] values = oxauth_env_host_port.split(":");
+                if (values.length > 1) {
+                    url = new URL(url.getProtocol(), values[0], Integer.valueOf(values[1]), url.getFile());
+                } else {
+                    url = new URL(url.getProtocol(), values[0], url.getPort(), url.getFile());
+                }
+            }
+            return url.toString();
+        } catch (MalformedURLException e) {
+            log.error("Error reading authz endpoint", e);
+            return openIdService.getOpenIdConfiguration().getAuthorizationEndpoint();
+        }
+    }
 
 }
