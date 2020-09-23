@@ -232,6 +232,9 @@ public class Shibboleth3ConfService implements Serializable {
         HashMap<String, Object> attrParams = initAttributeParamMap(trustRelationships);
         HashMap<String, Object> casParams = initCASParamMap();
         HashMap<String, Object> attrResolverParams = initAttributeResolverParamMap();
+		
+        for (String key: attrParams.keySet())
+			attrResolverParams.remove(key);
 
         boolean result = (trustParams != null) && (attrParams != null) && (casParams != null)
                 && (attrResolverParams != null);
