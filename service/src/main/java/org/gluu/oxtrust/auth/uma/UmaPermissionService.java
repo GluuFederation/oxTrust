@@ -127,7 +127,26 @@ public class UmaPermissionService implements Serializable {
 			metaDataConfigurationService = UmaClientFactory.instance().createMetadataService(umaConfigurationEndpoint,
 					this.clientHttpEngine);
 		}
-		UmaMetadata metadataConfiguration = metaDataConfigurationService.getMetadata();
+
+		UmaMetadata metadataConfiguration = null;
+		
+		int max_attempts = 10;
+ 		for (int attempt = 1; attempt <= max_attempts; attempt++) {
+			try {
+				metadataConfiguration = metaDataConfigurationService.getMetadata();
+			} catch (javax.ws.rs.ServiceUnavailableException ex) {
+	            if ((attempt == max_attempts) || (ex.getResponse().getStatus() != javax.ws.rs.core.Response.Status.SERVICE_UNAVAILABLE.getStatusCode())) {
+	            	throw ex;
+	            }
+
+	            try {
+					java.lang.Thread.sleep(3000);
+				} catch (InterruptedException ex2) {
+					throw ex;
+				}
+	    		log.info("##### Attempting to load UMA metadata ... {}", attempt);
+			}
+		}
 
 		log.info("##### Getting UMA metadata ... DONE");
 
