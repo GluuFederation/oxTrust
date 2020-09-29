@@ -51,6 +51,7 @@ import org.gluu.oxtrust.service.OpenIdService;
 import org.gluu.oxtrust.service.PersonService;
 import org.gluu.oxtrust.service.SecurityService;
 import org.gluu.oxtrust.util.OxTrustConstants;
+import org.gluu.service.custom.CustomScriptService;
 import org.gluu.util.ArrayHelper;
 import org.gluu.util.StringHelper;
 import org.gluu.util.security.StringEncrypter.EncryptionException;
@@ -89,6 +90,9 @@ public class Authenticator implements Serializable {
 
     @Inject
     private SecurityService securityService;
+
+    @Inject
+    private CustomScriptService customScriptService;
 
     @Inject
     private ConfigurationService configurationService;
@@ -388,15 +392,21 @@ public class Authenticator implements Serializable {
                 return OxTrustConstants.RESULT_NO_PERMISSIONS;
             }
 
-            List<String> acrValues = jwt.getClaims()
-                    .getClaimAsStringList(JwtClaimName.AUTHENTICATION_CONTEXT_CLASS_REFERENCE);
-            if ((acrValues == null) || (acrValues.size() == 0) || !acrValues.contains(requestAcrValues)) {
+            List<String> acrLevels = jwt.getClaims()
+                    .getClaimAsStringList(JwtClaimName.AUTHENTICATION_METHOD_REFERENCES);
+            if ((acrLevels == null) || (acrLevels.size() == 0)) {
                 log.error("User info response doesn't contains acr claim");
                 return OxTrustConstants.RESULT_NO_PERMISSIONS;
             }
-            if (!acrValues.contains(requestAcrValues)) {
-                log.error("User info response contains acr='{}' claim but expected acr='{}'", acrValues,
-                        requestAcrValues);
+            int currentAcrLevel = 0;
+            if (requestAcrValues.equalsIgnoreCase(OxTrustConstants.SCRIPT_TYPE_INTERNAL_RESERVED_NAME)) {
+                currentAcrLevel = -1;
+            } else {
+                currentAcrLevel = customScriptService
+                        .getScriptLevel(customScriptService.getScriptByDisplayName(requestAcrValues));
+            }
+            if (currentAcrLevel > Integer.valueOf(acrLevels.get(0))) {
+                log.error("User info response doesn't contains acr claim");
                 return OxTrustConstants.RESULT_NO_PERMISSIONS;
             }
         }
