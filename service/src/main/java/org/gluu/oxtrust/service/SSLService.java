@@ -109,9 +109,7 @@ public class SSLService implements Serializable {
 	 * @return
 	 */
 	public static X509Certificate getPEMCertificateStatic(InputStream certStream) throws Exception {
-		PEMParser r = null;
-		try (Reader reader = new InputStreamReader(certStream);) {
-			r = new PEMParser(reader);
+		try (Reader reader = new InputStreamReader(certStream);PEMParser r = new PEMParser(reader)) {
 			Object certObject = r.readObject();
 
 			if (certObject instanceof X509Certificate) {
@@ -123,9 +121,9 @@ public class SSLService implements Serializable {
 			} else {
 				throw new IOException("unknown certificate type");
 			}
-		} finally {
-			IOUtils.closeQuietly(r);
-		}
+		} catch (Exception e) {
+		    throw new IOException("unknown certificate type");
+        }
 	}
 
 	/**

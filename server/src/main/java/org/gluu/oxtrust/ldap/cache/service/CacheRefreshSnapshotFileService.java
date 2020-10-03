@@ -9,7 +9,6 @@ package org.gluu.oxtrust.ldap.cache.service;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -29,7 +28,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.gluu.config.oxtrust.CacheRefreshConfiguration;
 import org.gluu.util.ArrayHelper;
@@ -71,20 +69,10 @@ public class CacheRefreshSnapshotFileService {
 		if (!prepareSnapshotsFolder(cacheRefreshConfiguration)) {
 			return false;
 		}
-
 		DateFormat fileNameDateFormat = new SimpleDateFormat(SNAPSHOT_FILE_NAME_DATE_PATTERN);
 		String snapshotFileName = String.format(SNAPSHOT_FILE_NAME_PATTERN, fileNameDateFormat.format(new Date()));
-
 		File file = new File(cacheRefreshConfiguration.getSnapshotFolder() + File.separator + snapshotFileName);
-		BufferedWriter bos;
-		try {
-			bos = new BufferedWriter(new FileWriter(file));
-		} catch (IOException ex) {
-			log.error("Failed to create snapshot file '{}'", file.getAbsolutePath(), ex);
-			return false;
-		}
-
-		try {
+		try(BufferedWriter bos = new BufferedWriter(new FileWriter(file))) {
 			for (Entry<String, Integer> entry : inumWithEntryHashCodeMap.entrySet()) {
 				bos.write(String.format("%s:%d\n", entry.getKey(), entry.getValue()));
 			}
@@ -92,10 +80,7 @@ public class CacheRefreshSnapshotFileService {
 		} catch (IOException ex) {
 			log.error("Failed to create snapshot file '{}'", file.getAbsolutePath(), ex);
 			return false;
-		} finally {
-			IOUtils.closeQuietly(bos);
-		}
-
+		} 
 		return true;
 	}
 
@@ -108,17 +93,8 @@ public class CacheRefreshSnapshotFileService {
 		if (!file.exists()) {
 			return null;
 		}
-
-		BufferedReader bis;
-		try {
-			bis = new BufferedReader(new FileReader(file));
-		} catch (FileNotFoundException ex) {
-			log.error("Failed to load snapshot file '{}'", file.getAbsolutePath(), ex);
-			return null;
-		}
-
 		Map<String, Integer> result = new HashMap<String, Integer>();
-		try {
+		try(BufferedReader bis = new BufferedReader(new FileReader(file))) {
 			String line;
 			while ((line = bis.readLine()) != null) {
 				String[] lineValues = line.split(":");
@@ -137,10 +113,7 @@ public class CacheRefreshSnapshotFileService {
 		} catch (IOException ex) {
 			log.error("Failed to load snapshot file '{}'", file.getAbsolutePath(), ex);
 			return null;
-		} finally {
-			IOUtils.closeQuietly(bis);
-		}
-
+		} 
 		return result;
 	}
 
@@ -189,22 +162,12 @@ public class CacheRefreshSnapshotFileService {
 		if (!prepareSnapshotsFolder(cacheRefreshConfiguration)) {
 			return null;
 		}
-
 		File file = new File(cacheRefreshConfiguration.getSnapshotFolder() + File.separator + PROBLEM_LIST_FILE_NAME);
 		if (!file.exists()) {
 			return null;
 		}
-
-		BufferedReader bis;
-		try {
-			bis = new BufferedReader(new FileReader(file));
-		} catch (FileNotFoundException ex) {
-			log.error("Failed to load problem list from file '{}'", file.getAbsolutePath(), ex);
-			return null;
-		}
-
 		List<String> result = new ArrayList<String>();
-		try {
+		try (BufferedReader bis = new BufferedReader(new FileReader(file))){
 			String line;
 			while ((line = bis.readLine()) != null) {
 				result.add(line);
@@ -212,10 +175,7 @@ public class CacheRefreshSnapshotFileService {
 		} catch (IOException ex) {
 			log.error("Failed to load problem list from file '{}'", file.getAbsolutePath(), ex);
 			return null;
-		} finally {
-			IOUtils.closeQuietly(bis);
-		}
-
+		} 
 		return result;
 	}
 
@@ -223,17 +183,8 @@ public class CacheRefreshSnapshotFileService {
 		if (!prepareSnapshotsFolder(cacheRefreshConfiguration)) {
 			return false;
 		}
-
 		File file = new File(cacheRefreshConfiguration.getSnapshotFolder() + File.separator + PROBLEM_LIST_FILE_NAME);
-		BufferedWriter bos;
-		try {
-			bos = new BufferedWriter(new FileWriter(file));
-		} catch (IOException ex) {
-			log.error("Failed to write problem list to file '{}'", file.getAbsolutePath(), ex);
-			return false;
-		}
-
-		try {
+		try (BufferedWriter bos = new BufferedWriter(new FileWriter(file))){
 			for (String changedInum : changedInums) {
 				bos.write(String.format("%s\n", changedInum));
 			}
@@ -241,10 +192,7 @@ public class CacheRefreshSnapshotFileService {
 		} catch (IOException ex) {
 			log.error("Failed to write problem list to file '{}'", file.getAbsolutePath(), ex);
 			return false;
-		} finally {
-			IOUtils.closeQuietly(bos);
-		}
-
+		} 
 		return true;
 	}
 
