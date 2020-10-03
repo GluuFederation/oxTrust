@@ -21,7 +21,6 @@ import javax.imageio.ImageIO;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.model.GluuImage;
@@ -66,17 +65,14 @@ public class ImageRepository {
 
 	public void initFileTypesMap() throws Exception {
 		fileTypeMap = MimetypesFileTypeMap.getDefaultFileTypeMap();
-		InputStream is = ImageRepository.class.getClassLoader().getResourceAsStream("META-INF/mimetypes-gluu.default");
-		try {
+		try(InputStream is = ImageRepository.class.getClassLoader().getResourceAsStream("META-INF/mimetypes-gluu.default")) {
 			if (is != null) {
 				fileTypeMap = new MimetypesFileTypeMap(is);
 			}
 		} catch (Exception ex) {
 			log.error("Failed to load file types map. Using default one.", ex);
 			fileTypeMap = new MimetypesFileTypeMap();
-		} finally {
-			IOUtils.closeQuietly(is);
-		}
+		} 
 	}
 
 	/**
