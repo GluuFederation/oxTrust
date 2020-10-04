@@ -27,7 +27,6 @@ import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.util.EntityUtils;
 import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.config.oxtrust.AttributeResolverConfiguration;
-import org.gluu.config.oxtrust.LdapOxTrustConfiguration;
 import org.gluu.config.oxtrust.NameIdConfig;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.model.GluuAttribute;
@@ -38,7 +37,6 @@ import org.gluu.oxtrust.service.JsonConfigurationService;
 import org.gluu.oxtrust.service.Shibboleth3ConfService;
 import org.gluu.oxtrust.service.TrustService;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.service.security.Secure;
 import org.slf4j.Logger;
 
@@ -63,9 +61,6 @@ public class ConfigureNameIdAction implements Serializable {
 
 	@Inject
 	private AppConfiguration applicationConfiguration;
-
-	@Inject
-	private PersistenceEntryManager ldapEntryManager;
 
 	@Inject
 	private TrustService trustService;

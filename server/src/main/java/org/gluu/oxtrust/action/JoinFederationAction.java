@@ -34,7 +34,6 @@ import org.gluu.service.security.Secure;
 import org.gluu.util.StringHelper;
 import org.gluu.util.io.ExcludeFilterInputStream;
 import org.gluu.util.io.FileUploadWrapper;
-import org.slf4j.Logger;
 
 @ConversationScoped
 @Named("joinFederationAction")
@@ -46,9 +45,6 @@ public class JoinFederationAction implements Serializable {
 	private GluuSAMLFederationProposal federationProposal;
 
 	private String inum;
-
-	@Inject
-	private Logger log;
 
 	@Inject
 	private OrganizationService organizationService;

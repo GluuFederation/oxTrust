@@ -38,18 +38,18 @@ public class UpdateCASAction implements Serializable {
 
     private static final long serialVersionUID = 1061838191485356624L;
     
-    private static final String IDP_SESSION_STORAGESERVICE = "idp.session.StorageService";
+    private String IDP_SESSION_STORAGESERVICE = "idp.session.StorageService";
     
-    private static final String IDP_CAS_STORAGESERVICE = "idp.cas.StorageService";
+    private String IDP_CAS_STORAGESERVICE = "idp.cas.StorageService";
     
     // server-side storage of user sessions
-    private static final String SHIBBOLETH_STORAGESERVICE = "shibboleth.StorageService";
+    private String SHIBBOLETH_STORAGESERVICE = "shibboleth.StorageService";
     
     // client-side storage of user sessions
-    private static final String CLIENT_SESSION_STORAGESERVICE = "shibboleth.ClientSessionStorageService";
+    private String CLIENT_SESSION_STORAGESERVICE = "shibboleth.ClientSessionStorageService";
     
     // client-side storage of user sessions
-    private static final String SHIBBOLETH_MEMCACHEDSTORAGESERVICE = "shibboleth.MemcachedStorageService";
+    private String SHIBBOLETH_MEMCACHEDSTORAGESERVICE = "shibboleth.MemcachedStorageService";
     
     @Inject
     private Logger log;

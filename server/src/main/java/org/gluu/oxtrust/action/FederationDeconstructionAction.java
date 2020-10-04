@@ -6,7 +6,6 @@
 
 package org.gluu.oxtrust.action;
 
-import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -16,8 +15,6 @@ import java.util.Set;
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-
-import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.model.GluuStatus;
 import org.gluu.oxtrust.model.GluuMetadataSourceType;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
@@ -51,9 +48,6 @@ public class FederationDeconstructionAction implements Serializable {
 	
 	@Inject
 	private Shibboleth3ConfService shibboleth3ConfService;
-
-	@Inject
-	private AppConfiguration appConfiguration;
 
 	private List<String> bulkEntities;
 	private List<String> managedEntities;

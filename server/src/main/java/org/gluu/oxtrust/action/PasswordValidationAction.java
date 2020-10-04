@@ -42,7 +42,7 @@ import org.slf4j.Logger;
 @Secure("#{permissionService.hasPermission('profile', 'access')}")
 public class PasswordValidationAction implements Cloneable, Serializable {
 
-	private static final String USER_PASSWORD = "userPassword";
+	private String USER_PASSWORD = "userPassword";
 
 	private static final long serialVersionUID = 1952428504080910113L;
 

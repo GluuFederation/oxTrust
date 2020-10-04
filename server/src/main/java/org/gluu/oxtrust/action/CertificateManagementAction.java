@@ -45,11 +45,11 @@ import org.gluu.service.security.Secure;
 public class CertificateManagementAction implements Serializable {
 
 	private static final long serialVersionUID = -1938167091985945238L;
-	private static final String OPENLDAP_CERTIFICATE_FILE = "/etc/certs/openldap.crt";
-	private static final String OPENDJ_CERTIFICATE_FILE = "/etc/certs/opendj.crt";
-	private static final String HTTPD_CERTIFICATE_FILE = "/etc/certs/httpd.crt";
-	private static final String IDP_SIGNING_CERTIFICATE_FILE = "/etc/certs/idp-signing.crt";
-	private static final String IDP_ENCRYPT_CERTIFICATE_FILE = "/etc/certs/idp-encryption.crt";
+	private String OPENLDAP_CERTIFICATE_FILE = "/etc/certs/openldap.crt";
+	private String OPENDJ_CERTIFICATE_FILE = "/etc/certs/opendj.crt";
+	private String HTTPD_CERTIFICATE_FILE = "/etc/certs/httpd.crt";
+	private String IDP_SIGNING_CERTIFICATE_FILE = "/etc/certs/idp-signing.crt";
+	private String IDP_ENCRYPT_CERTIFICATE_FILE = "/etc/certs/idp-encryption.crt";
 
 	@Inject
 	private Logger log;

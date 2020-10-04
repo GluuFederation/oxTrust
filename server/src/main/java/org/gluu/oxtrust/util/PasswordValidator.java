@@ -22,7 +22,7 @@ import org.gluu.service.cdi.util.CdiUtil;
 @FacesValidator("gluuPasswordValidator")
 public class PasswordValidator implements Validator<Object> {
 
-	private static final String USER_PASSWORD = "userPassword";
+	private String USER_PASSWORD = "userPassword";
 	private Pattern pattern;
 	private Matcher matcher;
 	private boolean hasValidation = false;

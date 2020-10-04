@@ -51,7 +51,7 @@ public class UserProfileAction implements Serializable {
 
 	private static final long serialVersionUID = -8238855019631152823L;
 
-	private static final String tabName = "Attributes";
+	private String tabName = "Attributes";
 
 	@Inject
 	private Logger log;

@@ -26,7 +26,7 @@ public class UncaughtException extends Throwable implements ExceptionMapper<Thro
 
     private static final long serialVersionUID = 1L;
 
-    private static final String ERROR_PAGE = "/error.htm";
+    private final String ERROR_PAGE = "/error.htm";
 
     private Logger log = LoggerFactory.getLogger(UncaughtException.class);
 

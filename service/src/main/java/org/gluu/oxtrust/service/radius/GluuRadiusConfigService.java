@@ -2,7 +2,6 @@ package org.gluu.oxtrust.service.radius;
 
 import java.io.Serializable;
 
-import javax.ejb.Stateless;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
