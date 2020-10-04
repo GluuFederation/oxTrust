@@ -17,8 +17,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.gluu.config.oxtrust.AppConfiguration;
-import org.gluu.jsf2.message.FacesMessages;
-import org.gluu.jsf2.service.FacesService;
 import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.service.security.Secure;
@@ -41,13 +39,7 @@ public class SsoLoginAction implements Serializable {
 	private Logger log;
 
 	@Inject
-	private FacesMessages facesMessages;
-
-	@Inject
 	private Identity identity;
-
-	@Inject
-	private FacesService facesService;
 
 	private String userName;
 	private String password;

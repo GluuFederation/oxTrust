@@ -62,13 +62,13 @@ import org.slf4j.Logger;
 @Named("registerPersonAction")
 public class RegisterPersonAction implements Serializable {
 
-	private static final String POST_REGISTRATION_REDIRECT_URI = "post_registration_redirect_uri";
+	private String POST_REGISTRATION_REDIRECT_URI = "post_registration_redirect_uri";
 
-	private static final String HOST_NAME = "hostName";
+	private String HOST_NAME = "hostName";
 
 	private static final long serialVersionUID = 6002737004324917338L;
 
-	public static final Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$",
+	private Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$",
 			Pattern.CASE_INSENSITIVE);
 
 	@Inject

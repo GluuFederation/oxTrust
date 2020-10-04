@@ -58,7 +58,7 @@ public class UpdateScopeAction implements Serializable {
 
 	private static final long serialVersionUID = 8198574569820157032L;
 
-	private static final String[] CUSTOM_SCRIPT_RETURN_ATTRIBUTES = { "inum", "displayName", "description",
+	private String[] CUSTOM_SCRIPT_RETURN_ATTRIBUTES = { "inum", "displayName", "description",
 			"gluuStatus" };
 
 	@Inject

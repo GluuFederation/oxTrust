@@ -28,7 +28,6 @@ import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.oxtrust.model.LogViewerConfig;
 import org.gluu.oxtrust.service.ConfigurationService;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.service.JsonService;
 import org.gluu.service.security.Secure;
 import org.gluu.util.StringHelper;
 import org.gluu.util.io.ReverseLineReader;
@@ -51,9 +50,6 @@ public class ViewLogFileAction implements Serializable {
 	
 	@Inject
 	private ConfigurationService configurationService;
-
-	@Inject
-	private JsonService jsonService;
 
 	private GluuConfiguration configuration;
 

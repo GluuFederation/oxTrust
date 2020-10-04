@@ -63,16 +63,16 @@ import org.slf4j.Logger;
 @Secure("#{permissionService.hasPermission('person', 'import')}")
 public class PersonImportAction implements Serializable {
 
-	private static final String UID = "uid";
+	private String UID = "uid";
 
-	private static final String USER_PASSWORD = "userPassword";
+	private String USER_PASSWORD = "userPassword";
 
-	private static final String SEPARATOR = ";";
+	private String SEPARATOR = ";";
 
 	private static final long serialVersionUID = -1270460481895022468L;
 
-	private static final String[] PERSON_IMPORT_PERSON_LOCKUP_RETURN_ATTRIBUTES = { UID, "displayName", "mail" };
-	public static final String PERSON_PASSWORD_ATTRIBUTE = USER_PASSWORD;
+	private String[] PERSON_IMPORT_PERSON_LOCKUP_RETURN_ATTRIBUTES = { UID, "displayName", "mail" };
+	private String PERSON_PASSWORD_ATTRIBUTE = USER_PASSWORD;
 
 	@Inject
 	private Logger log;

@@ -65,7 +65,6 @@ import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.ProductInstallationChecker;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.exception.BasePersistenceException;
-import org.gluu.service.DataSourceTypeService;
 import org.gluu.service.JsonService;
 import org.gluu.service.security.Secure;
 import org.gluu.util.ArrayHelper;
@@ -100,21 +99,21 @@ public class UpdatePersonAction implements Serializable {
 		this.confirmPassword = confirmPassword;
 	}
 
-	private static final String MOBILE = "mobile";
+	private String MOBILE = "mobile";
 
-	private static final String OTP_DEVICE = "OTP Device";
+	private String OTP_DEVICE = "OTP Device";
 
-	private static final String HOTP = "hotp";
+	private String HOTP = "hotp";
 
-	private static final String TOTP = "totp";
+	private String TOTP = "totp";
 
-	private static final String COLON = ":";
+	private String COLON = ":";
 
-	private static final String DASH = "-";
+	private String DASH = "-";
 
-	private static final String PASSPORT = "Passport";
+	private String PASSPORT = "Passport";
 
-	private static final String MAIL = "mail";
+	private String MAIL = "mail";
 
 	private static final long serialVersionUID = -3242167044333943689L;
 
@@ -170,9 +169,6 @@ public class UpdatePersonAction implements Serializable {
 
 	@Inject
 	private PairwiseIdService pairwiseIdService;
-
-	@Inject
-	private DataSourceTypeService dataSourceTypeService;
 
 	@Inject
 	private Identity identity;

@@ -48,8 +48,8 @@ public class PasswordResetAction implements Serializable {
 	/**
 	 * 
 	 */
-	private static final String SECRET_QUESTION = "secretQuestion";
-	private static final String SECRET_ANSWER = "secretAnswer";
+	private String SECRET_QUESTION = "secretQuestion";
+	private String SECRET_ANSWER = "secretAnswer";
 
 	private static final long serialVersionUID = 6457422770824016614L;
 

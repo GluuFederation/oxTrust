@@ -53,7 +53,7 @@ public class ManageOtherCustomScriptAction
 	 */
 	private static final long serialVersionUID = 3741983528514587310L;
 
-	private static final Pattern NAME_PATTERN = Pattern.compile("^[a-zA-Z0-9_\\-\\:\\/\\.]+$");
+	private Pattern NAME_PATTERN = Pattern.compile("^[a-zA-Z0-9_\\-\\:\\/\\.]+$");
 
 	@Inject
 	private Logger log;

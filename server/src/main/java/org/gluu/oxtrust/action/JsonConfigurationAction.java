@@ -54,7 +54,7 @@ import java.lang.reflect.InvocationTargetException;
 @Secure("#{permissionService.hasPermission('configuration', 'access')}")
 public class JsonConfigurationAction implements Serializable {
 
-	private static final String HIDDEN_PASSWORD_TEXT = "hidden";
+	private String HIDDEN_PASSWORD_TEXT = "hidden";
 
 	private static final long serialVersionUID = -4470460481895022468L;
 

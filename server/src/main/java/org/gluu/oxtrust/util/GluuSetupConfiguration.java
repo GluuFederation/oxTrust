@@ -20,7 +20,7 @@ import org.apache.commons.logging.LogFactory;
 public class GluuSetupConfiguration {
     private static final Log log = LogFactory.getLog(GluuSetupConfiguration.class);
     
-    private static final String SETUP_PROPERTIES_FILE_PATH = "/install/community-edition-setup/setup.properties.last";
+    private final String SETUP_PROPERTIES_FILE_PATH = "/install/community-edition-setup/setup.properties.last";
     
     public static final String ASSIMBA_INSTALLED_KEY = "installAsimba";
     public static final String SAML_IDP_INSTALLED_KEY = "installSaml";

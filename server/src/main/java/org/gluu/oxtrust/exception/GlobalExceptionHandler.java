@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
  * Created by eugeniuparvan on 5/23/17.
  */
 public class GlobalExceptionHandler extends ExceptionHandlerWrapper {
-    private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+    private Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     private ExceptionHandler wrapped;
 

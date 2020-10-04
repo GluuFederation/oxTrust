@@ -10,10 +10,8 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.UUID;
 
-import javax.ejb.Stateless;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import org.gluu.oxauth.model.uma.persistence.UmaResource;
 import org.gluu.oxtrust.service.OrganizationService;

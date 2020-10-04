@@ -36,13 +36,13 @@ import org.slf4j.Logger;
 @Secure("#{permissionService.hasPermission('passport', 'access')}")
 public class PassportProvidersAction implements Serializable {
 
-	private static final String ISSUER = "issuer";
+	private String ISSUER = "issuer";
 
-	private static final String CLIENT_SECRET = "clientSecret";
+	private String CLIENT_SECRET = "clientSecret";
 
-	private static final String CLIENT_ID = "clientID";
+	private String CLIENT_ID = "clientID";
 
-	private static final String DEFAULT_ISSUER = "urn:test:example";
+	private String DEFAULT_ISSUER = "urn:test:example";
 
 	/**
 	 * 

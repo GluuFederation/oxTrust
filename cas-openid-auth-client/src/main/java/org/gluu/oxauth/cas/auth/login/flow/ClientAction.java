@@ -33,7 +33,7 @@ public final class ClientAction extends AbstractAction {
 
 	private final Logger logger = LoggerFactory.getLogger(ClientAction.class);
 
-	public final static String DEFAULT_CLIENT_NAME_PARAMETER = "client_name";
+	public String DEFAULT_CLIENT_NAME_PARAMETER = "client_name";
 
 	/**
 	 * Constants to store request parameters

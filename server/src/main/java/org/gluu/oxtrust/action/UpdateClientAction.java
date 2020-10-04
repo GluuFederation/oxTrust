@@ -75,7 +75,7 @@ import java.util.stream.Collectors;
 @Secure("#{permissionService.hasPermission('client', 'access')}")
 public class UpdateClientAction implements Serializable {
 
-	private static final String HTTPS = "https://";
+	private String HTTPS = "https://";
 
 	private static final long serialVersionUID = -5756470620039988876L;
 

@@ -74,8 +74,8 @@ import org.slf4j.Logger;
 @Named
 @Secure("#{permissionService.hasPermission('configuration', 'access')}")
 public class ManageCertificateAction implements Serializable {
-	public static final String BEGIN_CERT_REQ = "-----BEGIN CERTIFICATE REQUEST-----";
-	public static final String END_CERT_REQ = "-----END CERTIFICATE REQUEST-----";
+	private String BEGIN_CERT_REQ = "-----BEGIN CERTIFICATE REQUEST-----";
+	private String END_CERT_REQ = "-----END CERTIFICATE REQUEST-----";
 
 	private static final long serialVersionUID = 4012709440384265524L;
 

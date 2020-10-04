@@ -68,7 +68,7 @@ import org.w3c.dom.NodeList;
 @Secure("#{permissionService.hasPermission('configuration', 'access')}")
 public class UpdateOrganizationAction implements Serializable {
 
-	private static final String THE_CHANGE_MAY_TAKE_UP_TO_30MIN_TO_BE_EFFECTIVE_DUE_TO_CACHING = "The change may take up to 30min to be effective due to caching.You can use Ctrl+F5 to force cache reload.";
+	String THE_CHANGE_MAY_TAKE_UP_TO_30MIN_TO_BE_EFFECTIVE_DUE_TO_CACHING = "The change may take up to 30min to be effective due to caching.You can use Ctrl+F5 to force cache reload.";
 
 	private static final long serialVersionUID = -4470460481895022468L;
 

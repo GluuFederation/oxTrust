@@ -37,7 +37,7 @@ import org.slf4j.Logger;
 @Secure("#{permissionService.hasPermission('trust', 'access')}")
 public class RelyingPartyAction implements Serializable {
 
-	private static final String NAMEID_FORMAT_UNSPECIFIED = "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified";
+	private String NAMEID_FORMAT_UNSPECIFIED = "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified";
 
 	private static final long serialVersionUID = -5304171897858890801L;
 

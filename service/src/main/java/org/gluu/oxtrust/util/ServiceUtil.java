@@ -19,15 +19,12 @@ import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import org.apache.commons.io.IOUtils;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.service.IGroupService;
 import org.gluu.oxtrust.service.IPersonService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -37,8 +34,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 @ApplicationScoped
 public class ServiceUtil implements Serializable {
-
-	private static Logger logger = LoggerFactory.getLogger(ServiceUtil.class);
 
 	private static final long serialVersionUID = -2842459224631032594L;
 
@@ -66,7 +61,6 @@ public class ServiceUtil implements Serializable {
 	public void deleteGroupFromPerson(GluuGroup group, String dn) throws Exception {
 		List<String> persons = group.getMembers();
 		for (String onePerson : persons) {
-
 			GluuCustomPerson gluuPerson = personService.getPersonByDn(onePerson);
 			List<String> memberOflist = gluuPerson.getMemberOf();
 
@@ -81,7 +75,6 @@ public class ServiceUtil implements Serializable {
 					break;
 				}
 			}
-
 			List<String> cleanMemberOf = new ArrayList<>();
 
 			for (String aMemberOf : tempMemberOf) {
@@ -99,7 +92,6 @@ public class ServiceUtil implements Serializable {
 		if (list == null) {
 			return "";
 		}
-
 		StringBuilder sb = new StringBuilder();
 		for (Object item : list) {
 			sb.append(item);
@@ -119,19 +111,15 @@ public class ServiceUtil implements Serializable {
 	 */
 	public void personMembersAdder(GluuGroup gluuGroup, String dn) throws Exception {
 		List<String> members = gluuGroup.getMembers();
-
 		for (String member : members) {
 			GluuCustomPerson gluuPerson = personService.getPersonByDn(member);
-
 			List<String> groups = gluuPerson.getMemberOf();
 			if (!isMemberOfExist(groups, dn)) {
-
 				List<String> cleanGroups = new ArrayList<String>();
 				cleanGroups.add(dn);
 				for (String aGroup : groups) {
 					cleanGroups.add(aGroup);
 				}
-
 				gluuPerson.setMemberOf(cleanGroups);
 				personService.updatePerson(gluuPerson);
 			}
@@ -163,22 +151,15 @@ public class ServiceUtil implements Serializable {
 	 */
 	public void groupMembersAdder(GluuCustomPerson gluuPerson, String dn) throws Exception {
 		List<String> groups = gluuPerson.getMemberOf();
-
 		for (String group : groups) {
-
 			GluuGroup oneGroup = groupService.getGroupByDn(group);
-
 			List<String> groupMembers = oneGroup.getMembers();
-
 			if ((groupMembers != null && !groupMembers.isEmpty()) && !isMemberExist(groupMembers, dn)) {
-
 				List<String> cleanGroupMembers = new ArrayList<String>();
 				cleanGroupMembers.add(dn);
-
 				for (String personDN : groupMembers) {
 					cleanGroupMembers.add(personDN);
 				}
-
 				oneGroup.setMembers(cleanGroupMembers);
 				groupService.updateGroup(oneGroup);
 			}
@@ -191,7 +172,6 @@ public class ServiceUtil implements Serializable {
 	 * @return boolean
 	 */
 	private boolean isMemberExist(List<String> groupMembers, String dn) {
-
 		for (String member : groupMembers) {
 			if (member.equalsIgnoreCase(dn)) {
 				return true;
@@ -214,24 +194,18 @@ public class ServiceUtil implements Serializable {
 	 */
 	public static String saveRandomFile(byte[] array, String baseDir, String extension) throws IOException {
 		final String filepath = baseDir + File.separator + Math.abs(random.nextLong()) + "." + extension;
-
 		final File dir = new File(baseDir);
 		if (!dir.exists())
 			dir.mkdirs();
 		else if (!dir.isDirectory())
 			throw new IllegalArgumentException("parameter baseDir should be directory. The value: " + baseDir);
 
-		InputStream in = new ByteArrayInputStream(array);
-		FileOutputStream out = new FileOutputStream(filepath);
-		try {
+		try(InputStream in = new ByteArrayInputStream(array);FileOutputStream out = new FileOutputStream(filepath)) {
 			int b;
 			while ((b = in.read()) != -1) {
 				out.write(b);
 			}
-		} finally {
-			in.close();
-			out.close();
-		}
+		} 
 		return filepath;
 	}
 
