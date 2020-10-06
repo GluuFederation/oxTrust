@@ -90,7 +90,7 @@ public class StatusCheckerTimer {
 	}
 
 	public void initTimer() {
-		log.info("Initializing Daily Status Cheker Timer");
+		log.debug("Initializing Daily Status Cheker Timer");
 		this.isActive = new AtomicBoolean(false);
 
 		final int delay = 1 * 60;
@@ -127,7 +127,6 @@ public class StatusCheckerTimer {
 	 */
 	private void processInt() {
 		log.debug("Starting update of configuration status");
-		log.debug("=================================GETTING=======================================");
 		AppConfiguration appConfiguration = configurationFactory.getAppConfiguration();
 		if (!appConfiguration.isUpdateStatus()) {
 			log.debug("isUpdateStatus");

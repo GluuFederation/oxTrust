@@ -75,7 +75,6 @@ public class UpdateChecker {
 	}
 
 	private void processInt() {
-		log.debug("================================Running update checker timer==================================");
 		GluuVersionAvailability versionAvailability = new GluuVersionAvailability();
 		hasUpdate = false;
 		try {

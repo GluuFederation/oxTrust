@@ -54,7 +54,7 @@ public class StatusCheckerDaily {
 	private AtomicBoolean isActive;
 
 	public void initTimer() {
-		log.info("Initializing Daily Status Cheker Timer");
+		log.debug("Initializing Daily Status Cheker Timer");
 		this.isActive = new AtomicBoolean(false);
 
 		final int delay = 1 * 60;
