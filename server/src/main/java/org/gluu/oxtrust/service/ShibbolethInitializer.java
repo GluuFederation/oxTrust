@@ -37,11 +37,11 @@ public class ShibbolethInitializer {
 	
 	public boolean createShibbolethConfiguration() {
 		boolean createConfig = appConfiguration.isConfigGeneration();
-		log.info("IDP config generation is set to " + createConfig);
+		log.trace("IDP config generation is set to " + createConfig);
 		if (createConfig) {
 			List<GluuSAMLTrustRelationship> trustRelationships = trustService.getAllActiveTrustRelationships();
 			String shibbolethVersion = appConfiguration.getShibbolethVersion();
-			log.info("########## shibbolethVersion = " + shibbolethVersion);
+			log.trace("########## shibbolethVersion = " + shibbolethVersion);
 			shibboleth3ConfService.generateMetadataFiles();
 			shibboleth3ConfService.generateConfigurationFiles(trustRelationships);
 			shibboleth3ConfService.generateConfigurationFiles(samlAcrService.getAll());
