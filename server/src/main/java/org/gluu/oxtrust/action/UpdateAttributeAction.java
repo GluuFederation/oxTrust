@@ -290,16 +290,14 @@ public class UpdateAttributeAction implements Serializable {
             }
         } else {
             if (!validateName(attributeName)) {
+                facesMessages.add(FacesMessage.SEVERITY_ERROR, "An attribute with the same name already exist.");
                 return OxTrustConstants.RESULT_FAILURE;
             }
-            if (attributeService.attributeWithSameNameDontExist(this.attribute.getName())) {
-                boolean result = addNewAttribute(attributeName, false);
-                if (!result) {
-                    return OxTrustConstants.RESULT_FAILURE;
-                }
-            } else {
-                facesMessages.add(FacesMessage.SEVERITY_ERROR, "An attribute with the same name already exist/");
+            boolean result = addNewAttribute(attributeName, false);
+            if (!result) {
+                return OxTrustConstants.RESULT_FAILURE;
             }
+
         }
 
         return OxTrustConstants.RESULT_SUCCESS;
@@ -452,12 +450,9 @@ public class UpdateAttributeAction implements Serializable {
         GluuAttribute tmpAttribute = new GluuAttribute();
         tmpAttribute.setBaseDn(attributeService.getDnForAttribute(null));
         tmpAttribute.setName(attributeName);
-
         if (attributeService.containsAttribute(tmpAttribute)) {
-            facesMessages.add("nameId", FacesMessage.SEVERITY_ERROR, "Attribute with specified name already exist");
             return false;
         }
-
         return true;
     }
 
