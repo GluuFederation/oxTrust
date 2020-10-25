@@ -101,8 +101,8 @@ public class MetricService extends org.gluu.service.metric.MetricService {
         Map<String, Long> yearlyFailureStats = calculateCounterStatistics(YEARLY,
                 (List<CounterMetricEntry>) yearlyEntris.get(MetricType.OXAUTH_USER_AUTHENTICATION_FAILURES));
         Long yearlyFailsRequest = yearlyFailureStats.values().stream().mapToLong(Long::valueOf).sum();
-        String[] labels = new String[countDays];
-        Long[] values = new Long[countDays];
+        String[] labels = new String[countDays+1];
+        Long[] values = new Long[countDays+1];
         Map<String, Long> successStats = calculateCounterStatistics(countDays,
                 (List<CounterMetricEntry>) entries.get(MetricType.OXAUTH_USER_AUTHENTICATION_SUCCESS));
         labels = successStats.keySet().toArray(labels);
@@ -136,11 +136,9 @@ public class MetricService extends org.gluu.service.metric.MetricService {
         Map<String, Long> stats = new TreeMap<String, Long>();
         Calendar calendar = Calendar.getInstance();
         for (int i = 0; i <= countDays; i++) {
-            String dateString = df.format(calendar.getTime());
-            stats.put(dateString, 0L);
+            stats.put(df.format(calendar.getTime()), 0L);
             calendar.add(Calendar.DATE, -1);
         }
-
         if ((metrics == null) || (metrics.size() == 0)) {
             return stats;
         }
@@ -199,7 +197,6 @@ public class MetricService extends org.gluu.service.metric.MetricService {
         long count = prevMetric.getMetricData().getCount();
         String dateString = df.format(prevMetric.getCreationDate());
         stats.put(dateString, count - prevDayCount);
-
         return stats;
     }
 
