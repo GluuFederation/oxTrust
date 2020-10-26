@@ -1570,6 +1570,16 @@
                 ]
             }
         },
+        "discoveryCacheLifetimeInMinutes": {
+            "id": "discoveryCacheLifetimeInMinutes",
+            "description": "Lifetime of discovery cache.",
+            "type": "integer",
+            "multipleOf": 1,
+            "maximum": 2147483647,
+            "minimum": 1,
+            "exclusiveMaximum": false,
+            "exclusiveMinimum": false
+        },
         "keepAuthenticatorAttributesOnAcrChange": {
             "id": "keepAuthenticatorAttributesOnAcrChange",
             "description": "Boolean value specifying whether to keep authenticator attributes on ACR change.",
