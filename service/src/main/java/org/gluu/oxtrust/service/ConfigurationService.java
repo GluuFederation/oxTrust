@@ -87,7 +87,6 @@ public class ConfigurationService implements Serializable {
 		try {
 			persistenceEntryManager.merge(oxTrustStat);
 		} catch (Exception e) {
-			log.info("===============================Error");
 			log.info("", e);
 		}
 
