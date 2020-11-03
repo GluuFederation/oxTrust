@@ -127,15 +127,15 @@ public class ConfigurationService implements Serializable {
 
     public GluuOxTrustStat getOxtrustStat(String[] returnAttributes) {
         GluuOxTrustStat result = new GluuOxTrustStat();
-        if (!persistenceEntryManager.contains(getDnForParentOxtrustStat(), GluuOxTrustStat.class)) {
-            result.setDn(getDnForParentOxtrustStat());
-            persistenceEntryManager.persist(result);
-        }
-        if (persistenceEntryManager.contains(getDnForOxtrustStat(), GluuOxTrustStat.class)) {
-            result = persistenceEntryManager.find(getDnForOxtrustStat(), GluuOxTrustStat.class, returnAttributes);
-        } else {
-            result.setDn(getDnForOxtrustStat());
-            persistenceEntryManager.persist(result);
+        try {
+            if (persistenceEntryManager.contains(getDnForOxtrustStat(), GluuOxTrustStat.class)) {
+                result = persistenceEntryManager.find(getDnForOxtrustStat(), GluuOxTrustStat.class, returnAttributes);
+            } else {
+                result.setDn(getDnForOxtrustStat());
+                persistenceEntryManager.persist(result);
+            }
+        } catch (Exception e) {
+            log.error("Error with oxTrust metric: ", e);
         }
         return result;
     }
@@ -178,10 +178,6 @@ public class ConfigurationService implements Serializable {
 
     public String getDnForOxtrustStat() {
         return buildDn(LocalDateTime.now().format(formatter), new Date(), ApplicationType.OX_TRUST);
-    }
-
-    public String getDnForParentOxtrustStat() {
-        return buildDn(null, new Date(), ApplicationType.OX_TRUST);
     }
 
     public AuthenticationScriptUsageType[] getScriptUsageTypes() {
