@@ -1206,6 +1206,16 @@
             "type": "string",
             "minLength": 1
         },
+        "keySelectionStrategy": {
+            "id": "keySelectionStrategy",
+            "description": "Key selection strategy.",
+            "type": "string",
+            "enum": [
+                "OLDER",
+                "NEWER",
+                "FIRST"
+            ]
+        },
         "endSessionWithAccessToken": {
             "id": "endSessionWithAccessToken",
             "description": "Accept access token to call end_session endpoint.",
