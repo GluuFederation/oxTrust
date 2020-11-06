@@ -1210,6 +1210,7 @@
             "id": "keySelectionStrategy",
             "description": "Key selection strategy.",
             "type": "string",
+            "format": "select",
             "enum": [
                 "OLDER",
                 "NEWER",
