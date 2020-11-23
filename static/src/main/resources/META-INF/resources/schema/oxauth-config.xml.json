@@ -123,11 +123,6 @@
             "format": "url",
             "minLength": 1
         },
-        "introspectionAccessTokenMustHaveUmaProtectionScope": {
-            "id": "introspectionAccessTokenMustHaveUmaProtectionScope",
-            "description":"Reject introspection requests if access_token in Authorization header does not have uma_protection scope.",
-            "type": "boolean"
-        },
         "umaConfigurationEndpoint": {
             "id": "umaConfigurationEndpoint",
             "description": "URL for the UMA Configuration Endpoint.",
@@ -904,6 +899,16 @@
         "introspectionScriptBackwardCompatibility": {
             "id": "introspectionScriptBackwardCompatibility",
             "description": "Boolean value specifying whether switch off client's introspection scripts (true value) and run all scripts that exists on server. Default value is false.",
+            "type": "boolean"
+        },
+        "introspectionResponseScopesBackwardCompatibility": {
+            "id": "introspectionResponseScopesBackwardCompatibility",
+            "description":"When false, introspection endpoint returns scopes as a space-separated string, otherwise as JSON array.",
+            "type": "boolean"
+        },
+        "introspectionAccessTokenMustHaveUmaProtectionScope": {
+            "id": "introspectionAccessTokenMustHaveUmaProtectionScope",
+            "description":"Reject introspection requests if access_token in Authorization header does not have uma_protection scope.",
             "type": "boolean"
         },
         "personCustomObjectClassList": {
