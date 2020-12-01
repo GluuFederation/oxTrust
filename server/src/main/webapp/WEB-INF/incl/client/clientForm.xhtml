@@ -170,8 +170,8 @@
 									<div class="row" style="margin-left: 5px; margin-right: 5px;">
 										<div class="col-sm-6 col-lg-6" style="padding: 0px;">
 											<ox:decorate id="displayName"
-												label="#{msgs['clientForm.clientName']}" leftClass="col-sm-3"
-												rightClass="col-sm-9">
+												label="#{msgs['clientForm.clientName']}"
+												leftClass="col-sm-3" rightClass="col-sm-9">
 												<h:inputText value="#{_client.displayName}"
 													styleClass="form-control clientNameTextBox"
 													requiredMessage="Please Enter the Client Name"
@@ -183,6 +183,11 @@
 												<h:inputTextarea value="#{_client.description}" rows="3"
 													styleClass="col-sm-12 form-control rounded clientDescriptionTextArea"
 													cols="80" maxlength="250" id="descriptionId" />
+											</ox:decorate>
+											<ox:decorate id="sectorIdentifierUri" label="Sector URI"
+												leftClass="col-sm-3" rightClass="col-sm-9">
+												<h:inputText value="#{_client.sectorIdentifierUri}"
+													style="width:100%" />
 											</ox:decorate>
 											<h:panelGroup id="secretid">
 												<b:panel title="#{msgs['clientForm.redirectLoginURIs']}"
@@ -281,40 +286,6 @@
 															execute="@this" eventsQueue="clientQueue" />
 													</h:panelGroup>
 												</b:panel>
-
-												<ox:decorate id="sectorIdentifiers"
-													label="#{msgs['clientForm.sectorIdentifierURI']}">
-													<h:panelGroup id="selectedSectorId">
-														<h:panelGroup>
-															<a4j:repeat value="#{_clientAction.sectorIdentifiers}"
-																rowKeyVar="_sectorIdentifierIdx" var="_sectorIdentifier"
-																iterationStatusVar="loop">
-																<div class="row-fluid">
-																	<div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
-																		<h:outputText value="#{_sectorIdentifier.id}" />
-																		<h:outputText value="&#160;" />
-																		<div>
-																			<a4j:commandLink
-																				styleClass="glyphicon glyphicon-remove"
-																				style="margin-top:-20px; float:right;"
-																				action="#{_clientAction.removeSector(_sectorIdentifier)}"
-																				execute="@this" render="selectedSectorId"
-																				eventsQueue="clientQueue">
-																			</a4j:commandLink>
-																		</div>
-																	</div>
-																</div>
-																<br />
-															</a4j:repeat>
-															<p:spacer height="16" />
-															<a4j:commandButton
-																styleClass="btn btn-primary AddSectorIdentifierButton"
-																style="margin-top:5px" value="Set Sector identifier"
-																oncomplete="#{rich:component('sector:selectEntityModalPanel')}.show();"
-																execute="@this" eventsQueue="clientQueue" />
-														</h:panelGroup>
-													</h:panelGroup>
-												</ox:decorate>
 											</h:panelGroup>
 										</div>
 										<div class="col-sm-6 col-lg-6" style="padding: 0px;">
@@ -796,8 +767,8 @@
 										<div class="row" style="margin-left: 5px; margin-right: 5px;">
 											<div class="col-sm-12 col-lg-12" style="padding: 0px;">
 												<ox:decorate id="clientUri"
-													label="#{msgs['clientForm.clientUri']}" leftClass="col-sm-3"
-													rightClass="col-sm-9">
+													label="#{msgs['clientForm.clientUri']}"
+													leftClass="col-sm-3" rightClass="col-sm-9">
 													<h:inputText value="#{_client.clientUri}"
 														styleClass="form-control clientUriId" required="false"
 														id="clientUriId" />
@@ -1253,38 +1224,38 @@
 										</h:panelGroup>
 									</b:panel>
 								</div>
-                                <div class="row" style="padding-left: 25px;">
-                                    <b:panel title="#{msgs['clientForm.rptClaimsScripts']}"
-                                             id="rptClaimsScripts" look="primary">
-                                        <h:panelGroup id="selectedRptClaimsScriptsId">
+								<div class="row" style="padding-left: 25px;">
+									<b:panel title="#{msgs['clientForm.rptClaimsScripts']}"
+										id="rptClaimsScripts" look="primary">
+										<h:panelGroup id="selectedRptClaimsScriptsId">
 
-                                            <a4j:repeat rowKeyVar="_scriptIdx"
-                                                        value="#{_clientAction.rptClaimsScripts}" var="_item">
-                                                <div class="col-sm-12">
-                                                    <div class="col-sm-6">
-                                                        <h:outputText style="margin-left:-29px;"
-                                                                      value="#{_item.name}" />
-                                                        <h:outputText value=" " />
-                                                    </div>
-                                                    <div class="col-sm-6">
-                                                        <a4j:commandLink
-                                                                action="#{_clientAction.removeRptClaimsScript(_item)}"
-                                                                execute="@this" render="selectedRptClaimsScriptsId"
-                                                                styleClass="glyphicon glyphicon-remove removeRptClaimsScript">
-                                                        </a4j:commandLink>
-                                                    </div>
-                                                </div>
-                                            </a4j:repeat>
+											<a4j:repeat rowKeyVar="_scriptIdx"
+												value="#{_clientAction.rptClaimsScripts}" var="_item">
+												<div class="col-sm-12">
+													<div class="col-sm-6">
+														<h:outputText style="margin-left:-29px;"
+															value="#{_item.name}" />
+														<h:outputText value=" " />
+													</div>
+													<div class="col-sm-6">
+														<a4j:commandLink
+															action="#{_clientAction.removeRptClaimsScript(_item)}"
+															execute="@this" render="selectedRptClaimsScriptsId"
+															styleClass="glyphicon glyphicon-remove removeRptClaimsScript">
+														</a4j:commandLink>
+													</div>
+												</div>
+											</a4j:repeat>
 
-                                            <p:spacer height="5" />
-                                            <a4j:commandButton
-                                                    styleClass="btn btn-primary AddRptClaimsScript"
-                                                    style="margin-top:5px" value="#{msgs['clientForm.add']}"
-                                                    oncomplete="#{rich:component('rptClaimsDialog:selectEntityModalPanel')}.show();"
-                                                    execute="@this" eventsQueue="clientQueue" />
-                                        </h:panelGroup>
-                                    </b:panel>
-                                </div>
+											<p:spacer height="5" />
+											<a4j:commandButton
+												styleClass="btn btn-primary AddRptClaimsScript"
+												style="margin-top:5px" value="#{msgs['clientForm.add']}"
+												oncomplete="#{rich:component('rptClaimsDialog:selectEntityModalPanel')}.show();"
+												execute="@this" eventsQueue="clientQueue" />
+										</h:panelGroup>
+									</b:panel>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -1295,14 +1266,14 @@
 			</div>
 		</b:panel>
 	</h:form>
-    <ox:selectSelectableEntityDialog
-            acceptMethod="#{_clientAction.acceptRptClaimsScripts}"
-            cancelMethod="#{_clientAction.cancelRptClaimsScripts}"
-            displayNameProperty="entity.description" displaySearchForm="false"
-            id="rptClaimsDialog" label="#{msgs['clientForm.rptClaimsScripts']}"
-            nameProperty="entity.name" render="selectedRptClaimsScriptsId"
-            searchMethod="#{_clientAction.searchAvailableRptClaimsCustomScripts}"
-            searchResult="#{_clientAction.availableRptClaimsScripts}" />
+	<ox:selectSelectableEntityDialog
+		acceptMethod="#{_clientAction.acceptRptClaimsScripts}"
+		cancelMethod="#{_clientAction.cancelRptClaimsScripts}"
+		displayNameProperty="entity.description" displaySearchForm="false"
+		id="rptClaimsDialog" label="#{msgs['clientForm.rptClaimsScripts']}"
+		nameProperty="entity.name" render="selectedRptClaimsScriptsId"
+		searchMethod="#{_clientAction.searchAvailableRptClaimsCustomScripts}"
+		searchResult="#{_clientAction.availableRptClaimsScripts}" />
 	<ox:selectSelectableEntityDialog
 		acceptMethod="#{_clientAction.acceptPostAuthnScripts}"
 		cancelMethod="#{_clientAction.cancelPostAuthnScripts}"
