@@ -1975,7 +1975,14 @@ public class UpdateClientAction implements Serializable {
     }
 
     private boolean uriIsInValid(String uri) {
-        return uri.startsWith("http://");
+        URL url;
+        try {
+            url = new URL(uri);
+            return url.getProtocol().equalsIgnoreCase("http") && !url.getHost().equalsIgnoreCase("localhost");
+        } catch (MalformedURLException e) {
+            return false;
+        }
+
     }
 
 }
