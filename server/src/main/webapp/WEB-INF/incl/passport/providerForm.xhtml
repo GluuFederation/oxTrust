@@ -9,6 +9,9 @@
 	xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
 	xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
 	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox">
+	<script>
+		$('.tags').tagsinput('refresh');
+	</script>
 	<h:form id="providerForm">
 		<input type='hidden' name='cid' value='#{conversation.id}' />
 		<div class="row">
@@ -54,7 +57,8 @@
 											var="_type" itemLabel="#{_type}" />
 									</h:selectOneMenu>
 								</ox:decorate>
-								<ox:decorate label="#{msgs['passport.provider.form.strategyId']}"
+								<ox:decorate
+									label="#{msgs['passport.provider.form.strategyId']}"
 									leftClass="col-sm-3" rightClass="col-sm-9">
 									<h:inputText styleClass="form-control PassportStrategyId"
 										style="width:100%" required="true"
@@ -66,15 +70,12 @@
 							</div>
 							<!-- Second column-->
 							<div class="col-sm-6 col-lg-6" style="padding: 0px;">
-								<ox:decorate label="#{msgs['passport.provider.form.mapping']}"
-									leftClass="col-sm-3" rightClass="col-sm-9">
-									<h:inputText styleClass="form-control MappingId"
-										style="width:100%" required="true"
-										value="#{_providerAction.provider.mapping}" id="MappingId"
-										rendered="true">
-										<rich:validator event="blur" />
-									</h:inputText>
-								</ox:decorate>
+								<b:inputText id="MappingId"
+									value="#{_providerAction.provider.mapping}"
+									placeholder="Select a default mapping or enter the custom one here"
+									tags="true" typeahead="true"
+									typeahead-values="#{_providerAction.mappings}"
+									tiny-screen="full-width" />
 								<ox:decorate
 									label="#{msgs['passport.provider.form.passportAuthnParams']}"
 									required="true" leftClass="col-sm-3" rightClass="col-sm-9">
@@ -130,8 +131,10 @@
 							</div>
 						</div>
 						<div class="row" style="margin-left: 5px; margin-right: 5px;">
-							<ox:decorate label="#{msgs['passport.provider.form.callbackUrl']}"
-								leftClass="col-sm-3" rightClass="col-sm-9" rendered="#{_providerAction.isUpdate()}">
+							<ox:decorate
+								label="#{msgs['passport.provider.form.callbackUrl']}"
+								leftClass="col-sm-3" rightClass="col-sm-9"
+								rendered="#{_providerAction.isUpdate()}">
 								<h:outputText styleClass="form-control callBackUrlID"
 									style="width:100%" required="true"
 									value="#{_providerAction.provider.callbackUrl}"
