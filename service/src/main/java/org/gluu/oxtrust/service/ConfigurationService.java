@@ -200,7 +200,7 @@ public class ConfigurationService implements Serializable {
                 CustomScriptType.UMA_RPT_POLICY, CustomScriptType.UMA_CLAIMS_GATHERING, CustomScriptType.UMA_RPT_CLAIMS,
                 CustomScriptType.INTROSPECTION, CustomScriptType.RESOURCE_OWNER_PASSWORD_CREDENTIALS,
                 CustomScriptType.APPLICATION_SESSION, CustomScriptType.END_SESSION, CustomScriptType.SCIM,
-                CustomScriptType.POST_AUTHN, CustomScriptType.PERSISTENCE_EXTENSION, CustomScriptType.IDP };
+                CustomScriptType.POST_AUTHN, CustomScriptType.PERSISTENCE_EXTENSION, CustomScriptType.IDP, CustomScriptType.REVOKE_TOKEN };
     }
 
     public CustomScriptType[] getOthersCustomScriptTypes() {
@@ -211,7 +211,7 @@ public class ConfigurationService implements Serializable {
                 CustomScriptType.INTROSPECTION, CustomScriptType.RESOURCE_OWNER_PASSWORD_CREDENTIALS,
                 CustomScriptType.APPLICATION_SESSION, CustomScriptType.END_SESSION, CustomScriptType.SCIM,
                 CustomScriptType.POST_AUTHN, CustomScriptType.PERSISTENCE_EXTENSION, CustomScriptType.IDP,
-                CustomScriptType.CIBA_END_USER_NOTIFICATION };
+                CustomScriptType.REVOKE_TOKEN, CustomScriptType.CIBA_END_USER_NOTIFICATION };
     }
 
     public void encryptedSmtpPassword(SmtpConfiguration smtpConfiguration) {
