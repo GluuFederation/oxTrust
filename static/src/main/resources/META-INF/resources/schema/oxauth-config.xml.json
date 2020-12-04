@@ -1184,6 +1184,11 @@
             "description": "Share Subject ID between clients with same Sector ID.",
             "type": "boolean"
         },
+        "subjectIdentifierBasedOnWholeUriBackwardCompatibility": {
+            "id": "subjectIdentifierBasedOnWholeUriBackwardCompatibility",
+            "description": "Use for subject identifier whole uri instead of host (deprecated and will be removed in 5.0)",
+            "type": "boolean"
+        },
         "webKeysStorage": {
             "id": "webKeysStorage",
             "description": "Web Key Storage Type.",
@@ -1584,6 +1589,16 @@
         "discoveryCacheLifetimeInMinutes": {
             "id": "discoveryCacheLifetimeInMinutes",
             "description": "Lifetime of discovery cache.",
+            "type": "integer",
+            "multipleOf": 1,
+            "maximum": 2147483647,
+            "minimum": 1,
+            "exclusiveMaximum": false,
+            "exclusiveMinimum": false
+        },
+        "sectorIdentifierCacheLifetimeInMinutes": {
+            "id": "sectorIdentifierCacheLifetimeInMinutes",
+            "description": "Lifetime of sector identifier redirect uri's cache.",
             "type": "integer",
             "multipleOf": 1,
             "maximum": 2147483647,
