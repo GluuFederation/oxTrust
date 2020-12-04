@@ -9,9 +9,6 @@
 	xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
 	xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
 	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox">
-	<script>
-		$('.tags').tagsinput('refresh');
-	</script>
 	<h:form id="providerForm">
 		<input type='hidden' name='cid' value='#{conversation.id}' />
 		<div class="row">
@@ -60,22 +57,28 @@
 								<ox:decorate
 									label="#{msgs['passport.provider.form.strategyId']}"
 									leftClass="col-sm-3" rightClass="col-sm-9">
-									<h:inputText styleClass="form-control PassportStrategyId"
-										style="width:100%" required="true"
+									<b:inputText id="PassportStrategyId"
 										value="#{_providerAction.provider.passportStrategyId}"
-										id="PassportStrategyId" rendered="true">
-										<rich:validator event="blur" />
-									</h:inputText>
+										placeholder="Start typing here" inline="true" typeahead="true"
+										tags="false"
+										style="width:100%;margin-left:-15px; margin-right: -15px;"
+										typeahead-values="#{_providerAction.mappings}"
+										tiny-screen="full-width" />
 								</ox:decorate>
 							</div>
 							<!-- Second column-->
 							<div class="col-sm-6 col-lg-6" style="padding: 0px;">
-								<b:inputText id="MappingId"
-									value="#{_providerAction.provider.mapping}"
-									placeholder="Select a default mapping or enter the custom one here"
-									tags="true" typeahead="true"
-									typeahead-values="#{_providerAction.mappings}"
-									tiny-screen="full-width" />
+								<ox:decorate label="#{msgs['passport.provider.form.mapping']}"
+									leftClass="col-sm-3" rightClass="col-sm-9">
+									<b:inputText id="MappingId"
+										value="#{_providerAction.provider.mapping}"
+										placeholder="start typing here" inline="true" typeahead="true"
+										tags="false"
+										style="width:100%;margin-left:-15px; margin-right: -15px;"
+										typeahead-values="#{_providerAction.mappings}"
+										tiny-screen="full-width" />
+
+								</ox:decorate>
 								<ox:decorate
 									label="#{msgs['passport.provider.form.passportAuthnParams']}"
 									required="true" leftClass="col-sm-3" rightClass="col-sm-9">
