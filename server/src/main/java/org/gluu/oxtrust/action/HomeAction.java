@@ -6,6 +6,7 @@
 
 package org.gluu.oxtrust.action;
 
+import java.io.IOException;
 import java.io.Serializable;
 
 import javax.enterprise.context.ConversationScoped;
@@ -16,10 +17,14 @@ import org.gluu.oxtrust.model.AuthenticationChartDto;
 import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.oxtrust.model.GluuOxTrustStat;
 import org.gluu.oxtrust.service.ConfigurationService;
+import org.gluu.oxtrust.service.JsonConfigurationService;
 import org.gluu.oxtrust.service.MetricService;
 import org.gluu.oxtrust.service.PermissionService;
 import org.gluu.oxtrust.service.UpdateChecker;
+import org.gluu.oxtrust.util.OxTrustConstants;
+import org.gluu.service.CacheService;
 import org.gluu.service.JsonService;
+import org.gluu.service.LocalCacheService;
 import org.gluu.service.security.Secure;
 import org.slf4j.Logger;
 
@@ -34,6 +39,8 @@ import org.slf4j.Logger;
 public class HomeAction implements Serializable {
 
 	private static final long serialVersionUID = 5130372165991117114L;
+
+	public static final String CACHE_METRICS_ENABLED_KEY = "metrics_enabled";
 
 	@Inject
 	private Logger log;
@@ -53,6 +60,12 @@ public class HomeAction implements Serializable {
 	@Inject
 	private ConfigurationService configurationService;
 
+	@Inject
+	private JsonConfigurationService jsonConfigurationService;
+
+    @Inject
+    private LocalCacheService localCacheService;
+
 	private AuthenticationChartDto authenticationChartDto;
 
 	private String authenticationChartJson;
@@ -65,7 +78,17 @@ public class HomeAction implements Serializable {
 	}
 
 	private boolean generateAuthenticationChart() {
-		if (metricService.isMetricReporterEnabled()) {
+        Boolean metricEnabled = (Boolean) localCacheService.get(CACHE_METRICS_ENABLED_KEY);
+        if (metricEnabled == null) {
+        	try {
+				metricEnabled =  jsonConfigurationService.getOxauthAppConfiguration().getMetricReporterEnabled();
+			} catch (IOException ex) {
+				log.error("Failed to load oxAUth configuration", ex);
+			}
+        	localCacheService.put(CACHE_METRICS_ENABLED_KEY, metricEnabled);
+        }
+
+		if (metricEnabled) {
 			try {
 				this.authenticationChartDto = metricService.genereateAuthenticationChartDto(6);
 				this.authenticationChartJson = jsonService.objectToJson(authenticationChartDto);

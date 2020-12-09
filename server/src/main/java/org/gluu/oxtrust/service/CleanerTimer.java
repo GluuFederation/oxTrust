@@ -15,6 +15,7 @@ import javax.inject.Named;
 
 import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.model.ApplicationType;
+import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.service.cache.CacheProvider;
 import org.gluu.service.cdi.async.Asynchronous;
 import org.gluu.service.cdi.event.CleanerEvent;
@@ -56,6 +57,9 @@ public class CleanerTimer {
 
 	@Inject
 	private CleanUpLogger cleanUpLogger;
+
+    @Inject
+    private PersistenceEntryManager persistenceEntryManager;
 
 	private long lastFinishedTime;
 
@@ -136,6 +140,11 @@ public class CleanerTimer {
 	}
 
 	private void processMetricEntries() {
+		if (persistenceEntryManager.hasExpirationSupport(metricService.buildDn(null, null, ApplicationType.OX_TRUST))) {
+			// DB do this clean up based on value in TTL automatically
+			return;
+		}
+
 		cleanUpLogger.addNewLogLine("#Starting processing Metric entries at:" + new Date());
 		log.debug("Start metric entries clean up");
 		int keepDataDays = appConfiguration.getMetricReporterKeepDataDays();
