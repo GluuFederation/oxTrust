@@ -52,9 +52,8 @@
 								update="@form" styleClass="btn btn-primary saveButtonClass"
 								value="#{msgs['client.add']}" />
 							<b:commandButton action="#{updateClientAction.cancel}"
-								ajax="true" update="@form"
-								style="margin-left:3px;" styleClass="btn btn-primary"
-								value="#{msgs['client.cancel']}" />
+								ajax="true" update="@form" style="margin-left:3px;"
+								styleClass="btn btn-primary" value="#{msgs['client.cancel']}" />
 						</div>
 					</ui:define>
 				</ui:decorate>
@@ -80,8 +79,8 @@
 					acceptMethod="#{updateClientAction.acceptSelectScopes()}"
 					cancelMethod="#{updateClientAction.cancelSelectScopes()}"
 					displayNameProperty="entity.description" displaySearchForm="false"
-					id="scope" label="#{msgs['client.scopes']}" nameProperty="entity.id"
-					render="selectedScopesId"
+					id="scope" label="#{msgs['client.scopes']}"
+					nameProperty="entity.id" render="selectedScopesId"
 					searchMethod="#{updateClientAction.searchAvailableScopes}"
 					searchResult="#{updateClientAction.availableScopes}" />
 
@@ -94,14 +93,6 @@
 					searchMethod="#{updateClientAction.searchAvailableResponseTypes}"
 					searchResult="#{updateClientAction.availableResponseTypes}" />
 
-				<ox:selectSelectableEntityDialog
-					acceptMethod="#{updateClientAction.acceptSelectSectors}"
-					cancelMethod="#{updateClientAction.cancelSelectSectors}"
-					displayNameProperty="entity.description" displaySearchForm="false"
-					id="sector" label="Pick one sector from the list"
-					nameProperty="entity.id" render="selectedSectorId"
-					searchMethod="#{updateClientAction.searchAvailableSectors}"
-					searchResult="#{updateClientAction.availableSectors}" />
 
 				<ox:selectSelectableEntityDialog
 					acceptMethod="#{updateClientAction.acceptSelectCustomScripts}"

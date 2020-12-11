@@ -209,7 +209,6 @@ public class UpdateClientAction implements Serializable {
     private List<SelectableEntity<CustomScript>> availableIntrospectionScripts;
     private List<SelectableEntity<GrantType>> availableGrantTypes;
     private List<SelectableEntity<Scope>> availableScopes;
-    private List<SelectableEntity<OxAuthSectorIdentifier>> availableSectors;
 
     public String add() throws Exception {
         if (this.client != null) {
@@ -383,7 +382,10 @@ public class UpdateClientAction implements Serializable {
     }
 
     public String save() throws Exception {
-        validateSector();
+        String sectorIdentifierUri = this.client.getSectorIdentifierUri();
+        if (!StringUtils.isWhitespace(sectorIdentifierUri) && sectorIdentifierUri != null) {
+            loadSector(sectorIdentifierUri);
+        }
         if (this.client.isDeletable() && this.client.getExp() == null) {
             this.client.setExp(oneDay());
         }
@@ -394,7 +396,6 @@ public class UpdateClientAction implements Serializable {
         updateLogoutURIs();
         updateClientLogoutURIs();
         updateScopes();
-        updateSector();
         updateClaims();
         updateResponseTypes();
         updateCustomScripts();
@@ -423,11 +424,10 @@ public class UpdateClientAction implements Serializable {
                     "Client '#{updateClientAction.client.displayName}' updated successfully");
         } else {
             this.inum = clientService.generateInumForNewClient();
-            String dn = clientService.getDnForClient(this.inum);
             if (StringHelper.isEmpty(this.client.getEncodedClientSecret())) {
                 generatePassword();
             }
-            this.client.setDn(dn);
+            this.client.setDn(clientService.getDnForClient(this.inum));
             this.client.setInum(this.inum);
             try {
                 clientService.addClient(this.client);
@@ -440,7 +440,6 @@ public class UpdateClientAction implements Serializable {
                 facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new client");
                 return OxTrustConstants.RESULT_FAILURE;
             }
-
             facesMessages.add(FacesMessage.SEVERITY_INFO,
                     "New client '#{updateClientAction.client.displayName}' added successfully");
             conversationService.endConversation();
@@ -1009,19 +1008,6 @@ public class UpdateClientAction implements Serializable {
         this.client.setOxAuthScopes(scopes);
     }
 
-    private void updateSector() {
-        if (this.sectorIdentifiers != null && this.sectorIdentifiers.size() > 0) {
-            String url = appConfiguration.getOxAuthSectorIdentifierUrl() + "/" + this.sectorIdentifiers.get(0).getId();
-            this.client.setSectorIdentifierUri(url);
-            OxAuthSectorIdentifier sectorIdentifier = sectorIdentifierService
-                    .getSectorIdentifierById(this.sectorIdentifiers.get(0).getId());
-            if (sectorIdentifier != null) {
-                sectorIdentifier.addNewClient(this.getInum());
-                sectorIdentifierService.updateSectorIdentifier(sectorIdentifier);
-            }
-        }
-    }
-
     private void updateGrantTypes() {
         List<GrantType> currentGrantTypes = this.grantTypes;
         if (currentGrantTypes == null || currentGrantTypes.size() == 0) {
@@ -1119,19 +1105,6 @@ public class UpdateClientAction implements Serializable {
             }
             if (!availableResponseType.isSelected() && addedResponseTypes.contains(responseType)) {
                 removeResponseType(responseType.getValue());
-            }
-        }
-    }
-
-    public void acceptSelectSectors() {
-        List<OxAuthSectorIdentifier> addedSectors = getSectorIdentifiers();
-        for (SelectableEntity<OxAuthSectorIdentifier> availableSector : this.availableSectors) {
-            OxAuthSectorIdentifier sector = availableSector.getEntity();
-            if (availableSector.isSelected() && !addedSectors.contains(sector) && addedSectors.size() == 0) {
-                addSector(sector);
-            }
-            if (!availableSector.isSelected() && addedSectors.contains(sector)) {
-                removeSector(sector);
             }
         }
     }
@@ -1426,19 +1399,6 @@ public class UpdateClientAction implements Serializable {
         selectAddedScopes();
     }
 
-    public void searchAvailableSectors() {
-        if (this.availableSectors != null) {
-            selectAddedSector();
-            return;
-        }
-        List<SelectableEntity<OxAuthSectorIdentifier>> tmpAvailableSectors = new ArrayList<SelectableEntity<OxAuthSectorIdentifier>>();
-        for (OxAuthSectorIdentifier sector : sectorIdentifierService.getAllSectorIdentifiers()) {
-            tmpAvailableSectors.add(new SelectableEntity<OxAuthSectorIdentifier>(sector));
-        }
-        this.availableSectors = tmpAvailableSectors;
-        selectAddedSector();
-    }
-
     public void searchAvailableGrantTypes() {
         if (this.availableGrantTypes != null) {
             selectAddedGrantTypes();
@@ -1459,13 +1419,6 @@ public class UpdateClientAction implements Serializable {
         List<ResponseType> addedResponseTypes = getResponseTypes();
         for (SelectableEntity<ResponseType> availableResponseType : this.availableResponseTypes) {
             availableResponseType.setSelected(addedResponseTypes.contains(availableResponseType.getEntity()));
-        }
-    }
-
-    private void selectAddedSector() {
-        List<OxAuthSectorIdentifier> addedSectors = getSectorIdentifiers();
-        for (SelectableEntity<OxAuthSectorIdentifier> availableSector : this.availableSectors) {
-            availableSector.setSelected(addedSectors.contains(availableSector.getEntity()));
         }
     }
 
@@ -1672,14 +1625,6 @@ public class UpdateClientAction implements Serializable {
 
     public void setSearchAvailableClaimPattern(String searchAvailableClaimPattern) {
         this.searchAvailableClaimPattern = searchAvailableClaimPattern;
-    }
-
-    public List<SelectableEntity<OxAuthSectorIdentifier>> getAvailableSectors() {
-        return availableSectors;
-    }
-
-    public void setAvailableSectors(List<SelectableEntity<OxAuthSectorIdentifier>> availableSectors) {
-        this.availableSectors = availableSectors;
     }
 
     public String getAvailableClientlogoutUri() {
@@ -1950,27 +1895,19 @@ public class UpdateClientAction implements Serializable {
         return availableSpontaneousScripts;
     }
 
-    public void validateSector() {
-        if (this.client.getSectorIdentifierUri() != null) {
-            if (!this.client.getSectorIdentifierUri().startsWith("https://")) {
-                facesMessages.add(FacesMessage.SEVERITY_INFO,
-                        "Only protected ressource are allowed. please use https.");
-            }
-            HTTPFileDownloader.setEasyhttps(new Protocol("https", new EasyCASSLProtocolSocketFactory(), 443));
-            String spMetadataFileContent = HTTPFileDownloader.getResource(this.client.getSectorIdentifierUri(),
-                    "application/json", null, null);
-            try {
-                JSONArray uris = new JSONArray(spMetadataFileContent);
-                this.loginUris.clear();
-                for (int i = 0; i < uris.length(); i++) {
-                    if (!uriIsInValid(uris.getString(i))) {
-                        this.loginUris.add(uris.getString(i));
-                    }
-
+    private void loadSector(String sectorIdentifierUri) {
+        HTTPFileDownloader.setEasyhttps(new Protocol("https", new EasyCASSLProtocolSocketFactory(), 443));
+        String sectoruriContent = HTTPFileDownloader.getResource(sectorIdentifierUri, "application/json", null, null);
+        try {
+            JSONArray uris = new JSONArray(sectoruriContent);
+            this.loginUris.clear();
+            for (int i = 0; i < uris.length(); i++) {
+                if (!uriIsInValid(uris.getString(i))) {
+                    this.loginUris.add(uris.getString(i));
                 }
-            } catch (JSONException e) {
-                log.error("", e.getMessage());
             }
+        } catch (JSONException e) {
+            log.error("", e.getMessage());
         }
     }
 

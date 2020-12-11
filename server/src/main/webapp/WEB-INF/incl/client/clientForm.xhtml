@@ -186,8 +186,9 @@
 											</ox:decorate>
 											<ox:decorate id="sectorIdentifierUri" label="Sector URI"
 												leftClass="col-sm-3" rightClass="col-sm-9">
-												<h:inputText value="#{_client.sectorIdentifierUri}"
-													style="width:100%" />
+												<h:inputText id="sectorIdentifierUriId"
+													value="#{_client.sectorIdentifierUri}" style="width:100%"
+													styleClass="form-control sectorIdentifierUriId" />
 											</ox:decorate>
 											<h:panelGroup id="secretid">
 												<b:panel title="#{msgs['clientForm.redirectLoginURIs']}"
