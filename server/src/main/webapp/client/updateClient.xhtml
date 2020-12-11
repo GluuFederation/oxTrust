@@ -121,15 +121,6 @@
 				searchResult="#{updateClientAction.availableResponseTypes}" />
 
 			<ox:selectSelectableEntityDialog
-				acceptMethod="#{updateClientAction.acceptSelectSectors}"
-				cancelMethod="#{updateClientAction.cancelSelectSectors}"
-				displayNameProperty="entity.description" displaySearchForm="false"
-				id="sector" label="Pick one sector from the list"
-				nameProperty="entity.id" render="selectedSectorId"
-				searchMethod="#{updateClientAction.searchAvailableSectors}"
-				searchResult="#{updateClientAction.availableSectors}" />
-
-			<ox:selectSelectableEntityDialog
 				acceptMethod="#{updateClientAction.acceptSelectCustomScripts}"
 				cancelMethod="#{updateClientAction.cancelSelectCustomScripts}"
 				displayNameProperty="entity.description" displaySearchForm="false"
