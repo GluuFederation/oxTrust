@@ -85,7 +85,10 @@ public class PassportProvidersAction implements Serializable {
     private IIConfiguration idpInitiated;
     private Configuration configuration;
     private String[] providerTypes = { "saml", "openidconnect", "openidconnect-oxd", "oauth" };
-    private String[] mappings = { "saml_basic_profile", "saml_ldap_profile", "oxd-default", "opendidconnect-default" };
+    private String[] mappings = { "apple", "facebook", "google", "dropbox", "github", "linkedin", "twitter",
+            "windowslive", "tumblr", "saml_basic_profile", "saml_ldap_profile", "oxd-default",
+            "openidconnect-default" };
+    private String[] strategies = { "passport-saml", "passport-openidconnect", "passport-oxd" };
 
     public String init() {
         try {
@@ -391,5 +394,13 @@ public class PassportProvidersAction implements Serializable {
 
     public void setMappings(String[] mappings) {
         this.mappings = mappings;
+    }
+
+    public String[] getStrategies() {
+        return strategies;
+    }
+
+    public void setStrategies(String[] strategies) {
+        this.strategies = strategies;
     }
 }

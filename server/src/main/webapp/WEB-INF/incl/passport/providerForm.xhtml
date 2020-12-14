@@ -60,9 +60,9 @@
 									<b:inputText id="PassportStrategyId"
 										value="#{_providerAction.provider.passportStrategyId}"
 										placeholder="Start typing here" inline="true" typeahead="true"
-										tags="false"
+										tags="false" required="true" styleClass="form-control PassportStrategyId"
 										style="width:100%;margin-left:-15px;"
-										typeahead-values="#{_providerAction.mappings}"
+										typeahead-values="#{_providerAction.strategies}"
 										tiny-screen="full-width" />
 								</ox:decorate>
 							</div>
@@ -73,7 +73,7 @@
 									<b:inputText id="MappingId"
 										value="#{_providerAction.provider.mapping}"
 										placeholder="start typing here" inline="true" typeahead="true"
-										tags="false"
+										tags="false" required="true" styleClass="form-control MappingId"
 										style="width:100%;margin-left:-15px;"
 										typeahead-values="#{_providerAction.mappings}"
 										tiny-screen="full-width" />
