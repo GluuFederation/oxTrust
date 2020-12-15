@@ -11,6 +11,7 @@ import org.gluu.model.custom.script.CustomScriptType;
 import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.oxtrust.model.GluuOxTrustStat;
 import org.gluu.persist.PersistenceEntryManager;
+import org.gluu.persist.model.base.SimpleBranch;
 import org.gluu.util.StringHelper;
 import org.gluu.util.security.StringEncrypter.EncryptionException;
 import org.slf4j.Logger;
@@ -135,7 +136,11 @@ public class ConfigurationService implements Serializable {
                 persistenceEntryManager.persist(result);
             }
         } catch (Exception e) {
-            log.error("Error with oxTrust metric: ", e);
+            log.error("Error getting oxtrust metric: ", e);
+            log.info("Trying setting up the parent branch");
+            String baseDn = buildDn(null, new Date(), ApplicationType.OX_TRUST);
+            createBranch(baseDn, PERIOD_DATE_FORMAT.format(new Date()));
+            log.info("Parent branch created");
         }
         return result;
     }
@@ -200,7 +205,8 @@ public class ConfigurationService implements Serializable {
                 CustomScriptType.UMA_RPT_POLICY, CustomScriptType.UMA_CLAIMS_GATHERING, CustomScriptType.UMA_RPT_CLAIMS,
                 CustomScriptType.INTROSPECTION, CustomScriptType.RESOURCE_OWNER_PASSWORD_CREDENTIALS,
                 CustomScriptType.APPLICATION_SESSION, CustomScriptType.END_SESSION, CustomScriptType.SCIM,
-                CustomScriptType.POST_AUTHN, CustomScriptType.PERSISTENCE_EXTENSION, CustomScriptType.IDP, CustomScriptType.REVOKE_TOKEN };
+                CustomScriptType.POST_AUTHN, CustomScriptType.PERSISTENCE_EXTENSION, CustomScriptType.IDP,
+                CustomScriptType.REVOKE_TOKEN };
     }
 
     public CustomScriptType[] getOthersCustomScriptTypes() {
@@ -276,6 +282,19 @@ public class ConfigurationService implements Serializable {
         }
         dn.append("ou=statistic,o=metric");
         return dn.toString();
+    }
+
+    public void createBranch(String branchDn, String ou) {
+        addBranch(branchDn, ou);
+    }
+
+    public void addBranch(String branchDn, String ou) {
+        if (persistenceEntryManager.hasBranchesSupport(branchDn)) {
+            SimpleBranch branch = new SimpleBranch();
+            branch.setOrganizationalUnitName(ou);
+            branch.setDn(branchDn);
+            persistenceEntryManager.persist(branch);
+        }
     }
 
 }
