@@ -6,20 +6,6 @@
 
 package org.gluu.oxtrust.service;
 
-import org.gluu.model.*;
-import org.gluu.model.custom.script.CustomScriptType;
-import org.gluu.oxtrust.model.GluuConfiguration;
-import org.gluu.oxtrust.model.GluuOxTrustStat;
-import org.gluu.persist.PersistenceEntryManager;
-import org.gluu.service.metric.MetricService;
-import org.gluu.util.StringHelper;
-import org.gluu.util.security.StringEncrypter.EncryptionException;
-import org.slf4j.Logger;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.faces.context.FacesContext;
-import javax.inject.Inject;
-import javax.inject.Named;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
@@ -29,6 +15,25 @@ import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
+
+import javax.enterprise.context.ApplicationScoped;
+import javax.faces.context.FacesContext;
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.gluu.model.ApplicationType;
+import org.gluu.model.AuthenticationScriptUsageType;
+import org.gluu.model.ProgrammingLanguage;
+import org.gluu.model.ScriptLocationType;
+import org.gluu.model.SmtpConfiguration;
+import org.gluu.model.custom.script.CustomScriptType;
+import org.gluu.oxtrust.model.GluuConfiguration;
+import org.gluu.oxtrust.model.GluuOxTrustStat;
+import org.gluu.persist.PersistenceEntryManager;
+import org.gluu.service.metric.MetricService;
+import org.gluu.util.StringHelper;
+import org.gluu.util.security.StringEncrypter.EncryptionException;
+import org.slf4j.Logger;
 
 /**
  * GluuConfiguration service
@@ -130,20 +135,17 @@ public class ConfigurationService implements Serializable {
     }
 
     public GluuOxTrustStat getOxtrustStat(String[] returnAttributes) {
-        GluuOxTrustStat result = new GluuOxTrustStat();
-        try {
-            if (persistenceEntryManager.contains(getDnForOxtrustStat(), GluuOxTrustStat.class)) {
-                result = persistenceEntryManager.find(getDnForOxtrustStat(), GluuOxTrustStat.class, returnAttributes);
-            } else {
-            	Date stateDate = new Date();
-            	String statDn = metricService.buildDn(LocalDateTime.now().format(formatter), stateDate, ApplicationType.OX_TRUST);
-                result.setDn(statDn);
+    	Date statDate = new Date();
+    	String statDn = metricService.buildDn(LocalDateTime.now().format(formatter), statDate, ApplicationType.OX_TRUST);
 
-                metricService.prepareBranch(stateDate, ApplicationType.OX_TRUST);
-                persistenceEntryManager.persist(result);
-            }
-        } catch (Exception e) {
-            log.error("Error with oxTrust metric: ", e);
+    	GluuOxTrustStat result = new GluuOxTrustStat();
+        if (persistenceEntryManager.contains(statDn, GluuOxTrustStat.class)) {
+            result = persistenceEntryManager.find(statDn, GluuOxTrustStat.class, returnAttributes);
+        } else {
+            result.setDn(statDn);
+
+            metricService.prepareBranch(statDate, ApplicationType.OX_TRUST);
+            persistenceEntryManager.persist(result);
         }
         return result;
     }
@@ -184,10 +186,6 @@ public class ConfigurationService implements Serializable {
         return String.format("ou=configuration,%s", baseDn);
     }
 
-    public String getDnForOxtrustStat() {
-        return buildDn(LocalDateTime.now().format(formatter), new Date(), ApplicationType.OX_TRUST);
-    }
-
     public AuthenticationScriptUsageType[] getScriptUsageTypes() {
         return new AuthenticationScriptUsageType[] { AuthenticationScriptUsageType.INTERACTIVE,
                 AuthenticationScriptUsageType.SERVICE, AuthenticationScriptUsageType.BOTH };
@@ -208,7 +206,8 @@ public class ConfigurationService implements Serializable {
                 CustomScriptType.UMA_RPT_POLICY, CustomScriptType.UMA_CLAIMS_GATHERING, CustomScriptType.UMA_RPT_CLAIMS,
                 CustomScriptType.INTROSPECTION, CustomScriptType.RESOURCE_OWNER_PASSWORD_CREDENTIALS,
                 CustomScriptType.APPLICATION_SESSION, CustomScriptType.END_SESSION, CustomScriptType.SCIM,
-                CustomScriptType.POST_AUTHN, CustomScriptType.PERSISTENCE_EXTENSION, CustomScriptType.IDP, CustomScriptType.REVOKE_TOKEN };
+                CustomScriptType.POST_AUTHN, CustomScriptType.PERSISTENCE_EXTENSION, CustomScriptType.IDP,
+                CustomScriptType.REVOKE_TOKEN };
     }
 
     public CustomScriptType[] getOthersCustomScriptTypes() {
@@ -269,21 +268,6 @@ public class ConfigurationService implements Serializable {
             return version;
         }
         return "";
-    }
-
-    private String buildDn(String uniqueIdentifier, Date creationDate, ApplicationType applicationType) {
-        final StringBuilder dn = new StringBuilder();
-        if (StringHelper.isNotEmpty(uniqueIdentifier) && (creationDate != null) && (applicationType != null)) {
-            dn.append(String.format("uniqueIdentifier=%s,", uniqueIdentifier));
-        }
-        if ((creationDate != null) && (applicationType != null)) {
-            dn.append(String.format("ou=%s,", PERIOD_DATE_FORMAT.format(creationDate)));
-        }
-        if (applicationType != null) {
-            dn.append(String.format("ou=%s,", applicationType.getValue()));
-        }
-        dn.append("ou=statistic,o=metric");
-        return dn.toString();
     }
 
 }
