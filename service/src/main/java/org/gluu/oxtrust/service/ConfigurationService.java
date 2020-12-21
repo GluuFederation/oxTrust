@@ -11,6 +11,7 @@ import org.gluu.model.custom.script.CustomScriptType;
 import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.oxtrust.model.GluuOxTrustStat;
 import org.gluu.persist.PersistenceEntryManager;
+import org.gluu.service.metric.MetricService;
 import org.gluu.util.StringHelper;
 import org.gluu.util.security.StringEncrypter.EncryptionException;
 import org.slf4j.Logger;
@@ -51,6 +52,9 @@ public class ConfigurationService implements Serializable {
 
     @Inject
     private EncryptionService encryptionService;
+    
+    @Inject
+    private MetricService metricService;
 
     private static final SimpleDateFormat PERIOD_DATE_FORMAT = new SimpleDateFormat("yyyyMM");
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -131,7 +135,11 @@ public class ConfigurationService implements Serializable {
             if (persistenceEntryManager.contains(getDnForOxtrustStat(), GluuOxTrustStat.class)) {
                 result = persistenceEntryManager.find(getDnForOxtrustStat(), GluuOxTrustStat.class, returnAttributes);
             } else {
-                result.setDn(getDnForOxtrustStat());
+            	Date stateDate = new Date();
+            	String statDn = metricService.buildDn(LocalDateTime.now().format(formatter), stateDate, ApplicationType.OX_TRUST);
+                result.setDn(statDn);
+
+                metricService.prepareBranch(stateDate, ApplicationType.OX_TRUST);
                 persistenceEntryManager.persist(result);
             }
         } catch (Exception e) {
