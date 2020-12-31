@@ -1158,6 +1158,37 @@
             "description": "Boolean value specifying whether to enable Metric Reporter.",
             "type": "boolean"
         },
+        "statEnabled": {
+            "id": "statEnabled",
+            "description": "Boolean value specifying whether to enable statistic.",
+            "type": "boolean"
+        },
+        "statTimerIntervalInSeconds": {
+            "id": "statTimerIntervalInSeconds",
+            "description": "Interval in seconds which specifies how often statistic timer should run.",
+            "type": "integer",
+            "multipleOf": 1,
+            "maximum": 2147483647,
+            "minimum": 1,
+            "exclusiveMaximum": false,
+            "exclusiveMinimum": false
+        },
+        "statWebServiceIntervalLimitInSeconds": {
+            "id": "statWebServiceIntervalLimitInSeconds",
+            "description": "Interval in seconds which specifies limit before statistic web service can handle next call. Protection from calling expensive service too often.",
+            "type": "integer",
+            "multipleOf": 1,
+            "maximum": 2147483647,
+            "minimum": 1,
+            "exclusiveMaximum": false,
+            "exclusiveMinimum": false
+        },
+        "statNodeId": {
+            "id": "statNodeId",
+            "description": "Statistic node ID. It has to be any valid string which is unique and does not change over time. (e.g. UUID)",
+            "type": "string",
+            "minLength": 3
+        },
         "pairwiseIdType": {
             "id": "pairwiseIdType",
             "description": "The pairwise ID type.",
