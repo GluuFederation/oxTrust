@@ -88,7 +88,10 @@ public class PassportProvidersAction implements Serializable {
     private String[] mappings = { "apple", "facebook", "google", "dropbox", "github", "linkedin", "twitter",
             "windowslive", "tumblr", "saml_basic_profile", "saml_ldap_profile", "oxd-default",
             "openidconnect-default" };
-    private String[] strategies = { "passport-saml", "passport-openidconnect", "passport-oxd" };
+    private String[] strategies = { "passport-saml", "passport-openidconnect", "passport-oxd",
+            "@nicokaiser/passport-apple", "passport-dropbox-oauth2", "passport-facebook", "passport-github",
+            "passport-google-oauth2", "@sokratis/passport-linkedin-oauth2", "passport-tumblr", "passport-twitter",
+            "passport-windowslive" };
 
     public String init() {
         try {
