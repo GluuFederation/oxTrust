@@ -981,7 +981,8 @@ public class Shibboleth3ConfService implements Serializable {
             return result;
         }
         String spMetaDataFile = getSpMetadataFilePath(spMetaDataFN);
-        try (LineIterator it = FileUtils.lineIterator(new File(spMetaDataFile), "UTF-8")) {
+        try (InputStream is = documentStoreService.readDocumentAsStream(spMetaDataFile)) {;
+        	LineIterator it = IOUtils.lineIterator(is, UTF_8);
             while (it.hasNext()) {
                 String line = it.nextLine();
                 if (line.contains("<EntitiesDescriptor")) {
