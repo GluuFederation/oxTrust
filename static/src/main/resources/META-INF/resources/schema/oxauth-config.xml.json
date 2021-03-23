@@ -1258,6 +1258,18 @@
                 "FIRST"
             ]
         },
+        "keyAlgsAllowedForGeneration": {
+            "id": "keyAlgsAllowedForGeneration",
+            "description": "If it's empty then all keys are generated. If it's set then only keys with algorithms contained in the property are generated. Possible values: RS256, RS384, RS512, ES256, ES384, ES512, PS256, PS384, PS512, RSA1_5, RSA-OAEP",
+            "type": "array",
+            "minItems": 0,
+            "uniqueItems": true,
+            "additionalItems": true,
+            "items": {
+                "type": "string",
+                "minLength": 1
+            }
+         },
         "endSessionWithAccessToken": {
             "id": "endSessionWithAccessToken",
             "description": "Accept access token to call end_session endpoint.",
