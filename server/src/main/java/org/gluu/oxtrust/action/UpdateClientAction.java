@@ -176,7 +176,7 @@ public class UpdateClientAction implements Serializable {
     private String availableAuthorizedOrigin = HTTPS;
     private String availableClaimRedirectUri = HTTPS;
     private String oxAttributesJson;
-
+    Pattern domainPattern = Pattern.compile("^((?!-)[A-Za-z0-9-]{1,63}(?<!-)\\\\.)+[A-Za-z]{2,6}");
     public String getAvailableAuthorizedOrigin() {
         return availableAuthorizedOrigin;
     }
@@ -651,6 +651,12 @@ public class UpdateClientAction implements Serializable {
                 }
                 return false;
             } else {
+            	if(!availableLoginUri.contains("//") && domainPattern.matcher(availableLoginUri.split("/")[0]).matches()) {
+            		return true;
+            	}
+            	if(availableLoginUri.startsWith("schema://")|| availableLoginUri.startsWith("appschema://")) {
+            		return true;
+            	}
                 if (this.client.getSubjectType().equals(OxAuthSubjectType.PUBLIC)) {
                     return true;
                 } else if (this.loginUris.size() < 1) {
@@ -1874,10 +1880,16 @@ public class UpdateClientAction implements Serializable {
     private boolean uriIsInValid(String uri) {
         URL url;
         try {
+        	if(uri.startsWith("schema://")|| uri.startsWith("appschema://")) {
+        		return false;
+        	}
+        	if(!uri.contains("//") && !domainPattern.matcher(uri.split("/")[0]).matches()) {
+        		return false;
+        	}
             url = new URL(uri);
             return url.getProtocol().equalsIgnoreCase("http") && !url.getHost().equalsIgnoreCase("localhost");
         } catch (MalformedURLException e) {
-            return false;
+            return true;
         }
 
     }
