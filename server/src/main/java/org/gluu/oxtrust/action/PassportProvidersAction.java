@@ -38,9 +38,9 @@ public class PassportProvidersAction implements Serializable {
 
     private String ISSUER = "issuer";
 
-    private String CLIENT_SECRET = "clientSecret";
+    private String CLIENT_SECRET = "client_secret";
 
-    private String CLIENT_ID = "clientID";
+    private String CLIENT_ID = "client_id";
 
     private String DEFAULT_ISSUER = "urn:test:example";
 
@@ -84,11 +84,10 @@ public class PassportProvidersAction implements Serializable {
     private PassportConfiguration passportConfiguration;
     private IIConfiguration idpInitiated;
     private Configuration configuration;
-    private String[] providerTypes = { "saml", "openidconnect", "openidconnect-oxd", "oauth" };
+    private String[] providerTypes = { "saml", "openid-connect","openidconnect-oxd", "oauth"};
     private String[] mappings = { "apple", "facebook", "google", "dropbox", "github", "linkedin", "twitter",
-            "windowslive", "tumblr", "saml_basic_profile", "saml_ldap_profile", "oxd-default",
-            "openidconnect-default" };
-    private String[] strategies = { "passport-saml", "passport-openidconnect", "passport-oxd",
+            "windowslive", "tumblr", "saml_basic_profile", "saml_ldap_profile", "oxd-default","openid-connect" };
+    private String[] strategies = { "passport-saml", "openid-connect", "passport-oxd",
             "@nicokaiser/passport-apple", "passport-dropbox-oauth2", "passport-facebook", "passport-github",
             "passport-google-oauth2", "@sokratis/passport-linkedin-oauth2", "passport-tumblr", "passport-twitter",
             "passport-windowslive" };
@@ -143,14 +142,12 @@ public class PassportProvidersAction implements Serializable {
                 this.options.add(new OptionEntry("cert", ""));
             }
             if (type.equalsIgnoreCase(providerTypes[1])) {
-                this.options = new ArrayList<>();
+            	this.options = new ArrayList<>();
                 this.options.add(new OptionEntry(CLIENT_ID, ""));
                 this.options.add(new OptionEntry(CLIENT_SECRET, ""));
                 this.options.add(new OptionEntry(ISSUER, "https://server.example.com"));
-                this.options.add(new OptionEntry("authorizationURL", "https://server.example.com/authorize"));
-                this.options.add(new OptionEntry("tokenURL", "https://server.example.com/token"));
-                this.options.add(new OptionEntry("userInfoURL", "https://server.example.com/userinfo"));
-                this.options.add(new OptionEntry("scope", "openid"));
+                this.options.add(new OptionEntry("scope", "['openid', 'email', 'profile']"));
+                this.options.add(new OptionEntry("token_endpoint_auth_method", "client_secret_post"));
             }
             if (type.equalsIgnoreCase(providerTypes[2])) {
                 this.options = new ArrayList<>();
