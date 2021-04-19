@@ -1745,6 +1745,11 @@
                 "minLength": 1
             }
         },
+        "cibaEnabled": {
+            "id": "cibaEnabled",
+            "description": "Boolean value specifying whether turn on CIBA. If true AS will process CIBA requests.",
+            "type": "boolean"
+        },
         "cibaEndUserNotificationConfig": {
             "id": "cibaEndUserNotificationConfig",
             "description": "CIBA End User Notification Config",
@@ -1985,6 +1990,7 @@
         "backchannelAuthenticationResponseExpiresIn",
         "backchannelAuthenticationResponseInterval",
         "backchannelLoginHintClaims",
+        "cibaEnabled",
         "cibaEndUserNotificationConfig",
         "deviceAuthzRequestExpiresIn",
         "deviceAuthzTokenPollInterval",
