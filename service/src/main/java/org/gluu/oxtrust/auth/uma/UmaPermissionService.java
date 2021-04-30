@@ -240,11 +240,15 @@ public class UmaPermissionService implements Serializable {
 
 	private RptIntrospectionResponse getStatusResponse(Token patToken, String rptToken) {
 		String authorization = "Bearer " + patToken.getAccessToken();
-
+		//TODO: Added this if as a hack since init method is not called upon app startup in scim project   
+		if (this.rptStatusService == null) {
+			init(null);
+		}
+		//end
 		// Determine RPT token to status
 		RptIntrospectionResponse rptStatusResponse = null;
 		try {
-			rptStatusResponse = getRptStatusService().requestRptStatus(authorization, rptToken, "");
+			rptStatusResponse = this.rptStatusService.requestRptStatus(authorization, rptToken, "");
 		} catch (Exception ex) {
 			log.error("Failed to determine RPT status", ex);
 			ex.printStackTrace();
