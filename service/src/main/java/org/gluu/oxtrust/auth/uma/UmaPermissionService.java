@@ -162,8 +162,9 @@ public class UmaPermissionService implements Serializable {
 		  if (appConfiguration.isRptConnectionPoolUseConnectionPooling()){
 			this.rptStatusService = UmaClientFactory.instance().createRptStatusService(this.umaMetadata,
 						clientHttpEngine);
-			}
-		  this.rptStatusService = UmaClientFactory.instance().createRptStatusService(this.umaMetadata);
+		  } else {
+		    this.rptStatusService = UmaClientFactory.instance().createRptStatusService(this.umaMetadata);
+		  }
 		}
 		return this.rptStatusService;
 	}
