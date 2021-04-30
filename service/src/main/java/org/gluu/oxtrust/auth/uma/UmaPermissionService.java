@@ -102,7 +102,7 @@ public class UmaPermissionService implements Serializable {
 
 				} else {
 					this.permissionService = UmaClientFactory.instance().createPermissionService(this.umaMetadata);
-					this.rptStatusService = UmaClientFactory.instance().createRptStatusService(this.umaMetadata);
+					this.rptStatusService = getRptStatusService();
 				}
 			}
 		} catch (Exception ex) {
@@ -155,6 +155,13 @@ public class UmaPermissionService implements Serializable {
 		}
 
 		return metadataConfiguration;
+	}
+	
+	private  UmaRptIntrospectionService getRptStatusService() {
+		if(this.rptStatusService == null) {
+		  this.rptStatusService = UmaClientFactory.instance().createRptStatusService(this.umaMetadata);
+		}
+		return this.rptStatusService;
 	}
 
 	public String getUmaConfigurationEndpoint() {
@@ -221,6 +228,7 @@ public class UmaPermissionService implements Serializable {
 
 		return new Pair<Boolean, Response>(true, registerPermissionsResponse);
 	}
+	
 
 	private boolean isRptHasPermissions(RptIntrospectionResponse umaRptStatusResponse) {
 		return !((umaRptStatusResponse.getPermissions() == null) || umaRptStatusResponse.getPermissions().isEmpty());
@@ -232,7 +240,7 @@ public class UmaPermissionService implements Serializable {
 		// Determine RPT token to status
 		RptIntrospectionResponse rptStatusResponse = null;
 		try {
-			rptStatusResponse = this.rptStatusService.requestRptStatus(authorization, rptToken, "");
+			rptStatusResponse = getRptStatusService().requestRptStatus(authorization, rptToken, "");
 		} catch (Exception ex) {
 			log.error("Failed to determine RPT status", ex);
 			ex.printStackTrace();
