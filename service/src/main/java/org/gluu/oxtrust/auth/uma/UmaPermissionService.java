@@ -156,7 +156,7 @@ public class UmaPermissionService implements Serializable {
 
 		return metadataConfiguration;
 	}
-
+/* Might not need the below function if we are using the hack on line #244
 	private  UmaRptIntrospectionService getRptStatusService() {
 		if(this.rptStatusService == null) {
 		  if (appConfiguration.isRptConnectionPoolUseConnectionPooling()){
@@ -168,7 +168,7 @@ public class UmaPermissionService implements Serializable {
 		}
 		return this.rptStatusService;
 	}
-
+*/
 	public String getUmaConfigurationEndpoint() {
 		String umaIssuer = appConfiguration.getUmaIssuer();
 		if (StringHelper.isEmpty(umaIssuer)) {
