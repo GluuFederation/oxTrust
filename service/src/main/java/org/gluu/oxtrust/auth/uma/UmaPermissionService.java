@@ -102,7 +102,7 @@ public class UmaPermissionService implements Serializable {
 
 				} else {
 					this.permissionService = UmaClientFactory.instance().createPermissionService(this.umaMetadata);
-					this.rptStatusService = UmaClientFactory.instance().createRptStatusService(this.umaMetadata);
+					this.rptStatusService = getRptStatusService();
 				}
 			}
 		} catch (Exception ex) {
@@ -156,19 +156,7 @@ public class UmaPermissionService implements Serializable {
 
 		return metadataConfiguration;
 	}
-/* Might not need the below function if we are using the hack on line #244
-	private  UmaRptIntrospectionService getRptStatusService() {
-		if(this.rptStatusService == null) {
-		  if (appConfiguration.isRptConnectionPoolUseConnectionPooling()){
-			this.rptStatusService = UmaClientFactory.instance().createRptStatusService(this.umaMetadata,
-						clientHttpEngine);
-		  } else {
-		    this.rptStatusService = UmaClientFactory.instance().createRptStatusService(this.umaMetadata);
-		  }
-		}
-		return this.rptStatusService;
-	}
-*/
+  
 	public String getUmaConfigurationEndpoint() {
 		String umaIssuer = appConfiguration.getUmaIssuer();
 		if (StringHelper.isEmpty(umaIssuer)) {
@@ -233,6 +221,7 @@ public class UmaPermissionService implements Serializable {
 
 		return new Pair<Boolean, Response>(true, registerPermissionsResponse);
 	}
+	
 
 	private boolean isRptHasPermissions(RptIntrospectionResponse umaRptStatusResponse) {
 		return !((umaRptStatusResponse.getPermissions() == null) || umaRptStatusResponse.getPermissions().isEmpty());
@@ -248,7 +237,7 @@ public class UmaPermissionService implements Serializable {
 		// Determine RPT token to status
 		RptIntrospectionResponse rptStatusResponse = null;
 		try {
-			rptStatusResponse = this.rptStatusService.requestRptStatus(authorization, rptToken, "");
+			rptStatusResponse = getRptStatusService().requestRptStatus(authorization, rptToken, "");
 		} catch (Exception ex) {
 			log.error("Failed to determine RPT status", ex);
 			ex.printStackTrace();
