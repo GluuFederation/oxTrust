@@ -102,7 +102,7 @@ public class UmaPermissionService implements Serializable {
 
 				} else {
 					this.permissionService = UmaClientFactory.instance().createPermissionService(this.umaMetadata);
-					this.rptStatusService = UmaClientFactory.instance().createRptStatusService(this.umaMetadata());
+					this.rptStatusService = UmaClientFactory.instance().createRptStatusService(this.umaMetadata);
 				}
 			}
 		} catch (Exception ex) {
