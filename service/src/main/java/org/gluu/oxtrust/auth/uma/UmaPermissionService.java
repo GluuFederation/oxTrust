@@ -156,14 +156,7 @@ public class UmaPermissionService implements Serializable {
 
 		return metadataConfiguration;
 	}
-	
-	private  UmaRptIntrospectionService getRptStatusService() {
-		if(this.rptStatusService == null) {
-		  this.rptStatusService = UmaClientFactory.instance().createRptStatusService(this.umaMetadata);
-		}
-		return this.rptStatusService;
-	}
-
+  
 	public String getUmaConfigurationEndpoint() {
 		String umaIssuer = appConfiguration.getUmaIssuer();
 		if (StringHelper.isEmpty(umaIssuer)) {
@@ -236,7 +229,11 @@ public class UmaPermissionService implements Serializable {
 
 	private RptIntrospectionResponse getStatusResponse(Token patToken, String rptToken) {
 		String authorization = "Bearer " + patToken.getAccessToken();
-
+		//TODO: Added this if as a hack since init method is not called upon app startup in scim project   
+		if (this.rptStatusService == null) {
+			init(null);
+		}
+		//end
 		// Determine RPT token to status
 		RptIntrospectionResponse rptStatusResponse = null;
 		try {
