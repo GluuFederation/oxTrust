@@ -226,6 +226,12 @@ public class UmaPermissionService implements Serializable {
 	private boolean isRptHasPermissions(RptIntrospectionResponse umaRptStatusResponse) {
 		return !((umaRptStatusResponse.getPermissions() == null) || umaRptStatusResponse.getPermissions().isEmpty());
 	}
+	private  UmaRptIntrospectionService getRptStatusService() {
+		if(this.rptStatusService == null) {
+		  this.rptStatusService = UmaClientFactory.instance().createRptStatusService(this.umaMetadata);
+		}
+		return this.rptStatusService;
+	}
 
 	private RptIntrospectionResponse getStatusResponse(Token patToken, String rptToken) {
 		String authorization = "Bearer " + patToken.getAccessToken();
