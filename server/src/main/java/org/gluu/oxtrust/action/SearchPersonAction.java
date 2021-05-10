@@ -81,9 +81,6 @@ public class SearchPersonAction implements Serializable {
 
 	public String getNextPage() {
 		try {
-			log.error("==========================1");
-			log.error("==========================count: " + count);
-			log.error("==========================start: " + start);
 			searchIndex++;
 			start = start + count;
 			results = personService.findPeople(this.searchPattern, start, count);

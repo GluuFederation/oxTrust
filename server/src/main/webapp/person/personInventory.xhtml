@@ -62,7 +62,7 @@
 								</h:form>
 								<p:spacer height="16" />
 								<h:form id="personsFormId">
-									<h:panelGroup style="width: 100%;"
+									<h:panelGroup style="width: 100%; margin-bottom: 5px;"
 										rendered="#{searchPersonAction.nbPages gt 1}">
 										<b:commandButton
 											action="#{searchPersonAction.getPreviousPage}" ajax="true"
@@ -78,8 +78,6 @@
 											rendered="#{searchPersonAction.nbPages gt 1}"
 											styleClass="btn btn-primary searchButton" value="Next"
 											iconAwesome="angle-right" update=":personsFormId" />
-									</h:panelGroup>
-									<h:panelGroup>
 									</h:panelGroup>
 									<ui:fragment
 										rendered="#{searchPersonAction.personList.size() eq 0}">
@@ -106,7 +104,7 @@
 										</b:dataTableColumn>
 									</b:dataTable>
 									<p:spacer height="16" />
-									<h:panelGroup style="width: 100%;"
+									<h:panelGroup style="width: 100%; margin-top: 5px;"
 										rendered="#{searchPersonAction.nbPages gt 1}">
 										<b:commandButton
 											action="#{searchPersonAction.getPreviousPage}" ajax="true"
