@@ -27,6 +27,7 @@ import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.exception.operation.DuplicateEntryException;
 import org.gluu.persist.model.AttributeData;
+import org.gluu.persist.model.PagedResult;
 import org.gluu.persist.model.SearchScope;
 import org.gluu.persist.model.base.SimpleBranch;
 import org.gluu.persist.model.base.SimpleUser;
@@ -166,7 +167,8 @@ public class PersonService implements Serializable, IPersonService {
 	@Override
 	public List<GluuCustomPerson> searchPersons(String pattern, int sizeLimit) {
 		Filter searchFilter = buildFilter(pattern);
-		return persistenceEntryManager.findEntries(getDnForPerson(null), GluuCustomPerson.class, searchFilter, sizeLimit);
+		return persistenceEntryManager.findEntries(getDnForPerson(null), GluuCustomPerson.class, searchFilter,
+				sizeLimit);
 	}
 
 	/*
@@ -178,7 +180,9 @@ public class PersonService implements Serializable, IPersonService {
 	@Override
 	public List<GluuCustomPerson> searchPersons(String pattern) {
 		Filter searchFilter = buildFilter(pattern);
-		return persistenceEntryManager.findEntries(getDnForPerson(null), GluuCustomPerson.class, searchFilter);
+		String[] attributes = { "inum", "uid", "displayName", "mail", "gluuStatus" };
+		return persistenceEntryManager.findEntries(getDnForPerson(null), GluuCustomPerson.class, searchFilter,
+				attributes);
 	}
 
 	private Filter buildFilter(String pattern) {
@@ -189,8 +193,19 @@ public class PersonService implements Serializable, IPersonService {
 		Filter ppidFilter = Filter.createSubstringFilter(OxTrustConstants.ppid, null, targetArray, null);
 		Filter inumFilter = Filter.createSubstringFilter(OxTrustConstants.inum, null, targetArray, null);
 		Filter snFilter = Filter.createSubstringFilter(OxTrustConstants.sn, null, targetArray, null);
-		Filter searchFilter = Filter.createORFilter(uidFilter, mailFilter, nameFilter, ppidFilter, inumFilter,
-				snFilter);
+		Filter searchFilter = Filter.createORFilter(uidFilter, mailFilter, nameFilter, snFilter, inumFilter,
+				ppidFilter);
+		return searchFilter;
+	}
+
+	private Filter buildFilterForList(String pattern) {
+		String[] targetArray = new String[] { pattern };
+		Filter uidFilter = Filter.createSubstringFilter(OxConstants.UID, null, targetArray, null);
+		Filter mailFilter = Filter.createSubstringFilter(OxTrustConstants.mail, null, targetArray, null);
+		Filter nameFilter = Filter.createSubstringFilter(OxTrustConstants.displayName, null, targetArray, null);
+
+		Filter snFilter = Filter.createSubstringFilter(OxTrustConstants.sn, null, targetArray, null);
+		Filter searchFilter = Filter.createORFilter(uidFilter, mailFilter, nameFilter, snFilter);
 		return searchFilter;
 	}
 
@@ -234,7 +249,8 @@ public class PersonService implements Serializable, IPersonService {
 			Filter notFilter = Filter.createNOTFilter(orExcludeFilter);
 			searchFilter = Filter.createANDFilter(orFilter, notFilter);
 		}
-		return persistenceEntryManager.findEntries(getDnForPerson(null), GluuCustomPerson.class, searchFilter, sizeLimit);
+		return persistenceEntryManager.findEntries(getDnForPerson(null), GluuCustomPerson.class, searchFilter,
+				sizeLimit);
 	}
 
 	/*
@@ -246,7 +262,15 @@ public class PersonService implements Serializable, IPersonService {
 	 */
 	@Override
 	public List<GluuCustomPerson> findAllPersons(String[] returnAttributes) {
-		return persistenceEntryManager.findEntries(getDnForPerson(null), GluuCustomPerson.class, null, returnAttributes);
+		return persistenceEntryManager.findEntries(getDnForPerson(null), GluuCustomPerson.class, null,
+				returnAttributes);
+	}
+
+	public PagedResult<GluuCustomPerson> findPeople(String pattern, int start, int count) {
+		Filter filter = buildFilterForList(pattern);
+		String[] attributes = { "inum", "uid", "displayName", "mail", "gluuStatus" };
+		return persistenceEntryManager.findPagedEntries(getDnForPerson(null), GluuCustomPerson.class, filter,
+				attributes, null, null, start, count, count);
 	}
 
 	/*
@@ -263,7 +287,8 @@ public class PersonService implements Serializable, IPersonService {
 			uidFilters.add(Filter.createEqualityFilter(OxConstants.UID, uid));
 		}
 		Filter filter = Filter.createORFilter(uidFilters);
-		return persistenceEntryManager.findEntries(getDnForPerson(null), GluuCustomPerson.class, filter, returnAttributes);
+		return persistenceEntryManager.findEntries(getDnForPerson(null), GluuCustomPerson.class, filter,
+				returnAttributes);
 	}
 
 	/*
@@ -281,7 +306,8 @@ public class PersonService implements Serializable, IPersonService {
 			mailidFilters.add(Filter.createEqualityFilter(OxTrustConstants.mail, mailid));
 		}
 		Filter filter = Filter.createORFilter(mailidFilters);
-		return persistenceEntryManager.findEntries(getDnForPerson(null), GluuCustomPerson.class, filter, returnAttributes);
+		return persistenceEntryManager.findEntries(getDnForPerson(null), GluuCustomPerson.class, filter,
+				returnAttributes);
 	}
 
 	/*
@@ -538,9 +564,11 @@ public class PersonService implements Serializable, IPersonService {
 			return null;
 		}
 
-		Filter userUidFilter = Filter.createEqualityFilter(Filter.createLowercaseFilter(OxConstants.UID), StringHelper.toLowerCase(uid));
+		Filter userUidFilter = Filter.createEqualityFilter(Filter.createLowercaseFilter(OxConstants.UID),
+				StringHelper.toLowerCase(uid));
 
-		List<GluuCustomPerson> entries = persistenceEntryManager.findEntries(getDnForPerson(null), GluuCustomPerson.class, userUidFilter, returnAttributes);
+		List<GluuCustomPerson> entries = persistenceEntryManager.findEntries(getDnForPerson(null),
+				GluuCustomPerson.class, userUidFilter, returnAttributes);
 		log.debug("Found {} entries for userId = {}", entries.size(), uid);
 
 		return entries;
@@ -561,16 +589,19 @@ public class PersonService implements Serializable, IPersonService {
 			return null;
 		}
 
-		Filter userMailFilter = Filter.createEqualityFilter(Filter.createLowercaseFilter("mail"), StringHelper.toLowerCase(mail));
-		
+		Filter userMailFilter = Filter.createEqualityFilter(Filter.createLowercaseFilter("mail"),
+				StringHelper.toLowerCase(mail));
+
 		boolean multiValued = false;
 		GluuAttribute mailAttribute = attributeService.getAttributeByName("mail");
-		if ((mailAttribute != null) && (mailAttribute.getOxMultiValuedAttribute() != null) && mailAttribute.getOxMultiValuedAttribute()) {
+		if ((mailAttribute != null) && (mailAttribute.getOxMultiValuedAttribute() != null)
+				&& mailAttribute.getOxMultiValuedAttribute()) {
 			multiValued = true;
 		}
 		userMailFilter.multiValued(multiValued);
 
-		List<GluuCustomPerson> entries = persistenceEntryManager.findEntries(getDnForPerson(null), GluuCustomPerson.class, userMailFilter, returnAttributes);
+		List<GluuCustomPerson> entries = persistenceEntryManager.findEntries(getDnForPerson(null),
+				GluuCustomPerson.class, userMailFilter, returnAttributes);
 		log.debug("Found {} entries for mail = {}", entries.size(), mail);
 
 		return entries;
@@ -603,7 +634,8 @@ public class PersonService implements Serializable, IPersonService {
 	 */
 	@Override
 	public User getUserByUid(String uid) {
-		Filter userUidFilter = Filter.createEqualityFilter(Filter.createLowercaseFilter(OxConstants.UID), StringHelper.toLowerCase(uid));
+		Filter userUidFilter = Filter.createEqualityFilter(Filter.createLowercaseFilter(OxConstants.UID),
+				StringHelper.toLowerCase(uid));
 		Filter userObjectClassFilter = Filter.createEqualityFilter(OxConstants.OBJECT_CLASS, "gluuPerson");
 		Filter filter = Filter.createANDFilter(userObjectClassFilter, userUidFilter);
 
@@ -617,10 +649,8 @@ public class PersonService implements Serializable, IPersonService {
 	/**
 	 * Get list of persons by attribute
 	 *
-	 * @param attribute
-	 *            attribute
-	 * @param value
-	 *            value
+	 * @param attribute attribute
+	 * @param value     value
 	 * @return List <Person>
 	 */
 	@Override
