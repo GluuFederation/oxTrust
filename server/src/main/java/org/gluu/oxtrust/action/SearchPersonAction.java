@@ -67,6 +67,9 @@ public class SearchPersonAction implements Serializable {
 	
 	public String search() {
 		try {
+			start = 0;
+			nbPages = 0;
+			searchIndex = 1;
 			results = personService.findPeople(this.searchPattern, start, count);
 			persons = results.getEntries();
 			nbPages = (int) Math.ceil(results.getTotalEntriesCount() / (double) count);
