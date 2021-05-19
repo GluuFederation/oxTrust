@@ -21,7 +21,6 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.gluu.model.GluuAttribute;
 import org.gluu.model.attribute.AttributeDataType;
-import org.gluu.persist.model.base.GluuBoolean;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
