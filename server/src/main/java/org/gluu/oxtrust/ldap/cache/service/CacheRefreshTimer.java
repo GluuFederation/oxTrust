@@ -65,7 +65,7 @@ import org.gluu.persist.ldap.impl.LdapEntryManager;
 import org.gluu.persist.ldap.impl.LdapEntryManagerFactory;
 import org.gluu.persist.ldap.operation.LdapOperationService;
 import org.gluu.persist.model.SearchScope;
-import org.gluu.persist.model.base.GluuDummyEntry;
+import org.gluu.persist.model.base.DummyEntry;
 import org.gluu.persist.operation.PersistenceOperationService;
 import org.gluu.search.filter.Filter;
 import org.gluu.service.ObjectSerializationService;
@@ -568,7 +568,7 @@ public class CacheRefreshTimer {
 		for (String changedInum : changedInums) {
 			String baseDn = "action=synchronizecache," + personService.getDnForPerson(changedInum);
 			try {
-				targetPersistenceEntryManager.findEntries(baseDn, GluuDummyEntry.class, filter, SearchScope.SUB, null,
+				targetPersistenceEntryManager.findEntries(baseDn, DummyEntry.class, filter, SearchScope.SUB, null,
 						null, 0, 0, cacheRefreshConfiguration.getLdapSearchSizeLimit());
 				result.add(changedInum);
 				log.debug("Updated entry with inum {}", changedInum);
