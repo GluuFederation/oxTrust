@@ -17,7 +17,7 @@ import org.apache.http.util.EntityUtils;
 import org.gluu.oxauth.model.gluu.GluuConfiguration;
 import org.gluu.oxtrust.api.server.model.OxtrustSetting;
 import org.gluu.oxtrust.api.server.util.ApiConstants;
-import org.gluu.persist.model.base.GluuBoolean;
+import org.gluu.oxtrust.model.GluuBoolean;
 import org.junit.Assert;
 import org.junit.Test;
 
