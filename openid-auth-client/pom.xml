@@ -47,7 +47,7 @@
         </dependency>
 		<dependency>
 			<groupId>org.gluu</groupId>
-			<artifactId>oxcore-persistence-standalone</artifactId>
+			<artifactId>gluu-orm-standalone</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.gluu</groupId>

@@ -47,7 +47,7 @@
         </dependency>
         <dependency>
             <groupId>org.gluu</groupId>
-            <artifactId>oxcore-persistence-cdi</artifactId>
+            <artifactId>gluu-orm-cdi</artifactId>
             <scope>provided</scope>
         </dependency>
 
