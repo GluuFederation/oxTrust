@@ -6,8 +6,8 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.gluu.ldap.model.MailUniquenessConfiguration;
 import org.gluu.persist.PersistenceEntryManager;
+import org.gluu.persist.ldap.model.MailUniquenessConfiguration;
 
 @Stateless
 @Named("emailUniquenessService")
