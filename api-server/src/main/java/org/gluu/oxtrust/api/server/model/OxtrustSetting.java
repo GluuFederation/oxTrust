@@ -2,7 +2,7 @@ package org.gluu.oxtrust.api.server.model;
 
 import java.io.Serializable;
 
-import org.gluu.persist.model.base.GluuBoolean;
+import org.gluu.oxtrust.model.GluuBoolean;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
