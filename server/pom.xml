@@ -346,10 +346,6 @@
 		</dependency>
 		<dependency>
 			<groupId>org.gluu</groupId>
-			<artifactId>gluu-orm-ldap-sample</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.gluu</groupId>
 			<artifactId>gluu-orm-model</artifactId>
 		</dependency>
 		<dependency>
@@ -359,6 +355,14 @@
 		<dependency>
 			<groupId>org.gluu</groupId>
 			<artifactId>gluu-orm-couchbase</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.gluu</groupId>
+			<artifactId>gluu-orm-sql</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.gluu</groupId>
+			<artifactId>gluu-orm-spanner</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.gluu</groupId>
