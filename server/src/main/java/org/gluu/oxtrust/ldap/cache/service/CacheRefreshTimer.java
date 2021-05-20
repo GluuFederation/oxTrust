@@ -1145,14 +1145,21 @@ public class CacheRefreshTimer {
 		// Try to get updated password via script
 		BindCredentials bindCredentials = externalCacheRefreshService
 				.executeExternalGetBindCredentialsMethods(ldapConfig);
+        String bindPasswordPropertyKey = persistenceType + "." + PropertiesDecrypter.BIND_PASSWORD;
 		if (bindCredentials != null) {
 			log.error("Using updated password which got from getBindCredentials method");
 			ldapDecryptedProperties.setProperty(persistenceType + ".bindDN", bindCredentials.getBindDn());
-			ldapDecryptedProperties.setProperty(persistenceType + "." + PropertiesDecrypter.BIND_PASSWORD,
+			ldapDecryptedProperties.setProperty(bindPasswordPropertyKey,
 					bindCredentials.getBindPassword());
 		}
 
-		log.trace("Attempting to create PersistenceEntryManager with properties: {}", ldapDecryptedProperties);
+		if (log.isTraceEnabled()) {
+	        Properties clonedLdapDecryptedProperties = (Properties) ldapDecryptedProperties.clone();
+	        if (clonedLdapDecryptedProperties.getProperty(bindPasswordPropertyKey) != null) {
+	        	clonedLdapDecryptedProperties.setProperty(bindPasswordPropertyKey, "REDACTED");
+	        }
+			log.trace("Attempting to create PersistenceEntryManager with properties: {}", clonedLdapDecryptedProperties);
+		}
 		PersistenceEntryManager customPersistenceEntryManager = entryManagerFactory
 				.createEntryManager(ldapDecryptedProperties);
 		log.info("Created Cache Refresh PersistenceEntryManager: {}", customPersistenceEntryManager);
