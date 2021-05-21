@@ -19,7 +19,7 @@ import org.gluu.persist.annotation.ObjectClass;
  * 
  * @author Yuriy Movchan Date: 01/10/2014
  */
-@DataEntry(sortBy = { "userId" })
+@DataEntry(sortBy = { "userId" }, sortByName = "oxAuthUserId")
 @ObjectClass(value = "oxPushDevice")
 public class PushDevice extends Entry implements Serializable {
 
