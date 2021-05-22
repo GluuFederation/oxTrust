@@ -463,7 +463,7 @@ public class PersonService implements Serializable, IPersonService {
 	 */
 	@Override
 	public boolean authenticate(String userName, String password) {
-		return persistenceEntryManager.authenticate(userName, password);
+		return persistenceEntryManager.authenticate(userName, GluuCustomPerson.class, password);
 	}
 
 	/*

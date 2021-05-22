@@ -109,6 +109,7 @@ public class CleanerTimer {
 			Date now = new Date();
 			processCache(now);
 			processPasswordReset();
+			// We do this from oxAuth cleaner
 			processMetricEntries();
 
 			this.lastFinishedTime = System.currentTimeMillis();
