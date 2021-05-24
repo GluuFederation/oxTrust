@@ -88,9 +88,6 @@ public class GluuOrganization extends Entry implements Serializable {
 	@AttributeName(name = "gluuCustomMessage")
 	private String[] customMessages;
 
-	@AttributeName(name = "oxInumConfig")
-	private String oxInumConfig;
-
 	@AttributeName(name = "title")
 	private String title;
 
@@ -159,14 +156,6 @@ public class GluuOrganization extends Entry implements Serializable {
 
 	public void setOrganization(String organization) {
 		this.organization = organization;
-	}
-
-	public String getOxInumConfig() {
-		return oxInumConfig;
-	}
-
-	public void setOxInumConfig(String oxInumConfig) {
-		this.oxInumConfig = oxInumConfig;
 	}
 
 	public RegistrationConfiguration getOxRegistrationConfiguration() {
