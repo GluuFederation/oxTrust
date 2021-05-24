@@ -52,9 +52,6 @@ public class GluuOrganization extends Entry implements Serializable {
 	@AttributeName(name = "o")
 	private String organization;
 
-	@AttributeName
-	private String seeAlso;
-
 	@AttributeName(name = "gluuStatus")
 	private GluuStatus status;
 
@@ -164,14 +161,6 @@ public class GluuOrganization extends Entry implements Serializable {
 
 	public void setOxRegistrationConfiguration(RegistrationConfiguration oxRegistrationConfiguration) {
 		this.oxRegistrationConfiguration = oxRegistrationConfiguration;
-	}
-
-	public String getSeeAlso() {
-		return seeAlso;
-	}
-
-	public void setSeeAlso(String seeAlso) {
-		this.seeAlso = seeAlso;
 	}
 
 	public String getShortName() {
