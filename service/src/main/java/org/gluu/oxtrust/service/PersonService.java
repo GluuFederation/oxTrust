@@ -22,6 +22,7 @@ import org.gluu.model.GluuAttribute;
 import org.gluu.oxtrust.exception.DuplicateEmailException;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
+import org.gluu.oxtrust.model.SimplePerson;
 import org.gluu.oxtrust.model.User;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.PersistenceEntryManager;
@@ -636,10 +637,8 @@ public class PersonService implements Serializable, IPersonService {
 	public User getUserByUid(String uid) {
 		Filter userUidFilter = Filter.createEqualityFilter(Filter.createLowercaseFilter(OxConstants.UID),
 				StringHelper.toLowerCase(uid));
-		Filter userObjectClassFilter = Filter.createEqualityFilter(OxConstants.OBJECT_CLASS, "gluuPerson");
-		Filter filter = Filter.createANDFilter(userObjectClassFilter, userUidFilter);
 
-		List<SimpleUser> users = persistenceEntryManager.findEntries(getDnForPerson(null), SimpleUser.class, filter, 1);
+		List<SimplePerson> users = persistenceEntryManager.findEntries(getDnForPerson(null), SimplePerson.class, userUidFilter, 1);
 		if ((users != null) && (users.size() > 0)) {
 			return persistenceEntryManager.find(User.class, users.get(0).getDn());
 		}
