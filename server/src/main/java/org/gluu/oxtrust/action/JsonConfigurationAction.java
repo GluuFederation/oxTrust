@@ -142,13 +142,19 @@ public class JsonConfigurationAction implements Serializable {
 			log.debug("Saving oxauth-config.json:" + this.oxAuthDynamicConfigJson);
 			if (this.oxAuthDynamicConfigJson != null) {
 				String configurationJson = convertToOxAuthAppConfiguration(oxAuthDynamicConfigJson);
-				jsonConfigurationService.saveOxAuthDynamicConfigJson(configurationJson);
+				if (configurationJson == null) {
+					log.error("Failed to prepare update oxauth-config.json");
+					facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to prepare oxAuth configuration for update in DB");
+					return OxTrustConstants.RESULT_FAILURE;
+				} else {
+					jsonConfigurationService.saveOxAuthDynamicConfigJson(configurationJson);
+				}
 			}
 			facesMessages.add(FacesMessage.SEVERITY_INFO, "oxAuthDynamic Configuration is updated.");
 			return OxTrustConstants.RESULT_SUCCESS;
 		} catch (Exception ex) {
 			log.error("Failed to update oxauth-config.json", ex);
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update oxAuth configuration in LDAP");
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update oxAuth configuration in DB");
 		}
 		return OxTrustConstants.RESULT_FAILURE;
 	}
