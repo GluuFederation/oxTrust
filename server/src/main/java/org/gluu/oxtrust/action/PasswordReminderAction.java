@@ -8,6 +8,7 @@ package org.gluu.oxtrust.action;
 
 import java.io.Serializable;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -19,6 +20,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.model.RenderParameters;
@@ -127,11 +129,18 @@ public class PasswordReminderAction implements Serializable {
 				passwordResetService.prepareBranch();
 				PasswordResetRequest request = new PasswordResetRequest();
 				String guid = passwordResetService.generateGuidForNewPasswordResetRequest();
-				request.setCreationDate(Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTime());
+				Date creationTime = Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTime();
+				request.setCreationDate(creationTime);
 				request.setPersonInum(matchedPersons.get(0).getInum());
 				request.setOxGuid(guid);
 				request.setDn(passwordResetService.getDnForPasswordResetRequest(guid));
 				int value = this.oxTrustappConfiguration.getPasswordResetRequestExpirationTime() / 60;
+
+				// Set expiration time
+				request.setExpirationDate(DateUtils.addSeconds(creationTime, appConfiguration.getPasswordResetRequestExpirationTime()));
+		        int ttl = (int) ((request.getExpirationDate().getTime() - creationTime.getTime()) / 1000L);
+		        request.setTtl(ttl);
+
 				String expirationTime = Integer.toString(value) + " minute(s)";
 				rendererParameters.setParameter("expirationTime", expirationTime);
 				rendererParameters.setParameter("givenName", matchedPersons.get(0).getGivenName());
