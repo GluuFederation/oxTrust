@@ -323,9 +323,6 @@ public class GluuConfiguration extends InumEntry implements Serializable {
 	}
 
 	public String getContactEmail() {
-		if(this.contactEmail==null || this.contactEmail.isEmpty()) {
-			return "example@orgname.com";
-		}
 		return contactEmail;
 	}
 
