@@ -37,15 +37,25 @@ public class ResourceSetService implements Serializable {
 	private OrganizationService organizationService;
 
 	public void addBranch() {
+		String branchDn = getDnForResource(null);
+		if (!persistenceEntryManager.hasBranchesSupport(branchDn)) {
+			return;
+		}
+
 		SimpleBranch branch = new SimpleBranch();
 		branch.setOrganizationalUnitName("resources");
-		branch.setDn(getDnForResource(null));
+		branch.setDn(branchDn);
 
 		persistenceEntryManager.persist(branch);
 	}
 
 	public boolean containsBranch() {
-		return persistenceEntryManager.contains(getDnForResource(null), SimpleBranch.class);
+		String branchDn = getDnForResource(null);
+		if (!persistenceEntryManager.hasBranchesSupport(branchDn)) {
+			return true;
+		}
+
+		return persistenceEntryManager.contains(branchDn, SimpleBranch.class);
 	}
 
 	/**

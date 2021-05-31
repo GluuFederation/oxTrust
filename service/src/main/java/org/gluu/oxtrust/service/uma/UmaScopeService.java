@@ -12,10 +12,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import javax.ejb.Stateless;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import org.gluu.oxtrust.service.OrganizationService;
 import org.gluu.oxtrust.util.OxTrustConstants;
@@ -45,14 +43,24 @@ public class UmaScopeService implements Serializable {
 	private Logger log;
 
 	public void addBranch() {
+		String branchDn = getDnForScope(null);
+		if (!persistenceEntryManager.hasBranchesSupport(branchDn)) {
+			return;
+		}
+
 		SimpleBranch branch = new SimpleBranch();
 		branch.setOrganizationalUnitName("scopes");
-		branch.setDn(getDnForScope(null));
+		branch.setDn(branchDn);
 		persistenceEntryManager.persist(branch);
 	}
 
 	public boolean containsBranch() {
-		return persistenceEntryManager.contains(getDnForScope(null), SimpleBranch.class);
+		String branchDn = getDnForScope(null);
+		if (!persistenceEntryManager.hasBranchesSupport(branchDn)) {
+			return true;
+		}
+
+		return persistenceEntryManager.contains(branchDn, SimpleBranch.class);
 	}
 
 	public void prepareScopeDescriptionBranch() {
