@@ -74,9 +74,6 @@ public class OxAuthClient extends Entry implements Serializable {
 	@AttributeName(name = "oxAuthClientSecret")
 	private String encodedClientSecret;
 
-	@AttributeName(ignoreDuringUpdate = true)
-	private String userPassword;
-
 	@AttributeName(name = "associatedPerson")
 	private List<String> associatedPersons;
 
@@ -334,14 +331,6 @@ public class OxAuthClient extends Entry implements Serializable {
 
 	public void setEncodedClientSecret(String encodedClientSecret) {
 		this.encodedClientSecret = encodedClientSecret;
-	}
-
-	public String getUserPassword() {
-		return userPassword;
-	}
-
-	public void setUserPassword(String userPassword) {
-		this.userPassword = userPassword;
 	}
 
 	public List<String> getAssociatedPersons() {
