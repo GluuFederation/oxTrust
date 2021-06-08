@@ -18,7 +18,7 @@ import org.gluu.persist.annotation.AttributeEnum;
  */
 public enum GluuMetadataSourceType implements AttributeEnum {
 
-	NONE("none", "None"), FILE("file", "File"), URI("uri", "URI"), FEDERATION("federation", "Federation");
+	FILE("file", "File"), URI("uri", "URI"), FEDERATION("federation", "Federation");
 
 	private final String value;
 	private final String displayName;
