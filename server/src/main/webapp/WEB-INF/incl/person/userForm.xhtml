@@ -1,95 +1,97 @@
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-	xmlns:f="http://xmlns.jcp.org/jsf/core"
-	xmlns:rich="http://richfaces.org/rich"
-	xmlns:h="http://xmlns.jcp.org/jsf/html"
-	xmlns:a4j="http://richfaces.org/a4j" xmlns:b="http://bootsfaces.net/ui"
-	xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
-	xmlns:gluufn="http://www.gluu.org/jsf/functions"
-	xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
-	xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
-	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox">
-	<h:outputScript>
-	    function reload (){
-	     window.location.reload();
-	    }
-        function changeAttributeVisibility(attrId, show) {
-        	var attr = document.getElementById(attrId);
-
-            if (show) {
-	        	attr.style['display'] = '';
-            } else {
-	        	attr.style['display'] = 'none';
-            }
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:pp="http://primefaces.org/ui"
+                xmlns:rich="http://richfaces.org/rich"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:a4j="http://richfaces.org/a4j" xmlns:b="http://bootsfaces.net/ui"
+                xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
+                xmlns:gluufn="http://www.gluu.org/jsf/functions"
+                xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
+                xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox">
+    <h:outputScript>
+        function reload (){
+        window.location.reload();
         }
-				
-		function showPassword1(){
-		   var secretField = document.getElementsByClassName("FirstPasswordField")[0];
-		   secretField.setAttribute('type','text'); 
-		   document.getElementsByClassName("FirstPasswordFieldHide")[0].style.display = 'block';
-		   document.getElementsByClassName("FirstPasswordFieldShow")[0].style.display = 'none';
-		}
-		
-		function hidePassword1(){
-		   var secretField = document.getElementsByClassName("FirstPasswordField")[0];
-		   secretField.setAttribute('type','password'); 
-		   document.getElementsByClassName("FirstPasswordFieldHide")[0].style.display = 'none';
-		   document.getElementsByClassName("FirstPasswordFieldShow")[0].style.display = 'block';
-		}
-		function showPassword2(){
-		   var secretField = document.getElementsByClassName("SecondPasswordField")[0];
-		   secretField.setAttribute('type','text'); 
-		   document.getElementsByClassName("SecondPasswordFieldHide")[0].style.display = 'block';
-		   document.getElementsByClassName("SecondPasswordFieldShow")[0].style.display = 'none';
-		}
-		
-		function hidePassword2(){
-		   var secretField = document.getElementsByClassName("SecondPasswordField")[0];
-		   secretField.setAttribute('type','password'); 
-		   document.getElementsByClassName("SecondPasswordFieldHide")[0].style.display = 'none';
-		   document.getElementsByClassName("SecondPasswordFieldShow")[0].style.display = 'block';
-		}
-		
+        function changeAttributeVisibility(attrId, show) {
+        var attr = document.getElementById(attrId);
+
+        if (show) {
+        attr.style['display'] = '';
+        } else {
+        attr.style['display'] = 'none';
+        }
+        }
+
+        function showPassword1(){
+        var secretField = document.getElementsByClassName("FirstPasswordField")[0];
+        secretField.setAttribute('type','text');
+        document.getElementsByClassName("FirstPasswordFieldHide")[0].style.display = 'block';
+        document.getElementsByClassName("FirstPasswordFieldShow")[0].style.display = 'none';
+        }
+
+        function hidePassword1(){
+        var secretField = document.getElementsByClassName("FirstPasswordField")[0];
+        secretField.setAttribute('type','password');
+        document.getElementsByClassName("FirstPasswordFieldHide")[0].style.display = 'none';
+        document.getElementsByClassName("FirstPasswordFieldShow")[0].style.display = 'block';
+        }
+        function showPassword2(){
+        var secretField = document.getElementsByClassName("SecondPasswordField")[0];
+        secretField.setAttribute('type','text');
+        document.getElementsByClassName("SecondPasswordFieldHide")[0].style.display = 'block';
+        document.getElementsByClassName("SecondPasswordFieldShow")[0].style.display = 'none';
+        }
+
+        function hidePassword2(){
+        var secretField = document.getElementsByClassName("SecondPasswordField")[0];
+        secretField.setAttribute('type','password');
+        document.getElementsByClassName("SecondPasswordFieldHide")[0].style.display = 'none';
+        document.getElementsByClassName("SecondPasswordFieldShow")[0].style.display = 'block';
+        }
+
     </h:outputScript>
-	<ui:include src="/WEB-INF/incl/person/u2fPage.xhtml" />
-	<h:form id="PForm" autocomplete="off">
-		<b:panel title="Person Add Form" look="primary"
-			iconAwesome="fa-user-plus" collapsible="false">
-			<div class="row"
-				style="margin-left: 5px; margin-right: 5px; background: white;">
-				<div class="col-sm-7 col-lg-7" style="padding: 0px;">
-					<h:panelGroup id="selectedCustomAttributesId"
-						class="selectedCustomAttributesId">
-						<script type="text/javascript">
+    <ui:include src="/WEB-INF/incl/person/u2fPage.xhtml"/>
+    <h:form id="PForm" autocomplete="off">
+        <b:panel title="Person Add Form" look="primary"
+                 iconAwesome="fa-user-plus" collapsible="false">
+            <div class="row"
+                 style="margin-left: 5px; margin-right: 5px; background: white;">
+                <div class="col-sm-7 col-lg-7" style="padding: 0px;">
+                    <h:panelGroup id="selectedCustomAttributesId"
+                                  class="selectedCustomAttributesId">
+                        <script type="text/javascript">
 							// 										addIndex();
-						</script>
-						<a4j:repeat id="L"
-							value="#{_customAttributeAction.customAttributes}"
-							var="_custAttr" rowKeyVar="_custAttrIdx">
-							<h:panelGroup rendered="#{_custAttr.metadata != null}" id="mF">
-								<ui:param name="_mandatory" value="#{_custAttr.mandatory}" />
-								<ui:param name="_mustEnter" value="#{_mandatory}" />
-								<a4j:repeat id="IL" value="#{_custAttr.values}" var="_value"
-									rowKeyVar="_valueIdx">
-									<f:event type="postValidate"
-										listener="#{_customAttributeAction.validateAttributeValues}" />
-									<ui:param name="_aid"
-										value="#{_customAttributeAction.attributeIds[_custAttr.metadata]}" />
-									<ox:decorate id="D"
-										label="#{_custAttr.metadata.displayName eq 'Gender, male or female' ? 'Gender' : _custAttr.metadata.displayName } #{_valueIdx == 0 ? '' : _valueIdx}"
-										rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName ne 'Password')}"
-										leftClass="col-sm-3" rightClass="col-sm-9">
-										<div class="col-xs-10" id="attributeID">
-											<h:inputText
-												styleClass="form-control #{_custAttr.metadata.displayName}"
-												p:placeholder="#{msgs['person.clickToEnter']} #{_custAttr.metadata.displayName} #{_valueIdx == 0 ? '' : _valueIdx}"
-												style="width:100%" value="#{_custAttr.values[_valueIdx]}"
-												id="custId_text_#{_custAttrIdx}" require="#{_mustEnter}"
-												requiredMessage="#{msgs['person.pleaseEnter']} #{_custAttr.metadata.displayName} #{_valueIdx == 0 ? '' : _valueIdx}. "
-												validator="gluuAttributeValidator" autocomplete="off"
-												rendered="#{(_custAttr.adminCanEdit or _mustEnter) and 
+
+
+                        </script>
+                        <a4j:repeat id="L"
+                                    value="#{_customAttributeAction.customAttributes}"
+                                    var="_custAttr" rowKeyVar="_custAttrIdx">
+                            <h:panelGroup rendered="#{_custAttr.metadata != null}" id="mF">
+                                <ui:param name="_mandatory" value="#{_custAttr.mandatory}"/>
+                                <ui:param name="_mustEnter" value="#{_mandatory}"/>
+                                <a4j:repeat id="IL" value="#{_custAttr.values}" var="_value"
+                                            rowKeyVar="_valueIdx">
+                                    <f:event type="postValidate"
+                                             listener="#{_customAttributeAction.validateAttributeValues}"/>
+                                    <ui:param name="_aid"
+                                              value="#{_customAttributeAction.attributeIds[_custAttr.metadata]}"/>
+                                    <ox:decorate id="D"
+                                                 label="#{_custAttr.metadata.displayName eq 'Gender, male or female' ? 'Gender' : _custAttr.metadata.displayName } #{_valueIdx == 0 ? '' : _valueIdx}"
+                                                 rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName ne 'Password')}"
+                                                 leftClass="col-sm-3" rightClass="col-sm-9">
+                                        <div class="col-xs-10" id="attributeID">
+                                            <h:inputText
+                                                    styleClass="form-control #{_custAttr.metadata.displayName}"
+                                                    p:placeholder="#{msgs['person.clickToEnter']} #{_custAttr.metadata.displayName} #{_valueIdx == 0 ? '' : _valueIdx}"
+                                                    style="width:100%" value="#{_custAttr.values[_valueIdx]}"
+                                                    id="custId_text_#{_custAttrIdx}" require="#{_mustEnter}"
+                                                    requiredMessage="#{msgs['person.pleaseEnter']} #{_custAttr.metadata.displayName} #{_valueIdx == 0 ? '' : _valueIdx}. "
+                                                    validator="gluuAttributeValidator" autocomplete="off"
+                                                    rendered="#{(_custAttr.adminCanEdit or _mustEnter) and
 			                                                            (_custAttr.metadata.dataType.value ne 'boolean') and 
 			                                                            (_custAttr.metadata.displayName ne 'Password') and 
 			                                                            (_custAttr.metadata.displayName ne 'Gender, male or female') and
@@ -98,353 +100,307 @@
 			                                                            (_custAttr.metadata.displayName ne 'User Status') and 
 			                                                            (_custAttr.metadata.displayName ne 'Birthdate')}">
 
-												<rich:validator event="blur" />
-											</h:inputText>
-											<b:message
-												rendered="#{(_custAttr.adminCanEdit or _mustEnter) and 
+                                                <rich:validator event="blur"/>
+                                            </h:inputText>
+                                            <b:message
+                                                    rendered="#{(_custAttr.adminCanEdit or _mustEnter) and
 			                                                            (_custAttr.metadata.dataType.value ne 'boolean') and 
 			                                                            (_custAttr.metadata.displayName ne 'Password') and 
 			                                                            (_custAttr.metadata.displayName ne 'Gender, male or female') and
 			                                                            (_custAttr.metadata.dataType.value ne 'certificate') and 
 			                                                            (_custAttr.metadata.displayName ne 'Email') and
 			                                                            (_custAttr.metadata.displayName ne 'User Status') and 
-			                                                            (_custAttr.metadata.displayName ne 'Birthdate')}" />
-											<h:inputText
-												styleClass="form-control #{_custAttr.metadata.displayName}"
-												p:placeholder="#{msgs['person.clickToEnter']} email"
-												style="width:100%" value="#{_custAttr.values[_valueIdx]}"
-												id="Email" required="#{_mustEnter}" p:type="email"
-												prependId="false" maxlength="100"
-												validator="gluuAttributeValidator" autocomplete="off"
-												requiredMessage="Please provide a valid email address"
-												rendered="#{(_custAttr.adminCanEdit or _mustEnter) and 
+			                                                            (_custAttr.metadata.displayName ne 'Birthdate')}"/>
+                                            <h:inputText
+                                                    styleClass="form-control #{_custAttr.metadata.displayName}"
+                                                    p:placeholder="#{msgs['person.clickToEnter']} email"
+                                                    style="width:100%" value="#{_custAttr.values[_valueIdx]}"
+                                                    id="Email" required="#{_mustEnter}" p:type="email"
+                                                    prependId="false" maxlength="100"
+                                                    validator="gluuAttributeValidator" autocomplete="off"
+                                                    requiredMessage="Please provide a valid email address"
+                                                    rendered="#{(_custAttr.adminCanEdit or _mustEnter) and
 			                                                            (_custAttr.metadata.dataType.value ne 'boolean') and 
 			                                                            (_custAttr.metadata.displayName ne 'Password') and 
 			                                                            (_custAttr.metadata.displayName ne 'Gender, male or female') and
 			                                                            (_custAttr.metadata.dataType.value ne 'certificate') and
 			                                                            (_custAttr.metadata.displayName ne 'Birthdate') and
 			                                                            (_custAttr.metadata.displayName eq 'Email')}">
-												<f:validateRegex
-													pattern="[\w\.-]*[a-zA-Z0-9_]@[\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]" />
-												<rich:validator event="blur" />
-											</h:inputText>
-											<b:message
-												rendered="#{(_custAttr.adminCanEdit or _mustEnter) and 
+                                                <f:validateRegex
+                                                        pattern="[\w\.-]*[a-zA-Z0-9_]@[\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]"/>
+                                                <rich:validator event="blur"/>
+                                            </h:inputText>
+                                            <b:message
+                                                    rendered="#{(_custAttr.adminCanEdit or _mustEnter) and
 			                                                            (_custAttr.metadata.dataType.value ne 'boolean') and 
 			                                                            (_custAttr.metadata.displayName ne 'Password') and 
 			                                                            (_custAttr.metadata.displayName ne 'Gender, male or female') and
 			                                                            (_custAttr.metadata.dataType.value ne 'certificate') and
 			                                                            (_custAttr.metadata.displayName ne 'Birthdate') and
-			                                                            (_custAttr.metadata.displayName eq 'Email')}" />
-											<b:dateTimePicker id="calendar" renderLabel="false"
-												mode="toggle-icon"
-												rendered="#{(_custAttr.adminCanEdit or _mustEnter) and 
+			                                                            (_custAttr.metadata.displayName eq 'Email')}"/>
+                                            <b:dateTimePicker id="calendar" renderLabel="false"
+                                                              mode="toggle-icon"
+                                                              rendered="#{(_custAttr.adminCanEdit or _mustEnter) and
 			                                                            (_custAttr.metadata.displayName eq 'Birthdate')}"
-												value="#{_custAttr.values[_valueIdx]}" format="DD.MM.YYYY">
-												<f:converter
-													converterId="org.gluu.jsf2.converter.UserDateConverter" />
-											</b:dateTimePicker>
-											<h:selectOneMenu
-												styleClass="rounded form-control #{_custAttr.metadata.displayName}"
-												value="#{updatePersonAction.gluuStatus}"
-												required="#{_mustEnter}" id="statusId"
-												rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'User Status') }">
-												<f:selectItems
-													value="#{updatePersonAction.activeInactiveStatuses}"
-													var="_type" itemLabel="#{_type}" />
-											</h:selectOneMenu>
-											<h:selectOneMenu
-												styleClass="rounded form-control #{_custAttr.metadata.displayName}"
-												value="#{_custAttr.value}" required="#{_mustEnter}"
-												id="GenderId"
-												rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'Gender, male or female') }">
-												<f:selectItem itemValue="female" itemLabel="female" />
-												<f:selectItem itemValue="male" itemLabel="male" />
-											</h:selectOneMenu>
-											<h:selectOneMenu
-												styleClass="rounded form-control #{_custAttr.metadata.displayName}"
-												value="#{_custAttr.booleanValues[_valueIdx]}"
-												required="#{_mustEnter}" id="custId_boolean#{_custAttrIdx}"
-												rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.dataType.value eq 'boolean') and (_custAttr.metadata.displayName ne 'User Status') }">
-												<f:selectItems
-													value="#{organizationService.javaBooleanSelectionTypes}"
-													var="_type" itemLabel="#{_type.displayName}" />
-												<f:converter
-													converterId="org.gluu.jsf2.converter.EnumConverter" />
-											</h:selectOneMenu>
-											<h:inputTextarea cols="40" rows="3"
-												styleClass="form-control #{_custAttr.metadata.displayName}"
-												value="#{_custAttr.values[_valueIdx]}"
-												required="#{_mustEnter}"
-												requiredMessage="#{msgs['person.pleaseEnter']} #{_custAttr.metadata.displayName} #{_valueIdx == 0 ? '' : _valueIdx}. "
-												rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.dataType.value eq 'certificate')}">
-											</h:inputTextarea>
-										</div>
-										<h:outputText value="&#160;" />
-										<div class="col-xs-2" style="margin-top: -15px;">
-											<a4j:commandLink
-												action="#{_customAttributeAction.removeCustomAttribute(_custAttr.metadata.inum)}"
-												render="selectedCustomAttributesId"
-												styleClass="glyphicon glyphicon-remove removeAttributeButton iconButtonRemove"
-												onbegin="changeAttributeVisibility('#{_aid}', true);"
-												rendered="#{_custAttr.adminCanEdit and not _mandatory and not _custAttr.metadata.oxMultiValuedAttribute and _custAttr.metadata.displayName ne 'Username' and _custAttr.metadata.displayName ne 'Email' and _custAttr.metadata.displayName ne 'Inum'}"
-												execute="@this">
-											</a4j:commandLink>
-											<a4j:commandLink
-												action="#{_customAttributeAction.removeCustomAttribute(_custAttr.metadata.inum)}"
-												render="selectedCustomAttributesId"
-												styleClass="glyphicon glyphicon-remove removeAttributeButton iconButtonRemove"
-												onbegin="changeAttributeVisibility('#{_aid}', true);"
-												rendered="#{_custAttr.adminCanEdit and not _mandatory and _custAttr.metadata.oxMultiValuedAttribute and fn:length(_custAttr.values) eq 1 }"
-												execute="@this">
-											</a4j:commandLink>
-											<a4j:commandLink
-												action="#{_customAttributeAction.removeMultiValuesInAttributes(_custAttr.metadata.inum,_mandatory,_custAttr.values[_valueIdx])}"
-												render="selectedCustomAttributesId"
-												styleClass="glyphicon glyphicon-remove removeMultiValueAttributeButton iconButtonRemove"
-												rendered="#{_custAttr.adminCanEdit and not _mandatory and _custAttr.metadata.oxMultiValuedAttribute and fn:length(_custAttr.values) gt 1 }"
-												execute="@this">
-											</a4j:commandLink>
-											<a4j:commandLink
-												action="#{_customAttributeAction.addMultiValuesInAttributes(_custAttr.metadata.inum,_mandatory)}"
-												render="selectedCustomAttributesId"
-												styleClass="glyphicon glyphicon-plus addMultiValueAttributeButton iconButtonAdd"
-												rendered="#{_custAttr.adminCanEdit and _custAttr.metadata.oxMultiValuedAttribute and _valueIdx == 0}"
-												execute="@this">
-											</a4j:commandLink>
+                                                              value="#{_custAttr.values[_valueIdx]}"
+                                                              format="DD.MM.YYYY">
+                                                <f:converter
+                                                        converterId="org.gluu.jsf2.converter.UserDateConverter"/>
+                                            </b:dateTimePicker>
+                                            <h:selectOneMenu
+                                                    styleClass="rounded form-control #{_custAttr.metadata.displayName}"
+                                                    value="#{updatePersonAction.gluuStatus}"
+                                                    required="#{_mustEnter}" id="statusId"
+                                                    rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'User Status') }">
+                                                <f:selectItems
+                                                        value="#{updatePersonAction.activeInactiveStatuses}"
+                                                        var="_type" itemLabel="#{_type}"/>
+                                            </h:selectOneMenu>
+                                            <h:selectOneMenu
+                                                    styleClass="rounded form-control #{_custAttr.metadata.displayName}"
+                                                    value="#{_custAttr.value}" required="#{_mustEnter}"
+                                                    id="GenderId"
+                                                    rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'Gender, male or female') }">
+                                                <f:selectItem itemValue="female" itemLabel="female"/>
+                                                <f:selectItem itemValue="male" itemLabel="male"/>
+                                            </h:selectOneMenu>
+                                            <h:selectOneMenu
+                                                    styleClass="rounded form-control #{_custAttr.metadata.displayName}"
+                                                    value="#{_custAttr.booleanValues[_valueIdx]}"
+                                                    required="#{_mustEnter}" id="custId_boolean#{_custAttrIdx}"
+                                                    rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.dataType.value eq 'boolean') and (_custAttr.metadata.displayName ne 'User Status') }">
+                                                <f:selectItems
+                                                        value="#{organizationService.javaBooleanSelectionTypes}"
+                                                        var="_type" itemLabel="#{_type.displayName}"/>
+                                                <f:converter
+                                                        converterId="org.gluu.jsf2.converter.EnumConverter"/>
+                                            </h:selectOneMenu>
+                                            <h:inputTextarea cols="40" rows="3"
+                                                             styleClass="form-control #{_custAttr.metadata.displayName}"
+                                                             value="#{_custAttr.values[_valueIdx]}"
+                                                             required="#{_mustEnter}"
+                                                             requiredMessage="#{msgs['person.pleaseEnter']} #{_custAttr.metadata.displayName} #{_valueIdx == 0 ? '' : _valueIdx}. "
+                                                             rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.dataType.value eq 'certificate')}">
+                                            </h:inputTextarea>
+                                        </div>
+                                        <h:outputText value="&#160;"/>
+                                        <div class="col-xs-2" style="margin-top: -15px;">
+                                            <a4j:commandLink
+                                                    action="#{_customAttributeAction.removeCustomAttribute(_custAttr.metadata.inum)}"
+                                                    render="selectedCustomAttributesId"
+                                                    styleClass="glyphicon glyphicon-remove removeAttributeButton iconButtonRemove"
+                                                    onbegin="changeAttributeVisibility('#{_aid}', true);"
+                                                    rendered="#{_custAttr.adminCanEdit and not _mandatory and not _custAttr.metadata.oxMultiValuedAttribute and _custAttr.metadata.displayName ne 'Username' and _custAttr.metadata.displayName ne 'Email' and _custAttr.metadata.displayName ne 'Inum'}"
+                                                    execute="@this">
+                                            </a4j:commandLink>
+                                            <a4j:commandLink
+                                                    action="#{_customAttributeAction.removeCustomAttribute(_custAttr.metadata.inum)}"
+                                                    render="selectedCustomAttributesId"
+                                                    styleClass="glyphicon glyphicon-remove removeAttributeButton iconButtonRemove"
+                                                    onbegin="changeAttributeVisibility('#{_aid}', true);"
+                                                    rendered="#{_custAttr.adminCanEdit and not _mandatory and _custAttr.metadata.oxMultiValuedAttribute and fn:length(_custAttr.values) eq 1 }"
+                                                    execute="@this">
+                                            </a4j:commandLink>
+                                            <a4j:commandLink
+                                                    action="#{_customAttributeAction.removeMultiValuesInAttributes(_custAttr.metadata.inum,_mandatory,_custAttr.values[_valueIdx])}"
+                                                    render="selectedCustomAttributesId"
+                                                    styleClass="glyphicon glyphicon-remove removeMultiValueAttributeButton iconButtonRemove"
+                                                    rendered="#{_custAttr.adminCanEdit and not _mandatory and _custAttr.metadata.oxMultiValuedAttribute and fn:length(_custAttr.values) gt 1 }"
+                                                    execute="@this">
+                                            </a4j:commandLink>
+                                            <a4j:commandLink
+                                                    action="#{_customAttributeAction.addMultiValuesInAttributes(_custAttr.metadata.inum,_mandatory)}"
+                                                    render="selectedCustomAttributesId"
+                                                    styleClass="glyphicon glyphicon-plus addMultiValueAttributeButton iconButtonAdd"
+                                                    rendered="#{_custAttr.adminCanEdit and _custAttr.metadata.oxMultiValuedAttribute and _valueIdx == 0}"
+                                                    execute="@this">
+                                            </a4j:commandLink>
 
-										</div>
-									</ox:decorate>
-									<ox:decorate
-										rendered="#{not (_custAttr.adminCanEdit or _mustEnter)}"
-										label="#{_custAttr.metadata.displayName}" leftClass="col-sm-3"
-										rightClass="col-sm-9">
-										<h:outputText style="margin-left:19px;"
-											value="#{_custAttr.values[_valueIdx]}"
-											rendered="#{not (_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName ne 'memberOf')}" />
-										<h:outputText style="margin-left:19px;"
-											value="#{updatePersonAction.getGroupName(_custAttr.values[_valueIdx])}"
-											rendered="#{not (_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'memberOf')}" />
-										<h:outputText value="&#160;" />
-										<a4j:commandLink
-											action="#{_customAttributeAction.removeCustomAttribute(_custAttr.metadata.inum)}"
-											render="selectedCustomAttributesId"
-											onbegin="changeAttributeVisibility('#{_aid}', true);"
-											rendered="#{_custAttr.adminCanEdit and not _mandatory}"
-											execute="@this">
-											<h:graphicImage value="/img/remove.gif" />
-										</a4j:commandLink>
-									</ox:decorate>
-									<ox:decorate label="#{msgs['person.password']}" id="P"
-										rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'Password')}"
-										leftClass="col-sm-3" rightClass="col-sm-9">
-										<div class="col-xs-10">
-											<h:inputSecret
-												p:placeholder="#{msgs['person.clickToEnter']} #{msgs['person.password']}"
-												styleClass="FirstPasswordField form-control"
-												style="width:100%" value="#{updatePersonAction.password}"
-												validator="#{updatePersonAction.validateConfirmPassword}"
-												id="custpasswordId" require="#{_mustEnter}"
-												requiredMessage="Password is required" autocomplete="off"
-												rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'Password')}">
-												<rich:validator event="blur" />
-											</h:inputSecret>
-											<h:graphicImage value="/img/eye.png" id="viewPassword"
-												styleClass="FirstPasswordFieldShow"
-												style="float:right; margin-right:-35px; margin-top:-35px;"
-												onclick="showPassword1(); return false;" />
-											<h:graphicImage value="/img/eye-hidden.png" id="hidePassword"
-												styleClass="FirstPasswordFieldHide"
-												style="display: none; float:right; margin-right:-35px; margin-top:-35px;"
-												onclick="hidePassword1(); return false;" />
-											<b:message />
-										</div>
-									</ox:decorate>
-									<ox:decorate label="#{msgs['person.confirmPassword']}"
-										rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'Password')}"
-										leftClass="col-sm-3" rightClass="col-sm-9">
-										<div class="col-xs-10">
-											<h:inputSecret styleClass="SecondPasswordField form-control"
-												style="width:100%"
-												p:placeholder="#{msgs['person.clickToEnter']} #{msgs['person.confirmPassword']}"
-												validator="#{updatePersonAction.validateConfirmPassword}"
-												require="#{_mustEnter}" id="custconfirmpasswordId"
-												value="#{updatePersonAction.confirmPassword}"
-												requiredMessage="Confirm password is required" autocomplete="off"
-												rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'Password')}">
-												<rich:validator event="blur" />
-											</h:inputSecret>
-											<h:graphicImage value="/img/eye.png"
-												styleClass="SecondPasswordFieldShow"
-												style="float:right; margin-right:-35px; margin-top:-35px;"
-												id="viewCustPassword"
-												onclick="showPassword2(); return false;" />
-											<h:graphicImage value="/img/eye-hidden.png"
-												id="hideCustPassword" styleClass="SecondPasswordFieldHide"
-												style="float:right; margin-right:-35px; display: none;margin-top:-35px;"
-												onclick="hidePassword2(); return false;" />
-											<b:message />
-										</div>
-									</ox:decorate>
-								</a4j:repeat>
-							</h:panelGroup>
-						</a4j:repeat>
-					</h:panelGroup>
-				</div>
-				<div class="col-sm-5 col-lg-5" style="padding: 0px;">
-					<b:panel title="Available User Claims" look="primary"
-						id="tabPanelGroupId" collapsible="false">
-						<b:tabView id="attributeTabPanelId" pills="true"
-							contentStyle="border: 1px solid #337ab7; padding:10px; border-radius:5px;">
-							<ui:param name="_list"
-								value="#{gluufn:toList(_customAttributeAction.attributeByOrigin)}" />
-							<b:tab rendered="#{_list.size() > 0}"
-								title="#{_customAttributeAction.originDisplayNames[_list.get(0).key]}">
-								<div class="row" style="margin-left: 5px;">
-									<a4j:repeat var="attr" value="#{_list.get(0).value}">
-										<ui:fragment rendered="#{attr.status.value eq 'active'}">
-											<div>
-												<ui:param name="_aid"
-													value="#{_customAttributeAction.attributeIds[attr]}" />
-												<a4j:commandLink p:aid="#{_aid}" value="#{attr.displayName}"
-													action="#{_customAttributeAction.addCustomAttribute(attr.inum)}"
-													render="selectedCustomAttributesId"
-													oncomplete="changeAttributeVisibility('${component.clientId}', false);"
-													style="#{_customAttributeAction.containsCustomAttribute(attr) ? 'display: none;' : ''}"
-													execute="@this">
-													<f:event
-														listener="#{_customAttributeAction.renderAttribute}"
-														type="preRenderComponent" />
-												</a4j:commandLink>
-											</div>
-										</ui:fragment>
-									</a4j:repeat>
-								</div>
-							</b:tab>
-							<b:tab rendered="#{_list.size() > 1}"
-								title="#{_customAttributeAction.originDisplayNames[_list.get(1).key]}">
-								<b:label severity="warning"
-									text="Only active attributes are displayed." />
-								<div class="row" style="margin-left: 5px;">
-									<a4j:repeat var="attr" value="#{_list.get(1).value}">
-										<ui:fragment rendered="#{attr.status.value eq 'active'}">
-											<div>
-												<ui:param name="_aid"
-													value="#{_customAttributeAction.attributeIds[attr]}" />
-												<a4j:commandLink p:aid="#{_aid}" value="#{attr.displayName}"
-													action="#{_customAttributeAction.addCustomAttribute(attr.inum)}"
-													render="selectedCustomAttributesId"
-													oncomplete="changeAttributeVisibility('${component.clientId}', false);"
-													style="#{_customAttributeAction.containsCustomAttribute(attr) ? 'display: none;' : ''}"
-													execute="@this">
-													<f:event
-														listener="#{_customAttributeAction.renderAttribute}"
-														type="preRenderComponent" />
-												</a4j:commandLink>
-											</div>
-										</ui:fragment>
-									</a4j:repeat>
-								</div>
-							</b:tab>
-							<b:tab rendered="#{_list.size() > 2}"
-								title="#{_customAttributeAction.originDisplayNames[_list.get(2).key]}">
-								<b:label severity="warning"
-									text="Only active attributes are displayed." />
-								<div class="row" style="margin-left: 5px;">
-									<a4j:repeat var="attr" value="#{_list.get(2).value}">
-										<ui:fragment rendered="#{attr.status.value eq 'active'}">
-											<div>
-												<ui:param name="_aid"
-													value="#{_customAttributeAction.attributeIds[attr]}" />
-												<a4j:commandLink p:aid="#{_aid}" value="#{attr.displayName}"
-													action="#{_customAttributeAction.addCustomAttribute(attr.inum)}"
-													render="selectedCustomAttributesId"
-													oncomplete="changeAttributeVisibility('${component.clientId}', false);"
-													style="#{_customAttributeAction.containsCustomAttribute(attr) ? 'display: none;' : ''}"
-													execute="@this">
-													<f:event
-														listener="#{_customAttributeAction.renderAttribute}"
-														type="preRenderComponent" />
-												</a4j:commandLink>
-											</div>
-										</ui:fragment>
-									</a4j:repeat>
-								</div>
-							</b:tab>
-						</b:tabView>
-					</b:panel>
-				</div>
-			</div>
-			<div class="row"
-				style="margin-left: 5px; margin-right: 5px; background: white;">
-				<b:panel title="#{msgs['person.authenticationmethods']}"
-					look="success"
-					rendered="#{updatePersonAction.deviceDataMap.size() gt 0}">
-					<b:dataTable id="AuthMethod" style="text-align:center;"
-						rendered="#{updatePersonAction.deviceDataMap.size() gt 0}"
-						value="#{updatePersonAction.deviceDataMap}" var="_value"
-						select="true" responsive="true" searching="false">
-						<b:dataTableColumn label="ID">
-							<h:panelGroup id="U2fPanelid">
-								<a4j:commandLink id="u2fConfig"
-									action="#{updatePersonAction.fetchFidoRecord(_value.id)}"
-									value="#{_value.id}"
-									rendered="#{(not _value.id.contains(':')) and (_value.modality ne 'OTP Device') and ( _value.modality ne 'FIDO2') and ( _value.modality ne 'Mobile Device') and ( _value.modality ne 'Passport')}"
-									render=":U2fPanel"
-									oncomplete="#{rich:component('U2fPanel')}.show();"
-									execute="@this" />
-							</h:panelGroup>
-							<h:panelGroup id="NoU2fPanelid"
-								rendered="#{(_value.modality eq 'OTP Device') or ( _value.modality eq 'Mobile Device')}">
-                                             #{_value.id}                                           
+                                        </div>
+                                    </ox:decorate>
+                                    <ox:decorate
+                                            rendered="#{not (_custAttr.adminCanEdit or _mustEnter)}"
+                                            label="#{_custAttr.metadata.displayName}" leftClass="col-sm-3"
+                                            rightClass="col-sm-9">
+                                        <h:outputText style="margin-left:19px;"
+                                                      value="#{_custAttr.values[_valueIdx]}"
+                                                      rendered="#{not (_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName ne 'memberOf')}"/>
+                                        <h:outputText style="margin-left:19px;"
+                                                      value="#{updatePersonAction.getGroupName(_custAttr.values[_valueIdx])}"
+                                                      rendered="#{not (_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'memberOf')}"/>
+                                        <h:outputText value="&#160;"/>
+                                        <a4j:commandLink
+                                                action="#{_customAttributeAction.removeCustomAttribute(_custAttr.metadata.inum)}"
+                                                render="selectedCustomAttributesId"
+                                                onbegin="changeAttributeVisibility('#{_aid}', true);"
+                                                rendered="#{_custAttr.adminCanEdit and not _mandatory}"
+                                                execute="@this">
+                                            <h:graphicImage value="/img/remove.gif"/>
+                                        </a4j:commandLink>
+                                    </ox:decorate>
+                                    <ox:decorate label="#{msgs['person.password']}" id="P"
+                                                 rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'Password')}"
+                                                 leftClass="col-sm-3" rightClass="col-sm-9">
+                                        <div class="col-xs-10">
+                                            <h:inputSecret
+                                                    p:placeholder="#{msgs['person.clickToEnter']} #{msgs['person.password']}"
+                                                    styleClass="FirstPasswordField form-control"
+                                                    style="width:100%" value="#{updatePersonAction.password}"
+                                                    validator="#{updatePersonAction.validateConfirmPassword}"
+                                                    id="custpasswordId" require="#{_mustEnter}"
+                                                    requiredMessage="Password is required" autocomplete="off"
+                                                    rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'Password')}">
+                                                <rich:validator event="blur"/>
+                                            </h:inputSecret>
+                                            <h:graphicImage value="/img/eye.png" id="viewPassword"
+                                                            styleClass="FirstPasswordFieldShow"
+                                                            style="float:right; margin-right:-35px; margin-top:-35px;"
+                                                            onclick="showPassword1(); return false;"/>
+                                            <h:graphicImage value="/img/eye-hidden.png" id="hidePassword"
+                                                            styleClass="FirstPasswordFieldHide"
+                                                            style="display: none; float:right; margin-right:-35px; margin-top:-35px;"
+                                                            onclick="hidePassword1(); return false;"/>
+                                            <b:message/>
+                                        </div>
+                                    </ox:decorate>
+                                    <ox:decorate label="#{msgs['person.confirmPassword']}"
+                                                 rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'Password')}"
+                                                 leftClass="col-sm-3" rightClass="col-sm-9">
+                                        <div class="col-xs-10">
+                                            <h:inputSecret styleClass="SecondPasswordField form-control"
+                                                           style="width:100%"
+                                                           p:placeholder="#{msgs['person.clickToEnter']} #{msgs['person.confirmPassword']}"
+                                                           validator="#{updatePersonAction.validateConfirmPassword}"
+                                                           require="#{_mustEnter}" id="custconfirmpasswordId"
+                                                           value="#{updatePersonAction.confirmPassword}"
+                                                           requiredMessage="Confirm password is required"
+                                                           autocomplete="off"
+                                                           rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName eq 'Password')}">
+                                                <rich:validator event="blur"/>
+                                            </h:inputSecret>
+                                            <h:graphicImage value="/img/eye.png"
+                                                            styleClass="SecondPasswordFieldShow"
+                                                            style="float:right; margin-right:-35px; margin-top:-35px;"
+                                                            id="viewCustPassword"
+                                                            onclick="showPassword2(); return false;"/>
+                                            <h:graphicImage value="/img/eye-hidden.png"
+                                                            id="hideCustPassword" styleClass="SecondPasswordFieldHide"
+                                                            style="float:right; margin-right:-35px; display: none;margin-top:-35px;"
+                                                            onclick="hidePassword2(); return false;"/>
+                                            <b:message/>
+                                        </div>
+                                    </ox:decorate>
+                                </a4j:repeat>
                             </h:panelGroup>
-							<h:panelGroup id="FIDO2DeviceID"
-								rendered="#{(_value.modality eq 'FIDO2')}">
-                                             #{_value.id}                                           
+                        </a4j:repeat>
+                    </h:panelGroup>
+                </div>
+                <div class="col-sm-5 col-lg-5" style="padding: 0px;">
+                    <b:panel title="Available User Claims" look="primary"
+                             id="tabPanelGroupId" collapsible="false">
+                        <ui:param name="_list"
+                                  value="#{gluufn:toList(_customAttributeAction.attributeByOrigin)}" />
+                        <pp:tabView id="attributeTabPanelId" dynamic="false"
+                                   value="#{_list}" var="_product" varStatus="status">
+                            <pp:tab title="#{_customAttributeAction.originDisplayNames[_product.key]}">
+                                <b:label severity="info"
+                                         text="Only active attributes are displayed." />
+                                <div class="row" style="margin-left: 5px; margin-top: 5px;">
+                                    <ui:repeat var="attr" value="#{_product.value}">
+                                        <ui:fragment rendered="#{attr.status.value eq 'active'}">
+                                            <div>
+                                                <ui:param name="_aid"
+                                                          value="#{_customAttributeAction.attributeIds[attr]}"/>
+                                                <a4j:commandLink p:aid="#{_aid}" value="#{attr.displayName}"
+                                                                 action="#{_customAttributeAction.addCustomAttribute(attr.inum)}"
+                                                                 render="selectedCustomAttributesId"
+                                                                 oncomplete="changeAttributeVisibility('${component.clientId}', false);"
+                                                                 style="#{_customAttributeAction.containsCustomAttribute(attr) ? 'display: none;' : ''}"
+                                                                 execute="@this">
+                                                    <f:event
+                                                            listener="#{_customAttributeAction.renderAttribute}"
+                                                            type="preRenderComponent"/>
+                                                </a4j:commandLink>
+                                            </div>
+                                        </ui:fragment>
+                                    </ui:repeat>
+                                </div>
+                            </pp:tab>
+
+                        </pp:tabView>
+                    </b:panel>
+                </div>
+            </div>
+            <div class="row"
+                 style="margin-left: 5px; margin-right: 5px; background: white;">
+                <b:panel title="#{msgs['person.authenticationmethods']}"
+                         look="success"
+                         rendered="#{updatePersonAction.deviceDataMap.size() gt 0}">
+                    <b:dataTable id="AuthMethod" style="text-align:center;"
+                                 rendered="#{updatePersonAction.deviceDataMap.size() gt 0}"
+                                 value="#{updatePersonAction.deviceDataMap}" var="_value"
+                                 select="true" responsive="true" searching="false">
+                        <b:dataTableColumn label="ID">
+                            <h:panelGroup id="U2fPanelid">
+                                <a4j:commandLink id="u2fConfig"
+                                                 action="#{updatePersonAction.fetchFidoRecord(_value.id)}"
+                                                 value="#{_value.id}"
+                                                 rendered="#{(not _value.id.contains(':')) and (_value.modality ne 'OTP Device') and ( _value.modality ne 'FIDO2') and ( _value.modality ne 'Mobile Device') and ( _value.modality ne 'Passport')}"
+                                                 render=":U2fPanel"
+                                                 oncomplete="#{rich:component('U2fPanel')}.show();"
+                                                 execute="@this"/>
                             </h:panelGroup>
-							<h:panelGroup id="PassportPanelid"
-								rendered="#{(_value.modality eq 'Passport')}">
-                                             #{_value.id.length() gt 10 ? _value.id.substring(0,7).concat('...') : _value.id}                                           
+                            <h:panelGroup id="NoU2fPanelid"
+                                          rendered="#{(_value.modality eq 'OTP Device') or ( _value.modality eq 'Mobile Device')}">
+                                #{_value.id}
                             </h:panelGroup>
-						</b:dataTableColumn>
-						<b:dataTableColumn value="#{_value.nickName}" label="Nickname" />
-						<b:dataTableColumn value="#{_value.modality}" label="Modality" />
-						<b:dataTableColumn value="#{_value.creationDate}"
-							label="Date Added" />
-						<b:dataTableColumn label="Remove">
-							<a4j:commandLink render="PForm"
-								action="#{updatePersonAction.setDeviceToBeRemove(_value)}"
-								onclick="#{rich:component('deleteDevice:acceptRemovalModalPanel')}.show();"
-								execute="@this" eventsQueue="personQueue"
-								styleClass="glyphicon glyphicon-remove">
-							</a4j:commandLink>
-						</b:dataTableColumn>
-					</b:dataTable>
-				</b:panel>
-				<b:panel title="PairWideIdentifiers"
-					rendered="#{updatePersonAction.userPairWideIdentifiers.size() gt 0}"
-					look="success">
-					<b:dataTable id="PWI" style="text-align:center;"
-						rendered="#{updatePersonAction.userPairWideIdentifiers.size() gt 0}"
-						value="#{updatePersonAction.userPairWideIdentifiers}" var="_value"
-						select="true" responsive="true" searching="false">
-						<b:dataTableColumn value="#{_value.oxId}" label="Pairwise ID" />
-						<b:dataTableColumn
-							value="#{updatePersonAction.getClientName(_value.clientId)}"
-							label="Client" />
-						<b:dataTableColumn value="#{_value.sp}" label="Hostname" />
-						<b:dataTableColumn label="Actions">
-							<a4j:commandLink value="Remove" render="PForm"
-								onclick="#{rich:component('deletePairWise:acceptRemovalModalPanel')}.show();"
-								action="#{updatePersonAction.setPwiToBeRemove(_value)}"
-								execute="@this" eventsQueue="personQueue"
-								styleClass="btn-primary">
-							</a4j:commandLink>
-						</b:dataTableColumn>
-					</b:dataTable>
-				</b:panel>
-			</div>
-			<ui:insert name="controlButtons" />
-		</b:panel>
-	</h:form>
+                            <h:panelGroup id="FIDO2DeviceID"
+                                          rendered="#{(_value.modality eq 'FIDO2')}">
+                                #{_value.id}
+                            </h:panelGroup>
+                            <h:panelGroup id="PassportPanelid"
+                                          rendered="#{(_value.modality eq 'Passport')}">
+                                #{_value.id.length() gt 10 ? _value.id.substring(0,7).concat('...') : _value.id}
+                            </h:panelGroup>
+                        </b:dataTableColumn>
+                        <b:dataTableColumn value="#{_value.nickName}" label="Nickname"/>
+                        <b:dataTableColumn value="#{_value.modality}" label="Modality"/>
+                        <b:dataTableColumn value="#{_value.creationDate}"
+                                           label="Date Added"/>
+                        <b:dataTableColumn label="Remove">
+                            <a4j:commandLink render="PForm"
+                                             action="#{updatePersonAction.setDeviceToBeRemove(_value)}"
+                                             onclick="#{rich:component('deleteDevice:acceptRemovalModalPanel')}.show();"
+                                             execute="@this" eventsQueue="personQueue"
+                                             styleClass="glyphicon glyphicon-remove">
+                            </a4j:commandLink>
+                        </b:dataTableColumn>
+                    </b:dataTable>
+                </b:panel>
+                <b:panel title="PairWideIdentifiers"
+                         rendered="#{updatePersonAction.userPairWideIdentifiers.size() gt 0}"
+                         look="success">
+                    <b:dataTable id="PWI" style="text-align:center;"
+                                 rendered="#{updatePersonAction.userPairWideIdentifiers.size() gt 0}"
+                                 value="#{updatePersonAction.userPairWideIdentifiers}" var="_value"
+                                 select="true" responsive="true" searching="false">
+                        <b:dataTableColumn value="#{_value.oxId}" label="Pairwise ID"/>
+                        <b:dataTableColumn
+                                value="#{updatePersonAction.getClientName(_value.clientId)}"
+                                label="Client"/>
+                        <b:dataTableColumn value="#{_value.sp}" label="Hostname"/>
+                        <b:dataTableColumn label="Actions">
+                            <a4j:commandLink value="Remove" render="PForm"
+                                             onclick="#{rich:component('deletePairWise:acceptRemovalModalPanel')}.show();"
+                                             action="#{updatePersonAction.setPwiToBeRemove(_value)}"
+                                             execute="@this" eventsQueue="personQueue"
+                                             styleClass="btn-primary">
+                            </a4j:commandLink>
+                        </b:dataTableColumn>
+                    </b:dataTable>
+                </b:panel>
+            </div>
+            <ui:insert name="controlButtons"/>
+        </b:panel>
+    </h:form>
 </ui:composition>
