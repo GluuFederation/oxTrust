@@ -114,10 +114,10 @@ public class JsonConfigurationAction implements Serializable {
 			if (this.cacheConfiguration.getRedisConfiguration().getPassword() != null) {
 				decryptPassword(this.cacheConfiguration.getRedisConfiguration());
 			}
+			this.storeConfiguration = jsonConfigurationService.getDocumentStoreConfiguration();
 			if (this.storeConfiguration.getJcaConfiguration().getPassword() != null) {
 				decryptPassword(this.storeConfiguration.getJcaConfiguration());
 			}
-			this.storeConfiguration = jsonConfigurationService.getDocumentStoreConfiguration();
 			this.oxTrustConfigJson = getProtectedOxTrustappConfiguration(this.oxTrustappConfiguration);
 			this.oxTrustImportPersonConfigJson = getOxTrustImportPersonConfiguration(
 					this.oxTrustImportPersonConfiguration);
