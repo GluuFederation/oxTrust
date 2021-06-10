@@ -34,6 +34,6 @@ public class OptionEntry implements Serializable {
 	}
 
 	public boolean isSecret() {
-		return this.getKey().equalsIgnoreCase("client_secret") ;
+		return this.getKey().equalsIgnoreCase("clientSecret") ;
 	}
 }

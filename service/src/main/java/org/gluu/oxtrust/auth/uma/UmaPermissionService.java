@@ -102,7 +102,7 @@ public class UmaPermissionService implements Serializable {
 
 				} else {
 					this.permissionService = UmaClientFactory.instance().createPermissionService(this.umaMetadata);
-					this.rptStatusService = getRptStatusService();
+					this.rptStatusService = UmaClientFactory.instance().createRptStatusService(this.umaMetadata);
 				}
 			}
 		} catch (Exception ex) {
@@ -156,14 +156,7 @@ public class UmaPermissionService implements Serializable {
 
 		return metadataConfiguration;
 	}
-	
-	private  UmaRptIntrospectionService getRptStatusService() {
-		if(this.rptStatusService == null) {
-		  this.rptStatusService = UmaClientFactory.instance().createRptStatusService(this.umaMetadata);
-		}
-		return this.rptStatusService;
-	}
-
+  
 	public String getUmaConfigurationEndpoint() {
 		String umaIssuer = appConfiguration.getUmaIssuer();
 		if (StringHelper.isEmpty(umaIssuer)) {
@@ -233,14 +226,24 @@ public class UmaPermissionService implements Serializable {
 	private boolean isRptHasPermissions(RptIntrospectionResponse umaRptStatusResponse) {
 		return !((umaRptStatusResponse.getPermissions() == null) || umaRptStatusResponse.getPermissions().isEmpty());
 	}
+	private  UmaRptIntrospectionService getRptStatusService() {
+		if(this.rptStatusService == null) {
+		  this.rptStatusService = UmaClientFactory.instance().createRptStatusService(this.umaMetadata);
+		}
+		return this.rptStatusService;
+	}
 
 	private RptIntrospectionResponse getStatusResponse(Token patToken, String rptToken) {
 		String authorization = "Bearer " + patToken.getAccessToken();
-
+		//TODO: Added this if as a hack since init method is not called upon app startup in scim project   
+		if (this.rptStatusService == null) {
+			init(null);
+		}
+		//end
 		// Determine RPT token to status
 		RptIntrospectionResponse rptStatusResponse = null;
 		try {
-			rptStatusResponse = getRptStatusService().requestRptStatus(authorization, rptToken, "");
+			rptStatusResponse = this.rptStatusService.requestRptStatus(authorization, rptToken, "");
 		} catch (Exception ex) {
 			log.error("Failed to determine RPT status", ex);
 			ex.printStackTrace();
