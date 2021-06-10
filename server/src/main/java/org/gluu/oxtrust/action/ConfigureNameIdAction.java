@@ -126,6 +126,10 @@ public class ConfigureNameIdAction implements Serializable {
 		} else if (OxTrustConstants.RESULT_FAILURE.equals(outcome)) {
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update NameId configuration");
 		}
+		else if (OxTrustConstants.RESULT_RESTART_IDP.equals(outcome)) {
+			facesMessages.add(FacesMessage.SEVERITY_INFO, "Please kindly restart idp service to complete the NameID configuration");
+			outcome = OxTrustConstants.RESULT_SUCCESS;
+		}
 		return outcome;
 	}
 
@@ -155,8 +159,8 @@ public class ConfigureNameIdAction implements Serializable {
 					HttpResponse response = client.execute(request);
 					log.info(EntityUtils.toString(response.getEntity(), "UTF-8"));
 				} catch (Exception e) {
-					e.printStackTrace();
 					log.error("error refreshing nameid setting (kindly restart services manually)", e);
+					return OxTrustConstants.RESULT_RESTART_IDP;
 				}
 			}
 		}
