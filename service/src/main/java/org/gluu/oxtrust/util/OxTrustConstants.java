@@ -56,6 +56,7 @@ public final class OxTrustConstants extends OxConstants {
 
 	public static final String RESULT_SUCCESS = "success";
 	public static final String RESULT_FAILURE = "failure";
+	public static final String RESULT_RESTART_IDP = "restart idp service";
 	public static final String RESULT_DUPLICATE = "duplicate";
 	public static final String RESULT_DISABLED = "disabled";
 	public static final String RESULT_NO_PERMISSIONS = "no_permissions";
