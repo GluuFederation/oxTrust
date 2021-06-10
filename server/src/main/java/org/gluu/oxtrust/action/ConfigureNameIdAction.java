@@ -36,6 +36,7 @@ import org.gluu.oxtrust.service.AttributeService;
 import org.gluu.oxtrust.service.JsonConfigurationService;
 import org.gluu.oxtrust.service.Shibboleth3ConfService;
 import org.gluu.oxtrust.service.TrustService;
+import org.gluu.oxtrust.util.CloudEditionUtil;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.service.security.Secure;
 import org.slf4j.Logger;
@@ -154,7 +155,7 @@ public class ConfigureNameIdAction implements Serializable {
 							.setDefaultRequestConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build())
 							.setSSLSocketFactory(connectionFactory).build();
 					HttpGet request = new HttpGet(
-							"https://localhost/idp/profile/admin/reload-service?id=shibboleth.NameIdentifierGenerationService");
+							"https://"+CloudEditionUtil.getIdpHost().orElse("localhost")+"/idp/profile/admin/reload-service?id=shibboleth.NameIdentifierGenerationService");
 					request.addHeader("User-Agent", "Mozilla/5.0");
 					HttpResponse response = client.execute(request);
 					log.info(EntityUtils.toString(response.getEntity(), "UTF-8"));
