@@ -93,7 +93,7 @@ public class FidoDeviceService implements IFidoDeviceService, Serializable {
 			return ldapEntryManager.findEntries(getDnForFidoDevice(userInum, null), GluuCustomFidoDevice.class,
 					equalityFilter, returnAttributes);
 		} catch (Exception e) {
-			log.error("", e);
+			log.warn("", e);
 			return new ArrayList<>();
 		}
 	}

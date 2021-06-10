@@ -55,7 +55,7 @@ import org.slf4j.Logger;
 
 /**
  * Action class for updating attribute metadata
- * 
+ *
  * @author Yuriy Movchan Date: 10.19.2010
  */
 @ConversationScoped
@@ -137,7 +137,7 @@ public class UpdateAttributeAction implements Serializable {
         this.attribute = new GluuAttribute();
         attribute.setAttributeValidation(new AttributeValidation());
         this.attribute.setStatus(GluuStatus.ACTIVE);
-        this.attribute.setEditType(new GluuUserRole[] { GluuUserRole.ADMIN });
+        this.attribute.setEditType(new GluuUserRole[]{GluuUserRole.ADMIN});
         this.canEdit = true;
         return OxTrustConstants.RESULT_SUCCESS;
     }
@@ -185,9 +185,11 @@ public class UpdateAttributeAction implements Serializable {
         if (StringHelper.isEmpty(this.attribute.getSaml2Uri())) {
             this.attribute.setSaml2Uri(attributeService.getDefaultSaml2Uri(attribute.getName()));
         }
-
         if (attribute.getAttributeValidation() == null) {
             attribute.setAttributeValidation(new AttributeValidation());
+        }
+        if (attribute.getAttributeValidation().getRegexp() == null || StringHelper.isEmpty(attribute.getAttributeValidation().getRegexp())) {
+            this.validationToggle = false;
         } else {
             this.validationToggle = true;
         }
@@ -372,14 +374,14 @@ public class UpdateAttributeAction implements Serializable {
     }
 
     private String determineOrigin(String attributeName) {
-        String[] objectClasses = ArrayHelper.arrayMerge(new String[] { "gluuPerson" },
+        String[] objectClasses = ArrayHelper.arrayMerge(new String[]{"gluuPerson"},
                 appConfiguration.getPersonObjectClassTypes());
 
         SchemaEntry schemaEntry = schemaService.getSchema();
 
         for (String objectClass : objectClasses) {
             Set<String> attributeNames = schemaService.getObjectClassesAttributes(schemaEntry,
-                    new String[] { objectClass });
+                    new String[]{objectClass});
             String atributeNameToSearch = StringHelper.toLowerCase(attributeName);
             boolean contains = attributeNames.contains(atributeNameToSearch);
             if (contains) {
@@ -392,7 +394,7 @@ public class UpdateAttributeAction implements Serializable {
     }
 
     private boolean containsAttributeInGluuObjectClasses(String attributeName) {
-        String[] objectClasses = ArrayHelper.arrayMerge(new String[] { "gluuPerson" },
+        String[] objectClasses = ArrayHelper.arrayMerge(new String[]{"gluuPerson"},
                 appConfiguration.getPersonObjectClassTypes());
 
         SchemaEntry schemaEntry = schemaService.getSchema();
@@ -497,16 +499,14 @@ public class UpdateAttributeAction implements Serializable {
     }
 
     /**
-     * @param update
-     *            the update to set
+     * @param update the update to set
      */
     public void setUpdate(boolean update) {
         this.update = update;
     }
 
     /**
-     * @param showAttributeDeleteConfirmation
-     *            the showAttributeDeleteConfirmation to set
+     * @param showAttributeDeleteConfirmation the showAttributeDeleteConfirmation to set
      */
     public void setShowAttributeDeleteConfirmation(boolean showAttributeDeleteConfirmation) {
         this.showAttributeDeleteConfirmation = showAttributeDeleteConfirmation;
@@ -520,8 +520,7 @@ public class UpdateAttributeAction implements Serializable {
     }
 
     /**
-     * @param canEdit
-     *            the canEdit to set
+     * @param canEdit the canEdit to set
      */
     public void setCanEdit(boolean canEdit) {
         this.canEdit = canEdit;

@@ -63,11 +63,14 @@
 													label="#{msgs['passport.idpinitiated.oidc.passport.acrValues']}"
 													leftClass="col-sm-3" rightClass="col-sm-9"
 													id="PostProfileEndpointID">
-													<h:outputText styleClass="form-control AcrValuesID"
-														style="width:100%" required="true"
-														value="#{passportIdpInitiatedAction.iiConfiguration.openidclient.acrValues}"
-														id="AcrValuesID">
-													</h:outputText>
+													<h:selectOneMenu
+															styleClass="rounded form-control AcrValuesID"
+															value="#{passportIdpInitiatedAction.getAcrValue()}"
+															required="true" id="AcrValuesID">
+														<f:selectItems
+																value="#{passportIdpInitiatedAction.authScripts}"
+																var="_acr" itemLabel="#{_acr}" />
+													</h:selectOneMenu>
 												</ox:decorate>
 											</div>
 											<!-- Second column-->
