@@ -50,11 +50,13 @@ import org.gluu.oxtrust.service.EncryptionService;
 import org.gluu.oxtrust.service.OpenIdService;
 import org.gluu.oxtrust.service.PersonService;
 import org.gluu.oxtrust.service.SecurityService;
+import org.gluu.oxtrust.util.CloudEditionUtil;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.service.custom.CustomScriptService;
 import org.gluu.util.ArrayHelper;
 import org.gluu.util.StringHelper;
 import org.gluu.util.security.StringEncrypter.EncryptionException;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
 /**
@@ -399,14 +401,8 @@ public class Authenticator implements Serializable {
     private String getAuthorizationUrl() {
         try {
             URL url = new URL(openIdService.getOpenIdConfiguration().getAuthorizationEndpoint());
-            String oxauth_env_host_port = System.getProperty(CN_OXAUTH_HOST);
-            if (oxauth_env_host_port != null) {
-                String[] values = oxauth_env_host_port.split(":");
-                if (values.length > 1) {
-                    url = new URL(url.getProtocol(), values[0], Integer.valueOf(values[1]), url.getFile());
-                } else {
-                    url = new URL(url.getProtocol(), values[0], url.getPort(), url.getFile());
-                }
+            if (CloudEditionUtil.getOxAuthHost().isPresent()) {
+                url = CloudEditionUtil.getOxAuthUrl(url,CloudEditionUtil.getOxAuthHost().get());
             }
             return url.toString();
         } catch (MalformedURLException e) {
@@ -414,5 +410,7 @@ public class Authenticator implements Serializable {
             return openIdService.getOpenIdConfiguration().getAuthorizationEndpoint();
         }
     }
+
+
 
 }
