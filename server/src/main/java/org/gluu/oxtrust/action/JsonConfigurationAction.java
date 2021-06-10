@@ -25,6 +25,7 @@ import org.gluu.service.cache.*;
 import org.gluu.service.cdi.util.CdiUtil;
 import org.gluu.service.document.store.conf.DocumentStoreConfiguration;
 import org.gluu.service.document.store.conf.DocumentStoreType;
+import org.gluu.service.document.store.conf.JcaDocumentStoreConfiguration;
 import org.gluu.service.document.store.provider.JcaDocumentStoreProvider;
 import org.gluu.service.security.Secure;
 import org.gluu.util.StringHelper;
@@ -112,6 +113,9 @@ public class JsonConfigurationAction implements Serializable {
 			this.cacheConfiguration = jsonConfigurationService.getOxMemCacheConfiguration();
 			if (this.cacheConfiguration.getRedisConfiguration().getPassword() != null) {
 				decryptPassword(this.cacheConfiguration.getRedisConfiguration());
+			}
+			if (this.storeConfiguration.getJcaConfiguration().getPassword() != null) {
+				decryptPassword(this.storeConfiguration.getJcaConfiguration());
 			}
 			this.storeConfiguration = jsonConfigurationService.getDocumentStoreConfiguration();
 			this.oxTrustConfigJson = getProtectedOxTrustappConfiguration(this.oxTrustappConfiguration);
@@ -274,7 +278,20 @@ public class JsonConfigurationAction implements Serializable {
             log.error("Error during redis password decryption", e);
         }
     }
-	private boolean canConnectToMemCached() {
+
+    private void decryptPassword(JcaDocumentStoreConfiguration documentStoreConfiguration) {
+        try {
+            String encryptedPassword = documentStoreConfiguration.getPassword();
+            if (StringUtils.isNotBlank(encryptedPassword)) {
+            	documentStoreConfiguration.setPassword(stringEncrypter.decrypt(encryptedPassword));
+                log.trace("Decrypted JCA store password successfully.");
+            }
+        } catch (StringEncrypter.EncryptionException e) {
+            log.error("Error during JCA store password decryption", e);
+        }
+    }
+
+    private boolean canConnectToMemCached() {
 		try {
 			MemcachedProvider provider = CdiUtil.bean(MemcachedProvider.class);
 			provider.setCacheConfiguration(cacheConfiguration);
