@@ -26,7 +26,7 @@ public class CloudEditionUtil {
             url = new URL(url.getProtocol(), values[0], Integer.valueOf(values[1]), url.getFile());
         }
         if (values.length == 3) {
-            url = new URL(values[0], values[1], Integer.valueOf(values[2]), url.getFile());
+            url = new URL(values[0], values[1].substring(2), Integer.valueOf(values[2]), url.getFile());
         }
         else {
             url = new URL(url.getProtocol(), values[0], url.getPort(), url.getFile());
