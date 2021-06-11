@@ -72,8 +72,6 @@ public class Authenticator implements Serializable {
     /**
      * 
      */
-    private String CN_OXAUTH_HOST = "CN_OXAUTH_HOST";
-
     private String LOGIN_FAILED_OX_TRUST = "Login failed, oxTrust wasn't allowed to access user data";
 
     private static final long serialVersionUID = -3975272457541385597L;
