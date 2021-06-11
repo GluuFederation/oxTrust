@@ -228,7 +228,9 @@ public class UmaPermissionService implements Serializable {
 
 	private RptIntrospectionResponse getStatusResponse(Token patToken, String rptToken) {
 		String authorization = "Bearer " + patToken.getAccessToken();
-
+		if (this.rptStatusService == null) {
+			init(null);
+		}
 		// Determine RPT token to status
 		RptIntrospectionResponse rptStatusResponse = null;
 		try {
@@ -293,22 +295,14 @@ public class UmaPermissionService implements Serializable {
 	private ConnectionKeepAliveStrategy connectionKeepAliveStrategy = new ConnectionKeepAliveStrategy() {
 		@Override
 		public long getKeepAliveDuration(HttpResponse httpResponse, HttpContext httpContext) {
-
 			HeaderElementIterator headerElementIterator = new BasicHeaderElementIterator(
 					httpResponse.headerIterator(HTTP.CONN_KEEP_ALIVE));
-
 			while (headerElementIterator.hasNext()) {
-
 				HeaderElement headerElement = headerElementIterator.nextElement();
-
-				String name = headerElement.getName();
-				String value = headerElement.getValue();
-
-				if (value != null && name.equalsIgnoreCase("timeout")) {
-					return Long.parseLong(value) * 1000;
+				if (headerElement.getValue() != null && headerElement.getName().equalsIgnoreCase("timeout")) {
+					return Long.parseLong(headerElement.getValue()) * 1000;
 				}
 			}
-
 			// Set own keep alive duration if server does not have it
 			return appConfiguration.getRptConnectionPoolCustomKeepAliveTimeout() * 1000;
 		}
