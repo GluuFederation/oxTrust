@@ -155,7 +155,7 @@ public class ConfigureNameIdAction implements Serializable {
 							.setDefaultRequestConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build())
 							.setSSLSocketFactory(connectionFactory).build();
 					HttpGet request = new HttpGet(
-							"https://"+CloudEditionUtil.getIdpHost().orElse("localhost")+"/idp/profile/admin/reload-service?id=shibboleth.NameIdentifierGenerationService");
+							CloudEditionUtil.getIdpHost().orElse("https://localhost")+"/idp/profile/admin/reload-service?id=shibboleth.NameIdentifierGenerationService");
 					request.addHeader("User-Agent", "Mozilla/5.0");
 					HttpResponse response = client.execute(request);
 					log.info(EntityUtils.toString(response.getEntity(), "UTF-8"));
