@@ -45,11 +45,16 @@ public class ConfigurationFactory extends org.gluu.service.config.ConfigurationF
 
 	@Override
 	protected void init(LdapOxTrustConfiguration conf) {
-		this.appConfiguration = conf.getApplication();
-		this.cacheRefreshConfiguration = conf.getCacheRefresh();
-		this.importPersonConfig = conf.getImportPersonConfig();
-		this.attributeResolverConfiguration = conf.getAttributeResolverConfig();
-		this.loadedRevision = conf.getRevision();
+		try {
+			this.appConfiguration = conf.getApplication();
+			this.importPersonConfig = conf.getImportPersonConfig();
+			this.attributeResolverConfiguration = conf.getAttributeResolverConfig();
+			this.loadedRevision = conf.getRevision();
+			this.cacheRefreshConfiguration = conf.getCacheRefresh();
+		}catch (Exception e){
+			log.warn("==============================================");
+			log.warn("OxTrust configuration initialization",e);
+		}
 	}
 
 	@Override
