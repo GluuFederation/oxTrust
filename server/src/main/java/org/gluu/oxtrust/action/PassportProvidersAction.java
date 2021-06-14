@@ -38,9 +38,9 @@ public class PassportProvidersAction implements Serializable {
 
 	private String ISSUER = "issuer";
 
-	private String CLIENT_SECRET = "client_secret";
+	private String CLIENT_SECRET = "clientSecret";
 
-	private String CLIENT_ID = "client_id";
+	private String CLIENT_ID = "clientID";
 
 	private String DEFAULT_ISSUER = "urn:test:example";
 
@@ -143,8 +143,8 @@ public class PassportProvidersAction implements Serializable {
 			if (type.equalsIgnoreCase(providerTypes[1])) {
 				String scopes = "[\"openid\",\"email\",\"profile\"]";
 				this.options = new ArrayList<>();
-				this.options.add(new OptionEntry(CLIENT_ID, ""));
-				this.options.add(new OptionEntry(CLIENT_SECRET, ""));
+				this.options.add(new OptionEntry("client_id", ""));
+				this.options.add(new OptionEntry("client_secret", ""));
 				this.options.add(new OptionEntry(ISSUER, "https://server.example.com"));
 				this.options.add(new OptionEntry("scope", scopes));
 				this.options.add(new OptionEntry("token_endpoint_auth_method", "client_secret_post"));
