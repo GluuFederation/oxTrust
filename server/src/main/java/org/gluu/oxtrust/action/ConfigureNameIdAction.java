@@ -187,7 +187,6 @@ public class ConfigureNameIdAction implements Serializable {
 		for (Iterator<NameIdConfig> iterator = this.nameIdConfigs.iterator(); iterator.hasNext();) {
 			NameIdConfig nameIdConfig = iterator.next();
 			if (System.identityHashCode(removenameIdConfig) == System.identityHashCode(nameIdConfig)) {
-				log.info("======================================Removing "+removenameIdConfig);
 				iterator.remove();
 				return;
 			}
