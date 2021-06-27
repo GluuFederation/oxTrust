@@ -78,6 +78,8 @@ public class ManageCustomScriptAction
 
 	protected boolean initialized;
 
+	private boolean showActive;
+
 	protected List<String> allAcrs = new ArrayList<>();
 
 	@Inject
@@ -123,6 +125,18 @@ public class ManageCustomScriptAction
 		}
 		this.initialized = true;
 		return OxTrustConstants.RESULT_SUCCESS;
+	}
+
+	public boolean isShowActive() {
+		return showActive;
+	}
+
+	public void setShowActive(boolean showActive) {
+		this.showActive = showActive;
+	}
+
+	public boolean isShowCurrentScript(CustomScript script) {
+		return (showActive)? script.isEnabled(): true;
 	}
 
 	public String save() {
