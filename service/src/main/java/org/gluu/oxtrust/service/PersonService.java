@@ -14,6 +14,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.time.Instant;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -37,7 +38,6 @@ import org.gluu.service.DataSourceTypeService;
 import org.gluu.util.ArrayHelper;
 import org.gluu.util.OxConstants;
 import org.gluu.util.StringHelper;
-import org.joda.time.format.ISODateTimeFormat;
 import org.slf4j.Logger;
 
 /**
@@ -136,8 +136,7 @@ public class PersonService implements Serializable, IPersonService {
 			Date updateDate = new Date();
 			person.setUpdatedAt(updateDate);
 			if (person.getAttribute("oxTrustMetaLastModified") != null) {
-				person.setAttribute("oxTrustMetaLastModified",
-						ISODateTimeFormat.dateTime().withZoneUTC().print(updateDate.getTime()));
+				person.setAttribute("oxTrustMetaLastModified", Instant.ofEpochMilli(updateDate.getTime()).toString());
 			}
 			persistenceEntryManager.merge(person);
 		} catch (Exception e) {
