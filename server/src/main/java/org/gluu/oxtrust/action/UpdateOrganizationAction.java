@@ -324,11 +324,11 @@ public class UpdateOrganizationAction implements Serializable {
 	private void addLib(UploadedFile uploadedFile, boolean isOxTrust) {
 		String LIB_PATH = "/opt/gluu/jetty/identity/custom/libs/";
 		String XML_PATH = "/opt/gluu/jetty/identity/webapps/identity.xml";
-		String BASE_FILE_NAME = "/opt/gluu/jetty/identity/webapps/";
+		String BASE_FILE_NAME = LIB_PATH;
 		if (!isOxTrust) {
 			LIB_PATH = "/opt/gluu/jetty/oxauth/custom/libs/";
 			XML_PATH = "/opt/gluu/jetty/oxauth/webapps/oxauth.xml";
-			BASE_FILE_NAME = "/opt/gluu/jetty/oxauth/webapps/";
+			BASE_FILE_NAME = LIB_PATH;
 		}
 		String fileName = saveFile(uploadedFile, LIB_PATH);
 		BASE_FILE_NAME=BASE_FILE_NAME+fileName;
@@ -350,7 +350,6 @@ public class UpdateOrganizationAction implements Serializable {
 			Element configure = (Element) configures.item(0);
 			Element library = document.createElement("Set");
 			library.setAttribute("name", "extraClasspath");
-			//fileName = XML_PATH + fileName;
 			library.appendChild(document.createTextNode(fileName));
 			configure.appendChild(library);
 			document.getDocumentElement().normalize();
