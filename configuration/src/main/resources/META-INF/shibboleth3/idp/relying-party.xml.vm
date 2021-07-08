@@ -118,6 +118,7 @@
                     <bean parent="SAML2.SSO"
                           p:includeAttributeStatement="$profileConfig.includeAttributeStatement"
                           p:assertionLifetime="$profileConfig.assertionLifetime"
+                          p:postAuthenticationFlows="#{{'gluu-release-attributes-post-processor'}}"
                         #if ($profileConfig.signResponses == 'conditional')
                           p:signResponsesPredicate-ref="SignNoIntegrity"
                         #{else}
