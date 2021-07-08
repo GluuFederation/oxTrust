@@ -66,9 +66,9 @@
 			<h:outputScript>
          function toggleType() {
             var type = $(".ProviderType").val();
-            if( type == "openidconnect"){
-               $(".PassportStrategyId").val("passport-openidconnect");
-               $(".MappingId").val("openidconnect-default");
+            if( type == "openid-client"){
+               $(".PassportStrategyId").val("openid-client");
+               $(".MappingId").val("openid-client");
             }
             if( type == "openidconnect-oxd"){
              $(".PassportStrategyId").val("passport-oxd");

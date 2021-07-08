@@ -48,10 +48,12 @@
 										valueChangeListener="#{_providerAction.handleRequiredOptions}"
 										value="#{_providerAction.provider.type}" id="ProviderTypeId"
 										rendered="true" required="true"
-										onchange="toggleType(); submit();">
+										render="mainContentID"
+										onchange="toggleType();">
 										<f:selectItem noSelectionOption="true" itemLabel="" />
 										<f:selectItems value="#{_providerAction.providerTypes}"
 											var="_type" itemLabel="#{_type}" />
+										<a4j:ajax event="change" render="optionsPanel" />
 									</h:selectOneMenu>
 								</ox:decorate>
 								<ox:decorate
@@ -148,7 +150,7 @@
 						<!-- 3nd row-->
 						<div class="row" style="margin-left: 5px; margin-right: 5px;">
 							<b:panel title="#{msgs['passport.provider.form.options']}"
-								look="primary">
+								look="primary" id="optionsPanel">
 								<div class="col-sm-12 col-lg-12" style="padding: 0px;">
 									<ox:simpleMapProperties
 										label="#{msgs['manageAuthentication.passport.strategy.addProperty']}"
