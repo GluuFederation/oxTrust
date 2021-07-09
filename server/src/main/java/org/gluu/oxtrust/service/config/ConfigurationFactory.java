@@ -77,9 +77,6 @@ public class ConfigurationFactory extends org.gluu.service.config.ConfigurationF
 	@Override
 	protected void destroryLoadedConfiguration() {
 		destroy(AppConfiguration.class);
-		destroy(CacheRefreshConfiguration.class);
-		destroy(ImportPersonConfig.class);
-		destroy(AttributeResolverConfiguration.class);
 	}
 
 	@Override
