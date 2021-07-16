@@ -10,6 +10,7 @@ import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 
 import javax.ejb.Stateless;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
 
 import org.apache.commons.beanutils.BeanUtils;
@@ -19,7 +20,7 @@ import org.apache.commons.beanutils.BeanUtils;
  * 
  * @author Yuriy Movchan Date: 08/11/2013
  */
-@Stateless
+@ApplicationScoped
 @Named("propertyService")
 public class PropertyService implements Serializable {
 

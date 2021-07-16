@@ -183,10 +183,6 @@
 		</dependency>
 
 		<!-- Other -->
-		<dependency>
-			<groupId>javax.mail</groupId>
-			<artifactId>mail</artifactId>
-		</dependency>
 		
 		<!-- RestEasy -->
 		<dependency>

@@ -8,12 +8,12 @@ package org.gluu.oxtrust.service;
 
 import java.io.Serializable;
 
-import javax.ejb.Stateless;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
 
 import org.gluu.oxtrust.model.GluuCustomPerson;
 
-@Stateless
+@ApplicationScoped
 @Named("downloadService")
 public class DownloadService implements Serializable {
 
