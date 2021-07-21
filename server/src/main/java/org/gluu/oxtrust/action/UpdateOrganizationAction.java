@@ -113,6 +113,8 @@ public class UpdateOrganizationAction implements Serializable {
 
 	private String passwordDecrypted;
 
+	private String contactEmail = "example@orgname.com";
+
 	public String modify() {
 		if (this.initialized) {
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -185,6 +187,7 @@ public class UpdateOrganizationAction implements Serializable {
 				smtpConfiguration.setPasswordDecrypted(passwordDecrypted);
 				passwordDecrypted=null;
 			}
+			configuration.setContactEmail(getContactEmail());
 			configurationService.encryptedSmtpPassword(smtpConfiguration);
 			updateConfiguration();
 			saveWebKeySettings();
@@ -279,6 +282,14 @@ public class UpdateOrganizationAction implements Serializable {
 		facesMessages.add(FacesMessage.SEVERITY_INFO, "Organization configuration not updated");
 		conversationService.endConversation();
 		return OxTrustConstants.RESULT_SUCCESS;
+	}
+
+	public String getContactEmail() {
+		return configuration.getContactEmail()!=null ? configuration.getContactEmail() : contactEmail;
+	}
+
+	public void setContactEmail(String contactEmail) {
+		this.contactEmail = contactEmail;
 	}
 
 	public void setOxTrustLogoImage(FileUploadEvent event) {
