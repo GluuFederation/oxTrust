@@ -8,7 +8,7 @@
 	<url>http://maven.apache.org</url>
 	<groupId>org.gluu</groupId>
 	<artifactId>oxtrust-qa</artifactId>
-	<version>4.2.0.Final</version>
+	<version>4.2.0.sp1</version>
 	<packaging>jar</packaging>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
