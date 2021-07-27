@@ -14,6 +14,8 @@ import java.util.TimeZone;
 
 import javax.enterprise.context.ConversationScoped;
 import javax.faces.application.FacesMessage;
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.validation.constraints.AssertTrue;
@@ -171,13 +173,22 @@ public class PasswordResetAction implements Serializable {
 		conversationService.endConversation();
 	}
 
-	public String update() {
+	public void update() {
 		String outcome = updateImpl();
 		if (OxTrustConstants.RESULT_SUCCESS.equals(outcome)) {
 			facesMessages.add(FacesMessage.SEVERITY_INFO, "Password reset successful.");
 		}
+		redirect();
 		conversationService.endConversation();
-		return outcome;
+	}
+
+	public void redirect() {
+		try {
+			ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
+			externalContext.redirect("/identity/passwordResetResult.htm");
+		}catch (Exception e){
+			log.warn("Error redirecting to password reset result page");
+		}
 	}
 
 	public String updateImpl() {
