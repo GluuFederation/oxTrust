@@ -34,17 +34,25 @@ public class ShibbolethInitializer {
 	
 	@Inject
 	private Shibboleth3ConfService shibboleth3ConfService;
+
+	@Inject
+	private ShibbolethReloadService shibbolethReloadService;
 	
 	public boolean createShibbolethConfiguration() {
 		boolean createConfig = appConfiguration.isConfigGeneration();
-		log.trace("IDP config generation is set to " + createConfig);
+		log.info("IDP config generation is set to " + createConfig);
 		if (createConfig) {
 			List<GluuSAMLTrustRelationship> trustRelationships = trustService.getAllActiveTrustRelationships();
 			String shibbolethVersion = appConfiguration.getShibbolethVersion();
-			log.trace("########## shibbolethVersion = " + shibbolethVersion);
+			log.info("########## shibbolethVersion = " + shibbolethVersion);
 			shibboleth3ConfService.generateMetadataFiles();
 			shibboleth3ConfService.generateConfigurationFiles(trustRelationships);
 			shibboleth3ConfService.generateConfigurationFiles(samlAcrService.getAll());
+			if(shibboleth3ConfService.generateGluuAttributeRulesFile() == true ) {
+				if(shibbolethReloadService.reloadAttributeRegistryService() == false) {
+					log.info("Shibboleth attribute registry reload failed. (kindly restart service manually)");
+				}
+			}
 		}
 
 		return true;
