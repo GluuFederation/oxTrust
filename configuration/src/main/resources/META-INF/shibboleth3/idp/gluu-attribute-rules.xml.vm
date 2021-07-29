@@ -23,7 +23,7 @@
                      <property name="properties">
                         <props merge="true">
                           <prop key="id">eduPersonPrincipalName</prop>
-                          <prop key="transcoder">SAML2ScopedStringTranscoder SAML1ScopedStringTranscoder</prop>
+                          <prop key="transcoder">SAML2ScopedStringTranscoder</prop>
                           <prop key="saml2.name">urn:oid:1.3.6.1.4.1.5923.1.1.1.6</prop>
                           <prop key="saml1.name">$attributeSaml1Strings.get($attribute.name)</prop>
                           <prop key="displayName.en">$attribute.displayName</prop>
@@ -36,9 +36,8 @@
                      <property name="properties">
                        <props merge="true">
                           <prop key="id">$attribute.name</prop>
-                          <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
+                          <prop key="transcoder">SAML2StringTranscoder</prop>
                           <prop key="saml2.name">$attributeSaml2Strings.get($attribute.name)</prop>
-                          <prop key="saml1.name">$attributeSaml1Strings.get($attribute.name)</prop>
                           <prop key="displayName.en">$attribute.displayName</prop>
                           <prop key="description.en">$attribute.description</prop>
                        </props>

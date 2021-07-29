@@ -21,7 +21,6 @@ import org.slf4j.Logger;
 
 
 @ApplicationScoped
-@Named
 public class TranscodingRulesUpdater implements Serializable {
     
     private static final int DEFAULT_UPDATE_DELAY = 60 ; // Start after 5 minutes
@@ -75,13 +74,13 @@ public class TranscodingRulesUpdater implements Serializable {
     private void processTranscodingRulesUpdate() {
 
         log.debug("Start shibboleth transcoding rules update");
-        if(shibbolethConfService.generateGluuAttributeRulesFile() == false) {
-            log.debug("Shibboleth transcoding rules update failed. (Please restart service manually)");
+        if(!shibbolethConfService.generateGluuAttributeRulesFile()) {
+            log.error("Shibboleth transcoding rules update failed. (Please restart service manually)");
             return;
         }
 
-        if(shibbolethReloadService.reloadAttributeRegistryService() == false) {
-            log.debug("Shibboleth transcoding rules update failed. Attribute registry reload failed. (Please restart service manually)");
+        if(!shibbolethReloadService.reloadAttributeRegistryService()) {
+            log.error("Shibboleth transcoding rules update failed. Attribute registry reload failed. (Please restart service manually)");
             return;
         }
         log.debug("Finished shibboleth transcoding rules update");

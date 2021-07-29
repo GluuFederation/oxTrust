@@ -48,9 +48,9 @@ public class ShibbolethInitializer {
 			shibboleth3ConfService.generateMetadataFiles();
 			shibboleth3ConfService.generateConfigurationFiles(trustRelationships);
 			shibboleth3ConfService.generateConfigurationFiles(samlAcrService.getAll());
-			if(shibboleth3ConfService.generateGluuAttributeRulesFile() == true ) {
-				if(shibbolethReloadService.reloadAttributeRegistryService() == false) {
-					log.info("Shibboleth attribute registry reload failed. (kindly restart service manually)");
+			if(shibboleth3ConfService.generateGluuAttributeRulesFile()) {
+				if(!shibbolethReloadService.reloadAttributeRegistryService()) {
+					log.error("Shibboleth attribute registry reload failed. (kindly restart service manually)");
 				}
 			}
 		}
