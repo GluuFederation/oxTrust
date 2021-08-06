@@ -91,6 +91,7 @@ public class Shibboleth3ConfService implements Serializable {
     private static final String SHIB3_IDP_CONF_FOLDER = "conf";
     private static final String SHIB3_IDP_AUNTHN_FOLDER = "authn";
     public static final String SHIB3_IDP_METADATA_FOLDER = "metadata";
+    private static final String SHIB_IDP_ATTRIBUTES_FOLDER = "attributes";
     private static final String SHIB3_IDP_METADATA_PROVIDERS_FILE = "metadata-providers.xml";
     private static final String SHIB3_IDP_ATTRIBUTE_FILTER_FILE = "attribute-filter.xml";
     private static final String SHIB3_IDP_ATTRIBUTE_RESOLVER_FILE = "attribute-resolver.xml";
@@ -98,8 +99,10 @@ public class Shibboleth3ConfService implements Serializable {
     private static final String SHIB3_IDP_CAS_PROTOCOL_FILE = "cas-protocol.xml";
     public static final String SHIB3_IDP_IDP_METADATA_FILE = "idp-metadata.xml";
     public static final String SHIB3_IDP_SP_METADATA_FILE = "sp-metadata.xml";
+    private static final String SHIB_IDP_GLUU_ATTRIBUTE_RULES_FILE = "gluu-attribute-rules.xml";
     public static final String SHIB3_SP_ATTRIBUTE_MAP_FILE = "attribute-map.xml";
     public static final String SHIB3_SP_SHIBBOLETH2_FILE = "shibboleth2.xml";
+    
     private static final String SHIB3_SP_READ_ME = "/WEB-INF/resources/doc/README_SP.pdf";
     private static final String SHIB3_SP_READ_ME_WINDOWS = "/WEB-INF/resources/doc/README_SP_windows.pdf";
     private static final String SHIB3_SAML_NAMEID_FILE = "saml-nameid.xml";
@@ -210,6 +213,69 @@ public class Shibboleth3ConfService implements Serializable {
 
         log.info(">>>>>>>>>> LEAVING generateConfigurationFiles(SamlAcr[] acrs)...");
         return result;
+    }
+
+    public boolean generateGluuAttributeRulesFile() {
+
+        List<GluuAttribute> attributes = attributeService.getAllAttributes();
+        return generateGluuAttributeRulesFile(attributes);
+    }
+
+    public boolean generateGluuAttributeRulesFile(List<GluuAttribute> attributes) {
+
+        boolean ret = false;
+        log.info(">>>>>>>>>> IN Shibboleth3ConfService.generateGluuAttributeRulesFile() ...");
+        if(appConfiguration.getShibboleth3IdpRootDir() == null) {
+            throw new InvalidConfigurationException("Failed to update configuration due to undefined IDP root folder");
+        }
+
+        VelocityContext context = new VelocityContext();
+        List<String> attributeNames = new ArrayList<String>();
+        for(GluuAttribute attribute : attributes) {
+            attributeNames.add(attribute.getName());
+        }
+
+        SchemaEntry schemaEntry  = shemaService.getSchema();
+        List<AttributeTypeDefinition> attributeTypes = shemaService.getAttributeTypeDefinitions(schemaEntry,attributeNames);
+        Map<String,String> attributeSaml1Strings = new HashMap<String,String>();
+        Map<String,String> attributeSaml2Strings = new HashMap<String,String>();
+        
+        for(GluuAttribute metadata : attributes) {
+            String attributeName = metadata.getName();
+            
+            String saml1String = metadata.getSaml1Uri();
+            if(StringHelper.isEmpty(saml1String)) {
+                boolean standard = metadata.isCustom() || StringHelper.isEmpty(metadata.getUrn()) || 
+                                   (!StringHelper.isEmpty(metadata.getUrn()) && metadata.getUrn().startsWith("urn:gluu:dir:attribute-def:"));
+                
+                saml1String = String.format("urn:%s:dir:attribute-def:%s",(standard?"gluu":"mace"),attributeName);
+            }
+
+            attributeSaml1Strings.put(attributeName,saml1String);
+
+            String saml2String = metadata.getSaml2Uri();
+            if(StringHelper.isEmpty(saml2String)) {
+                AttributeTypeDefinition attributeTypeDefinition = shemaService.getAttributeTypeDefinition(attributeTypes, attributeName);
+                if(attributeTypeDefinition == null) {
+                    log.error("Failed to get OID for attribute name {}", attributeName);
+                    return false;
+                }
+
+                saml2String  = String.format("urn:oid:%s",attributeTypeDefinition.getOID());
+            }
+
+            attributeSaml2Strings.put(attributeName,saml2String);
+        }
+
+        context.put("attributes",attributes);
+        context.put("attributeSaml1Strings",attributeSaml1Strings);
+        context.put("attributeSaml2Strings",attributeSaml2Strings);
+
+        String gluuAttributesRules = generateConfFile(SHIB_IDP_GLUU_ATTRIBUTE_RULES_FILE, context);
+        log.info("Gluu attributes rules file path is {}",getGluuAttributesRulesFilePath());
+        ret = writeConfFile(getGluuAttributesRulesFilePath(), gluuAttributesRules);
+        log.info(">>>>>>>>>>> LEAVING Shibboleth3ConfService.generateGluuAttributeRulesFile() ...");
+        return ret;
     }
 
     /*
@@ -709,6 +775,19 @@ public class Shibboleth3ConfService implements Serializable {
         return appConfiguration.getShibboleth3IdpRootDir() + File.separator
                 + Shibboleth3ConfService.SHIB3_IDP_TEMPMETADATA_FOLDER + File.separator;
     }
+
+
+    public String getIdpAttributesDir() {
+        return appConfiguration.getShibboleth3IdpRootDir() + File.separator + SHIB3_IDP_CONF_FOLDER + File.separator
+               + SHIB_IDP_ATTRIBUTES_FOLDER + File.separator;
+    }
+
+    public String getGluuAttributesRulesFilePath() {
+
+        return getIdpAttributesDir() + SHIB_IDP_GLUU_ATTRIBUTE_RULES_FILE;
+    }
+
+
 
     public String getSpMetadataFilePath(String spMetaDataFN) {
         if (appConfiguration.getShibboleth3IdpRootDir() == null) {

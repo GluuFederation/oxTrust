@@ -157,6 +157,9 @@ public class AppInitializer {
 	private CleanerTimer cleanerTimer;
 
 	@Inject
+	private TranscodingRulesUpdater transcodingRulesUpdater;
+
+	@Inject
 	private Event<ApplicationInitializedEvent> eventApplicationInitialized;
 
 	@PostConstruct
@@ -218,6 +221,7 @@ public class AppInitializer {
 		statusCheckerTimer.initTimer();
 		logFileSizeChecker.initTimer();
 		updateChecker.initTimer();
+		transcodingRulesUpdater.initTimer();
 
 		// Notify other components/plugins about finish application initialization
 		eventApplicationInitialized.select(ApplicationInitialized.Literal.APPLICATION)
