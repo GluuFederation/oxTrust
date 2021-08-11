@@ -465,10 +465,6 @@
             "exclusiveMaximum": false,
             "exclusiveMinimum": false
         },
-        "scimTestMode": {
-            "id": "scimTestMode",
-            "type": "boolean"
-        },
         "oxTrustApiTestMode": {
             "id": "oxTrustApiTestMode",
             "type": "boolean"
@@ -568,7 +564,16 @@
             "default": 200,
             "minimum": 1,
             "maximum": 2147483647
-          }
+          },
+          "protectionMode": {
+			"title": "Protection Mode",
+			"type": "string",
+			"enum": [
+				"OAUTH",
+				"TEST",
+				"UMA"
+			]
+		  }
         }
         },
         "disableJdkLogger": {
@@ -707,7 +712,6 @@
         "rptConnectionPoolDefaultMaxPerRoute",
         "rptConnectionPoolValidateAfterInactivity",
         "rptConnectionPoolCustomKeepAliveTimeout",
-        "scimTestMode",
         "oxTrustApiTestMode",
         "shibbolethVersion",
         "shibboleth3IdpRootDir",
