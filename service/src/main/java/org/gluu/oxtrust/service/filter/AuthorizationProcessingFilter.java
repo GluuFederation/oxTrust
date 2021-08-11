@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
@@ -31,6 +32,8 @@ import javax.ws.rs.ext.Provider;
 import org.gluu.oxtrust.auth.uma.BaseUmaProtectionService;
 import org.gluu.oxtrust.auth.uma.BindingUrls;
 import org.slf4j.Logger;
+
+import static org.gluu.oxtrust.util.OxTrustConstants.API_PROTECTION_BYPASS_PROPERTY;
 
 /**
  * A RestEasy filter to centralize protection of APIs with UMA based on path
@@ -78,26 +81,28 @@ public class AuthorizationProcessingFilter implements ContainerRequestFilter {
 	 */
 	@Override
 	public void filter(ContainerRequestContext requestContext) throws IOException {
-		String path = requestContext.getUriInfo().getPath();
-		log.debug("REST call to '{}' intercepted", path);
-		BaseUmaProtectionService protectionService = null;
-		for (String prefix : protectionMapping.keySet()) {
-			if (path.startsWith(prefix)) {
-				protectionService = protectionServiceInstance.select(protectionMapping.get(prefix)).get();
-				break;
-			}
-		}
-		if (protectionService == null) {
-			log.warn(
-					"No concrete UMA protection mechanism is associated to this path (resource will be accessed anonymously)");
 
-		} else {
-			log.debug("Path is protected, proceeding with authorization processing...");
-			Response authorizationResponse = protectionService.processAuthorization(httpHeaders, resourceInfo);
-			if (authorizationResponse == null)
-				log.debug("Authorization passed"); // If authorization passed, proceed with actual processing of request
-			else
-				requestContext.abortWith(authorizationResponse);
+		if (Objects.isNull(requestContext.getProperty(API_PROTECTION_BYPASS_PROPERTY))) {
+    
+            String path = requestContext.getUriInfo().getPath();
+            BaseUmaProtectionService protectionService = null;
+            for (String prefix : protectionMapping.keySet()) {
+                if (path.startsWith(prefix)) {
+                    protectionService = protectionServiceInstance.select(protectionMapping.get(prefix)).get();
+                    break;
+                }
+            }
+            if (protectionService == null) {
+                log.warn("No concrete UMA protection mechanism is associated to this path (resource will be accessed anonymously)");
+
+            } else {
+                log.debug("Path is protected, proceeding with authorization processing...");
+                Response authorizationResponse = protectionService.processAuthorization(httpHeaders, resourceInfo);
+                if (authorizationResponse == null)
+                    log.debug("Authorization passed"); // If authorization passed, proceed with actual processing of request
+                else
+                    requestContext.abortWith(authorizationResponse);
+            } 
 		}
 
 	}

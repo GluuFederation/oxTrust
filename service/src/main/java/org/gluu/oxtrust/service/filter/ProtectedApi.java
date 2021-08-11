@@ -24,5 +24,7 @@ public @interface ProtectedApi {
      * @return UMA scopes which application should have to access this endpoint.
      */
 	String[] scopes() default {};
+	
+	String[] oauthScopes() default {};
 
 }

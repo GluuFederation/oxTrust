@@ -16,7 +16,9 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
+
 import org.gluu.config.oxtrust.AppConfiguration;
+import org.gluu.config.oxtrust.ScimMode;
 import org.gluu.oxauth.client.ClientInfoClient;
 import org.gluu.oxauth.client.ClientInfoResponse;
 import org.gluu.oxtrust.auth.uma.BaseUmaProtectionService;
@@ -82,7 +84,7 @@ public class ScimUmaProtectionService extends BaseUmaProtectionService implement
 	}
 
 	private boolean isScimEnabled() {
-		return configurationService.getConfiguration() .isScimEnabled();
+		return configurationService.getConfiguration().isScimEnabled();
 	}
 
     /**
@@ -105,8 +107,9 @@ public class ScimUmaProtectionService extends BaseUmaProtectionService implement
         log.info("Authorization header {} found", StringUtils.isEmpty(authorization) ? "not" : "");
 
         try {
+        	ScimMode mode = jsonConfigurationService.getOxTrustappConfiguration().getScimProperties().getProtectionMode();
             //Test mode may be removed in upcoming versions of Gluu Server...
-            if (jsonConfigurationService.getOxTrustappConfiguration().isScimTestMode()) {
+            if (ScimMode.TEST.equals(mode))) {
                 log.info("SCIM Test Mode is ACTIVE");
                 authorizationResponse = processTestModeAuthorization(authorization);
             }
