@@ -78,7 +78,8 @@ public class OxTrustJsonSetting implements Serializable {
 
 	@Override
 	public String toString() {
-		return "OxTrustJsonSetting [orgName=" + orgName + ", supportEmail=" + supportEmail + ", authenticationRecaptchaEnabled=" + authenticationRecaptchaEnabled
+		return "OxTrustJsonSetting [orgName=" + orgName + ", supportEmail=" + supportEmail
+				+ ", authenticationRecaptchaEnabled=" + authenticationRecaptchaEnabled
 				+ ", enforceEmailUniqueness=" + enforceEmailUniqueness + ", loggingLevel=" + loggingLevel
 				+ ", passwordResetRequestExpirationTime=" + passwordResetRequestExpirationTime
 				+ ", cleanServiceInterval=" + cleanServiceInterval + "]";
