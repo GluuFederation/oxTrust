@@ -99,11 +99,9 @@ public class ScimUmaProtectionService extends BaseUmaProtectionService implement
 
         //Comment this method body if you want to skip the authorization check and proceed straight to use your SCIM service.
         //This is useful under certain circumstances while doing development
-        //log.warn("Bypassing protection TEMPORARILY");
 
         Response authorizationResponse = null;
         String authorization = headers.getHeaderString("Authorization");
-        log.info("==== SCIM Service call intercepted ====");
         log.info("Authorization header {} found", StringUtils.isEmpty(authorization) ? "not" : "");
 
         try {
