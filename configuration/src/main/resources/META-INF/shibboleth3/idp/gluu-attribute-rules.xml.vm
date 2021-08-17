@@ -16,6 +16,13 @@
        <bean parent="shibboleth.TranscodingRuleLoader">
         <constructor-arg>
               <list>
+                <!-- addition to support the username openid attribute -->
+                <bean parent="shibboleth.TranscodingProperties">
+                    <properties name="properties">
+                       <props merge="true">
+                       </props>
+                    </properties>
+                </bean>
                 #foreach ($attribute in $attributes)
                 #if( ! ($attribute.name.equals('transientId') or $attribute.name.equals('persistentId')) )
                 #if( $attribute.name.equals('eppnForNIH'))

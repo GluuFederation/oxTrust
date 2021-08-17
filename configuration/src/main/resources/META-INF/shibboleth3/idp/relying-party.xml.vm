@@ -43,8 +43,9 @@
                       p:signResponsesPredicate-ref="SignNoIntegrity"
                       p:signAssertions="false"
                       p:encryptNameIDs="false"
-		      p:encryptAssertionsPredicate-ref="EncryptNoConfidentiality" 
-		      p:postAuthenticationFlows="#{{'gluu-release-attributes-post-processor'}}" />
+		                  p:encryptAssertionsPredicate-ref="EncryptNoConfidentiality" 
+		                  p:postAuthenticationFlows="#{{'gluu-release-attributes-post-processor'}}"
+                      p:inboundInterceptorFlows="#{ {'security-policy/saml2-sso', 'gluu-populate-context'} }" />
 
                 <bean parent="SAML2.ECP"
                       p:includeAttributeStatement="true"
