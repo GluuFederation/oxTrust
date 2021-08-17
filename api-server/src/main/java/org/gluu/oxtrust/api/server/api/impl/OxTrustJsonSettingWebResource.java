@@ -52,7 +52,6 @@ public class OxTrustJsonSettingWebResource extends BaseWebResource {
 			setting.setPasswordResetRequestExpirationTime(
 					this.oxTrustappConfiguration.getPasswordResetRequestExpirationTime());
 			setting.setLoggingLevel(this.oxTrustappConfiguration.getLoggingLevel());
-			setting.setScimTestMode(this.oxTrustappConfiguration.isScimTestMode());
 			return Response.ok(setting).build();
 		} catch (Exception e) {
 			log(logger, e);
@@ -73,7 +72,6 @@ public class OxTrustJsonSettingWebResource extends BaseWebResource {
 			this.oxTrustappConfiguration = jsonConfigurationService.getOxTrustappConfiguration();
 			this.oxTrustappConfiguration.setOrganizationName(oxtrustJsonSetting.getOrgName());
 			this.oxTrustappConfiguration.setOrgSupportEmail(oxtrustJsonSetting.getSupportEmail());
-			this.oxTrustappConfiguration.setScimTestMode(oxtrustJsonSetting.isScimTestMode());
 			this.oxTrustappConfiguration
 					.setPasswordResetRequestExpirationTime(oxtrustJsonSetting.getPasswordResetRequestExpirationTime());
 			this.oxTrustappConfiguration.setEnforceEmailUniqueness(oxtrustJsonSetting.isEnforceEmailUniqueness());

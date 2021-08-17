@@ -14,7 +14,6 @@ public class OxTrustJsonSetting implements Serializable {
 
 	private String orgName;
 	private String supportEmail;
-	private boolean scimTestMode;
 	private boolean authenticationRecaptchaEnabled;
 	private boolean enforceEmailUniqueness;
 	private String loggingLevel;
@@ -27,14 +26,6 @@ public class OxTrustJsonSetting implements Serializable {
 
 	public void setSupportEmail(String supportEmail) {
 		this.supportEmail = supportEmail;
-	}
-
-	public boolean isScimTestMode() {
-		return scimTestMode;
-	}
-
-	public void setScimTestMode(boolean scimTestMode) {
-		this.scimTestMode = scimTestMode;
 	}
 
 	public boolean isAuthenticationRecaptchaEnabled() {
@@ -87,8 +78,8 @@ public class OxTrustJsonSetting implements Serializable {
 
 	@Override
 	public String toString() {
-		return "OxTrustJsonSetting [orgName=" + orgName + ", supportEmail=" + supportEmail + ",  scimTestMode="
-				+ scimTestMode + ", authenticationRecaptchaEnabled=" + authenticationRecaptchaEnabled
+		return "OxTrustJsonSetting [orgName=" + orgName + ", supportEmail=" + supportEmail
+				+ ", authenticationRecaptchaEnabled=" + authenticationRecaptchaEnabled
 				+ ", enforceEmailUniqueness=" + enforceEmailUniqueness + ", loggingLevel=" + loggingLevel
 				+ ", passwordResetRequestExpirationTime=" + passwordResetRequestExpirationTime
 				+ ", cleanServiceInterval=" + cleanServiceInterval + "]";
