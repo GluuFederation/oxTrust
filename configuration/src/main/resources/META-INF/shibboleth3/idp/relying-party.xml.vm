@@ -44,8 +44,7 @@
                       p:signAssertions="false"
                       p:encryptNameIDs="false"
 		                  p:encryptAssertionsPredicate-ref="EncryptNoConfidentiality" 
-		                  p:postAuthenticationFlows="#{{'gluu-release-attributes-post-processor'}}"
-                      p:inboundInterceptorFlows="#{ {'security-policy/saml2-sso', 'gluu-populate-context'} }" />
+		                  p:postAuthenticationFlows="#{{'gluu-release-attributes-post-processor'}}" />
 
                 <bean parent="SAML2.ECP"
                       p:includeAttributeStatement="true"
@@ -120,6 +119,7 @@
                           p:includeAttributeStatement="$profileConfig.includeAttributeStatement"
                           p:assertionLifetime="$profileConfig.assertionLifetime"
                           p:postAuthenticationFlows="#{{'gluu-release-attributes-post-processor'}}"
+                          p:inboundInterceptorFlows="#{ {'security-policy/saml2-sso', 'gluu-populate-context'} }"
                         #if ($profileConfig.signResponses == 'conditional')
                           p:signResponsesPredicate-ref="SignNoIntegrity"
                         #{else}
