@@ -557,13 +557,18 @@
         "title": "Scim properties",
         "type": "object",
         "properties": {
-          "maxCount":{
+          "maxCount": {
             "title": "MAX COUNT",
             "type": "integer",
             "description": "Maximum value \"count\" query param can take (also used as default value when not specified)",
             "default": 200,
             "minimum": 1,
             "maximum": 2147483647
+          },
+          "userExtensionSchemaURI": {
+            "title": "User Extension Schema URI",
+            "type": "string",
+            "default": "urn:ietf:params:scim:schemas:extension:gluu:2.0:User"
           },
           "protectionMode": {
 			"title": "Protection Mode",
