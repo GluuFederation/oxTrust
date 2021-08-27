@@ -80,6 +80,7 @@ public class PassportIdpInitiatedAction implements Serializable {
 	private List<String> authScripts=new ArrayList<>();
 	private AuthzParams authzParam = new AuthzParams();
 	private AuthzParams previousParam;
+	private String acrValue;
 
 	public String init() {
 		try {
@@ -87,6 +88,7 @@ public class PassportIdpInitiatedAction implements Serializable {
 			this.ldapOxPassportConfiguration = passportService.loadConfigurationFromLdap();
 			this.passportConfiguration = this.ldapOxPassportConfiguration.getPassportConfiguration();
 			this.iiConfiguration = this.passportConfiguration.getIdpInitiated();
+			this.acrValue = this.iiConfiguration.getOpenidclient().getAcrValues();
 			this.authzParams = this.iiConfiguration.getAuthorizationParams();
 			this.clients = clientService.getAllClients();
 			this.scopes.add("openid");
@@ -113,6 +115,7 @@ public class PassportIdpInitiatedAction implements Serializable {
 	public String save() {
 		try {
 			this.iiConfiguration.setAuthorizationParams(authzParams);
+			this.iiConfiguration.getOpenidclient().setAcrValues(getAcrValue());
 			updateClientRedirects();
 			this.passportConfiguration.setIdpInitiated(iiConfiguration);
 			this.ldapOxPassportConfiguration.setPassportConfiguration(this.passportConfiguration);
@@ -370,8 +373,13 @@ public class PassportIdpInitiatedAction implements Serializable {
 	public List<String> getAuthScripts() {
 		return authScripts;
 	}
-	public String getAcrValue(){
-		return iiConfiguration.getOpenidclient().getAcrValues();
+
+	public String getAcrValue() {
+		return acrValue;
+	}
+
+	public void setAcrValue(String acrValue) {
+		this.acrValue = acrValue;
 	}
 
 	public void acceptSelectResponseTypes() {

@@ -16,7 +16,9 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
+
 import org.gluu.config.oxtrust.AppConfiguration;
+import org.gluu.config.oxtrust.ScimMode;
 import org.gluu.oxauth.client.ClientInfoClient;
 import org.gluu.oxauth.client.ClientInfoResponse;
 import org.gluu.oxtrust.auth.uma.BaseUmaProtectionService;
@@ -82,7 +84,7 @@ public class ScimUmaProtectionService extends BaseUmaProtectionService implement
 	}
 
 	private boolean isScimEnabled() {
-		return configurationService.getConfiguration() .isScimEnabled();
+		return configurationService.getConfiguration().isScimEnabled();
 	}
 
     /**
@@ -93,36 +95,31 @@ public class ScimUmaProtectionService extends BaseUmaProtectionService implement
      * @return A null value if the authorization was successful, otherwise a Response object is returned signaling an
      * authorization error
      */
-	public Response processAuthorization(HttpHeaders headers, ResourceInfo resourceInfo){
+	public Response processAuthorization(HttpHeaders headers, ResourceInfo resourceInfo) {
 
         //Comment this method body if you want to skip the authorization check and proceed straight to use your SCIM service.
         //This is useful under certain circumstances while doing development
-        //log.warn("Bypassing protection TEMPORARILY");
 
         Response authorizationResponse = null;
         String authorization = headers.getHeaderString("Authorization");
-        log.info("==== SCIM Service call intercepted ====");
         log.info("Authorization header {} found", StringUtils.isEmpty(authorization) ? "not" : "");
 
         try {
+        	ScimMode mode = jsonConfigurationService.getOxTrustappConfiguration().getScimProperties().getProtectionMode();
             //Test mode may be removed in upcoming versions of Gluu Server...
-            if (jsonConfigurationService.getOxTrustappConfiguration().isScimTestMode()) {
+            if (ScimMode.TEST.equals(mode)) {
                 log.info("SCIM Test Mode is ACTIVE");
                 authorizationResponse = processTestModeAuthorization(authorization);
-            }
-            else
-            if (isEnabled()){
+            } else if (isEnabled()) {
                 log.info("SCIM is protected by UMA");
                 authorizationResponse = processUmaAuthorization(authorization, resourceInfo);
-            }
-            else{
+            } else {
                 log.info("Please activate UMA or test mode to protect your SCIM endpoints. Read the Gluu SCIM docs to learn more");
-                authorizationResponse= getErrorResponse(Response.Status.UNAUTHORIZED, "SCIM API not protected");
+                authorizationResponse = getErrorResponse(Response.Status.UNAUTHORIZED, "SCIM API not protected");
             }
-        }
-        catch (Exception e){
+        } catch (Exception e){
             log.error(e.getMessage(), e);
-            authorizationResponse=getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, e.getMessage());
+            authorizationResponse = getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, e.getMessage());
         }
         return authorizationResponse;
 

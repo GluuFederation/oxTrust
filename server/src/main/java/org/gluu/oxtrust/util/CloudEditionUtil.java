@@ -1,7 +1,5 @@
 package org.gluu.oxtrust.util;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Optional;
