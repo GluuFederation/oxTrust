@@ -21,9 +21,11 @@ import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 
 import org.codehaus.jettison.json.JSONObject;
+import org.gluu.net.ProxyUtil;
 import org.gluu.util.StringHelper;
 import org.jboss.resteasy.client.ClientRequest;
 import org.jboss.resteasy.client.ClientResponse;
+import org.jboss.resteasy.client.core.executors.URLConnectionClientExecutor;
 import org.slf4j.Logger;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -82,7 +84,14 @@ public class RecaptchaUtil {
 	public boolean verifyGoogleRecaptcha(String gRecaptchaResponse, String secretKey) {
 		boolean result = false;
 		try {
-			ClientRequest request = new ClientRequest("https://www.google.com/recaptcha/api/siteverify");
+			String uriTemplate = "https://www.google.com/recaptcha/api/siteverify";
+			ClientRequest request;
+			if (ProxyUtil.isProxyRequied()) {
+				URLConnectionClientExecutor executor = new URLConnectionClientExecutor();
+				request = new ClientRequest(uriTemplate, executor);
+			} else {
+				request = new ClientRequest(uriTemplate);
+			}
 			request.formParameter("secret", secretKey);
 			request.formParameter("response", gRecaptchaResponse);
 			request.accept("application/json");
