@@ -43,6 +43,18 @@ public class JsfFunctions {
 		}
 	}
 
+	public static Object getTypedEntry(String dn, String clazz) {
+		if (dn == null) {
+			return null;
+		}
+
+		try {
+			return CdiUtil.bean(LookupService.class).getTypedEntry(dn, clazz);
+		} catch (Exception ex) {
+			return null;
+		}
+	}
+
 	public static List<DisplayNameEntry> getDisplayNameEntries(String baseDn, List<? extends Entry> entries) {
 		if ((baseDn == null) || (entries == null)) {
 			return null;
