@@ -204,13 +204,15 @@
 								</ox:decorate>
 								<ui:param name="_managerGroup"
 									value="#{gluufn:getDisplayNameEntry(_organization.managerGroup)}" />
-								<ox:decorate id="managerGroup"
-									label="#{msgs['organizationForm.managerGroup']}">
-									<h:link includeViewParams="false" outcome="/group/updateGroup"
-										value="#{_managerGroup.displayName}" styleClass="GroupLinkBox">
-										<f:param name="inum" value="#{_managerGroup.inum}" />
-									</h:link>
-								</ox:decorate>
+								<ui:fragment  rendered="#{_managerGroup != null}">
+									<ox:decorate id="managerGroup"
+										label="#{msgs['organizationForm.managerGroup']}">
+										<h:link includeViewParams="false" outcome="/group/updateGroup"
+											value="#{_managerGroup.displayName}" styleClass="GroupLinkBox">
+											<f:param name="inum" value="#{_managerGroup.inum}" />
+										</h:link>
+									</ox:decorate>
+								</ui:fragment>
 								<b:panel title="oxTrust Logo/Favicon" look="primary"
 									iconAwesome="fa-sliders">
 									<div class="row">
