@@ -203,7 +203,7 @@
 										styleClass="form-control orgNameTextBox" style="width:100%;" />
 								</ox:decorate>
 								<ui:param name="_managerGroup"
-									value="#{gluufn:getDisplayNameEntry(_organization.managerGroup)}" />
+									value="#{gluufn:getTypedEntry(_organization.managerGroup, 'org.gluu.oxtrust.model.GluuGroup')}" />
 								<ui:fragment  rendered="#{_managerGroup != null}">
 									<ox:decorate id="managerGroup"
 										label="#{msgs['organizationForm.managerGroup']}">
