@@ -256,8 +256,10 @@ public class ConfigurationService implements Serializable {
             Properties prop = new Properties();
             try (InputStream is = FacesContext.getCurrentInstance().getExternalContext()
                     .getResourceAsStream("/META-INF/MANIFEST.MF")) {
-                prop.load(is);
-                version = prop.getProperty("Implementation-Version");
+            	if (is != null) {
+	                prop.load(is);
+	                version = prop.getProperty("Implementation-Version");
+            	}
             } catch (IOException e) {
                 log.error(e.toString());
             }
