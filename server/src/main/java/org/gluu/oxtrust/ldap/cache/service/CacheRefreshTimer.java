@@ -1145,7 +1145,7 @@ public class CacheRefreshTimer {
 		// Try to get updated password via script
 		BindCredentials bindCredentials = externalCacheRefreshService
 				.executeExternalGetBindCredentialsMethods(ldapConfig);
-        String bindPasswordPropertyKey = persistenceType + "." + PropertiesDecrypter.BIND_PASSWORD;
+        String bindPasswordPropertyKey = persistenceType + "#" + PropertiesDecrypter.BIND_PASSWORD;
 		if (bindCredentials != null) {
 			log.error("Using updated password which got from getBindCredentials method");
 			ldapDecryptedProperties.setProperty(persistenceType + ".bindDN", bindCredentials.getBindDn());
