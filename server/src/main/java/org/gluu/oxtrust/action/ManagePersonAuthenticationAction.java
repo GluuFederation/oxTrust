@@ -292,6 +292,7 @@ public class ManagePersonAuthenticationAction
 			log.trace("Attempting to create LDAP connection with properties: {}", ldapDecryptedProperties);
 
 			LdapConnectionProvider connectionProvider = new LdapConnectionProvider(ldapDecryptedProperties);
+			connectionProvider.create();
 			if (connectionProvider.isConnected()) {
 				connectionProvider.closeConnectionPool();
 

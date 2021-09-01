@@ -712,6 +712,7 @@ public class ConfigureCacheRefreshAction
 			properties.setProperty("useSSL", Boolean.toString(ldapConfig.isUseSSL()));
 			LdapConnectionProvider connectionProvider = new LdapConnectionProvider(PropertiesDecrypter
 					.decryptProperties(properties, configurationFactory.getCryptoConfigurationSalt()));
+			connectionProvider.create();
 			if (connectionProvider.isConnected()) {
 				connectionProvider.closeConnectionPool();
 				facesMessages.add(FacesMessage.SEVERITY_INFO, facesMessages

@@ -30,6 +30,7 @@ public class ConnectionStatus {
 
 		LdapConnectionProvider connectionProvider = new LdapConnectionProvider(
 				PropertiesDecrypter.decryptProperties(properties, configurationFactory.getCryptoConfigurationSalt()));
+		connectionProvider.create();
 		if (connectionProvider.getConnectionPool() != null) {
 			boolean isConnected = connectionProvider.isConnected();
 			connectionProvider.closeConnectionPool();
