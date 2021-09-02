@@ -1287,18 +1287,18 @@ public class CacheRefreshTimer {
 			GluuLdapConfiguration ldapConfiguration) {
 		String persistenceType = ldapEntryManagerFactory.getPersistenceType();
 		Properties ldapProperties = new Properties();
-		ldapProperties.put(persistenceType + ".servers",
+		ldapProperties.put(persistenceType + "#servers",
 				PropertyUtil.simplePropertiesToCommaSeparatedList(ldapConfiguration.getServers()));
-		ldapProperties.put(persistenceType + ".maxconnections",
+		ldapProperties.put(persistenceType + "#maxconnections",
 				Integer.toString(ldapConfiguration.getMaxConnections()));
-		ldapProperties.put(persistenceType + ".useSSL", Boolean.toString(ldapConfiguration.isUseSSL()));
-		ldapProperties.put(persistenceType + ".bindDN", ldapConfiguration.getBindDN());
-		ldapProperties.put(persistenceType + ".bindPassword", ldapConfiguration.getBindPassword());
+		ldapProperties.put(persistenceType + "#useSSL", Boolean.toString(ldapConfiguration.isUseSSL()));
+		ldapProperties.put(persistenceType + "#bindDN", ldapConfiguration.getBindDN());
+		ldapProperties.put(persistenceType + "#bindPassword", ldapConfiguration.getBindPassword());
 
 		// Copy binary attributes list from main LDAP connection
 		PersistenceOperationService persistenceOperationService = ldapEntryManager.getOperationService();
 		if (persistenceOperationService instanceof LdapOperationService) {
-			ldapProperties.put(persistenceType + ".binaryAttributes",
+			ldapProperties.put(persistenceType + "#binaryAttributes",
 					PropertyUtil.stringsToCommaSeparatedList(((LdapOperationService) persistenceOperationService)
 							.getConnectionProvider().getBinaryAttributes()));
 		}
