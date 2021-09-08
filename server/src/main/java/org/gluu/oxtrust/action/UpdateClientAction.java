@@ -366,7 +366,11 @@ public class UpdateClientAction implements Serializable {
     public String save() throws Exception {
         String sectorIdentifierUri = this.client.getSectorIdentifierUri();
         if (!StringUtils.isWhitespace(sectorIdentifierUri) && sectorIdentifierUri != null) {
-            loadSector(sectorIdentifierUri);
+            boolean check=loadSector(sectorIdentifierUri);
+            if(!check){
+                facesMessages.add(FacesMessage.SEVERITY_ERROR, "The sector identifier uri provided is not valid!");
+                return OxTrustConstants.RESULT_FAILURE;
+            }
         }
         if (this.client.isDeletable() && this.client.getExp() == null) {
             this.client.setExp(oneDay());
@@ -1861,7 +1865,7 @@ public class UpdateClientAction implements Serializable {
         return availableSpontaneousScripts;
     }
 
-    private void loadSector(String sectorIdentifierUri) {
+    private boolean loadSector(String sectorIdentifierUri) {
         HTTPFileDownloader.setEasyhttps(new Protocol("https", new EasyCASSLProtocolSocketFactory(), 443));
         String sectoruriContent = HTTPFileDownloader.getResource(sectorIdentifierUri, "application/json", null, null);
         try {
@@ -1872,8 +1876,10 @@ public class UpdateClientAction implements Serializable {
                     this.loginUris.add(uris.getString(i));
                 }
             }
+            return true;
         } catch (JSONException e) {
             log.error("", e.getMessage());
+            return false;
         }
     }
 
