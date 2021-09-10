@@ -22,6 +22,8 @@ public class UserProfile implements Serializable {
 
 	private String id;
 
+	private String usedAcr;
+
 	private final Map<String, Object> attributes = new HashMap<String, Object>();
 
 	public String getId() {
@@ -30,6 +32,14 @@ public class UserProfile implements Serializable {
 
 	public void setId(final String id) {
 		this.id = id;
+	}
+
+	public String getUsedAcr() {
+		return usedAcr;
+	}
+
+	public void setUsedAcr(String usedAcr) {
+		this.usedAcr = usedAcr;
 	}
 
 	public Map<String, Object> getAttributes() {
