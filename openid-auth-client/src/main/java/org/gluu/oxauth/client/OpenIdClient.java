@@ -14,28 +14,15 @@ import java.util.Map.Entry;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.commons.lang.RandomStringUtils;
-import org.gluu.oxauth.client.auth.principal.OpenIdCredentials;
-import org.gluu.oxauth.client.auth.user.CommonProfile;
-import org.gluu.oxauth.client.auth.user.UserProfile;
-import org.gluu.oxauth.client.exception.CommunicationException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.gluu.conf.model.AppConfiguration;
 import org.gluu.conf.model.AppConfigurationEntry;
 import org.gluu.conf.model.ClaimToAttributeMapping;
 import org.gluu.conf.service.ConfigurationFactory;
 import org.gluu.context.WebContext;
-import org.gluu.oxauth.client.AuthorizationRequest;
-import org.gluu.oxauth.client.EndSessionRequest;
-import org.gluu.oxauth.client.OpenIdConfigurationClient;
-import org.gluu.oxauth.client.OpenIdConfigurationResponse;
-import org.gluu.oxauth.client.RegisterClient;
-import org.gluu.oxauth.client.RegisterRequest;
-import org.gluu.oxauth.client.RegisterResponse;
-import org.gluu.oxauth.client.TokenClient;
-import org.gluu.oxauth.client.TokenResponse;
-import org.gluu.oxauth.client.UserInfoClient;
-import org.gluu.oxauth.client.UserInfoResponse;
+import org.gluu.oxauth.client.auth.principal.OpenIdCredentials;
+import org.gluu.oxauth.client.auth.user.CommonProfile;
+import org.gluu.oxauth.client.auth.user.UserProfile;
+import org.gluu.oxauth.client.exception.CommunicationException;
 import org.gluu.oxauth.model.authorize.AuthorizeRequestParam;
 import org.gluu.oxauth.model.common.AuthenticationMethod;
 import org.gluu.oxauth.model.common.Prompt;
@@ -51,6 +38,8 @@ import org.gluu.util.exception.ConfigurationException;
 import org.gluu.util.init.Initializable;
 import org.gluu.util.security.StringEncrypter;
 import org.gluu.util.security.StringEncrypter.EncryptionException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class is the oxAuth client to authenticate users and retrieve user
@@ -406,6 +395,10 @@ public class OpenIdClient<C extends AppConfiguration, L extends AppConfiguration
 			id = getFirstClaim(userInfoResponse, JwtClaimName.SUBJECT_IDENTIFIER);
 		}
 		profile.setId(id);
+
+		String acrResponse = (String) jwt.getClaims().getClaim(JwtClaimName.AUTHENTICATION_CONTEXT_CLASS_REFERENCE);
+        logger.debug("Authentication ACR: '{}'", acrResponse);
+        profile.setUsedAcr(acrResponse);
 
 		List<ClaimToAttributeMapping> claimMappings = this.appConfiguration.getOpenIdClaimMapping();
 		if ((claimMappings == null) || (claimMappings.size() == 0)) {

@@ -15,6 +15,16 @@ public class CommonProfile extends UserProfile {
 
 	private static final long serialVersionUID = 470255919465444352L;
 
+	private String usedAcr;
+
+	public String getUsedAcr() {
+		return usedAcr;
+	}
+
+	public void setUsedAcr(String usedAcr) {
+		this.usedAcr = usedAcr;
+	}
+
 	public void setUserName(final String userName) {
 		addAttribute("username", userName);
 	}
