@@ -14,38 +14,38 @@ import javax.inject.Inject;
 import org.gluu.config.oxtrust.AppConfiguration;
 
 /**
- * Provides service to protect SCIM UMA Rest service endpoints
+ * Provides service to protect Passport Rest service endpoints
  */
 @ApplicationScoped
-public class ScimUmaProtectionService extends BaseUmaProtectionService implements Serializable {
+public class PassportUmaProtectionService extends BaseUmaProtectionService implements Serializable {
 
-	private static final long serialVersionUID = -5447131971095468865L;
+	private static final long serialVersionUID = -5547131971095468865L;
 
 	@Inject
 	private AppConfiguration appConfiguration;
 
 	protected String getClientId() {
-		return appConfiguration.getScimUmaClientId();
+		return appConfiguration.getPassportUmaClientId();
 	}
 
 	protected String getClientKeyStorePassword() {
-		return appConfiguration.getScimUmaClientKeyStorePassword();
+		return appConfiguration.getPassportUmaClientKeyStorePassword();
 	}
 
 	protected String getClientKeyStoreFile() {
-		return appConfiguration.getScimUmaClientKeyStoreFile();
+		return appConfiguration.getPassportUmaClientKeyStoreFile();
 	}
 
 	protected String getClientKeyId() {
-		return appConfiguration.getScimUmaClientKeyId();
+		return appConfiguration.getPassportUmaClientKeyId();
 	}
 
 	public String getUmaResourceId() {
-		return appConfiguration.getScimUmaResourceId();
+		return appConfiguration.getPassportUmaResourceId();
 	}
 
 	public String getUmaScope() {
-		return appConfiguration.getScimUmaScope();
+		return appConfiguration.getPassportUmaScope();
 	}
 
 }

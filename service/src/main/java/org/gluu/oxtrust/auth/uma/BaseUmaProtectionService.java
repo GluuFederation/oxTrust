@@ -14,23 +14,25 @@ import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang.StringUtils;
+
 import org.gluu.oxauth.client.uma.wrapper.UmaClient;
 import org.gluu.oxauth.model.uma.UmaMetadata;
 import org.gluu.oxauth.model.uma.wrapper.Token;
+import org.gluu.oxtrust.auth.IProtectionService;
 import org.gluu.oxtrust.exception.UmaProtectionException;
 import org.gluu.oxtrust.service.EncryptionService;
 import org.gluu.oxtrust.service.filter.ProtectedApi;
 import org.gluu.util.Pair;
 import org.gluu.util.StringHelper;
 import org.gluu.util.security.StringEncrypter.EncryptionException;
+
 import org.slf4j.Logger;
 
 /**
  * Provide base methods to simplify work with UMA Rest services
- * 
- * @author Yuriy Movchan Date: 12/06/2016
  */
-public abstract class BaseUmaProtectionService implements Serializable {
+public abstract class BaseUmaProtectionService implements IProtectionService, Serializable {
 
 	private static final long serialVersionUID = -1147131971095468865L;
 
@@ -147,17 +149,14 @@ public abstract class BaseUmaProtectionService implements Serializable {
 				|| (validatePatTokenExpiration <= now));
 	}
 
-	protected Response getErrorResponse(Response.Status status, String detail) {
-		return Response.status(status).entity(detail).build();
-	}
-
 	Response processUmaAuthorization(String authorization, ResourceInfo resourceInfo) throws Exception {
 		List<String> scopes = getRequestedScopes(resourceInfo);
 		Token patToken = null;
 		try {
 			patToken = getPatToken();
 		} catch (UmaProtectionException ex) {
-			return getErrorResponse(Response.Status.INTERNAL_SERVER_ERROR, "Failed to obtain PAT token");
+			return IProtectionService.simpleResponse(Response.Status.INTERNAL_SERVER_ERROR,
+                                "Failed to obtain PAT token");
 		}
 
 		Pair<Boolean, Response> rptTokenValidationResult;
@@ -174,7 +173,8 @@ public abstract class BaseUmaProtectionService implements Serializable {
 				return rptTokenValidationResult.getSecond();
 			}
 		} else {
-			return getErrorResponse(Response.Status.UNAUTHORIZED, "Invalid GAT/RPT token");
+			return IProtectionService.simpleResponse(Response.Status.UNAUTHORIZED,
+                                "Invalid GAT/RPT token");
 		}
 		return null;
 
@@ -213,8 +213,35 @@ public abstract class BaseUmaProtectionService implements Serializable {
 
 	public abstract String getUmaScope();
 
-	public abstract boolean isEnabled();
+    /**
+     * This method checks whether the authorization header is present and valid
+     * before service methods can be actually called.
+     * @param headers An object holding HTTP headers
+     * @param resourceInfo An object that allows access to the involved JAX-RS resource method or class
+     * @return A null value if the authorization was successful, otherwise a Response object is returned signaling an
+     * authorization error
+     */
+    @Override
+    public Response processAuthorization(HttpHeaders headers, ResourceInfo resourceInfo) {
 
-	public abstract Response processAuthorization(HttpHeaders headers, ResourceInfo resourceInfo);
+        Response authorizationResponse;
+        String authorization = headers.getHeaderString(HttpHeaders.AUTHORIZATION);
+        log.info("Authorization header {} found", StringUtils.isEmpty(authorization) ? "not" : "");
+
+        try {
+            if (isEnabledUmaAuthentication()) {
+                authorizationResponse = processUmaAuthorization(authorization, resourceInfo);
+            } else {
+                authorizationResponse = IProtectionService.simpleResponse(Response.Status.INTERNAL_SERVER_ERROR,
+                    "Failed to setup UMA authentication");
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            authorizationResponse = IProtectionService.simpleResponse(Response.Status.INTERNAL_SERVER_ERROR,
+                    e.getMessage());
+        }
+        return authorizationResponse;
+
+    }
 
 }

@@ -171,7 +171,5 @@ public final class OxTrustConstants extends OxConstants {
 	public static final String INIT_REGISTRATION_SCRIPT = "InitRegistrationScript";
 
 	public static final String CONFIRM_REGISTRATION_SCRIPT = "ConfirmRegistrationScript";
-	
-	public static final String API_PROTECTION_BYPASS_PROPERTY = "org.gluu.oxtrust.auth.bypass";
 
 }

@@ -6,19 +6,9 @@
 package org.gluu.oxtrust.service.filter;
 
 import java.io.IOException;
-import java.lang.annotation.Annotation;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.Priority;
 import javax.enterprise.context.RequestScoped;
-import javax.enterprise.inject.Any;
-import javax.enterprise.inject.Instance;
-import javax.enterprise.inject.spi.Bean;
-import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 import javax.ws.rs.Priorities;
 import javax.ws.rs.container.ContainerRequestContext;
@@ -29,22 +19,18 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
 
-import org.gluu.oxtrust.auth.uma.BaseUmaProtectionService;
-import org.gluu.oxtrust.auth.uma.BindingUrls;
+import org.gluu.oxtrust.auth.IProtectionService;
+import org.gluu.oxtrust.auth.GluuRestService;
+import org.gluu.oxtrust.auth.ProtectionServiceSelector;
+
 import org.slf4j.Logger;
 
-import static org.gluu.oxtrust.util.OxTrustConstants.API_PROTECTION_BYPASS_PROPERTY;
-
 /**
- * A RestEasy filter to centralize protection of APIs with UMA based on path
- * pattern. Created by jgomer on 2017-11-25.
- * 
- * @author Yuriy Movchan Date: 02/14/2017
+ * A RestEasy filter to centralize protection of APIs based on path pattern
  */
-// To protect methods with this filter just add the @ProtectedApi annotation to
-// them and ensure there is a proper subclass
-// of {@link BaseUmaProtectionService} that can handle specific protection logic
-// for your particular case
+// To protect JAX-RS resources with this filter add the @ProtectedApi annotation
+// to them and ensure there is a proper class implementing GluuRestApi
+// that is capable of handling specific protection logic for your particular case
 @Provider
 @ProtectedApi
 @Priority(Priorities.AUTHENTICATION)
@@ -59,14 +45,9 @@ public class AuthorizationProcessingFilter implements ContainerRequestFilter {
 
 	@Context
 	private ResourceInfo resourceInfo;
-
-	@Inject
-	private Instance<BaseUmaProtectionService> protectionServiceInstance;
 	
 	@Inject
-	private BeanManager beanManager;
-
-	private Map<String, Class<BaseUmaProtectionService>> protectionMapping;
+	private ProtectionServiceSelector beanSelector;
 
 	/**
 	 * This method performs the protection check of service invocations: it provokes
@@ -81,53 +62,47 @@ public class AuthorizationProcessingFilter implements ContainerRequestFilter {
 	 */
 	@Override
 	public void filter(ContainerRequestContext requestContext) throws IOException {
-
-		if (Objects.isNull(requestContext.getProperty(API_PROTECTION_BYPASS_PROPERTY))) {
-    
+            
+            Response authorizationResponse = null;
             String path = requestContext.getUriInfo().getPath();
-            BaseUmaProtectionService protectionService = null;
-            for (String prefix : protectionMapping.keySet()) {
-                if (path.startsWith(prefix)) {
-                    protectionService = protectionServiceInstance.select(protectionMapping.get(prefix)).get();
-                    break;
+            log.debug("REST call to '{}' intercepted", path);
+            GluuRestService api = beanSelector.select(path);
+
+            if (api == null) {
+                log.warn("No REST service bean associated to this path (resource will be accessed anonymously)");
+            } else if (!api.isEnabled()){
+                log.warn("Please activate {} API", api.getName());
+                authorizationResponse = disabledApiResponse(api.getName());
+            } else {
+                IProtectionService protectionService = api.getProtectionService();
+
+                if (protectionService == null) {
+                    log.warn("No concrete protection mechanism associated to this API. Denying access");
+                    authorizationResponse = unprotectedApiResponse(api.getName());
+
+                } else {
+                    log.debug("Path is protected, proceeding with authorization processing...");
+                    authorizationResponse = protectionService.processAuthorization(httpHeaders, resourceInfo);
+                    if (authorizationResponse == null) {
+                        // Actual processing of request proceeds
+                        log.debug("Authorization passed");
+                    }
                 }
             }
-            if (protectionService == null) {
-                log.warn("No concrete UMA protection mechanism is associated to this path (resource will be accessed anonymously)");
-
-            } else {
-                log.debug("Path is protected, proceeding with authorization processing...");
-                Response authorizationResponse = protectionService.processAuthorization(httpHeaders, resourceInfo);
-                if (authorizationResponse == null)
-                    log.debug("Authorization passed"); // If authorization passed, proceed with actual processing of request
-                else
-                    requestContext.abortWith(authorizationResponse);
-            } 
-		}
+            if (authorizationResponse != null) {
+                requestContext.abortWith(authorizationResponse);
+            }
 
 	}
 
-	/**
-	 * Builds a map around url patterns and service beans that are aimed to perform
-	 * actual protection
-	 */
-	@SuppressWarnings("unchecked")
-	@PostConstruct
-	private void init() {
-		protectionMapping = new HashMap<String, Class<BaseUmaProtectionService>>();
-		Set<Bean<?>> beans = beanManager.getBeans(BaseUmaProtectionService.class, Any.Literal.INSTANCE);
-		
-		for (Bean bean : beans) {
-			Class beanClass = bean.getBeanClass();
-			Annotation beanAnnotation = beanClass.getAnnotation(BindingUrls.class);
-			if (beanAnnotation != null) {
-				for (String pattern : ((BindingUrls) beanAnnotation).value()) {
-					if (pattern.length() > 0) {
-						protectionMapping.put(pattern, beanClass);
-					}
-				}
-			}
-		}
-	}
+    private Response unprotectedApiResponse(String name) {
+        return Response.status(Response.Status.UNAUTHORIZED).entity(name + " API not protected")
+                .build();
+    }
+
+    private Response disabledApiResponse(String name) {
+        return Response.status(Response.Status.SERVICE_UNAVAILABLE).entity(name + " API is disabled")
+                .build();
+    }
 
 }

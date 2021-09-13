@@ -3,7 +3,7 @@
  *
  * Copyright (c) 2018, Gluu
  */
-package org.gluu.oxtrust.auth.uma;
+package org.gluu.oxtrust.auth;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -11,7 +11,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Created by jgomer on 2018-02-13.
+ * Use this annotation to annotate classes implementing GluuRestService interface
  */
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
