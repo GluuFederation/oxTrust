@@ -18,7 +18,7 @@ import org.gluu.oxtrust.auth.IProtectionService;
 import org.gluu.oxtrust.service.filter.ProtectedApi;
 
 import org.slf4j.Logger;
-        
+
 @ApplicationScoped
 public class DefaultOAuthProtectionService extends BaseOAuthProtectionService {
 

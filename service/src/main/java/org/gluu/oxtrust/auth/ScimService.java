@@ -4,6 +4,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.gluu.config.oxtrust.ScimMode;
+import org.gluu.oxtrust.auth.none.NoProtectionService;
 import org.gluu.oxtrust.auth.oauth.DefaultOAuthProtectionService;
 import org.gluu.oxtrust.auth.oauth.DefaultTestModeProtectionService;
 import org.gluu.oxtrust.auth.uma.ScimUmaProtectionService;
@@ -33,6 +34,9 @@ public class ScimService implements GluuRestService {
     
     @Inject
     private DefaultTestModeProtectionService testModeProtectionService;
+    
+    @Inject
+    private NoProtectionService noProtectionService;
 
     @Override
     public String getName() {
@@ -59,7 +63,8 @@ public class ScimService implements GluuRestService {
             switch (mode) {
                 case UMA: return scimUmaProtectionService;
                 case OAUTH: return oauthProtectionService;
-                case TEST: return testModeProtectionService;                
+                case TEST: return testModeProtectionService;
+                case BYPASS: return noProtectionService;
             }
         }
         return null;
