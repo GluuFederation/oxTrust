@@ -407,6 +407,10 @@ public class OpenIdClient<C extends AppConfiguration, L extends AppConfiguration
 		}
 		profile.setId(id);
 
+		String acrResponse = (String) jwt.getClaims().getClaim(JwtClaimName.AUTHENTICATION_CONTEXT_CLASS_REFERENCE);
+        logger.debug("Authentication ACR: '{}'", acrResponse);
+        profile.setUsedAcr(acrResponse);
+
 		List<ClaimToAttributeMapping> claimMappings = this.appConfiguration.getOpenIdClaimMapping();
 		if ((claimMappings == null) || (claimMappings.size() == 0)) {
 			logger.info("Using default claims to attributes mapping");
