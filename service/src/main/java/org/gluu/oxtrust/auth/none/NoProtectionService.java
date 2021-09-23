@@ -18,7 +18,7 @@ public class NoProtectionService implements IProtectionService {
         
     @Override
     public Response processAuthorization(HttpHeaders headers, ResourceInfo resourceInfo) {
-        log.warn("Allowing access to this endpoint WITHOUT SECURITY checks in place. " +
+        log.warn("Allowing access to endpoint WITHOUT SECURITY checks in place. " +
                 "Ensure this is intedended behavior!");
         return null;
     }
