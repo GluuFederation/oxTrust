@@ -576,7 +576,8 @@
 			"enum": [
 				"OAUTH",
 				"TEST",
-				"UMA"
+				"UMA",
+				"BYPASS"
 			]
 		  }
         }
