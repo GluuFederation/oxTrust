@@ -1877,7 +1877,7 @@ public class UpdateClientAction implements Serializable {
                 }
             }
             return true;
-        } catch (JSONException e) {
+        } catch (Exception e) {
             log.error("", e.getMessage());
             return false;
         }
