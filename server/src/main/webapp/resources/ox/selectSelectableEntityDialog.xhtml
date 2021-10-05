@@ -34,7 +34,7 @@
 <cc:implementation>
 	<rich:popupPanel left="300" top="100" id="selectEntityModalPanel"
 		onmaskclick="#{rich:component('selectEntityModalPanel')}.hide()"
-		zindex="2000" moveable="true" autosized="true" width="725"
+		zindex="2000" moveable="true" autosized="true" width="825"
 		height="460"
 		onbeforeshow="if (#{not cc.attrs.displaySearchForm}) {executeSearch#{cc.attrs.id}();}">
 		<f:facet name="header">
@@ -80,17 +80,17 @@
 					layout="block" rendered="#{cc.attrs.searchResult.size() gt 0}">
 					<p:dataTable id="selectableListId" value="#{cc.attrs.searchResult}"
 						styleClass="data sortable" var="prs" style="width:100%">
-						<p:column width="50">
+						<p:column style="width:5%">
 							<f:facet name="header">X</f:facet>
 							<h:selectBooleanCheckbox value="#{prs.selected}" />
 						</p:column>
-						<p:column width="100"
+						<p:column style="width:50%"
 							sortBy="#{propertyService.getPropertyValue(prs, cc.attrs.nameProperty)}">
 							<f:facet name="header">Name</f:facet>
 							<h:outputText
 								value="#{propertyService.getPropertyValue(prs, cc.attrs.nameProperty)}" />
 						</p:column>
-						<p:column
+						<p:column style="width:45%"
 							sortBy="#{propertyService.getPropertyValue(prs, cc.attrs.displayNameProperty)}">
 							<f:facet name="header">Display Name</f:facet>
 							<h:outputText

@@ -20,7 +20,6 @@ import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.model.base.SimpleBranch;
 import org.gluu.search.filter.Filter;
 import org.gluu.util.StringHelper;
-import org.python.jline.internal.Log;
 
 /**
  * Provides operations with resources
@@ -38,15 +37,25 @@ public class ResourceSetService implements Serializable {
 	private OrganizationService organizationService;
 
 	public void addBranch() {
+		String branchDn = getDnForResource(null);
+		if (!persistenceEntryManager.hasBranchesSupport(branchDn)) {
+			return;
+		}
+
 		SimpleBranch branch = new SimpleBranch();
 		branch.setOrganizationalUnitName("resources");
-		branch.setDn(getDnForResource(null));
+		branch.setDn(branchDn);
 
 		persistenceEntryManager.persist(branch);
 	}
 
 	public boolean containsBranch() {
-		return persistenceEntryManager.contains(getDnForResource(null), SimpleBranch.class);
+		String branchDn = getDnForResource(null);
+		if (!persistenceEntryManager.hasBranchesSupport(branchDn)) {
+			return true;
+		}
+
+		return persistenceEntryManager.contains(branchDn, SimpleBranch.class);
 	}
 
 	/**
@@ -107,8 +116,7 @@ public class ResourceSetService implements Serializable {
 	 * @return List of resources
 	 */
 	public List<UmaResource> getAllResources(String... ldapReturnAttributes) {
-		return persistenceEntryManager.findEntries(getDnForResource(null), UmaResource.class, null,
-				ldapReturnAttributes);
+		return persistenceEntryManager.findEntries(getDnForResource(null), UmaResource.class, null, ldapReturnAttributes);
 	}
 
 	/**
@@ -126,8 +134,8 @@ public class ResourceSetService implements Serializable {
 		Filter displayNameFilter = Filter.createSubstringFilter(OxTrustConstants.displayName, null, targetArray, null);
 		Filter searchFilter = Filter.createORFilter(oxIdFilter, displayNameFilter);
 
-		List<UmaResource> result = persistenceEntryManager.findEntries(getDnForResource(null), UmaResource.class,
-				searchFilter, sizeLimit);
+		List<UmaResource> result = persistenceEntryManager.findEntries(getDnForResource(null), UmaResource.class, searchFilter,
+				sizeLimit);
 
 		return result;
 	}
@@ -163,13 +171,7 @@ public class ResourceSetService implements Serializable {
 	 * @return Resource set
 	 */
 	public UmaResource getResourceByDn(String dn) {
-		try {
-			return persistenceEntryManager.find(UmaResource.class, dn);
-		} catch (Exception e) {
-			Log.info("Error fetching resource", e);
-			return null;
-		}
-
+		return persistenceEntryManager.find(UmaResource.class, dn);
 	}
 
 	/**

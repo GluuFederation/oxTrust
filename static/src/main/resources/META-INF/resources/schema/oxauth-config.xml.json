@@ -123,11 +123,6 @@
             "format": "url",
             "minLength": 1
         },
-        "introspectionAccessTokenMustHaveUmaProtectionScope": {
-            "id": "introspectionAccessTokenMustHaveUmaProtectionScope",
-            "description":"Reject introspection requests if access_token in Authorization header does not have uma_protection scope.",
-            "type": "boolean"
-        },
         "umaConfigurationEndpoint": {
             "id": "umaConfigurationEndpoint",
             "description": "URL for the UMA Configuration Endpoint.",
@@ -638,16 +633,6 @@
             "description": "Boolean value specifying whether the OP requires any request_uri values used to be pre-registered using the request_uris registration parameter.",
             "type": "boolean"
         },
-        "requestUriHashVerificationEnabled": {
-            "id": "requestUriHashVerificationEnabled",
-            "description": "Boolean value specifying whether the OP should validate or not the content gotten from the request_uri using the hash included in the same request_uri param.",
-            "type": "boolean"
-        },
-        "idTokenFilterClaimsBasedOnAccessToken": {
-            "id": "idTokenFilterClaimsBasedOnAccessToken",
-            "description": "Boolean value specifying whether the OP should include or not profile, email, address and phone number claims from the IdToken depending on the kind of access token issued.",
-            "type": "boolean"
-        },
         "opPolicyUri": {
             "id": "opPolicyUri",
             "description": "URL that the OpenID Provider provides to the person registering the Client to read about the OP's requirements on how the Relying Party can use the data provided by the OP.",
@@ -787,18 +772,6 @@
             "exclusiveMaximum": false,
             "exclusiveMinimum": false
         },
-        "cleanServiceBaseDns": {
-            "id": "cleanServiceBaseDns",
-            "description": "List of additional base dns under which AS will look up for expired entities ",
-            "type": "array",
-            "minItems": 0,
-            "uniqueItems": true,
-            "additionalItems": true,
-            "items": {
-                "type": "string",
-                "minLength": 1
-            }
-        },
         "cleanServiceBatchChunkSize": {
             "id": "cleanServiceBatchChunkSize",
             "description": "Each clean up iteration fetches chunk of expired data per base dn and removes it from storage.",
@@ -914,6 +887,16 @@
         "introspectionScriptBackwardCompatibility": {
             "id": "introspectionScriptBackwardCompatibility",
             "description": "Boolean value specifying whether switch off client's introspection scripts (true value) and run all scripts that exists on server. Default value is false.",
+            "type": "boolean"
+        },
+        "introspectionResponseScopesBackwardCompatibility": {
+            "id": "introspectionResponseScopesBackwardCompatibility",
+            "description":"When false, introspection endpoint returns scopes as a space-separated string, otherwise as JSON array.",
+            "type": "boolean"
+        },
+        "introspectionAccessTokenMustHaveUmaProtectionScope": {
+            "id": "introspectionAccessTokenMustHaveUmaProtectionScope",
+            "description":"Reject introspection requests if access_token in Authorization header does not have uma_protection scope.",
             "type": "boolean"
         },
         "personCustomObjectClassList": {
@@ -1163,6 +1146,37 @@
             "description": "Boolean value specifying whether to enable Metric Reporter.",
             "type": "boolean"
         },
+        "statEnabled": {
+            "id": "statEnabled",
+            "description": "Boolean value specifying whether to enable statistic.",
+            "type": "boolean"
+        },
+        "statTimerIntervalInSeconds": {
+            "id": "statTimerIntervalInSeconds",
+            "description": "Interval in seconds which specifies how often statistic timer should run.",
+            "type": "integer",
+            "multipleOf": 1,
+            "maximum": 2147483647,
+            "minimum": 1,
+            "exclusiveMaximum": false,
+            "exclusiveMinimum": false
+        },
+        "statWebServiceIntervalLimitInSeconds": {
+            "id": "statWebServiceIntervalLimitInSeconds",
+            "description": "Interval in seconds which specifies limit before statistic web service can handle next call. Protection from calling expensive service too often.",
+            "type": "integer",
+            "multipleOf": 1,
+            "maximum": 2147483647,
+            "minimum": 1,
+            "exclusiveMaximum": false,
+            "exclusiveMinimum": false
+        },
+        "statNodeId": {
+            "id": "statNodeId",
+            "description": "Statistic node ID. It has to be any valid string which is unique and does not change over time. (e.g. UUID)",
+            "type": "string",
+            "minLength": 3
+        },
         "pairwiseIdType": {
             "id": "pairwiseIdType",
             "description": "The pairwise ID type.",
@@ -1187,6 +1201,11 @@
         "shareSubjectIdBetweenClientsWithSameSectorId": {
             "id": "shareSubjectIdBetweenClientsWithSameSectorId",
             "description": "Share Subject ID between clients with same Sector ID.",
+            "type": "boolean"
+        },
+        "subjectIdentifierBasedOnWholeUriBackwardCompatibility": {
+            "id": "subjectIdentifierBasedOnWholeUriBackwardCompatibility",
+            "description": "Use for subject identifier whole uri instead of host (deprecated and will be removed in 5.0)",
             "type": "boolean"
         },
         "webKeysStorage": {
@@ -1216,6 +1235,29 @@
             "type": "string",
             "minLength": 1
         },
+        "keySelectionStrategy": {
+            "id": "keySelectionStrategy",
+            "description": "Key selection strategy.",
+            "type": "string",
+            "format": "select",
+            "enum": [
+                "OLDER",
+                "NEWER",
+                "FIRST"
+            ]
+        },
+        "keyAlgsAllowedForGeneration": {
+            "id": "keyAlgsAllowedForGeneration",
+            "description": "If it's empty then all keys are generated. If it's set then only keys with algorithms contained in the property are generated. Possible values: RS256, RS384, RS512, ES256, ES384, ES512, PS256, PS384, PS512, RSA1_5, RSA-OAEP",
+            "type": "array",
+            "minItems": 0,
+            "uniqueItems": true,
+            "additionalItems": true,
+            "items": {
+                "type": "string",
+                "minLength": 1
+            }
+         },
         "endSessionWithAccessToken": {
             "id": "endSessionWithAccessToken",
             "description": "Accept access token to call end_session endpoint.",
@@ -1264,6 +1306,11 @@
         "frontChannelLogoutSessionSupported": {
         	"id": "frontChannelLogoutSessionSupported",
             "description": "Boolean value to specify support for front channel logout session.",
+            "type": "boolean"
+        },
+        "useCacheForAllImplicitFlowObjects": {
+            "id": "useCacheForAllImplicitFlowObjects",
+            "description": "Boolean value to specify whether to persist all objects into cache during Implicit Flow.",
             "type": "boolean"
         },
         "invalidateSessionCookiesAfterAuthorizationFlow": {
@@ -1580,6 +1627,16 @@
             "exclusiveMaximum": false,
             "exclusiveMinimum": false
         },
+        "sectorIdentifierCacheLifetimeInMinutes": {
+            "id": "sectorIdentifierCacheLifetimeInMinutes",
+            "description": "Lifetime of sector identifier redirect uri's cache.",
+            "type": "integer",
+            "multipleOf": 1,
+            "maximum": 2147483647,
+            "minimum": 1,
+            "exclusiveMaximum": false,
+            "exclusiveMinimum": false
+        },
         "keepAuthenticatorAttributesOnAcrChange": {
             "id": "keepAuthenticatorAttributesOnAcrChange",
             "description": "Boolean value specifying whether to keep authenticator attributes on ACR change.",
@@ -1841,8 +1898,6 @@
         "requestParameterSupported",
         "requestUriParameterSupported",
         "requireRequestUriRegistration",
-        "requestUriHashVerificationEnabled",
-        "idTokenFilterClaimsBasedOnAccessToken",
         "opPolicyUri",
         "opTosUri",
         "authorizationCodeLifetime",
@@ -1855,7 +1910,6 @@
         "umaKeepClientDuringResourceSetRegistration",
         "cleanServiceInterval",
         "cleanServiceBatchChunkSize",
-        "cleanServiceBaseDns",
         "keyRegenerationEnabled",
         "keyRegenerationInterval",
         "defaultSignatureAlgorithm",

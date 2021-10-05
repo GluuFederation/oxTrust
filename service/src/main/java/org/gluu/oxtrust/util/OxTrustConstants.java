@@ -36,7 +36,6 @@ public final class OxTrustConstants extends OxConstants {
 	public static final String mail = "mail";
 	public static final String ppid = "oxPPID";
 	public static final String oxId = "oxId";
-	public static final String SCRYPT_TYPE = "oxScriptType";
 
 	public static final String status = "status";
 	public static final String gluuStatus = "gluuStatus";
@@ -57,6 +56,7 @@ public final class OxTrustConstants extends OxConstants {
 
 	public static final String RESULT_SUCCESS = "success";
 	public static final String RESULT_FAILURE = "failure";
+	public static final String RESULT_RESTART_IDP = "restart idp service";
 	public static final String RESULT_DUPLICATE = "duplicate";
 	public static final String RESULT_DISABLED = "disabled";
 	public static final String RESULT_NO_PERMISSIONS = "no_permissions";

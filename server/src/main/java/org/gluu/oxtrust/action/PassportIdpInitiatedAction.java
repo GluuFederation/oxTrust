@@ -1,10 +1,7 @@
 package org.gluu.oxtrust.action;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -17,6 +14,8 @@ import org.gluu.config.oxtrust.LdapOxPassportConfiguration;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
 import org.gluu.model.SelectableEntity;
+import org.gluu.model.custom.script.CustomScriptType;
+import org.gluu.model.custom.script.model.CustomScript;
 import org.gluu.model.passport.PassportConfiguration;
 import org.gluu.model.passport.Provider;
 import org.gluu.model.passport.idpinitiated.AuthzParams;
@@ -29,6 +28,7 @@ import org.gluu.oxtrust.service.ConfigurationService;
 import org.gluu.oxtrust.service.PassportService;
 import org.gluu.oxtrust.service.ScopeService;
 import org.gluu.oxtrust.util.OxTrustConstants;
+import org.gluu.service.custom.script.AbstractCustomScriptService;
 import org.gluu.service.security.Secure;
 import org.slf4j.Logger;
 
@@ -61,6 +61,9 @@ public class PassportIdpInitiatedAction implements Serializable {
 	private ClientService clientService;
 
 	@Inject
+	private AbstractCustomScriptService customScriptService;
+
+	@Inject
 	private ScopeService scopeService;
 
 	private LdapOxPassportConfiguration ldapOxPassportConfiguration;
@@ -74,10 +77,10 @@ public class PassportIdpInitiatedAction implements Serializable {
 	private List<OptionEntry> options = new ArrayList<>();
 	private List<SelectableEntity<String>> availableScopes;
 	private List<SelectableEntity<String>> availableResponseTypes;
-	
-
+	private List<String> authScripts=new ArrayList<>();
 	private AuthzParams authzParam = new AuthzParams();
 	private AuthzParams previousParam;
+	private String acrValue;
 
 	public String init() {
 		try {
@@ -85,12 +88,14 @@ public class PassportIdpInitiatedAction implements Serializable {
 			this.ldapOxPassportConfiguration = passportService.loadConfigurationFromLdap();
 			this.passportConfiguration = this.ldapOxPassportConfiguration.getPassportConfiguration();
 			this.iiConfiguration = this.passportConfiguration.getIdpInitiated();
+			this.acrValue = this.iiConfiguration.getOpenidclient().getAcrValues();
 			this.authzParams = this.iiConfiguration.getAuthorizationParams();
 			this.clients = clientService.getAllClients();
 			this.scopes.add("openid");
 			this.responseTypes.add("code");
 			this.providers = this.passportConfiguration.getProviders().stream()
 					.filter(e -> e.getType().equalsIgnoreCase("saml")).collect(Collectors.toList());
+			loadAuthScripts();
 			log.debug("Load passport idp initiated configuration done");
 			return OxTrustConstants.RESULT_SUCCESS;
 		} catch (Exception e) {
@@ -98,10 +103,19 @@ public class PassportIdpInitiatedAction implements Serializable {
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 	}
+	private void loadAuthScripts(){
+		List<CustomScript> scripts=customScriptService.findCustomScripts(
+				Arrays.asList(CustomScriptType.PERSON_AUTHENTICATION), "displayName", "oxLevel", "oxEnabled");
+	    this.authScripts=scripts.stream().filter(e ->e.isEnabled()).map(i ->i.getName()).collect(Collectors.toList());
+	    this.authScripts.remove(getAcrValue());
+		this.authScripts.add(getAcrValue());
+	}
+
 
 	public String save() {
 		try {
 			this.iiConfiguration.setAuthorizationParams(authzParams);
+			this.iiConfiguration.getOpenidclient().setAcrValues(getAcrValue());
 			updateClientRedirects();
 			this.passportConfiguration.setIdpInitiated(iiConfiguration);
 			this.ldapOxPassportConfiguration.setPassportConfiguration(this.passportConfiguration);
@@ -356,6 +370,18 @@ public class PassportIdpInitiatedAction implements Serializable {
 		}
 	}
 
+	public List<String> getAuthScripts() {
+		return authScripts;
+	}
+
+	public String getAcrValue() {
+		return acrValue;
+	}
+
+	public void setAcrValue(String acrValue) {
+		this.acrValue = acrValue;
+	}
+
 	public void acceptSelectResponseTypes() {
 		List<String> addedResponseTypes = getResponseTypes();
 		for (SelectableEntity<String> availableResponseType : this.availableResponseTypes) {
@@ -369,6 +395,7 @@ public class PassportIdpInitiatedAction implements Serializable {
 			}
 		}
 	}
+
 
 	public List<SelectableEntity<String>> getAvailableScopes() {
 		return availableScopes;

@@ -22,14 +22,7 @@
             }
         }
 
-    function changeEvent(element) {
-    var val = $(element).find('option:selected').text();
-    if(val === 'None') {
-       #{rich:component('createSPMetadata:createSPMeatadataModalPanel')}.show();
-    }
-	}        
     </h:outputScript>
-	<ui:include src="/WEB-INF/incl/trustmanager/viewSPMetadata.xhtml" />
 	<ui:include
 		src="/WEB-INF/incl/trustmanager/configureMetadataFiltersPanel.xhtml" />
 	<ui:include
@@ -78,20 +71,6 @@
 .inpanelBody {
 	height: 220px;
 	width: 220px;
-}
-
-#spMetadataPanel_container {
-	z-index: 999 !important;
-}
-
-#spMetadataPanel_content_scroller {
-	width: 700px !important;
-	height: 500px !important;
-}
-
-#spMetadataPanel_content {
-	width: 700px !important;
-	height: 500px !important;
 }
 
 pre {
@@ -159,7 +138,7 @@ input[submit] {
 												<h:selectOneMenu
 													styleClass=" rounded form-control MetaDataType"
 													value="#{_trustRelationship.spMetaDataSourceType}"
-													onchange="changeEvent(this)" required="true"
+													required="true"
 													id="spMetaDataSourceTypeId"
 													converter="omnifaces.GenericEnumConverter">
 													<f:selectItem noSelectionOption="true"
@@ -254,10 +233,10 @@ input[submit] {
 													</a4j:commandLink>
 												</ox:decorate>
 											</h:panelGroup>
-											<p:dialog id="spMetadataPanel" header="SP METADATA" draggable="true"
-												closeOnEscape="true" minHeight="400" width="600"
-												resizable="true" widgetVar="spMetadataPanel" modal="true"
-												responsive="true">
+											<p:dialog id="spMetadataPanel" header="SP METADATA"
+												draggable="true" closeOnEscape="true" minHeight="400"
+												width="600" resizable="true" widgetVar="spMetadataPanel"
+												modal="true" responsive="true">
 												<pre>
 		                                            <h:outputText
 														value="#{_trustRelationshipAction.metadata}" />

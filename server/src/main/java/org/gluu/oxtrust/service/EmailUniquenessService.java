@@ -2,14 +2,14 @@ package org.gluu.oxtrust.service;
 
 import java.io.Serializable;
 
-import javax.ejb.Stateless;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.gluu.ldap.model.MailUniquenessConfiguration;
 import org.gluu.persist.PersistenceEntryManager;
+import org.gluu.persist.ldap.model.MailUniquenessConfiguration;
 
-@Stateless
+@ApplicationScoped
 @Named("emailUniquenessService")
 public class EmailUniquenessService implements Serializable {
 

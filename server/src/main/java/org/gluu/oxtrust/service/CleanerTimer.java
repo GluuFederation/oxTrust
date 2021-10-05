@@ -1,9 +1,10 @@
 package org.gluu.oxtrust.service;
 
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.TimeZone;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.ejb.DependsOn;
@@ -15,6 +16,10 @@ import javax.inject.Named;
 
 import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.model.ApplicationType;
+import org.gluu.model.metric.ldap.MetricEntry;
+import org.gluu.oxtrust.model.PasswordResetRequest;
+import org.gluu.persist.PersistenceEntryManager;
+import org.gluu.search.filter.Filter;
 import org.gluu.service.cache.CacheProvider;
 import org.gluu.service.cdi.async.Asynchronous;
 import org.gluu.service.cdi.event.CleanerEvent;
@@ -22,6 +27,9 @@ import org.gluu.service.cdi.event.Scheduled;
 import org.gluu.service.timer.event.TimerEvent;
 import org.gluu.service.timer.schedule.TimerSchedule;
 import org.slf4j.Logger;
+
+import com.google.common.base.Stopwatch;
+import com.google.common.collect.Maps;
 
 /**
  * Cleaner service
@@ -56,6 +64,9 @@ public class CleanerTimer {
 
 	@Inject
 	private CleanUpLogger cleanUpLogger;
+
+    @Inject
+    private PersistenceEntryManager entryManager;
 
 	private long lastFinishedTime;
 
@@ -102,26 +113,70 @@ public class CleanerTimer {
 				return;
 			}
 
-			Date now = new Date();
-			processCache(now);
-			processPasswordReset();
-			processMetricEntries();
+			int chunkSize = BATCH_SIZE;
 
-			this.lastFinishedTime = System.currentTimeMillis();
+            Date now = new Date();
+
+            final Set<String> processedBaseDns = new HashSet<>();
+            for (Map.Entry<String, Class<?>> baseDn : createCleanServiceBaseDns().entrySet()) {
+                try {
+                    if (entryManager.hasExpirationSupport(baseDn.getKey())) {
+                        continue;
+                    }
+
+                    String processedBaseDn = baseDn.getKey() + "_" + (baseDn.getValue() == null ? "" : baseDn.getValue().getSimpleName());
+                    if (processedBaseDns.contains(processedBaseDn)) {
+                        log.warn("baseDn: {}, already processed. Please fix cleaner configuration! Skipping second run...", baseDn);
+                        continue;
+                    }
+
+                    processedBaseDns.add(processedBaseDn);
+
+                    log.debug("Start clean up for baseDn: " + baseDn.getValue() + ", class: " + baseDn.getValue());
+                    final Stopwatch started = Stopwatch.createStarted();
+
+                    int removed = cleanup(baseDn, now, chunkSize);
+
+                    log.debug("Finished clean up for baseDn: {}, takes: {}ms, removed items: {}", baseDn, started.elapsed(TimeUnit.MILLISECONDS), removed);
+                } catch (Exception e) {
+                    log.error("Failed to process clean up for baseDn: " + baseDn + ", class: " + baseDn.getValue(), e);
+                }
+            }
+
+            processCache(now);
+
+            this.lastFinishedTime = System.currentTimeMillis();
 		} catch (Exception e) {
 			log.error("Failed to process clean up.", e);
 		}
 	}
 
-	protected void processPasswordReset() {
-		cleanUpLogger.addNewLogLine("-Starting processing PasswordReset clean up at:" + new Date());
-		Calendar calendar = new GregorianCalendar(TimeZone.getTimeZone("UTC"));
-		calendar.add(Calendar.SECOND, -appConfiguration.getPasswordResetRequestExpirationTime());
-		final Date expirationDate = calendar.getTime();
-		cleanUpLogger.addNewLogLine("-Running password reset clean up with expiration date :" + expirationDate);
-		passwordResetService.cleanup(expirationDate);
-		cleanUpLogger.addNewLogLine("-Processing PasswordReset clean up at:" + new Date());
-	}
+    private Map<String, Class<?>> createCleanServiceBaseDns() {
+        final Map<String, Class<?>> cleanServiceBaseDns = Maps.newHashMap();
+
+        cleanServiceBaseDns.put(passwordResetService.getDnForPasswordResetRequest(null), PasswordResetRequest.class);
+        cleanServiceBaseDns.put(metricService.buildDn(null, null, ApplicationType.OX_TRUST), MetricEntry.class);
+
+        return cleanServiceBaseDns;
+    }
+
+    public int cleanup(final Map.Entry<String, Class<?>> baseDn, final Date now, final int batchSize) {
+		cleanUpLogger.addNewLogLine("+Starting " + baseDn.getKey() + " clean up at:" + new Date());
+        try {
+            Filter filter = Filter.createANDFilter(
+                    Filter.createEqualityFilter("del", true),
+                    Filter.createLessOrEqualFilter("exp", entryManager.encodeTime(baseDn.getKey(), now)));
+
+            int removedCount = entryManager.remove(baseDn.getKey(), baseDn.getValue(), filter, batchSize);
+            log.trace("Removed " + removedCount + " entries from " + baseDn.getKey());
+            return removedCount;
+        } catch (Exception e) {
+            log.error("Failed to perform clean up.", e);
+        }
+		cleanUpLogger.addNewLogLine("-Finished " + baseDn.getKey() + " clean up at:" + new Date());
+
+        return 0;
+    }
 
 	private void processCache(Date now) {
 		cleanUpLogger.addNewLogLine("~Starting processing cache at:" + now);
@@ -133,21 +188,6 @@ public class CleanerTimer {
 			cleanUpLogger.addNewLogLineAsError("~Error message: " + e.getMessage());
 		}
 		cleanUpLogger.addNewLogLine("~Processing cache done at:" + new Date());
-	}
-
-	private void processMetricEntries() {
-		cleanUpLogger.addNewLogLine("#Starting processing Metric entries at:" + new Date());
-		log.debug("Start metric entries clean up");
-		int keepDataDays = appConfiguration.getMetricReporterKeepDataDays();
-		Calendar calendar = new GregorianCalendar(TimeZone.getTimeZone("UTC"));
-		calendar.add(Calendar.DATE, -keepDataDays);
-		Date expirationDate = calendar.getTime();
-		cleanUpLogger.addNewLogLine(String.format(
-				"#Ready to remove expired entries with parameters batch size: %s, expiration date: %s",
-				BATCH_SIZE, expirationDate));
-		metricService.removeExpiredMetricEntries(expirationDate, ApplicationType.OX_TRUST, 0, BATCH_SIZE);
-		log.debug("End metric entries clean up");
-		cleanUpLogger.addNewLogLine("#Processing Metric entries done at:" + new Date());
 	}
 
 	private boolean isStartProcess() {

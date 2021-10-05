@@ -131,7 +131,7 @@
 								</ox:decorate>
 								<ox:decorate label="#{msgs['organizationForm.contactEmail']}">
 									<h:inputText id="email" required="true"
-										value="#{_configuration.contactEmail}"
+										value="#{_organizationAction.contactEmail}"
 										styleClass="rounded form-control contactEmailTextBox"
 										validatorMessage="Please provide a valid email address">
 										<f:validateRegex
@@ -172,7 +172,7 @@
 										styleClass="form-control smtpUserNameTextBox" />
 								</ox:decorate>
 								<ox:decorate label="#{msgs['organizationForm.smtpPassword']}">
-									<h:inputSecret value="#{_smtp.passwordDecrypted}" autocomplete="off" redisplay="true"
+									<h:inputSecret value="#{_organizationAction.passwordDecrypted}" autocomplete="off" redisplay="true"
 										styleClass="form-control smtpPasswordTextBox" />
 								</ox:decorate>
 								<ox:decorate label="#{msgs['organizationForm.requiresSSL']}">
@@ -203,14 +203,16 @@
 										styleClass="form-control orgNameTextBox" style="width:100%;" />
 								</ox:decorate>
 								<ui:param name="_managerGroup"
-									value="#{gluufn:getDisplayNameEntry(_organization.managerGroup)}" />
-								<ox:decorate id="managerGroup"
-									label="#{msgs['organizationForm.managerGroup']}">
-									<h:link includeViewParams="false" outcome="/group/updateGroup"
-										value="#{_managerGroup.displayName}" styleClass="GroupLinkBox">
-										<f:param name="inum" value="#{_managerGroup.inum}" />
-									</h:link>
-								</ox:decorate>
+									value="#{gluufn:getTypedEntry(_organization.managerGroup, 'org.gluu.oxtrust.model.GluuGroup')}" />
+								<ui:fragment  rendered="#{_managerGroup != null}">
+									<ox:decorate id="managerGroup"
+										label="#{msgs['organizationForm.managerGroup']}">
+										<h:link includeViewParams="false" outcome="/group/updateGroup"
+											value="#{_managerGroup.displayName}" styleClass="GroupLinkBox">
+											<f:param name="inum" value="#{_managerGroup.inum}" />
+										</h:link>
+									</ox:decorate>
+								</ui:fragment>
 								<b:panel title="oxTrust Logo/Favicon" look="primary"
 									iconAwesome="fa-sliders">
 									<div class="row">

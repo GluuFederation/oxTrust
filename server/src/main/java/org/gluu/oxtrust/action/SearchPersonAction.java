@@ -7,6 +7,7 @@
 package org.gluu.oxtrust.action;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.enterprise.context.ConversationScoped;
@@ -19,8 +20,8 @@ import org.gluu.jsf2.service.ConversationService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.service.PersonService;
 import org.gluu.oxtrust.util.OxTrustConstants;
+import org.gluu.persist.model.PagedResult;
 import org.gluu.service.security.Secure;
-import org.gluu.util.Util;
 import org.slf4j.Logger;
 
 /**
@@ -46,40 +47,70 @@ public class SearchPersonAction implements Serializable {
 
 	private String searchPattern;
 
-	private String oldSearchPattern;
+	private List<GluuCustomPerson> persons = new ArrayList<>();
 
-	private boolean firstLaunch = false;
+	private PagedResult<GluuCustomPerson> results;
 
-	private List<GluuCustomPerson> personList;
+	private int count = 5000;
+	private int start = 0;
+	private int nbPages = 0;
+
+	private int searchIndex = 1;
 
 	@Inject
 	private PersonService personService;
 
 	public String start() {
-		firstLaunch = true;
 		return search();
 	}
 
+	
 	public String search() {
-		if (!firstLaunch && (this.searchPattern.isEmpty() || this.searchPattern.length() < 2)) {
-			firstLaunch = false;
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Length of search string should be between 2 and 30");
-			return OxTrustConstants.RESULT_SUCCESS;
-		}
-		if (Util.equals(this.oldSearchPattern, this.searchPattern)) {
-			firstLaunch = false;
-			return OxTrustConstants.RESULT_SUCCESS;
-		}
 		try {
-			this.personList = personService.searchPersons(this.searchPattern);
-			this.oldSearchPattern = this.searchPattern;
-			this.searchPattern = "";
-			firstLaunch = false;
+			start = 0;
+			nbPages = 0;
+			searchIndex = 1;
+			results = personService.findPeople(this.searchPattern, start, count);
+			persons = results.getEntries();
+			nbPages = (int) Math.ceil(results.getTotalEntriesCount() / (double) count);
 		} catch (Exception ex) {
 			log.error("Failed to find persons", ex);
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to find persons");
 			conversationService.endConversation();
-			firstLaunch = false;
+			return OxTrustConstants.RESULT_FAILURE;
+		}
+		return OxTrustConstants.RESULT_SUCCESS;
+	}
+
+	public String getNextPage() {
+		try {
+			searchIndex++;
+			start = start + count;
+			results = personService.findPeople(this.searchPattern, start, count);
+			persons.clear();
+			persons = results.getEntries();
+
+		} catch (Exception ex) {
+			log.error("Failed to find persons", ex);
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to find persons");
+			conversationService.endConversation();
+			return OxTrustConstants.RESULT_FAILURE;
+		}
+		return OxTrustConstants.RESULT_SUCCESS;
+	}
+
+	public String getPreviousPage() {
+		try {
+			searchIndex--;
+			start = start - count;
+			results = personService.findPeople(this.searchPattern, start, count);
+			persons.clear();
+			persons = results.getEntries();
+
+		} catch (Exception ex) {
+			log.error("Failed to find persons", ex);
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to find persons");
+			conversationService.endConversation();
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 		return OxTrustConstants.RESULT_SUCCESS;
@@ -94,7 +125,23 @@ public class SearchPersonAction implements Serializable {
 	}
 
 	public List<GluuCustomPerson> getPersonList() {
-		return personList;
+		return persons;
+	}
+
+	public int getNbPages() {
+		return nbPages;
+	}
+
+	public int getSearchIndex() {
+		return searchIndex;
+	}
+
+	public boolean showNext() {
+		return searchIndex < nbPages;
+	}
+
+	public boolean showPrev() {
+		return searchIndex > 1;
 	}
 
 }

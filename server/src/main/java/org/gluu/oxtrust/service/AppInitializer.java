@@ -52,7 +52,7 @@ import org.gluu.service.external.context.PersistenceExternalContext;
 import org.gluu.service.metric.inject.ReportMetric;
 import org.gluu.service.timer.QuartzSchedulerManager;
 import org.gluu.util.StringHelper;
-import org.gluu.util.properties.FileConfiguration;
+import org.gluu.orm.util.properties.FileConfiguration;
 import org.gluu.util.security.StringEncrypter;
 import org.gluu.util.security.StringEncrypter.EncryptionException;
 import org.slf4j.Logger;
@@ -157,11 +157,18 @@ public class AppInitializer {
 	private CleanerTimer cleanerTimer;
 
 	@Inject
+	private TranscodingRulesUpdater transcodingRulesUpdater;
+
+	@Inject
 	private Event<ApplicationInitializedEvent> eventApplicationInitialized;
 
 	@PostConstruct
 	public void createApplicationComponents() {
-		SecurityProviderUtility.installBCProvider();
+		try {
+			SecurityProviderUtility.installBCProvider();
+		} catch (ClassCastException ex) {
+			log.error("Failed to install BC provider properly");
+		}
 
 		// Remove JUL console logger
 		SLF4JBridgeHandler.removeHandlersForRootLogger();
@@ -214,6 +221,7 @@ public class AppInitializer {
 		statusCheckerTimer.initTimer();
 		logFileSizeChecker.initTimer();
 		updateChecker.initTimer();
+		transcodingRulesUpdater.initTimer();
 
 		// Notify other components/plugins about finish application initialization
 		eventApplicationInitialized.select(ApplicationInitialized.Literal.APPLICATION)

@@ -117,7 +117,7 @@ public class ConfigureLogViewerAction implements SimpleCustomPropertiesListModel
 			updateConfiguration.setOxLogViewerConfig(logViewerConfiguration);
 			updateConfiguration.setOxLogConfigLocation(oxTrustLogConfigLocation);
 			configurationService.updateConfiguration(updateConfiguration);
-			loggerService.updateLoggerConfigLocation();
+			loggerService.resetLoggerConfigLocation();
 		} catch (Exception ex) {
 			log.error("Failed to save log viewer configuration '{}'", ex);
 		}

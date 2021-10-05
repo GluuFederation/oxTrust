@@ -19,13 +19,7 @@
     "Unverified" typically means the IdP has no metadata, or equivalent way of assuring the identity and
     legitimacy of a requesting system. To run an "open" IdP, you can enable profiles here.
     -->
-    <bean id="shibboleth.UnverifiedRelyingParty" parent="RelyingParty">
-        <property name="profileConfigurations">
-            <list>
-            <!-- <bean parent="SAML2.SSO" p:encryptAssertions="false" /> -->
-            </list>
-        </property>
-    </bean>
+    <bean id="shibboleth.UnverifiedRelyingParty" parent="RelyingParty" />
 
     <!--
     Default configuration, with default settings applied for all profiles, and enables
@@ -49,7 +43,8 @@
                       p:signResponsesPredicate-ref="SignNoIntegrity"
                       p:signAssertions="false"
                       p:encryptNameIDs="false"
-                      p:encryptAssertionsPredicate-ref="EncryptNoConfidentiality" />
+		                  p:encryptAssertionsPredicate-ref="EncryptNoConfidentiality" 
+		                  p:postAuthenticationFlows="#{{'gluu-release-attributes-post-processor'}}" />
 
                 <bean parent="SAML2.ECP"
                       p:includeAttributeStatement="true"
@@ -123,6 +118,8 @@
                     <bean parent="SAML2.SSO"
                           p:includeAttributeStatement="$profileConfig.includeAttributeStatement"
                           p:assertionLifetime="$profileConfig.assertionLifetime"
+                          p:postAuthenticationFlows="#{{'gluu-release-attributes-post-processor'}}"
+                          p:inboundInterceptorFlows="#{ {'security-policy/saml2-sso', 'gluu-populate-context'} }"
                         #if ($profileConfig.signResponses == 'conditional')
                           p:signResponsesPredicate-ref="SignNoIntegrity"
                         #{else}

@@ -91,7 +91,7 @@ public class PasswordResetService implements Serializable {
 	 *            Password reset request
 	 */
 	public void addPasswordResetRequest(PasswordResetRequest passwordResetRequest) {
-		ldapEntryManager.persist(passwordResetRequest);
+        ldapEntryManager.persist(passwordResetRequest);
 	}
 
 	/**

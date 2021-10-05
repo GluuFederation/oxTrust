@@ -33,7 +33,8 @@
 		<section class="content">
 			<div class="row">
 				<div class="col-xs-12">
-					<b:panel title="Passport providers" look="primary" iconAwesome="fa-list" collapsible="false">
+					<b:panel title="Passport providers" look="primary"
+						iconAwesome="fa-list" collapsible="false">
 						<div class="row" style="padding: 5px; margin-bottom: 5px;">
 							<b:link style-class="addProviderButtonClass btn btn-primary"
 								icon="plus" outcome="/passport/addProvider"
@@ -41,16 +42,14 @@
 								includeViewParams="false" />
 						</div>
 						<div class="row" style="padding: 10px;">
-							<b:dataTable id="providersTableId" style="text-align:center; width:100%;"
-								responsive="true"
+							<b:dataTable id="providersTableId"
+								style="text-align:center; width:100%;" responsive="true"
 								rendered="#{passportProvidersAction.providerSelections.size() gt 0}"
 								value="#{passportProvidersAction.providerSelections}" var="c"
 								print="true" excel="true" csv="true" pdf="true" select="true">
-								<b:dataTableColumn
-									label="#{msgs['passport.provider.form.id']}">
+								<b:dataTableColumn label="#{msgs['passport.provider.form.id']}">
 									<b:link includeViewParams="false"
-										outcome="/passport/editProvider"
-										value="#{c.provider.id}">
+										outcome="/passport/editProvider" value="#{c.provider.id}">
 										<f:param name="id" value="#{c.provider.id}" />
 									</b:link>
 								</b:dataTableColumn>
@@ -72,6 +71,7 @@
 					<script>
 						$(document).ready(function() {
 						});
+						$('.tags').tagsinput('refresh');
 					</script>
 				</div>
 			</div>

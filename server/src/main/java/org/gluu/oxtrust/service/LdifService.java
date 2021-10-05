@@ -18,6 +18,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.gluu.model.GluuAttribute;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.ldap.impl.LdifDataUtility;
 import org.gluu.persist.ldap.operation.LdapOperationService;
@@ -59,7 +60,7 @@ public class LdifService implements Serializable {
 	@Inject
 	private PersistenceEntryManager persistenceManager;
 
-	public ResultCode importLdifFileInLdap(InputStream is) throws LDAPException {
+	public ResultCode importLdifFileInLdap(Class<?> entryClass, InputStream is) throws LDAPException {
 		if (dataSourceTypeService.isLDAP(attributeService.getDnForAttribute(null))) {
 			ResultCode result = ResultCode.UNAVAILABLE;
 			PersistenceOperationService persistenceOperationService = persistenceManager.getOperationService();
@@ -77,7 +78,7 @@ public class LdifService implements Serializable {
 			}
 			return result;
 		} else {
-			performImport(is);
+			performImport(entryClass, is);
 			return ResultCode.SUCCESS;
 		}
 	}
@@ -96,7 +97,7 @@ public class LdifService implements Serializable {
 	}
 
 	@SuppressWarnings("resource")
-	public void performImport(InputStream inputStream) {
+	public void performImport(Class entryClass, InputStream inputStream) {
 		final ArrayList<Entry> entryList = new ArrayList<Entry>();
 		final LDIFReader reader = new LDIFReader(inputStream);
 		while (true) {
@@ -121,7 +122,7 @@ public class LdifService implements Serializable {
 						(value.getValues().length > 1) ? true : false));
 			});
 			try {
-				persistenceManager.importEntry(e.getDN(), datas);
+				persistenceManager.importEntry(e.getDN(), entryClass, datas);
 			} catch (Exception ex) {
 				log.info("=========", ex);
 			}

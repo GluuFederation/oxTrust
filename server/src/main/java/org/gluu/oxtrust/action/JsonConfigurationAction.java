@@ -25,6 +25,7 @@ import org.gluu.service.cache.*;
 import org.gluu.service.cdi.util.CdiUtil;
 import org.gluu.service.document.store.conf.DocumentStoreConfiguration;
 import org.gluu.service.document.store.conf.DocumentStoreType;
+import org.gluu.service.document.store.conf.JcaDocumentStoreConfiguration;
 import org.gluu.service.document.store.provider.JcaDocumentStoreProvider;
 import org.gluu.service.security.Secure;
 import org.gluu.util.StringHelper;
@@ -114,6 +115,9 @@ public class JsonConfigurationAction implements Serializable {
 				decryptPassword(this.cacheConfiguration.getRedisConfiguration());
 			}
 			this.storeConfiguration = jsonConfigurationService.getDocumentStoreConfiguration();
+			if (this.storeConfiguration.getJcaConfiguration().getPassword() != null) {
+				decryptPassword(this.storeConfiguration.getJcaConfiguration());
+			}
 			this.oxTrustConfigJson = getProtectedOxTrustappConfiguration(this.oxTrustappConfiguration);
 			this.oxTrustImportPersonConfigJson = getOxTrustImportPersonConfiguration(
 					this.oxTrustImportPersonConfiguration);
@@ -142,13 +146,19 @@ public class JsonConfigurationAction implements Serializable {
 			log.debug("Saving oxauth-config.json:" + this.oxAuthDynamicConfigJson);
 			if (this.oxAuthDynamicConfigJson != null) {
 				String configurationJson = convertToOxAuthAppConfiguration(oxAuthDynamicConfigJson);
-				jsonConfigurationService.saveOxAuthDynamicConfigJson(configurationJson);
+				if (configurationJson == null) {
+					log.error("Failed to prepare update oxauth-config.json");
+					facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to prepare oxAuth configuration for update in DB");
+					return OxTrustConstants.RESULT_FAILURE;
+				} else {
+					jsonConfigurationService.saveOxAuthDynamicConfigJson(configurationJson);
+				}
 			}
 			facesMessages.add(FacesMessage.SEVERITY_INFO, "oxAuthDynamic Configuration is updated.");
 			return OxTrustConstants.RESULT_SUCCESS;
 		} catch (Exception ex) {
 			log.error("Failed to update oxauth-config.json", ex);
-			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update oxAuth configuration in LDAP");
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update oxAuth configuration in DB");
 		}
 		return OxTrustConstants.RESULT_FAILURE;
 	}
@@ -268,7 +278,20 @@ public class JsonConfigurationAction implements Serializable {
             log.error("Error during redis password decryption", e);
         }
     }
-	private boolean canConnectToMemCached() {
+
+    private void decryptPassword(JcaDocumentStoreConfiguration documentStoreConfiguration) {
+        try {
+            String encryptedPassword = documentStoreConfiguration.getPassword();
+            if (StringUtils.isNotBlank(encryptedPassword)) {
+            	documentStoreConfiguration.setPassword(stringEncrypter.decrypt(encryptedPassword));
+                log.trace("Decrypted JCA store password successfully.");
+            }
+        } catch (StringEncrypter.EncryptionException e) {
+            log.error("Error during JCA store password decryption", e);
+        }
+    }
+
+    private boolean canConnectToMemCached() {
 		try {
 			MemcachedProvider provider = CdiUtil.bean(MemcachedProvider.class);
 			provider.setCacheConfiguration(cacheConfiguration);

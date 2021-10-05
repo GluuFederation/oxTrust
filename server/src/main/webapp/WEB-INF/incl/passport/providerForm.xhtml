@@ -48,32 +48,38 @@
 										valueChangeListener="#{_providerAction.handleRequiredOptions}"
 										value="#{_providerAction.provider.type}" id="ProviderTypeId"
 										rendered="true" required="true"
-										onchange="toggleType(); submit();">
+										render="mainContentID"
+										onchange="toggleType();">
 										<f:selectItem noSelectionOption="true" itemLabel="" />
 										<f:selectItems value="#{_providerAction.providerTypes}"
 											var="_type" itemLabel="#{_type}" />
+										<a4j:ajax event="change" render="optionsPanel" />
 									</h:selectOneMenu>
 								</ox:decorate>
-								<ox:decorate label="#{msgs['passport.provider.form.strategyId']}"
+								<ox:decorate
+									label="#{msgs['passport.provider.form.strategyId']}"
 									leftClass="col-sm-3" rightClass="col-sm-9">
-									<h:inputText styleClass="form-control PassportStrategyId"
-										style="width:100%" required="true"
+									<b:inputText id="PassportStrategyId"
 										value="#{_providerAction.provider.passportStrategyId}"
-										id="PassportStrategyId" rendered="true">
-										<rich:validator event="blur" />
-									</h:inputText>
+										placeholder="Start typing here" inline="true" typeahead="true"
+										tags="false" required="true" styleClass="form-control PassportStrategyId"
+										style="width:100%;margin-left:-15px;"
+										typeahead-values="#{_providerAction.strategies}"
+										tiny-screen="full-width" />
 								</ox:decorate>
 							</div>
 							<!-- Second column-->
 							<div class="col-sm-6 col-lg-6" style="padding: 0px;">
 								<ox:decorate label="#{msgs['passport.provider.form.mapping']}"
 									leftClass="col-sm-3" rightClass="col-sm-9">
-									<h:inputText styleClass="form-control MappingId"
-										style="width:100%" required="true"
-										value="#{_providerAction.provider.mapping}" id="MappingId"
-										rendered="true">
-										<rich:validator event="blur" />
-									</h:inputText>
+									<b:inputText id="MappingId"
+										value="#{_providerAction.provider.mapping}"
+										placeholder="start typing here" inline="true" typeahead="true"
+										tags="false" required="true" styleClass="form-control MappingId"
+										style="width:100%;margin-left:-15px;"
+										typeahead-values="#{_providerAction.mappings}"
+										tiny-screen="full-width" />
+
 								</ox:decorate>
 								<ox:decorate
 									label="#{msgs['passport.provider.form.passportAuthnParams']}"
@@ -130,8 +136,10 @@
 							</div>
 						</div>
 						<div class="row" style="margin-left: 5px; margin-right: 5px;">
-							<ox:decorate label="#{msgs['passport.provider.form.callbackUrl']}"
-								leftClass="col-sm-3" rightClass="col-sm-9" rendered="#{_providerAction.isUpdate()}">
+							<ox:decorate
+								label="#{msgs['passport.provider.form.callbackUrl']}"
+								leftClass="col-sm-3" rightClass="col-sm-9"
+								rendered="#{_providerAction.isUpdate()}">
 								<h:outputText styleClass="form-control callBackUrlID"
 									style="width:100%" required="true"
 									value="#{_providerAction.provider.callbackUrl}"
@@ -142,7 +150,7 @@
 						<!-- 3nd row-->
 						<div class="row" style="margin-left: 5px; margin-right: 5px;">
 							<b:panel title="#{msgs['passport.provider.form.options']}"
-								look="primary">
+								look="primary" id="optionsPanel">
 								<div class="col-sm-12 col-lg-12" style="padding: 0px;">
 									<ox:simpleMapProperties
 										label="#{msgs['manageAuthentication.passport.strategy.addProperty']}"

@@ -67,16 +67,16 @@
 										</h:commandLink></li>
 
 									<li id="menuPersonAuthScript"><h:commandLink
-											value="#{msgs['leftmenu.personAuthnCustomScripts']}" onclick="lock();"
-											ondbclick="lock();" oncomplete="unlock();"
+											value="#{msgs['leftmenu.personAuthnCustomScripts']}"
+											onclick="lock();" ondbclick="lock();" oncomplete="unlock();"
 											action="#{menuAction.endConversation('/script/manageAuthScript.xhtml')}"
 											rendered="#{permissionService.hasPermission('passport', 'access')}">
 											<i class="fa fa-chevron-right"
 												style="float: left; margin-top: 2px;"></i>
 										</h:commandLink></li>
 									<li id="menuOtherAuthScript"><h:commandLink
-											value="#{msgs['leftmenu.otherCustomScripts']}" onclick="lock();"
-											ondbclick="lock();" oncomplete="unlock();"
+											value="#{msgs['leftmenu.otherCustomScripts']}"
+											onclick="lock();" ondbclick="lock();" oncomplete="unlock();"
 											action="#{menuAction.endConversation('/script/manageOtherScript.xhtml')}"
 											rendered="#{permissionService.hasPermission('passport', 'access')}">
 											<i class="fa fa-chevron-right"
@@ -101,8 +101,8 @@
 										</h:commandLink></li>
 
 									<li id="subMenuLinkConfiguration12"><h:commandLink
-											value="#{msgs['leftmenu.importExportAttribute']}" onclick="lock();"
-											ondbclick="lock();" oncomplete="unlock();"
+											value="#{msgs['leftmenu.importExportAttribute']}"
+											onclick="lock();" ondbclick="lock();" oncomplete="unlock();"
 											action="#{menuAction.endConversation('/attribute/attributeImport.xhtml')}"
 											rendered="#{permissionService.hasPermission('attribute', 'access')}">
 											<i class="fa fa-chevron-right"
@@ -173,8 +173,8 @@
 												style="float: left; margin-top: 2px;"></i>
 										</h:commandLink></li>
 									<li id="subMenuLinkSAML2"><h:commandLink
-											value="#{msgs['leftmenu.addRelationships']}" onclick="lock();"
-											ondbclick="lock();" oncomplete="unlock();"
+											value="#{msgs['leftmenu.addRelationships']}"
+											onclick="lock();" ondbclick="lock();" oncomplete="unlock();"
 											action="#{menuAction.endConversation('/trustmanager/addTrustRelationship.xhtml')}"
 											rendered="#{permissionService.hasPermission('trust', 'access') and productInstallationCheckerAction.showSAMLSubmenu}">
 											<i class="fa fa-chevron-right"
@@ -253,14 +253,6 @@
 										<i class="fa fa-chevron-right"
 											style="float: left; margin-top: 2px;"></i>
 									</h:commandLink></li>
-								<li id="subMenuLinkOpenID3"><h:commandLink
-										value="#{msgs['leftmenu.sectorIdentifier']}" onclick="lock();"
-										ondbclick="lock();" oncomplete="unlock();"
-										action="#{menuAction.endConversation('/sectoridentifier/sectorIdentifierInventory.xhtml')}"
-										rendered="#{permissionService.hasPermission('sectorIdentifier', 'access')}">
-										<i class="fa fa-chevron-right"
-											style="float: left; margin-top: 2px;"></i>
-									</h:commandLink></li>
 							</ul></li>
 					</ui:fragment>
 					<ui:fragment
@@ -293,8 +285,8 @@
 					<ui:fragment
 						rendered="#{permissionService.hasPermission('group', 'access') or permissionService.hasPermission('person', 'access')}">
 						<li class="treeview" id="menuUsers"><a href="#"> <i
-								class="fa fa-group"></i> <span>#{msgs['leftmenu.users']}</span> <i
-								class="fa fa-angle-left pull-right"></i>
+								class="fa fa-group"></i> <span>#{msgs['leftmenu.users']}</span>
+								<i class="fa fa-angle-left pull-right"></i>
 						</a>
 							<ul class="treeview-menu" id="subMenuUsers">
 								<li id="subMenuLinkUsers1"><h:commandLink

@@ -30,6 +30,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.gluu.config.oxauth.WebKeysSettings;
 import org.gluu.config.oxtrust.LdapOxAuthConfiguration;
 import org.gluu.jsf2.message.FacesMessages;
@@ -110,6 +111,10 @@ public class UpdateOrganizationAction implements Serializable {
 
 	private SmtpConfiguration smtpConfiguration;
 
+	private String passwordDecrypted;
+
+	private String contactEmail = "example@orgname.com";
+
 	public String modify() {
 		if (this.initialized) {
 			return OxTrustConstants.RESULT_SUCCESS;
@@ -166,7 +171,6 @@ public class UpdateOrganizationAction implements Serializable {
 		try {
 			ldapOxAuthConfiguration = organizationService.getOxAuthSetting(configurationDn);
 			this.webKeysSettings = ldapOxAuthConfiguration.getOxWebKeysSettings();
-
 			if (webKeysSettings == null) {
 				webKeysSettings = new WebKeysSettings();
 			}
@@ -179,6 +183,11 @@ public class UpdateOrganizationAction implements Serializable {
 		try {
 			setCustomMessages();
 			organizationService.updateOrganization(this.organization);
+			if(StringUtils.isNotEmpty(passwordDecrypted) && passwordDecrypted!=null){
+				smtpConfiguration.setPasswordDecrypted(passwordDecrypted);
+				passwordDecrypted=null;
+			}
+			configuration.setContactEmail(getContactEmail());
 			configurationService.encryptedSmtpPassword(smtpConfiguration);
 			updateConfiguration();
 			saveWebKeySettings();
@@ -220,8 +229,6 @@ public class UpdateOrganizationAction implements Serializable {
 	}
 
 	public String verifySmtpConfiguration() {
-		log.debug("UserName: " + smtpConfiguration.getUserName() + " Password: "
-				+ smtpConfiguration.getPasswordDecrypted());
 		boolean result = mailService.sendMail(smtpConfiguration, smtpConfiguration.getFromEmailAddress(),
 				smtpConfiguration.getFromName(), smtpConfiguration.getFromEmailAddress(), null,
 				facesMessages.evalResourceAsString("#{msgs['mail.verify.message.subject']}"),
@@ -277,6 +284,14 @@ public class UpdateOrganizationAction implements Serializable {
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
+	public String getContactEmail() {
+		return configuration.getContactEmail()!=null ? configuration.getContactEmail() : contactEmail;
+	}
+
+	public void setContactEmail(String contactEmail) {
+		this.contactEmail = contactEmail;
+	}
+
 	public void setOxTrustLogoImage(FileUploadEvent event) {
 		UploadedFile uploadedFile = event.getFile();
 		saveLogo(uploadedFile);
@@ -320,12 +335,15 @@ public class UpdateOrganizationAction implements Serializable {
 	private void addLib(UploadedFile uploadedFile, boolean isOxTrust) {
 		String LIB_PATH = "/opt/gluu/jetty/identity/custom/libs/";
 		String XML_PATH = "/opt/gluu/jetty/identity/webapps/identity.xml";
+		String BASE_FILE_NAME = LIB_PATH;
 		if (!isOxTrust) {
 			LIB_PATH = "/opt/gluu/jetty/oxauth/custom/libs/";
 			XML_PATH = "/opt/gluu/jetty/oxauth/webapps/oxauth.xml";
+			BASE_FILE_NAME = LIB_PATH;
 		}
 		String fileName = saveFile(uploadedFile, LIB_PATH);
-		boolean result = updateXml(XML_PATH, isOxTrust, fileName);
+		BASE_FILE_NAME=BASE_FILE_NAME+fileName;
+		boolean result = updateXml(XML_PATH, isOxTrust, BASE_FILE_NAME);
 		if (result) {
 			facesMessages.add(FacesMessage.SEVERITY_INFO, "Library " + fileName + " added");
 		} else {
@@ -343,7 +361,6 @@ public class UpdateOrganizationAction implements Serializable {
 			Element configure = (Element) configures.item(0);
 			Element library = document.createElement("Set");
 			library.setAttribute("name", "extraClasspath");
-			fileName = XML_PATH + fileName;
 			library.appendChild(document.createTextNode(fileName));
 			configure.appendChild(library);
 			document.getDocumentElement().normalize();
@@ -490,13 +507,20 @@ public class UpdateOrganizationAction implements Serializable {
 	public void setWelcomePageCustomMessage(String welcomePageCustomMessage) {
 		this.welcomePageCustomMessage = welcomePageCustomMessage;
 	}
-
 	public String getWelcomeTitleText() {
 		return welcomeTitleText;
 	}
 
 	public void setWelcomeTitleText(String welcomeTitleText) {
 		this.welcomeTitleText = welcomeTitleText;
+	}
+
+	public String getPasswordDecrypted() {
+		return passwordDecrypted;
+	}
+
+	public void setPasswordDecrypted(String passwordDecrypted) {
+		this.passwordDecrypted = passwordDecrypted;
 	}
 
 	public GluuConfiguration getConfiguration() {

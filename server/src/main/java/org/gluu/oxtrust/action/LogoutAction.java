@@ -31,53 +31,53 @@ import org.gluu.oxtrust.util.OxTrustConstants;
 @RequestScoped
 public class LogoutAction implements Serializable {
 
-	private static final long serialVersionUID = -1887682170119210113L;
+    private static final long serialVersionUID = -1887682170119210113L;
 
-	@Inject
-	private Identity identity;
+    @Inject
+    private Identity identity;
 
-	@Inject
-	private FacesService facesService;
+    @Inject
+    private FacesService facesService;
 
-	@Inject
-	private OpenIdService openIdService;
+    @Inject
+    private OpenIdService openIdService;
 
-	@Inject
-	private AppConfiguration appConfiguration;
+    @Inject
+    private AppConfiguration appConfiguration;
 
-	public void processLogout() throws Exception {
-		opLogout();
-		identity.logout();
-	}
+    public void processLogout() throws Exception {
+        opLogout();
+        identity.logout();
+    }
 
-	public void processSsoLogout() throws Exception {
-		identity.logout();
-		identity.setWorkingParameter(OxTrustConstants.OXAUTH_SSO_SESSION_STATE, Boolean.TRUE);
-	}
+    public void processSsoLogout() throws Exception {
+        identity.logout();
+        identity.setWorkingParameter(OxTrustConstants.OXAUTH_SSO_SESSION_STATE, Boolean.TRUE);
+    }
 
-	public String postLogout() {
-		identity.logout();
-		return OxTrustConstants.RESULT_SUCCESS;
-	}
+    public String postLogout() {
+        identity.logout();
+        return OxTrustConstants.RESULT_SUCCESS;
+    }
 
-	protected void opLogout() throws Exception {
-		Object ssoSessionState = identity.getWorkingParameter(OxTrustConstants.OXAUTH_SSO_SESSION_STATE);
-		if (Boolean.TRUE.equals(ssoSessionState)) {
-			facesService.redirectToExternalURL(appConfiguration.getLogoutRedirectUrl());
-			return;
-		}
-		OauthData oauthData = identity.getOauthData();
-		Client client = ClientBuilder.newClient();
-		WebTarget target = client.target(openIdService.getOpenIdConfiguration().getEndSessionEndpoint());
-		if (oauthData.getSessionState() != null) {
-			target = target.queryParam(OxTrustConstants.OXAUTH_SESSION_STATE, oauthData.getSessionState());
-		}
-		if (oauthData.getIdToken() != null) {
-			target = target.queryParam(OxTrustConstants.OXAUTH_ID_TOKEN_HINT, oauthData.getIdToken());
-		}
-		target = target.queryParam(OxTrustConstants.OXAUTH_POST_LOGOUT_REDIRECT_URI,
-				appConfiguration.getLogoutRedirectUrl());
-		facesService.redirectToExternalURL(target.getUri().toString());
-	}
+    protected void opLogout() throws Exception {
+        Object ssoSessionState = identity.getWorkingParameter(OxTrustConstants.OXAUTH_SSO_SESSION_STATE);
+        if (Boolean.TRUE.equals(ssoSessionState)) {
+            facesService.redirectToExternalURL(appConfiguration.getLogoutRedirectUrl());
+            return;
+        }
+        OauthData oauthData = identity.getOauthData();
+        Client client = ClientBuilder.newClient();
+        WebTarget target = client.target(openIdService.getOpenIdConfiguration().getEndSessionEndpoint());
+        if (oauthData.getSessionState() != null) {
+            target = target.queryParam(OxTrustConstants.OXAUTH_SESSION_STATE, oauthData.getSessionState());
+        }
+        if (appConfiguration.isPassIdTokenHintToLogoutRedirectUri() && oauthData.getIdToken() != null) {
+            target = target.queryParam(OxTrustConstants.OXAUTH_ID_TOKEN_HINT, oauthData.getIdToken());
+        }
+        target = target.queryParam(OxTrustConstants.OXAUTH_POST_LOGOUT_REDIRECT_URI,
+                appConfiguration.getLogoutRedirectUrl());
+        facesService.redirectToExternalURL(target.getUri().toString());
+    }
 
 }

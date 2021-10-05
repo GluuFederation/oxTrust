@@ -14,10 +14,7 @@
 		<f:viewParam name="searchPattern"
 			value="#{searchPersonAction.searchPattern}" />
 		<f:viewAction action="#{conversationService.initConversation}" />
-		<f:viewAction action="#{searchPersonAction.start}"
-			if="#{ searchPersonAction.personList == null }" onPostback="false" />
 	</f:metadata>
-
 	<ui:define name="body">
 		<section class="content-header">
 			<h1 style="color: #333;">
@@ -37,8 +34,8 @@
 		<section class="content">
 			<div class="row">
 				<div class="col-xs-12">
-					<b:panel title="Users List" look="primary" 
-					iconAwesome="fa-list" collapsible="false">
+					<b:panel title="Users List" look="primary" iconAwesome="fa-list"
+						collapsible="false">
 						<div id="formArea">
 							<div style="margin-left: 5px;">
 								<b:link style-class="addPerson btn btn-primary" icon="plus"
@@ -48,7 +45,6 @@
 							</div>
 							<h:panelGrid border="0" cellpadding="0" cellspacing="0"
 								columns="1" width="100%">
-								<p:spacer height="16" />
 								<h:form class="searchArea" style="width: 100%;">
 									<ox:decorate hideLabel="true" id="searchPattern">
 										<h:inputText
@@ -58,18 +54,39 @@
 											styleClass="searchParameters form-control searchTextBox"
 											value="#{searchPersonAction.searchPattern}" />
 										<b:commandButton action="#{searchPersonAction.search}"
-											style="float: left;" styleClass="btn btn-primary searchButton"
-											value="Search" iconAwesome="fa-search"/>
+											ajax="true" style="float: left;"
+											styleClass="btn btn-primary searchButton" value="Search"
+											iconAwesome="fa-search" update=":personsFormId" />
 									</ox:decorate>
 								</h:form>
 								<p:spacer height="16" />
 								<h:form id="personsFormId">
+									<h:panelGroup
+										style="width: 100%; margin-bottom: 10px; padding:10px;"
+										rendered="#{searchPersonAction.nbPages gt 1}">
+										<b:commandButton
+											action="#{searchPersonAction.getPreviousPage}" ajax="true"
+											style="float: left;"
+											disabled="!#{searchPersonAction.showPrev()}"
+											styleClass="btn btn-primary searchButton" value="Previous"
+											iconAwesome="angle-left" update=":personsFormId" />
+										<b:label
+											style="width: 80%; margin-top: 10px; margin-left:30%; text-align:center;"
+											text="#{searchPersonAction.searchIndex} page(s) over #{searchPersonAction.nbPages} pages"
+											severity="info" />
+										<b:commandButton action="#{searchPersonAction.getNextPage}"
+											ajax="true" style="float: right;"
+											disabled="!#{searchPersonAction.showNext()}"
+											styleClass="btn btn-primary searchButton" value="Next"
+											iconAwesome="angle-right" update=":personsFormId" />
+									</h:panelGroup>
 									<ui:fragment
 										rendered="#{searchPersonAction.personList.size() eq 0}">
 										<p:spacer height="30" />
 										<h:outputText value="#{msgs['person.noSearchResultFound']}" />
 									</ui:fragment>
-									<b:dataTable id="personsListId" style="text-align:center;width:100%;"
+									<b:dataTable id="personsListId"
+										style="text-align:center;width:100%;margin-top:10px;"
 										responsive="true"
 										rendered="#{searchPersonAction.personList.size() gt 0}"
 										value="#{searchPersonAction.personList}" var="prs"
@@ -82,17 +99,31 @@
 										</b:dataTableColumn>
 										<b:dataTableColumn label="#{msgs['person.displayName']}"
 											value="#{prs.displayName}" />
-										<b:dataTableColumn label="First Name" value="#{prs.givenName}" />
-										<b:dataTableColumn label="Group Count">
-											<b:label text="#{prs.getMemberOf().size()}"
-												severity="primary" />
-										</b:dataTableColumn>
 										<b:dataTableColumn value="#{prs.mail}"
 											label="#{msgs['person.email']}" />
 										<b:dataTableColumn label="#{msgs['person.status']}">
 											<b:label text="#{prs.status}" severity="info" />
 										</b:dataTableColumn>
 									</b:dataTable>
+									<p:spacer height="16" />
+									<h:panelGroup style="width: 100%; margin-top: 5px;"
+										rendered="#{searchPersonAction.nbPages gt 1}">
+										<b:commandButton
+											action="#{searchPersonAction.getPreviousPage}" ajax="true"
+											style="float: left;"
+											disabled="!#{searchPersonAction.showPrev()}"
+											styleClass="btn btn-primary searchButton" value="Previous"
+											iconAwesome="angle-left" update=":personsFormId" />
+										<b:label
+											style="width: 80%; margin-top: 10px; margin-left:30%; text-align:center;"
+											text="#{searchPersonAction.searchIndex} page(s) over #{searchPersonAction.nbPages} pages"
+											severity="info" />
+										<b:commandButton action="#{searchPersonAction.getNextPage}"
+											ajax="true" style="float: right;"
+											disabled="!#{searchPersonAction.showNext()}"
+											styleClass="btn btn-primary searchButton" value="Next"
+											iconAwesome="angle-right" update=":personsFormId" />
+									</h:panelGroup>
 								</h:form>
 							</h:panelGrid>
 						</div>

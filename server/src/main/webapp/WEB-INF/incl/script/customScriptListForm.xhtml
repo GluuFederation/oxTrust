@@ -51,6 +51,14 @@
 	</h:head>
 	<h:form id="customScriptForm">
 		<div class="row" style="margin: 1px;">
+			<h:panelGroup>
+				<ox:decorate label="Only show active custom scripts">
+					<h:selectBooleanCheckbox value="#{_action.showActive}"
+											 id="activeBox">
+						<a4j:ajax event="click" render="customScriptForm" />
+					</h:selectBooleanCheckbox>
+				</ox:decorate>
+			</h:panelGroup>
 			<b:panel title="Custom Scripts" look="primary" id="customScriptForm"
 				collapsible="false">
 				<rich:tabPanel switchType="ajax" id="scriptTypeTabPanelId"
@@ -68,6 +76,7 @@
 										styleClass="allScriptFor#{_scriptType.displayName}"
 										columns="1" value="#{_customScripts}" var="_customScript"
 										style="width: 100%;">
+									<h:panelGroup rendered="#{_action.isShowCurrentScript(_customScript)}">
 										<h:panelGroup layout="block"
 											styleClass="#{(_customScript.enabled) ?  'card-header active' : 'card-header'}"
 											style="#{(_customScript.enabled and _action.hasCustomScriptError(_customScript)) ?  'background: red' : ''}"
@@ -272,6 +281,7 @@
 												</h:panelGroup>
 											</h:panelGroup>
 										</div>
+									 </h:panelGroup>
 									</rich:dataGrid>
 									<h:panelGroup layout="block" styleClass="addConfig">
 										<a4j:commandLink styleClass="btn btn-primary addConfigButton"

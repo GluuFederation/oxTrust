@@ -7,8 +7,10 @@
 package org.gluu.oxtrust.service.uma;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -41,14 +43,24 @@ public class UmaScopeService implements Serializable {
 	private Logger log;
 
 	public void addBranch() {
+		String branchDn = getDnForScope(null);
+		if (!persistenceEntryManager.hasBranchesSupport(branchDn)) {
+			return;
+		}
+
 		SimpleBranch branch = new SimpleBranch();
 		branch.setOrganizationalUnitName("scopes");
-		branch.setDn(getDnForScope(null));
+		branch.setDn(branchDn);
 		persistenceEntryManager.persist(branch);
 	}
 
 	public boolean containsBranch() {
-		return persistenceEntryManager.contains(getDnForScope(null), SimpleBranch.class);
+		String branchDn = getDnForScope(null);
+		if (!persistenceEntryManager.hasBranchesSupport(branchDn)) {
+			return true;
+		}
+
+		return persistenceEntryManager.contains(branchDn, SimpleBranch.class);
 	}
 
 	public void prepareScopeDescriptionBranch() {
@@ -94,10 +106,8 @@ public class UmaScopeService implements Serializable {
 	 * @return List of scope descriptions
 	 */
 	public List<Scope> getAllUmaScope(String... ldapReturnAttributes) {
-		Filter scopeTypeFilter = Filter.createEqualityFilter("oxScopeType", "uma");
-		List<Scope> scopes = persistenceEntryManager.findEntries(getDnForScope(null), Scope.class, scopeTypeFilter,
-				ldapReturnAttributes);
-		return scopes;
+		List<Scope> scopes = persistenceEntryManager.findEntries(getDnForScope(null), Scope.class, null, ldapReturnAttributes);
+		return filter(scopes);
 	}
 
 	/**
@@ -112,19 +122,23 @@ public class UmaScopeService implements Serializable {
 	public List<Scope> findUmaScopes(String pattern, int sizeLimit) {
 		String[] targetArray = new String[] { pattern };
 		Filter oxIdFilter = Filter.createSubstringFilter("oxId", null, targetArray, null);
-		Filter scopeTypeFilter = Filter.createEqualityFilter("oxScopeType", "uma");
 		Filter displayNameFilter = Filter.createSubstringFilter(OxTrustConstants.displayName, null, targetArray, null);
 		Filter searchFilter = Filter.createORFilter(oxIdFilter, displayNameFilter);
-		List<Scope> scopes = persistenceEntryManager.findEntries(getDnForScope(null), Scope.class,
-				Filter.createANDFilter(searchFilter, scopeTypeFilter), sizeLimit);
-		return scopes;
+		List<Scope> scopes = persistenceEntryManager.findEntries(getDnForScope(null), Scope.class, searchFilter, sizeLimit);
+		return filter(scopes);
+	}
+
+	private List<Scope> filter(List<Scope> scopes) {
+		if (scopes != null) {
+			return scopes.stream().filter(Scope::isUmaType).collect(Collectors.toList());
+		} else {
+			return new ArrayList<>();
+		}
 	}
 
 	public List<Scope> getAllUmaScopes(int sizeLimit) {
-		Filter scopeTypeFilter = Filter.createEqualityFilter("oxScopeType", "uma");
-		List<Scope> scopes = persistenceEntryManager.findEntries(getDnForScope(null), Scope.class, scopeTypeFilter,
-				sizeLimit);
-		return scopes;
+		List<Scope> scopes = persistenceEntryManager.findEntries(getDnForScope(null), Scope.class, null, sizeLimit);
+		return filter(scopes);
 	}
 
 	/**
@@ -136,7 +150,7 @@ public class UmaScopeService implements Serializable {
 	 */
 	public List<Scope> findScope(Scope scopeDescription) {
 		List<Scope> scopes = persistenceEntryManager.findEntries(scopeDescription);
-		return scopes;
+		return filter(scopes);
 	}
 
 	/**
@@ -147,8 +161,7 @@ public class UmaScopeService implements Serializable {
 	 * @return List of ScopeDescription which specified id
 	 */
 	public List<Scope> findUmaScopeById(String id) {
-		return persistenceEntryManager.findEntries(getDnForScope(null), Scope.class,
-				Filter.createEqualityFilter("oxId", id));
+		return persistenceEntryManager.findEntries(getDnForScope(null), Scope.class, Filter.createEqualityFilter("oxId", id));
 	}
 
 	/**

@@ -15,6 +15,7 @@ import java.util.Date;
 import org.gluu.persist.model.base.Entry;
 import org.gluu.persist.annotation.AttributeName;
 import org.gluu.persist.annotation.DataEntry;
+import org.gluu.persist.annotation.Expiration;
 import org.gluu.persist.annotation.ObjectClass;
 
 @DataEntry(sortBy = "creationDate")
@@ -28,6 +29,15 @@ public class PasswordResetRequest extends Entry implements Serializable {
 	private String personInum;
 	@AttributeName
 	private Date creationDate;
+
+    @AttributeName(name = "exp")
+    private Date expirationDate;
+
+    @Expiration
+    private Integer ttl;
+
+    @AttributeName(name = "del")
+    private boolean deletable = true;
 
 	public String getOxGuid() {
 		return oxGuid;
@@ -53,11 +63,35 @@ public class PasswordResetRequest extends Entry implements Serializable {
 		this.creationDate = creationDate;
 	}
 
+	public Date getExpirationDate() {
+		return expirationDate;
+	}
+
+	public void setExpirationDate(Date expirationDate) {
+		this.expirationDate = expirationDate;
+	}
+
+	public Integer getTtl() {
+		return ttl;
+	}
+
+	public void setTtl(Integer ttl) {
+		this.ttl = ttl;
+	}
+
+	public boolean isDeletable() {
+		return deletable;
+	}
+
+	public void setDeletable(boolean deletable) {
+		this.deletable = deletable;
+	}
+
 	@Override
 	public String toString() {
-		return String
-				.format("PasswordResetRequest [oxGuid=%s, personInum=%s, creationDate=%s]",
-						oxGuid, personInum, creationDate);
+		return "PasswordResetRequest [oxGuid=" + oxGuid + ", personInum=" + personInum + ", creationDate="
+				+ creationDate + ", expirationDate=" + expirationDate + ", ttl=" + ttl + ", deletable=" + deletable
+				+ "]";
 	}
 
 }

@@ -18,6 +18,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.gluu.jsf2.message.FacesMessages;
+import org.gluu.model.GluuAttribute;
 import org.gluu.oxtrust.service.AttributeService;
 import org.gluu.oxtrust.service.LdifService;
 import org.gluu.oxtrust.util.OxTrustConstants;
@@ -72,7 +73,7 @@ public class AttributeImportAction implements Serializable {
 		}
 		ResultCode result = null;
 		try (InputStream is = new ByteArrayInputStream(fileDataToImport.getData());) {
-			result = ldifService.importLdifFileInLdap(is);
+			result = ldifService.importLdifFileInLdap(GluuAttribute.class, is);
 		} catch (LDAPException ex) {
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to import LDIF file");
 		}

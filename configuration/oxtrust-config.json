@@ -117,5 +117,6 @@
     "shibboleth3SpConfDir":"",
     "organizationName":"",
     "idp3SigningCert":"/etc/certs/idp-signing.crt",
-    "idp3EncryptionCert":"/etc/certs/idp-encryption.crt"
+    "idp3EncryptionCert":"/etc/certs/idp-encryption.crt",
+    "passIdTokenHintToLogoutRedirectUri": false
 }

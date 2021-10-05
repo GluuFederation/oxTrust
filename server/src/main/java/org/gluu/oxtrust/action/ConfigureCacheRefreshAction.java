@@ -234,7 +234,7 @@ public class ConfigureCacheRefreshAction
 		GluuConfiguration configuration = configurationService.getConfiguration();
 		configuration.setVdsCacheRefreshEnabled(this.configuration.isVdsCacheRefreshEnabled());
 		configuration.setVdsCacheRefreshPollingInterval(this.configuration.getVdsCacheRefreshPollingInterval());
-		configuration.setCacheRefreshServerIpAddress(this.configuration.getCacheRefreshServerIpAddress().trim());
+		configuration.setCacheRefreshServerIpAddress(this.configuration.getCacheRefreshServerIpAddress());
 		configurationService.updateConfiguration(configuration);
 	}
 
@@ -712,6 +712,7 @@ public class ConfigureCacheRefreshAction
 			properties.setProperty("useSSL", Boolean.toString(ldapConfig.isUseSSL()));
 			LdapConnectionProvider connectionProvider = new LdapConnectionProvider(PropertiesDecrypter
 					.decryptProperties(properties, configurationFactory.getCryptoConfigurationSalt()));
+			connectionProvider.create();
 			if (connectionProvider.isConnected()) {
 				connectionProvider.closeConnectionPool();
 				facesMessages.add(FacesMessage.SEVERITY_INFO, facesMessages

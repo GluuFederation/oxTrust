@@ -7,6 +7,7 @@
 	xmlns:b="http://bootsfaces.net/ui"
 	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
 	xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
+				xmlns:rich="http://richfaces.org/rich"
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
 	xmlns:p="http://primefaces.org/ui"
@@ -93,10 +94,13 @@
 												<div class="col-sm-11" tabindex="0">
 													<h:inputText tabindex="1"
 														defaultLabel="click to enter #{_custAttr.metadata.displayName}"
-														id="custId" inputWidth="300" maxlength="60"
-														styleClass="form-control"
+														id="custId" inputWidth="300" maxlength="60" required="true"
+														styleClass="form-control" requiredMessage="The field is empty" validatorMessage="String is not valid"
 														rendered="#{_custAttr.userCanEdit and _custAttr.metadata.displayName ne 'Gender, male or female' and permissionService.hasPermission(configurationService.configuration, 'profile_management')}"
-														value="#{_custAttr.value}" />
+														value="#{_custAttr.value}">
+														validator="gluuAttributeValidator"
+														<rich:validator event="blur"/>
+												</h:inputText>
 													<h:selectOneMenu value="#{_custAttr.value}"
 														styleClass="rounded form-control" tabindex="1"
 														rendered="#{_custAttr.userCanEdit and _custAttr.metadata.displayName eq 'Gender, male or female' and permissionService.hasPermission(configurationService.configuration, 'profile_management')}">

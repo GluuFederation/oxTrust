@@ -1,6 +1,7 @@
 package org.gluu.oxtrust.model;
 
 import java.io.Serializable;
+import java.util.Arrays;
 
 public class AuthenticationChartDto implements Serializable {
 
@@ -93,5 +94,13 @@ public class AuthenticationChartDto implements Serializable {
 	public void setTotalFailure(Long totalFailure) {
 		this.totalFailure = totalFailure;
 	}
+
+    @Override
+    public String toString() {
+        return "AuthenticationChartDto [labels=" + Arrays.toString(labels) + ", success=" + Arrays.toString(success)
+                + ", failure=" + Arrays.toString(failure) + ", totalRequest=" + totalRequest + ", yearlyRequest="
+                + yearlyRequest + ", totalSuccess=" + totalSuccess + ", totalFailure=" + totalFailure + "]";
+    }
+	
 
 }

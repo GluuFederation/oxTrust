@@ -65,7 +65,7 @@ import org.gluu.persist.ldap.impl.LdapEntryManager;
 import org.gluu.persist.ldap.impl.LdapEntryManagerFactory;
 import org.gluu.persist.ldap.operation.LdapOperationService;
 import org.gluu.persist.model.SearchScope;
-import org.gluu.persist.model.base.GluuDummyEntry;
+import org.gluu.persist.model.base.DummyEntry;
 import org.gluu.persist.operation.PersistenceOperationService;
 import org.gluu.search.filter.Filter;
 import org.gluu.service.ObjectSerializationService;
@@ -568,7 +568,7 @@ public class CacheRefreshTimer {
 		for (String changedInum : changedInums) {
 			String baseDn = "action=synchronizecache," + personService.getDnForPerson(changedInum);
 			try {
-				targetPersistenceEntryManager.findEntries(baseDn, GluuDummyEntry.class, filter, SearchScope.SUB, null,
+				targetPersistenceEntryManager.findEntries(baseDn, DummyEntry.class, filter, SearchScope.SUB, null,
 						null, 0, 0, cacheRefreshConfiguration.getLdapSearchSizeLimit());
 				result.add(changedInum);
 				log.debug("Updated entry with inum {}", changedInum);
@@ -1145,14 +1145,21 @@ public class CacheRefreshTimer {
 		// Try to get updated password via script
 		BindCredentials bindCredentials = externalCacheRefreshService
 				.executeExternalGetBindCredentialsMethods(ldapConfig);
+        String bindPasswordPropertyKey = persistenceType + "#" + PropertiesDecrypter.BIND_PASSWORD;
 		if (bindCredentials != null) {
 			log.error("Using updated password which got from getBindCredentials method");
 			ldapDecryptedProperties.setProperty(persistenceType + ".bindDN", bindCredentials.getBindDn());
-			ldapDecryptedProperties.setProperty(persistenceType + "." + PropertiesDecrypter.BIND_PASSWORD,
+			ldapDecryptedProperties.setProperty(bindPasswordPropertyKey,
 					bindCredentials.getBindPassword());
 		}
 
-		log.trace("Attempting to create PersistenceEntryManager with properties: {}", ldapDecryptedProperties);
+		if (log.isTraceEnabled()) {
+	        Properties clonedLdapDecryptedProperties = (Properties) ldapDecryptedProperties.clone();
+	        if (clonedLdapDecryptedProperties.getProperty(bindPasswordPropertyKey) != null) {
+	        	clonedLdapDecryptedProperties.setProperty(bindPasswordPropertyKey, "REDACTED");
+	        }
+			log.trace("Attempting to create PersistenceEntryManager with properties: {}", clonedLdapDecryptedProperties);
+		}
 		PersistenceEntryManager customPersistenceEntryManager = entryManagerFactory
 				.createEntryManager(ldapDecryptedProperties);
 		log.info("Created Cache Refresh PersistenceEntryManager: {}", customPersistenceEntryManager);
@@ -1280,18 +1287,18 @@ public class CacheRefreshTimer {
 			GluuLdapConfiguration ldapConfiguration) {
 		String persistenceType = ldapEntryManagerFactory.getPersistenceType();
 		Properties ldapProperties = new Properties();
-		ldapProperties.put(persistenceType + ".servers",
+		ldapProperties.put(persistenceType + "#servers",
 				PropertyUtil.simplePropertiesToCommaSeparatedList(ldapConfiguration.getServers()));
-		ldapProperties.put(persistenceType + ".maxconnections",
+		ldapProperties.put(persistenceType + "#maxconnections",
 				Integer.toString(ldapConfiguration.getMaxConnections()));
-		ldapProperties.put(persistenceType + ".useSSL", Boolean.toString(ldapConfiguration.isUseSSL()));
-		ldapProperties.put(persistenceType + ".bindDN", ldapConfiguration.getBindDN());
-		ldapProperties.put(persistenceType + ".bindPassword", ldapConfiguration.getBindPassword());
+		ldapProperties.put(persistenceType + "#useSSL", Boolean.toString(ldapConfiguration.isUseSSL()));
+		ldapProperties.put(persistenceType + "#bindDN", ldapConfiguration.getBindDN());
+		ldapProperties.put(persistenceType + "#bindPassword", ldapConfiguration.getBindPassword());
 
 		// Copy binary attributes list from main LDAP connection
 		PersistenceOperationService persistenceOperationService = ldapEntryManager.getOperationService();
 		if (persistenceOperationService instanceof LdapOperationService) {
-			ldapProperties.put(persistenceType + ".binaryAttributes",
+			ldapProperties.put(persistenceType + "#binaryAttributes",
 					PropertyUtil.stringsToCommaSeparatedList(((LdapOperationService) persistenceOperationService)
 							.getConnectionProvider().getBinaryAttributes()));
 		}

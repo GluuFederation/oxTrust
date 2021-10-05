@@ -10,7 +10,7 @@
 	<parent>
 		<groupId>org.gluu</groupId>
 		<artifactId>oxtrust</artifactId>
-		<version>5.0.0-SNAPSHOT</version>
+		<version>4.3.0.Final</version>
 	</parent>
 
 	<build>
@@ -57,15 +57,23 @@
 		</dependency>
 		<dependency>
 			<groupId>org.gluu</groupId>
-			<artifactId>oxcore-persistence-ldap</artifactId>
+			<artifactId>gluu-orm-ldap</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.gluu</groupId>
-			<artifactId>oxcore-persistence-couchbase</artifactId>
+			<artifactId>gluu-orm-couchbase</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.gluu</groupId>
+			<artifactId>gluu-orm-sql</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.gluu</groupId>
+			<artifactId>gluu-orm-spanner</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>oxcore-persistence-hybrid</artifactId>
+			<artifactId>gluu-orm-hybrid</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.gluu</groupId>
@@ -175,10 +183,6 @@
 		</dependency>
 
 		<!-- Other -->
-		<dependency>
-			<groupId>javax.mail</groupId>
-			<artifactId>mail</artifactId>
-		</dependency>
 		
 		<!-- RestEasy -->
 		<dependency>

@@ -5,6 +5,7 @@ import java.io.Serializable;
 import org.gluu.persist.annotation.AttributeName;
 import org.gluu.persist.annotation.DataEntry;
 import org.gluu.persist.annotation.ObjectClass;
+import org.gluu.persist.model.base.Entry;
 import org.gluu.persist.model.base.InumEntry;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -12,12 +13,15 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @DataEntry
 @ObjectClass(value = "gluuOxtrustStat")
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class GluuOxTrustStat extends InumEntry implements Serializable {
+public class GluuOxTrustStat extends Entry implements Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 2684923415744323028L;
+
+	@AttributeName(name = "uniqueIdentifier", ignoreDuringUpdate = true)
+    private String inum;
 
 	@AttributeName(name = "gluuFreeDiskSpace", updateOnly = true)
 	private String freeDiskSpace;
@@ -42,6 +46,14 @@ public class GluuOxTrustStat extends InumEntry implements Serializable {
 
 	@AttributeName(name = "gluuLoadAvg", updateOnly = true)
 	private String loadAvg;
+
+	public String getInum() {
+		return inum;
+	}
+
+	public void setInum(String inum) {
+		this.inum = inum;
+	}
 
 	public String getFreeDiskSpace() {
 		return freeDiskSpace;
