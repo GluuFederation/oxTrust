@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets" template="/WEB-INF/incl/layout/newtemplate.xhtml">
+    <f:metadata>
+        <f:viewAction action="#{permissionService.requestPermission('sectorIdentifier', 'access')}" />
+        <f:viewParam name="id" value="#{updateSectorIdentifierAction.id}" />
+        <f:viewAction action="#{conversationService.initConversation}" />
+        <f:viewAction action="#{updateSectorIdentifierAction.add}"
+                      if="#{updateSectorIdentifierAction.sectorIdentifier == null }"
+                      onPostback="false"/>
+    </f:metadata>
+
+    <ui:define name="body">
+        <div id="formArea">
+            <ui:decorate template="/WEB-INF/incl/sectoridentifier/sectorIdentifierForm.xhtml">
+                <ui:param name="_sectorIdentifier" value="#{updateSectorIdentifierAction.sectorIdentifier}"/>
+                <ui:param name="_sectorIdentifierAction" value="#{updateSectorIdentifierAction}"/>
+                <ui:param name="_new" value="true"/>
+
+                <ui:define name="controlButttons">
+                    <div id="updateButtons">
+                        <h:commandButton action="#{updateSectorIdentifierAction.save}" styleClass="btn btn-primary"
+                                         value="#{msgs['sectoridentifier.add']}"/>
+                        <h:commandButton action="#{updateSectorIdentifierAction.cancel}" immediate="true"
+                                         style="margin-left: 5px;" styleClass="btn btn-primary"
+                                         value="#{msgs['sectorIdentifier.cancel']}"/>
+                    </div>
+                </ui:define>
+            </ui:decorate>
+
+            <ox:inputTextDialog acceptMethod="#{updateSectorIdentifierAction.acceptSelectLoginUri}"
+                                cancelMethod="#{updateSectorIdentifierAction.cancelSelectLoginUri}" dialogWidth="600"
+                                id="loginRedirect" inputLabel="#{msgs['sectorIdentifier.loginRedirectURI']}"
+                                inputWidth="80" label="#{msgs['sectorIdentifier.selectLoginRedirectURI']}"
+                                maxLength="256" queue="sectorIdentifierQueue" render="selectedLoginURIsId"
+                                text="#{updateSectorIdentifierAction.availableLoginUri}" textId="loginTextId"/>
+
+            <ox:selectClientDialog acceptMethod="#{updateSectorIdentifierAction.acceptSelectClients}"
+                                   cancelMethod="#{updateSectorIdentifierAction.cancelSelectClients}" id="client"
+                                   render="selectedClientsId" renderuri="selectedLoginURIsId"
+                                   searchMethod="#{updateSectorIdentifierAction.searchAvailableClients}"
+                                   searchPattern="#{updateSectorIdentifierAction.searchAvailableClientPattern}"
+                                   searchResult="#{updateSectorIdentifierAction.availableClients}"/>
+        </div>
+    </ui:define>
+</ui:composition>

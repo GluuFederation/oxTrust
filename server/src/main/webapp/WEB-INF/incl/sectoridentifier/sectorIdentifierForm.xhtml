@@ -1,0 +1,149 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j" xmlns:b="http://bootsfaces.net/ui"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
+	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
+	xmlns:gluufn="http://www.gluu.org/jsf/functions">
+	<style type="text/css">
+.odd {
+	background-color: #ddd;
+}
+
+.even {
+	background-color: #eee;
+}
+</style>
+
+	<section class="content-header">
+	<h1 style="color: #333;">
+		#{msgs['sectorIdentifier.openIDConnect']} <small> <i
+			class="fa fa-caret-right" style="color: #333 !important;"></i>
+			#{msgs['sectorIdentifier.manageSectorIdentifiers']}
+		</small> <small> <i class="fa fa-caret-right"
+			style="color: #333 !important;"></i>
+			#{msgs['sectorIdentifier.addSectorIdentifiers']}
+		</small>
+	</h1>
+	<ol class="breadcrumb">
+		<li><a href="#{request.contextPath}"><i class="fa fa-home"></i></a>
+		</li>
+		<li class="organization/configuration"><a
+			href="#{request.contextPath}/sectoridentifier/sectorIdentifierInventory.htm">#{msgs['sectorIdentifier.manageSectorIdentifiers']}</a>
+		</li>
+	</ol>
+	</section>
+	<section class="content"> <h:form>
+		<div class="row">
+			<div class="col-xs-12">
+				<div class="box box-primary">
+					<div class="box-header">
+						<div style="display: inline-block; width: 95% !important;">
+							<h:panelGrid columns="1" width="100%" border="0" cellpadding="0"
+								cellspacing="0">
+								<ox:decorate id="inu" rendered="#{not _new}"
+									label="#{msgs['sectorIdentifier.id']}">
+									<h:outputText
+										value="#{_sectorIdentifierAction.sectorIdentifier.id}" />
+								</ox:decorate>
+								<ox:decorate id="description" class="description"
+									leftClass="col-sm-4" rightClass="col-sm-8" rendered="true"
+									label="Description">
+									<h:inputText
+									    styleClass="form-control DescriptionTestField" id="DescriptionTestField"
+										value="#{_sectorIdentifierAction.sectorIdentifier.description}" />
+								</ox:decorate>
+								<ox:decorate id="url" rendered="#{not _new}"
+									label="#{msgs['sectorIdentifier.url']}">
+									<h:outputLink
+										value="#{_sectorIdentifierAction.sectorIdentifierUrl}"
+										target="_blank">
+										<i class="icon-external-link"></i>
+										<h:outputText value="&#160;" />
+										<h:outputText
+											value="#{_sectorIdentifierAction.sectorIdentifierUrl}" />
+									</h:outputLink>
+								</ox:decorate>
+								<div class="row" style="margin-left: 10px; margin-right: 10px;">
+									<b:panel id="redirectLoginUrls"
+										title="#{msgs['sectorIdentifier.redirectLoginURIs']}"
+										look="primary" iconAwesome="fa-forward">
+										<h:panelGroup id="selectedLoginURIsId">
+											<h:panelGroup columns="1" width="100%" border="0"
+												cellpadding="0" cellspacing="0">
+												<a4j:repeat value="#{_sectorIdentifierAction.loginUris}"
+													rowKeyVar="_urisIdx" var="_uri" iterationStatusVar="loop">
+													<div class="row-fluid">
+														<div class="#{(loop.index % 2 == 0) ?'odd':'even'}">
+															<h:outputText value="#{empty _uri ? _uri : _uri}" />
+															<div class="span6 pull-right">
+																<a4j:commandLink styleClass="glyphicon glyphicon-remove RemoveLoginUrl"
+																	style="margin-top:-20px;"
+																	action="#{_sectorIdentifierAction.removeLoginURI(_uri)}"
+																	execute="@this" render="selectedLoginURIsId"
+																	eventsQueue="clientQueue">
+																</a4j:commandLink>
+															</div>
+														</div>
+													</div>
+													<br />
+												</a4j:repeat>
+												<p:spacer height="16" />
+											</h:panelGroup>
+											<a4j:commandButton styleClass="btn btn-primary AddLoginUrl"
+												value="#{msgs['sectorIdentifier.addLoginUri']}"
+												oncomplete="#{rich:component('loginRedirect:inputText')}.show();"
+												execute="@this" eventsQueue="sectorIdentifierQueue" />
+										</h:panelGroup>
+									</b:panel>
+								</div>
+								<div class="row" style="margin-left: 10px; margin-right: 10px;">
+									<b:panel id="clients" iconAwesome="fa-tasks"
+										title="#{msgs['sectorIdentifier.clients']}" look="primary">
+										<h:panelGroup id="selectedClientsId">
+											<div class="col-sm-12 prop">
+												<a4j:repeat
+													value="#{_sectorIdentifierAction.clientDisplayNameEntries}"
+													rowKeyVar="_clientIdx" var="_client"
+													iterationStatusVar="loop">
+													<div class="row-fluid">
+														<div class="row #{(loop.index % 2 == 0) ?'odd':'even'}">
+															<h:outputText value="#{_client.inum}" />
+															<h:outputText value="&nbsp;" />
+															<h:outputText value="#{_client.displayName}" />
+															<h:outputText value="&nbsp;" />
+															<div class="span6 pull-right">
+																<a4j:commandLink styleClass="glyphicon glyphicon-remove RemoveClient"
+																	action="#{_sectorIdentifierAction.removeClient(_client.inum)}"
+																	render="selectedClientsId" execute="@this">
+																</a4j:commandLink>
+															</div>
+														</div>
+													</div>
+													<br />
+												</a4j:repeat>
+											</div>
+										</h:panelGroup>
+										<a4j:commandButton styleClass="btn btn-primary AddClient"
+											value="#{msgs['sectorIdentifier.addClient']}"
+											action="#{_sectorIdentifierAction.selectAddedClients}"
+											oncomplete="#{rich:component('client:selectClientModalPanel')}.show();"
+											execute="@this" eventsQueue="sectorIdentifierQueue" />
+									</b:panel>
+								</div>
+							</h:panelGrid>
+						</div>
+					</div>
+					<div class="box-footer">
+						<ui:insert name="controlButttons" />
+					</div>
+				</div>
+			</div>
+		</div>
+	</h:form> </section>
+</ui:composition>

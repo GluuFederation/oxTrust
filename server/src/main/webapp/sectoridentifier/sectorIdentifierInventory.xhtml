@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:b="http://bootsfaces.net/ui"
+	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/incl/layout/newtemplate.xhtml">
+	<f:metadata>
+		<f:viewAction
+			action="#{permissionService.requestPermission('sectorIdentifier', 'access')}" />
+		<f:viewParam name="searchPattern"
+			value="#{searchSectorIdentifierAction.searchPattern}" />
+		<f:viewAction action="#{conversationService.initConversation}" />
+		<f:viewAction action="#{searchSectorIdentifierAction.start}"
+			if="#{searchSectorIdentifierAction.sectorIdentifierList == null }"
+			onPostback="false" />
+	</f:metadata>
+
+	<ui:define name="body">
+		<section class="content-header">
+			<h1 style="color: #333;">
+				#{msgs['sectorIdentifier.openIDConnect']} <small> <i
+					class="fa fa-caret-right" style="color: #333 !important;" />
+					#{msgs['sectorIdentifier.manageSectorIdentifiers']}
+				</small>
+			</h1>
+			<ol class="breadcrumb">
+				<li><a href="#{request.contextPath}/home.htm"> <i
+						class="fa fa-home" />
+				</a></li>
+				<li class="organization/configuration"><a
+					href="#{request.contextPath}/sectoridentifier/sectorIdentifierInventory.htm">#{msgs['sectorIdentifier.manageSectorIdentifiers']}</a>
+				</li>
+			</ol>
+		</section>
+		<section class="content">
+			<div class="row">
+				<div class="col-xs-12">
+					<b:panel title="Sector Identifiers List" look="primary" iconAwesome="fa-list">
+						<div id="formArea">
+							<b:link style-class=" addSectorIdentifier btn btn-primary"
+								icon="plus" outcome="/sectoridentifier/addSectorIdentifier"
+								style="margin-left:5px !important;"
+								value="#{msgs['sectorIdentifier.addSectorIdentifiers']}"
+								includeViewParams="false" />
+							<p:spacer height="16" />
+							<h:form>
+								<ox:decorate hideLabel="true" id="searchPattern">
+									<h:inputText
+										alt="search parameters for sector identifier like id, redirect_uri"
+										id="searchPatternId" maxlength="30" size="30"
+										style="float: left;width: 50%;"
+										styleClass="searchParameters form-control"
+										value="#{searchSectorIdentifierAction.searchPattern}" />
+									<b:commandButton
+										action="#{searchSectorIdentifierAction.search}"
+										class="btn btn-primary" style="float:left;"
+										value="#{msgs['sectorIdentifier.search']}" iconAwesome="fa-search"/>
+								</ox:decorate>
+							</h:form>
+							<p:spacer height="16" />
+							<h:form id="sectorIdentifiersFormId">
+								<b:dataTable id="sectorIdentifierListId"
+									style="text-align:center;width:100%;"
+									rendered="#{searchSectorIdentifierAction.sectorIdentifierList.size() gt 0}"
+									responsive="true"
+									value="#{searchSectorIdentifierAction.sectorIdentifierList}"
+									var="si" print="true" excel="true" csv="true" pdf="true"
+									select="true">
+									<b:dataTableColumn label="ID">
+										<h:link includeViewParams="false"
+											outcome="/sectoridentifier/updateSectorIdentifier"
+											value="#{si.id}">
+											<f:param name="id" value="#{si.id}" />
+										</h:link>
+									</b:dataTableColumn>
+									<b:dataTableColumn value="#{si.description}"
+										label="Description" />
+								</b:dataTable>
+							</h:form>
+						</div>
+					</b:panel>
+				</div>
+			</div>
+		</section>
+	</ui:define>
+</ui:composition>
