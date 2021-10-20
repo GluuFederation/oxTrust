@@ -229,6 +229,10 @@ public class UpdateOrganizationAction implements Serializable {
 	}
 
 	public String verifySmtpConfiguration() {
+		if(StringUtils.isNotEmpty(passwordDecrypted) && passwordDecrypted!=null){
+			smtpConfiguration.setPasswordDecrypted(passwordDecrypted);
+		}
+		configurationService.encryptedSmtpPassword(smtpConfiguration);
 		boolean result = mailService.sendMail(smtpConfiguration, smtpConfiguration.getFromEmailAddress(),
 				smtpConfiguration.getFromName(), smtpConfiguration.getFromEmailAddress(), null,
 				facesMessages.evalResourceAsString("#{msgs['mail.verify.message.subject']}"),
