@@ -42,7 +42,7 @@ import org.gluu.service.cdi.event.ApplicationInitializedEvent;
 import org.gluu.util.Pair;
 import org.gluu.util.StringHelper;
 import org.jboss.resteasy.client.jaxrs.ClientHttpEngine;
-import org.jboss.resteasy.client.jaxrs.engines.ApacheHttpClient4Engine;
+import org.jboss.resteasy.client.jaxrs.engines.ApacheHttpClient43Engine;
 import org.slf4j.Logger;
 
 /**
@@ -92,7 +92,7 @@ public class UmaPermissionService implements Serializable {
 							.setKeepAliveStrategy(connectionKeepAliveStrategy).setConnectionManager(connectionManager)
 							.build();
 
-					ApacheHttpClient4Engine engine = new ApacheHttpClient4Engine(client);
+					ApacheHttpClient43Engine engine = new ApacheHttpClient43Engine(client);
 					engine.setFollowRedirects(true);
 					this.clientHttpEngine = engine;
 					
