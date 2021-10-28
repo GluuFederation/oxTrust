@@ -83,12 +83,5 @@
             <groupId>org.codehaus.jettison</groupId>
             <artifactId>jettison</artifactId>
         </dependency>
-
-        <dependency>
-            <groupId>org.jboss.resteasy</groupId>
-            <artifactId>resteasy-jaxrs</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
     </dependencies>
 </project>

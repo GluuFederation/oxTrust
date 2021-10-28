@@ -19,13 +19,18 @@ import javax.faces.context.ExternalContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.Invocation.Builder;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.Form;
+import javax.ws.rs.core.Response;
 
 import org.codehaus.jettison.json.JSONObject;
 import org.gluu.net.ProxyUtil;
 import org.gluu.util.StringHelper;
-import org.jboss.resteasy.client.ClientRequest;
-import org.jboss.resteasy.client.ClientResponse;
-import org.jboss.resteasy.client.core.executors.URLConnectionClientExecutor;
+import org.jboss.resteasy.client.jaxrs.ResteasyClient;
+import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
+import org.jboss.resteasy.client.jaxrs.engines.URLConnectionEngine;
 import org.slf4j.Logger;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -85,25 +90,38 @@ public class RecaptchaUtil {
 		boolean result = false;
 		try {
 			String uriTemplate = "https://www.google.com/recaptcha/api/siteverify";
-			ClientRequest request;
+
+			ResteasyClient resteasyClient;
 			if (ProxyUtil.isProxyRequied()) {
-				URLConnectionClientExecutor executor = new URLConnectionClientExecutor();
-				request = new ClientRequest(uriTemplate, executor);
+				URLConnectionEngine engine = new URLConnectionEngine();
+				resteasyClient = ((ResteasyClientBuilder) ResteasyClientBuilder.newBuilder()).httpEngine(engine).build();
 			} else {
-				request = new ClientRequest(uriTemplate);
+				resteasyClient = (ResteasyClient) ResteasyClientBuilder.newClient();
 			}
-			request.formParameter("secret", secretKey);
-			request.formParameter("response", gRecaptchaResponse);
-			request.accept("application/json");
 
-			ClientResponse<String> response = request.post(String.class);
+			WebTarget webTarget = resteasyClient.target(uriTemplate);
+	        Builder clientRequest = webTarget.request();
+	        clientRequest.accept("application/json");
 
-			ObjectMapper mapper = new ObjectMapper();
-			Map<String, String> map = mapper.readValue(new ByteArrayInputStream(response.getEntity().getBytes()),
-					new TypeReference<Map<String, String>>() {
-					});
+	        Form requestForm = new Form();
+	        requestForm.param("secret", secretKey);
+	        requestForm.param("response", gRecaptchaResponse);
 
-			return Boolean.parseBoolean(map.get("success"));
+			Response response = clientRequest.buildPost(Entity.form(requestForm)).invoke();
+			try {
+				ObjectMapper mapper = new ObjectMapper();
+				Map<String, String> map = mapper.readValue(new ByteArrayInputStream(response.readEntity(String.class).getBytes()),
+						new TypeReference<Map<String, String>>() {
+						});
+
+				return Boolean.parseBoolean(map.get("success"));
+			} finally {
+				response.close();
+
+				if (resteasyClient.httpEngine() != null) {
+					resteasyClient.httpEngine().close();
+				}
+			}
 		} catch (Exception e) {
 			log.warn("Exception happened while verifying recaptcha, check your internet connection", e);
 			return result;
