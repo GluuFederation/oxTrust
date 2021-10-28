@@ -8,11 +8,12 @@ package org.gluu.oxauth.client.session;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.WebTarget;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.gluu.oxauth.client.util.Configuration;
-import org.jboss.resteasy.client.ClientRequest;
 
 /**
  * Listener to detect when an HTTP session is destroyed and remove it from the map of
@@ -53,16 +54,16 @@ public final class SignOutHandler {
         }
         
         // TODO: Validate access token
-        ClientRequest clientRequest = new ClientRequest(Configuration.instance().getPropertyValue(Configuration.OAUTH_PROPERTY_LOGOUT_URL));
+        WebTarget webTarget = ClientBuilder.newClient().target(Configuration.instance().getPropertyValue(Configuration.OAUTH_PROPERTY_LOGOUT_URL));
 
-		clientRequest.queryParameter(Configuration.OAUTH_ID_TOKEN_HINT, oAuthData.getIdToken());
-		clientRequest.queryParameter(Configuration.OAUTH_POST_LOGOUT_REDIRECT_URI, constructRedirectUrl(request));
+        webTarget = webTarget.queryParam(Configuration.OAUTH_ID_TOKEN_HINT, oAuthData.getIdToken());
+        webTarget = webTarget.queryParam(Configuration.OAUTH_POST_LOGOUT_REDIRECT_URI, constructRedirectUrl(request));
 
 		// Remove OAuth data from session
         session.removeAttribute(Configuration.SESSION_OAUTH_DATA);
 
 		try {
-			return clientRequest.getUri();
+			return webTarget.getUri().toString();
 		} catch (Exception ex) {
 			log.error("Failed to prepare OAuth log out URL", ex);
 		}
