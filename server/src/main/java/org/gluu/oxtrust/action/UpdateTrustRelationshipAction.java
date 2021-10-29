@@ -705,7 +705,10 @@ public class UpdateTrustRelationshipAction implements Serializable {
             }
 
             File file = new File(filePath);
-            if (!file.exists()) {
+
+            // Check if metadata file existis in local file system AND in document store
+            // workarround for : https://support.gluu.org/installation/10061/oxttrust-cant-update-trust-relationships/#at72943
+            if (!file.exists() && !shibboleth3ConfService.existsSpMetadataFilePath(filePath)) {
                 return false;
             }
             return true;
@@ -962,11 +965,30 @@ public class UpdateTrustRelationshipAction implements Serializable {
         File metadataFile = null;
         if (!StringUtils.isEmpty(filename)) {
             metadataFile = new File(shibboleth3ConfService.getSpMetadataFilePath(filename));
-            if (metadataFile.exists() && (metadataFile.length() / (1024 * 1024)) < 25) {
-                return FileUtils.readFileToString(metadataFile, "UTF-8");
+
+            // Try to get SP Metadata from Document Store if metadata file does not exists
+            // Workarround for: https://support.gluu.org/installation/10061/oxttrust-cant-update-trust-relationships/
+            if (metadataFile.exists())
+            {
+                if ((metadataFile.length() / (1024 * 1024)) < 25)
+                {
+                    return FileUtils.readFileToString(metadataFile, "UTF-8");
+                }
+                else  {
+                    return "Metada file is too heavy to be displayed. Please check it at "+metadataFile.getAbsolutePath();
+                }
             }
-            else  {
-                return "Metada file is too heavy to be displayed. Please check it at "+metadataFile.getAbsolutePath();
+            else
+            {
+                String metadataContent = shibboleth3ConfService.readSpMetadataFile(trustRelationship);
+                if (!StringUtils.isEmpty(metadataContent))
+                {
+                    return metadataContent;
+                }
+                else
+                {
+                   return "Metada file does not exists at path: " + metadataFile.getAbsolutePath() + " and also does not exists in document store";
+                }
             }
         }
         return null;
