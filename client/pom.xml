@@ -5,7 +5,7 @@
 	<artifactId>oxtrust-client</artifactId>
 	<name>oxTrust Client library</name>
 	<packaging>jar</packaging>
-	<url>http://www.gluu.org</url>
+	<url>https://www.gluu.org</url>
 
 	<parent>
 		<groupId>org.gluu</groupId>
