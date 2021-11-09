@@ -6,7 +6,7 @@
 	<artifactId>oxtrust-server-test</artifactId>
 	<name>oxTrust Server Test</name>
 	<packaging>war</packaging>
-	<url>http://www.gluu.org</url>
+	<url>https://www.gluu.org</url>
 
 	<parent>
 		<groupId>org.gluu</groupId>

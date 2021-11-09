@@ -5,7 +5,7 @@
     <artifactId>oxtrust-saml-openid-auth-client</artifactId>
     <name>OpenId authentication module for Saml</name>
     <packaging>jar</packaging>
-    <url>http://ox.gluu.org</url>
+    <url>https://www.gluu.org</url>
 
     <parent>
         <groupId>org.gluu</groupId>

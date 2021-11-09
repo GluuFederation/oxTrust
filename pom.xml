@@ -9,7 +9,7 @@
 	<packaging>pom</packaging>
 	<version>4.4.0-SNAPSHOT</version>
 	<name>oxTrust</name>
-	<url>http://www.gluu.org</url>
+	<url>https://www.gluu.org</url>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -52,7 +52,7 @@
 		<repository>
 			<id>gluu</id>
 			<name>Gluu repository</name>
-			<url>https://ox.gluu.org/maven</url>
+			<url>https://maven.gluu.org/maven</url>
 		</repository>
 		<repository>
 			<id>mavencentral</id>

@@ -5,7 +5,7 @@
 	<artifactId>oxtrust-static</artifactId>
 	<name>oxTrust static resources</name>
 	<packaging>jar</packaging>
-	<url>http://ox.gluu.org</url>
+	<url>https://www.gluu.org</url>
 
 	<parent>
 		<groupId>org.gluu</groupId>

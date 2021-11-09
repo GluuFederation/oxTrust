@@ -6,7 +6,7 @@
 	<artifactId>oxtrust-configuration</artifactId>
 	<name>oxTrust configuration</name>
 	<packaging>jar</packaging>
-	<url>http://ox.gluu.org</url>
+	<url>https://www.gluu.org</url>
 
 	<parent>
 		<groupId>org.gluu</groupId>
