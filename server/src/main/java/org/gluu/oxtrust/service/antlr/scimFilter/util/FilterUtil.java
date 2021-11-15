@@ -18,6 +18,7 @@ import org.xdi.util.Pair;
 
 import java.util.Map;
 import java.util.SortedSet;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class FilterUtil {
