@@ -6,7 +6,7 @@
 	<groupId>org.xdi</groupId>
 	<artifactId>oxtrust</artifactId>
 	<packaging>pom</packaging>
-	<version>3.1.5.sp4</version>
+	<version>3.1.5.sp5</version>
 	<name>oxTrust</name>
 	<url>http://www.gluu.org</url>
 
