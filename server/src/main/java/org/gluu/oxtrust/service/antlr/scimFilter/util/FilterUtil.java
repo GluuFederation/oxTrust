@@ -20,11 +20,14 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.regex.Pattern;
 
-/**
- * @author Val Pecaoco
- * Updated by jgomer on 2017-12-12.
- */
 public class FilterUtil {
+    
+    //the shortest filter expression between square brackets is 6 characters long: ref pr
+    //... assuming the dollar sign was dropped by ReferenceURIInterceptor
+    private static final int MINLEN_VALFILTER = 6;
+    //the shortest subattribute name length is 4: $ref / type
+    private static final Pattern p = Pattern.compile("\\w{4,}+\\s++(eq|ne|co|sw|ew|gt|lt|ge|le|pr).*");
+    private static final Pattern WORDCHAR_PATTERN = Pattern.compile("\\w");
 
     private static Logger log = LogManager.getLogger(FilterUtil.class);
 
@@ -123,9 +126,10 @@ public class FilterUtil {
 
     private static int startIndexParentAttr(String str){
 
-        int i;
-        for (i=str.length(); i>0 && Pattern.matches("\\w", str.substring(i-1, i)); i--);
+        int i = str.length();
+        for (; i > 0 && WORDCHAR_PATTERN.matcher(str.substring(i - 1, i)).matches(); i--);
         return i;
+
     }
 
     private static String applyPrefix(String parent, String innerExpr, Class<? extends BaseScimResource> clazz){
@@ -148,8 +152,9 @@ public class FilterUtil {
     }
 
     /**
-     * Transalte a filter string such as emails[type eq "work" and value co "@example.com"] or ims[type eq "xmpp" and value co "@foo.com"]
-     * into (emails.type eq "work" and emails.value co "@example.com") or (ims.type eq "xmpp" and ims.value co "@foo.com")
+     * Translates a filter string such as emails[type eq "work" and value co "@example.com"] or ims[type eq "xmpp" and value co "@foo.com"]
+     * into (emails.type eq "work" and emails.value co "@example.com") or (ims.type eq "xmpp" and ims.value co "@foo.com").
+     * This is a best-effort approximate algorithm, it's not 100% accurate
      * @param filther
      * @param clazz
      * @return
@@ -157,31 +162,44 @@ public class FilterUtil {
      */
     private static String removeBrackets(String filther, Class<? extends BaseScimResource> clazz) throws Exception {
 
-        //Remove brackets: [] and adjust by prefixing accordingly
-        int j, offset =0;
-        int i= filther.indexOf("[");
+        int offset = 0;
+        int open = filther.indexOf("[");
         StringBuilder sb=new StringBuilder();
 
-        while (i!=-1) {
-            //find closing bracket:
-            j= filther.indexOf("]", i);
-            if (j==-1)
-                throw new Exception("Invalid filter: closing bracket ']' expected");
+        while (open != -1 && open + MINLEN_VALFILTER + 1 < filther.length()) {
+            int close = -1;
+            int k = startIndexParentAttr(filther.substring(offset, open)) + offset;
 
-            String str= filther.substring(i+1, j);
-            int k=startIndexParentAttr(filther.substring(offset, i)) + offset;
-            if (k==i)
-                throw new Exception("Invalid filter: no parent attrPath found before opening braket '['");
+            if (k < open) {
+                close = filther.indexOf("]", open + MINLEN_VALFILTER);
+                
+                while (close != -1) {
+                    String str = filther.substring(open + 1, close);
+                    Matcher m = p.matcher(str);
 
-            sb.append(filther.substring(offset, k)).append("(");
-            sb.append(applyPrefix(filther.substring(k,i), str, clazz));
-            sb.append(")");
+                    if (m.matches()) {
+                        sb.append(filther.substring(offset, k)).append("(");
+                        sb.append(applyPrefix(filther.substring(k, open), str));
+                        sb.append(")");
+                        offset = close + 1;
 
-            offset=j+1;
-            i= filther.indexOf("[", offset);
+                        break;
+                    } else {
+                        close = filther.indexOf("]", close + 2);
+                    }
+                }
+                
+            }
+            if (close == -1) {
+                k = Math.min(filther.length(), open + 2);
+                sb.append(filther.substring(offset, k));
+                offset = k;
+            }
+            open = filther.indexOf("[", offset);
+            
         }
         //"Paste" the remaining unprocessed part
-        sb.append(filther.substring(offset));
+        sb.append(filther.substring(offset));        
         return sb.toString();
 
     }
