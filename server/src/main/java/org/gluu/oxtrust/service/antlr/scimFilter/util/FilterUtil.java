@@ -179,7 +179,7 @@ public class FilterUtil {
 
                     if (m.matches()) {
                         sb.append(filther.substring(offset, k)).append("(");
-                        sb.append(applyPrefix(filther.substring(k, open), str));
+                        sb.append(applyPrefix(filther.substring(k, open), str, clazz));
                         sb.append(")");
                         offset = close + 1;
 
