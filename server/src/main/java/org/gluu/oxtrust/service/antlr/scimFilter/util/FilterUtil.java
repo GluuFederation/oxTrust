@@ -24,10 +24,10 @@ import java.util.regex.Pattern;
 public class FilterUtil {
     
     //the shortest filter expression between square brackets is 6 characters long: ref pr
-    //... assuming the dollar sign was dropped by ReferenceURIInterceptor
+    //(dollar sign in $ref is dropped by ReferenceURIInterceptor)
     private static final int MINLEN_VALFILTER = 6;
-    //the shortest subattribute name length is 4: $ref / type
-    private static final Pattern p = Pattern.compile("\\w{4,}+\\s++(eq|ne|co|sw|ew|gt|lt|ge|le|pr).*");
+    //the shortest subattribute name length is 3: ref
+    private static final Pattern p = Pattern.compile("\\(*+(not\\()?+\\(*+\\w{3,}+\\s++(eq|ne|co|sw|ew|gt|lt|ge|le|pr).*");
     private static final Pattern WORDCHAR_PATTERN = Pattern.compile("\\w");
 
     private static Logger log = LogManager.getLogger(FilterUtil.class);
