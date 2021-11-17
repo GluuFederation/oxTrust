@@ -57,26 +57,26 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           case "$GITHUB_REPOSITORY" in
-            "GluuFederation/oxAuth")
-                    ;;&
-            "GluuFederation/oxTrust")
-                    ;;&
-            "GluuFederation/scim")
-                    ;;&
-            "GluuFederation/casa")
-                    ;;&
             "GluuFederation/gluu-opendj4")
                   echo "Build opendj-sdk first for gluu-opendj4"
                   mvn -B -f opendj-sdk/pom.xml -DskipTests clean install
+                  ;&
+            "GluuFederation/oxAuth")
+                  ;&
+            "GluuFederation/oxTrust")
+                  ;&
+            "GluuFederation/scim")
+                  ;&
+            "GluuFederation/casa")
                   ;&
             "GluuFederation/oxd")
                   echo "Run Sonar analysis without test execution"
                   mvn -B -DskipTests=true install org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
                   ;;
             *)
-            echo "Run Sonar analysis with test execution"
-            mvn -B install org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
-            ;;
+                  echo "Run Sonar analysis with test execution"
+                  mvn -B install org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
+                  ;;
           esac
 
 
