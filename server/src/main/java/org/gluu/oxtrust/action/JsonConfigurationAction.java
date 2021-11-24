@@ -257,6 +257,7 @@ public class JsonConfigurationAction implements Serializable {
 			}
 			return false;
 		} catch (Exception e) {
+			log.error("Failed to start RedisClusterProvider.", e);
 			return false;
 		}
 	}
