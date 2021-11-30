@@ -161,7 +161,7 @@ public class UpdateOrganizationAction implements Serializable {
 		this.welcomeTitleText = organizationService
 				.getOrganizationCustomMessage(OxTrustConstants.CUSTOM_MESSAGE_TITLE_TEXT);
 		initOxAuthSetting();
-		configurations = new ArrayList<GluuConfiguration>();
+		configurations = new ArrayList<>();
 		configurations.addAll(configurationService.getConfigurations());
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
@@ -183,7 +183,7 @@ public class UpdateOrganizationAction implements Serializable {
 		try {
 			setCustomMessages();
 			organizationService.updateOrganization(this.organization);
-			if(StringUtils.isNotEmpty(passwordDecrypted) && passwordDecrypted!=null){
+			if(StringUtils.isNotEmpty(passwordDecrypted)){
 				smtpConfiguration.setPasswordDecrypted(passwordDecrypted);
 				passwordDecrypted=null;
 			}
@@ -229,7 +229,7 @@ public class UpdateOrganizationAction implements Serializable {
 	}
 
 	public String verifySmtpConfiguration() {
-		if(StringUtils.isNotEmpty(passwordDecrypted) && passwordDecrypted!=null){
+		if(StringUtils.isNotEmpty(passwordDecrypted)){
 			smtpConfiguration.setPasswordDecrypted(passwordDecrypted);
 		}
 		configurationService.encryptedSmtpPassword(smtpConfiguration);
