@@ -197,9 +197,9 @@ public class UpdatePersonAction implements Serializable {
 		this.pwiToBeRemove = pwiToBeRemove;
 	}
 
-	private List<GluuDeviceDataBean> deviceDataMap = new ArrayList<GluuDeviceDataBean>();
+	private List<GluuDeviceDataBean> deviceDataMap = new ArrayList<>();
 
-	private List<GluuUserPairwiseIdentifier> userPairWideIdentifiers = new ArrayList<GluuUserPairwiseIdentifier>();
+	private List<GluuUserPairwiseIdentifier> userPairWideIdentifiers = new ArrayList<>();
 
 	public List<GluuUserPairwiseIdentifier> getUserPairWideIdentifiers() {
 		return userPairWideIdentifiers;
@@ -227,8 +227,8 @@ public class UpdatePersonAction implements Serializable {
 		this.deviceDataMap = deviceDataMap;
 	}
 
-	private List<String> externalAuthCustomAttributes = new ArrayList<String>();
-	private List<String> oxExternalUids = new ArrayList<String>();
+	private List<String> externalAuthCustomAttributes = new ArrayList<>();
+	private List<String> oxExternalUids = new ArrayList<>();
 	private DeviceData deviceDetail;
 
 	public DeviceData getDeviceDetail() {
@@ -313,7 +313,7 @@ public class UpdatePersonAction implements Serializable {
 	}
 
 	private void addExternalUids() {
-		if (oxExternalUids != null && oxExternalUids.size() > 0) {
+		if (oxExternalUids != null && !oxExternalUids.isEmpty()) {
 			for (String oxExternalUid : oxExternalUids) {
 				String[] args = oxExternalUid.split(COLON);
 				GluuDeviceDataBean gluuDeviceDataBean = new GluuDeviceDataBean();
@@ -359,8 +359,8 @@ public class UpdatePersonAction implements Serializable {
 		if (oxMobileDevices != null && !oxMobileDevices.trim().equals("")) {
 			ObjectMapper mapper = new ObjectMapper();
 			MobileDevice mobileDevice = mapper.readValue(oxMobileDevices, MobileDevice.class);
-			ArrayList<Phone> phones = mobileDevice.getPhones();
-			if (phones != null && phones.size() > 0) {
+			if (mobileDevice !=null && mobileDevice.getPhones() != null && !mobileDevice.getPhones().isEmpty()) {
+				ArrayList<Phone> phones = mobileDevice.getPhones();
 				for (Phone phone : phones) {
 					GluuDeviceDataBean gluuDeviceDataBean = new GluuDeviceDataBean();
 					gluuDeviceDataBean.setNickName(phone.getNickName());
@@ -376,15 +376,15 @@ public class UpdatePersonAction implements Serializable {
 
 	@SuppressWarnings("deprecation")
 	private void addOtpDevices() {
-		ArrayList<Device> devices = new ArrayList<Device>();
+		ArrayList<Device> devices = new ArrayList<>();
 		OTPDevice oxOTPDevices = this.person.getOxOTPDevices();
 		if (oxOTPDevices != null) {
 			devices = oxOTPDevices.getDevices();
 		}
-		if (devices != null && devices.size() > 0) {
+		if (devices != null && !devices.isEmpty()) {
 			List<String> oxExternalUids = this.person.getOxExternalUid();
-			boolean canProceed = false;
-			canProceed = oxExternalUids != null && oxExternalUids.size() > 0;
+			boolean canProceed;
+			canProceed = oxExternalUids != null && !oxExternalUids.isEmpty();
 			for (Device device : devices) {
 				GluuDeviceDataBean gluuDeviceDataBean = new GluuDeviceDataBean();
 				gluuDeviceDataBean.setNickName(device.getNickName());
@@ -424,7 +424,7 @@ public class UpdatePersonAction implements Serializable {
 					gluuDeviceDataBean.setId(entry.getId());
 					String convertedDate = ldapEntryManager
 							.decodeTime(null, ldapEntryManager.encodeTime(null, entry.getCreationDate())).toGMTString();
-					gluuDeviceDataBean.setCreationDate(convertedDate.toString());
+					gluuDeviceDataBean.setCreationDate(convertedDate);
 					gluuDeviceDataBean.setModality("FIDO2");
 					gluuDeviceDataBean.setNickName(entry.getDisplayName() != null ? entry.getDisplayName() : DASH);
 					deviceDataMap.add(gluuDeviceDataBean);
@@ -475,7 +475,7 @@ public class UpdatePersonAction implements Serializable {
 	}
 
 	private void fillExternalAuthCustomAttributes() {
-		if (oxExternalUids != null && oxExternalUids.size() > 0) {
+		if (oxExternalUids != null && !oxExternalUids.isEmpty()) {
 			for (String oxExternalUid : oxExternalUids) {
 				externalAuthCustomAttributes.add(oxExternalUid.split(COLON)[0]);
 			}
@@ -501,9 +501,7 @@ public class UpdatePersonAction implements Serializable {
 		} else {
 			facesMessages.add(FacesMessage.SEVERITY_INFO, "New person not added");
 		}
-
 		conversationService.endConversation();
-
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
@@ -605,7 +603,7 @@ public class UpdatePersonAction implements Serializable {
 
 			List<GluuCustomAttribute> personAttributes = this.person.getCustomAttributes();
 			if (!personAttributes.contains(new GluuCustomAttribute("cn", ""))) {
-				List<GluuCustomAttribute> changedAttributes = new ArrayList<GluuCustomAttribute>();
+				List<GluuCustomAttribute> changedAttributes = new ArrayList<>();
 				changedAttributes.addAll(personAttributes);
 				changedAttributes.add(
 						new GluuCustomAttribute("cn", this.person.getGivenName() + " " + this.person.getDisplayName()));
@@ -671,20 +669,17 @@ public class UpdatePersonAction implements Serializable {
 		if (mail == null) {
 			gluuCustomPerson.setAttribute("oxTrustEmail", new String[0]);
 		} else {
-			Set<String> mailSet = new HashSet<String>();
+			Set<String> mailSet = new HashSet<>();
 			if (mail.getValues() != null)
 				mailSet.addAll(Arrays.asList(mail.getValues()));
 
-			Set<String> mailSetCopy = new HashSet<String>(mailSet);
-			Set<String> oxTrustEmailSet = new HashSet<String>();
-			List<Email> oxTrustEmails = new ArrayList<Email>();
-
+			Set<String> mailSetCopy = new HashSet<>(mailSet);
+			Set<String> oxTrustEmailSet = new HashSet<>();
+			List<Email> oxTrustEmails = new ArrayList<>();
 			if (oxTrustEmail != null && oxTrustEmail.getValues() != null) {
-
 				for (String oxTrustEmailJson : oxTrustEmail.getValues()) {
 					oxTrustEmails.add(jsonService.jsonToObject(oxTrustEmailJson, Email.class));
 				}
-
 				for (Email email : oxTrustEmails) {
 					oxTrustEmailSet.add(email.getValue());
 				}
@@ -728,12 +723,9 @@ public class UpdatePersonAction implements Serializable {
 
 	private void updateCustomObjectClasses() {
 		personService.addCustomObjectClass(this.person);
-
-		// Update objectClasses
 		String[] allObjectClasses = ArrayHelper.arrayMerge(appConfiguration.getPersonObjectClassTypes(),
 				this.person.getCustomObjectClasses());
-		String[] resultObjectClasses = new HashSet<String>(Arrays.asList(allObjectClasses)).toArray(new String[0]);
-
+		String[] resultObjectClasses = new HashSet<>(Arrays.asList(allObjectClasses)).toArray(new String[0]);
 		this.person.setCustomObjectClasses(resultObjectClasses);
 	}
 
@@ -749,9 +741,7 @@ public class UpdatePersonAction implements Serializable {
 					"Failed to remove person '#{updatePersonAction.person.displayName}'");
 			return OxTrustConstants.RESULT_FAILURE;
 		}
-
 		if (update) {
-			// Remove person
 			try {
 				boolean runScript = externalUpdateUserService.isEnabled();
 				if (runScript) {
@@ -765,20 +755,16 @@ public class UpdatePersonAction implements Serializable {
 				if (runScript) {
 					externalUpdateUserService.executeExternalPostDeleteUserMethods(this.person);
 				}
-
 				facesMessages.add(FacesMessage.SEVERITY_INFO,
 						"Person '#{updatePersonAction.person.displayName}' removed successfully");
 				conversationService.endConversation();
-
 				return OxTrustConstants.RESULT_SUCCESS;
 			} catch (BasePersistenceException ex) {
 				log.error("Failed to remove person {}", this.person.getInum(), ex);
 			}
 		}
-
 		facesMessages.add(FacesMessage.SEVERITY_ERROR,
 				"Failed to remove person '#{updatePersonAction.person.displayName}'");
-
 		return OxTrustConstants.RESULT_FAILURE;
 	}
 
@@ -786,20 +772,16 @@ public class UpdatePersonAction implements Serializable {
 		if (add && externalUpdateUserService.isEnabled()) {
 			externalUpdateUserService.executeExternalNewUserMethods(this.person);
 		}
-
 		List<GluuAttribute> attributes = attributeService.getAllPersonAttributes(GluuUserRole.ADMIN);
 		List<String> origins = attributeService.getAllAttributeOrigins(attributes);
-
 		List<GluuCustomAttribute> customAttributes = this.person.getCustomAttributes();
 		boolean newPerson = (customAttributes == null) || customAttributes.isEmpty();
 		if (newPerson) {
-			customAttributes = new ArrayList<GluuCustomAttribute>();
+			customAttributes = new ArrayList<>();
 			this.person.setCustomAttributes(customAttributes);
 		}
-
 		customAttributeAction.initCustomAttributes(attributes, customAttributes, origins,
 				appConfiguration.getPersonObjectClassTypes(), appConfiguration.getPersonObjectClassDisplayNames());
-
 		if (newPerson) {
 			customAttributeAction.addCustomAttributes(personService.getMandatoryAtributes());
 		}
@@ -969,12 +951,12 @@ public class UpdatePersonAction implements Serializable {
 			ObjectMapper mapper = new ObjectMapper();
 			MobileDevice mobileDevice = mapper.readValue(oxMobileDevices, MobileDevice.class);
 			ArrayList<Phone> phones = mobileDevice.getPhones();
-			if (phones != null && phones.size() > 0) {
+			if (phones != null && !phones.isEmpty()) {
 				for (Phone phone : phones) {
 					if (phone.getNumber().equals(idOfDeviceToRemove)) {
 						deviceDataMap.remove(deleteDeviceData);
 						phones.remove(phone);
-						Map<String, ArrayList<Phone>> map = new HashMap<String, ArrayList<Phone>>();
+						Map<String, ArrayList<Phone>> map = new HashMap<>();
 						map.put("phones", phones);
 						String jsonInString = mapper.writeValueAsString(map);
 						this.person.setOxMobileDevices(jsonInString);
@@ -999,14 +981,14 @@ public class UpdatePersonAction implements Serializable {
 
 	private void removeOTPDevices(GluuDeviceDataBean deleteDeviceData, String idOfDeviceToRemove) {
 		OTPDevice oxOTPDevices = this.person.getOxOTPDevices();
-		ArrayList<Device> devices = new ArrayList<Device>();
+		ArrayList<Device> devices = new ArrayList<>();
 		if (oxOTPDevices != null) {
 			devices = oxOTPDevices.getDevices();
 		}
 
 		String entry = null;
 		String code = null;
-		List<String> uids = new ArrayList<String>(this.person.getOxExternalUid());
+		List<String> uids = new ArrayList<>(this.person.getOxExternalUid());
 		if (uids != null) {
 			for (String oxExternalUid : uids) {
 				String firstPart = oxExternalUid.split(COLON)[0];
@@ -1063,70 +1045,48 @@ public class UpdatePersonAction implements Serializable {
 	}
 
 	public boolean userNameIsUniqAtCreationTime(String uid) {
-		boolean userNameIsUniq = true;
 		if (uid == null) {
-			return userNameIsUniq;
+			return true;
 		}
 		List<GluuCustomPerson> gluuCustomPersons = personService.getPersonsByUid(uid);
-		if (gluuCustomPersons != null && gluuCustomPersons.size() > 0) {
+		if (gluuCustomPersons != null && !gluuCustomPersons.isEmpty()) {
 			for (GluuCustomPerson gluuCustomPerson : gluuCustomPersons) {
 				if (gluuCustomPerson.getUid().equalsIgnoreCase(uid)) {
-					userNameIsUniq = false;
-					break;
+					return false;
 				}
 			}
 		}
-		return userNameIsUniq;
+		return true;
 	}
 
 	private boolean userNameIsUniqAtEditionTime(String uid) {
 		if (uid == null) {
 			return true;
 		}
-		boolean userNameIsUniq = false;
 		List<GluuCustomPerson> gluuCustomPersons = personService.getPersonsByUid(uid);
-		if (gluuCustomPersons == null || gluuCustomPersons.isEmpty()) {
-			userNameIsUniq = true;
+		if ((gluuCustomPersons == null || gluuCustomPersons.isEmpty()) || (gluuCustomPersons.size() == 1 && gluuCustomPersons.get(0).getUid().equalsIgnoreCase(uid)
+				&& gluuCustomPersons.get(0).getInum().equalsIgnoreCase(this.person.getInum()))) {
+			return true;
 		}
-		if (gluuCustomPersons.size() == 1 && gluuCustomPersons.get(0).getUid().equalsIgnoreCase(uid)
-				&& gluuCustomPersons.get(0).getInum().equalsIgnoreCase(this.person.getInum())) {
-			userNameIsUniq = true;
-		}
-		return userNameIsUniq;
+		return false;
 	}
 
 	private boolean userEmailIsUniqAtCreationTime(String email) {
-		if (email == null) {
-			return true;
-		}
-		boolean emailIsUniq = true;
 		List<GluuCustomPerson> gluuCustomPersons = personService.getPersonsByEmail(email);
-		if (gluuCustomPersons != null && gluuCustomPersons.size() > 0) {
-			for (GluuCustomPerson gluuCustomPerson : gluuCustomPersons) {
-				if (gluuCustomPerson.getAttribute(MAIL).equalsIgnoreCase(email)) {
-					emailIsUniq = false;
-					break;
-				}
-			}
+		if (gluuCustomPersons != null && gluuCustomPersons.size() > 0
+				&& gluuCustomPersons.stream().filter(e->e.getAttribute(MAIL).equalsIgnoreCase(email)).count()>1) {
+			return false;
 		}
-		return emailIsUniq;
+		return true;
 	}
 
 	private boolean userEmailIsUniqAtEditionTime(String email) {
-		boolean emailIsUniq = false;
-		if (email == null) {
-			return true;
-		}
 		List<GluuCustomPerson> gluuCustomPersons = personService.getPersonsByEmail(email);
-		if (gluuCustomPersons == null || gluuCustomPersons.isEmpty()) {
-			emailIsUniq = true;
+		long count =gluuCustomPersons.stream().filter(e->e.getAttribute(MAIL).equalsIgnoreCase(email)).count();
+		if (email!=null && count>1 ) {
+			return false;
 		}
-		if (gluuCustomPersons.size() == 1 && gluuCustomPersons.get(0).getAttribute(MAIL).equalsIgnoreCase(email)
-				&& gluuCustomPersons.get(0).getInum().equalsIgnoreCase(this.person.getInum())) {
-			emailIsUniq = true;
-		}
-
-		return emailIsUniq;
+		return true;
 	}
 
 	public String getClientName(String inum) {

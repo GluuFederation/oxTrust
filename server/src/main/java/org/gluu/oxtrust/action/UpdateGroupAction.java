@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.ConversationScoped;
 import javax.faces.application.FacesMessage;
@@ -133,7 +134,6 @@ public class UpdateGroupAction implements Serializable {
 		} catch (BasePersistenceException ex) {
 			log.error("Failed to find group {}", inum, ex);
 		}
-
 		if (this.group == null) {
 			log.error("Failed to load group {}", inum);
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to find group");
@@ -164,7 +164,7 @@ public class UpdateGroupAction implements Serializable {
 	}
 
 	public String save() throws Exception {
-		List<DisplayNameEntry> oldMembers = null;
+		List<DisplayNameEntry> oldMembers;
 		try {
 			oldMembers = getMemberDisplayNameEntiries();
 		} catch (BasePersistenceException ex) {
@@ -235,7 +235,7 @@ public class UpdateGroupAction implements Serializable {
 		return OxTrustConstants.RESULT_FAILURE;
 	}
 
-	private List<DisplayNameEntry> getMemberDisplayNameEntiries() throws Exception {
+	private List<DisplayNameEntry> getMemberDisplayNameEntiries(){
 		List<DisplayNameEntry> result = new ArrayList<DisplayNameEntry>();
 		List<DisplayNameEntry> tmp = lookupService.getDisplayNameEntries(personService.getDnForPerson(null), this.group.getMembers());
 		if (tmp != null) {
@@ -249,7 +249,7 @@ public class UpdateGroupAction implements Serializable {
 		this.members.add(member);
 	}
 
-	public void removeMember(String inum) throws Exception {
+	public void removeMember(String inum){
 		if (StringHelper.isEmpty(inum)) {
 			return;
 		}
@@ -292,12 +292,7 @@ public class UpdateGroupAction implements Serializable {
 		if (this.availableMembers == null) {
 			return;
 		}
-
-		Set<String> addedMemberInums = new HashSet<String>();
-		for (DisplayNameEntry member : members) {
-			addedMemberInums.add(member.getInum());
-		}
-
+		Set<String> addedMemberInums = members.stream().map(e -> e.getInum()).collect(Collectors.toSet());
 		for (GluuCustomPerson person : this.availableMembers) {
 			person.setSelected(addedMemberInums.contains(person.getInum()));
 		}
@@ -308,11 +303,7 @@ public class UpdateGroupAction implements Serializable {
 			return;
 		}
 
-		Set<String> addedMemberInums = new HashSet<String>();
-		for (DisplayNameEntry member : members) {
-			addedMemberInums.add(member.getInum());
-		}
-
+		Set<String> addedMemberInums = members.stream().map( e->e.getInum()).collect(Collectors.toSet());
 		for (GluuCustomPerson person : this.availableMembers) {
 			if (person.isSelected() && !addedMemberInums.contains(person.getInum())) {
 				addMember(person);
@@ -348,23 +339,17 @@ public class UpdateGroupAction implements Serializable {
 		Arrays.sort(newMemberDns);
 		boolean[] retainOldMembers = new boolean[oldMemberDns.length];
 		Arrays.fill(retainOldMembers, false);
-		List<String> addedMembers = new ArrayList<String>();
-		List<String> removedMembers = new ArrayList<String>();
-		List<String> existingMembers = new ArrayList<String>();
-
-		// Add new values
+		List<String> addedMembers = new ArrayList<>();
+		List<String> removedMembers = new ArrayList<>();
+		List<String> existingMembers = new ArrayList<>();
 		for (String value : newMemberDns) {
 			int idx = Arrays.binarySearch(oldMemberDns, value);
 			if (idx >= 0) {
-				// Old members array contains member. Retain member
 				retainOldMembers[idx] = true;
 			} else {
-				// This is new member
 				addedMembers.add(value);
 			}
 		}
-
-		// Remove members which we don't have in new members
 		for (int i = 0; i < oldMemberDns.length; i++) {
 			if (retainOldMembers[i]) {
 				existingMembers.add(oldMemberDns[i]);
@@ -376,16 +361,13 @@ public class UpdateGroupAction implements Serializable {
 		for (String dn : addedMembers) {
 			GluuCustomPerson person = personService.getPersonByDn(dn);
 			log.debug("Adding group {} to person {} memberOf", groupDn, person.getDisplayName());
-
 			if (appConfiguration.isUpdateStatus()) {
 				Boolean slaManager = isSLAManager(organizationGroups, person);
 				person.setSLAManager(slaManager);
 			}
-
 			List<String> personMemberOf = new ArrayList<String>(person.getMemberOf());
 			personMemberOf.add(groupDn);
 			person.setMemberOf(personMemberOf);
-
 			personService.updatePerson(person);
 		}
 
@@ -403,16 +385,13 @@ public class UpdateGroupAction implements Serializable {
 		}
 
 		if (appConfiguration.isUpdateStatus()) {
-			// Update existing members if needed
 			for (String dn : existingMembers) {
 				GluuCustomPerson person = personService.getPersonByDn(dn);
 				log.debug("Updating group {} to person {} memberOf", groupDn, person.getDisplayName());
-
 				Boolean slaManager = isSLAManager(organizationGroups, person);
 				if (slaManager.equals(person.getSLAManager())) {
 					continue;
 				}
-	
 				person.setSLAManager(slaManager);
 				personService.updatePerson(person);
 			}
@@ -429,7 +408,6 @@ public class UpdateGroupAction implements Serializable {
 		for (DisplayNameEntry member : members) {
 			memberDns[i++] = member.getDn();
 		}
-
 		return memberDns;
 	}
 	

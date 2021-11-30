@@ -108,7 +108,7 @@ public class UpdateScopeAction implements Serializable {
 			if (this.scope.getOxAuthClaims() != null && this.scope.getOxAuthClaims().size() > 0) {
 				this.claims = getClaimDisplayNameEntiries();
 			} else {
-				this.claims = new ArrayList<DisplayNameEntry>();
+				this.claims = new ArrayList<>();
 			}
 		} catch (BasePersistenceException ex) {
 			log.error("Failed to load scopes", ex);
@@ -125,10 +125,10 @@ public class UpdateScopeAction implements Serializable {
 	private void fillAvailableDynScript() {
 		List<CustomScript> availableScripts = customScriptService
 				.findCustomScripts(Arrays.asList(CustomScriptType.DYNAMIC_SCOPE));
-		List<SelectableEntity<CustomScript>> tmpAvailableDynamicScripts = new ArrayList<SelectableEntity<CustomScript>>();
+		List<SelectableEntity<CustomScript>> tmpAvailableDynamicScripts = new ArrayList<>();
 		for (CustomScript dynamicScript : availableScripts) {
 			if (dynamicScript.isEnabled()) {
-				tmpAvailableDynamicScripts.add(new SelectableEntity<CustomScript>(dynamicScript));
+				tmpAvailableDynamicScripts.add(new SelectableEntity<>(dynamicScript));
 			}
 		}
 		availableDynamicScripts.addAll(tmpAvailableDynamicScripts);
@@ -160,7 +160,7 @@ public class UpdateScopeAction implements Serializable {
 			if (this.scope.getOxAuthClaims() != null && this.scope.getOxAuthClaims().size() > 0) {
 				this.claims = getClaimDisplayNameEntiries();
 			} else {
-				this.claims = new ArrayList<DisplayNameEntry>();
+				this.claims = new ArrayList<>();
 			}
 			this.dynamicScripts = getInitialDynamicScripts();
 
@@ -243,7 +243,7 @@ public class UpdateScopeAction implements Serializable {
 			this.scope.setOxAuthClaims(null);
 			return;
 		}
-		List<String> resultClaims = new ArrayList<String>();
+		List<String> resultClaims = new ArrayList<>();
 		this.scope.setOxAuthClaims(resultClaims);
 		for (DisplayNameEntry claim : this.claims) {
 			resultClaims.add(claim.getDn());
@@ -323,7 +323,7 @@ public class UpdateScopeAction implements Serializable {
 	}
 
 	public void removeDuplicates() {
-		List<GluuAttribute> tempAvailableClaims = new ArrayList<GluuAttribute>();
+		List<GluuAttribute> tempAvailableClaims = new ArrayList<>();
 		for (int i = 0; i < this.availableClaims.size(); i++) {
 			for (int j = i + 1; j < this.availableClaims.size();) {
 				if (this.availableClaims.get(i).getDisplayName()
@@ -346,7 +346,7 @@ public class UpdateScopeAction implements Serializable {
 		if (this.availableClaims == null) {
 			return;
 		}
-		Set<String> addedClaimInums = new HashSet<String>();
+		Set<String> addedClaimInums = new HashSet<>();
 		for (DisplayNameEntry claim : claims) {
 			addedClaimInums.add(claim.getInum());
 		}
@@ -361,7 +361,7 @@ public class UpdateScopeAction implements Serializable {
 		if (this.availableClaims == null) {
 			return;
 		}
-		Set<String> addedClaimsInums = new HashSet<String>();
+		Set<String> addedClaimsInums = new HashSet<>();
 		for (DisplayNameEntry claim : claims) {
 			addedClaimsInums.add(claim.getInum());
 		}
@@ -375,8 +375,8 @@ public class UpdateScopeAction implements Serializable {
 	public void cancelSelectClaims() {
 	}
 
-	private List<DisplayNameEntry> getClaimDisplayNameEntiries() throws Exception {
-		List<DisplayNameEntry> result = new ArrayList<DisplayNameEntry>();
+	private List<DisplayNameEntry> getClaimDisplayNameEntiries(){
+		List<DisplayNameEntry> result = new ArrayList<>();
 		List<DisplayNameEntry> tmp = lookupService.getDisplayNameEntries(attributeService.getDnForAttribute(null),
 				this.scope.getOxAuthClaims());
 		if (tmp != null) {
@@ -410,7 +410,7 @@ public class UpdateScopeAction implements Serializable {
 	}
 
 	private List<CustomScript> getInitialDynamicScripts() {
-		List<CustomScript> result = new ArrayList<CustomScript>();
+		List<CustomScript> result = new ArrayList<>();
 		if ((this.scope.getDynamicScopeScripts() == null) || (this.scope.getDynamicScopeScripts().size() == 0)) {
 			return result;
 		}
@@ -430,7 +430,7 @@ public class UpdateScopeAction implements Serializable {
 			this.scope.setDynamicScopeScripts(null);
 			return;
 		}
-		List<String> resultDynamicScripts = new ArrayList<String>();
+		List<String> resultDynamicScripts = new ArrayList<>();
 		for (CustomScript dynamicScript : this.dynamicScripts) {
 			resultDynamicScripts.add(dynamicScript.getDn());
 		}
@@ -471,7 +471,7 @@ public class UpdateScopeAction implements Serializable {
 			return;
 		}
 		for (Iterator<CustomScript> it = this.dynamicScripts.iterator(); it.hasNext();) {
-			CustomScript dynamicScript = (CustomScript) it.next();
+			CustomScript dynamicScript = it.next();
 			if (StringHelper.equalsIgnoreCase(removeDynamicScript.getInum(), dynamicScript.getInum())) {
 				it.remove();
 				break;
@@ -487,10 +487,10 @@ public class UpdateScopeAction implements Serializable {
 		try {
 			List<CustomScript> availableScripts = customScriptService
 					.findCustomScripts(Arrays.asList(CustomScriptType.DYNAMIC_SCOPE), CUSTOM_SCRIPT_RETURN_ATTRIBUTES);
-			List<SelectableEntity<CustomScript>> tmpAvailableDynamicScripts = new ArrayList<SelectableEntity<CustomScript>>();
+			List<SelectableEntity<CustomScript>> tmpAvailableDynamicScripts = new ArrayList<>();
 			for (CustomScript dynamicScript : availableScripts) {
 				if (dynamicScript.isEnabled()) {
-					tmpAvailableDynamicScripts.add(new SelectableEntity<CustomScript>(dynamicScript));
+					tmpAvailableDynamicScripts.add(new SelectableEntity<>(dynamicScript));
 				}
 			}
 			this.availableDynamicScripts = tmpAvailableDynamicScripts;
@@ -510,7 +510,7 @@ public class UpdateScopeAction implements Serializable {
 	}
 
 	private Set<String> getAddedDynamicScriptInums() {
-		Set<String> addedDynamicScriptInums = new HashSet<String>();
+		Set<String> addedDynamicScriptInums = new HashSet<>();
 		for (CustomScript dynamicScript : this.dynamicScripts) {
 			addedDynamicScriptInums.add(dynamicScript.getInum());
 		}
