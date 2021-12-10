@@ -57,8 +57,6 @@ public class ExcelService {
 			log.error("Error: " + e);
 		} catch (EncryptedDocumentException e) {
 			log.error("Error: " + e);
-		} catch (InvalidFormatException e) {
-			log.error("Error: " + e);
 		}
 		return result;
 	}
