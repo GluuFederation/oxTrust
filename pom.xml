@@ -28,7 +28,7 @@
 		<httpcore.version>4.4.9</httpcore.version>
 		<httpclient.version>4.5.5</httpclient.version>
 
-		<log4j.version>2.11.0</log4j.version>
+		<log4j.version>2.16.0</log4j.version>
 		<slf4j.version>1.7.25</slf4j.version>
 
 		<weld.version>3.0.5.Final</weld.version>
