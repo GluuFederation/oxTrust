@@ -8,6 +8,7 @@ package org.gluu.oxtrust.service.antlr.scimFilter;
 import com.unboundid.ldap.sdk.Filter;
 import com.unboundid.ldap.sdk.LDAPException;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.gluu.oxtrust.model.scim2.AttributeDefinition.Type;
@@ -85,8 +86,10 @@ public class LdapFilterListener extends ScimFilterBaseListener {
         }
         else
         if (Type.STRING.equals(attrType) || Type.REFERENCE.equals(attrType)){
-            compValue=escapeLdapString(compValue.substring(1, compValue.length()-1));     //Drop double quotes and encode
-            filth=getSubFilterString(subAttribute, ldapAttribute, compValue, operator);
+            compValue=StringEscapeUtils.unescapeJson(compValue.substring(1, compValue.length()-1)); //Omit surrounding double quotes and decode json chars
+     
+            log.trace("compValue decoded as: " + compValue);
+            filth=getSubFilterString(subAttribute, ldapAttribute, escapeLdapString(compValue), operator);
         }
         else
         if (Type.INTEGER.equals(attrType) || Type.DECIMAL.equals(attrType))
@@ -100,7 +103,7 @@ public class LdapFilterListener extends ScimFilterBaseListener {
             filth=getSubFilterDateTime(subAttribute, ldapAttribute, compValue, operator, attrType);
         }
 
-        log.trace("getSubFilter. {}", filth);
+        log.debug("getSubFilter. {}", filth);
         return filth;
 
     }
