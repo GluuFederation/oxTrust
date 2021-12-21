@@ -112,7 +112,6 @@
 					"description": "server details separated by comma, e.g. 'server1:8080,server2:8081'",
 					"title": "servers",
 					"type": "string",
-					"format": "url",
 					"minLength": 3
 				},
 				"password": {
@@ -145,11 +144,30 @@
 					"type": "boolean"
 				},
 				"sslTrustStoreFilePath": {
-					"id": "useTrustStoreFilePath",
+					"id": "sslTrustStoreFilePath",
 					"description": "Directory Path to Trust Store",
 					"type": "string",
-					"format": "url",
 					"minLength": 1
+				},
+				"sslTrustStorePassword": {
+					"id": "sslTrustStorePassword",
+					"description": "Trust store password",
+					"title": "sslTrustStorePassword",
+					"type": "string",
+					"minLength": 0
+				},
+				"sslKeyStoreFilePath": {
+					"id": "sslKeyStoreFilePath",
+					"description": "Directory path to the key store",
+					"type": "string",
+					"minLength": 1
+				},
+				"sslKeyStorePassword": {
+					"id": "sslKeyStorePassword",
+					"description": "Key store password",
+					"title": "sslKeyStorePassword",
+					"type": "string",
+					"minLength": 0
 				},
                 "maxIdleConnections": {
                     "id": "maxIdleConnections",
