@@ -11,12 +11,10 @@ import org.gluu.persist.annotation.AttributeName;
 import org.gluu.persist.annotation.DataEntry;
 import org.gluu.persist.annotation.ObjectClass;
 import org.gluu.persist.model.base.Entry;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.io.Serializable;
 
 /**
- * gluuPassportConfig
+ * oxTrustedIdp
  *
  * @author Shekhar L.
  * 
@@ -33,13 +31,9 @@ public class OxTrustedIdp extends Entry implements Serializable {
 	@AttributeName(ignoreDuringUpdate = true)
 	private String inum;
 
-	@NotNull
-	@Size(min = 0, max = 250, message = "Length of the remoteIdpName should not exceed 250")
 	@AttributeName
 	private String remoteIdpName;
 
-	@NotNull
-	@Size(min = 0, max = 250, message = "Length of the remoteIdpHost should not exceed 250")
 	@AttributeName
 	private String remoteIdpHost;
 	

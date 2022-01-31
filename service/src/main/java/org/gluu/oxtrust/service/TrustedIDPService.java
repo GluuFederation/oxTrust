@@ -22,9 +22,6 @@ import org.slf4j.Logger;
 @ApplicationScoped
 public class TrustedIDPService implements Serializable {
 	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 7622866899884574305L;
 
 	@Inject
@@ -71,9 +68,8 @@ public class TrustedIDPService implements Serializable {
 		OxTrustedIdp result = null;
 		try {
 			result = persistenceEntryManager.find(getDnForTrustedIDP(inum), OxTrustedIdp.class, ldapReturnAttributes);
-			
 		} catch (Exception ex) {
-			log.debug("Failed to load client entry", ex);
+			log.debug("Failed to load TrustedIDP entry", ex);
 		}
 		return result;
 	}
@@ -99,7 +95,7 @@ public class TrustedIDPService implements Serializable {
 	}
 	
 	public OxTrustedIdp getTrustedIDPByRemoteIdpHost(String remoteIdpHost, String... returnAttributes) {
-		log.debug("Getting user information from DB: userId = {}", remoteIdpHost);
+		log.debug("Getting user information from DB: TrustedIDP = {}", remoteIdpHost);
 		OxTrustedIdp oxTrustedIdp = null;
 		if (StringHelper.isEmpty(remoteIdpHost)) {
 			return null;
@@ -117,7 +113,7 @@ public class TrustedIDPService implements Serializable {
 
 		List<OxTrustedIdp> entries = persistenceEntryManager.findEntries(gluuPassportConfigDn,
 				OxTrustedIdp.class, gluuPassportConfigIdpHostFilter, returnAttributes);
-		log.debug("Found {} entries for userId = {}", entries.size(), remoteIdpHost);
+		log.debug("Found {} entries for TrustedIDP = {}", entries.size(), remoteIdpHost);
 		if(entries.size()>0) {
 			oxTrustedIdp = entries.get(0);
 		}
