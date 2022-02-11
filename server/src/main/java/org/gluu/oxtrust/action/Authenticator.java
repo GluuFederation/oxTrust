@@ -73,6 +73,7 @@ public class Authenticator implements Serializable {
      * 
      */
     private String LOGIN_FAILED_OX_TRUST = "Login failed, oxTrust wasn't allowed to access user data";
+    private static final String CN_OXAUTH_HOST = "CN_OXAUTH_HOST";
 
     private static final long serialVersionUID = -3975272457541385597L;
 
@@ -399,8 +400,14 @@ public class Authenticator implements Serializable {
     private String getAuthorizationUrl() {
         try {
             URL url = new URL(openIdService.getOpenIdConfiguration().getAuthorizationEndpoint());
-            if (CloudEditionUtil.getOxAuthHost().isPresent()) {
-                url = CloudEditionUtil.getOxAuthUrl(url,CloudEditionUtil.getOxAuthHost().get());
+            String oxauth_env_host_port = System.getProperty(CN_OXAUTH_HOST);
+            if (oxauth_env_host_port != null) {
+                String[] values = oxauth_env_host_port.split(":");
+                if (values.length > 1) {
+                    url = new URL(url.getProtocol(), values[0], Integer.valueOf(values[1]), url.getFile());
+                } else {
+                    url = new URL(url.getProtocol(), values[0], url.getPort(), url.getFile());
+                }
             }
             return url.toString();
         } catch (MalformedURLException e) {
@@ -408,7 +415,6 @@ public class Authenticator implements Serializable {
             return openIdService.getOpenIdConfiguration().getAuthorizationEndpoint();
         }
     }
-
 
 
 }
