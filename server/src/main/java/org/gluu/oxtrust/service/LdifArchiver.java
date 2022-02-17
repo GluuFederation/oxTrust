@@ -25,7 +25,6 @@ import org.slf4j.Logger;
 @Stateless
 @Named
 public class LdifArchiver implements DeleteNotifier {
-
 	@Inject
 	private Logger log;
 
@@ -49,7 +48,10 @@ public class LdifArchiver implements DeleteNotifier {
 		}
 	}
 
-	public void onBeforeRemove(String dn) {
+
+
+	@Override
+	public void onBeforeRemove(String dn, String[] classes) {
 		if (!disable) {
 			String dnForRemoval = dn;
 			int dnForRemovalLenght = dnForRemoval.length();
@@ -59,7 +61,7 @@ public class LdifArchiver implements DeleteNotifier {
 			File file = new File(storeDir + File.separator + dnForRemoval + Calendar.getInstance().getTimeInMillis());
 
 			try (PrintWriter writer = new PrintWriter(file);) {
-				List<AttributeData> exportEntry = persistenceManager.exportEntry(dn);
+				List<AttributeData> exportEntry = persistenceManager.exportEntry(dn, classes[0]);
 				if (exportEntry != null && exportEntry.size() >= 0) {
 					writer.println("dn: " + dn);
 					exportEntry.forEach(v -> {
@@ -76,14 +78,15 @@ public class LdifArchiver implements DeleteNotifier {
 				log.error("Failed to write into log file", e);
 			}
 		}
-
+		
 	}
-
+	
 	@Override
-	public void onAfterRemove(String arg0) {
+	public void onAfterRemove(String arg0, String[] arg1) {
 		// TODO Auto-generated method stub
 		
 	}
 
+	
 	
 }
