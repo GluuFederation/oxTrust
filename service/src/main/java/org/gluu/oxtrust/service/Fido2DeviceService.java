@@ -35,7 +35,7 @@ public class Fido2DeviceService implements Serializable {
 		try {
 			String finalDn = String.format("oxId=%s,ou=fido2_register,", deviceID);
 			finalDn = finalDn.concat(person.getDn());
-			ldapEntryManager.removeRecursively(finalDn);
+			ldapEntryManager.removeRecursively(finalDn, GluuFido2Device.class);
 			return true;
 		} catch (Exception e) {
 			log.error("", e);
