@@ -36,6 +36,7 @@ import org.gluu.oxtrust.service.ScopeService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.exception.BasePersistenceException;
 import org.gluu.service.LookupService;
+//import org.gluu.service.LookupService;
 import org.gluu.service.custom.CustomScriptService;
 import org.gluu.service.security.Secure;
 import org.gluu.util.StringHelper;
@@ -377,8 +378,9 @@ public class UpdateScopeAction implements Serializable {
 
 	private List<DisplayNameEntry> getClaimDisplayNameEntiries() throws Exception {
 		List<DisplayNameEntry> result = new ArrayList<DisplayNameEntry>();
-		List<DisplayNameEntry> tmp = lookupService.getDisplayNameEntries(attributeService.getDnForAttribute(null),
-				this.scope.getOxAuthClaims());
+		//List<DisplayNameEntry> tmp = lookupService.getDisplayNameEntries(attributeService.getDnForAttribute(null),
+		//		this.scope.getOxAuthClaims());
+		List<DisplayNameEntry> tmp = lookupService.getDisplayNameEntries(attributeService.getDnForAttribute(null), DisplayNameEntry.class, this.scope.getOxAuthClaims());
 		if (tmp != null) {
 			result.addAll(tmp);
 		}

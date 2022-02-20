@@ -237,7 +237,7 @@ public class UpdateGroupAction implements Serializable {
 
 	private List<DisplayNameEntry> getMemberDisplayNameEntiries() throws Exception {
 		List<DisplayNameEntry> result = new ArrayList<DisplayNameEntry>();
-		List<DisplayNameEntry> tmp = lookupService.getDisplayNameEntries(personService.getDnForPerson(null), this.group.getMembers());
+		List<DisplayNameEntry> tmp = lookupService.getDisplayNameEntries(personService.getDnForPerson(null), DisplayNameEntry.class, this.group.getMembers());
 		if (tmp != null) {
 			result.addAll(tmp);
 		}
