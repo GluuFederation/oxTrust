@@ -39,7 +39,6 @@ import org.codehaus.jettison.json.JSONException;
 import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
-import org.gluu.model.DisplayNameEntry;
 import org.gluu.model.GluuAttribute;
 import org.gluu.model.SelectableEntity;
 import org.gluu.model.custom.script.CustomScriptType;
@@ -49,14 +48,7 @@ import org.gluu.oxauth.model.common.GrantType;
 import org.gluu.oxauth.model.common.ResponseType;
 import org.gluu.oxauth.model.crypto.signature.AsymmetricSignatureAlgorithm;
 import org.gluu.oxauth.model.util.URLPatternList;
-import org.gluu.oxtrust.model.AuthenticationMethod;
-import org.gluu.oxtrust.model.BlockEncryptionAlgorithm;
-import org.gluu.oxtrust.model.GluuGroup;
-import org.gluu.oxtrust.model.KeyEncryptionAlgorithm;
-import org.gluu.oxtrust.model.OxAuthApplicationType;
-import org.gluu.oxtrust.model.OxAuthClient;
-import org.gluu.oxtrust.model.OxAuthSubjectType;
-import org.gluu.oxtrust.model.SignatureAlgorithm;
+import org.gluu.oxtrust.model.*;
 import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.service.AttributeService;
 import org.gluu.oxtrust.service.ClientService;
@@ -152,7 +144,7 @@ public class UpdateClientAction implements Serializable {
     private List<String> claimRedirectURIList;
 
     private List<Scope> scopes;
-    private List<DisplayNameEntry> claims;
+    private List<GluuDisplayNameEntry> claims;
     private List<ResponseType> responseTypes;
     private List<CustomScript> customScripts;
     private List<CustomScript> postAuthnScripts = Lists.newArrayList();
@@ -243,7 +235,7 @@ public class UpdateClientAction implements Serializable {
     }
 
     private List<CustomScript> getInitialAcrs() {
-        this.customScripts = new ArrayList<CustomScript>();
+        this.customScripts = new ArrayList<>();
         if (this.client.getDefaultAcrValues() != null && this.client.getDefaultAcrValues().length >= 1) {
             for (String scriptName : this.client.getDefaultAcrValues()) {
                 CustomScript customScript = new CustomScript();
@@ -255,7 +247,7 @@ public class UpdateClientAction implements Serializable {
     }
 
     private List<Scope> getInitialEntries() {
-        List<Scope> existingScopes = new ArrayList<Scope>();
+        List<Scope> existingScopes = new ArrayList<>();
         if ((client.getOxAuthScopes() == null) || (client.getOxAuthScopes().size() == 0)) {
             return existingScopes;
         }
@@ -586,7 +578,7 @@ public class UpdateClientAction implements Serializable {
     }
 
     private void addClaim(GluuAttribute claim) {
-        DisplayNameEntry oneClaim = new DisplayNameEntry(claim.getDn(), claim.getInum(), claim.getDisplayName());
+        GluuDisplayNameEntry oneClaim = new GluuDisplayNameEntry(claim.getDn(), claim.getInum(), claim.getDisplayName());
         this.claims.add(oneClaim);
     }
 
@@ -595,8 +587,8 @@ public class UpdateClientAction implements Serializable {
             return;
         }
         String removeClaimDn = attributeService.getDnForAttribute(inum);
-        for (Iterator<DisplayNameEntry> iterator = this.claims.iterator(); iterator.hasNext();) {
-            DisplayNameEntry oneClaim = iterator.next();
+        for (Iterator<GluuDisplayNameEntry> iterator = this.claims.iterator(); iterator.hasNext();) {
+            GluuDisplayNameEntry oneClaim = iterator.next();
             if (removeClaimDn.equals(oneClaim.getDn())) {
                 iterator.remove();
                 break;
@@ -741,7 +733,7 @@ public class UpdateClientAction implements Serializable {
             return;
         }
         Set<String> addedClaimInums = new HashSet<String>();
-        for (DisplayNameEntry claim : claims) {
+        for (GluuDisplayNameEntry claim : claims) {
             addedClaimInums.add(claim.getInum());
         }
 
@@ -972,7 +964,7 @@ public class UpdateClientAction implements Serializable {
             return;
         }
         List<String> tmpClaims = new ArrayList<String>();
-        for (DisplayNameEntry claim : this.claims) {
+        for (GluuDisplayNameEntry claim : this.claims) {
             tmpClaims.add(claim.getDn());
         }
         this.client.setOxAuthClaims(tmpClaims);
@@ -1033,7 +1025,7 @@ public class UpdateClientAction implements Serializable {
             return;
         }
         Set<String> addedClaimInums = new HashSet<String>();
-        for (DisplayNameEntry claim : this.claims) {
+        for (GluuDisplayNameEntry claim : this.claims) {
             addedClaimInums.add(claim.getInum());
         }
         for (GluuAttribute aClaim : this.availableClaims) {
@@ -1055,13 +1047,13 @@ public class UpdateClientAction implements Serializable {
         }
     }
 
-    private List<DisplayNameEntry> getInitialClaimDisplayNameEntries() throws Exception {
-        List<DisplayNameEntry> result = new ArrayList<DisplayNameEntry>();
+    private List<GluuDisplayNameEntry> getInitialClaimDisplayNameEntries() throws Exception {
+        List<GluuDisplayNameEntry> result = new ArrayList<>();
         if ((client.getOxAuthClaims() == null) || (client.getOxAuthClaims().size() == 0)) {
             return result;
         }
-        List<DisplayNameEntry> tmp = lookupService.getDisplayNameEntries(attributeService.getDnForAttribute(null),
-                this.client.getOxAuthClaims());
+        List<GluuDisplayNameEntry> tmp = lookupService.getDisplayNameEntries(attributeService.getDnForAttribute(null),
+                GluuDisplayNameEntry.class,  this.client.getOxAuthClaims());
         if (tmp != null) {
             result.addAll(tmp);
         }
@@ -1561,7 +1553,7 @@ public class UpdateClientAction implements Serializable {
         return this.scopes;
     }
 
-    public List<DisplayNameEntry> getClaims() {
+    public List<GluuDisplayNameEntry> getClaims() {
         return this.claims;
     }
 

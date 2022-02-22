@@ -22,13 +22,13 @@ import javax.inject.Named;
 
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
-import org.gluu.model.DisplayNameEntry;
 import org.gluu.model.GluuImage;
 import org.gluu.model.SelectableEntity;
 import org.gluu.model.custom.script.CustomScriptType;
 import org.gluu.model.custom.script.model.CustomScript;
 import org.gluu.oxauth.model.common.ScopeType;
 import org.gluu.oxauth.model.uma.persistence.UmaResource;
+import org.gluu.oxtrust.model.GluuDisplayNameEntry;
 import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.service.ClientService;
@@ -151,7 +151,7 @@ public class UpdateUmaScopeAction implements Serializable {
 				for (UmaResource umaResource : umaResourceList) {
 					List<String> list = umaResource.getClients();
 					if (list != null) {
-						clientList = new ArrayList<OxAuthClient>();
+						clientList = new ArrayList<>();
 						for (String clientDn : list) {
 							OxAuthClient oxAuthClient = clientService.getClientByDn(clientDn);
 							if (oxAuthClient != null) {
@@ -319,10 +319,10 @@ public class UpdateUmaScopeAction implements Serializable {
 			return result;
 		}
 
-		List<DisplayNameEntry> displayNameEntries = lookupService.getDisplayNameEntries(customScriptService.baseDn(),
-				this.umaScope.getUmaAuthorizationPolicies());
+		List<GluuDisplayNameEntry> displayNameEntries = lookupService.getDisplayNameEntries(customScriptService.baseDn(),
+				GluuDisplayNameEntry.class, this.umaScope.getUmaAuthorizationPolicies());
 		if (displayNameEntries != null) {
-			for (DisplayNameEntry displayNameEntry : displayNameEntries) {
+			for (GluuDisplayNameEntry displayNameEntry : displayNameEntries) {
 				result.add(new CustomScript(displayNameEntry.getDn(), displayNameEntry.getInum(),
 						displayNameEntry.getDisplayName()));
 			}

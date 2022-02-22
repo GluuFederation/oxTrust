@@ -26,12 +26,8 @@ import javax.validation.constraints.Size;
 import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
-import org.gluu.model.DisplayNameEntry;
 import org.gluu.model.GluuStatus;
-import org.gluu.oxtrust.model.GluuCustomPerson;
-import org.gluu.oxtrust.model.GluuGroup;
-import org.gluu.oxtrust.model.GluuGroupVisibility;
-import org.gluu.oxtrust.model.GluuOrganization;
+import org.gluu.oxtrust.model.*;
 import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.service.GroupService;
 import org.gluu.oxtrust.service.OrganizationService;
@@ -69,7 +65,7 @@ public class UpdateGroupAction implements Serializable {
 
 	private GluuGroup group;
 
-	private List<DisplayNameEntry> members;
+	private List<GluuDisplayNameEntry> members;
 
 	@NotNull
 	@Size(min = 2, max = 30, message = "Length of search string should be between 2 and 30")
@@ -113,7 +109,7 @@ public class UpdateGroupAction implements Serializable {
 		this.group.setOrganization(organizationService.getOrganization().getDn());
                 this.group.setStatus(GluuStatus.ACTIVE);
 		try {
-			this.members = getMemberDisplayNameEntiries();
+			this.members = getMemberDisplayNameEntries();
 		} catch (BasePersistenceException ex) {
 			log.error("Failed to prepare lists", ex);
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new group");
@@ -141,7 +137,7 @@ public class UpdateGroupAction implements Serializable {
 			return OxTrustConstants.RESULT_FAILURE;
 		}
 		try {
-			this.members = getMemberDisplayNameEntiries();
+			this.members = getMemberDisplayNameEntries();
 		} catch (BasePersistenceException ex) {
 			log.error("Failed to prepare lists", ex);
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to load group");
@@ -164,9 +160,9 @@ public class UpdateGroupAction implements Serializable {
 	}
 
 	public String save() throws Exception {
-		List<DisplayNameEntry> oldMembers = null;
+		List<GluuDisplayNameEntry> oldMembers = null;
 		try {
-			oldMembers = getMemberDisplayNameEntiries();
+			oldMembers = getMemberDisplayNameEntries();
 		} catch (BasePersistenceException ex) {
 			log.error("Failed to load person display names", ex);
 			facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to update group");
@@ -235,9 +231,9 @@ public class UpdateGroupAction implements Serializable {
 		return OxTrustConstants.RESULT_FAILURE;
 	}
 
-	private List<DisplayNameEntry> getMemberDisplayNameEntiries() throws Exception {
-		List<DisplayNameEntry> result = new ArrayList<DisplayNameEntry>();
-		List<DisplayNameEntry> tmp = lookupService.getDisplayNameEntries(personService.getDnForPerson(null), DisplayNameEntry.class, this.group.getMembers());
+	private List<GluuDisplayNameEntry> getMemberDisplayNameEntries(){
+		List<GluuDisplayNameEntry> result = new ArrayList<>();
+		List<GluuDisplayNameEntry> tmp = lookupService.getDisplayNameEntries(personService.getDnForPerson(null), GluuDisplayNameEntry.class, this.group.getMembers());
 		if (tmp != null) {
 			result.addAll(tmp);
 		}
@@ -245,17 +241,17 @@ public class UpdateGroupAction implements Serializable {
 	}
 
 	public void addMember(GluuCustomPerson person) {
-		DisplayNameEntry member = new DisplayNameEntry(person.getDn(), person.getInum(), person.getDisplayName());
+		GluuDisplayNameEntry member = new GluuDisplayNameEntry(person.getDn(), person.getInum(), person.getDisplayName());
 		this.members.add(member);
 	}
 
-	public void removeMember(String inum) throws Exception {
+	public void removeMember(String inum){
 		if (StringHelper.isEmpty(inum)) {
 			return;
 		}
 		String removeMemberInum = personService.getDnForPerson(inum);
-		for (Iterator<DisplayNameEntry> iterator = this.members.iterator(); iterator.hasNext();) {
-			DisplayNameEntry member = iterator.next();
+		for (Iterator<GluuDisplayNameEntry> iterator = this.members.iterator(); iterator.hasNext();) {
+			GluuDisplayNameEntry member = iterator.next();
 			if (removeMemberInum.equals(member.getDn())) {
 				iterator.remove();
 				break;
@@ -293,8 +289,8 @@ public class UpdateGroupAction implements Serializable {
 			return;
 		}
 
-		Set<String> addedMemberInums = new HashSet<String>();
-		for (DisplayNameEntry member : members) {
+		Set<String> addedMemberInums = new HashSet<>();
+		for (GluuDisplayNameEntry member : members) {
 			addedMemberInums.add(member.getInum());
 		}
 
@@ -309,7 +305,7 @@ public class UpdateGroupAction implements Serializable {
 		}
 
 		Set<String> addedMemberInums = new HashSet<String>();
-		for (DisplayNameEntry member : members) {
+		for (GluuDisplayNameEntry member : members) {
 			addedMemberInums.add(member.getInum());
 		}
 
@@ -328,14 +324,14 @@ public class UpdateGroupAction implements Serializable {
 			this.group.setMembers(null);
 			return;
 		}
-		List<String> tmpMembers = new ArrayList<String>();
-		for (DisplayNameEntry member : this.members) {
+		List<String> tmpMembers = new ArrayList<>();
+		for (GluuDisplayNameEntry member : this.members) {
 			tmpMembers.add(member.getDn());
 		}
 		this.group.setMembers(tmpMembers);
 	}
 
-	private void updatePersons(List<DisplayNameEntry> oldMembers, List<DisplayNameEntry> newMembers) throws Exception {
+	private void updatePersons(List<GluuDisplayNameEntry> oldMembers, List<GluuDisplayNameEntry> newMembers) throws Exception {
 		log.debug("Old members: {}", oldMembers);
 		log.debug("New members: {}", newMembers);
 		String groupDn = this.group.getDn();
@@ -348,9 +344,9 @@ public class UpdateGroupAction implements Serializable {
 		Arrays.sort(newMemberDns);
 		boolean[] retainOldMembers = new boolean[oldMemberDns.length];
 		Arrays.fill(retainOldMembers, false);
-		List<String> addedMembers = new ArrayList<String>();
-		List<String> removedMembers = new ArrayList<String>();
-		List<String> existingMembers = new ArrayList<String>();
+		List<String> addedMembers = new ArrayList<>();
+		List<String> removedMembers = new ArrayList<>();
+		List<String> existingMembers = new ArrayList<>();
 
 		// Add new values
 		for (String value : newMemberDns) {
@@ -382,7 +378,7 @@ public class UpdateGroupAction implements Serializable {
 				person.setSLAManager(slaManager);
 			}
 
-			List<String> personMemberOf = new ArrayList<String>(person.getMemberOf());
+			List<String> personMemberOf = new ArrayList<>(person.getMemberOf());
 			personMemberOf.add(groupDn);
 			person.setMemberOf(personMemberOf);
 
@@ -396,7 +392,7 @@ public class UpdateGroupAction implements Serializable {
 				Boolean slaManager = isSLAManager(organizationGroups, person);
 				person.setSLAManager(slaManager);
 			}
-			List<String> personMemberOf = new ArrayList<String>(person.getMemberOf());
+			List<String> personMemberOf = new ArrayList<>(person.getMemberOf());
 			personMemberOf.remove(groupDn);
 			person.setMemberOf(personMemberOf);
 			personService.updatePerson(person);
@@ -423,10 +419,10 @@ public class UpdateGroupAction implements Serializable {
 		return groupService.isMemberOrOwner(organizationGroups, person.getDn());
 	}
 
-	private String[] convertToDNsArray(List<DisplayNameEntry> members) {
+	private String[] convertToDNsArray(List<GluuDisplayNameEntry> members) {
 		String[] memberDns = new String[members.size()];
 		int i = 0;
-		for (DisplayNameEntry member : members) {
+		for (GluuDisplayNameEntry member : members) {
 			memberDns[i++] = member.getDn();
 		}
 
@@ -449,7 +445,7 @@ public class UpdateGroupAction implements Serializable {
 		return group;
 	}
 
-	public List<DisplayNameEntry> getMembers() {
+	public List<GluuDisplayNameEntry> getMembers() {
 		return members;
 	}
 

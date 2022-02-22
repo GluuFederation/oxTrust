@@ -19,9 +19,9 @@ import javax.validation.constraints.Size;
 
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
-import org.gluu.model.DisplayNameEntry;
 import org.gluu.oxauth.model.uma.UmaMetadata;
 import org.gluu.oxauth.model.uma.persistence.UmaResource;
+import org.gluu.oxtrust.model.GluuDisplayNameEntry;
 import org.gluu.oxtrust.service.ClientService;
 import org.gluu.oxtrust.service.ImageService;
 import org.gluu.oxtrust.service.uma.ResourceSetService;
@@ -125,11 +125,11 @@ public class UmaInventoryAction implements Serializable {
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
 
-	public List<DisplayNameEntry> getScopeDisplayNameEntries(UmaResource resource) {
+	public List<GluuDisplayNameEntry> getScopeDisplayNameEntries(UmaResource resource) {
 		List<String> scopeDns = resource.getScopes();
-		List<DisplayNameEntry> result = new ArrayList<DisplayNameEntry>();
-		List<DisplayNameEntry> tmp = lookupService
-				.getDisplayNameEntries(umaScopeService.getDnForScope(null), scopeDns);
+		List<GluuDisplayNameEntry> result = new ArrayList<>();
+		List<GluuDisplayNameEntry> tmp = lookupService
+				.getDisplayNameEntries(umaScopeService.getDnForScope(null), GluuDisplayNameEntry.class, scopeDns);
 		if (tmp != null) {
 			result.addAll(tmp);
 		}
@@ -150,9 +150,9 @@ public class UmaInventoryAction implements Serializable {
 		return result;
 	}
 
-	public List<DisplayNameEntry> getClientDisplayNameEntries(List<String> clientDns) {
-		List<DisplayNameEntry> result = new ArrayList<DisplayNameEntry>();
-		List<DisplayNameEntry> tmp = lookupService.getDisplayNameEntries(clientService.getDnForClient(null), clientDns);
+	public List<GluuDisplayNameEntry> getClientDisplayNameEntries(List<String> clientDns) {
+		List<GluuDisplayNameEntry> result = new ArrayList<>();
+		List<GluuDisplayNameEntry> tmp = lookupService.getDisplayNameEntries(clientService.getDnForClient(null), GluuDisplayNameEntry.class, clientDns);
 		if (tmp != null) {
 			result.addAll(tmp);
 		}

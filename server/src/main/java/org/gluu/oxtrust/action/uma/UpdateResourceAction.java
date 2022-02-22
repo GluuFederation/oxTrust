@@ -22,9 +22,9 @@ import javax.inject.Named;
 
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
-import org.gluu.model.DisplayNameEntry;
 import org.gluu.model.SelectableEntity;
 import org.gluu.oxauth.model.uma.persistence.UmaResource;
+import org.gluu.oxtrust.model.GluuDisplayNameEntry;
 import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.service.ClientService;
@@ -78,8 +78,8 @@ public class UpdateResourceAction implements Serializable {
 
 	private String oxId;
 	private UmaResource resource;
-	private List<DisplayNameEntry> scopes;
-	private List<DisplayNameEntry> clients;
+	private List<GluuDisplayNameEntry> scopes;
+	private List<GluuDisplayNameEntry> clients;
 	private List<String> resources;
 
 	private List<SelectableEntity<Scope>> availableScopes;
@@ -143,10 +143,10 @@ public class UpdateResourceAction implements Serializable {
 	private String add() {
 		this.resource = new UmaResource();
 
-		this.scopes = new ArrayList<DisplayNameEntry>();
-		this.clients = new ArrayList<DisplayNameEntry>();
-		this.clientList = new ArrayList<OxAuthClient>();
-		this.resources = new ArrayList<String>();
+		this.scopes = new ArrayList<>();
+		this.clients = new ArrayList<>();
+		this.clientList = new ArrayList<>();
+		this.resources = new ArrayList<>();
 
 		return OxTrustConstants.RESULT_SUCCESS;
 	}
@@ -332,7 +332,7 @@ public class UpdateResourceAction implements Serializable {
 		if (this.availableScopes == null) {
 			return addedScopeInums;
 		}
-		for (DisplayNameEntry scope : this.scopes) {
+		for (GluuDisplayNameEntry scope : this.scopes) {
 			addedScopeInums.add(scope.getInum());
 		}
 		return addedScopeInums;
@@ -342,7 +342,7 @@ public class UpdateResourceAction implements Serializable {
 	}
 
 	public void addScope(Scope scope) {
-		DisplayNameEntry oneScope = new DisplayNameEntry(scope.getDn(), scope.getId(), scope.getDisplayName());
+		GluuDisplayNameEntry oneScope = new GluuDisplayNameEntry(scope.getDn(), scope.getId(), scope.getDisplayName());
 		this.scopes.add(oneScope);
 	}
 
@@ -353,8 +353,8 @@ public class UpdateResourceAction implements Serializable {
 
 		String removeScopeDn = scopeDescriptionService.getDnForScope(inum);
 
-		for (Iterator<DisplayNameEntry> iterator = this.scopes.iterator(); iterator.hasNext();) {
-			DisplayNameEntry oneScope = iterator.next();
+		for (Iterator<GluuDisplayNameEntry> iterator = this.scopes.iterator(); iterator.hasNext();) {
+			GluuDisplayNameEntry oneScope = iterator.next();
 			if (removeScopeDn.equals(oneScope.getDn())) {
 				iterator.remove();
 				break;
@@ -369,17 +369,17 @@ public class UpdateResourceAction implements Serializable {
 		}
 
 		List<String> tmpScopes = new ArrayList<String>();
-		for (DisplayNameEntry scope : this.scopes) {
+		for (GluuDisplayNameEntry scope : this.scopes) {
 			tmpScopes.add(scope.getDn());
 		}
 
 		this.resource.setScopes(tmpScopes);
 	}
 
-	private List<DisplayNameEntry> getScopesDisplayNameEntries() {
-		List<DisplayNameEntry> result = new ArrayList<DisplayNameEntry>();
-		List<DisplayNameEntry> tmp = lookupService.getDisplayNameEntries(scopeDescriptionService.getDnForScope(null),
-				this.resource.getScopes());
+	private List<GluuDisplayNameEntry> getScopesDisplayNameEntries() {
+		List<GluuDisplayNameEntry> result = new ArrayList<>();
+		List<GluuDisplayNameEntry> tmp = lookupService.getDisplayNameEntries(scopeDescriptionService.getDnForScope(null),
+				GluuDisplayNameEntry.class, this.resource.getScopes());
 		if (tmp != null) {
 			result.addAll(tmp);
 		}
@@ -427,7 +427,7 @@ public class UpdateResourceAction implements Serializable {
 		if (this.availableClients == null) {
 			return addedClientInums;
 		}
-		for (DisplayNameEntry clietn : this.clients) {
+		for (GluuDisplayNameEntry clietn : this.clients) {
 			addedClientInums.add(clietn.getInum());
 		}
 		return addedClientInums;
@@ -470,10 +470,10 @@ public class UpdateResourceAction implements Serializable {
 		this.resource.setClients(tmpClients);
 	}
 
-	private List<DisplayNameEntry> getClientDisplayNameEntries() {
-		List<DisplayNameEntry> result = new ArrayList<DisplayNameEntry>();
-		List<DisplayNameEntry> tmp = lookupService.getDisplayNameEntries(clientService.getDnForClient(null),
-				this.resource.getClients());
+	private List<GluuDisplayNameEntry> getClientDisplayNameEntries() {
+		List<GluuDisplayNameEntry> result = new ArrayList<>();
+		List<GluuDisplayNameEntry> tmp = lookupService.getDisplayNameEntries(clientService.getDnForClient(null),
+				GluuDisplayNameEntry.class, this.resource.getClients());
 		if (tmp != null) {
 			result.addAll(tmp);
 		}
@@ -516,7 +516,7 @@ public class UpdateResourceAction implements Serializable {
 		return resource;
 	}
 
-	public List<DisplayNameEntry> getScopes() {
+	public List<GluuDisplayNameEntry> getScopes() {
 		return scopes;
 	}
 
@@ -532,7 +532,7 @@ public class UpdateResourceAction implements Serializable {
 		this.searchAvailableScopePattern = searchAvailableScopePattern;
 	}
 
-	public List<DisplayNameEntry> getClients() {
+	public List<GluuDisplayNameEntry> getClients() {
 		return clients;
 	}
 
