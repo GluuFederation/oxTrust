@@ -37,7 +37,7 @@ public class GluuCustomAttribute implements Serializable, Comparable<GluuCustomA
 	private static final long serialVersionUID = 1468440094325406153L;
 
 	private String name;
-	private String[] values;
+	private Object[] values;
 
 	private transient GluuAttribute metadata;
 
@@ -53,7 +53,7 @@ public class GluuCustomAttribute implements Serializable, Comparable<GluuCustomA
 	public GluuCustomAttribute() {
 	}
 
-	public GluuCustomAttribute(String name, String value) {
+	public GluuCustomAttribute(String name, Object value) {
 		this.name = name;
 		setValue(value);
 	}
@@ -87,7 +87,7 @@ public class GluuCustomAttribute implements Serializable, Comparable<GluuCustomA
 		this.values = values.toArray(new String[0]);
 	}
 
-	public String getValue() {
+	public Object getValue() {
 		if (this.values == null) {
 			return null;
 		}
@@ -99,13 +99,13 @@ public class GluuCustomAttribute implements Serializable, Comparable<GluuCustomA
 		return null;
 	}
 
-	public void setValue(String value) {
+	public void setValue(Object value) {
 		if (this.values == null) {
-			this.values = new String[0];
+			this.values = new Object[0];
 		}
 
 		if (this.values.length != 1) {
-			this.values = new String[1];
+			this.values = new Object[1];
 		}
 		this.values[0] = value;
 	}
@@ -133,7 +133,7 @@ public class GluuCustomAttribute implements Serializable, Comparable<GluuCustomA
 		this.booleanValues[0] = value;
 	}
 
-	public String[] getValues() {
+	public Object[] getValues() {
 		if (this.metadata != null) {
 			if ((AttributeDataType.BOOLEAN == this.metadata.getDataType()) && this.usedBooleanValues) {
 				this.values = toStringValuesFromBooleanValues(this.booleanValues);
@@ -185,7 +185,7 @@ public class GluuCustomAttribute implements Serializable, Comparable<GluuCustomA
 	}
 
 
-	public String getDisplayValue() {
+	public Object getDisplayValue() {
 
 		if (values == null || values.length==0) {
 			return "";
@@ -195,7 +195,7 @@ public class GluuCustomAttribute implements Serializable, Comparable<GluuCustomA
 			return values[0];
 		}
 
-		StringBuilder sb = new StringBuilder(values[0]);
+		StringBuilder sb = new StringBuilder(String.valueOf(values[0]));
 		for (int i = 1; i < values.length; i++) {
 			sb.append(", ").append(values[i]);
 		}
@@ -315,7 +315,7 @@ public class GluuCustomAttribute implements Serializable, Comparable<GluuCustomA
 	 */
 	Map<String[], String> idComponentMap = new HashMap<String[], String>();
 
-	private GluuBoolean[] toBooleanValuesFromStringValues(String[] inputValues) {
+	private GluuBoolean[] toBooleanValuesFromStringValues(Object[] inputValues) {
 		if (inputValues == null) {
 			return null;
 		}
@@ -341,12 +341,12 @@ public class GluuCustomAttribute implements Serializable, Comparable<GluuCustomA
 		return resultValues;
 	}
 
-	protected GluuBoolean toBooleanFromString(String value) {
+	protected GluuBoolean toBooleanFromString(Object value) {
 		if (value == null) {
 			return null;
 		}
 
-		return GluuBoolean.getByValue(value);
+		return GluuBoolean.getByValue(String.valueOf(value));
 	}
 
 	protected String toStringFromBoolean(GluuBoolean value) {

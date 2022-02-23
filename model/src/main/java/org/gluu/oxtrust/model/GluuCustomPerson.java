@@ -145,15 +145,15 @@ public class GluuCustomPerson extends User
     }
 
     public Boolean getSLAManager() {
-        return Boolean.valueOf(getAttribute("gluuSLAManager"));
+        return geBooleanAttribute("gluuSLAManager");
     }
 
     public void setSLAManager(Boolean value) {
-        setAttribute("gluuSLAManager", value.toString());
+        setBooleanAttribute("gluuSLAManager", value);
     }
 
-    public List<String> getMemberOf() {
-        String[] value = {};
+    public List<Object> getMemberOf() {
+    	Object[] value = {};
         for (GluuCustomAttribute attribute : customAttributes) {
             if (attribute.getName().equalsIgnoreCase("memberOf")) {
                 value = attribute.getValues();
@@ -207,15 +207,26 @@ public class GluuCustomPerson extends User
         String value = null;
         for (GluuCustomAttribute attribute : customAttributes) {
             if (attribute.getName().equalsIgnoreCase(attributeName)) {
-                value = attribute.getValue();
+                value = String.valueOf(attribute.getValue());
+                break;
+            }
+        }
+        return value;
+    }
+
+    public Boolean geBooleanAttribute(String attributeName) {
+        Boolean value = null;
+        for (GluuCustomAttribute attribute : customAttributes) {
+            if (attribute.getName().equalsIgnoreCase(attributeName)) {
+                value = Boolean.parseBoolean(String.valueOf(attribute.getValue()));
                 break;
             }
         }
         return value;
     }
     
-    public String[] getAttributeValues(String attributeName) {
-        String[] value = null;
+    public Object[] getAttributeValues(String attributeName) {
+    	Object[] value = null;
         for (GluuCustomAttribute attribute : customAttributes) {
             if (attribute.getName().equalsIgnoreCase(attributeName)) {
                 value = attribute.getValues();
@@ -225,7 +236,7 @@ public class GluuCustomPerson extends User
         return value;
     }
 
-    public String[] getAttributeArray(String attributeName) {
+    public Object[] getAttributeArray(String attributeName) {
         GluuCustomAttribute gluuCustomAttribute = 
                                 getGluuCustomAttribute(attributeName);
         if (gluuCustomAttribute == null) {
@@ -246,6 +257,13 @@ public class GluuCustomPerson extends User
     }
 
     public void setAttribute(String attributeName, String attributeValue) {
+        GluuCustomAttribute attribute = new GluuCustomAttribute(attributeName, 
+                                                                attributeValue);
+        customAttributes.remove(attribute);
+        customAttributes.add(attribute);
+    }
+
+    public void setBooleanAttribute(String attributeName, Boolean attributeValue) {
         GluuCustomAttribute attribute = new GluuCustomAttribute(attributeName, 
                                                                 attributeValue);
         customAttributes.remove(attribute);

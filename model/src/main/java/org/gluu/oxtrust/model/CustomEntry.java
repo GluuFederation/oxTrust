@@ -38,12 +38,12 @@ public abstract class CustomEntry extends Entry implements Serializable, Cloneab
 		this.customObjectClasses = customObjectClasses;
 	}
 
-	public String[] getAttributes(String attributeName) {
+	public Object[] getAttributes(String attributeName) {
 		if (StringHelper.isEmpty(attributeName)) {
 			return null;
 		}
 
-		String[] values = null;
+		Object[] values = null;
 		for (GluuCustomAttribute attribute : getCustomAttributes()) {
 			if (StringHelper.equalsIgnoreCase(attribute.getName(), attributeName)) {
 				values = attribute.getValues();
@@ -53,12 +53,12 @@ public abstract class CustomEntry extends Entry implements Serializable, Cloneab
 		return values;
 	}
 
-	public String getAttribute(String attributeName) {
+	public Object getAttribute(String attributeName) {
 		if (StringHelper.isEmpty(attributeName)) {
 			return null;
 		}
 
-		String value = null;
+		Object value = null;
 		for (GluuCustomAttribute attribute : getCustomAttributes()) {
 			if (StringHelper.equalsIgnoreCase(attribute.getName(), attributeName)) {
 				value = attribute.getValue();
@@ -68,9 +68,9 @@ public abstract class CustomEntry extends Entry implements Serializable, Cloneab
 		return value;
 	}
 
-	public String getAttribute(String attributeName, String defaultValue) {
-		String result = getAttribute(attributeName);
-		if (StringHelper.isEmpty(result)) {
+	public Object getAttribute(String attributeName, String defaultValue) {
+		Object result = getAttribute(attributeName);
+		if (StringHelper.isEmptyString(result)) {
 			result = defaultValue;
 		}
 
