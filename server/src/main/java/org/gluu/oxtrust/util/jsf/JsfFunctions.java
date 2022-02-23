@@ -14,6 +14,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.gluu.model.DisplayNameEntry;
+import org.gluu.oxtrust.model.GluuDisplayNameEntry;
 import org.gluu.oxtrust.model.User;
 import org.gluu.oxtrust.service.PermissionService;
 import org.gluu.persist.PersistenceEntryManager;
@@ -31,13 +32,13 @@ import org.gluu.util.StringHelper;
  */
 public class JsfFunctions {
 
-	public static DisplayNameEntry getDisplayNameEntry(String dn) {
+	public static GluuDisplayNameEntry getDisplayNameEntry(String dn) {
 		if (dn == null) {
 			return null;
 		}
 
 		try {
-			return CdiUtil.bean(LookupService.class).getDisplayNameEntry(dn);
+			return CdiUtil.bean(LookupService.class).getDisplayNameEntry(dn, GluuDisplayNameEntry.class);
 		} catch (Exception ex) {
 			return null;
 		}
@@ -61,7 +62,7 @@ public class JsfFunctions {
 		}
 
 		try {
-			return CdiUtil.bean(LookupService.class).getDisplayNameEntriesByEntries(baseDn, entries);
+			return CdiUtil.bean(LookupService.class).getDisplayNameEntriesByEntries(baseDn,  entries);
 		} catch (Exception ex) {
 			return null;
 		}
