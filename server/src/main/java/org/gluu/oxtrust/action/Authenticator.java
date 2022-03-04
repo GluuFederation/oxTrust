@@ -14,10 +14,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.UUID;
 
-import javax.enterprise.context.SessionScoped;
+import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Instance;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.ExternalContext;
@@ -59,7 +58,6 @@ import org.gluu.service.custom.CustomScriptService;
 import org.gluu.util.ArrayHelper;
 import org.gluu.util.StringHelper;
 import org.gluu.util.security.StringEncrypter.EncryptionException;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
 /**
@@ -69,7 +67,7 @@ import org.slf4j.Logger;
  * @author Yuriy Movchan Date: 02.12.2013
  */
 @Named("authenticator")
-@SessionScoped
+@RequestScoped
 public class Authenticator implements Serializable {
 
     /**
@@ -176,9 +174,15 @@ public class Authenticator implements Serializable {
     	// Destroy current session and session objects
     	externalContext.invalidateSession();
     	
-    	// After session end we should get new identity object
-    	Identity newSessionIdentity = identityInstance.get();
+    	// Force to create new session
+    	externalContext.getSession(true);
     	
+        // Force to create new identity bean
+        identityInstance.destroy(identityInstance.get());
+
+        // After session end we should get new identity object
+    	Identity newSessionIdentity = identityInstance.get();
+        
     	log.debug("Old identity hash code '{}', new identity hash code '{}'", System.identityHashCode(identity), System.identityHashCode(newSessionIdentity));
     	
     	// We need to copy oauthData/user/sessionMap object from old identity to newSessionIdentity
