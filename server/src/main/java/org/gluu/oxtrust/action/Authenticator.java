@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 
+import javax.enterprise.context.RequestScoped;
 import javax.enterprise.context.SessionScoped;
 import javax.enterprise.inject.Instance;
 import javax.faces.application.FacesMessage;
@@ -69,7 +70,8 @@ import org.slf4j.Logger;
  * @author Yuriy Movchan Date: 02.12.2013
  */
 @Named("authenticator")
-@SessionScoped
+@RequestScoped
+//@SessionScoped
 public class Authenticator implements Serializable {
 
     /**
