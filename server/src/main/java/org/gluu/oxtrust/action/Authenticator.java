@@ -14,10 +14,12 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.UUID;
 
 import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -81,6 +83,9 @@ public class Authenticator implements Serializable {
 
     @Inject
     private Identity identity;
+    
+    //@Inject
+    //private ExternalContext externalContext;
 
     @Inject
     private FacesService facesService;
@@ -161,13 +166,22 @@ public class Authenticator implements Serializable {
      * @throws Exception
      */
     private void postLogin(User user) {
+    	//externalContext.invalidateSession();
+    	Map oldSession = identity.getSessionMap();
+    	FacesContext.getCurrentInstance()
+        .getExternalContext().invalidateSession();
         identity.login();
         log.debug("Configuring application after user '{}' login", user.getUid());
         GluuCustomPerson person = findPersonByDn(user.getDn());
         identity.setUser(person);
+        Map afterInvalidate = identity.getSessionMap();
+        
 
         // Set user roles
         UserRole[] userRoles = securityService.getUserRoles(user);
+        //FacesContext.getCurrentInstance()
+        //.getExternalContext()
+        //.addResponseCookie("JSESSIONID",UUID.randomUUID().toString() , null);
         if (ArrayHelper.isNotEmpty(userRoles)) {
             log.debug("Get '{}' user roles", Arrays.toString(userRoles));
         } else {
