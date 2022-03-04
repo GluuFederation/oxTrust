@@ -179,7 +179,7 @@ public class Authenticator implements Serializable {
     	// After session end we should get new identity object
     	Identity newSessionIdentity = identityInstance.get();
     	
-    	log.debug("Old identity hash code '{}', new identity hash code '{}'", identity, newSessionIdentity);
+    	log.debug("Old identity hash code '{}', new identity hash code '{}'", System.identityHashCode(identity), System.identityHashCode(newSessionIdentity));
     	
     	// We need to copy oauthData/user/sessionMap object from old identity to newSessionIdentity
     	// Additonal code here
