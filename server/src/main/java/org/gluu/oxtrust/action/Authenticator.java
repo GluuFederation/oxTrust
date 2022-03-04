@@ -18,6 +18,7 @@ import java.util.Random;
 import java.util.UUID;
 
 import javax.enterprise.context.SessionScoped;
+import javax.enterprise.inject.Instance;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
@@ -84,8 +85,8 @@ public class Authenticator implements Serializable {
     @Inject
     private Identity identity;
     
-    //@Inject
-    //private ExternalContext externalContext;
+    @Inject
+    private ExternalContext externalContext;
 
     @Inject
     private FacesService facesService;
@@ -113,6 +114,9 @@ public class Authenticator implements Serializable {
 
     @Inject
     private EncryptionService encryptionService;
+
+    @Inject
+    private Instance<Identity> identityInstance;
 
     public boolean preAuthenticate() throws IOException, Exception {
         boolean result = true;
@@ -166,22 +170,27 @@ public class Authenticator implements Serializable {
      * @throws Exception
      */
     private void postLogin(User user) {
-    	//externalContext.invalidateSession();
-    	Map oldSession = identity.getSessionMap();
-    	FacesContext.getCurrentInstance()
-        .getExternalContext().invalidateSession();
-        identity.login();
+    	// At the end of this method execution new session and identity objects
+    	// should properly create and initialized
+    	
+    	// Destroy current session and session objects
+    	externalContext.invalidateSession();
+    	
+    	// After session end we should get new identity object
+    	Identity newSessionIdentity = identityInstance.get();
+    	
+    	log.debug("Old identity hash code '{}', new identity hash code '{}'", identity, newSessionIdentity);
+    	
+    	// We need to copy oauthData/user/sessionMap object from old identity to newSessionIdentity
+    	// Additonal code here
+        
+    	newSessionIdentity.login();
         log.debug("Configuring application after user '{}' login", user.getUid());
         GluuCustomPerson person = findPersonByDn(user.getDn());
         identity.setUser(person);
-        Map afterInvalidate = identity.getSessionMap();
         
-
         // Set user roles
         UserRole[] userRoles = securityService.getUserRoles(user);
-        //FacesContext.getCurrentInstance()
-        //.getExternalContext()
-        //.addResponseCookie("JSESSIONID",UUID.randomUUID().toString() , null);
         if (ArrayHelper.isNotEmpty(userRoles)) {
             log.debug("Get '{}' user roles", Arrays.toString(userRoles));
         } else {
