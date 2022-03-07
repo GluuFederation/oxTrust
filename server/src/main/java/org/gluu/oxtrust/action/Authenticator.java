@@ -16,8 +16,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import javax.enterprise.context.SessionScoped;
+import javax.enterprise.context.RequestScoped;
+import javax.enterprise.inject.Instance;
 import javax.faces.application.FacesMessage;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -56,7 +58,6 @@ import org.gluu.service.custom.CustomScriptService;
 import org.gluu.util.ArrayHelper;
 import org.gluu.util.StringHelper;
 import org.gluu.util.security.StringEncrypter.EncryptionException;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
 /**
@@ -66,7 +67,7 @@ import org.slf4j.Logger;
  * @author Yuriy Movchan Date: 02.12.2013
  */
 @Named("authenticator")
-@SessionScoped
+@RequestScoped
 public class Authenticator implements Serializable {
 
     /**
@@ -81,6 +82,9 @@ public class Authenticator implements Serializable {
 
     @Inject
     private Identity identity;
+    
+    @Inject
+    private ExternalContext externalContext;
 
     @Inject
     private FacesService facesService;
@@ -108,6 +112,9 @@ public class Authenticator implements Serializable {
 
     @Inject
     private EncryptionService encryptionService;
+
+    @Inject
+    private Instance<Identity> identityInstance;
 
     public boolean preAuthenticate() throws IOException, Exception {
         boolean result = true;
@@ -161,11 +168,31 @@ public class Authenticator implements Serializable {
      * @throws Exception
      */
     private void postLogin(User user) {
-        identity.login();
+    	// At the end of this method execution new session and identity objects
+    	// should properly create and initialized
+    	
+    	// Destroy current session and session objects
+    	externalContext.invalidateSession();
+    	
+    	// Force to create new session
+    	externalContext.getSession(true);
+    	
+        // Force to create new identity bean
+        identityInstance.destroy(identityInstance.get());
+
+        // After session end we should get new identity object
+    	Identity newSessionIdentity = identityInstance.get();
+        
+    	log.debug("Old identity hash code '{}', new identity hash code '{}'", System.identityHashCode(identity), System.identityHashCode(newSessionIdentity));
+    	
+    	// We need to copy oauthData/user/sessionMap object from old identity to newSessionIdentity
+    	// Additonal code here
+        
+    	newSessionIdentity.login();
         log.debug("Configuring application after user '{}' login", user.getUid());
         GluuCustomPerson person = findPersonByDn(user.getDn());
         identity.setUser(person);
-
+        
         // Set user roles
         UserRole[] userRoles = securityService.getUserRoles(user);
         if (ArrayHelper.isNotEmpty(userRoles)) {
