@@ -289,7 +289,7 @@ public class UpdateOrganizationAction implements Serializable {
 	}
 
 	public String getContactEmail() {
-		return configuration.getContactEmail()!=null ? configuration.getContactEmail() : contactEmail;
+		return (configuration.getContactEmail()== null) || (configuration.getContactEmail().equalsIgnoreCase("null")) ? contactEmail : configuration.getContactEmail()  ;
 	}
 
 	public void setContactEmail(String contactEmail) {
