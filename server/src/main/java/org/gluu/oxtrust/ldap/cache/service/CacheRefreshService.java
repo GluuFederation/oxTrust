@@ -152,7 +152,7 @@ public class CacheRefreshService implements Serializable {
 
 			GluuCustomAttribute gluuCustomAttribute = customAttributesMap.get(sourceKeyAttributeName);
 			if (gluuCustomAttribute != null) {
-				String[] values = gluuCustomAttribute.getValues();
+				String[] values = (String[]) gluuCustomAttribute.getValues();
 				String[] clonedValue = ArrayHelper.arrayClone(values);
 				
 				GluuCustomAttribute gluuCustomAttributeCopy = new GluuCustomAttribute(targetKeyAttributeName, clonedValue);

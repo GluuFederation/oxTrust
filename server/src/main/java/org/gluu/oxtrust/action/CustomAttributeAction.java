@@ -180,7 +180,7 @@ public class CustomAttributeAction implements Serializable {
 		int index = 0;
 		for (GluuCustomAttribute customAttribute : this.customAttributes) {
 			if (tmpAttribute.equals(customAttribute.getMetadata())) {
-				values = customAttribute.getValues();
+				values = (String[]) customAttribute.getValues();
 				break;
 			}
 			index++;
@@ -214,7 +214,7 @@ public class CustomAttributeAction implements Serializable {
 		int index = 0;
 		for (GluuCustomAttribute customAttribute : this.customAttributes) {
 			if (tmpAttribute.equals(customAttribute.getMetadata())) {
-				values = customAttribute.getValues();
+				values = (String[]) customAttribute.getValues();
 				newValues = removeElementFromArray(values, removeValue);
 				break;
 			}

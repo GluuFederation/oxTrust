@@ -95,7 +95,7 @@ public class GroupService implements Serializable, IGroupService {
 			for (String memberDN : memberDNs) {
 				if (personService.contains(memberDN)) {
 					GluuCustomPerson person = personService.getPersonByDn(memberDN);
-					List<String> groupDNs = person.getMemberOf();
+					List<String> groupDNs = (ArrayList<String>)(ArrayList<?>)person.getMemberOf();
 					List<String> updatedGroupDNs = new ArrayList<String>();
 					updatedGroupDNs.addAll(groupDNs);
 					updatedGroupDNs.remove(group.getDn());

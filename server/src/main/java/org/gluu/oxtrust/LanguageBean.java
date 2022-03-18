@@ -58,7 +58,7 @@ public class LanguageBean implements Serializable {
 		if (locale == null) {
 			return null;
 		} else {
-			return locale.getValue();
+			return (String)locale.getValue();
 		}
 	}
 
