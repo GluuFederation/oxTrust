@@ -111,7 +111,7 @@ public class GluuConfiguration extends InumEntry implements Serializable {
 	private boolean samlEnabled;
 
 	@AttributeName(name = "oxTrustEmail")
-	private String contactEmail;
+	private String[] contactEmail;
 
 	@AttributeName(name = "oxSmtpConfiguration")
 	@JsonObject
@@ -322,11 +322,11 @@ public class GluuConfiguration extends InumEntry implements Serializable {
 		this.pollingInterval = pollingInterval;
 	}
 
-	public String getContactEmail() {
+	public String[] getContactEmail() {
 		return contactEmail;
 	}
 
-	public void setContactEmail(String contactEmail) {
+	public void setContactEmail(String[] contactEmail) {
 		this.contactEmail = contactEmail;
 	}
 

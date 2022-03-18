@@ -36,6 +36,7 @@ import org.gluu.config.oxtrust.LdapOxAuthConfiguration;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
 import org.gluu.model.SmtpConfiguration;
+import org.gluu.orm.util.ArrayHelper;
 import org.gluu.oxtrust.service.config.ConfigurationFactory;
 import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.oxtrust.model.GluuOrganization;
@@ -187,7 +188,7 @@ public class UpdateOrganizationAction implements Serializable {
 				smtpConfiguration.setPasswordDecrypted(passwordDecrypted);
 				passwordDecrypted=null;
 			}
-			configuration.setContactEmail(getContactEmail());
+			configuration.setContactEmail(new String[] { getContactEmail()} );
 			configurationService.encryptedSmtpPassword(smtpConfiguration);
 			updateConfiguration();
 			saveWebKeySettings();
@@ -289,7 +290,7 @@ public class UpdateOrganizationAction implements Serializable {
 	}
 
 	public String getContactEmail() {
-		return (configuration.getContactEmail()== null) || (configuration.getContactEmail().equalsIgnoreCase("null")) ? contactEmail : configuration.getContactEmail()  ;
+		return ArrayHelper.isEmpty(configuration.getContactEmail()) ? contactEmail : configuration.getContactEmail()[0];
 	}
 
 	public void setContactEmail(String contactEmail) {
