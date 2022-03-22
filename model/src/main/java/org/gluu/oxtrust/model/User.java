@@ -14,6 +14,7 @@ import org.gluu.persist.annotation.AttributeName;
 import org.gluu.persist.annotation.AttributesList;
 import org.gluu.persist.annotation.DataEntry;
 import org.gluu.persist.annotation.ObjectClass;
+import org.gluu.util.StringHelper;
 
 /**
  * User
@@ -40,7 +41,7 @@ public class User extends CustomEntry implements Serializable, Cloneable {
 	}
 
 	public String getInum() {
-		return getAttribute("inum");
+		return StringHelper.toString(getAttribute("inum"));
 	}
 
 	public void setInum(String value) {
@@ -48,7 +49,7 @@ public class User extends CustomEntry implements Serializable, Cloneable {
 	}
 
 	public String getUid() {
-		return getAttribute("uid");
+		return StringHelper.toString(getAttribute("uid"));
 	}
 
 	public void setUid(String value) {
@@ -56,7 +57,7 @@ public class User extends CustomEntry implements Serializable, Cloneable {
 	}
 
 	public String getDisplayName() {
-		return getAttribute("displayName");
+		return StringHelper.toString(getAttribute("displayName"));
 	}
 
 	public void setDisplayName(String value) {

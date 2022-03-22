@@ -762,7 +762,7 @@ public class CacheRefreshTimer {
 		List<String> result2 = new ArrayList<String>();
 
 		for (GluuSimplePerson removedPerson : removedPersons) {
-			String inum = removedPerson.getAttribute(OxTrustConstants.inum);
+			String inum = removedPerson.getStringAttribute(OxTrustConstants.inum);
 
 			// Update GluuInumMap if it exist
 			GluuInumMap currentInumMap = inumInumMap.get(inum);
@@ -1053,7 +1053,7 @@ public class CacheRefreshTimer {
 		List<GluuSimplePerson> result = new ArrayList<GluuSimplePerson>();
 
 		for (GluuSimplePerson targetPerson : targetPersons) {
-			String personInum = targetPerson.getAttribute(OxTrustConstants.inum);
+			String personInum = targetPerson.getStringAttribute(OxTrustConstants.inum);
 			if (!currInumWithEntryHashCodeMap.containsKey(personInum)) {
 				log.debug("Person with such DN: '{}' isn't present on source server", targetPerson.getDn());
 				result.add(targetPerson);
@@ -1197,7 +1197,7 @@ public class CacheRefreshTimer {
 	private String[][] getKeyAttributesValues(String[] attrs, GluuSimplePerson person) {
 		String[][] result = new String[attrs.length][];
 		for (int i = 0; i < attrs.length; i++) {
-			result[i] = person.getAttributes(attrs[i]);
+			result[i] = person.getStringAttributes(attrs[i]);
 		}
 
 		return result;

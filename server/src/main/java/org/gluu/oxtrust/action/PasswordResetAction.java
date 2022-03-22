@@ -156,8 +156,8 @@ public class PasswordResetAction implements Serializable {
 		if (person != null) {
 			question = person.getGluuCustomAttribute(SECRET_QUESTION);
 			this.setAnswer(person.getGluuCustomAttribute(SECRET_ANSWER));
-			if (question != null && question.getValue() != null && !question.getValue().isEmpty()) {
-				this.securityQuestion = question.getValue();
+			if (question != null && question.getValue() != null && !question.getStringValue().isEmpty()) {
+				this.securityQuestion = (String) question.getValue();
 				this.hasSecurityQuestion = true;
 				hasSecurityQuestion(true);
 			}
@@ -223,7 +223,7 @@ public class PasswordResetAction implements Serializable {
 				removeRequest.setBaseDn(request.getBaseDn());
 				if (this.securityQuestion != null && this.answer != null) {
 					Boolean securityQuestionAnswered = (this.securityAnswer != null)
-							&& this.securityAnswer.equalsIgnoreCase(answer.getValue());
+							&& this.securityAnswer.equalsIgnoreCase(answer.getStringValue());
 					if (securityQuestionAnswered) {
 						person.setUserPassword(password);
 						try {

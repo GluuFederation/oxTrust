@@ -673,15 +673,14 @@ public class UpdatePersonAction implements Serializable {
 		} else {
 			Set<String> mailSet = new HashSet<String>();
 			if (mail.getValues() != null)
-				mailSet.addAll(Arrays.asList(mail.getValues()));
+				mailSet.addAll(Arrays.asList(mail.getStringValues()));
 
 			Set<String> mailSetCopy = new HashSet<String>(mailSet);
 			Set<String> oxTrustEmailSet = new HashSet<String>();
 			List<Email> oxTrustEmails = new ArrayList<Email>();
 
 			if (oxTrustEmail != null && oxTrustEmail.getValues() != null) {
-
-				for (String oxTrustEmailJson : oxTrustEmail.getValues()) {
+				for (String oxTrustEmailJson : oxTrustEmail.getStringValues()) {
 					oxTrustEmails.add(jsonService.jsonToObject(oxTrustEmailJson, Email.class));
 				}
 
@@ -978,7 +977,7 @@ public class UpdatePersonAction implements Serializable {
 						map.put("phones", phones);
 						String jsonInString = mapper.writeValueAsString(map);
 						this.person.setOxMobileDevices(jsonInString);
-						String[] mobiles = this.person.getAttributes(MOBILE);
+						String[] mobiles = this.person.getAttributeStringValues(MOBILE);
 						if (mobiles != null && mobiles.length > 0) {
 							List<String> values = new ArrayList<String>(Arrays.asList(mobiles));
 							for (String mobile : values) {
