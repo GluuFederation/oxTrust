@@ -273,7 +273,7 @@ public class UserProfileAction implements Serializable {
 			if (attribute.getName().equalsIgnoreCase(name)) {
 				List<String> values = Arrays.asList(attribute.getStringValues());
 				values.remove(value);
-				attribute.setValues(values);
+				attribute.setValues(values.toArray(new String[0]));
 				getPerson().setCustomAttributes(customAttributes);
 				if (values.isEmpty()) {
 					return true;
