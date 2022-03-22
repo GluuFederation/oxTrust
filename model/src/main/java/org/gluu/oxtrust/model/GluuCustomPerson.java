@@ -152,11 +152,11 @@ public class GluuCustomPerson extends User
         setBooleanAttribute("gluuSLAManager", value);
     }
 
-    public List<Object> getMemberOf() {
-    	Object[] value = {};
+    public List<String> getMemberOf() {
+    	String[] value = {};
         for (GluuCustomAttribute attribute : customAttributes) {
             if (attribute.getName().equalsIgnoreCase("memberOf")) {
-                value = attribute.getValues();
+                value = attribute.getStringValues();
                 break;
             }
         }
@@ -397,4 +397,6 @@ public class GluuCustomPerson extends User
 	public void setGuid(String guid) {
 		this.guid = guid;
 	}
+
+
 }

@@ -6,10 +6,12 @@
 
 package org.gluu.oxtrust.model;
 
+import java.beans.Transient;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -21,6 +23,10 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.gluu.model.GluuAttribute;
 import org.gluu.model.attribute.AttributeDataType;
+import org.gluu.persist.reflect.property.BasicPropertyAnnotationResolver;
+import org.gluu.persist.reflect.property.Setter;
+import org.gluu.persist.reflect.util.ReflectHelper;
+import org.gluu.util.StringHelper;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -58,27 +64,29 @@ public class GluuCustomAttribute implements Serializable, Comparable<GluuCustomA
 		setValue(value);
 	}
 
-	public GluuCustomAttribute(String name, String value, boolean newAttribute) {
+	public GluuCustomAttribute(String name, Object[] values) {
+		this.name = name;
+		this.values = values;
+	}
+
+	public GluuCustomAttribute(String name, Object value, boolean newAttribute) {
 		this.name = name;
 		setValue(value);
 		this.newAttribute = newAttribute;
 	}
 
-	public GluuCustomAttribute(String name, String value, boolean newAttribute, boolean mandatory) {
+	public GluuCustomAttribute(String name, Object value, boolean newAttribute, boolean mandatory) {
 		this.name = name;
 		setValue(value);
 		this.newAttribute = newAttribute;
 		this.mandatory = mandatory;
 	}
-	public GluuCustomAttribute(String name, String[] values, boolean newAttribute, boolean mandatory) {
+
+	public GluuCustomAttribute(String name, Object[] values, boolean newAttribute, boolean mandatory) {
 		this.name = name;
 		this.values = values;
 		this.newAttribute = newAttribute;
 		this.mandatory = mandatory;
-	}
-	public GluuCustomAttribute(String name, String[] values) {
-		this.name = name;
-		this.values = values;
 	}
 
 	// To avoid extra code in CR interceptor script
@@ -108,6 +116,18 @@ public class GluuCustomAttribute implements Serializable, Comparable<GluuCustomA
 			this.values = new Object[1];
 		}
 		this.values[0] = value;
+	}
+
+	public String getStringValue() {
+		if (this.values == null) {
+			return null;
+		}
+
+		if (this.values.length > 0) {
+			return StringHelper.toString(this.values[0]);
+		}
+
+		return null;
 	}
 
 	public GluuBoolean getBooleanValue() {
@@ -143,6 +163,18 @@ public class GluuCustomAttribute implements Serializable, Comparable<GluuCustomA
 		return values;
 	}
 
+	public String[] getStringValues() {
+		if (values instanceof String[]) {
+			return (String[]) values;
+		}
+		
+		if (values == null) {
+			return null;
+		}
+
+		return StringHelper.toStringArray(values);
+	}
+
 	public GluuBoolean[] getBooleanValues() {
 		this.usedBooleanValues = true; // Remove after adding separate type for status
 
@@ -158,18 +190,20 @@ public class GluuCustomAttribute implements Serializable, Comparable<GluuCustomA
         //@com.fasterxml.jackson.annotation.JsonIgnore
         @JsonIgnore
         @XmlTransient
+        @Transient
 	public void setValues(String[] values) {
 		this.values = values;
 	}
 
-	public void setValues(Collection<String> values) {
-		this.values = values.toArray(new String[0]);
+	public void setValues(List<Object> values) {
+		this.values = values.toArray(new Object[0]);
 	}
 
 	// To avoid extra code in CR interceptor script
         //@com.fasterxml.jackson.annotation.JsonIgnore
         @JsonIgnore
         @XmlTransient
+        @Transient
 	public void setValues(Set<String> values) {
 		this.values = values.toArray(new String[0]);
 	}
@@ -186,18 +220,17 @@ public class GluuCustomAttribute implements Serializable, Comparable<GluuCustomA
 
 
 	public Object getDisplayValue() {
-
 		if (values == null || values.length==0) {
 			return "";
 		}
 
 		if (values.length == 1) {
-			return values[0];
+			return String.valueOf(values[0]);
 		}
 
 		StringBuilder sb = new StringBuilder(String.valueOf(values[0]));
 		for (int i = 1; i < values.length; i++) {
-			sb.append(", ").append(values[i]);
+			sb.append(", ").append(String.valueOf(values[i]));
 		}
 
 		return sb.toString();

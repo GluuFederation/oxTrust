@@ -62,7 +62,7 @@ public class ServiceUtil implements Serializable {
 		List<String> persons = group.getMembers();
 		for (String onePerson : persons) {
 			GluuCustomPerson gluuPerson = personService.getPersonByDn(onePerson);
-			List<String> memberOflist = (ArrayList<String>)(ArrayList<?>)gluuPerson.getMemberOf();
+			List<String> memberOflist = gluuPerson.getMemberOf();
 
 			List<String> tempMemberOf = new ArrayList<>();
 			for (String aMemberOf : memberOflist) {
@@ -113,7 +113,7 @@ public class ServiceUtil implements Serializable {
 		List<String> members = gluuGroup.getMembers();
 		for (String member : members) {
 			GluuCustomPerson gluuPerson = personService.getPersonByDn(member);
-			List<String> groups = (ArrayList<String>)(ArrayList<?>)gluuPerson.getMemberOf();
+			List<String> groups = gluuPerson.getMemberOf();
 			if (!isMemberOfExist(groups, dn)) {
 				List<String> cleanGroups = new ArrayList<String>();
 				cleanGroups.add(dn);
@@ -150,7 +150,7 @@ public class ServiceUtil implements Serializable {
 	 * @throws Exception
 	 */
 	public void groupMembersAdder(GluuCustomPerson gluuPerson, String dn) throws Exception {
-		List<String> groups = (ArrayList<String>)(ArrayList<?>)gluuPerson.getMemberOf();
+		List<String> groups = gluuPerson.getMemberOf();
 		for (String group : groups) {
 			GluuGroup oneGroup = groupService.getGroupByDn(group);
 			List<String> groupMembers = oneGroup.getMembers();

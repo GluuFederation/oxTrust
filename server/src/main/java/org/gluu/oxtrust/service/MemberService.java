@@ -45,7 +45,7 @@ public class MemberService implements Serializable {
 		log.debug("Removing person from associated group before deletion");
         String pesonDn = person.getDn();
 		// Remove person from associated groups
-		List<String> associatedGroupsDn = (ArrayList<String>)(ArrayList<?>)person.getMemberOf();
+		List<String> associatedGroupsDn = person.getMemberOf();
 		for (String groupDn : associatedGroupsDn) {
 		    if (!groupService.contains(groupDn)) {
 		        continue;

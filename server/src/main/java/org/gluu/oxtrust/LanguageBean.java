@@ -16,6 +16,7 @@ import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.service.PersonService;
+import org.gluu.util.StringHelper;
 
 /**
  * Created by eugeniuparvan on 3/6/17.
@@ -58,7 +59,7 @@ public class LanguageBean implements Serializable {
 		if (locale == null) {
 			return null;
 		} else {
-			return (String)locale.getValue();
+			return locale.getStringValue();
 		}
 	}
 
@@ -98,7 +99,7 @@ public class LanguageBean implements Serializable {
 
 	private GluuCustomAttribute getLocaleOrNull(GluuCustomPerson gluuCustomPerson) {
 		for (GluuCustomAttribute attribute : gluuCustomPerson.getCustomAttributes()) {
-			if ("locale".equals(attribute.getName())) {
+			if ("locale".equalsIgnoreCase(attribute.getName())) {
 				return attribute;
 			}
 		}

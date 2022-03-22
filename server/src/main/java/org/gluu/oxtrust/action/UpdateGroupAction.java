@@ -388,7 +388,7 @@ public class UpdateGroupAction implements Serializable {
 				person.setSLAManager(slaManager);
 			}
 
-			List<String> personMemberOf = (ArrayList<String>)(ArrayList<?>)(person.getMemberOf());
+			List<String> personMemberOf = person.getMemberOf();
 			personMemberOf.add(groupDn);
 			person.setMemberOf(personMemberOf);
 
@@ -402,7 +402,7 @@ public class UpdateGroupAction implements Serializable {
 				Boolean slaManager = isSLAManager(organizationGroups, person);
 				person.setSLAManager(slaManager);
 			}
-			List<String> personMemberOf = (ArrayList<String>)(ArrayList<?>)(person.getMemberOf());
+			List<String> personMemberOf = person.getMemberOf();
 			personMemberOf.remove(groupDn);
 			person.setMemberOf(personMemberOf);
 			personService.updatePerson(person);

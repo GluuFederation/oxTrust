@@ -68,7 +68,7 @@ public abstract class CustomEntry extends Entry implements Serializable, Cloneab
 		return value;
 	}
 
-	public Object getAttribute(String attributeName, String defaultValue) {
+	public Object getAttribute(String attributeName, Object defaultValue) {
 		Object result = getAttribute(attributeName);
 		if (StringHelper.isEmptyString(result)) {
 			result = defaultValue;
@@ -76,6 +76,59 @@ public abstract class CustomEntry extends Entry implements Serializable, Cloneab
 
 		return result;
 	}
+
+	public String[] getStringAttributes(String attributeName) {
+		if (StringHelper.isEmpty(attributeName)) {
+			return null;
+		}
+
+		String[] values = null;
+		for (GluuCustomAttribute attribute : getCustomAttributes()) {
+			if (StringHelper.equalsIgnoreCase(attribute.getName(), attributeName)) {
+				values = attribute.getStringValues();
+				break;
+			}
+		}
+		return values;
+	}
+
+	public String getStringAttribute(String attributeName) {
+		if (StringHelper.isEmpty(attributeName)) {
+			return null;
+		}
+
+		String value = null;
+		for (GluuCustomAttribute attribute : getCustomAttributes()) {
+			if (StringHelper.equalsIgnoreCase(attribute.getName(), attributeName)) {
+				value = attribute.getStringValue();
+				break;
+			}
+		}
+		return value;
+	}
+
+	public GluuCustomAttribute getCustomAttribute(String attributeName) {
+		if (StringHelper.isEmpty(attributeName)) {
+			return null;
+		}
+
+		for (GluuCustomAttribute attribute : getCustomAttributes()) {
+			if (StringHelper.equalsIgnoreCase(attribute.getName(), attributeName)) {
+				return attribute;
+			}
+		}
+		
+		return null;
+	}
+
+    public String[] getAttributeStringValues(String attributeName) {
+    	GluuCustomAttribute customAttribute = getCustomAttribute(attributeName);
+    	if (customAttribute == null) {
+    		return null;
+    	}
+    	
+    	return customAttribute.getStringValues();
+    }
 
 	public void setAttribute(String attributeName, String attributeValue) {
 		setAttribute(new GluuCustomAttribute(attributeName, attributeValue));

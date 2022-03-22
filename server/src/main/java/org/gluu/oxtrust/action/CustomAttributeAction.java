@@ -176,17 +176,17 @@ public class CustomAttributeAction implements Serializable {
 		String id = this.attributeIds.get(tmpAttribute);
 		this.availableAttributeIds.remove(id);
 
-		String[] values = null;
+		Object[] values = null;
 		int index = 0;
 		for (GluuCustomAttribute customAttribute : this.customAttributes) {
 			if (tmpAttribute.equals(customAttribute.getMetadata())) {
-				values = (String[]) customAttribute.getValues();
+				values = customAttribute.getValues();
 				break;
 			}
 			index++;
 		}
 
-		String[] newValues = new String[values.length + 1];
+		Object[] newValues = new Object[values.length + 1];
 		System.arraycopy(values, 0, newValues, 0, values.length);
 		removeCustomAttribute(inum);
 		GluuCustomAttribute tmpGluuPersonAttribute = new GluuCustomAttribute(tmpAttribute.getName(), newValues, true,
@@ -209,8 +209,8 @@ public class CustomAttributeAction implements Serializable {
 		String id = this.attributeIds.get(tmpAttribute);
 		this.availableAttributeIds.remove(id);
 
-		String[] values = null;
-		String[] newValues = null;
+		Object[] values = null;
+		Object[] newValues = null;
 		int index = 0;
 		for (GluuCustomAttribute customAttribute : this.customAttributes) {
 			if (tmpAttribute.equals(customAttribute.getMetadata())) {
@@ -229,11 +229,11 @@ public class CustomAttributeAction implements Serializable {
 		this.customAttributes.add(index, tmpGluuPersonAttribute);
 	}
 
-	private String[] removeElementFromArray(String[] n, String removeElement) {
-		if (removeElement.isEmpty()) {
+	private Object[] removeElementFromArray(Object[] n, Object removeElement) {
+		if (StringHelper.isEmptyString(removeElement)) {
 			removeElement = null;
 		}
-		List<String> list = new ArrayList<String>();
+		List<Object> list = new ArrayList<Object>();
 		Collections.addAll(list, n);
 		list.remove(removeElement);
 		n = list.toArray(new String[list.size()]);
