@@ -389,6 +389,7 @@ public class UpdateGroupAction implements Serializable {
 			}
 
 			List<String> personMemberOf = person.getMemberOf();
+			personMemberOf = new ArrayList<String>(personMemberOf);
 			personMemberOf.add(groupDn);
 			person.setMemberOf(personMemberOf);
 
