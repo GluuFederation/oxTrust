@@ -156,7 +156,7 @@ public class GluuCustomAttribute implements Serializable, Comparable<GluuCustomA
 	public Object[] getValues() {
 		if (this.metadata != null) {
 			if ((AttributeDataType.BOOLEAN == this.metadata.getDataType()) && this.usedBooleanValues) {
-				this.values = toStringValuesFromBooleanValues(this.booleanValues);
+				this.values = toBooleanValuesFromGluuBooleanValues(this.booleanValues);
 			}
 		}
 
@@ -369,6 +369,21 @@ public class GluuCustomAttribute implements Serializable, Comparable<GluuCustomA
 		String resultValues[] = new String[inputValues.length];
 		for (int i = 0; i < inputValues.length; i++) {
 			resultValues[i] = toStringFromBoolean(inputValues[i]);
+		}
+		
+		return resultValues;
+	}
+
+	private Boolean[] toBooleanValuesFromGluuBooleanValues(GluuBoolean[] inputValues) {
+		if (inputValues == null) {
+			return null;
+		}
+
+		Boolean resultValues[] = new Boolean[inputValues.length];
+		for (int i = 0; i < inputValues.length; i++) {
+			if (inputValues[i] != null) {
+				resultValues[i] = Boolean.valueOf(inputValues[i].isBooleanValue());
+			}
 		}
 		
 		return resultValues;

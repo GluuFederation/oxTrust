@@ -156,7 +156,7 @@ public class CustomAttributeAction implements Serializable {
 		String id = this.attributeIds.get(tmpAttribute);
 		this.availableAttributeIds.remove(id);
 
-		GluuCustomAttribute tmpGluuPersonAttribute = new GluuCustomAttribute(tmpAttribute.getName(), (String) null,
+		GluuCustomAttribute tmpGluuPersonAttribute = new GluuCustomAttribute(tmpAttribute.getName(), (Object) null,
 				true, mandatory);
 		tmpGluuPersonAttribute.setMetadata(tmpAttribute);
 
