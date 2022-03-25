@@ -570,7 +570,7 @@ public class UpdateScopeAction implements Serializable {
 		}
 	}
 
-	@ObjectClass(value = "oxAuthCustomScope")
+	@ObjectClass(value = "oxCustomScript")
 	class ScriptDisplayNameEntry extends DisplayNameEntry {}
 
 }
