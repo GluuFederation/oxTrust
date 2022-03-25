@@ -31,6 +31,7 @@ import org.gluu.oxtrust.service.ClientService;
 import org.gluu.oxtrust.service.uma.ResourceSetService;
 import org.gluu.oxtrust.service.uma.UmaScopeService;
 import org.gluu.oxtrust.util.OxTrustConstants;
+import org.gluu.persist.annotation.ObjectClass;
 import org.gluu.persist.exception.BasePersistenceException;
 import org.gluu.service.LookupService;
 import org.gluu.service.security.Secure;
@@ -378,8 +379,8 @@ public class UpdateResourceAction implements Serializable {
 
 	private List<DisplayNameEntry> getScopesDisplayNameEntries() {
 		List<DisplayNameEntry> result = new ArrayList<DisplayNameEntry>();
-		List<DisplayNameEntry> tmp = lookupService.getDisplayNameEntries(scopeDescriptionService.getDnForScope(null),
-				this.resource.getScopes());
+		List<ScopeDisplayNameEntry> tmp = lookupService.getDisplayNameEntries(scopeDescriptionService.getDnForScope(null),
+				ScopeDisplayNameEntry.class, this.resource.getScopes());
 		if (tmp != null) {
 			result.addAll(tmp);
 		}
@@ -472,8 +473,8 @@ public class UpdateResourceAction implements Serializable {
 
 	private List<DisplayNameEntry> getClientDisplayNameEntries() {
 		List<DisplayNameEntry> result = new ArrayList<DisplayNameEntry>();
-		List<DisplayNameEntry> tmp = lookupService.getDisplayNameEntries(clientService.getDnForClient(null),
-				this.resource.getClients());
+		List<ClientDisplayNameEntry> tmp = lookupService.getDisplayNameEntries(clientService.getDnForClient(null),
+				ClientDisplayNameEntry.class, this.resource.getClients());
 		if (tmp != null) {
 			result.addAll(tmp);
 		}
@@ -567,5 +568,11 @@ public class UpdateResourceAction implements Serializable {
 	public void setOxId(String oxId) {
 		this.oxId = oxId;
 	}
+
+	@ObjectClass(value = "oxAuthCustomScope")
+	class ScopeDisplayNameEntry extends DisplayNameEntry {}
+
+	@ObjectClass(value = "oxAuthClient")
+	class ClientDisplayNameEntry extends DisplayNameEntry {}
 
 }
