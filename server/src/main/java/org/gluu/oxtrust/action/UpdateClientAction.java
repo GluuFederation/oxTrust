@@ -65,6 +65,7 @@ import org.gluu.oxtrust.service.OxTrustAuditService;
 import org.gluu.oxtrust.service.ScopeService;
 import org.gluu.oxtrust.util.EasyCASSLProtocolSocketFactory;
 import org.gluu.oxtrust.util.OxTrustConstants;
+import org.gluu.persist.annotation.ObjectClass;
 import org.gluu.persist.exception.BasePersistenceException;
 import org.gluu.persist.model.base.BaseEntry;
 import org.gluu.service.LookupService;
@@ -1060,8 +1061,8 @@ public class UpdateClientAction implements Serializable {
         if ((client.getOxAuthClaims() == null) || (client.getOxAuthClaims().size() == 0)) {
             return result;
         }
-        List<DisplayNameEntry> tmp = lookupService.getDisplayNameEntries(attributeService.getDnForAttribute(null),
-                this.client.getOxAuthClaims());
+        List<AttributeDisplayNameEntry> tmp = lookupService.getDisplayNameEntries(attributeService.getDnForAttribute(null),
+        		AttributeDisplayNameEntry.class, this.client.getOxAuthClaims());
         if (tmp != null) {
             result.addAll(tmp);
         }
@@ -1900,5 +1901,9 @@ public class UpdateClientAction implements Serializable {
         }
 
     }
-
+	
+	@ObjectClass(value = "gluuAttribute")
+	class AttributeDisplayNameEntry extends DisplayNameEntry {
+	    public AttributeDisplayNameEntry() {}
+	}
 }

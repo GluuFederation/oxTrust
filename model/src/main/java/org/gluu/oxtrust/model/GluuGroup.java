@@ -179,8 +179,8 @@ public class GluuGroup extends Entry implements Serializable {
 		this.customAttributes = customAttributes;
 	}
 
-	public String getAttribute(String attributeName) {
-		String value = null;
+	public Object getAttribute(String attributeName) {
+		Object value = null;
 		for (GluuCustomAttribute attribute : customAttributes) {
 			if (attribute.getName().equalsIgnoreCase(attributeName)) {
 				value = attribute.getValue();
@@ -190,7 +190,7 @@ public class GluuGroup extends Entry implements Serializable {
 		return value;
 	}
 
-	public String[] getAttributeArray(String attributeName) {
+	public Object[] getAttributeArray(String attributeName) {
 		GluuCustomAttribute gluuCustomAttribute = getGluuCustomAttribute(attributeName);
 		if (gluuCustomAttribute == null) {
 			return null;

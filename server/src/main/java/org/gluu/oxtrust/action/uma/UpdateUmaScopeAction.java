@@ -36,6 +36,7 @@ import org.gluu.oxtrust.service.ImageService;
 import org.gluu.oxtrust.service.uma.ResourceSetService;
 import org.gluu.oxtrust.service.uma.UmaScopeService;
 import org.gluu.oxtrust.util.OxTrustConstants;
+import org.gluu.persist.annotation.ObjectClass;
 import org.gluu.persist.exception.BasePersistenceException;
 import org.gluu.service.LookupService;
 import org.gluu.service.custom.CustomScriptService;
@@ -319,8 +320,8 @@ public class UpdateUmaScopeAction implements Serializable {
 			return result;
 		}
 
-		List<DisplayNameEntry> displayNameEntries = lookupService.getDisplayNameEntries(customScriptService.baseDn(),
-				this.umaScope.getUmaAuthorizationPolicies());
+		List<ScriptDisplayNameEntry> displayNameEntries = lookupService.getDisplayNameEntries(customScriptService.baseDn(),
+				ScriptDisplayNameEntry.class, this.umaScope.getUmaAuthorizationPolicies());
 		if (displayNameEntries != null) {
 			for (DisplayNameEntry displayNameEntry : displayNameEntries) {
 				result.add(new CustomScript(displayNameEntry.getDn(), displayNameEntry.getInum(),
@@ -492,4 +493,8 @@ public class UpdateUmaScopeAction implements Serializable {
 			return "{}";
 		}
 	}
+
+	@ObjectClass(value = "oxCustomScript")
+	class ScriptDisplayNameEntry extends DisplayNameEntry {}
+
 }

@@ -61,6 +61,7 @@ import org.gluu.model.GluuAttribute;
 import org.gluu.model.GluuStatus;
 import org.gluu.model.GluuUserRole;
 import org.gluu.model.SchemaEntry;
+import org.gluu.orm.util.ArrayHelper;
 import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuEntityType;
@@ -622,7 +623,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
         if (!StringUtils.isEmpty(mailMsgPlain)) {
             try {
                 GluuConfiguration configuration = configurationService.getConfiguration();
-                if (configuration.getContactEmail() == null || configuration.getContactEmail().isEmpty())
+                if (ArrayHelper.isEmpty(configuration.getContactEmail()) || configuration.getContactEmail()[0].isEmpty())
                     log.warn("Failed to send the 'Attributes released' notification email: unconfigured contact email");
                 else if (configuration.getSmtpConfiguration() == null
                         || StringHelper.isEmpty(configuration.getSmtpConfiguration().getHost()))
@@ -634,7 +635,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
                     String preMsgPlain = facesMessages
                             .evalResourceAsString("#{msgs['mail.trust.released.name.plain']}");
                     String preMsgHtml = facesMessages.evalResourceAsString("#{msgs['mail.trust.released.name.html']}");
-                    boolean result = mailService.sendMail(configuration.getContactEmail(), null, subj,
+                    boolean result = mailService.sendMail(configuration.getContactEmail()[0], null, subj,
                             preMsgPlain + mailMsgPlain, preMsgHtml + mailMsgHtml);
 
                     if (!result) {

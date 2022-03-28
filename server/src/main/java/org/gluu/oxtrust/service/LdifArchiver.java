@@ -49,7 +49,7 @@ public class LdifArchiver implements DeleteNotifier {
 		}
 	}
 
-	public void onBeforeRemove(String dn) {
+	public void onBeforeRemove(String dn, String[] objectClasses) {
 		if (!disable) {
 			String dnForRemoval = dn;
 			int dnForRemovalLenght = dnForRemoval.length();
@@ -59,7 +59,7 @@ public class LdifArchiver implements DeleteNotifier {
 			File file = new File(storeDir + File.separator + dnForRemoval + Calendar.getInstance().getTimeInMillis());
 
 			try (PrintWriter writer = new PrintWriter(file);) {
-				List<AttributeData> exportEntry = persistenceManager.exportEntry(dn);
+				List<AttributeData> exportEntry = persistenceManager.exportEntry(dn, objectClasses[0]);
 				if (exportEntry != null && exportEntry.size() >= 0) {
 					writer.println("dn: " + dn);
 					exportEntry.forEach(v -> {
@@ -79,7 +79,7 @@ public class LdifArchiver implements DeleteNotifier {
 
 	}
 
-	public void onAfterRemove(String dn) {
+	public void onAfterRemove(String dn, String[] objectClasses) {
 		// TODO Auto-generated method stub
 
 	}

@@ -34,6 +34,7 @@ import org.gluu.oxtrust.service.AttributeService;
 import org.gluu.oxtrust.service.OxTrustAuditService;
 import org.gluu.oxtrust.service.ScopeService;
 import org.gluu.oxtrust.util.OxTrustConstants;
+import org.gluu.persist.annotation.ObjectClass;
 import org.gluu.persist.exception.BasePersistenceException;
 import org.gluu.service.LookupService;
 import org.gluu.service.custom.CustomScriptService;
@@ -144,6 +145,11 @@ public class UpdateScopeAction implements Serializable {
 		this.update = true;
 		try {
 			this.scope = scopeService.getScopeByInum(this.inum);
+			if (this.scope == null) {
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to load scope");
+				conversationService.endConversation();
+				return OxTrustConstants.RESULT_FAILURE;
+			}
 			if (this.scope.getDisplayName() == null) {
 				this.scope.setDisplayName(this.scope.getId());
 			}
@@ -377,8 +383,8 @@ public class UpdateScopeAction implements Serializable {
 
 	private List<DisplayNameEntry> getClaimDisplayNameEntiries() throws Exception {
 		List<DisplayNameEntry> result = new ArrayList<DisplayNameEntry>();
-		List<DisplayNameEntry> tmp = lookupService.getDisplayNameEntries(attributeService.getDnForAttribute(null),
-				this.scope.getOxAuthClaims());
+		List<ScriptDisplayNameEntry> tmp = lookupService.getDisplayNameEntries(attributeService.getDnForAttribute(null),
+				ScriptDisplayNameEntry.class, this.scope.getOxAuthClaims());
 		if (tmp != null) {
 			result.addAll(tmp);
 		}
@@ -414,8 +420,8 @@ public class UpdateScopeAction implements Serializable {
 		if ((this.scope.getDynamicScopeScripts() == null) || (this.scope.getDynamicScopeScripts().size() == 0)) {
 			return result;
 		}
-		List<DisplayNameEntry> displayNameEntries = lookupService.getDisplayNameEntries(customScriptService.baseDn(),
-				this.scope.getDynamicScopeScripts());
+		List<ScriptDisplayNameEntry> displayNameEntries = lookupService.getDisplayNameEntries(customScriptService.baseDn(),
+				ScriptDisplayNameEntry.class, this.scope.getDynamicScopeScripts());
 		if (displayNameEntries != null) {
 			for (DisplayNameEntry displayNameEntry : displayNameEntries) {
 				result.add(new CustomScript(displayNameEntry.getDn(), displayNameEntry.getInum(),
@@ -563,4 +569,8 @@ public class UpdateScopeAction implements Serializable {
 			return "{}";
 		}
 	}
+
+	@ObjectClass(value = "oxCustomScript")
+	class ScriptDisplayNameEntry extends DisplayNameEntry {}
+
 }

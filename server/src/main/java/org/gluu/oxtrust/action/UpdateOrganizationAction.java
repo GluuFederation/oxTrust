@@ -36,6 +36,7 @@ import org.gluu.config.oxtrust.LdapOxAuthConfiguration;
 import org.gluu.jsf2.message.FacesMessages;
 import org.gluu.jsf2.service.ConversationService;
 import org.gluu.model.SmtpConfiguration;
+import org.gluu.orm.util.ArrayHelper;
 import org.gluu.oxtrust.service.config.ConfigurationFactory;
 import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.oxtrust.model.GluuOrganization;
@@ -69,9 +70,10 @@ import org.w3c.dom.NodeList;
 @Secure("#{permissionService.hasPermission('configuration', 'access')}")
 public class UpdateOrganizationAction implements Serializable {
 
-	String THE_CHANGE_MAY_TAKE_UP_TO_30MIN_TO_BE_EFFECTIVE_DUE_TO_CACHING = "The change may take up to 30min to be effective due to caching.You can use Ctrl+F5 to force cache reload.";
-
 	private static final long serialVersionUID = -4470460481895022468L;
+
+	private String THE_CHANGE_MAY_TAKE_UP_TO_30MIN_TO_BE_EFFECTIVE_DUE_TO_CACHING = "The change may take up to 30min to be effective due to caching.You can use Ctrl+F5 to force cache reload.";
+	private String DEFAULT_CONTACT_EMAIL = "example@orgname.com";
 
 	@Inject
 	private Logger log;
@@ -113,7 +115,7 @@ public class UpdateOrganizationAction implements Serializable {
 
 	private String passwordDecrypted;
 
-	private String contactEmail = "example@orgname.com";
+	private String contactEmail;
 
 	public String modify() {
 		if (this.initialized) {
@@ -187,7 +189,7 @@ public class UpdateOrganizationAction implements Serializable {
 				smtpConfiguration.setPasswordDecrypted(passwordDecrypted);
 				passwordDecrypted=null;
 			}
-			configuration.setContactEmail(getContactEmail());
+			configuration.setContactEmail(new String[] { getContactEmail()} );
 			configurationService.encryptedSmtpPassword(smtpConfiguration);
 			updateConfiguration();
 			saveWebKeySettings();
@@ -211,7 +213,7 @@ public class UpdateOrganizationAction implements Serializable {
 		configurationUpdate.setProfileManagment(configuration.isProfileManagment());
 		configurationUpdate.setConfigurationDnsServer(configuration.getConfigurationDnsServer());
 		configurationUpdate.setMaxLogSize(configuration.getMaxLogSize());
-		configurationUpdate.setContactEmail(configuration.getContactEmail());
+		configurationUpdate.setContactEmail(new String[] { contactEmail });
 		configurationUpdate.setSamlEnabled(configuration.isSamlEnabled());
 		configurationUpdate.setSmtpConfiguration(smtpConfiguration);
 		configurationService.updateConfiguration(configurationUpdate);
@@ -254,6 +256,11 @@ public class UpdateOrganizationAction implements Serializable {
 		}
 		try {
 			this.configuration = configurationService.getConfiguration();
+			if (ArrayHelper.isEmpty(configuration.getContactEmail())) {
+				this.contactEmail = DEFAULT_CONTACT_EMAIL;
+			} else {
+				this.contactEmail = configuration.getContactEmail()[0];
+			}
 			if (this.configuration == null) {
 				return OxTrustConstants.RESULT_FAILURE;
 			}
@@ -289,7 +296,7 @@ public class UpdateOrganizationAction implements Serializable {
 	}
 
 	public String getContactEmail() {
-		return (configuration.getContactEmail()== null) || (configuration.getContactEmail().equalsIgnoreCase("null")) ? contactEmail : configuration.getContactEmail()  ;
+		return contactEmail;
 	}
 
 	public void setContactEmail(String contactEmail) {

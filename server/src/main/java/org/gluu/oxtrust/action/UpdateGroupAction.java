@@ -7,6 +7,7 @@
 package org.gluu.oxtrust.action;
 
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -38,13 +39,18 @@ import org.gluu.oxtrust.service.OrganizationService;
 import org.gluu.oxtrust.service.OxTrustAuditService;
 import org.gluu.oxtrust.service.PersonService;
 import org.gluu.oxtrust.util.OxTrustConstants;
+import org.gluu.persist.annotation.ObjectClass;
 import org.gluu.persist.exception.BasePersistenceException;
+import org.gluu.persist.exception.PropertyNotFoundException;
 import org.gluu.persist.exception.operation.DuplicateEntryException;
+import org.gluu.persist.reflect.util.ReflectHelper;
 import org.gluu.service.LookupService;
 import org.gluu.service.security.Secure;
 import org.gluu.util.StringHelper;
 import org.gluu.util.Util;
 import org.slf4j.Logger;
+
+import net.sf.jsqlparser.statement.alter.AlterSystemOperation;
 
 /**
  * Action class for view and update group form.
@@ -237,7 +243,7 @@ public class UpdateGroupAction implements Serializable {
 
 	private List<DisplayNameEntry> getMemberDisplayNameEntiries() throws Exception {
 		List<DisplayNameEntry> result = new ArrayList<DisplayNameEntry>();
-		List<DisplayNameEntry> tmp = lookupService.getDisplayNameEntries(personService.getDnForPerson(null), this.group.getMembers());
+		List<PersonDisplayNameEntry> tmp = lookupService.getDisplayNameEntries(personService.getDnForPerson(null), PersonDisplayNameEntry.class, this.group.getMembers());
 		if (tmp != null) {
 			result.addAll(tmp);
 		}
@@ -382,7 +388,8 @@ public class UpdateGroupAction implements Serializable {
 				person.setSLAManager(slaManager);
 			}
 
-			List<String> personMemberOf = new ArrayList<String>(person.getMemberOf());
+			List<String> personMemberOf = person.getMemberOf();
+			personMemberOf = new ArrayList<String>(personMemberOf);
 			personMemberOf.add(groupDn);
 			person.setMemberOf(personMemberOf);
 
@@ -396,7 +403,7 @@ public class UpdateGroupAction implements Serializable {
 				Boolean slaManager = isSLAManager(organizationGroups, person);
 				person.setSLAManager(slaManager);
 			}
-			List<String> personMemberOf = new ArrayList<String>(person.getMemberOf());
+			List<String> personMemberOf = person.getMemberOf();
 			personMemberOf.remove(groupDn);
 			person.setMemberOf(personMemberOf);
 			personService.updatePerson(person);
@@ -456,5 +463,8 @@ public class UpdateGroupAction implements Serializable {
 	public boolean isUpdate() {
 		return update;
 	}
+	
+	@ObjectClass(value = "gluuPerson")
+	class PersonDisplayNameEntry extends DisplayNameEntry {}
 
 }
