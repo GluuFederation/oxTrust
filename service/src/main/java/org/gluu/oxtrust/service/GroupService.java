@@ -264,7 +264,7 @@ public class GroupService implements Serializable, IGroupService {
 	private String generateInumForNewGroupImpl() throws Exception {
 
 	    String id = null;
-	    if (idGeneratorService.isEnabled()) {	        
+	    if (idGeneratorService.isEnabled()) {
 	        id = idGeneratorService.executeExternalGenerateIdMethod(
 	            //Use the first enabled script only
 	            idGeneratorService.getCustomScriptConfigurations().stream().findFirst().orElse(null)
