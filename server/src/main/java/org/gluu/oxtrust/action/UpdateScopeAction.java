@@ -571,6 +571,11 @@ public class UpdateScopeAction implements Serializable {
 	}
 
 	@ObjectClass(value = "oxCustomScript")
-	class ScriptDisplayNameEntry extends DisplayNameEntry {}
+	class ScriptDisplayNameEntry extends DisplayNameEntry {
+
+		public ScriptDisplayNameEntry() {
+			super();
+		}
+	}
 
 }
