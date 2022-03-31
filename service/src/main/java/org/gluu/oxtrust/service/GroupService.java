@@ -14,9 +14,11 @@ import java.util.UUID;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import org.gluu.oxauth.model.common.IdType;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuGroup;
 import org.gluu.oxtrust.model.GluuGroupVisibility;
+import org.gluu.oxtrust.service.external.ExternalIdGeneratorService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.exception.EntryPersistenceException;
@@ -49,6 +51,9 @@ public class GroupService implements Serializable, IGroupService {
 
 	@Inject
 	private PersonService personService;
+	
+	@Inject
+	private ExternalIdGeneratorService idGeneratorService;
 
 	/*
 	 * (non-Javadoc)
@@ -257,7 +262,19 @@ public class GroupService implements Serializable, IGroupService {
 	 * @return New inum for group
 	 */
 	private String generateInumForNewGroupImpl() throws Exception {
-		return UUID.randomUUID().toString();
+
+	    String id = null;
+	    if (idGeneratorService.isEnabled()) {	        
+	        id = idGeneratorService.executeExternalGenerateIdMethod(
+	            //Use the first enabled script only
+	            idGeneratorService.getCustomScriptConfigurations().stream().findFirst().orElse(null)
+	            , ""    //appId 
+	            , IdType.GROUP.getType()    //idType
+	            , ""    //idPrefix
+            );
+	    }
+        return id == null ? UUID.randomUUID().toString() : id;
+
 	}
 
 	/*
