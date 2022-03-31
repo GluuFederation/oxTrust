@@ -32,8 +32,8 @@ import org.gluu.oxauth.model.crypto.OxAuthCryptoProvider;
 import org.gluu.oxauth.model.token.ClientAssertionType;
 import org.gluu.oxauth.model.uma.UmaMetadata;
 import org.gluu.oxauth.model.uma.UmaTokenResponse;
-import org.gluu.oxauth.model.util.SecurityProviderUtility;
 import org.gluu.util.StringHelper;
+import org.gluu.util.security.SecurityProviderUtility;
 import org.junit.Assert;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
