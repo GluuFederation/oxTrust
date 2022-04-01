@@ -465,6 +465,8 @@ public class UpdateGroupAction implements Serializable {
 	}
 	
 	@ObjectClass(value = "gluuPerson")
-	class PersonDisplayNameEntry extends DisplayNameEntry {}
+	class PersonDisplayNameEntry extends DisplayNameEntry {
+		public PersonDisplayNameEntry() {};
+	}
 
 }

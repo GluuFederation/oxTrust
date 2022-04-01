@@ -188,9 +188,13 @@ public class UmaInventoryAction implements Serializable {
 	}
 
 	@ObjectClass(value = "oxAuthCustomScope")
-	class ScopeDisplayNameEntry extends DisplayNameEntry {}
+	class ScopeDisplayNameEntry extends DisplayNameEntry {
+		public ScopeDisplayNameEntry() {}
+	}
 
 	@ObjectClass(value = "oxAuthClient")
-	class ClientDisplayNameEntry extends DisplayNameEntry {}
+	class ClientDisplayNameEntry extends DisplayNameEntry {
+		public ClientDisplayNameEntry() {}
+	}
 
 }

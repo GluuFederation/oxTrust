@@ -76,7 +76,7 @@ public class ClientService implements Serializable {
 	 * @param client
 	 */
 	public void removeClient(OxAuthClient client) {
-		persistenceEntryManager.removeRecursively(client.getDn());
+		persistenceEntryManager.removeRecursively(client.getDn(), OxAuthClient.class);
 	}
 
 	/**

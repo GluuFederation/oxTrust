@@ -97,8 +97,8 @@
 														id="custId" inputWidth="300" maxlength="60" required="true"
 														styleClass="form-control" requiredMessage="The field is empty" validatorMessage="String is not valid"
 														rendered="#{_custAttr.userCanEdit and _custAttr.metadata.displayName ne 'Gender, male or female' and permissionService.hasPermission(configurationService.configuration, 'profile_management')}"
-														value="#{_custAttr.value}">
-														validator="gluuAttributeValidator"
+														value="#{_custAttr.value}"
+														validator="gluuAttributeValidator">
 														<rich:validator event="blur"/>
 												</h:inputText>
 													<h:selectOneMenu value="#{_custAttr.value}"

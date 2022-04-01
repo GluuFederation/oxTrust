@@ -158,7 +158,7 @@ public class PersonService implements Serializable, IPersonService {
 	 */
 	@Override
 	public void removePerson(GluuCustomPerson person) {
-		persistenceEntryManager.removeRecursively(person.getDn());
+		persistenceEntryManager.removeRecursively(person.getDn(), GluuCustomPerson.class);
 	}
 
 	/*

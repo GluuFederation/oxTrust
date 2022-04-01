@@ -35,7 +35,7 @@ public class PairwiseIdService implements IPairwiseIdService, Serializable {
 		try {
 			String finalDn = String.format("oxId=%s,ou=pairwiseIdentifiers,", pairwiseIdentifier.getOxId());
 			finalDn = finalDn.concat(person.getDn());
-			ldapEntryManager.removeRecursively(finalDn);
+			ldapEntryManager.removeRecursively(finalDn, GluuCustomPerson.class);
 			return true;
 		} catch (Exception e) {
 			log.error("", e);

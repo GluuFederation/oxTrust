@@ -61,7 +61,7 @@ public class TrustedIDPService implements Serializable {
 	}
 	
 	public void removeTrustedIDP(OxTrustedIdp oxTrustedIdp) {
-		persistenceEntryManager.removeRecursively(oxTrustedIdp.getDn());
+		persistenceEntryManager.removeRecursively(oxTrustedIdp.getDn(), OxTrustedIdp.class);
 	}
 	
 	public OxTrustedIdp getTrustedIDPByInum(String inum, String... ldapReturnAttributes) {
