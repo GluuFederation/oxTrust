@@ -20,11 +20,13 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.gluu.model.GluuAttribute;
+import org.gluu.oxauth.model.common.IdType;
 import org.gluu.oxtrust.exception.DuplicateEmailException;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.SimplePerson;
 import org.gluu.oxtrust.model.User;
+import org.gluu.oxtrust.service.external.ExternalIdGeneratorService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.exception.operation.DuplicateEntryException;
@@ -64,6 +66,9 @@ public class PersonService implements Serializable, IPersonService {
 
 	@Inject
 	private OrganizationService organizationService;
+
+	@Inject
+	private ExternalIdGeneratorService idGeneratorService;
 
 	private List<GluuCustomAttribute> mandatoryAttributes;
 
@@ -439,7 +444,19 @@ public class PersonService implements Serializable, IPersonService {
 	 * @throws Exception
 	 */
 	private String generateInumForNewPersonImpl() {
-		return UUID.randomUUID().toString();
+
+	    String id = null;
+	    if (idGeneratorService.isEnabled()) {
+	        id = idGeneratorService.executeExternalGenerateIdMethod(
+	            //Use the first enabled script only
+	            idGeneratorService.getCustomScriptConfigurations().stream().findFirst().orElse(null)
+	            , ""    //appId 
+	            , IdType.PEOPLE.getType()    //idType
+	            , ""    //idPrefix
+            );
+	    }
+        return id == null ? UUID.randomUUID().toString() : id;
+
 	}
 
 	/*

@@ -496,7 +496,10 @@ public class UpdateUmaScopeAction implements Serializable {
 
 	@ObjectClass(value = "oxCustomScript")
 	class ScriptDisplayNameEntry extends DisplayNameEntry {
-		public ScriptDisplayNameEntry() {}
+
+		public ScriptDisplayNameEntry() {
+			super();
+		}
 	}
 
 }

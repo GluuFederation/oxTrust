@@ -571,12 +571,18 @@ public class UpdateResourceAction implements Serializable {
 
 	@ObjectClass(value = "oxAuthCustomScope")
 	class ScopeDisplayNameEntry extends DisplayNameEntry {
-		public ScopeDisplayNameEntry() {}
+
+		public ScopeDisplayNameEntry() {
+			super();
+		}
 	}
 
 	@ObjectClass(value = "oxAuthClient")
 	class ClientDisplayNameEntry extends DisplayNameEntry {
-		public ClientDisplayNameEntry() {}
+
+		public ClientDisplayNameEntry() {
+			super();
+		}
 	}
 
 }
