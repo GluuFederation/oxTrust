@@ -1428,6 +1428,11 @@ public class Shibboleth3ConfService implements Serializable {
         return documentStoreService.hasDocument(filePath);
     }
 
+    public boolean isLocalDocumentStoreType()  {
+
+        return documentStoreService.getProviderType() == DocumentStoreType.LOCAL;
+    }
+
     public void replaceSpMetadataCert(GluuSAMLTrustRelationship trustRelationship, String certRegEx, String certificate)
             throws IOException {
         String metadataFileName = trustRelationship.getSpMetaDataFN();

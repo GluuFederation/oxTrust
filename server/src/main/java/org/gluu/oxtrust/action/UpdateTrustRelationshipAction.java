@@ -698,16 +698,23 @@ public class UpdateTrustRelationshipAction implements Serializable {
         boolean emptySpMetadataFileName = StringHelper.isEmpty(spMetadataFileName);
         if ((fileWrapper == null) || (fileWrapper.getInputStream() == null)) {
             if (emptySpMetadataFileName) {
+                log.debug("The trust relationship {} has an empty Metadata filename",trustRelationship.getInum());
                 return false;
             }
             String filePath = shibboleth3ConfService.getSpMetadataFilePath(spMetadataFileName);
             if (filePath == null) {
+                log.debug("The trust relationship {} has an invalid Metadata file storage path", trustRelationship.getInum());
                 return false;
             }
 
-            File file = new File(filePath);
-            if (!file.exists()) {
-                return false;
+            if (shibboleth3ConfService.isLocalDocumentStoreType()) {
+                
+                File file = new File(filePath);
+                if(!file.exists()) {
+                    log.debug("The trust relationship {} metadata used local storage but the SP metadata file `{}` was not found",
+                    trustRelationship.getInum(),filePath);
+                    return false;
+                }
             }
             return true;
         }
