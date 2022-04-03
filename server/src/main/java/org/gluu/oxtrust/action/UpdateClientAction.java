@@ -1390,6 +1390,7 @@ public class UpdateClientAction implements Serializable {
         tmpAvailableGrantTypes.add(new SelectableEntity<GrantType>(GrantType.CLIENT_CREDENTIALS));
         tmpAvailableGrantTypes.add(new SelectableEntity<GrantType>(GrantType.RESOURCE_OWNER_PASSWORD_CREDENTIALS));
         tmpAvailableGrantTypes.add(new SelectableEntity<GrantType>(GrantType.OXAUTH_UMA_TICKET));
+        tmpAvailableGrantTypes.add(new SelectableEntity<GrantType>(GrantType.DEVICE_CODE));
         this.availableGrantTypes = tmpAvailableGrantTypes;
         selectAddedGrantTypes();
     }
