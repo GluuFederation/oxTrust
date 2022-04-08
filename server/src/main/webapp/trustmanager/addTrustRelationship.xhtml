@@ -32,11 +32,18 @@
                     </div>
                 </ui:define>
             </ui:decorate>
-            <ox:createSPMetadataDialog generateMethod="#{updateTrustRelationshipAction.generateSp()}"
-                                       id="createSPMetadata" label="Generate SP Metadata"
+            <ox:createMetadataDialog generateMethod="#{updateTrustRelationshipAction.generateMetadata}"
+                                       id="createMetadata" label="Generate SP Metadata"
                                        logoutUri="#{updateTrustRelationshipAction.trustRelationship.spLogoutURL}"
                                        metadataUri="#{updateTrustRelationshipAction.trustRelationship.spMetaDataURL}"
-                                       uri="#{updateTrustRelationshipAction.trustRelationship.url}"/>
+                                       uri="#{updateTrustRelationshipAction.trustRelationship.url}"
+                                       spEntityID="#{updateTrustRelationshipAction.saml2Settings.spEntityId}"
+                                       spAssertionConsumerServiceUrl="#{updateTrustRelationshipAction.spAssertionConsumerServiceUrlStr}"
+                                       spSingleLogoutServiceUrl="#{updateTrustRelationshipAction.spSingleLogoutServiceUrlStr}"                                       
+                                       spX509cert="#{updateTrustRelationshipAction.spX509certStr}"
+                                       spNameIDFormat="#{updateTrustRelationshipAction.saml2Settings.spNameIDFormat}"
+                                       authnRequestsSigned="#{updateTrustRelationshipAction.saml2Settings.authnRequestsSigned}"
+                                       wantAssertionsSigned="#{updateTrustRelationshipAction.saml2Settings.wantAssertionsSigned}"/>
 
 
         </section>

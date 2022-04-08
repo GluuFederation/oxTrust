@@ -22,7 +22,15 @@
             }
         }
 
+    function changeEvent(element) {
+    var val = $(element).find('option:selected').text();
+    alert("val " + val);
+    if(val === 'Manual') {
+       #{rich:component('createMetadata:createMeatadataModalPanel')}.show();
+    }
+	}        
     </h:outputScript>
+	<ui:include src="/WEB-INF/incl/trustmanager/viewSPMetadata.xhtml" />
 	<ui:include
 		src="/WEB-INF/incl/trustmanager/configureMetadataFiltersPanel.xhtml" />
 	<ui:include
@@ -71,6 +79,20 @@
 .inpanelBody {
 	height: 220px;
 	width: 220px;
+}
+
+#spMetadataPanel_container {
+	z-index: 999 !important;
+}
+
+#spMetadataPanel_content_scroller {
+	width: 700px !important;
+	height: 500px !important;
+}
+
+#spMetadataPanel_content {
+	width: 700px !important;
+	height: 500px !important;
 }
 
 pre {
@@ -138,7 +160,7 @@ input[submit] {
 												<h:selectOneMenu
 													styleClass=" rounded form-control MetaDataType"
 													value="#{_trustRelationship.spMetaDataSourceType}"
-													required="true"
+													onchange="changeEvent(this)" required="true"
 													id="spMetaDataSourceTypeId"
 													converter="omnifaces.GenericEnumConverter">
 													<f:selectItem noSelectionOption="true"

@@ -7,7 +7,7 @@
 	xmlns:b="http://bootsfaces.net/ui"
 	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
 	xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
-				xmlns:rich="http://richfaces.org/rich"
+	xmlns:rich="http://richfaces.org/rich"
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
 	xmlns:p="http://primefaces.org/ui"
@@ -80,6 +80,7 @@
 									</h:panelGroup>
 									<ui:param name="_mandatoryAttributes"
 										value="#{userProfileAction.mandatoryAttributes}" />
+									<h:messages errorStyle="color:red;"  />
 									<h:panelGroup id="selectedCustomAttributesId">
 										<a4j:repeat rowKeyVar="_custAttrIdx"
 											value="#{_customAttributes}" var="_custAttr">
@@ -92,14 +93,25 @@
 												rendered="#{_custAttr.userCanAccess  and (_custAttr.metadata.dataType.value ne 'photo') and (_custAttr.metadata.displayName ne 'Inum') and (_custAttr.metadata.name ne 'gluuIMAPData') and (not _custAttr.isMultiValued())}"
 												template="/WEB-INF/incl/layout/#{_custAttr.userCanEdit  ? 'edit' : 'view'}.xhtml">
 												<div class="col-sm-11" tabindex="0">
-													<h:inputText tabindex="1"
+												<h:inputText tabindex="1"
 														defaultLabel="click to enter #{_custAttr.metadata.displayName}"
 														id="custId" inputWidth="300" maxlength="60" required="true"
 														styleClass="form-control" requiredMessage="The field is empty" validatorMessage="String is not valid"
-														rendered="#{_custAttr.userCanEdit and _custAttr.metadata.displayName ne 'Gender, male or female' and permissionService.hasPermission(configurationService.configuration, 'profile_management')}"
+														rendered="#{_custAttr.userCanEdit and _custAttr.metadata.displayName ne 'Gender, male or female' and (_custAttr.metadata.displayName ne 'Email') and  permissionService.hasPermission(configurationService.configuration, 'profile_management')}"
 														value="#{_custAttr.value}"
 														validator="gluuAttributeValidator">
-														<rich:validator event="blur"/>
+                                                		<rich:validator event="blur"/>
+												</h:inputText>
+												<h:inputText tabindex="1"
+														defaultLabel="click to enter #{_custAttr.metadata.displayName}"
+														id="emailcust" inputWidth="300" maxlength="60" required="true"
+														styleClass="form-control" requiredMessage="The field is empty" validatorMessage="Please provide a valid email address"
+														rendered="#{_custAttr.userCanEdit and _custAttr.metadata.displayName eq 'Email' and permissionService.hasPermission(configurationService.configuration, 'profile_management')}"
+														value="#{_custAttr.value}"
+														validator="gluuAttributeValidator">
+														<f:validateRegex 
+                                                        pattern="[\w\.-]*[a-zA-Z0-9_]@[\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]"/>
+                                                		<rich:validator event="blur"/>
 												</h:inputText>
 													<h:selectOneMenu value="#{_custAttr.value}"
 														styleClass="rounded form-control" tabindex="1"
