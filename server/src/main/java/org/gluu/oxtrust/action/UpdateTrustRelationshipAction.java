@@ -6,6 +6,7 @@
 
 package org.gluu.oxtrust.action;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -13,10 +14,15 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.io.StringWriter;
 import java.math.BigInteger;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.SecureRandom;
 import java.security.cert.CertificateEncodingException;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -79,6 +85,8 @@ import org.gluu.oxtrust.service.SvnSyncTimer;
 import org.gluu.oxtrust.service.TemplateService;
 import org.gluu.oxtrust.service.TrustService;
 import org.gluu.oxtrust.util.OxTrustConstants;
+import org.gluu.oxtrust.util.saml.settings.Metadata;
+import org.gluu.oxtrust.util.saml.settings.Saml2Settings;
 import org.gluu.persist.exception.BasePersistenceException;
 import org.gluu.service.MailService;
 import org.gluu.service.SchemaService;
@@ -115,6 +123,8 @@ public class UpdateTrustRelationshipAction implements Serializable {
     private boolean update;
 
     private GluuSAMLTrustRelationship trustRelationship;
+    
+    private org.gluu.oxtrust.util.saml.settings.Saml2Settings saml2Settings;
 
     @Inject
     private OrganizationService organizationService;
@@ -199,6 +209,14 @@ public class UpdateTrustRelationshipAction implements Serializable {
 
     private List<String> availableEntitiesFiltered;
 
+	private String metadataStr;
+	
+	private String spAssertionConsumerServiceUrlStr;
+
+	private String spSingleLogoutServiceUrlStr;
+	
+	private String spX509certStr;
+
     public List<GluuMetadataSourceType> getMetadataSourceTypesList() {
         List<GluuMetadataSourceType> metadataSourceTypesList = (Arrays.asList(GluuMetadataSourceType.values()));
         if (GluuEntityType.FederationAggregate.equals(trustRelationship.getEntityType())) {
@@ -221,6 +239,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
         }
         this.update = false;
         this.trustRelationship = new GluuSAMLTrustRelationship();
+        this.saml2Settings = new Saml2Settings();
         this.trustRelationship.setMaxRefreshDelay("PT8H");
         this.trustRelationship.setOwner(organizationService.getOrganization().getDn());
         boolean initActionsResult = initActions();
@@ -332,6 +351,24 @@ public class UpdateTrustRelationshipAction implements Serializable {
                         }
                     } else {
                         log.error("Failed to save SP meta-data file {}", fileWrapper);
+                        return OxTrustConstants.RESULT_FAILURE;
+                    }
+                } catch (IOException ex) {
+                    log.error("Failed to download SP metadata", ex);
+                    facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to download SP metadata");
+                    return OxTrustConstants.RESULT_FAILURE;
+                }
+
+                break;
+            case MANUAL:
+                try {
+                    if (saveSpMetaDataFileSourceTypeManual()) {
+                        //updateSpMetaDataCert(certWrapper);
+                        if (!update) {
+                            this.trustRelationship.setStatus(GluuStatus.ACTIVE);
+                        }
+                    } else {
+                        log.error("Failed to save meta-data content file {}", fileWrapper);
                         return OxTrustConstants.RESULT_FAILURE;
                     }
                 } catch (IOException ex) {
@@ -726,6 +763,53 @@ public class UpdateTrustRelationshipAction implements Serializable {
             }
         }
         String result = shibboleth3ConfService.saveSpMetadataFile(spMetadataFileName, fileWrapper.getInputStream());
+        if (StringHelper.isNotEmpty(result)) {
+            metadataValidationTimer.queue(result);
+        } else {
+            facesMessages.add(FacesMessage.SEVERITY_ERROR,
+                    "Failed to save SP meta-data file. Please check if you provide correct file");
+        }
+        return StringHelper.isNotEmpty(result);
+    }
+    
+    private boolean saveSpMetaDataFileSourceTypeManual() throws IOException {
+        String spMetadataFileName = trustRelationship.getSpMetaDataFN();
+        InputStream is = new ByteArrayInputStream(metadataStr.getBytes());
+        boolean emptySpMetadataFileName = StringHelper.isEmpty(spMetadataFileName);
+        if ((metadataStr == null) || (is == null)) {
+            if (emptySpMetadataFileName) {
+                log.debug("The trust relationship {} has an empty Metadata filename",trustRelationship.getInum());
+                return false;
+            }
+            String filePath = shibboleth3ConfService.getSpMetadataFilePath(spMetadataFileName);
+            if (filePath == null) {
+                log.debug("The trust relationship {} has an invalid Metadata file storage path", trustRelationship.getInum());
+                return false;
+            }
+
+            if (shibboleth3ConfService.isLocalDocumentStoreType()) {
+                
+                File file = new File(filePath);
+                if(!file.exists()) {
+                    log.debug("The trust relationship {} metadata used local storage but the SP metadata file `{}` was not found",
+                    trustRelationship.getInum(),filePath);
+                    return false;
+                }
+            }
+            return true;
+        }
+        if (emptySpMetadataFileName) {
+            spMetadataFileName = shibboleth3ConfService.getSpNewMetadataFileName(this.trustRelationship);
+            this.trustRelationship.setSpMetaDataFN(spMetadataFileName);
+            if (trustRelationship.getDn() == null) {
+                String dn = trustService.getDnForTrustRelationShip(this.inum);
+                this.trustRelationship.setDn(dn);
+                trustService.addTrustRelationship(this.trustRelationship);
+            } else {
+                trustService.updateTrustRelationship(this.trustRelationship);
+            }
+        }
+        String result = shibboleth3ConfService.saveSpMetadataFile(spMetadataFileName, is);
         if (StringHelper.isNotEmpty(result)) {
             metadataValidationTimer.queue(result);
         } else {
@@ -1154,11 +1238,16 @@ public class UpdateTrustRelationshipAction implements Serializable {
         return GluuEntityType.values();
     }
 
-    public boolean generateSp() throws IOException {
+    public void generateSp() throws IOException {
         FacesContext facesContext = FacesContext.getCurrentInstance();
         try {
             this.trustRelationship.setInum(trustService.generateInumForNewTrustRelationship());
-            String cert = getCertForGeneratedSP();
+            String cert = "";
+            if(this.trustRelationship.getSpCertificate() != null ) {
+            	cert = this.trustRelationship.getSpCertificate();
+            }else {
+            	cert = getCertForGeneratedSP();
+            }
             String spMetadataFileName = this.trustRelationship.getSpMetaDataFN();
             if (StringHelper.isEmpty(spMetadataFileName)) {
                 spMetadataFileName = shibboleth3ConfService.getSpNewMetadataFileName(trustRelationship);
@@ -1202,4 +1291,64 @@ public class UpdateTrustRelationshipAction implements Serializable {
         }
 
     }
+
+	public org.gluu.oxtrust.util.saml.settings.Saml2Settings getSaml2Settings() {
+		return saml2Settings;
+	}
+
+	public void setSaml2Settings(org.gluu.oxtrust.util.saml.settings.Saml2Settings saml2Settings) {
+		this.saml2Settings = saml2Settings;
+	}
+	
+	public void generateMetadata() throws MalformedURLException, CertificateException {
+		if(spAssertionConsumerServiceUrlStr != null && !spAssertionConsumerServiceUrlStr.isEmpty()) 
+			saml2Settings.setSpAssertionConsumerServiceUrl(new URL(spAssertionConsumerServiceUrlStr));
+		
+		if(spSingleLogoutServiceUrlStr != null && !spSingleLogoutServiceUrlStr.isEmpty()) 
+			saml2Settings.setSpSingleLogoutServiceUrl(new URL(spSingleLogoutServiceUrlStr));
+		
+		if(spX509certStr != null && !spX509certStr.isEmpty()) {
+			spX509certStr = org.gluu.oxtrust.util.saml.util.Util.formatCert(spX509certStr, true);
+			X509Certificate cert = (X509Certificate) CertificateFactory.getInstance("X.509").generateCertificate(
+					new ByteArrayInputStream(spX509certStr.getBytes()));
+			saml2Settings.setSpX509cert(cert);
+		}
+		Metadata metadataObj = new Metadata(saml2Settings);
+		metadataStr = metadataObj.getMetadataString();
+		log.info(metadataStr);
+		//return true;
+		
+	}
+
+	public String getMetadataStr() {
+		return metadataStr;
+	}
+
+	public void setMetadataStr(String metadataStr) {
+		this.metadataStr = metadataStr;
+	}
+
+	public String getSpAssertionConsumerServiceUrlStr() {
+		return spAssertionConsumerServiceUrlStr;
+	}
+
+	public void setSpAssertionConsumerServiceUrlStr(String spAssertionConsumerServiceUrlStr) {
+		this.spAssertionConsumerServiceUrlStr = spAssertionConsumerServiceUrlStr;
+	}
+
+	public String getSpSingleLogoutServiceUrlStr() {
+		return spSingleLogoutServiceUrlStr;
+	}
+
+	public void setSpSingleLogoutServiceUrlStr(String spSingleLogoutServiceUrlStr) {
+		this.spSingleLogoutServiceUrlStr = spSingleLogoutServiceUrlStr;
+	}
+
+	public String getSpX509certStr() {
+		return spX509certStr;
+	}
+
+	public void setSpX509certStr(String spX509certStr) {
+		this.spX509certStr = spX509certStr;
+	}
 }
