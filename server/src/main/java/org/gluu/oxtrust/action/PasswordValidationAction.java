@@ -78,6 +78,8 @@ public class PasswordValidationAction implements Cloneable, Serializable {
 	private boolean checkOldPassword = false;
 
 	private GluuCustomPerson person;
+	@Inject
+	private LogoutAction logoutAction;
 
 	@AssertTrue(message = "Passwords are different or they don't match the requirements define by site administrator.")
 	public boolean isPasswordsEquals() {
@@ -131,6 +133,13 @@ public class PasswordValidationAction implements Cloneable, Serializable {
 				try {
 					person.setUserPassword(this.password);
 					personService.updatePerson(person);
+					
+					if(identity.getUser().getUid().equals(person.getUid())) {
+							logoutAction.processLogout();
+							facesMessages.add(FacesMessage.SEVERITY_INFO,
+									"Profile '#{userProfileAction.person.displayName}' updated successfully");
+					}
+					
 					oxTrustAuditService.audit(
 							"USER " + person.getInum() + " **" + person.getDisplayName() + "** PASSWORD UPDATED",
 							identity.getUser(),
