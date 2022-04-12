@@ -178,6 +178,9 @@ public class UpdatePersonAction implements Serializable {
 
 	@Inject
 	private JsonService jsonService;
+	
+	@Inject
+	private LogoutAction logoutAction;
 
 	private String gluuStatus;
 
@@ -230,6 +233,8 @@ public class UpdatePersonAction implements Serializable {
 	private List<String> externalAuthCustomAttributes = new ArrayList<String>();
 	private List<String> oxExternalUids = new ArrayList<String>();
 	private DeviceData deviceDetail;
+
+	private String oldUid;
 
 	public DeviceData getDeviceDetail() {
 		return deviceDetail;
@@ -305,6 +310,7 @@ public class UpdatePersonAction implements Serializable {
 			addFido2Devices();
 			addOtpDevices();
 			addMobileDevices();
+			this.oldUid = person.getUid();
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 			return OxTrustConstants.RESULT_FAILURE;
@@ -580,6 +586,11 @@ public class UpdatePersonAction implements Serializable {
 						(HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
 				if (runScript) {
 					externalUpdateUserService.executeExternalPostUpdateUserMethods(this.person);
+				}
+				if(identity.getUser().getUid().equals(this.oldUid)) {
+						logoutAction.processLogout();
+						facesMessages.add(FacesMessage.SEVERITY_INFO,
+								"Profile '#{userProfileAction.person.displayName}' updated successfully");
 				}
 			} catch (DuplicateEmailException ex) {
 				log.error("Failed to update person {}", inum, ex);
