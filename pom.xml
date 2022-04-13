@@ -393,7 +393,7 @@
 			<dependency>
 				<groupId>org.opensaml</groupId>
 				<artifactId>opensaml-saml-api</artifactId>
-				<version>3.4.3</version>
+				<version>3.4.6</version>
 			</dependency>
 			<dependency>
 				<groupId>javassist</groupId>
