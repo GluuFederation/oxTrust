@@ -125,6 +125,7 @@ public class OpenIdClient<C extends AppConfiguration, L extends AppConfiguration
 		final OpenIdConfigurationClient openIdConfigurationClient = new OpenIdConfigurationClient(openIdProvider);
 		final OpenIdConfigurationResponse response = openIdConfigurationClient.execOpenIdConfiguration();
 		if ((response == null) || (response.getStatus() != 200)) {
+			logger.info("Failed to load oxAuth configuration. Http code ( {} ). Body: {}", response.getStatus(),response.getEntity());
 			throw new ConfigurationException("Failed to load oxAuth configuration");
 		}
 
