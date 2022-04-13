@@ -46,10 +46,6 @@
 		</dependency>
 		<dependency>
 			<groupId>org.gluu</groupId>
-			<artifactId>oxcore-saml</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.gluu</groupId>
 			<artifactId>oxcore-document-store</artifactId>
 		</dependency>
 
