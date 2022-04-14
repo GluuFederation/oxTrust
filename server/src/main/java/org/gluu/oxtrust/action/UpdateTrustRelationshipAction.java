@@ -87,6 +87,7 @@ import org.gluu.service.SchemaService;
 import org.gluu.service.cdi.async.Asynchronous;
 import org.gluu.service.security.Secure;
 import org.gluu.util.StringHelper;
+import org.gluu.util.security.SecurityProviderUtility;
 import org.slf4j.Logger;
 
 import com.unboundid.ldap.sdk.schema.AttributeTypeDefinition;
@@ -491,11 +492,8 @@ public class UpdateTrustRelationshipAction implements Serializable {
         if ((cert == null) && (trustRelationship.getUrl() != null)) {
             facesMessages.add(FacesMessage.SEVERITY_ERROR,
                     "Certificate were not provided, or was incorrect. Appliance will create a self-signed certificate.");
-            if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
-                Security.addProvider(new BouncyCastleProvider());
-            }
             try {
-                KeyPairGenerator keyPairGen = KeyPairGenerator.getInstance("RSA", "BC");
+                KeyPairGenerator keyPairGen = KeyPairGenerator.getInstance("RSA", SecurityProviderUtility.getBCProvider());
                 keyPairGen.initialize(2048);
                 KeyPair pair = keyPairGen.generateKeyPair();
                 StringWriter keyWriter = new StringWriter();
@@ -510,8 +508,8 @@ public class UpdateTrustRelationshipAction implements Serializable {
                         new Date(System.currentTimeMillis() + (1000L * 60 * 60 * 24 * 365 * 10)),
                         new X500Name("CN=" + url + ", OU=None, O=None L=None, C=None"), pair.getPublic());
 
-                cert = new JcaX509CertificateConverter().setProvider("BC").getCertificate(v3CertGen
-                        .build(new JcaContentSignerBuilder("MD5withRSA").setProvider("BC").build(pair.getPrivate())));
+                cert = new JcaX509CertificateConverter().setProvider(SecurityProviderUtility.getBCProvider()).getCertificate(v3CertGen
+                        .build(new JcaContentSignerBuilder("MD5withRSA").setProvider(SecurityProviderUtility.getBCProvider()).build(pair.getPrivate())));
                 org.apache.commons.codec.binary.Base64 encoder = new org.apache.commons.codec.binary.Base64(64);
                 byte[] derCert = cert.getEncoded();
                 String pemCertPre = new String(encoder.encode(derCert));
