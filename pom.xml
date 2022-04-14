@@ -85,6 +85,7 @@
 		<module>client</module>
 		<module>service</module>
 		<module>server</module>
+		<module>server-fips</module>
 		<module>openid-auth-client</module>
 		<module>saml-openid-auth-client</module>
 		<module>cas-openid-auth-client</module>
