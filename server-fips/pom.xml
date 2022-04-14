@@ -27,7 +27,7 @@
 				<version>3.0.0</version>
 				<executions>
 					<execution>
-						<id>build-oxauth-fips-war</id>
+						<id>build-oxtrust-fips-war</id>
 						<phase>process-sources</phase>
 						<configuration>
 							<target>
