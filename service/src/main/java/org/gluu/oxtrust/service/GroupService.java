@@ -140,10 +140,12 @@ public class GroupService implements Serializable, IGroupService {
 		Filter ownerFilter = Filter.createEqualityFilter(OxTrustConstants.owner, personDN);
 		Filter memberFilter = Filter.createEqualityFilter(OxTrustConstants.member, personDN);
 		Filter searchFilter = Filter.createORFilter(ownerFilter, memberFilter);
+		Filter groupFilter = Filter.createEqualityFilter(OxTrustConstants.dn, groupDN);
+		Filter groupSearchFilter = Filter.createANDFilter(groupFilter,searchFilter);
 
 		boolean isMemberOrOwner = false;
 		try {
-			isMemberOrOwner = persistenceEntryManager.findEntries(groupDN, GluuGroup.class, searchFilter, 1).size() > 0;
+			isMemberOrOwner = persistenceEntryManager.findEntries(groupDN, GluuGroup.class, groupSearchFilter, 1).size() > 0;
 		} catch (EntryPersistenceException ex) {
 			log.error("Failed to determine if person '{}' memeber or owner of group '{}'", personDN, groupDN, ex);
 		}
