@@ -140,6 +140,11 @@ public class GroupService implements Serializable, IGroupService {
 		Filter ownerFilter = Filter.createEqualityFilter(OxTrustConstants.owner, personDN);
 		Filter memberFilter = Filter.createEqualityFilter(OxTrustConstants.member, personDN);
 		Filter searchFilter = Filter.createORFilter(ownerFilter, memberFilter);
+		
+		if (!persistenceEntryManager.hasBranchesSupport(groupDN)) {
+			Filter groupFilter = Filter.createEqualityFilter(OxTrustConstants.dn, groupDN);
+			searchFilter = Filter.createANDFilter(groupFilter,searchFilter);
+		}
 
 		boolean isMemberOrOwner = false;
 		try {
