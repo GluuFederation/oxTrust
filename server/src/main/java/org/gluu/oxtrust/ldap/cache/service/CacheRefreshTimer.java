@@ -725,10 +725,10 @@ public class CacheRefreshTimer {
 
 		try {
 			if (updatePerson) {
-				personService.updatePerson(targetPerson);
+				personService.updatePersonWithoutCheck(targetPerson);
 				log.debug("Updated person '{}'", targetInum);
 			} else {
-				personService.addPerson(targetPerson);
+				personService.addPersonWithoutCheck(targetPerson);
 				log.debug("Added new person '{}'", targetInum);
 			}
 		} catch (Exception ex) {
