@@ -119,11 +119,15 @@ public class PersonService implements Serializable, IPersonService {
 				throw new DuplicateEntryException("Duplicate UID value: " + person.getUid());
 			}
 		} catch (Exception e) {
+			if (log.isTraceEnabled()) {
+				log.trace("Failed to add person entry!", e);
+			}
+
 			if ((e.getCause() != null) && (e.getCause().getMessage() != null) &&
 				 e.getCause().getMessage().contains("unique attribute conflict was detected for attribute mail")) {
 				throw new DuplicateEmailException("Email Already Registered");
 			} else {
-				throw new Exception("Duplicate UID value: " + person.getUid());
+				throw new DuplicateEmailException("Duplicate UID value: " + person.getUid());
 			}
 		}
 
@@ -146,6 +150,10 @@ public class PersonService implements Serializable, IPersonService {
 			}
 			persistenceEntryManager.merge(person);
 		} catch (Exception e) {
+			if (log.isTraceEnabled()) {
+				log.trace("Failed to add person entry!", e);
+			}
+
 			if (e.getCause().getMessage().contains("unique attribute conflict was detected for attribute mail")) {
 				throw new DuplicateEmailException("Email Already Registered");
 			} else {
