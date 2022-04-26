@@ -113,8 +113,7 @@ public class PersonService implements Serializable, IPersonService {
 		try {
 			List<GluuCustomPerson> persons = getPersonsByUid(person.getUid());
 			if (persons == null || persons.size() == 0) {
-				person.setCreationDate(new Date());
-				persistenceEntryManager.persist(person);
+				addPersonWithoutCheck(person);
 			} else {
 				throw new DuplicateEntryException("Duplicate UID value: " + person.getUid());
 			}
@@ -133,6 +132,11 @@ public class PersonService implements Serializable, IPersonService {
 
 	}
 
+	public void addPersonWithoutCheck(GluuCustomPerson person) {
+		person.setCreationDate(new Date());
+		persistenceEntryManager.persist(person);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -143,12 +147,7 @@ public class PersonService implements Serializable, IPersonService {
 	@Override
 	public void updatePerson(GluuCustomPerson person) throws Exception {
 		try {
-			Date updateDate = new Date();
-			person.setUpdatedAt(updateDate);
-			if (person.getAttribute("oxTrustMetaLastModified") != null) {
-				person.setAttribute("oxTrustMetaLastModified", Instant.ofEpochMilli(updateDate.getTime()).toString());
-			}
-			persistenceEntryManager.merge(person);
+			updatePersonWithoutCheck(person);
 		} catch (Exception e) {
 			if (log.isTraceEnabled()) {
 				log.trace("Failed to add person entry!", e);
@@ -161,6 +160,15 @@ public class PersonService implements Serializable, IPersonService {
 			}
 		}
 
+	}
+
+	public void updatePersonWithoutCheck(GluuCustomPerson person) {
+		Date updateDate = new Date();
+		person.setUpdatedAt(updateDate);
+		if (person.getAttribute("oxTrustMetaLastModified") != null) {
+			person.setAttribute("oxTrustMetaLastModified", Instant.ofEpochMilli(updateDate.getTime()).toString());
+		}
+		persistenceEntryManager.merge(person);
 	}
 
 	/*
