@@ -31,7 +31,7 @@
         "personObjectClassTypes": {
             "id": "personObjectClassTypes",
             "type": "array",
-            "minItems": 1,
+            "minItems": 0,
             "uniqueItems": true,
             "additionalItems": true,
             "items": {
@@ -47,7 +47,7 @@
         "personObjectClassDisplayNames": {
             "id": "personObjectClassDisplayNames",
             "type": "array",
-            "minItems": 1,
+            "minItems": 0,
             "uniqueItems": true,
             "additionalItems": true,
             "items": {
