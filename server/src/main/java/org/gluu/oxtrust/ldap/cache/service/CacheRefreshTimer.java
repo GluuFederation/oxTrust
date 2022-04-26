@@ -783,7 +783,7 @@ public class CacheRefreshTimer {
 
 			// Remove person from target server
 			try {
-				targetPersistenceEntryManager.removeRecursively(removedPerson.getDn(), GluuSimplePerson.class);
+				targetPersistenceEntryManager.removeRecursively(removedPerson.getDn(), GluuCustomPerson.class);
 				result1.add(inum);
 			} catch (BasePersistenceException ex) {
 				log.error("Failed to remove person entry with inum '{}' and DN: {}", inum, removedPerson.getDn(), ex);
