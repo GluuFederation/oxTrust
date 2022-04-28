@@ -709,7 +709,10 @@ public class CacheRefreshTimer {
 			targetPerson.setStatus(appConfiguration.getSupportedUserStatus().get(0));
 			updatePerson = false;
 		}
-		targetPerson.setCustomObjectClasses(targetCustomObjectClasses);
+
+		if (PersistenceEntryManager.PERSITENCE_TYPES.ldap.name().equals(ldapEntryManager.getPersistenceType())) {
+			targetPerson.setCustomObjectClasses(targetCustomObjectClasses);
+		}
 
 		targetPerson.setSourceServerName(sourcePerson.getSourceServerName());
 		targetPerson.setSourceServerUserDn(sourcePerson.getDn());
