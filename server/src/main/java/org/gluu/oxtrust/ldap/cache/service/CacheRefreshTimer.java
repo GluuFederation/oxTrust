@@ -1315,6 +1315,10 @@ public class CacheRefreshTimer {
 	}
 
 	@ObjectClass(value = "gluuPerson")
-	class TypedGluuSimplePerson extends GluuSimplePerson {}
+	class TypedGluuSimplePerson extends GluuSimplePerson {
+		public TypedGluuSimplePerson() {
+			super();
+		}
+	}
 
 }
