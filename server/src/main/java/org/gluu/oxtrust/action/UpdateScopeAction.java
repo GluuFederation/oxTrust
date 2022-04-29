@@ -383,8 +383,8 @@ public class UpdateScopeAction implements Serializable {
 
 	private List<DisplayNameEntry> getClaimDisplayNameEntiries() throws Exception {
 		List<DisplayNameEntry> result = new ArrayList<DisplayNameEntry>();
-		List<ScriptDisplayNameEntry> tmp = lookupService.getDisplayNameEntries(attributeService.getDnForAttribute(null),
-				ScriptDisplayNameEntry.class, this.scope.getOxAuthClaims());
+		List<CustomScopeDisplayNameEntry> tmp = lookupService.getDisplayNameEntries(attributeService.getDnForAttribute(null),
+				CustomScopeDisplayNameEntry.class, this.scope.getOxAuthClaims());
 		if (tmp != null) {
 			result.addAll(tmp);
 		}
@@ -420,8 +420,8 @@ public class UpdateScopeAction implements Serializable {
 		if ((this.scope.getDynamicScopeScripts() == null) || (this.scope.getDynamicScopeScripts().size() == 0)) {
 			return result;
 		}
-		List<ScriptDisplayNameEntry> displayNameEntries = lookupService.getDisplayNameEntries(customScriptService.baseDn(),
-				ScriptDisplayNameEntry.class, this.scope.getDynamicScopeScripts());
+		List<CustomScopeDisplayNameEntry> displayNameEntries = lookupService.getDisplayNameEntries(customScriptService.baseDn(),
+				CustomScopeDisplayNameEntry.class, this.scope.getDynamicScopeScripts());
 		if (displayNameEntries != null) {
 			for (DisplayNameEntry displayNameEntry : displayNameEntries) {
 				result.add(new CustomScript(displayNameEntry.getDn(), displayNameEntry.getInum(),
@@ -570,10 +570,9 @@ public class UpdateScopeAction implements Serializable {
 		}
 	}
 
-	@ObjectClass(value = "oxCustomScript")
-	class ScriptDisplayNameEntry extends DisplayNameEntry {
-
-		public ScriptDisplayNameEntry() {
+	@ObjectClass(value = "oxAuthCustomScope")
+	class CustomScopeDisplayNameEntry extends DisplayNameEntry {
+		public CustomScopeDisplayNameEntry() {
 			super();
 		}
 	}
