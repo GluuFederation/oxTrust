@@ -338,7 +338,7 @@ public class CacheRefreshTimer {
 
 		// Load all entries from Source servers
 		log.info("Attempting to load entries from source server");
-		List<TypedGluuSimplePerson> sourcePersons;
+		List<GluuSimplePerson> sourcePersons;
 
 		if (cacheRefreshConfiguration.isUseSearchLimit()) {
 			sourcePersons = loadSourceServerEntries(cacheRefreshConfiguration, sourceServerConnections);
@@ -348,7 +348,7 @@ public class CacheRefreshTimer {
 
 		log.info("Found '{}' entries in source server", sourcePersons.size());
 
-		Map<CacheCompoundKey, TypedGluuSimplePerson> sourcePersonCacheCompoundKeyMap = getSourcePersonCompoundKeyMap(
+		Map<CacheCompoundKey, GluuSimplePerson> sourcePersonCacheCompoundKeyMap = getSourcePersonCompoundKeyMap(
 				cacheRefreshConfiguration, sourcePersons);
 		log.info("Found '{}' unique entries in source server", sourcePersonCacheCompoundKeyMap.size());
 
@@ -582,7 +582,7 @@ public class CacheRefreshTimer {
 	}
 
 	private List<String> updateTargetEntriesViaCopy(CacheRefreshConfiguration cacheRefreshConfiguration,
-			Map<CacheCompoundKey, TypedGluuSimplePerson> sourcePersonCacheCompoundKeyMap,
+			Map<CacheCompoundKey, GluuSimplePerson> sourcePersonCacheCompoundKeyMap,
 			HashMap<CacheCompoundKey, GluuInumMap> primaryKeyAttrValueInumMap, Set<String> changedInums) {
 		HashMap<String, CacheCompoundKey> inumCacheCompoundKeyMap = getInumCacheCompoundKeyMap(
 				primaryKeyAttrValueInumMap);
@@ -857,7 +857,7 @@ public class CacheRefreshTimer {
 				null, 0, 0, cacheRefreshConfiguration.getLdapSearchSizeLimit());
 	}
 
-	private List<TypedGluuSimplePerson> loadSourceServerEntriesWithoutLimits(
+	private List<GluuSimplePerson> loadSourceServerEntriesWithoutLimits(
 			CacheRefreshConfiguration cacheRefreshConfiguration, LdapServerConnection[] sourceServerConnections)
 			throws SearchException {
 		Filter customFilter = cacheRefreshService.createFilter(cacheRefreshConfiguration.getCustomLdapFilter());
@@ -870,7 +870,7 @@ public class CacheRefreshTimer {
 
 		Set<String> addedDns = new HashSet<String>();
 
-		List<TypedGluuSimplePerson> sourcePersons = new ArrayList<TypedGluuSimplePerson>();
+		List<GluuSimplePerson> sourcePersons = new ArrayList<GluuSimplePerson>();
 		for (LdapServerConnection sourceServerConnection : sourceServerConnections) {
 			String sourceServerName = sourceServerConnection.getSourceServerName();
 
@@ -882,12 +882,12 @@ public class CacheRefreshTimer {
 			}
 
 			for (String baseDn : baseDns) {
-				List<TypedGluuSimplePerson> currentSourcePersons = sourcePersistenceEntryManager.findEntries(baseDn,
-						TypedGluuSimplePerson.class, filter, SearchScope.SUB, returnAttributes, null, 0, 0,
+				List<GluuSimplePerson> currentSourcePersons = sourcePersistenceEntryManager.findEntries(baseDn,
+						GluuSimplePerson.class, filter, SearchScope.SUB, returnAttributes, null, 0, 0,
 						cacheRefreshConfiguration.getLdapSearchSizeLimit());
 
 				// Add to result and ignore root entry if needed
-				for (TypedGluuSimplePerson currentSourcePerson : currentSourcePersons) {
+				for (GluuSimplePerson currentSourcePerson : currentSourcePersons) {
 					currentSourcePerson.setSourceServerName(sourceServerName);
 					// if (!StringHelper.equalsIgnoreCase(baseDn,
 					// currentSourcePerson.getDn())) {
@@ -904,7 +904,7 @@ public class CacheRefreshTimer {
 		return sourcePersons;
 	}
 
-	private List<TypedGluuSimplePerson> loadSourceServerEntries(CacheRefreshConfiguration cacheRefreshConfiguration,
+	private List<GluuSimplePerson> loadSourceServerEntries(CacheRefreshConfiguration cacheRefreshConfiguration,
 			LdapServerConnection[] sourceServerConnections) throws SearchException {
 		Filter customFilter = cacheRefreshService.createFilter(cacheRefreshConfiguration.getCustomLdapFilter());
 		String[] keyAttributes = getCompoundKeyAttributes(cacheRefreshConfiguration);
@@ -917,7 +917,7 @@ public class CacheRefreshTimer {
 
 		Set<String> addedDns = new HashSet<String>();
 
-		List<TypedGluuSimplePerson> sourcePersons = new ArrayList<TypedGluuSimplePerson>();
+		List<GluuSimplePerson> sourcePersons = new ArrayList<GluuSimplePerson>();
 		for (LdapServerConnection sourceServerConnection : sourceServerConnections) {
 			String sourceServerName = sourceServerConnection.getSourceServerName();
 
@@ -931,12 +931,12 @@ public class CacheRefreshTimer {
 				}
 
 				for (String baseDn : baseDns) {
-					List<TypedGluuSimplePerson> currentSourcePersons = sourcePersistenceEntryManager.findEntries(baseDn,
-							TypedGluuSimplePerson.class, filter, SearchScope.SUB, returnAttributes, null, 0, 0,
+					List<GluuSimplePerson> currentSourcePersons = sourcePersistenceEntryManager.findEntries(baseDn,
+							GluuSimplePerson.class, filter, SearchScope.SUB, returnAttributes, null, 0, 0,
 							cacheRefreshConfiguration.getLdapSearchSizeLimit());
 
 					// Add to result and ignore root entry if needed
-					for (TypedGluuSimplePerson currentSourcePerson : currentSourcePersons) {
+					for (GluuSimplePerson currentSourcePerson : currentSourcePersons) {
 						currentSourcePerson.setSourceServerName(sourceServerName);
 						// if (!StringHelper.equalsIgnoreCase(baseDn,
 						// currentSourcePerson.getDn())) {
@@ -989,7 +989,7 @@ public class CacheRefreshTimer {
 
 	private HashMap<CacheCompoundKey, GluuInumMap> addNewInumServerEntries(
 			CacheRefreshConfiguration cacheRefreshConfiguration, LdapServerConnection inumDbServerConnection,
-			Map<CacheCompoundKey, TypedGluuSimplePerson> sourcePersonCacheCompoundKeyMap,
+			Map<CacheCompoundKey, GluuSimplePerson> sourcePersonCacheCompoundKeyMap,
 			HashMap<CacheCompoundKey, GluuInumMap> primaryKeyAttrValueInumMap) {
 		PersistenceEntryManager inumDbPersistenceEntryManager = inumDbServerConnection.getPersistenceEntryManager();
 		String inumbaseDn = inumDbServerConnection.getBaseDns()[0];
@@ -997,7 +997,7 @@ public class CacheRefreshTimer {
 		HashMap<CacheCompoundKey, GluuInumMap> result = new HashMap<CacheCompoundKey, GluuInumMap>();
 
 		String[] keyAttributesWithoutValues = getCompoundKeyAttributesWithoutValues(cacheRefreshConfiguration);
-		for (Entry<CacheCompoundKey, TypedGluuSimplePerson> sourcePersonCacheCompoundKeyEntry : sourcePersonCacheCompoundKeyMap
+		for (Entry<CacheCompoundKey, GluuSimplePerson> sourcePersonCacheCompoundKeyEntry : sourcePersonCacheCompoundKeyMap
 				.entrySet()) {
 			CacheCompoundKey cacheCompoundKey = sourcePersonCacheCompoundKeyEntry.getKey();
 			GluuSimplePerson sourcePerson = sourcePersonCacheCompoundKeyEntry.getValue();
@@ -1033,13 +1033,13 @@ public class CacheRefreshTimer {
 	}
 
 	private HashMap<String, Integer> getSourcePersonsHashCodesMap(LdapServerConnection inumDbServerConnection,
-			Map<CacheCompoundKey, TypedGluuSimplePerson> sourcePersonCacheCompoundKeyMap,
+			Map<CacheCompoundKey, GluuSimplePerson> sourcePersonCacheCompoundKeyMap,
 			HashMap<CacheCompoundKey, GluuInumMap> primaryKeyAttrValueInumMap) {
 		PersistenceEntryManager inumDbPersistenceEntryManager = inumDbServerConnection.getPersistenceEntryManager();
 
 		HashMap<String, Integer> result = new HashMap<String, Integer>();
 
-		for (Entry<CacheCompoundKey, TypedGluuSimplePerson> sourcePersonCacheCompoundKeyEntry : sourcePersonCacheCompoundKeyMap
+		for (Entry<CacheCompoundKey, GluuSimplePerson> sourcePersonCacheCompoundKeyEntry : sourcePersonCacheCompoundKeyMap
 				.entrySet()) {
 			CacheCompoundKey cacheCompoundKey = sourcePersonCacheCompoundKeyEntry.getKey();
 			GluuSimplePerson sourcePerson = sourcePersonCacheCompoundKeyEntry.getValue();
@@ -1088,13 +1088,13 @@ public class CacheRefreshTimer {
 		return result;
 	}
 
-	private Map<CacheCompoundKey, TypedGluuSimplePerson> getSourcePersonCompoundKeyMap(
-			CacheRefreshConfiguration cacheRefreshConfiguration, List<TypedGluuSimplePerson> sourcePersons) {
-		Map<CacheCompoundKey, TypedGluuSimplePerson> result = new HashMap<CacheCompoundKey, TypedGluuSimplePerson>();
+	private Map<CacheCompoundKey, GluuSimplePerson> getSourcePersonCompoundKeyMap(
+			CacheRefreshConfiguration cacheRefreshConfiguration, List<GluuSimplePerson> sourcePersons) {
+		Map<CacheCompoundKey, GluuSimplePerson> result = new HashMap<CacheCompoundKey, GluuSimplePerson>();
 		Set<CacheCompoundKey> duplicateKeys = new HashSet<CacheCompoundKey>();
 
 		String[] keyAttributesWithoutValues = getCompoundKeyAttributesWithoutValues(cacheRefreshConfiguration);
-		for (TypedGluuSimplePerson sourcePerson : sourcePersons) {
+		for (GluuSimplePerson sourcePerson : sourcePersons) {
 			String[][] keyAttributesValues = getKeyAttributesValues(keyAttributesWithoutValues, sourcePerson);
 			CacheCompoundKey cacheCompoundKey = new CacheCompoundKey(keyAttributesValues);
 
@@ -1258,12 +1258,12 @@ public class CacheRefreshTimer {
 		return cacheRefreshConfiguration.getSourceAttributes().toArray(new String[0]);
 	}
 
-	private String[] getCompoundKeyAttributes(CacheRefreshConfiguration cacheRefreshConfiguration) {
-		return cacheRefreshConfiguration.getKeyAttributes().toArray(new String[0]);
-	}
-
 	private String[] getCompoundKeyObjectClasses(CacheRefreshConfiguration cacheRefreshConfiguration) {
 		return cacheRefreshConfiguration.getKeyObjectClasses().toArray(new String[0]);
+	}
+
+	private String[] getCompoundKeyAttributes(CacheRefreshConfiguration cacheRefreshConfiguration) {
+		return cacheRefreshConfiguration.getKeyAttributes().toArray(new String[0]);
 	}
 
 	private String[] getCompoundKeyAttributesWithoutValues(CacheRefreshConfiguration cacheRefreshConfiguration) {
