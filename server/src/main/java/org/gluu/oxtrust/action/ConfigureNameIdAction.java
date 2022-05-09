@@ -189,12 +189,12 @@ public class ConfigureNameIdAction implements Serializable {
 	}
 
 	public Map<String, String> getAvailableNamedIds(NameIdConfig config) {
-		MapDifference<String, String> diff = Maps.difference(availableNamedIds, usedNamedIds);
-		Map<String, String> value = diff.entriesOnlyOnLeft();
-		Map<String, String> result = Maps.newHashMap(value);
-		if (config.getNameIdType() != null) {
+		//MapDifference<String, String> diff = Maps.difference(availableNamedIds, usedNamedIds);
+		//Map<String, String> value = diff.entriesOnlyOnLeft();
+		Map<String, String> result = Maps.newHashMap(availableNamedIds);
+		/*if (config.getNameIdType() != null) {
 			result.put(config.getNameIdType(), config.getNameIdType());
-		}
+		}*/
 		return result;
 	}
 
