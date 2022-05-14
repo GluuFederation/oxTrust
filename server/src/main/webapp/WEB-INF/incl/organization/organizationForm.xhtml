@@ -8,7 +8,8 @@
 	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
 	xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
 	xmlns:gluufn="http://www.gluu.org/jsf/functions"
-	xmlns:p="http://primefaces.org/ui">
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:a4j="http://richfaces.org/a4j">
 
 	<h:outputStylesheet>
         .addConfig {
@@ -175,16 +176,21 @@
 									<h:inputSecret value="#{_organizationAction.passwordDecrypted}" autocomplete="off" redisplay="true"
 										styleClass="form-control smtpPasswordTextBox" />
 								</ox:decorate>
-								<ox:decorate label="#{msgs['organizationForm.requiresSSL']}">
-									<h:selectBooleanCheckbox value="#{_smtp.requiresSsl}"
-										styleClass="requiresSSLCheckBox" />
+								<ox:decorate id="connectProtection" label="#{msgs['organizationForm.smtpConnectProtection']}">
+									<h:selectOneMenu styleClass="form-control connectProtectionSelectOneMenu"
+										value="#{_smtp.connectProtection}" required="true"
+										id="connectPtotectionTypeId" converter="omnifaces.GenericEnumConverter">
+										<f:selectItems
+											value="#{_smtp.connectProtectionList}"
+											var="_type" itemLabel="#{_type.displayName}" />
+										<a4j:ajax event="change" render="metadataType, spSingleGroup"
+											execute="@this" />
+									</h:selectOneMenu>
 								</ox:decorate>
-
 								<ox:decorate label="#{msgs['organizationForm.trustserver']}">
 									<h:selectBooleanCheckbox value="#{_smtp.serverTrust}"
 										styleClass="trustserverCheckBox" />
 								</ox:decorate>
-
 								<ox:decorate label="#{msgs['organizationForm.smtpPort']}">
 									<h:inputText value="#{_smtp.port}"
 										styleClass="form-control smtpPortTextBox" />
