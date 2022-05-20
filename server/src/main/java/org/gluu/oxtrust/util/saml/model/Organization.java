@@ -11,25 +11,31 @@ import org.apache.commons.lang3.StringUtils;
  * A class that stores organization info 
  */
 public class Organization {
+	
+	public Organization() {
+		super();
+		this.orgLangAttribute = "en";
+	}
+
 	/**
      * Organization name
      */
-	private final String orgName;
+	private  String orgName;
 
 	/**
      * Organization display name
      */
-	private final String orgDisplayName;
+	private  String orgDisplayName;
 
 	/**
      * Organization URL
      */
-	private final String orgUrl;
+	private  String orgUrl;
 	
 	/**
 	 * Organization lang attribute
 	 */
-	private final String orgLangAttribute;
+	private  String orgLangAttribute;
 
 	/**
 	 * Constructor
@@ -99,28 +105,28 @@ public class Organization {
 	/**
 	 * @return string the organization name
 	 */
-	public final String getOrgName() {
+	public  String getOrgName() {
 		return orgName;
 	}
 
 	/**
 	 * @return string the organization display name
 	 */
-	public final String getOrgDisplayName() {
+	public  String getOrgDisplayName() {
 		return orgDisplayName;
 	}
 
 	/**
 	 * @return string the organization URL
 	 */
-	public final String getOrgUrl() {
+	public  String getOrgUrl() {
 		return orgUrl;
 	}
 	
 	/**
 	 * @return string the lang attribute
 	 */
-	public final String getOrgLangAttribute() {
+	public  String getOrgLangAttribute() {
 		return orgLangAttribute;
 	}	
 
@@ -131,7 +137,23 @@ public class Organization {
 	 *
 	 * @return boolean true if organizations are equals
 	 */
-	public final Boolean equalsTo(Organization org) {
+	public  Boolean equalsTo(Organization org) {
 		return orgName.equals(org.getOrgName()) && orgDisplayName.equals(org.getOrgDisplayName()) && orgUrl.equals(org.getOrgUrl()) && orgLangAttribute.equals(org.getOrgLangAttribute());
+	}
+
+	public void setOrgName(String orgName) {
+		this.orgName = orgName;
+	}
+
+	public void setOrgDisplayName(String orgDisplayName) {
+		this.orgDisplayName = orgDisplayName;
+	}
+
+	public void setOrgUrl(String orgUrl) {
+		this.orgUrl = orgUrl;
+	}
+
+	public void setOrgLangAttribute(String orgLangAttribute) {
+		this.orgLangAttribute = orgLangAttribute;
 	}	
 }

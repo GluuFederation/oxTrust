@@ -97,7 +97,7 @@ public class Saml2Settings {
 
 	// Misc
 	private List<Contact> contacts = new LinkedList<>();
-	private Organization organization = null;
+	private Organization organization = new Organization();
 
 	private boolean spValidationOnly = false;
 	
