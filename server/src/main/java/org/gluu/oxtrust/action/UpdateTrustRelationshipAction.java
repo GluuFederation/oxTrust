@@ -1246,12 +1246,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
         FacesContext facesContext = FacesContext.getCurrentInstance();
         try {
             this.trustRelationship.setInum(trustService.generateInumForNewTrustRelationship());
-            String cert = "";
-            if(this.trustRelationship.getSpCertificate() != null ) {
-            	cert = this.trustRelationship.getSpCertificate();
-            }else {
-            	cert = getCertForGeneratedSP();
-            }
+            String cert = getCertForGeneratedSP();
             String spMetadataFileName = this.trustRelationship.getSpMetaDataFN();
             if (StringHelper.isEmpty(spMetadataFileName)) {
                 spMetadataFileName = shibboleth3ConfService.getSpNewMetadataFileName(trustRelationship);

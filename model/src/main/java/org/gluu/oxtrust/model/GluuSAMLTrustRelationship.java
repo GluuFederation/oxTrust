@@ -122,12 +122,6 @@ public class GluuSAMLTrustRelationship extends InumEntry implements Serializable
 
 	@AttributeName(name = "gluuEntityType")
 	private GluuEntityType entityType;
-	
-	@AttributeName(name = "spCertificate")
-	private String spCertificate;
-	
-	@AttributeName(name = "spPrivateKey")
-	private String spPrivateKey;
 
 	public void setFederation(boolean isFederation) {
 		this.gluuIsFederation = Boolean.toString(isFederation);
@@ -419,21 +413,5 @@ public class GluuSAMLTrustRelationship extends InumEntry implements Serializable
 
 	public void setEntityType(GluuEntityType entityType) {
 		this.entityType = entityType;
-	}
-
-	public String getSpCertificate() {
-		return spCertificate;
-	}
-
-	public void setSpCertificate(String spCertificate) {
-		this.spCertificate = spCertificate;
-	}
-
-	public String getSpPrivateKey() {
-		return spPrivateKey;
-	}
-
-	public void setSpPrivateKey(String spPrivateKey) {
-		this.spPrivateKey = spPrivateKey;
 	}
 }
