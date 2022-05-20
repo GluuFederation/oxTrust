@@ -43,7 +43,11 @@
                                        spX509cert="#{updateTrustRelationshipAction.spX509certStr}"
                                        spNameIDFormat="#{updateTrustRelationshipAction.saml2Settings.spNameIDFormat}"
                                        authnRequestsSigned="#{updateTrustRelationshipAction.saml2Settings.authnRequestsSigned}"
-                                       wantAssertionsSigned="#{updateTrustRelationshipAction.saml2Settings.wantAssertionsSigned}"/>
+                                       wantAssertionsSigned="#{updateTrustRelationshipAction.saml2Settings.wantAssertionsSigned}"
+                                       orgName="#{updateTrustRelationshipAction.saml2Settings.organization.orgName}"
+                                       orgDisplayName="#{updateTrustRelationshipAction.saml2Settings.organization.orgDisplayName}"
+                                       orgUrl="#{updateTrustRelationshipAction.saml2Settings.organization.orgUrl}"
+                                       />
 
 
         </section>

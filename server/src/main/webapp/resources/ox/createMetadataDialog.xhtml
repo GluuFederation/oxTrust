@@ -21,7 +21,10 @@
     <cc:attribute name="spX509cert"  required="true" />
     <cc:attribute name="spNameIDFormat"  required="true" />
     <cc:attribute name="authnRequestsSigned"  required="true" />
-    <cc:attribute name="wantAssertionsSigned"  required="true" /> />
+    <cc:attribute name="wantAssertionsSigned"  required="true" />
+    <cc:attribute name="orgName"  required="true" />
+    <cc:attribute name="orgDisplayName"  required="true" />
+    <cc:attribute name="orgUrl"  required="true" />                                   
 </cc:interface>
 
 <cc:implementation>
@@ -80,7 +83,15 @@
 					<h:outputText value="WantAssertionsSigned "  style="margin-top: 10px;display: block;"/>
 					<h:selectBooleanCheckbox id="WantAssertionsSignedId" value="#{cc.attrs.wantAssertionsSigned}"></h:selectBooleanCheckbox>
 					
+                    <h:outputText value="ORGANIZATION NAME "  style="margin-top: 10px;display: block;"/>
+                    <h:inputText value="#{cc.attrs.orgName}" id="orgNameId" autocomplete="off" styleClass="form-control" style="margin-top: 10px;"/>
+                
+                	<h:outputText value="ORGANIZATION DISPLAYNAME "  style="margin-top: 10px;display: block;"/>
+                    <h:inputText value="#{cc.attrs.orgDisplayName}" id="orgDisplayNameId" autocomplete="off" styleClass="form-control" style="margin-top: 10px;"/>
                     
+                    <h:outputText value="ORGANIZATION URL "  style="margin-top: 10px;display: block;"/>
+                    <h:inputText value="#{cc.attrs.orgUrl}" id="orgUrlId" autocomplete="off" styleClass="form-control" style="margin-top: 10px;"/>
+                
                 </h:panelGrid>           
 
                 <h:panelGroup style="margin-top: 10px;display: block;">

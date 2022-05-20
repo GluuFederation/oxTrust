@@ -1238,7 +1238,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
         return GluuEntityType.values();
     }
 
-    public void generateSp() throws IOException {
+    public boolean generateSp() throws IOException {
         FacesContext facesContext = FacesContext.getCurrentInstance();
         try {
             this.trustRelationship.setInum(trustService.generateInumForNewTrustRelationship());
