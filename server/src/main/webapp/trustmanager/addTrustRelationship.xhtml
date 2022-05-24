@@ -37,16 +37,16 @@
                                        logoutUri="#{updateTrustRelationshipAction.trustRelationship.spLogoutURL}"
                                        metadataUri="#{updateTrustRelationshipAction.trustRelationship.spMetaDataURL}"
                                        uri="#{updateTrustRelationshipAction.trustRelationship.url}"
-                                       spEntityID="#{updateTrustRelationshipAction.saml2Settings.spEntityId}"
+                                       spEntityID="#{updateTrustRelationshipAction.saml2Settings.spEntityIdSub}"
                                        spAssertionConsumerServiceUrl="#{updateTrustRelationshipAction.spAssertionConsumerServiceUrlStr}"
                                        spSingleLogoutServiceUrl="#{updateTrustRelationshipAction.spSingleLogoutServiceUrlStr}"                                       
                                        spX509cert="#{updateTrustRelationshipAction.spX509certStr}"
-                                       spNameIDFormat="#{updateTrustRelationshipAction.saml2Settings.spNameIDFormat}"
+                                       spNameIDFormat="#{updateTrustRelationshipAction.saml2Settings.spNameIDFormatSub}"
                                        authnRequestsSigned="#{updateTrustRelationshipAction.saml2Settings.authnRequestsSigned}"
                                        wantAssertionsSigned="#{updateTrustRelationshipAction.saml2Settings.wantAssertionsSigned}"
-                                       orgName="#{updateTrustRelationshipAction.saml2Settings.organization.orgName}"
-                                       orgDisplayName="#{updateTrustRelationshipAction.saml2Settings.organization.orgDisplayName}"
-                                       orgUrl="#{updateTrustRelationshipAction.saml2Settings.organization.orgUrl}"
+                                       orgName="#{updateTrustRelationshipAction.orgName}"
+                                       orgDisplayName="#{updateTrustRelationshipAction.orgDisplayName}"
+                                       orgUrl="#{updateTrustRelationshipAction.orgUrl}"
                                        />
 
 
