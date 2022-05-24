@@ -85,8 +85,7 @@ import org.gluu.oxtrust.service.SvnSyncTimer;
 import org.gluu.oxtrust.service.TemplateService;
 import org.gluu.oxtrust.service.TrustService;
 import org.gluu.oxtrust.util.OxTrustConstants;
-import org.gluu.oxtrust.util.saml.settings.Metadata;
-import org.gluu.oxtrust.util.saml.settings.Saml2Settings;
+import org.gluu.oxtrust.util.saml.Saml2Settings;
 import org.gluu.persist.exception.BasePersistenceException;
 import org.gluu.service.MailService;
 import org.gluu.service.SchemaService;
@@ -96,6 +95,9 @@ import org.gluu.util.StringHelper;
 import org.gluu.util.security.SecurityProviderUtility;
 import org.slf4j.Logger;
 
+import com.onelogin.saml2.model.Organization;
+import com.onelogin.saml2.settings.Metadata;
+import com.onelogin.saml2.util.Util;
 import com.unboundid.ldap.sdk.schema.AttributeTypeDefinition;
 
 /**
@@ -124,7 +126,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 
     private GluuSAMLTrustRelationship trustRelationship;
     
-    private org.gluu.oxtrust.util.saml.settings.Saml2Settings saml2Settings;
+    private Saml2Settings saml2Settings;
 
     @Inject
     private OrganizationService organizationService;
@@ -216,6 +218,10 @@ public class UpdateTrustRelationshipAction implements Serializable {
 	private String spSingleLogoutServiceUrlStr;
 	
 	private String spX509certStr;
+	
+	private String orgName;
+	private String orgDisplayName;
+	private String orgUrl;
 
     public List<GluuMetadataSourceType> getMetadataSourceTypesList() {
         List<GluuMetadataSourceType> metadataSourceTypesList = (Arrays.asList(GluuMetadataSourceType.values()));
@@ -240,6 +246,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
         this.update = false;
         this.trustRelationship = new GluuSAMLTrustRelationship();
         this.saml2Settings = new Saml2Settings();
+        //this.saml2Settings.setOrganizationSub(new Organization());
         this.trustRelationship.setMaxRefreshDelay("PT8H");
         this.trustRelationship.setOwner(organizationService.getOrganization().getDn());
         boolean initActionsResult = initActions();
@@ -1287,27 +1294,31 @@ public class UpdateTrustRelationshipAction implements Serializable {
 
     }
 
-	public org.gluu.oxtrust.util.saml.settings.Saml2Settings getSaml2Settings() {
+	public Saml2Settings getSaml2Settings() {
 		return saml2Settings;
 	}
 
-	public void setSaml2Settings(org.gluu.oxtrust.util.saml.settings.Saml2Settings saml2Settings) {
+	public void setSaml2Settings(Saml2Settings saml2Settings) {
 		this.saml2Settings = saml2Settings;
 	}
 	
 	public void generateMetadata() throws MalformedURLException, CertificateException {
 		if(spAssertionConsumerServiceUrlStr != null && !spAssertionConsumerServiceUrlStr.isEmpty()) 
-			saml2Settings.setSpAssertionConsumerServiceUrl(new URL(spAssertionConsumerServiceUrlStr));
+			
+			saml2Settings.setSpAssertionConsumerServiceUrlSub(new URL(spAssertionConsumerServiceUrlStr));
 		
 		if(spSingleLogoutServiceUrlStr != null && !spSingleLogoutServiceUrlStr.isEmpty()) 
-			saml2Settings.setSpSingleLogoutServiceUrl(new URL(spSingleLogoutServiceUrlStr));
+			saml2Settings.setSpSingleLogoutServiceUrlSub(new URL(spSingleLogoutServiceUrlStr));
+			//saml2Settings.setSpSingleLogoutServiceUrl(new URL(spSingleLogoutServiceUrlStr));
 		
 		if(spX509certStr != null && !spX509certStr.isEmpty()) {
-			spX509certStr = org.gluu.oxtrust.util.saml.util.Util.formatCert(spX509certStr, true);
+			spX509certStr = Util.formatCert(spX509certStr, true);
 			X509Certificate cert = (X509Certificate) CertificateFactory.getInstance("X.509").generateCertificate(
 					new ByteArrayInputStream(spX509certStr.getBytes()));
-			saml2Settings.setSpX509cert(cert);
+			saml2Settings.setSpX509certSub(cert);
 		}
+		Organization organization = new Organization(orgName,orgDisplayName,orgUrl);
+		saml2Settings.setOrganizationSub(organization);
 		Metadata metadataObj = new Metadata(saml2Settings);
 		metadataStr = metadataObj.getMetadataString();
 		log.info(metadataStr);
@@ -1345,5 +1356,29 @@ public class UpdateTrustRelationshipAction implements Serializable {
 
 	public void setSpX509certStr(String spX509certStr) {
 		this.spX509certStr = spX509certStr;
+	}
+
+	public String getOrgName() {
+		return orgName;
+	}
+
+	public void setOrgName(String orgName) {
+		this.orgName = orgName;
+	}
+
+	public String getOrgDisplayName() {
+		return orgDisplayName;
+	}
+
+	public void setOrgDisplayName(String orgDisplayName) {
+		this.orgDisplayName = orgDisplayName;
+	}
+
+	public String getOrgUrl() {
+		return orgUrl;
+	}
+
+	public void setOrgUrl(String orgUrl) {
+		this.orgUrl = orgUrl;
 	}
 }
