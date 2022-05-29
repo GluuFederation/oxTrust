@@ -1929,7 +1929,6 @@
         "clientAuthenticationFilters",
         "sessionIdUnusedLifetime",
         "sessionIdUnauthenticatedUnusedLifetime",
-        "sessionIdEnabled",
         "sessionIdPersistOnPromptNone",
         "sessionIdLifetime",
         "configurationUpdateInterval",
