@@ -1028,11 +1028,6 @@
             "exclusiveMaximum": false,
             "exclusiveMinimum": false
         },
-        "sessionIdEnabled": {
-            "id": "sessionIdEnabled",
-            "description": "Boolean value specifying whether to enable authentication by session_id.",
-            "type": "boolean"
-        },
         "changeSessionIdOnAuthentication": {
             "id": "changeSessionIdOnAuthentication",
             "description": "Boolean value specifying whether change session_id on authentication. Default value is true.",
