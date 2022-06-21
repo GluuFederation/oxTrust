@@ -18,6 +18,10 @@ import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlSeeAlso;
 
 import org.gluu.model.GluuStatus;
 import org.gluu.persist.annotation.AttributeName;
@@ -25,12 +29,21 @@ import org.gluu.persist.annotation.DataEntry;
 import org.gluu.persist.annotation.ObjectClass;
 import org.gluu.persist.model.base.InumEntry;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+
+import javax.xml.bind.annotation.XmlTransient;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 @DataEntry
 @ObjectClass(value = "gluuSAMLconfig")
 @JsonInclude(Include.NON_NULL)
+@JsonIgnoreProperties(ignoreUnknown = true)
+
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlSeeAlso({GluuEntityType.class, GluuMetadataSourceType.class, GluuStatus.class, GluuValidationStatus.class, 
+    GluuCustomAttribute.class, MetadataFilter.class, ProfileConfiguration.class, DeconstructedTrustRelationship.class})
 public class GluuSAMLTrustRelationship extends InumEntry implements Serializable {
 
 	private static final long serialVersionUID = 5907443836820485369L;
@@ -86,7 +99,7 @@ public class GluuSAMLTrustRelationship extends InumEntry implements Serializable
 	@AttributeName(name = "gluuTrustContact")
 	private List<String> gluuTrustContact;
 
-	private List<DeconstructedTrustRelationship> deconstructedTrustRelationships = new ArrayList<DeconstructedTrustRelationship>();
+	//private List<DeconstructedTrustRelationship> deconstructedTrustRelationships = new ArrayList<DeconstructedTrustRelationship>();
 
 	@AttributeName(name = "gluuTrustDeconstruction")
 	private List<String> gluuTrustDeconstruction;
@@ -152,7 +165,10 @@ public class GluuSAMLTrustRelationship extends InumEntry implements Serializable
 		return gluuEntityId;
 	}
 
-	public void setGluuEntityId(Set<String> gluuEntityId) {
+	/*public void setGluuEntityId(Set<String> gluuEntityId) {
+		this.gluuEntityId = new ArrayList<String>(gluuEntityId);
+	}*/
+	public void setUniqueGluuEntityId(Set<String> gluuEntityId) {
 		this.gluuEntityId = new ArrayList<String>(gluuEntityId);
 	}
 
@@ -175,7 +191,7 @@ public class GluuSAMLTrustRelationship extends InumEntry implements Serializable
 		if (entityId != null) {
 			entityIds.add(entityId);
 		}
-		setGluuEntityId(entityIds);
+		setUniqueGluuEntityId(entityIds);
 	}
 
 	public void setSpecificRelyingPartyConfig(boolean specificRelyingPartyConfig) {
@@ -186,14 +202,14 @@ public class GluuSAMLTrustRelationship extends InumEntry implements Serializable
 		return Boolean.parseBoolean(gluuSpecificRelyingPartyConfig);
 	}
 
-	public List<DeconstructedTrustRelationship> getDeconstructedTrustRelationships() {
+	/*public List<DeconstructedTrustRelationship> getDeconstructedTrustRelationships() {
 		return deconstructedTrustRelationships;
 	}
 
 	public void setDeconstructedTrustRelationships(
 			List<DeconstructedTrustRelationship> deconstructedTrustRelationships) {
 		this.deconstructedTrustRelationships = deconstructedTrustRelationships;
-	}
+	}*/
 
 	public String getDescription() {
 		return description;
