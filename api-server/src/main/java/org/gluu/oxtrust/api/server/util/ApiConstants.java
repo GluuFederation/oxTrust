@@ -6,6 +6,7 @@ public final class ApiConstants {
 	}
 
 	public static final String BASE_API_URL = "/api/v1";
+	public static final String SAMLTR = "/saml/tr";
 	public static final String CLIENTS = "/clients";
 	public static final String GROUPS = "/groups";
 	public static final String CERTIFICATES = "/certificates";

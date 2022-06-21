@@ -252,7 +252,7 @@ public class MetadataValidationTimer {
                                 + Arrays.toString(duplicatesSet.toArray()));
                     }
                     tr.setValidationLog(validationLog);
-                    tr.setGluuEntityId(entityIdSet);
+                    tr.setUniqueGluuEntityId(entityIdSet);
                     tr.setStatus(GluuStatus.ACTIVE);
 
                     trustService.updateTrustRelationship(tr);
@@ -280,7 +280,7 @@ public class MetadataValidationTimer {
                         }
                     }
 
-                    tr.setGluuEntityId(entityIdSet);
+                    tr.setUniqueGluuEntityId(entityIdSet);
                     tr.setStatus(GluuStatus.ACTIVE);
                     validationLog = tr.getValidationLog();
                     if (!duplicatesSet.isEmpty()) {
