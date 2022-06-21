@@ -117,7 +117,7 @@ public class EntityIDMonitoringService {
 				log.trace("EntityIds disjunction: " + serviceUtil.iterableToString(disjunction));
 				if (!disjunction.isEmpty()) {
 					log.trace("EntityIds disjunction is not empty. Somthing has changed. Processing further.");
-					tr.setGluuEntityId(fromFileEntityIds);
+					tr.setUniqueGluuEntityId(fromFileEntityIds);
 					List<GluuSAMLTrustRelationship> federatedTrs = trustService.getChildTrusts(tr);
 					for (GluuSAMLTrustRelationship federatedTr : federatedTrs) {
 						log.trace("Processing TR part: " + federatedTr.getDn());

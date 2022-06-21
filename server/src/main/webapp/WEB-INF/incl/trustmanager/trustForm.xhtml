@@ -24,7 +24,7 @@
 
     function changeEvent(element) {
     var val = $(element).find('option:selected').text();
-    alert("val " + val);
+    //alert("val " + val);
     if(val === 'Manual') {
        #{rich:component('createMetadata:createMeatadataModalPanel')}.show();
     }
