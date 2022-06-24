@@ -195,6 +195,18 @@
 									<h:inputText value="#{_smtp.port}"
 										styleClass="form-control smtpPortTextBox" />
 								</ox:decorate>
+								<ox:decorate label="#{msgs['organizationForm.keyStore']}">
+									<h:inputText value="#{_smtp.keyStore}"
+										styleClass="form-control" />
+								</ox:decorate>
+								<ox:decorate label="#{msgs['organizationForm.keyStorePassword']}">
+									<h:inputText value="#{_smtp.keyStorePassword}"
+										styleClass="form-control" />
+								</ox:decorate>
+								<ox:decorate label="#{msgs['organizationForm.keyStoreAlias']}">
+									<h:inputText value="#{_smtp.keyStoreAlias}"
+										styleClass="form-control" />
+								</ox:decorate>
 								<h:commandButton
 									value="#{msgs['organizationForm.testConfiguration']}"
 									styleClass="btn btn-success verifyButton"
