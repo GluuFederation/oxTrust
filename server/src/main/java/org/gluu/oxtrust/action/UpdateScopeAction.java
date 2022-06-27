@@ -420,8 +420,8 @@ public class UpdateScopeAction implements Serializable {
 		if ((this.scope.getDynamicScopeScripts() == null) || (this.scope.getDynamicScopeScripts().size() == 0)) {
 			return result;
 		}
-		List<AttributeDisplayNameEntry> displayNameEntries = lookupService.getDisplayNameEntries(customScriptService.baseDn(),
-				AttributeDisplayNameEntry.class, this.scope.getDynamicScopeScripts());
+		List<ScriptDisplayNameEntry> displayNameEntries = lookupService.getDisplayNameEntries(customScriptService.baseDn(),
+				ScriptDisplayNameEntry.class, this.scope.getDynamicScopeScripts());
 		if (displayNameEntries != null) {
 			for (DisplayNameEntry displayNameEntry : displayNameEntries) {
 				result.add(new CustomScript(displayNameEntry.getDn(), displayNameEntry.getInum(),
@@ -573,6 +573,13 @@ public class UpdateScopeAction implements Serializable {
 	@ObjectClass(value = "gluuAttribute")
 	class AttributeDisplayNameEntry extends DisplayNameEntry {
 		public AttributeDisplayNameEntry() {
+			super();
+		}
+	}
+	
+	@ObjectClass(value = "oxCustomScript")
+	class ScriptDisplayNameEntry extends DisplayNameEntry {
+		public ScriptDisplayNameEntry() {
 			super();
 		}
 	}
