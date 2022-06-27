@@ -45,6 +45,8 @@ import org.slf4j.Logger;
 public class AttributeInventoryAction implements Serializable {
 
 	private static final long serialVersionUID = -3832167044333943686L;
+	
+	private static final String gluuAttributeObjectClass = "gluuAttribute";
 
 	private boolean showInactive = false;
 
@@ -203,7 +205,7 @@ public class AttributeInventoryAction implements Serializable {
 		response.setContentType("text/plain");
 		response.addHeader("Content-disposition", "attachment; filename=\"attributes.ldif\"");
 		try (ServletOutputStream os = response.getOutputStream()) {
-			ldifService.exportLDIFFile(checkedItems, os);
+			ldifService.exportLDIFFile(checkedItems, os, gluuAttributeObjectClass);
 			os.flush();
 			facesContext.responseComplete();
 		} catch (Exception e) {
