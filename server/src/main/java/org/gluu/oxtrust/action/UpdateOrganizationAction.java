@@ -231,22 +231,39 @@ public class UpdateOrganizationAction implements Serializable {
 	}
 
 	public String verifySmtpConfiguration() {
-		if(StringUtils.isNotEmpty(passwordDecrypted) && passwordDecrypted!=null){
+		if (StringUtils.isNotEmpty(passwordDecrypted)){
 			smtpConfiguration.setPasswordDecrypted(passwordDecrypted);
 		}
 		configurationService.encryptedSmtpPassword(smtpConfiguration);
-		boolean result = mailService.sendMail(smtpConfiguration, smtpConfiguration.getFromEmailAddress(),
-				smtpConfiguration.getFromName(), smtpConfiguration.getFromEmailAddress(), null,
-				facesMessages.evalResourceAsString("#{msgs['mail.verify.message.subject']}"),
-				facesMessages.evalResourceAsString("#{msgs['mail.verify.message.plain.body']}"),
-				facesMessages.evalResourceAsString("#{msgs['mail.verify.message.html.body']}"));
 
+		boolean result = false;
+
+		String keystoreFile = smtpConfiguration.getKeyStore();
+		String keystoreSecret = smtpConfiguration.getKeyStorePassword();
+		String kjeyStoreAlias = smtpConfiguration.getKeyStoreAlias();
+
+		if (StringUtils.isNotEmpty(keystoreFile) &&
+				StringUtils.isNotEmpty(keystoreSecret) &&
+				StringUtils.isNotEmpty(kjeyStoreAlias)) {
+			result = mailService.sendMailSigned(smtpConfiguration, smtpConfiguration.getFromEmailAddress(),
+					smtpConfiguration.getFromName(), smtpConfiguration.getFromEmailAddress(), null,
+					facesMessages.evalResourceAsString("#{msgs['mail.verify.message.subject']}"),
+					facesMessages.evalResourceAsString("#{msgs['mail.verify.message.plain.body']}"),
+					facesMessages.evalResourceAsString("#{msgs['mail.verify.message.html.body']}"));
+		}
+		else {
+			result = mailService.sendMail(smtpConfiguration, smtpConfiguration.getFromEmailAddress(),
+					smtpConfiguration.getFromName(), smtpConfiguration.getFromEmailAddress(), null,
+					facesMessages.evalResourceAsString("#{msgs['mail.verify.message.subject']}"),
+					facesMessages.evalResourceAsString("#{msgs['mail.verify.message.plain.body']}"),
+					facesMessages.evalResourceAsString("#{msgs['mail.verify.message.html.body']}"));
+		}
 		if (result) {
 			log.info("Connection Successful");
 			facesMessages.add(FacesMessage.SEVERITY_INFO, "SMTP Test succeeded!");
 			return OxTrustConstants.RESULT_SUCCESS;
 		}
-		facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to connect to SMTP server");
+		facesMessages.add(FacesMessage.SEVERITY_ERROR, "SMTP Test Failed");
 		return OxTrustConstants.RESULT_FAILURE;
 	}
 

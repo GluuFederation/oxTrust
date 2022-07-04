@@ -207,6 +207,10 @@
 									<h:inputText value="#{_smtp.keyStoreAlias}"
 										styleClass="form-control" />
 								</ox:decorate>
+								<ox:decorate label="#{msgs['organizationForm.signingAlgorithm']}">
+									<h:inputText value="#{_smtp.signingAlgorithm}"
+										styleClass="form-control" />
+								</ox:decorate>
 								<h:commandButton
 									value="#{msgs['organizationForm.testConfiguration']}"
 									styleClass="btn btn-success verifyButton"
