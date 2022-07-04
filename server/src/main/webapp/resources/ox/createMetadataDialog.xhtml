@@ -1,0 +1,112 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:h="http://xmlns.jcp.org/jsf/html" 
+    xmlns:a4j="http://richfaces.org/a4j" 
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
+    xmlns:cc="http://xmlns.jcp.org/jsf/composite">
+
+<cc:interface>
+    <cc:attribute name="label" default="Generate Metadata" required="false" type="java.lang.String" />
+    <cc:attribute name="generateMethod"  required="true" method-signature="void action()" />
+    <cc:attribute name="metadataUri"  required="true"  /> 
+    <cc:attribute name="logoutUri"  required="true"  /> 
+    <cc:attribute name="uri"  required="true" /> 
+    <!-- <cc:attribute name="spCert"  required="false" /> -->
+    <cc:attribute name="spEntityID"  required="true" />
+    <cc:attribute name="spAssertionConsumerServiceUrl"  required="true" />
+    <cc:attribute name="spSingleLogoutServiceUrl"  required="true" />
+    <cc:attribute name="spX509cert"  required="true" />
+    <cc:attribute name="spNameIDFormat"  required="true" />
+    <cc:attribute name="authnRequestsSigned"  required="true" />
+    <cc:attribute name="wantAssertionsSigned"  required="true" />
+    <cc:attribute name="orgName"  required="true" />
+    <cc:attribute name="orgDisplayName"  required="true" />
+    <cc:attribute name="orgUrl"  required="true" />                                   
+</cc:interface>
+
+<cc:implementation>
+    <rich:popupPanel id="createMeatadataModalPanel" onmaskclick="#{rich:component('createMeatadataModalPanel')}.hide()" zindex="2000" moveable="true" autosized="true" width="1000" keepVisualState="true">
+        <f:facet name="header">
+            <h:outputText value="#{cc.attrs.label}" />
+        </f:facet>
+        <f:facet name="controls">
+            <h:graphicImage value="/img/close.gif" styleClass="hidelink" style="cursor:pointer" onclick="#{rich:component('createMeatadataModalPanel')}.hide(); return false;" />
+        </f:facet>
+
+        <h:outputStylesheet>
+            .red {
+                color: red;
+            }
+     
+            .green {
+               color: green;
+            }
+        </h:outputStylesheet>
+
+                <h:form id="generateMetadata">
+                <rich:messages for="gv" />
+
+                <h:panelGrid id="metadataGroupId" columns="2">
+                    <h:outputText value="EntityId" />
+                    <h:inputText value="#{cc.attrs.spEntityID}" id="spEntityID"  autocomplete="off" styleClass="form-control">
+                        
+                    </h:inputText>         
+
+                    <h:outputText value="Attribute Consume Service Endpoint (HTTP-POST) " style="margin-top: 10px;display: block;" />
+                    <h:inputText value="#{cc.attrs.spAssertionConsumerServiceUrl}" id="spAssertionConsumerServiceUrlId" autocomplete="off" styleClass="form-control" style="margin-top: 10px;">
+                        
+                    </h:inputText>
+                    
+
+                    <h:outputText value="Single Logout Service Endpoint (HTTP-REDIRECT)  "  style="margin-top: 10px;display: block;"/>
+                    <h:inputText value="#{cc.attrs.spSingleLogoutServiceUrl}" id="spSingleLogoutServiceUrlId" autocomplete="off" styleClass="form-control" style="margin-top: 10px;">
+                       
+                    </h:inputText>
+                    
+                    <h:outputText value="SP X.509 cert (same cert for sign/encrypt  "  style="margin-top: 10px;display: block;"/>
+					<h:inputTextarea value="#{cc.attrs.spX509cert}"
+								maxlength="10000" id="spX509cert" 
+								autocomplete="off" styleClass="form-control" style="margin-top: 10px;"/>
+								
+                    <h:outputText value="NameId Format "  style="margin-top: 10px;display: block;"/>
+					<h:inputTextarea value="#{cc.attrs.spNameIDFormat}"
+								maxlength="10000" id="spNameIDFormatId" 
+								autocomplete="off" styleClass="form-control" style="margin-top: 10px;"/>
+								
+					<h:outputText value="AuthnRequestsSigned "  style="margin-top: 10px;display: block;"/>
+					<h:selectBooleanCheckbox id="AuthnRequestsSignedId" value="#{cc.attrs.authnRequestsSigned}"></h:selectBooleanCheckbox>
+					
+					
+					<h:outputText value="WantAssertionsSigned "  style="margin-top: 10px;display: block;"/>
+					<h:selectBooleanCheckbox id="WantAssertionsSignedId" value="#{cc.attrs.wantAssertionsSigned}"></h:selectBooleanCheckbox>
+					
+                    <h:outputText value="ORGANIZATION NAME "  style="margin-top: 10px;display: block;"/>
+                    <h:inputText value="#{cc.attrs.orgName}" id="orgNameId" autocomplete="off" styleClass="form-control" style="margin-top: 10px;"/>
+                
+                	<h:outputText value="ORGANIZATION DISPLAYNAME "  style="margin-top: 10px;display: block;"/>
+                    <h:inputText value="#{cc.attrs.orgDisplayName}" id="orgDisplayNameId" autocomplete="off" styleClass="form-control" style="margin-top: 10px;"/>
+                    
+                    <h:outputText value="ORGANIZATION URL "  style="margin-top: 10px;display: block;"/>
+                    <h:inputText value="#{cc.attrs.orgUrl}" id="orgUrlId" autocomplete="off" styleClass="form-control" style="margin-top: 10px;"/>
+                
+                </h:panelGrid>           
+
+                <h:panelGroup style="margin-top: 10px;display: block;">
+                 <!-- <h:commandButton action="#{cc.attrs.generateMethod}" value="Generate SP Metadata"  styleClass="btn btn-primary" >
+       	         </h:commandButton>  -->
+       			 <a4j:commandButton style="margin-top: 15px;"
+							styleClass="btn btn-primary" action="#{cc.attrs.generateMethod}"
+							value="Generate SP Metadata"
+							oncomplete="#{rich:component('createMeatadataModalPanel')}.hide(); return false;"
+							 />
+                
+
+                </h:panelGroup> 
+        </h:form>
+    </rich:popupPanel>
+</cc:implementation>
+
+</html>
