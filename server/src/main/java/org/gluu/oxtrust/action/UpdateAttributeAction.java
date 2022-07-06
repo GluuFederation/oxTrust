@@ -537,5 +537,9 @@ public class UpdateAttributeAction implements Serializable {
     public GluuAttributeUsageType[] getAttributeUsageTypes() {
         return attributeService.getAttributeUsageTypes();
     }
+    
+    public String getPersistenceType() {
+		return attributeService.getPersistenceType();
+	}
 
 }
