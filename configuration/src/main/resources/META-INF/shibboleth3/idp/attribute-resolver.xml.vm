@@ -37,7 +37,33 @@
     <AttributeDefinition id="eduPersonPrincipalName" xsi:type="Scoped" scope="%{idp.scope}">
         <InputDataConnector ref="siteDataConnector" attributeNames="uid"/>
         <!-- AttributeEncoder xsi:type="SAML2ScopedString" name="urn:oid:1.3.6.1.4.1.5923.1.1.1.6" friendlyName="eduPersonPrincipalName" encodeType="false" / -->
-    </AttributeDefinition
+    </AttributeDefinition>
+#elseif( ($attribute.oxMultiValuedAttribute == true)  and ($resovlerParams.persistenceType.equalsIgnoreCase('sql') == true) )
+    <AttributeDefinition id="$attribute.name" xsi:type="ScriptedAttribute">
+       <InputDataConnector ref="siteDataConnector" attributeNames="$attribute.name"/>
+       <Script><![CDATA[
+       
+            var JSONParser = Java.type("org.json.simple.parser.JSONParser");
+            var StringAttrValueType = Java.type("net.shibboleth.idp.attribute.StringAttributeValue");
+            logger =  Java.type("org.slf4j.LoggerFactory").getLogger('org.gluu.idp.externalauth.ShibOxAuthAuthServlet');
+            try {
+                
+                parser = new JSONParser();
+                // parse values directly
+                parse_result = parser.parse(${attribute.name}.getValues().get(0));
+                attr_values = parse_result.get("v");
+
+                //empty old value(s)
+                ${attribute.name}.getValues().retainAll([]);
+                for(i = 0; i< attr_values.size(); i++) {
+                    ${attribute.name}.addValue(new StringAttrValueType(attr_values.get(i)));
+                }
+
+            }catch(error) {
+                logger.warn("Error processing multivalue attribute '${attribute.name}' : {}", error);
+            }
+       ]]></Script>
+    </AttributeDefinition>                                                                                              
 #else
     <AttributeDefinition xsi:type="Simple" id="$attribute.name">
         <InputDataConnector ref="siteDataConnector" attributeNames="$attribute.name"/>
