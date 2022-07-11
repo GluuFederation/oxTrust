@@ -117,7 +117,7 @@
 						<h:selectBooleanCheckbox
 							value="#{_attribute.oxMultiValuedAttribute}" id="multivaluedId"
 							styleClass="form-control multivaluedField"
-							disabled="#{not _attributeAction.canEdit()}">
+							disabled="#{not _attributeAction.canEdit() or _attributeAction.persistenceType eq 'sql'}">
 							<a4j:ajax event="click" render="validation" />
 						</h:selectBooleanCheckbox>
 					</ox:decorate>
