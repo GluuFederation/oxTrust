@@ -156,17 +156,13 @@ public class GluuSAMLTrustRelationship extends InumEntry implements Serializable
 		this.gluuEntityId = new ArrayList<String>(gluuEntityId);
 	}
 
-	/**
-	 * @param gluuEntityId
-	 */
+	
 	@Deprecated
 	public void setGluuEntityId(List<String> gluuEntityId) {
 		this.gluuEntityId = gluuEntityId;
 	}
 
-	/**
-	 * @return
-	 */
+	
 	public String getEntityId() {
 		if (this.gluuEntityId != null && !this.gluuEntityId.isEmpty()) {
 			return this.gluuEntityId.get(0);
