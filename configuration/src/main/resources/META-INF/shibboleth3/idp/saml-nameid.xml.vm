@@ -46,9 +46,9 @@
 
 #foreach($nameIdType in $grouped.keySet())
 	#if ($nameIdType == "urn:oasis:names:tc:SAML:2.0:nameid-format:persistent")
-		<bean parent="shibboleth.SAML2PersistentGenerator" p:attributeSourceIds="#{ {$grouped[$nameIdType]} }"/>
+		<bean parent="shibboleth.SAML2PersistentGenerator" p:attributeSourceIds="#{ {$grouped[$nameIdType]} }" p:omitQualifiers="false"/>
 	#else
-		<bean parent="shibboleth.SAML2AttributeSourcedGenerator" p:omitQualifiers="true" p:format="$nameIdType" p:attributeSourceIds="#{ {$grouped[$nameIdType]} }"/>
+		<bean parent="shibboleth.SAML2AttributeSourcedGenerator" p:omitQualifiers="false" p:format="$nameIdType" p:attributeSourceIds="#{ {$grouped[$nameIdType]} }"/>
 	#end	
 #end
         
