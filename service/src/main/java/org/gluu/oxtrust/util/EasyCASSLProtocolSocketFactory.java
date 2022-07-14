@@ -36,20 +36,7 @@ public class EasyCASSLProtocolSocketFactory extends EasySSLProtocolSocketFactory
 	protected SSLContext createEasySSLContext(AppConfiguration appConfiguration) {
 		try {
 
-			String password = appConfiguration.getCaCertsPassphrase();
-			char[] passphrase = null;
-			if (password != null) {
-				passphrase = encryptionService.decrypt(password).toCharArray();
-			}
-			KeyStore cacerts = null;
-			String cacertsFN = appConfiguration.getCaCertsLocation();
-			if (cacertsFN != null) {
-				cacerts = KeyStore.getInstance(KeyStore.getDefaultType());
-				FileInputStream cacertsFile = new FileInputStream(cacertsFN);
-				cacerts.load(cacertsFile, passphrase);
-				cacertsFile.close();
-			}
-
+			KeyStore cacerts = KeyStore.getInstance(KeyStore.getDefaultType());
 			SSLContext context = SSLContext.getInstance("SSL");
 			context.init(null, new TrustManager[] { new EasyX509TrustManager(cacerts) }, null);
 			return context;
