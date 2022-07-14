@@ -12,7 +12,8 @@
 			"type": "string",
 			"enum": [
 				"LOCAL",
-				"JCA"
+				"JCA",
+				"DB"
 			]
 		},
 		"localConfiguration": {
