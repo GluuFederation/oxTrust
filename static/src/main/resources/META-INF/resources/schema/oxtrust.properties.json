@@ -579,6 +579,22 @@
 				"UMA",
 				"BYPASS"
 			]
+		  },
+		  "bulkMaxOperations": {
+            "title": "Max. bulk operations",
+            "type": "integer",
+            "description": "Maximum number of operations allowed per Bulk request",
+            "default": 30,
+            "minimum": 1,
+            "maximum": 2147483647
+		  },
+		  "bulkMaxPayloadSize": {
+            "title": "Max. bulk payload size",
+            "type": "integer",
+            "description": "Maximum payload size of a Bulk request in bytes",
+            "default": 3072000,
+            "minimum": 1,
+            "maximum": 2147483647
 		  }
         }
         },
