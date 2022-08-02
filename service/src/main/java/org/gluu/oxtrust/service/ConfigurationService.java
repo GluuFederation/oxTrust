@@ -221,7 +221,7 @@ public class ConfigurationService implements Serializable {
                 CustomScriptType.REVOKE_TOKEN, CustomScriptType.UPDATE_TOKEN, CustomScriptType.CIBA_END_USER_NOTIFICATION };
     }
 
-    public void encryptedSmtpPassword(SmtpConfiguration smtpConfiguration) {
+    public void encryptSmtpPassword(SmtpConfiguration smtpConfiguration) {
         if (smtpConfiguration == null) {
             return;
         }
@@ -246,6 +246,35 @@ public class ConfigurationService implements Serializable {
                 smtpConfiguration.setPasswordDecrypted(encryptionService.decrypt(password));
             } catch (EncryptionException ex) {
                 log.error("Failed to decrypt SMTP password", ex);
+            }
+        }
+    }
+
+    public void encryptKeyStorePassword(SmtpConfiguration smtpConfiguration) {
+        if (smtpConfiguration == null) {
+            return;
+        }
+        String keyStorePassword = smtpConfiguration.getKeyStorePasswordDecrypted();
+        if (StringHelper.isNotEmpty(keyStorePassword)) {
+            try {
+                String encryptedKeyStorePassword = encryptionService.encrypt(keyStorePassword);
+                smtpConfiguration.setKeyStorePassword(encryptedKeyStorePassword);
+            } catch (EncryptionException ex) {
+                log.error("Failed to encrypt KeyStore password", ex);
+            }
+        }
+    }
+
+    public void decryptKeyStorePassword(SmtpConfiguration smtpConfiguration) {
+        if (smtpConfiguration == null) {
+            return;
+        }
+        String keyStorePassword = smtpConfiguration.getKeyStorePassword();
+        if (StringHelper.isNotEmpty(keyStorePassword)) {
+            try {
+                smtpConfiguration.setKeyStorePasswordDecrypted(encryptionService.decrypt(keyStorePassword));
+            } catch (EncryptionException ex) {
+                log.error("Failed to decrypt KeyStore password", ex);
             }
         }
     }
