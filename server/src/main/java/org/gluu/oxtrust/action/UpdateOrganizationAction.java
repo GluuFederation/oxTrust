@@ -16,6 +16,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.ConversationScoped;
 import javax.faces.application.FacesMessage;
@@ -113,9 +114,22 @@ public class UpdateOrganizationAction implements Serializable {
 
 	private SmtpConfiguration smtpConfiguration;
 
-	private String passwordDecrypted;
+	private String smtpPasswordDecrypted;
+	private String keyStorePasswordDecrypted;
 
 	private String contactEmail;
+
+	@PostConstruct
+	void init() {
+			GluuConfiguration configurationUpdate = configurationService.getConfiguration();
+			smtpConfiguration = configurationUpdate.getSmtpConfiguration();
+
+			configurationService.decryptSmtpPassword(smtpConfiguration);
+			configurationService.decryptKeyStorePassword(smtpConfiguration);
+
+			smtpPasswordDecrypted = smtpConfiguration.getPasswordDecrypted();
+			keyStorePasswordDecrypted = smtpConfiguration.getKeyStorePasswordDecrypted();
+	}
 
 	public String modify() {
 		if (this.initialized) {
@@ -185,12 +199,15 @@ public class UpdateOrganizationAction implements Serializable {
 		try {
 			setCustomMessages();
 			organizationService.updateOrganization(this.organization);
-			if(StringUtils.isNotEmpty(passwordDecrypted) && passwordDecrypted!=null){
-				smtpConfiguration.setPasswordDecrypted(passwordDecrypted);
-				passwordDecrypted=null;
+			if(StringUtils.isNotEmpty(smtpPasswordDecrypted) && smtpPasswordDecrypted!=null){
+				smtpConfiguration.setPasswordDecrypted(smtpPasswordDecrypted);
+			}
+			if(StringUtils.isNotEmpty(keyStorePasswordDecrypted) && keyStorePasswordDecrypted!=null){
+				smtpConfiguration.setKeyStorePasswordDecrypted(keyStorePasswordDecrypted);
 			}
 			configuration.setContactEmail(new String[] { getContactEmail()} );
-			configurationService.encryptedSmtpPassword(smtpConfiguration);
+			configurationService.encryptSmtpPassword(smtpConfiguration);
+			configurationService.encryptKeyStorePassword(smtpConfiguration);
 			updateConfiguration();
 			saveWebKeySettings();
 		} catch (BasePersistenceException ex) {
@@ -231,15 +248,20 @@ public class UpdateOrganizationAction implements Serializable {
 	}
 
 	public String verifySmtpConfiguration() {
-		if (StringUtils.isNotEmpty(passwordDecrypted)){
-			smtpConfiguration.setPasswordDecrypted(passwordDecrypted);
+		if (StringUtils.isNotEmpty(smtpPasswordDecrypted)){
+			smtpConfiguration.setPasswordDecrypted(smtpPasswordDecrypted);
 		}
-		configurationService.encryptedSmtpPassword(smtpConfiguration);
+		configurationService.encryptSmtpPassword(smtpConfiguration);
+
+		if (StringUtils.isNotEmpty(keyStorePasswordDecrypted)){
+			smtpConfiguration.setKeyStorePasswordDecrypted(keyStorePasswordDecrypted);
+		}
+		configurationService.encryptKeyStorePassword(smtpConfiguration);
 
 		boolean result = false;
 
 		String keystoreFile = smtpConfiguration.getKeyStore();
-		String keystoreSecret = smtpConfiguration.getKeyStorePassword();
+		String keystoreSecret = smtpConfiguration.getKeyStorePasswordDecrypted();
 		String kjeyStoreAlias = smtpConfiguration.getKeyStoreAlias();
 
 		if (StringUtils.isNotEmpty(keystoreFile) &&
@@ -287,6 +309,7 @@ public class UpdateOrganizationAction implements Serializable {
 				this.configuration.setSmtpConfiguration(smtpConfiguration);
 			}
 			configurationService.decryptSmtpPassword(smtpConfiguration);
+			configurationService.decryptKeyStorePassword(smtpConfiguration);
 			return OxTrustConstants.RESULT_SUCCESS;
 		} catch (Exception ex) {
 			log.error("an error occured", ex);
@@ -543,12 +566,20 @@ public class UpdateOrganizationAction implements Serializable {
 		this.welcomeTitleText = welcomeTitleText;
 	}
 
-	public String getPasswordDecrypted() {
-		return passwordDecrypted;
+	public String getSmtpPasswordDecrypted() {
+		return smtpPasswordDecrypted;
 	}
 
-	public void setPasswordDecrypted(String passwordDecrypted) {
-		this.passwordDecrypted = passwordDecrypted;
+	public void setSmtpPasswordDecrypted(String smtpPasswordDecrypted) {
+		this.smtpPasswordDecrypted = smtpPasswordDecrypted;
+	}
+
+	public String getKeyStorePasswordDecrypted() {
+		return keyStorePasswordDecrypted;
+	}
+
+	public void setKeyStorePasswordDecrypted(String keyStorePasswordDecrypted) {
+		this.keyStorePasswordDecrypted = keyStorePasswordDecrypted;
 	}
 
 	public GluuConfiguration getConfiguration() {

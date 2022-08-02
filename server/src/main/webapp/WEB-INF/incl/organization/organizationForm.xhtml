@@ -173,7 +173,7 @@
 										styleClass="form-control smtpUserNameTextBox" />
 								</ox:decorate>
 								<ox:decorate label="#{msgs['organizationForm.smtpPassword']}">
-									<h:inputSecret value="#{_organizationAction.passwordDecrypted}" autocomplete="off" redisplay="true"
+									<h:inputSecret value="#{_organizationAction.smtpPasswordDecrypted}" autocomplete="off" redisplay="true"
 										styleClass="form-control smtpPasswordTextBox" />
 								</ox:decorate>
 								<ox:decorate id="connectProtection" label="#{msgs['organizationForm.smtpConnectProtection']}">
@@ -200,7 +200,7 @@
 										styleClass="form-control" />
 								</ox:decorate>
 								<ox:decorate label="#{msgs['organizationForm.keyStorePassword']}">
-									<h:inputText value="#{_smtp.keyStorePassword}"
+									<h:inputSecret value="#{_organizationAction.keyStorePasswordDecrypted}" autocomplete="off" redisplay="true"
 										styleClass="form-control" />
 								</ox:decorate>
 								<ox:decorate label="#{msgs['organizationForm.keyStoreAlias']}">

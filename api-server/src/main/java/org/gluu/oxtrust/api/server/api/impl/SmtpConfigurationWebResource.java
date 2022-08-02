@@ -68,7 +68,8 @@ public class SmtpConfigurationWebResource extends BaseWebResource {
 	public Response updateSmtpConfiguration(SmtpConfiguration smtpConfiguration) {
 		try {
 			Preconditions.checkNotNull(smtpConfiguration, "Attempt to update null smtpConfiguration");
-			configurationService.encryptedSmtpPassword(smtpConfiguration);
+			configurationService.encryptSmtpPassword(smtpConfiguration);
+			configurationService.encryptKeyStorePassword(smtpConfiguration);
 			GluuConfiguration configurationUpdate = configurationService.getConfiguration();
 			configurationUpdate.setSmtpConfiguration(smtpConfiguration);
 			configurationService.updateConfiguration(configurationUpdate);
