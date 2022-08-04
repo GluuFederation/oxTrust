@@ -62,7 +62,7 @@ public class OxAuthClient extends Entry implements Serializable {
 	private List<String> oxAuthRedirectURIs;
 
 	@AttributeName(name = "oxAuthPostLogoutRedirectURI")
-	private List<String> oxAuthPostLogoutRedirectURIs;
+	private String oxAuthPostLogoutRedirectURIs;
 
 	@AttributeName(name = "oxAuthScope")
 	private List<String> oxAuthScopes;
@@ -168,7 +168,7 @@ public class OxAuthClient extends Entry implements Serializable {
 	private String[] claimRedirectURI;
 
 	@AttributeName(name = "oxAuthLogoutURI")
-	private List<String> logoutUri;
+	private String logoutUri;
 
 	@AttributeName(name = "oxAuthLogoutSessionRequired")
 	private Boolean logoutSessionRequired = Boolean.FALSE;
@@ -186,7 +186,7 @@ public class OxAuthClient extends Entry implements Serializable {
 	private Integer accessTokenLifetime;
 
 	@AttributeName(name = "oxAuthDefaultAcrValues")
-	private String[] defaultAcrValues;
+	private String defaultAcrValues;
 
 	@AttributeName(name = "oxAuthInitiateLoginURI")
 	private String initiateLoginUri;
@@ -301,11 +301,11 @@ public class OxAuthClient extends Entry implements Serializable {
 		this.oxAuthRedirectURIs = oxAuthRedirectURIs;
 	}
 
-	public List<String> getOxAuthPostLogoutRedirectURIs() {
+	public String getOxAuthPostLogoutRedirectURIs() {
 		return oxAuthPostLogoutRedirectURIs;
 	}
 
-	public void setOxAuthPostLogoutRedirectURIs(List<String> oxAuthPostLogoutRedirectURIs) {
+	public void setOxAuthPostLogoutRedirectURIs(String oxAuthPostLogoutRedirectURIs) {
 		this.oxAuthPostLogoutRedirectURIs = oxAuthPostLogoutRedirectURIs;
 	}
 
@@ -573,11 +573,11 @@ public class OxAuthClient extends Entry implements Serializable {
 		this.postLogoutRedirectUris = postLogoutRedirectUris;
 	}
 
-	public List<String> getLogoutUri() {
+	public String getLogoutUri() {
 		return logoutUri;
 	}
 
-	public void setLogoutUri(List<String> logoutUri) {
+	public void setLogoutUri(String logoutUri) {
 		this.logoutUri = logoutUri;
 	}
 
@@ -621,11 +621,11 @@ public class OxAuthClient extends Entry implements Serializable {
 		this.accessTokenLifetime = accessTokenLifetime;
 	}
 
-	public String[] getDefaultAcrValues() {
+	public String getDefaultAcrValues() {
 		return defaultAcrValues;
 	}
 
-	public void setDefaultAcrValues(String[] defaultAcrValues) {
+	public void setDefaultAcrValues(String defaultAcrValues) {
 		this.defaultAcrValues = defaultAcrValues;
 	}
 

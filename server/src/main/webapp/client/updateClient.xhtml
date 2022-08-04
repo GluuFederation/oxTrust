@@ -195,6 +195,16 @@
 				queue="clientQueue" render="selectedClaimRedirectURIIsId"
 				text="#{updateClientAction.availableClaimRedirectUri}"
 				textId="claimRedirectTextId" />
+				
+			<ox:inputTextDialog
+					acceptMethod="#{updateClientAction.acceptselectedAdditionalAudiences()}"
+					cancelMethod="#{updateClientAction.cancelAdditionalAudience()}"
+					dialogWidth="600" id="AdditionalAudience"
+					inputLabel="#{msgs['client.AdditionalAudience']}" inputWidth="80"
+					label="#{msgs['client.AdditionalAudience']}" maxLength="256"
+					queue="audienceQueue" render="selectedAdditionalAudiencesId"
+					text="#{updateClientAction.availableAdditionalAudience}"
+					textId="additionalAudienceTextId" />
 		</div>
 	</ui:define>
 </ui:composition>

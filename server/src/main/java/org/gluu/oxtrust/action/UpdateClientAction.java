@@ -48,6 +48,7 @@ import org.gluu.oxauth.model.common.BackchannelTokenDeliveryMode;
 import org.gluu.oxauth.model.common.GrantType;
 import org.gluu.oxauth.model.common.ResponseType;
 import org.gluu.oxauth.model.crypto.signature.AsymmetricSignatureAlgorithm;
+import org.gluu.oxauth.model.uma.persistence.UmaResource;
 import org.gluu.oxauth.model.util.URLPatternList;
 import org.gluu.oxtrust.model.AuthenticationMethod;
 import org.gluu.oxtrust.model.BlockEncryptionAlgorithm;
@@ -63,6 +64,7 @@ import org.gluu.oxtrust.service.ClientService;
 import org.gluu.oxtrust.service.EncryptionService;
 import org.gluu.oxtrust.service.OxTrustAuditService;
 import org.gluu.oxtrust.service.ScopeService;
+import org.gluu.oxtrust.service.uma.ResourceSetService;
 import org.gluu.oxtrust.util.EasyCASSLProtocolSocketFactory;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.annotation.ObjectClass;
@@ -119,6 +121,9 @@ public class UpdateClientAction implements Serializable {
     private AbstractCustomScriptService customScriptService;
 
     @Inject
+    private ResourceSetService resourceSetService;
+    
+    @Inject
     private LookupService lookupService;
 
     @Inject
@@ -151,8 +156,10 @@ public class UpdateClientAction implements Serializable {
     private List<String> logoutUris;
     private List<String> clientlogoutUris;
     private List<String> claimRedirectURIList;
+    private List<String> additionalAudienceList;
 
     private List<Scope> scopes;
+    private List<UmaResource> resources;
     private List<DisplayNameEntry> claims;
     private List<ResponseType> responseTypes;
     private List<CustomScript> customScripts;
@@ -168,6 +175,9 @@ public class UpdateClientAction implements Serializable {
 
     private String searchAvailableClaimPattern;
     private String oldSearchAvailableClaimPattern;
+    private String idTokenSubjectType;
+    private String defaultPromptLogin;
+    private String tlsSubjectDn;
 
     private String availableLoginUri = HTTPS;
     private String availableLogoutUri = HTTPS;
@@ -176,7 +186,19 @@ public class UpdateClientAction implements Serializable {
     private String availableRequestUri = HTTPS;
     private String availableAuthorizedOrigin = HTTPS;
     private String availableClaimRedirectUri = HTTPS;
+    private String availableAdditionalAudience = "";
     private String oxAttributesJson;
+    private String backchannelLogoutUri;
+    private String redirectRegex;
+    private String customScriptsforPostAuthn;
+    private String customScriptsforConsentGather;
+    private String spontaneousScopeCustomScript;
+    private String introspectionCustomScript;
+    private String rptClaimsScript;
+    private String updateTokenScript;
+    private String umaRPTModificationScript;
+    
+    
     Pattern domainPattern = Pattern.compile("^((?!-)[A-Za-z0-9-]{1,63}(?<!-)\\\\.)+[A-Za-z]{2,6}");
     public String getAvailableAuthorizedOrigin() {
         return availableAuthorizedOrigin;
@@ -196,6 +218,7 @@ public class UpdateClientAction implements Serializable {
 
     private List<GluuAttribute> availableClaims;
     private List<GluuGroup> availableGroups;
+    private List<CustomScript> availableCustomScriptsAcr;
     private List<SelectableEntity<ResponseType>> availableResponseTypes;
     private List<SelectableEntity<CustomScript>> availableCustomScripts;
     private List<SelectableEntity<CustomScript>> availablePostAuthnScripts;
@@ -219,8 +242,6 @@ public class UpdateClientAction implements Serializable {
         this.client.setSubjectType(OxAuthSubjectType.PAIRWISE);
         try {
             this.loginUris = getNonEmptyStringList(client.getOxAuthRedirectURIs());
-            this.logoutUris = getNonEmptyStringList(client.getOxAuthPostLogoutRedirectURIs());
-            this.clientlogoutUris = getNonEmptyStringList(client.getLogoutUri());
             this.scopes = getInitialEntries();
             this.claims = getInitialClaimDisplayNameEntries();
             this.responseTypes = getInitialResponseTypes();
@@ -229,11 +250,17 @@ public class UpdateClientAction implements Serializable {
             this.requestUris = getNonEmptyStringList(client.getRequestUris());
             this.authorizedOrigins = getNonEmptyStringList(client.getAuthorizedOrigins());
             this.claimRedirectURIList = getNonEmptyStringList(client.getClaimRedirectURI());
-            this.customScripts = getInitialAcrs();
+            this.additionalAudienceList = getNonEmptyStringList(client.getAttributes().getAdditionalAudience());
             this.postAuthnScripts = Lists.newArrayList();
             this.rptClaimsScripts = Lists.newArrayList();
             this.consentScripts = Lists.newArrayList();
             this.spontaneousScopesScripts = Lists.newArrayList();
+            this.backchannelLogoutUri = getStringFromList(client.getAttributes().getBackchannelLogoutUri());
+            this.redirectRegex = client.getAttributes().getRedirectRegex();
+            this.idTokenSubjectType = client.getAttributes().getIdTokenSubjectType();
+            this.defaultPromptLogin = client.getAttributes().getDefaultPromptLogin();
+            this.tlsSubjectDn = client.getAttributes().getTlsClientAuthSubjectDn();
+            searchAvailableCustomScriptsforAcr();
         } catch (BasePersistenceException ex) {
             log.error("Failed to prepare lists", ex);
             facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to add new client");
@@ -241,18 +268,6 @@ public class UpdateClientAction implements Serializable {
             return OxTrustConstants.RESULT_FAILURE;
         }
         return OxTrustConstants.RESULT_SUCCESS;
-    }
-
-    private List<CustomScript> getInitialAcrs() {
-        this.customScripts = new ArrayList<CustomScript>();
-        if (this.client.getDefaultAcrValues() != null && this.client.getDefaultAcrValues().length >= 1) {
-            for (String scriptName : this.client.getDefaultAcrValues()) {
-                CustomScript customScript = new CustomScript();
-                customScript.setName(scriptName);
-                this.customScripts.add(customScript);
-            }
-        }
-        return this.customScripts;
     }
 
     private List<Scope> getInitialEntries() {
@@ -295,8 +310,6 @@ public class UpdateClientAction implements Serializable {
         }
         try {
             this.loginUris = getNonEmptyStringList(client.getOxAuthRedirectURIs());
-            this.logoutUris = getNonEmptyStringList(client.getOxAuthPostLogoutRedirectURIs());
-            this.clientlogoutUris = getNonEmptyStringList(client.getLogoutUri());
             this.scopes = getInitialEntries();
             this.claims = getInitialClaimDisplayNameEntries();
             this.responseTypes = getInitialResponseTypes();
@@ -305,7 +318,12 @@ public class UpdateClientAction implements Serializable {
             this.requestUris = getNonEmptyStringList(client.getRequestUris());
             this.authorizedOrigins = getNonEmptyStringList(client.getAuthorizedOrigins());
             this.claimRedirectURIList = getNonEmptyStringList(client.getClaimRedirectURI());
-            this.customScripts = getInitialAcrs();
+            this.additionalAudienceList = getNonEmptyStringList(client.getAttributes().getAdditionalAudience());
+            this.redirectRegex = client.getAttributes().getRedirectRegex();
+            this.idTokenSubjectType = client.getAttributes().getIdTokenSubjectType();
+            this.defaultPromptLogin = client.getAttributes().getDefaultPromptLogin();
+            this.tlsSubjectDn = client.getAttributes().getTlsClientAuthSubjectDn();
+            
             this.postAuthnScripts = searchAvailablePostAuthnCustomScripts().stream()
                     .filter(entity -> client.getAttributes().getPostAuthnScripts().contains(entity.getEntity().getDn()))
                     .map(SelectableEntity::getEntity).collect(Collectors.toList());
@@ -323,6 +341,17 @@ public class UpdateClientAction implements Serializable {
                     entity -> client.getAttributes().getIntrospectionScripts().contains(entity.getEntity().getDn()))
                     .map(SelectableEntity::getEntity).collect(Collectors.toList());
             this.oxAttributesJson = getClientAttributesJson();
+            this.backchannelLogoutUri = getStringFromList(client.getAttributes().getBackchannelLogoutUri());
+            this.customScriptsforPostAuthn = getStringFromList(client.getAttributes().getPostAuthnScripts());
+            this.customScriptsforConsentGather = getStringFromList(client.getAttributes().getConsentGatheringScripts());
+            this.spontaneousScopeCustomScript = getStringFromList(client.getAttributes().getSpontaneousScopeScriptDns());
+            this.introspectionCustomScript = getStringFromList(client.getAttributes().getIntrospectionScripts());
+            this.rptClaimsScript = getStringFromList(client.getAttributes().getRptClaimsScripts());
+            this.updateTokenScript = getStringFromList(client.getAttributes().getUpdateTokenScripts());
+            this.umaRPTModificationScript = getStringFromList(client.getAttributes().getUmaRPTModificationScripts());
+            this.resources = resourceSetService.findResourcesByClients(client.getDn());
+            
+            searchAvailableCustomScriptsforAcr();
         } catch (BasePersistenceException ex) {
             log.error("Failed to prepare lists", ex);
             facesMessages.add(FacesMessage.SEVERITY_ERROR, "Failed to load client");
@@ -340,6 +369,14 @@ public class UpdateClientAction implements Serializable {
             return new ArrayList<String>(currentList);
         } else {
             return new ArrayList<String>();
+        }
+    }
+    
+    private String getStringFromList(List<String> currentList) {
+        if (currentList != null && currentList.size() > 0) {
+            return currentList.get(0);
+        } else {
+            return null;
         }
     }
 
@@ -380,8 +417,6 @@ public class UpdateClientAction implements Serializable {
             this.client.setExp(null);
         }
         updateLoginURIs();
-        updateLogoutURIs();
-        updateClientLogoutURIs();
         updateScopes();
         updateClaims();
         updateResponseTypes();
@@ -391,8 +426,13 @@ public class UpdateClientAction implements Serializable {
         updateRequestUris();
         updateAuthorizedOrigins();
         updateClaimredirectUri();
-        saveAttributesJson();
+        updateAdditionalAudience();
+        updateBackchannelLogoutUri();
         trimUriProperties();
+        client.getAttributes().setRedirectRegex(redirectRegex);
+        client.getAttributes().setIdTokenSubjectType(idTokenSubjectType);
+        client.getAttributes().setDefaultPromptLogin(defaultPromptLogin);
+        client.getAttributes().setTlsClientAuthSubjectDn(tlsSubjectDn);
         this.client.setEncodedClientSecret(encryptionService.encrypt(this.client.getOxAuthClientSecret()));
         if (update) {
             try {
@@ -500,6 +540,14 @@ public class UpdateClientAction implements Serializable {
 
     public void removeClaimRedirectURI(String uri) {
         removeFromList(this.claimRedirectURIList, uri);
+    }
+    
+    public void removeClientResource(String uri) {
+        resourceSetService.removeResource(uri);
+    }
+    
+    public void removeAdditionalAudience(String uri) {
+        removeFromList(this.additionalAudienceList, uri);
     }
 
     public void removePostAuthnScript(CustomScript script) {
@@ -795,6 +843,18 @@ public class UpdateClientAction implements Serializable {
         }
         this.availableClaimRedirectUri = HTTPS;
     }
+    
+    //method for audience
+    public void acceptselectedAdditionalAudiences() {
+        if (StringHelper.isEmpty(this.availableAdditionalAudience)) {
+            return;
+        }
+        
+        if (!this.additionalAudienceList.contains(this.availableAdditionalAudience)) {
+            this.additionalAudienceList.add(this.availableAdditionalAudience);
+        }
+        this.availableAdditionalAudience = "";
+    }
 
     public void acceptSelectContact() {
         if (StringHelper.isEmpty(this.availableContact)) {
@@ -868,6 +928,10 @@ public class UpdateClientAction implements Serializable {
     public void cancelClaimRedirectUri() {
         this.availableClaimRedirectUri = HTTPS;
     }
+    
+    public void cancelAdditionalAudience() {
+        this.availableAdditionalAudience = "";
+    }
 
     public void cancelSelectContact() {
         this.availableContact = "";
@@ -892,30 +956,6 @@ public class UpdateClientAction implements Serializable {
             tmpUris.add(StringHelper.trimAll(uri));
         }
         this.client.setOxAuthRedirectURIs(tmpUris);
-    }
-
-    private void updateLogoutURIs() {
-        if (this.logoutUris == null || this.logoutUris.size() == 0) {
-            this.client.setOxAuthPostLogoutRedirectURIs(null);
-            return;
-        }
-        List<String> tmpUris = new ArrayList<String>();
-        for (String uri : this.logoutUris) {
-            tmpUris.add(StringHelper.trimAll(uri));
-        }
-        this.client.setOxAuthPostLogoutRedirectURIs(tmpUris);
-    }
-
-    private void updateClientLogoutURIs() {
-        if (this.clientlogoutUris == null || this.clientlogoutUris.size() == 0) {
-            this.client.setLogoutUri(null);
-            return;
-        }
-        List<String> tmpUris = new ArrayList<String>();
-        for (String uri : this.clientlogoutUris) {
-            tmpUris.add(StringHelper.trimAll(uri));
-        }
-        this.client.setLogoutUri(tmpUris);
     }
 
     private void updateContacts() {
@@ -966,6 +1006,30 @@ public class UpdateClientAction implements Serializable {
         }
         client.setClaimRedirectURI(tmpClaimRedirectURI.toArray(new String[tmpClaimRedirectURI.size()]));
     }
+    
+    private void updateAdditionalAudience() {
+        if (additionalAudienceList == null || additionalAudienceList.size() == 0) {
+            client.getAttributes().setAdditionalAudience(null);
+            return;
+        }
+        List<String> tmpAdditionalAudience = new ArrayList<String>();
+        for (String additionalAudience : additionalAudienceList) {
+        	tmpAdditionalAudience.add(StringHelper.trimAll(additionalAudience));
+        }
+        client.getAttributes().setAdditionalAudience(tmpAdditionalAudience);
+        
+    }
+    
+    private void updateBackchannelLogoutUri() {
+    	if(client.getAttributes().getBackchannelLogoutUri() == null) {
+    		client.getAttributes().setBackchannelLogoutUri(new ArrayList<String>());
+    	}
+    	
+    	if(!client.getAttributes().getBackchannelLogoutUri().contains(backchannelLogoutUri.trim())) {    	
+        client.getAttributes().getBackchannelLogoutUri().add(backchannelLogoutUri);
+    	}
+        
+    }
 
     private void updateClaims() {
         if (this.claims == null || this.claims.size() == 0) {
@@ -1011,22 +1075,35 @@ public class UpdateClientAction implements Serializable {
     }
 
     private void updateCustomScripts() {
-        List<CustomScript> currentCustomScripts = this.customScripts;
-        if (currentCustomScripts == null || currentCustomScripts.size() == 0) {
-            this.client.setDefaultAcrValues(null);
-            return;
-        }
-        List<String> customScripts = new ArrayList<String>();
-        for (CustomScript customScript : currentCustomScripts) {
-            customScripts.add(customScript.getName());
-        }
-        this.client.setDefaultAcrValues(customScripts.toArray(new String[customScripts.size()]));
-
-        this.client.getAttributes().setPostAuthnScripts(BaseEntry.getDNs(getPostAuthnScripts()));
-        this.client.getAttributes().setRptClaimsScripts(BaseEntry.getDNs(getRptClaimsScripts()));
-        this.client.getAttributes().setConsentGatheringScripts(BaseEntry.getDNs(getConsentScripts()));
-        this.client.getAttributes().setIntrospectionScripts(BaseEntry.getDNs(getIntrospectionScripts()));
-        this.client.getAttributes().setSpontaneousScopeScriptDns(BaseEntry.getDNs(getSpontaneousScopesScripts()));
+    	if(!this.client.getAttributes().getPostAuthnScripts().contains(customScriptsforPostAuthn)
+    			&&  !customScriptsforPostAuthn.isEmpty()) {
+    		this.client.getAttributes().getPostAuthnScripts().add(customScriptsforPostAuthn);
+    	}
+    	if(!this.client.getAttributes().getRptClaimsScripts().contains(rptClaimsScript)
+    			&&  !rptClaimsScript.isEmpty()) {
+    		this.client.getAttributes().getRptClaimsScripts().add(rptClaimsScript);
+    	}
+    	if(!this.client.getAttributes().getConsentGatheringScripts().contains(customScriptsforConsentGather)
+    			&&  !customScriptsforConsentGather.isEmpty()) {
+    		this.client.getAttributes().getConsentGatheringScripts().add(customScriptsforConsentGather);
+    	}
+    	if(!this.client.getAttributes().getIntrospectionScripts().contains(introspectionCustomScript)
+    			&&  !introspectionCustomScript.isEmpty()) {
+    		this.client.getAttributes().getIntrospectionScripts().add(introspectionCustomScript);
+    	}
+    	if(!this.client.getAttributes().getSpontaneousScopeScriptDns().contains(spontaneousScopeCustomScript)
+    			&&  !spontaneousScopeCustomScript.isEmpty()) {
+    		this.client.getAttributes().getSpontaneousScopeScriptDns().add(spontaneousScopeCustomScript);
+    	}
+    	if(!this.client.getAttributes().getUpdateTokenScripts().contains(updateTokenScript)
+    			&&  !updateTokenScript.isEmpty()) {
+    		this.client.getAttributes().getUpdateTokenScripts().add(updateTokenScript);
+    	}
+    	
+    	if(!this.client.getAttributes().getUmaRPTModificationScripts().contains(umaRPTModificationScript)
+    			&&  !umaRPTModificationScript.isEmpty()) {
+    		this.client.getAttributes().getUmaRPTModificationScripts().add(umaRPTModificationScript);
+    	}
     }
 
     public void selectAddedClaims() {
@@ -1298,7 +1375,38 @@ public class UpdateClientAction implements Serializable {
             return;
         }
         this.availableCustomScripts = getSelectableScripts(CustomScriptType.PERSON_AUTHENTICATION);
-        selectAddedCustomScripts();
+    }
+    
+    public void searchAvailableCustomScriptsforAcr() {        
+        this.availableCustomScriptsAcr = getScripts(CustomScriptType.PERSON_AUTHENTICATION);
+    }
+    
+    public List<CustomScript> searchAvailableCustomScriptsforPostAuthn() {        
+        return getScripts(CustomScriptType.POST_AUTHN);
+    }
+    
+    public List<CustomScript> searchAvailableCustomScriptsforConsentGath() {        
+        return getScripts(CustomScriptType.CONSENT_GATHERING);
+    }
+    
+    public List<CustomScript> searchAvailableCustomScriptsforSpontaneousScope() {        
+        return getScripts(CustomScriptType.SPONTANEOUS_SCOPE);
+    }
+    
+    public List<CustomScript> searchAvailableCustomScriptsforintrospection() {        
+        return getScripts(CustomScriptType.INTROSPECTION);
+    }
+    
+    public List<CustomScript> searchAvailableCustomScriptsforrptClaimsScripts() {        
+        return getScripts(CustomScriptType.UMA_RPT_CLAIMS);
+    }
+    
+    public List<CustomScript> searchAvailableCustomScriptsforUpdateTokens() {        
+        return getScripts(CustomScriptType.UPDATE_TOKEN);
+    }
+    
+    public List<CustomScript> searchAvailableCustomScriptsforRptModifications() {        
+        return getScripts(CustomScriptType.UMA_RPT_POLICY);
     }
 
     public List<SelectableEntity<CustomScript>> searchAvailableIntrospectionCustomScripts() {
@@ -1762,9 +1870,7 @@ public class UpdateClientAction implements Serializable {
             if (client.getContacts() != null && !client.getContacts().toString().isEmpty()) {
                 items.add("**Contacts:** " + this.contacts.toString());
             }
-            if (client.getDefaultAcrValues() != null && client.getDefaultAcrValues().length > 0) {
-                items.add("**DefaultAcrValues:** " + Arrays.asList(client.getDefaultAcrValues()).toString());
-            }
+            
             sb.append(new UnorderedList<Object>(items)).append("\n");
             markDown = sb.toString();
         } catch (Exception e) {
@@ -1902,8 +2008,136 @@ public class UpdateClientAction implements Serializable {
 
     }
 	
+    public List<String> getAdditionalAudienceList() {
+		return additionalAudienceList;
+	}
+
+	public void setAdditionalAudienceList(List<String> additionalAudienceList) {
+		this.additionalAudienceList = additionalAudienceList;
+	}
+
+	public String getAvailableAdditionalAudience() {
+		return availableAdditionalAudience;
+	}
+
+	public void setAvailableAdditionalAudience(String availableAdditionalAudience) {
+		this.availableAdditionalAudience = availableAdditionalAudience;
+	}
+
+	public String getBackchannelLogoutUri() {
+		return backchannelLogoutUri;
+	}
+
+	public void setBackchannelLogoutUri(String backchannelLogoutUri) {
+		this.backchannelLogoutUri = backchannelLogoutUri;
+	}
+
+	public String getRedirectRegex() {
+		return redirectRegex;
+	}
+
+	public void setRedirectRegex(String redirectRegex) {
+		this.redirectRegex = redirectRegex;
+	}
+
 	@ObjectClass(value = "gluuAttribute")
 	class AttributeDisplayNameEntry extends DisplayNameEntry {
 	    public AttributeDisplayNameEntry() {}
+	}
+
+	public String getIdTokenSubjectType() {
+		return idTokenSubjectType;
+	}
+
+	public void setIdTokenSubjectType(String idTokenSubjectType) {
+		this.idTokenSubjectType = idTokenSubjectType;
+	}
+
+	public String getDefaultPromptLogin() {
+		return defaultPromptLogin;
+	}
+
+	public void setDefaultPromptLogin(String defaultPromptLogin) {
+		this.defaultPromptLogin = defaultPromptLogin;
+	}
+
+	public String getTlsSubjectDn() {
+		return tlsSubjectDn;
+	}
+
+	public void setTlsSubjectDn(String tlsSubjectDn) {
+		this.tlsSubjectDn = tlsSubjectDn;
+	}
+
+	public List<CustomScript> getAvailableCustomScriptsAcr() {
+		return availableCustomScriptsAcr;
+	}
+
+	public void setAvailableCustomScriptsAcr(List<CustomScript> availableCustomScriptsAcr) {
+		this.availableCustomScriptsAcr = availableCustomScriptsAcr;
+	}
+
+	public String getCustomScriptsforPostAuthn() {
+		return customScriptsforPostAuthn;
+	}
+
+	public void setCustomScriptsforPostAuthn(String customScriptsforPostAuthn) {
+		this.customScriptsforPostAuthn = customScriptsforPostAuthn;
+	}
+
+	public String getCustomScriptsforConsentGather() {
+		return customScriptsforConsentGather;
+	}
+
+	public void setCustomScriptsforConsentGather(String customScriptsforConsentGather) {
+		this.customScriptsforConsentGather = customScriptsforConsentGather;
+	}
+
+	public String getSpontaneousScopeCustomScript() {
+		return spontaneousScopeCustomScript;
+	}
+
+	public void setSpontaneousScopeCustomScript(String spontaneousScopeCustomScript) {
+		this.spontaneousScopeCustomScript = spontaneousScopeCustomScript;
+	}
+
+	public String getIntrospectionCustomScript() {
+		return introspectionCustomScript;
+	}
+
+	public void setIntrospectionCustomScript(String introspectionCustomScript) {
+		this.introspectionCustomScript = introspectionCustomScript;
+	}
+
+	public String getRptClaimsScript() {
+		return rptClaimsScript;
+	}
+
+	public void setRptClaimsScript(String rptClaimsScript) {
+		this.rptClaimsScript = rptClaimsScript;
+	}
+
+	public String getUpdateTokenScript() {
+		return updateTokenScript;
+	}
+
+	public void setUpdateTokenScript(String updateTokenScript) {
+		this.updateTokenScript = updateTokenScript;
+	}
+
+	public List<UmaResource> getResources() {
+		return resources;
+	}
+
+	public void setResources(List<UmaResource> resources) {
+		this.resources = resources;
+	}
+
+	public String getUmaRPTModificationScript() {
+		return umaRPTModificationScript;
+	}
+
+	public void setUmaRPTModificationScript(String umaRPTModificationScript) {
+		this.umaRPTModificationScript = umaRPTModificationScript;
 	}
 }

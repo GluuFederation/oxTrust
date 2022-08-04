@@ -96,6 +96,19 @@ public class ResourceSetService implements Serializable {
 	public void removeResource(UmaResource resource) {
 		persistenceEntryManager.remove(resource);
 	}
+	
+	/**
+	 * Remove resource entry
+	 * 
+	 * @param String
+	 *            inum
+	 */
+	public void removeResource(String inum) {		
+		List<UmaResource> resourcelist = findResourcesById(inum);
+		if(resourcelist != null && resourcelist.size()>0) {		
+			persistenceEntryManager.remove(resourcelist.get(0));
+		}
+	}
 
 	/**
 	 * Check if LDAP server contains resource with specified attributes
@@ -221,6 +234,18 @@ public class ResourceSetService implements Serializable {
 	public List<UmaResource> findResourcesByScope(String scopeId) {
 		return persistenceEntryManager.findEntries(getDnForResource(null), UmaResource.class,
 				Filter.createEqualityFilter("oxAuthUmaScope", scopeId));
+	}
+	
+	/**
+	 * Get resources by associated Clients
+	 * 
+	 * @param id
+	 *            Id
+	 * @return List of Resources which specified associated Clients
+	 */
+	public List<UmaResource> findResourcesByClients(String clientId) {
+		return persistenceEntryManager.findEntries(getDnForResource(null), UmaResource.class,
+				Filter.createEqualityFilter("oxAssociatedClient", clientId));
 	}
 
 }
