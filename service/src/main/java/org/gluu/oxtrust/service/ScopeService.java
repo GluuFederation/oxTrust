@@ -146,7 +146,7 @@ public class ScopeService implements Serializable {
 		List<Scope> result = new ArrayList<>();
 		try {
 			result = persistenceEntryManager.findEntries(getDnForScope(null), Scope.class, searchFilter, sizeLimit);
-			return filter(result);
+			return result;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

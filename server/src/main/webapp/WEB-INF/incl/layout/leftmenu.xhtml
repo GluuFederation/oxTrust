@@ -255,32 +255,6 @@
 									</h:commandLink></li>
 							</ul></li>
 					</ui:fragment>
-					<ui:fragment
-						rendered="#{permissionService.hasPermission('uma', 'access')}">
-
-						<li class="treeview" id="menuUMA"><a href="#"> <i
-								class="fa fa-folder-open-o"></i> <span>#{msgs['leftmenu.uma']}</span>
-								<i class="fa fa-angle-left pull-right"></i>
-						</a>
-							<ul class="treeview-menu" id="subMenuUMA">
-								<li id="subMenuLinkUMA1"><h:commandLink
-										value="#{msgs['leftmenu.scopes']}" onclick="lock();"
-										ondbclick="lock();" oncomplete="unlock();"
-										action="#{menuAction.endConversation('/uma/scope.xhtml?scopes=1')}"
-										rendered="#{permissionService.hasPermission('uma', 'access')}">
-										<i class="fa fa-chevron-right"
-											style="float: left; margin-top: 2px;"></i>
-									</h:commandLink></li>
-								<li id="subMenuLinkUMA2"><h:commandLink
-										value="#{msgs['leftmenu.resources']}" onclick="lock();"
-										ondbclick="lock();" oncomplete="unlock();"
-										action="#{menuAction.endConversation('/uma/resource.xhtml?resources=1')}"
-										rendered="#{permissionService.hasPermission('uma', 'access')}">
-										<i class="fa fa-chevron-right"
-											style="float: left; margin-top: 2px;"></i>
-									</h:commandLink></li>
-							</ul></li>
-					</ui:fragment>
 
 					<ui:fragment
 						rendered="#{permissionService.hasPermission('group', 'access') or permissionService.hasPermission('person', 'access')}">
