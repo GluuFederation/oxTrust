@@ -71,9 +71,17 @@
 													</b:dataTableColumn>
 													<b:dataTableColumn value="#{clt.inum}"
 														label="#{msgs['client.inum']}" />
-													<b:dataTableColumn label="#{msgs['client.applicationType']}">
-														<b:label text="#{clt.oxAuthAppType}" severity="primary" />
+													<b:dataTableColumn label="Grant Types">
+														<!-- <b:label text="#{clt.grantTypes}" severity="primary" />-->
+														<ui:repeat value="#{clt.grantTypes}" var="str" varStatus="status">
+															#{str}#{status.last?'':', '}
+														</ui:repeat>
 													</b:dataTableColumn>
+													<b:dataTableColumn label="Access Token">
+														<b:label rendered="#{clt.accessTokenAsJwt}" text="JWT" severity="primary"  />	
+														<b:label rendered="#{!clt.accessTokenAsJwt}" text="Reference" severity="primary"  />													
+													</b:dataTableColumn>
+													
 													<b:dataTableColumn
 														label="#{msgs['passport.deleteProvider']}">
 														<h:selectBooleanCheckbox id="selectId"
