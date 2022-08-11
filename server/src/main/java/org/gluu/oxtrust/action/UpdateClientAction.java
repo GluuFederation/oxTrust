@@ -175,7 +175,6 @@ public class UpdateClientAction implements Serializable {
 
     private String searchAvailableClaimPattern;
     private String oldSearchAvailableClaimPattern;
-    private String idTokenSubjectType;
     private String defaultPromptLogin;
     private String tlsSubjectDn;
 
@@ -257,7 +256,6 @@ public class UpdateClientAction implements Serializable {
             this.spontaneousScopesScripts = Lists.newArrayList();
             this.backchannelLogoutUri = getStringFromList(client.getAttributes().getBackchannelLogoutUri());
             this.redirectRegex = client.getAttributes().getRedirectRegex();
-            this.idTokenSubjectType = client.getAttributes().getIdTokenSubjectType();
             this.defaultPromptLogin = client.getAttributes().getDefaultPromptLogin();
             this.tlsSubjectDn = client.getAttributes().getTlsClientAuthSubjectDn();
             searchAvailableCustomScriptsforAcr();
@@ -320,7 +318,6 @@ public class UpdateClientAction implements Serializable {
             this.claimRedirectURIList = getNonEmptyStringList(client.getClaimRedirectURI());
             this.additionalAudienceList = getNonEmptyStringList(client.getAttributes().getAdditionalAudience());
             this.redirectRegex = client.getAttributes().getRedirectRegex();
-            this.idTokenSubjectType = client.getAttributes().getIdTokenSubjectType();
             this.defaultPromptLogin = client.getAttributes().getDefaultPromptLogin();
             this.tlsSubjectDn = client.getAttributes().getTlsClientAuthSubjectDn();
             
@@ -430,7 +427,6 @@ public class UpdateClientAction implements Serializable {
         updateBackchannelLogoutUri();
         trimUriProperties();
         client.getAttributes().setRedirectRegex(redirectRegex);
-        client.getAttributes().setIdTokenSubjectType(idTokenSubjectType);
         client.getAttributes().setDefaultPromptLogin(defaultPromptLogin);
         client.getAttributes().setTlsClientAuthSubjectDn(tlsSubjectDn);
         this.client.setEncodedClientSecret(encryptionService.encrypt(this.client.getOxAuthClientSecret()));
@@ -2043,14 +2039,6 @@ public class UpdateClientAction implements Serializable {
 	@ObjectClass(value = "gluuAttribute")
 	class AttributeDisplayNameEntry extends DisplayNameEntry {
 	    public AttributeDisplayNameEntry() {}
-	}
-
-	public String getIdTokenSubjectType() {
-		return idTokenSubjectType;
-	}
-
-	public void setIdTokenSubjectType(String idTokenSubjectType) {
-		this.idTokenSubjectType = idTokenSubjectType;
 	}
 
 	public String getDefaultPromptLogin() {
