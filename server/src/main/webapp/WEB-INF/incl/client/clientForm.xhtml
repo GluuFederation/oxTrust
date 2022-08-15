@@ -80,7 +80,7 @@
 					<div class="box-header">
 						<a4j:commandButton
 							styleClass="btn btn-primary showOIDCSummaryButton"
-							style="margin-left: 75%; margin-right:1%; width:180px; border:none !important;"
+							style="float: right; margin-right:1%; width:180px; border:none !important;"
 							rendered="#{not _new}"
 							value="#{msgs['clientForm.clientSummary']}"
 							onclick="#{rich:component('summary:clientSummary')}.show();"
@@ -201,16 +201,11 @@
 													requiredMessage="Please Enter the redirect Regex"
 													required="false" id="redirectRegexId" />
 											</ox:decorate>
-											<ox:decorate id="idTokenSubjectType"
-												label="#{msgs['clientForm.idTokenSubjectType']}"
+											<ox:decorate id="sectorIdentifierUri" label="Sector URI"
 												leftClass="col-sm-3" rightClass="col-sm-9">
-												<h:selectOneMenu
-													styleClass="col-sm-9 form-control rounded idTokenSubjectTypeSelectBox"
-													value="#{_clientAction.idTokenSubjectType}" id="idTokenSubjectTypeId"
-													required="true">
-													<f:selectItems value="#{_clientAction.subjectTypes}" 
-														var="_subjectType" label="#{_subjectType.displayName}" />
-												</h:selectOneMenu>
+												<h:inputText id="sectorIdentifierUriId"
+													value="#{_client.sectorIdentifierUri}" style="width:100%"
+													styleClass="form-control sectorIdentifierUriId" />
 											</ox:decorate>
 											
 											<h:panelGroup id="secretid">
@@ -328,7 +323,7 @@
 												</h:selectOneMenu>
 											</ox:decorate>
 											<ox:decorate id="subjectType"
-												label="#{msgs['clientForm.subjectType']}"
+												label="#{msgs['clientForm.idTokenSubjectType']}"
 												leftClass="col-sm-6" rightClass="col-sm-6">
 												<h:selectOneMenu
 													styleClass="col-sm-9 form-control rounded subjectTypeSelectBox"
@@ -449,17 +444,7 @@
 														#{msgs['clientForm.includeClaimsInIdTokenTooltip']} </span>
 												</rich:tooltip>									
 											
-											</a4j:outputPanel>
-											
-											<ox:decorate id="requireAuthTime"
-												label="#{msgs['clientForm.requireAuthTime']}"
-												leftClass="col-sm-6" rightClass="col-sm-6">
-												<h:selectBooleanCheckbox value="#{_client.requireAuthTime}"
-													id="requireAuthTimeId" styleClass="col-sm-9 rounded"
-													required="false" />
-											</ox:decorate>
-											
-											
+											</a4j:outputPanel>											
 										</div>
 									</div>
 									<div class="row" style="margin-left: 5px; margin-right: 5px;">										
@@ -553,14 +538,8 @@
 							</div>
 							
 							<!-- Advanced Settings -->
-							<div class="tab-pane box box-primary" id="advancedSettings">
+							<div class="tab-pane box box-primary" id="advancedSettings">							
 							
-							<ox:decorate id="sectorIdentifierUri" label="Sector URI"
-												leftClass="col-sm-3" rightClass="col-sm-9">
-												<h:inputText id="sectorIdentifierUriId"
-													value="#{_client.sectorIdentifierUri}" style="width:100%"
-													styleClass="form-control sectorIdentifierUriId" />
-							</ox:decorate>
 							<ox:decorate id="persistClientAuthorizations"
 												label="#{msgs['clientForm.persistClientAuthorization']}"
 												leftClass="col-sm-3" rightClass="col-sm-3">
@@ -720,7 +699,7 @@
 									</ox:decorate>
 									
 									<ox:decorate id="logoutSessionRequired"
-												label="#{msgs['clientForm.logoutSessionRequired']}"
+												label="#{msgs['clientForm.frontchannellogoutSessionRequired']}"
 												leftClass="col-sm-6" rightClass="col-sm-6">
 												<h:selectBooleanCheckbox
 													value="#{_client.logoutSessionRequired}"
@@ -863,6 +842,9 @@
 							
 							<!-- CIBA -->
 							<div class="tab-pane box box-primary" id="ciba">
+								<div class="col-sm-12 col-lg-12" style="padding: 0px;">
+											<b:panel title="CIBA"
+												id="CIBAheader" look="primary">
 								<ox:decorate id="cibaTokenDeliveryMode" leftClass="col-sm-3"
 													rightClass="col-sm-9"
 													label="#{msgs['clientForm.cibaTokenDeliveryMode']}">
@@ -891,6 +873,11 @@
 														id="cibaUserCodeParameterId" styleClass="col-sm-9 rounded"
 														required="false" />
 								</ox:decorate>
+								</b:panel></div>
+								<div class="col-sm-12 col-lg-12" style="padding: 0px;">
+											<b:panel title="UMA"
+												id="UMAhader" look="primary">						
+								
 								<ox:decorate id="rptAsJwt"
 												label="#{msgs['clientForm.rptAsJwt']}" leftClass="col-sm-3"
 												rightClass="col-sm-6">
@@ -912,7 +899,39 @@
 															itemValue="#{script.dn}"
 															/>
 													</h:selectOneMenu>
-									</ox:decorate>
+								</ox:decorate>
+								
+								<ox:decorate id="rptClaimsScripts" label="#{msgs['clientForm.rptClaimsScripts']}"
+												leftClass="col-sm-3" rightClass="col-sm-9">
+													
+												<h:selectOneMenu styleClass="col-sm-9 form-control rounded" 
+														value="#{_clientAction.rptClaimsScript}"
+														id="rptClaimsScriptsId" required="false">
+														<f:selectItem noSelectionOption="true" itemLabel="" />
+														<f:selectItems
+															value="#{_clientAction.searchAvailableCustomScriptsforrptClaimsScripts()}" 
+															var="script" 
+															itemLabel="#{script.name}"
+															itemValue="#{script.dn}"
+															/>
+													</h:selectOneMenu>
+								</ox:decorate>
+								<ox:decorate id="consentGatheringScripts" label="#{msgs['clientForm.consentGatheringScripts']}"
+												leftClass="col-sm-3" rightClass="col-sm-9">
+													
+												<h:selectOneMenu styleClass="col-sm-9 form-control rounded" 
+														value="#{_clientAction.customScriptsforConsentGather}"
+														id="consentGatheringScriptsId" required="false">
+														<f:selectItem noSelectionOption="true" itemLabel="" />
+														<f:selectItems
+															value="#{_clientAction.searchAvailableCustomScriptsforConsentGath()}" 
+															var="script" 
+															itemLabel="#{script.name}"
+															itemValue="#{script.dn}"
+															/>
+													</h:selectOneMenu>
+								</ox:decorate>
+								
 								
 								<div class="col-sm-6 col-lg-6" style="padding: 0px;">
 											<b:panel title="#{msgs['clientForm.claimRedirectURI']}"
@@ -1016,7 +1035,9 @@
 												</h:panelGroup>
 											</b:panel>
 																						
-										</div>							
+										</div>	
+										
+								</b:panel></div>						
 							</div>
 							
 							<!-- Encryption tab -->
@@ -1253,21 +1274,6 @@
 															/>
 													</h:selectOneMenu>
 									</ox:decorate>
-									<ox:decorate id="consentGatheringScripts" label="#{msgs['clientForm.consentGatheringScripts']}"
-												leftClass="col-sm-3" rightClass="col-sm-9">
-													
-												<h:selectOneMenu styleClass="col-sm-9 form-control rounded" 
-														value="#{_clientAction.customScriptsforConsentGather}"
-														id="consentGatheringScriptsId" required="false">
-														<f:selectItem noSelectionOption="true" itemLabel="" />
-														<f:selectItems
-															value="#{_clientAction.searchAvailableCustomScriptsforConsentGath()}" 
-															var="script" 
-															itemLabel="#{script.name}"
-															itemValue="#{script.dn}"
-															/>
-													</h:selectOneMenu>
-									</ox:decorate>
 									<ox:decorate id="spontaneousScopeScripts" label="#{msgs['clientForm.spontaneousScopeScripts']}"
 												leftClass="col-sm-3" rightClass="col-sm-9">
 													
@@ -1292,21 +1298,6 @@
 														<f:selectItem noSelectionOption="true" itemLabel="" />
 														<f:selectItems
 															value="#{_clientAction.searchAvailableCustomScriptsforintrospection()}" 
-															var="script" 
-															itemLabel="#{script.name}"
-															itemValue="#{script.dn}"
-															/>
-													</h:selectOneMenu>
-									</ox:decorate>
-									<ox:decorate id="rptClaimsScripts" label="#{msgs['clientForm.rptClaimsScripts']}"
-												leftClass="col-sm-3" rightClass="col-sm-9">
-													
-												<h:selectOneMenu styleClass="col-sm-9 form-control rounded" 
-														value="#{_clientAction.rptClaimsScript}"
-														id="rptClaimsScriptsId" required="false">
-														<f:selectItem noSelectionOption="true" itemLabel="" />
-														<f:selectItems
-															value="#{_clientAction.searchAvailableCustomScriptsforrptClaimsScripts()}" 
 															var="script" 
 															itemLabel="#{script.name}"
 															itemValue="#{script.dn}"
