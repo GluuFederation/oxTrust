@@ -67,12 +67,8 @@
 												</b:dataTableColumn>
 												<b:dataTableColumn value="#{clt.description}"
 													label="#{msgs['scope.description']}" />
-												<b:dataTableColumn label="#{msgs['scope.default']}">
-													<b:label rendered="#{clt.isDefaultScope() eq 'true'}"
-														text="#{clt.isDefaultScope()}" severity="primary" />
-													<b:label rendered="#{clt.isDefaultScope() eq 'false'}"
-														text="#{clt.isDefaultScope()}" severity="info" />
-												</b:dataTableColumn>
+												<b:dataTableColumn label="#{msgs['scope.scopeType']}" 
+														value="#{clt.scopeType}" severity="primary" />
 											</b:dataTable>
 										</h:form>
 									</div>

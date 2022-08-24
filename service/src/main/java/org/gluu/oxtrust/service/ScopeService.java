@@ -193,7 +193,7 @@ public class ScopeService implements Serializable {
 	public List<ScopeType> getScopeTypes() {
 		List<ScopeType> scopeTypes = new ArrayList<ScopeType>(
 				Arrays.asList(org.gluu.oxauth.model.common.ScopeType.values()));
-		scopeTypes.remove(ScopeType.UMA);
+		
 		return scopeTypes;
 	}
 
