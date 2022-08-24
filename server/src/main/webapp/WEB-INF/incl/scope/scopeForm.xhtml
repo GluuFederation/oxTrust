@@ -24,6 +24,12 @@
 			<b:panel title="OpenID Connect Scope Form" look="primary"
 				iconAwesome="fa-list" collapsible="false">
 				<h:panelGroup>
+					<ox:decorate id="oxid" label="#{msgs['scope.oxid']}">
+						<h:inputText value="#{_scope.id}"
+							styleClass="form-control oxidId"
+							defaultLabel="Click to enter id" maxlength="60"
+							inputWidth="704" required="true" id="oxId" />
+					</ox:decorate>
 					<ox:decorate id="inum" rendered="#{not _new}"
 						label="#{msgs['scope.inum']}">
 						<h:outputText styleClass="form-control" value="#{_scope.inum}" />
@@ -39,32 +45,129 @@
 							value="#{_scope.description}" rows="3" cols="80" maxlength="4000"
 							id="descriptionId" />
 					</ox:decorate>
-					<div class="row">
-						<div class="col-sm-6 col-lg-6">
-							<ox:decorate label="#{msgs['scope.scopeType']}">
-								<h:selectOneMenu
-									styleClass="col-sm-9 rounded form-control scopeType"
-									value="#{_scope.scopeType}">
-									<f:selectItems value="#{_scopeAction.getScopeTypes()}"
-										var="_type" itemLabel="#{_type.displayName}" />
-									<f:converter
-										converterId="org.gluu.jsf2.converter.EnumConverter" />
-									<a4j:ajax event="change"
-										render="dynamicScripts, selectedClaims" execute="@this" />
-								</h:selectOneMenu>
+					<h:panelGroup id="iconUrlId">
+						<a4j:region
+									rendered="#{(not empty _scope.scopeType) and (_scope.scopeType.value eq 'uma')}">
+										
+							<ox:decorate id="iconUrl" leftClass="col-sm-4"
+												rightClass="col-sm-8" label="#{msgs['uma.iconURI']}">
+												<h:inputText defaultLabel="Click to enter Icon Url"
+													id="iconUrlId" maxlength="60" 
+													styleClass="form-control" value="#{_scope.iconUrl}" />
 							</ox:decorate>
-						</div>
-						<div class="col-sm-6 col-lg-6">
+						</a4j:region>
+					</h:panelGroup>
+								
+					<ox:decorate label="#{msgs['scope.scopeType']}">
+						<h:selectOneMenu disabled="#{_scopeAction.update}"
+							styleClass="col-sm-9 rounded form-control scopeType"
+							value="#{_scope.scopeType}">
+							<f:selectItems value="#{_scopeAction.getScopeTypes()}"
+								var="_type" itemLabel="#{_type.displayName}" />
+							<f:converter
+								converterId="org.gluu.jsf2.converter.EnumConverter" />
+							<a4j:ajax event="change"
+								render="dynamicScripts, selectedClaims, spontaneousclientId, umaClients, selectedAuthorizationPolicy" execute="@this" />
+						</h:selectOneMenu>
+					</ox:decorate>
+					<h:panelGroup id="scopeendpointId">
+						<a4j:region
+									rendered="#{(not empty _scope.scopeType) and !(_scope.scopeType.value eq 'uma' or _scope.scopeType.value eq 'spontaneous')}">
+									
 							<ox:decorate label="#{msgs['scope.defaultScope']}">
 								<h:selectBooleanCheckbox value="#{_scope.defaultScope}"
 									styleClass="col-sm-9 rounded registrationType">
 								</h:selectBooleanCheckbox>
 							</ox:decorate>
-						</div>
+								
+							<ox:decorate label="#{msgs['scope.showConfigurationEndpoint']}">
+										<h:selectBooleanCheckbox value="#{_scope.attributes.showInConfigurationEndpoint}"
+											styleClass="col-sm-9 rounded registrationType">
+										</h:selectBooleanCheckbox>
+							</ox:decorate>
+						</a4j:region>
+					</h:panelGroup>
+					
+					<div class="row" style="margin-left: 10px; margin-right: 10px;">
+						<h:panelGroup id="spontaneousclientId">
+								<a4j:region
+									rendered="#{(_scopeAction.clientList != null)  and (not empty _scope.scopeType) and (_scope.scopeType.value eq 'spontaneous')}">
+									<b:panel id="clients"
+										title="Associated Clients" look="primary">
+										<a4j:repeat rowKeyVar="_clientIdx"
+											value="#{_scopeAction.clientList}" var="_cilent">
+											<h:link includeViewParams="false"
+												outcome="/client/updateClient"
+												value="#{_cilent.displayName}">
+												<f:param name="inum" value="#{_cilent.inum}" />
+											</h:link>
+										</a4j:repeat>
+									</b:panel>
+								</a4j:region>
+						</h:panelGroup>
 					</div>
+					
+					<div class="row" style="margin-left: 10px; margin-right: 10px;">
+						<h:panelGroup id="selectedAuthorizationPolicy">
+							<a4j:region
+									rendered="#{(not empty _scope.scopeType) and (_scope.scopeType.value eq 'uma')}">
+									<b:panel id="responseTypes"
+										title="#{msgs['uma.authorizationPolicy']}" look="primary">
+										<h:panelGroup id="selectedAuthorizationPolicyId">
+											<a4j:repeat rowKeyVar="_authorizationPolicyIdx"
+												value="#{_scopeAction.authorizationPolicies}"
+												var="_authorizationPolicy">
+												<div class="col-sm-12">
+													<div class="col-sm-6">
+														<h:outputText style="margin-left:-29px;"
+															value="#{_authorizationPolicy.name}" />
+														<h:outputText value=" " />
+													</div>
+													<div class="col-sm-6">
+														<a4j:commandLink
+															action="#{_scopeAction.removeAuthorizationPolicy(_authorizationPolicy)}"
+															execute="@this" render="selectedAuthorizationPolicyId"
+															styleClass="glyphicon glyphicon-remove removeAuthorization">
+														</a4j:commandLink>
+													</div>
+												</div>
+											</a4j:repeat>
+											<p:spacer height="16" />
+										</h:panelGroup>
+										<h:panelGroup>
+											<a4j:commandButton execute="@this"
+												oncomplete="#{rich:component('authorizationPolicy:selectEntityModalPanel')}.show();"
+												styleClass="btn btn-primary AddAuthorizationButtonClass"
+												value="#{msgs['uma.addAuthorizationPolicy']}" />
+										</h:panelGroup>
+									</b:panel>
+									</a4j:region>
+									</h:panelGroup>
+								</div>
+								<div class="row" style="margin-left: 10px; margin-right: 10px;">
+									<h:panelGroup id="umaClients">
+										<a4j:region
+											rendered="#{(_scopeAction.umaClientList != null)  and (not empty _scope.scopeType) and (_scope.scopeType.value eq 'uma')}">
+											<b:panel id="umaClientsId"
+												rendered="#{(_scopeAction.umaClientList != null) and (_scope.scopeType.value eq 'uma')}"
+												title="UMA Associated Clients" look="primary">
+												<a4j:repeat rowKeyVar="_clientIdx"
+													value="#{_scopeAction.umaClientList}" var="_cilent">
+													<h:link includeViewParams="false"
+														outcome="/client/updateClient"
+														value="#{_cilent.displayName}">
+														<f:param name="inum" value="#{_cilent.inum}" />
+													</h:link>
+												</a4j:repeat>
+											</b:panel>
+										</a4j:region>
+									</h:panelGroup>
+								</div>
+					
+					
 					<h:panelGroup id="selectedClaims">
 						<a4j:region
-							rendered="#{(not empty _scope.scopeType) and (_scope.scopeType.value eq 'openid')}">
+							rendered="#{(not empty _scope.scopeType) and (_scope.scopeType.value eq 'openid' or _scope.scopeType.value eq 'dynamic')}">
 							<b:panel id="claims" title="#{msgs['scope.claims']}"
 								look="primary" iconAwesome="fa-list">
 								<h:panelGroup id="selectedClaimsId"
@@ -135,31 +238,15 @@
 							</b:panel>
 						</a4j:region>
 					</h:panelGroup>
-					<b:panel id="Attributes" title="Attributes" look="primary">
-						<h:panelGroup columns="1" width="100%" prependId="false"
-							style="background-color: white;">
-							<ui:decorate id="scopeAttributes" prependId="false"
-								template="/WEB-INF/incl/layout/jsonscopeeditor.xhtml">
-								<ui:param name="id" value="scopeAttributes" />
-								<ui:param name="parentId" value="scopeAttributes" />
-								<ui:param name="json"
-									value="#{updateScopeAction.oxAttributesJson}" />
-								<ui:param name="jsonSchema"
-									value="#{request.contextPath}/schema/oxScopeAttributes.properties.json" />
-								<ui:param name="saveBtnId" value="updateScopeButtonId" />
-								<ui:param name="saveBtnLabel" value="Save attributes" />
-							</ui:decorate>
-							<h:panelGroup styleClass="hiddenFieldBox">
-								<h:inputHidden prependId="false" id="#{id}_hidden"
-									style="width:100%;"
-									value="#{updateScopeAction.oxAttributesJson}"
-									class="hiddenField" />
-							</h:panelGroup>
-						</h:panelGroup>
-					</b:panel>
+					
+					
 				</h:panelGroup>
-				<div class="box-footer">
+				<div class="box-footer">				
+				<h:panelGroup>
+					<a4j:region id="controlbuttonid" rendered="#{(not empty _scope.scopeType) and !(_scope.scopeType.value eq 'uma' or _scope.scopeType.value eq 'spontaneous')}">
 					<ui:insert name="controlButttons" />
+					</a4j:region>
+				</h:panelGroup>
 				</div>
 			</b:panel>
 		</div>
@@ -169,6 +256,14 @@
         }
     </h:outputScript>
 	</h:form>
+	<ox:selectSelectableEntityDialog
+			acceptMethod="#{updateScopeAction.acceptSelectAuthorizationPolicies}"
+			cancelMethod="#{updateScopeAction.cancelSelectAuthorizationPolicies}"
+			displayNameProperty="entity.description" displaySearchForm="false"
+			id="authorizationPolicy" label="#{msgs['uma.addAuthorizationPolicy']}"
+			nameProperty="entity.name" render="selectedAuthorizationPolicyId"
+			searchMethod="#{updateScopeAction.searchAvailableAuthorizationPolicies}"
+			searchResult="#{updateScopeAction.availableAuthorizationPolicies}" />
 	<ox:selectSelectableEntityDialog id="dynamicScript"
 		searchMethod="#{updateScopeAction.searchAvailableDynamicScripts}"
 		searchResult="#{updateScopeAction.availableDynamicScripts}"
