@@ -214,7 +214,7 @@ public class CustomAttributeAction implements Serializable {
 		int index = 0;
 		for (GluuCustomAttribute customAttribute : this.customAttributes) {
 			if (tmpAttribute.equals(customAttribute.getMetadata())) {
-				values = (String[]) customAttribute.getValues();
+				values =  customAttribute.getValues();
 				newValues = removeElementFromArray(values, removeValue);
 				break;
 			}
