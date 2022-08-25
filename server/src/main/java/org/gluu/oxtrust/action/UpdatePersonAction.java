@@ -588,9 +588,11 @@ public class UpdatePersonAction implements Serializable {
 					externalUpdateUserService.executeExternalPostUpdateUserMethods(this.person);
 				}
 				if(identity.getUser().getUid().equals(this.oldUid)) {
-						logoutAction.processLogout();
+						
 						facesMessages.add(FacesMessage.SEVERITY_INFO,
 								"Profile '#{userProfileAction.person.displayName}' updated successfully");
+						logoutAction.processLogout();
+						return OxTrustConstants.RESULT_SUCCESS;
 				}
 			} catch (DuplicateEmailException ex) {
 				log.error("Failed to update person {}", inum, ex);
