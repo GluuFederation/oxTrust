@@ -175,7 +175,6 @@ public class UpdateClientAction implements Serializable {
 
     private String searchAvailableClaimPattern;
     private String oldSearchAvailableClaimPattern;
-    private String defaultPromptLogin;
     private String tlsSubjectDn;
 
     private String availableLoginUri = HTTPS;
@@ -188,14 +187,11 @@ public class UpdateClientAction implements Serializable {
     private String availableAdditionalAudience = "";
     private String oxAttributesJson;
     private String backchannelLogoutUri;
-    private String redirectRegex;
     private String customScriptsforPostAuthn;
     private String customScriptsforConsentGather;
     private String spontaneousScopeCustomScript;
     private String introspectionCustomScript;
     private String rptClaimsScript;
-    private String updateTokenScript;
-    private String umaRPTModificationScript;
     
     
     Pattern domainPattern = Pattern.compile("^((?!-)[A-Za-z0-9-]{1,63}(?<!-)\\\\.)+[A-Za-z]{2,6}");
@@ -255,8 +251,6 @@ public class UpdateClientAction implements Serializable {
             this.consentScripts = Lists.newArrayList();
             this.spontaneousScopesScripts = Lists.newArrayList();
             this.backchannelLogoutUri = getStringFromList(client.getAttributes().getBackchannelLogoutUri());
-            this.redirectRegex = client.getAttributes().getRedirectRegex();
-            this.defaultPromptLogin = client.getAttributes().getDefaultPromptLogin();
             this.tlsSubjectDn = client.getAttributes().getTlsClientAuthSubjectDn();
             searchAvailableCustomScriptsforAcr();
         } catch (BasePersistenceException ex) {
@@ -317,8 +311,6 @@ public class UpdateClientAction implements Serializable {
             this.authorizedOrigins = getNonEmptyStringList(client.getAuthorizedOrigins());
             this.claimRedirectURIList = getNonEmptyStringList(client.getClaimRedirectURI());
             this.additionalAudienceList = getNonEmptyStringList(client.getAttributes().getAdditionalAudience());
-            this.redirectRegex = client.getAttributes().getRedirectRegex();
-            this.defaultPromptLogin = client.getAttributes().getDefaultPromptLogin();
             this.tlsSubjectDn = client.getAttributes().getTlsClientAuthSubjectDn();
             
             this.postAuthnScripts = searchAvailablePostAuthnCustomScripts().stream()
@@ -344,8 +336,6 @@ public class UpdateClientAction implements Serializable {
             this.spontaneousScopeCustomScript = getStringFromList(client.getAttributes().getSpontaneousScopeScriptDns());
             this.introspectionCustomScript = getStringFromList(client.getAttributes().getIntrospectionScripts());
             this.rptClaimsScript = getStringFromList(client.getAttributes().getRptClaimsScripts());
-            this.updateTokenScript = getStringFromList(client.getAttributes().getUpdateTokenScripts());
-            this.umaRPTModificationScript = getStringFromList(client.getAttributes().getUmaRPTModificationScripts());
             this.resources = resourceSetService.findResourcesByClients(client.getDn());
             
             searchAvailableCustomScriptsforAcr();
@@ -426,8 +416,6 @@ public class UpdateClientAction implements Serializable {
         updateAdditionalAudience();
         updateBackchannelLogoutUri();
         trimUriProperties();
-        client.getAttributes().setRedirectRegex(redirectRegex);
-        client.getAttributes().setDefaultPromptLogin(defaultPromptLogin);
         client.getAttributes().setTlsClientAuthSubjectDn(tlsSubjectDn);
         this.client.setEncodedClientSecret(encryptionService.encrypt(this.client.getOxAuthClientSecret()));
         if (update) {
@@ -1091,15 +1079,7 @@ public class UpdateClientAction implements Serializable {
     			&&  !spontaneousScopeCustomScript.isEmpty()) {
     		this.client.getAttributes().getSpontaneousScopeScriptDns().add(spontaneousScopeCustomScript);
     	}
-    	if(!this.client.getAttributes().getUpdateTokenScripts().contains(updateTokenScript)
-    			&&  !updateTokenScript.isEmpty()) {
-    		this.client.getAttributes().getUpdateTokenScripts().add(updateTokenScript);
-    	}
     	
-    	if(!this.client.getAttributes().getUmaRPTModificationScripts().contains(umaRPTModificationScript)
-    			&&  !umaRPTModificationScript.isEmpty()) {
-    		this.client.getAttributes().getUmaRPTModificationScripts().add(umaRPTModificationScript);
-    	}
     }
 
     public void selectAddedClaims() {
@@ -2028,25 +2008,9 @@ public class UpdateClientAction implements Serializable {
 		this.backchannelLogoutUri = backchannelLogoutUri;
 	}
 
-	public String getRedirectRegex() {
-		return redirectRegex;
-	}
-
-	public void setRedirectRegex(String redirectRegex) {
-		this.redirectRegex = redirectRegex;
-	}
-
 	@ObjectClass(value = "gluuAttribute")
 	class AttributeDisplayNameEntry extends DisplayNameEntry {
 	    public AttributeDisplayNameEntry() {}
-	}
-
-	public String getDefaultPromptLogin() {
-		return defaultPromptLogin;
-	}
-
-	public void setDefaultPromptLogin(String defaultPromptLogin) {
-		this.defaultPromptLogin = defaultPromptLogin;
 	}
 
 	public String getTlsSubjectDn() {
@@ -2105,27 +2069,11 @@ public class UpdateClientAction implements Serializable {
 		this.rptClaimsScript = rptClaimsScript;
 	}
 
-	public String getUpdateTokenScript() {
-		return updateTokenScript;
-	}
-
-	public void setUpdateTokenScript(String updateTokenScript) {
-		this.updateTokenScript = updateTokenScript;
-	}
-
 	public List<UmaResource> getResources() {
 		return resources;
 	}
 
 	public void setResources(List<UmaResource> resources) {
 		this.resources = resources;
-	}
-
-	public String getUmaRPTModificationScript() {
-		return umaRPTModificationScript;
-	}
-
-	public void setUmaRPTModificationScript(String umaRPTModificationScript) {
-		this.umaRPTModificationScript = umaRPTModificationScript;
 	}
 }

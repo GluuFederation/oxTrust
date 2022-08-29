@@ -193,14 +193,6 @@
 													styleClass="col-sm-12 form-control rounded clientDescriptionTextArea"
 													cols="80" maxlength="250" id="descriptionId" />
 											</ox:decorate>
-											<ox:decorate id="redirectRegex"
-												label="#{msgs['clientForm.redirectRegex']}"
-												leftClass="col-sm-3" rightClass="col-sm-9">
-												<h:inputText value="#{_clientAction.redirectRegex}"
-													styleClass="form-control redirectRegexTextBox"
-													requiredMessage="Please Enter the redirect Regex"
-													required="false" id="redirectRegexId" />
-											</ox:decorate>
 											<ox:decorate id="sectorIdentifierUri" label="Sector URI"
 												leftClass="col-sm-3" rightClass="col-sm-9">
 												<h:inputText id="sectorIdentifierUriId"
@@ -631,12 +623,6 @@
 															/>
 													</h:selectOneMenu>
 							</ox:decorate>
-							<ox:decorate id="defaultPromptLogin" label="#{msgs['clientForm.defaultPromptLogin']}"
-												leftClass="col-sm-3" rightClass="col-sm-9">
-												<h:inputText id="defaultPromptLoginId"
-													value="#{_clientAction.defaultPromptLogin}" style="width:100%"
-													styleClass="form-control defaultPromptLoginId" />
-							</ox:decorate>
 							
 							<ox:decorate id="tlsSubjectDn" label="#{msgs['clientForm.tlsSubjectDn']}"
 												leftClass="col-sm-3" rightClass="col-sm-9">
@@ -884,21 +870,6 @@
 												<h:selectBooleanCheckbox value="#{_client.rptAsJwt}"
 													id="rptAsJwtId" styleClass="col-sm-9 rounded"
 													required="false" />
-								</ox:decorate>
-								<ox:decorate id="umaRPTModificationScript" label="#{msgs['clientForm.rptModificationScript']}"
-												leftClass="col-sm-3" rightClass="col-sm-9">
-													
-												<h:selectOneMenu styleClass="col-sm-9 form-control rounded" 
-														value="#{_clientAction.umaRPTModificationScript}"
-														id="umaRPTModificationScriptId" required="false">
-														<f:selectItem noSelectionOption="true" itemLabel="" />
-														<f:selectItems
-															value="#{_clientAction.searchAvailableCustomScriptsforRptModifications()}" 
-															var="script" 
-															itemLabel="#{script.name}"
-															itemValue="#{script.dn}"
-															/>
-													</h:selectOneMenu>
 								</ox:decorate>
 								
 								<ox:decorate id="rptClaimsScripts" label="#{msgs['clientForm.rptClaimsScripts']}"
@@ -1298,22 +1269,6 @@
 														<f:selectItem noSelectionOption="true" itemLabel="" />
 														<f:selectItems
 															value="#{_clientAction.searchAvailableCustomScriptsforintrospection()}" 
-															var="script" 
-															itemLabel="#{script.name}"
-															itemValue="#{script.dn}"
-															/>
-													</h:selectOneMenu>
-									</ox:decorate>
-									
-									<ox:decorate id="updateTokenScripts" label="#{msgs['clientForm.updateTokenScripts']}"
-												leftClass="col-sm-3" rightClass="col-sm-9">
-													
-												<h:selectOneMenu styleClass="col-sm-9 form-control rounded" 
-														value="#{_clientAction.updateTokenScript}"
-														id="rptClaimsScriptsId" required="false">
-														<f:selectItem noSelectionOption="true" itemLabel="" />
-														<f:selectItems
-															value="#{_clientAction.searchAvailableCustomScriptsforUpdateTokens()}" 
 															var="script" 
 															itemLabel="#{script.name}"
 															itemValue="#{script.dn}"
