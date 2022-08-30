@@ -15,6 +15,7 @@ import org.gluu.oxtrust.action.HomeAction;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.security.Identity;
+import org.gluu.oxtrust.service.JsonConfigurationService;
 import org.gluu.oxtrust.service.PersonService;
 import org.gluu.util.StringHelper;
 
@@ -35,17 +36,25 @@ public class LanguageBean implements Serializable {
 
 	@Inject
 	private HomeAction homeAction;
+	
+	@Inject
+	private JsonConfigurationService jsonConfigurationService;
 
 	private static Map<String, Object> countries;
 
-	static {
-		countries = new LinkedHashMap<String, Object>();
-		countries.put("English", Locale.ENGLISH); // label, value
-		countries.put("Russian", new Locale("ru"));
-		countries.put("French", new Locale("fr"));
-	}
+	
 
 	public Map<String, Object> getCountriesInMap() {
+		String [] locales = jsonConfigurationService.getOxTrustappConfiguration().getOxTrustAdminUIlocalesSupported();
+			countries = new LinkedHashMap<String, Object>();
+			for(String locale: locales ) {
+				if(locale.equalsIgnoreCase("English"))
+					countries.put("English", Locale.ENGLISH);
+				if(locale.equalsIgnoreCase("Russian"))
+					countries.put("Russian", new Locale("ru"));
+				if(locale.equalsIgnoreCase("French"))
+					countries.put("French", Locale.FRENCH);			
+			}
 		return countries;
 	}
 
