@@ -1,10 +1,8 @@
 package org.gluu.oxtrust;
 
 import java.io.Serializable;
-import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-
 import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
@@ -17,7 +15,6 @@ import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.service.JsonConfigurationService;
 import org.gluu.oxtrust.service.PersonService;
-import org.gluu.util.StringHelper;
 
 /**
  * Created by eugeniuparvan on 3/6/17.
@@ -40,22 +37,15 @@ public class LanguageBean implements Serializable {
 	@Inject
 	private JsonConfigurationService jsonConfigurationService;
 
-	private static Map<String, Object> countries;
+	//private static Map<String, Object> countries;
+	private List<org.gluu.model.LocaleSupported> adminUiLocaleSupported;
 
 	
 
-	public Map<String, Object> getCountriesInMap() {
-		String [] locales = jsonConfigurationService.getOxTrustappConfiguration().getOxTrustAdminUIlocalesSupported();
-			countries = new LinkedHashMap<String, Object>();
-			for(String locale: locales ) {
-				if(locale.equalsIgnoreCase("English"))
-					countries.put("English", Locale.ENGLISH);
-				if(locale.equalsIgnoreCase("Russian"))
-					countries.put("Russian", new Locale("ru"));
-				if(locale.equalsIgnoreCase("French"))
-					countries.put("French", Locale.FRENCH);			
-			}
-		return countries;
+	public List<org.gluu.model.LocaleSupported> getCountriesInMap() {
+		adminUiLocaleSupported = jsonConfigurationService.getOxTrustappConfiguration().getAdminUiLocaleSupported();
+		return adminUiLocaleSupported;
+
 	}
 
 	public String getLocaleCode() {
@@ -98,11 +88,7 @@ public class LanguageBean implements Serializable {
 
 	public void countryLocaleCodeChanged(ValueChangeEvent e) {
 		String newLocaleValue = e.getNewValue().toString();
-		for (Map.Entry<String, Object> entry : countries.entrySet()) {
-			if (entry.getValue().toString().equals(newLocaleValue)) {
-				FacesContext.getCurrentInstance().getViewRoot().setLocale((Locale) entry.getValue());
-			}
-		}
+		FacesContext.getCurrentInstance().getViewRoot().setLocale(new Locale( newLocaleValue));
 		homeAction.init();
 	}
 
@@ -120,5 +106,13 @@ public class LanguageBean implements Serializable {
 		locale.setName("locale");
 		locale.setValue(localeCode);
 		gluuCustomPerson.getCustomAttributes().add(locale);
+	}
+
+	public List<org.gluu.model.LocaleSupported> getAdminUiLocaleSupported() {
+		return adminUiLocaleSupported;
+	}
+
+	public void setAdminUiLocaleSupported(List<org.gluu.model.LocaleSupported> adminUiLocaleSupported) {
+		this.adminUiLocaleSupported = adminUiLocaleSupported;
 	}
 }
