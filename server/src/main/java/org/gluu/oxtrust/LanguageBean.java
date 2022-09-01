@@ -1,6 +1,7 @@
 package org.gluu.oxtrust;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import javax.enterprise.context.SessionScoped;
@@ -15,6 +16,7 @@ import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.service.JsonConfigurationService;
 import org.gluu.oxtrust.service.PersonService;
+import org.gluu.model.LocaleSupported;
 
 /**
  * Created by eugeniuparvan on 3/6/17.
@@ -37,13 +39,17 @@ public class LanguageBean implements Serializable {
 	@Inject
 	private JsonConfigurationService jsonConfigurationService;
 
-	//private static Map<String, Object> countries;
-	private List<org.gluu.model.LocaleSupported> adminUiLocaleSupported;
+	private List<LocaleSupported> adminUiLocaleSupported;
 
 	
 
 	public List<org.gluu.model.LocaleSupported> getCountriesInMap() {
 		adminUiLocaleSupported = jsonConfigurationService.getOxTrustappConfiguration().getAdminUiLocaleSupported();
+		if(adminUiLocaleSupported == null) {
+			adminUiLocaleSupported = new ArrayList<LocaleSupported>();
+			adminUiLocaleSupported.add(new LocaleSupported("en","English"));			
+		}
+		
 		return adminUiLocaleSupported;
 
 	}
