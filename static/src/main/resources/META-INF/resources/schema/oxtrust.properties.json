@@ -77,6 +77,30 @@
                 "minLength": 1
             }
         },
+        "adminUiLocaleSupported" : {
+            "id": "adminUiLocaleSupported",
+            "description": "adminUiLocaleSupported.",
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "additionalItems": true,
+            "items": {
+                "type": "object",
+                "additionalProperties": true,
+                "properties": {
+                    "locale": {
+                        "id": "locale",
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "displayName": {
+                        "id": "displayName",
+                        "type": "string",
+                        "minLength": 1
+                    }
+                }
+            }
+        },
         "authMode": {
             "id": "authMode",
             "type": "string",
