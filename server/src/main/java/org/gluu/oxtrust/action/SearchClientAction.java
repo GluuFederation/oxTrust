@@ -72,9 +72,9 @@ public class SearchClientAction implements Serializable {
 	protected String searchImpl() {
 		try {
 			if (searchPattern == null || searchPattern.isEmpty()) {
-				this.clientList = clientService.getAllClients(100);
+				this.clientList = clientService.getAllClients(1000);
 			} else {
-				this.clientList = clientService.searchClients(this.searchPattern, 100);
+				this.clientList = clientService.searchClients(this.searchPattern, 1000);
 			}
 			this.clientList.sort(Comparator.comparing(OxAuthClient::getDisplayName));
 			this.oldSearchPattern = this.searchPattern;
