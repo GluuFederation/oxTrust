@@ -60,5 +60,17 @@ public final class ApiConstants {
 	public static final String DISPLAY_NAME = "displayName";
 	public static final String SEARCH_PATTERN = "pattern";
 	public static final String SCOPE_INUM_PARAM_PATH = "/{sinum}";
+	public static final String INBOUNDSAML = "/inbound-saml";
+	public static final String TRUSTEDIDP = "/trusted-idp";
+	public static final String REMOTEIDPHOST = "/{remoteIdpHost}";
+	public static final String API = "/api";
+	public static final String CAPTCHA = "/captcha";
+	public static final String IDP = "/idp";
+	public static final String METRIC = "/metric";
+	public static final String OXAUTH = "/oxauth";
+	public static final String OXTRUST = "/oxtrust";
+	public static final String RPT = "/rpt";
+	public static final String SCIM = "/scim";
+	public static final String SYSTEM = "/system";
 
 }
