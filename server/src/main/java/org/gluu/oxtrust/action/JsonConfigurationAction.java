@@ -448,7 +448,6 @@ public class JsonConfigurationAction implements Serializable {
 			processPasswordProperty(this.oxTrustappConfiguration, resultOxTrustappConfiguration,
 					"idpSecurityKeyPassword");
 			processPasswordProperty(this.oxTrustappConfiguration, resultOxTrustappConfiguration, "idpBindPassword");
-			processPasswordProperty(this.oxTrustappConfiguration, resultOxTrustappConfiguration, "caCertsPassphrase");
 			processPasswordProperty(this.oxTrustappConfiguration, resultOxTrustappConfiguration,
 					"oxAuthClientPassword");
 
