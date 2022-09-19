@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:b="http://bootsfaces.net/ui"
+	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/WEB-INF/incl/layout/newtemplate.xhtml">
+	<f:metadata>
+		<f:viewAction
+			action="#{permissionService.requestPermission('group', 'access')}" />
+		<f:viewParam name="inum" value="#{updateTrustedIdpAction.inum}" />
+		<f:viewAction action="#{conversationService.initConversation}" />
+		<f:viewAction action="#{updateTrustedIdpAction.update}" onPostback="false" />
+	</f:metadata>
+
+	<ui:define name="body">
+		<div id="formArea">
+			<ui:decorate template="/WEB-INF/incl/trustedidp/trustedIdpForm.xhtml">
+				<ui:param name="_trustedIdp" value="#{updateTrustedIdpAction.oxTrustedIdp}" />
+				<ui:param name="_trustedIdpAction" value="#{updateTrustedIdpAction}" />
+				<ui:param name="_new" value="false" />
+
+				<ui:define name="controlButttons">
+					<div id="updateButtons">
+						<b:commandButton action="#{updateTrustedIdpAction.save}" ajax="true"
+							update="@form" styleClass="btn btn-primary"
+							value="#{msgs['group.update']}">
+							<f:param name="blockui.disabled" value="true" />
+						</b:commandButton>
+						<a4j:commandButton ajaxSingle="true" eventsQueue="trustedQueue"
+							onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();"
+							rendered="#{not _new}" style="margin-left:3px;"
+							styleClass="btn btn-primary" value="#{msgs['group.delete']}" />
+						<b:commandButton action="#{updateTrustedIdpAction.cancel}"
+							style="margin-left:3px;" ajax="true" update="@form"
+							styleClass="btn btn-primary" value="#{msgs['group.cancel']}" />
+					</div>
+				</ui:define>
+			</ui:decorate>
+
+
+			<ox:acceptRemovalDialog deleteMethod="#{updateTrustedIdpAction.delete}"
+				id="deleteConfirmation" queue="trustedQueue" subject="trustedIdp"
+				value="#{updateTrustedIdpAction.oxTrustedIdp.remoteIdpName}" />
+		</div>
+	</ui:define>
+
+</ui:composition>

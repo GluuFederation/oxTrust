@@ -1,0 +1,72 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:b="http://bootsfaces.net/ui" xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
+	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
+	xmlns:gluufn="http://www.gluu.org/jsf/functions">
+
+	<section class="content-header">
+	<h1 style="color: #333;">
+		#{msgs['trustedIdp.TrustedIDP']}
+	</h1>
+	<ol class="breadcrumb">
+		<li><a href="#{request.contextPath}"><i class="fa fa-home"></i></a></li>
+		<li class="organization/configuration"><a
+			href="#{request.contextPath}/trustedidp/trustedIdpInventory.htm">
+				#{msgs['trustedIdp.manageTrustedIDP']}</a></li>
+	</ol>
+	</section>
+	<section class="content"> <h:form>
+		<div class="row" style="margin: 5px;">
+			<b:panel title="Trusted Idp Form" id="groups" look="primary"
+				iconAwesome="fa-th-large" collapsible="false">
+				<h:panelGrid columns="1" width="100%" border="0" cellpadding="0"
+					cellspacing="0">
+					
+					<ox:decorate id="remoteIdpName" leftClass="col-sm-4"
+						rightClass="col-sm-8" label="#{msgs['trustedIdp.remoteIDPName']}">
+						<h:inputText class="form-control remoteIdpNameField"
+							value="#{_trustedIdp.remoteIdpName}"
+							defaultLabel="click to enter remote Idp name" maxlength="60"
+							required="true" id="remoteIdpNameId" />
+					</ox:decorate>
+					<ox:decorate id="remoteIdpHost" label="#{msgs['trustedIdp.remoteIDPHost']}">
+						<h:inputText class="form-control remoteIdpHostField"
+							value="#{_trustedIdp.remoteIdpHost}"
+							defaultLabel="click to enter remote Idp host" maxlength="60"
+							required="true" id="remoteIdpHostId" />
+					</ox:decorate>
+					
+					<ox:decorate id="signingCertificates" label="#{msgs['trustedIdp.signingCertificates']}">
+						<h:inputTextarea class="rounded signingCertificatesField"
+							value="#{_trustedIdp.signingCertificates}" rows="3" size="40" maxlength="4000"
+							id="signingCertificatesId" styleClass="form-control" />
+					</ox:decorate>
+					<ox:decorate id="selectedSingleSignOnBinding" label="#{msgs['trustedIdp.selectedSingleSignOnService.binding']}">
+						<h:inputText class="rounded selectedSingleSignOnBindingField"
+							value="#{_trustedIdpAction.selectedSingleSignOnService.binding}" rows="3" size="40" maxlength="4000"
+							id="signingCertificatesId" styleClass="form-control" />
+					</ox:decorate>
+					<ox:decorate id="selectedSingleSignOnLocation" label="#{msgs['trustedIdp.selectedSingleSignOnService.location']}">
+						<h:inputText class="rounded selectedSingleSignOnLocationld"
+							value="#{_trustedIdpAction.selectedSingleSignOnService.location}" rows="3" size="40" maxlength="4000"
+							id="signingCertificatesId" styleClass="form-control" />
+					</ox:decorate>
+					<ox:decorate id="single" label="#{msgs['trustedIdp.singleSignOnService']}">
+							<ui:decorate id="singleSignOnService" label="Single SignOn Service" 
+									template="/WEB-INF/incl/trustedidp/singleSignOnServiceForm.xhtml" />
+					</ox:decorate>
+					
+				</h:panelGrid>
+				<div class="box-footer">
+					<ui:insert name="controlButttons" />
+				</div>
+			</b:panel>
+		</div>
+	</h:form> </section>
+</ui:composition>

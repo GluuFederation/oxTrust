@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:b="http://bootsfaces.net/ui"
+	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/WEB-INF/incl/layout/newtemplate.xhtml">
+	<f:metadata>
+		<f:viewAction
+			action="#{permissionService.requestPermission('group', 'access')}" />
+		<f:viewParam name="inum" value="#{updateTrustedIdpAction.inum}" />
+		<f:viewAction action="#{conversationService.initConversation}" />
+		<f:viewAction action="#{updateTrustedIdpAction.add}" onPostback="false" />
+	</f:metadata>
+	<ui:define name="body">
+		<div id="formArea">
+			<ui:decorate template="/WEB-INF/incl/trustedidp/trustedIdpForm.xhtml">
+				<ui:param name="_trustedIdp" value="#{updateTrustedIdpAction.oxTrustedIdp}" />
+				<ui:param name="_trustedIdpAction" value="#{updateTrustedIdpAction}" />
+				<ui:param name="_new" value="true" />
+				<ui:define name="controlButttons">
+					<div id="updateButtons">
+						<b:commandButton action="#{updateTrustedIdpAction.save}"
+						     ajax="true" update="@form"
+							styleClass="btn btn-primary" value="Add" />
+						<b:commandButton action="#{updateTrustedIdpAction.cancel}"
+							immediate="true" style="margin-left: 5px;"
+							 ajax="true" update="@form"
+							styleClass="btn btn-primary" value="Cancel" />
+					</div>
+				</ui:define>
+			</ui:decorate>
+		</div>
+	</ui:define>
+
+</ui:composition>

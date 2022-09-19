@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:ox="http://xmlns.jcp.org/jsf/composite/ox"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:b="http://bootsfaces.net/ui" xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:richext="http://xmlns.jcp.org/jsf/composite/richext"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/WEB-INF/incl/layout/newtemplate.xhtml">
+	<f:metadata>
+		<f:viewAction
+			action="#{permissionService.requestPermission('client', 'access')}" />
+		<f:viewParam name="searchPattern"
+			value="#{searchTrustedIdpAction.searchPattern}" />
+		<f:viewAction action="#{conversationService.initConversation}" />
+		<f:viewAction action="#{searchTrustedIdpAction.start}"
+			if="#{searchTrustedIdpAction.oxTrustedIdpList == null}" onPostback="false" />
+	</f:metadata>
+	<ui:define name="body">
+		<section class="content">
+			<div id="formArea">
+				<div class="row">
+					<div class="col-xs-12 col-md-12">
+						<b:panel title="Trusted IDP List" look="primary"
+							iconAwesome="fa-list">
+							<h:panelGroup id="trustedIdpsTable">
+								<div class="row"
+									style="padding: 5px; margin-bottom: 5px; margin-left: 15px">
+									<b:link style-class="addClientButtonClass btn btn-primary"
+										icon="plus" outcome="/trustedidp/addTrustedIdp" onclick="clearOIDC();"
+										value="Add Trusted IDP" includeViewParams="false" />
+								</div>
+								<h:form>
+									<ox:decorate hideLabel="true" id="searchPattern">
+										<div style="width: 100%; float: left; margin-left: 17px;">
+											<h:inputText
+												alt="Search parameters for client like inum,sn,displayName"
+												id="searchPatternId" maxlength="30" size="30"
+												style="width:60%; float:left;"
+												styleClass="form-control searchBoxClass"
+												value="#{searchTrustedIdpAction.searchPattern}" />
+											<b:commandButton action="#{searchTrustedIdpAction.search}"
+												style="float:left;margin-left :3px;"
+												styleClass="btn btn-primary searchButtonClass"
+												value="#{msgs['client.search']}" iconAwesome="fa-search" />
+										</div>
+									</ox:decorate>
+								</h:form>
+								<div class="row">
+									<div class="box-body">
+										<div class="table-responsive" style="overflow: auto">
+											<h:form id="trustedIdpsFormId">
+												<ui:fragment
+													rendered="#{searchTrustedIdpAction.oxTrustedIdpList.size() eq 0}">
+
+													<h:outputText value="#{msgs['client.noSearchResultFound']}" />
+												</ui:fragment>
+												<b:dataTable id="clientsListId" style="text-align:center;width:100%;"
+													rendered="#{searchTrustedIdpAction.oxTrustedIdpList.size() gt 0}"
+													value="#{searchTrustedIdpAction.oxTrustedIdpList}" var="clt"
+													print="true" excel="true" csv="true" pdf="true"
+													select="true" responsive="true">
+													<b:dataTableColumn label="Remote Idp Name"
+														order="desc">
+														<h:link includeViewParams="false"
+															outcome="/trustedidp/updateTrustedIdp" onclick="clearOIDC();"
+															value="#{clt.remoteIdpName}">
+															<f:param name="inum" value="#{clt.inum}" />
+														</h:link>
+													</b:dataTableColumn>
+													<b:dataTableColumn value="#{clt.inum}"
+														label="#{msgs['client.inum']}" />
+													<b:dataTableColumn value="#{clt.remoteIdpHost}"
+														label="Remote Idp Host" />												
+													
+													<b:dataTableColumn
+														label="#{msgs['passport.deleteProvider']}">
+														<h:selectBooleanCheckbox id="selectId"
+															onchange="displayButton();" value="#{clt.selected}" />
+													</b:dataTableColumn>
+												</b:dataTable>
+												<a4j:commandButton ajaxSingle="true" id="deleteId"
+													eventsQueue="trustedIdpQueue"
+													onclick="#{rich:component('deleteConfirmation:acceptRemovalModalPanel')}.show();"
+													styleClass="btn btn-primary DeleteBulkClients"
+													style="float:left;margin-left :3px;" value="Delete" />
+											</h:form>
+										</div>
+									</div>
+								</div>
+							</h:panelGroup>
+							<div class="box-footer">
+								<ui:insert name="controlButttons" />
+							</div>
+						</b:panel>
+					</div>
+				</div>
+				<ox:acceptRemovalDialog
+					deleteMethod="#{searchTrustedIdpAction.deleteTrustedIdps}"
+					render="trustedIdpsTable" id="deleteConfirmation"
+					queue="trustedIdpQueue" subject="TrustedIdp" value="all selected TrustedIdp" />
+		<h:outputScript> 
+	    	function displayButton() {  	
+		    	var selectedIds = $("input[id$=selectId]:checked");
+		    	deleteBtn = $("input[id$=deleteId]");
+		    	
+		    	if (selectedIds.length == 0) {
+		    		deleteBtn.attr("disabled", "disabled");
+		    	} else {
+		    		deleteBtn.removeAttr("disabled");
+		    	}
+		    	
+	    	} 
+	    	displayButton();
+   	      </h:outputScript>
+			</div>
+		</section>
+	</ui:define>
+</ui:composition>
