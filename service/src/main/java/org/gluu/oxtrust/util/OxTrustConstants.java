@@ -31,6 +31,8 @@ public final class OxTrustConstants extends OxConstants {
 
 	public static final String inum = "inum";
 	public static final String displayName = "displayName";
+	public static final String remoteIdpName = "remoteIdpName";
+	public static final String remoteIdpHost = "remoteIdpHost";
 	public static final String description = "description";
 	public static final String origin = "gluuAttributeOrigin";
 	public static final String mail = "mail";

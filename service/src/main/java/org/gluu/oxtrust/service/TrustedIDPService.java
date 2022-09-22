@@ -6,7 +6,9 @@ import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.model.OxTrustedIdp;
+import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.search.filter.Filter;
 import org.gluu.service.DataSourceTypeService;
@@ -44,10 +46,48 @@ public class TrustedIDPService implements Serializable {
 		return persistenceEntryManager.findEntries(getDnForTrustedIDP(null), OxTrustedIdp.class, null);
 	}
 	
+	public List<OxTrustedIdp> getAllTrustedIDP(int sizeLimit) {
+		return persistenceEntryManager.findEntries(getDnForTrustedIDP(null), OxTrustedIdp.class, null, sizeLimit);
+	}
+	
+	
+	/**
+	 * Get custom TrustedIDP by inum
+	 *
+	 * @param inum
+	 *            OxTrustedIdp Inum
+	 * @return OxTrustedIdp
+	 */
 	public OxTrustedIdp getTrustedIDPByInumCustom(String inum) {
 		return persistenceEntryManager.find(OxTrustedIdp.class, getDnForTrustedIDP(inum));
 	}
 	
+	/**
+	 * Search OxTrustedIdp by pattern
+	 *
+	 * @param pattern
+	 *            Pattern
+	 * @param sizeLimit
+	 *            Maximum count of results
+	 * @return List of OxTrustedIdp
+	 */
+	public List<OxTrustedIdp> searchOxTrustedIdp(String pattern, int sizeLimit) {
+		String[] targetArray = new String[] { pattern };
+		Filter remoteIdpNameFilter = Filter.createSubstringFilter(OxTrustConstants.remoteIdpName, null, targetArray, null);
+		Filter remoteIdpHostFilter = Filter.createSubstringFilter(OxTrustConstants.remoteIdpHost, null, targetArray, null);
+		Filter inumFilter = Filter.createSubstringFilter(OxTrustConstants.inum, null, targetArray, null);
+		Filter searchFilter = Filter.createORFilter(remoteIdpNameFilter, remoteIdpHostFilter, inumFilter);
+		return persistenceEntryManager.findEntries(getDnForTrustedIDP(null), OxTrustedIdp.class, searchFilter, sizeLimit);
+	}
+	
+	/**
+	 * Build DN string for OxTrustedIdp
+	 *
+	 * @param inum
+	 *            OxTrustedIdp Inum
+	 * @return DN string for specified OxTrustedIdp or DN for OxTrustedIdp branch if inum is
+	 *         null
+	 */	
 	public String getDnForTrustedIDP(String inum) {
 		String orgDn = organizationService.getDnForOrganization();
 		if (StringHelper.isEmpty(inum)) {
@@ -56,14 +96,31 @@ public class TrustedIDPService implements Serializable {
 		return String.format("inum=%s,ou=trusted-idp,%s", inum, orgDn);
 	}
 	
+	/**
+	 * Add new OxTrustedIdp entry
+	 *
+	 * @param OxTrustedIdp
+	 */
 	public void addTrustedIDP(OxTrustedIdp oxTrustedIdp) {
 		persistenceEntryManager.persist(oxTrustedIdp);
 	}
 	
+	/**
+	 * Remove OxTrustedIdp entry
+	 *
+	 * @param OxTrustedIdp
+	 */
 	public void removeTrustedIDP(OxTrustedIdp oxTrustedIdp) {
 		persistenceEntryManager.removeRecursively(oxTrustedIdp.getDn(), OxTrustedIdp.class);
 	}
 	
+	/**
+	 * Get OxTrustedIdp by inum
+	 *
+	 * @param inum
+	 *            OxTrustedIdp Inum
+	 * @return OxTrustedIdp
+	 */
 	public OxTrustedIdp getTrustedIDPByInum(String inum, String... ldapReturnAttributes) {
 		OxTrustedIdp result = null;
 		try {

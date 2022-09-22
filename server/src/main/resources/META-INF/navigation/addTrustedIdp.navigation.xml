@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<faces-config xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.2" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
+
+  <navigation-rule>
+    <from-view-id>/trustedidp/addTrustedIdp.xhtml</from-view-id>
+
+    <navigation-case>
+      <from-action>#{updateTrustedIdpAction.update}</from-action>
+      <from-outcome>failure</from-outcome>
+      <to-view-id>/trustedidp/trustedIdpInventory.xhtml</to-view-id>
+      <redirect/>
+    </navigation-case>
+
+    <navigation-case>
+      <from-action>#{updateTrustedIdpAction.cancel}</from-action>
+      <from-outcome>success</from-outcome>
+      <to-view-id>/trustedidp/trustedIdpInventory.xhtml</to-view-id>
+      <redirect/>
+    </navigation-case>
+
+    <navigation-case>
+      <from-action>#{cc.attrs.deleteMethod}</from-action>
+      <from-outcome>success</from-outcome>
+      <to-view-id>/trustedidp/trustedIdpInventory.xhtml</to-view-id>
+      <redirect/>
+    </navigation-case>
+    <navigation-case>
+      <from-action>#{updateTrustedIdpAction.save}</from-action>
+      <from-outcome>success</from-outcome>
+      <to-view-id>/trustedidp/updateTrustedIdp.xhtml</to-view-id>
+      <redirect>
+		<view-param>
+			<name>inum</name>
+			<value>#{updateTrustedIdpAction.inum}</value>
+		</view-param>
+      </redirect>
+    </navigation-case>
+  </navigation-rule>
+
+</faces-config>
