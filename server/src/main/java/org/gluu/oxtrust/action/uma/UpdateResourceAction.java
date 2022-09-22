@@ -213,7 +213,7 @@ public class UpdateResourceAction implements Serializable {
 				facesMessages.add(FacesMessage.SEVERITY_ERROR, "A resource with same name already exist 1.");
 				return OxTrustConstants.RESULT_FAILURE;
 			}
-			resource.setRev(String.valueOf(StringHelper.toInteger(resource.getRev(), 0) + 1));
+			resource.setRev(resource.getRev() + 1);
 			try {
 				umaResourcesService.updateResource(this.resource);
 			} catch (BasePersistenceException ex) {
@@ -235,7 +235,7 @@ public class UpdateResourceAction implements Serializable {
 			String resourceSetDn = umaResourcesService.getDnForResource(id);
 			this.resource.setDn(resourceSetDn);
 			this.resource.setId(id);
-			this.resource.setRev(String.valueOf(0));
+			this.resource.setRev(1);
 			this.resource.setCreator(identity.getUser().getDn());
 			try {
 				umaResourcesService.addResource(this.resource);
