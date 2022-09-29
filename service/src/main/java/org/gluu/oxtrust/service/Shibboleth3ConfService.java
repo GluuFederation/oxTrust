@@ -826,7 +826,7 @@ public class Shibboleth3ConfService implements Serializable {
         String tempFileName = getTempMetadataFilename(idpMetadataTempFolder, spMetadataFileName);
         String spMetadataFile = idpMetadataTempFolder + tempFileName;
         try {
-            boolean result = documentStoreService.saveDocumentStream(spMetadataFile, stream);
+            boolean result = documentStoreService.saveDocumentStream(spMetadataFile, stream, List.of("oxtrust-server","Shibboleth"));
             if (result) {
                 return tempFileName;
             }
@@ -869,7 +869,7 @@ public class Shibboleth3ConfService implements Serializable {
         String tempFileName = getTempMetadataFilename(idpMetadataTempFolder, spMetadataFileName);
         String spMetadataFile = idpMetadataTempFolder + tempFileName;
         try {
-            boolean result = documentStoreService.saveDocument(spMetadataFile, spMetadataFileContent, UTF_8);
+            boolean result = documentStoreService.saveDocument(spMetadataFile, spMetadataFileContent, UTF_8, List.of("oxtrust-server","Shibboleth"));
             if (result) {
                 return tempFileName;
             }
@@ -1186,7 +1186,7 @@ public class Shibboleth3ConfService implements Serializable {
 
         String spMetadataFile = getIdpMetadataDir() + metadataFileName;
         try {
-            return documentStoreService.saveDocumentStream(spMetadataFile, stream);
+            return documentStoreService.saveDocumentStream(spMetadataFile, stream, List.of("oxtrust-server","Shibboleth"));
         } catch (Exception ex) {
             log.error("Failed to write meta-data file '{}'", spMetadataFile, ex);
         } finally {
@@ -1216,7 +1216,7 @@ public class Shibboleth3ConfService implements Serializable {
 
         String spMetadataFile = getIdpMetadataDir() + metadataFileName;
         try {
-            return documentStoreService.saveDocument(spMetadataFile, metadataFileContent, UTF_8);
+            return documentStoreService.saveDocument(spMetadataFile, metadataFileContent, UTF_8, List.of("oxtrust-server","Shibboleth"));
         } catch (Exception ex) {
             log.error("Failed to write meta-data file '{}'", spMetadataFile, ex);
         }
@@ -1257,7 +1257,7 @@ public class Shibboleth3ConfService implements Serializable {
                 boolean hasSigningCert = documentStoreService.hasDocument(signingCert);
                 if (!hasSigningCert) {
                     try (InputStream signingCertStream = localDocumentStoreService.readDocumentAsStream(signingCert)) {
-                        documentStoreService.saveDocumentStream(signingCert, signingCertStream);
+                        documentStoreService.saveDocumentStream(signingCert, signingCertStream, List.of("oxtrust-server","Shibboleth"));
                     }
                 }
             }
@@ -1280,7 +1280,7 @@ public class Shibboleth3ConfService implements Serializable {
                 if (!hasSigningCert) {
                     try (InputStream encryptionCertStream = localDocumentStoreService
                             .readDocumentAsStream(encryptionCert)) {
-                        documentStoreService.saveDocumentStream(encryptionCert, encryptionCertStream);
+                        documentStoreService.saveDocumentStream(encryptionCert, encryptionCertStream, List.of("oxtrust-server","Shibboleth"));
                     }
                 }
             }
@@ -1374,7 +1374,7 @@ public class Shibboleth3ConfService implements Serializable {
 
     public boolean writeConfFile(String confFile, String confContent) {
         try {
-            return documentStoreService.saveDocument(confFile, confContent, UTF_8);
+            return documentStoreService.saveDocument(confFile, confContent, UTF_8, List.of("oxtrust-server","Shibboleth"));
         } catch (Exception ex) {
             log.error("Failed to write IDP configuration file '{}'", confFile, ex);
         }
@@ -1396,7 +1396,7 @@ public class Shibboleth3ConfService implements Serializable {
                 + Shibboleth3ConfService.PUBLIC_CERTIFICATE_END_LINE;
 
         if (certificate != null) {
-            documentStoreService.saveDocument(certPath, certData, UTF_8);
+            documentStoreService.saveDocument(certPath, certData, UTF_8, List.of("oxtrust-server","Shibboleth"));
         } else {
             if (documentStoreService.hasDocument(certPath)) {
                 documentStoreService.removeDocument(certPath);
@@ -1416,7 +1416,7 @@ public class Shibboleth3ConfService implements Serializable {
         String keyPath = sslDirFN + getSpNewMetadataFileName(trustRelationship).replaceFirst("\\.xml$", ".key");
 
         if (key != null) {
-            documentStoreService.saveDocument(keyPath, key, UTF_8);
+            documentStoreService.saveDocument(keyPath, key, UTF_8, List.of("oxtrust-server","Shibboleth"));
         } else {
             if (documentStoreService.hasDocument(keyPath)) {
                 documentStoreService.removeDocument(keyPath);
@@ -1440,7 +1440,7 @@ public class Shibboleth3ConfService implements Serializable {
         String metadataFile = getSpMetadataFilePath(metadataFileName);
         String metadata = documentStoreService.readDocument(metadataFile, UTF_8);
         String updatedMetadata = metadata.replaceFirst(certRegEx, certificate);
-        documentStoreService.saveDocument(metadataFile, updatedMetadata, UTF_8);
+        documentStoreService.saveDocument(metadataFile, updatedMetadata, UTF_8, List.of("oxtrust-server","Shibboleth"));
     }
 
     public String readSpMetadataFile(GluuSAMLTrustRelationship trustRelationship) throws IOException {
@@ -1505,7 +1505,7 @@ public class Shibboleth3ConfService implements Serializable {
         String filterCertFile = idpMetadataFolder + profileConfigurationCertFileName;
 
         try {
-            boolean result = documentStoreService.saveDocumentStream(filterCertFile, stream);
+            boolean result = documentStoreService.saveDocumentStream(filterCertFile, stream, List.of("oxtrust-server","Shibboleth"));
             if (result) {
                 return filterCertFile;
             }
@@ -1529,7 +1529,7 @@ public class Shibboleth3ConfService implements Serializable {
                 + SHIB3_IDP_METADATA_FOLDER + File.separator + "credentials" + File.separator;
         String filterCertFile = idpMetadataFolder + filterCertFileName;
         try {
-            boolean result = documentStoreService.saveDocumentStream(filterCertFile, stream);
+            boolean result = documentStoreService.saveDocumentStream(filterCertFile, stream, List.of("oxtrust-server","Shibboleth"));
             if (result) {
                 return filterCertFile;
             }
