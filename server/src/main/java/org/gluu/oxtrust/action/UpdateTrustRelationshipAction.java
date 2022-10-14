@@ -410,24 +410,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
                     return "invalid_entity_id";
                 }
                 break;
-            case MDQ:
-            	try {
-                    if (generateSpMetaDataFile(trustRelationship)) {
-                    	if (!update) {
-                            this.trustRelationship.setStatus(GluuStatus.ACTIVE);
-                        }
-                    } else {
-                        log.error("Failed to generate SP meta-data file");
-                        return OxTrustConstants.RESULT_FAILURE;
-                    }
-                } catch (Exception ex) {
-                    log.error("Failed to download SP certificate", ex);
-
-                    return OxTrustConstants.RESULT_FAILURE;
-                }
-
-                break;
-                default:
+            default:
 
                 break;
             }
@@ -1342,18 +1325,6 @@ public class UpdateTrustRelationshipAction implements Serializable {
 		//return true;
 		
 	}
-	
-	private boolean generateSpMetaDataFile(GluuSAMLTrustRelationship trustRelationship) {
-        String spMetadataFileName = trustRelationship.getSpMetaDataFN();
-
-        if (StringHelper.isEmpty(spMetadataFileName)) {
-            // Generate new file name
-            spMetadataFileName = shibboleth3ConfService.getSpNewMetadataFileName(trustRelationship);
-            trustRelationship.setSpMetaDataFN(spMetadataFileName);
-        }
-
-        return shibboleth3ConfService.generateMDQMetadataFile(trustRelationship);
-    }
 
 	public String getMetadataStr() {
 		return metadataStr;

@@ -43,7 +43,6 @@ public class GlobalExceptionHandler extends ExceptionHandlerWrapper {
             ExceptionQueuedEventContext context = (ExceptionQueuedEventContext) event.getSource();
 
             Throwable t = context.getException();
-            t.printStackTrace();
             final FacesContext fc = FacesContext.getCurrentInstance();
             final ExternalContext externalContext = fc.getExternalContext();
             try {
