@@ -99,6 +99,7 @@ public class Shibboleth3ConfService implements Serializable {
     private static final String SHIB3_IDP_CAS_PROTOCOL_FILE = "cas-protocol.xml";
     public static final String SHIB3_IDP_IDP_METADATA_FILE = "idp-metadata.xml";
     public static final String SHIB3_IDP_SP_METADATA_FILE = "sp-metadata.xml";
+    public static final String SHIB3_MDQ_METADATA_FILE = "mdq-metadata.xml";
     private static final String SHIB_IDP_GLUU_ATTRIBUTE_RULES_FILE = "gluu-attribute-rules.xml";
     public static final String SHIB3_SP_ATTRIBUTE_MAP_FILE = "attribute-map.xml";
     public static final String SHIB3_SP_SHIBBOLETH2_FILE = "shibboleth2.xml";
@@ -927,6 +928,38 @@ public class Shibboleth3ConfService implements Serializable {
         // Generate sp-metadata.xml meta-data file
         String spMetadataFileContent = generateConfFile(SHIB3_IDP_SP_METADATA_FILE, context);
         return spMetadataFileContent;
+    }
+    
+    public boolean generateMDQMetadataFile(GluuSAMLTrustRelationship trustRelationship) {
+        if (appConfiguration.getShibboleth3IdpRootDir() == null) {
+            throw new InvalidConfigurationException(
+                    "Failed to generate SP meta-data file due to undefined IDP root folder");
+        }
+
+        String idpMetadataFolder = getIdpMetadataDir();
+
+        // Generate sp-metadata.xml meta-data file
+        String spMetadataFileContent = generateMDQSpMetadataFileContent(trustRelationship);
+        if (StringHelper.isEmpty(spMetadataFileContent)) {
+            return false;
+        }
+
+        if (StringHelper.isEmpty(trustRelationship.getUrl())) {
+            log.error("Trust relationship URL is empty");
+            return false;
+        }
+
+        return writeConfFile(idpMetadataFolder + trustRelationship.getSpMetaDataFN(), spMetadataFileContent);
+    }
+    
+    public String generateMDQSpMetadataFileContent(GluuSAMLTrustRelationship trustRelationship) {
+        VelocityContext context = new VelocityContext();
+        context.put("trustRelationship", trustRelationship);
+        context.put("mdqUrl", trustRelationship.getUrl().replaceFirst("/$", ""));
+
+        // Generate mdq-metadata.xml.xml meta-data file
+        String mdqMetadataFileContent = generateConfFile(SHIB3_MDQ_METADATA_FILE, context);
+        return mdqMetadataFileContent;
     }
 
     public void removeSpMetadataFile(String spMetadataFileName) {
