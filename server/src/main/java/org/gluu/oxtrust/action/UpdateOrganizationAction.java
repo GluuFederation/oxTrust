@@ -248,13 +248,12 @@ public class UpdateOrganizationAction implements Serializable {
 	}
 
 	public String verifySmtpConfiguration() {
-<<<<<<< HEAD
-		if (StringUtils.isNotEmpty(smtpPasswordDecrypted)){
+		if (StringUtils.isNotEmpty(smtpPasswordDecrypted)) {
 			smtpConfiguration.setPasswordDecrypted(smtpPasswordDecrypted);
 		}
 		configurationService.encryptSmtpPassword(smtpConfiguration);
 
-		if (StringUtils.isNotEmpty(keyStorePasswordDecrypted)){
+		if (StringUtils.isNotEmpty(keyStorePasswordDecrypted)) {
 			smtpConfiguration.setKeyStorePasswordDecrypted(keyStorePasswordDecrypted);
 		}
 		configurationService.encryptKeyStorePassword(smtpConfiguration);
@@ -263,17 +262,6 @@ public class UpdateOrganizationAction implements Serializable {
 
 		String keystoreFile = smtpConfiguration.getKeyStore();
 		String keystoreSecret = smtpConfiguration.getKeyStorePasswordDecrypted();
-=======
-		if (StringUtils.isNotEmpty(passwordDecrypted)){
-			smtpConfiguration.setPasswordDecrypted(passwordDecrypted);
-		}
-		configurationService.encryptedSmtpPassword(smtpConfiguration);
-
-		boolean result = false;
-
-		String keystoreFile = smtpConfiguration.getKeyStore();
-		String keystoreSecret = smtpConfiguration.getKeyStorePassword();
->>>>>>> c1feccc0e... feat: singing of sending emails has been added;
 		String kjeyStoreAlias = smtpConfiguration.getKeyStoreAlias();
 
 		if (StringUtils.isNotEmpty(keystoreFile) &&
