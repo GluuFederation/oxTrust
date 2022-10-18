@@ -199,10 +199,10 @@ public class UpdateOrganizationAction implements Serializable {
 		try {
 			setCustomMessages();
 			organizationService.updateOrganization(this.organization);
-			if(StringUtils.isNotEmpty(smtpPasswordDecrypted) && smtpPasswordDecrypted!=null){
+			if(StringUtils.isNotEmpty(smtpPasswordDecrypted)){
 				smtpConfiguration.setPasswordDecrypted(smtpPasswordDecrypted);
 			}
-			if(StringUtils.isNotEmpty(keyStorePasswordDecrypted) && keyStorePasswordDecrypted!=null){
+			if(StringUtils.isNotEmpty(keyStorePasswordDecrypted)){
 				smtpConfiguration.setKeyStorePasswordDecrypted(keyStorePasswordDecrypted);
 			}
 			configuration.setContactEmail(new String[] { getContactEmail()} );
