@@ -15,6 +15,7 @@ import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.util.EntityUtils;
 import org.gluu.model.SmtpConfiguration;
+import org.gluu.model.SmtpConnectProtectionType;
 import org.gluu.oxtrust.api.server.util.ApiConstants;
 import org.junit.Assert;
 import org.junit.Test;
@@ -70,8 +71,7 @@ public class SMTPWebResourceTest extends BaseApiTest {
 		configuration.setFromEmailAddress("gluutestmail@gmail.com");
 		configuration.setFromName("Gluu Api");
 		configuration.setRequiresAuthentication(true);
-		configuration.setServerTrust(true);
-		configuration.setRequiresSsl(true);
+		configuration.setConnectProtection(SmtpConnectProtectionType.StartTls);
 		configuration.setUserName("gluutestmail@gmail.com");
 		return configuration;
 	}
