@@ -187,12 +187,18 @@
 			<dependency>
 				<groupId>org.gluu</groupId>
 				<artifactId>oxcore-document-store</artifactId>
+				<version>4.4.2-SNAPSHOT</version>
+<!--
 				<version>${oxcore.version}</version>
+-->
 			</dependency>
 			<dependency>
 				<groupId>org.gluu</groupId>
 				<artifactId>oxcore-standalone</artifactId>
+				<version>4.4.2-SNAPSHOT</version>
+<!--
 				<version>${oxcore.version}</version>
+-->
 			</dependency>
 			<dependency>
 				<groupId>org.gluu</groupId>
@@ -210,7 +216,10 @@
 			<dependency>
 				<groupId>org.gluu</groupId>
 				<artifactId>oxcore-util</artifactId>
+				<version>4.4.2-SNAPSHOT</version>
+<!--
 				<version>${oxcore.version}</version>
+-->
 			</dependency>
 			<dependency>
 				<groupId>org.gluu</groupId>
@@ -255,32 +264,50 @@
 			<dependency>
 				<groupId>org.gluu</groupId>
 				<artifactId>oxcore-service</artifactId>
+				<version>4.4.2-SNAPSHOT</version>
+<!--
 				<version>${oxcore.version}</version>
+-->
 			</dependency>
 			<dependency>
 				<groupId>org.gluu</groupId>
 				<artifactId>oxcore-server</artifactId>
+				<version>4.4.2-SNAPSHOT</version>
+<!--
 				<version>${oxcore.version}</version>
+-->
 			</dependency>
 			<dependency>
 				<groupId>org.gluu</groupId>
 				<artifactId>oxcore-jsf-util</artifactId>
+				<version>4.4.2-SNAPSHOT</version>
+<!--
 				<version>${oxcore.version}</version>
+-->
 			</dependency>
 			<dependency>
 				<groupId>org.gluu</groupId>
 				<artifactId>oxcore-saml</artifactId>
+				<version>4.4.2-SNAPSHOT</version>
+<!--
 				<version>${oxcore.version}</version>
+-->
 			</dependency>
 			<dependency>
 				<groupId>org.gluu</groupId>
 				<artifactId>oxcore-model</artifactId>
+				<version>4.4.2-SNAPSHOT</version>
+<!--
 				<version>${oxcore.version}</version>
+-->
 			</dependency>
 			<dependency>
 				<groupId>org.gluu</groupId>
 				<artifactId>oxcore-radius</artifactId>
+				<version>4.4.2-SNAPSHOT</version>
+<!--
 				<version>${oxcore.version}</version>
+-->
 			</dependency>
 
 			<!-- Omnifaces -->
