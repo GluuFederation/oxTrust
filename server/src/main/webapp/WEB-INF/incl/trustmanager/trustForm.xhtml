@@ -169,7 +169,7 @@ input[submit] {
 														value="#{_trustRelationshipAction.metadataSourceTypesList}"
 														var="_type" itemLabel="#{_type.displayName}" />
 													<a4j:ajax event="change"
-														render="MetadataOperations, spMetaDataUrlGroupId, FederationWizard, FederationWizardEntitySelection, urlId"
+														render="MetadataOperations, spMetaDataUrlGroupId, FederationWizard, FederationWizardEntitySelection, urlId, mdqEntityId"
 														limitRender="true" execute="@this" />
 												</h:selectOneMenu>
 											</ox:decorate>
@@ -287,6 +287,19 @@ input[submit] {
 												required="true" id="spMetaDataURLId" />
 										</ox:decorate>
 									</h:panelGroup>
+									
+									<h:panelGroup id="mdqEntityId" >
+										<h:panelGroup rendered="#{_trustRelationship.spMetaDataSourceType.value eq 'mdq'}">
+
+										<ox:decorate id="mdqUriId"
+											label="MDQ URL">
+											<h:inputText styleClass="form-control"
+												size="40" value="#{_trustRelationship.url}"
+												required="true" id="mdquriId" />
+										</ox:decorate>
+									</h:panelGroup>
+									</h:panelGroup>
+										
 									<h:panelGroup id="spSingleGroup">
 										<h:panelGroup id="spSingleGroupId">
 											<h:panelGroup id="LogoutUrlGroupId">
