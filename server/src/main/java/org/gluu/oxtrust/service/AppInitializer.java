@@ -116,6 +116,9 @@ public class AppInitializer {
 	
 	@Inject
 	private UpdateChecker updateChecker;
+	
+	@Inject
+	private CleanUpFilesDaily cleanUpFilesDaily;
 
 	@Inject
 	private PythonService pythonService;
@@ -221,6 +224,7 @@ public class AppInitializer {
 		statusCheckerTimer.initTimer();
 		logFileSizeChecker.initTimer();
 		updateChecker.initTimer();
+		cleanUpFilesDaily.initTimer();
 		transcodingRulesUpdater.initTimer();
 
 		// Notify other components/plugins about finish application initialization
