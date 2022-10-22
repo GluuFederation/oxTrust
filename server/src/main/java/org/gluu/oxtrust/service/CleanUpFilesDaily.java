@@ -30,9 +30,7 @@ import org.slf4j.Logger;
 @Named("cleanUpFilesDaily")
 public class CleanUpFilesDaily {
 
-	// Group count and person count will now be checked daily
-	//public static final int DEFAULT_INTERVAL = 60 * 60 * 24;
-	public static final int DEFAULT_INTERVAL = 60 * 5;
+	public static final int DEFAULT_INTERVAL = 60 * 60 * 24;
 
 	@Inject
 	private Logger log;
