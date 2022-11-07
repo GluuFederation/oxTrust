@@ -22,6 +22,8 @@ public class GluuUserPairwiseIdentifier extends BaseEntry implements Serializabl
 	private String clientId;
 	@AttributeName(name = "oxSectorIdentifier")
 	private String sp;
+	@AttributeName(name = "oxAuthUserId")
+    private String userInum;
 
 	public String getOxId() {
 		return oxId;
@@ -45,6 +47,14 @@ public class GluuUserPairwiseIdentifier extends BaseEntry implements Serializabl
 
 	public void setSp(String sp) {
 		this.sp = sp;
+	}
+
+	public String getUserInum() {
+		return userInum;
+	}
+
+	public void setUserInum(String userInum) {
+		this.userInum = userInum;
 	}
 
 	@Override

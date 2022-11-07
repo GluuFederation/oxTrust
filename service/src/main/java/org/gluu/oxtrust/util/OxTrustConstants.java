@@ -49,6 +49,8 @@ public final class OxTrustConstants extends OxConstants {
 	public static final String dn = "dn";
 
 	public static final String attributeName = "gluuAttributeName";
+	public static final String oxAuthUserId = "oxAuthUserId";
+	
 
 	/**
 	 * oxAsimba fields

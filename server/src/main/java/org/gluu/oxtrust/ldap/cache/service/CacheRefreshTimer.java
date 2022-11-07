@@ -46,11 +46,17 @@ import org.gluu.oxtrust.ldap.cache.model.GluuSimplePerson;
 import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
+import org.gluu.oxtrust.model.GluuFido2Device;
+import org.gluu.oxtrust.model.GluuUserPairwiseIdentifier;
+import org.gluu.oxtrust.model.fido.GluuCustomFidoDevice;
 import org.gluu.oxtrust.service.ApplicationFactory;
 import org.gluu.oxtrust.service.AttributeService;
 import org.gluu.oxtrust.service.ConfigurationService;
 import org.gluu.oxtrust.service.EncryptionService;
+import org.gluu.oxtrust.service.Fido2DeviceService;
+import org.gluu.oxtrust.service.FidoDeviceService;
 import org.gluu.oxtrust.service.InumService;
+import org.gluu.oxtrust.service.PairwiseIdService;
 import org.gluu.oxtrust.service.PersonService;
 import org.gluu.oxtrust.service.cdi.event.CacheRefreshEvent;
 import org.gluu.oxtrust.service.external.ExternalCacheRefreshService;
@@ -141,6 +147,15 @@ public class CacheRefreshTimer {
 
 	@Inject
 	private EncryptionService encryptionService;
+	
+	@Inject
+	private PairwiseIdService pairwiseIdService;
+	
+	@Inject
+	private FidoDeviceService fidoDeviceService;
+	
+	@Inject
+	private Fido2DeviceService fido2DeviceService;
 
 	@Inject
 	private ObjectSerializationService objectSerializationService;
@@ -786,8 +801,24 @@ public class CacheRefreshTimer {
 			}
 
 			// Remove person from target server
-			try {
-				targetPersistenceEntryManager.removeRecursively(removedPerson.getDn(), GluuCustomPerson.class);
+			try {				
+				//ldap ORM
+				if(targetPersistenceEntryManager.hasBranchesSupport(removedPerson.getDn())){					
+					targetPersistenceEntryManager.removeRecursively(removedPerson.getDn(), GluuCustomPerson.class);
+					
+				}else {
+					//other ORM
+					targetPersistenceEntryManager.remove(removedPerson.getDn(), GluuCustomPerson.class);
+					 
+					Filter pairwiseIdentifiersFilter = Filter.createEqualityFilter(OxTrustConstants.oxAuthUserId, removedPerson.getDn());
+					targetPersistenceEntryManager.remove(pairwiseIdService.getDnForPairWiseIdentifier(null, removedPerson.getDn()), GluuUserPairwiseIdentifier.class, pairwiseIdentifiersFilter,10);
+				
+					Filter equalityFilter = Filter.createEqualityFilter("personInum", removedPerson.getDn());
+					targetPersistenceEntryManager.remove(fidoDeviceService.getDnForFidoDevice(removedPerson.getDn(),null), GluuCustomFidoDevice.class, equalityFilter,10);
+					
+					Filter equalityFido2DeviceFilter = Filter.createEqualityFilter("personInum", removedPerson.getDn());
+					targetPersistenceEntryManager.remove(fido2DeviceService.getDnForFido2Device(null, removedPerson.getDn()), GluuFido2Device.class, equalityFido2DeviceFilter,10);
+				}
 				result1.add(inum);
 			} catch (BasePersistenceException ex) {
 				log.error("Failed to remove person entry with inum '{}' and DN: {}", inum, removedPerson.getDn(), ex);
