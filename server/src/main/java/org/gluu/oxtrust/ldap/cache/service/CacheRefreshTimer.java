@@ -811,13 +811,13 @@ public class CacheRefreshTimer {
 					targetPersistenceEntryManager.remove(removedPerson.getDn(), GluuCustomPerson.class);
 					 
 					Filter pairwiseIdentifiersFilter = Filter.createEqualityFilter(OxTrustConstants.oxAuthUserId, removedPerson.getDn());
-					targetPersistenceEntryManager.remove(pairwiseIdService.getDnForPairWiseIdentifier(null, removedPerson.getDn()), GluuUserPairwiseIdentifier.class, pairwiseIdentifiersFilter,10);
+					targetPersistenceEntryManager.remove(pairwiseIdService.getDnForPairWiseIdentifier(null, removedPerson.getDn()), GluuUserPairwiseIdentifier.class, pairwiseIdentifiersFilter,0);
 				
 					Filter equalityFilter = Filter.createEqualityFilter("personInum", removedPerson.getDn());
-					targetPersistenceEntryManager.remove(fidoDeviceService.getDnForFidoDevice(removedPerson.getDn(),null), GluuCustomFidoDevice.class, equalityFilter,10);
+					targetPersistenceEntryManager.remove(fidoDeviceService.getDnForFidoDevice(removedPerson.getDn(),null), GluuCustomFidoDevice.class, equalityFilter,0);
 					
 					Filter equalityFido2DeviceFilter = Filter.createEqualityFilter("personInum", removedPerson.getDn());
-					targetPersistenceEntryManager.remove(fido2DeviceService.getDnForFido2Device(null, removedPerson.getDn()), GluuFido2Device.class, equalityFido2DeviceFilter,10);
+					targetPersistenceEntryManager.remove(fido2DeviceService.getDnForFido2Device(null, removedPerson.getDn()), GluuFido2Device.class, equalityFido2DeviceFilter,0);
 				}
 				result1.add(inum);
 			} catch (BasePersistenceException ex) {
