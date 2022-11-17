@@ -57,5 +57,16 @@ public enum GluuMetadataSourceType implements AttributeEnum {
 	public String toString() {
 		return value;
 	}
+	
+	public static boolean contains(String name) {
+		boolean result = false;
+	    for (GluuMetadataSourceType direction : values()) {
+	        if (direction.name().equalsIgnoreCase(name)) {
+	            result = true;
+	            break;
+	        }
+	    }
+	    return result;
+	}
 
 }
