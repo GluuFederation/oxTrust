@@ -135,6 +135,26 @@ public class GluuSAMLTrustRelationship extends InumEntry implements Serializable
 
 	@AttributeName(name = "gluuEntityType")
 	private GluuEntityType entityType;
+	
+	private String metadataStr;
+	
+	private String certificate;
+
+	public String getCertificate() {
+		return certificate;
+	}
+
+	public void setCertificate(String certificate) {
+		this.certificate = certificate;
+	}
+
+	public String getMetadataStr() {
+		return metadataStr;
+	}
+
+	public void setMetadataStr(String metadataStr) {
+		this.metadataStr = metadataStr;
+	}
 
 	public void setFederation(boolean isFederation) {
 		this.gluuIsFederation = Boolean.toString(isFederation);
