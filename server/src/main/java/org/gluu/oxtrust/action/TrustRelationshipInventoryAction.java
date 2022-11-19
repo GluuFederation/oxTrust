@@ -84,7 +84,7 @@ public class TrustRelationshipInventoryAction implements Serializable {
 	public String search() {
 		try {
 			if (searchPattern == null || searchPattern.isEmpty()) {
-				this.trustedSpList = trustService.getAllSAMLTrustRelationships(100);
+				this.trustedSpList = trustService.getAllTrustRelationships();
 			} else {
 				this.trustedSpList = trustService.searchSAMLTrustRelationships(searchPattern, 100);
 			}
