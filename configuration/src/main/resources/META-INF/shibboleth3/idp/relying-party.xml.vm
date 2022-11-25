@@ -119,6 +119,7 @@
                           p:includeAttributeStatement="$profileConfig.includeAttributeStatement"
                           p:assertionLifetime="$profileConfig.assertionLifetime"
                           p:postAuthenticationFlows="#{{'gluu-release-attributes-post-processor'}}"
+                          p:inboundInterceptorFlows="#{ {'gluu-populate-context'} }"
                         #if ($profileConfig.signResponses == 'conditional')
                           p:signResponsesPredicate-ref="SignNoIntegrity"
                         #{else}
