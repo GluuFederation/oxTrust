@@ -51,13 +51,16 @@ public class CustomScriptWebResource extends BaseWebResource {
 
 	public CustomScriptWebResource() {
 	}
+	
+	static final String SCOPE_CUSTOMSCRIPT_READ = "https://gluu.org/auth/oxtrust.customscript.read";
+    static final String SCOPE_CUSTOMSCRIPT_WRITE = "https://gluu.org/auth/oxtrust.customscript.write";
 
 	@GET
 	@Operation(summary = "Get all custom scripts", description = "Get all custom scripts")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = CustomScript[].class)), description = "Success"),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { READ_ACCESS })
+	@ProtectedApi(scopes = { SCOPE_CUSTOMSCRIPT_READ })
 	public Response listCustomScripts() {
 		log(logger, "Get all custom scripts");
 		try {
@@ -75,7 +78,7 @@ public class CustomScriptWebResource extends BaseWebResource {
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = CustomScript[].class)), description = "Success"),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { READ_ACCESS })
+	@ProtectedApi(scopes = { SCOPE_CUSTOMSCRIPT_READ })
 	public Response listCustomScriptsByType(@PathParam(ApiConstants.TYPE) @NotNull String type) {
 		log(logger, "Get custom scripts of type: " + type);
 		try {
@@ -100,7 +103,7 @@ public class CustomScriptWebResource extends BaseWebResource {
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = CustomScript.class)), description = "Success"),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { READ_ACCESS })
+	@ProtectedApi(scopes = { SCOPE_CUSTOMSCRIPT_READ })
 	public Response getCustomScriptsByInum(@PathParam(ApiConstants.INUM) @NotNull String inum) {
 		log(logger, "Get scripts by inum");
 		try {
@@ -121,7 +124,7 @@ public class CustomScriptWebResource extends BaseWebResource {
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = CustomScript.class)), description = "Success"),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { WRITE_ACCESS })
+	@ProtectedApi(scopes = { SCOPE_CUSTOMSCRIPT_WRITE })
 	public Response createCustomScript(CustomScript customScript) {
 		log(logger, "Add new custom script ");
 		try {
@@ -146,7 +149,7 @@ public class CustomScriptWebResource extends BaseWebResource {
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = CustomScript.class)), description = "Success"),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { WRITE_ACCESS })
+	@ProtectedApi(scopes = { SCOPE_CUSTOMSCRIPT_WRITE })
 	public Response updateCustomScript(CustomScript customScript) {
 		try {
 			Objects.requireNonNull(customScript, "Attempt to update null custom script");
@@ -171,7 +174,7 @@ public class CustomScriptWebResource extends BaseWebResource {
 	@Operation(summary = "Delete custom script", description = "Delete an custom script")
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Success"),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { WRITE_ACCESS })
+	@ProtectedApi(scopes = { SCOPE_CUSTOMSCRIPT_WRITE })
 	public Response deleteCustomScript(@PathParam(ApiConstants.INUM) @NotNull String inum) {
 		log(logger, "Delete custom script" + inum);
 		try {

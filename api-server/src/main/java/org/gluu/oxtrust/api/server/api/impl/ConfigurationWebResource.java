@@ -35,13 +35,16 @@ public class ConfigurationWebResource extends BaseWebResource {
 
 	public ConfigurationWebResource() {
 	}
+	
+	static final String SCOPE_CONFIGURATION_READ = "https://gluu.org/auth/oxtrust.configuration.read";
+    static final String SCOPE_CONFIGURATION_WRITE = "https://gluu.org/auth/oxtrust.configuration.write";
 
 	@GET
 	@Operation(summary="Get gluu configuration",description = "Retrieve gluu configuration")
 	@ApiResponses(value = {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = GluuConfiguration.class)), description = Constants.RESULT_SUCCESS),
             @ApiResponse(responseCode = "500", description = "Server error")})
-	@ProtectedApi(scopes = { READ_ACCESS })
+	@ProtectedApi(scopes = { SCOPE_CONFIGURATION_READ })
 	public Response getConfiguration() {
 		log(logger, "Processing get gluu configuration");
 		try {

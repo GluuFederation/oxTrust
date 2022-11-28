@@ -124,6 +124,9 @@ public class TrustRelationshipWebService extends BaseWebResource {
     
     ObjectMapper objectMapper;
     
+    static final String SCOPE_SAML_TR_READ = "https://gluu.org/auth/oxtrust.saml.read";
+    static final String SCOPE_SAML_TR_WRITE = "https://gluu.org/auth/oxtrust.saml.write";
+    
     
     @GET
     @Path("/read/{inum}")
@@ -132,7 +135,7 @@ public class TrustRelationshipWebService extends BaseWebResource {
     @ApiResponses(value = {
 		@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = GluuSAMLTrustRelationship.class)), description = "Success"),
 		@ApiResponse(responseCode = "500", description = "Server error") })
-    @ProtectedApi(scopes = { READ_ACCESS })
+    @ProtectedApi(oauthScopes = { SCOPE_SAML_TR_READ })
     public Response read(@PathParam("inum") @NotNull String inum) {
         logger.info("Read Trust Relationship");
         try {
@@ -152,7 +155,7 @@ public class TrustRelationshipWebService extends BaseWebResource {
     @ApiResponses(value = {
 		@ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = String.class))),
 		@ApiResponse(responseCode = "500", description = "Server error") })
-    @ProtectedApi(scopes = { WRITE_ACCESS })
+    @ProtectedApi(scopes = { SCOPE_SAML_TR_WRITE })
     public Response create(GluuSAMLTrustRelationship trustRelationship) {
         logger.info("Create Trust Relationship");
         try {
@@ -184,7 +187,7 @@ public class TrustRelationshipWebService extends BaseWebResource {
     @ApiResponses(value = {
 		@ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = GluuSAMLTrustRelationship.class))),
 		@ApiResponse(responseCode = "500", description = "Server error") })
-    @ProtectedApi(scopes = { WRITE_ACCESS })
+    @ProtectedApi(scopes = { SCOPE_SAML_TR_WRITE })
     public Response update(@PathParam("inum") @NotNull String inum, GluuSAMLTrustRelationship trustRelationship) {
         logger.info("Update Trust Relationship");
         try {
@@ -212,7 +215,7 @@ public class TrustRelationshipWebService extends BaseWebResource {
     @ApiResponses(value = {
 		@ApiResponse(responseCode = "200", description = "OK"),
 		@ApiResponse(responseCode = "500", description = "Server error") })
-    @ProtectedApi(scopes = { WRITE_ACCESS })
+    @ProtectedApi(scopes = { SCOPE_SAML_TR_WRITE })
     public Response delete(@PathParam("inum") @NotNull String inum) {
         logger.info("Delete Trust Relationship");
         try {
@@ -236,7 +239,7 @@ public class TrustRelationshipWebService extends BaseWebResource {
     @ApiResponses(value = {
 		@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = GluuSAMLTrustRelationship.class)), description = "SUCCESS"),
 		@ApiResponse(responseCode = "500", description = "Server error") })
-    @ProtectedApi(scopes = { READ_ACCESS })
+    @ProtectedApi(scopes = { SCOPE_SAML_TR_READ })
     public Response list() {
         try {
             List<SAMLTrustRelationshipShort> trustRelationships = convertTRtoTRShort(trustService.getAllTrustRelationships());
@@ -255,7 +258,7 @@ public class TrustRelationshipWebService extends BaseWebResource {
     @ApiResponses(value = {
 		@ApiResponse(responseCode = "200", description = "OK",  content = @Content(schema = @Schema(implementation = SAMLTrustRelationshipShort[].class))),
 		@ApiResponse(responseCode = "500", description = "Server error") })
-    @ProtectedApi(scopes = { READ_ACCESS })
+    @ProtectedApi(scopes = { SCOPE_SAML_TR_READ })
     public Response listAllFederations() {
         try {
             List<SAMLTrustRelationshipShort> trustRelationships = convertTRtoTRShort(trustService.getAllFederations());
@@ -272,7 +275,7 @@ public class TrustRelationshipWebService extends BaseWebResource {
     @ApiResponses(value = {
 		@ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = SAMLTrustRelationshipShort[].class))),
 		@ApiResponse(responseCode = "500", description = "Server error") })
-    @ProtectedApi(scopes = { READ_ACCESS })
+    @ProtectedApi(scopes = { SCOPE_SAML_TR_READ })
     public Response listAllActiveTrustRelationships() {
         try {
             List<SAMLTrustRelationshipShort> trustRelationships = convertTRtoTRShort(trustService.getAllActiveTrustRelationships());
@@ -291,7 +294,7 @@ public class TrustRelationshipWebService extends BaseWebResource {
     @ApiResponses(value = {
 		@ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = SAMLTrustRelationshipShort[].class))),
 		@ApiResponse(responseCode = "500", description = "Server error") })
-    @ProtectedApi(scopes = { READ_ACCESS })
+    @ProtectedApi(scopes = { SCOPE_SAML_TR_READ })
     public Response listAllOtherFederations(@PathParam("inum") String inum) {
         try {
             List<SAMLTrustRelationshipShort> trustRelationships = convertTRtoTRShort(trustService.getAllOtherFederations(inum));
@@ -309,7 +312,7 @@ public class TrustRelationshipWebService extends BaseWebResource {
     @ApiResponses(value = {
 		@ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = SAMLTrustRelationshipShort[].class))),
 		@ApiResponse(responseCode = "500", description = "Server error") })
-    @ProtectedApi(scopes = { READ_ACCESS })
+    @ProtectedApi(scopes = { SCOPE_SAML_TR_READ })
     public Response listAllSAMLTrustRelationships(@QueryParam("size_limit") int sizeLimit) {
         try {
             List<SAMLTrustRelationshipShort> trustRelationships = convertTRtoTRShort(trustService.getAllSAMLTrustRelationships(sizeLimit));
@@ -327,7 +330,7 @@ public class TrustRelationshipWebService extends BaseWebResource {
     @ApiResponses(value = {
 		@ApiResponse(responseCode = "200", description = "OK",  content = @Content(schema = @Schema(implementation = SAMLTrustRelationshipShort[].class))),
 		@ApiResponse(responseCode = "500", description = "Server error") })
-    @ProtectedApi(scopes = { READ_ACCESS })
+    @ProtectedApi(scopes = { SCOPE_SAML_TR_READ })
     public Response listDeconstructedTrustRelationships(@PathParam("inum") String inum) {
         try {
             GluuSAMLTrustRelationship trustRelationship = trustService.getRelationshipByInum(inum);
@@ -346,7 +349,7 @@ public class TrustRelationshipWebService extends BaseWebResource {
     @ApiResponses(value = {
 		@ApiResponse(responseCode = "200", description = "OK",content = @Content(schema = @Schema(implementation = SAMLTrustRelationshipShort[].class))),
 		@ApiResponse(responseCode = "500", description = "Server error") })
-    @ProtectedApi(scopes = { READ_ACCESS })
+    @ProtectedApi(scopes = { SCOPE_SAML_TR_READ })
     public Response searchTrustRelationships(@QueryParam("pattern") @NotNull String pattern, @QueryParam("size_limit") int sizeLimit) {
         try {
             List<SAMLTrustRelationshipShort> trustRelationships = convertTRtoTRShort(trustService.searchSAMLTrustRelationships(pattern, sizeLimit));
@@ -365,7 +368,7 @@ public class TrustRelationshipWebService extends BaseWebResource {
     @ApiResponses(value = {
 		@ApiResponse(responseCode = "200", description = "OK"),
 		@ApiResponse(responseCode = "500", description = "Server error") })
-    @ProtectedApi(scopes = { WRITE_ACCESS })
+    @ProtectedApi(scopes = { SCOPE_SAML_TR_WRITE })
     public Response setMetadata(@PathParam("inum") String trustRelationshipInum, @NotNull String metadata) {
         try {
             GluuSAMLTrustRelationship trustRelationship = trustService.getRelationshipByInum(trustRelationshipInum);
@@ -394,7 +397,7 @@ public class TrustRelationshipWebService extends BaseWebResource {
     @ApiResponses(value = {
 		@ApiResponse(responseCode = "200", description = "OK"),
 		@ApiResponse(responseCode = "500", description = "Server error") })
-    @ProtectedApi(scopes = { WRITE_ACCESS })
+    @ProtectedApi(scopes = { SCOPE_SAML_TR_WRITE })
     public Response setMetadataURL(@PathParam("inum") String trustRelationshipInum, @NotNull String url) {
         try {
             GluuSAMLTrustRelationship trustRelationship = trustService.getRelationshipByInum(trustRelationshipInum);
@@ -424,7 +427,7 @@ public class TrustRelationshipWebService extends BaseWebResource {
     @ApiResponses(value = {
 		@ApiResponse(responseCode = "200", description = "OK"),
 		@ApiResponse(responseCode = "500", description = "Server error") })
-    @ProtectedApi(scopes = { WRITE_ACCESS})
+    @ProtectedApi(scopes = { SCOPE_SAML_TR_WRITE})
     public Response addAttribute(@PathParam("inum") String trustRelationshipInum, @NotNull String attribute) {
         try {
             GluuSAMLTrustRelationship trustRelationship = trustService.getRelationshipByInum(trustRelationshipInum);
@@ -449,7 +452,7 @@ public class TrustRelationshipWebService extends BaseWebResource {
     @ApiResponses(value = {
 		@ApiResponse(responseCode = "200", description = "OK",  content = @Content(schema = @Schema(implementation =String.class))),
 		@ApiResponse(responseCode = "500", description = "Server error") })
-    @ProtectedApi(scopes = { READ_ACCESS })
+    @ProtectedApi(scopes = { SCOPE_SAML_TR_READ })
     public Response generateInumForNewTrustRelationship() {
         try {
             String inum = trustService.generateInumForNewTrustRelationship();
@@ -466,7 +469,7 @@ public class TrustRelationshipWebService extends BaseWebResource {
     @ApiResponses(value = {
     		@ApiResponse(responseCode = "200", description = "OK",  content = @Content(schema = @Schema(implementation =TrustContact[].class))),
     		@ApiResponse(responseCode = "500", description = "Server error") })
-    @ProtectedApi(scopes = { READ_ACCESS })
+    @ProtectedApi(scopes = { SCOPE_SAML_TR_READ })
     public Response getContacts(@PathParam("inum") String trustRelationshipInum) {
         try {
             GluuSAMLTrustRelationship trustRelationship = trustService.getRelationshipByInum(trustRelationshipInum);
@@ -486,7 +489,7 @@ public class TrustRelationshipWebService extends BaseWebResource {
     @ApiResponses(value = {
 		@ApiResponse(responseCode = "200", description = "OK"),
 		@ApiResponse(responseCode = "500", description = "Server error") })
-    @ProtectedApi(scopes = { WRITE_ACCESS })
+    @ProtectedApi(scopes = { SCOPE_SAML_TR_WRITE })
     public Response setContacts(@PathParam("inum") String trustRelationshipInum, String contacts) {
         try {
             GluuSAMLTrustRelationship trustRelationship = trustService.getRelationshipByInum(trustRelationshipInum);
@@ -509,7 +512,7 @@ public class TrustRelationshipWebService extends BaseWebResource {
     @ApiResponses(value = {
 		@ApiResponse(responseCode = "200", description = "OK"),
 		@ApiResponse(responseCode = "500", description = "Server error") })
-    @ProtectedApi(scopes = { WRITE_ACCESS })
+    @ProtectedApi(scopes = { SCOPE_SAML_TR_WRITE })
     public Response setCertificate(@PathParam("inum") String trustRelationshipInum, String certificate) {
         try {
             GluuSAMLTrustRelationship trustRelationship = trustService.getRelationshipByInum(trustRelationshipInum);
@@ -531,7 +534,7 @@ public class TrustRelationshipWebService extends BaseWebResource {
     @Path("/remove_attribute")
     @Consumes({MediaType.TEXT_PLAIN})
     @Produces(MediaType.TEXT_PLAIN)
-    @ProtectedApi(scopes = { WRITE_ACCESS })
+    @ProtectedApi(scopes = { SCOPE_SAML_TR_WRITE })
     public Response removeAttribute(GluuAttribute attribute) {
         try {
             trustService.removeAttribute(attribute);
@@ -550,7 +553,7 @@ public class TrustRelationshipWebService extends BaseWebResource {
     @ApiResponses(value = {
 		@ApiResponse(responseCode = "200", description = "OK"),
 		@ApiResponse(responseCode = "500", description = "Server error") })
-    @ProtectedApi(scopes = { WRITE_ACCESS })
+    @ProtectedApi(scopes = { SCOPE_SAML_TR_WRITE })
     public Response generateConfigurationFiles() {
         try {
             List<GluuSAMLTrustRelationship> trustRelationships = trustService.getAllActiveTrustRelationships();
