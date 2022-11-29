@@ -4,6 +4,8 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.gluu.config.oxtrust.AppConfiguration;
+import org.gluu.config.oxtrust.OxTrustApiMode;
+import org.gluu.oxtrust.auth.oauth.DefaultOAuthProtectionService;
 import org.gluu.oxtrust.auth.oauth.DefaultTestModeProtectionService;
 import org.gluu.oxtrust.auth.uma.ApiUmaProtectionService;
 
@@ -23,7 +25,10 @@ public class OxTrustApiService implements GluuRestService {
     private ApiUmaProtectionService apiUmaProtectionService;
     
     @Inject
-    private DefaultTestModeProtectionService testModeProtectionService; 
+    private DefaultTestModeProtectionService testModeProtectionService;
+    
+    @Inject
+    private DefaultOAuthProtectionService oAuthProtectionService;
 
     @Override
     public String getName() {
@@ -35,12 +40,21 @@ public class OxTrustApiService implements GluuRestService {
         return true;
     }
         
-    @Override
-    public IProtectionService getProtectionService() {        
-        boolean testMode = appConfiguration.isOxTrustApiTestMode();
-        log.info("oxTrust API protection mode is {}", testMode ? "TEST" : "UMA");
-        
-        return testMode ? testModeProtectionService : apiUmaProtectionService;
-    }
+    
+  @Override
+  public IProtectionService getProtectionService() {        
+      OxTrustApiMode mode = appConfiguration.getOxTrustProtectionMode();
+      log.info("oxTrust API protection mode is {}", mode);
+      
+      if (mode != null) {
+          switch (mode) {
+              case UMA: return apiUmaProtectionService;
+              case OAUTH: return oAuthProtectionService;
+              case TEST: return testModeProtectionService;
+          }
+      }
+      
+      return null;
+  }
     
 }

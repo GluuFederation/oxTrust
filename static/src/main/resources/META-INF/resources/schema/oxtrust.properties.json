@@ -622,6 +622,17 @@
 		  }
         }
         },
+        "oxTrustProtectionMode": {
+            "id": "oxTrustProtectionMode",
+            "description": "Select the protection Mode for oxtrust Api.",
+            "type": "string",
+            "format": "select",
+            "enum": [
+                "TEST",
+                "OAUTH",
+                "UMA"
+            ]
+        },
         "disableJdkLogger": {
             "id": "disableJdkLogger",
             "description": "Boolean value specifying whether to enable JDK Loggers.",
@@ -775,6 +786,7 @@
         "enforceEmailUniqueness",
         "useLocalCache",
         "enableUpdateNotification",
-        "supportedUserStatus"
+        "supportedUserStatus",
+        "oxTrustProtectionMode"
     ]
 }
