@@ -150,7 +150,8 @@ public abstract class BaseUmaProtectionService implements IProtectionService, Se
 	}
 
 	Response processUmaAuthorization(String authorization, ResourceInfo resourceInfo) throws Exception {
-		List<String> scopes = getRequestedScopes(resourceInfo);
+		List<String> scopes = null;
+//		scopes = getRequestedScopes(resourceInfo);
 		Token patToken = null;
 		try {
 			patToken = getPatToken();
@@ -160,7 +161,7 @@ public abstract class BaseUmaProtectionService implements IProtectionService, Se
 		}
 
 		Pair<Boolean, Response> rptTokenValidationResult;
-		if (!scopes.isEmpty()) {
+		if ((scopes != null) && !scopes.isEmpty()) {
 			rptTokenValidationResult = umaPermissionService.validateRptToken(patToken, authorization,
 					getUmaResourceId(), scopes);
 		} else {
