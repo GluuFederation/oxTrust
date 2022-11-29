@@ -40,13 +40,16 @@ public class ApiConfigWebRecource extends BaseWebResource {
 	private JsonConfigurationService jsonConfigurationService;
 	@Inject
 	private EncryptionService encryptionService;
+	
+	static final String SCOPE_APICONFIG_READ = "https://gluu.org/auth/oxtrust.apiconfig.read";
+    static final String SCOPE_APICONFIG_WRITE = "https://gluu.org/auth/oxtrust.apiconfig.write";
 
 	@GET
 	@Operation(summary = "Retrieve api configuration", description = "Retrieve api configuration")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = ApiConfig.class)), description = Constants.RESULT_SUCCESS),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { READ_ACCESS })
+	@ProtectedApi(scopes = { SCOPE_APICONFIG_READ })
 	public Response retrieveApiConfiguration() {
 		try {
 			log(logger, "Retrieving api configuration");
@@ -72,7 +75,7 @@ public class ApiConfigWebRecource extends BaseWebResource {
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = ApiConfig.class)), description = Constants.RESULT_SUCCESS),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { WRITE_ACCESS })
+	@ProtectedApi(scopes = { SCOPE_APICONFIG_WRITE })
 	public Response updateApiConfiguration(ApiConfig apiConfig) {
 		try {
 			log(logger, "Processing api configuration update");
