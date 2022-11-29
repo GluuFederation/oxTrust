@@ -19,8 +19,6 @@ import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 	)
 )
 public class BaseWebResource {
-	protected static final String READ_ACCESS = "oxtrust-api-read";
-	protected static final String WRITE_ACCESS = "oxtrust-api-write";
 
 	public BaseWebResource() {
 	}

@@ -40,6 +40,9 @@ public class AuthenticationMethodWebResource extends BaseWebResource {
 
 	public AuthenticationMethodWebResource() {
 	}
+	
+	static final String SCOPE_AUTHENTICATION_METHOD_READ = "https://gluu.org/auth/oxtrust.authenticationmethod.read";
+    static final String SCOPE_AUTHENTICATION_METHOD_WRITE = "https://gluu.org/auth/oxtrust.authenticationmethod.write";
 
     @GET
     @Operation(summary="Get current authentication methods", description = "Get current authentication methods")
@@ -48,7 +51,7 @@ public class AuthenticationMethodWebResource extends BaseWebResource {
                     schema = @Schema(implementation = AuthenticationMethod.class)
             ), description = Constants.RESULT_SUCCESS),
             @ApiResponse(responseCode = "500", description = "Server error")})
-	@ProtectedApi(scopes = { READ_ACCESS })
+	@ProtectedApi(scopes = { SCOPE_AUTHENTICATION_METHOD_READ })
 	public Response getCurrentAuthentication() {
 		log(logger, "Processing getCurrentAuthentication()");
 		try {
@@ -68,7 +71,7 @@ public class AuthenticationMethodWebResource extends BaseWebResource {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = AuthenticationMethod.class)), description = Constants.RESULT_SUCCESS),
             @ApiResponse(responseCode = "500", description = "Server error")})
-	@ProtectedApi(scopes = { WRITE_ACCESS })
+	@ProtectedApi(scopes = { SCOPE_AUTHENTICATION_METHOD_WRITE })
 	public Response updateAuthenticationMethod(AuthenticationMethod method) {
 		log(logger, "Processing updateAuthenticationMethod()");
 		try {

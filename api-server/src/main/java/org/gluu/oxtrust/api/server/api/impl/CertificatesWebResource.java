@@ -40,6 +40,9 @@ public class CertificatesWebResource extends BaseWebResource {
 	private static final String HTTPD_CERTIFICATE_FILE = "/etc/certs/httpd.crt";
 	private static final String IDP_SIGNING_CERTIFICATE_FILE = "/etc/certs/idp-signing.crt";
 	private static final String IDP_ENCRYPT_CERTIFICATE_FILE = "/etc/certs/idp-encryption.crt";
+	
+	private static final String SCOPE_CERTIFICATES_READ = "https://gluu.org/auth/oxtrust.certificates.read";
+	private static final String SCOPE_CERTIFICATES_WRITE = "https://gluu.org/auth/oxtrust.certificates.write";
 
 	@Inject
 	private Logger logger;
@@ -56,7 +59,7 @@ public class CertificatesWebResource extends BaseWebResource {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = Certificates[].class)), description = "Success"),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { READ_ACCESS })
+	@ProtectedApi(scopes = { SCOPE_CERTIFICATES_READ })
 	public Response listCertificates() {
 		log(logger, "Processing certificates retrieval request");
 		try {

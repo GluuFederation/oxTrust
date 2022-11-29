@@ -40,11 +40,14 @@ public class CasProtocolWebResource extends BaseWebResource {
 
 	@Inject
 	private ShibbolethService shibbolethService;
+	
+	static final String SCOPE_CAS_PROTOCOL_READ = "https://gluu.org/auth/oxtrust.casprotocol.read";
+    static final String SCOPE_CAS_PROTOCOL_WRITE = "https://gluu.org/auth/oxtrust.casprotocol.write";
 
 	@GET
 	@Operation(summary="Get existing configuration",description = "Get the existing configuration")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = CasProtocolDTO.class)), description = "Success")})
-	@ProtectedApi(scopes = { READ_ACCESS })
+	@ProtectedApi(scopes = { SCOPE_CAS_PROTOCOL_READ })
 	public Response getCasConfig() {
 		log(logger, "Get the existing cas configuration");
 		try {
@@ -61,7 +64,7 @@ public class CasProtocolWebResource extends BaseWebResource {
 	@PUT
 	@Operation(summary="Update the configuration",description = "Update the configuration")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = CasProtocolDTO.class)), description = "Success")})
-	@ProtectedApi(scopes = { WRITE_ACCESS })
+	@ProtectedApi(scopes = { SCOPE_CAS_PROTOCOL_WRITE })
 	public Response update(@Valid CasProtocolDTO casProtocol) {
 		log(logger, "Update the configuration");
 		try {
