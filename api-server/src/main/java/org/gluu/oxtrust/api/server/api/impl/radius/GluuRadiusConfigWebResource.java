@@ -56,6 +56,9 @@ public class GluuRadiusConfigWebResource extends BaseWebResource {
     @Inject
     private ClientService clientService;
     
+	static final String SCOPE_GLUU_RADIUS_CONFIG_READ = "https://gluu.org/auth/oxtrust.oxauthconfiguration.read";
+	static final String SCOPE_GLUU_RADIUS_CONFIG_WRITE = "https://gluu.org/auth/oxtrust.oxauthconfiguration.write";
+    
     @GET
     @Operation(summary = "Get Radius Server Configuration",description = "Get Radius Server Configuration")
     @ApiResponses(value = {
@@ -64,7 +67,7 @@ public class GluuRadiusConfigWebResource extends BaseWebResource {
         @ApiResponse(responseCode = "404", description="Gluu Radius configuration not found"),
         @ApiResponse(responseCode = "500", description="Internal server error")
     })
-    @ProtectedApi(scopes = {READ_ACCESS})
+    @ProtectedApi(scopes = {SCOPE_GLUU_RADIUS_CONFIG_READ})
     public Response getServerConfig() {
         log(logger,"Get radius server configuration");
         try {
@@ -89,7 +92,7 @@ public class GluuRadiusConfigWebResource extends BaseWebResource {
         @ApiResponse(responseCode = "404", description = "Gluu Radius configuration not found"),
         @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    @ProtectedApi(scopes = {WRITE_ACCESS})
+    @ProtectedApi(scopes = {SCOPE_GLUU_RADIUS_CONFIG_WRITE})
     public Response updateServerConfiguration(ServerConfiguration newConfig) {
         log(logger,"Update radius server configuration");
         try {
