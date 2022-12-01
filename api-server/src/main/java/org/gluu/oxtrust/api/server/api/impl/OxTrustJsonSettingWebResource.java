@@ -32,13 +32,16 @@ public class OxTrustJsonSettingWebResource extends BaseWebResource {
 	private JsonConfigurationService jsonConfigurationService;
 
 	private AppConfiguration oxTrustappConfiguration;
+	
+	static final String SCOPE_OXTRUST_JSON_SETTING_READ = "https://gluu.org/auth/oxtrust.oxtrustjsonSetting.read";
+	static final String SCOPE_OXTRUST_JSON_SETTING_WRITE = "https://gluu.org/auth/oxtrust.oxtrustjsonSetting.write";
 
 	@GET
 	@Operation(summary="Get json oxtrust settings",description = "Get json oxtrust settings")
 	@ApiResponses(value = {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = OxTrustJsonSetting.class)), description = Constants.RESULT_SUCCESS),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { READ_ACCESS })
+	@ProtectedApi(scopes = { SCOPE_OXTRUST_JSON_SETTING_READ })
 	public Response getOxtrustJsonSettings() {
 		try {
 			log(logger, "Processing oxtrust json settings retrival");
@@ -64,7 +67,7 @@ public class OxTrustJsonSettingWebResource extends BaseWebResource {
 	@ApiResponses(value = {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = OxTrustJsonSetting.class)), description = Constants.RESULT_SUCCESS),
 			@ApiResponse(responseCode = "404", description = "Not found"), @ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { WRITE_ACCESS })
+	@ProtectedApi(scopes = { SCOPE_OXTRUST_JSON_SETTING_WRITE })
 	public Response updateOxtrustJsonSetting(OxTrustJsonSetting oxtrustJsonSetting) {
 		try {
 			log(logger, "Processing oxtrust json update request");

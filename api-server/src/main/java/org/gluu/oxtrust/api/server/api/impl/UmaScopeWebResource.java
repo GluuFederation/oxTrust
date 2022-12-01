@@ -33,13 +33,16 @@ public class UmaScopeWebResource extends BaseWebResource {
 
 	@Inject
 	private UmaScopeService scopeDescriptionService;
+	
+	static final String SCOPE_UMA_SCOPE_READ = "https://gluu.org/auth/oxtrust.umascope.read";
+	static final String SCOPE_UMA_SCOPE_WRITE = "https://gluu.org/auth/oxtrust.umascope.write";
 
 	@GET
 	@Operation(summary = "Get UMA scopes", description = "Get uma scopes")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = Scope[].class)), description = Constants.RESULT_SUCCESS),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { READ_ACCESS })
+	@ProtectedApi(scopes = { SCOPE_UMA_SCOPE_READ })
 	public Response listUmaScopes() {
 		log(logger, "Get uma scopes");
 		try {
@@ -57,7 +60,7 @@ public class UmaScopeWebResource extends BaseWebResource {
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = Scope[].class)), description = Constants.RESULT_SUCCESS),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { READ_ACCESS })
+	@ProtectedApi(scopes = { SCOPE_UMA_SCOPE_READ })
 	public Response searchUmaScopes(@QueryParam(ApiConstants.SEARCH_PATTERN) @NotNull String pattern) {
 		log(logger, "Search uma scope with pattern = " + pattern);
 		try {
@@ -75,7 +78,7 @@ public class UmaScopeWebResource extends BaseWebResource {
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = Scope.class)), description = Constants.RESULT_SUCCESS),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { READ_ACCESS })
+	@ProtectedApi(scopes = { SCOPE_UMA_SCOPE_READ })
 	public Response getUmaScopeByInum(@PathParam(ApiConstants.INUM) @NotNull String inum) {
 		log(logger, "Get uma scope " + inum);
 		try {
@@ -97,7 +100,7 @@ public class UmaScopeWebResource extends BaseWebResource {
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "201", content = @Content(schema = @Schema(implementation = Scope.class)), description = Constants.RESULT_SUCCESS),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { WRITE_ACCESS })
+	@ProtectedApi(scopes = { SCOPE_UMA_SCOPE_WRITE })
 	public Response createUmaScope(Scope umaScopeDescription) {
 		log(logger, "Add new uma scope");
 		try {
@@ -122,7 +125,7 @@ public class UmaScopeWebResource extends BaseWebResource {
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = Scope.class)), description = Constants.RESULT_SUCCESS),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { WRITE_ACCESS })
+	@ProtectedApi(scopes = { SCOPE_UMA_SCOPE_WRITE })
 	public Response updateUmaScope(Scope umaScopeDescription) {
 		String inum = umaScopeDescription.getInum();
 		log(logger, "Update uma scope " + inum);
@@ -148,7 +151,7 @@ public class UmaScopeWebResource extends BaseWebResource {
 	@Operation(summary = "Delete UMA scope", description = "Delete a uma scope")
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = Constants.RESULT_SUCCESS),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { WRITE_ACCESS })
+	@ProtectedApi(scopes = { SCOPE_UMA_SCOPE_WRITE })
 	public Response deleteUmaScope(@PathParam(ApiConstants.INUM) @NotNull String inum) {
 		log(logger, "Delete a uma scope having inum " + inum);
 		try {
@@ -169,7 +172,7 @@ public class UmaScopeWebResource extends BaseWebResource {
 	// It is unclear what this method does. So we comment it until we find out
 	// what it is supposed to do.
 	// @DELETE
-	// @ProtectedApi(scopes = { WRITE_ACCESS })
+	// @ProtectedApi(scopes = { SCOPE_UMA_SCOPE_WRITE })
 	// public Response deleteAllUmaScopes() {
 	// return Response.status(Response.Status.UNAUTHORIZED).build();
 	// }

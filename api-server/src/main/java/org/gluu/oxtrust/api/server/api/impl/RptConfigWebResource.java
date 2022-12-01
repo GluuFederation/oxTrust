@@ -36,13 +36,16 @@ public class RptConfigWebResource extends BaseWebResource {
 	private Logger logger;
 	@Inject
 	private JsonConfigurationService jsonConfigurationService;
+	
+	static final String SCOPE_RPT_CONFIG_READ = "https://gluu.org/auth/oxtrust.rptConfig.read";
+	static final String SCOPE_RPT_CONFIG_WRITE = "https://gluu.org/auth/oxtrust.rptConfig.write";
 
 	@GET
 	@Operation(summary = "Retrieve rpt configuration", description = "Retrieve rpt configuration")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = RptConfig.class)), description = Constants.RESULT_SUCCESS),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { READ_ACCESS })
+	@ProtectedApi(scopes = { SCOPE_RPT_CONFIG_READ })
 	public Response retrieveRptConfiguration() {
 		try {
 			log(logger, "Retrieving rpt configuration");
@@ -69,7 +72,7 @@ public class RptConfigWebResource extends BaseWebResource {
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = RptConfig.class)), description = Constants.RESULT_SUCCESS),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { WRITE_ACCESS })
+	@ProtectedApi(scopes = { SCOPE_RPT_CONFIG_WRITE })
 	public Response updateRptConfiguration(RptConfig rptConfig) {
 		try {
 			log(logger, "Processing rpt configuration update");

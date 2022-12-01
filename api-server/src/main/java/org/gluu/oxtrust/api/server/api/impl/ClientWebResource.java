@@ -41,13 +41,16 @@ public class ClientWebResource extends BaseWebResource {
 
 	public ClientWebResource() {
 	}
+	
+	static final String SCOPE_CLIENT_READ = "https://gluu.org/auth/oxtrust.client.read";
+    static final String SCOPE_CLIENT_WRITE = "https://gluu.org/auth/oxtrust.client.write";
 
 	@GET
 	@Operation(summary = "Get openid connect clients", description = "Get openid connect clients")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = OxAuthClient[].class)), description = "Success"),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { READ_ACCESS })
+	@ProtectedApi(scopes = { SCOPE_CLIENT_READ })
 	public Response listClients() {
 		log(logger, "Get all clients ");
 		try {
@@ -66,7 +69,7 @@ public class ClientWebResource extends BaseWebResource {
 			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = Scope[].class)), description = "Success"),
 			@ApiResponse(responseCode = "500", description = "Server error"),
 			@ApiResponse(responseCode = "404", description = "Not Found") })
-	@ProtectedApi(scopes = { READ_ACCESS })
+	@ProtectedApi(scopes = { SCOPE_CLIENT_READ })
 	public Response getClientScope(@PathParam(ApiConstants.INUM) @NotNull String inum) {
 		log(logger, "Get client scopes");
 		try {
@@ -98,7 +101,7 @@ public class ClientWebResource extends BaseWebResource {
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = OxAuthClient.class)), description = "Success"),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { READ_ACCESS })
+	@ProtectedApi(scopes = { SCOPE_CLIENT_READ })
 	public Response getClientByInum(@PathParam(ApiConstants.INUM) @NotNull String inum) {
 		log(logger, "Get client " + inum);
 		try {
@@ -121,7 +124,7 @@ public class ClientWebResource extends BaseWebResource {
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = OxAuthClient[].class)), description = "Success"),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { READ_ACCESS })
+	@ProtectedApi(scopes = { SCOPE_CLIENT_READ })
 	public Response searchClients(@QueryParam(ApiConstants.SEARCH_PATTERN) @NotNull String pattern,
 			@DefaultValue("1") @QueryParam(ApiConstants.SIZE) int size) {
 		log(logger, "Search client with pattern= " + pattern + " and size " + size);
@@ -139,7 +142,7 @@ public class ClientWebResource extends BaseWebResource {
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "201", content = @Content(schema = @Schema(implementation = OxAuthClient.class)), description = "Success"),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { WRITE_ACCESS })
+	@ProtectedApi(scopes = { SCOPE_CLIENT_WRITE })
 	public Response createClient(OxAuthClient client) {
 		log(logger, "Add new client ");
 		try {
@@ -164,7 +167,7 @@ public class ClientWebResource extends BaseWebResource {
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = OxAuthClient.class)), description = "Success"),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { WRITE_ACCESS })
+	@ProtectedApi(scopes = { SCOPE_CLIENT_WRITE })
 	public Response updateClient(OxAuthClient client) {
 		try {
 			Objects.requireNonNull(client, "Attempt to update null client");
@@ -192,7 +195,7 @@ public class ClientWebResource extends BaseWebResource {
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = Scope[].class)), description = "Success"),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { WRITE_ACCESS })
+	@ProtectedApi(scopes = { SCOPE_CLIENT_WRITE })
 	public Response addScopeToClient(@PathParam(ApiConstants.INUM) @NotNull String inum,
 			@PathParam(ApiConstants.SCOPE_INUM) @NotNull String sinum) {
 		log(logger, "add new scope to client");
@@ -224,7 +227,7 @@ public class ClientWebResource extends BaseWebResource {
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = Scope[].class)), description = "Success"),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { WRITE_ACCESS })
+	@ProtectedApi(scopes = { SCOPE_CLIENT_WRITE })
 	public Response removeScopeToClient(@PathParam(ApiConstants.INUM) @NotNull String inum,
 			@PathParam(ApiConstants.SCOPE_INUM) @NotNull String sinum) {
 		log(logger, "remove scope to client");
@@ -254,7 +257,7 @@ public class ClientWebResource extends BaseWebResource {
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = OxAuthClient[].class)), description = "Success"),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { WRITE_ACCESS })
+	@ProtectedApi(scopes = { SCOPE_CLIENT_WRITE })
 	public Response deleteClient(@PathParam(ApiConstants.INUM) @NotNull String inum) {
 		log(logger, "Delete client " + inum);
 		try {
@@ -273,14 +276,14 @@ public class ClientWebResource extends BaseWebResource {
 	}
 
 	@DELETE
-	@ProtectedApi(scopes = { WRITE_ACCESS })
+	@ProtectedApi(scopes = { SCOPE_CLIENT_WRITE })
 	public Response deleteClients() {
 		return Response.status(Response.Status.UNAUTHORIZED).build();
 	}
 
 	@DELETE
 	@Path(ApiConstants.INUM_PARAM_PATH + ApiConstants.SCOPES)
-	@ProtectedApi(scopes = { WRITE_ACCESS })
+	@ProtectedApi(scopes = { SCOPE_CLIENT_WRITE })
 	public Response deleteClientScopes(@PathParam(ApiConstants.INUM) @NotNull String inum) {
 		return Response.status(Response.Status.UNAUTHORIZED).build();
 	}

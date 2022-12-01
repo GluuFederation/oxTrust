@@ -32,6 +32,9 @@ public class OxAuthJsonSettingWebResource extends BaseWebResource {
 	private JsonConfigurationService jsonConfigurationService;
 
 	private String oxAuthDynamicConfigJson;
+	
+	static final String SCOPE_OXAUTH_JSONS_ETTING_READ = "https://gluu.org/auth/oxtrust.OxauthjsonSetting.read";
+	static final String SCOPE_OXAUTH_JSON_SETTING_WRITE = "https://gluu.org/auth/oxtrust.oxauthjsonSetting.write";
 
 	@GET
 	@Operation(summary = "Get json oxauth settings", description = "Gets oxAuth configuration in JSON format",
@@ -40,7 +43,7 @@ public class OxAuthJsonSettingWebResource extends BaseWebResource {
                     @ApiResponse(responseCode = "500", description = "Server error")
             }
     )
-	@ProtectedApi(scopes = { READ_ACCESS })
+	@ProtectedApi(scopes = { SCOPE_OXAUTH_JSONS_ETTING_READ })
 	public Response getOxAuthJsonSettings() {
 		try {
 			log(logger, "Processing oxauth json settings retrieval request");
@@ -62,7 +65,7 @@ public class OxAuthJsonSettingWebResource extends BaseWebResource {
             ), description = Constants.RESULT_SUCCESS),
 			@ApiResponse(responseCode = "404", description = "Not found"),
             @ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { WRITE_ACCESS })
+	@ProtectedApi(scopes = { SCOPE_OXAUTH_JSON_SETTING_WRITE })
 	public Response updateOxauthJsonSetting(OxAuthJsonConfiguration oxAuthJsonSetting) {
 		try {
 			log(logger, "Processing oxauth json settings update request");

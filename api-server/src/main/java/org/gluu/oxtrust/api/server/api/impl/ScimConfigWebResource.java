@@ -42,13 +42,16 @@ public class ScimConfigWebResource extends BaseWebResource {
 	private Logger logger;
 	@Inject
 	private JsonConfigurationService jsonConfigurationService;
+	
+	static final String SCOPE_SCIM_CONFIG_READ = "https://gluu.org/auth/oxtrust.scimconfig.read";
+	static final String SCOPE_SCIM_CONFIG_WRITE = "https://gluu.org/auth/oxtrust.scimconfig.write";
 
 	@GET
 	@Operation(summary = "Retrieve scim configuration", description = "Retrieve scim configuration")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = ScimConfig.class)), description = Constants.RESULT_SUCCESS),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { READ_ACCESS })
+	@ProtectedApi(scopes = { SCOPE_SCIM_CONFIG_READ })
 	public Response retrieveScimConfiguration() {
 		try {
 			log(logger, "Retrieving SCIM configuration");
@@ -75,7 +78,7 @@ public class ScimConfigWebResource extends BaseWebResource {
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = ScimConfig.class)), description = Constants.RESULT_SUCCESS),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { WRITE_ACCESS })
+	@ProtectedApi(scopes = { SCOPE_SCIM_CONFIG_WRITE })
 	public Response updateScimConfiguration(ScimConfig scimConfig) {
 		try {
 			log(logger, "Processing scim configuration update");

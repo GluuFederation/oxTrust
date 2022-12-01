@@ -34,10 +34,13 @@ public class PassportBasicConfigWebResource extends BaseWebResource {
 
 	private LdapOxPassportConfiguration ldapOxPassportConfiguration;
 	private PassportConfiguration passportConfiguration;
+	
+	static final String SCOPE_PASSPORT_BASIC_CONFIG_READ = "https://gluu.org/auth/oxtrust.passportbasicconfig.read";
+	static final String SCOPE_PASSPORT_BASIC_CONFIG_WRITE = "https://gluu.org/auth/oxtrust.passportbasicconfig.write";
 
 	@GET
 	@Operation(summary="Get passport basic configuration",description = "Get passport basic configuration")
-	@ProtectedApi(scopes = { READ_ACCESS })
+	@ProtectedApi(scopes = { SCOPE_PASSPORT_BASIC_CONFIG_READ })
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = PassportConfiguration[].class)), description = "Success"),
             @ApiResponse(responseCode = "500", description = "Server error")})
@@ -58,7 +61,7 @@ public class PassportBasicConfigWebResource extends BaseWebResource {
 	@ApiResponses(value = {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = PassportConfiguration[].class)), description = "Success"),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { WRITE_ACCESS })
+	@ProtectedApi(scopes = { SCOPE_PASSPORT_BASIC_CONFIG_WRITE })
 	public Response updatePassportBasicConfig(Configuration configuration) {
 		log(logger, "Update passport basic configuration");
 		try {

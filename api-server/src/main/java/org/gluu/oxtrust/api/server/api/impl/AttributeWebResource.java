@@ -50,13 +50,16 @@ public class AttributeWebResource extends BaseWebResource {
 
 	public AttributeWebResource() {
 	}
+	
+	static final String SCOPE_ATTRIBUTE_READ = "https://gluu.org/auth/oxtrust.attribute.read";
+    static final String SCOPE_ATTRIBUTE_WRITE = "https://gluu.org/auth/oxtrust.attribute.write";
 
 	@GET
 	@Operation(summary = "Get all attributes", description = "Gets all the gluu attributes")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = GluuAttribute[].class)), description = "Success"),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { READ_ACCESS })
+	@ProtectedApi(scopes = { SCOPE_ATTRIBUTE_READ })
 	public Response getAllAttributes() {
 		log(logger, "Processing getAllAttributes()");
 		try {
@@ -74,7 +77,7 @@ public class AttributeWebResource extends BaseWebResource {
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = GluuAttribute[].class)), description = Constants.RESULT_SUCCESS),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { READ_ACCESS })
+	@ProtectedApi(scopes = { SCOPE_ATTRIBUTE_READ })
 	public Response getAllActiveAttributes() {
 		log(logger, "Processing getAllActivesAttributes()");
 		try {
@@ -93,7 +96,7 @@ public class AttributeWebResource extends BaseWebResource {
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = GluuAttribute[].class)), description = Constants.RESULT_SUCCESS),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { READ_ACCESS })
+	@ProtectedApi(scopes = { SCOPE_ATTRIBUTE_READ })
 	public Response getAllInactiveAttributes() {
 		log(logger, "Processing getAllInActivesAttributes()");
 		try {
@@ -112,7 +115,7 @@ public class AttributeWebResource extends BaseWebResource {
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = GluuAttribute.class)), description = Constants.RESULT_SUCCESS),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { READ_ACCESS })
+	@ProtectedApi(scopes = { SCOPE_ATTRIBUTE_READ })
 	public Response getAttributeByInum(@PathParam(ApiConstants.INUM) @NotNull String inum) {
 		log(logger, "Processing getAttributeByInum()");
 		try {
@@ -130,7 +133,7 @@ public class AttributeWebResource extends BaseWebResource {
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = GluuAttribute.class)), description = Constants.RESULT_SUCCESS),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { READ_ACCESS })
+	@ProtectedApi(scopes = { SCOPE_ATTRIBUTE_READ })
 	public Response searchAttributes(@QueryParam(ApiConstants.SEARCH_PATTERN) @NotNull String pattern,
 			@DefaultValue("1") @QueryParam(ApiConstants.SIZE) int size) {
 		log(logger, "Processing searchAttributes()");
@@ -148,7 +151,7 @@ public class AttributeWebResource extends BaseWebResource {
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = GluuAttribute.class)), description = "Success"),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { WRITE_ACCESS })
+	@ProtectedApi(scopes = { SCOPE_ATTRIBUTE_WRITE })
 	public Response createAttribute(GluuAttribute gluuAttribute) {
 		log(logger, "Processing createAttribute()");
 		try {
@@ -173,7 +176,7 @@ public class AttributeWebResource extends BaseWebResource {
 			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = GluuAttribute.class)), description = Constants.RESULT_SUCCESS),
 			@ApiResponse(responseCode = "404", description = "Not found"),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { WRITE_ACCESS })
+	@ProtectedApi(scopes = { SCOPE_ATTRIBUTE_WRITE })
 	public Response updateAttribute(GluuAttribute gluuAttribute) {
 		log(logger, "Processing updateAttribute()");
 		try {
@@ -199,7 +202,7 @@ public class AttributeWebResource extends BaseWebResource {
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = Constants.RESULT_SUCCESS),
 			@ApiResponse(responseCode = "404", description = "Not found"),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { WRITE_ACCESS })
+	@ProtectedApi(scopes = { SCOPE_ATTRIBUTE_WRITE })
 	public Response deleteAttribute(@PathParam(ApiConstants.INUM) @NotNull String inum) {
 		log(logger, "Processing deleteAttribute()");
 		try {
@@ -218,7 +221,7 @@ public class AttributeWebResource extends BaseWebResource {
 	}
 
 	@DELETE
-	@ProtectedApi(scopes = { WRITE_ACCESS })
+	@ProtectedApi(scopes = { SCOPE_ATTRIBUTE_WRITE })
 	public Response deleteAttributes() {
 		return Response.status(Response.Status.UNAUTHORIZED).build();
 	}

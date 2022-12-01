@@ -71,7 +71,7 @@ public class SMTPWebResourceTest extends BaseApiTest {
 		configuration.setFromEmailAddress("gluutestmail@gmail.com");
 		configuration.setFromName("Gluu Api");
 		configuration.setRequiresAuthentication(true);
-		configuration.setConnectProtection(SmtpConnectProtectionType.StartTls);
+		configuration.setConnectProtection(SmtpConnectProtectionType.START_TLS);
 		configuration.setUserName("gluutestmail@gmail.com");
 		return configuration;
 	}
