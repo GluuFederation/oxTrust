@@ -32,13 +32,16 @@ public class ServerStatusWebResource extends BaseWebResource {
 	private Logger logger;
 	@Inject
 	private ConfigurationService configurationService;
+	
+	static final String SCOPE_SERVER_STATUS_READ = "https://gluu.org/auth/oxtrust.serverstatus.read";
+	static final String SCOPE_SERVER_STATUS_WRITE = "https://gluu.org/auth/oxtrust.serverstatus.write";
 
 	@GET
 	@Operation(summary = "Get server status", description = "Get server status")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = GluuServerStatus.class)), description = "Success"),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { READ_ACCESS })
+	@ProtectedApi(scopes = { SCOPE_SERVER_STATUS_READ })
 	public Response getServerStatus() {
 		log("Get server status");
 		try {

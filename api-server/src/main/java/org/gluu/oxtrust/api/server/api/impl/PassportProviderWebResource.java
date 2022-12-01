@@ -36,13 +36,16 @@ public class PassportProviderWebResource extends BaseWebResource {
 	private Logger logger;
 	@Inject
 	private PassportService passportService;
+	
+	static final String SCOPE_PASSPORT_PROVIDER_READ = "https://gluu.org/auth/oxtrust.passportprovider.read";
+	static final String SCOPE_PASSPORT_PROVIDER_WRITE = "https://gluu.org/auth/oxtrust.passportprovider.write";
 
 	@GET
 	@Operation(summary="List passport providers",description = "List passport providers")
 	@ApiResponses(value = {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = Provider[].class)), description = "Success"),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { READ_ACCESS })
+	@ProtectedApi(scopes = { SCOPE_PASSPORT_PROVIDER_READ })
 	public Response listProviders() {
 		log(logger, "List passport providers");
 		try {
@@ -63,7 +66,7 @@ public class PassportProviderWebResource extends BaseWebResource {
 	@ApiResponses(value = {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = Provider.class)), description = "Success"),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { READ_ACCESS })
+	@ProtectedApi(scopes = { SCOPE_PASSPORT_PROVIDER_READ })
 	public Response getProviderById(@PathParam(ApiConstants.ID) @NotNull String id) {
 		log(logger, "Get group having group" + id);
 		id = id.equalsIgnoreCase("") ? null : id;
@@ -90,7 +93,7 @@ public class PassportProviderWebResource extends BaseWebResource {
 	@ApiResponses(value = {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = Provider.class)), description = "Success"),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { WRITE_ACCESS })
+	@ProtectedApi(scopes = { SCOPE_PASSPORT_PROVIDER_WRITE })
 	public Response createPassportProvider(Provider provider) {
 		log(logger, "Add passport provider " + provider.getDisplayName());
 		try {
@@ -120,7 +123,7 @@ public class PassportProviderWebResource extends BaseWebResource {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = Provider.class)), description = "Success"),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { WRITE_ACCESS })
+	@ProtectedApi(scopes = { SCOPE_PASSPORT_PROVIDER_WRITE })
 	public Response updatePassportProvider(Provider provider) {
 		String id = provider.getId();
 		id = id.equalsIgnoreCase("") ? null : id;
@@ -165,7 +168,7 @@ public class PassportProviderWebResource extends BaseWebResource {
 	@ApiResponses(value = {
 	        @ApiResponse(responseCode = "200", description = "Success"),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { WRITE_ACCESS })
+	@ProtectedApi(scopes = { SCOPE_PASSPORT_PROVIDER_WRITE })
 	public Response deleteProvider(@PathParam(ApiConstants.ID) @NotNull String id) {
 		log(logger, "Delete passport provider having id " + id);
 		try {
@@ -197,7 +200,7 @@ public class PassportProviderWebResource extends BaseWebResource {
 	}
 
 	@DELETE
-	@ProtectedApi(scopes = { WRITE_ACCESS })
+	@ProtectedApi(scopes = { SCOPE_PASSPORT_PROVIDER_WRITE })
 	public Response deleteAllProviders() {
 		return Response.status(Response.Status.UNAUTHORIZED).build();
 	}

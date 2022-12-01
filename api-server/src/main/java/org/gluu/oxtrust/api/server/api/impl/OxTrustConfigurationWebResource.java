@@ -37,13 +37,16 @@ public class OxTrustConfigurationWebResource extends BaseWebResource {
 	private Logger logger;
 	@Inject
 	private JsonConfigurationService jsonConfigurationService;
+	
+	static final String SCOPE_OXTRUST_CONFIGURATION_READ = "https://gluu.org/auth/oxtrust.oxtrustconfiguration.read";
+	static final String SCOPE_OXTRUST_CONFIGURATION_WRITE = "https://gluu.org/auth/oxtrust.oxtrustconfiguration.write";
 
 	@GET
 	@Operation(summary = "Retrieve oxtrust configuration", description = "Retrieve oxtrust configuration")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = OxTrustBasicConfig.class)), description = Constants.RESULT_SUCCESS),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { READ_ACCESS })
+	@ProtectedApi(scopes = { SCOPE_OXTRUST_CONFIGURATION_READ })
 	public Response retrieveOxtrustConfiguration() {
 		try {
 			log(logger, "Retrieving oxtrust configuration");
@@ -79,7 +82,7 @@ public class OxTrustConfigurationWebResource extends BaseWebResource {
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = AppConfiguration.class)), description = Constants.RESULT_SUCCESS),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { WRITE_ACCESS })
+	@ProtectedApi(scopes = { SCOPE_OXTRUST_CONFIGURATION_WRITE })
 	public Response updateOxtrustConfiguration(OxTrustBasicConfig oxTrustBasicConfig) {
 		try {
 			log(logger, "Processing oxtrust json update request");
