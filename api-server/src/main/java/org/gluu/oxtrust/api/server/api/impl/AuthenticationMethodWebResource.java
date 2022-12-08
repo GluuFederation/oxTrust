@@ -12,6 +12,7 @@ import javax.ws.rs.core.Response;
 
 import org.gluu.oxtrust.api.server.model.AuthenticationMethod;
 import org.gluu.oxtrust.api.server.util.ApiConstants;
+import org.gluu.oxtrust.api.server.util.ApiScopeConstants;
 import org.gluu.oxtrust.api.server.util.Constants;
 import org.gluu.oxtrust.service.ConfigurationService;
 import org.gluu.oxtrust.model.GluuConfiguration;
@@ -25,6 +26,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 @Path(ApiConstants.BASE_API_URL + ApiConstants.ACRS)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -40,18 +42,17 @@ public class AuthenticationMethodWebResource extends BaseWebResource {
 
 	public AuthenticationMethodWebResource() {
 	}
-	
-	static final String SCOPE_AUTHENTICATION_METHOD_READ = "https://gluu.org/auth/oxtrust.authenticationmethod.read";
-    static final String SCOPE_AUTHENTICATION_METHOD_WRITE = "https://gluu.org/auth/oxtrust.authenticationmethod.write";
 
     @GET
-    @Operation(summary="Get current authentication methods", description = "Get current authentication methods")
+    @Operation(summary="Get current authentication methods", description = "Get current authentication methods",
+    security = @SecurityRequirement(name = "oauth2", scopes = {
+    		ApiScopeConstants.SCOPE_AUTHENTICATION_METHOD_READ }))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", content = @Content(
                     schema = @Schema(implementation = AuthenticationMethod.class)
             ), description = Constants.RESULT_SUCCESS),
             @ApiResponse(responseCode = "500", description = "Server error")})
-	@ProtectedApi(scopes = { SCOPE_AUTHENTICATION_METHOD_READ })
+	@ProtectedApi(scopes = { ApiScopeConstants.SCOPE_AUTHENTICATION_METHOD_READ })
 	public Response getCurrentAuthentication() {
 		log(logger, "Processing getCurrentAuthentication()");
 		try {
@@ -67,11 +68,13 @@ public class AuthenticationMethodWebResource extends BaseWebResource {
 	}
 
 	@PUT
-	@Operation(summary = "Update authentication methods", description = "Update authentication methods")
+	@Operation(summary = "Update authentication methods", description = "Update authentication methods",
+    security = @SecurityRequirement(name = "oauth2", scopes = {
+    		ApiScopeConstants.SCOPE_AUTHENTICATION_METHOD_WRITE }))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = AuthenticationMethod.class)), description = Constants.RESULT_SUCCESS),
             @ApiResponse(responseCode = "500", description = "Server error")})
-	@ProtectedApi(scopes = { SCOPE_AUTHENTICATION_METHOD_WRITE })
+	@ProtectedApi(scopes = { ApiScopeConstants.SCOPE_AUTHENTICATION_METHOD_WRITE })
 	public Response updateAuthenticationMethod(AuthenticationMethod method) {
 		log(logger, "Processing updateAuthenticationMethod()");
 		try {

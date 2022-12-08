@@ -13,6 +13,7 @@ import javax.ws.rs.core.Response;
 import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.oxtrust.api.server.model.OxTrustBasicConfig;
 import org.gluu.oxtrust.api.server.util.ApiConstants;
+import org.gluu.oxtrust.api.server.util.ApiScopeConstants;
 import org.gluu.oxtrust.api.server.util.Constants;
 import org.gluu.oxtrust.service.JsonConfigurationService;
 import org.gluu.oxtrust.service.filter.ProtectedApi;
@@ -38,15 +39,12 @@ public class OxTrustConfigurationWebResource extends BaseWebResource {
 	@Inject
 	private JsonConfigurationService jsonConfigurationService;
 	
-	static final String SCOPE_OXTRUST_CONFIGURATION_READ = "https://gluu.org/auth/oxtrust.oxtrustconfiguration.read";
-	static final String SCOPE_OXTRUST_CONFIGURATION_WRITE = "https://gluu.org/auth/oxtrust.oxtrustconfiguration.write";
-
 	@GET
 	@Operation(summary = "Retrieve oxtrust configuration", description = "Retrieve oxtrust configuration")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = OxTrustBasicConfig.class)), description = Constants.RESULT_SUCCESS),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { SCOPE_OXTRUST_CONFIGURATION_READ })
+	@ProtectedApi(scopes = { ApiScopeConstants.SCOPE_OXTRUST_CONFIGURATION_READ })
 	public Response retrieveOxtrustConfiguration() {
 		try {
 			log(logger, "Retrieving oxtrust configuration");
@@ -82,7 +80,7 @@ public class OxTrustConfigurationWebResource extends BaseWebResource {
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = AppConfiguration.class)), description = Constants.RESULT_SUCCESS),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { SCOPE_OXTRUST_CONFIGURATION_WRITE })
+	@ProtectedApi(scopes = { ApiScopeConstants.SCOPE_OXTRUST_CONFIGURATION_WRITE })
 	public Response updateOxtrustConfiguration(OxTrustBasicConfig oxTrustBasicConfig) {
 		try {
 			log(logger, "Processing oxtrust json update request");

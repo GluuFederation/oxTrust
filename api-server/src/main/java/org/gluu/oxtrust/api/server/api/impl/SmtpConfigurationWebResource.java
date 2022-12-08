@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.gluu.model.SmtpConfiguration;
 import org.gluu.oxtrust.api.server.util.ApiConstants;
+import org.gluu.oxtrust.api.server.util.ApiScopeConstants;
 import org.gluu.oxtrust.api.server.util.Constants;
 import org.gluu.oxtrust.service.ConfigurationService;
 import org.gluu.oxtrust.service.EncryptionService;
@@ -39,15 +40,12 @@ public class SmtpConfigurationWebResource extends BaseWebResource {
 	@Inject
 	private EncryptionService encryptionService;
 	
-	static final String SCOPE_SMTP_CONFIGURATION_READ = "https://gluu.org/auth/oxtrust.smtpconfiguration.read";
-	static final String SCOPE_SMTP_CONFIGURATION_WRITE = "https://gluu.org/auth/oxtrust.smtpconfiguration.write";
-
 	@GET
 	@Operation(summary="Get smtp configuration" ,description = "Get smtp configuration")
 	@ApiResponses(value = {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = SmtpConfiguration.class)), description = Constants.RESULT_SUCCESS),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { SCOPE_SMTP_CONFIGURATION_READ })
+	@ProtectedApi(scopes = { ApiScopeConstants.SCOPE_SMTP_CONFIGURATION_READ })
 	public Response getSmtpServerConfiguration() {
 		try {
 			SmtpConfiguration smtpConfiguration = configurationService.getConfiguration().getSmtpConfiguration();
@@ -67,7 +65,7 @@ public class SmtpConfigurationWebResource extends BaseWebResource {
 	@ApiResponses(value = {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = SmtpConfiguration.class)), description = Constants.RESULT_SUCCESS),
 			@ApiResponse(responseCode = "404", description = "Not found"), @ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { SCOPE_SMTP_CONFIGURATION_WRITE })
+	@ProtectedApi(scopes = { ApiScopeConstants.SCOPE_SMTP_CONFIGURATION_WRITE })
 	public Response updateSmtpConfiguration(SmtpConfiguration smtpConfiguration) {
 		try {
 			Preconditions.checkNotNull(smtpConfiguration, "Attempt to update null smtpConfiguration");
@@ -89,7 +87,7 @@ public class SmtpConfigurationWebResource extends BaseWebResource {
 	@ApiResponses(value = {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = SmtpConfiguration.class)), description = Constants.RESULT_SUCCESS),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { SCOPE_SMTP_CONFIGURATION_READ })
+	@ProtectedApi(scopes = { ApiScopeConstants.SCOPE_SMTP_CONFIGURATION_READ })
 	public Response testSmtpConfiguration() {
 		try {
 			SmtpConfiguration smtpConfiguration = configurationService.getConfiguration().getSmtpConfiguration();

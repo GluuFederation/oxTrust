@@ -12,6 +12,7 @@ import javax.ws.rs.core.Response;
 
 import org.gluu.oxtrust.api.server.model.SystemConfig;
 import org.gluu.oxtrust.api.server.util.ApiConstants;
+import org.gluu.oxtrust.api.server.util.ApiScopeConstants;
 import org.gluu.oxtrust.api.server.util.Constants;
 import org.gluu.oxtrust.model.GluuConfiguration;
 import org.gluu.oxtrust.service.ConfigurationService;
@@ -38,15 +39,12 @@ public class SystemConfigWebResource extends BaseWebResource {
 	@Inject
 	private ConfigurationService configurationService;
 	
-	static final String SCOPE_SYSTEM_CONFIG_READ = "https://gluu.org/auth/oxtrust.systemconfig.read";
-	static final String SCOPE_SYSTEM_CONFIG_WRITE = "https://gluu.org/auth/oxtrust.systemconfig.write";
-
 	@GET
 	@Operation(summary = "Retrieve system configuration", description = "Retrieve system configuration")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = SystemConfig.class)), description = Constants.RESULT_SUCCESS),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { SCOPE_SYSTEM_CONFIG_READ })
+	@ProtectedApi(scopes = { ApiScopeConstants.SCOPE_SYSTEM_CONFIG_READ })
 	public Response retrieveSystemConfiguration() {
 		try {
 			log(logger, "Retrieving system configuration");
@@ -70,7 +68,7 @@ public class SystemConfigWebResource extends BaseWebResource {
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = SystemConfig.class)), description = Constants.RESULT_SUCCESS),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { SCOPE_SYSTEM_CONFIG_WRITE })
+	@ProtectedApi(scopes = { ApiScopeConstants.SCOPE_SYSTEM_CONFIG_WRITE })
 	public Response updateSystemConfiguration(SystemConfig systemConfig) {
 		try {
 			log(logger, "Updating system configuration");

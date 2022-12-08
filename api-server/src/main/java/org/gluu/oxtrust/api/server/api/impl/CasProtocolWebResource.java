@@ -5,8 +5,11 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+
 import org.gluu.oxtrust.api.server.model.CasProtocolDTO;
 import org.gluu.oxtrust.api.server.util.ApiConstants;
+import org.gluu.oxtrust.api.server.util.ApiScopeConstants;
 import org.gluu.oxtrust.api.server.util.CASProtocolConfigurationProvider;
 import org.gluu.oxtrust.api.server.util.CasProtocolDtoAssembly;
 import org.gluu.oxtrust.service.CASService;
@@ -40,14 +43,13 @@ public class CasProtocolWebResource extends BaseWebResource {
 
 	@Inject
 	private ShibbolethService shibbolethService;
-	
-	static final String SCOPE_CAS_PROTOCOL_READ = "https://gluu.org/auth/oxtrust.casprotocol.read";
-    static final String SCOPE_CAS_PROTOCOL_WRITE = "https://gluu.org/auth/oxtrust.casprotocol.write";
 
 	@GET
-	@Operation(summary="Get existing configuration",description = "Get the existing configuration")
+	@Operation(summary="Get existing configuration",description = "Get the existing configuration",
+	security = @SecurityRequirement(name = "oauth2", scopes = {
+	   		ApiScopeConstants.SCOPE_CAS_PROTOCOL_READ }))
     @ApiResponses(value = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = CasProtocolDTO.class)), description = "Success")})
-	@ProtectedApi(scopes = { SCOPE_CAS_PROTOCOL_READ })
+	@ProtectedApi(scopes = { ApiScopeConstants.SCOPE_CAS_PROTOCOL_READ })
 	public Response getCasConfig() {
 		log(logger, "Get the existing cas configuration");
 		try {
@@ -62,9 +64,11 @@ public class CasProtocolWebResource extends BaseWebResource {
 	}
 
 	@PUT
-	@Operation(summary="Update the configuration",description = "Update the configuration")
+	@Operation(summary="Update the configuration",description = "Update the configuration",
+	security = @SecurityRequirement(name = "oauth2", scopes = {
+	   		ApiScopeConstants.SCOPE_CAS_PROTOCOL_WRITE }))
     @ApiResponses(value = {@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = CasProtocolDTO.class)), description = "Success")})
-	@ProtectedApi(scopes = { SCOPE_CAS_PROTOCOL_WRITE })
+	@ProtectedApi(scopes = { ApiScopeConstants.SCOPE_CAS_PROTOCOL_WRITE })
 	public Response update(@Valid CasProtocolDTO casProtocol) {
 		log(logger, "Update the configuration");
 		try {

@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.gluu.oxtrust.api.server.model.OxAuthJsonConfiguration;
 import org.gluu.oxtrust.api.server.util.ApiConstants;
+import org.gluu.oxtrust.api.server.util.ApiScopeConstants;
 import org.gluu.oxtrust.api.server.util.Constants;
 import org.gluu.oxtrust.service.JsonConfigurationService;
 import org.gluu.oxtrust.service.filter.ProtectedApi;
@@ -33,14 +34,11 @@ public class OxAuthConfigurationWebResource extends BaseWebResource {
 
 	private String oxAuthDynamicConfigJson;
 	
-	static final String SCOPE_OXAUTHCONFIGURATION_READ = "https://gluu.org/auth/oxtrust.oxauthconfiguration.read";
-	static final String SCOPE_OXAUTHCONFIGURATION_WRITE = "https://gluu.org/auth/oxtrust.oxauthconfiguration.write";
-
 	@GET
 	@Operation(summary = "Retrieve oxauth configuration", description = "Retrieve oxauth configuration", responses = {
 			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = OxAuthJsonConfiguration.class)), description = Constants.RESULT_SUCCESS),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { SCOPE_OXAUTHCONFIGURATION_READ })
+	@ProtectedApi(scopes = { ApiScopeConstants.SCOPE_OXAUTHCONFIGURATION_READ })
 	public Response retrieveOxauthConfiguration() {
 		try {
 			log(logger, "Retrieving oxauth configuration");
@@ -59,7 +57,7 @@ public class OxAuthConfigurationWebResource extends BaseWebResource {
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = OxAuthJsonConfiguration.class)), description = Constants.RESULT_SUCCESS),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { SCOPE_OXAUTHCONFIGURATION_WRITE })
+	@ProtectedApi(scopes = { ApiScopeConstants.SCOPE_OXAUTHCONFIGURATION_WRITE })
 	public Response updateOxauthConfiguration(OxAuthJsonConfiguration oxAuthJsonSetting) {
 		try {
 			log(logger, "Processing oxauth json configuration");
