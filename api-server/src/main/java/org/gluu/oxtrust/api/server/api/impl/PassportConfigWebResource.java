@@ -13,6 +13,7 @@ import javax.ws.rs.core.Response;
 import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.oxtrust.api.server.model.PassportConfig;
 import org.gluu.oxtrust.api.server.util.ApiConstants;
+import org.gluu.oxtrust.api.server.util.ApiScopeConstants;
 import org.gluu.oxtrust.api.server.util.Constants;
 import org.gluu.oxtrust.service.JsonConfigurationService;
 import org.gluu.oxtrust.service.filter.ProtectedApi;
@@ -38,15 +39,12 @@ public class PassportConfigWebResource extends BaseWebResource {
 	@Inject
 	private JsonConfigurationService jsonConfigurationService;
 	
-	static final String SCOPE_PASSPORT_CONFIG_READ = "https://gluu.org/auth/oxtrust.passportconfig.read";
-	static final String SCOPE_PASSPORT_CONFIG_WRITE = "https://gluu.org/auth/oxtrust.passportconfig.write";
-
 	@GET
 	@Operation(summary = "Retrieve passport configuration", description = "Retrieve passport configuration")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = PassportConfig.class)), description = Constants.RESULT_SUCCESS),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { SCOPE_PASSPORT_CONFIG_READ })
+	@ProtectedApi(scopes = { ApiScopeConstants.SCOPE_PASSPORT_CONFIG_READ })
 	public Response retrievePassportConfiguration() {
 		try {
 			log(logger, "Retrieving oxtrust configuration");
@@ -71,7 +69,7 @@ public class PassportConfigWebResource extends BaseWebResource {
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = PassportConfig.class)), description = Constants.RESULT_SUCCESS),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { SCOPE_PASSPORT_CONFIG_WRITE })
+	@ProtectedApi(scopes = { ApiScopeConstants.SCOPE_PASSPORT_CONFIG_WRITE })
 	public Response updatePassportConfiguration(PassportConfig passportConfig) {
 		try {
 			log(logger, "Processing passport configuration update");

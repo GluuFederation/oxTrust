@@ -13,6 +13,7 @@ import javax.ws.rs.core.Response;
 import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.oxtrust.api.server.model.IdpConfig;
 import org.gluu.oxtrust.api.server.util.ApiConstants;
+import org.gluu.oxtrust.api.server.util.ApiScopeConstants;
 import org.gluu.oxtrust.api.server.util.Constants;
 import org.gluu.oxtrust.service.EncryptionService;
 import org.gluu.oxtrust.service.JsonConfigurationService;
@@ -41,15 +42,12 @@ public class IdpConfigWebResource extends BaseWebResource {
 	@Inject
 	private EncryptionService encryptionService;
 	
-	static final String SCOPE_IDPCONFIG_READ = "https://gluu.org/auth/oxtrust.idpconfig.read";
-	static final String SCOPE_IDPCONFIG_WRITE = "https://gluu.org/auth/oxtrust.idpconfig.write";
-
 	@GET
 	@Operation(summary = "Retrieve idp configuration", description = "Retrieve idp configuration")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = IdpConfig.class)), description = Constants.RESULT_SUCCESS),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { SCOPE_IDPCONFIG_READ })
+	@ProtectedApi(scopes = { ApiScopeConstants.SCOPE_IDPCONFIG_READ })
 	public Response retrieveIdpConfiguration() {
 		try {
 			log(logger, "Retrieving idp configuration");
@@ -83,7 +81,7 @@ public class IdpConfigWebResource extends BaseWebResource {
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = IdpConfig.class)), description = Constants.RESULT_SUCCESS),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { SCOPE_IDPCONFIG_WRITE })
+	@ProtectedApi(scopes = { ApiScopeConstants.SCOPE_IDPCONFIG_WRITE })
 	public Response updateIdpConfiguration(IdpConfig idpConfig) {
 		try {
 			log(logger, "Processing idp configuration update");

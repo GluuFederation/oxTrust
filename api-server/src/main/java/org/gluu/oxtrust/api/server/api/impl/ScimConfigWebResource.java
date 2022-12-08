@@ -17,6 +17,7 @@ import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.config.oxtrust.ScimProperties;
 import org.gluu.oxtrust.api.server.model.ScimConfig;
 import org.gluu.oxtrust.api.server.util.ApiConstants;
+import org.gluu.oxtrust.api.server.util.ApiScopeConstants;
 import org.gluu.oxtrust.api.server.util.Constants;
 import org.gluu.oxtrust.service.JsonConfigurationService;
 import org.gluu.oxtrust.service.filter.ProtectedApi;
@@ -42,16 +43,13 @@ public class ScimConfigWebResource extends BaseWebResource {
 	private Logger logger;
 	@Inject
 	private JsonConfigurationService jsonConfigurationService;
-	
-	static final String SCOPE_SCIM_CONFIG_READ = "https://gluu.org/auth/oxtrust.scimconfig.read";
-	static final String SCOPE_SCIM_CONFIG_WRITE = "https://gluu.org/auth/oxtrust.scimconfig.write";
 
 	@GET
 	@Operation(summary = "Retrieve scim configuration", description = "Retrieve scim configuration")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = ScimConfig.class)), description = Constants.RESULT_SUCCESS),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { SCOPE_SCIM_CONFIG_READ })
+	@ProtectedApi(scopes = { ApiScopeConstants.SCOPE_SCIM_CONFIG_READ })
 	public Response retrieveScimConfiguration() {
 		try {
 			log(logger, "Retrieving SCIM configuration");
@@ -78,7 +76,7 @@ public class ScimConfigWebResource extends BaseWebResource {
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = ScimConfig.class)), description = Constants.RESULT_SUCCESS),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { SCOPE_SCIM_CONFIG_WRITE })
+	@ProtectedApi(scopes = { ApiScopeConstants.SCOPE_SCIM_CONFIG_WRITE })
 	public Response updateScimConfiguration(ScimConfig scimConfig) {
 		try {
 			log(logger, "Processing scim configuration update");

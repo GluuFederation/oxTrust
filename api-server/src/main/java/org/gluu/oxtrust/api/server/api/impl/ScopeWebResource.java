@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.gluu.model.GluuAttribute;
 import org.gluu.oxtrust.api.server.util.ApiConstants;
+import org.gluu.oxtrust.api.server.util.ApiScopeConstants;
 import org.gluu.oxtrust.service.AttributeService;
 import org.gluu.oxtrust.service.ScopeService;
 import org.gluu.oxtrust.service.filter.ProtectedApi;
@@ -41,15 +42,12 @@ public class ScopeWebResource extends BaseWebResource {
 	public ScopeWebResource() {
 	}
 	
-	static final String SCOPE_OXTRUST_SCOPE_READ = "https://gluu.org/auth/oxtrust.scope.read";
-	static final String SCOPE_OXTRUST_SCOPE_WRITE = "https://gluu.org/auth/oxtrust.scope.write";
-
 	@GET
 	@Operation(summary = "Get all scopes", description = "Get all scopes")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = Scope[].class)), description = "Success"),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { SCOPE_OXTRUST_SCOPE_READ })
+	@ProtectedApi(scopes = { ApiScopeConstants.SCOPE_OXTRUST_SCOPE_READ })
 	public Response getAllScopes() {
 		log(logger, "List openid connect scopes ");
 		try {
@@ -66,7 +64,7 @@ public class ScopeWebResource extends BaseWebResource {
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = Scope.class)), description = "Success"),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { SCOPE_OXTRUST_SCOPE_READ })
+	@ProtectedApi(scopes = { ApiScopeConstants.SCOPE_OXTRUST_SCOPE_READ })
 	public Response getScopeByInum(@PathParam(ApiConstants.INUM) @NotNull String inum) {
 		log(logger, "Get openid connect scope by " + inum);
 		try {
@@ -88,7 +86,7 @@ public class ScopeWebResource extends BaseWebResource {
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = Scope[].class)), description = "Success"),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { SCOPE_OXTRUST_SCOPE_READ })
+	@ProtectedApi(scopes = { ApiScopeConstants.SCOPE_OXTRUST_SCOPE_READ })
 	public Response searchScope(@QueryParam(ApiConstants.SEARCH_PATTERN) String pattern,
 			@DefaultValue("10") @QueryParam("size") int size) {
 		log(logger, "Search openid connect scopes with pattern= " + pattern);
@@ -106,7 +104,7 @@ public class ScopeWebResource extends BaseWebResource {
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "201", content = @Content(schema = @Schema(implementation = Scope.class)), description = "Success"),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { SCOPE_OXTRUST_SCOPE_WRITE })
+	@ProtectedApi(scopes = { ApiScopeConstants.SCOPE_OXTRUST_SCOPE_WRITE })
 	public Response createScope(Scope scope) {
 		log(logger, "Create scope");
 		try {
@@ -130,7 +128,7 @@ public class ScopeWebResource extends BaseWebResource {
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = Scope.class)), description = "Success"),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { SCOPE_OXTRUST_SCOPE_WRITE })
+	@ProtectedApi(scopes = { ApiScopeConstants.SCOPE_OXTRUST_SCOPE_WRITE })
 	public Response updateScope(Scope scope) {
 		String inum = scope.getInum();
 		log(logger, "Update scope " + inum);
@@ -157,7 +155,7 @@ public class ScopeWebResource extends BaseWebResource {
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = GluuAttribute[].class)), description = "Success"),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { SCOPE_OXTRUST_SCOPE_WRITE })
+	@ProtectedApi(scopes = { ApiScopeConstants.SCOPE_OXTRUST_SCOPE_WRITE })
 	public Response getScopeClaims(@PathParam(ApiConstants.INUM) @NotNull String inum) {
 		log(logger, "List all claims of scope ==> " + inum);
 		try {
@@ -185,7 +183,7 @@ public class ScopeWebResource extends BaseWebResource {
 	@Operation(summary = "Delete openid connect scope", description = "Delete an openidconnect scope")
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Success"),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { SCOPE_OXTRUST_SCOPE_WRITE })
+	@ProtectedApi(scopes = { ApiScopeConstants.SCOPE_OXTRUST_SCOPE_WRITE })
 	public Response deleteScope(@PathParam(ApiConstants.INUM) @NotNull String inum) {
 		log(logger, "Delete openidconnect scope " + inum);
 		try {

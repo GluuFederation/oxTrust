@@ -22,6 +22,7 @@ import org.gluu.oxtrust.api.server.model.TrustedIDPApi;
 import org.gluu.oxtrust.api.server.model.RemoteIdp;
 import org.gluu.oxtrust.api.server.model.SingleSignOnServices;
 import org.gluu.oxtrust.api.server.util.ApiConstants;
+import org.gluu.oxtrust.api.server.util.ApiScopeConstants;
 import org.gluu.oxtrust.model.OxTrustedIdp;
 import org.gluu.oxtrust.service.TrustedIDPService;
 import org.gluu.oxtrust.service.filter.ProtectedApi;
@@ -52,16 +53,13 @@ public class TrustedIDPWebResource  extends BaseWebResource{
 	@Inject
 	private TrustedIDPService trustedIDPService;
 	
-	static final String SCOPE_TRUSTED_IDP_READ = "https://gluu.org/auth/oxtrust.trustedidp.read";
-    static final String SCOPE_TRUSTED_IDP_WRITE = "https://gluu.org/auth/oxtrust.trustedidp.write";
-	
 	@GET
 	@Produces({ MediaType.APPLICATION_JSON })
 	@Operation(summary = "Retrieve all trusted-idps", description = "Retrieve all trusted-idps")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = TrustedIDPApi[].class)), description = "Success"),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { SCOPE_TRUSTED_IDP_READ })
+	@ProtectedApi(scopes = { ApiScopeConstants.SCOPE_TRUSTED_IDP_READ })
 	public Response gluuTrustedIdps() {
 		log(logger, "get all trusted-idps ");
 		try {
@@ -86,7 +84,7 @@ public class TrustedIDPWebResource  extends BaseWebResource{
 			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = TrustedIDPApi.class)), description = "Success"),
 			@ApiResponse(responseCode = "404", description = "Resource not Found"),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { SCOPE_TRUSTED_IDP_READ })
+	@ProtectedApi(scopes = { ApiScopeConstants.SCOPE_TRUSTED_IDP_READ })
 	public Response gluuTrustedIdp( @PathParam("inum") String inum) {
 		log(logger, "get trusted-idp by inum ");
 		try {
@@ -114,7 +112,7 @@ public class TrustedIDPWebResource  extends BaseWebResource{
 			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = TrustedIDPApi.class)), description = "Success"),
 			@ApiResponse(responseCode = "404", description = "Resource not Found"),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { SCOPE_TRUSTED_IDP_READ })
+	@ProtectedApi(scopes = { ApiScopeConstants.SCOPE_TRUSTED_IDP_READ })
 	public Response gluuTrustedIdpByRemoteIdpHost( @PathParam("remoteIdpHost") String remoteIdpHost) {
 		log(logger, "get  trusted-idps by remote idp host ");
 		try {
@@ -141,7 +139,7 @@ public class TrustedIDPWebResource  extends BaseWebResource{
 			@ApiResponse(responseCode = "201", content = @Content(schema = @Schema(implementation = TrustedIDPApi.class)), description = "Success"),
 			@ApiResponse(responseCode = "403", description = "Trust Relation already exists"),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { SCOPE_TRUSTED_IDP_WRITE })
+	@ProtectedApi(scopes = { ApiScopeConstants.SCOPE_TRUSTED_IDP_WRITE })
 	public Response createGluuTrustedIdp(TrustedIDPApi trustedIDPApi) {
 		log(logger, "Add new remote idp ");
 		try {
@@ -181,7 +179,7 @@ public class TrustedIDPWebResource  extends BaseWebResource{
 			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = TrustedIDPApi.class)), description = "Success"),
 			@ApiResponse(responseCode = "404", description = "Resource not Found"),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { SCOPE_TRUSTED_IDP_WRITE })
+	@ProtectedApi(scopes = { ApiScopeConstants.SCOPE_TRUSTED_IDP_WRITE })
 	public Response updateTrustedIdp(@PathParam("remoteIdpHost") String remoteIdpHost, TrustedIDPApi trustedIDPApi)
 			throws Exception {
 		log(logger,"update TrustedIDP ");
@@ -215,7 +213,7 @@ public class TrustedIDPWebResource  extends BaseWebResource{
 	@Operation(summary = "Delete TrustedIDP", description = "Delete a TrustedIDP")
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Success"),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { SCOPE_TRUSTED_IDP_WRITE })
+	@ProtectedApi(scopes = { ApiScopeConstants.SCOPE_TRUSTED_IDP_WRITE })
 	public Response deleteTrustedIdps(@PathParam("remoteIdpHost") String remoteIdpHost) throws Exception {
 		log(logger,"delete TrustedIDP by host");
 		try {
