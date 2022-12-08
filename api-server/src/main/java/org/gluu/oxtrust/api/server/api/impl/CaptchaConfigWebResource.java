@@ -13,6 +13,7 @@ import javax.ws.rs.core.Response;
 import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.oxtrust.api.server.model.CaptchaConfig;
 import org.gluu.oxtrust.api.server.util.ApiConstants;
+import org.gluu.oxtrust.api.server.util.ApiScopeConstants;
 import org.gluu.oxtrust.api.server.util.Constants;
 import org.gluu.oxtrust.service.JsonConfigurationService;
 import org.gluu.oxtrust.service.filter.ProtectedApi;
@@ -26,6 +27,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 @Path(ApiConstants.CONFIGURATION + ApiConstants.CAPTCHA)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -36,18 +38,16 @@ public class CaptchaConfigWebResource extends BaseWebResource {
 	@Inject
 	private Logger logger;
 	@Inject
-	private JsonConfigurationService jsonConfigurationService;
-	
-	static final String SCOPE_CAPTCHA_CONFiG_READ = "https://gluu.org/auth/oxtrust.captchaconfig.read";
-    static final String SCOPE_CAPTCHA_CONFiG_WRITE = "https://gluu.org/auth/oxtrust.captchaconfig.write";
-    
+	private JsonConfigurationService jsonConfigurationService;    
 
 	@GET
-	@Operation(summary = "Retrieve captcha configuration", description = "Retrieve captcha configuration")
+	@Operation(summary = "Retrieve captcha configuration", description = "Retrieve captcha configuration",
+    security = @SecurityRequirement(name = "oauth2", scopes = {
+    		ApiScopeConstants.SCOPE_CAPTCHA_CONFiG_READ }))
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = CaptchaConfig.class)), description = Constants.RESULT_SUCCESS),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { SCOPE_CAPTCHA_CONFiG_READ })
+	@ProtectedApi(scopes = { ApiScopeConstants.SCOPE_CAPTCHA_CONFiG_READ })
 	public Response retrieveCaptchaConfiguration() {
 		try {
 			log(logger, "Retrieving captcha configuration");
@@ -64,11 +64,13 @@ public class CaptchaConfigWebResource extends BaseWebResource {
 	}
 
 	@POST
-	@Operation(summary = "Update captcha configuration", description = "Update captcha configuration")
+	@Operation(summary = "Update captcha configuration", description = "Update captcha configuration",
+	security = @SecurityRequirement(name = "oauth2", scopes = {
+	   		ApiScopeConstants.SCOPE_CAPTCHA_CONFiG_WRITE }))
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = CaptchaConfig.class)), description = Constants.RESULT_SUCCESS),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { SCOPE_CAPTCHA_CONFiG_WRITE })
+	@ProtectedApi(scopes = { ApiScopeConstants.SCOPE_CAPTCHA_CONFiG_WRITE })
 	public Response updateCaptchaConfiguration(CaptchaConfig captchaConfig) {
 		try {
 			log(logger, "Processing captcha configuration update");

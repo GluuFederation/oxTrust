@@ -6,8 +6,11 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+
 import org.gluu.oxtrust.api.Certificates;
 import org.gluu.oxtrust.api.server.util.ApiConstants;
+import org.gluu.oxtrust.api.server.util.ApiScopeConstants;
 import org.gluu.oxtrust.service.ConfigurationService;
 import org.gluu.oxtrust.service.SSLService;
 import org.gluu.oxtrust.model.GluuConfiguration;
@@ -41,9 +44,6 @@ public class CertificatesWebResource extends BaseWebResource {
 	private static final String IDP_SIGNING_CERTIFICATE_FILE = "/etc/certs/idp-signing.crt";
 	private static final String IDP_ENCRYPT_CERTIFICATE_FILE = "/etc/certs/idp-encryption.crt";
 	
-	private static final String SCOPE_CERTIFICATES_READ = "https://gluu.org/auth/oxtrust.certificates.read";
-	private static final String SCOPE_CERTIFICATES_WRITE = "https://gluu.org/auth/oxtrust.certificates.write";
-
 	@Inject
 	private Logger logger;
 
@@ -55,11 +55,13 @@ public class CertificatesWebResource extends BaseWebResource {
 	private List<X509CertificateShortInfo> internalCertificates;
 
 	@GET
-	@Operation(summary = "List certificates", description = "List Gluu Server's certificates. You can get only description of certificates, not keys.")
+	@Operation(summary = "List certificates", description = "List Gluu Server's certificates. You can get only description of certificates, not keys.",
+	security = @SecurityRequirement(name = "oauth2", scopes = {
+			ApiScopeConstants.SCOPE_CERTIFICATES_READ }))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = Certificates[].class)), description = "Success"),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { SCOPE_CERTIFICATES_READ })
+	@ProtectedApi(scopes = { ApiScopeConstants.SCOPE_CERTIFICATES_READ })
 	public Response listCertificates() {
 		log(logger, "Processing certificates retrieval request");
 		try {

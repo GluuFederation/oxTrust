@@ -13,6 +13,7 @@ import javax.ws.rs.core.Response;
 import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.oxtrust.api.server.model.ApiConfig;
 import org.gluu.oxtrust.api.server.util.ApiConstants;
+import org.gluu.oxtrust.api.server.util.ApiScopeConstants;
 import org.gluu.oxtrust.api.server.util.Constants;
 import org.gluu.oxtrust.service.EncryptionService;
 import org.gluu.oxtrust.service.JsonConfigurationService;
@@ -27,6 +28,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 @Path(ApiConstants.CONFIGURATION + ApiConstants.API)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -40,16 +42,15 @@ public class ApiConfigWebRecource extends BaseWebResource {
 	private JsonConfigurationService jsonConfigurationService;
 	@Inject
 	private EncryptionService encryptionService;
-	
-	static final String SCOPE_APICONFIG_READ = "https://gluu.org/auth/oxtrust.apiconfig.read";
-    static final String SCOPE_APICONFIG_WRITE = "https://gluu.org/auth/oxtrust.apiconfig.write";
 
 	@GET
-	@Operation(summary = "Retrieve api configuration", description = "Retrieve api configuration")
+	@Operation(summary = "Retrieve api configuration", description = "Retrieve api configuration" ,
+	security = @SecurityRequirement(name = "oauth2", scopes = {
+			ApiScopeConstants.SCOPE_APICONFIG_READ}))
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = ApiConfig.class)), description = Constants.RESULT_SUCCESS),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { SCOPE_APICONFIG_READ })
+	@ProtectedApi(scopes = { ApiScopeConstants.SCOPE_APICONFIG_READ })
 	public Response retrieveApiConfiguration() {
 		try {
 			log(logger, "Retrieving api configuration");
@@ -75,7 +76,7 @@ public class ApiConfigWebRecource extends BaseWebResource {
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = ApiConfig.class)), description = Constants.RESULT_SUCCESS),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { SCOPE_APICONFIG_WRITE })
+	@ProtectedApi(scopes = { ApiScopeConstants.SCOPE_APICONFIG_WRITE })
 	public Response updateApiConfiguration(ApiConfig apiConfig) {
 		try {
 			log(logger, "Processing api configuration update");

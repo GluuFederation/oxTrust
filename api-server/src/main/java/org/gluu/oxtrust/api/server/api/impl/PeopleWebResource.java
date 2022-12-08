@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.gluu.oxtrust.api.server.model.GluuPersonApi;
 import org.gluu.oxtrust.api.server.util.ApiConstants;
+import org.gluu.oxtrust.api.server.util.ApiScopeConstants;
 import org.gluu.oxtrust.service.PersonService;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.service.filter.ProtectedApi;
@@ -39,15 +40,12 @@ public class PeopleWebResource extends BaseWebResource {
 	public PeopleWebResource() {
 	}
 	
-	static final String SCOPE_PEOPLE_READ = "https://gluu.org/auth/oxtrust.people.read";
-	static final String SCOPE_PEOPLE_WRITE = "https://gluu.org/auth/oxtrust.people.write";
-
 	@GET
 	@Operation(summary = "Get people", description = "Get people")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = GluuPersonApi[].class)), description = "Success"),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { SCOPE_PEOPLE_READ })
+	@ProtectedApi(scopes = { ApiScopeConstants.SCOPE_PEOPLE_READ })
 	public Response listPeople() {
 		try {
 			log(logger, "Get people");
@@ -65,7 +63,7 @@ public class PeopleWebResource extends BaseWebResource {
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = GluuPersonApi[].class)), description = "Success"),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { SCOPE_PEOPLE_READ })
+	@ProtectedApi(scopes = { ApiScopeConstants.SCOPE_PEOPLE_READ })
 	public Response searchPeople(@QueryParam(ApiConstants.SEARCH_PATTERN) @NotNull String pattern) {
 		try {
 			log(logger, "Search person with pattern= " + pattern);
@@ -83,7 +81,7 @@ public class PeopleWebResource extends BaseWebResource {
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = GluuPersonApi.class)), description = "Success"),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { SCOPE_PEOPLE_READ })
+	@ProtectedApi(scopes = { ApiScopeConstants.SCOPE_PEOPLE_READ })
 	public Response getPersonByInum(@PathParam(ApiConstants.INUM) @NotNull String inum) {
 		log(logger, "Get person " + inum);
 		try {
@@ -105,7 +103,7 @@ public class PeopleWebResource extends BaseWebResource {
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "201", content = @Content(schema = @Schema(implementation = GluuPersonApi.class)), description = "Success"),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { SCOPE_PEOPLE_WRITE })
+	@ProtectedApi(scopes = { ApiScopeConstants.SCOPE_PEOPLE_WRITE })
 	public Response createPerson(GluuPersonApi person) {
 		log(logger, "Adding person " + person.getDisplayName());
 		try {
@@ -131,7 +129,7 @@ public class PeopleWebResource extends BaseWebResource {
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = GluuPersonApi.class)), description = "Success"),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { SCOPE_PEOPLE_WRITE })
+	@ProtectedApi(scopes = { ApiScopeConstants.SCOPE_PEOPLE_WRITE })
 	public Response updatePerson(GluuPersonApi person) {
 		String inum = person.getInum();
 		log(logger, "Update group " + inum);
@@ -160,7 +158,7 @@ public class PeopleWebResource extends BaseWebResource {
 	@Operation(summary = "Delete person", description = "Delete a person")
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Success"),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { SCOPE_PEOPLE_WRITE })
+	@ProtectedApi(scopes = { ApiScopeConstants.SCOPE_PEOPLE_WRITE })
 	public Response deletePerson(@PathParam(ApiConstants.INUM) @NotNull String inum) {
 		log(logger, "Delete person having inum " + inum);
 		try {

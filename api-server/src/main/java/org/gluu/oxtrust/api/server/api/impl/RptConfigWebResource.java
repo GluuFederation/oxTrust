@@ -13,6 +13,7 @@ import javax.ws.rs.core.Response;
 import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.oxtrust.api.server.model.RptConfig;
 import org.gluu.oxtrust.api.server.util.ApiConstants;
+import org.gluu.oxtrust.api.server.util.ApiScopeConstants;
 import org.gluu.oxtrust.api.server.util.Constants;
 import org.gluu.oxtrust.service.JsonConfigurationService;
 import org.gluu.oxtrust.service.filter.ProtectedApi;
@@ -37,15 +38,12 @@ public class RptConfigWebResource extends BaseWebResource {
 	@Inject
 	private JsonConfigurationService jsonConfigurationService;
 	
-	static final String SCOPE_RPT_CONFIG_READ = "https://gluu.org/auth/oxtrust.rptConfig.read";
-	static final String SCOPE_RPT_CONFIG_WRITE = "https://gluu.org/auth/oxtrust.rptConfig.write";
-
 	@GET
 	@Operation(summary = "Retrieve rpt configuration", description = "Retrieve rpt configuration")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = RptConfig.class)), description = Constants.RESULT_SUCCESS),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { SCOPE_RPT_CONFIG_READ })
+	@ProtectedApi(scopes = { ApiScopeConstants.SCOPE_RPT_CONFIG_READ })
 	public Response retrieveRptConfiguration() {
 		try {
 			log(logger, "Retrieving rpt configuration");
@@ -72,7 +70,7 @@ public class RptConfigWebResource extends BaseWebResource {
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = RptConfig.class)), description = Constants.RESULT_SUCCESS),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { SCOPE_RPT_CONFIG_WRITE })
+	@ProtectedApi(scopes = { ApiScopeConstants.SCOPE_RPT_CONFIG_WRITE })
 	public Response updateRptConfiguration(RptConfig rptConfig) {
 		try {
 			log(logger, "Processing rpt configuration update");

@@ -13,6 +13,7 @@ import javax.ws.rs.core.Response;
 import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.oxtrust.api.server.model.MetricConfig;
 import org.gluu.oxtrust.api.server.util.ApiConstants;
+import org.gluu.oxtrust.api.server.util.ApiScopeConstants;
 import org.gluu.oxtrust.api.server.util.Constants;
 import org.gluu.oxtrust.service.JsonConfigurationService;
 import org.gluu.oxtrust.service.filter.ProtectedApi;
@@ -37,15 +38,12 @@ public class MetricConfigWebResource extends BaseWebResource {
 	@Inject
 	private JsonConfigurationService jsonConfigurationService;
 	
-	static final String SCOPE_METRICCONFIG_READ = "https://gluu.org/auth/oxtrust.metricconfig.read";
-	static final String SCOPE_METRICCONFIG_WRITE = "https://gluu.org/auth/oxtrust.metricconfig.write";
-
 	@GET
 	@Operation(summary = "Retrieve metric configuration", description = "Retrieve metric configuration")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = MetricConfig.class)), description = Constants.RESULT_SUCCESS),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { SCOPE_METRICCONFIG_READ })
+	@ProtectedApi(scopes = { ApiScopeConstants.SCOPE_METRICCONFIG_READ })
 	public Response retrieveMetricConfiguration() {
 		try {
 			log(logger, "Retrieving metric configuration");
@@ -66,7 +64,7 @@ public class MetricConfigWebResource extends BaseWebResource {
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = MetricConfig.class)), description = Constants.RESULT_SUCCESS),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { SCOPE_METRICCONFIG_WRITE })
+	@ProtectedApi(scopes = { ApiScopeConstants.SCOPE_METRICCONFIG_WRITE })
 	public Response updatePassportConfiguration(MetricConfig metricConfig) {
 		try {
 			log(logger, "Processing metric configuration update");

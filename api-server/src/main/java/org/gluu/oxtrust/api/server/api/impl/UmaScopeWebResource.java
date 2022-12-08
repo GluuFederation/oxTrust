@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.gluu.oxtrust.api.server.util.ApiConstants;
+import org.gluu.oxtrust.api.server.util.ApiScopeConstants;
 import org.gluu.oxtrust.api.server.util.Constants;
 import org.gluu.oxtrust.service.uma.UmaScopeService;
 import org.gluu.oxtrust.service.filter.ProtectedApi;
@@ -33,16 +34,13 @@ public class UmaScopeWebResource extends BaseWebResource {
 
 	@Inject
 	private UmaScopeService scopeDescriptionService;
-	
-	static final String SCOPE_UMA_SCOPE_READ = "https://gluu.org/auth/oxtrust.umascope.read";
-	static final String SCOPE_UMA_SCOPE_WRITE = "https://gluu.org/auth/oxtrust.umascope.write";
 
 	@GET
 	@Operation(summary = "Get UMA scopes", description = "Get uma scopes")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = Scope[].class)), description = Constants.RESULT_SUCCESS),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { SCOPE_UMA_SCOPE_READ })
+	@ProtectedApi(scopes = { ApiScopeConstants.SCOPE_UMA_SCOPE_READ })
 	public Response listUmaScopes() {
 		log(logger, "Get uma scopes");
 		try {
@@ -60,7 +58,7 @@ public class UmaScopeWebResource extends BaseWebResource {
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = Scope[].class)), description = Constants.RESULT_SUCCESS),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { SCOPE_UMA_SCOPE_READ })
+	@ProtectedApi(scopes = { ApiScopeConstants.SCOPE_UMA_SCOPE_READ })
 	public Response searchUmaScopes(@QueryParam(ApiConstants.SEARCH_PATTERN) @NotNull String pattern) {
 		log(logger, "Search uma scope with pattern = " + pattern);
 		try {
@@ -78,7 +76,7 @@ public class UmaScopeWebResource extends BaseWebResource {
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = Scope.class)), description = Constants.RESULT_SUCCESS),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { SCOPE_UMA_SCOPE_READ })
+	@ProtectedApi(scopes = { ApiScopeConstants.SCOPE_UMA_SCOPE_READ })
 	public Response getUmaScopeByInum(@PathParam(ApiConstants.INUM) @NotNull String inum) {
 		log(logger, "Get uma scope " + inum);
 		try {
@@ -100,7 +98,7 @@ public class UmaScopeWebResource extends BaseWebResource {
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "201", content = @Content(schema = @Schema(implementation = Scope.class)), description = Constants.RESULT_SUCCESS),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { SCOPE_UMA_SCOPE_WRITE })
+	@ProtectedApi(scopes = { ApiScopeConstants.SCOPE_UMA_SCOPE_WRITE })
 	public Response createUmaScope(Scope umaScopeDescription) {
 		log(logger, "Add new uma scope");
 		try {
@@ -125,7 +123,7 @@ public class UmaScopeWebResource extends BaseWebResource {
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = Scope.class)), description = Constants.RESULT_SUCCESS),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { SCOPE_UMA_SCOPE_WRITE })
+	@ProtectedApi(scopes = { ApiScopeConstants.SCOPE_UMA_SCOPE_WRITE })
 	public Response updateUmaScope(Scope umaScopeDescription) {
 		String inum = umaScopeDescription.getInum();
 		log(logger, "Update uma scope " + inum);
@@ -151,7 +149,7 @@ public class UmaScopeWebResource extends BaseWebResource {
 	@Operation(summary = "Delete UMA scope", description = "Delete a uma scope")
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = Constants.RESULT_SUCCESS),
 			@ApiResponse(responseCode = "500", description = "Server error") })
-	@ProtectedApi(scopes = { SCOPE_UMA_SCOPE_WRITE })
+	@ProtectedApi(scopes = { ApiScopeConstants.SCOPE_UMA_SCOPE_WRITE })
 	public Response deleteUmaScope(@PathParam(ApiConstants.INUM) @NotNull String inum) {
 		log(logger, "Delete a uma scope having inum " + inum);
 		try {
