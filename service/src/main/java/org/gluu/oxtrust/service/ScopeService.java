@@ -212,6 +212,22 @@ public class ScopeService implements Serializable {
 		}
 		return null;
 	}
+	
+	/**
+	 * Get scope by oxId
+	 * 
+	 * @param oxId
+	 * @return scope
+	 */
+	public Scope getScopeById(String id) throws Exception {
+		Scope scope = new Scope();
+		scope.setId(id);
+		List<Scope> scopes = persistenceEntryManager.findEntries(scope);
+		if ((scopes != null) && (scopes.size() > 0)) {
+			return scopes.get(0);
+		}
+		return null;
+	}
 
 	private List<Scope> filter(List<Scope> scopes) {
 		if (scopes != null) {

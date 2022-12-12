@@ -24,6 +24,7 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.ServletContext;
+import org.gluu.oxtrust.service.secure.ApiProtectionService;
 
 import org.gluu.exception.OxIntializationException;
 import org.gluu.model.custom.script.CustomScriptType;
@@ -51,6 +52,7 @@ import org.gluu.service.external.context.PersistenceExternalContext;
 import org.gluu.service.metric.inject.ReportMetric;
 import org.gluu.service.timer.QuartzSchedulerManager;
 import org.gluu.util.StringHelper;
+import org.gluu.util.exception.ConfigurationException;
 import org.gluu.orm.util.properties.FileConfiguration;
 import org.gluu.util.security.SecurityProviderUtility;
 import org.gluu.util.security.StringEncrypter;
@@ -72,6 +74,9 @@ public class AppInitializer {
 
 	@Inject
 	private BeanManager beanManager;
+	
+	@Inject
+	private ApiProtectionService apiProtectionService;
 
 	@Inject
 	@Named(ApplicationFactory.PERSISTENCE_ENTRY_MANAGER_NAME)
@@ -207,6 +212,7 @@ public class AppInitializer {
 				CustomScriptType.UPDATE_USER, CustomScriptType.USER_REGISTRATION, CustomScriptType.ID_GENERATOR,
 				CustomScriptType.PERSISTENCE_EXTENSION);
 
+		this.createAuthorizationService();
 		// Start timer
 		initSchedulerService();
 
@@ -242,6 +248,32 @@ public class AppInitializer {
 			return;
 		}
 	}
+	
+	@Produces
+    @ApplicationScoped
+    @Named("authorizationService")
+    private void createAuthorizationService() {
+        log.info(
+                "=============  AppInitializer::createAuthorizationService() - configurationFactory.getApiProtectionType():{} ",
+                configurationFactory.getAppConfiguration().getOxTrustProtectionMode());
+
+        if (StringHelper.isEmpty(configurationFactory.getAppConfiguration().getOxTrustProtectionMode().name())) {
+            throw new ConfigurationException("API Protection Type not defined");
+        }
+        try {
+            // Verify resources available
+            apiProtectionService.verifyResources(configurationFactory.getAppConfiguration().getOxTrustProtectionMode().name(),
+                    configurationFactory.getAppConfiguration().getOxAuthClientId());
+            //return authorizationServiceInstance.select(OpenIdAuthorizationService.class).get();
+        } catch (Exception ex) {
+            if (log.isErrorEnabled()) {
+                log.error("Failed to create AuthorizationService instance - apiProtectionType:{}, exception:{} ",
+                		configurationFactory.getAppConfiguration().getOxTrustProtectionMode(), ex);
+            }
+            throw new ConfigurationException("Failed to create AuthorizationService instance  - apiProtectionType = "
+                    + configurationFactory.getAppConfiguration().getOxTrustProtectionMode(), ex);
+        }
+    }
 
 	@Produces
 	@ApplicationScoped
