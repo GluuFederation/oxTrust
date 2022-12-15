@@ -221,6 +221,7 @@ public class ScopeService implements Serializable {
 	 */
 	public Scope getScopeById(String id) throws Exception {
 		Scope scope = new Scope();
+		scope.setBaseDn(getDnForScope(null));
 		scope.setId(id);
 		List<Scope> scopes = persistenceEntryManager.findEntries(scope);
 		if ((scopes != null) && (scopes.size() > 0)) {

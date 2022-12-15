@@ -5,26 +5,20 @@ import com.google.common.base.Preconditions;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.ws.rs.WebApplicationException;
-
 import org.apache.commons.lang.StringUtils;
 import org.gluu.conf.service.ConfigurationFactory;
 import org.gluu.oxauth.model.common.ScopeType;
 import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.model.ResourceScope;
-import org.gluu.oxtrust.model.RsResource;
 import org.gluu.oxtrust.service.ClientService;
 import org.gluu.oxtrust.service.ScopeService;
 import org.oxauth.persistence.model.Scope;
@@ -33,7 +27,7 @@ import org.slf4j.Logger;
 @ApplicationScoped
 public class ApiProtectionService {
 
-	public static final String PROTECTION_CONFIGURATION_FILE_NAME = "config-api-rs-protect.json";
+	public static final String PROTECTION_CONFIGURATION_FILE_NAME = "api-protect.json";
 
 	@Inject
 	Logger log;
@@ -43,26 +37,23 @@ public class ApiProtectionService {
 
 	@Inject
 	ClientService clientService;
-
-	@Inject
-	ConfigurationFactory<?, ?> configurationFactory;
-
-	// ResourceAccess fullAccess;
-	// ResourceAccess modifyAccess;
-	// ResourceAccess readOnlyAccess;
+	
+	ArrayList<String> scopeReadDns = new ArrayList<String>();
+	ArrayList<String> scopeWriteDns = new ArrayList<String>();
+	ArrayList<String> scopeAllDns = new ArrayList<String>();
 
 	ResourceScope resourceScope;
 
 	public void verifyResources(String apiProtectionType, String clientId) throws IOException {
 		log.debug(
 				"ApiProtectionService::verifyResources() - apiProtectionType:{}, clientId:{}, configurationFactory:{} ",
-				apiProtectionType, clientId, configurationFactory);
+				apiProtectionType, clientId);
 
 		// Load the resource json
 		ClassLoader loader = Thread.currentThread().getContextClassLoader();
 		InputStream inputStream = loader.getResourceAsStream(PROTECTION_CONFIGURATION_FILE_NAME);
 
-		ResourceScope resourceScope = new ObjectMapper().readValue(inputStream, ResourceScope.class);
+		resourceScope = new ObjectMapper().readValue(inputStream, ResourceScope.class);
 		log.debug("verifyResources() - fullAccess{} ", resourceScope);
 
 		Preconditions.checkNotNull(resourceScope.getScopes(), "Config Api Resource list cannot be null !!!");
@@ -97,7 +88,7 @@ public class ApiProtectionService {
 			}
 
 		}
-	}
+	} 
 
 	private void validateScope(String rsScope) throws Exception {
 		// Check in DB
@@ -126,6 +117,16 @@ public class ApiProtectionService {
 			scope.setScopeType(scopeType);
 			scopeService.updateScope(scope);
 		}
+		Scope updatedScope  = scopeService.getScopeByInum(scope.getInum());
+		if(null != updatedScope.getId() && updatedScope.getId().contains("read") )
+		{
+			scopeReadDns.add(updatedScope.getDn());
+		}
+		if(null != updatedScope.getId() && updatedScope.getId().contains("write") )
+		{
+			scopeWriteDns.add(updatedScope.getDn());
+		}
+		
 	}
 
 	private void updateScopeForClientIfNeeded(String clientId) {
@@ -138,7 +139,7 @@ public class ApiProtectionService {
 		try {
 			OxAuthClient client = this.clientService.getClientByInum(clientId);
 			log.debug("updateScopeForClientIfNeeded() - Verify client:{} ", client);
-			List<String> scopes = resourceScope.getScopes();
+			//List<String> scopes = resourceScope.getScopes();
 
 			if (client != null) {
 				// Assign scope
@@ -146,56 +147,60 @@ public class ApiProtectionService {
 				
 				log.trace("updateScopeForClientIfNeeded() - All scopes:{}", resourceScope.getScopes());
 
-				if (client.getOxAuthScopes() != null) {
-					List<String> existingScopes = client.getOxAuthScopes();
-					log.trace("updateScopeForClientIfNeeded() - Clients existing scopes:{} ", existingScopes);
-					if (scopes == null) {
-						scopes = new ArrayList<>();
-					}
-					scopes.addAll(existingScopes);
+				List<String> existingScopes = client.getOxAuthScopes();
+				log.trace("updateScopeForClientIfNeeded() - Clients existing scopes:{} ", existingScopes);
+				if (existingScopes != null) {
+					scopeAllDns.addAll(existingScopes);
+					scopeAllDns.addAll(scopeReadDns);
+					scopeAllDns.addAll(scopeWriteDns);
+					scopeWriteDns.addAll(existingScopes);
+					scopeReadDns.addAll(existingScopes);
 				}
 
 				// Distinct scopes
-				List<String> distinctScopes = (scopes == null ? Collections.emptyList()
-						: scopes.stream().distinct().collect(Collectors.toList()));
-				log.debug("updateScopeForClientIfNeeded() - Distinct scopes to add:{} ", distinctScopes);
+				List<String> distinctAllScopes = (scopeAllDns == null ? Collections.emptyList()
+						: scopeAllDns.stream().distinct().collect(Collectors.toList()));
+				List<String> distinctReadScopes = (scopeReadDns == null ? Collections.emptyList()
+						: scopeReadDns.stream().distinct().collect(Collectors.toList()));
+				List<String> distinctWriteScopes = (scopeWriteDns == null ? Collections.emptyList()
+						: scopeWriteDns.stream().distinct().collect(Collectors.toList()));
+				log.debug("updateScopeForClientIfNeeded() - Distinct scopes to add:{} ", distinctAllScopes);
 
 				// String[] scopeArray = this.getAllScopesArray(distinctScopes);
-				log.debug("All Scope to assign to client:{}", distinctScopes);
+				log.debug("All Scope to assign to client:{}", distinctAllScopes);
 
-				client.setOxAuthScopes(distinctScopes);
+				client.setOxAuthScopes(distinctAllScopes);
 				this.clientService.updateClient(client);
+			
+			
+			//create readonly client
+			try {
+				client.setInum(clientService.generateInumForNewClient());
+				client.setOxAuthScopes(distinctReadScopes);
+				client.setDn(clientService.getDnForClient(client.getInum()));
+				client.setDisplayName("oxtrustAPIReadOnlyclient");
+				client.setDescription("oxtrust API Read-Only client");
+				clientService.addClient(client);
+			}catch(Exception e){
+				log.info("Something went wrong on creating readonly client" + e.getMessage());
+			}
+			
+			
+			//create write only client
+			try {
+				client.setInum(clientService.generateInumForNewClient());
+				client.setDisplayName("oxtrustAPIWriteOnlyclient");
+				client.setDescription("oxtrust API Write-Only client");
+				client.setDn(clientService.getDnForClient(client.getInum()));
+				client.setOxAuthScopes(distinctWriteScopes);
+				clientService.addClient(client);
+			}catch(Exception e) {
+				log.info("Something went wrong on creating writeonly client" + e.getMessage());
+			}
 			}
 			client = this.clientService.getClientByInum(clientId);
 			log.debug(" Verify scopes post assignment, clientId:{}, scopes:{}", clientId,
 					Arrays.asList(client.getOxAuthScopes()));
-			
-			ArrayList<String> readScopes = new ArrayList<String>();
-			ArrayList<String> writeScopes = new ArrayList<String>();
-			for(String sc :scopes) {
-				if(sc.contains("read")){
-					readScopes.add(sc);
-					break;
-				}
-				if(sc.contains("write")){
-					writeScopes.add(sc);
-				}
-				
-			}
-			//create readonly client
-			client.setInum(clientService.generateInumForNewClient());
-			client.setOxAuthScopes(readScopes);
-			client.setDisplayName("oxtrustAPIReadOnlyclient");
-			client.setDescription("oxtrust API Read-Only client");
-			clientService.addClient(client);
-			
-			
-			//create write only client
-			client.setInum(clientService.generateInumForNewClient());
-			client.setDisplayName("oxtrustAPIWriteOnlyclient");
-			client.setDescription("oxtrust API Write-Only client");
-			client.setOxAuthScopes(writeScopes);
-			clientService.addClient(client);
 			
 		} catch (Exception ex) {
 			log.error("Error while searching internal client", ex);

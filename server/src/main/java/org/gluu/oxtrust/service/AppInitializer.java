@@ -212,7 +212,7 @@ public class AppInitializer {
 				CustomScriptType.UPDATE_USER, CustomScriptType.USER_REGISTRATION, CustomScriptType.ID_GENERATOR,
 				CustomScriptType.PERSISTENCE_EXTENSION);
 
-		this.createAuthorizationService();
+		
 		// Start timer
 		initSchedulerService();
 
@@ -236,6 +236,8 @@ public class AppInitializer {
 		// Notify other components/plugins about finish application initialization
 		eventApplicationInitialized.select(ApplicationInitialized.Literal.APPLICATION)
 				.fire(new ApplicationInitializedEvent());
+		
+		this.createAuthorizationService();
 	}
 
 	protected void initSchedulerService() {
@@ -264,7 +266,6 @@ public class AppInitializer {
             // Verify resources available
             apiProtectionService.verifyResources(configurationFactory.getAppConfiguration().getOxTrustProtectionMode().name(),
                     configurationFactory.getAppConfiguration().getOxAuthClientId());
-            //return authorizationServiceInstance.select(OpenIdAuthorizationService.class).get();
         } catch (Exception ex) {
             if (log.isErrorEnabled()) {
                 log.error("Failed to create AuthorizationService instance - apiProtectionType:{}, exception:{} ",
