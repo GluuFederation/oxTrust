@@ -240,7 +240,11 @@ public class ClientService implements Serializable {
 		OxAuthClient client = new OxAuthClient();
 		client.setBaseDn(getDnForClient(null));
 		client.setDisplayName(DisplayName);
-		List<OxAuthClient> clients = persistenceEntryManager.findEntries(client);
+		Filter filter = Filter.createORFilter(Filter.createEqualityFilter(OxTrustConstants.displayName, DisplayName));
+		List<OxAuthClient> clients =  persistenceEntryManager.findEntries(getDnForClient(null), OxAuthClient.class, filter,
+				null);
+		
+		//List<OxAuthClient> clients = persistenceEntryManager.findEntries(client);
 		if ((clients != null) && (clients.size() > 0)) {
 			return clients.get(0);
 		}
