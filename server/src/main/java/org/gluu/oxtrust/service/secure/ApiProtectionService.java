@@ -139,15 +139,24 @@ public class ApiProtectionService {
 		try {
 			OxAuthClient client = this.clientService.getClientByInum(clientId);
 			log.debug("updateScopeForClientIfNeeded() - Verify client:{} ", client);
-			//List<String> scopes = resourceScope.getScopes();
+
+			// List<String> scopes = resourceScope.getScopes();
 
 			if (client != null) {
 				// Assign scope
 				// Prepare scope array
-				
+
 				log.trace("updateScopeForClientIfNeeded() - All scopes:{}", resourceScope.getScopes());
 
-				List<String> existingScopes = client.getOxAuthScopes();
+				List<String> existingClientScopes = client.getOxAuthScopes();
+				List<String> existingScopes = new ArrayList();;
+				for(String dn: existingClientScopes) {
+					Scope scope = scopeService.getScopeByDn(dn);
+					if(scope != null && !(scope.getId().contains("read") || scope.getId().contains("write"))){
+						existingScopes.add(scope.getDn());
+					}
+				}
+
 				log.trace("updateScopeForClientIfNeeded() - Clients existing scopes:{} ", existingScopes);
 				if (existingScopes != null) {
 					scopeAllDns.addAll(existingScopes);
@@ -171,37 +180,49 @@ public class ApiProtectionService {
 
 				client.setOxAuthScopes(distinctAllScopes);
 				this.clientService.updateClient(client);
-			
-			
-			//create readonly client
-			try {
-				client.setInum(clientService.generateInumForNewClient());
-				client.setOxAuthScopes(distinctReadScopes);
-				client.setDn(clientService.getDnForClient(client.getInum()));
-				client.setDisplayName("oxtrustAPIReadOnlyclient");
-				client.setDescription("oxtrust API Read-Only client");
-				clientService.addClient(client);
-			}catch(Exception e){
-				log.info("Something went wrong on creating readonly client" + e.getMessage());
-			}
-			
-			
-			//create write only client
-			try {
-				client.setInum(clientService.generateInumForNewClient());
-				client.setDisplayName("oxtrustAPIWriteOnlyclient");
-				client.setDescription("oxtrust API Write-Only client");
-				client.setDn(clientService.getDnForClient(client.getInum()));
-				client.setOxAuthScopes(distinctWriteScopes);
-				clientService.addClient(client);
-			}catch(Exception e) {
-				log.info("Something went wrong on creating writeonly client" + e.getMessage());
-			}
+
+
+				// create readonly client
+				try {
+					OxAuthClient existingReadClient = clientService.getClientByDisplayName("oxtrustAPIReadOnlyclient");
+					if (existingReadClient == null) {
+						client.setInum(clientService.generateInumForNewClient());
+						client.setOxAuthScopes(distinctReadScopes);
+						client.setDn(clientService.getDnForClient(client.getInum()));
+						client.setDisplayName("oxtrustAPIReadOnlyclient");
+						client.setDescription("oxtrust API Read-Only client");
+						clientService.addClient(client);
+					}else {
+						existingReadClient.setOxAuthScopes(distinctReadScopes);
+						clientService.updateClient(existingReadClient);
+					}
+				} catch (Exception e) {
+					log.info("Something went wrong on creating readonly client" + e.getMessage());
+				}
+
+				// create write only client
+				try {
+					OxAuthClient existingCWritelient = clientService.getClientByDisplayName("oxtrustAPIWriteOnlyclient");
+					if (existingCWritelient == null) {
+						client.setInum(clientService.generateInumForNewClient());
+						client.setDisplayName("oxtrustAPIWriteOnlyclient");
+						client.setDescription("oxtrust API Write-Only client");
+						client.setDn(clientService.getDnForClient(client.getInum()));
+						client.setOxAuthScopes(distinctWriteScopes);
+						clientService.addClient(client);
+					}else {
+						existingCWritelient.setOxAuthScopes(distinctWriteScopes);
+						clientService.updateClient(existingCWritelient);
+					}
+				} catch (Exception e) {
+					log.info("Something went wrong on creating writeonly client" + e.getMessage());
+				}
+
 			}
 			client = this.clientService.getClientByInum(clientId);
 			log.debug(" Verify scopes post assignment, clientId:{}, scopes:{}", clientId,
 					Arrays.asList(client.getOxAuthScopes()));
-			
+
 		} catch (Exception ex) {
 			log.error("Error while searching internal client", ex);
 		}
