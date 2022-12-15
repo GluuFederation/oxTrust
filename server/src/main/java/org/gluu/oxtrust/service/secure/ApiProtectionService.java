@@ -139,6 +139,7 @@ public class ApiProtectionService {
 		try {
 			OxAuthClient client = this.clientService.getClientByInum(clientId);
 			log.debug("updateScopeForClientIfNeeded() - Verify client:{} ", client);
+
 			// List<String> scopes = resourceScope.getScopes();
 
 			if (client != null) {
@@ -155,6 +156,7 @@ public class ApiProtectionService {
 						existingScopes.add(scope.getDn());
 					}
 				}
+
 				log.trace("updateScopeForClientIfNeeded() - Clients existing scopes:{} ", existingScopes);
 				if (existingScopes != null) {
 					scopeAllDns.addAll(existingScopes);
@@ -178,6 +180,7 @@ public class ApiProtectionService {
 
 				client.setOxAuthScopes(distinctAllScopes);
 				this.clientService.updateClient(client);
+
 
 				// create readonly client
 				try {
@@ -214,6 +217,7 @@ public class ApiProtectionService {
 				} catch (Exception e) {
 					log.info("Something went wrong on creating writeonly client" + e.getMessage());
 				}
+
 			}
 			client = this.clientService.getClientByInum(clientId);
 			log.debug(" Verify scopes post assignment, clientId:{}, scopes:{}", clientId,
