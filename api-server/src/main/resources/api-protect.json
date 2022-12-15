@@ -1,74 +1,574 @@
 {
-	"scopes": [
-		"https://gluu.org/auth/oxtrust.apiconfig.read",
-		"https://gluu.org/auth/oxtrust.apiconfig.write",
-		"https://gluu.org/auth/oxtrust.attribute.read",
-		"https://gluu.org/auth/oxtrust.attribute.write",
-		"https://gluu.org/auth/oxtrust.authenticationmethod.read",
-		"https://gluu.org/auth/oxtrust.authenticationmethod.write",
-		"https://gluu.org/auth/oxtrust.captchaconfig.read",
-		"https://gluu.org/auth/oxtrust.captchaconfig.write",
-		"https://gluu.org/auth/oxtrust.casprotocol.read",
-		"https://gluu.org/auth/oxtrust.casprotocol.write",
-		"https://gluu.org/auth/oxtrust.certificates.read",
-		"https://gluu.org/auth/oxtrust.certificates.write",
-		"https://gluu.org/auth/oxtrust.client.read",
-		"https://gluu.org/auth/oxtrust.client.write",
-		"https://gluu.org/auth/oxtrust.configuration.read",
-		"https://gluu.org/auth/oxtrust.configuration.write",
-		"https://gluu.org/auth/oxtrust.customscript.read",
-		"https://gluu.org/auth/oxtrust.customscript.write",
-		"https://gluu.org/auth/oxtrust.group.read",
-		"https://gluu.org/auth/oxtrust.group.write",
-		"https://gluu.org/auth/oxtrust.idpconfig.read",
-		"https://gluu.org/auth/oxtrust.idpconfig.write",
-		"https://gluu.org/auth/oxtrust.ldapauthentication.read",
-		"https://gluu.org/auth/oxtrust.ldapauthentication.write",
-		"https://gluu.org/auth/oxtrust.metricconfig.read",
-		"https://gluu.org/auth/oxtrust.metricconfig.write",
-		"https://gluu.org/auth/oxtrust.oxauthconfiguration.read",
-		"https://gluu.org/auth/oxtrust.oxauthconfiguration.write",
-		"https://gluu.org/auth/oxtrust.OxauthjsonSetting.read",
-		"https://gluu.org/auth/oxtrust.oxauthjsonSetting.write",
-		"https://gluu.org/auth/oxtrust.oxtrustconfiguration.read",
-		"https://gluu.org/auth/oxtrust.oxtrustconfiguration.write",
-		"https://gluu.org/auth/oxtrust.oxtrustjsonSetting.read",
-		"https://gluu.org/auth/oxtrust.oxtrustjsonSetting.write",
-		"https://gluu.org/auth/oxtrust.oxtrustsetting.read",
-		"https://gluu.org/auth/oxtrust.oxtrustsetting.write",
-		"https://gluu.org/auth/oxtrust.passportbasicconfig.read",
-		"https://gluu.org/auth/oxtrust.passportbasicconfig.write",
-		"https://gluu.org/auth/oxtrust.passportconfig.read",
-		"https://gluu.org/auth/oxtrust.passportconfig.write",
-		"https://gluu.org/auth/oxtrust.passportprovider.read",
-		"https://gluu.org/auth/oxtrust.passportprovider.write",
-		"https://gluu.org/auth/oxtrust.people.read",
-		"https://gluu.org/auth/oxtrust.people.write",
-		"https://gluu.org/auth/oxtrust.rptConfig.read",
-		"https://gluu.org/auth/oxtrust.rptConfig.write",
-		"https://gluu.org/auth/oxtrust.scimconfig.read",
-		"https://gluu.org/auth/oxtrust.scimconfig.write",
-		"https://gluu.org/auth/oxtrust.scope.read",
-		"https://gluu.org/auth/oxtrust.scope.write",
-		"https://gluu.org/auth/oxtrust.sectoridentifier.read",
-		"https://gluu.org/auth/oxtrust.sectoridentifier.write",
-		"https://gluu.org/auth/oxtrust.serverstatus.read",
-		"https://gluu.org/auth/oxtrust.serverstatus.write",
-		"https://gluu.org/auth/oxtrust.smtpconfiguration.read",
-		"https://gluu.org/auth/oxtrust.smtpconfiguration.write",
-		"https://gluu.org/auth/oxtrust.systemconfig.read",
-		"https://gluu.org/auth/oxtrust.systemconfig.write",
-		"https://gluu.org/auth/oxtrust.trustedidp.read",
-		"https://gluu.org/auth/oxtrust.trustedidp.write",
-		"https://gluu.org/auth/oxtrust.saml.read",
-		"https://gluu.org/auth/oxtrust.saml.write",
-		"https://gluu.org/auth/oxtrust.umaresource.read",
-		"https://gluu.org/auth/oxtrust.umaresource.write",
-		"https://gluu.org/auth/oxtrust.umascope.read",
-		"https://gluu.org/auth/oxtrust.umascope.write",
-		"https://gluu.org/auth/oxtrust.gluuradiusclient.read",
-		"https://gluu.org/auth/oxtrust.gluuradiusclient.write",
-		"https://gluu.org/auth/oxtrust.gluuradiusconfig.read",
-		"https://gluu.org/auth/oxtrust.gluuradiusconfig.write"
-	]
+	"full_access": {
+		"scopes": [
+			{
+				"inum": "1800.01.1",
+				"name": "https://gluu.org/auth/oxtrust.apiconfig.read"
+			},
+			{
+				"inum": "1800.01.3",
+				"name": "https://gluu.org/auth/oxtrust.attribute.read"
+			},
+			{
+				"inum": "1800.01.5",
+				"name": "https://gluu.org/auth/oxtrust.authenticationmethod.read"
+			},
+			{
+				"inum": "1800.01.7",
+				"name": "https://gluu.org/auth/oxtrust.captchaconfig.read"
+			},
+			{
+				"inum": "1800.01.9",
+				"name": "https://gluu.org/auth/oxtrust.casprotocol.read"
+			},
+			{
+				"inum": "1800.01.11",
+				"name": "https://gluu.org/auth/oxtrust.certificates.read"
+			},
+			{
+				"inum": "1800.01.13",
+				"name": "https://gluu.org/auth/oxtrust.client.read"
+			},
+			{
+				"inum": "1800.01.15",
+				"name": "https://gluu.org/auth/oxtrust.configuration.read"
+			},
+			{
+				"inum": "1800.01.17",
+				"name": "https://gluu.org/auth/oxtrust.customscript.read"
+			},
+			{
+				"inum": "1800.01.19",
+				"name": "https://gluu.org/auth/oxtrust.group.read"
+			},
+			{
+				"inum": "1800.01.21",
+				"name": "https://gluu.org/auth/oxtrust.idpconfig.read"
+			},
+			{
+				"inum": "1800.01.23",
+				"name": "https://gluu.org/auth/oxtrust.ldapauthentication.read"
+			},
+			{
+				"inum": "1800.01.25",
+				"name": "https://gluu.org/auth/oxtrust.metricconfig.read"
+			},
+			{
+				"inum": "1800.01.27",
+				"name": "https://gluu.org/auth/oxtrust.oxauthconfiguration.read"
+			},
+			{
+				"inum": "1800.01.29",
+				"name": "https://gluu.org/auth/oxtrust.OxauthjsonSetting.read"
+			},
+			{
+				"inum": "1800.01.31",
+				"name": "https://gluu.org/auth/oxtrust.oxtrustconfiguration.read"
+			},
+			{
+				"inum": "1800.01.33",
+				"name": "https://gluu.org/auth/oxtrust.oxtrustjsonSetting.read"
+			},
+			{
+				"inum": "1800.01.35",
+				"name": "https://gluu.org/auth/oxtrust.oxtrustsetting.read"
+			},
+			{
+				"inum": "1800.01.37",
+				"name": "https://gluu.org/auth/oxtrust.passportbasicconfig.read"
+			},
+			{
+				"inum": "1800.01.39",
+				"name": "https://gluu.org/auth/oxtrust.passportconfig.read"
+			},
+			{
+				"inum": "1800.01.41",
+				"name": "https://gluu.org/auth/oxtrust.passportprovider.read"
+			},
+			{
+				"inum": "1800.01.43",
+				"name": "https://gluu.org/auth/oxtrust.people.read"
+			},
+			{
+				"inum": "1800.01.45",
+				"name": "https://gluu.org/auth/oxtrust.rptConfig.read"
+			},
+			{
+				"inum": "1800.01.47",
+				"name": "https://gluu.org/auth/oxtrust.scimconfig.read"
+			},
+			{
+				"inum": "1800.01.49",
+				"name": "https://gluu.org/auth/oxtrust.scope.read"
+			},
+			{
+				"inum": "1800.01.51",
+				"name": "https://gluu.org/auth/oxtrust.sectoridentifier.read"
+			},
+			{
+				"inum": "1800.01.53",
+				"name": "https://gluu.org/auth/oxtrust.serverstatus.read"
+			},
+			{
+				"inum": "1800.01.55",
+				"name": "https://gluu.org/auth/oxtrust.smtpconfiguration.read"
+			},
+			{
+				"inum": "1800.01.57",
+				"name": "https://gluu.org/auth/oxtrust.systemconfig.read"
+			},
+			{
+				"inum": "1800.01.59",
+				"name": "https://gluu.org/auth/oxtrust.trustedidp.read"
+			},
+			{
+				"inum": "1800.01.61",
+				"name": "https://gluu.org/auth/oxtrust.saml.read"
+			},
+			{
+				"inum": "1800.01.63",
+				"name": "https://gluu.org/auth/oxtrust.umaresource.read"
+			},
+			{
+				"inum": "1800.01.65",
+				"name": "https://gluu.org/auth/oxtrust.umascope.read"
+			},
+			{
+				"inum": "1800.01.67",
+				"name": "https://gluu.org/auth/oxtrust.gluuradiusclient.read"
+			},
+			{
+				"inum": "1800.01.69",
+				"name": "https://gluu.org/auth/oxtrust.gluuradiusconfig.read"
+			},
+			{
+				"inum": "1800.01.2",
+				"name": "https://gluu.org/auth/oxtrust.apiconfig.write"
+			},
+			{
+				"inum": "1800.01.4",
+				"name": "https://gluu.org/auth/oxtrust.attribute.write"
+			},
+			{
+				"inum": "1800.01.6",
+				"name": "https://gluu.org/auth/oxtrust.authenticationmethod.write"
+			},
+			{
+				"inum": "1800.01.8",
+				"name": "https://gluu.org/auth/oxtrust.captchaconfig.write"
+			},
+			{
+				"inum": "1800.01.10",
+				"name": "https://gluu.org/auth/oxtrust.casprotocol.write"
+			},
+			{
+				"inum": "1800.01.12",
+				"name": "https://gluu.org/auth/oxtrust.certificates.write"
+			},
+			{
+				"inum": "1800.01.14",
+				"name": "https://gluu.org/auth/oxtrust.client.write"
+			},
+			{
+				"inum": "1800.01.16",
+				"name": "https://gluu.org/auth/oxtrust.configuration.write"
+			},
+			{
+				"inum": "1800.01.18",
+				"name": "https://gluu.org/auth/oxtrust.customscript.write"
+			},
+			{
+				"inum": "1800.01.20",
+				"name": "https://gluu.org/auth/oxtrust.group.write"
+			},
+			{
+				"inum": "1800.01.22",
+				"name": "https://gluu.org/auth/oxtrust.idpconfig.write"
+			},
+			{
+				"inum": "1800.01.24",
+				"name": "https://gluu.org/auth/oxtrust.ldapauthentication.write"
+			},
+			{
+				"inum": "1800.01.26",
+				"name": "https://gluu.org/auth/oxtrust.metricconfig.write"
+			},
+			{
+				"inum": "1800.01.28",
+				"name": "https://gluu.org/auth/oxtrust.oxauthconfiguration.write"
+			},
+			{
+				"inum": "1800.01.30",
+				"name": "https://gluu.org/auth/oxtrust.oxauthjsonSetting.write"
+			},
+			{
+				"inum": "1800.01.32",
+				"name": "https://gluu.org/auth/oxtrust.oxtrustconfiguration.write"
+			},
+			{
+				"inum": "1800.01.34",
+				"name": "https://gluu.org/auth/oxtrust.oxtrustjsonSetting.write"
+			},
+			{
+				"inum": "1800.01.36",
+				"name": "https://gluu.org/auth/oxtrust.oxtrustsetting.write"
+			},
+			{
+				"inum": "1800.01.38",
+				"name": "https://gluu.org/auth/oxtrust.passportbasicconfig.write"
+			},
+			{
+				"inum": "1800.01.40",
+				"name": "https://gluu.org/auth/oxtrust.passportconfig.write"
+			},
+			{
+				"inum": "1800.01.42",
+				"name": "https://gluu.org/auth/oxtrust.passportprovider.write"
+			},
+			{
+				"inum": "1800.01.44",
+				"name": "https://gluu.org/auth/oxtrust.people.write"
+			},
+			{
+				"inum": "1800.01.46",
+				"name": "https://gluu.org/auth/oxtrust.rptConfig.write"
+			},
+			{
+				"inum": "1800.01.48",
+				"name": "https://gluu.org/auth/oxtrust.scimconfig.write"
+			},
+			{
+				"inum": "1800.01.50",
+				"name": "https://gluu.org/auth/oxtrust.scope.write"
+			},
+			{
+				"inum": "1800.01.52",
+				"name": "https://gluu.org/auth/oxtrust.sectoridentifier.write"
+			},
+			{
+				"inum": "1800.01.54",
+				"name": "https://gluu.org/auth/oxtrust.serverstatus.write"
+			},
+			{
+				"inum": "1800.01.56",
+				"name": "https://gluu.org/auth/oxtrust.smtpconfiguration.write"
+			},
+			{
+				"inum": "1800.01.58",
+				"name": "https://gluu.org/auth/oxtrust.systemconfig.write"
+			},
+			{
+				"inum": "1800.01.60",
+				"name": "https://gluu.org/auth/oxtrust.trustedidp.write"
+			},
+			{
+				"inum": "1800.01.62",
+				"name": "https://gluu.org/auth/oxtrust.saml.write"
+			},
+			{
+				"inum": "1800.01.64",
+				"name": "https://gluu.org/auth/oxtrust.umaresource.write"
+			},
+			{
+				"inum": "1800.01.66",
+				"name": "https://gluu.org/auth/oxtrust.umascope.write"
+			},
+			{
+				"inum": "1800.01.68",
+				"name": "https://gluu.org/auth/oxtrust.gluuradiusclient.write"
+			},
+			{
+				"inum": "1800.01.70",
+				"name": "https://gluu.org/auth/oxtrust.gluuradiusconfig.write"
+			}
+		]
+	},
+	"read_only_access": {
+		"scopes": [
+			{
+				"inum": "1800.01.1",
+				"name": "https://gluu.org/auth/oxtrust.apiconfig.read"
+			},
+			{
+				"inum": "1800.01.3",
+				"name": "https://gluu.org/auth/oxtrust.attribute.read"
+			},
+			{
+				"inum": "1800.01.5",
+				"name": "https://gluu.org/auth/oxtrust.authenticationmethod.read"
+			},
+			{
+				"inum": "1800.01.7",
+				"name": "https://gluu.org/auth/oxtrust.captchaconfig.read"
+			},
+			{
+				"inum": "1800.01.9",
+				"name": "https://gluu.org/auth/oxtrust.casprotocol.read"
+			},
+			{
+				"inum": "1800.01.11",
+				"name": "https://gluu.org/auth/oxtrust.certificates.read"
+			},
+			{
+				"inum": "1800.01.13",
+				"name": "https://gluu.org/auth/oxtrust.client.read"
+			},
+			{
+				"inum": "1800.01.15",
+				"name": "https://gluu.org/auth/oxtrust.configuration.read"
+			},
+			{
+				"inum": "1800.01.17",
+				"name": "https://gluu.org/auth/oxtrust.customscript.read"
+			},
+			{
+				"inum": "1800.01.19",
+				"name": "https://gluu.org/auth/oxtrust.group.read"
+			},
+			{
+				"inum": "1800.01.21",
+				"name": "https://gluu.org/auth/oxtrust.idpconfig.read"
+			},
+			{
+				"inum": "1800.01.23",
+				"name": "https://gluu.org/auth/oxtrust.ldapauthentication.read"
+			},
+			{
+				"inum": "1800.01.25",
+				"name": "https://gluu.org/auth/oxtrust.metricconfig.read"
+			},
+			{
+				"inum": "1800.01.27",
+				"name": "https://gluu.org/auth/oxtrust.oxauthconfiguration.read"
+			},
+			{
+				"inum": "1800.01.29",
+				"name": "https://gluu.org/auth/oxtrust.OxauthjsonSetting.read"
+			},
+			{
+				"inum": "1800.01.31",
+				"name": "https://gluu.org/auth/oxtrust.oxtrustconfiguration.read"
+			},
+			{
+				"inum": "1800.01.33",
+				"name": "https://gluu.org/auth/oxtrust.oxtrustjsonSetting.read"
+			},
+			{
+				"inum": "1800.01.35",
+				"name": "https://gluu.org/auth/oxtrust.oxtrustsetting.read"
+			},
+			{
+				"inum": "1800.01.37",
+				"name": "https://gluu.org/auth/oxtrust.passportbasicconfig.read"
+			},
+			{
+				"inum": "1800.01.39",
+				"name": "https://gluu.org/auth/oxtrust.passportconfig.read"
+			},
+			{
+				"inum": "1800.01.41",
+				"name": "https://gluu.org/auth/oxtrust.passportprovider.read"
+			},
+			{
+				"inum": "1800.01.43",
+				"name": "https://gluu.org/auth/oxtrust.people.read"
+			},
+			{
+				"inum": "1800.01.45",
+				"name": "https://gluu.org/auth/oxtrust.rptConfig.read"
+			},
+			{
+				"inum": "1800.01.47",
+				"name": "https://gluu.org/auth/oxtrust.scimconfig.read"
+			},
+			{
+				"inum": "1800.01.49",
+				"name": "https://gluu.org/auth/oxtrust.scope.read"
+			},
+			{
+				"inum": "1800.01.51",
+				"name": "https://gluu.org/auth/oxtrust.sectoridentifier.read"
+			},
+			{
+				"inum": "1800.01.53",
+				"name": "https://gluu.org/auth/oxtrust.serverstatus.read"
+			},
+			{
+				"inum": "1800.01.55",
+				"name": "https://gluu.org/auth/oxtrust.smtpconfiguration.read"
+			},
+			{
+				"inum": "1800.01.57",
+				"name": "https://gluu.org/auth/oxtrust.systemconfig.read"
+			},
+			{
+				"inum": "1800.01.59",
+				"name": "https://gluu.org/auth/oxtrust.trustedidp.read"
+			},
+			{
+				"inum": "1800.01.61",
+				"name": "https://gluu.org/auth/oxtrust.saml.read"
+			},
+			{
+				"inum": "1800.01.63",
+				"name": "https://gluu.org/auth/oxtrust.umaresource.read"
+			},
+			{
+				"inum": "1800.01.65",
+				"name": "https://gluu.org/auth/oxtrust.umascope.read"
+			},
+			{
+				"inum": "1800.01.67",
+				"name": "https://gluu.org/auth/oxtrust.gluuradiusclient.read"
+			},
+			{
+				"inum": "1800.01.69",
+				"name": "https://gluu.org/auth/oxtrust.gluuradiusconfig.read"
+			}
+		]
+	},
+	"modify_access": {
+		"scopes": [
+			{
+				"inum": "1800.01.2",
+				"name": "https://gluu.org/auth/oxtrust.apiconfig.write"
+			},
+			{
+				"inum": "1800.01.4",
+				"name": "https://gluu.org/auth/oxtrust.attribute.write"
+			},
+			{
+				"inum": "1800.01.6",
+				"name": "https://gluu.org/auth/oxtrust.authenticationmethod.write"
+			},
+			{
+				"inum": "1800.01.8",
+				"name": "https://gluu.org/auth/oxtrust.captchaconfig.write"
+			},
+			{
+				"inum": "1800.01.10",
+				"name": "https://gluu.org/auth/oxtrust.casprotocol.write"
+			},
+			{
+				"inum": "1800.01.12",
+				"name": "https://gluu.org/auth/oxtrust.certificates.write"
+			},
+			{
+				"inum": "1800.01.14",
+				"name": "https://gluu.org/auth/oxtrust.client.write"
+			},
+			{
+				"inum": "1800.01.16",
+				"name": "https://gluu.org/auth/oxtrust.configuration.write"
+			},
+			{
+				"inum": "1800.01.18",
+				"name": "https://gluu.org/auth/oxtrust.customscript.write"
+			},
+			{
+				"inum": "1800.01.20",
+				"name": "https://gluu.org/auth/oxtrust.group.write"
+			},
+			{
+				"inum": "1800.01.22",
+				"name": "https://gluu.org/auth/oxtrust.idpconfig.write"
+			},
+			{
+				"inum": "1800.01.24",
+				"name": "https://gluu.org/auth/oxtrust.ldapauthentication.write"
+			},
+			{
+				"inum": "1800.01.26",
+				"name": "https://gluu.org/auth/oxtrust.metricconfig.write"
+			},
+			{
+				"inum": "1800.01.28",
+				"name": "https://gluu.org/auth/oxtrust.oxauthconfiguration.write"
+			},
+			{
+				"inum": "1800.01.30",
+				"name": "https://gluu.org/auth/oxtrust.oxauthjsonSetting.write"
+			},
+			{
+				"inum": "1800.01.32",
+				"name": "https://gluu.org/auth/oxtrust.oxtrustconfiguration.write"
+			},
+			{
+				"inum": "1800.01.34",
+				"name": "https://gluu.org/auth/oxtrust.oxtrustjsonSetting.write"
+			},
+			{
+				"inum": "1800.01.36",
+				"name": "https://gluu.org/auth/oxtrust.oxtrustsetting.write"
+			},
+			{
+				"inum": "1800.01.38",
+				"name": "https://gluu.org/auth/oxtrust.passportbasicconfig.write"
+			},
+			{
+				"inum": "1800.01.40",
+				"name": "https://gluu.org/auth/oxtrust.passportconfig.write"
+			},
+			{
+				"inum": "1800.01.42",
+				"name": "https://gluu.org/auth/oxtrust.passportprovider.write"
+			},
+			{
+				"inum": "1800.01.44",
+				"name": "https://gluu.org/auth/oxtrust.people.write"
+			},
+			{
+				"inum": "1800.01.46",
+				"name": "https://gluu.org/auth/oxtrust.rptConfig.write"
+			},
+			{
+				"inum": "1800.01.48",
+				"name": "https://gluu.org/auth/oxtrust.scimconfig.write"
+			},
+			{
+				"inum": "1800.01.50",
+				"name": "https://gluu.org/auth/oxtrust.scope.write"
+			},
+			{
+				"inum": "1800.01.52",
+				"name": "https://gluu.org/auth/oxtrust.sectoridentifier.write"
+			},
+			{
+				"inum": "1800.01.54",
+				"name": "https://gluu.org/auth/oxtrust.serverstatus.write"
+			},
+			{
+				"inum": "1800.01.56",
+				"name": "https://gluu.org/auth/oxtrust.smtpconfiguration.write"
+			},
+			{
+				"inum": "1800.01.58",
+				"name": "https://gluu.org/auth/oxtrust.systemconfig.write"
+			},
+			{
+				"inum": "1800.01.60",
+				"name": "https://gluu.org/auth/oxtrust.trustedidp.write"
+			},
+			{
+				"inum": "1800.01.62",
+				"name": "https://gluu.org/auth/oxtrust.saml.write"
+			},
+			{
+				"inum": "1800.01.64",
+				"name": "https://gluu.org/auth/oxtrust.umaresource.write"
+			},
+			{
+				"inum": "1800.01.66",
+				"name": "https://gluu.org/auth/oxtrust.umascope.write"
+			},
+			{
+				"inum": "1800.01.68",
+				"name": "https://gluu.org/auth/oxtrust.gluuradiusclient.write"
+			},
+			{
+				"inum": "1800.01.70",
+				"name": "https://gluu.org/auth/oxtrust.gluuradiusconfig.write"
+			}
+		]
+	}
 }
