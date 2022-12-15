@@ -698,8 +698,8 @@ public class CacheRefreshTimer {
 			return true;
 		}
 
-		log.error("Skipping target entries update. Destination server schema doesn't has next attributes: '{}'",
-				targetAttributesSet);
+		log.error("Skipping target entries update. Destination server schema doesn't has next attributes: '{}', target OC: '{}', target OC attributes: '{}'",
+				targetAttributesSet, targetObjectClasses.toArray(new String[0]), objectClassesAttributesSet);
 
 		return false;
 	}
