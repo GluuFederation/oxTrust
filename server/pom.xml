@@ -44,6 +44,7 @@
 					<include>**/*.png</include>
 					<include>**/*.gif</include>
 					<include>**/*.ico</include>
+					<include>**/*.json</include>
 					<include>META-INF/navigation/*.navigation.xml</include>
 					<include>META-INF/beans.xml</include>
 					<include>META-INF/services/*.*</include>
