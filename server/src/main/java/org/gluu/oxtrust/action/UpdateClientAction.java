@@ -660,6 +660,7 @@ public class UpdateClientAction implements Serializable {
                         facesMessages.add(FacesMessage.SEVERITY_ERROR, "A sector identifier must be defined first.");
                     }
                 } catch (MalformedURLException e) {
+                	facesMessages.add(FacesMessage.SEVERITY_ERROR, "The url is malformed.");
                 }
 
             }
@@ -674,6 +675,7 @@ public class UpdateClientAction implements Serializable {
     private boolean isAcceptable(String availableLoginUri) {
         boolean result = false;
         try {
+        	if(availableLoginUri.contains("http") && !availableLoginUri.startsWith("https")) {
             if (getProtocol(availableLoginUri).equalsIgnoreCase("http")) {
                 if (this.client.getOxAuthAppType().equals(OxAuthApplicationType.NATIVE) && isImplicitFlow()) {
                     return true;
@@ -687,7 +689,7 @@ public class UpdateClientAction implements Serializable {
                     return true;
                 }
                 return false;
-            } else {
+            } } else {
             	if(!availableLoginUri.contains("//") && domainPattern.matcher(availableLoginUri.split("/")[0]).matches()) {
             		return true;
             	}
@@ -698,9 +700,11 @@ public class UpdateClientAction implements Serializable {
                     return true;
                 } else if (this.loginUris.size() < 1) {
                     result = true;
-                } else if (this.loginUris.size() >= 1 && hasSameHostname(this.availableLoginUri)) {
+                } else if (this.loginUris.size() >= 1 && availableLoginUri.startsWith("https://") &&  hasSameHostname(this.availableLoginUri)) {
                     result = true;
-                } else if (this.loginUris.size() >= 1 && !hasSameHostname(this.availableLoginUri) && sectorExist()) {
+                } else if (this.loginUris.size() >= 1 && availableLoginUri.startsWith("https://") && !hasSameHostname(this.availableLoginUri) && sectorExist()) {
+                    result = true;
+                }else if (this.loginUris.size() >= 1 && !availableLoginUri.startsWith("https://") && availableLoginUri.contains(":/")) {
                     result = true;
                 }
             }
@@ -722,11 +726,13 @@ public class UpdateClientAction implements Serializable {
         boolean result = true;
         URL uri1 = new URL(url1);
         for (String url : this.loginUris) {
-            URL uri = new URL(url);
-            if (!(uri1.getHost().equalsIgnoreCase(uri.getHost()))) {
-                result = false;
-                break;
-            }
+        	if(url.startsWith(HTTPS)) {
+	            URL uri = new URL(url);
+	            if (!(uri1.getHost().equalsIgnoreCase(uri.getHost()))) {
+	                result = false;
+	                break;
+	            }
+        	}
         }
         return result;
     }
