@@ -47,7 +47,7 @@ jobs:
 
       - name: Cache SonarCloud packages for JVM based project
         if: contains(env.JVM_PROJECTS, github.repository)
-        uses: actions/cache@v3.0.11
+        uses: actions/cache@v3.2.2
         with:
           path: ~/.sonar/cache
           key: ${{ runner.os }}-sonar
