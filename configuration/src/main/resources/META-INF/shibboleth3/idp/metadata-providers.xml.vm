@@ -47,6 +47,12 @@
                       metadataURL="$trustRelationship.spMetaDataURL"
                       backingFile="$medataFolder$trustRelationship.spMetaDataFN">
 
+    #elseif($trustRelationship.spMetaDataSourceType.value == "mdq")
+    <MetadataProvider id="SiteSP$trustParams.trustIds.get($trustRelationship.inum)"
+                      xsi:type="DynamicHTTPMetadataProvider" 
+                      connectionRequestTimeout="PT0S">
+                
+                <MetadataQueryProtocol>$trustRelationship.spMetaDataURL</MetadataQueryProtocol>
     #end
 
     #if( $trustRelationship.gluuSAMLMetaDataFilter and $trustRelationship.getGluuSAMLMetaDataFilter().size() > 0 )
@@ -59,7 +65,7 @@
 
     #end
 
-    #if($trustRelationship.spMetaDataSourceType.value == 'file' || $trustRelationship.spMetaDataSourceType.value == 'uri')
+    #if($trustRelationship.spMetaDataSourceType.value == 'file' || $trustRelationship.spMetaDataSourceType.value == 'uri' || $trustRelationship.spMetaDataSourceType.value == 'mdq')
     </MetadataProvider>
     #end
 
