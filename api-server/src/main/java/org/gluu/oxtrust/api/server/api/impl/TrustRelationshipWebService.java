@@ -655,21 +655,7 @@ public class TrustRelationshipWebService extends BaseWebResource {
 
                 break;
             case MDQ:
-            	try {
-                    if (generateSpMetaDataFile(trustRelationship)) {
-                    	if (!update) {
-                            trustRelationship.setStatus(GluuStatus.ACTIVE);
-                        }
-                    } else {
-                        logger.error("Failed to generate MDQ SP meta-data file");
-                        return OxTrustConstants.RESULT_FAILURE;
-                    }
-                } catch (Exception ex) {
-                	logger.error("Failed to generate MDQ  SP certificate", ex);
-
-                    return "MDQ : Failed to generate MDQ SP meta-data file";
-                }
-
+            	//TODO: Implement MDQ Save
                 break;
             default:
 
@@ -1038,17 +1024,7 @@ public class TrustRelationshipWebService extends BaseWebResource {
         }
     }
     
-    private boolean generateSpMetaDataFile(GluuSAMLTrustRelationship trustRelationship) {
-        String spMetadataFileName = trustRelationship.getSpMetaDataFN();
-
-        if (StringHelper.isEmpty(spMetadataFileName)) {
-            // Generate new file name
-            spMetadataFileName = shibboleth3ConfService.getSpNewMetadataFileName(trustRelationship);
-            trustRelationship.setSpMetaDataFN(spMetadataFileName);
-        }
-
-        return shibboleth3ConfService.generateMDQMetadataFile(trustRelationship);
-    }
+    
     
     private boolean saveSpMetaDataFileSourceTypeManual(GluuSAMLTrustRelationship trustRelationship , String metadataStr) throws IOException {
         String spMetadataFileName = trustRelationship.getSpMetaDataFN();
