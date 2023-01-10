@@ -52,7 +52,7 @@
                       xsi:type="DynamicHTTPMetadataProvider" 
                       connectionRequestTimeout="PT0S">
                 
-                <MetadataQueryProtocol>$trustRelationship.spMetaDataURL</MetadataQueryProtocol>
+                <MetadataQueryProtocol>$trustRelationship.url</MetadataQueryProtocol>
     #end
 
     #if( $trustRelationship.gluuSAMLMetaDataFilter and $trustRelationship.getGluuSAMLMetaDataFilter().size() > 0 )
