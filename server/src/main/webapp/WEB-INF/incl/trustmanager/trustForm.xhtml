@@ -289,15 +289,13 @@ input[submit] {
 									</h:panelGroup>
 									
 									<h:panelGroup id="mdqEntityId" >
-										<h:panelGroup rendered="#{_trustRelationship.spMetaDataSourceType.value eq 'mdq'}">
-
 										<ox:decorate id="mdqUriId"
-											label="MDQ URL">
+											rendered="#{_trustRelationship.spMetaDataSourceType.value eq 'mdq'}"
+											label="#{msgs['trustmanager.mdqUrl']}">
 											<h:inputText styleClass="form-control"
 												size="40" value="#{_trustRelationship.url}"
 												required="true" id="mdquriId" />
 										</ox:decorate>
-									</h:panelGroup>
 									</h:panelGroup>
 										
 									<h:panelGroup id="spSingleGroup">
