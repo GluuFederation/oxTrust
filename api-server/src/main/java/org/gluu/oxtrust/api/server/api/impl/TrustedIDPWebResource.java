@@ -221,7 +221,9 @@ public class TrustedIDPWebResource  extends BaseWebResource{
 			if(oxTrustedIdp != null)
 				trustedIDPService.removeTrustedIDP(oxTrustedIdp);
 
-			return Response.status(Response.Status.OK).build();
+			return Response.status(Response.Status.OK).entity("{\r\n" + 
+					"  \"message\": \"OK\"\r\n" + 
+					"}").build();
 		} catch (Exception e) {
 			log(logger, e);
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
