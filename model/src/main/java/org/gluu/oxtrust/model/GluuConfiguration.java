@@ -10,6 +10,10 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang3.builder.DiffBuilder;
+import org.apache.commons.lang3.builder.DiffResult;
+import org.apache.commons.lang3.builder.ToStringStyle;
+import org.gluu.config.oxtrust.Configuration;
 import org.gluu.model.GluuStatus;
 import org.gluu.model.SmtpConfiguration;
 import org.gluu.oxtrust.model.cert.TrustStoreCertificate;
@@ -34,7 +38,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @DataEntry
 @ObjectClass(value = "gluuConfiguration")
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class GluuConfiguration extends InumEntry implements Serializable {
+public class GluuConfiguration extends InumEntry implements Serializable,Configuration {
 
 	private static final long serialVersionUID = -1817003894646725601L;
 
@@ -495,5 +499,51 @@ public class GluuConfiguration extends InumEntry implements Serializable {
 				+ passwordResetAllowed + ", trustStoreConfiguration=" + trustStoreConfiguration
 				+ ", trustStoreCertificates=" + trustStoreCertificates + ", cacheConfiguration=" + cacheConfiguration
 				+ "]";
+	}
+
+	@Override
+	public DiffResult diff(Configuration newObj) {
+		GluuConfiguration obj = (GluuConfiguration) newObj;
+		 return new DiffBuilder(this, obj, ToStringStyle.SHORT_PREFIX_STYLE)
+				 .append("description", this.description, obj.description)
+				 .append("displayName", this.displayName, obj.displayName)
+				 .append("hostname", this.hostname, obj.hostname)
+				 .append("lastUpdate", this.lastUpdate, obj.lastUpdate)
+				 .append("pollingInterval", this.pollingInterval, obj.pollingInterval)
+				 .append("status", this.status, obj.status)
+				 .append("userPassword", this.userPassword, obj.userPassword)
+				 .append("gluuHttpStatus", this.gluuHttpStatus, obj.gluuHttpStatus)
+				 .append("gluuDSStatus", this.gluuDSStatus, obj.gluuDSStatus)
+				 .append("gluuVDSStatus", this.gluuVDSStatus, obj.gluuVDSStatus)
+				 .append("gluuSPTR", this.gluuSPTR, obj.gluuSPTR)
+				 .append("sslExpiry", this.sslExpiry, obj.sslExpiry)
+				 .append("profileManagment", this.profileManagment, obj.profileManagment)
+				 .append("manageIdentityPermission", this.manageIdentityPermission, obj.manageIdentityPermission)
+				 .append("vdsCacheRefreshEnabled", this.vdsCacheRefreshEnabled, obj.vdsCacheRefreshEnabled)
+				 .append("cacheRefreshServerIpAddress", this.cacheRefreshServerIpAddress, obj.cacheRefreshServerIpAddress)
+				 .append("vdsCacheRefreshPollingInterval", this.vdsCacheRefreshPollingInterval, obj.vdsCacheRefreshPollingInterval)
+				 .append("vdsCacheRefreshLastUpdate", this.vdsCacheRefreshLastUpdate, obj.vdsCacheRefreshLastUpdate)
+				 .append("vdsCacheRefreshLastUpdateCount", this.vdsCacheRefreshLastUpdate, obj.vdsCacheRefreshLastUpdate)
+				 .append("vdsCacheRefreshProblemCount", this.vdsCacheRefreshProblemCount, obj.vdsCacheRefreshProblemCount)
+				 .append("scimEnabled", this.scimEnabled, obj.scimEnabled)
+				 .append("passportEnabled", this.passportEnabled, obj.passportEnabled)
+				 .append("radiusEnabled", this.radiusEnabled, obj.radiusEnabled)
+				 .append("samlEnabled", this.samlEnabled, obj.samlEnabled)
+				 .append("contactEmail", this.contactEmail, obj.contactEmail)
+				 .append("smtpConfiguration", this.smtpConfiguration, obj.smtpConfiguration)
+				 .append("configurationDnsServer", this.configurationDnsServer, obj.configurationDnsServer)
+				 .append("maxLogSize", this.configurationDnsServer, obj.configurationDnsServer)
+				 .append("oxIDPAuthentication", this.oxIDPAuthentication, obj.oxIDPAuthentication)
+				 .append("authenticationMode", this.authenticationMode, obj.authenticationMode)
+				 .append("oxTrustAuthenticationMode", this.oxTrustAuthenticationMode, obj.oxTrustAuthenticationMode)
+				 .append("oxLogViewerConfig", this.oxLogViewerConfig, obj.oxLogViewerConfig)
+				 .append("oxLogConfigLocation", this.oxLogConfigLocation, obj.oxLogConfigLocation)
+				 .append("passwordResetAllowed", this.passwordResetAllowed, obj.passwordResetAllowed)
+				 .append("trustStoreConfiguration", this.trustStoreConfiguration, obj.trustStoreConfiguration)
+				 .append("trustStoreCertificates", this.trustStoreCertificates, obj.trustStoreCertificates)
+				 .append("cacheConfiguration", this.cacheConfiguration, obj.cacheConfiguration)
+				 .append("documentStoreConfiguration", this.documentStoreConfiguration, obj.documentStoreConfiguration)
+				 .append("customObjectClasses", this.customObjectClasses, obj.customObjectClasses)
+				 .build();
 	}
 }

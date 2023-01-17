@@ -14,6 +14,8 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.builder.Diff;
+import org.apache.commons.lang3.builder.DiffResult;
 import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.config.oxtrust.AttributeResolverConfiguration;
 import org.gluu.config.oxtrust.CacheRefreshConfiguration;
@@ -98,6 +100,7 @@ public class JsonConfigurationService implements Serializable {
 
 	public boolean saveOxTrustappConfiguration(AppConfiguration oxTrustappConfiguration) {
 		LdapOxTrustConfiguration ldapOxTrustConfiguration = getOxTrustConfiguration();
+		diff(ldapOxTrustConfiguration.getApplication(), oxTrustappConfiguration);
 		ldapOxTrustConfiguration.setApplication(oxTrustappConfiguration);
 		ldapOxTrustConfiguration.setRevision(ldapOxTrustConfiguration.getRevision() + 1);
 		persistenceEntryManager.merge(ldapOxTrustConfiguration);
@@ -106,6 +109,7 @@ public class JsonConfigurationService implements Serializable {
 
 	public boolean saveOxTrustImportPersonConfiguration(ImportPersonConfig oxTrustImportPersonConfiguration) {
 		LdapOxTrustConfiguration ldapOxTrustConfiguration = getOxTrustConfiguration();
+		diff(ldapOxTrustConfiguration.getImportPersonConfig(), oxTrustImportPersonConfiguration);
 		ldapOxTrustConfiguration.setImportPersonConfig(oxTrustImportPersonConfiguration);
 		ldapOxTrustConfiguration.setRevision(ldapOxTrustConfiguration.getRevision() + 1);
 		persistenceEntryManager.merge(ldapOxTrustConfiguration);
@@ -114,6 +118,7 @@ public class JsonConfigurationService implements Serializable {
 
 	public boolean saveOxTrustCacheRefreshConfiguration(CacheRefreshConfiguration oxTrustCacheRefreshConfiguration) {
 		LdapOxTrustConfiguration ldapOxTrustConfiguration = getOxTrustConfiguration();
+		diff(ldapOxTrustConfiguration.getCacheRefresh(), oxTrustCacheRefreshConfiguration);
 		ldapOxTrustConfiguration.setCacheRefresh(oxTrustCacheRefreshConfiguration);
 		ldapOxTrustConfiguration.setRevision(ldapOxTrustConfiguration.getRevision() + 1);
 		persistenceEntryManager.merge(ldapOxTrustConfiguration);
@@ -123,6 +128,7 @@ public class JsonConfigurationService implements Serializable {
 	public boolean saveOxTrustAttributeResolverConfigurationConfiguration(
 			AttributeResolverConfiguration attributeResolverConfiguration) {
 		LdapOxTrustConfiguration ldapOxTrustConfiguration = getOxTrustConfiguration();
+		diff(ldapOxTrustConfiguration.getAttributeResolverConfig(),attributeResolverConfiguration);
 		ldapOxTrustConfiguration.setAttributeResolverConfig(attributeResolverConfiguration);
 		ldapOxTrustConfiguration.setRevision(ldapOxTrustConfiguration.getRevision() + 1);
 		persistenceEntryManager.merge(ldapOxTrustConfiguration);
@@ -131,6 +137,7 @@ public class JsonConfigurationService implements Serializable {
 
 	public boolean saveOxAuthAppConfiguration(org.gluu.oxauth.model.configuration.AppConfiguration appConfiguration) {
 		try {
+			diff(getOxauthAppConfiguration(),appConfiguration);
 			String appConfigurationJson = jsonService.objectToJson(appConfiguration);
 			return saveOxAuthDynamicConfigJson(appConfigurationJson);
 		} catch (IOException e) {
@@ -220,6 +227,25 @@ public class JsonConfigurationService implements Serializable {
 		fido2Configuration.setDynamicConf(fido2ConfigJson);
 		fido2Configuration.setRevision(fido2Configuration.getRevision() + 1);
 		persistenceEntryManager.merge(fido2Configuration);
+	}
+	
+	private void diff(org.gluu.config.oxtrust.Configuration oldObj,org.gluu.config.oxtrust.Configuration newObj) {
+		DiffResult diff = oldObj.diff(newObj);
+		
+		for(Diff<?> d: diff.getDiffs()) {
+			log.info("difference test : " + d.getFieldName() 
+                            + "= FROM[" + d.getLeft() + "] TO [" + d.getRight() + "]");
+		}
+		
+	}
+	private void diff(org.gluu.oxauth.model.configuration.Configuration oldObj,org.gluu.oxauth.model.configuration.Configuration newObj) {
+		DiffResult diff = oldObj.diff(newObj);
+		
+		for(Diff<?> d: diff.getDiffs()) {
+			log.info("difference test : " + d.getFieldName() 
+                            + "= FROM[" + d.getLeft() + "] TO [" + d.getRight() + "]");
+		}
+		
 	}
 
 }
