@@ -32,7 +32,9 @@ import org.gluu.config.oxtrust.ImportPersonConfig;
 import org.gluu.config.oxtrust.LdapOxAuthConfiguration;
 import org.gluu.config.oxtrust.LdapOxTrustConfiguration;
 import org.gluu.service.config.ConfigurationFactory;
+import org.gluu.oxtrust.model.AuditConfigLogDetails;
 import org.gluu.oxtrust.model.GluuConfiguration;
+import org.gluu.oxtrust.security.Identity;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.exception.BasePersistenceException;
 import org.gluu.service.JsonService;
@@ -69,6 +71,9 @@ public class JsonConfigurationService implements Serializable {
 
 	@Inject
 	private ConfigurationService configurationService;
+	
+    @Inject
+    private Identity identity;
 
 	public AppConfiguration getOxTrustappConfiguration() {
 		LdapOxTrustConfiguration ldapOxTrustConfiguration = getOxTrustConfiguration();
@@ -268,38 +273,56 @@ public class JsonConfigurationService implements Serializable {
 									}
 									if (oo1.getClass().isArray()) {
 										if (!Arrays.deepEquals((Object[]) oo1, (Object[]) oo2)) {
-											logline = logline + dateFormat.format(date) + " " + c.getSimpleName()
-													+ " Array Property : " + m[i].getName().substring(2)
-													+ " old value : " + oo1.toString() + " new value :" + oo2.toString()
-													+ "\n";
+											
+											AuditConfigLogDetails auditConfigLogDetails = new AuditConfigLogDetails(
+													identity.getUser().getDisplayName(),
+													c.getSimpleName(),
+													m[i].getName().substring(2),
+													oo1.toString(),
+													oo2.toString());
+											
+											logline = logline + dateFormat.format(date) + " " + jsonService.objectToJson(auditConfigLogDetails) + "\n";
+											log.info(auditConfigLogDetails.toString());
 										}
 										continue;
 									}
 									if (oo1 instanceof List) {
 										if (!CollectionUtils.isEqualCollection((List) oo1, (List) oo2)) {
-											logline = logline + dateFormat.format(date) + " " + c.getSimpleName()
-													+ " List Property : " + m[i].getName().substring(2)
-													+ " old value : " + oo1.toString() + " new value :" + oo2.toString()
-													+ "\n";
+											AuditConfigLogDetails auditConfigLogDetails = new AuditConfigLogDetails(
+													identity.getUser().getDisplayName(),
+													c.getSimpleName(),
+													m[i].getName().substring(2),
+													oo1.toString(),
+													oo2.toString());
+											
+											logline = logline + dateFormat.format(date) + " " +  jsonService.objectToJson(auditConfigLogDetails) + "\n";
+											log.info(auditConfigLogDetails.toString());
 										}
 										continue;
 									}
 									if (!oo1.equals(oo2)) {
 										if (m[i].getName().startsWith("is")) {
-											logline = logline + dateFormat.format(date) + " " + c.getSimpleName()
-													+ " Property : " + m[i].getName().substring(2) + "-  old value : "
-													+ oo1.toString() + " - new value :" + oo2.toString() + "\n";
-											log.info(c.getSimpleName() + " " + dateFormat.format(date) + " Property : "
-													+ m[i].getName().substring(2) + " old value : " + oo1.toString()
-													+ " new value :" + oo2.toString());
+											AuditConfigLogDetails auditConfigLogDetails = new AuditConfigLogDetails(
+													identity.getUser().getDisplayName(),
+													c.getSimpleName(),
+													m[i].getName().substring(2),
+													oo1.toString(),
+													oo2.toString());
+											
+											logline = logline + dateFormat.format(date) + " " + jsonService.objectToJson(auditConfigLogDetails) + "\n";
+											
+											log.info(auditConfigLogDetails.toString());
 
 										} else {
-											logline = logline + dateFormat.format(date) + " " + c.getSimpleName()
-													+ " Property : " + m[i].getName().substring(3) + " old value : "
-													+ oo1.toString() + " new value :" + oo2.toString() + "\n";
-											log.info(dateFormat.format(date) + " " + c.getSimpleName() + " Property : "
-													+ m[i].getName().substring(3) + " old value : " + oo1.toString()
-													+ " new value :" + oo2.toString());
+											AuditConfigLogDetails auditConfigLogDetails = new AuditConfigLogDetails(
+													identity.getUser().getDisplayName(),
+													c.getSimpleName(),
+													m[i].getName().substring(3),
+													oo1.toString(),
+													oo2.toString());
+											
+											logline = logline + dateFormat.format(date) + " " +  jsonService.objectToJson(auditConfigLogDetails) + "\n";
+											log.info(auditConfigLogDetails.toString());
 
 										}
 									}
