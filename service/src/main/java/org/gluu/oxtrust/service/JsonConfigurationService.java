@@ -32,7 +32,9 @@ import org.gluu.config.oxtrust.ImportPersonConfig;
 import org.gluu.config.oxtrust.LdapOxAuthConfiguration;
 import org.gluu.config.oxtrust.LdapOxTrustConfiguration;
 import org.gluu.service.config.ConfigurationFactory;
+import org.gluu.oxtrust.model.AuditConfigLogDetails;
 import org.gluu.oxtrust.model.GluuConfiguration;
+import org.gluu.oxtrust.security.Identity;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.persist.exception.BasePersistenceException;
 import org.gluu.service.JsonService;
@@ -69,6 +71,9 @@ public class JsonConfigurationService implements Serializable {
 
 	@Inject
 	private ConfigurationService configurationService;
+	
+    @Inject
+    private Identity identity;
 
 	public AppConfiguration getOxTrustappConfiguration() {
 		LdapOxTrustConfiguration ldapOxTrustConfiguration = getOxTrustConfiguration();
@@ -241,78 +246,100 @@ public class JsonConfigurationService implements Serializable {
 	
 	public void diff(Object obj1, Object obj2) {
 		// Make sure that 2 objects has same type
-		if (obj1.getClass().equals(obj2.getClass())) {
-			LdapOxTrustConfiguration ldapOxTrustConfiguration = getOxTrustConfiguration();
-			String auditLogLocation = ldapOxTrustConfiguration.getApplication().getAuditLogsLocation();
-			if (auditLogLocation != null && !auditLogLocation.isEmpty()) {
-				File file = new File(
-						auditLogLocation + "_" + new SimpleDateFormat("yyyy-MM-dd").format(new Date()) + ".txt");
-				String logline = "";
+		if (obj1 != null && obj2 != null) {
+			if (obj1.getClass().equals(obj2.getClass())) {
+				LdapOxTrustConfiguration ldapOxTrustConfiguration = getOxTrustConfiguration();
+				String auditLogLocation = ldapOxTrustConfiguration.getApplication().getAuditConfigLogsLocation();
+				if (auditLogLocation != null && !auditLogLocation.isEmpty()) {
+					File file = new File(
+							auditLogLocation + "_" + new SimpleDateFormat("yyyy-MM-dd").format(new Date()) + ".txt");
+					String logline = "";
 
-				try {
-					Class c = Class.forName(obj1.getClass().getName());
-					Method m[] = c.getDeclaredMethods();
-					Object oo1, oo2;
+					try {
+						Class c = Class.forName(obj1.getClass().getName());
+						Method m[] = c.getDeclaredMethods();
+						Object oo1, oo2;
 
-					for (int i = 0; i < m.length; i++) {
-						if (m[i].getName().startsWith("get") || m[i].getName().startsWith("is")) {
-							oo1 = m[i].invoke(obj1, null);
-							oo2 = m[i].invoke(obj2, null);
-							if (oo1 != null || oo2 != null) {
-								Date date = new Date();
-								DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-								if (oo1.getClass().getName().startsWith("org.gluu")) {
-									diff(oo1, oo2);
-									continue;
-								}
-								if (oo1.getClass().isArray()) {
-									if (!Arrays.deepEquals((Object[]) oo1, (Object[]) oo2)) {
-										logline = logline + dateFormat.format(date) + " " + c.getSimpleName()
-												+ " Array Property : " + m[i].getName().substring(2) + " old value : "
-												+ oo1.toString() + " new value :" + oo2.toString() + "\n";
+						for (int i = 0; i < m.length; i++) {
+							if (m[i].getName().startsWith("get") || m[i].getName().startsWith("is")) {
+								oo1 = m[i].invoke(obj1, null);
+								oo2 = m[i].invoke(obj2, null);
+								if (oo1 != null || oo2 != null) {
+									Date date = new Date();
+									DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+									if (oo1.getClass().getName().startsWith("org.gluu")) {
+										diff(oo1, oo2);
+										continue;
 									}
-									continue;
-								}
-								if (oo1 instanceof List) {
-									if (!CollectionUtils.isEqualCollection((List) oo1, (List) oo2)) {
-										logline = logline + dateFormat.format(date) + " " + c.getSimpleName()
-												+ " List Property : " + m[i].getName().substring(2) + " old value : "
-												+ oo1.toString() + " new value :" + oo2.toString() + "\n";
+									if (oo1.getClass().isArray()) {
+										if (!Arrays.deepEquals((Object[]) oo1, (Object[]) oo2)) {
+											
+											AuditConfigLogDetails auditConfigLogDetails = new AuditConfigLogDetails(
+													identity.getUser().getDisplayName(),
+													c.getSimpleName(),
+													m[i].getName().substring(2),
+													oo1.toString(),
+													oo2.toString());
+											
+											logline = logline + dateFormat.format(date) + " " + jsonService.objectToJson(auditConfigLogDetails) + "\n";
+											log.info(auditConfigLogDetails.toString());
+										}
+										continue;
 									}
-									continue;
-								}
-								if (!oo1.equals(oo2)) {
-									if (m[i].getName().startsWith("is")) {
-										logline = logline + dateFormat.format(date) + " " + c.getSimpleName()
-												+ " Property : " + m[i].getName().substring(2) + "-  old value : "
-												+ oo1.toString() + " - new value :" + oo2.toString() + "\n";
-										log.info(c.getSimpleName() + " " + dateFormat.format(date) + " Property : "
-												+ m[i].getName().substring(2) + " old value : " + oo1.toString()
-												+ " new value :" + oo2.toString());
+									if (oo1 instanceof List) {
+										if (!CollectionUtils.isEqualCollection((List) oo1, (List) oo2)) {
+											AuditConfigLogDetails auditConfigLogDetails = new AuditConfigLogDetails(
+													identity.getUser().getDisplayName(),
+													c.getSimpleName(),
+													m[i].getName().substring(2),
+													oo1.toString(),
+													oo2.toString());
+											
+											logline = logline + dateFormat.format(date) + " " +  jsonService.objectToJson(auditConfigLogDetails) + "\n";
+											log.info(auditConfigLogDetails.toString());
+										}
+										continue;
+									}
+									if (!oo1.equals(oo2)) {
+										if (m[i].getName().startsWith("is")) {
+											AuditConfigLogDetails auditConfigLogDetails = new AuditConfigLogDetails(
+													identity.getUser().getDisplayName(),
+													c.getSimpleName(),
+													m[i].getName().substring(2),
+													oo1.toString(),
+													oo2.toString());
+											
+											logline = logline + dateFormat.format(date) + " " + jsonService.objectToJson(auditConfigLogDetails) + "\n";
+											
+											log.info(auditConfigLogDetails.toString());
 
-									} else {
-										logline = logline + dateFormat.format(date) + " " + c.getSimpleName()
-												+ " Property : " + m[i].getName().substring(3) + " old value : "
-												+ oo1.toString() + " new value :" + oo2.toString() + "\n";
-										log.info(dateFormat.format(date) + " " + c.getSimpleName() + " Property : "
-												+ m[i].getName().substring(3) + " old value : " + oo1.toString()
-												+ " new value :" + oo2.toString());
+										} else {
+											AuditConfigLogDetails auditConfigLogDetails = new AuditConfigLogDetails(
+													identity.getUser().getDisplayName(),
+													c.getSimpleName(),
+													m[i].getName().substring(3),
+													oo1.toString(),
+													oo2.toString());
+											
+											logline = logline + dateFormat.format(date) + " " +  jsonService.objectToJson(auditConfigLogDetails) + "\n";
+											log.info(auditConfigLogDetails.toString());
 
+										}
 									}
 								}
 							}
 						}
+						FileUtils.writeStringToFile(file, logline, StandardCharsets.UTF_8, true);
+					} catch (Throwable e) {
+						log.error(e.getMessage());
 					}
-					FileUtils.writeStringToFile(file, logline, StandardCharsets.UTF_8, true);
-				} catch (Throwable e) {
-					log.error(e.getMessage());
+				} else {
+					log.info(
+							"Audit log location is not set to save log files.please set AuditLogsLocation property in oxtrust configuration. ");
 				}
 			} else {
-				log.info(
-						"Audit log location is not set to save log files.please set AuditLogsLocation property in oxtrust configuration. ");
+				log.info("compare object class mismatch");
 			}
-		} else {
-			log.info("compare object class mismatch");
 		}
 	}
 
