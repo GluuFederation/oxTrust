@@ -201,6 +201,7 @@ public class UpdateClientAction implements Serializable {
     private String spontaneousScopeCustomScript;
     private String introspectionCustomScript;
     private String rptClaimsScript;
+    private String scopePattern;
     
     
     Pattern domainPattern = Pattern.compile("^((?!-)[A-Za-z0-9-]{1,63}(?<!-)\\\\.)+[A-Za-z]{2,6}");
@@ -263,6 +264,7 @@ public class UpdateClientAction implements Serializable {
             this.spontaneousScopesScripts = Lists.newArrayList();
             this.backchannelLogoutUri = getStringFromList(client.getAttributes().getBackchannelLogoutUri());
             this.tlsSubjectDn = client.getAttributes().getTlsClientAuthSubjectDn();
+            this.scopePattern = "";
             searchAvailableCustomScriptsforAcr();
         } catch (BasePersistenceException ex) {
             log.error("Failed to prepare lists", ex);
@@ -334,6 +336,7 @@ public class UpdateClientAction implements Serializable {
             this.claimRedirectURIList = getNonEmptyStringList(client.getClaimRedirectURI());
             this.additionalAudienceList = getNonEmptyStringList(client.getAttributes().getAdditionalAudience());
             this.tlsSubjectDn = client.getAttributes().getTlsClientAuthSubjectDn();
+            this.scopePattern = "";
             
             this.postAuthnScripts = searchAvailablePostAuthnCustomScripts().stream()
                     .filter(entity -> client.getAttributes().getPostAuthnScripts().contains(entity.getEntity().getDn()))
@@ -1489,14 +1492,18 @@ public class UpdateClientAction implements Serializable {
     }
 
     public void searchAvailableScopes() {
-        if (this.availableScopes != null) {
-            selectAddedScopes();
-            return;
-        }
+        //if (this.availableScopes != null) {
+        //    selectAddedScopes();
+        //    return;
+        //}
         List<SelectableEntity<Scope>> tmpAvailableScopes = new ArrayList<SelectableEntity<Scope>>();
         List<Scope> scopes = new ArrayList<Scope>();
         try {
-            scopes = scopeService.getAllScopesList(1000);
+        	if(scopePattern !=  null && !scopePattern.isEmpty()) {
+        		scopes = scopeService.searchScopes(scopePattern, 0);
+        	}else {
+        		scopes = scopeService.getAllScopesList(1000);
+        	}
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -2164,6 +2171,7 @@ public class UpdateClientAction implements Serializable {
 		this.resources = resources;
 	}
 
+
 	public List<String> getClientBackChannellogoutUris() {
 		return clientBackChannellogoutUris;
 	}
@@ -2178,5 +2186,13 @@ public class UpdateClientAction implements Serializable {
 
 	public void setAvailableClientBacklogoutUri(String availableClientBacklogoutUri) {
 		this.availableClientBacklogoutUri = availableClientBacklogoutUri;
+	}
+
+	public String getScopePattern() {
+		return scopePattern;
+	}
+
+	public void setScopePattern(String scopePattern) {
+		this.scopePattern = scopePattern;
 	}
 }
