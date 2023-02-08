@@ -224,19 +224,19 @@ public class UpdateTrustRelationshipAction implements Serializable {
 	private String orgUrl;
 
     public List<GluuMetadataSourceType> getMetadataSourceTypesList() {
-        List<GluuMetadataSourceType> metadataSourceTypesList = (Arrays.asList(GluuMetadataSourceType.values()));
-        if (GluuEntityType.FederationAggregate.equals(trustRelationship.getEntityType())) {
-            List<GluuMetadataSourceType> GluuMetadataSourceTypeSubList = new ArrayList<GluuMetadataSourceType>();
-            for (GluuMetadataSourceType enumType : GluuMetadataSourceType.values()) {
-                if (!GluuMetadataSourceType.FEDERATION.equals(enumType)) {
-                    GluuMetadataSourceTypeSubList.add(enumType);
+        
+        List<GluuMetadataSourceType> ret = null;
+        if(GluuEntityType.FederationAggregate.equals(trustRelationship.getEntityType())) {
+            ret = new ArrayList<GluuMetadataSourceType>();
+            for(GluuMetadataSourceType enumType: GluuMetadataSourceType.values()) {
+                if(!GluuMetadataSourceType.FEDERATION.equals(enumType)) {
+                    ret.add(enumType);
                 }
             }
-            return GluuMetadataSourceTypeSubList;
-        } else {
-            return metadataSourceTypesList;
+        }else {
+            ret = Arrays.asList(GluuMetadataSourceType.values());   
         }
-
+        return ret;
     }
 
     public String add() {
@@ -412,6 +412,14 @@ public class UpdateTrustRelationshipAction implements Serializable {
                 break;
             case MDQ:
             	//TODO: Implement MDQ save 
+                if(!update) {
+                    this.trustRelationship.setStatus(GluuStatus.ACTIVE);
+                }
+
+                if(this.trustRelationship.getEntityType().equals(GluuEntityType.SingleSP) && this.trustRelationship.getEntityId() == null) {
+                    facesMessages.add(FacesMessage.SEVERITY_ERROR,"EntityID required for MDQ");
+                    return "invalid_entity_id";
+                }
                 break;
                 
             default:
@@ -1296,6 +1304,16 @@ public class UpdateTrustRelationshipAction implements Serializable {
             return new ArrayList<>();
         }
 
+    }
+
+    public List<GluuSAMLTrustRelationship> getAllMdqFederatedTrustRelationships() {
+
+        try {
+            return trustService.getAllMdqFederatedTrustRelationships();
+        }catch(Exception e) {
+            e.printStackTrace();
+            return new ArrayList<GluuSAMLTrustRelationship>();
+        }
     }
 
 	public Saml2Settings getSaml2Settings() {

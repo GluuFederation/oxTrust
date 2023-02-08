@@ -149,7 +149,7 @@ input[submit] {
 											<f:selectItems
 												value="#{_trustRelationshipAction.entityTypeList}"
 												var="_type" itemLabel="#{_type.displayName}" />
-											<a4j:ajax event="change" render="metadataType, spSingleGroup"
+											<a4j:ajax event="change" render="metadataType, spSingleGroup, mdqUrlId, mdqProviderId, mdqEntityId"
 												execute="@this" />
 										</h:selectOneMenu>
 									</ox:decorate>
@@ -169,7 +169,7 @@ input[submit] {
 														value="#{_trustRelationshipAction.metadataSourceTypesList}"
 														var="_type" itemLabel="#{_type.displayName}" />
 													<a4j:ajax event="change"
-														render="MetadataOperations, spMetaDataUrlGroupId, FederationWizard, FederationWizardEntitySelection, urlId, mdqEntityId"
+														render="MetadataOperations, spMetaDataUrlGroupId, FederationWizard, FederationWizardEntitySelection, urlId, mdqUrlId, mdqProviderId, mdqEntityId"
 														limitRender="true" execute="@this" />
 												</h:selectOneMenu>
 											</ox:decorate>
@@ -288,13 +288,35 @@ input[submit] {
 										</ox:decorate>
 									</h:panelGroup>
 									
-									<h:panelGroup id="mdqEntityId" >
-										<ox:decorate id="mdqUriId"
-											rendered="#{_trustRelationship.spMetaDataSourceType.value eq 'mdq'}"
+									<h:panelGroup id="mdqUrlId">
+										<ox:decorate id="mdqUrlId_"
+											rendered="#{(_trustRelationship.spMetaDataSourceType.value eq 'mdq') and (_trustRelationship.entityType.value eq 'Federation/Aggregate')}"
 											label="#{msgs['trustmanager.mdqUrl']}">
 											<h:inputText styleClass="form-control"
 												size="40" value="#{_trustRelationship.url}"
-												required="true" id="mdquriId" />
+												required="true" id="mdqUrlId__" />
+										</ox:decorate>
+									</h:panelGroup>
+
+									<h:panelGroup id="mdqProviderId">
+										<ox:decorate id="mdqProviderId_"
+											rendered="#{(_trustRelationship.spMetaDataSourceType.value eq 'mdq') and (_trustRelationship.entityType.value eq 'Single SP')}"
+											label="#{msgs['trustmanager.selectMdqProvider']}">
+											<h:selectOneMenu styleClass="rounded form-control"
+												value="#{_trustRelationship.gluuContainerFederation}" required="true"
+												id="mdqProviderId__">
+												<f:selectItem noSelectOption="true" itemLabel="#{msgs['trustmanager.mdqProviderSelectLabel']}"/>
+												<f:selectItems value="#{_trustRelationshipAction.allMdqFederatedTrustRelationships}"
+													var="_type" itemLabel="#{_type.displayName}" itemValue="#{_type.dn}" />
+											</h:selectOneMenu>
+										</ox:decorate>
+									</h:panelGroup>
+									<h:panelGroup id="mdqEntityId">
+										<ox:decorate id="mdqEntityId_"
+											rendered="#{(_trustRelationship.spMetaDataSourceType.value eq 'mdq') and (_trustRelationship.entityType.value eq 'Single SP')}"
+											label="#{msgs['trustmanager.mdqEntityId']}">
+											<h:inputText styleClass="form-control"
+												size="40" value="#{_trustRelationship.entityId}" required="true" id="mdqEntityId__"/>
 										</ox:decorate>
 									</h:panelGroup>
 										
