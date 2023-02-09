@@ -71,6 +71,7 @@ import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuEntityType;
 import org.gluu.oxtrust.model.GluuMetadataSourceType;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
+import org.gluu.oxtrust.model.GluuValidationStatus;
 import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.service.AttributeService;
@@ -414,6 +415,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
             	//TODO: Implement MDQ save 
                 if(!update) {
                     this.trustRelationship.setStatus(GluuStatus.ACTIVE);
+                    this.trustRelationship.setValidationStatus(GluuValidationStatus.SUCCESS);
                 }
 
                 if(this.trustRelationship.getEntityType().equals(GluuEntityType.SingleSP) && this.trustRelationship.getEntityId() == null) {
@@ -1214,7 +1216,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
     }
 
     public List<String> getAvailableEntities() {
-        if (getContainerFederationTr() == null) {
+        if (!trustRelationship.isFederation() || getContainerFederationTr() == null) {
             return null;
         } else {
             if (!getContainerFederationTr().getGluuEntityId().contains(trustRelationship.getEntityId())) {
