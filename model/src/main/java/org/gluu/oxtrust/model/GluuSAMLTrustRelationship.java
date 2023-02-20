@@ -8,6 +8,8 @@ package org.gluu.oxtrust.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +34,6 @@ import org.gluu.persist.model.base.InumEntry;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
-import javax.xml.bind.annotation.XmlTransient;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 @DataEntry
@@ -140,6 +141,7 @@ public class GluuSAMLTrustRelationship extends InumEntry implements Serializable
 	
 	private String certificate;
 
+
 	public String getCertificate() {
 		return certificate;
 	}
@@ -221,15 +223,6 @@ public class GluuSAMLTrustRelationship extends InumEntry implements Serializable
 	public boolean getSpecificRelyingPartyConfig() {
 		return Boolean.parseBoolean(gluuSpecificRelyingPartyConfig);
 	}
-
-	/*public List<DeconstructedTrustRelationship> getDeconstructedTrustRelationships() {
-		return deconstructedTrustRelationships;
-	}
-
-	public void setDeconstructedTrustRelationships(
-			List<DeconstructedTrustRelationship> deconstructedTrustRelationships) {
-		this.deconstructedTrustRelationships = deconstructedTrustRelationships;
-	}*/
 
 	public String getDescription() {
 		return description;
@@ -449,5 +442,42 @@ public class GluuSAMLTrustRelationship extends InumEntry implements Serializable
 
 	public void setEntityType(GluuEntityType entityType) {
 		this.entityType = entityType;
+	}
+
+	public boolean entityTypeIsFederation() {
+
+		return (this.entityType == GluuEntityType.FederationAggregate);
+	}
+
+	public boolean entityTypeIsSingleSp() {
+
+		return (this.entityType == GluuEntityType.SingleSP);
+	}
+
+	public boolean isFileMetadataSourceType() {
+
+		return (this.spMetaDataSourceType == GluuMetadataSourceType.FILE);
+	}
+
+	public boolean isUriMetadataSourceType() {
+
+		return (this.spMetaDataSourceType == GluuMetadataSourceType.URI);
+	}
+
+	public boolean isMdqMetadataSourceType() {
+
+		return (this.spMetaDataSourceType == GluuMetadataSourceType.MDQ);
+	}
+
+	private static class SortByDatasourceTypeComparator implements Comparator<GluuSAMLTrustRelationship> {
+
+		public int compare(GluuSAMLTrustRelationship first, GluuSAMLTrustRelationship second) {
+
+			return first.getSpMetaDataSourceType().getRank() - second.getSpMetaDataSourceType().getRank();
+		}
+	}
+
+	public static void sortByDataSourceType(List<GluuSAMLTrustRelationship> trustRelationships) {
+		Collections.sort(trustRelationships,new SortByDatasourceTypeComparator());
 	}
 }
