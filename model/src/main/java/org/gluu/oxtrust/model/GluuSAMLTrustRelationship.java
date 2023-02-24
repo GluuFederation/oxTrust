@@ -469,6 +469,11 @@ public class GluuSAMLTrustRelationship extends InumEntry implements Serializable
 		return (this.spMetaDataSourceType == GluuMetadataSourceType.MDQ);
 	}
 
+	public boolean isMdqFederation() {
+
+		return (this.entityType == GluuEntityType.FederationAggregate) && (this.spMetaDataSourceType == GluuMetadataSourceType.MDQ);
+	}
+
 	private static class SortByDatasourceTypeComparator implements Comparator<GluuSAMLTrustRelationship> {
 
 		public int compare(GluuSAMLTrustRelationship first, GluuSAMLTrustRelationship second) {

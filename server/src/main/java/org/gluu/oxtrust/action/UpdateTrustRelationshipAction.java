@@ -429,10 +429,15 @@ public class UpdateTrustRelationshipAction implements Serializable {
                 break;
             }
             updateReleasedAttributes(this.trustRelationship);
+
+            if(trustRelationship.isMdqFederation()) {
+                trustRelationship.setFederation(true);
+            }
             if (trustRelationship.getSpMetaDataSourceType().equals(GluuMetadataSourceType.FEDERATION)) {
                 boolean federation = shibboleth3ConfService.isFederation(this.trustRelationship);
                 this.trustRelationship.setFederation(federation);
             }
+            
             trustContactsAction.saveContacts();
             if (update) {
                 try {
