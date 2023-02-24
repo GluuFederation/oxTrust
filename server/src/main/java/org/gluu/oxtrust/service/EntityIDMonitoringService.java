@@ -95,6 +95,7 @@ public class EntityIDMonitoringService {
 			process();
 		} catch (Throwable ex) {
 			log.error("Exception happened while monitoring EntityId", ex);
+			ex.printStackTrace();
 		} finally {
 			this.isActive.set(false);
 		}
@@ -104,7 +105,7 @@ public class EntityIDMonitoringService {
 		log.trace("Starting entityId monitoring process.");
 		log.trace("EVENT_METADATA_ENTITY_ID_UPDATE Starting");
 		for (GluuSAMLTrustRelationship tr : trustService.getAllTrustRelationships().stream()
-				.filter(e -> e.isFederation()).collect(Collectors.toList())) {
+				.filter(e -> e.isFederation()).filter(e -> !e.isMdqFederation()).collect(Collectors.toList())) {
 			log.info("==========================CURRENT TR " + tr.getInum());
 			String idpMetadataFolder = shibboleth3ConfService.getIdpMetadataDir();
 			String metadataFile = idpMetadataFolder + tr.getSpMetaDataFN();
