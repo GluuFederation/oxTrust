@@ -51,8 +51,8 @@
                     xsi:type="DynamicHTTPMetadataProvider" connectionRequestTimeout="PT0S"
                     connectionTimeout="PT0S" socketTimeout="PT0S">
         
-        <MetadataFilter xsi:type="RequiredValidUntil" maxValidityInterval="PT1D"/>
-        <MetadataProvider>$trustRelationship.url</MetadataProvider>
+        <MetadataFilter xsi:type="RequiredValidUntil" maxValidityInterval="P1D"/>
+        <MetadataQueryProtocol>$trustRelationship.url</MetadataQueryProtocol>
     
     #end
 
