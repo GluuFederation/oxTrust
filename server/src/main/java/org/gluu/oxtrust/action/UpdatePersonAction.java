@@ -886,6 +886,7 @@ public class UpdatePersonAction implements Serializable {
 		} else if (comp.getClientId().endsWith("custconfirmpasswordId")) {
 			this.confirmPassword = (String) value;
 		}
+		this.confirmPassword = this.confirmPassword == null ? "" : this.confirmPassword;
 		if (canValidate) {
 			pattern = Pattern.compile(validation.getRegexp());
 		}
