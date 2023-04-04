@@ -12,6 +12,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.gluu.config.oxtrust.AppConfiguration;
+import org.gluu.util.ArrayHelper;
 
 /**
  * Provides service to protect APIs Rest service endpoints with UMA scope.
@@ -51,12 +52,8 @@ public class ApiUmaProtectionService extends BaseUmaProtectionService implements
 	}
 
 	@Override
-	public String getUmaScope() {
-		StringBuffer buffer = new StringBuffer();
-		buffer.append(appConfiguration.getApiUmaScopes()[0]);
-		buffer.append(" ");
-		buffer.append(appConfiguration.getApiUmaScopes()[1]);
-		return buffer.toString();
+	public String[] getUmaScope() {
+		return ArrayHelper.arrayClone(appConfiguration.getApiUmaScopes());
 	}
 
 }

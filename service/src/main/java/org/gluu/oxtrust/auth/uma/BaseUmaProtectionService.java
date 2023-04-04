@@ -3,6 +3,7 @@ package org.gluu.oxtrust.auth.uma;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
@@ -166,7 +167,7 @@ public abstract class BaseUmaProtectionService implements IProtectionService, Se
 					getUmaResourceId(), scopes);
 		} else {
 			rptTokenValidationResult = umaPermissionService.validateRptToken(patToken, authorization,
-					getUmaResourceId(), getUmaScope());
+					getUmaResourceId(), Arrays.asList(getUmaScope()));
 		}
 
 		if (rptTokenValidationResult.getFirst()) {
@@ -212,7 +213,7 @@ public abstract class BaseUmaProtectionService implements IProtectionService, Se
 
 	public abstract String getUmaResourceId();
 
-	public abstract String getUmaScope();
+	public abstract String[] getUmaScope();
 
     /**
      * This method checks whether the authorization header is present and valid
