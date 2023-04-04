@@ -44,8 +44,8 @@ public class ScimUmaProtectionService extends BaseUmaProtectionService implement
 		return appConfiguration.getScimUmaResourceId();
 	}
 
-	public String getUmaScope() {
-		return appConfiguration.getScimUmaScope();
+	public String[] getUmaScope() {
+		return new String[] { appConfiguration.getScimUmaScope() };
 	}
 
 }
