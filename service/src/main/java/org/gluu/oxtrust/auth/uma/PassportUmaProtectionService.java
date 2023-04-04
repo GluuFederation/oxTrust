@@ -44,8 +44,8 @@ public class PassportUmaProtectionService extends BaseUmaProtectionService imple
 		return appConfiguration.getPassportUmaResourceId();
 	}
 
-	public String getUmaScope() {
-		return appConfiguration.getPassportUmaScope();
+	public String[] getUmaScope() {
+		return new String[] { appConfiguration.getPassportUmaScope() };
 	}
 
 }
