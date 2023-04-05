@@ -177,6 +177,16 @@
 				render="selectedClientUrisId"
 				text="#{updateClientAction.availableClientlogoutUri}"
 				textId="clientLogoutTextId" />
+			
+			<ox:inputTextDialog
+					acceptMethod="#{updateClientAction.acceptSelectClientBackLogoutUri()}"
+					cancelMethod="#{updateClientAction.cancelClientBackLogoutUri()}"
+					dialogWidth="600" id="backchannelLogoutUris"
+					inputLabel="#{msgs['client.logoutURI']}" inputWidth="80"
+					label="#{msgs['client.logoutURI']}" maxLength="256"
+					queue="clientQueue" render="selectedClientBackLogoutUrisId"
+					text="#{updateClientAction.availableClientBacklogoutUri}"
+					textId="clientBackLogoutTextId" />
 
 			<ox:changeClientPasswordDialog id="clientPassword"
 				label="#{msgs['client.changeClientSecret']}"
