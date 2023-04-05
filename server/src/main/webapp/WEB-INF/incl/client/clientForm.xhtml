@@ -656,26 +656,87 @@
 							<!-- Logout Tab -->
 							<div class="tab-pane box box-primary" id="logout">								
 								<h:panelGroup columns="1" width="100%">
-								<div class="col-sm-6 col-lg-6" style="padding: 0px;">									
-									<ox:decorate id="clientLogoutUrls" label="#{msgs['clientForm.frontChannelLogoutURI']}"
-												leftClass="col-sm-6" rightClass="col-sm-6">
-												<h:inputText id="clientLogoutUrlsId"
-													value="#{_client.logoutUri}" style="width:100%"
-													styleClass="form-control clientLogoutUrlsId" />
-									</ox:decorate>
+								<div class="col-sm-9 col-lg-9" style="padding: 0px;">									
+									
+									<b:panel title="Front Channel Logout URI"
+										id="clientLogoutUrls" look="primary">
+										<h:panelGroup id="selectedClientUrisId">
+											<h:panelGroup columns="1" width="100%" border="0"
+												cellpadding="0" cellspacing="0">
+												<a4j:repeat value="#{_clientAction.clientlogoutUris}"
+													rowKeyVar="_urisIdx" var="_uri" iterationStatusVar="loop">
+													<div class="row-fluid">
+														<div class="#{(loop.index % 2 == 0) ?'odd':'even'}"
+															style="overflow-x: scroll;">
+															<h:outputText value="#{empty _uri ? _uri : _uri}" />
+															<h:outputText value="&#160;" />
+															<div class="span6 pull-right">
+																<a4j:commandLink
+																	styleClass="glyphicon glyphicon-remove"
+																	action="#{_clientAction.removeClientLogoutURI(_uri)}"
+																	execute="@this" render="selectedClientUrisId"
+																	eventsQueue="clientQueue">
+																	<!-- <h:graphicImage value="/img/remove.gif" /> -->
+																</a4j:commandLink>
+															</div>
+														</div>
+													</div>
+													<br />
+												</a4j:repeat>
+												<p:spacer height="16" />
+												<a4j:commandButton
+													styleClass="btn btn-primary addLogoutUriButton"
+													style="margin-top:5px" value="Add Frontchannel Logout URI"
+													oncomplete="#{rich:component('clientLogoutUri:inputText')}.show();"
+													execute="@this" eventsQueue="clientQueue" />
+											</h:panelGroup>
+										</h:panelGroup>
+									</b:panel>
 									<ox:decorate id="redirectLogoutUrls" label="#{msgs['clientForm.redirectLogoutURIs']}"
 												leftClass="col-sm-6" rightClass="col-sm-6">
 												<h:inputText id="redirectLogoutUrlsId"
 													value="#{_client.oxAuthPostLogoutRedirectURIs}" style="width:100%"
 													styleClass="form-control redirectLogoutUrlsId" />
 									</ox:decorate>
-									<ox:decorate id="backchannelLogoutUri" label="#{msgs['clientForm.backChannelLogoutURI']}"
-												leftClass="col-sm-6" rightClass="col-sm-6">
-												<h:inputText id="backchannelLogoutUriId"
-													value="#{_clientAction.backchannelLogoutUri}" style="width:100%"
-													styleClass="form-control backchannelLogoutUriId" />
-									</ox:decorate>
-									<ox:decorate id="backChannellogoutSessionRequired"
+									
+										<b:panel title="Back Channel Logout URI"
+											id="backchannelLogoutUri" look="primary">
+											<h:panelGroup id="selectedClientBackLogoutUrisId">
+												<h:panelGroup columns="1" width="100%" border="0"
+													cellpadding="0" cellspacing="0">
+													<a4j:repeat
+														value="#{_clientAction.clientBackChannellogoutUris}"
+														rowKeyVar="_urisIdx" var="_uri" iterationStatusVar="loop">
+														<div class="row-fluid">
+															<div class="#{(loop.index % 2 == 0) ?'odd':'even'}"
+																style="overflow-x: scroll;">
+																<h:outputText value="#{empty _uri ? _uri : _uri}" />
+																<h:outputText value="&#160;" />
+																<div class="span6 pull-right">
+																	<a4j:commandLink
+																		styleClass="glyphicon glyphicon-remove"
+																		action="#{_clientAction.removeClientBackLogoutURI(_uri)}"
+																		execute="@this"
+																		render="selectedClientBackLogoutUrisId"
+																		eventsQueue="clientQueue">
+																		<!-- <h:graphicImage value="/img/remove.gif" /> -->
+																	</a4j:commandLink>
+																</div>
+															</div>
+														</div>
+														<br />
+													</a4j:repeat>
+													<p:spacer height="16" />
+													<a4j:commandButton
+														styleClass="btn btn-primary addLogoutUriButton"
+														style="margin-top:5px" value="Add Back channel Logout URI"
+														oncomplete="#{rich:component('backchannelLogoutUris:inputText')}.show();"
+														execute="@this" eventsQueue="clientQueue" />
+												</h:panelGroup>
+											</h:panelGroup>
+										</b:panel>
+										<p:spacer height="16" />
+										<ox:decorate id="backChannellogoutSessionRequired"
 												label="Back Channel logout Session Required"
 												leftClass="col-sm-6" rightClass="col-sm-6">
 												<h:selectBooleanCheckbox
