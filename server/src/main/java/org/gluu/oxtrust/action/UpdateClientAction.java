@@ -155,6 +155,7 @@ public class UpdateClientAction implements Serializable {
     private List<String> loginUris = Lists.newArrayList();
     private List<String> logoutUris;
     private List<String> clientlogoutUris;
+    private List<String> clientBackChannellogoutUris;
     private List<String> claimRedirectURIList;
     private List<String> additionalAudienceList;
 
@@ -180,6 +181,7 @@ public class UpdateClientAction implements Serializable {
     private String availableLoginUri = HTTPS;
     private String availableLogoutUri = HTTPS;
     private String availableClientlogoutUri = HTTPS;
+    private String availableClientBacklogoutUri = HTTPS;
     private String availableContact = "";
     private String availableRequestUri = HTTPS;
     private String availableAuthorizedOrigin = HTTPS;
@@ -238,6 +240,8 @@ public class UpdateClientAction implements Serializable {
         this.client.setSubjectType(OxAuthSubjectType.PAIRWISE);
         try {
             this.loginUris = getNonEmptyStringList(client.getOxAuthRedirectURIs());
+            this.clientlogoutUris = getNonEmptyStringList(client.getLogoutUri());
+            this.clientBackChannellogoutUris = getNonEmptyStringList(client.getAttributes().getBackchannelLogoutUri());
             this.scopes = getInitialEntries();
             this.claims = getInitialClaimDisplayNameEntries();
             this.responseTypes = getInitialResponseTypes();
@@ -264,7 +268,15 @@ public class UpdateClientAction implements Serializable {
         return OxTrustConstants.RESULT_SUCCESS;
     }
 
-    private List<Scope> getInitialEntries() {
+	private List<String> getNonEmptyStringList(List<String> currentList) {
+    	        if (currentList != null && currentList.size() > 0) {
+    	            return new ArrayList<String>(currentList);
+    	        } else {
+    	            return new ArrayList<String>();
+    	        }
+	}
+
+	private List<Scope> getInitialEntries() {
         List<Scope> existingScopes = new ArrayList<Scope>();
         if ((client.getOxAuthScopes() == null) || (client.getOxAuthScopes().size() == 0)) {
             return existingScopes;
@@ -304,6 +316,9 @@ public class UpdateClientAction implements Serializable {
         }
         try {
             this.loginUris = getNonEmptyStringList(client.getOxAuthRedirectURIs());
+
+            this.clientlogoutUris = getNonEmptyStringList(client.getLogoutUri());
+            this.clientBackChannellogoutUris = getNonEmptyStringList(client.getAttributes().getBackchannelLogoutUri());
             this.scopes = getInitialEntries();
             this.claims = getInitialClaimDisplayNameEntries();
             this.responseTypes = getInitialResponseTypes();
@@ -351,16 +366,6 @@ public class UpdateClientAction implements Serializable {
 
         return OxTrustConstants.RESULT_SUCCESS;
     }
-
-   
-
-    private List<String> getNonEmptyStringList(List<String> currentList) {
-        if (currentList != null && currentList.size() > 0) {
-            return new ArrayList<String>(currentList);
-        } else {
-            return new ArrayList<String>();
-        }
-    }
     
     private String getStringFromList(List<String> currentList) {
         if (currentList != null && currentList.size() > 0) {
@@ -407,6 +412,8 @@ public class UpdateClientAction implements Serializable {
             this.client.setExp(null);
         }
         updateLoginURIs();
+        updateLogoutURIs();
+        updateBackChannelLogoutURIs();
         updateScopes();
         updateClaims();
         updateResponseTypes();
@@ -417,7 +424,6 @@ public class UpdateClientAction implements Serializable {
         updateAuthorizedOrigins();
         updateClaimredirectUri();
         updateAdditionalAudience();
-        updateBackchannelLogoutUri();
         trimUriProperties();
         client.getAttributes().setTlsClientAuthSubjectDn(tlsSubjectDn);
         this.client.setEncodedClientSecret(encryptionService.encrypt(this.client.getOxAuthClientSecret()));
@@ -523,6 +529,10 @@ public class UpdateClientAction implements Serializable {
 
     public void removeClientLogoutURI(String uri) {
         removeFromList(this.clientlogoutUris, uri);
+    }
+
+    public void removeClientBackLogoutURI(String uri) {
+        removeFromList(this.clientBackChannellogoutUris, uri);
     }
 
     public void removeClaimRedirectURI(String uri) {
@@ -823,6 +833,19 @@ public class UpdateClientAction implements Serializable {
         }
         this.availableClientlogoutUri = HTTPS;
     }
+    
+    public void acceptSelectClientBackLogoutUri() {
+        if (StringHelper.isEmpty(this.availableClientBacklogoutUri)) {
+            return;
+        }
+        if (this.availableClientBacklogoutUri.equalsIgnoreCase(HTTPS)) {
+            return;
+        }
+        if (!this.clientBackChannellogoutUris.contains(this.availableClientBacklogoutUri)) {
+            this.clientBackChannellogoutUris.add(this.availableClientBacklogoutUri);
+        }
+        this.availableClientBacklogoutUri = HTTPS;
+    }
 
     public void acceptSelectClaimRedirectUri() {
         if (StringHelper.isEmpty(this.availableClaimRedirectUri)) {
@@ -917,6 +940,10 @@ public class UpdateClientAction implements Serializable {
     public void cancelClientLogoutUri() {
         this.availableClientlogoutUri = HTTPS;
     }
+    
+    public void cancelClientBackLogoutUri() {
+        this.availableClientBacklogoutUri = HTTPS;
+    }
 
     public void cancelClaimRedirectUri() {
         this.availableClaimRedirectUri = HTTPS;
@@ -949,6 +976,43 @@ public class UpdateClientAction implements Serializable {
             tmpUris.add(StringHelper.trimAll(uri));
         }
         this.client.setOxAuthRedirectURIs(tmpUris);
+    }
+    
+    private void updateLogoutURIs() {
+        if (this.clientlogoutUris == null || this.clientlogoutUris.size() == 0) {
+            this.client.setLogoutUri(null);
+            return;
+        }
+        List<String> tmpUris = new ArrayList<String>();
+        for (String uri : this.clientlogoutUris) {
+            tmpUris.add(StringHelper.trimAll(uri));
+        }
+        this.client.setLogoutUri(tmpUris);
+    }
+    
+    private void updateBackChannelLogoutURIs() {
+        if (this.clientBackChannellogoutUris == null || this.clientBackChannellogoutUris.size() == 0) {
+        	client.getAttributes().setBackchannelLogoutUri(new ArrayList<String>());
+            return;
+        }
+        List<String> tmpUris = new ArrayList<String>();
+        for (String uri : this.clientBackChannellogoutUris) {
+            tmpUris.add(StringHelper.trimAll(uri));
+        }
+        
+        client.getAttributes().getBackchannelLogoutUri().clear();
+        client.getAttributes().getBackchannelLogoutUri().addAll(tmpUris);
+    }
+    
+    private void updateBackchannelLogoutUri() {
+    	if(client.getAttributes().getBackchannelLogoutUri() == null) {
+    		client.getAttributes().setBackchannelLogoutUri(new ArrayList<String>());
+    	}
+    	
+    	if(!client.getAttributes().getBackchannelLogoutUri().contains(backchannelLogoutUri.trim())) {    	
+        client.getAttributes().getBackchannelLogoutUri().add(backchannelLogoutUri);
+    	}
+        
     }
 
     private void updateContacts() {
@@ -1010,17 +1074,6 @@ public class UpdateClientAction implements Serializable {
         	tmpAdditionalAudience.add(StringHelper.trimAll(additionalAudience));
         }
         client.getAttributes().setAdditionalAudience(tmpAdditionalAudience);
-        
-    }
-    
-    private void updateBackchannelLogoutUri() {
-    	if(client.getAttributes().getBackchannelLogoutUri() == null) {
-    		client.getAttributes().setBackchannelLogoutUri(new ArrayList<String>());
-    	}
-    	
-    	if(!client.getAttributes().getBackchannelLogoutUri().contains(backchannelLogoutUri.trim())) {    	
-        client.getAttributes().getBackchannelLogoutUri().add(backchannelLogoutUri);
-    	}
         
     }
 
@@ -2096,5 +2149,21 @@ public class UpdateClientAction implements Serializable {
 
 	public void setScopePattern(String scopePattern) {
 		this.scopePattern = scopePattern;
+	}
+
+	public List<String> getClientBackChannellogoutUris() {
+		return clientBackChannellogoutUris;
+	}
+
+	public void setClientBackChannellogoutUris(List<String> clientBackChannellogoutUris) {
+		this.clientBackChannellogoutUris = clientBackChannellogoutUris;
+	}
+
+	public String getAvailableClientBacklogoutUri() {
+		return availableClientBacklogoutUri;
+	}
+
+	public void setAvailableClientBacklogoutUri(String availableClientBacklogoutUri) {
+		this.availableClientBacklogoutUri = availableClientBacklogoutUri;
 	}
 }
