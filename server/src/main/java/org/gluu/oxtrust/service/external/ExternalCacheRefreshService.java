@@ -16,6 +16,7 @@ import org.gluu.model.custom.script.CustomScriptType;
 import org.gluu.model.custom.script.conf.CustomScriptConfiguration;
 import org.gluu.model.custom.script.model.bind.BindCredentials;
 import org.gluu.model.custom.script.type.user.CacheRefreshType;
+import org.gluu.oxtrust.ldap.cache.model.GluuSimplePerson;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.service.custom.script.ExternalScriptService;
 import org.gluu.util.StringHelper;
@@ -41,6 +42,25 @@ public class ExternalCacheRefreshService extends ExternalScriptService {
 			CacheRefreshType externalType = (CacheRefreshType) customScriptConfiguration.getExternalType();
 			Map<String, SimpleCustomProperty> configurationAttributes = customScriptConfiguration.getConfigurationAttributes();
 			return externalType.updateUser(user, configurationAttributes);
+		} catch (Exception ex) {
+			log.error(ex.getMessage(), ex);
+            saveScriptError(customScriptConfiguration.getCustomScript(), ex);
+		}
+
+		return false;
+	}
+
+	public boolean executeExternalUpdateSourceUserMethod(CustomScriptConfiguration customScriptConfiguration, GluuSimplePerson user) {
+		try {
+            CacheRefreshType externalType = (CacheRefreshType) customScriptConfiguration.getExternalType();
+            Map<String, SimpleCustomProperty> configurationAttributes = customScriptConfiguration.getConfigurationAttributes();
+            
+            // Execute only if API > 3
+            if (externalType.getApiVersion() > 3) {
+                log.debug("Executing python 'updateSourceUser' method");
+
+				return externalType.updateSourceUser(user, configurationAttributes);
+            }
 		} catch (Exception ex) {
 			log.error(ex.getMessage(), ex);
             saveScriptError(customScriptConfiguration.getCustomScript(), ex);
@@ -89,6 +109,18 @@ public class ExternalCacheRefreshService extends ExternalScriptService {
 		boolean result = true;
 		for (CustomScriptConfiguration customScriptConfiguration : this.customScriptConfigurations) {
 			result &= executeExternalUpdateUserMethod(customScriptConfiguration, user);
+			if (!result) {
+				return result;
+			}
+		}
+
+		return result;
+	}
+
+	public boolean executeExternalUpdateSourceUserMethods(GluuSimplePerson user) {
+		boolean result = true;
+		for (CustomScriptConfiguration customScriptConfiguration : this.customScriptConfigurations) {
+			result &= executeExternalUpdateSourceUserMethod(customScriptConfiguration, user);
 			if (!result) {
 				return result;
 			}
