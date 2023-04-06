@@ -168,7 +168,7 @@ public class OxAuthClient extends Entry implements Serializable {
 	private String[] claimRedirectURI;
 
 	@AttributeName(name = "oxAuthLogoutURI")
-	private String logoutUri;
+	private List<String> logoutUri;
 
 	@AttributeName(name = "oxAuthLogoutSessionRequired")
 	private Boolean logoutSessionRequired = Boolean.FALSE;
@@ -573,11 +573,11 @@ public class OxAuthClient extends Entry implements Serializable {
 		this.postLogoutRedirectUris = postLogoutRedirectUris;
 	}
 
-	public String getLogoutUri() {
+	public List<String> getLogoutUri() {
 		return logoutUri;
 	}
 
-	public void setLogoutUri(String logoutUri) {
+	public void setLogoutUri(List<String> logoutUri) {
 		this.logoutUri = logoutUri;
 	}
 
