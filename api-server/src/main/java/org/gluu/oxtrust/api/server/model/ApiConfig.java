@@ -20,8 +20,8 @@ public class ApiConfig implements Serializable{
 	private String apiUmaClientKeyId;
 	@JsonProperty("apiUmaResourceId")
 	private String apiUmaResourceId;
-	@JsonProperty("apiUmaScopes")
-	private String[] apiUmaScopes = null;
+	@JsonProperty("apiUmaScope")
+	private String apiUmaScope;
 	@JsonProperty("apiUmaClientKeyStoreFile")
 	private String apiUmaClientKeyStoreFile;
 	@JsonProperty("apiUmaClientKeyStorePassword")
@@ -61,14 +61,14 @@ public class ApiConfig implements Serializable{
 		this.apiUmaResourceId = apiUmaResourceId;
 	}
 
-	@JsonProperty("apiUmaScopes")
-	public String[] getApiUmaScopes() {
-		return apiUmaScopes;
+	@JsonProperty("apiUmaScope")
+	public String getApiUmaScope() {
+		return apiUmaScope;
 	}
 
 	@JsonProperty("apiUmaScopes")
-	public void setApiUmaScopes(String[] strings) {
-		this.apiUmaScopes = strings;
+	public void setApiUmaScope(String apiUmaScope) {
+		this.apiUmaScope = apiUmaScope;
 	}
 
 	@JsonProperty("apiUmaClientKeyStoreFile")
