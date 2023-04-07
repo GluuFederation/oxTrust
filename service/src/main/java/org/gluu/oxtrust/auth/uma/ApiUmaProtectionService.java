@@ -53,7 +53,7 @@ public class ApiUmaProtectionService extends BaseUmaProtectionService implements
 
 	@Override
 	public String[] getUmaScope() {
-		return ArrayHelper.arrayClone(appConfiguration.getApiUmaScopes());
+		return new String[] { appConfiguration.getApiUmaScope() };
 	}
 
 }
