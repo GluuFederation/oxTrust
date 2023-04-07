@@ -62,7 +62,7 @@ public class ApiConfigWebRecource extends BaseWebResource {
 			apiConfig.setApiUmaClientKeyStorePassword(
 					encryptionService.decrypt(oxTrustappConfiguration.getApiUmaClientKeyStorePassword()));
 			apiConfig.setApiUmaResourceId(oxTrustappConfiguration.getApiUmaResourceId());
-			apiConfig.setApiUmaScopes(oxTrustappConfiguration.getApiUmaScopes());
+			apiConfig.setApiUmaScope(oxTrustappConfiguration.getApiUmaScope());
 			apiConfig.setOxTrustApiTestMode(oxTrustappConfiguration.isOxTrustApiTestMode());
 			return Response.ok(apiConfig).build();
 		} catch (Exception e) {
@@ -98,8 +98,8 @@ public class ApiConfigWebRecource extends BaseWebResource {
 			if (!Strings.isNullOrEmpty(apiConfig.getApiUmaResourceId())) {
 				appConfiguration.setApiUmaResourceId(apiConfig.getApiUmaResourceId());
 			}
-			if (apiConfig.getApiUmaScopes() != null) {
-				appConfiguration.setApiUmaScopes(apiConfig.getApiUmaScopes());
+			if (apiConfig.getApiUmaScope() != null) {
+				appConfiguration.setApiUmaScope(apiConfig.getApiUmaScope());
 			}
 			appConfiguration.setOxTrustApiTestMode(apiConfig.getOxTrustApiTestMode());
 			jsonConfigurationService.saveOxTrustappConfiguration(appConfiguration);
