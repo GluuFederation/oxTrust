@@ -351,16 +351,10 @@
             "type": "string",
             "minLength": 1
         },
-        "apiUmaScopes": {
-            "id": "apiUmaScopes",
-            "type": "array",
-            "minItems": 0,
-            "uniqueItems": false,
-            "additionalItems": true,
-            "items": {
-                "type": "string",
-                "minLength": 1
-            }
+        "apiUmaScope": {
+            "id": "umaScope",
+            "type": "string",
+            "minLength": 1
         },
         "apiUmaClientKeyStoreFile": {
             "id": "apiClientKeyStoreFile",
@@ -748,7 +742,7 @@
         "apiUmaClientId",
         "apiUmaClientKeyId",
         "apiUmaResourceId",
-        "apiUmaScopes",
+        "apiUmaScope",
         "apiUmaClientKeyStoreFile",
         "apiUmaClientKeyStorePassword",
         "passportUmaClientId",
