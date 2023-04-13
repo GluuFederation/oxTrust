@@ -15,9 +15,9 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.min-version>3.3.9</maven.min-version>
 
-		<gluu.parent.version>4.5.0.Final</gluu.parent.version>
+		<gluu.parent.version>4.5.0.sp1</gluu.parent.version>
 		<oxcore.version>4.5.0.sp1</oxcore.version>
-		<oxauth.version>4.5.0.Final</oxauth.version>
+		<oxauth.version>4.5.0.sp1</oxauth.version>
 
 		<jettison.version>1.5.4</jettison.version>
 
