@@ -10,7 +10,7 @@
 	<parent>
 		<groupId>org.gluu</groupId>
 		<artifactId>oxtrust</artifactId>
-		<version>4.5.0.sp1</version>
+		<version>4.5.1-SNAPSHOT</version>
 	</parent>
 
 	<!--repositories>
