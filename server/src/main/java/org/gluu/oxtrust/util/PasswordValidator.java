@@ -49,6 +49,9 @@ public class PasswordValidator implements Validator<Object> {
 		if (hasValidation) {
 			matcher = pattern.matcher(value.toString());
 		}
+		if (facesMessages == null) {
+			facesMessages = CdiUtil.bean(FacesMessages.class);
+		}
 		if (hasValidation && !matcher.matches()) {
 			FacesMessage msg = new FacesMessage(
 					facesMessages.evalResourceAsString("#{msgs['password.validation.invalid']}"));
