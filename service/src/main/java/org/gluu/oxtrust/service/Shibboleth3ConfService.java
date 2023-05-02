@@ -59,12 +59,12 @@ import org.gluu.service.config.ConfigurationFactory;
 import org.gluu.service.document.store.conf.DocumentStoreType;
 import org.gluu.service.document.store.service.DocumentStoreService;
 import org.gluu.service.document.store.service.LocalDocumentStoreService;
+import org.gluu.util.ArrayHelper;
 import org.gluu.util.INumGenerator;
 import org.gluu.util.OxConstants;
 import org.gluu.util.StringHelper;
 import org.gluu.util.Util;
 import org.gluu.util.exception.InvalidConfigurationException;
-import org.gluu.util.io.HTTPFileDownloader;
 import org.gluu.util.security.StringEncrypter.EncryptionException;
 import org.gluu.xml.GluuErrorHandler;
 import org.gluu.xml.XMLValidator;
@@ -858,19 +858,19 @@ public class Shibboleth3ConfService implements Serializable {
             throw new InvalidConfigurationException(
                     "Failed to save SP meta-data file due to undefined IDP root folder");
         }
-        HTTPFileDownloader.setEasyhttps(new Protocol("https", new EasyCASSLProtocolSocketFactory(), 443));
-        String spMetadataFileContent = HTTPFileDownloader.getResource(spMetaDataURL, "application/xml, text/xml", null,
-                null);
-
-        if (StringHelper.isEmpty(spMetadataFileContent)) {
-            return null;
-        }
 
         String idpMetadataTempFolder = getIdpMetadataTempDir();
         String tempFileName = getTempMetadataFilename(idpMetadataTempFolder, spMetadataFileName);
         String spMetadataFile = idpMetadataTempFolder + tempFileName;
+
         try {
-            boolean result = documentStoreService.saveDocument(spMetadataFile, spMetadataFileContent, UTF_8, List.of("oxtrust-server","Shibboleth"));
+            byte[] spMetadataFileContent = samlMetadataParser.downloadMetadata(spMetaDataURL);
+
+            if ((spMetadataFileContent == null) || (spMetadataFileContent.length == 0)) {
+                return null;
+            }
+
+            boolean result = documentStoreService.saveDocumentStream(spMetadataFile, new ByteArrayInputStream(spMetadataFileContent), List.of("oxtrust-server","Shibboleth"));
             if (result) {
                 return tempFileName;
             }
@@ -1239,17 +1239,16 @@ public class Shibboleth3ConfService implements Serializable {
                     "Failed to save meta-data file due to undefined federation root folder");
         }
 
-        HTTPFileDownloader.setEasyhttps(new Protocol("https", new EasyCASSLProtocolSocketFactory(), 443));
-        String metadataFileContent = HTTPFileDownloader.getResource(spMetaDataURL, "application/xml, text/xml", null,
-                null);
-
-        if (StringHelper.isEmpty(metadataFileContent)) {
-            return false;
-        }
-
         String spMetadataFile = getIdpMetadataDir() + metadataFileName;
+
         try {
-            return documentStoreService.saveDocument(spMetadataFile, metadataFileContent, UTF_8, List.of("oxtrust-server","Shibboleth"));
+            byte[] metadataFileContent = samlMetadataParser.downloadMetadata(spMetaDataURL);
+
+            if ((metadataFileContent == null) || (metadataFileContent.length == 0)) {
+                return false;
+            }
+
+            return documentStoreService.saveDocumentStream(spMetadataFile, new ByteArrayInputStream(metadataFileContent), List.of("oxtrust-server","Shibboleth"));
         } catch (Exception ex) {
             log.error("Failed to write meta-data file '{}'", spMetadataFile, ex);
         }

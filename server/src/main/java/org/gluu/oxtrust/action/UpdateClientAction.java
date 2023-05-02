@@ -11,6 +11,7 @@ import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -30,10 +31,19 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.httpclient.protocol.Protocol;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.config.CookieSpecs;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.gluu.config.oxtrust.AppConfiguration;
@@ -65,18 +75,15 @@ import org.gluu.oxtrust.service.EncryptionService;
 import org.gluu.oxtrust.service.OxTrustAuditService;
 import org.gluu.oxtrust.service.ScopeService;
 import org.gluu.oxtrust.service.uma.ResourceSetService;
-import org.gluu.oxtrust.util.EasyCASSLProtocolSocketFactory;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.annotation.ObjectClass;
 import org.gluu.persist.exception.BasePersistenceException;
-import org.gluu.persist.model.base.BaseEntry;
 import org.gluu.service.LookupService;
 import org.gluu.service.custom.script.AbstractCustomScriptService;
 import org.gluu.service.security.Secure;
 import org.gluu.util.SelectableEntityHelper;
 import org.gluu.util.StringHelper;
 import org.gluu.util.Util;
-import org.gluu.util.io.HTTPFileDownloader;
 import org.gluu.util.security.StringEncrypter.EncryptionException;
 import org.oxauth.persistence.model.ClientAttributes;
 import org.oxauth.persistence.model.Scope;
@@ -2002,10 +2009,14 @@ public class UpdateClientAction implements Serializable {
         return availableSpontaneousScripts;
     }
 
-    private boolean loadSector(String sectorIdentifierUri) {
-        HTTPFileDownloader.setEasyhttps(new Protocol("https", new EasyCASSLProtocolSocketFactory(), 443));
-        String sectoruriContent = HTTPFileDownloader.getResource(sectorIdentifierUri, "application/json", null, null);
-        try {
+    private boolean loadSector(String sectorIdentifierUri) throws ClientProtocolException, IOException {
+    	String sectoruriContent = downloadSectorIdentifierUri(sectorIdentifierUri);
+    	
+    	if (sectoruriContent == null) {
+    		return false;
+    	}
+
+    	try {
             JSONArray uris = new JSONArray(sectoruriContent);
             this.loginUris.clear();
             for (int i = 0; i < uris.length(); i++) {
@@ -2019,6 +2030,44 @@ public class UpdateClientAction implements Serializable {
             return false;
         }
     }
+
+    private String getResponseContent(HttpResponse httpResponse) throws IOException {
+        if ((httpResponse == null) || (httpResponse.getStatusLine().getStatusCode() != HttpStatus.SC_OK)) {
+        	return null;
+        }
+
+        HttpEntity entity = httpResponse.getEntity();
+		byte[] responseBytes = new byte[0];
+		if (entity != null) {
+			responseBytes = EntityUtils.toByteArray(entity);
+		}
+
+    	// Consume response content
+		if (entity != null) {
+			EntityUtils.consume(entity);
+		}
+
+    	return new String(responseBytes, StandardCharsets.UTF_8);
+	}
+
+    private String downloadSectorIdentifierUri(String sectorIdentifierUri) throws IOException, ClientProtocolException {
+		HttpGet httpGet = new HttpGet();
+    	httpGet.setHeader("Accept", "application/json");
+
+    	String fileContent = null;
+    	try ( CloseableHttpClient httpClient = HttpClients.custom()
+				.setDefaultRequestConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build())
+				.build() ) {
+    		HttpResponse httpResponse = httpClient.execute(httpGet);
+    		fileContent = getResponseContent(httpResponse);
+		}
+
+        if (fileContent == null) {
+            return null;
+        }
+
+        return fileContent;
+	}
 
     private boolean uriIsInValid(String uri) {
         URL url;
