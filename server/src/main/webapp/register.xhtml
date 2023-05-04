@@ -151,9 +151,11 @@ iframe {
 											template="/WEB-INF/incl/layout/edit.xhtml">
 											<h:inputSecret autocomplete="off" class="form-control"
 												id="password" binding="#{passwordComponent}" maxlength="60"
+												validator="#{registerPersonAction.validateConfirmPassword}"
 												redisplay="true" required="true" size="40" tabindex="6"
 												value="#{registerPersonAction.password}" />
 											<h:outputText value=" " />
+											<b:message/>
 										</ox:decorate>
 										<ox:decorate id="repeatPasswordField"
 											label="#{msgs['register.repeatPassword']}"
@@ -162,12 +164,14 @@ iframe {
 											<h:inputSecret autocomplete="off" class="form-control"
 												id="passwordValidation" maxlength="60" redisplay="true"
 												required="true" size="40" tabindex="7"
+												validator="#{registerPersonAction.validateConfirmPassword}"
 												value="#{registerPersonAction.repeatPassword}">
 												<f:validator validatorId="equalsValidator" />
 												<f:attribute name="otherValue"
 													value="#{passwordComponent.value}" />
 											</h:inputSecret>
 											<h:outputText value=" " />
+											<b:message/>
 										</ox:decorate>
 										<ox:decorate id="email" label="#{msgs['register.email']} "
 											style="margin-left: -15px;"
