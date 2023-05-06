@@ -168,6 +168,8 @@ public class MetadataValidationTimer {
             shibboleth3ConfService.generateConfigurationFiles(trustRelationships);
 
             log.info("IDP config generation files finished. TR count: '{}'", trustRelationships.size());
+        }else {
+            log.debug("Shibboleth config generation disabled");
         }
     }
 
