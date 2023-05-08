@@ -666,50 +666,29 @@ public class UpdateClientAction implements Serializable {
             this.availableLoginUri = HTTPS;
             return;
         }
-        if (!this.loginUris.contains(this.availableLoginUri) && checkWhiteListRedirectUris(availableLoginUri)
-                && checkBlackListRedirectUris(availableLoginUri)) {
-            boolean acceptable = isAcceptable(this.availableLoginUri);
-            if (acceptable) {
-                this.loginUris.add(this.availableLoginUri);
-            } else {
-                try {
-                    if (getProtocol(availableLoginUri).equalsIgnoreCase("http")) {
-                        facesMessages.add(FacesMessage.SEVERITY_ERROR,
-                                "http schema is allowed with localhost/127.0.0.1");
-                    } else {
-                        facesMessages.add(FacesMessage.SEVERITY_ERROR, "A sector identifier must be defined first.");
-                    }
-                } catch (MalformedURLException e) {
-                	facesMessages.add(FacesMessage.SEVERITY_ERROR, "The url is malformed.");
-                }
-
-            }
-
-        } else {
-            facesMessages.add(FacesMessage.SEVERITY_ERROR, "The URL is not valid or may be Blacklisted.",
-                    "The URL is not valid or may be Blacklisted.");
-        }
+		if (!this.loginUris.contains(this.availableLoginUri) && checkWhiteListRedirectUris(availableLoginUri)
+				&& checkBlackListRedirectUris(availableLoginUri)) {
+			boolean acceptable = isAcceptable(this.availableLoginUri);
+			if (acceptable) {
+				this.loginUris.add(this.availableLoginUri);
+			} else {
+				facesMessages.add(FacesMessage.SEVERITY_ERROR, "A sector identifier must be defined first.");
+			}
+		} else {
+			facesMessages.add(FacesMessage.SEVERITY_ERROR, "The URL is not valid or may be Blacklisted.",
+					"The URL is not valid or may be Blacklisted.");
+		}
         this.availableLoginUri = HTTPS;
     }
 
     private boolean isAcceptable(String availableLoginUri) {
         boolean result = false;
         try {
-        	if(availableLoginUri.contains("http") && !availableLoginUri.startsWith("https")) {
-            if (getProtocol(availableLoginUri).equalsIgnoreCase("http")) {
-                if (this.client.getOxAuthAppType().equals(OxAuthApplicationType.NATIVE) && isImplicitFlow()) {
+                if (getProtocol(availableLoginUri).equalsIgnoreCase("http") 
+                		&& this.client.getOxAuthAppType().equals(OxAuthApplicationType.NATIVE) 
+                		&& isImplicitFlow()) {
                     return true;
-                }
-                if (!this.client.getOxAuthAppType().equals(OxAuthApplicationType.NATIVE)
-                        && getHostname(availableLoginUri).equalsIgnoreCase("localhost")) {
-                    return true;
-                }
-                if (!this.client.getOxAuthAppType().equals(OxAuthApplicationType.NATIVE)
-                        && getHostname(availableLoginUri).equalsIgnoreCase("127.0.0.1")) {
-                    return true;
-                }
-                return false;
-            } } else {
+                }                
             	if(!availableLoginUri.contains("//") && domainPattern.matcher(availableLoginUri.split("/")[0]).matches()) {
             		return true;
             	}
@@ -724,10 +703,12 @@ public class UpdateClientAction implements Serializable {
                     result = true;
                 } else if (this.loginUris.size() >= 1 && availableLoginUri.startsWith("https://") && !hasSameHostname(this.availableLoginUri) && sectorExist()) {
                     result = true;
-                }else if (this.loginUris.size() >= 1 && !availableLoginUri.startsWith("https://") && availableLoginUri.contains(":/")) {
+                }else if (this.loginUris.size() >= 1 && availableLoginUri.startsWith("http://") && !hasSameHostname(this.availableLoginUri) && sectorExist()) {
+                    result = true;
+                }else if (this.loginUris.size() >= 1 && !(availableLoginUri.startsWith("https://") || availableLoginUri.startsWith("http://")) && availableLoginUri.contains(":/")) {
                     result = true;
                 }
-            }
+      
         } catch (MalformedURLException e) {
             facesMessages.add(FacesMessage.SEVERITY_ERROR, "The url is malformed", "The url is malformed");
             log.error(e.getMessage());
