@@ -178,9 +178,10 @@ public class PasswordResetAction implements Serializable {
 		String outcome = updateImpl();
 		if (OxTrustConstants.RESULT_SUCCESS.equals(outcome)) {
 			facesMessages.add(FacesMessage.SEVERITY_INFO, "Password reset successful.");
+			redirect();
+			conversationService.endConversation();
 		}
-		redirect();
-		conversationService.endConversation();
+		
 	}
 
 	public String updateImpl() {
