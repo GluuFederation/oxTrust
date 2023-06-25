@@ -692,12 +692,41 @@
 											</h:panelGroup>
 										</h:panelGroup>
 									</b:panel>
-									<ox:decorate id="redirectLogoutUrls" label="#{msgs['clientForm.redirectLogoutURIs']}"
-												leftClass="col-sm-6" rightClass="col-sm-6">
-												<h:inputText id="redirectLogoutUrlsId"
-													value="#{_client.oxAuthPostLogoutRedirectURIs}" style="width:100%"
-													styleClass="form-control redirectLogoutUrlsId" />
-									</ox:decorate>
+																		
+									<b:panel title="#{msgs['clientForm.redirectLogoutURIs']}"
+										id="redirectLogoutUrl" look="primary">
+										<h:panelGroup id="selectedRedirectLogoutUrlId">
+											<h:panelGroup columns="1" width="100%" border="0"
+												cellpadding="0" cellspacing="0">
+												<a4j:repeat value="#{_clientAction.redirectLogoutUrl}"
+													rowKeyVar="_urisIdx" var="_uri" iterationStatusVar="loop">
+													<div class="row-fluid">
+														<div class="#{(loop.index % 2 == 0) ?'odd':'even'}"
+															style="overflow-x: scroll;">
+															<h:outputText value="#{empty _uri ? _uri : _uri}" />
+															<h:outputText value="&#160;" />
+															<div class="span6 pull-right">
+																<a4j:commandLink
+																	styleClass="glyphicon glyphicon-remove"
+																	action="#{_clientAction.removeRedirectLogoutUrl(_uri)}"
+																	execute="@this" render="selectedRedirectLogoutUrlId"
+																	eventsQueue="clientQueue">
+																	<!-- <h:graphicImage value="/img/remove.gif" /> -->
+																</a4j:commandLink>
+															</div>
+														</div>
+													</div>
+													<br />
+												</a4j:repeat>
+												<p:spacer height="16" />
+												<a4j:commandButton
+													styleClass="btn btn-primary addLogoutUriButton"
+													style="margin-top:5px" value="Add Post Logout Redirect URI"
+													oncomplete="#{rich:component('redirectLogoutUrlsId:inputText')}.show();"
+													execute="@this" eventsQueue="clientQueue" />
+											</h:panelGroup>
+										</h:panelGroup>
+									</b:panel>									
 									
 										<b:panel title="Back Channel Logout URI"
 											id="backchannelLogoutUri" look="primary">
