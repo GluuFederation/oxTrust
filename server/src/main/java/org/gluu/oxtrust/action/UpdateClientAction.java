@@ -162,6 +162,7 @@ public class UpdateClientAction implements Serializable {
     private List<String> loginUris = Lists.newArrayList();
     private List<String> logoutUris;
     private List<String> clientlogoutUris;
+    private List<String> redirectLogoutUrl;
     private List<String> clientBackChannellogoutUris;
     private List<String> claimRedirectURIList;
     private List<String> additionalAudienceList;
@@ -188,6 +189,7 @@ public class UpdateClientAction implements Serializable {
     private String availableLoginUri = HTTPS;
     private String availableLogoutUri = HTTPS;
     private String availableClientlogoutUri = HTTPS;
+    private String availableRedirectLogoutUrl = HTTPS;
     private String availableClientBacklogoutUri = HTTPS;
     private String availableContact = "";
     private String availableRequestUri = HTTPS;
@@ -263,6 +265,7 @@ public class UpdateClientAction implements Serializable {
             this.spontaneousScopesScripts = Lists.newArrayList();
             this.backchannelLogoutUri = getStringFromList(client.getAttributes().getBackchannelLogoutUri());
             this.tlsSubjectDn = client.getAttributes().getTlsClientAuthSubjectDn();
+            this.redirectLogoutUrl = getNonEmptyStringList(client.getOxAuthPostLogoutRedirectURIs());
             searchAvailableCustomScriptsforAcr();
         } catch (BasePersistenceException ex) {
             log.error("Failed to prepare lists", ex);
@@ -323,6 +326,7 @@ public class UpdateClientAction implements Serializable {
             this.loginUris = getNonEmptyStringList(client.getOxAuthRedirectURIs());
 
             this.clientlogoutUris = getNonEmptyStringList(client.getLogoutUri());
+            this.redirectLogoutUrl= getNonEmptyStringList(client.getOxAuthPostLogoutRedirectURIs());
             this.clientBackChannellogoutUris = getNonEmptyStringList(client.getAttributes().getBackchannelLogoutUri());
             this.scopes = getInitialEntries();
             this.claims = getInitialClaimDisplayNameEntries();
@@ -417,6 +421,7 @@ public class UpdateClientAction implements Serializable {
         }
         updateLoginURIs();
         updateLogoutURIs();
+        updateRedirectLogoutUrls();
         updateBackChannelLogoutURIs();
         updateScopes();
         updateClaims();
@@ -533,6 +538,10 @@ public class UpdateClientAction implements Serializable {
 
     public void removeClientLogoutURI(String uri) {
         removeFromList(this.clientlogoutUris, uri);
+    }
+    
+    public void removeRedirectLogoutUrl(String uri) {
+        removeFromList(this.redirectLogoutUrl, uri);
     }
 
     public void removeClientBackLogoutURI(String uri) {
@@ -804,6 +813,19 @@ public class UpdateClientAction implements Serializable {
         this.availableLogoutUri = HTTPS;
     }
 
+    public void acceptSelectRedirectLogoutUrl() {
+        if (StringHelper.isEmpty(this.availableRedirectLogoutUrl)) {
+            return;
+        }
+        if (this.availableRedirectLogoutUrl.equalsIgnoreCase(HTTPS)) {
+            return;
+        }
+        if (!this.redirectLogoutUrl.contains(this.availableRedirectLogoutUrl)) {
+            this.redirectLogoutUrl.add(this.availableRedirectLogoutUrl);
+        }
+        this.availableRedirectLogoutUrl = HTTPS;
+    }
+    
     public void acceptSelectClientLogoutUri() {
         if (StringHelper.isEmpty(this.availableClientlogoutUri)) {
             return;
@@ -924,6 +946,10 @@ public class UpdateClientAction implements Serializable {
         this.availableClientlogoutUri = HTTPS;
     }
     
+    public void cancelRedirectLogoutUrl() {
+        this.availableRedirectLogoutUrl = HTTPS;
+    }
+    
     public void cancelClientBackLogoutUri() {
         this.availableClientBacklogoutUri = HTTPS;
     }
@@ -971,6 +997,18 @@ public class UpdateClientAction implements Serializable {
             tmpUris.add(StringHelper.trimAll(uri));
         }
         this.client.setLogoutUri(tmpUris);
+    }
+    
+    private void updateRedirectLogoutUrls() {
+        if (this.redirectLogoutUrl == null || this.redirectLogoutUrl.size() == 0) {
+            this.client.setOxAuthPostLogoutRedirectURIs(null);
+            return;
+        }
+        List<String> tmpUris = new ArrayList<String>();
+        for (String uri : this.redirectLogoutUrl) {
+            tmpUris.add(StringHelper.trimAll(uri));
+        }
+        this.client.setOxAuthPostLogoutRedirectURIs(tmpUris);
     }
     
     private void updateBackChannelLogoutURIs() {
@@ -2178,5 +2216,21 @@ public class UpdateClientAction implements Serializable {
 
 	public void setAvailableClientBacklogoutUri(String availableClientBacklogoutUri) {
 		this.availableClientBacklogoutUri = availableClientBacklogoutUri;
+	}
+
+	public List<String> getRedirectLogoutUrl() {
+		return redirectLogoutUrl;
+	}
+
+	public void setRedirectLogoutUrl(List<String> redirectLogoutUrl) {
+		this.redirectLogoutUrl = redirectLogoutUrl;
+	}
+
+	public String getAvailableRedirectLogoutUrl() {
+		return availableRedirectLogoutUrl;
+	}
+
+	public void setAvailableRedirectLogoutUrl(String availableRedirectLogoutUrl) {
+		this.availableRedirectLogoutUrl = availableRedirectLogoutUrl;
 	}
 }
