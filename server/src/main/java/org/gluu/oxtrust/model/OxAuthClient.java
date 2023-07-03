@@ -62,7 +62,7 @@ public class OxAuthClient extends Entry implements Serializable {
 	private List<String> oxAuthRedirectURIs;
 
 	@AttributeName(name = "oxAuthPostLogoutRedirectURI")
-	private String oxAuthPostLogoutRedirectURIs;
+	private List<String> oxAuthPostLogoutRedirectURIs;
 
 	@AttributeName(name = "oxAuthScope")
 	private List<String> oxAuthScopes;
@@ -301,11 +301,11 @@ public class OxAuthClient extends Entry implements Serializable {
 		this.oxAuthRedirectURIs = oxAuthRedirectURIs;
 	}
 
-	public String getOxAuthPostLogoutRedirectURIs() {
+	public List<String> getOxAuthPostLogoutRedirectURIs() {
 		return oxAuthPostLogoutRedirectURIs;
 	}
 
-	public void setOxAuthPostLogoutRedirectURIs(String oxAuthPostLogoutRedirectURIs) {
+	public void setOxAuthPostLogoutRedirectURIs(List<String> oxAuthPostLogoutRedirectURIs) {
 		this.oxAuthPostLogoutRedirectURIs = oxAuthPostLogoutRedirectURIs;
 	}
 
