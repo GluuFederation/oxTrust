@@ -1837,6 +1837,11 @@
             "description": "Response type used to process device authz requests",
             "type": "string",
             "minLength": 0
+        },
+        "skipAuthenticationFilterOptionsMethod": {
+            "id": "skipAuthenticationFilterOptionsMethod",
+            "description": "Specifies whether to process OPTIONS rerquests in Authentication Filter or not",
+            "type": "boolean"
         }
     },
     "required": [
