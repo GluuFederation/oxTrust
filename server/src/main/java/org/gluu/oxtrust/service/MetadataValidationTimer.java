@@ -221,7 +221,7 @@ public class MetadataValidationTimer {
                 if (errorHandler.isValid()) {
                     tr.setValidationLog(errorHandler.getLog());
                     tr.setValidationStatus(GluuValidationStatus.SUCCESS);
-                    if (shibboleth3ConfService.renameMetadata(metadataPath, destinationMetadataPath)) {
+                    if (!shibboleth3ConfService.renameMetadata(metadataPath, destinationMetadataPath)) {
                         log.error("Failed to move metadata file to location:" + destinationMetadataPath);
                         tr.setStatus(GluuStatus.INACTIVE);
                     } else {
