@@ -2045,6 +2045,9 @@ public class UpdateClientAction implements Serializable {
 				.build() ) {
     		HttpResponse httpResponse = httpClient.execute(httpGet);
     		fileContent = getResponseContent(httpResponse);
+		}catch(Exception e) {
+			log.error("url is invalid please check ", e.getMessage());
+            return null;			
 		}
 
         if (fileContent == null) {
