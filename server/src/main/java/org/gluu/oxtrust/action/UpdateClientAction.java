@@ -9,6 +9,8 @@ package org.gluu.oxtrust.action;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -2033,13 +2035,14 @@ public class UpdateClientAction implements Serializable {
     }
 
     private boolean loadSector(String sectorIdentifierUri) throws ClientProtocolException, IOException {
+    	try {
     	String sectoruriContent = downloadSectorIdentifierUri(sectorIdentifierUri);
     	
     	if (sectoruriContent == null) {
     		return false;
     	}
 
-    	try {
+    	
             JSONArray uris = new JSONArray(sectoruriContent);
             this.loginUris.clear();
             for (int i = 0; i < uris.length(); i++) {
@@ -2049,7 +2052,7 @@ public class UpdateClientAction implements Serializable {
             }
             return true;
         } catch (Exception e) {
-            log.error("", e.getMessage());
+            log.error("exception in parsing the uri", e.getMessage());
             return false;
         }
     }
@@ -2073,8 +2076,10 @@ public class UpdateClientAction implements Serializable {
     	return new String(responseBytes, StandardCharsets.UTF_8);
 	}
 
-    private String downloadSectorIdentifierUri(String sectorIdentifierUri) throws IOException, ClientProtocolException {
-		HttpGet httpGet = new HttpGet();
+    private String downloadSectorIdentifierUri(String sectorIdentifierUri) throws IOException, ClientProtocolException, URISyntaxException {
+		
+    	HttpGet httpGet = new HttpGet();
+		httpGet.setURI(new URI(sectorIdentifierUri));
     	httpGet.setHeader("Accept", "application/json");
 
     	String fileContent = null;
