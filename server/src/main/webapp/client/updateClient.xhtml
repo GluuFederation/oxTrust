@@ -176,6 +176,16 @@
 				render="selectedClientUrisId"
 				text="#{updateClientAction.availableClientlogoutUri}"
 				textId="clientLogoutTextId" />
+				
+			<ox:inputTextDialog
+					acceptMethod="#{updateClientAction.acceptSelectRedirectLogoutUrl()}"
+					cancelMethod="#{updateClientAction.cancelRedirectLogoutUrl()}"
+					dialogWidth="600" id="redirectLogoutUrlsId"
+					inputLabel="Add #{msgs['clientForm.redirectLogoutURIs']}" inputWidth="80"
+					label="#{msgs['clientForm.redirectLogoutURIs']}" maxLength="256"
+					queue="clientQueue" render="selectedRedirectLogoutUrlId"
+					text="#{updateClientAction.availableRedirectLogoutUrl}"
+					textId="redirectLogoutURIstextId" />
 			
 			<ox:inputTextDialog
 					acceptMethod="#{updateClientAction.acceptSelectClientBackLogoutUri()}"
