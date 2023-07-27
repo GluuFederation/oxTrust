@@ -125,7 +125,7 @@
 			                                                            (_custAttr.metadata.displayName ne 'Birthdate') and
 			                                                            (_custAttr.metadata.displayName eq 'Email')}">
 												<f:validateRegex
-													pattern="[\w\.-]*[a-zA-Z0-9_]@[\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]" />
+													pattern="^[a-zA-Z0-9_!#$%&amp;'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$" />
 												<rich:validator event="blur" />
 											</h:inputText>
 											<b:message
