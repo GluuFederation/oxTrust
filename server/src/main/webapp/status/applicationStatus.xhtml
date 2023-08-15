@@ -105,6 +105,27 @@
 						</div>
 					</div>
 				</b:panel>
+			</h:panelGroup>			
+			<h:panelGroup id="ServerStatsId" layout="block">
+				<b:panel title="MAU Stats"
+					look="primary" iconAwesome="fa-gear" collapsible="true">
+					<div style="display: inline-block; width: 50% !important;">
+						<div class="row" style="margin-left: 5px; margin-right: 5px;">
+							<b:dataTable id="scopesListId" paginated="false"
+								style="text-align:left;width:100%;"
+								value="#{configurationStatusAction.getStatsData()}" var="entry">
+								
+								<b:dataTableColumn label="Period" 
+									value="#{entry.key}">
+								</b:dataTableColumn>
+								<b:dataTableColumn  label="Stats"
+									value="#{entry.value}">
+								</b:dataTableColumn>
+								
+							</b:dataTable>
+						</div>
+					</div>
+				</b:panel>
 			</h:panelGroup>
 		</section>
 	</ui:define>
