@@ -182,6 +182,11 @@
 				<artifactId>oxauth-client</artifactId>
 				<version>${oxauth.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>org.gluu</groupId>
+				<artifactId>stat-exporter</artifactId>
+				<version>${oxauth.version}</version>
+			</dependency>
 
 			<!-- oxCore -->
 			<dependency>
