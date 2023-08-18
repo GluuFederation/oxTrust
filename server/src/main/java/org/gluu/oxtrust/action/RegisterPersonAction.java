@@ -229,7 +229,7 @@ public class RegisterPersonAction implements Serializable {
 		}
 		String outcome = registerImpl();
 		if (OxTrustConstants.RESULT_SUCCESS.equals(outcome)) {
-			setPostRegistrationInformation("You successfully registered. Enjoy!");
+			setPostRegistrationInformation("You've successfully created your account, please go to you email to successfully register your account.");
 		} else if (OxTrustConstants.RESULT_DISABLED.equals(outcome)) {
 			setPostRegistrationInformation(
 					"You successfully registered. Please contact site administration to enable your account.");
