@@ -190,14 +190,7 @@
 												style="float: left; margin-top: 2px;"></i>
 										</h:commandLink></li>
 										
-									<li id="trustedIDP"><h:commandLink
-											value="#{msgs['leftmenu.trustedIdp']}" onclick="lock();"
-											ondbclick="lock();" oncomplete="unlock();"
-											action="#{menuAction.endConversation('/trustedidp/trustedIdpInventory.xhtml')}"
-											rendered="#{permissionService.hasPermission('trust', 'access')}">
-											<i class="fa fa-chevron-right"
-												style="float: left; margin-top: 2px;"></i>
-										</h:commandLink></li></li>
+									</li>
 					</ul>
 					</li>
 					</ui:fragment>
