@@ -78,11 +78,12 @@
 				<ox:selectSelectableEntityDialog
 					acceptMethod="#{updateClientAction.acceptSelectScopes()}"
 					cancelMethod="#{updateClientAction.cancelSelectScopes()}"
-					displayNameProperty="entity.description" displaySearchForm="false"
+					displayNameProperty="entity.description" displaySearchForm="true"
 					id="scope" label="#{msgs['client.scopes']}"
 					nameProperty="entity.id" render="selectedScopesId"
 					searchMethod="#{updateClientAction.searchAvailableScopes}"
-					searchResult="#{updateClientAction.availableScopes}" />
+					searchResult="#{updateClientAction.availableScopes}" 
+					searchPattern="#{updateClientAction.scopePattern}"/>
 
 				<ox:selectSelectableEntityDialog
 					acceptMethod="#{updateClientAction.acceptSelectResponseTypes}"
