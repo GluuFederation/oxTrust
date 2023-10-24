@@ -1992,6 +1992,7 @@
         "cibaEndUserNotificationConfig",
         "deviceAuthzRequestExpiresIn",
         "deviceAuthzTokenPollInterval",
-        "deviceAuthzResponseTypeToProcessAuthz"
+        "deviceAuthzResponseTypeToProcessAuthz",
+        "skipAuthenticationFilterOptionsMethod"
     ]
 }
