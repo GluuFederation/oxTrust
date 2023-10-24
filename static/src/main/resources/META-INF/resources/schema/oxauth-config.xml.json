@@ -1842,6 +1842,11 @@
             "description": "Response type used to process device authz requests",
             "type": "string",
             "minLength": 0
+        },
+        "skipAuthenticationFilterOptionsMethod": {
+            "id": "skipAuthenticationFilterOptionsMethod",
+            "description": "Boolean value specifying whetherauthentication filter should skip OPTIONS request processing.",
+            "type": "boolean"
         }
     },
     "required": [
@@ -1994,6 +1999,7 @@
         "cibaEndUserNotificationConfig",
         "deviceAuthzRequestExpiresIn",
         "deviceAuthzTokenPollInterval",
-        "deviceAuthzResponseTypeToProcessAuthz"
+        "deviceAuthzResponseTypeToProcessAuthz",
+        "skipAuthenticationFilterOptionsMethod"
     ]
 }
