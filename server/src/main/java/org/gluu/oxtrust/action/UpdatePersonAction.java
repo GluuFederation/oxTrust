@@ -37,6 +37,7 @@ import org.gluu.model.attribute.AttributeValidation;
 import org.gluu.oxauth.model.fido.u2f.protocol.DeviceData;
 import org.gluu.oxtrust.exception.DuplicateEmailException;
 import org.gluu.oxtrust.model.Device;
+import org.gluu.oxtrust.model.GluuBoolean;
 import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuCustomPerson;
 import org.gluu.oxtrust.model.GluuFido2Device;
@@ -565,9 +566,14 @@ public class UpdatePersonAction implements Serializable {
 		for (GluuCustomAttribute customAttribute : customAttributes) {
 			if (customAttribute.getName().equalsIgnoreCase("gluuStatus")) {
 				customAttribute.setValue(gluuStatus);
-				break;
 			}
-
+			if (customAttribute.getName().equalsIgnoreCase("oxTrustActive")) {
+				if(gluuStatus.equalsIgnoreCase("active")) {
+					customAttribute.setBooleanValue(GluuBoolean.TRUE);
+				}else {
+					customAttribute.setBooleanValue(GluuBoolean.FALSE);
+				}
+			}
 		}
 		this.person.setCustomAttributes(customAttributeAction.getCustomAttributes());
 		this.person.getCustomAttributes().addAll(removedAttributes);
