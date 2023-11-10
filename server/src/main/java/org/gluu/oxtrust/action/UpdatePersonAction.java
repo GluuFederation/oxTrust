@@ -569,8 +569,10 @@ public class UpdatePersonAction implements Serializable {
 			}
 			if (customAttribute.getName().equalsIgnoreCase("oxTrustActive")) {
 				if(gluuStatus.equalsIgnoreCase("active")) {
+					customAttribute.setValue(GluuBoolean.TRUE);
 					customAttribute.setBooleanValue(GluuBoolean.TRUE);
 				}else {
+					customAttribute.setValue(GluuBoolean.FALSE);
 					customAttribute.setBooleanValue(GluuBoolean.FALSE);
 				}
 			}
