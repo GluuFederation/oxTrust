@@ -26,7 +26,6 @@ import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.persist.PersistenceEntryManager;
 import org.gluu.search.filter.Filter;
 import org.gluu.util.StringHelper;
-import org.python.jline.internal.Log;
 import org.slf4j.Logger;
 
 /**
@@ -207,7 +206,7 @@ public class ClientService implements Serializable {
 		try {
 			return persistenceEntryManager.find(OxAuthClient.class, Dn);
 		} catch (Exception e) {
-			Log.warn("", e);
+			logger.warn("Failed to find client by DN", e);
 			return null;
 		}
 
