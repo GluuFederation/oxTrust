@@ -12,11 +12,11 @@ import io.swagger.v3.oas.annotations.security.*;
 @OpenAPIDefinition (
 	info = @Info (
 		title = "oxTrust API",
-		version = "4.0.0",
+		version = "4.5.2",
 		description = "This is an API for Gluu Server's oxTrust administrative interface. Go to https://gluu.org for more information",
-		termsOfService = "https://www.gluu.org/terms/",
-		contact = @Contact(url="https://gluu.org",name="Gluu Support",email="contact@gluu.org"),
-		license = @License(name = "Gluu Support License", url = "https://www.gluu.org/support-license/") 
+		termsOfService = "https://gluu.org/gluu-terms-and-conditions/",
+		contact = @Contact(url="https://support.gluu.org/",name="Gluu Support",email="support@gluu.org"),
+		license = @License(name = "Gluu Support License", url = "https://gluu.org/")  
 	)
 )
 
