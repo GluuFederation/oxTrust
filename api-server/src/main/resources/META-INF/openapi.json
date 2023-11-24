@@ -3,17 +3,17 @@
   "info" : {
     "title" : "oxTrust API",
     "description" : "This is an API for Gluu Server's oxTrust administrative interface. Go to https://gluu.org for more information",
-    "termsOfService" : "https://www.gluu.org/terms/",
+    "termsOfService" : "https://gluu.org/gluu-terms-and-conditions/",
     "contact" : {
       "name" : "Gluu Support",
-      "url" : "https://gluu.org",
-      "email" : "contact@gluu.org"
+      "url" : "https://support.gluu.org/",
+      "email" : "support@gluu.org"
     },
     "license" : {
       "name" : "Gluu Support License",
-      "url" : "https://www.gluu.org/support-license/"
+      "url" : "https://gluu.org/"
     },
-    "version" : "4.0.0"
+    "version" : "4.5.0"
   },
   "paths" : {
     "/configuration/api" : {
@@ -173,25 +173,17 @@
         }
       }
     },
-    "/api/v1/attributes/search" : {
+    "/api/v1/attributes/attribute/{inum}" : {
       "get" : {
-        "summary" : "Search attributes",
-        "description" : "Perform an attribute search",
-        "operationId" : "searchAttributes",
+        "summary" : "Get attribute by inum",
+        "description" : "Get an attribute by inum",
+        "operationId" : "getAttributeByInum",
         "parameters" : [ {
-          "name" : "pattern",
-          "in" : "query",
+          "name" : "inum",
+          "in" : "path",
           "required" : true,
           "schema" : {
             "type" : "string"
-          }
-        }, {
-          "name" : "size",
-          "in" : "query",
-          "schema" : {
-            "type" : "integer",
-            "format" : "int32",
-            "default" : 1
           }
         } ],
         "responses" : {
@@ -243,17 +235,25 @@
         } ]
       }
     },
-    "/api/v1/attributes/attribute/{inum}" : {
+    "/api/v1/attributes/search" : {
       "get" : {
-        "summary" : "Get attribute by inum",
-        "description" : "Get an attribute by inum",
-        "operationId" : "getAttributeByInum",
+        "summary" : "Search attributes",
+        "description" : "Perform an attribute search",
+        "operationId" : "searchAttributes",
         "parameters" : [ {
-          "name" : "inum",
-          "in" : "path",
+          "name" : "pattern",
+          "in" : "query",
           "required" : true,
           "schema" : {
             "type" : "string"
+          }
+        }, {
+          "name" : "size",
+          "in" : "query",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "default" : 1
           }
         } ],
         "responses" : {
@@ -1138,6 +1138,57 @@
         }
       }
     },
+    "/api/v1/groups/{inum}" : {
+      "get" : {
+        "summary" : "Get group by inum",
+        "description" : "Get a group by inum",
+        "operationId" : "getGroupByInum",
+        "parameters" : [ {
+          "name" : "inum",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Success",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/GluuGroupApi"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Server error"
+          }
+        }
+      },
+      "delete" : {
+        "summary" : "Delete group",
+        "description" : "Delete a group",
+        "operationId" : "deleteGroup",
+        "parameters" : [ {
+          "name" : "inum",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Success"
+          },
+          "500" : {
+            "description" : "Server error"
+          }
+        }
+      }
+    },
     "/api/v1/groups/search" : {
       "get" : {
         "summary" : "Search groups",
@@ -1223,57 +1274,6 @@
             "content" : {
               "application/json" : { }
             }
-          }
-        }
-      }
-    },
-    "/api/v1/groups/{inum}" : {
-      "get" : {
-        "summary" : "Get group by inum",
-        "description" : "Get a group by inum",
-        "operationId" : "getGroupByInum",
-        "parameters" : [ {
-          "name" : "inum",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "Success",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/GluuGroupApi"
-                }
-              }
-            }
-          },
-          "500" : {
-            "description" : "Server error"
-          }
-        }
-      },
-      "delete" : {
-        "summary" : "Delete group",
-        "description" : "Delete a group",
-        "operationId" : "deleteGroup",
-        "parameters" : [ {
-          "name" : "inum",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "Success"
-          },
-          "500" : {
-            "description" : "Server error"
           }
         }
       }
@@ -1394,6 +1394,61 @@
         }
       }
     },
+    "/api/v1/configuration/ldap/{name}/status" : {
+      "get" : {
+        "summary" : "Check the status of an existing configuration",
+        "description" : "Check the status of an existing configuration",
+        "operationId" : "getLdapConfigurationStatusByName",
+        "parameters" : [ {
+          "name" : "name",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Success",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ConnectionStatusDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/configuration/ldap/status" : {
+      "post" : {
+        "summary" : "Check status of a configuration",
+        "description" : "Check the status of a configuration",
+        "operationId" : "getLdapConfigurationStatus",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/LdapConnectionData"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Success",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ConnectionStatusDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/configuration/ldap" : {
       "get" : {
         "summary" : "Get existing configuration",
@@ -1488,61 +1543,6 @@
               "application/json" : {
                 "schema" : {
                   "type" : "string"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/configuration/ldap/status" : {
-      "post" : {
-        "summary" : "Check status of a configuration",
-        "description" : "Check the status of a configuration",
-        "operationId" : "getLdapConfigurationStatus",
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/LdapConnectionData"
-              }
-            }
-          }
-        },
-        "responses" : {
-          "200" : {
-            "description" : "Success",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ConnectionStatusDTO"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/configuration/ldap/{name}/status" : {
-      "get" : {
-        "summary" : "Check the status of an existing configuration",
-        "description" : "Check the status of an existing configuration",
-        "operationId" : "getLdapConfigurationStatusByName",
-        "parameters" : [ {
-          "name" : "name",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "Success",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ConnectionStatusDTO"
                 }
               }
             }
@@ -1967,57 +1967,6 @@
         }
       }
     },
-    "/api/v1/passport/providers/{id}" : {
-      "get" : {
-        "summary" : "Get passport provider by id",
-        "description" : "Get passport provider by id",
-        "operationId" : "getProviderById",
-        "parameters" : [ {
-          "name" : "id",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "Success",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Provider"
-                }
-              }
-            }
-          },
-          "500" : {
-            "description" : "Server error"
-          }
-        }
-      },
-      "delete" : {
-        "summary" : "Delete passport provider",
-        "description" : "Delete a passport provider",
-        "operationId" : "deleteProvider",
-        "parameters" : [ {
-          "name" : "id",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "Success"
-          },
-          "500" : {
-            "description" : "Server error"
-          }
-        }
-      }
-    },
     "/api/v1/passport/providers" : {
       "get" : {
         "summary" : "List passport providers",
@@ -2105,6 +2054,57 @@
             "content" : {
               "application/json" : { }
             }
+          }
+        }
+      }
+    },
+    "/api/v1/passport/providers/{id}" : {
+      "get" : {
+        "summary" : "Get passport provider by id",
+        "description" : "Get passport provider by id",
+        "operationId" : "getProviderById",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Success",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Provider"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Server error"
+          }
+        }
+      },
+      "delete" : {
+        "summary" : "Delete passport provider",
+        "description" : "Delete a passport provider",
+        "operationId" : "deleteProvider",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Success"
+          },
+          "500" : {
+            "description" : "Server error"
           }
         }
       }
@@ -2503,36 +2503,6 @@
         }
       }
     },
-    "/api/v1/scopes/{inum}/claims" : {
-      "get" : {
-        "summary" : "Get scope claims",
-        "description" : "List all claims of a scope",
-        "operationId" : "getScopeClaims",
-        "parameters" : [ {
-          "name" : "inum",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "Success",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "type" : "string"
-                }
-              }
-            }
-          },
-          "500" : {
-            "description" : "Server error"
-          }
-        }
-      }
-    },
     "/api/v1/scopes/search" : {
       "get" : {
         "summary" : "Search openid connect scopes",
@@ -2570,13 +2540,13 @@
         }
       }
     },
-    "/api/v1/sectoridentifiers/sector/{id}" : {
+    "/api/v1/scopes/{inum}/claims" : {
       "get" : {
-        "summary" : "Get sector identifier",
-        "description" : "Get a sector identifier",
-        "operationId" : "getSectorIdentifierById",
+        "summary" : "Get scope claims",
+        "description" : "List all claims of a scope",
+        "operationId" : "getScopeClaims",
         "parameters" : [ {
-          "name" : "id",
+          "name" : "inum",
           "in" : "path",
           "required" : true,
           "schema" : {
@@ -2589,7 +2559,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/OxAuthSectorIdentifier"
+                  "type" : "string"
                 }
               }
             }
@@ -2740,6 +2710,36 @@
         }
       }
     },
+    "/api/v1/sectoridentifiers/sector/{id}" : {
+      "get" : {
+        "summary" : "Get sector identifier",
+        "description" : "Get a sector identifier",
+        "operationId" : "getSectorIdentifierById",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Success",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/OxAuthSectorIdentifier"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Server error"
+          }
+        }
+      }
+    },
     "/api/v1/configuration/status" : {
       "get" : {
         "summary" : "Get server status",
@@ -2752,6 +2752,28 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/GluuServerStatus"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Server error"
+          }
+        }
+      }
+    },
+    "/api/v1/configuration/smtp/test" : {
+      "get" : {
+        "summary" : "Test smtp configuration",
+        "description" : "Test smtp configuration",
+        "operationId" : "testSmtpConfiguration",
+        "responses" : {
+          "200" : {
+            "description" : "success",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/SmtpConfiguration"
                 }
               }
             }
@@ -2809,28 +2831,6 @@
           },
           "404" : {
             "description" : "Not found"
-          },
-          "500" : {
-            "description" : "Server error"
-          }
-        }
-      }
-    },
-    "/api/v1/configuration/smtp/test" : {
-      "get" : {
-        "summary" : "Test smtp configuration",
-        "description" : "Test smtp configuration",
-        "operationId" : "testSmtpConfiguration",
-        "responses" : {
-          "200" : {
-            "description" : "success",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/SmtpConfiguration"
-                }
-              }
-            }
           },
           "500" : {
             "description" : "Server error"
@@ -3065,6 +3065,28 @@
         }
       }
     },
+    "/api/v1/saml/tr/remove_attribute" : {
+      "delete" : {
+        "operationId" : "removeAttribute",
+        "requestBody" : {
+          "content" : {
+            "text/plain" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/GluuAttribute"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "default" : {
+            "description" : "default response",
+            "content" : {
+              "text/plain" : { }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/saml/tr/set_metadata/{inum}" : {
       "post" : {
         "operationId" : "setMetadata",
@@ -3101,53 +3123,19 @@
         }
       }
     },
-    "/api/v1/saml/tr/remove_attribute" : {
-      "delete" : {
-        "operationId" : "removeAttribute",
-        "requestBody" : {
-          "content" : {
-            "text/plain" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/GluuAttribute"
-              }
-            }
-          }
-        },
-        "responses" : {
-          "default" : {
-            "description" : "default response",
-            "content" : {
-              "text/plain" : { }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/saml/tr/set_certificate/{inum}" : {
-      "post" : {
-        "summary" : "set certificate for TrustRelationship",
-        "description" : "Find TrustRelationship by inum and set certificate.",
-        "operationId" : "setCertificate",
-        "parameters" : [ {
-          "name" : "inum",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "requestBody" : {
-          "content" : {
-            "text/plain" : {
-              "schema" : {
-                "type" : "string"
-              }
-            }
-          }
-        },
+    "/api/v1/saml/tr/list_all_federations" : {
+      "get" : {
+        "operationId" : "listAllFederations",
         "responses" : {
           "200" : {
-            "description" : "OK"
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            }
           },
           "500" : {
             "description" : "Server error"
@@ -3179,54 +3167,6 @@
         "responses" : {
           "200" : {
             "description" : "OK"
-          },
-          "500" : {
-            "description" : "Server error"
-          }
-        }
-      }
-    },
-    "/api/v1/saml/tr/get_contacts/{inum}" : {
-      "get" : {
-        "operationId" : "getContacts",
-        "parameters" : [ {
-          "name" : "inum",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "text/plain" : {
-                "schema" : {
-                  "type" : "string"
-                }
-              }
-            }
-          },
-          "500" : {
-            "description" : "Server error"
-          }
-        }
-      }
-    },
-    "/api/v1/saml/tr/list_all_federations" : {
-      "get" : {
-        "operationId" : "listAllFederations",
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "type" : "string"
-                }
-              }
-            }
           },
           "500" : {
             "description" : "Server error"
@@ -3266,9 +3206,57 @@
         }
       }
     },
-    "/api/v1/saml/tr/list_deconstructed_trust_relationships/{inum}" : {
+    "/api/v1/saml/tr/get_contacts/{inum}" : {
       "get" : {
-        "operationId" : "listDeconstructedTrustRelationships",
+        "operationId" : "getContacts",
+        "parameters" : [ {
+          "name" : "inum",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "text/plain" : {
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Server error"
+          }
+        }
+      }
+    },
+    "/api/v1/saml/tr/list_all_active_trust_relationships" : {
+      "get" : {
+        "operationId" : "listAllActiveTrustRelationships",
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Server error"
+          }
+        }
+      }
+    },
+    "/api/v1/saml/tr/list_all_other_federations/{inum}" : {
+      "get" : {
+        "operationId" : "listAllOtherFederations",
         "parameters" : [ {
           "name" : "inum",
           "in" : "path",
@@ -3294,14 +3282,22 @@
         }
       }
     },
-    "/api/v1/saml/tr/generate_inum_for_new_trust_relationship" : {
+    "/api/v1/saml/tr/list_all_saml_trust_relationships" : {
       "get" : {
-        "operationId" : "generateInumForNewTrustRelationship",
+        "operationId" : "listAllSAMLTrustRelationships",
+        "parameters" : [ {
+          "name" : "size_limit",
+          "in" : "query",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        } ],
         "responses" : {
           "200" : {
             "description" : "OK",
             "content" : {
-              "text/plain" : {
+              "application/json" : {
                 "schema" : {
                   "type" : "string"
                 }
@@ -3364,57 +3360,9 @@
         }
       }
     },
-    "/api/v1/saml/tr/list_all_active_trust_relationships" : {
+    "/api/v1/saml/tr/list_deconstructed_trust_relationships/{inum}" : {
       "get" : {
-        "operationId" : "listAllActiveTrustRelationships",
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "type" : "string"
-                }
-              }
-            }
-          },
-          "500" : {
-            "description" : "Server error"
-          }
-        }
-      }
-    },
-    "/api/v1/saml/tr/list_all_saml_trust_relationships" : {
-      "get" : {
-        "operationId" : "listAllSAMLTrustRelationships",
-        "parameters" : [ {
-          "name" : "size_limit",
-          "in" : "query",
-          "schema" : {
-            "type" : "integer",
-            "format" : "int32"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "type" : "string"
-                }
-              }
-            }
-          },
-          "500" : {
-            "description" : "Server error"
-          }
-        }
-      }
-    },
-    "/api/v1/saml/tr/list_all_other_federations/{inum}" : {
-      "get" : {
-        "operationId" : "listAllOtherFederations",
+        "operationId" : "listDeconstructedTrustRelationships",
         "parameters" : [ {
           "name" : "inum",
           "in" : "path",
@@ -3440,16 +3388,14 @@
         }
       }
     },
-    "/api/v1/inbound-saml/trusted-idp" : {
+    "/api/v1/saml/tr/generate_inum_for_new_trust_relationship" : {
       "get" : {
-        "summary" : "Retrieve all trusted-idps",
-        "description" : "Retrieve all trusted-idps",
-        "operationId" : "gluuTrustedIdps",
+        "operationId" : "generateInumForNewTrustRelationship",
         "responses" : {
           "200" : {
-            "description" : "Success",
+            "description" : "OK",
             "content" : {
-              "application/json" : {
+              "text/plain" : {
                 "schema" : {
                   "type" : "string"
                 }
@@ -3460,33 +3406,33 @@
             "description" : "Server error"
           }
         }
-      },
+      }
+    },
+    "/api/v1/saml/tr/set_certificate/{inum}" : {
       "post" : {
-        "summary" : "Add TrustedIDP",
-        "description" : "Add an TrustedIDP",
-        "operationId" : "createGluuTrustedIdp",
+        "summary" : "set certificate for TrustRelationship",
+        "description" : "Find TrustRelationship by inum and set certificate.",
+        "operationId" : "setCertificate",
+        "parameters" : [ {
+          "name" : "inum",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
         "requestBody" : {
           "content" : {
-            "application/json" : {
+            "text/plain" : {
               "schema" : {
-                "$ref" : "#/components/schemas/TrustedIDPApi"
+                "type" : "string"
               }
             }
           }
         },
         "responses" : {
-          "201" : {
-            "description" : "Success",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/TrustedIDPApi"
-                }
-              }
-            }
-          },
-          "403" : {
-            "description" : "Trust Relation already exists"
+          "200" : {
+            "description" : "OK"
           },
           "500" : {
             "description" : "Server error"
@@ -3588,6 +3534,60 @@
         }
       }
     },
+    "/api/v1/inbound-saml/trusted-idp" : {
+      "get" : {
+        "summary" : "Retrieve all trusted-idps",
+        "description" : "Retrieve all trusted-idps",
+        "operationId" : "gluuTrustedIdps",
+        "responses" : {
+          "200" : {
+            "description" : "Success",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Server error"
+          }
+        }
+      },
+      "post" : {
+        "summary" : "Add TrustedIDP",
+        "description" : "Add an TrustedIDP",
+        "operationId" : "createGluuTrustedIdp",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/TrustedIDPApi"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "201" : {
+            "description" : "Success",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/TrustedIDPApi"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Trust Relation already exists"
+          },
+          "500" : {
+            "description" : "Server error"
+          }
+        }
+      }
+    },
     "/api/v1/inbound-saml/trusted-idp/inum/{inum}" : {
       "get" : {
         "summary" : "Get TrustedIDP by inum",
@@ -3614,6 +3614,57 @@
           },
           "404" : {
             "description" : "Resource not Found"
+          },
+          "500" : {
+            "description" : "Server error"
+          }
+        }
+      }
+    },
+    "/api/v1/uma/resources/{id}" : {
+      "get" : {
+        "summary" : "Get UMA resource by id",
+        "description" : "Get a uma resource by id",
+        "operationId" : "getUmaResourceById",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Success",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/UmaResource"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Server error"
+          }
+        }
+      },
+      "delete" : {
+        "summary" : "Delete UMA resource",
+        "description" : "Delete a uma resource",
+        "operationId" : "deleteUmaResource",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Success"
           },
           "500" : {
             "description" : "Server error"
@@ -3739,129 +3790,6 @@
         }
       }
     },
-    "/api/v1/uma/resources/{id}" : {
-      "get" : {
-        "summary" : "Get UMA resource by id",
-        "description" : "Get a uma resource by id",
-        "operationId" : "getUmaResourceById",
-        "parameters" : [ {
-          "name" : "id",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "Success",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/UmaResource"
-                }
-              }
-            }
-          },
-          "500" : {
-            "description" : "Server error"
-          }
-        }
-      },
-      "delete" : {
-        "summary" : "Delete UMA resource",
-        "description" : "Delete a uma resource",
-        "operationId" : "deleteUmaResource",
-        "parameters" : [ {
-          "name" : "id",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "Success"
-          },
-          "500" : {
-            "description" : "Server error"
-          }
-        }
-      }
-    },
-    "/api/v1/uma/resources/{id}/scopes/{inum}" : {
-      "post" : {
-        "summary" : "Add UMA resource scope",
-        "description" : "add scope to uma resource",
-        "operationId" : "addScopeToUmaResource",
-        "parameters" : [ {
-          "name" : "id",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "inum",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "Success",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/UmaResource"
-                }
-              }
-            }
-          },
-          "500" : {
-            "description" : "Server error"
-          }
-        }
-      },
-      "delete" : {
-        "summary" : "Remove UMA resource scope",
-        "description" : "remove a scope from uma resource",
-        "operationId" : "removeScopeToUmaResource",
-        "parameters" : [ {
-          "name" : "id",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "inum",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "Success",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/UmaResource"
-                }
-              }
-            }
-          },
-          "500" : {
-            "description" : "Server error"
-          }
-        }
-      }
-    },
     "/api/v1/uma/resources/{id}/clients/{inum}" : {
       "post" : {
         "summary" : "Add UMA resource client",
@@ -3934,29 +3862,6 @@
         }
       }
     },
-    "/api/v1/uma/resources/{id}/scopes" : {
-      "get" : {
-        "summary" : "Get UMA resource scopes",
-        "description" : "Get scopes of uma resource",
-        "operationId" : "getUmaResourceScopes",
-        "parameters" : [ {
-          "name" : "id",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "default" : {
-            "description" : "default response",
-            "content" : {
-              "application/json" : { }
-            }
-          }
-        }
-      }
-    },
     "/api/v1/uma/resources/{id}/clients" : {
       "get" : {
         "summary" : "Get clients of UMA resources",
@@ -3980,12 +3885,42 @@
         }
       }
     },
-    "/api/v1/uma/scopes/{inum}" : {
+    "/api/v1/uma/resources/{id}/scopes" : {
       "get" : {
-        "summary" : "Get UMA scope by inum",
-        "description" : "Get a uma scope by inum",
-        "operationId" : "getUmaScopeByInum",
+        "summary" : "Get UMA resource scopes",
+        "description" : "Get scopes of uma resource",
+        "operationId" : "getUmaResourceScopes",
         "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "default" : {
+            "description" : "default response",
+            "content" : {
+              "application/json" : { }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/uma/resources/{id}/scopes/{inum}" : {
+      "post" : {
+        "summary" : "Add UMA resource scope",
+        "description" : "add scope to uma resource",
+        "operationId" : "addScopeToUmaResource",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
           "name" : "inum",
           "in" : "path",
           "required" : true,
@@ -3995,11 +3930,11 @@
         } ],
         "responses" : {
           "200" : {
-            "description" : "success",
+            "description" : "Success",
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/Scope"
+                  "$ref" : "#/components/schemas/UmaResource"
                 }
               }
             }
@@ -4010,10 +3945,17 @@
         }
       },
       "delete" : {
-        "summary" : "Delete UMA scope",
-        "description" : "Delete a uma scope",
-        "operationId" : "deleteUmaScope",
+        "summary" : "Remove UMA resource scope",
+        "description" : "remove a scope from uma resource",
+        "operationId" : "removeScopeToUmaResource",
         "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
           "name" : "inum",
           "in" : "path",
           "required" : true,
@@ -4023,34 +3965,11 @@
         } ],
         "responses" : {
           "200" : {
-            "description" : "success"
-          },
-          "500" : {
-            "description" : "Server error"
-          }
-        }
-      }
-    },
-    "/api/v1/uma/scopes/search" : {
-      "get" : {
-        "summary" : "Search UMA scopes",
-        "description" : "Search uma scopes",
-        "operationId" : "searchUmaScopes",
-        "parameters" : [ {
-          "name" : "pattern",
-          "in" : "query",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "success",
+            "description" : "Success",
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "type" : "string"
+                  "$ref" : "#/components/schemas/UmaResource"
                 }
               }
             }
@@ -4131,6 +4050,87 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/Scope"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Server error"
+          }
+        }
+      }
+    },
+    "/api/v1/uma/scopes/{inum}" : {
+      "get" : {
+        "summary" : "Get UMA scope by inum",
+        "description" : "Get a uma scope by inum",
+        "operationId" : "getUmaScopeByInum",
+        "parameters" : [ {
+          "name" : "inum",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "success",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Scope"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Server error"
+          }
+        }
+      },
+      "delete" : {
+        "summary" : "Delete UMA scope",
+        "description" : "Delete a uma scope",
+        "operationId" : "deleteUmaScope",
+        "parameters" : [ {
+          "name" : "inum",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "success"
+          },
+          "500" : {
+            "description" : "Server error"
+          }
+        }
+      }
+    },
+    "/api/v1/uma/scopes/search" : {
+      "get" : {
+        "summary" : "Search UMA scopes",
+        "description" : "Search uma scopes",
+        "operationId" : "searchUmaScopes",
+        "parameters" : [ {
+          "name" : "pattern",
+          "in" : "query",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "success",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "string"
                 }
               }
             }
@@ -4513,12 +4513,6 @@
           "gluuTooltip" : {
             "type" : "string"
           },
-          "userCanEdit" : {
-            "type" : "boolean"
-          },
-          "userCanAccess" : {
-            "type" : "boolean"
-          },
           "adminCanAccess" : {
             "type" : "boolean"
           },
@@ -4528,7 +4522,13 @@
           "adminCanEdit" : {
             "type" : "boolean"
           },
+          "userCanAccess" : {
+            "type" : "boolean"
+          },
           "userCanView" : {
+            "type" : "boolean"
+          },
+          "userCanEdit" : {
             "type" : "boolean"
           },
           "whitePagesCanView" : {
@@ -5909,6 +5909,34 @@
           }
         }
       },
+      "ConnectionStatusDTO" : {
+        "type" : "object",
+        "properties" : {
+          "up" : {
+            "type" : "boolean"
+          }
+        }
+      },
+      "LdapConnectionData" : {
+        "type" : "object",
+        "properties" : {
+          "bindDN" : {
+            "type" : "string"
+          },
+          "bindPassword" : {
+            "type" : "string"
+          },
+          "servers" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "useSSL" : {
+            "type" : "boolean"
+          }
+        }
+      },
       "LdapConfigurationDTO" : {
         "type" : "object",
         "properties" : {
@@ -5959,34 +5987,6 @@
           "level" : {
             "type" : "integer",
             "format" : "int32"
-          }
-        }
-      },
-      "ConnectionStatusDTO" : {
-        "type" : "object",
-        "properties" : {
-          "up" : {
-            "type" : "boolean"
-          }
-        }
-      },
-      "LdapConnectionData" : {
-        "type" : "object",
-        "properties" : {
-          "bindDN" : {
-            "type" : "string"
-          },
-          "bindPassword" : {
-            "type" : "string"
-          },
-          "servers" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string"
-            }
-          },
-          "useSSL" : {
-            "type" : "boolean"
           }
         }
       },
@@ -7541,24 +7541,6 @@
             "type" : "string",
             "enum" : [ "disabled", "enabled", "false", "true", "inactive", "active" ]
           },
-          "stringValue" : {
-            "type" : "string"
-          },
-          "stringValues" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string"
-            }
-          },
-          "new" : {
-            "type" : "boolean"
-          },
-          "userCanEdit" : {
-            "type" : "boolean"
-          },
-          "userCanAccess" : {
-            "type" : "boolean"
-          },
           "adminCanAccess" : {
             "type" : "boolean"
           },
@@ -7568,10 +7550,28 @@
           "adminCanEdit" : {
             "type" : "boolean"
           },
+          "userCanAccess" : {
+            "type" : "boolean"
+          },
           "userCanView" : {
             "type" : "boolean"
           },
+          "userCanEdit" : {
+            "type" : "boolean"
+          },
           "multiValued" : {
+            "type" : "boolean"
+          },
+          "stringValues" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "stringValue" : {
+            "type" : "string"
+          },
+          "new" : {
             "type" : "boolean"
           }
         }
@@ -7710,14 +7710,17 @@
           "certificate" : {
             "type" : "string"
           },
+          "entityId" : {
+            "type" : "string"
+          },
+          "researchBundle" : {
+            "type" : "boolean"
+          },
           "containerFederation" : {
             "$ref" : "#/components/schemas/GluuSAMLTrustRelationship"
           },
           "specificRelyingPartyConfig" : {
             "type" : "boolean"
-          },
-          "entityId" : {
-            "type" : "string"
           },
           "federation" : {
             "type" : "boolean"
@@ -7729,9 +7732,6 @@
             "items" : {
               "type" : "string"
             }
-          },
-          "researchBundle" : {
-            "type" : "boolean"
           },
           "baseDn" : {
             "type" : "string"
@@ -7839,23 +7839,6 @@
           }
         }
       },
-      "TrustContact" : {
-        "type" : "object",
-        "properties" : {
-          "name" : {
-            "type" : "string"
-          },
-          "phone" : {
-            "type" : "string"
-          },
-          "mail" : {
-            "type" : "string"
-          },
-          "title" : {
-            "type" : "string"
-          }
-        }
-      },
       "SAMLTrustRelationshipShort" : {
         "type" : "object",
         "properties" : {
@@ -7877,6 +7860,23 @@
             "items" : {
               "type" : "string"
             }
+          }
+        }
+      },
+      "TrustContact" : {
+        "type" : "object",
+        "properties" : {
+          "name" : {
+            "type" : "string"
+          },
+          "phone" : {
+            "type" : "string"
+          },
+          "mail" : {
+            "type" : "string"
+          },
+          "title" : {
+            "type" : "string"
           }
         }
       },
