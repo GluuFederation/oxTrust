@@ -32,6 +32,16 @@
 		.configurationSheet{
 			border: 1px solid #999;
 		}
+
+		.nav-tabs-custom>.nav-tabs>li>a.active {
+			border-top-color: #3c8dbc !important;
+		}
+
+		.nav-tabs-custom>.nav-tabs>li>a {
+			border-top: 3px solid transparent;
+			margin-bottom: -2px;
+			margin-right: 5px;
+		}
     </h:outputStylesheet>
 
 	<h:outputStylesheet>
@@ -75,7 +85,7 @@
           if (event.which == '13') {
           event.preventDefault();
          }
-     });   
+     });
     </h:outputScript>
 	<h:form id="organizationForm" autocomplete="off">
 		<div class="row" style="margin: 1px;">
