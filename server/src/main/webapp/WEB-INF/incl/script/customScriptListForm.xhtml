@@ -84,7 +84,7 @@
 											<h5 class="mb-0">
 												<a class="accordion-toggle in" data-toggle="collapse"
 													href="#collapseOne#{gluufn:hashCode(_customScript.name)}"
-													aria-expanded="true" aria-controls="collapseOne">
+													aria-expanded="true" aria-controls="collapseOne#{gluufn:hashCode(_customScript.name)}">
 													#{(_customScript.name == null) ?
 													msgs['customScript.newscript'] : _customScript.name } </a>
 											</h5>
@@ -94,7 +94,6 @@
 										<div id="collapseOne#{gluufn:hashCode(_customScript.name)}"
 											class="#{_customScript.dn != null ? 'collapse' : 'collapse in'}"
 											role="tabpanel" aria-labelledby="headingOne"
-											data-parent="#accordion"
 											expanded="#{_customScript.dn == null}">
 											<h:panelGroup layout="block" class="card-body">
 												<a4j:commandLink value="Delete Script" immediate="true"
