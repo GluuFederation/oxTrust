@@ -254,6 +254,117 @@ a {
 .collapse {
     display: none !important;
 }
+.navbar-nav {
+    --bs-nav-link-padding-x: 0;
+    --bs-nav-link-padding-y: 0.5rem;
+    --bs-nav-link-font-weight: ;
+    --bs-nav-link-color: var(--bs-navbar-color);
+    --bs-nav-link-hover-color: var(--bs-navbar-hover-color);
+    --bs-nav-link-disabled-color: var(--bs-navbar-disabled-color);
+    display: flex;
+    flex-direction: unset !important;
+    padding-left: 0;
+    margin-bottom: 0;
+    list-style: none;
+}
+
+.table {
+    --bs-table-color-type: initial;
+    --bs-table-bg-type: initial;
+    --bs-table-color-state: initial;
+    --bs-table-bg-state: initial;
+    --bs-table-color: unset !important;
+    --bs-table-bg: unset !important;
+    --bs-table-border-color: var(--bs-border-color);
+    --bs-table-accent-bg: transparent;
+    --bs-table-striped-color: var(--bs-emphasis-color);
+    --bs-table-striped-bg: rgba(var(--bs-emphasis-color-rgb), 0.05);
+    --bs-table-active-color: var(--bs-emphasis-color);
+    --bs-table-active-bg: rgba(var(--bs-emphasis-color-rgb), 0.1);
+    --bs-table-hover-color: var(--bs-emphasis-color);
+    --bs-table-hover-bg: rgba(var(--bs-emphasis-color-rgb), 0.075);
+    width: 100%;
+    margin-bottom: 1rem;
+    vertical-align: top;
+    border-color: var(--bs-table-border-color);
+}
+
+.row {
+    --bs-gutter-x: 1.5rem;
+    --bs-gutter-y: 0;
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: calc(-1 * var(--bs-gutter-y));
+}
+body {
+    font-family: 'Source Sans Pro','Helvetica Neue',Helvetica,Arial,sans-serif;
+    font-weight: 500;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+body {
+    margin: 0;
+    font-family: Arial, Verdana, sans-serif;
+    font-size: 14px !important;
+    font-weight: var(--bs-body-font-weight);
+    line-height: var(--bs-body-line-height);
+    color: var(--bs-body-color);
+    text-align: var(--bs-body-text-align);
+    background-color: var(--bs-body-bg);
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.card {
+    --bs-card-spacer-y: 1rem;
+    --bs-card-spacer-x: 1rem;
+    --bs-card-title-spacer-y: 0.5rem;
+    --bs-card-title-color: ;
+    --bs-card-subtitle-color: ;
+    --bs-card-border-width: none !important;
+    --bs-card-border-color: var(--bs-border-color-translucent);
+    --bs-card-border-radius: var(--bs-border-radius);
+    --bs-card-box-shadow: ;
+    --bs-card-inner-border-radius: calc(var(--bs-border-radius) - (var(--bs-border-width)));
+    --bs-card-cap-padding-y: 0.5rem;
+    --bs-card-cap-padding-x: 1rem;
+    --bs-card-cap-bg: rgba(var(--bs-body-color-rgb), 0.03);
+    --bs-card-cap-color: ;
+    --bs-card-height: ;
+    --bs-card-color: ;
+    --bs-card-bg: var(--bs-body-bg);
+    --bs-card-img-overlay-padding: 1rem;
+    --bs-card-group-margin: 0.75rem;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    height: var(--bs-card-height);
+    color: var(--bs-body-color);
+    word-wrap: break-word;
+    background-color: var(--bs-card-bg);
+    background-clip: border-box;
+    border: var(--bs-card-border-width) solid var(--bs-card-border-color);
+    border-radius: var(--bs-card-border-radius);
+}
+
+.card-header {
+    background: #fff;
+    border-top-left-radius: 4px  !important;
+    border-top-right-radius: 4px !important;
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 0px;
+    border: 1px solid #ccc;
+    padding: 15px 12px !important;
+}
+.row>* {
+    flex-shrink: 0;
+    width: 100%;
+    max-width: 100%;
+    padding-right: unset !important;
+    padding-left: unset !important;
+    margin-top: var(--bs-gutter-y);
+}
         </style>
     </h:head>
     <h:body styleClass="skin-green">
@@ -287,6 +398,10 @@ a {
         <script
                 src="#{oxTrustConfigurationService.cssLocation}/../theme/bootstrap/js/bootstrap.min.js"
                 type="text/javascript"></script>
+
+        <script
+                src="#{oxTrustConfigurationService.cssLocation}/../theme/bootstrap/js/bootstrap.bundle.min.js"
+                type="text/javascript"></script>
         <script
                 src="#{oxTrustConfigurationService.cssLocation}/../theme/dist/js/app.min.js"
                 type="text/javascript"></script>
@@ -306,6 +421,7 @@ a {
 			$.blockUI.defaults.message = $('div.gluuBusyIndicator')
 			$.blockUI.defaults.fadeIn = 0
 			$.blockUI.defaults.fadeOut = 0
+
         </script>
         <div class="footer"></div>
     </h:body>
