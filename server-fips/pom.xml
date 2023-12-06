@@ -10,7 +10,7 @@
 	<parent>
 		<groupId>org.gluu</groupId>
 		<artifactId>oxtrust</artifactId>
-		<version>4.5.3-SNAPSHOT</version>
+		<version>4.5.4-SNAPSHOT</version>
 	</parent>
 
 	<prerequisites>
@@ -61,10 +61,10 @@
 						</manifestEntries>
 					</archive>
 					<packagingExcludes>
-						WEB-INF/lib/bcpkix-jdk15on-*.jar,
-						WEB-INF/lib/bcprov-jdk15on-*.jar,
-						WEB-INF/lib/bcutil-jdk15on-*.jar,
-						WEB-INF/lib/bcmail-jdk15on-*.jar
+						WEB-INF/lib/bcpkix-jdk18on-*.jar,
+						WEB-INF/lib/bcprov-jdk18on-*.jar,
+						WEB-INF/lib/bcutil-jdk18on-*.jar,
+						WEB-INF/lib/bcmail-jdk18on-*.jar
 					</packagingExcludes>
 				</configuration>
 			</plugin>
