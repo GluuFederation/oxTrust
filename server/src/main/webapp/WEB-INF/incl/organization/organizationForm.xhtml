@@ -32,16 +32,6 @@
 		.configurationSheet{
 			border: 1px solid #999;
 		}
-
-		.nav-tabs-custom>.nav-tabs>li>a.active {
-			border-top-color: #3c8dbc !important;
-		}
-
-		.nav-tabs-custom>.nav-tabs>li>a {
-			border-top: 3px solid transparent;
-			margin-bottom: -2px;
-			margin-right: 5px;
-		}
     </h:outputStylesheet>
 
 	<h:outputStylesheet>
@@ -85,7 +75,7 @@
           if (event.which == '13') {
           event.preventDefault();
          }
-     });
+     });   
     </h:outputScript>
 	<h:form id="organizationForm" autocomplete="off">
 		<div class="row" style="margin: 1px;">
@@ -93,11 +83,11 @@
 				iconAwesome="fa-university" collapsible="false">
 				<div class="nav-tabs-custom" style="margin-bottom: 0px;">
 					<ul class="nav nav-tabs" id="organizationFormtab">
-						<li class="active"><a href="#sys-config" data-toggle="tab">#{msgs['organizationForm.systemConfiguration']}</a></li>
-						<li><a href="#smtp-server" data-toggle="tab">#{msgs['organizationForm.smtpServerConfiguration']}</a></li>
-						<li><a href="#ox-trust" data-toggle="tab">Organization
+						<li><a href="#sys-config" data-bs-toggle="tab" class="active">#{msgs['organizationForm.systemConfiguration']}</a></li>
+						<li><a href="#smtp-server" data-bs-toggle="tab">#{msgs['organizationForm.smtpServerConfiguration']}</a></li>
+						<li><a href="#ox-trust" data-bs-toggle="tab">Organization
 								Settings</a></li>
-						<li><a href="#libs" data-toggle="tab">Extra libraries</a></li>
+						<li><a href="#libs" data-bs-toggle="tab">Extra libraries</a></li>
 					</ul>
 					<div class="tab-content">
 						<div class="tab-pane active" id="sys-config">
@@ -248,7 +238,7 @@
 								<b:panel title="oxTrust Logo/Favicon" look="primary"
 									iconAwesome="fa-sliders">
 									<div class="row">
-										<div class="col-sm-6 col-lg-6">
+										<div class="col-sm-6 col-lg-6" style="padding-right: 15px !important;">
 											<b:panel id="oxTrustLogoPanelId" title="Current oxTrust Logo"
 												look="success" collapsible="true" collapsed="true">
 												<div class="row">
@@ -306,7 +296,7 @@
 								<b:panel title="oxAuth Logo/Favicon" look="primary"
 									iconAwesome="fa-sliders">
 									<div class="row">
-										<div class="col-sm-6 col-lg-6">
+										<div class="col-sm-6 col-lg-6" style="padding-right: 15px !important;">
 											<b:panel id="oxAuthLogoPanelId" title="Current oxAuth Logo"
 												look="success" collapsible="true" collapsed="true">
 												<div class="row">
