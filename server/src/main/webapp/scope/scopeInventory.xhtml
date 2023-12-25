@@ -27,7 +27,7 @@
 								<div class="row"
 									style="padding: 5px; margin-bottom: 5px; margin-left: 15px">
 									<b:link style-class="addScopeButtonClass btn btn-primary"
-										icon="plus" outcome="/scope/addScope"
+										icon="plus" outcome="/scope/addScope" style="width: 9%;"
 										value="#{msgs['scope.addScope']}" includeViewParams="false" />
 								</div>
 								<p:spacer height="16" />
@@ -56,18 +56,18 @@
 												value="#{searchScopeAction.scopeList}" var="clt"
 												print="true" excel="true" csv="true" pdf="true"
 												select="true">
-												<b:dataTableColumn label="#{msgs['scope.inum']}">
+												<b:dataTableColumn label="#{msgs['scope.inum']}" header-style="font-size: 14px !important;">
 													<h:link includeViewParams="false"
 														outcome="/scope/updateScope" value="#{clt.inum}">
 														<f:param name="inum" value="#{clt.inum}" />
 													</h:link>
 												</b:dataTableColumn>
-												<b:dataTableColumn label="#{msgs['scope.displayName']}"
+												<b:dataTableColumn label="#{msgs['scope.displayName']}" header-style="font-size: 14px !important;"
 													value="#{clt.id eq null ? clt.displayName : clt.id}">
 												</b:dataTableColumn>
-												<b:dataTableColumn value="#{clt.description}"
+												<b:dataTableColumn value="#{clt.description}" header-style="font-size: 14px !important;"
 													label="#{msgs['scope.description']}" />
-												<b:dataTableColumn label="#{msgs['scope.scopeType']}" 
+												<b:dataTableColumn label="#{msgs['scope.scopeType']}" header-style="font-size: 14px !important;"
 														value="#{clt.scopeType}" severity="primary" />
 											</b:dataTable>
 										</h:form>
