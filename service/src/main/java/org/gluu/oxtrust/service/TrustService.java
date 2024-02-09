@@ -22,6 +22,7 @@ import javax.xml.xpath.XPathExpressionException;
 import org.gluu.model.GluuAttribute;
 import org.gluu.model.GluuStatus;
 import org.gluu.model.TrustContact;
+import org.gluu.oxtrust.model.GluuEntityType;
 import org.gluu.oxtrust.model.GluuMetadataSourceType;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
 import org.gluu.oxtrust.util.OxTrustConstants;
@@ -161,6 +162,26 @@ public class TrustService implements Serializable {
 		List<GluuSAMLTrustRelationship> result = getAllFederations();
 		result.remove(getRelationshipByInum(inum));
 		return result;
+	}
+
+	public List<GluuSAMLTrustRelationship> getAllMdqFederatedTrustRelationships() {
+
+		GluuSAMLTrustRelationship trustRelationship = new GluuSAMLTrustRelationship();
+		trustRelationship.setBaseDn(getDnForTrustRelationShip(null));
+		//trustRelationship.setStatus(GluuStatus.ACTIVE);
+		trustRelationship.setEntityType(GluuEntityType.FederationAggregate);
+		trustRelationship.setSpMetaDataSourceType((GluuMetadataSourceType.MDQ));
+		return persistenceEntryManager.findEntries(trustRelationship);
+	}
+
+	public List<GluuSAMLTrustRelationship> getAllActiveMdqFederatedTrustRelationships() {
+
+		GluuSAMLTrustRelationship trustRelationship = new GluuSAMLTrustRelationship();
+		trustRelationship.setBaseDn(getDnForTrustRelationShip(null));
+		trustRelationship.setStatus(GluuStatus.ACTIVE);
+		trustRelationship.setEntityType(GluuEntityType.FederationAggregate);
+		trustRelationship.setSpMetaDataSourceType(GluuMetadataSourceType.MDQ);
+		return persistenceEntryManager.findEntries(trustRelationship);
 	}
 
 	/**

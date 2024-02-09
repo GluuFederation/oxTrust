@@ -44,6 +44,7 @@ import org.gluu.model.GluuAttribute;
 import org.gluu.model.GluuStatus;
 import org.gluu.model.GluuUserRole;
 import org.gluu.model.SchemaEntry;
+import org.gluu.oxtrust.model.GluuEntityType;
 import org.gluu.oxtrust.model.GluuMetadataSourceType;
 import org.gluu.oxtrust.model.GluuSAMLFederationProposal;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
@@ -96,7 +97,6 @@ public class Shibboleth3ConfService implements Serializable {
     public static final String SHIB3_IDP_IDP_METADATA_FILE = "idp-metadata.xml";
     public static final String SHIB3_IDP_SP_METADATA_FILE = "sp-metadata.xml";
     private static final String SHIB_IDP_GLUU_ATTRIBUTE_RULES_FILE = "gluu-attribute-rules.xml";
-    public static final String SHIB3_MDQ_METADATA_FILE = "mdq-metadata.xml";
     public static final String SHIB3_SP_ATTRIBUTE_MAP_FILE = "attribute-map.xml";
     public static final String SHIB3_SP_SHIBBOLETH2_FILE = "shibboleth2.xml";
     
@@ -281,7 +281,7 @@ public class Shibboleth3ConfService implements Serializable {
     public boolean generateConfigurationFiles(List<GluuSAMLTrustRelationship> trustRelationships) {
 
         log.info(">>>>>>>>>> IN Shibboleth3ConfService.generateConfigurationFiles()...");
-
+        GluuSAMLTrustRelationship.sortByDataSourceType(trustRelationships);
         if (appConfiguration.getShibboleth3IdpRootDir() == null) {
             throw new InvalidConfigurationException("Failed to update configuration due to undefined IDP root folder");
         }
@@ -411,25 +411,23 @@ public class Shibboleth3ConfService implements Serializable {
      * Prepare trustRelationships to generate files
      */
     private HashMap<String, Object> initTrustParamMap(List<GluuSAMLTrustRelationship> trustRelationships) {
-
-        log.trace("Starting trust parameters map initialization.");
-
-        HashMap<String, Object> trustParams = new HashMap<String, Object>();
+        
+        log.trace("Starting trust parameter map initialization");
+        HashMap<String,Object> ret = new HashMap<String,Object>();
 
         // Metadata signature verification engines
         // https://wiki.shibboleth.net/confluence/display/SHIB2/IdPTrustEngine
-        List<Map<String, String>> trustEngines = new ArrayList<Map<String, String>>();
+        List<Map<String,String>> trustEngines = new ArrayList<Map<String,String>>();
 
         // the map of {inum,number} for easy naming of relying parties.
-        Map<String, String> trustIds = new HashMap<String, String>();
+        Map<String,String> trustIds = new HashMap<String,String>();
 
         // Trust relationships that are part of some federation
         List<GluuSAMLTrustRelationship> deconstructed = new ArrayList<GluuSAMLTrustRelationship>();
 
-        // the map of {inum,number} for easy naming of federated relying
-        // parties.
+        // the map of {inum,number} for easy naming of federated relying parties
         Map<String, String> deconstructedIds = new HashMap<String, String>();
-
+        
         // the map of {inum, {inum, inum, inum...}} describing the federations
         // and TRs defined from them.
         Map<String, List<String>> deconstructedMap = new HashMap<String, List<String>>();
@@ -438,116 +436,118 @@ public class Shibboleth3ConfService implements Serializable {
         Map<String, List<String>> trustEntityIds = new HashMap<String, List<String>>();
 
         int id = 1;
-        for (GluuSAMLTrustRelationship trustRelationship : trustRelationships) {
+        String idpMetadataDir = getIdpMetadataDir();
+        for(GluuSAMLTrustRelationship trustRelationship: trustRelationships) {
 
-            boolean isPartOfFederation = !(trustRelationship.getSpMetaDataSourceType()
-                    .equals(GluuMetadataSourceType.URI)
-                    || trustRelationship.getSpMetaDataSourceType().equals(GluuMetadataSourceType.FILE));
+            if(isMetadataProviderSource(trustRelationship)) {
 
-            if (!isPartOfFederation) {
+                trustIds.put(trustRelationship.getInum(),String.valueOf(id++));
 
-                // Set Id
-                trustIds.put(trustRelationship.getInum(), String.valueOf(id++));
+                if(isFileOrUriMetadataSource(trustRelationship)) {
+                    String metadataFile = idpMetadataDir + trustRelationship.getSpMetaDataFN();
+                    List<String> entityIds = samlMetadataParser.getEntityIdFromMetadataFile(metadataFile);
 
-                // Set entityId
-                String idpMetadataFolder = getIdpMetadataDir();
+                    //If for some reason metadata is corrupted or missing 
+                    //Mark TR as INACTIVE.
+                    //User will be able to fix this in the UI 
+                    if(entityIds == null) {
+                        trustRelationship.setStatus(GluuStatus.INACTIVE);
+                        trustService.updateTrustRelationship(trustRelationship);
+                        continue;
+                    }
 
-                String metadataFile = idpMetadataFolder + trustRelationship.getSpMetaDataFN();
-                List<String> entityIds = samlMetadataParser.getEntityIdFromMetadataFile(metadataFile);
-
-                // if for some reason metadata is corrupted or missing - mark trust relationship
-                // INACTIVE
-                // user will be able to fix this in UI
-                if (entityIds == null) {
-                    trustRelationship.setStatus(GluuStatus.INACTIVE);
-                    trustService.updateTrustRelationship(trustRelationship);
-                    continue;
+                    trustEntityIds.put(trustRelationship.getInum(),entityIds);
                 }
 
-                trustEntityIds.put(trustRelationship.getInum(), entityIds);
-
                 initProfileConfiguration(trustRelationship);
-
-                if (trustRelationship.getMetadataFilters().get("signatureValidation") != null) {
-
-                    Map<String, String> trustEngine = new HashMap<String, String>();
-
-                    trustEngine.put("id", "Trust" + StringHelper.removePunctuation(trustRelationship.getInum()));
-
-                    trustEngine.put("certPath", getIdpMetadataDir() + "credentials" + File.separator + trustRelationship
-                            .getMetadataFilters().get("signatureValidation").getFilterCertFileName());
-
+                if(trustRelationship.getMetadataFilters().get("signatureValidation") != null) {
+                    Map<String,String> trustEngine = new HashMap<String, String>();
+                    trustEngine.put("id","Trust"+StringHelper.removePunctuation(trustRelationship.getInum()));
+                    trustEngine.put("certPath",idpMetadataDir+"credentials"+File.separator+
+                        trustRelationship.getMetadataFilters().get("signatureValidation").getFilterCertFileName());
                     trustEngines.add(trustEngine);
                 }
 
-                // If there is an intrusive filter - push it to the end of the list.
-                if (trustRelationship.getGluuSAMLMetaDataFilter() != null) {
+                //Push intrusive filters to the end of the list if need be 
+                if(trustRelationship.getGluuSAMLMetaDataFilter() != null) {
 
-                    List<String> filtersList = new ArrayList<String>();
+                    List<String> filters = new ArrayList<String>();
                     String entityRoleWhiteList = null;
-                    for (String filterXML : trustRelationship.getGluuSAMLMetaDataFilter()) {
-
-                        Document xmlDocument;
-
+                    for(String filterXml : trustRelationship.getGluuSAMLMetaDataFilter()) {
+                        Document xmldoc;
                         try {
-
-                            xmlDocument = xmlService.getXmlDocument(filterXML.getBytes());
-
-                        } catch (Exception e) {
-                            log.error("GluuSAMLMetaDataFilter contains invalid value.", e);
-                            e.printStackTrace();
+                            xmldoc = xmlService.getXmlDocument(filterXml.getBytes());
+                        }catch(Exception e) {
+                            log.error("GluuSAMLMetaDataFilter contains an invalid value",e);
                             continue;
                         }
 
-                        if (xmlDocument.getFirstChild().getAttributes().getNamedItem("xsi:type").getNodeValue()
-                                .equals(FilterService.ENTITY_ROLE_WHITE_LIST_TYPE)) {
-                            entityRoleWhiteList = filterXML;
+                        if(xmldoc.getFirstChild().getAttributes().getNamedItem("xsi:type").getNodeValue()
+                            .equals(FilterService.ENTITY_ROLE_WHITE_LIST_TYPE)) {
+                            
+                            entityRoleWhiteList = filterXml;
                             continue;
                         }
 
-                        filtersList.add(filterXML);
+                        filters.add(filterXml);
                     }
 
-                    if (entityRoleWhiteList != null) {
-                        filtersList.add(entityRoleWhiteList);
+                    if(entityRoleWhiteList !=null) {
+                        filters.add(entityRoleWhiteList);
                     }
-
-                    trustRelationship.setGluuSAMLMetaDataFilter(filtersList);
+                    trustRelationship.setGluuSAMLMetaDataFilter(filters);
                 }
 
-            } else {
+            }else {
+
                 initProfileConfiguration(trustRelationship);
-
                 String federationInum = trustRelationship.getGluuContainerFederation();
-
-                if (deconstructedMap.get(federationInum) == null) {
+                if(deconstructedMap.get(federationInum) == null) {
                     deconstructedMap.put(federationInum, new ArrayList<String>());
                 }
-
+                
                 deconstructedMap.get(federationInum).add(trustRelationship.getEntityId());
                 deconstructed.add(trustRelationship);
-                deconstructedIds.put(trustRelationship.getEntityId(), String.valueOf(id++));
+                deconstructedIds.put(trustRelationship.getEntityId(),String.valueOf(id++));
             }
         }
 
-        for (String trustRelationshipInum : trustEntityIds.keySet()) {
-            List<String> federatedSites = deconstructedMap.get(trustRelationshipInum);
-            if (federatedSites != null) {
-                trustEntityIds.get(trustRelationshipInum).removeAll(federatedSites);
+        for(String trInum : trustEntityIds.keySet()) {
+            List<String> federatedsites = deconstructedMap.get(trInum);
+            if(federatedsites != null) {
+                trustEntityIds.get(trInum).removeAll(federatedsites);
             }
         }
+        
+        ret.put("deconstructed",deconstructed);
+        ret.put("deconstructedIds",deconstructedIds);
+        ret.put("trustEngines",trustEngines);
+        ret.put("trusts",trustRelationships);
+        ret.put("trustIds",trustIds);
+        ret.put("trustEntityIds",trustEntityIds);
+        return ret;
+    }
 
-        trustParams.put("idpCredentialsPath", getIdpMetadataDir() + "credentials" + File.separator);
+    private boolean isMetadataProviderSource(GluuSAMLTrustRelationship trustRelationship) {
 
-        trustParams.put("deconstructed", deconstructed);
-        trustParams.put("deconstructedIds", deconstructedIds);
+        if(trustRelationship.getSpMetaDataSourceType().equals(GluuMetadataSourceType.URI)
+            || trustRelationship.getSpMetaDataSourceType().equals(GluuMetadataSourceType.FILE)) {
+            
+            return true;
+        }
 
-        trustParams.put("trustEngines", trustEngines);
-        trustParams.put("trusts", trustRelationships);
-        trustParams.put("trustIds", trustIds);
-        trustParams.put("trustEntityIds", trustEntityIds);
+        if(trustRelationship.getEntityType().equals(GluuEntityType.FederationAggregate) && 
+           trustRelationship.getSpMetaDataSourceType().equals(GluuMetadataSourceType.MDQ)) {
 
-        return trustParams;
+            return true;
+        } 
+        return false;
+    }
+
+    private boolean isFileOrUriMetadataSource(GluuSAMLTrustRelationship trustRelationship) {
+
+        return trustRelationship.getSpMetaDataSourceType().equals(GluuMetadataSourceType.FILE)
+            || trustRelationship.getSpMetaDataSourceType().equals(GluuMetadataSourceType.URI);
     }
 
     protected void initProfileConfiguration(GluuSAMLTrustRelationship trustRelationship)
@@ -926,38 +926,6 @@ public class Shibboleth3ConfService implements Serializable {
         return spMetadataFileContent;
     }
     
-    public boolean generateMDQMetadataFile(GluuSAMLTrustRelationship trustRelationship) {
-        if (appConfiguration.getShibboleth3IdpRootDir() == null) {
-            throw new InvalidConfigurationException(
-                    "Failed to generate SP meta-data file due to undefined IDP root folder");
-        }
-
-        String idpMetadataFolder = getIdpMetadataDir();
-
-        // Generate sp-metadata.xml meta-data file
-        String spMetadataFileContent = generateMDQSpMetadataFileContent(trustRelationship);
-        if (StringHelper.isEmpty(spMetadataFileContent)) {
-            return false;
-        }
-
-        if (StringHelper.isEmpty(trustRelationship.getUrl())) {
-            log.error("Trust relationship URL is empty");
-            return false;
-        }
-
-        return writeConfFile(idpMetadataFolder + trustRelationship.getSpMetaDataFN(), spMetadataFileContent);
-    }
-
-    public String generateMDQSpMetadataFileContent(GluuSAMLTrustRelationship trustRelationship) {
-        VelocityContext context = new VelocityContext();
-        context.put("trustRelationship", trustRelationship);
-        context.put("mdqUrl", trustRelationship.getUrl().replaceFirst("/$", ""));
-
-        // Generate mdq-metadata.xml.xml meta-data file
-        String mdqMetadataFileContent = generateConfFile(SHIB3_MDQ_METADATA_FILE, context);
-        return mdqMetadataFileContent;
-    }
-
     public void removeSpMetadataFile(String spMetadataFileName) {
         if (appConfiguration.getShibboleth3IdpRootDir() == null) {
             throw new InvalidConfigurationException(

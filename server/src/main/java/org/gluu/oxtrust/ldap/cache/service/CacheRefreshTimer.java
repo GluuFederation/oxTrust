@@ -39,7 +39,6 @@ import org.gluu.model.GluuStatus;
 import org.gluu.model.SchemaEntry;
 import org.gluu.model.custom.script.model.bind.BindCredentials;
 import org.gluu.model.ldap.GluuLdapConfiguration;
-import org.gluu.oxtrust.service.config.ConfigurationFactory;
 import org.gluu.oxtrust.ldap.cache.model.CacheCompoundKey;
 import org.gluu.oxtrust.ldap.cache.model.GluuInumMap;
 import org.gluu.oxtrust.ldap.cache.model.GluuSimplePerson;
@@ -59,6 +58,7 @@ import org.gluu.oxtrust.service.InumService;
 import org.gluu.oxtrust.service.PairwiseIdService;
 import org.gluu.oxtrust.service.PersonService;
 import org.gluu.oxtrust.service.cdi.event.CacheRefreshEvent;
+import org.gluu.oxtrust.service.config.ConfigurationFactory;
 import org.gluu.oxtrust.service.external.ExternalCacheRefreshService;
 import org.gluu.oxtrust.util.OxTrustConstants;
 import org.gluu.oxtrust.util.PropertyUtil;
@@ -68,7 +68,6 @@ import org.gluu.persist.annotation.ObjectClass;
 import org.gluu.persist.exception.BasePersistenceException;
 import org.gluu.persist.exception.EntryPersistenceException;
 import org.gluu.persist.exception.operation.SearchException;
-import org.gluu.persist.ldap.impl.LdapEntryManager;
 import org.gluu.persist.ldap.impl.LdapEntryManagerFactory;
 import org.gluu.persist.ldap.operation.LdapOperationService;
 import org.gluu.persist.model.SearchScope;
@@ -920,6 +919,7 @@ public class CacheRefreshTimer {
 				// Add to result and ignore root entry if needed
 				for (GluuSimplePerson currentSourcePerson : currentSourcePersons) {
 					currentSourcePerson.setSourceServerName(sourceServerName);
+					externalCacheRefreshService.executeExternalUpdateSourceUserMethods(currentSourcePerson);
 					// if (!StringHelper.equalsIgnoreCase(baseDn,
 					// currentSourcePerson.getDn())) {
 					String currentSourcePersonDn = currentSourcePerson.getDn().toLowerCase();
@@ -969,6 +969,7 @@ public class CacheRefreshTimer {
 					// Add to result and ignore root entry if needed
 					for (GluuSimplePerson currentSourcePerson : currentSourcePersons) {
 						currentSourcePerson.setSourceServerName(sourceServerName);
+						externalCacheRefreshService.executeExternalUpdateSourceUserMethods(currentSourcePerson);
 						// if (!StringHelper.equalsIgnoreCase(baseDn,
 						// currentSourcePerson.getDn())) {
 						String currentSourcePersonDn = currentSourcePerson.getDn().toLowerCase();

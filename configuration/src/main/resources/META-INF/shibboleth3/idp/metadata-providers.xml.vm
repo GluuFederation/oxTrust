@@ -32,21 +32,28 @@
     -->
 
 #foreach( $trustRelationship in $trustParams.trusts )
-
-    #if($trustRelationship.spMetaDataSourceType.value == "file")
+    #if($trustRelationship.isFileMetadataSourceType())
 
     <MetadataProvider id="SiteSP$trustParams.trustIds.get($trustRelationship.inum)"
                       xsi:type="FilesystemMetadataProvider"
                       metadataFile="$medataFolder$trustRelationship.spMetaDataFN">
 
-    #elseif($trustRelationship.spMetaDataSourceType.value == "uri")
+    #elseif($trustRelationship.isUriMetadataSourceType())
 
     <MetadataProvider id="SiteSP$trustParams.trustIds.get($trustRelationship.inum)"
                       xsi:type="FileBackedHTTPMetadataProvider"
                       maxRefreshDelay="$trustRelationship.maxRefreshDelay"
                       metadataURL="$trustRelationship.spMetaDataURL"
                       backingFile="$medataFolder$trustRelationship.spMetaDataFN">
-
+    
+    #elseif($trustRelationship.isMdqMetadataSourceType() and $trustRelationship.entityTypeIsFederation())
+    <MetadataProvider id="SiteSP$trustParams.trustIds.get($trustRelationship.inum)"
+                    xsi:type="DynamicHTTPMetadataProvider" connectionRequestTimeout="PT0S"
+                    connectionTimeout="PT0S" socketTimeout="PT0S">
+        
+        <MetadataFilter xsi:type="RequiredValidUntil" maxValidityInterval="P1D"/>
+        <MetadataQueryProtocol>$trustRelationship.url</MetadataQueryProtocol>
+    
     #end
 
     #if( $trustRelationship.gluuSAMLMetaDataFilter and $trustRelationship.getGluuSAMLMetaDataFilter().size() > 0 )
@@ -59,10 +66,11 @@
 
     #end
 
-    #if($trustRelationship.spMetaDataSourceType.value == 'file' || $trustRelationship.spMetaDataSourceType.value == 'uri')
+    #if($trustRelationship.isFileMetadataSourceType() or $trustRelationship.isUriMetadataSourceType())
     </MetadataProvider>
     #end
-
+    #if($trustRelationship.isMdqMetadataSourceType() and $trustRelationship.entityTypeIsFederation())
+    </MetadataProvider>
+    #end
 #end
-
 </MetadataProvider>

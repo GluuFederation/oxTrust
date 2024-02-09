@@ -738,11 +738,13 @@ public class UpdateClientAction implements Serializable {
         boolean result = true;
         URL uri1 = new URL(url1);
         for (String url : this.loginUris) {
-            URL uri = new URL(url);
-            if (!(uri1.getHost().equalsIgnoreCase(uri.getHost()))) {
-                result = false;
-                break;
-            }
+        	if(url.startsWith(HTTPS)) {
+	            URL uri = new URL(url);
+	            if (!(uri1.getHost().equalsIgnoreCase(uri.getHost()))) {
+	                result = false;
+	                break;
+	            }
+        	}
         }
         return result;
     }

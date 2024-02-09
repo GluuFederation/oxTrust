@@ -9,6 +9,7 @@ package org.gluu.oxtrust.action;
 import java.io.Serializable;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.ConversationScoped;
 import javax.faces.application.FacesMessage;
@@ -76,7 +77,10 @@ public class SearchClientAction implements Serializable {
 			} else {
 				this.clientList = clientService.searchClients(this.searchPattern, 100);
 			}
-			this.clientList.sort(Comparator.comparing(OxAuthClient::getDisplayName));
+			this.clientList = this.clientList.stream()
+					.sorted(Comparator.comparing(OxAuthClient::getDisplayName,
+							Comparator.nullsFirst(Comparator.naturalOrder())))
+					.collect(Collectors.toList());
 			this.oldSearchPattern = this.searchPattern;
 			this.searchPattern = "";
 		} catch (Exception ex) {

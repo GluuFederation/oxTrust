@@ -55,7 +55,7 @@ public class GlobalExceptionHandler extends ExceptionHandlerWrapper {
                     storeRequestURI();
                     performRedirect(externalContext, "/login.htm");
 				} else {
-					log.trace(t.getMessage(), t);
+					log.debug(t.getMessage(), t);
 					performRedirect(externalContext, "/error.htm");
 				}
                 fc.renderResponse();

@@ -71,6 +71,7 @@ import org.gluu.oxtrust.model.GluuCustomAttribute;
 import org.gluu.oxtrust.model.GluuEntityType;
 import org.gluu.oxtrust.model.GluuMetadataSourceType;
 import org.gluu.oxtrust.model.GluuSAMLTrustRelationship;
+import org.gluu.oxtrust.model.GluuValidationStatus;
 import org.gluu.oxtrust.model.OxAuthClient;
 import org.gluu.oxtrust.security.Identity;
 import org.gluu.oxtrust.service.AttributeService;
@@ -224,19 +225,19 @@ public class UpdateTrustRelationshipAction implements Serializable {
 	private String orgUrl;
 
     public List<GluuMetadataSourceType> getMetadataSourceTypesList() {
-        List<GluuMetadataSourceType> metadataSourceTypesList = (Arrays.asList(GluuMetadataSourceType.values()));
-        if (GluuEntityType.FederationAggregate.equals(trustRelationship.getEntityType())) {
-            List<GluuMetadataSourceType> GluuMetadataSourceTypeSubList = new ArrayList<GluuMetadataSourceType>();
-            for (GluuMetadataSourceType enumType : GluuMetadataSourceType.values()) {
-                if (!GluuMetadataSourceType.FEDERATION.equals(enumType)) {
-                    GluuMetadataSourceTypeSubList.add(enumType);
+        
+        List<GluuMetadataSourceType> ret = null;
+        if(GluuEntityType.FederationAggregate.equals(trustRelationship.getEntityType())) {
+            ret = new ArrayList<GluuMetadataSourceType>();
+            for(GluuMetadataSourceType enumType: GluuMetadataSourceType.values()) {
+                if(!GluuMetadataSourceType.FEDERATION.equals(enumType)) {
+                    ret.add(enumType);
                 }
             }
-            return GluuMetadataSourceTypeSubList;
-        } else {
-            return metadataSourceTypesList;
+        }else {
+            ret = Arrays.asList(GluuMetadataSourceType.values());   
         }
-
+        return ret;
     }
 
     public String add() {
@@ -411,21 +412,16 @@ public class UpdateTrustRelationshipAction implements Serializable {
                 }
                 break;
             case MDQ:
-            	try {
-                    if (generateSpMetaDataFile(trustRelationship)) {
-                    	if (!update) {
-                            this.trustRelationship.setStatus(GluuStatus.ACTIVE);
-                        }
-                    } else {
-                        log.error("Failed to generate SP meta-data file");
-                        return OxTrustConstants.RESULT_FAILURE;
-                    }
-                } catch (Exception ex) {
-                    log.error("Failed to download SP certificate", ex);
-
-                    return OxTrustConstants.RESULT_FAILURE;
+            	//TODO: Implement MDQ save 
+                if(!update) {
+                    this.trustRelationship.setStatus(GluuStatus.ACTIVE);
+                    this.trustRelationship.setValidationStatus(GluuValidationStatus.SUCCESS);
                 }
 
+                if(this.trustRelationship.getEntityType().equals(GluuEntityType.SingleSP) && this.trustRelationship.getEntityId() == null) {
+                    facesMessages.add(FacesMessage.SEVERITY_ERROR,"EntityID required for MDQ");
+                    return "invalid_entity_id";
+                }
                 break;
                 
             default:
@@ -433,10 +429,15 @@ public class UpdateTrustRelationshipAction implements Serializable {
                 break;
             }
             updateReleasedAttributes(this.trustRelationship);
+
+            if(trustRelationship.isMdqFederation()) {
+                trustRelationship.setFederation(true);
+            }
             if (trustRelationship.getSpMetaDataSourceType().equals(GluuMetadataSourceType.FEDERATION)) {
                 boolean federation = shibboleth3ConfService.isFederation(this.trustRelationship);
                 this.trustRelationship.setFederation(federation);
             }
+            
             trustContactsAction.saveContacts();
             if (update) {
                 try {
@@ -1220,7 +1221,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
     }
 
     public List<String> getAvailableEntities() {
-        if (getContainerFederationTr() == null) {
+        if (!trustRelationship.isFederation() || getContainerFederationTr() == null) {
             return null;
         } else {
             if (!getContainerFederationTr().getGluuEntityId().contains(trustRelationship.getEntityId())) {
@@ -1312,6 +1313,16 @@ public class UpdateTrustRelationshipAction implements Serializable {
 
     }
 
+    public List<GluuSAMLTrustRelationship> getAllMdqFederatedTrustRelationships() {
+
+        try {
+            return trustService.getAllMdqFederatedTrustRelationships();
+        }catch(Exception e) {
+            e.printStackTrace();
+            return new ArrayList<GluuSAMLTrustRelationship>();
+        }
+    }
+
 	public Saml2Settings getSaml2Settings() {
 		return saml2Settings;
 	}
@@ -1344,17 +1355,7 @@ public class UpdateTrustRelationshipAction implements Serializable {
 		
 	}
 	
-	private boolean generateSpMetaDataFile(GluuSAMLTrustRelationship trustRelationship) {
-        String spMetadataFileName = trustRelationship.getSpMetaDataFN();
-
-        if (StringHelper.isEmpty(spMetadataFileName)) {
-            // Generate new file name
-            spMetadataFileName = shibboleth3ConfService.getSpNewMetadataFileName(trustRelationship);
-            trustRelationship.setSpMetaDataFN(spMetadataFileName);
-        }
-
-        return shibboleth3ConfService.generateMDQMetadataFile(trustRelationship);
-    }
+	
 
 	public String getMetadataStr() {
 		return metadataStr;
