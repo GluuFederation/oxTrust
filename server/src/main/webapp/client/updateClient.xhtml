@@ -110,9 +110,9 @@
 				render="selectedScopesId"
 				searchMethod="#{updateClientAction.searchAvailableScopes}"
 				searchResult="#{updateClientAction.availableScopes}" 
-				searchPattern="#{updateClientAction.scopePattern}" />
-				
-			<ox:selectSelectableEntityDialog
+				searchPattern="#{updateClientAction.scopePattern}"/>
+
+      <ox:selectSelectableEntityDialog
 				acceptMethod="#{updateClientAction.acceptSelectResponseTypes}"
 				cancelMethod="#{updateClientAction.cancelSelectResponseTypes}"
 				displayNameProperty="entity.value" displaySearchForm="false"

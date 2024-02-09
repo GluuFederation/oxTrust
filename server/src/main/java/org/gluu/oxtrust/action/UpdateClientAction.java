@@ -268,8 +268,8 @@ public class UpdateClientAction implements Serializable {
             this.spontaneousScopesScripts = Lists.newArrayList();
             this.backchannelLogoutUri = getStringFromList(client.getAttributes().getBackchannelLogoutUri());
             this.tlsSubjectDn = client.getAttributes().getTlsClientAuthSubjectDn();
-            this.redirectLogoutUrl = getNonEmptyStringList(client.getOxAuthPostLogoutRedirectURIs());
             this.scopePattern = "";
+            this.redirectLogoutUrl = getNonEmptyStringList(client.getOxAuthPostLogoutRedirectURIs());
             searchAvailableCustomScriptsforAcr();
         } catch (BasePersistenceException ex) {
             log.error("Failed to prepare lists", ex);
@@ -691,7 +691,7 @@ public class UpdateClientAction implements Serializable {
 		}
         this.availableLoginUri = HTTPS;
     }
-
+    
     private boolean isAcceptable(String availableLoginUri) {
         boolean result = false;
         try {
@@ -1534,10 +1534,9 @@ public class UpdateClientAction implements Serializable {
     }
 
     public void searchAvailableScopes() {
-        //if (this.availableScopes != null) {
-        //    selectAddedScopes();
-        //    return;
-        //}
+		/*
+		 * if (this.availableScopes != null) { selectAddedScopes(); return; }
+		 */
         List<SelectableEntity<Scope>> tmpAvailableScopes = new ArrayList<SelectableEntity<Scope>>();
         List<Scope> scopes = new ArrayList<Scope>();
         try {
@@ -2219,14 +2218,6 @@ public class UpdateClientAction implements Serializable {
 		this.resources = resources;
 	}
 
-	public String getScopePattern() {
-		return scopePattern;
-	}
-
-	public void setScopePattern(String scopePattern) {
-		this.scopePattern = scopePattern;
-	}
-
 	public List<String> getClientBackChannellogoutUris() {
 		return clientBackChannellogoutUris;
 	}
@@ -2257,5 +2248,13 @@ public class UpdateClientAction implements Serializable {
 
 	public void setAvailableRedirectLogoutUrl(String availableRedirectLogoutUrl) {
 		this.availableRedirectLogoutUrl = availableRedirectLogoutUrl;
+	}
+	
+	public String getScopePattern() {
+		return scopePattern;
+	}
+
+	public void setScopePattern(String scopePattern) {
+		this.scopePattern = scopePattern;
 	}
 }

@@ -81,7 +81,7 @@
                                               value="#{_customAttributeAction.attributeIds[_custAttr.metadata]}"/>
                                     <ox:decorate id="D"
                                                  label="#{_custAttr.metadata.displayName eq 'Gender, male or female' ? 'Gender' : _custAttr.metadata.displayName } #{_valueIdx == 0 ? '' : _valueIdx}"
-                                                 rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName ne 'Password')}"
+                                                 rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.displayName ne 'Password') and (_custAttr.metadata.name ne 'oxTrustActive')}"
                                                  leftClass="col-sm-3" rightClass="col-sm-9">
                                         <div class="col-xs-10" id="attributeID">
                                             <h:inputText
@@ -168,7 +168,7 @@
                                                     styleClass="rounded form-control #{_custAttr.metadata.displayName}"
                                                     value="#{_custAttr.booleanValues[_valueIdx]}"
                                                     required="#{_mustEnter}" id="custId_boolean#{_custAttrIdx}"
-                                                    rendered="#{(_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.dataType.value eq 'boolean') and (_custAttr.metadata.displayName ne 'User Status') }">
+                                                    rendered="#{((_custAttr.adminCanEdit or _mustEnter) and (_custAttr.metadata.dataType.value eq 'boolean') and (_custAttr.metadata.displayName ne 'User Status') and (_custAttr.metadata.name ne 'oxTrustActive')) }">
                                                 <f:selectItems
                                                         value="#{organizationService.javaBooleanSelectionTypes}"
                                                         var="_type" itemLabel="#{_type.displayName}"/>
