@@ -127,6 +127,10 @@ public class GluuSAMLTrustRelationship extends InumEntry implements Serializable
 	@AttributeName(name = "oxAuthPostLogoutRedirectURI")
 	private String spLogoutURL;
 
+	@Pattern(regexp = "^$|(^(https?|http)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|])", message = "Please enter a valid url, including protocol (http/https)")
+	@AttributeName(name="spLogoutRedirectUrl")
+	private String spLogoutRedirectUrl;
+
 	@AttributeName(name = "gluuValidationLog")
 	private List<String> validationLog;
 
@@ -365,6 +369,17 @@ public class GluuSAMLTrustRelationship extends InumEntry implements Serializable
 
 	public void setSpLogoutURL(String spLogoutURL) {
 		this.spLogoutURL = spLogoutURL;
+	}
+
+	public String getSpLogoutRedirectUrl() {
+		
+		
+		return spLogoutRedirectUrl;
+	}
+
+	public void setSpLogoutRedirectUrl(String spLogoutRedirectUrl) {
+
+		this.spLogoutRedirectUrl = spLogoutRedirectUrl;
 	}
 
 	public String getSpMetaDataFN() {
