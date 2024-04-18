@@ -642,6 +642,10 @@
 			<artifactId>poi-ooxml</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-compress</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.openid4java</groupId>
 			<artifactId>openid4java-consumer</artifactId>
 			<type>pom</type>
