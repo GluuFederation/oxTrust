@@ -366,6 +366,11 @@
 				<version>5.2.5</version>
 			</dependency>
 			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-compress</artifactId>
+				<version>1.26.1</version>
+			</dependency>
+			<dependency>
 				<groupId>org.openid4java</groupId>
 				<artifactId>openid4java-consumer</artifactId>
 				<version>0.9.6</version>
