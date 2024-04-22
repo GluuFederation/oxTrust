@@ -7,7 +7,7 @@
 	<groupId>org.gluu</groupId>
 	<artifactId>oxtrust</artifactId>
 	<packaging>pom</packaging>
-	<version>4.5.4-SNAPSHOT</version>
+	<version>4.5.5-SNAPSHOT</version>
 	<name>oxTrust</name>
 	<url>https://www.gluu.org</url>
 
@@ -15,9 +15,9 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.min-version>3.3.9</maven.min-version>
 
-		<gluu.parent.version>4.5.4-SNAPSHOT</gluu.parent.version>
-		<oxcore.version>4.5.4-SNAPSHOT</oxcore.version>
-		<oxauth.version>4.5.4-SNAPSHOT</oxauth.version>
+		<gluu.parent.version>4.5.5-SNAPSHOT</gluu.parent.version>
+		<oxcore.version>4.5.5-SNAPSHOT</oxcore.version>
+		<oxauth.version>4.5.5-SNAPSHOT</oxauth.version>
 
 		<jettison.version>1.5.4</jettison.version>
 
@@ -202,7 +202,7 @@
 			<dependency>
 				<groupId>org.gluu</groupId>
 				<artifactId>uma-rs-resteasy</artifactId>
-				<version>4.5.4-SNAPSHOT</version>
+				<version>4.5.5-SNAPSHOT</version>
 				<exclusions>
 					<exclusion>
 						<groupId>org.slf4j</groupId>
