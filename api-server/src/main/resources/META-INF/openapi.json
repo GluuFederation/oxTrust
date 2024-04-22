@@ -13,7 +13,7 @@
       "name" : "Gluu Support License",
       "url" : "https://gluu.org/"
     },
-    "version" : "4.5.3"
+    "version" : "4.5.4"
   },
   "paths" : {
     "/configuration/api" : {
