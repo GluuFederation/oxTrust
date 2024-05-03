@@ -520,10 +520,12 @@ public class RegisterPersonAction implements Serializable {
 			message.setSeverity(FacesMessage.SEVERITY_ERROR);
 			throw new ValidatorException(message);
 		}
+		boolean validateOnlyPwd = false;
 		AttributeValidation validation = attributeService.getAttributeByName("userPassword").getAttributeValidation();
 		boolean canValidate = validation != null && validation.getRegexp() != null && !validation.getRegexp().isEmpty();
 		if (comp.getClientId().endsWith("password")) {
 			this.password = (String) value;
+			validateOnlyPwd = true;
 		} else if (comp.getClientId().endsWith("passwordValidation")) {
 			this.repeatPassword = (String) value;
 		}
@@ -531,13 +533,22 @@ public class RegisterPersonAction implements Serializable {
 		if (canValidate) {
 			pattern = Pattern.compile(validation.getRegexp());
 		}
-		if (!StringHelper.equalsIgnoreCase(password, repeatPassword) && this.repeatPassword != null) {
+
+		if (canValidate && validateOnlyPwd
+				&& (!pattern.matcher(this.password).matches())) {
+			((UIInput) comp).setValid(false);
+			FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					facesMessages.evalResourceAsString("#{msgs['password.validation.invalid']}"),
+					facesMessages.evalResourceAsString("#{msgs['password.validation.invalid']}"));
+			context.addMessage(comp.getClientId(context), message);
+		}
+		if (!validateOnlyPwd && !StringHelper.equals(password, repeatPassword) && this.repeatPassword != null) {
 			((UIInput) comp).setValid(false);
 			FacesMessage message = new FacesMessage("Both passwords should be the same!");
 			message.setSeverity(FacesMessage.SEVERITY_ERROR);
 			throw new ValidatorException(message);
 		}
-		if (canValidate
+		if (canValidate && !validateOnlyPwd
 				&& (!pattern.matcher(this.password).matches() || !pattern.matcher(this.repeatPassword).matches())) {
 			((UIInput) comp).setValid(false);
 			FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR,
