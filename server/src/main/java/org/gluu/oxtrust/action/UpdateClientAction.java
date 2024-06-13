@@ -1163,6 +1163,7 @@ public class UpdateClientAction implements Serializable {
     	}
     	if(!this.client.getAttributes().getIntrospectionScripts().contains(introspectionCustomScript)
     			&&  !introspectionCustomScript.isEmpty()) {
+            this.client.getAttributes().getIntrospectionScripts().clear();
     		this.client.getAttributes().getIntrospectionScripts().add(introspectionCustomScript);
     	}
     	if(!this.client.getAttributes().getSpontaneousScopeScriptDns().contains(spontaneousScopeCustomScript)
