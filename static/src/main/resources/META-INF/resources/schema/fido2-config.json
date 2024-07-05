@@ -106,6 +106,26 @@
          "description":"Boolean value specifying whether to enable Metric Reporter.",
          "type":"boolean"
       },
+      "superGluuEnabled":{
+         "id":"superGluuEnabled",
+         "description":"Boolean value specifying whether to enable Super Gluu.",
+         "type":"boolean"
+      },
+      "sessionIdPersistInCache":{
+         "id":"sessionIdPersistInCache",
+         "description":"Boolean value specifying whether to enable sessionId Persist In Cache.",
+         "type":"boolean"
+      },
+      "oldU2fMigrationEnabled":{
+         "id":"oldU2fMigrationEnabled",
+         "description":"Boolean value specifying whether to enable old U2f Migration.",
+         "type":"boolean"
+      },
+      "errorReasonEnabled":{
+         "id":"errorReasonEnabled",
+         "description":"Boolean value specifying whether to enable Error reason.",
+         "type":"boolean"
+      },
       "personCustomObjectClassList":{
          "id":"personCustomObjectClassList",
          "description":"LDAP custom object class list for dynamic person enrollment.",
@@ -241,6 +261,27 @@
                      }
                   }
                }
+            },
+            "metadataUrlsProvider":{
+               "id":"metadataUrlsProvider",
+               "description":"metadata Url provider.",
+               "type":"string",
+               "minLength":1
+            },
+            "skipDownloadMdsEnabled":{
+               "id":"skipDownloadMdsEnabled",
+               "description":" boolean to enable skip download MDS",
+               "type":"boolean"
+            },
+            "skipValidateMdsInAttestationEnabled":{
+               "id":"skipValidateMdsInAttestationEnabled",
+               "description":" boolean to enable skip Validate Mds In Attestation",
+               "type":"boolean"
+            },
+            "assertionOptionsGenerateEndpointEnabled":{
+               "id":"assertionOptionsGenerateEndpointEnabled",
+               "description":" boolean to enable assertion Options Generate Endpoint",
+               "type":"boolean"
             }
          }
       }
@@ -258,6 +299,10 @@
       "metricReporterInterval",
       "metricReporterKeepDataDays",
       "metricReporterEnabled",
+      "superGluuEnabled",
+      "sessionIdPersistInCache",
+      "oldU2fMigrationEnabled",
+      "errorReasonEnabled",
       "personCustomObjectClassList",
       "fido2Configuration"
    ]
