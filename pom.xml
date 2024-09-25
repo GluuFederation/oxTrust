@@ -17,7 +17,7 @@
 
 		<gluu.parent.version>4.5.1.Final</gluu.parent.version>
 		<oxcore.version>4.5.1.Final</oxcore.version>
-		<oxauth.version>4.5.1.Final</oxauth.version>
+		<oxauth.version>4.5.1.sp1</oxauth.version>
 
 		<jettison.version>1.5.4</jettison.version>
 
