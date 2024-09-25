@@ -9,6 +9,8 @@ package org.gluu.oxtrust.action;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -162,6 +164,7 @@ public class UpdateClientAction implements Serializable {
     private List<String> loginUris = Lists.newArrayList();
     private List<String> logoutUris;
     private List<String> clientlogoutUris;
+    private List<String> redirectLogoutUrl;
     private List<String> clientBackChannellogoutUris;
     private List<String> claimRedirectURIList;
     private List<String> additionalAudienceList;
@@ -188,6 +191,7 @@ public class UpdateClientAction implements Serializable {
     private String availableLoginUri = HTTPS;
     private String availableLogoutUri = HTTPS;
     private String availableClientlogoutUri = HTTPS;
+    private String availableRedirectLogoutUrl = HTTPS;
     private String availableClientBacklogoutUri = HTTPS;
     private String availableContact = "";
     private String availableRequestUri = HTTPS;
@@ -201,6 +205,7 @@ public class UpdateClientAction implements Serializable {
     private String spontaneousScopeCustomScript;
     private String introspectionCustomScript;
     private String rptClaimsScript;
+    private String scopePattern;
     
     
     Pattern domainPattern = Pattern.compile("^((?!-)[A-Za-z0-9-]{1,63}(?<!-)\\\\.)+[A-Za-z]{2,6}");
@@ -263,6 +268,8 @@ public class UpdateClientAction implements Serializable {
             this.spontaneousScopesScripts = Lists.newArrayList();
             this.backchannelLogoutUri = getStringFromList(client.getAttributes().getBackchannelLogoutUri());
             this.tlsSubjectDn = client.getAttributes().getTlsClientAuthSubjectDn();
+            this.redirectLogoutUrl = getNonEmptyStringList(client.getOxAuthPostLogoutRedirectURIs());
+            this.scopePattern = "";
             searchAvailableCustomScriptsforAcr();
         } catch (BasePersistenceException ex) {
             log.error("Failed to prepare lists", ex);
@@ -323,6 +330,7 @@ public class UpdateClientAction implements Serializable {
             this.loginUris = getNonEmptyStringList(client.getOxAuthRedirectURIs());
 
             this.clientlogoutUris = getNonEmptyStringList(client.getLogoutUri());
+            this.redirectLogoutUrl= getNonEmptyStringList(client.getOxAuthPostLogoutRedirectURIs());
             this.clientBackChannellogoutUris = getNonEmptyStringList(client.getAttributes().getBackchannelLogoutUri());
             this.scopes = getInitialEntries();
             this.claims = getInitialClaimDisplayNameEntries();
@@ -334,6 +342,7 @@ public class UpdateClientAction implements Serializable {
             this.claimRedirectURIList = getNonEmptyStringList(client.getClaimRedirectURI());
             this.additionalAudienceList = getNonEmptyStringList(client.getAttributes().getAdditionalAudience());
             this.tlsSubjectDn = client.getAttributes().getTlsClientAuthSubjectDn();
+            this.scopePattern = "";
             
             this.postAuthnScripts = searchAvailablePostAuthnCustomScripts().stream()
                     .filter(entity -> client.getAttributes().getPostAuthnScripts().contains(entity.getEntity().getDn()))
@@ -417,6 +426,7 @@ public class UpdateClientAction implements Serializable {
         }
         updateLoginURIs();
         updateLogoutURIs();
+        updateRedirectLogoutUrls();
         updateBackChannelLogoutURIs();
         updateScopes();
         updateClaims();
@@ -533,6 +543,10 @@ public class UpdateClientAction implements Serializable {
 
     public void removeClientLogoutURI(String uri) {
         removeFromList(this.clientlogoutUris, uri);
+    }
+    
+    public void removeRedirectLogoutUrl(String uri) {
+        removeFromList(this.redirectLogoutUrl, uri);
     }
 
     public void removeClientBackLogoutURI(String uri) {
@@ -804,6 +818,19 @@ public class UpdateClientAction implements Serializable {
         this.availableLogoutUri = HTTPS;
     }
 
+    public void acceptSelectRedirectLogoutUrl() {
+        if (StringHelper.isEmpty(this.availableRedirectLogoutUrl)) {
+            return;
+        }
+        if (this.availableRedirectLogoutUrl.equalsIgnoreCase(HTTPS)) {
+            return;
+        }
+        if (!this.redirectLogoutUrl.contains(this.availableRedirectLogoutUrl)) {
+            this.redirectLogoutUrl.add(this.availableRedirectLogoutUrl);
+        }
+        this.availableRedirectLogoutUrl = HTTPS;
+    }
+    
     public void acceptSelectClientLogoutUri() {
         if (StringHelper.isEmpty(this.availableClientlogoutUri)) {
             return;
@@ -924,6 +951,10 @@ public class UpdateClientAction implements Serializable {
         this.availableClientlogoutUri = HTTPS;
     }
     
+    public void cancelRedirectLogoutUrl() {
+        this.availableRedirectLogoutUrl = HTTPS;
+    }
+    
     public void cancelClientBackLogoutUri() {
         this.availableClientBacklogoutUri = HTTPS;
     }
@@ -971,6 +1002,18 @@ public class UpdateClientAction implements Serializable {
             tmpUris.add(StringHelper.trimAll(uri));
         }
         this.client.setLogoutUri(tmpUris);
+    }
+    
+    private void updateRedirectLogoutUrls() {
+        if (this.redirectLogoutUrl == null || this.redirectLogoutUrl.size() == 0) {
+            this.client.setOxAuthPostLogoutRedirectURIs(null);
+            return;
+        }
+        List<String> tmpUris = new ArrayList<String>();
+        for (String uri : this.redirectLogoutUrl) {
+            tmpUris.add(StringHelper.trimAll(uri));
+        }
+        this.client.setOxAuthPostLogoutRedirectURIs(tmpUris);
     }
     
     private void updateBackChannelLogoutURIs() {
@@ -1489,14 +1532,18 @@ public class UpdateClientAction implements Serializable {
     }
 
     public void searchAvailableScopes() {
-        if (this.availableScopes != null) {
-            selectAddedScopes();
-            return;
-        }
+        //if (this.availableScopes != null) {
+        //    selectAddedScopes();
+        //    return;
+        //}
         List<SelectableEntity<Scope>> tmpAvailableScopes = new ArrayList<SelectableEntity<Scope>>();
         List<Scope> scopes = new ArrayList<Scope>();
         try {
-            scopes = scopeService.getAllScopesList(1000);
+        	if(scopePattern !=  null && !scopePattern.isEmpty()) {
+        		scopes = scopeService.searchScopes(scopePattern, 0);
+        	}else {
+        		scopes = scopeService.getAllScopesList(1000);
+        	}
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -1995,13 +2042,14 @@ public class UpdateClientAction implements Serializable {
     }
 
     private boolean loadSector(String sectorIdentifierUri) throws ClientProtocolException, IOException {
+    	try {
     	String sectoruriContent = downloadSectorIdentifierUri(sectorIdentifierUri);
     	
     	if (sectoruriContent == null) {
     		return false;
     	}
 
-    	try {
+    	
             JSONArray uris = new JSONArray(sectoruriContent);
             this.loginUris.clear();
             for (int i = 0; i < uris.length(); i++) {
@@ -2035,8 +2083,9 @@ public class UpdateClientAction implements Serializable {
     	return new String(responseBytes, StandardCharsets.UTF_8);
 	}
 
-    private String downloadSectorIdentifierUri(String sectorIdentifierUri) throws IOException, ClientProtocolException {
+    private String downloadSectorIdentifierUri(String sectorIdentifierUri) throws IOException, ClientProtocolException, URISyntaxException {
 		HttpGet httpGet = new HttpGet();
+		httpGet.setURI(new URI(sectorIdentifierUri));
     	httpGet.setHeader("Accept", "application/json");
 
     	String fileContent = null;
@@ -2164,6 +2213,7 @@ public class UpdateClientAction implements Serializable {
 		this.resources = resources;
 	}
 
+
 	public List<String> getClientBackChannellogoutUris() {
 		return clientBackChannellogoutUris;
 	}
@@ -2178,5 +2228,29 @@ public class UpdateClientAction implements Serializable {
 
 	public void setAvailableClientBacklogoutUri(String availableClientBacklogoutUri) {
 		this.availableClientBacklogoutUri = availableClientBacklogoutUri;
+	}
+
+	public String getScopePattern() {
+		return scopePattern;
+	}
+
+	public void setScopePattern(String scopePattern) {
+		this.scopePattern = scopePattern;
+	}
+	
+	public List<String> getRedirectLogoutUrl() {
+		return redirectLogoutUrl;
+	}
+
+	public void setRedirectLogoutUrl(List<String> redirectLogoutUrl) {
+		this.redirectLogoutUrl = redirectLogoutUrl;
+	}
+
+	public String getAvailableRedirectLogoutUrl() {
+		return availableRedirectLogoutUrl;
+	}
+
+	public void setAvailableRedirectLogoutUrl(String availableRedirectLogoutUrl) {
+		this.availableRedirectLogoutUrl = availableRedirectLogoutUrl;
 	}
 }
