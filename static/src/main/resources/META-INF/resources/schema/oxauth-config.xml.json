@@ -1847,6 +1847,10 @@
             "id": "skipAuthenticationFilterOptionsMethod",
             "description": "Boolean value specifying whetherauthentication filter should skip OPTIONS request processing.",
             "type": "boolean"
+        },"allowWildcardRedirectUri": {
+            "id": "allowWildcardRedirectUri",
+            "description": "Specifies whether to allow wildcard in redirect URI or not.",
+            "type": "boolean"
         }
     },
     "required": [
