@@ -1,3 +1,4 @@
+# Moved to [Gluu4 monorepo](https://github.com/GluuFederation/gluu4/tree/main/oxTrust)
 oxTrust
 ======
 oxTrust is a Weld based web application for Gluu Server administration.
