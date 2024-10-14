@@ -355,12 +355,12 @@ public class CustomAttributeAction implements Serializable {
 		Set<String> origCustomAttributesSet = new HashSet<String>();
 
 		for (GluuCustomAttribute origCustomAttribute : origCustomAttributes) {
-			String attributeName = StringHelper.toLowerCase(origCustomAttribute.getName());
+			String attributeName = origCustomAttribute.getName();
 			origCustomAttributesSet.add(attributeName);
 		}
 
 		for (GluuCustomAttribute currentCustomAttribute : customAttributes) {
-			String attributeName = StringHelper.toLowerCase(currentCustomAttribute.getName());
+			String attributeName = currentCustomAttribute.getName();
 			origCustomAttributesSet.remove(attributeName);
 		}
 
