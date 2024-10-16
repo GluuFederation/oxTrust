@@ -105,7 +105,7 @@
         #set($entityId = $trustRelationship.getEntityId())
         #set($relyingPartyId = $StringHelper.removePunctuation($trustRelationship.inum))
 
-        <bean parent="RelyingPartyByName" id="$relyingPartyId" c:relyingPartyIds="$entityId">
+        <bean parent="RelyingPartyByName" id="$relyingPartyId" c:relyingPartyIds="$esc.xml($entityId)">
             <property name="profileConfigurations">
                 <list>
             #if($trustRelationship.specificRelyingPartyConfig and (not $trustRelationship.isFederation()))

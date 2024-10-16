@@ -26,12 +26,12 @@
 
                 <Rule xsi:type="OR">
                     #foreach( $entityId in $trustParams.trustEntityIds.get($trustRelationship.inum) )
-                        <Rule xsi:type="Requester" value="$entityId" />
+                        <Rule xsi:type="Requester" value="$esc.xml($entityId)" />
                     #end
                 </Rule>
             #else
 
-                <Rule xsi:type="Requester" value="$trustParams.trustEntityIds.get($trustRelationship.inum).get(0)" />
+                <Rule xsi:type="Requester" value="$esc.xml($trustParams.trustEntityIds.get($trustRelationship.inum).get(0))" />
             #end
         </PolicyRequirementRule>
         #else
@@ -39,12 +39,12 @@
 
         <PolicyRequirementRule xsi:type="OR">
             #foreach( $entityId in $trustParams.trustEntityIds.get($trustRelationship.inum) )
-                <Rule xsi:type="Requester" value="$entityId" />
+                <Rule xsi:type="Requester" value="$esc.xml($entityId)" />
             #end
         </PolicyRequirementRule>
             #else
 
-        <PolicyRequirementRule xsi:type="Requester" value="$trustParams.trustEntityIds.get($trustRelationship.inum).get(0)" />
+        <PolicyRequirementRule xsi:type="Requester" value="$esc.xml($trustParams.trustEntityIds.get($trustRelationship.inum).get(0))" />
             #end
         #end
 
