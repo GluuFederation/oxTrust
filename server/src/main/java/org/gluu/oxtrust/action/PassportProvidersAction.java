@@ -138,7 +138,7 @@ public class PassportProvidersAction implements Serializable {
 						new OptionEntry("identifierFormat", "urn:oasis:names:tc:SAML:2.0:nameid-format:transient"));
 				this.options.add(new OptionEntry("authnRequestBinding", "HTTP-POST"));
 				this.options.add(new OptionEntry(ISSUER, DEFAULT_ISSUER));
-				this.options.add(new OptionEntry("cert", ""));
+				this.options.add(new OptionEntry("idpCert", ""));
 			}
 			if (type.equalsIgnoreCase(providerTypes[1])) {
 				String scopes = "[\"openid\",\"email\",\"profile\"]";
