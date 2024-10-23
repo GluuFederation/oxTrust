@@ -36,12 +36,47 @@
 #if( $attribute.name.equals('eppnForNIH') )
     <AttributeDefinition id="eduPersonPrincipalName" xsi:type="Scoped" scope="%{idp.scope}">
         <InputDataConnector ref="siteDataConnector" attributeNames="uid"/>
-        <!-- AttributeEncoder xsi:type="SAML2ScopedString" name="urn:oid:1.3.6.1.4.1.5923.1.1.1.6" friendlyName="eduPersonPrincipalName" encodeType="false" / -->
     </AttributeDefinition
-#else
+#elseif( $resovlerParams.persistenceType.equals('ldap'))
     <AttributeDefinition xsi:type="Simple" id="$attribute.name">
         <InputDataConnector ref="siteDataConnector" attributeNames="$attribute.name"/>
-        <!-- AttributeEncoder xsi:type="SAML2String" name="$attrParams.attributeSAML2Strings.get($attribute.name)" friendlyName="$attribute.name" encodeType="false" / -->
+    </AttributeDefinition>
+#elseif( $resovlerParams.persistenceType.equals('sql') && $attribute.oxMultiValuedAttribute == false )
+    <AttributeDefinition xsi:type="Simple" id="$attribute.name">
+        <InputDataConnector ref="siteDataConnector" attributeNames="$attribute.name"/>
+    </AttributeDefinition>
+#elseif( $attribute.oxMultiValuedAttribute == false)
+    <AttributeDefinition xsi:type="Simple" id="$attribute.name">
+        <InputDataConnector ref="siteDataConnector" attributeNames="$attribute.name"/>
+    </AttributeDefinition>
+#else
+    <AttributeDefinition xsi:type="ScriptedAttribute" id="$attribute.name">
+        <InputDataConnector ref="siteDataConnector" attributeNames="$attribute.name" />
+        <Script> <![CDATA[
+            logger = Java.type("org.slf4j.LoggerFactory").getLogger("org.gluu.idp.support.GluuScriptedAttribute");
+            _JsonObjectType  = Java.type("org.json.JSONObject");
+            _ArrayListType =  Java.type("java.util.ArrayList");
+            _StringAttributeValueType = Java.type("net.shibboleth.idp.attribute.StringAttributeValue");
+
+            idpattr = ${attribute.name}.getNativeAttribute();
+            idpattr_values = idpattr.getValues();
+            if(idpattr_values.size() ==  1) {
+                attrvalue =  idpattr_values.get(0).getNativeValue();
+                try {
+                   json = new _JsonObjectType(attrvalue);
+                   jsonvalues = json.getJSONArray("v");
+                   newidpattr_values = new _ArrayListType();
+                   for(i = 0 ; i < jsonvalues.length() ;i++) {
+                       val = jsonvalues.getString(i);
+                       newidpattr_values.add(new _StringAttributeValueType(val));
+                   }
+                   idpattr.setValues(newidpattr_values);
+                }catch(e) {
+                    logger.info("Error parsing multivalue attribute",e);
+                }
+            }
+        ]]>
+        </Script>
     </AttributeDefinition>
 #end
 #end
