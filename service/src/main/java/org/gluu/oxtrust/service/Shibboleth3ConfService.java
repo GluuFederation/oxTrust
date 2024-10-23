@@ -37,6 +37,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.velocity.tools.generic.EscapeTool;
 import org.apache.velocity.VelocityContext;
 import org.gluu.config.oxtrust.AppConfiguration;
 import org.gluu.config.oxtrust.AttributeResolverConfiguration;
@@ -687,6 +688,7 @@ public class Shibboleth3ConfService implements Serializable {
         VelocityContext context = new VelocityContext();
 
         context.put("StringHelper", StringHelper.class);
+        context.put("esc",new EscapeTool());
         context.put("salt", configurationFactory.getCryptoConfigurationSalt());
 
         context.put("trustParams", trustParams);
